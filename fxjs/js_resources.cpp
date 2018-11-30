@@ -7,61 +7,90 @@
 #include "fxjs/js_resources.h"
 
 WideString JSGetStringFromID(JSMessage msg) {
+  const char* msg_string = "";
   switch (msg) {
     case JSMessage::kAlert:
-      return L"Alert";
+      msg_string = "Alert";
+      break;
     case JSMessage::kParamError:
-      return L"Incorrect number of parameters passed to function.";
+      msg_string = "Incorrect number of parameters passed to function.";
+      break;
     case JSMessage::kInvalidInputError:
-      return L"The input value is invalid.";
+      msg_string = "The input value is invalid.";
+      break;
     case JSMessage::kParamTooLongError:
-      return L"The input value is too long.";
+      msg_string = "The input value is too long.";
+      break;
     case JSMessage::kParseDateError:
-      return L"The input value can't be parsed as a valid date/time (%ls).";
+      msg_string =
+          "The input value can't be parsed as a valid date/time (%ls).";
+      break;
     case JSMessage::kRangeBetweenError:
-      return L"The input value must be greater than or equal to %ls"
-             L" and less than or equal to %ls.";
+      msg_string =
+          "The input value must be greater than or equal to %ls"
+          " and less than or equal to %ls.";
+      break;
     case JSMessage::kRangeGreaterError:
-      return L"The input value must be greater than or equal to %ls.";
+      msg_string = "The input value must be greater than or equal to %ls.";
+      break;
     case JSMessage::kRangeLessError:
-      return L"The input value must be less than or equal to %ls.";
+      msg_string = "The input value must be less than or equal to %ls.";
+      break;
     case JSMessage::kNotSupportedError:
-      return L"Operation not supported.";
+      msg_string = "Operation not supported.";
+      break;
     case JSMessage::kBusyError:
-      return L"System is busy.";
+      msg_string = "System is busy.";
+      break;
     case JSMessage::kDuplicateEventError:
-      return L"Duplicate formfield event found.";
+      msg_string = "Duplicate formfield event found.";
+      break;
     case JSMessage::kSecondParamNotDateError:
-      return L"The second parameter can't be converted to a Date.";
+      msg_string = "The second parameter can't be converted to a Date.";
+      break;
     case JSMessage::kSecondParamInvalidDateError:
-      return L"The second parameter is an invalid Date.";
+      msg_string = "The second parameter is an invalid Date.";
+      break;
     case JSMessage::kGlobalNotFoundError:
-      return L"Global value not found.";
+      msg_string = "Global value not found.";
+      break;
     case JSMessage::kReadOnlyError:
-      return L"Cannot assign to readonly property.";
+      msg_string = "Cannot assign to readonly property.";
+      break;
     case JSMessage::kTypeError:
-      return L"Incorrect parameter type.";
+      msg_string = "Incorrect parameter type.";
+      break;
     case JSMessage::kValueError:
-      return L"Incorrect parameter value.";
+      msg_string = "Incorrect parameter value.";
+      break;
     case JSMessage::kPermissionError:
-      return L"Permission denied.";
+      msg_string = "Permission denied.";
+      break;
     case JSMessage::kBadObjectError:
-      return L"Object no longer exists.";
+      msg_string = "Object no longer exists.";
+      break;
     case JSMessage::kObjectTypeError:
-      return L"Object is of the wrong type.";
+      msg_string = "Object is of the wrong type.";
+      break;
     case JSMessage::kUnknownProperty:
-      return L"Unknown property.";
+      msg_string = "Unknown property.";
+      break;
     case JSMessage::kInvalidSetError:
-      return L"Set not possible, invalid or unknown.";
+      msg_string = "Set not possible, invalid or unknown.";
+      break;
 #ifdef PDF_ENABLE_XFA
     case JSMessage::kTooManyOccurances:
-      return L"Too many occurances.";
+      msg_string = "Too many occurances.";
+      break;
     case JSMessage::kUnknownMethod:
-      return L"Unknown method.";
+      msg_string = "Unknown method.";
+      break;
+    default:
+      NOTREACHED();
+      break;
 #endif
   }
-  NOTREACHED();
-  return L"";
+  return WideString::FromASCII(msg_string);
 }
 
 WideString JSFormatErrorString(const char* class_name,

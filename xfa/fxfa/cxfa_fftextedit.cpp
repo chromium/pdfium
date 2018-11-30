@@ -204,10 +204,10 @@ void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
     return;
 
   WideString wsSomField = GetNode()->GetSOMExpression();
-  pAppProvider->MsgBox(wsText + L" can not contain " + wsSomField,
-                       pAppProvider->GetAppTitle(),
-                       static_cast<uint32_t>(AlertIcon::kError),
-                       static_cast<uint32_t>(AlertButton::kOK));
+  pAppProvider->MsgBox(
+      wsText + WideString::FromASCII(" can not contain ") + wsSomField,
+      pAppProvider->GetAppTitle(), static_cast<uint32_t>(AlertIcon::kError),
+      static_cast<uint32_t>(AlertButton::kOK));
 }
 
 bool CXFA_FFTextEdit::IsDataChanged() {

@@ -50,9 +50,11 @@ CXFA_Script::~CXFA_Script() {}
 CXFA_Script::Type CXFA_Script::GetContentType() {
   Optional<WideString> cData =
       JSObject()->TryCData(XFA_Attribute::ContentType, false);
-  if (!cData || *cData == L"application/x-formcalc")
+  if (!cData.has_value())
     return Type::Formcalc;
-  if (*cData == L"application/x-javascript")
+  if (cData.value().EqualsASCII("application/x-formcalc"))
+    return Type::Formcalc;
+  if (cData.value().EqualsASCII("application/x-javascript"))
     return Type::Javascript;
   return Type::Unknown;
 }

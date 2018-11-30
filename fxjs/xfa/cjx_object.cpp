@@ -180,26 +180,29 @@ CJS_Result CJX_Object::RunMethod(
 }
 
 void CJX_Object::ThrowTooManyOccurancesException(const WideString& obj) const {
-  ThrowException(L"The element [" + obj +
-                 L"] has violated its allowable number of occurrences.");
+  ThrowException(WideString::FromASCII("The element [") + obj +
+                 WideString::FromASCII(
+                     "] has violated its allowable number of occurrences."));
 }
 
 void CJX_Object::ThrowInvalidPropertyException() const {
-  ThrowException(L"Invalid property set operation.");
+  ThrowException(WideString::FromASCII("Invalid property set operation."));
 }
 
 void CJX_Object::ThrowIndexOutOfBoundsException() const {
-  ThrowException(L"Index value is out of bounds.");
+  ThrowException(WideString::FromASCII("Index value is out of bounds."));
 }
 
 void CJX_Object::ThrowParamCountMismatchException(
     const WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '" + method +
-                 L"'.");
+  ThrowException(
+      WideString::FromASCII("Incorrect number of parameters calling method '") +
+      method + WideString::FromASCII("'."));
 }
 
 void CJX_Object::ThrowArgumentMismatchException() const {
-  ThrowException(L"Argument mismatch in property or function argument.");
+  ThrowException(WideString::FromASCII(
+      "Argument mismatch in property or function argument."));
 }
 
 void CJX_Object::ThrowException(const WideString& str) const {

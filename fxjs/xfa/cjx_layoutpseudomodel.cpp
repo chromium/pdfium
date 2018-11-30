@@ -64,7 +64,7 @@ void CJX_LayoutPseudoModel::ready(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
   if (bSetting) {
-    ThrowException(L"Unable to set ready value.");
+    ThrowException(WideString::FromASCII("Unable to set ready value."));
     return;
   }
 
@@ -84,7 +84,7 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
   if (!pNode)
     return CJS_Result::Success();
 
-  WideString unit(L"pt");
+  WideString unit = WideString::FromASCII("pt");
   if (params.size() >= 2) {
     WideString tmp_unit = runtime->ToWideString(params[1]);
     if (!tmp_unit.IsEmpty())

@@ -6067,36 +6067,40 @@ void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 void CFXJSE_FormCalcContext::ThrowNoDefaultPropertyException(
     const ByteStringView& name) const {
   ThrowException(WideString::FromUTF8(name) +
-                 L" doesn't have a default property.");
+                 WideString::FromASCII(" doesn't have a default property."));
 }
 
 void CFXJSE_FormCalcContext::ThrowCompilerErrorException() const {
-  ThrowException(L"Compiler error.");
+  ThrowException(WideString::FromASCII("Compiler error."));
 }
 
 void CFXJSE_FormCalcContext::ThrowDivideByZeroException() const {
-  ThrowException(L"Divide by zero.");
+  ThrowException(WideString::FromASCII("Divide by zero."));
 }
 
 void CFXJSE_FormCalcContext::ThrowServerDeniedException() const {
-  ThrowException(L"Server does not permit operation.");
+  ThrowException(WideString::FromASCII("Server does not permit operation."));
 }
 
 void CFXJSE_FormCalcContext::ThrowPropertyNotInObjectException(
     const WideString& name,
     const WideString& exp) const {
-  ThrowException(L"An attempt was made to reference property '" + name +
-                 L"' of a non-object in SOM expression " + exp + L".");
+  ThrowException(
+      WideString::FromASCII("An attempt was made to reference property '") +
+      name + WideString::FromASCII("' of a non-object in SOM expression ") +
+      exp + L".");
 }
 
 void CFXJSE_FormCalcContext::ThrowParamCountMismatchException(
     const WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '" + method +
-                 L"'.");
+  ThrowException(
+      WideString::FromASCII("Incorrect number of parameters calling method '") +
+      method + L"'.");
 }
 
 void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
-  ThrowException(L"Argument mismatch in property or function argument.");
+  ThrowException(WideString::FromASCII(
+      "Argument mismatch in property or function argument."));
 }
 
 void CFXJSE_FormCalcContext::ThrowException(const WideString& str) const {

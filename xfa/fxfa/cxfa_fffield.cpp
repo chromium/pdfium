@@ -661,10 +661,11 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
 
       IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
       if (pAppProvider) {
-        pAppProvider->MsgBox(L"You are not allowed to modify this field.",
-                             L"Calculate Override",
-                             static_cast<uint32_t>(AlertIcon::kWarning),
-                             static_cast<uint32_t>(AlertButton::kOK));
+        pAppProvider->MsgBox(
+            WideString::FromASCII("You are not allowed to modify this field."),
+            WideString::FromASCII("Calculate Override"),
+            static_cast<uint32_t>(AlertIcon::kWarning),
+            static_cast<uint32_t>(AlertButton::kOK));
       }
       return 0;
     }
@@ -685,9 +686,11 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
       WideString wsMessage = calc->GetMessageText();
       if (!wsMessage.IsEmpty())
         wsMessage += L"\r\n";
+      wsMessage +=
+          WideString::FromASCII("Are you sure you want to modify this field?");
 
-      wsMessage += L"Are you sure you want to modify this field?";
-      if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
+      if (pAppProvider->MsgBox(wsMessage,
+                               WideString::FromASCII("Calculate Override"),
                                static_cast<uint32_t>(AlertIcon::kWarning),
                                static_cast<uint32_t>(AlertButton::kYesNo)) ==
           static_cast<uint32_t>(AlertReturn::kYes)) {

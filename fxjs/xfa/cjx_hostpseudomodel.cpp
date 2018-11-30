@@ -126,7 +126,7 @@ void CJX_HostPseudoModel::language(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    ThrowException(L"Unable to set language value.");
+    ThrowException(WideString::FromASCII("Unable to set language value."));
     return;
   }
   pValue->SetString(
@@ -142,7 +142,7 @@ void CJX_HostPseudoModel::numPages(CFXJSE_Value* pValue,
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    ThrowException(L"Unable to set numPages value.");
+    ThrowException(WideString::FromASCII("Unable to set numPages value."));
     return;
   }
   pValue->SetInteger(hDoc->GetDocEnvironment()->CountPages(hDoc));
@@ -156,7 +156,7 @@ void CJX_HostPseudoModel::platform(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    ThrowException(L"Unable to set platform value.");
+    ThrowException(WideString::FromASCII("Unable to set platform value."));
     return;
   }
   pValue->SetString(
@@ -208,7 +208,7 @@ void CJX_HostPseudoModel::variation(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    ThrowException(L"Unable to set variation value.");
+    ThrowException(WideString::FromASCII("Unable to set variation value."));
     return;
   }
   pValue->SetString("Full");
@@ -218,7 +218,7 @@ void CJX_HostPseudoModel::version(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   if (bSetting) {
-    ThrowException(L"Unable to set version value.");
+    ThrowException(WideString::FromASCII("Unable to set version value."));
     return;
   }
   pValue->SetString("11");

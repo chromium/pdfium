@@ -585,7 +585,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   if (!pEvent->m_pValue)
-    return CJS_Result::Failure(L"No event handler");
+    return CJS_Result::Failure(WideString::FromASCII("No event handler"));
 
   WideString& Value = pEvent->Value();
   ByteString strValue = StrTrim(Value.ToDefANSI());
@@ -935,8 +935,8 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1) {
-    return CJS_Result::Failure(
-        WideString(L"AFDate_KeystrokeEx's parameter size not correct"));
+    return CJS_Result::Failure(WideString::FromASCII(
+        "AFDate_KeystrokeEx's parameter size not correct"));
   }
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
