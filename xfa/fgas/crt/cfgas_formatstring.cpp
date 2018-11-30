@@ -29,29 +29,33 @@
 namespace {
 
 struct FX_LOCALESUBCATEGORYINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
+  uint32_t uHash;  // Hashed as wide string.
   int32_t eSubCategory;
 };
 
+#undef SUBC
+#define SUBC(a, b, c) a, c
+
 const FX_LOCALESUBCATEGORYINFO g_FXLocaleDateTimeSubCatData[] = {
-    {0x14da2125, L"default", FX_LOCALEDATETIMESUBCATEGORY_Default},
-    {0x9041d4b0, L"short", FX_LOCALEDATETIMESUBCATEGORY_Short},
-    {0xa084a381, L"medium", FX_LOCALEDATETIMESUBCATEGORY_Medium},
-    {0xcdce56b3, L"full", FX_LOCALEDATETIMESUBCATEGORY_Full},
-    {0xf6b4afb0, L"long", FX_LOCALEDATETIMESUBCATEGORY_Long},
+    {SUBC(0x14da2125, "default", FX_LOCALEDATETIMESUBCATEGORY_Default)},
+    {SUBC(0x9041d4b0, "short", FX_LOCALEDATETIMESUBCATEGORY_Short)},
+    {SUBC(0xa084a381, "medium", FX_LOCALEDATETIMESUBCATEGORY_Medium)},
+    {SUBC(0xcdce56b3, "full", FX_LOCALEDATETIMESUBCATEGORY_Full)},
+    {SUBC(0xf6b4afb0, "long", FX_LOCALEDATETIMESUBCATEGORY_Long)},
 };
 const int32_t g_iFXLocaleDateTimeSubCatCount =
     sizeof(g_FXLocaleDateTimeSubCatData) / sizeof(FX_LOCALESUBCATEGORYINFO);
 
 const FX_LOCALESUBCATEGORYINFO g_FXLocaleNumSubCatData[] = {
-    {0x46f95531, L"percent", FX_LOCALENUMPATTERN_Percent},
-    {0x4c4e8acb, L"currency", FX_LOCALENUMPATTERN_Currency},
-    {0x54034c2f, L"decimal", FX_LOCALENUMPATTERN_Decimal},
-    {0x7568e6ae, L"integer", FX_LOCALENUMPATTERN_Integer},
+    {SUBC(0x46f95531, "percent", FX_LOCALENUMPATTERN_Percent)},
+    {SUBC(0x4c4e8acb, "currency", FX_LOCALENUMPATTERN_Currency)},
+    {SUBC(0x54034c2f, "decimal", FX_LOCALENUMPATTERN_Decimal)},
+    {SUBC(0x7568e6ae, "integer", FX_LOCALENUMPATTERN_Integer)},
 };
 const int32_t g_iFXLocaleNumSubCatCount =
     sizeof(g_FXLocaleNumSubCatData) / sizeof(FX_LOCALESUBCATEGORYINFO);
+
+#undef SUBC
 
 struct FX_LOCALETIMEZONEINFO {
   const wchar_t* name;
