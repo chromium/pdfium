@@ -17,13 +17,13 @@ class CFX_CSSData {
  public:
   struct Property {
     CFX_CSSProperty eName;
-    uint32_t dwHash;
+    uint32_t dwHash;  // Hashed as wide string.
     uint32_t dwType;
   };
 
   struct PropertyValue {
     CFX_CSSPropertyValue eName;
-    uint32_t dwHash;
+    uint32_t dwHash;  // Hashed as wide string.
   };
 
   struct LengthUnit {
