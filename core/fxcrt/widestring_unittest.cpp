@@ -1018,6 +1018,15 @@ TEST(WideString, EqualsASCII) {
   EXPECT_FALSE(WideString(L"\u0141").EqualsASCII("\x41"));
 }
 
+TEST(WideString, EqualsASCIINoCase) {
+  EXPECT_TRUE(WideString(L"").EqualsASCIINoCase(""));
+  EXPECT_FALSE(WideString(L"A").EqualsASCIINoCase("b"));
+  EXPECT_TRUE(WideString(L"AbC").EqualsASCIINoCase("aBc"));
+  EXPECT_FALSE(WideString(L"ABc").EqualsASCIINoCase("AeC"));
+  EXPECT_FALSE(WideString(L"\u00c1").EqualsASCIINoCase("\x41"));
+  EXPECT_FALSE(WideString(L"\u0141").EqualsASCIINoCase("\x41"));
+}
+
 TEST(WideString, ToASCII) {
   const char* kResult =
       "x"

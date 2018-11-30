@@ -194,6 +194,8 @@ class WideString {
 
   bool IsASCII() const;
   bool EqualsASCII(const ByteStringView& that) const;
+  bool EqualsASCIINoCase(const ByteStringView& that) const;
+
   ByteString ToASCII() const;
   ByteString ToDefANSI() const;
   ByteString ToUTF8() const;
