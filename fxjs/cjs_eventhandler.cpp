@@ -430,96 +430,96 @@ bool CJS_EventHandler::Modifier() const {
   return m_bModifier;
 }
 
-const wchar_t* CJS_EventHandler::Name() const {
+ByteStringView CJS_EventHandler::Name() const {
   switch (m_eEventType) {
     case JET_APP_INIT:
-      return L"Init";
+      return "Init";
     case JET_BATCH_EXEC:
-      return L"Exec";
+      return "Exec";
     case JET_BOOKMARK_MOUSEUP:
-      return L"Mouse Up";
+      return "Mouse Up";
     case JET_CONSOLE_EXEC:
-      return L"Exec";
+      return "Exec";
     case JET_DOC_DIDPRINT:
-      return L"DidPrint";
+      return "DidPrint";
     case JET_DOC_DIDSAVE:
-      return L"DidSave";
+      return "DidSave";
     case JET_DOC_OPEN:
-      return L"Open";
+      return "Open";
     case JET_DOC_WILLCLOSE:
-      return L"WillClose";
+      return "WillClose";
     case JET_DOC_WILLPRINT:
-      return L"WillPrint";
+      return "WillPrint";
     case JET_DOC_WILLSAVE:
-      return L"WillSave";
+      return "WillSave";
     case JET_EXTERNAL_EXEC:
-      return L"Exec";
+      return "Exec";
     case JET_FIELD_FOCUS:
     case JET_SCREEN_FOCUS:
-      return L"Focus";
+      return "Focus";
     case JET_FIELD_BLUR:
     case JET_SCREEN_BLUR:
-      return L"Blur";
+      return "Blur";
     case JET_FIELD_MOUSEDOWN:
     case JET_SCREEN_MOUSEDOWN:
-      return L"Mouse Down";
+      return "Mouse Down";
     case JET_FIELD_MOUSEUP:
     case JET_SCREEN_MOUSEUP:
-      return L"Mouse Up";
+      return "Mouse Up";
     case JET_FIELD_MOUSEENTER:
     case JET_SCREEN_MOUSEENTER:
-      return L"Mouse Enter";
+      return "Mouse Enter";
     case JET_FIELD_MOUSEEXIT:
     case JET_SCREEN_MOUSEEXIT:
-      return L"Mouse Exit";
+      return "Mouse Exit";
     case JET_FIELD_CALCULATE:
-      return L"Calculate";
+      return "Calculate";
     case JET_FIELD_FORMAT:
-      return L"Format";
+      return "Format";
     case JET_FIELD_KEYSTROKE:
-      return L"Keystroke";
+      return "Keystroke";
     case JET_FIELD_VALIDATE:
-      return L"Validate";
+      return "Validate";
     case JET_LINK_MOUSEUP:
-      return L"Mouse Up";
+      return "Mouse Up";
     case JET_MENU_EXEC:
-      return L"Exec";
+      return "Exec";
     case JET_PAGE_OPEN:
     case JET_SCREEN_OPEN:
-      return L"Open";
+      return "Open";
     case JET_PAGE_CLOSE:
     case JET_SCREEN_CLOSE:
-      return L"Close";
+      return "Close";
     case JET_SCREEN_INVIEW:
     case JET_PAGE_INVIEW:
-      return L"InView";
+      return "InView";
     case JET_PAGE_OUTVIEW:
     case JET_SCREEN_OUTVIEW:
-      return L"OutView";
+      return "OutView";
     default:
-      return L"";
+      return "";
   }
 }
 
-const wchar_t* CJS_EventHandler::Type() const {
+ByteStringView CJS_EventHandler::Type() const {
   switch (m_eEventType) {
     case JET_APP_INIT:
-      return L"App";
+      return "App";
     case JET_BATCH_EXEC:
-      return L"Batch";
+      return "Batch";
     case JET_BOOKMARK_MOUSEUP:
-      return L"BookMark";
+      return "BookMark";
     case JET_CONSOLE_EXEC:
-      return L"Console";
+      return "Console";
     case JET_DOC_DIDPRINT:
     case JET_DOC_DIDSAVE:
     case JET_DOC_OPEN:
     case JET_DOC_WILLCLOSE:
     case JET_DOC_WILLPRINT:
     case JET_DOC_WILLSAVE:
-      return L"Doc";
+      return "Doc";
     case JET_EXTERNAL_EXEC:
-      return L"External";
+      return "External";
     case JET_FIELD_BLUR:
     case JET_FIELD_FOCUS:
     case JET_FIELD_MOUSEDOWN:
@@ -530,7 +530,7 @@ const wchar_t* CJS_EventHandler::Type() const {
     case JET_FIELD_FORMAT:
     case JET_FIELD_KEYSTROKE:
     case JET_FIELD_VALIDATE:
-      return L"Field";
+      return "Field";
     case JET_SCREEN_FOCUS:
     case JET_SCREEN_BLUR:
     case JET_SCREEN_OPEN:
@@ -541,18 +541,18 @@ const wchar_t* CJS_EventHandler::Type() const {
     case JET_SCREEN_MOUSEEXIT:
     case JET_SCREEN_INVIEW:
     case JET_SCREEN_OUTVIEW:
-      return L"Screen";
+      return "Screen";
     case JET_LINK_MOUSEUP:
-      return L"Link";
+      return "Link";
     case JET_MENU_EXEC:
-      return L"Menu";
+      return "Menu";
     case JET_PAGE_OPEN:
     case JET_PAGE_CLOSE:
     case JET_PAGE_INVIEW:
     case JET_PAGE_OUTVIEW:
-      return L"Page";
+      return "Page";
     default:
-      return L"";
+      return "";
   }
 }
 

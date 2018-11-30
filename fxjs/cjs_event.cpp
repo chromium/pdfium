@@ -99,7 +99,7 @@ CJS_Result CJS_Event::set_commit_key(CJS_Runtime* pRuntime,
 CJS_Result CJS_Event::get_field_full(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  if (wcscmp(pEvent->Name(), L"Keystroke") != 0)
+  if (pEvent->Name() != "Keystroke")
     return CJS_Result::Failure(L"unrecognized event");
 
   return CJS_Result::Success(pRuntime->NewBoolean(pEvent->FieldFull()));
@@ -185,8 +185,7 @@ CJS_Result CJS_Event::set_rich_value(CJS_Runtime* pRuntime,
 CJS_Result CJS_Event::get_sel_end(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-
-  if (wcscmp(pEvent->Name(), L"Keystroke") != 0)
+  if (pEvent->Name() != "Keystroke")
     return CJS_Result::Success();
 
   return CJS_Result::Success(pRuntime->NewNumber(pEvent->SelEnd()));
@@ -196,8 +195,7 @@ CJS_Result CJS_Event::set_sel_end(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-
-  if (wcscmp(pEvent->Name(), L"Keystroke") == 0)
+  if (pEvent->Name() == "Keystroke")
     pEvent->SetSelEnd(pRuntime->ToInt32(vp));
 
   return CJS_Result::Success();
@@ -206,8 +204,7 @@ CJS_Result CJS_Event::set_sel_end(CJS_Runtime* pRuntime,
 CJS_Result CJS_Event::get_sel_start(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-
-  if (wcscmp(pEvent->Name(), L"Keystroke") != 0)
+  if (pEvent->Name() != "Keystroke")
     return CJS_Result::Success();
 
   return CJS_Result::Success(pRuntime->NewNumber(pEvent->SelStart()));
@@ -217,8 +214,7 @@ CJS_Result CJS_Event::set_sel_start(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-
-  if (wcscmp(pEvent->Name(), L"Keystroke") == 0)
+  if (pEvent->Name() == "Keystroke")
     pEvent->SetSelStart(pRuntime->ToInt32(vp));
 
   return CJS_Result::Success();
@@ -282,8 +278,7 @@ CJS_Result CJS_Event::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 CJS_Result CJS_Event::get_value(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-
-  if (wcscmp(pEvent->Type(), L"Field") != 0)
+  if (pEvent->Type() != "Field")
     return CJS_Result::Failure(L"Bad event type.");
 
   if (!pEvent->m_pValue)
@@ -297,8 +292,7 @@ CJS_Result CJS_Event::set_value(CJS_Runtime* pRuntime,
                                 v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-
-  if (wcscmp(pEvent->Type(), L"Field") != 0)
+  if (pEvent->Type() != "Field")
     return CJS_Result::Failure(L"Bad event type.");
 
   if (!pEvent->m_pValue)

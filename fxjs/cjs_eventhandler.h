@@ -148,8 +148,8 @@ class CJS_EventHandler {
   bool FieldFull() const;
   bool KeyDown() const;
   bool Modifier() const;
-  const wchar_t* Name() const;
-  const wchar_t* Type() const;
+  ByteStringView Name() const;
+  ByteStringView Type() const;
   bool& Rc();
   int SelEnd() const;
   int SelStart() const;
