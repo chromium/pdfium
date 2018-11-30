@@ -290,7 +290,7 @@ typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
                                                    XFA_Attribute eAttribute);
 
 struct XFA_SCRIPTATTRIBUTEINFO {
-  uint32_t uHash;
+  uint32_t uHash;  // Hashed as wide string.
   XFA_Attribute attribute;
   XFA_ScriptType eValueType;
   XFA_ATTRIBUTE_CALLBACK callback;
