@@ -946,9 +946,9 @@ struct XFA_SCRIPTHIERARCHY {
 #define XFA_PROPERTYFLAG_DefaultOneOf 0x02
 
 struct XFA_AttributeEnumInfo {
-  uint32_t uHash;
-  const wchar_t* pName;
+  uint32_t uHash;  // |pName| hashed as WideString.
   XFA_AttributeEnum eName;
+  const char* pName;
 };
 
 enum class XFA_Unit : uint8_t {

@@ -543,7 +543,7 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
 };
 
 // static
-WideString CXFA_Node::AttributeEnumToName(XFA_AttributeEnum item) {
+ByteStringView CXFA_Node::AttributeEnumToName(XFA_AttributeEnum item) {
   return g_XFAEnumData[static_cast<int32_t>(item)].pName;
 }
 
@@ -558,8 +558,9 @@ Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
                               FX_HashCode_GetW(name, false),
                               [](const XFA_AttributeEnumInfo& arg,
                                  uint32_t hash) { return arg.uHash < hash; });
-  if (it != kXFAEnumDataEnd && name == it->pName)
-    return {it->eName};
+  if (it != kXFAEnumDataEnd && name.EqualsASCII(it->pName))
+    return it->eName;
+
   return {};
 }
 

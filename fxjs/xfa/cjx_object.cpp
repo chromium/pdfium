@@ -281,7 +281,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       if (!value)
         return {};
 
-      return {CXFA_Node::AttributeEnumToName(*value)};
+      return WideString::FromASCII(CXFA_Node::AttributeEnumToName(*value));
     }
     case XFA_AttributeType::CData:
       return TryCData(eAttr, bUseDefault);
@@ -398,8 +398,9 @@ void CJX_Object::SetEnum(XFA_Attribute eAttr,
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
                                   (void*)(uintptr_t)eValue, bNotify);
   if (elem) {
-    elem->SetAttribute(CXFA_Node::AttributeToName(eAttr),
-                       CXFA_Node::AttributeEnumToName(eValue));
+    elem->SetAttribute(
+        CXFA_Node::AttributeToName(eAttr),
+        WideString::FromASCII(CXFA_Node::AttributeEnumToName(eValue)));
   }
 }
 
@@ -1543,8 +1544,7 @@ void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
     return;
   }
 
-  WideString str = CXFA_Node::AttributeEnumToName(validate->GetNullTest());
-  pValue->SetString(str.ToUTF8().AsStringView());
+  pValue->SetString(CXFA_Node::AttributeEnumToName(validate->GetNullTest()));
 }
 
 void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
