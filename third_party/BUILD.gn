@@ -19,7 +19,10 @@ group("third_party") {
 }
 
 config("pdfium_third_party_config") {
-  configs = [ "..:pdfium_common_config" ]
+  configs = [
+    "..:pdfium_common_config",
+    "..:pdfium_public_config",
+  ]
 }
 
 if (pdf_enable_xfa) {

@@ -25,12 +25,29 @@ config("pdfium_common_config") {
     "PNG_USE_READ_MACROS",
   ]
 
-  if (pdf_enable_v8) {
-    defines += [ "PDF_ENABLE_V8" ]
-  }
-
   if (pdf_enable_click_logging) {
     defines += [ "PDF_ENABLE_CLICK_LOGGING" ]
+  }
+
+  if (pdf_use_skia) {
+    defines += [ "_SKIA_SUPPORT_" ]
+  }
+
+  if (pdf_use_skia_paths) {
+    defines += [ "_SKIA_SUPPORT_PATHS_" ]
+  }
+
+  if (is_win) {
+    # Assume UTF-8 by default to avoid code page dependencies.
+    cflags += [ "/utf-8" ]
+  }
+}
+
+config("pdfium_public_config") {
+  defines = []
+
+  if (pdf_enable_v8) {
+    defines += [ "PDF_ENABLE_V8" ]
   }
 
   if (pdf_enable_xfa) {
@@ -49,27 +66,17 @@ config("pdfium_common_config") {
     }
   }
 
-  if (pdf_use_skia) {
-    defines += [ "_SKIA_SUPPORT_" ]
-  }
-
-  if (pdf_use_skia_paths) {
-    defines += [ "_SKIA_SUPPORT_PATHS_" ]
-  }
-
   if (pdf_use_win32_gdi) {
     defines += [ "PDFIUM_PRINT_TEXT_WITH_GDI" ]
-  }
-
-  if (is_win) {
-    # Assume UTF-8 by default to avoid code page dependencies.
-    cflags += [ "/utf-8" ]
   }
 }
 
 config("pdfium_core_config") {
   cflags = []
-  configs = [ ":pdfium_common_config" ]
+  configs = [
+    ":pdfium_common_config",
+    ":pdfium_public_config",
+  ]
   defines = [ "V8_DEPRECATION_WARNINGS" ]
   if (is_clang) {
     cflags += [ "-Wshadow" ]
@@ -115,6 +122,8 @@ jumbo_source_set("pdfium_public_headers") {
     "public/fpdf_transformpage.h",
     "public/fpdfview.h",
   ]
+
+  public_configs = [ ":pdfium_public_config" ]
 }
 
 jumbo_static_library("pdfium") {

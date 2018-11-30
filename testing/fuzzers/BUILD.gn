@@ -13,12 +13,6 @@ config("fuzzer_config") {
     "PNG_USE_READ_MACROS",
   ]
   include_dirs = [ "../.." ]
-  if (pdf_enable_v8) {
-    defines += [ "PDF_ENABLE_V8" ]
-  }
-  if (pdf_enable_xfa) {
-    defines += [ "PDF_ENABLE_XFA" ]
-  }
 }
 
 group("fuzzers") {
