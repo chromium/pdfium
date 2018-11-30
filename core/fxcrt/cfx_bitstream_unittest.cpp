@@ -119,7 +119,8 @@ TEST(fxcrt, BitStream) {
 }
 
 TEST(fxcrt, BitStreamSameAsReferenceGetBits32) {
-  unsigned char kData[] = {0xDE, 0x3F, 0xB1, 0x7C, 0x12, 0x9A, 0x04, 0x56};
+  static const unsigned char kData[] = {0xDE, 0x3F, 0xB1, 0x7C,
+                                        0x12, 0x9A, 0x04, 0x56};
   CFX_BitStream bitstream(kData);
   for (int nbits = 1; nbits <= 32; ++nbits) {
     for (size_t bitpos = 0; bitpos < sizeof(kData) * 8 - nbits; ++bitpos) {

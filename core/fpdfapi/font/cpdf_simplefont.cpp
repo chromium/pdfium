@@ -225,7 +225,8 @@ bool CPDF_SimpleFont::LoadCommon() {
     return true;
 
   if (FontStyleIsAllCaps(m_Flags)) {
-    unsigned char kLowercases[][2] = {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}};
+    static const unsigned char kLowercases[][2] = {
+        {'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}};
     for (size_t range = 0; range < FX_ArraySize(kLowercases); ++range) {
       const auto& lower = kLowercases[range];
       for (int i = lower[0]; i <= lower[1]; ++i) {

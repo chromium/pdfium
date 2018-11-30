@@ -16,7 +16,7 @@ struct TestCase {
 
 TEST(OnedCode128WriterTest, Encode128B) {
   char buf[100];
-  TestCase kTestCases[] = {
+  static const TestCase kTestCases[] = {
       {"", 104, {104}, 1},
       {"a", 169, {104, 65}, 2},
       {"1", 121, {104, 17}, 2},
@@ -49,7 +49,7 @@ TEST(OnedCode128WriterTest, Encode128B) {
 
 TEST(OnedCode128WriterTest, Encode128C) {
   char buf[100];
-  TestCase kTestCases[] = {
+  static const TestCase kTestCases[] = {
       {"", 105, {105}, 1},
       {"a", 202, {105, 97}, 2},
       {"1", 106, {105, 1}, 2},
