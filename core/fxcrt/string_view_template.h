@@ -109,6 +109,40 @@ class StringViewTemplate {
     return !(*this == other);
   }
 
+  bool IsASCII() const {
+    for (auto c : *this) {
+      if (c <= 0 || c > 127)  // Questionable signedness of |c|.
+        return false;
+    }
+    return true;
+  }
+
+  bool EqualsASCII(const StringViewTemplate<char>& that) const {
+    size_t length = GetLength();
+    if (length != that.GetLength())
+      return false;
+
+    for (size_t i = 0; i < length; ++i) {
+      auto c = (*this)[i];
+      if (c <= 0 || c > 127 || c != that[i])  // Questionable signedness of |c|.
+        return false;
+    }
+    return true;
+  }
+
+  bool EqualsASCIINoCase(const StringViewTemplate<char>& that) const {
+    size_t length = GetLength();
+    if (length != that.GetLength())
+      return false;
+
+    for (size_t i = 0; i < length; ++i) {
+      auto c = (*this)[i];
+      if (c <= 0 || c > 127 || tolower(c) != tolower(that[i]))
+        return false;
+    }
+    return true;
+  }
+
   uint32_t GetID() const {
     if (m_Span.size() == 0)
       return 0;

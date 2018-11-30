@@ -635,40 +635,6 @@ intptr_t WideString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
 
-bool WideString::IsASCII() const {
-  for (wchar_t wc : *this) {
-    if (wc <= 0 || wc > 127)  // Questionable signedness of wchar_t.
-      return false;
-  }
-  return true;
-}
-
-bool WideString::EqualsASCII(const ByteStringView& that) const {
-  size_t length = GetLength();
-  if (length != that.GetLength())
-    return false;
-
-  for (size_t i = 0; i < length; ++i) {
-    wchar_t wc = (*this)[i];
-    if (wc <= 0 || wc > 127 || wc != that[i])
-      return false;
-  }
-  return true;
-}
-
-bool WideString::EqualsASCIINoCase(const ByteStringView& that) const {
-  size_t length = GetLength();
-  if (length != that.GetLength())
-    return false;
-
-  for (size_t i = 0; i < length; ++i) {
-    wchar_t wc = (*this)[i];
-    if (wc <= 0 || wc > 127 || tolower(wc) != tolower(that[i]))
-      return false;
-  }
-  return true;
-}
-
 ByteString WideString::ToASCII() const {
   ByteString result;
   result.Reserve(GetLength());
