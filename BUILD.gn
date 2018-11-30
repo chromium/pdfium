@@ -48,21 +48,21 @@ config("pdfium_public_config") {
 
   if (pdf_enable_v8) {
     defines += [ "PDF_ENABLE_V8" ]
-  }
 
-  if (pdf_enable_xfa) {
-    defines += [ "PDF_ENABLE_XFA" ]
-    if (pdf_enable_xfa_bmp) {
-      defines += [ "PDF_ENABLE_XFA_BMP" ]
-    }
-    if (pdf_enable_xfa_gif) {
-      defines += [ "PDF_ENABLE_XFA_GIF" ]
-    }
-    if (pdf_enable_xfa_png) {
-      defines += [ "PDF_ENABLE_XFA_PNG" ]
-    }
-    if (pdf_enable_xfa_tiff) {
-      defines += [ "PDF_ENABLE_XFA_TIFF" ]
+    if (pdf_enable_xfa) {
+      defines += [ "PDF_ENABLE_XFA" ]
+      if (pdf_enable_xfa_bmp) {
+        defines += [ "PDF_ENABLE_XFA_BMP" ]
+      }
+      if (pdf_enable_xfa_gif) {
+        defines += [ "PDF_ENABLE_XFA_GIF" ]
+      }
+      if (pdf_enable_xfa_png) {
+        defines += [ "PDF_ENABLE_XFA_PNG" ]
+      }
+      if (pdf_enable_xfa_tiff) {
+        defines += [ "PDF_ENABLE_XFA_TIFF" ]
+      }
     }
   }
 

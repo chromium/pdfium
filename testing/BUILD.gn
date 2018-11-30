@@ -71,18 +71,18 @@ jumbo_source_set("embedder_test_support") {
       "js_embedder_test.h",
     ]
     deps += [ "../fxjs" ]
-  }
 
-  if (pdf_enable_xfa) {
-    sources += [
-      "xfa_js_embedder_test.cpp",
-      "xfa_js_embedder_test.h",
-    ]
-    deps += [
-      "../fpdfsdk",
-      "../fpdfsdk/fpdfxfa",
-      "../xfa/fxfa",
-      "../xfa/fxfa/parser",
-    ]
+    if (pdf_enable_xfa) {
+      sources += [
+        "xfa_js_embedder_test.cpp",
+        "xfa_js_embedder_test.h",
+      ]
+      deps += [
+        "../fpdfsdk",
+        "../fpdfsdk/fpdfxfa",
+        "../xfa/fxfa",
+        "../xfa/fxfa/parser",
+      ]
+    }
   }
 }
