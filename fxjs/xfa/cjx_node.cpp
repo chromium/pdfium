@@ -28,7 +28,7 @@
 
 namespace {
 
-enum class EventAppliesToo {
+enum class EventAppliesToo : uint8_t {
   kNone = 0,
   kAll = 1,
   kAllNonRecursive = 2,
@@ -41,33 +41,75 @@ enum class EventAppliesToo {
 
 struct XFA_ExecEventParaInfo {
  public:
-  uint32_t m_uHash;
-  const wchar_t* m_lpcEventName;
+  uint32_t m_uHash;  // hashed as wide string.
   XFA_EVENTTYPE m_eventType;
   EventAppliesToo m_validFlags;
 };
 
+#undef PARA
+#define PARA(a, b, c, d) a, c, d
 const XFA_ExecEventParaInfo gs_eventParaInfos[] = {
-    {0x109d7ce7, L"mouseEnter", XFA_EVENT_MouseEnter, EventAppliesToo::kField},
-    {0x1bfc72d9, L"preOpen", XFA_EVENT_PreOpen, EventAppliesToo::kChoiceList},
-    {0x2196a452, L"initialize", XFA_EVENT_Initialize, EventAppliesToo::kAll},
-    {0x27410f03, L"mouseExit", XFA_EVENT_MouseExit, EventAppliesToo::kField},
-    {0x36f1c6d8, L"preSign", XFA_EVENT_PreSign, EventAppliesToo::kSignature},
-    {0x4731d6ba, L"exit", XFA_EVENT_Exit, EventAppliesToo::kAllNonRecursive},
-    {0x7233018a, L"validate", XFA_EVENT_Validate, EventAppliesToo::kAll},
-    {0x8808385e, L"indexChange", XFA_EVENT_IndexChange,
-     EventAppliesToo::kSubform},
-    {0x891f4606, L"change", XFA_EVENT_Change,
-     EventAppliesToo::kFieldOrExclusion},
-    {0x9f693b21, L"mouseDown", XFA_EVENT_MouseDown, EventAppliesToo::kField},
-    {0xcdce56b3, L"full", XFA_EVENT_Full, EventAppliesToo::kFieldOrExclusion},
-    {0xd576d08e, L"mouseUp", XFA_EVENT_MouseUp, EventAppliesToo::kField},
-    {0xd95657a6, L"click", XFA_EVENT_Click, EventAppliesToo::kFieldOrExclusion},
-    {0xdbfbe02e, L"calculate", XFA_EVENT_Calculate, EventAppliesToo::kAll},
-    {0xe25fa7b8, L"postOpen", XFA_EVENT_PostOpen, EventAppliesToo::kChoiceList},
-    {0xe28dce7e, L"enter", XFA_EVENT_Enter, EventAppliesToo::kAllNonRecursive},
-    {0xfd54fbb7, L"postSign", XFA_EVENT_PostSign, EventAppliesToo::kSignature},
+    {PARA(0x109d7ce7,
+          "mouseEnter",
+          XFA_EVENT_MouseEnter,
+          EventAppliesToo::kField)},
+    {PARA(0x1bfc72d9,
+          "preOpen",
+          XFA_EVENT_PreOpen,
+          EventAppliesToo::kChoiceList)},
+    {PARA(0x2196a452,
+          "initialize",
+          XFA_EVENT_Initialize,
+          EventAppliesToo::kAll)},
+    {PARA(0x27410f03,
+          "mouseExit",
+          XFA_EVENT_MouseExit,
+          EventAppliesToo::kField)},
+    {PARA(0x36f1c6d8,
+          "preSign",
+          XFA_EVENT_PreSign,
+          EventAppliesToo::kSignature)},
+    {PARA(0x4731d6ba,
+          "exit",
+          XFA_EVENT_Exit,
+          EventAppliesToo::kAllNonRecursive)},
+    {PARA(0x7233018a, "validate", XFA_EVENT_Validate, EventAppliesToo::kAll)},
+    {PARA(0x8808385e,
+          "indexChange",
+          XFA_EVENT_IndexChange,
+          EventAppliesToo::kSubform)},
+    {PARA(0x891f4606,
+          "change",
+          XFA_EVENT_Change,
+          EventAppliesToo::kFieldOrExclusion)},
+    {PARA(0x9f693b21,
+          "mouseDown",
+          XFA_EVENT_MouseDown,
+          EventAppliesToo::kField)},
+    {PARA(0xcdce56b3,
+          "full",
+          XFA_EVENT_Full,
+          EventAppliesToo::kFieldOrExclusion)},
+    {PARA(0xd576d08e, "mouseUp", XFA_EVENT_MouseUp, EventAppliesToo::kField)},
+    {PARA(0xd95657a6,
+          "click",
+          XFA_EVENT_Click,
+          EventAppliesToo::kFieldOrExclusion)},
+    {PARA(0xdbfbe02e, "calculate", XFA_EVENT_Calculate, EventAppliesToo::kAll)},
+    {PARA(0xe25fa7b8,
+          "postOpen",
+          XFA_EVENT_PostOpen,
+          EventAppliesToo::kChoiceList)},
+    {PARA(0xe28dce7e,
+          "enter",
+          XFA_EVENT_Enter,
+          EventAppliesToo::kAllNonRecursive)},
+    {PARA(0xfd54fbb7,
+          "postSign",
+          XFA_EVENT_PostSign,
+          EventAppliesToo::kSignature)},
 };
+#undef PARA
 
 const XFA_ExecEventParaInfo* GetEventParaInfoByName(
     WideStringView wsEventName) {

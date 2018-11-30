@@ -13,7 +13,7 @@
 
 class CXFA_Node;
 
-enum XFA_EVENTTYPE {
+enum XFA_EVENTTYPE : uint8_t {
   XFA_EVENT_Click,
   XFA_EVENT_Change,
   XFA_EVENT_DocClose,
