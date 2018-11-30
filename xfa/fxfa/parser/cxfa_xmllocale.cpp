@@ -42,7 +42,7 @@ std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
   for (auto* child = doc->GetRoot()->GetFirstChild(); child;
        child = child->GetNextSibling()) {
     CFX_XMLElement* elem = ToXMLElement(child);
-    if (elem && elem->GetName() == L"locale") {
+    if (elem && elem->GetName().EqualsASCII("locale")) {
       locale = elem;
       break;
     }
@@ -134,7 +134,7 @@ WideString CXFA_XMLLocale::GetCalendarSymbol(const WideStringView& symbol,
     WideString abbr = elem->GetAttribute(L"abbr");
     bool abbr_value = false;
     if (!abbr.IsEmpty())
-      abbr_value = abbr == L"1";
+      abbr_value = abbr.EqualsASCII("1");
     if (abbr_value != bAbbr)
       continue;
 

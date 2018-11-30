@@ -91,7 +91,7 @@ CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
 
   WideString sSpace =
       pRuntime->ToWideString(pRuntime->GetArrayElement(array, 0));
-  if (sSpace == L"T")
+  if (sSpace.EqualsASCII("T"))
     return CFX_Color(CFX_Color::kTransparent);
 
   float d1 = 0;
@@ -99,8 +99,7 @@ CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
     d1 = static_cast<float>(
         pRuntime->ToDouble(pRuntime->GetArrayElement(array, 1)));
   }
-
-  if (sSpace == L"G")
+  if (sSpace.EqualsASCII("G"))
     return CFX_Color(CFX_Color::kGray, d1);
 
   float d2 = 0;
@@ -113,8 +112,7 @@ CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
     d3 = static_cast<float>(
         pRuntime->ToDouble(pRuntime->GetArrayElement(array, 3)));
   }
-
-  if (sSpace == L"RGB")
+  if (sSpace.EqualsASCII("RGB"))
     return CFX_Color(CFX_Color::kRGB, d1, d2, d3);
 
   float d4 = 0;
@@ -122,7 +120,7 @@ CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
     d4 = static_cast<float>(
         pRuntime->ToDouble(pRuntime->GetArrayElement(array, 4)));
   }
-  if (sSpace == L"CMYK")
+  if (sSpace.EqualsASCII("CMYK"))
     return CFX_Color(CFX_Color::kCMYK, d1, d2, d3, d4);
 
   return CFX_Color();
@@ -280,13 +278,13 @@ CJS_Result CJS_Color::convert(CJS_Runtime* pRuntime,
 
   WideString sDestSpace = pRuntime->ToWideString(params[1]);
   int nColorType = CFX_Color::kTransparent;
-  if (sDestSpace == L"T")
+  if (sDestSpace.EqualsASCII("T"))
     nColorType = CFX_Color::kTransparent;
-  else if (sDestSpace == L"G")
+  else if (sDestSpace.EqualsASCII("G"))
     nColorType = CFX_Color::kGray;
-  else if (sDestSpace == L"RGB")
+  else if (sDestSpace.EqualsASCII("RGB"))
     nColorType = CFX_Color::kRGB;
-  else if (sDestSpace == L"CMYK")
+  else if (sDestSpace.EqualsASCII("CMYK"))
     nColorType = CFX_Color::kCMYK;
 
   CFX_Color color =

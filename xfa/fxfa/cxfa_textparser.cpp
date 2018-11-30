@@ -237,8 +237,8 @@ void CXFA_TextParser::ParseRichText(const CFX_XMLNode* pXMLNode,
     return;
 
   RetainPtr<CFX_CSSComputedStyle> pNewStyle;
-  if ((tagProvider->GetTagName() != L"body") ||
-      (tagProvider->GetTagName() != L"html")) {
+  if (!(tagProvider->GetTagName().EqualsASCII("body") &&
+        tagProvider->GetTagName().EqualsASCII("html"))) {
     auto pTextContext = pdfium::MakeUnique<CXFA_TextParseContext>();
     CFX_CSSDisplay eDisplay = CFX_CSSDisplay::Inline;
     if (!tagProvider->m_bContent) {
@@ -330,11 +330,8 @@ int32_t CXFA_TextParser::CountTabs(CFX_CSSComputedStyle* pStyle) const {
 
 bool CXFA_TextParser::IsSpaceRun(CFX_CSSComputedStyle* pStyle) const {
   WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(L"xfa-spacerun", &wsValue)) {
-    wsValue.MakeLower();
-    return wsValue == L"yes";
-  }
-  return false;
+  return pStyle && pStyle->GetCustomStyle(L"xfa-spacerun", &wsValue) &&
+         wsValue.EqualsASCIINoCase("yes");
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
@@ -438,7 +435,7 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
 
   WideString wsValue;
   if (pStyle->GetCustomStyle(L"underlinePeriod", &wsValue)) {
-    if (wsValue == L"word")
+    if (wsValue.EqualsASCII("word"))
       iPeriod = XFA_AttributeEnum::Word;
   } else if (font) {
     iPeriod = font->GetUnderlinePeriod();
@@ -528,12 +525,12 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
 
   WideString ws =
       GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedType", L"som");
-  if (ws != L"uri")
+  if (!ws.EqualsASCII("uri"))
     return {};
 
   ws = GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedMode",
                                              L"formatted");
-  if (ws != L"raw" && ws != L"formatted")
+  if (!(ws.EqualsASCII("raw") || ws.EqualsASCII("formatted")))
     return {};
 
   return pTextProvider->GetEmbeddedObj(wsAttr);

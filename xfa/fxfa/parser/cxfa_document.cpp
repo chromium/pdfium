@@ -108,10 +108,10 @@ void FormValueNode_SetChildContent(CXFA_Node* pValueNode,
           Optional<WideString> contentType =
               pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
                                                    false);
-          if (contentType) {
-            if (*contentType == L"text/html")
+          if (contentType.has_value()) {
+            if (contentType.value().EqualsASCII("text/html"))
               element = XFA_Element::SharpxHTML;
-            else if (*contentType == L"text/xml")
+            else if (contentType.value().EqualsASCII("text/xml"))
               element = XFA_Element::Sharpxml;
           }
         }
@@ -349,7 +349,7 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
                                bool bForceBind,
                                bool bUpLevel) {
   uint32_t dFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_BindNew;
-  if (bUpLevel || wsRef != L"name")
+  if (bUpLevel || !wsRef.EqualsASCII("name"))
     dFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
   XFA_RESOLVENODE_RS rs;
@@ -753,8 +753,10 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
         continue;
 
       Optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
-      if (!ns || *ns != L"http://ns.adobe.com/data-description/")
+      if (!ns.has_value() ||
+          !ns.value().EqualsASCII("http://ns.adobe.com/data-description/")) {
         continue;
+      }
     }
 
     CXFA_Node* pDDNode =
@@ -1254,8 +1256,10 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
           continue;
 
         Optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
-        if (!ns || *ns != L"http://ns.adobe.com/data-description/")
+        if (!ns.has_value() ||
+            !ns.value().EqualsASCII("http://ns.adobe.com/data-description/")) {
           continue;
+        }
       }
 
       CXFA_Node* pDDNode = pDDGroupNode->GetFirstChildByName(dwNameHash);
@@ -1410,7 +1414,7 @@ bool CXFA_Document::IsInteractive() {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
 
     WideString wsInteractive = pFormFiller->JSObject()->GetContent(false);
-    if (wsInteractive == L"1") {
+    if (wsInteractive.EqualsASCII("1")) {
       m_dwDocFlags |= XFA_DOCFLAG_Interactive;
       return true;
     }
@@ -1547,7 +1551,6 @@ void CXFA_Document::DoProtoMerge() {
           wsSOM = WideStringView(wsUseVal.c_str(), wsUseVal.GetLength());
       }
     }
-
     if (!wsURI.IsEmpty() && wsURI != L".")
       continue;
 
@@ -1656,10 +1659,12 @@ void CXFA_Document::DoDataMerge() {
     if (!pDDRoot && pChildNode->GetNameHash() == XFA_HASHCODE_DataDescription) {
       Optional<WideString> namespaceURI =
           pChildNode->JSObject()->TryNamespace();
-      if (!namespaceURI)
+      if (!namespaceURI.has_value())
         continue;
-      if (*namespaceURI == L"http://ns.adobe.com/data-description/")
+      if (namespaceURI.value().EqualsASCII(
+              "http://ns.adobe.com/data-description/")) {
         pDDRoot = pChildNode;
+      }
     } else if (!pDataRoot && pChildNode->GetNameHash() == XFA_HASHCODE_Data) {
       Optional<WideString> namespaceURI =
           pChildNode->JSObject()->TryNamespace();

@@ -669,7 +669,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
             TryAttribute(XFA_Attribute::ContentType, false);
         if (ret)
           wsContentType = *ret;
-        if (wsContentType == L"text/html") {
+        if (wsContentType.EqualsASCII("text/html")) {
           wsContentType = L"";
           SetAttribute(XFA_Attribute::ContentType, wsContentType.AsStringView(),
                        false);
@@ -680,7 +680,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
       if (!pContentRawDataNode) {
         pContentRawDataNode =
             ToNode(GetXFAObject())
-                ->CreateSamePacketNode((wsContentType == L"text/xml")
+                ->CreateSamePacketNode(wsContentType.EqualsASCII("text/xml")
                                            ? XFA_Element::Sharpxml
                                            : XFA_Element::Sharptext);
         ToNode(GetXFAObject())->InsertChild(pContentRawDataNode, nullptr);
@@ -766,10 +766,10 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
         if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExData) {
           Optional<WideString> contentType =
               TryAttribute(XFA_Attribute::ContentType, false);
-          if (contentType) {
-            if (*contentType == L"text/html")
+          if (contentType.has_value()) {
+            if (contentType.value().EqualsASCII("text/html"))
               element = XFA_Element::SharpxHTML;
-            else if (*contentType == L"text/xml")
+            else if (contentType.value().EqualsASCII("text/xml"))
               element = XFA_Element::Sharpxml;
           }
         }

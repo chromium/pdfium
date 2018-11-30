@@ -165,8 +165,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_parser_state = FDE_XmlSyntaxState::TargetData;
 
             WideString target_name = GetTextData();
-            if (target_name == L"originalXFAVersion" ||
-                target_name == L"acrobat") {
+            if (target_name.EqualsASCII("originalXFAVersion") ||
+                target_name.EqualsASCII("acrobat")) {
               auto* node = doc->CreateNode<CFX_XMLInstruction>(target_name);
               current_node_->AppendChild(node);
               current_node_ = node;

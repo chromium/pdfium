@@ -23,8 +23,7 @@ void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
   if (!bSetting) {
-    WideString wsValue = GetContent(true);
-    pValue->SetBoolean(wsValue == L"1");
+    pValue->SetBoolean(GetContent(true).EqualsASCII("1"));
     return;
   }
 

@@ -222,9 +222,10 @@ CJS_Global::~CJS_Global() {
 }
 
 CJS_Result CJS_Global::QueryProperty(const wchar_t* propname) {
-  if (WideString(propname) != L"setPersistent")
-    return CJS_Result::Failure(JSMessage::kUnknownProperty);
-  return CJS_Result::Success();
+  if (WideString(propname).EqualsASCII("setPersistent"))
+    return CJS_Result::Success();
+
+  return CJS_Result::Failure(JSMessage::kUnknownProperty);
 }
 
 CJS_Result CJS_Global::DelProperty(CJS_Runtime* pRuntime,

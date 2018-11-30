@@ -32,16 +32,16 @@ void CFX_XMLInstruction::AppendData(const WideString& wsData) {
 }
 
 bool CFX_XMLInstruction::IsOriginalXFAVersion() const {
-  return name_ == L"originalXFAVersion";
+  return name_.EqualsASCII("originalXFAVersion");
 }
 
 bool CFX_XMLInstruction::IsAcrobat() const {
-  return name_ == L"acrobat";
+  return name_.EqualsASCII("acrobat");
 }
 
 void CFX_XMLInstruction::Save(
     const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) {
-  if (name_.CompareNoCase(L"xml") == 0) {
+  if (name_.EqualsASCIINoCase("xml")) {
     pXMLStream->WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     return;
   }

@@ -103,10 +103,9 @@ CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
     if (!pXMLElement)
       continue;
     WideString wsTag = pXMLElement->GetLocalTagName();
-    if (wsTag == L"body" || wsTag == L"html")
+    if (wsTag.EqualsASCII("body") || wsTag.EqualsASCII("html"))
       return pXMLChild;
   }
-
   return nullptr;
 }
 
@@ -737,7 +736,7 @@ bool CXFA_TextLayout::LoadRichText(
         pElement = static_cast<const CFX_XMLElement*>(pXMLNode);
         wsName = pElement->GetLocalTagName();
       }
-      if (wsName == L"ol") {
+      if (wsName.EqualsASCII("ol")) {
         bIsOl = true;
         bCurOl = true;
       }
@@ -755,8 +754,9 @@ bool CXFA_TextLayout::LoadRichText(
         if ((eDisplay == CFX_CSSDisplay::Block ||
              eDisplay == CFX_CSSDisplay::ListItem) &&
             pStyle &&
-            (wsName.IsEmpty() || (wsName != L"body" && wsName != L"html" &&
-                                  wsName != L"ol" && wsName != L"ul"))) {
+            (wsName.IsEmpty() ||
+             !(wsName.EqualsASCII("body") || wsName.EqualsASCII("html") ||
+               wsName.EqualsASCII("ol") || wsName.EqualsASCII("ul")))) {
           const CFX_CSSRect* pRect = pStyle->GetMarginWidth();
           if (pRect) {
             *pLinePos += pRect->top.GetValue();
@@ -764,7 +764,7 @@ bool CXFA_TextLayout::LoadRichText(
           }
         }
 
-        if (wsName == L"a") {
+        if (wsName.EqualsASCII("a")) {
           ASSERT(pElement);
           WideString wsLinkContent = pElement->GetAttribute(L"href");
           if (!wsLinkContent.IsEmpty()) {
@@ -780,9 +780,9 @@ bool CXFA_TextLayout::LoadRichText(
         WideString wsText;
         if (bContentNode && iTabCount == 0) {
           wsText = ToXMLText(pXMLNode)->GetText();
-        } else if (wsName == L"br") {
+        } else if (wsName.EqualsASCII("br")) {
           wsText = L'\n';
-        } else if (wsName == L"li") {
+        } else if (wsName.EqualsASCII("li")) {
           bCurLi = true;
           if (bIsOl)
             wsText = WideString::Format(L"%d.  ", iLiCount);

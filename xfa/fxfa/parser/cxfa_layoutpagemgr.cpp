@@ -81,17 +81,15 @@ uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
   WideString wsRelevant =
       pFormItem->JSObject()->GetCData(XFA_Attribute::Relevant);
   if (!wsRelevant.IsEmpty()) {
-    if (wsRelevant == L"+print" || wsRelevant == L"print")
+    if (wsRelevant.EqualsASCII("+print") || wsRelevant.EqualsASCII("print"))
       dwRelevant &= ~XFA_WidgetStatus_Viewable;
-    else if (wsRelevant == L"-print")
+    else if (wsRelevant.EqualsASCII("-print"))
       dwRelevant &= ~XFA_WidgetStatus_Printable;
   }
-
   if (!(dwParentRelvant & XFA_WidgetStatus_Viewable) &&
       (dwRelevant != XFA_WidgetStatus_Viewable)) {
     dwRelevant &= ~XFA_WidgetStatus_Viewable;
   }
-
   if (!(dwParentRelvant & XFA_WidgetStatus_Printable) &&
       (dwRelevant != XFA_WidgetStatus_Printable)) {
     dwRelevant &= ~XFA_WidgetStatus_Printable;
@@ -188,9 +186,9 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
         return pNode;
     } else if (bNewExprStyle) {
       WideString wsProcessedTarget = wsExpr;
-      if (wsExpr.Left(4) == L"som(" && wsExpr.Last() == L')') {
+      if (wsExpr.Left(4).EqualsASCII("som(") && wsExpr.Last() == L')')
         wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
-      }
+
       XFA_RESOLVENODE_RS rs;
       bool iRet = pDocument->GetScriptContext()->ResolveObjects(
           pPageSetRoot, wsProcessedTarget.AsStringView(), &rs,

@@ -335,8 +335,10 @@ CJS_Result CJX_Node::saveXML(CFX_V8* runtime,
   if (params.size() > 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  if (params.size() == 1 && runtime->ToWideString(params[0]) != L"pretty")
+  if (params.size() == 1 &&
+      !runtime->ToWideString(params[0]).EqualsASCII("pretty")) {
     return CJS_Result::Failure(JSMessage::kValueError);
+  }
 
   // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
 

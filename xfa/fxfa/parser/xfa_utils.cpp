@@ -207,7 +207,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       Optional<WideString> contentType =
           pNode->JSObject()->TryAttribute(XFA_Attribute::ContentType, false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
-          (contentType && *contentType == L"text/html")) {
+          contentType.has_value() &&
+          contentType.value().EqualsASCII("text/html")) {
         CFX_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
         if (!pExDataXML)
           break;
@@ -221,7 +222,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         wsChildren += WideString::FromUTF8(
             ByteStringView(pMemStream->GetBuffer(), pMemStream->GetSize()));
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
-                 (contentType && *contentType == L"text/xml")) {
+                 contentType.has_value() &&
+                 contentType.value().EqualsASCII("text/xml")) {
         Optional<WideString> rawValue = pRawValueNode->JSObject()->TryAttribute(
             XFA_Attribute::Value, false);
         if (!rawValue || rawValue->IsEmpty())

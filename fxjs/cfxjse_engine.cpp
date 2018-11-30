@@ -300,7 +300,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
       pOriginalObject->GetDocument()->GetScriptContext();
   CXFA_Object* pObject =
       lpScriptContext->GetVariablesThis(pOriginalObject, false);
-  if (wsPropName == L"xfa") {
+  if (wsPropName.EqualsASCII("xfa")) {
     CFXJSE_Value* pValue = lpScriptContext->GetJSValueFromMap(
         lpScriptContext->GetDocument()->GetRoot());
     pReturnValue->Assign(pValue);

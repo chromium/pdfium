@@ -627,9 +627,9 @@ void CFXJSE_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
   ASSERT(iFoundCount == pdfium::CollectionSize<int32_t>(rnd.m_Objects));
   WideString wsExpression;
   CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
-  if (wsCondition.Left(2) == L".[" && wsCondition.Last() == L']')
+  if (wsCondition.Left(2).EqualsASCII(".[") && wsCondition.Last() == L']')
     eLangType = CXFA_Script::Type::Formcalc;
-  else if (wsCondition.Left(2) == L".(" && wsCondition.Last() == L')')
+  else if (wsCondition.Left(2).EqualsASCII(".(") && wsCondition.Last() == L')')
     eLangType = CXFA_Script::Type::Javascript;
   else
     return;

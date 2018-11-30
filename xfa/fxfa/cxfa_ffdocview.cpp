@@ -617,8 +617,10 @@ void CXFA_FFDocView::RunBindItems() {
     WideString wsValueRef = item->GetValueRef();
     WideString wsLabelRef = item->GetLabelRef();
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
-    const bool bLabelUseContent = wsLabelRef.IsEmpty() || wsLabelRef == L"$";
-    const bool bValueUseContent = wsValueRef.IsEmpty() || wsValueRef == L"$";
+    const bool bLabelUseContent =
+        wsLabelRef.IsEmpty() || wsLabelRef.EqualsASCII("$");
+    const bool bValueUseContent =
+        wsValueRef.IsEmpty() || wsValueRef.EqualsASCII("$");
     WideString wsValue;
     WideString wsLabel;
     uint32_t uValueHash = FX_HashCode_GetW(wsValueRef.AsStringView(), false);

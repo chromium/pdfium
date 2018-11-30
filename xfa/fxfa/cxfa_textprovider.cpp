@@ -50,8 +50,10 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       Optional<WideString> contentType = pChildNode->JSObject()->TryAttribute(
           XFA_Attribute::ContentType, false);
-      if (contentType && *contentType == L"text/html")
+      if (contentType.has_value() &&
+          contentType.value().EqualsASCII("text/html")) {
         bRichText = true;
+      }
     }
     return pChildNode;
   }
@@ -85,8 +87,10 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       Optional<WideString> contentType = pChildNode->JSObject()->TryAttribute(
           XFA_Attribute::ContentType, false);
-      if (contentType && *contentType == L"text/html")
+      if (contentType.has_value() &&
+          contentType.value().EqualsASCII("text/html")) {
         bRichText = true;
+      }
     }
     return pChildNode;
   }
@@ -99,9 +103,11 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   CXFA_Node* pNode = pItemNode->GetFirstChild();
   while (pNode) {
     WideString wsName = pNode->JSObject()->GetCData(XFA_Attribute::Name);
-    if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover && wsName == L"rollover")
+    if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover &&
+        wsName.EqualsASCII("rollover")) {
       return pNode;
-    if (m_eType == XFA_TEXTPROVIDERTYPE_Down && wsName == L"down")
+    }
+    if (m_eType == XFA_TEXTPROVIDERTYPE_Down && wsName.EqualsASCII("down"))
       return pNode;
 
     pNode = pNode->GetNextSibling();

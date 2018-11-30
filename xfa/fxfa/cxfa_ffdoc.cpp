@@ -159,7 +159,7 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
     return true;
 
   WideString wsType = pDynamicRender->JSObject()->GetContent(false);
-  if (wsType == L"required")
+  if (wsType.EqualsASCII("required"))
     m_FormType = FormType::kXFAFull;
 
   return true;

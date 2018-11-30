@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_metadata.h"
 
+#include <memory>
+
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
@@ -18,15 +20,16 @@ namespace {
 
 void CheckForSharedFormInternal(CFX_XMLElement* element,
                                 std::vector<UnsupportedFeature>* unsupported) {
-  WideString attr = element->GetAttribute(L"xmlns:adhocwf");
-  if (attr == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
+  WideString attr =
+      element->GetAttribute(WideString::FromASCII("xmlns:adhocwf"));
+  if (attr.EqualsASCII("http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/")) {
     for (const auto* child = element->GetFirstChild(); child;
          child = child->GetNextSibling()) {
       if (child->GetType() != FX_XMLNODE_Element)
         continue;
 
       const auto* child_elem = static_cast<const CFX_XMLElement*>(child);
-      if (child_elem->GetName() != L"adhocwf:workflowType")
+      if (!child_elem->GetName().EqualsASCII("adhocwf:workflowType"))
         continue;
 
       switch (child_elem->GetTextData().GetInteger()) {

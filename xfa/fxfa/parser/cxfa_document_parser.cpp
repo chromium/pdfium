@@ -155,8 +155,8 @@ bool ResolveAttribute(CFX_XMLElement* pElement,
     wsNSPrefix = wsAttrName.Left(wsAttrName.GetLength() -
                                  wsLocalAttrName.GetLength() - 1);
   }
-  if (wsLocalAttrName == L"xmlns" || wsNSPrefix == L"xmlns" ||
-      wsNSPrefix == L"xml") {
+  if (wsLocalAttrName.EqualsASCII("xmlns") || wsNSPrefix.EqualsASCII("xmlns") ||
+      wsNSPrefix.EqualsASCII("xml")) {
     return false;
   }
   if (!XFA_FDEExtension_ResolveNamespaceQualifier(pElement, wsNSPrefix,
@@ -307,8 +307,8 @@ WideString GetPlainTextFromRichText(CFX_XMLNode* pXMLNode) {
 }  // namespace
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
-  return pRichTextXMLNode &&
-         pRichTextXMLNode->GetNamespaceURI() == L"http://www.w3.org/1999/xhtml";
+  return pRichTextXMLNode && pRichTextXMLNode->GetNamespaceURI().EqualsASCII(
+                                 "http://www.w3.org/1999/xhtml");
 }
 
 CXFA_DocumentParser::CXFA_DocumentParser(CXFA_Document* pFactory)
@@ -448,12 +448,13 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_XDP(
   pXFARootNode->JSObject()->SetCData(XFA_Attribute::Name, L"xfa", false, false);
 
   for (auto it : ToXMLElement(pXMLDocumentNode)->GetAttributes()) {
-    if (it.first == L"uuid")
+    if (it.first.EqualsASCII("uuid")) {
       pXFARootNode->JSObject()->SetCData(XFA_Attribute::Uuid, it.second, false,
                                          false);
-    else if (it.first == L"timeStamp")
+    } else if (it.first.EqualsASCII("timeStamp")) {
       pXFARootNode->JSObject()->SetCData(XFA_Attribute::TimeStamp, it.second,
                                          false, false);
+    }
   }
 
   CFX_XMLNode* pXMLConfigDOMRoot = nullptr;
@@ -796,7 +797,7 @@ CXFA_Node* CXFA_DocumentParser::NormalLoader(CXFA_Node* pXFANode,
         for (auto it : pXMLElement->GetAttributes()) {
           WideString wsAttrName;
           GetAttributeLocalName(it.first.AsStringView(), wsAttrName);
-          if (wsAttrName == L"nil" && it.second == L"true")
+          if (wsAttrName.EqualsASCII("nil") && it.second.EqualsASCII("true"))
             IsNeedValue = false;
 
           XFA_Attribute attr =
@@ -850,9 +851,9 @@ void CXFA_DocumentParser::ParseContentNode(CXFA_Node* pXFANode,
   if (pXFANode->GetElementType() == XFA_Element::ExData) {
     WideString wsContentType =
         pXFANode->JSObject()->GetCData(XFA_Attribute::ContentType);
-    if (wsContentType == L"text/html")
+    if (wsContentType.EqualsASCII("text/html"))
       element = XFA_Element::SharpxHTML;
-    else if (wsContentType == L"text/xml")
+    else if (wsContentType.EqualsASCII("text/xml"))
       element = XFA_Element::Sharpxml;
   }
   if (element == XFA_Element::SharpxHTML)
@@ -907,13 +908,14 @@ void CXFA_DocumentParser::ParseDataGroup(CXFA_Node* pXFANode,
     switch (pXMLChild->GetType()) {
       case FX_XMLNODE_Element: {
         CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
-        {
-          WideString wsNamespaceURI = pXMLElement->GetNamespaceURI();
-          if (wsNamespaceURI == L"http://www.xfa.com/schema/xfa-package/" ||
-              wsNamespaceURI == L"http://www.xfa.org/schema/xfa-package/" ||
-              wsNamespaceURI == L"http://www.w3.org/2001/XMLSchema-instance") {
-            continue;
-          }
+        WideString wsNamespaceURI = pXMLElement->GetNamespaceURI();
+        if (wsNamespaceURI.EqualsASCII(
+                "http://www.xfa.com/schema/xfa-package/") ||
+            wsNamespaceURI.EqualsASCII(
+                "http://www.xfa.org/schema/xfa-package/") ||
+            wsNamespaceURI.EqualsASCII(
+                "http://www.w3.org/2001/XMLSchema-instance")) {
+          continue;
         }
 
         XFA_Element eNodeType = XFA_Element::DataModel;
@@ -922,9 +924,9 @@ void CXFA_DocumentParser::ParseDataGroup(CXFA_Node* pXFANode,
           if (FindAttributeWithNS(pXMLElement, L"dataNode",
                                   L"http://www.xfa.org/schema/xfa-data/1.0/",
                                   wsDataNodeAttr)) {
-            if (wsDataNodeAttr == L"dataGroup")
+            if (wsDataNodeAttr.EqualsASCII("dataGroup"))
               eNodeType = XFA_Element::DataGroup;
-            else if (wsDataNodeAttr == L"dataValue")
+            else if (wsDataNodeAttr.EqualsASCII("dataValue"))
               eNodeType = XFA_Element::DataValue;
           }
         }
@@ -965,14 +967,14 @@ void CXFA_DocumentParser::ParseDataGroup(CXFA_Node* pXFANode,
           if (!ResolveAttribute(pXMLElement, it.first, wsName, wsNS)) {
             continue;
           }
-          if (wsName == L"nil" && it.second == L"true") {
+          if (wsName.EqualsASCII("nil") && it.second.EqualsASCII("true")) {
             bNeedValue = false;
             continue;
           }
-          if (wsNS == L"http://www.xfa.com/schema/xfa-package/" ||
-              wsNS == L"http://www.xfa.org/schema/xfa-package/" ||
-              wsNS == L"http://www.w3.org/2001/XMLSchema-instance" ||
-              wsNS == L"http://www.xfa.org/schema/xfa-data/1.0/") {
+          if (wsNS.EqualsASCII("http://www.xfa.com/schema/xfa-package/") ||
+              wsNS.EqualsASCII("http://www.xfa.org/schema/xfa-package/") ||
+              wsNS.EqualsASCII("http://www.w3.org/2001/XMLSchema-instance") ||
+              wsNS.EqualsASCII("http://www.xfa.org/schema/xfa-data/1.0/")) {
             continue;
           }
           CXFA_Node* pXFAMetaData = m_pFactory->CreateNode(
@@ -1126,20 +1128,18 @@ void CXFA_DocumentParser::ParseInstruction(CXFA_Node* pXFANode,
                                            CFX_XMLInstruction* pXMLInstruction,
                                            XFA_PacketType ePacketID) {
   const std::vector<WideString>& target_data = pXMLInstruction->GetTargetData();
-
   if (pXMLInstruction->IsOriginalXFAVersion()) {
     if (target_data.size() > 1 &&
         (pXFANode->GetDocument()->RecognizeXFAVersionNumber(target_data[0]) !=
          XFA_VERSION_UNKNOWN) &&
-        target_data[1] == L"v2.7-scripting:1") {
+        target_data[1].EqualsASCII("v2.7-scripting:1")) {
       pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_Scripting, true);
     }
     return;
   }
-
   if (pXMLInstruction->IsAcrobat()) {
-    if (target_data.size() > 1 && target_data[0] == L"JavaScript" &&
-        target_data[1] == L"strictScoping") {
+    if (target_data.size() > 1 && target_data[0].EqualsASCII("JavaScript") &&
+        target_data[1].EqualsASCII("strictScoping")) {
       pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_StrictScoping, true);
     }
   }

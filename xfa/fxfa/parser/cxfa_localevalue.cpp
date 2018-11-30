@@ -146,7 +146,7 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
       case FX_LOCALECATEGORY_Zero:
         bRet = pFormat->ParseZero(wsValue, wsFormat);
         if (!bRet)
-          bRet = wsValue == L"0";
+          bRet = wsValue.EqualsASCII("0");
         break;
       case FX_LOCALECATEGORY_Num: {
         WideString fNum;
@@ -353,7 +353,7 @@ bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
         bRet = pFormat->FormatNull(wsFormat, &wsResult);
       break;
     case FX_LOCALECATEGORY_Zero:
-      if (m_wsValue == L"0")
+      if (m_wsValue.EqualsASCII("0"))
         bRet = pFormat->FormatZero(wsFormat, &wsResult);
       break;
     case FX_LOCALECATEGORY_Num:

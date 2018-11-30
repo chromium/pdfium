@@ -57,7 +57,7 @@ CJS_Result CJX_Field::execEvent(
   WideString eventString = runtime->ToWideString(params[0]);
   int32_t iRet =
       execSingleEventByName(eventString.AsStringView(), XFA_Element::Field);
-  if (eventString != L"validate")
+  if (!eventString.EqualsASCII("validate"))
     return CJS_Result::Success();
 
   return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));

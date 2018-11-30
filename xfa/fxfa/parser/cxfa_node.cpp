@@ -163,28 +163,26 @@ int32_t XFA_Base64Decode(const char* pStr, uint8_t* pOutBuffer) {
 
 FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
   WideString wsContentType(wsType);
-  wsContentType.MakeLower();
-
-  if (wsContentType == L"image/jpg")
+  if (wsContentType.EqualsASCIINoCase("image/jpg"))
     return FXCODEC_IMAGE_JPG;
 
 #ifdef PDF_ENABLE_XFA_BMP
-  if (wsContentType == L"image/bmp")
+  if (wsContentType.EqualsASCIINoCase("image/bmp"))
     return FXCODEC_IMAGE_BMP;
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  if (wsContentType == L"image/gif")
+  if (wsContentType.EqualsASCIINoCase("image/gif"))
     return FXCODEC_IMAGE_GIF;
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-  if (wsContentType == L"image/png")
+  if (wsContentType.EqualsASCIINoCase("image/png"))
     return FXCODEC_IMAGE_PNG;
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-  if (wsContentType == L"image/tif")
+  if (wsContentType.EqualsASCII("image/tif"))
     return FXCODEC_IMAGE_TIFF;
 #endif  // PDF_ENABLE_XFA_TIFF
 
@@ -220,7 +218,8 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
     }
   } else {
     WideString wsURL = wsHref;
-    if (wsURL.Left(7) != L"http://" && wsURL.Left(6) != L"ftp://") {
+    if (!(wsURL.Left(7).EqualsASCII("http://") ||
+          wsURL.Left(6).EqualsASCII("ftp://"))) {
       RetainPtr<CFX_DIBitmap> pBitmap =
           pDoc->GetPDFNamedImage(wsURL.AsStringView(), iImageXDpi, iImageYDpi);
       if (pBitmap) {
@@ -979,9 +978,9 @@ CXFA_Node* CXFA_Node::GetContainerNode() {
 
 LocaleIface* CXFA_Node::GetLocale() {
   Optional<WideString> localeName = GetLocaleName();
-  if (!localeName)
+  if (!localeName.has_value())
     return nullptr;
-  if (localeName.value() == L"ambient")
+  if (localeName.value().EqualsASCII("ambient"))
     return GetDocument()->GetLocaleMgr()->GetDefLocale();
   return GetDocument()->GetLocaleMgr()->GetLocaleByName(localeName.value());
 }
@@ -3554,8 +3553,11 @@ bool CXFA_Node::HasButtonRollover() {
 
   for (CXFA_Node* pText = pItems->GetFirstChild(); pText;
        pText = pText->GetNextSibling()) {
-    if (pText->JSObject()->GetCData(XFA_Attribute::Name) == L"rollover")
+    if (pText->JSObject()
+            ->GetCData(XFA_Attribute::Name)
+            .EqualsASCII("rollover")) {
       return !pText->JSObject()->GetContent(false).IsEmpty();
+    }
   }
   return false;
 }
@@ -3567,8 +3569,9 @@ bool CXFA_Node::HasButtonDown() {
 
   for (CXFA_Node* pText = pItems->GetFirstChild(); pText;
        pText = pText->GetNextSibling()) {
-    if (pText->JSObject()->GetCData(XFA_Attribute::Name) == L"down")
+    if (pText->JSObject()->GetCData(XFA_Attribute::Name).EqualsASCII("down")) {
       return !pText->JSObject()->GetContent(false).IsEmpty();
+    }
   }
   return false;
 }
@@ -4328,7 +4331,7 @@ bool CXFA_Node::SetValue(XFA_VALUEPICTURE eValueType,
       bSyncData = true;
     }
   } else if (eType == XFA_Element::NumericEdit) {
-    if (wsNewText != L"0")
+    if (!wsNewText.EqualsASCII("0"))
       wsNewText = NumericLimit(wsNewText);
 
     bSyncData = true;
