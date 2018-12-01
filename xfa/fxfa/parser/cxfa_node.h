@@ -83,10 +83,6 @@ class CXFA_Node : public CXFA_Object {
     void* default_value;
   };
 
-#ifndef NDEBUG
-  static WideString ElementToName(XFA_Element elem);
-#endif  // NDEBUG
-
   static ByteStringView AttributeEnumToName(XFA_AttributeEnum item);
   static Optional<XFA_AttributeEnum> NameToAttributeEnum(
       const WideStringView& name);
