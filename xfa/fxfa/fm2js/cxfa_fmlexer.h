@@ -82,7 +82,7 @@ enum XFA_FM_TOKEN {
 
 struct XFA_FMKeyword {
   XFA_FM_TOKEN m_type;
-  const wchar_t* m_keyword;  // Raw, POD struct.
+  const char* m_keyword;  // Raw, POD struct.
 };
 
 class CXFA_FMToken {
