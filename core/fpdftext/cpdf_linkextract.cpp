@@ -306,7 +306,8 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
 }
 
 WideString CPDF_LinkExtract::GetURL(size_t index) const {
-  return index < m_LinkArray.size() ? m_LinkArray[index].m_strUrl : L"";
+  return index < m_LinkArray.size() ? m_LinkArray[index].m_strUrl
+                                    : WideString();
 }
 
 std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {

@@ -228,15 +228,15 @@ WideString CPDFXFA_Context::GetAppTitle() const {
 }
 
 WideString CPDFXFA_Context::GetAppName() {
-  return m_pFormFillEnv ? m_pFormFillEnv->FFI_GetAppName() : L"";
+  return m_pFormFillEnv ? m_pFormFillEnv->FFI_GetAppName() : WideString();
 }
 
 WideString CPDFXFA_Context::GetLanguage() {
-  return m_pFormFillEnv ? m_pFormFillEnv->GetLanguage() : L"";
+  return m_pFormFillEnv ? m_pFormFillEnv->GetLanguage() : WideString();
 }
 
 WideString CPDFXFA_Context::GetPlatform() {
-  return m_pFormFillEnv ? m_pFormFillEnv->GetPlatform() : L"";
+  return m_pFormFillEnv ? m_pFormFillEnv->GetPlatform() : WideString();
 }
 
 void CPDFXFA_Context::Beep(uint32_t dwType) {

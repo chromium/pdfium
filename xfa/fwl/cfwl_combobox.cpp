@@ -140,7 +140,7 @@ void CFWL_ComboBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
 WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
   CFWL_ListItem* pItem = static_cast<CFWL_ListItem*>(
       m_pListBox->GetItem(m_pListBox.get(), iIndex));
-  return pItem ? pItem->GetText() : L"";
+  return pItem ? pItem->GetText() : WideString();
 }
 
 void CFWL_ComboBox::SetCurSel(int32_t iSel) {
@@ -151,7 +151,7 @@ void CFWL_ComboBox::SetCurSel(int32_t iSel) {
       m_pEdit->SetText(WideString());
     } else {
       CFWL_ListItem* hItem = m_pListBox->GetItem(this, iSel);
-      m_pEdit->SetText(hItem ? hItem->GetText() : L"");
+      m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
     }
     m_pEdit->Update();
   }
@@ -186,10 +186,10 @@ WideString CFWL_ComboBox::GetEditText() const {
   if (m_pEdit)
     return m_pEdit->GetText();
   if (!m_pListBox)
-    return L"";
+    return WideString();
 
   CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-  return hItem ? hItem->GetText() : L"";
+  return hItem ? hItem->GetText() : WideString();
 }
 
 void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
@@ -283,7 +283,7 @@ void CFWL_ComboBox::MatchEditText() {
 
 void CFWL_ComboBox::SyncEditText(int32_t iListItem) {
   CFWL_ListItem* hItem = m_pListBox->GetItem(this, iListItem);
-  m_pEdit->SetText(hItem ? hItem->GetText() : L"");
+  m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
   m_pEdit->Update();
   m_pEdit->SetSelected();
 }
@@ -319,7 +319,7 @@ void CFWL_ComboBox::Layout() {
   if (m_iCurSel >= 0) {
     CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
     m_pEdit->LockUpdate();
-    m_pEdit->SetText(hItem ? hItem->GetText() : L"");
+    m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
     m_pEdit->UnlockUpdate();
   }
   m_pEdit->Update();
@@ -569,7 +569,7 @@ void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
       iCurSel = pComboList->MatchItem(wsText);
       if (iCurSel >= 0) {
         CFWL_ListItem* item = m_pListBox->GetSelItem(iCurSel);
-        bMatchEqual = wsText == (item ? item->GetText() : L"");
+        bMatchEqual = wsText == (item ? item->GetText() : WideString());
       }
     }
     if (iCurSel < 0) {

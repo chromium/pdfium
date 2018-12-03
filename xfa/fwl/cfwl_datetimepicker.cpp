@@ -175,7 +175,7 @@ void CFWL_DateTimePicker::SetEditText(const WideString& wsText) {
 }
 
 WideString CFWL_DateTimePicker::GetEditText() const {
-  return m_pEdit ? m_pEdit->GetText() : L"";
+  return m_pEdit ? m_pEdit->GetText() : WideString();
 }
 
 int32_t CFWL_DateTimePicker::GetEditTextLength() const {

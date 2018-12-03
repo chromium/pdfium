@@ -51,7 +51,7 @@ WideString MakeLetters(int num) {
 
 WideString GetLabelNumPortion(int num, const ByteString& bsStyle) {
   if (bsStyle.IsEmpty())
-    return L"";
+    return WideString();
   if (bsStyle == "D")
     return WideString::Format(L"%d", num);
   if (bsStyle == "R") {
@@ -68,7 +68,7 @@ WideString GetLabelNumPortion(int num, const ByteString& bsStyle) {
   }
   if (bsStyle == "a")
     return MakeLetters(num);
-  return L"";
+  return WideString();
 }
 
 }  // namespace

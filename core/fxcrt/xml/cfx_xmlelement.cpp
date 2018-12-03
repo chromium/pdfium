@@ -68,7 +68,7 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
     }
     return pElement->GetAttribute(attr);
   }
-  return L"";
+  return WideString();
 }
 
 WideString CFX_XMLElement::GetTextData() const {
@@ -137,7 +137,7 @@ bool CFX_XMLElement::HasAttribute(const WideString& name) const {
 
 WideString CFX_XMLElement::GetAttribute(const WideString& name) const {
   auto it = attrs_.find(name);
-  return it != attrs_.end() ? it->second : L"";
+  return it != attrs_.end() ? it->second : WideString();
 }
 
 void CFX_XMLElement::SetAttribute(const WideString& name,

@@ -645,7 +645,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
         return false;
 
       pFormFillEnv->JS_appAlert(WideString::FromDefANSI(IDS_XFA_Validate_Input),
-                                L"", JSPLATFORM_ALERT_BUTTON_OK,
+                                WideString(), JSPLATFORM_ALERT_BUTTON_OK,
                                 JSPLATFORM_ALERT_ICON_WARNING);
       return false;
     }
@@ -880,9 +880,9 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
       tmp = tmp.Right(tmp.GetLength() - 5);
       csMsg += tmp;
     }
-    srcURL = !pos.has_value()
-                 ? L""
-                 : srcURL.Right(csURL.GetLength() - (pos.value() + 1));
+    srcURL = pos.has_value()
+                 ? srcURL.Right(csURL.GetLength() - (pos.value() + 1))
+                 : WideString();
   }
   csToAddress.Replace(L",", L";");
   csCCAddress.Replace(L",", L";");
@@ -899,8 +899,8 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
 
   WideString csURL = submit->GetSubmitTarget();
   if (csURL.IsEmpty()) {
-    pFormFillEnv->JS_appAlert(WideString::FromDefANSI("Submit cancelled."), L"",
-                              JSPLATFORM_ALERT_BUTTON_OK,
+    pFormFillEnv->JS_appAlert(WideString::FromDefANSI("Submit cancelled."),
+                              WideString(), JSPLATFORM_ALERT_BUTTON_OK,
                               JSPLATFORM_ALERT_ICON_ASTERISK);
     return false;
   }

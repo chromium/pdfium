@@ -634,5 +634,5 @@ bool CPWL_ListCtrl::IsValid(int32_t nItemIndex) const {
 WideString CPWL_ListCtrl::GetItemText(int32_t nIndex) const {
   if (pdfium::IndexInBounds(m_ListItems, nIndex) && m_ListItems[nIndex])
     return m_ListItems[nIndex]->GetText();
-  return L"";
+  return WideString();
 }

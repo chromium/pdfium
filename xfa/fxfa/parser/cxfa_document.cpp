@@ -523,7 +523,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       case XFA_FFWidgetType::kChoiceList:
-        wsValue = defValue ? defValue->GetChildValueContent() : L"";
+        wsValue = defValue ? defValue->GetChildValueContent() : WideString();
         if (pFormNode->IsChoiceListMultiSelect()) {
           std::vector<WideString> wsSelTextArray =
               pFormNode->GetSelectedItemsValue();
@@ -549,7 +549,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         }
         break;
       case XFA_FFWidgetType::kCheckButton:
-        wsValue = defValue ? defValue->GetChildValueContent() : L"";
+        wsValue = defValue ? defValue->GetChildValueContent() : WideString();
         if (wsValue.IsEmpty())
           break;
 
@@ -619,7 +619,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       case XFA_FFWidgetType::kNumericEdit: {
-        wsValue = defValue ? defValue->GetChildValueContent() : L"";
+        wsValue = defValue ? defValue->GetChildValueContent() : WideString();
         if (wsValue.IsEmpty())
           break;
 
@@ -633,7 +633,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         break;
       }
       default:
-        wsValue = defValue ? defValue->GetChildValueContent() : L"";
+        wsValue = defValue ? defValue->GetChildValueContent() : WideString();
         if (wsValue.IsEmpty())
           break;
 
@@ -1198,7 +1198,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
           WideString wsRef =
               pTemplateNodeBind
                   ? pTemplateNodeBind->JSObject()->GetCData(XFA_Attribute::Ref)
-                  : L"";
+                  : WideString();
           uint32_t dFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
           XFA_RESOLVENODE_RS rs;

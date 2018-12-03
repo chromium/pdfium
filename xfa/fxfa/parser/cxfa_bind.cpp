@@ -50,5 +50,5 @@ CXFA_Bind::~CXFA_Bind() {}
 WideString CXFA_Bind::GetPicture() {
   CXFA_Picture* pPicture =
       GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
-  return pPicture ? pPicture->JSObject()->GetContent(false) : L"";
+  return pPicture ? pPicture->JSObject()->GetContent(false) : WideString();
 }

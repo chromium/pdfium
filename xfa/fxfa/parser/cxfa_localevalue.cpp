@@ -46,8 +46,8 @@ FX_LOCALECATEGORY ValueCategory(FX_LOCALECATEGORY eCategory,
 bool ValueSplitDateTime(const WideString& wsDateTime,
                         WideString& wsDate,
                         WideString& wsTime) {
-  wsDate = L"";
-  wsTime = L"";
+  wsDate.clear();
+  wsTime.clear();
   if (wsDateTime.IsEmpty())
     return false;
 

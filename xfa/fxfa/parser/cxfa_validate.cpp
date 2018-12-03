@@ -79,7 +79,7 @@ WideString CXFA_Validate::GetMessageText(const WideString& wsMessageType) {
   CXFA_Message* pNode =
       JSObject()->GetProperty<CXFA_Message>(0, XFA_Element::Message);
   if (!pNode)
-    return L"";
+    return WideString();
 
   for (CXFA_Node* pItemNode = pNode->GetFirstChild(); pItemNode;
        pItemNode = pItemNode->GetNextSibling()) {
@@ -90,7 +90,7 @@ WideString CXFA_Validate::GetMessageText(const WideString& wsMessageType) {
     if (wsName.IsEmpty() || wsName == wsMessageType)
       return pItemNode->JSObject()->GetContent(false);
   }
-  return L"";
+  return WideString();
 }
 
 void CXFA_Validate::SetFormatMessageText(const WideString& wsMessage) {
@@ -146,7 +146,7 @@ void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
 
 WideString CXFA_Validate::GetPicture() {
   CXFA_Picture* pNode = GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
-  return pNode ? pNode->JSObject()->GetContent(false) : L"";
+  return pNode ? pNode->JSObject()->GetContent(false) : WideString();
 }
 
 CXFA_Script* CXFA_Validate::GetScriptIfExists() {

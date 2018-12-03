@@ -265,7 +265,7 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode, WideString& wsOutput) {
 
 WideString GetPlainTextFromRichText(CFX_XMLNode* pXMLNode) {
   if (!pXMLNode)
-    return L"";
+    return WideString();
 
   WideString wsPlainText;
   switch (pXMLNode->GetType()) {
@@ -1070,7 +1070,8 @@ void CXFA_DocumentParser::ParseDataValue(CXFA_Node* pXFANode,
         if (!pXFAChild)
           return;
 
-        pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, L"", false, false);
+        pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, WideString(),
+                                        false, false);
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Value, wsCurValue, false,
                                         false);
         pXFANode->InsertChild(pXFAChild, nullptr);
@@ -1107,7 +1108,8 @@ void CXFA_DocumentParser::ParseDataValue(CXFA_Node* pXFANode,
         if (!pXFAChild)
           return;
 
-        pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, L"", false, false);
+        pXFAChild->JSObject()->SetCData(XFA_Attribute::Name, WideString(),
+                                        false, false);
         pXFAChild->JSObject()->SetCData(XFA_Attribute::Value, wsCurValue, false,
                                         false);
         pXFANode->InsertChild(pXFAChild, nullptr);

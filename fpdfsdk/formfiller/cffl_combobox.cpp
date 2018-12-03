@@ -142,8 +142,8 @@ void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
           fa.sChangeEx = GetSelectExportText();
 
           if (fa.bFieldFull) {
-            fa.sChange = L"";
-            fa.sChangeEx = L"";
+            fa.sChange.clear();
+            fa.sChangeEx.clear();
           }
         }
       }

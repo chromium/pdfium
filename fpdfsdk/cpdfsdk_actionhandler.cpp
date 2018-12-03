@@ -128,7 +128,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
     if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty())
-        RunDocumentOpenJavaScript(pFormFillEnv, L"", swJS);
+        RunDocumentOpenJavaScript(pFormFillEnv, WideString(), swJS);
     }
   } else {
     DoAction_NoJs(action, CPDF_AAction::AActionType::kDocumentOpen,

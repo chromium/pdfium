@@ -21,7 +21,7 @@ const wchar_t kMinusEqual[] = L" -= ";
 
 WideString IdentifierToName(WideStringView ident) {
   if (ident.IsEmpty())
-    return L"";
+    return WideString();
   if (ident[0] != L'!')
     return WideString(ident);
   return L"pfm__excl__" + ident.Right(ident.GetLength() - 1);

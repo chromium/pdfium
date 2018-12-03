@@ -823,7 +823,7 @@ FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
 
   CPDF_Stream* pStream = GetAnnotAPNoFallback(pAnnotDict, mode);
   return Utf16EncodeMaybeCopyAndReturnLength(
-      pStream ? pStream->GetUnicodeText() : L"", buffer, buflen);
+      pStream ? pStream->GetUnicodeText() : WideString(), buffer, buflen);
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV

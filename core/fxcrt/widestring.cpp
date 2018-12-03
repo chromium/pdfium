@@ -296,7 +296,7 @@ WideString WideString::FormatV(const wchar_t* format, va_list argList) {
     va_end(argListCopy);
 
     if (!guess.has_value())
-      return L"";
+      return WideString();
     maxLen = pdfium::base::checked_cast<int>(guess.value());
   }
 
@@ -310,7 +310,7 @@ WideString WideString::FormatV(const wchar_t* format, va_list argList) {
       return *ret;
     maxLen *= 2;
   }
-  return L"";
+  return WideString();
 }
 
 // static

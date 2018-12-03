@@ -452,7 +452,7 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
     const WideString& wsEncode,
     const WideString& wsHeader) {
   if (!m_pInfo || !m_pInfo->FFI_PostRequestURL)
-    return L"";
+    return WideString();
 
   ByteString bsURL = wsURL.ToUTF16LE();
   ByteString bsData = wsData.ToUTF16LE();

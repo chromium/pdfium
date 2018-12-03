@@ -241,8 +241,8 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
 bool SplitDateTime(const WideString& wsDateTime,
                    WideString& wsDate,
                    WideString& wsTime) {
-  wsDate = L"";
-  wsTime = L"";
+  wsDate.clear();
+  wsTime.clear();
   if (wsDateTime.IsEmpty())
     return false;
 
@@ -371,7 +371,7 @@ float GetEdgeThickness(const std::vector<CXFA_Stroke*>& strokes,
 
 WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
   if (wsValue.IsEmpty())
-    return L"";
+    return WideString();
 
   WideString wsSrcNum = wsValue;
   WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
@@ -385,7 +385,7 @@ WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
   dot_index = !dot_index.has_value() ? wsSrcNum.GetLength() : dot_index;
 
   if (dot_index.value() < 1)
-    return L"";
+    return WideString();
 
   size_t nPos = dot_index.value() % 3;
   WideString wsOutput;
@@ -4174,11 +4174,11 @@ WideString CXFA_Node::GetItemValue(const WideStringView& wsLabel) {
     iCount++;
   }
   if (iSearch < 0)
-    return L"";
+    return WideString();
 
   CXFA_Node* pText =
       pSaveItems->GetChild<CXFA_Node>(iSearch, XFA_Element::Unknown, false);
-  return pText ? pText->JSObject()->GetContent(false) : L"";
+  return pText ? pText->JSObject()->GetContent(false) : WideString();
 }
 
 bool CXFA_Node::DeleteItem(int32_t nIndex, bool bNotify, bool bScriptModify) {
@@ -4345,7 +4345,7 @@ bool CXFA_Node::SetValue(XFA_VALUEPICTURE eValueType,
 
 WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
   if (ePicture == XFA_VALUEPICTURE_Raw)
-    return L"";
+    return WideString();
 
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
   switch (ePicture) {
@@ -4363,7 +4363,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
 
       LocaleIface* pLocale = GetLocale();
       if (!pLocale)
-        return L"";
+        return WideString();
 
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
@@ -4378,7 +4378,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
         case XFA_VT_DECIMAL:
         case XFA_VT_FLOAT:
         default:
-          return L"";
+          return WideString();
       }
     }
     case XFA_VALUEPICTURE_Edit: {
@@ -4395,7 +4395,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
 
       LocaleIface* pLocale = GetLocale();
       if (!pLocale)
-        return L"";
+        return WideString();
 
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
@@ -4408,7 +4408,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
                  L"T" +
                  pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
         default:
-          return L"";
+          return WideString();
       }
     }
     case XFA_VALUEPICTURE_DataBind: {
@@ -4420,7 +4420,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
     default:
       break;
   }
-  return L"";
+  return WideString();
 }
 
 WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
@@ -4439,7 +4439,8 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
       if (eValueType == XFA_VALUEPICTURE_Display) {
         int32_t iSelItemIndex = GetSelectedItem(0);
         if (iSelItemIndex >= 0) {
-          wsValue = GetChoiceListItem(iSelItemIndex, false).value_or(L"");
+          wsValue =
+              GetChoiceListItem(iSelItemIndex, false).value_or(WideString());
           wsPicture.clear();
         }
       }
@@ -4490,7 +4491,7 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
 
 WideString CXFA_Node::GetNormalizeDataValue(const WideString& wsValue) {
   if (wsValue.IsEmpty())
-    return L"";
+    return WideString();
 
   WideString wsPicture = GetPictureContent(XFA_VALUEPICTURE_DataBind);
   if (wsPicture.IsEmpty())
@@ -4509,7 +4510,7 @@ WideString CXFA_Node::GetNormalizeDataValue(const WideString& wsValue) {
 
 WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
   if (wsValue.IsEmpty())
-    return L"";
+    return WideString();
 
   WideString wsPicture = GetPictureContent(XFA_VALUEPICTURE_DataBind);
   if (wsPicture.IsEmpty())
@@ -4591,7 +4592,7 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
 
 WideString CXFA_Node::NormalizeNumStr(const WideString& wsValue) {
   if (wsValue.IsEmpty())
-    return L"";
+    return WideString();
 
   WideString wsOutput = wsValue;
   wsOutput.TrimLeft('0');

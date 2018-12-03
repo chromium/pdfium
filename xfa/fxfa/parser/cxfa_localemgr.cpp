@@ -1225,7 +1225,7 @@ WideString CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
     return m_wsConfigLocale;
 
   m_hasSetLocaleName = true;
-  m_wsConfigLocale = L"";
+  m_wsConfigLocale.clear();
   if (!pConfig)
     return m_wsConfigLocale;
 

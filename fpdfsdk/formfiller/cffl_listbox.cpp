@@ -146,7 +146,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
   switch (type) {
     case CPDF_AAction::kValidate:
       if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
-        fa.sValue = L"";
+        fa.sValue.clear();
       } else {
         auto* pListBox =
             static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, false));
@@ -160,7 +160,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
     case CPDF_AAction::kLoseFocus:
     case CPDF_AAction::kGetFocus:
       if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
-        fa.sValue = L"";
+        fa.sValue.clear();
       } else {
         int32_t nCurSel = m_pWidget->GetSelectedIndex(0);
         if (nCurSel >= 0)

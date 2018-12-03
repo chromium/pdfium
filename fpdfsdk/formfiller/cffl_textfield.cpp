@@ -168,8 +168,8 @@ void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
         fa.sValue = pWnd->GetText();
 
         if (fa.bFieldFull) {
-          fa.sChange = L"";
-          fa.sChangeEx = L"";
+          fa.sChange.clear();
+          fa.sChangeEx.clear();
         }
       }
       break;

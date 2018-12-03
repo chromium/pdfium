@@ -473,7 +473,7 @@ void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
 WideString CPDF_TextPage::GetPageText(int start, int count) const {
   if (start < 0 || start >= CountChars() || count <= 0 || !m_bIsParsed ||
       m_CharList.empty() || m_TextBuf.GetLength() == 0) {
-    return L"";
+    return WideString();
   }
 
   const int count_chars = CountChars();
@@ -484,7 +484,7 @@ WideString CPDF_TextPage::GetPageText(int start, int count) const {
   // character.
   while (text_start < 0) {
     if (start >= count_chars)
-      return L"";
+      return WideString();
     start++;
     text_start = TextIndexFromCharIndex(start);
   }
@@ -499,14 +499,14 @@ WideString CPDF_TextPage::GetPageText(int start, int count) const {
   // character.
   while (text_last < 0) {
     if (last < text_start)
-      return L"";
+      return WideString();
 
     last--;
     text_last = TextIndexFromCharIndex(last);
   }
 
   if (text_last < text_start)
-    return L"";
+    return WideString();
 
   int text_count = text_last - text_start + 1;
 

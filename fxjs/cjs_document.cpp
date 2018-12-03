@@ -64,7 +64,7 @@ int CountWords(const CPDF_TextObject* pTextObj) {
 WideString GetObjWordStr(const CPDF_TextObject* pTextObj, int nWordIndex) {
   CPDF_Font* pFont = pTextObj->GetFont();
   if (!pFont)
-    return L"";
+    return WideString();
 
   WideString swRet;
   int nWords = 0;

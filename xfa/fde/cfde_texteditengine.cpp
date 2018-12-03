@@ -790,7 +790,7 @@ void CFDE_TextEditEngine::SetSelection(size_t start_idx, size_t count) {
 
 WideString CFDE_TextEditEngine::GetSelectedText() const {
   if (!has_selection_)
-    return L"";
+    return WideString();
 
   WideString text;
   if (selection_.start_idx < gap_position_) {
@@ -824,7 +824,7 @@ WideString CFDE_TextEditEngine::GetSelectedText() const {
 WideString CFDE_TextEditEngine::DeleteSelectedText(
     RecordOperation add_operation) {
   if (!has_selection_)
-    return L"";
+    return WideString();
 
   return Delete(selection_.start_idx, selection_.count, add_operation);
 }
@@ -833,10 +833,10 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
                                        size_t length,
                                        RecordOperation add_operation) {
   if (start_idx >= text_length_)
-    return L"";
+    return WideString();
 
   TextChange change;
-  change.text = L"";
+  change.text.clear();
   change.cancelled = false;
   if (delegate_ && (add_operation != RecordOperation::kSkipRecord &&
                     add_operation != RecordOperation::kSkipNotify)) {
@@ -846,7 +846,7 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
 
     delegate_->OnTextWillChange(&change);
     if (change.cancelled)
-      return L"";
+      return WideString();
 
     start_idx = change.selection_start;
     length = change.selection_end - change.selection_start;

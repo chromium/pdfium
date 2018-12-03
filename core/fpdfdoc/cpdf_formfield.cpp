@@ -93,7 +93,7 @@ WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
       if (full_name.IsEmpty())
         full_name = std::move(short_name);
       else
-        full_name = short_name + L"." + full_name;
+        full_name = short_name + L'.' + full_name;
     }
     pLevel = pLevel->GetDictFor("Parent");
     if (pdfium::ContainsKey(visited, pLevel))
@@ -300,12 +300,12 @@ CPDF_AAction CPDF_FormField::GetAdditionalAction() const {
 
 WideString CPDF_FormField::GetAlternateName() const {
   const CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict.Get(), "TU");
-  return pObj ? pObj->GetUnicodeText() : L"";
+  return pObj ? pObj->GetUnicodeText() : WideString();
 }
 
 WideString CPDF_FormField::GetMappingName() const {
   const CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict.Get(), "TM");
-  return pObj ? pObj->GetUnicodeText() : L"";
+  return pObj ? pObj->GetUnicodeText() : WideString();
 }
 
 uint32_t CPDF_FormField::GetFieldFlags() const {

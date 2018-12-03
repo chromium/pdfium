@@ -64,7 +64,9 @@ XFA_Element CXFA_Value::GetChildValueClassID() const {
 
 WideString CXFA_Value::GetChildValueContent() const {
   CXFA_Node* pNode = GetFirstChild();
-  return pNode ? pNode->JSObject()->TryContent(false, true).value_or(L"") : L"";
+  return pNode
+             ? pNode->JSObject()->TryContent(false, true).value_or(WideString())
+             : WideString();
 }
 
 CXFA_Arc* CXFA_Value::GetArcIfExists() const {
