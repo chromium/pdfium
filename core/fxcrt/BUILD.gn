@@ -151,6 +151,7 @@ pdfium_unittest_source_set("unittests") {
     "autorestorer_unittest.cpp",
     "bytestring_unittest.cpp",
     "cfx_bitstream_unittest.cpp",
+    "cfx_widetextbuf_unittest.cpp",
     "fx_bidi_unittest.cpp",
     "fx_coordinates_unittest.cpp",
     "fx_extension_unittest.cpp",
