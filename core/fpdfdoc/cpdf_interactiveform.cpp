@@ -930,7 +930,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       if (pClone)
         pDict->SetFor("T", std::move(pClone));
       else
-        pDict->SetNewFor<CPDF_Name>("T", "");
+        pDict->SetNewFor<CPDF_Name>("T", ByteString());
     }
     if (!m_pFieldTree->SetField(csWName, std::move(newField)))
       return;

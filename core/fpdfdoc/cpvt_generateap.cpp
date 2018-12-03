@@ -51,11 +51,11 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
     return ByteString::Format("%c", SubWord);
 
   if (!pFontMap)
-    return "";
+    return ByteString();
 
   CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
-    return "";
+    return ByteString();
 
   if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
       pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
@@ -72,7 +72,7 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
 ByteString GetWordRenderString(const ByteString& strWords) {
   if (strWords.GetLength() > 0)
     return PDF_EncodeString(strWords, false) + " Tj\n";
-  return "";
+  return ByteString();
 }
 
 ByteString GetFontSetString(IPVT_FontMap* pFontMap,

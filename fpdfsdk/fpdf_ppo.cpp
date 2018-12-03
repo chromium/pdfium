@@ -322,7 +322,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
 
   pDocInfoDict->SetNewFor<CPDF_String>("Producer", "PDFium", false);
 
-  ByteString cbRootType = pNewRoot->GetStringFor("Type", "");
+  ByteString cbRootType = pNewRoot->GetStringFor("Type", ByteString());
   if (cbRootType.IsEmpty())
     pNewRoot->SetNewFor<CPDF_Name>("Type", "Catalog");
 
@@ -334,7 +334,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
     pNewRoot->SetFor("Pages", pNewPages->MakeReference(dest()));
   }
 
-  ByteString cbPageType = pNewPages->GetStringFor("Type", "");
+  ByteString cbPageType = pNewPages->GetStringFor("Type", ByteString());
   if (cbPageType.IsEmpty())
     pNewPages->SetNewFor<CPDF_Name>("Type", "Pages");
 

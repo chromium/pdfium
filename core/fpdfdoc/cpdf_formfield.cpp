@@ -315,7 +315,7 @@ uint32_t CPDF_FormField::GetFieldFlags() const {
 
 ByteString CPDF_FormField::GetDefaultStyle() const {
   const CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict.Get(), "DS");
-  return pObj ? pObj->GetString() : "";
+  return pObj ? pObj->GetString() : ByteString();
 }
 
 void CPDF_FormField::SetOpt(std::unique_ptr<CPDF_Object> pOpt) {

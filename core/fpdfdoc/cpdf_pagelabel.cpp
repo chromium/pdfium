@@ -110,7 +110,7 @@ Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
       if (pLabel->KeyExist("P"))
         label += pLabel->GetUnicodeTextFor("P");
 
-      ByteString bsNumberingStyle = pLabel->GetStringFor("S", "");
+      ByteString bsNumberingStyle = pLabel->GetStringFor("S", ByteString());
       int nLabelNum = nPage - n + pLabel->GetIntegerFor("St", 1);
       WideString wsNumPortion = GetLabelNumPortion(nLabelNum, bsNumberingStyle);
       label += wsNumPortion;

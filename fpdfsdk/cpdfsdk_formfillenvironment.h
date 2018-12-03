@@ -202,7 +202,7 @@ class CPDFSDK_FormFillEnvironment final
   WideString JS_docGetFilePath();
   void JS_docSubmitForm(void* formData, int length, const WideString& URL);
 
-  ByteString GetAppName() const { return ""; }
+  ByteString GetAppName() const { return ByteString(); }
   CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 

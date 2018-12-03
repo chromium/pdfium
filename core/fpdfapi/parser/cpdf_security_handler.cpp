@@ -99,7 +99,10 @@ CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
 bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
                                   const CPDF_Array* pIdArray,
                                   const ByteString& password) {
-  m_FileId = pIdArray ? pIdArray->GetStringAt(0) : "";
+  if (pIdArray)
+    m_FileId = pIdArray->GetStringAt(0);
+  else
+    m_FileId.clear();
   if (!LoadDict(pEncryptDict))
     return false;
   if (m_Cipher == FXCIPHER_NONE)

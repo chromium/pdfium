@@ -1248,7 +1248,7 @@ void CPWL_AppStream::SetAsPushButton() {
                              &font_map, pNormalIcon, iconFit, csNormalCaption,
                              crText, fFontSize, nLayout);
 
-  Write("N", csAP, "");
+  Write("N", csAP, ByteString());
   if (pNormalIcon)
     AddImage("N", pNormalIcon);
 
@@ -1269,7 +1269,7 @@ void CPWL_AppStream::SetAsPushButton() {
                                &font_map, pRolloverIcon, iconFit,
                                csRolloverCaption, crText, fFontSize, nLayout);
 
-    Write("R", csAP, "");
+    Write("R", csAP, ByteString());
     if (pRolloverIcon)
       AddImage("R", pRolloverIcon);
 
@@ -1304,7 +1304,7 @@ void CPWL_AppStream::SetAsPushButton() {
                                &font_map, pDownIcon, iconFit, csDownCaption,
                                crText, fFontSize, nLayout);
 
-    Write("D", csAP, "");
+    Write("D", csAP, ByteString());
     if (pDownIcon)
       AddImage("D", pDownIcon);
   } else {
@@ -1649,7 +1649,7 @@ void CPWL_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   sBody << GetDropButtonAppStream(rcButton);
   Write("N",
         GetBackgroundAppStream() + GetBorderAppStream() + ByteString(sBody),
-        "");
+        ByteString());
 }
 
 void CPWL_AppStream::SetAsListBox() {
@@ -1734,7 +1734,7 @@ void CPWL_AppStream::SetAsListBox() {
   }
   Write("N",
         GetBackgroundAppStream() + GetBorderAppStream() + ByteString(sBody),
-        "");
+        ByteString());
 }
 
 void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
@@ -1884,7 +1884,7 @@ void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   Write("N",
         GetBackgroundAppStream() + GetBorderAppStream() + ByteString(sLines) +
             ByteString(sBody),
-        "");
+        ByteString());
 }
 
 void CPWL_AppStream::AddImage(const ByteString& sAPType, CPDF_Stream* pImage) {

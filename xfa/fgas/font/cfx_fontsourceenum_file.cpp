@@ -35,7 +35,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
       !m_FolderQueue.empty() ? m_FolderQueue.back().pFileHandle : nullptr;
   if (!pCurHandle) {
     if (m_FolderPaths.empty())
-      return "";
+      return ByteString();
     pCurHandle = FX_OpenFolder(m_FolderPaths.back().c_str());
     HandleParentPath hpp;
     hpp.pFileHandle = pCurHandle;
@@ -52,7 +52,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
       if (m_FolderQueue.empty()) {
         if (!m_FolderPaths.empty())
           m_FolderPaths.pop_back();
-        return !m_FolderPaths.empty() ? GetNextFile() : "";
+        return !m_FolderPaths.empty() ? GetNextFile() : ByteString();
       }
       pCurHandle = m_FolderQueue.back().pFileHandle;
       continue;
