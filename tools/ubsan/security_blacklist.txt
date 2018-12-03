@@ -1,0 +1,56 @@
+# This black list is a merge of blacklist.txt and vptr_blacklist.txt.
+
+#############################################################################
+# UBSan blacklist.
+
+#############################################################################
+# YASM does some funny things that UBsan doesn't like.
+# https://crbug.com/489901
+src:*/third_party/yasm/*
+
+#############################################################################
+# V8 gives too many false positives. Ignore them for now.
+src:*/v8/*
+
+#############################################################################
+# Ignore system libraries.
+src:*/usr/*
+
+#############################################################################
+# ICU supressions. Mostly hash functions where integer overflow is OK.
+fun:*hashEntry*
+fun:*LocaleCacheKey*hashCode*
+fun:*google*protobuf*hash*
+fun:*(hash|Hash)*
+
+#############################################################################
+# Bounds blacklist.
+# Array at the end of struct pattern:
+# Maybe UBSan itself can be improved here?
+# e.g.
+# struct blah {
+#   int a;
+#   char foo[2]; // not actually 2
+# }
+src:*/third_party/icu/source/common/rbbi.cpp
+src:*/third_party/icu/source/common/rbbitblb.cpp
+src:*/third_party/icu/source/common/ucmndata.c
+
+#############################################################################
+# UBSan vptr blacklist.
+# Function and type based blacklisting use a mangled name, and it is especially
+# tricky to represent C++ types. For now, any possible changes by name manglings
+# are simply represented as wildcard expressions of regexp, and thus it might be
+# over-blacklisted.
+
+#############################################################################
+# UBSan seems to be emit false positives when virtual base classes are
+# involved, see e.g. crbug.com/448102.
+
+type:*v8*internal*OFStream*
+
+#############################################################################
+# UBsan goes into an infinite recursion when __dynamic_cast instrumented with
+# "vptr". See crbug.com/609786.
+
+src:*/third_party/libc\+\+abi/trunk/src/private_typeinfo.cpp

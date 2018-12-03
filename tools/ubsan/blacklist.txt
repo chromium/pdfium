@@ -1,0 +1,35 @@
+#############################################################################
+# UBSan blacklist.
+
+#############################################################################
+# YASM does some funny things that UBsan doesn't like.
+# https://crbug.com/489901
+src:*/third_party/yasm/*
+
+#############################################################################
+# V8 gives too many false positives. Ignore them for now.
+src:*/v8/*
+
+#############################################################################
+# Ignore system libraries.
+src:*/usr/*
+
+#############################################################################
+# ICU supressions. Mostly hash functions where integer overflow is OK.
+fun:*hashEntry*
+fun:*LocaleCacheKey*hashCode*
+fun:*google*protobuf*hash*
+fun:*(hash|Hash)*
+
+#############################################################################
+# Bounds blacklist.
+# Array at the end of struct pattern:
+# Maybe UBSan itself can be improved here?
+# e.g.
+# struct blah {
+#   int a;
+#   char foo[2]; // not actually 2
+# }
+src:*/third_party/icu/source/common/rbbi.cpp
+src:*/third_party/icu/source/common/rbbitblb.cpp
+src:*/third_party/icu/source/common/ucmndata.c
