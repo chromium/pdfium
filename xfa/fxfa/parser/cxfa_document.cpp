@@ -1551,7 +1551,7 @@ void CXFA_Document::DoProtoMerge() {
           wsSOM = WideStringView(wsUseVal.c_str(), wsUseVal.GetLength());
       }
     }
-    if (!wsURI.IsEmpty() && wsURI != L".")
+    if (!wsURI.IsEmpty() && !wsURI.EqualsASCII("."))
       continue;
 
     CXFA_Node* pProtoNode = nullptr;

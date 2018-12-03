@@ -873,7 +873,7 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   ClearSelection();
 
   // The JS requested the insertion of text instead of just a deletion.
-  if (change.text != L"")
+  if (!change.text.IsEmpty())
     Insert(start_idx, change.text, RecordOperation::kSkipRecord);
 
   if (delegate_)

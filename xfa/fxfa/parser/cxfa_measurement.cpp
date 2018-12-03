@@ -129,21 +129,21 @@ bool CXFA_Measurement::ToUnitInternal(XFA_Unit eUnit, float* fValue) const {
 
 // static
 XFA_Unit CXFA_Measurement::GetUnitFromString(const WideStringView& wsUnit) {
-  if (wsUnit == L"mm")
+  if (wsUnit.EqualsASCII("mm"))
     return XFA_Unit::Mm;
-  if (wsUnit == L"pt")
+  if (wsUnit.EqualsASCII("pt"))
     return XFA_Unit::Pt;
-  if (wsUnit == L"in")
+  if (wsUnit.EqualsASCII("in"))
     return XFA_Unit::In;
-  if (wsUnit == L"cm")
+  if (wsUnit.EqualsASCII("cm"))
     return XFA_Unit::Cm;
-  if (wsUnit == L"pc")
+  if (wsUnit.EqualsASCII("pc"))
     return XFA_Unit::Pc;
-  if (wsUnit == L"mp")
+  if (wsUnit.EqualsASCII("mp"))
     return XFA_Unit::Mp;
-  if (wsUnit == L"em")
+  if (wsUnit.EqualsASCII("em"))
     return XFA_Unit::Em;
-  if (wsUnit == L"%")
+  if (wsUnit.EqualsASCII("%"))
     return XFA_Unit::Percent;
   return XFA_Unit::Unknown;
 }

@@ -155,21 +155,21 @@ bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  if (m_wsIdentifier == L"$")
+  if (m_wsIdentifier.EqualsASCII("$"))
     *js << "this";
-  else if (m_wsIdentifier == L"!")
+  else if (m_wsIdentifier.EqualsASCII("!"))
     *js << "xfa.datasets";
-  else if (m_wsIdentifier == L"$data")
+  else if (m_wsIdentifier.EqualsASCII("$data"))
     *js << "xfa.datasets.data";
-  else if (m_wsIdentifier == L"$event")
+  else if (m_wsIdentifier.EqualsASCII("$event"))
     *js << "xfa.event";
-  else if (m_wsIdentifier == L"$form")
+  else if (m_wsIdentifier.EqualsASCII("$form"))
     *js << "xfa.form";
-  else if (m_wsIdentifier == L"$host")
+  else if (m_wsIdentifier.EqualsASCII("$host"))
     *js << "xfa.host";
-  else if (m_wsIdentifier == L"$layout")
+  else if (m_wsIdentifier.EqualsASCII("$layout"))
     *js << "xfa.layout";
-  else if (m_wsIdentifier == L"$template")
+  else if (m_wsIdentifier.EqualsASCII("$template"))
     *js << "xfa.template";
   else if (m_wsIdentifier[0] == L'!')
     *js << "pfm__excl__"
@@ -211,7 +211,7 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf* js,
   *js << "pfm_rt.asgn_val_op(" << tempExp1 << ", " << tempExp2 << ");\n}\n";
 
   if (m_pExp1->GetOperatorToken() == TOKidentifier &&
-      tempExp1.AsStringView() != L"this") {
+      !tempExp1.AsStringView().EqualsASCII("this")) {
     *js << "else\n{\n";
     if (type == ReturnType::kImplied)
       *js << "pfm_ret = ";
@@ -489,11 +489,11 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
     return false;
   }
 
-  if (funcName.AsStringView() == L"Eval") {
+  if (funcName.AsStringView().EqualsASCII("Eval")) {
     isEvalFunc = true;
     *js << "eval.call(this, pfm_rt.Translate";
   } else {
-    if (funcName.AsStringView() == L"Exists")
+    if (funcName.AsStringView().EqualsASCII("Exists"))
       isExistsFunc = true;
 
     *js << "pfm_rt." << funcName;

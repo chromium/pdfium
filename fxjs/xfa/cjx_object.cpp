@@ -231,7 +231,7 @@ void CJX_Object::SetAttribute(XFA_Attribute eAttr,
       SetCData(eAttr, WideString(wsValue), bNotify, false);
       break;
     case XFA_AttributeType::Boolean:
-      SetBoolean(eAttr, wsValue != L"0", bNotify);
+      SetBoolean(eAttr, !wsValue.EqualsASCII("0"), bNotify);
       break;
     case XFA_AttributeType::Integer:
       SetInteger(eAttr,
