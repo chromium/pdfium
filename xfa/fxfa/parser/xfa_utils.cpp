@@ -55,19 +55,19 @@ WideString ExportEncodeAttribute(const WideString& str) {
   for (int32_t i = 0; i < iLen; i++) {
     switch (str[i]) {
       case '&':
-        textBuf << L"&amp;";
+        textBuf << "&amp;";
         break;
       case '<':
-        textBuf << L"&lt;";
+        textBuf << "&lt;";
         break;
       case '>':
-        textBuf << L"&gt;";
+        textBuf << "&gt;";
         break;
       case '\'':
-        textBuf << L"&apos;";
+        textBuf << "&apos;";
         break;
       case '\"':
-        textBuf << L"&quot;";
+        textBuf << "&quot;";
         break;
       default:
         textBuf.AppendChar(str[i]);
@@ -90,20 +90,20 @@ WideString ExportEncodeContent(const WideString& str) {
       continue;
 
     if (ch == '&') {
-      textBuf << L"&amp;";
+      textBuf << "&amp;";
     } else if (ch == '<') {
-      textBuf << L"&lt;";
+      textBuf << "&lt;";
     } else if (ch == '>') {
-      textBuf << L"&gt;";
+      textBuf << "&gt;";
     } else if (ch == '\'') {
-      textBuf << L"&apos;";
+      textBuf << "&apos;";
     } else if (ch == '\"') {
-      textBuf << L"&quot;";
+      textBuf << "&quot;";
     } else if (ch == ' ') {
       if (i && str[i - 1] != ' ') {
         textBuf.AppendChar(' ');
       } else {
-        textBuf << L"&#x20;";
+        textBuf << "&#x20;";
       }
     } else {
       textBuf.AppendChar(str[i]);
@@ -252,18 +252,18 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (bodyTagName.IsEmpty())
           bodyTagName = L"ListBox1";
 
-        buf << L"<";
+        buf << "<";
         buf << bodyTagName;
-        buf << L" xmlns=\"\"\n>";
+        buf << " xmlns=\"\"\n>";
         for (int32_t i = 0; i < pdfium::CollectionSize<int32_t>(wsSelTextArray);
              i++) {
-          buf << L"<value\n>";
+          buf << "<value\n>";
           buf << ExportEncodeContent(wsSelTextArray[i]);
-          buf << L"</value\n>";
+          buf << "</value\n>";
         }
-        buf << L"</";
+        buf << "</";
         buf << bodyTagName;
-        buf << L"\n>";
+        buf << "\n>";
         wsChildren += buf.AsStringView();
         buf.Clear();
       } else {
@@ -317,18 +317,18 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     WideStringView wsElement = pNode->GetClassName();
     WideString wsName;
     SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsName);
-    buf << L"<";
+    buf << "<";
     buf << wsElement;
     buf << wsName;
     buf << wsAttrs;
     if (wsChildren.IsEmpty()) {
-      buf << L"\n/>";
+      buf << "\n/>";
     } else {
-      buf << L"\n>";
+      buf << "\n>";
       buf << wsChildren;
-      buf << L"</";
+      buf << "</";
       buf << wsElement;
-      buf << L"\n>";
+      buf << "\n>";
     }
   }
 }

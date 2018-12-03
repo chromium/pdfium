@@ -53,16 +53,16 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf* js,
   if (m_wsName.IsEmpty())
     return false;
 
-  *js << L"function " << IdentifierToName(m_wsName) << L"(";
+  *js << "function " << IdentifierToName(m_wsName) << "(";
   for (const auto& identifier : m_pArguments) {
     if (identifier != m_pArguments.front())
-      *js << L", ";
+      *js << ", ";
 
     *js << IdentifierToName(identifier);
   }
-  *js << L") {\n";
+  *js << ") {\n";
 
-  *js << L"var pfm_ret = null;\n";
+  *js << "var pfm_ret = null;\n";
   for (const auto& expr : m_pExpressions) {
     ReturnType ret_type = expr == m_pExpressions.back() ? ReturnType::kImplied
                                                         : ReturnType::kInfered;
@@ -70,8 +70,8 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf* js,
       return false;
   }
 
-  *js << L"return pfm_ret;\n";
-  *js << L"}\n";
+  *js << "return pfm_ret;\n";
+  *js << "}\n";
 
   return !CXFA_IsTooBig(js);
 }
@@ -84,22 +84,22 @@ CXFA_FMAST::~CXFA_FMAST() = default;
 
 bool CXFA_FMAST::ToJavaScript(CFX_WideTextBuf* js) {
   if (expressions_.empty()) {
-    *js << L"// comments only";
+    *js << "// comments only";
     return !CXFA_IsTooBig(js);
   }
 
-  *js << L"(function() {\n";
-  *js << L"let pfm_method_runner = function(obj, cb) {\n";
-  *js << L"  if (pfm_rt.is_ary(obj)) {\n";
-  *js << L"    let pfm_method_return = null;\n";
-  *js << L"    for (var idx = obj.length -1; idx > 1; idx--) {\n";
-  *js << L"      pfm_method_return = cb(obj[idx]);\n";
-  *js << L"    }\n";
-  *js << L"    return pfm_method_return;\n";
-  *js << L"  }\n";
-  *js << L"  return cb(obj);\n";
-  *js << L"};\n";
-  *js << L"var pfm_ret = null;\n";
+  *js << "(function() {\n";
+  *js << "let pfm_method_runner = function(obj, cb) {\n";
+  *js << "  if (pfm_rt.is_ary(obj)) {\n";
+  *js << "    let pfm_method_return = null;\n";
+  *js << "    for (var idx = obj.length -1; idx > 1; idx--) {\n";
+  *js << "      pfm_method_return = cb(obj[idx]);\n";
+  *js << "    }\n";
+  *js << "    return pfm_method_return;\n";
+  *js << "  }\n";
+  *js << "  return cb(obj);\n";
+  *js << "};\n";
+  *js << "var pfm_ret = null;\n";
 
   for (const auto& expr : expressions_) {
     ReturnType ret_type = expr == expressions_.back() ? ReturnType::kImplied
@@ -108,8 +108,8 @@ bool CXFA_FMAST::ToJavaScript(CFX_WideTextBuf* js) {
       return false;
   }
 
-  *js << L"return pfm_rt.get_val(pfm_ret);\n";
-  *js << L"}).call(this);";
+  *js << "return pfm_rt.get_val(pfm_ret);\n";
+  *js << "}).call(this);";
   return !CXFA_IsTooBig(js);
 }
 
@@ -126,19 +126,19 @@ bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
     return false;
 
   WideString tempName = IdentifierToName(m_wsName);
-  *js << L"var " << tempName << L" = ";
+  *js << "var " << tempName << " = ";
   if (m_pInit) {
     if (!m_pInit->ToJavaScript(js, ReturnType::kInfered))
       return false;
 
-    *js << L";\n";
-    *js << tempName << L" = pfm_rt.var_filter(" << tempName << L");\n";
+    *js << ";\n";
+    *js << tempName << " = pfm_rt.var_filter(" << tempName << ");\n";
   } else {
-    *js << L"\"\";\n";
+    *js << "\"\";\n";
   }
 
   if (type == ReturnType::kImplied)
-    *js << L"pfm_ret = " << tempName << L";\n";
+    *js << "pfm_ret = " << tempName << ";\n";
 
   return !CXFA_IsTooBig(js);
 }
@@ -157,7 +157,7 @@ bool CXFA_FMExpExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
   if (type == ReturnType::kInfered) {
     bool ret = m_pExpression->ToJavaScript(js, ReturnType::kInfered);
     if (m_pExpression->GetOperatorToken() != TOKassign)
-      *js << L";\n";
+      *js << ";\n";
 
     return ret;
   }
@@ -170,19 +170,19 @@ bool CXFA_FMExpExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
       m_pExpression->GetOperatorToken() == TOKdotscream ||
       m_pExpression->GetOperatorToken() == TOKdotdot ||
       m_pExpression->GetOperatorToken() == TOKdot) {
-    *js << L"pfm_ret = pfm_rt.get_val(";
+    *js << "pfm_ret = pfm_rt.get_val(";
     if (!m_pExpression->ToJavaScript(js, ReturnType::kInfered))
       return false;
 
-    *js << L");\n";
+    *js << ");\n";
     return !CXFA_IsTooBig(js);
   }
 
-  *js << L"pfm_ret = ";
+  *js << "pfm_ret = ";
   if (!m_pExpression->ToJavaScript(js, ReturnType::kInfered))
     return false;
 
-  *js << L";\n";
+  *js << ";\n";
   return !CXFA_IsTooBig(js);
 }
 
@@ -198,7 +198,7 @@ bool CXFA_FMBlockExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  *js << L"{\n";
+  *js << "{\n";
   for (const auto& expr : m_ExpressionList) {
     if (type == ReturnType::kInfered) {
       if (!expr->ToJavaScript(js, ReturnType::kInfered))
@@ -211,7 +211,7 @@ bool CXFA_FMBlockExpression::ToJavaScript(CFX_WideTextBuf* js,
         return false;
     }
   }
-  *js << L"}\n";
+  *js << "}\n";
 
   return !CXFA_IsTooBig(js);
 }
@@ -251,12 +251,12 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
     return false;
 
   if (type == ReturnType::kImplied)
-    *js << L"pfm_ret = 0;\n";
+    *js << "pfm_ret = 0;\n";
 
-  *js << L"if (pfm_rt.get_val(";
+  *js << "if (pfm_rt.get_val(";
   if (!m_pExpression->ToJavaScript(js, ReturnType::kInfered))
     return false;
-  *js << L"))\n";
+  *js << "))\n";
 
   if (CXFA_IsTooBig(js))
     return false;
@@ -269,13 +269,13 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
   }
 
   for (auto& expr : m_pElseIfExpressions) {
-    *js << L"else ";
+    *js << "else ";
     if (!expr->ToJavaScript(js, ReturnType::kInfered))
       return false;
   }
 
   if (m_pElseExpression) {
-    *js << L"else ";
+    *js << "else ";
     if (!m_pElseExpression->ToJavaScript(js, type))
       return false;
   }
@@ -298,13 +298,13 @@ bool CXFA_FMWhileExpression::ToJavaScript(CFX_WideTextBuf* js,
     return false;
 
   if (type == ReturnType::kImplied)
-    *js << L"pfm_ret = 0;\n";
+    *js << "pfm_ret = 0;\n";
 
-  *js << L"while (";
+  *js << "while (";
   if (!m_pCondition->ToJavaScript(js, ReturnType::kInfered))
     return false;
 
-  *js << L")\n";
+  *js << ")\n";
   if (CXFA_IsTooBig(js))
     return false;
 
@@ -324,7 +324,7 @@ bool CXFA_FMBreakExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  *js << L"pfm_ret = 0;\nbreak;\n";
+  *js << "pfm_ret = 0;\nbreak;\n";
   return !CXFA_IsTooBig(js);
 }
 
@@ -338,7 +338,7 @@ bool CXFA_FMContinueExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  *js << L"pfm_ret = 0;\ncontinue;\n";
+  *js << "pfm_ret = 0;\ncontinue;\n";
   return !CXFA_IsTooBig(js);
 }
 
@@ -365,41 +365,41 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
     return false;
 
   if (type == ReturnType::kImplied)
-    *js << L"pfm_ret = 0;\n";
+    *js << "pfm_ret = 0;\n";
 
-  *js << L"{\n";
+  *js << "{\n";
 
   WideString tmpName = IdentifierToName(m_wsVariant);
-  *js << L"var " << tmpName << L" = null;\n";
+  *js << "var " << tmpName << " = null;\n";
 
-  *js << L"for (" << tmpName << L" = pfm_rt.get_val(";
+  *js << "for (" << tmpName << " = pfm_rt.get_val(";
   if (!m_pAssignment->ToJavaScript(js, ReturnType::kInfered))
     return false;
-  *js << L"); ";
+  *js << "); ";
 
   *js << tmpName << (m_bDirection ? kLessEqual : kGreaterEqual);
-  *js << L"pfm_rt.get_val(";
+  *js << "pfm_rt.get_val(";
   if (!m_pAccessor->ToJavaScript(js, ReturnType::kInfered))
     return false;
-  *js << L"); ";
+  *js << "); ";
 
   *js << tmpName << (m_bDirection ? kPlusEqual : kMinusEqual);
   if (m_pStep) {
-    *js << L"pfm_rt.get_val(";
+    *js << "pfm_rt.get_val(";
     if (!m_pStep->ToJavaScript(js, ReturnType::kInfered))
       return false;
-    *js << L")";
+    *js << ")";
   } else {
-    *js << L"1";
+    *js << "1";
   }
-  *js << L")\n";
+  *js << ")\n";
   if (CXFA_IsTooBig(js))
     return false;
 
   if (!m_pList->ToJavaScript(js, type))
     return false;
 
-  *js << L"}\n";
+  *js << "}\n";
   return !CXFA_IsTooBig(js);
 }
 
@@ -421,28 +421,28 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf* js,
     return false;
 
   if (type == ReturnType::kImplied)
-    *js << L"pfm_ret = 0;\n";
+    *js << "pfm_ret = 0;\n";
 
-  *js << L"{\n";
+  *js << "{\n";
 
   WideString tmpName = IdentifierToName(m_wsIdentifier);
-  *js << L"var " << tmpName << L" = null;\n";
-  *js << L"var pfm_ary = pfm_rt.concat_obj(";
+  *js << "var " << tmpName << " = null;\n";
+  *js << "var pfm_ary = pfm_rt.concat_obj(";
   for (const auto& expr : m_pAccessors) {
     if (!expr->ToJavaScript(js, ReturnType::kInfered))
       return false;
     if (expr != m_pAccessors.back())
-      *js << L", ";
+      *js << ", ";
   }
-  *js << L");\n";
+  *js << ");\n";
 
-  *js << L"var pfm_ary_idx = 0;\n";
-  *js << L"while(pfm_ary_idx < pfm_ary.length)\n{\n";
-  *js << tmpName << L" = pfm_ary[pfm_ary_idx++];\n";
+  *js << "var pfm_ary_idx = 0;\n";
+  *js << "while(pfm_ary_idx < pfm_ary.length)\n{\n";
+  *js << tmpName << " = pfm_ary[pfm_ary_idx++];\n";
   if (!m_pList->ToJavaScript(js, type))
     return false;
-  *js << L"}\n";  // while
+  *js << "}\n";  // while
 
-  *js << L"}\n";  // block
+  *js << "}\n";  // block
   return !CXFA_IsTooBig(js);
 }
