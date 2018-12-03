@@ -12,14 +12,16 @@ size_t CFX_WideTextBuf::GetLength() const {
 
 void CFX_WideTextBuf::AppendChar(wchar_t ch) {
   ExpandBuf(sizeof(wchar_t));
-  *(wchar_t*)(m_pBuffer.get() + m_DataSize) = ch;
+  *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
   m_DataSize += sizeof(wchar_t);
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const ByteStringView& ascii) {
-  // TODO(tsepez): avoid a malloc/copy here.
-  WideString temp = WideString::FromASCII(ascii);
-  AppendBlock(temp.c_str(), temp.GetLength() * sizeof(wchar_t));
+  ExpandBuf(ascii.GetLength() * sizeof(wchar_t));
+  for (uint8_t ch : ascii) {
+    *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
+    m_DataSize += sizeof(wchar_t);
+  }
   return *this;
 }
 
@@ -38,7 +40,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   FXSYS_itoa(i, buf, 10);
   size_t len = strlen(buf);
   ExpandBuf(len * sizeof(wchar_t));
-  wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
+  wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
   for (size_t j = 0; j < len; j++) {
     *str++ = buf[j];
   }
@@ -50,7 +52,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
   size_t len = FX_ftoa((float)f, buf);
   ExpandBuf(len * sizeof(wchar_t));
-  wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
+  wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
   for (size_t i = 0; i < len; i++) {
     *str++ = buf[i];
   }
