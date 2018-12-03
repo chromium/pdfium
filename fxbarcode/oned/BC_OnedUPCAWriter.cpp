@@ -36,10 +36,6 @@ CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
   m_bRightPadding = true;
 }
 
-void CBC_OnedUPCAWriter::Init() {
-  m_subWriter = pdfium::MakeUnique<CBC_OnedEAN13Writer>();
-}
-
 CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
 
 bool CBC_OnedUPCAWriter::CheckContentValidity(const WideStringView& contents) {
@@ -64,6 +60,10 @@ WideString CBC_OnedUPCAWriter::FilterContents(const WideStringView& contents) {
       filtercontents += ch;
   }
   return filtercontents;
+}
+
+void CBC_OnedUPCAWriter::InitEANWriter() {
+  m_subWriter = pdfium::MakeUnique<CBC_OnedEAN13Writer>();
 }
 
 int32_t CBC_OnedUPCAWriter::CalcChecksum(const ByteString& contents) {

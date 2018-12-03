@@ -26,54 +26,18 @@
 #include "fxbarcode/oned/BC_OnedEAN8Writer.h"
 #include "third_party/base/ptr_util.h"
 
-CBC_EAN8::CBC_EAN8() : CBC_OneCode(pdfium::MakeUnique<CBC_OnedEAN8Writer>()) {}
+CBC_EAN8::CBC_EAN8() : CBC_EANCode(pdfium::MakeUnique<CBC_OnedEAN8Writer>()) {}
 
-CBC_EAN8::~CBC_EAN8() {}
-
-WideString CBC_EAN8::Preprocess(const WideStringView& contents) {
-  auto* pWriter = GetOnedEAN8Writer();
-  WideString encodeContents = pWriter->FilterContents(contents);
-  size_t length = encodeContents.GetLength();
-  if (length <= 7) {
-    for (size_t i = 0; i < 7 - length; i++)
-      encodeContents = L'0' + encodeContents;
-
-    ByteString byteString = encodeContents.ToUTF8();
-    int32_t checksum = pWriter->CalcChecksum(byteString);
-    encodeContents += L'0' + checksum;
-  } else {
-    encodeContents = encodeContents.Left(8);
-  }
-
-  return encodeContents;
-}
-
-bool CBC_EAN8::Encode(const WideStringView& contents) {
-  if (contents.IsEmpty())
-    return false;
-
-  BCFORMAT format = BCFORMAT_EAN_8;
-  int32_t outWidth = 0;
-  int32_t outHeight = 0;
-  m_renderContents = Preprocess(contents);
-  ByteString byteString = m_renderContents.ToUTF8();
-  auto* pWriter = GetOnedEAN8Writer();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, format, outWidth, outHeight));
-  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
-                                       data.get(), outWidth);
-}
-
-bool CBC_EAN8::RenderDevice(CFX_RenderDevice* device,
-                            const CFX_Matrix* matrix) {
-  return GetOnedEAN8Writer()->RenderDeviceResult(
-      device, matrix, m_renderContents.AsStringView());
-}
+CBC_EAN8::~CBC_EAN8() = default;
 
 BC_TYPE CBC_EAN8::GetType() {
   return BC_EAN8;
 }
 
-CBC_OnedEAN8Writer* CBC_EAN8::GetOnedEAN8Writer() {
-  return static_cast<CBC_OnedEAN8Writer*>(m_pBCWriter.get());
+BCFORMAT CBC_EAN8::GetFormat() const {
+  return BCFORMAT_EAN_8;
+}
+
+size_t CBC_EAN8::GetMaxLength() const {
+  return 7;
 }

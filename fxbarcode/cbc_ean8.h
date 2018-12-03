@@ -9,25 +9,19 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "fxbarcode/cbc_onecode.h"
+#include "fxbarcode/cbc_eancode.h"
 
 class CBC_OnedEAN8Writer;
 
-class CBC_EAN8 final : public CBC_OneCode {
+class CBC_EAN8 final : public CBC_EANCode {
  public:
   CBC_EAN8();
   ~CBC_EAN8() override;
 
-  // CBC_OneCode:
-  bool Encode(const WideStringView& contents) override;
-  bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix* matrix) override;
+  // CBC_EANCode:
   BC_TYPE GetType() override;
-
- private:
-  CBC_OnedEAN8Writer* GetOnedEAN8Writer();
-  WideString Preprocess(const WideStringView& contents);
-  WideString m_renderContents;
+  BCFORMAT GetFormat() const override;
+  size_t GetMaxLength() const override;
 };
 
 #endif  // FXBARCODE_CBC_EAN8_H_

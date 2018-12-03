@@ -9,6 +9,7 @@ namespace {
 
 TEST(OnedEAN13WriterTest, Encode) {
   CBC_OnedEAN13Writer writer;
+  writer.InitEANWriter();
   int32_t width;
   int32_t height;
   uint8_t* encoded;
@@ -89,6 +90,7 @@ TEST(OnedEAN13WriterTest, Encode) {
 
 TEST(OnedEAN13WriterTest, Checksum) {
   CBC_OnedEAN13Writer writer;
+  writer.InitEANWriter();
   EXPECT_EQ(0, writer.CalcChecksum(""));
   EXPECT_EQ(6, writer.CalcChecksum("123"));
   EXPECT_EQ(8, writer.CalcChecksum("123456789012"));

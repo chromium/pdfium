@@ -27,55 +27,18 @@
 #include "third_party/base/ptr_util.h"
 
 CBC_EAN13::CBC_EAN13()
-    : CBC_OneCode(pdfium::MakeUnique<CBC_OnedEAN13Writer>()) {}
+    : CBC_EANCode(pdfium::MakeUnique<CBC_OnedEAN13Writer>()) {}
 
-CBC_EAN13::~CBC_EAN13() {}
-
-WideString CBC_EAN13::Preprocess(const WideStringView& contents) {
-  auto* pWriter = GetOnedEAN13Writer();
-  WideString encodeContents = pWriter->FilterContents(contents);
-  size_t length = encodeContents.GetLength();
-  if (length <= 12) {
-    for (size_t i = 0; i < 12 - length; i++)
-      encodeContents.InsertAtFront(L'0');
-
-    ByteString byteString = encodeContents.ToUTF8();
-    int32_t checksum = pWriter->CalcChecksum(byteString);
-    byteString += checksum + '0';
-    encodeContents = WideString::FromUTF8(byteString.AsStringView());
-  } else {
-    encodeContents = encodeContents.Left(13);
-  }
-
-  return encodeContents;
-}
-
-bool CBC_EAN13::Encode(const WideStringView& contents) {
-  if (contents.IsEmpty())
-    return false;
-
-  BCFORMAT format = BCFORMAT_EAN_13;
-  int32_t outWidth = 0;
-  int32_t outHeight = 0;
-  m_renderContents = Preprocess(contents);
-  ByteString byteString = m_renderContents.ToUTF8();
-  auto* pWriter = GetOnedEAN13Writer();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, format, outWidth, outHeight));
-  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
-                                       data.get(), outWidth);
-}
-
-bool CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
-                             const CFX_Matrix* matrix) {
-  return GetOnedEAN13Writer()->RenderDeviceResult(
-      device, matrix, m_renderContents.AsStringView());
-}
+CBC_EAN13::~CBC_EAN13() = default;
 
 BC_TYPE CBC_EAN13::GetType() {
   return BC_EAN13;
 }
 
-CBC_OnedEAN13Writer* CBC_EAN13::GetOnedEAN13Writer() {
-  return static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get());
+BCFORMAT CBC_EAN13::GetFormat() const {
+  return BCFORMAT_EAN_13;
+}
+
+size_t CBC_EAN13::GetMaxLength() const {
+  return 12;
 }

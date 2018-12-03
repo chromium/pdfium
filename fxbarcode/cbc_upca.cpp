@@ -26,56 +26,18 @@
 #include "fxbarcode/oned/BC_OnedUPCAWriter.h"
 #include "third_party/base/ptr_util.h"
 
-CBC_UPCA::CBC_UPCA() : CBC_OneCode(pdfium::MakeUnique<CBC_OnedUPCAWriter>()) {}
+CBC_UPCA::CBC_UPCA() : CBC_EANCode(pdfium::MakeUnique<CBC_OnedUPCAWriter>()) {}
 
-CBC_UPCA::~CBC_UPCA() {}
-
-WideString CBC_UPCA::Preprocess(const WideStringView& contents) {
-  CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
-  WideString encodeContents = pWriter->FilterContents(contents);
-  size_t length = encodeContents.GetLength();
-  if (length <= 11) {
-    for (size_t i = 0; i < 11 - length; i++)
-      encodeContents = L'0' + encodeContents;
-
-    ByteString byteString = encodeContents.ToUTF8();
-    int32_t checksum = pWriter->CalcChecksum(byteString);
-    byteString += '0' + checksum;
-    encodeContents = WideString::FromUTF8(byteString.AsStringView());
-  } else {
-    encodeContents = encodeContents.Left(12);
-  }
-
-  return encodeContents;
-}
-
-bool CBC_UPCA::Encode(const WideStringView& contents) {
-  if (contents.IsEmpty())
-    return false;
-
-  BCFORMAT format = BCFORMAT_UPC_A;
-  int32_t outWidth = 0;
-  int32_t outHeight = 0;
-  m_renderContents = Preprocess(contents);
-  ByteString byteString = m_renderContents.ToUTF8();
-  CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
-  pWriter->Init();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, format, outWidth, outHeight));
-  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
-                                       data.get(), outWidth);
-}
-
-bool CBC_UPCA::RenderDevice(CFX_RenderDevice* device,
-                            const CFX_Matrix* matrix) {
-  return GetOnedUPCAWriter()->RenderDeviceResult(
-      device, matrix, m_renderContents.AsStringView());
-}
+CBC_UPCA::~CBC_UPCA() = default;
 
 BC_TYPE CBC_UPCA::GetType() {
   return BC_UPCA;
 }
 
-CBC_OnedUPCAWriter* CBC_UPCA::GetOnedUPCAWriter() {
-  return static_cast<CBC_OnedUPCAWriter*>(m_pBCWriter.get());
+BCFORMAT CBC_UPCA::GetFormat() const {
+  return BCFORMAT_UPC_A;
+}
+
+size_t CBC_UPCA::GetMaxLength() const {
+  return 11;
 }

@@ -24,13 +24,13 @@ class CBC_OneCode : public CBC_CodeBase {
   virtual bool CheckContentValidity(const WideStringView& contents);
   virtual WideString FilterContents(const WideStringView& contents);
 
-  virtual void SetPrintChecksum(bool checksum);
-  virtual void SetDataLength(int32_t length);
-  virtual void SetCalChecksum(bool calc);
-  virtual bool SetFont(CFX_Font* cFont);
-  virtual void SetFontSize(float size);
-  virtual void SetFontStyle(int32_t style);
-  virtual void SetFontColor(FX_ARGB color);
+  void SetPrintChecksum(bool checksum);
+  void SetDataLength(int32_t length);
+  void SetCalChecksum(bool calc);
+  bool SetFont(CFX_Font* cFont);
+  void SetFontSize(float size);
+  void SetFontStyle(int32_t style);
+  void SetFontColor(FX_ARGB color);
 
  private:
   CBC_OneDimWriter* GetOneDimWriter();
