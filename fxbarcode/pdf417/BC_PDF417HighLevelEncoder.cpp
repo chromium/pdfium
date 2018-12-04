@@ -27,21 +27,29 @@
 
 namespace {
 
-constexpr int32_t kLatchToText = 900;
-constexpr int32_t kLatchToBytePadded = 901;
-constexpr int32_t kLatchToNumeric = 902;
-constexpr int32_t kShiftToByte = 913;
-constexpr int32_t kLatchToByte = 924;
+constexpr int16_t kLatchToText = 900;
+constexpr int16_t kLatchToBytePadded = 901;
+constexpr int16_t kLatchToNumeric = 902;
+constexpr int16_t kShiftToByte = 913;
+constexpr int16_t kLatchToByte = 924;
 
-constexpr uint8_t kTextMixedRaw[] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
-                                     38, 13, 9,  44, 58, 35, 45, 46, 36, 47,
-                                     43, 37, 42, 61, 94, 0,  32, 0,  0,  0};
-constexpr uint8_t kTextPunctuationRaw[] = {
-    59, 60, 62, 64, 91, 92, 93,  95, 96, 126, 33, 13,  9,   44, 58,
-    10, 45, 46, 36, 47, 34, 124, 42, 40, 41,  63, 123, 125, 39, 0};
+constexpr int8_t kMixed[128] = {
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, -1, -1, -1, 11, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 26, -1, -1, 15, 18, 21,
+    10, -1, -1, -1, 22, 20, 13, 16, 17, 19, 0,  1,  2,  3,  4,  5,  6,  7,  8,
+    9,  14, -1, -1, 23, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 24,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
-int32_t g_mixed[128] = {0};
-int32_t g_punctuation[128] = {0};
+constexpr int8_t kPunctuation[128] = {
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 15, -1, -1, 11, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 20, -1, 18, -1,
+    -1, 28, 23, 24, 22, -1, 13, 16, 17, 19, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, 14, 0,  1,  -1, 2,  25, 3,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4,  5,  6,  -1,
+    7,  8,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, 26, 21, 27, 9,  -1};
 
 bool IsAlphaUpperOrSpace(wchar_t ch) {
   return ch == ' ' || (ch >= 'A' && ch <= 'Z');
@@ -53,46 +61,21 @@ bool IsAlphaLowerOrSpace(wchar_t ch) {
 
 bool IsMixed(wchar_t ch) {
   // Bounds check avoiding sign mismatch error given questionable signedness.
-  return !((ch & ~0x7F) || g_mixed[ch] == -1);
+  return !((ch & ~0x7F) || kMixed[ch] == -1);
 }
 
 bool IsPunctuation(wchar_t ch) {
   // Bounds check avoiding sign mismatch error given questionable signedness.
-  return !((ch & ~0x7F) || g_punctuation[ch] == -1);
+  return !((ch & ~0x7F) || kPunctuation[ch] == -1);
 }
 
 bool IsText(wchar_t ch) {
   return (ch >= 32 && ch <= 126) || ch == '\t' || ch == '\n' || ch == '\r';
 }
 
-void Inverse() {
-  for (size_t l = 0; l < FX_ArraySize(g_mixed); ++l)
-    g_mixed[l] = -1;
-
-  for (uint8_t i = 0; i < FX_ArraySize(kTextMixedRaw); ++i) {
-    uint8_t b = kTextMixedRaw[i];
-    if (b != 0)
-      g_mixed[b] = i;
-  }
-
-  for (size_t l = 0; l < FX_ArraySize(g_punctuation); ++l)
-    g_punctuation[l] = -1;
-
-  for (uint8_t i = 0; i < FX_ArraySize(kTextPunctuationRaw); ++i) {
-    uint8_t b = kTextPunctuationRaw[i];
-    if (b != 0)
-      g_punctuation[b] = i;
-  }
-}
-
 }  // namespace
 
-void CBC_PDF417HighLevelEncoder::Initialize() {
-  Inverse();
-}
-
-void CBC_PDF417HighLevelEncoder::Finalize() {}
-
+// static
 Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
     const WideString& msg) {
   ByteString bytes = msg.ToUTF8();
@@ -188,7 +171,7 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
         }
         if (IsPunctuation(ch)) {
           tmp += 29;
-          tmp += g_punctuation[ch];
+          tmp += kPunctuation[ch];
         }
         break;
       case SubMode::kLower:
@@ -211,12 +194,12 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
         }
         if (IsPunctuation(ch)) {
           tmp += 29;
-          tmp += g_punctuation[ch];
+          tmp += kPunctuation[ch];
         }
         break;
       case SubMode::kMixed:
         if (IsMixed(ch)) {
-          tmp += g_mixed[ch];
+          tmp += kMixed[ch];
           break;
         }
         if (IsAlphaUpperOrSpace(ch)) {
@@ -239,12 +222,12 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
         }
         if (IsPunctuation(ch)) {
           tmp += 29;
-          tmp += g_punctuation[ch];
+          tmp += kPunctuation[ch];
         }
         break;
       default:
         if (IsPunctuation(ch)) {
-          tmp += g_punctuation[ch];
+          tmp += kPunctuation[ch];
           break;
         }
         submode = SubMode::kAlpha;

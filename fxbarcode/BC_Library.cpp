@@ -10,7 +10,6 @@
 
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
@@ -21,7 +20,6 @@ void BC_Library_Init() {
   CBC_QRCoderVersion::Initialize();
   CBC_ReedSolomonGF256::Initialize();
   CBC_SymbolInfo::Initialize();
-  CBC_PDF417HighLevelEncoder::Initialize();
 }
 
 void BC_Library_Destroy() {
@@ -30,5 +28,4 @@ void BC_Library_Destroy() {
   CBC_QRCoderVersion::Finalize();
   CBC_ReedSolomonGF256::Finalize();
   CBC_SymbolInfo::Finalize();
-  CBC_PDF417HighLevelEncoder::Finalize();
 }
