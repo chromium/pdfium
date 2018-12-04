@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
+
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
