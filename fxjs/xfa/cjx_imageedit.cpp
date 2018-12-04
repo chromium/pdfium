@@ -15,17 +15,17 @@ CJX_ImageEdit::~CJX_ImageEdit() = default;
 void CJX_ImageEdit::use(CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_ImageEdit::usehref(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_ImageEdit::data(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

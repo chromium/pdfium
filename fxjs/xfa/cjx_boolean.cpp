@@ -16,7 +16,7 @@ CJX_Boolean::~CJX_Boolean() = default;
 void CJX_Boolean::use(CFXJSE_Value* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
@@ -44,7 +44,7 @@ void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
 void CJX_Boolean::usehref(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Boolean::value(CFXJSE_Value* pValue,

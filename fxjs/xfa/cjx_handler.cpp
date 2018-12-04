@@ -15,13 +15,13 @@ CJX_Handler::~CJX_Handler() = default;
 void CJX_Handler::use(CFXJSE_Value* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Handler::type(CFXJSE_Value* pValue,
                        bool bSetting,
                        XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Handler::version(CFXJSE_Value* pValue,
@@ -31,5 +31,5 @@ void CJX_Handler::version(CFXJSE_Value* pValue,
 void CJX_Handler::usehref(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

@@ -15,5 +15,5 @@ CJX_SubjectDNs::~CJX_SubjectDNs() = default;
 void CJX_SubjectDNs::type(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

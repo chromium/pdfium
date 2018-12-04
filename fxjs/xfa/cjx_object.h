@@ -113,67 +113,67 @@ class CJX_Object {
                          bool bNotify,
                          bool bScriptModify);
 
-  void Script_Attribute_String(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_Attribute eAttribute);
-  void Script_Attribute_BOOL(CFXJSE_Value* pValue,
+  void ScriptAttributeString(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute);
-  void Script_Attribute_Integer(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
+  void ScriptAttributeBool(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
+  void ScriptAttributeInteger(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
 
-  void Script_Som_FontColor(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
-  void Script_Som_FillColor(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
-  void Script_Som_BorderColor(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
-  void Script_Som_BorderWidth(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
-  void Script_Som_ValidationMessage(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-  void Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
-  void Script_Field_Length(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void Script_Som_DefaultValue(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_Attribute eAttribute);
-  void Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-  void Script_Som_DataNode(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void Script_Som_Mandatory(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
-  void Script_Som_InstanceIndex(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
-  void Script_Som_Message(CFXJSE_Value* pValue,
+  void ScriptSomFontColor(CFXJSE_Value* pValue,
                           bool bSetting,
-                          XFA_SOM_MESSAGETYPE iMessageType);
-  void Script_Subform_InstanceManager(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_AttributeEnum eAttribute);
-  void Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
-  void Script_Form_Checksum(CFXJSE_Value* pValue,
+                          XFA_Attribute eAttribute);
+  void ScriptSomFillColor(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute);
+  void ScriptSomBorderColor(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute);
-  void Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
+  void ScriptSomBorderWidth(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute);
+  void ScriptSomValidationMessage(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute);
+  void ScriptSomMandatoryMessage(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute);
+  void ScriptFieldLength(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute);
+  void ScriptSomDefaultValue(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute);
+  void ScriptSomDefaultValue_Read(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
+  void ScriptSomDataNode(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute);
+  void ScriptSomMandatory(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute);
+  void ScriptSomInstanceIndex(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
+  void ScriptSomMessage(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_SOM_MESSAGETYPE iMessageType);
+  void ScriptSubformInstanceManager(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_AttributeEnum eAttribute);
+  void ScriptSubmitFormatMode(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute);
+  void ScriptFormChecksumS(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
+  void ScriptExclGroupErrorText(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute);
 
   Optional<WideString> TryNamespace();
 

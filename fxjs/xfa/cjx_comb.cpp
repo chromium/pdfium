@@ -15,17 +15,17 @@ CJX_Comb::~CJX_Comb() = default;
 void CJX_Comb::use(CFXJSE_Value* pValue,
                    bool bSetting,
                    XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Comb::numberOfCells(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
-  Script_Attribute_Integer(pValue, bSetting, eAttribute);
+  ScriptAttributeInteger(pValue, bSetting, eAttribute);
 }
 
 void CJX_Comb::usehref(CFXJSE_Value* pValue,
                        bool bSetting,
                        XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

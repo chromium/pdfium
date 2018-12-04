@@ -15,23 +15,23 @@ CJX_DateTime::~CJX_DateTime() = default;
 void CJX_DateTime::use(CFXJSE_Value* pValue,
                        bool bSetting,
                        XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_DateTime::defaultValue(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {
-  Script_Som_DefaultValue(pValue, bSetting, eAttribute);
+  ScriptSomDefaultValue(pValue, bSetting, eAttribute);
 }
 
 void CJX_DateTime::usehref(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_DateTime::value(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
-  Script_Som_DefaultValue(pValue, bSetting, eAttribute);
+  ScriptSomDefaultValue(pValue, bSetting, eAttribute);
 }

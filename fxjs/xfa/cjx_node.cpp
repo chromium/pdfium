@@ -439,7 +439,7 @@ CJS_Result CJX_Node::setElement(
 void CJX_Node::id(CFXJSE_Value* pValue,
                   bool bSetting,
                   XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Node::ns(CFXJSE_Value* pValue,

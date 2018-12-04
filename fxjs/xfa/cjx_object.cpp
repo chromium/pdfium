@@ -1145,9 +1145,9 @@ std::unique_ptr<CXFA_CalcData> CJX_Object::ReleaseCalcData() {
   return std::move(calc_data_);
 }
 
-void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute eAttribute) {
+void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
+                                       bool bSetting,
+                                       XFA_Attribute eAttribute) {
   if (!bSetting) {
     pValue->SetString(GetAttribute(eAttribute).ToUTF8().AsStringView());
     return;
@@ -1212,9 +1212,9 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
   pProtoForm = nullptr;
 }
 
-void CJX_Object::Script_Attribute_BOOL(CFXJSE_Value* pValue,
-                                       bool bSetting,
-                                       XFA_Attribute eAttribute) {
+void CJX_Object::ScriptAttributeBool(CFXJSE_Value* pValue,
+                                     bool bSetting,
+                                     XFA_Attribute eAttribute) {
   if (bSetting) {
     SetBoolean(eAttribute, pValue->ToBoolean(), true);
     return;
@@ -1222,9 +1222,9 @@ void CJX_Object::Script_Attribute_BOOL(CFXJSE_Value* pValue,
   pValue->SetString(GetBoolean(eAttribute) ? "1" : "0");
 }
 
-void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
-                                          bool bSetting,
-                                          XFA_Attribute eAttribute) {
+void CJX_Object::ScriptAttributeInteger(CFXJSE_Value* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute) {
   if (bSetting) {
     SetInteger(eAttribute, pValue->ToInteger(), true);
     return;
@@ -1232,9 +1232,9 @@ void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
   pValue->SetInteger(GetInteger(eAttribute));
 }
 
-void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomFontColor(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute) {
   CXFA_Font* font = ToNode(object_.Get())->GetOrCreateFontIfPossible();
   if (!font)
     return;
@@ -1257,9 +1257,9 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
   pValue->SetString(ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
 
-void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomFillColor(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute) {
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   CXFA_Fill* borderfill = border->GetOrCreateFillIfPossible();
   if (!borderfill)
@@ -1285,9 +1285,9 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
       WideString::Format(L"%d,%d,%d", r, g, b).ToUTF8().AsStringView());
 }
 
-void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
-                                        bool bSetting,
-                                        XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomBorderColor(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute) {
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   int32_t iSize = border->CountEdges();
   if (bSetting) {
@@ -1316,9 +1316,9 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
       WideString::Format(L"%d,%d,%d", r, g, b).ToUTF8().AsStringView());
 }
 
-void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
-                                        bool bSetting,
-                                        XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomBorderWidth(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute) {
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   if (bSetting) {
     CXFA_Edge* edge = border->GetEdgeIfExists(0);
@@ -1336,9 +1336,9 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
   }
 }
 
-void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_SOM_MESSAGETYPE iMessageType) {
+void CJX_Object::ScriptSomMessage(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_SOM_MESSAGETYPE iMessageType) {
   bool bNew = false;
   CXFA_Validate* validate = ToNode(object_.Get())->GetValidateIfExists();
   if (!validate) {
@@ -1396,21 +1396,21 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
   pValue->SetString(wsMessage.ToUTF8().AsStringView());
 }
 
-void CJX_Object::Script_Som_ValidationMessage(CFXJSE_Value* pValue,
-                                              bool bSetting,
-                                              XFA_Attribute eAttribute) {
-  Script_Som_Message(pValue, bSetting, XFA_SOM_ValidationMessage);
+void CJX_Object::ScriptSomValidationMessage(CFXJSE_Value* pValue,
+                                            bool bSetting,
+                                            XFA_Attribute eAttribute) {
+  ScriptSomMessage(pValue, bSetting, XFA_SOM_ValidationMessage);
 }
 
-void CJX_Object::Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
-                                             bool bSetting,
-                                             XFA_Attribute eAttribute) {
-  Script_Som_Message(pValue, bSetting, XFA_SOM_MandatoryMessage);
+void CJX_Object::ScriptSomMandatoryMessage(CFXJSE_Value* pValue,
+                                           bool bSetting,
+                                           XFA_Attribute eAttribute) {
+  ScriptSomMessage(pValue, bSetting, XFA_SOM_MandatoryMessage);
 }
 
-void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
+void CJX_Object::ScriptFieldLength(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
@@ -1424,9 +1424,9 @@ void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
   pValue->SetInteger(node->CountChoiceListItems(true));
 }
 
-void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute /* unused */) {
+void CJX_Object::ScriptSomDefaultValue(CFXJSE_Value* pValue,
+                                       bool bSetting,
+                                       XFA_Attribute /* unused */) {
   XFA_Element eType = ToNode(GetXFAObject())->GetElementType();
 
   // TODO(dsinclair): This should look through the properties on the node to see
@@ -1497,9 +1497,9 @@ void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
   }
 }
 
-void CJX_Object::Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
-                                              bool bSetting,
-                                              XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomDefaultValue_Read(CFXJSE_Value* pValue,
+                                            bool bSetting,
+                                            XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
@@ -1513,9 +1513,9 @@ void CJX_Object::Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
   pValue->SetString(content.ToUTF8().AsStringView());
 }
 
-void CJX_Object::Script_Som_DataNode(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomDataNode(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
@@ -1531,9 +1531,9 @@ void CJX_Object::Script_Som_DataNode(CFXJSE_Value* pValue,
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pDataNode));
 }
 
-void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomMandatory(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute) {
   CXFA_Validate* validate =
       ToNode(object_.Get())->GetOrCreateValidateIfPossible();
   if (!validate)
@@ -1547,9 +1547,9 @@ void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
   pValue->SetString(CXFA_Node::AttributeEnumToName(validate->GetNullTest()));
 }
 
-void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
-                                          bool bSetting,
-                                          XFA_Attribute eAttribute) {
+void CJX_Object::ScriptSomInstanceIndex(CFXJSE_Value* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute) {
   if (!bSetting) {
     pValue->SetInteger(Subform_and_SubformSet_InstanceIndex());
     return;
@@ -1586,9 +1586,9 @@ void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
   }
 }
 
-void CJX_Object::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
-                                                bool bSetting,
-                                                XFA_AttributeEnum eAttribute) {
+void CJX_Object::ScriptSubformInstanceManager(CFXJSE_Value* pValue,
+                                              bool bSetting,
+                                              XFA_AttributeEnum eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
@@ -1617,13 +1617,13 @@ void CJX_Object::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pInstanceMgr));
 }
 
-void CJX_Object::Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
-                                          bool bSetting,
-                                          XFA_Attribute eAttribute) {}
+void CJX_Object::ScriptSubmitFormatMode(CFXJSE_Value* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute) {}
 
-void CJX_Object::Script_Form_Checksum(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
+void CJX_Object::ScriptFormChecksumS(CFXJSE_Value* pValue,
+                                     bool bSetting,
+                                     XFA_Attribute eAttribute) {
   if (bSetting) {
     SetAttribute(XFA_Attribute::Checksum, pValue->ToWideString().AsStringView(),
                  false);
@@ -1634,9 +1634,9 @@ void CJX_Object::Script_Form_Checksum(CFXJSE_Value* pValue,
   pValue->SetString(checksum ? checksum->ToUTF8().AsStringView() : "");
 }
 
-void CJX_Object::Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
+void CJX_Object::ScriptExclGroupErrorText(CFXJSE_Value* pValue,
+                                          bool bSetting,
+                                          XFA_Attribute eAttribute) {
   if (bSetting)
     ThrowInvalidPropertyException();
 }

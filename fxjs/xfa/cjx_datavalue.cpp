@@ -15,19 +15,19 @@ CJX_DataValue::~CJX_DataValue() = default;
 void CJX_DataValue::contentType(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_DataValue::contains(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_DataValue::defaultValue(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
-  Script_Som_DefaultValue(pValue, bSetting, eAttribute);
+  ScriptSomDefaultValue(pValue, bSetting, eAttribute);
 }
 
 void CJX_DataValue::value(CFXJSE_Value* pValue,
@@ -39,5 +39,5 @@ void CJX_DataValue::value(CFXJSE_Value* pValue,
 void CJX_DataValue::isNull(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
-  Script_Attribute_BOOL(pValue, bSetting, eAttribute);
+  ScriptAttributeBool(pValue, bSetting, eAttribute);
 }

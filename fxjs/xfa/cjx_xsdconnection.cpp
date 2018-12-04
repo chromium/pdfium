@@ -16,5 +16,5 @@ CJX_XsdConnection::~CJX_XsdConnection() = default;
 void CJX_XsdConnection::dataDescription(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

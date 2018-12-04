@@ -29,11 +29,11 @@ void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
 void CJX_Xfa::timeStamp(CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Xfa::uuid(CFXJSE_Value* pValue,
                    bool bSetting,
                    XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

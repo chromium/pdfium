@@ -399,8 +399,8 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       const XFA_SCRIPTATTRIBUTEINFO* lpAttrInfo = XFA_GetScriptAttributeByName(
           pPropOrChild->GetElementType(), L"{default}");
       if (lpAttrInfo) {
-        pPropOrChild->JSObject()->Script_Som_DefaultValue(
-            pReturnValue, true, XFA_Attribute::Unknown);
+        pPropOrChild->JSObject()->ScriptSomDefaultValue(pReturnValue, true,
+                                                        XFA_Attribute::Unknown);
         return;
       }
     }

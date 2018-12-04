@@ -15,7 +15,7 @@ CJX_Encrypt::~CJX_Encrypt() = default;
 void CJX_Encrypt::use(CFXJSE_Value* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Encrypt::format(CFXJSE_Value* pValue,
@@ -25,5 +25,5 @@ void CJX_Encrypt::format(CFXJSE_Value* pValue,
 void CJX_Encrypt::usehref(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

@@ -133,7 +133,7 @@ void CJX_Tree::classAll(CFXJSE_Value* pValue,
 void CJX_Tree::name(CFXJSE_Value* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {
-  Script_Attribute_String(pValue, bSetting, eAttribute);
+  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Tree::nodes(CFXJSE_Value* pValue,
