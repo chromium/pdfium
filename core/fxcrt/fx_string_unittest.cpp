@@ -53,3 +53,26 @@ TEST(fxstring, FX_UTF8EncodeDecodeConsistency) {
   EXPECT_EQ(0x10000u, wstr2.GetLength());
   EXPECT_EQ(wstr, wstr2);
 }
+
+TEST(fxstring, StringToFloat) {
+  EXPECT_FLOAT_EQ(0.0f, StringToFloat(""));
+  EXPECT_FLOAT_EQ(0.0f, StringToFloat("0"));
+  EXPECT_FLOAT_EQ(0.0f, StringToFloat("0.0"));
+  EXPECT_FLOAT_EQ(0.0f, StringToFloat("-0.0"));
+
+  EXPECT_FLOAT_EQ(0.25f, StringToFloat("0.25"));
+  EXPECT_FLOAT_EQ(-0.25f, StringToFloat("-0.25"));
+
+  EXPECT_FLOAT_EQ(100.0f, StringToFloat("100"));
+  EXPECT_FLOAT_EQ(100.0f, StringToFloat("100.0"));
+  EXPECT_FLOAT_EQ(100.0f, StringToFloat("    100.0"));
+  EXPECT_FLOAT_EQ(-100.0f, StringToFloat("-100.0000"));
+
+  EXPECT_FLOAT_EQ(3.402823e+38f,
+                  StringToFloat("340282300000000000000000000000000000000"));
+  EXPECT_FLOAT_EQ(-3.402823e+38f,
+                  StringToFloat("-340282300000000000000000000000000000000"));
+
+  EXPECT_FLOAT_EQ(1.000000119f, StringToFloat("1.000000119"));
+  EXPECT_FLOAT_EQ(1.999999881f, StringToFloat("1.999999881"));
+}
