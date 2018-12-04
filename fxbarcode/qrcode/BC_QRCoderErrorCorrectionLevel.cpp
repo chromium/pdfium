@@ -44,7 +44,11 @@ void CBC_QRCoderErrorCorrectionLevel::Initialize() {
 
 void CBC_QRCoderErrorCorrectionLevel::Finalize() {
   delete L;
+  L = nullptr;
   delete M;
+  M = nullptr;
   delete Q;
+  Q = nullptr;
   delete H;
+  H = nullptr;
 }

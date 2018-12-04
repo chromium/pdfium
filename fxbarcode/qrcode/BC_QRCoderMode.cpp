@@ -62,15 +62,25 @@ void CBC_QRCoderMode::Initialize() {
 
 void CBC_QRCoderMode::Finalize() {
   delete sBYTE;
+  sBYTE = nullptr;
   delete sALPHANUMERIC;
+  sALPHANUMERIC = nullptr;
   delete sECI;
+  sECI = nullptr;
   delete sKANJI;
+  sKANJI = nullptr;
   delete sNUMERIC;
+  sNUMERIC = nullptr;
   delete sGBK;
+  sGBK = nullptr;
   delete sTERMINATOR;
+  sTERMINATOR = nullptr;
   delete sFNC1_FIRST_POSITION;
+  sFNC1_FIRST_POSITION = nullptr;
   delete sFNC1_SECOND_POSITION;
+  sFNC1_SECOND_POSITION = nullptr;
   delete sSTRUCTURED_APPEND;
+  sSTRUCTURED_APPEND = nullptr;
 }
 
 int32_t CBC_QRCoderMode::GetBits() const {
