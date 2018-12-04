@@ -96,8 +96,8 @@ CBC_SymbolInfo::CBC_SymbolInfo(size_t dataCapacity,
                                int32_t matrixWidth,
                                int32_t matrixHeight,
                                int32_t dataRegions,
-                               int32_t rsBlockData,
-                               int32_t rsBlockError)
+                               size_t rsBlockData,
+                               size_t rsBlockError)
     : m_rectangular(matrixWidth != matrixHeight),
       m_dataCapacity(dataCapacity),
       m_errorCodewords(errorCodewords),
@@ -182,10 +182,10 @@ size_t CBC_SymbolInfo::getInterleavedBlockCount() const {
   return m_dataCapacity / m_rsBlockData;
 }
 
-int32_t CBC_SymbolInfo::getDataLengthForInterleavedBlock(int32_t index) const {
+size_t CBC_SymbolInfo::getDataLengthForInterleavedBlock() const {
   return m_rsBlockData;
 }
 
-int32_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock(int32_t index) const {
+size_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock() const {
   return m_rsBlockError;
 }

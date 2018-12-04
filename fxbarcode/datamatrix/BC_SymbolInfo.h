@@ -31,8 +31,8 @@ class CBC_SymbolInfo {
   int32_t getSymbolHeight() const;
   size_t getCodewordCount() const;
   virtual size_t getInterleavedBlockCount() const;
-  int32_t getDataLengthForInterleavedBlock(int32_t index) const;
-  int32_t getErrorLengthForInterleavedBlock(int32_t index) const;
+  size_t getDataLengthForInterleavedBlock() const;
+  size_t getErrorLengthForInterleavedBlock() const;
 
   size_t dataCapacity() const { return m_dataCapacity; }
   size_t errorCodewords() const { return m_errorCodewords; }
@@ -45,8 +45,8 @@ class CBC_SymbolInfo {
                  int32_t matrixWidth,
                  int32_t matrixHeight,
                  int32_t dataRegions,
-                 int32_t rsBlockData,
-                 int32_t rsBlockError);
+                 size_t rsBlockData,
+                 size_t rsBlockError);
 
  private:
   int32_t getHorizontalDataRegions() const;
@@ -58,8 +58,8 @@ class CBC_SymbolInfo {
   const int32_t m_matrixWidth;
   const int32_t m_matrixHeight;
   const int32_t m_dataRegions;
-  const int32_t m_rsBlockData;
-  const int32_t m_rsBlockError;
+  const size_t m_rsBlockData;
+  const size_t m_rsBlockError;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_

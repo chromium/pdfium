@@ -139,40 +139,40 @@ constexpr uint8_t ALOG[256] = {
     3,   6,   12,  24,  48,  96,  192, 173, 119, 238, 241, 207, 179, 75,  150,
     0};
 
-WideString CreateECCBlock(const WideString& codewords, int32_t numECWords) {
+WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   ASSERT(numECWords > 0);
 
-  const int32_t len = codewords.GetLength();
+  const size_t len = codewords.GetLength();
   static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
   size_t table = 0;
   while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
-    table++;
+    ++table;
 
   if (table >= kFactorTableNum)
     return WideString();
 
-  uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
-  for (int32_t i = 0; i < 0 + len; i++) {
+  std::vector<uint16_t> ecc(numECWords);
+  for (size_t i = 0; i < len; ++i) {
     uint16_t m = ecc[numECWords - 1] ^ codewords[i];
-    for (int32_t k = numECWords - 1; k > 0; k--) {
-      if (m != 0 && FACTORS[table][k] != 0) {
-        ecc[k] = (uint16_t)(ecc[k - 1] ^
-                            ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
+    for (int32_t j = numECWords - 1; j > 0; --j) {
+      if (m != 0 && FACTORS[table][j] != 0) {
+        ecc[j] = static_cast<uint16_t>(
+            ecc[j - 1] ^ ALOG[(LOG[m] + LOG[FACTORS[table][j]]) % 255]);
       } else {
-        ecc[k] = ecc[k - 1];
+        ecc[j] = ecc[j - 1];
       }
     }
     if (m != 0 && FACTORS[table][0] != 0) {
-      ecc[0] = (uint16_t)ALOG[(LOG[m] + LOG[FACTORS[table][0]]) % 255];
+      ecc[0] =
+          static_cast<uint16_t>(ALOG[(LOG[m] + LOG[FACTORS[table][0]]) % 255]);
     } else {
       ecc[0] = 0;
     }
   }
   WideString strecc;
-  for (int32_t j = 0; j < numECWords; j++) {
-    strecc += (wchar_t)ecc[numECWords - j - 1];
-  }
-  FX_Free(ecc);
+  strecc.Reserve(numECWords);
+  for (size_t i = 0; i < numECWords; ++i)
+    strecc.InsertAtBack(static_cast<wchar_t>(ecc[numECWords - i - 1]));
 
   ASSERT(!strecc.IsEmpty());
   return strecc;
@@ -193,30 +193,28 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
       return WideString();
     sb += ecc;
   } else {
-    std::vector<int32_t> dataSizes(blockCount);
-    std::vector<int32_t> errorSizes(blockCount);
-    std::vector<int32_t> startPos(blockCount);
-    for (size_t i = 0; i < blockCount; i++) {
-      dataSizes[i] = symbolInfo->getDataLengthForInterleavedBlock(i + 1);
-      errorSizes[i] = symbolInfo->getErrorLengthForInterleavedBlock(i + 1);
-      startPos[i] = 0;
-      if (i > 0) {
-        startPos[i] = startPos[i - 1] + dataSizes[i];
-      }
+    std::vector<size_t> dataSizes(blockCount);
+    std::vector<size_t> errorSizes(blockCount);
+    std::vector<size_t> startPos(blockCount);
+    for (size_t i = 0; i < blockCount; ++i) {
+      dataSizes[i] = symbolInfo->getDataLengthForInterleavedBlock();
+      errorSizes[i] = symbolInfo->getErrorLengthForInterleavedBlock();
+      startPos[i] = i > 0 ? startPos[i - 1] + dataSizes[i] : 0;
     }
-    for (size_t block = 0; block < blockCount; block++) {
+    for (size_t block = 0; block < blockCount; ++block) {
       WideString temp;
+      if (symbolInfo->dataCapacity() > block)
+        temp.Reserve((symbolInfo->dataCapacity() - block / blockCount) + 1);
       for (size_t d = block; d < symbolInfo->dataCapacity(); d += blockCount)
-        temp += static_cast<wchar_t>(codewords[d]);
+        temp.InsertAtBack(static_cast<wchar_t>(codewords[d]));
 
       WideString ecc = CreateECCBlock(temp, errorSizes[block]);
       if (ecc.IsEmpty())
         return WideString();
 
-      size_t pos = 0;
-      for (size_t i = block; i < errorSizes[block] * blockCount;
-           i += blockCount) {
-        sb.SetAt(symbolInfo->dataCapacity() + i, ecc[pos++]);
+      for (size_t pos = 0, i = block; i < errorSizes[block] * blockCount;
+           ++pos, i += blockCount) {
+        sb.SetAt(symbolInfo->dataCapacity() + i, ecc[pos]);
       }
     }
   }
