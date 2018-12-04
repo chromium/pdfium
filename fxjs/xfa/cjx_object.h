@@ -225,16 +225,6 @@ class CJX_Object {
   void ThrowException(const WideString& str) const;
 
  private:
-  void Script_Boolean_DefaultValue(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
-  void Script_Draw_DefaultValue(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
-  void Script_Field_DefaultValue(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute);
-
   std::pair<CXFA_Node*, int32_t> GetPropertyInternal(int32_t index,
                                                      XFA_Element eType) const;
   CXFA_Node* GetOrCreatePropertyInternal(int32_t index, XFA_Element eType);
