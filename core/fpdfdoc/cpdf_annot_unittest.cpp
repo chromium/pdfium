@@ -48,6 +48,13 @@ TEST(CPDFAnnotTest, BoundingRectFromQuadPoints) {
   EXPECT_EQ(0.0f, rect.right);
   EXPECT_EQ(0.0f, rect.top);
 
+  dict.SetFor("QuadPoints", CreateQuadPointArrayFromVector({0, 1, 2}));
+  rect = CPDF_Annot::BoundingRectFromQuadPoints(&dict);
+  EXPECT_EQ(0.0f, rect.left);
+  EXPECT_EQ(0.0f, rect.bottom);
+  EXPECT_EQ(0.0f, rect.right);
+  EXPECT_EQ(0.0f, rect.top);
+
   dict.SetFor("QuadPoints",
               CreateQuadPointArrayFromVector({0, 1, 2, 3, 4, 5, 6, 7}));
   rect = CPDF_Annot::BoundingRectFromQuadPoints(&dict);
@@ -86,6 +93,11 @@ TEST(CPDFAnnotTest, RectFromQuadPoints) {
   EXPECT_EQ(5.0f, rect.bottom);
   EXPECT_EQ(2.0f, rect.right);
   EXPECT_EQ(3.0f, rect.top);
+  rect = CPDF_Annot::RectFromQuadPoints(&dict, 5);
+  EXPECT_EQ(0.0f, rect.left);
+  EXPECT_EQ(0.0f, rect.bottom);
+  EXPECT_EQ(0.0f, rect.right);
+  EXPECT_EQ(0.0f, rect.top);
 
   dict.SetFor("QuadPoints", CreateQuadPointArrayFromVector(
                                 {0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5,
