@@ -75,11 +75,6 @@ const CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
   return (*g_VERSION)[versionNumber - 1].get();
 }
 
-// static
-void CBC_QRCoderVersion::Destroy() {
-  g_VERSION->clear();
-}
-
 int32_t CBC_QRCoderVersion::GetVersionNumber() const {
   return m_versionNumber;
 }

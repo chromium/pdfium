@@ -48,22 +48,3 @@ void CBC_QRCoderErrorCorrectionLevel::Finalize() {
   delete Q;
   delete H;
 }
-
-void CBC_QRCoderErrorCorrectionLevel::Destroy() {
-  if (L) {
-    delete CBC_QRCoderErrorCorrectionLevel::L;
-    L = nullptr;
-  }
-  if (M) {
-    delete CBC_QRCoderErrorCorrectionLevel::M;
-    M = nullptr;
-  }
-  if (H) {
-    delete CBC_QRCoderErrorCorrectionLevel::H;
-    H = nullptr;
-  }
-  if (Q) {
-    delete CBC_QRCoderErrorCorrectionLevel::Q;
-    Q = nullptr;
-  }
-}

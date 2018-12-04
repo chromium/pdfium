@@ -25,7 +25,6 @@ class CBC_QRCoderVersion {
   static void Finalize();
 
   static const CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber);
-  static void Destroy();
 
   int32_t GetVersionNumber() const;
   int32_t GetTotalCodeWords() const;

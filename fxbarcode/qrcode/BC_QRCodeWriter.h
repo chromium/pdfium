@@ -9,13 +9,10 @@
 
 #include "fxbarcode/BC_TwoDimWriter.h"
 
-class CBC_TwoDimWriter;
 class CBC_QRCodeWriter final : public CBC_TwoDimWriter {
  public:
   CBC_QRCodeWriter();
   ~CBC_QRCodeWriter() override;
-
-  static void ReleaseAll();
 
   uint8_t* Encode(const WideString& contents,
                   int32_t ecLevel,

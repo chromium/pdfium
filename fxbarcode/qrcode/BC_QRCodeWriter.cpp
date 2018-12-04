@@ -35,17 +35,7 @@ CBC_QRCodeWriter::CBC_QRCodeWriter() {
   m_iCorrectLevel = 1;
 }
 
-CBC_QRCodeWriter::~CBC_QRCodeWriter() {}
-
-void CBC_QRCodeWriter::ReleaseAll() {
-  delete CBC_ReedSolomonGF256::QRCodeField;
-  CBC_ReedSolomonGF256::QRCodeField = nullptr;
-  delete CBC_ReedSolomonGF256::DataMatrixField;
-  CBC_ReedSolomonGF256::DataMatrixField = nullptr;
-  CBC_QRCoderMode::Destroy();
-  CBC_QRCoderErrorCorrectionLevel::Destroy();
-  CBC_QRCoderVersion::Destroy();
-}
+CBC_QRCodeWriter::~CBC_QRCodeWriter() = default;
 
 bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3) {
