@@ -87,20 +87,22 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
 }
 
 std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
-  static const wchar_t s_pStyle[] =
-      L"html,body,ol,p,ul{display:block}"
-      L"li{display:list-item}"
-      L"ol,ul{padding-left:33px;margin:1.12em 0}"
-      L"ol{list-style-type:decimal}"
-      L"a{color:#0000ff;text-decoration:underline}"
-      L"b{font-weight:bolder}"
-      L"i{font-style:italic}"
-      L"sup{vertical-align:+15em;font-size:.66em}"
-      L"sub{vertical-align:-15em;font-size:.66em}";
-
+  static const char kStyle[] =
+      "html,body,ol,p,ul{display:block}"
+      "li{display:list-item}"
+      "ol,ul{padding-left:33px;margin:1.12em 0}"
+      "ol{list-style-type:decimal}"
+      "a{color:#0000ff;text-decoration:underline}"
+      "b{font-weight:bolder}"
+      "i{font-style:italic}"
+      "sup{vertical-align:+15em;font-size:.66em}"
+      "sub{vertical-align:-15em;font-size:.66em}";
+  WideString ws = WideString::FromASCII(kStyle);
   auto sheet = pdfium::MakeUnique<CFX_CSSStyleSheet>();
-  return sheet->LoadBuffer(s_pStyle, wcslen(s_pStyle)) ? std::move(sheet)
-                                                       : nullptr;
+  if (!sheet->LoadBuffer(ws.c_str(), ws.GetLength()))
+    return nullptr;
+
+  return sheet;
 }
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
