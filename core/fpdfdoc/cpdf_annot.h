@@ -71,7 +71,7 @@ class CPDF_Annot {
                                                size_t nIndex);
   static CFX_FloatRect BoundingRectFromQuadPoints(
       const CPDF_Dictionary* pAnnotDict);
-  static CFX_FloatRect RectFromQuadPoints(CPDF_Dictionary* pAnnotDict,
+  static CFX_FloatRect RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                           size_t nIndex);
   static size_t QuadPointCount(const CPDF_Array* pArray);
 

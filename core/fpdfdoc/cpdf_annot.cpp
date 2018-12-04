@@ -247,9 +247,9 @@ CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
 }
 
 // static
-CFX_FloatRect CPDF_Annot::RectFromQuadPoints(CPDF_Dictionary* pAnnotDict,
+CFX_FloatRect CPDF_Annot::RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                              size_t nIndex) {
-  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
+  const CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (!pArray)
     return CFX_FloatRect();
   return RectFromQuadPointsArray(pArray, nIndex);
