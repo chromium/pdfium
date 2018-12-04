@@ -104,6 +104,7 @@ jumbo_source_set("fpdfdoc") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "cpdf_annot_unittest.cpp",
     "cpdf_defaultappearance_unittest.cpp",
     "cpdf_dest_unittest.cpp",
     "cpdf_filespec_unittest.cpp",
