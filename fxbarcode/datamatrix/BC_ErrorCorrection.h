@@ -16,9 +16,6 @@ class CBC_ErrorCorrection {
   CBC_ErrorCorrection() = delete;
   ~CBC_ErrorCorrection() = delete;
 
-  static void Initialize();
-  static void Finalize();
-
   // Returns an empty string on failure.
   static WideString EncodeECC200(const WideString& codewords,
                                  const CBC_SymbolInfo* symbolInfo);
