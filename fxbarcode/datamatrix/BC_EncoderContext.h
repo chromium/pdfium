@@ -15,7 +15,6 @@ class CBC_SymbolInfo;
 class CBC_EncoderContext {
  public:
   CBC_EncoderContext(const WideString& msg,
-                     const WideString& ecLevel,
                      bool bAllowRectangular);
   ~CBC_EncoderContext();
 

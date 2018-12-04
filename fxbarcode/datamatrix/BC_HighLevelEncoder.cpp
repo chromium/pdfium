@@ -65,9 +65,8 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(WideString msg) {
 
 // static
 WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
-                                                 const WideString& ecLevel,
                                                  bool bAllowRectangular) {
-  CBC_EncoderContext context(msg, ecLevel, bAllowRectangular);
+  CBC_EncoderContext context(msg, bAllowRectangular);
   if (context.HasCharactersOutsideISO88591Encoding())
     return WideString();
 

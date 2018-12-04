@@ -109,9 +109,7 @@ bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
 uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
                                       int32_t& outWidth,
                                       int32_t& outHeight) {
-  WideString ecLevel;
-  WideString encoded =
-      CBC_HighLevelEncoder::EncodeHighLevel(contents, ecLevel, false);
+  WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents, false);
   if (encoded.IsEmpty())
     return nullptr;
 

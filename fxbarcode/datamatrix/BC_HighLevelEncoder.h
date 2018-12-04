@@ -27,7 +27,6 @@ class CBC_HighLevelEncoder {
 
   // Returns an empty string on failure.
   static WideString EncodeHighLevel(const WideString& msg,
-                                    const WideString& ecLevel,
                                     bool bAllowRectangular);
 
   static int32_t lookAheadTest(const WideString& msg,
