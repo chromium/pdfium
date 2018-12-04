@@ -20,10 +20,10 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/BC_TwoDimWriter.h"
+#include "fxbarcode/qrcode/BC_QRCodeWriter.h"
+
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
-#include "fxbarcode/qrcode/BC_QRCodeWriter.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderEncoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
