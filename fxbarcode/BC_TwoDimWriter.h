@@ -17,7 +17,7 @@ class CFX_RenderDevice;
 
 class CBC_TwoDimWriter : public CBC_Writer {
  public:
-  CBC_TwoDimWriter();
+  explicit CBC_TwoDimWriter(bool bFixedSize);
   ~CBC_TwoDimWriter() override;
 
   virtual bool RenderResult(uint8_t* code,
@@ -26,11 +26,10 @@ class CBC_TwoDimWriter : public CBC_Writer {
   virtual void RenderDeviceResult(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix);
 
-  int32_t GetErrorCorrectionLevel() const;
+  int32_t error_correction_level() const { return m_iCorrectionLevel; }
 
  protected:
-  int32_t m_iCorrectLevel;
-  bool m_bFixedSize;
+  void set_error_correction_level(int32_t level) { m_iCorrectionLevel = level; }
 
  private:
   std::unique_ptr<CBC_CommonBitMatrix> m_output;
@@ -42,6 +41,8 @@ class CBC_TwoDimWriter : public CBC_Writer {
   int32_t m_inputHeight;
   int32_t m_outputWidth;
   int32_t m_outputHeight;
+  int32_t m_iCorrectionLevel = 1;
+  const bool m_bFixedSize;
 };
 
 #endif  // FXBARCODE_BC_TWODIMWRITER_H_

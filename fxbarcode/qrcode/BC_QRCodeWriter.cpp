@@ -30,10 +30,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 
-CBC_QRCodeWriter::CBC_QRCodeWriter() {
-  m_bFixedSize = true;
-  m_iCorrectLevel = 1;
-}
+CBC_QRCodeWriter::CBC_QRCodeWriter() : CBC_TwoDimWriter(true) {}
 
 CBC_QRCodeWriter::~CBC_QRCodeWriter() = default;
 
@@ -41,7 +38,7 @@ bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3) {
     return false;
   }
-  m_iCorrectLevel = level;
+  set_error_correction_level(level);
   return true;
 }
 

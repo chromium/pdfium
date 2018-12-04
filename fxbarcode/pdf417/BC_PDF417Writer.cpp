@@ -30,17 +30,15 @@
 #include "fxbarcode/pdf417/BC_PDF417.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 
-CBC_PDF417Writer::CBC_PDF417Writer() {
-  m_bFixedSize = false;
-}
+CBC_PDF417Writer::CBC_PDF417Writer() : CBC_TwoDimWriter(false) {}
 
-CBC_PDF417Writer::~CBC_PDF417Writer() {}
+CBC_PDF417Writer::~CBC_PDF417Writer() = default;
 
 bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 8) {
     return false;
   }
-  m_iCorrectLevel = level;
+  set_error_correction_level(level);
   return true;
 }
 
@@ -56,7 +54,7 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
     encoder.setDimensions(col, col, 90, 3);
   else if (row >= 3 && row <= 90)
     encoder.setDimensions(30, 1, row, row);
-  if (!encoder.generateBarcodeLogic(contents, m_iCorrectLevel))
+  if (!encoder.generateBarcodeLogic(contents, error_correction_level()))
     return nullptr;
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();

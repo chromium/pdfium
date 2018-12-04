@@ -24,9 +24,6 @@ class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
-
- private:
-  int32_t m_iCorrectLevel;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_DATAMATRIXWRITER_H_

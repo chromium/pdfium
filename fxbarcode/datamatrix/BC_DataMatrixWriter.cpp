@@ -97,12 +97,12 @@ std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
 
 }  // namespace
 
-CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
+CBC_DataMatrixWriter::CBC_DataMatrixWriter() : CBC_TwoDimWriter(true) {}
 
-CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
+CBC_DataMatrixWriter::~CBC_DataMatrixWriter() = default;
 
 bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
-  m_iCorrectLevel = level;
+  set_error_correction_level(level);
   return true;
 }
 
