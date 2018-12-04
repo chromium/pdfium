@@ -48,7 +48,7 @@ float FractionalScale(size_t scale_factor, int value) {
 
 }  // namespace
 
-float FX_atof(const ByteStringView& strc) {
+float StringToFloat(const ByteStringView& strc) {
   if (strc.IsEmpty())
     return 0.0;
 
@@ -87,11 +87,11 @@ float FX_atof(const ByteStringView& strc) {
   return bNegative ? -value : value;
 }
 
-float FX_atof(const WideStringView& wsStr) {
-  return FX_atof(FX_UTF8Encode(wsStr).c_str());
+float StringToFloat(const WideStringView& wsStr) {
+  return StringToFloat(FX_UTF8Encode(wsStr).c_str());
 }
 
-size_t FX_ftoa(float d, char* buf) {
+size_t FloatToString(float d, char* buf) {
   buf[0] = '0';
   buf[1] = '\0';
   if (d == 0.0f) {

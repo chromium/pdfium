@@ -170,7 +170,7 @@ void CPDF_PSProc::AddOperator(const ByteStringView& word) {
   if (pFound != std::end(kPsOpNames) && pFound->name == word)
     m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>(pFound->op));
   else
-    m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word)));
+    m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>(StringToFloat(word)));
 }
 
 CPDF_PSEngine::CPDF_PSEngine() = default;

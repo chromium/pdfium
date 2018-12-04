@@ -19,8 +19,8 @@
 ByteString FX_UTF8Encode(const WideStringView& wsStr);
 WideString FX_UTF8Decode(const ByteStringView& bsStr);
 
-float FX_atof(const ByteStringView& str);
-float FX_atof(const WideStringView& wsStr);
-size_t FX_ftoa(float f, char* buf);
+float StringToFloat(const ByteStringView& str);
+float StringToFloat(const WideStringView& wsStr);
+size_t FloatToString(float f, char* buf);
 
 #endif  // CORE_FXCRT_FX_STRING_H_

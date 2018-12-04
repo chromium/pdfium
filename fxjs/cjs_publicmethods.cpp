@@ -917,11 +917,11 @@ double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
     }
   }
 
-  int nDay = FX_atof(wsArray[2].AsStringView());
-  int nHour = FX_atof(wsArray[3].AsStringView());
-  int nMin = FX_atof(wsArray[4].AsStringView());
-  int nSec = FX_atof(wsArray[5].AsStringView());
-  int nYear = FX_atof(wsArray[7].AsStringView());
+  int nDay = StringToFloat(wsArray[2].AsStringView());
+  int nHour = StringToFloat(wsArray[3].AsStringView());
+  int nMin = StringToFloat(wsArray[4].AsStringView());
+  int nSec = StringToFloat(wsArray[5].AsStringView());
+  int nYear = StringToFloat(wsArray[7].AsStringView());
   double dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
                             FX_MakeTime(nHour, nMin, nSec, 0));
   if (std::isnan(dRet))
@@ -1297,7 +1297,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
           WideString trimmed = pFormField->GetValue();
           trimmed.TrimRight();
           trimmed.TrimLeft();
-          dTemp = FX_atof(trimmed.AsStringView());
+          dTemp = StringToFloat(trimmed.AsStringView());
           break;
         }
         case FormFieldType::kPushButton:
@@ -1312,7 +1312,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
             WideString trimmed = pFormCtrl->GetExportValue();
             trimmed.TrimRight();
             trimmed.TrimLeft();
-            dTemp = FX_atof(trimmed.AsStringView());
+            dTemp = StringToFloat(trimmed.AsStringView());
             break;
           }
           break;
@@ -1321,7 +1321,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
             WideString trimmed = pFormField->GetValue();
             trimmed.TrimRight();
             trimmed.TrimLeft();
-            dTemp = FX_atof(trimmed.AsStringView());
+            dTemp = StringToFloat(trimmed.AsStringView());
           }
           break;
         default:

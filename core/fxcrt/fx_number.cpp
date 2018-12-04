@@ -31,7 +31,7 @@ FX_Number::FX_Number(const ByteStringView& strc)
   if (strc.Contains('.')) {
     m_bInteger = false;
     m_bSigned = true;
-    m_FloatValue = FX_atof(strc);
+    m_FloatValue = StringToFloat(strc);
     return;
   }
 

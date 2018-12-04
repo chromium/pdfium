@@ -50,7 +50,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
-  size_t len = FX_ftoa((float)f, buf);
+  size_t len = FloatToString((float)f, buf);
   ExpandBuf(len * sizeof(wchar_t));
   wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
   for (size_t i = 0; i < len; i++) {

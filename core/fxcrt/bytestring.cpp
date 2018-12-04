@@ -76,7 +76,7 @@ ByteString ByteString::FormatInteger(int i) {
 // static
 ByteString ByteString::FormatFloat(float d) {
   char buf[32];
-  return ByteString(buf, FX_ftoa(d, buf));
+  return ByteString(buf, FloatToString(d, buf));
 }
 
 // static

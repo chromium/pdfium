@@ -63,7 +63,7 @@ Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   if (FindTagParamFromStart(&syntax, "Tf", 2)) {
     csFontNameTag = ByteString(syntax.GetWord());
     csFontNameTag.Delete(0, 1);
-    *fFontSize = FX_atof(syntax.GetWord());
+    *fFontSize = StringToFloat(syntax.GetWord());
   }
   return {PDF_NameDecode(csFontNameTag.AsStringView())};
 }
@@ -77,20 +77,20 @@ Optional<CFX_Color::Type> CPDF_DefaultAppearance::GetColor(float fc[4]) {
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView().span());
   if (FindTagParamFromStart(&syntax, "g", 1)) {
-    fc[0] = FX_atof(syntax.GetWord());
+    fc[0] = StringToFloat(syntax.GetWord());
     return {CFX_Color::kGray};
   }
   if (FindTagParamFromStart(&syntax, "rg", 3)) {
-    fc[0] = FX_atof(syntax.GetWord());
-    fc[1] = FX_atof(syntax.GetWord());
-    fc[2] = FX_atof(syntax.GetWord());
+    fc[0] = StringToFloat(syntax.GetWord());
+    fc[1] = StringToFloat(syntax.GetWord());
+    fc[2] = StringToFloat(syntax.GetWord());
     return {CFX_Color::kRGB};
   }
   if (FindTagParamFromStart(&syntax, "k", 4)) {
-    fc[0] = FX_atof(syntax.GetWord());
-    fc[1] = FX_atof(syntax.GetWord());
-    fc[2] = FX_atof(syntax.GetWord());
-    fc[3] = FX_atof(syntax.GetWord());
+    fc[0] = StringToFloat(syntax.GetWord());
+    fc[1] = StringToFloat(syntax.GetWord());
+    fc[2] = StringToFloat(syntax.GetWord());
+    fc[3] = StringToFloat(syntax.GetWord());
     return {CFX_Color::kCMYK};
   }
 
