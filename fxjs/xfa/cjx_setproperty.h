@@ -16,9 +16,6 @@ class CJX_SetProperty final : public CJX_Node {
  public:
   explicit CJX_SetProperty(CXFA_SetProperty* node);
   ~CJX_SetProperty() override;
-
-  JSE_PROP(connection);
-  JSE_PROP(target);
 };
 
 #endif  // FXJS_XFA_CJX_SETPROPERTY_H_

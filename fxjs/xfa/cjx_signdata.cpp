@@ -11,33 +11,3 @@
 CJX_SignData::CJX_SignData(CXFA_SignData* node) : CJX_Node(node) {}
 
 CJX_SignData::~CJX_SignData() = default;
-
-void CJX_SignData::ref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SignData::use(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SignData::operation(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SignData::usehref(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SignData::target(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

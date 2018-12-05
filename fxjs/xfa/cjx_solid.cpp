@@ -11,15 +11,3 @@
 CJX_Solid::CJX_Solid(CXFA_Solid* node) : CJX_Node(node) {}
 
 CJX_Solid::~CJX_Solid() = default;
-
-void CJX_Solid::use(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Solid::usehref(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

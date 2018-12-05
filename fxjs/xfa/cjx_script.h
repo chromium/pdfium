@@ -18,12 +18,7 @@ class CJX_Script final : public CJX_Node {
   ~CJX_Script() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(binding);
-  JSE_PROP(contentType);
-  JSE_PROP(runAt);
   JSE_PROP(stateless);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

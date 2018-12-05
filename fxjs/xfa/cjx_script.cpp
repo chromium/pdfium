@@ -13,24 +13,6 @@ CJX_Script::CJX_Script(CXFA_Script* node) : CJX_Node(node) {}
 
 CJX_Script::~CJX_Script() = default;
 
-void CJX_Script::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Script::contentType(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Script::runAt(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Script::stateless(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {
@@ -45,18 +27,6 @@ void CJX_Script::defaultValue(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   ScriptSomDefaultValue(pValue, bSetting, eAttribute);
-}
-
-void CJX_Script::binding(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Script::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Script::value(CFXJSE_Value* pValue,

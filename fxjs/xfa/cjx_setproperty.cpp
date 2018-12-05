@@ -11,15 +11,3 @@
 CJX_SetProperty::CJX_SetProperty(CXFA_SetProperty* node) : CJX_Node(node) {}
 
 CJX_SetProperty::~CJX_SetProperty() = default;
-
-void CJX_SetProperty::connection(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SetProperty::target(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

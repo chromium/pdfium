@@ -11,15 +11,3 @@
 CJX_Ref::CJX_Ref(CXFA_Ref* node) : CJX_TextNode(node) {}
 
 CJX_Ref::~CJX_Ref() = default;
-
-void CJX_Ref::use(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Ref::usehref(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

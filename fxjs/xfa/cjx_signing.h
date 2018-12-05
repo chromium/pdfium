@@ -16,10 +16,6 @@ class CJX_Signing final : public CJX_Node {
  public:
   explicit CJX_Signing(CXFA_Signing* node);
   ~CJX_Signing() override;
-
-  JSE_PROP(type);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_SIGNING_H_

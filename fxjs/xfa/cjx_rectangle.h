@@ -16,10 +16,6 @@ class CJX_Rectangle final : public CJX_Node {
  public:
   explicit CJX_Rectangle(CXFA_Rectangle* node);
   ~CJX_Rectangle() override;
-
-  JSE_PROP(hand);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_RECTANGLE_H_

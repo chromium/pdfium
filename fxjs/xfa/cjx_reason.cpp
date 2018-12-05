@@ -11,15 +11,3 @@
 CJX_Reason::CJX_Reason(CXFA_Reason* node) : CJX_TextNode(node) {}
 
 CJX_Reason::~CJX_Reason() = default;
-
-void CJX_Reason::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Reason::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

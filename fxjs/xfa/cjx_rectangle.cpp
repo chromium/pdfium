@@ -11,21 +11,3 @@
 CJX_Rectangle::CJX_Rectangle(CXFA_Rectangle* node) : CJX_Node(node) {}
 
 CJX_Rectangle::~CJX_Rectangle() = default;
-
-void CJX_Rectangle::use(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Rectangle::usehref(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Rectangle::hand(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

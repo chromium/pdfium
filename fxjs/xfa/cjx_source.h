@@ -36,8 +36,6 @@ class CJX_Source final : public CJX_Node {
   JSE_METHOD(updateBatch, CJX_Source);
 
   JSE_PROP(db);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

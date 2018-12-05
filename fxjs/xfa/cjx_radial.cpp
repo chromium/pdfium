@@ -11,21 +11,3 @@
 CJX_Radial::CJX_Radial(CXFA_Radial* node) : CJX_Node(node) {}
 
 CJX_Radial::~CJX_Radial() = default;
-
-void CJX_Radial::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Radial::type(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Radial::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

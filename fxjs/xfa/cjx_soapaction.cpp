@@ -11,15 +11,3 @@
 CJX_SoapAction::CJX_SoapAction(CXFA_SoapAction* node) : CJX_TextNode(node) {}
 
 CJX_SoapAction::~CJX_SoapAction() = default;
-
-void CJX_SoapAction::use(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SoapAction::usehref(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

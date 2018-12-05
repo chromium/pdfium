@@ -12,22 +12,10 @@ CJX_Picture::CJX_Picture(CXFA_Picture* node) : CJX_Node(node) {}
 
 CJX_Picture::~CJX_Picture() = default;
 
-void CJX_Picture::use(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Picture::defaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
   ScriptSomDefaultValue(pValue, bSetting, eAttribute);
-}
-
-void CJX_Picture::usehref(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Picture::value(CFXJSE_Value* pValue,

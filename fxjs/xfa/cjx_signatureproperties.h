@@ -17,9 +17,6 @@ class CJX_SignatureProperties final : public CJX_Node {
  public:
   explicit CJX_SignatureProperties(CXFA_SignatureProperties* node);
   ~CJX_SignatureProperties() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_SIGNATUREPROPERTIES_H_

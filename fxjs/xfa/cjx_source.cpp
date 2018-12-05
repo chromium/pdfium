@@ -182,15 +182,3 @@ CJS_Result CJX_Source::hasDataChanged(
 void CJX_Source::db(CFXJSE_Value* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {}
-
-void CJX_Source::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Source::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

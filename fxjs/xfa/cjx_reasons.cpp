@@ -11,21 +11,3 @@
 CJX_Reasons::CJX_Reasons(CXFA_Reasons* node) : CJX_Node(node) {}
 
 CJX_Reasons::~CJX_Reasons() = default;
-
-void CJX_Reasons::use(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Reasons::type(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Reasons::usehref(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

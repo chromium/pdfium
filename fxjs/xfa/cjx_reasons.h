@@ -16,10 +16,6 @@ class CJX_Reasons final : public CJX_Node {
  public:
   explicit CJX_Reasons(CXFA_Reasons* node);
   ~CJX_Reasons() override;
-
-  JSE_PROP(type);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_REASONS_H_

@@ -11,15 +11,3 @@
 CJX_SoapAddress::CJX_SoapAddress(CXFA_SoapAddress* node) : CJX_TextNode(node) {}
 
 CJX_SoapAddress::~CJX_SoapAddress() = default;
-
-void CJX_SoapAddress::use(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_SoapAddress::usehref(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

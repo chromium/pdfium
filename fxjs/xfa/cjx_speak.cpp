@@ -11,27 +11,3 @@
 CJX_Speak::CJX_Speak(CXFA_Speak* node) : CJX_TextNode(node) {}
 
 CJX_Speak::~CJX_Speak() = default;
-
-void CJX_Speak::use(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Speak::priority(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Speak::usehref(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Speak::disable(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

@@ -11,15 +11,3 @@
 CJX_RootElement::CJX_RootElement(CXFA_RootElement* node) : CJX_TextNode(node) {}
 
 CJX_RootElement::~CJX_RootElement() = default;
-
-void CJX_RootElement::use(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_RootElement::usehref(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

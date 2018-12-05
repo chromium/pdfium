@@ -16,9 +16,6 @@ class CJX_SoapAddress final : public CJX_TextNode {
  public:
   explicit CJX_SoapAddress(CXFA_SoapAddress* node);
   ~CJX_SoapAddress() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_SOAPADDRESS_H_

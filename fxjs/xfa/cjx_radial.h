@@ -16,10 +16,6 @@ class CJX_Radial final : public CJX_Node {
  public:
   explicit CJX_Radial(CXFA_Radial* node);
   ~CJX_Radial() override;
-
-  JSE_PROP(type);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_RADIAL_H_

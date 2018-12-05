@@ -16,9 +16,6 @@ class CJX_Reason final : public CJX_TextNode {
  public:
   explicit CJX_Reason(CXFA_Reason* node);
   ~CJX_Reason() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_REASON_H_

@@ -16,10 +16,6 @@ class CJX_Query final : public CJX_Node {
  public:
   explicit CJX_Query(CXFA_Query* node);
   ~CJX_Query() override;
-
-  JSE_PROP(commandType);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_QUERY_H_
