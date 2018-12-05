@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_ErrorCorrection.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "fxbarcode/datamatrix/BC_Encoder.h"
@@ -201,6 +202,13 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
       errorSizes[i] = symbolInfo->getErrorLengthForInterleavedBlock();
       startPos[i] = i > 0 ? startPos[i - 1] + dataSizes[i] : 0;
     }
+
+    size_t max_error_sizes =
+        *std::max_element(errorSizes.begin(), errorSizes.end()) * blockCount;
+    sb.Reserve(sb.GetLength() + max_error_sizes);
+    for (size_t i = 0; i < max_error_sizes; ++i)
+      sb.InsertAtBack(0);
+
     for (size_t block = 0; block < blockCount; ++block) {
       WideString temp;
       if (symbolInfo->dataCapacity() > block)
