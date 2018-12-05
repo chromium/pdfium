@@ -36,7 +36,7 @@ bool CBC_PDF417I::Encode(const WideStringView& contents) {
   int32_t height;
   auto* pWriter = GetPDF417Writer();
   std::vector<uint8_t> data = pWriter->Encode(contents, &width, &height);
-  return !data.empty() && pWriter->RenderResult(data.data(), width, height);
+  return pWriter->RenderResult(data, width, height);
 }
 
 bool CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,

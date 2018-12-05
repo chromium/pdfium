@@ -37,7 +37,7 @@ bool CBC_DataMatrix::Encode(const WideStringView& contents) {
   auto* pWriter = GetDataMatrixWriter();
   std::vector<uint8_t> data =
       pWriter->Encode(WideString(contents), &width, &height);
-  return !data.empty() && pWriter->RenderResult(data.data(), width, height);
+  return pWriter->RenderResult(data, width, height);
 }
 
 bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,

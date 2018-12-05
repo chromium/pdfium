@@ -8,6 +8,7 @@
 #define FXBARCODE_BC_TWODIMWRITER_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "fxbarcode/BC_Writer.h"
@@ -20,11 +21,10 @@ class CBC_TwoDimWriter : public CBC_Writer {
   explicit CBC_TwoDimWriter(bool bFixedSize);
   ~CBC_TwoDimWriter() override;
 
-  virtual bool RenderResult(uint8_t* code,
-                            int32_t codeWidth,
-                            int32_t codeHeight);
-  virtual void RenderDeviceResult(CFX_RenderDevice* device,
-                                  const CFX_Matrix* matrix);
+  bool RenderResult(const std::vector<uint8_t>& code,
+                    int32_t codeWidth,
+                    int32_t codeHeight);
+  void RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix);
 
   int32_t error_correction_level() const { return m_iCorrectionLevel; }
 

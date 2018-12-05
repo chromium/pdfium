@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fxbarcode/BC_TwoDimWriter.h"
+
 #include <algorithm>
 
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -20,9 +21,12 @@ CBC_TwoDimWriter::CBC_TwoDimWriter(bool bFixedSize)
 
 CBC_TwoDimWriter::~CBC_TwoDimWriter() = default;
 
-bool CBC_TwoDimWriter::RenderResult(uint8_t* code,
+bool CBC_TwoDimWriter::RenderResult(const std::vector<uint8_t>& code,
                                     int32_t codeWidth,
                                     int32_t codeHeight) {
+  if (code.empty())
+    return false;
+
   m_inputWidth = codeWidth;
   m_inputHeight = codeHeight;
   int32_t tempWidth = m_inputWidth + 2;
