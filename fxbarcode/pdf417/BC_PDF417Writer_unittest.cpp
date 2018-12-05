@@ -4,7 +4,7 @@
 
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
 
-#include <memory>
+#include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -413,13 +413,12 @@ TEST_F(CBC_PDF417WriterTest, Encode) {
         1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1,
         0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1};
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"", &width, &height));
-    ASSERT_TRUE(data);
+    std::vector<uint8_t> data = writer.Encode(L"", &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedWidth, width);
     ASSERT_EQ(kExpectedHeight, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedWidth = 579;
@@ -811,12 +810,11 @@ TEST_F(CBC_PDF417WriterTest, Encode) {
         1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0,
         0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1};
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"hello world", &width, &height));
-    ASSERT_TRUE(data);
+    std::vector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedWidth, width);
     ASSERT_EQ(kExpectedHeight, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
 }

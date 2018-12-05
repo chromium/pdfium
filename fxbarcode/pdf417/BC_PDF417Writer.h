@@ -18,9 +18,9 @@ class CBC_PDF417Writer final : public CBC_TwoDimWriter {
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;
 
-  uint8_t* Encode(const WideStringView& contents,
-                  int32_t* pOutWidth,
-                  int32_t* pOutHeight);
+  std::vector<uint8_t> Encode(const WideStringView& contents,
+                              int32_t* pOutWidth,
+                              int32_t* pOutHeight);
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
