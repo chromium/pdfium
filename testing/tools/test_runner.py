@@ -40,6 +40,13 @@ def TestOneFileParallel(this, test_case):
     raise KeyboardInterruptError()
 
 
+def DeleteFiles(files):
+  """Utility function to delete a list of files"""
+  for f in files:
+    if os.path.exists(f):
+      os.remove(f)
+
+
 class TestRunner:
   def __init__(self, dirname):
     # Currently the only used directories are corpus, javascript, and pixel,
@@ -48,6 +55,7 @@ class TestRunner:
     # an argument for the type will need to be added.
     self.test_dir = dirname
     self.test_type = dirname
+    self.delete_output_on_success = False
     self.enforce_expected_images = False
     self.oneshot_renderer = False
 
@@ -66,9 +74,7 @@ class TestRunner:
     # Remove any existing generated images from previous runs.
     actual_images = self.image_differ.GetActualFiles(input_filename, source_dir,
                                                      self.working_dir)
-    for image in actual_images:
-      if os.path.exists(image):
-        os.remove(image)
+    DeleteFiles(actual_images)
 
     sys.stdout.flush()
 
@@ -101,6 +107,8 @@ class TestRunner:
         print 'FAILURE: %s; Missing expected images' % input_filename
         return False, results
 
+    if self.delete_output_on_success:
+      DeleteFiles(actual_images)
     return True, results
 
   def RegenerateIfNeeded_(self, input_filename, source_dir):
@@ -365,6 +373,10 @@ class TestRunner:
     print '  Failures: %d' % number_failures
     print
     print 'Test cases not executed: %d' % len(self.execution_suppressed_cases)
+
+  def SetDeleteOutputOnSuccess(self, new_value):
+    """Set whether to delete generated output if the test passes."""
+    self.delete_output_on_success = new_value
 
   def SetEnforceExpectedImages(self, new_value):
     """Set whether to enforce that each test case provide an expected image."""
