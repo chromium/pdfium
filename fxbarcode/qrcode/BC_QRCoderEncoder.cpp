@@ -320,66 +320,6 @@ bool TerminateBits(int32_t numDataBytes, CBC_QRCoderBitVector* bits) {
   return bits->Size() == capacity;
 }
 
-void SplitString(const ByteString& content,
-                 std::vector<ModeStringPair>* result) {
-  size_t index = 0;
-  while (index < content.GetLength()) {
-    uint8_t c = static_cast<uint8_t>(content[index]);
-    if (!((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
-      break;
-    index += 2;
-  }
-  if (index)
-    result->push_back({CBC_QRCoderMode::sGBK, content.Left(index)});
-  if (index >= content.GetLength())
-    return;
-
-  size_t flag = index;
-  while (GetAlphaNumericCode(content[index]) == -1 &&
-         index < content.GetLength()) {
-    uint8_t c = static_cast<uint8_t>(content[index]);
-    if (((c >= 0xA1 && c <= 0xAA) || (c >= 0xB0 && c <= 0xFA)))
-      break;
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-    bool high = !!IsDBCSLeadByte(content[index]);
-#else
-    bool high = content[index] > 127;
-#endif
-    ++index;
-    if (high)
-      ++index;
-  }
-  if (index != flag) {
-    result->push_back(
-        {CBC_QRCoderMode::sBYTE, content.Mid(flag, index - flag)});
-  }
-  flag = index;
-  if (index >= content.GetLength())
-    return;
-
-  while (index < content.GetLength() && isdigit(content[index]))
-    ++index;
-
-  if (index != flag) {
-    result->push_back(
-        {CBC_QRCoderMode::sNUMERIC, content.Mid(flag, index - flag)});
-  }
-  flag = index;
-  if (index >= content.GetLength())
-    return;
-
-  while (index < content.GetLength() &&
-         GetAlphaNumericCode(content[index]) != -1) {
-    ++index;
-  }
-  if (index != flag) {
-    result->push_back(
-        {CBC_QRCoderMode::sALPHANUMERIC, content.Mid(flag, index - flag)});
-  }
-  if (index < content.GetLength())
-    SplitString(content.Right(content.GetLength() - index), result);
-}
-
 CBC_QRCoderMode* ChooseMode(const ByteString& content, ByteString encoding) {
   if (encoding.Compare("SHIFT_JIS") == 0)
     return CBC_QRCoderMode::sKANJI;
