@@ -18,15 +18,15 @@ class CBC_PDF417Writer final : public CBC_TwoDimWriter {
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;
 
-  uint8_t* Encode(const WideString& contents,
-                  int32_t* outWidth,
-                  int32_t* outHeight);
+  uint8_t* Encode(const WideStringView& contents,
+                  int32_t* pOutWidth,
+                  int32_t* pOutHeight);
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
 
  private:
-  void rotateArray(std::vector<uint8_t>& bitarray,
+  void RotateArray(std::vector<uint8_t>* bitarray,
                    int32_t width,
                    int32_t height);
 };

@@ -357,7 +357,7 @@ CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
   return m_barcodeMatrix.get();
 }
 
-bool CBC_PDF417::generateBarcodeLogic(WideString msg,
+bool CBC_PDF417::GenerateBarcodeLogic(const WideStringView& msg,
                                       int32_t errorCorrectionLevel) {
   int32_t errorCorrectionCodeWords =
       CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(

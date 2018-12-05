@@ -32,14 +32,14 @@ CBC_PDF417I::CBC_PDF417I()
 CBC_PDF417I::~CBC_PDF417I() {}
 
 bool CBC_PDF417I::Encode(const WideStringView& contents) {
-  int32_t outWidth;
-  int32_t outHeight;
+  int32_t width;
+  int32_t height;
   auto* pWriter = GetPDF417Writer();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(WideString(contents), &outWidth, &outHeight));
+      pWriter->Encode(contents, &width, &height));
   if (!data)
     return false;
-  return pWriter->RenderResult(data.get(), outWidth, outHeight);
+  return pWriter->RenderResult(data.get(), width, height);
 }
 
 bool CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,

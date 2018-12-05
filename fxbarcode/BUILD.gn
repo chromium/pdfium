@@ -151,6 +151,7 @@ pdfium_unittest_source_set("unittests") {
     "oned/BC_OnedEAN8Writer_unittest.cpp",
     "oned/BC_OnedUPCAWriter_unittest.cpp",
     "pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
+    "pdf417/BC_PDF417Writer_unittest.cpp",
     "qrcode/BC_QRCodeWriter_unittest.cpp",
   ]
   deps = [

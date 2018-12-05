@@ -27,7 +27,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 21;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
         1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1,
@@ -61,7 +61,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 21;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1,
         1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
@@ -95,7 +95,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 21;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
         1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1,
@@ -129,7 +129,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 21;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1,
         1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1,
@@ -163,7 +163,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 21;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1,
         1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1,
@@ -198,7 +198,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 21;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1,
         1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1,
@@ -232,7 +232,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   }
   {
     static constexpr int kExpectedDimension = 25;
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1,
         1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0,
         0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1,
@@ -270,7 +270,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
   }
   {
     static constexpr int kExpectedDimension = 25;
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1,
         1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0,
         0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1,

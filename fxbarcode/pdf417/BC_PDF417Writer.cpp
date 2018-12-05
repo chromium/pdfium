@@ -42,9 +42,9 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
-                                  int32_t* outWidth,
-                                  int32_t* outHeight) {
+uint8_t* CBC_PDF417Writer::Encode(const WideStringView& contents,
+                                  int32_t* pOutWidth,
+                                  int32_t* pOutHeight) {
   CBC_PDF417 encoder;
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
@@ -54,7 +54,7 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
     encoder.setDimensions(col, col, 90, 3);
   else if (row >= 3 && row <= 90)
     encoder.setDimensions(30, 1, row, row);
-  if (!encoder.generateBarcodeLogic(contents, error_correction_level()))
+  if (!encoder.GenerateBarcodeLogic(contents, error_correction_level()))
     return nullptr;
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
@@ -63,24 +63,24 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
   int32_t matrixHeight = barcodeMatrix->getHeight();
 
   if (matrixWidth < matrixHeight) {
-    rotateArray(matrixData, matrixHeight, matrixWidth);
+    RotateArray(&matrixData, matrixHeight, matrixWidth);
     std::swap(matrixWidth, matrixHeight);
   }
   uint8_t* result = FX_Alloc2D(uint8_t, matrixHeight, matrixWidth);
   memcpy(result, matrixData.data(), matrixHeight * matrixWidth);
-  *outWidth = matrixWidth;
-  *outHeight = matrixHeight;
+  *pOutWidth = matrixWidth;
+  *pOutHeight = matrixHeight;
   return result;
 }
 
-void CBC_PDF417Writer::rotateArray(std::vector<uint8_t>& bitarray,
+void CBC_PDF417Writer::RotateArray(std::vector<uint8_t>* bitarray,
                                    int32_t height,
                                    int32_t width) {
-  std::vector<uint8_t> temp = bitarray;
+  std::vector<uint8_t> temp = *bitarray;
   for (int32_t ii = 0; ii < height; ii++) {
     int32_t inverseii = height - ii - 1;
     for (int32_t jj = 0; jj < width; jj++) {
-      bitarray[jj * height + inverseii] = temp[ii * width + jj];
+      (*bitarray)[jj * height + inverseii] = temp[ii * width + jj];
     }
   }
 }

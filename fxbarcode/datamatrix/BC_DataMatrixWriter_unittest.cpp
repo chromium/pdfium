@@ -27,7 +27,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 10;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
         1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 1, 0, 1, 0, 0, 0, 0, 1, 0,
@@ -50,7 +50,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 14;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
         1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0,
@@ -77,7 +77,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 10;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
         1, 1, 0, 1, 1, 0, 0, 1, 1, 1,
         1, 1, 0, 0, 0, 1, 0, 1, 1, 0,
@@ -100,7 +100,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
   {
     static constexpr int kExpectedDimension = 18;
     // clang-format off
-    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+    static constexpr uint8_t kExpectedData[] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
         1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1,
         1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0,
