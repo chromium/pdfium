@@ -18,8 +18,6 @@ class CJX_Extras final : public CJX_Node {
   ~CJX_Extras() override;
 
   JSE_PROP(type);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_EXTRAS_H_

@@ -12,18 +12,6 @@ CJX_Extras::CJX_Extras(CXFA_Extras* node) : CJX_Node(node) {}
 
 CJX_Extras::~CJX_Extras() = default;
 
-void CJX_Extras::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Extras::type(CFXJSE_Value* pValue,
                       bool bSetting,
                       XFA_Attribute eAttribute) {}
-
-void CJX_Extras::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

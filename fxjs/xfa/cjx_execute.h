@@ -16,12 +16,6 @@ class CJX_Execute final : public CJX_Node {
  public:
   explicit CJX_Execute(CXFA_Execute* node);
   ~CJX_Execute() override;
-
-  JSE_PROP(connection);
-  JSE_PROP(executeType);
-  JSE_PROP(runAt);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_EXECUTE_H_
