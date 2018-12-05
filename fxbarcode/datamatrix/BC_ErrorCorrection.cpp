@@ -143,7 +143,7 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   ASSERT(numECWords > 0);
 
   const size_t len = codewords.GetLength();
-  static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
+  static constexpr size_t kFactorTableNum = FX_ArraySize(FACTOR_SETS);
   size_t table = 0;
   while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
     ++table;

@@ -98,6 +98,38 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
       EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
+    static constexpr int kExpectedDimension = 18;
+    // clang-format off
+    static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
+        1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+        1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1,
+        1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+        1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1,
+        1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0,
+        1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+        1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0,
+        1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1,
+        1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0,
+        1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1,
+        1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0,
+        1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1,
+        1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0,
+        1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1,
+        1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0,
+        1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1,
+        1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    };
+    // clang-format on
+    std::vector<uint8_t> data =
+        writer.Encode(L"abcdefghijklmnopqrst", &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
+    for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
+  }
+  {
     std::vector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
     ASSERT_TRUE(data.empty());
   }
