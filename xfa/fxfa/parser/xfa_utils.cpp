@@ -32,23 +32,6 @@ namespace {
 
 constexpr const char kFormNS[] = "http://www.xfa.org/schema/xfa-form/";
 
-const double fraction_scales[] = {0.1,
-                                  0.01,
-                                  0.001,
-                                  0.0001,
-                                  0.00001,
-                                  0.000001,
-                                  0.0000001,
-                                  0.00000001,
-                                  0.000000001,
-                                  0.0000000001,
-                                  0.00000000001,
-                                  0.000000000001,
-                                  0.0000000000001,
-                                  0.00000000000001,
-                                  0.000000000000001,
-                                  0.0000000000000001};
-
 WideString ExportEncodeAttribute(const WideString& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();
@@ -403,14 +386,6 @@ WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
 }
 
 }  // namespace
-
-double XFA_GetFractionalScale(uint32_t idx) {
-  return fraction_scales[idx];
-}
-
-int XFA_GetMaxFractionalScale() {
-  return FX_ArraySize(fraction_scales);
-}
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
   CXFA_Value* pNodeValue =

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 
+#include <cwchar>
 #include <utility>
 #include <vector>
 
@@ -210,66 +211,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     return 0;
   }
 
-  size_t cc = 0;
-  pdfium::span<const wchar_t> str = m_wsValue.AsSpan();
-  while (cc < str.size() && FXSYS_iswspace(str[cc]))
-    cc++;
-
-  if (cc >= str.size())
-    return 0;
-
-  bool bNegative = false;
-  if (str[cc] == '+') {
-    cc++;
-  } else if (str[cc] == '-') {
-    bNegative = true;
-    cc++;
-  }
-
-  int64_t nIntegral = 0;
-  size_t nIntegralLen = 0;
-  while (cc < str.size()) {
-    if (str[cc] == '.' || !FXSYS_IsDecimalDigit(str[cc]) || nIntegralLen > 17)
-      break;
-
-    nIntegral = nIntegral * 10 + str[cc++] - '0';
-    nIntegralLen++;
-  }
-  nIntegral = bNegative ? -nIntegral : nIntegral;
-
-  int32_t scale = 0;
-  int32_t nExponent = 0;
-  double fraction = 0.0;
-  if (cc < str.size() && str[cc] == '.') {
-    cc++;
-    while (cc < str.size() && FXSYS_IsDecimalDigit(str[cc])) {
-      fraction += XFA_GetFractionalScale(scale) * (str[cc++] - '0');
-      if (++scale == XFA_GetMaxFractionalScale())
-        break;
-    }
-  }
-  if (cc < str.size() && (str[cc] == 'E' || str[cc] == 'e')) {
-    cc++;
-    bool bExpSign = false;
-    if (cc < str.size()) {
-      if (str[cc] == '+') {
-        cc++;
-      } else if (str[cc] == '-') {
-        bExpSign = true;
-        cc++;
-      }
-    }
-    while (cc < str.size() && FXSYS_IsDecimalDigit(str[cc]))
-      nExponent = nExponent * 10 + str[cc++] - '0';
-
-    nExponent = bExpSign ? -nExponent : nExponent;
-  }
-
-  double dValue = nIntegral + (bNegative ? -fraction : fraction);
-  if (nExponent != 0)
-    dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
-
-  return dValue;
+  return wcstod(m_wsValue.c_str(), nullptr);
 }
 
 CFX_DateTime CXFA_LocaleValue::GetDate() const {
