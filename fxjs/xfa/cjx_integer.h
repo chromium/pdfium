@@ -18,8 +18,6 @@ class CJX_Integer final : public CJX_Content {
   ~CJX_Integer() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

@@ -16,12 +16,6 @@ class CJX_Keep final : public CJX_Node {
  public:
   explicit CJX_Keep(CXFA_Keep* node);
   ~CJX_Keep() override;
-
-  JSE_PROP(intact);
-  JSE_PROP(next);
-  JSE_PROP(previous);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_KEEP_H_

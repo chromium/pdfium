@@ -18,8 +18,6 @@ class CJX_Float final : public CJX_Content {
   ~CJX_Float() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

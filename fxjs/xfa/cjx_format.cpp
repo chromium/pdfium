@@ -11,15 +11,3 @@
 CJX_Format::CJX_Format(CXFA_Format* node) : CJX_Node(node) {}
 
 CJX_Format::~CJX_Format() = default;
-
-void CJX_Format::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Format::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

@@ -16,9 +16,6 @@ class CJX_Insert final : public CJX_TextNode {
  public:
   explicit CJX_Insert(CXFA_Insert* node);
   ~CJX_Insert() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_INSERT_H_

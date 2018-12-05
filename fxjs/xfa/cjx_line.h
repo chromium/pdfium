@@ -16,11 +16,6 @@ class CJX_Line final : public CJX_Node {
  public:
   explicit CJX_Line(CXFA_Line* node);
   ~CJX_Line() override;
-
-  JSE_PROP(hand);
-  JSE_PROP(slope);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_LINE_H_

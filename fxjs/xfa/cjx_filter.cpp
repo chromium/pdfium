@@ -11,21 +11,3 @@
 CJX_Filter::CJX_Filter(CXFA_Filter* node) : CJX_Node(node) {}
 
 CJX_Filter::~CJX_Filter() = default;
-
-void CJX_Filter::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Filter::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Filter::addRevocationInfo(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

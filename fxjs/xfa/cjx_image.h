@@ -18,12 +18,6 @@ class CJX_Image final : public CJX_Node {
   ~CJX_Image() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(aspect);
-  JSE_PROP(contentType);
-  JSE_PROP(href);
-  JSE_PROP(transferEncoding);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

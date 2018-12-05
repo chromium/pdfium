@@ -11,33 +11,3 @@
 CJX_Keep::CJX_Keep(CXFA_Keep* node) : CJX_Node(node) {}
 
 CJX_Keep::~CJX_Keep() = default;
-
-void CJX_Keep::next(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Keep::use(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Keep::previous(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Keep::usehref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Keep::intact(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

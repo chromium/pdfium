@@ -11,15 +11,3 @@
 CJX_Insert::CJX_Insert(CXFA_Insert* node) : CJX_TextNode(node) {}
 
 CJX_Insert::~CJX_Insert() = default;
-
-void CJX_Insert::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Insert::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

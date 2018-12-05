@@ -17,10 +17,7 @@ class CJX_Handler final : public CJX_TextNode {
   explicit CJX_Handler(CXFA_Handler* node);
   ~CJX_Handler() override;
 
-  JSE_PROP(type);
-  JSE_PROP(use);
   JSE_PROP(version);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_HANDLER_H_

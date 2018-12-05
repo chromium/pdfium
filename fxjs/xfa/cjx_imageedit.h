@@ -16,10 +16,6 @@ class CJX_ImageEdit final : public CJX_Node {
  public:
   explicit CJX_ImageEdit(CXFA_ImageEdit* node);
   ~CJX_ImageEdit() override;
-
-  JSE_PROP(data);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_IMAGEEDIT_H_

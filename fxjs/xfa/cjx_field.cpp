@@ -360,24 +360,6 @@ void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
   node->SetItemState(iIndex, true, true, true, true);
 }
 
-void CJX_Field::access(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::accessKey(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::anchorType(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Field::borderColor(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
@@ -388,12 +370,6 @@ void CJX_Field::borderWidth(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   ScriptSomBorderWidth(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::colSpan(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Field::fillColor(CFXJSE_Value* pValue,
@@ -408,24 +384,6 @@ void CJX_Field::fontColor(CFXJSE_Value* pValue,
   ScriptSomFontColor(pValue, bSetting, eAttribute);
 }
 
-void CJX_Field::h(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::hAlign(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::locale(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Field::mandatory(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
@@ -438,92 +396,14 @@ void CJX_Field::mandatoryMessage(CFXJSE_Value* pValue,
   ScriptSomMandatoryMessage(pValue, bSetting, eAttribute);
 }
 
-void CJX_Field::maxH(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::maxW(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::minH(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::minW(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::presence(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Field::rawValue(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   defaultValue(pValue, bSetting, eAttribute);
 }
 
-void CJX_Field::relevant(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::rotate(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::use(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::usehref(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Field::validationMessage(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   ScriptSomValidationMessage(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::vAlign(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::w(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::x(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::y(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

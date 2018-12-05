@@ -16,10 +16,6 @@ class CJX_Filter final : public CJX_Node {
  public:
   explicit CJX_Filter(CXFA_Filter* node);
   ~CJX_Filter() override;
-
-  JSE_PROP(addRevocationInfo);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_FILTER_H_

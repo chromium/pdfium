@@ -31,39 +31,19 @@ class CJX_Field final : public CJX_Container {
   JSE_METHOD(setItemState, CJX_Field);
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(access);
-  JSE_PROP(accessKey);
-  JSE_PROP(anchorType);
   JSE_PROP(borderColor);
   JSE_PROP(borderWidth);
-  JSE_PROP(colSpan);
   JSE_PROP(editValue);
   JSE_PROP(fillColor);
   JSE_PROP(fontColor);
   JSE_PROP(formatMessage);
   JSE_PROP(formattedValue);
-  JSE_PROP(h);
-  JSE_PROP(hAlign);
-  JSE_PROP(locale);
   JSE_PROP(mandatory);
   JSE_PROP(mandatoryMessage);
-  JSE_PROP(maxH);
-  JSE_PROP(maxW);
-  JSE_PROP(minH);
-  JSE_PROP(minW);
   JSE_PROP(parentSubform);
-  JSE_PROP(presence);
   JSE_PROP(rawValue);
-  JSE_PROP(relevant);
-  JSE_PROP(rotate);
   JSE_PROP(selectedIndex);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(validationMessage);
-  JSE_PROP(vAlign);
-  JSE_PROP(w);
-  JSE_PROP(x);
-  JSE_PROP(y);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];
