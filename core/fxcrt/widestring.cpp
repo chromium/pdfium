@@ -593,8 +593,7 @@ size_t WideString::Delete(size_t index, size_t count) {
     return 0;
 
   size_t old_length = m_pData->m_nDataLength;
-  if (count == 0 ||
-      index != pdfium::clamp(index, static_cast<size_t>(0), old_length))
+  if (count == 0 || index != pdfium::clamp<size_t>(index, 0, old_length))
     return old_length;
 
   size_t removal_length = index + count;
@@ -730,7 +729,7 @@ void WideString::AllocCopy(WideString& dest,
 }
 
 size_t WideString::Insert(size_t location, wchar_t ch) {
-  const size_t cur_length = m_pData ? m_pData->m_nDataLength : 0;
+  const size_t cur_length = GetLength();
   if (!IsValidLength(location))
     return cur_length;
 
@@ -788,7 +787,7 @@ void WideString::MakeUpper() {
 }
 
 size_t WideString::Remove(wchar_t chRemove) {
-  if (!m_pData || m_pData->m_nDataLength < 1)
+  if (!m_pData || m_pData->m_nDataLength == 0)
     return 0;
 
   wchar_t* pstrSource = m_pData->m_String;
