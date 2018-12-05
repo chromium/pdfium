@@ -16,11 +16,6 @@ class CJX_Event final : public CJX_Node {
  public:
   explicit CJX_Event(CXFA_Event* node);
   ~CJX_Event() override;
-
-  JSE_PROP(activity);
-  JSE_PROP(ref);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_EVENT_H_

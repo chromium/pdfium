@@ -18,12 +18,6 @@ class CJX_ExData final : public CJX_Content {
   ~CJX_ExData() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(contentType);
-  JSE_PROP(href);
-  JSE_PROP(maxLength);
-  JSE_PROP(transferEncoding);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_EXDATA_H_
