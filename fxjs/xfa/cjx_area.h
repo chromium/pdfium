@@ -16,13 +16,6 @@ class CJX_Area final : public CJX_Container {
  public:
   explicit CJX_Area(CXFA_Area* node);
   ~CJX_Area() override;
-
-  JSE_PROP(colSpan);
-  JSE_PROP(relevant);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
-  JSE_PROP(x);
-  JSE_PROP(y);
 };
 
 #endif  // FXJS_XFA_CJX_AREA_H_

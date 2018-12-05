@@ -16,10 +16,6 @@ class CJX_Button final : public CJX_Node {
  public:
   explicit CJX_Button(CXFA_Button* node);
   ~CJX_Button() override;
-
-  JSE_PROP(highlight);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BUTTON_H_

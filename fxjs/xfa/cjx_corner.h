@@ -16,15 +16,6 @@ class CJX_Corner final : public CJX_Node {
  public:
   explicit CJX_Corner(CXFA_Corner* node);
   ~CJX_Corner() override;
-
-  JSE_PROP(inverted);
-  JSE_PROP(join);
-  JSE_PROP(presence);
-  JSE_PROP(radius);
-  JSE_PROP(stroke);
-  JSE_PROP(thickness);
-  JSE_PROP(usehref);
-  JSE_PROP(use);
 };
 
 #endif  // FXJS_XFA_CJX_CORNER_H_

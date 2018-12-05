@@ -16,19 +16,6 @@ class CJX_Break final : public CJX_Node {
  public:
   explicit CJX_Break(CXFA_Break* node);
   ~CJX_Break() override;
-
-  JSE_PROP(after);
-  JSE_PROP(afterTarget);
-  JSE_PROP(before);
-  JSE_PROP(beforeTarget);
-  JSE_PROP(bookendLeader);
-  JSE_PROP(bookendTrailer);
-  JSE_PROP(overflowLeader);
-  JSE_PROP(overflowTarget);
-  JSE_PROP(overflowTrailer);
-  JSE_PROP(startNew);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BREAK_H_

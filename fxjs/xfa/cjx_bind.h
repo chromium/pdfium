@@ -16,13 +16,6 @@ class CJX_Bind final : public CJX_Node {
  public:
   explicit CJX_Bind(CXFA_Bind* node);
   ~CJX_Bind() override;
-
-  JSE_PROP(contentType);
-  JSE_PROP(match);
-  JSE_PROP(ref);
-  JSE_PROP(transferEncoding);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BIND_H_

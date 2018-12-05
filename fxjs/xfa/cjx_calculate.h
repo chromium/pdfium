@@ -16,10 +16,6 @@ class CJX_Calculate final : public CJX_Node {
  public:
   explicit CJX_Calculate(CXFA_Calculate* node);
   ~CJX_Calculate() override;
-
-  JSE_PROP(override);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CALCULATE_H_

@@ -16,11 +16,6 @@ class CJX_Bookend final : public CJX_Node {
  public:
   explicit CJX_Bookend(CXFA_Bookend* node);
   ~CJX_Bookend() override;
-
-  JSE_PROP(leader);
-  JSE_PROP(trailer);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BOOKEND_H_

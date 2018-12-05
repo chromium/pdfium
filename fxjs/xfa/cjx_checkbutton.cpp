@@ -11,39 +11,3 @@
 CJX_CheckButton::CJX_CheckButton(CXFA_CheckButton* node) : CJX_Node(node) {}
 
 CJX_CheckButton::~CJX_CheckButton() = default;
-
-void CJX_CheckButton::use(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_CheckButton::allowNeutral(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_CheckButton::mark(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_CheckButton::shape(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_CheckButton::size(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_CheckButton::usehref(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

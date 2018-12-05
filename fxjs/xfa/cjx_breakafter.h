@@ -16,14 +16,6 @@ class CJX_BreakAfter final : public CJX_Node {
  public:
   explicit CJX_BreakAfter(CXFA_BreakAfter* node);
   ~CJX_BreakAfter() override;
-
-  JSE_PROP(leader);
-  JSE_PROP(startNew);
-  JSE_PROP(target);
-  JSE_PROP(targetType);
-  JSE_PROP(trailer);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BREAKAFTER_H_

@@ -16,12 +16,6 @@ class CJX_Caption final : public CJX_Node {
  public:
   explicit CJX_Caption(CXFA_Caption* node);
   ~CJX_Caption() override;
-
-  JSE_PROP(placement);
-  JSE_PROP(presence);
-  JSE_PROP(reserve);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CAPTION_H_

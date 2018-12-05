@@ -16,13 +16,6 @@ class CJX_Border final : public CJX_Node {
  public:
   explicit CJX_Border(CXFA_Border* node);
   ~CJX_Border() override;
-
-  JSE_PROP(breakValue); /* break */
-  JSE_PROP(hand);
-  JSE_PROP(presence);
-  JSE_PROP(relevant);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BORDER_H_

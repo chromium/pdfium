@@ -16,14 +16,6 @@ class CJX_BreakBefore final : public CJX_Node {
  public:
   explicit CJX_BreakBefore(CXFA_BreakBefore* node);
   ~CJX_BreakBefore() override;
-
-  JSE_PROP(leader);
-  JSE_PROP(startNew);
-  JSE_PROP(target);
-  JSE_PROP(targetType);
-  JSE_PROP(trailer);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BREAKBEFORE_H_

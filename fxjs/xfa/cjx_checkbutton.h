@@ -16,13 +16,6 @@ class CJX_CheckButton final : public CJX_Node {
  public:
   explicit CJX_CheckButton(CXFA_CheckButton* node);
   ~CJX_CheckButton() override;
-
-  JSE_PROP(allowNeutral);
-  JSE_PROP(mark);
-  JSE_PROP(shape);
-  JSE_PROP(size);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CHECKBUTTON_H_

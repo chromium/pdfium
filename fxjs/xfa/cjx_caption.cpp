@@ -11,33 +11,3 @@
 CJX_Caption::CJX_Caption(CXFA_Caption* node) : CJX_Node(node) {}
 
 CJX_Caption::~CJX_Caption() = default;
-
-void CJX_Caption::use(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Caption::reserve(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Caption::presence(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Caption::usehref(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Caption::placement(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

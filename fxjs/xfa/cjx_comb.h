@@ -18,8 +18,6 @@ class CJX_Comb final : public CJX_Node {
   ~CJX_Comb() override;
 
   JSE_PROP(numberOfCells);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_COMB_H_

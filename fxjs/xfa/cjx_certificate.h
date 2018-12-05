@@ -16,9 +16,6 @@ class CJX_Certificate final : public CJX_TextNode {
  public:
   explicit CJX_Certificate(CXFA_Certificate* node);
   ~CJX_Certificate() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CERTIFICATE_H_

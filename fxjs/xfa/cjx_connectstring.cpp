@@ -12,15 +12,3 @@ CJX_ConnectString::CJX_ConnectString(CXFA_ConnectString* node)
     : CJX_TextNode(node) {}
 
 CJX_ConnectString::~CJX_ConnectString() = default;
-
-void CJX_ConnectString::use(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_ConnectString::usehref(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

@@ -16,10 +16,6 @@ class CJX_BindItems final : public CJX_Node {
  public:
   explicit CJX_BindItems(CXFA_BindItems* node);
   ~CJX_BindItems() override;
-
-  JSE_PROP(connection);
-  JSE_PROP(labelRef);
-  JSE_PROP(valueRef);
 };
 
 #endif  // FXJS_XFA_CJX_BINDITEMS_H_

@@ -12,20 +12,8 @@ CJX_Comb::CJX_Comb(CXFA_Comb* node) : CJX_Node(node) {}
 
 CJX_Comb::~CJX_Comb() = default;
 
-void CJX_Comb::use(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Comb::numberOfCells(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
   ScriptAttributeInteger(pValue, bSetting, eAttribute);
-}
-
-void CJX_Comb::usehref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }

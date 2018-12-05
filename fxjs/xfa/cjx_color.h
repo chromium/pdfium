@@ -16,11 +16,6 @@ class CJX_Color final : public CJX_Node {
  public:
   explicit CJX_Color(CXFA_Color* node);
   ~CJX_Color() override;
-
-  JSE_PROP(cSpace);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
-  JSE_PROP(value);
 };
 
 #endif  // FXJS_XFA_CJX_COLOR_H_

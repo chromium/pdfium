@@ -16,12 +16,6 @@ class CJX_ChoiceList final : public CJX_Node {
  public:
   explicit CJX_ChoiceList(CXFA_ChoiceList* node);
   ~CJX_ChoiceList() override;
-
-  JSE_PROP(commitOn);
-  JSE_PROP(open);
-  JSE_PROP(textEntry);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CHOICELIST_H_
