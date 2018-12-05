@@ -86,8 +86,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256::BuildMonomial(
   std::vector<int32_t> coefficients(degree + 1);
   coefficients[0] = coefficient;
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
-  if (!temp->Init(this, &coefficients))
-    return nullptr;
+  temp->Init(this, coefficients);
   return temp;
 }
 

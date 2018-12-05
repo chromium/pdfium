@@ -19,8 +19,9 @@ class CBC_ReedSolomonGF256Poly final {
   CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients);
   CBC_ReedSolomonGF256Poly();
   ~CBC_ReedSolomonGF256Poly();
-  bool Init(CBC_ReedSolomonGF256* field,
-            const std::vector<int32_t>* coefficients);
+
+  void Init(CBC_ReedSolomonGF256* field,
+            const std::vector<int32_t>& coefficients);
 
   int32_t GetCoefficients(int32_t degree) const;
   const std::vector<int32_t>& GetCoefficients() const;

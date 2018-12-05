@@ -44,8 +44,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
     for (size_t d = m_cachedGenerators.size(); d <= degree; ++d) {
       std::vector<int32_t> temp = {1, m_field->Exp(d - 1)};
       CBC_ReedSolomonGF256Poly temp_poly;
-      if (!temp_poly.Init(m_field.Get(), &temp))
-        return nullptr;
+      temp_poly.Init(m_field.Get(), temp);
 
       auto nextGenerator = lastGenerator->Multiply(&temp_poly);
       if (!nextGenerator)
@@ -76,8 +75,7 @@ bool CBC_ReedSolomonEncoder::Encode(std::vector<int32_t>* toEncode,
     infoCoefficients[x] = (*toEncode)[x];
 
   CBC_ReedSolomonGF256Poly info;
-  if (!info.Init(m_field.Get(), &infoCoefficients))
-    return false;
+  info.Init(m_field.Get(), infoCoefficients);
 
   auto infoTemp = info.MultiplyByMonomial(ecBytes, 1);
   if (!infoTemp)
