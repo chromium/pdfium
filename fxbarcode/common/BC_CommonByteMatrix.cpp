@@ -23,7 +23,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include "core/fxcrt/fx_memory.h"
 #include "third_party/base/stl_util.h"
 
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height)

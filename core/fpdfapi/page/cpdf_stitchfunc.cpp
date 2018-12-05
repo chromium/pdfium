@@ -10,7 +10,6 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fxcrt/fx_memory.h"
 
 namespace {
 

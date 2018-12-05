@@ -7,7 +7,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"

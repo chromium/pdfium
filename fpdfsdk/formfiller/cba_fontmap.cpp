@@ -20,7 +20,6 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxge/cfx_substfont.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "third_party/base/ptr_util.h"
 
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
                          CFX_SystemHandler* pSystemHandler)

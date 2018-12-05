@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "fxjs/cfx_keyvalue.h"
-#include "third_party/base/ptr_util.h"
 
 CFX_GlobalArray::CFX_GlobalArray() = default;
 

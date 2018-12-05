@@ -11,7 +11,6 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/render/cpdf_dibbase.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_dib.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"

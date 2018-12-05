@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_stream.h"
 
 class CPDF_Dictionary;

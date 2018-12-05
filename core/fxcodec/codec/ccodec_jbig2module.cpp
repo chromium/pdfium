@@ -13,7 +13,6 @@
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
-#include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
 
 JBig2_DocumentContext::JBig2_DocumentContext() {}

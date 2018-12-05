@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "core/fdrm/fx_crypt.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/utils/path_service.h"
 

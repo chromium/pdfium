@@ -11,7 +11,6 @@
 #include <iterator>
 #include <utility>
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"

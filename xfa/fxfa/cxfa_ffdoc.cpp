@@ -17,7 +17,6 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/cfx_seekablemultistream.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"

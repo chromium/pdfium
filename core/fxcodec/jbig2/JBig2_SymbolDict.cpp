@@ -7,7 +7,6 @@
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
-#include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
 
 CJBig2_SymbolDict::CJBig2_SymbolDict() {}
