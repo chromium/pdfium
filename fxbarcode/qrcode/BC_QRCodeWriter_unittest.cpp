@@ -4,7 +4,7 @@
 
 #include "fxbarcode/qrcode/BC_QRCodeWriter.h"
 
-#include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -26,11 +26,6 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
 
   {
     static constexpr int kExpectedDimension = 21;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"", 0, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1,
@@ -56,16 +51,15 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"", 0, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 21;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"", 1, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1,
@@ -91,16 +85,15 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"", 1, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 21;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"", 2, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
@@ -126,16 +119,15 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"", 2, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 21;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"", 3, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
@@ -161,16 +153,15 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"", 3, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 21;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"hello world", 0, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
@@ -196,16 +187,16 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0
     };
     // clang-format on
+    std::vector<uint8_t> data =
+        writer.Encode(L"hello world", 0, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 21;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"hello world", 1, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
@@ -231,16 +222,16 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0
     };
     // clang-format on
+    std::vector<uint8_t> data =
+        writer.Encode(L"hello world", 1, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 25;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"hello world", 2, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1,
         1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -269,16 +260,16 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1,
         1};
+    std::vector<uint8_t> data =
+        writer.Encode(L"hello world", 2, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 25;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"hello world", 3, width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1,
         1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -307,7 +298,12 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1,
         1};
+    std::vector<uint8_t> data =
+        writer.Encode(L"hello world", 3, &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
 }

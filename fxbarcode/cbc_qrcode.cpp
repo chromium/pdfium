@@ -21,7 +21,7 @@
 
 #include "fxbarcode/cbc_qrcode.h"
 
-#include <memory>
+#include <vector>
 
 #include "fxbarcode/qrcode/BC_QRCodeWriter.h"
 #include "third_party/base/ptr_util.h"
@@ -29,16 +29,15 @@
 CBC_QRCode::CBC_QRCode()
     : CBC_CodeBase(pdfium::MakeUnique<CBC_QRCodeWriter>()) {}
 
-CBC_QRCode::~CBC_QRCode() {}
+CBC_QRCode::~CBC_QRCode() = default;
 
 bool CBC_QRCode::Encode(const WideStringView& contents) {
-  int32_t outWidth = 0;
-  int32_t outHeight = 0;
+  int32_t width;
+  int32_t height;
   CBC_QRCodeWriter* pWriter = GetQRCodeWriter();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(WideString(contents), pWriter->error_correction_level(),
-                      outWidth, outHeight));
-  return data && pWriter->RenderResult(data.get(), outWidth, outHeight);
+  std::vector<uint8_t> data = pWriter->Encode(
+      contents, pWriter->error_correction_level(), &width, &height);
+  return !data.empty() && pWriter->RenderResult(data.data(), width, height);
 }
 
 bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,

@@ -462,11 +462,11 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
 }  // namespace
 
 // static
-bool CBC_QRCoderEncoder::Encode(const WideString& content,
+bool CBC_QRCoderEncoder::Encode(const WideStringView& content,
                                 const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode) {
   ByteString encoding = "utf8";
-  ByteString utf8Data = content.ToUTF8();
+  ByteString utf8Data = FX_UTF8Encode(content);
   CBC_QRCoderMode* mode = ChooseMode(utf8Data, encoding);
   CBC_QRCoderBitVector dataBits;
   if (!AppendBytes(utf8Data, mode, &dataBits, encoding))

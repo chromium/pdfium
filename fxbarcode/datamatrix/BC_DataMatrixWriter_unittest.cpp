@@ -4,7 +4,7 @@
 
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 
-#include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"

@@ -21,7 +21,6 @@
 
 #include "fxbarcode/cbc_datamatrix.h"
 
-#include <memory>
 #include <vector>
 
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"

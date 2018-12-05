@@ -29,6 +29,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "third_party/base/stl_util.h"
 
 CBC_QRCodeWriter::CBC_QRCodeWriter() : CBC_TwoDimWriter(true) {}
 
@@ -42,10 +43,11 @@ bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-uint8_t* CBC_QRCodeWriter::Encode(const WideString& contents,
-                                  int32_t ecLevel,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight) {
+std::vector<uint8_t> CBC_QRCodeWriter::Encode(const WideStringView& contents,
+                                              int32_t ecLevel,
+                                              int32_t* pOutWidth,
+                                              int32_t* pOutHeight) {
+  std::vector<uint8_t> results;
   CBC_QRCoderErrorCorrectionLevel* ec = nullptr;
   switch (ecLevel) {
     case 0:
@@ -61,15 +63,16 @@ uint8_t* CBC_QRCodeWriter::Encode(const WideString& contents,
       ec = CBC_QRCoderErrorCorrectionLevel::H;
       break;
     default:
-      return nullptr;
+      return results;
   }
   CBC_QRCoder qr;
   if (!CBC_QRCoderEncoder::Encode(contents, ec, &qr))
-    return nullptr;
+    return results;
 
-  outWidth = qr.GetMatrixWidth();
-  outHeight = qr.GetMatrixWidth();
-  uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
-  memcpy(result, qr.GetMatrix()->GetArray().data(), outWidth * outHeight);
-  return result;
+  *pOutWidth = qr.GetMatrixWidth();
+  *pOutHeight = qr.GetMatrixWidth();
+  results = pdfium::Vector2D<uint8_t>(*pOutWidth, *pOutHeight);
+  memcpy(results.data(), qr.GetMatrix()->GetArray().data(),
+         *pOutWidth * *pOutHeight);
+  return results;
 }
