@@ -7,6 +7,7 @@
 #include "fxjs/cfxjse_formcalc_context.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <string>
 #include <utility>
 
@@ -497,89 +498,6 @@ ByteString GUIDString(bool bSeparator) {
   }
   bsStr.ReleaseBuffer(bSeparator ? 36 : 32);
   return bsStr;
-}
-
-double ByteStringToDouble(const ByteStringView& szStringVal) {
-  WideString wsValue = WideString::FromUTF8(szStringVal);
-  wsValue.Trim();
-
-  int32_t cc = 0;
-  bool bNegative = false;
-
-  const wchar_t* str = wsValue.c_str();
-  int32_t len = wsValue.GetLength();
-  if (str[0] == '+') {
-    cc++;
-  } else if (str[0] == '-') {
-    bNegative = true;
-    cc++;
-  }
-
-  int32_t nIntegralLen = 0;
-  int64_t nIntegral = 0;
-  while (cc < len) {
-    if (str[cc] == '.' || str[cc] == 'E' || str[cc] == 'e' ||
-        nIntegralLen > 17) {
-      break;
-    }
-    if (!FXSYS_IsDecimalDigit(str[cc])) {
-      return 0;
-    }
-    nIntegral = nIntegral * 10 + str[cc] - '0';
-    cc++;
-    nIntegralLen++;
-  }
-  nIntegral = bNegative ? -nIntegral : nIntegral;
-
-  int32_t scale = 0;
-  double fraction = 0.0;
-  uint32_t dwFractional = 0;
-  if (cc < len && str[cc] == '.') {
-    cc++;
-    while (cc < len) {
-      fraction += XFA_GetFractionalScale(scale) * (str[cc] - '0');
-      scale++;
-      cc++;
-      if (cc == len)
-        break;
-      if (scale == XFA_GetMaxFractionalScale() || str[cc] == 'E' ||
-          str[cc] == 'e') {
-        break;
-      }
-      if (!FXSYS_IsDecimalDigit(str[cc]))
-        return 0;
-    }
-    dwFractional = static_cast<uint32_t>(fraction * 4294967296.0);
-  }
-
-  int32_t nExponent = 0;
-  bool bExpSign = false;
-  if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
-    cc++;
-    if (cc < len) {
-      if (str[cc] == '+') {
-        cc++;
-      } else if (str[cc] == '-') {
-        bExpSign = true;
-        cc++;
-      }
-    }
-    while (cc < len) {
-      if (str[cc] == '.' || !FXSYS_IsDecimalDigit(str[cc]))
-        return 0;
-
-      nExponent = nExponent * 10 + str[cc] - '0';
-      cc++;
-    }
-    nExponent = bExpSign ? -nExponent : nExponent;
-  }
-
-  double dValue = dwFractional / 4294967296.0;
-  dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
-  if (nExponent != 0)
-    dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
-
-  return dValue;
 }
 
 bool IsIsoDateFormat(const char* pData,
@@ -5935,10 +5853,8 @@ float CFXJSE_FormCalcContext::ValueToFloat(CFXJSE_Value* pThis,
     GetObjectDefaultValue(arg, newPropertyValue.get());
     return ValueToFloat(pThis, newPropertyValue.get());
   }
-  if (arg->IsString()) {
-    return static_cast<float>(
-        ByteStringToDouble(arg->ToString().AsStringView()));
-  }
+  if (arg->IsString())
+    return strtof(arg->ToString().c_str(), nullptr);
   if (arg->IsUndefined())
     return 0;
 
@@ -5972,7 +5888,7 @@ double CFXJSE_FormCalcContext::ValueToDouble(CFXJSE_Value* pThis,
     return ValueToDouble(pThis, newPropertyValue.get());
   }
   if (arg->IsString())
-    return ByteStringToDouble(arg->ToString().AsStringView());
+    return strtod(arg->ToString().c_str(), nullptr);
   if (arg->IsUndefined())
     return 0;
   return arg->ToDouble();
