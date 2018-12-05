@@ -16,12 +16,9 @@ class CBC_ReedSolomonGF256;
 
 class CBC_ReedSolomonGF256Poly final {
  public:
-  CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients);
-  CBC_ReedSolomonGF256Poly();
+  CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field,
+                           const std::vector<int32_t>& coefficients);
   ~CBC_ReedSolomonGF256Poly();
-
-  void Init(CBC_ReedSolomonGF256* field,
-            const std::vector<int32_t>& coefficients);
 
   int32_t GetCoefficients(int32_t degree) const;
   const std::vector<int32_t>& GetCoefficients() const;
@@ -40,7 +37,7 @@ class CBC_ReedSolomonGF256Poly final {
   std::unique_ptr<CBC_ReedSolomonGF256Poly> Clone() const;
 
  private:
-  UnownedPtr<CBC_ReedSolomonGF256> m_field;
+  UnownedPtr<CBC_ReedSolomonGF256> const m_field;
   std::vector<int32_t> m_coefficients;
 };
 
