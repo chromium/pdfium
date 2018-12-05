@@ -18,8 +18,6 @@ class CJX_DataValue final : public CJX_Node {
   ~CJX_DataValue() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(contains);
-  JSE_PROP(contentType);
   JSE_PROP(isNull);
   JSE_PROP(value);
 };

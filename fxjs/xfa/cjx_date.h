@@ -18,8 +18,6 @@ class CJX_Date final : public CJX_Content {
   ~CJX_Date() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

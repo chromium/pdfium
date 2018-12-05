@@ -18,10 +18,6 @@ class CJX_Decimal final : public CJX_Content {
   ~CJX_Decimal() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(fracDigits);
-  JSE_PROP(leadDigits);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

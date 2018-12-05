@@ -16,9 +16,6 @@ class CJX_DigestMethod final : public CJX_Node {
  public:
   explicit CJX_DigestMethod(CXFA_DigestMethod* node);
   ~CJX_DigestMethod() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_DIGESTMETHOD_H_

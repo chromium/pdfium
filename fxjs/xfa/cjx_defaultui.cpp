@@ -11,15 +11,3 @@
 CJX_DefaultUi::CJX_DefaultUi(CXFA_DefaultUi* node) : CJX_Node(node) {}
 
 CJX_DefaultUi::~CJX_DefaultUi() = default;
-
-void CJX_DefaultUi::use(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_DefaultUi::usehref(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

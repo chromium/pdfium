@@ -16,10 +16,6 @@ class CJX_Encodings final : public CJX_Node {
  public:
   explicit CJX_Encodings(CXFA_Encodings* node);
   ~CJX_Encodings() override;
-
-  JSE_PROP(type);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_ENCODINGS_H_

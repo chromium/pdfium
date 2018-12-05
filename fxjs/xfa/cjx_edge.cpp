@@ -11,39 +11,3 @@
 CJX_Edge::CJX_Edge(CXFA_Edge* node) : CJX_Node(node) {}
 
 CJX_Edge::~CJX_Edge() = default;
-
-void CJX_Edge::cap(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Edge::use(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Edge::stroke(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Edge::presence(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Edge::thickness(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Edge::usehref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

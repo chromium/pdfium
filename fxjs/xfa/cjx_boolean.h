@@ -17,9 +17,7 @@ class CJX_Boolean final : public CJX_Content {
   explicit CJX_Boolean(CXFA_Boolean* node);
   ~CJX_Boolean() override;
 
-  JSE_PROP(use);
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

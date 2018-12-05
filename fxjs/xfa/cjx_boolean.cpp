@@ -13,12 +13,6 @@ CJX_Boolean::CJX_Boolean(CXFA_Boolean* node) : CJX_Content(node) {}
 
 CJX_Boolean::~CJX_Boolean() = default;
 
-void CJX_Boolean::use(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
@@ -39,12 +33,6 @@ void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
     wsFormatValue = pContainerNode->GetFormatDataValue(wsNewValue);
 
   SetContent(wsNewValue, wsFormatValue, true, true, true);
-}
-
-void CJX_Boolean::usehref(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Boolean::value(CFXJSE_Value* pValue,

@@ -28,15 +28,3 @@ CJS_Result CJX_Desc::metadata(CFX_V8* runtime,
 
   return CJS_Result::Success(runtime->NewString(""));
 }
-
-void CJX_Desc::use(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Desc::usehref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

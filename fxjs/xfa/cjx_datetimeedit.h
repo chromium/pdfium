@@ -16,10 +16,6 @@ class CJX_DateTimeEdit final : public CJX_Node {
  public:
   explicit CJX_DateTimeEdit(CXFA_DateTimeEdit* node);
   ~CJX_DateTimeEdit() override;
-
-  JSE_PROP(hScrollPolicy);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_DATETIMEEDIT_H_

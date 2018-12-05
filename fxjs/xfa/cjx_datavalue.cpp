@@ -12,18 +12,6 @@ CJX_DataValue::CJX_DataValue(CXFA_DataValue* node) : CJX_Node(node) {}
 
 CJX_DataValue::~CJX_DataValue() = default;
 
-void CJX_DataValue::contentType(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_DataValue::contains(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_DataValue::defaultValue(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {

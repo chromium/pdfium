@@ -12,22 +12,10 @@ CJX_Date::CJX_Date(CXFA_Date* node) : CJX_Content(node) {}
 
 CJX_Date::~CJX_Date() = default;
 
-void CJX_Date::use(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Date::defaultValue(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   ScriptSomDefaultValue(pValue, bSetting, eAttribute);
-}
-
-void CJX_Date::usehref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Date::value(CFXJSE_Value* pValue,

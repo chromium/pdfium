@@ -16,9 +16,6 @@ class CJX_DefaultUi final : public CJX_Node {
  public:
   explicit CJX_DefaultUi(CXFA_DefaultUi* node);
   ~CJX_DefaultUi() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_DEFAULTUI_H_

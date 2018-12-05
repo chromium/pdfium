@@ -11,21 +11,3 @@
 CJX_Encodings::CJX_Encodings(CXFA_Encodings* node) : CJX_Node(node) {}
 
 CJX_Encodings::~CJX_Encodings() = default;
-
-void CJX_Encodings::use(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Encodings::type(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Encodings::usehref(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
