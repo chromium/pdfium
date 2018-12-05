@@ -10,16 +10,17 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/optional.h"
 
 class CBC_PDF417ErrorCorrection {
  public:
-  CBC_PDF417ErrorCorrection();
-  virtual ~CBC_PDF417ErrorCorrection();
+  CBC_PDF417ErrorCorrection() = delete;
+  ~CBC_PDF417ErrorCorrection() = delete;
 
-  static int32_t getErrorCorrectionCodewordCount(int32_t errorCorrectionLevel);
-  static bool generateErrorCorrection(const WideString& dataCodewords,
-                                      int32_t errorCorrectionLevel,
-                                      WideString* result);
+  static int32_t GetErrorCorrectionCodewordCount(int32_t errorCorrectionLevel);
+  static Optional<WideString> GenerateErrorCorrection(
+      const WideString& dataCodewords,
+      int32_t errorCorrectionLevel);
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_

@@ -122,25 +122,21 @@ const uint16_t* const EC_COEFFICIENTS[9] = {
 
 }  // namespace
 
-CBC_PDF417ErrorCorrection::CBC_PDF417ErrorCorrection() {}
-CBC_PDF417ErrorCorrection::~CBC_PDF417ErrorCorrection() {}
-int32_t CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
+// static
+int32_t CBC_PDF417ErrorCorrection::GetErrorCorrectionCodewordCount(
     int32_t errorCorrectionLevel) {
   if (errorCorrectionLevel < 0 || errorCorrectionLevel > 8)
     return -1;
   return 1 << (errorCorrectionLevel + 1);
 }
 
-bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
+// static
+Optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
     const WideString& dataCodewords,
-    int32_t errorCorrectionLevel,
-    WideString* result) {
-  ASSERT(result);
-  ASSERT(result->IsEmpty());
-
-  int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel);
+    int32_t errorCorrectionLevel) {
+  int32_t k = GetErrorCorrectionCodewordCount(errorCorrectionLevel);
   if (k < 0)
-    return false;
+    return {};
 
   std::vector<wchar_t> ech(k);
   size_t sld = dataCodewords.GetLength();
@@ -157,11 +153,12 @@ bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
     t3 = 929 - t2;
     ech[0] = (wchar_t)(t3 % 929);
   }
-  result->Reserve(k);
+  WideString result;
+  result.Reserve(k);
   for (int32_t j = k - 1; j >= 0; j--) {
     if (ech[j] != 0)
       ech[j] = static_cast<wchar_t>(929) - ech[j];
-    *result += ech[j];
+    result += ech[j];
   }
-  return true;
+  return result;
 }

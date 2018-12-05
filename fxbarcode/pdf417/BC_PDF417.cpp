@@ -360,7 +360,7 @@ CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
 bool CBC_PDF417::GenerateBarcodeLogic(const WideStringView& msg,
                                       int32_t errorCorrectionLevel) {
   int32_t errorCorrectionCodeWords =
-      CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
+      CBC_PDF417ErrorCorrection::GetErrorCorrectionCodewordCount(
           errorCorrectionLevel);
   if (errorCorrectionCodeWords < 0)
     return false;
@@ -390,12 +390,12 @@ bool CBC_PDF417::GenerateBarcodeLogic(const WideStringView& msg,
     sb += (wchar_t)900;
 
   WideString dataCodewords(sb);
-  WideString ec;
-  if (!CBC_PDF417ErrorCorrection::generateErrorCorrection(
-          dataCodewords, errorCorrectionLevel, &ec)) {
+  Optional<WideString> ec = CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
+      dataCodewords, errorCorrectionLevel);
+  if (!ec.has_value())
     return false;
-  }
-  WideString fullCodewords = dataCodewords + ec;
+
+  WideString fullCodewords = dataCodewords + ec.value();
   m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(cols, rows);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
                  m_barcodeMatrix.get());
