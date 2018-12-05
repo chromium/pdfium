@@ -565,8 +565,7 @@ int CCodec_FaxModule::FaxG4Decode(const uint8_t* src_buf,
                                   int height,
                                   int pitch,
                                   uint8_t* dest_buf) {
-  if (pitch == 0)
-    pitch = (width + 7) / 8;
+  ASSERT(pitch != 0);
 
   std::vector<uint8_t> ref_buf(pitch, 0xff);
   int bitpos = starting_bitpos;
