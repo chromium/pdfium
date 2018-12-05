@@ -84,25 +84,6 @@ int32_t CBC_ReedSolomonGF256Poly::GetCoefficients(int32_t degree) const {
   return m_coefficients[m_coefficients.size() - 1 - degree];
 }
 
-int32_t CBC_ReedSolomonGF256Poly::EvaluateAt(int32_t a) {
-  if (a == 0)
-    return GetCoefficients(0);
-
-  size_t size = m_coefficients.size();
-  if (a == 1) {
-    int32_t result = 0;
-    for (size_t i = 0; i < size; i++)
-      result = CBC_ReedSolomonGF256::AddOrSubtract(result, m_coefficients[i]);
-    return result;
-  }
-  int32_t result = m_coefficients[0];
-  for (size_t j = 1; j < size; j++) {
-    result = CBC_ReedSolomonGF256::AddOrSubtract(m_field->Multiply(a, result),
-                                                 m_coefficients[j]);
-  }
-  return result;
-}
-
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Clone()
     const {
   auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
