@@ -267,9 +267,8 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
   std::vector<WideString> wsPatterns;
   pFormat->SplitFormatString(wsFormat, &wsPatterns);
   wsResult.clear();
-  int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
-  for (int32_t i = 0; i < iCount; i++) {
-    if (FormatSinglePattern(wsResult, wsPatterns[i], pLocale, eValueType))
+  for (const auto& pattern : wsPatterns) {
+    if (FormatSinglePattern(wsResult, pattern, pLocale, eValueType))
       return true;
   }
   return false;

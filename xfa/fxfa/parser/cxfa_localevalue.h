@@ -59,7 +59,7 @@ class CXFA_LocaleValue {
                            LocaleIface* pLocale);
 
   bool IsValid() const { return m_bValid; }
-  WideString GetValue() const { return m_wsValue; }
+  const WideString& GetValue() const { return m_wsValue; }
   uint32_t GetType() const { return m_dwType; }
   double GetDoubleNum() const;
   bool SetDate(const CFX_DateTime& d);
