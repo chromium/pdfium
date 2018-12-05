@@ -37,21 +37,3 @@ void CJX_Manifest::defaultValue(CFXJSE_Value* pValue,
                                 XFA_Attribute eAttribute) {
   ScriptSomDefaultValue(pValue, bSetting, eAttribute);
 }
-
-void CJX_Manifest::action(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Manifest::use(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Manifest::usehref(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

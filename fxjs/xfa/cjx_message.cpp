@@ -11,15 +11,3 @@
 CJX_Message::CJX_Message(CXFA_Message* node) : CJX_Node(node) {}
 
 CJX_Message::~CJX_Message() = default;
-
-void CJX_Message::use(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Message::usehref(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

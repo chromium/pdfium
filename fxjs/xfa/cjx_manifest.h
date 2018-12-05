@@ -20,9 +20,6 @@ class CJX_Manifest final : public CJX_Node {
   JSE_METHOD(evaluate, CJX_Manifest);
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(action);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

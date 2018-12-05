@@ -11,15 +11,3 @@
 CJX_Oid::CJX_Oid(CXFA_Oid* node) : CJX_TextNode(node) {}
 
 CJX_Oid::~CJX_Oid() = default;
-
-void CJX_Oid::use(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Oid::usehref(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

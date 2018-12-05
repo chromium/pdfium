@@ -17,11 +17,8 @@ class CJX_Occur final : public CJX_Node {
   explicit CJX_Occur(CXFA_Occur* node);
   ~CJX_Occur() override;
 
-  JSE_PROP(initial);
   JSE_PROP(max);
   JSE_PROP(min);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_OCCUR_H_

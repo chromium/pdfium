@@ -16,9 +16,6 @@ class CJX_Password final : public CJX_TextNode {
  public:
   explicit CJX_Password(CXFA_Password* node);
   ~CJX_Password() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_PASSWORD_H_

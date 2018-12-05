@@ -16,10 +16,6 @@ class CJX_NumericEdit final : public CJX_Node {
  public:
   explicit CJX_NumericEdit(CXFA_NumericEdit* node);
   ~CJX_NumericEdit() override;
-
-  JSE_PROP(hScrollPolicy);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_NUMERICEDIT_H_

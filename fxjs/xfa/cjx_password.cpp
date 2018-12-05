@@ -11,15 +11,3 @@
 CJX_Password::CJX_Password(CXFA_Password* node) : CJX_TextNode(node) {}
 
 CJX_Password::~CJX_Password() = default;
-
-void CJX_Password::use(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Password::usehref(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

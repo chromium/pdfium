@@ -30,7 +30,6 @@ class CJX_Node : public CJX_Tree {
   JSE_METHOD(setAttribute, CJX_Node);
   JSE_METHOD(setElement, CJX_Node);
 
-  JSE_PROP(id);
   JSE_PROP(isContainer);
   JSE_PROP(isNull);
   JSE_PROP(model);

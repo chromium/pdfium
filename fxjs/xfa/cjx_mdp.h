@@ -16,11 +16,6 @@ class CJX_Mdp final : public CJX_Node {
  public:
   explicit CJX_Mdp(CXFA_Mdp* node);
   ~CJX_Mdp() override;
-
-  JSE_PROP(permissions);
-  JSE_PROP(signatureType);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_MDP_H_

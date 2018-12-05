@@ -436,12 +436,6 @@ CJS_Result CJX_Node::setElement(
   return CJS_Result::Success();
 }
 
-void CJX_Node::id(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Node::ns(CFXJSE_Value* pValue,
                   bool bSetting,
                   XFA_Attribute eAttribute) {

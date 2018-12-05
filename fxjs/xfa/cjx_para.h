@@ -16,21 +16,6 @@ class CJX_Para final : public CJX_Node {
  public:
   explicit CJX_Para(CXFA_Para* node);
   ~CJX_Para() override;
-
-  JSE_PROP(hAlign);
-  JSE_PROP(lineHeight);
-  JSE_PROP(marginLeft);
-  JSE_PROP(marginRight);
-  JSE_PROP(preserve);
-  JSE_PROP(radixOffset);
-  JSE_PROP(spaceAbove);
-  JSE_PROP(spaceBelow);
-  JSE_PROP(tabDefault);
-  JSE_PROP(tabStops);
-  JSE_PROP(textIndent);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
-  JSE_PROP(vAlign);
 };
 
 #endif  // FXJS_XFA_CJX_PARA_H_

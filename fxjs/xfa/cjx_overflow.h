@@ -16,12 +16,6 @@ class CJX_Overflow final : public CJX_Node {
  public:
   explicit CJX_Overflow(CXFA_Overflow* node);
   ~CJX_Overflow() override;
-
-  JSE_PROP(leader);
-  JSE_PROP(target);
-  JSE_PROP(trailer);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_OVERFLOW_H_
