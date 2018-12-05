@@ -26,11 +26,6 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
 
   {
     static constexpr int kExpectedDimension = 10;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"", width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
@@ -45,16 +40,15 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"", &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 14;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"helloworld", width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
@@ -73,16 +67,15 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"helloworld", &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
     static constexpr int kExpectedDimension = 10;
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"12345", width, height));
-    ASSERT_TRUE(data);
-    ASSERT_EQ(kExpectedDimension, width);
-    ASSERT_EQ(kExpectedDimension, height);
     // clang-format off
     static const char kExpectedData[kExpectedDimension * kExpectedDimension] = {
         1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
@@ -97,12 +90,15 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
+    std::vector<uint8_t> data = writer.Encode(L"12345", &width, &height);
+    ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
+    ASSERT_EQ(kExpectedDimension, width);
+    ASSERT_EQ(kExpectedDimension, height);
     for (size_t i = 0; i < FX_ArraySize(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data.get()[i]) << i;
+      EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
-    std::unique_ptr<uint8_t, FxFreeDeleter> data(
-        writer.Encode(L"hello world", width, height));
-    ASSERT_FALSE(data);
+    std::vector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
+    ASSERT_TRUE(data.empty());
   }
 }

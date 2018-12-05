@@ -42,6 +42,7 @@
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -106,22 +107,23 @@ bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
-                                      int32_t& outWidth,
-                                      int32_t& outHeight) {
+std::vector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
+                                                  int32_t* pOutWidth,
+                                                  int32_t* pOutHeight) {
+  std::vector<uint8_t> results;
   WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents, false);
   if (encoded.IsEmpty())
-    return nullptr;
+    return results;
 
   const CBC_SymbolInfo* pSymbolInfo =
       CBC_SymbolInfo::Lookup(encoded.GetLength(), false);
   if (!pSymbolInfo)
-    return nullptr;
+    return results;
 
   WideString codewords =
       CBC_ErrorCorrection::EncodeECC200(encoded, pSymbolInfo);
   if (codewords.IsEmpty())
-    return nullptr;
+    return results;
 
   int32_t width = pSymbolInfo->getSymbolDataWidth();
   ASSERT(width);
@@ -133,11 +135,12 @@ uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
   placement->place();
   auto bytematrix = encodeLowLevel(placement.get(), pSymbolInfo);
   if (!bytematrix)
-    return nullptr;
+    return results;
 
-  outWidth = bytematrix->GetWidth();
-  outHeight = bytematrix->GetHeight();
-  uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
-  memcpy(result, bytematrix->GetArray().data(), outWidth * outHeight);
-  return result;
+  *pOutWidth = bytematrix->GetWidth();
+  *pOutHeight = bytematrix->GetHeight();
+  results = pdfium::Vector2D<uint8_t>(*pOutWidth, *pOutHeight);
+  memcpy(results.data(), bytematrix->GetArray().data(),
+         *pOutWidth * *pOutHeight);
+  return results;
 }
