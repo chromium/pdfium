@@ -18,8 +18,6 @@ class CJX_Xfa final : public CJX_Model {
   ~CJX_Xfa() override;
 
   JSE_PROP(thisValue); /* this */
-  JSE_PROP(timeStamp);
-  JSE_PROP(uuid);
 };
 
 #endif  // FXJS_XFA_CJX_XFA_H_

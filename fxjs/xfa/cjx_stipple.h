@@ -16,10 +16,6 @@ class CJX_Stipple final : public CJX_Node {
  public:
   explicit CJX_Stipple(CXFA_Stipple* node);
   ~CJX_Stipple() override;
-
-  JSE_PROP(rate);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_STIPPLE_H_

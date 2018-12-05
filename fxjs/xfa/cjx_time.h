@@ -18,8 +18,6 @@ class CJX_Time final : public CJX_Content {
   ~CJX_Time() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

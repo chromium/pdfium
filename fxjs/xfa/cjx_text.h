@@ -18,9 +18,6 @@ class CJX_Text final : public CJX_Content {
   ~CJX_Text() override;
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(maxChars);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(value);
 };
 

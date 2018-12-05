@@ -25,15 +25,3 @@ void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
   ASSERT(pThis);
   pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(pThis));
 }
-
-void CJX_Xfa::timeStamp(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Xfa::uuid(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

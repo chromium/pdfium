@@ -16,9 +16,6 @@ class CJX_User final : public CJX_TextNode {
  public:
   explicit CJX_User(CXFA_User* node);
   ~CJX_User() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_USER_H_

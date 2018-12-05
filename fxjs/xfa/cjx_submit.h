@@ -16,14 +16,6 @@ class CJX_Submit final : public CJX_Node {
  public:
   explicit CJX_Submit(CXFA_Submit* node);
   ~CJX_Submit() override;
-
-  JSE_PROP(embedPDF);
-  JSE_PROP(format);
-  JSE_PROP(target);
-  JSE_PROP(textEncoding);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
-  JSE_PROP(xdpContent);
 };
 
 #endif  // FXJS_XFA_CJX_SUBMIT_H_

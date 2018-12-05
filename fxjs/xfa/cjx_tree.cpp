@@ -130,12 +130,6 @@ void CJX_Tree::classAll(CFXJSE_Value* pValue,
                   XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL, nullptr);
 }
 
-void CJX_Tree::name(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Tree::nodes(CFXJSE_Value* pValue,
                      bool bSetting,
                      XFA_Attribute eAttribute) {

@@ -31,15 +31,3 @@ CJS_Result CJX_WsdlConnection::execute(
 
   return CJS_Result::Success(runtime->NewBoolean(false));
 }
-
-void CJX_WsdlConnection::dataDescription(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_WsdlConnection::execute(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

@@ -16,11 +16,6 @@ class CJX_Traverse final : public CJX_Node {
  public:
   explicit CJX_Traverse(CXFA_Traverse* node);
   ~CJX_Traverse() override;
-
-  JSE_PROP(operation);
-  JSE_PROP(ref);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_TRAVERSE_H_

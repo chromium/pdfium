@@ -12,24 +12,6 @@ CJX_Value::CJX_Value(CXFA_Value* node) : CJX_Node(node) {}
 
 CJX_Value::~CJX_Value() = default;
 
-void CJX_Value::use(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Value::relevant(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Value::usehref(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Value::override(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {

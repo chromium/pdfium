@@ -19,9 +19,6 @@ class CJX_WsdlConnection final : public CJX_Node {
 
   JSE_METHOD(execute, CJX_WsdlConnection);
 
-  JSE_PROP(dataDescription);
-  JSE_PROP(execute);
-
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

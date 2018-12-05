@@ -16,13 +16,6 @@ class CJX_TextEdit final : public CJX_Node {
  public:
   explicit CJX_TextEdit(CXFA_TextEdit* node);
   ~CJX_TextEdit() override;
-
-  JSE_PROP(allowRichText);
-  JSE_PROP(hScrollPolicy);
-  JSE_PROP(multiLine);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
-  JSE_PROP(vScrollPolicy);
 };
 
 #endif  // FXJS_XFA_CJX_TEXTEDIT_H_

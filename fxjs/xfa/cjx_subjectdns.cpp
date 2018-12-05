@@ -11,9 +11,3 @@
 CJX_SubjectDNs::CJX_SubjectDNs(CXFA_SubjectDNs* node) : CJX_Node(node) {}
 
 CJX_SubjectDNs::~CJX_SubjectDNs() = default;
-
-void CJX_SubjectDNs::type(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

@@ -12,22 +12,10 @@ CJX_Time::CJX_Time(CXFA_Time* node) : CJX_Content(node) {}
 
 CJX_Time::~CJX_Time() = default;
 
-void CJX_Time::use(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Time::defaultValue(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
   ScriptSomDefaultValue(pValue, bSetting, eAttribute);
-}
-
-void CJX_Time::usehref(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
 }
 
 void CJX_Time::value(CFXJSE_Value* pValue,

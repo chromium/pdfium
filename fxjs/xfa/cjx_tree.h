@@ -25,7 +25,6 @@ class CJX_Tree : public CJX_Object {
   JSE_PROP(classAll);
   JSE_PROP(classIndex);
   JSE_PROP(index);
-  JSE_PROP(name);
   JSE_PROP(nodes);
   JSE_PROP(parent);
   JSE_PROP(somExpression);

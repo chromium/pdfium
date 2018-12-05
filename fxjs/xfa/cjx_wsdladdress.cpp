@@ -11,15 +11,3 @@
 CJX_WsdlAddress::CJX_WsdlAddress(CXFA_WsdlAddress* node) : CJX_TextNode(node) {}
 
 CJX_WsdlAddress::~CJX_WsdlAddress() = default;
-
-void CJX_WsdlAddress::use(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_WsdlAddress::usehref(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

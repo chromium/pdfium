@@ -16,8 +16,6 @@ class CJX_XsdConnection final : public CJX_Node {
  public:
   explicit CJX_XsdConnection(CXFA_XsdConnection* node);
   ~CJX_XsdConnection() override;
-
-  JSE_PROP(dataDescription);
 };
 
 #endif  // FXJS_XFA_CJX_XSDCONNECTION_H_

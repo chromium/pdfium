@@ -16,9 +16,6 @@ class CJX_Ui final : public CJX_Node {
  public:
   explicit CJX_Ui(CXFA_Ui* node);
   ~CJX_Ui() override;
-
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_UI_H_

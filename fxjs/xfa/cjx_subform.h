@@ -22,30 +22,10 @@ class CJX_Subform final : public CJX_Container {
   JSE_METHOD(execInitialize, CJX_Subform);
   JSE_METHOD(execValidate, CJX_Subform);
 
-  JSE_PROP(allowMacro);
-  JSE_PROP(anchorType);
-  JSE_PROP(colSpan);
-  JSE_PROP(columnWidths);
-  JSE_PROP(h);
-  JSE_PROP(hAlign);
   JSE_PROP(instanceIndex);
   JSE_PROP(layout);
   JSE_PROP(locale);
-  JSE_PROP(maxH);
-  JSE_PROP(maxW);
-  JSE_PROP(minH);
-  JSE_PROP(minW);
-  JSE_PROP(presence);
-  JSE_PROP(relevant);
-  JSE_PROP(restoreState);
-  JSE_PROP(scope);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
   JSE_PROP(validationMessage);
-  JSE_PROP(vAlign);
-  JSE_PROP(w);
-  JSE_PROP(x);
-  JSE_PROP(y);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

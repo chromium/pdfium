@@ -16,12 +16,6 @@ class CJX_Validate final : public CJX_Node {
  public:
   explicit CJX_Validate(CXFA_Validate* node);
   ~CJX_Validate() override;
-
-  JSE_PROP(formatTest);
-  JSE_PROP(nullTest);
-  JSE_PROP(scriptTest);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_VALIDATE_H_

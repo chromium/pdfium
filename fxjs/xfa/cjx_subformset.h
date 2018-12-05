@@ -18,10 +18,6 @@ class CJX_SubformSet final : public CJX_Container {
   ~CJX_SubformSet() override;
 
   JSE_PROP(instanceIndex);
-  JSE_PROP(relation);
-  JSE_PROP(relevant);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_SUBFORMSET_H_

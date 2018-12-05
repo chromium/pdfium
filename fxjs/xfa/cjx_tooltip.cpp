@@ -11,15 +11,3 @@
 CJX_ToolTip::CJX_ToolTip(CXFA_ToolTip* node) : CJX_TextNode(node) {}
 
 CJX_ToolTip::~CJX_ToolTip() = default;
-
-void CJX_ToolTip::use(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_ToolTip::usehref(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

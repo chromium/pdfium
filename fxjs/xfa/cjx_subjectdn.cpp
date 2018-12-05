@@ -11,9 +11,3 @@
 CJX_SubjectDN::CJX_SubjectDN(CXFA_SubjectDN* node) : CJX_Node(node) {}
 
 CJX_SubjectDN::~CJX_SubjectDN() = default;
-
-void CJX_SubjectDN::delimiter(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

@@ -11,15 +11,3 @@
 CJX_Update::CJX_Update(CXFA_Update* node) : CJX_TextNode(node) {}
 
 CJX_Update::~CJX_Update() = default;
-
-void CJX_Update::use(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
-void CJX_Update::usehref(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}

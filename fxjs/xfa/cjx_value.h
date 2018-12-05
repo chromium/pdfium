@@ -18,9 +18,6 @@ class CJX_Value final : public CJX_Node {
   ~CJX_Value() override;
 
   JSE_PROP(override);
-  JSE_PROP(relevant);
-  JSE_PROP(use);
-  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_VALUE_H_
