@@ -432,8 +432,8 @@ TEST(fxcodec, YUV420ToRGB) {
     bool expected;
   } cases[] = {{0, false}, {1, false},  {30, false}, {31, true},
                {32, true}, {33, false}, {34, false}, {UINT_MAX, false}};
-  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
-    y.w = cases[i].w;
+  for (const auto& testcase : cases) {
+    y.w = testcase.w;
     y.h = y.w;
     img.x1 = y.w;
     img.y1 = y.h;
@@ -450,7 +450,7 @@ TEST(fxcodec, YUV420ToRGB) {
     img.comps[1] = u;
     img.comps[2] = v;
     sycc420_to_rgb(&img);
-    if (cases[i].expected) {
+    if (testcase.expected) {
       EXPECT_EQ(img.comps[0].w, img.comps[1].w);
       EXPECT_EQ(img.comps[0].h, img.comps[1].h);
       EXPECT_EQ(img.comps[0].w, img.comps[2].w);

@@ -180,17 +180,15 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
   const uint32_t dwType = property->dwType;
   switch (dwType & 0x0F) {
     case CFX_CSSVALUETYPE_Primitive: {
-      static const uint32_t g_ValueGuessOrder[] = {
+      static constexpr CFX_CSSVALUETYPE kValueGuessOrder[] = {
           CFX_CSSVALUETYPE_MaybeNumber, CFX_CSSVALUETYPE_MaybeEnum,
           CFX_CSSVALUETYPE_MaybeColor, CFX_CSSVALUETYPE_MaybeString,
       };
-      static const int32_t g_ValueGuessCount =
-          sizeof(g_ValueGuessOrder) / sizeof(uint32_t);
-      for (int32_t i = 0; i < g_ValueGuessCount; ++i) {
-        const uint32_t dwMatch = dwType & g_ValueGuessOrder[i];
-        if (dwMatch == 0) {
+      for (uint32_t guess : kValueGuessOrder) {
+        const uint32_t dwMatch = dwType & guess;
+        if (dwMatch == 0)
           continue;
-        }
+
         RetainPtr<CFX_CSSValue> pCSSValue;
         switch (dwMatch) {
           case CFX_CSSVALUETYPE_MaybeNumber:
@@ -213,7 +211,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
           return;
         }
 
-        if ((dwType & ~(g_ValueGuessOrder[i])) == CFX_CSSVALUETYPE_Primitive)
+        if ((dwType & ~guess) == CFX_CSSVALUETYPE_Primitive)
           return;
       }
       break;

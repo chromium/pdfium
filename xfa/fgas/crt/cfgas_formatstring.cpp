@@ -28,32 +28,33 @@
 
 namespace {
 
-struct FX_LOCALESUBCATEGORYINFO {
+struct LocaleDateTimeSubCategoryWithHash {
   uint32_t uHash;  // Hashed as wide string.
-  int32_t eSubCategory;
+  FX_LOCALEDATETIMESUBCATEGORY eSubCategory;
+};
+
+struct LocaleNumberSubCategoryWithHash {
+  uint32_t uHash;  // Hashed as wide string.
+  FX_LOCALENUMSUBCATEGORY eSubCategory;
 };
 
 #undef SUBC
 #define SUBC(a, b, c) a, c
 
-const FX_LOCALESUBCATEGORYINFO g_FXLocaleDateTimeSubCatData[] = {
+const LocaleDateTimeSubCategoryWithHash g_FXLocaleDateTimeSubCatData[] = {
     {SUBC(0x14da2125, "default", FX_LOCALEDATETIMESUBCATEGORY_Default)},
     {SUBC(0x9041d4b0, "short", FX_LOCALEDATETIMESUBCATEGORY_Short)},
     {SUBC(0xa084a381, "medium", FX_LOCALEDATETIMESUBCATEGORY_Medium)},
     {SUBC(0xcdce56b3, "full", FX_LOCALEDATETIMESUBCATEGORY_Full)},
     {SUBC(0xf6b4afb0, "long", FX_LOCALEDATETIMESUBCATEGORY_Long)},
 };
-const int32_t g_iFXLocaleDateTimeSubCatCount =
-    sizeof(g_FXLocaleDateTimeSubCatData) / sizeof(FX_LOCALESUBCATEGORYINFO);
 
-const FX_LOCALESUBCATEGORYINFO g_FXLocaleNumSubCatData[] = {
+const LocaleNumberSubCategoryWithHash g_FXLocaleNumSubCatData[] = {
     {SUBC(0x46f95531, "percent", FX_LOCALENUMPATTERN_Percent)},
     {SUBC(0x4c4e8acb, "currency", FX_LOCALENUMPATTERN_Currency)},
     {SUBC(0x54034c2f, "decimal", FX_LOCALENUMPATTERN_Decimal)},
     {SUBC(0x7568e6ae, "integer", FX_LOCALENUMPATTERN_Integer)},
 };
-const int32_t g_iFXLocaleNumSubCatCount =
-    sizeof(g_FXLocaleNumSubCatData) / sizeof(FX_LOCALESUBCATEGORYINFO);
 
 #undef SUBC
 
@@ -1021,10 +1022,9 @@ LocaleIface* CFGAS_FormatString::GetNumericFormat(
           uint32_t dwSubHash =
               FX_HashCode_GetW(wsSubCategory.AsStringView(), false);
           FX_LOCALENUMSUBCATEGORY eSubCategory = FX_LOCALENUMPATTERN_Decimal;
-          for (int32_t i = 0; i < g_iFXLocaleNumSubCatCount; i++) {
-            if (g_FXLocaleNumSubCatData[i].uHash == dwSubHash) {
-              eSubCategory = (FX_LOCALENUMSUBCATEGORY)g_FXLocaleNumSubCatData[i]
-                                 .eSubCategory;
+          for (const auto& data : g_FXLocaleNumSubCatData) {
+            if (data.uHash == dwSubHash) {
+              eSubCategory = data.eSubCategory;
               break;
             }
           }
@@ -1620,11 +1620,9 @@ FX_DATETIMETYPE CFGAS_FormatString::GetDateTimeFormat(
               FX_HashCode_GetW(wsSubCategory.AsStringView(), false);
           FX_LOCALEDATETIMESUBCATEGORY eSubCategory =
               FX_LOCALEDATETIMESUBCATEGORY_Medium;
-          for (int32_t i = 0; i < g_iFXLocaleDateTimeSubCatCount; i++) {
-            if (g_FXLocaleDateTimeSubCatData[i].uHash == dwSubHash) {
-              eSubCategory =
-                  (FX_LOCALEDATETIMESUBCATEGORY)g_FXLocaleDateTimeSubCatData[i]
-                      .eSubCategory;
+          for (const auto& data : g_FXLocaleDateTimeSubCatData) {
+            if (data.uHash == dwSubHash) {
+              eSubCategory = data.eSubCategory;
               break;
             }
           }
