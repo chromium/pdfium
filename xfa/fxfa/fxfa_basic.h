@@ -135,7 +135,7 @@ enum class XFA_AttributeType : uint8_t {
 struct XFA_SCRIPTHIERARCHY {
   uint16_t wAttributeStart;
   uint16_t wAttributeCount;
-  int16_t wParentIndex;
+  XFA_Element wParentIndex;
 };
 
 #define XFA_PROPERTYFLAG_OneOf 0x01

@@ -539,24 +539,17 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     return nullptr;
 
   uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
-  int32_t iElementIndex = static_cast<int32_t>(eElement);
-  while (iElementIndex != -1) {
-    const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
-    size_t iCount = scriptIndex->wAttributeCount;
-    if (iCount == 0) {
-      iElementIndex = scriptIndex->wParentIndex;
-      continue;
-    }
-
+  while (eElement != XFA_Element::Unknown) {
+    const XFA_SCRIPTHIERARCHY* scriptIndex =
+        &g_XFAScriptIndex[static_cast<size_t>(eElement)];
     size_t iStart = scriptIndex->wAttributeStart;
-    size_t iEnd = iStart + iCount;
+    size_t iEnd = iStart + scriptIndex->wAttributeCount;
     for (size_t iter = iStart; iter < iEnd; ++iter) {
-      const XFA_SCRIPTATTRIBUTEINFO* pInfo = g_SomAttributeData + iter;
+      const XFA_SCRIPTATTRIBUTEINFO* pInfo = &g_SomAttributeData[iter];
       if (uHash == pInfo->uHash)
         return pInfo;
     }
-
-    iElementIndex = scriptIndex->wParentIndex;
+    eElement = scriptIndex->wParentIndex;
   }
   return nullptr;
 }
