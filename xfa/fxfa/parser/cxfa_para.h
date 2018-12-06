@@ -14,8 +14,8 @@ class CXFA_Para final : public CXFA_Node {
   CXFA_Para(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Para() override;
 
-  XFA_AttributeEnum GetHorizontalAlign();
-  XFA_AttributeEnum GetVerticalAlign();
+  XFA_AttributeValue GetHorizontalAlign();
+  XFA_AttributeValue GetVerticalAlign();
   float GetLineHeight();
   float GetMarginLeft();
   float GetMarginRight();

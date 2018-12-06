@@ -16,7 +16,8 @@ class CXFA_Graphics;
 
 class CXFA_Linear final : public CXFA_Node {
  public:
-  static constexpr XFA_AttributeEnum kDefaultType = XFA_AttributeEnum::ToRight;
+  static constexpr XFA_AttributeValue kDefaultType =
+      XFA_AttributeValue::ToRight;
 
   CXFA_Linear(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Linear() override;
@@ -28,7 +29,7 @@ class CXFA_Linear final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
-  XFA_AttributeEnum GetType();
+  XFA_AttributeValue GetType();
   CXFA_Color* GetColorIfExists();
 };
 

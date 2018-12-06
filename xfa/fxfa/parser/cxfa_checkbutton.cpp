@@ -21,9 +21,9 @@ const CXFA_Node::AttributeData kCheckButtonAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::AllowNeutral, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Mark, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Default},
+     (void*)XFA_AttributeValue::Default},
     {XFA_Attribute::Shape, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Square},
+     (void*)XFA_AttributeValue::Square},
     {XFA_Attribute::Size, XFA_AttributeType::Measure, (void*)L"10pt"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
@@ -50,10 +50,10 @@ XFA_FFWidgetType CXFA_CheckButton::GetDefaultFFWidgetType() const {
 }
 
 bool CXFA_CheckButton::IsRound() {
-  return JSObject()->GetEnum(XFA_Attribute::Shape) == XFA_AttributeEnum::Round;
+  return JSObject()->GetEnum(XFA_Attribute::Shape) == XFA_AttributeValue::Round;
 }
 
-XFA_AttributeEnum CXFA_CheckButton::GetMark() {
+XFA_AttributeValue CXFA_CheckButton::GetMark() {
   return JSObject()->GetEnum(XFA_Attribute::Mark);
 }
 

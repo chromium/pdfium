@@ -10,7 +10,7 @@ namespace {
 
 const CXFA_Node::AttributeData kCurrencySymbolAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Symbol},
+     (void*)XFA_AttributeValue::Symbol},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kCurrencySymbolName[] = L"currencySymbol";

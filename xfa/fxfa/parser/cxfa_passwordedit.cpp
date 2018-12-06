@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kPasswordEditAttributeData[] = {
     {XFA_Attribute::PasswordChar, XFA_AttributeType::CData, (void*)L"*"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Auto},
+     (void*)XFA_AttributeValue::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kPasswordEditName[] = L"passwordEdit";

@@ -21,7 +21,7 @@ class CXFA_Font final : public CXFA_Node {
   float GetLetterSpacing();
   int32_t GetLineThrough();
   int32_t GetUnderline();
-  XFA_AttributeEnum GetUnderlinePeriod();
+  XFA_AttributeValue GetUnderlinePeriod();
   float GetFontSize() const;
   WideString GetTypeface();
 

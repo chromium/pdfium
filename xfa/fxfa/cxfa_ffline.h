@@ -21,7 +21,7 @@ class CXFA_FFLine final : public CXFA_FFWidget {
 
  private:
   void GetRectFromHand(CFX_RectF& rect,
-                       XFA_AttributeEnum iHand,
+                       XFA_AttributeValue iHand,
                        float fLineWidth);
 };
 

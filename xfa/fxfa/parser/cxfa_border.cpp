@@ -18,14 +18,14 @@ const CXFA_Node::PropertyData kBorderPropertyData[] = {
 const CXFA_Node::AttributeData kBorderAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Break, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Close},
+     (void*)XFA_AttributeValue::Close},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Visible},
+     (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Relevant, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Even},
+     (void*)XFA_AttributeValue::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kBorderName[] = L"border";

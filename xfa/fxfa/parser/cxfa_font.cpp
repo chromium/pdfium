@@ -25,28 +25,28 @@ const CXFA_Node::AttributeData kFontAttributeData[] = {
      (void*)L"100%"},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::KerningMode, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::None},
+     (void*)XFA_AttributeValue::None},
     {XFA_Attribute::Underline, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::BaselineShift, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::OverlinePeriod, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::All},
+     (void*)XFA_AttributeValue::All},
     {XFA_Attribute::LetterSpacing, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::LineThroughPeriod, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::All},
+     (void*)XFA_AttributeValue::All},
     {XFA_Attribute::FontVerticalScale, XFA_AttributeType::CData,
      (void*)L"100%"},
     {XFA_Attribute::PsName, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Size, XFA_AttributeType::Measure, (void*)L"10pt"},
     {XFA_Attribute::Posture, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Normal},
+     (void*)XFA_AttributeValue::Normal},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Weight, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Normal},
+     (void*)XFA_AttributeValue::Normal},
     {XFA_Attribute::UnderlinePeriod, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::All},
+     (void*)XFA_AttributeValue::All},
     {XFA_Attribute::Overline, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::GenericFamily, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Serif},
+     (void*)XFA_AttributeValue::Serif},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kFontName[] = L"font";
@@ -101,10 +101,10 @@ int32_t CXFA_Font::GetUnderline() {
   return JSObject()->GetInteger(XFA_Attribute::Underline);
 }
 
-XFA_AttributeEnum CXFA_Font::GetUnderlinePeriod() {
+XFA_AttributeValue CXFA_Font::GetUnderlinePeriod() {
   return JSObject()
       ->TryEnum(XFA_Attribute::UnderlinePeriod, true)
-      .value_or(XFA_AttributeEnum::All);
+      .value_or(XFA_AttributeValue::All);
 }
 
 float CXFA_Font::GetFontSize() const {
@@ -116,12 +116,12 @@ WideString CXFA_Font::GetTypeface() {
 }
 
 bool CXFA_Font::IsBold() {
-  return JSObject()->GetEnum(XFA_Attribute::Weight) == XFA_AttributeEnum::Bold;
+  return JSObject()->GetEnum(XFA_Attribute::Weight) == XFA_AttributeValue::Bold;
 }
 
 bool CXFA_Font::IsItalic() {
   return JSObject()->GetEnum(XFA_Attribute::Posture) ==
-         XFA_AttributeEnum::Italic;
+         XFA_AttributeValue::Italic;
 }
 
 void CXFA_Font::SetColor(FX_ARGB color) {

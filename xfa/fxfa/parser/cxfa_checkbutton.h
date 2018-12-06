@@ -18,7 +18,7 @@ class CXFA_CheckButton final : public CXFA_Node {
 
   bool IsRound();
   bool IsAllowNeutral();
-  XFA_AttributeEnum GetMark();
+  XFA_AttributeValue GetMark();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CHECKBUTTON_H_

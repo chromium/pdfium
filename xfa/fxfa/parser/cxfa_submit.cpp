@@ -18,7 +18,7 @@ const CXFA_Node::AttributeData kSubmitAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Format, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Xdp},
+     (void*)XFA_AttributeValue::Xdp},
     {XFA_Attribute::EmbedPDF, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Target, XFA_AttributeType::CData, nullptr},
@@ -47,7 +47,7 @@ bool CXFA_Submit::IsSubmitEmbedPDF() {
   return JSObject()->GetBoolean(XFA_Attribute::EmbedPDF);
 }
 
-XFA_AttributeEnum CXFA_Submit::GetSubmitFormat() {
+XFA_AttributeValue CXFA_Submit::GetSubmitFormat() {
   return JSObject()->GetEnum(XFA_Attribute::Format);
 }
 

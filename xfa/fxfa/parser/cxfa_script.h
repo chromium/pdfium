@@ -22,7 +22,7 @@ class CXFA_Script final : public CXFA_Node {
   ~CXFA_Script() override;
 
   Type GetContentType();
-  XFA_AttributeEnum GetRunAt();
+  XFA_AttributeValue GetRunAt();
   WideString GetExpression();
 };
 

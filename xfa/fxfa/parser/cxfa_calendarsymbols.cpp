@@ -16,7 +16,7 @@ const CXFA_Node::PropertyData kCalendarSymbolsPropertyData[] = {
     {XFA_Element::Unknown, 0, 0}};
 const CXFA_Node::AttributeData kCalendarSymbolsAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Gregorian},
+     (void*)XFA_AttributeValue::Gregorian},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kCalendarSymbolsName[] = L"calendarSymbols";

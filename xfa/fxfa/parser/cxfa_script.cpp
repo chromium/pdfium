@@ -22,7 +22,7 @@ const CXFA_Node::AttributeData kScriptAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ContentType, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::RunAt, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Client},
+     (void*)XFA_AttributeValue::Client},
     {XFA_Attribute::Binding, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
@@ -59,7 +59,7 @@ CXFA_Script::Type CXFA_Script::GetContentType() {
   return Type::Unknown;
 }
 
-XFA_AttributeEnum CXFA_Script::GetRunAt() {
+XFA_AttributeValue CXFA_Script::GetRunAt() {
   return JSObject()->GetEnum(XFA_Attribute::RunAt);
 }
 

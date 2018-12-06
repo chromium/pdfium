@@ -131,7 +131,7 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pParam->m_eType = XFA_EVENT_Change;
   pParam->m_pTarget = m_pNode.Get();
   pParam->m_wsPrevText = ToComboBox(m_pNormalWidget.get())->GetEditText();
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, pParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change, pParam);
 }
 
 WideString CXFA_FFComboBox::GetCurrentText() const {
@@ -153,18 +153,18 @@ uint32_t CXFA_FFComboBox::GetAlignment() {
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
-    case XFA_AttributeEnum::Center:
+    case XFA_AttributeValue::Center:
       dwExtendedStyle |=
           FWL_STYLEEXT_CMB_EditHCenter | FWL_STYLEEXT_CMB_ListItemCenterAlign;
       break;
-    case XFA_AttributeEnum::Justify:
+    case XFA_AttributeValue::Justify:
       dwExtendedStyle |= FWL_STYLEEXT_CMB_EditJustified;
       break;
-    case XFA_AttributeEnum::JustifyAll:
+    case XFA_AttributeValue::JustifyAll:
       break;
-    case XFA_AttributeEnum::Radix:
+    case XFA_AttributeValue::Radix:
       break;
-    case XFA_AttributeEnum::Right:
+    case XFA_AttributeValue::Right:
       break;
     default:
       dwExtendedStyle |=
@@ -173,10 +173,10 @@ uint32_t CXFA_FFComboBox::GetAlignment() {
   }
 
   switch (para->GetVerticalAlign()) {
-    case XFA_AttributeEnum::Middle:
+    case XFA_AttributeValue::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_CMB_EditVCenter;
       break;
-    case XFA_AttributeEnum::Bottom:
+    case XFA_AttributeValue::Bottom:
       dwExtendedStyle |= FWL_STYLEEXT_CMB_EditVFar;
       break;
     default:
@@ -318,14 +318,14 @@ void CXFA_FFComboBox::OnPreOpen(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_PreOpen;
   eParam.m_pTarget = m_pNode.Get();
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::PreOpen, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::PreOpen, &eParam);
 }
 
 void CXFA_FFComboBox::OnPostOpen(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_PostOpen;
   eParam.m_pTarget = m_pNode.Get();
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::PostOpen, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::PostOpen, &eParam);
 }
 
 void CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {

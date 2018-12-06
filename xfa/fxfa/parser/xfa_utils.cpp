@@ -523,7 +523,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
   }
 
   return pFirstChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
-         XFA_AttributeEnum::MultiSelect;
+         XFA_AttributeValue::MultiSelect;
 }
 
 int32_t XFA_MapRotation(int32_t nRotation) {

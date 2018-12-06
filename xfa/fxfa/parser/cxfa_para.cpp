@@ -18,7 +18,7 @@ const CXFA_Node::PropertyData kParaPropertyData[] = {
 const CXFA_Node::AttributeData kParaAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HAlign, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Left},
+     (void*)XFA_AttributeValue::Left},
     {XFA_Attribute::TextIndent, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Widows, XFA_AttributeType::Integer, (void*)0},
@@ -28,7 +28,7 @@ const CXFA_Node::AttributeData kParaAttributeData[] = {
     {XFA_Attribute::Preserve, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::SpaceBelow, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::VAlign, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Top},
+     (void*)XFA_AttributeValue::Top},
     {XFA_Attribute::TabDefault, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TabStops, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Orphans, XFA_AttributeType::Integer, (void*)0},
@@ -54,16 +54,16 @@ CXFA_Para::CXFA_Para(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Para::~CXFA_Para() {}
 
-XFA_AttributeEnum CXFA_Para::GetHorizontalAlign() {
+XFA_AttributeValue CXFA_Para::GetHorizontalAlign() {
   return JSObject()
       ->TryEnum(XFA_Attribute::HAlign, true)
-      .value_or(XFA_AttributeEnum::Left);
+      .value_or(XFA_AttributeValue::Left);
 }
 
-XFA_AttributeEnum CXFA_Para::GetVerticalAlign() {
+XFA_AttributeValue CXFA_Para::GetVerticalAlign() {
   return JSObject()
       ->TryEnum(XFA_Attribute::VAlign, true)
-      .value_or(XFA_AttributeEnum::Top);
+      .value_or(XFA_AttributeValue::Top);
 }
 
 float CXFA_Para::GetLineHeight() {

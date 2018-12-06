@@ -59,10 +59,11 @@ TEST_F(CXFANodeTest, NameToAttribute) {
 TEST_F(CXFANodeTest, GetAttributeEnumByName) {
   EXPECT_FALSE(!!CXFA_Node::NameToAttributeEnum(L""));
   EXPECT_FALSE(!!CXFA_Node::NameToAttributeEnum(L"nonesuch"));
-  EXPECT_EQ(XFA_AttributeEnum::Asterisk, *CXFA_Node::NameToAttributeEnum(L"*"));
-  EXPECT_EQ(XFA_AttributeEnum::Visible,
+  EXPECT_EQ(XFA_AttributeValue::Asterisk,
+            *CXFA_Node::NameToAttributeEnum(L"*"));
+  EXPECT_EQ(XFA_AttributeValue::Visible,
             *CXFA_Node::NameToAttributeEnum(L"visible"));
-  EXPECT_EQ(XFA_AttributeEnum::Lowered,
+  EXPECT_EQ(XFA_AttributeValue::Lowered,
             *CXFA_Node::NameToAttributeEnum(L"lowered"));
 }
 

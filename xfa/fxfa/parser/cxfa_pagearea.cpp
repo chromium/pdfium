@@ -22,15 +22,15 @@ const CXFA_Node::AttributeData kPageAreaAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::PagePosition, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Any},
+     (void*)XFA_AttributeValue::Any},
     {XFA_Attribute::OddOrEven, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Any},
+     (void*)XFA_AttributeValue::Any},
     {XFA_Attribute::Relevant, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::InitialNumber, XFA_AttributeType::Integer, (void*)1},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Numbered, XFA_AttributeType::Integer, (void*)1},
     {XFA_Attribute::BlankOrNotBlank, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Any},
+     (void*)XFA_AttributeValue::Any},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kPageAreaName[] = L"pageArea";

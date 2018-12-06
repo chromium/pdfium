@@ -60,21 +60,21 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
   pCheckBox->SetBoxSize(m_pNode->GetCheckButtonSize());
   uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
   switch (button_->GetMark()) {
-    case XFA_AttributeEnum::Check:
+    case XFA_AttributeValue::Check:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCheck;
       break;
-    case XFA_AttributeEnum::Circle:
+    case XFA_AttributeValue::Circle:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
       break;
-    case XFA_AttributeEnum::Cross:
+    case XFA_AttributeValue::Cross:
       break;
-    case XFA_AttributeEnum::Diamond:
+    case XFA_AttributeValue::Diamond:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeDiamond;
       break;
-    case XFA_AttributeEnum::Square:
+    case XFA_AttributeValue::Square:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeSquare;
       break;
-    case XFA_AttributeEnum::Star:
+    case XFA_AttributeValue::Star:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeStar;
       break;
     default: {
@@ -97,7 +97,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
   XFA_RectWithoutMargin(&rtWidget, margin);
 
-  XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
+  XFA_AttributeValue iCapPlacement = XFA_AttributeValue::Unknown;
   float fCapReserve = 0;
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (caption && caption->IsVisible()) {
@@ -105,8 +105,8 @@ bool CXFA_FFCheckButton::PerformLayout() {
     iCapPlacement = caption->GetPlacementType();
     fCapReserve = caption->GetReserve();
     if (fCapReserve <= 0) {
-      if (iCapPlacement == XFA_AttributeEnum::Top ||
-          iCapPlacement == XFA_AttributeEnum::Bottom) {
+      if (iCapPlacement == XFA_AttributeValue::Top ||
+          iCapPlacement == XFA_AttributeValue::Bottom) {
         fCapReserve = rtWidget.height - fCheckSize;
       } else {
         fCapReserve = rtWidget.width - fCheckSize;
@@ -114,8 +114,8 @@ bool CXFA_FFCheckButton::PerformLayout() {
     }
   }
 
-  XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
-  XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
+  XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left;
+  XFA_AttributeValue iVertAlign = XFA_AttributeValue::Top;
   CXFA_Para* para = m_pNode->GetParaIfExists();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
@@ -125,49 +125,49 @@ bool CXFA_FFCheckButton::PerformLayout() {
   m_rtUI = rtWidget;
   CXFA_Margin* captionMargin = caption ? caption->GetMarginIfExists() : nullptr;
   switch (iCapPlacement) {
-    case XFA_AttributeEnum::Left: {
+    case XFA_AttributeValue::Left: {
       m_rtCaption.width = fCapReserve;
       CapLeftRightPlacement(captionMargin);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
       break;
     }
-    case XFA_AttributeEnum::Top: {
+    case XFA_AttributeValue::Top: {
       m_rtCaption.height = fCapReserve;
       XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
       m_rtUI.height -= fCapReserve;
       m_rtUI.top += fCapReserve;
       break;
     }
-    case XFA_AttributeEnum::Right: {
+    case XFA_AttributeValue::Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
       CapLeftRightPlacement(captionMargin);
       m_rtUI.width -= fCapReserve;
       break;
     }
-    case XFA_AttributeEnum::Bottom: {
+    case XFA_AttributeValue::Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
       XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
       m_rtUI.height -= fCapReserve;
       break;
     }
-    case XFA_AttributeEnum::Inline:
+    case XFA_AttributeValue::Inline:
       break;
     default:
-      iHorzAlign = XFA_AttributeEnum::Right;
+      iHorzAlign = XFA_AttributeValue::Right;
       break;
   }
 
-  if (iHorzAlign == XFA_AttributeEnum::Center)
+  if (iHorzAlign == XFA_AttributeValue::Center)
     m_rtUI.left += (m_rtUI.width - fCheckSize) / 2;
-  else if (iHorzAlign == XFA_AttributeEnum::Right)
+  else if (iHorzAlign == XFA_AttributeValue::Right)
     m_rtUI.left = m_rtUI.right() - fCheckSize;
 
-  if (iVertAlign == XFA_AttributeEnum::Middle)
+  if (iVertAlign == XFA_AttributeValue::Middle)
     m_rtUI.top += (m_rtUI.height - fCheckSize) / 2;
-  else if (iVertAlign == XFA_AttributeEnum::Bottom)
+  else if (iVertAlign == XFA_AttributeValue::Bottom)
     m_rtUI.top = m_rtUI.bottom() - fCheckSize;
 
   m_rtUI.width = fCheckSize;
@@ -200,15 +200,15 @@ void CXFA_FFCheckButton::CapLeftRightPlacement(
   }
 }
 
-void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeEnum iCapPlacement) {
+void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeValue iCapPlacement) {
   CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
   m_rtUI.top -= rtUIMargin.top / 2 - rtUIMargin.height / 2;
 
   float fLeftAddRight = rtUIMargin.left + rtUIMargin.width;
   float fTopAddBottom = rtUIMargin.top + rtUIMargin.height;
   if (m_rtUI.width < fLeftAddRight) {
-    if (iCapPlacement == XFA_AttributeEnum::Right ||
-        iCapPlacement == XFA_AttributeEnum::Left) {
+    if (iCapPlacement == XFA_AttributeValue::Right ||
+        iCapPlacement == XFA_AttributeValue::Left) {
       m_rtUI.left -= fLeftAddRight - m_rtUI.width;
     } else {
       m_rtUI.left -= 2 * (fLeftAddRight - m_rtUI.width);
@@ -216,7 +216,7 @@ void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeEnum iCapPlacement) {
     m_rtUI.width += 2 * (fLeftAddRight - m_rtUI.width);
   }
   if (m_rtUI.height < fTopAddBottom) {
-    if (iCapPlacement == XFA_AttributeEnum::Right)
+    if (iCapPlacement == XFA_AttributeValue::Right)
       m_rtUI.left -= fTopAddBottom - m_rtUI.height;
 
     m_rtUI.top -= fTopAddBottom - m_rtUI.height;
@@ -314,20 +314,22 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
         if (exclNode) {
           m_pDocView->AddValidateNode(exclNode);
           m_pDocView->AddCalculateNode(exclNode);
-          exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
+          exclNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change,
                                  &eParam);
         }
         eParam.m_pTarget = m_pNode.Get();
-        m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
+        m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change,
+                              &eParam);
       } else {
         SetFWLCheckState(m_pNode->GetCheckState());
       }
       if (exclNode) {
         eParam.m_pTarget = exclNode;
-        exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
+        exclNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Click,
+                               &eParam);
       }
       eParam.m_pTarget = m_pNode.Get();
-      m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
+      m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Click, &eParam);
       break;
     }
     default:

@@ -95,7 +95,7 @@ enum XFA_XDPPACKET_FLAGS {
   XFA_XDPPACKET_FLAGS_SUPPORTMANY = 16,
 };
 
-enum class XFA_AttributeEnum : uint16_t {
+enum class XFA_AttributeValue : uint16_t {
   Asterisk,
   Slash,
   Backslash,
@@ -945,9 +945,9 @@ struct XFA_SCRIPTHIERARCHY {
 #define XFA_PROPERTYFLAG_OneOf 0x01
 #define XFA_PROPERTYFLAG_DefaultOneOf 0x02
 
-struct XFA_AttributeEnumInfo {
+struct XFA_AttributeValueInfo {
   uint32_t uHash;  // |pName| hashed as WideString.
-  XFA_AttributeEnum eName;
+  XFA_AttributeValue eName;
   const char* pName;
 };
 

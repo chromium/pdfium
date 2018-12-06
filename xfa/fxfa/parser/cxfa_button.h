@@ -16,7 +16,7 @@ class CXFA_Button final : public CXFA_Node {
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
-  XFA_AttributeEnum GetHighlight();
+  XFA_AttributeValue GetHighlight();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BUTTON_H_

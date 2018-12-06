@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kRectangleAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Even},
+     (void*)XFA_AttributeValue::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kRectangleName[] = L"rectangle";
@@ -93,7 +93,7 @@ void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
       stroke1 = strokes[0];
       if (stroke1->IsInverted())
         bSameStyles = false;
-      if (stroke1->GetJoinType() != XFA_AttributeEnum::Square)
+      if (stroke1->GetJoinType() != XFA_AttributeValue::Square)
         bSameStyles = false;
     }
   }
@@ -116,7 +116,7 @@ void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
     float fRadius1 = corner1->GetRadius();
     float fRadius2 = corner2->GetRadius();
     bool bInverted = corner1->IsInverted();
-    bool bRound = corner1->GetJoinType() == XFA_AttributeEnum::Round;
+    bool bRound = corner1->GetJoinType() == XFA_AttributeValue::Round;
     if (bRound) {
       sy = FX_PI / 2;
     }
@@ -215,36 +215,36 @@ void CXFA_Rectangle::Draw(const std::vector<CXFA_Stroke*>& strokes,
   for (int32_t i = 1; i < 8; i += 2) {
     float fThickness = std::fmax(0.0, strokes[i]->GetThickness());
     float fHalf = fThickness / 2;
-    XFA_AttributeEnum iHand = GetHand();
+    XFA_AttributeValue iHand = GetHand();
     switch (i) {
       case 1:
-        if (iHand == XFA_AttributeEnum::Left) {
+        if (iHand == XFA_AttributeValue::Left) {
           rtWidget.top -= fHalf;
           rtWidget.height += fHalf;
-        } else if (iHand == XFA_AttributeEnum::Right) {
+        } else if (iHand == XFA_AttributeValue::Right) {
           rtWidget.top += fHalf;
           rtWidget.height -= fHalf;
         }
         break;
       case 3:
-        if (iHand == XFA_AttributeEnum::Left) {
+        if (iHand == XFA_AttributeValue::Left) {
           rtWidget.width += fHalf;
-        } else if (iHand == XFA_AttributeEnum::Right) {
+        } else if (iHand == XFA_AttributeValue::Right) {
           rtWidget.width -= fHalf;
         }
         break;
       case 5:
-        if (iHand == XFA_AttributeEnum::Left) {
+        if (iHand == XFA_AttributeValue::Left) {
           rtWidget.height += fHalf;
-        } else if (iHand == XFA_AttributeEnum::Right) {
+        } else if (iHand == XFA_AttributeValue::Right) {
           rtWidget.height -= fHalf;
         }
         break;
       case 7:
-        if (iHand == XFA_AttributeEnum::Left) {
+        if (iHand == XFA_AttributeValue::Left) {
           rtWidget.left -= fHalf;
           rtWidget.width += fHalf;
-        } else if (iHand == XFA_AttributeEnum::Right) {
+        } else if (iHand == XFA_AttributeValue::Right) {
           rtWidget.left += fHalf;
           rtWidget.width -= fHalf;
         }
@@ -260,23 +260,23 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
                             const CFX_Matrix& matrix) {
   bool bVisible;
   float fThickness;
-  XFA_AttributeEnum i3DType;
+  XFA_AttributeValue i3DType;
   std::tie(i3DType, bVisible, fThickness) = Get3DStyle();
-  if (i3DType != XFA_AttributeEnum::Unknown) {
+  if (i3DType != XFA_AttributeValue::Unknown) {
     if (!bVisible || fThickness < 0.001f)
       return;
 
     switch (i3DType) {
-      case XFA_AttributeEnum::Lowered:
+      case XFA_AttributeValue::Lowered:
         StrokeLowered(pGS, rtWidget, fThickness, matrix);
         break;
-      case XFA_AttributeEnum::Raised:
+      case XFA_AttributeValue::Raised:
         StrokeRaised(pGS, rtWidget, fThickness, matrix);
         break;
-      case XFA_AttributeEnum::Etched:
+      case XFA_AttributeValue::Etched:
         StrokeEtched(pGS, rtWidget, fThickness, matrix);
         break;
-      case XFA_AttributeEnum::Embossed:
+      case XFA_AttributeValue::Embossed:
         StrokeEmbossed(pGS, rtWidget, fThickness, matrix);
         break;
       default:
@@ -313,7 +313,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
       stroke1 = strokes[0];
       if (stroke1->IsInverted())
         bSameStyles = false;
-      if (stroke1->GetJoinType() != XFA_AttributeEnum::Square)
+      if (stroke1->GetJoinType() != XFA_AttributeValue::Square)
         bSameStyles = false;
     }
   }
@@ -457,7 +457,7 @@ void CXFA_Rectangle::GetPath(const std::vector<CXFA_Stroke*>& strokes,
   bool bInverted = corner1->IsInverted();
   float offsetY = 0.0f;
   float offsetX = 0.0f;
-  bool bRound = corner1->GetJoinType() == XFA_AttributeEnum::Round;
+  bool bRound = corner1->GetJoinType() == XFA_AttributeValue::Round;
   float halfAfter = 0.0f;
   float halfBefore = 0.0f;
 

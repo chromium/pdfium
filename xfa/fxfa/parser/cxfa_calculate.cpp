@@ -24,7 +24,7 @@ const CXFA_Node::AttributeData kCalculateAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Override, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Error},
+     (void*)XFA_AttributeValue::Error},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kCalculateName[] = L"calculate";
@@ -44,10 +44,10 @@ CXFA_Calculate::CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Calculate::~CXFA_Calculate() {}
 
-XFA_AttributeEnum CXFA_Calculate::GetOverride() {
+XFA_AttributeValue CXFA_Calculate::GetOverride() {
   return JSObject()
       ->TryEnum(XFA_Attribute::Override, false)
-      .value_or(XFA_AttributeEnum::Error);
+      .value_or(XFA_AttributeValue::Error);
 }
 
 CXFA_Script* CXFA_Calculate::GetScriptIfExists() {

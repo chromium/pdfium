@@ -20,10 +20,10 @@ const CXFA_Node::AttributeData kLineAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Slope, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Backslash},
+     (void*)XFA_AttributeValue::Backslash},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Even},
+     (void*)XFA_AttributeValue::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kLineName[] = L"line";
@@ -43,12 +43,12 @@ CXFA_Line::CXFA_Line(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Line::~CXFA_Line() {}
 
-XFA_AttributeEnum CXFA_Line::GetHand() {
+XFA_AttributeValue CXFA_Line::GetHand() {
   return JSObject()->GetEnum(XFA_Attribute::Hand);
 }
 
 bool CXFA_Line::GetSlope() {
-  return JSObject()->GetEnum(XFA_Attribute::Slope) == XFA_AttributeEnum::Slash;
+  return JSObject()->GetEnum(XFA_Attribute::Slope) == XFA_AttributeValue::Slash;
 }
 
 CXFA_Edge* CXFA_Line::GetEdgeIfExists() {

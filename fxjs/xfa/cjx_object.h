@@ -164,7 +164,7 @@ class CJX_Object {
                         XFA_SOM_MESSAGETYPE iMessageType);
   void ScriptSubformInstanceManager(CFXJSE_Value* pValue,
                                     bool bSetting,
-                                    XFA_AttributeEnum eAttribute);
+                                    XFA_AttributeValue eAttribute);
   void ScriptSubmitFormatMode(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute);
@@ -188,10 +188,10 @@ class CJX_Object {
                 bool bScriptModify);
   WideString GetCData(XFA_Attribute eAttr);
 
-  Optional<XFA_AttributeEnum> TryEnum(XFA_Attribute eAttr,
-                                      bool bUseDefault) const;
-  void SetEnum(XFA_Attribute eAttr, XFA_AttributeEnum eValue, bool bNotify);
-  XFA_AttributeEnum GetEnum(XFA_Attribute eAttr) const;
+  Optional<XFA_AttributeValue> TryEnum(XFA_Attribute eAttr,
+                                       bool bUseDefault) const;
+  void SetEnum(XFA_Attribute eAttr, XFA_AttributeValue eValue, bool bNotify);
+  XFA_AttributeValue GetEnum(XFA_Attribute eAttr) const;
 
   Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
   void SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);

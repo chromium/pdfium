@@ -22,9 +22,9 @@ const CXFA_Node::AttributeData kDateTimeEditAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Picker, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Host},
+     (void*)XFA_AttributeValue::Host},
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Auto},
+     (void*)XFA_AttributeValue::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kDateTimeEditName[] = L"dateTimeEdit";

@@ -23,10 +23,10 @@ const CXFA_Node::AttributeData kBindAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ContentType, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TransferEncoding, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::None},
+     (void*)XFA_AttributeValue::None},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Match, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Once},
+     (void*)XFA_AttributeValue::Once},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kBindName[] = L"bind";

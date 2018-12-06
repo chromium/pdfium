@@ -24,10 +24,10 @@ const CXFA_Node::AttributeData kCaptionAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Reserve, XFA_AttributeType::Measure, (void*)L"-1un"},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Visible},
+     (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Placement, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Left},
+     (void*)XFA_AttributeValue::Left},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kCaptionName[] = L"caption";
@@ -50,20 +50,21 @@ CXFA_Caption::~CXFA_Caption() {}
 bool CXFA_Caption::IsVisible() {
   return JSObject()
              ->TryEnum(XFA_Attribute::Presence, true)
-             .value_or(XFA_AttributeEnum::Visible) ==
-         XFA_AttributeEnum::Visible;
+             .value_or(XFA_AttributeValue::Visible) ==
+         XFA_AttributeValue::Visible;
 }
 
 bool CXFA_Caption::IsHidden() {
   return JSObject()
              ->TryEnum(XFA_Attribute::Presence, true)
-             .value_or(XFA_AttributeEnum::Visible) == XFA_AttributeEnum::Hidden;
+             .value_or(XFA_AttributeValue::Visible) ==
+         XFA_AttributeValue::Hidden;
 }
 
-XFA_AttributeEnum CXFA_Caption::GetPlacementType() {
+XFA_AttributeValue CXFA_Caption::GetPlacementType() {
   return JSObject()
       ->TryEnum(XFA_Attribute::Placement, true)
-      .value_or(XFA_AttributeEnum::Left);
+      .value_or(XFA_AttributeValue::Left);
 }
 
 float CXFA_Caption::GetReserve() const {

@@ -220,7 +220,7 @@ void CJX_Object::SetAttribute(XFA_Attribute eAttr,
                               bool bNotify) {
   switch (ToNode(GetXFAObject())->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      Optional<XFA_AttributeEnum> item =
+      Optional<XFA_AttributeValue> item =
           CXFA_Node::NameToAttributeEnum(wsValue);
       SetEnum(eAttr,
               item ? *item : *(ToNode(GetXFAObject())->GetDefaultEnum(eAttr)),
@@ -277,7 +277,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
                                               bool bUseDefault) {
   switch (ToNode(GetXFAObject())->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      Optional<XFA_AttributeEnum> value = TryEnum(eAttr, bUseDefault);
+      Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
       if (!value)
         return {};
 
@@ -378,13 +378,13 @@ Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
   return ToNode(GetXFAObject())->GetDefaultInteger(eAttr);
 }
 
-Optional<XFA_AttributeEnum> CJX_Object::TryEnum(XFA_Attribute eAttr,
-                                                bool bUseDefault) const {
+Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
+                                                 bool bUseDefault) const {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, pValue)) {
     return {
-        static_cast<XFA_AttributeEnum>(reinterpret_cast<uintptr_t>(pValue))};
+        static_cast<XFA_AttributeValue>(reinterpret_cast<uintptr_t>(pValue))};
   }
   if (!bUseDefault)
     return {};
@@ -393,7 +393,7 @@ Optional<XFA_AttributeEnum> CJX_Object::TryEnum(XFA_Attribute eAttr,
 }
 
 void CJX_Object::SetEnum(XFA_Attribute eAttr,
-                         XFA_AttributeEnum eValue,
+                         XFA_AttributeValue eValue,
                          bool bNotify) {
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
                                   (void*)(uintptr_t)eValue, bNotify);
@@ -404,8 +404,8 @@ void CJX_Object::SetEnum(XFA_Attribute eAttr,
   }
 }
 
-XFA_AttributeEnum CJX_Object::GetEnum(XFA_Attribute eAttr) const {
-  return TryEnum(eAttr, true).value_or(XFA_AttributeEnum::Unknown);
+XFA_AttributeValue CJX_Object::GetEnum(XFA_Attribute eAttr) const {
+  return TryEnum(eAttr, true).value_or(XFA_AttributeValue::Unknown);
 }
 
 void CJX_Object::SetMeasure(XFA_Attribute eAttr,
@@ -822,7 +822,7 @@ Optional<WideString> CJX_Object::TryNamespace() {
     return {};
 
   if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue &&
-      GetEnum(XFA_Attribute::Contains) == XFA_AttributeEnum::MetaData) {
+      GetEnum(XFA_Attribute::Contains) == XFA_AttributeValue::MetaData) {
     WideString wsNamespace;
     if (!XFA_FDEExtension_ResolveNamespaceQualifier(
             element, GetCData(XFA_Attribute::QualifiedName), &wsNamespace)) {
@@ -1588,7 +1588,7 @@ void CJX_Object::ScriptSomInstanceIndex(CFXJSE_Value* pValue,
 
 void CJX_Object::ScriptSubformInstanceManager(CFXJSE_Value* pValue,
                                               bool bSetting,
-                                              XFA_AttributeEnum eAttribute) {
+                                              XFA_AttributeValue eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;

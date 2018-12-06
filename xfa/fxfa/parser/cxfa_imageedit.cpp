@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kImageEditAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Data, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Link},
+     (void*)XFA_AttributeValue::Link},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kImageEditName[] = L"imageEdit";

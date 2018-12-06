@@ -83,8 +83,8 @@ class CXFA_Node : public CXFA_Object {
     void* default_value;
   };
 
-  static ByteStringView AttributeEnumToName(XFA_AttributeEnum item);
-  static Optional<XFA_AttributeEnum> NameToAttributeEnum(
+  static ByteStringView AttributeEnumToName(XFA_AttributeValue item);
+  static Optional<XFA_AttributeValue> NameToAttributeEnum(
       const WideStringView& name);
   static XFA_Attribute NameToAttribute(const WideStringView& name);
   static WideString AttributeToName(XFA_Attribute attr);
@@ -198,7 +198,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetContainerNode();
   LocaleIface* GetLocale();
   Optional<WideString> GetLocaleName();
-  XFA_AttributeEnum GetIntact();
+  XFA_AttributeValue GetIntact();
 
   CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
@@ -222,7 +222,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
   Optional<CXFA_Measurement> GetDefaultMeasurement(XFA_Attribute attr) const;
   Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
-  Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
+  Optional<XFA_AttributeValue> GetDefaultEnum(XFA_Attribute attr) const;
 
   bool IsOpenAccess();
 
@@ -252,7 +252,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetExclGroupIfExists();
 
   int32_t ProcessEvent(CXFA_FFDocView* docView,
-                       XFA_AttributeEnum iActivity,
+                       XFA_AttributeValue iActivity,
                        CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate(CXFA_FFDocView* docView);
   int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
@@ -275,7 +275,7 @@ class CXFA_Node : public CXFA_Object {
 
   void SetWidgetReady() { is_widget_ready_ = true; }
   bool IsWidgetReady() const { return is_widget_ready_; }
-  std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
+  std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeValue iActivity,
                                               bool bIsFormReady);
 
   void ResetData();

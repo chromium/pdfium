@@ -17,13 +17,13 @@ const CXFA_Node::PropertyData kKeepPropertyData[] = {
 const CXFA_Node::AttributeData kKeepAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Next, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::None},
+     (void*)XFA_AttributeValue::None},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Previous, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::None},
+     (void*)XFA_AttributeValue::None},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Intact, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::None},
+     (void*)XFA_AttributeValue::None},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kKeepName[] = L"keep";

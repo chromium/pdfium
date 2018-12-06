@@ -15,15 +15,15 @@ class CXFA_Value;
 
 class CXFA_Caption final : public CXFA_Node {
  public:
-  static constexpr XFA_AttributeEnum kDefaultPlacementType =
-      XFA_AttributeEnum::Left;
+  static constexpr XFA_AttributeValue kDefaultPlacementType =
+      XFA_AttributeValue::Left;
 
   CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Caption() override;
 
   bool IsVisible();
   bool IsHidden();
-  XFA_AttributeEnum GetPlacementType();
+  XFA_AttributeValue GetPlacementType();
   float GetReserve() const;
   CXFA_Margin* GetMarginIfExists();
   CXFA_Font* GetFontIfExists();

@@ -203,8 +203,8 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   std::vector<uint8_t> buffer;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
-    XFA_AttributeEnum iEncoding = pImage->GetTransferEncoding();
-    if (iEncoding == XFA_AttributeEnum::Base64) {
+    XFA_AttributeValue iEncoding = pImage->GetTransferEncoding();
+    if (iEncoding == XFA_AttributeValue::Base64) {
       ByteString bsData = wsImage.ToUTF8();
       buffer.resize(bsData.GetLength());
       int32_t iRead = XFA_Base64Decode(bsData.c_str(), buffer.data());
@@ -543,12 +543,12 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
 };
 
 // static
-ByteStringView CXFA_Node::AttributeEnumToName(XFA_AttributeEnum item) {
+ByteStringView CXFA_Node::AttributeEnumToName(XFA_AttributeValue item) {
   return g_XFAEnumData[static_cast<int32_t>(item)].pName;
 }
 
 // static
-Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
+Optional<XFA_AttributeValue> CXFA_Node::NameToAttributeEnum(
     const WideStringView& name) {
   if (name.IsEmpty())
     return {};
@@ -556,7 +556,7 @@ Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
   static const auto* kXFAEnumDataEnd = g_XFAEnumData + g_szXFAEnumCount;
   auto* it = std::lower_bound(g_XFAEnumData, kXFAEnumDataEnd,
                               FX_HashCode_GetW(name, false),
-                              [](const XFA_AttributeEnumInfo& arg,
+                              [](const XFA_AttributeValueInfo& arg,
                                  uint32_t hash) { return arg.uHash < hash; });
   if (it != kXFAEnumDataEnd && name.EqualsASCII(it->pName))
     return it->eName;
@@ -633,7 +633,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       pCloneXML = pCloneXMLElement;
 
       pClone->JSObject()->SetEnum(XFA_Attribute::Contains,
-                                  XFA_AttributeEnum::Unknown, false);
+                                  XFA_AttributeValue::Unknown, false);
     } else {
       pCloneXML = xml_node_->Clone(
           GetDocument()->GetNotify()->GetHDOC()->GetXMLDocument());
@@ -1022,37 +1022,37 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
   return {pLocale->GetName()};
 }
 
-XFA_AttributeEnum CXFA_Node::GetIntact() {
+XFA_AttributeValue CXFA_Node::GetIntact() {
   CXFA_Keep* pKeep = GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
-  XFA_AttributeEnum eLayoutType = JSObject()
-                                      ->TryEnum(XFA_Attribute::Layout, true)
-                                      .value_or(XFA_AttributeEnum::Position);
+  XFA_AttributeValue eLayoutType = JSObject()
+                                       ->TryEnum(XFA_Attribute::Layout, true)
+                                       .value_or(XFA_AttributeValue::Position);
   if (pKeep) {
-    Optional<XFA_AttributeEnum> intact =
+    Optional<XFA_AttributeValue> intact =
         pKeep->JSObject()->TryEnum(XFA_Attribute::Intact, false);
     if (intact) {
-      if (*intact == XFA_AttributeEnum::None &&
-          eLayoutType == XFA_AttributeEnum::Row &&
+      if (*intact == XFA_AttributeValue::None &&
+          eLayoutType == XFA_AttributeValue::Row &&
           m_pDocument->GetCurVersionMode() < XFA_VERSION_208) {
         CXFA_Node* pPreviewRow = GetPrevContainerSibling();
         if (pPreviewRow &&
             pPreviewRow->JSObject()->GetEnum(XFA_Attribute::Layout) ==
-                XFA_AttributeEnum::Row) {
-          Optional<XFA_AttributeEnum> value =
+                XFA_AttributeValue::Row) {
+          Optional<XFA_AttributeValue> value =
               pKeep->JSObject()->TryEnum(XFA_Attribute::Previous, false);
-          if (value && (*value == XFA_AttributeEnum::ContentArea ||
-                        *value == XFA_AttributeEnum::PageArea)) {
-            return XFA_AttributeEnum::ContentArea;
+          if (value && (*value == XFA_AttributeValue::ContentArea ||
+                        *value == XFA_AttributeValue::PageArea)) {
+            return XFA_AttributeValue::ContentArea;
           }
 
           CXFA_Keep* pNode =
               pPreviewRow->GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
-          Optional<XFA_AttributeEnum> ret;
+          Optional<XFA_AttributeValue> ret;
           if (pNode)
             ret = pNode->JSObject()->TryEnum(XFA_Attribute::Next, false);
-          if (ret && (*ret == XFA_AttributeEnum::ContentArea ||
-                      *ret == XFA_AttributeEnum::PageArea)) {
-            return XFA_AttributeEnum::ContentArea;
+          if (ret && (*ret == XFA_AttributeValue::ContentArea ||
+                      *ret == XFA_AttributeValue::PageArea)) {
+            return XFA_AttributeValue::ContentArea;
           }
         }
       }
@@ -1063,41 +1063,42 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
   switch (GetElementType()) {
     case XFA_Element::Subform:
       switch (eLayoutType) {
-        case XFA_AttributeEnum::Position:
-        case XFA_AttributeEnum::Row:
-          return XFA_AttributeEnum::ContentArea;
+        case XFA_AttributeValue::Position:
+        case XFA_AttributeValue::Row:
+          return XFA_AttributeValue::ContentArea;
         default:
-          return XFA_AttributeEnum::None;
+          return XFA_AttributeValue::None;
       }
     case XFA_Element::Field: {
       CXFA_Node* parent = GetParent();
       if (!parent || parent->GetElementType() == XFA_Element::PageArea)
-        return XFA_AttributeEnum::ContentArea;
-      if (parent->GetIntact() != XFA_AttributeEnum::None)
-        return XFA_AttributeEnum::ContentArea;
+        return XFA_AttributeValue::ContentArea;
+      if (parent->GetIntact() != XFA_AttributeValue::None)
+        return XFA_AttributeValue::ContentArea;
 
-      XFA_AttributeEnum eParLayout = parent->JSObject()
-                                         ->TryEnum(XFA_Attribute::Layout, true)
-                                         .value_or(XFA_AttributeEnum::Position);
-      if (eParLayout == XFA_AttributeEnum::Position ||
-          eParLayout == XFA_AttributeEnum::Row ||
-          eParLayout == XFA_AttributeEnum::Table) {
-        return XFA_AttributeEnum::None;
+      XFA_AttributeValue eParLayout =
+          parent->JSObject()
+              ->TryEnum(XFA_Attribute::Layout, true)
+              .value_or(XFA_AttributeValue::Position);
+      if (eParLayout == XFA_AttributeValue::Position ||
+          eParLayout == XFA_AttributeValue::Row ||
+          eParLayout == XFA_AttributeValue::Table) {
+        return XFA_AttributeValue::None;
       }
 
       XFA_VERSION version = m_pDocument->GetCurVersionMode();
-      if (eParLayout == XFA_AttributeEnum::Tb && version < XFA_VERSION_208) {
+      if (eParLayout == XFA_AttributeValue::Tb && version < XFA_VERSION_208) {
         Optional<CXFA_Measurement> measureH =
             JSObject()->TryMeasure(XFA_Attribute::H, false);
         if (measureH)
-          return XFA_AttributeEnum::ContentArea;
+          return XFA_AttributeValue::ContentArea;
       }
-      return XFA_AttributeEnum::None;
+      return XFA_AttributeValue::None;
     }
     case XFA_Element::Draw:
-      return XFA_AttributeEnum::ContentArea;
+      return XFA_AttributeValue::ContentArea;
     default:
-      return XFA_AttributeEnum::None;
+      return XFA_AttributeValue::None;
   }
 }
 
@@ -1308,7 +1309,7 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   }
   pNode->xml_node_ = pNewXMLElement;
   pNode->JSObject()->SetEnum(XFA_Attribute::Contains,
-                             XFA_AttributeEnum::Unknown, false);
+                             XFA_AttributeValue::Unknown, false);
 }
 
 CXFA_Node* CXFA_Node::GetFirstChildByName(const WideStringView& wsName) const {
@@ -1419,7 +1420,7 @@ void CXFA_Node::ClearFlag(uint32_t dwFlag) {
 
 bool CXFA_Node::IsAttributeInXML() {
   return JSObject()->GetEnum(XFA_Attribute::Contains) ==
-         XFA_AttributeEnum::MetaData;
+         XFA_AttributeValue::MetaData;
 }
 
 void CXFA_Node::OnRemoved(bool bNotify) {
@@ -1678,12 +1679,12 @@ Optional<WideString> CXFA_Node::GetDefaultCData(XFA_Attribute attr) const {
   return {WideString(static_cast<const wchar_t*>(*value))};
 }
 
-Optional<XFA_AttributeEnum> CXFA_Node::GetDefaultEnum(
+Optional<XFA_AttributeValue> CXFA_Node::GetDefaultEnum(
     XFA_Attribute attr) const {
   Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Enum);
   if (!value)
     return {};
-  return {static_cast<XFA_AttributeEnum>(reinterpret_cast<uintptr_t>(*value))};
+  return {static_cast<XFA_AttributeValue>(reinterpret_cast<uintptr_t>(*value))};
 }
 
 Optional<void*> CXFA_Node::GetDefaultValue(XFA_Attribute attr,
@@ -1918,8 +1919,8 @@ CXFA_Para* CXFA_Node::GetParaIfExists() const {
 
 bool CXFA_Node::IsOpenAccess() {
   for (auto* pNode = this; pNode; pNode = pNode->GetContainerParent()) {
-    XFA_AttributeEnum iAcc = pNode->JSObject()->GetEnum(XFA_Attribute::Access);
-    if (iAcc != XFA_AttributeEnum::Open)
+    XFA_AttributeValue iAcc = pNode->JSObject()->GetEnum(XFA_Attribute::Access);
+    if (iAcc != XFA_AttributeValue::Open)
       return false;
   }
   return true;
@@ -1985,7 +1986,7 @@ CXFA_Node* CXFA_Node::GetExclGroupIfExists() {
 }
 
 int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
-                                XFA_AttributeEnum iActivity,
+                                XFA_AttributeValue iActivity,
                                 CXFA_EventParam* pEventParam) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
@@ -2075,7 +2076,7 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
 
   WideString wsTitle = pAppProvider->GetAppTitle();
   WideString wsScriptMsg = validate->GetScriptMessageText();
-  if (validate->GetScriptTest() == XFA_AttributeEnum::Warning) {
+  if (validate->GetScriptTest() == XFA_AttributeValue::Warning) {
     if (IsUserInteractive())
       return;
     if (wsScriptMsg.IsEmpty())
@@ -2129,7 +2130,7 @@ int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
 
   WideString wsFormatMsg = validate->GetFormatMessageText();
   WideString wsTitle = pAppProvider->GetAppTitle();
-  if (validate->GetFormatTest() == XFA_AttributeEnum::Error) {
+  if (validate->GetFormatTest() == XFA_AttributeValue::Error) {
     if (wsFormatMsg.IsEmpty())
       wsFormatMsg = GetValidateMessage(true, bVersionFlag);
     pAppProvider->MsgBox(wsFormatMsg, wsTitle,
@@ -2167,15 +2168,15 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
   if (m_bIsNull && m_bPreNull)
     return XFA_EVENTERROR_Success;
 
-  XFA_AttributeEnum eNullTest = validate->GetNullTest();
+  XFA_AttributeValue eNullTest = validate->GetNullTest();
   WideString wsNullMsg = validate->GetNullMessageText();
   if (iFlags & 0x01) {
     int32_t iRet = XFA_EVENTERROR_Success;
-    if (eNullTest != XFA_AttributeEnum::Disabled)
+    if (eNullTest != XFA_AttributeValue::Disabled)
       iRet = XFA_EVENTERROR_Error;
 
     if (!wsNullMsg.IsEmpty()) {
-      if (eNullTest != XFA_AttributeEnum::Disabled) {
+      if (eNullTest != XFA_AttributeValue::Disabled) {
         docView->m_arrNullTestMsg.push_back(wsNullMsg);
         return XFA_EVENTERROR_Error;
       }
@@ -2184,7 +2185,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
     return iRet;
   }
   if (wsNullMsg.IsEmpty() && bVersionFlag &&
-      eNullTest != XFA_AttributeEnum::Disabled) {
+      eNullTest != XFA_AttributeValue::Disabled) {
     return XFA_EVENTERROR_Error;
   }
   IXFA_AppProvider* pAppProvider =
@@ -2195,7 +2196,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
   WideString wsCaptionName;
   WideString wsTitle = pAppProvider->GetAppTitle();
   switch (eNullTest) {
-    case XFA_AttributeEnum::Error: {
+    case XFA_AttributeValue::Error: {
       if (wsNullMsg.IsEmpty()) {
         wsCaptionName = GetValidateCaptionName(bVersionFlag);
         wsNullMsg = wsCaptionName + L" cannot be blank.";
@@ -2205,7 +2206,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
                            static_cast<uint32_t>(AlertButton::kOK));
       return XFA_EVENTERROR_Error;
     }
-    case XFA_AttributeEnum::Warning: {
+    case XFA_AttributeValue::Warning: {
       if (IsUserInteractive())
         return true;
 
@@ -2223,7 +2224,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
       }
       return XFA_EVENTERROR_Error;
     }
-    case XFA_AttributeEnum::Disabled:
+    case XFA_AttributeValue::Disabled:
     default:
       break;
   }
@@ -2326,7 +2327,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
   ASSERT(pEventParam);
   if (!script)
     return {XFA_EVENTERROR_NotExist, false};
-  if (script->GetRunAt() == XFA_AttributeEnum::Server)
+  if (script->GetRunAt() == XFA_AttributeValue::Server)
     return {XFA_EVENTERROR_Disabled, false};
 
   WideString wsExpression = script->GetExpression();
@@ -2581,7 +2582,7 @@ CFX_RectF CXFA_Node::GetUIMargin() {
     return CFX_RectF();
 
   CXFA_Border* border = GetUIBorder();
-  if (border && border->GetPresence() != XFA_AttributeEnum::Visible)
+  if (border && border->GetPresence() != XFA_AttributeValue::Visible)
     return CFX_RectF();
 
   Optional<float> left = mgUI->TryLeftInset();
@@ -2591,7 +2592,7 @@ CFX_RectF CXFA_Node::GetUIMargin() {
   if (border) {
     bool bVisible = false;
     float fThickness = 0;
-    XFA_AttributeEnum iType = XFA_AttributeEnum::Unknown;
+    XFA_AttributeValue iType = XFA_AttributeValue::Unknown;
     std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
     if (!left || !top || !right || !bottom) {
       std::vector<CXFA_Stroke*> strokes = border->GetStrokes();
@@ -2610,7 +2611,7 @@ CFX_RectF CXFA_Node::GetUIMargin() {
 }
 
 std::vector<CXFA_Event*> CXFA_Node::GetEventByActivity(
-    XFA_AttributeEnum iActivity,
+    XFA_AttributeValue iActivity,
     bool bIsFormReady) {
   std::vector<CXFA_Event*> events;
   for (CXFA_Node* node : GetNodeList(0, XFA_Element::Event)) {
@@ -2618,7 +2619,7 @@ std::vector<CXFA_Event*> CXFA_Node::GetEventByActivity(
     if (event->GetActivity() != iActivity)
       continue;
 
-    if (iActivity != XFA_AttributeEnum::Ready) {
+    if (iActivity != XFA_AttributeValue::Ready) {
       events.push_back(event);
       continue;
     }
@@ -2716,7 +2717,7 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
   CXFA_Node* pBind = GetBindData();
   if (!pBind) {
     if (image)
-      image->SetTransferEncoding(XFA_AttributeEnum::Base64);
+      image->SetTransferEncoding(XFA_AttributeValue::Base64);
     return;
   }
   pBind->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
@@ -2756,10 +2757,10 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {
   LoadCaption(doc);
 
   const float fCapReserve = caption->GetReserve();
-  const XFA_AttributeEnum iCapPlacement = caption->GetPlacementType();
+  const XFA_AttributeValue iCapPlacement = caption->GetPlacementType();
   const bool bReserveExit = fCapReserve > 0.01;
-  const bool bVert = iCapPlacement == XFA_AttributeEnum::Top ||
-                     iCapPlacement == XFA_AttributeEnum::Bottom;
+  const bool bVert = iCapPlacement == XFA_AttributeValue::Top ||
+                     iCapPlacement == XFA_AttributeValue::Bottom;
   CXFA_TextLayout* pCapTextLayout =
       m_pLayoutData->AsFieldLayoutData()->m_pCapTextLayout.get();
   if (pCapTextLayout) {
@@ -2815,17 +2816,18 @@ bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   pSize->height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
     CXFA_Caption* caption = GetCaptionIfExists();
-    XFA_AttributeEnum placement = caption ? caption->GetPlacementType()
-                                          : CXFA_Caption::kDefaultPlacementType;
+    XFA_AttributeValue placement = caption
+                                       ? caption->GetPlacementType()
+                                       : CXFA_Caption::kDefaultPlacementType;
     switch (placement) {
-      case XFA_AttributeEnum::Left:
-      case XFA_AttributeEnum::Right:
-      case XFA_AttributeEnum::Inline: {
+      case XFA_AttributeValue::Left:
+      case XFA_AttributeValue::Right:
+      case XFA_AttributeValue::Inline: {
         pSize->width += szCap.width;
         pSize->height = std::max(pSize->height, szCap.height);
       } break;
-      case XFA_AttributeEnum::Top:
-      case XFA_AttributeEnum::Bottom: {
+      case XFA_AttributeValue::Top:
+      case XFA_AttributeValue::Bottom: {
         pSize->height += szCap.height;
         pSize->width = std::max(pSize->width, szCap.width);
         break;
@@ -2914,15 +2916,15 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
     CFX_SizeF szCap;
     CalcCaptionSize(doc, &szCap);
     bool bCapExit = szCap.width > 0.01 && szCap.height > 0.01;
-    XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
+    XFA_AttributeValue iCapPlacement = XFA_AttributeValue::Unknown;
     if (bCapExit) {
       CXFA_Caption* caption = GetCaptionIfExists();
       iCapPlacement = caption ? caption->GetPlacementType()
                               : CXFA_Caption::kDefaultPlacementType;
       switch (iCapPlacement) {
-        case XFA_AttributeEnum::Left:
-        case XFA_AttributeEnum::Right:
-        case XFA_AttributeEnum::Inline: {
+        case XFA_AttributeValue::Left:
+        case XFA_AttributeValue::Right:
+        case XFA_AttributeValue::Inline: {
           pSize->width -= szCap.width;
           break;
         }
@@ -2940,13 +2942,13 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
     pSize->height += rtUIMargin.top + rtUIMargin.height;
     if (bCapExit) {
       switch (iCapPlacement) {
-        case XFA_AttributeEnum::Left:
-        case XFA_AttributeEnum::Right:
-        case XFA_AttributeEnum::Inline: {
+        case XFA_AttributeValue::Left:
+        case XFA_AttributeValue::Right:
+        case XFA_AttributeValue::Inline: {
           pSize->height = std::max(pSize->height, szCap.height);
         } break;
-        case XFA_AttributeEnum::Top:
-        case XFA_AttributeEnum::Bottom: {
+        case XFA_AttributeValue::Top:
+        case XFA_AttributeValue::Bottom: {
           pSize->height += szCap.height;
           break;
         }
@@ -3236,7 +3238,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     return true;
   }
 
-  XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
+  XFA_AttributeValue iCapPlacement = XFA_AttributeValue::Unknown;
   float fCapReserve = 0;
   if (iBlockIndex == 0) {
     CXFA_Caption* caption = GetCaptionIfExists();
@@ -3244,17 +3246,17 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
       iCapPlacement = caption->GetPlacementType();
       fCapReserve = caption->GetReserve();
     }
-    if (iCapPlacement == XFA_AttributeEnum::Top &&
+    if (iCapPlacement == XFA_AttributeValue::Top &&
         *pCalcHeight < fCapReserve + fTopInset) {
       *pCalcHeight = 0;
       return true;
     }
-    if (iCapPlacement == XFA_AttributeEnum::Bottom &&
+    if (iCapPlacement == XFA_AttributeValue::Bottom &&
         m_pLayoutData->m_fWidgetHeight - fCapReserve - fBottomInset) {
       *pCalcHeight = 0;
       return true;
     }
-    if (iCapPlacement != XFA_AttributeEnum::Top)
+    if (iCapPlacement != XFA_AttributeValue::Top)
       fCapReserve = 0;
   }
   CXFA_FieldLayoutData* pFieldData = m_pLayoutData->AsFieldLayoutData();
@@ -3297,13 +3299,13 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
       float fSpaceBelow = para->GetSpaceBelow();
       fHeight -= (fSpaceAbove + fSpaceBelow);
       switch (para->GetVerticalAlign()) {
-        case XFA_AttributeEnum::Top:
+        case XFA_AttributeValue::Top:
           fStartOffset += fSpaceAbove;
           break;
-        case XFA_AttributeEnum::Middle:
+        case XFA_AttributeValue::Middle:
           fStartOffset += ((fHeight - fTextHeight) / 2 + fSpaceAbove);
           break;
-        case XFA_AttributeEnum::Bottom:
+        case XFA_AttributeValue::Bottom:
           fStartOffset += (fHeight - fTextHeight + fSpaceAbove);
           break;
         default:
@@ -3326,20 +3328,20 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
 
   XFA_VERSION version = docView->GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
-  XFA_AttributeEnum eLayoutMode = GetParent()
-                                      ->JSObject()
-                                      ->TryEnum(XFA_Attribute::Layout, true)
-                                      .value_or(XFA_AttributeEnum::Position);
-  if ((eLayoutMode == XFA_AttributeEnum::Position ||
-       eLayoutMode == XFA_AttributeEnum::Tb ||
-       eLayoutMode == XFA_AttributeEnum::Row ||
-       eLayoutMode == XFA_AttributeEnum::Table) &&
+  XFA_AttributeValue eLayoutMode = GetParent()
+                                       ->JSObject()
+                                       ->TryEnum(XFA_Attribute::Layout, true)
+                                       .value_or(XFA_AttributeValue::Position);
+  if ((eLayoutMode == XFA_AttributeValue::Position ||
+       eLayoutMode == XFA_AttributeValue::Tb ||
+       eLayoutMode == XFA_AttributeValue::Row ||
+       eLayoutMode == XFA_AttributeValue::Table) &&
       version > XFA_VERSION_208) {
     bCanSplitNoContent = true;
   }
-  if ((eLayoutMode == XFA_AttributeEnum::Tb ||
-       eLayoutMode == XFA_AttributeEnum::Row ||
-       eLayoutMode == XFA_AttributeEnum::Table) &&
+  if ((eLayoutMode == XFA_AttributeValue::Tb ||
+       eLayoutMode == XFA_AttributeValue::Row ||
+       eLayoutMode == XFA_AttributeValue::Table) &&
       version <= XFA_VERSION_208) {
     if (fStartOffset < *pCalcHeight) {
       bCanSplitNoContent = true;
@@ -3768,7 +3770,7 @@ bool CXFA_Node::IsChoiceListCommitOnSelect() {
   CXFA_Node* pUIChild = GetUIChildNode();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::CommitOn) ==
-           XFA_AttributeEnum::Select;
+           XFA_AttributeValue::Select;
   }
   return true;
 }
@@ -3782,7 +3784,7 @@ bool CXFA_Node::IsChoiceListMultiSelect() {
   CXFA_Node* pUIChild = GetUIChildNode();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
-           XFA_AttributeEnum::MultiSelect;
+           XFA_AttributeValue::MultiSelect;
   }
   return false;
 }
@@ -3792,9 +3794,9 @@ bool CXFA_Node::IsListBox() {
   if (!pUIChild)
     return false;
 
-  XFA_AttributeEnum attr = pUIChild->JSObject()->GetEnum(XFA_Attribute::Open);
-  return attr == XFA_AttributeEnum::Always ||
-         attr == XFA_AttributeEnum::MultiSelect;
+  XFA_AttributeValue attr = pUIChild->JSObject()->GetEnum(XFA_Attribute::Open);
+  return attr == XFA_AttributeValue::Always ||
+         attr == XFA_AttributeValue::MultiSelect;
 }
 
 int32_t CXFA_Node::CountChoiceListItems(bool bSaveValue) {
@@ -4074,12 +4076,12 @@ void CXFA_Node::InsertItem(const WideString& wsLabel,
     CXFA_Node* pNode = listitems[0];
     pNode->JSObject()->SetBoolean(XFA_Attribute::Save, false, false);
     pNode->JSObject()->SetEnum(XFA_Attribute::Presence,
-                               XFA_AttributeEnum::Visible, false);
+                               XFA_AttributeValue::Visible, false);
     CXFA_Node* pSaveItems = CreateSamePacketNode(XFA_Element::Items);
     InsertChild(-1, pSaveItems);
     pSaveItems->JSObject()->SetBoolean(XFA_Attribute::Save, true, false);
     pSaveItems->JSObject()->SetEnum(XFA_Attribute::Presence,
-                                    XFA_AttributeEnum::Hidden, false);
+                                    XFA_AttributeValue::Hidden, false);
     CXFA_Node* pListNode = pNode->GetFirstChild();
     int32_t i = 0;
     while (pListNode) {
@@ -4218,7 +4220,7 @@ bool CXFA_Node::IsHorizontalScrollPolicyOff() {
   CXFA_Node* pUIChild = GetUIChildNode();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::HScrollPolicy) ==
-           XFA_AttributeEnum::Off;
+           XFA_AttributeValue::Off;
   }
   return false;
 }
@@ -4227,7 +4229,7 @@ bool CXFA_Node::IsVerticalScrollPolicyOff() {
   CXFA_Node* pUIChild = GetUIChildNode();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::VScrollPolicy) ==
-           XFA_AttributeEnum::Off;
+           XFA_AttributeValue::Off;
   }
   return false;
 }
@@ -4661,11 +4663,11 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
 }
 
 bool CXFA_Node::PresenceRequiresSpace() const {
-  XFA_AttributeEnum ePresence = JSObject()
-                                    ->TryEnum(XFA_Attribute::Presence, true)
-                                    .value_or(XFA_AttributeEnum::Visible);
-  return ePresence == XFA_AttributeEnum::Visible ||
-         ePresence == XFA_AttributeEnum::Invisible;
+  XFA_AttributeValue ePresence = JSObject()
+                                     ->TryEnum(XFA_Attribute::Presence, true)
+                                     .value_or(XFA_AttributeValue::Visible);
+  return ePresence == XFA_AttributeValue::Visible ||
+         ePresence == XFA_AttributeValue::Invisible;
 }
 
 void CXFA_Node::SetToXML(const WideString& value) {

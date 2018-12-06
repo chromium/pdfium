@@ -79,10 +79,10 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                   XFA_AttributeEnum iAspect,
+                   XFA_AttributeValue iAspect,
                    const CFX_Size& dpi,
-                   XFA_AttributeEnum iHorzAlign,
-                   XFA_AttributeEnum iVertAlign) {
+                   XFA_AttributeValue iHorzAlign,
+                   XFA_AttributeValue iVertAlign) {
   if (rtImage.IsEmpty())
     return;
   if (!pDIBitmap || !pDIBitmap->GetBuffer())
@@ -92,7 +92,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                   XFA_UnitPx2Pt(pDIBitmap->GetWidth(), dpi.width),
                   XFA_UnitPx2Pt(pDIBitmap->GetHeight(), dpi.height));
   switch (iAspect) {
-    case XFA_AttributeEnum::Fit: {
+    case XFA_AttributeValue::Fit: {
       float f1 = rtImage.height / rtFit.height;
       float f2 = rtImage.width / rtFit.width;
       f1 = std::min(f1, f2);
@@ -100,35 +100,35 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
       rtFit.width = rtFit.width * f1;
       break;
     }
-    case XFA_AttributeEnum::Height: {
+    case XFA_AttributeValue::Height: {
       float f1 = rtImage.height / rtFit.height;
       rtFit.height = rtImage.height;
       rtFit.width = f1 * rtFit.width;
       break;
     }
-    case XFA_AttributeEnum::None:
+    case XFA_AttributeValue::None:
       rtFit.height = rtImage.height;
       rtFit.width = rtImage.width;
       break;
-    case XFA_AttributeEnum::Width: {
+    case XFA_AttributeValue::Width: {
       float f1 = rtImage.width / rtFit.width;
       rtFit.width = rtImage.width;
       rtFit.height = rtFit.height * f1;
       break;
     }
-    case XFA_AttributeEnum::Actual:
+    case XFA_AttributeValue::Actual:
     default:
       break;
   }
 
-  if (iHorzAlign == XFA_AttributeEnum::Center)
+  if (iHorzAlign == XFA_AttributeValue::Center)
     rtFit.left += (rtImage.width - rtFit.width) / 2;
-  else if (iHorzAlign == XFA_AttributeEnum::Right)
+  else if (iHorzAlign == XFA_AttributeValue::Right)
     rtFit.left = rtImage.right() - rtFit.width;
 
-  if (iVertAlign == XFA_AttributeEnum::Middle)
+  if (iVertAlign == XFA_AttributeValue::Middle)
     rtFit.top += (rtImage.height - rtFit.height) / 2;
-  else if (iVertAlign == XFA_AttributeEnum::Bottom)
+  else if (iVertAlign == XFA_AttributeValue::Bottom)
     rtFit.top = rtImage.bottom() - rtImage.height;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
@@ -411,7 +411,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
   eParam.m_pTarget = m_pNode.Get();
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Enter, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
   return true;
 }
 
@@ -614,7 +614,7 @@ void CXFA_FFWidget::EventKillFocus() {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Exit;
   eParam.m_pTarget = m_pNode.Get();
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Exit, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Exit, &eParam);
 }
 
 bool CXFA_FFWidget::IsButtonDown() {

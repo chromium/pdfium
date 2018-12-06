@@ -23,7 +23,7 @@ class CXFA_Node;
 class CXFA_Subform;
 class CXFA_ReadyNodeIterator;
 
-extern const XFA_AttributeEnum gs_EventActivity[];
+extern const XFA_AttributeValue gs_EventActivity[];
 enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_None,
   XFA_DOCVIEW_LAYOUTSTATUS_Start,

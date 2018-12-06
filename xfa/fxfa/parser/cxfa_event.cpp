@@ -26,10 +26,10 @@ const CXFA_Node::AttributeData kEventAttributeData[] = {
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Listen, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::RefOnly},
+     (void*)XFA_AttributeValue::RefOnly},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Activity, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Click},
+     (void*)XFA_AttributeValue::Click},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kEventName[] = L"event";
@@ -49,7 +49,7 @@ CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Event::~CXFA_Event() {}
 
-XFA_AttributeEnum CXFA_Event::GetActivity() {
+XFA_AttributeValue CXFA_Event::GetActivity() {
   return JSObject()->GetEnum(XFA_Attribute::Activity);
 }
 

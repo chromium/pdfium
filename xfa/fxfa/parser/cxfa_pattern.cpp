@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kPatternAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::CrossHatch},
+     (void*)XFA_AttributeValue::CrossHatch},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
@@ -46,7 +46,7 @@ CXFA_Color* CXFA_Pattern::GetColorIfExists() {
   return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
 }
 
-XFA_AttributeEnum CXFA_Pattern::GetType() {
+XFA_AttributeValue CXFA_Pattern::GetType() {
   return JSObject()->GetEnum(XFA_Attribute::Type);
 }
 
@@ -60,19 +60,19 @@ void CXFA_Pattern::Draw(CXFA_Graphics* pGS,
 
   FX_HatchStyle iHatch = FX_HatchStyle::Cross;
   switch (GetType()) {
-    case XFA_AttributeEnum::CrossDiagonal:
+    case XFA_AttributeValue::CrossDiagonal:
       iHatch = FX_HatchStyle::DiagonalCross;
       break;
-    case XFA_AttributeEnum::DiagonalLeft:
+    case XFA_AttributeValue::DiagonalLeft:
       iHatch = FX_HatchStyle::ForwardDiagonal;
       break;
-    case XFA_AttributeEnum::DiagonalRight:
+    case XFA_AttributeValue::DiagonalRight:
       iHatch = FX_HatchStyle::BackwardDiagonal;
       break;
-    case XFA_AttributeEnum::Horizontal:
+    case XFA_AttributeValue::Horizontal:
       iHatch = FX_HatchStyle::Horizontal;
       break;
-    case XFA_AttributeEnum::Vertical:
+    case XFA_AttributeValue::Vertical:
       iHatch = FX_HatchStyle::Vertical;
       break;
     default:

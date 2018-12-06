@@ -17,7 +17,7 @@ const CXFA_Node::AttributeData kKeyUsageAttributeData[] = {
     {XFA_Attribute::NonRepudiation, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::EncipherOnly, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Optional},
+     (void*)XFA_AttributeValue::Optional},
     {XFA_Attribute::DigitalSignature, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::CrlSign, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::KeyAgreement, XFA_AttributeType::CData, nullptr},

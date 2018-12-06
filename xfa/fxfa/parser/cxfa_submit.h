@@ -16,7 +16,7 @@ class CXFA_Submit final : public CXFA_Node {
   ~CXFA_Submit() override;
 
   bool IsSubmitEmbedPDF();
-  XFA_AttributeEnum GetSubmitFormat();
+  XFA_AttributeValue GetSubmitFormat();
   WideString GetSubmitTarget();
   WideString GetSubmitXDPContent();
 };

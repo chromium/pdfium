@@ -19,7 +19,7 @@ const CXFA_Node::PropertyData kTemplatePropertyData[] = {
 const CXFA_Node::AttributeData kTemplateAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::BaseProfile, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Full},
+     (void*)XFA_AttributeValue::Full},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

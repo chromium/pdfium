@@ -20,9 +20,9 @@ const CXFA_Node::AttributeData kChoiceListAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Open, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::UserControl},
+     (void*)XFA_AttributeValue::UserControl},
     {XFA_Attribute::CommitOn, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Select},
+     (void*)XFA_AttributeValue::Select},
     {XFA_Attribute::TextEntry, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
@@ -46,7 +46,7 @@ CXFA_ChoiceList::~CXFA_ChoiceList() {}
 
 XFA_Element CXFA_ChoiceList::GetValueNodeType() const {
   return JSObject()->GetEnum(XFA_Attribute::Open) ==
-                 XFA_AttributeEnum::MultiSelect
+                 XFA_AttributeValue::MultiSelect
              ? XFA_Element::ExData
              : XFA_Element::Text;
 }

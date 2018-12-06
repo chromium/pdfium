@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kTraverseAttributeData[] = {
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Operation, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Next},
+     (void*)XFA_AttributeValue::Next},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 

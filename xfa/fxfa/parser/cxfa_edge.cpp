@@ -18,12 +18,12 @@ const CXFA_Node::PropertyData kEdgePropertyData[] = {
 const CXFA_Node::AttributeData kEdgeAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Cap, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Square},
+     (void*)XFA_AttributeValue::Square},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Stroke, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Solid},
+     (void*)XFA_AttributeValue::Solid},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Visible},
+     (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Thickness, XFA_AttributeType::Measure, (void*)L"0.5pt"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

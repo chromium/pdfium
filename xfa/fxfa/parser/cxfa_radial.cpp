@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kRadialAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::ToEdge},
+     (void*)XFA_AttributeValue::ToEdge},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
@@ -47,7 +47,8 @@ CXFA_Radial::~CXFA_Radial() {}
 bool CXFA_Radial::IsToEdge() {
   return JSObject()
              ->TryEnum(XFA_Attribute::Type, true)
-             .value_or(XFA_AttributeEnum::ToEdge) == XFA_AttributeEnum::ToEdge;
+             .value_or(XFA_AttributeValue::ToEdge) ==
+         XFA_AttributeValue::ToEdge;
 }
 
 CXFA_Color* CXFA_Radial::GetColorIfExists() {

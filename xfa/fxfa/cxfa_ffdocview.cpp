@@ -38,21 +38,21 @@
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
-const XFA_AttributeEnum gs_EventActivity[] = {
-    XFA_AttributeEnum::Click,      XFA_AttributeEnum::Change,
-    XFA_AttributeEnum::DocClose,   XFA_AttributeEnum::DocReady,
-    XFA_AttributeEnum::Enter,      XFA_AttributeEnum::Exit,
-    XFA_AttributeEnum::Full,       XFA_AttributeEnum::IndexChange,
-    XFA_AttributeEnum::Initialize, XFA_AttributeEnum::MouseDown,
-    XFA_AttributeEnum::MouseEnter, XFA_AttributeEnum::MouseExit,
-    XFA_AttributeEnum::MouseUp,    XFA_AttributeEnum::PostExecute,
-    XFA_AttributeEnum::PostOpen,   XFA_AttributeEnum::PostPrint,
-    XFA_AttributeEnum::PostSave,   XFA_AttributeEnum::PostSign,
-    XFA_AttributeEnum::PostSubmit, XFA_AttributeEnum::PreExecute,
-    XFA_AttributeEnum::PreOpen,    XFA_AttributeEnum::PrePrint,
-    XFA_AttributeEnum::PreSave,    XFA_AttributeEnum::PreSign,
-    XFA_AttributeEnum::PreSubmit,  XFA_AttributeEnum::Ready,
-    XFA_AttributeEnum::Unknown,
+const XFA_AttributeValue gs_EventActivity[] = {
+    XFA_AttributeValue::Click,      XFA_AttributeValue::Change,
+    XFA_AttributeValue::DocClose,   XFA_AttributeValue::DocReady,
+    XFA_AttributeValue::Enter,      XFA_AttributeValue::Exit,
+    XFA_AttributeValue::Full,       XFA_AttributeValue::IndexChange,
+    XFA_AttributeValue::Initialize, XFA_AttributeValue::MouseDown,
+    XFA_AttributeValue::MouseEnter, XFA_AttributeValue::MouseExit,
+    XFA_AttributeValue::MouseUp,    XFA_AttributeValue::PostExecute,
+    XFA_AttributeValue::PostOpen,   XFA_AttributeValue::PostPrint,
+    XFA_AttributeValue::PostSave,   XFA_AttributeValue::PostSign,
+    XFA_AttributeValue::PostSubmit, XFA_AttributeValue::PreExecute,
+    XFA_AttributeValue::PreOpen,    XFA_AttributeValue::PrePrint,
+    XFA_AttributeValue::PreSave,    XFA_AttributeValue::PreSign,
+    XFA_AttributeValue::PreSubmit,  XFA_AttributeValue::Ready,
+    XFA_AttributeValue::Unknown,
 };
 
 CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
@@ -470,7 +470,7 @@ void CXFA_FFDocView::RunSubformIndexChange() {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_IndexChange;
     eParam.m_pTarget = pSubformNode;
-    pSubformNode->ProcessEvent(this, XFA_AttributeEnum::IndexChange, &eParam);
+    pSubformNode->ProcessEvent(this, XFA_AttributeValue::IndexChange, &eParam);
   }
   m_IndexChangedSubforms.clear();
 }

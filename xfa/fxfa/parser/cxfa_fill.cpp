@@ -31,7 +31,7 @@ const CXFA_Node::AttributeData kFillAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Visible},
+     (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
@@ -55,8 +55,8 @@ CXFA_Fill::~CXFA_Fill() {}
 bool CXFA_Fill::IsVisible() {
   return JSObject()
              ->TryEnum(XFA_Attribute::Presence, true)
-             .value_or(XFA_AttributeEnum::Visible) ==
-         XFA_AttributeEnum::Visible;
+             .value_or(XFA_AttributeValue::Visible) ==
+         XFA_AttributeValue::Visible;
 }
 
 void CXFA_Fill::SetColor(FX_ARGB color) {

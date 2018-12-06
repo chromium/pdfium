@@ -29,7 +29,7 @@ class CXFA_TextPiece {
   int32_t iVerScale;
   int32_t iBidiLevel;
   int32_t iUnderline;
-  XFA_AttributeEnum iPeriod;
+  XFA_AttributeValue iPeriod;
   int32_t iLineThrough;
   FX_ARGB dwColor;
   float fFontSize;

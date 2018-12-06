@@ -25,13 +25,13 @@ const CXFA_Node::AttributeData kValidateAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ScriptTest, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Error},
+     (void*)XFA_AttributeValue::Error},
     {XFA_Attribute::NullTest, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Disabled},
+     (void*)XFA_AttributeValue::Disabled},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::FormatTest, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Warning},
+     (void*)XFA_AttributeValue::Warning},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
@@ -56,22 +56,22 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
 
 CXFA_Validate::~CXFA_Validate() {}
 
-XFA_AttributeEnum CXFA_Validate::GetFormatTest() {
+XFA_AttributeValue CXFA_Validate::GetFormatTest() {
   return JSObject()->GetEnum(XFA_Attribute::FormatTest);
 }
 
 void CXFA_Validate::SetNullTest(const WideString& wsValue) {
-  Optional<XFA_AttributeEnum> item =
+  Optional<XFA_AttributeValue> item =
       CXFA_Node::NameToAttributeEnum(wsValue.AsStringView());
   JSObject()->SetEnum(XFA_Attribute::NullTest,
-                      item ? *item : XFA_AttributeEnum::Disabled, false);
+                      item ? *item : XFA_AttributeValue::Disabled, false);
 }
 
-XFA_AttributeEnum CXFA_Validate::GetNullTest() {
+XFA_AttributeValue CXFA_Validate::GetNullTest() {
   return JSObject()->GetEnum(XFA_Attribute::NullTest);
 }
 
-XFA_AttributeEnum CXFA_Validate::GetScriptTest() {
+XFA_AttributeValue CXFA_Validate::GetScriptTest() {
   return JSObject()->GetEnum(XFA_Attribute::ScriptTest);
 }
 

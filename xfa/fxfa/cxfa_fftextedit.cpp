@@ -221,16 +221,16 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
-    case XFA_AttributeEnum::Center:
+    case XFA_AttributeValue::Center:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_HCenter;
       break;
-    case XFA_AttributeEnum::Justify:
+    case XFA_AttributeValue::Justify:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_Justified;
       break;
-    case XFA_AttributeEnum::JustifyAll:
-    case XFA_AttributeEnum::Radix:
+    case XFA_AttributeValue::JustifyAll:
+    case XFA_AttributeValue::Radix:
       break;
-    case XFA_AttributeEnum::Right:
+    case XFA_AttributeValue::Right:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_HFar;
       break;
     default:
@@ -239,10 +239,10 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
   }
 
   switch (para->GetVerticalAlign()) {
-    case XFA_AttributeEnum::Middle:
+    case XFA_AttributeValue::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_VCenter;
       break;
-    case XFA_AttributeEnum::Bottom:
+    case XFA_AttributeValue::Bottom:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_VFar;
       break;
     default:
@@ -309,7 +309,7 @@ void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,
   eParam.m_iSelStart = static_cast<int32_t>(event->selection_start);
   eParam.m_iSelEnd = static_cast<int32_t>(event->selection_end);
 
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change, &eParam);
 
   // Copy the data back out of the EventParam and into the TextChanged event so
   // it can propagate back to the calling widget.
@@ -323,7 +323,7 @@ void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
   eParam.m_pTarget = m_pNode.Get();
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Full, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Full, &eParam);
 }
 
 void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {

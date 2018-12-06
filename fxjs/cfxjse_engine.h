@@ -79,8 +79,8 @@ class CFXJSE_Engine final : public CFX_V8 {
   void AddNodesOfRunScript(CXFA_Node* pNode);
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
 
-  void SetRunAtType(XFA_AttributeEnum eRunAt) { m_eRunAtType = eRunAt; }
-  bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeEnum::Server; }
+  void SetRunAtType(XFA_AttributeValue eRunAt) { m_eRunAtType = eRunAt; }
+  bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeValue::Server; }
 
   CXFA_Script::Type GetType();
   std::vector<CXFA_Node*>* GetUpObjectArray() { return &m_upObjectArray; }
@@ -123,7 +123,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   std::unique_ptr<CFXJSE_ResolveProcessor> const m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
   UnownedPtr<CXFA_Object> m_pThisObject;
-  XFA_AttributeEnum m_eRunAtType = XFA_AttributeEnum::Client;
+  XFA_AttributeValue m_eRunAtType = XFA_AttributeValue::Client;
 };
 
 #endif  //  FXJS_CFXJSE_ENGINE_H_

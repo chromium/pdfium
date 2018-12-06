@@ -108,16 +108,16 @@ uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
 
   uint32_t dwExtendedStyle = 0;
   switch (para->GetHorizontalAlign()) {
-    case XFA_AttributeEnum::Center:
+    case XFA_AttributeValue::Center:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditHCenter;
       break;
-    case XFA_AttributeEnum::Justify:
+    case XFA_AttributeValue::Justify:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditJustified;
       break;
-    case XFA_AttributeEnum::JustifyAll:
-    case XFA_AttributeEnum::Radix:
+    case XFA_AttributeValue::JustifyAll:
+    case XFA_AttributeValue::Radix:
       break;
-    case XFA_AttributeEnum::Right:
+    case XFA_AttributeValue::Right:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditHFar;
       break;
     default:
@@ -126,10 +126,10 @@ uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
   }
 
   switch (para->GetVerticalAlign()) {
-    case XFA_AttributeEnum::Middle:
+    case XFA_AttributeValue::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditVCenter;
       break;
-    case XFA_AttributeEnum::Bottom:
+    case XFA_AttributeValue::Bottom:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditVFar;
       break;
     default:
@@ -201,7 +201,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pNode.Get();
   eParam.m_wsPrevText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change, &eParam);
 }
 
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {

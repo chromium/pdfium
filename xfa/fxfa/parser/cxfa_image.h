@@ -14,14 +14,14 @@ class CXFA_Image final : public CXFA_Node {
   CXFA_Image(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Image() override;
 
-  XFA_AttributeEnum GetAspect();
+  XFA_AttributeValue GetAspect();
   WideString GetContent();
 
   WideString GetHref();
   void SetHref(const WideString& wsHref);
 
-  XFA_AttributeEnum GetTransferEncoding();
-  void SetTransferEncoding(XFA_AttributeEnum iTransferEncoding);
+  XFA_AttributeValue GetTransferEncoding();
+  void SetTransferEncoding(XFA_AttributeValue iTransferEncoding);
 
   WideString GetContentType();
   void SetContentType(const WideString& wsContentType);

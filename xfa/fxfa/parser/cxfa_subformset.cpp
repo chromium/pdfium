@@ -21,7 +21,7 @@ const CXFA_Node::AttributeData kSubformSetAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Relation, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Ordered},
+     (void*)XFA_AttributeValue::Ordered},
     {XFA_Attribute::Relevant, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

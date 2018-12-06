@@ -16,17 +16,17 @@ class CXFA_Validate final : public CXFA_Node {
   CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Validate() override;
 
-  XFA_AttributeEnum GetFormatTest();
+  XFA_AttributeValue GetFormatTest();
   WideString GetFormatMessageText();
   void SetFormatMessageText(const WideString& wsMessage);
 
-  XFA_AttributeEnum GetNullTest();
+  XFA_AttributeValue GetNullTest();
   void SetNullTest(const WideString& wsValue);
 
   WideString GetNullMessageText();
   void SetNullMessageText(const WideString& wsMessage);
 
-  XFA_AttributeEnum GetScriptTest();
+  XFA_AttributeValue GetScriptTest();
   WideString GetScriptMessageText();
   void SetScriptMessageText(const WideString& wsMessage);
 

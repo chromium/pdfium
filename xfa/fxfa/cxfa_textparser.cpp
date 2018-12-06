@@ -119,20 +119,20 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     pStyle->SetTextIndent(indent);
     CFX_CSSTextAlign hAlign = CFX_CSSTextAlign::Left;
     switch (para->GetHorizontalAlign()) {
-      case XFA_AttributeEnum::Center:
+      case XFA_AttributeValue::Center:
         hAlign = CFX_CSSTextAlign::Center;
         break;
-      case XFA_AttributeEnum::Right:
+      case XFA_AttributeValue::Right:
         hAlign = CFX_CSSTextAlign::Right;
         break;
-      case XFA_AttributeEnum::Justify:
+      case XFA_AttributeValue::Justify:
         hAlign = CFX_CSSTextAlign::Justify;
         break;
-      case XFA_AttributeEnum::JustifyAll:
+      case XFA_AttributeValue::JustifyAll:
         hAlign = CFX_CSSTextAlign::JustifyAll;
         break;
-      case XFA_AttributeEnum::Left:
-      case XFA_AttributeEnum::Radix:
+      case XFA_AttributeValue::Left:
+      case XFA_AttributeValue::Radix:
         break;
       default:
         NOTREACHED();
@@ -310,10 +310,10 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
   return tagProvider;
 }
 
-XFA_AttributeEnum CXFA_TextParser::GetVAlign(
+XFA_AttributeValue CXFA_TextParser::GetVAlign(
     CXFA_TextProvider* pTextProvider) const {
   CXFA_Para* para = pTextProvider->GetParaIfExists();
-  return para ? para->GetVerticalAlign() : XFA_AttributeEnum::Top;
+  return para ? para->GetVerticalAlign() : XFA_AttributeValue::Top;
 }
 
 float CXFA_TextParser::GetTabInterval(CFX_CSSComputedStyle* pStyle) const {
@@ -417,9 +417,9 @@ int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
 void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
                                    CFX_CSSComputedStyle* pStyle,
                                    int32_t& iUnderline,
-                                   XFA_AttributeEnum& iPeriod) const {
+                                   XFA_AttributeValue& iPeriod) const {
   iUnderline = 0;
-  iPeriod = XFA_AttributeEnum::All;
+  iPeriod = XFA_AttributeValue::All;
   CXFA_Font* font = pTextProvider->GetFontIfExists();
   if (!pStyle) {
     if (font) {
@@ -438,7 +438,7 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
   WideString wsValue;
   if (pStyle->GetCustomStyle(L"underlinePeriod", &wsValue)) {
     if (wsValue.EqualsASCII("word"))
-      iPeriod = XFA_AttributeEnum::Word;
+      iPeriod = XFA_AttributeValue::Word;
   } else if (font) {
     iPeriod = font->GetUnderlinePeriod();
   }

@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kButtonAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Highlight, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Inverted},
+     (void*)XFA_AttributeValue::Inverted},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kButtonName[] = L"button";
@@ -43,6 +43,6 @@ XFA_FFWidgetType CXFA_Button::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kButton;
 }
 
-XFA_AttributeEnum CXFA_Button::GetHighlight() {
+XFA_AttributeValue CXFA_Button::GetHighlight() {
   return JSObject()->GetEnum(XFA_Attribute::Highlight);
 }

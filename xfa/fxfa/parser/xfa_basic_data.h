@@ -11,7 +11,7 @@
 
 #include "xfa/fxfa/fxfa_basic.h"
 
-extern const XFA_AttributeEnumInfo g_XFAEnumData[];
+extern const XFA_AttributeValueInfo g_XFAEnumData[];
 extern const size_t g_szXFAEnumCount;
 
 extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[];

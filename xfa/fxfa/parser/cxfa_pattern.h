@@ -16,7 +16,8 @@ class CXFA_Graphics;
 
 class CXFA_Pattern final : public CXFA_Node {
  public:
-  static constexpr XFA_AttributeEnum kDefaultType = XFA_AttributeEnum::Unknown;
+  static constexpr XFA_AttributeValue kDefaultType =
+      XFA_AttributeValue::Unknown;
 
   CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Pattern() override;
@@ -28,7 +29,7 @@ class CXFA_Pattern final : public CXFA_Node {
             const CFX_Matrix& matrix);
 
  private:
-  XFA_AttributeEnum GetType();
+  XFA_AttributeValue GetType();
   CXFA_Color* GetColorIfExists();
 };
 

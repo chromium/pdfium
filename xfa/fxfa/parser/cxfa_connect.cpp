@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kConnectAttributeData[] = {
     {XFA_Attribute::Timeout, XFA_AttributeType::Integer, (void*)15},
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usage, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::ExportAndImport},
+     (void*)XFA_AttributeValue::ExportAndImport},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DelayedOpen, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};

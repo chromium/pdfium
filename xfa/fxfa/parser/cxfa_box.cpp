@@ -24,10 +24,10 @@
 
 namespace {
 
-std::pair<XFA_AttributeEnum, CXFA_Stroke*> Style3D(
+std::pair<XFA_AttributeValue, CXFA_Stroke*> Style3D(
     const std::vector<CXFA_Stroke*>& strokes) {
   if (strokes.empty())
-    return {XFA_AttributeEnum::Unknown, nullptr};
+    return {XFA_AttributeValue::Unknown, nullptr};
 
   CXFA_Stroke* stroke = strokes[0];
   for (size_t i = 1; i < strokes.size(); i++) {
@@ -41,14 +41,14 @@ std::pair<XFA_AttributeEnum, CXFA_Stroke*> Style3D(
     break;
   }
 
-  XFA_AttributeEnum iType = stroke->GetStrokeType();
-  if (iType == XFA_AttributeEnum::Lowered ||
-      iType == XFA_AttributeEnum::Raised ||
-      iType == XFA_AttributeEnum::Etched ||
-      iType == XFA_AttributeEnum::Embossed) {
+  XFA_AttributeValue iType = stroke->GetStrokeType();
+  if (iType == XFA_AttributeValue::Lowered ||
+      iType == XFA_AttributeValue::Raised ||
+      iType == XFA_AttributeValue::Etched ||
+      iType == XFA_AttributeValue::Embossed) {
     return {iType, stroke};
   }
-  return {XFA_AttributeEnum::Unknown, stroke};
+  return {XFA_AttributeValue::Unknown, stroke};
 }
 
 CXFA_Rectangle* ToRectangle(CXFA_Box* box) {
@@ -78,14 +78,14 @@ CXFA_Box::CXFA_Box(CXFA_Document* pDoc,
 
 CXFA_Box::~CXFA_Box() = default;
 
-XFA_AttributeEnum CXFA_Box::GetHand() {
+XFA_AttributeValue CXFA_Box::GetHand() {
   return JSObject()->GetEnum(XFA_Attribute::Hand);
 }
 
-XFA_AttributeEnum CXFA_Box::GetPresence() {
+XFA_AttributeValue CXFA_Box::GetPresence() {
   return JSObject()
       ->TryEnum(XFA_Attribute::Presence, true)
-      .value_or(XFA_AttributeEnum::Visible);
+      .value_or(XFA_AttributeValue::Visible);
 }
 
 int32_t CXFA_Box::CountEdges() {
@@ -119,17 +119,17 @@ CXFA_Fill* CXFA_Box::GetOrCreateFillIfPossible() {
   return JSObject()->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill);
 }
 
-std::tuple<XFA_AttributeEnum, bool, float> CXFA_Box::Get3DStyle() {
+std::tuple<XFA_AttributeValue, bool, float> CXFA_Box::Get3DStyle() {
   if (GetElementType() == XFA_Element::Arc)
-    return {XFA_AttributeEnum::Unknown, false, 0.0f};
+    return {XFA_AttributeValue::Unknown, false, 0.0f};
 
   std::vector<CXFA_Stroke*> strokes = GetStrokesInternal(true);
   CXFA_Stroke* stroke;
-  XFA_AttributeEnum iType;
+  XFA_AttributeValue iType;
 
   std::tie(iType, stroke) = Style3D(strokes);
-  if (iType == XFA_AttributeEnum::Unknown)
-    return {XFA_AttributeEnum::Unknown, false, 0.0f};
+  if (iType == XFA_AttributeValue::Unknown)
+    return {XFA_AttributeValue::Unknown, false, 0.0f};
 
   return {iType, stroke->IsVisible(), stroke->GetThickness()};
 }
@@ -184,7 +184,7 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
                     const CFX_RectF& rtWidget,
                     const CFX_Matrix& matrix,
                     bool forceRound) {
-  if (GetPresence() != XFA_AttributeEnum::Visible)
+  if (GetPresence() != XFA_AttributeValue::Visible)
     return;
 
   XFA_Element eType = GetElementType();
@@ -224,10 +224,10 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
     CXFA_Edge* edge = GetEdgeIfExists(0);
     float fThickness = std::fmax(0.0, edge ? edge->GetThickness() : 0);
     float fHalf = fThickness / 2;
-    XFA_AttributeEnum iHand = GetHand();
-    if (iHand == XFA_AttributeEnum::Left)
+    XFA_AttributeValue iHand = GetHand();
+    if (iHand == XFA_AttributeValue::Left)
       rtWidget.Inflate(fHalf, fHalf);
-    else if (iHand == XFA_AttributeEnum::Right)
+    else if (iHand == XFA_AttributeValue::Right)
       rtWidget.Deflate(fHalf, fHalf);
 
     GetPathArcOrRounded(rtWidget, forceRound, &fillPath);
@@ -278,10 +278,10 @@ void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
 
   bool bVisible;
   float fThickness;
-  XFA_AttributeEnum i3DType;
+  XFA_AttributeValue i3DType;
   std::tie(i3DType, bVisible, fThickness) = Get3DStyle();
   bool lowered3d = false;
-  if (i3DType != XFA_AttributeEnum::Unknown) {
+  if (i3DType != XFA_AttributeValue::Unknown) {
     if (bVisible && fThickness >= 0.001f)
       lowered3d = true;
   }
@@ -291,10 +291,10 @@ void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
     fHalf = 0;
   }
 
-  XFA_AttributeEnum iHand = GetHand();
-  if (iHand == XFA_AttributeEnum::Left) {
+  XFA_AttributeValue iHand = GetHand();
+  if (iHand == XFA_AttributeValue::Left) {
     rtWidget.Inflate(fHalf, fHalf);
-  } else if (iHand == XFA_AttributeEnum::Right) {
+  } else if (iHand == XFA_AttributeValue::Right) {
     rtWidget.Deflate(fHalf, fHalf);
   }
   if (!forceRound || !lowered3d) {

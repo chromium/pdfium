@@ -89,10 +89,10 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void CapPlacement();
   void CapTopBottomPlacement(const CXFA_Margin* margin,
                              const CFX_RectF& rtWidget,
-                             XFA_AttributeEnum iCapPlacement);
+                             XFA_AttributeValue iCapPlacement);
   void CapLeftRightPlacement(const CXFA_Margin* margin,
                              const CFX_RectF& rtWidget,
-                             XFA_AttributeEnum iCapPlacement);
+                             XFA_AttributeValue iCapPlacement);
   void SetEditScrollOffset();
 
   std::unique_ptr<CFWL_Widget> m_pNormalWidget;

@@ -10,7 +10,7 @@ namespace {
 
 const CXFA_Node::AttributeData kDatePatternAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
-     (void*)XFA_AttributeEnum::Med},
+     (void*)XFA_AttributeValue::Med},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kDatePatternName[] = L"datePattern";
