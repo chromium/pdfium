@@ -40,3 +40,26 @@ TEST(FXFABasic, ValueHashOrder) {
 #include "xfa/fxfa/parser/attribute_values.inc"
 #undef VALUE____
 }
+
+TEST(FXFABasic, ElementHashMatchesString) {
+#undef ELEM____
+#undef ELEM_HIDDEN____
+#define ELEM____(a, b, c) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
+#define ELEM_HIDDEN____(a)
+#include "xfa/fxfa/parser/elements.inc"
+#undef ELEM____
+#undef ELEM_HIDDEN____
+}
+
+TEST(FXFABasic, ElementHashOrder) {
+  uint32_t so_far = 0;
+#undef ELEM____
+#undef ELEM_HIDDEN____
+#define ELEM____(a, b, c) \
+  EXPECT_LT(so_far, a);   \
+  so_far = a;
+#define ELEM_HIDDEN____(a)
+#include "xfa/fxfa/parser/elements.inc"
+#undef ELEM____
+#undef ELEM_HIDDEN____
+}
