@@ -7,14 +7,14 @@
 #include "core/fxcrt/bytestring.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(FXFABasic, HashMatchesString) {
+TEST(FXFABasic, AttrHashMatchesString) {
 #undef ATTR____
 #define ATTR____(a, b, c) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 }
 
-TEST(FXFABasic, HashOrder) {
+TEST(FXFABasic, AttrHashOrder) {
   uint32_t so_far = 0;
 #undef ATTR____
 #define ATTR____(a, b, c) \
@@ -22,4 +22,21 @@ TEST(FXFABasic, HashOrder) {
   so_far = a;
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
+}
+
+TEST(FXFABasic, ValueHashMatchesString) {
+#undef VALUE____
+#define VALUE____(a, b, c) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
+#include "xfa/fxfa/parser/attribute_values.inc"
+#undef VALUE____
+}
+
+TEST(FXFABasic, ValueHashOrder) {
+  uint32_t so_far = 0;
+#undef VALUE____
+#define VALUE____(a, b, c) \
+  EXPECT_LT(so_far, a);    \
+  so_far = a;
+#include "xfa/fxfa/parser/attribute_values.inc"
+#undef VALUE____
 }
