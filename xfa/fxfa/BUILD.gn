@@ -134,6 +134,7 @@ pdfium_unittest_source_set("unittests") {
   sources = [
     "cxfa_ffbarcode_unittest.cpp",
     "cxfa_textparser_unittest.cpp",
+    "fxfa_basic_unittest.cpp",
   ]
   deps = [
     ":fxfa",
