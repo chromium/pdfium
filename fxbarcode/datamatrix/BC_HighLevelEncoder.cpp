@@ -45,8 +45,12 @@ namespace {
 const wchar_t kPad = 129;
 const wchar_t kMacro05 = 236;
 const wchar_t kMacro06 = 237;
-const wchar_t kMacro05Header[] = L"[)>05";
-const wchar_t kMacro06Header[] = L"[)>06";
+const wchar_t kMacro05Header[] =
+    L"[)>\036"
+    L"05";
+const wchar_t kMacro06Header[] =
+    L"[)>\036"
+    L"06";
 const wchar_t kMacroTrailer = 0x0004;
 
 wchar_t Randomize253State(wchar_t ch, int32_t codewordPosition) {
