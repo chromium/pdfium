@@ -15,7 +15,7 @@ class CBC_TextEncoder final : public CBC_C40Encoder {
   ~CBC_TextEncoder() override;
 
   // CBC_C40Encoder
-  int32_t getEncodingMode() override;
+  CBC_HighLevelEncoder::Encoding GetEncodingMode() override;
   int32_t EncodeChar(wchar_t c, WideString* sb) override;
 };
 

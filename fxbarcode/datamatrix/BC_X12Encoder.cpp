@@ -34,8 +34,8 @@ CBC_X12Encoder::CBC_X12Encoder() = default;
 
 CBC_X12Encoder::~CBC_X12Encoder() = default;
 
-int32_t CBC_X12Encoder::getEncodingMode() {
-  return X12_ENCODATION;
+CBC_HighLevelEncoder::Encoding CBC_X12Encoder::GetEncodingMode() {
+  return CBC_HighLevelEncoder::Encoding::X12;
 }
 
 bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
@@ -49,10 +49,11 @@ bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
     size_t count = buffer.GetLength();
     if ((count % 3) == 0) {
       WriteNextTriplet(context, &buffer);
-      int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
-          context->m_msg, context->m_pos, getEncodingMode());
-      if (newMode != getEncodingMode()) {
-        context->signalEncoderChange(newMode);
+      CBC_HighLevelEncoder::Encoding newMode =
+          CBC_HighLevelEncoder::LookAheadTest(context->m_msg, context->m_pos,
+                                              GetEncodingMode());
+      if (newMode != GetEncodingMode()) {
+        context->SignalEncoderChange(newMode);
         break;
       }
     }
@@ -71,13 +72,13 @@ bool CBC_X12Encoder::HandleEOD(CBC_EncoderContext* context,
   if (count == 2) {
     context->writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
     context->m_pos -= 2;
-    context->signalEncoderChange(ASCII_ENCODATION);
+    context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);
   } else if (count == 1) {
     context->m_pos--;
     if (available > 1) {
       context->writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
     }
-    context->signalEncoderChange(ASCII_ENCODATION);
+    context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);
   }
   return true;
 }

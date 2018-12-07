@@ -48,8 +48,8 @@ CBC_C40Encoder::CBC_C40Encoder() = default;
 
 CBC_C40Encoder::~CBC_C40Encoder() = default;
 
-int32_t CBC_C40Encoder::getEncodingMode() {
-  return C40_ENCODATION;
+CBC_HighLevelEncoder::Encoding CBC_C40Encoder::GetEncodingMode() {
+  return CBC_HighLevelEncoder::Encoding::C40;
 }
 
 bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
@@ -86,10 +86,11 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
     }
     size_t count = buffer.GetLength();
     if ((count % 3) == 0) {
-      int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
-          context->m_msg, context->m_pos, getEncodingMode());
-      if (newMode != getEncodingMode()) {
-        context->signalEncoderChange(newMode);
+      CBC_HighLevelEncoder::Encoding newMode =
+          CBC_HighLevelEncoder::LookAheadTest(context->m_msg, context->m_pos,
+                                              GetEncodingMode());
+      if (newMode != GetEncodingMode()) {
+        context->SignalEncoderChange(newMode);
         break;
       }
     }
@@ -135,7 +136,7 @@ bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
   } else {
     return false;
   }
-  context->signalEncoderChange(ASCII_ENCODATION);
+  context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);
   return true;
 }
 

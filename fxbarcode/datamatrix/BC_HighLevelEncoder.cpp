@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <vector>
@@ -105,6 +106,11 @@ bool IsNativeEDIFACT(wchar_t ch) {
   return ch >= ' ' && ch <= '^';
 }
 
+size_t EncoderIndex(CBC_HighLevelEncoder::Encoding encoding) {
+  ASSERT(encoding != CBC_HighLevelEncoder::Encoding::UNKNOWN);
+  return static_cast<size_t>(encoding);
+}
+
 }  // namespace
 
 // static
@@ -134,14 +140,14 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
   encoders.push_back(pdfium::MakeUnique<CBC_X12Encoder>());
   encoders.push_back(pdfium::MakeUnique<CBC_EdifactEncoder>());
   encoders.push_back(pdfium::MakeUnique<CBC_Base256Encoder>());
-  int32_t encodingMode = ASCII_ENCODATION;
+  Encoding encodingMode = Encoding::ASCII;
   while (context.hasMoreCharacters()) {
-    if (!encoders[encodingMode]->Encode(&context))
+    if (!encoders[EncoderIndex(encodingMode)]->Encode(&context))
       return WideString();
 
-    if (context.m_newEncoding >= 0) {
+    if (context.m_newEncoding != Encoding::UNKNOWN) {
       encodingMode = context.m_newEncoding;
-      context.resetEncoderSignal();
+      context.ResetEncoderSignal();
     }
   }
   size_t len = context.m_codewords.GetLength();
@@ -150,10 +156,8 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
 
   size_t capacity = context.m_symbolInfo->dataCapacity();
   if (len < capacity) {
-    if (encodingMode != ASCII_ENCODATION &&
-        encodingMode != BASE256_ENCODATION) {
+    if (encodingMode != Encoding::ASCII && encodingMode != Encoding::BASE256)
       context.writeCodeword(0x00fe);
-    }
   }
   WideString codewords = context.m_codewords;
   if (codewords.GetLength() < capacity)
@@ -167,18 +171,19 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
 }
 
 // static
-int32_t CBC_HighLevelEncoder::LookAheadTest(const WideString& msg,
-                                            size_t startpos,
-                                            int32_t currentMode) {
+CBC_HighLevelEncoder::Encoding CBC_HighLevelEncoder::LookAheadTest(
+    const WideString& msg,
+    size_t startpos,
+    CBC_HighLevelEncoder::Encoding currentMode) {
   if (startpos >= msg.GetLength())
     return currentMode;
 
   std::vector<float> charCounts;
-  if (currentMode == ASCII_ENCODATION) {
+  if (currentMode == Encoding::ASCII) {
     charCounts = {0, 1, 1, 1, 1, 1.25f};
   } else {
     charCounts = {1, 2, 2, 2, 2, 2.25f};
-    charCounts[currentMode] = 0;
+    charCounts[EncoderIndex(currentMode)] = 0;
   }
   size_t charsProcessed = 0;
   while (true) {
@@ -186,61 +191,75 @@ int32_t CBC_HighLevelEncoder::LookAheadTest(const WideString& msg,
       std::vector<uint8_t> mins(6);
       std::vector<int32_t> intCharCounts(6);
       int32_t min = FindMinimums(charCounts, &intCharCounts, &mins);
-      int32_t minCount = GetMinimumCount(mins);
-      if (intCharCounts[ASCII_ENCODATION] == min)
-        return ASCII_ENCODATION;
-      if (minCount == 1 && mins[BASE256_ENCODATION] > 0)
-        return BASE256_ENCODATION;
-      if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0)
-        return EDIFACT_ENCODATION;
-      if (minCount == 1 && mins[TEXT_ENCODATION] > 0)
-        return TEXT_ENCODATION;
-      if (minCount == 1 && mins[X12_ENCODATION] > 0)
-        return X12_ENCODATION;
-      return C40_ENCODATION;
+      if (intCharCounts[EncoderIndex(Encoding::ASCII)] == min)
+        return Encoding::ASCII;
+      const int32_t minCount = GetMinimumCount(mins);
+      if (minCount == 1) {
+        if (mins[EncoderIndex(Encoding::BASE256)] > 0)
+          return Encoding::BASE256;
+        if (mins[EncoderIndex(Encoding::EDIFACT)] > 0)
+          return Encoding::EDIFACT;
+        if (mins[EncoderIndex(Encoding::TEXT)] > 0)
+          return Encoding::TEXT;
+        if (mins[EncoderIndex(Encoding::X12)] > 0)
+          return Encoding::X12;
+      }
+      return Encoding::C40;
     }
 
     wchar_t c = msg[startpos + charsProcessed];
     charsProcessed++;
-    if (FXSYS_IsDecimalDigit(c)) {
-      charCounts[ASCII_ENCODATION] += 0.5;
-    } else if (IsExtendedASCII(c)) {
-      charCounts[ASCII_ENCODATION] = ceilf(charCounts[ASCII_ENCODATION]);
-      charCounts[ASCII_ENCODATION] += 2;
-    } else {
-      charCounts[ASCII_ENCODATION] = ceilf(charCounts[ASCII_ENCODATION]);
-      charCounts[ASCII_ENCODATION]++;
+    {
+      auto& count = charCounts[EncoderIndex(Encoding::ASCII)];
+      if (FXSYS_IsDecimalDigit(c))
+        count += 0.5;
+      else if (IsExtendedASCII(c))
+        count = ceilf(count) + 2;
+      else
+        count = ceilf(count) + 1;
     }
 
-    if (IsNativeC40(c))
-      charCounts[C40_ENCODATION] += 2.0f / 3.0f;
-    else if (IsExtendedASCII(c))
-      charCounts[C40_ENCODATION] += 8.0f / 3.0f;
-    else
-      charCounts[C40_ENCODATION] += 4.0f / 3.0f;
+    {
+      auto& count = charCounts[EncoderIndex(Encoding::C40)];
+      if (IsNativeC40(c))
+        count += 2.0f / 3.0f;
+      else if (IsExtendedASCII(c))
+        count += 8.0f / 3.0f;
+      else
+        count += 4.0f / 3.0f;
+    }
 
-    if (IsNativeText(c))
-      charCounts[TEXT_ENCODATION] += 2.0f / 3.0f;
-    else if (IsExtendedASCII(c))
-      charCounts[TEXT_ENCODATION] += 8.0f / 3.0f;
-    else
-      charCounts[TEXT_ENCODATION] += 4.0f / 3.0f;
+    {
+      auto& count = charCounts[EncoderIndex(Encoding::TEXT)];
+      if (IsNativeText(c))
+        count += 2.0f / 3.0f;
+      else if (IsExtendedASCII(c))
+        count += 8.0f / 3.0f;
+      else
+        count += 4.0f / 3.0f;
+    }
 
-    if (IsNativeX12(c))
-      charCounts[X12_ENCODATION] += 2.0f / 3.0f;
-    else if (IsExtendedASCII(c))
-      charCounts[X12_ENCODATION] += 13.0f / 3.0f;
-    else
-      charCounts[X12_ENCODATION] += 10.0f / 3.0f;
+    {
+      auto& count = charCounts[EncoderIndex(Encoding::X12)];
+      if (IsNativeX12(c))
+        count += 2.0f / 3.0f;
+      else if (IsExtendedASCII(c))
+        count += 13.0f / 3.0f;
+      else
+        count += 10.0f / 3.0f;
+    }
 
-    if (IsNativeEDIFACT(c))
-      charCounts[EDIFACT_ENCODATION] += 3.0f / 4.0f;
-    else if (IsExtendedASCII(c))
-      charCounts[EDIFACT_ENCODATION] += 17.0f / 4.0f;
-    else
-      charCounts[EDIFACT_ENCODATION] += 13.0f / 4.0f;
+    {
+      auto& count = charCounts[EncoderIndex(Encoding::EDIFACT)];
+      if (IsNativeEDIFACT(c))
+        count += 3.0f / 4.0f;
+      else if (IsExtendedASCII(c))
+        count += 17.0f / 4.0f;
+      else
+        count += 13.0f / 4.0f;
+    }
 
-    charCounts[BASE256_ENCODATION]++;
+    charCounts[EncoderIndex(Encoding::BASE256)]++;
     if (charsProcessed < 4)
       continue;
 
@@ -248,41 +267,46 @@ int32_t CBC_HighLevelEncoder::LookAheadTest(const WideString& msg,
     std::vector<uint8_t> mins(6);
     FindMinimums(charCounts, &intCharCounts, &mins);
     int32_t minCount = GetMinimumCount(mins);
-    if (intCharCounts[ASCII_ENCODATION] < intCharCounts[BASE256_ENCODATION] &&
-        intCharCounts[ASCII_ENCODATION] < intCharCounts[C40_ENCODATION] &&
-        intCharCounts[ASCII_ENCODATION] < intCharCounts[TEXT_ENCODATION] &&
-        intCharCounts[ASCII_ENCODATION] < intCharCounts[X12_ENCODATION] &&
-        intCharCounts[ASCII_ENCODATION] < intCharCounts[EDIFACT_ENCODATION]) {
-      return ASCII_ENCODATION;
+    int32_t ascii_count = intCharCounts[EncoderIndex(Encoding::ASCII)];
+    int32_t c40_count = intCharCounts[EncoderIndex(Encoding::C40)];
+    int32_t text_count = intCharCounts[EncoderIndex(Encoding::TEXT)];
+    int32_t x12_count = intCharCounts[EncoderIndex(Encoding::X12)];
+    int32_t editfact_count = intCharCounts[EncoderIndex(Encoding::EDIFACT)];
+    int32_t base256_count = intCharCounts[EncoderIndex(Encoding::BASE256)];
+    int32_t bet_min = std::min({base256_count, editfact_count, text_count});
+    if (ascii_count < bet_min && ascii_count < c40_count &&
+        ascii_count < x12_count) {
+      return Encoding::ASCII;
     }
-    if (intCharCounts[BASE256_ENCODATION] < intCharCounts[ASCII_ENCODATION] ||
-        (mins[C40_ENCODATION] + mins[TEXT_ENCODATION] + mins[X12_ENCODATION] +
-         mins[EDIFACT_ENCODATION]) == 0) {
-      return BASE256_ENCODATION;
+    if (base256_count < ascii_count ||
+        (mins[EncoderIndex(Encoding::C40)] +
+         mins[EncoderIndex(Encoding::TEXT)] +
+         mins[EncoderIndex(Encoding::X12)] +
+         mins[EncoderIndex(Encoding::EDIFACT)]) == 0) {
+      return Encoding::BASE256;
     }
-    if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0)
-      return EDIFACT_ENCODATION;
-    if (minCount == 1 && mins[TEXT_ENCODATION] > 0)
-      return TEXT_ENCODATION;
-    if (minCount == 1 && mins[X12_ENCODATION] > 0)
-      return X12_ENCODATION;
-    if (intCharCounts[C40_ENCODATION] + 1 < intCharCounts[ASCII_ENCODATION] &&
-        intCharCounts[C40_ENCODATION] + 1 < intCharCounts[BASE256_ENCODATION] &&
-        intCharCounts[C40_ENCODATION] + 1 < intCharCounts[EDIFACT_ENCODATION] &&
-        intCharCounts[C40_ENCODATION] + 1 < intCharCounts[TEXT_ENCODATION]) {
-      if (intCharCounts[C40_ENCODATION] < intCharCounts[X12_ENCODATION])
-        return C40_ENCODATION;
-      if (intCharCounts[C40_ENCODATION] == intCharCounts[X12_ENCODATION]) {
+    if (minCount == 1) {
+      if (mins[EncoderIndex(Encoding::EDIFACT)] > 0)
+        return Encoding::EDIFACT;
+      if (mins[EncoderIndex(Encoding::TEXT)] > 0)
+        return Encoding::TEXT;
+      if (mins[EncoderIndex(Encoding::X12)] > 0)
+        return Encoding::X12;
+    }
+    if (c40_count + 1 < ascii_count && c40_count + 1 < bet_min) {
+      if (c40_count < x12_count)
+        return Encoding::C40;
+      if (c40_count == x12_count) {
         size_t p = startpos + charsProcessed + 1;
         while (p < msg.GetLength()) {
           wchar_t tc = msg[p];
           if (IsX12TermSep(tc))
-            return X12_ENCODATION;
+            return Encoding::X12;
           if (!IsNativeX12(tc))
             break;
           p++;
         }
-        return C40_ENCODATION;
+        return Encoding::C40;
       }
     }
   }

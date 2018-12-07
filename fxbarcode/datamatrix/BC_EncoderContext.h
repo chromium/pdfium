@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
+#include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 
 class CBC_SymbolInfo;
 
@@ -24,8 +25,8 @@ class CBC_EncoderContext {
   void writeCodewords(const WideString& codewords);
   void writeCodeword(wchar_t codeword);
   size_t getCodewordCount();
-  void signalEncoderChange(int32_t encoding);
-  void resetEncoderSignal();
+  void SignalEncoderChange(CBC_HighLevelEncoder::Encoding encoding);
+  void ResetEncoderSignal();
   bool hasMoreCharacters();
   size_t getRemainingCharacters();
   bool UpdateSymbolInfo();
@@ -39,7 +40,8 @@ class CBC_EncoderContext {
   WideString m_msg;
   WideString m_codewords;
   size_t m_pos = 0;
-  int32_t m_newEncoding = -1;
+  CBC_HighLevelEncoder::Encoding m_newEncoding =
+      CBC_HighLevelEncoder::Encoding::UNKNOWN;
   UnownedPtr<const CBC_SymbolInfo> m_symbolInfo;
 
  private:

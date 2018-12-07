@@ -70,12 +70,13 @@ size_t CBC_EncoderContext::getCodewordCount() {
   return m_codewords.GetLength();
 }
 
-void CBC_EncoderContext::signalEncoderChange(int32_t encoding) {
+void CBC_EncoderContext::SignalEncoderChange(
+    CBC_HighLevelEncoder::Encoding encoding) {
   m_newEncoding = encoding;
 }
 
-void CBC_EncoderContext::resetEncoderSignal() {
-  m_newEncoding = -1;
+void CBC_EncoderContext::ResetEncoderSignal() {
+  m_newEncoding = CBC_HighLevelEncoder::Encoding::UNKNOWN;
 }
 
 bool CBC_EncoderContext::hasMoreCharacters() {

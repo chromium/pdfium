@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_ENCODER_H_
 #define FXBARCODE_DATAMATRIX_BC_ENCODER_H_
 
-#include <stdint.h>
+#include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 
 class CBC_EncoderContext;
 
@@ -16,7 +16,7 @@ class CBC_Encoder {
   CBC_Encoder();
   virtual ~CBC_Encoder();
 
-  virtual int32_t getEncodingMode() = 0;
+  virtual CBC_HighLevelEncoder::Encoding GetEncodingMode() = 0;
   virtual bool Encode(CBC_EncoderContext* context) = 0;
 };
 

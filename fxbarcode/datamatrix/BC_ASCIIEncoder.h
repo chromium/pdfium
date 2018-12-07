@@ -17,7 +17,7 @@ class CBC_ASCIIEncoder final : public CBC_Encoder {
   ~CBC_ASCIIEncoder() override;
 
   // CBC_Encoder
-  int32_t getEncodingMode() override;
+  CBC_HighLevelEncoder::Encoding GetEncodingMode() override;
   bool Encode(CBC_EncoderContext* context) override;
 };
 

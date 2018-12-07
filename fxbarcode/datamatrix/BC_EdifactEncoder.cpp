@@ -96,7 +96,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
   } else {
     context->writeCodewords(encoded);
   }
-  context->signalEncoderChange(ASCII_ENCODATION);
+  context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);
   return true;
 }
 
@@ -120,8 +120,8 @@ CBC_EdifactEncoder::CBC_EdifactEncoder() = default;
 
 CBC_EdifactEncoder::~CBC_EdifactEncoder() = default;
 
-int32_t CBC_EdifactEncoder::getEncodingMode() {
-  return EDIFACT_ENCODATION;
+CBC_HighLevelEncoder::Encoding CBC_EdifactEncoder::GetEncodingMode() {
+  return CBC_HighLevelEncoder::Encoding::EDIFACT;
 }
 
 bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
@@ -140,10 +140,11 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
 
       context->writeCodewords(encoded);
       buffer.Delete(0, 4);
-      int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
-          context->m_msg, context->m_pos, getEncodingMode());
-      if (newMode != getEncodingMode()) {
-        context->signalEncoderChange(ASCII_ENCODATION);
+      CBC_HighLevelEncoder::Encoding newMode =
+          CBC_HighLevelEncoder::LookAheadTest(context->m_msg, context->m_pos,
+                                              GetEncodingMode());
+      if (newMode != GetEncodingMode()) {
+        context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);
         break;
       }
     }

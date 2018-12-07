@@ -56,8 +56,8 @@ CBC_ASCIIEncoder::CBC_ASCIIEncoder() = default;
 
 CBC_ASCIIEncoder::~CBC_ASCIIEncoder() = default;
 
-int32_t CBC_ASCIIEncoder::getEncodingMode() {
-  return ASCII_ENCODATION;
+CBC_HighLevelEncoder::Encoding CBC_ASCIIEncoder::GetEncodingMode() {
+  return CBC_HighLevelEncoder::Encoding::ASCII;
 }
 
 bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
@@ -74,33 +74,30 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
   }
 
   wchar_t c = context->getCurrentChar();
-  int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
-      context->m_msg, context->m_pos, getEncodingMode());
-  if (newMode != getEncodingMode()) {
+  CBC_HighLevelEncoder::Encoding newMode = CBC_HighLevelEncoder::LookAheadTest(
+      context->m_msg, context->m_pos, GetEncodingMode());
+  if (newMode != GetEncodingMode()) {
     switch (newMode) {
-      case BASE256_ENCODATION:
+      case CBC_HighLevelEncoder::Encoding::BASE256:
         context->writeCodeword(CBC_HighLevelEncoder::LATCH_TO_BASE256);
-        context->signalEncoderChange(BASE256_ENCODATION);
-        return true;
-      case C40_ENCODATION:
+        break;
+      case CBC_HighLevelEncoder::Encoding::C40:
         context->writeCodeword(CBC_HighLevelEncoder::LATCH_TO_C40);
-        context->signalEncoderChange(C40_ENCODATION);
-        return true;
-      case X12_ENCODATION:
+        break;
+      case CBC_HighLevelEncoder::Encoding::X12:
         context->writeCodeword(CBC_HighLevelEncoder::LATCH_TO_ANSIX12);
-        context->signalEncoderChange(X12_ENCODATION);
-        return true;
-      case TEXT_ENCODATION:
+        break;
+      case CBC_HighLevelEncoder::Encoding::TEXT:
         context->writeCodeword(CBC_HighLevelEncoder::LATCH_TO_TEXT);
-        context->signalEncoderChange(TEXT_ENCODATION);
-        return true;
-      case EDIFACT_ENCODATION:
+        break;
+      case CBC_HighLevelEncoder::Encoding::EDIFACT:
         context->writeCodeword(CBC_HighLevelEncoder::LATCH_TO_EDIFACT);
-        context->signalEncoderChange(EDIFACT_ENCODATION);
-        return true;
+        break;
       default:
         return false;
     }
+    context->SignalEncoderChange(newMode);
+    return true;
   }
 
   if (CBC_HighLevelEncoder::IsExtendedASCII(c)) {

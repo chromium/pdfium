@@ -15,7 +15,7 @@ class CBC_EdifactEncoder final : public CBC_Encoder {
   ~CBC_EdifactEncoder() override;
 
   // CBC_Encoder
-  int32_t getEncodingMode() override;
+  CBC_HighLevelEncoder::Encoding GetEncodingMode() override;
   bool Encode(CBC_EncoderContext* context) override;
 };
 

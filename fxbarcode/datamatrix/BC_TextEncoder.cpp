@@ -32,8 +32,8 @@ CBC_TextEncoder::CBC_TextEncoder() = default;
 
 CBC_TextEncoder::~CBC_TextEncoder() = default;
 
-int32_t CBC_TextEncoder::getEncodingMode() {
-  return TEXT_ENCODATION;
+CBC_HighLevelEncoder::Encoding CBC_TextEncoder::GetEncodingMode() {
+  return CBC_HighLevelEncoder::Encoding::TEXT;
 }
 
 int32_t CBC_TextEncoder::EncodeChar(wchar_t c, WideString* sb) {

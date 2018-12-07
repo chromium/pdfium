@@ -11,15 +11,18 @@
 
 #include "core/fxcrt/widestring.h"
 
-#define ASCII_ENCODATION 0
-#define C40_ENCODATION 1
-#define TEXT_ENCODATION 2
-#define X12_ENCODATION 3
-#define EDIFACT_ENCODATION 4
-#define BASE256_ENCODATION 5
-
 class CBC_HighLevelEncoder {
  public:
+  enum class Encoding : int8_t {
+    UNKNOWN = -1,
+    ASCII = 0,
+    C40,
+    TEXT,
+    X12,
+    EDIFACT,
+    BASE256,
+  };
+
   CBC_HighLevelEncoder() = delete;
   ~CBC_HighLevelEncoder() = delete;
 
@@ -27,9 +30,9 @@ class CBC_HighLevelEncoder {
   static WideString EncodeHighLevel(const WideString& msg,
                                     bool bAllowRectangular);
 
-  static int32_t LookAheadTest(const WideString& msg,
-                               size_t startpos,
-                               int32_t currentMode);
+  static Encoding LookAheadTest(const WideString& msg,
+                                size_t startpos,
+                                Encoding currentMode);
   static bool IsExtendedASCII(wchar_t ch);
 
   static const wchar_t LATCH_TO_C40 = 230;
