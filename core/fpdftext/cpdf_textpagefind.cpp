@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdftext/cpdf_textpage.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
@@ -336,11 +337,12 @@ bool CPDF_TextPageFind::IsMatchWholeWord(const WideString& csPageText,
     char_right = csPageText[startPos + char_count];
   if ((char_left > 'A' && char_left < 'a') ||
       (char_left > 'a' && char_left < 'z') ||
-      (char_left > 0xfb00 && char_left < 0xfb06) || std::iswdigit(char_left) ||
+      (char_left > 0xfb00 && char_left < 0xfb06) ||
+      FXSYS_IsDecimalDigit(char_left) ||
       (char_right > 'A' && char_right < 'a') ||
       (char_right > 'a' && char_right < 'z') ||
       (char_right > 0xfb00 && char_right < 0xfb06) ||
-      std::iswdigit(char_right)) {
+      FXSYS_IsDecimalDigit(char_right)) {
     return false;
   }
   if (!(('A' > char_left || char_left > 'Z') &&
@@ -350,10 +352,14 @@ bool CPDF_TextPageFind::IsMatchWholeWord(const WideString& csPageText,
     return false;
   }
   if (char_count > 0) {
-    if (std::iswdigit(char_left) && std::iswdigit(csPageText[startPos]))
+    if (FXSYS_IsDecimalDigit(char_left) &&
+        FXSYS_IsDecimalDigit(csPageText[startPos])) {
       return false;
-    if (std::iswdigit(char_right) && std::iswdigit(csPageText[endPos]))
+    }
+    if (FXSYS_IsDecimalDigit(char_right) &&
+        FXSYS_IsDecimalDigit(csPageText[endPos])) {
       return false;
+    }
   }
   return true;
 }

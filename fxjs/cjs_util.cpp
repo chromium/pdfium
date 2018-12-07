@@ -336,7 +336,7 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
       } break;
       case '9': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (std::iswdigit(wsSource[iSourceIdx])) {
+          if (FXSYS_IsDecimalDigit(wsSource[iSourceIdx])) {
             wsResult += wsSource[iSourceIdx];
             ++iFormatIdx;
           }
@@ -421,7 +421,7 @@ int CJS_Util::ParseDataType(std::wstring* sFormat) {
       case WIDTH:
         if (c == L'*')
           return -1;
-        if (std::iswdigit(c)) {
+        if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
         } else if (c == L'.') {
           state = PRECISION;
@@ -433,7 +433,7 @@ int CJS_Util::ParseDataType(std::wstring* sFormat) {
       case PRECISION:
         if (c == L'*')
           return -1;
-        if (std::iswdigit(c)) {
+        if (FXSYS_IsDecimalDigit(c)) {
           // Stay in same state.
           ++precision_digits;
         } else {

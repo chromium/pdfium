@@ -33,7 +33,8 @@ bool CFX_CSSValueListParser::NextValue(CFX_CSSPrimitiveType* eType,
     *iLength = SkipTo(' ', false, false);
     if (*iLength == 4 || *iLength == 7)
       *eType = CFX_CSSPrimitiveType::RGB;
-  } else if (std::iswdigit(wch) || wch == '.' || wch == '-' || wch == '+') {
+  } else if (FXSYS_IsDecimalDigit(wch) || wch == '.' || wch == '-' ||
+             wch == '+') {
     while (m_pCur < m_pEnd && (*m_pCur > ' ' && *m_pCur != m_Separator))
       ++m_pCur;
 

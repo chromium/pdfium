@@ -63,7 +63,8 @@ bool CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
 }
 
 bool CBC_OnedEAN8Writer::CheckContentValidity(const WideStringView& contents) {
-  return std::all_of(contents.begin(), contents.end(), std::iswdigit);
+  return std::all_of(contents.begin(), contents.end(),
+                     [](wchar_t c) { return FXSYS_IsDecimalDigit(c); });
 }
 
 WideString CBC_OnedEAN8Writer::FilterContents(const WideStringView& contents) {

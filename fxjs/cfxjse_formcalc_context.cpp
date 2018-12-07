@@ -476,7 +476,7 @@ bool IsPartOfNumber(char ch) {
 }
 
 bool IsPartOfNumberW(wchar_t ch) {
-  return std::iswdigit(ch) || ch == L'-' || ch == L'.';
+  return FXSYS_IsDecimalDigit(ch) || ch == L'-' || ch == L'.';
 }
 
 ByteString GUIDString(bool bSeparator) {

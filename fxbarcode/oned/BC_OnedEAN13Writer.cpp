@@ -57,7 +57,8 @@ CBC_OnedEAN13Writer::CBC_OnedEAN13Writer() {
 CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer() {}
 
 bool CBC_OnedEAN13Writer::CheckContentValidity(const WideStringView& contents) {
-  return std::all_of(contents.begin(), contents.end(), std::iswdigit);
+  return std::all_of(contents.begin(), contents.end(),
+                     [](wchar_t c) { return FXSYS_IsDecimalDigit(c); });
 }
 
 WideString CBC_OnedEAN13Writer::FilterContents(const WideStringView& contents) {

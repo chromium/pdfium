@@ -77,7 +77,7 @@ Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
     }
     if (nWidth == 0) {
       nWidth = FXSYS_wtoi(pStr);
-      while (std::iswdigit(*pStr))
+      while (FXSYS_IsDecimalDigit(*pStr))
         ++pStr;
     }
     if (nWidth < 0 || nWidth > 128 * 1024)
@@ -90,7 +90,7 @@ Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
         pStr++;
       } else {
         nPrecision = FXSYS_wtoi(pStr);
-        while (std::iswdigit(*pStr))
+        while (FXSYS_IsDecimalDigit(*pStr))
           ++pStr;
       }
     }

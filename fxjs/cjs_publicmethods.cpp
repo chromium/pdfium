@@ -277,7 +277,7 @@ bool CJS_PublicMethods::IsNumber(const WideString& str) {
       if (c != L'+' && c != L'-')
         return false;
       bKXJS = true;
-    } else if (!std::iswdigit(c)) {
+    } else if (!FXSYS_IsDecimalDigit(c)) {
       return false;
     }
     p++;
@@ -289,7 +289,7 @@ bool CJS_PublicMethods::IsNumber(const WideString& str) {
 bool CJS_PublicMethods::MaskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
   switch (c_Mask) {
     case L'9':
-      return !!std::iswdigit(c_Change);
+      return !!FXSYS_IsDecimalDigit(c_Change);
     case L'A':
       return isascii(c_Change) && isalpha(c_Change);
     case L'O':
@@ -360,7 +360,7 @@ double CJS_PublicMethods::ParseDate(const WideString& value,
       break;
 
     wchar_t c = value[i];
-    if (std::iswdigit(c)) {
+    if (FXSYS_IsDecimalDigit(c)) {
       number[nIndex++] = FX_ParseStringInteger(value, i, &nSkip, 4);
       i += nSkip;
     } else {
@@ -760,7 +760,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
       continue;
     }
 
-    if (!std::iswdigit(wstrChange[i])) {
+    if (!FXSYS_IsDecimalDigit(wstrChange[i])) {
       pEvent->Rc() = false;
       return CJS_Result::Success();
     }
@@ -1419,7 +1419,7 @@ CJS_Result CJS_PublicMethods::AFExtractNums(
   v8::Local<v8::Array> nums = pRuntime->NewArray();
   int nIndex = 0;
   for (const auto& wc : str) {
-    if (std::iswdigit(wc)) {
+    if (FXSYS_IsDecimalDigit(wc)) {
       sPart += wc;
     } else if (sPart.GetLength() > 0) {
       pRuntime->PutArrayElement(nums, nIndex,

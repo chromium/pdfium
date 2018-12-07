@@ -49,7 +49,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   float fValue = 0.0f;
   while (iUsedLen < iLength) {
     wchar_t wch = pwsStr[iUsedLen];
-    if (!std::iswdigit(wch))
+    if (!FXSYS_IsDecimalDigit(wch))
       break;
 
     fValue = fValue * 10.0f + (wch - L'0');
@@ -60,7 +60,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
     float fPrecise = 0.1f;
     while (++iUsedLen < iLength) {
       wchar_t wch = pwsStr[iUsedLen];
-      if (!std::iswdigit(wch))
+      if (!FXSYS_IsDecimalDigit(wch))
         break;
 
       fValue += (wch - L'0') * fPrecise;
@@ -82,7 +82,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
     int32_t exp_value = 0;
     while (iUsedLen < iLength) {
       wchar_t wch = pwsStr[iUsedLen];
-      if (!std::iswdigit(wch))
+      if (!FXSYS_IsDecimalDigit(wch))
         break;
 
       exp_value = exp_value * 10.0f + (wch - L'0');

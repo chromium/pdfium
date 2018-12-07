@@ -312,7 +312,7 @@ CFX_Decimal::CFX_Decimal(const WideStringView& strObj) {
     str++;
   }
 
-  while (str != strBound && (std::iswdigit(*str) || *str == '.') &&
+  while (str != strBound && (FXSYS_IsDecimalDigit(*str) || *str == '.') &&
          scale < FXMATH_DECIMAL_SCALELIMIT) {
     if (*str == '.') {
       if (!pointmet)
