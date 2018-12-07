@@ -140,7 +140,7 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
 
       context->writeCodewords(encoded);
       buffer.Delete(0, 4);
-      int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
+      int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
           context->m_msg, context->m_pos, getEncodingMode());
       if (newMode != getEncodingMode()) {
         context->signalEncoderChange(ASCII_ENCODATION);

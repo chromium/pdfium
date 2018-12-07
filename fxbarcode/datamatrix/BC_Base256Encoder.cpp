@@ -55,7 +55,7 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
     wchar_t c = context->getCurrentChar();
     buffer += c;
     context->m_pos++;
-    int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
+    int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
         context->m_msg, context->m_pos, getEncodingMode());
     if (newMode != getEncodingMode()) {
       context->signalEncoderChange(newMode);

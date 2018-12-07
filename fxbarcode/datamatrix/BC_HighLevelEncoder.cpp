@@ -167,7 +167,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
 }
 
 // static
-int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
+int32_t CBC_HighLevelEncoder::LookAheadTest(const WideString& msg,
                                             int32_t startpos,
                                             int32_t currentMode) {
   if (startpos >= pdfium::base::checked_cast<int32_t>(msg.GetLength())) {
@@ -210,7 +210,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
     charsProcessed++;
     if (FXSYS_IsDecimalDigit(c)) {
       charCounts[ASCII_ENCODATION] += 0.5;
-    } else if (isExtendedASCII(c)) {
+    } else if (IsExtendedASCII(c)) {
       charCounts[ASCII_ENCODATION] = (float)ceil(charCounts[ASCII_ENCODATION]);
       charCounts[ASCII_ENCODATION] += 2;
     } else {
@@ -219,28 +219,28 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
     }
     if (IsNativeC40(c)) {
       charCounts[C40_ENCODATION] += 2.0f / 3.0f;
-    } else if (isExtendedASCII(c)) {
+    } else if (IsExtendedASCII(c)) {
       charCounts[C40_ENCODATION] += 8.0f / 3.0f;
     } else {
       charCounts[C40_ENCODATION] += 4.0f / 3.0f;
     }
     if (IsNativeText(c)) {
       charCounts[TEXT_ENCODATION] += 2.0f / 3.0f;
-    } else if (isExtendedASCII(c)) {
+    } else if (IsExtendedASCII(c)) {
       charCounts[TEXT_ENCODATION] += 8.0f / 3.0f;
     } else {
       charCounts[TEXT_ENCODATION] += 4.0f / 3.0f;
     }
     if (IsNativeX12(c)) {
       charCounts[X12_ENCODATION] += 2.0f / 3.0f;
-    } else if (isExtendedASCII(c)) {
+    } else if (IsExtendedASCII(c)) {
       charCounts[X12_ENCODATION] += 13.0f / 3.0f;
     } else {
       charCounts[X12_ENCODATION] += 10.0f / 3.0f;
     }
     if (IsNativeEDIFACT(c)) {
       charCounts[EDIFACT_ENCODATION] += 3.0f / 4.0f;
-    } else if (isExtendedASCII(c)) {
+    } else if (IsExtendedASCII(c)) {
       charCounts[EDIFACT_ENCODATION] += 17.0f / 4.0f;
     } else {
       charCounts[EDIFACT_ENCODATION] += 13.0f / 4.0f;
@@ -304,25 +304,6 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
 }
 
 // static
-bool CBC_HighLevelEncoder::isExtendedASCII(wchar_t ch) {
+bool CBC_HighLevelEncoder::IsExtendedASCII(wchar_t ch) {
   return ch >= 128 && ch <= 255;
-}
-
-// static
-int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(WideString msg,
-                                                             int32_t startpos) {
-  int32_t count = 0;
-  int32_t len = pdfium::base::checked_cast<int32_t>(msg.GetLength());
-  int32_t idx = startpos;
-  if (idx < len) {
-    wchar_t ch = msg[idx];
-    while (FXSYS_IsDecimalDigit(ch) && idx < len) {
-      count++;
-      idx++;
-      if (idx < len) {
-        ch = msg[idx];
-      }
-    }
-  }
-  return count;
 }

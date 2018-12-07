@@ -27,12 +27,10 @@ class CBC_HighLevelEncoder {
   static WideString EncodeHighLevel(const WideString& msg,
                                     bool bAllowRectangular);
 
-  static int32_t lookAheadTest(const WideString& msg,
+  static int32_t LookAheadTest(const WideString& msg,
                                int32_t startpos,
                                int32_t currentMode);
-  static bool isExtendedASCII(wchar_t ch);
-  static int32_t determineConsecutiveDigitCount(WideString msg,
-                                                int32_t startpos);
+  static bool IsExtendedASCII(wchar_t ch);
 
   static const wchar_t LATCH_TO_C40 = 230;
   static const wchar_t LATCH_TO_BASE256 = 231;

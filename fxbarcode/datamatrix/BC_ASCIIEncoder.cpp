@@ -40,6 +40,23 @@ Optional<wchar_t> EncodeASCIIDigits(wchar_t digit1, wchar_t digit2) {
   return static_cast<wchar_t>((digit1 - 48) * 10 + (digit2 - 48) + 130);
 }
 
+int32_t DetermineConsecutiveDigitCount(WideString msg, int32_t startpos) {
+  int32_t count = 0;
+  int32_t len = pdfium::base::checked_cast<int32_t>(msg.GetLength());
+  int32_t idx = startpos;
+  if (idx < len) {
+    wchar_t ch = msg[idx];
+    while (FXSYS_IsDecimalDigit(ch) && idx < len) {
+      count++;
+      idx++;
+      if (idx < len) {
+        ch = msg[idx];
+      }
+    }
+  }
+  return count;
+}
+
 }  // namespace
 
 CBC_ASCIIEncoder::CBC_ASCIIEncoder() = default;
@@ -51,8 +68,7 @@ int32_t CBC_ASCIIEncoder::getEncodingMode() {
 }
 
 bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
-  int32_t n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(
-      context->m_msg, context->m_pos);
+  int32_t n = DetermineConsecutiveDigitCount(context->m_msg, context->m_pos);
   if (n >= 2) {
     Optional<wchar_t> code = EncodeASCIIDigits(
         context->m_msg[context->m_pos], context->m_msg[context->m_pos + 1]);
@@ -65,7 +81,7 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
   }
 
   wchar_t c = context->getCurrentChar();
-  int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
+  int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
       context->m_msg, context->m_pos, getEncodingMode());
   if (newMode != getEncodingMode()) {
     switch (newMode) {
@@ -94,7 +110,7 @@ bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
     }
   }
 
-  if (CBC_HighLevelEncoder::isExtendedASCII(c)) {
+  if (CBC_HighLevelEncoder::IsExtendedASCII(c)) {
     context->writeCodeword(CBC_HighLevelEncoder::UPPER_SHIFT);
     context->writeCodeword(static_cast<wchar_t>(c - 128 + 1));
   } else {

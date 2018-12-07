@@ -86,7 +86,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
     }
     size_t count = buffer.GetLength();
     if ((count % 3) == 0) {
-      int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
+      int32_t newMode = CBC_HighLevelEncoder::LookAheadTest(
           context->m_msg, context->m_pos, getEncodingMode());
       if (newMode != getEncodingMode()) {
         context->signalEncoderChange(newMode);
