@@ -200,10 +200,8 @@ bool AppendBytes(const ByteString& content,
 
 bool InitQRCode(int32_t numInputBytes,
                 const CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                CBC_QRCoderMode* mode,
                 CBC_QRCoder* qrCode) {
   qrCode->SetECLevel(ecLevel);
-  qrCode->SetMode(mode);
   for (int32_t i = 1; i <= CBC_QRCoderVersion::kMaxVersion; ++i) {
     const auto* version = CBC_QRCoderVersion::GetVersionForNumber(i);
     int32_t numBytes = version->GetTotalCodeWords();
@@ -412,7 +410,7 @@ bool CBC_QRCoderEncoder::Encode(const WideStringView& content,
   if (!AppendBytes(utf8Data, mode, &dataBits, encoding))
     return false;
   int32_t numInputBytes = dataBits.sizeInBytes();
-  if (!InitQRCode(numInputBytes, ecLevel, mode, qrCode))
+  if (!InitQRCode(numInputBytes, ecLevel, qrCode))
     return false;
   CBC_QRCoderBitVector headerAndDataBits;
   AppendModeInfo(mode, &headerAndDataBits);

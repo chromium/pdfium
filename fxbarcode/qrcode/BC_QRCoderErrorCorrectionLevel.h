@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
 #define FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
 
-#include "core/fxcrt/fx_string.h"
+#include <stdint.h>
 
 class CBC_QRCoderErrorCorrectionLevel {
  public:
@@ -23,17 +23,12 @@ class CBC_QRCoderErrorCorrectionLevel {
 
   int32_t Ordinal() const { return m_ordinal; }
   int32_t GetBits() const { return m_bits; }
-  ByteString GetName() const { return m_name; }
 
  private:
-  CBC_QRCoderErrorCorrectionLevel(int32_t ordinal,
-                                  int32_t bits,
-                                  const char* name);
-  CBC_QRCoderErrorCorrectionLevel();
+  CBC_QRCoderErrorCorrectionLevel(int32_t ordinal, int32_t bits);
 
   int32_t m_ordinal;
   int32_t m_bits;
-  ByteString m_name;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_

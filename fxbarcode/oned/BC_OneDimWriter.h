@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/BC_Writer.h"

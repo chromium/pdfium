@@ -11,8 +11,6 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_string.h"
-
 class CBC_QRCoderMode {
  public:
   virtual ~CBC_QRCoderMode();
@@ -22,7 +20,6 @@ class CBC_QRCoderMode {
 
   int32_t GetCharacterCountBits(int32_t number) const;
   int32_t GetBits() const;
-  ByteString GetName() const;
 
   static CBC_QRCoderMode* sBYTE;
   static CBC_QRCoderMode* sNUMERIC;
@@ -36,14 +33,10 @@ class CBC_QRCoderMode {
   static CBC_QRCoderMode* sSTRUCTURED_APPEND;
 
  private:
-  CBC_QRCoderMode();
-  CBC_QRCoderMode(std::vector<int32_t> charCountBits,
-                  int32_t bits,
-                  ByteString name);
+  CBC_QRCoderMode(std::vector<int32_t> charCountBits, int32_t bits);
 
   std::vector<int32_t> m_characterCountBitsForVersions;
   const int32_t m_bits;
-  const ByteString m_name;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERMODE_H_

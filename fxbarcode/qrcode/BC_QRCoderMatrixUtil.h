@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODERMATRIXUTIL_H_
 #define FXBARCODE_QRCODE_BC_QRCODERMATRIXUTIL_H_
 
+#include <stdint.h>
+
 class CBC_CommonByteMatrix;
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderBitVector;

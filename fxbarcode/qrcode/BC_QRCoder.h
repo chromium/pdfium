@@ -24,7 +24,6 @@ class CBC_QRCoder {
 
   static bool IsValidMaskPattern(int32_t maskPattern);
 
-  CBC_QRCoderMode* GetMode() const;
   const CBC_QRCoderErrorCorrectionLevel* GetECLevel() const;
   int32_t GetVersion() const;
   int32_t GetMatrixWidth() const;
@@ -37,7 +36,6 @@ class CBC_QRCoder {
 
   bool IsValid() const;
 
-  void SetMode(CBC_QRCoderMode* value);
   void SetECLevel(const CBC_QRCoderErrorCorrectionLevel* ecLevel);
   void SetVersion(int32_t version);
   void SetMatrixWidth(int32_t width);
@@ -49,15 +47,14 @@ class CBC_QRCoder {
   void SetMatrix(std::unique_ptr<CBC_CommonByteMatrix> pMatrix);
 
  private:
-  UnownedPtr<CBC_QRCoderMode> m_mode;
   UnownedPtr<const CBC_QRCoderErrorCorrectionLevel> m_ecLevel;
-  int32_t m_version;
-  int32_t m_matrixWidth;
-  int32_t m_maskPattern;
-  int32_t m_numTotalBytes;
-  int32_t m_numDataBytes;
-  int32_t m_numECBytes;
-  int32_t m_numRSBlocks;
+  int32_t m_version = -1;
+  int32_t m_matrixWidth = -1;
+  int32_t m_maskPattern = -1;
+  int32_t m_numTotalBytes = -1;
+  int32_t m_numDataBytes = -1;
+  int32_t m_numECBytes = -1;
+  int32_t m_numRSBlocks = -1;
   std::unique_ptr<CBC_CommonByteMatrix> m_matrix;
 };
 

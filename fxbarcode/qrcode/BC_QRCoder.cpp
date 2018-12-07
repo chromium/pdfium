@@ -27,22 +27,9 @@
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 
-CBC_QRCoder::CBC_QRCoder()
-    : m_mode(nullptr),
-      m_ecLevel(nullptr),
-      m_version(-1),
-      m_matrixWidth(-1),
-      m_maskPattern(-1),
-      m_numTotalBytes(-1),
-      m_numDataBytes(-1),
-      m_numECBytes(-1),
-      m_numRSBlocks(-1) {}
+CBC_QRCoder::CBC_QRCoder() = default;
 
-CBC_QRCoder::~CBC_QRCoder() {}
-
-CBC_QRCoderMode* CBC_QRCoder::GetMode() const {
-  return m_mode.Get();
-}
+CBC_QRCoder::~CBC_QRCoder() = default;
 
 const CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() const {
   return m_ecLevel.Get();
@@ -81,17 +68,13 @@ const CBC_CommonByteMatrix* CBC_QRCoder::GetMatrix() const {
 }
 
 bool CBC_QRCoder::IsValid() const {
-  return m_mode && m_ecLevel && m_version != -1 && m_matrixWidth != -1 &&
+  return m_ecLevel && m_version != -1 && m_matrixWidth != -1 &&
          m_maskPattern != -1 && m_numTotalBytes != -1 && m_numDataBytes != -1 &&
          m_numECBytes != -1 && m_numRSBlocks != -1 &&
          IsValidMaskPattern(m_maskPattern) &&
          m_numTotalBytes == m_numDataBytes + m_numECBytes && m_matrix &&
          m_matrixWidth == m_matrix->GetWidth() &&
          m_matrix->GetWidth() == m_matrix->GetHeight();
-}
-
-void CBC_QRCoder::SetMode(CBC_QRCoderMode* value) {
-  m_mode = value;
 }
 
 void CBC_QRCoder::SetECLevel(const CBC_QRCoderErrorCorrectionLevel* ecLevel) {

@@ -20,12 +20,14 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
+
+#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
-#include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 
 namespace {
 
