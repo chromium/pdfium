@@ -20,10 +20,8 @@
 
 class CBC_HighLevelEncoder {
  public:
-  CBC_HighLevelEncoder();
-  ~CBC_HighLevelEncoder();
-
-  std::vector<uint8_t>& getBytesForMessage(WideString msg);
+  CBC_HighLevelEncoder() = delete;
+  ~CBC_HighLevelEncoder() = delete;
 
   // Returns an empty string on failure.
   static WideString EncodeHighLevel(const WideString& msg,
@@ -36,36 +34,14 @@ class CBC_HighLevelEncoder {
   static int32_t determineConsecutiveDigitCount(WideString msg,
                                                 int32_t startpos);
 
-  static const wchar_t LATCH_TO_C40;
-  static const wchar_t LATCH_TO_BASE256;
-  static const wchar_t UPPER_SHIFT;
-  static const wchar_t LATCH_TO_ANSIX12;
-  static const wchar_t LATCH_TO_TEXT;
-  static const wchar_t LATCH_TO_EDIFACT;
-  static const wchar_t C40_UNLATCH;
-  static const wchar_t X12_UNLATCH;
-
- private:
-  static wchar_t randomize253State(wchar_t ch, int32_t codewordPosition);
-  static int32_t findMinimums(std::vector<float>& charCounts,
-                              std::vector<int32_t>& intCharCounts,
-                              int32_t min,
-                              std::vector<uint8_t>& mins);
-  static int32_t getMinimumCount(std::vector<uint8_t>& mins);
-  static bool isNativeC40(wchar_t ch);
-  static bool isNativeText(wchar_t ch);
-  static bool isNativeX12(wchar_t ch);
-  static bool isX12TermSep(wchar_t ch);
-  static bool isNativeEDIFACT(wchar_t ch);
-
-  static const wchar_t PAD;
-  static const wchar_t MACRO_05;
-  static const wchar_t MACRO_06;
-  static const wchar_t MACRO_05_HEADER[];
-  static const wchar_t MACRO_06_HEADER[];
-  static const wchar_t MACRO_TRAILER;
-
-  std::vector<uint8_t> m_bytearray;
+  static const wchar_t LATCH_TO_C40 = 230;
+  static const wchar_t LATCH_TO_BASE256 = 231;
+  static const wchar_t UPPER_SHIFT = 235;
+  static const wchar_t LATCH_TO_ANSIX12 = 238;
+  static const wchar_t LATCH_TO_TEXT = 239;
+  static const wchar_t LATCH_TO_EDIFACT = 240;
+  static const wchar_t C40_UNLATCH = 254;
+  static const wchar_t X12_UNLATCH = 254;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_HIGHLEVELENCODER_H_
