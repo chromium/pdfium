@@ -28,7 +28,7 @@ class CBC_HighLevelEncoder {
                                     bool bAllowRectangular);
 
   static int32_t LookAheadTest(const WideString& msg,
-                               int32_t startpos,
+                               size_t startpos,
                                int32_t currentMode);
   static bool IsExtendedASCII(wchar_t ch);
 

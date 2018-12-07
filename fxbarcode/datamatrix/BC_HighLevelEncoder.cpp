@@ -55,33 +55,33 @@ wchar_t Randomize253State(wchar_t ch, int32_t codewordPosition) {
                              : static_cast<wchar_t>(tempVariable - 254);
 }
 
-int32_t FindMinimums(std::vector<float>& charCounts,
-                     std::vector<int32_t>& intCharCounts,
-                     int32_t min,
-                     std::vector<uint8_t>& mins) {
-  for (size_t l = 0; l < mins.size(); l++)
-    mins[l] = 0;
+int32_t FindMinimums(const std::vector<float>& charCounts,
+                     std::vector<int32_t>* intCharCounts,
+                     std::vector<uint8_t>* mins) {
+  for (size_t i = 0; i < mins->size(); ++i)
+    (*mins)[i] = 0;
 
-  for (size_t i = 0; i < 6; i++) {
-    intCharCounts[i] = static_cast<int32_t>(ceil(charCounts[i]));
-    int32_t current = intCharCounts[i];
+  int32_t min = std::numeric_limits<int32_t>::max();
+  for (size_t i = 0; i < 6; ++i) {
+    int32_t current = static_cast<int32_t>(ceil(charCounts[i]));
+    (*intCharCounts)[i] = current;
     if (min > current) {
       min = current;
-      for (size_t j = 0; j < mins.size(); j++)
-        mins[j] = 0;
+      for (size_t j = 0; j < mins->size(); j++)
+        (*mins)[j] = 0;
     }
     if (min == current)
-      mins[i]++;
+      (*mins)[i]++;
   }
   return min;
 }
 
-int32_t GetMinimumCount(std::vector<uint8_t>& mins) {
-  int32_t minCount = 0;
-  for (int32_t i = 0; i < 6; i++) {
-    minCount += mins[i];
-  }
-  return minCount;
+int32_t GetMinimumCount(const std::vector<uint8_t>& mins) {
+  ASSERT(mins.size() == 6);
+  int32_t count = 0;
+  for (int32_t i = 0; i < 6; ++i)
+    count += mins[i];
+  return count;
 }
 
 bool IsNativeC40(wchar_t ch) {
@@ -168,136 +168,121 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
 
 // static
 int32_t CBC_HighLevelEncoder::LookAheadTest(const WideString& msg,
-                                            int32_t startpos,
+                                            size_t startpos,
                                             int32_t currentMode) {
-  if (startpos >= pdfium::base::checked_cast<int32_t>(msg.GetLength())) {
+  if (startpos >= msg.GetLength())
     return currentMode;
-  }
-  std::vector<float> charCounts(6);
+
+  std::vector<float> charCounts;
   if (currentMode == ASCII_ENCODATION) {
     charCounts = {0, 1, 1, 1, 1, 1.25f};
   } else {
     charCounts = {1, 2, 2, 2, 2, 2.25f};
     charCounts[currentMode] = 0;
   }
-  int32_t charsProcessed = 0;
+  size_t charsProcessed = 0;
   while (true) {
-    if ((startpos + charsProcessed) ==
-        pdfium::base::checked_cast<int32_t>(msg.GetLength())) {
-      int32_t min = std::numeric_limits<int32_t>::max();
+    if ((startpos + charsProcessed) == msg.GetLength()) {
       std::vector<uint8_t> mins(6);
       std::vector<int32_t> intCharCounts(6);
-      min = FindMinimums(charCounts, intCharCounts, min, mins);
+      int32_t min = FindMinimums(charCounts, &intCharCounts, &mins);
       int32_t minCount = GetMinimumCount(mins);
-      if (intCharCounts[ASCII_ENCODATION] == min) {
+      if (intCharCounts[ASCII_ENCODATION] == min)
         return ASCII_ENCODATION;
-      }
-      if (minCount == 1 && mins[BASE256_ENCODATION] > 0) {
+      if (minCount == 1 && mins[BASE256_ENCODATION] > 0)
         return BASE256_ENCODATION;
-      }
-      if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0) {
+      if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0)
         return EDIFACT_ENCODATION;
-      }
-      if (minCount == 1 && mins[TEXT_ENCODATION] > 0) {
+      if (minCount == 1 && mins[TEXT_ENCODATION] > 0)
         return TEXT_ENCODATION;
-      }
-      if (minCount == 1 && mins[X12_ENCODATION] > 0) {
+      if (minCount == 1 && mins[X12_ENCODATION] > 0)
         return X12_ENCODATION;
-      }
       return C40_ENCODATION;
     }
+
     wchar_t c = msg[startpos + charsProcessed];
     charsProcessed++;
     if (FXSYS_IsDecimalDigit(c)) {
       charCounts[ASCII_ENCODATION] += 0.5;
     } else if (IsExtendedASCII(c)) {
-      charCounts[ASCII_ENCODATION] = (float)ceil(charCounts[ASCII_ENCODATION]);
+      charCounts[ASCII_ENCODATION] = ceilf(charCounts[ASCII_ENCODATION]);
       charCounts[ASCII_ENCODATION] += 2;
     } else {
-      charCounts[ASCII_ENCODATION] = (float)ceil(charCounts[ASCII_ENCODATION]);
+      charCounts[ASCII_ENCODATION] = ceilf(charCounts[ASCII_ENCODATION]);
       charCounts[ASCII_ENCODATION]++;
     }
-    if (IsNativeC40(c)) {
+
+    if (IsNativeC40(c))
       charCounts[C40_ENCODATION] += 2.0f / 3.0f;
-    } else if (IsExtendedASCII(c)) {
+    else if (IsExtendedASCII(c))
       charCounts[C40_ENCODATION] += 8.0f / 3.0f;
-    } else {
+    else
       charCounts[C40_ENCODATION] += 4.0f / 3.0f;
-    }
-    if (IsNativeText(c)) {
+
+    if (IsNativeText(c))
       charCounts[TEXT_ENCODATION] += 2.0f / 3.0f;
-    } else if (IsExtendedASCII(c)) {
+    else if (IsExtendedASCII(c))
       charCounts[TEXT_ENCODATION] += 8.0f / 3.0f;
-    } else {
+    else
       charCounts[TEXT_ENCODATION] += 4.0f / 3.0f;
-    }
-    if (IsNativeX12(c)) {
+
+    if (IsNativeX12(c))
       charCounts[X12_ENCODATION] += 2.0f / 3.0f;
-    } else if (IsExtendedASCII(c)) {
+    else if (IsExtendedASCII(c))
       charCounts[X12_ENCODATION] += 13.0f / 3.0f;
-    } else {
+    else
       charCounts[X12_ENCODATION] += 10.0f / 3.0f;
-    }
-    if (IsNativeEDIFACT(c)) {
+
+    if (IsNativeEDIFACT(c))
       charCounts[EDIFACT_ENCODATION] += 3.0f / 4.0f;
-    } else if (IsExtendedASCII(c)) {
+    else if (IsExtendedASCII(c))
       charCounts[EDIFACT_ENCODATION] += 17.0f / 4.0f;
-    } else {
+    else
       charCounts[EDIFACT_ENCODATION] += 13.0f / 4.0f;
-    }
+
     charCounts[BASE256_ENCODATION]++;
-    if (charsProcessed >= 4) {
-      std::vector<int32_t> intCharCounts(6);
-      std::vector<uint8_t> mins(6);
-      FindMinimums(charCounts, intCharCounts,
-                   std::numeric_limits<int32_t>::max(), mins);
-      int32_t minCount = GetMinimumCount(mins);
-      if (intCharCounts[ASCII_ENCODATION] < intCharCounts[BASE256_ENCODATION] &&
-          intCharCounts[ASCII_ENCODATION] < intCharCounts[C40_ENCODATION] &&
-          intCharCounts[ASCII_ENCODATION] < intCharCounts[TEXT_ENCODATION] &&
-          intCharCounts[ASCII_ENCODATION] < intCharCounts[X12_ENCODATION] &&
-          intCharCounts[ASCII_ENCODATION] < intCharCounts[EDIFACT_ENCODATION]) {
-        return ASCII_ENCODATION;
-      }
-      if (intCharCounts[BASE256_ENCODATION] < intCharCounts[ASCII_ENCODATION] ||
-          (mins[C40_ENCODATION] + mins[TEXT_ENCODATION] + mins[X12_ENCODATION] +
-           mins[EDIFACT_ENCODATION]) == 0) {
-        return BASE256_ENCODATION;
-      }
-      if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0) {
-        return EDIFACT_ENCODATION;
-      }
-      if (minCount == 1 && mins[TEXT_ENCODATION] > 0) {
-        return TEXT_ENCODATION;
-      }
-      if (minCount == 1 && mins[X12_ENCODATION] > 0) {
-        return X12_ENCODATION;
-      }
-      if (intCharCounts[C40_ENCODATION] + 1 < intCharCounts[ASCII_ENCODATION] &&
-          intCharCounts[C40_ENCODATION] + 1 <
-              intCharCounts[BASE256_ENCODATION] &&
-          intCharCounts[C40_ENCODATION] + 1 <
-              intCharCounts[EDIFACT_ENCODATION] &&
-          intCharCounts[C40_ENCODATION] + 1 < intCharCounts[TEXT_ENCODATION]) {
-        if (intCharCounts[C40_ENCODATION] < intCharCounts[X12_ENCODATION]) {
-          return C40_ENCODATION;
+    if (charsProcessed < 4)
+      continue;
+
+    std::vector<int32_t> intCharCounts(6);
+    std::vector<uint8_t> mins(6);
+    FindMinimums(charCounts, &intCharCounts, &mins);
+    int32_t minCount = GetMinimumCount(mins);
+    if (intCharCounts[ASCII_ENCODATION] < intCharCounts[BASE256_ENCODATION] &&
+        intCharCounts[ASCII_ENCODATION] < intCharCounts[C40_ENCODATION] &&
+        intCharCounts[ASCII_ENCODATION] < intCharCounts[TEXT_ENCODATION] &&
+        intCharCounts[ASCII_ENCODATION] < intCharCounts[X12_ENCODATION] &&
+        intCharCounts[ASCII_ENCODATION] < intCharCounts[EDIFACT_ENCODATION]) {
+      return ASCII_ENCODATION;
+    }
+    if (intCharCounts[BASE256_ENCODATION] < intCharCounts[ASCII_ENCODATION] ||
+        (mins[C40_ENCODATION] + mins[TEXT_ENCODATION] + mins[X12_ENCODATION] +
+         mins[EDIFACT_ENCODATION]) == 0) {
+      return BASE256_ENCODATION;
+    }
+    if (minCount == 1 && mins[EDIFACT_ENCODATION] > 0)
+      return EDIFACT_ENCODATION;
+    if (minCount == 1 && mins[TEXT_ENCODATION] > 0)
+      return TEXT_ENCODATION;
+    if (minCount == 1 && mins[X12_ENCODATION] > 0)
+      return X12_ENCODATION;
+    if (intCharCounts[C40_ENCODATION] + 1 < intCharCounts[ASCII_ENCODATION] &&
+        intCharCounts[C40_ENCODATION] + 1 < intCharCounts[BASE256_ENCODATION] &&
+        intCharCounts[C40_ENCODATION] + 1 < intCharCounts[EDIFACT_ENCODATION] &&
+        intCharCounts[C40_ENCODATION] + 1 < intCharCounts[TEXT_ENCODATION]) {
+      if (intCharCounts[C40_ENCODATION] < intCharCounts[X12_ENCODATION])
+        return C40_ENCODATION;
+      if (intCharCounts[C40_ENCODATION] == intCharCounts[X12_ENCODATION]) {
+        size_t p = startpos + charsProcessed + 1;
+        while (p < msg.GetLength()) {
+          wchar_t tc = msg[p];
+          if (IsX12TermSep(tc))
+            return X12_ENCODATION;
+          if (!IsNativeX12(tc))
+            break;
+          p++;
         }
-        if (intCharCounts[C40_ENCODATION] == intCharCounts[X12_ENCODATION]) {
-          int32_t p = startpos + charsProcessed + 1;
-          int32_t checked_length =
-              pdfium::base::checked_cast<int32_t>(msg.GetLength());
-          while (p < checked_length) {
-            wchar_t tc = msg[p];
-            if (IsX12TermSep(tc)) {
-              return X12_ENCODATION;
-            }
-            if (!IsNativeX12(tc)) {
-              break;
-            }
-            p++;
-          }
-          return C40_ENCODATION;
-        }
+        return C40_ENCODATION;
       }
     }
   }

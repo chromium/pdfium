@@ -40,19 +40,12 @@ Optional<wchar_t> EncodeASCIIDigits(wchar_t digit1, wchar_t digit2) {
   return static_cast<wchar_t>((digit1 - 48) * 10 + (digit2 - 48) + 130);
 }
 
-int32_t DetermineConsecutiveDigitCount(WideString msg, int32_t startpos) {
-  int32_t count = 0;
-  int32_t len = pdfium::base::checked_cast<int32_t>(msg.GetLength());
-  int32_t idx = startpos;
-  if (idx < len) {
-    wchar_t ch = msg[idx];
-    while (FXSYS_IsDecimalDigit(ch) && idx < len) {
-      count++;
-      idx++;
-      if (idx < len) {
-        ch = msg[idx];
-      }
-    }
+size_t DetermineConsecutiveDigitCount(const WideString& msg, size_t startpos) {
+  size_t count = 0;
+  for (size_t i = startpos; i < msg.GetLength(); ++i) {
+    if (!FXSYS_IsDecimalDigit(msg[i]))
+      break;
+    ++count;
   }
   return count;
 }
@@ -68,7 +61,7 @@ int32_t CBC_ASCIIEncoder::getEncodingMode() {
 }
 
 bool CBC_ASCIIEncoder::Encode(CBC_EncoderContext* context) {
-  int32_t n = DetermineConsecutiveDigitCount(context->m_msg, context->m_pos);
+  size_t n = DetermineConsecutiveDigitCount(context->m_msg, context->m_pos);
   if (n >= 2) {
     Optional<wchar_t> code = EncodeASCIIDigits(
         context->m_msg[context->m_pos], context->m_msg[context->m_pos + 1]);
