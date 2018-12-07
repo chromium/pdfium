@@ -20,6 +20,8 @@ TEST(fxcrt, FXSYS_DecimalCharToInt) {
   EXPECT_EQ(0, FXSYS_DecimalCharToInt('a'));
   EXPECT_EQ(7, FXSYS_DecimalCharToInt(L'7'));
   EXPECT_EQ(0, FXSYS_DecimalCharToInt(L'a'));
+  EXPECT_EQ(0, FXSYS_DecimalCharToInt(static_cast<char>(-78)));
+  EXPECT_EQ(0, FXSYS_DecimalCharToInt(static_cast<wchar_t>(0xb2)));
 }
 
 TEST(fxcrt, FXSYS_IsDecimalDigit) {
@@ -27,6 +29,8 @@ TEST(fxcrt, FXSYS_IsDecimalDigit) {
   EXPECT_TRUE(FXSYS_IsDecimalDigit(L'7'));
   EXPECT_FALSE(FXSYS_IsDecimalDigit('a'));
   EXPECT_FALSE(FXSYS_IsDecimalDigit(L'a'));
+  EXPECT_FALSE(FXSYS_IsDecimalDigit(static_cast<char>(-78)));
+  EXPECT_FALSE(FXSYS_IsDecimalDigit(static_cast<wchar_t>(0xb2)));
 }
 
 TEST(fxcrt, FXSYS_IntToTwoHexChars) {

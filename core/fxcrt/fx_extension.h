@@ -95,7 +95,7 @@ inline bool FXSYS_IsDecimalDigit(char c) {
 }
 
 inline bool FXSYS_IsDecimalDigit(wchar_t c) {
-  return !!std::iswdigit(c);
+  return !((c & 0xFFFFFF80) || !std::iswdigit(c));
 }
 
 inline int FXSYS_DecimalCharToInt(char c) {
@@ -103,7 +103,7 @@ inline int FXSYS_DecimalCharToInt(char c) {
 }
 
 inline int FXSYS_DecimalCharToInt(wchar_t c) {
-  return std::iswdigit(c) ? c - L'0' : 0;
+  return FXSYS_IsDecimalDigit(c) ? c - L'0' : 0;
 }
 
 void FXSYS_IntToTwoHexChars(uint8_t c, char* buf);
