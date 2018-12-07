@@ -53,7 +53,9 @@ void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
   ASSERT(rect.right - rect.left >= GetMinWidth());
   ASSERT(rect.top - rect.bottom >= GetMinHeight());
 
-  GetAnnotDict()->SetRectFor("Rect", rect);
+  CPDF_Dictionary* pDict = GetAnnotDict();
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("Rect"));
+  pDict->SetRectFor("Rect", rect);
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
@@ -96,10 +98,10 @@ bool CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 }
 
 void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
-  if (sName.IsEmpty())
-    GetAnnotDict()->RemoveFor("NM");
-  else
-    GetAnnotDict()->SetNewFor<CPDF_String>("NM", PDF_EncodeText(sName), false);
+  CPDF_Dictionary* pDict = GetAnnotDict();
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("NM"));
+  if (!sName.IsEmpty())
+    pDict->SetNewFor<CPDF_String>("NM", PDF_EncodeText(sName), false);
 }
 
 WideString CPDFSDK_BAAnnot::GetAnnotName() const {
@@ -107,7 +109,9 @@ WideString CPDFSDK_BAAnnot::GetAnnotName() const {
 }
 
 void CPDFSDK_BAAnnot::SetFlags(uint32_t nFlags) {
-  GetAnnotDict()->SetNewFor<CPDF_Number>("F", static_cast<int>(nFlags));
+  CPDF_Dictionary* pDict = GetAnnotDict();
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("F"));
+  pDict->SetNewFor<CPDF_Number>("F", static_cast<int>(nFlags));
 }
 
 uint32_t CPDFSDK_BAAnnot::GetFlags() const {
@@ -115,10 +119,10 @@ uint32_t CPDFSDK_BAAnnot::GetFlags() const {
 }
 
 void CPDFSDK_BAAnnot::SetAppState(const ByteString& str) {
-  if (str.IsEmpty())
-    GetAnnotDict()->RemoveFor("AS");
-  else
-    GetAnnotDict()->SetNewFor<CPDF_String>("AS", str, false);
+  CPDF_Dictionary* pDict = GetAnnotDict();
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("AS"));
+  if (!str.IsEmpty())
+    pDict->SetNewFor<CPDF_String>("AS", str, false);
 }
 
 ByteString CPDFSDK_BAAnnot::GetAppState() const {
@@ -133,7 +137,7 @@ void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
     CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
     if (!pBSDict)
       pBSDict = GetAnnotDict()->SetNewFor<CPDF_Dictionary>("BS");
-
+    m_pAnnot->GetDocument()->AddOrphan(pBSDict->RemoveFor("W"));
     pBSDict->SetNewFor<CPDF_Number>("W", nWidth);
   }
 }
@@ -153,25 +157,28 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
   if (!pBSDict)
     pBSDict = GetAnnotDict()->SetNewFor<CPDF_Dictionary>("BS");
 
+  const char* name = nullptr;
   switch (nStyle) {
     case BorderStyle::SOLID:
-      pBSDict->SetNewFor<CPDF_Name>("S", "S");
+      name = "S";
       break;
     case BorderStyle::DASH:
-      pBSDict->SetNewFor<CPDF_Name>("S", "D");
+      name = "D";
       break;
     case BorderStyle::BEVELED:
-      pBSDict->SetNewFor<CPDF_Name>("S", "B");
+      name = "B";
       break;
     case BorderStyle::INSET:
-      pBSDict->SetNewFor<CPDF_Name>("S", "I");
+      name = "I";
       break;
     case BorderStyle::UNDERLINE:
-      pBSDict->SetNewFor<CPDF_Name>("S", "U");
+      name = "U";
       break;
     default:
-      break;
+      return;
   }
+  m_pAnnot->GetDocument()->AddOrphan(pBSDict->RemoveFor("S"));
+  pBSDict->SetNewFor<CPDF_Name>("S", name);
 }
 
 BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
