@@ -59,6 +59,7 @@ jumbo_source_set("font") {
 pdfium_unittest_source_set("unittests") {
   sources = [
     "cpdf_cmapparser_unittest.cpp",
+    "cpdf_fontencoding_unittest.cpp",
     "cpdf_tounicodemap_unittest.cpp",
   ]
   deps = [
