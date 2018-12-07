@@ -31,8 +31,4 @@ void XFA_DataExporter_RegenerateFormFile(
     const RetainPtr<IFX_SeekableStream>& pStream,
     bool bSaveXML);
 
-const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
-    XFA_Element eElement,
-    WideStringView wsAttributeName);
-
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

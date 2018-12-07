@@ -117,8 +117,8 @@ enum class XFA_Element : int16_t {
   Unknown = -1,
 #undef ELEM____
 #undef ELEM_HIDDEN____
-#define ELEM____(a, b, c) c,
-#define ELEM_HIDDEN____(a) a,
+#define ELEM____(a, b, c, d) c,
+#define ELEM_HIDDEN____(a, b) a,
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
 #undef ELEM_HIDDEN____
@@ -130,12 +130,6 @@ enum class XFA_AttributeType : uint8_t {
   Boolean,
   Integer,
   Measure,
-};
-
-struct XFA_SCRIPTHIERARCHY {
-  uint16_t wAttributeStart;
-  uint16_t wAttributeCount;
-  XFA_Element wParentIndex;
 };
 
 #define XFA_PROPERTYFLAG_OneOf 0x01

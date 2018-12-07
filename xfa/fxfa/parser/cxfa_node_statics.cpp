@@ -323,8 +323,8 @@ struct ElementNameInfo {
 const ElementNameInfo ElementNameToEnum[] = {
 #undef ELEM____
 #undef ELEM_HIDDEN____
-#define ELEM____(a, b, c) {a, XFA_Element::c},
-#define ELEM_HIDDEN____(a)
+#define ELEM____(a, b, c, d) {a, XFA_Element::c},
+#define ELEM_HIDDEN____(a, b)
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
 #undef ELEM_HIDDEN____

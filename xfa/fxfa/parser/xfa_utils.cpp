@@ -531,25 +531,3 @@ int32_t XFA_MapRotation(int32_t nRotation) {
   nRotation = nRotation < 0 ? nRotation + 360 : nRotation;
   return nRotation;
 }
-
-const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
-    XFA_Element eElement,
-    WideStringView wsAttributeName) {
-  if (wsAttributeName.IsEmpty())
-    return nullptr;
-
-  uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
-  while (eElement != XFA_Element::Unknown) {
-    const XFA_SCRIPTHIERARCHY* scriptIndex =
-        &g_XFAScriptIndex[static_cast<size_t>(eElement)];
-    size_t iStart = scriptIndex->wAttributeStart;
-    size_t iEnd = iStart + scriptIndex->wAttributeCount;
-    for (size_t iter = iStart; iter < iEnd; ++iter) {
-      const XFA_SCRIPTATTRIBUTEINFO* pInfo = &g_SomAttributeData[iter];
-      if (uHash == pInfo->uHash)
-        return pInfo;
-    }
-    eElement = scriptIndex->wParentIndex;
-  }
-  return nullptr;
-}
