@@ -21,6 +21,7 @@ class CBC_HighLevelEncoder {
     X12,
     EDIFACT,
     BASE256,
+    LAST = BASE256,
   };
 
   CBC_HighLevelEncoder() = delete;
