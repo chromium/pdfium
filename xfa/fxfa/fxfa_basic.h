@@ -102,16 +102,13 @@ enum class XFA_AttributeValue : uint16_t {
 #undef VALUE____
 };
 
-enum class XFA_Attribute : uint8_t {
+enum class XFA_Attribute : int16_t {
+  Unknown = -1,
 #undef ATTR____
 #define ATTR____(a, b, c) c,
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
-  FIRST_UNUSED,
-  Unknown = 255,
 };
-static_assert(XFA_Attribute::FIRST_UNUSED < XFA_Attribute::Unknown,
-              "enumerated value collsion");
 
 enum class XFA_Element : int16_t {
   Unknown = -1,
