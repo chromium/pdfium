@@ -61,9 +61,12 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
   if (!trycatch->HasCaught())
     return hReturnValue;
 
+  v8::Local<v8::Message> hMessage = trycatch->Message();
+  if (hMessage.IsEmpty())
+    return hReturnValue;
+
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::Value> hException = trycatch->Exception();
-  v8::Local<v8::Message> hMessage = trycatch->Message();
   if (hException->IsObject()) {
     v8::Local<v8::String> hNameStr =
         v8::String::NewFromUtf8(pIsolate, "name", v8::NewStringType::kNormal)
