@@ -58,64 +58,53 @@ char g_FXJSEProxyObjectTag[] = "FXJSE Proxy Object";
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch& trycatch) {
   v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
-  if (trycatch.HasCaught()) {
-    v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-    v8::Local<v8::Value> hException = trycatch.Exception();
-    v8::Local<v8::Message> hMessage = trycatch.Message();
-    if (hException->IsObject()) {
-      v8::Local<v8::String> hNameStr =
-          v8::String::NewFromUtf8(pIsolate, "name", v8::NewStringType::kNormal)
-              .ToLocalChecked();
-      v8::Local<v8::Value> hValue =
-          hException.As<v8::Object>()->Get(context, hNameStr).ToLocalChecked();
-      if (hValue->IsString() || hValue->IsStringObject()) {
-        hReturnValue->Set(context, 0, hValue).FromJust();
-      } else {
-        v8::Local<v8::String> hErrorStr =
-            v8::String::NewFromUtf8(pIsolate, "Error",
-                                    v8::NewStringType::kNormal)
-                .ToLocalChecked();
-        hReturnValue->Set(context, 0, hErrorStr).FromJust();
-      }
+  if (!trycatch.HasCaught())
+    return hReturnValue;
 
-      v8::Local<v8::String> hMessageStr =
-          v8::String::NewFromUtf8(pIsolate, "message",
-                                  v8::NewStringType::kNormal)
-              .ToLocalChecked();
-      hValue = hException.As<v8::Object>()
-                   ->Get(context, hMessageStr)
-                   .ToLocalChecked();
-      if (hValue->IsString() || hValue->IsStringObject())
-        hReturnValue->Set(context, 1, hValue).FromJust();
-      else
-        hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+  v8::Local<v8::Value> hException = trycatch.Exception();
+  v8::Local<v8::Message> hMessage = trycatch.Message();
+  if (hException->IsObject()) {
+    v8::Local<v8::String> hNameStr =
+        v8::String::NewFromUtf8(pIsolate, "name", v8::NewStringType::kNormal)
+            .ToLocalChecked();
+    v8::Local<v8::Value> hValue =
+        hException.As<v8::Object>()->Get(context, hNameStr).ToLocalChecked();
+    if (hValue->IsString() || hValue->IsStringObject()) {
+      hReturnValue->Set(context, 0, hValue).FromJust();
     } else {
       v8::Local<v8::String> hErrorStr =
           v8::String::NewFromUtf8(pIsolate, "Error", v8::NewStringType::kNormal)
               .ToLocalChecked();
       hReturnValue->Set(context, 0, hErrorStr).FromJust();
-      hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
     }
-    hReturnValue->Set(context, 2, hException).FromJust();
-    hReturnValue
-        ->Set(context, 3,
-              v8::Integer::New(pIsolate,
-                               hMessage->GetLineNumber(context).FromMaybe(0)))
-        .FromJust();
-    hReturnValue
-        ->Set(
-            context, 4,
-            hMessage->GetSourceLine(context).FromMaybe(v8::Local<v8::String>()))
-        .FromJust();
-    v8::Maybe<int32_t> maybe_int = hMessage->GetStartColumn(context);
-    hReturnValue
-        ->Set(context, 5, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)))
-        .FromJust();
-    maybe_int = hMessage->GetEndColumn(context);
-    hReturnValue
-        ->Set(context, 6, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)))
-        .FromJust();
+
+    v8::Local<v8::String> hMessageStr =
+        v8::String::NewFromUtf8(pIsolate, "message", v8::NewStringType::kNormal)
+            .ToLocalChecked();
+    hValue =
+        hException.As<v8::Object>()->Get(context, hMessageStr).ToLocalChecked();
+    if (hValue->IsString() || hValue->IsStringObject())
+      hReturnValue->Set(context, 1, hValue).FromJust();
+    else
+      hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
+  } else {
+    v8::Local<v8::String> hErrorStr =
+        v8::String::NewFromUtf8(pIsolate, "Error", v8::NewStringType::kNormal)
+            .ToLocalChecked();
+    hReturnValue->Set(context, 0, hErrorStr).FromJust();
+    hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
   }
+  hReturnValue->Set(context, 2, hException).FromJust();
+  int line = hMessage->GetLineNumber(context).FromMaybe(0);
+  hReturnValue->Set(context, 3, v8::Integer::New(pIsolate, line)).FromJust();
+  v8::Local<v8::String> source =
+      hMessage->GetSourceLine(context).FromMaybe(v8::Local<v8::String>());
+  hReturnValue->Set(context, 4, source).FromJust();
+  int column = hMessage->GetStartColumn(context).FromMaybe(0);
+  hReturnValue->Set(context, 5, v8::Integer::New(pIsolate, column)).FromJust();
+  column = hMessage->GetEndColumn(context).FromMaybe(0);
+  hReturnValue->Set(context, 6, v8::Integer::New(pIsolate, column)).FromJust();
   return hReturnValue;
 }
 
