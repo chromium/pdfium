@@ -56,14 +56,14 @@ char g_FXJSEHostObjectTag[] = "FXJSE Host Object";
 char g_FXJSEProxyObjectTag[] = "FXJSE Proxy Object";
 
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
-                                        v8::TryCatch& trycatch) {
+                                        v8::TryCatch* trycatch) {
   v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
-  if (!trycatch.HasCaught())
+  if (!trycatch->HasCaught())
     return hReturnValue;
 
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-  v8::Local<v8::Value> hException = trycatch.Exception();
-  v8::Local<v8::Message> hMessage = trycatch.Message();
+  v8::Local<v8::Value> hException = trycatch->Exception();
+  v8::Local<v8::Message> hMessage = trycatch->Message();
   if (hException->IsObject()) {
     v8::Local<v8::String> hNameStr =
         v8::String::NewFromUtf8(pIsolate, "name", v8::NewStringType::kNormal)
@@ -124,7 +124,7 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
   v8::Context::Scope m_cscope;
 };
 
-void FXJSE_UpdateProxyBinding(v8::Local<v8::Object>& hObject) {
+void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() == 2);
   hObject->SetAlignedPointerInInternalField(0, g_FXJSEProxyObjectTag);
@@ -133,7 +133,7 @@ void FXJSE_UpdateProxyBinding(v8::Local<v8::Object>& hObject) {
 
 }  // namespace
 
-void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
+void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
                                CFXJSE_HostObject* lpNewBinding) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() == 2);
@@ -269,7 +269,7 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
     }
     if (lpRetValue) {
       lpRetValue->m_hValue.Reset(GetIsolate(),
-                                 CreateReturnValue(GetIsolate(), trycatch));
+                                 CreateReturnValue(GetIsolate(), &trycatch));
     }
     return false;
   }
@@ -316,7 +316,7 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
 
   if (lpRetValue) {
     lpRetValue->m_hValue.Reset(GetIsolate(),
-                               CreateReturnValue(GetIsolate(), trycatch));
+                               CreateReturnValue(GetIsolate(), &trycatch));
   }
   return false;
 }
