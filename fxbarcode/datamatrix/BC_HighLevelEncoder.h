@@ -28,8 +28,7 @@ class CBC_HighLevelEncoder {
   ~CBC_HighLevelEncoder() = delete;
 
   // Returns an empty string on failure.
-  static WideString EncodeHighLevel(const WideString& msg,
-                                    bool bAllowRectangular);
+  static WideString EncodeHighLevel(const WideString& msg);
 
   static Encoding LookAheadTest(const WideString& msg,
                                 size_t startpos,

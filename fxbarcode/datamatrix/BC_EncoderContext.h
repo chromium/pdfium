@@ -15,8 +15,7 @@ class CBC_SymbolInfo;
 
 class CBC_EncoderContext {
  public:
-  CBC_EncoderContext(const WideString& msg,
-                     bool bAllowRectangular);
+  explicit CBC_EncoderContext(const WideString& msg);
   ~CBC_EncoderContext();
 
   void setSkipAtEnd(int32_t count);
@@ -47,7 +46,7 @@ class CBC_EncoderContext {
  private:
   size_t getTotalMessageCharCount();
 
-  bool m_bAllowRectangular;  // Force square when false.
+  bool m_bAllowRectangular = false;  // Force square when false.
   bool m_bHasCharactersOutsideISO88591Encoding = false;
   size_t m_skipAtEnd = 0;
 };

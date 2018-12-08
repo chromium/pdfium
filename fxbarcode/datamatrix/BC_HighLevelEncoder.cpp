@@ -119,9 +119,8 @@ size_t EncoderIndex(CBC_HighLevelEncoder::Encoding encoding) {
 }  // namespace
 
 // static
-WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
-                                                 bool bAllowRectangular) {
-  CBC_EncoderContext context(msg, bAllowRectangular);
+WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
+  CBC_EncoderContext context(msg);
   if (context.HasCharactersOutsideISO88591Encoding())
     return WideString();
 

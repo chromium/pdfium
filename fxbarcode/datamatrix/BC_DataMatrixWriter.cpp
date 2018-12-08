@@ -111,7 +111,7 @@ std::vector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
                                                   int32_t* pOutWidth,
                                                   int32_t* pOutHeight) {
   std::vector<uint8_t> results;
-  WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents, false);
+  WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents);
   if (encoded.IsEmpty())
     return results;
 

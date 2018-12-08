@@ -28,9 +28,7 @@
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
-CBC_EncoderContext::CBC_EncoderContext(const WideString& msg,
-                                       bool bAllowRectangular)
-    : m_bAllowRectangular(bAllowRectangular) {
+CBC_EncoderContext::CBC_EncoderContext(const WideString& msg) {
   ByteString dststr = msg.ToUTF8();
   size_t c = dststr.GetLength();
   WideString sb;
