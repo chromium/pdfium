@@ -222,45 +222,45 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
                       TbConvertTable[i].lpszCppMark);
       iStart = iEnd;
     }
-    }
+  }
 
-    if (year < 0)
-      return CJS_Result::Failure(JSMessage::kValueError);
+  if (year < 0)
+    return CJS_Result::Failure(JSMessage::kValueError);
 
-    const TbConvertAdditional cTableAd[] = {
-        {L"m", month}, {L"d", day},
-        {L"H", hour},  {L"h", hour > 12 ? hour - 12 : hour},
-        {L"M", min},   {L"s", sec},
-    };
+  const TbConvertAdditional cTableAd[] = {
+      {L"m", month}, {L"d", day},
+      {L"H", hour},  {L"h", hour > 12 ? hour - 12 : hour},
+      {L"M", min},   {L"s", sec},
+  };
 
-    for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
-      int iStart = 0;
-      int iEnd;
-      while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
-        if (iEnd > 0) {
-          if (cFormat[iEnd - 1] == L'%') {
-            iStart = iEnd + 1;
-            continue;
-          }
+  for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
+    int iStart = 0;
+    int iEnd;
+    while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
+      if (iEnd > 0) {
+        if (cFormat[iEnd - 1] == L'%') {
+          iStart = iEnd + 1;
+          continue;
         }
-        cFormat.replace(iEnd, wcslen(cTableAd[i].lpszJSMark),
-                        WideString::Format(L"%d", cTableAd[i].iValue).c_str());
-        iStart = iEnd;
       }
+      cFormat.replace(iEnd, wcslen(cTableAd[i].lpszJSMark),
+                      WideString::Format(L"%d", cTableAd[i].iValue).c_str());
+      iStart = iEnd;
     }
+  }
 
-    struct tm time = {};
-    time.tm_year = year - 1900;
-    time.tm_mon = month - 1;
-    time.tm_mday = day;
-    time.tm_hour = hour;
-    time.tm_min = min;
-    time.tm_sec = sec;
+  struct tm time = {};
+  time.tm_year = year - 1900;
+  time.tm_mon = month - 1;
+  time.tm_mday = day;
+  time.tm_hour = hour;
+  time.tm_min = min;
+  time.tm_sec = sec;
 
-    wchar_t buf[64] = {};
-    FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
-    cFormat = buf;
-    return CJS_Result::Success(pRuntime->NewString(cFormat.c_str()));
+  wchar_t buf[64] = {};
+  FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
+  cFormat = buf;
+  return CJS_Result::Success(pRuntime->NewString(cFormat.c_str()));
 }
 
 CJS_Result CJS_Util::printx(CJS_Runtime* pRuntime,
