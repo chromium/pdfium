@@ -32,6 +32,14 @@ void* GetAlignedPointerForPerObjectDataTag() {
   return const_cast<void*>(static_cast<const void*>(kPerObjectDataTag));
 }
 
+std::pair<int, int> GetLineAndColumnFromError(v8::Local<v8::Message> message,
+                                              v8::Local<v8::Context> context) {
+  if (message.IsEmpty())
+    return std::make_pair(-1, -1);
+  return std::make_pair(message->GetLineNumber(context).FromMaybe(-1),
+                        message->GetStartColumn());
+}
+
 }  // namespace
 
 // Global weak map to save dynamic objects.
@@ -553,19 +561,20 @@ Optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
            .ToLocal(&compiled_script)) {
     v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
     v8::Local<v8::Message> msg = try_catch.Message();
-    v8::Maybe<int> line = msg->GetLineNumber(context);
-
-    return IJS_Runtime::JS_Error(line.FromMaybe(-1), msg->GetStartColumn(),
-                                 WideString::FromUTF8(*error));
+    int line = -1;
+    int column = -1;
+    std::tie(line, column) = GetLineAndColumnFromError(msg, context);
+    return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
 
   v8::Local<v8::Value> result;
   if (!compiled_script->Run(context).ToLocal(&result)) {
     v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
     auto msg = try_catch.Message();
-    auto line = msg->GetLineNumber(context);
-    return IJS_Runtime::JS_Error(line.FromMaybe(-1), msg->GetStartColumn(),
-                                 WideString::FromUTF8(*error));
+    int line = -1;
+    int column = -1;
+    std::tie(line, column) = GetLineAndColumnFromError(msg, context);
+    return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
   return pdfium::nullopt;
 }
