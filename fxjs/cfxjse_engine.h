@@ -26,6 +26,19 @@ class CFXJSE_ResolveProcessor;
 class CJS_Runtime;
 class CXFA_List;
 
+// Flags for |dwStyles| argument to CFXJSE_Engine::ResolveObjects().
+#define XFA_RESOLVENODE_Children 0x0001
+#define XFA_RESOLVENODE_TagName 0x0002
+#define XFA_RESOLVENODE_Attributes 0x0004
+#define XFA_RESOLVENODE_Properties 0x0008
+#define XFA_RESOLVENODE_Siblings 0x0020
+#define XFA_RESOLVENODE_Parent 0x0040
+#define XFA_RESOLVENODE_AnyChild 0x0080
+#define XFA_RESOLVENODE_ALL 0x0100
+#define XFA_RESOLVENODE_CreateNode 0x0400
+#define XFA_RESOLVENODE_Bind 0x0800
+#define XFA_RESOLVENODE_BindNew 0x1000
+
 class CFXJSE_Engine final : public CFX_V8 {
  public:
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
