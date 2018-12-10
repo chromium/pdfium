@@ -149,6 +149,15 @@
 #include "fxjs/xfa/cjx_xsdconnection.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+const XFA_AttributeValueInfo g_XFAEnumData[] = {
+#undef VALUE____
+#define VALUE____(a, b, c) {a, XFA_AttributeValue::c, b},
+#include "xfa/fxfa/parser/attribute_values.inc"
+#undef VALUE____
+};
+
+const size_t g_szXFAEnumCount = FX_ArraySize(g_XFAEnumData);
+
 const XFA_Element g_XFAScriptParents[] = {
 #undef ELEM____
 #undef ELEM_HIDDEN____
