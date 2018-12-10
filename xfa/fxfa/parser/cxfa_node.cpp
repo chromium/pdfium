@@ -546,28 +546,6 @@ class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
   RetainPtr<CFX_DIBitmap> m_pDIBitmap;
 };
 
-// static
-ByteStringView CXFA_Node::AttributeEnumToName(XFA_AttributeValue item) {
-  return g_XFAEnumData[static_cast<int32_t>(item)].pName;
-}
-
-// static
-Optional<XFA_AttributeValue> CXFA_Node::NameToAttributeEnum(
-    const WideStringView& name) {
-  if (name.IsEmpty())
-    return {};
-
-  static const auto* kXFAEnumDataEnd = g_XFAEnumData + g_szXFAEnumCount;
-  auto* it = std::lower_bound(g_XFAEnumData, kXFAEnumDataEnd,
-                              FX_HashCode_GetW(name, false),
-                              [](const XFA_AttributeValueInfo& arg,
-                                 uint32_t hash) { return arg.uHash < hash; });
-  if (it != kXFAEnumDataEnd && name.EqualsASCII(it->pName))
-    return it->eName;
-
-  return {};
-}
-
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_PacketType ePacket,
                      uint32_t validPackets,

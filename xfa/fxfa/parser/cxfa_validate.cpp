@@ -12,6 +12,7 @@
 #include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 
 namespace {
 
@@ -62,7 +63,7 @@ XFA_AttributeValue CXFA_Validate::GetFormatTest() {
 
 void CXFA_Validate::SetNullTest(const WideString& wsValue) {
   Optional<XFA_AttributeValue> item =
-      CXFA_Node::NameToAttributeEnum(wsValue.AsStringView());
+      XFA_GetAttributeValueByName(wsValue.AsStringView());
   JSObject()->SetEnum(XFA_Attribute::NullTest,
                       item ? *item : XFA_AttributeValue::Disabled, false);
 }

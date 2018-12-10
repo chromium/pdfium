@@ -149,14 +149,14 @@
 #include "fxjs/xfa/cjx_xsdconnection.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+namespace {
+
 const XFA_AttributeValueInfo g_XFAEnumData[] = {
 #undef VALUE____
 #define VALUE____(a, b, c) {a, XFA_AttributeValue::c, b},
 #include "xfa/fxfa/parser/attribute_values.inc"
 #undef VALUE____
 };
-
-const size_t g_szXFAEnumCount = FX_ArraySize(g_XFAEnumData);
 
 const XFA_Element g_XFAScriptParents[] = {
 #undef ELEM____
@@ -6537,7 +6537,28 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
 
 #undef ATTR
 
-const size_t g_szSomAttributeCount = FX_ArraySize(g_SomAttributeData);
+}  // namespace
+
+ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
+  return g_XFAEnumData[static_cast<int32_t>(item)].pName;
+}
+
+Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
+    const WideStringView& name) {
+  if (name.IsEmpty())
+    return {};
+
+  auto* it =
+      std::lower_bound(std::begin(g_XFAEnumData), std::end(g_XFAEnumData),
+                       FX_HashCode_GetW(name, false),
+                       [](const XFA_AttributeValueInfo& arg, uint32_t hash) {
+                         return arg.uHash < hash;
+                       });
+  if (it != std::end(g_XFAEnumData) && name.EqualsASCII(it->pName))
+    return it->eName;
+
+  return {};
+}
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,

@@ -39,6 +39,7 @@
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -220,8 +221,7 @@ void CJX_Object::SetAttribute(XFA_Attribute eAttr,
                               bool bNotify) {
   switch (ToNode(GetXFAObject())->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      Optional<XFA_AttributeValue> item =
-          CXFA_Node::NameToAttributeEnum(wsValue);
+      Optional<XFA_AttributeValue> item = XFA_GetAttributeValueByName(wsValue);
       SetEnum(eAttr,
               item ? *item : *(ToNode(GetXFAObject())->GetDefaultEnum(eAttr)),
               bNotify);
@@ -281,7 +281,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       if (!value)
         return {};
 
-      return WideString::FromASCII(CXFA_Node::AttributeEnumToName(*value));
+      return WideString::FromASCII(XFA_AttributeValueToName(*value));
     }
     case XFA_AttributeType::CData:
       return TryCData(eAttr, bUseDefault);
@@ -398,9 +398,8 @@ void CJX_Object::SetEnum(XFA_Attribute eAttr,
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
                                   (void*)(uintptr_t)eValue, bNotify);
   if (elem) {
-    elem->SetAttribute(
-        CXFA_Node::AttributeToName(eAttr),
-        WideString::FromASCII(CXFA_Node::AttributeEnumToName(eValue)));
+    elem->SetAttribute(CXFA_Node::AttributeToName(eAttr),
+                       WideString::FromASCII(XFA_AttributeValueToName(eValue)));
   }
 }
 
@@ -1544,7 +1543,7 @@ void CJX_Object::ScriptSomMandatory(CFXJSE_Value* pValue,
     return;
   }
 
-  pValue->SetString(CXFA_Node::AttributeEnumToName(validate->GetNullTest()));
+  pValue->SetString(XFA_AttributeValueToName(validate->GetNullTest()));
 }
 
 void CJX_Object::ScriptSomInstanceIndex(CFXJSE_Value* pValue,

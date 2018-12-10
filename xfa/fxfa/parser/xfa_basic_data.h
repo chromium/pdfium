@@ -12,11 +12,9 @@
 #include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-extern const XFA_AttributeValueInfo g_XFAEnumData[];
-extern const size_t g_szXFAEnumCount;
-
-extern const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[];
-extern const size_t g_szSomAttributeCount;
+ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item);
+Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
+    const WideStringView& name);
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,

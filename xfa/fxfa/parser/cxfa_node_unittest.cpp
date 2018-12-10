@@ -56,17 +56,6 @@ TEST_F(CXFANodeTest, NameToAttribute) {
             CXFA_Node::NameToAttribute(L"decipherOnly"));
 }
 
-TEST_F(CXFANodeTest, GetAttributeEnumByName) {
-  EXPECT_FALSE(!!CXFA_Node::NameToAttributeEnum(L""));
-  EXPECT_FALSE(!!CXFA_Node::NameToAttributeEnum(L"nonesuch"));
-  EXPECT_EQ(XFA_AttributeValue::Asterisk,
-            *CXFA_Node::NameToAttributeEnum(L"*"));
-  EXPECT_EQ(XFA_AttributeValue::Visible,
-            *CXFA_Node::NameToAttributeEnum(L"visible"));
-  EXPECT_EQ(XFA_AttributeValue::Lowered,
-            *CXFA_Node::NameToAttributeEnum(L"lowered"));
-}
-
 TEST_F(CXFANodeTest, InsertFirstChild) {
   EXPECT_EQ(nullptr, GetNode()->GetFirstChild());
   EXPECT_EQ(nullptr, GetNode()->GetLastChild());

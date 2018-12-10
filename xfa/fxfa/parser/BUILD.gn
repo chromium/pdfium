@@ -727,6 +727,7 @@ pdfium_unittest_source_set("unittests") {
     "cxfa_node_unittest.cpp",
     "cxfa_nodeiteratortemplate_unittest.cpp",
     "cxfa_xmllocale_unittest.cpp",
+    "xfa_basic_data_unittest.cpp",
     "xfa_utils_unittest.cpp",
   ]
   deps = [
