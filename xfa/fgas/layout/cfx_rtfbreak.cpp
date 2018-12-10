@@ -730,6 +730,9 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   bool bRTLPiece = FX_IsOdd(pText->iBidiLevel);
   float fFontSize = pText->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
+  if (iFontSize == 0)
+    return 0;
+
   int32_t iAscent = pFont->GetAscent();
   int32_t iDescent = pFont->GetDescent();
   int32_t iMaxHeight = iAscent - iDescent;
