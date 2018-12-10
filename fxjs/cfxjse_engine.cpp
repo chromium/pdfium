@@ -164,14 +164,11 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
     pValue->Assign(GetJSValueFromMap(resolveRs.objects.front().Get()));
     return true;
   }
-  if (resolveRs.dwFlags == XFA_ResolveNode_RSType_Attribute) {
-    const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
-        resolveRs.pScriptAttribute.Get();
-    if (lpAttributeInfo) {
-      CJX_Object* jsObject = resolveRs.objects.front()->JSObject();
-      (jsObject->*(lpAttributeInfo->callback))(pValue, bSetting,
-                                               lpAttributeInfo->attribute);
-    }
+  if (resolveRs.dwFlags == XFA_ResolveNode_RSType_Attribute &&
+      resolveRs.script_attribute.callback) {
+    CJX_Object* jsObject = resolveRs.objects.front()->JSObject();
+    (jsObject->*(resolveRs.script_attribute.callback))(
+        pValue, bSetting, resolveRs.script_attribute.attribute);
   }
   return true;
 }
@@ -332,13 +329,12 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                                szPropName, pReturnValue, true);
 
     if (!bRet) {
-      const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
-          XFA_GetScriptAttributeByName(pObject->GetElementType(),
-                                       wsPropName.AsStringView());
-      if (lpAttributeInfo) {
+      Optional<XFA_SCRIPTATTRIBUTEINFO> info = XFA_GetScriptAttributeByName(
+          pObject->GetElementType(), wsPropName.AsStringView());
+      if (info.has_value()) {
         CJX_Object* jsObject = pObject->JSObject();
-        (jsObject->*(lpAttributeInfo->callback))(pReturnValue, false,
-                                                 lpAttributeInfo->attribute);
+        (jsObject->*(info.value().callback))(pReturnValue, false,
+                                             info.value().attribute);
         return;
       }
     }
@@ -372,12 +368,12 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
   CXFA_Object* pObject =
       lpScriptContext->GetVariablesThis(pOriginalObject, false);
   WideString wsPropName = WideString::FromUTF8(szPropName);
-  const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo = XFA_GetScriptAttributeByName(
+  Optional<XFA_SCRIPTATTRIBUTEINFO> info = XFA_GetScriptAttributeByName(
       pObject->GetElementType(), wsPropName.AsStringView());
-  if (lpAttributeInfo) {
+  if (info.has_value()) {
     CJX_Object* jsObject = pObject->JSObject();
-    (jsObject->*(lpAttributeInfo->callback))(pReturnValue, true,
-                                             lpAttributeInfo->attribute);
+    (jsObject->*(info.value().callback))(pReturnValue, true,
+                                         info.value().attribute);
     return;
   }
 
@@ -396,9 +392,9 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
     }
 
     if (pPropOrChild) {
-      const XFA_SCRIPTATTRIBUTEINFO* lpAttrInfo = XFA_GetScriptAttributeByName(
-          pPropOrChild->GetElementType(), L"{default}");
-      if (lpAttrInfo) {
+      info = XFA_GetScriptAttributeByName(pPropOrChild->GetElementType(),
+                                          L"{default}");
+      if (info.has_value()) {
         pPropOrChild->JSObject()->ScriptSomDefaultValue(pReturnValue, true,
                                                         XFA_Attribute::Unknown);
         return;
@@ -658,13 +654,13 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         continue;
 
       if (rndFind.m_dwFlag == XFA_ResolveNode_RSType_Attribute &&
-          rndFind.m_pScriptAttribute &&
+          rndFind.m_ScriptAttribute.callback &&
           nStart <
               pdfium::base::checked_cast<int32_t>(wsExpression.GetLength())) {
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
         CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
-        (jsObject->*(rndFind.m_pScriptAttribute->callback))(
-            pValue.get(), false, rndFind.m_pScriptAttribute->attribute);
+        (jsObject->*(rndFind.m_ScriptAttribute.callback))(
+            pValue.get(), false, rndFind.m_ScriptAttribute.attribute);
         rndFind.m_Objects.front() = ToObject(pValue.get());
       }
       if (!m_upObjectArray.empty())
@@ -712,7 +708,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
                                     findObjects.begin(), findObjects.end());
     }
     if (rndFind.m_dwFlag == XFA_ResolveNode_RSType_Attribute) {
-      resolveNodeRS->pScriptAttribute = rndFind.m_pScriptAttribute;
+      resolveNodeRS->script_attribute = rndFind.m_ScriptAttribute;
       return 1;
     }
   }

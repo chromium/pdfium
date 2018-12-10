@@ -10,13 +10,15 @@
 #include <stddef.h>
 
 #include "core/fxcrt/widestring.h"
+#include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item);
 Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
     const WideStringView& name);
 
-const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
+Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     WideStringView wsAttributeName);
 

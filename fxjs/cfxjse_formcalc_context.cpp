@@ -5774,13 +5774,13 @@ void CFXJSE_FormCalcContext::ParseResolveResult(
   }
 
   *bAttribute = true;
-  if (resolveNodeRS.pScriptAttribute &&
-      resolveNodeRS.pScriptAttribute->eValueType == XFA_ScriptType::Object) {
+  if (resolveNodeRS.script_attribute.callback &&
+      resolveNodeRS.script_attribute.eValueType == XFA_ScriptType::Object) {
     for (auto& pObject : resolveNodeRS.objects) {
       auto pValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       CJX_Object* jsObject = pObject->JSObject();
-      (jsObject->*(resolveNodeRS.pScriptAttribute->callback))(
-          pValue.get(), false, resolveNodeRS.pScriptAttribute->attribute);
+      (jsObject->*(resolveNodeRS.script_attribute.callback))(
+          pValue.get(), false, resolveNodeRS.script_attribute.attribute);
 
       resultValues->push_back(std::move(pValue));
       *bAttribute = false;

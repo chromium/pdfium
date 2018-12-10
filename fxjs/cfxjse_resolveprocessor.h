@@ -31,7 +31,7 @@ class CFXJSE_ResolveNodeData {
   int32_t m_nLevel;
   std::vector<CXFA_Object*> m_Objects;  // Not owned.
   uint32_t m_dwStyles;
-  const XFA_SCRIPTATTRIBUTEINFO* m_pScriptAttribute;
+  XFA_SCRIPTATTRIBUTEINFO m_ScriptAttribute;
   XFA_ResolveNode_RSType m_dwFlag;
 };
 

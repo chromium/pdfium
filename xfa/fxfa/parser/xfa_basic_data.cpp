@@ -168,12 +168,12 @@ const XFA_Element g_XFAScriptParents[] = {
 #undef ELEM_HIDDEN____
 };
 
-struct XFA_SCRIPTINDEX {
+struct ScriptIndexRecord {
   uint16_t wAttributeStart;
   uint16_t wAttributeCount;
 };
 
-const XFA_SCRIPTINDEX g_XFAScriptIndex[] = {
+const ScriptIndexRecord g_ScriptIndexTable[] = {
     {/* ps */ 0, 2},
     {/* to */ 2, 2},
     {/* ui */ 4, 2},
@@ -506,10 +506,17 @@ static_assert(static_cast<int>(XFA_Element::Placeholder3) == 318, "318");
 static_assert(static_cast<int>(XFA_Element::Model) == 319, "319");
 static_assert(static_cast<int>(XFA_Element::Placeholder4) == 320, "320");
 
+struct ElementAttributeRecord {
+  uint32_t uHash;  // Hashed as wide string.
+  XFA_Attribute attribute;
+  XFA_ScriptType eValueType;
+  XFA_ATTRIBUTE_CALLBACK callback;
+};
+
 #undef ATTR
 #define ATTR(a, b, c, d, e) a, d, e, reinterpret_cast<XFA_ATTRIBUTE_CALLBACK>(c)
 
-const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
+const ElementAttributeRecord g_ElementAttributeTable[] = {
     /* ps */
     {ATTR(0xbe52dfbf,
           "desc",
@@ -6560,24 +6567,29 @@ Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
   return {};
 }
 
-const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
+Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     WideStringView wsAttributeName) {
   if (wsAttributeName.IsEmpty())
-    return nullptr;
+    return {};
 
   uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
   while (eElement != XFA_Element::Unknown) {
-    const XFA_SCRIPTINDEX* scriptIndex =
-        &g_XFAScriptIndex[static_cast<size_t>(eElement)];
+    const ScriptIndexRecord* scriptIndex =
+        &g_ScriptIndexTable[static_cast<size_t>(eElement)];
     size_t iStart = scriptIndex->wAttributeStart;
     size_t iEnd = iStart + scriptIndex->wAttributeCount;
     for (size_t iter = iStart; iter < iEnd; ++iter) {
-      const XFA_SCRIPTATTRIBUTEINFO* pInfo = &g_SomAttributeData[iter];
-      if (uHash == pInfo->uHash)
-        return pInfo;
+      const ElementAttributeRecord* pInfo = &g_ElementAttributeTable[iter];
+      if (uHash == pInfo->uHash) {
+        XFA_SCRIPTATTRIBUTEINFO result;
+        result.attribute = pInfo->attribute;
+        result.eValueType = pInfo->eValueType;
+        result.callback = pInfo->callback;
+        return result;
+      }
     }
     eElement = g_XFAScriptParents[static_cast<size_t>(eElement)];
   }
-  return nullptr;
+  return {};
 }

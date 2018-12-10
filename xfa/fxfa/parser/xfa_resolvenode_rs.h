@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/xfa/cjx_object.h"
 
 class CXFA_Object;
-struct XFA_SCRIPTATTRIBUTEINFO;
 
 enum XFA_ResolveNode_RSType {
   XFA_ResolveNode_RSType_Nodes,
@@ -28,8 +28,8 @@ struct XFA_RESOLVENODE_RS {
   ~XFA_RESOLVENODE_RS();
 
   XFA_ResolveNode_RSType dwFlags = XFA_ResolveNode_RSType_Nodes;
+  XFA_SCRIPTATTRIBUTEINFO script_attribute;
   std::vector<UnownedPtr<CXFA_Object>> objects;
-  UnownedPtr<const XFA_SCRIPTATTRIBUTEINFO> pScriptAttribute;
 };
 
 inline XFA_RESOLVENODE_RS::XFA_RESOLVENODE_RS() = default;

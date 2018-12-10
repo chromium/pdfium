@@ -7,11 +7,18 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(XFABasicDataTest, GetAttributeValueByName) {
-  EXPECT_FALSE(!!XFA_GetAttributeValueByName(L""));
-  EXPECT_FALSE(!!XFA_GetAttributeValueByName(L"nonesuch"));
-  EXPECT_EQ(XFA_AttributeValue::Asterisk, *XFA_GetAttributeValueByName(L"*"));
-  EXPECT_EQ(XFA_AttributeValue::Visible,
-            *XFA_GetAttributeValueByName(L"visible"));
-  EXPECT_EQ(XFA_AttributeValue::Lowered,
-            *XFA_GetAttributeValueByName(L"lowered"));
+  EXPECT_FALSE(XFA_GetAttributeValueByName(L"").has_value());
+  EXPECT_FALSE(XFA_GetAttributeValueByName(L"nonesuch").has_value());
+
+  Optional<XFA_AttributeValue> result = XFA_GetAttributeValueByName(L"*");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_AttributeValue::Asterisk, result.value());
+
+  result = XFA_GetAttributeValueByName(L"visible");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_AttributeValue::Visible, result.value());
+
+  result = XFA_GetAttributeValueByName(L"lowered");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_AttributeValue::Lowered, result.value());
 }

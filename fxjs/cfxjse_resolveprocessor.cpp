@@ -203,12 +203,12 @@ bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(
     CXFA_Object* curNode,
     CFXJSE_ResolveNodeData& rnd,
     const WideStringView& strAttr) {
-  const XFA_SCRIPTATTRIBUTEINFO* lpScriptAttribute =
+  Optional<XFA_SCRIPTATTRIBUTEINFO> info =
       XFA_GetScriptAttributeByName(curNode->GetElementType(), strAttr);
-  if (!lpScriptAttribute)
+  if (!info.has_value())
     return false;
 
-  rnd.m_pScriptAttribute = lpScriptAttribute;
+  rnd.m_ScriptAttribute = info.value();
   rnd.m_Objects.push_back(curNode);
   rnd.m_dwFlag = XFA_ResolveNode_RSType_Attribute;
   return true;
@@ -738,7 +738,6 @@ CFXJSE_ResolveNodeData::CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC)
       m_nLevel(0),
       m_Objects(),
       m_dwStyles(XFA_RESOLVENODE_Children),
-      m_pScriptAttribute(nullptr),
       m_dwFlag(XFA_ResolveNode_RSType_Nodes) {}
 
 CFXJSE_ResolveNodeData::~CFXJSE_ResolveNodeData() {}
