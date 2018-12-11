@@ -2296,8 +2296,12 @@ bool CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
   if (!pTemplate)
     pTemplate = pFormNode;
 
-  int32_t iMax =
-      pTemplate->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur)->GetMax();
+  auto* pOccur =
+      pTemplate->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
+  if (!pOccur)
+    return false;
+
+  int32_t iMax = pOccur->GetMax();
   if (iMax < 0)
     return true;
 
