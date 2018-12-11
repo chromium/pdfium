@@ -15,7 +15,7 @@ class CPWL_TimerHandler;
 class CPWL_Timer {
  public:
   CPWL_Timer(CPWL_TimerHandler* pAttached, CFX_SystemHandler* pSystemHandler);
-  virtual ~CPWL_Timer();
+  ~CPWL_Timer();
 
   static void TimerProc(int32_t idEvent);
 
@@ -23,9 +23,13 @@ class CPWL_Timer {
   void KillPWLTimer();
 
  private:
-  int32_t m_nTimerID;
-  UnownedPtr<CPWL_TimerHandler> m_pAttached;
-  UnownedPtr<CFX_SystemHandler> m_pSystemHandler;
+  static constexpr int32_t kInvalidTimerID = 0;
+
+  bool HasValidID() const { return m_nTimerID != kInvalidTimerID; }
+
+  int32_t m_nTimerID = kInvalidTimerID;
+  UnownedPtr<CPWL_TimerHandler> const m_pAttached;
+  UnownedPtr<CFX_SystemHandler> const m_pSystemHandler;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_TIMER_H_

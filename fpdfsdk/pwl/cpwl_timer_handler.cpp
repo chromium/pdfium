@@ -9,9 +9,9 @@
 #include "fpdfsdk/pwl/cpwl_timer.h"
 #include "third_party/base/ptr_util.h"
 
-CPWL_TimerHandler::CPWL_TimerHandler() {}
+CPWL_TimerHandler::CPWL_TimerHandler() = default;
 
-CPWL_TimerHandler::~CPWL_TimerHandler() {}
+CPWL_TimerHandler::~CPWL_TimerHandler() = default;
 
 void CPWL_TimerHandler::BeginTimer(int32_t nElapse) {
   if (!m_pTimer)
