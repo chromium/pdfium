@@ -169,28 +169,15 @@ const ElementRecord g_ElementTable[] = {
 struct AttributeRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Attribute attribute;
+  const char* name;
 };
 
 const AttributeRecord g_AttributeTable[] = {
 #undef ATTR____
-#define ATTR____(a, b, c) {a, XFA_Attribute::c},
+#define ATTR____(a, b, c) {a, XFA_Attribute::c, b},
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 };
-
-const char* AttributeToNameASCII(XFA_Attribute attr) {
-  switch (attr) {
-#undef ATTR____
-#define ATTR____(a, b, c) \
-  case XFA_Attribute::c:  \
-    return b;
-#include "xfa/fxfa/parser/attributes.inc"
-#undef ATTR____
-    default:
-      NOTREACHED();
-      return "";
-  }
-}
 
 struct AttributeValueRecord {
   uint32_t uHash;  // |pName| hashed as WideString.
@@ -6604,7 +6591,8 @@ XFA_Element XFA_GetElementByName(const WideString& name) {
 }
 
 WideString XFA_AttributeToName(XFA_Attribute attr) {
-  return WideString::FromASCII(AttributeToNameASCII(attr));
+  return WideString::FromASCII(
+      g_AttributeTable[static_cast<size_t>(attr)].name);
 }
 
 XFA_Attribute XFA_GetAttributeByName(const WideStringView& name) {
@@ -6612,7 +6600,7 @@ XFA_Attribute XFA_GetAttributeByName(const WideStringView& name) {
   auto* elem = std::lower_bound(
       std::begin(g_AttributeTable), std::end(g_AttributeTable), hash,
       [](const AttributeRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(g_AttributeTable) && elem->hash == hash)
+  if (elem != std::end(g_AttributeTable) && name.EqualsASCII(elem->name))
     return elem->attribute;
   return XFA_Attribute::Unknown;
 }
