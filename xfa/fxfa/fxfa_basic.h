@@ -132,12 +132,6 @@ enum class XFA_AttributeType : uint8_t {
 #define XFA_PROPERTYFLAG_OneOf 0x01
 #define XFA_PROPERTYFLAG_DefaultOneOf 0x02
 
-struct XFA_AttributeValueInfo {
-  uint32_t uHash;  // |pName| hashed as WideString.
-  XFA_AttributeValue eName;
-  const char* pName;
-};
-
 enum class XFA_Unit : uint8_t {
   Percent = 0,
   Em,

@@ -151,12 +151,12 @@
 
 namespace {
 
-struct ElementNameInfo {
+struct ElementRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Element element;
 };
 
-const ElementNameInfo ElementNameToEnum[] = {
+const ElementRecord g_ElementTable[] = {
 #undef ELEM____
 #undef ELEM_HIDDEN____
 #define ELEM____(a, b, c, d) {a, XFA_Element::c},
@@ -166,12 +166,12 @@ const ElementNameInfo ElementNameToEnum[] = {
 #undef ELEM_HIDDEN____
 };
 
-struct AttributeNameInfo {
+struct AttributeRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Attribute attribute;
 };
 
-const AttributeNameInfo AttributeNameInfoToEnum[] = {
+const AttributeRecord g_AttributeTable[] = {
 #undef ATTR____
 #define ATTR____(a, b, c) {a, XFA_Attribute::c},
 #include "xfa/fxfa/parser/attributes.inc"
@@ -192,7 +192,13 @@ const char* AttributeToNameASCII(XFA_Attribute attr) {
   }
 }
 
-const XFA_AttributeValueInfo g_XFAEnumData[] = {
+struct AttributeValueRecord {
+  uint32_t uHash;  // |pName| hashed as WideString.
+  XFA_AttributeValue eName;
+  const char* pName;
+};
+
+const AttributeValueRecord g_AttributeValueTable[] = {
 #undef VALUE____
 #define VALUE____(a, b, c) {a, XFA_AttributeValue::c, b},
 #include "xfa/fxfa/parser/attribute_values.inc"
@@ -6590,9 +6596,9 @@ const ElementAttributeRecord g_ElementAttributeTable[] = {
 XFA_Element XFA_GetElementByName(const WideString& name) {
   uint32_t hash = FX_HashCode_GetW(name.AsStringView(), false);
   auto* elem = std::lower_bound(
-      std::begin(ElementNameToEnum), std::end(ElementNameToEnum), hash,
-      [](const ElementNameInfo& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(ElementNameToEnum) && elem->hash == hash)
+      std::begin(g_ElementTable), std::end(g_ElementTable), hash,
+      [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });
+  if (elem != std::end(g_ElementTable) && elem->hash == hash)
     return elem->element;
   return XFA_Element::Unknown;
 }
@@ -6604,30 +6610,25 @@ WideString XFA_AttributeToName(XFA_Attribute attr) {
 XFA_Attribute XFA_GetAttributeByName(const WideStringView& name) {
   uint32_t hash = FX_HashCode_GetW(name, false);
   auto* elem = std::lower_bound(
-      std::begin(AttributeNameInfoToEnum), std::end(AttributeNameInfoToEnum),
-      hash,
-      [](const AttributeNameInfo& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(AttributeNameInfoToEnum) && elem->hash == hash)
+      std::begin(g_AttributeTable), std::end(g_AttributeTable), hash,
+      [](const AttributeRecord& a, uint32_t hash) { return a.hash < hash; });
+  if (elem != std::end(g_AttributeTable) && elem->hash == hash)
     return elem->attribute;
   return XFA_Attribute::Unknown;
 }
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
-  return g_XFAEnumData[static_cast<int32_t>(item)].pName;
+  return g_AttributeValueTable[static_cast<int32_t>(item)].pName;
 }
 
 Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
     const WideStringView& name) {
-  if (name.IsEmpty())
-    return {};
-
-  auto* it =
-      std::lower_bound(std::begin(g_XFAEnumData), std::end(g_XFAEnumData),
-                       FX_HashCode_GetW(name, false),
-                       [](const XFA_AttributeValueInfo& arg, uint32_t hash) {
-                         return arg.uHash < hash;
-                       });
-  if (it != std::end(g_XFAEnumData) && name.EqualsASCII(it->pName))
+  auto* it = std::lower_bound(std::begin(g_AttributeValueTable),
+                              std::end(g_AttributeValueTable),
+                              FX_HashCode_GetW(name, false),
+                              [](const AttributeValueRecord& arg,
+                                 uint32_t hash) { return arg.uHash < hash; });
+  if (it != std::end(g_AttributeValueTable) && name.EqualsASCII(it->pName))
     return it->eName;
 
   return {};
