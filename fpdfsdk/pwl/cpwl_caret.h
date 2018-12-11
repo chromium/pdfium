@@ -27,7 +27,7 @@ class CPWL_Caret final : public CPWL_Wnd {
   void SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,
                 const CFX_PointF& ptFoot);
-  void SetInvalidRect(CFX_FloatRect rc) { m_rcInvalid = rc; }
+  void SetInvalidRect(const CFX_FloatRect& rc) { m_rcInvalid = rc; }
 
  private:
   CFX_FloatRect GetCaretRect() const;
@@ -36,7 +36,6 @@ class CPWL_Caret final : public CPWL_Wnd {
   CFX_PointF m_ptHead;
   CFX_PointF m_ptFoot;
   float m_fWidth = 0.4f;
-  int32_t m_nDelay = 0;
   CFX_FloatRect m_rcInvalid;
 };
 

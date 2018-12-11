@@ -14,8 +14,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-#define PWL_CARET_FLASHINTERVAL 500
-
 CPWL_Caret::CPWL_Caret(const CreateParams& cp,
                        std::unique_ptr<PrivateData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {}
@@ -53,11 +51,6 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Caret::TimerProc() {
-  if (m_nDelay > 0) {
-    --m_nDelay;
-    return;
-  }
-
   m_bFlash = !m_bFlash;
   InvalidateRect(nullptr);
   // Note, |this| may no longer be viable at this point. If more work needs
@@ -87,10 +80,12 @@ void CPWL_Caret::SetCaret(bool bVisible,
   }
 
   if (!IsVisible()) {
+    static constexpr int32_t kCaretFlashIntervalMs = 500;
+
     m_ptHead = ptHead;
     m_ptFoot = ptFoot;
     EndTimer();
-    BeginTimer(PWL_CARET_FLASHINTERVAL);
+    BeginTimer(kCaretFlashIntervalMs);
 
     if (!CPWL_Wnd::SetVisible(true))
       return;
