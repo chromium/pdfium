@@ -47,15 +47,6 @@ class CXFANodeTest : public testing::Test {
   std::unique_ptr<TestNode> node_;
 };
 
-TEST_F(CXFANodeTest, NameToAttribute) {
-  EXPECT_EQ(XFA_Attribute::Unknown, CXFA_Node::NameToAttribute(L""));
-  EXPECT_EQ(XFA_Attribute::Unknown, CXFA_Node::NameToAttribute(L"nonesuch"));
-  EXPECT_EQ(XFA_Attribute::H, CXFA_Node::NameToAttribute(L"h"));
-  EXPECT_EQ(XFA_Attribute::Short, CXFA_Node::NameToAttribute(L"short"));
-  EXPECT_EQ(XFA_Attribute::DecipherOnly,
-            CXFA_Node::NameToAttribute(L"decipherOnly"));
-}
-
 TEST_F(CXFANodeTest, InsertFirstChild) {
   EXPECT_EQ(nullptr, GetNode()->GetFirstChild());
   EXPECT_EQ(nullptr, GetNode()->GetLastChild());

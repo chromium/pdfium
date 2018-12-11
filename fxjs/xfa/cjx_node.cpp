@@ -24,6 +24,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -205,8 +206,8 @@ CJS_Result CJX_Node::getElement(
 
   WideString expression = runtime->ToWideString(params[0]);
   int32_t iValue = params.size() >= 2 ? runtime->ToInt32(params[1]) : 0;
-  CXFA_Node* pNode = GetOrCreateProperty<CXFA_Node>(
-      iValue, CXFA_Node::NameToElement(expression));
+  CXFA_Node* pNode =
+      GetOrCreateProperty<CXFA_Node>(iValue, XFA_GetElementByName(expression));
   if (!pNode)
     return CJS_Result::Success(runtime->NewNull());
 
@@ -226,13 +227,13 @@ CJS_Result CJX_Node::isPropertySpecified(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString expression = runtime->ToWideString(params[0]);
-  XFA_Attribute attr = CXFA_Node::NameToAttribute(expression.AsStringView());
+  XFA_Attribute attr = XFA_GetAttributeByName(expression.AsStringView());
   if (attr != XFA_Attribute::Unknown && HasAttribute(attr))
     return CJS_Result::Success(runtime->NewBoolean(true));
 
   bool bParent = params.size() < 2 || runtime->ToBoolean(params[1]);
   int32_t iIndex = params.size() == 3 ? runtime->ToInt32(params[2]) : 0;
-  XFA_Element eType = CXFA_Node::NameToElement(expression);
+  XFA_Element eType = XFA_GetElementByName(expression);
   bool bHas = !!GetOrCreateProperty<CXFA_Node>(iIndex, eType);
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.

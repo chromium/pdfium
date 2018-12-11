@@ -13,6 +13,7 @@
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 
 const CJX_MethodSpec CJX_Model::MethodSpecs[] = {
     {"clearErrorList", clearErrorList_static},
@@ -46,7 +47,7 @@ CJS_Result CJX_Model::createNode(
     nameSpace = runtime->ToWideString(params[2]);
 
   WideString tagName = runtime->ToWideString(params[0]);
-  XFA_Element eType = CXFA_Node::NameToElement(tagName);
+  XFA_Element eType = XFA_GetElementByName(tagName);
   CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
   if (!pNewNode)
     return CJS_Result::Success(runtime->NewNull());

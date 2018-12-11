@@ -14,6 +14,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -325,7 +326,7 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
     CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
-    XFA_Element eType = CXFA_Node::NameToElement(wsName);
+    XFA_Element eType = XFA_GetElementByName(wsName);
     if (eType == XFA_Element::Unknown)
       return false;
 

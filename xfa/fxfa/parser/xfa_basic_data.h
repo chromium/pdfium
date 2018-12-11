@@ -14,6 +14,11 @@
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+XFA_Element XFA_GetElementByName(const WideString& name);
+
+WideString XFA_AttributeToName(XFA_Attribute attr);
+XFA_Attribute XFA_GetAttributeByName(const WideStringView& name);
+
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item);
 Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
     const WideStringView& name);

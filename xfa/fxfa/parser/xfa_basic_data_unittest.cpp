@@ -6,6 +6,15 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+TEST(XFABasicDataTest, GetAttributeByName) {
+  EXPECT_EQ(XFA_Attribute::Unknown, XFA_GetAttributeByName(L""));
+  EXPECT_EQ(XFA_Attribute::Unknown, XFA_GetAttributeByName(L"nonesuch"));
+  EXPECT_EQ(XFA_Attribute::H, XFA_GetAttributeByName(L"h"));
+  EXPECT_EQ(XFA_Attribute::Short, XFA_GetAttributeByName(L"short"));
+  EXPECT_EQ(XFA_Attribute::DecipherOnly,
+            XFA_GetAttributeByName(L"decipherOnly"));
+}
+
 TEST(XFABasicDataTest, GetAttributeValueByName) {
   EXPECT_FALSE(XFA_GetAttributeValueByName(L"").has_value());
   EXPECT_FALSE(XFA_GetAttributeValueByName(L"nonesuch").has_value());

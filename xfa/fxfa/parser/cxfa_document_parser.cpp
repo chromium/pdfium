@@ -773,7 +773,7 @@ CXFA_Node* CXFA_DocumentParser::NormalLoader(CXFA_Node* pXFANode,
       case FX_XMLNODE_Element: {
         CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
         WideString wsTagName = pXMLElement->GetLocalTagName();
-        XFA_Element eType = CXFA_Node::NameToElement(wsTagName);
+        XFA_Element eType = XFA_GetElementByName(wsTagName);
         if (eType == XFA_Element::Unknown)
           continue;
 
@@ -801,7 +801,7 @@ CXFA_Node* CXFA_DocumentParser::NormalLoader(CXFA_Node* pXFANode,
             IsNeedValue = false;
 
           XFA_Attribute attr =
-              CXFA_Node::NameToAttribute(wsAttrName.AsStringView());
+              XFA_GetAttributeByName(wsAttrName.AsStringView());
           if (attr == XFA_Attribute::Unknown)
             continue;
 

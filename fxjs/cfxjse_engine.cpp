@@ -383,7 +383,7 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
 
     CXFA_Node* pNode = ToNode(pObject);
     CXFA_Node* pPropOrChild = nullptr;
-    XFA_Element eType = CXFA_Node::NameToElement(wsPropName);
+    XFA_Element eType = XFA_GetElementByName(wsPropName);
     if (eType != XFA_Element::Unknown) {
       pPropOrChild =
           pNode->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eType);

@@ -396,7 +396,6 @@ jumbo_source_set("parser") {
     "cxfa_neverembed.h",
     "cxfa_node.cpp",
     "cxfa_node.h",
-    "cxfa_node_statics.cpp",
     "cxfa_nodehelper.cpp",
     "cxfa_nodehelper.h",
     "cxfa_nodeiteratortemplate.h",
