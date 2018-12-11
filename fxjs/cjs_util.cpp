@@ -277,6 +277,7 @@ CJS_Result CJS_Util::printx(CJS_Runtime* pRuntime,
 WideString CJS_Util::StringPrintx(const WideString& wsFormat,
                                   const WideString& wsSource) {
   WideString wsResult;
+  wsResult.Reserve(wsFormat.GetLength());
   size_t iSourceIdx = 0;
   size_t iFormatIdx = 0;
   CaseMode eCaseMode = kPreserveCase;

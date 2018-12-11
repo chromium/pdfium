@@ -395,6 +395,24 @@ TEST(ByteString, OperatorPlus) {
   EXPECT_EQ("Dogs like me", ByteString("Dogs") + " like me");
   EXPECT_EQ("Oh no, error number 42",
             "Oh no, error number " + ByteString::Format("%d", 42));
+
+  {
+    // Make sure operator+= and Concat() increases string memory allocation
+    // geometrically.
+    int allocations = 0;
+    ByteString str("ABCDEFGHIJKLMN");
+    const char* buffer = str.c_str();
+    for (size_t i = 0; i < 10000; ++i) {
+      str += "!";
+      const char* new_buffer = str.c_str();
+      if (new_buffer != buffer) {
+        buffer = new_buffer;
+        ++allocations;
+      }
+    }
+    EXPECT_LT(allocations, 25);
+    EXPECT_GT(allocations, 10);
+  }
 }
 
 TEST(ByteString, Concat) {

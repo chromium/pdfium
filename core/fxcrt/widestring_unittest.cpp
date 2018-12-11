@@ -402,6 +402,24 @@ TEST(WideString, OperatorPlus) {
   EXPECT_EQ(L"Dogs like me", WideString(L"Dogs") + L" like me");
   EXPECT_EQ(L"Oh no, error number 42",
             L"Oh no, error number " + WideString::Format(L"%d", 42));
+
+  {
+    // Make sure operator+= and Concat() increases string memory allocation
+    // geometrically.
+    int allocations = 0;
+    WideString str(L"ABCDEFGHIJKLMN");
+    const wchar_t* buffer = str.c_str();
+    for (size_t i = 0; i < 10000; ++i) {
+      str += L"!";
+      const wchar_t* new_buffer = str.c_str();
+      if (new_buffer != buffer) {
+        buffer = new_buffer;
+        ++allocations;
+      }
+    }
+    EXPECT_LT(allocations, 25);
+    EXPECT_GT(allocations, 10);
+  }
 }
 
 TEST(WideString, ConcatInPlace) {
