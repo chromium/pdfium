@@ -378,8 +378,14 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateRadioButton(CXFA_Node* pParent,
                                                    CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateField(XFA_Element::CheckButton, pParent, pBefore);
   CXFA_Ui* pUi = pField->GetFirstChildByClass<CXFA_Ui>(XFA_Element::Ui);
+  if (!pUi)
+    return nullptr;
+
   CXFA_CheckButton* pWidget =
       pUi->GetFirstChildByClass<CXFA_CheckButton>(XFA_Element::CheckButton);
+  if (!pWidget)
+    return nullptr;
+
   pWidget->JSObject()->SetEnum(XFA_Attribute::Shape, XFA_AttributeValue::Round,
                                false);
   return pField;

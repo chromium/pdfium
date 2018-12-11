@@ -406,13 +406,14 @@ CJS_Result CJX_LayoutPseudoModel::relayout(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
+  CXFA_LayoutProcessor* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
   CXFA_Form* pFormRoot =
       pRootNode->GetFirstChildByClass<CXFA_Form>(XFA_Element::Form);
-  CXFA_Node* pContentRootNode = pFormRoot->GetFirstChild();
-  CXFA_LayoutProcessor* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
-  if (pContentRootNode)
-    pLayoutProcessor->AddChangedContainer(pContentRootNode);
-
+  if (pFormRoot) {
+    CXFA_Node* pContentRootNode = pFormRoot->GetFirstChild();
+    if (pContentRootNode)
+      pLayoutProcessor->AddChangedContainer(pContentRootNode);
+  }
   pLayoutProcessor->SetForceReLayout(true);
   return CJS_Result::Success();
 }

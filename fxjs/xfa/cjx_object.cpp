@@ -1161,9 +1161,11 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
 
   CXFA_Node* pTemplateNode =
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Template));
+  CXFA_Subform* pSubForm =
+      pTemplateNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
   CXFA_Proto* pProtoRoot =
-      pTemplateNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform)
-          ->GetFirstChildByClass<CXFA_Proto>(XFA_Element::Proto);
+      pSubForm ? pSubForm->GetFirstChildByClass<CXFA_Proto>(XFA_Element::Proto)
+               : nullptr;
 
   WideString wsID;
   WideString wsSOM;

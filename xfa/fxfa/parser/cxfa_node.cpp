@@ -1256,7 +1256,8 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
   CXFA_Node* pForm = GetDocument()->GetXFAObject(XFA_HASHCODE_Form)->AsNode();
   CXFA_Subform* pTopSubform =
       pForm->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
-  ASSERT(pTopSubform);
+  if (!pTopSubform)
+    return {};
 
   CXFA_Node* pLocaleNode = this;
   do {

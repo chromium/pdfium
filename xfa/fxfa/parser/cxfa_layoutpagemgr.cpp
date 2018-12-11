@@ -1599,6 +1599,9 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(float fChildHeight) {
 
   CXFA_Node* pContentArea = pPageNode->GetFirstChildByClass<CXFA_ContentArea>(
       XFA_Element::ContentArea);
+  if (!pContentArea)
+    return false;
+
   float fNextContentHeight = pContentArea->JSObject()
                                  ->GetMeasure(XFA_Attribute::H)
                                  .ToUnit(XFA_Unit::Pt);
@@ -1832,7 +1835,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           pDocument->GetXFAObject(XFA_HASHCODE_Form)
               ->AsNode()
               ->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
-      pFormToplevelSubform->InsertChild(pPendingPageSet, nullptr);
+      if (pFormToplevelSubform)
+        pFormToplevelSubform->InsertChild(pPendingPageSet, nullptr);
     }
     pDocument->DataMerge_UpdateBindingRelations(pPendingPageSet);
     pPendingPageSet->SetFlagAndNotify(XFA_NodeFlag_Initialized);

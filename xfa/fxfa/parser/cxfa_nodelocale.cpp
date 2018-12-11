@@ -164,8 +164,8 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
   if (!pCalendar)
     return WideString();
 
-  CXFA_Node* pNode = pCalendar->GetFirstChildByClass<CXFA_Node>(eElement);
-  for (; pNode; pNode = pNode->GetNextSameClassSibling<CXFA_Node>(eElement)) {
+  for (CXFA_Node* pNode = pCalendar->GetFirstChildByClass<CXFA_Node>(eElement);
+       pNode; pNode = pNode->GetNextSameClassSibling<CXFA_Node>(eElement)) {
     if (pNode->JSObject()->GetBoolean(XFA_Attribute::Abbr) == bAbbr) {
       CXFA_Node* pSymbol =
           pNode->GetChild<CXFA_Node>(index, XFA_Element::Unknown, false);
