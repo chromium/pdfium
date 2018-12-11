@@ -17,7 +17,7 @@
 XFA_Element XFA_GetElementByName(const WideString& name);
 
 WideString XFA_AttributeToName(XFA_Attribute attr);
-XFA_Attribute XFA_GetAttributeByName(const WideStringView& name);
+Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(const WideStringView& name);
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item);
 Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(

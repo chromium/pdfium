@@ -169,12 +169,13 @@ const ElementRecord g_ElementTable[] = {
 struct AttributeRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Attribute attribute;
+  XFA_ScriptType script_type;
   const char* name;
 };
 
 const AttributeRecord g_AttributeTable[] = {
 #undef ATTR____
-#define ATTR____(a, b, c) {a, XFA_Attribute::c, b},
+#define ATTR____(a, b, c, d) {a, XFA_Attribute::c, XFA_ScriptType::d, b},
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 };
@@ -6595,14 +6596,18 @@ WideString XFA_AttributeToName(XFA_Attribute attr) {
       g_AttributeTable[static_cast<size_t>(attr)].name);
 }
 
-XFA_Attribute XFA_GetAttributeByName(const WideStringView& name) {
+Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(const WideStringView& name) {
   uint32_t hash = FX_HashCode_GetW(name, false);
   auto* elem = std::lower_bound(
       std::begin(g_AttributeTable), std::end(g_AttributeTable), hash,
       [](const AttributeRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(g_AttributeTable) && name.EqualsASCII(elem->name))
-    return elem->attribute;
-  return XFA_Attribute::Unknown;
+  if (elem != std::end(g_AttributeTable) && name.EqualsASCII(elem->name)) {
+    XFA_ATTRIBUTEINFO result;
+    result.attribute = elem->attribute;
+    result.eValueType = elem->script_type;
+    return result;
+  }
+  return {};
 }
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {

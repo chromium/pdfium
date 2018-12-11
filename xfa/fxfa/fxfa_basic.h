@@ -105,7 +105,7 @@ enum class XFA_AttributeValue : uint16_t {
 enum class XFA_Attribute : int16_t {
   Unknown = -1,
 #undef ATTR____
-#define ATTR____(a, b, c) c,
+#define ATTR____(a, b, c, d) c,
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 };

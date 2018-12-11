@@ -7,19 +7,33 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(XFABasicDataTest, GetAttributeByName) {
-  EXPECT_EQ(XFA_Attribute::Unknown, XFA_GetAttributeByName(L""));
-  EXPECT_EQ(XFA_Attribute::Unknown, XFA_GetAttributeByName(L"nonesuch"));
-  EXPECT_EQ(XFA_Attribute::H, XFA_GetAttributeByName(L"h"));
-  EXPECT_EQ(XFA_Attribute::Short, XFA_GetAttributeByName(L"short"));
-  EXPECT_EQ(XFA_Attribute::DecipherOnly,
-            XFA_GetAttributeByName(L"decipherOnly"));
+  Optional<XFA_ATTRIBUTEINFO> result = XFA_GetAttributeByName(L"");
+  EXPECT_FALSE(result.has_value());
+
+  result = XFA_GetAttributeByName(L"nonesuch");
+  EXPECT_FALSE(result.has_value());
+
+  result = XFA_GetAttributeByName(L"h");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_Attribute::H, result.value().attribute);
+
+  result = XFA_GetAttributeByName(L"short");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_Attribute::Short, result.value().attribute);
+
+  result = XFA_GetAttributeByName(L"decipherOnly");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_Attribute::DecipherOnly, result.value().attribute);
 }
 
 TEST(XFABasicDataTest, GetAttributeValueByName) {
-  EXPECT_FALSE(XFA_GetAttributeValueByName(L"").has_value());
-  EXPECT_FALSE(XFA_GetAttributeValueByName(L"nonesuch").has_value());
+  Optional<XFA_AttributeValue> result = XFA_GetAttributeValueByName(L"");
+  EXPECT_FALSE(result.has_value());
 
-  Optional<XFA_AttributeValue> result = XFA_GetAttributeValueByName(L"*");
+  result = XFA_GetAttributeValueByName(L"nonesuch");
+  EXPECT_FALSE(result.has_value());
+
+  result = XFA_GetAttributeValueByName(L"*");
   ASSERT_TRUE(result.has_value());
   EXPECT_EQ(XFA_AttributeValue::Asterisk, result.value());
 

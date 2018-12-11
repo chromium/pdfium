@@ -9,7 +9,7 @@
 
 TEST(FXFABasic, AttrHashMatchesString) {
 #undef ATTR____
-#define ATTR____(a, b, c) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
+#define ATTR____(a, b, c, d) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 }
@@ -17,8 +17,8 @@ TEST(FXFABasic, AttrHashMatchesString) {
 TEST(FXFABasic, AttrHashOrder) {
   uint32_t so_far = 0;
 #undef ATTR____
-#define ATTR____(a, b, c) \
-  EXPECT_LT(so_far, a);   \
+#define ATTR____(a, b, c, d) \
+  EXPECT_LT(so_far, a);      \
   so_far = a;
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____

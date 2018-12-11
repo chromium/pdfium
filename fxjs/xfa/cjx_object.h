@@ -279,6 +279,11 @@ typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
                                                    bool bSetting,
                                                    XFA_Attribute eAttribute);
 
+struct XFA_ATTRIBUTEINFO {
+  XFA_Attribute attribute;
+  XFA_ScriptType eValueType;
+};
+
 struct XFA_SCRIPTATTRIBUTEINFO {
   XFA_Attribute attribute;
   XFA_ScriptType eValueType;

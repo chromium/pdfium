@@ -255,12 +255,11 @@ void CJX_Object::SetMapModuleString(void* pKey, const WideStringView& wsValue) {
 void CJX_Object::SetAttribute(const WideStringView& wsAttr,
                               const WideStringView& wsValue,
                               bool bNotify) {
-  XFA_Attribute attr = XFA_GetAttributeByName(wsValue);
-  if (attr != XFA_Attribute::Unknown) {
-    SetAttribute(attr, wsValue, bNotify);
+  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsValue);
+  if (!attr.has_value()) {
+    SetAttribute(attr.value().attribute, wsValue, bNotify);
     return;
   }
-
   void* pKey = GetMapKey_Custom(wsAttr);
   SetMapModuleString(pKey, wsValue);
 }
@@ -313,9 +312,9 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
 
 Optional<WideString> CJX_Object::TryAttribute(const WideStringView& wsAttr,
                                               bool bUseDefault) {
-  XFA_Attribute attr = XFA_GetAttributeByName(wsAttr);
-  if (attr != XFA_Attribute::Unknown)
-    return TryAttribute(attr, bUseDefault);
+  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
+  if (attr.has_value())
+    return TryAttribute(attr.value().attribute, bUseDefault);
 
   void* pKey = GetMapKey_Custom(wsAttr);
   WideStringView wsValueC;

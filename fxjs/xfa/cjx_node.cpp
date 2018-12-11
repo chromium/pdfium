@@ -227,8 +227,9 @@ CJS_Result CJX_Node::isPropertySpecified(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString expression = runtime->ToWideString(params[0]);
-  XFA_Attribute attr = XFA_GetAttributeByName(expression.AsStringView());
-  if (attr != XFA_Attribute::Unknown && HasAttribute(attr))
+  Optional<XFA_ATTRIBUTEINFO> attr =
+      XFA_GetAttributeByName(expression.AsStringView());
+  if (attr.has_value() && HasAttribute(attr.value().attribute))
     return CJS_Result::Success(runtime->NewBoolean(true));
 
   bool bParent = params.size() < 2 || runtime->ToBoolean(params[1]);
@@ -238,7 +239,7 @@ CJS_Result CJX_Node::isPropertySpecified(
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.
     auto* jsnode = GetXFANode()->GetParent()->JSObject();
-    bHas = jsnode->HasAttribute(attr) ||
+    bHas = jsnode->HasAttribute(attr.value().attribute) ||
            !!jsnode->GetOrCreateProperty<CXFA_Node>(iIndex, eType);
   }
   return CJS_Result::Success(runtime->NewBoolean(bHas));
