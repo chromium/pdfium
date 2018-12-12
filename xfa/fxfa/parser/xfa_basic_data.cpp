@@ -542,14 +542,12 @@ static_assert(static_cast<int>(XFA_Element::Model) == 319, "319");
 static_assert(static_cast<int>(XFA_Element::Placeholder4) == 320, "320");
 
 struct ElementAttributeRecord {
-  uint32_t uHash;  // Hashed as wide string.
   XFA_Attribute attribute;
-  XFA_ScriptType eValueType;
   XFA_ATTRIBUTE_CALLBACK callback;
 };
 
 #undef ATTR
-#define ATTR(a, b, c, d, e) a, d, e, reinterpret_cast<XFA_ATTRIBUTE_CALLBACK>(c)
+#define ATTR(a, b, c, d, e) d, reinterpret_cast<XFA_ATTRIBUTE_CALLBACK>(c)
 
 const ElementAttributeRecord g_ElementAttributeTable[] = {
     /* ps */
@@ -6630,10 +6628,10 @@ Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
 Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     WideStringView wsAttributeName) {
-  if (wsAttributeName.IsEmpty())
+  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttributeName);
+  if (!attr.has_value())
     return {};
 
-  uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
   while (eElement != XFA_Element::Unknown) {
     const ScriptIndexRecord* scriptIndex =
         &g_ScriptIndexTable[static_cast<size_t>(eElement)];
@@ -6641,10 +6639,10 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     size_t iEnd = iStart + scriptIndex->wAttributeCount;
     for (size_t iter = iStart; iter < iEnd; ++iter) {
       const ElementAttributeRecord* pInfo = &g_ElementAttributeTable[iter];
-      if (uHash == pInfo->uHash) {
+      if (attr.value().attribute == pInfo->attribute) {
         XFA_SCRIPTATTRIBUTEINFO result;
-        result.attribute = pInfo->attribute;
-        result.eValueType = pInfo->eValueType;
+        result.attribute = attr.value().attribute;
+        result.eValueType = attr.value().eValueType;
         result.callback = pInfo->callback;
         return result;
       }
