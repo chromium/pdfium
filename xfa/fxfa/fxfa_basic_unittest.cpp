@@ -7,59 +7,40 @@
 #include "core/fxcrt/bytestring.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(FXFABasic, AttrHashMatchesString) {
+namespace {
+
+void HashTestCase(uint32_t hash, const char* str, uint32_t* so_far) {
+  if (hash != 0xffffffffu) {
+    EXPECT_EQ(hash, FX_HashCode_GetAsIfW(str, false)) << str;
+    EXPECT_LT(*so_far, hash) << hash;
+  } else {
+    EXPECT_NE(hash, FX_HashCode_GetAsIfW(str, false)) << str;
+  }
+  *so_far = hash;
+}
+
+}  // namespace
+
+TEST(FXFABasic, AttrHashTest) {
+  uint32_t so_far = 0;
 #undef ATTR____
-#define ATTR____(a, b, c, d) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
+#define ATTR____(a, b, c, d) HashTestCase(a, b, &so_far);
 #include "xfa/fxfa/parser/attributes.inc"
 #undef ATTR____
 }
 
-TEST(FXFABasic, AttrHashOrder) {
+TEST(FXFABasic, ValueHashTest) {
   uint32_t so_far = 0;
-#undef ATTR____
-#define ATTR____(a, b, c, d) \
-  EXPECT_LT(so_far, a);      \
-  so_far = a;
-#include "xfa/fxfa/parser/attributes.inc"
-#undef ATTR____
-}
-
-TEST(FXFABasic, ValueHashMatchesString) {
 #undef VALUE____
-#define VALUE____(a, b, c) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
+#define VALUE____(a, b, c) HashTestCase(a, b, &so_far);
 #include "xfa/fxfa/parser/attribute_values.inc"
 #undef VALUE____
 }
 
-TEST(FXFABasic, ValueHashOrder) {
-  uint32_t so_far = 0;
-#undef VALUE____
-#define VALUE____(a, b, c) \
-  EXPECT_LT(so_far, a);    \
-  so_far = a;
-#include "xfa/fxfa/parser/attribute_values.inc"
-#undef VALUE____
-}
-
-TEST(FXFABasic, ElementHashMatchesString) {
-#undef ELEM____
-#undef ELEM_HIDDEN____
-#define ELEM____(a, b, c, d) EXPECT_EQ(a, FX_HashCode_GetAsIfW(b, false));
-#define ELEM_HIDDEN____(a, b)
-#include "xfa/fxfa/parser/elements.inc"
-#undef ELEM____
-#undef ELEM_HIDDEN____
-}
-
-TEST(FXFABasic, ElementHashOrder) {
+TEST(FXFABasic, ElementHashTest) {
   uint32_t so_far = 0;
 #undef ELEM____
-#undef ELEM_HIDDEN____
-#define ELEM____(a, b, c, d) \
-  EXPECT_LT(so_far, a);      \
-  so_far = a;
-#define ELEM_HIDDEN____(a, b)
+#define ELEM____(a, b, c, d) HashTestCase(a, b, &so_far);
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
-#undef ELEM_HIDDEN____
 }

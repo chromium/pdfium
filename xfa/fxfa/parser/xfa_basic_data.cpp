@@ -160,12 +160,9 @@ struct ElementRecord {
 
 const ElementRecord g_ElementTable[] = {
 #undef ELEM____
-#undef ELEM_HIDDEN____
 #define ELEM____(a, b, c, d) {a, XFA_Element::c},
-#define ELEM_HIDDEN____(a, b)
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
-#undef ELEM_HIDDEN____
 };
 
 struct AttributeRecord {
@@ -197,12 +194,9 @@ const AttributeValueRecord g_AttributeValueTable[] = {
 
 const XFA_Element g_XFAScriptParents[] = {
 #undef ELEM____
-#undef ELEM_HIDDEN____
 #define ELEM____(a, b, c, d) XFA_Element::d,
-#define ELEM_HIDDEN____(a, b) XFA_Element::b,
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
-#undef ELEM_HIDDEN____
 };
 
 struct ElementAttributeRecord {

@@ -113,12 +113,9 @@ enum class XFA_Attribute : int16_t {
 enum class XFA_Element : int16_t {
   Unknown = -1,
 #undef ELEM____
-#undef ELEM_HIDDEN____
 #define ELEM____(a, b, c, d) c,
-#define ELEM_HIDDEN____(a, b) a,
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
-#undef ELEM_HIDDEN____
 };
 
 enum class XFA_AttributeType : uint8_t {
