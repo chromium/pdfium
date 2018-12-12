@@ -156,11 +156,13 @@ namespace {
 struct ElementRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Element element;
+  XFA_Element parent;
+  const char* name;
 };
 
 const ElementRecord g_ElementTable[] = {
 #undef ELEM____
-#define ELEM____(a, b, c, d) {a, XFA_Element::c},
+#define ELEM____(a, b, c, d) {a, XFA_Element::c, XFA_Element::d, b},
 #include "xfa/fxfa/parser/elements.inc"
 #undef ELEM____
 };
@@ -192,13 +194,6 @@ const AttributeValueRecord g_AttributeValueTable[] = {
 #undef VALUE____
 };
 
-const XFA_Element g_XFAScriptParents[] = {
-#undef ELEM____
-#define ELEM____(a, b, c, d) XFA_Element::d,
-#include "xfa/fxfa/parser/elements.inc"
-#undef ELEM____
-};
-
 struct ElementAttributeRecord {
   XFA_Element element;
   XFA_Attribute attribute;
@@ -221,7 +216,7 @@ XFA_Element XFA_GetElementByName(const WideString& name) {
   auto* elem = std::lower_bound(
       std::begin(g_ElementTable), std::end(g_ElementTable), hash,
       [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });
-  if (elem != std::end(g_ElementTable) && elem->hash == hash)
+  if (elem != std::end(g_ElementTable) && name.EqualsASCII(elem->name))
     return elem->element;
   return XFA_Element::Unknown;
 }
@@ -286,7 +281,7 @@ Optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
       result.callback = it->callback;
       return result;
     }
-    element = g_XFAScriptParents[static_cast<size_t>(element)];
+    element = g_ElementTable[static_cast<size_t>(element)].parent;
   }
   return {};
 }
