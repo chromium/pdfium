@@ -211,6 +211,10 @@ const ElementAttributeRecord g_ElementAttributeTable[] = {
 
 }  // namespace
 
+ByteStringView XFA_ElementToName(XFA_Element elem) {
+  return g_ElementTable[static_cast<size_t>(elem)].name;
+}
+
 XFA_Element XFA_GetElementByName(const WideString& name) {
   uint32_t hash = FX_HashCode_GetW(name.AsStringView(), false);
   auto* elem = std::lower_bound(
@@ -221,9 +225,8 @@ XFA_Element XFA_GetElementByName(const WideString& name) {
   return XFA_Element::Unknown;
 }
 
-WideString XFA_AttributeToName(XFA_Attribute attr) {
-  return WideString::FromASCII(
-      g_AttributeTable[static_cast<size_t>(attr)].name);
+ByteStringView XFA_AttributeToName(XFA_Attribute attr) {
+  return g_AttributeTable[static_cast<size_t>(attr)].name;
 }
 
 Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(const WideStringView& name) {

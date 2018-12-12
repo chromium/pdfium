@@ -166,7 +166,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       continue;
     }
     WideString wsAttr;
-    SaveAttribute(pNode, attr, XFA_AttributeToName(attr), bSaveXML, wsAttr);
+    SaveAttribute(pNode, attr, WideString::FromASCII(XFA_AttributeToName(attr)),
+                  bSaveXML, wsAttr);
     wsAttrs += wsAttr;
   }
 
@@ -345,7 +346,8 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
       continue;
 
     WideString wsAttr;
-    SaveAttribute(pNode, attr, XFA_AttributeToName(attr), false, wsAttr);
+    SaveAttribute(pNode, attr, WideString::FromASCII(XFA_AttributeToName(attr)),
+                  false, wsAttr);
     wsOutput += wsAttr;
   }
 
