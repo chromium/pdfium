@@ -14,7 +14,7 @@ void DoElementAttrTestCase(XFA_Element elem,
                            XFA_Attribute attr,
                            std::pair<XFA_Element, XFA_Attribute>* so_far) {
   auto curr = std::make_pair(elem, attr);
-  EXPECT_LE(*so_far, curr) << " for " << static_cast<int>(elem) << ", "
+  EXPECT_LT(*so_far, curr) << " for " << static_cast<int>(elem) << ", "
                            << static_cast<int>(attr);
   *so_far = curr;
 }
@@ -61,7 +61,6 @@ TEST(XFABasicDataTest, GetAttributeValueByName) {
   EXPECT_EQ(XFA_AttributeValue::Lowered, result.value());
 }
 
-// TODO(tsepez): convert EXPECT_LE to EXPECT_LT after removing duplicate rows.
 TEST(XFABasicDataText, ElementAttributeOrder) {
   std::pair<XFA_Element, XFA_Attribute> so_far = {};
 #undef ELEM_ATTR____
