@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kRelevantAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRelevantName[] = L"relevant";
-
 }  // namespace
 
 CXFA_Relevant::CXFA_Relevant(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Relevant::CXFA_Relevant(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Relevant,
                 nullptr,
-                kRelevantAttributeData,
-                kRelevantName) {}
+                kRelevantAttributeData) {}
 
-CXFA_Relevant::~CXFA_Relevant() {}
+CXFA_Relevant::~CXFA_Relevant() = default;

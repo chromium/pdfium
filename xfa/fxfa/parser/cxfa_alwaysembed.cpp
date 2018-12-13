@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAlwaysEmbedAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAlwaysEmbedName[] = L"alwaysEmbed";
-
 }  // namespace
 
 CXFA_AlwaysEmbed::CXFA_AlwaysEmbed(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_AlwaysEmbed::CXFA_AlwaysEmbed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::AlwaysEmbed,
                 nullptr,
-                kAlwaysEmbedAttributeData,
-                kAlwaysEmbedName) {}
+                kAlwaysEmbedAttributeData) {}
 
-CXFA_AlwaysEmbed::~CXFA_AlwaysEmbed() {}
+CXFA_AlwaysEmbed::~CXFA_AlwaysEmbed() = default;

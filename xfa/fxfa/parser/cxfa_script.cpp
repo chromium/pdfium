@@ -16,6 +16,7 @@ const CXFA_Node::PropertyData kScriptPropertyData[] = {
     {XFA_Element::CurrentPage, 1, 0},
     {XFA_Element::RunScripts, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kScriptAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
@@ -29,8 +30,6 @@ const CXFA_Node::AttributeData kScriptAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kScriptName[] = L"script";
-
 }  // namespace
 
 CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
@@ -42,10 +41,9 @@ CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Script,
           kScriptPropertyData,
           kScriptAttributeData,
-          kScriptName,
           pdfium::MakeUnique<CJX_Script>(this)) {}
 
-CXFA_Script::~CXFA_Script() {}
+CXFA_Script::~CXFA_Script() = default;
 
 CXFA_Script::Type CXFA_Script::GetContentType() {
   Optional<WideString> cData =

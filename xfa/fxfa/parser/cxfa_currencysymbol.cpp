@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kCurrencySymbolAttributeData[] = {
      (void*)XFA_AttributeValue::Symbol},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCurrencySymbolName[] = L"currencySymbol";
-
 }  // namespace
 
 CXFA_CurrencySymbol::CXFA_CurrencySymbol(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_CurrencySymbol::CXFA_CurrencySymbol(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CurrencySymbol,
                 nullptr,
-                kCurrencySymbolAttributeData,
-                kCurrencySymbolName) {}
+                kCurrencySymbolAttributeData) {}
 
-CXFA_CurrencySymbol::~CXFA_CurrencySymbol() {}
+CXFA_CurrencySymbol::~CXFA_CurrencySymbol() = default;

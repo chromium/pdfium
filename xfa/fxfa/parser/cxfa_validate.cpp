@@ -36,7 +36,6 @@ const CXFA_Node::AttributeData kValidateAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kValidateName[] = L"validate";
 constexpr wchar_t kFormatTest[] = L"formatTest";
 constexpr wchar_t kNullTest[] = L"nullTest";
 constexpr wchar_t kScriptTest[] = L"scriptTest";
@@ -52,10 +51,9 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Validate,
           kValidatePropertyData,
           kValidateAttributeData,
-          kValidateName,
           pdfium::MakeUnique<CJX_Validate>(this)) {}
 
-CXFA_Validate::~CXFA_Validate() {}
+CXFA_Validate::~CXFA_Validate() = default;
 
 XFA_AttributeValue CXFA_Validate::GetFormatTest() {
   return JSObject()->GetEnum(XFA_Attribute::FormatTest);

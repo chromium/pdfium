@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kCompressLogicalStructureAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCompressLogicalStructureName[] = L"compressLogicalStructure";
-
 }  // namespace
 
 CXFA_CompressLogicalStructure::CXFA_CompressLogicalStructure(
@@ -26,7 +24,6 @@ CXFA_CompressLogicalStructure::CXFA_CompressLogicalStructure(
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CompressLogicalStructure,
                 nullptr,
-                kCompressLogicalStructureAttributeData,
-                kCompressLogicalStructureName) {}
+                kCompressLogicalStructureAttributeData) {}
 
-CXFA_CompressLogicalStructure::~CXFA_CompressLogicalStructure() {}
+CXFA_CompressLogicalStructure::~CXFA_CompressLogicalStructure() = default;

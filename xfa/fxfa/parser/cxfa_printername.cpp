@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPrinterNameAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPrinterNameName[] = L"printerName";
-
 }  // namespace
 
 CXFA_PrinterName::CXFA_PrinterName(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_PrinterName::CXFA_PrinterName(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PrinterName,
                 nullptr,
-                kPrinterNameAttributeData,
-                kPrinterNameName) {}
+                kPrinterNameAttributeData) {}
 
-CXFA_PrinterName::~CXFA_PrinterName() {}
+CXFA_PrinterName::~CXFA_PrinterName() = default;

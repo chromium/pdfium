@@ -20,6 +20,7 @@ const CXFA_Node::PropertyData kRectanglePropertyData[] = {
     {XFA_Element::Corner, 4, 0},
     {XFA_Element::Fill, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kRectangleAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -27,8 +28,6 @@ const CXFA_Node::AttributeData kRectangleAttributeData[] = {
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kRectangleName[] = L"rectangle";
 
 }  // namespace
 
@@ -40,7 +39,6 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
                XFA_Element::Rectangle,
                kRectanglePropertyData,
                kRectangleAttributeData,
-               kRectangleName,
                pdfium::MakeUnique<CJX_Rectangle>(this)) {}
 
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
@@ -50,7 +48,6 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                                XFA_Element eType,
                                const PropertyData* properties,
                                const AttributeData* attributes,
-                               const WideStringView& elementName,
                                std::unique_ptr<CJX_Object> js_node)
     : CXFA_Box(pDoc,
                ePacket,
@@ -59,7 +56,6 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                eType,
                properties,
                attributes,
-               elementName,
                std::move(js_node)) {}
 
 CXFA_Rectangle::~CXFA_Rectangle() {}

@@ -17,8 +17,6 @@ const CXFA_Node::AttributeData kVariablesAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kVariablesName[] = L"variables";
-
 }  // namespace
 
 CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
@@ -29,7 +27,6 @@ CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Variables,
                 nullptr,
                 kVariablesAttributeData,
-                kVariablesName,
                 pdfium::MakeUnique<CJX_Variables>(this)) {}
 
-CXFA_Variables::~CXFA_Variables() {}
+CXFA_Variables::~CXFA_Variables() = default;

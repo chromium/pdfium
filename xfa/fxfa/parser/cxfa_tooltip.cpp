@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kToolTipAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kToolTipName[] = L"toolTip";
-
 }  // namespace
 
 CXFA_ToolTip::CXFA_ToolTip(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_ToolTip::CXFA_ToolTip(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ToolTip,
                 nullptr,
                 kToolTipAttributeData,
-                kToolTipName,
                 pdfium::MakeUnique<CJX_ToolTip>(this)) {}
 
-CXFA_ToolTip::~CXFA_ToolTip() {}
+CXFA_ToolTip::~CXFA_ToolTip() = default;

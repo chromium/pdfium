@@ -17,7 +17,6 @@ CXFA_TreeList::CXFA_TreeList(CXFA_Document* pDocument)
     : CXFA_List(pDocument,
                 XFA_ObjectType::TreeList,
                 XFA_Element::TreeList,
-                WideStringView(L"treeList"),
                 pdfium::MakeUnique<CJX_TreeList>(this)) {}
 
 CXFA_TreeList::~CXFA_TreeList() = default;

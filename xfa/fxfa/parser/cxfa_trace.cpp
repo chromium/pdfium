@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kTraceAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kTraceName[] = L"trace";
-
 }  // namespace
 
 CXFA_Trace::CXFA_Trace(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Trace::CXFA_Trace(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Trace,
                 nullptr,
-                kTraceAttributeData,
-                kTraceName) {}
+                kTraceAttributeData) {}
 
-CXFA_Trace::~CXFA_Trace() {}
+CXFA_Trace::~CXFA_Trace() = default;

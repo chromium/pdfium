@@ -14,8 +14,6 @@ const CXFA_Node::AttributeData kAgentAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAgentName[] = L"agent";
-
 }  // namespace
 
 CXFA_Agent::CXFA_Agent(CXFA_Document* doc, XFA_PacketType packet)
@@ -25,7 +23,6 @@ CXFA_Agent::CXFA_Agent(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Agent,
                 nullptr,
-                kAgentAttributeData,
-                kAgentName) {}
+                kAgentAttributeData) {}
 
-CXFA_Agent::~CXFA_Agent() {}
+CXFA_Agent::~CXFA_Agent() = default;

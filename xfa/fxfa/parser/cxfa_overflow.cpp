@@ -20,8 +20,6 @@ const CXFA_Node::AttributeData kOverflowAttributeData[] = {
     {XFA_Attribute::Leader, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kOverflowName[] = L"overflow";
-
 }  // namespace
 
 CXFA_Overflow::CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet)
@@ -32,7 +30,6 @@ CXFA_Overflow::CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Overflow,
                 nullptr,
                 kOverflowAttributeData,
-                kOverflowName,
                 pdfium::MakeUnique<CJX_Overflow>(this)) {}
 
-CXFA_Overflow::~CXFA_Overflow() {}
+CXFA_Overflow::~CXFA_Overflow() = default;

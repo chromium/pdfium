@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kConnectStringAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kConnectStringName[] = L"connectString";
-
 }  // namespace
 
 CXFA_ConnectString::CXFA_ConnectString(CXFA_Document* doc,
@@ -31,7 +29,6 @@ CXFA_ConnectString::CXFA_ConnectString(CXFA_Document* doc,
                 XFA_Element::ConnectString,
                 nullptr,
                 kConnectStringAttributeData,
-                kConnectStringName,
                 pdfium::MakeUnique<CJX_ConnectString>(this)) {}
 
-CXFA_ConnectString::~CXFA_ConnectString() {}
+CXFA_ConnectString::~CXFA_ConnectString() = default;

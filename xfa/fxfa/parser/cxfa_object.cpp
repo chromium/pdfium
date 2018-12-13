@@ -17,17 +17,17 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/cxfa_treelist.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
                          XFA_Element elementType,
-                         const WideStringView& elementName,
                          std::unique_ptr<CJX_Object> jsObject)
     : m_pDocument(pDocument),
       m_objectType(objectType),
       m_elementType(elementType),
-      m_elementNameHash(FX_HashCode_GetW(elementName, false)),
-      m_elementName(elementName),
+      m_elementName(XFA_ElementToName(elementType)),
+      m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName, false)),
       m_pJSObject(std::move(jsObject)) {}
 
 CXFA_Object::~CXFA_Object() = default;

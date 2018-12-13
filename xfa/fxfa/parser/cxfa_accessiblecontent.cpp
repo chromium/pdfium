@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAccessibleContentAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAccessibleContentName[] = L"accessibleContent";
-
 }  // namespace
 
 CXFA_AccessibleContent::CXFA_AccessibleContent(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_AccessibleContent::CXFA_AccessibleContent(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AccessibleContent,
                 nullptr,
-                kAccessibleContentAttributeData,
-                kAccessibleContentName) {}
+                kAccessibleContentAttributeData) {}
 
-CXFA_AccessibleContent::~CXFA_AccessibleContent() {}
+CXFA_AccessibleContent::~CXFA_AccessibleContent() = default;

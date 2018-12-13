@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kLayoutAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kLayoutName[] = L"layout";
-
 }  // namespace
 
 CXFA_Layout::CXFA_Layout(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Layout::CXFA_Layout(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Layout,
                 nullptr,
-                kLayoutAttributeData,
-                kLayoutName) {}
+                kLayoutAttributeData) {}
 
-CXFA_Layout::~CXFA_Layout() {}
+CXFA_Layout::~CXFA_Layout() = default;

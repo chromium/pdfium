@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kIfEmptyAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kIfEmptyName[] = L"ifEmpty";
-
 }  // namespace
 
 CXFA_IfEmpty::CXFA_IfEmpty(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_IfEmpty::CXFA_IfEmpty(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::IfEmpty,
                 nullptr,
-                kIfEmptyAttributeData,
-                kIfEmptyName) {}
+                kIfEmptyAttributeData) {}
 
-CXFA_IfEmpty::~CXFA_IfEmpty() {}
+CXFA_IfEmpty::~CXFA_IfEmpty() = default;

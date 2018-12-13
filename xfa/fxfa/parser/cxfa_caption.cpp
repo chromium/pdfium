@@ -19,6 +19,7 @@ const CXFA_Node::PropertyData kCaptionPropertyData[] = {
     {XFA_Element::Margin, 1, 0}, {XFA_Element::Para, 1, 0},
     {XFA_Element::Font, 1, 0},   {XFA_Element::Value, 1, 0},
     {XFA_Element::Extras, 1, 0}, {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kCaptionAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -30,8 +31,6 @@ const CXFA_Node::AttributeData kCaptionAttributeData[] = {
      (void*)XFA_AttributeValue::Left},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCaptionName[] = L"caption";
-
 }  // namespace
 
 CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
@@ -42,10 +41,9 @@ CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Caption,
                 kCaptionPropertyData,
                 kCaptionAttributeData,
-                kCaptionName,
                 pdfium::MakeUnique<CJX_Caption>(this)) {}
 
-CXFA_Caption::~CXFA_Caption() {}
+CXFA_Caption::~CXFA_Caption() = default;
 
 bool CXFA_Caption::IsVisible() {
   return JSObject()

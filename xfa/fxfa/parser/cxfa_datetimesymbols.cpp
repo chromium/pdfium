@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_datetimesymbols.h"
 
-namespace {
-
-constexpr wchar_t kDateTimeSymbolsName[] = L"dateTimeSymbols";
-
-}  // namespace
-
 CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                                            XFA_PacketType packet)
     : CXFA_Node(doc,
@@ -20,7 +14,6 @@ CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DateTimeSymbols,
                 nullptr,
-                nullptr,
-                kDateTimeSymbolsName) {}
+                nullptr) {}
 
-CXFA_DateTimeSymbols::~CXFA_DateTimeSymbols() {}
+CXFA_DateTimeSymbols::~CXFA_DateTimeSymbols() = default;

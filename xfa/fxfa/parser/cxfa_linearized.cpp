@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kLinearizedAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kLinearizedName[] = L"linearized";
-
 }  // namespace
 
 CXFA_Linearized::CXFA_Linearized(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Linearized::CXFA_Linearized(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Linearized,
                 nullptr,
-                kLinearizedAttributeData,
-                kLinearizedName) {}
+                kLinearizedAttributeData) {}
 
-CXFA_Linearized::~CXFA_Linearized() {}
+CXFA_Linearized::~CXFA_Linearized() = default;

@@ -12,8 +12,6 @@ const CXFA_Node::PropertyData kNumberSymbolsPropertyData[] = {
     {XFA_Element::NumberSymbol, 5, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kNumberSymbolsName[] = L"numberSymbols";
-
 }  // namespace
 
 CXFA_NumberSymbols::CXFA_NumberSymbols(CXFA_Document* doc,
@@ -24,7 +22,6 @@ CXFA_NumberSymbols::CXFA_NumberSymbols(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::NumberSymbols,
                 kNumberSymbolsPropertyData,
-                nullptr,
-                kNumberSymbolsName) {}
+                nullptr) {}
 
-CXFA_NumberSymbols::~CXFA_NumberSymbols() {}
+CXFA_NumberSymbols::~CXFA_NumberSymbols() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kBaseAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBaseName[] = L"base";
-
 }  // namespace
 
 CXFA_Base::CXFA_Base(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Base::CXFA_Base(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Base,
                 nullptr,
-                kBaseAttributeData,
-                kBaseName) {}
+                kBaseAttributeData) {}
 
-CXFA_Base::~CXFA_Base() {}
+CXFA_Base::~CXFA_Base() = default;

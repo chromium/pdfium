@@ -12,8 +12,6 @@ const CXFA_Node::AttributeData kDSigDataAttributeData[] = {
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDSigDataName[] = L"dSigData";
-
 }  // namespace
 
 CXFA_DSigData::CXFA_DSigData(CXFA_Document* doc, XFA_PacketType packet)
@@ -23,7 +21,6 @@ CXFA_DSigData::CXFA_DSigData(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::DSigData,
                 nullptr,
-                kDSigDataAttributeData,
-                kDSigDataName) {}
+                kDSigDataAttributeData) {}
 
-CXFA_DSigData::~CXFA_DSigData() {}
+CXFA_DSigData::~CXFA_DSigData() = default;

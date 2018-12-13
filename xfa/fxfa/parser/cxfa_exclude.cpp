@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kExcludeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kExcludeName[] = L"exclude";
-
 }  // namespace
 
 CXFA_Exclude::CXFA_Exclude(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Exclude::CXFA_Exclude(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Exclude,
                 nullptr,
-                kExcludeAttributeData,
-                kExcludeName) {}
+                kExcludeAttributeData) {}
 
-CXFA_Exclude::~CXFA_Exclude() {}
+CXFA_Exclude::~CXFA_Exclude() = default;

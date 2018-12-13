@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kInteractiveAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kInteractiveName[] = L"interactive";
-
 }  // namespace
 
 CXFA_Interactive::CXFA_Interactive(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Interactive::CXFA_Interactive(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Interactive,
                 nullptr,
-                kInteractiveAttributeData,
-                kInteractiveName) {}
+                kInteractiveAttributeData) {}
 
 CXFA_Interactive::~CXFA_Interactive() {}

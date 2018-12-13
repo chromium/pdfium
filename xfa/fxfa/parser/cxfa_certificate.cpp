@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kCertificateAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCertificateName[] = L"certificate";
-
 }  // namespace
 
 CXFA_Certificate::CXFA_Certificate(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Certificate::CXFA_Certificate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Certificate,
                 nullptr,
                 kCertificateAttributeData,
-                kCertificateName,
                 pdfium::MakeUnique<CJX_Certificate>(this)) {}
 
-CXFA_Certificate::~CXFA_Certificate() {}
+CXFA_Certificate::~CXFA_Certificate() = default;

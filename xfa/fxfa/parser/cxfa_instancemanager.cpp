@@ -14,11 +14,10 @@ namespace {
 const CXFA_Node::PropertyData kInstanceManagerPropertyData[] = {
     {XFA_Element::Occur, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kInstanceManagerAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kInstanceManagerName[] = L"instanceManager";
 
 }  // namespace
 
@@ -31,7 +30,6 @@ CXFA_InstanceManager::CXFA_InstanceManager(CXFA_Document* doc,
                 XFA_Element::InstanceManager,
                 kInstanceManagerPropertyData,
                 kInstanceManagerAttributeData,
-                kInstanceManagerName,
                 pdfium::MakeUnique<CJX_InstanceManager>(this)) {}
 
-CXFA_InstanceManager::~CXFA_InstanceManager() {}
+CXFA_InstanceManager::~CXFA_InstanceManager() = default;

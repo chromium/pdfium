@@ -8,16 +8,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kaDBE_JSConsoleAttributeData[] = {
+const CXFA_Node::AttributeData kADBE_JSConsoleAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kaDBE_JSConsoleName[] = L"ADBE_JSConsole";
-
 }  // namespace
 
-CXFA_aDBE_JSConsole::CXFA_aDBE_JSConsole(CXFA_Document* doc,
+CXFA_ADBE_JSConsole::CXFA_ADBE_JSConsole(CXFA_Document* doc,
                                          XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -25,7 +23,6 @@ CXFA_aDBE_JSConsole::CXFA_aDBE_JSConsole(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ADBE_JSConsole,
                 nullptr,
-                kaDBE_JSConsoleAttributeData,
-                kaDBE_JSConsoleName) {}
+                kADBE_JSConsoleAttributeData) {}
 
-CXFA_aDBE_JSConsole::~CXFA_aDBE_JSConsole() {}
+CXFA_ADBE_JSConsole::~CXFA_ADBE_JSConsole() = default;

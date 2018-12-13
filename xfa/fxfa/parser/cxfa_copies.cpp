@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kCopiesAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCopiesName[] = L"copies";
-
 }  // namespace
 
 CXFA_Copies::CXFA_Copies(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Copies::CXFA_Copies(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Copies,
                 nullptr,
-                kCopiesAttributeData,
-                kCopiesName) {}
+                kCopiesAttributeData) {}
 
-CXFA_Copies::~CXFA_Copies() {}
+CXFA_Copies::~CXFA_Copies() = default;

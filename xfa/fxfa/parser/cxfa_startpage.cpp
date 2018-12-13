@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kStartPageAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kStartPageName[] = L"startPage";
-
 }  // namespace
 
 CXFA_StartPage::CXFA_StartPage(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_StartPage::CXFA_StartPage(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::StartPage,
                 nullptr,
-                kStartPageAttributeData,
-                kStartPageName) {}
+                kStartPageAttributeData) {}
 
-CXFA_StartPage::~CXFA_StartPage() {}
+CXFA_StartPage::~CXFA_StartPage() = default;

@@ -19,7 +19,6 @@ const CXFA_Node::AttributeData kBookendAttributeData[] = {
     {XFA_Attribute::Leader, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBookendName[] = L"bookend";
 
 }  // namespace
 
@@ -31,7 +30,6 @@ CXFA_Bookend::CXFA_Bookend(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Bookend,
                 nullptr,
                 kBookendAttributeData,
-                kBookendName,
                 pdfium::MakeUnique<CJX_Bookend>(this)) {}
 
-CXFA_Bookend::~CXFA_Bookend() {}
+CXFA_Bookend::~CXFA_Bookend() = default;

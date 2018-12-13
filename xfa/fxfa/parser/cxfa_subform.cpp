@@ -21,6 +21,7 @@ const CXFA_Node::PropertyData kSubformPropertyData[] = {
     {XFA_Element::Bookend, 1, 0}, {XFA_Element::Calculate, 1, 0},
     {XFA_Element::Extras, 1, 0},  {XFA_Element::Variables, 1, 0},
     {XFA_Element::Occur, 1, 0},   {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kSubformAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -59,8 +60,6 @@ const CXFA_Node::AttributeData kSubformAttributeData[] = {
      (void*)XFA_AttributeValue::Name},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSubformName[] = L"subform";
-
 }  // namespace
 
 CXFA_Subform::CXFA_Subform(CXFA_Document* doc, XFA_PacketType packet)
@@ -71,7 +70,6 @@ CXFA_Subform::CXFA_Subform(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Subform,
                 kSubformPropertyData,
                 kSubformAttributeData,
-                kSubformName,
                 pdfium::MakeUnique<CJX_Subform>(this)) {}
 
-CXFA_Subform::~CXFA_Subform() {}
+CXFA_Subform::~CXFA_Subform() = default;

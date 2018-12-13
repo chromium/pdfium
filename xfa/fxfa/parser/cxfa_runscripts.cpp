@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kRunScriptsAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRunScriptsName[] = L"runScripts";
-
 }  // namespace
 
 CXFA_RunScripts::CXFA_RunScripts(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_RunScripts::CXFA_RunScripts(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::RunScripts,
                 nullptr,
-                kRunScriptsAttributeData,
-                kRunScriptsName) {}
+                kRunScriptsAttributeData) {}
 
-CXFA_RunScripts::~CXFA_RunScripts() {}
+CXFA_RunScripts::~CXFA_RunScripts() = default;

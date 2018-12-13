@@ -16,6 +16,7 @@ const CXFA_Node::PropertyData kImageEditPropertyData[] = {
     {XFA_Element::Border, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kImageEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -23,8 +24,6 @@ const CXFA_Node::AttributeData kImageEditAttributeData[] = {
     {XFA_Attribute::Data, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Link},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kImageEditName[] = L"imageEdit";
 
 }  // namespace
 
@@ -36,10 +35,9 @@ CXFA_ImageEdit::CXFA_ImageEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ImageEdit,
                 kImageEditPropertyData,
                 kImageEditAttributeData,
-                kImageEditName,
                 pdfium::MakeUnique<CJX_ImageEdit>(this)) {}
 
-CXFA_ImageEdit::~CXFA_ImageEdit() {}
+CXFA_ImageEdit::~CXFA_ImageEdit() = default;
 
 XFA_Element CXFA_ImageEdit::GetValueNodeType() const {
   return XFA_Element::Image;

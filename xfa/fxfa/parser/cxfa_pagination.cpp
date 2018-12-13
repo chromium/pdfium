@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPaginationAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPaginationName[] = L"pagination";
-
 }  // namespace
 
 CXFA_Pagination::CXFA_Pagination(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Pagination::CXFA_Pagination(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Pagination,
                 nullptr,
-                kPaginationAttributeData,
-                kPaginationName) {}
+                kPaginationAttributeData) {}
 
-CXFA_Pagination::~CXFA_Pagination() {}
+CXFA_Pagination::~CXFA_Pagination() = default;

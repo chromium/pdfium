@@ -17,6 +17,7 @@ const CXFA_Node::PropertyData kPageAreaPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Occur, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kPageAreaAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
@@ -33,8 +34,6 @@ const CXFA_Node::AttributeData kPageAreaAttributeData[] = {
      (void*)XFA_AttributeValue::Any},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPageAreaName[] = L"pageArea";
-
 }  // namespace
 
 CXFA_PageArea::CXFA_PageArea(CXFA_Document* doc, XFA_PacketType packet)
@@ -45,7 +44,6 @@ CXFA_PageArea::CXFA_PageArea(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PageArea,
                 kPageAreaPropertyData,
                 kPageAreaAttributeData,
-                kPageAreaName,
                 pdfium::MakeUnique<CJX_PageArea>(this)) {}
 
-CXFA_PageArea::~CXFA_PageArea() {}
+CXFA_PageArea::~CXFA_PageArea() = default;

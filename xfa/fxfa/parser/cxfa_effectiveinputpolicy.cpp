@@ -15,8 +15,6 @@ const CXFA_Node::AttributeData kEffectiveInputPolicyAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEffectiveInputPolicyName[] = L"effectiveInputPolicy";
-
 }  // namespace
 
 CXFA_EffectiveInputPolicy::CXFA_EffectiveInputPolicy(CXFA_Document* doc,
@@ -27,7 +25,6 @@ CXFA_EffectiveInputPolicy::CXFA_EffectiveInputPolicy(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveInputPolicy,
                 nullptr,
-                kEffectiveInputPolicyAttributeData,
-                kEffectiveInputPolicyName) {}
+                kEffectiveInputPolicyAttributeData) {}
 
-CXFA_EffectiveInputPolicy::~CXFA_EffectiveInputPolicy() {}
+CXFA_EffectiveInputPolicy::~CXFA_EffectiveInputPolicy() = default;

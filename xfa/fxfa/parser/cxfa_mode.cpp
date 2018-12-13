@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kModeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kModeName[] = L"mode";
-
 }  // namespace
 
 CXFA_Mode::CXFA_Mode(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Mode::CXFA_Mode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Mode,
                 nullptr,
-                kModeAttributeData,
-                kModeName) {}
+                kModeAttributeData) {}
 
-CXFA_Mode::~CXFA_Mode() {}
+CXFA_Mode::~CXFA_Mode() = default;

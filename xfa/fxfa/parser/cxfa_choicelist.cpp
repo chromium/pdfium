@@ -16,6 +16,7 @@ const CXFA_Node::PropertyData kChoiceListPropertyData[] = {
     {XFA_Element::Border, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kChoiceListAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -27,8 +28,6 @@ const CXFA_Node::AttributeData kChoiceListAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kChoiceListName[] = L"choiceList";
-
 }  // namespace
 
 CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
@@ -39,10 +38,9 @@ CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ChoiceList,
                 kChoiceListPropertyData,
                 kChoiceListAttributeData,
-                kChoiceListName,
                 pdfium::MakeUnique<CJX_ChoiceList>(this)) {}
 
-CXFA_ChoiceList::~CXFA_ChoiceList() {}
+CXFA_ChoiceList::~CXFA_ChoiceList() = default;
 
 XFA_Element CXFA_ChoiceList::GetValueNodeType() const {
   return JSObject()->GetEnum(XFA_Attribute::Open) ==

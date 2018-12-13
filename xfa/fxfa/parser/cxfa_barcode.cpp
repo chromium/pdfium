@@ -40,8 +40,6 @@ const CXFA_Node::AttributeData kBarcodeAttributeData[] = {
     {XFA_Attribute::EndChar, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBarcodeName[] = L"barcode";
-
 }  // namespace
 
 CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
@@ -52,10 +50,9 @@ CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Barcode,
                 nullptr,
                 kBarcodeAttributeData,
-                kBarcodeName,
                 pdfium::MakeUnique<CJX_Barcode>(this)) {}
 
-CXFA_Barcode::~CXFA_Barcode() {}
+CXFA_Barcode::~CXFA_Barcode() = default;
 
 XFA_FFWidgetType CXFA_Barcode::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kBarcode;

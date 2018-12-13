@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kEnforceAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEnforceName[] = L"enforce";
-
 }  // namespace
 
 CXFA_Enforce::CXFA_Enforce(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Enforce::CXFA_Enforce(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Enforce,
                 nullptr,
-                kEnforceAttributeData,
-                kEnforceName) {}
+                kEnforceAttributeData) {}
 
-CXFA_Enforce::~CXFA_Enforce() {}
+CXFA_Enforce::~CXFA_Enforce() = default;

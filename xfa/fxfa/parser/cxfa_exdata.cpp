@@ -24,7 +24,6 @@ const CXFA_Node::AttributeData kExDataAttributeData[] = {
     {XFA_Attribute::Href, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kExDataName[] = L"exData";
 
 }  // namespace
 
@@ -36,10 +35,9 @@ CXFA_ExData::CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ExData,
                 nullptr,
                 kExDataAttributeData,
-                kExDataName,
                 pdfium::MakeUnique<CJX_ExData>(this)) {}
 
-CXFA_ExData::~CXFA_ExData() {}
+CXFA_ExData::~CXFA_ExData() = default;
 
 void CXFA_ExData::SetContentType(const WideString& wsContentType) {
   JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false, false);

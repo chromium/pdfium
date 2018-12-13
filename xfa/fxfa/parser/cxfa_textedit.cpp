@@ -17,6 +17,7 @@ const CXFA_Node::PropertyData kTextEditPropertyData[] = {
     {XFA_Element::Comb, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kTextEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::VScrollPolicy, XFA_AttributeType::Enum,
@@ -29,8 +30,6 @@ const CXFA_Node::AttributeData kTextEditAttributeData[] = {
      (void*)XFA_AttributeValue::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kTextEditName[] = L"textEdit";
-
 }  // namespace
 
 CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
@@ -41,10 +40,9 @@ CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::TextEdit,
                 kTextEditPropertyData,
                 kTextEditAttributeData,
-                kTextEditName,
                 pdfium::MakeUnique<CJX_TextEdit>(this)) {}
 
-CXFA_TextEdit::~CXFA_TextEdit() {}
+CXFA_TextEdit::~CXFA_TextEdit() = default;
 
 XFA_FFWidgetType CXFA_TextEdit::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kTextEdit;

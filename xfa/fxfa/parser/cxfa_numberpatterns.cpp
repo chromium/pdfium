@@ -12,8 +12,6 @@ const CXFA_Node::PropertyData kNumberPatternsPropertyData[] = {
     {XFA_Element::NumberPattern, 4, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kNumberPatternsName[] = L"numberPatterns";
-
 }  // namespace
 
 CXFA_NumberPatterns::CXFA_NumberPatterns(CXFA_Document* doc,
@@ -24,7 +22,6 @@ CXFA_NumberPatterns::CXFA_NumberPatterns(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::NumberPatterns,
                 kNumberPatternsPropertyData,
-                nullptr,
-                kNumberPatternsName) {}
+                nullptr) {}
 
-CXFA_NumberPatterns::~CXFA_NumberPatterns() {}
+CXFA_NumberPatterns::~CXFA_NumberPatterns() = default;

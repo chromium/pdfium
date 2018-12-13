@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kBindItemsAttributeData[] = {
     {XFA_Attribute::ValueRef, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBindItemsName[] = L"bindItems";
-
 }  // namespace
 
 CXFA_BindItems::CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,10 +28,9 @@ CXFA_BindItems::CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::BindItems,
                 nullptr,
                 kBindItemsAttributeData,
-                kBindItemsName,
                 pdfium::MakeUnique<CJX_BindItems>(this)) {}
 
-CXFA_BindItems::~CXFA_BindItems() {}
+CXFA_BindItems::~CXFA_BindItems() = default;
 
 WideString CXFA_BindItems::GetLabelRef() {
   return JSObject()->GetCData(XFA_Attribute::LabelRef);

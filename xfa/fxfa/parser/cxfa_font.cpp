@@ -17,6 +17,7 @@ const CXFA_Node::PropertyData kFontPropertyData[] = {
     {XFA_Element::Fill, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kFontAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::LineThrough, XFA_AttributeType::Integer, (void*)0},
@@ -49,8 +50,6 @@ const CXFA_Node::AttributeData kFontAttributeData[] = {
      (void*)XFA_AttributeValue::Serif},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kFontName[] = L"font";
-
 }  // namespace
 
 CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
@@ -62,10 +61,9 @@ CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Font,
           kFontPropertyData,
           kFontAttributeData,
-          kFontName,
           pdfium::MakeUnique<CJX_Font>(this)) {}
 
-CXFA_Font::~CXFA_Font() {}
+CXFA_Font::~CXFA_Font() = default;
 
 float CXFA_Font::GetBaselineShift() const {
   return JSObject()

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kProducerAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kProducerName[] = L"producer";
-
 }  // namespace
 
 CXFA_Producer::CXFA_Producer(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Producer::CXFA_Producer(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Producer,
                 nullptr,
-                kProducerAttributeData,
-                kProducerName) {}
+                kProducerAttributeData) {}
 
-CXFA_Producer::~CXFA_Producer() {}
+CXFA_Producer::~CXFA_Producer() = default;

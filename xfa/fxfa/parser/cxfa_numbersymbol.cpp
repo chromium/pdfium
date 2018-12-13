@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kNumberSymbolAttributeData[] = {
      (void*)XFA_AttributeValue::Decimal},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kNumberSymbolName[] = L"numberSymbol";
-
 }  // namespace
 
 CXFA_NumberSymbol::CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_NumberSymbol::CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::NumberSymbol,
                 nullptr,
-                kNumberSymbolAttributeData,
-                kNumberSymbolName) {}
+                kNumberSymbolAttributeData) {}
 
-CXFA_NumberSymbol::~CXFA_NumberSymbol() {}
+CXFA_NumberSymbol::~CXFA_NumberSymbol() = default;

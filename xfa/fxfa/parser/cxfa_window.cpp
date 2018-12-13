@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kWindowAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kWindowName[] = L"window";
-
 }  // namespace
 
 CXFA_Window::CXFA_Window(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Window::CXFA_Window(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Window,
                 nullptr,
-                kWindowAttributeData,
-                kWindowName) {}
+                kWindowAttributeData) {}
 
-CXFA_Window::~CXFA_Window() {}
+CXFA_Window::~CXFA_Window() = default;

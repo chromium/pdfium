@@ -29,8 +29,6 @@ const CXFA_Node::AttributeData kRecordSetAttributeData[] = {
      (void*)XFA_AttributeValue::Client},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRecordSetName[] = L"recordSet";
-
 }  // namespace
 
 CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
@@ -41,7 +39,6 @@ CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::RecordSet,
                 nullptr,
                 kRecordSetAttributeData,
-                kRecordSetName,
                 pdfium::MakeUnique<CJX_RecordSet>(this)) {}
 
-CXFA_RecordSet::~CXFA_RecordSet() {}
+CXFA_RecordSet::~CXFA_RecordSet() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAddViewerPreferencesAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAddViewerPreferencesName[] = L"addViewerPreferences";
-
 }  // namespace
 
 CXFA_AddViewerPreferences::CXFA_AddViewerPreferences(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_AddViewerPreferences::CXFA_AddViewerPreferences(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AddViewerPreferences,
                 nullptr,
-                kAddViewerPreferencesAttributeData,
-                kAddViewerPreferencesName) {}
+                kAddViewerPreferencesAttributeData) {}
 
-CXFA_AddViewerPreferences::~CXFA_AddViewerPreferences() {}
+CXFA_AddViewerPreferences::~CXFA_AddViewerPreferences() = default;

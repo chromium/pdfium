@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAdjustDataAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAdjustDataName[] = L"adjustData";
-
 }  // namespace
 
 CXFA_AdjustData::CXFA_AdjustData(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_AdjustData::CXFA_AdjustData(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::AdjustData,
                 nullptr,
-                kAdjustDataAttributeData,
-                kAdjustDataName) {}
+                kAdjustDataAttributeData) {}
 
-CXFA_AdjustData::~CXFA_AdjustData() {}
+CXFA_AdjustData::~CXFA_AdjustData() = default;

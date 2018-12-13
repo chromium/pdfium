@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPickTrayByPDFSizeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPickTrayByPDFSizeName[] = L"pickTrayByPDFSize";
-
 }  // namespace
 
 CXFA_PickTrayByPDFSize::CXFA_PickTrayByPDFSize(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_PickTrayByPDFSize::CXFA_PickTrayByPDFSize(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PickTrayByPDFSize,
                 nullptr,
-                kPickTrayByPDFSizeAttributeData,
-                kPickTrayByPDFSizeName) {}
+                kPickTrayByPDFSizeAttributeData) {}
 
-CXFA_PickTrayByPDFSize::~CXFA_PickTrayByPDFSize() {}
+CXFA_PickTrayByPDFSize::~CXFA_PickTrayByPDFSize() = default;

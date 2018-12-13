@@ -8,16 +8,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kaDBE_JSDebuggerAttributeData[] = {
+const CXFA_Node::AttributeData kADBE_JSDebuggerAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kaDBE_JSDebuggerName[] = L"ADBE_JSDebugger";
-
 }  // namespace
 
-CXFA_aDBE_JSDebugger::CXFA_aDBE_JSDebugger(CXFA_Document* doc,
+CXFA_ADBE_JSDebugger::CXFA_ADBE_JSDebugger(CXFA_Document* doc,
                                            XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -25,7 +23,6 @@ CXFA_aDBE_JSDebugger::CXFA_aDBE_JSDebugger(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ADBE_JSDebugger,
                 nullptr,
-                kaDBE_JSDebuggerAttributeData,
-                kaDBE_JSDebuggerName) {}
+                kADBE_JSDebuggerAttributeData) {}
 
-CXFA_aDBE_JSDebugger::~CXFA_aDBE_JSDebugger() {}
+CXFA_ADBE_JSDebugger::~CXFA_ADBE_JSDebugger() = default;

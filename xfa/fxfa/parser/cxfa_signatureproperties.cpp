@@ -16,8 +16,6 @@ const CXFA_Node::AttributeData kSignaturePropertiesAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSignaturePropertiesName[] = L"signatureProperties";
-
 }  // namespace
 
 CXFA_SignatureProperties::CXFA_SignatureProperties(CXFA_Document* doc,
@@ -29,7 +27,6 @@ CXFA_SignatureProperties::CXFA_SignatureProperties(CXFA_Document* doc,
                 XFA_Element::SignatureProperties,
                 nullptr,
                 kSignaturePropertiesAttributeData,
-                kSignaturePropertiesName,
                 pdfium::MakeUnique<CJX_SignatureProperties>(this)) {}
 
-CXFA_SignatureProperties::~CXFA_SignatureProperties() {}
+CXFA_SignatureProperties::~CXFA_SignatureProperties() = default;

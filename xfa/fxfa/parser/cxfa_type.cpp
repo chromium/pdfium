@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kTypeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kTypeName[] = L"type";
-
 }  // namespace
 
 CXFA_Type::CXFA_Type(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Type::CXFA_Type(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Type,
                 nullptr,
-                kTypeAttributeData,
-                kTypeName) {}
+                kTypeAttributeData) {}
 
-CXFA_Type::~CXFA_Type() {}
+CXFA_Type::~CXFA_Type() = default;

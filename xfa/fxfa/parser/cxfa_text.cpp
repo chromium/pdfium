@@ -20,8 +20,6 @@ const CXFA_Node::AttributeData kTextAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kTextName[] = L"text";
-
 }  // namespace
 
 CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
@@ -33,10 +31,9 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Text,
                 nullptr,
                 kTextAttributeData,
-                kTextName,
                 pdfium::MakeUnique<CJX_Text>(this)) {}
 
-CXFA_Text::~CXFA_Text() {}
+CXFA_Text::~CXFA_Text() = default;
 
 WideString CXFA_Text::GetContent() {
   return JSObject()->GetContent(false);

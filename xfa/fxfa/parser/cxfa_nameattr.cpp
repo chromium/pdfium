@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kNameAttrAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kNameAttrName[] = L"nameAttr";
-
 }  // namespace
 
 CXFA_NameAttr::CXFA_NameAttr(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_NameAttr::CXFA_NameAttr(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::NameAttr,
                 nullptr,
-                kNameAttrAttributeData,
-                kNameAttrName) {}
+                kNameAttrAttributeData) {}
 
-CXFA_NameAttr::~CXFA_NameAttr() {}
+CXFA_NameAttr::~CXFA_NameAttr() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPaginationOverrideAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPaginationOverrideName[] = L"paginationOverride";
-
 }  // namespace
 
 CXFA_PaginationOverride::CXFA_PaginationOverride(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_PaginationOverride::CXFA_PaginationOverride(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PaginationOverride,
                 nullptr,
-                kPaginationOverrideAttributeData,
-                kPaginationOverrideName) {}
+                kPaginationOverrideAttributeData) {}
 
-CXFA_PaginationOverride::~CXFA_PaginationOverride() {}
+CXFA_PaginationOverride::~CXFA_PaginationOverride() = default;

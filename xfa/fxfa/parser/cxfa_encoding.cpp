@@ -17,8 +17,6 @@ const CXFA_Node::AttributeData kEncodingAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEncodingName[] = L"encoding";
-
 }  // namespace
 
 CXFA_Encoding::CXFA_Encoding(CXFA_Document* doc, XFA_PacketType packet)
@@ -29,7 +27,6 @@ CXFA_Encoding::CXFA_Encoding(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Encoding,
                 nullptr,
                 kEncodingAttributeData,
-                kEncodingName,
                 pdfium::MakeUnique<CJX_Encoding>(this)) {}
 
-CXFA_Encoding::~CXFA_Encoding() {}
+CXFA_Encoding::~CXFA_Encoding() = default;

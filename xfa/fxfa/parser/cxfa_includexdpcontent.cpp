@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kIncludeXDPContentAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kIncludeXDPContentName[] = L"includeXDPContent";
-
 }  // namespace
 
 CXFA_IncludeXDPContent::CXFA_IncludeXDPContent(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_IncludeXDPContent::CXFA_IncludeXDPContent(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::IncludeXDPContent,
                 nullptr,
-                kIncludeXDPContentAttributeData,
-                kIncludeXDPContentName) {}
+                kIncludeXDPContentAttributeData) {}
 
-CXFA_IncludeXDPContent::~CXFA_IncludeXDPContent() {}
+CXFA_IncludeXDPContent::~CXFA_IncludeXDPContent() = default;

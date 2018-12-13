@@ -20,6 +20,7 @@ const CXFA_Node::PropertyData kEventPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Submit, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kEventAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
@@ -32,8 +33,6 @@ const CXFA_Node::AttributeData kEventAttributeData[] = {
      (void*)XFA_AttributeValue::Click},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEventName[] = L"event";
-
 }  // namespace
 
 CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
@@ -44,10 +43,9 @@ CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Event,
                 kEventPropertyData,
                 kEventAttributeData,
-                kEventName,
                 pdfium::MakeUnique<CJX_Event>(this)) {}
 
-CXFA_Event::~CXFA_Event() {}
+CXFA_Event::~CXFA_Event() = default;
 
 XFA_AttributeValue CXFA_Event::GetActivity() {
   return JSObject()->GetEnum(XFA_Attribute::Activity);

@@ -68,7 +68,6 @@ CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                          XFA_Element eType,
                          const PropertyData* properties,
                          const AttributeData* attributes,
-                         const WideStringView& elementName,
                          std::unique_ptr<CJX_Object> js_node)
     : CXFA_Node(pDoc,
                 ePacket,
@@ -77,7 +76,6 @@ CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                 eType,
                 properties,
                 attributes,
-                elementName,
                 std::move(js_node)) {}
 
 CXFA_Stroke::~CXFA_Stroke() = default;

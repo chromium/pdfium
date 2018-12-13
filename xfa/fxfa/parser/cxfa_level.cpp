@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kLevelAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kLevelName[] = L"level";
-
 }  // namespace
 
 CXFA_Level::CXFA_Level(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Level::CXFA_Level(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Level,
                 nullptr,
-                kLevelAttributeData,
-                kLevelName) {}
+                kLevelAttributeData) {}
 
-CXFA_Level::~CXFA_Level() {}
+CXFA_Level::~CXFA_Level() = default;

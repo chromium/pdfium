@@ -85,7 +85,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   }
 
   XFA_Element GetElementType() const { return m_elementType; }
-  WideStringView GetClassName() const { return m_elementName; }
+  ByteStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
 
   WideString GetSOMExpression();
@@ -94,14 +94,13 @@ class CXFA_Object : public CFXJSE_HostObject {
   CXFA_Object(CXFA_Document* pDocument,
               XFA_ObjectType objectType,
               XFA_Element eType,
-              const WideStringView& elementName,
               std::unique_ptr<CJX_Object> jsObject);
 
   UnownedPtr<CXFA_Document> const m_pDocument;
   const XFA_ObjectType m_objectType;
   const XFA_Element m_elementType;
+  const ByteStringView m_elementName;
   const uint32_t m_elementNameHash;
-  const WideStringView m_elementName;
   std::unique_ptr<CJX_Object> m_pJSObject;
 };
 

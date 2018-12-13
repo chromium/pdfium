@@ -12,8 +12,6 @@ const CXFA_Node::PropertyData kEraNamesPropertyData[] = {
     {XFA_Element::Era, 2, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kEraNamesName[] = L"eraNames";
-
 }  // namespace
 
 CXFA_EraNames::CXFA_EraNames(CXFA_Document* doc, XFA_PacketType packet)
@@ -23,7 +21,6 @@ CXFA_EraNames::CXFA_EraNames(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::EraNames,
                 kEraNamesPropertyData,
-                nullptr,
-                kEraNamesName) {}
+                nullptr) {}
 
-CXFA_EraNames::~CXFA_EraNames() {}
+CXFA_EraNames::~CXFA_EraNames() = default;

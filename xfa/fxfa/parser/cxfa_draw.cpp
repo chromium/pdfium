@@ -19,6 +19,7 @@ const CXFA_Node::PropertyData kDrawPropertyData[] = {
     {XFA_Element::Desc, 1, 0},   {XFA_Element::Font, 1, 0},
     {XFA_Element::Value, 1, 0},  {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kDrawAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -46,8 +47,6 @@ const CXFA_Node::AttributeData kDrawAttributeData[] = {
      (void*)XFA_AttributeValue::TopLeft},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDrawName[] = L"draw";
-
 }  // namespace
 
 CXFA_Draw::CXFA_Draw(CXFA_Document* doc, XFA_PacketType packet)
@@ -58,7 +57,6 @@ CXFA_Draw::CXFA_Draw(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Draw,
                 kDrawPropertyData,
                 kDrawAttributeData,
-                kDrawName,
                 pdfium::MakeUnique<CJX_Draw>(this)) {}
 
-CXFA_Draw::~CXFA_Draw() {}
+CXFA_Draw::~CXFA_Draw() = default;

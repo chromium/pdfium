@@ -28,7 +28,6 @@ class CXFA_List : public CXFA_Object {
   CXFA_List(CXFA_Document* pDocument,
             XFA_ObjectType objectType,
             XFA_Element eType,
-            const WideStringView& elementName,
             std::unique_ptr<CJX_Object> obj);
 };
 

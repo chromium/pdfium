@@ -19,12 +19,11 @@ const CXFA_Node::PropertyData kViewerPreferencesPropertyData[] = {
     {XFA_Element::ADBE_JSDebugger, 1, 0},
     {XFA_Element::PickTrayByPDFSize, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kViewerPreferencesAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kViewerPreferencesName[] = L"viewerPreferences";
 
 }  // namespace
 
@@ -36,7 +35,6 @@ CXFA_ViewerPreferences::CXFA_ViewerPreferences(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::ViewerPreferences,
                 kViewerPreferencesPropertyData,
-                kViewerPreferencesAttributeData,
-                kViewerPreferencesName) {}
+                kViewerPreferencesAttributeData) {}
 
-CXFA_ViewerPreferences::~CXFA_ViewerPreferences() {}
+CXFA_ViewerPreferences::~CXFA_ViewerPreferences() = default;

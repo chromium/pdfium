@@ -14,14 +14,13 @@ namespace {
 const CXFA_Node::PropertyData kSourcePropertyData[] = {
     {XFA_Element::Connect, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kSourceAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kSourceName[] = L"source";
 
 }  // namespace
 
@@ -33,7 +32,6 @@ CXFA_Source::CXFA_Source(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Source,
                 kSourcePropertyData,
                 kSourceAttributeData,
-                kSourceName,
                 pdfium::MakeUnique<CJX_Source>(this)) {}
 
-CXFA_Source::~CXFA_Source() {}
+CXFA_Source::~CXFA_Source() = default;

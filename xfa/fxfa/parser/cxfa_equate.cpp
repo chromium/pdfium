@@ -16,8 +16,6 @@ const CXFA_Node::AttributeData kEquateAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEquateName[] = L"equate";
-
 }  // namespace
 
 CXFA_Equate::CXFA_Equate(CXFA_Document* doc, XFA_PacketType packet)
@@ -27,7 +25,6 @@ CXFA_Equate::CXFA_Equate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Equate,
                 nullptr,
-                kEquateAttributeData,
-                kEquateName) {}
+                kEquateAttributeData) {}
 
-CXFA_Equate::~CXFA_Equate() {}
+CXFA_Equate::~CXFA_Equate() = default;

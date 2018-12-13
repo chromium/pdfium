@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kStartNodeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kStartNodeName[] = L"startNode";
-
 }  // namespace
 
 CXFA_StartNode::CXFA_StartNode(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_StartNode::CXFA_StartNode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::StartNode,
                 nullptr,
-                kStartNodeAttributeData,
-                kStartNodeName) {}
+                kStartNodeAttributeData) {}
 
-CXFA_StartNode::~CXFA_StartNode() {}
+CXFA_StartNode::~CXFA_StartNode() = default;

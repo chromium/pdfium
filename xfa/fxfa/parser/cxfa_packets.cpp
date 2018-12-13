@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPacketsAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPacketsName[] = L"packets";
-
 }  // namespace
 
 CXFA_Packets::CXFA_Packets(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Packets::CXFA_Packets(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Packets,
                 nullptr,
-                kPacketsAttributeData,
-                kPacketsName) {}
+                kPacketsAttributeData) {}
 
-CXFA_Packets::~CXFA_Packets() {}
+CXFA_Packets::~CXFA_Packets() = default;

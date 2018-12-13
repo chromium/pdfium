@@ -380,7 +380,6 @@ class CXFA_Node : public CXFA_Object {
             XFA_Element eType,
             const PropertyData* properties,
             const AttributeData* attributes,
-            const WideStringView& elementName,
             std::unique_ptr<CJX_Object> js_node);
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -388,8 +387,7 @@ class CXFA_Node : public CXFA_Object {
             XFA_ObjectType oType,
             XFA_Element eType,
             const PropertyData* properties,
-            const AttributeData* attributes,
-            const WideStringView& elementName);
+            const AttributeData* attributes);
 
  private:
   void ProcessScriptTestValidate(CXFA_FFDocView* docView,

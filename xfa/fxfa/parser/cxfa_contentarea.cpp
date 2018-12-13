@@ -15,6 +15,7 @@ const CXFA_Node::PropertyData kContentAreaPropertyData[] = {
     {XFA_Element::Desc, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kContentAreaAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -27,8 +28,6 @@ const CXFA_Node::AttributeData kContentAreaAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kContentAreaName[] = L"contentArea";
-
 }  // namespace
 
 CXFA_ContentArea::CXFA_ContentArea(CXFA_Document* doc, XFA_PacketType packet)
@@ -39,7 +38,6 @@ CXFA_ContentArea::CXFA_ContentArea(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ContentArea,
                 kContentAreaPropertyData,
                 kContentAreaAttributeData,
-                kContentAreaName,
                 pdfium::MakeUnique<CJX_ContentArea>(this)) {}
 
-CXFA_ContentArea::~CXFA_ContentArea() {}
+CXFA_ContentArea::~CXFA_ContentArea() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kEmbedAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEmbedName[] = L"embed";
-
 }  // namespace
 
 CXFA_Embed::CXFA_Embed(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Embed::CXFA_Embed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Embed,
                 nullptr,
-                kEmbedAttributeData,
-                kEmbedName) {}
+                kEmbedAttributeData) {}
 
-CXFA_Embed::~CXFA_Embed() {}
+CXFA_Embed::~CXFA_Embed() = default;

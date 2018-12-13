@@ -15,12 +15,11 @@ const CXFA_Node::PropertyData kXsdConnectionPropertyData[] = {
     {XFA_Element::Uri, 1, 0},
     {XFA_Element::RootElement, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kXsdConnectionAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataDescription, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kXsdConnectionName[] = L"xsdConnection";
 
 }  // namespace
 
@@ -33,7 +32,6 @@ CXFA_XsdConnection::CXFA_XsdConnection(CXFA_Document* doc,
                 XFA_Element::XsdConnection,
                 kXsdConnectionPropertyData,
                 kXsdConnectionAttributeData,
-                kXsdConnectionName,
                 pdfium::MakeUnique<CJX_XsdConnection>(this)) {}
 
-CXFA_XsdConnection::~CXFA_XsdConnection() {}
+CXFA_XsdConnection::~CXFA_XsdConnection() = default;

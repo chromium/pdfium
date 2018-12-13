@@ -47,7 +47,6 @@ class CXFA_Box : public CXFA_Node {
            XFA_Element eType,
            const PropertyData* properties,
            const AttributeData* attributes,
-           const WideStringView& elementName,
            std::unique_ptr<CJX_Object> js_node);
 
   XFA_AttributeValue GetHand();

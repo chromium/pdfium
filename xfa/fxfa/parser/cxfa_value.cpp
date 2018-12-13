@@ -32,6 +32,7 @@ const CXFA_Node::PropertyData kValuePropertyData[] = {
     {XFA_Element::Float, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Line, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kValueAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -39,8 +40,6 @@ const CXFA_Node::AttributeData kValueAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Override, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kValueName[] = L"value";
 
 }  // namespace
 
@@ -52,10 +51,9 @@ CXFA_Value::CXFA_Value(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Value,
                 kValuePropertyData,
                 kValueAttributeData,
-                kValueName,
                 pdfium::MakeUnique<CJX_Value>(this)) {}
 
-CXFA_Value::~CXFA_Value() {}
+CXFA_Value::~CXFA_Value() = default;
 
 XFA_Element CXFA_Value::GetChildValueClassID() const {
   CXFA_Node* pNode = GetFirstChild();

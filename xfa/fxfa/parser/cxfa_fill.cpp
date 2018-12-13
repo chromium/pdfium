@@ -27,6 +27,7 @@ const CXFA_Node::PropertyData kFillPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Radial, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kFillAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -34,8 +35,6 @@ const CXFA_Node::AttributeData kFillAttributeData[] = {
      (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kFillName[] = L"fill";
 
 }  // namespace
 
@@ -47,10 +46,9 @@ CXFA_Fill::CXFA_Fill(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Fill,
                 kFillPropertyData,
                 kFillAttributeData,
-                kFillName,
                 pdfium::MakeUnique<CJX_Fill>(this)) {}
 
-CXFA_Fill::~CXFA_Fill() {}
+CXFA_Fill::~CXFA_Fill() = default;
 
 bool CXFA_Fill::IsVisible() {
   return JSObject()

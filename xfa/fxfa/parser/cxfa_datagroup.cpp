@@ -12,8 +12,6 @@ const CXFA_Node::AttributeData kDataGroupAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDataGroupName[] = L"dataGroup";
-
 }  // namespace
 
 CXFA_DataGroup::CXFA_DataGroup(CXFA_Document* doc, XFA_PacketType packet)
@@ -23,7 +21,6 @@ CXFA_DataGroup::CXFA_DataGroup(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::DataGroup,
                 nullptr,
-                kDataGroupAttributeData,
-                kDataGroupName) {}
+                kDataGroupAttributeData) {}
 
-CXFA_DataGroup::~CXFA_DataGroup() {}
+CXFA_DataGroup::~CXFA_DataGroup() = default;

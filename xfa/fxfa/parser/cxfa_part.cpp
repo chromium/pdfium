@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPartAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPartName[] = L"part";
-
 }  // namespace
 
 CXFA_Part::CXFA_Part(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Part::CXFA_Part(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Part,
                 nullptr,
-                kPartAttributeData,
-                kPartName) {}
+                kPartAttributeData) {}
 
-CXFA_Part::~CXFA_Part() {}
+CXFA_Part::~CXFA_Part() = default;

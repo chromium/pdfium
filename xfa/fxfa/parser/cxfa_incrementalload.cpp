@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kIncrementalLoadAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kIncrementalLoadName[] = L"incrementalLoad";
-
 }  // namespace
 
 CXFA_IncrementalLoad::CXFA_IncrementalLoad(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_IncrementalLoad::CXFA_IncrementalLoad(CXFA_Document* doc,
                 XFA_ObjectType::NodeV,
                 XFA_Element::IncrementalLoad,
                 nullptr,
-                kIncrementalLoadAttributeData,
-                kIncrementalLoadName) {}
+                kIncrementalLoadAttributeData) {}
 
-CXFA_IncrementalLoad::~CXFA_IncrementalLoad() {}
+CXFA_IncrementalLoad::~CXFA_IncrementalLoad() = default;

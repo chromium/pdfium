@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kThresholdAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kThresholdName[] = L"threshold";
-
 }  // namespace
 
 CXFA_Threshold::CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Threshold::CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Threshold,
                 nullptr,
-                kThresholdAttributeData,
-                kThresholdName) {}
+                kThresholdAttributeData) {}
 
-CXFA_Threshold::~CXFA_Threshold() {}
+CXFA_Threshold::~CXFA_Threshold() = default;

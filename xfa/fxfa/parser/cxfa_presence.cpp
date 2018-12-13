@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPresenceAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPresenceName[] = L"presence";
-
 }  // namespace
 
 CXFA_Presence::CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Presence::CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Presence,
                 nullptr,
-                kPresenceAttributeData,
-                kPresenceName) {}
+                kPresenceAttributeData) {}
 
-CXFA_Presence::~CXFA_Presence() {}
+CXFA_Presence::~CXFA_Presence() = default;

@@ -12,8 +12,6 @@ const CXFA_Node::PropertyData kMeridiemNamesPropertyData[] = {
     {XFA_Element::Meridiem, 2, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kMeridiemNamesName[] = L"meridiemNames";
-
 }  // namespace
 
 CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc,
@@ -24,7 +22,6 @@ CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::MeridiemNames,
                 kMeridiemNamesPropertyData,
-                nullptr,
-                kMeridiemNamesName) {}
+                nullptr) {}
 
-CXFA_MeridiemNames::~CXFA_MeridiemNames() {}
+CXFA_MeridiemNames::~CXFA_MeridiemNames() = default;

@@ -13,9 +13,6 @@ const CXFA_Node::AttributeData kValidateApprovalSignaturesAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kValidateApprovalSignaturesName[] =
-    L"validateApprovalSignatures";
-
 }  // namespace
 
 CXFA_ValidateApprovalSignatures::CXFA_ValidateApprovalSignatures(
@@ -27,7 +24,6 @@ CXFA_ValidateApprovalSignatures::CXFA_ValidateApprovalSignatures(
                 XFA_ObjectType::NodeV,
                 XFA_Element::ValidateApprovalSignatures,
                 nullptr,
-                kValidateApprovalSignaturesAttributeData,
-                kValidateApprovalSignaturesName) {}
+                kValidateApprovalSignaturesAttributeData) {}
 
-CXFA_ValidateApprovalSignatures::~CXFA_ValidateApprovalSignatures() {}
+CXFA_ValidateApprovalSignatures::~CXFA_ValidateApprovalSignatures() = default;

@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kFloatAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kFloatName[] = L"float";
-
 }  // namespace
 
 CXFA_Float::CXFA_Float(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Float::CXFA_Float(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Float,
                 nullptr,
                 kFloatAttributeData,
-                kFloatName,
                 pdfium::MakeUnique<CJX_Float>(this)) {}
 
-CXFA_Float::~CXFA_Float() {}
+CXFA_Float::~CXFA_Float() = default;

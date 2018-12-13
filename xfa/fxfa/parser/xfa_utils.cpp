@@ -297,7 +297,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
   if (!wsChildren.IsEmpty() || !wsAttrs.IsEmpty() ||
       pNode->JSObject()->HasAttribute(XFA_Attribute::Name)) {
-    WideStringView wsElement = pNode->GetClassName();
+    WideString wsElement = WideString::FromASCII(pNode->GetClassName());
     WideString wsName;
     SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsName);
     buf << "<";
@@ -330,7 +330,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
     return;
   }
 
-  WideString wsElement(pNode->GetClassName());
+  WideString wsElement = WideString::FromASCII(pNode->GetClassName());
   pStream->WriteString("<");
   pStream->WriteString(wsElement.ToUTF8().AsStringView());
 

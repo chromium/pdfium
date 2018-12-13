@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kCreatorAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCreatorName[] = L"creator";
-
 }  // namespace
 
 CXFA_Creator::CXFA_Creator(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Creator::CXFA_Creator(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Creator,
                 nullptr,
-                kCreatorAttributeData,
-                kCreatorName) {}
+                kCreatorAttributeData) {}
 
-CXFA_Creator::~CXFA_Creator() {}
+CXFA_Creator::~CXFA_Creator() = default;

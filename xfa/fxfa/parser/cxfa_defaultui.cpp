@@ -13,13 +13,12 @@ namespace {
 const CXFA_Node::PropertyData kDefaultUiPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kDefaultUiAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kDefaultUiName[] = L"defaultUi";
 
 }  // namespace
 
@@ -30,10 +29,9 @@ CXFA_DefaultUi::CXFA_DefaultUi(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::DefaultUi,
                 kDefaultUiPropertyData,
-                kDefaultUiAttributeData,
-                kDefaultUiName) {}
+                kDefaultUiAttributeData) {}
 
-CXFA_DefaultUi::~CXFA_DefaultUi() {}
+CXFA_DefaultUi::~CXFA_DefaultUi() = default;
 
 XFA_FFWidgetType CXFA_DefaultUi::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kTextEdit;

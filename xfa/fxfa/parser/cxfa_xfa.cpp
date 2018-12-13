@@ -16,8 +16,6 @@ const CXFA_Node::AttributeData kXfaAttributeData[] = {
     {XFA_Attribute::Uuid, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kXfaName[] = L"xfa";
-
 }  // namespace
 
 CXFA_Xfa::CXFA_Xfa(CXFA_Document* doc, XFA_PacketType packet)
@@ -28,7 +26,6 @@ CXFA_Xfa::CXFA_Xfa(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Xfa,
                 nullptr,
                 kXfaAttributeData,
-                kXfaName,
                 pdfium::MakeUnique<CJX_Xfa>(this)) {}
 
-CXFA_Xfa::~CXFA_Xfa() {}
+CXFA_Xfa::~CXFA_Xfa() = default;

@@ -11,12 +11,11 @@ namespace {
 const CXFA_Node::PropertyData kOutputXSLPropertyData[] = {
     {XFA_Element::Uri, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kOutputXSLAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kOutputXSLName[] = L"outputXSL";
 
 }  // namespace
 
@@ -27,7 +26,6 @@ CXFA_OutputXSL::CXFA_OutputXSL(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::OutputXSL,
                 kOutputXSLPropertyData,
-                kOutputXSLAttributeData,
-                kOutputXSLName) {}
+                kOutputXSLAttributeData) {}
 
-CXFA_OutputXSL::~CXFA_OutputXSL() {}
+CXFA_OutputXSL::~CXFA_OutputXSL() = default;

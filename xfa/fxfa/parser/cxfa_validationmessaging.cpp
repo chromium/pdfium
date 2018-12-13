@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kValidationMessagingAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kValidationMessagingName[] = L"validationMessaging";
-
 }  // namespace
 
 CXFA_ValidationMessaging::CXFA_ValidationMessaging(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_ValidationMessaging::CXFA_ValidationMessaging(CXFA_Document* doc,
                 XFA_ObjectType::NodeV,
                 XFA_Element::ValidationMessaging,
                 nullptr,
-                kValidationMessagingAttributeData,
-                kValidationMessagingName) {}
+                kValidationMessagingAttributeData) {}
 
-CXFA_ValidationMessaging::~CXFA_ValidationMessaging() {}
+CXFA_ValidationMessaging::~CXFA_ValidationMessaging() = default;

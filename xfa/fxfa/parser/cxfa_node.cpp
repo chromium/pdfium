@@ -837,9 +837,8 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_Element eType,
                      const PropertyData* properties,
                      const AttributeData* attributes,
-                     const WideStringView& elementName,
                      std::unique_ptr<CJX_Object> js_node)
-    : CXFA_Object(pDoc, oType, eType, elementName, std::move(js_node)),
+    : CXFA_Object(pDoc, oType, eType, std::move(js_node)),
       m_Properties(properties),
       m_Attributes(attributes),
       m_ValidPackets(validPackets),
@@ -853,8 +852,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                      XFA_ObjectType oType,
                      XFA_Element eType,
                      const PropertyData* properties,
-                     const AttributeData* attributes,
-                     const WideStringView& elementName)
+                     const AttributeData* attributes)
     : CXFA_Node(pDoc,
                 ePacket,
                 validPackets,
@@ -862,7 +860,6 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                 eType,
                 properties,
                 attributes,
-                elementName,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Node::~CXFA_Node() = default;
@@ -5545,7 +5542,7 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
       node = pdfium::MakeUnique<CXFA_Signature>(doc, packet);
       break;
     case XFA_Element::ADBE_JSConsole:
-      node = pdfium::MakeUnique<CXFA_aDBE_JSConsole>(doc, packet);
+      node = pdfium::MakeUnique<CXFA_ADBE_JSConsole>(doc, packet);
       break;
     case XFA_Element::Caption:
       node = pdfium::MakeUnique<CXFA_Caption>(doc, packet);
@@ -5650,7 +5647,7 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
       node = pdfium::MakeUnique<CXFA_EffectiveOutputPolicy>(doc, packet);
       break;
     case XFA_Element::ADBE_JSDebugger:
-      node = pdfium::MakeUnique<CXFA_aDBE_JSDebugger>(doc, packet);
+      node = pdfium::MakeUnique<CXFA_ADBE_JSDebugger>(doc, packet);
       break;
     case XFA_Element::Acrobat7:
       node = pdfium::MakeUnique<CXFA_Acrobat7>(doc, packet);

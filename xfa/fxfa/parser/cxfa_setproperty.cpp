@@ -17,8 +17,6 @@ const CXFA_Node::AttributeData kSetPropertyAttributeData[] = {
     {XFA_Attribute::Target, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSetPropertyName[] = L"setProperty";
-
 }  // namespace
 
 CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet)
@@ -29,7 +27,6 @@ CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SetProperty,
                 nullptr,
                 kSetPropertyAttributeData,
-                kSetPropertyName,
                 pdfium::MakeUnique<CJX_SetProperty>(this)) {}
 
-CXFA_SetProperty::~CXFA_SetProperty() {}
+CXFA_SetProperty::~CXFA_SetProperty() = default;

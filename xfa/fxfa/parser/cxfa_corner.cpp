@@ -15,6 +15,7 @@ const CXFA_Node::PropertyData kCornerPropertyData[] = {
     {XFA_Element::Color, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kCornerAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -30,8 +31,6 @@ const CXFA_Node::AttributeData kCornerAttributeData[] = {
     {XFA_Attribute::Radius, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCornerName[] = L"corner";
-
 }  // namespace
 
 CXFA_Corner::CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet)
@@ -42,7 +41,6 @@ CXFA_Corner::CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet)
                   XFA_Element::Corner,
                   kCornerPropertyData,
                   kCornerAttributeData,
-                  kCornerName,
                   pdfium::MakeUnique<CJX_Corner>(this)) {}
 
-CXFA_Corner::~CXFA_Corner() {}
+CXFA_Corner::~CXFA_Corner() = default;

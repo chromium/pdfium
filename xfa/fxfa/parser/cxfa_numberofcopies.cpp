@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kNumberOfCopiesAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kNumberOfCopiesName[] = L"numberOfCopies";
-
 }  // namespace
 
 CXFA_NumberOfCopies::CXFA_NumberOfCopies(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_NumberOfCopies::CXFA_NumberOfCopies(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::NumberOfCopies,
                 nullptr,
-                kNumberOfCopiesAttributeData,
-                kNumberOfCopiesName) {}
+                kNumberOfCopiesAttributeData) {}
 
-CXFA_NumberOfCopies::~CXFA_NumberOfCopies() {}
+CXFA_NumberOfCopies::~CXFA_NumberOfCopies() = default;

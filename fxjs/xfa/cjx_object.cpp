@@ -148,8 +148,7 @@ void CJX_Object::className(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetString(
-      FX_UTF8Encode(GetXFAObject()->GetClassName()).AsStringView());
+  pValue->SetString(GetXFAObject()->GetClassName());
 }
 
 int32_t CJX_Object::Subform_and_SubformSet_InstanceIndex() {

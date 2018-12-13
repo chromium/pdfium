@@ -15,8 +15,6 @@ const CXFA_Node::AttributeData kEffectiveOutputPolicyAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kEffectiveOutputPolicyName[] = L"effectiveOutputPolicy";
-
 }  // namespace
 
 CXFA_EffectiveOutputPolicy::CXFA_EffectiveOutputPolicy(CXFA_Document* doc,
@@ -27,7 +25,6 @@ CXFA_EffectiveOutputPolicy::CXFA_EffectiveOutputPolicy(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveOutputPolicy,
                 nullptr,
-                kEffectiveOutputPolicyAttributeData,
-                kEffectiveOutputPolicyName) {}
+                kEffectiveOutputPolicyAttributeData) {}
 
-CXFA_EffectiveOutputPolicy::~CXFA_EffectiveOutputPolicy() {}
+CXFA_EffectiveOutputPolicy::~CXFA_EffectiveOutputPolicy() = default;

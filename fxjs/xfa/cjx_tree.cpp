@@ -123,7 +123,8 @@ void CJX_Tree::classAll(CFXJSE_Value* pValue,
     return;
   }
 
-  WideString wsExpression = L"#" + GetXFAObject()->GetClassName() + L"[*]";
+  WideString wsExpression =
+      L"#" + WideString::FromASCII(GetXFAObject()->GetClassName()) + L"[*]";
   ResolveNodeList(pValue, wsExpression,
                   XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL, nullptr);
 }

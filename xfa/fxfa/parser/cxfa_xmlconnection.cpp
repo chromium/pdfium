@@ -14,12 +14,11 @@ namespace {
 const CXFA_Node::PropertyData kXmlConnectionPropertyData[] = {
     {XFA_Element::Uri, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kXmlConnectionAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataDescription, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kXmlConnectionName[] = L"xmlConnection";
 
 }  // namespace
 
@@ -32,7 +31,6 @@ CXFA_XmlConnection::CXFA_XmlConnection(CXFA_Document* doc,
                 XFA_Element::XmlConnection,
                 kXmlConnectionPropertyData,
                 kXmlConnectionAttributeData,
-                kXmlConnectionName,
                 pdfium::MakeUnique<CJX_XmlConnection>(this)) {}
 
-CXFA_XmlConnection::~CXFA_XmlConnection() {}
+CXFA_XmlConnection::~CXFA_XmlConnection() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAdobeExtensionLevelAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAdobeExtensionLevelName[] = L"adobeExtensionLevel";
-
 }  // namespace
 
 CXFA_AdobeExtensionLevel::CXFA_AdobeExtensionLevel(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_AdobeExtensionLevel::CXFA_AdobeExtensionLevel(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AdobeExtensionLevel,
                 nullptr,
-                kAdobeExtensionLevelAttributeData,
-                kAdobeExtensionLevelName) {}
+                kAdobeExtensionLevelAttributeData) {}
 
-CXFA_AdobeExtensionLevel::~CXFA_AdobeExtensionLevel() {}
+CXFA_AdobeExtensionLevel::~CXFA_AdobeExtensionLevel() = default;

@@ -15,8 +15,6 @@ const CXFA_Node::AttributeData kCompressAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCompressName[] = L"compress";
-
 }  // namespace
 
 CXFA_Compress::CXFA_Compress(CXFA_Document* doc, XFA_PacketType packet)
@@ -26,7 +24,6 @@ CXFA_Compress::CXFA_Compress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Compress,
                 nullptr,
-                kCompressAttributeData,
-                kCompressName) {}
+                kCompressAttributeData) {}
 
-CXFA_Compress::~CXFA_Compress() {}
+CXFA_Compress::~CXFA_Compress() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kOverprintAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kOverprintName[] = L"overprint";
-
 }  // namespace
 
 CXFA_Overprint::CXFA_Overprint(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Overprint::CXFA_Overprint(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Overprint,
                 nullptr,
-                kOverprintAttributeData,
-                kOverprintName) {}
+                kOverprintAttributeData) {}
 
-CXFA_Overprint::~CXFA_Overprint() {}
+CXFA_Overprint::~CXFA_Overprint() = default;

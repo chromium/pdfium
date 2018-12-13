@@ -23,8 +23,6 @@ const CXFA_Node::AttributeData kImageAttributeData[] = {
     {XFA_Attribute::Href, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kImageName[] = L"image";
-
 }  // namespace
 
 CXFA_Image::CXFA_Image(CXFA_Document* doc, XFA_PacketType packet)
@@ -34,10 +32,9 @@ CXFA_Image::CXFA_Image(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Image,
                 nullptr,
-                kImageAttributeData,
-                kImageName) {}
+                kImageAttributeData) {}
 
-CXFA_Image::~CXFA_Image() {}
+CXFA_Image::~CXFA_Image() = default;
 
 XFA_AttributeValue CXFA_Image::GetAspect() {
   return JSObject()->GetEnum(XFA_Attribute::Aspect);

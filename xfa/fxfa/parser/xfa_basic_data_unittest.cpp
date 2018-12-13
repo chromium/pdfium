@@ -22,8 +22,8 @@ TEST(XFABasicDataTest, ElementToName) {
   EXPECT_EQ("conformance", XFA_ElementToName(XFA_Element::Conformance));
   EXPECT_EQ("tagged", XFA_ElementToName(XFA_Element::Tagged));
 
-  // Internal elements resolve to some sort of name.
-  EXPECT_EQ("******", XFA_ElementToName(XFA_Element::Node));
+  // Internal elements resolve back to real names.
+  EXPECT_EQ("node", XFA_ElementToName(XFA_Element::Node));
 }
 
 TEST(XFABasicDataTest, GetAttributeByName) {

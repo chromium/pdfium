@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kSelectAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSelectName[] = L"select";
-
 }  // namespace
 
 CXFA_Select::CXFA_Select(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Select::CXFA_Select(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Select,
                 nullptr,
                 kSelectAttributeData,
-                kSelectName,
                 pdfium::MakeUnique<CJX_Select>(this)) {}
 
-CXFA_Select::~CXFA_Select() {}
+CXFA_Select::~CXFA_Select() = default;

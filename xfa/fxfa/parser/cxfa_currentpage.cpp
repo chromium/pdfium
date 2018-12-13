@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kCurrentPageAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCurrentPageName[] = L"currentPage";
-
 }  // namespace
 
 CXFA_CurrentPage::CXFA_CurrentPage(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_CurrentPage::CXFA_CurrentPage(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CurrentPage,
                 nullptr,
-                kCurrentPageAttributeData,
-                kCurrentPageName) {}
+                kCurrentPageAttributeData) {}
 
-CXFA_CurrentPage::~CXFA_CurrentPage() {}
+CXFA_CurrentPage::~CXFA_CurrentPage() = default;

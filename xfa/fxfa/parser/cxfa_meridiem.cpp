@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_meridiem.h"
 
-namespace {
-
-constexpr wchar_t kMeridiemName[] = L"meridiem";
-
-}  // namespace
-
 CXFA_Meridiem::CXFA_Meridiem(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -19,7 +13,6 @@ CXFA_Meridiem::CXFA_Meridiem(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Meridiem,
                 nullptr,
-                nullptr,
-                kMeridiemName) {}
+                nullptr) {}
 
-CXFA_Meridiem::~CXFA_Meridiem() {}
+CXFA_Meridiem::~CXFA_Meridiem() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kChangeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kChangeName[] = L"change";
-
 }  // namespace
 
 CXFA_Change::CXFA_Change(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Change::CXFA_Change(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Change,
                 nullptr,
-                kChangeAttributeData,
-                kChangeName) {}
+                kChangeAttributeData) {}
 
-CXFA_Change::~CXFA_Change() {}
+CXFA_Change::~CXFA_Change() = default;

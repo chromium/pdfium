@@ -16,14 +16,13 @@ const CXFA_Node::PropertyData kTemplatePropertyData[] = {
     {XFA_Element::StartPage, 1, 0}, {XFA_Element::Relevant, 1, 0},
     {XFA_Element::Base, 1, 0},      {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kTemplateAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::BaseProfile, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Full},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kTemplateName[] = L"template";
 
 }  // namespace
 
@@ -36,7 +35,6 @@ CXFA_Template::CXFA_Template(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Template,
           kTemplatePropertyData,
           kTemplateAttributeData,
-          kTemplateName,
           pdfium::MakeUnique<CJX_Template>(this)) {}
 
-CXFA_Template::~CXFA_Template() {}
+CXFA_Template::~CXFA_Template() = default;

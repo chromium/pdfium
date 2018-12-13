@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_month.h"
 
-namespace {
-
-constexpr wchar_t kMonthName[] = L"month";
-
-}  // namespace
-
 CXFA_Month::CXFA_Month(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -19,7 +13,6 @@ CXFA_Month::CXFA_Month(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Month,
                 nullptr,
-                nullptr,
-                kMonthName) {}
+                nullptr) {}
 
-CXFA_Month::~CXFA_Month() {}
+CXFA_Month::~CXFA_Month() = default;

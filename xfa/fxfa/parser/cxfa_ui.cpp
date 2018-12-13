@@ -26,13 +26,12 @@ const CXFA_Node::PropertyData kUiPropertyData[] = {
     {XFA_Element::TextEdit, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kUiAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kUiName[] = L"ui";
 
 }  // namespace
 
@@ -44,10 +43,9 @@ CXFA_Ui::CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Ui,
                 kUiPropertyData,
                 kUiAttributeData,
-                kUiName,
                 pdfium::MakeUnique<CJX_Ui>(this)) {}
 
-CXFA_Ui::~CXFA_Ui() {}
+CXFA_Ui::~CXFA_Ui() = default;
 
 bool CXFA_Ui::IsAOneOfChild(CXFA_Node* child) const {
   for (auto& prop : kUiPropertyData) {

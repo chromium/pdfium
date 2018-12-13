@@ -17,6 +17,7 @@ const CXFA_Node::PropertyData kNumericEditPropertyData[] = {
     {XFA_Element::Comb, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kNumericEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -24,8 +25,6 @@ const CXFA_Node::AttributeData kNumericEditAttributeData[] = {
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kNumericEditName[] = L"numericEdit";
 
 }  // namespace
 
@@ -37,10 +36,9 @@ CXFA_NumericEdit::CXFA_NumericEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::NumericEdit,
                 kNumericEditPropertyData,
                 kNumericEditAttributeData,
-                kNumericEditName,
                 pdfium::MakeUnique<CJX_NumericEdit>(this)) {}
 
-CXFA_NumericEdit::~CXFA_NumericEdit() {}
+CXFA_NumericEdit::~CXFA_NumericEdit() = default;
 
 XFA_Element CXFA_NumericEdit::GetValueNodeType() const {
   return XFA_Element::Float;

@@ -15,8 +15,6 @@ const CXFA_Node::AttributeData kDefaultTypefaceAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDefaultTypefaceName[] = L"defaultTypeface";
-
 }  // namespace
 
 CXFA_DefaultTypeface::CXFA_DefaultTypeface(CXFA_Document* doc,
@@ -27,7 +25,6 @@ CXFA_DefaultTypeface::CXFA_DefaultTypeface(CXFA_Document* doc,
                 XFA_ObjectType::NodeV,
                 XFA_Element::DefaultTypeface,
                 nullptr,
-                kDefaultTypefaceAttributeData,
-                kDefaultTypefaceName) {}
+                kDefaultTypefaceAttributeData) {}
 
-CXFA_DefaultTypeface::~CXFA_DefaultTypeface() {}
+CXFA_DefaultTypeface::~CXFA_DefaultTypeface() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kSuppressBannerAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSuppressBannerName[] = L"suppressBanner";
-
 }  // namespace
 
 CXFA_SuppressBanner::CXFA_SuppressBanner(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_SuppressBanner::CXFA_SuppressBanner(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::SuppressBanner,
                 nullptr,
-                kSuppressBannerAttributeData,
-                kSuppressBannerName) {}
+                kSuppressBannerAttributeData) {}
 
-CXFA_SuppressBanner::~CXFA_SuppressBanner() {}
+CXFA_SuppressBanner::~CXFA_SuppressBanner() = default;

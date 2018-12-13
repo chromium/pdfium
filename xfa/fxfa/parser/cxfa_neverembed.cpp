@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kNeverEmbedAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kNeverEmbedName[] = L"neverEmbed";
-
 }  // namespace
 
 CXFA_NeverEmbed::CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_NeverEmbed::CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::NeverEmbed,
                 nullptr,
-                kNeverEmbedAttributeData,
-                kNeverEmbedName) {}
+                kNeverEmbedAttributeData) {}
 
-CXFA_NeverEmbed::~CXFA_NeverEmbed() {}
+CXFA_NeverEmbed::~CXFA_NeverEmbed() = default;

@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kUserAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kUserName[] = L"user";
-
 }  // namespace
 
 CXFA_User::CXFA_User(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_User::CXFA_User(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::User,
                 nullptr,
                 kUserAttributeData,
-                kUserName,
                 pdfium::MakeUnique<CJX_User>(this)) {}
 
-CXFA_User::~CXFA_User() {}
+CXFA_User::~CXFA_User() = default;

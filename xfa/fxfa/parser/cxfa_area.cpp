@@ -15,6 +15,7 @@ const CXFA_Node::PropertyData kAreaPropertyData[] = {
     {XFA_Element::Desc, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kAreaAttributeData[] = {
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Y, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -28,8 +29,6 @@ const CXFA_Node::AttributeData kAreaAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAreaName[] = L"area";
-
 }  // namespace
 
 CXFA_Area::CXFA_Area(CXFA_Document* doc, XFA_PacketType packet)
@@ -41,7 +40,6 @@ CXFA_Area::CXFA_Area(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Area,
           kAreaPropertyData,
           kAreaAttributeData,
-          kAreaName,
           pdfium::MakeUnique<CJX_Area>(this)) {}
 
-CXFA_Area::~CXFA_Area() {}
+CXFA_Area::~CXFA_Area() = default;

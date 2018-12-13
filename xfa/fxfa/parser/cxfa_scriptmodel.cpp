@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kScriptModelAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kScriptModelName[] = L"scriptModel";
-
 }  // namespace
 
 CXFA_ScriptModel::CXFA_ScriptModel(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_ScriptModel::CXFA_ScriptModel(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ScriptModel,
                 nullptr,
-                kScriptModelAttributeData,
-                kScriptModelName) {}
+                kScriptModelAttributeData) {}
 
-CXFA_ScriptModel::~CXFA_ScriptModel() {}
+CXFA_ScriptModel::~CXFA_ScriptModel() = default;

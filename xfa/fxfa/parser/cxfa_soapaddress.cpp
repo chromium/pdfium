@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kSoapAddressAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSoapAddressName[] = L"soapAddress";
-
 }  // namespace
 
 CXFA_SoapAddress::CXFA_SoapAddress(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_SoapAddress::CXFA_SoapAddress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SoapAddress,
                 nullptr,
                 kSoapAddressAttributeData,
-                kSoapAddressName,
                 pdfium::MakeUnique<CJX_SoapAddress>(this)) {}
 
-CXFA_SoapAddress::~CXFA_SoapAddress() {}
+CXFA_SoapAddress::~CXFA_SoapAddress() = default;

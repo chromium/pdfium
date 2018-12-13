@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kSubmitUrlAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSubmitUrlName[] = L"submitUrl";
-
 }  // namespace
 
 CXFA_SubmitUrl::CXFA_SubmitUrl(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_SubmitUrl::CXFA_SubmitUrl(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::SubmitUrl,
                 nullptr,
-                kSubmitUrlAttributeData,
-                kSubmitUrlName) {}
+                kSubmitUrlAttributeData) {}
 
-CXFA_SubmitUrl::~CXFA_SubmitUrl() {}
+CXFA_SubmitUrl::~CXFA_SubmitUrl() = default;

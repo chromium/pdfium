@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_typefaces.h"
 
-namespace {
-
-constexpr wchar_t kTypefacesName[] = L"typefaces";
-
-}  // namespace
-
 CXFA_Typefaces::CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -19,7 +13,6 @@ CXFA_Typefaces::CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Typefaces,
                 nullptr,
-                nullptr,
-                kTypefacesName) {}
+                nullptr) {}
 
-CXFA_Typefaces::~CXFA_Typefaces() {}
+CXFA_Typefaces::~CXFA_Typefaces() = default;

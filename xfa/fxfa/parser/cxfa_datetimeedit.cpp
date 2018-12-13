@@ -17,6 +17,7 @@ const CXFA_Node::PropertyData kDateTimeEditPropertyData[] = {
     {XFA_Element::Comb, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kDateTimeEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -26,8 +27,6 @@ const CXFA_Node::AttributeData kDateTimeEditAttributeData[] = {
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kDateTimeEditName[] = L"dateTimeEdit";
 
 }  // namespace
 
@@ -39,10 +38,9 @@ CXFA_DateTimeEdit::CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DateTimeEdit,
                 kDateTimeEditPropertyData,
                 kDateTimeEditAttributeData,
-                kDateTimeEditName,
                 pdfium::MakeUnique<CJX_DateTimeEdit>(this)) {}
 
-CXFA_DateTimeEdit::~CXFA_DateTimeEdit() {}
+CXFA_DateTimeEdit::~CXFA_DateTimeEdit() = default;
 
 XFA_Element CXFA_DateTimeEdit::GetValueNodeType() const {
   return XFA_Element::DateTime;

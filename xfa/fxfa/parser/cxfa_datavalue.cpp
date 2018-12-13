@@ -20,8 +20,6 @@ const CXFA_Node::AttributeData kDataValueAttributeData[] = {
     {XFA_Attribute::IsNull, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDataValueName[] = L"dataValue";
-
 }  // namespace
 
 CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_PacketType packet)
@@ -32,7 +30,6 @@ CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DataValue,
                 nullptr,
                 kDataValueAttributeData,
-                kDataValueName,
                 pdfium::MakeUnique<CJX_DataValue>(this)) {}
 
-CXFA_DataValue::~CXFA_DataValue() {}
+CXFA_DataValue::~CXFA_DataValue() = default;

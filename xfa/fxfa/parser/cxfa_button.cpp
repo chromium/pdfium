@@ -14,6 +14,7 @@ namespace {
 const CXFA_Node::PropertyData kButtonPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kButtonAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -21,8 +22,6 @@ const CXFA_Node::AttributeData kButtonAttributeData[] = {
     {XFA_Attribute::Highlight, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Inverted},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kButtonName[] = L"button";
 
 }  // namespace
 
@@ -34,10 +33,9 @@ CXFA_Button::CXFA_Button(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Button,
                 kButtonPropertyData,
                 kButtonAttributeData,
-                kButtonName,
                 pdfium::MakeUnique<CJX_Button>(this)) {}
 
-CXFA_Button::~CXFA_Button() {}
+CXFA_Button::~CXFA_Button() = default;
 
 XFA_FFWidgetType CXFA_Button::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kButton;

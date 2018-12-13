@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kTimeAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kTimeName[] = L"time";
-
 }  // namespace
 
 CXFA_Time::CXFA_Time(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Time::CXFA_Time(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Time,
                 nullptr,
                 kTimeAttributeData,
-                kTimeName,
                 pdfium::MakeUnique<CJX_Time>(this)) {}
 
-CXFA_Time::~CXFA_Time() {}
+CXFA_Time::~CXFA_Time() = default;

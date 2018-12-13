@@ -14,6 +14,7 @@ namespace {
 const CXFA_Node::PropertyData kSubmitPropertyData[] = {
     {XFA_Element::Encrypt, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kSubmitAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -26,8 +27,6 @@ const CXFA_Node::AttributeData kSubmitAttributeData[] = {
     {XFA_Attribute::XdpContent, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSubmitName[] = L"submit";
-
 }  // namespace
 
 CXFA_Submit::CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet)
@@ -38,10 +37,9 @@ CXFA_Submit::CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Submit,
                 kSubmitPropertyData,
                 kSubmitAttributeData,
-                kSubmitName,
                 pdfium::MakeUnique<CJX_Submit>(this)) {}
 
-CXFA_Submit::~CXFA_Submit() {}
+CXFA_Submit::~CXFA_Submit() = default;
 
 bool CXFA_Submit::IsSubmitEmbedPDF() {
   return JSObject()->GetBoolean(XFA_Attribute::EmbedPDF);

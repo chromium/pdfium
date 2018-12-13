@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kUpdateAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kUpdateName[] = L"update";
-
 }  // namespace
 
 CXFA_Update::CXFA_Update(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Update::CXFA_Update(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Update,
                 nullptr,
                 kUpdateAttributeData,
-                kUpdateName,
                 pdfium::MakeUnique<CJX_Update>(this)) {}
 
-CXFA_Update::~CXFA_Update() {}
+CXFA_Update::~CXFA_Update() = default;

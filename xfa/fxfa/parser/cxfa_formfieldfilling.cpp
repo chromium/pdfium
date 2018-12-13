@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kFormFieldFillingAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kFormFieldFillingName[] = L"formFieldFilling";
-
 }  // namespace
 
 CXFA_FormFieldFilling::CXFA_FormFieldFilling(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_FormFieldFilling::CXFA_FormFieldFilling(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::FormFieldFilling,
                 nullptr,
-                kFormFieldFillingAttributeData,
-                kFormFieldFillingName) {}
+                kFormFieldFillingAttributeData) {}
 
-CXFA_FormFieldFilling::~CXFA_FormFieldFilling() {}
+CXFA_FormFieldFilling::~CXFA_FormFieldFilling() = default;

@@ -292,7 +292,7 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
       clone = pThisXMLRoot->Clone(top_xml_doc);
     } else {
       clone = top_xml_doc->CreateNode<CFX_XMLElement>(
-          WideString(GetXFANode()->GetClassName()));
+          WideString::FromASCII(GetXFANode()->GetClassName()));
     }
     pFakeXMLRoot = clone;
   }

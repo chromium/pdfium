@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kSoapActionAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSoapActionName[] = L"soapAction";
-
 }  // namespace
 
 CXFA_SoapAction::CXFA_SoapAction(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_SoapAction::CXFA_SoapAction(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SoapAction,
                 nullptr,
                 kSoapActionAttributeData,
-                kSoapActionName,
                 pdfium::MakeUnique<CJX_SoapAction>(this)) {}
 
-CXFA_SoapAction::~CXFA_SoapAction() {}
+CXFA_SoapAction::~CXFA_SoapAction() = default;

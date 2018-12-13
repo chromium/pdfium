@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kCompressObjectStreamAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCompressObjectStreamName[] = L"compressObjectStream";
-
 }  // namespace
 
 CXFA_CompressObjectStream::CXFA_CompressObjectStream(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_CompressObjectStream::CXFA_CompressObjectStream(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CompressObjectStream,
                 nullptr,
-                kCompressObjectStreamAttributeData,
-                kCompressObjectStreamName) {}
+                kCompressObjectStreamAttributeData) {}
 
-CXFA_CompressObjectStream::~CXFA_CompressObjectStream() {}
+CXFA_CompressObjectStream::~CXFA_CompressObjectStream() = default;

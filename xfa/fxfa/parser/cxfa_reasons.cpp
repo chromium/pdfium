@@ -19,8 +19,6 @@ const CXFA_Node::AttributeData kReasonsAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kReasonsName[] = L"reasons";
-
 }  // namespace
 
 CXFA_Reasons::CXFA_Reasons(CXFA_Document* doc, XFA_PacketType packet)
@@ -31,7 +29,6 @@ CXFA_Reasons::CXFA_Reasons(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Reasons,
                 nullptr,
                 kReasonsAttributeData,
-                kReasonsName,
                 pdfium::MakeUnique<CJX_Reasons>(this)) {}
 
-CXFA_Reasons::~CXFA_Reasons() {}
+CXFA_Reasons::~CXFA_Reasons() = default;

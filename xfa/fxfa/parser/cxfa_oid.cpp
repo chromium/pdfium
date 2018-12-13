@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kOidAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kOidName[] = L"oid";
-
 }  // namespace
 
 CXFA_Oid::CXFA_Oid(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Oid::CXFA_Oid(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Oid,
                 nullptr,
                 kOidAttributeData,
-                kOidName,
                 pdfium::MakeUnique<CJX_Oid>(this)) {}
 
-CXFA_Oid::~CXFA_Oid() {}
+CXFA_Oid::~CXFA_Oid() = default;

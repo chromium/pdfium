@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kSourceSetAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSourceSetName[] = L"sourceSet";
-
 }  // namespace
 
 CXFA_SourceSet::CXFA_SourceSet(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_SourceSet::CXFA_SourceSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SourceSet,
                 nullptr,
                 kSourceSetAttributeData,
-                kSourceSetName,
                 pdfium::MakeUnique<CJX_SourceSet>(this)) {}
 
-CXFA_SourceSet::~CXFA_SourceSet() {}
+CXFA_SourceSet::~CXFA_SourceSet() = default;

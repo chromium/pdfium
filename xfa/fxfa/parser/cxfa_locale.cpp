@@ -14,13 +14,12 @@ const CXFA_Node::PropertyData kLocalePropertyData[] = {
     {XFA_Element::DateTimeSymbols, 1, 0}, {XFA_Element::NumberPatterns, 1, 0},
     {XFA_Element::NumberSymbols, 1, 0},   {XFA_Element::TimePatterns, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kLocaleAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kLocaleName[] = L"locale";
 
 }  // namespace
 
@@ -31,7 +30,6 @@ CXFA_Locale::CXFA_Locale(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Locale,
                 kLocalePropertyData,
-                kLocaleAttributeData,
-                kLocaleName) {}
+                kLocaleAttributeData) {}
 
-CXFA_Locale::~CXFA_Locale() {}
+CXFA_Locale::~CXFA_Locale() = default;

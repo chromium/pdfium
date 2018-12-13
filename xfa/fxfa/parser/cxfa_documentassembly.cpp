@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kDocumentAssemblyAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDocumentAssemblyName[] = L"documentAssembly";
-
 }  // namespace
 
 CXFA_DocumentAssembly::CXFA_DocumentAssembly(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_DocumentAssembly::CXFA_DocumentAssembly(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DocumentAssembly,
                 nullptr,
-                kDocumentAssemblyAttributeData,
-                kDocumentAssemblyName) {}
+                kDocumentAssemblyAttributeData) {}
 
-CXFA_DocumentAssembly::~CXFA_DocumentAssembly() {}
+CXFA_DocumentAssembly::~CXFA_DocumentAssembly() = default;

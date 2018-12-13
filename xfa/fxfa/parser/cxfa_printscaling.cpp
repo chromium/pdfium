@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPrintScalingAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPrintScalingName[] = L"printScaling";
-
 }  // namespace
 
 CXFA_PrintScaling::CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_PrintScaling::CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PrintScaling,
                 nullptr,
-                kPrintScalingAttributeData,
-                kPrintScalingName) {}
+                kPrintScalingAttributeData) {}
 
-CXFA_PrintScaling::~CXFA_PrintScaling() {}
+CXFA_PrintScaling::~CXFA_PrintScaling() = default;

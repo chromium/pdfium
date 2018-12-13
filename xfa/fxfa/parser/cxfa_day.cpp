@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_day.h"
 
-namespace {
-
-constexpr wchar_t kDayName[] = L"day";
-
-}  // namespace
-
 CXFA_Day::CXFA_Day(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -19,7 +13,6 @@ CXFA_Day::CXFA_Day(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Day,
                 nullptr,
-                nullptr,
-                kDayName) {}
+                nullptr) {}
 
-CXFA_Day::~CXFA_Day() {}
+CXFA_Day::~CXFA_Day() = default;

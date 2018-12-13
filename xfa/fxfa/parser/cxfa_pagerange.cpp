@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPageRangeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPageRangeName[] = L"pageRange";
-
 }  // namespace
 
 CXFA_PageRange::CXFA_PageRange(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_PageRange::CXFA_PageRange(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PageRange,
                 nullptr,
-                kPageRangeAttributeData,
-                kPageRangeName) {}
+                kPageRangeAttributeData) {}
 
-CXFA_PageRange::~CXFA_PageRange() {}
+CXFA_PageRange::~CXFA_PageRange() = default;

@@ -17,6 +17,7 @@ const CXFA_Node::PropertyData kPatternPropertyData[] = {
     {XFA_Element::Color, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kPatternAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -24,8 +25,6 @@ const CXFA_Node::AttributeData kPatternAttributeData[] = {
      (void*)XFA_AttributeValue::CrossHatch},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kPatternName[] = L"pattern";
 
 }  // namespace
 
@@ -37,10 +36,9 @@ CXFA_Pattern::CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Pattern,
                 kPatternPropertyData,
                 kPatternAttributeData,
-                kPatternName,
                 pdfium::MakeUnique<CJX_Pattern>(this)) {}
 
-CXFA_Pattern::~CXFA_Pattern() {}
+CXFA_Pattern::~CXFA_Pattern() = default;
 
 CXFA_Color* CXFA_Pattern::GetColorIfExists() {
   return GetChild<CXFA_Color>(0, XFA_Element::Color, false);

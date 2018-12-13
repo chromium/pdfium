@@ -16,8 +16,6 @@ const CXFA_Node::AttributeData kAppearanceFilterAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAppearanceFilterName[] = L"appearanceFilter";
-
 }  // namespace
 
 CXFA_AppearanceFilter::CXFA_AppearanceFilter(CXFA_Document* doc,
@@ -28,7 +26,6 @@ CXFA_AppearanceFilter::CXFA_AppearanceFilter(CXFA_Document* doc,
                 XFA_ObjectType::NodeC,
                 XFA_Element::AppearanceFilter,
                 nullptr,
-                kAppearanceFilterAttributeData,
-                kAppearanceFilterName) {}
+                kAppearanceFilterAttributeData) {}
 
-CXFA_AppearanceFilter::~CXFA_AppearanceFilter() {}
+CXFA_AppearanceFilter::~CXFA_AppearanceFilter() = default;

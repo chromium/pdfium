@@ -19,8 +19,6 @@ const CXFA_Node::AttributeData kSubjectDNsAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSubjectDNsName[] = L"subjectDNs";
-
 }  // namespace
 
 CXFA_SubjectDNs::CXFA_SubjectDNs(CXFA_Document* doc, XFA_PacketType packet)
@@ -31,7 +29,6 @@ CXFA_SubjectDNs::CXFA_SubjectDNs(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SubjectDNs,
                 nullptr,
                 kSubjectDNsAttributeData,
-                kSubjectDNsName,
                 pdfium::MakeUnique<CJX_SubjectDNs>(this)) {}
 
-CXFA_SubjectDNs::~CXFA_SubjectDNs() {}
+CXFA_SubjectDNs::~CXFA_SubjectDNs() = default;

@@ -14,6 +14,7 @@ namespace {
 const CXFA_Node::PropertyData kBreakBeforePropertyData[] = {
     {XFA_Element::Script, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kBreakBeforeAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -26,8 +27,6 @@ const CXFA_Node::AttributeData kBreakBeforeAttributeData[] = {
     {XFA_Attribute::Leader, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBreakBeforeName[] = L"breakBefore";
-
 }  // namespace
 
 CXFA_BreakBefore::CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet)
@@ -38,7 +37,6 @@ CXFA_BreakBefore::CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::BreakBefore,
                 kBreakBeforePropertyData,
                 kBreakBeforeAttributeData,
-                kBreakBeforeName,
                 pdfium::MakeUnique<CJX_BreakBefore>(this)) {}
 
-CXFA_BreakBefore::~CXFA_BreakBefore() {}
+CXFA_BreakBefore::~CXFA_BreakBefore() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kDynamicRenderAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDynamicRenderName[] = L"dynamicRender";
-
 }  // namespace
 
 CXFA_DynamicRender::CXFA_DynamicRender(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_DynamicRender::CXFA_DynamicRender(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DynamicRender,
                 nullptr,
-                kDynamicRenderAttributeData,
-                kDynamicRenderName) {}
+                kDynamicRenderAttributeData) {}
 
-CXFA_DynamicRender::~CXFA_DynamicRender() {}
+CXFA_DynamicRender::~CXFA_DynamicRender() = default;

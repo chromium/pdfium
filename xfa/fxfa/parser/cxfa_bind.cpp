@@ -16,6 +16,7 @@ namespace {
 const CXFA_Node::PropertyData kBindPropertyData[] = {
     {XFA_Element::Picture, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kBindAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
@@ -29,8 +30,6 @@ const CXFA_Node::AttributeData kBindAttributeData[] = {
      (void*)XFA_AttributeValue::Once},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBindName[] = L"bind";
-
 }  // namespace
 
 CXFA_Bind::CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet)
@@ -42,10 +41,9 @@ CXFA_Bind::CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Bind,
                 kBindPropertyData,
                 kBindAttributeData,
-                kBindName,
                 pdfium::MakeUnique<CJX_Bind>(this)) {}
 
-CXFA_Bind::~CXFA_Bind() {}
+CXFA_Bind::~CXFA_Bind() = default;
 
 WideString CXFA_Bind::GetPicture() {
   CXFA_Picture* pPicture =

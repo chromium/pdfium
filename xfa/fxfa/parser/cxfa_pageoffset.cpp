@@ -15,8 +15,6 @@ const CXFA_Node::AttributeData kPageOffsetAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPageOffsetName[] = L"pageOffset";
-
 }  // namespace
 
 CXFA_PageOffset::CXFA_PageOffset(CXFA_Document* doc, XFA_PacketType packet)
@@ -26,7 +24,6 @@ CXFA_PageOffset::CXFA_PageOffset(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::PageOffset,
                 nullptr,
-                kPageOffsetAttributeData,
-                kPageOffsetName) {}
+                kPageOffsetAttributeData) {}
 
-CXFA_PageOffset::~CXFA_PageOffset() {}
+CXFA_PageOffset::~CXFA_PageOffset() = default;

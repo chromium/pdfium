@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kRootElementAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRootElementName[] = L"rootElement";
-
 }  // namespace
 
 CXFA_RootElement::CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_RootElement::CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::RootElement,
                 nullptr,
                 kRootElementAttributeData,
-                kRootElementName,
                 pdfium::MakeUnique<CJX_RootElement>(this)) {}
 
-CXFA_RootElement::~CXFA_RootElement() {}
+CXFA_RootElement::~CXFA_RootElement() = default;

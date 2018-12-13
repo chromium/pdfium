@@ -20,8 +20,6 @@ const CXFA_Node::AttributeData kOperationAttributeData[] = {
     {XFA_Attribute::Input, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kOperationName[] = L"operation";
-
 }  // namespace
 
 CXFA_Operation::CXFA_Operation(CXFA_Document* doc, XFA_PacketType packet)
@@ -32,7 +30,6 @@ CXFA_Operation::CXFA_Operation(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Operation,
                 nullptr,
                 kOperationAttributeData,
-                kOperationName,
                 pdfium::MakeUnique<CJX_Operation>(this)) {}
 
-CXFA_Operation::~CXFA_Operation() {}
+CXFA_Operation::~CXFA_Operation() = default;

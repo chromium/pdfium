@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kJogAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kJogName[] = L"jog";
-
 }  // namespace
 
 CXFA_Jog::CXFA_Jog(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Jog::CXFA_Jog(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Jog,
                 nullptr,
-                kJogAttributeData,
-                kJogName) {}
+                kJogAttributeData) {}
 
-CXFA_Jog::~CXFA_Jog() {}
+CXFA_Jog::~CXFA_Jog() = default;

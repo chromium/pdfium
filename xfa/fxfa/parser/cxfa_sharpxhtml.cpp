@@ -12,8 +12,6 @@ const CXFA_Node::AttributeData kSharpxHTMLAttributeData[] = {
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSharpxHTMLName[] = L"#xHTML";
-
 }  // namespace
 
 CXFA_SharpxHTML::CXFA_SharpxHTML(CXFA_Document* doc, XFA_PacketType packet)
@@ -25,7 +23,6 @@ CXFA_SharpxHTML::CXFA_SharpxHTML(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::SharpxHTML,
                 nullptr,
-                kSharpxHTMLAttributeData,
-                kSharpxHTMLName) {}
+                kSharpxHTMLAttributeData) {}
 
-CXFA_SharpxHTML::~CXFA_SharpxHTML() {}
+CXFA_SharpxHTML::~CXFA_SharpxHTML() = default;

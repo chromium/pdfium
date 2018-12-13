@@ -16,14 +16,13 @@ const CXFA_Node::PropertyData kStipplePropertyData[] = {
     {XFA_Element::Color, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kStippleAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Rate, XFA_AttributeType::Integer, (void*)50},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kStippleName[] = L"stipple";
 
 }  // namespace
 
@@ -35,10 +34,9 @@ CXFA_Stipple::CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Stipple,
                 kStipplePropertyData,
                 kStippleAttributeData,
-                kStippleName,
                 pdfium::MakeUnique<CJX_Stipple>(this)) {}
 
-CXFA_Stipple::~CXFA_Stipple() {}
+CXFA_Stipple::~CXFA_Stipple() = default;
 
 CXFA_Color* CXFA_Stipple::GetColorIfExists() {
   return GetChild<CXFA_Color>(0, XFA_Element::Color, false);

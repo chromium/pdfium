@@ -12,8 +12,6 @@ const CXFA_Node::AttributeData kTypefaceAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kTypefaceName[] = L"typeface";
-
 }  // namespace
 
 CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
@@ -23,7 +21,6 @@ CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Typeface,
                 nullptr,
-                kTypefaceAttributeData,
-                kTypefaceName) {}
+                kTypefaceAttributeData) {}
 
-CXFA_Typeface::~CXFA_Typeface() {}
+CXFA_Typeface::~CXFA_Typeface() = default;

@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_proto.h"
 
-namespace {
-
-constexpr wchar_t kProtoName[] = L"proto";
-
-}  // namespace
-
 CXFA_Proto::CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -19,7 +13,6 @@ CXFA_Proto::CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Proto,
                 nullptr,
-                nullptr,
-                kProtoName) {}
+                nullptr) {}
 
-CXFA_Proto::~CXFA_Proto() {}
+CXFA_Proto::~CXFA_Proto() = default;

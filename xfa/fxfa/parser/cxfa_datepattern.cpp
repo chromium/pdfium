@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kDatePatternAttributeData[] = {
      (void*)XFA_AttributeValue::Med},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDatePatternName[] = L"datePattern";
-
 }  // namespace
 
 CXFA_DatePattern::CXFA_DatePattern(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_DatePattern::CXFA_DatePattern(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DatePattern,
                 nullptr,
-                kDatePatternAttributeData,
-                kDatePatternName) {}
+                kDatePatternAttributeData) {}
 
-CXFA_DatePattern::~CXFA_DatePattern() {}
+CXFA_DatePattern::~CXFA_DatePattern() = default;

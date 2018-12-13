@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAmdAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAmdName[] = L"amd";
-
 }  // namespace
 
 CXFA_Amd::CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Amd::CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Amd,
                 nullptr,
-                kAmdAttributeData,
-                kAmdName) {}
+                kAmdAttributeData) {}
 
-CXFA_Amd::~CXFA_Amd() {}
+CXFA_Amd::~CXFA_Amd() = default;

@@ -17,8 +17,6 @@ const CXFA_Node::AttributeData kDigestMethodAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDigestMethodName[] = L"digestMethod";
-
 }  // namespace
 
 CXFA_DigestMethod::CXFA_DigestMethod(CXFA_Document* doc, XFA_PacketType packet)
@@ -29,7 +27,6 @@ CXFA_DigestMethod::CXFA_DigestMethod(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DigestMethod,
                 nullptr,
                 kDigestMethodAttributeData,
-                kDigestMethodName,
                 pdfium::MakeUnique<CJX_DigestMethod>(this)) {}
 
-CXFA_DigestMethod::~CXFA_DigestMethod() {}
+CXFA_DigestMethod::~CXFA_DigestMethod() = default;

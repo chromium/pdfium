@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kGroupParentAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kGroupParentName[] = L"groupParent";
-
 }  // namespace
 
 CXFA_GroupParent::CXFA_GroupParent(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_GroupParent::CXFA_GroupParent(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::GroupParent,
                 nullptr,
-                kGroupParentAttributeData,
-                kGroupParentName) {}
+                kGroupParentAttributeData) {}
 
-CXFA_GroupParent::~CXFA_GroupParent() {}
+CXFA_GroupParent::~CXFA_GroupParent() = default;

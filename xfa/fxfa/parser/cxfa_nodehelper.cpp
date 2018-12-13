@@ -249,7 +249,7 @@ WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
   bool bIsProperty = NodeIsProperty(refNode);
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
-    ws = refNode->GetClassName();
+    ws = WideString::FromASCII(refNode->GetClassName());
     return WideString::Format(
         L"#%ls[%d]", ws.c_str(),
         GetIndex(refNode, XFA_LOGIC_Transparent, bIsProperty, true));

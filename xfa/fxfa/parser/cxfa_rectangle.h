@@ -34,7 +34,6 @@ class CXFA_Rectangle : public CXFA_Box {
                  XFA_Element eType,
                  const PropertyData* properties,
                  const AttributeData* attributes,
-                 const WideStringView& elementName,
                  std::unique_ptr<CJX_Object> js_node);
 
  private:

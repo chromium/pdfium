@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kRangeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRangeName[] = L"range";
-
 }  // namespace
 
 CXFA_Range::CXFA_Range(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Range::CXFA_Range(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Range,
                 nullptr,
-                kRangeAttributeData,
-                kRangeName) {}
+                kRangeAttributeData) {}
 
-CXFA_Range::~CXFA_Range() {}
+CXFA_Range::~CXFA_Range() = default;

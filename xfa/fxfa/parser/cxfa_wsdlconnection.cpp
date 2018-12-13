@@ -19,12 +19,11 @@ const CXFA_Node::PropertyData kWsdlConnectionPropertyData[] = {
     {XFA_Element::EffectiveOutputPolicy, 1, 0},
     {XFA_Element::EffectiveInputPolicy, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kWsdlConnectionAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataDescription, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kWsdlConnectionName[] = L"wsdlConnection";
 
 }  // namespace
 
@@ -37,7 +36,6 @@ CXFA_WsdlConnection::CXFA_WsdlConnection(CXFA_Document* doc,
                 XFA_Element::WsdlConnection,
                 kWsdlConnectionPropertyData,
                 kWsdlConnectionAttributeData,
-                kWsdlConnectionName,
                 pdfium::MakeUnique<CJX_WsdlConnection>(this)) {}
 
-CXFA_WsdlConnection::~CXFA_WsdlConnection() {}
+CXFA_WsdlConnection::~CXFA_WsdlConnection() = default;

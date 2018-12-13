@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kDuplexOptionAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDuplexOptionName[] = L"duplexOption";
-
 }  // namespace
 
 CXFA_DuplexOption::CXFA_DuplexOption(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_DuplexOption::CXFA_DuplexOption(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DuplexOption,
                 nullptr,
-                kDuplexOptionAttributeData,
-                kDuplexOptionName) {}
+                kDuplexOptionAttributeData) {}
 
-CXFA_DuplexOption::~CXFA_DuplexOption() {}
+CXFA_DuplexOption::~CXFA_DuplexOption() = default;

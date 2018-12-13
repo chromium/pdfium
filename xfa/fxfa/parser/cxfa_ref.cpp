@@ -17,8 +17,6 @@ const CXFA_Node::AttributeData kRefAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRefName[] = L"ref";
-
 }  // namespace
 
 CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_PacketType packet)
@@ -29,7 +27,6 @@ CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Ref,
                 nullptr,
                 kRefAttributeData,
-                kRefName,
                 pdfium::MakeUnique<CJX_Ref>(this)) {}
 
-CXFA_Ref::~CXFA_Ref() {}
+CXFA_Ref::~CXFA_Ref() = default;

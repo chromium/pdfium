@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kCombAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kCombName[] = L"comb";
-
 }  // namespace
 
 CXFA_Comb::CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Comb::CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Comb,
                 nullptr,
                 kCombAttributeData,
-                kCombName,
                 pdfium::MakeUnique<CJX_Comb>(this)) {}
 
 CXFA_Comb::~CXFA_Comb() {}

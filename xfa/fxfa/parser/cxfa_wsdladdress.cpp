@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kWsdlAddressAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kWsdlAddressName[] = L"wsdlAddress";
-
 }  // namespace
 
 CXFA_WsdlAddress::CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_WsdlAddress::CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::WsdlAddress,
                 nullptr,
                 kWsdlAddressAttributeData,
-                kWsdlAddressName,
                 pdfium::MakeUnique<CJX_WsdlAddress>(this)) {}
 
-CXFA_WsdlAddress::~CXFA_WsdlAddress() {}
+CXFA_WsdlAddress::~CXFA_WsdlAddress() = default;

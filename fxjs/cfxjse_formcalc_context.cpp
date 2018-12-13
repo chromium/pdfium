@@ -5729,7 +5729,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
             wsName = *ret;
         }
         if (wsName.IsEmpty())
-          wsName = L"#" + pNode->GetClassName();
+          wsName = L"#" + WideString::FromASCII(pNode->GetClassName());
 
         wsSomExpression = wsName + wsSomExpression;
         dFlags = XFA_RESOLVENODE_Siblings;

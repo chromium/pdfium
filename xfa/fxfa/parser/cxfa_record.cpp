@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kRecordAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kRecordName[] = L"record";
-
 }  // namespace
 
 CXFA_Record::CXFA_Record(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_Record::CXFA_Record(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Record,
                 nullptr,
-                kRecordAttributeData,
-                kRecordName) {}
+                kRecordAttributeData) {}
 
-CXFA_Record::~CXFA_Record() {}
+CXFA_Record::~CXFA_Record() = default;

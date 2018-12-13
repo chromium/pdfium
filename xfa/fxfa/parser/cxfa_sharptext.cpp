@@ -12,8 +12,6 @@ const CXFA_Node::AttributeData kSharptextAttributeData[] = {
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSharptextName[] = L"#text";
-
 }  // namespace
 
 CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet)
@@ -25,7 +23,6 @@ CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Sharptext,
                 nullptr,
-                kSharptextAttributeData,
-                kSharptextName) {}
+                kSharptextAttributeData) {}
 
-CXFA_Sharptext::~CXFA_Sharptext() {}
+CXFA_Sharptext::~CXFA_Sharptext() = default;

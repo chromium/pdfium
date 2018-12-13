@@ -21,8 +21,6 @@ const CXFA_Node::AttributeData kSpeakAttributeData[] = {
     {XFA_Attribute::Disable, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kSpeakName[] = L"speak";
-
 }  // namespace
 
 CXFA_Speak::CXFA_Speak(CXFA_Document* doc, XFA_PacketType packet)
@@ -33,7 +31,6 @@ CXFA_Speak::CXFA_Speak(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Speak,
                 nullptr,
                 kSpeakAttributeData,
-                kSpeakName,
                 pdfium::MakeUnique<CJX_Speak>(this)) {}
 
-CXFA_Speak::~CXFA_Speak() {}
+CXFA_Speak::~CXFA_Speak() = default;

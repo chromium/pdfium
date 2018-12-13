@@ -24,12 +24,11 @@ const CXFA_Node::PropertyData kPresentPropertyData[] = {
     {XFA_Element::Destination, 1, 0},
     {XFA_Element::IncrementalMerge, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kPresentAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kPresentName[] = L"present";
 
 }  // namespace
 
@@ -40,7 +39,6 @@ CXFA_Present::CXFA_Present(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Present,
                 kPresentPropertyData,
-                kPresentAttributeData,
-                kPresentName) {}
+                kPresentAttributeData) {}
 
-CXFA_Present::~CXFA_Present() {}
+CXFA_Present::~CXFA_Present() = default;

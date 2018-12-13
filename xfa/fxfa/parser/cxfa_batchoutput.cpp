@@ -15,8 +15,6 @@ const CXFA_Node::AttributeData kBatchOutputAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kBatchOutputName[] = L"batchOutput";
-
 }  // namespace
 
 CXFA_BatchOutput::CXFA_BatchOutput(CXFA_Document* doc, XFA_PacketType packet)
@@ -26,7 +24,6 @@ CXFA_BatchOutput::CXFA_BatchOutput(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::BatchOutput,
                 nullptr,
-                kBatchOutputAttributeData,
-                kBatchOutputName) {}
+                kBatchOutputAttributeData) {}
 
-CXFA_BatchOutput::~CXFA_BatchOutput() {}
+CXFA_BatchOutput::~CXFA_BatchOutput() = default;

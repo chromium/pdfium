@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kContentCopyAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kContentCopyName[] = L"contentCopy";
-
 }  // namespace
 
 CXFA_ContentCopy::CXFA_ContentCopy(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_ContentCopy::CXFA_ContentCopy(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ContentCopy,
                 nullptr,
-                kContentCopyAttributeData,
-                kContentCopyName) {}
+                kContentCopyAttributeData) {}
 
-CXFA_ContentCopy::~CXFA_ContentCopy() {}
+CXFA_ContentCopy::~CXFA_ContentCopy() = default;

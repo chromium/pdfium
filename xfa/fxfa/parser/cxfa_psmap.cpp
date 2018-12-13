@@ -6,12 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_psmap.h"
 
-namespace {
-
-constexpr wchar_t kPsMapName[] = L"psMap";
-
-}  // namespace
-
 CXFA_PsMap::CXFA_PsMap(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -19,7 +13,6 @@ CXFA_PsMap::CXFA_PsMap(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::PsMap,
                 nullptr,
-                nullptr,
-                kPsMapName) {}
+                nullptr) {}
 
-CXFA_PsMap::~CXFA_PsMap() {}
+CXFA_PsMap::~CXFA_PsMap() = default;

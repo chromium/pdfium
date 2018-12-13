@@ -15,12 +15,11 @@ const CXFA_Node::PropertyData kDataPropertyData[] = {
     {XFA_Element::Window, 1, 0},     {XFA_Element::Record, 1, 0},
     {XFA_Element::Range, 1, 0},      {XFA_Element::IncrementalLoad, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
+
 const CXFA_Node::AttributeData kDataAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
-constexpr wchar_t kDataName[] = L"data";
 
 }  // namespace
 
@@ -31,7 +30,6 @@ CXFA_Data::CXFA_Data(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Data,
                 kDataPropertyData,
-                kDataAttributeData,
-                kDataName) {}
+                kDataAttributeData) {}
 
-CXFA_Data::~CXFA_Data() {}
+CXFA_Data::~CXFA_Data() = default;

@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kAutoSaveAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kAutoSaveName[] = L"autoSave";
-
 }  // namespace
 
 CXFA_AutoSave::CXFA_AutoSave(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_AutoSave::CXFA_AutoSave(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::AutoSave,
                 nullptr,
-                kAutoSaveAttributeData,
-                kAutoSaveName) {}
+                kAutoSaveAttributeData) {}
 
-CXFA_AutoSave::~CXFA_AutoSave() {}
+CXFA_AutoSave::~CXFA_AutoSave() = default;

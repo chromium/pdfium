@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kPlaintextMetadataAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kPlaintextMetadataName[] = L"plaintextMetadata";
-
 }  // namespace
 
 CXFA_PlaintextMetadata::CXFA_PlaintextMetadata(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_PlaintextMetadata::CXFA_PlaintextMetadata(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PlaintextMetadata,
                 nullptr,
-                kPlaintextMetadataAttributeData,
-                kPlaintextMetadataName) {}
+                kPlaintextMetadataAttributeData) {}
 
-CXFA_PlaintextMetadata::~CXFA_PlaintextMetadata() {}
+CXFA_PlaintextMetadata::~CXFA_PlaintextMetadata() = default;

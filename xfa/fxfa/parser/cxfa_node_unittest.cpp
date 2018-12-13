@@ -17,10 +17,9 @@ class TestNode final : public CXFA_Node {
                   XFA_PacketType::Form,
                   (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                   XFA_ObjectType::Node,
-                  XFA_Element::Unknown,
+                  XFA_Element::Node,
                   nullptr,
-                  nullptr,
-                  L"TestNode") {}
+                  nullptr) {}
 
   ~TestNode() override = default;
 };

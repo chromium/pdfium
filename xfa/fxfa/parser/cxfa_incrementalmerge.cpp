@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kIncrementalMergeAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kIncrementalMergeName[] = L"incrementalMerge";
-
 }  // namespace
 
 CXFA_IncrementalMerge::CXFA_IncrementalMerge(CXFA_Document* doc,
@@ -25,7 +23,6 @@ CXFA_IncrementalMerge::CXFA_IncrementalMerge(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::IncrementalMerge,
                 nullptr,
-                kIncrementalMergeAttributeData,
-                kIncrementalMergeName) {}
+                kIncrementalMergeAttributeData) {}
 
-CXFA_IncrementalMerge::~CXFA_IncrementalMerge() {}
+CXFA_IncrementalMerge::~CXFA_IncrementalMerge() = default;

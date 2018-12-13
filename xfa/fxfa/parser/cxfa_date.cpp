@@ -18,8 +18,6 @@ const CXFA_Node::AttributeData kDateAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kDateName[] = L"date";
-
 }  // namespace
 
 CXFA_Date::CXFA_Date(CXFA_Document* doc, XFA_PacketType packet)
@@ -30,7 +28,6 @@ CXFA_Date::CXFA_Date(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Date,
                 nullptr,
                 kDateAttributeData,
-                kDateName,
                 pdfium::MakeUnique<CJX_Date>(this)) {}
 
-CXFA_Date::~CXFA_Date() {}
+CXFA_Date::~CXFA_Date() = default;

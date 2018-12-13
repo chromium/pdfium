@@ -13,8 +13,6 @@ const CXFA_Node::AttributeData kToAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kToName[] = L"to";
-
 }  // namespace
 
 CXFA_To::CXFA_To(CXFA_Document* doc, XFA_PacketType packet)
@@ -24,7 +22,6 @@ CXFA_To::CXFA_To(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::To,
                 nullptr,
-                kToAttributeData,
-                kToName) {}
+                kToAttributeData) {}
 
-CXFA_To::~CXFA_To() {}
+CXFA_To::~CXFA_To() = default;

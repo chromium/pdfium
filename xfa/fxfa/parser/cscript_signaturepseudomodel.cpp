@@ -14,7 +14,6 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     : CXFA_Object(pDocument,
                   XFA_ObjectType::Object,
                   XFA_Element::SignaturePseudoModel,
-                  WideStringView(L"signaturePseudoModel"),
                   pdfium::MakeUnique<CJX_SignaturePseudoModel>(this)) {}
 
 CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() = default;
