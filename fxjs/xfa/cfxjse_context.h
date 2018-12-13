@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_CONTEXT_H_
-#define FXJS_CFXJSE_CONTEXT_H_
+#ifndef FXJS_XFA_CFXJSE_CONTEXT_H_
+#define FXJS_XFA_CFXJSE_CONTEXT_H_
 
 #include <memory>
 #include <vector>
@@ -54,4 +54,4 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
 
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject);
 
-#endif  // FXJS_CFXJSE_CONTEXT_H_
+#endif  // FXJS_XFA_CFXJSE_CONTEXT_H_

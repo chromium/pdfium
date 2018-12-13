@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_RESOLVEPROCESSOR_H_
-#define FXJS_CFXJSE_RESOLVEPROCESSOR_H_
+#ifndef FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_
+#define FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_
 
 #include <memory>
 #include <vector>
@@ -77,4 +77,4 @@ class CFXJSE_ResolveProcessor {
   std::unique_ptr<CXFA_NodeHelper> const m_pNodeHelper;
 };
 
-#endif  // FXJS_CFXJSE_RESOLVEPROCESSOR_H_
+#endif  // FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_

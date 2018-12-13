@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_FORMCALC_CONTEXT_H_
-#define FXJS_CFXJSE_FORMCALC_CONTEXT_H_
+#ifndef FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
+#define FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/fxjse.h"
+#include "fxjs/xfa/fxjse.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CFXJSE_Arguments;
@@ -407,4 +407,4 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   UnownedPtr<CXFA_Document> const m_pDocument;
 };
 
-#endif  // FXJS_CFXJSE_FORMCALC_CONTEXT_H_
+#endif  // FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_

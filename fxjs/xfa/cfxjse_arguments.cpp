@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/xfa/cfxjse_arguments.h"
 
-#include "fxjs/cfxjse_context.h"
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_context.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 
 CFXJSE_Arguments::CFXJSE_Arguments(

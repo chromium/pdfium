@@ -6,7 +6,7 @@
 
 #include "fxjs/xfa/cjx_textnode.h"
 
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CJX_TextNode::CJX_TextNode(CXFA_Node* node) : CJX_Node(node) {}

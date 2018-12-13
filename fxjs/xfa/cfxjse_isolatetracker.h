@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_ISOLATETRACKER_H_
-#define FXJS_CFXJSE_ISOLATETRACKER_H_
+#ifndef FXJS_XFA_CFXJSE_ISOLATETRACKER_H_
+#define FXJS_XFA_CFXJSE_ISOLATETRACKER_H_
 
 #include "v8/include/v8.h"
 
@@ -41,4 +41,4 @@ class CFXJSE_ScopeUtil_IsolateHandleRootContext final
   v8::Context::Scope m_cscope;
 };
 
-#endif  // FXJS_CFXJSE_ISOLATETRACKER_H_
+#endif  // FXJS_XFA_CFXJSE_ISOLATETRACKER_H_

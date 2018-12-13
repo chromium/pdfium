@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_value.h"
 
 #include <math.h>
 
-#include "fxjs/cfxjse_class.h"
-#include "fxjs/cfxjse_context.h"
-#include "fxjs/cfxjse_isolatetracker.h"
+#include "fxjs/xfa/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_context.h"
+#include "fxjs/xfa/cfxjse_isolatetracker.h"
 
 namespace {
 
@@ -485,4 +485,3 @@ void CFXJSE_Value::SetString(const ByteStringView& szString) {
           .ToLocalChecked();
   m_hValue.Reset(GetIsolate(), hValue);
 }
-

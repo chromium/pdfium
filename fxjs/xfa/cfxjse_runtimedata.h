@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_RUNTIMEDATA_H_
-#define FXJS_CFXJSE_RUNTIMEDATA_H_
+#ifndef FXJS_XFA_CFXJSE_RUNTIMEDATA_H_
+#define FXJS_XFA_CFXJSE_RUNTIMEDATA_H_
 
 #include <memory>
 
@@ -32,4 +32,4 @@ class CFXJSE_RuntimeData {
   CFXJSE_RuntimeData& operator=(const CFXJSE_RuntimeData&) = delete;
 };
 
-#endif  // FXJS_CFXJSE_RUNTIMEDATA_H_
+#endif  // FXJS_XFA_CFXJSE_RUNTIMEDATA_H_

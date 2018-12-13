@@ -8,9 +8,9 @@
 
 #include <vector>
 
-#include "fxjs/cfxjse_class.h"
-#include "fxjs/cfxjse_engine.h"
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_field.h"

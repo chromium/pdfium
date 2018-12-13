@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_formcalc_context.h"
+#include "fxjs/xfa/cfxjse_formcalc_context.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -16,11 +16,11 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/locale_iface.h"
-#include "fxjs/cfxjse_arguments.h"
-#include "fxjs/cfxjse_class.h"
-#include "fxjs/cfxjse_context.h"
-#include "fxjs/cfxjse_engine.h"
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_arguments.h"
+#include "fxjs/xfa/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_context.h"
+#include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -447,12 +447,11 @@ FX_LOCALEDATETIMESUBCATEGORY SubCategoryFromInt(int32_t iStyle) {
   }
 }
 
-ByteString GetLocalDateTimeFormat(
-    CXFA_Document* pDoc,
-    int32_t iStyle,
-    const ByteStringView& szLocale,
-    bool bStandard,
-    bool bIsDate) {
+ByteString GetLocalDateTimeFormat(CXFA_Document* pDoc,
+                                  int32_t iStyle,
+                                  const ByteStringView& szLocale,
+                                  bool bStandard,
+                                  bool bIsDate) {
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, szLocale);
   if (!pLocale)

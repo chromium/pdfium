@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cjs_object.h"
+#include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/v8-util.h"

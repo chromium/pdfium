@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
-#include "fxjs/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_treelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

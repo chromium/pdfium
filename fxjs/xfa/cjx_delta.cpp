@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 
 const CJX_MethodSpec CJX_Delta::MethodSpecs[] = {{"restore", restore_static}};

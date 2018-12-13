@@ -8,10 +8,10 @@
 
 #include <vector>
 
-#include "fxjs/cfxjse_class.h"
-#include "fxjs/cfxjse_engine.h"
-#include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
+#include "fxjs/xfa/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_list.h"

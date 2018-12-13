@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_runtimedata.h"
+#include "fxjs/xfa/cfxjse_runtimedata.h"
 
 #include <utility>
 
 #include "fxjs/cfxjs_engine.h"
-#include "fxjs/cfxjse_isolatetracker.h"
+#include "fxjs/xfa/cfxjse_isolatetracker.h"
 
 CFXJSE_RuntimeData::CFXJSE_RuntimeData() = default;
 

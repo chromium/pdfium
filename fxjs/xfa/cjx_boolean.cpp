@@ -6,7 +6,7 @@
 
 #include "fxjs/xfa/cjx_boolean.h"
 
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_boolean.h"
 
 CJX_Boolean::CJX_Boolean(CXFA_Boolean* node) : CJX_Content(node) {}

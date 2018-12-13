@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_FXJSE_H_
-#define FXJS_FXJSE_H_
+#ifndef FXJS_XFA_FXJSE_H_
+#define FXJS_XFA_FXJSE_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -82,4 +82,4 @@ extern const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor;
 
 void FXJSE_ThrowMessage(const ByteStringView& utf8Message);
 
-#endif  // FXJS_FXJSE_H_
+#endif  // FXJS_XFA_FXJSE_H_

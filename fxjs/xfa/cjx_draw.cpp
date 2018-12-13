@@ -6,7 +6,7 @@
 
 #include "fxjs/xfa/cjx_draw.h"
 
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_draw.h"
 
 CJX_Draw::CJX_Draw(CXFA_Draw* node) : CJX_Container(node) {}

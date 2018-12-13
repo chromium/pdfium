@@ -119,26 +119,24 @@ jumbo_source_set("fxjs") {
 
     if (pdf_enable_xfa) {
       sources += [
-        "cfxjse_arguments.cpp",
-        "cfxjse_arguments.h",
-        "cfxjse_class.cpp",
-        "cfxjse_class.h",
-        "cfxjse_context.cpp",
-        "cfxjse_context.h",
-        "cfxjse_engine.cpp",
-        "cfxjse_engine.h",
-        "cfxjse_formcalc_context.cpp",
-        "cfxjse_formcalc_context.h",
-        "cfxjse_isolatetracker.cpp",
-        "cfxjse_isolatetracker.h",
-        "cfxjse_resolveprocessor.cpp",
-        "cfxjse_resolveprocessor.h",
-        "cfxjse_runtimedata.cpp",
-        "cfxjse_runtimedata.h",
-        "cfxjse_value.cpp",
-        "cfxjse_value.h",
-        "fxjse.cpp",
-        "fxjse.h",
+        "xfa/cfxjse_arguments.cpp",
+        "xfa/cfxjse_arguments.h",
+        "xfa/cfxjse_class.cpp",
+        "xfa/cfxjse_class.h",
+        "xfa/cfxjse_context.cpp",
+        "xfa/cfxjse_context.h",
+        "xfa/cfxjse_engine.cpp",
+        "xfa/cfxjse_engine.h",
+        "xfa/cfxjse_formcalc_context.cpp",
+        "xfa/cfxjse_formcalc_context.h",
+        "xfa/cfxjse_isolatetracker.cpp",
+        "xfa/cfxjse_isolatetracker.h",
+        "xfa/cfxjse_resolveprocessor.cpp",
+        "xfa/cfxjse_resolveprocessor.h",
+        "xfa/cfxjse_runtimedata.cpp",
+        "xfa/cfxjse_runtimedata.h",
+        "xfa/cfxjse_value.cpp",
+        "xfa/cfxjse_value.h",
         "xfa/cjx_arc.cpp",
         "xfa/cjx_arc.h",
         "xfa/cjx_area.cpp",
@@ -439,6 +437,8 @@ jumbo_source_set("fxjs") {
         "xfa/cjx_xmlconnection.h",
         "xfa/cjx_xsdconnection.cpp",
         "xfa/cjx_xsdconnection.h",
+        "xfa/fxjse.cpp",
+        "xfa/fxjse.h",
       ]
       deps += [ "../xfa/fxfa/fm2js" ]
     }
@@ -474,7 +474,7 @@ if (pdf_enable_v8) {
     pdfium_root_dir = "../"
 
     if (pdf_enable_xfa) {
-      sources += [ "cfxjse_formcalc_context_embeddertest.cpp" ]
+      sources += [ "xfa/cfxjse_formcalc_context_embeddertest.cpp" ]
       deps += [ "..///xfa/fxfa" ]
     }
   }

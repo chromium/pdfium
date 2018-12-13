@@ -8,7 +8,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
-#include "fxjs/cfxjse_formcalc_context.h"
+#include "fxjs/xfa/cfxjse_formcalc_context.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FX_SAFE_SIZE_T safe_size = size;

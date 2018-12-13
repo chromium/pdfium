@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_ENGINE_H_
-#define FXJS_CFXJSE_ENGINE_H_
+#ifndef FXJS_XFA_CFXJSE_ENGINE_H_
+#define FXJS_XFA_CFXJSE_ENGINE_H_
 
 #include <map>
 #include <memory>
@@ -139,4 +139,4 @@ class CFXJSE_Engine final : public CFX_V8 {
   XFA_AttributeValue m_eRunAtType = XFA_AttributeValue::Client;
 };
 
-#endif  //  FXJS_CFXJSE_ENGINE_H_
+#endif  //  FXJS_XFA_CFXJSE_ENGINE_H_

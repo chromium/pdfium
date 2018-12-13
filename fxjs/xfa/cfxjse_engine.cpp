@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_engine.h"
 
 #include <utility>
 
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
-#include "fxjs/cfxjse_class.h"
-#include "fxjs/cfxjse_context.h"
-#include "fxjs/cfxjse_formcalc_context.h"
-#include "fxjs/cfxjse_resolveprocessor.h"
-#include "fxjs/cfxjse_value.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/xfa/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_context.h"
+#include "fxjs/xfa/cfxjse_formcalc_context.h"
+#include "fxjs/xfa/cfxjse_resolveprocessor.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

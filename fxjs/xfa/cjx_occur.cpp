@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
 
 CJX_Occur::CJX_Occur(CXFA_Occur* node) : CJX_Node(node) {}

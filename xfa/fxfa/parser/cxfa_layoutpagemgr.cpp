@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 
-#include "fxjs/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"

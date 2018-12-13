@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_resolveprocessor.h"
+#include "fxjs/xfa/cfxjse_resolveprocessor.h"
 
 #include <algorithm>
 #include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
-#include "fxjs/cfxjse_engine.h"
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_engine.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

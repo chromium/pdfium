@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_ARGUMENTS_H_
-#define FXJS_CFXJSE_ARGUMENTS_H_
+#ifndef FXJS_XFA_CFXJSE_ARGUMENTS_H_
+#define FXJS_XFA_CFXJSE_ARGUMENTS_H_
 
 #include <memory>
 
@@ -34,4 +34,4 @@ class CFXJSE_Arguments {
   UnownedPtr<CFXJSE_Value> const m_pRetValue;
 };
 
-#endif  // FXJS_CFXJSE_ARGUMENTS_H_
+#endif  // FXJS_XFA_CFXJSE_ARGUMENTS_H_

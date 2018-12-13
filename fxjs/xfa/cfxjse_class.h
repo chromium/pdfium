@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_CLASS_H_
-#define FXJS_CFXJSE_CLASS_H_
+#ifndef FXJS_XFA_CFXJSE_CLASS_H_
+#define FXJS_XFA_CFXJSE_CLASS_H_
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/fxjse.h"
+#include "fxjs/xfa/fxjse.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_Context;
@@ -37,4 +37,4 @@ class CFXJSE_Class {
   v8::Global<v8::FunctionTemplate> m_hTemplate;
 };
 
-#endif  // FXJS_CFXJSE_CLASS_H_
+#endif  // FXJS_XFA_CFXJSE_CLASS_H_

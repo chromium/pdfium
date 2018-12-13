@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_context.h"
+#include "fxjs/xfa/cfxjse_context.h"
 
 #include <utility>
 
 #include "fxjs/cfxjs_engine.h"
-#include "fxjs/cfxjse_class.h"
-#include "fxjs/cfxjse_isolatetracker.h"
-#include "fxjs/cfxjse_runtimedata.h"
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_isolatetracker.h"
+#include "fxjs/xfa/cfxjse_runtimedata.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

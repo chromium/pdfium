@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_class.h"
+#include "fxjs/xfa/cfxjse_class.h"
 
 #include <memory>
 #include <utility>
 
-#include "fxjs/cfxjse_arguments.h"
-#include "fxjs/cfxjse_context.h"
-#include "fxjs/cfxjse_isolatetracker.h"
-#include "fxjs/cfxjse_value.h"
 #include "fxjs/cjs_result.h"
 #include "fxjs/js_resources.h"
+#include "fxjs/xfa/cfxjse_arguments.h"
+#include "fxjs/xfa/cfxjse_context.h"
+#include "fxjs/xfa/cfxjse_isolatetracker.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 
 using pdfium::fxjse::kFuncTag;

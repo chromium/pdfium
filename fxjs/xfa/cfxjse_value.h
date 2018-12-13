@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CFXJSE_VALUE_H_
-#define FXJS_CFXJSE_VALUE_H_
+#ifndef FXJS_XFA_CFXJSE_VALUE_H_
+#define FXJS_XFA_CFXJSE_VALUE_H_
 
 #include <memory>
 #include <vector>
@@ -94,4 +94,4 @@ class CFXJSE_Value {
   v8::Global<v8::Value> m_hValue;
 };
 
-#endif  // FXJS_CFXJSE_VALUE_H_
+#endif  // FXJS_XFA_CFXJSE_VALUE_H_

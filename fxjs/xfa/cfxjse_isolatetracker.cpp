@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cfxjse_isolatetracker.h"
+#include "fxjs/xfa/cfxjse_isolatetracker.h"
 
-#include "fxjs/cfxjse_runtimedata.h"
+#include "fxjs/xfa/cfxjse_runtimedata.h"
 
 CFXJSE_ScopeUtil_IsolateHandle::CFXJSE_ScopeUtil_IsolateHandle(
     v8::Isolate* pIsolate)

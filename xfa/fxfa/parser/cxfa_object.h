@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "fxjs/fxjse.h"
+#include "fxjs/xfa/fxjse.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 enum class XFA_ObjectType {

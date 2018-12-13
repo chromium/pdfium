@@ -6,7 +6,7 @@
 
 #include "fxjs/xfa/cjx_script.h"
 
-#include "fxjs/cfxjse_value.h"
+#include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 
 CJX_Script::CJX_Script(CXFA_Script* node) : CJX_Node(node) {}
