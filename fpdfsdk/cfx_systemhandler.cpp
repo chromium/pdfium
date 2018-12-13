@@ -22,9 +22,11 @@
 #include "third_party/base/ptr_util.h"
 
 CFX_SystemHandler::CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {}
+    : m_pFormFillEnv(pFormFillEnv) {
+  ASSERT(m_pFormFillEnv);
+}
 
-CFX_SystemHandler::~CFX_SystemHandler() {}
+CFX_SystemHandler::~CFX_SystemHandler() = default;
 
 void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget,
                                        const CFX_FloatRect& rect) {
@@ -48,7 +50,7 @@ void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget,
 }
 
 void CFX_SystemHandler::OutputSelectedRect(CFFL_FormFiller* pFormFiller,
-                                           CFX_FloatRect& rect) {
+                                           const CFX_FloatRect& rect) {
   if (!pFormFiller)
     return;
 
@@ -64,9 +66,6 @@ void CFX_SystemHandler::OutputSelectedRect(CFFL_FormFiller* pFormFiller,
 }
 
 bool CFX_SystemHandler::IsSelectionImplemented() const {
-  if (!m_pFormFillEnv)
-    return false;
-
   FPDF_FORMFILLINFO* pInfo = m_pFormFillEnv->GetFormFillInfo();
   return pInfo && pInfo->FFI_OutputSelectedRect;
 }

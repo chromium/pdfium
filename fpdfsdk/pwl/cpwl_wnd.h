@@ -63,6 +63,14 @@ struct PWL_SCROLL_INFO;
 // combobox styles
 #define PCBS_ALLOWCUSTOMTEXT 0x0001L
 
+// Cursor style. These must match the values in public/fpdf_formfill.h
+#define FXCT_ARROW 0
+#define FXCT_NESW 1
+#define FXCT_NWSE 2
+#define FXCT_VBEAM 3
+#define FXCT_HBEAM 4
+#define FXCT_HAND 5
+
 struct CPWL_Dash {
   CPWL_Dash() : nDash(0), nGap(0), nPhase(0) {}
   CPWL_Dash(int32_t dash, int32_t gap, int32_t phase)

@@ -14,14 +14,6 @@
 
 using TimerCallback = void (*)(int32_t idEvent);
 
-// Cursor style. These must match the values in public/fpdf_formfill.h
-#define FXCT_ARROW 0
-#define FXCT_NESW 1
-#define FXCT_NWSE 2
-#define FXCT_VBEAM 3
-#define FXCT_HBEAM 4
-#define FXCT_HAND 5
-
 class CFFL_FormFiller;
 class CPDF_Document;
 class CPDF_Font;
@@ -34,7 +26,8 @@ class CFX_SystemHandler {
   ~CFX_SystemHandler();
 
   void InvalidateRect(CPDFSDK_Widget* widget, const CFX_FloatRect& rect);
-  void OutputSelectedRect(CFFL_FormFiller* pFormFiller, CFX_FloatRect& rect);
+  void OutputSelectedRect(CFFL_FormFiller* pFormFiller,
+                          const CFX_FloatRect& rect);
   bool IsSelectionImplemented() const;
   void SetCursor(int32_t nCursorType);
   bool FindNativeTrueTypeFont(ByteString sFontFaceName);
