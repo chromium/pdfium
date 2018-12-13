@@ -37,6 +37,29 @@ void CBA_FontMap::Reset() {
   m_sDefaultFontName.clear();
 }
 
+void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
+                                 const ByteString& sFontName) {
+  ASSERT(pFont);
+
+  if (m_pDefaultFont)
+    return;
+
+  m_pDefaultFont = pFont;
+  m_sDefaultFontName = sFontName;
+
+  int32_t nCharset = FX_CHARSET_Default;
+  if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
+    nCharset = pSubstFont->m_Charset;
+  AddFontData(m_pDefaultFont.Get(), m_sDefaultFontName, nCharset);
+}
+
+void CBA_FontMap::SetAPType(const ByteString& sAPType) {
+  m_sAPType = sAPType;
+
+  Reset();
+  Initialize();
+}
+
 void CBA_FontMap::Initialize() {
   int32_t nCharset = FX_CHARSET_Default;
 
@@ -63,20 +86,8 @@ void CBA_FontMap::Initialize() {
     CPWL_FontMap::Initialize();
 }
 
-void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
-                                 const ByteString& sFontName) {
-  ASSERT(pFont);
-
-  if (m_pDefaultFont)
-    return;
-
-  m_pDefaultFont = pFont;
-  m_sDefaultFontName = sFontName;
-
-  int32_t nCharset = FX_CHARSET_Default;
-  if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
-    nCharset = pSubstFont->m_Charset;
-  AddFontData(m_pDefaultFont.Get(), m_sDefaultFontName, nCharset);
+CPDF_Document* CBA_FontMap::GetDocument() {
+  return m_pDocument.Get();
 }
 
 CPDF_Font* CBA_FontMap::FindFontSameCharset(ByteString* sFontAlias,
@@ -100,8 +111,8 @@ CPDF_Font* CBA_FontMap::FindFontSameCharset(ByteString* sFontAlias,
   return FindResFontSameCharset(pDRDict, sFontAlias, nCharset);
 }
 
-CPDF_Document* CBA_FontMap::GetDocument() {
-  return m_pDocument.Get();
+void CBA_FontMap::AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias) {
+  AddFontToAnnotDict(pFont, sFontAlias);
 }
 
 CPDF_Font* CBA_FontMap::FindResFontSameCharset(const CPDF_Dictionary* pResDict,
@@ -140,54 +151,6 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(const CPDF_Dictionary* pResDict,
     }
   }
   return pFind;
-}
-
-void CBA_FontMap::AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias) {
-  AddFontToAnnotDict(pFont, sFontAlias);
-}
-
-void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
-                                     const ByteString& sAlias) {
-  if (!pFont)
-    return;
-
-  CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP");
-  if (!pAPDict)
-    pAPDict = m_pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
-
-  // to avoid checkbox and radiobutton
-  if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))
-    return;
-
-  CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
-  if (!pStream) {
-    pStream = m_pDocument->NewIndirect<CPDF_Stream>();
-    pAPDict->SetFor(m_sAPType, pStream->MakeReference(m_pDocument.Get()));
-  }
-
-  CPDF_Dictionary* pStreamDict = pStream->GetDict();
-  if (!pStreamDict) {
-    auto pOwnedDict = m_pDocument->New<CPDF_Dictionary>();
-    pStreamDict = pOwnedDict.get();
-    pStream->InitStream({}, std::move(pOwnedDict));
-  }
-
-  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
-  if (!pStreamResList)
-    pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
-  CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
-  if (!pStreamResFontList) {
-    pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    pStreamResList->SetFor(
-        "Font", pStreamResFontList->MakeReference(m_pDocument.Get()));
-  }
-  if (!pStreamResFontList->KeyExist(sAlias)) {
-    CPDF_Dictionary* pFontDict = pFont->GetFontDict();
-    std::unique_ptr<CPDF_Object> pObject =
-        pFontDict->IsInline() ? pFontDict->Clone()
-                              : pFontDict->MakeReference(m_pDocument.Get());
-    pStreamResFontList->SetFor(sAlias, std::move(pObject));
-  }
 }
 
 CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
@@ -237,9 +200,46 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   return pFontDict ? m_pDocument->LoadFont(pFontDict) : nullptr;
 }
 
-void CBA_FontMap::SetAPType(const ByteString& sAPType) {
-  m_sAPType = sAPType;
+void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
+                                     const ByteString& sAlias) {
+  if (!pFont)
+    return;
 
-  Reset();
-  Initialize();
+  CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP");
+  if (!pAPDict)
+    pAPDict = m_pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+
+  // to avoid checkbox and radiobutton
+  if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))
+    return;
+
+  CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
+  if (!pStream) {
+    pStream = m_pDocument->NewIndirect<CPDF_Stream>();
+    pAPDict->SetFor(m_sAPType, pStream->MakeReference(m_pDocument.Get()));
+  }
+
+  CPDF_Dictionary* pStreamDict = pStream->GetDict();
+  if (!pStreamDict) {
+    auto pOwnedDict = m_pDocument->New<CPDF_Dictionary>();
+    pStreamDict = pOwnedDict.get();
+    pStream->InitStream({}, std::move(pOwnedDict));
+  }
+
+  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
+  if (!pStreamResList)
+    pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
+  CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
+  if (!pStreamResFontList) {
+    pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
+    pStreamResList->SetFor(
+        "Font", pStreamResFontList->MakeReference(m_pDocument.Get()));
+  }
+  if (!pStreamResFontList->KeyExist(sAlias)) {
+    CPDF_Dictionary* pFontDict = pFont->GetFontDict();
+    std::unique_ptr<CPDF_Object> pObject =
+        pFontDict->IsInline() ? pFontDict->Clone()
+                              : pFontDict->MakeReference(m_pDocument.Get());
+    pStreamResFontList->SetFor(sAlias, std::move(pObject));
+  }
 }
