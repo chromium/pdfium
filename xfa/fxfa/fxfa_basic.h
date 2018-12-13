@@ -46,21 +46,10 @@ enum XFA_HashCode : uint32_t {
 };
 
 enum class XFA_PacketType : uint8_t {
-  User,
-  SourceSet,
-  Pdf,
-  Xdc,
-  Xdp,
-  Xmpmeta,
-  Xfdf,
-  Config,
-  LocaleSet,
-  Stylesheet,
-  Template,
-  Signature,
-  Datasets,
-  Form,
-  ConnectionSet,
+#undef PCKT____
+#define PCKT____(a, b, c, d, e, f) c,
+#include "xfa/fxfa/parser/packets.inc"
+#undef PCKT____
 };
 
 enum XFA_XDPPACKET {

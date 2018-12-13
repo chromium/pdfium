@@ -21,7 +21,15 @@ void HashTestCase(uint32_t hash, const char* str, uint32_t* so_far) {
 
 }  // namespace
 
-TEST(FXFABasic, AttrHashTest) {
+TEST(FXFABasic, PacketHashTest) {
+  uint32_t so_far = 0;
+#undef PCKT____
+#define PCKT____(a, b, c, d, e, f) HashTestCase(a, b, &so_far);
+#include "xfa/fxfa/parser/packets.inc"
+#undef PCKT____
+}
+
+TEST(FXFABasic, AttributeHashTest) {
   uint32_t so_far = 0;
 #undef ATTR____
 #define ATTR____(a, b, c, d) HashTestCase(a, b, &so_far);
