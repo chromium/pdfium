@@ -46,23 +46,18 @@ CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Caption::~CXFA_Caption() = default;
 
 bool CXFA_Caption::IsVisible() {
-  return JSObject()
-             ->TryEnum(XFA_Attribute::Presence, true)
-             .value_or(XFA_AttributeValue::Visible) ==
-         XFA_AttributeValue::Visible;
+  auto value = JSObject()->TryEnum(XFA_Attribute::Presence, true);
+  return !value.has_value() || value.value() == XFA_AttributeValue::Visible;
 }
 
 bool CXFA_Caption::IsHidden() {
-  return JSObject()
-             ->TryEnum(XFA_Attribute::Presence, true)
-             .value_or(XFA_AttributeValue::Visible) ==
-         XFA_AttributeValue::Hidden;
+  auto value = JSObject()->TryEnum(XFA_Attribute::Presence, true);
+  return !value.has_value() || value.value() == XFA_AttributeValue::Hidden;
 }
 
 XFA_AttributeValue CXFA_Caption::GetPlacementType() {
-  return JSObject()
-      ->TryEnum(XFA_Attribute::Placement, true)
-      .value_or(XFA_AttributeValue::Left);
+  auto value = JSObject()->TryEnum(XFA_Attribute::Placement, true);
+  return value.value_or(XFA_AttributeValue::Left);
 }
 
 float CXFA_Caption::GetReserve() const {

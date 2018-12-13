@@ -672,10 +672,8 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
 
 float CXFA_ItemLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
   ASSERT(m_pLayoutItem);
-  XFA_AttributeValue eLayout = GetFormNode()
-                                   ->JSObject()
-                                   ->TryEnum(XFA_Attribute::Layout, true)
-                                   .value_or(XFA_AttributeValue::Position);
+  auto value = GetFormNode()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
+  XFA_AttributeValue eLayout = value.value_or(XFA_AttributeValue::Position);
   bool bCalculateMargin = eLayout != XFA_AttributeValue::Position;
   while (fProposedSplitPos > XFA_LAYOUT_FLOAT_PERCISION) {
     bool bAppChange = false;
@@ -691,11 +689,10 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
     CXFA_ContentLayoutItem* pLayoutItem,
     CXFA_ContentLayoutItem* pSecondParent,
     float fSplitPos) {
-  float fCurTopMargin = 0, fCurBottomMargin = 0;
-  XFA_AttributeValue eLayout = GetFormNode()
-                                   ->JSObject()
-                                   ->TryEnum(XFA_Attribute::Layout, true)
-                                   .value_or(XFA_AttributeValue::Position);
+  float fCurTopMargin = 0;
+  float fCurBottomMargin = 0;
+  auto value = GetFormNode()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
+  XFA_AttributeValue eLayout = value.value_or(XFA_AttributeValue::Position);
   bool bCalculateMargin = true;
   if (eLayout == XFA_AttributeValue::Position)
     bCalculateMargin = false;
@@ -1123,11 +1120,9 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
     return;
 
   m_pLayoutItem = CreateContentLayoutItem(GetFormNode());
-  bool bIgnoreXY = (GetFormNode()
-                        ->JSObject()
-                        ->TryEnum(XFA_Attribute::Layout, true)
-                        .value_or(XFA_AttributeValue::Position) !=
-                    XFA_AttributeValue::Position);
+  auto value = GetFormNode()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
+  bool bIgnoreXY = value.value_or(XFA_AttributeValue::Position) !=
+                   XFA_AttributeValue::Position;
   bool bContainerWidthAutoSize = true;
   bool bContainerHeightAutoSize = true;
   CFX_SizeF containerSize = CalculateContainerSpecifiedSize(

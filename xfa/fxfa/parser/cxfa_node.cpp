@@ -1288,9 +1288,9 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
 
 XFA_AttributeValue CXFA_Node::GetIntact() {
   CXFA_Keep* pKeep = GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
-  XFA_AttributeValue eLayoutType = JSObject()
-                                       ->TryEnum(XFA_Attribute::Layout, true)
-                                       .value_or(XFA_AttributeValue::Position);
+  auto layout = JSObject()->TryEnum(XFA_Attribute::Layout, true);
+  XFA_AttributeValue eLayoutType =
+      layout.value_or(XFA_AttributeValue::Position);
   if (pKeep) {
     Optional<XFA_AttributeValue> intact =
         pKeep->JSObject()->TryEnum(XFA_Attribute::Intact, false);
@@ -1340,10 +1340,9 @@ XFA_AttributeValue CXFA_Node::GetIntact() {
       if (parent->GetIntact() != XFA_AttributeValue::None)
         return XFA_AttributeValue::ContentArea;
 
+      auto value = parent->JSObject()->TryEnum(XFA_Attribute::Layout, true);
       XFA_AttributeValue eParLayout =
-          parent->JSObject()
-              ->TryEnum(XFA_Attribute::Layout, true)
-              .value_or(XFA_AttributeValue::Position);
+          value.value_or(XFA_AttributeValue::Position);
       if (eParLayout == XFA_AttributeValue::Position ||
           eParLayout == XFA_AttributeValue::Row ||
           eParLayout == XFA_AttributeValue::Table) {
@@ -3592,10 +3591,8 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
 
   XFA_VERSION version = docView->GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
-  XFA_AttributeValue eLayoutMode = GetParent()
-                                       ->JSObject()
-                                       ->TryEnum(XFA_Attribute::Layout, true)
-                                       .value_or(XFA_AttributeValue::Position);
+  auto value = GetParent()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
+  XFA_AttributeValue eLayoutMode = value.value_or(XFA_AttributeValue::Position);
   if ((eLayoutMode == XFA_AttributeValue::Position ||
        eLayoutMode == XFA_AttributeValue::Tb ||
        eLayoutMode == XFA_AttributeValue::Row ||
@@ -4927,9 +4924,8 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
 }
 
 bool CXFA_Node::PresenceRequiresSpace() const {
-  XFA_AttributeValue ePresence = JSObject()
-                                     ->TryEnum(XFA_Attribute::Presence, true)
-                                     .value_or(XFA_AttributeValue::Visible);
+  auto value = JSObject()->TryEnum(XFA_Attribute::Presence, true);
+  XFA_AttributeValue ePresence = value.value_or(XFA_AttributeValue::Visible);
   return ePresence == XFA_AttributeValue::Visible ||
          ePresence == XFA_AttributeValue::Invisible;
 }

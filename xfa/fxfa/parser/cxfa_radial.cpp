@@ -43,10 +43,8 @@ CXFA_Radial::CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Radial::~CXFA_Radial() = default;
 
 bool CXFA_Radial::IsToEdge() {
-  return JSObject()
-             ->TryEnum(XFA_Attribute::Type, true)
-             .value_or(XFA_AttributeValue::ToEdge) ==
-         XFA_AttributeValue::ToEdge;
+  auto value = JSObject()->TryEnum(XFA_Attribute::Type, true);
+  return !value.has_value() || value.value() == XFA_AttributeValue::ToEdge;
 }
 
 CXFA_Color* CXFA_Radial::GetColorIfExists() {
