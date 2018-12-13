@@ -546,6 +546,7 @@ typedef struct _FPDF_FORMFILLINFO {
    *     pThis       -   Pointer to the interface structure itself.
    * Return value:
    *     The local time. See FPDF_SYSTEMTIME above for details.
+   * Note: Unused.
    */
   FPDF_SYSTEMTIME (*FFI_GetLocalTime)(struct _FPDF_FORMFILLINFO* pThis);
 

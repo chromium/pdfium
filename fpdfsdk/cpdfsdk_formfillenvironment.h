@@ -15,7 +15,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcrt/observable.h"
-#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
@@ -90,7 +89,6 @@ class CPDFSDK_FormFillEnvironment final
   int SetTimer(int uElapse, TimerCallback lpTimerFunc);
   void KillTimer(int nTimerID);
 
-  FX_SYSTEMTIME GetLocalTime() const;
   FPDF_PAGE GetCurrentPage() const;
 
   void OnChange();

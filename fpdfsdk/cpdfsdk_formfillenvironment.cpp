@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_docjsactions.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -283,23 +284,6 @@ int CPDFSDK_FormFillEnvironment::SetTimer(int uElapse,
 void CPDFSDK_FormFillEnvironment::KillTimer(int nTimerID) {
   if (m_pInfo && m_pInfo->FFI_KillTimer)
     m_pInfo->FFI_KillTimer(m_pInfo, nTimerID);
-}
-
-FX_SYSTEMTIME CPDFSDK_FormFillEnvironment::GetLocalTime() const {
-  FX_SYSTEMTIME fxtime;
-  if (!m_pInfo || !m_pInfo->FFI_GetLocalTime)
-    return fxtime;
-
-  FPDF_SYSTEMTIME systime = m_pInfo->FFI_GetLocalTime(m_pInfo);
-  fxtime.wDay = systime.wDay;
-  fxtime.wDayOfWeek = systime.wDayOfWeek;
-  fxtime.wHour = systime.wHour;
-  fxtime.wMilliseconds = systime.wMilliseconds;
-  fxtime.wMinute = systime.wMinute;
-  fxtime.wMonth = systime.wMonth;
-  fxtime.wSecond = systime.wSecond;
-  fxtime.wYear = systime.wYear;
-  return fxtime;
 }
 
 void CPDFSDK_FormFillEnvironment::OnChange() {

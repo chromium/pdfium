@@ -14,27 +14,6 @@
 
 using TimerCallback = void (*)(int32_t idEvent);
 
-struct FX_SYSTEMTIME {
-  FX_SYSTEMTIME()
-      : wYear(0),
-        wMonth(0),
-        wDayOfWeek(0),
-        wDay(0),
-        wHour(0),
-        wMinute(0),
-        wSecond(0),
-        wMilliseconds(0) {}
-
-  uint16_t wYear;
-  uint16_t wMonth;
-  uint16_t wDayOfWeek;
-  uint16_t wDay;
-  uint16_t wHour;
-  uint16_t wMinute;
-  uint16_t wSecond;
-  uint16_t wMilliseconds;
-};
-
 // Cursor style. These must match the values in public/fpdf_formfill.h
 #define FXCT_ARROW 0
 #define FXCT_NESW 1
