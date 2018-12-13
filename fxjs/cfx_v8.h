@@ -50,10 +50,11 @@ class CFX_V8 {
 
   // Objects.
   std::vector<WideString> GetObjectPropertyNames(v8::Local<v8::Object> pObj);
-  v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
-                                         const WideString& PropertyName);
+  v8::Local<v8::Value> GetObjectProperty(
+      v8::Local<v8::Object> pObj,
+      const ByteStringView& bsUTF8PropertyName);
   void PutObjectProperty(v8::Local<v8::Object> pObj,
-                         const WideString& PropertyName,
+                         const ByteStringView& bsUTF8PropertyName,
                          v8::Local<v8::Value> pValue);
 
  protected:

@@ -224,7 +224,7 @@ CJS_Result CJS_App::openFDF(CJS_Runtime* pRuntime,
 CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params) {
   std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
-      pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
+      pRuntime, params, 4, "cMsg", "nIcon", "nType", "cTitle");
 
   if (!IsExpandedParamKnown(newParams[0]))
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -433,9 +433,8 @@ CJS_Result CJS_App::goForward(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
-  std::vector<v8::Local<v8::Value>> newParams =
-      ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
-                          L"cSubject", L"cMsg");
+  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+      pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
   if (!IsExpandedParamKnown(newParams[0]))
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -532,8 +531,8 @@ CJS_Result CJS_App::openDoc(CJS_Runtime* pRuntime,
 CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   std::vector<v8::Local<v8::Value>> newParams =
-      ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
-                          L"cDefault", L"bPassword", L"cLabel");
+      ExpandKeywordParams(pRuntime, params, 5, "cQuestion", "cTitle",
+                          "cDefault", "bPassword", "cLabel");
 
   if (!IsExpandedParamKnown(newParams[0]))
     return CJS_Result::Failure(JSMessage::kParamError);

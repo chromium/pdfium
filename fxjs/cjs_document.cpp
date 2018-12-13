@@ -380,9 +380,8 @@ CJS_Result CJS_Document::mailDoc(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  std::vector<v8::Local<v8::Value>> newParams =
-      ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
-                          L"cSubject", L"cMsg");
+  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+      pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
   bool bUI = true;
   if (IsExpandedParamKnown(newParams[0]))
@@ -431,9 +430,8 @@ CJS_Result CJS_Document::mailForm(
   if (sTextBuf.GetLength() == 0)
     return CJS_Result::Failure(L"Bad FDF format.");
 
-  std::vector<v8::Local<v8::Value>> newParams =
-      ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
-                          L"cSubject", L"cMsg");
+  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+      pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
   bool bUI = true;
   if (IsExpandedParamKnown(newParams[0]))
@@ -471,8 +469,8 @@ CJS_Result CJS_Document::print(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
-      pRuntime, params, 8, L"bUI", L"nStart", L"nEnd", L"bSilent",
-      L"bShrinkToFit", L"bPrintAsImage", L"bReverse", L"bAnnotations");
+      pRuntime, params, 8, "bUI", "nStart", "nEnd", "bSilent", "bShrinkToFit",
+      "bPrintAsImage", "bReverse", "bAnnotations");
 
   bool bUI = true;
   if (IsExpandedParamKnown(newParams[0]))
@@ -645,13 +643,13 @@ CJS_Result CJS_Document::submitForm(
       aFields = pRuntime->ToArray(params[3]);
   } else if (params[0]->IsObject()) {
     v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0]);
-    v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, L"cURL");
+    v8::Local<v8::Value> pValue = pRuntime->GetObjectProperty(pObj, "cURL");
     if (!pValue.IsEmpty())
       strURL = pRuntime->ToWideString(pValue);
 
-    bFDF = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bFDF"));
-    bEmpty = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bEmpty"));
-    aFields = pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, L"aFields"));
+    bFDF = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, "bFDF"));
+    bEmpty = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, "bEmpty"));
+    aFields = pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, "aFields"));
   }
 
   CPDF_InteractiveForm* pPDFForm = GetCoreInteractiveForm();
@@ -726,24 +724,23 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
   WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
 
   v8::Local<v8::Object> pObj = pRuntime->NewObject();
-  pRuntime->PutObjectProperty(pObj, L"Author",
+  pRuntime->PutObjectProperty(pObj, "Author",
                               pRuntime->NewString(cwAuthor.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"Title",
+  pRuntime->PutObjectProperty(pObj, "Title",
                               pRuntime->NewString(cwTitle.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"Subject",
+  pRuntime->PutObjectProperty(pObj, "Subject",
                               pRuntime->NewString(cwSubject.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"Keywords",
+  pRuntime->PutObjectProperty(pObj, "Keywords",
                               pRuntime->NewString(cwKeywords.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"Creator",
+  pRuntime->PutObjectProperty(pObj, "Creator",
                               pRuntime->NewString(cwCreator.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"Producer",
+  pRuntime->PutObjectProperty(pObj, "Producer",
                               pRuntime->NewString(cwProducer.AsStringView()));
   pRuntime->PutObjectProperty(
-      pObj, L"CreationDate",
-      pRuntime->NewString(cwCreationDate.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"ModDate",
+      pObj, "CreationDate", pRuntime->NewString(cwCreationDate.AsStringView()));
+  pRuntime->PutObjectProperty(pObj, "ModDate",
                               pRuntime->NewString(cwModDate.AsStringView()));
-  pRuntime->PutObjectProperty(pObj, L"Trapped",
+  pRuntime->PutObjectProperty(pObj, "Trapped",
                               pRuntime->NewString(cwTrapped.AsStringView()));
 
   // PutObjectProperty() calls below may re-enter JS and change info dict.
@@ -752,17 +749,17 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
   for (const auto& it : locker) {
     const ByteString& bsKey = it.first;
     CPDF_Object* pValueObj = it.second.get();
-    WideString wsKey = WideString::FromUTF8(bsKey.AsStringView());
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectProperty(
-          pObj, wsKey,
+          pObj, bsKey.AsStringView(),
           pRuntime->NewString(pValueObj->GetUnicodeText().AsStringView()));
     } else if (pValueObj->IsNumber()) {
-      pRuntime->PutObjectProperty(pObj, wsKey,
+      pRuntime->PutObjectProperty(pObj, bsKey.AsStringView(),
                                   pRuntime->NewNumber(pValueObj->GetNumber()));
     } else if (pValueObj->IsBoolean()) {
       pRuntime->PutObjectProperty(
-          pObj, wsKey, pRuntime->NewBoolean(!!pValueObj->GetInteger()));
+          pObj, bsKey.AsStringView(),
+          pRuntime->NewBoolean(!!pValueObj->GetInteger()));
     }
   }
   return CJS_Result::Success(pObj);

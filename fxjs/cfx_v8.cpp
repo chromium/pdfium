@@ -15,12 +15,11 @@ CFX_V8::~CFX_V8() = default;
 
 v8::Local<v8::Value> CFX_V8::GetObjectProperty(
     v8::Local<v8::Object> pObj,
-    const WideString& wsPropertyName) {
+    const ByteStringView& bsUTF8PropertyName) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
-  if (!pObj->Get(m_pIsolate->GetCurrentContext(),
-                 NewString(wsPropertyName.AsStringView()))
+  if (!pObj->Get(m_pIsolate->GetCurrentContext(), NewString(bsUTF8PropertyName))
            .ToLocal(&val))
     return v8::Local<v8::Value>();
   return val;
@@ -45,12 +44,12 @@ std::vector<WideString> CFX_V8::GetObjectPropertyNames(
 }
 
 void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
-                               const WideString& wsPropertyName,
+                               const ByteStringView& bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(m_pIsolate->GetCurrentContext(),
-            NewString(wsPropertyName.AsStringView()), pPut)
+  pObj->Set(m_pIsolate->GetCurrentContext(), NewString(bsUTF8PropertyName),
+            pPut)
       .FromJust();
 }
 

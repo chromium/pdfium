@@ -25,7 +25,7 @@ void CheckAssignmentInEngineContext(CFXJS_Engine* current_engine,
                                     double expected) {
   v8::Context::Scope context_scope(current_engine->GetV8Context());
   v8::Local<v8::Object> This = current_engine->GetThisObj();
-  v8::Local<v8::Value> fred = current_engine->GetObjectProperty(This, L"fred");
+  v8::Local<v8::Value> fred = current_engine->GetObjectProperty(This, "fred");
   EXPECT_TRUE(fred->IsNumber());
   EXPECT_EQ(expected, current_engine->ToDouble(fred));
 }
