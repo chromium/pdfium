@@ -14,6 +14,17 @@
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+struct XFA_ATTRIBUTEINFO {
+  XFA_Attribute attribute;
+  XFA_ScriptType eValueType;
+};
+
+struct XFA_SCRIPTATTRIBUTEINFO {
+  XFA_Attribute attribute;
+  XFA_ScriptType eValueType;
+  XFA_ATTRIBUTE_CALLBACK callback = nullptr;
+};
+
 ByteStringView XFA_ElementToName(XFA_Element elem);
 XFA_Element XFA_GetElementByName(const WideString& name);
 

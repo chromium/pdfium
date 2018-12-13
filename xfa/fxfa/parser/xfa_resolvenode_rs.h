@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/xfa/cjx_object.h"
+#include "xfa/fxfa/parser/xfa_basic_data.h"
 
 class CXFA_Object;
 
