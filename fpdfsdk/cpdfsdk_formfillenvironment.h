@@ -19,7 +19,6 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
-#include "public/fpdf_fwlevent.h"
 
 class CFFL_InteractiveFormFiller;
 class CFX_SystemHandler;
@@ -50,15 +49,9 @@ class CPDFSDK_FormFillEnvironment final
   CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFSDK_FormFillEnvironment();
 
-  static bool IsSHIFTKeyDown(uint32_t nFlag) {
-    return !!(nFlag & FWL_EVENTFLAG_ShiftKey);
-  }
-  static bool IsCTRLKeyDown(uint32_t nFlag) {
-    return !!(nFlag & FWL_EVENTFLAG_ControlKey);
-  }
-  static bool IsALTKeyDown(uint32_t nFlag) {
-    return !!(nFlag & FWL_EVENTFLAG_AltKey);
-  }
+  static bool IsSHIFTKeyDown(uint32_t nFlag);
+  static bool IsCTRLKeyDown(uint32_t nFlag);
+  static bool IsALTKeyDown(uint32_t nFlag);
 
   CPDFSDK_PageView* GetPageView(IPDF_Page* pPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);

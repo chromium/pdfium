@@ -23,6 +23,7 @@
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
+#include "public/fpdf_fwlevent.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
