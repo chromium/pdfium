@@ -30,6 +30,7 @@ class CXFA_FFDoc;
 class CXFA_FFDocView;
 class CXFA_FFWidget;
 class CXFA_Font;
+class CXFA_Keep;
 class CXFA_Margin;
 class CXFA_Occur;
 class CXFA_Para;
@@ -460,6 +461,9 @@ class CXFA_Node : public CXFA_Object {
   void SyncValue(const WideString& wsValue, bool bNotify);
   CXFA_Value* GetDefaultValueIfExists();
   CXFA_Bind* GetBindIfExists() const;
+  Optional<XFA_AttributeValue> GetIntactFromKeep(
+      const CXFA_Keep* pKeep,
+      XFA_AttributeValue eLayoutType) const;
 
   Optional<float> TryHeight();
   Optional<float> TryMinWidth();
