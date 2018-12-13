@@ -125,7 +125,7 @@ class CPDFSDK_FormFillEnvironment final
 
   WideString GetPlatform();
   void GotoURL(const WideString& wsURL);
-  void GetPageViewRect(CPDFXFA_Page* page, FS_RECTF& dstRect);
+  FS_RECTF GetPageViewRect(CPDFXFA_Page* page);
   bool PopupMenu(CPDFXFA_Page* page,
                  FPDF_WIDGET hWidget,
                  int menuFlag,

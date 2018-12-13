@@ -125,9 +125,7 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
   if (!pFormFillEnv)
     return false;
 
-  FS_RECTF page_view_rect = {0.0f, 0.0f, 0.0f, 0.0f};
-  pFormFillEnv->GetPageViewRect(pPage.Get(), page_view_rect);
-
+  FS_RECTF page_view_rect = pFormFillEnv->GetPageViewRect(pPage.Get());
   int nRotate = hWidget->GetNode()->GetRotate();
 
   int space_available_below_anchor;

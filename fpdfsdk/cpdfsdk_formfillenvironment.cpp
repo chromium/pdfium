@@ -397,10 +397,10 @@ void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
                        AsFPDFWideString(&bsTo));
 }
 
-void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
-                                                  FS_RECTF& dstRect) {
+FS_RECTF CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page) {
+  FS_RECTF rect = {0.0f, 0.0f, 0.0f, 0.0f};
   if (!m_pInfo || !m_pInfo->FFI_GetPageViewRect)
-    return;
+    return rect;
 
   double left;
   double top;
@@ -409,10 +409,11 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
   m_pInfo->FFI_GetPageViewRect(m_pInfo, FPDFPageFromIPDFPage(page), &left, &top,
                                &right, &bottom);
 
-  dstRect.left = static_cast<float>(left);
-  dstRect.top = static_cast<float>(top);
-  dstRect.bottom = static_cast<float>(bottom);
-  dstRect.right = static_cast<float>(right);
+  rect.left = static_cast<float>(left);
+  rect.top = static_cast<float>(top);
+  rect.bottom = static_cast<float>(bottom);
+  rect.right = static_cast<float>(right);
+  return rect;
 }
 
 bool CPDFSDK_FormFillEnvironment::PopupMenu(CPDFXFA_Page* page,
