@@ -625,17 +625,14 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       break;
     }
     if (bNextCreate) {
-      bool bCreate = pNodeHelper->ResolveNodes_CreateNode(
-          rndFind.m_wsName, rndFind.m_wsCondition,
-          nStart ==
-              pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
-          this);
-      if (bCreate)
+      int32_t checked_length =
+          pdfium::base::checked_cast<int32_t>(wsExpression.GetLength());
+      if (pNodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
+                                  nStart == checked_length, this)) {
         continue;
-
+      }
       break;
     }
-
     std::vector<CXFA_Object*> retObjects;
     while (i < nNodes) {
       bool bDataBind = false;
@@ -681,7 +678,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
           pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject);
           pNodeHelper->m_iCreateCount = 1;
         }
-        bool bCreate = pNodeHelper->ResolveNodes_CreateNode(
+        bool bCreate = pNodeHelper->CreateNode(
             rndFind.m_wsName, rndFind.m_wsCondition,
             nStart ==
                 pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
@@ -717,7 +714,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     if (pNodeHelper->m_pCreateParent)
       resolveNodeRS->objects.emplace_back(pNodeHelper->m_pCreateParent.Get());
     else
-      pNodeHelper->CreateNode_ForCondition(rndFind.m_wsCondition);
+      pNodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
 
     resolveNodeRS->dwFlags = pNodeHelper->m_iCreateFlag;
     if (resolveNodeRS->dwFlags == XFA_ResolveNode_RSType_CreateNodeOne) {

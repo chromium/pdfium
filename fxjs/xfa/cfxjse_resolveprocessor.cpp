@@ -98,8 +98,8 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
     bClassName = true;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }
-  findNode = m_pNodeHelper->ResolveNodes_GetOneChild(
-      ToNode(rnd.m_CurObject), wsName.c_str(), bClassName);
+  findNode = m_pNodeHelper->GetOneChild(ToNode(rnd.m_CurObject), wsName.c_str(),
+                                        bClassName);
   if (!findNode)
     return false;
 
@@ -363,8 +363,8 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     }
   }
 
-  CXFA_Node* parentNode = m_pNodeHelper->ResolveNodes_GetParent(
-      curNode->AsNode(), XFA_LOGIC_NoTransparent);
+  CXFA_Node* parentNode =
+      m_pNodeHelper->GetParent(curNode->AsNode(), XFA_LOGIC_NoTransparent);
   uint32_t uCurClassHash = curNode->GetClassHashCode();
   if (!parentNode) {
     if (uCurClassHash == uNameHash) {
@@ -718,7 +718,7 @@ void CFXJSE_ResolveProcessor::SetStylesForChild(uint32_t dwParentStyles,
 void CFXJSE_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
                                                int32_t& iIndex,
                                                int32_t iCount) {
-  if (m_pNodeHelper->CreateNode_ForCondition(wsNextCondition)) {
+  if (m_pNodeHelper->CreateNodeForCondition(wsNextCondition)) {
     if (m_pNodeHelper->m_eLastCreateType == XFA_Element::DataGroup) {
       iIndex = 0;
     } else {

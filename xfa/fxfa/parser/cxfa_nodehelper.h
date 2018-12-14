@@ -26,22 +26,20 @@ class CXFA_NodeHelper {
   CXFA_NodeHelper();
   ~CXFA_NodeHelper();
 
-  CXFA_Node* ResolveNodes_GetOneChild(CXFA_Node* parent,
-                                      const wchar_t* pwsName,
-                                      bool bIsClassName);
-  CXFA_Node* ResolveNodes_GetParent(CXFA_Node* pNode,
-                                    XFA_LOGIC_TYPE eLogicType);
-
-  int32_t NodeAcc_TraverseSiblings(CXFA_Node* parent,
-                                   uint32_t dNameHash,
-                                   std::vector<CXFA_Node*>* pSiblings,
-                                   XFA_LOGIC_TYPE eLogicType,
-                                   bool bIsClassName,
-                                   bool bIsFindProperty);
-  int32_t NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
-                                      uint32_t dNameHash,
-                                      std::vector<CXFA_Node*>* pSiblings,
-                                      bool bIsClassName);
+  CXFA_Node* GetOneChild(CXFA_Node* parent,
+                         const wchar_t* pwsName,
+                         bool bIsClassName);
+  CXFA_Node* GetParent(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType);
+  int32_t TraverseSiblings(CXFA_Node* parent,
+                           uint32_t dNameHash,
+                           std::vector<CXFA_Node*>* pSiblings,
+                           XFA_LOGIC_TYPE eLogicType,
+                           bool bIsClassName,
+                           bool bIsFindProperty);
+  int32_t TraverseAnySiblings(CXFA_Node* parent,
+                              uint32_t dNameHash,
+                              std::vector<CXFA_Node*>* pSiblings,
+                              bool bIsClassName);
   int32_t CountSiblings(CXFA_Node* pNode,
                         XFA_LOGIC_TYPE eLogicType,
                         std::vector<CXFA_Node*>* pSiblings,
@@ -52,11 +50,11 @@ class CXFA_NodeHelper {
                    bool bIsClassIndex);
   WideString GetNameExpression(CXFA_Node* refNode, bool bIsAllPath);
   bool NodeIsTransparent(CXFA_Node* refNode);
-  bool ResolveNodes_CreateNode(WideString wsName,
-                               WideString wsCondition,
-                               bool bLastNode,
-                               CFXJSE_Engine* pScriptContext);
-  bool CreateNode_ForCondition(WideString& wsCondition);
+  bool CreateNode(WideString wsName,
+                  WideString wsCondition,
+                  bool bLastNode,
+                  CFXJSE_Engine* pScriptContext);
+  bool CreateNodeForCondition(const WideString& wsCondition);
   void SetCreateNodeType(CXFA_Node* refNode);
   bool NodeIsProperty(CXFA_Node* refNode);
 
