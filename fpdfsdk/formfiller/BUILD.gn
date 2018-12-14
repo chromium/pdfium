@@ -7,8 +7,6 @@ import("../../pdfium.gni")
 
 jumbo_source_set("formfiller") {
   sources = [
-    "cba_fontmap.cpp",
-    "cba_fontmap.h",
     "cffl_button.cpp",
     "cffl_button.h",
     "cffl_checkbox.cpp",
@@ -32,6 +30,24 @@ jumbo_source_set("formfiller") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
+    ":fontmap",
+    "../../:pdfium_public_headers",
+    "../../core/fpdfapi/page",
+    "../../core/fpdfapi/parser",
+    "../../core/fxcrt",
+    "../../core/fxge",
+    "../pwl",
+  ]
+  visibility = [ "../../*" ]
+}
+
+jumbo_source_set("fontmap") {
+  sources = [
+    "cba_fontmap.cpp",
+    "cba_fontmap.h",
+  ]
+  configs += [ "../../:pdfium_core_config" ]
+  deps = [
     "../../:pdfium_public_headers",
     "../../core/fpdfapi",
     "../../core/fpdfapi/font",
@@ -40,8 +56,6 @@ jumbo_source_set("formfiller") {
     "../../core/fpdfdoc",
     "../../core/fxcrt",
     "../../core/fxge",
-    "../pwl",
   ]
-  allow_circular_includes_from = [ "../pwl" ]
   visibility = [ "../../*" ]
 }

@@ -63,11 +63,13 @@ jumbo_source_set("fpdfsdk") {
     "../core/fxge",
     "../fxjs",
     "formfiller",
+    "formfiller:fontmap",
     "pwl",
   ]
   allow_circular_includes_from = [
     "../fxjs",
     "formfiller",
+    "formfiller:fontmap",
     "pwl",
   ]
   visibility = [ "../*" ]
