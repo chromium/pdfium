@@ -19,7 +19,7 @@ CBC_OneDimEANWriter* CBC_EANCode::GetOneDimEANWriter() {
   return static_cast<CBC_OneDimEANWriter*>(m_pBCWriter.get());
 }
 
-bool CBC_EANCode::Encode(const WideStringView& contents) {
+bool CBC_EANCode::Encode(WideStringView contents) {
   if (contents.IsEmpty())
     return false;
 
@@ -42,7 +42,7 @@ bool CBC_EANCode::RenderDevice(CFX_RenderDevice* device,
       device, matrix, m_renderContents.AsStringView());
 }
 
-WideString CBC_EANCode::Preprocess(const WideStringView& contents) {
+WideString CBC_EANCode::Preprocess(WideStringView contents) {
   auto* pWriter = GetOneDimEANWriter();
   WideString encoded_contents = pWriter->FilterContents(contents);
   size_t length = encoded_contents.GetLength();

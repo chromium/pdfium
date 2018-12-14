@@ -121,7 +121,7 @@ CFXJSE_Engine::~CFXJSE_Engine() {
 }
 
 bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
-                              const WideStringView& wsScript,
+                              WideStringView wsScript,
                               CFXJSE_Value* hRetValue,
                               CXFA_Object* pThisObject) {
   ByteString btScript;
@@ -150,7 +150,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
 }
 
 bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
-                                    const WideStringView& propname,
+                                    WideStringView propname,
                                     CFXJSE_Value* pValue,
                                     uint32_t dwFlag,
                                     bool bSetting) {
@@ -563,7 +563,7 @@ void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
 }
 
 bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
-                                   const WideStringView& wsExpression,
+                                   WideStringView wsExpression,
                                    XFA_RESOLVENODE_RS* resolveNodeRS,
                                    uint32_t dwStyles,
                                    CXFA_Node* bindNode) {

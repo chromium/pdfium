@@ -31,7 +31,7 @@ CBC_Codabar::CBC_Codabar()
 
 CBC_Codabar::~CBC_Codabar() {}
 
-bool CBC_Codabar::Encode(const WideStringView& contents) {
+bool CBC_Codabar::Encode(WideStringView contents) {
   if (contents.IsEmpty())
     return false;
 

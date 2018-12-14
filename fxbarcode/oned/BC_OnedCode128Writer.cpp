@@ -83,8 +83,7 @@ CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type)
 
 CBC_OnedCode128Writer::~CBC_OnedCode128Writer() = default;
 
-bool CBC_OnedCode128Writer::CheckContentValidity(
-    const WideStringView& contents) {
+bool CBC_OnedCode128Writer::CheckContentValidity(WideStringView contents) {
   for (const auto& ch : contents) {
     int32_t patternIndex = static_cast<int32_t>(ch);
     if (patternIndex < 32 || patternIndex > 126 || patternIndex == 34)
@@ -93,8 +92,7 @@ bool CBC_OnedCode128Writer::CheckContentValidity(
   return true;
 }
 
-WideString CBC_OnedCode128Writer::FilterContents(
-    const WideStringView& contents) {
+WideString CBC_OnedCode128Writer::FilterContents(WideStringView contents) {
   const wchar_t limit = m_codeFormat == BC_CODE128_B ? 126 : 106;
 
   WideString filtered;

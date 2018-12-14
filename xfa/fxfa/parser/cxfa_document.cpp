@@ -1478,7 +1478,7 @@ FormType CXFA_Document::GetFormType() const {
 }
 
 CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
-                                      const WideStringView& wsID) const {
+                                      WideStringView wsID) const {
   if (!pRoot || wsID.IsEmpty())
     return nullptr;
 

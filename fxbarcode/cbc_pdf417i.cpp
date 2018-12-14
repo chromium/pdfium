@@ -31,7 +31,7 @@ CBC_PDF417I::CBC_PDF417I()
 
 CBC_PDF417I::~CBC_PDF417I() {}
 
-bool CBC_PDF417I::Encode(const WideStringView& contents) {
+bool CBC_PDF417I::Encode(WideStringView contents) {
   int32_t width;
   int32_t height;
   auto* pWriter = GetPDF417Writer();

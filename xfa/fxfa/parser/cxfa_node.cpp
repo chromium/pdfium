@@ -1548,7 +1548,7 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
                              XFA_AttributeValue::Unknown, false);
 }
 
-CXFA_Node* CXFA_Node::GetFirstChildByName(const WideStringView& wsName) const {
+CXFA_Node* CXFA_Node::GetFirstChildByName(WideStringView wsName) const {
   return GetFirstChildByName(FX_HashCode_GetW(wsName, false));
 }
 
@@ -1580,7 +1580,7 @@ CXFA_Node* CXFA_Node::GetNextSameNameSibling(uint32_t dwNameHash) const {
 }
 
 CXFA_Node* CXFA_Node::GetNextSameNameSiblingInternal(
-    const WideStringView& wsNodeName) const {
+    WideStringView wsNodeName) const {
   return GetNextSameNameSibling(FX_HashCode_GetW(wsNodeName, false));
 }
 
@@ -3969,8 +3969,7 @@ CXFA_Node* CXFA_Node::GetSelectedMember() {
   return pSelectedMember;
 }
 
-CXFA_Node* CXFA_Node::SetSelectedMember(const WideStringView& wsName,
-                                        bool bNotify) {
+CXFA_Node* CXFA_Node::SetSelectedMember(WideStringView wsName, bool bNotify) {
   uint32_t nameHash = FX_HashCode_GetW(wsName, false);
   for (CXFA_Node* pNode = ToNode(GetFirstChild()); pNode;
        pNode = pNode->GetNextSibling()) {
@@ -3982,7 +3981,7 @@ CXFA_Node* CXFA_Node::SetSelectedMember(const WideStringView& wsName,
   return nullptr;
 }
 
-void CXFA_Node::SetSelectedMemberByValue(const WideStringView& wsValue,
+void CXFA_Node::SetSelectedMemberByValue(WideStringView wsValue,
                                          bool bNotify,
                                          bool bScriptModify,
                                          bool bSyncData) {
@@ -4378,7 +4377,7 @@ void CXFA_Node::InsertItem(const WideString& wsLabel,
                                                     wsValue.c_str(), nIndex);
 }
 
-WideString CXFA_Node::GetItemLabel(const WideStringView& wsValue) const {
+WideString CXFA_Node::GetItemLabel(WideStringView wsValue) const {
   std::vector<CXFA_Node*> listitems;
   CXFA_Node* pItems = GetFirstChild();
   for (; pItems; pItems = pItems->GetNextSibling()) {
@@ -4418,7 +4417,7 @@ WideString CXFA_Node::GetItemLabel(const WideStringView& wsValue) const {
   return pText ? pText->JSObject()->GetContent(false) : WideString();
 }
 
-WideString CXFA_Node::GetItemValue(const WideStringView& wsLabel) {
+WideString CXFA_Node::GetItemValue(WideStringView wsLabel) {
   int32_t iCount = 0;
   std::vector<CXFA_Node*> listitems;
   for (CXFA_Node* pItems = GetFirstChild(); pItems;

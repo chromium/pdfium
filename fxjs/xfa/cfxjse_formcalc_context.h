@@ -383,7 +383,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                               CFXJSE_Value* src,
                               bool* ret);
 
-  static bool Translate(const WideStringView& wsFormcalc,
+  static bool Translate(WideStringView wsFormcalc,
                         CFX_WideTextBuf* wsJavascript);
 
   void GlobalPropertyGetter(CFXJSE_Value* pValue);

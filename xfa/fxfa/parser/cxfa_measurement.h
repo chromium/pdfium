@@ -13,11 +13,11 @@
 
 class CXFA_Measurement {
  public:
-  explicit CXFA_Measurement(const WideStringView& wsMeasure);
+  explicit CXFA_Measurement(WideStringView wsMeasure);
   CXFA_Measurement();
   CXFA_Measurement(float fValue, XFA_Unit eUnit);
 
-  static XFA_Unit GetUnitFromString(const WideStringView& wsUnit);
+  static XFA_Unit GetUnitFromString(WideStringView wsUnit);
 
   void Set(float fValue, XFA_Unit eUnit) {
     m_fValue = fValue;
@@ -31,7 +31,7 @@ class CXFA_Measurement {
   float ToUnit(XFA_Unit eUnit) const;
 
  private:
-  void SetString(const WideStringView& wsMeasure);
+  void SetString(WideStringView wsMeasure);
   bool ToUnitInternal(XFA_Unit eUnit, float* fValue) const;
 
   float m_fValue;

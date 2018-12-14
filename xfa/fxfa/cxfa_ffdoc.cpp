@@ -180,10 +180,9 @@ void CXFA_FFDoc::CloseDoc() {
   m_pApp->ClearEventTargets();
 }
 
-RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
-    const WideStringView& wsName,
-    int32_t& iImageXDpi,
-    int32_t& iImageYDpi) {
+RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
+                                                     int32_t& iImageXDpi,
+                                                     int32_t& iImageYDpi) {
   if (!m_pPDFDoc)
     return nullptr;
 

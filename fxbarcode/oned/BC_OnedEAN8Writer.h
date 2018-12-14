@@ -27,14 +27,14 @@ class CBC_OnedEAN8Writer final : public CBC_OneDimEANWriter {
                           int32_t& outHeight,
                           int32_t hints) override;
   uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
-  bool CheckContentValidity(const WideStringView& contents) override;
-  WideString FilterContents(const WideStringView& contents) override;
+  bool CheckContentValidity(WideStringView contents) override;
+  WideString FilterContents(WideStringView contents) override;
   void SetDataLength(int32_t length) override;
   bool SetTextLocation(BC_TEXT_LOC location) override;
   int32_t CalcChecksum(const ByteString& contents) override;
 
  private:
-  bool ShowChars(const WideStringView& contents,
+  bool ShowChars(WideStringView contents,
                  CFX_RenderDevice* device,
                  const CFX_Matrix* matrix,
                  int32_t barWidth,

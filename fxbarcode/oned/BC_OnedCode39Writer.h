@@ -22,16 +22,16 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
                           int32_t& outHeight,
                           int32_t hints) override;
   uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
-  bool RenderResult(const WideStringView& contents,
+  bool RenderResult(WideStringView contents,
                     uint8_t* code,
                     int32_t codeLength) override;
-  bool CheckContentValidity(const WideStringView& contents) override;
-  WideString FilterContents(const WideStringView& contents) override;
-  WideString RenderTextContents(const WideStringView& contents) override;
+  bool CheckContentValidity(WideStringView contents) override;
+  WideString FilterContents(WideStringView contents) override;
+  WideString RenderTextContents(WideStringView contents) override;
   bool SetTextLocation(BC_TEXT_LOC location) override;
   bool SetWideNarrowRatio(int8_t ratio) override;
 
-  bool encodedContents(const WideStringView& contents, WideString* result);
+  bool encodedContents(WideStringView contents, WideString* result);
 
  private:
   void ToIntArray(int16_t a, int8_t* toReturn);

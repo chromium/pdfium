@@ -294,7 +294,7 @@ CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(val < 0 && IsNotZero(), scale);
 }
 
-CFX_Decimal::CFX_Decimal(const WideStringView& strObj) {
+CFX_Decimal::CFX_Decimal(WideStringView strObj) {
   const wchar_t* str = strObj.unterminated_c_str();
   const wchar_t* strBound = str + strObj.GetLength();
   bool pointmet = false;

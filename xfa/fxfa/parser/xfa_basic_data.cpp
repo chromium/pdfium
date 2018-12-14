@@ -233,7 +233,7 @@ XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket) {
   return {pRecord->name, pRecord->packet_type, pRecord->uri, pRecord->flags};
 }
 
-Optional<XFA_PACKETINFO> XFA_GetPacketByName(const WideStringView& wsName) {
+Optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName) {
   uint32_t hash = FX_HashCode_GetW(wsName, false);
   auto* elem = std::lower_bound(
       std::begin(g_PacketTable), std::end(g_PacketTable), hash,
@@ -261,7 +261,7 @@ ByteStringView XFA_AttributeToName(XFA_Attribute attr) {
   return g_AttributeTable[static_cast<size_t>(attr)].name;
 }
 
-Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(const WideStringView& name) {
+Optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name) {
   uint32_t hash = FX_HashCode_GetW(name, false);
   auto* elem = std::lower_bound(
       std::begin(g_AttributeTable), std::end(g_AttributeTable), hash,
@@ -279,8 +279,7 @@ ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item) {
   return g_AttributeValueTable[static_cast<int32_t>(item)].pName;
 }
 
-Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
-    const WideStringView& name) {
+Optional<XFA_AttributeValue> XFA_GetAttributeValueByName(WideStringView name) {
   auto* it = std::lower_bound(std::begin(g_AttributeValueTable),
                               std::end(g_AttributeValueTable),
                               FX_HashCode_GetW(name, false),

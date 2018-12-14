@@ -29,7 +29,7 @@ class CFX_V8 {
   v8::Local<v8::Number> NewNumber(float number);
   v8::Local<v8::Boolean> NewBoolean(bool b);
   v8::Local<v8::String> NewString(const ByteStringView& str);
-  v8::Local<v8::String> NewString(const WideStringView& str);
+  v8::Local<v8::String> NewString(WideStringView str);
   v8::Local<v8::Date> NewDate(double d);
 
   int ToInt32(v8::Local<v8::Value> pValue);

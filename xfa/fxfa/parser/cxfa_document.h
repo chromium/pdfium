@@ -65,7 +65,7 @@ class CXFA_Document final : public CXFA_NodeOwner {
   CXFA_FFNotify* GetNotify() const { return notify_.Get(); }
   CXFA_LocaleMgr* GetLocaleMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
-  CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID) const;
+  CXFA_Node* GetNodeByID(CXFA_Node* pRoot, WideStringView wsID) const;
   CXFA_Node* GetNotBindNode(
       const std::vector<UnownedPtr<CXFA_Object>>& arrayNodes) const;
   CXFA_LayoutProcessor* GetLayoutProcessor();

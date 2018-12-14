@@ -39,8 +39,7 @@ class CJX_Node : public CJX_Tree {
   CXFA_Node* GetXFANode() const;
 
  protected:
-  int32_t execSingleEventByName(const WideStringView& wsEventName,
-                                XFA_Element eType);
+  int32_t execSingleEventByName(WideStringView wsEventName, XFA_Element eType);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

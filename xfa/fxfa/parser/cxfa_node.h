@@ -195,7 +195,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<WideString> GetLocaleName();
   XFA_AttributeValue GetIntact();
 
-  CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
+  CXFA_Node* GetFirstChildByName(WideStringView wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
   template <typename T>
   T* GetFirstChildByClass(XFA_Element eType) const {
@@ -203,7 +203,7 @@ class CXFA_Node : public CXFA_Object {
   }
   CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
   template <typename T>
-  T* GetNextSameNameSibling(const WideStringView& wsNodeName) const {
+  T* GetNextSameNameSibling(WideStringView wsNodeName) const {
     return static_cast<T*>(GetNextSameNameSiblingInternal(wsNodeName));
   }
   template <typename T>
@@ -313,8 +313,8 @@ class CXFA_Node : public CXFA_Object {
   void SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify);
 
   CXFA_Node* GetSelectedMember();
-  CXFA_Node* SetSelectedMember(const WideStringView& wsName, bool bNotify);
-  void SetSelectedMemberByValue(const WideStringView& wsValue,
+  CXFA_Node* SetSelectedMember(WideStringView wsName, bool bNotify);
+  void SetSelectedMemberByValue(WideStringView wsValue,
                                 bool bNotify,
                                 bool bScriptModify,
                                 bool bSyncData);
@@ -350,7 +350,7 @@ class CXFA_Node : public CXFA_Object {
                     bool bScriptModify,
                     bool bSyncData);
 
-  WideString GetItemValue(const WideStringView& wsLabel);
+  WideString GetItemValue(WideStringView wsLabel);
 
   bool IsHorizontalScrollPolicyOff();
   bool IsVerticalScrollPolicyOff();
@@ -416,8 +416,7 @@ class CXFA_Node : public CXFA_Object {
                                   XFA_AttributeType eType) const;
   CXFA_Node* GetChildInternal(size_t index, XFA_Element eType, bool bOnlyChild);
   CXFA_Node* GetFirstChildByClassInternal(XFA_Element eType) const;
-  CXFA_Node* GetNextSameNameSiblingInternal(
-      const WideStringView& wsNodeName) const;
+  CXFA_Node* GetNextSameNameSiblingInternal(WideStringView wsNodeName) const;
   CXFA_Node* GetNextSameClassSiblingInternal(XFA_Element eType) const;
   void CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap);
   bool CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
@@ -442,7 +441,7 @@ class CXFA_Node : public CXFA_Object {
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,
                           int32_t nIndex);
-  WideString GetItemLabel(const WideStringView& wsValue) const;
+  WideString GetItemLabel(WideStringView wsValue) const;
 
   std::pair<XFA_FFWidgetType, CXFA_Ui*> CreateChildUIAndValueNodesIfNeeded();
   void CreateValueNodeIfNeeded(CXFA_Value* value, CXFA_Node* pUIChild);

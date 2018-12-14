@@ -43,7 +43,7 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-std::vector<uint8_t> CBC_PDF417Writer::Encode(const WideStringView& contents,
+std::vector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
                                               int32_t* pOutWidth,
                                               int32_t* pOutHeight) {
   std::vector<uint8_t> results;

@@ -57,7 +57,7 @@ class CFDE_TextOut {
   void CalcLogicSize(const WideString& str, CFX_SizeF* pSize);
   void CalcLogicSize(const WideString& str, CFX_RectF* pRect);
   void DrawLogicText(CFX_RenderDevice* device,
-                     const WideStringView& str,
+                     WideStringView str,
                      const CFX_RectF& rect);
   int32_t GetTotalLines() const { return m_iTotalLines; }
 

@@ -500,7 +500,7 @@ void CJX_Node::oneOfChild(CFXJSE_Value* pValue,
   }
 }
 
-int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
+int32_t CJX_Node::execSingleEventByName(WideStringView wsEventName,
                                         XFA_Element eType) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)

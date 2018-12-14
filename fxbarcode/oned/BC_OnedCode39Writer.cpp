@@ -64,13 +64,11 @@ CBC_OnedCode39Writer::CBC_OnedCode39Writer() = default;
 
 CBC_OnedCode39Writer::~CBC_OnedCode39Writer() = default;
 
-bool CBC_OnedCode39Writer::CheckContentValidity(
-    const WideStringView& contents) {
+bool CBC_OnedCode39Writer::CheckContentValidity(WideStringView contents) {
   return std::all_of(contents.begin(), contents.end(), IsInOnedCode39Alphabet);
 }
 
-WideString CBC_OnedCode39Writer::FilterContents(
-    const WideStringView& contents) {
+WideString CBC_OnedCode39Writer::FilterContents(WideStringView contents) {
   WideString filtercontents;
   filtercontents.Reserve(contents.GetLength());
   for (size_t i = 0; i < contents.GetLength(); i++) {
@@ -89,8 +87,7 @@ WideString CBC_OnedCode39Writer::FilterContents(
   return filtercontents;
 }
 
-WideString CBC_OnedCode39Writer::RenderTextContents(
-    const WideStringView& contents) {
+WideString CBC_OnedCode39Writer::RenderTextContents(WideStringView contents) {
   WideString renderContents;
   for (size_t i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
@@ -214,7 +211,7 @@ uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
   return result.release();
 }
 
-bool CBC_OnedCode39Writer::encodedContents(const WideStringView& contents,
+bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
                                            WideString* result) {
   *result = WideString(contents);
   if (m_bCalcChecksum && m_bPrintChecksum) {
@@ -230,7 +227,7 @@ bool CBC_OnedCode39Writer::encodedContents(const WideStringView& contents,
   return true;
 }
 
-bool CBC_OnedCode39Writer::RenderResult(const WideStringView& contents,
+bool CBC_OnedCode39Writer::RenderResult(WideStringView contents,
                                         uint8_t* code,
                                         int32_t codeLength) {
   WideString encodedCon;

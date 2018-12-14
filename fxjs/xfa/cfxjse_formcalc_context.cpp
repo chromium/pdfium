@@ -5938,7 +5938,7 @@ ByteString CFXJSE_FormCalcContext::ValueToUTF8String(CFXJSE_Value* arg) {
 }
 
 // static.
-bool CFXJSE_FormCalcContext::Translate(const WideStringView& wsFormcalc,
+bool CFXJSE_FormCalcContext::Translate(WideStringView wsFormcalc,
                                        CFX_WideTextBuf* wsJavascript) {
   if (wsFormcalc.IsEmpty()) {
     wsJavascript->Clear();

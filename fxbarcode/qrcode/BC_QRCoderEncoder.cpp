@@ -400,7 +400,7 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
 }  // namespace
 
 // static
-bool CBC_QRCoderEncoder::Encode(const WideStringView& content,
+bool CBC_QRCoderEncoder::Encode(WideStringView content,
                                 const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode) {
   ByteString encoding = "utf8";

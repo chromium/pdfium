@@ -119,7 +119,7 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
                     FXSYS_GetBValue(colorref));
 }
 
-FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
+FX_ARGB StringToFXARGB(WideStringView wsValue) {
   static constexpr FX_ARGB kDefaultValue = 0xff000000;
   if (wsValue.GetLength() == 0)
     return kDefaultValue;

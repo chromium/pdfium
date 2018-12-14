@@ -284,7 +284,7 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
 }
 
 void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
-                                 const WideStringView& str,
+                                 WideStringView str,
                                  const CFX_RectF& rect) {
   ASSERT(m_pFont);
   ASSERT(m_fFontSize >= 1.0f);

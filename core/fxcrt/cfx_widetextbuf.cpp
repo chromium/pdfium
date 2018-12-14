@@ -25,7 +25,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const ByteStringView& ascii) {
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const WideStringView& str) {
+CFX_WideTextBuf& CFX_WideTextBuf::operator<<(WideStringView str) {
   AppendBlock(str.unterminated_c_str(), str.GetLength() * sizeof(wchar_t));
   return *this;
 }

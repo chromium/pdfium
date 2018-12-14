@@ -35,9 +35,8 @@ class CFX_XMLElement final : public CFX_XMLNode {
 
   void RemoveAttribute(const WideString& name);
 
-  CFX_XMLElement* GetFirstChildNamed(const WideStringView& name) const;
-  CFX_XMLElement* GetNthChildNamed(const WideStringView& name,
-                                   size_t idx) const;
+  CFX_XMLElement* GetFirstChildNamed(WideStringView name) const;
+  CFX_XMLElement* GetNthChildNamed(WideStringView name, size_t idx) const;
 
   WideString GetLocalTagName() const;
   WideString GetNamespacePrefix() const;

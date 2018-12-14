@@ -45,8 +45,8 @@ CFX_XMLNode* GetDocumentNode(CFX_XMLNode* pRootNode) {
 }
 
 bool MatchNodeName(CFX_XMLNode* pNode,
-                   const WideStringView& wsLocalTagName,
-                   const WideStringView& wsNamespaceURIPrefix,
+                   WideStringView wsLocalTagName,
+                   WideStringView wsNamespaceURIPrefix,
                    uint32_t eMatchFlags = XFA_XDPPACKET_FLAGS_NOMATCH) {
   CFX_XMLElement* pElement = ToXMLElement(pNode);
   if (!pElement)
@@ -67,7 +67,7 @@ bool MatchNodeName(CFX_XMLNode* pNode,
   return wsNodeStr == wsNamespaceURIPrefix;
 }
 
-bool GetAttributeLocalName(const WideStringView& wsAttributeName,
+bool GetAttributeLocalName(WideStringView wsAttributeName,
                            WideString& wsLocalAttrName) {
   WideString wsAttrName(wsAttributeName);
   auto pos = wsAttrName.Find(L':', 0);
@@ -101,8 +101,8 @@ bool ResolveAttribute(CFX_XMLElement* pElement,
 }
 
 bool FindAttributeWithNS(CFX_XMLElement* pElement,
-                         const WideStringView& wsLocalAttributeName,
-                         const WideStringView& wsNamespaceURIPrefix,
+                         WideStringView wsLocalAttributeName,
+                         WideStringView wsNamespaceURIPrefix,
                          WideString& wsValue,
                          bool bMatchNSAsPrefix = false) {
   if (!pElement)

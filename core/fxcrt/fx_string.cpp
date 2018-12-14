@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/compiler_specific.h"
 
-ByteString FX_UTF8Encode(const WideStringView& wsStr) {
+ByteString FX_UTF8Encode(WideStringView wsStr) {
   size_t len = wsStr.GetLength();
   const wchar_t* pStr = wsStr.unterminated_c_str();
   CFX_UTF8Encoder encoder;
@@ -87,7 +87,7 @@ float StringToFloat(const ByteStringView& strc) {
   return bNegative ? -value : value;
 }
 
-float StringToFloat(const WideStringView& wsStr) {
+float StringToFloat(WideStringView wsStr) {
   return StringToFloat(FX_UTF8Encode(wsStr).c_str());
 }
 

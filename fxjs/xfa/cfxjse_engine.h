@@ -71,12 +71,12 @@ class CFXJSE_Engine final : public CFX_V8 {
   void SetEventParam(CXFA_EventParam* param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() const { return m_eventParam.Get(); }
   bool RunScript(CXFA_Script::Type eScriptType,
-                 const WideStringView& wsScript,
+                 WideStringView wsScript,
                  CFXJSE_Value* pRetValue,
                  CXFA_Object* pThisObject);
 
   bool ResolveObjects(CXFA_Object* refObject,
-                      const WideStringView& wsExpression,
+                      WideStringView wsExpression,
                       XFA_RESOLVENODE_RS* resolveNodeRS,
                       uint32_t dwStyles,
                       CXFA_Node* bindNode);
@@ -108,7 +108,7 @@ class CFXJSE_Engine final : public CFX_V8 {
                                          CXFA_Node* pSubform);
   void RemoveBuiltInObjs(CFXJSE_Context* pContext) const;
   bool QueryNodeByFlag(CXFA_Node* refNode,
-                       const WideStringView& propname,
+                       WideStringView propname,
                        CFXJSE_Value* pValue,
                        uint32_t dwFlag,
                        bool bSetting);

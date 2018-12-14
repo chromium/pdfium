@@ -60,7 +60,7 @@ class CXFA_FFDoc {
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
-  RetainPtr<CFX_DIBitmap> GetPDFNamedImage(const WideStringView& wsName,
+  RetainPtr<CFX_DIBitmap> GetPDFNamedImage(WideStringView wsName,
                                            int32_t& iImageXDpi,
                                            int32_t& iImageYDpi);
   CFGAS_PDFFontMgr* GetPDFFontMgr() const { return m_pPDFFontMgr.get(); }

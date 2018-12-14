@@ -41,7 +41,7 @@ class CFXJSE_ResolveProcessor {
   ~CFXJSE_ResolveProcessor();
 
   bool Resolve(CFXJSE_ResolveNodeData& rnd);
-  int32_t GetFilter(const WideStringView& wsExpression,
+  int32_t GetFilter(WideStringView wsExpression,
                     int32_t nStart,
                     CFXJSE_ResolveNodeData& rnd);
   void SetIndexDataBind(WideString& wsNextCondition,
@@ -54,7 +54,7 @@ class CFXJSE_ResolveProcessor {
  private:
   bool ResolveForAttributeRs(CXFA_Object* curNode,
                              CFXJSE_ResolveNodeData& rnd,
-                             const WideStringView& strAttr);
+                             WideStringView strAttr);
   bool ResolveAnyChild(CFXJSE_ResolveNodeData& rnd);
   bool ResolveDollar(CFXJSE_ResolveNodeData& rnd);
   bool ResolveExcalmatory(CFXJSE_ResolveNodeData& rnd);

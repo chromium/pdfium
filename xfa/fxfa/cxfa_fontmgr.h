@@ -20,7 +20,7 @@ class CXFA_FontMgr {
   ~CXFA_FontMgr();
 
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                  const WideStringView& wsFontFamily,
+                                  WideStringView wsFontFamily,
                                   uint32_t dwFontStyles);
 
  private:

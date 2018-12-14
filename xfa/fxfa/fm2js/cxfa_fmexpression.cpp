@@ -32,7 +32,7 @@ WideString IdentifierToName(WideStringView ident) {
 CXFA_FMExpression::CXFA_FMExpression() = default;
 
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
-    const WideStringView& wsName,
+    WideStringView wsName,
     std::vector<WideStringView>&& arguments,
     std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions)
     : CXFA_FMExpression(),
@@ -114,7 +114,7 @@ bool CXFA_FMAST::ToJavaScript(CFX_WideTextBuf* js) {
 }
 
 CXFA_FMVarExpression::CXFA_FMVarExpression(
-    const WideStringView& wsName,
+    WideStringView wsName,
     std::unique_ptr<CXFA_FMSimpleExpression> pInit)
     : CXFA_FMExpression(), m_wsName(wsName), m_pInit(std::move(pInit)) {}
 
@@ -343,7 +343,7 @@ bool CXFA_FMContinueExpression::ToJavaScript(CFX_WideTextBuf* js,
 }
 
 CXFA_FMForExpression::CXFA_FMForExpression(
-    const WideStringView& wsVariant,
+    WideStringView wsVariant,
     std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
     int32_t iDirection,
@@ -404,7 +404,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
 }
 
 CXFA_FMForeachExpression::CXFA_FMForeachExpression(
-    const WideStringView& wsIdentifier,
+    WideStringView wsIdentifier,
     std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
     std::unique_ptr<CXFA_FMExpression> pList)
     : CXFA_FMExpression(),

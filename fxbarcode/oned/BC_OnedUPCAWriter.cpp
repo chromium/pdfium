@@ -38,7 +38,7 @@ CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
 
 CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
 
-bool CBC_OnedUPCAWriter::CheckContentValidity(const WideStringView& contents) {
+bool CBC_OnedUPCAWriter::CheckContentValidity(WideStringView contents) {
   for (size_t i = 0; i < contents.GetLength(); ++i) {
     if (contents[i] < '0' || contents[i] > '9')
       return false;
@@ -46,7 +46,7 @@ bool CBC_OnedUPCAWriter::CheckContentValidity(const WideStringView& contents) {
   return true;
 }
 
-WideString CBC_OnedUPCAWriter::FilterContents(const WideStringView& contents) {
+WideString CBC_OnedUPCAWriter::FilterContents(WideStringView contents) {
   WideString filtercontents;
   filtercontents.Reserve(contents.GetLength());
   wchar_t ch;
@@ -102,7 +102,7 @@ uint8_t* CBC_OnedUPCAWriter::EncodeImpl(const ByteString& contents,
   return nullptr;
 }
 
-bool CBC_OnedUPCAWriter::ShowChars(const WideStringView& contents,
+bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                                    CFX_RenderDevice* device,
                                    const CFX_Matrix* matrix,
                                    int32_t barWidth,

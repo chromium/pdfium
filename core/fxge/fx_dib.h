@@ -138,7 +138,7 @@ constexpr FX_ARGB ArgbEncode(int a, int r, int g, int b) {
 
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref);
 
-FX_ARGB StringToFXARGB(const WideStringView& view);
+FX_ARGB StringToFXARGB(WideStringView view);
 
 #define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
 #define FXARGB_R(argb) ((uint8_t)((argb) >> 16))

@@ -31,7 +31,7 @@ CBC_QRCode::CBC_QRCode()
 
 CBC_QRCode::~CBC_QRCode() = default;
 
-bool CBC_QRCode::Encode(const WideStringView& contents) {
+bool CBC_QRCode::Encode(WideStringView contents) {
   int32_t width;
   int32_t height;
   CBC_QRCodeWriter* pWriter = GetQRCodeWriter();

@@ -31,7 +31,7 @@ CBC_DataMatrix::CBC_DataMatrix()
 
 CBC_DataMatrix::~CBC_DataMatrix() = default;
 
-bool CBC_DataMatrix::Encode(const WideStringView& contents) {
+bool CBC_DataMatrix::Encode(WideStringView contents) {
   int32_t width;
   int32_t height;
   auto* pWriter = GetDataMatrixWriter();

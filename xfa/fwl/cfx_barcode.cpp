@@ -222,7 +222,7 @@ bool CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   return m_pBCEngine && m_pBCEngine->SetErrorCorrectionLevel(level);
 }
 
-bool CFX_Barcode::Encode(const WideStringView& contents) {
+bool CFX_Barcode::Encode(WideStringView contents) {
   return m_pBCEngine && m_pBCEngine->Encode(contents);
 }
 

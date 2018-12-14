@@ -62,7 +62,7 @@ enum XFA_KEYTYPE {
   XFA_KEYTYPE_Element,
 };
 
-void* GetMapKey_Custom(const WideStringView& wsKey) {
+void* GetMapKey_Custom(WideStringView wsKey) {
   uint32_t dwKey = FX_HashCode_GetW(wsKey, false);
   return (void*)(uintptr_t)((dwKey << 1) | XFA_KEYTYPE_Custom);
 }
@@ -216,7 +216,7 @@ bool CJX_Object::HasAttribute(XFA_Attribute eAttr) {
 }
 
 void CJX_Object::SetAttribute(XFA_Attribute eAttr,
-                              const WideStringView& wsValue,
+                              WideStringView wsValue,
                               bool bNotify) {
   switch (ToNode(GetXFAObject())->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
@@ -246,13 +246,13 @@ void CJX_Object::SetAttribute(XFA_Attribute eAttr,
   }
 }
 
-void CJX_Object::SetMapModuleString(void* pKey, const WideStringView& wsValue) {
+void CJX_Object::SetMapModuleString(void* pKey, WideStringView wsValue) {
   SetMapModuleBuffer(pKey, const_cast<wchar_t*>(wsValue.unterminated_c_str()),
                      wsValue.GetLength() * sizeof(wchar_t), nullptr);
 }
 
-void CJX_Object::SetAttribute(const WideStringView& wsAttr,
-                              const WideStringView& wsValue,
+void CJX_Object::SetAttribute(WideStringView wsAttr,
+                              WideStringView wsValue,
                               bool bNotify) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsValue);
   if (!attr.has_value()) {
@@ -263,7 +263,7 @@ void CJX_Object::SetAttribute(const WideStringView& wsAttr,
   SetMapModuleString(pKey, wsValue);
 }
 
-WideString CJX_Object::GetAttribute(const WideStringView& attr) {
+WideString CJX_Object::GetAttribute(WideStringView attr) {
   return TryAttribute(attr, true).value_or(WideString());
 }
 
@@ -309,7 +309,7 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
   return {};
 }
 
-Optional<WideString> CJX_Object::TryAttribute(const WideStringView& wsAttr,
+Optional<WideString> CJX_Object::TryAttribute(WideStringView wsAttr,
                                               bool bUseDefault) {
   Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
   if (attr.has_value())
@@ -323,7 +323,7 @@ Optional<WideString> CJX_Object::TryAttribute(const WideStringView& wsAttr,
   return {WideString(wsValueC)};
 }
 
-void CJX_Object::RemoveAttribute(const WideStringView& wsAttr) {
+void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
   void* pKey = GetMapKey_Custom(wsAttr);
   if (pKey)
     RemoveMapModuleKey(pKey);

@@ -26,7 +26,7 @@ class CXFA_FMExpression {
 class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
  public:
   CXFA_FMFunctionDefinition(
-      const WideStringView& wsName,
+      WideStringView wsName,
       std::vector<WideStringView>&& arguments,
       std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions);
   ~CXFA_FMFunctionDefinition() override;
@@ -53,7 +53,7 @@ class CXFA_FMAST {
 
 class CXFA_FMVarExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMVarExpression(const WideStringView& wsName,
+  CXFA_FMVarExpression(WideStringView wsName,
                        std::unique_ptr<CXFA_FMSimpleExpression> pInit);
   ~CXFA_FMVarExpression() override;
 
@@ -148,7 +148,7 @@ class CXFA_FMContinueExpression final : public CXFA_FMExpression {
 
 class CXFA_FMForExpression final : public CXFA_FMExpression {
  public:
-  CXFA_FMForExpression(const WideStringView& wsVariant,
+  CXFA_FMForExpression(WideStringView wsVariant,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
                        int32_t iDirection,
@@ -171,7 +171,7 @@ class CXFA_FMForeachExpression final : public CXFA_FMExpression {
  public:
   // Takes ownership of |pAccessors|.
   CXFA_FMForeachExpression(
-      const WideStringView& wsIdentifier,
+      WideStringView wsIdentifier,
       std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
       std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMForeachExpression() override;

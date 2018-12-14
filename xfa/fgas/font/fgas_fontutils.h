@@ -26,8 +26,8 @@ struct FGAS_FontInfo {
   uint16_t wCodePage;
 };
 
-WideString FGAS_FontNameToEnglishName(const WideStringView& wsLocalName);
+WideString FGAS_FontNameToEnglishName(WideStringView wsLocalName);
 
-const FGAS_FontInfo* FGAS_FontInfoByFontName(const WideStringView& wsFontName);
+const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName);
 
 #endif  // XFA_FGAS_FONT_FGAS_FONTUTILS_H_

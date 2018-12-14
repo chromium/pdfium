@@ -175,7 +175,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                          m_fontColor, FXTEXT_CLEARTYPE);
 }
 
-bool CBC_OneDimWriter::ShowChars(const WideStringView& contents,
+bool CBC_OneDimWriter::ShowChars(WideStringView contents,
                                  CFX_RenderDevice* device,
                                  const CFX_Matrix* matrix,
                                  int32_t barWidth,
@@ -233,7 +233,7 @@ bool CBC_OneDimWriter::ShowChars(const WideStringView& contents,
 
 bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix,
-                                          const WideStringView& contents) {
+                                          WideStringView contents) {
   if (m_output.empty())
     return false;
 
@@ -256,7 +256,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
          ShowChars(contents, device, matrix, m_barWidth, m_multiple);
 }
 
-bool CBC_OneDimWriter::RenderResult(const WideStringView& contents,
+bool CBC_OneDimWriter::RenderResult(WideStringView contents,
                                     uint8_t* code,
                                     int32_t codeLength) {
   if (codeLength < 1)
@@ -306,7 +306,6 @@ void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX,
   }
 }
 
-WideString CBC_OneDimWriter::RenderTextContents(
-    const WideStringView& contents) {
+WideString CBC_OneDimWriter::RenderTextContents(WideStringView contents) {
   return WideString();
 }

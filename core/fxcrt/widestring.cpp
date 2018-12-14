@@ -343,14 +343,14 @@ WideString::WideString(wchar_t ch) {
 WideString::WideString(const wchar_t* ptr)
     : WideString(ptr, ptr ? wcslen(ptr) : 0) {}
 
-WideString::WideString(const WideStringView& stringSrc) {
+WideString::WideString(WideStringView stringSrc) {
   if (!stringSrc.IsEmpty()) {
     m_pData.Reset(StringData::Create(stringSrc.unterminated_c_str(),
                                      stringSrc.GetLength()));
   }
 }
 
-WideString::WideString(const WideStringView& str1, const WideStringView& str2) {
+WideString::WideString(WideStringView str1, WideStringView str2) {
   FX_SAFE_SIZE_T nSafeLen = str1.GetLength();
   nSafeLen += str2.GetLength();
 
@@ -394,7 +394,7 @@ const WideString& WideString::operator=(const wchar_t* pStr) {
   return *this;
 }
 
-const WideString& WideString::operator=(const WideStringView& stringSrc) {
+const WideString& WideString::operator=(WideStringView stringSrc) {
   if (stringSrc.IsEmpty())
     clear();
   else
@@ -436,7 +436,7 @@ const WideString& WideString::operator+=(const WideString& str) {
   return *this;
 }
 
-const WideString& WideString::operator+=(const WideStringView& str) {
+const WideString& WideString::operator+=(WideStringView str) {
   if (!str.IsEmpty())
     Concat(str.unterminated_c_str(), str.GetLength());
 
@@ -454,7 +454,7 @@ bool WideString::operator==(const wchar_t* ptr) const {
          wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 
-bool WideString::operator==(const WideStringView& str) const {
+bool WideString::operator==(WideStringView str) const {
   if (!m_pData)
     return str.IsEmpty();
 
@@ -482,7 +482,7 @@ bool WideString::operator<(const wchar_t* ptr) const {
   return Compare(ptr) < 0;
 }
 
-bool WideString::operator<(const WideStringView& str) const {
+bool WideString::operator<(WideStringView str) const {
   if (!m_pData && !str.unterminated_c_str())
     return false;
   if (c_str() == str.unterminated_c_str())
@@ -757,8 +757,7 @@ Optional<size_t> WideString::Find(wchar_t ch, size_t start) const {
               : Optional<size_t>();
 }
 
-Optional<size_t> WideString::Find(const WideStringView& subStr,
-                                  size_t start) const {
+Optional<size_t> WideString::Find(WideStringView subStr, size_t start) const {
   if (!m_pData)
     return Optional<size_t>();
 
@@ -822,8 +821,7 @@ size_t WideString::Remove(wchar_t chRemove) {
   return count;
 }
 
-size_t WideString::Replace(const WideStringView& pOld,
-                           const WideStringView& pNew) {
+size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
   if (!m_pData || pOld.IsEmpty())
     return 0;
 
@@ -974,7 +972,7 @@ void WideString::Trim(wchar_t target) {
   TrimLeft(str);
 }
 
-void WideString::Trim(const WideStringView& targets) {
+void WideString::Trim(WideStringView targets) {
   TrimRight(targets);
   TrimLeft(targets);
 }
@@ -988,7 +986,7 @@ void WideString::TrimLeft(wchar_t target) {
   TrimLeft(str);
 }
 
-void WideString::TrimLeft(const WideStringView& targets) {
+void WideString::TrimLeft(WideStringView targets) {
   if (!m_pData || targets.IsEmpty())
     return;
 
@@ -1026,7 +1024,7 @@ void WideString::TrimRight(wchar_t target) {
   TrimRight(str);
 }
 
-void WideString::TrimRight(const WideStringView& targets) {
+void WideString::TrimRight(WideStringView targets) {
   if (IsEmpty() || targets.IsEmpty())
     return;
 
@@ -1054,18 +1052,18 @@ std::ostream& operator<<(std::ostream& os, const WideString& str) {
   return os;
 }
 
-std::wostream& operator<<(std::wostream& os, const WideStringView& str) {
+std::wostream& operator<<(std::wostream& os, WideStringView str) {
   return os.write(str.unterminated_c_str(), str.GetLength());
 }
 
-std::ostream& operator<<(std::ostream& os, const WideStringView& str) {
+std::ostream& operator<<(std::ostream& os, WideStringView str) {
   os << FX_UTF8Encode(str);
   return os;
 }
 
 }  // namespace fxcrt
 
-uint32_t FX_HashCode_GetW(const WideStringView& str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetW(WideStringView str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (wchar_t c : str)  // match FXSYS_towlower() arg type.

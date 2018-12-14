@@ -112,12 +112,11 @@ void CFX_XMLElement::Save(
   pXMLStream->WriteString(">\n");
 }
 
-CFX_XMLElement* CFX_XMLElement::GetFirstChildNamed(
-    const WideStringView& name) const {
+CFX_XMLElement* CFX_XMLElement::GetFirstChildNamed(WideStringView name) const {
   return GetNthChildNamed(name, 0);
 }
 
-CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(const WideStringView& name,
+CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(WideStringView name,
                                                  size_t idx) const {
   for (auto* child = GetFirstChild(); child; child = child->GetNextSibling()) {
     CFX_XMLElement* elem = ToXMLElement(child);

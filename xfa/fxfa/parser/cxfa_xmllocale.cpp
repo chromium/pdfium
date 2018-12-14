@@ -121,7 +121,7 @@ WideString CXFA_XMLLocale::GetEraName(bool bAD) const {
   return GetCalendarSymbol(L"era", bAD ? 1 : 0, false);
 }
 
-WideString CXFA_XMLLocale::GetCalendarSymbol(const WideStringView& symbol,
+WideString CXFA_XMLLocale::GetCalendarSymbol(WideStringView symbol,
                                              size_t index,
                                              bool bAbbr) const {
   CFX_XMLElement* child = locale_->GetFirstChildNamed(L"calendarSymbols");
@@ -209,8 +209,8 @@ WideString CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const {
 }
 
 WideString CXFA_XMLLocale::GetPattern(CFX_XMLElement* patterns,
-                                      const WideStringView& bsTag,
-                                      const WideStringView& wsName) const {
+                                      WideStringView bsTag,
+                                      WideStringView wsName) const {
   for (auto* child = patterns->GetFirstChild(); child;
        child = child->GetNextSibling()) {
     CFX_XMLElement* pattern = ToXMLElement(child);

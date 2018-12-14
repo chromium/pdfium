@@ -97,15 +97,13 @@ bool CBC_OnedCodaBarWriter::FindChar(wchar_t ch, bool isContent) {
          (isContent && pdfium::ContainsValue(kStartEndChars, narrow_ch));
 }
 
-bool CBC_OnedCodaBarWriter::CheckContentValidity(
-    const WideStringView& contents) {
+bool CBC_OnedCodaBarWriter::CheckContentValidity(WideStringView contents) {
   return std::all_of(
       contents.begin(), contents.end(),
       [this](const wchar_t& ch) { return this->FindChar(ch, false); });
 }
 
-WideString CBC_OnedCodaBarWriter::FilterContents(
-    const WideStringView& contents) {
+WideString CBC_OnedCodaBarWriter::FilterContents(WideStringView contents) {
   WideString filtercontents;
   filtercontents.Reserve(contents.GetLength());
   wchar_t ch;
@@ -191,14 +189,13 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const ByteString& contents,
   return result;
 }
 
-WideString CBC_OnedCodaBarWriter::encodedContents(
-    const WideStringView& contents) {
+WideString CBC_OnedCodaBarWriter::encodedContents(WideStringView contents) {
   WideString strStart(static_cast<wchar_t>(m_chStart));
   WideString strEnd(static_cast<wchar_t>(m_chEnd));
   return strStart + contents + strEnd;
 }
 
-bool CBC_OnedCodaBarWriter::RenderResult(const WideStringView& contents,
+bool CBC_OnedCodaBarWriter::RenderResult(WideStringView contents,
                                          uint8_t* code,
                                          int32_t codeLength) {
   return CBC_OneDimWriter::RenderResult(

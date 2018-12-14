@@ -115,7 +115,7 @@ v8::Local<v8::String> CFX_V8::NewString(const ByteStringView& str) {
       .ToLocalChecked();
 }
 
-v8::Local<v8::String> CFX_V8::NewString(const WideStringView& str) {
+v8::Local<v8::String> CFX_V8::NewString(WideStringView str) {
   // Conversion from pdfium's wchar_t wide-strings to v8's uint16_t
   // wide-strings isn't handled by v8, so use UTF8 as a common
   // intermediate format.

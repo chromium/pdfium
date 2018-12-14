@@ -113,7 +113,7 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     FORM_OnLButtonUp(form_handle(), page_, 0, end.x, end.y);
   }
 
-  void CheckSelection(const WideStringView& expected_string) {
+  void CheckSelection(WideStringView expected_string) {
     unsigned long actual_len =
         FORM_GetSelectedText(form_handle(), page_, nullptr, 0);
     ASSERT_NE(actual_len, 0U);
@@ -127,7 +127,7 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     EXPECT_EQ(expected_string, WideString::FromUTF16LE(buf.data(), num_chars));
   }
 
-  void CheckFocusedFieldText(const WideStringView& expected_string) {
+  void CheckFocusedFieldText(WideStringView expected_string) {
     unsigned long actual_len =
         FORM_GetFocusedText(form_handle(), page_, nullptr, 0);
     ASSERT_NE(actual_len, 0U);

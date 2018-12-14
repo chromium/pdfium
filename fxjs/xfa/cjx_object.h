@@ -75,17 +75,14 @@ class CJX_Object {
                        const std::vector<v8::Local<v8::Value>>& params);
 
   bool HasAttribute(XFA_Attribute eAttr);
-  void SetAttribute(XFA_Attribute eAttr,
-                    const WideStringView& wsValue,
+  void SetAttribute(XFA_Attribute eAttr, WideStringView wsValue, bool bNotify);
+  void SetAttribute(WideStringView wsAttr,
+                    WideStringView wsValue,
                     bool bNotify);
-  void SetAttribute(const WideStringView& wsAttr,
-                    const WideStringView& wsValue,
-                    bool bNotify);
-  void RemoveAttribute(const WideStringView& wsAttr);
-  WideString GetAttribute(const WideStringView& attr);
+  void RemoveAttribute(WideStringView wsAttr);
+  WideString GetAttribute(WideStringView attr);
   WideString GetAttribute(XFA_Attribute attr);
-  Optional<WideString> TryAttribute(const WideStringView& wsAttr,
-                                    bool bUseDefault);
+  Optional<WideString> TryAttribute(WideStringView wsAttr, bool bUseDefault);
   Optional<WideString> TryAttribute(XFA_Attribute eAttr, bool bUseDefault);
 
   Optional<WideString> TryContent(bool bScriptModify, bool bProto);
@@ -221,7 +218,7 @@ class CJX_Object {
  protected:
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
-  void SetMapModuleString(void* pKey, const WideStringView& wsValue);
+  void SetMapModuleString(void* pKey, WideStringView wsValue);
   void ThrowException(const WideString& str) const;
 
  private:

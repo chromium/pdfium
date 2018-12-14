@@ -281,8 +281,7 @@ void CXFA_FFComboBox::SetItemState(int32_t nIndex, bool bSelected) {
   InvalidateRect();
 }
 
-void CXFA_FFComboBox::InsertItem(const WideStringView& wsLabel,
-                                 int32_t nIndex) {
+void CXFA_FFComboBox::InsertItem(WideStringView wsLabel, int32_t nIndex) {
   ToComboBox(m_pNormalWidget.get())->AddString(wsLabel);
   m_pNormalWidget->Update();
   InvalidateRect();

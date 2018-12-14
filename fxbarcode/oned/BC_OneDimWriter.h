@@ -25,12 +25,12 @@ class CBC_OneDimWriter : public CBC_Writer {
   CBC_OneDimWriter();
   ~CBC_OneDimWriter() override;
 
-  virtual bool RenderResult(const WideStringView& contents,
+  virtual bool RenderResult(WideStringView contents,
                             uint8_t* code,
                             int32_t codeLength);
-  virtual bool CheckContentValidity(const WideStringView& contents) = 0;
-  virtual WideString FilterContents(const WideStringView& contents) = 0;
-  virtual WideString RenderTextContents(const WideStringView& contents);
+  virtual bool CheckContentValidity(WideStringView contents) = 0;
+  virtual WideString FilterContents(WideStringView contents) = 0;
+  virtual WideString RenderTextContents(WideStringView contents);
   virtual void SetPrintChecksum(bool checksum);
   virtual void SetDataLength(int32_t length);
   virtual void SetCalcChecksum(bool state);
@@ -44,7 +44,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                   int32_t& outHeight);
   bool RenderDeviceResult(CFX_RenderDevice* device,
                           const CFX_Matrix* matrix,
-                          const WideStringView& contents);
+                          WideStringView contents);
   bool SetFont(CFX_Font* cFont);
 
  protected:
@@ -55,7 +55,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                                   int32_t hints);
   virtual uint8_t* EncodeImpl(const ByteString& contents,
                               int32_t& outLength) = 0;
-  virtual bool ShowChars(const WideStringView& contents,
+  virtual bool ShowChars(WideStringView contents,
                          CFX_RenderDevice* device,
                          const CFX_Matrix* matrix,
                          int32_t barWidth,

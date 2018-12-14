@@ -17,7 +17,7 @@ class CXFA_TreeList : public CXFA_List {
   explicit CXFA_TreeList(CXFA_Document* pDocument);
   ~CXFA_TreeList() override;
 
-  CXFA_Node* NamedItem(const WideStringView& wsName);
+  CXFA_Node* NamedItem(WideStringView wsName);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TREELIST_H_

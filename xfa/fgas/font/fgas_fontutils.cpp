@@ -1868,7 +1868,7 @@ const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
   return nullptr;
 }
 
-WideString FGAS_FontNameToEnglishName(const WideStringView& wsLocalName) {
+WideString FGAS_FontNameToEnglishName(WideStringView wsLocalName) {
   uint32_t dwLocalNameHash = FX_HashCode_GetW(wsLocalName, true);
   const FGAS_FontInfo* pEnd = g_XFAFontsMap + FX_ArraySize(g_XFAFontsMap);
   const FGAS_FontInfo* pFontInfo =
@@ -1881,7 +1881,7 @@ WideString FGAS_FontNameToEnglishName(const WideStringView& wsLocalName) {
   return WideString(wsLocalName);
 }
 
-const FGAS_FontInfo* FGAS_FontInfoByFontName(const WideStringView& wsFontName) {
+const FGAS_FontInfo* FGAS_FontInfoByFontName(WideStringView wsFontName) {
   WideString wsFontNameTemp(wsFontName);
   wsFontNameTemp.Remove(L' ');
   uint32_t dwCurFontNameHash =

@@ -165,7 +165,7 @@ void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {
   InvalidateRect();
 }
 
-void CXFA_FFListBox::InsertItem(const WideStringView& wsLabel, int32_t nIndex) {
+void CXFA_FFListBox::InsertItem(WideStringView wsLabel, int32_t nIndex) {
   WideString wsTemp(wsLabel);
   ToListBox(m_pNormalWidget.get())->AddString(wsTemp.AsStringView());
   m_pNormalWidget->Update();

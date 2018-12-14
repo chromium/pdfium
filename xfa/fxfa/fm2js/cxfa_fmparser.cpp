@@ -21,7 +21,7 @@ constexpr unsigned int kMaxExpressionListSize = 10000;
 
 }  // namespace
 
-CXFA_FMParser::CXFA_FMParser(const WideStringView& wsFormcalc)
+CXFA_FMParser::CXFA_FMParser(WideStringView wsFormcalc)
     : m_lexer(pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc)),
       m_error(false),
       m_parse_depth(0),

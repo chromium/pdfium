@@ -21,7 +21,7 @@
 
 namespace {
 
-int32_t FilterName(const WideStringView& wsExpression,
+int32_t FilterName(WideStringView wsExpression,
                    int32_t nStart,
                    WideString& wsFilter) {
   ASSERT(nStart > -1);

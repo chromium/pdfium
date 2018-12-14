@@ -24,13 +24,13 @@ class CBC_EANCode : public CBC_OneCode {
   virtual size_t GetMaxLength() const = 0;
 
   // CBC_EANCode:
-  bool Encode(const WideStringView& contents) override;
+  bool Encode(WideStringView contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
 
  protected:
   CBC_OneDimEANWriter* GetOneDimEANWriter();
-  WideString Preprocess(const WideStringView& contents);
+  WideString Preprocess(WideStringView contents);
 
   WideString m_renderContents;
 };

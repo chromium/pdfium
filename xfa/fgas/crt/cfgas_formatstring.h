@@ -15,7 +15,7 @@
 class CXFA_LocaleMgr;
 
 bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime);
-bool FX_TimeFromCanonical(const WideStringView& wsTime,
+bool FX_TimeFromCanonical(WideStringView wsTime,
                           CFX_DateTime* datetime,
                           LocaleIface* pLocale);
 
@@ -58,12 +58,12 @@ class CFGAS_FormatString {
 
  private:
   WideString GetTextFormat(const WideString& wsPattern,
-                           const WideStringView& wsCategory) const;
+                           WideStringView wsCategory) const;
   LocaleIface* GetNumericFormat(const WideString& wsPattern,
                                 int32_t* iDotIndex,
                                 uint32_t* dwStyle,
                                 WideString* wsPurgePattern) const;
-  bool FormatStrNum(const WideStringView& wsInputNum,
+  bool FormatStrNum(WideStringView wsInputNum,
                     const WideString& wsPattern,
                     WideString* wsOutput) const;
   FX_DATETIMETYPE GetDateTimeFormat(const WideString& wsPattern,

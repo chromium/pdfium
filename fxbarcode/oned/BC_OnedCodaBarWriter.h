@@ -24,11 +24,11 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t hints) override;
-  bool RenderResult(const WideStringView& contents,
+  bool RenderResult(WideStringView contents,
                     uint8_t* code,
                     int32_t codeLength) override;
-  bool CheckContentValidity(const WideStringView& contents) override;
-  WideString FilterContents(const WideStringView& contents) override;
+  bool CheckContentValidity(WideStringView contents) override;
+  WideString FilterContents(WideStringView contents) override;
   void SetDataLength(int32_t length) override;
   bool SetTextLocation(BC_TEXT_LOC location) override;
   bool SetWideNarrowRatio(int8_t ratio) override;
@@ -37,7 +37,7 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
 
   virtual bool FindChar(wchar_t ch, bool isContent);
 
-  WideString encodedContents(const WideStringView& contents);
+  WideString encodedContents(WideStringView contents);
 
  private:
   char m_chStart = 'A';

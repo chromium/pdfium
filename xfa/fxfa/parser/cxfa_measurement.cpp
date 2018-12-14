@@ -18,7 +18,7 @@ constexpr float kPtToPc = 12;
 
 }  // namespace
 
-CXFA_Measurement::CXFA_Measurement(const WideStringView& wsMeasure) {
+CXFA_Measurement::CXFA_Measurement(WideStringView wsMeasure) {
   SetString(wsMeasure);
 }
 
@@ -30,7 +30,7 @@ CXFA_Measurement::CXFA_Measurement(float fValue, XFA_Unit eUnit) {
   Set(fValue, eUnit);
 }
 
-void CXFA_Measurement::SetString(const WideStringView& wsMeasure) {
+void CXFA_Measurement::SetString(WideStringView wsMeasure) {
   if (wsMeasure.IsEmpty()) {
     m_fValue = 0;
     m_eUnit = XFA_Unit::Unknown;
@@ -128,7 +128,7 @@ bool CXFA_Measurement::ToUnitInternal(XFA_Unit eUnit, float* fValue) const {
 }
 
 // static
-XFA_Unit CXFA_Measurement::GetUnitFromString(const WideStringView& wsUnit) {
+XFA_Unit CXFA_Measurement::GetUnitFromString(WideStringView wsUnit) {
   if (wsUnit.EqualsASCII("mm"))
     return XFA_Unit::Mm;
   if (wsUnit.EqualsASCII("pt"))

@@ -102,7 +102,7 @@ class CXFA_FMToken {
 
 class CXFA_FMLexer {
  public:
-  explicit CXFA_FMLexer(const WideStringView& wsFormcalc);
+  explicit CXFA_FMLexer(WideStringView wsFormcalc);
   ~CXFA_FMLexer();
 
   CXFA_FMToken NextToken();

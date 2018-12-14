@@ -199,10 +199,9 @@ bool CFXJSE_ResolveProcessor::ResolveNumberSign(CFXJSE_ResolveNodeData& rnd) {
   return !rnd.m_Objects.empty();
 }
 
-bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(
-    CXFA_Object* curNode,
-    CFXJSE_ResolveNodeData& rnd,
-    const WideStringView& strAttr) {
+bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(CXFA_Object* curNode,
+                                                    CFXJSE_ResolveNodeData& rnd,
+                                                    WideStringView strAttr) {
   Optional<XFA_SCRIPTATTRIBUTEINFO> info =
       XFA_GetScriptAttributeByName(curNode->GetElementType(), strAttr);
   if (!info.has_value())
@@ -483,7 +482,7 @@ bool CFXJSE_ResolveProcessor::ResolveAsterisk(CFXJSE_ResolveNodeData& rnd) {
   return !rnd.m_Objects.empty();
 }
 
-int32_t CFXJSE_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
+int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
                                            int32_t nStart,
                                            CFXJSE_ResolveNodeData& rnd) {
   ASSERT(nStart > -1);

@@ -767,7 +767,7 @@ bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime) {
   return true;
 }
 
-bool FX_TimeFromCanonical(const WideStringView& wsTime,
+bool FX_TimeFromCanonical(WideStringView wsTime,
                           CFX_DateTime* datetime,
                           LocaleIface* pLocale) {
   if (wsTime.GetLength() == 0)
@@ -922,9 +922,8 @@ FX_LOCALECATEGORY CFGAS_FormatString::GetCategory(
   return eCategory;
 }
 
-WideString CFGAS_FormatString::GetTextFormat(
-    const WideString& wsPattern,
-    const WideStringView& wsCategory) const {
+WideString CFGAS_FormatString::GetTextFormat(const WideString& wsPattern,
+                                             WideStringView wsCategory) const {
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const wchar_t* pStr = wsPattern.c_str();
@@ -1854,7 +1853,7 @@ bool CFGAS_FormatString::FormatText(const WideString& wsSrcText,
   return iText == iLenText;
 }
 
-bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
+bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
                                       const WideString& wsPattern,
                                       WideString* wsOutput) const {
   if (wsInputNum.IsEmpty() || wsPattern.IsEmpty())

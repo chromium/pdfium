@@ -164,7 +164,7 @@ void CFX_CSSDeclaration::AddPropertyHolder(CFX_CSSProperty eProperty,
 }
 
 void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
-                                     const WideStringView& value) {
+                                     WideStringView value) {
   ASSERT(!value.IsEmpty());
 
   const wchar_t* pszValue = value.unterminated_c_str();

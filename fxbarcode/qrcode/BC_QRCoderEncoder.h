@@ -17,7 +17,7 @@ class CBC_QRCoderEncoder {
   CBC_QRCoderEncoder() = delete;
   ~CBC_QRCoderEncoder() = delete;
 
-  static bool Encode(const WideStringView& content,
+  static bool Encode(WideStringView content,
                      const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                      CBC_QRCoder* qrCode);
 };

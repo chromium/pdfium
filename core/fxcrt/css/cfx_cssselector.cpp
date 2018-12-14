@@ -49,7 +49,7 @@ CFX_CSSSelector* CFX_CSSSelector::GetNextSelector() const {
 
 // static.
 std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
-    const WideStringView& str) {
+    WideStringView str) {
   ASSERT(!str.IsEmpty());
 
   const wchar_t* psz = str.unterminated_c_str();

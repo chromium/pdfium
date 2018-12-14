@@ -31,7 +31,7 @@ CBC_Code39::CBC_Code39()
 
 CBC_Code39::~CBC_Code39() {}
 
-bool CBC_Code39::Encode(const WideStringView& contents) {
+bool CBC_Code39::Encode(WideStringView contents) {
   if (contents.IsEmpty())
     return false;
 

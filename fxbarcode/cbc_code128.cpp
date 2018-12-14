@@ -31,7 +31,7 @@ CBC_Code128::CBC_Code128(BC_TYPE type)
 
 CBC_Code128::~CBC_Code128() {}
 
-bool CBC_Code128::Encode(const WideStringView& contents) {
+bool CBC_Code128::Encode(WideStringView contents) {
   if (contents.IsEmpty())
     return false;
 

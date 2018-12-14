@@ -77,7 +77,7 @@ bool IsText(wchar_t ch) {
 
 // static
 Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
-    const WideStringView& msg) {
+    WideStringView msg) {
   ByteString bytes = FX_UTF8Encode(msg);
   size_t len = bytes.GetLength();
   WideString result;

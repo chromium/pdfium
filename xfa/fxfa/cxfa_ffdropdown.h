@@ -13,7 +13,7 @@ class CXFA_FFDropDown : public CXFA_FFField {
  public:
   ~CXFA_FFDropDown() override;
 
-  virtual void InsertItem(const WideStringView& wsLabel, int32_t nIndex) = 0;
+  virtual void InsertItem(WideStringView wsLabel, int32_t nIndex) = 0;
   virtual void DeleteItem(int32_t nIndex) = 0;
 
  protected:

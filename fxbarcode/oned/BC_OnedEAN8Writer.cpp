@@ -62,12 +62,12 @@ bool CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
   return false;
 }
 
-bool CBC_OnedEAN8Writer::CheckContentValidity(const WideStringView& contents) {
+bool CBC_OnedEAN8Writer::CheckContentValidity(WideStringView contents) {
   return std::all_of(contents.begin(), contents.end(),
                      [](wchar_t c) { return FXSYS_IsDecimalDigit(c); });
 }
 
-WideString CBC_OnedEAN8Writer::FilterContents(const WideStringView& contents) {
+WideString CBC_OnedEAN8Writer::FilterContents(WideStringView contents) {
   WideString filtercontents;
   filtercontents.Reserve(contents.GetLength());
   wchar_t ch;
@@ -124,7 +124,7 @@ uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const ByteString& contents,
   return result.release();
 }
 
-bool CBC_OnedEAN8Writer::ShowChars(const WideStringView& contents,
+bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
                                    CFX_RenderDevice* device,
                                    const CFX_Matrix* matrix,
                                    int32_t barWidth,

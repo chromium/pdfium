@@ -25,10 +25,9 @@ CXFA_FontMgr::CXFA_FontMgr() = default;
 
 CXFA_FontMgr::~CXFA_FontMgr() = default;
 
-RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
-    CXFA_FFDoc* hDoc,
-    const WideStringView& wsFontFamily,
-    uint32_t dwFontStyles) {
+RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
+                                              WideStringView wsFontFamily,
+                                              uint32_t dwFontStyles) {
   uint32_t dwHash = FX_HashCode_GetW(wsFontFamily, false);
   ByteString bsKey = ByteString::Format("%u%u%u", dwHash, dwFontStyles, 0xFFFF);
   auto iter = m_FontMap.find(bsKey);

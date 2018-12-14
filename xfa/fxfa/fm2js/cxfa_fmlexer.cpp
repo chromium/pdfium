@@ -98,7 +98,7 @@ const char* const tokenStrings[] = {
 };
 #endif  // NDEBUG
 
-XFA_FM_TOKEN TokenizeIdentifier(const WideStringView& str) {
+XFA_FM_TOKEN TokenizeIdentifier(WideStringView str) {
   const XFA_FMKeyword* result =
       std::find_if(std::begin(keyWords), std::end(keyWords),
                    [str](const XFA_FMKeyword& iter) {
@@ -129,7 +129,7 @@ WideString CXFA_FMToken::ToDebugString() const {
 }
 #endif  // NDEBUG
 
-CXFA_FMLexer::CXFA_FMLexer(const WideStringView& wsFormCalc)
+CXFA_FMLexer::CXFA_FMLexer(WideStringView wsFormCalc)
     : m_cursor(wsFormCalc.unterminated_c_str()),
       m_end(m_cursor + wsFormCalc.GetLength()),
       m_lexer_error(false) {}
