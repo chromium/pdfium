@@ -25,8 +25,8 @@ int32_t FindGroup(const CPDF_Array* pArray, const CPDF_Dictionary* pGroupDict) {
 }
 
 bool HasIntent(const CPDF_Dictionary* pDict,
-               const ByteStringView& csElement,
-               const ByteStringView& csDef) {
+               ByteStringView csElement,
+               ByteStringView csDef) {
   const CPDF_Object* pIntent = pDict->GetDirectObjectFor("Intent");
   if (!pIntent)
     return csElement == csDef;

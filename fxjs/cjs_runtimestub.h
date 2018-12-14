@@ -28,10 +28,8 @@ class CJS_RuntimeStub final : public IJS_Runtime {
 
 #ifdef PDF_ENABLE_XFA
   CJS_Runtime* AsCJSRuntime() override;
-  bool GetValueByNameFromGlobalObject(const ByteStringView&,
-                                      CFXJSE_Value*) override;
-  bool SetValueByNameInGlobalObject(const ByteStringView&,
-                                    CFXJSE_Value*) override;
+  bool GetValueByNameFromGlobalObject(ByteStringView, CFXJSE_Value*) override;
+  bool SetValueByNameInGlobalObject(ByteStringView, CFXJSE_Value*) override;
 #endif  // PDF_ENABLE_XFA
 
   Optional<IJS_Runtime::JS_Error> ExecuteScript(

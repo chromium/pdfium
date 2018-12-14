@@ -59,9 +59,9 @@ class WideString {
 
   ~WideString();
 
-  static WideString FromASCII(const ByteStringView& str) WARN_UNUSED_RESULT;
-  static WideString FromDefANSI(const ByteStringView& str) WARN_UNUSED_RESULT;
-  static WideString FromUTF8(const ByteStringView& str) WARN_UNUSED_RESULT;
+  static WideString FromASCII(ByteStringView str) WARN_UNUSED_RESULT;
+  static WideString FromDefANSI(ByteStringView str) WARN_UNUSED_RESULT;
+  static WideString FromUTF8(ByteStringView str) WARN_UNUSED_RESULT;
   static WideString FromUTF16LE(const unsigned short* str,
                                 size_t len) WARN_UNUSED_RESULT;
 
@@ -192,10 +192,10 @@ class WideString {
   size_t Remove(wchar_t ch);
 
   bool IsASCII() const { return AsStringView().IsASCII(); }
-  bool EqualsASCII(const ByteStringView& that) const {
+  bool EqualsASCII(ByteStringView that) const {
     return AsStringView().EqualsASCII(that);
   }
-  bool EqualsASCIINoCase(const ByteStringView& that) const {
+  bool EqualsASCIINoCase(ByteStringView that) const {
     return AsStringView().EqualsASCIINoCase(that);
   }
 

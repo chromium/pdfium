@@ -110,7 +110,7 @@ ByteString CFGAS_PDFFontMgr::PsNameToFontName(const ByteString& strPsName,
   return strPsName;
 }
 
-bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(const ByteStringView& bsPsName,
+bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(ByteStringView bsPsName,
                                              bool bBold,
                                              bool bItalic,
                                              const ByteString& bsDRFontName,

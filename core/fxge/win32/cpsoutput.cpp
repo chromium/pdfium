@@ -36,6 +36,6 @@ bool CPSOutput::WriteBlock(const void* str, size_t len) {
   return true;
 }
 
-bool CPSOutput::WriteString(const ByteStringView& str) {
+bool CPSOutput::WriteString(ByteStringView str) {
   return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }

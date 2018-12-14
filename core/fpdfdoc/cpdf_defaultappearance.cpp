@@ -18,7 +18,7 @@ namespace {
 // Find the token and its |nParams| parameters from the start of data,
 // and move the current position to the start of those parameters.
 bool FindTagParamFromStart(CPDF_SimpleParser* parser,
-                           const ByteStringView& token,
+                           ByteStringView token,
                            int nParams) {
   nParams++;
 
@@ -128,7 +128,7 @@ CPDF_DefaultAppearance::GetColor() {
 
 bool CPDF_DefaultAppearance::FindTagParamFromStartForTesting(
     CPDF_SimpleParser* parser,
-    const ByteStringView& token,
+    ByteStringView token,
     int nParams) {
   return FindTagParamFromStart(parser, token, nParams);
 }

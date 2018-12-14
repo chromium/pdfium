@@ -108,7 +108,7 @@ bool CPDF_Font::IsUnicodeCompatible() const {
   return false;
 }
 
-size_t CPDF_Font::CountChar(const ByteStringView& pString) const {
+size_t CPDF_Font::CountChar(ByteStringView pString) const {
   return pString.GetLength();
 }
 
@@ -271,7 +271,7 @@ void CPDF_Font::LoadUnicodeMap() const {
   m_pToUnicodeMap->Load(pStream);
 }
 
-uint32_t CPDF_Font::GetStringWidth(const ByteStringView& pString) {
+uint32_t CPDF_Font::GetStringWidth(ByteStringView pString) {
   size_t offset = 0;
   uint32_t width = 0;
   while (offset < pString.GetLength())
@@ -280,8 +280,7 @@ uint32_t CPDF_Font::GetStringWidth(const ByteStringView& pString) {
 }
 
 // static
-CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
-                                   const ByteStringView& name) {
+CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
   ByteString fontname(name);
   int font_id = PDF_GetStandardFontName(&fontname);
   if (font_id < 0)
@@ -329,8 +328,7 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   return pFont->Load() ? std::move(pFont) : nullptr;
 }
 
-uint32_t CPDF_Font::GetNextChar(const ByteStringView& pString,
-                                size_t* pOffset) const {
+uint32_t CPDF_Font::GetNextChar(ByteStringView pString, size_t* pOffset) const {
   if (pString.IsEmpty())
     return 0;
 

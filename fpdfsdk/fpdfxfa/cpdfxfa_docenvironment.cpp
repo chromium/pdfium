@@ -970,7 +970,7 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
 
 bool CPDFXFA_DocEnvironment::SetPropertyInNonXFAGlobalObject(
     CXFA_FFDoc* hDoc,
-    const ByteStringView& szPropName,
+    ByteStringView szPropName,
     CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;
@@ -989,7 +989,7 @@ bool CPDFXFA_DocEnvironment::SetPropertyInNonXFAGlobalObject(
 
 bool CPDFXFA_DocEnvironment::GetPropertyFromNonXFAGlobalObject(
     CXFA_FFDoc* hDoc,
-    const ByteStringView& szPropName,
+    ByteStringView szPropName,
     CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;

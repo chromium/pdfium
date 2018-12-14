@@ -31,12 +31,12 @@ CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
   return nullptr;
 }
 
-bool CJS_RuntimeStub::GetValueByNameFromGlobalObject(const ByteStringView&,
+bool CJS_RuntimeStub::GetValueByNameFromGlobalObject(ByteStringView,
                                                      CFXJSE_Value*) {
   return false;
 }
 
-bool CJS_RuntimeStub::SetValueByNameInGlobalObject(const ByteStringView&,
+bool CJS_RuntimeStub::SetValueByNameInGlobalObject(ByteStringView,
                                                    CFXJSE_Value*) {
   return false;
 }

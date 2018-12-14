@@ -66,10 +66,10 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
   bool GetPropertyFromNonXFAGlobalObject(CXFA_FFDoc* hDoc,
-                                         const ByteStringView& szPropName,
+                                         ByteStringView szPropName,
                                          CFXJSE_Value* pValue) override;
   bool SetPropertyInNonXFAGlobalObject(CXFA_FFDoc* hDoc,
-                                       const ByteStringView& szPropName,
+                                       ByteStringView szPropName,
                                        CFXJSE_Value* pValue) override;
 
   RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(

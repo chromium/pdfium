@@ -45,7 +45,7 @@ Optional<FX_FILESIZE> GetHeaderOffset(
 
 int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key);
 
-ByteString PDF_NameDecode(const ByteStringView& orig);
+ByteString PDF_NameDecode(ByteStringView orig);
 ByteString PDF_NameEncode(const ByteString& orig);
 
 std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);

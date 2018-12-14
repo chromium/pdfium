@@ -126,7 +126,7 @@ void DynPropGetterAdapter_MethodCallback(
 
 void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                           CFXJSE_Value* pObject,
-                          const ByteStringView& szPropName,
+                          ByteStringView szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
 
@@ -166,7 +166,7 @@ void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
 
 void DynPropSetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                           CFXJSE_Value* pObject,
-                          const ByteStringView& szPropName,
+                          ByteStringView szPropName,
                           CFXJSE_Value* pValue) {
   ASSERT(lpClass);
   int32_t nPropType =
@@ -181,7 +181,7 @@ void DynPropSetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
 
 bool DynPropQueryAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                          CFXJSE_Value* pObject,
-                         const ByteStringView& szPropName) {
+                         ByteStringView szPropName) {
   ASSERT(lpClass);
   int32_t nPropType =
       lpClass->dynPropTypeGetter == nullptr

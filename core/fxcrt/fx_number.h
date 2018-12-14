@@ -17,7 +17,7 @@ class FX_Number {
   explicit FX_Number(uint32_t value);
   explicit FX_Number(int32_t value);
   explicit FX_Number(float value);
-  explicit FX_Number(const ByteStringView& str);
+  explicit FX_Number(ByteStringView str);
 
   bool IsInteger() const { return m_bInteger; }
   bool IsSigned() const { return m_bSigned; }

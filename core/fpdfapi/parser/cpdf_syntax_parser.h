@@ -53,8 +53,8 @@ class CPDF_SyntaxParser {
   ByteString GetKeyword();
   void ToNextLine();
   void ToNextWord();
-  bool BackwardsSearchToWord(const ByteStringView& word, FX_FILESIZE limit);
-  FX_FILESIZE FindTag(const ByteStringView& tag);
+  bool BackwardsSearchToWord(ByteStringView word, FX_FILESIZE limit);
+  FX_FILESIZE FindTag(ByteStringView tag);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   ByteString GetNextWord(bool* bIsNumber);
@@ -89,11 +89,11 @@ class CPDF_SyntaxParser {
   void GetNextWordInternal(bool* bIsNumber);
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
-                   const ByteStringView& tag,
+                   ByteStringView tag,
                    bool checkKeyword);
 
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
-  FX_FILESIZE FindWordPos(const ByteStringView& word);
+  FX_FILESIZE FindWordPos(ByteStringView word);
   FX_FILESIZE FindStreamEndPos();
   std::unique_ptr<CPDF_Stream> ReadStream(
       std::unique_ptr<CPDF_Dictionary> pDict);

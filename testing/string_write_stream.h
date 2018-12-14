@@ -21,7 +21,7 @@ class StringWriteStream final : public IFX_SeekableWriteStream {
   bool WriteBlockAtOffset(const void* pData,
                           FX_FILESIZE offset,
                           size_t size) override;
-  bool WriteString(const ByteStringView& str) override;
+  bool WriteString(ByteStringView str) override;
 
   std::string ToString() const { return stream_.str(); }
 

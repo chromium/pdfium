@@ -19,7 +19,7 @@ class CPDFSDK_FileWriteAdapter final : public IFX_RetainableWriteStream {
 
   // IFX_WriteStream:
   bool WriteBlock(const void* data, size_t size) override;
-  bool WriteString(const ByteStringView& str) override;
+  bool WriteString(ByteStringView str) override;
 
  private:
   explicit CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write);

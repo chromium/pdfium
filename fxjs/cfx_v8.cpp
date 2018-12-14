@@ -15,7 +15,7 @@ CFX_V8::~CFX_V8() = default;
 
 v8::Local<v8::Value> CFX_V8::GetObjectProperty(
     v8::Local<v8::Object> pObj,
-    const ByteStringView& bsUTF8PropertyName) {
+    ByteStringView bsUTF8PropertyName) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
@@ -44,7 +44,7 @@ std::vector<WideString> CFX_V8::GetObjectPropertyNames(
 }
 
 void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
-                               const ByteStringView& bsUTF8PropertyName,
+                               ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
   if (pObj.IsEmpty())
     return;
@@ -108,7 +108,7 @@ v8::Local<v8::Boolean> CFX_V8::NewBoolean(bool b) {
   return v8::Boolean::New(GetIsolate(), b);
 }
 
-v8::Local<v8::String> CFX_V8::NewString(const ByteStringView& str) {
+v8::Local<v8::String> CFX_V8::NewString(ByteStringView str) {
   v8::Isolate* pIsolate = m_pIsolate ? GetIsolate() : v8::Isolate::GetCurrent();
   return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
                                  v8::NewStringType::kNormal, str.GetLength())

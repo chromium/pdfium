@@ -164,7 +164,7 @@ struct AbbrReplacementOp {
 
 ByteStringView FindFullName(const AbbrPair* table,
                             size_t count,
-                            const ByteStringView& abbr) {
+                            ByteStringView abbr) {
   auto* it = std::find_if(table, table + count, [abbr](const AbbrPair& pair) {
     return pair.abbr == abbr;
   });
@@ -319,14 +319,14 @@ int CPDF_StreamContentParser::GetNextParamPos() {
   return index;
 }
 
-void CPDF_StreamContentParser::AddNameParam(const ByteStringView& bsName) {
+void CPDF_StreamContentParser::AddNameParam(ByteStringView bsName) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   param.m_Type = ContentParam::NAME;
   param.m_Name =
       bsName.Contains('#') ? PDF_NameDecode(bsName) : ByteString(bsName);
 }
 
-void CPDF_StreamContentParser::AddNumberParam(const ByteStringView& str) {
+void CPDF_StreamContentParser::AddNumberParam(ByteStringView str) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   param.m_Type = ContentParam::NUMBER;
   param.m_Number = FX_Number(str);
@@ -563,7 +563,7 @@ CPDF_StreamContentParser::InitializeOpCodes() {
   });
 }
 
-void CPDF_StreamContentParser::OnOperator(const ByteStringView& op) {
+void CPDF_StreamContentParser::OnOperator(ByteStringView op) {
   static const OpCodes s_OpCodes = InitializeOpCodes();
 
   auto it = s_OpCodes.find(op.GetID());
@@ -1635,13 +1635,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
 
 // static
 ByteStringView CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
-    const ByteStringView& abbr) {
+    ByteStringView abbr) {
   return FindFullName(InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), abbr);
 }
 
 // static
 ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
-    const ByteStringView& abbr) {
+    ByteStringView abbr) {
   return FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr), abbr);
 }
 

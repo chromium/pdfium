@@ -52,9 +52,9 @@ class CJS_Runtime final : public IJS_Runtime,
 
 #ifdef PDF_ENABLE_XFA
   CJS_Runtime* AsCJSRuntime() override;
-  bool GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
+  bool GetValueByNameFromGlobalObject(ByteStringView utf8Name,
                                       CFXJSE_Value* pValue) override;
-  bool SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
+  bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
                                     CFXJSE_Value* pValue) override;
 #endif  // PDF_ENABLE_XFA
 

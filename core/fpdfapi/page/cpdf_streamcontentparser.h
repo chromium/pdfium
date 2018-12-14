@@ -58,10 +58,8 @@ class CPDF_StreamContentParser {
   const float* GetType3Data() const { return m_Type3Data; }
   CPDF_Font* FindFont(const ByteString& name);
 
-  static ByteStringView FindKeyAbbreviationForTesting(
-      const ByteStringView& abbr);
-  static ByteStringView FindValueAbbreviationForTesting(
-      const ByteStringView& abbr);
+  static ByteStringView FindKeyAbbreviationForTesting(ByteStringView abbr);
+  static ByteStringView FindValueAbbreviationForTesting(ByteStringView abbr);
 
  private:
   struct ContentParam {
@@ -81,8 +79,8 @@ class CPDF_StreamContentParser {
   using OpCodes = std::map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();
 
-  void AddNameParam(const ByteStringView& str);
-  void AddNumberParam(const ByteStringView& str);
+  void AddNameParam(ByteStringView str);
+  void AddNumberParam(ByteStringView str);
   void AddObjectParam(std::unique_ptr<CPDF_Object> pObj);
   int GetNextParamPos();
   void ClearAllParams();
@@ -95,7 +93,7 @@ class CPDF_StreamContentParser {
   int GetInteger(uint32_t index) const {
     return static_cast<int>(GetNumber(index));
   }
-  void OnOperator(const ByteStringView& op);
+  void OnOperator(ByteStringView op);
   void AddTextObject(const ByteString* pStrs,
                      float fInitKerning,
                      const std::vector<float>& kernings,

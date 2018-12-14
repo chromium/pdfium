@@ -107,7 +107,7 @@ bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
   return WriteBlockAtOffset(buffer, GetSize(), size);
 }
 
-bool IFX_SeekableStream::WriteString(const ByteStringView& str) {
+bool IFX_SeekableStream::WriteString(ByteStringView str) {
   return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }
 

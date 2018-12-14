@@ -17,6 +17,6 @@ bool CPDFSDK_FileWriteAdapter::WriteBlock(const void* data, size_t size) {
   return file_write_->WriteBlock(file_write_.Get(), data, size) != 0;
 }
 
-bool CPDFSDK_FileWriteAdapter::WriteString(const ByteStringView& str) {
+bool CPDFSDK_FileWriteAdapter::WriteString(ByteStringView str) {
   return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }

@@ -30,7 +30,7 @@ class CPDF_DefaultAppearance {
   std::pair<Optional<CFX_Color::Type>, FX_ARGB> GetColor();
 
   bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
-                                       const ByteStringView& token,
+                                       ByteStringView token,
                                        int nParams);
 
  private:

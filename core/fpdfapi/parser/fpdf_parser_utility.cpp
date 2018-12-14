@@ -90,7 +90,7 @@ int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {
   return pObj ? pObj->GetInteger() : 0;
 }
 
-ByteString PDF_NameDecode(const ByteStringView& bstr) {
+ByteString PDF_NameDecode(ByteStringView bstr) {
   if (!bstr.Contains('#'))
     return ByteString(bstr);
 

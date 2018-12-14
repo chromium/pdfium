@@ -733,7 +733,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   return pdata[0] * 256 + pdata[1];
 }
 
-uint32_t CPDF_CIDFont::GetNextChar(const ByteStringView& pString,
+uint32_t CPDF_CIDFont::GetNextChar(ByteStringView pString,
                                    size_t* pOffset) const {
   return m_pCMap->GetNextChar(pString, pOffset);
 }
@@ -742,7 +742,7 @@ int CPDF_CIDFont::GetCharSize(uint32_t charcode) const {
   return m_pCMap->GetCharSize(charcode);
 }
 
-size_t CPDF_CIDFont::CountChar(const ByteStringView& pString) const {
+size_t CPDF_CIDFont::CountChar(ByteStringView pString) const {
   return m_pCMap->CountChar(pString);
 }
 

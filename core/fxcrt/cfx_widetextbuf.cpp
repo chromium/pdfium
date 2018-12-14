@@ -16,7 +16,7 @@ void CFX_WideTextBuf::AppendChar(wchar_t ch) {
   m_DataSize += sizeof(wchar_t);
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const ByteStringView& ascii) {
+CFX_WideTextBuf& CFX_WideTextBuf::operator<<(ByteStringView ascii) {
   ExpandBuf(ascii.GetLength() * sizeof(wchar_t));
   for (uint8_t ch : ascii) {
     *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;

@@ -48,23 +48,20 @@ class CFXJSE_Value {
   void SetBoolean(bool bBoolean);
   void SetInteger(int32_t nInteger);
   void SetDouble(double dDouble);
-  void SetString(const ByteStringView& szString);
+  void SetString(ByteStringView szString);
   void SetFloat(float fFloat);
 
   void SetObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* pClass);
   void SetArray(const std::vector<std::unique_ptr<CFXJSE_Value>>& values);
   void SetDate(double dDouble);
 
-  bool GetObjectProperty(const ByteStringView& szPropName,
-                         CFXJSE_Value* lpPropValue);
-  bool SetObjectProperty(const ByteStringView& szPropName,
-                         CFXJSE_Value* lpPropValue);
+  bool GetObjectProperty(ByteStringView szPropName, CFXJSE_Value* lpPropValue);
+  bool SetObjectProperty(ByteStringView szPropName, CFXJSE_Value* lpPropValue);
   bool GetObjectPropertyByIdx(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
   bool SetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
-  bool DeleteObjectProperty(const ByteStringView& szPropName);
-  bool HasObjectOwnProperty(const ByteStringView& szPropName,
-                            bool bUseTypeGetter);
-  bool SetObjectOwnProperty(const ByteStringView& szPropName,
+  bool DeleteObjectProperty(ByteStringView szPropName);
+  bool HasObjectOwnProperty(ByteStringView szPropName, bool bUseTypeGetter);
+  bool SetObjectOwnProperty(ByteStringView szPropName,
                             CFXJSE_Value* lpPropValue);
   bool SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis);
 

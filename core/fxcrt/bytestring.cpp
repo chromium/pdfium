@@ -142,13 +142,13 @@ ByteString::ByteString(char ch) {
 ByteString::ByteString(const char* ptr)
     : ByteString(ptr, ptr ? strlen(ptr) : 0) {}
 
-ByteString::ByteString(const ByteStringView& stringSrc) {
+ByteString::ByteString(ByteStringView stringSrc) {
   if (!stringSrc.IsEmpty())
     m_pData.Reset(StringData::Create(stringSrc.unterminated_c_str(),
                                      stringSrc.GetLength()));
 }
 
-ByteString::ByteString(const ByteStringView& str1, const ByteStringView& str2) {
+ByteString::ByteString(ByteStringView str1, ByteStringView str2) {
   FX_SAFE_SIZE_T nSafeLen = str1.GetLength();
   nSafeLen += str2.GetLength();
 
@@ -198,7 +198,7 @@ const ByteString& ByteString::operator=(const char* pStr) {
   return *this;
 }
 
-const ByteString& ByteString::operator=(const ByteStringView& stringSrc) {
+const ByteString& ByteString::operator=(ByteStringView stringSrc) {
   if (stringSrc.IsEmpty())
     clear();
   else
@@ -240,7 +240,7 @@ const ByteString& ByteString::operator+=(const ByteString& str) {
   return *this;
 }
 
-const ByteString& ByteString::operator+=(const ByteStringView& str) {
+const ByteString& ByteString::operator+=(ByteStringView str) {
   if (!str.IsEmpty())
     Concat(str.unterminated_c_str(), str.GetLength());
 
@@ -258,7 +258,7 @@ bool ByteString::operator==(const char* ptr) const {
          memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 
-bool ByteString::operator==(const ByteStringView& str) const {
+bool ByteString::operator==(ByteStringView str) const {
   if (!m_pData)
     return str.IsEmpty();
 
@@ -294,7 +294,7 @@ bool ByteString::operator<(const char* ptr) const {
   return result < 0 || (result == 0 && len < other_len);
 }
 
-bool ByteString::operator<(const ByteStringView& str) const {
+bool ByteString::operator<(ByteStringView str) const {
   return Compare(str) < 0;
 }
 
@@ -308,7 +308,7 @@ bool ByteString::operator<(const ByteString& other) const {
   return result < 0 || (result == 0 && len < other_len);
 }
 
-bool ByteString::EqualNoCase(const ByteStringView& str) const {
+bool ByteString::EqualNoCase(ByteStringView str) const {
   if (!m_pData)
     return str.IsEmpty();
 
@@ -545,8 +545,7 @@ Optional<size_t> ByteString::Find(char ch, size_t start) const {
               : Optional<size_t>();
 }
 
-Optional<size_t> ByteString::Find(const ByteStringView& subStr,
-                                  size_t start) const {
+Optional<size_t> ByteString::Find(ByteStringView subStr, size_t start) const {
   if (!m_pData)
     return Optional<size_t>();
 
@@ -622,8 +621,7 @@ size_t ByteString::Remove(char chRemove) {
   return nCount;
 }
 
-size_t ByteString::Replace(const ByteStringView& pOld,
-                           const ByteStringView& pNew) {
+size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
   if (!m_pData || pOld.IsEmpty())
     return 0;
 
@@ -669,7 +667,7 @@ size_t ByteString::Replace(const ByteStringView& pOld,
   return nCount;
 }
 
-int ByteString::Compare(const ByteStringView& str) const {
+int ByteString::Compare(ByteStringView str) const {
   if (!m_pData)
     return str.IsEmpty() ? 0 : -1;
 
@@ -695,7 +693,7 @@ void ByteString::Trim(char target) {
   TrimLeft(targets);
 }
 
-void ByteString::Trim(const ByteStringView& targets) {
+void ByteString::Trim(ByteStringView targets) {
   TrimRight(targets);
   TrimLeft(targets);
 }
@@ -708,7 +706,7 @@ void ByteString::TrimLeft(char target) {
   TrimLeft(ByteStringView(target));
 }
 
-void ByteString::TrimLeft(const ByteStringView& targets) {
+void ByteString::TrimLeft(ByteStringView targets) {
   if (!m_pData || targets.IsEmpty())
     return;
 
@@ -742,7 +740,7 @@ void ByteString::TrimRight(char target) {
   TrimRight(ByteStringView(target));
 }
 
-void ByteString::TrimRight(const ByteStringView& targets) {
+void ByteString::TrimRight(ByteStringView targets) {
   if (!m_pData || targets.IsEmpty())
     return;
 
@@ -769,13 +767,13 @@ std::ostream& operator<<(std::ostream& os, const ByteString& str) {
   return os.write(str.c_str(), str.GetLength());
 }
 
-std::ostream& operator<<(std::ostream& os, const ByteStringView& str) {
+std::ostream& operator<<(std::ostream& os, ByteStringView str) {
   return os.write(str.unterminated_c_str(), str.GetLength());
 }
 
 }  // namespace fxcrt
 
-uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetA(ByteStringView str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (ByteStringView::UnsignedType c : str)
@@ -787,7 +785,7 @@ uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase) {
   return dwHashCode;
 }
 
-uint32_t FX_HashCode_GetAsIfW(const ByteStringView& str, bool bIgnoreCase) {
+uint32_t FX_HashCode_GetAsIfW(ByteStringView str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (ByteStringView::UnsignedType c : str)

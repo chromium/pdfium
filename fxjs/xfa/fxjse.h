@@ -43,13 +43,13 @@ typedef CJS_Result (*FXJSE_MethodCallback)(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     const WideString& functionName);
 typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args);
 typedef void (*FXJSE_PropAccessor)(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
+                                   ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
 typedef int32_t (*FXJSE_PropTypeGetter)(CFXJSE_Value* pObject,
-                                        const ByteStringView& szPropName,
+                                        ByteStringView szPropName,
                                         bool bQueryIn);
 
 enum FXJSE_ClassPropTypes {
@@ -80,6 +80,6 @@ extern const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor;
 extern const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor;
 
-void FXJSE_ThrowMessage(const ByteStringView& utf8Message);
+void FXJSE_ThrowMessage(ByteStringView utf8Message);
 
 #endif  // FXJS_XFA_FXJSE_H_

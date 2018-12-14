@@ -34,7 +34,7 @@ class CFXJSE_Context {
   v8::Local<v8::Context> GetContext();
   std::unique_ptr<CFXJSE_Value> GetGlobalObject();
   void AddClass(std::unique_ptr<CFXJSE_Class> pClass);
-  CFXJSE_Class* GetClassByName(const ByteStringView& szName) const;
+  CFXJSE_Class* GetClassByName(ByteStringView szName) const;
   void EnableCompatibleMode();
   bool ExecuteScript(const char* szScript,
                      CFXJSE_Value* lpRetValue,

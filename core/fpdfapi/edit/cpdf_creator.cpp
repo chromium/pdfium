@@ -38,7 +38,7 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   bool WriteBlock(const void* pBuf, size_t size) override;
   bool WriteByte(uint8_t byte) override;
   bool WriteDWord(uint32_t i) override;
-  bool WriteString(const ByteStringView& str) override;
+  bool WriteString(ByteStringView str) override;
 
   FX_FILESIZE CurrentOffset() const override { return offset_; }
 
@@ -111,7 +111,7 @@ bool CFX_FileBufferArchive::WriteDWord(uint32_t i) {
   return WriteBlock(buf, strlen(buf));
 }
 
-bool CFX_FileBufferArchive::WriteString(const ByteStringView& str) {
+bool CFX_FileBufferArchive::WriteString(ByteStringView str) {
   return WriteBlock(str.raw_str(), str.GetLength());
 }
 

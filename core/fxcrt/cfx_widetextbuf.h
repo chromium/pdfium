@@ -35,7 +35,7 @@ class CFX_WideTextBuf final : public CFX_BinaryBuf {
 
   CFX_WideTextBuf& operator<<(int i);
   CFX_WideTextBuf& operator<<(double f);
-  CFX_WideTextBuf& operator<<(const ByteStringView& ascii);
+  CFX_WideTextBuf& operator<<(ByteStringView ascii);
   CFX_WideTextBuf& operator<<(const wchar_t* lpsz);
   CFX_WideTextBuf& operator<<(WideStringView str);
   CFX_WideTextBuf& operator<<(const WideString& str);

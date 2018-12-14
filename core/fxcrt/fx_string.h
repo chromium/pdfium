@@ -17,9 +17,9 @@
    ((uint32_t)c4))
 
 ByteString FX_UTF8Encode(WideStringView wsStr);
-WideString FX_UTF8Decode(const ByteStringView& bsStr);
+WideString FX_UTF8Decode(ByteStringView bsStr);
 
-float StringToFloat(const ByteStringView& str);
+float StringToFloat(ByteStringView str);
 float StringToFloat(WideStringView wsStr);
 size_t FloatToString(float f, char* buf);
 

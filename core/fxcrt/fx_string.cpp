@@ -24,7 +24,7 @@ ByteString FX_UTF8Encode(WideStringView wsStr) {
   return ByteString(encoder.GetResult());
 }
 
-WideString FX_UTF8Decode(const ByteStringView& bsStr) {
+WideString FX_UTF8Decode(ByteStringView bsStr) {
   if (bsStr.IsEmpty())
     return WideString();
 
@@ -48,7 +48,7 @@ float FractionalScale(size_t scale_factor, int value) {
 
 }  // namespace
 
-float StringToFloat(const ByteStringView& strc) {
+float StringToFloat(ByteStringView strc) {
   if (strc.IsEmpty())
     return 0.0;
 

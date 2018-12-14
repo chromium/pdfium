@@ -23,12 +23,12 @@ class CFPF_SkiaFontMgr {
   ~CFPF_SkiaFontMgr();
 
   void LoadSystemFonts();
-  CFPF_SkiaFont* CreateFont(const ByteStringView& bsFamilyname,
+  CFPF_SkiaFont* CreateFont(ByteStringView bsFamilyname,
                             uint8_t uCharset,
                             uint32_t dwStyle);
 
   bool InitFTLibrary();
-  FXFT_Face GetFontFace(const ByteStringView& bsFile, int32_t iFaceIndex);
+  FXFT_Face GetFontFace(ByteStringView bsFile, int32_t iFaceIndex);
 
  private:
   void ScanPath(const ByteString& path);

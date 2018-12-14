@@ -59,9 +59,9 @@ class IJS_Runtime {
 
 #ifdef PDF_ENABLE_XFA
   virtual CJS_Runtime* AsCJSRuntime() = 0;
-  virtual bool GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
+  virtual bool GetValueByNameFromGlobalObject(ByteStringView utf8Name,
                                               CFXJSE_Value* pValue) = 0;
-  virtual bool SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
+  virtual bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
                                             CFXJSE_Value* pValue) = 0;
 #endif  // PDF_ENABLE_XFA
 

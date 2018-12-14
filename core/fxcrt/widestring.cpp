@@ -870,7 +870,7 @@ size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
 }
 
 // static
-WideString WideString::FromASCII(const ByteStringView& bstr) {
+WideString WideString::FromASCII(ByteStringView bstr) {
   WideString result;
   result.Reserve(bstr.GetLength());
   for (char c : bstr)
@@ -879,7 +879,7 @@ WideString WideString::FromASCII(const ByteStringView& bstr) {
 }
 
 // static
-WideString WideString::FromDefANSI(const ByteStringView& bstr) {
+WideString WideString::FromDefANSI(ByteStringView bstr) {
   int src_len = bstr.GetLength();
   int dest_len = FXSYS_MultiByteToWideChar(
       FX_CODEPAGE_DefANSI, 0, bstr.unterminated_c_str(), src_len, nullptr, 0);
@@ -898,7 +898,7 @@ WideString WideString::FromDefANSI(const ByteStringView& bstr) {
 }
 
 // static
-WideString WideString::FromUTF8(const ByteStringView& str) {
+WideString WideString::FromUTF8(ByteStringView str) {
   return FX_UTF8Decode(str);
 }
 

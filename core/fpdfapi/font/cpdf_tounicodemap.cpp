@@ -54,7 +54,7 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
 }
 
 // Static.
-uint32_t CPDF_ToUnicodeMap::StringToCode(const ByteStringView& str) {
+uint32_t CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
   int len = str.GetLength();
   if (len == 0)
     return 0;
@@ -91,7 +91,7 @@ static WideString StringDataAdd(WideString str) {
 }
 
 // Static.
-WideString CPDF_ToUnicodeMap::StringToWideString(const ByteStringView& str) {
+WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
   int len = str.GetLength();
   if (len == 0)
     return WideString();

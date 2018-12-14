@@ -17,7 +17,7 @@ class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
   bool WriteDWord(uint32_t i) override;
   FX_FILESIZE CurrentOffset() const override;
   bool WriteBlock(const void* pData, size_t size) override;
-  bool WriteString(const ByteStringView& str) override;
+  bool WriteString(ByteStringView str) override;
 
  private:
   std::ostringstream* stream_;

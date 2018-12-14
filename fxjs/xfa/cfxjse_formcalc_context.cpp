@@ -322,7 +322,7 @@ void AlternateDateTimeSymbols(WideString* pPattern,
   }
 }
 
-std::pair<bool, uint32_t> PatternStringType(const ByteStringView& szPattern) {
+std::pair<bool, uint32_t> PatternStringType(ByteStringView szPattern) {
   WideString wsPattern = WideString::FromUTF8(szPattern);
   if (L"datetime" == wsPattern.Left(8))
     return {true, XFA_VT_DATETIME};
@@ -415,7 +415,7 @@ CFXJSE_FormCalcContext* ToFormCalcContext(CFXJSE_Value* pValue) {
 
 LocaleIface* LocaleFromString(CXFA_Document* pDoc,
                               CXFA_LocaleMgr* pMgr,
-                              const ByteStringView& szLocale) {
+                              ByteStringView szLocale) {
   if (!szLocale.IsEmpty())
     return pMgr->GetLocaleByName(WideString::FromUTF8(szLocale));
 
@@ -424,8 +424,7 @@ LocaleIface* LocaleFromString(CXFA_Document* pDoc,
   return pThisNode->GetLocale();
 }
 
-WideString FormatFromString(LocaleIface* pLocale,
-                            const ByteStringView& szFormat) {
+WideString FormatFromString(LocaleIface* pLocale, ByteStringView szFormat) {
   if (!szFormat.IsEmpty())
     return WideString::FromUTF8(szFormat);
 
@@ -449,7 +448,7 @@ FX_LOCALEDATETIMESUBCATEGORY SubCategoryFromInt(int32_t iStyle) {
 
 ByteString GetLocalDateTimeFormat(CXFA_Document* pDoc,
                                   int32_t iStyle,
-                                  const ByteStringView& szLocale,
+                                  ByteStringView szLocale,
                                   bool bStandard,
                                   bool bIsDate) {
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
@@ -773,7 +772,7 @@ bool IsIsoDateTimeFormat(const char* pData,
                          &iSecond, &iMilliSecond, &iZoneHour, &iZoneMinute);
 }
 
-int32_t DateString2Num(const ByteStringView& szDateString) {
+int32_t DateString2Num(ByteStringView szDateString) {
   int32_t iLength = szDateString.GetLength();
   int32_t iYear = 0;
   int32_t iMonth = 0;
@@ -841,8 +840,7 @@ void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
 }
 
 bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
-  auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter,
-                    const ByteStringView& val) {
+  auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter, ByteStringView val) {
     return strcmp(val.unterminated_c_str(), iter.m_htmlReserve) > 0;
   };
   if (!pData.IsASCII())
@@ -1187,7 +1185,7 @@ WideString EncodeXML(const ByteString& szXMLString) {
   return wsResultBuf.MakeString();
 }
 
-ByteString TrillionUS(const ByteStringView& szData) {
+ByteString TrillionUS(ByteStringView szData) {
   static const ByteStringView pUnits[] = {"zero",  "one",  "two", "three",
                                           "four",  "five", "six", "seven",
                                           "eight", "nine"};
@@ -1353,7 +1351,7 @@ const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
 
 // static
 void CFXJSE_FormCalcContext::Abs(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Abs");
@@ -1375,7 +1373,7 @@ void CFXJSE_FormCalcContext::Abs(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Avg(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1) {
@@ -1442,7 +1440,7 @@ void CFXJSE_FormCalcContext::Avg(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Ceil(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Ceil");
@@ -1460,7 +1458,7 @@ void CFXJSE_FormCalcContext::Ceil(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Count(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -1514,7 +1512,7 @@ void CFXJSE_FormCalcContext::Count(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Floor(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Floor");
@@ -1532,7 +1530,7 @@ void CFXJSE_FormCalcContext::Floor(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Max(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -1606,7 +1604,7 @@ void CFXJSE_FormCalcContext::Max(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Min(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -1680,7 +1678,7 @@ void CFXJSE_FormCalcContext::Min(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Mod(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 2) {
@@ -1715,7 +1713,7 @@ void CFXJSE_FormCalcContext::Mod(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Round(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   int32_t argc = args.GetLength();
@@ -1761,7 +1759,7 @@ void CFXJSE_FormCalcContext::Round(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Sum(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc == 0) {
@@ -1836,7 +1834,7 @@ void CFXJSE_FormCalcContext::Sum(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Date(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 0) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Date");
@@ -1855,7 +1853,7 @@ void CFXJSE_FormCalcContext::Date(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Date2Num(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
+                                      ByteStringView szFuncName,
                                       CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -1899,7 +1897,7 @@ void CFXJSE_FormCalcContext::Date2Num(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::DateFmt(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
+                                     ByteStringView szFuncName,
                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
@@ -1937,7 +1935,7 @@ void CFXJSE_FormCalcContext::DateFmt(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::IsoDate2Num(CFXJSE_Value* pThis,
-                                         const ByteStringView& szFuncName,
+                                         ByteStringView szFuncName,
                                          CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"IsoDate2Num");
@@ -1954,7 +1952,7 @@ void CFXJSE_FormCalcContext::IsoDate2Num(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::IsoTime2Num(CFXJSE_Value* pThis,
-                                         const ByteStringView& szFuncName,
+                                         ByteStringView szFuncName,
                                          CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 1) {
@@ -2008,7 +2006,7 @@ void CFXJSE_FormCalcContext::IsoTime2Num(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::LocalDateFmt(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
+                                          ByteStringView szFuncName,
                                           CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
@@ -2045,7 +2043,7 @@ void CFXJSE_FormCalcContext::LocalDateFmt(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::LocalTimeFmt(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
+                                          ByteStringView szFuncName,
                                           CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
@@ -2082,7 +2080,7 @@ void CFXJSE_FormCalcContext::LocalTimeFmt(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
+                                      ByteStringView szFuncName,
                                       CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -2222,7 +2220,7 @@ void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Num2GMTime(CFXJSE_Value* pThis,
-                                        const ByteStringView& szFuncName,
+                                        ByteStringView szFuncName,
                                         CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -2269,7 +2267,7 @@ void CFXJSE_FormCalcContext::Num2GMTime(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Num2Time(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
+                                      ByteStringView szFuncName,
                                       CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -2316,7 +2314,7 @@ void CFXJSE_FormCalcContext::Num2Time(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Time(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 0) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Time");
@@ -2333,7 +2331,7 @@ void CFXJSE_FormCalcContext::Time(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Time2Num(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
+                                      ByteStringView szFuncName,
                                       CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -2418,7 +2416,7 @@ void CFXJSE_FormCalcContext::Time2Num(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::TimeFmt(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
+                                     ByteStringView szFuncName,
                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc > 2) {
@@ -2454,11 +2452,10 @@ void CFXJSE_FormCalcContext::TimeFmt(CFXJSE_Value* pThis,
 }
 
 // static
-ByteString CFXJSE_FormCalcContext::Local2IsoDate(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szDate,
-    const ByteStringView& szFormat,
-    const ByteStringView& szLocale) {
+ByteString CFXJSE_FormCalcContext::Local2IsoDate(CFXJSE_Value* pThis,
+                                                 ByteStringView szDate,
+                                                 ByteStringView szFormat,
+                                                 ByteStringView szLocale) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2478,11 +2475,10 @@ ByteString CFXJSE_FormCalcContext::Local2IsoDate(
 }
 
 // static
-ByteString CFXJSE_FormCalcContext::IsoDate2Local(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szDate,
-    const ByteStringView& szFormat,
-    const ByteStringView& szLocale) {
+ByteString CFXJSE_FormCalcContext::IsoDate2Local(CFXJSE_Value* pThis,
+                                                 ByteStringView szDate,
+                                                 ByteStringView szFormat,
+                                                 ByteStringView szLocale) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2500,11 +2496,10 @@ ByteString CFXJSE_FormCalcContext::IsoDate2Local(
 }
 
 // static
-ByteString CFXJSE_FormCalcContext::IsoTime2Local(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szTime,
-    const ByteStringView& szFormat,
-    const ByteStringView& szLocale) {
+ByteString CFXJSE_FormCalcContext::IsoTime2Local(CFXJSE_Value* pThis,
+                                                 ByteStringView szTime,
+                                                 ByteStringView szFormat,
+                                                 ByteStringView szLocale) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2524,11 +2519,10 @@ ByteString CFXJSE_FormCalcContext::IsoTime2Local(
 }
 
 // static
-ByteString CFXJSE_FormCalcContext::GetLocalDateFormat(
-    CFXJSE_Value* pThis,
-    int32_t iStyle,
-    const ByteStringView& szLocale,
-    bool bStandard) {
+ByteString CFXJSE_FormCalcContext::GetLocalDateFormat(CFXJSE_Value* pThis,
+                                                      int32_t iStyle,
+                                                      ByteStringView szLocale,
+                                                      bool bStandard) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2538,11 +2532,10 @@ ByteString CFXJSE_FormCalcContext::GetLocalDateFormat(
 }
 
 // static
-ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(
-    CFXJSE_Value* pThis,
-    int32_t iStyle,
-    const ByteStringView& szLocale,
-    bool bStandard) {
+ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
+                                                      int32_t iStyle,
+                                                      ByteStringView szLocale,
+                                                      bool bStandard) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
     return ByteString();
@@ -2555,7 +2548,7 @@ ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(
 ByteString CFXJSE_FormCalcContext::GetStandardDateFormat(
     CFXJSE_Value* pThis,
     int32_t iStyle,
-    const ByteStringView& szLocalStr) {
+    ByteStringView szLocalStr) {
   return GetLocalDateFormat(pThis, iStyle, szLocalStr, true);
 }
 
@@ -2563,15 +2556,15 @@ ByteString CFXJSE_FormCalcContext::GetStandardDateFormat(
 ByteString CFXJSE_FormCalcContext::GetStandardTimeFormat(
     CFXJSE_Value* pThis,
     int32_t iStyle,
-    const ByteStringView& szLocalStr) {
+    ByteStringView szLocalStr) {
   return GetLocalTimeFormat(pThis, iStyle, szLocalStr, true);
 }
 
 // static
 ByteString CFXJSE_FormCalcContext::Num2AllTime(CFXJSE_Value* pThis,
                                                int32_t iTime,
-                                               const ByteStringView& szFormat,
-                                               const ByteStringView& szLocale,
+                                               ByteStringView szFormat,
+                                               ByteStringView szLocale,
                                                bool bGM) {
   int32_t iHour = 0;
   int32_t iMin = 0;
@@ -2598,7 +2591,7 @@ ByteString CFXJSE_FormCalcContext::Num2AllTime(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Apr(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -2651,7 +2644,7 @@ void CFXJSE_FormCalcContext::Apr(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::CTerm(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -2682,7 +2675,7 @@ void CFXJSE_FormCalcContext::CTerm(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::FV(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
+                                ByteStringView szFuncName,
                                 CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -2723,7 +2716,7 @@ void CFXJSE_FormCalcContext::FV(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::IPmt(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 5) {
@@ -2780,7 +2773,7 @@ void CFXJSE_FormCalcContext::IPmt(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::NPV(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   int32_t argc = args.GetLength();
@@ -2823,7 +2816,7 @@ void CFXJSE_FormCalcContext::NPV(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Pmt(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -2858,7 +2851,7 @@ void CFXJSE_FormCalcContext::Pmt(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::PPmt(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 5) {
@@ -2916,7 +2909,7 @@ void CFXJSE_FormCalcContext::PPmt(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::PV(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
+                                ByteStringView szFuncName,
                                 CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -2951,7 +2944,7 @@ void CFXJSE_FormCalcContext::PV(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Rate(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -2982,7 +2975,7 @@ void CFXJSE_FormCalcContext::Rate(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Term(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 3) {
@@ -3013,7 +3006,7 @@ void CFXJSE_FormCalcContext::Term(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Choose(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   int32_t argc = args.GetLength();
@@ -3082,7 +3075,7 @@ void CFXJSE_FormCalcContext::Choose(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Exists(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Exists");
@@ -3093,7 +3086,7 @@ void CFXJSE_FormCalcContext::Exists(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::HasValue(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
+                                      ByteStringView szFuncName,
                                       CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"HasValue");
@@ -3114,7 +3107,7 @@ void CFXJSE_FormCalcContext::HasValue(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Oneof(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   if (args.GetLength() < 2) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Oneof");
@@ -3137,7 +3130,7 @@ void CFXJSE_FormCalcContext::Oneof(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Within(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   if (args.GetLength() != 3) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Within");
@@ -3171,7 +3164,7 @@ void CFXJSE_FormCalcContext::Within(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::If(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
+                                ByteStringView szFuncName,
                                 CFXJSE_Arguments& args) {
   if (args.GetLength() != 3) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"If");
@@ -3185,7 +3178,7 @@ void CFXJSE_FormCalcContext::If(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Eval(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 1) {
@@ -3222,7 +3215,7 @@ void CFXJSE_FormCalcContext::Eval(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Ref(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -3280,7 +3273,7 @@ void CFXJSE_FormCalcContext::Ref(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::UnitType(CFXJSE_Value* pThis,
-                                      const ByteStringView& szFuncName,
+                                      ByteStringView szFuncName,
                                       CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"UnitType");
@@ -3387,7 +3380,7 @@ void CFXJSE_FormCalcContext::UnitType(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::UnitValue(CFXJSE_Value* pThis,
-                                       const ByteStringView& szFuncName,
+                                       ByteStringView szFuncName,
                                        CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
@@ -3526,7 +3519,7 @@ void CFXJSE_FormCalcContext::UnitValue(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::At(CFXJSE_Value* pThis,
-                                const ByteStringView& szFuncName,
+                                ByteStringView szFuncName,
                                 CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"At");
@@ -3553,7 +3546,7 @@ void CFXJSE_FormCalcContext::At(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Concat(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1) {
@@ -3582,7 +3575,7 @@ void CFXJSE_FormCalcContext::Concat(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Decode(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
@@ -3632,7 +3625,7 @@ void CFXJSE_FormCalcContext::Decode(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Encode(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
@@ -3676,7 +3669,7 @@ void CFXJSE_FormCalcContext::Encode(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() < 2) {
@@ -3759,7 +3752,7 @@ void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Left(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Left");
@@ -3781,7 +3774,7 @@ void CFXJSE_FormCalcContext::Left(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Len(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Len");
@@ -3800,7 +3793,7 @@ void CFXJSE_FormCalcContext::Len(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Lower(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
@@ -3832,7 +3825,7 @@ void CFXJSE_FormCalcContext::Lower(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Ltrim(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Ltrim");
@@ -3852,7 +3845,7 @@ void CFXJSE_FormCalcContext::Ltrim(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 2) {
@@ -3988,7 +3981,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Replace(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
+                                     ByteStringView szFuncName,
                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 2 || argc > 3) {
@@ -4047,7 +4040,7 @@ void CFXJSE_FormCalcContext::Replace(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Right(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Right");
@@ -4069,7 +4062,7 @@ void CFXJSE_FormCalcContext::Right(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Rtrim(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Rtrim");
@@ -4089,7 +4082,7 @@ void CFXJSE_FormCalcContext::Rtrim(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Space(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Space");
@@ -4115,7 +4108,7 @@ void CFXJSE_FormCalcContext::Space(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Str(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -4230,7 +4223,7 @@ void CFXJSE_FormCalcContext::Str(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Stuff(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 3 || argc > 4) {
@@ -4281,7 +4274,7 @@ void CFXJSE_FormCalcContext::Stuff(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
-                                    const ByteStringView& szFuncName,
+                                    ByteStringView szFuncName,
                                     CFXJSE_Arguments& args) {
   if (args.GetLength() != 3) {
     ToFormCalcContext(pThis)->ThrowParamCountMismatchException(L"Substr");
@@ -4319,7 +4312,7 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Uuid(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 0 || argc > 1) {
@@ -4337,7 +4330,7 @@ void CFXJSE_FormCalcContext::Uuid(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Upper(CFXJSE_Value* pThis,
-                                   const ByteStringView& szFuncName,
+                                   ByteStringView szFuncName,
                                    CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 2) {
@@ -4374,7 +4367,7 @@ void CFXJSE_FormCalcContext::Upper(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::WordNum(CFXJSE_Value* pThis,
-                                     const ByteStringView& szFuncName,
+                                     ByteStringView szFuncName,
                                      CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if (argc < 1 || argc > 3) {
@@ -4422,7 +4415,7 @@ void CFXJSE_FormCalcContext::WordNum(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Get(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 1) {
@@ -4453,7 +4446,7 @@ void CFXJSE_FormCalcContext::Get(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Post(CFXJSE_Value* pThis,
-                                  const ByteStringView& szFuncName,
+                                  ByteStringView szFuncName,
                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   int32_t argc = args.GetLength();
@@ -4509,7 +4502,7 @@ void CFXJSE_FormCalcContext::Post(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::Put(CFXJSE_Value* pThis,
-                                 const ByteStringView& szFuncName,
+                                 ByteStringView szFuncName,
                                  CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   int32_t argc = args.GetLength();
@@ -4550,10 +4543,9 @@ void CFXJSE_FormCalcContext::Put(CFXJSE_Value* pThis,
 }
 
 // static
-void CFXJSE_FormCalcContext::assign_value_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::assign_value_operator(CFXJSE_Value* pThis,
+                                                   ByteStringView szFuncName,
+                                                   CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 2) {
     pContext->ThrowCompilerErrorException();
@@ -4595,10 +4587,9 @@ void CFXJSE_FormCalcContext::assign_value_operator(
 }
 
 // static
-void CFXJSE_FormCalcContext::logical_or_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::logical_or_operator(CFXJSE_Value* pThis,
+                                                 ByteStringView szFuncName,
+                                                 CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
     return;
@@ -4617,10 +4608,9 @@ void CFXJSE_FormCalcContext::logical_or_operator(
 }
 
 // static
-void CFXJSE_FormCalcContext::logical_and_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::logical_and_operator(CFXJSE_Value* pThis,
+                                                  ByteStringView szFuncName,
+                                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
     return;
@@ -4640,7 +4630,7 @@ void CFXJSE_FormCalcContext::logical_and_operator(
 
 // static
 void CFXJSE_FormCalcContext::equality_operator(CFXJSE_Value* pThis,
-                                               const ByteStringView& szFuncName,
+                                               ByteStringView szFuncName,
                                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4672,10 +4662,9 @@ void CFXJSE_FormCalcContext::equality_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CFXJSE_FormCalcContext::notequality_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::notequality_operator(CFXJSE_Value* pThis,
+                                                  ByteStringView szFuncName,
+                                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
     return;
@@ -4733,7 +4722,7 @@ bool CFXJSE_FormCalcContext::fm_ref_equal(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::less_operator(CFXJSE_Value* pThis,
-                                           const ByteStringView& szFuncName,
+                                           ByteStringView szFuncName,
                                            CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4760,10 +4749,9 @@ void CFXJSE_FormCalcContext::less_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CFXJSE_FormCalcContext::lessequal_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::lessequal_operator(CFXJSE_Value* pThis,
+                                                ByteStringView szFuncName,
+                                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
     return;
@@ -4791,7 +4779,7 @@ void CFXJSE_FormCalcContext::lessequal_operator(
 
 // static
 void CFXJSE_FormCalcContext::greater_operator(CFXJSE_Value* pThis,
-                                              const ByteStringView& szFuncName,
+                                              ByteStringView szFuncName,
                                               CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4818,10 +4806,9 @@ void CFXJSE_FormCalcContext::greater_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CFXJSE_FormCalcContext::greaterequal_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::greaterequal_operator(CFXJSE_Value* pThis,
+                                                   ByteStringView szFuncName,
+                                                   CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
     return;
@@ -4849,7 +4836,7 @@ void CFXJSE_FormCalcContext::greaterequal_operator(
 
 // static
 void CFXJSE_FormCalcContext::plus_operator(CFXJSE_Value* pThis,
-                                           const ByteStringView& szFuncName,
+                                           ByteStringView szFuncName,
                                            CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4871,7 +4858,7 @@ void CFXJSE_FormCalcContext::plus_operator(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::minus_operator(CFXJSE_Value* pThis,
-                                            const ByteStringView& szFuncName,
+                                            ByteStringView szFuncName,
                                             CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4892,7 +4879,7 @@ void CFXJSE_FormCalcContext::minus_operator(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::multiple_operator(CFXJSE_Value* pThis,
-                                               const ByteStringView& szFuncName,
+                                               ByteStringView szFuncName,
                                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 2) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4913,7 +4900,7 @@ void CFXJSE_FormCalcContext::multiple_operator(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::divide_operator(CFXJSE_Value* pThis,
-                                             const ByteStringView& szFuncName,
+                                             ByteStringView szFuncName,
                                              CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 2) {
@@ -4940,7 +4927,7 @@ void CFXJSE_FormCalcContext::divide_operator(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::positive_operator(CFXJSE_Value* pThis,
-                                               const ByteStringView& szFuncName,
+                                               ByteStringView szFuncName,
                                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4957,7 +4944,7 @@ void CFXJSE_FormCalcContext::positive_operator(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::negative_operator(CFXJSE_Value* pThis,
-                                               const ByteStringView& szFuncName,
+                                               ByteStringView szFuncName,
                                                CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -4973,10 +4960,9 @@ void CFXJSE_FormCalcContext::negative_operator(CFXJSE_Value* pThis,
 }
 
 // static
-void CFXJSE_FormCalcContext::logical_not_operator(
-    CFXJSE_Value* pThis,
-    const ByteStringView& szFuncName,
-    CFXJSE_Arguments& args) {
+void CFXJSE_FormCalcContext::logical_not_operator(CFXJSE_Value* pThis,
+                                                  ByteStringView szFuncName,
+                                                  CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
     return;
@@ -4994,7 +4980,7 @@ void CFXJSE_FormCalcContext::logical_not_operator(
 
 // static
 void CFXJSE_FormCalcContext::dot_accessor(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
+                                          ByteStringView szFuncName,
                                           CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -5112,7 +5098,7 @@ void CFXJSE_FormCalcContext::dot_accessor(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::dotdot_accessor(CFXJSE_Value* pThis,
-                                             const ByteStringView& szFuncName,
+                                             ByteStringView szFuncName,
                                              CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -5230,7 +5216,7 @@ void CFXJSE_FormCalcContext::dotdot_accessor(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::eval_translation(CFXJSE_Value* pThis,
-                                              const ByteStringView& szFuncName,
+                                              ByteStringView szFuncName,
                                               CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 1) {
@@ -5259,7 +5245,7 @@ void CFXJSE_FormCalcContext::eval_translation(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::is_fm_object(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
+                                          ByteStringView szFuncName,
                                           CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     args.GetReturnValue()->SetBoolean(false);
@@ -5272,7 +5258,7 @@ void CFXJSE_FormCalcContext::is_fm_object(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::is_fm_array(CFXJSE_Value* pThis,
-                                         const ByteStringView& szFuncName,
+                                         ByteStringView szFuncName,
                                          CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     args.GetReturnValue()->SetBoolean(false);
@@ -5285,7 +5271,7 @@ void CFXJSE_FormCalcContext::is_fm_array(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::get_fm_value(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
+                                          ByteStringView szFuncName,
                                           CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 1) {
@@ -5320,7 +5306,7 @@ void CFXJSE_FormCalcContext::get_fm_value(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::get_fm_jsobj(CFXJSE_Value* pThis,
-                                          const ByteStringView& szFuncName,
+                                          ByteStringView szFuncName,
                                           CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
     ToFormCalcContext(pThis)->ThrowCompilerErrorException();
@@ -5346,7 +5332,7 @@ void CFXJSE_FormCalcContext::get_fm_jsobj(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::fm_var_filter(CFXJSE_Value* pThis,
-                                           const ByteStringView& szFuncName,
+                                           ByteStringView szFuncName,
                                            CFXJSE_Arguments& args) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   if (args.GetLength() != 1) {
@@ -5400,7 +5386,7 @@ void CFXJSE_FormCalcContext::fm_var_filter(CFXJSE_Value* pThis,
 
 // static
 void CFXJSE_FormCalcContext::concat_fm_object(CFXJSE_Value* pThis,
-                                              const ByteStringView& szFuncName,
+                                              ByteStringView szFuncName,
                                               CFXJSE_Arguments& args) {
   v8::Isolate* pIsolate = ToFormCalcContext(pThis)->GetScriptRuntime();
   uint32_t iLength = 0;
@@ -5640,11 +5626,10 @@ bool CFXJSE_FormCalcContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
 }
 
 // static
-ByteString CFXJSE_FormCalcContext::GenerateSomExpression(
-    const ByteStringView& szName,
-    int32_t iIndexFlags,
-    int32_t iIndexValue,
-    bool bIsStar) {
+ByteString CFXJSE_FormCalcContext::GenerateSomExpression(ByteStringView szName,
+                                                         int32_t iIndexFlags,
+                                                         int32_t iIndexValue,
+                                                         bool bIsStar) {
   if (bIsStar)
     return ByteString(szName, "[*]");
 
@@ -5671,10 +5656,9 @@ ByteString CFXJSE_FormCalcContext::GenerateSomExpression(
 }
 
 // static
-bool CFXJSE_FormCalcContext::GetObjectForName(
-    CFXJSE_Value* pThis,
-    CFXJSE_Value* accessorValue,
-    const ByteStringView& szAccessorName) {
+bool CFXJSE_FormCalcContext::GetObjectForName(CFXJSE_Value* pThis,
+                                              CFXJSE_Value* accessorValue,
+                                              ByteStringView szAccessorName) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
     return false;
@@ -5698,7 +5682,7 @@ bool CFXJSE_FormCalcContext::GetObjectForName(
 // static
 bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
                                             CFXJSE_Value* pRefValue,
-                                            const ByteStringView& bsSomExp,
+                                            ByteStringView bsSomExp,
                                             XFA_RESOLVENODE_RS* resolveNodeRS,
                                             bool bdotAccessor,
                                             bool bHasNoResolveName) {
@@ -5980,7 +5964,7 @@ void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 }
 
 void CFXJSE_FormCalcContext::ThrowNoDefaultPropertyException(
-    const ByteStringView& name) const {
+    ByteStringView name) const {
   ThrowException(WideString::FromUTF8(name) +
                  WideString::FromASCII(" doesn't have a default property."));
 }

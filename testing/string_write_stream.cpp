@@ -26,7 +26,7 @@ bool StringWriteStream::WriteBlockAtOffset(const void* pData,
   return true;
 }
 
-bool StringWriteStream::WriteString(const ByteStringView& str) {
+bool StringWriteStream::WriteString(ByteStringView str) {
   stream_.write(str.unterminated_c_str(), str.GetLength());
   return true;
 }

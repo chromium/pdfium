@@ -15,7 +15,7 @@ CPDF_Number::CPDF_Number(int value) : m_Number(value) {}
 
 CPDF_Number::CPDF_Number(float value) : m_Number(value) {}
 
-CPDF_Number::CPDF_Number(const ByteStringView& str) : m_Number(str) {}
+CPDF_Number::CPDF_Number(ByteStringView str) : m_Number(str) {}
 
 CPDF_Number::~CPDF_Number() {}
 

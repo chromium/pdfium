@@ -134,7 +134,7 @@ uint32_t FPF_SkiaGetCharset(uint8_t uCharset) {
   return FPF_SKIACHARSET_Default;
 }
 
-uint32_t FPF_SKIANormalizeFontName(const ByteStringView& bsfamily) {
+uint32_t FPF_SKIANormalizeFontName(ByteStringView bsfamily) {
   uint32_t dwHash = 0;
   int32_t iLength = bsfamily.GetLength();
   const char* pBuffer = bsfamily.unterminated_c_str();
@@ -147,7 +147,7 @@ uint32_t FPF_SKIANormalizeFontName(const ByteStringView& bsfamily) {
   return dwHash;
 }
 
-uint32_t FPF_SKIAGetFamilyHash(const ByteStringView& bsFamily,
+uint32_t FPF_SKIAGetFamilyHash(ByteStringView bsFamily,
                                uint32_t dwStyle,
                                uint8_t uCharset) {
   ByteString bsFont(bsFamily);
@@ -165,13 +165,13 @@ bool FPF_SkiaIsCJK(uint8_t uCharset) {
   return FX_CharSetIsCJK(uCharset);
 }
 
-bool FPF_SkiaMaybeSymbol(const ByteStringView& bsFacename) {
+bool FPF_SkiaMaybeSymbol(ByteStringView bsFacename) {
   ByteString bsName(bsFacename);
   bsName.MakeLower();
   return bsName.Contains("symbol");
 }
 
-bool FPF_SkiaMaybeArabic(const ByteStringView& bsFacename) {
+bool FPF_SkiaMaybeArabic(ByteStringView bsFacename) {
   ByteString bsName(bsFacename);
   bsName.MakeLower();
   return bsName.Contains("arabic");
@@ -248,7 +248,7 @@ void CFPF_SkiaFontMgr::LoadSystemFonts() {
   m_bLoaded = true;
 }
 
-CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
+CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
                                             uint8_t uCharset,
                                             uint32_t dwStyle) {
   uint32_t dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
@@ -331,7 +331,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
   return pRet;
 }
 
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const ByteStringView& bsFile,
+FXFT_Face CFPF_SkiaFontMgr::GetFontFace(ByteStringView bsFile,
                                         int32_t iFaceIndex) {
   if (bsFile.IsEmpty())
     return nullptr;

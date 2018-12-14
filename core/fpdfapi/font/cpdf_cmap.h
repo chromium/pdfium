@@ -60,8 +60,8 @@ class CPDF_CMap final : public Retainable {
   uint16_t CIDFromCharCode(uint32_t charcode) const;
 
   int GetCharSize(uint32_t charcode) const;
-  uint32_t GetNextChar(const ByteStringView& pString, size_t* pOffset) const;
-  size_t CountChar(const ByteStringView& pString) const;
+  uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const;
+  size_t CountChar(ByteStringView pString) const;
   int AppendChar(char* str, uint32_t charcode) const;
 
   void SetVertical(bool vert) { m_bVertical = vert; }

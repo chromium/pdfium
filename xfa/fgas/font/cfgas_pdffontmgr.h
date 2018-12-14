@@ -34,7 +34,7 @@ class CFGAS_PDFFontMgr final : public Observable<CFGAS_PDFFontMgr> {
   ByteString PsNameToFontName(const ByteString& strPsName,
                               bool bBold,
                               bool bItalic);
-  bool PsNameMatchDRFontName(const ByteStringView& bsPsName,
+  bool PsNameMatchDRFontName(ByteStringView bsPsName,
                              bool bBold,
                              bool bItalic,
                              const ByteString& bsDRFontName,

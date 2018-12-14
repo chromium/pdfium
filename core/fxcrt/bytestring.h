@@ -56,8 +56,8 @@ class ByteString {
   ByteString(const char* ptr, size_t len);
   ByteString(const uint8_t* ptr, size_t len);
 
-  explicit ByteString(const ByteStringView& bstrc);
-  ByteString(const ByteStringView& bstrc1, const ByteStringView& bstrc2);
+  explicit ByteString(ByteStringView bstrc);
+  ByteString(ByteStringView bstrc1, ByteStringView bstrc2);
   ByteString(const std::initializer_list<ByteStringView>& list);
   explicit ByteString(const std::ostringstream& outStream);
 
@@ -114,30 +114,30 @@ class ByteString {
   bool IsValidIndex(size_t index) const { return index < GetLength(); }
   bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
-  int Compare(const ByteStringView& str) const;
-  bool EqualNoCase(const ByteStringView& str) const;
+  int Compare(ByteStringView str) const;
+  bool EqualNoCase(ByteStringView str) const;
 
   bool operator==(const char* ptr) const;
-  bool operator==(const ByteStringView& str) const;
+  bool operator==(ByteStringView str) const;
   bool operator==(const ByteString& other) const;
 
   bool operator!=(const char* ptr) const { return !(*this == ptr); }
-  bool operator!=(const ByteStringView& str) const { return !(*this == str); }
+  bool operator!=(ByteStringView str) const { return !(*this == str); }
   bool operator!=(const ByteString& other) const { return !(*this == other); }
 
   bool operator<(const char* ptr) const;
-  bool operator<(const ByteStringView& str) const;
+  bool operator<(ByteStringView str) const;
   bool operator<(const ByteString& other) const;
 
   const ByteString& operator=(const char* str);
-  const ByteString& operator=(const ByteStringView& bstrc);
+  const ByteString& operator=(ByteStringView bstrc);
   const ByteString& operator=(const ByteString& that);
   const ByteString& operator=(ByteString&& that);
 
   const ByteString& operator+=(char ch);
   const ByteString& operator+=(const char* str);
   const ByteString& operator+=(const ByteString& str);
-  const ByteString& operator+=(const ByteStringView& bstrc);
+  const ByteString& operator+=(ByteStringView bstrc);
 
   CharType operator[](const size_t index) const {
     ASSERT(IsValidIndex(index));
@@ -165,11 +165,11 @@ class ByteString {
   ByteString Left(size_t count) const;
   ByteString Right(size_t count) const;
 
-  Optional<size_t> Find(const ByteStringView& lpszSub, size_t start = 0) const;
+  Optional<size_t> Find(ByteStringView lpszSub, size_t start = 0) const;
   Optional<size_t> Find(char ch, size_t start = 0) const;
   Optional<size_t> ReverseFind(char ch) const;
 
-  bool Contains(const ByteStringView& lpszSub, size_t start = 0) const {
+  bool Contains(ByteStringView lpszSub, size_t start = 0) const {
     return Find(lpszSub, start).has_value();
   }
 
@@ -182,17 +182,17 @@ class ByteString {
 
   void Trim();
   void Trim(char target);
-  void Trim(const ByteStringView& targets);
+  void Trim(ByteStringView targets);
 
   void TrimLeft();
   void TrimLeft(char target);
-  void TrimLeft(const ByteStringView& targets);
+  void TrimLeft(ByteStringView targets);
 
   void TrimRight();
   void TrimRight(char target);
-  void TrimRight(const ByteStringView& targets);
+  void TrimRight(ByteStringView targets);
 
-  size_t Replace(const ByteStringView& lpszOld, const ByteStringView& lpszNew);
+  size_t Replace(ByteStringView lpszOld, ByteStringView lpszNew);
   size_t Remove(char ch);
 
   uint32_t GetID() const { return AsStringView().GetID(); }
@@ -217,33 +217,32 @@ class ByteString {
 inline bool operator==(const char* lhs, const ByteString& rhs) {
   return rhs == lhs;
 }
-inline bool operator==(const ByteStringView& lhs, const ByteString& rhs) {
+inline bool operator==(ByteStringView lhs, const ByteString& rhs) {
   return rhs == lhs;
 }
 inline bool operator!=(const char* lhs, const ByteString& rhs) {
   return rhs != lhs;
 }
-inline bool operator!=(const ByteStringView& lhs, const ByteString& rhs) {
+inline bool operator!=(ByteStringView lhs, const ByteString& rhs) {
   return rhs != lhs;
 }
 inline bool operator<(const char* lhs, const ByteString& rhs) {
   return rhs.Compare(lhs) > 0;
 }
 
-inline ByteString operator+(const ByteStringView& str1,
-                            const ByteStringView& str2) {
+inline ByteString operator+(ByteStringView str1, ByteStringView str2) {
   return ByteString(str1, str2);
 }
-inline ByteString operator+(const ByteStringView& str1, const char* str2) {
+inline ByteString operator+(ByteStringView str1, const char* str2) {
   return ByteString(str1, str2);
 }
-inline ByteString operator+(const char* str1, const ByteStringView& str2) {
+inline ByteString operator+(const char* str1, ByteStringView str2) {
   return ByteString(str1, str2);
 }
-inline ByteString operator+(const ByteStringView& str1, char ch) {
+inline ByteString operator+(ByteStringView str1, char ch) {
   return ByteString(str1, ByteStringView(ch));
 }
-inline ByteString operator+(char ch, const ByteStringView& str2) {
+inline ByteString operator+(char ch, ByteStringView str2) {
   return ByteString(ch, str2);
 }
 inline ByteString operator+(const ByteString& str1, const ByteString& str2) {
@@ -261,24 +260,22 @@ inline ByteString operator+(const ByteString& str1, const char* str2) {
 inline ByteString operator+(const char* str1, const ByteString& str2) {
   return ByteString(str1, str2.AsStringView());
 }
-inline ByteString operator+(const ByteString& str1,
-                            const ByteStringView& str2) {
+inline ByteString operator+(const ByteString& str1, ByteStringView str2) {
   return ByteString(str1.AsStringView(), str2);
 }
-inline ByteString operator+(const ByteStringView& str1,
-                            const ByteString& str2) {
+inline ByteString operator+(ByteStringView str1, const ByteString& str2) {
   return ByteString(str1, str2.AsStringView());
 }
 
 std::ostream& operator<<(std::ostream& os, const ByteString& str);
-std::ostream& operator<<(std::ostream& os, const ByteStringView& str);
+std::ostream& operator<<(std::ostream& os, ByteStringView str);
 
 }  // namespace fxcrt
 
 using ByteString = fxcrt::ByteString;
 
-uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase);
-uint32_t FX_HashCode_GetAsIfW(const ByteStringView& str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetA(ByteStringView str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetAsIfW(ByteStringView str, bool bIgnoreCase);
 
 namespace std {
 

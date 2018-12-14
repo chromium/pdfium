@@ -19,7 +19,7 @@ class CPDF_Number final : public CPDF_Object {
   CPDF_Number();
   explicit CPDF_Number(int value);
   explicit CPDF_Number(float value);
-  explicit CPDF_Number(const ByteStringView& str);
+  explicit CPDF_Number(ByteStringView str);
   ~CPDF_Number() override;
 
   // CPDF_Object:

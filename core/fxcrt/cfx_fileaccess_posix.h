@@ -22,7 +22,7 @@ class CFX_FileAccess_Posix final : public FileAccessIface {
   ~CFX_FileAccess_Posix() override;
 
   // FileAccessIface:
-  bool Open(const ByteStringView& fileName, uint32_t dwMode) override;
+  bool Open(ByteStringView fileName, uint32_t dwMode) override;
   bool Open(WideStringView fileName, uint32_t dwMode) override;
   void Close() override;
   FX_FILESIZE GetSize() const override;

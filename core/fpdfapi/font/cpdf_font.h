@@ -32,8 +32,7 @@ class CPDF_Font {
  public:
   static std::unique_ptr<CPDF_Font> Create(CPDF_Document* pDoc,
                                            CPDF_Dictionary* pFontDict);
-  static CPDF_Font* GetStockFont(CPDF_Document* pDoc,
-                                 const ByteStringView& fontname);
+  static CPDF_Font* GetStockFont(CPDF_Document* pDoc, ByteStringView fontname);
   static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
 
   virtual ~CPDF_Font();
@@ -53,9 +52,8 @@ class CPDF_Font {
 
   virtual bool IsVertWriting() const;
   virtual bool IsUnicodeCompatible() const;
-  virtual uint32_t GetNextChar(const ByteStringView& pString,
-                               size_t* pOffset) const;
-  virtual size_t CountChar(const ByteStringView& pString) const;
+  virtual uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const;
+  virtual size_t CountChar(ByteStringView pString) const;
   virtual int AppendChar(char* buf, uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
@@ -77,7 +75,7 @@ class CPDF_Font {
   const FX_RECT& GetFontBBox() const { return m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
   int GetTypeDescent() const { return m_Descent; }
-  uint32_t GetStringWidth(const ByteStringView& pString);
+  uint32_t GetStringWidth(ByteStringView pString);
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
   int GetFontFlags() const { return m_Flags; }

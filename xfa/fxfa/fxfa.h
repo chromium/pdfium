@@ -263,12 +263,11 @@ class IXFA_DocEnvironment {
   virtual bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) = 0;
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
-  virtual bool GetPropertyFromNonXFAGlobalObject(
-      CXFA_FFDoc* hDoc,
-      const ByteStringView& szPropName,
-      CFXJSE_Value* pValue) = 0;
+  virtual bool GetPropertyFromNonXFAGlobalObject(CXFA_FFDoc* hDoc,
+                                                 ByteStringView szPropName,
+                                                 CFXJSE_Value* pValue) = 0;
   virtual bool SetPropertyInNonXFAGlobalObject(CXFA_FFDoc* hDoc,
-                                               const ByteStringView& szPropName,
+                                               ByteStringView szPropName,
                                                CFXJSE_Value* pValue) = 0;
   virtual RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
       CXFA_FFDoc* hDoc,

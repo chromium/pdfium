@@ -29,7 +29,7 @@ bool CPDF_StringArchiveStream::WriteBlock(const void* pData, size_t size) {
   return true;
 }
 
-bool CPDF_StringArchiveStream::WriteString(const ByteStringView& str) {
+bool CPDF_StringArchiveStream::WriteString(ByteStringView str) {
   stream_->write(str.unterminated_c_str(), str.GetLength());
   return true;
 }

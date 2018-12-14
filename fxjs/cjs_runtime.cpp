@@ -187,7 +187,7 @@ CJS_Runtime* CJS_Runtime::AsCJSRuntime() {
   return this;
 }
 
-bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
+bool CJS_Runtime::GetValueByNameFromGlobalObject(ByteStringView utf8Name,
                                                  CFXJSE_Value* pValue) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
@@ -212,7 +212,7 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
   return true;
 }
 
-bool CJS_Runtime::SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
+bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,
                                                CFXJSE_Value* pValue) {
   if (utf8Name.IsEmpty() || !pValue)
     return false;

@@ -29,8 +29,8 @@ class CPDF_ToUnicodeMap {
   friend class cpdf_tounicodemap_StringToCode_Test;
   friend class cpdf_tounicodemap_StringToWideString_Test;
 
-  static uint32_t StringToCode(const ByteStringView& str);
-  static WideString StringToWideString(const ByteStringView& str);
+  static uint32_t StringToCode(ByteStringView str);
+  static WideString StringToWideString(ByteStringView str);
 
   uint32_t GetUnicode();
 

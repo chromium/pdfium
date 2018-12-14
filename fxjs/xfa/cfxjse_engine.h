@@ -44,25 +44,25 @@ class CFXJSE_Engine final : public CFX_V8 {
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
   static CXFA_Object* ToObject(CFXJSE_Value* pValue);
   static void GlobalPropertyGetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
+                                   ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static void GlobalPropertySetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
+                                   ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static void NormalPropertyGetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
+                                   ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static void NormalPropertySetter(CFXJSE_Value* pObject,
-                                   const ByteStringView& szPropName,
+                                   ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
   static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
   static int32_t NormalPropTypeGetter(CFXJSE_Value* pObject,
-                                      const ByteStringView& szPropName,
+                                      ByteStringView szPropName,
                                       bool bQueryIn);
   static int32_t GlobalPropTypeGetter(CFXJSE_Value* pObject,
-                                      const ByteStringView& szPropName,
+                                      ByteStringView szPropName,
                                       bool bQueryIn);
 
   CFXJSE_Engine(CXFA_Document* pDocument, CJS_Runtime* fxjs_runtime);
@@ -115,7 +115,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   bool IsStrictScopeInJavaScript();
   CXFA_Object* GetVariablesThis(CXFA_Object* pObject, bool bScriptNode);
   bool QueryVariableValue(CXFA_Node* pScriptNode,
-                          const ByteStringView& szPropName,
+                          ByteStringView szPropName,
                           CFXJSE_Value* pValue,
                           bool bGetter);
   bool RunVariablesScript(CXFA_Node* pScriptNode);

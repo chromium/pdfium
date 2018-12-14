@@ -581,7 +581,7 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
   return 0;
 }
 
-FX_FILESIZE CPDF_SyntaxParser::FindWordPos(const ByteStringView& word) {
+FX_FILESIZE CPDF_SyntaxParser::FindWordPos(ByteStringView word) {
   AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
   FX_FILESIZE end_offset = FindTag(word);
   while (end_offset >= 0) {
@@ -741,7 +741,7 @@ uint32_t CPDF_SyntaxParser::GetDirectNum() {
 
 bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
                                     FX_FILESIZE limit,
-                                    const ByteStringView& tag,
+                                    ByteStringView tag,
                                     bool checkKeyword) {
   const uint32_t taglen = tag.GetLength();
 
@@ -767,7 +767,7 @@ bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
   return true;
 }
 
-bool CPDF_SyntaxParser::BackwardsSearchToWord(const ByteStringView& tag,
+bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView tag,
                                               FX_FILESIZE limit) {
   int32_t taglen = tag.GetLength();
   if (taglen == 0)
@@ -801,7 +801,7 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(const ByteStringView& tag,
   }
 }
 
-FX_FILESIZE CPDF_SyntaxParser::FindTag(const ByteStringView& tag) {
+FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
   const FX_FILESIZE startpos = GetPos();
   const int32_t taglen = tag.GetLength();
   ASSERT(taglen > 0);
