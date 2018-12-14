@@ -50,8 +50,8 @@ class CXFA_NodeHelper {
                    bool bIsClassIndex);
   WideString GetNameExpression(CXFA_Node* refNode, bool bIsAllPath);
   bool NodeIsTransparent(CXFA_Node* refNode);
-  bool CreateNode(WideString wsName,
-                  WideString wsCondition,
+  bool CreateNode(const WideString& wsName,
+                  const WideString& wsCondition,
                   bool bLastNode,
                   CFXJSE_Engine* pScriptContext);
   bool CreateNodeForCondition(const WideString& wsCondition);

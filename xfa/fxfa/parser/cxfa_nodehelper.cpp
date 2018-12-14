@@ -266,18 +266,18 @@ bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {
 }
 
 bool CXFA_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
-  int32_t iLen = wsCondition.GetLength();
+  size_t szLen = wsCondition.GetLength();
   WideString wsIndex(L"0");
   bool bAll = false;
-  if (iLen == 0) {
+  if (szLen == 0) {
     m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
     return false;
   }
   if (wsCondition[0] != '[')
     return false;
 
-  int32_t i = 1;
-  for (; i < iLen; ++i) {
+  size_t i = 1;
+  for (; i < szLen; ++i) {
     wchar_t ch = wsCondition[i];
     if (ch == ' ')
       continue;
@@ -291,44 +291,46 @@ bool CXFA_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
     m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeAll;
   } else {
     m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
-    wsIndex = wsCondition.Mid(i, iLen - 1 - i);
+    wsIndex = wsCondition.Mid(i, szLen - 1 - i);
   }
-  int32_t iIndex = wsIndex.GetInteger();
-  m_iCreateCount = iIndex;
+  m_iCreateCount = wsIndex.GetInteger();
   return true;
 }
 
-bool CXFA_NodeHelper::CreateNode(WideString wsName,
-                                 WideString wsCondition,
+bool CXFA_NodeHelper::CreateNode(const WideString& wsName,
+                                 const WideString& wsCondition,
                                  bool bLastNode,
                                  CFXJSE_Engine* pScriptContext) {
-  if (!m_pCreateParent) {
+  ASSERT(!wsName.IsEmpty());
+
+  if (!m_pCreateParent)
     return false;
-  }
+
+  WideStringView wsNameView = wsName.AsStringView();
   bool bIsClassName = false;
   bool bResult = false;
-  if (wsName[0] == '!') {
-    wsName = wsName.Right(wsName.GetLength() - 1);
+  if (wsNameView[0] == '!') {
+    wsNameView = wsNameView.Right(wsNameView.GetLength() - 1);
     m_pCreateParent = ToNode(
         pScriptContext->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets));
   }
-  if (wsName[0] == '#') {
+  if (wsNameView[0] == '#') {
     bIsClassName = true;
-    wsName = wsName.Right(wsName.GetLength() - 1);
+    wsNameView = wsNameView.Right(wsNameView.GetLength() - 1);
   }
-  if (m_iCreateCount == 0) {
+  if (m_iCreateCount == 0)
     CreateNodeForCondition(wsCondition);
-  }
+
   if (bIsClassName) {
-    XFA_Element eType = XFA_GetElementByName(wsName.AsStringView());
+    XFA_Element eType = XFA_GetElementByName(wsNameView);
     if (eType == XFA_Element::Unknown)
       return false;
 
-    for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
+    for (int32_t i = 0; i < m_iCreateCount; ++i) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eType);
       if (pNewNode) {
         m_pCreateParent->InsertChild(pNewNode, nullptr);
-        if (iIndex == m_iCreateCount - 1) {
+        if (i == m_iCreateCount - 1) {
           m_pCreateParent = pNewNode;
         }
         bResult = true;
@@ -339,23 +341,23 @@ bool CXFA_NodeHelper::CreateNode(WideString wsName,
     if (bLastNode) {
       eClassType = m_eLastCreateType;
     }
-    for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
+    for (int32_t i = 0; i < m_iCreateCount; ++i) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eClassType);
       if (pNewNode) {
-        pNewNode->JSObject()->SetAttribute(XFA_Attribute::Name,
-                                           wsName.AsStringView(), false);
+        pNewNode->JSObject()->SetAttribute(XFA_Attribute::Name, wsNameView,
+                                           false);
         pNewNode->CreateXMLMappingNode();
         m_pCreateParent->InsertChild(pNewNode, nullptr);
-        if (iIndex == m_iCreateCount - 1) {
+        if (i == m_iCreateCount - 1) {
           m_pCreateParent = pNewNode;
         }
         bResult = true;
       }
     }
   }
-  if (!bResult) {
+  if (!bResult)
     m_pCreateParent = nullptr;
-  }
+
   return bResult;
 }
 
