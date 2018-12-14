@@ -68,9 +68,9 @@ void UpdateWidgetSize(CXFA_ContentLayoutItem* pLayoutItem,
     case XFA_Element::Area:
     case XFA_Element::ExclGroup:
     case XFA_Element::SubformSet: {
-      if (*pWidth < -XFA_LAYOUT_FLOAT_PERCISION)
+      if (*pWidth < -kXFALayoutPrecision)
         *pWidth = pLayoutItem->m_sSize.width;
-      if (*pHeight < -XFA_LAYOUT_FLOAT_PERCISION)
+      if (*pHeight < -kXFALayoutPrecision)
         *pHeight = pLayoutItem->m_sSize.height;
       break;
     }
@@ -97,14 +97,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) {
     Optional<CXFA_Measurement> wValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::W, false);
-    if (wValue && wValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+    if (wValue && wValue->GetValue() > kXFALayoutPrecision) {
       containerSize.width = wValue->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
     Optional<CXFA_Measurement> hValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::H, false);
-    if (hValue && hValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+    if (hValue && hValue->GetValue() > kXFALayoutPrecision) {
       containerSize.height = hValue->ToUnit(XFA_Unit::Pt);
       *bContainerHeightAutoSize = false;
     }
@@ -113,14 +113,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   if (*bContainerWidthAutoSize && eType == XFA_Element::Subform) {
     Optional<CXFA_Measurement> maxW =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxW, false);
-    if (maxW && maxW->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+    if (maxW && maxW->GetValue() > kXFALayoutPrecision) {
       containerSize.width = maxW->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
     Optional<CXFA_Measurement> maxH =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxH, false);
-    if (maxH && maxH->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
+    if (maxH && maxH->GetValue() > kXFALayoutPrecision) {
       containerSize.height = maxH->ToUnit(XFA_Unit::Pt);
       *bContainerHeightAutoSize = false;
     }
@@ -471,9 +471,9 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
                             bool* bAppChange,
                             bool bCalculateMargin) {
   CXFA_Node* pFormNode = pLayoutItem->GetFormNode();
-  if (*fProposedSplitPos <= fCurVerticalOffset + XFA_LAYOUT_FLOAT_PERCISION ||
+  if (*fProposedSplitPos <= fCurVerticalOffset + kXFALayoutPrecision ||
       *fProposedSplitPos > fCurVerticalOffset + pLayoutItem->m_sSize.height -
-                               XFA_LAYOUT_FLOAT_PERCISION) {
+                               kXFALayoutPrecision) {
     return false;
   }
 
@@ -505,7 +505,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
             *fProposedSplitPos = fCurVerticalOffset + fRelSplitPos;
             *bAppChange = true;
             if (*fProposedSplitPos <=
-                fCurVerticalOffset + XFA_LAYOUT_FLOAT_PERCISION) {
+                fCurVerticalOffset + kXFALayoutPrecision) {
               return true;
             }
           }
@@ -522,8 +522,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
           bool bChange = false;
           if (FindLayoutItemSplitPos(pChildItem, fChildOffset, &fRelSplitPos,
                                      &bChange, bCalculateMargin)) {
-            if (fRelSplitPos - fChildOffset < XFA_LAYOUT_FLOAT_PERCISION &&
-                bChange) {
+            if (fRelSplitPos - fChildOffset < kXFALayoutPrecision && bChange) {
               *fProposedSplitPos = fRelSplitPos - fCurTopMargin;
             } else {
               *fProposedSplitPos = fRelSplitPos + fCurBottomMargin;
@@ -531,7 +530,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
             bAnyChanged = true;
             bChanged = true;
             if (*fProposedSplitPos <=
-                fCurVerticalOffset + XFA_LAYOUT_FLOAT_PERCISION) {
+                fCurVerticalOffset + kXFALayoutPrecision) {
               return true;
             }
             if (bAnyChanged)
@@ -670,7 +669,7 @@ float CXFA_ItemLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
   auto value = GetFormNode()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
   XFA_AttributeValue eLayout = value.value_or(XFA_AttributeValue::Position);
   bool bCalculateMargin = eLayout != XFA_AttributeValue::Position;
-  while (fProposedSplitPos > XFA_LAYOUT_FLOAT_PERCISION) {
+  while (fProposedSplitPos > kXFALayoutPrecision) {
     bool bAppChange = false;
     if (!FindLayoutItemSplitPos(m_pLayoutItem, 0, &fProposedSplitPos,
                                 &bAppChange, bCalculateMargin)) {
@@ -752,7 +751,7 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
     pChildNext = ToContentLayoutItem(pChildItem->m_pNextSibling);
     pChildItem->m_pNextSibling = nullptr;
     if (fSplitPos <= fCurTopMargin + pChildItem->m_sPos.y + fCurBottomMargin +
-                         XFA_LAYOUT_FLOAT_PERCISION) {
+                         kXFALayoutPrecision) {
       if (!ExistContainerKeep(pChildItem->GetFormNode(), true)) {
         pChildItem->m_sPos.y -= fSplitPos - fCurBottomMargin;
         pChildItem->m_sPos.y += lHeightForKeep;
@@ -760,7 +759,7 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
         pSecondLayoutItem->AddChild(pChildItem);
         continue;
       }
-      if (lHeightForKeep < XFA_LAYOUT_FLOAT_PERCISION) {
+      if (lHeightForKeep < kXFALayoutPrecision) {
         for (auto* pPreItem : keepLayoutItems) {
           pLayoutItem->RemoveChild(pPreItem);
           pPreItem->m_sPos.y -= fSplitPos;
@@ -782,9 +781,9 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
       pSecondLayoutItem->AddChild(pChildItem);
       continue;
     }
-    if (fSplitPos + XFA_LAYOUT_FLOAT_PERCISION >=
-        fCurTopMargin + fCurBottomMargin + pChildItem->m_sPos.y +
-            pChildItem->m_sSize.height) {
+    if (fSplitPos + kXFALayoutPrecision >= fCurTopMargin + fCurBottomMargin +
+                                               pChildItem->m_sPos.y +
+                                               pChildItem->m_sSize.height) {
       pLayoutItem->AddChild(pChildItem);
       if (ExistContainerKeep(pChildItem->GetFormNode(), false))
         keepLayoutItems.push_back(pChildItem);
@@ -845,7 +844,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
     XFA_ItemLayoutProcessorStages* nCurStage,
     CXFA_Node* pParentContainer,
     bool bUsePageBreak) {
-  CXFA_Node* pChildContainer = XFA_LAYOUT_INVALIDNODE;
+  CXFA_Node* pChildContainer = nullptr;
   switch (*nCurStage) {
     case XFA_ItemLayoutProcessorStages::BreakBefore:
     case XFA_ItemLayoutProcessorStages::BreakAfter: {
@@ -857,7 +856,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       pChildContainer = pCurActionNode;
       break;
     default:
-      pChildContainer = XFA_LAYOUT_INVALIDNODE;
+      pChildContainer = nullptr;
       break;
   }
 
@@ -871,12 +870,12 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       goto CheckNextChildContainer;
     }
     case XFA_ItemLayoutProcessorStages::None: {
-      pCurActionNode = XFA_LAYOUT_INVALIDNODE;
+      pCurActionNode = nullptr;
       FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BookendLeader:
-        for (CXFA_Node* pBookendNode = pCurActionNode == XFA_LAYOUT_INVALIDNODE
-                                           ? pParentContainer->GetFirstChild()
-                                           : pCurActionNode->GetNextSibling();
+        for (CXFA_Node* pBookendNode = pCurActionNode
+                                           ? pCurActionNode->GetNextSibling()
+                                           : pParentContainer->GetFirstChild();
              pBookendNode; pBookendNode = pBookendNode->GetNextSibling()) {
           switch (pBookendNode->GetElementType()) {
             case XFA_Element::Bookend:
@@ -890,10 +889,10 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
         }
     }
       {
-        pCurActionNode = XFA_LAYOUT_INVALIDNODE;
+        pCurActionNode = nullptr;
         FALLTHROUGH;
         case XFA_ItemLayoutProcessorStages::BreakBefore:
-          if (pCurActionNode != XFA_LAYOUT_INVALIDNODE) {
+          if (pCurActionNode) {
             CXFA_Node* pBreakBeforeNode = pCurActionNode->GetNextSibling();
             if (!m_bKeepBreakFinish &&
                 FindBreakNode(pBreakBeforeNode, true, &pCurActionNode,
@@ -914,19 +913,19 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
           goto CheckNextChildContainer;
       }
     case XFA_ItemLayoutProcessorStages::Container: {
-      pCurActionNode = XFA_LAYOUT_INVALIDNODE;
+      pCurActionNode = nullptr;
       FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BreakAfter: {
-        if (pCurActionNode == XFA_LAYOUT_INVALIDNODE) {
-          CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
-          if (!m_bKeepBreakFinish &&
-              FindBreakNode(pBreakAfterNode, false, &pCurActionNode,
+        if (pCurActionNode) {
+          CXFA_Node* pBreakAfterNode = pCurActionNode->GetNextSibling();
+          if (FindBreakNode(pBreakAfterNode, false, &pCurActionNode,
                             nCurStage)) {
             return;
           }
         } else {
-          CXFA_Node* pBreakAfterNode = pCurActionNode->GetNextSibling();
-          if (FindBreakNode(pBreakAfterNode, false, &pCurActionNode,
+          CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
+          if (!m_bKeepBreakFinish &&
+              FindBreakNode(pBreakAfterNode, false, &pCurActionNode,
                             nCurStage)) {
             return;
           }
@@ -937,9 +936,8 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
 
     CheckNextChildContainer : {
       CXFA_Node* pNextChildContainer =
-          pChildContainer == XFA_LAYOUT_INVALIDNODE
-              ? pParentContainer->GetFirstContainerChild()
-              : pChildContainer->GetNextContainerSibling();
+          pChildContainer ? pChildContainer->GetNextContainerSibling()
+                          : pParentContainer->GetFirstContainerChild();
       while (pNextChildContainer &&
              pNextChildContainer->IsLayoutGeneratedNode()) {
         CXFA_Node* pSaveNode = pNextChildContainer;
@@ -969,12 +967,12 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
     }
 
     NoMoreChildContainer : {
-      pCurActionNode = XFA_LAYOUT_INVALIDNODE;
+      pCurActionNode = nullptr;
       FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BookendTrailer:
-        for (CXFA_Node* pBookendNode = pCurActionNode == XFA_LAYOUT_INVALIDNODE
-                                           ? pParentContainer->GetFirstChild()
-                                           : pCurActionNode->GetNextSibling();
+        for (CXFA_Node* pBookendNode = pCurActionNode
+                                           ? pCurActionNode->GetNextSibling()
+                                           : pParentContainer->GetFirstChild();
              pBookendNode; pBookendNode = pBookendNode->GetNextSibling()) {
           switch (pBookendNode->GetElementType()) {
             case XFA_Element::Bookend:
@@ -1053,7 +1051,7 @@ bool CXFA_ItemLayoutProcessor::ProcessKeepNodesForBreakBefore(
 void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
     CXFA_ContainerLayoutItem* pPageAreaLayoutItem) {
   CXFA_Node* pFormNode = pPageAreaLayoutItem->GetFormNode();
-  CXFA_Node* pCurChildNode = XFA_LAYOUT_INVALIDNODE;
+  CXFA_Node* pCurChildNode = nullptr;
   XFA_ItemLayoutProcessorStages nCurChildNodeStage =
       XFA_ItemLayoutProcessorStages::None;
   CXFA_LayoutItem* pBeforeItem = nullptr;
@@ -1124,7 +1122,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
   float fContentCalculatedHeight = 0;
   float fHiddenContentCalculatedWidth = 0;
   float fHiddenContentCalculatedHeight = 0;
-  if (m_pCurChildNode == XFA_LAYOUT_INVALIDNODE) {
+  if (!m_pCurChildNode) {
     GotoNextContainerNode(m_pCurChildNode, &m_nCurChildNodeStage, GetFormNode(),
                           false);
   }
@@ -1221,7 +1219,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   if (!pLayoutNode)
     pLayoutNode = GetFormNode();
 
-  ASSERT(m_pCurChildNode == XFA_LAYOUT_INVALIDNODE);
+  ASSERT(!m_pCurChildNode);
 
   m_pLayoutItem = CreateContentLayoutItem(GetFormNode());
   bool bContainerWidthAutoSize = true;
@@ -1267,7 +1265,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   layoutContext.m_prgSpecifiedColumnWidths = &m_rgSpecifiedColumnWidths;
   CXFA_LayoutContext* pLayoutContext =
       iSpecifiedColumnCount > 0 ? &layoutContext : nullptr;
-  if (m_pCurChildNode == XFA_LAYOUT_INVALIDNODE) {
+  if (!m_pCurChildNode) {
     GotoNextContainerNode(m_pCurChildNode, &m_nCurChildNodeStage, GetFormNode(),
                           false);
   }
@@ -1360,7 +1358,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
           for (int32_t j = 0; j < c; j++)
             m_rgSpecifiedColumnWidths.push_back(0);
         }
-        if (m_rgSpecifiedColumnWidths[iColCount] < XFA_LAYOUT_FLOAT_PERCISION)
+        if (m_rgSpecifiedColumnWidths[iColCount] < kXFALayoutPrecision)
           bAutoCol = true;
         if (bAutoCol &&
             m_rgSpecifiedColumnWidths[iColCount] < rgRowItemsWidth[i]) {
@@ -1948,7 +1946,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           ASSERT(m_pCurChildNode->IsContainerNode());
           if (m_pCurChildNode->GetElementType() == XFA_Element::Variables)
             break;
-          if (fContentCurRowY >= fHeightLimit + XFA_LAYOUT_FLOAT_PERCISION &&
+          if (fContentCurRowY >= fHeightLimit + kXFALayoutPrecision &&
               m_pCurChildNode->PresenceRequiresSpace()) {
             bForceEndPage = true;
             goto SuspendAndCreateNewRow;
@@ -2028,7 +2026,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
       GetFormNode(), bContainerWidthAutoSize, fContentCalculatedWidth,
       bContainerHeightAutoSize, fContentCalculatedHeight, containerSize);
 
-  if (containerSize.height >= XFA_LAYOUT_FLOAT_PERCISION || m_pLayoutItem ||
+  if (containerSize.height >= kXFALayoutPrecision || m_pLayoutItem ||
       bRetValue) {
     if (!m_pLayoutItem)
       m_pLayoutItem = CreateContentLayoutItem(GetFormNode());
@@ -2198,7 +2196,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutField() {
   if (m_pLayoutItem)
     return;
 
-  ASSERT(m_pCurChildNode == XFA_LAYOUT_INVALIDNODE);
+  ASSERT(!m_pCurChildNode);
   m_pLayoutItem = CreateContentLayoutItem(GetFormNode());
   if (!m_pLayoutItem)
     return;
@@ -2324,9 +2322,9 @@ void CXFA_ItemLayoutProcessor::AddTrailerBeforeSplit(
   float fHeight = pTrailerLayoutItem->m_sSize.height;
   if (bUseInherited) {
     float fNewSplitPos = 0;
-    if (fSplitPos - fHeight > XFA_LAYOUT_FLOAT_PERCISION)
+    if (fSplitPos - fHeight > kXFALayoutPrecision)
       fNewSplitPos = FindSplitPos(fSplitPos - fHeight);
-    if (fNewSplitPos > XFA_LAYOUT_FLOAT_PERCISION)
+    if (fNewSplitPos > kXFALayoutPrecision)
       SplitLayoutItem(fNewSplitPos);
     return;
   }
@@ -2362,10 +2360,10 @@ void CXFA_ItemLayoutProcessor::AddTrailerBeforeSplit(
   }
 
   float fNewSplitPos = 0;
-  if (fSplitPos - fHeight > XFA_LAYOUT_FLOAT_PERCISION)
+  if (fSplitPos - fHeight > kXFALayoutPrecision)
     fNewSplitPos = FindSplitPos(fSplitPos - fHeight);
 
-  if (fNewSplitPos > XFA_LAYOUT_FLOAT_PERCISION) {
+  if (fNewSplitPos > kXFALayoutPrecision) {
     SplitLayoutItem(fNewSplitPos);
     pTrailerLayoutItem->m_sPos.y = fNewSplitPos - fTopInset - fBottomInset;
   } else {
@@ -2554,15 +2552,13 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::InsertFlowedItem(
     return eRetValue;
 
   CFX_SizeF childSize = pProcessor->GetCurrentComponentSize();
-  if (bUseRealHeight && fRealHeight < XFA_LAYOUT_FLOAT_PERCISION) {
+  if (bUseRealHeight && fRealHeight < kXFALayoutPrecision) {
     fRealHeight = FLT_MAX;
     fAvailHeight = FLT_MAX;
   }
   if (bTakeSpace &&
-      (childSize.width >
-       *fContentCurRowAvailWidth + XFA_LAYOUT_FLOAT_PERCISION) &&
-      (fContentWidthLimit - *fContentCurRowAvailWidth >
-       XFA_LAYOUT_FLOAT_PERCISION)) {
+      (childSize.width > *fContentCurRowAvailWidth + kXFALayoutPrecision) &&
+      (fContentWidthLimit - *fContentCurRowAvailWidth > kXFALayoutPrecision)) {
     return XFA_ItemLayoutProcessorResult::RowFullBreak;
   }
 
@@ -2606,10 +2602,9 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::InsertFlowedItem(
 
   if (!bTakeSpace ||
       *fContentCurRowY + childSize.height <=
-          fAvailHeight + XFA_LAYOUT_FLOAT_PERCISION ||
+          fAvailHeight + kXFALayoutPrecision ||
       (!bContainerHeightAutoSize &&
-       m_fUsedSize + fAvailHeight + XFA_LAYOUT_FLOAT_PERCISION >=
-           fContainerHeight)) {
+       m_fUsedSize + fAvailHeight + kXFALayoutPrecision >= fContainerHeight)) {
     if (!bTakeSpace || eRetValue == XFA_ItemLayoutProcessorResult::Done) {
       if (pProcessor->m_bUseInheriated) {
         if (pTrailerLayoutItem)
@@ -2682,7 +2677,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::InsertFlowedItem(
 
   *bForceEndPage = true;
   float fSplitPos = pProcessor->FindSplitPos(fAvailHeight - *fContentCurRowY);
-  if (fSplitPos > XFA_LAYOUT_FLOAT_PERCISION) {
+  if (fSplitPos > kXFALayoutPrecision) {
     XFA_AttributeValue eLayout =
         pProcessor->GetFormNode()->JSObject()->GetEnum(XFA_Attribute::Layout);
     if (eLayout == XFA_AttributeValue::Tb &&
@@ -2745,7 +2740,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::InsertFlowedItem(
     return XFA_ItemLayoutProcessorResult::PageFullBreak;
   }
 
-  if (*fContentCurRowY <= XFA_LAYOUT_FLOAT_PERCISION) {
+  if (*fContentCurRowY <= kXFALayoutPrecision) {
     childSize = pProcessor->GetCurrentComponentSize();
     if (pProcessor->m_pPageMgr->GetNextAvailContentHeight(childSize.height)) {
       CXFA_Node* pTempLeaderNode = nullptr;

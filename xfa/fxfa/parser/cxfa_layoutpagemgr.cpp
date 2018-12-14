@@ -499,7 +499,7 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
                            ->JSObject()
                            ->GetMeasure(XFA_Attribute::H)
                            .ToUnit(XFA_Unit::Pt);
-  if (fAvailHeight >= XFA_LAYOUT_FLOAT_PERCISION)
+  if (fAvailHeight >= kXFALayoutPrecision)
     return fAvailHeight;
   if (m_CurrentContainerRecordIter == m_ProposedContainerRecords.begin())
     return 0.0f;
@@ -701,11 +701,11 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
               continue;
             }
             iCurContentAreaIndex++;
-            if (rgUsedHeights[iCurContentAreaIndex] >
-                pContentAreaNode->JSObject()
-                        ->GetMeasure(XFA_Attribute::H)
-                        .ToUnit(XFA_Unit::Pt) +
-                    XFA_LAYOUT_FLOAT_PERCISION) {
+            const float fHeight = pContentAreaNode->JSObject()
+                                      ->GetMeasure(XFA_Attribute::H)
+                                      .ToUnit(XFA_Unit::Pt) +
+                                  kXFALayoutPrecision;
+            if (rgUsedHeights[iCurContentAreaIndex] > fHeight) {
               bUsable = false;
               break;
             }
@@ -1605,7 +1605,7 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(float fChildHeight) {
   float fNextContentHeight = pContentArea->JSObject()
                                  ->GetMeasure(XFA_Attribute::H)
                                  .ToUnit(XFA_Unit::Pt);
-  if (fNextContentHeight < XFA_LAYOUT_FLOAT_PERCISION)
+  if (fNextContentHeight < kXFALayoutPrecision)
     return true;
   if (fNextContentHeight > fChildHeight)
     return true;

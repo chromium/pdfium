@@ -424,7 +424,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
                const std::unique_ptr<CXFA_TabParam>& arg2) {
               const CFX_RectF& rt1 = arg1->GetWidget()->GetWidgetRect();
               const CFX_RectF& rt2 = arg2->GetWidget()->GetWidgetRect();
-              if (rt1.top - rt2.top >= XFA_FLOAT_PERCISION)
+              if (rt1.top - rt2.top >= kXFAWidgetPrecision)
                 return rt1.top < rt2.top;
               return rt1.left < rt2.left;
             });

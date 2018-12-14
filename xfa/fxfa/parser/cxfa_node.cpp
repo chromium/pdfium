@@ -3511,7 +3511,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     if (*pCalcHeight != 0) {
       if (iBlockIndex == 0)
         *pCalcHeight += fTopInset;
-      if (fabs(fHeight - *pCalcHeight) < XFA_FLOAT_PERCISION)
+      if (fabs(fHeight - *pCalcHeight) < kXFAWidgetPrecision)
         return false;
     }
     return true;
@@ -3632,7 +3632,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
       *pCalcHeight = 0;
       return true;
     }
-    if (fStartOffset + XFA_FLOAT_PERCISION >= *pCalcHeight) {
+    if (fStartOffset + kXFAWidgetPrecision >= *pCalcHeight) {
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
         (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
         (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
@@ -3654,7 +3654,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
       return true;
     }
     float fTextNum =
-        *pCalcHeight + XFA_FLOAT_PERCISION - fCapReserve - fStartOffset;
+        *pCalcHeight + kXFAWidgetPrecision - fCapReserve - fStartOffset;
     int32_t iLineNum =
         (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
     if (iLineNum >= iLinesCount) {
@@ -3687,7 +3687,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
         pFieldArray->push_back(iLineNum);
         pFieldArray->push_back(fSplitHeight);
       }
-      if (fabs(fSplitHeight - *pCalcHeight) < XFA_FLOAT_PERCISION)
+      if (fabs(fSplitHeight - *pCalcHeight) < kXFAWidgetPrecision)
         return false;
 
       *pCalcHeight = fSplitHeight;

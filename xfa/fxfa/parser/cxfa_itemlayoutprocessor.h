@@ -16,8 +16,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-#define XFA_LAYOUT_INVALIDNODE nullptr
-#define XFA_LAYOUT_FLOAT_PERCISION (0.0005f)
+constexpr float kXFALayoutPrecision = 0.0005f;
 
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
@@ -164,7 +163,7 @@ class CXFA_ItemLayoutProcessor {
 
   CXFA_Node* m_pFormNode;
   CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
-  CXFA_Node* m_pCurChildNode = XFA_LAYOUT_INVALIDNODE;
+  CXFA_Node* m_pCurChildNode = nullptr;
   float m_fUsedSize = 0;
   CXFA_LayoutPageMgr* m_pPageMgr;
   std::list<CXFA_Node*> m_PendingNodes;

@@ -32,7 +32,7 @@ inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
   return fPx * 72.0f / fDpi;
 }
 
-#define XFA_FLOAT_PERCISION 0.001f
+constexpr float kXFAWidgetPrecision = 0.001f;
 
 void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
