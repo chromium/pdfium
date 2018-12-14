@@ -351,7 +351,8 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
     if (currentChar > kMaxUnicode)
       break;
 
-    widths[glyphIndex] = pFont->GetGlyphWidth(glyphIndex);
+    if (!pdfium::ContainsKey(widths, glyphIndex))
+      widths[glyphIndex] = pFont->GetGlyphWidth(glyphIndex);
     to_unicode[glyphIndex] = currentChar;
     currentChar =
         FXFT_Get_Next_Char(pFont->GetFace(), currentChar, &glyphIndex);
