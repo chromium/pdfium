@@ -124,12 +124,12 @@ class CXFA_ItemLayoutProcessor {
                              CXFA_Node* pParentContainer,
                              bool bUsePageBreak);
 
-  bool ProcessKeepNodesForCheckNext(CXFA_Node*& pCurActionNode,
+  bool ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
                                     XFA_ItemLayoutProcessorStages* nCurStage,
-                                    CXFA_Node*& pNextContainer,
-                                    bool& bLastKeepNode);
+                                    CXFA_Node** pNextContainer,
+                                    bool* pLastKeepNode);
 
-  bool ProcessKeepNodesForBreakBefore(CXFA_Node*& pCurActionNode,
+  bool ProcessKeepNodesForBreakBefore(CXFA_Node** pCurActionNode,
                                       XFA_ItemLayoutProcessorStages* nCurStage,
                                       CXFA_Node* pContainerNode);
 

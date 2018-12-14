@@ -901,7 +901,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
               return;
             }
             if (m_bIsProcessKeep) {
-              if (ProcessKeepNodesForBreakBefore(pCurActionNode, nCurStage,
+              if (ProcessKeepNodesForBreakBefore(&pCurActionNode, nCurStage,
                                                  pChildContainer)) {
                 return;
               }
@@ -951,8 +951,8 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
         goto NoMoreChildContainer;
 
       bool bLastKeep = false;
-      if (ProcessKeepNodesForCheckNext(pCurActionNode, nCurStage,
-                                       pNextChildContainer, bLastKeep)) {
+      if (ProcessKeepNodesForCheckNext(&pCurActionNode, nCurStage,
+                                       &pNextChildContainer, &bLastKeep)) {
         return;
       }
       if (!m_bKeepBreakFinish && !bLastKeep &&
@@ -995,52 +995,49 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
 }
 
 bool CXFA_ItemLayoutProcessor::ProcessKeepNodesForCheckNext(
-    CXFA_Node*& pCurActionNode,
+    CXFA_Node** pCurActionNode,
     XFA_ItemLayoutProcessorStages* nCurStage,
-    CXFA_Node*& pNextContainer,
-    bool& bLastKeepNode) {
+    CXFA_Node** pNextContainer,
+    bool* pLastKeepNode) {
   const bool bCanSplit =
-      pNextContainer->GetIntact() == XFA_AttributeValue::None;
-  bool bNextKeep = false;
-  if (ExistContainerKeep(pNextContainer, false))
-    bNextKeep = true;
+      (*pNextContainer)->GetIntact() == XFA_AttributeValue::None;
+  const bool bNextKeep = ExistContainerKeep(*pNextContainer, false);
 
   if (bNextKeep && !bCanSplit) {
     if (!m_bIsProcessKeep && !m_bKeepBreakFinish) {
-      m_pKeepHeadNode = pNextContainer;
+      m_pKeepHeadNode = *pNextContainer;
       m_bIsProcessKeep = true;
     }
     return false;
   }
 
-  if (m_bIsProcessKeep && m_pKeepHeadNode) {
-    m_pKeepTailNode = pNextContainer;
-    if (!m_bKeepBreakFinish &&
-        FindBreakNode(pNextContainer->GetFirstChild(), true, &pCurActionNode,
-                      nCurStage)) {
-      return true;
-    }
+  if (!m_bIsProcessKeep || !m_pKeepHeadNode) {
+    if (m_bKeepBreakFinish)
+      *pLastKeepNode = true;
+    m_bKeepBreakFinish = false;
+    return false;
+  }
 
-    pNextContainer = m_pKeepHeadNode;
+  m_pKeepTailNode = *pNextContainer;
+  if (m_bKeepBreakFinish || !FindBreakNode((*pNextContainer)->GetFirstChild(),
+                                           true, pCurActionNode, nCurStage)) {
+    *pNextContainer = m_pKeepHeadNode;
     m_bKeepBreakFinish = true;
     m_pKeepHeadNode = nullptr;
     m_pKeepTailNode = nullptr;
     m_bIsProcessKeep = false;
-  } else {
-    if (m_bKeepBreakFinish)
-      bLastKeepNode = true;
-    m_bKeepBreakFinish = false;
+    return false;
   }
 
-  return false;
+  return true;
 }
 
 bool CXFA_ItemLayoutProcessor::ProcessKeepNodesForBreakBefore(
-    CXFA_Node*& pCurActionNode,
+    CXFA_Node** pCurActionNode,
     XFA_ItemLayoutProcessorStages* nCurStage,
     CXFA_Node* pContainerNode) {
   if (m_pKeepTailNode == pContainerNode) {
-    pCurActionNode = m_pKeepHeadNode;
+    *pCurActionNode = m_pKeepHeadNode;
     m_bKeepBreakFinish = true;
     m_pKeepHeadNode = nullptr;
     m_pKeepTailNode = nullptr;
@@ -1050,7 +1047,7 @@ bool CXFA_ItemLayoutProcessor::ProcessKeepNodesForBreakBefore(
   }
 
   CXFA_Node* pBreakAfterNode = pContainerNode->GetFirstChild();
-  return FindBreakNode(pBreakAfterNode, false, &pCurActionNode, nCurStage);
+  return FindBreakNode(pBreakAfterNode, false, pCurActionNode, nCurStage);
 }
 
 void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
