@@ -22,6 +22,9 @@ namespace fxcrt {
 // An immutable string with caller-provided storage which must outlive the
 // string itself. These are not necessarily nul-terminated, so that substring
 // extraction (via the Mid(), Left(), and Right() methods) is copy-free.
+//
+// String view arguments should be passed by value, since they are small,
+// rather than const-ref, even if they are not modified.
 template <typename T>
 class StringViewTemplate {
  public:
