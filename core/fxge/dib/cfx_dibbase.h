@@ -94,7 +94,7 @@ class CFX_DIBBase : public Retainable {
   bool SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
                     const FX_RECT* pClip);
 
-  void GetOverlapRect(int& dest_left,
+  bool GetOverlapRect(int& dest_left,
                       int& dest_top,
                       int& width,
                       int& height,

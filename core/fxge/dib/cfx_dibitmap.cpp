@@ -190,10 +190,11 @@ bool CFX_DIBitmap::TransferBitmap(int dest_left,
   if (!m_pBuffer)
     return false;
 
-  GetOverlapRect(dest_left, dest_top, width, height, pSrcBitmap->GetWidth(),
-                 pSrcBitmap->GetHeight(), src_left, src_top, nullptr);
-  if (width == 0 || height == 0)
+  if (!GetOverlapRect(dest_left, dest_top, width, height,
+                      pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(), src_left,
+                      src_top, nullptr)) {
     return true;
+  }
 
   FXDIB_Format dest_format = GetFormat();
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
@@ -875,11 +876,12 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   if (pSrcBitmap->IsAlphaMask() || m_bpp < 8) {
     return false;
   }
-  GetOverlapRect(dest_left, dest_top, width, height, pSrcBitmap->GetWidth(),
-                 pSrcBitmap->GetHeight(), src_left, src_top, pClipRgn);
-  if (width == 0 || height == 0) {
+  if (!GetOverlapRect(dest_left, dest_top, width, height,
+                      pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(), src_left,
+                      src_top, pClipRgn)) {
     return true;
   }
+
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
   if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::RectI) {
@@ -948,10 +950,10 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   if (!pMask->IsAlphaMask() || m_bpp < 8)
     return false;
 
-  GetOverlapRect(dest_left, dest_top, width, height, pMask->GetWidth(),
-                 pMask->GetHeight(), src_left, src_top, pClipRgn);
-  if (width == 0 || height == 0)
+  if (!GetOverlapRect(dest_left, dest_top, width, height, pMask->GetWidth(),
+                      pMask->GetHeight(), src_left, src_top, pClipRgn)) {
     return true;
+  }
 
   int src_alpha =
       (uint8_t)(alpha_flag >> 8) ? (alpha_flag & 0xff) : FXARGB_A(color);

@@ -854,7 +854,7 @@ int CFX_DIBBase::FindPalette(uint32_t color) const {
   return -1;
 }
 
-void CFX_DIBBase::GetOverlapRect(int& dest_left,
+bool CFX_DIBBase::GetOverlapRect(int& dest_left,
                                  int& dest_top,
                                  int& width,
                                  int& height,
@@ -864,7 +864,7 @@ void CFX_DIBBase::GetOverlapRect(int& dest_left,
                                  int& src_top,
                                  const CFX_ClipRgn* pClipRgn) {
   if (width == 0 || height == 0)
-    return;
+    return false;
 
   ASSERT(width > 0);
   ASSERT(height > 0);
@@ -872,7 +872,7 @@ void CFX_DIBBase::GetOverlapRect(int& dest_left,
   if (dest_left > m_Width || dest_top > m_Height) {
     width = 0;
     height = 0;
-    return;
+    return false;
   }
   int x_offset = dest_left - src_left;
   int y_offset = dest_top - src_top;
@@ -891,6 +891,7 @@ void CFX_DIBBase::GetOverlapRect(int& dest_left,
   src_top = dest_top - y_offset;
   width = dest_rect.right - dest_rect.left;
   height = dest_rect.bottom - dest_rect.top;
+  return width != 0 && height != 0;
 }
 
 void CFX_DIBBase::SetPalette(const uint32_t* pSrc) {
