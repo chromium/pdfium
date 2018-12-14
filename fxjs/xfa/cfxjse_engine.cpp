@@ -194,7 +194,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
   }
   if (lpOrginalNode->IsThisProxy()) {
     if (pValue && pValue->IsUndefined()) {
-      pObject->SetObjectOwnProperty(szPropName, pValue);
+      pObject->DeleteObjectProperty(szPropName);
       return;
     }
   }
