@@ -14,6 +14,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"
+#include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -22,7 +23,6 @@
 #include "fpdfsdk/pwl/cpwl_caret.h"
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
-#include "fpdfsdk/pwl/cpwl_font_map.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"

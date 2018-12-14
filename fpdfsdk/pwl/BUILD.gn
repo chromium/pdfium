@@ -22,8 +22,6 @@ jumbo_source_set("pwl") {
     "cpwl_edit_ctrl.h",
     "cpwl_edit_impl.cpp",
     "cpwl_edit_impl.h",
-    "cpwl_font_map.cpp",
-    "cpwl_font_map.h",
     "cpwl_icon.cpp",
     "cpwl_icon.h",
     "cpwl_list_box.cpp",
@@ -44,7 +42,6 @@ jumbo_source_set("pwl") {
   configs += [ "../../:pdfium_core_config" ]
   deps = [
     "../../:pdfium_public_headers",
-    "../../core/fpdfapi",
     "../../core/fpdfapi/font",
     "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",

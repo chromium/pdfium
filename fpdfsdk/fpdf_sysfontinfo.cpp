@@ -16,7 +16,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/pwl/cpwl_font_map.h"
 #include "third_party/base/ptr_util.h"
 
 static_assert(FXFONT_ANSI_CHARSET == FX_CHARSET_ANSI, "Charset must match");

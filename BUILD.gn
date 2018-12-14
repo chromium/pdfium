@@ -171,7 +171,6 @@ jumbo_static_library("pdfium") {
     "core/fxge",
     "fpdfsdk",
     "fpdfsdk/formfiller",
-    "fpdfsdk/pwl",
     "fxjs",
     "third_party:pdfium_base",
     "third_party:skia_shared",

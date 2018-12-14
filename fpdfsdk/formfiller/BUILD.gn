@@ -33,6 +33,7 @@ jumbo_source_set("formfiller") {
   configs += [ "../../:pdfium_core_config" ]
   deps = [
     "../../:pdfium_public_headers",
+    "../../core/fpdfapi",
     "../../core/fpdfapi/font",
     "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",

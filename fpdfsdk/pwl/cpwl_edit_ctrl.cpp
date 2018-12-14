@@ -12,7 +12,6 @@
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/pwl/cpwl_caret.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
-#include "fpdfsdk/pwl/cpwl_font_map.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
