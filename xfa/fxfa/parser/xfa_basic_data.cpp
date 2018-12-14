@@ -153,6 +153,23 @@
 
 namespace {
 
+struct PacketRecord {
+  uint32_t hash;
+  const wchar_t* name;
+  XFA_PacketType packet_type;
+  const wchar_t* uri;
+  uint32_t flags;
+};
+
+const PacketRecord g_PacketTable[] = {
+#undef PCKT____
+#define PCKT____(a, b, c, d, e, f) \
+  {a, L##b, XFA_PacketType::c, d,  \
+   XFA_XDPPACKET_FLAGS_##e | XFA_XDPPACKET_FLAGS_##f},
+#include "xfa/fxfa/parser/packets.inc"
+#undef PCKT____
+};
+
 struct ElementRecord {
   uint32_t hash;  // Hashed as wide string.
   XFA_Element element;
@@ -210,6 +227,21 @@ const ElementAttributeRecord g_ElementAttributeTable[] = {
 };
 
 }  // namespace
+
+XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket) {
+  const PacketRecord* pRecord = &g_PacketTable[static_cast<uint8_t>(ePacket)];
+  return {pRecord->name, pRecord->packet_type, pRecord->uri, pRecord->flags};
+}
+
+Optional<XFA_PACKETINFO> XFA_GetPacketByName(const WideStringView& wsName) {
+  uint32_t hash = FX_HashCode_GetW(wsName, false);
+  auto* elem = std::lower_bound(
+      std::begin(g_PacketTable), std::end(g_PacketTable), hash,
+      [](const PacketRecord& a, uint32_t hash) { return a.hash < hash; });
+  if (elem != std::end(g_PacketTable) && elem->name == wsName)
+    return XFA_GetPacketByIndex(elem->packet_type);
+  return {};
+}
 
 ByteStringView XFA_ElementToName(XFA_Element elem) {
   return g_ElementTable[static_cast<size_t>(elem)].name;

@@ -8,6 +8,30 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+TEST(XFABasicDataTest, GetPacketByName) {
+  Optional<XFA_PACKETINFO> result = XFA_GetPacketByName(L"");
+  EXPECT_FALSE(result.has_value());
+
+  result = XFA_GetPacketByName(L"nonesuch");
+  EXPECT_FALSE(result.has_value());
+
+  result = XFA_GetPacketByName(L"datasets");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_PacketType::Datasets, result.value().packet_type);
+
+  result = XFA_GetPacketByName(L"sourceSet");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(XFA_PacketType::SourceSet, result.value().packet_type);
+}
+
+TEST(XFABasicDataTest, PacketToName) {
+  XFA_PACKETINFO result = XFA_GetPacketByIndex(XFA_PacketType::Datasets);
+  EXPECT_STREQ(L"datasets", result.name);
+
+  result = XFA_GetPacketByIndex(XFA_PacketType::ConnectionSet);
+  EXPECT_STREQ(L"connectionSet", result.name);
+}
+
 TEST(XFABasicDataTest, GetElementByName) {
   EXPECT_EQ(XFA_Element::Unknown, XFA_GetElementByName(L""));
   EXPECT_EQ(XFA_Element::Unknown, XFA_GetElementByName(L"nonesuch"));
@@ -46,7 +70,7 @@ TEST(XFABasicDataTest, GetAttributeByName) {
   EXPECT_EQ(XFA_Attribute::DecipherOnly, result.value().attribute);
 }
 
-TEST(XFABasicDataTest, AttributeToNamee) {
+TEST(XFABasicDataTest, AttributeToName) {
   EXPECT_EQ("spaceBelow", XFA_AttributeToName(XFA_Attribute::SpaceBelow));
   EXPECT_EQ("decipherOnly", XFA_AttributeToName(XFA_Attribute::DecipherOnly));
 }
