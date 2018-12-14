@@ -744,8 +744,9 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
   pRuntime->PutObjectProperty(pObj, L"Trapped",
                               pRuntime->NewString(cwTrapped.AsStringView()));
 
-  // It's to be compatible to non-standard info dictionary.
-  for (const auto& it : *pDictionary) {
+  // PutObjectProperty() calls below may re-enter JS and change info dict.
+  auto pCopy = pDictionary->Clone();
+  for (const auto& it : *ToDictionary(pCopy.get())) {
     const ByteString& bsKey = it.first;
     CPDF_Object* pValueObj = it.second.get();
     WideString wsKey = WideString::FromUTF8(bsKey.AsStringView());
