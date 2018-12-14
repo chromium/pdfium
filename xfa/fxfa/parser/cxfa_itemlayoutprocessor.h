@@ -119,7 +119,7 @@ class CXFA_ItemLayoutProcessor {
   void DoLayoutField();
 
   void GotoNextContainerNodeSimple(bool bUsePageBreak);
-  void GotoNextContainerNode(CXFA_Node*& pCurActionNode,
+  void GotoNextContainerNode(CXFA_Node** pCurActionNode,
                              XFA_ItemLayoutProcessorStages* nCurStage,
                              CXFA_Node* pParentContainer,
                              bool bUsePageBreak);
