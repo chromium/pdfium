@@ -320,7 +320,7 @@ bool CXFA_NodeHelper::CreateNode(WideString wsName,
     CreateNodeForCondition(wsCondition);
   }
   if (bIsClassName) {
-    XFA_Element eType = XFA_GetElementByName(wsName);
+    XFA_Element eType = XFA_GetElementByName(wsName.AsStringView());
     if (eType == XFA_Element::Unknown)
       return false;
 

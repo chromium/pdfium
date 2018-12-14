@@ -247,8 +247,8 @@ ByteStringView XFA_ElementToName(XFA_Element elem) {
   return g_ElementTable[static_cast<size_t>(elem)].name;
 }
 
-XFA_Element XFA_GetElementByName(const WideString& name) {
-  uint32_t hash = FX_HashCode_GetW(name.AsStringView(), false);
+XFA_Element XFA_GetElementByName(WideStringView name) {
+  uint32_t hash = FX_HashCode_GetW(name, false);
   auto* elem = std::lower_bound(
       std::begin(g_ElementTable), std::end(g_ElementTable), hash,
       [](const ElementRecord& a, uint32_t hash) { return a.hash < hash; });

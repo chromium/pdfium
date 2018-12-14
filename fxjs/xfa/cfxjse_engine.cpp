@@ -368,8 +368,9 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
   CXFA_Object* pObject =
       lpScriptContext->GetVariablesThis(pOriginalObject, false);
   WideString wsPropName = WideString::FromUTF8(szPropName);
-  Optional<XFA_SCRIPTATTRIBUTEINFO> info = XFA_GetScriptAttributeByName(
-      pObject->GetElementType(), wsPropName.AsStringView());
+  WideStringView wsPropNameView = wsPropName.AsStringView();
+  Optional<XFA_SCRIPTATTRIBUTEINFO> info =
+      XFA_GetScriptAttributeByName(pObject->GetElementType(), wsPropNameView);
   if (info.has_value()) {
     CJX_Object* jsObject = pObject->JSObject();
     (jsObject->*(info.value().callback))(pReturnValue, true,
@@ -378,17 +379,17 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
   }
 
   if (pObject->IsNode()) {
-    if (wsPropName[0] == '#')
-      wsPropName = wsPropName.Right(wsPropName.GetLength() - 1);
+    if (wsPropNameView[0] == '#')
+      wsPropNameView = wsPropNameView.Right(wsPropNameView.GetLength() - 1);
 
     CXFA_Node* pNode = ToNode(pObject);
     CXFA_Node* pPropOrChild = nullptr;
-    XFA_Element eType = XFA_GetElementByName(wsPropName);
+    XFA_Element eType = XFA_GetElementByName(wsPropNameView);
     if (eType != XFA_Element::Unknown) {
       pPropOrChild =
           pNode->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eType);
     } else {
-      pPropOrChild = pNode->GetFirstChildByName(wsPropName.AsStringView());
+      pPropOrChild = pNode->GetFirstChildByName(wsPropNameView);
     }
 
     if (pPropOrChild) {
@@ -678,13 +679,12 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
           pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject);
           pNodeHelper->m_iCreateCount = 1;
         }
-        bool bCreate = pNodeHelper->CreateNode(
-            rndFind.m_wsName, rndFind.m_wsCondition,
-            nStart ==
-                pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
-            this);
-        if (bCreate)
+        int32_t checked_length =
+            pdfium::base::checked_cast<int32_t>(wsExpression.GetLength());
+        if (pNodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
+                                    nStart == checked_length, this)) {
           continue;
+        }
       }
       break;
     }

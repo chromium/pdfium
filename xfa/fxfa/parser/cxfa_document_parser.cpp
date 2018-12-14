@@ -695,7 +695,7 @@ CXFA_Node* CXFA_DocumentParser::NormalLoader(CXFA_Node* pXFANode,
       case FX_XMLNODE_Element: {
         CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
         WideString wsTagName = pXMLElement->GetLocalTagName();
-        XFA_Element eType = XFA_GetElementByName(wsTagName);
+        XFA_Element eType = XFA_GetElementByName(wsTagName.AsStringView());
         if (eType == XFA_Element::Unknown)
           continue;
 

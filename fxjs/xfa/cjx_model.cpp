@@ -47,7 +47,7 @@ CJS_Result CJX_Model::createNode(
     nameSpace = runtime->ToWideString(params[2]);
 
   WideString tagName = runtime->ToWideString(params[0]);
-  XFA_Element eType = XFA_GetElementByName(tagName);
+  XFA_Element eType = XFA_GetElementByName(tagName.AsStringView());
   CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
   if (!pNewNode)
     return CJS_Result::Success(runtime->NewNull());

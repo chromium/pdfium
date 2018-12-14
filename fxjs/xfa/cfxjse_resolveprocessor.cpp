@@ -348,7 +348,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
             0, XFA_Element::Occur);
       }
     } else {
-      XFA_Element eType = XFA_GetElementByName(wsName);
+      XFA_Element eType = XFA_GetElementByName(wsName.AsStringView());
       if (eType == XFA_Element::PageSet) {
         pProp = curNode->AsNode()->JSObject()->GetProperty<CXFA_Node>(0, eType);
       } else if (eType != XFA_Element::Unknown) {
