@@ -22,27 +22,13 @@ jumbo_source_set("fgas") {
     "font/cfgas_pdffontmgr.h",
     "font/fgas_fontutils.cpp",
     "font/fgas_fontutils.h",
-    "layout/cfx_break.cpp",
-    "layout/cfx_break.h",
-    "layout/cfx_breakline.cpp",
-    "layout/cfx_breakline.h",
-    "layout/cfx_breakpiece.cpp",
-    "layout/cfx_breakpiece.h",
-    "layout/cfx_linebreak.cpp",
-    "layout/cfx_linebreak.h",
-    "layout/cfx_rtfbreak.cpp",
-    "layout/cfx_rtfbreak.h",
-    "layout/cfx_txtbreak.cpp",
-    "layout/cfx_txtbreak.h",
   ]
   deps = [
     "../../core/fpdfapi/font",
     "../../core/fpdfapi/parser",
     "../../core/fxcrt",
     "../../core/fxge",
-    "../fde",
   ]
-  allow_circular_includes_from = [ "../fde" ]
   configs += [
     "../../:pdfium_core_config",
     "../:xfa_warnings",
@@ -60,13 +46,10 @@ jumbo_source_set("fgas") {
 pdfium_unittest_source_set("unittests") {
   sources = [
     "crt/cfgas_formatstring_unittest.cpp",
-    "layout/cfx_rtfbreak_unittest.cpp",
-    "layout/cfx_txtbreak_unittest.cpp",
   ]
   deps = [
     ":fgas",
     "../../core/fpdfapi",
-    "../../core/fxge",
     "../fxfa/parser",
   ]
   pdfium_root_dir = "../../"

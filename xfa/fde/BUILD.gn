@@ -21,6 +21,7 @@ jumbo_source_set("fde") {
   deps = [
     "../../core/fxcrt",
     "../../core/fxge",
+    "../fgas",
   ]
   configs += [
     "../../:pdfium_core_config",

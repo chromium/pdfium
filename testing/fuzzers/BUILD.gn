@@ -142,6 +142,7 @@ if (pdf_enable_v8) {
       ]
       deps = [
         "../../xfa/fgas",
+        "../../xfa/fgas/layout",
       ]
     }
 

@@ -279,6 +279,7 @@ test("pdfium_unittests") {
       "xfa/fde:unittests",
       "xfa/fgas",
       "xfa/fgas:unittests",
+      "xfa/fgas/layout:unittests",
       "xfa/fwl:unittests",
       "xfa/fxfa:unittests",
       "xfa/fxfa/fm2js:unittests",
