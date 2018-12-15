@@ -63,8 +63,8 @@ class CFX_TxtBreak final : public CFX_Break {
   void SetCombWidth(float fCombWidth);
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
 
-  int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
-                        FXTEXT_CHARPOS* pCharPos) const;
+  size_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
+                       FXTEXT_CHARPOS* pCharPos) const;
   std::vector<CFX_RectF> GetCharRects(const FX_TXTRUN* pTxtRun,
                                       bool bCharBBox) const;
   CFX_BreakType AppendChar(wchar_t wch);
@@ -82,7 +82,7 @@ class CFX_TxtBreak final : public CFX_Break {
   void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                           bool bAllChars,
                           CFX_BreakType dwStatus);
-  int32_t GetBreakPos(std::vector<CFX_Char>& ca,
+  int32_t GetBreakPos(std::vector<CFX_Char>* pChars,
                       bool bAllChars,
                       bool bOnlyBrk,
                       int32_t* pEndPos);

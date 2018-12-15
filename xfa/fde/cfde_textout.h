@@ -38,7 +38,7 @@ class CFDE_TextOut {
                          FX_ARGB color,
                          const RetainPtr<CFGAS_GEFont>& pFont,
                          FXTEXT_CHARPOS* pCharPos,
-                         int32_t iCount,
+                         size_t szCount,
                          float fFontSize,
                          const CFX_Matrix* pMatrix);
 
@@ -95,7 +95,7 @@ class CFDE_TextOut {
                       int32_t* pPieceWidths);
   void AppendPiece(const FDE_TTOPIECE& ttoPiece, bool bNeedReload, bool bEnd);
   void DoAlignment(const CFX_RectF& rect);
-  int32_t GetDisplayPos(FDE_TTOPIECE* pPiece);
+  size_t GetDisplayPos(FDE_TTOPIECE* pPiece);
 
   std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
   RetainPtr<CFGAS_GEFont> m_pFont;

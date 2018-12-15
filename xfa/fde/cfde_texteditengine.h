@@ -171,8 +171,6 @@ class CFDE_TextEditEngine {
   std::vector<CFX_RectF> GetCharacterRectsInRange(int32_t start_idx,
                                                   int32_t count);
 
-  CFX_TxtBreak* GetTextBreak() { return &text_break_; }
-
   const std::vector<FDE_TEXTEDITPIECE>& GetTextPieces() {
     // Force a layout if needed.
     Layout();

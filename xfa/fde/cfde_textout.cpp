@@ -37,17 +37,17 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               FX_ARGB color,
                               const RetainPtr<CFGAS_GEFont>& pFont,
                               FXTEXT_CHARPOS* pCharPos,
-                              int32_t iCount,
+                              size_t szCount,
                               float fFontSize,
                               const CFX_Matrix* pMatrix) {
   ASSERT(pFont);
   ASSERT(pCharPos);
-  ASSERT(iCount > 0);
+  ASSERT(szCount > 0);
 
   CFX_Font* pFxFont = pFont->GetDevFont();
   if (FontStyleIsItalic(pFont->GetFontStyles()) && !pFxFont->IsItalic()) {
     FXTEXT_CHARPOS* pCharPosIter = pCharPos;
-    for (int32_t i = 0; i < iCount; ++i) {
+    for (size_t i = 0; i < szCount; ++i) {
       static const float mc = 0.267949f;
       float* pAM = pCharPosIter->m_AdjustMatrix;
       pAM[2] = mc * pAM[0] + pAM[2];
@@ -71,7 +71,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   FXTEXT_CHARPOS* pCurCP = nullptr;
   int32_t iCurCount = 0;
   FXTEXT_CHARPOS* pCharPosIter = pCharPos;
-  for (int32_t i = 0; i < iCount; ++i) {
+  for (size_t i = 0; i < szCount; ++i) {
     RetainPtr<CFGAS_GEFont> pSTFont =
         pFont->GetSubstFont(static_cast<int32_t>(pCharPosIter->m_GlyphIndex));
     pCharPosIter->m_GlyphIndex &= 0x00FFFFFF;
@@ -318,10 +318,10 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
       if (!pPiece)
         continue;
 
-      int32_t iCount = GetDisplayPos(pPiece);
-      if (iCount > 0) {
+      size_t szCount = GetDisplayPos(pPiece);
+      if (szCount > 0) {
         CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont, m_CharPos.data(),
-                                 iCount, m_fFontSize, &m_Matrix);
+                                 szCount, m_fFontSize, &m_Matrix);
       }
     }
   }
@@ -518,7 +518,7 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   }
 }
 
-int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
+size_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
   ASSERT(pPiece->iChars >= 0);
 
   if (pdfium::CollectionSize<int32_t>(m_CharPos) < pPiece->iChars)

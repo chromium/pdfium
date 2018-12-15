@@ -1134,12 +1134,12 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
                                    FXTEXT_CHARPOS* pCharPos,
                                    const CFX_Matrix& tmDoc2Device) {
   const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
-  int32_t iCount = GetDisplayPos(pPiece, pCharPos);
-  if (iCount > 0) {
+  size_t szCount = GetDisplayPos(pPiece, pCharPos);
+  if (szCount > 0) {
     CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont, pCharPos,
-                             iCount, pPiece->fFontSize, &tmDoc2Device);
+                             szCount, pPiece->fFontSize, &tmDoc2Device);
   }
-  pPieceLine->m_charCounts.push_back(iCount);
+  pPieceLine->m_charCounts.push_back(szCount);
 }
 
 void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
@@ -1154,13 +1154,14 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
     return;
 
   CFX_PathData path;
-  int32_t iChars = GetDisplayPos(pPiece, pCharPos);
-  if (iChars > 0) {
-    CFX_PointF pt1, pt2;
+  size_t szChars = GetDisplayPos(pPiece, pCharPos);
+  if (szChars > 0) {
+    CFX_PointF pt1;
+    CFX_PointF pt2;
     float fEndY = pCharPos[0].m_Origin.y + 1.05f;
     if (pPiece->iPeriod == XFA_AttributeValue::Word) {
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
-        for (int32_t j = 0; j < iChars; j++) {
+        for (size_t j = 0; j < szChars; j++) {
           pt1.x = pCharPos[j].m_Origin.x;
           pt2.x =
               pt1.x + pCharPos[j].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
@@ -1172,8 +1173,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
     } else {
       pt1.x = pCharPos[0].m_Origin.x;
       pt2.x =
-          pCharPos[iChars - 1].m_Origin.x +
-          pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+          pCharPos[szChars - 1].m_Origin.x +
+          pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         pt1.y = pt2.y = fEndY;
         path.AppendLine(pt1, pt2);
@@ -1182,8 +1183,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
     }
     fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
     pt1.x = pCharPos[0].m_Origin.x;
-    pt2.x = pCharPos[iChars - 1].m_Origin.x +
-            pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+    pt2.x = pCharPos[szChars - 1].m_Origin.x +
+            pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
       path.AppendLine(pt1, pt2);
@@ -1194,41 +1195,43 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
         (bNoUnderline || pPiece->iPeriod != XFA_AttributeValue::All)) {
       return;
     }
-    int32_t iCharsTmp = 0;
+    bool bHasCount = false;
     int32_t iPiecePrev = iPiece;
     int32_t iPieceNext = iPiece;
     while (iPiecePrev > 0) {
       iPiecePrev--;
-      iCharsTmp = pPieceLine->m_charCounts[iPiecePrev];
-      if (iCharsTmp > 0)
+      if (pPieceLine->m_charCounts[iPiecePrev] > 0) {
+        bHasCount = true;
         break;
+      }
     }
-    if (iCharsTmp == 0)
+    if (!bHasCount)
       return;
 
-    iCharsTmp = 0;
+    bHasCount = false;
     int32_t iPieces = pdfium::CollectionSize<int32_t>(pPieceLine->m_textPieces);
     while (iPieceNext < iPieces - 1) {
       iPieceNext++;
-      iCharsTmp = pPieceLine->m_charCounts[iPieceNext];
-      if (iCharsTmp > 0)
+      if (pPieceLine->m_charCounts[iPieceNext] > 0) {
+        bHasCount = true;
         break;
+      }
     }
-    if (iCharsTmp == 0)
+    if (!bHasCount)
       return;
 
     float fOrgX = 0.0f;
     float fEndX = 0.0f;
     pPiece = pPieceLine->m_textPieces[iPiecePrev].get();
-    iChars = GetDisplayPos(pPiece, pCharPos);
-    if (iChars < 1)
+    szChars = GetDisplayPos(pPiece, pCharPos);
+    if (szChars < 1)
       return;
 
-    fOrgX = pCharPos[iChars - 1].m_Origin.x +
-            pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+    fOrgX = pCharPos[szChars - 1].m_Origin.x +
+            pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     pPiece = pPieceLine->m_textPieces[iPieceNext].get();
-    iChars = GetDisplayPos(pPiece, pCharPos);
-    if (iChars < 1)
+    szChars = GetDisplayPos(pPiece, pCharPos);
+    if (szChars < 1)
       return;
 
     fEndX = pCharPos[0].m_Origin.x;
@@ -1261,8 +1264,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   pDevice->DrawPath(&path, &tmDoc2Device, &graphState, 0, pPiece->dwColor, 0);
 }
 
-int32_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,
-                                       FXTEXT_CHARPOS* pCharPos) {
+size_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,
+                                      FXTEXT_CHARPOS* pCharPos) {
   if (!pPiece)
     return 0;
 

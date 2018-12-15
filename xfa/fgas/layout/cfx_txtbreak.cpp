@@ -301,7 +301,7 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
   CFX_BreakPiece tp;
   if (bAllChars && !bDone) {
     int32_t iEndPos = m_pCurLine->m_iWidth;
-    GetBreakPos(m_pCurLine->m_LineChars, bAllChars, true, &iEndPos);
+    GetBreakPos(&m_pCurLine->m_LineChars, bAllChars, true, &iEndPos);
   }
   return false;
 }
@@ -522,11 +522,12 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
   return dwStatus;
 }
 
-int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>& ca,
+int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
                                   bool bAllChars,
                                   bool bOnlyBrk,
                                   int32_t* pEndPos) {
-  int32_t iLength = pdfium::CollectionSize<int32_t>(ca) - 1;
+  std::vector<CFX_Char>& chars = *pChars;
+  int32_t iLength = pdfium::CollectionSize<int32_t>(chars) - 1;
   if (iLength < 1)
     return iLength;
 
@@ -548,7 +549,7 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>& ca,
   uint32_t nCodeProp;
   uint32_t nCur;
   uint32_t nNext;
-  CFX_Char* pCur = &ca[iLength--];
+  CFX_Char* pCur = &chars[iLength--];
   if (bAllChars)
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
 
@@ -559,7 +560,7 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>& ca,
     *pEndPos -= iCharWidth;
 
   while (iLength >= 0) {
-    pCur = &ca[iLength];
+    pCur = &chars[iLength];
     nCodeProp = pCur->char_props();
     nCur = nCodeProp & 0x003F;
     if (nNext == kBreakPropertySpace)
@@ -620,7 +621,7 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
 
   int32_t iEndPos = pCurLine->m_iWidth;
   std::vector<CFX_Char>& curChars = pCurLine->m_LineChars;
-  int32_t iCharPos = GetBreakPos(curChars, bAllChars, false, &iEndPos);
+  int32_t iCharPos = GetBreakPos(&curChars, bAllChars, false, &iEndPos);
   if (iCharPos < 0)
     iCharPos = 0;
 
@@ -656,8 +657,8 @@ struct FX_FORMCHAR {
   int32_t iWidth;
 };
 
-int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
-                                    FXTEXT_CHARPOS* pCharPos) const {
+size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
+                                   FXTEXT_CHARPOS* pCharPos) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
 
@@ -675,7 +676,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   int32_t iDescent = pFont->GetDescent();
   int32_t iMaxHeight = iAscent - iDescent;
   float fFontHeight = fFontSize;
-  float fAscent = fFontHeight * (float)iAscent / (float)iMaxHeight;
+  float fAscent = fFontHeight * iAscent / iMaxHeight;
   float fX = rtText.left;
   float fY;
   float fCharWidth;
@@ -691,7 +692,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   fYBase = rtText.top + (rtText.height - fFontSize) / 2.0f;
   fY = fYBase + fAscent;
 
-  int32_t iCount = 0;
+  size_t szCount = 0;
   int32_t iNext = 0;
   wchar_t wPrev = 0xFEFF;
   wchar_t wNext = 0xFEFF;
@@ -808,7 +809,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       bEmptyChar = true;
 
     int32_t iForms = bLam ? 3 : 1;
-    iCount += (bEmptyChar && bSkipSpace) ? 0 : iForms;
+    szCount += (bEmptyChar && bSkipSpace) ? 0 : iForms;
     if (!pCharPos) {
       if (iWidth > 0)
         wPrev = wch;
@@ -911,7 +912,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       wPrev = static_cast<wchar_t>(formChars[0].wch);
     wLast = wch;
   }
-  return iCount;
+  return szCount;
 }
 
 std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,

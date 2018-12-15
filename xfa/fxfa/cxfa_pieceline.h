@@ -18,7 +18,7 @@ class CXFA_PieceLine {
   ~CXFA_PieceLine();
 
   std::vector<std::unique_ptr<CXFA_TextPiece>> m_textPieces;
-  std::vector<int32_t> m_charCounts;
+  std::vector<size_t> m_charCounts;
 };
 
 #endif  // XFA_FXFA_CXFA_PIECELINE_H_
