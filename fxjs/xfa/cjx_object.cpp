@@ -278,7 +278,6 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       Optional<XFA_AttributeValue> value = TryEnum(eAttr, bUseDefault);
       if (!value)
         return {};
-
       return WideString::FromASCII(XFA_AttributeValueToName(*value));
     }
     case XFA_AttributeType::CData:
@@ -288,20 +287,20 @@ Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       Optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value)
         return {};
-      return {*value ? L"1" : L"0"};
+      return WideString(*value ? L"1" : L"0");
     }
     case XFA_AttributeType::Integer: {
       Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue)
         return {};
-      return {WideString::Format(L"%d", *iValue)};
+      return WideString::Format(L"%d", *iValue);
     }
     case XFA_AttributeType::Measure: {
       Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
       if (!value)
         return {};
 
-      return {value->ToString()};
+      return value->ToString();
     }
     default:
       break;
@@ -320,7 +319,7 @@ Optional<WideString> CJX_Object::TryAttribute(WideStringView wsAttr,
   if (!GetMapModuleString(pKey, &wsValueC))
     return {};
 
-  return {WideString(wsValueC)};
+  return WideString(wsValueC);
 }
 
 void CJX_Object::RemoveAttribute(WideStringView wsAttr) {
@@ -333,7 +332,7 @@ Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
   void* pValue = nullptr;
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   if (GetMapModuleValue(pKey, &pValue))
-    return {!!pValue};
+    return !!pValue;
   if (!bUseDefault)
     return {};
 
@@ -343,9 +342,10 @@ Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
 void CJX_Object::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Boolean,
                                   (void*)(uintptr_t)bValue, bNotify);
-  if (elem)
+  if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        bValue ? L"1" : L"0");
+  }
 }
 
 bool CJX_Object::GetBoolean(XFA_Attribute eAttr) {
@@ -370,10 +370,9 @@ Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, &pValue))
-    return {static_cast<int32_t>(reinterpret_cast<uintptr_t>(pValue))};
+    return static_cast<int32_t>(reinterpret_cast<uintptr_t>(pValue));
   if (!bUseDefault)
     return {};
-
   return ToNode(GetXFAObject())->GetDefaultInteger(eAttr);
 }
 
@@ -381,13 +380,10 @@ Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
                                                  bool bUseDefault) const {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue = nullptr;
-  if (GetMapModuleValue(pKey, &pValue)) {
-    return {
-        static_cast<XFA_AttributeValue>(reinterpret_cast<uintptr_t>(pValue))};
-  }
+  if (GetMapModuleValue(pKey, &pValue))
+    return static_cast<XFA_AttributeValue>(reinterpret_cast<uintptr_t>(pValue));
   if (!bUseDefault)
     return {};
-
   return ToNode(GetXFAObject())->GetDefaultEnum(eAttr);
 }
 
@@ -422,18 +418,17 @@ Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
   int32_t iBytes;
   if (GetMapModuleBuffer(pKey, &pValue, &iBytes) &&
       iBytes == sizeof(CXFA_Measurement)) {
-    return {*static_cast<CXFA_Measurement*>(pValue)};
+    return *static_cast<CXFA_Measurement*>(pValue);
   }
   if (!bUseDefault)
     return {};
-
   return ToNode(GetXFAObject())->GetDefaultMeasurement(eAttr);
 }
 
 Optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
   Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
   if (measure)
-    return {measure->ToUnit(XFA_Unit::Pt)};
+    return measure->ToUnit(XFA_Unit::Pt);
   return {};
 }
 
@@ -519,15 +514,14 @@ Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
       pStr = reinterpret_cast<WideString*>(pData);
     }
     if (pStr)
-      return {*pStr};
+      return *pStr;
   } else {
     WideStringView wsValueC;
     if (GetMapModuleString(pKey, &wsValueC))
-      return {WideString(wsValueC)};
+      return WideString(wsValueC);
   }
   if (!bUseDefault)
     return {};
-
   return ToNode(GetXFAObject())->GetDefaultCData(eAttr);
 }
 
@@ -807,7 +801,7 @@ Optional<WideString> CJX_Object::TryNamespace() {
     if (!element)
       return {};
 
-    return {element->GetNamespaceURI()};
+    return element->GetNamespaceURI();
   }
 
   if (ToNode(GetXFAObject())->GetPacketType() != XFA_PacketType::Datasets)
@@ -825,9 +819,9 @@ Optional<WideString> CJX_Object::TryNamespace() {
             element, GetCData(XFA_Attribute::QualifiedName), &wsNamespace)) {
       return {};
     }
-    return {wsNamespace};
+    return wsNamespace;
   }
-  return {element->GetNamespaceURI()};
+  return element->GetNamespaceURI();
 }
 
 std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
