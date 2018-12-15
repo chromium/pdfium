@@ -243,16 +243,13 @@ class CJX_Object {
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
   void SetMapModuleValue(void* pKey, void* pValue);
-  bool GetMapModuleValue(void* pKey, void*& pValue) const;
-  bool GetMapModuleString(void* pKey, WideStringView& wsValue);
+  bool GetMapModuleValue(void* pKey, void** pValue) const;
+  bool GetMapModuleString(void* pKey, WideStringView* pValue);
   void SetMapModuleBuffer(void* pKey,
                           void* pValue,
                           int32_t iBytes,
                           const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
-  bool GetMapModuleBuffer(void* pKey,
-                          void*& pValue,
-                          int32_t& iBytes,
-                          bool bProtoAlso) const;
+  bool GetMapModuleBuffer(void* pKey, void** pValue, int32_t* pBytes) const;
   bool HasMapModuleKey(void* pKey);
   void ClearMapModuleBuffer();
   void RemoveMapModuleKey(void* pKey);
