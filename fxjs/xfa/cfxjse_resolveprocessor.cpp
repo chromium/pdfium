@@ -90,22 +90,23 @@ bool CFXJSE_ResolveProcessor::Resolve(CFXJSE_ResolveNodeData& rnd) {
 }
 
 bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
-  WideString wsName = rnd.m_wsName;
+  WideStringView wsName = rnd.m_wsName.AsStringView();
   WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* findNode = nullptr;
   bool bClassName = false;
   if (wsName.GetLength() && wsName[0] == '#') {
     bClassName = true;
-    wsName = wsName.Right(wsName.GetLength() - 1);
+    findNode = m_pNodeHelper->GetOneChildOfClass(
+        ToNode(rnd.m_CurObject), wsName.Right(wsName.GetLength() - 1));
+  } else {
+    findNode = m_pNodeHelper->GetOneChildNamed(ToNode(rnd.m_CurObject), wsName);
   }
-  findNode = m_pNodeHelper->GetOneChild(ToNode(rnd.m_CurObject), wsName.c_str(),
-                                        bClassName);
   if (!findNode)
     return false;
 
   if (wsCondition.IsEmpty()) {
     rnd.m_Objects.push_back(findNode);
-    return !rnd.m_Objects.empty();
+    return true;
   }
 
   std::vector<CXFA_Node*> tempNodes;

@@ -22,16 +22,74 @@ CXFA_NodeHelper::CXFA_NodeHelper() = default;
 
 CXFA_NodeHelper::~CXFA_NodeHelper() = default;
 
-CXFA_Node* CXFA_NodeHelper::GetOneChild(CXFA_Node* parent,
-                                        const wchar_t* pwsName,
-                                        bool bIsClassName) {
+CXFA_Node* CXFA_NodeHelper::GetOneChildNamed(CXFA_Node* parent,
+                                             WideStringView wsName) {
   if (!parent)
     return nullptr;
 
-  std::vector<CXFA_Node*> siblings;
-  uint32_t uNameHash = FX_HashCode_GetW(WideStringView(pwsName), false);
-  TraverseAnySiblings(parent, uNameHash, &siblings, bIsClassName);
-  return !siblings.empty() ? siblings[0] : nullptr;
+  return FindFirstSiblingNamed(parent, FX_HashCode_GetW(wsName, false));
+}
+
+CXFA_Node* CXFA_NodeHelper::GetOneChildOfClass(CXFA_Node* parent,
+                                               WideStringView wsClass) {
+  if (!parent)
+    return nullptr;
+
+  XFA_Element element = XFA_GetElementByName(wsClass);
+  if (element == XFA_Element::Unknown)
+    return nullptr;
+
+  return FindFirstSiblingOfClass(parent, element);
+}
+
+CXFA_Node* CXFA_NodeHelper::FindFirstSiblingNamed(CXFA_Node* parent,
+                                                  uint32_t dNameHash) {
+  CXFA_Node* result =
+      FindFirstSiblingNamedInList(parent, dNameHash, XFA_NODEFILTER_Properties);
+  if (result)
+    return result;
+
+  return FindFirstSiblingNamedInList(parent, dNameHash,
+                                     XFA_NODEFILTER_Children);
+}
+
+CXFA_Node* CXFA_NodeHelper::FindFirstSiblingNamedInList(CXFA_Node* parent,
+                                                        uint32_t dNameHash,
+                                                        uint32_t dwFilter) {
+  for (CXFA_Node* child : parent->GetNodeList(dwFilter, XFA_Element::Unknown)) {
+    if (child->GetNameHash() == dNameHash)
+      return child;
+
+    CXFA_Node* result = FindFirstSiblingNamed(child, dNameHash);
+    if (result)
+      return result;
+  }
+  return nullptr;
+}
+
+CXFA_Node* CXFA_NodeHelper::FindFirstSiblingOfClass(CXFA_Node* parent,
+                                                    XFA_Element element) {
+  CXFA_Node* result =
+      FindFirstSiblingOfClassInList(parent, element, XFA_NODEFILTER_Properties);
+  if (result)
+    return result;
+
+  return FindFirstSiblingOfClassInList(parent, element,
+                                       XFA_NODEFILTER_Children);
+}
+
+CXFA_Node* CXFA_NodeHelper::FindFirstSiblingOfClassInList(CXFA_Node* parent,
+                                                          XFA_Element element,
+                                                          uint32_t dwFilter) {
+  for (CXFA_Node* child : parent->GetNodeList(dwFilter, XFA_Element::Unknown)) {
+    if (child->GetElementType() == element)
+      return child;
+
+    CXFA_Node* result = FindFirstSiblingOfClass(child, element);
+    if (result)
+      return result;
+  }
+  return nullptr;
 }
 
 int32_t CXFA_NodeHelper::CountSiblings(CXFA_Node* pNode,
@@ -55,53 +113,6 @@ int32_t CXFA_NodeHelper::CountSiblings(CXFA_Node* pNode,
   }
   return TraverseSiblings(parent, pNode->GetNameHash(), pSiblings, eLogicType,
                           bIsClassName, true);
-}
-
-int32_t CXFA_NodeHelper::TraverseAnySiblings(CXFA_Node* parent,
-                                             uint32_t dNameHash,
-                                             std::vector<CXFA_Node*>* pSiblings,
-                                             bool bIsClassName) {
-  if (!parent || !pSiblings)
-    return 0;
-
-  int32_t nCount = 0;
-  for (CXFA_Node* child :
-       parent->GetNodeList(XFA_NODEFILTER_Properties, XFA_Element::Unknown)) {
-    if (bIsClassName) {
-      if (child->GetClassHashCode() == dNameHash) {
-        pSiblings->push_back(child);
-        nCount++;
-      }
-    } else {
-      if (child->GetNameHash() == dNameHash) {
-        pSiblings->push_back(child);
-        nCount++;
-      }
-    }
-    if (nCount > 0)
-      return nCount;
-
-    nCount += TraverseAnySiblings(child, dNameHash, pSiblings, bIsClassName);
-  }
-  for (CXFA_Node* child :
-       parent->GetNodeList(XFA_NODEFILTER_Children, XFA_Element::Unknown)) {
-    if (bIsClassName) {
-      if (child->GetClassHashCode() == dNameHash) {
-        pSiblings->push_back(child);
-        nCount++;
-      }
-    } else {
-      if (child->GetNameHash() == dNameHash) {
-        pSiblings->push_back(child);
-        nCount++;
-      }
-    }
-    if (nCount > 0)
-      return nCount;
-
-    nCount += TraverseAnySiblings(child, dNameHash, pSiblings, bIsClassName);
-  }
-  return nCount;
 }
 
 int32_t CXFA_NodeHelper::TraverseSiblings(CXFA_Node* parent,

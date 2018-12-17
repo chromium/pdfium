@@ -26,20 +26,10 @@ class CXFA_NodeHelper {
   CXFA_NodeHelper();
   ~CXFA_NodeHelper();
 
-  CXFA_Node* GetOneChild(CXFA_Node* parent,
-                         const wchar_t* pwsName,
-                         bool bIsClassName);
+  CXFA_Node* GetOneChildNamed(CXFA_Node* parent, WideStringView wsName);
+  CXFA_Node* GetOneChildOfClass(CXFA_Node* parent, WideStringView wsClass);
+
   CXFA_Node* GetParent(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType);
-  int32_t TraverseSiblings(CXFA_Node* parent,
-                           uint32_t dNameHash,
-                           std::vector<CXFA_Node*>* pSiblings,
-                           XFA_LOGIC_TYPE eLogicType,
-                           bool bIsClassName,
-                           bool bIsFindProperty);
-  int32_t TraverseAnySiblings(CXFA_Node* parent,
-                              uint32_t dNameHash,
-                              std::vector<CXFA_Node*>* pSiblings,
-                              bool bIsClassName);
   int32_t CountSiblings(CXFA_Node* pNode,
                         XFA_LOGIC_TYPE eLogicType,
                         std::vector<CXFA_Node*>* pSiblings,
@@ -64,6 +54,22 @@ class CXFA_NodeHelper {
   int32_t m_iCurAllStart = -1;
   UnownedPtr<CXFA_Node> m_pCreateParent;
   UnownedPtr<CXFA_Node> m_pAllStartParent;
+
+ private:
+  CXFA_Node* FindFirstSiblingNamed(CXFA_Node* parent, uint32_t dNameHash);
+  CXFA_Node* FindFirstSiblingNamedInList(CXFA_Node* parent,
+                                         uint32_t dwNameHash,
+                                         uint32_t dwFilter);
+  CXFA_Node* FindFirstSiblingOfClass(CXFA_Node* parent, XFA_Element element);
+  CXFA_Node* FindFirstSiblingOfClassInList(CXFA_Node* parent,
+                                           XFA_Element element,
+                                           uint32_t dwFilter);
+  int32_t TraverseSiblings(CXFA_Node* parent,
+                           uint32_t dNameHash,
+                           std::vector<CXFA_Node*>* pSiblings,
+                           XFA_LOGIC_TYPE eLogicType,
+                           bool bIsClassName,
+                           bool bIsFindProperty);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
