@@ -166,8 +166,7 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
   bool bXRefRebuilt = false;
 
   m_LastXRefOffset = ParseStartXRef();
-
-  if (m_LastXRefOffset > 0) {
+  if (m_LastXRefOffset >= kPDFHeaderSize) {
     if (!LoadAllCrossRefV4(m_LastXRefOffset) &&
         !LoadAllCrossRefV5(m_LastXRefOffset)) {
       if (!RebuildCrossRef())

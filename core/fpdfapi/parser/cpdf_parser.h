@@ -125,6 +125,7 @@ class CPDF_Parser {
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
 
  private:
+  friend class cpdf_parser_BadStartXrefShouldNotBuildCrossRefTable_Test;
   friend class cpdf_parser_ParseStartXRefWithHeaderOffset_Test;
   friend class cpdf_parser_ParseStartXRef_Test;
   friend class cpdf_parser_ParseLinearizedWithHeaderOffset_Test;
