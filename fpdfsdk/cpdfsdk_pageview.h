@@ -82,7 +82,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                     const CFX_PointF& point,
                     int nFlag);
 
-  void GetCurrentMatrix(CFX_Matrix& matrix) { matrix = m_curMatrix; }
+  const CFX_Matrix& GetCurrentMatrix() const { return m_curMatrix; }
   void UpdateRects(const std::vector<CFX_FloatRect>& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);
 

@@ -424,10 +424,8 @@ CFX_Matrix CFFL_FormFiller::GetWindowMatrix(
   if (!pPrivateData || !pPrivateData->pPageView)
     return mt;
 
-  CFX_Matrix mtPageView;
-  pPrivateData->pPageView->GetCurrentMatrix(mtPageView);
   mt = GetCurMatrix();
-  mt.Concat(mtPageView);
+  mt.Concat(pPrivateData->pPageView->GetCurrentMatrix());
   return mt;
 }
 

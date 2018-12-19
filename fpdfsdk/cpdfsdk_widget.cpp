@@ -673,9 +673,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   if (!m_pInteractiveForm->IsNeedHighLight(fieldType))
     return;
 
-  CFX_Matrix page2device;
-  pPageView->GetCurrentMatrix(page2device);
-
+  CFX_Matrix page2device = pPageView->GetCurrentMatrix();
   CFX_FloatRect rcDevice = GetRect();
   CFX_PointF tmp =
       page2device.Transform(CFX_PointF(rcDevice.left, rcDevice.bottom));
