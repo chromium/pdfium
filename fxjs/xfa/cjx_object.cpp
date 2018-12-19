@@ -333,8 +333,7 @@ Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
 }
 
 void CJX_Object::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
-  CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Boolean,
-                                  (void*)(uintptr_t)bValue, bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, (void*)(uintptr_t)bValue, bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        bValue ? L"1" : L"0");
@@ -346,8 +345,7 @@ bool CJX_Object::GetBoolean(XFA_Attribute eAttr) {
 }
 
 void CJX_Object::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
-  CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Integer,
-                                  (void*)(uintptr_t)iValue, bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, (void*)(uintptr_t)iValue, bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        WideString::Format(L"%d", iValue));
@@ -385,8 +383,7 @@ Optional<XFA_AttributeValue> CJX_Object::TryEnum(XFA_Attribute eAttr,
 void CJX_Object::SetEnum(XFA_Attribute eAttr,
                          XFA_AttributeValue eValue,
                          bool bNotify) {
-  CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
-                                  (void*)(uintptr_t)eValue, bNotify);
+  CFX_XMLElement* elem = SetValue(eAttr, (void*)(uintptr_t)eValue, bNotify);
   if (elem) {
     elem->SetAttribute(WideString::FromASCII(XFA_AttributeToName(eAttr)),
                        WideString::FromASCII(XFA_AttributeValueToName(eValue)));
@@ -521,7 +518,6 @@ Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
 }
 
 CFX_XMLElement* CJX_Object::SetValue(XFA_Attribute eAttr,
-                                     XFA_AttributeType eType,
                                      void* pValue,
                                      bool bNotify) {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);

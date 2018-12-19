@@ -234,10 +234,7 @@ class CJX_Object {
 
   // Returns a pointer to the XML node that needs to be updated with the new
   // attribute value. |nullptr| if no update is needed.
-  CFX_XMLElement* SetValue(XFA_Attribute eAttr,
-                           XFA_AttributeType eType,
-                           void* pValue,
-                           bool bNotify);
+  CFX_XMLElement* SetValue(XFA_Attribute eAttr, void* pValue, bool bNotify);
   int32_t Subform_and_SubformSet_InstanceIndex();
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
