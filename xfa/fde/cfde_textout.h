@@ -97,23 +97,23 @@ class CFDE_TextOut {
   void DoAlignment(const CFX_RectF& rect);
   size_t GetDisplayPos(FDE_TTOPIECE* pPiece);
 
-  std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
+  std::unique_ptr<CFX_TxtBreak> const m_pTxtBreak;
   RetainPtr<CFGAS_GEFont> m_pFont;
-  float m_fFontSize;
-  float m_fLineSpace;
-  float m_fLinePos;
-  float m_fTolerance;
-  FDE_TextAlignment m_iAlignment;
+  float m_fFontSize = 12.0f;
+  float m_fLineSpace = 12.0f;
+  float m_fLinePos = 0.0f;
+  float m_fTolerance = 0.0f;
+  FDE_TextAlignment m_iAlignment = FDE_TextAlignment::kTopLeft;
   FDE_TextStyle m_Styles;
   std::vector<int32_t> m_CharWidths;
-  FX_ARGB m_TxtColor;
-  uint32_t m_dwTxtBkStyles;
+  FX_ARGB m_TxtColor = 0xFF000000;
+  uint32_t m_dwTxtBkStyles = 0;
   WideString m_wsText;
   CFX_Matrix m_Matrix;
   std::deque<CFDE_TTOLine> m_ttoLines;
-  int32_t m_iCurLine;
-  int32_t m_iCurPiece;
-  int32_t m_iTotalLines;
+  int32_t m_iCurLine = 0;
+  int32_t m_iCurPiece = 0;
+  int32_t m_iTotalLines = 0;
   std::vector<FXTEXT_CHARPOS> m_CharPos;
 };
 

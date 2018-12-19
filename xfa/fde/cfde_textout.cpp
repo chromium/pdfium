@@ -122,21 +122,9 @@ FDE_TTOPIECE::FDE_TTOPIECE(const FDE_TTOPIECE& that) = default;
 FDE_TTOPIECE::~FDE_TTOPIECE() = default;
 
 CFDE_TextOut::CFDE_TextOut()
-    : m_pTxtBreak(pdfium::MakeUnique<CFX_TxtBreak>()),
-      m_pFont(nullptr),
-      m_fFontSize(12.0f),
-      m_fLineSpace(m_fFontSize),
-      m_fLinePos(0.0f),
-      m_fTolerance(0.0f),
-      m_iAlignment(FDE_TextAlignment::kTopLeft),
-      m_TxtColor(0xFF000000),
-      m_dwTxtBkStyles(0),
-      m_ttoLines(5),
-      m_iCurLine(0),
-      m_iCurPiece(0),
-      m_iTotalLines(0) {}
+    : m_pTxtBreak(pdfium::MakeUnique<CFX_TxtBreak>()), m_ttoLines(5) {}
 
-CFDE_TextOut::~CFDE_TextOut() {}
+CFDE_TextOut::~CFDE_TextOut() = default;
 
 void CFDE_TextOut::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
   ASSERT(pFont);
