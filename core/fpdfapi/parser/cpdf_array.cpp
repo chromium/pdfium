@@ -80,7 +80,6 @@ CFX_FloatRect CPDF_Array::GetRect() const {
 }
 
 CFX_Matrix CPDF_Array::GetMatrix() const {
-  CFX_Matrix matrix;
   if (!IsArray() || m_Objects.size() != 6)
     return CFX_Matrix();
 

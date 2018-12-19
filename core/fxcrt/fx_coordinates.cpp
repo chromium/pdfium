@@ -51,15 +51,6 @@ static_assert(sizeof(FX_RECT::bottom) == sizeof(RECT::bottom),
               "FX_RECT vs. RECT mismatch");
 #endif
 
-inline CFX_Matrix ConcatInternal(const CFX_Matrix& left,
-                                 const CFX_Matrix& right) {
-  return CFX_Matrix(
-      left.a * right.a + left.b * right.c, left.a * right.b + left.b * right.d,
-      left.c * right.a + left.d * right.c, left.c * right.b + left.d * right.d,
-      left.e * right.a + left.f * right.c + right.e,
-      left.e * right.b + left.f * right.d + right.f);
-}
-
 }  // namespace
 
 void FX_RECT::Normalize() {
@@ -322,11 +313,11 @@ CFX_Matrix CFX_Matrix::GetInverse() const {
 }
 
 void CFX_Matrix::Concat(const CFX_Matrix& m) {
-  *this = ConcatInternal(*this, m);
+  *this *= m;
 }
 
 void CFX_Matrix::ConcatPrepend(const CFX_Matrix& m) {
-  *this = ConcatInternal(m, *this);
+  *this = m * (*this);
 }
 
 void CFX_Matrix::ConcatInverse(const CFX_Matrix& src) {
