@@ -14,6 +14,7 @@
 #include "core/fxcrt/cfx_char.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/span.h"
 #include "xfa/fde/cfde_data.h"
 
 class CFDE_RenderDevice;
@@ -37,8 +38,7 @@ class CFDE_TextOut {
   static bool DrawString(CFX_RenderDevice* device,
                          FX_ARGB color,
                          const RetainPtr<CFGAS_GEFont>& pFont,
-                         FXTEXT_CHARPOS* pCharPos,
-                         size_t szCount,
+                         pdfium::span<FXTEXT_CHARPOS> pCharPos,
                          float fFontSize,
                          const CFX_Matrix* pMatrix);
 

@@ -36,23 +36,18 @@ bool IsTextAlignmentTop(const FDE_TextAlignment align) {
 bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               FX_ARGB color,
                               const RetainPtr<CFGAS_GEFont>& pFont,
-                              FXTEXT_CHARPOS* pCharPos,
-                              size_t szCount,
+                              pdfium::span<FXTEXT_CHARPOS> pCharPos,
                               float fFontSize,
                               const CFX_Matrix* pMatrix) {
   ASSERT(pFont);
-  ASSERT(pCharPos);
-  ASSERT(szCount > 0);
+  ASSERT(!pCharPos.empty());
 
   CFX_Font* pFxFont = pFont->GetDevFont();
   if (FontStyleIsItalic(pFont->GetFontStyles()) && !pFxFont->IsItalic()) {
-    FXTEXT_CHARPOS* pCharPosIter = pCharPos;
-    for (size_t i = 0; i < szCount; ++i) {
-      static const float mc = 0.267949f;
-      float* pAM = pCharPosIter->m_AdjustMatrix;
-      pAM[2] = mc * pAM[0] + pAM[2];
-      pAM[3] = mc * pAM[1] + pAM[3];
-      ++pCharPosIter;
+    for (auto& pos : pCharPos) {
+      static constexpr float mc = 0.267949f;
+      pos.m_AdjustMatrix[2] += mc * pos.m_AdjustMatrix[0];
+      pos.m_AdjustMatrix[3] += mc * pos.m_AdjustMatrix[1];
     }
   }
 
@@ -70,12 +65,11 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   RetainPtr<CFGAS_GEFont> pCurFont;
   FXTEXT_CHARPOS* pCurCP = nullptr;
   int32_t iCurCount = 0;
-  FXTEXT_CHARPOS* pCharPosIter = pCharPos;
-  for (size_t i = 0; i < szCount; ++i) {
+  for (auto& pos : pCharPos) {
     RetainPtr<CFGAS_GEFont> pSTFont =
-        pFont->GetSubstFont(static_cast<int32_t>(pCharPosIter->m_GlyphIndex));
-    pCharPosIter->m_GlyphIndex &= 0x00FFFFFF;
-    pCharPosIter->m_bFontStyle = false;
+        pFont->GetSubstFont(static_cast<int32_t>(pos.m_GlyphIndex));
+    pos.m_GlyphIndex &= 0x00FFFFFF;
+    pos.m_bFontStyle = false;
     if (pCurFont != pSTFont) {
       if (pCurFont) {
         pFxFont = pCurFont->GetDevFont();
@@ -92,12 +86,11 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                                color, FXTEXT_CLEARTYPE);
       }
       pCurFont = pSTFont;
-      pCurCP = pCharPosIter;
+      pCurCP = &pos;
       iCurCount = 1;
     } else {
       ++iCurCount;
     }
-    ++pCharPosIter;
   }
 
   bool bRet = true;
@@ -320,8 +313,9 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
 
       size_t szCount = GetDisplayPos(pPiece);
       if (szCount > 0) {
-        CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont, m_CharPos.data(),
-                                 szCount, m_fFontSize, &m_Matrix);
+        CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
+                                 {m_CharPos.data(), szCount}, m_fFontSize,
+                                 &m_Matrix);
       }
     }
   }

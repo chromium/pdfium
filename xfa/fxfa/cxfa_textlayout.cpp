@@ -1136,8 +1136,9 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
   const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
-    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont, pCharPos,
-                             szCount, pPiece->fFontSize, &tmDoc2Device);
+    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont,
+                             {pCharPos, szCount}, pPiece->fFontSize,
+                             &tmDoc2Device);
   }
   pPieceLine->m_charCounts.push_back(szCount);
 }

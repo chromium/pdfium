@@ -474,8 +474,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
       continue;
 
     CFDE_TextOut::DrawString(pRenderDev, m_EdtEngine.GetFontColor(), font,
-                             char_pos.data(), char_pos.size(),
-                             m_EdtEngine.GetFontSize(), &mt);
+                             char_pos, m_EdtEngine.GetFontSize(), &mt);
   }
 }
 
