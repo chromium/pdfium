@@ -243,8 +243,8 @@ class CJX_Object {
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
   void SetMapModuleValue(void* pKey, void* pValue);
-  bool GetMapModuleValue(void* pKey, void** pValue) const;
-  bool GetMapModuleString(void* pKey, WideStringView* pValue);
+  Optional<void*> GetMapModuleValue(void* pKey) const;
+  Optional<WideString> GetMapModuleString(void* pKey);
   void SetMapModuleBuffer(void* pKey,
                           void* pValue,
                           int32_t iBytes,
