@@ -7,8 +7,8 @@
 #ifndef FXJS_XFA_CJX_LIST_H_
 #define FXJS_XFA_CJX_LIST_H_
 
-#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "fxjs/xfa/jse_define.h"
 
 class CXFA_List;
 

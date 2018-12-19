@@ -7,8 +7,8 @@
 #ifndef FXJS_XFA_CJX_LOGPSEUDOMODEL_H_
 #define FXJS_XFA_CJX_LOGPSEUDOMODEL_H_
 
-#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "fxjs/xfa/jse_define.h"
 
 class CScript_LogPseudoModel;
 

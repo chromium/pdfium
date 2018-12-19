@@ -100,7 +100,6 @@ jumbo_source_set("fxjs") {
       "js_define.h",
       "js_resources.cpp",
       "js_resources.h",
-      "jse_define.h",
     ]
     deps += [
       "../core/fdrm",
@@ -439,6 +438,7 @@ jumbo_source_set("fxjs") {
         "xfa/cjx_xsdconnection.h",
         "xfa/fxjse.cpp",
         "xfa/fxjse.h",
+        "xfa/jse_define.h",
       ]
       deps += [ "../xfa/fxfa/fm2js" ]
     }
