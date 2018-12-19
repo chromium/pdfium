@@ -42,16 +42,14 @@ CBA_FontMap::~CBA_FontMap() {
 }
 
 CPDF_Font* CBA_FontMap::GetPDFFont(int32_t nFontIndex) {
-  if (pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex])
+  if (pdfium::IndexInBounds(m_Data, nFontIndex))
     return m_Data[nFontIndex]->pFont;
-
   return nullptr;
 }
 
 ByteString CBA_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
-  if (pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex])
+  if (pdfium::IndexInBounds(m_Data, nFontIndex))
     return m_Data[nFontIndex]->sFontName;
-
   return ByteString();
 }
 
@@ -62,7 +60,8 @@ int32_t CBA_FontMap::GetWordFontIndex(uint16_t word,
     if (KnowWord(nFontIndex, word))
       return nFontIndex;
   } else {
-    if (const CBA_FontMap_Data* pData = GetFontMapData(0)) {
+    if (!m_Data.empty()) {
+      const Data* pData = m_Data.front().get();
       if (nCharset == FX_CHARSET_Default ||
           pData->nCharset == FX_CHARSET_Symbol || nCharset == pData->nCharset) {
         if (KnowWord(0, word))
@@ -90,8 +89,8 @@ int32_t CBA_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
   if (!pdfium::IndexInBounds(m_Data, nFontIndex))
     return -1;
 
-  CBA_FontMap_Data* pData = m_Data[nFontIndex].get();
-  if (!pData || !pData->pFont)
+  Data* pData = m_Data[nFontIndex].get();
+  if (!pData->pFont)
     return -1;
 
   if (pData->pFont->IsUnicodeCompatible())
@@ -112,29 +111,8 @@ int32_t CBA_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   return CFX_Font::GetCharSetFromUnicode(word);
 }
 
-const CBA_FontMap_Data* CBA_FontMap::GetFontMapData(int32_t nIndex) const {
-  return pdfium::IndexInBounds(m_Data, nIndex) ? m_Data[nIndex].get() : nullptr;
-}
-
 int32_t CBA_FontMap::GetNativeCharset() {
   return FX_GetCharsetFromCodePage(FXSYS_GetACP());
-}
-
-ByteString CBA_FontMap::GetNativeFontName(int32_t nCharset) {
-  for (const auto& pData : m_NativeFont) {
-    if (pData && pData->nCharset == nCharset)
-      return pData->sFontName;
-  }
-
-  ByteString sNew = GetNativeFont(nCharset);
-  if (sNew.IsEmpty())
-    return ByteString();
-
-  auto pNewData = pdfium::MakeUnique<CBA_FontMap_Native>();
-  pNewData->nCharset = nCharset;
-  pNewData->sFontName = sNew;
-  m_NativeFont.push_back(std::move(pNewData));
-  return sNew;
 }
 
 void CBA_FontMap::Reset() {
@@ -341,7 +319,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 }
 
 bool CBA_FontMap::KnowWord(int32_t nFontIndex, uint16_t word) {
-  return pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex] &&
+  return pdfium::IndexInBounds(m_Data, nFontIndex) &&
          CharCodeFromUnicode(nFontIndex, word) >= 0;
 }
 
@@ -371,7 +349,7 @@ int32_t CBA_FontMap::GetFontIndex(const ByteString& sFontName,
 int32_t CBA_FontMap::AddFontData(CPDF_Font* pFont,
                                  const ByteString& sFontAlias,
                                  int32_t nCharset) {
-  auto pNewData = pdfium::MakeUnique<CBA_FontMap_Data>();
+  auto pNewData = pdfium::MakeUnique<Data>();
   pNewData->pFont = pFont;
   pNewData->sFontName = sFontAlias;
   pNewData->nCharset = nCharset;
@@ -393,8 +371,7 @@ ByteString CBA_FontMap::EncodeFontAlias(const ByteString& sFontName) {
 int32_t CBA_FontMap::FindFont(const ByteString& sFontName, int32_t nCharset) {
   int32_t i = 0;
   for (const auto& pData : m_Data) {
-    if (pData &&
-        (nCharset == FX_CHARSET_Default || nCharset == pData->nCharset) &&
+    if ((nCharset == FX_CHARSET_Default || nCharset == pData->nCharset) &&
         (sFontName.IsEmpty() || pData->sFontName == sFontName)) {
       return i;
     }
@@ -412,6 +389,23 @@ ByteString CBA_FontMap::GetNativeFont(int32_t nCharset) {
     return ByteString();
 
   return sFontName;
+}
+
+ByteString CBA_FontMap::GetNativeFontName(int32_t nCharset) {
+  for (const auto& pData : m_NativeFont) {
+    if (pData && pData->nCharset == nCharset)
+      return pData->sFontName;
+  }
+
+  ByteString sNew = GetNativeFont(nCharset);
+  if (sNew.IsEmpty())
+    return ByteString();
+
+  auto pNewData = pdfium::MakeUnique<Native>();
+  pNewData->nCharset = nCharset;
+  pNewData->sFontName = sNew;
+  m_NativeFont.push_back(std::move(pNewData));
+  return sNew;
 }
 
 CPDF_Font* CBA_FontMap::AddFontToDocument(CPDF_Document* pDoc,
