@@ -706,7 +706,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     }
     if (rndFind.m_dwFlag == XFA_ResolveNode_RSType_Attribute) {
       resolveNodeRS->script_attribute = rndFind.m_ScriptAttribute;
-      return 1;
+      return true;
     }
   }
   if (dwStyles & (XFA_RESOLVENODE_CreateNode | XFA_RESOLVENODE_Bind |

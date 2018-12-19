@@ -1560,10 +1560,12 @@ void CXFA_Document::DoProtoMerge() {
                         XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resolveNodeRS;
-      int32_t iRet = m_pScriptContext->ResolveObjects(
-          pUseHrefNode, wsSOM, &resolveNodeRS, dwFlag, nullptr);
-      if (iRet > 0 && resolveNodeRS.objects.front()->IsNode())
-        pProtoNode = resolveNodeRS.objects.front()->AsNode();
+      if (m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM, &resolveNodeRS,
+                                           dwFlag, nullptr)) {
+        auto* pFirstObject = resolveNodeRS.objects.front().Get();
+        if (pFirstObject && pFirstObject->IsNode())
+          pProtoNode = pFirstObject->AsNode();
+      }
     } else if (!wsID.IsEmpty()) {
       auto it = mIDMap.find(FX_HashCode_GetW(wsID, false));
       if (it == mIDMap.end())
