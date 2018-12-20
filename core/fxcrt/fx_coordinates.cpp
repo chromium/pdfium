@@ -105,13 +105,6 @@ void CFX_FloatRect::Normalize() {
     std::swap(top, bottom);
 }
 
-void CFX_FloatRect::Reset() {
-  left = 0.0f;
-  right = 0.0f;
-  bottom = 0.0f;
-  top = 0.0f;
-}
-
 void CFX_FloatRect::Intersect(const CFX_FloatRect& other_rect) {
   Normalize();
   CFX_FloatRect other = other_rect;
@@ -121,7 +114,7 @@ void CFX_FloatRect::Intersect(const CFX_FloatRect& other_rect) {
   right = std::min(right, other.right);
   top = std::min(top, other.top);
   if (left > right || bottom > top)
-    Reset();
+    *this = CFX_FloatRect();
 }
 
 void CFX_FloatRect::Union(const CFX_FloatRect& other_rect) {
