@@ -552,20 +552,14 @@ class CFX_Matrix {
     return *this;
   }
 
-  void SetIdentity() { *this = CFX_Matrix(); }
   bool IsIdentity() const { return *this == CFX_Matrix(); }
-
   CFX_Matrix GetInverse() const;
-
-  void Concat(const CFX_Matrix& right);
-  void ConcatPrepend(const CFX_Matrix& left);
-  void ConcatInverse(const CFX_Matrix& m);
-  void ConcatInversePrepend(const CFX_Matrix& m);
 
   bool Is90Rotated() const;
   bool IsScaled() const;
   bool WillScale() const { return a != 1.0f || b != 0 || c != 0 || d != 1.0f; }
 
+  void Concat(const CFX_Matrix& right) { *this *= right; }
   void Translate(float x, float y);
   void TranslatePrepend(float x, float y);
   void Translate(int32_t x, int32_t y) {

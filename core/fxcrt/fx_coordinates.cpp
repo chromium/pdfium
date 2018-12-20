@@ -312,22 +312,6 @@ CFX_Matrix CFX_Matrix::GetInverse() const {
   return inverse;
 }
 
-void CFX_Matrix::Concat(const CFX_Matrix& m) {
-  *this *= m;
-}
-
-void CFX_Matrix::ConcatPrepend(const CFX_Matrix& m) {
-  *this = m * (*this);
-}
-
-void CFX_Matrix::ConcatInverse(const CFX_Matrix& src) {
-  Concat(src.GetInverse());
-}
-
-void CFX_Matrix::ConcatInversePrepend(const CFX_Matrix& src) {
-  ConcatPrepend(src.GetInverse());
-}
-
 bool CFX_Matrix::Is90Rotated() const {
   return fabs(a * 1000) < fabs(b) && fabs(d * 1000) < fabs(c);
 }

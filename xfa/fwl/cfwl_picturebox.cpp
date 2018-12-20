@@ -12,9 +12,6 @@
 
 CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app)
     : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
-  m_rtClient.Reset();
-  m_rtImage.Reset();
-  m_matrix.SetIdentity();
 }
 
 CFWL_PictureBox::~CFWL_PictureBox() {}

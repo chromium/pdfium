@@ -1485,10 +1485,8 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     m_pObjectHolder->AppendPageObject(std::move(pPathObj));
   }
   if (PathClipType) {
-    if (!matrix.IsIdentity()) {
+    if (!matrix.IsIdentity())
       Path.Transform(&matrix);
-      matrix.SetIdentity();
-    }
     m_pCurStates->m_ClipPath.AppendPath(Path, PathClipType, true);
   }
 }

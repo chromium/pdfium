@@ -50,8 +50,6 @@ void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
   m_Layers.back().m_pObjectHolder = pObjectHolder;
   if (pObject2Device)
     m_Layers.back().m_Matrix = *pObject2Device;
-  else
-    m_Layers.back().m_Matrix.SetIdentity();
 }
 
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,

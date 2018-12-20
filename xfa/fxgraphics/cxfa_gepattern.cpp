@@ -13,8 +13,6 @@ CXFA_GEPattern::CXFA_GEPattern(FX_HatchStyle hatchStyle,
     : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {
   if (matrix)
     m_matrix = *matrix;
-  else
-    m_matrix.SetIdentity();
 }
 
 CXFA_GEPattern::~CXFA_GEPattern() {}

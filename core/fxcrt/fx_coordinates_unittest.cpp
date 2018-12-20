@@ -229,9 +229,7 @@ TEST(CFX_RectF, Print) {
 #endif  // NDEBUG
 
 TEST(CFX_Matrix, ReverseIdentity) {
-  CFX_Matrix m;
-  m.SetIdentity();
-  CFX_Matrix rev = m.GetInverse();
+  CFX_Matrix rev = CFX_Matrix().GetInverse();
 
   EXPECT_FLOAT_EQ(1.0, rev.a);
   EXPECT_FLOAT_EQ(0.0, rev.b);
@@ -241,7 +239,7 @@ TEST(CFX_Matrix, ReverseIdentity) {
   EXPECT_FLOAT_EQ(0.0, rev.f);
 
   CFX_PointF expected(2, 3);
-  CFX_PointF result = rev.Transform(m.Transform(CFX_PointF(2, 3)));
+  CFX_PointF result = rev.Transform(CFX_Matrix().Transform(CFX_PointF(2, 3)));
   EXPECT_FLOAT_EQ(expected.x, result.x);
   EXPECT_FLOAT_EQ(expected.y, result.y);
 }
@@ -259,7 +257,7 @@ TEST(CFX_Matrix, SetIdentity) {
   m.a = -1;
   EXPECT_FALSE(m.IsIdentity());
 
-  m.SetIdentity();
+  m = CFX_Matrix();
   EXPECT_FLOAT_EQ(1.0f, m.a);
   EXPECT_FLOAT_EQ(0.0f, m.b);
   EXPECT_FLOAT_EQ(0.0f, m.c);
@@ -447,10 +445,10 @@ TEST(CFX_Matrix, ComposeTransformations) {
   EXPECT_FLOAT_EQ(273.0f, p_10_20_transformed.y);
 
   // Now compose all transforms prepending.
-  m.SetIdentity();
-  m.ConcatPrepend(rotate_90);
-  m.ConcatPrepend(translate_23_11);
-  m.ConcatPrepend(scale_5_13);
+  m = CFX_Matrix();
+  m = rotate_90 * m;
+  m = translate_23_11 * m;
+  m = scale_5_13 * m;
   EXPECT_NEAR_FIVE_PLACES(0.0f, m.a);
   EXPECT_NEAR_FIVE_PLACES(5.0f, m.b);
   EXPECT_NEAR_FIVE_PLACES(-13.0f, m.c);

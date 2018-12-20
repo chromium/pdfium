@@ -13,6 +13,4 @@ CFWL_ThemePart::CFWL_ThemePart()
       m_bMaximize(false),
       m_bStaticBackground(false),
       m_pData(nullptr) {
-  m_rtPart.Reset();
-  m_matrix.SetIdentity();
 }
