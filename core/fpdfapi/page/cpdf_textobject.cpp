@@ -115,8 +115,7 @@ CPDF_PageObject::Type CPDF_TextObject::GetType() const {
 }
 
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
-  CFX_Matrix text_matrix = GetTextMatrix();
-  text_matrix.Concat(matrix);
+  CFX_Matrix text_matrix = GetTextMatrix() * matrix;
 
   float* pTextMatrix = m_TextState.GetMutableMatrix();
   pTextMatrix[0] = text_matrix.a;

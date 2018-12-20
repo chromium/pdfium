@@ -61,10 +61,9 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              CFX_RenderDevice* pDevice,
                              const CFX_Matrix& mtUser2Device) {
-  if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
-    CFX_Matrix mt = GetCurMatrix();
-    mt.Concat(mtUser2Device);
-    pWnd->DrawAppearance(pDevice, mt);
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  if (pWnd) {
+    pWnd->DrawAppearance(pDevice, GetCurMatrix() * mtUser2Device);
     return;
   }
 
@@ -419,14 +418,11 @@ void CFFL_FormFiller::DestroyPDFWindow(CPDFSDK_PageView* pPageView) {
 
 CFX_Matrix CFFL_FormFiller::GetWindowMatrix(
     const CPWL_Wnd::PrivateData* pAttached) {
-  CFX_Matrix mt;
   const auto* pPrivateData = static_cast<const CFFL_PrivateData*>(pAttached);
   if (!pPrivateData || !pPrivateData->pPageView)
-    return mt;
+    return CFX_Matrix();
 
-  mt = GetCurMatrix();
-  mt.Concat(pPrivateData->pPageView->GetCurrentMatrix());
-  return mt;
+  return GetCurMatrix() * pPrivateData->pPageView->GetCurrentMatrix();
 }
 
 CFX_Matrix CFFL_FormFiller::GetCurMatrix() {

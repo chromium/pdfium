@@ -207,11 +207,10 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
       y2 = rect.top;
       break;
   }
-  CFX_Matrix matrix = m_PageMatrix;
-  matrix.Concat(CFX_Matrix(
-      (x2 - x0) / m_PageSize.width, (y2 - y0) / m_PageSize.width,
-      (x1 - x0) / m_PageSize.height, (y1 - y0) / m_PageSize.height, x0, y0));
-  return matrix;
+  CFX_Matrix matrix((x2 - x0) / m_PageSize.width, (y2 - y0) / m_PageSize.width,
+                    (x1 - x0) / m_PageSize.height,
+                    (y1 - y0) / m_PageSize.height, x0, y0);
+  return m_PageMatrix * matrix;
 }
 
 int CPDF_Page::GetPageRotation() const {

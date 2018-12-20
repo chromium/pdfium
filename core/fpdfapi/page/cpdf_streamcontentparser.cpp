@@ -694,8 +694,7 @@ void CPDF_StreamContentParser::Handle_CurveTo_123() {
 void CPDF_StreamContentParser::Handle_ConcatMatrix() {
   CFX_Matrix new_matrix(GetNumber(5), GetNumber(4), GetNumber(3), GetNumber(2),
                         GetNumber(1), GetNumber(0));
-  new_matrix.Concat(m_pCurStates->m_CTM);
-  m_pCurStates->m_CTM = new_matrix;
+  m_pCurStates->m_CTM = new_matrix * m_pCurStates->m_CTM;
   OnChangeTextMatrix();
 }
 
@@ -788,8 +787,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
       m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
   form->ParseContent(&status, nullptr, nullptr, m_ParsedSet.Get());
 
-  CFX_Matrix matrix = m_pCurStates->m_CTM;
-  matrix.Concat(m_mtContentToUser);
+  CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
 
   auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>(GetCurrentStreamIndex(),
                                                       std::move(form), matrix);
@@ -839,8 +837,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
   SetGraphicStates(pImageObj.get(), pImageObj->GetImage()->IsMask(), false,
                    false);
 
-  CFX_Matrix ImageMatrix = m_pCurStates->m_CTM;
-  ImageMatrix.Concat(m_mtContentToUser);
+  CFX_Matrix ImageMatrix = m_pCurStates->m_CTM * m_mtContentToUser;
   pImageObj->set_matrix(ImageMatrix);
   pImageObj->CalcBoundingBox();
 
@@ -1094,8 +1091,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (!pShading->IsShadingObject() || !pShading->Load())
     return;
 
-  CFX_Matrix matrix = m_pCurStates->m_CTM;
-  matrix.Concat(m_mtContentToUser);
+  CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
   auto pObj = pdfium::MakeUnique<CPDF_ShadingObject>(GetCurrentStreamIndex(),
                                                      pShading, matrix);
   SetGraphicStates(pObj.get(), false, false, false);
@@ -1471,8 +1467,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   for (const auto& point : PathPoints)
     Path.AppendPoint(point.m_Point, point.m_Type, point.m_CloseFigure);
 
-  CFX_Matrix matrix = m_pCurStates->m_CTM;
-  matrix.Concat(m_mtContentToUser);
+  CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
   if (bStroke || FillType) {
     auto pPathObj =
         pdfium::MakeUnique<CPDF_PathObject>(GetCurrentStreamIndex());

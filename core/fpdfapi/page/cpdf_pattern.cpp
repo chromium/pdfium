@@ -17,6 +17,5 @@ CPDF_Pattern::~CPDF_Pattern() {}
 
 void CPDF_Pattern::SetPatternToFormMatrix() {
   const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
-  m_Pattern2Form = pDict->GetMatrixFor("Matrix");
-  m_Pattern2Form.Concat(m_ParentMatrix);
+  m_Pattern2Form = pDict->GetMatrixFor("Matrix") * m_ParentMatrix;
 }
