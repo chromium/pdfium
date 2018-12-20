@@ -507,15 +507,14 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
     return false;
   std::vector<CrossRefObjData> result_objects;
   while (1) {
-    FX_FILESIZE SavedPos = m_pSyntax->GetPos();
+    FX_FILESIZE saved_pos = m_pSyntax->GetPos();
     bool bIsNumber;
     ByteString word = m_pSyntax->GetNextWord(&bIsNumber);
-    if (word.IsEmpty()) {
+    if (word.IsEmpty())
       return false;
-    }
 
     if (!bIsNumber) {
-      m_pSyntax->SetPos(SavedPos);
+      m_pSyntax->SetPos(saved_pos);
       break;
     }
 
@@ -525,7 +524,6 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
 
     uint32_t count = m_pSyntax->GetDirectNum();
     m_pSyntax->ToNextWord();
-    SavedPos = m_pSyntax->GetPos();
 
     if (!ParseAndAppendCrossRefSubsectionData(
             start_objnum, count, out_objects ? &result_objects : nullptr)) {
