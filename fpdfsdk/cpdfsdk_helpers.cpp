@@ -26,6 +26,13 @@ namespace {
 
 constexpr char kQuadPoints[] = "QuadPoints";
 
+// 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
+static uint32_t g_sandbox_policy = 0xFFFFFFFF;
+
+#ifndef _WIN32
+int g_last_error;
+#endif  // _WIN32
+
 bool RaiseUnSupportError(int nError) {
   CFSDK_UnsupportInfo_Adapter* pAdapter =
       CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter();
@@ -174,172 +181,12 @@ ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
       .ToUTF8();
 }
 
-void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
-  CPDF_Annot::Subtype nAnnotSubtype = pPDFAnnot->GetSubtype();
-  if (nAnnotSubtype == CPDF_Annot::Subtype::THREED) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::SCREEN) {
-    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
-    ByteString cbString;
-    if (pAnnotDict->KeyExist("IT"))
-      cbString = pAnnotDict->GetStringFor("IT");
-    if (cbString.Compare("Img") != 0)
-      RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::MOVIE) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_MOVIE);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::SOUND) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_SOUND);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::RICHMEDIA) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::FILEATTACHMENT) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_ATTACHMENT);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::WIDGET) {
-    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
-    ByteString cbString;
-    if (pAnnotDict->KeyExist("FT"))
-      cbString = pAnnotDict->GetStringFor("FT");
-    if (cbString.Compare("Sig") == 0)
-      RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
-  }
+#ifdef PDF_ENABLE_XFA
+RetainPtr<IFX_SeekableStream> MakeSeekableStream(
+    FPDF_FILEHANDLER* pFilehandler) {
+  return pdfium::MakeRetain<FPDF_FileHandlerContext>(pFilehandler);
 }
-
-void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
-  const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
-  if (pRootDict) {
-    // Portfolios and Packages
-    if (pRootDict->KeyExist("Collection")) {
-      RaiseUnSupportError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
-      return;
-    }
-    if (pRootDict->KeyExist("Names")) {
-      const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
-      if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
-        RaiseUnSupportError(FPDF_UNSP_DOC_ATTACHMENT);
-        return;
-      }
-      if (pNameDict && pNameDict->KeyExist("JavaScript")) {
-        const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
-        const CPDF_Array* pArray =
-            pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
-        if (pArray) {
-          for (size_t i = 0; i < pArray->size(); i++) {
-            ByteString cbStr = pArray->GetStringAt(i);
-            if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
-              RaiseUnSupportError(FPDF_UNSP_DOC_SHAREDREVIEW);
-              return;
-            }
-          }
-        }
-      }
-    }
-
-    // SharedForm
-    const CPDF_Stream* pStream = pRootDict->GetStreamFor("Metadata");
-    if (pStream) {
-      CPDF_Metadata metaData(pStream);
-      for (const auto& err : metaData.CheckForSharedForm())
-        RaiseUnSupportError(static_cast<int>(err));
-    }
-  }
-
-  // XFA Forms
-  if (!pDoc->GetExtension() && CPDF_InteractiveForm(pDoc).HasXFAForm())
-    RaiseUnSupportError(FPDF_UNSP_DOC_XFAFORM);
-}
-
-#ifndef _WIN32
-int g_LastError;
-void SetLastError(int err) {
-  g_LastError = err;
-}
-
-int GetLastError() {
-  return g_LastError;
-}
-#endif  // _WIN32
-
-void ProcessParseError(CPDF_Parser::Error err) {
-  uint32_t err_code = FPDF_ERR_SUCCESS;
-  // Translate FPDFAPI error code to FPDFVIEW error code
-  switch (err) {
-    case CPDF_Parser::SUCCESS:
-      err_code = FPDF_ERR_SUCCESS;
-      break;
-    case CPDF_Parser::FILE_ERROR:
-      err_code = FPDF_ERR_FILE;
-      break;
-    case CPDF_Parser::FORMAT_ERROR:
-      err_code = FPDF_ERR_FORMAT;
-      break;
-    case CPDF_Parser::PASSWORD_ERROR:
-      err_code = FPDF_ERR_PASSWORD;
-      break;
-    case CPDF_Parser::HANDLER_ERROR:
-      err_code = FPDF_ERR_SECURITY;
-      break;
-  }
-  SetLastError(err_code);
-}
-
-// 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
-static uint32_t foxit_sandbox_policy = 0xFFFFFFFF;
-
-void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
-  switch (policy) {
-    case FPDF_POLICY_MACHINETIME_ACCESS: {
-      if (enable)
-        foxit_sandbox_policy |= 0x01;
-      else
-        foxit_sandbox_policy &= 0xFFFFFFFE;
-    } break;
-    default:
-      break;
-  }
-}
-
-FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
-  switch (policy) {
-    case FPDF_POLICY_MACHINETIME_ACCESS:
-      return !!(foxit_sandbox_policy & 0x01);
-    default:
-      return false;
-  }
-}
-
-unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
-                                                   void* buffer,
-                                                   unsigned long buflen) {
-  ASSERT(stream);
-  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
-  stream_acc->LoadAllDataFiltered();
-  const auto stream_data_size = stream_acc->GetSize();
-  if (!buffer || buflen < stream_data_size)
-    return stream_data_size;
-
-  memcpy(buffer, stream_acc->GetData(), stream_data_size);
-  return stream_data_size;
-}
-
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
-                                                  void* buffer,
-                                                  unsigned long buflen) {
-  ByteString encoded_text = text.ToUTF16LE();
-  unsigned long len = encoded_text.GetLength();
-  if (buffer && len <= buflen)
-    memcpy(buffer, encoded_text.c_str(), len);
-  return len;
-}
-
-void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect) {
-  out_rect->left = rect.left;
-  out_rect->top = rect.top;
-  out_rect->right = rect.right;
-  out_rect->bottom = rect.bottom;
-}
-
-CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
-  return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
-}
+#endif  // PDF_ENABLE_XFA
 
 const CPDF_Array* GetQuadPointsArrayFromDictionary(
     const CPDF_Dictionary* dict) {
@@ -402,9 +249,165 @@ bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
   return true;
 }
 
-#ifdef PDF_ENABLE_XFA
-RetainPtr<IFX_SeekableStream> MakeSeekableStream(
-    FPDF_FILEHANDLER* pFilehandler) {
-  return pdfium::MakeRetain<FPDF_FileHandlerContext>(pFilehandler);
+CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
+  return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
 }
-#endif  // PDF_ENABLE_XFA
+
+void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect) {
+  out_rect->left = rect.left;
+  out_rect->top = rect.top;
+  out_rect->right = rect.right;
+  out_rect->bottom = rect.bottom;
+}
+
+unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
+                                                  void* buffer,
+                                                  unsigned long buflen) {
+  ByteString encoded_text = text.ToUTF16LE();
+  unsigned long len = encoded_text.GetLength();
+  if (buffer && len <= buflen)
+    memcpy(buffer, encoded_text.c_str(), len);
+  return len;
+}
+
+unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
+                                                   void* buffer,
+                                                   unsigned long buflen) {
+  ASSERT(stream);
+  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
+  stream_acc->LoadAllDataFiltered();
+  const auto stream_data_size = stream_acc->GetSize();
+  if (!buffer || buflen < stream_data_size)
+    return stream_data_size;
+
+  memcpy(buffer, stream_acc->GetData(), stream_data_size);
+  return stream_data_size;
+}
+
+void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
+  switch (policy) {
+    case FPDF_POLICY_MACHINETIME_ACCESS: {
+      if (enable)
+        g_sandbox_policy |= 0x01;
+      else
+        g_sandbox_policy &= 0xFFFFFFFE;
+    } break;
+    default:
+      break;
+  }
+}
+
+FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
+  switch (policy) {
+    case FPDF_POLICY_MACHINETIME_ACCESS:
+      return !!(g_sandbox_policy & 0x01);
+    default:
+      return false;
+  }
+}
+
+void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
+  const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
+  if (pRootDict) {
+    // Portfolios and Packages
+    if (pRootDict->KeyExist("Collection")) {
+      RaiseUnSupportError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
+      return;
+    }
+    if (pRootDict->KeyExist("Names")) {
+      const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
+      if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
+        RaiseUnSupportError(FPDF_UNSP_DOC_ATTACHMENT);
+        return;
+      }
+      if (pNameDict && pNameDict->KeyExist("JavaScript")) {
+        const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
+        const CPDF_Array* pArray =
+            pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
+        if (pArray) {
+          for (size_t i = 0; i < pArray->size(); i++) {
+            ByteString cbStr = pArray->GetStringAt(i);
+            if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
+              RaiseUnSupportError(FPDF_UNSP_DOC_SHAREDREVIEW);
+              return;
+            }
+          }
+        }
+      }
+    }
+
+    // SharedForm
+    const CPDF_Stream* pStream = pRootDict->GetStreamFor("Metadata");
+    if (pStream) {
+      CPDF_Metadata metaData(pStream);
+      for (const auto& err : metaData.CheckForSharedForm())
+        RaiseUnSupportError(static_cast<int>(err));
+    }
+  }
+
+  // XFA Forms
+  if (!pDoc->GetExtension() && CPDF_InteractiveForm(pDoc).HasXFAForm())
+    RaiseUnSupportError(FPDF_UNSP_DOC_XFAFORM);
+}
+
+void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
+  CPDF_Annot::Subtype nAnnotSubtype = pPDFAnnot->GetSubtype();
+  if (nAnnotSubtype == CPDF_Annot::Subtype::THREED) {
+    RaiseUnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
+  } else if (nAnnotSubtype == CPDF_Annot::Subtype::SCREEN) {
+    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
+    ByteString cbString;
+    if (pAnnotDict->KeyExist("IT"))
+      cbString = pAnnotDict->GetStringFor("IT");
+    if (cbString.Compare("Img") != 0)
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
+  } else if (nAnnotSubtype == CPDF_Annot::Subtype::MOVIE) {
+    RaiseUnSupportError(FPDF_UNSP_ANNOT_MOVIE);
+  } else if (nAnnotSubtype == CPDF_Annot::Subtype::SOUND) {
+    RaiseUnSupportError(FPDF_UNSP_ANNOT_SOUND);
+  } else if (nAnnotSubtype == CPDF_Annot::Subtype::RICHMEDIA) {
+    RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA);
+  } else if (nAnnotSubtype == CPDF_Annot::Subtype::FILEATTACHMENT) {
+    RaiseUnSupportError(FPDF_UNSP_ANNOT_ATTACHMENT);
+  } else if (nAnnotSubtype == CPDF_Annot::Subtype::WIDGET) {
+    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
+    ByteString cbString;
+    if (pAnnotDict->KeyExist("FT"))
+      cbString = pAnnotDict->GetStringFor("FT");
+    if (cbString.Compare("Sig") == 0)
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
+  }
+}
+
+#ifndef _WIN32
+void SetLastError(int err) {
+  g_last_error = err;
+}
+
+int GetLastError() {
+  return g_last_error;
+}
+#endif  // _WIN32
+
+void ProcessParseError(CPDF_Parser::Error err) {
+  uint32_t err_code = FPDF_ERR_SUCCESS;
+  // Translate FPDFAPI error code to FPDFVIEW error code
+  switch (err) {
+    case CPDF_Parser::SUCCESS:
+      err_code = FPDF_ERR_SUCCESS;
+      break;
+    case CPDF_Parser::FILE_ERROR:
+      err_code = FPDF_ERR_FILE;
+      break;
+    case CPDF_Parser::FORMAT_ERROR:
+      err_code = FPDF_ERR_FORMAT;
+      break;
+    case CPDF_Parser::PASSWORD_ERROR:
+      err_code = FPDF_ERR_PASSWORD;
+      break;
+    case CPDF_Parser::HANDLER_ERROR:
+      err_code = FPDF_ERR_SECURITY;
+      break;
+  }
+  SetLastError(err_code);
+}
