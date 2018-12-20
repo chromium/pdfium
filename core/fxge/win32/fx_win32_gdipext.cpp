@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#include <objidl.h>
+
 #include <algorithm>
 #include <memory>
 #include <sstream>
