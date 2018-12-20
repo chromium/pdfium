@@ -118,6 +118,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "fpdf_dataavail_embeddertest.cpp",
     "fpdf_doc_embeddertest.cpp",
     "fpdf_edit_embeddertest.cpp",
+    "fpdf_editpage_embeddertest.cpp",
     "fpdf_editpath_embeddertest.cpp",
     "fpdf_ext_embeddertest.cpp",
     "fpdf_flatten_embeddertest.cpp",
