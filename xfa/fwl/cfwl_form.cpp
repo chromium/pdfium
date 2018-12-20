@@ -24,13 +24,7 @@
 CFWL_Form::CFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter),
-      m_pSubFocus(nullptr),
-      m_fCXBorder(0),
-      m_fCYBorder(0) {
-  m_rtRelative.Reset();
-  m_rtRestore.Reset();
-
+    : CFWL_Widget(app, std::move(properties), pOuter) {
   RegisterForm();
   RegisterEventTarget(nullptr);
 }

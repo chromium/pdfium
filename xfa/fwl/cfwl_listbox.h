@@ -122,13 +122,13 @@ class CFWL_ListBox : public CFWL_Widget {
   CFX_RectF m_rtConent;
   std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
-  FDE_TextStyle m_dwTTOStyles;
-  FDE_TextAlignment m_iTTOAligns;
-  CFWL_ListItem* m_hAnchor;
-  float m_fItemHeight;
-  float m_fScorllBarWidth;
-  bool m_bLButtonDown;
-  IFWL_ThemeProvider* m_pScrollBarTP;
+  FDE_TextStyle m_TTOStyles;
+  FDE_TextAlignment m_iTTOAligns = FDE_TextAlignment::kTopLeft;
+  bool m_bLButtonDown = false;
+  float m_fItemHeight = 0.0f;
+  float m_fScorllBarWidth = 0.0f;
+  CFWL_ListItem* m_hAnchor = nullptr;
+  IFWL_ThemeProvider* m_pScrollBarTP = nullptr;
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
 };
 

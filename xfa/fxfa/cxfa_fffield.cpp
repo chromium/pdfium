@@ -191,10 +191,9 @@ void CXFA_FFField::CapPlacement() {
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (caption && !caption->IsHidden()) {
     iCapPlacement = caption->GetPlacementType();
-    if (iCapPlacement == XFA_AttributeValue::Top && GetPrev()) {
-      m_rtCaption.Reset();
-    } else if (iCapPlacement == XFA_AttributeValue::Bottom && GetNext()) {
-      m_rtCaption.Reset();
+    if ((iCapPlacement == XFA_AttributeValue::Top && GetPrev()) ||
+        (iCapPlacement == XFA_AttributeValue::Bottom && GetNext())) {
+      m_rtCaption = CFX_RectF();
     } else {
       fCapReserve = caption->GetReserve();
       if (iCapPlacement == XFA_AttributeValue::Top ||

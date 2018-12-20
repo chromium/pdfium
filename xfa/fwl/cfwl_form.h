@@ -55,9 +55,9 @@ class CFWL_Form final : public CFWL_Widget {
   CFX_RectF m_rtRestore;
   CFX_RectF m_rtRelative;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
-  CFWL_Widget* m_pSubFocus;
-  float m_fCXBorder;
-  float m_fCYBorder;
+  CFWL_Widget* m_pSubFocus = nullptr;
+  float m_fCXBorder = 0.0f;
+  float m_fCYBorder = 0.0f;
 };
 
 #endif  // XFA_FWL_CFWL_FORM_H_

@@ -24,8 +24,8 @@ class CFWL_ListItem {
   WideString GetText() const { return m_wsText; }
 
  private:
+  uint32_t m_dwStates = 0;
   CFX_RectF m_rtItem;
-  uint32_t m_dwStates;
   WideString m_wsText;
 };
 

@@ -31,16 +31,7 @@ const int kItemTextMargin = 2;
 CFWL_ListBox::CFWL_ListBox(const CFWL_App* app,
                            std::unique_ptr<CFWL_WidgetProperties> properties,
                            CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter),
-      m_iTTOAligns(FDE_TextAlignment::kTopLeft),
-      m_hAnchor(nullptr),
-      m_fScorllBarWidth(0),
-      m_bLButtonDown(false),
-      m_pScrollBarTP(nullptr) {
-  m_rtClient.Reset();
-  m_rtConent.Reset();
-  m_rtStatic.Reset();
-}
+    : CFWL_Widget(app, std::move(properties), pOuter) {}
 
 CFWL_ListBox::~CFWL_ListBox() {}
 
@@ -69,7 +60,7 @@ void CFWL_ListBox::Update() {
       break;
     }
   }
-  m_dwTTOStyles.single_line_ = true;
+  m_TTOStyles.single_line_ = true;
   m_fScorllBarWidth = GetScrollWidth();
   CalcSize(false);
 }
@@ -460,7 +451,7 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
   textParam.m_matrix.Concat(*pMatrix);
   textParam.m_rtPart = rtText;
   textParam.m_wsText = std::move(wsText);
-  textParam.m_dwTTOStyles = m_dwTTOStyles;
+  textParam.m_dwTTOStyles = m_TTOStyles;
   textParam.m_iTTOAlign = m_iTTOAligns;
   textParam.m_bMaximize = true;
   pTheme->DrawText(&textParam);

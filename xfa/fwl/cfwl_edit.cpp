@@ -47,20 +47,7 @@ constexpr int kEditingModifier = FWL_KEYFLAG_Ctrl;
 CFWL_Edit::CFWL_Edit(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter),
-      m_fVAlignOffset(0.0f),
-      m_fScrollOffsetX(0.0f),
-      m_fScrollOffsetY(0.0f),
-      m_bLButtonDown(false),
-      m_CursorPosition(0),
-      m_nLimit(-1),
-      m_fFontSize(0),
-      m_bSetRange(false),
-      m_iMax(0xFFFFFFF) {
-  m_rtClient.Reset();
-  m_rtEngine.Reset();
-  m_rtStatic.Reset();
-
+    : CFWL_Widget(app, std::move(properties), pOuter) {
   m_EdtEngine.SetDelegate(this);
 }
 

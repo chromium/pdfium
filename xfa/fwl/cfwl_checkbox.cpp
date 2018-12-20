@@ -30,15 +30,8 @@ const int kCaptionMargin = 5;
 }  // namespace
 
 CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_iTTOAlign(FDE_TextAlignment::kCenter),
-      m_bBtnDown(false),
-      m_fBoxHeight(16.0f) {
-  m_dwTTOStyles.single_line_ = true;
-  m_rtClient.Reset();
-  m_rtBox.Reset();
-  m_rtCaption.Reset();
-  m_rtFocus.Reset();
+    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
+  m_TTOStyles.single_line_ = true;
 }
 
 CFWL_CheckBox::~CFWL_CheckBox() {}
@@ -98,7 +91,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   textParam.m_matrix.Concat(matrix);
   textParam.m_rtPart = m_rtCaption;
   textParam.m_wsText = L"Check box";
-  textParam.m_dwTTOStyles = m_dwTTOStyles;
+  textParam.m_dwTTOStyles = m_TTOStyles;
   textParam.m_iTTOAlign = m_iTTOAlign;
   pTheme->DrawText(&textParam);
 }
@@ -135,8 +128,8 @@ void CFWL_CheckBox::Layout() {
   CFX_RectF rtFocus(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
                     m_rtCaption.height);
 
-  CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider.Get(),
-               m_dwTTOStyles, m_iTTOAlign, &rtFocus);
+  CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider.Get(), m_TTOStyles,
+               m_iTTOAlign, &rtFocus);
 
   m_rtFocus = CFX_RectF(m_rtCaption.TopLeft(),
                         std::max(m_rtCaption.width, rtFocus.width),
@@ -168,9 +161,8 @@ uint32_t CFWL_CheckBox::GetPartStates() const {
 
 void CFWL_CheckBox::UpdateTextOutStyles() {
   m_iTTOAlign = FDE_TextAlignment::kTopLeft;
-
-  m_dwTTOStyles.Reset();
-  m_dwTTOStyles.single_line_ = true;
+  m_TTOStyles.Reset();
+  m_TTOStyles.single_line_ = true;
 }
 
 void CFWL_CheckBox::NextStates() {

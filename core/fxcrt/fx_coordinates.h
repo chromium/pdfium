@@ -345,12 +345,6 @@ class CFX_RectF {
         width(other.width),
         height(other.height) {}
 
-  void Reset() {
-    left = 0;
-    top = 0;
-    width = 0;
-    height = 0;
-  }
   CFX_RectF& operator+=(const PointType& p) {
     left += p.x;
     top += p.y;

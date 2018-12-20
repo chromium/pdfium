@@ -32,30 +32,7 @@ CFWL_ScrollBar::CFWL_ScrollBar(
     std::unique_ptr<CFWL_WidgetProperties> properties,
     CFWL_Widget* pOuter)
     : CFWL_Widget(app, std::move(properties), pOuter),
-      m_pTimerInfo(nullptr),
-      m_fRangeMin(0),
-      m_fRangeMax(-1),
-      m_fPageSize(0),
-      m_fStepSize(0),
-      m_fPos(0),
-      m_fTrackPos(0),
-      m_iMinButtonState(CFWL_PartState_Normal),
-      m_iMaxButtonState(CFWL_PartState_Normal),
-      m_iThumbButtonState(CFWL_PartState_Normal),
-      m_iMinTrackState(CFWL_PartState_Normal),
-      m_iMaxTrackState(CFWL_PartState_Normal),
-      m_fLastTrackPos(0),
-      m_iMouseWheel(0),
-      m_bMouseDown(false),
-      m_fButtonLen(0),
-      m_bMinSize(false),
       m_Timer(this) {
-  m_rtClient.Reset();
-  m_rtThumb.Reset();
-  m_rtMinBtn.Reset();
-  m_rtMaxBtn.Reset();
-  m_rtMinTrack.Reset();
-  m_rtMaxTrack.Reset();
 }
 
 CFWL_ScrollBar::~CFWL_ScrollBar() {}

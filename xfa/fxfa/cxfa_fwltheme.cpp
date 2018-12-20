@@ -58,9 +58,7 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
       m_pCaretTP(pdfium::MakeUnique<CFWL_CaretTP>()),
       m_pBarcodeTP(pdfium::MakeUnique<CFWL_BarcodeTP>()),
       m_pTextOut(pdfium::MakeUnique<CFDE_TextOut>()),
-      m_pCalendarFont(nullptr),
       m_pApp(pApp) {
-  m_Rect.Reset();
 }
 
 bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
