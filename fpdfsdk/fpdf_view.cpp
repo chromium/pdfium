@@ -666,10 +666,8 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 
   const FX_RECT rect(0, 0, pPage->GetPageWidth(), pPage->GetPageHeight());
   CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(rect, 0);
-  if (matrix) {
-    transform_matrix.Concat(CFX_Matrix(matrix->a, matrix->b, matrix->c,
-                                       matrix->d, matrix->e, matrix->f));
-  }
+  if (matrix)
+    transform_matrix *= CFXMatrixFromFSMatrix(*matrix);
   RenderPageImpl(pContext, pPage, transform_matrix, clip_rect, flags, true,
                  nullptr);
 

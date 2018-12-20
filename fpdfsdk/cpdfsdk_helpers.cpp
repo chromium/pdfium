@@ -260,6 +260,10 @@ void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect) {
   out_rect->bottom = rect.bottom;
 }
 
+CFX_Matrix CFXMatrixFromFSMatrix(const FS_MATRIX& matrix) {
+  return CFX_Matrix(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+}
+
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen) {

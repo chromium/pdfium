@@ -235,8 +235,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     else
       continue;
 
-    CFX_Matrix m(matrix->a, matrix->b, matrix->c, matrix->d, matrix->e,
-                 matrix->f);
+    CFX_Matrix m = CFXMatrixFromFSMatrix(*matrix);
     pDict->SetMatrixFor("Matrix", pDict->GetMatrixFor("Matrix") * m);
   }
 
