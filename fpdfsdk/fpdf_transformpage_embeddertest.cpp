@@ -208,3 +208,24 @@ TEST_F(FPDFTransformEmbedderTest, ClipPath) {
   FPDF_DestroyClipPath(clip);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTransformEmbedderTest, TransFormWithClip) {
+  const FS_MATRIX half_matrix{0.5, 0, 0, 0.5, 0, 0};
+  const FS_RECTF clip_rect = {0.0f, 0.0f, 20.0f, 10.0f};
+
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_FALSE(FPDFPage_TransFormWithClip(nullptr, nullptr, nullptr));
+  EXPECT_FALSE(FPDFPage_TransFormWithClip(nullptr, &half_matrix, nullptr));
+  EXPECT_FALSE(FPDFPage_TransFormWithClip(nullptr, nullptr, &clip_rect));
+  EXPECT_FALSE(FPDFPage_TransFormWithClip(nullptr, &half_matrix, &clip_rect));
+  EXPECT_FALSE(FPDFPage_TransFormWithClip(page, nullptr, nullptr));
+  EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, nullptr));
+  EXPECT_TRUE(FPDFPage_TransFormWithClip(page, nullptr, &clip_rect));
+  EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, &clip_rect));
+
+  UnloadPage(page);
+}
