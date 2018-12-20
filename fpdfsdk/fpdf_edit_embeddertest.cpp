@@ -2938,7 +2938,7 @@ TEST_F(FPDFEditEmbeddertest, GetImageData) {
   EXPECT_EQ("cb3637934bb3b95a6e4ae1ea9eb9e56e",
             GenerateMD5Base16(reinterpret_cast<uint8_t*>(buf.data()), len));
 
-  // Retrieve an image obejct with DCTDecode-encoded data stream.
+  // Retrieve an image object with DCTDecode-encoded data stream.
   obj = FPDFPage_GetObject(page, 37);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
 
@@ -3114,8 +3114,8 @@ TEST_F(FPDFEditEmbeddertest, GetImageMetadata) {
   EXPECT_EQ(7, metadata.marked_content_id);
   EXPECT_EQ(92u, metadata.width);
   EXPECT_EQ(68u, metadata.height);
-  EXPECT_NEAR(96.000000, metadata.horizontal_dpi, 0.001);
-  EXPECT_NEAR(96.000000, metadata.vertical_dpi, 0.001);
+  EXPECT_FLOAT_EQ(96.0f, metadata.horizontal_dpi);
+  EXPECT_FLOAT_EQ(96.0f, metadata.vertical_dpi);
   EXPECT_EQ(0u, metadata.bits_per_pixel);
   EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
 
@@ -3124,8 +3124,8 @@ TEST_F(FPDFEditEmbeddertest, GetImageMetadata) {
   EXPECT_EQ(7, metadata.marked_content_id);
   EXPECT_EQ(92u, metadata.width);
   EXPECT_EQ(68u, metadata.height);
-  EXPECT_NEAR(96.000000, metadata.horizontal_dpi, 0.001);
-  EXPECT_NEAR(96.000000, metadata.vertical_dpi, 0.001);
+  EXPECT_FLOAT_EQ(96.0f, metadata.horizontal_dpi);
+  EXPECT_FLOAT_EQ(96.0f, metadata.vertical_dpi);
   EXPECT_EQ(1u, metadata.bits_per_pixel);
   EXPECT_EQ(FPDF_COLORSPACE_INDEXED, metadata.colorspace);
 
@@ -3136,8 +3136,8 @@ TEST_F(FPDFEditEmbeddertest, GetImageMetadata) {
   EXPECT_EQ(9, metadata.marked_content_id);
   EXPECT_EQ(126u, metadata.width);
   EXPECT_EQ(106u, metadata.height);
-  EXPECT_NEAR(162.173752, metadata.horizontal_dpi, 0.001);
-  EXPECT_NEAR(162.555878, metadata.vertical_dpi, 0.001);
+  EXPECT_FLOAT_EQ(162.173752f, metadata.horizontal_dpi);
+  EXPECT_FLOAT_EQ(162.555878f, metadata.vertical_dpi);
   EXPECT_EQ(24u, metadata.bits_per_pixel);
   EXPECT_EQ(FPDF_COLORSPACE_DEVICERGB, metadata.colorspace);
 
