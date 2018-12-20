@@ -605,7 +605,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
 
   CFX_PathData TransformedPath(*pPathData);
   if (charpos.m_bGlyphAdjust)
-    TransformedPath.Transform(&matrix);
+    TransformedPath.Transform(matrix);
 
   std::ostringstream buf;
   buf << "/X" << *ps_fontnum << " Ff/CharProcs get begin/" << glyphindex

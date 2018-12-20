@@ -291,11 +291,9 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(float line_width,
   return rect;
 }
 
-void CFX_PathData::Transform(const CFX_Matrix* pMatrix) {
-  if (!pMatrix)
-    return;
+void CFX_PathData::Transform(const CFX_Matrix& matrix) {
   for (auto& point : m_Points)
-    point.m_Point = pMatrix->Transform(point.m_Point);
+    point.m_Point = matrix.Transform(point.m_Point);
 }
 
 bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,

@@ -49,7 +49,7 @@ class CFX_PathData final : public Retainable {
   CFX_FloatRect GetBoundingBox() const;
   CFX_FloatRect GetBoundingBox(float line_width, float miter_limit) const;
 
-  void Transform(const CFX_Matrix* pMatrix);
+  void Transform(const CFX_Matrix& matrix);
   bool IsRect() const;
   bool GetZeroAreaPath(const CFX_Matrix* pMatrix,
                        bool bAdjust,

@@ -37,8 +37,8 @@ bool CPDF_Path::IsRect() const {
   return m_Ref.GetObject()->IsRect();
 }
 
-void CPDF_Path::Transform(const CFX_Matrix* pMatrix) {
-  m_Ref.GetPrivateCopy()->Transform(pMatrix);
+void CPDF_Path::Transform(const CFX_Matrix& matrix) {
+  m_Ref.GetPrivateCopy()->Transform(matrix);
 }
 
 void CPDF_Path::Append(const CPDF_Path& other, const CFX_Matrix* pMatrix) {

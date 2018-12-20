@@ -81,9 +81,9 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
     ClipPath.Emplace();
     ClipPath.AppendRect(form_bbox.left, form_bbox.bottom, form_bbox.right,
                         form_bbox.top);
-    ClipPath.Transform(&form_matrix);
+    ClipPath.Transform(form_matrix);
     if (pParentMatrix)
-      ClipPath.Transform(pParentMatrix);
+      ClipPath.Transform(*pParentMatrix);
 
     form_bbox = form_matrix.TransformRect(form_bbox);
     if (pParentMatrix)

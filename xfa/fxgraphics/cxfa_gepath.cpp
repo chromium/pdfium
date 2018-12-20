@@ -146,5 +146,5 @@ void CXFA_GEPath::AddSubpath(CXFA_GEPath* path) {
 }
 
 void CXFA_GEPath::TransformBy(const CFX_Matrix& mt) {
-  data_.Transform(&mt);
+  data_.Transform(mt);
 }

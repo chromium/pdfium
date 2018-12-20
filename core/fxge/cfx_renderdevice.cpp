@@ -1084,7 +1084,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
     matrix.Concat(*pText2User);
 
     CFX_PathData TransformedPath(*pPath);
-    TransformedPath.Transform(&matrix);
+    TransformedPath.Transform(matrix);
     if (fill_color || stroke_color) {
       int fill_mode = nFlag;
       if (fill_color)

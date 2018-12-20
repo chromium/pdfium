@@ -467,7 +467,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
   if (m_pDIBBase->IsOpaqueImage()) {
     CFX_PathData path;
     path.AppendRect(0, 0, 1, 1);
-    path.Transform(&m_ImageMatrix);
+    path.Transform(m_ImageMatrix);
     uint32_t fill_color =
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
     m_pRenderStatus->GetRenderDevice()->DrawPath(&path, nullptr, nullptr,
