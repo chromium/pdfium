@@ -47,7 +47,10 @@ class CPDF_PageObjectHolder {
  public:
   enum class ParseState : uint8_t { kNotParsed, kParsing, kParsed };
 
-  CPDF_PageObjectHolder(CPDF_Document* pDoc, CPDF_Dictionary* pDict);
+  CPDF_PageObjectHolder(CPDF_Document* pDoc,
+                        CPDF_Dictionary* pDict,
+                        CPDF_Dictionary* pPageResources,
+                        CPDF_Dictionary* pResources);
   virtual ~CPDF_PageObjectHolder();
 
   virtual bool IsPage() const;

@@ -13,6 +13,16 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "third_party/base/ptr_util.h"
 
+// static
+CPDF_Dictionary* CPDF_Form::ChooseResourcesDict(
+    CPDF_Dictionary* pResources,
+    CPDF_Dictionary* pParentResources,
+    CPDF_Dictionary* pPageResources) {
+  if (pResources)
+    return pResources;
+  return pParentResources ? pParentResources : pPageResources;
+}
+
 CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pPageResources,
                      CPDF_Stream* pFormStream)
@@ -22,14 +32,14 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pPageResources,
                      CPDF_Stream* pFormStream,
                      CPDF_Dictionary* pParentResources)
-    : CPDF_PageObjectHolder(pDoc, pFormStream->GetDict()),
+    : CPDF_PageObjectHolder(
+          pDoc,
+          pFormStream->GetDict(),
+          pPageResources,
+          ChooseResourcesDict(pFormStream->GetDict()->GetDictFor("Resources"),
+                              pParentResources,
+                              pPageResources)),
       m_pFormStream(pFormStream) {
-  m_pResources = GetDict()->GetDictFor("Resources");
-  m_pPageResources = pPageResources;
-  if (!m_pResources)
-    m_pResources = pParentResources;
-  if (!m_pResources)
-    m_pResources = pPageResources;
   LoadTransInfo();
 }
 

@@ -33,13 +33,18 @@ bool FontData::operator<(const FontData& other) const {
 }
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder(CPDF_Document* pDoc,
-                                             CPDF_Dictionary* pDict)
-    : m_pDict(pDict), m_pDocument(pDoc) {
+                                             CPDF_Dictionary* pDict,
+                                             CPDF_Dictionary* pPageResources,
+                                             CPDF_Dictionary* pResources)
+    : m_pPageResources(pPageResources),
+      m_pResources(pResources),
+      m_pDict(pDict),
+      m_pDocument(pDoc) {
   // TODO(thestig): Check if |m_pDict| is never a nullptr and simplify
   // callers that checks for that.
 }
 
-CPDF_PageObjectHolder::~CPDF_PageObjectHolder() {}
+CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
 
 bool CPDF_PageObjectHolder::IsPage() const {
   return false;

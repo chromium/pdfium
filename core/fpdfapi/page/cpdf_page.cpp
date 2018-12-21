@@ -23,13 +23,16 @@
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      CPDF_Dictionary* pPageDict,
                      bool bPageCache)
-    : CPDF_PageObjectHolder(pDocument, pPageDict),
+    : CPDF_PageObjectHolder(pDocument, pPageDict, nullptr, nullptr),
       m_PageSize(100, 100),
       m_pPDFDocument(pDocument) {
   ASSERT(pPageDict);
   if (bPageCache)
     m_pPageRender = pdfium::MakeUnique<CPDF_PageRenderCache>(this);
 
+  // Cannot initialize |m_pResources| and |m_pPageResources| via the
+  // CPDF_PageObjectHolder ctor because GetPageAttr() requires
+  // CPDF_PageObjectHolder to finish initializing first.
   CPDF_Object* pPageAttr = GetPageAttr(pdfium::page_object::kResources);
   m_pResources = pPageAttr ? pPageAttr->GetDict() : nullptr;
   m_pPageResources = m_pResources;
