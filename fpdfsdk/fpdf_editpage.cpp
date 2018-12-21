@@ -677,6 +677,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page,
   rotate %= 4;
   pPage->GetDict()->SetNewFor<CPDF_Number>(pdfium::page_object::kRotate,
                                            rotate * 90);
+  pPage->UpdateDimensions();
 }
 
 FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,

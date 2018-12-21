@@ -32,15 +32,15 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
 
     {
       // Render the page after rotation.
-      // Note that even though the rotation has changed, nothing else has.
-      // TODO(https://crbug.com/pdfium/1209): Fix tne rendering.
+      // Note that the change affects the rendering, as expected.
+      // It behaves just like the case below, rather than the case above.
       EXPECT_EQ(1, FPDFPage_GetRotation(page));
       const int page_width = static_cast<int>(FPDF_GetPageWidth(page));
       const int page_height = static_cast<int>(FPDF_GetPageHeight(page));
-      EXPECT_EQ(200, page_width);
-      EXPECT_EQ(300, page_height);
+      EXPECT_EQ(300, page_width);
+      EXPECT_EQ(200, page_height);
       ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-      CompareBitmap(bitmap.get(), page_width, page_height, kOriginalMD5);
+      CompareBitmap(bitmap.get(), page_width, page_height, kRotatedMD5);
     }
 
     UnloadPage(page);

@@ -60,6 +60,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   CPDF_Document* GetPDFDocument() const { return m_pPDFDocument.Get(); }
   View* GetView() const { return m_pView.Get(); }
   void SetView(View* pView) { m_pView = pView; }
+  void UpdateDimensions();
 
  private:
   CPDF_Page(CPDF_Document* pDocument,
