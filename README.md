@@ -142,6 +142,14 @@ differences on the various platforms. These tests are reliable on the bots. If
 you see failures, it can be a good idea to run the tests on the tip-of-tree
 checkout to see if the same failures appear.
 
+## Embedding PDFium in your own projects
+
+The public/ directory contains header files for the APIs available for use by
+embedders of PDFium. We endeavor to keep these as stable as possible.
+
+Outside of the public/ directory, code may change at any time, and embedders
+should not directly call these routines.
+
 ## Code Coverage
 
 Code coverage reports for PDFium can be generated in Linux development
