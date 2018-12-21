@@ -26,10 +26,9 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
     : CPDF_PageObjectHolder(pDocument, pPageDict),
       m_PageSize(100, 100),
       m_pPDFDocument(pDocument) {
+  ASSERT(pPageDict);
   if (bPageCache)
     m_pPageRender = pdfium::MakeUnique<CPDF_PageRenderCache>(this);
-  if (!pPageDict)
-    return;
 
   CPDF_Object* pPageAttr = GetPageAttr(pdfium::page_object::kResources);
   m_pResources = pPageAttr ? pPageAttr->GetDict() : nullptr;
@@ -68,7 +67,6 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
       break;
   }
 
-  m_Transparency = CPDF_Transparency();
   m_Transparency.SetIsolated();
   LoadTransInfo();
 }

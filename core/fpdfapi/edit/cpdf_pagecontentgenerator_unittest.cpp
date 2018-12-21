@@ -55,7 +55,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   pPathObj->set_filltype(FXFILL_ALTERNATE);
   pPathObj->path().AppendRect(10, 5, 13, 30);
 
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, nullptr, false);
+  CPDF_Dictionary dummy_page_dict;
+  auto pTestPage =
+      pdfium::MakeRetain<CPDF_Page>(nullptr, &dummy_page_dict, false);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -96,7 +98,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   pPathObj->path().AppendPoint(CFX_PointF(12, 13.64f), FXPT_TYPE::BezierTo,
                                true);
 
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, nullptr, false);
+  CPDF_Dictionary dummy_page_dict;
+  auto pTestPage =
+      pdfium::MakeRetain<CPDF_Page>(nullptr, &dummy_page_dict, false);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
