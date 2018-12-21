@@ -31,7 +31,7 @@ class CPDF_ScaledRenderBuffer {
                   int max_dpi);
 
   CFX_RenderDevice* GetDevice() const;
-  CFX_Matrix* GetMatrix() { return &m_Matrix; }
+  const CFX_Matrix& GetMatrix() const { return m_Matrix; }
   void OutputToDevice();
 
  private:

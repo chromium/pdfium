@@ -144,7 +144,7 @@ class CPDF_RenderStatus {
   void ProcessShading(const CPDF_ShadingObject* pShadingObj,
                       const CFX_Matrix& mtObj2Device);
   void DrawShading(const CPDF_ShadingPattern* pPattern,
-                   const CFX_Matrix* pMatrix,
+                   const CFX_Matrix& mtMatrix,
                    const FX_RECT& clip_rect,
                    int alpha,
                    bool bAlphaMode);

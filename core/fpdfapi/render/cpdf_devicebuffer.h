@@ -28,7 +28,7 @@ class CPDF_DeviceBuffer {
                   int max_dpi);
   void OutputToDevice();
   RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
-  const CFX_Matrix* GetMatrix() const { return &m_Matrix; }
+  const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
  private:
   UnownedPtr<CFX_RenderDevice> m_pDevice;
