@@ -22,8 +22,8 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pPageResources,
                      CPDF_Stream* pFormStream,
                      CPDF_Dictionary* pParentResources)
-    : CPDF_PageObjectHolder(pDoc, pFormStream->GetDict()) {
-  m_pFormStream = pFormStream;
+    : CPDF_PageObjectHolder(pDoc, pFormStream->GetDict()),
+      m_pFormStream(pFormStream) {
   m_pResources = GetDict()->GetDictFor("Resources");
   m_pPageResources = pPageResources;
   if (!m_pResources)
