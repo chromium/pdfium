@@ -30,8 +30,11 @@ namespace {
 void SetBoundingBox(CPDF_Page* page,
                     const ByteString& key,
                     const CFX_FloatRect& rect) {
-  if (page)
-    page->GetDict()->SetRectFor(key, rect);
+  if (!page)
+    return;
+
+  page->GetDict()->SetRectFor(key, rect);
+  page->UpdateDimensions();
 }
 
 bool GetBoundingBox(CPDF_Page* page,
