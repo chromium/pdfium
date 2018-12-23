@@ -735,8 +735,7 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  pAnnotDict->SetNewFor<CPDF_String>(
-      key, CFXByteStringFromFPDFWideString(value), false);
+  pAnnotDict->SetNewFor<CPDF_String>(key, WideStringFromFPDFWideString(value));
   return true;
 }
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <algorithm>
 #include <cwchar>
 #include <memory>
 #include <string>
@@ -1543,4 +1544,64 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   }
 
   UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
+
+  static const char kTestKey[] = "test";
+  static constexpr wchar_t kData[] = L"\xf6\xe4";
+  std::vector<char> buf(12);
+
+  {
+    // Add a text annotation to the page.
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
+
+    // Make sure there is no test key, add set a value there, and read it back.
+    std::fill(buf.begin(), buf.end(), 'x');
+    ASSERT_EQ(2u, FPDFAnnot_GetStringValue(annot.get(), kTestKey, buf.data(),
+                                           buf.size()));
+    EXPECT_STREQ(L"", BufferToWString(buf).c_str());
+
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(kData);
+    EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), kTestKey, text.get()));
+
+    std::fill(buf.begin(), buf.end(), 'x');
+    ASSERT_EQ(6u, FPDFAnnot_GetStringValue(annot.get(), kTestKey, buf.data(),
+                                           buf.size()));
+    EXPECT_STREQ(kData, BufferToWString(buf).c_str());
+  }
+
+  UnloadPage(page);
+
+  {
+    // Save a copy, open the copy, and check the annotation again.
+    // Note that it renders the rotation.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    OpenSavedDocument(nullptr);
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(saved_page));
+    {
+      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
+      ASSERT_TRUE(annot);
+      EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
+
+      std::fill(buf.begin(), buf.end(), 'x');
+      ASSERT_EQ(6u, FPDFAnnot_GetStringValue(annot.get(), kTestKey, buf.data(),
+                                             buf.size()));
+      EXPECT_STREQ(kData, BufferToWString(buf).c_str());
+    }
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
 }

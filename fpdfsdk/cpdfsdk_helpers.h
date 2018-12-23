@@ -208,6 +208,8 @@ CPDFSDKFormFillEnvironmentFromFPDFFormHandle(FPDF_FORMHANDLE handle) {
 
 ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
+WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
+
 #ifdef PDF_ENABLE_XFA
 inline FPDF_WIDGET FPDFWidgetFromCXFAFFWidget(CXFA_FFWidget* widget) {
   return reinterpret_cast<FPDF_WIDGET>(widget);

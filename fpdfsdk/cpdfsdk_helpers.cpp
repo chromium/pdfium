@@ -181,6 +181,11 @@ ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
       .ToUTF8();
 }
 
+WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
+  return WideString::FromUTF16LE(wide_string,
+                                 WideString::WStringLength(wide_string));
+}
+
 #ifdef PDF_ENABLE_XFA
 RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFilehandler) {
