@@ -158,23 +158,23 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
 
 }  // namespace
 
-class FPDFDataAvailEmbeddertest : public EmbedderTest {};
+class FPDFDataAvailEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFDataAvailEmbeddertest, TrailerUnterminated) {
+TEST_F(FPDFDataAvailEmbedderTest, TrailerUnterminated) {
   // Document must load without crashing but is too malformed to be available.
   EXPECT_FALSE(OpenDocument("trailer_unterminated.pdf"));
   MockDownloadHints hints;
   EXPECT_FALSE(FPDFAvail_IsDocAvail(avail_, &hints));
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, TrailerAsHexstring) {
+TEST_F(FPDFDataAvailEmbedderTest, TrailerAsHexstring) {
   // Document must load without crashing but is too malformed to be available.
   EXPECT_FALSE(OpenDocument("trailer_as_hexstring.pdf"));
   MockDownloadHints hints;
   EXPECT_FALSE(FPDFAvail_IsDocAvail(avail_, &hints));
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, LoadUsingHintTables) {
+TEST_F(FPDFDataAvailEmbedderTest, LoadUsingHintTables) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
   avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
   ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
@@ -189,7 +189,7 @@ TEST_F(FPDFDataAvailEmbeddertest, LoadUsingHintTables) {
   FPDF_ClosePage(page);
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, CheckFormAvailIfLinearized) {
+TEST_F(FPDFDataAvailEmbedderTest, CheckFormAvailIfLinearized) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
   avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
   ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
@@ -209,7 +209,7 @@ TEST_F(FPDFDataAvailEmbeddertest, CheckFormAvailIfLinearized) {
   EXPECT_NE(PDF_FORM_ERROR, status);
 }
 
-TEST_F(FPDFDataAvailEmbeddertest,
+TEST_F(FPDFDataAvailEmbedderTest,
        DoNotLoadMainCrossRefForFirstPageIfLinearized) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
   avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
@@ -249,7 +249,7 @@ TEST_F(FPDFDataAvailEmbeddertest,
   FPDF_ClosePage(page);
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, LoadSecondPageIfLinearizedWithHints) {
+TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
   TestAsyncLoader loader("feature_linearized_loading.pdf");
   avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
   ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
@@ -277,7 +277,7 @@ TEST_F(FPDFDataAvailEmbeddertest, LoadSecondPageIfLinearizedWithHints) {
   FPDF_ClosePage(page);
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, LoadInfoAfterReceivingWholeDocument) {
+TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingWholeDocument) {
   TestAsyncLoader loader("linearized.pdf");
   loader.set_is_new_data_available(false);
   avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
@@ -299,7 +299,7 @@ TEST_F(FPDFDataAvailEmbeddertest, LoadInfoAfterReceivingWholeDocument) {
   EXPECT_TRUE(FPDF_GetMetaText(document_, "CreationDate", nullptr, 0));
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, LoadInfoAfterReceivingFirstPage) {
+TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingFirstPage) {
   TestAsyncLoader loader("linearized.pdf");
   // Map "Info" to an object within the first section without breaking
   // linearization.
@@ -327,7 +327,7 @@ TEST_F(FPDFDataAvailEmbeddertest, LoadInfoAfterReceivingFirstPage) {
             WideString::FromUTF16LE(buffer, FXSYS_len(kExpectedValue)));
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, TryLoadInvalidInfo) {
+TEST_F(FPDFDataAvailEmbedderTest, TryLoadInvalidInfo) {
   TestAsyncLoader loader("linearized.pdf");
   // Map "Info" to an invalid object without breaking linearization.
   ByteString data(loader.file_contents(), loader.file_length());
@@ -353,7 +353,7 @@ TEST_F(FPDFDataAvailEmbeddertest, TryLoadInvalidInfo) {
   EXPECT_FALSE(FPDF_GetMetaText(document_, "Type", nullptr, 0));
 }
 
-TEST_F(FPDFDataAvailEmbeddertest, TryLoadNonExistsInfo) {
+TEST_F(FPDFDataAvailEmbedderTest, TryLoadNonExistsInfo) {
   TestAsyncLoader loader("linearized.pdf");
   // Break the "Info" parameter without breaking linearization.
   ByteString data(loader.file_contents(), loader.file_length());

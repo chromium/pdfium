@@ -13,7 +13,7 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CPWLComboBoxEditEmbeddertest : public EmbedderTest {
+class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
  protected:
   void SetUp() override {
     EmbedderTest::SetUp();
@@ -97,7 +97,7 @@ class CPWLComboBoxEditEmbeddertest : public EmbedderTest {
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
 };
 
-TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextEmptyAndBasicNormal) {
+TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
 
   // Automatically pre-filled with "Banana".
@@ -119,7 +119,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextEmptyAndBasicNormal) {
   EXPECT_FALSE(GetCFFLFormFiller()->OnChar(GetCPDFSDKAnnotNormal(), 'a', 0));
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsNormal) {
+TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsNormal) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
   EXPECT_STREQ(L"Banana", GetCPWLComboBox()->GetText().c_str());
 
@@ -145,7 +145,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsNormal) {
   EXPECT_STREQ(L"a", GetCPWLComboBox()->GetSelectedText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextEmptyAndBasicEditable) {
+TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   EXPECT_TRUE(GetCPWLComboBox()->GetText().IsEmpty());
 
@@ -174,7 +174,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextEmptyAndBasicEditable) {
   EXPECT_STREQ(L"Baabc", GetCPWLComboBox()->GetSelectedText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsEditable) {
+TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextFragmentsEditable) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -204,7 +204,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, GetSelectedTextFragmentsEditable) {
   EXPECT_STREQ(L"r", GetCPWLComboBox()->GetSelectedText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEntireTextSelection) {
+TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEntireTextSelection) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -216,7 +216,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEntireTextSelection) {
   EXPECT_TRUE(GetCPWLComboBox()->GetText().IsEmpty());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionMiddle) {
+TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionMiddle) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -228,7 +228,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionMiddle) {
                GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionLeft) {
+TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionLeft) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -240,7 +240,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionLeft) {
                GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionRight) {
+TEST_F(CPWLComboBoxEditEmbedderTest, DeleteTextSelectionRight) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -252,7 +252,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteTextSelectionRight) {
                GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEmptyTextSelection) {
+TEST_F(CPWLComboBoxEditEmbedderTest, DeleteEmptyTextSelection) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(50);
 
@@ -261,13 +261,13 @@ TEST_F(CPWLComboBoxEditEmbeddertest, DeleteEmptyTextSelection) {
                GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest, InsertTextInEmptyEditableComboBox) {
+TEST_F(CPWLComboBoxEditEmbedderTest, InsertTextInEmptyEditableComboBox) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   GetCPWLComboBox()->ReplaceSelection(L"Hello");
   EXPECT_STREQ(L"Hello", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxLeft) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
@@ -280,7 +280,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest,
   EXPECT_STREQ(L"HelloABCDEFGHIJ", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxMiddle) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
@@ -295,7 +295,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest,
   EXPECT_STREQ(L"ABCDEHelloFGHIJ", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextInPopulatedEditableComboBoxRight) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
@@ -304,7 +304,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest,
   EXPECT_STREQ(L"ABCDEFGHIJHello", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxWhole) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
@@ -315,7 +315,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest,
   EXPECT_STREQ(L"Hello", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxLeft) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
@@ -326,7 +326,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest,
   EXPECT_STREQ(L"HelloFGHIJ", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxMiddle) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);
@@ -337,7 +337,7 @@ TEST_F(CPWLComboBoxEditEmbeddertest,
   EXPECT_STREQ(L"ABHelloHIJ", GetCPWLComboBox()->GetText().c_str());
 }
 
-TEST_F(CPWLComboBoxEditEmbeddertest,
+TEST_F(CPWLComboBoxEditEmbedderTest,
        InsertTextAndReplaceSelectionInPopulatedEditableComboBoxRight) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   TypeTextIntoTextField(10);

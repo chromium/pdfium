@@ -37,9 +37,9 @@ bool check_unsigned_shorts(const char* expected,
 
 }  // namespace
 
-class FPDFTextEmbeddertest : public EmbedderTest {};
+class FPDFTextEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFTextEmbeddertest, Text) {
+TEST_F(FPDFTextEmbedderTest, Text) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -192,7 +192,7 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, TextSearch) {
+TEST_F(FPDFTextEmbedderTest, TextSearch) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -303,7 +303,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 }
 
 // Test that the page has characters despite a bad stream length.
-TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
+TEST_F(FPDFTextEmbedderTest, StreamLengthPastEndOfFile) {
   ASSERT_TRUE(OpenDocument("bug_57.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -316,7 +316,7 @@ TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, WebLinks) {
+TEST_F(FPDFTextEmbedderTest, WebLinks) {
   ASSERT_TRUE(OpenDocument("weblinks.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -426,7 +426,7 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLines) {
+TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
   ASSERT_TRUE(OpenDocument("weblinks_across_lines.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -465,7 +465,7 @@ TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLines) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLinesBug) {
+TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLinesBug) {
   ASSERT_TRUE(OpenDocument("bug_650.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -492,7 +492,7 @@ TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLinesBug) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, GetFontSize) {
+TEST_F(FPDFTextEmbedderTest, GetFontSize) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -513,7 +513,7 @@ TEST_F(FPDFTextEmbeddertest, GetFontSize) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, GetFontInfo) {
+TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -595,7 +595,7 @@ TEST_F(FPDFTextEmbeddertest, GetFontInfo) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, ToUnicode) {
+TEST_F(FPDFTextEmbedderTest, ToUnicode) {
   ASSERT_TRUE(OpenDocument("bug_583.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -610,7 +610,7 @@ TEST_F(FPDFTextEmbeddertest, ToUnicode) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, Bug_921) {
+TEST_F(FPDFTextEmbedderTest, Bug_921) {
   ASSERT_TRUE(OpenDocument("bug_921.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -641,7 +641,7 @@ TEST_F(FPDFTextEmbeddertest, Bug_921) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
+TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   ASSERT_TRUE(OpenDocument("bug_781804.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -688,7 +688,7 @@ TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, bug_782596) {
+TEST_F(FPDFTextEmbedderTest, bug_782596) {
   // If there is a regression in this test, it will only fail under ASAN
   ASSERT_TRUE(OpenDocument("bug_782596.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -699,7 +699,7 @@ TEST_F(FPDFTextEmbeddertest, bug_782596) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, ControlCharacters) {
+TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
   ASSERT_TRUE(OpenDocument("control_characters.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -734,7 +734,7 @@ TEST_F(FPDFTextEmbeddertest, ControlCharacters) {
 
 // Testing that hyphen makers (0x0002) are replacing hard hyphens when
 // the word contains non-ASCII characters.
-TEST_F(FPDFTextEmbeddertest, bug_1029) {
+TEST_F(FPDFTextEmbedderTest, bug_1029) {
   ASSERT_TRUE(OpenDocument("bug_1029.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -774,7 +774,7 @@ TEST_F(FPDFTextEmbeddertest, bug_1029) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, CountRects) {
+TEST_F(FPDFTextEmbedderTest, CountRects) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -846,7 +846,7 @@ TEST_F(FPDFTextEmbeddertest, CountRects) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, GetText) {
+TEST_F(FPDFTextEmbedderTest, GetText) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -890,7 +890,7 @@ TEST_F(FPDFTextEmbeddertest, GetText) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbeddertest, CroppedText) {
+TEST_F(FPDFTextEmbedderTest, CroppedText) {
   static constexpr int kPageCount = 4;
   static constexpr FS_RECTF kBoxes[kPageCount] = {
       {50.0f, 150.0f, 150.0f, 50.0f},
@@ -945,7 +945,7 @@ TEST_F(FPDFTextEmbeddertest, CroppedText) {
   }
 }
 
-TEST_F(FPDFTextEmbeddertest, Bug_1139) {
+TEST_F(FPDFTextEmbedderTest, Bug_1139) {
   ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);

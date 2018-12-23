@@ -13,37 +13,37 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CPDFSecurityHandlerEmbeddertest : public EmbedderTest {};
+class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {};
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, Unencrypted) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, Unencrypted) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, UnencryptedWithPassword) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, UnencryptedWithPassword) {
   ASSERT_TRUE(OpenDocumentWithPassword("about_blank.pdf", "foobar"));
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, NoPassword) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, NoPassword) {
   EXPECT_FALSE(OpenDocument("encrypted.pdf"));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, BadPassword) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, BadPassword) {
   EXPECT_FALSE(OpenDocumentWithPassword("encrypted.pdf", "tiger"));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, UserPassword) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPassword) {
   ASSERT_TRUE(OpenDocumentWithPassword("encrypted.pdf", "1234"));
   EXPECT_EQ(0xFFFFF2C0, FPDF_GetDocPermissions(document()));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, OwnerPassword) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
   ASSERT_TRUE(OpenDocumentWithPassword("encrypted.pdf", "5678"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   const char md5[] = "7048dca58e2ed8f93339008b91e4eb4e";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
@@ -93,20 +93,20 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
   }
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, NoPasswordVersion5) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, NoPasswordVersion5) {
   ASSERT_FALSE(OpenDocument("bug_644.pdf"));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, BadPasswordVersion5) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, BadPasswordVersion5) {
   ASSERT_FALSE(OpenDocumentWithPassword("bug_644.pdf", "tiger"));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, OwnerPasswordVersion5) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5) {
   ASSERT_TRUE(OpenDocumentWithPassword("bug_644.pdf", "a"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }
 
-TEST_F(CPDFSecurityHandlerEmbeddertest, UserPasswordVersion5) {
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5) {
   ASSERT_TRUE(OpenDocumentWithPassword("bug_644.pdf", "b"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }

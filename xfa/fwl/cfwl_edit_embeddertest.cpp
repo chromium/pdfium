@@ -10,7 +10,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
-class CFWLEditEmbeddertest : public XFAJSEmbedderTest {
+class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
  protected:
   void SetUp() override {
     EmbedderTest::SetUp();
@@ -36,12 +36,12 @@ class CFWLEditEmbeddertest : public XFAJSEmbedderTest {
   EmbedderTestTimerHandlingDelegate delegate_;
 };
 
-TEST_F(CFWLEditEmbeddertest, Trivial) {
+TEST_F(CFWLEditEmbedderTest, Trivial) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   ASSERT_EQ(0u, delegate().GetAlerts().size());
 }
 
-TEST_F(CFWLEditEmbeddertest, LeftClickMouseSelection) {
+TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   for (size_t i = 0; i < 10; ++i)
@@ -59,7 +59,7 @@ TEST_F(CFWLEditEmbeddertest, LeftClickMouseSelection) {
   EXPECT_STREQ(L"defgh", WideString::FromUTF16LE(buf, len).c_str());
 }
 
-TEST_F(CFWLEditEmbeddertest, DragMouseSelection) {
+TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   for (size_t i = 0; i < 10; ++i)
@@ -85,7 +85,7 @@ TEST_F(CFWLEditEmbeddertest, DragMouseSelection) {
   }
 }
 
-TEST_F(CFWLEditEmbeddertest, SimpleFill) {
+TEST_F(CFWLEditEmbedderTest, SimpleFill) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   const char kBlankMD5[] = "eea5c72701270ac4a7edcc4df66d812a";
   {
@@ -106,7 +106,7 @@ TEST_F(CFWLEditEmbeddertest, SimpleFill) {
   }
 }
 
-TEST_F(CFWLEditEmbeddertest, FillWithNewLineWithoutMultiline) {
+TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   for (size_t i = 0; i < 5; ++i)
@@ -124,7 +124,7 @@ TEST_F(CFWLEditEmbeddertest, FillWithNewLineWithoutMultiline) {
 }
 
 // Disabled due to flakiness.
-TEST_F(CFWLEditEmbeddertest, DISABLED_FillWithNewLineWithMultiline) {
+TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
   CreateAndInitializeFormPDF("xfa/xfa_multiline_textfield.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
 

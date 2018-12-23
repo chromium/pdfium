@@ -5,9 +5,9 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CPDF_FunctionEmbeddertest : public EmbedderTest {};
+class CPDF_FunctionEmbedderTest : public EmbedderTest {};
 
-TEST_F(CPDF_FunctionEmbeddertest, Crasher_830221) {
+TEST_F(CPDF_FunctionEmbedderTest, Crasher_830221) {
   EXPECT_TRUE(OpenDocument("bug_830221.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);

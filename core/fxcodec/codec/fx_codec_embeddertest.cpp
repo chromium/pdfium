@@ -8,9 +8,9 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FXCodecEmbeddertest : public EmbedderTest {};
+class FXCodecEmbedderTest : public EmbedderTest {};
 
-TEST_F(FXCodecEmbeddertest, Bug_631912) {
+TEST_F(FXCodecEmbedderTest, Bug_631912) {
   // Test jbig2 image in PDF file can be loaded successfully.
   // Should not crash.
   EXPECT_TRUE(OpenDocument("bug_631912.pdf"));

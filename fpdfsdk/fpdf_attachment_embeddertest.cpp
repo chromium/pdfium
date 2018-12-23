@@ -13,9 +13,9 @@
 static constexpr char kDateKey[] = "CreationDate";
 static constexpr char kChecksumKey[] = "CheckSum";
 
-class FPDFAttachmentEmbeddertest : public EmbedderTest {};
+class FPDFAttachmentEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFAttachmentEmbeddertest, ExtractAttachments) {
+TEST_F(FPDFAttachmentEmbedderTest, ExtractAttachments) {
   // Open a file with two attachments.
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
   EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
@@ -86,7 +86,7 @@ TEST_F(FPDFAttachmentEmbeddertest, ExtractAttachments) {
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data())));
 }
 
-TEST_F(FPDFAttachmentEmbeddertest, AddAttachments) {
+TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   // Open a file with two attachments.
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
   EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
@@ -152,7 +152,7 @@ TEST_F(FPDFAttachmentEmbeddertest, AddAttachments) {
   EXPECT_EQ(std::string(kContents2), std::string(buf.data(), 6));
 }
 
-TEST_F(FPDFAttachmentEmbeddertest, AddAttachmentsWithParams) {
+TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsWithParams) {
   // Open a file with two attachments.
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
   EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
@@ -230,7 +230,7 @@ TEST_F(FPDFAttachmentEmbeddertest, AddAttachmentsWithParams) {
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data())));
 }
 
-TEST_F(FPDFAttachmentEmbeddertest, DeleteAttachment) {
+TEST_F(FPDFAttachmentEmbedderTest, DeleteAttachment) {
   // Open a file with two attachments.
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
   EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));

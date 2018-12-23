@@ -18,7 +18,7 @@
 
 static constexpr char kContentsKey[] = "Contents";
 
-class FPDFAnnotEmbeddertest : public EmbedderTest {};
+class FPDFAnnotEmbedderTest : public EmbedderTest {};
 
 std::wstring BufferToWString(const std::vector<char>& buf) {
   return GetPlatformWString(reinterpret_cast<FPDF_WIDESTRING>(buf.data()));
@@ -28,7 +28,7 @@ std::string BufferToString(const std::vector<char>& buf) {
   return GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(buf.data()));
 }
 
-TEST_F(FPDFAnnotEmbeddertest, BadParams) {
+TEST_F(FPDFAnnotEmbedderTest, BadParams) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -65,7 +65,7 @@ TEST_F(FPDFAnnotEmbeddertest, BadParams) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
+TEST_F(FPDFAnnotEmbedderTest, RenderAnnotWithOnlyRolloverAP) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -81,7 +81,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, RenderMultilineMarkupAnnotWithoutAP) {
+TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
   const char md5_hash[] = "76512832d88017668d9acc7aacd13dae";
   // Open a file with multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
@@ -94,7 +94,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderMultilineMarkupAnnotWithoutAP) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
+TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
   FPDF_PAGE page = LoadPageNoEvents(0);
@@ -174,7 +174,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
   UnloadPageNoEvents(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
+TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
   // Open a file with three annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
   FPDF_PAGE page = LoadPageNoEvents(0);
@@ -221,7 +221,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
   UnloadPageNoEvents(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddIllegalSubtypeAnnotation) {
+TEST_F(FPDFAnnotEmbedderTest, AddIllegalSubtypeAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -233,7 +233,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddIllegalSubtypeAnnotation) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
+TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
   // Open a file with no annotation and load its first page.
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -318,7 +318,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
+TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -381,7 +381,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetAndSetQuadPoints) {
+TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -465,7 +465,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetAndSetQuadPoints) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
+TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "63af8432fab95a67cdebb7cd0e514941";
   const char md5_modified_highlight[] = "aec26075011349dec9bace891856b5f2";
@@ -576,7 +576,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, CountAttachmentPoints) {
+TEST_F(FPDFAnnotEmbedderTest, CountAttachmentPoints) {
   // Open a file with multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -594,7 +594,7 @@ TEST_F(FPDFAnnotEmbeddertest, CountAttachmentPoints) {
   EXPECT_EQ(0u, FPDFAnnot_CountAttachmentPoints(nullptr));
 }
 
-TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
+TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
   // Open a file with 3 annotations on its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
   FPDF_PAGE page = LoadPageNoEvents(0);
@@ -670,7 +670,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   FPDF_CloseDocument(new_doc);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
+TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
   const char md5_modified_path[] = "873b92ea83ccf006e58415d866ce145b";
@@ -818,7 +818,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
+TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
   // Open a file with an annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -872,7 +872,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
+TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
   const char md5_new_image[] = "ff012f5697436dfcaec25b32d1333596";
@@ -957,7 +957,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   VerifySavedDocument(595, 842, md5_modified_image);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
+TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
   const char md5_new_text[] = "e5680ed048c2cfd9a1d27212cdf41286";
@@ -1044,7 +1044,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
+TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1128,7 +1128,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
+TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1251,7 +1251,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFAnnotEmbeddertest, RemoveOptionalAP) {
+TEST_F(FPDFAnnotEmbedderTest, RemoveOptionalAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1287,7 +1287,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveOptionalAP) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, RemoveRequiredAP) {
+TEST_F(FPDFAnnotEmbedderTest, RemoveRequiredAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1321,7 +1321,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveRequiredAP) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
+TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
   // Open a file with annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1368,7 +1368,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1397,7 +1397,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsComboBox) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1442,7 +1442,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotNull) {
+TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotNull) {
   // Open file with form text fields.
   EXPECT_TRUE(OpenDocument("text_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1466,7 +1466,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotNull) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsTextField) {
+TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
   // Open file with form text fields.
   EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1497,7 +1497,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsTextField) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
+TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   // Open file with form comboboxes.
   EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
   FPDF_PAGE page = LoadPage(0);

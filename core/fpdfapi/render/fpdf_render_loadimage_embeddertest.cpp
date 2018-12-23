@@ -8,9 +8,9 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FPDFRenderLoadImageEmbeddertest : public EmbedderTest {};
+class FPDFRenderLoadImageEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_554151) {
+TEST_F(FPDFRenderLoadImageEmbedderTest, Bug_554151) {
   // Test scanline downsampling with a BitsPerComponent of 4.
   // Should not crash.
   EXPECT_TRUE(OpenDocument("bug_554151.pdf"));
@@ -21,7 +21,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_554151) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_557223) {
+TEST_F(FPDFRenderLoadImageEmbedderTest, Bug_557223) {
   // Should not crash
   EXPECT_TRUE(OpenDocument("bug_557223.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -31,7 +31,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_557223) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_603518) {
+TEST_F(FPDFRenderLoadImageEmbedderTest, Bug_603518) {
   // Should not crash
   EXPECT_TRUE(OpenDocument("bug_603518.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -41,7 +41,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_603518) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_1087) {
+TEST_F(FPDFRenderLoadImageEmbedderTest, Bug_1087) {
   EXPECT_TRUE(OpenDocument("bug_1087.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);

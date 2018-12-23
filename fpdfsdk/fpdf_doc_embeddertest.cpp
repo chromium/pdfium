@@ -18,9 +18,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-class FPDFDocEmbeddertest : public EmbedderTest {};
+class FPDFDocEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
+TEST_F(FPDFDocEmbedderTest, MultipleSamePage) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
 
@@ -39,7 +39,7 @@ TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
 #endif  // PDF_ENABLE_XFA
 }
 
-TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
+TEST_F(FPDFDocEmbedderTest, DestGetPageIndex) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
   // NULL argument cases.
@@ -67,7 +67,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), dest));
 }
 
-TEST_F(FPDFDocEmbeddertest, DestGetView) {
+TEST_F(FPDFDocEmbedderTest, DestGetView) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
   unsigned long numParams;
@@ -126,7 +126,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
   EXPECT_FLOAT_EQ(42.4242f, params[3]);
 }
 
-TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
+TEST_F(FPDFDocEmbedderTest, DestGetLocationInPage) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
@@ -154,7 +154,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
   EXPECT_EQ(1, zoom);
 }
 
-TEST_F(FPDFDocEmbeddertest, BUG_680376) {
+TEST_F(FPDFDocEmbedderTest, BUG_680376) {
   EXPECT_TRUE(OpenDocument("bug_680376.pdf"));
 
   // Page number directly in item from Dests NameTree.
@@ -163,7 +163,7 @@ TEST_F(FPDFDocEmbeddertest, BUG_680376) {
   EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), dest));
 }
 
-TEST_F(FPDFDocEmbeddertest, BUG_821454) {
+TEST_F(FPDFDocEmbedderTest, BUG_821454) {
   EXPECT_TRUE(OpenDocument("bug_821454.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -225,7 +225,7 @@ TEST_F(FPDFDocEmbeddertest, BUG_821454) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFDocEmbeddertest, ActionBadArguments) {
+TEST_F(FPDFDocEmbedderTest, ActionBadArguments) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
   EXPECT_EQ(static_cast<unsigned long>(PDFACTION_UNSUPPORTED),
             FPDFAction_GetType(nullptr));
@@ -237,7 +237,7 @@ TEST_F(FPDFDocEmbeddertest, ActionBadArguments) {
   EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), nullptr, nullptr, 0));
 }
 
-TEST_F(FPDFDocEmbeddertest, ActionLaunch) {
+TEST_F(FPDFDocEmbedderTest, ActionLaunch) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -268,7 +268,7 @@ TEST_F(FPDFDocEmbeddertest, ActionLaunch) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFDocEmbeddertest, ActionURI) {
+TEST_F(FPDFDocEmbedderTest, ActionURI) {
   EXPECT_TRUE(OpenDocument("uri_action.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -299,7 +299,7 @@ TEST_F(FPDFDocEmbeddertest, ActionURI) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFDocEmbeddertest, ActionGoto) {
+TEST_F(FPDFDocEmbedderTest, ActionGoto) {
   EXPECT_TRUE(OpenDocument("goto_action.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -324,7 +324,7 @@ TEST_F(FPDFDocEmbeddertest, ActionGoto) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFDocEmbeddertest, ActionNonesuch) {
+TEST_F(FPDFDocEmbedderTest, ActionNonesuch) {
   EXPECT_TRUE(OpenDocument("nonesuch_action.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -348,7 +348,7 @@ TEST_F(FPDFDocEmbeddertest, ActionNonesuch) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFDocEmbeddertest, NoBookmarks) {
+TEST_F(FPDFDocEmbedderTest, NoBookmarks) {
   // Open a file with no bookmarks.
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
@@ -368,7 +368,7 @@ TEST_F(FPDFDocEmbeddertest, NoBookmarks) {
   EXPECT_EQ(nullptr, FPDFBookmark_GetAction(nullptr));
 }
 
-TEST_F(FPDFDocEmbeddertest, Bookmarks) {
+TEST_F(FPDFDocEmbedderTest, Bookmarks) {
   // Open a file with two bookmarks.
   EXPECT_TRUE(OpenDocument("bookmarks.pdf"));
 
@@ -391,7 +391,7 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
   EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling));
 }
 
-TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
+TEST_F(FPDFDocEmbedderTest, FindBookmarks) {
   // Open a file with two bookmarks.
   EXPECT_TRUE(OpenDocument("bookmarks.pdf"));
 
@@ -416,7 +416,7 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
 }
 
 // Check circular bookmarks will not cause infinite loop.
-TEST_F(FPDFDocEmbeddertest, FindBookmarks_bug420) {
+TEST_F(FPDFDocEmbedderTest, FindBookmarks_bug420) {
   // Open a file with circular bookmarks.
   EXPECT_TRUE(OpenDocument("bookmarks_circular.pdf"));
 
@@ -426,14 +426,14 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks_bug420) {
   EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), title.get()));
 }
 
-TEST_F(FPDFDocEmbeddertest, DeletePage) {
+TEST_F(FPDFDocEmbedderTest, DeletePage) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
   FPDFPage_Delete(document(), 0);
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
 }
 
-TEST_F(FPDFDocEmbeddertest, GetMetaText) {
+TEST_F(FPDFDocEmbedderTest, GetMetaText) {
   ASSERT_TRUE(OpenDocument("bug_601362.pdf"));
 
   // Invalid document / tag results in 0.
@@ -467,7 +467,7 @@ TEST_F(FPDFDocEmbeddertest, GetMetaText) {
             WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
 }
 
-TEST_F(FPDFDocEmbeddertest, Bug_182) {
+TEST_F(FPDFDocEmbedderTest, Bug_182) {
   ASSERT_TRUE(OpenDocument("bug_182.pdf"));
 
   unsigned short buf[128];
@@ -478,7 +478,7 @@ TEST_F(FPDFDocEmbeddertest, Bug_182) {
             WideString::FromUTF16LE(buf, FXSYS_len(kExpectedTitle)));
 }
 
-TEST_F(FPDFDocEmbeddertest, GetMetaTextSameObjectNumber) {
+TEST_F(FPDFDocEmbedderTest, GetMetaTextSameObjectNumber) {
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
 
   // The PDF has been edited. It has two %%EOF markers, and 2 objects numbered
@@ -491,7 +491,7 @@ TEST_F(FPDFDocEmbeddertest, GetMetaTextSameObjectNumber) {
             WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
 }
 
-TEST_F(FPDFDocEmbeddertest, GetMetaTextInAttachmentFile) {
+TEST_F(FPDFDocEmbedderTest, GetMetaTextInAttachmentFile) {
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
 
   // Make sure this is the date from the PDF itself and not the attached PDF.
@@ -502,21 +502,21 @@ TEST_F(FPDFDocEmbeddertest, GetMetaTextInAttachmentFile) {
             WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
 }
 
-TEST_F(FPDFDocEmbeddertest, GetMetaTextFromNewDocument) {
+TEST_F(FPDFDocEmbedderTest, GetMetaTextFromNewDocument) {
   FPDF_DOCUMENT empty_doc = FPDF_CreateNewDocument();
   unsigned short buf[128];
   EXPECT_EQ(2u, FPDF_GetMetaText(empty_doc, "Title", buf, sizeof(buf)));
   FPDF_CloseDocument(empty_doc);
 }
 
-TEST_F(FPDFDocEmbeddertest, NoPageLabels) {
+TEST_F(FPDFDocEmbedderTest, NoPageLabels) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ASSERT_EQ(0u, FPDF_GetPageLabel(document(), 0, nullptr, 0));
 }
 
-TEST_F(FPDFDocEmbeddertest, GetPageLabels) {
+TEST_F(FPDFDocEmbedderTest, GetPageLabels) {
   EXPECT_TRUE(OpenDocument("page_labels.pdf"));
   EXPECT_EQ(7, FPDF_GetPageCount(document()));
 
@@ -568,7 +568,7 @@ TEST_F(FPDFDocEmbeddertest, GetPageLabels) {
 }
 
 #ifdef PDF_ENABLE_XFA
-TEST_F(FPDFDocEmbeddertest, GetXFALinks) {
+TEST_F(FPDFDocEmbedderTest, GetXFALinks) {
   EXPECT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ScopedFPDFPage page(FPDF_LoadPage(document(), 0));

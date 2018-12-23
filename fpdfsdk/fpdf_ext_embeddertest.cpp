@@ -7,18 +7,18 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class FPDFExtEmbeddertest : public EmbedderTest {};
+class FPDFExtEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFExtEmbeddertest, PageModeUnknown) {
+TEST_F(FPDFExtEmbedderTest, PageModeUnknown) {
   EXPECT_EQ(PAGEMODE_UNKNOWN, FPDFDoc_GetPageMode(nullptr));
 }
 
-TEST_F(FPDFExtEmbeddertest, PageModeUseNone) {
+TEST_F(FPDFExtEmbedderTest, PageModeUseNone) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(PAGEMODE_USENONE, FPDFDoc_GetPageMode(document()));
 }
 
-TEST_F(FPDFExtEmbeddertest, PageModeUseOutlines) {
+TEST_F(FPDFExtEmbedderTest, PageModeUseOutlines) {
   EXPECT_TRUE(OpenDocument("use_outlines.pdf"));
   EXPECT_EQ(PAGEMODE_USEOUTLINES, FPDFDoc_GetPageMode(document()));
 }
