@@ -120,9 +120,7 @@ deps_os = {
     "third_party/android_ndk":
       Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
     "third_party/catapult":
-      Var('chromium_git') +
-          "/external/github.com/catapult-project/catapult.git@" +
-          Var('catapult_revision'),
+      Var('chromium_git') + '/catapult.git' + '@' + Var('catapult_revision'),
   },
   "win": {
     "v8/third_party/cygwin":
