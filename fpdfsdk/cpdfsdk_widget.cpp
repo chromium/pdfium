@@ -52,25 +52,26 @@ CPDFSDK_Widget::~CPDFSDK_Widget() = default;
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
   CPDFXFA_Context* pContext = m_pPageView->GetFormFillEnv()->GetXFAContext();
-  if (pContext->GetFormType() == FormType::kXFAForeground) {
-    if (!m_hMixXFAWidget) {
-      if (CXFA_FFDocView* pDocView = pContext->GetXFADocView()) {
-        WideString sName;
-        if (GetFieldType() == FormFieldType::kRadioButton) {
-          sName = GetAnnotName();
-          if (sName.IsEmpty())
-            sName = GetName();
-        } else {
-          sName = GetName();
-        }
+  if (pContext->GetFormType() != FormType::kXFAForeground)
+    return nullptr;
 
-        if (!sName.IsEmpty())
-          m_hMixXFAWidget = pDocView->GetWidgetByName(sName, nullptr);
-      }
-    }
-    return m_hMixXFAWidget.Get();
+  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  if (!pDocView)
+    return nullptr;
+
+  WideString sName;
+  if (GetFieldType() == FormFieldType::kRadioButton) {
+    sName = GetAnnotName();
+    if (sName.IsEmpty())
+      sName = GetName();
+  } else {
+    sName = GetName();
   }
-  return nullptr;
+
+  if (sName.IsEmpty())
+    return nullptr;
+
+  return pDocView->GetWidgetByName(sName, nullptr);
 }
 
 CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
