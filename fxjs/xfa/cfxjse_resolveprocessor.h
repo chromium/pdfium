@@ -11,28 +11,28 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "fxjs/xfa/cfxjse_engine.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_NodeHelper;
-class CFXJSE_Engine;
 
 class CFXJSE_ResolveNodeData {
  public:
   explicit CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC);
   ~CFXJSE_ResolveNodeData();
 
-  CFXJSE_Engine* m_pSC;
-  CXFA_Object* m_CurObject;
+  UnownedPtr<CFXJSE_Engine> const m_pSC;
+  UnownedPtr<CXFA_Object> m_CurObject;
   WideString m_wsName;
-  XFA_HashCode m_uHashName;
   WideString m_wsCondition;
-  int32_t m_nLevel;
-  std::vector<CXFA_Object*> m_Objects;  // Not owned.
-  uint32_t m_dwStyles;
+  XFA_HashCode m_uHashName = XFA_HASHCODE_None;
+  int32_t m_nLevel = 0;
+  uint32_t m_dwStyles = XFA_RESOLVENODE_Children;
+  XFA_ResolveNode_RSType m_dwFlag = XFA_ResolveNode_RSType_Nodes;
+  std::vector<UnownedPtr<CXFA_Object>> m_Objects;
   XFA_SCRIPTATTRIBUTEINFO m_ScriptAttribute;
-  XFA_ResolveNode_RSType m_dwFlag;
 };
 
 class CFXJSE_ResolveProcessor {

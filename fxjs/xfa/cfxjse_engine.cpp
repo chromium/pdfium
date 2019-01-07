@@ -634,7 +634,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       }
       break;
     }
-    std::vector<CXFA_Object*> retObjects;
+    std::vector<UnownedPtr<CXFA_Object>> retObjects;
     while (i < nNodes) {
       bool bDataBind = false;
       if (((dwStyles & XFA_RESOLVENODE_Bind) ||
@@ -676,7 +676,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       if (dwStyles & XFA_RESOLVENODE_CreateNode) {
         bNextCreate = true;
         if (!pNodeHelper->m_pCreateParent) {
-          pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject);
+          pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject.Get());
           pNodeHelper->m_iCreateCount = 1;
         }
         int32_t checked_length =
@@ -689,8 +689,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       break;
     }
 
-    findObjects = std::vector<UnownedPtr<CXFA_Object>>(retObjects.begin(),
-                                                       retObjects.end());
+    findObjects = std::move(retObjects);
     rndFind.m_Objects.clear();
     if (nLevel == 0)
       dwStyles &= ~(XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
