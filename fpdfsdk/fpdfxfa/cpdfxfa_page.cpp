@@ -49,21 +49,9 @@ bool CPDFXFA_Page::LoadPDFPage() {
   return true;
 }
 
-bool CPDFXFA_Page::LoadXFAPageView() {
-  CXFA_FFDoc* pXFADoc = m_pContext->GetXFADoc();
-  if (!pXFADoc)
-    return false;
-
+CXFA_FFPageView* CPDFXFA_Page::GetXFAPageView() const {
   CXFA_FFDocView* pXFADocView = m_pContext->GetXFADocView();
-  if (!pXFADocView)
-    return false;
-
-  CXFA_FFPageView* pPageView = pXFADocView->GetPageView(m_iPageIndex);
-  if (!pPageView)
-    return false;
-
-  m_pXFAPageView = pPageView;
-  return true;
+  return pXFADocView ? pXFADocView->GetPageView(m_iPageIndex) : nullptr;
 }
 
 bool CPDFXFA_Page::LoadPage() {
@@ -73,7 +61,7 @@ bool CPDFXFA_Page::LoadPage() {
     case FormType::kXFAForeground:
       return LoadPDFPage();
     case FormType::kXFAFull:
-      return LoadXFAPageView();
+      return !!GetXFAPageView();
   }
   NOTREACHED();
   return false;
@@ -90,7 +78,8 @@ CPDF_Document::Extension* CPDFXFA_Page::GetDocumentExtension() const {
 }
 
 float CPDFXFA_Page::GetPageWidth() const {
-  if (!m_pPDFPage && !m_pXFAPageView)
+  CXFA_FFPageView* pPageView = GetXFAPageView();
+  if (!m_pPDFPage && !pPageView)
     return 0.0f;
 
   switch (m_pContext->GetFormType()) {
@@ -101,8 +90,8 @@ float CPDFXFA_Page::GetPageWidth() const {
         return m_pPDFPage->GetPageWidth();
       FALLTHROUGH;
     case FormType::kXFAFull:
-      if (m_pXFAPageView)
-        return m_pXFAPageView->GetPageViewRect().width;
+      if (pPageView)
+        return pPageView->GetPageViewRect().width;
       break;
   }
 
@@ -110,7 +99,8 @@ float CPDFXFA_Page::GetPageWidth() const {
 }
 
 float CPDFXFA_Page::GetPageHeight() const {
-  if (!m_pPDFPage && !m_pXFAPageView)
+  CXFA_FFPageView* pPageView = GetXFAPageView();
+  if (!m_pPDFPage && !pPageView)
     return 0.0f;
 
   switch (m_pContext->GetFormType()) {
@@ -121,8 +111,8 @@ float CPDFXFA_Page::GetPageHeight() const {
         return m_pPDFPage->GetPageHeight();
       FALLTHROUGH;
     case FormType::kXFAFull:
-      if (m_pXFAPageView)
-        return m_pXFAPageView->GetPageViewRect().height;
+      if (pPageView)
+        return pPageView->GetPageViewRect().height;
       break;
   }
 
@@ -133,7 +123,8 @@ Optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& device_point) const {
-  if (!m_pPDFPage && !m_pXFAPageView)
+  CXFA_FFPageView* pPageView = GetXFAPageView();
+  if (!m_pPDFPage && !pPageView)
     return {};
 
   CFX_PointF pos =
@@ -145,7 +136,8 @@ Optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& page_point) const {
-  if (!m_pPDFPage && !m_pXFAPageView)
+  CXFA_FFPageView* pPageView = GetXFAPageView();
+  if (!m_pPDFPage && !pPageView)
     return {};
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
@@ -154,7 +146,8 @@ Optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
 
 CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
                                           int iRotate) const {
-  if (!m_pPDFPage && !m_pXFAPageView)
+  CXFA_FFPageView* pPageView = GetXFAPageView();
+  if (!m_pPDFPage && !pPageView)
     return CFX_Matrix();
 
   switch (m_pContext->GetFormType()) {
@@ -165,8 +158,8 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
         return m_pPDFPage->GetDisplayMatrix(rect, iRotate);
       FALLTHROUGH;
     case FormType::kXFAFull:
-      if (m_pXFAPageView)
-        return m_pXFAPageView->GetDisplayMatrix(rect, iRotate);
+      if (pPageView)
+        return pPageView->GetDisplayMatrix(rect, iRotate);
       break;
   }
 

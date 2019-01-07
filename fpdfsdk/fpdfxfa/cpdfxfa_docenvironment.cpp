@@ -296,7 +296,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
       continue;
 
     m_pContext->GetFormFillEnv()->RemovePageView(pPage.Get());
-    pPage->SetXFAPageView(pXFADocView->GetPageView(iPageIter));
+    pPage->SetXFAPageViewIndex(iPageIter);
   }
 
   int flag = (nNewCount < m_pContext->GetOriginalPageCount())
