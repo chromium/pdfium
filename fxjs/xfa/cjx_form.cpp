@@ -42,10 +42,7 @@ CJS_Result CJX_Form::formNodes(
   if (!pDataNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  std::vector<CXFA_Node*> formItems;
   CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
-  pFormNodes->SetArrayNodeList(formItems);
-
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pFormNodes);
   if (!value)

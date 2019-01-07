@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 
+#include <utility>
 #include <vector>
 
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
@@ -13,10 +14,9 @@ CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
 
 CXFA_ArrayNodeList::~CXFA_ArrayNodeList() {}
 
-void CXFA_ArrayNodeList::SetArrayNodeList(
-    const std::vector<CXFA_Node*>& srcArray) {
+void CXFA_ArrayNodeList::SetArrayNodeList(std::vector<CXFA_Node*> srcArray) {
   if (!srcArray.empty())
-    m_array = srcArray;
+    m_array = std::move(srcArray);
 }
 
 size_t CXFA_ArrayNodeList::GetLength() {
