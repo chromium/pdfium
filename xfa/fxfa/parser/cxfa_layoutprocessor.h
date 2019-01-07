@@ -46,8 +46,8 @@ class CXFA_LayoutProcessor {
   bool IsNeedLayout();
 
   UnownedPtr<CXFA_Document> const m_pDocument;
-  std::unique_ptr<CXFA_ItemLayoutProcessor> m_pRootItemLayoutProcessor;
   std::unique_ptr<CXFA_LayoutPageMgr> m_pLayoutPageMgr;
+  std::unique_ptr<CXFA_ItemLayoutProcessor> m_pRootItemLayoutProcessor;
   std::vector<CXFA_Node*> m_rgChangedContainers;
   uint32_t m_nProgressCounter;
   bool m_bNeedLayout;

@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 constexpr float kXFALayoutPrecision = 0.0005f;
@@ -166,7 +167,7 @@ class CXFA_ItemLayoutProcessor {
   CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
   CXFA_Node* m_pCurChildNode = nullptr;
   float m_fUsedSize = 0;
-  CXFA_LayoutPageMgr* m_pPageMgr;
+  UnownedPtr<CXFA_LayoutPageMgr> m_pPageMgr;
   std::list<CXFA_Node*> m_PendingNodes;
   bool m_bBreakPending = true;
   std::vector<float> m_rgSpecifiedColumnWidths;

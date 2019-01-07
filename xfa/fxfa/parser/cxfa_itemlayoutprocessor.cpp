@@ -1135,7 +1135,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
       continue;
 
     auto pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-        m_pCurChildNode, m_pPageMgr);
+        m_pCurChildNode, m_pPageMgr.Get());
     if (pContext && pContext->m_prgSpecifiedColumnWidths) {
       int32_t iColSpan =
           m_pCurChildNode->JSObject()->GetInteger(XFA_Attribute::ColSpan);
@@ -1273,7 +1273,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
       continue;
 
     auto pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-        m_pCurChildNode, m_pPageMgr);
+        m_pCurChildNode, m_pPageMgr.Get());
     pProcessor->DoLayout(false, FLT_MAX, FLT_MAX, pLayoutContext);
     if (!pProcessor->HasLayoutItem())
       continue;
@@ -1887,7 +1887,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           } else if (m_pPageMgr && m_pPageMgr->ProcessBookendLeaderOrTrailer(
                                        m_pCurChildNode, true, pLeaderNode)) {
             pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-                pLeaderNode, m_pPageMgr);
+                pLeaderNode, m_pPageMgr.Get());
           }
 
           if (pProcessor) {
@@ -1915,7 +1915,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           } else if (m_pPageMgr && m_pPageMgr->ProcessBookendLeaderOrTrailer(
                                        m_pCurChildNode, false, pTrailerNode)) {
             pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-                pTrailerNode, m_pPageMgr);
+                pTrailerNode, m_pPageMgr.Get());
           }
           if (pProcessor) {
             if (InsertFlowedItem(pProcessor.get(), bContainerWidthAutoSize,
@@ -1953,7 +1953,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
             bNewRow = true;
           } else {
             pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-                m_pCurChildNode, m_pPageMgr);
+                m_pCurChildNode, m_pPageMgr.Get());
           }
 
           pProcessor->InsertPendingItems(m_pCurChildNode);
