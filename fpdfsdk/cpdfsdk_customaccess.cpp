@@ -7,12 +7,14 @@
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 
 CPDFSDK_CustomAccess::CPDFSDK_CustomAccess(FPDF_FILEACCESS* pFileAccess)
-    : m_FileAccess(*pFileAccess) {}
+    : m_pFileAccess(pFileAccess) {
+  ASSERT(m_pFileAccess);
+}
 
 CPDFSDK_CustomAccess::~CPDFSDK_CustomAccess() = default;
 
 FX_FILESIZE CPDFSDK_CustomAccess::GetSize() {
-  return m_FileAccess.m_FileLen;
+  return m_pFileAccess->m_FileLen;
 }
 
 bool CPDFSDK_CustomAccess::ReadBlockAtOffset(void* buffer,
@@ -21,12 +23,13 @@ bool CPDFSDK_CustomAccess::ReadBlockAtOffset(void* buffer,
   if (offset < 0)
     return false;
 
-  FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
-  newPos += offset;
-  if (!newPos.IsValid() ||
-      newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
+  FX_SAFE_FILESIZE new_pos = pdfium::base::checked_cast<FX_FILESIZE>(size);
+  new_pos += offset;
+  if (!new_pos.IsValid())
     return false;
-  }
-  return !!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
-                                   static_cast<uint8_t*>(buffer), size);
+  if (new_pos.ValueOrDie() > static_cast<FX_FILESIZE>(m_pFileAccess->m_FileLen))
+    return false;
+
+  return !!m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
+                                     static_cast<uint8_t*>(buffer), size);
 }

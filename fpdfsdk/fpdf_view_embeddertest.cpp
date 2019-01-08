@@ -107,6 +107,10 @@ TEST_F(FPDFViewEmbedderTest, LinearizedDocument) {
   EXPECT_EQ(16, version);
 }
 
+TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithoutFileAccess) {
+  EXPECT_FALSE(FPDF_LoadCustomDocument(nullptr, ""));
+}
+
 TEST_F(FPDFViewEmbedderTest, Page) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
