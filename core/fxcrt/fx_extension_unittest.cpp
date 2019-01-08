@@ -126,6 +126,9 @@ TEST(fxcrt, FXSYS_wcstof) {
   EXPECT_FLOAT_EQ(99999999999999999.0f,
                   FXSYS_wcstof(L"99999999999999999", 17, &used_len));
   EXPECT_EQ(17, used_len);
+
+  // For https://crbug.com/pdfium/1217
+  EXPECT_FLOAT_EQ(0.0f, FXSYS_wcstof(L"e76", 3, nullptr));
 }
 
 TEST(fxcrt, FXSYS_SafeOps) {

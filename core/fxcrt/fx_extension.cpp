@@ -91,7 +91,8 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
            -exp_value < std::numeric_limits<float>::min_exponent10) ||
           (!negative_exponent &&
            exp_value > std::numeric_limits<float>::max_exponent10)) {
-        *pUsedLen = 0;
+        if (pUsedLen)
+          *pUsedLen = 0;
         return 0.0f;
       }
 
