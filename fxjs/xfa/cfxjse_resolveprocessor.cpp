@@ -512,12 +512,12 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
     while (nStart < iLength) {
       wCur = pSrc[nStart++];
       if (wCur == '.') {
-        if (wPrev == '\\') {
-          pNameBuf[nNameCount - 1] = wPrev = '.';
-          continue;
-        }
         if (nNameCount == 0) {
           rnd.m_dwStyles |= XFA_RESOLVENODE_AnyChild;
+          continue;
+        }
+        if (wPrev == '\\') {
+          pNameBuf[nNameCount - 1] = wPrev = '.';
           continue;
         }
 
