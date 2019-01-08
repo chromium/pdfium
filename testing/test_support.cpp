@@ -217,8 +217,10 @@ int TestLoader::GetBlock(void* param,
                          unsigned char* pBuf,
                          unsigned long size) {
   TestLoader* pLoader = static_cast<TestLoader*>(param);
-  if (pos + size < pos || pos + size > pLoader->m_Len)
+  if (pos + size < pos || pos + size > pLoader->m_Len) {
+    NOTREACHED();
     return 0;
+  }
 
   memcpy(pBuf, pLoader->m_pBuf + pos, size);
   return 1;

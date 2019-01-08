@@ -568,12 +568,15 @@ int EmbedderTest::GetBlockFromString(void* param,
                                      unsigned char* buf,
                                      unsigned long size) {
   std::string* new_file = static_cast<std::string*>(param);
-  if (!new_file || pos + size < pos)
+  if (!new_file || pos + size < pos) {
+    NOTREACHED();
     return 0;
+  }
 
-  unsigned long file_size = new_file->size();
-  if (pos + size > file_size)
+  if (pos + size > new_file->size()) {
+    NOTREACHED();
     return 0;
+  }
 
   memcpy(buf, new_file->data() + pos, size);
   return 1;

@@ -418,6 +418,9 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
     uint32_t start_objnum,
     uint32_t count,
     std::vector<CrossRefObjData>* out_objects) {
+  if (!count)
+    return true;
+
   // Each entry shall be exactly 20 byte.
   // A sample entry looks like:
   // "0000000000 00007 f\r\n"

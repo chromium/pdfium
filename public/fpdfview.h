@@ -333,6 +333,7 @@ typedef struct {
 
   // A function pointer for getting a block of data from a specific position.
   // Position is specified by byte offset from the beginning of the file.
+  // The pointer to the buffer is never NULL and the size is never 0.
   // The position and size will never go out of range of the file length.
   // It may be possible for FPDFSDK to call this function multiple times for
   // the same position.
