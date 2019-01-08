@@ -680,3 +680,29 @@ TEST_F(FPDFViewEmbedderTest, DocumentHasInvalidCrossReferenceTable) {
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
   EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(document()));
 }
+
+// Related to https://crbug.com/pdfium/1197
+// TODO(thestig): FPDF_DocumentHasValidCrossReferenceTable() should return true
+// in this test.
+TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
+  ASSERT_TRUE(OpenDocument("empty_xref.pdf"));
+  EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(document()));
+
+  std::string file_path;
+  ASSERT_TRUE(PathService::GetTestFilePath("empty_xref.pdf", &file_path));
+  {
+    ScopedFPDFDocument doc(FPDF_LoadDocument(file_path.c_str(), ""));
+    ASSERT_TRUE(doc);
+    EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(doc.get()));
+  }
+  {
+    size_t file_length = 0;
+    std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
+        GetFileContents(file_path.c_str(), &file_length);
+    ASSERT(file_contents);
+    ScopedFPDFDocument doc(
+        FPDF_LoadMemDocument(file_contents.get(), file_length, ""));
+    ASSERT_TRUE(doc);
+    EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(doc.get()));
+  }
+}
