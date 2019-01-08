@@ -372,6 +372,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_CountNamedDests);
     CHK(FPDF_DestroyLibrary);
     CHK(FPDF_DeviceToPage);
+    CHK(FPDF_DocumentHasValidCrossReferenceTable);
     CHK(FPDF_GetDocPermissions);
     CHK(FPDF_GetFileVersion);
     CHK(FPDF_GetLastError);

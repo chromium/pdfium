@@ -432,7 +432,8 @@ typedef struct _FPDF_FILEHANDLER {
   FPDF_RESULT (*Truncate)(FPDF_LPVOID clientData, FPDF_DWORD size);
 } FPDF_FILEHANDLER, *FPDF_LPFILEHANDLER;
 
-#endif
+#endif  // PDF_ENABLE_XFA
+
 // Function: FPDF_LoadCustomDocument
 //          Load PDF document from a custom access descriptor.
 // Parameters:
@@ -488,6 +489,21 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 //          If the previous SDK call succeeded, the return value of this
 //          function is not defined.
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetLastError();
+
+// Function: FPDF_DocumentHasValidCrossReferenceTable
+//          Whether the document's cross reference table is valid or not.
+//          Experimental API.
+// Parameters:
+//          document    -   Handle to a document. Returned by FPDF_LoadDocument.
+// Return value:
+//          True if the PDF parser did not encounter problems parsing the cross
+//          reference table. False if the parser could not parse the cross
+//          reference table and the table had to be rebuild from other data
+//          within the document.
+// Comments:
+//          The return value can change over time as the PDF parser evolves.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_DocumentHasValidCrossReferenceTable(FPDF_DOCUMENT document);
 
 // Function: FPDF_GetDocPermission
 //          Get file permission flags of the document.

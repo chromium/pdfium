@@ -668,3 +668,15 @@ TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadDocument) {
   FPDF_CloseDocument(doc);
   SetDelegate(nullptr);
 }
+
+TEST_F(FPDFViewEmbedderTest, DocumentHasValidCrossReferenceTable) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(document()));
+}
+
+TEST_F(FPDFViewEmbedderTest, DocumentHasInvalidCrossReferenceTable) {
+  EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(nullptr));
+
+  ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
+  EXPECT_FALSE(FPDF_DocumentHasValidCrossReferenceTable(document()));
+}

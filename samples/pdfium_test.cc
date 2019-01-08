@@ -744,6 +744,9 @@ void RenderPdf(const std::string& name,
     return;
   }
 
+  if (!FPDF_DocumentHasValidCrossReferenceTable(doc.get()))
+    fprintf(stderr, "Document has invalid cross reference table\n");
+
   (void)FPDF_GetDocPermissions(doc.get());
 
   if (options.show_metadata)

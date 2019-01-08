@@ -111,6 +111,8 @@ class CPDF_Parser {
     return m_CrossRefTable.get();
   }
 
+  bool xref_table_rebuilt() const { return m_bXRefTableRebuilt; }
+
   CPDF_SyntaxParser* GetSyntax() const { return m_pSyntax.get(); }
 
   void SetLinearizedHeader(std::unique_ptr<CPDF_LinearizedHeader> pLinearized);
@@ -175,6 +177,7 @@ class CPDF_Parser {
 
   bool m_bHasParsed = false;
   bool m_bXRefStream = false;
+  bool m_bXRefTableRebuilt = false;
   int m_FileVersion = 0;
   // m_CrossRefTable must be destroyed after m_pSecurityHandler due to the
   // ownership of the ID array data.

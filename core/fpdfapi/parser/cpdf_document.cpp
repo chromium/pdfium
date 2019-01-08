@@ -211,7 +211,7 @@ CPDF_Parser::Error CPDF_Document::LoadDoc(
   if (!m_pParser)
     SetParser(pdfium::MakeUnique<CPDF_Parser>(this));
 
-  return m_pParser->StartParse(pFileAccess, password);
+  return HandleLoadResult(m_pParser->StartParse(pFileAccess, password));
 }
 
 CPDF_Parser::Error CPDF_Document::LoadLinearizedDoc(
@@ -220,7 +220,7 @@ CPDF_Parser::Error CPDF_Document::LoadLinearizedDoc(
   if (!m_pParser)
     SetParser(pdfium::MakeUnique<CPDF_Parser>(this));
 
-  return m_pParser->StartLinearizedParse(validator, password);
+  return HandleLoadResult(m_pParser->StartLinearizedParse(validator, password));
 }
 
 void CPDF_Document::LoadPages() {
@@ -311,6 +311,12 @@ void CPDF_Document::ResetTraversal() {
 void CPDF_Document::SetParser(std::unique_ptr<CPDF_Parser> pParser) {
   ASSERT(!m_pParser);
   m_pParser = std::move(pParser);
+}
+
+CPDF_Parser::Error CPDF_Document::HandleLoadResult(CPDF_Parser::Error error) {
+  if (error == CPDF_Parser::SUCCESS)
+    m_bHasValidCrossReferenceTable = !m_pParser->xref_table_rebuilt();
+  return error;
 }
 
 const CPDF_Dictionary* CPDF_Document::GetPagesDict() const {

@@ -289,8 +289,12 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
   return true;
 }
 
-// jabdelmalek: changed return type from uint32_t to build on Linux (and match
-// header).
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_DocumentHasValidCrossReferenceTable(FPDF_DOCUMENT document) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  return pDoc && pDoc->has_valid_cross_reference_table();
+}
+
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);

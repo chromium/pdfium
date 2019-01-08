@@ -160,10 +160,9 @@ CPDF_Parser::Error CPDF_Parser::StartParse(
 
 CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
   ASSERT(!m_bHasParsed);
+  ASSERT(!m_bXRefTableRebuilt);
   m_bHasParsed = true;
   m_bXRefStream = false;
-
-  bool bXRefRebuilt = false;
 
   m_LastXRefOffset = ParseStartXRef();
   if (m_LastXRefOffset >= kPDFHeaderSize) {
@@ -172,21 +171,21 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
       if (!RebuildCrossRef())
         return FORMAT_ERROR;
 
-      bXRefRebuilt = true;
+      m_bXRefTableRebuilt = true;
       m_LastXRefOffset = 0;
     }
   } else {
     if (!RebuildCrossRef())
       return FORMAT_ERROR;
 
-    bXRefRebuilt = true;
+    m_bXRefTableRebuilt = true;
   }
   Error eRet = SetEncryptHandler();
   if (eRet != SUCCESS)
     return eRet;
 
   if (!GetRoot() || !m_pObjectsHolder->TryInit()) {
-    if (bXRefRebuilt)
+    if (m_bXRefTableRebuilt)
       return FORMAT_ERROR;
 
     ReleaseEncryptHandler();
@@ -961,6 +960,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     const RetainPtr<CPDF_ReadValidator>& validator,
     const char* password) {
   ASSERT(!m_bHasParsed);
+  ASSERT(!m_bXRefTableRebuilt);
   SetPassword(password);
   m_bXRefStream = false;
   m_LastXRefOffset = 0;
@@ -976,13 +976,12 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
 
   m_LastXRefOffset = m_pLinearized->GetLastXRefOffset();
   FX_FILESIZE dwFirstXRefOffset = m_LastXRefOffset;
-  bool bXRefRebuilt = false;
   bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, false);
   if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, true)) {
     if (!RebuildCrossRef())
       return FORMAT_ERROR;
 
-    bXRefRebuilt = true;
+    m_bXRefTableRebuilt = true;
     m_LastXRefOffset = 0;
   }
   if (bLoadV4) {
@@ -1001,7 +1000,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     return eRet;
 
   if (!GetRoot() || !m_pObjectsHolder->TryInit()) {
-    if (bXRefRebuilt)
+    if (m_bXRefTableRebuilt)
       return FORMAT_ERROR;
 
     ReleaseEncryptHandler();
