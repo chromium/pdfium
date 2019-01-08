@@ -752,7 +752,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
     wchar_t wch = pText->pStr[i];
     int32_t iWidth = pText->pWidths[i];
     uint32_t dwProps = FX_GetUnicodeProperties(wch);
-    uint32_t dwCharType = (dwProps & FX_CHARTYPEBITSMASK);
+    uint32_t dwCharType = GetCharTypeFromProp(dwProps);
     if (iWidth == 0) {
       if (dwCharType == FX_CHARTYPE_ArabicAlef)
         wPrev = 0xFEFF;

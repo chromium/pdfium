@@ -8,6 +8,8 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+namespace fxcrt {
+
 const uint32_t kTextLayoutCodeProperties[] = {
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93,
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe8ae5, 0xfffe9b5c, 0xfffe9ada,
@@ -10937,6 +10939,23 @@ const uint32_t kTextLayoutCodeProperties[] = {
 const size_t kTextLayoutCodePropertiesSize =
     FX_ArraySize(kTextLayoutCodeProperties);
 
+static_assert(kTextLayoutCodePropertiesSize == 65536, "missing characters");
+
+static_assert((kBreakTypeBitMask | kBidiClassBitMask | kCharTypeBitMask |
+               kField2BitMask | kMirrorBitMask) == 0xffffffff,
+              "missing bits in mask");
+
+static_assert((kBreakTypeBitMask & kBidiClassBitMask) == 0, "overlapping bits");
+static_assert((kBreakTypeBitMask & kCharTypeBitMask) == 0, "overlapping bits");
+static_assert((kBreakTypeBitMask & kField2BitMask) == 0, "overlapping bits");
+static_assert((kBreakTypeBitMask & kMirrorBitMask) == 0, "overlapping bits");
+static_assert((kBidiClassBitMask & kCharTypeBitMask) == 0, "overlapping bits");
+static_assert((kBidiClassBitMask & kField2BitMask) == 0, "overlapping bits");
+static_assert((kBidiClassBitMask & kMirrorBitMask) == 0, "overlapping bits");
+static_assert((kCharTypeBitMask & kField2BitMask) == 0, "overlapping bits");
+static_assert((kCharTypeBitMask & kMirrorBitMask) == 0, "overlapping bits");
+static_assert((kField2BitMask & kMirrorBitMask) == 0, "overlapping bits");
+
 const uint16_t kFXTextLayoutBidiMirror[] = {
     0x0029, 0x0028, 0x003E, 0x003C, 0x005D, 0x005B, 0x007D, 0x007B, 0x00BB,
     0x00AB, 0x0F3B, 0x0F3A, 0x0F3D, 0x0F3C, 0x169C, 0x169B, 0x2019, 0x2018,
@@ -10999,3 +11018,5 @@ const uint16_t kFXTextLayoutBidiMirror[] = {
 
 const size_t kFXTextLayoutBidiMirrorSize =
     FX_ArraySize(kFXTextLayoutBidiMirror);
+
+}  // namespace fxcrt

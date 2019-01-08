@@ -10,14 +10,11 @@
 
 namespace {
 
-constexpr uint32_t kMirrorBits = 23;
-constexpr uint32_t kMirrorMask = 0x1FFU << kMirrorBits;
-
 wchar_t GetMirrorChar(wchar_t wch, uint32_t dwProps) {
-  uint32_t dwTemp = (dwProps & kMirrorMask);
-  if (dwTemp == kMirrorMask)
+  uint32_t dwTemp = (dwProps & kMirrorBitMask);
+  if (dwTemp == kMirrorBitMask)
     return wch;
-  size_t idx = dwTemp >> kMirrorBits;
+  size_t idx = dwTemp >> kMirrorBitPos;
   return idx < kFXTextLayoutBidiMirrorSize ? kFXTextLayoutBidiMirror[idx] : wch;
 }
 
@@ -35,6 +32,20 @@ wchar_t FX_GetMirrorChar(wchar_t wch) {
 }
 
 #ifdef PDF_ENABLE_XFA
+static_assert(FX_CHARTYPEBITS == kCharTypeBitPos, "positions must match");
+
+FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
+  uint32_t result = (prop & kCharTypeBitMask);
+  ASSERT(result <= FX_CHARTYPE_Arabic);
+  return static_cast<FX_CHARTYPE>(result);
+}
+
+uint32_t GetBreakPropertyFromProp(uint32_t prop) {
+  uint32_t result = (prop & kBreakTypeBitMask) >> kBreakTypeBitPos;
+  ASSERT(result <= kBreakPropertyTB);
+  return result;
+}
+
 wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps) {
   return GetMirrorChar(wch, dwProps);
 }

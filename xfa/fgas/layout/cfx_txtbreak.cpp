@@ -18,7 +18,7 @@
 namespace {
 
 bool IsCtrlCode(wchar_t ch) {
-  uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
+  uint32_t dwRet = GetCharTypeFromProp(FX_GetUnicodeProperties(ch));
   return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
 }
 
@@ -728,7 +728,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             int32_t iNextAbsolute = iNext + pTxtRun->iStart;
             wNext = pEngine->GetChar(iNextAbsolute);
             dwProps = FX_GetUnicodeProperties(wNext);
-            if ((dwProps & FX_CHARTYPEBITSMASK) != FX_CHARTYPE_Combination)
+            if (GetCharTypeFromProp(dwProps) != FX_CHARTYPE_Combination)
               break;
 
             iNext++;
@@ -744,7 +744,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 
             wNext = pStr[j];
             dwProps = FX_GetUnicodeProperties(wNext);
-          } while ((dwProps & FX_CHARTYPEBITSMASK) == FX_CHARTYPE_Combination);
+          } while (GetCharTypeFromProp(dwProps) == FX_CHARTYPE_Combination);
           if (i + j >= iLength)
             wNext = 0xFEFF;
         }
@@ -876,8 +876,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           }
           if (wForm == wch && wLast != 0xFEFF) {
             uint32_t dwLastProps = FX_GetUnicodeProperties(wLast);
-            if ((dwLastProps & FX_CHARTYPEBITSMASK) ==
-                FX_CHARTYPE_Combination) {
+            if (GetCharTypeFromProp(dwLastProps) == FX_CHARTYPE_Combination) {
               FX_RECT rtBox;
               if (pFont->GetCharBBox(wLast, &rtBox))
                 pCharPos->m_Origin.y -= fFontSize * rtBox.Height() / iMaxHeight;

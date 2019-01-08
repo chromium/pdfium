@@ -19,7 +19,6 @@ constexpr uint8_t kBreakPropertySpace = 35;
 constexpr uint8_t kBreakPropertyTB = 37;  // Highest, don't know what this is.
 
 constexpr uint32_t FX_CHARTYPEBITS = 11;
-constexpr uint32_t FX_CHARTYPEBITSMASK = 0xF << FX_CHARTYPEBITS;
 
 enum FX_CHARTYPE {
   FX_CHARTYPE_Unknown = 0,
@@ -37,16 +36,11 @@ enum FX_CHARTYPE {
   FX_CHARTYPE_Arabic = (12 << FX_CHARTYPEBITS),
 };
 
-inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
-  return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
-}
+FX_CHARTYPE GetCharTypeFromProp(uint32_t prop);
 
-inline uint32_t GetBreakPropertyFromProp(uint32_t prop) {
-  // Analagous to ULineBreak in icu's uchar.h, but permuted order, and a
-  // subset lacking some more recent additions.
-  ASSERT((prop & 0x3f) <= kBreakPropertyTB);
-  return prop & 0x3f;
-}
+// Analagous to ULineBreak in icu's uchar.h, but permuted order, and a
+// subset lacking some more recent additions.
+uint32_t GetBreakPropertyFromProp(uint32_t prop);
 
 wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps);
 
