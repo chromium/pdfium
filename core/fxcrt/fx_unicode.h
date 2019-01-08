@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_FX_UNICODE_H_
 #define CORE_FXCRT_FX_UNICODE_H_
 
-#include <stdint.h>
+#include "core/fxcrt/fx_system.h"
 
 uint32_t FX_GetUnicodeProperties(wchar_t wch);
 wchar_t FX_GetMirrorChar(wchar_t wch);
@@ -16,7 +16,7 @@ wchar_t FX_GetMirrorChar(wchar_t wch);
 
 // As defined in http://www.unicode.org/reports/tr14
 constexpr uint8_t kBreakPropertySpace = 35;
-constexpr uint8_t kBreakPropertyTB = 37;  // Don't know what this is ...
+constexpr uint8_t kBreakPropertyTB = 37;  // Highest, don't know what this is.
 
 constexpr uint32_t FX_CHARTYPEBITS = 11;
 constexpr uint32_t FX_CHARTYPEBITSMASK = 0xF << FX_CHARTYPEBITS;
@@ -39,6 +39,13 @@ enum FX_CHARTYPE {
 
 inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
+}
+
+inline uint32_t GetBreakPropertyFromProp(uint32_t prop) {
+  // Analagous to ULineBreak in icu's uchar.h, but permuted order, and a
+  // subset lacking some more recent additions.
+  ASSERT((prop & 0x3f) <= kBreakPropertyTB);
+  return prop & 0x3f;
 }
 
 wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps);
