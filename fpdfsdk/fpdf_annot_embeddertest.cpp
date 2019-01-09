@@ -1579,6 +1579,30 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
     EXPECT_STREQ(kData, BufferToWString(buf).c_str());
   }
 
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(FPDF_ANNOT_STAMP, FPDFAnnot_GetSubtype(annot.get()));
+    // Also do the same test for its appearance string.
+    std::fill(buf.begin(), buf.end(), 'x');
+    ASSERT_EQ(2u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                              buf.data(), buf.size()));
+    EXPECT_STREQ(L"", BufferToWString(buf).c_str());
+
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(kData);
+    EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                                text.get()));
+
+    std::fill(buf.begin(), buf.end(), 'x');
+    ASSERT_EQ(6u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                              buf.data(), buf.size()));
+    EXPECT_STREQ(kData, BufferToWString(buf).c_str());
+  }
+
   UnloadPage(page);
 
   {
@@ -1589,11 +1613,23 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
     FPDF_PAGE saved_page = LoadSavedPage(0);
     ASSERT_TRUE(saved_page);
 
-    EXPECT_EQ(1, FPDFPage_GetAnnotCount(saved_page));
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(saved_page));
     {
       ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
       ASSERT_TRUE(annot);
       EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
+
+      std::fill(buf.begin(), buf.end(), 'x');
+      ASSERT_EQ(6u, FPDFAnnot_GetStringValue(annot.get(), kTestKey, buf.data(),
+                                             buf.size()));
+      EXPECT_STREQ(kData, BufferToWString(buf).c_str());
+    }
+
+    {
+      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
+      ASSERT_TRUE(annot);
+      // TODO(thestig): This return FPDF_ANNOT_UNKNOWN for some reason.
+      // EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
 
       std::fill(buf.begin(), buf.end(), 'x');
       ASSERT_EQ(6u, FPDFAnnot_GetStringValue(annot.get(), kTestKey, buf.data(),

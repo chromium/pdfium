@@ -785,7 +785,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     if (!pApDict)
       pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
 
-    ByteString newValue = ByteStringFromFPDFWideString(value);
+    ByteString newValue = PDF_EncodeText(WideStringFromFPDFWideString(value));
     auto pNewApStream = pdfium::MakeUnique<CPDF_Stream>();
     pNewApStream->SetData(newValue.AsRawSpan());
     pApDict->SetFor(modeKey, std::move(pNewApStream));
