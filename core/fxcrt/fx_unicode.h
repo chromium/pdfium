@@ -51,11 +51,6 @@ enum class FX_BREAKPROPERTY : uint8_t {
   kTB = 37,
 };
 
-uint32_t FX_GetUnicodeProperties(wchar_t wch);
-wchar_t FX_GetMirrorChar(wchar_t wch);
-
-#ifdef PDF_ENABLE_XFA
-
 enum class FX_CHARTYPE : uint8_t {
   kUnknown = 0,
   kTab,
@@ -71,6 +66,11 @@ enum class FX_CHARTYPE : uint8_t {
   kArabicForm,
   kArabic,
 };
+
+uint32_t FX_GetUnicodeProperties(wchar_t wch);
+wchar_t FX_GetMirrorChar(wchar_t wch);
+
+#ifdef PDF_ENABLE_XFA
 
 FX_CHARTYPE GetCharTypeFromProp(uint32_t prop);
 

@@ -38,9 +38,10 @@ constexpr uint32_t kMirrorBitMask =
     (((1 << kMirrorBitCount) - 1) << kMirrorBitPos);
 
 #undef CHARPROP____
-#define CHARPROP____(mirror, f2, ct, bd, bt)            \
-  ((mirror << kMirrorBitPos) | (f2 << kField2BitPos) |  \
-   (ct << kCharTypeBitPos) | (bd << kBidiClassBitPos) | \
+#define CHARPROP____(mirror, f2, ct, bd, bt)                     \
+  ((mirror << kMirrorBitPos) | (f2 << kField2BitPos) |           \
+   (static_cast<uint32_t>(FX_CHARTYPE::ct) << kCharTypeBitPos) | \
+   (bd << kBidiClassBitPos) |                                    \
    (static_cast<uint32_t>(FX_BREAKPROPERTY::bt) << kBreakTypeBitPos))
 
 const uint32_t kTextLayoutCodeProperties[] = {
