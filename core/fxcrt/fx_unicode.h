@@ -9,14 +9,52 @@
 
 #include "core/fxcrt/fx_system.h"
 
+// As defined in http://www.unicode.org/reports/tr14
+enum class FX_BREAKPROPERTY : uint8_t {
+  kOP = 0,
+  kCL = 1,
+  kQU = 2,
+  kGL = 3,
+  kNS = 4,
+  kEX = 5,
+  kSY = 6,
+  kIS = 7,
+  kPR = 8,
+  kPO = 9,
+  kNU = 10,
+  kAL = 11,
+  kID = 12,
+  kIN = 13,
+  kHY = 14,
+  kBA = 15,
+  kBB = 16,
+  kB2 = 17,
+  kZW = 18,
+  kCM = 19,
+  kWJ = 20,
+  kH2 = 21,
+  kH3 = 22,
+  kJL = 23,
+  kJV = 24,
+  kJT = 25,
+  kBK = 26,
+  kCR = 27,
+  kLF = 28,
+  kNL = 29,
+  kSA = 30,
+  kSG = 31,
+  kCB = 32,
+  kXX = 33,
+  kAI = 34,
+  kSP = 35,
+  kNONE = 36,
+  kTB = 37,
+};
+
 uint32_t FX_GetUnicodeProperties(wchar_t wch);
 wchar_t FX_GetMirrorChar(wchar_t wch);
 
 #ifdef PDF_ENABLE_XFA
-
-// As defined in http://www.unicode.org/reports/tr14
-constexpr uint8_t kBreakPropertySpace = 35;
-constexpr uint8_t kBreakPropertyTB = 37;  // Highest, don't know what this is.
 
 constexpr uint32_t FX_CHARTYPEBITS = 11;
 
@@ -40,7 +78,7 @@ FX_CHARTYPE GetCharTypeFromProp(uint32_t prop);
 
 // Analagous to ULineBreak in icu's uchar.h, but permuted order, and a
 // subset lacking some more recent additions.
-uint32_t GetBreakPropertyFromProp(uint32_t prop);
+FX_BREAKPROPERTY GetBreakPropertyFromProp(uint32_t prop);
 
 wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps);
 

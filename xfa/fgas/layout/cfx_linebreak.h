@@ -23,11 +23,12 @@ enum FX_LINEBREAKTYPE : uint8_t {
 // TODO(tsepez): the dimensions of this table are wrong, should be 38x38.
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 
-inline FX_LINEBREAKTYPE GetLineBreakTypeFromPair(uint32_t curr_char_break,
-                                                 uint32_t next_char_break) {
-  ASSERT(curr_char_break <= kBreakPropertyTB);
-  ASSERT(next_char_break <= kBreakPropertyTB);
-  return gs_FX_LineBreak_PairTable[curr_char_break][next_char_break];
+inline FX_LINEBREAKTYPE GetLineBreakTypeFromPair(FX_BREAKPROPERTY curr_char,
+                                                 FX_BREAKPROPERTY next_char) {
+  ASSERT(curr_char <= FX_BREAKPROPERTY::kTB);
+  ASSERT(next_char <= FX_BREAKPROPERTY::kTB);
+  return gs_FX_LineBreak_PairTable[static_cast<size_t>(curr_char)]
+                                  [static_cast<size_t>(next_char)];
 }
 
 #endif  // XFA_FGAS_LAYOUT_CFX_LINEBREAK_H_

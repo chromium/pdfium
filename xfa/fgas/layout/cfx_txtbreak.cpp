@@ -547,8 +547,8 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
 
   FX_LINEBREAKTYPE eType;
   uint32_t nCodeProp;
-  uint32_t nCur;
-  uint32_t nNext;
+  FX_BREAKPROPERTY nCur;
+  FX_BREAKPROPERTY nNext;
   CFX_Char* pCur = &chars[iLength--];
   if (bAllChars)
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
@@ -563,7 +563,7 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
     pCur = &chars[iLength];
     nCodeProp = pCur->char_props();
     nCur = GetBreakPropertyFromProp(nCodeProp);
-    if (nNext == kBreakPropertySpace)
+    if (nNext == FX_BREAKPROPERTY::kSP)
       eType = FX_LBT_PROHIBITED_BRK;
     else
       eType = GetLineBreakTypeFromPair(nCur, nNext);
@@ -571,7 +571,7 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
       pCur->m_nBreakType = static_cast<uint8_t>(eType);
     if (!bOnlyBrk) {
       if (m_bSingleLine || *pEndPos <= m_iLineWidth ||
-          nCur == kBreakPropertySpace) {
+          nCur == FX_BREAKPROPERTY::kSP) {
         if (eType == FX_LBT_DIRECT_BRK && iBreak < 0) {
           iBreak = iLength;
           iBreakPos = *pEndPos;

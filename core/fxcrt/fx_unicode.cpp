@@ -41,7 +41,7 @@ constexpr uint32_t kMirrorBitMask =
 #define CHARPROP____(mirror, f2, ct, bd, bt)            \
   ((mirror << kMirrorBitPos) | (f2 << kField2BitPos) |  \
    (ct << kCharTypeBitPos) | (bd << kBidiClassBitPos) | \
-   (bt << kBreakTypeBitPos))
+   (static_cast<uint32_t>(FX_BREAKPROPERTY::bt) << kBreakTypeBitPos))
 
 const uint32_t kTextLayoutCodeProperties[] = {
 #include "core/fxcrt/fx_ucddata.inc"
@@ -161,10 +161,10 @@ FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   return static_cast<FX_CHARTYPE>(result);
 }
 
-uint32_t GetBreakPropertyFromProp(uint32_t prop) {
+FX_BREAKPROPERTY GetBreakPropertyFromProp(uint32_t prop) {
   uint32_t result = (prop & kBreakTypeBitMask) >> kBreakTypeBitPos;
-  ASSERT(result <= kBreakPropertyTB);
-  return result;
+  ASSERT(result <= static_cast<uint32_t>(FX_BREAKPROPERTY::kTB));
+  return static_cast<FX_BREAKPROPERTY>(result);
 }
 
 wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps) {
