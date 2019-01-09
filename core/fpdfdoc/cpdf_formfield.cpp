@@ -381,19 +381,16 @@ bool CPDF_FormField::SetValue(const WideString& value,
         return false;
       }
       ByteString key(bDefault ? "DV" : "V");
+      m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor(key));
+      m_pDict->SetNewFor<CPDF_String>(key, csValue);
       int iIndex = FindOptionValue(csValue);
       if (iIndex < 0) {
-        ByteString bsEncodeText = PDF_EncodeText(csValue);
-        m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor(key));
-        m_pDict->SetNewFor<CPDF_String>(key, bsEncodeText, false);
         if (m_Type == kRichText && !bDefault) {
           m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("RV"));
-          m_pDict->SetNewFor<CPDF_String>("RV", bsEncodeText, false);
+          m_pDict->SetFor("RV", m_pDict->GetObjectFor(key)->Clone());
         }
         m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
       } else {
-        m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor(key));
-        m_pDict->SetNewFor<CPDF_String>(key, PDF_EncodeText(csValue), false);
         if (!bDefault) {
           ClearSelection(NotificationOption::kDoNotNotify);
           SetItemSelection(iIndex, true, NotificationOption::kDoNotNotify);
@@ -574,18 +571,16 @@ bool CPDF_FormField::SetItemSelection(int index,
     if (GetType() == kListBox) {
       SelectOption(index, true, NotificationOption::kDoNotNotify);
       if (!(m_Flags & kFormListMultiSelect)) {
-        m_pDict->SetNewFor<CPDF_String>("V", PDF_EncodeText(opt_value), false);
+        m_pDict->SetNewFor<CPDF_String>("V", opt_value);
       } else {
         CPDF_Array* pArray = m_pDict->SetNewFor<CPDF_Array>("V");
         for (int i = 0; i < CountOptions(); i++) {
-          if (i == index || IsItemSelected(i)) {
-            opt_value = GetOptionValue(i);
-            pArray->AddNew<CPDF_String>(PDF_EncodeText(opt_value), false);
-          }
+          if (i == index || IsItemSelected(i))
+            pArray->AddNew<CPDF_String>(GetOptionValue(i));
         }
       }
     } else {
-      m_pDict->SetNewFor<CPDF_String>("V", PDF_EncodeText(opt_value), false);
+      m_pDict->SetNewFor<CPDF_String>("V", opt_value);
       CPDF_Array* pI = m_pDict->SetNewFor<CPDF_Array>("I");
       pI->AddNew<CPDF_Number>(index);
     }
@@ -600,10 +595,8 @@ bool CPDF_FormField::SetItemSelection(int index,
         } else if (pValue->IsArray()) {
           auto pArray = pdfium::MakeUnique<CPDF_Array>();
           for (int i = 0; i < CountOptions(); i++) {
-            if (i != index && IsItemSelected(i)) {
-              opt_value = GetOptionValue(i);
-              pArray->AddNew<CPDF_String>(PDF_EncodeText(opt_value), false);
-            }
+            if (i != index && IsItemSelected(i))
+              pArray->AddNew<CPDF_String>(GetOptionValue(i));
           }
           if (pArray->size() > 0) {
             m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
@@ -698,8 +691,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
   if (!bChecked && pControl->IsChecked() == bChecked)
     return false;
 
-  WideString csWExport = pControl->GetExportValue();
-  ByteString csBExport = PDF_EncodeText(csWExport);
+  const WideString csWExport = pControl->GetExportValue();
   int iCount = CountControls();
   bool bUnison = IsUnison(this);
   for (int i = 0; i < iCount; i++) {
@@ -724,6 +716,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
 
   const CPDF_Object* pOpt = FPDF_GetFieldAttr(m_pDict.Get(), "Opt");
   if (!ToArray(pOpt)) {
+    ByteString csBExport = PDF_EncodeText(csWExport);
     if (bChecked) {
       m_pDict->SetNewFor<CPDF_Name>("V", csBExport);
     } else {

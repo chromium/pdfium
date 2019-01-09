@@ -1022,8 +1022,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       WideString wsFilePath = CPDF_FileSpec::EncodeFileName(pdf_path);
       pMainDict->SetNewFor<CPDF_String>(pdfium::stream::kF,
                                         wsFilePath.ToDefANSI(), false);
-      pMainDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsFilePath),
-                                        false);
+      pMainDict->SetNewFor<CPDF_String>("UF", wsFilePath);
     } else {
       auto pNewDict = pDoc->New<CPDF_Dictionary>();
       pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");

@@ -100,7 +100,7 @@ void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
   CPDF_Dictionary* pDict = GetAnnotDict();
   m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("NM"));
   if (!sName.IsEmpty())
-    pDict->SetNewFor<CPDF_String>("NM", PDF_EncodeText(sName), false);
+    pDict->SetNewFor<CPDF_String>("NM", sName);
 }
 
 WideString CPDFSDK_BAAnnot::GetAnnotName() const {

@@ -795,9 +795,7 @@ CJS_Result CJS_Document::setPropertyInternal(CJS_Runtime* pRuntime,
   if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
-  WideString csProperty = pRuntime->ToWideString(vp);
-  pDictionary->SetNewFor<CPDF_String>(propName, PDF_EncodeText(csProperty),
-                                      false);
+  pDictionary->SetNewFor<CPDF_String>(propName, pRuntime->ToWideString(vp));
   m_pFormFillEnv->SetChangeMark();
   return CJS_Result::Success();
 }

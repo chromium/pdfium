@@ -206,6 +206,6 @@ void CPDF_FileSpec::SetFileName(const WideString& wsFileName) {
     m_pWritableObj->SetString(wsStr.ToDefANSI());
   } else if (CPDF_Dictionary* pDict = m_pWritableObj->AsDictionary()) {
     pDict->SetNewFor<CPDF_String>(pdfium::stream::kF, wsStr.ToDefANSI(), false);
-    pDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsStr), false);
+    pDict->SetNewFor<CPDF_String>("UF", wsStr);
   }
 }
