@@ -11,7 +11,7 @@ index 700152ee3..3c3848b2a 100644
  
  // This function is here to help applications to prevent mixing lcms versions on header and shared objects.
  int CMSEXPORT cmsGetEncodedCMMversion(void)
-@@ -65,140 +67,75 @@ long int CMSEXPORT cmsfilelength(FILE* f)
+@@ -67,140 +67,75 @@ long int CMSEXPORT cmsfilelength(FILE* f)
      return n;
  }
  
@@ -36,7 +36,7 @@ index 700152ee3..3c3848b2a 100644
 -// *********************************************************************************
 -
 -// This is the default memory allocation function. It does a very coarse
--// check of amout of memory, just to prevent exploits
+-// check of amount of memory, just to prevent exploits
 -static
 -void* _cmsMallocDefaultFn(cmsContext ContextID, cmsUInt32Number size)
 +cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin)
@@ -174,7 +174,7 @@ index 700152ee3..3c3848b2a 100644
      }
      else {
  
-         // To reset it, we use the default allocators, which cannot be overriden
+         // To reset it, we use the default allocators, which cannot be overridden
          ctx ->chunks[MemPlugin] = &ctx ->DefaultMemoryManager;
 -    } 
 +    }
@@ -184,7 +184,7 @@ index 700152ee3..3c3848b2a 100644
  void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkType* ptr)
  {
      if (Plugin == NULL) {
-@@ -212,94 +149,15 @@ void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkTy
+@@ -214,94 +149,15 @@ void _cmsInstallAllocFunctions(cmsPluginMemHandler* Plugin, _cmsMemPluginChunkTy
          ptr ->ReallocPtr = Plugin -> ReallocPtr;
  
          // Make sure we revert to defaults

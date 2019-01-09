@@ -1,7 +1,7 @@
 
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2016 Marti Maria Saguer
+//  Copyright (c) 1998-2017 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -77,7 +77,7 @@
 // Maximum of channels for internal pipeline evaluation
 #define MAX_STAGE_CHANNELS  128
 
-// Unused parameter warning supression
+// Unused parameter warning suppression
 #define cmsUNUSED_PARAMETER(x) ((void)x)
 
 // The specification for "inline" is section 6.7.4 of the C99 standard (ISO/IEC 9899:1999).
@@ -96,8 +96,16 @@
 # ifndef vsnprintf
 #       define vsnprintf  _vsnprintf
 # endif
-#endif
 
+/// Properly define some macros to accommodate
+/// older MSVC versions.
+# if _MSC_VER <= 1700
+        #include <float.h>
+        #define isnan _isnan
+        #define isinf(x) (!_finite((x)))
+# endif
+
+#endif
 
 // A fast way to convert from/to 16 <-> 8 bits
 #define FROM_8_TO_16(rgb) (cmsUInt16Number) ((((cmsUInt16Number) (rgb)) << 8)|(rgb))
@@ -185,6 +193,34 @@ cmsINLINE cmsUInt16Number _cmsQuickSaturateWord(cmsFloat64Number d)
 #include <windows.h>
 
 
+// The locking scheme in LCMS requires a single 'top level' mutex
+// to work. This is actually implemented on Windows as a
+// CriticalSection, because they are lighter weight. With
+// pthreads, this is statically inited. Unfortunately, windows
+// can't officially statically init critical sections.
+//
+// We can work around this in 2 ways.
+//
+// 1) We can use a proper mutex purely to protect the init
+// of the CriticalSection. This in turns requires us to protect
+// the Mutex creation, which we can do using the snappily
+// named InterlockedCompareExchangePointer API (present on
+// windows XP and above).
+//
+// 2) In cases where we want to work on pre-Windows XP, we
+// can use an even more horrible hack described below.
+//
+// So why wouldn't we always use 2)? Because not calling
+// the init function for a critical section means it fails
+// testing with ApplicationVerifier (and presumably similar
+// tools).
+//
+// We therefore default to 1, and people who want to be able
+// to run on pre-Windows XP boxes can build with:
+//     CMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT
+// defined. This is automatically set for builds using
+// versions of MSVC that don't have this API available.
+//
 // From: http://locklessinc.com/articles/pthreads_on_windows/
 // The pthreads API has an initialization macro that has no correspondence to anything in 
 // the windows API. By investigating the internal definition of the critical section type, 
@@ -206,12 +242,28 @@ cmsINLINE cmsUInt16Number _cmsQuickSaturateWord(cmsFloat64Number d)
 
 typedef CRITICAL_SECTION _cmsMutex;
 
-#define CMS_MUTEX_INITIALIZER {(PRTL_CRITICAL_SECTION_DEBUG) -1,-1,0,0,0,0}
-
 #ifdef _MSC_VER
 #    if (_MSC_VER >= 1800)
 #          pragma warning(disable : 26135)
 #    endif
+#endif
+
+#ifndef CMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT
+// If we are building with a version of MSVC smaller
+// than 1400 (i.e. before VS2005) then we don't have
+// the InterlockedCompareExchangePointer API, so use
+// the old version.
+#    ifdef _MSC_VER
+#       if _MSC_VER < 1400
+#          define CMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT
+#       endif
+#    endif
+#endif
+
+#ifdef CMS_RELY_ON_WINDOWS_STATIC_MUTEX_INIT
+#      define CMS_MUTEX_INITIALIZER {(PRTL_CRITICAL_SECTION_DEBUG) -1,-1,0,0,0,0}
+#else
+#      define CMS_MUTEX_INITIALIZER {(PRTL_CRITICAL_SECTION_DEBUG)NULL,-1,0,0,0,0}
 #endif
 
 cmsINLINE int _cmsLockPrimitive(_cmsMutex *m)
@@ -449,7 +501,7 @@ struct _cmsContext_struct {
     void* chunks[MemoryClientMax];    // array of pointers to client chunks. Memory itself is hold in the suballocator. 
                                       // If NULL, then it reverts to global Context0
 
-    _cmsMemPluginChunkType DefaultMemoryManager;  // The allocators used for creating the context itself. Cannot be overriden
+    _cmsMemPluginChunkType DefaultMemoryManager;  // The allocators used for creating the context itself. Cannot be overridden
 };
 
 // Returns a pointer to a valid context structure, including the global one if id is zero. 
@@ -771,8 +823,8 @@ void                 _cmsTagSignature2String(char String[5], cmsTagSignature sig
 
 // Interpolation ---------------------------------------------------------------------------------------------------------
 
-cmsInterpParams*     _cmsComputeInterpParams(cmsContext ContextID, int nSamples, int InputChan, int OutputChan, const void* Table, cmsUInt32Number dwFlags);
-cmsInterpParams*     _cmsComputeInterpParamsEx(cmsContext ContextID, const cmsUInt32Number nSamples[], int InputChan, int OutputChan, const void* Table, cmsUInt32Number dwFlags);
+cmsInterpParams*     _cmsComputeInterpParams(cmsContext ContextID, cmsUInt32Number nSamples, cmsUInt32Number InputChan, cmsUInt32Number OutputChan, const void* Table, cmsUInt32Number dwFlags);
+cmsInterpParams*     _cmsComputeInterpParamsEx(cmsContext ContextID, const cmsUInt32Number nSamples[], cmsUInt32Number InputChan, cmsUInt32Number OutputChan, const void* Table, cmsUInt32Number dwFlags);
 void                 _cmsFreeInterpParams(cmsInterpParams* p);
 cmsBool              _cmsSetInterpolationRoutine(cmsContext ContextID, cmsInterpParams* p);
 
@@ -831,13 +883,13 @@ cmsStage*        _cmsStageAllocLabV2ToV4(cmsContext ContextID);
 cmsStage*        _cmsStageAllocLabV2ToV4curves(cmsContext ContextID);
 cmsStage*        _cmsStageAllocLabV4ToV2(cmsContext ContextID);
 cmsStage*        _cmsStageAllocNamedColor(cmsNAMEDCOLORLIST* NamedColorList, cmsBool UsePCS);
-cmsStage*        _cmsStageAllocIdentityCurves(cmsContext ContextID, int nChannels);
-cmsStage*        _cmsStageAllocIdentityCLut(cmsContext ContextID, int nChan);
+cmsStage*        _cmsStageAllocIdentityCurves(cmsContext ContextID, cmsUInt32Number nChannels);
+cmsStage*        _cmsStageAllocIdentityCLut(cmsContext ContextID, cmsUInt32Number nChan);
 cmsStage*        _cmsStageNormalizeFromLabFloat(cmsContext ContextID);
 cmsStage*        _cmsStageNormalizeFromXyzFloat(cmsContext ContextID);
 cmsStage*        _cmsStageNormalizeToLabFloat(cmsContext ContextID);
 cmsStage*        _cmsStageNormalizeToXyzFloat(cmsContext ContextID);
-cmsStage*        _cmsStageClipNegatives(cmsContext ContextID, int nChannels);
+cmsStage*        _cmsStageClipNegatives(cmsContext ContextID, cmsUInt32Number nChannels);
 
 
 // For curve set only
@@ -872,9 +924,9 @@ struct _cmsPipeline_struct {
 // Read tags using low-level function, provide necessary glue code to adapt versions, etc. All those return a brand new copy
 // of the LUTS, since ownership of original is up to the profile. The user should free allocated resources.
 
-cmsPipeline*      _cmsReadInputLUT(cmsHPROFILE hProfile, int Intent);
-cmsPipeline*      _cmsReadOutputLUT(cmsHPROFILE hProfile, int Intent);
-cmsPipeline*      _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, int Intent);
+cmsPipeline*      _cmsReadInputLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
+cmsPipeline*      _cmsReadOutputLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
+cmsPipeline*      _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent);
 
 // Special values
 cmsBool           _cmsReadMediaWhitePoint(cmsCIEXYZ* Dest, cmsHPROFILE hProfile);
@@ -899,8 +951,8 @@ cmsSEQ* _cmsCompileProfileSequence(cmsContext ContextID, cmsUInt32Number nProfil
 
 // LUT optimization ------------------------------------------------------------------------------------------------
 
-cmsUInt16Number  _cmsQuantizeVal(cmsFloat64Number i, int MaxSamples);
-int              _cmsReasonableGridpointsByColorspace(cmsColorSpaceSignature Colorspace, cmsUInt32Number dwFlags);
+cmsUInt16Number  _cmsQuantizeVal(cmsFloat64Number i, cmsUInt32Number MaxSamples);
+cmsUInt32Number  _cmsReasonableGridpointsByColorspace(cmsColorSpaceSignature Colorspace, cmsUInt32Number dwFlags);
 
 cmsBool          _cmsEndPointsBySpace(cmsColorSpaceSignature Space,
                                       cmsUInt16Number **White,
@@ -909,7 +961,7 @@ cmsBool          _cmsEndPointsBySpace(cmsColorSpaceSignature Space,
 
 cmsBool          _cmsOptimizePipeline(cmsContext ContextID,
                                       cmsPipeline**    Lut,
-                                      int              Intent,
+                                      cmsUInt32Number  Intent,
                                       cmsUInt32Number* InputFormat,
                                       cmsUInt32Number* OutputFormat,
                                       cmsUInt32Number* dwFlags );

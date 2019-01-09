@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2016 Marti Maria Saguer
+//  Copyright (c) 1998-2017 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -59,6 +59,11 @@ typedef struct _cmsTagTypeLinkedList_st {
 
 // Helper macro to define a MPE handler. Callbacks do have a fixed naming convention
 #define TYPE_MPE_HANDLER(t, x)  { (t), READ_FN(x), WRITE_FN(x), GenericMPEdup, GenericMPEfree, NULL, 0 }
+
+// Infinites
+#define MINUS_INF   (-1E22F)
+#define PLUS_INF    (+1E22F)
+
 
 // Register a new type handler. This routine is shared between normal types and MPE. LinkedList points to the optional list head
 static
@@ -176,7 +181,8 @@ cmsBool ReadPositionTable(struct _cms_typehandler_struct* self,
     cmsUInt32Number currentPosition;
 
     currentPosition = io->Tell(io);
-    // Verify there is enough space left to read two cmsUInt32Number items for Count items.
+
+    // Verify there is enough space left to read at least two cmsUInt32Number items for Count items.
     if (((io->ReportedSize - currentPosition) / (2 * sizeof(cmsUInt32Number))) < Count)
         return FALSE;
 
@@ -238,7 +244,7 @@ cmsBool WritePositionTable(struct _cms_typehandler_struct* self,
 
     // Keep starting position of curve offsets
     DirectoryPos = io ->Tell(io);
-
+  
     // Write a fake directory to be filled latter on
     for (i=0; i < Count; i++) {
 
@@ -401,8 +407,8 @@ Error:
 static
 cmsBool  SaveOneChromaticity(cmsFloat64Number x, cmsFloat64Number y, cmsIOHANDLER* io)
 {
-    if (!_cmsWriteUInt32Number(io, _cmsDoubleTo15Fixed16(x))) return FALSE;
-    if (!_cmsWriteUInt32Number(io, _cmsDoubleTo15Fixed16(y))) return FALSE;
+    if (!_cmsWriteUInt32Number(io, (cmsUInt32Number) _cmsDoubleTo15Fixed16(x))) return FALSE;
+    if (!_cmsWriteUInt32Number(io, (cmsUInt32Number) _cmsDoubleTo15Fixed16(y))) return FALSE;
 
     return TRUE;
 }
@@ -961,14 +967,14 @@ cmsBool  Type_Text_Description_Write(struct _cms_typehandler_struct* self, cmsIO
     cmsBool  rc = FALSE;
     char Filler[68];
 
-    // Used below for writting zeroes
+    // Used below for writing zeroes
     memset(Filler, 0, sizeof(Filler));
 
     // Get the len of string
     len = cmsMLUgetASCII(mlu, cmsNoLanguage, cmsNoCountry, NULL, 0);
 
     // Specification ICC.1:2001-04 (v2.4.0): It has been found that textDescriptionType can contain misaligned data
-    //(see clause 4.1 for the definition of 'aligned'. Because the Unicode language
+    //(see clause 4.1 for the definition of "aligned"). Because the Unicode language
     // code and Unicode count immediately follow the ASCII description, their
     // alignment is not correct if the ASCII count is not a multiple of four. The
     // ScriptCode code is misaligned when the ASCII count is odd. Profile reading and
@@ -1124,8 +1130,8 @@ void *Type_Curve_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cm
                if (!NewGamma) return NULL;
 
                if (!_cmsReadUInt16Array(io, Count, NewGamma -> Table16)) {
-                 cmsFreeToneCurve(NewGamma);
-                 return NULL;
+                   cmsFreeToneCurve(NewGamma);
+                   return NULL;
                }
 
                *nItems = 1;
@@ -1186,7 +1192,7 @@ void Type_Curve_Free(struct _cms_typehandler_struct* self, void* Ptr)
 // ********************************************************************************
 
 
-// Decide which curve type to use on writting
+// Decide which curve type to use on writing
 static
 cmsTagTypeSignature DecideCurveType(cmsFloat64Number ICCVersion, const void *Data)
 {
@@ -1468,7 +1474,8 @@ void *Type_MLU_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
         if (!_cmsReadUInt32Number(io, &Offset)) goto Error;
 
         // Check for overflow
-        if (Offset < (SizeOfHeader + 8)) goto Error;
+        if (Offset < (SizeOfHeader + 8)) goto Error;        
+        if (((Offset + Len) < Len) || ((Offset + Len) > SizeOfTag + 8)) goto Error;
 
         // True begin of the string
         BeginOfThisString = Offset - SizeOfHeader - 8;
@@ -1578,7 +1585,7 @@ void Type_MLU_Free(struct _cms_typehandler_struct* self, void* Ptr)
 // Type cmsSigLut8Type
 // ********************************************************************************
 
-// Decide which LUT type to use on writting
+// Decide which LUT type to use on writing
 static
 cmsTagTypeSignature DecideLUTtypeA2B(cmsFloat64Number ICCVersion, const void *Data)
 {
@@ -1627,10 +1634,10 @@ Byte Position   Field Length (bytes)  Content Encoded as...
 
 // Read 8 bit tables as gamma functions
 static
-cmsBool  Read8bitTables(cmsContext ContextID, cmsIOHANDLER* io, cmsPipeline* lut, int nChannels)
+cmsBool  Read8bitTables(cmsContext ContextID, cmsIOHANDLER* io, cmsPipeline* lut, cmsUInt32Number nChannels)
 {
     cmsUInt8Number* Temp = NULL;
-    int i, j;
+    cmsUInt32Number i, j;
     cmsToneCurve* Tables[cmsMAXCHANNELS];
 
     if (nChannels > cmsMAXCHANNELS) return FALSE;
@@ -1821,8 +1828,10 @@ void *Type_LUT8_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cms
         _cmsFree(self ->ContextID, Temp);
         Temp = NULL;
 
-        if (!cmsPipelineInsertStage(NewLUT, cmsAT_END, cmsStageAllocCLut16bit(self ->ContextID, CLUTpoints, InputChannels, OutputChannels, T)))
+        if (!cmsPipelineInsertStage(NewLUT, cmsAT_END, cmsStageAllocCLut16bit(self ->ContextID, CLUTpoints, InputChannels, OutputChannels, T))) {
+            _cmsFree(self ->ContextID, T);
             goto Error;
+        }
         _cmsFree(self ->ContextID, T);
     }
 
@@ -1851,7 +1860,7 @@ cmsBool  Type_LUT8_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io,
     _cmsStageToneCurvesData* PreMPE = NULL, *PostMPE = NULL;
     _cmsStageMatrixData* MatMPE = NULL;
     _cmsStageCLutData* clut = NULL;
-    int clutPoints;
+    cmsUInt32Number clutPoints;
 
     // Disassemble the LUT into components.
     mpe = NewLUT -> Elements;
@@ -1971,9 +1980,10 @@ void Type_LUT8_Free(struct _cms_typehandler_struct* self, void* Ptr)
 
 // Read 16 bit tables as gamma functions
 static
-cmsBool  Read16bitTables(cmsContext ContextID, cmsIOHANDLER* io, cmsPipeline* lut, int nChannels, int nEntries)
+cmsBool  Read16bitTables(cmsContext ContextID, cmsIOHANDLER* io, cmsPipeline* lut, 
+                                    cmsUInt32Number nChannels, cmsUInt32Number nEntries)
 {
-    int i;
+    cmsUInt32Number i;
     cmsToneCurve* Tables[cmsMAXCHANNELS];
 
     // Maybe an empty table? (this is a lcms extension)
@@ -2015,10 +2025,10 @@ Error:
 static
 cmsBool Write16bitTables(cmsContext ContextID, cmsIOHANDLER* io, _cmsStageToneCurvesData* Tables)
 {
-    int j;
+    cmsUInt32Number j;
     cmsUInt32Number i;
     cmsUInt16Number val;
-    int nEntries;
+    cmsUInt32Number nEntries;
 
     _cmsAssert(Tables != NULL);
 
@@ -2139,7 +2149,7 @@ cmsBool  Type_LUT16_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
     _cmsStageToneCurvesData* PreMPE = NULL, *PostMPE = NULL;
     _cmsStageMatrixData* MatMPE = NULL;
     _cmsStageCLutData* clut = NULL;
-    int i, InputChannels, OutputChannels, clutPoints;
+    cmsUInt32Number i, InputChannels, OutputChannels, clutPoints;
 
     // Disassemble the LUT into components.
     mpe = NewLUT -> Elements;
@@ -2325,7 +2335,8 @@ cmsStage* ReadMatrix(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cms
 //  V4 stuff. Read CLUT part for LutAtoB and LutBtoA
 
 static
-cmsStage* ReadCLUT(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsUInt32Number Offset, int InputChannels, int OutputChannels)
+cmsStage* ReadCLUT(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, 
+                   cmsUInt32Number Offset, cmsUInt32Number InputChannels, cmsUInt32Number OutputChannels)
 {
     cmsUInt8Number  gridPoints8[cmsMAXCHANNELS]; // Number of grid points in each dimension.
     cmsUInt32Number GridPoints[cmsMAXCHANNELS], i;
@@ -2362,8 +2373,8 @@ cmsStage* ReadCLUT(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsUI
         for (i=0; i < Data ->nEntries; i++) {
 
             if (io ->Read(io, &v, sizeof(cmsUInt8Number), 1) != 1) {
-              cmsStageFree(CLUT);
-              return NULL;
+                cmsStageFree(CLUT);
+                return NULL;
             }
             Data ->Tab.T[i] = FROM_8_TO_16(v);
         }
@@ -2679,7 +2690,7 @@ static
 cmsBool Type_LUTA2B_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
 {
     cmsPipeline* Lut = (cmsPipeline*) Ptr;
-    int inputChan, outputChan;
+    cmsUInt32Number inputChan, outputChan;
     cmsStage *A = NULL, *B = NULL, *M = NULL;
     cmsStage * Matrix = NULL;
     cmsStage * CLUT = NULL;
@@ -2727,7 +2738,7 @@ cmsBool Type_LUTA2B_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
 
     if (CLUT != NULL) {
         offsetC = io ->Tell(io) - BaseOffset;
-        if (!WriteCLUT(self, io, Lut ->SaveAs8Bits ? 1 : 2, CLUT)) return FALSE;
+        if (!WriteCLUT(self, io, (Lut ->SaveAs8Bits ? 1U : 2U), CLUT)) return FALSE;
 
     }
     if (M != NULL) {
@@ -2867,7 +2878,7 @@ static
 cmsBool  Type_LUTB2A_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
 {
     cmsPipeline* Lut = (cmsPipeline*) Ptr;
-    int inputChan, outputChan;
+    cmsUInt32Number inputChan, outputChan;
     cmsStage *A = NULL, *B = NULL, *M = NULL;
     cmsStage *Matrix = NULL;
     cmsStage *CLUT = NULL;
@@ -2909,7 +2920,7 @@ cmsBool  Type_LUTB2A_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* i
 
     if (CLUT != NULL) {
         offsetC = io ->Tell(io) - BaseOffset;
-        if (!WriteCLUT(self, io, Lut ->SaveAs8Bits ? 1 : 2, CLUT)) return FALSE;
+        if (!WriteCLUT(self, io, (Lut ->SaveAs8Bits ? 1U : 2U), CLUT)) return FALSE;
 
     }
     if (M != NULL) {
@@ -2984,7 +2995,7 @@ void *Type_ColorantTable_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER
 {
     cmsUInt32Number i, Count;
     cmsNAMEDCOLORLIST* List;
-    char Name[33];
+    char Name[34];
     cmsUInt16Number PCS[3];
 
 
@@ -3025,7 +3036,7 @@ static
 cmsBool  Type_ColorantTable_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
 {
     cmsNAMEDCOLORLIST* NamedColorList = (cmsNAMEDCOLORLIST*) Ptr;
-    int i, nColors;
+    cmsUInt32Number i, nColors;
 
     nColors = cmsNamedColorCount(NamedColorList);
 
@@ -3033,8 +3044,10 @@ cmsBool  Type_ColorantTable_Write(struct _cms_typehandler_struct* self, cmsIOHAN
 
     for (i=0; i < nColors; i++) {
 
-        char root[33];
+        char root[cmsMAX_PATH];
         cmsUInt16Number PCS[3];
+
+        memset(root, 0, sizeof(root));
 
         if (!cmsNamedColorInfo(NamedColorList, i, root, NULL, NULL, PCS, NULL)) return 0;
         root[32] = 0;
@@ -3078,8 +3091,8 @@ void Type_ColorantTable_Free(struct _cms_typehandler_struct* self, void* Ptr)
 //The namedColor2Type is a count value and array of structures that provide color
 //coordinates for 7-bit ASCII color names. For each named color, a PCS and optional
 //device representation of the color are given. Both representations are 16-bit values.
-//The device representation corresponds to the header's 'color space of data' field.
-//This representation should be consistent with the 'number of device components'
+//The device representation corresponds to the header's "color space of data" field.
+//This representation should be consistent with the "number of device components"
 //field in the namedColor2Type. If this field is 0, device coordinates are not provided.
 //The PCS representation corresponds to the header's PCS field. The PCS representation
 //is always provided. Color names are fixed-length, 32-byte fields including null
@@ -3095,8 +3108,8 @@ void *Type_NamedColor_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* i
     cmsUInt32Number      nDeviceCoords;  // Num of device coordinates
     char                 prefix[32];     // Prefix for each color name
     char                 suffix[32];     // Suffix for each color name
-    cmsNAMEDCOLORLIST*  v;
-    cmsUInt32Number i;
+    cmsNAMEDCOLORLIST*   v;
+    cmsUInt32Number      i;
 
 
     *nItems = 0;
@@ -3153,7 +3166,7 @@ cmsBool Type_NamedColor_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER
     cmsNAMEDCOLORLIST* NamedColorList = (cmsNAMEDCOLORLIST*) Ptr;
     char                prefix[33];     // Prefix for each color name
     char                suffix[33];     // Suffix for each color name
-    int i, nColors;
+    cmsUInt32Number     i, nColors;
 
     nColors = cmsNamedColorCount(NamedColorList);
 
@@ -3173,7 +3186,7 @@ cmsBool Type_NamedColor_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER
 
        cmsUInt16Number PCS[3];
        cmsUInt16Number Colorant[cmsMAXCHANNELS];
-       char Root[33];
+       char Root[cmsMAX_PATH];
 
         if (!cmsNamedColorInfo(NamedColorList, i, Root, NULL, NULL, PCS, Colorant)) return 0;
         Root[32] = 0;
@@ -3826,7 +3839,7 @@ void Type_Screening_Free(struct _cms_typehandler_struct* self, void* Ptr)
 // ********************************************************************************
 //
 //This type represents a set of viewing condition parameters including:
-//CIE 'absolute'illuminant white point tristimulus values and CIE 'absolute'
+//CIE 'absolute' illuminant white point tristimulus values and CIE 'absolute'
 //surround tristimulus values.
 
 static
@@ -3927,7 +3940,7 @@ cmsToneCurve* ReadSegmentedCurve(struct _cms_typehandler_struct* self, cmsIOHAND
     cmsUInt16Number nSegments;
     cmsCurveSegment*  Segments;
     cmsToneCurve* Curve;
-    cmsFloat32Number PrevBreak = -1E22F;    // - infinite
+    cmsFloat32Number PrevBreak = MINUS_INF;    // - infinite
 
     // Take signature and channels for each element.
      if (!_cmsReadUInt32Number(io, (cmsUInt32Number*) &ElementSig)) return NULL;
@@ -3952,7 +3965,7 @@ cmsToneCurve* ReadSegmentedCurve(struct _cms_typehandler_struct* self, cmsIOHAND
      }
 
      Segments[nSegments-1].x0 = PrevBreak;
-     Segments[nSegments-1].x1 = 1E22F;     // A big cmsFloat32Number number
+     Segments[nSegments-1].x1 = PLUS_INF;     // A big cmsFloat32Number number
 
      // Read segments
      for (i=0; i < nSegments; i++) {
@@ -4078,7 +4091,7 @@ void *Type_MPEcurve_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io,
     }
 
     _cmsFree(self ->ContextID, GammaTables);
-    *nItems = (mpe != NULL) ? 1 : 0;
+    *nItems = (mpe != NULL) ? 1U : 0;
     return mpe;
 
     cmsUNUSED_PARAMETER(SizeOfTag);
@@ -4214,7 +4227,7 @@ void *Type_MPEmatrix_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io
     if (InputChans >= cmsMAXCHANNELS) return NULL;
     if (OutputChans >= cmsMAXCHANNELS) return NULL;
 
-    nElems = InputChans * OutputChans;
+    nElems = (cmsUInt32Number) InputChans * OutputChans;
 
     Matrix = (cmsFloat64Number*) _cmsCalloc(self ->ContextID, nElems, sizeof(cmsFloat64Number));
     if (Matrix == NULL) return NULL;
@@ -4318,22 +4331,22 @@ void *Type_MPEclut_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, 
         goto Error;
 
     // Copy MAX_INPUT_DIMENSIONS at most. Expand to cmsUInt32Number
-    nMaxGrids = InputChans > MAX_INPUT_DIMENSIONS ? MAX_INPUT_DIMENSIONS : InputChans;
+    nMaxGrids = InputChans > MAX_INPUT_DIMENSIONS ? (cmsUInt32Number) MAX_INPUT_DIMENSIONS : InputChans;
 
     for (i = 0; i < nMaxGrids; i++) {
         if (Dimensions8[i] == 1) goto Error; // Impossible value, 0 for no CLUT and then 2 at least
         GridPoints[i] = (cmsUInt32Number)Dimensions8[i];
     }
-
+    
     // Allocate the true CLUT
     mpe = cmsStageAllocCLutFloatGranular(self ->ContextID, GridPoints, InputChans, OutputChans, NULL);
     if (mpe == NULL) goto Error;
 
-    // Read the data
+    // Read and sanitize the data
     clut = (_cmsStageCLutData*) mpe ->Data;
     for (i=0; i < clut ->nEntries; i++) {
 
-        if (!_cmsReadFloat32Number(io, &clut ->Tab.TFloat[i])) goto Error;
+        if (!_cmsReadFloat32Number(io, &clut->Tab.TFloat[i])) goto Error;       
     }
 
     *nItems = 1;
@@ -4470,15 +4483,19 @@ void *Type_MPE_Read(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, cmsU
     NewLUT = cmsPipelineAlloc(self ->ContextID, InputChans, OutputChans);
     if (NewLUT == NULL) return NULL;
 
-    if (!_cmsReadUInt32Number(io, &ElementCount)) goto Error;
+    if (!_cmsReadUInt32Number(io, &ElementCount)) goto Error;    
     if (!ReadPositionTable(self, io, ElementCount, BaseOffset, NewLUT, ReadMPEElem)) goto Error;
+
+    // Check channel count
+    if (InputChans != NewLUT->InputChannels ||
+        OutputChans != NewLUT->OutputChannels) goto Error;
 
     // Success
     *nItems = 1;
     return NewLUT;
 
     // Error
-Error:
+Error:    
     if (NewLUT != NULL) cmsPipelineFree(NewLUT);
     *nItems = 0;
     return NULL;
@@ -4493,7 +4510,7 @@ static
 cmsBool Type_MPE_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, void* Ptr, cmsUInt32Number nItems)
 {
     cmsUInt32Number i, BaseOffset, DirectoryPos, CurrentPos;
-    int inputChan, outputChan;
+    cmsUInt32Number inputChan, outputChan;
     cmsUInt32Number ElemCount;
     cmsUInt32Number *ElementOffsets = NULL, *ElementSizes = NULL, Before;
     cmsStageSignature ElementSig;
@@ -4541,7 +4558,7 @@ cmsBool Type_MPE_Write(struct _cms_typehandler_struct* self, cmsIOHANDLER* io, v
 
                 _cmsTagSignature2String(String, (cmsTagSignature) ElementSig);
 
-                 // An unknow element was found.
+                 // An unknown element was found.
                  cmsSignalError(self->ContextID, cmsERROR_UNKNOWN_EXTENSION, "Found unknown MPE type '%s'", String);
                  goto Error;
         }
@@ -5276,38 +5293,38 @@ void Type_Dictionary_Free(struct _cms_typehandler_struct* self, void* Ptr)
 
 
 // This is the list of built-in types
-static _cmsTagTypeLinkedList SupportedTagTypes[] = {
+static const _cmsTagTypeLinkedList SupportedTagTypes[] = {
 
-{TYPE_HANDLER(cmsSigChromaticityType,          Chromaticity),        &SupportedTagTypes[1] },
-{TYPE_HANDLER(cmsSigColorantOrderType,         ColorantOrderType),   &SupportedTagTypes[2] },
-{TYPE_HANDLER(cmsSigS15Fixed16ArrayType,       S15Fixed16),          &SupportedTagTypes[3] },
-{TYPE_HANDLER(cmsSigU16Fixed16ArrayType,       U16Fixed16),          &SupportedTagTypes[4] },
-{TYPE_HANDLER(cmsSigTextType,                  Text),                &SupportedTagTypes[5] },
-{TYPE_HANDLER(cmsSigTextDescriptionType,       Text_Description),    &SupportedTagTypes[6] },
-{TYPE_HANDLER(cmsSigCurveType,                 Curve),               &SupportedTagTypes[7] },
-{TYPE_HANDLER(cmsSigParametricCurveType,       ParametricCurve),     &SupportedTagTypes[8] },
-{TYPE_HANDLER(cmsSigDateTimeType,              DateTime),            &SupportedTagTypes[9] },
-{TYPE_HANDLER(cmsSigLut8Type,                  LUT8),                &SupportedTagTypes[10] },
-{TYPE_HANDLER(cmsSigLut16Type,                 LUT16),               &SupportedTagTypes[11] },
-{TYPE_HANDLER(cmsSigColorantTableType,         ColorantTable),       &SupportedTagTypes[12] },
-{TYPE_HANDLER(cmsSigNamedColor2Type,           NamedColor),          &SupportedTagTypes[13] },
-{TYPE_HANDLER(cmsSigMultiLocalizedUnicodeType, MLU),                 &SupportedTagTypes[14] },
-{TYPE_HANDLER(cmsSigProfileSequenceDescType,   ProfileSequenceDesc), &SupportedTagTypes[15] },
-{TYPE_HANDLER(cmsSigSignatureType,             Signature),           &SupportedTagTypes[16] },
-{TYPE_HANDLER(cmsSigMeasurementType,           Measurement),         &SupportedTagTypes[17] },
-{TYPE_HANDLER(cmsSigDataType,                  Data),                &SupportedTagTypes[18] },
-{TYPE_HANDLER(cmsSigLutAtoBType,               LUTA2B),              &SupportedTagTypes[19] },
-{TYPE_HANDLER(cmsSigLutBtoAType,               LUTB2A),              &SupportedTagTypes[20] },
-{TYPE_HANDLER(cmsSigUcrBgType,                 UcrBg),               &SupportedTagTypes[21] },
-{TYPE_HANDLER(cmsSigCrdInfoType,               CrdInfo),             &SupportedTagTypes[22] },
-{TYPE_HANDLER(cmsSigMultiProcessElementType,   MPE),                 &SupportedTagTypes[23] },
-{TYPE_HANDLER(cmsSigScreeningType,             Screening),           &SupportedTagTypes[24] },
-{TYPE_HANDLER(cmsSigViewingConditionsType,     ViewingConditions),   &SupportedTagTypes[25] },
-{TYPE_HANDLER(cmsSigXYZType,                   XYZ),                 &SupportedTagTypes[26] },
-{TYPE_HANDLER(cmsCorbisBrokenXYZtype,          XYZ),                 &SupportedTagTypes[27] },
-{TYPE_HANDLER(cmsMonacoBrokenCurveType,        Curve),               &SupportedTagTypes[28] },
-{TYPE_HANDLER(cmsSigProfileSequenceIdType,     ProfileSequenceId),   &SupportedTagTypes[29] },
-{TYPE_HANDLER(cmsSigDictType,                  Dictionary),          &SupportedTagTypes[30] },
+{TYPE_HANDLER(cmsSigChromaticityType,          Chromaticity),       (_cmsTagTypeLinkedList*) &SupportedTagTypes[1] },
+{TYPE_HANDLER(cmsSigColorantOrderType,         ColorantOrderType),  (_cmsTagTypeLinkedList*) &SupportedTagTypes[2] },
+{TYPE_HANDLER(cmsSigS15Fixed16ArrayType,       S15Fixed16),         (_cmsTagTypeLinkedList*) &SupportedTagTypes[3] },
+{TYPE_HANDLER(cmsSigU16Fixed16ArrayType,       U16Fixed16),         (_cmsTagTypeLinkedList*) &SupportedTagTypes[4] },
+{TYPE_HANDLER(cmsSigTextType,                  Text),               (_cmsTagTypeLinkedList*) &SupportedTagTypes[5] },
+{TYPE_HANDLER(cmsSigTextDescriptionType,       Text_Description),   (_cmsTagTypeLinkedList*) &SupportedTagTypes[6] },
+{TYPE_HANDLER(cmsSigCurveType,                 Curve),              (_cmsTagTypeLinkedList*) &SupportedTagTypes[7] },
+{TYPE_HANDLER(cmsSigParametricCurveType,       ParametricCurve),    (_cmsTagTypeLinkedList*) &SupportedTagTypes[8] },
+{TYPE_HANDLER(cmsSigDateTimeType,              DateTime),           (_cmsTagTypeLinkedList*) &SupportedTagTypes[9] },
+{TYPE_HANDLER(cmsSigLut8Type,                  LUT8),               (_cmsTagTypeLinkedList*) &SupportedTagTypes[10] },
+{TYPE_HANDLER(cmsSigLut16Type,                 LUT16),              (_cmsTagTypeLinkedList*) &SupportedTagTypes[11] },
+{TYPE_HANDLER(cmsSigColorantTableType,         ColorantTable),      (_cmsTagTypeLinkedList*) &SupportedTagTypes[12] },
+{TYPE_HANDLER(cmsSigNamedColor2Type,           NamedColor),         (_cmsTagTypeLinkedList*) &SupportedTagTypes[13] },
+{TYPE_HANDLER(cmsSigMultiLocalizedUnicodeType, MLU),                (_cmsTagTypeLinkedList*) &SupportedTagTypes[14] },
+{TYPE_HANDLER(cmsSigProfileSequenceDescType,   ProfileSequenceDesc),(_cmsTagTypeLinkedList*) &SupportedTagTypes[15] },
+{TYPE_HANDLER(cmsSigSignatureType,             Signature),          (_cmsTagTypeLinkedList*) &SupportedTagTypes[16] },
+{TYPE_HANDLER(cmsSigMeasurementType,           Measurement),        (_cmsTagTypeLinkedList*) &SupportedTagTypes[17] },
+{TYPE_HANDLER(cmsSigDataType,                  Data),               (_cmsTagTypeLinkedList*) &SupportedTagTypes[18] },
+{TYPE_HANDLER(cmsSigLutAtoBType,               LUTA2B),             (_cmsTagTypeLinkedList*) &SupportedTagTypes[19] },
+{TYPE_HANDLER(cmsSigLutBtoAType,               LUTB2A),             (_cmsTagTypeLinkedList*) &SupportedTagTypes[20] },
+{TYPE_HANDLER(cmsSigUcrBgType,                 UcrBg),              (_cmsTagTypeLinkedList*) &SupportedTagTypes[21] },
+{TYPE_HANDLER(cmsSigCrdInfoType,               CrdInfo),            (_cmsTagTypeLinkedList*) &SupportedTagTypes[22] },
+{TYPE_HANDLER(cmsSigMultiProcessElementType,   MPE),                (_cmsTagTypeLinkedList*) &SupportedTagTypes[23] },
+{TYPE_HANDLER(cmsSigScreeningType,             Screening),          (_cmsTagTypeLinkedList*) &SupportedTagTypes[24] },
+{TYPE_HANDLER(cmsSigViewingConditionsType,     ViewingConditions),  (_cmsTagTypeLinkedList*) &SupportedTagTypes[25] },
+{TYPE_HANDLER(cmsSigXYZType,                   XYZ),                (_cmsTagTypeLinkedList*) &SupportedTagTypes[26] },
+{TYPE_HANDLER(cmsCorbisBrokenXYZtype,          XYZ),                (_cmsTagTypeLinkedList*) &SupportedTagTypes[27] },
+{TYPE_HANDLER(cmsMonacoBrokenCurveType,        Curve),              (_cmsTagTypeLinkedList*) &SupportedTagTypes[28] },
+{TYPE_HANDLER(cmsSigProfileSequenceIdType,     ProfileSequenceId),  (_cmsTagTypeLinkedList*) &SupportedTagTypes[29] },
+{TYPE_HANDLER(cmsSigDictType,                  Dictionary),         (_cmsTagTypeLinkedList*) &SupportedTagTypes[30] },
 {TYPE_HANDLER(cmsSigVcgtType,                  vcgt),                NULL }
 };
 
@@ -5399,7 +5416,7 @@ cmsTagTypeHandler* _cmsGetTagTypeHandler(cmsContext ContextID, cmsTagTypeSignatu
 {
     _cmsTagTypePluginChunkType* ctx = ( _cmsTagTypePluginChunkType*) _cmsContextGetClientChunk(ContextID, TagTypePlugin);
 
-    return GetHandler(sig, ctx->TagTypes, SupportedTagTypes);
+    return GetHandler(sig, ctx->TagTypes, (_cmsTagTypeLinkedList*) SupportedTagTypes);
 }
 
 // ********************************************************************************
@@ -5414,7 +5431,7 @@ typedef struct _cmsTagLinkedList_st {
 
 } _cmsTagLinkedList;
 
-// This is the list of built-in tags
+// This is the list of built-in tags. The data of this list can be modified by plug-ins
 static _cmsTagLinkedList SupportedTags[] = {
 
     { cmsSigAToB0Tag,               { 1, 3,  { cmsSigLut16Type,  cmsSigLutAtoBType, cmsSigLut8Type}, DecideLUTtypeA2B}, &SupportedTags[1]},
@@ -5463,7 +5480,7 @@ static _cmsTagLinkedList SupportedTags[] = {
     { cmsSigPreview2Tag,            { 1, 3,  { cmsSigLut16Type, cmsSigLutBtoAType, cmsSigLut8Type }, DecideLUTtypeB2A}, &SupportedTags[32]},
 
     { cmsSigProfileDescriptionTag,  { 1, 3, { cmsSigTextDescriptionType, cmsSigMultiLocalizedUnicodeType, cmsSigTextType}, DecideTextDescType}, &SupportedTags[33]},
-    { cmsSigProfileSequenceDescTag, { 1, 1, { cmsSigProfileSequenceDescType }, NULL}, &SupportedTags[34]},
+    { cmsSigProfileSequenceDescTag, { 1, 1, { cmsSigProfileSequenceDescType }, NULL},  &SupportedTags[34]},
     { cmsSigTechnologyTag,          { 1, 1, { cmsSigSignatureType }, NULL},  &SupportedTags[35]},
 
     { cmsSigColorimetricIntentImageStateTag,   { 1, 1, { cmsSigSignatureType }, NULL}, &SupportedTags[36]},
@@ -5500,9 +5517,9 @@ static _cmsTagLinkedList SupportedTags[] = {
     { cmsSigVcgtTag,                { 1, 1, { cmsSigVcgtType},               NULL }, &SupportedTags[60]},
     { cmsSigMetaTag,                { 1, 1, { cmsSigDictType},               NULL }, &SupportedTags[61]},
     { cmsSigProfileSequenceIdTag,   { 1, 1, { cmsSigProfileSequenceIdType},  NULL }, &SupportedTags[62]},
+
     { cmsSigProfileDescriptionMLTag,{ 1, 1, { cmsSigMultiLocalizedUnicodeType}, NULL}, &SupportedTags[63]},
     { cmsSigArgyllArtsTag,          { 9, 1, { cmsSigS15Fixed16ArrayType},    NULL}, NULL}
-
 
 };
 

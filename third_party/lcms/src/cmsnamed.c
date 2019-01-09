@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2016 Marti Maria Saguer
+//  Copyright (c) 1998-2017 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -127,7 +127,7 @@ int SearchMLUEntry(cmsMLU* mlu, cmsUInt16Number LanguageCode, cmsUInt16Number Co
     for (i=0; i < mlu ->UsedEntries; i++) {
 
         if (mlu ->Entries[i].Country  == CountryCode &&
-            mlu ->Entries[i].Language == LanguageCode) return i;
+            mlu ->Entries[i].Language == LanguageCode) return (int) i;
     }
 
     // Not found
@@ -178,31 +178,32 @@ cmsBool AddMLUBlock(cmsMLU* mlu, cmsUInt32Number size, const wchar_t *Block,
     return TRUE;
 }
 
-// Convert from a 3-char code to a cmsUInt16Number. It is done inthis way because some
+// Convert from a 3-char code to a cmsUInt16Number. It is done in this way because some
 // compilers don't properly align beginning of strings
 
 static
 cmsUInt16Number strTo16(const char str[3])
 {
-    cmsUInt16Number n = ((cmsUInt16Number) str[0] << 8) | str[1];
+    const cmsUInt8Number* ptr8 = (const cmsUInt8Number*)str;
+    cmsUInt16Number n = (cmsUInt16Number) (((cmsUInt16Number) ptr8[1] << 8) | ptr8[0]);
 
-    return n;  // Always big endian in this case
+    return _cmsAdjustEndianess16(n);
 }
 
 static
 void strFrom16(char str[3], cmsUInt16Number n)
 {
-    // Assiming this would be aligned
+    // Assuming this would be aligned
     union {
 
        cmsUInt16Number n;
-       char str[2];
+       cmsUInt8Number str[2];
        
     } c;
 
-    c.n = n;  // Always big endian in this case
+    c.n = _cmsAdjustEndianess16(n);  
 
-    str[0] = c.str[0]; str[1] = c.str[1]; str[2] = 0;
+    str[0] = (char) c.str[0]; str[1] = (char) c.str[1]; str[2] = (char) 0;
 
 }
 
@@ -325,7 +326,7 @@ const wchar_t* _cmsMLUgetWide(const cmsMLU* mlu,
                               cmsUInt16Number* UsedLanguageCode, cmsUInt16Number* UsedCountryCode)
 {
     cmsUInt32Number i;
-    cmsInt32Number Best = -1;
+    int Best = -1;
     _cmsMLUentry* v;
 
     if (mlu == NULL) return NULL;
@@ -338,7 +339,7 @@ const wchar_t* _cmsMLUgetWide(const cmsMLU* mlu,
 
         if (v -> Language == LanguageCode) {
 
-            if (Best == -1) Best = i;
+            if (Best == -1) Best = (int) i;
 
             if (v -> Country == CountryCode) {
 
@@ -517,7 +518,11 @@ cmsBool  GrowNamedColorList(cmsNAMEDCOLORLIST* v)
         size = v ->Allocated * 2;
 
     // Keep a maximum color lists can grow, 100K entries seems reasonable
-    if (size > 1024*100) return FALSE;
+    if (size > 1024 * 100) {
+        _cmsFree(v->ContextID, (void*) v->List);
+        v->List = NULL;
+        return FALSE;
+    }
 
     NewPtr = (_cmsNAMEDCOLOR*) _cmsRealloc(v ->ContextID, v ->List, size * sizeof(_cmsNAMEDCOLOR));
     if (NewPtr == NULL)
@@ -539,7 +544,7 @@ cmsNAMEDCOLORLIST* CMSEXPORT cmsAllocNamedColorList(cmsContext ContextID, cmsUIn
     v ->nColors   = 0;
     v ->ContextID  = ContextID;
 
-    while (v -> Allocated < n){
+    while (v -> Allocated < n) {
         if (!GrowNamedColorList(v)) {
             cmsFreeNamedColorList(v);
             return NULL;
@@ -603,10 +608,10 @@ cmsBool  CMSEXPORT cmsAppendNamedColor(cmsNAMEDCOLORLIST* NamedColorList,
     }
 
     for (i=0; i < NamedColorList ->ColorantCount; i++)
-        NamedColorList ->List[NamedColorList ->nColors].DeviceColorant[i] = Colorant == NULL? 0 : Colorant[i];
+        NamedColorList ->List[NamedColorList ->nColors].DeviceColorant[i] = Colorant == NULL ? (cmsUInt16Number)0 : Colorant[i];
 
     for (i=0; i < 3; i++)
-        NamedColorList ->List[NamedColorList ->nColors].PCS[i] = PCS == NULL ? 0 : PCS[i];
+        NamedColorList ->List[NamedColorList ->nColors].PCS[i] = PCS == NULL ? (cmsUInt16Number) 0 : PCS[i];
 
     if (Name != NULL) {
 
@@ -641,6 +646,7 @@ cmsBool  CMSEXPORT cmsNamedColorInfo(const cmsNAMEDCOLORLIST* NamedColorList, cm
 
     if (nColor >= cmsNamedColorCount(NamedColorList)) return FALSE;
 
+    // strcpy instead of strncpy because many apps are using small buffers
     if (Name) strcpy(Name, NamedColorList->List[nColor].Name);
     if (Prefix) strcpy(Prefix, NamedColorList->Prefix);
     if (Suffix) strcpy(Suffix, NamedColorList->Suffix);
@@ -658,13 +664,14 @@ cmsBool  CMSEXPORT cmsNamedColorInfo(const cmsNAMEDCOLORLIST* NamedColorList, cm
 // Search for a given color name (no prefix or suffix)
 cmsInt32Number CMSEXPORT cmsNamedColorIndex(const cmsNAMEDCOLORLIST* NamedColorList, const char* Name)
 {
-    int i, n;
+    cmsUInt32Number i;
+    cmsUInt32Number n;
 
     if (NamedColorList == NULL) return -1;
     n = cmsNamedColorCount(NamedColorList);
     for (i=0; i < n; i++) {
         if (cmsstrcasecmp(Name,  NamedColorList->List[i].Name) == 0)
-            return i;
+            return (cmsInt32Number) i;
     }
 
     return -1;
@@ -693,7 +700,8 @@ void EvalNamedColorPCS(const cmsFloat32Number In[], cmsFloat32Number Out[], cons
     cmsUInt16Number index = (cmsUInt16Number) _cmsQuickSaturateWord(In[0] * 65535.0);
 
     if (index >= NamedColorList-> nColors) {
-        cmsSignalError(NamedColorList ->ContextID, cmsERROR_RANGE, "Color %d out of range; ignored", index);
+        cmsSignalError(NamedColorList ->ContextID, cmsERROR_RANGE, "Color %d out of range", index);
+        Out[0] = Out[1] = Out[2] = 0.0f;
     }
     else {
 
@@ -712,7 +720,10 @@ void EvalNamedColor(const cmsFloat32Number In[], cmsFloat32Number Out[], const c
     cmsUInt32Number j;
 
     if (index >= NamedColorList-> nColors) {
-        cmsSignalError(NamedColorList ->ContextID, cmsERROR_RANGE, "Color %d out of range; ignored", index);
+        cmsSignalError(NamedColorList ->ContextID, cmsERROR_RANGE, "Color %d out of range", index);
+        for (j = 0; j < NamedColorList->ColorantCount; j++)
+            Out[j] = 0.0f;
+
     }
     else {
         for (j=0; j < NamedColorList ->ColorantCount; j++)
