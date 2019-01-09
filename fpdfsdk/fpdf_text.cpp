@@ -281,9 +281,8 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
 
   CPDF_TextPageFind* textpageFind =
       new CPDF_TextPageFind(CPDFTextPageFromFPDFTextPage(text_page));
-  size_t len = WideString::WStringLength(findwhat);
   textpageFind->FindFirst(
-      WideString::FromUTF16LE(findwhat, len), flags,
+      WideStringFromFPDFWideString(findwhat), flags,
       start_index >= 0 ? Optional<size_t>(start_index) : Optional<size_t>());
   return FPDFSchHandleFromCPDFTextPageFind(textpageFind);
 }

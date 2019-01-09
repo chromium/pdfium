@@ -532,10 +532,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return;
 
-  size_t len = WideString::WStringLength(wsText);
-  WideString wide_str_text = WideString::FromUTF16LE(wsText, len);
-
-  pPageView->ReplaceSelection(wide_str_text);
+  pPageView->ReplaceSelection(WideStringFromFPDFWideString(wsText));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_CanUndo(FPDF_FORMHANDLE hHandle,

@@ -452,8 +452,7 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
   if (!pTextObj)
     return false;
 
-  size_t len = WideString::WStringLength(text);
-  WideString encodedText = WideString::FromUTF16LE(text, len);
+  WideString encodedText = WideStringFromFPDFWideString(text);
   ByteString byteText;
   for (wchar_t wc : encodedText) {
     pTextObj->GetFont()->AppendChar(

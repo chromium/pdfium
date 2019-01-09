@@ -175,10 +175,8 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
   return page ? IPDFPageFromFPDFPage(page)->AsPDFPage() : nullptr;
 }
 
-ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  return WideString::FromUTF16LE(wide_string,
-                                 WideString::WStringLength(wide_string))
-      .ToUTF8();
+ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
+  return WideStringFromFPDFWideString(wide_string).ToUTF8();
 }
 
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {

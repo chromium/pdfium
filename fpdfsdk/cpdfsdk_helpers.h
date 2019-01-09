@@ -206,7 +206,7 @@ CPDFSDKFormFillEnvironmentFromFPDFFormHandle(FPDF_FORMHANDLE handle) {
   return reinterpret_cast<CPDFSDK_FormFillEnvironment*>(handle);
 }
 
-ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
+ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
