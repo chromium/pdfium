@@ -56,22 +56,20 @@ wchar_t FX_GetMirrorChar(wchar_t wch);
 
 #ifdef PDF_ENABLE_XFA
 
-constexpr uint32_t FX_CHARTYPEBITS = 11;
-
-enum FX_CHARTYPE {
-  FX_CHARTYPE_Unknown = 0,
-  FX_CHARTYPE_Tab = (1 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_Space = (2 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_Control = (3 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_Combination = (4 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_Numeric = (5 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_Normal = (6 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_ArabicAlef = (7 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_ArabicSpecial = (8 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_ArabicDistortion = (9 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_ArabicNormal = (10 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_ArabicForm = (11 << FX_CHARTYPEBITS),
-  FX_CHARTYPE_Arabic = (12 << FX_CHARTYPEBITS),
+enum class FX_CHARTYPE : uint8_t {
+  kUnknown = 0,
+  kTab,
+  kSpace,
+  kControl,
+  kCombination,
+  kNumeric,
+  kNormal,
+  kArabicAlef,
+  kArabicSpecial,
+  kArabicDistortion,
+  kArabicNormal,
+  kArabicForm,
+  kArabic,
 };
 
 FX_CHARTYPE GetCharTypeFromProp(uint32_t prop);

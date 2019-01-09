@@ -153,11 +153,9 @@ wchar_t FX_GetMirrorChar(wchar_t wch) {
 }
 
 #ifdef PDF_ENABLE_XFA
-static_assert(FX_CHARTYPEBITS == kCharTypeBitPos, "positions must match");
-
 FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
-  uint32_t result = (prop & kCharTypeBitMask);
-  ASSERT(result <= FX_CHARTYPE_Arabic);
+  uint32_t result = (prop & kCharTypeBitMask) >> kCharTypeBitPos;
+  ASSERT(result <= static_cast<uint32_t>(FX_CHARTYPE::kArabic));
   return static_cast<FX_CHARTYPE>(result);
 }
 

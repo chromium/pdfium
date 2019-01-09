@@ -146,7 +146,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
                                  wchar_t* wChar,
                                  FX_CHARTYPE* eType) {
   if (!pTC) {
-    *eType = FX_CHARTYPE_Unknown;
+    *eType = FX_CHARTYPE::kUnknown;
     *wChar = 0xFEFF;
     return nullptr;
   }
@@ -154,8 +154,8 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
   *eType = pTC->GetCharType();
   *wChar = static_cast<wchar_t>(pTC->char_code());
   const FX_ARBFORMTABLE* pFT = GetArabicFormTable(*wChar);
-  if (!pFT || *eType >= FX_CHARTYPE_ArabicNormal)
-    *eType = FX_CHARTYPE_Unknown;
+  if (!pFT || *eType >= FX_CHARTYPE::kArabicNormal)
+    *eType = FX_CHARTYPE::kUnknown;
 
   return pFT;
 }
@@ -188,33 +188,33 @@ wchar_t GetFormChar(const CFX_Char* cur,
   FX_CHARTYPE eCur;
   wchar_t wCur;
   const FX_ARBFORMTABLE* ft = ParseChar(cur, &wCur, &eCur);
-  if (eCur < FX_CHARTYPE_ArabicAlef || eCur >= FX_CHARTYPE_ArabicNormal)
+  if (eCur < FX_CHARTYPE::kArabicAlef || eCur >= FX_CHARTYPE::kArabicNormal)
     return wCur;
 
   FX_CHARTYPE ePrev;
   wchar_t wPrev;
   ParseChar(prev, &wPrev, &ePrev);
-  if (wPrev == 0x0644 && eCur == FX_CHARTYPE_ArabicAlef)
+  if (wPrev == 0x0644 && eCur == FX_CHARTYPE::kArabicAlef)
     return 0xFEFF;
 
   FX_CHARTYPE eNext;
   wchar_t wNext;
   ParseChar(next, &wNext, &eNext);
-  bool bAlef = (eNext == FX_CHARTYPE_ArabicAlef && wCur == 0x644);
-  if (ePrev < FX_CHARTYPE_ArabicAlef) {
+  bool bAlef = (eNext == FX_CHARTYPE::kArabicAlef && wCur == 0x644);
+  if (ePrev < FX_CHARTYPE::kArabicAlef) {
     if (bAlef)
       return GetArabicFromAlefTable(wNext);
-    return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wIsolated : ft->wInitial;
+    return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wIsolated : ft->wInitial;
   }
 
   if (bAlef) {
     wCur = GetArabicFromAlefTable(wNext);
-    return (ePrev != FX_CHARTYPE_ArabicDistortion) ? wCur : ++wCur;
+    return (ePrev != FX_CHARTYPE::kArabicDistortion) ? wCur : ++wCur;
   }
 
-  if (ePrev == FX_CHARTYPE_ArabicAlef || ePrev == FX_CHARTYPE_ArabicSpecial)
-    return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wIsolated : ft->wInitial;
-  return (eNext < FX_CHARTYPE_ArabicAlef) ? ft->wFinal : ft->wMedial;
+  if (ePrev == FX_CHARTYPE::kArabicAlef || ePrev == FX_CHARTYPE::kArabicSpecial)
+    return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wIsolated : ft->wInitial;
+  return (eNext < FX_CHARTYPE::kArabicAlef) ? ft->wFinal : ft->wMedial;
 }
 
 }  // namespace arabic
