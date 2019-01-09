@@ -184,6 +184,8 @@ class CPDF_FormField {
   bool SetCheckValue(const WideString& value,
                      bool bDefault,
                      NotificationOption notify);
+  void SetItemSelectionSelected(int index, const WideString& opt_value);
+  void SetItemSelectionUnselected(int index, const WideString& opt_value);
   bool NotifyBeforeSelectionChange(const WideString& value);
   void NotifyAfterSelectionChange();
   bool NotifyBeforeValueChange(const WideString& value);

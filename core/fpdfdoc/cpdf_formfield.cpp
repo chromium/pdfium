@@ -567,51 +567,70 @@ bool CPDF_FormField::SetItemSelection(int index,
       !NotifyListOrComboBoxBeforeChange(opt_value)) {
     return false;
   }
-  if (bSelected) {
-    if (GetType() == kListBox) {
-      SelectOption(index, true, NotificationOption::kDoNotNotify);
-      if (!(m_Flags & kFormListMultiSelect)) {
-        m_pDict->SetNewFor<CPDF_String>("V", opt_value);
-      } else {
-        CPDF_Array* pArray = m_pDict->SetNewFor<CPDF_Array>("V");
-        for (int i = 0; i < CountOptions(); i++) {
-          if (i == index || IsItemSelected(i))
-            pArray->AddNew<CPDF_String>(GetOptionValue(i));
-        }
-      }
-    } else {
-      m_pDict->SetNewFor<CPDF_String>("V", opt_value);
-      CPDF_Array* pI = m_pDict->SetNewFor<CPDF_Array>("I");
-      pI->AddNew<CPDF_Number>(index);
-    }
-  } else {
-    const CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict.Get(), "V");
-    if (pValue) {
-      if (GetType() == kListBox) {
-        SelectOption(index, false, NotificationOption::kDoNotNotify);
-        if (pValue->IsString()) {
-          if (pValue->GetUnicodeText() == opt_value)
-            m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
-        } else if (pValue->IsArray()) {
-          auto pArray = pdfium::MakeUnique<CPDF_Array>();
-          for (int i = 0; i < CountOptions(); i++) {
-            if (i != index && IsItemSelected(i))
-              pArray->AddNew<CPDF_String>(GetOptionValue(i));
-          }
-          if (pArray->size() > 0) {
-            m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
-            m_pDict->SetFor("V", std::move(pArray));
-          }
-        }
-      } else {
-        m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
-        m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
-      }
-    }
-  }
+
+  if (bSelected)
+    SetItemSelectionSelected(index, opt_value);
+  else
+    SetItemSelectionUnselected(index, opt_value);
+
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();
   return true;
+}
+
+void CPDF_FormField::SetItemSelectionSelected(int index,
+                                              const WideString& opt_value) {
+  if (GetType() != kListBox) {
+    m_pDict->SetNewFor<CPDF_String>("V", opt_value);
+    CPDF_Array* pI = m_pDict->SetNewFor<CPDF_Array>("I");
+    pI->AddNew<CPDF_Number>(index);
+    return;
+  }
+
+  SelectOption(index, true, NotificationOption::kDoNotNotify);
+  if (!(m_Flags & kFormListMultiSelect)) {
+    m_pDict->SetNewFor<CPDF_String>("V", opt_value);
+    return;
+  }
+
+  CPDF_Array* pArray = m_pDict->SetNewFor<CPDF_Array>("V");
+  for (int i = 0; i < CountOptions(); i++) {
+    if (i == index || IsItemSelected(i))
+      pArray->AddNew<CPDF_String>(GetOptionValue(i));
+  }
+}
+
+void CPDF_FormField::SetItemSelectionUnselected(int index,
+                                                const WideString& opt_value) {
+  const CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict.Get(), "V");
+  if (!pValue)
+    return;
+
+  if (GetType() != kListBox) {
+    m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
+    m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
+    return;
+  }
+
+  SelectOption(index, false, NotificationOption::kDoNotNotify);
+  if (pValue->IsString()) {
+    if (pValue->GetUnicodeText() == opt_value)
+      m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
+    return;
+  }
+
+  if (!pValue->IsArray())
+    return;
+
+  auto pArray = pdfium::MakeUnique<CPDF_Array>();
+  for (int i = 0; i < CountOptions(); i++) {
+    if (i != index && IsItemSelected(i))
+      pArray->AddNew<CPDF_String>(GetOptionValue(i));
+  }
+  if (pArray->size() > 0) {
+    m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("V"));
+    m_pDict->SetFor("V", std::move(pArray));
+  }
 }
 
 bool CPDF_FormField::IsItemDefaultSelected(int index) const {
