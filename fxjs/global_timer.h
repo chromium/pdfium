@@ -38,9 +38,9 @@ class GlobalTimer {
   using TimerMap = std::map<uint32_t, GlobalTimer*>;
   static TimerMap* GetGlobalTimerMap();
 
-  uint32_t m_nTimerID;
+  const uint32_t m_nTimerID;
   CJS_App* const m_pEmbedApp;
-  bool m_bProcessing;
+  bool m_bProcessing = false;
 
   // data
   const int m_nType;  // 0:Interval; 1:TimeOut

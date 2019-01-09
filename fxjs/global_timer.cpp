@@ -15,16 +15,13 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
                          const WideString& script,
                          uint32_t dwElapse,
                          uint32_t dwTimeOut)
-    : m_nTimerID(0),
+    : m_nTimerID(pFormFillEnv->GetSysHandler()->SetTimer(dwElapse, Trigger)),
       m_pEmbedApp(pObj),
-      m_bProcessing(false),
       m_nType(nType),
       m_dwTimeOut(dwTimeOut),
       m_swJScript(script),
       m_pRuntime(pRuntime),
       m_pFormFillEnv(pFormFillEnv) {
-  CFX_SystemHandler* pHandler = m_pFormFillEnv->GetSysHandler();
-  m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
   if (m_nTimerID)
     (*GetGlobalTimerMap())[m_nTimerID] = this;
 }
