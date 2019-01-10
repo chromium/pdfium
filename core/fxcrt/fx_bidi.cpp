@@ -267,8 +267,7 @@ void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
   if (bWS) {
     for (size_t i = 0; i < iCount; ++i) {
       CFX_Char& cur = (*chars)[i];
-      cur.m_iBidiClass =
-          static_cast<int16_t>(FX_GetBidiClassFromProp(cur.char_props()));
+      cur.m_iBidiClass = static_cast<int16_t>(FX_GetBidiClass(cur.char_code()));
     }
     return;
   }
@@ -277,7 +276,7 @@ void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
     CFX_Char& cur = (*chars)[i];
     cur.m_iBidiClass =
         static_cast<int16_t>(gc_FX_BidiNTypes[static_cast<size_t>(
-            FX_GetBidiClassFromProp(cur.char_props()))]);
+            FX_GetBidiClass(cur.char_code()))]);
   }
 }
 
@@ -529,8 +528,7 @@ CFX_BidiChar::CFX_BidiChar()
 
 bool CFX_BidiChar::AppendChar(wchar_t wch) {
   Direction direction;
-  uint32_t dwProps = FX_GetUnicodeProperties(wch);
-  switch (FX_GetBidiClassFromProp(dwProps)) {
+  switch (FX_GetBidiClass(wch)) {
     case FX_BIDICLASS::kL:
     case FX_BIDICLASS::kAN:
     case FX_BIDICLASS::kEN:

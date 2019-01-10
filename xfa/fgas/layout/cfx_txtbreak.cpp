@@ -17,8 +17,8 @@
 
 namespace {
 
-bool IsCtrlCode(wchar_t ch) {
-  FX_CHARTYPE dwRet = FX_GetCharTypeFromProp(FX_GetUnicodeProperties(ch));
+bool IsCtrlCode(wchar_t wch) {
+  FX_CHARTYPE dwRet = FX_GetCharType(wch);
   return dwRet == FX_CHARTYPE::kTab || dwRet == FX_CHARTYPE::kControl;
 }
 
@@ -224,9 +224,8 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
 }
 
 CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
-  uint32_t dwProps = FX_GetUnicodeProperties(wch);
-  FX_CHARTYPE chartype = FX_GetCharTypeFromProp(dwProps);
-  m_pCurLine->m_LineChars.emplace_back(wch, dwProps, m_iHorizontalScale,
+  FX_CHARTYPE chartype = FX_GetCharType(wch);
+  m_pCurLine->m_LineChars.emplace_back(wch, m_iHorizontalScale,
                                        m_iVerticalScale);
   CFX_Char* pCurChar = &m_pCurLine->m_LineChars.back();
   pCurChar->m_dwCharStyles = m_iAlignment | (1 << 8);
@@ -548,23 +547,20 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
   }
 
   FX_LINEBREAKTYPE eType;
-  uint32_t nCodeProp;
   FX_BREAKPROPERTY nCur;
   FX_BREAKPROPERTY nNext;
   CFX_Char* pCur = &chars[iLength--];
   if (bAllChars)
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
 
-  nCodeProp = pCur->char_props();
-  nNext = FX_GetBreakPropertyFromProp(nCodeProp);
+  nNext = FX_GetBreakProperty(pCur->char_code());
   int32_t iCharWidth = pCur->m_iCharWidth;
   if (iCharWidth > 0)
     *pEndPos -= iCharWidth;
 
   while (iLength >= 0) {
     pCur = &chars[iLength];
-    nCodeProp = pCur->char_props();
-    nCur = FX_GetBreakPropertyFromProp(nCodeProp);
+    nCur = FX_GetBreakProperty(pCur->char_code());
     if (nNext == FX_BREAKPROPERTY::kSP)
       eType = FX_LBT_PROHIBITED_BRK;
     else
@@ -592,7 +588,7 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
       if (iCharWidth > 0)
         *pEndPos -= iCharWidth;
     }
-    nNext = FX_GetBreakPropertyFromProp(nCodeProp);
+    nNext = nCur;
     iLength--;
   }
   if (bOnlyBrk)
@@ -714,8 +710,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       iWidth = *pWidths++;
     }
 
-    uint32_t dwProps = FX_GetUnicodeProperties(wch);
-    FX_CHARTYPE chartype = FX_GetCharTypeFromProp(dwProps);
+    FX_CHARTYPE chartype = FX_GetCharType(wch);
     if (chartype == FX_CHARTYPE::kArabicAlef && iWidth == 0) {
       wPrev = 0xFEFF;
       wLast = wch;
@@ -729,8 +724,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           while (iNext <= iLength) {
             int32_t iNextAbsolute = iNext + pTxtRun->iStart;
             wNext = pEngine->GetChar(iNextAbsolute);
-            dwProps = FX_GetUnicodeProperties(wNext);
-            if (FX_GetCharTypeFromProp(dwProps) != FX_CHARTYPE::kCombination)
+            if (FX_GetCharType(wNext) != FX_CHARTYPE::kCombination)
               break;
 
             iNext++;
@@ -745,9 +739,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
               break;
 
             wNext = pStr[j];
-            dwProps = FX_GetUnicodeProperties(wNext);
-          } while (FX_GetCharTypeFromProp(dwProps) ==
-                   FX_CHARTYPE::kCombination);
+          } while (FX_GetCharType(wNext) == FX_CHARTYPE::kCombination);
           if (i + j >= iLength)
             wNext = 0xFEFF;
         }
@@ -797,7 +789,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
     } else if (wch == L',') {
       wForm = wch;
     } else if (bRTLPiece) {
-      wForm = FX_GetMirrorChar(wch, dwProps);
+      wForm = FX_GetMirrorChar(wch);
     } else {
       wForm = wch;
     }
@@ -878,9 +870,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
                 fYBase + fFontSize - fFontSize * rtBBox.Height() / iMaxHeight;
           }
           if (wForm == wch && wLast != 0xFEFF) {
-            uint32_t dwLastProps = FX_GetUnicodeProperties(wLast);
-            if (FX_GetCharTypeFromProp(dwLastProps) ==
-                FX_CHARTYPE::kCombination) {
+            if (FX_GetCharType(wLast) == FX_CHARTYPE::kCombination) {
               FX_RECT rtBox;
               if (pFont->GetCharBBox(wLast, &rtBox))
                 pCharPos->m_Origin.y -= fFontSize * rtBox.Height() / iMaxHeight;

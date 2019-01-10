@@ -69,9 +69,8 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
   ASSERT(m_pFont);
   ASSERT(m_pCurLine);
 
-  uint32_t dwProps = FX_GetUnicodeProperties(wch);
-  FX_CHARTYPE chartype = FX_GetCharTypeFromProp(dwProps);
-  m_pCurLine->m_LineChars.emplace_back(wch, dwProps, m_iHorizontalScale,
+  FX_CHARTYPE chartype = FX_GetCharType(wch);
+  m_pCurLine->m_LineChars.emplace_back(wch, m_iHorizontalScale,
                                        m_iVerticalScale);
   CFX_Char* pCurChar = &m_pCurLine->m_LineChars.back();
   pCurChar->m_iFontSize = m_iFontSize;
@@ -609,16 +608,14 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
   if (bAllChars)
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
 
-  uint32_t nCodeProp = pCur->char_props();
-  FX_BREAKPROPERTY nNext = FX_GetBreakPropertyFromProp(nCodeProp);
+  FX_BREAKPROPERTY nNext = FX_GetBreakProperty(pCur->char_code());
   int32_t iCharWidth = pCur->m_iCharWidth;
   if (iCharWidth > 0)
     *pEndPos -= iCharWidth;
 
   while (iLength >= 0) {
     pCur = pCharArray + iLength;
-    nCodeProp = pCur->char_props();
-    FX_BREAKPROPERTY nCur = FX_GetBreakPropertyFromProp(nCodeProp);
+    FX_BREAKPROPERTY nCur = FX_GetBreakProperty(pCur->char_code());
     bool bNeedBreak = false;
     FX_LINEBREAKTYPE eType;
     if (nCur == FX_BREAKPROPERTY::kTB) {
@@ -657,7 +654,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
       if (iCharWidth > 0)
         *pEndPos -= iCharWidth;
     }
-    nNext = FX_GetBreakPropertyFromProp(nCodeProp);
+    nNext = nCur;
     --iLength;
   }
   if (bOnlyBrk)
@@ -753,8 +750,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   for (int32_t i = 0; i < pText->iLength; ++i) {
     wchar_t wch = pText->pStr[i];
     int32_t iWidth = pText->pWidths[i];
-    uint32_t dwProps = FX_GetUnicodeProperties(wch);
-    FX_CHARTYPE dwCharType = FX_GetCharTypeFromProp(dwProps);
+    FX_CHARTYPE dwCharType = FX_GetCharType(wch);
     if (iWidth == 0) {
       if (dwCharType == FX_CHARTYPE::kArabicAlef)
         wPrev = 0xFEFF;
@@ -780,7 +776,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
         }
         wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
       } else if (bRTLPiece) {
-        wForm = FX_GetMirrorChar(wch, dwProps);
+        wForm = FX_GetMirrorChar(wch);
       }
 
       if (!bEmptyChar) {

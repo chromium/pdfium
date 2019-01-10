@@ -132,7 +132,17 @@ const uint16_t kFXTextLayoutBidiMirror[] = {
 const size_t kFXTextLayoutBidiMirrorSize =
     FX_ArraySize(kFXTextLayoutBidiMirror);
 
-wchar_t GetMirrorChar(wchar_t wch, uint32_t dwProps) {
+uint32_t GetUnicodeProperties(wchar_t wch) {
+  size_t idx = static_cast<size_t>(wch);
+  if (idx < kTextLayoutCodePropertiesSize)
+    return kTextLayoutCodeProperties[idx];
+  return 0;
+}
+
+}  // namespace
+
+wchar_t FX_GetMirrorChar(wchar_t wch) {
+  uint32_t dwProps = GetUnicodeProperties(wch);
   uint32_t dwTemp = (dwProps & kMirrorBitMask);
   if (dwTemp == kMirrorBitMask)
     return wch;
@@ -140,39 +150,25 @@ wchar_t GetMirrorChar(wchar_t wch, uint32_t dwProps) {
   return idx < kFXTextLayoutBidiMirrorSize ? kFXTextLayoutBidiMirror[idx] : wch;
 }
 
-}  // namespace
-
-uint32_t FX_GetUnicodeProperties(wchar_t wch) {
-  size_t idx = static_cast<size_t>(wch);
-  if (idx < kTextLayoutCodePropertiesSize)
-    return kTextLayoutCodeProperties[idx];
-  return 0;
-}
-
-wchar_t FX_GetMirrorChar(wchar_t wch) {
-  return GetMirrorChar(wch, FX_GetUnicodeProperties(wch));
-}
-
-FX_BIDICLASS FX_GetBidiClassFromProp(uint32_t prop) {
+FX_BIDICLASS FX_GetBidiClass(wchar_t wch) {
+  uint32_t prop = GetUnicodeProperties(wch);
   uint32_t result = (prop & kBidiClassBitMask) >> kBidiClassBitPos;
   ASSERT(result <= static_cast<uint32_t>(FX_BIDICLASS::kPDF));
   return static_cast<FX_BIDICLASS>(result);
 }
 
 #ifdef PDF_ENABLE_XFA
-FX_CHARTYPE FX_GetCharTypeFromProp(uint32_t prop) {
+FX_CHARTYPE FX_GetCharType(wchar_t wch) {
+  uint32_t prop = GetUnicodeProperties(wch);
   uint32_t result = (prop & kCharTypeBitMask) >> kCharTypeBitPos;
   ASSERT(result <= static_cast<uint32_t>(FX_CHARTYPE::kArabic));
   return static_cast<FX_CHARTYPE>(result);
 }
 
-FX_BREAKPROPERTY FX_GetBreakPropertyFromProp(uint32_t prop) {
+FX_BREAKPROPERTY FX_GetBreakProperty(wchar_t wch) {
+  uint32_t prop = GetUnicodeProperties(wch);
   uint32_t result = (prop & kBreakTypeBitMask) >> kBreakTypeBitPos;
   ASSERT(result <= static_cast<uint32_t>(FX_BREAKPROPERTY::kTB));
   return static_cast<FX_BREAKPROPERTY>(result);
-}
-
-wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps) {
-  return GetMirrorChar(wch, dwProps);
 }
 #endif  // PDF_ENABLE_XFA

@@ -12,13 +12,12 @@
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
 
-enum class CFX_BreakType { None = 0, Piece, Line, Paragraph, Page };
+enum class CFX_BreakType : uint8_t { None = 0, Piece, Line, Paragraph, Page };
 
 class CFX_Char {
  public:
-  CFX_Char(uint16_t wCharCode, uint32_t dwCharProps);
+  explicit CFX_Char(uint16_t wCharCode);
   CFX_Char(uint16_t wCharCode,
-           uint32_t dwCharProps,
            int32_t iHorizontalScale,
            int32_t iVerticalScale);
   CFX_Char(const CFX_Char& other);
@@ -27,25 +26,23 @@ class CFX_Char {
   FX_CHARTYPE GetCharType() const;
 
   uint16_t char_code() const { return m_wCharCode; }
-  uint32_t char_props() const { return m_dwCharProps; }
   int16_t horizonal_scale() const { return m_iHorizontalScale; }
   int16_t vertical_scale() const { return m_iVerticalScale; }
 
-  CFX_BreakType m_dwStatus;
-  uint8_t m_nBreakType;
-  uint32_t m_dwCharStyles;
-  int32_t m_iCharWidth;
-  int16_t m_iBidiClass;
-  uint16_t m_iBidiLevel;
-  uint16_t m_iBidiPos;
-  uint16_t m_iBidiOrder;
-  int32_t m_iFontSize;
-  uint32_t m_dwIdentity;
+  CFX_BreakType m_dwStatus = CFX_BreakType::None;
+  uint8_t m_nBreakType = 0;
+  uint32_t m_dwCharStyles = 0;
+  int32_t m_iCharWidth = 0;
+  int16_t m_iBidiClass = 0;
+  uint16_t m_iBidiLevel = 0;
+  uint16_t m_iBidiPos = 0;
+  uint16_t m_iBidiOrder = 0;
+  int32_t m_iFontSize = 0;
+  uint32_t m_dwIdentity = 0;
   RetainPtr<Retainable> m_pUserData;
 
  private:
   uint16_t m_wCharCode;
-  uint32_t m_dwCharProps;
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
 };

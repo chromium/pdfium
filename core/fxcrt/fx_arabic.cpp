@@ -176,9 +176,9 @@ namespace pdfium {
 namespace arabic {
 
 wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next) {
-  CFX_Char c(wch, FX_GetUnicodeProperties(wch));
-  CFX_Char p(prev, FX_GetUnicodeProperties(prev));
-  CFX_Char n(next, FX_GetUnicodeProperties(next));
+  CFX_Char c(wch);
+  CFX_Char p(prev);
+  CFX_Char n(next);
   return GetFormChar(&c, &p, &n);
 }
 
