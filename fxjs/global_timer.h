@@ -7,8 +7,6 @@
 #ifndef FXJS_GLOBAL_TIMER_H_
 #define FXJS_GLOBAL_TIMER_H_
 
-#include <map>
-
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cjs_runtime.h"
 
@@ -16,10 +14,15 @@ class CJS_App;
 
 class GlobalTimer {
  public:
+  enum class Type : bool {
+    kRepeating = false,
+    kOneShot = true,
+  };
+
   GlobalTimer(CJS_App* pObj,
               CPDFSDK_FormFillEnvironment* pFormFillEnv,
               CJS_Runtime* pRuntime,
-              int nType,
+              Type nType,
               const WideString& script,
               uint32_t dwElapse,
               uint32_t dwTimeOut);
@@ -28,16 +31,13 @@ class GlobalTimer {
   static void Trigger(int32_t nTimerID);
   static void Cancel(int32_t nTimerID);
 
-  bool IsOneShot() const { return m_nType == 1; }
+  bool IsOneShot() const { return m_nType == Type::kOneShot; }
   uint32_t GetTimeOut() const { return m_dwTimeOut; }
   int32_t GetTimerID() const { return m_nTimerID; }
   CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }
   WideString GetJScript() const { return m_swJScript; }
 
  private:
-  using TimerMap = std::map<int32_t, GlobalTimer*>;
-  static TimerMap* GetGlobalTimerMap();
-
   bool HasValidID() const;
 
   const int32_t m_nTimerID;
@@ -45,7 +45,7 @@ class GlobalTimer {
   bool m_bProcessing = false;
 
   // data
-  const int m_nType;  // 0:Interval; 1:TimeOut
+  const Type m_nType;
   const uint32_t m_dwTimeOut;
   const WideString m_swJScript;
   CJS_Runtime::ObservedPtr m_pRuntime;

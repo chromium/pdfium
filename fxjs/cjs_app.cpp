@@ -316,7 +316,8 @@ CJS_Result CJS_App::setInterval(
 
   uint32_t dwInterval = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   auto timerRef = pdfium::MakeUnique<GlobalTimer>(
-      this, pRuntime->GetFormFillEnv(), pRuntime, 0, script, dwInterval, 0);
+      this, pRuntime->GetFormFillEnv(), pRuntime, GlobalTimer::Type::kRepeating,
+      script, dwInterval, 0);
   GlobalTimer* pTimerRef = timerRef.get();
   m_Timers.insert(std::move(timerRef));
 
@@ -344,8 +345,8 @@ CJS_Result CJS_App::setTimeOut(
 
   uint32_t dwTimeOut = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
   auto timerRef = pdfium::MakeUnique<GlobalTimer>(
-      this, pRuntime->GetFormFillEnv(), pRuntime, 1, script, dwTimeOut,
-      dwTimeOut);
+      this, pRuntime->GetFormFillEnv(), pRuntime, GlobalTimer::Type::kOneShot,
+      script, dwTimeOut, dwTimeOut);
   GlobalTimer* pTimerRef = timerRef.get();
   m_Timers.insert(std::move(timerRef));
 

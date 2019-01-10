@@ -6,13 +6,26 @@
 
 #include "fxjs/global_timer.h"
 
+#include <map>
+
 #include "fpdfsdk/cfx_systemhandler.h"
 #include "fxjs/cjs_app.h"
+
+namespace {
+
+using TimerMap = std::map<int32_t, GlobalTimer*>;
+TimerMap* GetGlobalTimerMap() {
+  // Leak the timer array at shutdown.
+  static auto* s_TimerMap = new TimerMap;
+  return s_TimerMap;
+}
+
+}  // namespace
 
 GlobalTimer::GlobalTimer(CJS_App* pObj,
                          CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CJS_Runtime* pRuntime,
-                         int nType,
+                         Type nType,
                          const WideString& script,
                          uint32_t dwElapse,
                          uint32_t dwTimeOut)
@@ -70,13 +83,6 @@ void GlobalTimer::Cancel(int32_t nTimerID) {
 
   GlobalTimer* pTimer = it->second;
   pTimer->m_pEmbedApp->CancelProc(pTimer);
-}
-
-// static
-GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
-  // Leak the timer array at shutdown.
-  static auto* s_TimerMap = new TimerMap;
-  return s_TimerMap;
 }
 
 bool GlobalTimer::HasValidID() const {
