@@ -77,7 +77,7 @@ config("pdfium_core_config") {
     ":pdfium_common_config",
     ":pdfium_public_config",
   ]
-  defines = [ "V8_DEPRECATION_WARNINGS" ]
+  defines = []
   if (is_clang) {
     cflags += [ "-Wshadow" ]
   }
