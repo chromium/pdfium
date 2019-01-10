@@ -37,7 +37,7 @@ GlobalTimer::~GlobalTimer() {
 }
 
 // static
-void GlobalTimer::Trigger(int nTimerID) {
+void GlobalTimer::Trigger(int32_t nTimerID) {
   auto it = GetGlobalTimerMap()->find(nTimerID);
   if (it == GetGlobalTimerMap()->end())
     return;
@@ -62,7 +62,7 @@ void GlobalTimer::Trigger(int nTimerID) {
 }
 
 // static
-void GlobalTimer::Cancel(int nTimerID) {
+void GlobalTimer::Cancel(int32_t nTimerID) {
   auto it = GetGlobalTimerMap()->find(nTimerID);
   if (it == GetGlobalTimerMap()->end())
     return;
