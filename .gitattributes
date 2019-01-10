@@ -1,0 +1,2 @@
+# Skip Tricium on expectation files.
+*_expected.txt -tricium
