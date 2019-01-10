@@ -24,7 +24,6 @@ class CPDF_TestDocument final : public CPDF_Document {
 
   void SetRoot(CPDF_Dictionary* root) {
     m_pRootDict = root;
-    GetRoot();
   }
 };
 
