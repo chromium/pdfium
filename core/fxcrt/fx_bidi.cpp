@@ -17,31 +17,6 @@
 
 namespace {
 
-enum class FX_BIDICLASS : uint8_t {
-  kON = 0,    // Other Neutral
-  kL = 1,     // Left Letter
-  kR = 2,     // Right Letter
-  kAN = 3,    // Arabic Number
-  kEN = 4,    // European Number
-  kAL = 5,    // Arabic Letter
-  kNSM = 6,   // Non-spacing Mark
-  kCS = 7,    // Common Number Separator
-  kES = 8,    // European Separator
-  kET = 9,    // European Number Terminator
-  kBN = 10,   // Boundary Neutral
-  kS = 11,    // Segment Separator
-  kWS = 12,   // Whitespace
-  kB = 13,    // Paragraph Separator
-  kRLO = 14,  // Right-to-Left Override
-  kRLE = 15,  // Right-to-Left Embedding
-  kLRO = 16,  // Left-to-Right Override
-  kLRE = 17,  // Left-to-Right Embedding
-  kPDF = 18,  // Pop Directional Format
-  kN = kON,
-};
-constexpr uint32_t FX_BIDICLASSBITS = 6;
-constexpr uint32_t FX_BIDICLASSBITSMASK = 0x1F << FX_BIDICLASSBITS;
-
 #ifdef PDF_ENABLE_XFA
 
 #ifndef NDEBUG
@@ -293,17 +268,16 @@ void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
     for (size_t i = 0; i < iCount; ++i) {
       CFX_Char& cur = (*chars)[i];
       cur.m_iBidiClass =
-          static_cast<int16_t>(cur.char_props() & FX_BIDICLASSBITSMASK) >>
-          FX_BIDICLASSBITS;
+          static_cast<int16_t>(FX_GetBidiClassFromProp(cur.char_props()));
     }
     return;
   }
 
   for (size_t i = 0; i < iCount; ++i) {
     CFX_Char& cur = (*chars)[i];
-    cur.m_iBidiClass = static_cast<int16_t>(
-        gc_FX_BidiNTypes[(cur.char_props() & FX_BIDICLASSBITSMASK) >>
-                         FX_BIDICLASSBITS]);
+    cur.m_iBidiClass =
+        static_cast<int16_t>(gc_FX_BidiNTypes[static_cast<size_t>(
+            FX_GetBidiClassFromProp(cur.char_props()))]);
   }
 }
 
@@ -554,11 +528,9 @@ CFX_BidiChar::CFX_BidiChar()
     : m_CurrentSegment({0, 0, NEUTRAL}), m_LastSegment({0, 0, NEUTRAL}) {}
 
 bool CFX_BidiChar::AppendChar(wchar_t wch) {
-  uint32_t dwProps = FX_GetUnicodeProperties(wch);
-  FX_BIDICLASS iBidiCls = static_cast<FX_BIDICLASS>(
-      (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS);
   Direction direction;
-  switch (iBidiCls) {
+  uint32_t dwProps = FX_GetUnicodeProperties(wch);
+  switch (FX_GetBidiClassFromProp(dwProps)) {
     case FX_BIDICLASS::kL:
     case FX_BIDICLASS::kAN:
     case FX_BIDICLASS::kEN:

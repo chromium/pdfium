@@ -51,6 +51,29 @@ enum class FX_BREAKPROPERTY : uint8_t {
   kTB = 37,
 };
 
+enum class FX_BIDICLASS : uint8_t {
+  kON = 0,    // Other Neutral
+  kL = 1,     // Left Letter
+  kR = 2,     // Right Letter
+  kAN = 3,    // Arabic Number
+  kEN = 4,    // European Number
+  kAL = 5,    // Arabic Letter
+  kNSM = 6,   // Non-spacing Mark
+  kCS = 7,    // Common Number Separator
+  kES = 8,    // European Separator
+  kET = 9,    // European Number Terminator
+  kBN = 10,   // Boundary Neutral
+  kS = 11,    // Segment Separator
+  kWS = 12,   // Whitespace
+  kB = 13,    // Paragraph Separator
+  kRLO = 14,  // Right-to-Left Override
+  kRLE = 15,  // Right-to-Left Embedding
+  kLRO = 16,  // Left-to-Right Override
+  kLRE = 17,  // Left-to-Right Embedding
+  kPDF = 18,  // Pop Directional Format
+  kN = kON,
+};
+
 enum class FX_CHARTYPE : uint8_t {
   kUnknown = 0,
   kTab,
@@ -69,6 +92,7 @@ enum class FX_CHARTYPE : uint8_t {
 
 uint32_t FX_GetUnicodeProperties(wchar_t wch);
 wchar_t FX_GetMirrorChar(wchar_t wch);
+FX_BIDICLASS FX_GetBidiClassFromProp(uint32_t prop);
 
 #ifdef PDF_ENABLE_XFA
 

@@ -153,6 +153,12 @@ wchar_t FX_GetMirrorChar(wchar_t wch) {
   return GetMirrorChar(wch, FX_GetUnicodeProperties(wch));
 }
 
+FX_BIDICLASS FX_GetBidiClassFromProp(uint32_t prop) {
+  uint32_t result = (prop & kBidiClassBitMask) >> kBidiClassBitPos;
+  ASSERT(result <= static_cast<uint32_t>(FX_BIDICLASS::kPDF));
+  return static_cast<FX_BIDICLASS>(result);
+}
+
 #ifdef PDF_ENABLE_XFA
 FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   uint32_t result = (prop & kCharTypeBitMask) >> kCharTypeBitPos;
