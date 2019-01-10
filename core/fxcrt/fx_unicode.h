@@ -95,15 +95,13 @@ wchar_t FX_GetMirrorChar(wchar_t wch);
 FX_BIDICLASS FX_GetBidiClassFromProp(uint32_t prop);
 
 #ifdef PDF_ENABLE_XFA
-
-FX_CHARTYPE GetCharTypeFromProp(uint32_t prop);
+FX_CHARTYPE FX_GetCharTypeFromProp(uint32_t prop);
 
 // Analagous to ULineBreak in icu's uchar.h, but permuted order, and a
 // subset lacking some more recent additions.
-FX_BREAKPROPERTY GetBreakPropertyFromProp(uint32_t prop);
+FX_BREAKPROPERTY FX_GetBreakPropertyFromProp(uint32_t prop);
 
 wchar_t FX_GetMirrorChar(wchar_t wch, uint32_t dwProps);
-
 #endif  // PDF_ENABLE_XFA
 
 #endif  // CORE_FXCRT_FX_UNICODE_H_

@@ -160,13 +160,13 @@ FX_BIDICLASS FX_GetBidiClassFromProp(uint32_t prop) {
 }
 
 #ifdef PDF_ENABLE_XFA
-FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
+FX_CHARTYPE FX_GetCharTypeFromProp(uint32_t prop) {
   uint32_t result = (prop & kCharTypeBitMask) >> kCharTypeBitPos;
   ASSERT(result <= static_cast<uint32_t>(FX_CHARTYPE::kArabic));
   return static_cast<FX_CHARTYPE>(result);
 }
 
-FX_BREAKPROPERTY GetBreakPropertyFromProp(uint32_t prop) {
+FX_BREAKPROPERTY FX_GetBreakPropertyFromProp(uint32_t prop) {
   uint32_t result = (prop & kBreakTypeBitMask) >> kBreakTypeBitPos;
   ASSERT(result <= static_cast<uint32_t>(FX_BREAKPROPERTY::kTB));
   return static_cast<FX_BREAKPROPERTY>(result);

@@ -70,7 +70,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
   ASSERT(m_pCurLine);
 
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
-  FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
+  FX_CHARTYPE chartype = FX_GetCharTypeFromProp(dwProps);
   m_pCurLine->m_LineChars.emplace_back(wch, dwProps, m_iHorizontalScale,
                                        m_iVerticalScale);
   CFX_Char* pCurChar = &m_pCurLine->m_LineChars.back();
@@ -610,7 +610,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
 
   uint32_t nCodeProp = pCur->char_props();
-  FX_BREAKPROPERTY nNext = GetBreakPropertyFromProp(nCodeProp);
+  FX_BREAKPROPERTY nNext = FX_GetBreakPropertyFromProp(nCodeProp);
   int32_t iCharWidth = pCur->m_iCharWidth;
   if (iCharWidth > 0)
     *pEndPos -= iCharWidth;
@@ -618,7 +618,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
   while (iLength >= 0) {
     pCur = pCharArray + iLength;
     nCodeProp = pCur->char_props();
-    FX_BREAKPROPERTY nCur = GetBreakPropertyFromProp(nCodeProp);
+    FX_BREAKPROPERTY nCur = FX_GetBreakPropertyFromProp(nCodeProp);
     bool bNeedBreak = false;
     FX_LINEBREAKTYPE eType;
     if (nCur == FX_BREAKPROPERTY::kTB) {
@@ -657,7 +657,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
       if (iCharWidth > 0)
         *pEndPos -= iCharWidth;
     }
-    nNext = GetBreakPropertyFromProp(nCodeProp);
+    nNext = FX_GetBreakPropertyFromProp(nCodeProp);
     --iLength;
   }
   if (bOnlyBrk)
@@ -754,7 +754,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
     wchar_t wch = pText->pStr[i];
     int32_t iWidth = pText->pWidths[i];
     uint32_t dwProps = FX_GetUnicodeProperties(wch);
-    FX_CHARTYPE dwCharType = GetCharTypeFromProp(dwProps);
+    FX_CHARTYPE dwCharType = FX_GetCharTypeFromProp(dwProps);
     if (iWidth == 0) {
       if (dwCharType == FX_CHARTYPE::kArabicAlef)
         wPrev = 0xFEFF;
