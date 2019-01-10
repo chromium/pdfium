@@ -36,7 +36,8 @@ int32_t CPWL_Timer::SetPWLTimer(int32_t nElapse) {
   KillPWLTimer();
 
   m_nTimerID = m_pSystemHandler->SetTimer(nElapse, TimerProc);
-  GetPWLTimeMap()[m_nTimerID] = this;
+  if (HasValidID())
+    GetPWLTimeMap()[m_nTimerID] = this;
   return m_nTimerID;
 }
 
