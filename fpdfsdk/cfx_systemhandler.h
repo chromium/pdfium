@@ -22,6 +22,8 @@ class CPDFSDK_Widget;
 
 class CFX_SystemHandler {
  public:
+  static constexpr int32_t kInvalidTimerID = 0;
+
   explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CFX_SystemHandler();
 

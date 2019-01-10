@@ -8,8 +8,8 @@
 #define FPDFSDK_PWL_CPWL_TIMER_H_
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 
-class CFX_SystemHandler;
 class CPWL_TimerHandler;
 
 class CPWL_Timer {
@@ -23,11 +23,11 @@ class CPWL_Timer {
   void KillPWLTimer();
 
  private:
-  static constexpr int32_t kInvalidTimerID = 0;
+  bool HasValidID() const {
+    return m_nTimerID != CFX_SystemHandler::kInvalidTimerID;
+  }
 
-  bool HasValidID() const { return m_nTimerID != kInvalidTimerID; }
-
-  int32_t m_nTimerID = kInvalidTimerID;
+  int32_t m_nTimerID = CFX_SystemHandler::kInvalidTimerID;
   UnownedPtr<CPWL_TimerHandler> const m_pAttached;
   UnownedPtr<CFX_SystemHandler> const m_pSystemHandler;
 };

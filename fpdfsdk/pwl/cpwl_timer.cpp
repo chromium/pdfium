@@ -8,7 +8,6 @@
 
 #include <map>
 
-#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/pwl/cpwl_timer_handler.h"
 
 namespace {
@@ -47,7 +46,7 @@ void CPWL_Timer::KillPWLTimer() {
 
   m_pSystemHandler->KillTimer(m_nTimerID);
   GetPWLTimeMap().erase(m_nTimerID);
-  m_nTimerID = kInvalidTimerID;
+  m_nTimerID = CFX_SystemHandler::kInvalidTimerID;
 }
 
 // static

@@ -38,6 +38,8 @@ class GlobalTimer {
   using TimerMap = std::map<int32_t, GlobalTimer*>;
   static TimerMap* GetGlobalTimerMap();
 
+  bool HasValidID() const;
+
   const int32_t m_nTimerID;
   CJS_App* const m_pEmbedApp;
   bool m_bProcessing = false;

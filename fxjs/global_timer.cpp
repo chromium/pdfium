@@ -6,6 +6,7 @@
 
 #include "fxjs/global_timer.h"
 
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fxjs/cjs_app.h"
 
 GlobalTimer::GlobalTimer(CJS_App* pObj,
@@ -22,12 +23,12 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
       m_swJScript(script),
       m_pRuntime(pRuntime),
       m_pFormFillEnv(pFormFillEnv) {
-  if (m_nTimerID)
+  if (HasValidID())
     (*GetGlobalTimerMap())[m_nTimerID] = this;
 }
 
 GlobalTimer::~GlobalTimer() {
-  if (!m_nTimerID)
+  if (!HasValidID())
     return;
 
   if (GetRuntime())
@@ -76,4 +77,8 @@ GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
   // Leak the timer array at shutdown.
   static auto* s_TimerMap = new TimerMap;
   return s_TimerMap;
+}
+
+bool GlobalTimer::HasValidID() const {
+  return m_nTimerID != CFX_SystemHandler::kInvalidTimerID;
 }
