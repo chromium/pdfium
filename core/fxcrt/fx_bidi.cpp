@@ -17,27 +17,27 @@
 
 namespace {
 
-enum FX_BIDICLASS {
-  FX_BIDICLASS_ON = 0,    // Other Neutral
-  FX_BIDICLASS_L = 1,     // Left Letter
-  FX_BIDICLASS_R = 2,     // Right Letter
-  FX_BIDICLASS_AN = 3,    // Arabic Number
-  FX_BIDICLASS_EN = 4,    // European Number
-  FX_BIDICLASS_AL = 5,    // Arabic Letter
-  FX_BIDICLASS_NSM = 6,   // Non-spacing Mark
-  FX_BIDICLASS_CS = 7,    // Common Number Separator
-  FX_BIDICLASS_ES = 8,    // European Separator
-  FX_BIDICLASS_ET = 9,    // European Number Terminator
-  FX_BIDICLASS_BN = 10,   // Boundary Neutral
-  FX_BIDICLASS_S = 11,    // Segment Separator
-  FX_BIDICLASS_WS = 12,   // Whitespace
-  FX_BIDICLASS_B = 13,    // Paragraph Separator
-  FX_BIDICLASS_RLO = 14,  // Right-to-Left Override
-  FX_BIDICLASS_RLE = 15,  // Right-to-Left Embedding
-  FX_BIDICLASS_LRO = 16,  // Left-to-Right Override
-  FX_BIDICLASS_LRE = 17,  // Left-to-Right Embedding
-  FX_BIDICLASS_PDF = 18,  // Pop Directional Format
-  FX_BIDICLASS_N = FX_BIDICLASS_ON,
+enum class FX_BIDICLASS : uint8_t {
+  kON = 0,    // Other Neutral
+  kL = 1,     // Left Letter
+  kR = 2,     // Right Letter
+  kAN = 3,    // Arabic Number
+  kEN = 4,    // European Number
+  kAL = 5,    // Arabic Letter
+  kNSM = 6,   // Non-spacing Mark
+  kCS = 7,    // Common Number Separator
+  kES = 8,    // European Separator
+  kET = 9,    // European Number Terminator
+  kBN = 10,   // Boundary Neutral
+  kS = 11,    // Segment Separator
+  kWS = 12,   // Whitespace
+  kB = 13,    // Paragraph Separator
+  kRLO = 14,  // Right-to-Left Override
+  kRLE = 15,  // Right-to-Left Embedding
+  kLRO = 16,  // Left-to-Right Override
+  kLRE = 17,  // Left-to-Right Embedding
+  kPDF = 18,  // Pop Directional Format
+  kN = kON,
 };
 constexpr uint32_t FX_BIDICLASSBITS = 6;
 constexpr uint32_t FX_BIDICLASSBITSMASK = 0x1F << FX_BIDICLASSBITS;
@@ -71,29 +71,33 @@ enum FX_BIDIWEAKSTATE {
   FX_BWSlet
 };
 
+#undef PACK_NIBBLES
+#define PACK_NIBBLES(hi, lo) \
+  ((static_cast<uint32_t>(hi) << 4) + static_cast<uint32_t>(lo))
+
 enum FX_BIDIWEAKACTION {
   FX_BWAIX = 0x100,
   FX_BWAXX = 0x0F,
-  FX_BWAxxx = (0x0F << 4) + 0x0F,
+  FX_BWAxxx = 0xFF,
   FX_BWAxIx = 0x100 + FX_BWAxxx,
-  FX_BWAxxN = (0x0F << 4) + FX_BIDICLASS_ON,
-  FX_BWAxxE = (0x0F << 4) + FX_BIDICLASS_EN,
-  FX_BWAxxA = (0x0F << 4) + FX_BIDICLASS_AN,
-  FX_BWAxxR = (0x0F << 4) + FX_BIDICLASS_R,
-  FX_BWAxxL = (0x0F << 4) + FX_BIDICLASS_L,
-  FX_BWANxx = (FX_BIDICLASS_ON << 4) + 0x0F,
-  FX_BWAAxx = (FX_BIDICLASS_AN << 4) + 0x0F,
-  FX_BWAExE = (FX_BIDICLASS_EN << 4) + FX_BIDICLASS_EN,
-  FX_BWANIx = (FX_BIDICLASS_ON << 4) + 0x0F + 0x100,
-  FX_BWANxN = (FX_BIDICLASS_ON << 4) + FX_BIDICLASS_ON,
-  FX_BWANxR = (FX_BIDICLASS_ON << 4) + FX_BIDICLASS_R,
-  FX_BWANxE = (FX_BIDICLASS_ON << 4) + FX_BIDICLASS_EN,
-  FX_BWAAxA = (FX_BIDICLASS_AN << 4) + FX_BIDICLASS_AN,
-  FX_BWANxL = (FX_BIDICLASS_ON << 4) + FX_BIDICLASS_L,
-  FX_BWALxL = (FX_BIDICLASS_L << 4) + FX_BIDICLASS_L,
-  FX_BWAxIL = (0x0F << 4) + FX_BIDICLASS_L + 0x100,
-  FX_BWAAxR = (FX_BIDICLASS_AN << 4) + FX_BIDICLASS_R,
-  FX_BWALxx = (FX_BIDICLASS_L << 4) + 0x0F,
+  FX_BWAxxN = PACK_NIBBLES(0x0F, FX_BIDICLASS::kON),
+  FX_BWAxxE = PACK_NIBBLES(0x0F, FX_BIDICLASS::kEN),
+  FX_BWAxxA = PACK_NIBBLES(0x0F, FX_BIDICLASS::kAN),
+  FX_BWAxxR = PACK_NIBBLES(0x0F, FX_BIDICLASS::kR),
+  FX_BWAxxL = PACK_NIBBLES(0x0F, FX_BIDICLASS::kL),
+  FX_BWANxx = PACK_NIBBLES(FX_BIDICLASS::kON, 0x0F),
+  FX_BWAAxx = PACK_NIBBLES(FX_BIDICLASS::kAN, 0x0F),
+  FX_BWAExE = PACK_NIBBLES(FX_BIDICLASS::kEN, FX_BIDICLASS::kEN),
+  FX_BWANIx = 0x100 + PACK_NIBBLES(FX_BIDICLASS::kON, 0x0F),
+  FX_BWANxN = PACK_NIBBLES(FX_BIDICLASS::kON, FX_BIDICLASS::kON),
+  FX_BWANxR = PACK_NIBBLES(FX_BIDICLASS::kON, FX_BIDICLASS::kR),
+  FX_BWANxE = PACK_NIBBLES(FX_BIDICLASS::kON, FX_BIDICLASS::kEN),
+  FX_BWAAxA = PACK_NIBBLES(FX_BIDICLASS::kAN, FX_BIDICLASS::kAN),
+  FX_BWANxL = PACK_NIBBLES(FX_BIDICLASS::kON, FX_BIDICLASS::kL),
+  FX_BWALxL = PACK_NIBBLES(FX_BIDICLASS::kL, FX_BIDICLASS::kL),
+  FX_BWAxIL = 0x100 + PACK_NIBBLES(0x0F, FX_BIDICLASS::kL),
+  FX_BWAAxR = PACK_NIBBLES(FX_BIDICLASS::kAN, FX_BIDICLASS::kR),
+  FX_BWALxx = PACK_NIBBLES(FX_BIDICLASS::kL, 0x0F),
 };
 
 enum FX_BIDINEUTRALSTATE {
@@ -106,20 +110,23 @@ enum FX_BIDINEUTRALSTATE {
 };
 
 enum FX_BIDINEUTRALACTION {
-  FX_BNAnL = FX_BIDICLASS_L,
-  FX_BNAEn = (FX_BIDICLASS_AN << 4),
-  FX_BNARn = (FX_BIDICLASS_R << 4),
-  FX_BNALn = (FX_BIDICLASS_L << 4),
+  FX_BNAnL = PACK_NIBBLES(0, FX_BIDICLASS::kL),
+  FX_BNAEn = PACK_NIBBLES(FX_BIDICLASS::kAN, 0),
+  FX_BNARn = PACK_NIBBLES(FX_BIDICLASS::kR, 0),
+  FX_BNALn = PACK_NIBBLES(FX_BIDICLASS::kL, 0),
   FX_BNAIn = FX_BWAIX,
-  FX_BNALnL = (FX_BIDICLASS_L << 4) + FX_BIDICLASS_L,
+  FX_BNALnL = PACK_NIBBLES(FX_BIDICLASS::kL, FX_BIDICLASS::kL),
 };
+#undef PACK_NIBBLES
 
-const int32_t gc_FX_BidiNTypes[] = {
-    FX_BIDICLASS_N,   FX_BIDICLASS_L,   FX_BIDICLASS_R,   FX_BIDICLASS_AN,
-    FX_BIDICLASS_EN,  FX_BIDICLASS_AL,  FX_BIDICLASS_NSM, FX_BIDICLASS_CS,
-    FX_BIDICLASS_ES,  FX_BIDICLASS_ET,  FX_BIDICLASS_BN,  FX_BIDICLASS_BN,
-    FX_BIDICLASS_N,   FX_BIDICLASS_B,   FX_BIDICLASS_RLO, FX_BIDICLASS_RLE,
-    FX_BIDICLASS_LRO, FX_BIDICLASS_LRE, FX_BIDICLASS_PDF, FX_BIDICLASS_ON,
+const FX_BIDICLASS gc_FX_BidiNTypes[] = {
+    FX_BIDICLASS::kN,   FX_BIDICLASS::kL,   FX_BIDICLASS::kR,
+    FX_BIDICLASS::kAN,  FX_BIDICLASS::kEN,  FX_BIDICLASS::kAL,
+    FX_BIDICLASS::kNSM, FX_BIDICLASS::kCS,  FX_BIDICLASS::kES,
+    FX_BIDICLASS::kET,  FX_BIDICLASS::kBN,  FX_BIDICLASS::kBN,
+    FX_BIDICLASS::kN,   FX_BIDICLASS::kB,   FX_BIDICLASS::kRLO,
+    FX_BIDICLASS::kRLE, FX_BIDICLASS::kLRO, FX_BIDICLASS::kLRE,
+    FX_BIDICLASS::kPDF, FX_BIDICLASS::kON,
 };
 
 const int32_t gc_FX_BidiWeakStates[][10] = {
@@ -218,10 +225,10 @@ const int32_t gc_FX_BidiNeutralStates[][5] = {
 };
 const int32_t gc_FX_BidiNeutralActions[][5] = {
     {FX_BNAIn, 0, 0, 0, 0},
-    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
+    {FX_BNAIn, 0, 0, 0, static_cast<uint32_t>(FX_BIDICLASS::kL)},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNARn},
     {FX_BNAIn, FX_BNALn, FX_BNAEn, FX_BNAEn, FX_BNALnL},
-    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
+    {FX_BNAIn, 0, 0, 0, static_cast<uint32_t>(FX_BIDICLASS::kL)},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
 };
 
@@ -230,8 +237,8 @@ const int32_t gc_FX_BidiAddLevel[][4] = {
     {1, 0, 1, 1},
 };
 
-int32_t Direction(int32_t val) {
-  return FX_IsOdd(val) ? FX_BIDICLASS_R : FX_BIDICLASS_L;
+FX_BIDICLASS Direction(int32_t val) {
+  return FX_IsOdd(val) ? FX_BIDICLASS::kR : FX_BIDICLASS::kL;
 }
 
 int32_t GetDeferredType(int32_t val) {
@@ -245,7 +252,7 @@ int32_t GetResolvedType(int32_t val) {
 int32_t GetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
   iAction = (iAction >> 4) & 0xF;
   if (iAction == (FX_BNAEn >> 4))
-    return Direction(iLevel);
+    return static_cast<uint32_t>(Direction(iLevel));
   return iAction;
 }
 
@@ -320,20 +327,21 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
   for (; i <= iCount; ++i) {
     CFX_Char* pTC = &(*chars)[i];
     iClsCur = pTC->m_iBidiClass;
-    if (iClsCur == FX_BIDICLASS_BN) {
+    if (iClsCur == static_cast<int32_t>(FX_BIDICLASS::kBN)) {
       pTC->m_iBidiLevel = (int16_t)iLevelCur;
       if (i == iCount && iLevelCur != 0) {
-        iClsCur = Direction(iLevelCur);
+        iClsCur = static_cast<int32_t>(Direction(iLevelCur));
         pTC->m_iBidiClass = (int16_t)iClsCur;
       } else if (i < iCount) {
         CFX_Char* pTCNext = &(*chars)[i + 1];
         int32_t iLevelNext, iLevelNew;
         iClsNew = pTCNext->m_iBidiClass;
         iLevelNext = pTCNext->m_iBidiLevel;
-        if (iClsNew != FX_BIDICLASS_BN && iLevelCur != iLevelNext) {
+        if (iClsNew != static_cast<int32_t>(FX_BIDICLASS::kBN) &&
+            iLevelCur != iLevelNext) {
           iLevelNew = std::max(iLevelNext, iLevelCur);
           pTC->m_iBidiLevel = static_cast<int16_t>(iLevelNew);
-          iClsCur = Direction(iLevelNew);
+          iClsCur = static_cast<int32_t>(Direction(iLevelNew));
           pTC->m_iBidiClass = static_cast<int16_t>(iClsCur);
           iLevelCur = iLevelNext;
         } else {
@@ -347,7 +355,7 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
         continue;
       }
     }
-    if (iClsCur > FX_BIDICLASS_BN)
+    if (iClsCur > static_cast<int32_t>(FX_BIDICLASS::kBN))
       continue;
 
     int32_t iAction = gc_FX_BidiWeakActions[iState][iClsCur];
@@ -367,7 +375,7 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
   if (iNum == 0)
     return;
 
-  iClsCur = Direction(0);
+  iClsCur = static_cast<int32_t>(Direction(0));
   iClsRun = GetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
   if (iClsRun != FX_BWAXX)
     SetDeferredRun(chars, true, i, iNum, iClsRun);
@@ -390,23 +398,23 @@ void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
   for (; i <= iCount; ++i) {
     pTC = &(*chars)[i];
     iClsCur = pTC->m_iBidiClass;
-    if (iClsCur == FX_BIDICLASS_BN) {
+    if (iClsCur == static_cast<int32_t>(FX_BIDICLASS::kBN)) {
       if (iNum)
         ++iNum;
       continue;
     }
-    if (iClsCur >= FX_BIDICLASS_AL)
+    if (iClsCur >= static_cast<int32_t>(FX_BIDICLASS::kAL))
       continue;
 
     iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
     iClsRun = GetDeferredNeutrals(iAction, iLevel);
-    if (iClsRun != FX_BIDICLASS_N && iNum > 0) {
+    if (iClsRun != static_cast<int32_t>(FX_BIDICLASS::kN) && iNum > 0) {
       SetDeferredRun(chars, true, i, iNum, iClsRun);
       iNum = 0;
     }
 
     iClsNew = GetResolvedNeutrals(iAction);
-    if (iClsNew != FX_BIDICLASS_N)
+    if (iClsNew != static_cast<int32_t>(FX_BIDICLASS::kN))
       pTC->m_iBidiClass = (int16_t)iClsNew;
     if (FX_BNAIn & iAction)
       ++iNum;
@@ -417,21 +425,21 @@ void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
   if (iNum == 0)
     return;
 
-  iClsCur = Direction(iLevel);
+  iClsCur = static_cast<int32_t>(Direction(iLevel));
   iClsRun =
       GetDeferredNeutrals(gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
-  if (iClsRun != FX_BIDICLASS_N)
+  if (iClsRun != static_cast<int32_t>(FX_BIDICLASS::kN))
     SetDeferredRun(chars, true, i, iNum, iClsRun);
 }
 
 void ResolveImplicit(std::vector<CFX_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
     int32_t iCls = (*chars)[i].m_iBidiClass;
-    if (iCls == FX_BIDICLASS_BN)
+    if (iCls == static_cast<int32_t>(FX_BIDICLASS::kBN) ||
+        iCls <= static_cast<int32_t>(FX_BIDICLASS::kON) ||
+        iCls >= static_cast<int32_t>(FX_BIDICLASS::kAL)) {
       continue;
-    if (iCls <= FX_BIDICLASS_ON || iCls >= FX_BIDICLASS_AL)
-      continue;
-
+    }
     int32_t iLevel = (*chars)[i].m_iBidiLevel;
     iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
     (*chars)[i].m_iBidiLevel = (int16_t)iLevel;
@@ -447,21 +455,21 @@ void ResolveWhitespace(std::vector<CFX_Char>* chars, size_t iCount) {
   size_t i = 0;
   size_t iNum = 0;
   for (; i <= iCount; ++i) {
-    switch ((*chars)[i].m_iBidiClass) {
-      case FX_BIDICLASS_WS:
+    switch (static_cast<FX_BIDICLASS>((*chars)[i].m_iBidiClass)) {
+      case FX_BIDICLASS::kWS:
         ++iNum;
         break;
-      case FX_BIDICLASS_RLE:
-      case FX_BIDICLASS_LRE:
-      case FX_BIDICLASS_LRO:
-      case FX_BIDICLASS_RLO:
-      case FX_BIDICLASS_PDF:
-      case FX_BIDICLASS_BN:
+      case FX_BIDICLASS::kRLE:
+      case FX_BIDICLASS::kLRE:
+      case FX_BIDICLASS::kLRO:
+      case FX_BIDICLASS::kRLO:
+      case FX_BIDICLASS::kPDF:
+      case FX_BIDICLASS::kBN:
         (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iLevel);
         ++iNum;
         break;
-      case FX_BIDICLASS_S:
-      case FX_BIDICLASS_B:
+      case FX_BIDICLASS::kS:
+      case FX_BIDICLASS::kB:
         if (iNum > 0)
           SetDeferredRun(chars, false, i, iNum, 0);
 
@@ -547,17 +555,21 @@ CFX_BidiChar::CFX_BidiChar()
 
 bool CFX_BidiChar::AppendChar(wchar_t wch) {
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
-  int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
-  Direction direction = NEUTRAL;
+  FX_BIDICLASS iBidiCls = static_cast<FX_BIDICLASS>(
+      (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS);
+  Direction direction;
   switch (iBidiCls) {
-    case FX_BIDICLASS_L:
-    case FX_BIDICLASS_AN:
-    case FX_BIDICLASS_EN:
+    case FX_BIDICLASS::kL:
+    case FX_BIDICLASS::kAN:
+    case FX_BIDICLASS::kEN:
       direction = LEFT;
       break;
-    case FX_BIDICLASS_R:
-    case FX_BIDICLASS_AL:
+    case FX_BIDICLASS::kR:
+    case FX_BIDICLASS::kAL:
       direction = RIGHT;
+      break;
+    default:
+      direction = NEUTRAL;
       break;
   }
 
