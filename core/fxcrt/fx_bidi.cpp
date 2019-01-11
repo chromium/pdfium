@@ -23,7 +23,11 @@ namespace {
 constexpr int32_t kBidiMaxLevel = 61;
 #endif  // NDEBUG
 
-enum FX_BIDIWEAKSTATE {
+#undef PACK_NIBBLES
+#define PACK_NIBBLES(hi, lo) \
+  ((static_cast<uint32_t>(hi) << 4) + static_cast<uint32_t>(lo))
+
+enum FX_BIDIWEAKSTATE : uint8_t {
   FX_BWSxa = 0,
   FX_BWSxr,
   FX_BWSxl,
@@ -46,15 +50,11 @@ enum FX_BIDIWEAKSTATE {
   FX_BWSlet
 };
 
-#undef PACK_NIBBLES
-#define PACK_NIBBLES(hi, lo) \
-  ((static_cast<uint32_t>(hi) << 4) + static_cast<uint32_t>(lo))
-
 // NOTE: Range of FX_BIDICLASS prevents encoding all possible values in this
 // manner, but the ones used manage to fit. Except that I suspect that 0xF
 // was intended to be used as a sentinel, even though it also means kRLE.
 // TODO(tsepez): pick a better representation.
-enum FX_BIDIWEAKACTION {
+enum FX_BIDIWEAKACTION : uint16_t {
   FX_BWAIX = 0x100,
   FX_BWAXX = 0x0F,
   FX_BWAxxx = 0xFF,
@@ -79,7 +79,7 @@ enum FX_BIDIWEAKACTION {
   FX_BWALxx = PACK_NIBBLES(FX_BIDICLASS::kL, 0x0F),
 };
 
-enum FX_BIDINEUTRALSTATE {
+enum FX_BIDINEUTRALSTATE : uint8_t {
   FX_BNSr = 0,
   FX_BNSl,
   FX_BNSrn,
@@ -88,7 +88,11 @@ enum FX_BIDINEUTRALSTATE {
   FX_BNSna
 };
 
-enum FX_BIDINEUTRALACTION {
+enum FX_BIDINEUTRALACTION : uint16_t {
+  // For placeholders in table.
+  FX_BNAZero = 0,
+
+  // Other values.
   FX_BNAnL = PACK_NIBBLES(0, FX_BIDICLASS::kL),
   FX_BNAEn = PACK_NIBBLES(FX_BIDICLASS::kAN, 0),
   FX_BNARn = PACK_NIBBLES(FX_BIDICLASS::kR, 0),
@@ -108,7 +112,7 @@ const FX_BIDICLASS gc_FX_BidiNTypes[] = {
     FX_BIDICLASS::kPDF, FX_BIDICLASS::kON,
 };
 
-const int32_t gc_FX_BidiWeakStates[][10] = {
+const FX_BIDIWEAKSTATE gc_FX_BidiWeakStates[20][10] = {
     {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSxa,
      FX_BWSao, FX_BWSao, FX_BWSao},
     {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSxr,
@@ -151,7 +155,7 @@ const int32_t gc_FX_BidiWeakStates[][10] = {
      FX_BWSlo, FX_BWSlo, FX_BWSlet},
 };
 
-const int32_t gc_FX_BidiWeakActions[][10] = {
+const FX_BIDIWEAKACTION gc_FX_BidiWeakActions[20][10] = {
     {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
      FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
     {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
@@ -194,7 +198,7 @@ const int32_t gc_FX_BidiWeakActions[][10] = {
      FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxxL},
 };
 
-const int32_t gc_FX_BidiNeutralStates[][5] = {
+const FX_BIDINEUTRALSTATE gc_FX_BidiNeutralStates[6][5] = {
     {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
     {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
     {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
@@ -202,12 +206,13 @@ const int32_t gc_FX_BidiNeutralStates[][5] = {
     {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
     {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
 };
-const int32_t gc_FX_BidiNeutralActions[][5] = {
-    {FX_BNAIn, 0, 0, 0, 0},
-    {FX_BNAIn, 0, 0, 0, static_cast<uint32_t>(FX_BIDICLASS::kL)},
+
+const FX_BIDINEUTRALACTION gc_FX_BidiNeutralActions[6][5] = {
+    {FX_BNAIn, FX_BNAZero, FX_BNAZero, FX_BNAZero, FX_BNAZero},
+    {FX_BNAIn, FX_BNAZero, FX_BNAZero, FX_BNAZero, FX_BNAnL},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNARn},
     {FX_BNAIn, FX_BNALn, FX_BNAEn, FX_BNAEn, FX_BNALnL},
-    {FX_BNAIn, 0, 0, 0, static_cast<uint32_t>(FX_BIDICLASS::kL)},
+    {FX_BNAIn, FX_BNAZero, FX_BNAZero, FX_BNAZero, FX_BNAnL},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
 };
 
