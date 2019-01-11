@@ -95,7 +95,7 @@ class CPDF_Font {
   static bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
   static const char* GetAdobeCharName(int iBaseEncoding,
                                       const std::vector<ByteString>& charnames,
-                                      int charcode);
+                                      uint32_t charcode);
 
   virtual bool Load() = 0;
 

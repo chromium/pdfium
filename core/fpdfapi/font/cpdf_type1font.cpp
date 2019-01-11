@@ -138,7 +138,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   if (!IsEmbedded() && (m_Base14Font < 12) && m_Font.IsTTFont()) {
     if (FT_UseTTCharmap(m_Font.GetFace(), 3, 0)) {
       bool bGotOne = false;
-      for (int charcode = 0; charcode < 256; charcode++) {
+      for (uint32_t charcode = 0; charcode < 256; charcode++) {
         const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
         for (int j = 0; j < 4; j++) {
           uint16_t unicode = prefix[j] * 256 + charcode;
@@ -165,7 +165,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (m_BaseEncoding == 0)
       m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
 
-    for (int charcode = 0; charcode < 256; charcode++) {
+    for (uint32_t charcode = 0; charcode < 256; charcode++) {
       const char* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
       if (!name)
@@ -195,7 +195,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   if (bCoreText) {
     if (FontStyleIsSymbolic(m_Flags)) {
-      for (int charcode = 0; charcode < 256; charcode++) {
+      for (uint32_t charcode = 0; charcode < 256; charcode++) {
         const char* name =
             GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
         if (name) {
@@ -227,7 +227,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
 
     bool bUnicode =
         FXFT_Select_Charmap(m_Font.GetFace(), FXFT_ENCODING_UNICODE) == 0;
-    for (int charcode = 0; charcode < 256; charcode++) {
+    for (uint32_t charcode = 0; charcode < 256; charcode++) {
       const char* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
       if (!name)
@@ -320,7 +320,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
 }
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-void CPDF_Type1Font::SetExtGID(const char* name, int charcode) {
+void CPDF_Type1Font::SetExtGID(const char* name, uint32_t charcode) {
   CFStringRef name_ct = CFStringCreateWithCStringNoCopy(
       kCFAllocatorDefault, name, kCFStringEncodingASCII, kCFAllocatorNull);
   m_ExtGID[charcode] =
@@ -329,7 +329,7 @@ void CPDF_Type1Font::SetExtGID(const char* name, int charcode) {
     CFRelease(name_ct);
 }
 
-void CPDF_Type1Font::CalcExtGID(int charcode) {
+void CPDF_Type1Font::CalcExtGID(uint32_t charcode) {
   char name_glyph[256];
   FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode], name_glyph,
                       256);

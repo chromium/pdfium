@@ -349,8 +349,8 @@ bool CPDF_Font::IsStandardFont() const {
 const char* CPDF_Font::GetAdobeCharName(
     int iBaseEncoding,
     const std::vector<ByteString>& charnames,
-    int charcode) {
-  if (charcode < 0 || charcode >= 256)
+    uint32_t charcode) {
+  if (charcode >= 256)
     return nullptr;
 
   if (!charnames.empty() && !charnames[charcode].IsEmpty())

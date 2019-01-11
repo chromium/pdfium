@@ -96,7 +96,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       }
     }
     bool bToUnicode = m_pFontDict->KeyExist("ToUnicode");
-    for (int charcode = 0; charcode < 256; charcode++) {
+    for (uint32_t charcode = 0; charcode < 256; charcode++) {
       const char* name = GetAdobeCharName(baseEncoding, m_CharNames, charcode);
       if (!name) {
         m_GlyphIndex[charcode] =
@@ -163,7 +163,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     }
     if (bFound) {
       if (baseEncoding != PDFFONT_ENCODING_BUILTIN) {
-        for (int charcode = 0; charcode < 256; charcode++) {
+        for (uint32_t charcode = 0; charcode < 256; charcode++) {
           const char* name =
               GetAdobeCharName(baseEncoding, m_CharNames, charcode);
           if (name)
@@ -194,7 +194,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (FXFT_Select_Charmap(m_Font.GetFace(), FXFT_ENCODING_UNICODE) == 0) {
     bool bFound = false;
     const uint16_t* pUnicodes = PDF_UnicodesForPredefinedCharSet(baseEncoding);
-    for (int charcode = 0; charcode < 256; charcode++) {
+    for (uint32_t charcode = 0; charcode < 256; charcode++) {
       if (m_pFontFile) {
         m_Encoding.m_Unicodes[charcode] = charcode;
       } else {
