@@ -345,6 +345,7 @@ bool CPDF_Font::IsStandardFont() const {
   return AsType1Font()->IsBase14Font();
 }
 
+// static
 const char* CPDF_Font::GetAdobeCharName(
     int iBaseEncoding,
     const std::vector<ByteString>& charnames,

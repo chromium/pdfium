@@ -93,16 +93,15 @@ class CPDF_Font {
 
   static int TT2PDF(int m, FXFT_Face face);
   static bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
+  static const char* GetAdobeCharName(int iBaseEncoding,
+                                      const std::vector<ByteString>& charnames,
+                                      int charcode);
 
   virtual bool Load() = 0;
 
   void LoadUnicodeMap() const;  // logically const only.
   void LoadFontDescriptor(const CPDF_Dictionary* pDict);
   void CheckFontMetrics();
-
-  const char* GetAdobeCharName(int iBaseEncoding,
-                               const std::vector<ByteString>& charnames,
-                               int charcode);
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   CFX_Font m_Font;
