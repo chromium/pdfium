@@ -50,6 +50,10 @@ enum FX_BIDIWEAKSTATE {
 #define PACK_NIBBLES(hi, lo) \
   ((static_cast<uint32_t>(hi) << 4) + static_cast<uint32_t>(lo))
 
+// NOTE: Range of FX_BIDICLASS prevents encoding all possible values in this
+// manner, but the ones used manage to fit. Except that I suspect that 0xF
+// was intended to be used as a sentinel, even though it also means kRLE.
+// TODO(tsepez): pick a better representation.
 enum FX_BIDIWEAKACTION {
   FX_BWAIX = 0x100,
   FX_BWAXX = 0x0F,
@@ -207,7 +211,7 @@ const int32_t gc_FX_BidiNeutralActions[][5] = {
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
 };
 
-const int32_t gc_FX_BidiAddLevel[][4] = {
+const uint8_t gc_FX_BidiAddLevel[2][4] = {
     {0, 1, 2, 2},
     {1, 0, 1, 1},
 };
@@ -216,24 +220,21 @@ FX_BIDICLASS Direction(int32_t val) {
   return FX_IsOdd(val) ? FX_BIDICLASS::kR : FX_BIDICLASS::kL;
 }
 
-int32_t GetDeferredType(int32_t val) {
-  return (val >> 4) & 0x0F;
+FX_BIDICLASS GetDeferredType(int32_t val) {
+  return static_cast<FX_BIDICLASS>((val >> 4) & 0x0F);
 }
 
-int32_t GetResolvedType(int32_t val) {
-  return val & 0x0F;
+FX_BIDICLASS GetResolvedType(int32_t val) {
+  return static_cast<FX_BIDICLASS>(val & 0x0F);
 }
 
-int32_t GetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
-  iAction = (iAction >> 4) & 0xF;
-  if (iAction == (FX_BNAEn >> 4))
-    return static_cast<uint32_t>(Direction(iLevel));
-  return iAction;
+FX_BIDICLASS GetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
+  FX_BIDICLASS eClass = GetDeferredType(iAction);
+  return eClass == FX_BIDICLASS::kAN ? Direction(iLevel) : eClass;
 }
 
-int32_t GetResolvedNeutrals(int32_t iAction) {
-  iAction &= 0xF;
-  return iAction == FX_BNAIn ? 0 : iAction;
+FX_BIDICLASS GetResolvedNeutrals(int32_t iAction) {
+  return GetResolvedType(iAction);
 }
 
 void ReverseString(std::vector<CFX_Char>* chars, size_t iStart, size_t iCount) {
@@ -246,13 +247,13 @@ void ReverseString(std::vector<CFX_Char>* chars, size_t iStart, size_t iCount) {
 void SetDeferredRunClass(std::vector<CFX_Char>* chars,
                          size_t iStart,
                          size_t iCount,
-                         int32_t iValue) {
+                         FX_BIDICLASS eValue) {
   ASSERT(iStart <= chars->size());
   ASSERT(iStart >= iCount);
 
   size_t iLast = iStart - iCount;
   for (size_t i = iStart; i > iLast; --i)
-    (*chars)[i - 1].m_iBidiClass = static_cast<int16_t>(iValue);
+    (*chars)[i - 1].m_iBidiClass = eValue;
 }
 
 void SetDeferredRunLevel(std::vector<CFX_Char>* chars,
@@ -271,7 +272,7 @@ void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
   if (bWS) {
     for (size_t i = 0; i < iCount; ++i) {
       CFX_Char& cur = (*chars)[i];
-      cur.m_iBidiClass = static_cast<int16_t>(FX_GetBidiClass(cur.char_code()));
+      cur.m_iBidiClass = FX_GetBidiClass(cur.char_code());
     }
     return;
   }
@@ -279,8 +280,7 @@ void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
   for (size_t i = 0; i < iCount; ++i) {
     CFX_Char& cur = (*chars)[i];
     cur.m_iBidiClass =
-        static_cast<int16_t>(gc_FX_BidiNTypes[static_cast<size_t>(
-            FX_GetBidiClass(cur.char_code()))]);
+        gc_FX_BidiNTypes[static_cast<size_t>(FX_GetBidiClass(cur.char_code()))];
   }
 }
 
@@ -297,29 +297,28 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
   int32_t iLevelCur = 0;
   int32_t iState = FX_BWSxl;
   size_t iNum = 0;
-  int32_t iClsCur;
-  int32_t iClsRun;
-  int32_t iClsNew;
+  FX_BIDICLASS eClsCur;
+  FX_BIDICLASS eClsRun;
+  FX_BIDICLASS eClsNew;
   size_t i = 0;
   for (; i <= iCount; ++i) {
     CFX_Char* pTC = &(*chars)[i];
-    iClsCur = pTC->m_iBidiClass;
-    if (iClsCur == static_cast<int32_t>(FX_BIDICLASS::kBN)) {
+    eClsCur = pTC->m_iBidiClass;
+    if (eClsCur == FX_BIDICLASS::kBN) {
       pTC->m_iBidiLevel = (int16_t)iLevelCur;
       if (i == iCount && iLevelCur != 0) {
-        iClsCur = static_cast<int32_t>(Direction(iLevelCur));
-        pTC->m_iBidiClass = (int16_t)iClsCur;
+        eClsCur = Direction(iLevelCur);
+        pTC->m_iBidiClass = eClsCur;
       } else if (i < iCount) {
         CFX_Char* pTCNext = &(*chars)[i + 1];
         int32_t iLevelNext, iLevelNew;
-        iClsNew = pTCNext->m_iBidiClass;
+        eClsNew = pTCNext->m_iBidiClass;
         iLevelNext = pTCNext->m_iBidiLevel;
-        if (iClsNew != static_cast<int32_t>(FX_BIDICLASS::kBN) &&
-            iLevelCur != iLevelNext) {
+        if (eClsNew != FX_BIDICLASS::kBN && iLevelCur != iLevelNext) {
           iLevelNew = std::max(iLevelNext, iLevelCur);
           pTC->m_iBidiLevel = static_cast<int16_t>(iLevelNew);
-          iClsCur = static_cast<int32_t>(Direction(iLevelNew));
-          pTC->m_iBidiClass = static_cast<int16_t>(iClsCur);
+          eClsCur = Direction(iLevelNew);
+          pTC->m_iBidiClass = eClsCur;
           iLevelCur = iLevelNext;
         } else {
           if (iNum > 0)
@@ -332,30 +331,32 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
         continue;
       }
     }
-    if (iClsCur > static_cast<int32_t>(FX_BIDICLASS::kBN))
+    if (eClsCur > FX_BIDICLASS::kBN)
       continue;
 
-    int32_t iAction = gc_FX_BidiWeakActions[iState][iClsCur];
-    iClsRun = GetDeferredType(iAction);
-    if (iClsRun != FX_BWAXX && iNum > 0) {
-      SetDeferredRunClass(chars, i, iNum, iClsRun);
+    int32_t iAction =
+        gc_FX_BidiWeakActions[iState][static_cast<size_t>(eClsCur)];
+    eClsRun = GetDeferredType(iAction);
+    if (eClsRun != static_cast<FX_BIDICLASS>(0xF) && iNum > 0) {
+      SetDeferredRunClass(chars, i, iNum, eClsRun);
       iNum = 0;
     }
-    iClsNew = GetResolvedType(iAction);
-    if (iClsNew != FX_BWAXX)
-      pTC->m_iBidiClass = static_cast<int16_t>(iClsNew);
+    eClsNew = GetResolvedType(iAction);
+    if (eClsNew != static_cast<FX_BIDICLASS>(0xF))
+      pTC->m_iBidiClass = eClsNew;
     if (FX_BWAIX & iAction)
       ++iNum;
 
-    iState = gc_FX_BidiWeakStates[iState][iClsCur];
+    iState = gc_FX_BidiWeakStates[iState][static_cast<size_t>(eClsCur)];
   }
   if (iNum == 0)
     return;
 
-  iClsCur = static_cast<int32_t>(Direction(0));
-  iClsRun = GetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
-  if (iClsRun != FX_BWAXX)
-    SetDeferredRunClass(chars, i, iNum, iClsRun);
+  eClsCur = Direction(0);
+  eClsRun = GetDeferredType(
+      gc_FX_BidiWeakActions[iState][static_cast<size_t>(eClsCur)]);
+  if (eClsRun != static_cast<FX_BIDICLASS>(0xF))
+    SetDeferredRunClass(chars, i, iNum, eClsRun);
 }
 
 void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
@@ -368,58 +369,57 @@ void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
   int32_t iState = FX_BNSl;
   size_t i = 0;
   size_t iNum = 0;
-  int32_t iClsCur;
-  int32_t iClsRun;
-  int32_t iClsNew;
+  FX_BIDICLASS eClsCur;
+  FX_BIDICLASS eClsRun;
+  FX_BIDICLASS eClsNew;
   int32_t iAction;
   for (; i <= iCount; ++i) {
     pTC = &(*chars)[i];
-    iClsCur = pTC->m_iBidiClass;
-    if (iClsCur == static_cast<int32_t>(FX_BIDICLASS::kBN)) {
+    eClsCur = pTC->m_iBidiClass;
+    if (eClsCur == FX_BIDICLASS::kBN) {
       if (iNum)
         ++iNum;
       continue;
     }
-    if (iClsCur >= static_cast<int32_t>(FX_BIDICLASS::kAL))
+    if (eClsCur >= FX_BIDICLASS::kAL)
       continue;
 
-    iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
-    iClsRun = GetDeferredNeutrals(iAction, iLevel);
-    if (iClsRun != static_cast<int32_t>(FX_BIDICLASS::kN) && iNum > 0) {
-      SetDeferredRunClass(chars, i, iNum, iClsRun);
+    iAction = gc_FX_BidiNeutralActions[iState][static_cast<size_t>(eClsCur)];
+    eClsRun = GetDeferredNeutrals(iAction, iLevel);
+    if (eClsRun != FX_BIDICLASS::kN && iNum > 0) {
+      SetDeferredRunClass(chars, i, iNum, eClsRun);
       iNum = 0;
     }
 
-    iClsNew = GetResolvedNeutrals(iAction);
-    if (iClsNew != static_cast<int32_t>(FX_BIDICLASS::kN))
-      pTC->m_iBidiClass = (int16_t)iClsNew;
+    eClsNew = GetResolvedNeutrals(iAction);
+    if (eClsNew != FX_BIDICLASS::kN)
+      pTC->m_iBidiClass = eClsNew;
     if (FX_BNAIn & iAction)
       ++iNum;
 
-    iState = gc_FX_BidiNeutralStates[iState][iClsCur];
+    iState = gc_FX_BidiNeutralStates[iState][static_cast<size_t>(eClsCur)];
     iLevel = pTC->m_iBidiLevel;
   }
   if (iNum == 0)
     return;
 
-  iClsCur = static_cast<int32_t>(Direction(iLevel));
-  iClsRun =
-      GetDeferredNeutrals(gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
-  if (iClsRun != static_cast<int32_t>(FX_BIDICLASS::kN))
-    SetDeferredRunClass(chars, i, iNum, iClsRun);
+  eClsCur = Direction(iLevel);
+  eClsRun = GetDeferredNeutrals(
+      gc_FX_BidiNeutralActions[iState][static_cast<size_t>(eClsCur)], iLevel);
+  if (eClsRun != FX_BIDICLASS::kN)
+    SetDeferredRunClass(chars, i, iNum, eClsRun);
 }
 
 void ResolveImplicit(std::vector<CFX_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
-    int32_t iCls = (*chars)[i].m_iBidiClass;
-    if (iCls == static_cast<int32_t>(FX_BIDICLASS::kBN) ||
-        iCls <= static_cast<int32_t>(FX_BIDICLASS::kON) ||
-        iCls >= static_cast<int32_t>(FX_BIDICLASS::kAL)) {
+    FX_BIDICLASS eCls = (*chars)[i].m_iBidiClass;
+    if (eCls == FX_BIDICLASS::kBN || eCls <= FX_BIDICLASS::kON ||
+        eCls >= FX_BIDICLASS::kAL) {
       continue;
     }
-    int32_t iLevel = (*chars)[i].m_iBidiLevel;
-    iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
-    (*chars)[i].m_iBidiLevel = (int16_t)iLevel;
+    (*chars)[i].m_iBidiLevel +=
+        gc_FX_BidiAddLevel[FX_IsOdd((*chars)[i].m_iBidiLevel)]
+                          [static_cast<size_t>(eCls) - 1];
   }
 }
 

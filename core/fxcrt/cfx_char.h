@@ -30,10 +30,10 @@ class CFX_Char {
   int16_t vertical_scale() const { return m_iVerticalScale; }
 
   CFX_BreakType m_dwStatus = CFX_BreakType::None;
+  FX_BIDICLASS m_iBidiClass = FX_BIDICLASS::kON;
   uint8_t m_nBreakType = 0;
   uint32_t m_dwCharStyles = 0;
   int32_t m_iCharWidth = 0;
-  int16_t m_iBidiClass = 0;
   uint16_t m_iBidiLevel = 0;
   uint16_t m_iBidiPos = 0;
   uint16_t m_iBidiOrder = 0;

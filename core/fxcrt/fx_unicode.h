@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_system.h"
 
+// NOTE: Order matters, less-than/greater-than comparisons are used.
 enum class FX_BIDICLASS : uint8_t {
   kON = 0,    // Other Neutral
   kL = 1,     // Left Letter
