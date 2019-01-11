@@ -349,10 +349,8 @@ const char* CPDF_Font::GetAdobeCharName(
     int iBaseEncoding,
     const std::vector<ByteString>& charnames,
     int charcode) {
-  if (charcode < 0 || charcode >= 256) {
-    NOTREACHED();
+  if (charcode < 0 || charcode >= 256)
     return nullptr;
-  }
 
   if (!charnames.empty() && !charnames[charcode].IsEmpty())
     return charnames[charcode].c_str();
