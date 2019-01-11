@@ -243,24 +243,28 @@ void ReverseString(std::vector<CFX_Char>* chars, size_t iStart, size_t iCount) {
   std::reverse(chars->begin() + iStart, chars->begin() + iStart + iCount);
 }
 
-void SetDeferredRun(std::vector<CFX_Char>* chars,
-                    bool bClass,
-                    size_t iStart,
-                    size_t iCount,
-                    int32_t iValue) {
+void SetDeferredRunClass(std::vector<CFX_Char>* chars,
+                         size_t iStart,
+                         size_t iCount,
+                         int32_t iValue) {
   ASSERT(iStart <= chars->size());
   ASSERT(iStart >= iCount);
 
   size_t iLast = iStart - iCount;
-  for (size_t i = iStart - 1; i >= iLast; --i) {
-    if (bClass)
-      (*chars)[i].m_iBidiClass = static_cast<int16_t>(iValue);
-    else
-      (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iValue);
+  for (size_t i = iStart; i > iLast; --i)
+    (*chars)[i - 1].m_iBidiClass = static_cast<int16_t>(iValue);
+}
 
-    if (i == 0)
-      break;
-  }
+void SetDeferredRunLevel(std::vector<CFX_Char>* chars,
+                         size_t iStart,
+                         size_t iCount,
+                         int32_t iValue) {
+  ASSERT(iStart <= chars->size());
+  ASSERT(iStart >= iCount);
+
+  size_t iLast = iStart - iCount;
+  for (size_t i = iStart; i > iLast; --i)
+    (*chars)[i - 1].m_iBidiLevel = static_cast<int16_t>(iValue);
 }
 
 void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
@@ -334,7 +338,7 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
     int32_t iAction = gc_FX_BidiWeakActions[iState][iClsCur];
     iClsRun = GetDeferredType(iAction);
     if (iClsRun != FX_BWAXX && iNum > 0) {
-      SetDeferredRun(chars, true, i, iNum, iClsRun);
+      SetDeferredRunClass(chars, i, iNum, iClsRun);
       iNum = 0;
     }
     iClsNew = GetResolvedType(iAction);
@@ -351,7 +355,7 @@ void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
   iClsCur = static_cast<int32_t>(Direction(0));
   iClsRun = GetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
   if (iClsRun != FX_BWAXX)
-    SetDeferredRun(chars, true, i, iNum, iClsRun);
+    SetDeferredRunClass(chars, i, iNum, iClsRun);
 }
 
 void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
@@ -382,7 +386,7 @@ void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
     iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
     iClsRun = GetDeferredNeutrals(iAction, iLevel);
     if (iClsRun != static_cast<int32_t>(FX_BIDICLASS::kN) && iNum > 0) {
-      SetDeferredRun(chars, true, i, iNum, iClsRun);
+      SetDeferredRunClass(chars, i, iNum, iClsRun);
       iNum = 0;
     }
 
@@ -402,7 +406,7 @@ void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
   iClsRun =
       GetDeferredNeutrals(gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
   if (iClsRun != static_cast<int32_t>(FX_BIDICLASS::kN))
-    SetDeferredRun(chars, true, i, iNum, iClsRun);
+    SetDeferredRunClass(chars, i, iNum, iClsRun);
 }
 
 void ResolveImplicit(std::vector<CFX_Char>* chars, size_t iCount) {
@@ -444,7 +448,7 @@ void ResolveWhitespace(std::vector<CFX_Char>* chars, size_t iCount) {
       case FX_BIDICLASS::kS:
       case FX_BIDICLASS::kB:
         if (iNum > 0)
-          SetDeferredRun(chars, false, i, iNum, 0);
+          SetDeferredRunLevel(chars, i, iNum, 0);
 
         (*chars)[i].m_iBidiLevel = 0;
         iNum = 0;
@@ -456,7 +460,7 @@ void ResolveWhitespace(std::vector<CFX_Char>* chars, size_t iCount) {
     iLevel = (*chars)[i].m_iBidiLevel;
   }
   if (iNum > 0)
-    SetDeferredRun(chars, false, i, iNum, 0);
+    SetDeferredRunLevel(chars, i, iNum, 0);
 }
 
 size_t ReorderLevel(std::vector<CFX_Char>* chars,
