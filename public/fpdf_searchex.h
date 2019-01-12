@@ -17,7 +17,7 @@ extern "C" {
 // Get the character index in |text_page| internal character list.
 //
 //   text_page  - a text page information structure.
-//   nTextIndex - index of the text returned from |FPDFText_GetText|.
+//   nTextIndex - index of the text returned from FPDFText_GetText().
 //
 // Returns the index of the character in internal character list. -1 for error.
 FPDF_EXPORT int FPDF_CALLCONV
@@ -28,7 +28,7 @@ FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 //   text_page  - a text page information structure.
 //   nCharIndex - index of the character in internal character list.
 //
-// Returns the index of the text returned from |FPDFText_GetText|. -1 for error.
+// Returns the index of the text returned from FPDFText_GetText(). -1 for error.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetTextIndexFromCharIndex(FPDF_TEXTPAGE text_page, int nCharIndex);
 

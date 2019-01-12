@@ -59,7 +59,7 @@ typedef void* FPDF_AVAIL;
 //
 // Returns a handle to the document availability provider, or NULL on error.
 //
-// |FPDFAvail_Destroy| must be called when done with the availability provider.
+// FPDFAvail_Destroy() must be called when done with the availability provider.
 FPDF_EXPORT FPDF_AVAIL FPDF_CALLCONV FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                                       FPDF_FILEACCESS* file);
 
@@ -105,7 +105,7 @@ typedef struct _FX_DOWNLOADHINTS {
 // |PDF_DATA_ERROR| or |PDF_DATA_AVAIL|.
 // if hints is nullptr, the function just check current document availability.
 //
-// Once all data is available, call |FPDFAvail_GetDocument| to get a document
+// Once all data is available, call FPDFAvail_GetDocument() to get a document
 // handle.
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
                                                    FX_DOWNLOADHINTS* hints);
@@ -117,7 +117,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
 //
 // Returns a handle to the document.
 //
-// When |FPDFAvail_IsDocAvail| returns TRUE, call |FPDFAvail_GetDocument| to
+// When FPDFAvail_IsDocAvail() returns TRUE, call FPDFAvail_GetDocument() to
 // retrieve the document handle.
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password);
@@ -146,7 +146,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc);
 //   PDF_DATA_NOTAVAIL: Data not yet available.
 //   PDF_DATA_AVAIL: Data available.
 //
-// This function can be called only after |FPDFAvail_GetDocument| is called.
+// This function can be called only after FPDFAvail_GetDocument() is called.
 // Applications should call this function whenever new data arrives and process
 // all the generated download |hints|, if any, until this function returns
 // |PDF_DATA_ERROR| or |PDF_DATA_AVAIL|. Applications can then perform page
@@ -170,14 +170,14 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
 //   PDF_FORM_AVAIL: Data available.
 //   PDF_FORM_NOTEXIST: No form data.
 //
-// This function can be called only after |FPDFAvail_GetDocument| is called.
+// This function can be called only after FPDFAvail_GetDocument() is called.
 // The application should call this function whenever new data arrives and
 // process all the generated download |hints|, if any, until the function
 // |PDF_FORM_ERROR|, |PDF_FORM_AVAIL| or |PDF_FORM_NOTEXIST|.
 // if hints is nullptr, the function just check current form availability.
 //
 // Applications can then perform page loading. It is recommend to call
-// |FPDFDOC_InitFormFillEnvironment| when |PDF_FORM_AVAIL| is returned.
+// FPDFDOC_InitFormFillEnvironment() when |PDF_FORM_AVAIL| is returned.
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
                                                     FX_DOWNLOADHINTS* hints);
 
@@ -190,7 +190,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
 //   PDF_NOT_LINEARIZED
 //   PDF_LINEARIZATION_UNKNOWN
 //
-// |FPDFAvail_IsLinearized| will return |PDF_LINEARIZED| or |PDF_NOT_LINEARIZED|
+// FPDFAvail_IsLinearized() will return |PDF_LINEARIZED| or |PDF_NOT_LINEARIZED|
 // when we have 1k  of data. If the files size less than 1k, it returns
 // |PDF_LINEARIZATION_UNKNOWN| as there is insufficient information to determine
 // if the PDF is linearlized.
