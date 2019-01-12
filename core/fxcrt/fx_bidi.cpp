@@ -301,15 +301,14 @@ void SetDeferredRunLevel(std::vector<CFX_Char>* chars,
     (*chars)[i - 1].m_iBidiLevel = static_cast<int16_t>(iValue);
 }
 
-void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
-  if (bWS) {
-    for (size_t i = 0; i < iCount; ++i) {
-      CFX_Char& cur = (*chars)[i];
-      cur.m_iBidiClass = FX_GetBidiClass(cur.char_code());
-    }
-    return;
+void Classify(std::vector<CFX_Char>* chars, size_t iCount) {
+  for (size_t i = 0; i < iCount; ++i) {
+    CFX_Char& cur = (*chars)[i];
+    cur.m_iBidiClass = FX_GetBidiClass(cur.char_code());
   }
+}
 
+void ClassifyWithTransform(std::vector<CFX_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
     CFX_Char& cur = (*chars)[i];
     cur.m_iBidiClass =
@@ -541,12 +540,12 @@ void BidiLine(std::vector<CFX_Char>* chars, size_t iCount) {
   if (iCount < 2)
     return;
 
-  Classify(chars, iCount, false);
+  ClassifyWithTransform(chars, iCount);
   ResolveExplicit(chars, iCount);
   ResolveWeak(chars, iCount);
   ResolveNeutrals(chars, iCount);
   ResolveImplicit(chars, iCount);
-  Classify(chars, iCount, true);
+  Classify(chars, iCount);
   ResolveWhitespace(chars, iCount);
   Reorder(chars, iCount);
   Position(chars, iCount);
