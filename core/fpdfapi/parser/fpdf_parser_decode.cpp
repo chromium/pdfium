@@ -454,20 +454,20 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
-WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
+WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   int dest_pos = 0;
   WideString result;
-  if (src_len >= 2 && ((src_data[0] == 0xfe && src_data[1] == 0xff) ||
-                       (src_data[0] == 0xff && src_data[1] == 0xfe))) {
-    uint32_t max_chars = (src_len - 2) / 2;
+  if (span.size() >= 2 && ((span[0] == 0xfe && span[1] == 0xff) ||
+                           (span[0] == 0xff && span[1] == 0xfe))) {
+    uint32_t max_chars = (span.size() - 2) / 2;
     if (!max_chars)
       return result;
 
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(max_chars);
     uint16_t (*GetUnicodeFromBytes)(const uint8_t*) =
-        src_data[0] == 0xfe ? GetUnicodeFromBigEndianBytes
-                            : GetUnicodeFromLittleEndianBytes;
-    const uint8_t* unicode_str = src_data + 2;
+        span[0] == 0xfe ? GetUnicodeFromBigEndianBytes
+                        : GetUnicodeFromLittleEndianBytes;
+    const uint8_t* unicode_str = &span[2];
     for (uint32_t i = 0; i < max_chars * 2; i += 2) {
       uint16_t unicode = GetUnicodeFromBytes(unicode_str + i);
 
@@ -490,18 +490,13 @@ WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
       dest_buf[dest_pos++] = unicode;
     }
   } else {
-    pdfium::span<wchar_t> dest_buf = result.GetBuffer(src_len);
-    for (uint32_t i = 0; i < src_len; ++i)
-      dest_buf[i] = PDFDocEncoding[src_data[i]];
-    dest_pos = src_len;
+    pdfium::span<wchar_t> dest_buf = result.GetBuffer(span.size());
+    for (uint32_t i = 0; i < span.size(); ++i)
+      dest_buf[i] = PDFDocEncoding[span[i]];
+    dest_pos = span.size();
   }
   result.ReleaseBuffer(dest_pos);
   return result;
-}
-
-WideString PDF_DecodeText(const ByteString& bstr) {
-  return PDF_DecodeText(reinterpret_cast<const uint8_t*>(bstr.c_str()),
-                        bstr.GetLength());
 }
 
 ByteString PDF_EncodeText(const WideString& str) {

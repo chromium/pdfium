@@ -48,7 +48,7 @@ const CPDF_Name* CPDF_Name::AsName() const {
 }
 
 WideString CPDF_Name::GetUnicodeText() const {
-  return PDF_DecodeText(m_Name);
+  return PDF_DecodeText(m_Name.AsRawSpan());
 }
 
 bool CPDF_Name::WriteTo(IFX_ArchiveStream* archive,

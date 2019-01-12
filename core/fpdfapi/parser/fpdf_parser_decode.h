@@ -24,8 +24,7 @@ extern const uint16_t PDFDocEncoding[256];
 bool ValidateDecoderPipeline(const CPDF_Array* pDecoders);
 
 ByteString PDF_EncodeString(const ByteString& src, bool bHex);
-WideString PDF_DecodeText(const uint8_t* pData, uint32_t size);
-WideString PDF_DecodeText(const ByteString& bstr);
+WideString PDF_DecodeText(pdfium::span<const uint8_t> span);
 ByteString PDF_EncodeText(const WideString& str);
 
 std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(

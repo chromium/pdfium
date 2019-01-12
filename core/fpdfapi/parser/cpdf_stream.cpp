@@ -176,7 +176,7 @@ bool CPDF_Stream::HasFilter() const {
 WideString CPDF_Stream::GetUnicodeText() const {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
   pAcc->LoadAllDataFiltered();
-  return PDF_DecodeText(pAcc->GetData(), pAcc->GetSize());
+  return PDF_DecodeText(pAcc->GetSpan());
 }
 
 bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,

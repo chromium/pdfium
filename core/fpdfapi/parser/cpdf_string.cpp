@@ -64,7 +64,7 @@ const CPDF_String* CPDF_String::AsString() const {
 }
 
 WideString CPDF_String::GetUnicodeText() const {
-  return PDF_DecodeText(m_String);
+  return PDF_DecodeText(m_String.AsRawSpan());
 }
 
 bool CPDF_String::WriteTo(IFX_ArchiveStream* archive,

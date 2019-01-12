@@ -1052,8 +1052,9 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
     return nullptr;
 
   CPDF_NameTree name_tree(pDoc, "Dests");
+  ByteStringView name_view(name);
   return FPDFDestFromCPDFArray(
-      name_tree.LookupNamedDest(pDoc, PDF_DecodeText(ByteString(name))));
+      name_tree.LookupNamedDest(pDoc, PDF_DecodeText(name_view.span())));
 }
 
 #ifdef PDF_ENABLE_V8
@@ -1145,10 +1146,10 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
     index -= count;
     int i = 0;
-    ByteString bsName;
+    ByteStringView bsName;
     CPDF_DictionaryLocker locker(pDest);
     for (const auto& it : locker) {
-      bsName = it.first;
+      bsName = it.first.AsStringView();
       pDestObj = it.second.get();
       if (!pDestObj)
         continue;
@@ -1156,7 +1157,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
         break;
       i++;
     }
-    wsName = PDF_DecodeText(bsName);
+    wsName = PDF_DecodeText(bsName.span());
   } else {
     pDestObj = nameTree.LookupValueAndName(index, &wsName);
   }
