@@ -321,8 +321,9 @@ void Revision6_Hash(const ByteString& password,
 bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
                                                 bool bOwner,
                                                 uint8_t* key) {
-  if (!m_pEncryptDict)
-    return false;
+  ASSERT(key);
+  ASSERT(m_pEncryptDict);
+  ASSERT(m_Revision >= 5);
 
   ByteString okey = m_pEncryptDict->GetStringFor("O");
   if (okey.GetLength() < 48)
@@ -348,9 +349,6 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   }
   if (memcmp(digest, pkey, 32) != 0)
     return false;
-
-  if (!key)
-    return true;
 
   if (m_Revision >= 6) {
     Revision6_Hash(password, (const uint8_t*)pkey + 40,
@@ -404,12 +402,10 @@ bool CPDF_SecurityHandler::CheckPassword(const ByteString& password,
                                          bool bOwner,
                                          uint8_t* key,
                                          int32_t key_len) {
+  ASSERT(key);
+
   if (m_Revision >= 5)
     return AES256_CheckPassword(password, bOwner, key);
-
-  uint8_t keybuf[32];
-  if (!key)
-    key = keybuf;
 
   if (bOwner)
     return CheckOwnerPassword(password, key, key_len);
