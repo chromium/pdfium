@@ -13,6 +13,26 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace {
+
+const char kAgeUTF8[] =
+    "\xc3\xa2"
+    "ge";
+const char kAgeLatin1[] =
+    "\xe2"
+    "ge";
+
+const char kHotelUTF8[] =
+    "h"
+    "\xc3\xb4"
+    "tel";
+const char kHotelLatin1[] =
+    "h"
+    "\xf4"
+    "tel";
+
+}  // namespace
+
 class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {};
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, Unencrypted) {
@@ -109,4 +129,112 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5) {
   ASSERT_TRUE(OpenDocumentWithPassword("bug_644.pdf", "b"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
+  // The password is "age", where the 'a' has a circumflex. Encoding the
+  // password as UTF-8 does not work. TODO(bug_1194): Fix this.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r2.pdf", kAgeUTF8));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2Latin1) {
+  // The same password encoded as Latin-1 also works at revision 2.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r2.pdf", kAgeLatin1));
+  EXPECT_EQ(2, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3UTF8) {
+  // Same as OwnerPasswordVersion2UTF8 test above.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r3.pdf", kAgeUTF8));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3Latin1) {
+  // Same as OwnerPasswordVersion2Latin1 test above.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r3.pdf", kAgeLatin1));
+  EXPECT_EQ(3, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5UTF8) {
+  // The password is "age", where the 'a' has a circumflex. Encoding the
+  // password as UTF-8 works.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kAgeUTF8));
+  EXPECT_EQ(5, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
+  // And Latin-1 encoding does not work. TODO(bug_1194): Fix this.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kAgeLatin1));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
+  // Same as OwnerPasswordVersion5UTF8 test above.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kAgeUTF8));
+  EXPECT_EQ(6, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
+  // Same as OwnerPasswordVersion5Latin1 test above.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kAgeLatin1));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
+  // The password is "hotel", where the 'o' has a circumflex. Encoding the
+  // password as UTF-8 does not work. TODO(bug_1194): Fix this.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r2.pdf", kHotelUTF8));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
+  // The same password encoded as Latin-1 also works at revision 2.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r2.pdf", kHotelLatin1));
+  EXPECT_EQ(2, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
+  // Same as UserPasswordVersion2UTF8 test above.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r3.pdf", kHotelUTF8));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
+  // Same as UserPasswordVersion2Latin1 test above.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r3.pdf", kHotelLatin1));
+  EXPECT_EQ(3, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
+  // The password is "hotel", where the 'o' has a circumflex. Encoding the
+  // password as UTF-8 works.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kHotelUTF8));
+  EXPECT_EQ(5, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
+  // And Latin-1 encoding does not work. TODO(bug_1194): Fix this.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kHotelLatin1));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
+  // Same as UserPasswordVersion5UTF8 test above.
+  ASSERT_TRUE(
+      OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kHotelUTF8));
+  EXPECT_EQ(6, FPDF_GetSecurityHandlerRevision(document()));
+}
+
+TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
+  // Same as UserPasswordVersion5Latin1 test above.
+  ASSERT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kHotelLatin1));
 }
