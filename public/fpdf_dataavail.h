@@ -119,6 +119,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
 //
 // When FPDFAvail_IsDocAvail() returns TRUE, call FPDFAvail_GetDocument() to
 // retrieve the document handle.
+// See the comments for FPDF_LoadDocument() regarding the encoding for
+// |password|.
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password);
 

@@ -296,12 +296,19 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode);
 //          file_path -  Path to the PDF file (including extension).
 //          password  -  A string used as the password for the PDF file.
 //                       If no password is needed, empty or NULL can be used.
+//                       See comments below regarding the encoding.
 // Return value:
 //          A handle to the loaded document, or NULL on failure.
 // Comments:
 //          Loaded document can be closed by FPDF_CloseDocument().
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
+//
+//          The encoding for |password| can be either UTF-8 or Latin-1. PDFs,
+//          depending on the security handler revision, will only accept one or
+//          the other encoding. If |password|'s encoding and the PDF's expected
+//          encoding do not match, FPDF_LoadDocument() will automatically
+//          convert |password| to the other encoding.
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password);
 
@@ -319,6 +326,9 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password);
 //          The loaded document can be closed by FPDF_CloseDocument.
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
+//
+//          See the comments for FPDF_LoadDocument() regarding the encoding for
+//          |password|.
 // Notes:
 //          If PDFium is built with the XFA module, the application should call
 //          FPDF_LoadXFA() function after the PDF document loaded to support XFA
@@ -447,6 +457,9 @@ typedef struct _FPDF_FILEHANDLER {
 //          document is closed.
 //
 //          The loaded document can be closed with FPDF_CloseDocument.
+//
+//          See the comments for FPDF_LoadDocument() regarding the encoding for
+//          |password|.
 // Notes:
 //          If PDFium is built with the XFA module, the application should call
 //          FPDF_LoadXFA() function after the PDF document loaded to support XFA

@@ -133,8 +133,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5) {
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
   // The password is "age", where the 'a' has a circumflex. Encoding the
-  // password as UTF-8 does not work. TODO(bug_1194): Fix this.
-  ASSERT_FALSE(
+  // password as UTF-8 works.
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r2.pdf", kAgeUTF8));
 }
 
@@ -147,7 +147,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2Latin1) {
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3UTF8) {
   // Same as OwnerPasswordVersion2UTF8 test above.
-  ASSERT_FALSE(
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r3.pdf", kAgeUTF8));
 }
 
@@ -159,36 +159,35 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3Latin1) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5UTF8) {
-  // The password is "age", where the 'a' has a circumflex. Encoding the
-  // password as UTF-8 works.
+  // Same as OwnerPasswordVersion2UTF8 test above.
   ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kAgeUTF8));
   EXPECT_EQ(5, FPDF_GetSecurityHandlerRevision(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
-  // And Latin-1 encoding does not work. TODO(bug_1194): Fix this.
-  ASSERT_FALSE(
+  // Same as OwnerPasswordVersion2Latin1 test above.
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kAgeLatin1));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
-  // Same as OwnerPasswordVersion5UTF8 test above.
+  // Same as OwnerPasswordVersion2UTF8 test above.
   ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kAgeUTF8));
   EXPECT_EQ(6, FPDF_GetSecurityHandlerRevision(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
-  // Same as OwnerPasswordVersion5Latin1 test above.
-  ASSERT_FALSE(
+  // Same as OwnerPasswordVersion2Latin1 test above.
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kAgeLatin1));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
   // The password is "hotel", where the 'o' has a circumflex. Encoding the
-  // password as UTF-8 does not work. TODO(bug_1194): Fix this.
-  ASSERT_FALSE(
+  // password as UTF-8 works.
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r2.pdf", kHotelUTF8));
 }
 
@@ -201,7 +200,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
   // Same as UserPasswordVersion2UTF8 test above.
-  ASSERT_FALSE(
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r3.pdf", kHotelUTF8));
 }
 
@@ -213,28 +212,27 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
-  // The password is "hotel", where the 'o' has a circumflex. Encoding the
-  // password as UTF-8 works.
+  // Same as UserPasswordVersion2UTF8 test above.
   ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kHotelUTF8));
   EXPECT_EQ(5, FPDF_GetSecurityHandlerRevision(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
-  // And Latin-1 encoding does not work. TODO(bug_1194): Fix this.
-  ASSERT_FALSE(
+  // Same as UserPasswordVersion2Latin1 test above.
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r5.pdf", kHotelLatin1));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
-  // Same as UserPasswordVersion5UTF8 test above.
+  // Same as UserPasswordVersion2UTF8 test above.
   ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kHotelUTF8));
   EXPECT_EQ(6, FPDF_GetSecurityHandlerRevision(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
-  // Same as UserPasswordVersion5Latin1 test above.
-  ASSERT_FALSE(
+  // Same as UserPasswordVersion2Latin1 test above.
+  ASSERT_TRUE(
       OpenDocumentWithPassword("encrypted_hello_world_r6.pdf", kHotelLatin1));
 }

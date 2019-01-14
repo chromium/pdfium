@@ -53,8 +53,8 @@ class CPDF_SecurityHandler {
 
   ByteString GetUserPassword(const ByteString& owner_password) const;
   bool CheckPassword(const ByteString& user_password, bool bOwner);
+  bool CheckPasswordImpl(const ByteString& password, bool bOwner);
   bool CheckUserPassword(const ByteString& password, bool bIgnoreEncryptMeta);
-
   bool CheckOwnerPassword(const ByteString& password);
   bool AES256_CheckPassword(const ByteString& password, bool bOwner);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
