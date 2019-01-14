@@ -1062,6 +1062,23 @@ TEST(WideString, ToASCII) {
                          .ToASCII());
 }
 
+TEST(WideString, ToLatin1) {
+  const char* kResult =
+      "x"
+      "\x82"
+      "\xff"
+      "\x22"
+      "\x8c"
+      "y";
+  EXPECT_EQ(kResult, WideString(L"x"
+                                L"\u0082"
+                                L"\u00ff"
+                                L"\u0122"
+                                L"\u208c"
+                                L"y")
+                         .ToLatin1());
+}
+
 TEST(WideString, ToDefANSI) {
   EXPECT_EQ("", WideString().ToDefANSI());
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -1089,7 +1106,7 @@ TEST(WideString, ToDefANSI) {
 }
 
 TEST(WideString, FromASCII) {
-  EXPECT_EQ(L"", WideString::FromDefANSI(ByteStringView()));
+  EXPECT_EQ(L"", WideString::FromASCII(ByteStringView()));
   const wchar_t* kResult =
       L"x"
       L"\u0002"
@@ -1099,6 +1116,19 @@ TEST(WideString, FromASCII) {
                                            "\x82"
                                            "\xff"
                                            "y"));
+}
+
+TEST(WideString, FromLatin1) {
+  EXPECT_EQ(L"", WideString::FromLatin1(ByteStringView()));
+  const wchar_t* kResult =
+      L"x"
+      L"\u0082"
+      L"\u00ff"
+      L"y";
+  EXPECT_EQ(kResult, WideString::FromLatin1("x"
+                                            "\x82"
+                                            "\xff"
+                                            "y"));
 }
 
 TEST(WideString, FromDefANSI) {

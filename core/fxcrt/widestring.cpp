@@ -644,6 +644,14 @@ ByteString WideString::ToASCII() const {
   return result;
 }
 
+ByteString WideString::ToLatin1() const {
+  ByteString result;
+  result.Reserve(GetLength());
+  for (wchar_t wc : *this)
+    result.InsertAtBack(static_cast<char>(wc & 0xff));
+  return result;
+}
+
 ByteString WideString::ToDefANSI() const {
   int src_len = GetLength();
   int dest_len = FXSYS_WideCharToMultiByte(
@@ -875,6 +883,15 @@ WideString WideString::FromASCII(ByteStringView bstr) {
   result.Reserve(bstr.GetLength());
   for (char c : bstr)
     result.InsertAtBack(static_cast<wchar_t>(c & 0x7f));
+  return result;
+}
+
+// static
+WideString WideString::FromLatin1(ByteStringView bstr) {
+  WideString result;
+  result.Reserve(bstr.GetLength());
+  for (char c : bstr)
+    result.InsertAtBack(static_cast<wchar_t>(c & 0xff));
   return result;
 }
 
