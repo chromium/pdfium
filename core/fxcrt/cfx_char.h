@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/fx_linebreak.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -31,7 +32,7 @@ class CFX_Char {
 
   CFX_BreakType m_dwStatus = CFX_BreakType::None;
   FX_BIDICLASS m_iBidiClass = FX_BIDICLASS::kON;
-  uint8_t m_nBreakType = 0;
+  FX_LINEBREAKTYPE m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
   uint32_t m_dwCharStyles = 0;
   int32_t m_iCharWidth = 0;
   uint16_t m_iBidiLevel = 0;

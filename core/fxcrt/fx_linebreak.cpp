@@ -4,20 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/cfx_linebreak.h"
+#include "core/fxcrt/fx_linebreak.h"
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_unicode.h"
 
 namespace {
 
-#define FX_LBUN FX_LBT_UNKNOWN
-#define FX_LBDB FX_LBT_DIRECT_BRK
-#define FX_LBIB FX_LBT_INDIRECT_BRK
-#define FX_LBCB FX_LBT_COM_INDIRECT_BRK
-#define FX_LBCP FX_LBT_COM_PROHIBITED_BRK
-#define FX_LBPB FX_LBT_PROHIBITED_BRK
-#define FX_LBHS FX_LBT_HANGUL_SPACE_BRK
+#define FX_LBUN FX_LINEBREAKTYPE::kUNKNOWN
+#define FX_LBDB FX_LINEBREAKTYPE::kDIRECT_BRK
+#define FX_LBIB FX_LINEBREAKTYPE::kINDIRECT_BRK
+#define FX_LBCB FX_LINEBREAKTYPE::kCOM_INDIRECT_BRK
+#define FX_LBCP FX_LINEBREAKTYPE::kCOM_PROHIBITED_BRK
+#define FX_LBPB FX_LINEBREAKTYPE::kPROHIBITED_BRK
+#define FX_LBHS FX_LINEBREAKTYPE::kHANGUL_SPACE_BRK
 
 const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[38][38] = {
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,

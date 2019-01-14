@@ -10,10 +10,10 @@
 
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_bidi.h"
+#include "core/fxcrt/fx_linebreak.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/cfx_linebreak.h"
 
 namespace {
 
@@ -425,7 +425,7 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
     int32_t j = bArabic ? 0 : ttp.m_iChars - 1;
     while (j > -1 && j < ttp.m_iChars) {
       const CFX_Char* pTC = ttp.GetChar(j);
-      if (pTC->m_nBreakType == FX_LBT_DIRECT_BRK)
+      if (pTC->m_eLineBreakType == FX_LINEBREAKTYPE::kDIRECT_BRK)
         iGapChars++;
       if (!bFind || !bAllChars) {
         FX_CHARTYPE chartype = pTC->GetCharType();
@@ -458,9 +458,10 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
 
       for (int32_t j = 0; j < ttp.m_iChars && iGapChars > 0; j++, iGapChars--) {
         CFX_Char* pTC = ttp.GetChar(j);
-        if (pTC->m_nBreakType != FX_LBT_DIRECT_BRK || pTC->m_iCharWidth < 0)
+        if (pTC->m_eLineBreakType != FX_LINEBREAKTYPE::kDIRECT_BRK ||
+            pTC->m_iCharWidth < 0) {
           continue;
-
+        }
         int32_t k = iOffset / iGapChars;
         pTC->m_iCharWidth += k;
         ttp.m_iWidth += k;
@@ -551,7 +552,7 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
   FX_BREAKPROPERTY nNext;
   CFX_Char* pCur = &chars[iLength--];
   if (bAllChars)
-    pCur->m_nBreakType = FX_LBT_UNKNOWN;
+    pCur->m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
 
   nNext = FX_GetBreakProperty(pCur->char_code());
   int32_t iCharWidth = pCur->m_iCharWidth;
@@ -562,20 +563,20 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>* pChars,
     pCur = &chars[iLength];
     nCur = FX_GetBreakProperty(pCur->char_code());
     if (nNext == FX_BREAKPROPERTY::kSP)
-      eType = FX_LBT_PROHIBITED_BRK;
+      eType = FX_LINEBREAKTYPE::kPROHIBITED_BRK;
     else
       eType = GetLineBreakTypeFromPair(nCur, nNext);
     if (bAllChars)
-      pCur->m_nBreakType = static_cast<uint8_t>(eType);
+      pCur->m_eLineBreakType = eType;
     if (!bOnlyBrk) {
       if (m_bSingleLine || *pEndPos <= m_iLineWidth ||
           nCur == FX_BREAKPROPERTY::kSP) {
-        if (eType == FX_LBT_DIRECT_BRK && iBreak < 0) {
+        if (eType == FX_LINEBREAKTYPE::kDIRECT_BRK && iBreak < 0) {
           iBreak = iLength;
           iBreakPos = *pEndPos;
           if (!bAllChars)
             return iLength;
-        } else if (eType == FX_LBT_INDIRECT_BRK && iIndirect < 0) {
+        } else if (eType == FX_LINEBREAKTYPE::kINDIRECT_BRK && iIndirect < 0) {
           iIndirect = iLength;
           iIndirectPos = *pEndPos;
         }
@@ -627,7 +628,7 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
   if (iCharPos >= pdfium::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
     pNextLine->Clear();
     CFX_Char* pTC = &curChars[iCharPos - 1];
-    pTC->m_nBreakType = FX_LBT_UNKNOWN;
+    pTC->m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
     return;
   }
 
@@ -636,7 +637,7 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
   curChars.erase(curChars.begin() + iCharPos, curChars.end());
   pCurLine->m_iWidth = iEndPos;
   CFX_Char* pTC = &curChars[iCharPos - 1];
-  pTC->m_nBreakType = FX_LBT_UNKNOWN;
+  pTC->m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
   int32_t iWidth = 0;
   for (size_t i = 0; i < pNextLine->m_LineChars.size(); ++i) {
     if (pNextLine->m_LineChars[i].GetCharType() >= FX_CHARTYPE::kArabicAlef) {

@@ -16,8 +16,6 @@ jumbo_source_set("layout") {
     "cfx_breakline.h",
     "cfx_breakpiece.cpp",
     "cfx_breakpiece.h",
-    "cfx_linebreak.cpp",
-    "cfx_linebreak.h",
     "cfx_rtfbreak.cpp",
     "cfx_rtfbreak.h",
     "cfx_txtbreak.cpp",
