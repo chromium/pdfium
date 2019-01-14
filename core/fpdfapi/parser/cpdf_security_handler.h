@@ -41,13 +41,6 @@ class CPDF_SecurityHandler {
   uint32_t GetPermissions() const;
   bool IsMetadataEncrypted() const;
 
-  ByteString GetUserPassword(const ByteString& owner_password,
-                             int32_t key_len) const;
-  bool CheckPassword(const ByteString& user_password,
-                     bool bOwner,
-                     uint8_t* key,
-                     int key_len);
-
   CPDF_CryptoHandler* GetCryptoHandler() const {
     return m_pCryptoHandler.get();
   }
@@ -58,17 +51,12 @@ class CPDF_SecurityHandler {
                 int& cipher,
                 int& key_len);
 
-  bool CheckUserPassword(const ByteString& password,
-                         bool bIgnoreEncryptMeta,
-                         uint8_t* key,
-                         int32_t key_len);
+  ByteString GetUserPassword(const ByteString& owner_password) const;
+  bool CheckPassword(const ByteString& user_password, bool bOwner);
+  bool CheckUserPassword(const ByteString& password, bool bIgnoreEncryptMeta);
 
-  bool CheckOwnerPassword(const ByteString& password,
-                          uint8_t* key,
-                          int32_t key_len);
-  bool AES256_CheckPassword(const ByteString& password,
-                            bool bOwner,
-                            uint8_t* key);
+  bool CheckOwnerPassword(const ByteString& password);
+  bool AES256_CheckPassword(const ByteString& password, bool bOwner);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                           const ByteString& password,
                           bool bOwner,

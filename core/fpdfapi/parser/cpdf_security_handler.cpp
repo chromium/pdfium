@@ -115,12 +115,11 @@ bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
 }
 
 bool CPDF_SecurityHandler::CheckSecurity(const ByteString& password) {
-  if (!password.IsEmpty() &&
-      CheckPassword(password, true, m_EncryptKey, m_KeyLen)) {
+  if (!password.IsEmpty() && CheckPassword(password, true)) {
     m_bOwnerUnlocked = true;
     return true;
   }
-  return CheckPassword(password, false, m_EncryptKey, m_KeyLen);
+  return CheckPassword(password, false);
 }
 
 uint32_t CPDF_SecurityHandler::GetPermissions() const {
@@ -319,9 +318,7 @@ void Revision6_Hash(const ByteString& password,
 }
 
 bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
-                                                bool bOwner,
-                                                uint8_t* key) {
-  ASSERT(key);
+                                                bool bOwner) {
   ASSERT(m_pEncryptDict);
   ASSERT(m_Revision >= 5);
 
@@ -371,8 +368,8 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   uint8_t iv[16];
   memset(iv, 0, 16);
   CRYPT_AESSetIV(&aes, iv);
-  CRYPT_AESDecrypt(&aes, key, ekey.raw_str(), 32);
-  CRYPT_AESSetKey(&aes, key, 32, false);
+  CRYPT_AESDecrypt(&aes, m_EncryptKey, ekey.raw_str(), 32);
+  CRYPT_AESSetKey(&aes, m_EncryptKey, 32, false);
   CRYPT_AESSetIV(&aes, iv);
   ByteString perms = m_pEncryptDict->GetStringFor("Perms");
   if (perms.IsEmpty())
@@ -399,26 +396,20 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
 }
 
 bool CPDF_SecurityHandler::CheckPassword(const ByteString& password,
-                                         bool bOwner,
-                                         uint8_t* key,
-                                         int32_t key_len) {
-  ASSERT(key);
-
+                                         bool bOwner) {
   if (m_Revision >= 5)
-    return AES256_CheckPassword(password, bOwner, key);
+    return AES256_CheckPassword(password, bOwner);
 
   if (bOwner)
-    return CheckOwnerPassword(password, key, key_len);
+    return CheckOwnerPassword(password);
 
-  return CheckUserPassword(password, false, key, key_len) ||
-         CheckUserPassword(password, true, key, key_len);
+  return CheckUserPassword(password, false) ||
+         CheckUserPassword(password, true);
 }
 
 bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
-                                             bool bIgnoreEncryptMeta,
-                                             uint8_t* key,
-                                             int32_t key_len) {
-  CalcEncryptKey(m_pEncryptDict.Get(), password, key, key_len,
+                                             bool bIgnoreEncryptMeta) {
+  CalcEncryptKey(m_pEncryptDict.Get(), password, m_EncryptKey, m_KeyLen,
                  bIgnoreEncryptMeta, m_FileId);
   ByteString ukey =
       m_pEncryptDict ? m_pEncryptDict->GetStringFor("U") : ByteString();
@@ -429,36 +420,36 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   uint8_t ukeybuf[32];
   if (m_Revision == 2) {
     memcpy(ukeybuf, defpasscode, 32);
-    CRYPT_ArcFourCryptBlock(ukeybuf, 32, key, key_len);
-  } else {
-    uint8_t test[32], tmpkey[32];
-    uint32_t copy_len = sizeof(test);
-    if (copy_len > (uint32_t)ukey.GetLength()) {
-      copy_len = ukey.GetLength();
-    }
-    memset(test, 0, sizeof(test));
-    memset(tmpkey, 0, sizeof(tmpkey));
-    memcpy(test, ukey.c_str(), copy_len);
-    for (int32_t i = 19; i >= 0; i--) {
-      for (int j = 0; j < key_len; j++)
-        tmpkey[j] = key[j] ^ static_cast<uint8_t>(i);
-      CRYPT_ArcFourCryptBlock(test, 32, tmpkey, key_len);
-    }
-    CRYPT_md5_context md5;
-    CRYPT_MD5Start(&md5);
-    CRYPT_MD5Update(&md5, defpasscode, 32);
-    if (!m_FileId.IsEmpty()) {
-      CRYPT_MD5Update(&md5, (uint8_t*)m_FileId.c_str(), m_FileId.GetLength());
-    }
-    CRYPT_MD5Finish(&md5, ukeybuf);
-    return memcmp(test, ukeybuf, 16) == 0;
+    CRYPT_ArcFourCryptBlock(ukeybuf, 32, m_EncryptKey, m_KeyLen);
+    return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
   }
-  return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
+
+  uint8_t test[32];
+  uint8_t tmpkey[32];
+  uint32_t copy_len = sizeof(test);
+  if (copy_len > (uint32_t)ukey.GetLength())
+    copy_len = ukey.GetLength();
+
+  memset(test, 0, sizeof(test));
+  memset(tmpkey, 0, sizeof(tmpkey));
+  memcpy(test, ukey.c_str(), copy_len);
+  for (int32_t i = 19; i >= 0; i--) {
+    for (int j = 0; j < m_KeyLen; j++)
+      tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i);
+    CRYPT_ArcFourCryptBlock(test, 32, tmpkey, m_KeyLen);
+  }
+  CRYPT_md5_context md5;
+  CRYPT_MD5Start(&md5);
+  CRYPT_MD5Update(&md5, defpasscode, 32);
+  if (!m_FileId.IsEmpty()) {
+    CRYPT_MD5Update(&md5, (uint8_t*)m_FileId.c_str(), m_FileId.GetLength());
+  }
+  CRYPT_MD5Finish(&md5, ukeybuf);
+  return memcmp(test, ukeybuf, 16) == 0;
 }
 
 ByteString CPDF_SecurityHandler::GetUserPassword(
-    const ByteString& owner_password,
-    int32_t key_len) const {
+    const ByteString& owner_password) const {
   ByteString okey = m_pEncryptDict->GetStringFor("O");
   uint8_t passcode[32];
   for (uint32_t i = 0; i < 32; i++) {
@@ -475,10 +466,10 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   }
   uint8_t enckey[32];
   memset(enckey, 0, sizeof(enckey));
-  uint32_t copy_len = key_len;
-  if (copy_len > sizeof(digest)) {
+  uint32_t copy_len = m_KeyLen;
+  if (copy_len > sizeof(digest))
     copy_len = sizeof(digest);
-  }
+
   memcpy(enckey, digest, copy_len);
   int okeylen = okey.GetLength();
   if (okeylen > 32) {
@@ -488,14 +479,14 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   memset(okeybuf, 0, sizeof(okeybuf));
   memcpy(okeybuf, okey.c_str(), okeylen);
   if (m_Revision == 2) {
-    CRYPT_ArcFourCryptBlock(okeybuf, okeylen, enckey, key_len);
+    CRYPT_ArcFourCryptBlock(okeybuf, okeylen, enckey, m_KeyLen);
   } else {
     for (int32_t i = 19; i >= 0; i--) {
       uint8_t tempkey[32];
       memset(tempkey, 0, sizeof(tempkey));
       for (int j = 0; j < m_KeyLen; j++)
         tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i);
-      CRYPT_ArcFourCryptBlock(okeybuf, okeylen, tempkey, key_len);
+      CRYPT_ArcFourCryptBlock(okeybuf, okeylen, tempkey, m_KeyLen);
     }
   }
   int len = 32;
@@ -505,13 +496,10 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   return ByteString(okeybuf, len);
 }
 
-bool CPDF_SecurityHandler::CheckOwnerPassword(const ByteString& password,
-                                              uint8_t* key,
-                                              int32_t key_len) {
-  ByteString user_pass = GetUserPassword(password, key_len);
-  if (CheckUserPassword(user_pass, false, key, key_len))
-    return true;
-  return CheckUserPassword(user_pass, true, key, key_len);
+bool CPDF_SecurityHandler::CheckOwnerPassword(const ByteString& password) {
+  ByteString user_pass = GetUserPassword(password);
+  return CheckUserPassword(user_pass, false) ||
+         CheckUserPassword(user_pass, true);
 }
 
 bool CPDF_SecurityHandler::IsMetadataEncrypted() const {
