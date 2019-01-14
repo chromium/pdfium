@@ -25,9 +25,7 @@ jumbo_source_set("layout") {
     "../:fgas",
     "../../../core/fxcrt",
     "../../../core/fxge",
-    "../../fde",
   ]
-  allow_circular_includes_from = [ "../../fde" ]
   configs += [
     "../../../:pdfium_core_config",
     "../../:xfa_warnings",

@@ -36,7 +36,7 @@ inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that) =
     default;
 inline FDE_TEXTEDITPIECE::~FDE_TEXTEDITPIECE() = default;
 
-class CFDE_TextEditEngine {
+class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
  public:
   class Iterator {
    public:
@@ -84,7 +84,11 @@ class CFDE_TextEditEngine {
   enum class RecordOperation { kInsertRecord, kSkipRecord, kSkipNotify };
 
   CFDE_TextEditEngine();
-  ~CFDE_TextEditEngine();
+  ~CFDE_TextEditEngine() override;
+
+  // CFX_TxtBreak::Engine:
+  wchar_t GetChar(size_t idx) const override;
+  size_t GetWidthOfChar(size_t idx) override;
 
   void SetDelegate(Delegate* delegate) { delegate_ = delegate; }
   void Clear();
@@ -158,9 +162,6 @@ class CFDE_TextEditEngine {
 
   void Layout();
 
-  wchar_t GetChar(size_t idx) const;
-  // Non-const so we can force a Layout() if needed.
-  size_t GetWidthOfChar(size_t idx);
   // Non-const so we can force a Layout() if needed.
   size_t GetIndexForPoint(const CFX_PointF& point);
   // <start_idx, count>

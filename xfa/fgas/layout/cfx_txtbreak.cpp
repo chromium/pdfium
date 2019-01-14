@@ -11,8 +11,8 @@
 #include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_linebreak.h"
+#include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
 namespace {
@@ -656,12 +656,12 @@ struct FX_FORMCHAR {
   int32_t iWidth;
 };
 
-size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
+size_t CFX_TxtBreak::GetDisplayPos(const Run* pTxtRun,
                                    FXTEXT_CHARPOS* pCharPos) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
 
-  CFDE_TextEditEngine* pEngine = pTxtRun->pEdtEngine;
+  Engine* pEngine = pTxtRun->pEdtEngine;
   const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
@@ -909,12 +909,12 @@ size_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   return szCount;
 }
 
-std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
+std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const Run* pTxtRun,
                                                   bool bCharBBox) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return std::vector<CFX_RectF>();
 
-  CFDE_TextEditEngine* pEngine = pTxtRun->pEdtEngine;
+  Engine* pEngine = pTxtRun->pEdtEngine;
   const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength;
@@ -990,19 +990,10 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   return rtArray;
 }
 
-FX_TXTRUN::FX_TXTRUN()
-    : pEdtEngine(nullptr),
-      pWidths(nullptr),
-      iLength(0),
-      pFont(nullptr),
-      fFontSize(12),
-      dwStyles(0),
-      iHorizontalScale(100),
-      iVerticalScale(100),
-      dwCharStyles(0),
-      pRect(nullptr),
-      bSkipSpace(true) {}
+CFX_TxtBreak::Engine::~Engine() = default;
 
-FX_TXTRUN::~FX_TXTRUN() {}
+CFX_TxtBreak::Run::Run() = default;
 
-FX_TXTRUN::FX_TXTRUN(const FX_TXTRUN& other) = default;
+CFX_TxtBreak::Run::~Run() = default;
+
+CFX_TxtBreak::Run::Run(const CFX_TxtBreak::Run& other) = default;

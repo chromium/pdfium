@@ -22,6 +22,7 @@ jumbo_source_set("fde") {
     "../../core/fxcrt",
     "../../core/fxge",
     "../fgas",
+    "../fgas/layout",
   ]
   configs += [
     "../../:pdfium_core_config",

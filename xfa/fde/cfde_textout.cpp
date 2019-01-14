@@ -506,7 +506,7 @@ size_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
   if (pdfium::CollectionSize<int32_t>(m_CharPos) < pPiece->iChars)
     m_CharPos.resize(pPiece->iChars, FXTEXT_CHARPOS());
 
-  FX_TXTRUN tr;
+  CFX_TxtBreak::Run tr;
   tr.wsStr = m_wsText + pPiece->iStartChar;
   tr.pWidths = &m_CharWidths[pPiece->iStartChar];
   tr.iLength = pPiece->iChars;
