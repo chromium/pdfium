@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#include "core/fxcrt/fx_bidi.h"
+#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_font.h"
 #include "third_party/base/ptr_util.h"
@@ -31,6 +31,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     rtf_break.AppendChar(ch);
 
   auto chars = rtf_break.GetCurrentLineForTesting()->m_LineChars;
-  FX_BidiLine(&chars, chars.size());
+  CFX_Char::BidiLine(&chars, chars.size());
   return 0;
 }

@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/fx_bidi.h"
+#include "core/fxcrt/cfx_char.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -86,6 +86,6 @@ TEST_F(CFX_RTFBreakTest, BidiLine) {
     rtf_break->AppendChar(ch);
 
   auto chars = rtf_break->GetCurrentLineForTesting()->m_LineChars;
-  FX_BidiLine(&chars, chars.size());
+  CFX_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }

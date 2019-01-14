@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include "core/fxcrt/fx_linebreak.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -17,6 +19,8 @@ enum class CFX_BreakType : uint8_t { None = 0, Piece, Line, Paragraph, Page };
 
 class CFX_Char {
  public:
+  static void BidiLine(std::vector<CFX_Char>* chars, size_t iCount);
+
   explicit CFX_Char(uint16_t wCharCode);
   CFX_Char(uint16_t wCharCode,
            int32_t iHorizontalScale,

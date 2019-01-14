@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/fx_arabic.h"
-#include "core/fxcrt/fx_bidi.h"
 #include "core/fxcrt/fx_linebreak.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_texteditengine.h"
@@ -323,7 +323,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       if (i == 0)
         pTC->m_iBidiLevel = 1;
     }
-    FX_BidiLine(&chars, iBidiNum + 1);
+    CFX_Char::BidiLine(&chars, iBidiNum + 1);
   }
 
   if (bDone) {
