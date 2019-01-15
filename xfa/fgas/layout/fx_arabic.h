@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FX_ARABIC_H_
-#define CORE_FXCRT_FX_ARABIC_H_
+#ifndef XFA_FGAS_LAYOUT_FX_ARABIC_H_
+#define XFA_FGAS_LAYOUT_FX_ARABIC_H_
 
-#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fgas/layout/cfx_char.h"
 
 namespace pdfium {
 namespace arabic {
@@ -23,4 +23,4 @@ wchar_t GetFormChar(const CFX_Char* cur,
 
 wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda);
 
-#endif  // CORE_FXCRT_FX_ARABIC_H_
+#endif  // XFA_FGAS_LAYOUT_FX_ARABIC_H_

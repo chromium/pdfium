@@ -8,13 +8,13 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/cfx_char.h"
-#include "core/fxcrt/fx_arabic.h"
-#include "core/fxcrt/fx_linebreak.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/fx_arabic.h"
+#include "xfa/fgas/layout/fx_linebreak.h"
 
 CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
     : CFX_Break(dwLayoutStyles),

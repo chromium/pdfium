@@ -4,12 +4,12 @@
 
 #include <cstdint>
 
-#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_font.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfx_char.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

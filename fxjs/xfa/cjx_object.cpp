@@ -8,7 +8,6 @@
 
 #include <tuple>
 
-#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
@@ -22,6 +21,7 @@
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
@@ -1471,7 +1471,7 @@ void CJX_Object::ScriptSomDefaultValue(CFXJSE_Value* pValue,
   } else if (eType == XFA_Element::Integer) {
     pValue->SetInteger(FXSYS_wtoi(content.c_str()));
   } else if (eType == XFA_Element::Float || eType == XFA_Element::Decimal) {
-    CFX_Decimal decimal(content.AsStringView());
+    CFGAS_Decimal decimal(content.AsStringView());
     pValue->SetFloat((float)(double)decimal);
   } else {
     pValue->SetString(content.ToUTF8().AsStringView());

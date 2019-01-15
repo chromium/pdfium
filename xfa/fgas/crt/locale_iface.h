@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_LOCALE_IFACE_H_
-#define CORE_FXCRT_LOCALE_IFACE_H_
+#ifndef XFA_FGAS_CRT_LOCALE_IFACE_H_
+#define XFA_FGAS_CRT_LOCALE_IFACE_H_
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
@@ -67,4 +67,4 @@ class LocaleIface {
   virtual WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
 };
 
-#endif  // CORE_FXCRT_LOCALE_IFACE_H_
+#endif  // XFA_FGAS_CRT_LOCALE_IFACE_H_

@@ -8,10 +8,10 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_decimal.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/fxfa.h"
@@ -278,7 +278,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {
       pValue->SetString(content.ToUTF8().AsStringView());
     } else {
-      CFX_Decimal decimal(content.AsStringView());
+      CFGAS_Decimal decimal(content.AsStringView());
       pValue->SetFloat((float)(double)decimal);
     }
   } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
@@ -286,7 +286,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   } else if (pNode && pNode->GetElementType() == XFA_Element::Boolean) {
     pValue->SetBoolean(FXSYS_wtoi(content.c_str()) == 0 ? false : true);
   } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
-    CFX_Decimal decimal(content.AsStringView());
+    CFGAS_Decimal decimal(content.AsStringView());
     pValue->SetFloat((float)(double)decimal);
   } else {
     pValue->SetString(content.ToUTF8().AsStringView());

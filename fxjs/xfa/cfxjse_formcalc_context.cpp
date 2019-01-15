@@ -11,11 +11,9 @@
 #include <string>
 #include <utility>
 
-#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
-#include "core/fxcrt/locale_iface.h"
 #include "fxjs/xfa/cfxjse_arguments.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
@@ -24,6 +22,8 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fgas/crt/cfgas_decimal.h"
+#include "xfa/fgas/crt/locale_iface.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/cxfa_fmparser.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
@@ -1753,7 +1753,7 @@ void CFXJSE_FormCalcContext::Round(CFXJSE_Value* pThis,
     uPrecision = static_cast<uint8_t>(pdfium::clamp(dPrecision, 0.0, 12.0));
   }
 
-  CFX_Decimal decimalValue(static_cast<float>(dValue), uPrecision);
+  CFGAS_Decimal decimalValue(static_cast<float>(dValue), uPrecision);
   args.GetReturnValue()->SetDouble(decimalValue);
 }
 

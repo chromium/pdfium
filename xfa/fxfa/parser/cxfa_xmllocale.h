@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "core/fxcrt/locale_iface.h"
 #include "third_party/base/span.h"
+#include "xfa/fgas/crt/locale_iface.h"
 
 class CFX_XMLDocument;
 class CFX_XMLElement;

@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/cfx_char.h"
 #include "xfa/fgas/layout/cfx_breakpiece.h"
+#include "xfa/fgas/layout/cfx_char.h"
 
 class CFX_BreakLine {
  public:

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/cfx_decimal.h"
+#include "xfa/fgas/crt/cfgas_decimal.h"
 
 #include <algorithm>
 #include <utility>
@@ -238,22 +238,22 @@ inline void decimal_helper_truncate(uint64_t& phi,
 
 }  // namespace
 
-CFX_Decimal::CFX_Decimal() : m_uHi(0), m_uLo(0), m_uMid(0), m_uFlags(0) {}
+CFGAS_Decimal::CFGAS_Decimal() : m_uHi(0), m_uLo(0), m_uMid(0), m_uFlags(0) {}
 
-CFX_Decimal::CFX_Decimal(uint64_t val)
+CFGAS_Decimal::CFGAS_Decimal(uint64_t val)
     : m_uHi(0),
       m_uLo(static_cast<uint32_t>(val)),
       m_uMid(static_cast<uint32_t>(FXMATH_DECIMAL_RSHIFT32BIT(val))),
       m_uFlags(0) {}
 
-CFX_Decimal::CFX_Decimal(uint32_t val)
+CFGAS_Decimal::CFGAS_Decimal(uint32_t val)
     : m_uHi(0), m_uLo(static_cast<uint32_t>(val)), m_uMid(0), m_uFlags(0) {}
 
-CFX_Decimal::CFX_Decimal(uint32_t lo,
-                         uint32_t mid,
-                         uint32_t hi,
-                         bool neg,
-                         uint8_t scale)
+CFGAS_Decimal::CFGAS_Decimal(uint32_t lo,
+                             uint32_t mid,
+                             uint32_t hi,
+                             bool neg,
+                             uint8_t scale)
     : m_uHi(hi),
       m_uLo(lo),
       m_uMid(mid),
@@ -261,16 +261,16 @@ CFX_Decimal::CFX_Decimal(uint32_t lo,
           neg && IsNotZero(),
           (scale > FXMATH_DECIMAL_SCALELIMIT ? 0 : scale))) {}
 
-CFX_Decimal::CFX_Decimal(int32_t val) {
+CFGAS_Decimal::CFGAS_Decimal(int32_t val) {
   if (val >= 0) {
-    *this = CFX_Decimal(static_cast<uint32_t>(val));
+    *this = CFGAS_Decimal(static_cast<uint32_t>(val));
   } else {
-    *this = CFX_Decimal(static_cast<uint32_t>(-val));
+    *this = CFGAS_Decimal(static_cast<uint32_t>(-val));
     SetNegate();
   }
 }
 
-CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
+CFGAS_Decimal::CFGAS_Decimal(float val, uint8_t scale) {
   float newval = fabs(val);
   uint64_t phi;
   uint64_t pmid;
@@ -294,7 +294,7 @@ CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(val < 0 && IsNotZero(), scale);
 }
 
-CFX_Decimal::CFX_Decimal(WideStringView strObj) {
+CFGAS_Decimal::CFGAS_Decimal(WideStringView strObj) {
   const wchar_t* str = strObj.unterminated_c_str();
   const wchar_t* strBound = str + strObj.GetLength();
   bool pointmet = false;
@@ -329,7 +329,7 @@ CFX_Decimal::CFX_Decimal(WideStringView strObj) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(negmet && IsNotZero(), scale);
 }
 
-CFX_Decimal::operator WideString() const {
+CFGAS_Decimal::operator WideString() const {
   WideString retString;
   WideString tmpbuf;
   uint64_t phi = m_uHi;
@@ -355,7 +355,7 @@ CFX_Decimal::operator WideString() const {
   return retString;
 }
 
-CFX_Decimal::operator double() const {
+CFGAS_Decimal::operator double() const {
   double pow = (double)(1 << 16) * (1 << 16);
   double base = static_cast<double>(m_uHi) * pow * pow +
                 static_cast<double>(m_uMid) * pow + static_cast<double>(m_uLo);
@@ -364,7 +364,7 @@ CFX_Decimal::operator double() const {
   return (bNeg ? -1 : 1) * base * ::pow(10.0, -scale);
 }
 
-void CFX_Decimal::SetScale(uint8_t newscale) {
+void CFGAS_Decimal::SetScale(uint8_t newscale) {
   uint8_t oldscale = FXMATH_DECIMAL_FLAGS2SCALE(m_uFlags);
   if (newscale > oldscale) {
     uint64_t phi = m_uHi;
@@ -403,23 +403,23 @@ void CFX_Decimal::SetScale(uint8_t newscale) {
   }
 }
 
-uint8_t CFX_Decimal::GetScale() {
+uint8_t CFGAS_Decimal::GetScale() {
   return FXMATH_DECIMAL_FLAGS2SCALE(m_uFlags);
 }
 
-void CFX_Decimal::SetNegate() {
+void CFGAS_Decimal::SetNegate() {
   if (IsNotZero())
     m_uFlags ^= FXMATH_DECIMAL_NEGMASK;
 }
 
-void CFX_Decimal::Swap(CFX_Decimal& val) {
+void CFGAS_Decimal::Swap(CFGAS_Decimal& val) {
   std::swap(m_uHi, val.m_uHi);
   std::swap(m_uMid, val.m_uMid);
   std::swap(m_uLo, val.m_uLo);
   std::swap(m_uFlags, val.m_uFlags);
 }
 
-CFX_Decimal CFX_Decimal::operator*(const CFX_Decimal& val) const {
+CFGAS_Decimal CFGAS_Decimal::operator*(const CFGAS_Decimal& val) const {
   uint64_t a[3] = {m_uLo, m_uMid, m_uHi},
            b[3] = {val.m_uLo, val.m_uMid, val.m_uHi};
   uint64_t c[6];
@@ -429,13 +429,13 @@ CFX_Decimal CFX_Decimal::operator*(const CFX_Decimal& val) const {
   uint8_t scale = FXMATH_DECIMAL_FLAGS2SCALE(m_uFlags) +
                   FXMATH_DECIMAL_FLAGS2SCALE(val.m_uFlags);
   decimal_helper_shrinkintorange(c, 6, 3, scale);
-  return CFX_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
-                     static_cast<uint32_t>(c[2]), neg, scale);
+  return CFGAS_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
+                       static_cast<uint32_t>(c[2]), neg, scale);
 }
 
-CFX_Decimal CFX_Decimal::operator/(const CFX_Decimal& val) const {
+CFGAS_Decimal CFGAS_Decimal::operator/(const CFGAS_Decimal& val) const {
   if (!val.IsNotZero())
-    return CFX_Decimal();
+    return CFGAS_Decimal();
 
   bool neg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags) ^
              FXMATH_DECIMAL_FLAGS2NEG(val.m_uFlags);
@@ -456,7 +456,7 @@ CFX_Decimal CFX_Decimal::operator/(const CFX_Decimal& val) const {
 
   uint8_t minscale = scale;
   if (!IsNotZero())
-    return CFX_Decimal(0, 0, 0, 0, minscale);
+    return CFGAS_Decimal(0, 0, 0, 0, minscale);
 
   while (!a[6]) {
     decimal_helper_mul10_any(a, 7);
@@ -468,6 +468,6 @@ CFX_Decimal CFX_Decimal::operator/(const CFX_Decimal& val) const {
   decimal_helper_raw_div(a, 6, b, 3, c, 7);
   decimal_helper_shrinkintorange(c, 6, 3, scale);
   decimal_helper_truncate(c[2], c[1], c[0], scale, minscale);
-  return CFX_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
-                     static_cast<uint32_t>(c[2]), neg, scale);
+  return CFGAS_Decimal(static_cast<uint32_t>(c[0]), static_cast<uint32_t>(c[1]),
+                       static_cast<uint32_t>(c[2]), neg, scale);
 }

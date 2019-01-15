@@ -7,13 +7,13 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/cfx_char.h"
 #include "core/fxge/cfx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfx_char.h"
 
 class CFX_TxtBreakTest : public testing::Test {
  public:

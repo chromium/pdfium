@@ -116,19 +116,6 @@ jumbo_source_set("fxcrt") {
       "cfx_fileaccess_windows.h",
     ]
   }
-  if (pdf_enable_xfa) {
-    sources += [
-      "cfx_char.cpp",
-      "cfx_char.h",
-      "cfx_decimal.cpp",
-      "cfx_decimal.h",
-      "fx_arabic.cpp",
-      "fx_arabic.h",
-      "fx_linebreak.cpp",
-      "fx_linebreak.h",
-      "locale_iface.h",
-    ]
-  }
 }
 
 if (pdf_enable_xfa) {

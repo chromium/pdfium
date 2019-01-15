@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
+#include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde
@@ -1530,13 +1530,13 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
       return false;
   }
   if (iExponent || bHavePercentSymbol) {
-    CFX_Decimal decimal = CFX_Decimal(wsValue->AsStringView());
+    CFGAS_Decimal decimal = CFGAS_Decimal(wsValue->AsStringView());
     if (iExponent) {
       decimal = decimal *
-                CFX_Decimal(FXSYS_pow(10, static_cast<float>(iExponent)), 3);
+                CFGAS_Decimal(FXSYS_pow(10, static_cast<float>(iExponent)), 3);
     }
     if (bHavePercentSymbol)
-      decimal = decimal / CFX_Decimal(100);
+      decimal = decimal / CFGAS_Decimal(100);
 
     *wsValue = decimal;
   }
@@ -1875,9 +1875,9 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
   if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.')
     wsSrcNum.InsertAtFront('0');
 
-  CFX_Decimal decimal = CFX_Decimal(wsSrcNum.AsStringView());
+  CFGAS_Decimal decimal = CFGAS_Decimal(wsSrcNum.AsStringView());
   if (dwNumStyle & FX_NUMSTYLE_Percent) {
-    decimal = decimal * CFX_Decimal(100);
+    decimal = decimal * CFGAS_Decimal(100);
     wsSrcNum = decimal;
   }
 
@@ -1903,18 +1903,18 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
       threshold *= 10;
       fixed_count--;
     }
-    if (decimal != CFX_Decimal(0)) {
-      if (decimal < CFX_Decimal(threshold)) {
-        decimal = decimal * CFX_Decimal(10);
+    if (decimal != CFGAS_Decimal(0)) {
+      if (decimal < CFGAS_Decimal(threshold)) {
+        decimal = decimal * CFGAS_Decimal(10);
         exponent = -1;
-        while (decimal < CFX_Decimal(threshold)) {
-          decimal = decimal * CFX_Decimal(10);
+        while (decimal < CFGAS_Decimal(threshold)) {
+          decimal = decimal * CFGAS_Decimal(10);
           exponent -= 1;
         }
-      } else if (decimal > CFX_Decimal(threshold)) {
+      } else if (decimal > CFGAS_Decimal(threshold)) {
         threshold *= 10;
-        while (decimal > CFX_Decimal(threshold)) {
-          decimal = decimal / CFX_Decimal(10);
+        while (decimal > CFGAS_Decimal(threshold)) {
+          decimal = decimal / CFGAS_Decimal(10);
           exponent += 1;
         }
       }

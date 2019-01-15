@@ -10,8 +10,11 @@ assert(pdf_enable_xfa)
 
 jumbo_source_set("fgas") {
   sources = [
+    "crt/cfgas_decimal.cpp",
+    "crt/cfgas_decimal.h",
     "crt/cfgas_formatstring.cpp",
     "crt/cfgas_formatstring.h",
+    "crt/locale_iface.h",
     "font/cfgas_defaultfontmanager.cpp",
     "font/cfgas_defaultfontmanager.h",
     "font/cfgas_fontmgr.cpp",

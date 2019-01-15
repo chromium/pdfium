@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_CHAR_H_
-#define CORE_FXCRT_CFX_CHAR_H_
+#ifndef XFA_FGAS_LAYOUT_CFX_CHAR_H_
+#define XFA_FGAS_LAYOUT_CFX_CHAR_H_
 
 #include <stdint.h>
 
 #include <vector>
 
-#include "core/fxcrt/fx_linebreak.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "xfa/fgas/layout/fx_linebreak.h"
 
 enum class CFX_BreakType : uint8_t { None = 0, Piece, Line, Paragraph, Page };
 
@@ -52,4 +52,4 @@ class CFX_Char {
   int32_t m_iVerticalScale;
 };
 
-#endif  // CORE_FXCRT_CFX_CHAR_H_
+#endif  // XFA_FGAS_LAYOUT_CFX_CHAR_H_

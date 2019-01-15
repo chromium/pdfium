@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/locale_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "xfa/fgas/crt/locale_iface.h"
 
 class CXFA_LocaleMgr;
 

@@ -10,9 +10,9 @@
 #include <deque>
 #include <vector>
 
-#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fgas/layout/cfx_break.h"
+#include "xfa/fgas/layout/cfx_char.h"
 
 class CFGAS_GEFont;
 class FXTEXT_CHARPOS;

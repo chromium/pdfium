@@ -14,11 +14,9 @@
 #include <vector>
 
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/locale_iface.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -33,6 +31,8 @@
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
+#include "xfa/fgas/crt/cfgas_decimal.h"
+#include "xfa/fgas/crt/locale_iface.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -4922,7 +4922,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
         iTread_++;
         if (iTread_ > iTread) {
           if (iTread != -1) {
-            CFX_Decimal wsDeci = CFX_Decimal(wsValue.AsStringView());
+            CFGAS_Decimal wsDeci = CFGAS_Decimal(wsValue.AsStringView());
             wsDeci.SetScale(iTread);
             wsRet = wsDeci;
           }
