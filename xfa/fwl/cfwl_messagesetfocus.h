@@ -14,6 +14,7 @@
 class CFWL_MessageSetFocus final : public CFWL_Message {
  public:
   CFWL_MessageSetFocus(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
+  CFWL_MessageSetFocus(const CFWL_MessageSetFocus& that);
   ~CFWL_MessageSetFocus() override;
 
   // CFWL_Message

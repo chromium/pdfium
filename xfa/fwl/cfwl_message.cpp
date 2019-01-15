@@ -6,11 +6,6 @@
 
 #include "xfa/fwl/cfwl_message.h"
 
-CFWL_Message::CFWL_Message(CFWL_Message::Type type) : m_type(type) {}
-
-CFWL_Message::CFWL_Message(Type type, CFWL_Widget* pSrcTarget)
-    : m_type(type), m_pSrcTarget(pSrcTarget) {}
-
 CFWL_Message::CFWL_Message(Type type,
                            CFWL_Widget* pSrcTarget,
                            CFWL_Widget* pDstTarget)
@@ -19,7 +14,3 @@ CFWL_Message::CFWL_Message(Type type,
 CFWL_Message::CFWL_Message(const CFWL_Message& that) = default;
 
 CFWL_Message::~CFWL_Message() = default;
-
-std::unique_ptr<CFWL_Message> CFWL_Message::Clone() {
-  return nullptr;
-}
