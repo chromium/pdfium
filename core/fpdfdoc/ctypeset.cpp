@@ -276,128 +276,11 @@ CPVT_FloatRect CTypeset::Typeset() {
 void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
   ASSERT(m_pVT);
   ASSERT(m_pSection);
-  int32_t nLineHead = 0;
-  int32_t nLineTail = 0;
-  float fMaxX = 0.0f;
-  float fMaxY = 0.0f;
-  float fLineWidth = 0.0f;
-  float fBackupLineWidth = 0.0f;
-  float fLineAscent = 0.0f;
-  float fBackupLineAscent = 0.0f;
-  float fLineDescent = 0.0f;
-  float fBackupLineDescent = 0.0f;
-  int32_t nWordStartPos = 0;
-  bool bFullWord = false;
-  int32_t nLineFullWordIndex = 0;
-  int32_t nCharIndex = 0;
+
   CPVT_LineInfo line;
-  float fWordWidth = 0;
-  float fTypesetWidth =
-      std::max(m_pVT->GetPlateWidth() - m_pVT->GetLineIndent(), 0.0f);
-  int32_t nTotalWords =
-      pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
-  bool bOpened = false;
-  if (nTotalWords > 0) {
-    int32_t i = 0;
-    while (i < nTotalWords) {
-      CPVT_WordInfo* pWord = m_pSection->m_WordArray[i].get();
-      CPVT_WordInfo* pOldWord = pWord;
-      if (i > 0) {
-        pOldWord = m_pSection->m_WordArray[i - 1].get();
-      }
-      if (pWord) {
-        if (bTypeset) {
-          fLineAscent = std::max(fLineAscent, m_pVT->GetWordAscent(*pWord));
-          fLineDescent = std::min(fLineDescent, m_pVT->GetWordDescent(*pWord));
-          fWordWidth = m_pVT->GetWordWidth(*pWord);
-        } else {
-          fLineAscent =
-              std::max(fLineAscent, m_pVT->GetWordAscent(*pWord, fFontSize));
-          fLineDescent =
-              std::min(fLineDescent, m_pVT->GetWordDescent(*pWord, fFontSize));
-          fWordWidth = m_pVT->GetWordWidth(
-              pWord->nFontIndex, pWord->Word, m_pVT->GetSubWord(),
-              m_pVT->GetCharSpace(), fFontSize, pWord->fWordTail);
-        }
-        if (!bOpened) {
-          if (IsOpenStylePunctuation(pWord->Word)) {
-            bOpened = true;
-            bFullWord = true;
-          } else if (pOldWord) {
-            if (NeedDivision(pOldWord->Word, pWord->Word)) {
-              bFullWord = true;
-            }
-          }
-        } else {
-          if (!IsSpace(pWord->Word) && !IsOpenStylePunctuation(pWord->Word)) {
-            bOpened = false;
-          }
-        }
-        if (bFullWord) {
-          bFullWord = false;
-          if (nCharIndex > 0) {
-            nLineFullWordIndex++;
-          }
-          nWordStartPos = i;
-          fBackupLineWidth = fLineWidth;
-          fBackupLineAscent = fLineAscent;
-          fBackupLineDescent = fLineDescent;
-        }
-        nCharIndex++;
-      }
-      if (m_pVT->IsAutoReturn() && fTypesetWidth > 0 &&
-          fLineWidth + fWordWidth > fTypesetWidth) {
-        if (nLineFullWordIndex > 0) {
-          i = nWordStartPos;
-          fLineWidth = fBackupLineWidth;
-          fLineAscent = fBackupLineAscent;
-          fLineDescent = fBackupLineDescent;
-        }
-        if (nCharIndex == 1) {
-          fLineWidth = fWordWidth;
-          i++;
-        }
-        nLineTail = i - 1;
-        if (bTypeset) {
-          line.nBeginWordIndex = nLineHead;
-          line.nEndWordIndex = nLineTail;
-          line.nTotalWord = nLineTail - nLineHead + 1;
-          line.fLineWidth = fLineWidth;
-          line.fLineAscent = fLineAscent;
-          line.fLineDescent = fLineDescent;
-          m_pSection->AddLine(line);
-        }
-        fMaxY += (fLineAscent + m_pVT->GetLineLeading());
-        fMaxY -= fLineDescent;
-        fMaxX = std::max(fLineWidth, fMaxX);
-        nLineHead = i;
-        fLineWidth = 0.0f;
-        fLineAscent = 0.0f;
-        fLineDescent = 0.0f;
-        nCharIndex = 0;
-        nLineFullWordIndex = 0;
-        bFullWord = false;
-      } else {
-        fLineWidth += fWordWidth;
-        i++;
-      }
-    }
-    if (nLineHead <= nTotalWords - 1) {
-      nLineTail = nTotalWords - 1;
-      if (bTypeset) {
-        line.nBeginWordIndex = nLineHead;
-        line.nEndWordIndex = nLineTail;
-        line.nTotalWord = nLineTail - nLineHead + 1;
-        line.fLineWidth = fLineWidth;
-        line.fLineAscent = fLineAscent;
-        line.fLineDescent = fLineDescent;
-        m_pSection->AddLine(line);
-      }
-      fMaxY += (fLineAscent + m_pVT->GetLineLeading());
-      fMaxY -= fLineDescent;
-      fMaxX = std::max(fLineWidth, fMaxX);
-    }
-  } else {
+  if (m_pSection->m_WordArray.empty()) {
+    float fLineAscent;
+    float fLineDescent;
     if (bTypeset) {
       fLineAscent = m_pVT->GetLineAscent();
       fLineDescent = m_pVT->GetLineDescent();
@@ -416,7 +299,129 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
       line.fLineDescent = fLineDescent;
       m_pSection->AddLine(line);
     }
-    fMaxY += m_pVT->GetLineLeading() + fLineAscent - fLineDescent;
+    float fMaxY = m_pVT->GetLineLeading() + fLineAscent - fLineDescent;
+    m_rcRet = CPVT_FloatRect(0, 0, 0, fMaxY);
+    return;
+  }
+
+  int32_t nLineHead = 0;
+  int32_t nLineTail = 0;
+  float fMaxX = 0.0f;
+  float fMaxY = 0.0f;
+  float fLineWidth = 0.0f;
+  float fBackupLineWidth = 0.0f;
+  float fLineAscent = 0.0f;
+  float fBackupLineAscent = 0.0f;
+  float fLineDescent = 0.0f;
+  float fBackupLineDescent = 0.0f;
+  int32_t nWordStartPos = 0;
+  bool bFullWord = false;
+  int32_t nLineFullWordIndex = 0;
+  int32_t nCharIndex = 0;
+  float fWordWidth = 0;
+  float fTypesetWidth =
+      std::max(m_pVT->GetPlateWidth() - m_pVT->GetLineIndent(), 0.0f);
+  int32_t nTotalWords =
+      pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
+  bool bOpened = false;
+  int32_t i = 0;
+  while (i < nTotalWords) {
+    CPVT_WordInfo* pWord = m_pSection->m_WordArray[i].get();
+    CPVT_WordInfo* pOldWord = pWord;
+    if (i > 0) {
+      pOldWord = m_pSection->m_WordArray[i - 1].get();
+    }
+    if (pWord) {
+      if (bTypeset) {
+        fLineAscent = std::max(fLineAscent, m_pVT->GetWordAscent(*pWord));
+        fLineDescent = std::min(fLineDescent, m_pVT->GetWordDescent(*pWord));
+        fWordWidth = m_pVT->GetWordWidth(*pWord);
+      } else {
+        fLineAscent =
+            std::max(fLineAscent, m_pVT->GetWordAscent(*pWord, fFontSize));
+        fLineDescent =
+            std::min(fLineDescent, m_pVT->GetWordDescent(*pWord, fFontSize));
+        fWordWidth = m_pVT->GetWordWidth(
+            pWord->nFontIndex, pWord->Word, m_pVT->GetSubWord(),
+            m_pVT->GetCharSpace(), fFontSize, pWord->fWordTail);
+      }
+      if (!bOpened) {
+        if (IsOpenStylePunctuation(pWord->Word)) {
+          bOpened = true;
+          bFullWord = true;
+        } else if (pOldWord) {
+          if (NeedDivision(pOldWord->Word, pWord->Word)) {
+            bFullWord = true;
+          }
+        }
+      } else {
+        if (!IsSpace(pWord->Word) && !IsOpenStylePunctuation(pWord->Word)) {
+          bOpened = false;
+        }
+      }
+      if (bFullWord) {
+        bFullWord = false;
+        if (nCharIndex > 0) {
+          nLineFullWordIndex++;
+        }
+        nWordStartPos = i;
+        fBackupLineWidth = fLineWidth;
+        fBackupLineAscent = fLineAscent;
+        fBackupLineDescent = fLineDescent;
+      }
+      nCharIndex++;
+    }
+    if (m_pVT->IsAutoReturn() && fTypesetWidth > 0 &&
+        fLineWidth + fWordWidth > fTypesetWidth) {
+      if (nLineFullWordIndex > 0) {
+        i = nWordStartPos;
+        fLineWidth = fBackupLineWidth;
+        fLineAscent = fBackupLineAscent;
+        fLineDescent = fBackupLineDescent;
+      }
+      if (nCharIndex == 1) {
+        fLineWidth = fWordWidth;
+        i++;
+      }
+      nLineTail = i - 1;
+      if (bTypeset) {
+        line.nBeginWordIndex = nLineHead;
+        line.nEndWordIndex = nLineTail;
+        line.nTotalWord = nLineTail - nLineHead + 1;
+        line.fLineWidth = fLineWidth;
+        line.fLineAscent = fLineAscent;
+        line.fLineDescent = fLineDescent;
+        m_pSection->AddLine(line);
+      }
+      fMaxY += (fLineAscent + m_pVT->GetLineLeading());
+      fMaxY -= fLineDescent;
+      fMaxX = std::max(fLineWidth, fMaxX);
+      nLineHead = i;
+      fLineWidth = 0.0f;
+      fLineAscent = 0.0f;
+      fLineDescent = 0.0f;
+      nCharIndex = 0;
+      nLineFullWordIndex = 0;
+      bFullWord = false;
+    } else {
+      fLineWidth += fWordWidth;
+      i++;
+    }
+  }
+  if (nLineHead <= nTotalWords - 1) {
+    nLineTail = nTotalWords - 1;
+    if (bTypeset) {
+      line.nBeginWordIndex = nLineHead;
+      line.nEndWordIndex = nLineTail;
+      line.nTotalWord = nLineTail - nLineHead + 1;
+      line.fLineWidth = fLineWidth;
+      line.fLineAscent = fLineAscent;
+      line.fLineDescent = fLineDescent;
+      m_pSection->AddLine(line);
+    }
+    fMaxY += (fLineAscent + m_pVT->GetLineLeading());
+    fMaxY -= fLineDescent;
+    fMaxX = std::max(fLineWidth, fMaxX);
   }
   m_rcRet = CPVT_FloatRect(0, 0, fMaxX, fMaxY);
 }
