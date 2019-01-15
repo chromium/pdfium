@@ -44,8 +44,6 @@ jumbo_source_set("fwl") {
     "cfwl_eventtextwillchange.h",
     "cfwl_eventvalidate.cpp",
     "cfwl_eventvalidate.h",
-    "cfwl_form.cpp",
-    "cfwl_form.h",
     "cfwl_listbox.cpp",
     "cfwl_listbox.h",
     "cfwl_listitem.cpp",

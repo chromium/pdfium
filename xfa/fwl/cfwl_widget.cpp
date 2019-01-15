@@ -16,7 +16,6 @@
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
-#include "xfa/fwl/cfwl_form.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
