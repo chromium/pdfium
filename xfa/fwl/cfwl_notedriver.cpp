@@ -24,7 +24,6 @@
 
 CFWL_NoteDriver::CFWL_NoteDriver()
     : m_pNoteLoop(pdfium::MakeUnique<CFWL_NoteLoop>()) {
-  m_NoteLoopQueue.emplace_back(m_pNoteLoop.get());
 }
 
 CFWL_NoteDriver::~CFWL_NoteDriver() = default;
@@ -127,10 +126,6 @@ void CFWL_NoteDriver::UnqueueMessageAndProcess(CFWL_NoteLoop* pNoteLoop) {
     return;
 
   ProcessMessage(std::move(pMessage));
-}
-
-CFWL_NoteLoop* CFWL_NoteDriver::GetTopLoop() const {
-  return !m_NoteLoopQueue.empty() ? m_NoteLoopQueue.back().Get() : nullptr;
 }
 
 void CFWL_NoteDriver::ProcessMessage(std::unique_ptr<CFWL_Message> pMessage) {
@@ -316,19 +311,12 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 }
 
 bool CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
-  for (const auto& pNoteLoop : m_NoteLoopQueue) {
-    CFWL_Widget* pForm = pNoteLoop->GetForm();
-    if (pForm && pForm == pMessage->GetDstTarget())
-      return true;
-  }
-  return false;
+  CFWL_Widget* pForm = m_pNoteLoop->GetForm();
+  return pForm && pForm == pMessage->GetDstTarget();
 }
 
 CFWL_Widget* CFWL_NoteDriver::GetMessageForm(CFWL_Widget* pDstTarget) {
-  if (m_NoteLoopQueue.empty())
-    return nullptr;
-
-  CFWL_Widget* pMessageForm = m_NoteLoopQueue.back()->GetForm();
+  CFWL_Widget* pMessageForm = m_pNoteLoop->GetForm();
   if (!pMessageForm && pDstTarget) {
     CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
     if (!pWidgetMgr)

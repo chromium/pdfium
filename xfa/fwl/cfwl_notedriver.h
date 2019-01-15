@@ -33,8 +33,7 @@ class CFWL_NoteDriver {
   void UnregisterEventTarget(CFWL_Widget* pListener);
   void ClearEventTargets();
 
-  CFWL_NoteLoop* GetTopLoop() const;
-
+  CFWL_NoteLoop* GetTopLoop() const { return m_pNoteLoop.get(); }
   CFWL_Widget* GetFocus() const { return m_pFocus.Get(); }
   bool SetFocus(CFWL_Widget* pFocus);
   void SetGrab(CFWL_Widget* pGrab, bool bSet) {
@@ -42,10 +41,8 @@ class CFWL_NoteDriver {
   }
 
   void Run();
-
   void NotifyTargetHide(CFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(CFWL_Widget* pNoteTarget);
-
   void ProcessMessage(std::unique_ptr<CFWL_Message> pMessage);
   void QueueMessage(std::unique_ptr<CFWL_Message> pMessage);
   void UnqueueMessageAndProcess(CFWL_NoteLoop* pNoteLoop);
@@ -63,8 +60,7 @@ class CFWL_NoteDriver {
   CFWL_Widget* GetMessageForm(CFWL_Widget* pDstTarget);
 
   std::deque<std::unique_ptr<CFWL_Message>> m_NoteQueue;
-  std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
-  std::vector<UnownedPtr<CFWL_NoteLoop>> m_NoteLoopQueue;
+  std::unique_ptr<CFWL_NoteLoop> const m_pNoteLoop;
   std::map<uint32_t, std::unique_ptr<CFWL_EventTarget>> m_eventTargets;
   UnownedPtr<CFWL_Widget> m_pHover;
   UnownedPtr<CFWL_Widget> m_pFocus;
