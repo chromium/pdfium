@@ -185,3 +185,15 @@ TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
     CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
   }
 }
+
+TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
+  CreateAndInitializeFormPDF("xfa/xfa_image_edit.pdf");
+  FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
+
+  const char kFilledMD5[] = "1940568c9ba33bac5d0b1ee9558c76b3";
+  {
+    ScopedFPDFBitmap page_bitmap =
+        RenderPageWithFlags(page(), form_handle(), FPDF_ANNOT);
+    CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+  }
+}
