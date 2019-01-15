@@ -11,24 +11,16 @@
 
 class CPVT_FloatRect final : public CFX_FloatRect {
  public:
-  CPVT_FloatRect() { left = top = right = bottom = 0.0f; }
+  CPVT_FloatRect() = default;
 
   CPVT_FloatRect(float other_left,
                  float other_top,
                  float other_right,
-                 float other_bottom) {
-    left = other_left;
-    top = other_top;
-    right = other_right;
-    bottom = other_bottom;
-  }
+                 float other_bottom)
+      : CFX_FloatRect(other_left, other_bottom, other_right, other_top) {}
 
-  explicit CPVT_FloatRect(const CFX_FloatRect& rect) {
-    left = rect.left;
-    top = rect.top;
-    right = rect.right;
-    bottom = rect.bottom;
-  }
+  explicit CPVT_FloatRect(const CFX_FloatRect& rect)
+      : CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top) {}
 
   float Height() const {
     if (top > bottom)
