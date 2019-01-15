@@ -174,14 +174,12 @@ bool NeedDivision(uint16_t prevWord, uint16_t curWord) {
 }  // namespace
 
 CTypeset::CTypeset(CSection* pSection)
-    : m_rcRet(0.0f, 0.0f, 0.0f, 0.0f),
-      m_pVT(pSection->m_pVT),
-      m_pSection(pSection) {}
+    : m_pVT(pSection->m_pVT), m_pSection(pSection) {}
 
-CTypeset::~CTypeset() {}
+CTypeset::~CTypeset() = default;
 
 CPVT_FloatRect CTypeset::CharArray() {
-  m_rcRet = CPVT_FloatRect(0, 0, 0, 0);
+  m_rcRet = CPVT_FloatRect();
   if (m_pSection->m_LineArray.empty())
     return m_rcRet;
 
@@ -280,10 +278,14 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
   ASSERT(m_pSection);
   int32_t nLineHead = 0;
   int32_t nLineTail = 0;
-  float fMaxX = 0.0f, fMaxY = 0.0f;
-  float fLineWidth = 0.0f, fBackupLineWidth = 0.0f;
-  float fLineAscent = 0.0f, fBackupLineAscent = 0.0f;
-  float fLineDescent = 0.0f, fBackupLineDescent = 0.0f;
+  float fMaxX = 0.0f;
+  float fMaxY = 0.0f;
+  float fLineWidth = 0.0f;
+  float fBackupLineWidth = 0.0f;
+  float fLineAscent = 0.0f;
+  float fBackupLineAscent = 0.0f;
+  float fLineDescent = 0.0f;
+  float fBackupLineDescent = 0.0f;
   int32_t nWordStartPos = 0;
   bool bFullWord = false;
   int32_t nLineFullWordIndex = 0;
@@ -422,8 +424,7 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
 void CTypeset::OutputLines() {
   ASSERT(m_pVT);
   ASSERT(m_pSection);
-  float fMinX = 0.0f, fMinY = 0.0f, fMaxX = 0.0f, fMaxY = 0.0f;
-  float fPosX = 0.0f, fPosY = 0.0f;
+  float fMinX;
   float fLineIndent = m_pVT->GetLineIndent();
   float fTypesetWidth = std::max(m_pVT->GetPlateWidth() - fLineIndent, 0.0f);
   switch (m_pVT->GetAlignment()) {
@@ -438,12 +439,14 @@ void CTypeset::OutputLines() {
       fMinX = fTypesetWidth - m_rcRet.Width();
       break;
   }
-  fMaxX = fMinX + m_rcRet.Width();
-  fMinY = 0.0f;
-  fMaxY = m_rcRet.Height();
+  float fMaxX = fMinX + m_rcRet.Width();
+  float fMinY = 0.0f;
+  float fMaxY = m_rcRet.Height();
   int32_t nTotalLines =
       pdfium::CollectionSize<int32_t>(m_pSection->m_LineArray);
   if (nTotalLines > 0) {
+    float fPosX = 0.0f;
+    float fPosY = 0.0f;
     for (int32_t l = 0; l < nTotalLines; l++) {
       CLine* pLine = m_pSection->m_LineArray[l].get();
       switch (m_pVT->GetAlignment()) {
