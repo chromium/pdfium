@@ -76,9 +76,6 @@ bool CFX_SystemHandler::FindNativeTrueTypeFont(ByteString sFontFaceName) {
     return false;
 
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
-  if (!pFontMapper)
-    return false;
-
   pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {

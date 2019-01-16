@@ -57,7 +57,10 @@ class CFX_FontMgr {
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
   Optional<pdfium::span<const uint8_t>> GetBuiltinFont(size_t index);
+
+  // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
+
   FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
   bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
 
@@ -67,8 +70,8 @@ class CFX_FontMgr {
 
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
-  FXFT_Library m_FTLibrary;
-  bool m_FTLibrarySupportsHinting;
+  FXFT_Library m_FTLibrary = nullptr;
+  bool m_FTLibrarySupportsHinting = false;
 };
 
 #endif  // CORE_FXGE_CFX_FONTMGR_H_

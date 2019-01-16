@@ -76,8 +76,7 @@ int GetTTCIndex(const uint8_t* pFontData,
 
 }  // namespace
 
-CFX_FontMgr::CFX_FontMgr()
-    : m_FTLibrary(nullptr), m_FTLibrarySupportsHinting(false) {
+CFX_FontMgr::CFX_FontMgr() {
   m_pBuiltinMapper = pdfium::MakeUnique<CFX_FontMapper>(this);
 }
 
