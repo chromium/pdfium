@@ -59,7 +59,6 @@ class CXFA_DocumentParser {
   CXFA_Node* DataLoader(CXFA_Node* pXFANode,
                         CFX_XMLNode* pXMLDoc,
                         bool bDoTransform);
-  CXFA_Node* UserPacketLoader(CXFA_Node* pXFANode, CFX_XMLNode* pXMLDoc);
   void ParseContentNode(CXFA_Node* pXFANode,
                         CFX_XMLNode* pXMLNode,
                         XFA_PacketType ePacketID);

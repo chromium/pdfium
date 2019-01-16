@@ -23,6 +23,7 @@
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -100,14 +101,9 @@ bool ResolveAttribute(CFX_XMLElement* pElement,
   return true;
 }
 
-bool FindAttributeWithNS(CFX_XMLElement* pElement,
-                         WideStringView wsLocalAttributeName,
-                         WideStringView wsNamespaceURIPrefix,
-                         WideString& wsValue,
-                         bool bMatchNSAsPrefix = false) {
-  if (!pElement)
-    return false;
-
+Optional<WideString> FindAttributeWithNS(CFX_XMLElement* pElement,
+                                         WideStringView wsLocalAttributeName,
+                                         WideStringView wsNamespaceURIPrefix) {
   WideString wsAttrNS;
   for (auto it : pElement->GetAttributes()) {
     auto pos = it.first.Find(L':', 0);
@@ -122,24 +118,14 @@ bool FindAttributeWithNS(CFX_XMLElement* pElement,
       }
       wsNSPrefix = it.first.Left(pos.value());
     }
-
     if (!XFA_FDEExtension_ResolveNamespaceQualifier(pElement, wsNSPrefix,
-                                                    &wsAttrNS)) {
+                                                    &wsAttrNS) ||
+        wsAttrNS != wsNamespaceURIPrefix) {
       continue;
     }
-    if (bMatchNSAsPrefix) {
-      if (wsAttrNS.Left(wsNamespaceURIPrefix.GetLength()) !=
-          wsNamespaceURIPrefix) {
-        continue;
-      }
-    } else {
-      if (wsAttrNS != wsNamespaceURIPrefix)
-        continue;
-    }
-    wsValue = it.second;
-    return true;
+    return it.second;
   }
-  return false;
+  return {};
 }
 
 CFX_XMLNode* GetDataSetsFromXDP(CFX_XMLNode* pXMLDocumentNode) {
@@ -659,16 +645,8 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_User(
 
   WideString wsName = ToXMLElement(pXMLDocumentNode)->GetLocalTagName();
   pNode->JSObject()->SetCData(XFA_Attribute::Name, wsName, false, false);
-  if (!UserPacketLoader(pNode, pXMLDocumentNode))
-    return nullptr;
-
   pNode->SetXMLMappingNode(pXMLDocumentNode);
   return pNode;
-}
-
-CXFA_Node* CXFA_DocumentParser::UserPacketLoader(CXFA_Node* pXFANode,
-                                                 CFX_XMLNode* pXMLDoc) {
-  return pXFANode;
 }
 
 CXFA_Node* CXFA_DocumentParser::DataLoader(CXFA_Node* pXFANode,
@@ -842,24 +820,22 @@ void CXFA_DocumentParser::ParseDataGroup(CXFA_Node* pXFANode,
 
         XFA_Element eNodeType = XFA_Element::DataModel;
         if (eNodeType == XFA_Element::DataModel) {
-          WideString wsDataNodeAttr;
-          if (FindAttributeWithNS(pXMLElement, L"dataNode",
-                                  L"http://www.xfa.org/schema/xfa-data/1.0/",
-                                  wsDataNodeAttr)) {
-            if (wsDataNodeAttr.EqualsASCII("dataGroup"))
+          Optional<WideString> wsDataNodeAttr =
+              FindAttributeWithNS(pXMLElement, L"dataNode",
+                                  L"http://www.xfa.org/schema/xfa-data/1.0/");
+          if (wsDataNodeAttr.has_value()) {
+            if (wsDataNodeAttr.value().EqualsASCII("dataGroup"))
               eNodeType = XFA_Element::DataGroup;
-            else if (wsDataNodeAttr.EqualsASCII("dataValue"))
+            else if (wsDataNodeAttr.value().EqualsASCII("dataValue"))
               eNodeType = XFA_Element::DataValue;
           }
         }
-        WideString wsContentType;
         if (eNodeType == XFA_Element::DataModel) {
-          if (FindAttributeWithNS(pXMLElement, L"contentType",
-                                  L"http://www.xfa.org/schema/xfa-data/1.0/",
-                                  wsContentType)) {
-            if (!wsContentType.IsEmpty())
-              eNodeType = XFA_Element::DataValue;
-          }
+          Optional<WideString> wsContentType =
+              FindAttributeWithNS(pXMLElement, L"contentType",
+                                  L"http://www.xfa.org/schema/xfa-data/1.0/");
+          if (wsContentType.has_value() && !wsContentType.value().IsEmpty())
+            eNodeType = XFA_Element::DataValue;
         }
         if (eNodeType == XFA_Element::DataModel) {
           for (CFX_XMLNode* pXMLDataChild = pXMLElement->GetFirstChild();
