@@ -354,12 +354,7 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pDstWidget)
     return;
 
-  const CFWL_App* pApp = pDstWidget->GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pNoteDriver =
-      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
+  CFWL_NoteDriver* pNoteDriver = pDstWidget->GetOwnerApp()->GetNoteDriver();
   if (!pNoteDriver)
     return;
 

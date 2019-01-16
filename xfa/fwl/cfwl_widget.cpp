@@ -134,8 +134,7 @@ void CFWL_Widget::SetStates(uint32_t dwStates) {
   if (IsVisible())
     return;
 
-  CFWL_NoteDriver* noteDriver =
-      static_cast<CFWL_NoteDriver*>(GetOwnerApp()->GetNoteDriver());
+  CFWL_NoteDriver* noteDriver = GetOwnerApp()->GetNoteDriver();
   CFWL_WidgetMgr* widgetMgr = GetOwnerApp()->GetWidgetMgr();
   noteDriver->NotifyTargetHide(this);
   CFWL_Widget* child = widgetMgr->GetFirstChildWidget(this);
@@ -292,21 +291,12 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
 }
 
 void CFWL_Widget::SetGrab(bool bSet) {
-  const CFWL_App* pApp = GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
+  CFWL_NoteDriver* pDriver = GetOwnerApp()->GetNoteDriver();
   pDriver->SetGrab(this, bSet);
 }
 
 void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource) {
-  const CFWL_App* pApp = GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
   if (!pNoteDriver)
     return;
 
@@ -314,11 +304,7 @@ void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource) {
 }
 
 void CFWL_Widget::UnregisterEventTarget() {
-  const CFWL_App* pApp = GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
   if (!pNoteDriver)
     return;
 
@@ -330,13 +316,10 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
     m_pOuter->GetDelegate()->OnProcessEvent(pEvent);
     return;
   }
-  const CFWL_App* pApp = GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
   if (!pNoteDriver)
     return;
+
   pNoteDriver->SendEvent(pEvent);
 }
 
@@ -372,12 +355,7 @@ void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Widget::NotifyDriver() {
-  const CFWL_App* pApp = GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
+  CFWL_NoteDriver* pDriver = GetOwnerApp()->GetNoteDriver();
   if (!pDriver)
     return;
 
