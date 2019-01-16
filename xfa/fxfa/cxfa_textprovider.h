@@ -31,7 +31,7 @@ class CXFA_TextProvider {
   }
   ~CXFA_TextProvider() {}
 
-  CXFA_Node* GetTextNode(bool& bRichText);
+  CXFA_Node* GetTextNode(bool* bRichText);
   CXFA_Para* GetParaIfExists();
   CXFA_Font* GetFontIfExists();
   bool IsCheckButtonAndAutoWidth() const;

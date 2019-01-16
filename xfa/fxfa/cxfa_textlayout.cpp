@@ -82,7 +82,7 @@ void CXFA_TextLayout::GetTextDataNode() {
   if (!m_pTextProvider)
     return;
 
-  CXFA_Node* pNode = m_pTextProvider->GetTextNode(m_bRichText);
+  CXFA_Node* pNode = m_pTextProvider->GetTextNode(&m_bRichText);
   if (pNode && m_bRichText)
     m_textParser.Reset();
 

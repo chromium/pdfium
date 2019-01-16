@@ -37,9 +37,8 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
-  bRichText = false;
-
+CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
+  *bRichText = false;
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
     CXFA_Value* pValueNode =
         m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
@@ -52,7 +51,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
           XFA_Attribute::ContentType, false);
       if (contentType.has_value() &&
           contentType.value().EqualsASCII("text/html")) {
-        bRichText = true;
+        *bRichText = true;
       }
     }
     return pChildNode;
@@ -65,7 +64,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
          pXMLChild = pXMLChild->GetNextSibling()) {
       CFX_XMLElement* pElement = ToXMLElement(pXMLChild);
       if (pElement && XFA_RecognizeRichText(pElement)) {
-        bRichText = true;
+        *bRichText = true;
         break;
       }
     }
@@ -89,7 +88,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
           XFA_Attribute::ContentType, false);
       if (contentType.has_value() &&
           contentType.value().EqualsASCII("text/html")) {
-        bRichText = true;
+        *bRichText = true;
       }
     }
     return pChildNode;
