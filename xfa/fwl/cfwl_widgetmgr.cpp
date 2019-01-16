@@ -355,9 +355,6 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
     return;
 
   CFWL_NoteDriver* pNoteDriver = pDstWidget->GetOwnerApp()->GetNoteDriver();
-  if (!pNoteDriver)
-    return;
-
   pNoteDriver->ProcessMessage(pMessage->Clone());
 
 #if (_FX_OS_ == _FX_OS_MACOSX_)

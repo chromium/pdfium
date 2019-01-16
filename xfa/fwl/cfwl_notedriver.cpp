@@ -250,9 +250,6 @@ bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
 bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
                               CFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
-  if (!pWidgetMgr)
-    return false;
-
   CFWL_MessageMouseWheel* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
   CFWL_Widget* pDst = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_pos);
   if (!pDst)
@@ -266,8 +263,6 @@ bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
 bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
                                 CFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
-  if (!pWidgetMgr)
-    return false;
   CFWL_Widget* pTarget = nullptr;
   if (m_pGrab)
     pTarget = m_pGrab.Get();
@@ -319,9 +314,6 @@ CFWL_Widget* CFWL_NoteDriver::GetMessageForm(CFWL_Widget* pDstTarget) {
   CFWL_Widget* pMessageForm = m_pNoteLoop->GetForm();
   if (!pMessageForm && pDstTarget) {
     CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
-    if (!pWidgetMgr)
-      return nullptr;
-
     pMessageForm = pWidgetMgr->GetSystemFormWidget(pDstTarget);
   }
   return pMessageForm;

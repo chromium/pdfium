@@ -135,8 +135,9 @@ void CFWL_Widget::SetStates(uint32_t dwStates) {
     return;
 
   CFWL_NoteDriver* noteDriver = GetOwnerApp()->GetNoteDriver();
-  CFWL_WidgetMgr* widgetMgr = GetOwnerApp()->GetWidgetMgr();
   noteDriver->NotifyTargetHide(this);
+
+  CFWL_WidgetMgr* widgetMgr = GetOwnerApp()->GetWidgetMgr();
   CFWL_Widget* child = widgetMgr->GetFirstChildWidget(this);
   while (child) {
     noteDriver->NotifyTargetHide(child);
@@ -297,17 +298,11 @@ void CFWL_Widget::SetGrab(bool bSet) {
 
 void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource) {
   CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
-  if (!pNoteDriver)
-    return;
-
   pNoteDriver->RegisterEventTarget(this, pEventSource);
 }
 
 void CFWL_Widget::UnregisterEventTarget() {
   CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
-  if (!pNoteDriver)
-    return;
-
   pNoteDriver->UnregisterEventTarget(this);
 }
 
@@ -317,9 +312,6 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
     return;
   }
   CFWL_NoteDriver* pNoteDriver = GetOwnerApp()->GetNoteDriver();
-  if (!pNoteDriver)
-    return;
-
   pNoteDriver->SendEvent(pEvent);
 }
 
@@ -356,9 +348,6 @@ void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
 
 void CFWL_Widget::NotifyDriver() {
   CFWL_NoteDriver* pDriver = GetOwnerApp()->GetNoteDriver();
-  if (!pDriver)
-    return;
-
   pDriver->NotifyTargetDestroy(this);
 }
 
@@ -367,9 +356,6 @@ CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
     return CFX_SizeF();
 
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
-  if (!pWidgetMgr)
-    return CFX_SizeF();
-
   CFX_SizeF szRet(m_pProperties->m_rtWidget.left,
                   m_pProperties->m_rtWidget.top);
 
