@@ -201,7 +201,7 @@ CJS_Result CJX_EventPseudoModel::reset(
 
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (pEventParam)
-    pEventParam->Reset();
+    *pEventParam = CXFA_EventParam();
 
   return CJS_Result::Success();
 }

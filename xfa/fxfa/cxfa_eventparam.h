@@ -50,23 +50,26 @@ enum XFA_EVENTTYPE : uint8_t {
 class CXFA_EventParam {
  public:
   CXFA_EventParam();
-  ~CXFA_EventParam();
   CXFA_EventParam(const CXFA_EventParam& other);
+  ~CXFA_EventParam();
 
-  void Reset();
+  CXFA_EventParam& operator=(const CXFA_EventParam& other);
+  CXFA_EventParam& operator=(CXFA_EventParam&& other);
+
   WideString GetNewText() const;
 
+  XFA_EVENTTYPE m_eType = XFA_EVENT_Unknown;
+  bool m_bCancelAction = false;
+  bool m_bKeyDown = false;
+  bool m_bModifier = false;
+  bool m_bReenter = false;
+  bool m_bShift = false;
+  bool m_bIsFormReady = false;
+  int32_t m_iCommitKey = 0;
+  int32_t m_iSelEnd = 0;
+  int32_t m_iSelStart = 0;
   UnownedPtr<CXFA_Node> m_pTarget;
-  XFA_EVENTTYPE m_eType;
   WideString m_wsResult;
-  bool m_bCancelAction;
-  int32_t m_iCommitKey;
-  bool m_bKeyDown;
-  bool m_bModifier;
-  bool m_bReenter;
-  int32_t m_iSelEnd;
-  int32_t m_iSelStart;
-  bool m_bShift;
   WideString m_wsChange;
   WideString m_wsFullText;
   WideString m_wsNewContentType;
@@ -74,7 +77,6 @@ class CXFA_EventParam {
   WideString m_wsPrevText;
   WideString m_wsSoapFaultCode;
   WideString m_wsSoapFaultString;
-  bool m_bIsFormReady;
 };
 
 #endif  // XFA_FXFA_CXFA_EVENTPARAM_H_

@@ -8,41 +8,16 @@
 
 #include "xfa/fxfa/fxfa.h"
 
-CXFA_EventParam::CXFA_EventParam()
-    : m_pTarget(nullptr),
-      m_eType(XFA_EVENT_Unknown),
-      m_bCancelAction(false),
-      m_iCommitKey(0),
-      m_bKeyDown(false),
-      m_bModifier(false),
-      m_bReenter(false),
-      m_iSelEnd(0),
-      m_iSelStart(0),
-      m_bShift(false),
-      m_bIsFormReady(false) {}
-
-CXFA_EventParam::~CXFA_EventParam() = default;
+CXFA_EventParam::CXFA_EventParam() = default;
 
 CXFA_EventParam::CXFA_EventParam(const CXFA_EventParam& other) = default;
 
-void CXFA_EventParam::Reset() {
-  m_wsChange.clear();
-  m_bCancelAction = false;
-  m_iCommitKey = 0;
-  m_wsFullText.clear();
-  m_bKeyDown = false;
-  m_bModifier = false;
-  m_wsNewContentType.clear();
-  m_wsPrevContentType.clear();
-  m_wsPrevText.clear();
-  m_bReenter = false;
-  m_iSelEnd = 0;
-  m_iSelStart = 0;
-  m_bShift = false;
-  m_wsSoapFaultCode.clear();
-  m_wsSoapFaultString.clear();
-  m_bIsFormReady = false;
-}
+CXFA_EventParam::~CXFA_EventParam() = default;
+
+CXFA_EventParam& CXFA_EventParam::operator=(const CXFA_EventParam& other) =
+    default;
+
+CXFA_EventParam& CXFA_EventParam::operator=(CXFA_EventParam&& other) = default;
 
 WideString CXFA_EventParam::GetNewText() const {
   return m_wsPrevText.Left(m_iSelStart) + m_wsChange +
