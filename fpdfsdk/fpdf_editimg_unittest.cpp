@@ -5,6 +5,7 @@
 #include "public/fpdf_edit.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class PDFEditImgTest : public testing::Test {
@@ -68,6 +69,20 @@ TEST_F(PDFEditImgTest, NewImageObjGenerateContent) {
   FPDFBitmap_Destroy(bitmap);
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);
+}
+
+TEST_F(PDFEditImgTest, SetBitmap) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
+  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(100, 100, 0));
+
+  FPDF_PAGE page_ptr = page.get();
+  FPDF_PAGE* pages = &page_ptr;
+  EXPECT_TRUE(FPDFImageObj_SetBitmap(nullptr, 1, image.get(), bitmap.get()));
+  EXPECT_TRUE(FPDFImageObj_SetBitmap(pages, 0, image.get(), bitmap.get()));
+  EXPECT_FALSE(FPDFImageObj_SetBitmap(pages, 1, nullptr, bitmap.get()));
+  EXPECT_FALSE(FPDFImageObj_SetBitmap(pages, 1, image.get(), nullptr));
 }
 
 TEST_F(PDFEditImgTest, GetSetImageMatrix) {

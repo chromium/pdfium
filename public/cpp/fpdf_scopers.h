@@ -33,13 +33,12 @@ using ScopedFPDFDocument =
     std::unique_ptr<std::remove_pointer<FPDF_DOCUMENT>::type,
                     FPDFDocumentDeleter>;
 
+using ScopedFPDFFont =
+    std::unique_ptr<std::remove_pointer<FPDF_FONT>::type, FPDFFontDeleter>;
+
 using ScopedFPDFFormHandle =
     std::unique_ptr<std::remove_pointer<FPDF_FORMHANDLE>::type,
                     FPDFFormHandleDeleter>;
-
-using ScopedFPDFTextPage =
-    std::unique_ptr<std::remove_pointer<FPDF_TEXTPAGE>::type,
-                    FPDFTextPageDeleter>;
 
 using ScopedFPDFPage =
     std::unique_ptr<std::remove_pointer<FPDF_PAGE>::type, FPDFPageDeleter>;
@@ -48,11 +47,16 @@ using ScopedFPDFPageLink =
     std::unique_ptr<std::remove_pointer<FPDF_PAGELINK>::type,
                     FPDFPageLinkDeleter>;
 
+using ScopedFPDFPageObject =
+    std::unique_ptr<std::remove_pointer<FPDF_PAGEOBJECT>::type,
+                    FPDFPageObjectDeleter>;
+
 using ScopedFPDFStructTree =
     std::unique_ptr<std::remove_pointer<FPDF_STRUCTTREE>::type,
                     FPDFStructTreeDeleter>;
 
-using ScopedFPDFFont =
-    std::unique_ptr<std::remove_pointer<FPDF_FONT>::type, FPDFFontDeleter>;
+using ScopedFPDFTextPage =
+    std::unique_ptr<std::remove_pointer<FPDF_TEXTPAGE>::type,
+                    FPDFTextPageDeleter>;
 
 #endif  // PUBLIC_CPP_FPDF_SCOPERS_H_

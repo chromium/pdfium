@@ -31,14 +31,14 @@ struct FPDFDocumentDeleter {
   inline void operator()(FPDF_DOCUMENT doc) { FPDF_CloseDocument(doc); }
 };
 
+struct FPDFFontDeleter {
+  inline void operator()(FPDF_FONT font) { FPDFFont_Close(font); }
+};
+
 struct FPDFFormHandleDeleter {
   inline void operator()(FPDF_FORMHANDLE form) {
     FPDFDOC_ExitFormFillEnvironment(form);
   }
-};
-
-struct FPDFTextPageDeleter {
-  inline void operator()(FPDF_TEXTPAGE text) { FPDFText_ClosePage(text); }
 };
 
 struct FPDFPageDeleter {
@@ -51,12 +51,18 @@ struct FPDFPageLinkDeleter {
   }
 };
 
+struct FPDFPageObjectDeleter {
+  inline void operator()(FPDF_PAGEOBJECT object) {
+    FPDFPageObj_Destroy(object);
+  }
+};
+
 struct FPDFStructTreeDeleter {
   inline void operator()(FPDF_STRUCTTREE tree) { FPDF_StructTree_Close(tree); }
 };
 
-struct FPDFFontDeleter {
-  inline void operator()(FPDF_FONT font) { FPDFFont_Close(font); }
+struct FPDFTextPageDeleter {
+  inline void operator()(FPDF_TEXTPAGE text) { FPDFText_ClosePage(text); }
 };
 
 #endif  // PUBLIC_CPP_FPDF_DELETERS_H_

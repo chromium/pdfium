@@ -160,9 +160,6 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
                        int count,
                        FPDF_PAGEOBJECT image_object,
                        FPDF_BITMAP bitmap) {
-  if (!pages)
-    return false;
-
   CPDF_ImageObject* pImgObj = CPDFImageObjectFromFPDFPageObject(image_object);
   if (!pImgObj)
     return false;
@@ -170,11 +167,14 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   if (!bitmap)
     return false;
 
-  for (int index = 0; index < count; index++) {
-    CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
-    if (pPage)
-      pImgObj->GetImage()->ResetCache(pPage);
+  if (pages) {
+    for (int index = 0; index < count; index++) {
+      CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
+      if (pPage)
+        pImgObj->GetImage()->ResetCache(pPage);
+    }
   }
+
   RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
   pImgObj->GetImage()->SetImage(holder);
   pImgObj->CalcBoundingBox();
