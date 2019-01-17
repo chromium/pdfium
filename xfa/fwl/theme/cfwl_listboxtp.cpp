@@ -56,7 +56,7 @@ void CFWL_ListBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
                                      uint32_t dwStates,
                                      const CFX_RectF* prtItem,
-                                     void* pData,
+                                     const CFX_RectF* pData,
                                      const CFX_Matrix* pMatrix) {
   if (dwStates & CFWL_PartState_Selected) {
     pGraphics->SaveGraphState();
@@ -71,6 +71,6 @@ void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
     pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
     pGraphics->RestoreGraphState();
   }
-  if (dwStates & CFWL_PartState_Focused && pData)
-    DrawFocus(pGraphics, static_cast<CFX_RectF*>(pData), pMatrix);
+  if ((dwStates & CFWL_PartState_Focused) && pData)
+    DrawFocus(pGraphics, pData, pMatrix);
 }
