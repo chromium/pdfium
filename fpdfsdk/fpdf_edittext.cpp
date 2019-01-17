@@ -22,6 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -329,8 +330,8 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
   // TODO(npm): Maybe use FT_Get_CID_Registry_Ordering_Supplement to get the
   // CIDSystemInfo
   CPDF_Dictionary* pCIDSystemInfo = pDoc->NewIndirect<CPDF_Dictionary>();
-  pCIDSystemInfo->SetNewFor<CPDF_Name>("Registry", "Adobe");
-  pCIDSystemInfo->SetNewFor<CPDF_Name>("Ordering", "Identity");
+  pCIDSystemInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
+  pCIDSystemInfo->SetNewFor<CPDF_String>("Ordering", "Identity", false);
   pCIDSystemInfo->SetNewFor<CPDF_Number>("Supplement", 0);
   pCIDFont->SetFor("CIDSystemInfo", pCIDSystemInfo->MakeReference(pDoc));
 

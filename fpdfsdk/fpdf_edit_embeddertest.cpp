@@ -2244,15 +2244,13 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   const CPDF_Dictionary* cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
-  // TODO(https://crbug.com/pdfium/1224): These two dictionary values should be
-  // strings, not names.
   const CPDF_Object* registry = cidinfo_dict->GetObjectFor("Registry");
   ASSERT_TRUE(registry);
-  EXPECT_EQ(CPDF_Object::kName, registry->GetType());
+  EXPECT_EQ(CPDF_Object::kString, registry->GetType());
   EXPECT_EQ("Adobe", registry->GetString());
   const CPDF_Object* ordering = cidinfo_dict->GetObjectFor("Ordering");
   ASSERT_TRUE(ordering);
-  EXPECT_EQ(CPDF_Object::kName, ordering->GetType());
+  EXPECT_EQ(CPDF_Object::kString, ordering->GetType());
   EXPECT_EQ("Identity", ordering->GetString());
   EXPECT_EQ(0, cidinfo_dict->GetNumberFor("Supplement"));
   CheckFontDescriptor(cidfont_dict, FPDF_FONT_TYPE1, false, false, span);
