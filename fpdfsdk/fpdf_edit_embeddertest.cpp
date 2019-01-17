@@ -197,7 +197,7 @@ TEST_F(FPDFEditEmbedderTest, EmptyCreation) {
 TEST_F(FPDFEditEmbedderTest, RasterizePDF) {
   const char kAllBlackMd5sum[] = "5708fc5c4a8bd0abde99c8e8f0390615";
 
-  // Get the bitmap for the original document/
+  // Get the bitmap for the original document.
   ScopedFPDFBitmap orig_bitmap;
   {
     EXPECT_TRUE(OpenDocument("black.pdf"));

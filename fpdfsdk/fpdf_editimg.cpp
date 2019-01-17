@@ -60,27 +60,27 @@ CPDF_ImageObject* CPDFImageObjectFromFPDFPageObject(
 }
 
 bool LoadJpegHelper(FPDF_PAGE* pages,
-                    int nCount,
+                    int count,
                     FPDF_PAGEOBJECT image_object,
-                    FPDF_FILEACCESS* fileAccess,
-                    bool inlineJpeg) {
+                    FPDF_FILEACCESS* file_access,
+                    bool inline_jpeg) {
   CPDF_ImageObject* pImgObj = CPDFImageObjectFromFPDFPageObject(image_object);
   if (!pImgObj)
     return false;
 
-  if (!fileAccess)
+  if (!file_access)
     return false;
 
   if (pages) {
-    for (int index = 0; index < nCount; index++) {
+    for (int index = 0; index < count; index++) {
       CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
       if (pPage)
         pImgObj->GetImage()->ResetCache(pPage);
     }
   }
 
-  RetainPtr<IFX_SeekableReadStream> pFile = MakeSeekableReadStream(fileAccess);
-  if (inlineJpeg)
+  RetainPtr<IFX_SeekableReadStream> pFile = MakeSeekableReadStream(file_access);
+  if (inline_jpeg)
     pImgObj->GetImage()->SetJpegImageInline(pFile);
   else
     pImgObj->GetImage()->SetJpegImage(pFile);
@@ -105,18 +105,18 @@ FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
-                          int nCount,
+                          int count,
                           FPDF_PAGEOBJECT image_object,
-                          FPDF_FILEACCESS* fileAccess) {
-  return LoadJpegHelper(pages, nCount, image_object, fileAccess, false);
+                          FPDF_FILEACCESS* file_access) {
+  return LoadJpegHelper(pages, count, image_object, file_access, false);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
-                                int nCount,
+                                int count,
                                 FPDF_PAGEOBJECT image_object,
-                                FPDF_FILEACCESS* fileAccess) {
-  return LoadJpegHelper(pages, nCount, image_object, fileAccess, true);
+                                FPDF_FILEACCESS* file_access) {
+  return LoadJpegHelper(pages, count, image_object, file_access, true);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -157,7 +157,7 @@ FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
-                       int nCount,
+                       int count,
                        FPDF_PAGEOBJECT image_object,
                        FPDF_BITMAP bitmap) {
   if (!pages)
@@ -170,7 +170,7 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   if (!bitmap)
     return false;
 
-  for (int index = 0; index < nCount; index++) {
+  for (int index = 0; index < count; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)
       pImgObj->GetImage()->ResetCache(pPage);
