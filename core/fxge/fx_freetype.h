@@ -93,7 +93,7 @@ using FXFT_Outline_Funcs = FT_Outline_Funcs;
 #define FXFT_Get_Name_Index(face, name) \
   FT_Get_Name_Index(static_cast<FT_Face>(face), const_cast<char*>(name))
 #define FXFT_Has_Glyph_Names(face) \
-  (static_cast<FT_Face>(face)->face_flags & FT_FACE_FLAG_GLYPH_NAMES)
+  ((static_cast<FT_Face>(face)->face_flags) & FT_FACE_FLAG_GLYPH_NAMES)
 #define FXFT_Get_Postscript_Name(face) \
   FT_Get_Postscript_Name(static_cast<FT_Face>(face))
 #define FXFT_Load_Sfnt_Table(face, tag, offset, buffer, length) \
@@ -105,21 +105,21 @@ using FXFT_Outline_Funcs = FT_Outline_Funcs;
 #define FXFT_Clear_Face_External_Stream(face) \
   (static_cast<FT_Face>(face)->face_flags &= ~FT_FACE_FLAG_EXTERNAL_STREAM)
 #define FXFT_Get_Face_External_Stream(face) \
-  (static_cast<FT_Face>(face)->face_flags & FT_FACE_FLAG_EXTERNAL_STREAM)
+  ((static_cast<FT_Face>(face)->face_flags) & FT_FACE_FLAG_EXTERNAL_STREAM)
 #define FXFT_Is_Face_TT_OT(face) \
-  (static_cast<FT_Face>(face)->face_flags & FT_FACE_FLAG_SFNT)
+  ((static_cast<FT_Face>(face)->face_flags) & FT_FACE_FLAG_SFNT)
 #define FXFT_Is_Face_Tricky(face) \
-  (static_cast<FT_Face>(face)->face_flags & FXFT_FACE_FLAG_TRICKY)
+  ((static_cast<FT_Face>(face)->face_flags) & FXFT_FACE_FLAG_TRICKY)
 #define FXFT_Is_Face_fixedwidth(face) \
-  (static_cast<FT_Face>(face)->face_flags & FT_FACE_FLAG_FIXED_WIDTH)
+  ((static_cast<FT_Face>(face)->face_flags) & FT_FACE_FLAG_FIXED_WIDTH)
 #define FXFT_Get_Face_Stream_Base(face) static_cast<FT_Face>(face)->stream->base
 #define FXFT_Get_Face_Stream_Size(face) static_cast<FT_Face>(face)->stream->size
 #define FXFT_Get_Face_Family_Name(face) static_cast<FT_Face>(face)->family_name
 #define FXFT_Get_Face_Style_Name(face) static_cast<FT_Face>(face)->style_name
 #define FXFT_Is_Face_Italic(face) \
-  (static_cast<FT_Face>(face)->style_flags & FT_STYLE_FLAG_ITALIC)
+  ((static_cast<FT_Face>(face)->style_flags) & FT_STYLE_FLAG_ITALIC)
 #define FXFT_Is_Face_Bold(face) \
-  (static_cast<FT_Face>(face)->style_flags & FT_STYLE_FLAG_BOLD)
+  ((static_cast<FT_Face>(face)->style_flags) & FT_STYLE_FLAG_BOLD)
 #define FXFT_Get_Face_Charmaps(face) static_cast<FT_Face>(face)->charmaps
 #define FXFT_Get_Glyph_HoriBearingX(face) \
   static_cast<FT_Face>(face)->glyph->metrics.horiBearingX
@@ -148,14 +148,15 @@ using FXFT_Outline_Funcs = FT_Outline_Funcs;
 #define FXFT_Get_Face_Descender(face) static_cast<FT_Face>(face)->descender
 #define FXFT_Get_Glyph_HoriAdvance(face) \
   static_cast<FT_Face>(face)->glyph->metrics.horiAdvance
-#define FXFT_Get_MM_Axis(var, index) &static_cast<FT_MM_Var*>(var)->axis[index]
-#define FXFT_Get_MM_Axis_Min(axis) static_cast<FT_Var_Axis*>(axis)->minimum
-#define FXFT_Get_MM_Axis_Max(axis) static_cast<FT_Var_Axis*>(axis)->maximum
-#define FXFT_Get_MM_Axis_Def(axis) static_cast<FT_Var_Axis*>(axis)->def
+#define FXFT_Get_MM_Axis(var, index) static_cast<FT_MM_Var*>(var)->axis[index]
+#define FXFT_Get_MM_Axis_Min(axis) (axis).minimum
+#define FXFT_Get_MM_Axis_Max(axis) (axis).maximum
+#define FXFT_Get_MM_Axis_Def(axis) (axis).def
 #define FXFT_Free(face, p)                                                     \
   static_cast<FT_Face>(face)->memory->free(static_cast<FT_Face>(face)->memory, \
                                            p)
-#define FXFT_Get_Glyph_Outline(face) &static_cast<FT_Face>(face)->glyph->outline
+#define FXFT_Get_Glyph_Outline(face) \
+  &(static_cast<FT_Face>(face)->glyph->outline)
 #define FXFT_Render_Glyph(face, mode)                \
   FT_Render_Glyph(static_cast<FT_Face>(face)->glyph, \
                   static_cast<enum FT_Render_Mode_>(mode))
@@ -167,13 +168,12 @@ using FXFT_Outline_Funcs = FT_Outline_Funcs;
 #define FXFT_Set_Transform(face, m, d) \
   FT_Set_Transform(static_cast<FT_Face>(face), m, d)
 #define FXFT_Outline_Embolden(outline, s) FT_Outline_Embolden(outline, s)
-#define FXFT_Get_Glyph_Bitmap(face) &static_cast<FT_Face>(face)->glyph->bitmap
-#define FXFT_Get_Bitmap_Width(bitmap) static_cast<FT_Bitmap*>(bitmap)->width
-#define FXFT_Get_Bitmap_Rows(bitmap) static_cast<FT_Bitmap*>(bitmap)->rows
-#define FXFT_Get_Bitmap_PixelMode(bitmap) \
-  static_cast<FT_Bitmap*>(bitmap)->pixel_mode
-#define FXFT_Get_Bitmap_Pitch(bitmap) static_cast<FT_Bitmap*>(bitmap)->pitch
-#define FXFT_Get_Bitmap_Buffer(bitmap) static_cast<FT_Bitmap*>(bitmap)->buffer
+#define FXFT_Get_Glyph_Bitmap(face) static_cast<FT_Face>(face)->glyph->bitmap
+#define FXFT_Get_Bitmap_Width(bitmap) (bitmap).width
+#define FXFT_Get_Bitmap_Rows(bitmap) (bitmap).rows
+#define FXFT_Get_Bitmap_PixelMode(bitmap) (bitmap).pixel_mode
+#define FXFT_Get_Bitmap_Pitch(bitmap) (bitmap).pitch
+#define FXFT_Get_Bitmap_Buffer(bitmap) (bitmap).buffer
 #define FXFT_Get_Glyph_BitmapLeft(face) \
   static_cast<FT_Face>(face)->glyph->bitmap_left
 #define FXFT_Get_Glyph_BitmapTop(face) \
