@@ -17,7 +17,7 @@ class CFWL_PushButtonTP final : public CFWL_WidgetTP {
   ~CFWL_PushButtonTP() override;
 
   // CFWL_WidgetTP
-  void DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 
  private:
   struct PBThemeData {

@@ -21,18 +21,21 @@ class IFWL_ThemeProvider {
  public:
   virtual ~IFWL_ThemeProvider() = default;
 
-  virtual void DrawBackground(CFWL_ThemeBackground* pParams) = 0;
-  virtual void DrawText(CFWL_ThemeText* pParams) = 0;
-  virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF* pRect) = 0;
+  virtual void DrawBackground(const CFWL_ThemeBackground& pParams) = 0;
+  virtual void DrawText(const CFWL_ThemeText& pParams) = 0;
+  virtual void CalcTextRect(const CFWL_ThemeText& pParams,
+                            CFX_RectF* pRect) = 0;
   virtual float GetCXBorderSize() const = 0;
   virtual float GetCYBorderSize() const = 0;
-  virtual CFX_RectF GetUIMargin(CFWL_ThemePart* pThemePart) const = 0;
-  virtual float GetFontSize(CFWL_ThemePart* pThemePart) const = 0;
-  virtual RetainPtr<CFGAS_GEFont> GetFont(CFWL_ThemePart* pThemePart) const = 0;
-  virtual float GetLineHeight(CFWL_ThemePart* pThemePart) const = 0;
+  virtual CFX_RectF GetUIMargin(const CFWL_ThemePart& pThemePart) const = 0;
+  virtual float GetFontSize(const CFWL_ThemePart& pThemePart) const = 0;
+  virtual RetainPtr<CFGAS_GEFont> GetFont(
+      const CFWL_ThemePart& pThemePart) const = 0;
+  virtual float GetLineHeight(const CFWL_ThemePart& pThemePart) const = 0;
   virtual float GetScrollBarWidth() const = 0;
-  virtual FX_COLORREF GetTextColor(CFWL_ThemePart* pThemePart) const = 0;
-  virtual CFX_SizeF GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const = 0;
+  virtual FX_COLORREF GetTextColor(const CFWL_ThemePart& pThemePart) const = 0;
+  virtual CFX_SizeF GetSpaceAboveBelow(
+      const CFWL_ThemePart& pThemePart) const = 0;
 };
 
 #endif  // XFA_FWL_IFWL_THEMEPROVIDER_H_

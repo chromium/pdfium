@@ -16,7 +16,7 @@ class CFWL_BarcodeTP final : public CFWL_WidgetTP {
   ~CFWL_BarcodeTP() override;
 
   // CFWL_WidgetTP
-  void DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 };
 
 #endif  // XFA_FWL_THEME_CFWL_BARCODETP_H_

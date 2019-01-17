@@ -29,8 +29,8 @@ class CFWL_WidgetTP {
   virtual void Initialize();
   virtual void Finalize();
 
-  virtual void DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void DrawText(CFWL_ThemeText* pParams);
+  virtual void DrawBackground(const CFWL_ThemeBackground& pParams);
+  virtual void DrawText(const CFWL_ThemeText& pParams);
 
   const RetainPtr<CFGAS_GEFont>& GetFont() const;
 
@@ -50,31 +50,31 @@ class CFWL_WidgetTP {
 
   void DrawBorder(CXFA_Graphics* pGraphics,
                   const CFX_RectF* pRect,
-                  CFX_Matrix* pMatrix);
+                  const CFX_Matrix* pMatrix);
   void FillBackground(CXFA_Graphics* pGraphics,
                       const CFX_RectF* pRect,
-                      CFX_Matrix* pMatrix);
+                      const CFX_Matrix* pMatrix);
   void FillSolidRect(CXFA_Graphics* pGraphics,
                      FX_ARGB fillColor,
                      const CFX_RectF* pRect,
-                     CFX_Matrix* pMatrix);
+                     const CFX_Matrix* pMatrix);
   void DrawFocus(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
-                 CFX_Matrix* pMatrix);
+                 const CFX_Matrix* pMatrix);
   void DrawArrow(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  FWLTHEME_DIRECTION eDict,
                  FX_ARGB argSign,
-                 CFX_Matrix* pMatrix);
+                 const CFX_Matrix* pMatrix);
   void DrawBtn(CXFA_Graphics* pGraphics,
                const CFX_RectF* pRect,
                FWLTHEME_STATE eState,
-               CFX_Matrix* pMatrix);
+               const CFX_Matrix* pMatrix);
   void DrawArrowBtn(CXFA_Graphics* pGraphics,
                     const CFX_RectF* pRect,
                     FWLTHEME_DIRECTION eDict,
                     FWLTHEME_STATE eState,
-                    CFX_Matrix* pMatrix);
+                    const CFX_Matrix* pMatrix);
 
   uint32_t m_dwRefCount;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;

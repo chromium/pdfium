@@ -342,7 +342,7 @@ void CFWL_Edit::DrawTextBk(CXFA_Graphics* pGraphics,
   param.m_pGraphics = pGraphics;
   param.m_matrix = *pMatrix;
   param.m_rtPart = m_rtClient;
-  pTheme->DrawBackground(&param);
+  pTheme->DrawBackground(param);
 
   if (!IsShowScrollBar(true) || !IsShowScrollBar(false))
     return;
@@ -355,7 +355,7 @@ void CFWL_Edit::DrawTextBk(CXFA_Graphics* pGraphics,
   param.m_bStaticBackground = true;
   param.m_bMaximize = true;
   param.m_rtPart = rtStatic;
-  pTheme->DrawBackground(&param);
+  pTheme->DrawBackground(param);
 }
 
 void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
@@ -398,7 +398,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
     param.m_pWidget = this;
     param.m_iPart = CFWL_Part::Background;
     param.m_pPath = &path;
-    pTheme->DrawBackground(&param);
+    pTheme->DrawBackground(param);
   }
 
   CFX_RenderDevice* pRenderDev = pGraphics->GetRenderDevice();
@@ -426,7 +426,7 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
     param.m_pWidget = this;
     param.m_iPart = CFWL_Part::CombTextLine;
     param.m_pPath = &path;
-    pTheme->DrawBackground(&param);
+    pTheme->DrawBackground(param);
   }
   pGraphics->RestoreGraphState();
 }
@@ -530,19 +530,19 @@ void CFWL_Edit::UpdateEditParams() {
     m_fFontSize = FWLTHEME_CAPACITY_FontSize;
     return;
   }
-  m_fFontSize = theme->GetFontSize(&part);
+  m_fFontSize = theme->GetFontSize(part);
 
-  RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(&part);
+  RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(part);
   if (!pFont)
     return;
 
   m_EdtEngine.SetFont(pFont);
-  m_EdtEngine.SetFontColor(theme->GetTextColor(&part));
+  m_EdtEngine.SetFontColor(theme->GetTextColor(part));
   m_EdtEngine.SetFontSize(m_fFontSize);
-  m_EdtEngine.SetLineSpace(theme->GetLineHeight(&part));
+  m_EdtEngine.SetLineSpace(theme->GetLineHeight(part));
   m_EdtEngine.SetTabWidth(m_fFontSize);
   m_EdtEngine.SetVisibleLineCount(m_rtEngine.height /
-                                  theme->GetLineHeight(&part));
+                                  theme->GetLineHeight(part));
 }
 
 void CFWL_Edit::UpdateEditLayout() {
@@ -607,7 +607,7 @@ void CFWL_Edit::UpdateVAlignment() {
     CFWL_ThemePart part;
     part.m_pWidget = this;
 
-    CFX_SizeF pSpace = theme->GetSpaceAboveBelow(&part);
+    CFX_SizeF pSpace = theme->GetSpaceAboveBelow(part);
     fSpaceAbove = pSpace.width >= 0.1f ? pSpace.width : 0.0f;
     fSpaceBelow = pSpace.height >= 0.1f ? pSpace.height : 0.0f;
   }
@@ -741,12 +741,12 @@ void CFWL_Edit::Layout() {
   CFWL_ThemePart part;
   if (!m_pOuter) {
     part.m_pWidget = this;
-    CFX_RectF pUIMargin = theme->GetUIMargin(&part);
+    CFX_RectF pUIMargin = theme->GetUIMargin(part);
     m_rtEngine.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                        pUIMargin.height);
   } else if (m_pOuter->GetClassID() == FWL_Type::DateTimePicker) {
     part.m_pWidget = m_pOuter;
-    CFX_RectF pUIMargin = theme->GetUIMargin(&part);
+    CFX_RectF pUIMargin = theme->GetUIMargin(part);
     m_rtEngine.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                        pUIMargin.height);
   }

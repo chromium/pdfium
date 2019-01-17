@@ -21,15 +21,15 @@ CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
 
 CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
 
-void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  switch (pParams->m_iPart) {
+void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
+  switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
-      DrawBorder(pParams->m_pGraphics.Get(), &pParams->m_rtPart,
-                 &pParams->m_matrix);
+      DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
+                 &pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
-      CFX_RectF& rect = pParams->m_rtPart;
+      const CFX_RectF& rect = pParams.m_rtPart;
       float fRight = rect.right();
       float fBottom = rect.bottom();
 
@@ -52,7 +52,7 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       CXFA_GEPath fillPath;
       fillPath.AddSubpath(&strokePath);
 
-      CXFA_Graphics* pGraphics = pParams->m_pGraphics.Get();
+      CXFA_Graphics* pGraphics = pParams.m_pGraphics.Get();
       pGraphics->SaveGraphState();
 
       CFX_RectF rtInner(rect);
@@ -61,22 +61,22 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      int32_t iColor = GetColorID(pParams->m_dwStates);
+      int32_t iColor = GetColorID(pParams.m_dwStates);
       FillSolidRect(pGraphics, m_pThemeData->clrEnd[iColor], &rect,
-                    &pParams->m_matrix);
+                    &pParams.m_matrix);
 
       pGraphics->SetStrokeColor(CXFA_GEColor(m_pThemeData->clrBorder[iColor]));
-      pGraphics->StrokePath(&strokePath, &pParams->m_matrix);
+      pGraphics->StrokePath(&strokePath, &pParams.m_matrix);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
       pGraphics->SetFillColor(CXFA_GEColor(m_pThemeData->clrFill[iColor]));
-      pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams->m_matrix);
-      if (pParams->m_dwStates & CFWL_PartState_Focused) {
+      pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams.m_matrix);
+      if (pParams.m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);
-        DrawFocus(pGraphics, &rtInner, &pParams->m_matrix);
+        DrawFocus(pGraphics, &rtInner, &pParams.m_matrix);
       }
       pGraphics->RestoreGraphState();
       break;

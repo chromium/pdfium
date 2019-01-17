@@ -76,12 +76,13 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   param.m_matrix.Concat(matrix);
   param.m_rtPart = m_rtClient;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
+
     param.m_pRtData = &m_rtFocus;
-  pTheme->DrawBackground(&param);
+  pTheme->DrawBackground(param);
 
   param.m_iPart = CFWL_Part::CheckBox;
   param.m_rtPart = m_rtBox;
-  pTheme->DrawBackground(&param);
+  pTheme->DrawBackground(param);
 
   CFWL_ThemeText textParam;
   textParam.m_pWidget = this;
@@ -93,7 +94,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   textParam.m_wsText = L"Check box";
   textParam.m_dwTTOStyles = m_TTOStyles;
   textParam.m_iTTOAlign = m_iTTOAlign;
-  pTheme->DrawText(&textParam);
+  pTheme->DrawText(textParam);
 }
 
 void CFWL_CheckBox::SetCheckState(int32_t iCheck) {

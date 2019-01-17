@@ -14,14 +14,11 @@ CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
 
-void CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (!pParams)
-    return;
-
-  switch (pParams->m_iPart) {
+void CFWL_PictureBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
+  switch (pParams.m_iPart) {
     case CFWL_Part::Border:
-      DrawBorder(pParams->m_pGraphics.Get(), &pParams->m_rtPart,
-                 &pParams->m_matrix);
+      DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
+                 &pParams.m_matrix);
       break;
     default:
       break;

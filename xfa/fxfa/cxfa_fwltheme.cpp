@@ -84,75 +84,75 @@ CXFA_FWLTheme::~CXFA_FWLTheme() {
   FWLTHEME_Release();
 }
 
-void CXFA_FWLTheme::DrawBackground(CFWL_ThemeBackground* pParams) {
-  GetTheme(pParams->m_pWidget)->DrawBackground(pParams);
+void CXFA_FWLTheme::DrawBackground(const CFWL_ThemeBackground& pParams) {
+  GetTheme(pParams.m_pWidget)->DrawBackground(pParams);
 }
 
-void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
-  if (pParams->m_wsText.IsEmpty())
+void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
+  if (pParams.m_wsText.IsEmpty())
     return;
 
-  if (pParams->m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
-    CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
+  if (pParams.m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
+    CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
     if (!pWidget)
       return;
 
-    m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-    m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
+    m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
+    m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
     m_pTextOut->SetFont(m_pCalendarFont);
     m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
-    if ((pParams->m_iPart == CFWL_Part::DatesIn) &&
-        !(pParams->m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
-        (pParams->m_dwStates &
+    if ((pParams.m_iPart == CFWL_Part::DatesIn) &&
+        !(pParams.m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
+        (pParams.m_dwStates &
          (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
       m_pTextOut->SetTextColor(0xFF888888);
     }
-    if (pParams->m_iPart == CFWL_Part::Caption)
+    if (pParams.m_iPart == CFWL_Part::Caption)
       m_pTextOut->SetTextColor(ArgbEncode(0xff, 0, 153, 255));
 
-    CXFA_Graphics* pGraphics = pParams->m_pGraphics;
+    CXFA_Graphics* pGraphics = pParams.m_pGraphics;
     CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
     if (!pRenderDevice)
       return;
 
-    CFX_Matrix mtPart = pParams->m_matrix;
+    CFX_Matrix mtPart = pParams.m_matrix;
     const CFX_Matrix* pMatrix = pGraphics->GetMatrix();
     if (pMatrix)
       mtPart.Concat(*pMatrix);
 
     m_pTextOut->SetMatrix(mtPart);
-    m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringView(),
-                              pParams->m_rtPart);
+    m_pTextOut->DrawLogicText(pRenderDevice, pParams.m_wsText.AsStringView(),
+                              pParams.m_rtPart);
     return;
   }
-  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
+  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
   if (!pWidget)
     return;
 
   CXFA_Node* pNode = pWidget->GetNode();
-  CXFA_Graphics* pGraphics = pParams->m_pGraphics;
+  CXFA_Graphics* pGraphics = pParams.m_pGraphics;
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
   if (!pRenderDevice)
     return;
 
-  m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-  m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
+  m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
+  m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
   m_pTextOut->SetFont(pNode->GetFDEFont(pWidget->GetDoc()));
   m_pTextOut->SetFontSize(pNode->GetFontSize());
   m_pTextOut->SetTextColor(pNode->GetTextColor());
-  CFX_Matrix mtPart = pParams->m_matrix;
+  CFX_Matrix mtPart = pParams.m_matrix;
   const CFX_Matrix* pMatrix = pGraphics->GetMatrix();
   if (pMatrix)
     mtPart.Concat(*pMatrix);
 
   m_pTextOut->SetMatrix(mtPart);
-  m_pTextOut->DrawLogicText(pRenderDevice, pParams->m_wsText.AsStringView(),
-                            pParams->m_rtPart);
+  m_pTextOut->DrawLogicText(pRenderDevice, pParams.m_wsText.AsStringView(),
+                            pParams.m_rtPart);
 }
 
-CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
-  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
+CFX_RectF CXFA_FWLTheme::GetUIMargin(const CFWL_ThemePart& pThemePart) const {
+  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget);
   if (!pWidget)
     return CFX_RectF();
 
@@ -185,21 +185,21 @@ float CXFA_FWLTheme::GetCYBorderSize() const {
   return 1.0f;
 }
 
-float CXFA_FWLTheme::GetFontSize(CFWL_ThemePart* pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+float CXFA_FWLTheme::GetFontSize(const CFWL_ThemePart& pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetFontSize();
   return FWLTHEME_CAPACITY_FontSize;
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
-    CFWL_ThemePart* pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+    const CFWL_ThemePart& pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetFDEFont(pWidget->GetDoc());
-  return GetTheme(pThemePart->m_pWidget)->GetFont();
+  return GetTheme(pThemePart.m_pWidget)->GetFont();
 }
 
-float CXFA_FWLTheme::GetLineHeight(CFWL_ThemePart* pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+float CXFA_FWLTheme::GetLineHeight(const CFWL_ThemePart& pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetLineHeight();
   return kLineHeight;
 }
@@ -208,15 +208,17 @@ float CXFA_FWLTheme::GetScrollBarWidth() const {
   return 9.0f;
 }
 
-FX_COLORREF CXFA_FWLTheme::GetTextColor(CFWL_ThemePart* pThemePart) const {
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+FX_COLORREF CXFA_FWLTheme::GetTextColor(
+    const CFWL_ThemePart& pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget))
     return pWidget->GetNode()->GetTextColor();
   return FWLTHEME_CAPACITY_TextColor;
 }
 
-CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
+CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(
+    const CFWL_ThemePart& pThemePart) const {
   CFX_SizeF sizeAboveBelow;
-  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart.m_pWidget)) {
     CXFA_Para* para = pWidget->GetNode()->GetParaIfExists();
     if (para) {
       sizeAboveBelow.width = para->GetSpaceAbove();
@@ -226,35 +228,32 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   return sizeAboveBelow;
 }
 
-void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF* pRect) {
-  if (pParams->m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
-    CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-    if (!pWidget || !pParams || !m_pTextOut)
-      return;
+void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
+                                 CFX_RectF* pRect) {
+  if (!m_pTextOut)
+    return;
 
+  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
+  if (!pWidget)
+    return;
+
+  if (pParams.m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
     m_pTextOut->SetFont(m_pCalendarFont);
     m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
-    m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
-    m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-    m_pTextOut->CalcLogicSize(pParams->m_wsText, pRect);
+    m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
+    m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
+    m_pTextOut->CalcLogicSize(pParams.m_wsText, pRect);
     return;
   }
-
-  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
-  if (!pWidget)
-    return;
 
   CXFA_Node* pNode = pWidget->GetNode();
   m_pTextOut->SetFont(pNode->GetFDEFont(pWidget->GetDoc()));
   m_pTextOut->SetFontSize(pNode->GetFontSize());
   m_pTextOut->SetTextColor(pNode->GetTextColor());
-  if (!pParams)
-    return;
-
-  m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
-  m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-  m_pTextOut->CalcLogicSize(pParams->m_wsText, pRect);
+  m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
+  m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
+  m_pTextOut->CalcLogicSize(pParams.m_wsText, pRect);
 }
 
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) const {

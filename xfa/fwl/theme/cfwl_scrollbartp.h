@@ -17,7 +17,7 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
   ~CFWL_ScrollBarTP() override;
 
   // CFWL_WidgetTP
-  void DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 
  private:
   struct SBThemeData {
@@ -34,23 +34,23 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
                     bool bVert,
                     FWLTHEME_STATE eState,
                     bool bPawButton,
-                    CFX_Matrix* pMatrix);
+                    const CFX_Matrix* pMatrix);
   void DrawTrack(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  bool bVert,
                  FWLTHEME_STATE eState,
                  bool bLowerTrack,
-                 CFX_Matrix* pMatrix);
+                 const CFX_Matrix* pMatrix);
   void DrawMaxMinBtn(CXFA_Graphics* pGraphics,
                      const CFX_RectF* pRect,
                      FWLTHEME_DIRECTION eDict,
                      FWLTHEME_STATE eState,
-                     CFX_Matrix* pMatrix);
+                     const CFX_Matrix* pMatrix);
   void DrawPaw(CXFA_Graphics* pGraphics,
                const CFX_RectF* pRect,
                bool bVert,
                FWLTHEME_STATE eState,
-               CFX_Matrix* pMatrix);
+               const CFX_Matrix* pMatrix);
   void SetThemeData();
 
   std::unique_ptr<SBThemeData> m_pThemeData;

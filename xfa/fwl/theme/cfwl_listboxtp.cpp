@@ -16,40 +16,36 @@ CFWL_ListBoxTP::CFWL_ListBoxTP() {}
 
 CFWL_ListBoxTP::~CFWL_ListBoxTP() {}
 
-void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (!pParams)
-    return;
-
-  switch (pParams->m_iPart) {
+void CFWL_ListBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
+  switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
-      DrawBorder(pParams->m_pGraphics.Get(), &pParams->m_rtPart,
-                 &pParams->m_matrix);
+      DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
+                 &pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
-      FillSolidRect(pParams->m_pGraphics.Get(), ArgbEncode(255, 255, 255, 255),
-                    &pParams->m_rtPart, &pParams->m_matrix);
-      if (pParams->m_pRtData) {
-        FillSolidRect(pParams->m_pGraphics.Get(), FWLTHEME_COLOR_Background,
-                      pParams->m_pRtData, &pParams->m_matrix);
+      FillSolidRect(pParams.m_pGraphics.Get(), ArgbEncode(255, 255, 255, 255),
+                    &pParams.m_rtPart, &pParams.m_matrix);
+      if (pParams.m_pRtData) {
+        FillSolidRect(pParams.m_pGraphics.Get(), FWLTHEME_COLOR_Background,
+                      pParams.m_pRtData, &pParams.m_matrix);
       }
       break;
     }
     case CFWL_Part::ListItem: {
-      DrawListBoxItem(pParams->m_pGraphics.Get(), pParams->m_dwStates,
-                      &pParams->m_rtPart, pParams->m_pRtData,
-                      &pParams->m_matrix);
+      DrawListBoxItem(pParams.m_pGraphics.Get(), pParams.m_dwStates,
+                      &pParams.m_rtPart, pParams.m_pRtData, &pParams.m_matrix);
       break;
     }
     case CFWL_Part::Check: {
       uint32_t color = 0xFF000000;
-      if (pParams->m_dwStates == CFWL_PartState_Checked) {
+      if (pParams.m_dwStates == CFWL_PartState_Checked) {
         color = 0xFFFF0000;
-      } else if (pParams->m_dwStates == CFWL_PartState_Normal) {
+      } else if (pParams.m_dwStates == CFWL_PartState_Normal) {
         color = 0xFF0000FF;
       }
-      FillSolidRect(pParams->m_pGraphics.Get(), color, &pParams->m_rtPart,
-                    &pParams->m_matrix);
+      FillSolidRect(pParams.m_pGraphics.Get(), color, &pParams.m_rtPart,
+                    &pParams.m_matrix);
       break;
     }
     default:
@@ -61,7 +57,7 @@ void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
                                      uint32_t dwStates,
                                      const CFX_RectF* prtItem,
                                      void* pData,
-                                     CFX_Matrix* pMatrix) {
+                                     const CFX_Matrix* pMatrix) {
   if (dwStates & CFWL_PartState_Selected) {
     pGraphics->SaveGraphState();
     pGraphics->SetFillColor(CXFA_GEColor(FWLTHEME_COLOR_BKSelected));

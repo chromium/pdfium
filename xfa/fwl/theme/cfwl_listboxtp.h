@@ -15,14 +15,14 @@ class CFWL_ListBoxTP final : public CFWL_WidgetTP {
   ~CFWL_ListBoxTP() override;
 
   // CFWL_WidgetTP
-  void DrawBackground(CFWL_ThemeBackground* pParams) override;
+  void DrawBackground(const CFWL_ThemeBackground& pParams) override;
 
  private:
   void DrawListBoxItem(CXFA_Graphics* pGraphics,
                        uint32_t dwStates,
                        const CFX_RectF* prtItem,
                        void* pData,
-                       CFX_Matrix* pMatrix);
+                       const CFX_Matrix* pMatrix);
 };
 
 #endif  // XFA_FWL_THEME_CFWL_LISTBOXTP_H_

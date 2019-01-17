@@ -35,26 +35,26 @@ void CFWL_WidgetTP::Finalize() {
     FinalizeTTO();
 }
 
-void CFWL_WidgetTP::DrawBackground(CFWL_ThemeBackground* pParams) {}
+void CFWL_WidgetTP::DrawBackground(const CFWL_ThemeBackground& pParams) {}
 
-void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
+void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   if (!m_pTextOut)
     InitTTO();
 
-  int32_t iLen = pParams->m_wsText.GetLength();
+  int32_t iLen = pParams.m_wsText.GetLength();
   if (iLen <= 0)
     return;
 
-  CXFA_Graphics* pGraphics = pParams->m_pGraphics;
-  m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-  m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
+  CXFA_Graphics* pGraphics = pParams.m_pGraphics;
+  m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
+  m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
 
-  CFX_Matrix* pMatrix = &pParams->m_matrix;
-  pMatrix->Concat(*pGraphics->GetMatrix());
-  m_pTextOut->SetMatrix(*pMatrix);
+  CFX_Matrix matrix = pParams.m_matrix;
+  matrix.Concat(*pGraphics->GetMatrix());
+  m_pTextOut->SetMatrix(matrix);
   m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(),
-                            WideStringView(pParams->m_wsText.c_str(), iLen),
-                            pParams->m_rtPart);
+                            WideStringView(pParams.m_wsText.c_str(), iLen),
+                            pParams.m_rtPart);
 }
 
 const RetainPtr<CFGAS_GEFont>& CFWL_WidgetTP::GetFont() const {
@@ -102,7 +102,7 @@ void CFWL_WidgetTP::FinalizeTTO() {
 
 void CFWL_WidgetTP::DrawBorder(CXFA_Graphics* pGraphics,
                                const CFX_RectF* pRect,
-                               CFX_Matrix* pMatrix) {
+                               const CFX_Matrix* pMatrix) {
   if (!pGraphics || !pRect)
     return;
 
@@ -118,14 +118,14 @@ void CFWL_WidgetTP::DrawBorder(CXFA_Graphics* pGraphics,
 
 void CFWL_WidgetTP::FillBackground(CXFA_Graphics* pGraphics,
                                    const CFX_RectF* pRect,
-                                   CFX_Matrix* pMatrix) {
+                                   const CFX_Matrix* pMatrix) {
   FillSolidRect(pGraphics, FWLTHEME_COLOR_Background, pRect, pMatrix);
 }
 
 void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
                                   FX_ARGB fillColor,
                                   const CFX_RectF* pRect,
-                                  CFX_Matrix* pMatrix) {
+                                  const CFX_Matrix* pMatrix) {
   if (!pGraphics || !pRect)
     return;
 
@@ -139,7 +139,7 @@ void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
 
 void CFWL_WidgetTP::DrawFocus(CXFA_Graphics* pGraphics,
                               const CFX_RectF* pRect,
-                              CFX_Matrix* pMatrix) {
+                              const CFX_Matrix* pMatrix) {
   if (!pGraphics || !pRect)
     return;
 
@@ -157,7 +157,7 @@ void CFWL_WidgetTP::DrawArrow(CXFA_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               FWLTHEME_DIRECTION eDict,
                               FX_ARGB argSign,
-                              CFX_Matrix* pMatrix) {
+                              const CFX_Matrix* pMatrix) {
   bool bVert =
       (eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down);
   float fLeft =
@@ -210,9 +210,8 @@ void CFWL_WidgetTP::DrawArrow(CXFA_Graphics* pGraphics,
 void CFWL_WidgetTP::DrawBtn(CXFA_Graphics* pGraphics,
                             const CFX_RectF* pRect,
                             FWLTHEME_STATE eState,
-                            CFX_Matrix* pMatrix) {
+                            const CFX_Matrix* pMatrix) {
   InitializeArrowColorData();
-
   FillSolidRect(pGraphics, m_pColorData->clrEnd[eState - 1], pRect, pMatrix);
 
   CXFA_GEPath path;
@@ -225,7 +224,7 @@ void CFWL_WidgetTP::DrawArrowBtn(CXFA_Graphics* pGraphics,
                                  const CFX_RectF* pRect,
                                  FWLTHEME_DIRECTION eDict,
                                  FWLTHEME_STATE eState,
-                                 CFX_Matrix* pMatrix) {
+                                 const CFX_Matrix* pMatrix) {
   DrawBtn(pGraphics, pRect, eState, pMatrix);
 
   InitializeArrowColorData();

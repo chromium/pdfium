@@ -274,7 +274,7 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
   calPart.m_iTTOAlign = FDE_TextAlignment::kTopLeft;
   float fWidth = bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
   CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
-  pTheme->CalcTextRect(&calPart, &rect);
+  pTheme->CalcTextRect(calPart, &rect);
   return CFX_SizeF(rect.width, rect.height);
 }
 
@@ -288,7 +288,7 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
   calPart.m_wsText = wsText;
   calPart.m_dwTTOStyles = dwTTOStyles;
   calPart.m_iTTOAlign = iTTOAlign;
-  pTheme->CalcTextRect(&calPart, pRect);
+  pTheme->CalcTextRect(calPart, pRect);
 }
 
 void CFWL_Widget::SetGrab(bool bSet) {
@@ -330,7 +330,7 @@ void CFWL_Widget::DrawBackground(CXFA_Graphics* pGraphics,
   if (pMatrix)
     param.m_matrix = *pMatrix;
   param.m_rtPart = GetRelativeRect();
-  pTheme->DrawBackground(&param);
+  pTheme->DrawBackground(param);
 }
 
 void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
@@ -343,7 +343,7 @@ void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
   param.m_pGraphics = pGraphics;
   param.m_matrix = matrix;
   param.m_rtPart = GetRelativeRect();
-  pTheme->DrawBackground(&param);
+  pTheme->DrawBackground(param);
 }
 
 void CFWL_Widget::NotifyDriver() {

@@ -108,7 +108,7 @@ void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
     param.m_dwStates = m_iBtnState;
     param.m_pGraphics = pGraphics;
     param.m_rtPart = m_rtBtn;
-    pTheme->DrawBackground(&param);
+    pTheme->DrawBackground(param);
   }
   pGraphics->RestoreGraphState();
 
@@ -222,7 +222,7 @@ void CFWL_ComboBox::DrawStretchHandler(CXFA_Graphics* pGraphics,
   param.m_pWidget = this;
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  m_pProperties->m_pThemeProvider->DrawBackground(&param);
+  m_pProperties->m_pThemeProvider->DrawBackground(param);
 }
 
 void CFWL_ComboBox::ShowDropList(bool bActivate) {
@@ -305,7 +305,7 @@ void CFWL_ComboBox::Layout() {
 
   CFWL_ThemePart part;
   part.m_pWidget = this;
-  CFX_RectF pUIMargin = theme->GetUIMargin(&part);
+  CFX_RectF pUIMargin = theme->GetUIMargin(part);
   m_rtContent.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
                       pUIMargin.height);
 

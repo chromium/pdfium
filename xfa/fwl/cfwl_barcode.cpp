@@ -163,12 +163,12 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   if (pTheme) {
     CFWL_ThemePart part;
     part.m_pWidget = this;
-    if (RetainPtr<CFGAS_GEFont> pFont = pTheme->GetFont(&part)) {
+    if (RetainPtr<CFGAS_GEFont> pFont = pTheme->GetFont(part)) {
       if (CFX_Font* pCXFont = pFont->GetDevFont())
         m_pBarcodeEngine->SetFont(pCXFont);
     }
-    m_pBarcodeEngine->SetFontSize(pTheme->GetFontSize(&part));
-    m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(&part));
+    m_pBarcodeEngine->SetFontSize(pTheme->GetFontSize(part));
+    m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(part));
   } else {
     m_pBarcodeEngine->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   }

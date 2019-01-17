@@ -25,45 +25,42 @@ CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
 
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {}
 
-void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  if (!pParams)
-    return;
-
-  CFWL_Widget* pWidget = pParams->m_pWidget;
+void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
+  CFWL_Widget* pWidget = pParams.m_pWidget;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
-  if (pParams->m_dwStates & CFWL_PartState_Hovered)
+  if (pParams.m_dwStates & CFWL_PartState_Hovered)
     eState = FWLTHEME_STATE_Hover;
-  else if (pParams->m_dwStates & CFWL_PartState_Pressed)
+  else if (pParams.m_dwStates & CFWL_PartState_Pressed)
     eState = FWLTHEME_STATE_Pressed;
-  else if (pParams->m_dwStates & CFWL_PartState_Disabled)
+  else if (pParams.m_dwStates & CFWL_PartState_Disabled)
     eState = FWLTHEME_STATE_Disable;
 
-  CXFA_Graphics* pGraphics = pParams->m_pGraphics.Get();
-  CFX_RectF* pRect = &pParams->m_rtPart;
+  CXFA_Graphics* pGraphics = pParams.m_pGraphics.Get();
+  const CFX_RectF* pRect = &pParams.m_rtPart;
   bool bVert = !!pWidget->GetStylesEx();
-  switch (pParams->m_iPart) {
+  switch (pParams.m_iPart) {
     case CFWL_Part::ForeArrow: {
       DrawMaxMinBtn(pGraphics, pRect,
                     bVert ? FWLTHEME_DIRECTION_Up : FWLTHEME_DIRECTION_Left,
-                    eState, &pParams->m_matrix);
+                    eState, &pParams.m_matrix);
       break;
     }
     case CFWL_Part::BackArrow: {
       DrawMaxMinBtn(pGraphics, pRect,
                     bVert ? FWLTHEME_DIRECTION_Down : FWLTHEME_DIRECTION_Right,
-                    eState, &pParams->m_matrix);
+                    eState, &pParams.m_matrix);
       break;
     }
     case CFWL_Part::Thumb: {
-      DrawThumbBtn(pGraphics, pRect, bVert, eState, true, &pParams->m_matrix);
+      DrawThumbBtn(pGraphics, pRect, bVert, eState, true, &pParams.m_matrix);
       break;
     }
     case CFWL_Part::LowerTrack: {
-      DrawTrack(pGraphics, pRect, bVert, eState, true, &pParams->m_matrix);
+      DrawTrack(pGraphics, pRect, bVert, eState, true, &pParams.m_matrix);
       break;
     }
     case CFWL_Part::UpperTrack: {
-      DrawTrack(pGraphics, pRect, bVert, eState, false, &pParams->m_matrix);
+      DrawTrack(pGraphics, pRect, bVert, eState, false, &pParams.m_matrix);
       break;
     }
     default:
@@ -76,7 +73,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
                                     bool bVert,
                                     FWLTHEME_STATE eState,
                                     bool bPawButton,
-                                    CFX_Matrix* pMatrix) {
+                                    const CFX_Matrix* pMatrix) {
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
 
@@ -106,7 +103,7 @@ void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
                                const CFX_RectF* pRect,
                                bool bVert,
                                FWLTHEME_STATE eState,
-                               CFX_Matrix* pMatrix) {
+                               const CFX_Matrix* pMatrix) {
   CXFA_GEPath path;
   if (bVert) {
     float fPawLen = kPawLength;
@@ -190,7 +187,7 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
                                  bool bVert,
                                  FWLTHEME_STATE eState,
                                  bool bLowerTrack,
-                                 CFX_Matrix* pMatrix) {
+                                 const CFX_Matrix* pMatrix) {
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
 
@@ -218,7 +215,7 @@ void CFWL_ScrollBarTP::DrawMaxMinBtn(CXFA_Graphics* pGraphics,
                                      const CFX_RectF* pRect,
                                      FWLTHEME_DIRECTION eDict,
                                      FWLTHEME_STATE eState,
-                                     CFX_Matrix* pMatrix) {
+                                     const CFX_Matrix* pMatrix) {
   DrawTrack(pGraphics, pRect,
             eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down,
             eState, true, pMatrix);
