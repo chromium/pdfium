@@ -357,7 +357,7 @@ void CFWL_ListBox::DrawBkground(CXFA_Graphics* pGraphics,
   param.m_matrix.Concat(*pMatrix);
   param.m_rtPart = m_rtClient;
   if (IsShowScrollBar(false) && IsShowScrollBar(true))
-    param.m_pData = &m_rtStatic;
+    param.m_pRtData = &m_rtStatic;
   if (!IsEnabled())
     param.m_dwStates = CFWL_PartState_Disabled;
 
@@ -424,7 +424,7 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
   bg_param.m_rtPart = rtItem;
   bg_param.m_bMaximize = true;
   CFX_RectF rtFocus(rtItem);
-  bg_param.m_pData = &rtFocus;
+  bg_param.m_pRtData = &rtFocus;
   if (m_pVertScrollBar && !m_pHorzScrollBar &&
       (dwPartStates & CFWL_PartState_Focused)) {
     bg_param.m_rtPart.left += 1;

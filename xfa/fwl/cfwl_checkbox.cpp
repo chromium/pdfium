@@ -76,7 +76,7 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
   param.m_matrix.Concat(matrix);
   param.m_rtPart = m_rtClient;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
-    param.m_pData = &m_rtFocus;
+    param.m_pRtData = &m_rtFocus;
   pTheme->DrawBackground(&param);
 
   param.m_iPart = CFWL_Part::CheckBox;

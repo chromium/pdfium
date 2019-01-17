@@ -12,5 +12,4 @@ CFWL_ThemePart::CFWL_ThemePart()
       m_dwStates(CFWL_PartState_Normal),
       m_bMaximize(false),
       m_bStaticBackground(false),
-      m_pData(nullptr) {
-}
+      m_pRtData(nullptr) {}

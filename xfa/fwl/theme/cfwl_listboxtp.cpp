@@ -29,16 +29,16 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     case CFWL_Part::Background: {
       FillSolidRect(pParams->m_pGraphics.Get(), ArgbEncode(255, 255, 255, 255),
                     &pParams->m_rtPart, &pParams->m_matrix);
-      if (pParams->m_pData) {
+      if (pParams->m_pRtData) {
         FillSolidRect(pParams->m_pGraphics.Get(), FWLTHEME_COLOR_Background,
-                      static_cast<CFX_RectF*>(pParams->m_pData),
-                      &pParams->m_matrix);
+                      pParams->m_pRtData, &pParams->m_matrix);
       }
       break;
     }
     case CFWL_Part::ListItem: {
       DrawListBoxItem(pParams->m_pGraphics.Get(), pParams->m_dwStates,
-                      &pParams->m_rtPart, pParams->m_pData, &pParams->m_matrix);
+                      &pParams->m_rtPart, pParams->m_pRtData,
+                      &pParams->m_matrix);
       break;
     }
     case CFWL_Part::Check: {
