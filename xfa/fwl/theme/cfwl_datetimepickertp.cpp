@@ -18,10 +18,10 @@ void CFWL_DateTimePickerTP::DrawBackground(
   switch (pParams.m_iPart) {
     case CFWL_Part::Border:
       DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
-                 &pParams.m_matrix);
+                 pParams.m_matrix);
       break;
     case CFWL_Part::DropDownButton:
-      DrawDropDownButton(pParams, &pParams.m_matrix);
+      DrawDropDownButton(pParams, pParams.m_matrix);
       break;
     default:
       break;
@@ -30,7 +30,7 @@ void CFWL_DateTimePickerTP::DrawBackground(
 
 void CFWL_DateTimePickerTP::DrawDropDownButton(
     const CFWL_ThemeBackground& pParams,
-    const CFX_Matrix* pMatrix) {
+    const CFX_Matrix& matrix) {
   uint32_t dwStates = pParams.m_dwStates;
   dwStates &= 0x03;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
@@ -55,5 +55,5 @@ void CFWL_DateTimePickerTP::DrawDropDownButton(
       break;
   }
   DrawArrowBtn(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
-               FWLTHEME_DIRECTION_Down, eState, pMatrix);
+               FWLTHEME_DIRECTION_Down, eState, matrix);
 }

@@ -102,7 +102,7 @@ void CFWL_WidgetTP::FinalizeTTO() {
 
 void CFWL_WidgetTP::DrawBorder(CXFA_Graphics* pGraphics,
                                const CFX_RectF* pRect,
-                               const CFX_Matrix* pMatrix) {
+                               const CFX_Matrix& matrix) {
   if (!pGraphics || !pRect)
     return;
 
@@ -112,20 +112,20 @@ void CFWL_WidgetTP::DrawBorder(CXFA_Graphics* pGraphics,
                     pRect->height - 2);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 0, 0, 0)));
-  pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
+  pGraphics->FillPath(&path, FXFILL_ALTERNATE, &matrix);
   pGraphics->RestoreGraphState();
 }
 
 void CFWL_WidgetTP::FillBackground(CXFA_Graphics* pGraphics,
                                    const CFX_RectF* pRect,
-                                   const CFX_Matrix* pMatrix) {
-  FillSolidRect(pGraphics, FWLTHEME_COLOR_Background, pRect, pMatrix);
+                                   const CFX_Matrix& matrix) {
+  FillSolidRect(pGraphics, FWLTHEME_COLOR_Background, pRect, matrix);
 }
 
 void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
                                   FX_ARGB fillColor,
                                   const CFX_RectF* pRect,
-                                  const CFX_Matrix* pMatrix) {
+                                  const CFX_Matrix& matrix) {
   if (!pGraphics || !pRect)
     return;
 
@@ -133,13 +133,13 @@ void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(fillColor));
-  pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
+  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
   pGraphics->RestoreGraphState();
 }
 
 void CFWL_WidgetTP::DrawFocus(CXFA_Graphics* pGraphics,
                               const CFX_RectF* pRect,
-                              const CFX_Matrix* pMatrix) {
+                              const CFX_Matrix& matrix) {
   if (!pGraphics || !pRect)
     return;
 
@@ -149,7 +149,7 @@ void CFWL_WidgetTP::DrawFocus(CXFA_Graphics* pGraphics,
   pGraphics->SetStrokeColor(CXFA_GEColor(0xFF000000));
   static constexpr float kDashPattern[2] = {1, 1};
   pGraphics->SetLineDash(0.0f, kDashPattern, FX_ArraySize(kDashPattern));
-  pGraphics->StrokePath(&path, pMatrix);
+  pGraphics->StrokePath(&path, &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -157,7 +157,7 @@ void CFWL_WidgetTP::DrawArrow(CXFA_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               FWLTHEME_DIRECTION eDict,
                               FX_ARGB argSign,
-                              const CFX_Matrix* pMatrix) {
+                              const CFX_Matrix& matrix) {
   bool bVert =
       (eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down);
   float fLeft =
@@ -204,32 +204,30 @@ void CFWL_WidgetTP::DrawArrow(CXFA_Graphics* pGraphics,
     }
   }
   pGraphics->SetFillColor(CXFA_GEColor(argSign));
-  pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
+  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
 }
 
 void CFWL_WidgetTP::DrawBtn(CXFA_Graphics* pGraphics,
                             const CFX_RectF* pRect,
                             FWLTHEME_STATE eState,
-                            const CFX_Matrix* pMatrix) {
+                            const CFX_Matrix& matrix) {
   InitializeArrowColorData();
-  FillSolidRect(pGraphics, m_pColorData->clrEnd[eState - 1], pRect, pMatrix);
+  FillSolidRect(pGraphics, m_pColorData->clrEnd[eState - 1], pRect, matrix);
 
   CXFA_GEPath path;
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->SetStrokeColor(CXFA_GEColor(m_pColorData->clrBorder[eState - 1]));
-  pGraphics->StrokePath(&path, pMatrix);
+  pGraphics->StrokePath(&path, &matrix);
 }
 
 void CFWL_WidgetTP::DrawArrowBtn(CXFA_Graphics* pGraphics,
                                  const CFX_RectF* pRect,
                                  FWLTHEME_DIRECTION eDict,
                                  FWLTHEME_STATE eState,
-                                 const CFX_Matrix* pMatrix) {
-  DrawBtn(pGraphics, pRect, eState, pMatrix);
-
+                                 const CFX_Matrix& matrix) {
+  DrawBtn(pGraphics, pRect, eState, matrix);
   InitializeArrowColorData();
-  DrawArrow(pGraphics, pRect, eDict, m_pColorData->clrSign[eState - 1],
-            pMatrix);
+  DrawArrow(pGraphics, pRect, eDict, m_pColorData->clrSign[eState - 1], matrix);
 }
 
 CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}

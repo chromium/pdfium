@@ -34,23 +34,23 @@ class CFWL_MonthCalendarTP final : public CFWL_WidgetTP {
   };
 
   void DrawTotalBK(const CFWL_ThemeBackground& pParams,
-                   const CFX_Matrix* pMatrix);
+                   const CFX_Matrix& matrix);
   void DrawHeadBk(const CFWL_ThemeBackground& pParams,
-                  const CFX_Matrix* pMatrix);
+                  const CFX_Matrix& matrix);
   void DrawLButton(const CFWL_ThemeBackground& pParams,
-                   const CFX_Matrix* pMatrix);
+                   const CFX_Matrix& matrix);
   void DrawRButton(const CFWL_ThemeBackground& pParams,
-                   const CFX_Matrix* pMatrix);
+                   const CFX_Matrix& matrix);
   void DrawDatesInBK(const CFWL_ThemeBackground& pParams,
-                     const CFX_Matrix* pMatrix);
+                     const CFX_Matrix& matrix);
   void DrawDatesInCircle(const CFWL_ThemeBackground& pParams,
-                         const CFX_Matrix* pMatrix);
+                         const CFX_Matrix& matrix);
   void DrawTodayCircle(const CFWL_ThemeBackground& pParams,
-                       const CFX_Matrix* pMatrix);
+                       const CFX_Matrix& matrix);
   void DrawHSeperator(const CFWL_ThemeBackground& pParams,
-                      const CFX_Matrix* pMatrix);
+                      const CFX_Matrix& matrix);
   void DrawWeekNumSep(const CFWL_ThemeBackground& pParams,
-                      const CFX_Matrix* pMatrix);
+                      const CFX_Matrix& matrix);
   FWLTHEME_STATE GetState(uint32_t dwFWLStates);
   void SetThemeData();
 

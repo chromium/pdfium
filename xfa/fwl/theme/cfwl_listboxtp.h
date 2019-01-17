@@ -22,7 +22,7 @@ class CFWL_ListBoxTP final : public CFWL_WidgetTP {
                        uint32_t dwStates,
                        const CFX_RectF* prtItem,
                        const CFX_RectF* pData,
-                       const CFX_Matrix* pMatrix);
+                       const CFX_Matrix& matrix);
 };
 
 #endif  // XFA_FWL_THEME_CFWL_LISTBOXTP_H_

@@ -21,7 +21,7 @@ class CFWL_CaretTP final : public CFWL_WidgetTP {
   void DrawCaretBK(CXFA_Graphics* pGraphics,
                    uint32_t dwStates,
                    const CFX_RectF* pRect,
-                   const CFX_Matrix* pMatrix);
+                   const CFX_Matrix& matrix);
 };
 
 #endif  // XFA_FWL_THEME_CFWL_CARETTP_H_

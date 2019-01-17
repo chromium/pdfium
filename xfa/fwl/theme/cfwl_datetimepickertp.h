@@ -19,7 +19,7 @@ class CFWL_DateTimePickerTP final : public CFWL_WidgetTP {
 
  private:
   void DrawDropDownButton(const CFWL_ThemeBackground& pParams,
-                          const CFX_Matrix* pMatrix);
+                          const CFX_Matrix& matrix);
 };
 
 #endif  // XFA_FWL_THEME_CFWL_DATETIMEPICKERTP_H_

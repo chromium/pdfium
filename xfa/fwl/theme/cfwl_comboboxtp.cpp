@@ -21,7 +21,7 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
-                 &pParams.m_matrix);
+                 pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
@@ -46,11 +46,11 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
     }
     case CFWL_Part::DropDownButton: {
-      DrawDropDownButton(pParams, pParams.m_dwStates, &pParams.m_matrix);
+      DrawDropDownButton(pParams, pParams.m_dwStates, pParams.m_matrix);
       break;
     }
     case CFWL_Part::StretchHandler: {
-      DrawStretchHandler(pParams, 0, &pParams.m_matrix);
+      DrawStretchHandler(pParams, 0, pParams.m_matrix);
       break;
     }
     default:
@@ -60,7 +60,7 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
 void CFWL_ComboBoxTP::DrawStretchHandler(const CFWL_ThemeBackground& pParams,
                                          uint32_t dwStates,
-                                         const CFX_Matrix* pMatrix) {
+                                         const CFX_Matrix& matrix) {
   CXFA_GEPath path;
   path.AddRectangle(pParams.m_rtPart.left, pParams.m_rtPart.top,
                     pParams.m_rtPart.width - 1, pParams.m_rtPart.height);
@@ -70,7 +70,7 @@ void CFWL_ComboBoxTP::DrawStretchHandler(const CFWL_ThemeBackground& pParams,
 
 void CFWL_ComboBoxTP::DrawDropDownButton(const CFWL_ThemeBackground& pParams,
                                          uint32_t dwStates,
-                                         const CFX_Matrix* pMatrix) {
+                                         const CFX_Matrix& matrix) {
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (dwStates) {
     case CFWL_PartState_Normal: {
@@ -93,5 +93,5 @@ void CFWL_ComboBoxTP::DrawDropDownButton(const CFWL_ThemeBackground& pParams,
       break;
   }
   DrawArrowBtn(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
-               FWLTHEME_DIRECTION_Down, eState, &pParams.m_matrix);
+               FWLTHEME_DIRECTION_Down, eState, pParams.m_matrix);
 }

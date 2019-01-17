@@ -25,7 +25,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
       DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
-                 &pParams.m_matrix);
+                 pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
@@ -63,7 +63,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
       int32_t iColor = GetColorID(pParams.m_dwStates);
       FillSolidRect(pGraphics, m_pThemeData->clrEnd[iColor], &rect,
-                    &pParams.m_matrix);
+                    pParams.m_matrix);
 
       pGraphics->SetStrokeColor(CXFA_GEColor(m_pThemeData->clrBorder[iColor]));
       pGraphics->StrokePath(&strokePath, &pParams.m_matrix);
@@ -76,7 +76,7 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams.m_matrix);
       if (pParams.m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);
-        DrawFocus(pGraphics, &rtInner, &pParams.m_matrix);
+        DrawFocus(pGraphics, &rtInner, pParams.m_matrix);
       }
       pGraphics->RestoreGraphState();
       break;
