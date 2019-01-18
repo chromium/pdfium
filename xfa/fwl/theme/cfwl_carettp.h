@@ -20,7 +20,7 @@ class CFWL_CaretTP final : public CFWL_WidgetTP {
  private:
   void DrawCaretBK(CXFA_Graphics* pGraphics,
                    uint32_t dwStates,
-                   const CFX_RectF* pRect,
+                   const CFX_RectF& rect,
                    const CFX_Matrix& matrix);
 };
 

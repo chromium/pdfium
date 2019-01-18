@@ -22,7 +22,7 @@ void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         return;
 
       DrawCaretBK(pParams.m_pGraphics.Get(), pParams.m_dwStates,
-                  &pParams.m_rtPart, pParams.m_matrix);
+                  pParams.m_rtPart, pParams.m_matrix);
       break;
     }
     default:
@@ -32,10 +32,9 @@ void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
 void CFWL_CaretTP::DrawCaretBK(CXFA_Graphics* pGraphics,
                                uint32_t dwStates,
-                               const CFX_RectF* pRect,
+                               const CFX_RectF& rect,
                                const CFX_Matrix& matrix) {
   CXFA_GEPath path;
-  CFX_RectF rect = *pRect;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 0, 0, 0)));
   pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);

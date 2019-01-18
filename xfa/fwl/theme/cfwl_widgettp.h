@@ -49,29 +49,29 @@ class CFWL_WidgetTP {
   void FinalizeTTO();
 
   void DrawBorder(CXFA_Graphics* pGraphics,
-                  const CFX_RectF* pRect,
+                  const CFX_RectF& rect,
                   const CFX_Matrix& matrix);
   void FillBackground(CXFA_Graphics* pGraphics,
-                      const CFX_RectF* pRect,
+                      const CFX_RectF& rect,
                       const CFX_Matrix& matrix);
   void FillSolidRect(CXFA_Graphics* pGraphics,
                      FX_ARGB fillColor,
-                     const CFX_RectF* pRect,
+                     const CFX_RectF& rect,
                      const CFX_Matrix& matrix);
   void DrawFocus(CXFA_Graphics* pGraphics,
-                 const CFX_RectF* pRect,
+                 const CFX_RectF& rect,
                  const CFX_Matrix& matrix);
   void DrawArrow(CXFA_Graphics* pGraphics,
-                 const CFX_RectF* pRect,
+                 const CFX_RectF& rect,
                  FWLTHEME_DIRECTION eDict,
                  FX_ARGB argSign,
                  const CFX_Matrix& matrix);
   void DrawBtn(CXFA_Graphics* pGraphics,
-               const CFX_RectF* pRect,
+               const CFX_RectF& rect,
                FWLTHEME_STATE eState,
                const CFX_Matrix& matrix);
   void DrawArrowBtn(CXFA_Graphics* pGraphics,
-                    const CFX_RectF* pRect,
+                    const CFX_RectF& rect,
                     FWLTHEME_DIRECTION eDict,
                     FWLTHEME_STATE eState,
                     const CFX_Matrix& matrix);

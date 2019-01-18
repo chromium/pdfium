@@ -20,8 +20,7 @@ CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
 void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
-      DrawBorder(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
-                 pParams.m_matrix);
+      DrawBorder(pParams.m_pGraphics.Get(), pParams.m_rtPart, pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
@@ -92,6 +91,6 @@ void CFWL_ComboBoxTP::DrawDropDownButton(const CFWL_ThemeBackground& pParams,
     default:
       break;
   }
-  DrawArrowBtn(pParams.m_pGraphics.Get(), &pParams.m_rtPart,
+  DrawArrowBtn(pParams.m_pGraphics.Get(), pParams.m_rtPart,
                FWLTHEME_DIRECTION_Down, eState, pParams.m_matrix);
 }

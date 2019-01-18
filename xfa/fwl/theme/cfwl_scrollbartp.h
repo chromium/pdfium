@@ -30,24 +30,24 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
   };
 
   void DrawThumbBtn(CXFA_Graphics* pGraphics,
-                    const CFX_RectF* pRect,
+                    const CFX_RectF& rect,
                     bool bVert,
                     FWLTHEME_STATE eState,
                     bool bPawButton,
                     const CFX_Matrix& matrix);
   void DrawTrack(CXFA_Graphics* pGraphics,
-                 const CFX_RectF* pRect,
+                 const CFX_RectF& rect,
                  bool bVert,
                  FWLTHEME_STATE eState,
                  bool bLowerTrack,
                  const CFX_Matrix& matrix);
   void DrawMaxMinBtn(CXFA_Graphics* pGraphics,
-                     const CFX_RectF* pRect,
+                     const CFX_RectF& rect,
                      FWLTHEME_DIRECTION eDict,
                      FWLTHEME_STATE eState,
                      const CFX_Matrix& matrix);
   void DrawPaw(CXFA_Graphics* pGraphics,
-               const CFX_RectF* pRect,
+               const CFX_RectF& rect,
                bool bVert,
                FWLTHEME_STATE eState,
                const CFX_Matrix& matrix);

@@ -43,27 +43,27 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
                      int32_t iState,
                      const CFX_Matrix& matrix);
   void DrawSignCheck(CXFA_Graphics* pGraphics,
-                     const CFX_RectF* pRtSign,
+                     const CFX_RectF& rtSign,
                      FX_ARGB argbFill,
                      const CFX_Matrix& matrix);
   void DrawSignCircle(CXFA_Graphics* pGraphics,
-                      const CFX_RectF* pRtSign,
+                      const CFX_RectF& rtSign,
                       FX_ARGB argbFill,
                       const CFX_Matrix& matrix);
   void DrawSignCross(CXFA_Graphics* pGraphics,
-                     const CFX_RectF* pRtSign,
+                     const CFX_RectF& rtSign,
                      FX_ARGB argbFill,
                      const CFX_Matrix& matrix);
   void DrawSignDiamond(CXFA_Graphics* pGraphics,
-                       const CFX_RectF* pRtSign,
+                       const CFX_RectF& rtSign,
                        FX_ARGB argbFill,
                        const CFX_Matrix& matrix);
   void DrawSignSquare(CXFA_Graphics* pGraphics,
-                      const CFX_RectF* pRtSign,
+                      const CFX_RectF& rtSign,
                       FX_ARGB argbFill,
                       const CFX_Matrix& matrix);
   void DrawSignStar(CXFA_Graphics* pGraphics,
-                    const CFX_RectF* pRtSign,
+                    const CFX_RectF& rtSign,
                     FX_ARGB argbFill,
                     const CFX_Matrix& matrix);
 
