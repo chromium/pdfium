@@ -55,9 +55,6 @@ class CXFA_Graphics {
                 const CFX_Matrix* matrix);
   void ConcatMatrix(const CFX_Matrix* matrix);
 
- protected:
-  int32_t m_type;
-
  private:
   struct TInfo {
     TInfo();
@@ -69,24 +66,24 @@ class CXFA_Graphics {
     bool isActOnDash;
     CXFA_GEColor strokeColor;
     CXFA_GEColor fillColor;
-  } m_info;
+  };
 
   void RenderDeviceStrokePath(const CXFA_GEPath* path,
                               const CFX_Matrix* matrix);
   void RenderDeviceFillPath(const CXFA_GEPath* path,
                             FX_FillMode fillMode,
                             const CFX_Matrix* matrix);
-
   void FillPathWithPattern(const CXFA_GEPath* path,
                            FX_FillMode fillMode,
                            const CFX_Matrix& matrix);
   void FillPathWithShading(const CXFA_GEPath* path,
                            FX_FillMode fillMode,
                            const CFX_Matrix& matrix);
-
   void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
                            const CFX_Matrix& matrix);
 
+  int32_t m_type;
+  TInfo m_info;
   CFX_RenderDevice* const m_renderDevice;  // Not owned.
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
 };
