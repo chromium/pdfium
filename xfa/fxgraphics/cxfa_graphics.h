@@ -82,9 +82,8 @@ class CXFA_Graphics {
   void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
                            const CFX_Matrix& matrix);
 
-  int32_t m_type;
-  TInfo m_info;
   CFX_RenderDevice* const m_renderDevice;  // Not owned.
+  TInfo m_info;
   std::vector<std::unique_ptr<TInfo>> m_infoStack;
 };
 
