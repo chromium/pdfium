@@ -113,9 +113,6 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
 
     CXFA_Graphics* pGraphics = pParams.m_pGraphics;
     CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
-    if (!pRenderDevice)
-      return;
-
     CFX_Matrix mtPart = pParams.m_matrix;
     const CFX_Matrix* pMatrix = pGraphics->GetMatrix();
     if (pMatrix)
@@ -133,9 +130,6 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
   CXFA_Node* pNode = pWidget->GetNode();
   CXFA_Graphics* pGraphics = pParams.m_pGraphics;
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
-  if (!pRenderDevice)
-    return;
-
   m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
   m_pTextOut->SetFont(pNode->GetFDEFont(pWidget->GetDoc()));

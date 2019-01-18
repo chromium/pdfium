@@ -402,9 +402,6 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   }
 
   CFX_RenderDevice* pRenderDev = pGraphics->GetRenderDevice();
-  if (!pRenderDev)
-    return;
-
   RenderText(pRenderDev, rtClip, mt);
 
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
