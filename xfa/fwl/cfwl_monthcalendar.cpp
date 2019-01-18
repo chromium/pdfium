@@ -30,54 +30,58 @@
 
 namespace {
 
-WideString GetCapacityForDay(IFWL_ThemeProvider* pTheme,
-                             CFWL_ThemePart& params,
-                             uint32_t day) {
-  ASSERT(day < 7);
-
-  if (day == 0)
-    return L"Sun";
-  if (day == 1)
-    return L"Mon";
-  if (day == 2)
-    return L"Tue";
-  if (day == 3)
-    return L"Wed";
-  if (day == 4)
-    return L"Thu";
-  if (day == 5)
-    return L"Fri";
-  return L"Sat";
+WideString GetAbbreviatedDayOfWeek(int day) {
+  switch (day) {
+    case 0:
+      return L"Sun";
+    case 1:
+      return L"Mon";
+    case 2:
+      return L"Tue";
+    case 3:
+      return L"Wed";
+    case 4:
+      return L"Thu";
+    case 5:
+      return L"Fri";
+    case 6:
+      return L"Sat";
+    default:
+      NOTREACHED();
+      return L"";
+  }
 }
 
-WideString GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
-                               CFWL_ThemePart& params,
-                               uint32_t month) {
-  ASSERT(month < 12);
-
-  if (month == 0)
-    return L"January";
-  if (month == 1)
-    return L"February";
-  if (month == 2)
-    return L"March";
-  if (month == 3)
-    return L"April";
-  if (month == 4)
-    return L"May";
-  if (month == 5)
-    return L"June";
-  if (month == 6)
-    return L"July";
-  if (month == 7)
-    return L"August";
-  if (month == 8)
-    return L"September";
-  if (month == 9)
-    return L"October";
-  if (month == 10)
-    return L"November";
-  return L"December";
+WideString GetMonth(int month) {
+  switch (month) {
+    case 0:
+      return L"January";
+    case 1:
+      return L"February";
+    case 2:
+      return L"March";
+    case 3:
+      return L"April";
+    case 4:
+      return L"May";
+    case 5:
+      return L"June";
+    case 6:
+      return L"July";
+    case 7:
+      return L"August";
+    case 8:
+      return L"September";
+    case 9:
+      return L"October";
+    case 10:
+      return L"November";
+    case 11:
+      return L"December";
+    default:
+      NOTREACHED();
+      return L"";
+  }
 }
 
 }  // namespace
@@ -286,13 +290,13 @@ void CFWL_MonthCalendar::DrawWeek(CXFA_Graphics* pGraphics,
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
 
-  for (int32_t i = 0; i < 7; i++) {
+  for (int32_t i = 0; i < 7; ++i) {
     rtDayOfWeek =
         CFX_RectF(m_rtWeek.left + i * (m_szCell.width + MONTHCAL_HMARGIN * 2),
                   m_rtWeek.top, m_szCell);
 
     params.m_rtPart = rtDayOfWeek;
-    params.m_wsText = GetCapacityForDay(pTheme, params, i);
+    params.m_wsText = GetAbbreviatedDayOfWeek(i);
     pTheme->DrawText(params);
   }
 }
@@ -388,14 +392,10 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   if (!pTheme)
     return CFX_SizeF();
 
-  CFWL_ThemePart params;
-  params.m_pWidget = this;
-
   float fMaxWeekW = 0.0f;
   float fMaxWeekH = 0.0f;
-  for (uint32_t i = 0; i < 7; ++i) {
-    CFX_SizeF sz =
-        CalcTextSize(GetCapacityForDay(pTheme, params, i), pTheme, false);
+  for (int i = 0; i < 7; ++i) {
+    CFX_SizeF sz = CalcTextSize(GetAbbreviatedDayOfWeek(i), pTheme, false);
     fMaxWeekW = (fMaxWeekW >= sz.width) ? fMaxWeekW : sz.width;
     fMaxWeekH = (fMaxWeekH >= sz.height) ? fMaxWeekH : sz.height;
   }
@@ -418,9 +418,8 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
 
   float fMonthMaxW = 0.0f;
   float fMonthMaxH = 0.0f;
-  for (uint32_t i = 0; i < 12; ++i) {
-    CFX_SizeF sz =
-        CalcTextSize(GetCapacityForMonth(pTheme, params, i), pTheme, false);
+  for (int i = 0; i < 12; ++i) {
+    CFX_SizeF sz = CalcTextSize(GetMonth(i), pTheme, false);
     fMonthMaxW = (fMonthMaxW >= sz.width) ? fMonthMaxW : sz.width;
     fMonthMaxH = (fMonthMaxH >= sz.height) ? fMonthMaxH : sz.height;
   }
