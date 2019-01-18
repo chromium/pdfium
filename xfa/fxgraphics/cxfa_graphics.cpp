@@ -25,15 +25,13 @@ enum {
   FX_CONTEXT_Device,
 };
 
-#define FX_HATCHSTYLE_Total 53
-
 struct FX_HATCHDATA {
   int32_t width;
   int32_t height;
   uint8_t maskBits[64];
 };
 
-const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
+const FX_HATCHDATA kHatchBitmapData[] = {
     {16,  // Horizontal
      16,
      {
@@ -95,6 +93,23 @@ const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
          0x00, 0x42, 0x42, 0x00, 0x00, 0x81, 0x81, 0x00, 0x00,
      }},
 };
+
+const FX_HATCHDATA kHatchPlaceHolder = {
+    0,
+    0,
+    {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    }};
+
+const FX_HATCHDATA& GetHatchBitmapData(size_t index) {
+  return index < FX_ArraySize(kHatchBitmapData) ? kHatchBitmapData[index]
+                                                : kHatchPlaceHolder;
+}
 
 }  // namespace
 
@@ -273,7 +288,8 @@ void CXFA_Graphics::FillPathWithPattern(const CXFA_GEPath* path,
   m_renderDevice->GetDIBits(bmp, 0, 0);
 
   FX_HatchStyle hatchStyle = m_info.fillColor.GetPattern()->m_hatchStyle;
-  const FX_HATCHDATA& data = hatchBitmapData[static_cast<int>(hatchStyle)];
+  const FX_HATCHDATA& data =
+      GetHatchBitmapData(static_cast<size_t>(hatchStyle));
 
   auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
   mask->Create(data.width, data.height, FXDIB_1bppMask);
