@@ -242,7 +242,6 @@ void CXFA_Graphics::RenderDeviceFillPath(const CXFA_GEPath* path,
 void CXFA_Graphics::FillPathWithPattern(const CXFA_GEPath* path,
                                         FX_FillMode fillMode,
                                         const CFX_Matrix& matrix) {
-  CXFA_GEPattern* pattern = m_info.fillColor.GetPattern();
   RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
@@ -270,7 +269,7 @@ void CXFA_Graphics::FillPathWithPattern(const CXFA_GEPath* path,
   }
   CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
   m_renderDevice->SetClip_PathFill(path->GetPathData(), &matrix, fillMode);
-  SetDIBitsWithMatrix(bmp, pattern->m_matrix);
+  SetDIBitsWithMatrix(bmp, CFX_Matrix());
 }
 
 void CXFA_Graphics::FillPathWithShading(const CXFA_GEPath* path,

@@ -18,15 +18,12 @@ class CXFA_GEPattern {
  public:
   CXFA_GEPattern(FX_HatchStyle hatchStyle,
                  const FX_ARGB foreArgb,
-                 const FX_ARGB backArgb,
-                 CFX_Matrix* matrix);
+                 const FX_ARGB backArgb);
 
   virtual ~CXFA_GEPattern();
 
  private:
   friend class CXFA_Graphics;
-
-  CFX_Matrix m_matrix;
 
   const FX_HatchStyle m_hatchStyle;
   const FX_ARGB m_foreArgb;

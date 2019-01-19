@@ -8,11 +8,7 @@
 
 CXFA_GEPattern::CXFA_GEPattern(FX_HatchStyle hatchStyle,
                                const FX_ARGB foreArgb,
-                               const FX_ARGB backArgb,
-                               CFX_Matrix* matrix)
-    : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {
-  if (matrix)
-    m_matrix = *matrix;
-}
+                               const FX_ARGB backArgb)
+    : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {}
 
 CXFA_GEPattern::~CXFA_GEPattern() {}
