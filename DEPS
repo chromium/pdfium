@@ -7,8 +7,7 @@ vars = {
   # purposes.
   'checkout_configuration': 'default',
 
-  # TODO(dpranke): change to != "small" once != is supported.
-  'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration == "default"',
+  'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
