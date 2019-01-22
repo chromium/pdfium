@@ -72,8 +72,8 @@ CJS_Result CJX_Tree::resolveNode(
 
   auto pValue = pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
   CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();
-  (jsObject->*(resolveNodeRS.script_attribute.callback))(
-      pValue.get(), false, resolveNodeRS.script_attribute.attribute);
+  (*resolveNodeRS.script_attribute.callback)(
+      jsObject, pValue.get(), false, resolveNodeRS.script_attribute.attribute);
   return CJS_Result::Success(
       pValue->DirectGetValue().Get(runtime->GetIsolate()));
 }
@@ -235,9 +235,9 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
         auto innerValue =
             pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
         CJX_Object* jsObject = pObject->JSObject();
-        (jsObject->*(resolveNodeRS.script_attribute.callback))(
-            innerValue.get(), false, resolveNodeRS.script_attribute.attribute);
-
+        (*resolveNodeRS.script_attribute.callback)(
+            jsObject, innerValue.get(), false,
+            resolveNodeRS.script_attribute.attribute);
         CXFA_Object* obj = CFXJSE_Engine::ToObject(innerValue.get());
         if (obj->IsNode())
           pNodeList->Append(obj->AsNode());

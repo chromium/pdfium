@@ -219,9 +219,7 @@ struct ElementAttributeRecord {
 
 const ElementAttributeRecord g_ElementAttributeTable[] = {
 #undef ELEM_ATTR____
-#define ELEM_ATTR____(a, b, c)       \
-  {XFA_Element::a, XFA_Attribute::b, \
-   reinterpret_cast<XFA_ATTRIBUTE_CALLBACK>(c)},
+#define ELEM_ATTR____(a, b, c) {XFA_Element::a, XFA_Attribute::b, c##_static},
 #include "xfa/fxfa/parser/element_attributes.inc"
 #undef ELEM_ATTR____
 };

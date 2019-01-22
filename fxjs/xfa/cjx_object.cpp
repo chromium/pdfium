@@ -1569,7 +1569,7 @@ void CJX_Object::ScriptSomInstanceIndex(CFXJSE_Value* pValue,
 
 void CJX_Object::ScriptSubformInstanceManager(CFXJSE_Value* pValue,
                                               bool bSetting,
-                                              XFA_AttributeValue eAttribute) {
+                                              XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;

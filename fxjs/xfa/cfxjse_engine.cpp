@@ -167,8 +167,8 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
   if (resolveRs.dwFlags == XFA_ResolveNode_RSType_Attribute &&
       resolveRs.script_attribute.callback) {
     CJX_Object* jsObject = resolveRs.objects.front()->JSObject();
-    (jsObject->*(resolveRs.script_attribute.callback))(
-        pValue, bSetting, resolveRs.script_attribute.attribute);
+    (*resolveRs.script_attribute.callback)(
+        jsObject, pValue, bSetting, resolveRs.script_attribute.attribute);
   }
   return true;
 }
@@ -333,8 +333,8 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
           pObject->GetElementType(), wsPropName.AsStringView());
       if (info.has_value()) {
         CJX_Object* jsObject = pObject->JSObject();
-        (jsObject->*(info.value().callback))(pReturnValue, false,
-                                             info.value().attribute);
+        (*info.value().callback)(jsObject, pReturnValue, false,
+                                 info.value().attribute);
         return;
       }
     }
@@ -373,8 +373,8 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
       XFA_GetScriptAttributeByName(pObject->GetElementType(), wsPropNameView);
   if (info.has_value()) {
     CJX_Object* jsObject = pObject->JSObject();
-    (jsObject->*(info.value().callback))(pReturnValue, true,
-                                         info.value().attribute);
+    (*info.value().callback)(jsObject, pReturnValue, true,
+                             info.value().attribute);
     return;
   }
 
@@ -657,8 +657,8 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
               pdfium::base::checked_cast<int32_t>(wsExpression.GetLength())) {
         auto pValue = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
         CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
-        (jsObject->*(rndFind.m_ScriptAttribute.callback))(
-            pValue.get(), false, rndFind.m_ScriptAttribute.attribute);
+        (*rndFind.m_ScriptAttribute.callback)(
+            jsObject, pValue.get(), false, rndFind.m_ScriptAttribute.attribute);
         rndFind.m_Objects.front() = ToObject(pValue.get());
       }
       if (!m_upObjectArray.empty())
