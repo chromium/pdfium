@@ -222,6 +222,8 @@ class CJX_Object {
   void ThrowException(const WideString& str) const;
 
  private:
+  using Type__ = CJX_Object;
+
   std::pair<CXFA_Node*, int32_t> GetPropertyInternal(int32_t index,
                                                      XFA_Element eType) const;
   CXFA_Node* GetOrCreatePropertyInternal(int32_t index, XFA_Element eType);

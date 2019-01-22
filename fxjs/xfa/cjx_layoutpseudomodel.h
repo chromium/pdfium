@@ -29,29 +29,31 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
   ~CJX_LayoutPseudoModel() override;
 
-  JSE_METHOD(absPage, CJX_LayoutPseudoModel);
-  JSE_METHOD(absPageCount, CJX_LayoutPseudoModel);
-  JSE_METHOD(absPageCountInBatch, CJX_LayoutPseudoModel);
-  JSE_METHOD(absPageInBatch, CJX_LayoutPseudoModel);
-  JSE_METHOD(absPageSpan, CJX_LayoutPseudoModel);
-  JSE_METHOD(h, CJX_LayoutPseudoModel);
-  JSE_METHOD(page, CJX_LayoutPseudoModel);
-  JSE_METHOD(pageContent, CJX_LayoutPseudoModel);
-  JSE_METHOD(pageCount, CJX_LayoutPseudoModel);
-  JSE_METHOD(pageSpan, CJX_LayoutPseudoModel);
-  JSE_METHOD(relayout, CJX_LayoutPseudoModel);
-  JSE_METHOD(relayoutPageArea, CJX_LayoutPseudoModel);
-  JSE_METHOD(sheet, CJX_LayoutPseudoModel);
-  JSE_METHOD(sheetCount, CJX_LayoutPseudoModel);
-  JSE_METHOD(sheetCountInBatch, CJX_LayoutPseudoModel);
-  JSE_METHOD(sheetInBatch, CJX_LayoutPseudoModel);
-  JSE_METHOD(w, CJX_LayoutPseudoModel);
-  JSE_METHOD(x, CJX_LayoutPseudoModel);
-  JSE_METHOD(y, CJX_LayoutPseudoModel);
+  JSE_METHOD(absPage);
+  JSE_METHOD(absPageCount);
+  JSE_METHOD(absPageCountInBatch);
+  JSE_METHOD(absPageInBatch);
+  JSE_METHOD(absPageSpan);
+  JSE_METHOD(h);
+  JSE_METHOD(page);
+  JSE_METHOD(pageContent);
+  JSE_METHOD(pageCount);
+  JSE_METHOD(pageSpan);
+  JSE_METHOD(relayout);
+  JSE_METHOD(relayoutPageArea);
+  JSE_METHOD(sheet);
+  JSE_METHOD(sheetCount);
+  JSE_METHOD(sheetCountInBatch);
+  JSE_METHOD(sheetInBatch);
+  JSE_METHOD(w);
+  JSE_METHOD(x);
+  JSE_METHOD(y);
 
   JSE_PROP(ready);
 
  private:
+  using Type__ = CJX_LayoutPseudoModel;
+
   CJS_Result NumberedPageCount(CFX_V8* runtime, bool bNumbered);
   CJS_Result HWXY(CFX_V8* runtime,
                   const std::vector<v8::Local<v8::Value>>& params,

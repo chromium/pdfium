@@ -19,6 +19,9 @@ class CJX_Picture final : public CJX_Node {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Picture;
 };
 
 #endif  // FXJS_XFA_CJX_PICTURE_H_

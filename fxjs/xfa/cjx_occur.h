@@ -19,6 +19,9 @@ class CJX_Occur final : public CJX_Node {
 
   JSE_PROP(max);
   JSE_PROP(min);
+
+ private:
+  using Type__ = CJX_Occur;
 };
 
 #endif  // FXJS_XFA_CJX_OCCUR_H_

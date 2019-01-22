@@ -17,14 +17,16 @@ class CJX_Model : public CJX_Node {
   explicit CJX_Model(CXFA_Node* obj);
   ~CJX_Model() override;
 
-  JSE_METHOD(clearErrorList, CJX_Model);
-  JSE_METHOD(createNode, CJX_Model);
-  JSE_METHOD(isCompatibleNS, CJX_Model);
+  JSE_METHOD(clearErrorList);
+  JSE_METHOD(createNode);
+  JSE_METHOD(isCompatibleNS);
 
   JSE_PROP(aliasNode);
   JSE_PROP(context);
 
  private:
+  using Type__ = CJX_Model;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

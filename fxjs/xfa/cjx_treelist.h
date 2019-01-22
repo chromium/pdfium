@@ -17,9 +17,11 @@ class CJX_TreeList final : public CJX_List {
   explicit CJX_TreeList(CXFA_TreeList* list);
   ~CJX_TreeList() override;
 
-  JSE_METHOD(namedItem, CJX_TreeList);
+  JSE_METHOD(namedItem);
 
  private:
+  using Type__ = CJX_TreeList;
+
   CXFA_TreeList* GetXFATreeList();
 
   static const CJX_MethodSpec MethodSpecs[];

@@ -17,10 +17,12 @@ class CJX_Container : public CJX_Node {
   explicit CJX_Container(CXFA_Node* node);
   ~CJX_Container() override;
 
-  JSE_METHOD(getDelta, CJX_Container);
-  JSE_METHOD(getDeltas, CJX_Container);
+  JSE_METHOD(getDelta);
+  JSE_METHOD(getDeltas);
 
  private:
+  using Type__ = CJX_Container;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

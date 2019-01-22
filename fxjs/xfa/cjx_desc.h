@@ -17,9 +17,11 @@ class CJX_Desc final : public CJX_Node {
   explicit CJX_Desc(CXFA_Desc* desc);
   ~CJX_Desc() override;
 
-  JSE_METHOD(metadata, CJX_Desc);
+  JSE_METHOD(metadata);
 
  private:
+  using Type__ = CJX_Desc;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

@@ -18,6 +18,9 @@ class CJX_SubformSet final : public CJX_Container {
   ~CJX_SubformSet() override;
 
   JSE_PROP(instanceIndex);
+
+ private:
+  using Type__ = CJX_SubformSet;
 };
 
 #endif  // FXJS_XFA_CJX_SUBFORMSET_H_

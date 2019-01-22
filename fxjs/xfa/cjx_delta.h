@@ -17,13 +17,15 @@ class CJX_Delta final : public CJX_Object {
   explicit CJX_Delta(CXFA_Delta* delta);
   ~CJX_Delta() override;
 
-  JSE_METHOD(restore, CJX_Delta);
+  JSE_METHOD(restore);
 
   JSE_PROP(currentValue);
   JSE_PROP(savedValue);
   JSE_PROP(target);
 
  private:
+  using Type__ = CJX_Delta;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

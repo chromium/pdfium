@@ -18,6 +18,9 @@ class CJX_Xfa final : public CJX_Model {
   ~CJX_Xfa() override;
 
   JSE_PROP(thisValue); /* this */
+
+ private:
+  using Type__ = CJX_Xfa;
 };
 
 #endif  // FXJS_XFA_CJX_XFA_H_

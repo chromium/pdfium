@@ -17,11 +17,11 @@ class CJX_InstanceManager final : public CJX_Node {
   explicit CJX_InstanceManager(CXFA_InstanceManager* mgr);
   ~CJX_InstanceManager() override;
 
-  JSE_METHOD(addInstance, CJX_InstanceManager);
-  JSE_METHOD(insertInstance, CJX_InstanceManager);
-  JSE_METHOD(moveInstance, CJX_InstanceManager);
-  JSE_METHOD(removeInstance, CJX_InstanceManager);
-  JSE_METHOD(setInstances, CJX_InstanceManager);
+  JSE_METHOD(addInstance);
+  JSE_METHOD(insertInstance);
+  JSE_METHOD(moveInstance);
+  JSE_METHOD(removeInstance);
+  JSE_METHOD(setInstances);
 
   JSE_PROP(count);
   JSE_PROP(max);
@@ -30,6 +30,8 @@ class CJX_InstanceManager final : public CJX_Node {
   int32_t MoveInstance(int32_t iTo, int32_t iFrom);
 
  private:
+  using Type__ = CJX_InstanceManager;
+
   int32_t SetInstances(int32_t iDesired);
 
   static const CJX_MethodSpec MethodSpecs[];

@@ -18,6 +18,9 @@ class CJX_Encrypt final : public CJX_Node {
   ~CJX_Encrypt() override;
 
   JSE_PROP(format);
+
+ private:
+  using Type__ = CJX_Encrypt;
 };
 
 #endif  // FXJS_XFA_CJX_ENCRYPT_H_

@@ -19,6 +19,9 @@ class CJX_Float final : public CJX_Content {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Float;
 };
 
 #endif  // FXJS_XFA_CJX_FLOAT_H_

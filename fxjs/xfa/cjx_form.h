@@ -17,14 +17,16 @@ class CJX_Form final : public CJX_Model {
   explicit CJX_Form(CXFA_Form* form);
   ~CJX_Form() override;
 
-  JSE_METHOD(execCalculate, CJX_Form);
-  JSE_METHOD(execInitialize, CJX_Form);
-  JSE_METHOD(execValidate, CJX_Form);
-  JSE_METHOD(formNodes, CJX_Form);
-  JSE_METHOD(recalculate, CJX_Form);
-  JSE_METHOD(remerge, CJX_Form);
+  JSE_METHOD(execCalculate);
+  JSE_METHOD(execInitialize);
+  JSE_METHOD(execValidate);
+  JSE_METHOD(formNodes);
+  JSE_METHOD(recalculate);
+  JSE_METHOD(remerge);
 
  private:
+  using Type__ = CJX_Form;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

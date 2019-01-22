@@ -19,10 +19,10 @@ class CJX_DataWindow final : public CJX_Object {
   explicit CJX_DataWindow(CScript_DataWindow* window);
   ~CJX_DataWindow() override;
 
-  JSE_METHOD(gotoRecord, CJX_DataWindow);
-  JSE_METHOD(isRecordGroup, CJX_DataWindow);
-  JSE_METHOD(moveCurrentRecord, CJX_DataWindow);
-  JSE_METHOD(record, CJX_DataWindow);
+  JSE_METHOD(gotoRecord);
+  JSE_METHOD(isRecordGroup);
+  JSE_METHOD(moveCurrentRecord);
+  JSE_METHOD(record);
 
   JSE_PROP(currentRecordNumber);
   JSE_PROP(isDefined);
@@ -30,6 +30,8 @@ class CJX_DataWindow final : public CJX_Object {
   JSE_PROP(recordsBefore);
 
  private:
+  using Type__ = CJX_DataWindow;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

@@ -19,6 +19,9 @@ class CJX_DateTime final : public CJX_Node {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_DateTime;
 };
 
 #endif  // FXJS_XFA_CJX_DATETIME_H_

@@ -17,9 +17,11 @@ class CJX_WsdlConnection final : public CJX_Node {
   explicit CJX_WsdlConnection(CXFA_WsdlConnection* connection);
   ~CJX_WsdlConnection() override;
 
-  JSE_METHOD(execute, CJX_WsdlConnection);
+  JSE_METHOD(execute);
 
  private:
+  using Type__ = CJX_WsdlConnection;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

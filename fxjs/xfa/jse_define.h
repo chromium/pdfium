@@ -22,14 +22,14 @@ CJS_Result JSEMethod(C* node,
   return (node->*M)(runtime, params);
 }
 
-#define JSE_METHOD(method_name, class_name)                 \
-  static CJS_Result method_name##_static(                   \
-      CJX_Object* node, CFX_V8* runtime,                    \
-      const std::vector<v8::Local<v8::Value>>& params) {    \
-    return JSEMethod<class_name, &class_name::method_name>( \
-        static_cast<class_name*>(node), runtime, params);   \
-  }                                                         \
-  CJS_Result method_name(CFX_V8* runtime,                   \
+#define JSE_METHOD(method_name)                                                \
+  static CJS_Result method_name##_static(                                      \
+      CJX_Object* node, CFX_V8* runtime,                                       \
+      const std::vector<v8::Local<v8::Value>>& params) {                       \
+    return JSEMethod<Type__, &Type__::method_name>(static_cast<Type__*>(node), \
+                                                   runtime, params);           \
+  }                                                                            \
+  CJS_Result method_name(CFX_V8* runtime,                                      \
                          const std::vector<v8::Local<v8::Value>>& params)
 
 #define JSE_PROP(prop_name) \

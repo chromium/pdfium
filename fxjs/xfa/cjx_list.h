@@ -17,14 +17,16 @@ class CJX_List : public CJX_Object {
   explicit CJX_List(CXFA_List* list);
   ~CJX_List() override;
 
-  JSE_METHOD(append, CJX_List);
-  JSE_METHOD(insert, CJX_List);
-  JSE_METHOD(item, CJX_List);
-  JSE_METHOD(remove, CJX_List);
+  JSE_METHOD(append);
+  JSE_METHOD(insert);
+  JSE_METHOD(item);
+  JSE_METHOD(remove);
 
   JSE_PROP(length);
 
  private:
+  using Type__ = CJX_List;
+
   CXFA_List* GetXFAList();
 
   static const CJX_MethodSpec MethodSpecs[];

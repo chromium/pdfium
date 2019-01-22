@@ -38,8 +38,8 @@ class CJX_EventPseudoModel final : public CJX_Object {
   explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
   ~CJX_EventPseudoModel() override;
 
-  JSE_METHOD(emit, CJX_EventPseudoModel);
-  JSE_METHOD(reset, CJX_EventPseudoModel);
+  JSE_METHOD(emit);
+  JSE_METHOD(reset);
 
   JSE_PROP(cancelAction);
   JSE_PROP(change);
@@ -60,6 +60,8 @@ class CJX_EventPseudoModel final : public CJX_Object {
   JSE_PROP(target);
 
  private:
+  using Type__ = CJX_EventPseudoModel;
+
   void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);
 
   static const CJX_MethodSpec MethodSpecs[];

@@ -19,6 +19,9 @@ class CJX_Draw final : public CJX_Container {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(rawValue);
+
+ private:
+  using Type__ = CJX_Draw;
 };
 
 #endif  // FXJS_XFA_CJX_DRAW_H_

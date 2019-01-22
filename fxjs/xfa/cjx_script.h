@@ -20,6 +20,9 @@ class CJX_Script final : public CJX_Node {
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(stateless);
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Script;
 };
 
 #endif  // FXJS_XFA_CJX_SCRIPT_H_

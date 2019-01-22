@@ -19,6 +19,9 @@ class CJX_Integer final : public CJX_Content {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Integer;
 };
 
 #endif  // FXJS_XFA_CJX_INTEGER_H_

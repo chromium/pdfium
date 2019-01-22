@@ -17,11 +17,13 @@ class CJX_Manifest final : public CJX_Node {
   explicit CJX_Manifest(CXFA_Manifest* manifest);
   ~CJX_Manifest() override;
 
-  JSE_METHOD(evaluate, CJX_Manifest);
+  JSE_METHOD(evaluate);
 
   JSE_PROP(defaultValue); /* {default} */
 
  private:
+  using Type__ = CJX_Manifest;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

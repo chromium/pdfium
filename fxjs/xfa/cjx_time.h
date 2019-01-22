@@ -19,6 +19,9 @@ class CJX_Time final : public CJX_Content {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Time;
 };
 
 #endif  // FXJS_XFA_CJX_TIME_H_

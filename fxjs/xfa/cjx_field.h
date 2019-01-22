@@ -17,18 +17,18 @@ class CJX_Field final : public CJX_Container {
   explicit CJX_Field(CXFA_Field* field);
   ~CJX_Field() override;
 
-  JSE_METHOD(addItem, CJX_Field);
-  JSE_METHOD(boundItem, CJX_Field);
-  JSE_METHOD(clearItems, CJX_Field);
-  JSE_METHOD(deleteItem, CJX_Field);
-  JSE_METHOD(execCalculate, CJX_Field);
-  JSE_METHOD(execEvent, CJX_Field);
-  JSE_METHOD(execInitialize, CJX_Field);
-  JSE_METHOD(execValidate, CJX_Field);
-  JSE_METHOD(getDisplayItem, CJX_Field);
-  JSE_METHOD(getItemState, CJX_Field);
-  JSE_METHOD(getSaveItem, CJX_Field);
-  JSE_METHOD(setItemState, CJX_Field);
+  JSE_METHOD(addItem);
+  JSE_METHOD(boundItem);
+  JSE_METHOD(clearItems);
+  JSE_METHOD(deleteItem);
+  JSE_METHOD(execCalculate);
+  JSE_METHOD(execEvent);
+  JSE_METHOD(execInitialize);
+  JSE_METHOD(execValidate);
+  JSE_METHOD(getDisplayItem);
+  JSE_METHOD(getItemState);
+  JSE_METHOD(getSaveItem);
+  JSE_METHOD(setItemState);
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(borderColor);
@@ -46,6 +46,8 @@ class CJX_Field final : public CJX_Container {
   JSE_PROP(validationMessage);
 
  private:
+  using Type__ = CJX_Field;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

@@ -18,8 +18,8 @@ class CJX_Tree : public CJX_Object {
   explicit CJX_Tree(CXFA_Object* obj);
   ~CJX_Tree() override;
 
-  JSE_METHOD(resolveNode, CJX_Tree);
-  JSE_METHOD(resolveNodes, CJX_Tree);
+  JSE_METHOD(resolveNode);
+  JSE_METHOD(resolveNodes);
 
   JSE_PROP(all);
   JSE_PROP(classAll);
@@ -30,6 +30,8 @@ class CJX_Tree : public CJX_Object {
   JSE_PROP(somExpression);
 
  private:
+  using Type__ = CJX_Tree;
+
   void ResolveNodeList(CFXJSE_Value* pValue,
                        WideString wsExpression,
                        uint32_t dwFlag,

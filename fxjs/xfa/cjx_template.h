@@ -20,14 +20,16 @@ class CJX_Template final : public CJX_Model {
   /* The docs list a |createNode| method on Template but that method already
    * exists on Model, also the |createNode| docs say it exists on Model not
    * on Template so I'm leaving |createNode| out of the template methods. */
-  JSE_METHOD(execCalculate, CJX_Template);
-  JSE_METHOD(execInitialize, CJX_Template);
-  JSE_METHOD(execValidate, CJX_Template);
-  JSE_METHOD(formNodes, CJX_Template);
-  JSE_METHOD(recalculate, CJX_Template);
-  JSE_METHOD(remerge, CJX_Template);
+  JSE_METHOD(execCalculate);
+  JSE_METHOD(execInitialize);
+  JSE_METHOD(execValidate);
+  JSE_METHOD(formNodes);
+  JSE_METHOD(recalculate);
+  JSE_METHOD(remerge);
 
  private:
+  using Type__ = CJX_Template;
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

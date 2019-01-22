@@ -20,6 +20,9 @@ class CJX_DataValue final : public CJX_Node {
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(isNull);
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_DataValue;
 };
 
 #endif  // FXJS_XFA_CJX_DATAVALUE_H_

@@ -18,6 +18,9 @@ class CJX_ExData final : public CJX_Content {
   ~CJX_ExData() override;
 
   JSE_PROP(defaultValue); /* {default} */
+
+ private:
+  using Type__ = CJX_ExData;
 };
 
 #endif  // FXJS_XFA_CJX_EXDATA_H_

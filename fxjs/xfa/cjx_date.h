@@ -19,6 +19,9 @@ class CJX_Date final : public CJX_Content {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Date;
 };
 
 #endif  // FXJS_XFA_CJX_DATE_H_

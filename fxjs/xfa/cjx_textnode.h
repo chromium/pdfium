@@ -19,6 +19,9 @@ class CJX_TextNode : public CJX_Node {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_TextNode;
 };
 
 #endif  // FXJS_XFA_CJX_TEXTNODE_H_

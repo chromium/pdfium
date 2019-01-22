@@ -19,6 +19,9 @@ class CJX_Boolean final : public CJX_Content {
 
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
+
+ private:
+  using Type__ = CJX_Boolean;
 };
 
 #endif  // FXJS_XFA_CJX_BOOLEAN_H_
