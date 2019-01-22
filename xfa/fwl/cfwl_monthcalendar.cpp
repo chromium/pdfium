@@ -407,9 +407,9 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
     fDayMaxW = (fDayMaxW >= sz.width) ? fDayMaxW : sz.width;
     fDayMaxH = (fDayMaxH >= sz.height) ? fDayMaxH : sz.height;
   }
-  m_szCell.width = float((fMaxWeekW >= fDayMaxW) ? (int)(fMaxWeekW + 0.5)
-                                                 : (int)(fDayMaxW + 0.5));
-  m_szCell.height = (fMaxWeekH >= fDayMaxH) ? fMaxWeekH : fDayMaxH;
+  m_szCell.width =
+      static_cast<int>(0.5 + (fMaxWeekW >= fDayMaxW ? fMaxWeekW : fDayMaxW));
+  m_szCell.height = fMaxWeekH >= fDayMaxH ? fMaxWeekH : fDayMaxH;
 
   CFX_SizeF fs;
   fs.width = m_szCell.width * MONTHCAL_COLUMNS +

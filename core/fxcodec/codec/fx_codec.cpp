@@ -1788,10 +1788,10 @@ std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
   // getting the same answer as before is desirable.
   // All floats from 0.0 to 1.0 were tested and now give the same results.
   const float rounding_offset = 0.49999997f;
-  uint8_t c1 = int(c * 255.f + rounding_offset);
-  uint8_t m1 = int(m * 255.f + rounding_offset);
-  uint8_t y1 = int(y * 255.f + rounding_offset);
-  uint8_t k1 = int(k * 255.f + rounding_offset);
+  uint8_t c1 = static_cast<int>(c * 255.f + rounding_offset);
+  uint8_t m1 = static_cast<int>(m * 255.f + rounding_offset);
+  uint8_t y1 = static_cast<int>(y * 255.f + rounding_offset);
+  uint8_t k1 = static_cast<int>(k * 255.f + rounding_offset);
 
   ASSERT(c1 == FXSYS_round(c * 255));
   ASSERT(m1 == FXSYS_round(m * 255));
