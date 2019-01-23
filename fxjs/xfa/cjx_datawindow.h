@@ -19,6 +19,9 @@ class CJX_DataWindow final : public CJX_Object {
   explicit CJX_DataWindow(CScript_DataWindow* window);
   ~CJX_DataWindow() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(gotoRecord);
   JSE_METHOD(isRecordGroup);
   JSE_METHOD(moveCurrentRecord);
@@ -31,7 +34,9 @@ class CJX_DataWindow final : public CJX_Object {
 
  private:
   using Type__ = CJX_DataWindow;
+  using ParentType__ = CJX_Object;
 
+  static const TypeTag static_type__ = TypeTag::DataWindow;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

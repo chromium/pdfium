@@ -17,10 +17,16 @@ class CJX_Extras final : public CJX_Node {
   explicit CJX_Extras(CXFA_Extras* node);
   ~CJX_Extras() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(type);
 
  private:
   using Type__ = CJX_Extras;
+  using ParentType__ = CJX_Node;
+
+  static const TypeTag static_type__ = TypeTag::Extras;
 };
 
 #endif  // FXJS_XFA_CJX_EXTRAS_H_

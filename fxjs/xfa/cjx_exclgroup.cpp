@@ -30,6 +30,10 @@ CJX_ExclGroup::CJX_ExclGroup(CXFA_ExclGroup* group) : CJX_Node(group) {
 
 CJX_ExclGroup::~CJX_ExclGroup() {}
 
+bool CJX_ExclGroup::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_ExclGroup::execEvent(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

@@ -12,6 +12,10 @@ CJX_SubformSet::CJX_SubformSet(CXFA_SubformSet* node) : CJX_Container(node) {}
 
 CJX_SubformSet::~CJX_SubformSet() = default;
 
+bool CJX_SubformSet::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_SubformSet::instanceIndex(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {

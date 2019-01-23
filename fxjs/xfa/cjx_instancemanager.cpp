@@ -33,6 +33,10 @@ CJX_InstanceManager::CJX_InstanceManager(CXFA_InstanceManager* mgr)
 
 CJX_InstanceManager::~CJX_InstanceManager() {}
 
+bool CJX_InstanceManager::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
   int32_t iMin = occur ? occur->GetMin() : CXFA_Occur::kDefaultMin;

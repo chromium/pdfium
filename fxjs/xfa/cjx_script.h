@@ -17,12 +17,18 @@ class CJX_Script final : public CJX_Node {
   explicit CJX_Script(CXFA_Script* node);
   ~CJX_Script() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(stateless);
   JSE_PROP(value);
 
  private:
   using Type__ = CJX_Script;
+  using ParentType__ = CJX_Node;
+
+  static const TypeTag static_type__ = TypeTag::Script;
 };
 
 #endif  // FXJS_XFA_CJX_SCRIPT_H_

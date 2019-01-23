@@ -17,6 +17,9 @@ class CJX_ExclGroup final : public CJX_Node {
   explicit CJX_ExclGroup(CXFA_ExclGroup* group);
   ~CJX_ExclGroup() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(execCalculate);
   JSE_METHOD(execEvent);
   JSE_METHOD(execInitialize);
@@ -35,7 +38,9 @@ class CJX_ExclGroup final : public CJX_Node {
 
  private:
   using Type__ = CJX_ExclGroup;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::ExclGroup;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

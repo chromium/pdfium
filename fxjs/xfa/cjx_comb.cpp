@@ -12,6 +12,10 @@ CJX_Comb::CJX_Comb(CXFA_Comb* node) : CJX_Node(node) {}
 
 CJX_Comb::~CJX_Comb() = default;
 
+bool CJX_Comb::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Comb::numberOfCells(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {

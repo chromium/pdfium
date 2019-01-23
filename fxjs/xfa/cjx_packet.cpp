@@ -29,6 +29,10 @@ CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
 
 CJX_Packet::~CJX_Packet() {}
 
+bool CJX_Packet::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Packet::getAttribute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

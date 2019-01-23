@@ -39,6 +39,10 @@ CJX_Field::CJX_Field(CXFA_Field* field) : CJX_Container(field) {
 
 CJX_Field::~CJX_Field() {}
 
+bool CJX_Field::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Field::clearItems(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

@@ -31,6 +31,10 @@ CJX_Form::CJX_Form(CXFA_Form* form) : CJX_Model(form) {
 
 CJX_Form::~CJX_Form() {}
 
+bool CJX_Form::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Form::formNodes(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

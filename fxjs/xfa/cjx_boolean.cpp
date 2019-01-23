@@ -13,6 +13,10 @@ CJX_Boolean::CJX_Boolean(CXFA_Boolean* node) : CJX_Content(node) {}
 
 CJX_Boolean::~CJX_Boolean() = default;
 
+bool CJX_Boolean::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {

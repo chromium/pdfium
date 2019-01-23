@@ -17,11 +17,17 @@ class CJX_Integer final : public CJX_Content {
   explicit CJX_Integer(CXFA_Integer* node);
   ~CJX_Integer() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
 
  private:
   using Type__ = CJX_Integer;
+  using ParentType__ = CJX_Content;
+
+  static const TypeTag static_type__ = TypeTag::Integer;
 };
 
 #endif  // FXJS_XFA_CJX_INTEGER_H_

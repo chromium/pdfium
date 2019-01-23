@@ -17,11 +17,17 @@ class CJX_Float final : public CJX_Content {
   explicit CJX_Float(CXFA_Float* node);
   ~CJX_Float() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
 
  private:
   using Type__ = CJX_Float;
+  using ParentType__ = CJX_Content;
+
+  static const TypeTag static_type__ = TypeTag::Float;
 };
 
 #endif  // FXJS_XFA_CJX_FLOAT_H_

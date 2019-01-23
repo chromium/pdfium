@@ -24,6 +24,10 @@ CJX_TreeList::CJX_TreeList(CXFA_TreeList* list) : CJX_List(list) {
 
 CJX_TreeList::~CJX_TreeList() {}
 
+bool CJX_TreeList::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CXFA_TreeList* CJX_TreeList::GetXFATreeList() {
   return ToTreeList(GetXFAObject());
 }

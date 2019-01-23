@@ -56,8 +56,63 @@ enum XFA_SOM_MESSAGETYPE {
 
 class CJX_Object {
  public:
+  // Similar, but not exactly equal to XFA_Element enum.
+  // TODO(tsepez): unify with XFA_Element.
+  enum class TypeTag {
+    Boolean,
+    Comb,
+    Container,
+    DataValue,
+    DataWindow,
+    Date,
+    DateTime,
+    Decimal,
+    Delta,
+    Desc,
+    Draw,
+    Encrypt,
+    EventPseudoModel,
+    ExclGroup,
+    ExData,
+    Extras,
+    Field,
+    Float,
+    Form,
+    Handler,
+    HostPseudoModel,
+    Image,
+    InstanceManager,
+    Integer,
+    LayoutPseudoModel,
+    List,
+    LogPseudoModel,
+    Manifest,
+    Model,
+    Node,
+    Object,
+    Occur,
+    Packet,
+    Picture,
+    Script,
+    SignaturePesudoModel,
+    Source,
+    Subform,
+    SubformSet,
+    Template,
+    Text,
+    TextNode,
+    Time,
+    Tree,
+    TreeList,
+    Value,
+    WsdlConnection,
+    Xfa,
+  };
+
   explicit CJX_Object(CXFA_Object* obj);
   virtual ~CJX_Object();
+
+  virtual bool DynamicTypeIs(TypeTag eType) const;
 
   JSE_PROP(className);
 
@@ -187,6 +242,7 @@ class CJX_Object {
 
  private:
   using Type__ = CJX_Object;
+  static const TypeTag static_type__ = TypeTag::Object;
 
   std::pair<CXFA_Node*, int32_t> GetPropertyInternal(int32_t index,
                                                      XFA_Element eType) const;

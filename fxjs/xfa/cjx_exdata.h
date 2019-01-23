@@ -17,10 +17,16 @@ class CJX_ExData final : public CJX_Content {
   explicit CJX_ExData(CXFA_ExData* node);
   ~CJX_ExData() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
 
  private:
   using Type__ = CJX_ExData;
+  using ParentType__ = CJX_Content;
+
+  static const TypeTag static_type__ = TypeTag::ExData;
 };
 
 #endif  // FXJS_XFA_CJX_EXDATA_H_

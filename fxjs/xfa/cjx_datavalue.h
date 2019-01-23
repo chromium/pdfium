@@ -17,12 +17,18 @@ class CJX_DataValue final : public CJX_Node {
   explicit CJX_DataValue(CXFA_DataValue* node);
   ~CJX_DataValue() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(isNull);
   JSE_PROP(value);
 
  private:
   using Type__ = CJX_DataValue;
+  using ParentType__ = CJX_Node;
+
+  static const TypeTag static_type__ = TypeTag::DataValue;
 };
 
 #endif  // FXJS_XFA_CJX_DATAVALUE_H_

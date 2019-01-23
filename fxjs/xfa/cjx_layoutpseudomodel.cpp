@@ -57,6 +57,10 @@ CJX_LayoutPseudoModel::CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model)
 
 CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}
 
+bool CJX_LayoutPseudoModel::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_LayoutPseudoModel::ready(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {

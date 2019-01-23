@@ -21,6 +21,10 @@ CJX_Desc::CJX_Desc(CXFA_Desc* desc) : CJX_Node(desc) {
 
 CJX_Desc::~CJX_Desc() {}
 
+bool CJX_Desc::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Desc::metadata(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 0 && params.size() != 1)

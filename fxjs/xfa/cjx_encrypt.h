@@ -17,10 +17,16 @@ class CJX_Encrypt final : public CJX_Node {
   explicit CJX_Encrypt(CXFA_Encrypt* node);
   ~CJX_Encrypt() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(format);
 
  private:
   using Type__ = CJX_Encrypt;
+  using ParentType__ = CJX_Node;
+
+  static const TypeTag static_type__ = TypeTag::Encrypt;
 };
 
 #endif  // FXJS_XFA_CJX_ENCRYPT_H_

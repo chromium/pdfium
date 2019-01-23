@@ -22,6 +22,10 @@ CJX_Manifest::CJX_Manifest(CXFA_Manifest* manifest) : CJX_Node(manifest) {
 
 CJX_Manifest::~CJX_Manifest() {}
 
+bool CJX_Manifest::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Manifest::evaluate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

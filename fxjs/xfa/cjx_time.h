@@ -17,11 +17,17 @@ class CJX_Time final : public CJX_Content {
   explicit CJX_Time(CXFA_Time* node);
   ~CJX_Time() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(value);
 
  private:
   using Type__ = CJX_Time;
+  using ParentType__ = CJX_Content;
+
+  static const TypeTag static_type__ = TypeTag::Time;
 };
 
 #endif  // FXJS_XFA_CJX_TIME_H_

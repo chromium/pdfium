@@ -12,6 +12,10 @@ CJX_Integer::CJX_Integer(CXFA_Integer* node) : CJX_Content(node) {}
 
 CJX_Integer::~CJX_Integer() = default;
 
+bool CJX_Integer::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Integer::defaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {

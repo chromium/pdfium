@@ -17,11 +17,17 @@ class CJX_Draw final : public CJX_Container {
   explicit CJX_Draw(CXFA_Draw* node);
   ~CJX_Draw() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(rawValue);
 
  private:
   using Type__ = CJX_Draw;
+  using ParentType__ = CJX_Container;
+
+  static const TypeTag static_type__ = TypeTag::Draw;
 };
 
 #endif  // FXJS_XFA_CJX_DRAW_H_

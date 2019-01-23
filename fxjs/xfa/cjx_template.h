@@ -17,6 +17,9 @@ class CJX_Template final : public CJX_Model {
   explicit CJX_Template(CXFA_Template* tmpl);
   ~CJX_Template() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   /* The docs list a |createNode| method on Template but that method already
    * exists on Model, also the |createNode| docs say it exists on Model not
    * on Template so I'm leaving |createNode| out of the template methods. */
@@ -29,7 +32,9 @@ class CJX_Template final : public CJX_Model {
 
  private:
   using Type__ = CJX_Template;
+  using ParentType__ = CJX_Model;
 
+  static const TypeTag static_type__ = TypeTag::Template;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

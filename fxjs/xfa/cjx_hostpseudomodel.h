@@ -19,6 +19,9 @@ class CJX_HostPseudoModel final : public CJX_Object {
   explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
   ~CJX_HostPseudoModel() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(beep);
   JSE_METHOD(documentCountInBatch);
   JSE_METHOD(documentInBatch);
@@ -52,7 +55,9 @@ class CJX_HostPseudoModel final : public CJX_Object {
 
  private:
   using Type__ = CJX_HostPseudoModel;
+  using ParentType__ = CJX_Object;
 
+  static const TypeTag static_type__ = TypeTag::HostPseudoModel;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

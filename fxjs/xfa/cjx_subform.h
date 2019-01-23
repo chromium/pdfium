@@ -17,6 +17,9 @@ class CJX_Subform final : public CJX_Container {
   explicit CJX_Subform(CXFA_Node* container);
   ~CJX_Subform() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(execCalculate);
   JSE_METHOD(execEvent);
   JSE_METHOD(execInitialize);
@@ -29,7 +32,9 @@ class CJX_Subform final : public CJX_Container {
 
  private:
   using Type__ = CJX_Subform;
+  using ParentType__ = CJX_Container;
 
+  static const TypeTag static_type__ = TypeTag::Subform;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

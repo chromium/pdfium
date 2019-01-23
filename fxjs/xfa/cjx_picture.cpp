@@ -12,6 +12,10 @@ CJX_Picture::CJX_Picture(CXFA_Picture* node) : CJX_Node(node) {}
 
 CJX_Picture::~CJX_Picture() = default;
 
+bool CJX_Picture::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Picture::defaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {

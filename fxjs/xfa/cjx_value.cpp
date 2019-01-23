@@ -12,6 +12,10 @@ CJX_Value::CJX_Value(CXFA_Value* node) : CJX_Node(node) {}
 
 CJX_Value::~CJX_Value() = default;
 
+bool CJX_Value::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Value::override(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {

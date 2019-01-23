@@ -25,6 +25,10 @@ CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
 
 CJX_LogPseudoModel::~CJX_LogPseudoModel() {}
 
+bool CJX_LogPseudoModel::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_LogPseudoModel::message(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

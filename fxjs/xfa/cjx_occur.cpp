@@ -15,6 +15,10 @@ CJX_Occur::CJX_Occur(CXFA_Occur* node) : CJX_Node(node) {}
 
 CJX_Occur::~CJX_Occur() = default;
 
+bool CJX_Occur::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Occur::max(CFXJSE_Value* pValue,
                     bool bSetting,
                     XFA_Attribute eAttribute) {

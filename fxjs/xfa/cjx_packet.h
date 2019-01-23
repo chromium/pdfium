@@ -17,6 +17,9 @@ class CJX_Packet final : public CJX_Node {
   explicit CJX_Packet(CXFA_Packet* packet);
   ~CJX_Packet() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(getAttribute);
   JSE_METHOD(removeAttribute);
   JSE_METHOD(setAttribute);
@@ -25,7 +28,9 @@ class CJX_Packet final : public CJX_Node {
 
  private:
   using Type__ = CJX_Packet;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::Packet;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

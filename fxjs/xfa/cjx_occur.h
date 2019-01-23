@@ -17,11 +17,17 @@ class CJX_Occur final : public CJX_Node {
   explicit CJX_Occur(CXFA_Occur* node);
   ~CJX_Occur() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(max);
   JSE_PROP(min);
 
  private:
   using Type__ = CJX_Occur;
+  using ParentType__ = CJX_Node;
+
+  static const TypeTag static_type__ = TypeTag::Occur;
 };
 
 #endif  // FXJS_XFA_CJX_OCCUR_H_

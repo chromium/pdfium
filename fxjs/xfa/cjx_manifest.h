@@ -17,13 +17,18 @@ class CJX_Manifest final : public CJX_Node {
   explicit CJX_Manifest(CXFA_Manifest* manifest);
   ~CJX_Manifest() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(evaluate);
 
   JSE_PROP(defaultValue); /* {default} */
 
  private:
   using Type__ = CJX_Manifest;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::Manifest;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

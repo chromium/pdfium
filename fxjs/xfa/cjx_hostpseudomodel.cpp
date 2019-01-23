@@ -73,6 +73,10 @@ CJX_HostPseudoModel::CJX_HostPseudoModel(CScript_HostPseudoModel* model)
 
 CJX_HostPseudoModel::~CJX_HostPseudoModel() {}
 
+bool CJX_HostPseudoModel::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_HostPseudoModel::appType(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {

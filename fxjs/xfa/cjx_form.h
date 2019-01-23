@@ -17,6 +17,9 @@ class CJX_Form final : public CJX_Model {
   explicit CJX_Form(CXFA_Form* form);
   ~CJX_Form() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(execCalculate);
   JSE_METHOD(execInitialize);
   JSE_METHOD(execValidate);
@@ -26,7 +29,9 @@ class CJX_Form final : public CJX_Model {
 
  private:
   using Type__ = CJX_Form;
+  using ParentType__ = CJX_Model;
 
+  static const TypeTag static_type__ = TypeTag::Form;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

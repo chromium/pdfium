@@ -15,6 +15,10 @@ CJX_Xfa::CJX_Xfa(CXFA_Xfa* node) : CJX_Model(node) {}
 
 CJX_Xfa::~CJX_Xfa() = default;
 
+bool CJX_Xfa::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {

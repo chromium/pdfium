@@ -18,6 +18,9 @@ class CJX_Tree : public CJX_Object {
   explicit CJX_Tree(CXFA_Object* obj);
   ~CJX_Tree() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(resolveNode);
   JSE_METHOD(resolveNodes);
 
@@ -31,13 +34,15 @@ class CJX_Tree : public CJX_Object {
 
  private:
   using Type__ = CJX_Tree;
+  using ParentType__ = CJX_Object;
+
+  static const TypeTag static_type__ = TypeTag::Tree;
+  static const CJX_MethodSpec MethodSpecs[];
 
   void ResolveNodeList(CFXJSE_Value* pValue,
                        WideString wsExpression,
                        uint32_t dwFlag,
                        CXFA_Node* refNode);
-
-  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_XFA_CJX_TREE_H_

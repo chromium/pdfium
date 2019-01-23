@@ -29,6 +29,9 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
   ~CJX_LayoutPseudoModel() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(absPage);
   JSE_METHOD(absPageCount);
   JSE_METHOD(absPageCountInBatch);
@@ -53,6 +56,10 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
 
  private:
   using Type__ = CJX_LayoutPseudoModel;
+  using ParentType__ = CJX_Object;
+
+  static const TypeTag static_type__ = TypeTag::LayoutPseudoModel;
+  static const CJX_MethodSpec MethodSpecs[];
 
   CJS_Result NumberedPageCount(CFX_V8* runtime, bool bNumbered);
   CJS_Result HWXY(CFX_V8* runtime,
@@ -65,8 +72,6 @@ class CJX_LayoutPseudoModel final : public CJX_Object {
   CJS_Result PageInternals(CFX_V8* runtime,
                            const std::vector<v8::Local<v8::Value>>& params,
                            bool bAbsPage);
-
-  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_XFA_CJX_LAYOUTPSEUDOMODEL_H_

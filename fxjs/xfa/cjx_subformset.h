@@ -17,10 +17,16 @@ class CJX_SubformSet final : public CJX_Container {
   explicit CJX_SubformSet(CXFA_SubformSet* node);
   ~CJX_SubformSet() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_PROP(instanceIndex);
 
  private:
   using Type__ = CJX_SubformSet;
+  using ParentType__ = CJX_Container;
+
+  static const TypeTag static_type__ = TypeTag::SubformSet;
 };
 
 #endif  // FXJS_XFA_CJX_SUBFORMSET_H_

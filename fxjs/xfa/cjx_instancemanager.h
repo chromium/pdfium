@@ -17,6 +17,9 @@ class CJX_InstanceManager final : public CJX_Node {
   explicit CJX_InstanceManager(CXFA_InstanceManager* mgr);
   ~CJX_InstanceManager() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(addInstance);
   JSE_METHOD(insertInstance);
   JSE_METHOD(moveInstance);
@@ -31,10 +34,12 @@ class CJX_InstanceManager final : public CJX_Node {
 
  private:
   using Type__ = CJX_InstanceManager;
+  using ParentType__ = CJX_Node;
+
+  static const TypeTag static_type__ = TypeTag::InstanceManager;
+  static const CJX_MethodSpec MethodSpecs[];
 
   int32_t SetInstances(int32_t iDesired);
-
-  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_XFA_CJX_INSTANCEMANAGER_H_

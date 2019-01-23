@@ -18,6 +18,9 @@ class CJX_Node : public CJX_Tree {
   explicit CJX_Node(CXFA_Node* node);
   ~CJX_Node() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(applyXSL);
   JSE_METHOD(assignNode);
   JSE_METHOD(clone);
@@ -43,7 +46,9 @@ class CJX_Node : public CJX_Tree {
 
  private:
   using Type__ = CJX_Node;
+  using ParentType__ = CJX_Tree;
 
+  static const TypeTag static_type__ = TypeTag::Node;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

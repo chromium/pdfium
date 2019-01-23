@@ -12,6 +12,11 @@
 CJX_Draw::CJX_Draw(CXFA_Draw* node) : CJX_Container(node) {}
 
 CJX_Draw::~CJX_Draw() = default;
+
+bool CJX_Draw::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Draw::rawValue(CFXJSE_Value* pValue,
                         bool bSetting,
                         XFA_Attribute eAttribute) {

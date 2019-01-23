@@ -17,6 +17,9 @@ class CJX_Model : public CJX_Node {
   explicit CJX_Model(CXFA_Node* obj);
   ~CJX_Model() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(clearErrorList);
   JSE_METHOD(createNode);
   JSE_METHOD(isCompatibleNS);
@@ -26,7 +29,9 @@ class CJX_Model : public CJX_Node {
 
  private:
   using Type__ = CJX_Model;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::Model;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

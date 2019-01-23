@@ -28,6 +28,10 @@ CJX_List::CJX_List(CXFA_List* list) : CJX_Object(list) {
 
 CJX_List::~CJX_List() {}
 
+bool CJX_List::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CXFA_List* CJX_List::GetXFAList() {
   return ToList(GetXFAObject());
 }

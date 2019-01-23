@@ -26,6 +26,10 @@ CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
 
 CJX_Model::~CJX_Model() {}
 
+bool CJX_Model::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Model::clearErrorList(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

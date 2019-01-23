@@ -24,6 +24,10 @@ CJX_DataWindow::CJX_DataWindow(CScript_DataWindow* window)
 
 CJX_DataWindow::~CJX_DataWindow() {}
 
+bool CJX_DataWindow::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_DataWindow::moveCurrentRecord(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

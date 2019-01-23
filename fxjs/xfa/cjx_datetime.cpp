@@ -12,6 +12,10 @@ CJX_DateTime::CJX_DateTime(CXFA_DateTime* node) : CJX_Node(node) {}
 
 CJX_DateTime::~CJX_DateTime() = default;
 
+bool CJX_DateTime::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_DateTime::defaultValue(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {

@@ -17,11 +17,16 @@ class CJX_Desc final : public CJX_Node {
   explicit CJX_Desc(CXFA_Desc* desc);
   ~CJX_Desc() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(metadata);
 
  private:
   using Type__ = CJX_Desc;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::Desc;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

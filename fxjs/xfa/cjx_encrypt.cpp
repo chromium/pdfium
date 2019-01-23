@@ -12,6 +12,10 @@ CJX_Encrypt::CJX_Encrypt(CXFA_Encrypt* node) : CJX_Node(node) {}
 
 CJX_Encrypt::~CJX_Encrypt() = default;
 
+bool CJX_Encrypt::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Encrypt::format(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {}

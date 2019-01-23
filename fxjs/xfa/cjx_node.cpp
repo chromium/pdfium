@@ -149,6 +149,10 @@ CJX_Node::CJX_Node(CXFA_Node* node) : CJX_Tree(node) {
 
 CJX_Node::~CJX_Node() = default;
 
+bool CJX_Node::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CXFA_Node* CJX_Node::GetXFANode() const {
   return ToNode(GetXFAObject());
 }

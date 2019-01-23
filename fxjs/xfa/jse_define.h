@@ -25,7 +25,8 @@ class CFX_V8;
 #define JSE_PROP(prop_name)                                               \
   static void prop_name##_static(CJX_Object* node, CFXJSE_Value* value,   \
                                  bool setting, XFA_Attribute attribute) { \
-    static_cast<Type__*>(node)->prop_name(value, setting, attribute);     \
+    if (node->DynamicTypeIs(static_type__))                               \
+      static_cast<Type__*>(node)->prop_name(value, setting, attribute);   \
   }                                                                       \
   void prop_name(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute)
 

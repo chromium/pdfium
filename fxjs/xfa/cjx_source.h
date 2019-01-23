@@ -17,6 +17,9 @@ class CJX_Source final : public CJX_Node {
   explicit CJX_Source(CXFA_Source* src);
   ~CJX_Source() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(addNew);
   JSE_METHOD(cancel);
   JSE_METHOD(cancelBatch);
@@ -39,7 +42,9 @@ class CJX_Source final : public CJX_Node {
 
  private:
   using Type__ = CJX_Source;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::Source;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

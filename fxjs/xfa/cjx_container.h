@@ -17,12 +17,17 @@ class CJX_Container : public CJX_Node {
   explicit CJX_Container(CXFA_Node* node);
   ~CJX_Container() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(getDelta);
   JSE_METHOD(getDeltas);
 
  private:
   using Type__ = CJX_Container;
+  using ParentType__ = CJX_Node;
 
+  static const TypeTag static_type__ = TypeTag::Container;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

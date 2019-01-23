@@ -56,6 +56,10 @@ CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}
 
+bool CJX_EventPseudoModel::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_EventPseudoModel::cancelAction(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {

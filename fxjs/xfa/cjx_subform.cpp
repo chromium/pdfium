@@ -29,6 +29,10 @@ CJX_Subform::CJX_Subform(CXFA_Node* node) : CJX_Container(node) {
 
 CJX_Subform::~CJX_Subform() {}
 
+bool CJX_Subform::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Subform::execEvent(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

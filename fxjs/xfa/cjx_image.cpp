@@ -12,6 +12,10 @@ CJX_Image::CJX_Image(CXFA_Image* node) : CJX_Node(node) {}
 
 CJX_Image::~CJX_Image() = default;
 
+bool CJX_Image::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Image::defaultValue(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {

@@ -38,6 +38,9 @@ class CJX_EventPseudoModel final : public CJX_Object {
   explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
   ~CJX_EventPseudoModel() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(emit);
   JSE_METHOD(reset);
 
@@ -61,10 +64,12 @@ class CJX_EventPseudoModel final : public CJX_Object {
 
  private:
   using Type__ = CJX_EventPseudoModel;
+  using ParentType__ = CJX_Object;
+
+  static const TypeTag static_type__ = TypeTag::EventPseudoModel;
+  static const CJX_MethodSpec MethodSpecs[];
 
   void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);
-
-  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_XFA_CJX_EVENTPSEUDOMODEL_H_

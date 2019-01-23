@@ -12,6 +12,10 @@ CJX_Handler::CJX_Handler(CXFA_Handler* node) : CJX_TextNode(node) {}
 
 CJX_Handler::~CJX_Handler() = default;
 
+bool CJX_Handler::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Handler::version(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {}

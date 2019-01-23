@@ -23,6 +23,10 @@ CJX_WsdlConnection::CJX_WsdlConnection(CXFA_WsdlConnection* connection)
 
 CJX_WsdlConnection::~CJX_WsdlConnection() {}
 
+bool CJX_WsdlConnection::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_WsdlConnection::execute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

@@ -17,6 +17,9 @@ class CJX_List : public CJX_Object {
   explicit CJX_List(CXFA_List* list);
   ~CJX_List() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(append);
   JSE_METHOD(insert);
   JSE_METHOD(item);
@@ -26,10 +29,12 @@ class CJX_List : public CJX_Object {
 
  private:
   using Type__ = CJX_List;
+  using ParentType__ = CJX_Object;
+
+  static const TypeTag static_type__ = TypeTag::List;
+  static const CJX_MethodSpec MethodSpecs[];
 
   CXFA_List* GetXFAList();
-
-  static const CJX_MethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_XFA_CJX_LIST_H_

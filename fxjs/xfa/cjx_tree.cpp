@@ -29,6 +29,10 @@ CJX_Tree::CJX_Tree(CXFA_Object* obj) : CJX_Object(obj) {
 
 CJX_Tree::~CJX_Tree() {}
 
+bool CJX_Tree::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 CJS_Result CJX_Tree::resolveNode(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {

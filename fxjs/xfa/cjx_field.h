@@ -17,6 +17,9 @@ class CJX_Field final : public CJX_Container {
   explicit CJX_Field(CXFA_Field* field);
   ~CJX_Field() override;
 
+  // CJX_Object:
+  bool DynamicTypeIs(TypeTag eType) const override;
+
   JSE_METHOD(addItem);
   JSE_METHOD(boundItem);
   JSE_METHOD(clearItems);
@@ -47,7 +50,9 @@ class CJX_Field final : public CJX_Container {
 
  private:
   using Type__ = CJX_Field;
+  using ParentType__ = CJX_Container;
 
+  static const TypeTag static_type__ = TypeTag::Field;
   static const CJX_MethodSpec MethodSpecs[];
 };
 

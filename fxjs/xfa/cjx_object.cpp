@@ -132,6 +132,10 @@ CJX_Object::~CJX_Object() {
   ClearMapModuleBuffer();
 }
 
+bool CJX_Object::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__;
+}
+
 void CJX_Object::DefineMethods(pdfium::span<const CJX_MethodSpec> methods) {
   for (const auto& item : methods)
     method_specs_[item.pName] = item.pMethodCall;

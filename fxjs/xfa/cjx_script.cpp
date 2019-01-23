@@ -13,6 +13,10 @@ CJX_Script::CJX_Script(CXFA_Script* node) : CJX_Node(node) {}
 
 CJX_Script::~CJX_Script() = default;
 
+bool CJX_Script::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Script::stateless(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute) {

@@ -12,6 +12,10 @@ CJX_Text::CJX_Text(CXFA_Text* node) : CJX_Content(node) {}
 
 CJX_Text::~CJX_Text() = default;
 
+bool CJX_Text::DynamicTypeIs(TypeTag eType) const {
+  return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
+}
+
 void CJX_Text::defaultValue(CFXJSE_Value* pValue,
                             bool bSetting,
                             XFA_Attribute eAttribute) {
