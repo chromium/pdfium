@@ -91,8 +91,9 @@ int Blend(BlendMode blend_mode, int back_color, int src_color) {
                                     : back_color - src_color;
     case BlendMode::kExclusion:
       return back_color + src_color - 2 * back_color * src_color / 255;
+    default:
+      return src_color;
   }
-  return src_color;
 }
 
 struct RGB {
@@ -172,6 +173,8 @@ void RGB_Blend(BlendMode blend_mode,
       break;
     case BlendMode::kLuminosity:
       result = SetLum(back, Lum(src));
+      break;
+    default:
       break;
   }
   results[0] = result.blue;
