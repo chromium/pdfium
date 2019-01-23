@@ -173,6 +173,7 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
   return true;
 }
 
+// static
 void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pValue) {
@@ -207,6 +208,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
                                                              pValue);
 }
 
+// static
 void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pValue) {
@@ -233,9 +235,10 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   }
 
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
-  if (pOriginalObject->IsThisProxy())
+  if (pOriginalObject->IsThisProxy()) {
     pRefNode =
         ToNode(lpScriptContext->GetVariablesThis(pOriginalObject, false));
+  }
 
   if (lpScriptContext->QueryNodeByFlag(
           pRefNode, wsPropName.AsStringView(), pValue,
@@ -283,6 +286,7 @@ int32_t CFXJSE_Engine::GlobalPropTypeGetter(CFXJSE_Value* pOriginalValue,
   return FXJSE_ClassPropType_Property;
 }
 
+// static
 void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pReturnValue) {
@@ -356,6 +360,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
     pReturnValue->SetUndefined();
 }
 
+// static
 void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
                                          ByteStringView szPropName,
                                          CFXJSE_Value* pReturnValue) {
@@ -443,7 +448,7 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
   pObject = lpScriptContext->GetVariablesThis(pObject, false);
 
   std::vector<v8::Local<v8::Value>> parameters;
-  for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
+  for (int i = 0; i < info.Length(); i++)
     parameters.push_back(info[i]);
 
   return pObject->JSObject()->RunMethod(functionName, parameters);
@@ -540,26 +545,26 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
     return true;
   }
 
-  if (pObject->HasObjectOwnProperty(szPropName, false)) {
-    pObject->GetObjectProperty(szPropName, hVariableValue.get());
-    if (hVariableValue->IsFunction())
-      pValue->SetFunctionBind(hVariableValue.get(), pObject.get());
-    else if (bGetter)
-      pValue->Assign(hVariableValue.get());
-    else
-      hVariableValue.get()->Assign(pValue);
-    return true;
-  }
-  return false;
+  if (!pObject->HasObjectOwnProperty(szPropName, false))
+    return false;
+
+  pObject->GetObjectProperty(szPropName, hVariableValue.get());
+  if (hVariableValue->IsFunction())
+    pValue->SetFunctionBind(hVariableValue.get(), pObject.get());
+  else if (bGetter)
+    pValue->Assign(hVariableValue.get());
+  else
+    hVariableValue.get()->Assign(pValue);
+  return true;
 }
 
 void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
-  const ByteStringView OBJ_NAME[2] = {"Number", "Date"};
+  const ByteStringView kObjNames[2] = {"Number", "Date"};
   std::unique_ptr<CFXJSE_Value> pObject = pContext->GetGlobalObject();
   auto hProp = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
-  for (int i = 0; i < 2; ++i) {
-    if (pObject->GetObjectProperty(OBJ_NAME[i], hProp.get()))
-      pObject->DeleteObjectProperty(OBJ_NAME[i]);
+  for (const auto& obj : kObjNames) {
+    if (pObject->GetObjectProperty(obj, hProp.get()))
+      pObject->DeleteObjectProperty(obj);
   }
 }
 
