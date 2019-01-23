@@ -452,7 +452,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
   unsigned short buffer[128];
   for (int i = 0; i < kNumLinks; i++) {
     const size_t expected_len = strlen(kExpectedUrls[i]) + 1;
-    memset(buffer, 0, FX_ArraySize(buffer));
+    memset(buffer, 0, sizeof(buffer));
     EXPECT_EQ(static_cast<int>(expected_len),
               FPDFLink_GetURL(pagelink, i, nullptr, 0));
     EXPECT_EQ(static_cast<int>(expected_len),
