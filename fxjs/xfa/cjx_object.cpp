@@ -1313,6 +1313,9 @@ void CJX_Object::ScriptSomBorderWidth(CFXJSE_Value* pValue,
     return;
   }
 
+  if (pValue->IsEmpty())
+    return;
+
   WideString wsThickness = pValue->ToWideString();
   for (int32_t i = 0; i < border->CountEdges(); ++i) {
     CXFA_Edge* edge = border->GetEdgeIfExists(i);
