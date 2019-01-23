@@ -54,7 +54,9 @@ class CPDFSDK_FormFillEnvironment final
 
   CPDFSDK_PageView* GetPageView(IPDF_Page* pPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
+#ifdef PDF_ENABLE_V8
   CPDFSDK_PageView* GetCurrentView();
+#endif
   void RemovePageView(IPDF_Page* pPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
@@ -89,7 +91,9 @@ class CPDFSDK_FormFillEnvironment final
   int SetTimer(int uElapse, TimerCallback lpTimerFunc);
   void KillTimer(int nTimerID);
 
+#ifdef PDF_ENABLE_V8
   FPDF_PAGE GetCurrentPage() const;
+#endif
 
   void OnChange();
   void ExecuteNamedAction(const char* namedAction);

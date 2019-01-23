@@ -291,6 +291,7 @@ void CPDFSDK_FormFillEnvironment::OnChange() {
     m_pInfo->FFI_OnChange(m_pInfo);
 }
 
+#ifdef PDF_ENABLE_V8
 FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
   if (m_pInfo && m_pInfo->FFI_GetCurrentPage) {
     return m_pInfo->FFI_GetCurrentPage(
@@ -298,6 +299,7 @@ FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
   }
   return nullptr;
 }
+#endif
 
 void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(const char* namedAction) {
   if (m_pInfo && m_pInfo->FFI_ExecuteNamedAction)
@@ -543,10 +545,12 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
   return pPageView;
 }
 
+#ifdef PDF_ENABLE_V8
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
   IPDF_Page* pPage = IPDFPageFromFPDFPage(GetCurrentPage());
   return pPage ? GetPageView(pPage, true) : nullptr;
 }
+#endif
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
   IPDF_Page* pTempPage = GetPage(nIndex);
