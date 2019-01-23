@@ -478,7 +478,10 @@ if (pdf_enable_v8) {
     pdfium_root_dir = "../"
 
     if (pdf_enable_xfa) {
-      sources += [ "xfa/cfxjse_formcalc_context_embeddertest.cpp" ]
+      sources += [
+        "xfa/cfxjse_formcalc_context_embeddertest.cpp",
+        "xfa/cfxjse_value_embeddertest.cpp",
+      ]
       deps += [ "..///xfa/fxfa" ]
     }
   }

@@ -23,6 +23,7 @@ class CFXJSE_Value {
   explicit CFXJSE_Value(v8::Isolate* pIsolate);
   ~CFXJSE_Value();
 
+  bool IsEmpty() const;
   bool IsUndefined() const;
   bool IsNull() const;
   bool IsBoolean() const;

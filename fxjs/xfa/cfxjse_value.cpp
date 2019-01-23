@@ -103,6 +103,8 @@ void CFXJSE_Value::SetArray(
   v8::Local<v8::Context> context = GetIsolate()->GetCurrentContext();
   uint32_t count = 0;
   for (auto& v : values) {
+    if (v->IsEmpty())
+      v->SetUndefined();
     hArrayObject
         ->Set(
             context, count++,
@@ -302,8 +304,12 @@ bool CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
   return true;
 }
 
+bool CFXJSE_Value::IsEmpty() const {
+  return m_hValue.IsEmpty();
+}
+
 bool CFXJSE_Value::IsUndefined() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -313,7 +319,7 @@ bool CFXJSE_Value::IsUndefined() const {
 }
 
 bool CFXJSE_Value::IsNull() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -323,7 +329,7 @@ bool CFXJSE_Value::IsNull() const {
 }
 
 bool CFXJSE_Value::IsBoolean() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -333,7 +339,7 @@ bool CFXJSE_Value::IsBoolean() const {
 }
 
 bool CFXJSE_Value::IsString() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -343,7 +349,7 @@ bool CFXJSE_Value::IsString() const {
 }
 
 bool CFXJSE_Value::IsNumber() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -353,7 +359,7 @@ bool CFXJSE_Value::IsNumber() const {
 }
 
 bool CFXJSE_Value::IsInteger() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -363,7 +369,7 @@ bool CFXJSE_Value::IsInteger() const {
 }
 
 bool CFXJSE_Value::IsObject() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -373,7 +379,7 @@ bool CFXJSE_Value::IsObject() const {
 }
 
 bool CFXJSE_Value::IsArray() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -383,7 +389,7 @@ bool CFXJSE_Value::IsArray() const {
 }
 
 bool CFXJSE_Value::IsFunction() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -393,7 +399,7 @@ bool CFXJSE_Value::IsFunction() const {
 }
 
 bool CFXJSE_Value::IsDate() const {
-  if (m_hValue.IsEmpty())
+  if (IsEmpty())
     return false;
 
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
@@ -403,7 +409,7 @@ bool CFXJSE_Value::IsDate() const {
 }
 
 bool CFXJSE_Value::ToBoolean() const {
-  ASSERT(!m_hValue.IsEmpty());
+  ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
@@ -411,7 +417,7 @@ bool CFXJSE_Value::ToBoolean() const {
 }
 
 float CFXJSE_Value::ToFloat() const {
-  ASSERT(!m_hValue.IsEmpty());
+  ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
@@ -420,7 +426,7 @@ float CFXJSE_Value::ToFloat() const {
 }
 
 double CFXJSE_Value::ToDouble() const {
-  ASSERT(!m_hValue.IsEmpty());
+  ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
@@ -428,7 +434,7 @@ double CFXJSE_Value::ToDouble() const {
 }
 
 int32_t CFXJSE_Value::ToInteger() const {
-  ASSERT(!m_hValue.IsEmpty());
+  ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
@@ -437,7 +443,7 @@ int32_t CFXJSE_Value::ToInteger() const {
 }
 
 ByteString CFXJSE_Value::ToString() const {
-  ASSERT(!m_hValue.IsEmpty());
+  ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
