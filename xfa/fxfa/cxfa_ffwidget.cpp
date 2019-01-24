@@ -15,7 +15,6 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
