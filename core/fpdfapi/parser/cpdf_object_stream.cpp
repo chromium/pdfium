@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
-#include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -97,8 +97,9 @@ void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
     auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
     stream_acc->LoadAllDataFiltered();
     const uint32_t data_size = stream_acc->GetSize();
-    data_stream_ = pdfium::MakeRetain<CFX_MemoryStream>(
-        stream_acc->DetachData(), data_size);
+    data_ = stream_acc->DetachData();
+    data_stream_ = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+        pdfium::make_span(data_.get(), data_size));
   }
 
   CPDF_SyntaxParser syntax(data_stream_);
