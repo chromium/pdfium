@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_bind.h"
 
-#include "fxjs/xfa/cjx_bind.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
@@ -41,7 +41,7 @@ CXFA_Bind::CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Bind,
                 kBindPropertyData,
                 kBindAttributeData,
-                pdfium::MakeUnique<CJX_Bind>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Bind::~CXFA_Bind() = default;
 

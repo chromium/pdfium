@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_mdp.h"
 
-#include "fxjs/xfa/cjx_mdp.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,6 +30,6 @@ CXFA_Mdp::CXFA_Mdp(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Mdp,
                 nullptr,
                 kMdpAttributeData,
-                pdfium::MakeUnique<CJX_Mdp>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Mdp::~CXFA_Mdp() = default;

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_break.h"
 
-#include "fxjs/xfa/cjx_break.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -43,6 +43,6 @@ CXFA_Break::CXFA_Break(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Break,
                 kBreakPropertyData,
                 kBreakAttributeData,
-                pdfium::MakeUnique<CJX_Break>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Break::~CXFA_Break() = default;

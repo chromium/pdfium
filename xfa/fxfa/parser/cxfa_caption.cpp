@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_caption.h"
 
-#include "fxjs/xfa/cjx_caption.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
@@ -41,7 +41,7 @@ CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Caption,
                 kCaptionPropertyData,
                 kCaptionAttributeData,
-                pdfium::MakeUnique<CJX_Caption>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Caption::~CXFA_Caption() = default;
 

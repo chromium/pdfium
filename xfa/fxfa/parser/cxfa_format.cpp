@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_format.h"
 
-#include "fxjs/xfa/cjx_format.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -32,6 +32,6 @@ CXFA_Format::CXFA_Format(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Format,
                 kFormatPropertyData,
                 kFormatAttributeData,
-                pdfium::MakeUnique<CJX_Format>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Format::~CXFA_Format() = default;

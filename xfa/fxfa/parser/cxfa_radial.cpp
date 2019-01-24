@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "fxjs/xfa/cjx_radial.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxgraphics/cxfa_geshading.h"
@@ -38,7 +38,7 @@ CXFA_Radial::CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Radial,
                 kRadialPropertyData,
                 kRadialAttributeData,
-                pdfium::MakeUnique<CJX_Radial>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Radial::~CXFA_Radial() = default;
 

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_subjectdns.h"
 
-#include "fxjs/xfa/cjx_subjectdns.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -29,6 +29,6 @@ CXFA_SubjectDNs::CXFA_SubjectDNs(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SubjectDNs,
                 nullptr,
                 kSubjectDNsAttributeData,
-                pdfium::MakeUnique<CJX_SubjectDNs>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_SubjectDNs::~CXFA_SubjectDNs() = default;

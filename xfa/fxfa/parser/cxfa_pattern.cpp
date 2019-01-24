@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_pattern.h"
 
-#include "fxjs/xfa/cjx_pattern.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxgraphics/cxfa_gepattern.h"
@@ -36,7 +36,7 @@ CXFA_Pattern::CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Pattern,
                 kPatternPropertyData,
                 kPatternAttributeData,
-                pdfium::MakeUnique<CJX_Pattern>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Pattern::~CXFA_Pattern() = default;
 

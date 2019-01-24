@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_imageedit.h"
 
-#include "fxjs/xfa/cjx_imageedit.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -35,7 +35,7 @@ CXFA_ImageEdit::CXFA_ImageEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ImageEdit,
                 kImageEditPropertyData,
                 kImageEditAttributeData,
-                pdfium::MakeUnique<CJX_ImageEdit>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_ImageEdit::~CXFA_ImageEdit() = default;
 

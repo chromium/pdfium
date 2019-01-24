@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_choicelist.h"
 
-#include "fxjs/xfa/cjx_choicelist.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -38,7 +38,7 @@ CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ChoiceList,
                 kChoiceListPropertyData,
                 kChoiceListAttributeData,
-                pdfium::MakeUnique<CJX_ChoiceList>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_ChoiceList::~CXFA_ChoiceList() = default;
 

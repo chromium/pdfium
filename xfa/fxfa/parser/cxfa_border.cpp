@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_border.h"
 
-#include "fxjs/xfa/cjx_border.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -39,6 +39,6 @@ CXFA_Border::CXFA_Border(CXFA_Document* doc, XFA_PacketType packet)
                      XFA_Element::Border,
                      kBorderPropertyData,
                      kBorderAttributeData,
-                     pdfium::MakeUnique<CJX_Border>(this)) {}
+                     pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Border::~CXFA_Border() = default;

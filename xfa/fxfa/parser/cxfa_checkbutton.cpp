@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_checkbutton.h"
 
-#include "fxjs/xfa/cjx_checkbutton.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -39,7 +39,7 @@ CXFA_CheckButton::CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::CheckButton,
                 kCheckButtonPropertyData,
                 kCheckButtonAttributeData,
-                pdfium::MakeUnique<CJX_CheckButton>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_CheckButton::~CXFA_CheckButton() = default;
 

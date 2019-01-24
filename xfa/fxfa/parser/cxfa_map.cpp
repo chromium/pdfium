@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_map.h"
 
-#include "fxjs/xfa/cjx_map.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -32,6 +32,6 @@ CXFA_Map::CXFA_Map(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Map,
                 nullptr,
                 kMapAttributeData,
-                pdfium::MakeUnique<CJX_Map>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Map::~CXFA_Map() = default;

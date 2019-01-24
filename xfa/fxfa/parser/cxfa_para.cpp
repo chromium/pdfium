@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_para.h"
 
-#include "fxjs/xfa/cjx_para.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
@@ -48,7 +48,7 @@ CXFA_Para::CXFA_Para(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Para,
                 kParaPropertyData,
                 kParaAttributeData,
-                pdfium::MakeUnique<CJX_Para>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Para::~CXFA_Para() = default;
 

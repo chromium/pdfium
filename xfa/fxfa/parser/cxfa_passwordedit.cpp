@@ -6,7 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
-#include "fxjs/xfa/cjx_passwordedit.h"
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -34,7 +35,8 @@ CXFA_PasswordEdit::CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::PasswordEdit,
                 kPasswordEditPropertyData,
-                kPasswordEditAttributeData) {}
+                kPasswordEditAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_PasswordEdit::~CXFA_PasswordEdit() = default;
 

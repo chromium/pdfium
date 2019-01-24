@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 
-#include "fxjs/xfa/cjx_calculate.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
@@ -38,7 +38,7 @@ CXFA_Calculate::CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Calculate,
                 kCalculatePropertyData,
                 kCalculateAttributeData,
-                pdfium::MakeUnique<CJX_Calculate>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Calculate::~CXFA_Calculate() = default;
 

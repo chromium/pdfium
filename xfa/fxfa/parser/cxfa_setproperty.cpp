@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_setproperty.h"
 
-#include "fxjs/xfa/cjx_setproperty.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -27,6 +27,6 @@ CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SetProperty,
                 nullptr,
                 kSetPropertyAttributeData,
-                pdfium::MakeUnique<CJX_SetProperty>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_SetProperty::~CXFA_SetProperty() = default;

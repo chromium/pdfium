@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_filter.h"
 
-#include "fxjs/xfa/cjx_filter.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -37,6 +37,6 @@ CXFA_Filter::CXFA_Filter(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Filter,
                 kFilterPropertyData,
                 kFilterAttributeData,
-                pdfium::MakeUnique<CJX_Filter>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Filter::~CXFA_Filter() = default;

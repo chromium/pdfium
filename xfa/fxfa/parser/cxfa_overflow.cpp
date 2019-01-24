@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_overflow.h"
 
-#include "fxjs/xfa/cjx_overflow.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,6 +30,6 @@ CXFA_Overflow::CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Overflow,
                 nullptr,
                 kOverflowAttributeData,
-                pdfium::MakeUnique<CJX_Overflow>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Overflow::~CXFA_Overflow() = default;

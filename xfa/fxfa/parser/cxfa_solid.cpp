@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_solid.h"
 
-#include "fxjs/xfa/cjx_solid.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -31,6 +31,6 @@ CXFA_Solid::CXFA_Solid(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Solid,
                 kSolidPropertyData,
                 kSolidAttributeData,
-                pdfium::MakeUnique<CJX_Solid>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Solid::~CXFA_Solid() = default;

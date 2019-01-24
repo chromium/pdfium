@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_event.h"
 
-#include "fxjs/xfa/cjx_event.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"
@@ -43,7 +43,7 @@ CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Event,
                 kEventPropertyData,
                 kEventAttributeData,
-                pdfium::MakeUnique<CJX_Event>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Event::~CXFA_Event() = default;
 

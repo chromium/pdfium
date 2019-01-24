@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_encodings.h"
 
-#include "fxjs/xfa/cjx_encodings.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -29,6 +29,6 @@ CXFA_Encodings::CXFA_Encodings(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Encodings,
                 nullptr,
                 kEncodingsAttributeData,
-                pdfium::MakeUnique<CJX_Encodings>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Encodings::~CXFA_Encodings() = default;

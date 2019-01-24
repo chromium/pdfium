@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_recordset.h"
 
-#include "fxjs/xfa/cjx_recordset.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -39,6 +39,6 @@ CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::RecordSet,
                 nullptr,
                 kRecordSetAttributeData,
-                pdfium::MakeUnique<CJX_RecordSet>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_RecordSet::~CXFA_RecordSet() = default;

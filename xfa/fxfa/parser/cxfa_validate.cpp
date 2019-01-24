@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
+#include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "fxjs/xfa/cjx_validate.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
@@ -51,7 +51,7 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Validate,
           kValidatePropertyData,
           kValidateAttributeData,
-          pdfium::MakeUnique<CJX_Validate>(this)) {}
+          pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Validate::~CXFA_Validate() = default;
 

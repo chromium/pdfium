@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_textedit.h"
 
-#include "fxjs/xfa/cjx_textedit.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -40,7 +40,7 @@ CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::TextEdit,
                 kTextEditPropertyData,
                 kTextEditAttributeData,
-                pdfium::MakeUnique<CJX_TextEdit>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_TextEdit::~CXFA_TextEdit() = default;
 

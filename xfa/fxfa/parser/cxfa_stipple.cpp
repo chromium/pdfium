@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_stipple.h"
 
-#include "fxjs/xfa/cjx_stipple.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 
@@ -34,7 +34,7 @@ CXFA_Stipple::CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Stipple,
                 kStipplePropertyData,
                 kStippleAttributeData,
-                pdfium::MakeUnique<CJX_Stipple>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Stipple::~CXFA_Stipple() = default;
 

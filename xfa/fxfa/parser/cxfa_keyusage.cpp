@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_keyusage.h"
 
-#include "fxjs/xfa/cjx_keyusage.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -38,6 +38,6 @@ CXFA_KeyUsage::CXFA_KeyUsage(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::KeyUsage,
                 nullptr,
                 kKeyUsageAttributeData,
-                pdfium::MakeUnique<CJX_KeyUsage>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_KeyUsage::~CXFA_KeyUsage() = default;
