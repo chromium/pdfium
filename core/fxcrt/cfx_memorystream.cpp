@@ -89,7 +89,7 @@ bool CFX_MemoryStream::WriteBlockAtOffset(const void* buffer,
 
     m_nTotalSize = new_size.ValueOrDie();
     if (m_data)
-      m_data.reset(FX_Realloc(uint8_t, m_data.get(), m_nTotalSize));
+      m_data.reset(FX_Realloc(uint8_t, m_data.release(), m_nTotalSize));
     else
       m_data.reset(FX_Alloc(uint8_t, m_nTotalSize));
   }
