@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_speak.h"
 
-#include "fxjs/xfa/cjx_speak.h"
+#include "fxjs/xfa/cjx_textnode.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -31,6 +31,6 @@ CXFA_Speak::CXFA_Speak(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Speak,
                 nullptr,
                 kSpeakAttributeData,
-                pdfium::MakeUnique<CJX_Speak>(this)) {}
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_Speak::~CXFA_Speak() = default;

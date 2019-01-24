@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_soapaction.h"
 
-#include "fxjs/xfa/cjx_soapaction.h"
+#include "fxjs/xfa/cjx_textnode.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -28,6 +28,6 @@ CXFA_SoapAction::CXFA_SoapAction(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SoapAction,
                 nullptr,
                 kSoapActionAttributeData,
-                pdfium::MakeUnique<CJX_SoapAction>(this)) {}
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_SoapAction::~CXFA_SoapAction() = default;

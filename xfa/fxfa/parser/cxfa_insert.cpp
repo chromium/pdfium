@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_insert.h"
 
-#include "fxjs/xfa/cjx_insert.h"
+#include "fxjs/xfa/cjx_textnode.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -28,6 +28,6 @@ CXFA_Insert::CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Insert,
                 nullptr,
                 kInsertAttributeData,
-                pdfium::MakeUnique<CJX_Insert>(this)) {}
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_Insert::~CXFA_Insert() = default;

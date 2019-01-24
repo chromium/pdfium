@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_delete.h"
 
-#include "fxjs/xfa/cjx_delete.h"
+#include "fxjs/xfa/cjx_textnode.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -28,6 +28,6 @@ CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Delete,
                 nullptr,
                 kDeleteAttributeData,
-                pdfium::MakeUnique<CJX_Delete>(this)) {}
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_Delete::~CXFA_Delete() = default;

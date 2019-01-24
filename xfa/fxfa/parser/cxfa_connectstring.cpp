@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_connectstring.h"
 
-#include "fxjs/xfa/cjx_connectstring.h"
+#include "fxjs/xfa/cjx_textnode.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -29,6 +29,6 @@ CXFA_ConnectString::CXFA_ConnectString(CXFA_Document* doc,
                 XFA_Element::ConnectString,
                 nullptr,
                 kConnectStringAttributeData,
-                pdfium::MakeUnique<CJX_ConnectString>(this)) {}
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_ConnectString::~CXFA_ConnectString() = default;

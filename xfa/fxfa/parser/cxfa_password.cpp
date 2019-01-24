@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_password.h"
 
-#include "fxjs/xfa/cjx_password.h"
+#include "fxjs/xfa/cjx_textnode.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -28,6 +28,6 @@ CXFA_Password::CXFA_Password(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Password,
                 nullptr,
                 kPasswordAttributeData,
-                pdfium::MakeUnique<CJX_Password>(this)) {}
+                pdfium::MakeUnique<CJX_TextNode>(this)) {}
 
 CXFA_Password::~CXFA_Password() = default;
