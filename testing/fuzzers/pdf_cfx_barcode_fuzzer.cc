@@ -11,7 +11,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size < 2 * sizeof(uint16_t))
     return 0;
 
-  BC_TYPE type = static_cast<BC_TYPE>(data[0] % (BC_DATAMATRIX + 1));
+  BC_TYPE type = static_cast<BC_TYPE>(data[0] % (BC_LAST + 1));
 
   // Only used one byte, but align with uint16_t for string below.
   data += sizeof(uint16_t);

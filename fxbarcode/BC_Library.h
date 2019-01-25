@@ -29,7 +29,8 @@ enum BC_TYPE {
   BC_EAN13,
   BC_QR_CODE,
   BC_PDF417,
-  BC_DATAMATRIX
+  BC_DATAMATRIX,
+  BC_LAST = BC_DATAMATRIX
 };
 
 void BC_Library_Init();
