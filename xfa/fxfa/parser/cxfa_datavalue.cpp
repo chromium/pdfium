@@ -18,7 +18,7 @@ const CXFA_Node::AttributeData kDataValueAttributeData[] = {
      (void*)XFA_AttributeValue::Data},
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::IsNull, XFA_AttributeType::Boolean, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

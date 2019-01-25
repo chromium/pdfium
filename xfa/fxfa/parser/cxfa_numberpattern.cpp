@@ -14,7 +14,7 @@ namespace {
 const CXFA_Node::AttributeData kNumberPatternAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Numeric},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

@@ -13,12 +13,12 @@ namespace {
 
 const CXFA_Node::PropertyData kAcrobat7PropertyData[] = {
     {XFA_Element::DynamicRender, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kAcrobat7AttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

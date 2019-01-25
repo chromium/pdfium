@@ -31,13 +31,13 @@ const CXFA_Node::PropertyData kPdfPropertyData[] = {
     {XFA_Element::Creator, 1, 0},
     {XFA_Element::Linearized, 1, 0},
     {XFA_Element::Tagged, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kPdfAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

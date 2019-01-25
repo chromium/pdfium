@@ -16,7 +16,7 @@ namespace {
 const CXFA_Node::PropertyData kFontPropertyData[] = {
     {XFA_Element::Fill, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kFontAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -48,7 +48,7 @@ const CXFA_Node::AttributeData kFontAttributeData[] = {
     {XFA_Attribute::Overline, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::GenericFamily, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Serif},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

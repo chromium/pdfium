@@ -17,13 +17,13 @@ const CXFA_Node::PropertyData kDescPropertyData[] = {
     {XFA_Element::Decimal, 1, 0},  {XFA_Element::Boolean, 1, 0},
     {XFA_Element::Integer, 1, 0},  {XFA_Element::ExData, 1, 0},
     {XFA_Element::Date, 1, 0},     {XFA_Element::Float, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kDescAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

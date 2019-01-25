@@ -15,7 +15,7 @@ namespace {
 
 const CXFA_Node::PropertyData kBindPropertyData[] = {
     {XFA_Element::Picture, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kBindAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -28,7 +28,7 @@ const CXFA_Node::AttributeData kBindAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Match, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Once},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

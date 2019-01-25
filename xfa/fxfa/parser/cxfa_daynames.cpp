@@ -13,11 +13,11 @@ namespace {
 
 const CXFA_Node::PropertyData kDayNamesPropertyData[] = {
     {XFA_Element::Day, 7, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kDayNamesAttributeData[] = {
     {XFA_Attribute::Abbr, XFA_AttributeType::Boolean, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

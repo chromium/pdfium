@@ -16,7 +16,8 @@ const CXFA_Node::PropertyData kFilterPropertyData[] = {
     {XFA_Element::TimeStamp, 1, 0},     {XFA_Element::Handler, 1, 0},
     {XFA_Element::DigestMethods, 1, 0}, {XFA_Element::Encodings, 1, 0},
     {XFA_Element::Reasons, 1, 0},       {XFA_Element::AppearanceFilter, 1, 0},
-    {XFA_Element::LockDocument, 1, 0},  {XFA_Element::Unknown, 0, 0}};
+    {XFA_Element::LockDocument, 1, 0},
+};
 
 const CXFA_Node::AttributeData kFilterAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -25,7 +26,7 @@ const CXFA_Node::AttributeData kFilterAttributeData[] = {
     {XFA_Attribute::Version, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::AddRevocationInfo, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

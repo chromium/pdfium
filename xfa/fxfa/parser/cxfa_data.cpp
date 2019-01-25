@@ -17,12 +17,12 @@ const CXFA_Node::PropertyData kDataPropertyData[] = {
     {XFA_Element::AdjustData, 1, 0}, {XFA_Element::Attributes, 1, 0},
     {XFA_Element::Window, 1, 0},     {XFA_Element::Record, 1, 0},
     {XFA_Element::Range, 1, 0},      {XFA_Element::IncrementalLoad, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kDataAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

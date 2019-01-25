@@ -15,7 +15,7 @@ const CXFA_Node::AttributeData kTemplateCacheAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::MaxEntries, XFA_AttributeType::Integer, (void*)5},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

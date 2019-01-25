@@ -14,7 +14,7 @@ namespace {
 const CXFA_Node::PropertyData kCornerPropertyData[] = {
     {XFA_Element::Color, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kCornerAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -29,7 +29,7 @@ const CXFA_Node::AttributeData kCornerAttributeData[] = {
     {XFA_Attribute::Join, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Square},
     {XFA_Attribute::Radius, XFA_AttributeType::Measure, (void*)L"0in"},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

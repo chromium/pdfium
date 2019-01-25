@@ -14,7 +14,7 @@ namespace {
 const CXFA_Node::PropertyData kSignDataPropertyData[] = {
     {XFA_Element::Filter, 1, 0},
     {XFA_Element::Manifest, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kSignDataAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -24,7 +24,7 @@ const CXFA_Node::AttributeData kSignDataAttributeData[] = {
      (void*)XFA_AttributeValue::Sign},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Target, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

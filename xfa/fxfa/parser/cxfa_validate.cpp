@@ -21,7 +21,7 @@ const CXFA_Node::PropertyData kValidatePropertyData[] = {
     {XFA_Element::Picture, 1, 0},
     {XFA_Element::Script, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 const CXFA_Node::AttributeData kValidateAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -34,7 +34,7 @@ const CXFA_Node::AttributeData kValidateAttributeData[] = {
     {XFA_Attribute::FormatTest, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Warning},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 constexpr wchar_t kFormatTest[] = L"formatTest";
 constexpr wchar_t kNullTest[] = L"nullTest";

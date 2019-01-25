@@ -14,7 +14,8 @@ namespace {
 const CXFA_Node::PropertyData kCertificatesPropertyData[] = {
     {XFA_Element::KeyUsage, 1, 0}, {XFA_Element::SubjectDNs, 1, 0},
     {XFA_Element::Issuers, 1, 0},  {XFA_Element::Signing, 1, 0},
-    {XFA_Element::Oids, 1, 0},     {XFA_Element::Unknown, 0, 0}};
+    {XFA_Element::Oids, 1, 0},
+};
 
 const CXFA_Node::AttributeData kCertificatesAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -24,7 +25,7 @@ const CXFA_Node::AttributeData kCertificatesAttributeData[] = {
      (void*)XFA_AttributeValue::Optional},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::UrlPolicy, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

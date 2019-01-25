@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::PropertyData kMeridiemNamesPropertyData[] = {
     {XFA_Element::Meridiem, 2, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 }  // namespace
 

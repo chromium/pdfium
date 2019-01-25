@@ -18,7 +18,7 @@ namespace {
 const CXFA_Node::PropertyData kRadialPropertyData[] = {
     {XFA_Element::Color, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kRadialAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -26,7 +26,7 @@ const CXFA_Node::AttributeData kRadialAttributeData[] = {
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::ToEdge},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

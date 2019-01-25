@@ -16,7 +16,7 @@ const CXFA_Node::AttributeData kBindItemsAttributeData[] = {
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::LabelRef, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ValueRef, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

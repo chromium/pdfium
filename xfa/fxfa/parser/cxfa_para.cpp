@@ -14,7 +14,7 @@ namespace {
 
 const CXFA_Node::PropertyData kParaPropertyData[] = {
     {XFA_Element::Hyphenation, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kParaAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -36,7 +36,7 @@ const CXFA_Node::AttributeData kParaAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::LineHeight, XFA_AttributeType::Measure, (void*)L"0pt"},
     {XFA_Attribute::SpaceAbove, XFA_AttributeType::Measure, (void*)L"0in"},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

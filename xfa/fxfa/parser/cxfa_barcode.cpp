@@ -38,7 +38,7 @@ const CXFA_Node::AttributeData kBarcodeAttributeData[] = {
     {XFA_Attribute::RowColumnRatio, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataLength, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::EndChar, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

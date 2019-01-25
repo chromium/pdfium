@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kMediumAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Stock, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Long, XFA_AttributeType::Measure, (void*)L"0in"},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

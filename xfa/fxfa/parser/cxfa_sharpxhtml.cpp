@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::AttributeData kSharpxHTMLAttributeData[] = {
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

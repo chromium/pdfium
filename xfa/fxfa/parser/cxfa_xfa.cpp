@@ -14,7 +14,7 @@ namespace {
 const CXFA_Node::AttributeData kXfaAttributeData[] = {
     {XFA_Attribute::TimeStamp, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Uuid, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

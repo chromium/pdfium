@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kSpeakAttributeData[] = {
      (void*)XFA_AttributeValue::Custom},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Disable, XFA_AttributeType::Boolean, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

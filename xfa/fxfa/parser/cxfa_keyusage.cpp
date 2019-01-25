@@ -26,7 +26,7 @@ const CXFA_Node::AttributeData kKeyUsageAttributeData[] = {
     {XFA_Attribute::DataEncipherment, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::KeyCertSign, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DecipherOnly, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

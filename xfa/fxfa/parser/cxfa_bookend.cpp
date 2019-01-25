@@ -17,8 +17,7 @@ const CXFA_Node::AttributeData kBookendAttributeData[] = {
     {XFA_Attribute::Trailer, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Leader, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
-
+};
 
 }  // namespace
 

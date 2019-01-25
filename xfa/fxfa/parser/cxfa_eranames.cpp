@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::PropertyData kEraNamesPropertyData[] = {
     {XFA_Element::Era, 2, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 }  // namespace
 

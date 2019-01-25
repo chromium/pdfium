@@ -16,7 +16,7 @@ const CXFA_Node::AttributeData kDefaultTypefaceAttributeData[] = {
     {XFA_Attribute::WritingScript, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Asterisk},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

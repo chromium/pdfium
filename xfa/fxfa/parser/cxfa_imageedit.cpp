@@ -15,7 +15,7 @@ const CXFA_Node::PropertyData kImageEditPropertyData[] = {
     {XFA_Element::Margin, 1, 0},
     {XFA_Element::Border, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kImageEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kImageEditAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Data, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Link},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

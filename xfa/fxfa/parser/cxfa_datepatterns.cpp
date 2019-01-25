@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::PropertyData kDatePatternsPropertyData[] = {
     {XFA_Element::DatePattern, 4, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 }  // namespace
 

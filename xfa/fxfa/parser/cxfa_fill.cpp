@@ -26,7 +26,7 @@ const CXFA_Node::PropertyData kFillPropertyData[] = {
     {XFA_Element::Linear, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Radial, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kFillAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -34,7 +34,7 @@ const CXFA_Node::AttributeData kFillAttributeData[] = {
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::AttributeData kFormAttributeData[] = {
     {XFA_Attribute::Checksum, XFA_AttributeType::CData, (void*)nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

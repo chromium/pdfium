@@ -16,13 +16,13 @@ const CXFA_Node::PropertyData kPsPropertyData[] = {
     {XFA_Element::Xdc, 1, 0},       {XFA_Element::BatchOutput, 1, 0},
     {XFA_Element::OutputBin, 1, 0}, {XFA_Element::Compress, 1, 0},
     {XFA_Element::Staple, 1, 0},    {XFA_Element::MediumInfo, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kPsAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

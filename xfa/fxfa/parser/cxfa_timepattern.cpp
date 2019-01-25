@@ -14,7 +14,7 @@ namespace {
 const CXFA_Node::AttributeData kTimePatternAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Med},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

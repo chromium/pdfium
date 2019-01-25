@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::PropertyData kMarginPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kMarginAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -23,7 +23,7 @@ const CXFA_Node::AttributeData kMarginAttributeData[] = {
     {XFA_Attribute::TopInset, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::RightInset, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

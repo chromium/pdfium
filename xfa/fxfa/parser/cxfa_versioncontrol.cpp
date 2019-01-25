@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kVersionControlAttributeData[] = {
     {XFA_Attribute::SourceAbove, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Warn},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

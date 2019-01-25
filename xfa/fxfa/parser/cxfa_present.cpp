@@ -26,12 +26,12 @@ const CXFA_Node::PropertyData kPresentPropertyData[] = {
     {XFA_Element::PaginationOverride, 1, 0},
     {XFA_Element::Destination, 1, 0},
     {XFA_Element::IncrementalMerge, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kPresentAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

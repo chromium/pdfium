@@ -16,7 +16,7 @@ const CXFA_Node::PropertyData kTextEditPropertyData[] = {
     {XFA_Element::Border, 1, 0},
     {XFA_Element::Comb, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kTextEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -28,7 +28,7 @@ const CXFA_Node::AttributeData kTextEditAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HScrollPolicy, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Auto},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

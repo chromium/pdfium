@@ -15,7 +15,7 @@ const CXFA_Node::PropertyData kSubformSetPropertyData[] = {
     {XFA_Element::Break, 1, 0},  {XFA_Element::Overflow, 1, 0},
     {XFA_Element::Desc, 1, 0},   {XFA_Element::Bookend, 1, 0},
     {XFA_Element::Extras, 1, 0}, {XFA_Element::Occur, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kSubformSetAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -25,7 +25,7 @@ const CXFA_Node::AttributeData kSubformSetAttributeData[] = {
      (void*)XFA_AttributeValue::Ordered},
     {XFA_Attribute::Relevant, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

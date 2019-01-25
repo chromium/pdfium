@@ -14,7 +14,8 @@ namespace {
 const CXFA_Node::PropertyData kBorderPropertyData[] = {
     {XFA_Element::Margin, 1, 0}, {XFA_Element::Edge, 4, 0},
     {XFA_Element::Corner, 4, 0}, {XFA_Element::Fill, 1, 0},
-    {XFA_Element::Extras, 1, 0}, {XFA_Element::Unknown, 0, 0}};
+    {XFA_Element::Extras, 1, 0},
+};
 
 const CXFA_Node::AttributeData kBorderAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -27,7 +28,7 @@ const CXFA_Node::AttributeData kBorderAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Hand, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Even},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

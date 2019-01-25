@@ -17,7 +17,8 @@ const CXFA_Node::PropertyData kExclGroupPropertyData[] = {
     {XFA_Element::Traversal, 1, 0}, {XFA_Element::Validate, 1, 0},
     {XFA_Element::Caption, 1, 0},   {XFA_Element::Bind, 1, 0},
     {XFA_Element::Desc, 1, 0},      {XFA_Element::Calculate, 1, 0},
-    {XFA_Element::Extras, 1, 0},    {XFA_Element::Unknown, 0, 0}};
+    {XFA_Element::Extras, 1, 0},
+};
 
 const CXFA_Node::AttributeData kExclGroupAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -47,7 +48,7 @@ const CXFA_Node::AttributeData kExclGroupAttributeData[] = {
     {XFA_Attribute::AnchorType, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::TopLeft},
     {XFA_Attribute::AccessKey, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

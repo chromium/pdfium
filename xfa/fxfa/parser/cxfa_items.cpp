@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kItemsAttributeData[] = {
      (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Save, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

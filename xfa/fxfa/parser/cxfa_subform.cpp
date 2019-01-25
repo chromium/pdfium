@@ -20,7 +20,8 @@ const CXFA_Node::PropertyData kSubformPropertyData[] = {
     {XFA_Element::Bind, 1, 0},    {XFA_Element::Desc, 1, 0},
     {XFA_Element::Bookend, 1, 0}, {XFA_Element::Calculate, 1, 0},
     {XFA_Element::Extras, 1, 0},  {XFA_Element::Variables, 1, 0},
-    {XFA_Element::Occur, 1, 0},   {XFA_Element::Unknown, 0, 0}};
+    {XFA_Element::Occur, 1, 0},
+};
 
 const CXFA_Node::AttributeData kSubformAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -58,7 +59,7 @@ const CXFA_Node::AttributeData kSubformAttributeData[] = {
      (void*)XFA_AttributeValue::Manual},
     {XFA_Attribute::Scope, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Name},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

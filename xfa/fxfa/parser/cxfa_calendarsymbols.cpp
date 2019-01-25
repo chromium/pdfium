@@ -16,12 +16,12 @@ const CXFA_Node::PropertyData kCalendarSymbolsPropertyData[] = {
     {XFA_Element::DayNames, 2, 0},
     {XFA_Element::MeridiemNames, 1, 0},
     {XFA_Element::MonthNames, 2, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kCalendarSymbolsAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Gregorian},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

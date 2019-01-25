@@ -16,7 +16,7 @@ const CXFA_Node::PropertyData kPageAreaPropertyData[] = {
     {XFA_Element::Desc, 1, 0},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Occur, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kPageAreaAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -32,7 +32,7 @@ const CXFA_Node::AttributeData kPageAreaAttributeData[] = {
     {XFA_Attribute::Numbered, XFA_AttributeType::Integer, (void*)1},
     {XFA_Attribute::BlankOrNotBlank, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Any},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

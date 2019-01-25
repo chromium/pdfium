@@ -22,7 +22,7 @@ const CXFA_Node::AttributeData kImageAttributeData[] = {
     {XFA_Attribute::Aspect, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::Fit},
     {XFA_Attribute::Href, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

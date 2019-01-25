@@ -18,12 +18,12 @@ const CXFA_Node::PropertyData kWsdlConnectionPropertyData[] = {
     {XFA_Element::SoapAction, 1, 0},
     {XFA_Element::EffectiveOutputPolicy, 1, 0},
     {XFA_Element::EffectiveInputPolicy, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kWsdlConnectionAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataDescription, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

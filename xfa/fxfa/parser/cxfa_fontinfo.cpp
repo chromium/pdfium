@@ -15,12 +15,12 @@ const CXFA_Node::PropertyData kFontInfoPropertyData[] = {
     {XFA_Element::SubsetBelow, 1, 0},
     {XFA_Element::Map, 1, 0},
     {XFA_Element::Embed, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kFontInfoAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

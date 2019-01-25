@@ -21,12 +21,12 @@ const CXFA_Node::PropertyData kPermissionsPropertyData[] = {
     {XFA_Element::PlaintextMetadata, 1, 0},
     {XFA_Element::PrintHighQuality, 1, 0},
     {XFA_Element::DocumentAssembly, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kPermissionsAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

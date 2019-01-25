@@ -13,7 +13,7 @@ namespace {
 
 const CXFA_Node::AttributeData kTypefaceAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 

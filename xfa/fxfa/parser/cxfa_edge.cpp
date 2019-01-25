@@ -14,7 +14,7 @@ namespace {
 const CXFA_Node::PropertyData kEdgePropertyData[] = {
     {XFA_Element::Color, 1, 0},
     {XFA_Element::Extras, 1, 0},
-    {XFA_Element::Unknown, 0, 0}};
+};
 
 const CXFA_Node::AttributeData kEdgeAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
@@ -27,7 +27,7 @@ const CXFA_Node::AttributeData kEdgeAttributeData[] = {
      (void*)XFA_AttributeValue::Visible},
     {XFA_Attribute::Thickness, XFA_AttributeType::Measure, (void*)L"0.5pt"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
-    {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
+};
 
 }  // namespace
 
