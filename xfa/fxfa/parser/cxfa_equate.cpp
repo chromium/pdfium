@@ -27,7 +27,7 @@ CXFA_Equate::CXFA_Equate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::Equate,
-                nullptr,
+                {},
                 kEquateAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

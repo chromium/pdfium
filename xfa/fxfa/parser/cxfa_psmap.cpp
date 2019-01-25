@@ -15,8 +15,8 @@ CXFA_PsMap::CXFA_PsMap(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::PsMap,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_PsMap::~CXFA_PsMap() = default;

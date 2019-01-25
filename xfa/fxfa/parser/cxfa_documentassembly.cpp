@@ -25,7 +25,7 @@ CXFA_DocumentAssembly::CXFA_DocumentAssembly(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DocumentAssembly,
-                nullptr,
+                {},
                 kDocumentAssemblyAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

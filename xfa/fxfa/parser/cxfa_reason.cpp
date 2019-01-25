@@ -26,7 +26,7 @@ CXFA_Reason::CXFA_Reason(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::TextNode,
                 XFA_Element::Reason,
-                nullptr,
+                {},
                 kReasonAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

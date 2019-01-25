@@ -27,7 +27,7 @@ CXFA_Boolean::CXFA_Boolean(CXFA_Document* doc, XFA_PacketType packet)
                  XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Boolean,
-                nullptr,
+                {},
                 kBooleanAttributeData,
                 pdfium::MakeUnique<CJX_Boolean>(this)) {}
 

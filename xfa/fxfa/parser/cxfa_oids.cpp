@@ -27,7 +27,7 @@ CXFA_Oids::CXFA_Oids(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Oids,
-                nullptr,
+                {},
                 kOidsAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

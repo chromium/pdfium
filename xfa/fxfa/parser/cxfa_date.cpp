@@ -26,7 +26,7 @@ CXFA_Date::CXFA_Date(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Date,
-                nullptr,
+                {},
                 kDateAttributeData,
                 pdfium::MakeUnique<CJX_Date>(this)) {}
 

@@ -23,7 +23,7 @@ CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Form,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::Form,
-                nullptr,
+                {},
                 kFormAttributeData,
                 pdfium::MakeUnique<CJX_Form>(this)) {}
 

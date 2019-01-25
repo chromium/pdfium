@@ -26,7 +26,7 @@ CXFA_Insert::CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_SourceSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::Insert,
-                nullptr,
+                {},
                 kInsertAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

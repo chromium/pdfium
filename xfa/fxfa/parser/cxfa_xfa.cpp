@@ -24,7 +24,7 @@ CXFA_Xfa::CXFA_Xfa(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_XDP,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::Xfa,
-                nullptr,
+                {},
                 kXfaAttributeData,
                 pdfium::MakeUnique<CJX_Xfa>(this)) {}
 

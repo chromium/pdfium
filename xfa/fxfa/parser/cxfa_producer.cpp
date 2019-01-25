@@ -24,7 +24,7 @@ CXFA_Producer::CXFA_Producer(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Producer,
-                nullptr,
+                {},
                 kProducerAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

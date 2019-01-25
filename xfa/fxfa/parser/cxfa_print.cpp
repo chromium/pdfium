@@ -24,7 +24,7 @@ CXFA_Print::CXFA_Print(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Print,
-                nullptr,
+                {},
                 kPrintAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

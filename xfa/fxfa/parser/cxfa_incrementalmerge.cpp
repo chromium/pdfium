@@ -25,7 +25,7 @@ CXFA_IncrementalMerge::CXFA_IncrementalMerge(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::IncrementalMerge,
-                nullptr,
+                {},
                 kIncrementalMergeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

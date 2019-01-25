@@ -25,7 +25,7 @@ CXFA_Encoding::CXFA_Encoding(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::NodeC,
                 XFA_Element::Encoding,
-                nullptr,
+                {},
                 kEncodingAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

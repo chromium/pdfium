@@ -24,7 +24,7 @@ CXFA_Amd::CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Amd,
-                nullptr,
+                {},
                 kAmdAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

@@ -29,7 +29,7 @@ CXFA_Speak::CXFA_Speak(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::TextNode,
                 XFA_Element::Speak,
-                nullptr,
+                {},
                 kSpeakAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

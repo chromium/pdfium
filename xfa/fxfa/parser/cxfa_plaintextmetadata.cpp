@@ -25,7 +25,7 @@ CXFA_PlaintextMetadata::CXFA_PlaintextMetadata(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PlaintextMetadata,
-                nullptr,
+                {},
                 kPlaintextMetadataAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

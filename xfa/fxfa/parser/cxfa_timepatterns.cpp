@@ -24,7 +24,7 @@ CXFA_TimePatterns::CXFA_TimePatterns(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::TimePatterns,
                 kTimePatternsPropertyData,
-                nullptr,
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_TimePatterns::~CXFA_TimePatterns() = default;

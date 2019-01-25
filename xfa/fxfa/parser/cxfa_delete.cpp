@@ -26,7 +26,7 @@ CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_SourceSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::Delete,
-                nullptr,
+                {},
                 kDeleteAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

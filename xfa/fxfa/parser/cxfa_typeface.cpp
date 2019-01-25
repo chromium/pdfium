@@ -23,7 +23,7 @@ CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::Typeface,
-                nullptr,
+                {},
                 kTypefaceAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

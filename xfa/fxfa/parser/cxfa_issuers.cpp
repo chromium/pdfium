@@ -27,7 +27,7 @@ CXFA_Issuers::CXFA_Issuers(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Issuers,
-                nullptr,
+                {},
                 kIssuersAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

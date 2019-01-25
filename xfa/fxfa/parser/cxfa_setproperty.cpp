@@ -25,7 +25,7 @@ CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::SetProperty,
-                nullptr,
+                {},
                 kSetPropertyAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

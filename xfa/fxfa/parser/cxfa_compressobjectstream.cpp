@@ -25,7 +25,7 @@ CXFA_CompressObjectStream::CXFA_CompressObjectStream(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CompressObjectStream,
-                nullptr,
+                {},
                 kCompressObjectStreamAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

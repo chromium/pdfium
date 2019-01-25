@@ -25,7 +25,7 @@ CXFA_NumberPatterns::CXFA_NumberPatterns(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::NumberPatterns,
                 kNumberPatternsPropertyData,
-                nullptr,
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_NumberPatterns::~CXFA_NumberPatterns() = default;

@@ -24,7 +24,7 @@ CXFA_PageRange::CXFA_PageRange(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PageRange,
-                nullptr,
+                {},
                 kPageRangeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

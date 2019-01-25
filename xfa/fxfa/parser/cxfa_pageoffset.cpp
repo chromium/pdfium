@@ -26,7 +26,7 @@ CXFA_PageOffset::CXFA_PageOffset(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::PageOffset,
-                nullptr,
+                {},
                 kPageOffsetAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

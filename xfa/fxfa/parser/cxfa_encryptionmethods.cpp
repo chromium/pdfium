@@ -28,7 +28,7 @@ CXFA_EncryptionMethods::CXFA_EncryptionMethods(CXFA_Document* doc,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::EncryptionMethods,
-                nullptr,
+                {},
                 kEncryptionMethodsAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

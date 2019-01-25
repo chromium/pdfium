@@ -16,8 +16,8 @@ CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DateTimeSymbols,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_DateTimeSymbols::~CXFA_DateTimeSymbols() = default;

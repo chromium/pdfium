@@ -25,7 +25,7 @@ CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet)
                  XFA_XDPPACKET_SourceSet | XFA_XDPPACKET_Form),
                 XFA_ObjectType::NodeV,
                 XFA_Element::Sharptext,
-                nullptr,
+                {},
                 kSharptextAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

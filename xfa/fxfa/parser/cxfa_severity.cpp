@@ -24,7 +24,7 @@ CXFA_Severity::CXFA_Severity(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::Severity,
-                nullptr,
+                {},
                 kSeverityAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

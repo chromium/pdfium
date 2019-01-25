@@ -25,7 +25,7 @@ CXFA_ADBE_JSConsole::CXFA_ADBE_JSConsole(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ADBE_JSConsole,
-                nullptr,
+                {},
                 kADBE_JSConsoleAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

@@ -24,7 +24,7 @@ CXFA_Messaging::CXFA_Messaging(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Messaging,
-                nullptr,
+                {},
                 kMessagingAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

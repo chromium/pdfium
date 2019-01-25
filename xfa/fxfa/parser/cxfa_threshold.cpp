@@ -24,7 +24,7 @@ CXFA_Threshold::CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::Threshold,
-                nullptr,
+                {},
                 kThresholdAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

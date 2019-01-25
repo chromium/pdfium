@@ -15,8 +15,8 @@ CXFA_Meridiem::CXFA_Meridiem(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Meridiem,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Meridiem::~CXFA_Meridiem() = default;

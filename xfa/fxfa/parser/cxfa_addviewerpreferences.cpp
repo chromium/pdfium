@@ -25,7 +25,7 @@ CXFA_AddViewerPreferences::CXFA_AddViewerPreferences(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AddViewerPreferences,
-                nullptr,
+                {},
                 kAddViewerPreferencesAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

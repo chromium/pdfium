@@ -25,7 +25,7 @@ CXFA_SignatureProperties::CXFA_SignatureProperties(CXFA_Document* doc,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::SignatureProperties,
-                nullptr,
+                {},
                 kSignaturePropertiesAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

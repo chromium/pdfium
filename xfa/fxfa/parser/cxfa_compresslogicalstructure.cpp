@@ -26,7 +26,7 @@ CXFA_CompressLogicalStructure::CXFA_CompressLogicalStructure(
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CompressLogicalStructure,
-                nullptr,
+                {},
                 kCompressLogicalStructureAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

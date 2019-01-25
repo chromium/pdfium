@@ -24,7 +24,7 @@ CXFA_RenderPolicy::CXFA_RenderPolicy(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::RenderPolicy,
-                nullptr,
+                {},
                 kRenderPolicyAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

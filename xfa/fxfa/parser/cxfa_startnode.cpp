@@ -24,7 +24,7 @@ CXFA_StartNode::CXFA_StartNode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::StartNode,
-                nullptr,
+                {},
                 kStartNodeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

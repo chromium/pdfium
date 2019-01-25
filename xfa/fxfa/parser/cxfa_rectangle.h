@@ -32,8 +32,8 @@ class CXFA_Rectangle : public CXFA_Box {
                  uint32_t validPackets,
                  XFA_ObjectType oType,
                  XFA_Element eType,
-                 const PropertyData* properties,
-                 const AttributeData* attributes,
+                 pdfium::span<const PropertyData> properties,
+                 pdfium::span<const AttributeData> attributes,
                  std::unique_ptr<CJX_Object> js_node);
 
  private:

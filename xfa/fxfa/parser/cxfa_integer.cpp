@@ -27,7 +27,7 @@ CXFA_Integer::CXFA_Integer(CXFA_Document* doc, XFA_PacketType packet)
                  XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Integer,
-                nullptr,
+                {},
                 kIntegerAttributeData,
                 pdfium::MakeUnique<CJX_Integer>(this)) {}
 

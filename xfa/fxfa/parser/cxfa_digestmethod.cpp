@@ -25,7 +25,7 @@ CXFA_DigestMethod::CXFA_DigestMethod(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::NodeC,
                 XFA_Element::DigestMethod,
-                nullptr,
+                {},
                 kDigestMethodAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

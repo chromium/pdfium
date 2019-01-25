@@ -24,7 +24,7 @@ CXFA_EraNames::CXFA_EraNames(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::EraNames,
                 kEraNamesPropertyData,
-                nullptr,
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_EraNames::~CXFA_EraNames() = default;

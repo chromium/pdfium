@@ -37,7 +37,7 @@ CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_SourceSet,
                 XFA_ObjectType::Node,
                 XFA_Element::RecordSet,
-                nullptr,
+                {},
                 kRecordSetAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

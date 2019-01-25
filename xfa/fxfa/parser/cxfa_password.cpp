@@ -26,7 +26,7 @@ CXFA_Password::CXFA_Password(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_SourceSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::Password,
-                nullptr,
+                {},
                 kPasswordAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

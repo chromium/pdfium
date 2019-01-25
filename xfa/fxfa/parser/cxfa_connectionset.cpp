@@ -16,8 +16,8 @@ CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc,
                 XFA_XDPPACKET_ConnectionSet,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::ConnectionSet,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Model>(this)) {}
 
 CXFA_ConnectionSet::~CXFA_ConnectionSet() = default;

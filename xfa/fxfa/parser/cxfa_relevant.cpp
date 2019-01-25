@@ -24,7 +24,7 @@ CXFA_Relevant::CXFA_Relevant(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::Relevant,
-                nullptr,
+                {},
                 kRelevantAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

@@ -28,7 +28,7 @@ CXFA_Uri::CXFA_Uri(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Config | XFA_XDPPACKET_ConnectionSet),
                 XFA_ObjectType::TextNode,
                 XFA_Element::Uri,
-                nullptr,
+                {},
                 kUriAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

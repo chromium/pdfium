@@ -26,7 +26,7 @@ CXFA_WsdlAddress::CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_ConnectionSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::WsdlAddress,
-                nullptr,
+                {},
                 kWsdlAddressAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

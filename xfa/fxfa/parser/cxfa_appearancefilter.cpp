@@ -28,7 +28,7 @@ CXFA_AppearanceFilter::CXFA_AppearanceFilter(CXFA_Document* doc,
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::NodeC,
                 XFA_Element::AppearanceFilter,
-                nullptr,
+                {},
                 kAppearanceFilterAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

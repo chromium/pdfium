@@ -26,7 +26,7 @@ CXFA_User::CXFA_User(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_SourceSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::User,
-                nullptr,
+                {},
                 kUserAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

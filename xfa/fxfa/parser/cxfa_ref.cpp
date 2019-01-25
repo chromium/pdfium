@@ -25,7 +25,7 @@ CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::TextNode,
                 XFA_Element::Ref,
-                nullptr,
+                {},
                 kRefAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

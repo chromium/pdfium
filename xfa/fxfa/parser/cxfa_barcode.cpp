@@ -48,7 +48,7 @@ CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Barcode,
-                nullptr,
+                {},
                 kBarcodeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

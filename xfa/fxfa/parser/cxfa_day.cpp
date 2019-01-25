@@ -15,8 +15,8 @@ CXFA_Day::CXFA_Day(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Day,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Day::~CXFA_Day() = default;

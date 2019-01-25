@@ -24,7 +24,7 @@ CXFA_NameAttr::CXFA_NameAttr(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::NameAttr,
-                nullptr,
+                {},
                 kNameAttrAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

@@ -15,8 +15,8 @@ CXFA_DataModel::CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Datasets,
                 XFA_ObjectType::ModelNode,
                 XFA_Element::DataModel,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Model>(this)) {}
 
 CXFA_DataModel::~CXFA_DataModel() = default;

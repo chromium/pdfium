@@ -25,7 +25,7 @@ CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::Variables,
-                nullptr,
+                {},
                 kVariablesAttributeData,
                 pdfium::MakeUnique<CJX_Container>(this)) {}
 

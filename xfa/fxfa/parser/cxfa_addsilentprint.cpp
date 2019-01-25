@@ -25,7 +25,7 @@ CXFA_AddSilentPrint::CXFA_AddSilentPrint(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AddSilentPrint,
-                nullptr,
+                {},
                 kAddSilentPrintAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

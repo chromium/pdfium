@@ -25,7 +25,7 @@ CXFA_ValidationMessaging::CXFA_ValidationMessaging(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::ValidationMessaging,
-                nullptr,
+                {},
                 kValidationMessagingAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

@@ -15,8 +15,8 @@ CXFA_Proto::CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Proto,
-                nullptr,
-                nullptr,
+                {},
+                {},
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Proto::~CXFA_Proto() = default;

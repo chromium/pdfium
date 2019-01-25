@@ -29,7 +29,7 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
                  XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Text,
-                nullptr,
+                {},
                 kTextAttributeData,
                 pdfium::MakeUnique<CJX_Text>(this)) {}
 

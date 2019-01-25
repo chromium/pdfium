@@ -26,7 +26,7 @@ CXFA_Staple::CXFA_Staple(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Staple,
-                nullptr,
+                {},
                 kStapleAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

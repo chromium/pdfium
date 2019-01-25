@@ -27,7 +27,7 @@ CXFA_Handler::CXFA_Handler(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::TextNode,
                 XFA_Element::Handler,
-                nullptr,
+                {},
                 kHandlerAttributeData,
                 pdfium::MakeUnique<CJX_Handler>(this)) {}
 

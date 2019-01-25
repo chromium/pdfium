@@ -25,7 +25,7 @@ CXFA_SuppressBanner::CXFA_SuppressBanner(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::SuppressBanner,
-                nullptr,
+                {},
                 kSuppressBannerAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

@@ -24,7 +24,7 @@ CXFA_GroupParent::CXFA_GroupParent(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::GroupParent,
-                nullptr,
+                {},
                 kGroupParentAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

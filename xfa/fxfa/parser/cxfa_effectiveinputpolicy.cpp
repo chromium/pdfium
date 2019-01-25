@@ -27,7 +27,7 @@ CXFA_EffectiveInputPolicy::CXFA_EffectiveInputPolicy(CXFA_Document* doc,
                 XFA_XDPPACKET_ConnectionSet,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveInputPolicy,
-                nullptr,
+                {},
                 kEffectiveInputPolicyAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

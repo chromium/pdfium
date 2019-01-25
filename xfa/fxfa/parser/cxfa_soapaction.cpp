@@ -26,7 +26,7 @@ CXFA_SoapAction::CXFA_SoapAction(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_ConnectionSet,
                 XFA_ObjectType::TextNode,
                 XFA_Element::SoapAction,
-                nullptr,
+                {},
                 kSoapActionAttributeData,
                 pdfium::MakeUnique<CJX_TextNode>(this)) {}
 

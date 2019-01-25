@@ -27,7 +27,7 @@ CXFA_SubjectDN::CXFA_SubjectDN(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::NodeC,
                 XFA_Element::SubjectDN,
-                nullptr,
+                {},
                 kSubjectDNAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

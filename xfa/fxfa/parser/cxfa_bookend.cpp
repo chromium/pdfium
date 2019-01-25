@@ -28,7 +28,7 @@ CXFA_Bookend::CXFA_Bookend(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Bookend,
-                nullptr,
+                {},
                 kBookendAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

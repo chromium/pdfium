@@ -24,7 +24,7 @@ CXFA_LocaleSet::CXFA_LocaleSet(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet),
                 XFA_ObjectType::ModelNode,
                 XFA_Element::LocaleSet,
-                nullptr,
+                {},
                 kLocaleSetAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

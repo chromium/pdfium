@@ -28,7 +28,7 @@ CXFA_Picture::CXFA_Picture(CXFA_Document* doc, XFA_PacketType packet)
           (XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
           XFA_ObjectType::ContentNode,
           XFA_Element::Picture,
-          nullptr,
+          {},
           kPictureAttributeData,
           pdfium::MakeUnique<CJX_Picture>(this)) {}
 

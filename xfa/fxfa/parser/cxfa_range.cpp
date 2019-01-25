@@ -24,7 +24,7 @@ CXFA_Range::CXFA_Range(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::Range,
-                nullptr,
+                {},
                 kRangeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

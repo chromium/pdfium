@@ -26,7 +26,7 @@ CXFA_Float::CXFA_Float(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Float,
-                nullptr,
+                {},
                 kFloatAttributeData,
                 pdfium::MakeUnique<CJX_Float>(this)) {}
 

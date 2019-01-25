@@ -30,7 +30,7 @@ CXFA_VersionControl::CXFA_VersionControl(CXFA_Document* doc,
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::VersionControl,
-                nullptr,
+                {},
                 kVersionControlAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

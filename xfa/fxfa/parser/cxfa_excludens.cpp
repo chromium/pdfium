@@ -24,7 +24,7 @@ CXFA_ExcludeNS::CXFA_ExcludeNS(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::ExcludeNS,
-                nullptr,
+                {},
                 kExcludeNSAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

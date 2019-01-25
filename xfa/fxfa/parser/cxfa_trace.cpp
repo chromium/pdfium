@@ -24,7 +24,7 @@ CXFA_Trace::CXFA_Trace(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Trace,
-                nullptr,
+                {},
                 kTraceAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

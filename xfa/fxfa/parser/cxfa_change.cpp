@@ -24,7 +24,7 @@ CXFA_Change::CXFA_Change(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Change,
-                nullptr,
+                {},
                 kChangeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

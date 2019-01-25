@@ -26,7 +26,7 @@ CXFA_Time::CXFA_Time(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Time,
-                nullptr,
+                {},
                 kTimeAttributeData,
                 pdfium::MakeUnique<CJX_Time>(this)) {}
 

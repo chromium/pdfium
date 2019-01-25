@@ -24,7 +24,7 @@ CXFA_ContentCopy::CXFA_ContentCopy(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ContentCopy,
-                nullptr,
+                {},
                 kContentCopyAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 

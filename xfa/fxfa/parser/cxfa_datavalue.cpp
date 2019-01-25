@@ -28,7 +28,7 @@ CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Datasets,
                 XFA_ObjectType::Node,
                 XFA_Element::DataValue,
-                nullptr,
+                {},
                 kDataValueAttributeData,
                 pdfium::MakeUnique<CJX_DataValue>(this)) {}
 

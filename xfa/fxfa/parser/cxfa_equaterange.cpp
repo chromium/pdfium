@@ -27,7 +27,7 @@ CXFA_EquateRange::CXFA_EquateRange(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::NodeV,
                 XFA_Element::EquateRange,
-                nullptr,
+                {},
                 kEquateRangeAttributeData,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
