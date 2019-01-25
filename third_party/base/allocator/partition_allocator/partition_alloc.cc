@@ -209,12 +209,10 @@ bool PartitionReallocDirectMappedInPlace(PartitionRootGeneric* root,
 
   // bucket->slot_size is the current size of the allocation.
   size_t current_size = page->bucket->slot_size;
-  if (new_size == current_size)
-    return true;
-
   char* char_ptr = static_cast<char*>(internal::PartitionPage::ToPointer(page));
-
-  if (new_size < current_size) {
+  if (new_size == current_size) {
+    // No need to move any memory around, but update size and cookie below.
+  } else if (new_size < current_size) {
     size_t map_size =
         internal::PartitionDirectMapExtent::FromPage(page)->map_size;
 
