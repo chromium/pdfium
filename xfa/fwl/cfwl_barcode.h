@@ -11,15 +11,8 @@
 
 #include "fxbarcode/BC_Library.h"
 #include "xfa/fwl/cfwl_edit.h"
-#include "xfa/fwl/cfwl_scrollbar.h"
-#include "xfa/fwl/cfwl_widget.h"
 
-class CFWL_WidgetProperties;
 class CFX_Barcode;
-class CFWL_Widget;
-
-#define XFA_BCS_NeedUpdate 0x0001
-#define XFA_BCS_EncodeSuccess 0x0002
 
 enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_NONE = 0,
@@ -69,12 +62,18 @@ class CFWL_Barcode final : public CFWL_Edit {
   void SetErrorCorrectionLevel(int32_t ecLevel);
 
  private:
+  enum class Status : uint8_t {
+    kNormal,
+    kNeedUpdate,
+    kEncodeSuccess,
+  };
+
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 
   std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
-  uint32_t m_dwStatus;
-  BC_TYPE m_type;
+  Status m_eStatus = Status::kNormal;
+  BC_TYPE m_type = BC_UNKNOWN;
   BC_CHAR_ENCODING m_eCharEncoding;
   int32_t m_nModuleHeight;
   int32_t m_nModuleWidth;
@@ -86,7 +85,7 @@ class CFWL_Barcode final : public CFWL_Edit {
   char m_cStartChar;
   char m_cEndChar;
   int32_t m_nECLevel;
-  uint32_t m_dwAttributeMask;
+  uint32_t m_dwAttributeMask = 0;
 };
 
 #endif  // XFA_FWL_CFWL_BARCODE_H_
