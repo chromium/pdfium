@@ -8,10 +8,9 @@
 
 #include <utility>
 
-#include "fxjs/xfa/cjx_area.h"
 #include "fxjs/xfa/cjx_boolean.h"
 #include "fxjs/xfa/cjx_comb.h"
-#include "fxjs/xfa/cjx_contentarea.h"
+#include "fxjs/xfa/cjx_container.h"
 #include "fxjs/xfa/cjx_datavalue.h"
 #include "fxjs/xfa/cjx_datawindow.h"
 #include "fxjs/xfa/cjx_date.h"
@@ -38,8 +37,6 @@
 #include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_occur.h"
 #include "fxjs/xfa/cjx_packet.h"
-#include "fxjs/xfa/cjx_pagearea.h"
-#include "fxjs/xfa/cjx_pageset.h"
 #include "fxjs/xfa/cjx_picture.h"
 #include "fxjs/xfa/cjx_script.h"
 #include "fxjs/xfa/cjx_signaturepseudomodel.h"
@@ -53,7 +50,6 @@
 #include "fxjs/xfa/cjx_tree.h"
 #include "fxjs/xfa/cjx_treelist.h"
 #include "fxjs/xfa/cjx_value.h"
-#include "fxjs/xfa/cjx_variables.h"
 #include "fxjs/xfa/cjx_wsdlconnection.h"
 #include "fxjs/xfa/cjx_xfa.h"
 #include "xfa/fxfa/fxfa_basic.h"

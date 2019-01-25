@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_pagearea.h"
 
-#include "fxjs/xfa/cjx_pagearea.h"
+#include "fxjs/xfa/cjx_container.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -44,6 +44,6 @@ CXFA_PageArea::CXFA_PageArea(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PageArea,
                 kPageAreaPropertyData,
                 kPageAreaAttributeData,
-                pdfium::MakeUnique<CJX_PageArea>(this)) {}
+                pdfium::MakeUnique<CJX_Container>(this)) {}
 
 CXFA_PageArea::~CXFA_PageArea() = default;
