@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_text.h"
 
-CJX_Text::CJX_Text(CXFA_Text* node) : CJX_Content(node) {}
+CJX_Text::CJX_Text(CXFA_Text* node) : CJX_Object(node) {}
 
 CJX_Text::~CJX_Text() = default;
 

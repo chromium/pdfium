@@ -7,12 +7,12 @@
 #ifndef FXJS_XFA_CJX_BOOLEAN_H_
 #define FXJS_XFA_CJX_BOOLEAN_H_
 
-#include "fxjs/xfa/cjx_content.h"
+#include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
 
 class CXFA_Boolean;
 
-class CJX_Boolean final : public CJX_Content {
+class CJX_Boolean final : public CJX_Object {
  public:
   explicit CJX_Boolean(CXFA_Boolean* node);
   ~CJX_Boolean() override;
@@ -25,7 +25,7 @@ class CJX_Boolean final : public CJX_Content {
 
  private:
   using Type__ = CJX_Boolean;
-  using ParentType__ = CJX_Content;
+  using ParentType__ = CJX_Object;
 
   static const TypeTag static_type__ = TypeTag::Boolean;
 };

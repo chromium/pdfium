@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_time.h"
 
-CJX_Time::CJX_Time(CXFA_Time* node) : CJX_Content(node) {}
+CJX_Time::CJX_Time(CXFA_Time* node) : CJX_Object(node) {}
 
 CJX_Time::~CJX_Time() = default;
 

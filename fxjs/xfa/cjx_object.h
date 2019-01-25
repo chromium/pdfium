@@ -56,8 +56,7 @@ enum XFA_SOM_MESSAGETYPE {
 
 class CJX_Object {
  public:
-  // Similar, but not exactly equal to XFA_Element enum.
-  // TODO(tsepez): unify with XFA_Element.
+  // Corresponds 1:1 with CJX_ subclasses.
   enum class TypeTag {
     Boolean,
     Comb,

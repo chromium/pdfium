@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_integer.h"
 
-CJX_Integer::CJX_Integer(CXFA_Integer* node) : CJX_Content(node) {}
+CJX_Integer::CJX_Integer(CXFA_Integer* node) : CJX_Object(node) {}
 
 CJX_Integer::~CJX_Integer() = default;
 

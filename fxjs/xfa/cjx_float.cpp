@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_float.h"
 
-CJX_Float::CJX_Float(CXFA_Float* node) : CJX_Content(node) {}
+CJX_Float::CJX_Float(CXFA_Float* node) : CJX_Object(node) {}
 
 CJX_Float::~CJX_Float() = default;
 

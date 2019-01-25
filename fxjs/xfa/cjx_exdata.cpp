@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_exdata.h"
 
-CJX_ExData::CJX_ExData(CXFA_ExData* node) : CJX_Content(node) {}
+CJX_ExData::CJX_ExData(CXFA_ExData* node) : CJX_Object(node) {}
 
 CJX_ExData::~CJX_ExData() = default;
 

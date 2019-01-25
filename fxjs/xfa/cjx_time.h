@@ -7,12 +7,12 @@
 #ifndef FXJS_XFA_CJX_TIME_H_
 #define FXJS_XFA_CJX_TIME_H_
 
-#include "fxjs/xfa/cjx_content.h"
+#include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
 
 class CXFA_Time;
 
-class CJX_Time final : public CJX_Content {
+class CJX_Time final : public CJX_Object {
  public:
   explicit CJX_Time(CXFA_Time* node);
   ~CJX_Time() override;
@@ -25,7 +25,7 @@ class CJX_Time final : public CJX_Content {
 
  private:
   using Type__ = CJX_Time;
-  using ParentType__ = CJX_Content;
+  using ParentType__ = CJX_Object;
 
   static const TypeTag static_type__ = TypeTag::Time;
 };

@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_decimal.h"
 
-CJX_Decimal::CJX_Decimal(CXFA_Decimal* node) : CJX_Content(node) {}
+CJX_Decimal::CJX_Decimal(CXFA_Decimal* node) : CJX_Object(node) {}
 
 CJX_Decimal::~CJX_Decimal() = default;
 

@@ -8,7 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_date.h"
 
-CJX_Date::CJX_Date(CXFA_Date* node) : CJX_Content(node) {}
+CJX_Date::CJX_Date(CXFA_Date* node) : CJX_Object(node) {}
 
 CJX_Date::~CJX_Date() = default;
 

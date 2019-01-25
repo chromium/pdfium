@@ -9,7 +9,7 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cxfa_boolean.h"
 
-CJX_Boolean::CJX_Boolean(CXFA_Boolean* node) : CJX_Content(node) {}
+CJX_Boolean::CJX_Boolean(CXFA_Boolean* node) : CJX_Object(node) {}
 
 CJX_Boolean::~CJX_Boolean() = default;
 
