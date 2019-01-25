@@ -20,6 +20,7 @@ class CFWL_ComboEdit final : public CFWL_Edit {
   CFWL_ComboEdit(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  CFWL_Widget* pOuter);
+  ~CFWL_ComboEdit() override;
 
   // CFWL_Edit.
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -27,9 +28,6 @@ class CFWL_ComboEdit final : public CFWL_Edit {
   void ClearSelected();
   void SetSelected();
   void FlagFocus(bool bSet);
-
- private:
-  CFWL_ComboBox* m_pOuter;
 };
 
 #endif  // XFA_FWL_CFWL_COMBOEDIT_H_

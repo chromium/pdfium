@@ -18,8 +18,9 @@ CFWL_ComboEdit::CFWL_ComboEdit(
     std::unique_ptr<CFWL_WidgetProperties> properties,
     CFWL_Widget* pOuter)
     : CFWL_Edit(app, std::move(properties), pOuter) {
-  m_pOuter = static_cast<CFWL_ComboBox*>(pOuter);
 }
+
+CFWL_ComboEdit::~CFWL_ComboEdit() = default;
 
 void CFWL_ComboEdit::ClearSelected() {
   ClearSelection();
