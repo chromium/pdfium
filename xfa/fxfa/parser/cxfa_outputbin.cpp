@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_outputbin.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kOutputBinAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_OutputBin::CXFA_OutputBin(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::OutputBin,
                 nullptr,
-                kOutputBinAttributeData) {}
+                kOutputBinAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_OutputBin::~CXFA_OutputBin() = default;

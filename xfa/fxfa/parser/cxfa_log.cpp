@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_log.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kLogPropertyData[] = {
@@ -29,6 +32,7 @@ CXFA_Log::CXFA_Log(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Log,
                 kLogPropertyData,
-                kLogAttributeData) {}
+                kLogAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Log::~CXFA_Log() = default;

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_adjustdata.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAdjustDataAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_AdjustData::CXFA_AdjustData(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::AdjustData,
                 nullptr,
-                kAdjustDataAttributeData) {}
+                kAdjustDataAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_AdjustData::~CXFA_AdjustData() = default;

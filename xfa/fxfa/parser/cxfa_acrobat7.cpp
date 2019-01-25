@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_acrobat7.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kAcrobat7PropertyData[] = {
@@ -26,6 +29,7 @@ CXFA_Acrobat7::CXFA_Acrobat7(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Acrobat7,
                 kAcrobat7PropertyData,
-                kAcrobat7AttributeData) {}
+                kAcrobat7AttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Acrobat7::~CXFA_Acrobat7() = default;

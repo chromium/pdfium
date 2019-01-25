@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_typeface.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kTypefaceAttributeData[] = {
@@ -21,6 +24,7 @@ CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Typeface,
                 nullptr,
-                kTypefaceAttributeData) {}
+                kTypefaceAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Typeface::~CXFA_Typeface() = default;

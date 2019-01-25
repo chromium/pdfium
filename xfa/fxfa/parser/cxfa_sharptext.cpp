@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_sharptext.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kSharptextAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_Sharptext::CXFA_Sharptext(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Sharptext,
                 nullptr,
-                kSharptextAttributeData) {}
+                kSharptextAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Sharptext::~CXFA_Sharptext() = default;

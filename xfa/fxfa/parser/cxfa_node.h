@@ -371,9 +371,6 @@ class CXFA_Node : public CXFA_Object {
   WideString NumericLimit(const WideString& wsValue);
 
  protected:
-  virtual XFA_Element GetValueNodeType() const;
-  virtual XFA_FFWidgetType GetDefaultFFWidgetType() const;
-
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
             uint32_t validPackets,
@@ -381,14 +378,10 @@ class CXFA_Node : public CXFA_Object {
             XFA_Element eType,
             const PropertyData* properties,
             const AttributeData* attributes,
-            std::unique_ptr<CJX_Object> js_node);
-  CXFA_Node(CXFA_Document* pDoc,
-            XFA_PacketType ePacket,
-            uint32_t validPackets,
-            XFA_ObjectType oType,
-            XFA_Element eType,
-            const PropertyData* properties,
-            const AttributeData* attributes);
+            std::unique_ptr<CJX_Object> js_object);
+
+  virtual XFA_Element GetValueNodeType() const;
+  virtual XFA_FFWidgetType GetDefaultFFWidgetType() const;
 
  private:
   void ProcessScriptTestValidate(CXFA_FFDocView* docView,

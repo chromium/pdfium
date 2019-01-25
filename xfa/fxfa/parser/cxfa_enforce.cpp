@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_enforce.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kEnforceAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Enforce::CXFA_Enforce(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Enforce,
                 nullptr,
-                kEnforceAttributeData) {}
+                kEnforceAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Enforce::~CXFA_Enforce() = default;

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_window.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kWindowAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Window::CXFA_Window(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Window,
                 nullptr,
-                kWindowAttributeData) {}
+                kWindowAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Window::~CXFA_Window() = default;

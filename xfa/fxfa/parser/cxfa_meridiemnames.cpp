@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_meridiemnames.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kMeridiemNamesPropertyData[] = {
@@ -22,6 +25,7 @@ CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::MeridiemNames,
                 kMeridiemNamesPropertyData,
-                nullptr) {}
+                nullptr,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_MeridiemNames::~CXFA_MeridiemNames() = default;

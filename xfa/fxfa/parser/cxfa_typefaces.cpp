@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_typefaces.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 CXFA_Typefaces::CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -13,6 +16,7 @@ CXFA_Typefaces::CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Typefaces,
                 nullptr,
-                nullptr) {}
+                nullptr,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Typefaces::~CXFA_Typefaces() = default;

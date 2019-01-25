@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_printhighquality.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kPrintHighQualityAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_PrintHighQuality::CXFA_PrintHighQuality(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PrintHighQuality,
                 nullptr,
-                kPrintHighQualityAttributeData) {}
+                kPrintHighQualityAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_PrintHighQuality::~CXFA_PrintHighQuality() = default;

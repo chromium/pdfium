@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_submitformat.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kSubmitFormatAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_SubmitFormat::CXFA_SubmitFormat(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::SubmitFormat,
                 nullptr,
-                kSubmitFormatAttributeData) {}
+                kSubmitFormatAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_SubmitFormat::~CXFA_SubmitFormat() = default;

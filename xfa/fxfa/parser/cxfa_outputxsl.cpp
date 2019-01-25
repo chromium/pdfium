@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_outputxsl.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kOutputXSLPropertyData[] = {
@@ -26,6 +29,7 @@ CXFA_OutputXSL::CXFA_OutputXSL(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::OutputXSL,
                 kOutputXSLPropertyData,
-                kOutputXSLAttributeData) {}
+                kOutputXSLAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_OutputXSL::~CXFA_OutputXSL() = default;

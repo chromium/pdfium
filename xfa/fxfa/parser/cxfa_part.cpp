@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_part.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kPartAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Part::CXFA_Part(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Part,
                 nullptr,
-                kPartAttributeData) {}
+                kPartAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Part::~CXFA_Part() = default;

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_presence.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kPresenceAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Presence::CXFA_Presence(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Presence,
                 nullptr,
-                kPresenceAttributeData) {}
+                kPresenceAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Presence::~CXFA_Presence() = default;

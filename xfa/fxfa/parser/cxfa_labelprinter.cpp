@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_labelprinter.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kLabelPrinterPropertyData[] = {
@@ -31,6 +34,7 @@ CXFA_LabelPrinter::CXFA_LabelPrinter(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::LabelPrinter,
                 kLabelPrinterPropertyData,
-                kLabelPrinterAttributeData) {}
+                kLabelPrinterAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_LabelPrinter::~CXFA_LabelPrinter() = default;

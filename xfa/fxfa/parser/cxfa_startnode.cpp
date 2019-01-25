@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_startnode.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kStartNodeAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_StartNode::CXFA_StartNode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::StartNode,
                 nullptr,
-                kStartNodeAttributeData) {}
+                kStartNodeAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_StartNode::~CXFA_StartNode() = default;

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_zpl.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kZplPropertyData[] = {
@@ -30,6 +33,7 @@ CXFA_Zpl::CXFA_Zpl(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Zpl,
                 kZplPropertyData,
-                kZplAttributeData) {}
+                kZplAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Zpl::~CXFA_Zpl() = default;

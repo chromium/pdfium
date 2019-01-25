@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_interactive.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kInteractiveAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Interactive::CXFA_Interactive(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Interactive,
                 nullptr,
-                kInteractiveAttributeData) {}
+                kInteractiveAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Interactive::~CXFA_Interactive() {}

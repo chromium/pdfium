@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_versioncontrol.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kVersionControlAttributeData[] = {
@@ -28,6 +31,7 @@ CXFA_VersionControl::CXFA_VersionControl(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::VersionControl,
                 nullptr,
-                kVersionControlAttributeData) {}
+                kVersionControlAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_VersionControl::~CXFA_VersionControl() = default;

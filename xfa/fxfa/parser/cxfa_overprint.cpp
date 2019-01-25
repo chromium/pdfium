@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_overprint.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kOverprintAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Overprint::CXFA_Overprint(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Overprint,
                 nullptr,
-                kOverprintAttributeData) {}
+                kOverprintAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Overprint::~CXFA_Overprint() = default;

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_addsilentprint.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAddSilentPrintAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_AddSilentPrint::CXFA_AddSilentPrint(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AddSilentPrint,
                 nullptr,
-                kAddSilentPrintAttributeData) {}
+                kAddSilentPrintAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_AddSilentPrint::~CXFA_AddSilentPrint() = default;

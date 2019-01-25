@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_embed.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kEmbedAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Embed::CXFA_Embed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Embed,
                 nullptr,
-                kEmbedAttributeData) {}
+                kEmbedAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Embed::~CXFA_Embed() = default;

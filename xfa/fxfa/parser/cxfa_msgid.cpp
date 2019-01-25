@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_msgid.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kMsgIdAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_MsgId::CXFA_MsgId(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::MsgId,
                 nullptr,
-                kMsgIdAttributeData) {}
+                kMsgIdAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_MsgId::~CXFA_MsgId() = default;

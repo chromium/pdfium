@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_record.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kRecordAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Record::CXFA_Record(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Record,
                 nullptr,
-                kRecordAttributeData) {}
+                kRecordAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Record::~CXFA_Record() = default;

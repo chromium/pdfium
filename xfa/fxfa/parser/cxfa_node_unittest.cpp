@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 #include "xfa/fxfa/parser/cxfa_node.h"
+
+#include "fxjs/xfa/cjx_node.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
@@ -19,7 +21,8 @@ class TestNode final : public CXFA_Node {
                   XFA_ObjectType::Node,
                   XFA_Element::Node,
                   nullptr,
-                  nullptr) {}
+                  nullptr,
+                  pdfium::MakeUnique<CJX_Node>(this)) {}
 
   ~TestNode() override = default;
 };

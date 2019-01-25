@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_month.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 CXFA_Month::CXFA_Month(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -13,6 +16,7 @@ CXFA_Month::CXFA_Month(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Month,
                 nullptr,
-                nullptr) {}
+                nullptr,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Month::~CXFA_Month() = default;

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_compresslogicalstructure.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kCompressLogicalStructureAttributeData[] = {
@@ -24,6 +27,7 @@ CXFA_CompressLogicalStructure::CXFA_CompressLogicalStructure(
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CompressLogicalStructure,
                 nullptr,
-                kCompressLogicalStructureAttributeData) {}
+                kCompressLogicalStructureAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_CompressLogicalStructure::~CXFA_CompressLogicalStructure() = default;

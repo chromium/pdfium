@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_cache.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kCachePropertyData[] = {
@@ -26,6 +29,7 @@ CXFA_Cache::CXFA_Cache(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Cache,
                 kCachePropertyData,
-                kCacheAttributeData) {}
+                kCacheAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Cache::~CXFA_Cache() {}

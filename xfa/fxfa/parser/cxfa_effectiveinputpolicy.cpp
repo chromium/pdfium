@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_effectiveinputpolicy.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kEffectiveInputPolicyAttributeData[] = {
@@ -25,6 +28,7 @@ CXFA_EffectiveInputPolicy::CXFA_EffectiveInputPolicy(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveInputPolicy,
                 nullptr,
-                kEffectiveInputPolicyAttributeData) {}
+                kEffectiveInputPolicyAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_EffectiveInputPolicy::~CXFA_EffectiveInputPolicy() = default;

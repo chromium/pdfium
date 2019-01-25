@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_dsigdata.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kDSigDataAttributeData[] = {
@@ -21,6 +24,7 @@ CXFA_DSigData::CXFA_DSigData(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::DSigData,
                 nullptr,
-                kDSigDataAttributeData) {}
+                kDSigDataAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_DSigData::~CXFA_DSigData() = default;

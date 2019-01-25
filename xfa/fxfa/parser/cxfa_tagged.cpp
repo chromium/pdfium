@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_tagged.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kTaggedAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Tagged::CXFA_Tagged(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Tagged,
                 nullptr,
-                kTaggedAttributeData) {}
+                kTaggedAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Tagged::~CXFA_Tagged() = default;

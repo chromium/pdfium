@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_effectiveoutputpolicy.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kEffectiveOutputPolicyAttributeData[] = {
@@ -25,6 +28,7 @@ CXFA_EffectiveOutputPolicy::CXFA_EffectiveOutputPolicy(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveOutputPolicy,
                 nullptr,
-                kEffectiveOutputPolicyAttributeData) {}
+                kEffectiveOutputPolicyAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_EffectiveOutputPolicy::~CXFA_EffectiveOutputPolicy() = default;

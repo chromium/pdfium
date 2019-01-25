@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_encryption.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kEncryptionPropertyData[] = {
@@ -28,6 +31,7 @@ CXFA_Encryption::CXFA_Encryption(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Encryption,
                 kEncryptionPropertyData,
-                kEncryptionAttributeData) {}
+                kEncryptionAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Encryption::~CXFA_Encryption() = default;

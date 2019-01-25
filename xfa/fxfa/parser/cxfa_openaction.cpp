@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_openaction.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kOpenActionPropertyData[] = {
@@ -26,6 +29,7 @@ CXFA_OpenAction::CXFA_OpenAction(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::OpenAction,
                 kOpenActionPropertyData,
-                kOpenActionAttributeData) {}
+                kOpenActionAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_OpenAction::~CXFA_OpenAction() = default;

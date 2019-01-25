@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_pcl.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPclPropertyData[] = {
@@ -30,6 +33,7 @@ CXFA_Pcl::CXFA_Pcl(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Pcl,
                 kPclPropertyData,
-                kPclAttributeData) {}
+                kPclAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Pcl::~CXFA_Pcl() = default;

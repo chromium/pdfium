@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_adbe_jsdebugger.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kADBE_JSDebuggerAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_ADBE_JSDebugger::CXFA_ADBE_JSDebugger(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ADBE_JSDebugger,
                 nullptr,
-                kADBE_JSDebuggerAttributeData) {}
+                kADBE_JSDebuggerAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_ADBE_JSDebugger::~CXFA_ADBE_JSDebugger() = default;

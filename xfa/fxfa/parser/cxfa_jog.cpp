@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_jog.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kJogAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Jog::CXFA_Jog(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Jog,
                 nullptr,
-                kJogAttributeData) {}
+                kJogAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Jog::~CXFA_Jog() = default;

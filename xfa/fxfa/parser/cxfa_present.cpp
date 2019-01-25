@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_present.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPresentPropertyData[] = {
@@ -39,6 +42,7 @@ CXFA_Present::CXFA_Present(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Present,
                 kPresentPropertyData,
-                kPresentAttributeData) {}
+                kPresentAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Present::~CXFA_Present() = default;

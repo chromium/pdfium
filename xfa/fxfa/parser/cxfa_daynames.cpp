@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_daynames.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kDayNamesPropertyData[] = {
@@ -25,6 +28,7 @@ CXFA_DayNames::CXFA_DayNames(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::DayNames,
                 kDayNamesPropertyData,
-                kDayNamesAttributeData) {}
+                kDayNamesAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_DayNames::~CXFA_DayNames() = default;

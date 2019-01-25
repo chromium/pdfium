@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_mode.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kModeAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Mode::CXFA_Mode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Mode,
                 nullptr,
-                kModeAttributeData) {}
+                kModeAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Mode::~CXFA_Mode() = default;

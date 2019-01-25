@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_plaintextmetadata.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kPlaintextMetadataAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_PlaintextMetadata::CXFA_PlaintextMetadata(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PlaintextMetadata,
                 nullptr,
-                kPlaintextMetadataAttributeData) {}
+                kPlaintextMetadataAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_PlaintextMetadata::~CXFA_PlaintextMetadata() = default;

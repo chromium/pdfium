@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_locale.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kLocalePropertyData[] = {
@@ -30,6 +33,7 @@ CXFA_Locale::CXFA_Locale(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Locale,
                 kLocalePropertyData,
-                kLocaleAttributeData) {}
+                kLocaleAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Locale::~CXFA_Locale() = default;

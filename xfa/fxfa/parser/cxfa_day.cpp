@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_day.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 CXFA_Day::CXFA_Day(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
                 packet,
@@ -13,6 +16,7 @@ CXFA_Day::CXFA_Day(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Day,
                 nullptr,
-                nullptr) {}
+                nullptr,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Day::~CXFA_Day() = default;

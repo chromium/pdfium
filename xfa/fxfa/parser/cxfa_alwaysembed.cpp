@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_alwaysembed.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAlwaysEmbedAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_AlwaysEmbed::CXFA_AlwaysEmbed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::AlwaysEmbed,
                 nullptr,
-                kAlwaysEmbedAttributeData) {}
+                kAlwaysEmbedAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_AlwaysEmbed::~CXFA_AlwaysEmbed() = default;

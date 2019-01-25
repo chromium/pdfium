@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_modifyannots.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kModifyAnnotsAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_ModifyAnnots::CXFA_ModifyAnnots(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ModifyAnnots,
                 nullptr,
-                kModifyAnnotsAttributeData) {}
+                kModifyAnnotsAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_ModifyAnnots::~CXFA_ModifyAnnots() = default;

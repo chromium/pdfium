@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_documentassembly.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kDocumentAssemblyAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_DocumentAssembly::CXFA_DocumentAssembly(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DocumentAssembly,
                 nullptr,
-                kDocumentAssemblyAttributeData) {}
+                kDocumentAssemblyAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_DocumentAssembly::~CXFA_DocumentAssembly() = default;

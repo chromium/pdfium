@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_mediuminfo.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kMediumInfoPropertyData[] = {
@@ -26,6 +29,7 @@ CXFA_MediumInfo::CXFA_MediumInfo(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::MediumInfo,
                 kMediumInfoPropertyData,
-                kMediumInfoAttributeData) {}
+                kMediumInfoAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_MediumInfo::~CXFA_MediumInfo() = default;

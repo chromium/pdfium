@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kDynamicRenderAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_DynamicRender::CXFA_DynamicRender(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::DynamicRender,
                 nullptr,
-                kDynamicRenderAttributeData) {}
+                kDynamicRenderAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_DynamicRender::~CXFA_DynamicRender() = default;

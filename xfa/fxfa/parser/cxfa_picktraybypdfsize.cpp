@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_picktraybypdfsize.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kPickTrayByPDFSizeAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_PickTrayByPDFSize::CXFA_PickTrayByPDFSize(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PickTrayByPDFSize,
                 nullptr,
-                kPickTrayByPDFSizeAttributeData) {}
+                kPickTrayByPDFSizeAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_PickTrayByPDFSize::~CXFA_PickTrayByPDFSize() = default;

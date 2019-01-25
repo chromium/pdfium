@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_compression.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kCompressionPropertyData[] = {
@@ -29,6 +32,7 @@ CXFA_Compression::CXFA_Compression(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Compression,
                 kCompressionPropertyData,
-                kCompressionAttributeData) {}
+                kCompressionAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Compression::~CXFA_Compression() = default;

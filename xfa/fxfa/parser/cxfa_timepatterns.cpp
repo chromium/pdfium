@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_timepatterns.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kTimePatternsPropertyData[] = {
@@ -21,6 +24,7 @@ CXFA_TimePatterns::CXFA_TimePatterns(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::TimePatterns,
                 kTimePatternsPropertyData,
-                nullptr) {}
+                nullptr,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_TimePatterns::~CXFA_TimePatterns() = default;

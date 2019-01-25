@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_layout.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kLayoutAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Layout::CXFA_Layout(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Layout,
                 nullptr,
-                kLayoutAttributeData) {}
+                kLayoutAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Layout::~CXFA_Layout() = default;

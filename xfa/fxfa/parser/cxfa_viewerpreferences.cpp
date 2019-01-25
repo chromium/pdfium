@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_viewerpreferences.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kViewerPreferencesPropertyData[] = {
@@ -35,6 +38,7 @@ CXFA_ViewerPreferences::CXFA_ViewerPreferences(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::ViewerPreferences,
                 kViewerPreferencesPropertyData,
-                kViewerPreferencesAttributeData) {}
+                kViewerPreferencesAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_ViewerPreferences::~CXFA_ViewerPreferences() = default;

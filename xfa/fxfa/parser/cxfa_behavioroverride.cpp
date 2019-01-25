@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_behavioroverride.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kBehaviorOverrideAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_BehaviorOverride::CXFA_BehaviorOverride(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::BehaviorOverride,
                 nullptr,
-                kBehaviorOverrideAttributeData) {}
+                kBehaviorOverrideAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_BehaviorOverride::~CXFA_BehaviorOverride() = default;

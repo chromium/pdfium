@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_incrementalmerge.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kIncrementalMergeAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_IncrementalMerge::CXFA_IncrementalMerge(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::IncrementalMerge,
                 nullptr,
-                kIncrementalMergeAttributeData) {}
+                kIncrementalMergeAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_IncrementalMerge::~CXFA_IncrementalMerge() = default;

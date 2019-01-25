@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_formfieldfilling.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kFormFieldFillingAttributeData[] = {
@@ -23,6 +26,7 @@ CXFA_FormFieldFilling::CXFA_FormFieldFilling(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::FormFieldFilling,
                 nullptr,
-                kFormFieldFillingAttributeData) {}
+                kFormFieldFillingAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_FormFieldFilling::~CXFA_FormFieldFilling() = default;

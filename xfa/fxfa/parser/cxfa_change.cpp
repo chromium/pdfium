@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_change.h"
 
+#include "fxjs/xfa/cjx_node.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kChangeAttributeData[] = {
@@ -22,6 +25,7 @@ CXFA_Change::CXFA_Change(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Change,
                 nullptr,
-                kChangeAttributeData) {}
+                kChangeAttributeData,
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Change::~CXFA_Change() = default;
