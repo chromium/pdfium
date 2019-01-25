@@ -64,11 +64,16 @@ void CFWL_Barcode::SetType(BC_TYPE type) {
   m_eStatus = Status::kNeedUpdate;
 }
 
-void CFWL_Barcode::SetText(const WideString& wsText,
-                           CFDE_TextEditEngine::RecordOperation op) {
+void CFWL_Barcode::SetText(const WideString& wsText) {
   m_pBarcodeEngine.reset();
   m_eStatus = Status::kNeedUpdate;
-  CFWL_Edit::SetText(wsText, op);
+  CFWL_Edit::SetText(wsText);
+}
+
+void CFWL_Barcode::SetTextSkipNotify(const WideString& wsText) {
+  m_pBarcodeEngine.reset();
+  m_eStatus = Status::kNeedUpdate;
+  CFWL_Edit::SetTextSkipNotify(wsText);
 }
 
 bool CFWL_Barcode::IsProtectedType() const {

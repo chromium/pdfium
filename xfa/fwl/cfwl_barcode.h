@@ -41,10 +41,8 @@ class CFWL_Barcode final : public CFWL_Edit {
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
   // CFWL_Edit
-  void SetText(
-      const WideString& wsText,
-      CFDE_TextEditEngine::RecordOperation op =
-          CFDE_TextEditEngine::RecordOperation::kInsertRecord) override;
+  void SetText(const WideString& wsText) override;
+  void SetTextSkipNotify(const WideString& wsText) override;
 
   void SetType(BC_TYPE type);
   bool IsProtectedType() const;

@@ -288,7 +288,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   WideString wsText = m_pNode->GetValue(eType);
   WideString wsOldText = pEdit->GetText();
   if (wsText != wsOldText || (eType == XFA_VALUEPICTURE_Edit && bUpdate)) {
-    pEdit->SetText(wsText, CFDE_TextEditEngine::RecordOperation::kSkipNotify);
+    pEdit->SetTextSkipNotify(wsText);
     bUpdate = true;
   }
   if (bUpdate)

@@ -64,9 +64,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  virtual void SetText(const WideString& wsText,
-                       CFDE_TextEditEngine::RecordOperation op =
-                           CFDE_TextEditEngine::RecordOperation::kInsertRecord);
+  virtual void SetText(const WideString& wsText);
+  virtual void SetTextSkipNotify(const WideString& wsText);
 
   int32_t GetTextLength() const;
   WideString GetText() const;
