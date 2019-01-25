@@ -18,8 +18,6 @@ jumbo_source_set("fxcrt") {
     "cfx_datetime.cpp",
     "cfx_datetime.h",
     "cfx_fixedbufgrow.h",
-    "cfx_memorystream.cpp",
-    "cfx_memorystream.h",
     "cfx_readonlymemorystream.cpp",
     "cfx_readonlymemorystream.h",
     "cfx_seekablestreamproxy.cpp",
@@ -116,6 +114,12 @@ jumbo_source_set("fxcrt") {
       "cfx_fileaccess_windows.h",
     ]
   }
+  if (pdf_enable_xfa) {
+    sources += [
+      "cfx_memorystream.cpp",
+      "cfx_memorystream.h",
+    ]
+  }
 }
 
 if (pdf_enable_xfa) {
@@ -138,7 +142,6 @@ pdfium_unittest_source_set("unittests") {
     "autorestorer_unittest.cpp",
     "bytestring_unittest.cpp",
     "cfx_bitstream_unittest.cpp",
-    "cfx_memorystream_unittest.cpp",
     "cfx_widetextbuf_unittest.cpp",
     "fx_bidi_unittest.cpp",
     "fx_coordinates_unittest.cpp",
@@ -170,6 +173,7 @@ pdfium_unittest_source_set("unittests") {
 
   if (pdf_enable_xfa) {
     sources += [
+      "cfx_memorystream_unittest.cpp",
       "cfx_seekablemultistream_unittest.cpp",
       "css/cfx_cssdeclaration_unittest.cpp",
       "css/cfx_cssstylesheet_unittest.cpp",
