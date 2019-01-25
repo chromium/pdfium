@@ -98,8 +98,10 @@ class CXFA_Node : public CXFA_Object {
   void SendAttributeChangeMessage(XFA_Attribute eAttribute, bool bScriptModify);
 
   bool HasAttribute(XFA_Attribute attr) const;
-  XFA_Attribute GetAttribute(size_t i) const;
   XFA_AttributeType GetAttributeType(XFA_Attribute type) const;
+
+  // Note: returns XFA_Attribute::Unknown for invalid indicies.
+  XFA_Attribute GetAttribute(size_t i) const;
 
   XFA_PacketType GetPacketType() const { return m_ePacket; }
 
@@ -467,8 +469,8 @@ class CXFA_Node : public CXFA_Object {
                        CXFA_Event* event,
                        CXFA_EventParam* pEventParam);
 
-  const PropertyData* const m_Properties;
-  const AttributeData* const m_Attributes;
+  pdfium::span<const PropertyData> const m_Properties;
+  pdfium::span<const AttributeData> const m_Attributes;
   const uint32_t m_ValidPackets;
 
   // These members are responsible for building the CXFA_Node tree. Node
