@@ -62,52 +62,52 @@ static pdfium::span<const uint8_t> JpegScanSOI(
 
 extern "C" {
 
-static void _src_do_nothing(struct jpeg_decompress_struct* cinfo) {}
+static void src_do_nothing(jpeg_decompress_struct* cinfo) {}
 
-static void _error_fatal(j_common_ptr cinfo) {
+static void error_fatal(j_common_ptr cinfo) {
   longjmp(*(jmp_buf*)cinfo->client_data, -1);
 }
 
-static void _src_skip_data(struct jpeg_decompress_struct* cinfo, long num) {
+static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
   if (num > (long)cinfo->src->bytes_in_buffer) {
-    _error_fatal((j_common_ptr)cinfo);
+    error_fatal((j_common_ptr)cinfo);
   }
   cinfo->src->next_input_byte += num;
   cinfo->src->bytes_in_buffer -= num;
 }
 
-static boolean _src_fill_buffer(j_decompress_ptr cinfo) {
+static boolean src_fill_buffer(j_decompress_ptr cinfo) {
   return FALSE;
 }
 
-static boolean _src_resync(j_decompress_ptr cinfo, int desired) {
+static boolean src_resync(j_decompress_ptr cinfo, int desired) {
   return FALSE;
 }
 
-static void _error_do_nothing(j_common_ptr cinfo) {}
+static void error_do_nothing(j_common_ptr cinfo) {}
 
-static void _error_do_nothing1(j_common_ptr cinfo, int) {}
+static void error_do_nothing1(j_common_ptr cinfo, int) {}
 
-static void _error_do_nothing2(j_common_ptr cinfo, char*) {}
+static void error_do_nothing2(j_common_ptr cinfo, char*) {}
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-static void _dest_do_nothing(j_compress_ptr cinfo) {}
+static void dest_do_nothing(j_compress_ptr cinfo) {}
 
-static boolean _dest_empty(j_compress_ptr cinfo) {
+static boolean dest_empty(j_compress_ptr cinfo) {
   return false;
 }
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 }  // extern "C"
 
 #ifdef PDF_ENABLE_XFA
-static void JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
+static void JpegLoadAttribute(const jpeg_decompress_struct& info,
                               CFX_DIBAttribute* pAttribute) {
   if (!pAttribute)
     return;
 
-  pAttribute->m_nXDPI = pInfo->X_density;
-  pAttribute->m_nYDPI = pInfo->Y_density;
-  pAttribute->m_wDPIUnit = pInfo->density_unit;
+  pAttribute->m_nXDPI = info.X_density;
+  pAttribute->m_nYDPI = info.Y_density;
+  pAttribute->m_wDPIUnit = info.density_unit;
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -118,13 +118,13 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
                          int* bits_per_components,
                          bool* color_transform) {
   src_span = JpegScanSOI(src_span);
-  struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-  jerr.error_exit = _error_fatal;
-  jerr.emit_message = _error_do_nothing1;
-  jerr.output_message = _error_do_nothing;
-  jerr.format_message = _error_do_nothing2;
-  jerr.reset_error_mgr = _error_do_nothing;
+  jpeg_decompress_struct cinfo;
+  jpeg_error_mgr jerr;
+  jerr.error_exit = error_fatal;
+  jerr.emit_message = error_do_nothing1;
+  jerr.output_message = error_do_nothing;
+  jerr.format_message = error_do_nothing2;
+  jerr.reset_error_mgr = error_do_nothing;
   jerr.trace_level = 0;
   cinfo.err = &jerr;
   jmp_buf mark;
@@ -133,12 +133,12 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
     return false;
 
   jpeg_create_decompress(&cinfo);
-  struct jpeg_source_mgr src;
-  src.init_source = _src_do_nothing;
-  src.term_source = _src_do_nothing;
-  src.skip_input_data = _src_skip_data;
-  src.fill_input_buffer = _src_fill_buffer;
-  src.resync_to_restart = _src_resync;
+  jpeg_source_mgr src;
+  src.init_source = src_do_nothing;
+  src.term_source = src_do_nothing;
+  src.skip_input_data = src_skip_data;
+  src.fill_input_buffer = src_fill_buffer;
+  src.resync_to_restart = src_resync;
   src.bytes_in_buffer = src_span.size();
   src.next_input_byte = src_span.data();
   cinfo.src = &src;
@@ -180,9 +180,9 @@ class CCodec_JpegDecoder final : public CCodec_ScanlineDecoder {
   bool InitDecode();
 
   jmp_buf m_JmpBuf;
-  struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-  struct jpeg_source_mgr src;
+  jpeg_decompress_struct cinfo;
+  jpeg_error_mgr jerr;
+  jpeg_source_mgr src;
   pdfium::span<const uint8_t> m_SrcSpan;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanlineBuf;
   bool m_bInited = false;
@@ -246,16 +246,16 @@ bool CCodec_JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
                                 int nComps,
                                 bool ColorTransform) {
   m_SrcSpan = JpegScanSOI(src_span);
-  jerr.error_exit = _error_fatal;
-  jerr.emit_message = _error_do_nothing1;
-  jerr.output_message = _error_do_nothing;
-  jerr.format_message = _error_do_nothing2;
-  jerr.reset_error_mgr = _error_do_nothing;
-  src.init_source = _src_do_nothing;
-  src.term_source = _src_do_nothing;
-  src.skip_input_data = _src_skip_data;
-  src.fill_input_buffer = _src_fill_buffer;
-  src.resync_to_restart = _src_resync;
+  jerr.error_exit = error_fatal;
+  jerr.emit_message = error_do_nothing1;
+  jerr.output_message = error_do_nothing;
+  jerr.format_message = error_do_nothing2;
+  jerr.reset_error_mgr = error_do_nothing;
+  src.init_source = src_do_nothing;
+  src.term_source = src_do_nothing;
+  src.skip_input_data = src_skip_data;
+  src.fill_input_buffer = src_fill_buffer;
+  src.resync_to_restart = src_resync;
   m_bJpegTransform = ColorTransform;
   if (m_SrcSpan.size() >= 2) {
     const_cast<uint8_t*>(m_SrcSpan.data())[m_SrcSpan.size() - 2] = 0xFF;
@@ -348,12 +348,12 @@ bool CCodec_JpegModule::LoadInfo(pdfium::span<const uint8_t> src_span,
 
 extern "C" {
 
-static void _error_fatal1(j_common_ptr cinfo) {
+static void error_fatal1(j_common_ptr cinfo) {
   auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
   longjmp(pContext->m_JumpMark, -1);
 }
 
-static void _src_skip_data1(struct jpeg_decompress_struct* cinfo, long num) {
+static void src_skip_data1(jpeg_decompress_struct* cinfo, long num) {
   if (cinfo->src->bytes_in_buffer < static_cast<size_t>(num)) {
     auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
     pContext->m_SkipSize = (unsigned int)(num - cinfo->src->bytes_in_buffer);
@@ -381,18 +381,18 @@ CJpegContext::CJpegContext()
   m_Info.err = &m_ErrMgr;
 
   memset(&m_ErrMgr, 0, sizeof(m_ErrMgr));
-  m_ErrMgr.error_exit = _error_fatal1;
-  m_ErrMgr.emit_message = _error_do_nothing1;
-  m_ErrMgr.output_message = _error_do_nothing;
-  m_ErrMgr.format_message = _error_do_nothing2;
-  m_ErrMgr.reset_error_mgr = _error_do_nothing;
+  m_ErrMgr.error_exit = error_fatal1;
+  m_ErrMgr.emit_message = error_do_nothing1;
+  m_ErrMgr.output_message = error_do_nothing;
+  m_ErrMgr.format_message = error_do_nothing2;
+  m_ErrMgr.reset_error_mgr = error_do_nothing;
 
   memset(&m_SrcMgr, 0, sizeof(m_SrcMgr));
-  m_SrcMgr.init_source = _src_do_nothing;
-  m_SrcMgr.term_source = _src_do_nothing;
-  m_SrcMgr.skip_input_data = _src_skip_data1;
-  m_SrcMgr.fill_input_buffer = _src_fill_buffer;
-  m_SrcMgr.resync_to_restart = _src_resync;
+  m_SrcMgr.init_source = src_do_nothing;
+  m_SrcMgr.term_source = src_do_nothing;
+  m_SrcMgr.skip_input_data = src_skip_data1;
+  m_SrcMgr.fill_input_buffer = src_fill_buffer;
+  m_SrcMgr.resync_to_restart = src_resync;
 }
 
 CJpegContext::~CJpegContext() {
@@ -448,7 +448,7 @@ int CCodec_JpegModule::ReadHeader(Context* pContext,
   *width = ctx->m_Info.image_width;
   *height = ctx->m_Info.image_height;
   *nComps = ctx->m_Info.num_components;
-  JpegLoadAttribute(&ctx->m_Info, pAttribute);
+  JpegLoadAttribute(ctx->m_Info, pAttribute);
   return 0;
 }
 #endif  // PDF_ENABLE_XFA
@@ -480,14 +480,14 @@ jmp_buf* CCodec_JpegModule::GetJumpMark(Context* pContext) {
 bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
                                    uint8_t** dest_buf,
                                    size_t* dest_size) {
-  struct jpeg_error_mgr jerr;
-  jerr.error_exit = _error_do_nothing;
-  jerr.emit_message = _error_do_nothing1;
-  jerr.output_message = _error_do_nothing;
-  jerr.format_message = _error_do_nothing2;
-  jerr.reset_error_mgr = _error_do_nothing;
+  jpeg_error_mgr jerr;
+  jerr.error_exit = error_do_nothing;
+  jerr.emit_message = error_do_nothing1;
+  jerr.output_message = error_do_nothing;
+  jerr.format_message = error_do_nothing2;
+  jerr.reset_error_mgr = error_do_nothing;
 
-  struct jpeg_compress_struct cinfo;
+  jpeg_compress_struct cinfo;
   memset(&cinfo, 0, sizeof(cinfo));
   cinfo.err = &jerr;
   jpeg_create_compress(&cinfo);
@@ -513,10 +513,10 @@ bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
   if (!(*dest_buf))
     return false;
 
-  struct jpeg_destination_mgr dest;
-  dest.init_destination = _dest_do_nothing;
-  dest.term_destination = _dest_do_nothing;
-  dest.empty_output_buffer = _dest_empty;
+  jpeg_destination_mgr dest;
+  dest.init_destination = dest_do_nothing;
+  dest.term_destination = dest_do_nothing;
+  dest.empty_output_buffer = dest_empty;
   dest.next_output_byte = *dest_buf;
   dest.free_in_buffer = dest_buf_length;
   cinfo.dest = &dest;
