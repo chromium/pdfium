@@ -73,11 +73,6 @@ void* GetMapKey_Element(XFA_Element eType, XFA_Attribute eAttribute) {
                             XFA_KEYTYPE_Element);
 }
 
-void XFA_DefaultFreeData(void* pData) {}
-
-const XFA_MAPDATABLOCKCALLBACKINFO gs_XFADefaultFreeData = {XFA_DefaultFreeData,
-                                                            nullptr};
-
 std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
   int32_t r = 0;
   int32_t g = 0;
@@ -876,8 +871,8 @@ void CJX_Object::SetUserData(
     void* pKey,
     void* pData,
     const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  SetMapModuleBuffer(pKey, &pData, sizeof(void*),
-                     pCallbackInfo ? pCallbackInfo : &gs_XFADefaultFreeData);
+  ASSERT(pCallbackInfo);
+  SetMapModuleBuffer(pKey, &pData, sizeof(void*), pCallbackInfo);
 }
 
 XFA_MAPMODULEDATA* CJX_Object::CreateMapModuleData() {
