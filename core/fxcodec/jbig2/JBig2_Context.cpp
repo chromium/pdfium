@@ -57,7 +57,6 @@ CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
                                bool bIsGlobal)
     : m_pStream(pdfium::MakeUnique<CJBig2_BitStream>(pSrcStream)),
       m_HuffmanTables(CJBig2_HuffmanTable::kNumHuffmanTables),
-      m_nSegmentDecoded(0),
       m_bInPage(false),
       m_bBufSpecified(false),
       m_PauseStep(10),
@@ -122,47 +121,6 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
   return JBig2_Result::kSuccess;
 }
 
-JBig2_Result CJBig2_Context::DecodeRandomFirstPage(
-    PauseIndicatorIface* pPause) {
-  while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
-    auto pSegment = pdfium::MakeUnique<CJBig2_Segment>();
-    JBig2_Result nRet = ParseSegmentHeader(pSegment.get());
-    if (nRet != JBig2_Result::kSuccess)
-      return nRet;
-
-    if (pSegment->m_cFlags.s.type == 51)
-      break;
-
-    m_SegmentList.push_back(std::move(pSegment));
-    if (pPause && pPause->NeedToPauseNow()) {
-      m_PauseStep = 3;
-      m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return JBig2_Result::kSuccess;
-    }
-  }
-  m_nSegmentDecoded = 0;
-  return DecodeRandom(pPause);
-}
-
-JBig2_Result CJBig2_Context::DecodeRandom(PauseIndicatorIface* pPause) {
-  for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
-    JBig2_Result nRet =
-        ParseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
-    if (nRet == JBig2_Result::kEndReached)
-      return JBig2_Result::kSuccess;
-
-    if (nRet != JBig2_Result::kSuccess)
-      return nRet;
-
-    if (m_pPage && pPause && pPause->NeedToPauseNow()) {
-      m_PauseStep = 4;
-      m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return JBig2_Result::kSuccess;
-    }
-  }
-  return JBig2_Result::kSuccess;
-}
-
 bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
                                   int32_t width,
                                   int32_t height,
@@ -189,16 +147,13 @@ bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
 bool CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
   JBig2_Result nRet = JBig2_Result::kSuccess;
-  if (m_PauseStep <= 2) {
-    nRet = DecodeSequential(pPause);
-  } else if (m_PauseStep == 3) {
-    nRet = DecodeRandomFirstPage(pPause);
-  } else if (m_PauseStep == 4) {
-    nRet = DecodeRandom(pPause);
-  } else if (m_PauseStep == 5) {
+  if (m_PauseStep == 5) {
     m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
     return true;
   }
+
+  if (m_PauseStep <= 2)
+    nRet = DecodeSequential(pPause);
   if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return nRet == JBig2_Result::kSuccess;
 
