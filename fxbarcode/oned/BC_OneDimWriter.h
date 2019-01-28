@@ -80,7 +80,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                         int32_t patternLength,
                         bool startColor);
 
-  void RenderVerticalBars(int32_t outputX, int32_t width, int32_t height);
+  void RenderVerticalBars(int32_t outputX, int32_t width);
 
   bool m_bPrintChecksum = true;
   bool m_bCalcChecksum = false;

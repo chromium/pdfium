@@ -272,7 +272,6 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
       m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codeLength)
                   : 1.0;
   m_multiple = 1;
-  const int32_t outputHeight = 1;
   const int32_t outputWidth = codeLength;
   m_barWidth = m_Width;
 
@@ -286,22 +285,20 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
       return true;
 
     if (outputX + m_multiple > outputWidth && outputWidth - outputX > 0) {
-      RenderVerticalBars(outputX, outputWidth - outputX, outputHeight);
+      RenderVerticalBars(outputX, outputWidth - outputX);
       return true;
     }
 
-    RenderVerticalBars(outputX, m_multiple, outputHeight);
+    RenderVerticalBars(outputX, m_multiple);
   }
   return true;
 }
 
-void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX,
-                                          int32_t width,
-                                          int32_t height) {
+void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX, int32_t width) {
   for (int i = 0; i < width; ++i) {
     float x = outputX + i;
     CFX_PathData rect;
-    rect.AppendRect(x, 0.0f, x + 1, static_cast<float>(height));
+    rect.AppendRect(x, 0.0f, x + 1, 1.0f);
     m_output.push_back(rect);
   }
 }
