@@ -774,9 +774,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
   if (pNode) {
     if (bScriptModify) {
       CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-      if (pScriptContext)
-        GetDocument()->GetScriptContext()->AddNodesOfRunScript(
-            ToNode(GetXFAObject()));
+      pScriptContext->AddNodesOfRunScript(ToNode(GetXFAObject()));
     }
     return TryCData(XFA_Attribute::Value, false);
   }

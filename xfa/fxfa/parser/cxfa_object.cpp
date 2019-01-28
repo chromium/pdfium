@@ -38,9 +38,6 @@ CXFA_Object* CXFA_Object::AsCXFAObject() {
 
 WideString CXFA_Object::GetSOMExpression() {
   CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
-  if (!pScriptContext)
-    return WideString();
-
   return pScriptContext->GetSomExpression(ToNode(this));
 }
 

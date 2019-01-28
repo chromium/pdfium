@@ -109,9 +109,6 @@ void CJX_EventPseudoModel::newText(CFXJSE_Value* pValue,
     return;
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  if (!pScriptContext)
-    return;
-
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (!pEventParam)
     return;
@@ -177,9 +174,6 @@ CJS_Result CJX_EventPseudoModel::emit(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  if (!pScriptContext)
-    return CJS_Result::Success();
-
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (!pEventParam)
     return CJS_Result::Success();
@@ -200,9 +194,6 @@ CJS_Result CJX_EventPseudoModel::reset(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  if (!pScriptContext)
-    return CJS_Result::Success();
-
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (pEventParam)
     *pEventParam = CXFA_EventParam();
@@ -221,9 +212,6 @@ void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,
   }
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  if (!pScriptContext)
-    return;
-
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (!pEventParam)
     return;

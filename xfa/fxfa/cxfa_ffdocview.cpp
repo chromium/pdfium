@@ -405,9 +405,6 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
   CFXJSE_Engine* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
-  if (!pScriptContext)
-    return nullptr;
-
   CXFA_Node* pRefNode = nullptr;
   if (pRefWidget) {
     CXFA_Node* node = pRefWidget->GetNode();
