@@ -42,7 +42,7 @@ class CPDF_Path {
   const CFX_PathData* GetObject() const { return m_Ref.GetObject(); }
 
  private:
-  SharedCopyOnWrite<CFX_PathData> m_Ref;
+  SharedCopyOnWrite<CFX_RetainablePathData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATH_H_

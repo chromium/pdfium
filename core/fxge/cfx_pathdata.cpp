@@ -166,11 +166,13 @@ FX_PATHPOINT::FX_PATHPOINT(const FX_PATHPOINT& other) = default;
 
 FX_PATHPOINT::~FX_PATHPOINT() = default;
 
-CFX_PathData::CFX_PathData() {}
+CFX_PathData::CFX_PathData() = default;
 
-CFX_PathData::~CFX_PathData() {}
+CFX_PathData::CFX_PathData(const CFX_PathData& src) = default;
 
-CFX_PathData::CFX_PathData(const CFX_PathData& src) : m_Points(src.m_Points) {}
+CFX_PathData::CFX_PathData(CFX_PathData&& src) = default;
+
+CFX_PathData::~CFX_PathData() = default;
 
 void CFX_PathData::Clear() {
   m_Points.clear();
@@ -494,3 +496,16 @@ bool CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
   }
   return true;
 }
+
+CFX_RetainablePathData::CFX_RetainablePathData() = default;
+
+// Note: can't default the copy constructor since Retainable<> has a deleted
+// copy constructor (as it should). Instead, we want the default Retainable<>
+// constructor to be invoked so as to create a copy with a ref-count of 1 as
+// of the time it is created, then populate the remainder of the members from
+// the |src| object.
+CFX_RetainablePathData::CFX_RetainablePathData(
+    const CFX_RetainablePathData& src)
+    : CFX_PathData(src) {}
+
+CFX_RetainablePathData::~CFX_RetainablePathData() = default;
