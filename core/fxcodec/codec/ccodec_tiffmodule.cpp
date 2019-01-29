@@ -258,31 +258,29 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_BITSPERSAMPLE, &tif_bpc);
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_ROWSPERSTRIP, &tif_rps);
 
-  if (pAttribute) {
-    pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_INCH;
-    if (TIFFGetField(m_tif_ctx.get(), TIFFTAG_RESOLUTIONUNIT,
-                     &pAttribute->m_wDPIUnit)) {
-      pAttribute->m_wDPIUnit--;
-    }
-    Tiff_Exif_GetInfo<uint16_t>(m_tif_ctx.get(), TIFFTAG_ORIENTATION,
-                                pAttribute);
-    if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_XRESOLUTION,
-                                 pAttribute)) {
-      void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
-      float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
-      pAttribute->m_nXDPI = (int32_t)(fDpi + 0.5f);
-    }
-    if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_YRESOLUTION,
-                                 pAttribute)) {
-      void* val = pAttribute->m_Exif[TIFFTAG_YRESOLUTION];
-      float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
-      pAttribute->m_nYDPI = (int32_t)(fDpi + 0.5f);
-    }
-    Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_IMAGEDESCRIPTION,
-                            pAttribute);
-    Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MAKE, pAttribute);
-    Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MODEL, pAttribute);
+  pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_INCH;
+  if (TIFFGetField(m_tif_ctx.get(), TIFFTAG_RESOLUTIONUNIT,
+                   &pAttribute->m_wDPIUnit)) {
+    pAttribute->m_wDPIUnit--;
   }
+  Tiff_Exif_GetInfo<uint16_t>(m_tif_ctx.get(), TIFFTAG_ORIENTATION, pAttribute);
+  if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_XRESOLUTION,
+                               pAttribute)) {
+    void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
+    float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
+    pAttribute->m_nXDPI = (int32_t)(fDpi + 0.5f);
+  }
+  if (Tiff_Exif_GetInfo<float>(m_tif_ctx.get(), TIFFTAG_YRESOLUTION,
+                               pAttribute)) {
+    void* val = pAttribute->m_Exif[TIFFTAG_YRESOLUTION];
+    float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
+    pAttribute->m_nYDPI = (int32_t)(fDpi + 0.5f);
+  }
+  Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_IMAGEDESCRIPTION,
+                          pAttribute);
+  Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MAKE, pAttribute);
+  Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MODEL, pAttribute);
+
   pdfium::base::CheckedNumeric<int32_t> checked_width = tif_width;
   pdfium::base::CheckedNumeric<int32_t> checked_height = tif_height;
   if (!checked_width.IsValid() || !checked_height.IsValid())
@@ -516,6 +514,8 @@ bool CCodec_TiffModule::LoadFrameInfo(Context* pContext,
                                       int32_t* comps,
                                       int32_t* bpc,
                                       CFX_DIBAttribute* pAttribute) {
+  ASSERT(pAttribute);
+
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
 }

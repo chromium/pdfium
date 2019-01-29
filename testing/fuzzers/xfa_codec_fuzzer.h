@@ -55,7 +55,8 @@ class XFACodecFuzzer {
         mgr->CreateProgressiveDecoder();
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
         pdfium::make_span(data, size));
-    FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, nullptr, true);
+    CFX_DIBAttribute attr;
+    FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, &attr, true);
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
 

@@ -1633,6 +1633,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
     FXCODEC_IMAGE_TYPE imageType,
     CFX_DIBAttribute* pAttribute,
     bool bSkipImageTypeCheck) {
+  ASSERT(pAttribute);
+
   switch (m_status) {
     case FXCODEC_STATUS_FRAME_READY:
     case FXCODEC_STATUS_FRAME_TOBECONTINUE:
