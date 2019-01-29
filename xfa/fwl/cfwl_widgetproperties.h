@@ -26,7 +26,6 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStates = 0;
   UnownedPtr<IFWL_ThemeProvider> m_pThemeProvider;
   CFWL_Widget* m_pParent = nullptr;  // Raw, this class owned by node in tree.
-  CFWL_Widget* m_pOwner = nullptr;   // Raw, this class owned by node in tree.
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETPROPERTIES_H_

@@ -154,7 +154,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   UnownedPtr<CFWL_WidgetMgr> const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
   CFWL_Widget* m_pOuter;
-  int32_t m_iLock;
+  int32_t m_iLock = 0;
 
  private:
   CFWL_Widget* GetParent() const { return m_pWidgetMgr->GetParentWidget(this); }
@@ -166,8 +166,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 
-  CXFA_FFWidget* m_pLayoutItem;
-  uint32_t m_nEventKey;
+  uint32_t m_nEventKey = 0;
+  CXFA_FFWidget* m_pLayoutItem = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };
 
