@@ -9,10 +9,13 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fxfa/fxfa.h"
 
 class CXFA_Graphics;
+class CXFA_FFPageView;
+class CXFA_FFWidget;
+class IXFA_WidgetIterator;
 
 class CXFA_RenderContext {
  public:
@@ -24,10 +27,10 @@ class CXFA_RenderContext {
   void DoRender(CXFA_Graphics* gs);
 
  private:
-  std::unique_ptr<IXFA_WidgetIterator> m_pWidgetIterator;
+  std::unique_ptr<IXFA_WidgetIterator> const m_pWidgetIterator;
   UnownedPtr<CXFA_FFWidget> m_pWidget;
-  CFX_Matrix m_matrix;
-  CFX_RectF m_rtClipRect;
+  const CFX_Matrix m_matrix;
+  const CFX_RectF m_rtClipRect;
 };
 
 #endif  // XFA_FXFA_CXFA_RENDERCONTEXT_H_
