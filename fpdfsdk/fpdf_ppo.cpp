@@ -185,13 +185,6 @@ CFX_FloatRect GetCropBox(const CPDF_Dictionary* pPageDict) {
   return GetMediaBox(pPageDict);
 }
 
-const CPDF_Object* GetPageOrganizerPageContent(
-    const CPDF_Dictionary* pPageDict) {
-  return pPageDict
-             ? pPageDict->GetDirectObjectFor(pdfium::page_object::kContents)
-             : nullptr;
-}
-
 bool CopyInheritable(CPDF_Dictionary* pDestPageDict,
                      const CPDF_Dictionary* pSrcPageDict,
                      const ByteString& key) {
@@ -683,7 +676,9 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
     ObjectNumberMap* pObjNumberMap) {
   ASSERT(pSrcPageDict);
 
-  const CPDF_Object* pSrcContentObj = GetPageOrganizerPageContent(pSrcPageDict);
+  const CPDF_Object* pSrcContentObj =
+      pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
+
   CPDF_Stream* pNewXObject = dest()->NewIndirect<CPDF_Stream>(
       nullptr, 0, dest()->New<CPDF_Dictionary>());
   CPDF_Dictionary* pNewXObjectDict = pNewXObject->GetDict();
