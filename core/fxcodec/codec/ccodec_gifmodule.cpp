@@ -28,8 +28,7 @@ CFX_GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
                                                  int* height,
                                                  int* pal_num,
                                                  CFX_GifPalette** pal_pp,
-                                                 int* bg_index,
-                                                 CFX_DIBAttribute* pAttribute) {
+                                                 int* bg_index) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->ReadHeader();
   if (ret != CFX_GifDecodeStatus::Success)
@@ -54,17 +53,8 @@ std::pair<CFX_GifDecodeStatus, size_t> CCodec_GifModule::LoadFrameInfo(
 }
 
 CFX_GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
-                                                size_t frame_num,
-                                                CFX_DIBAttribute* pAttribute) {
-  auto* context = static_cast<CFX_GifContext*>(pContext);
-  CFX_GifDecodeStatus ret = context->LoadFrame(frame_num);
-  if (ret != CFX_GifDecodeStatus::Success)
-    return ret;
-
-  if (pAttribute)
-    pAttribute->m_fAspectRatio = context->pixel_aspect_;
-
-  return CFX_GifDecodeStatus::Success;
+                                                size_t frame_num) {
+  return static_cast<CFX_GifContext*>(pContext)->LoadFrame(frame_num);
 }
 
 FX_FILESIZE CCodec_GifModule::GetAvailInput(Context* pContext) const {

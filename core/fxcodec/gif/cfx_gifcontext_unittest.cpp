@@ -164,7 +164,6 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(0, context.width_);
     EXPECT_EQ(0, context.height_);
     EXPECT_EQ(0u, context.bc_index_);
-    EXPECT_EQ(0u, context.pixel_aspect_);
     context.SetTestInputBuffer({});
   }
   // LSD with no global palette
@@ -181,7 +180,6 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(0u, context.bc_index_);  // bc_index_ is 0 if no global palette
-    EXPECT_EQ(2u, context.pixel_aspect_);
     context.SetTestInputBuffer({});
   }
   // LSD with global palette bit set, but no global palette
@@ -213,7 +211,6 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
-    EXPECT_EQ(2u, context.pixel_aspect_);
     EXPECT_EQ(1u, context.global_pal_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
@@ -264,7 +261,6 @@ TEST(CFX_GifContext, ReadHeader) {
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(0u, context.bc_index_);  // bc_index_ is 0 if no global palette
-    EXPECT_EQ(2u, context.pixel_aspect_);
     context.SetTestInputBuffer({});
   }
   // Missing Global Palette
@@ -298,7 +294,6 @@ TEST(CFX_GifContext, ReadHeader) {
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
-    EXPECT_EQ(2u, context.pixel_aspect_);
     EXPECT_EQ(1u, context.global_pal_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);

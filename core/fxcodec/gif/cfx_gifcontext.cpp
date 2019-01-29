@@ -32,7 +32,6 @@ CFX_GifContext::CFX_GifContext(CCodec_GifModule* gif_module,
       width_(0),
       height_(0),
       bc_index_(0),
-      pixel_aspect_(0),
       global_sort_flag_(0),
       global_color_resolution_(0),
       img_pass_num_(0) {}
@@ -414,7 +413,6 @@ CFX_GifDecodeStatus CFX_GifContext::ReadLogicalScreenDescriptor() {
   height_ = static_cast<int>(
       FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.height)));
 
-  pixel_aspect_ = lsd.pixel_aspect;
   return CFX_GifDecodeStatus::Success;
 }
 

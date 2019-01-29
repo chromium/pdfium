@@ -192,7 +192,7 @@ class CCodec_ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_GIF
   bool GifReadMoreData(CCodec_GifModule* pGifModule,
                        FXCODEC_STATUS& err_status);
-  bool GifDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
+  bool GifDetectImageTypeInBuffer();
   FXCODEC_STATUS GifStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS GifContinueDecode();
   void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,

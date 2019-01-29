@@ -858,8 +858,7 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
   return true;
 }
 
-bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer(
-    CFX_DIBAttribute* pAttribute) {
+bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
   if (!pGifModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
@@ -868,9 +867,9 @@ bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer(
   m_pGifContext = pGifModule->Start(this);
   pGifModule->Input(m_pGifContext.get(), m_pCodecMemory, nullptr);
   m_SrcComponents = 1;
-  CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
-      m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
-      &m_pGifPalette, &m_GifBgIndex, nullptr);
+  CFX_GifDecodeStatus readResult =
+      pGifModule->ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
+                             &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
   while (readResult == CFX_GifDecodeStatus::Unfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
     if (!GifReadMoreData(pGifModule, error_status)) {
@@ -878,9 +877,9 @@ bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer(
       m_status = error_status;
       return false;
     }
-    readResult = pGifModule->ReadHeader(m_pGifContext.get(), &m_SrcWidth,
-                                        &m_SrcHeight, &m_GifPltNumber,
-                                        &m_pGifPalette, &m_GifBgIndex, nullptr);
+    readResult =
+        pGifModule->ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
+                               &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
   }
   if (readResult == CFX_GifDecodeStatus::Success) {
     m_SrcBPC = 8;
@@ -923,7 +922,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GifContinueDecode() {
   }
 
   CFX_GifDecodeStatus readRes =
-      pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
+      pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur);
   while (readRes == CFX_GifDecodeStatus::Unfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
     if (!GifReadMoreData(pGifModule, error_status)) {
@@ -932,7 +931,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GifContinueDecode() {
       m_status = error_status;
       return m_status;
     }
-    readRes = pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
+    readRes = pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur);
   }
 
   if (readRes == CFX_GifDecodeStatus::Success) {
@@ -1568,7 +1567,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 
 #ifdef PDF_ENABLE_XFA_GIF
   if (imageType == FXCODEC_IMAGE_GIF)
-    return GifDetectImageTypeInBuffer(pAttribute);
+    return GifDetectImageTypeInBuffer();
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG

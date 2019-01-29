@@ -48,12 +48,9 @@ class CCodec_GifModule final : public CodecModuleIface {
                                  int* height,
                                  int* pal_num,
                                  CFX_GifPalette** pal_pp,
-                                 int* bg_index,
-                                 CFX_DIBAttribute* pAttribute);
+                                 int* bg_index);
   std::pair<CFX_GifDecodeStatus, size_t> LoadFrameInfo(Context* context);
-  CFX_GifDecodeStatus LoadFrame(Context* context,
-                                size_t frame_num,
-                                CFX_DIBAttribute* pAttribute);
+  CFX_GifDecodeStatus LoadFrame(Context* context, size_t frame_num);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_

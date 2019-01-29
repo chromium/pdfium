@@ -52,7 +52,6 @@ int32_t CCodec_BmpModule::ReadHeader(Context* pContext,
     pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_METER;
     pAttribute->m_nXDPI = ctx->m_Bmp.dpi_x_;
     pAttribute->m_nYDPI = ctx->m_Bmp.dpi_y_;
-    pAttribute->m_nBmpCompressType = ctx->m_Bmp.compress_flag_;
   }
   return 1;
 }

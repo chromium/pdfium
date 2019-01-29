@@ -58,7 +58,6 @@ class CFX_GifContext : public CodecModuleIface::Context {
   int width_;
   int height_;
   uint8_t bc_index_;
-  uint8_t pixel_aspect_;
   uint8_t global_sort_flag_;
   uint8_t global_color_resolution_;
   uint8_t img_pass_num_;
