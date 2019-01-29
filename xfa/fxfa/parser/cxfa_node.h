@@ -15,7 +15,7 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
-#include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffwidget_type.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFGAS_GEFont;

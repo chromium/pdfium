@@ -61,27 +61,6 @@ class CXFA_CalcData {
   int32_t m_iRefCount;
 };
 
-enum class XFA_FFWidgetType {
-  kNone = 0,
-  kBarcode,
-  kButton,
-  kCheckButton,
-  kChoiceList,
-  kDateTimeEdit,
-  kImageEdit,
-  kNumericEdit,
-  kPasswordEdit,
-  kSignature,
-  kTextEdit,
-  kArc,
-  kLine,
-  kRectangle,
-  kText,
-  kImage,
-  kSubform,
-  kExclGroup
-};
-
 class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  public:
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };

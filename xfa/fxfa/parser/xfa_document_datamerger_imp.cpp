@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
 
+#include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 bool XFA_DataMerge_NeedGenerateForm(CXFA_Node* pTemplateChild,
