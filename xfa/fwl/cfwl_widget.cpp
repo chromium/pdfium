@@ -83,10 +83,6 @@ void CFWL_Widget::SetParent(CFWL_Widget* pParent) {
   m_pWidgetMgr->SetParent(pParent, this);
 }
 
-uint32_t CFWL_Widget::GetStyles() const {
-  return m_pProperties->m_dwStyles;
-}
-
 void CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
                                uint32_t dwStylesRemoved) {
   m_pProperties->m_dwStyles =

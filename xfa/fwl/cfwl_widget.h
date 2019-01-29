@@ -86,7 +86,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   CFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
 
-  uint32_t GetStyles() const;
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
   uint32_t GetStylesEx() const;
   uint32_t GetStates() const;

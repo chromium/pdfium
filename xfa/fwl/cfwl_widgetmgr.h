@@ -48,9 +48,6 @@ class CFWL_WidgetMgr {
                                 const CFX_PointF& point) const;
   CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus, bool& bFind);
 
-  std::vector<CFWL_Widget*> GetSameGroupRadioButton(
-      CFWL_Widget* pRadioButton) const;
-
   CFWL_Widget* GetDefaultButton(CFWL_Widget* pParent) const;
   void AddRedrawCounts(CFWL_Widget* pWidget);
 
@@ -83,12 +80,7 @@ class CFWL_WidgetMgr {
   Item* GetWidgetMgrItem(const CFWL_Widget* pWidget) const;
 
   void AppendWidget(CFWL_Widget* pWidget);
-
-  int32_t CountRadioButtonGroup(CFWL_Widget* pFirst) const;
-  CFWL_Widget* GetRadioButtonGroupHeader(CFWL_Widget* pRadioButton) const;
-
   void ResetRedrawCounts(CFWL_Widget* pWidget);
-
   void DrawChild(CFWL_Widget* pParent,
                  const CFX_RectF& rtClip,
                  CXFA_Graphics* pGraphics,

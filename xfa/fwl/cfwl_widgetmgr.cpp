@@ -263,38 +263,6 @@ CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent,
   return nullptr;
 }
 
-int32_t CFWL_WidgetMgr::CountRadioButtonGroup(CFWL_Widget* pFirst) const {
-  int32_t iRet = 0;
-  CFWL_Widget* pChild = pFirst;
-  while (pChild) {
-    pChild = GetNextSiblingWidget(pChild);
-    ++iRet;
-  }
-  return iRet;
-}
-
-CFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
-    CFWL_Widget* pRadioButton) const {
-  CFWL_Widget* pNext = pRadioButton;
-  if (pNext && (pNext->GetStyles() & FWL_WGTSTYLE_Group))
-    return pNext;
-  return nullptr;
-}
-
-std::vector<CFWL_Widget*> CFWL_WidgetMgr::GetSameGroupRadioButton(
-    CFWL_Widget* pRadioButton) const {
-  CFWL_Widget* pFirst = GetFirstSiblingWidget(pRadioButton);
-  if (!pFirst)
-    pFirst = pRadioButton;
-
-  if (CountRadioButtonGroup(pFirst) < 2)
-    return std::vector<CFWL_Widget*>();
-
-  std::vector<CFWL_Widget*> group;
-  group.push_back(GetRadioButtonGroupHeader(pRadioButton));
-  return group;
-}
-
 CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
   if ((pParent->GetClassID() == FWL_Type::PushButton) &&
       (pParent->GetStates() & (1 << (FWL_WGTSTATE_MAX + 2)))) {
