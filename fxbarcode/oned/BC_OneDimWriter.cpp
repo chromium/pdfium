@@ -246,7 +246,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   CFX_Matrix scaledMatrix(m_outputHScale, 0.0, 0.0,
                           static_cast<float>(m_Height), 0.0, 0.0);
   scaledMatrix.Concat(*matrix);
-  for (auto& rect : m_output) {
+  for (const auto& rect : m_output) {
     CFX_GraphStateData data;
     device->DrawPath(&rect, &scaledMatrix, &data, m_barColor, 0,
                      FXFILL_WINDING);
@@ -298,9 +298,8 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
 void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX, int32_t width) {
   for (int i = 0; i < width; ++i) {
     float x = outputX + i;
-    CFX_PathData rect;
-    rect.AppendRect(x, 0.0f, x + 1, 1.0f);
-    m_output.push_back(rect);
+    m_output.emplace_back();
+    m_output.back().AppendRect(x, 0.0f, x + 1, 1.0f);
   }
 }
 
