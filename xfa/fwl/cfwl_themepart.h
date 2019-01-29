@@ -40,7 +40,6 @@ enum class CFWL_Part {
   MaximizeBox,
   NarrowCaption,
   RBtn,
-  StretchHandler,
   Thumb,
   ThumbBackArrow,
   ThumbForeArrow,

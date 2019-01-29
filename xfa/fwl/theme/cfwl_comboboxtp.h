@@ -21,9 +21,6 @@ class CFWL_ComboBoxTP final : public CFWL_WidgetTP {
   void DrawDropDownButton(const CFWL_ThemeBackground& pParams,
                           uint32_t dwStates,
                           const CFX_Matrix& matrix);
-  void DrawStretchHandler(const CFWL_ThemeBackground& pParams,
-                          uint32_t dwStates,
-                          const CFX_Matrix& matrix);
 };
 
 #endif  // XFA_FWL_THEME_CFWL_COMBOBOXTP_H_

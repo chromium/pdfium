@@ -213,18 +213,6 @@ void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
     m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
-void CFWL_ComboBox::DrawStretchHandler(CXFA_Graphics* pGraphics,
-                                       const CFX_Matrix* pMatrix) {
-  CFWL_ThemeBackground param;
-  param.m_pGraphics = pGraphics;
-  param.m_iPart = CFWL_Part::StretchHandler;
-  param.m_dwStates = CFWL_PartState_Normal;
-  param.m_pWidget = this;
-  if (pMatrix)
-    param.m_matrix.Concat(*pMatrix);
-  m_pProperties->m_pThemeProvider->DrawBackground(param);
-}
-
 void CFWL_ComboBox::ShowDropList(bool bActivate) {
   if (IsDropListVisible() == bActivate)
     return;
