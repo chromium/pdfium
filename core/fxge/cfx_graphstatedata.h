@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CFX_GraphStateData final : public Retainable {
+class CFX_GraphStateData {
  public:
   enum LineCap : uint8_t {
     LineCapButt = 0,
@@ -28,9 +28,11 @@ class CFX_GraphStateData final : public Retainable {
 
   CFX_GraphStateData();
   CFX_GraphStateData(const CFX_GraphStateData& src);
-  ~CFX_GraphStateData() override;
+  CFX_GraphStateData(CFX_GraphStateData&& src);
+  ~CFX_GraphStateData();
 
   CFX_GraphStateData& operator=(const CFX_GraphStateData& src);
+  CFX_GraphStateData& operator=(CFX_GraphStateData&& src);
 
   LineCap m_LineCap = LineCapButt;
   LineJoin m_LineJoin = LineJoinMiter;
@@ -38,6 +40,18 @@ class CFX_GraphStateData final : public Retainable {
   float m_MiterLimit = 10.0f;
   float m_LineWidth = 1.0f;
   std::vector<float> m_DashArray;
+};
+
+class CFX_RetainableGraphStateData : public Retainable,
+                                     public CFX_GraphStateData {
+ public:
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
+ private:
+  CFX_RetainableGraphStateData();
+  CFX_RetainableGraphStateData(const CFX_RetainableGraphStateData& src);
+  ~CFX_RetainableGraphStateData() override;
 };
 
 #endif  // CORE_FXGE_CFX_GRAPHSTATEDATA_H_

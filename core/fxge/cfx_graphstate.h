@@ -38,7 +38,7 @@ class CFX_GraphState {
   const CFX_GraphStateData* GetObject() const { return m_Ref.GetObject(); }
 
  private:
-  SharedCopyOnWrite<CFX_GraphStateData> m_Ref;
+  SharedCopyOnWrite<CFX_RetainableGraphStateData> m_Ref;
 };
 
 #endif  // CORE_FXGE_CFX_GRAPHSTATE_H_
