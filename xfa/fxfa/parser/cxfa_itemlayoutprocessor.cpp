@@ -444,7 +444,7 @@ void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
     CXFA_ContentLayoutItem* pCurLayoutItem =
         ToContentLayoutItem(pNode->JSObject()->GetLayoutItem());
     while (pCurLayoutItem) {
-      CXFA_ContentLayoutItem* pNextLayoutItem = pCurLayoutItem->m_pNext;
+      CXFA_ContentLayoutItem* pNextLayoutItem = pCurLayoutItem->GetNext();
       pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
       delete pCurLayoutItem;
       pCurLayoutItem = pNextLayoutItem;
@@ -643,7 +643,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
   CXFA_ContentLayoutItem* pLayoutItem = nullptr;
   if (m_pOldLayoutItem) {
     pLayoutItem = m_pOldLayoutItem;
-    m_pOldLayoutItem = m_pOldLayoutItem->m_pNext;
+    m_pOldLayoutItem = m_pOldLayoutItem->GetNext();
     return pLayoutItem;
   }
   pLayoutItem = pFormNode->GetDocument()
@@ -653,11 +653,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       ToContentLayoutItem(pFormNode->JSObject()->GetLayoutItem());
   if (pPrevLayoutItem) {
-    while (pPrevLayoutItem->m_pNext)
-      pPrevLayoutItem = pPrevLayoutItem->m_pNext;
-
-    pPrevLayoutItem->m_pNext = pLayoutItem;
-    pLayoutItem->m_pPrev = pPrevLayoutItem;
+    pPrevLayoutItem->GetLast()->InsertAfter(pLayoutItem);
   } else {
     pFormNode->JSObject()->SetLayoutItem(pLayoutItem);
   }
@@ -818,16 +814,13 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
     return pLayoutItem;
   }
 
-  if (m_pOldLayoutItem->m_pPrev)
-    m_pOldLayoutItem->m_pPrev->m_pNext = nullptr;
-
   CXFA_FFNotify* pNotify =
       m_pOldLayoutItem->GetFormNode()->GetDocument()->GetNotify();
   CXFA_LayoutProcessor* pDocLayout =
       m_pOldLayoutItem->GetFormNode()->GetDocument()->GetLayoutProcessor();
   CXFA_ContentLayoutItem* pOldLayoutItem = m_pOldLayoutItem;
   while (pOldLayoutItem) {
-    CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->m_pNext;
+    CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->GetNext();
     pNotify->OnLayoutItemRemoving(pDocLayout, pOldLayoutItem);
     if (pOldLayoutItem->m_pParent)
       pOldLayoutItem->m_pParent->RemoveChild(pOldLayoutItem);
@@ -1725,7 +1718,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
         if (!pLayoutNext->m_pNextSibling && m_pCurChildPreprocessor &&
             m_pCurChildPreprocessor->GetFormNode() ==
                 pLayoutNext->GetFormNode()) {
-          pLayoutNext->m_pNext = m_pCurChildPreprocessor->m_pLayoutItem;
+          pLayoutNext->InsertAfter(m_pCurChildPreprocessor->m_pLayoutItem);
           m_pCurChildPreprocessor->m_pLayoutItem = pLayoutNext;
           break;
         }

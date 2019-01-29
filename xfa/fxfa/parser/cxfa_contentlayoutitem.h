@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_CONTENTLAYOUTITEM_H_
 #define XFA_FXFA_PARSER_CXFA_CONTENTLAYOUTITEM_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 
 class CXFA_FFWidget;
@@ -20,18 +21,23 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
 
   CXFA_ContentLayoutItem* GetFirst();
   CXFA_ContentLayoutItem* GetLast();
-  CXFA_ContentLayoutItem* GetPrev() const { return m_pPrev; }
-  CXFA_ContentLayoutItem* GetNext() const { return m_pNext; }
+  CXFA_ContentLayoutItem* GetPrev() const { return m_pPrev.Get(); }
+  CXFA_ContentLayoutItem* GetNext() const { return m_pNext.Get(); }
+  void InsertAfter(CXFA_ContentLayoutItem* pNext);
 
   CFX_RectF GetRect(bool bRelative) const;
   int32_t GetIndex() const;
   int32_t GetCount() const;
 
-  CXFA_ContentLayoutItem* m_pPrev = nullptr;
-  CXFA_ContentLayoutItem* m_pNext = nullptr;
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;
   mutable uint32_t m_dwStatus = 0;
+
+ private:
+  void RemoveSelf();
+
+  UnownedPtr<CXFA_ContentLayoutItem> m_pPrev;
+  UnownedPtr<CXFA_ContentLayoutItem> m_pNext;
 };
 
 inline CXFA_FFWidget* ToFFWidget(CXFA_ContentLayoutItem* item) {
