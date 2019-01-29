@@ -17,26 +17,15 @@
 
 namespace {
 
-const int32_t s_gif_interlace_step[4] = {8, 8, 4, 2};
+constexpr int32_t kGifInterlaceStep[4] = {8, 8, 4, 2};
 
 }  // namespace
 
 CFX_GifContext::CFX_GifContext(CCodec_GifModule* gif_module,
                                CCodec_GifModule::Delegate* delegate)
-    : gif_module_(gif_module),
-      delegate_(delegate),
-      global_pal_exp_(0),
-      img_row_offset_(0),
-      img_row_avail_size_(0),
-      decode_status_(GIF_D_STATUS_SIG),
-      width_(0),
-      height_(0),
-      bc_index_(0),
-      global_sort_flag_(0),
-      global_color_resolution_(0),
-      img_pass_num_(0) {}
+    : gif_module_(gif_module), delegate_(delegate) {}
 
-CFX_GifContext::~CFX_GifContext() {}
+CFX_GifContext::~CFX_GifContext() = default;
 
 void CFX_GifContext::RecordCurrentPosition(uint32_t* cur_pos) {
   delegate_->GifRecordCurrentPosition(*cur_pos);
@@ -307,15 +296,15 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
         if (ret == CFX_GifDecodeStatus::InsufficientDestSize) {
           if (gif_image->image_info.local_flags.interlace) {
             ReadScanline(gif_image->row_num, gif_image->row_buffer.data());
-            gif_image->row_num += s_gif_interlace_step[img_pass_num_];
+            gif_image->row_num += kGifInterlaceStep[img_pass_num_];
             if (gif_image->row_num >=
                 static_cast<int32_t>(gif_image->image_info.height)) {
               img_pass_num_++;
-              if (img_pass_num_ == FX_ArraySize(s_gif_interlace_step)) {
+              if (img_pass_num_ == FX_ArraySize(kGifInterlaceStep)) {
                 DecodingFailureAtTailCleanup(gif_image);
                 return CFX_GifDecodeStatus::Error;
               }
-              gif_image->row_num = s_gif_interlace_step[img_pass_num_] / 2;
+              gif_image->row_num = kGifInterlaceStep[img_pass_num_] / 2;
             }
           } else {
             ReadScanline(gif_image->row_num++, gif_image->row_buffer.data());

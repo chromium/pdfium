@@ -45,22 +45,22 @@ class CFX_GifContext : public CodecModuleIface::Context {
   uint32_t GetAvailInput() const;
   size_t GetFrameNum() const { return images_.size(); }
 
-  UnownedPtr<CCodec_GifModule> gif_module_;
-  UnownedPtr<CCodec_GifModule::Delegate> delegate_;
+  UnownedPtr<CCodec_GifModule> const gif_module_;
+  UnownedPtr<CCodec_GifModule::Delegate> const delegate_;
   std::vector<CFX_GifPalette> global_palette_;
-  uint8_t global_pal_exp_;
-  uint32_t img_row_offset_;
-  uint32_t img_row_avail_size_;
-  int32_t decode_status_;
+  uint8_t global_pal_exp_ = 0;
+  uint32_t img_row_offset_ = 0;
+  uint32_t img_row_avail_size_ = 0;
+  int32_t decode_status_ = GIF_D_STATUS_SIG;
   std::unique_ptr<CFX_GifGraphicControlExtension> graphic_control_extension_;
   std::vector<std::unique_ptr<CFX_GifImage>> images_;
   std::unique_ptr<CFX_LZWDecompressor> lzw_decompressor_;
-  int width_;
-  int height_;
-  uint8_t bc_index_;
-  uint8_t global_sort_flag_;
-  uint8_t global_color_resolution_;
-  uint8_t img_pass_num_;
+  int width_ = 0;
+  int height_ = 0;
+  uint8_t bc_index_ = 0;
+  uint8_t global_sort_flag_ = 0;
+  uint8_t global_color_resolution_ = 0;
+  uint8_t img_pass_num_ = 0;
 
  protected:
   bool ReadAllOrNone(uint8_t* dest, uint32_t size);
