@@ -276,6 +276,7 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
   m_barWidth = m_Width;
 
   m_output.clear();
+  m_output.reserve(codeOldLength * m_multiple);
   for (int32_t inputX = 0, outputX = leftPadding * m_multiple;
        inputX < codeOldLength; ++inputX, outputX += m_multiple) {
     if (code[inputX] != 1)
