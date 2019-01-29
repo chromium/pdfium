@@ -46,14 +46,18 @@ class CPDF_ClipPath {
  private:
   class PathData final : public Retainable {
    public:
-    using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
+    template <typename T, typename... Args>
+    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-    PathData();
-    PathData(const PathData& that);
-    ~PathData() override;
+    using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
 
     std::vector<PathAndTypeData> m_PathAndTypeList;
     std::vector<std::unique_ptr<CPDF_TextObject>> m_TextList;
+
+   private:
+    PathData();
+    PathData(const PathData& that);
+    ~PathData() override;
   };
 
   SharedCopyOnWrite<PathData> m_Ref;

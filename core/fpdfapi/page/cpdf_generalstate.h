@@ -80,9 +80,8 @@ class CPDF_GeneralState {
  private:
   class StateData final : public Retainable {
    public:
-    StateData();
-    StateData(const StateData& that);
-    ~StateData() override;
+    template <typename T, typename... Args>
+    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
     ByteString m_BlendMode = pdfium::transparency::kNormal;
     BlendMode m_BlendType = BlendMode::kNormal;
@@ -105,6 +104,11 @@ class CPDF_GeneralState {
     UnownedPtr<const CPDF_Object> m_pHT;
     float m_Flatness = 1.0f;
     float m_Smoothness = 0.0f;
+
+   private:
+    StateData();
+    StateData(const StateData& that);
+    ~StateData() override;
   };
 
   SharedCopyOnWrite<StateData> m_Ref;

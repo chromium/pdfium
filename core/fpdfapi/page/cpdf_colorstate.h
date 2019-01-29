@@ -52,9 +52,8 @@ class CPDF_ColorState {
  private:
   class ColorData final : public Retainable {
    public:
-    ColorData();
-    ColorData(const ColorData& src);
-    ~ColorData() override;
+    template <typename T, typename... Args>
+    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
     void SetDefault();
 
@@ -62,6 +61,11 @@ class CPDF_ColorState {
     FX_COLORREF m_StrokeColorRef = 0;
     CPDF_Color m_FillColor;
     CPDF_Color m_StrokeColor;
+
+   private:
+    ColorData();
+    ColorData(const ColorData& src);
+    ~ColorData() override;
   };
 
   void SetColor(CPDF_ColorSpace* pCS,
