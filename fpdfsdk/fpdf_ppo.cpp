@@ -698,6 +698,9 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
   pNewXObjectDict->SetRectFor("BBox", GetCropBox(pSrcPageDict));
   // TODO(xlou): add matrix field to pNewXObjectDict.
 
+  if (!pSrcContentObj)
+    return pNewXObject->GetObjNum();
+
   if (const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj)) {
     ByteString bsSrcContentStream;
     for (size_t i = 0; i < pSrcContentArray->size(); ++i) {

@@ -120,6 +120,13 @@ TEST_F(FPDFPPOEmbedderTest, NupRenderImage) {
   }
 }
 
+TEST_F(FPDFPPOEmbedderTest, BUG_925981) {
+  ASSERT_TRUE(OpenDocument("bug_925981.pdf"));
+  ScopedFPDFDocument output_doc_2up(
+      FPDF_ImportNPagesToOne(document(), 612, 792, 2, 1));
+  EXPECT_EQ(1, FPDF_GetPageCount(output_doc_2up.get()));
+}
+
 TEST_F(FPDFPPOEmbedderTest, BadRepeatViewerPref) {
   ASSERT_TRUE(OpenDocument("repeat_viewer_ref.pdf"));
 
