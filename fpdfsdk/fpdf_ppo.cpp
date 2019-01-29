@@ -701,8 +701,9 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
   if (!pSrcContentObj)
     return pNewXObject->GetObjNum();
 
-  if (const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj)) {
-    ByteString bsSrcContentStream;
+  ByteString bsSrcContentStream;
+  const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj);
+  if (pSrcContentArray) {
     for (size_t i = 0; i < pSrcContentArray->size(); ++i) {
       const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
@@ -710,17 +711,13 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
       bsSrcContentStream += ByteString(pAcc->GetData(), pAcc->GetSize());
       bsSrcContentStream += "\n";
     }
-    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.AsRawSpan());
   } else {
-    ByteString bsStream;
-    {
-      const CPDF_Stream* pStream = pSrcContentObj->AsStream();
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-      pAcc->LoadAllDataFiltered();
-      bsStream = ByteString(pAcc->GetData(), pAcc->GetSize());
-    }
-    pNewXObject->SetDataAndRemoveFilter(bsStream.AsRawSpan());
+    const CPDF_Stream* pStream = pSrcContentObj->AsStream();
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+    pAcc->LoadAllDataFiltered();
+    bsSrcContentStream = ByteString(pAcc->GetData(), pAcc->GetSize());
   }
+  pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.AsRawSpan());
   return pNewXObject->GetObjNum();
 }
 
