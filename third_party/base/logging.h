@@ -94,10 +94,12 @@
 #define IMMEDIATE_CRASH() WRAPPED_TRAP_SEQUENCE()
 #endif
 
-#define CHECK(condition)        \
-  if (UNLIKELY(!(condition))) { \
-    IMMEDIATE_CRASH();          \
-  }
+#define CHECK(condition)          \
+  do {                            \
+    if (UNLIKELY(!(condition))) { \
+      IMMEDIATE_CRASH();          \
+    }                             \
+  } while (0)
 
 // TODO(palmer): These are quick hacks to import PartitionAlloc with minimum
 // hassle. Look into pulling in the real DCHECK definition. It might be more
