@@ -107,11 +107,11 @@ class CXFA_LayoutPageMgr {
   bool FindPageAreaFromPageSet_SimplexDuplex(
       CXFA_Node* pPageSet,
       CXFA_Node* pStartChild,
-      CXFA_Node* pTargetPageArea = nullptr,
-      CXFA_Node* pTargetContentArea = nullptr,
-      bool bNewPage = false,
-      bool bQuery = false,
-      XFA_AttributeValue ePreferredPosition = XFA_AttributeValue::First);
+      CXFA_Node* pTargetPageArea,
+      CXFA_Node* pTargetContentArea,
+      bool bNewPage,
+      bool bQuery,
+      XFA_AttributeValue ePreferredPosition);
   bool MatchPageAreaOddOrEven(CXFA_Node* pPageArea);
   CXFA_Node* GetNextAvailPageArea(CXFA_Node* pTargetPageArea,
                                   CXFA_Node* pTargetContentArea,
