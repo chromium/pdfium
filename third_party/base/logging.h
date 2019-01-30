@@ -101,14 +101,22 @@
     }                             \
   } while (0)
 
-// TODO(palmer): These are quick hacks to import PartitionAlloc with minimum
-// hassle. Look into pulling in the real DCHECK definition. It might be more
-// than we need, or have more dependencies than we want. In the meantime, this
-// is safe, at the cost of some performance.
-#define DCHECK CHECK
-#define DCHECK_EQ(x, y) CHECK((x) == (y))
-#define DCHECK_IS_ON() true
+#if defined(NDEBUG) && !defined(DCHECK_ALWAYS_ON)
+#define DCHECK_IS_ON() 0
+#else
+#define DCHECK_IS_ON() 1
+#endif
 
-#define NOTREACHED() assert(false)
+// Debug mode: Use assert() for better diagnostics
+// Release mode, DCHECK_ALWAYS_ON: Use CHECK() since assert() is a no-op.
+// Release mode, no DCHECK_ALWAYS_ON: Use assert(), which is a no-op.
+#if defined(NDEBUG) && defined(DCHECK_ALWAYS_ON)
+#define DCHECK CHECK
+#else
+#define DCHECK assert
+#endif
+
+#define DCHECK_EQ(x, y) DCHECK((x) == (y))
+#define NOTREACHED() DCHECK(false)
 
 #endif  // THIRD_PARTY_BASE_LOGGING_H_
