@@ -375,7 +375,12 @@ ScopedFPDFBitmap EmbedderTest::RenderPage(FPDF_PAGE page) {
   return RenderPageWithFlags(page, nullptr, 0);
 }
 
-FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
+FPDF_DOCUMENT EmbedderTest::OpenSavedDocument() {
+  return OpenSavedDocumentWithPassword(nullptr);
+}
+
+FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
+    const char* password) {
   memset(&saved_file_access_, 0, sizeof(saved_file_access_));
   saved_file_access_.m_FileLen = data_string_.size();
   saved_file_access_.m_GetBlock = GetBlockFromString;
@@ -448,7 +453,7 @@ void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
 }
 
 void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {
-  OpenSavedDocument(nullptr);
+  ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE page = LoadSavedPage(0);
   VerifySavedRendering(page, width, height, md5);
   CloseSavedPage(page);

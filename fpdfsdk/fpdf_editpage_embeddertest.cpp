@@ -50,7 +50,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
     // Save a copy, open the copy, and render it.
     // Note that it renders the rotation.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    OpenSavedDocument(nullptr);
+    ASSERT_TRUE(OpenSavedDocument());
     FPDF_PAGE saved_page = LoadSavedPage(0);
     ASSERT_TRUE(saved_page);
 

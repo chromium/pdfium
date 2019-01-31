@@ -103,7 +103,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   } tests[] = {{"1234", 0xFFFFF2C0}, {"5678", 0xFFFFFFFC}};
 
   for (const auto& test : tests) {
-    OpenSavedDocument(test.password);
+    ASSERT_TRUE(OpenSavedDocumentWithPassword(test.password));
     FPDF_PAGE page = LoadSavedPage(0);
     VerifySavedRendering(page, 612, 792, md5);
     EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document_));

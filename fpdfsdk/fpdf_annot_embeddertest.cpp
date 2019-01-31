@@ -356,7 +356,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   // Open the saved document.
   const char md5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
 
-  OpenSavedDocument(nullptr);
+  ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 612, 792, md5);
 
@@ -794,7 +794,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   UnloadPage(page);
 
   // Open the saved document.
-  OpenSavedDocument(nullptr);
+  ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 595, 842, md5_new_annot);
 
@@ -1108,7 +1108,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 #endif
 
   // Open the saved annotation.
-  OpenSavedDocument(nullptr);
+  ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 595, 842, md5);
   {
@@ -1230,7 +1230,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
-  OpenSavedDocument(nullptr);
+  ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
   {
     ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
@@ -1609,7 +1609,7 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
     // Save a copy, open the copy, and check the annotation again.
     // Note that it renders the rotation.
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    OpenSavedDocument(nullptr);
+    ASSERT_TRUE(OpenSavedDocument());
     FPDF_PAGE saved_page = LoadSavedPage(0);
     ASSERT_TRUE(saved_page);
 
