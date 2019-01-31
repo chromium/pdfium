@@ -183,8 +183,11 @@ class CPDF_Document : public Observable<CPDF_Document>,
   bool m_bReachedMaxPageLevel = false;
   int m_iNextPageToTraverse = 0;
   uint32_t m_ParsedPageCount = 0;
-  std::unique_ptr<CPDF_DocPageData> m_pDocPage;
+
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
+  // Must be after |m_pDocRender|.
+  std::unique_ptr<CPDF_DocPageData> m_pDocPage;
+
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
   std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.

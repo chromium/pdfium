@@ -183,8 +183,8 @@ std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
 }  // namespace
 
 CPDF_Document::CPDF_Document()
-    : m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
-      m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)),
+    : m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)),
+      m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
       m_StockFontClearer(this) {}
 
 CPDF_Document::~CPDF_Document() = default;
