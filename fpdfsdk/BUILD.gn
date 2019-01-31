@@ -134,6 +134,7 @@ pdfium_embeddertest_source_set("embeddertests") {
   ]
   deps = [
     ":fpdfsdk",
+    "../constants",
     "../core/fpdfapi/font",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",

@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "constants/annotation_common.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
@@ -16,8 +17,6 @@
 #include "testing/embedder_test.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-
-static constexpr char kContentsKey[] = "Contents";
 
 class FPDFAnnotEmbedderTest : public EmbedderTest {};
 
@@ -134,13 +133,16 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     EXPECT_STREQ(L"Jae Hyun Park", BufferToWString(buf).c_str());
 
     // Check that the content is correct.
-    EXPECT_EQ(FPDF_OBJECT_STRING,
-              FPDFAnnot_GetValueType(annot.get(), kContentsKey));
-    len = FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0);
+    EXPECT_EQ(
+        FPDF_OBJECT_STRING,
+        FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kContents));
+    len = FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kContents,
+                                   nullptr, 0);
     buf.clear();
     buf.resize(len);
-    EXPECT_EQ(2690u, FPDFAnnot_GetStringValue(annot.get(), kContentsKey,
-                                              buf.data(), len));
+    EXPECT_EQ(2690u,
+              FPDFAnnot_GetStringValue(
+                  annot.get(), pdfium::annotation::kContents, buf.data(), len));
     const wchar_t contents[] =
         L"This is a note for that highlight annotation. Very long highlight "
         "annotation. Long long long Long long longLong long longLong long "
@@ -203,8 +205,8 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     EXPECT_EQ(76u, A);
 
     // Check that there is no content.
-    EXPECT_EQ(2u,
-              FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0));
+    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(
+                      annot.get(), pdfium::annotation::kContents, nullptr, 0));
 
     // Check that the rectange coordinates are correct.
     // Note that upon rendering, the rectangle coordinates will be adjusted.
@@ -306,14 +308,15 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
         L"Hello! This is a customized content.";
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
         GetFPDFWideString(kContents);
-    ASSERT_TRUE(
-        FPDFAnnot_SetStringValue(annot.get(), kContentsKey, text.get()));
+    ASSERT_TRUE(FPDFAnnot_SetStringValue(
+        annot.get(), pdfium::annotation::kContents, text.get()));
     // Check that the content has been set correctly.
-    unsigned long len =
-        FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0);
+    unsigned long len = FPDFAnnot_GetStringValue(
+        annot.get(), pdfium::annotation::kContents, nullptr, 0);
     std::vector<char> buf(len);
-    EXPECT_EQ(74u, FPDFAnnot_GetStringValue(annot.get(), kContentsKey,
-                                            buf.data(), len));
+    EXPECT_EQ(74u,
+              FPDFAnnot_GetStringValue(
+                  annot.get(), pdfium::annotation::kContents, buf.data(), len));
     EXPECT_STREQ(kContents, BufferToWString(buf).c_str());
   }
   UnloadPage(page);
@@ -1051,7 +1054,6 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  static constexpr char kDateKey[] = "M";
   static constexpr wchar_t kNewDate[] = L"D:201706282359Z00'00'";
 
   {
@@ -1063,11 +1065,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
     EXPECT_FALSE(FPDFAnnot_HasKey(annot.get(), "none"));
 
     // Check that the string value of a non-string dictionary entry is empty.
-    static constexpr char kApKey[] = "AP";
-    EXPECT_TRUE(FPDFAnnot_HasKey(annot.get(), kApKey));
+    EXPECT_TRUE(FPDFAnnot_HasKey(annot.get(), pdfium::annotation::kAP));
     EXPECT_EQ(FPDF_OBJECT_REFERENCE,
-              FPDFAnnot_GetValueType(annot.get(), kApKey));
-    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot.get(), kApKey, nullptr, 0));
+              FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kAP));
+    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kAP,
+                                           nullptr, 0));
 
     // Check that the string value of the hash is correct.
     static constexpr char kHashKey[] = "AAPL:Hash";
@@ -1082,17 +1084,19 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
     // Check that the string value of the modified date is correct.
     EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot.get(), kHashKey));
-    len = FPDFAnnot_GetStringValue(annot.get(), kDateKey, nullptr, 0);
+    len = FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kM, nullptr,
+                                   0);
     buf.clear();
     buf.resize(len);
-    EXPECT_EQ(44u,
-              FPDFAnnot_GetStringValue(annot.get(), kDateKey, buf.data(), len));
+    EXPECT_EQ(44u, FPDFAnnot_GetStringValue(annot.get(), pdfium::annotation::kM,
+                                            buf.data(), len));
     EXPECT_STREQ(L"D:201706071721Z00'00'", BufferToWString(buf).c_str());
 
     // Update the date entry for the annotation.
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
         GetFPDFWideString(kNewDate);
-    EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), kDateKey, text.get()));
+    EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), pdfium::annotation::kM,
+                                         text.get()));
   }
 
   // Save the document, closing the page and document.
@@ -1116,12 +1120,13 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
     // Check that the string value of the modified date is the newly-set value.
     EXPECT_EQ(FPDF_OBJECT_STRING,
-              FPDFAnnot_GetValueType(new_annot.get(), kDateKey));
-    unsigned long len =
-        FPDFAnnot_GetStringValue(new_annot.get(), kDateKey, nullptr, 0);
+              FPDFAnnot_GetValueType(new_annot.get(), pdfium::annotation::kM));
+    unsigned long len = FPDFAnnot_GetStringValue(
+        new_annot.get(), pdfium::annotation::kM, nullptr, 0);
     std::vector<char> buf(len);
-    EXPECT_EQ(44u, FPDFAnnot_GetStringValue(new_annot.get(), kDateKey,
-                                            buf.data(), len));
+    EXPECT_EQ(44u,
+              FPDFAnnot_GetStringValue(new_annot.get(), pdfium::annotation::kM,
+                                       buf.data(), len));
     EXPECT_STREQ(kNewDate, BufferToWString(buf).c_str());
   }
 
@@ -1359,11 +1364,10 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
 
     // Attempting to retrieve |annot|'s parent dictionary as an annotation
     // would fail, since its parent is not an annotation.
-    static constexpr char kPKey[] = "P";
-    ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), kPKey));
+    ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), pdfium::annotation::kP));
     EXPECT_EQ(FPDF_OBJECT_REFERENCE,
-              FPDFAnnot_GetValueType(annot.get(), kPKey));
-    EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), kPKey));
+              FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kP));
+    EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), pdfium::annotation::kP));
   }
 
   UnloadPage(page);

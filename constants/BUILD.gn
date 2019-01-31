@@ -7,6 +7,7 @@ import("../pdfium.gni")
 
 jumbo_source_set("constants") {
   sources = [
+    "annotation_common.h",
     "form_flags.h",
     "page_object.h",
     "stream_dict_common.h",
