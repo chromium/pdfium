@@ -980,9 +980,6 @@ bool CPDFXFA_DocEnvironment::SetPropertyInNonXFAGlobalObject(
     return false;
 
   IJS_Runtime* pIJSRuntime = pFormFillEnv->GetIJSRuntime();
-  if (!pIJSRuntime)
-    return false;
-
   IJS_Runtime::ScopedEventContext pContext(pIJSRuntime);
   return pIJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
 }
@@ -999,9 +996,6 @@ bool CPDFXFA_DocEnvironment::GetPropertyFromNonXFAGlobalObject(
     return false;
 
   IJS_Runtime* pIJSRuntime = pFormFillEnv->GetIJSRuntime();
-  if (!pIJSRuntime)
-    return false;
-
   IJS_Runtime::ScopedEventContext pContext(pIJSRuntime);
   return pIJSRuntime->GetValueByNameFromGlobalObject(szPropName, pValue);
 }
