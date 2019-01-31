@@ -47,8 +47,7 @@ CJS_Result CJS_Annot::get_hidden(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_Annot* pPDFAnnot = m_pAnnot->AsBAAnnot()->GetPDFAnnot();
-  return CJS_Result::Success(pRuntime->NewBoolean(
-      CPDF_Annot::IsAnnotationHidden(pPDFAnnot->GetAnnotDict())));
+  return CJS_Result::Success(pRuntime->NewBoolean(pPDFAnnot->IsHidden()));
 }
 
 CJS_Result CJS_Annot::set_hidden(CJS_Runtime* pRuntime,

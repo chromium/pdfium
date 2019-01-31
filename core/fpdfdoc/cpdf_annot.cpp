@@ -35,16 +35,6 @@ bool IsTextMarkupAnnotation(CPDF_Annot::Subtype type) {
          type == CPDF_Annot::Subtype::UNDERLINE;
 }
 
-bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
-  // If AP dictionary exists and defines an appearance for normal mode, we use
-  // the appearance defined in the existing AP dictionary.
-  CPDF_Dictionary* pAP = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
-  if (pAP && pAP->GetDictFor("N"))
-    return false;
-
-  return !CPDF_Annot::IsAnnotationHidden(pAnnotDict);
-}
-
 CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
                           CPDF_Annot* pAnnot,
                           CPDF_Annot::AppearanceMode mode,
@@ -126,7 +116,7 @@ void CPDF_Annot::Init() {
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
-  if (!ShouldGenerateAPForAnnotation(m_pAnnotDict.Get()))
+  if (!ShouldGenerateAP())
     return;
   if (!CPVT_GenerateAP::GenerateAnnotAP(m_nSubtype, m_pDocument.Get(),
                                         m_pAnnotDict.Get())) {
@@ -137,8 +127,19 @@ void CPDF_Annot::GenerateAPIfNeeded() {
   m_bHasGeneratedAP = true;
 }
 
+bool CPDF_Annot::ShouldGenerateAP() const {
+  // If AP dictionary exists and defines an appearance for normal mode, we use
+  // the appearance defined in the existing AP dictionary.
+  const CPDF_Dictionary* pAP =
+      m_pAnnotDict->GetDictFor(pdfium::annotation::kAP);
+  if (pAP && pAP->GetDictFor("N"))
+    return false;
+
+  return !IsHidden();
+}
+
 bool CPDF_Annot::ShouldDrawAnnotation() {
-  if (IsAnnotationHidden(m_pAnnotDict.Get()))
+  if (IsHidden())
     return false;
 
   if (m_nSubtype == CPDF_Annot::Subtype::POPUP && !m_bOpenState)
@@ -178,6 +179,10 @@ CFX_FloatRect CPDF_Annot::GetRect() const {
 
 uint32_t CPDF_Annot::GetFlags() const {
   return m_pAnnotDict->GetIntegerFor(pdfium::annotation::kF);
+}
+
+bool CPDF_Annot::IsHidden() const {
+  return !!(GetFlags() & ANNOTFLAG_HIDDEN);
 }
 
 CPDF_Stream* GetAnnotAP(CPDF_Dictionary* pAnnotDict,
@@ -255,12 +260,6 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
   if (nIndex >= nQuadPointCount)
     return CFX_FloatRect();
   return RectFromQuadPointsArray(pArray, nIndex);
-}
-
-// static
-bool CPDF_Annot::IsAnnotationHidden(CPDF_Dictionary* pAnnotDict) {
-  return !!(pAnnotDict->GetIntegerFor(pdfium::annotation::kF) &
-            ANNOTFLAG_HIDDEN);
 }
 
 // static
