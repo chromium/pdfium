@@ -157,6 +157,9 @@ class EmbedderTest : public ::testing::Test,
                                               FPDF_FORMHANDLE handle,
                                               int flags);
 
+  // Simplified form of RenderPageWithFlags() with no handle and no flags.
+  static ScopedFPDFBitmap RenderPage(FPDF_PAGE page);
+
  protected:
   using PageNumberToHandleMap = std::map<int, FPDF_PAGE>;
 

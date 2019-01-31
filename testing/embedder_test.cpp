@@ -370,6 +370,11 @@ ScopedFPDFBitmap EmbedderTest::RenderPageWithFlags(FPDF_PAGE page,
   return bitmap;
 }
 
+// static
+ScopedFPDFBitmap EmbedderTest::RenderPage(FPDF_PAGE page) {
+  return RenderPageWithFlags(page, nullptr, 0);
+}
+
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
   memset(&saved_file_access_, 0, sizeof(saved_file_access_));
   saved_file_access_.m_FileLen = data_string_.size();
