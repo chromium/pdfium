@@ -13,8 +13,6 @@
 #include <utility>
 
 #include "core/fdrm/fx_crypt.h"
-#include "core/fpdfapi/edit/cpdf_encryptor.h"
-#include "core/fpdfapi/edit/cpdf_flateencoder.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_object_walker.h"

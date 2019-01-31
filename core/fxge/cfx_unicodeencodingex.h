@@ -14,12 +14,15 @@
 
 class CFX_UnicodeEncodingEx final : public CFX_UnicodeEncoding {
  public:
+  static constexpr uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
+
   CFX_UnicodeEncodingEx(CFX_Font* pFont, uint32_t EncodingID);
   ~CFX_UnicodeEncodingEx() override;
 
   // CFX_UnicodeEncoding:
   uint32_t GlyphFromCharCode(uint32_t charcode) override;
 
+  // Returns |kInvalidCharCode| on error.
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
 
  private:

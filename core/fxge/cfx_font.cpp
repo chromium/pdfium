@@ -12,7 +12,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/cfx_facecache.h"

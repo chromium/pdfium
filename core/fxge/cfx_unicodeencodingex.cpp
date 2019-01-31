@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/ptr_util.h"
@@ -81,7 +81,7 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
       return Unicode;
     }
   }
-  return CPDF_Font::kInvalidCharCode;
+  return kInvalidCharCode;
 }
 
 std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
