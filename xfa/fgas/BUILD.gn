@@ -15,6 +15,7 @@ jumbo_source_set("fgas") {
     "crt/cfgas_formatstring.cpp",
     "crt/cfgas_formatstring.h",
     "crt/locale_iface.h",
+    "crt/locale_mgr_iface.h",
     "font/cfgas_defaultfontmanager.cpp",
     "font/cfgas_defaultfontmanager.h",
     "font/cfgas_fontmgr.cpp",

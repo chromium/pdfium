@@ -12,17 +12,18 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
+#include "xfa/fgas/crt/locale_mgr_iface.h"
 
 class CXFA_Node;
 class LocaleIface;
 
-class CXFA_LocaleMgr {
+class CXFA_LocaleMgr : public LocaleMgrIface {
  public:
   CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid);
-  ~CXFA_LocaleMgr();
+  ~CXFA_LocaleMgr() override;
 
-  LocaleIface* GetDefLocale();
-  LocaleIface* GetLocaleByName(const WideString& wsLocaleName);
+  LocaleIface* GetDefLocale() override;
+  LocaleIface* GetLocaleByName(const WideString& wsLocaleName) override;
 
   void SetDefLocale(LocaleIface* pLocale);
   WideString GetConfigLocaleName(CXFA_Node* pConfig);

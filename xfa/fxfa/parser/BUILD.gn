@@ -708,10 +708,7 @@ jumbo_source_set("parser") {
     "../../fgas",
     "../../fxgraphics",
   ]
-  allow_circular_includes_from = [
-    "../../fgas",
-    "../../../fxjs",
-  ]
+  allow_circular_includes_from = [ "../../../fxjs" ]
   configs += [
     "../../../:pdfium_core_config",
     "../../:xfa_warnings",

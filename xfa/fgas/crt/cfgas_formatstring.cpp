@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
-#include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde
 #define FX_LOCALECATEGORY_TimeHash 0x2d71b00f
@@ -839,7 +838,7 @@ bool FX_TimeFromCanonical(WideStringView wsTime,
   return true;
 }
 
-CFGAS_FormatString::CFGAS_FormatString(CXFA_LocaleMgr* pLocaleMgr)
+CFGAS_FormatString::CFGAS_FormatString(LocaleMgrIface* pLocaleMgr)
     : m_pLocaleMgr(pLocaleMgr) {}
 
 CFGAS_FormatString::~CFGAS_FormatString() {}

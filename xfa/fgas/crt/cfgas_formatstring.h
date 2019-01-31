@@ -11,8 +11,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fgas/crt/locale_iface.h"
-
-class CXFA_LocaleMgr;
+#include "xfa/fgas/crt/locale_mgr_iface.h"
 
 bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime);
 bool FX_TimeFromCanonical(WideStringView wsTime,
@@ -21,7 +20,7 @@ bool FX_TimeFromCanonical(WideStringView wsTime,
 
 class CFGAS_FormatString {
  public:
-  explicit CFGAS_FormatString(CXFA_LocaleMgr* pLocaleMgr);
+  explicit CFGAS_FormatString(LocaleMgrIface* pLocaleMgr);
   ~CFGAS_FormatString();
 
   void SplitFormatString(const WideString& wsFormatString,
@@ -71,7 +70,7 @@ class CFGAS_FormatString {
                                     WideString* wsDatePattern,
                                     WideString* wsTimePattern) const;
 
-  UnownedPtr<CXFA_LocaleMgr> const m_pLocaleMgr;
+  UnownedPtr<LocaleMgrIface> const m_pLocaleMgr;
 };
 
 #endif  // XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
