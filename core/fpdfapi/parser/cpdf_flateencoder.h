@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_
-#define CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_
+#ifndef CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_
+#define CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_
 
 #include <memory>
 
@@ -44,4 +44,4 @@ class CPDF_FlateEncoder {
   std::unique_ptr<CPDF_Dictionary> m_pClonedDict;
 };
 
-#endif  // CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_
+#endif  // CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_

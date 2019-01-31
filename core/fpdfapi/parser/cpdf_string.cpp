@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/edit/cpdf_encryptor.h"
+#include "core/fpdfapi/parser/cpdf_encryptor.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"

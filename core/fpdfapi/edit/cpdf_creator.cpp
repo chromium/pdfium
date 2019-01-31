@@ -8,12 +8,12 @@
 
 #include <algorithm>
 
-#include "core/fpdfapi/edit/cpdf_encryptor.h"
-#include "core/fpdfapi/edit/cpdf_flateencoder.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_encryptor.h"
+#include "core/fpdfapi/parser/cpdf_flateencoder.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"

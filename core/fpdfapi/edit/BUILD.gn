@@ -10,10 +10,6 @@ jumbo_source_set("edit") {
   sources = [
     "cpdf_creator.cpp",
     "cpdf_creator.h",
-    "cpdf_encryptor.cpp",
-    "cpdf_encryptor.h",
-    "cpdf_flateencoder.cpp",
-    "cpdf_flateencoder.h",
     "cpdf_pagecontentgenerator.cpp",
     "cpdf_pagecontentgenerator.h",
     "cpdf_pagecontentmanager.cpp",
@@ -30,7 +26,6 @@ jumbo_source_set("edit") {
     "../page",
     "../parser",
   ]
-  allow_circular_includes_from = [ "../parser" ]
   visibility = [ "../../../*" ]
 }
 

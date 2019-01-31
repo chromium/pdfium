@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_EDIT_CPDF_ENCRYPTOR_H_
-#define CORE_FPDFAPI_EDIT_CPDF_ENCRYPTOR_H_
+#ifndef CORE_FPDFAPI_PARSER_CPDF_ENCRYPTOR_H_
+#define CORE_FPDFAPI_PARSER_CPDF_ENCRYPTOR_H_
 
 #include <stdint.h>
 
@@ -28,4 +28,4 @@ class CPDF_Encryptor {
   const int m_ObjNum;
 };
 
-#endif  // CORE_FPDFAPI_EDIT_CPDF_ENCRYPTOR_H_
+#endif  // CORE_FPDFAPI_PARSER_CPDF_ENCRYPTOR_H_

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/edit/cpdf_flateencoder.h"
+#include "core/fpdfapi/parser/cpdf_flateencoder.h"
 
 #include <memory>
 #include <utility>

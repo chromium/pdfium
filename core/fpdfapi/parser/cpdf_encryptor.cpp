@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/edit/cpdf_encryptor.h"
+#include "core/fpdfapi/parser/cpdf_encryptor.h"
 
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 
