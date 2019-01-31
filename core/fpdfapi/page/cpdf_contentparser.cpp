@@ -21,8 +21,6 @@
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "third_party/base/ptr_util.h"
 
-#define PARSE_STEP_LIMIT 100
-
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
   ASSERT(pPage);
@@ -34,30 +32,21 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
   CPDF_Object* pContent =
       pPage->GetDict()->GetDirectObjectFor(pdfium::page_object::kContents);
   if (!pContent) {
-    m_CurrentStage = Stage::kComplete;
+    HandlePageContentFailure();
     return;
   }
 
   CPDF_Stream* pStream = pContent->AsStream();
   if (pStream) {
-    m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-    m_pSingleStream->LoadAllDataFiltered();
-    m_CurrentStage = Stage::kPrepareContent;
+    HandlePageContentStream(pStream);
     return;
   }
 
   CPDF_Array* pArray = pContent->AsArray();
-  if (!pArray) {
-    m_CurrentStage = Stage::kComplete;
+  if (pArray && HandlePageContentArray(pArray))
     return;
-  }
 
-  m_nStreams = pArray->size();
-  if (m_nStreams == 0) {
-    m_CurrentStage = Stage::kComplete;
-    return;
-  }
-  m_StreamArray.resize(m_nStreams);
+  HandlePageContentFailure();
 }
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
@@ -208,8 +197,9 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (m_StreamSegmentOffsets.empty())
     m_StreamSegmentOffsets.push_back(0);
 
+  static constexpr uint32_t kParseStepLimit = 100;
   m_CurrentOffset += m_pParser->Parse(m_pData.Get(), m_Size, m_CurrentOffset,
-                                      PARSE_STEP_LIMIT, m_StreamSegmentOffsets);
+                                      kParseStepLimit, m_StreamSegmentOffsets);
   return Stage::kParse;
 }
 
@@ -238,4 +228,23 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
       pObj->m_ClipPath.SetNull();
   }
   return Stage::kComplete;
+}
+
+void CPDF_ContentParser::HandlePageContentStream(CPDF_Stream* pStream) {
+  m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pSingleStream->LoadAllDataFiltered();
+  m_CurrentStage = Stage::kPrepareContent;
+}
+
+bool CPDF_ContentParser::HandlePageContentArray(CPDF_Array* pArray) {
+  m_nStreams = pArray->size();
+  if (m_nStreams == 0)
+    return false;
+
+  m_StreamArray.resize(m_nStreams);
+  return true;
+}
+
+void CPDF_ContentParser::HandlePageContentFailure() {
+  m_CurrentStage = Stage::kComplete;
 }
