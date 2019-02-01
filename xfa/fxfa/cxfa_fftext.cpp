@@ -66,7 +66,7 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
 bool CXFA_FFText::IsLoaded() {
   CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
-  return pTextLayout && !pTextLayout->m_bHasBlock;
+  return pTextLayout && !pTextLayout->HasBlock();
 }
 
 bool CXFA_FFText::PerformLayout() {
@@ -74,10 +74,10 @@ bool CXFA_FFText::PerformLayout() {
   CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
     return false;
-  if (!pTextLayout->m_bHasBlock)
+  if (!pTextLayout->HasBlock())
     return true;
 
-  pTextLayout->m_Blocks.clear();
+  pTextLayout->ClearBlocks();
   CXFA_ContentLayoutItem* pItem = this;
   if (!pItem->GetPrev() && !pItem->GetNext())
     return true;
@@ -95,7 +95,7 @@ bool CXFA_FFText::PerformLayout() {
     pTextLayout->ItemBlocks(rtText, pItem->GetIndex());
     pItem = pItem->GetNext();
   }
-  pTextLayout->m_bHasBlock = false;
+  pTextLayout->ResetHasBlock();
   return true;
 }
 

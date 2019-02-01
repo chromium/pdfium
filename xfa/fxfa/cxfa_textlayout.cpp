@@ -36,6 +36,8 @@
 
 namespace {
 
+constexpr float kHeightTolerance = 0.001f;
+
 void ProcessText(WideString* pText) {
   int32_t iLen = pText->GetLength();
   if (iLen == 0)
@@ -79,9 +81,6 @@ void CXFA_TextLayout::Unload() {
 }
 
 void CXFA_TextLayout::GetTextDataNode() {
-  if (!m_pTextProvider)
-    return;
-
   CXFA_Node* pNode = m_pTextProvider->GetTextNode(&m_bRichText);
   if (pNode && m_bRichText)
     m_textParser.Reset();
@@ -358,36 +357,44 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
   }
 
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_pLoader->lineHeights);
-  int32_t i = 0;
-  for (i = iLineIndex; i < iCount; i++) {
-    float fLineHeight = m_pLoader->lineHeights[i];
-    if (i == iLineIndex && fLineHeight - fContentAreaHeight > 0.001)
-      return 0;
+  if (iLineIndex < 0 || iLineIndex >= iCount)
+    return fCalcHeight;
 
-    if (fLinePos + fLineHeight - fContentAreaHeight > 0.001) {
-      if (iBlockCount >= (iBlockIndex + 1) * 2) {
-        m_Blocks[iBlockIndex * 2] = iLineIndex;
-        m_Blocks[iBlockIndex * 2 + 1] = i - iLineIndex;
-      } else {
-        m_Blocks.push_back(iLineIndex);
-        m_Blocks.push_back(i - iLineIndex);
-      }
-      if (i == iLineIndex) {
-        if (fCalcHeight <= fLinePos) {
-          if (pdfium::CollectionSize<int32_t>(m_pLoader->blocksHeight) >
-                  iBlockIndex * 2 &&
-              (m_pLoader->blocksHeight[iBlockIndex * 2] == iBlockIndex)) {
-            m_pLoader->blocksHeight[iBlockIndex * 2 + 1] = fCalcHeight;
-          } else {
-            m_pLoader->blocksHeight.push_back(iBlockIndex);
-            m_pLoader->blocksHeight.push_back(fCalcHeight);
-          }
-        }
-        return fCalcHeight;
-      }
-      return fLinePos;
+  if (m_pLoader->lineHeights[iLineIndex] - fContentAreaHeight >
+      kHeightTolerance) {
+    return 0;
+  }
+
+  for (int32_t i = iLineIndex; i < iCount; ++i) {
+    float fLineHeight = m_pLoader->lineHeights[i];
+    if (fLinePos + fLineHeight - fContentAreaHeight <= kHeightTolerance) {
+      fLinePos += fLineHeight;
+      continue;
     }
-    fLinePos += fLineHeight;
+
+    if (iBlockCount >= (iBlockIndex + 1) * 2) {
+      m_Blocks[iBlockIndex * 2] = iLineIndex;
+      m_Blocks[iBlockIndex * 2 + 1] = i - iLineIndex;
+    } else {
+      m_Blocks.push_back(iLineIndex);
+      m_Blocks.push_back(i - iLineIndex);
+    }
+
+    if (i != iLineIndex)
+      return fLinePos;
+
+    if (fCalcHeight > fLinePos)
+      return fCalcHeight;
+
+    if (pdfium::CollectionSize<int32_t>(m_pLoader->blocksHeight) >
+            iBlockIndex * 2 &&
+        (m_pLoader->blocksHeight[iBlockIndex * 2] == iBlockIndex)) {
+      m_pLoader->blocksHeight[iBlockIndex * 2 + 1] = fCalcHeight;
+    } else {
+      m_pLoader->blocksHeight.push_back(iBlockIndex);
+      m_pLoader->blocksHeight.push_back(fCalcHeight);
+    }
+    return fCalcHeight;
   }
   return fCalcHeight;
 }
@@ -552,7 +559,7 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
   int32_t i = 0;
   for (i = iLineIndex; i < iCountHeight; i++) {
     float fLineHeight = m_pLoader->lineHeights[i];
-    if (fLinePos + fLineHeight - rtText.height > 0.001) {
+    if (fLinePos + fLineHeight - rtText.height > kHeightTolerance) {
       m_Blocks.push_back(iLineIndex);
       m_Blocks.push_back(i - iLineIndex);
       bEndItem = false;
