@@ -317,21 +317,21 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
                                 float fCalcHeight,
                                 float fContentAreaHeight,
                                 float fTextHeight) {
+  ASSERT(iBlockIndex >= 0);
+
   if (!m_pLoader)
     return fCalcHeight;
 
-  int32_t iBlockCount = pdfium::CollectionSize<int32_t>(m_Blocks);
-  float fHeight = fTextHeight;
-  if (fHeight < 0)
-    fHeight = GetLayoutHeight();
+  m_pLoader->fHeight = fTextHeight;
+  if (m_pLoader->fHeight < 0)
+    m_pLoader->fHeight = GetLayoutHeight();
 
-  m_pLoader->fHeight = fHeight;
   if (fContentAreaHeight < 0)
     return fCalcHeight;
 
   m_bHasBlock = true;
-  if (iBlockCount == 0 && fHeight > 0) {
-    fHeight = fTextHeight - GetLayoutHeight();
+  if (m_Blocks.empty() && m_pLoader->fHeight > 0) {
+    float fHeight = fTextHeight - GetLayoutHeight();
     if (fHeight > 0) {
       XFA_AttributeValue iAlign = m_textParser.GetVAlign(m_pTextProvider);
       if (iAlign == XFA_AttributeValue::Middle)
@@ -342,6 +342,7 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
     }
   }
 
+  int32_t iBlockCount = pdfium::CollectionSize<int32_t>(m_Blocks);
   float fLinePos = m_pLoader->fStartLineOffset;
   int32_t iLineIndex = 0;
   if (iBlockCount > 1) {
