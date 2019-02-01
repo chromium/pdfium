@@ -2171,7 +2171,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleType1Font) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("Type1", font_dict->GetStringFor("Subtype"));
-  EXPECT_EQ("Times New Roman Bold", font_dict->GetStringFor("BaseFont"));
+  EXPECT_EQ("TimesNewRomanPS-BoldMT", font_dict->GetStringFor("BaseFont"));
   ASSERT_TRUE(font_dict->KeyExist("FirstChar"));
   ASSERT_TRUE(font_dict->KeyExist("LastChar"));
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
@@ -2199,7 +2199,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleTrueTypeFont) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("TrueType", font_dict->GetStringFor("Subtype"));
-  EXPECT_EQ("Courier New", font_dict->GetStringFor("BaseFont"));
+  EXPECT_EQ("CourierNewPSMT", font_dict->GetStringFor("BaseFont"));
   ASSERT_TRUE(font_dict->KeyExist("FirstChar"));
   ASSERT_TRUE(font_dict->KeyExist("LastChar"));
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
@@ -2229,7 +2229,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetStringFor("Subtype"));
-  EXPECT_EQ("Times New Roman-Identity-H", font_dict->GetStringFor("BaseFont"));
+  EXPECT_EQ("TimesNewRomanPSMT-Identity-H", font_dict->GetStringFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetStringFor("Encoding"));
   const CPDF_Array* descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
@@ -2240,7 +2240,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
   EXPECT_EQ("Font", cidfont_dict->GetStringFor("Type"));
   EXPECT_EQ("CIDFontType0", cidfont_dict->GetStringFor("Subtype"));
-  EXPECT_EQ("Times New Roman", cidfont_dict->GetStringFor("BaseFont"));
+  EXPECT_EQ("TimesNewRomanPSMT", cidfont_dict->GetStringFor("BaseFont"));
   const CPDF_Dictionary* cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
@@ -2277,7 +2277,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetStringFor("Subtype"));
-  EXPECT_EQ("Arial Italic", font_dict->GetStringFor("BaseFont"));
+  EXPECT_EQ("Arial-ItalicMT", font_dict->GetStringFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetStringFor("Encoding"));
   const CPDF_Array* descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
@@ -2288,7 +2288,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
   EXPECT_EQ("Font", cidfont_dict->GetStringFor("Type"));
   EXPECT_EQ("CIDFontType2", cidfont_dict->GetStringFor("Subtype"));
-  EXPECT_EQ("Arial Italic", cidfont_dict->GetStringFor("BaseFont"));
+  EXPECT_EQ("Arial-ItalicMT", cidfont_dict->GetStringFor("BaseFont"));
   const CPDF_Dictionary* cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);

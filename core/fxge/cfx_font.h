@@ -81,6 +81,7 @@ class CFX_Font {
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
   ByteString GetFaceName() const;
+  ByteString GetBaseFontName(bool restrict_to_psname) const;
   bool IsTTFont() const;
   bool GetBBox(FX_RECT* pBBox);
   bool IsEmbedded() const { return m_bEmbedded; }
