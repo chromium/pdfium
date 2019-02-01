@@ -14,8 +14,10 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
 
+class CCodec_ModuleMgr;
 class CFX_DIBBase;
 class CFX_FaceCache;
 class CFX_Font;
@@ -28,7 +30,7 @@ struct FXDIB_ResampleOptions;
 
 class CFX_PSRenderer {
  public:
-  CFX_PSRenderer();
+  explicit CFX_PSRenderer(CCodec_ModuleMgr* pModuleMgr);
   ~CFX_PSRenderer();
 
   void Init(const RetainPtr<IFX_RetainableWriteStream>& stream,
@@ -88,17 +90,18 @@ class CFX_PSRenderer {
   void WritePSBinary(const uint8_t* data, int len);
   void WriteToStream(std::ostringstream* stringStream);
 
-  RetainPtr<IFX_RetainableWriteStream> m_pStream;
-  int m_PSLevel;
-  CFX_GraphStateData m_CurGraphState;
-  bool m_bGraphStateSet;
+  bool m_bInited = false;
+  bool m_bGraphStateSet = false;
   bool m_bCmykOutput;
-  bool m_bColorSet;
-  uint32_t m_LastColor;
+  bool m_bColorSet = false;
+  int m_PSLevel = 0;
+  uint32_t m_LastColor = 0;
   FX_RECT m_ClipBox;
+  CFX_GraphStateData m_CurGraphState;
+  UnownedPtr<CCodec_ModuleMgr> m_pModuleMgr;
+  RetainPtr<IFX_RetainableWriteStream> m_pStream;
   std::vector<std::unique_ptr<CPSFont>> m_PSFontList;
   std::vector<FX_RECT> m_ClipBoxStack;
-  bool m_bInited;
 };
 
 #endif  // CORE_FXGE_WIN32_CFX_PSRENDERER_H_

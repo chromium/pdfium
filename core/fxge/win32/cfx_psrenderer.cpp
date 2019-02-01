@@ -11,7 +11,6 @@
 #include <sstream>
 #include <utility>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
 #include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_flatemodule.h"
@@ -47,7 +46,8 @@ bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
   return true;
 }
 
-void PSCompressData(int PSLevel,
+void PSCompressData(CCodec_ModuleMgr* pEncoders,
+                    int PSLevel,
                     uint8_t* src_buf,
                     uint32_t src_size,
                     uint8_t** output_buf,
@@ -59,7 +59,6 @@ void PSCompressData(int PSLevel,
   if (src_size < 1024)
     return;
 
-  CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
   uint8_t* dest_buf = nullptr;
   uint32_t dest_size = src_size;
   if (PSLevel >= 3) {
@@ -101,13 +100,10 @@ class CPSFont {
   PSGlyph m_Glyphs[256];
 };
 
-CFX_PSRenderer::CFX_PSRenderer()
-    : m_pStream(nullptr),
-      m_bGraphStateSet(false),
-      m_bColorSet(false),
-      m_bInited(false) {}
+CFX_PSRenderer::CFX_PSRenderer(CCodec_ModuleMgr* pModuleMgr)
+    : m_pModuleMgr(pModuleMgr) {}
 
-CFX_PSRenderer::~CFX_PSRenderer() {}
+CFX_PSRenderer::~CFX_PSRenderer() = default;
 
 void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
                           int pslevel,
@@ -484,8 +480,8 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       }
       uint8_t* compressed_buf;
       uint32_t compressed_size;
-      PSCompressData(m_PSLevel, output_buf, output_size, &compressed_buf,
-                     &compressed_size, &filter);
+      PSCompressData(m_pModuleMgr.Get(), m_PSLevel, output_buf, output_size,
+                     &compressed_buf, &compressed_size, &filter);
       if (output_buf != compressed_buf)
         FX_Free(output_buf);
 
@@ -691,9 +687,8 @@ bool CFX_PSRenderer::DrawText(int nChars,
 void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size;
-  CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-  if (pEncoders->GetBasicModule()->A85Encode({data, static_cast<size_t>(len)},
-                                             &dest_buf, &dest_size)) {
+  if (m_pModuleMgr->GetBasicModule()->A85Encode(
+          {data, static_cast<size_t>(len)}, &dest_buf, &dest_size)) {
     m_pStream->WriteBlock(dest_buf.get(), dest_size);
   } else {
     m_pStream->WriteBlock(data, len);

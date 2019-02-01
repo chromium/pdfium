@@ -330,10 +330,11 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
 #endif
 }
 
-CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
+CPSPrinterDriver::CPSPrinterDriver(CCodec_ModuleMgr* pModuleMgr,
+                                   HDC hDC,
                                    WindowsPrintMode mode,
                                    bool bCmykOutput)
-    : m_hDC(hDC), m_bCmykOutput(bCmykOutput) {
+    : m_hDC(hDC), m_bCmykOutput(bCmykOutput), m_PSRenderer(pModuleMgr) {
   // |mode| should be PostScript.
   ASSERT(mode == WindowsPrintMode::kModePostScript2 ||
          mode == WindowsPrintMode::kModePostScript3 ||

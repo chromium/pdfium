@@ -33,7 +33,4 @@ jumbo_source_set("fpdfapi") {
     "render",
   ]
   visibility = [ "../../*" ]
-  if (is_win) {
-    allow_circular_includes_from += [ "../fxge" ]
-  }
 }

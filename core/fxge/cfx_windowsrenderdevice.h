@@ -23,6 +23,7 @@ enum WindowsPrintMode {
   kModePostScript3PassThrough = 5,
 };
 
+class CCodec_ModuleMgr;
 class RenderDeviceDriverIface;
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
@@ -38,9 +39,10 @@ extern WindowsPrintMode g_pdfium_print_mode;
 
 class CFX_WindowsRenderDevice final : public CFX_RenderDevice {
  public:
-  static RenderDeviceDriverIface* CreateDriver(HDC hDC);
+  static RenderDeviceDriverIface* CreateDriver(CCodec_ModuleMgr* pModuleMgr,
+                                               HDC hDC);
 
-  explicit CFX_WindowsRenderDevice(HDC hDC);
+  CFX_WindowsRenderDevice(CCodec_ModuleMgr* pModuleMgr, HDC hDC);
   ~CFX_WindowsRenderDevice() override;
 };
 
