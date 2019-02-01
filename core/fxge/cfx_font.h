@@ -132,6 +132,8 @@ class CFX_Font {
   void ReleasePlatformResource();
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 
+  ByteString GetFamilyNameOrUntitled() const;
+
   mutable UnownedPtr<FXFT_FaceRec> m_Face;
   mutable UnownedPtr<CFX_FaceCache> m_FaceCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;

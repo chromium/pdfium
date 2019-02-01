@@ -174,6 +174,10 @@ int Outline_CubicTo(const FXFT_Vector* control1,
   return 0;
 }
 
+bool ShouldAppendStyle(const ByteString& style) {
+  return !style.IsEmpty() && style != "Regular";
+}
+
 }  // namespace
 
 const char CFX_Font::s_AngleSkew[] = {
@@ -517,8 +521,12 @@ ByteString CFX_Font::GetFamilyName() const {
     return ByteString();
   if (m_Face)
     return ByteString(FXFT_Get_Face_Family_Name(m_Face.Get()));
-
   return m_pSubstFont->m_Family;
+}
+
+ByteString CFX_Font::GetFamilyNameOrUntitled() const {
+  ByteString facename = GetFamilyName();
+  return facename.IsEmpty() ? kUntitledFontName : facename;
 }
 
 ByteString CFX_Font::GetFaceName() const {
@@ -526,10 +534,8 @@ ByteString CFX_Font::GetFaceName() const {
     return ByteString();
   if (m_Face) {
     ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face.Get()));
-    ByteString facename = GetFamilyName();
-    if (facename.IsEmpty())
-      facename = kUntitledFontName;
-    if (!style.IsEmpty() && style != "Regular")
+    ByteString facename = GetFamilyNameOrUntitled();
+    if (ShouldAppendStyle(style))
       facename += " " + style;
     return facename;
   }
@@ -544,12 +550,10 @@ ByteString CFX_Font::GetBaseFontName(bool restrict_to_psname) const {
     return ByteString();
   if (m_Face) {
     ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face.Get()));
-    ByteString facename = GetFamilyName();
-    if (facename.IsEmpty())
-      facename = kUntitledFontName;
+    ByteString facename = GetFamilyNameOrUntitled();
     if (IsTTFont())
       facename.Remove(' ');
-    if (!style.IsEmpty() && style != "Regular")
+    if (ShouldAppendStyle(style))
       facename += (IsTTFont() ? "," : " ") + style;
     return facename;
   }
