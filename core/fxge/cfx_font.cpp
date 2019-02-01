@@ -224,7 +224,11 @@ const CFX_Font::CharsetFontMap CFX_Font::defaultTTFMap[] = {
     {-1, nullptr}};
 
 // static
+const char CFX_Font::kUntitledFontName[] = "Untitled";
+
+// static
 const char CFX_Font::kDefaultAnsiFontName[] = "Helvetica";
+
 // static
 const char CFX_Font::kUniversalDefaultFontName[] = "Arial Unicode MS";
 
@@ -504,7 +508,7 @@ ByteString CFX_Font::GetPsName() const {
 
   ByteString psName = FXFT_Get_Postscript_Name(m_Face.Get());
   if (psName.IsEmpty())
-    psName = "Untitled";
+    psName = kUntitledFontName;
   return psName;
 }
 
@@ -524,7 +528,7 @@ ByteString CFX_Font::GetFaceName() const {
     ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face.Get()));
     ByteString facename = GetFamilyName();
     if (facename.IsEmpty())
-      facename = "Untitled";
+      facename = kUntitledFontName;
     if (!style.IsEmpty() && style != "Regular")
       facename += " " + style;
     return facename;
@@ -534,7 +538,7 @@ ByteString CFX_Font::GetFaceName() const {
 
 ByteString CFX_Font::GetBaseFontName(bool restrict_to_psname) const {
   ByteString psname = GetPsName();
-  if (restrict_to_psname || (!psname.IsEmpty() && psname != "Untitled"))
+  if (restrict_to_psname || (!psname.IsEmpty() && psname != kUntitledFontName))
     return psname;
   if (!m_Face && !m_pSubstFont)
     return ByteString();
@@ -542,7 +546,7 @@ ByteString CFX_Font::GetBaseFontName(bool restrict_to_psname) const {
     ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face.Get()));
     ByteString facename = GetFamilyName();
     if (facename.IsEmpty())
-      facename = "Untitled";
+      facename = kUntitledFontName;
     if (IsTTFont())
       facename.Remove(' ');
     if (!style.IsEmpty() && style != "Regular")

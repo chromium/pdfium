@@ -31,6 +31,9 @@ class CFX_Font {
   CFX_Font();
   ~CFX_Font();
 
+  // Used when the font name is empty.
+  static const char kUntitledFontName[];
+
   static const char kDefaultAnsiFontName[];
   static const char kUniversalDefaultFontName[];
   static ByteString GetDefaultFontNameByCharset(uint8_t nCharset);

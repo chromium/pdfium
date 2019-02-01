@@ -271,7 +271,7 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
       "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
   ByteString name = pFont->GetBaseFontName(font_type == FPDF_FONT_TYPE1);
   if (name.IsEmpty())
-    name = "Untitled";
+    name = CFX_Font::kUntitledFontName;
   fontDict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   uint32_t glyphIndex;
@@ -316,7 +316,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
   fontDict->SetNewFor<CPDF_Name>("Encoding", encoding);
   ByteString name = pFont->GetBaseFontName(font_type == FPDF_FONT_TYPE1);
   if (name.IsEmpty())
-    name = "Untitled";
+    name = CFX_Font::kUntitledFontName;
   fontDict->SetNewFor<CPDF_Name>(
       "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
 
