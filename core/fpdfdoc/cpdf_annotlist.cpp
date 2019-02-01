@@ -71,7 +71,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   if (!PopupAppearsForAnnotType(pAnnot->GetSubtype()))
     return nullptr;
 
-  CPDF_Dictionary* pParentDict = pAnnot->GetAnnotDict();
+  const CPDF_Dictionary* pParentDict = pAnnot->GetAnnotDict();
   if (!pParentDict)
     return nullptr;
 
@@ -224,10 +224,10 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       continue;
 
     if (pOptions) {
-      CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-      if (pOptions->GetOCContext() && pAnnotDict &&
-          !pOptions->GetOCContext()->CheckOCGVisible(
-              pAnnotDict->GetDictFor("OC"))) {
+      const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
+      const CPDF_OCContext* pOCContext = pOptions->GetOCContext();
+      if (pAnnotDict && pOCContext &&
+          !pOCContext->CheckOCGVisible(pAnnotDict->GetDictFor("OC"))) {
         continue;
       }
     }

@@ -138,14 +138,10 @@ bool CPDF_Annot::ShouldGenerateAP() const {
   return !IsHidden();
 }
 
-bool CPDF_Annot::ShouldDrawAnnotation() {
+bool CPDF_Annot::ShouldDrawAnnotation() const {
   if (IsHidden())
     return false;
-
-  if (m_nSubtype == CPDF_Annot::Subtype::POPUP && !m_bOpenState)
-    return false;
-
-  return true;
+  return m_bOpenState || m_nSubtype != CPDF_Annot::Subtype::POPUP;
 }
 
 void CPDF_Annot::ClearCachedAP() {

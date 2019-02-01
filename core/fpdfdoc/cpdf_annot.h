@@ -83,7 +83,8 @@ class CPDF_Annot {
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
-  CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
+  const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
+  CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict.Get(); }
 
   bool IsHidden() const;
 
@@ -110,11 +111,11 @@ class CPDF_Annot {
   void Init();
   void GenerateAPIfNeeded();
   bool ShouldGenerateAP() const;
-  bool ShouldDrawAnnotation();
+  bool ShouldDrawAnnotation() const;
 
   CFX_FloatRect RectForDrawing() const;
 
-  MaybeOwned<CPDF_Dictionary> m_pAnnotDict;
+  MaybeOwned<CPDF_Dictionary> const m_pAnnotDict;
   UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
