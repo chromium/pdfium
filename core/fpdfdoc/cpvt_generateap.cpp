@@ -27,9 +27,12 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "third_party/base/ptr_util.h"
+
+namespace {
 
 struct CPVT_Dash {
   CPVT_Dash(int32_t dash, int32_t gap, int32_t phase)
@@ -39,8 +42,6 @@ struct CPVT_Dash {
   int32_t nGap;
   int32_t nPhase;
 };
-
-namespace {
 
 enum class PaintOperation { STROKE, FILL };
 
@@ -904,9 +905,9 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }  // namespace
 
 // static
-void CPVT_GenerateAP::GenerateFormAP(Type type,
-                                     CPDF_Document* pDoc,
-                                     CPDF_Dictionary* pAnnotDict) {
+void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
+                                     CPDF_Dictionary* pAnnotDict,
+                                     FormType type) {
   CPDF_Dictionary* pRootDict = pDoc->GetRoot();
   if (!pRootDict)
     return;
@@ -1339,9 +1340,9 @@ void CPVT_GenerateAP::GenerateEmptyAP(CPDF_Document* pDoc,
 }
 
 // static
-bool CPVT_GenerateAP::GenerateAnnotAP(CPDF_Annot::Subtype subtype,
-                                      CPDF_Document* pDoc,
-                                      CPDF_Dictionary* pAnnotDict) {
+bool CPVT_GenerateAP::GenerateAnnotAP(CPDF_Document* pDoc,
+                                      CPDF_Dictionary* pAnnotDict,
+                                      CPDF_Annot::Subtype subtype) {
   switch (subtype) {
     case CPDF_Annot::Subtype::CIRCLE:
       return GenerateCircleAP(pDoc, pAnnotDict);

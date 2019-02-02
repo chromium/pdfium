@@ -130,8 +130,8 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   ByteString field_type = pFieldTypeObj->GetString();
   if (field_type == "Tx") {
-    CPVT_GenerateAP::GenerateFormAP(CPVT_GenerateAP::kTextField, pDoc,
-                                    pAnnotDict);
+    CPVT_GenerateAP::GenerateFormAP(pDoc, pAnnotDict,
+                                    CPVT_GenerateAP::kTextField);
     return;
   }
 
@@ -140,7 +140,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (field_type == "Ch") {
     auto type = (flags & (1 << 17)) ? CPVT_GenerateAP::kComboBox
                                     : CPVT_GenerateAP::kListBox;
-    CPVT_GenerateAP::GenerateFormAP(type, pDoc, pAnnotDict);
+    CPVT_GenerateAP::GenerateFormAP(pDoc, pAnnotDict, type);
     return;
   }
 

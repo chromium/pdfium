@@ -118,8 +118,8 @@ void CPDF_Annot::Init() {
 void CPDF_Annot::GenerateAPIfNeeded() {
   if (!ShouldGenerateAP())
     return;
-  if (!CPVT_GenerateAP::GenerateAnnotAP(m_nSubtype, m_pDocument.Get(),
-                                        m_pAnnotDict.Get())) {
+  if (!CPVT_GenerateAP::GenerateAnnotAP(m_pDocument.Get(), m_pAnnotDict.Get(),
+                                        m_nSubtype)) {
     return;
   }
 
