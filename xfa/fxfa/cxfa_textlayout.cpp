@@ -347,9 +347,10 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
   int32_t iLineIndex = 0;
   if (iBlockCount > 1) {
     if (iBlockCount >= (iBlockIndex + 1) * 2) {
-      iLineIndex = m_Blocks[iBlockIndex * 2];
+      iLineIndex = GetBlockIndex(iBlockIndex);
     } else {
-      iLineIndex = m_Blocks[iBlockCount - 1] + m_Blocks[iBlockCount - 2];
+      int32_t iLast = iBlockCount / 2 - 1;
+      iLineIndex = GetBlockIndex(iLast) + GetBlockLength(iLast);
     }
     if (!m_pLoader->blockHeights.empty()) {
       for (int32_t i = 0; i < iBlockIndex; i++)
@@ -374,8 +375,8 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
     }
 
     if (iBlockCount >= (iBlockIndex + 1) * 2) {
-      m_Blocks[iBlockIndex * 2] = iLineIndex;
-      m_Blocks[iBlockIndex * 2 + 1] = i - iLineIndex;
+      GetBlockIndex(iBlockIndex) = iLineIndex;
+      GetBlockLength(iBlockIndex) = i - iLineIndex;
     } else {
       m_Blocks.push_back(iLineIndex);
       m_Blocks.push_back(i - iLineIndex);
@@ -466,14 +467,14 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
 
     m_pLoader->iChar = 0;
     if (iCount > 1)
-      m_pLoader->iTotalLines = m_Blocks[iBlock * 2 + 1];
+      m_pLoader->iTotalLines = GetBlockLength(iBlock);
 
     Loader(szText.width, &fLinePos, true);
     if (iCount == 0 && m_pLoader->fStartLineOffset < 0.1f)
       UpdateAlign(szText.height, fLinePos);
   } else if (m_pTextDataNode) {
     if (iBlock * 2 < iCount - 2)
-      m_pLoader->iTotalLines = m_Blocks[iBlock * 2 + 1];
+      m_pLoader->iTotalLines = GetBlockLength(iBlock);
 
     m_pBreak->Reset();
     if (m_bRichText) {
@@ -550,7 +551,8 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
     } else {
       fLinePos = 0;
     }
-    iLineIndex = m_Blocks[iBlockCount - 1] + m_Blocks[iBlockCount - 2];
+    int32_t iLast = iBlockCount / 2 - 1;
+    iLineIndex = GetBlockIndex(iLast) + GetBlockLength(iLast);
   }
 
   int32_t i = 0;
@@ -592,10 +594,9 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   int32_t iPieceLines = pdfium::CollectionSize<int32_t>(m_pieceLines);
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Blocks);
   if (iCount > 0) {
-    iBlock *= 2;
-    if (iBlock < iCount) {
-      iLineStart = m_Blocks[iBlock];
-      iPieceLines = m_Blocks[iBlock + 1];
+    if (iBlock * 2 < iCount) {
+      iLineStart = GetBlockIndex(iBlock);
+      iPieceLines = GetBlockLength(iBlock);
     } else {
       iPieceLines = 0;
     }
