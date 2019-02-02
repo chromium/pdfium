@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_ffdocview.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
@@ -168,12 +170,16 @@ void CXFA_FFDocView::UpdateDocView() {
     return;
 
   LockUpdate();
-  for (CXFA_Node* pNode : m_NewAddedNodes) {
-    InitCalculate(pNode);
-    InitValidate(pNode);
-    ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Ready, true, true);
+  while (!m_NewAddedNodes.empty()) {
+    std::vector<CXFA_Node*> nodes = std::move(m_NewAddedNodes);
+    m_NewAddedNodes.clear();
+    for (CXFA_Node* pNode : nodes) {
+      InitCalculate(pNode);
+      InitValidate(pNode);
+      ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Ready, true, true);
+    }
+    // May have created more newly added nodes, try again.
   }
-  m_NewAddedNodes.clear();
 
   RunSubformIndexChange();
   RunCalculateWidgets();

@@ -466,6 +466,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<float> TryMaxWidth();
   Optional<float> TryMaxHeight();
   int32_t ProcessEvent(CXFA_FFDocView* docView,
+                       XFA_AttributeValue iActivity,
                        CXFA_Event* event,
                        CXFA_EventParam* pEventParam);
 

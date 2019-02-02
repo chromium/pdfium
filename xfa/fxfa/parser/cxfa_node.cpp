@@ -2240,7 +2240,7 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
   bool first = true;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   for (CXFA_Event* event : eventArray) {
-    int32_t result = ProcessEvent(docView, event, pEventParam);
+    int32_t result = ProcessEvent(docView, iActivity, event, pEventParam);
     if (first || result == XFA_EVENTERROR_Success)
       iRet = result;
     first = false;
@@ -2249,6 +2249,7 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
 }
 
 int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
+                                XFA_AttributeValue iActivity,
                                 CXFA_Event* event,
                                 CXFA_EventParam* pEventParam) {
   if (!event)
@@ -2258,6 +2259,10 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
     case XFA_Element::Execute:
       break;
     case XFA_Element::Script:
+      if (iActivity == XFA_AttributeValue::DocClose) {
+        // Too late, scripting engine already gone.
+        return false;
+      }
       return ExecuteScript(docView, event->GetScriptIfExists(), pEventParam);
     case XFA_Element::SignData:
       break;
