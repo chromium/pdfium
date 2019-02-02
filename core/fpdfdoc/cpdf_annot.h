@@ -104,7 +104,7 @@ class CPDF_Annot {
                   const CPDF_RenderOptions* pOptions);
   CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
   void SetOpenState(bool bOpenState) { m_bOpenState = bOpenState; }
-  CPDF_Annot* GetPopupAnnot() const { return m_pPopupAnnot; }
+  CPDF_Annot* GetPopupAnnot() const { return m_pPopupAnnot.Get(); }
   void SetPopupAnnot(CPDF_Annot* pAnnot) { m_pPopupAnnot = pAnnot; }
 
  private:
@@ -119,13 +119,12 @@ class CPDF_Annot {
   UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
+  // If non-null, then this is not a popup annotation.
+  UnownedPtr<CPDF_Annot> m_pPopupAnnot;
   // |m_bOpenState| is only set for popup annotations.
   bool m_bOpenState = false;
   bool m_bHasGeneratedAP;
   bool m_bIsTextMarkupAnnotation;
-  // Not owned. If there is a valid pointer in |m_pPopupAnnot|,
-  // then this annot is never a popup.
-  CPDF_Annot* m_pPopupAnnot = nullptr;
 };
 
 // Get the AP in an annotation dict for a given appearance mode.

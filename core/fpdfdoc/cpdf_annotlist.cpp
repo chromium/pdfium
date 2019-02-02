@@ -196,8 +196,8 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     }
   }
 
-  size_t nAnnotListSize = m_AnnotList.size();
-  for (size_t i = 0; i < nAnnotListSize; ++i) {
+  m_nAnnotCount = m_AnnotList.size();
+  for (size_t i = 0; i < m_nAnnotCount; ++i) {
     std::unique_ptr<CPDF_Annot> pPopupAnnot =
         CreatePopupAnnot(m_pDocument.Get(), pPage, m_AnnotList[i].get());
     if (pPopupAnnot)
@@ -205,7 +205,16 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   }
 }
 
-CPDF_AnnotList::~CPDF_AnnotList() = default;
+CPDF_AnnotList::~CPDF_AnnotList() {
+  // Move the pop-up annotations out of |m_AnnotList| into |popups|. Then
+  // destroy |m_AnnotList| first. This prevents dangling pointers to the pop-up
+  // annotations.
+  size_t nPopupCount = m_AnnotList.size() - m_nAnnotCount;
+  std::vector<std::unique_ptr<CPDF_Annot>> popups(nPopupCount);
+  for (size_t i = 0; i < nPopupCount; ++i)
+    popups[i] = std::move(m_AnnotList[m_nAnnotCount + i]);
+  m_AnnotList.clear();
+}
 
 void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
