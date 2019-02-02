@@ -17,6 +17,11 @@ class CFX_CSSComputedStyle;
 class CFX_XMLNode;
 class CXFA_Node;
 
+struct CXFA_BlockHeight {
+  int iBlockIndex;
+  float fHeight;
+};
+
 struct CXFA_LoaderContext {
   CXFA_LoaderContext();
   ~CXFA_LoaderContext();
@@ -33,7 +38,7 @@ struct CXFA_LoaderContext {
   UnownedPtr<CXFA_Node> pNode;
   RetainPtr<CFX_CSSComputedStyle> pParentStyle;
   std::vector<float> lineHeights;
-  std::vector<float> blocksHeight;
+  std::vector<CXFA_BlockHeight> blockHeights;
 };
 
 #endif  // XFA_FXFA_CXFA_LOADERCONTEXT_H_
