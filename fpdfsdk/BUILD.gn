@@ -26,7 +26,6 @@ jumbo_source_set("fpdfsdk") {
     "cpdfsdk_baannot.h",
     "cpdfsdk_baannothandler.cpp",
     "cpdfsdk_baannothandler.h",
-    "cpdfsdk_common.h",
     "cpdfsdk_customaccess.cpp",
     "cpdfsdk_customaccess.h",
     "cpdfsdk_fieldaction.cpp",

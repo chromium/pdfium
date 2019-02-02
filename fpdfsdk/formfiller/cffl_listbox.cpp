@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "fpdfsdk/cpdfsdk_common.h"
+#include "constants/form_flags.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
@@ -27,7 +27,7 @@ CFFL_ListBox::~CFFL_ListBox() {}
 CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
   CPWL_Wnd::CreateParams cp = CFFL_TextObject::GetCreateParam();
   uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
-  if (dwFieldFlag & FIELDFLAG_MULTISELECT)
+  if (dwFieldFlag & pdfium::form_flags::kChoiceMultiSelect)
     cp.dwFlags |= PLBS_MULTIPLESEL;
 
   cp.dwFlags |= PWS_VSCROLL;
@@ -88,7 +88,7 @@ bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
   if (!pListBox)
     return false;
 
-  if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
+  if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
     size_t nSelCount = 0;
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; ++i) {
       if (pListBox->IsItemSelected(i)) {
@@ -112,7 +112,7 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
 
   int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
   m_pWidget->ClearSelection(NotificationOption::kDoNotNotify);
-  if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
+  if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
       if (pListBox->IsItemSelected(i)) {
         m_pWidget->SetOptionSelection(i, true,
@@ -145,7 +145,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
                                  CPDFSDK_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::kValidate:
-      if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
+      if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
         fa.sValue.clear();
       } else {
         auto* pListBox =
@@ -159,7 +159,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
       break;
     case CPDF_AAction::kLoseFocus:
     case CPDF_AAction::kGetFocus:
-      if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
+      if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
         fa.sValue.clear();
       } else {
         int32_t nCurSel = m_pWidget->GetSelectedIndex(0);

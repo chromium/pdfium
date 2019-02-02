@@ -42,6 +42,7 @@ jumbo_source_set("pwl") {
   configs += [ "../../:pdfium_core_config" ]
   deps = [
     "../../:pdfium_public_headers",
+    "../../constants",
     "../../core/fpdfapi/font",
     "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",

@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
@@ -42,7 +43,7 @@ bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
     return false;
 
   int nFieldFlags = pWidget->GetFieldFlags();
-  if ((nFieldFlags & FIELDFLAG_READONLY) == FIELDFLAG_READONLY)
+  if (nFieldFlags & pdfium::form_flags::kReadOnly)
     return false;
 
   if (pWidget->GetFieldType() == FormFieldType::kPushButton)

@@ -12,6 +12,7 @@
 
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
+#include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -139,15 +140,16 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   CPDF_Object* pFieldFlagsObj = FPDF_GetFieldAttr(pAnnotDict, "Ff");
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
   if (field_type == "Ch") {
-    auto type = (flags & (1 << 17)) ? CPVT_GenerateAP::kComboBox
-                                    : CPVT_GenerateAP::kListBox;
+    auto type = (flags & pdfium::form_flags::kChoiceCombo)
+                    ? CPVT_GenerateAP::kComboBox
+                    : CPVT_GenerateAP::kListBox;
     CPVT_GenerateAP::GenerateFormAP(pDoc, pAnnotDict, type);
     return;
   }
 
   if (field_type != "Btn")
     return;
-  if (flags & (1 << 16))
+  if (flags & pdfium::form_flags::kButtonPushbutton)
     return;
   if (pAnnotDict->KeyExist(pdfium::annotation::kAS))
     return;

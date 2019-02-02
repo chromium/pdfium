@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 
+#include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/autorestorer.h"
@@ -451,7 +452,7 @@ bool CFFL_InteractiveFormFiller::IsVisible(CPDFSDK_Widget* pWidget) {
 
 bool CFFL_InteractiveFormFiller::IsReadOnly(CPDFSDK_Widget* pWidget) {
   int nFieldFlags = pWidget->GetFieldFlags();
-  return (nFieldFlags & FIELDFLAG_READONLY) == FIELDFLAG_READONLY;
+  return !!(nFieldFlags & pdfium::form_flags::kReadOnly);
 }
 
 bool CFFL_InteractiveFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget) {

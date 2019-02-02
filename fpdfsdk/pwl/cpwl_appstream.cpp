@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "constants/form_flags.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -1757,7 +1758,7 @@ void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   pEdit->SetAlignmentH(pControl->GetControlAlignment(), true);
 
   uint32_t dwFieldFlags = pField->GetFieldFlags();
-  bool bMultiLine = (dwFieldFlags >> 12) & 1;
+  bool bMultiLine = dwFieldFlags & pdfium::form_flags::kTextMultiline;
   if (bMultiLine) {
     pEdit->SetMultiLine(true, true);
     pEdit->SetAutoReturn(true, true);
@@ -1766,13 +1767,13 @@ void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   }
 
   uint16_t subWord = 0;
-  if ((dwFieldFlags >> 13) & 1) {
+  if (dwFieldFlags & pdfium::form_flags::kTextPassword) {
     subWord = '*';
     pEdit->SetPasswordChar(subWord, true);
   }
 
   int nMaxLen = pField->GetMaxLen();
-  bool bCharArray = (dwFieldFlags >> 24) & 1;
+  bool bCharArray = dwFieldFlags & pdfium::form_flags::kTextComb;
   float fFontSize = widget_->GetFontSize();
 
 #ifdef PDF_ENABLE_XFA
