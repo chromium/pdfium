@@ -62,6 +62,11 @@ class CXFA_TextLayout {
   void ResetHasBlock() { m_bHasBlock = false; }
 
  private:
+  struct BlockData {
+    int32_t iIndex;
+    int32_t iLength;
+  };
+
   void GetTextDataNode();
   CFX_XMLNode* GetXMLContainerNode();
   std::unique_ptr<CFX_RTFBreak> CreateBreak(bool bDefault);
@@ -111,15 +116,15 @@ class CXFA_TextLayout {
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
-  int32_t& GetBlockIndex(int32_t index) { return m_Blocks[index * 2]; }
-  int32_t& GetBlockLength(int32_t index) { return m_Blocks[index * 2 + 1]; }
+  int32_t& GetBlockIndex(int32_t index) { return m_Blocks[index].iIndex; }
+  int32_t& GetBlockLength(int32_t index) { return m_Blocks[index].iLength; }
 
   bool m_bHasBlock = false;
   bool m_bRichText = false;
   bool m_bBlockContinue = true;
   int32_t m_iLines = 0;
   float m_fMaxWidth = 0;
-  std::vector<int32_t> m_Blocks;
+  std::vector<BlockData> m_Blocks;
   UnownedPtr<CXFA_FFDoc> const m_pDoc;
   CXFA_TextProvider* const m_pTextProvider;  // Raw, owned by tree node.
   CXFA_Node* m_pTextDataNode = nullptr;      // Raw, owned by tree node.
