@@ -472,9 +472,8 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
     if (iCount == 0 && m_pLoader->fStartLineOffset < 0.1f)
       UpdateAlign(szText.height, fLinePos);
   } else if (m_pTextDataNode) {
-    iBlock *= 2;
-    if (iBlock < iCount - 2)
-      m_pLoader->iTotalLines = m_Blocks[iBlock + 1];
+    if (iBlock * 2 < iCount - 2)
+      m_pLoader->iTotalLines = m_Blocks[iBlock * 2 + 1];
 
     m_pBreak->Reset();
     if (m_bRichText) {
@@ -522,7 +521,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
       LoadText(pNode, szText.width, &fLinePos, true);
     }
   }
-  if (iBlock == iCount) {
+  if (iBlock * 2 == iCount) {
     m_pTabstopContext.reset();
     m_pLoader.reset();
   }
