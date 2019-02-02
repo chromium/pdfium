@@ -23,6 +23,8 @@ constexpr char kAP[] = "AP";
 constexpr char kAS[] = "AS";
 constexpr char kBorder[] = "Border";
 constexpr char kC[] = "C";
+constexpr char kStructParent[] = "StructParent";
+constexpr char kOC[] = "OC";
 
 }  // namespace annotation
 }  // namespace pdfium
