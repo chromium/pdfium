@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "constants/annotation_common.h"
+#include "constants/annotation_flags.h"
 #include "constants/page_object.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -102,14 +103,14 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
       continue;
 
     int nAnnotFlag = pAnnotDict->GetIntegerFor("F");
-    if (nAnnotFlag & ANNOTFLAG_HIDDEN)
+    if (nAnnotFlag & pdfium::annotation_flags::kHidden)
       continue;
 
     bool bParseStream;
     if (nUsage == FLAT_NORMALDISPLAY)
-      bParseStream = !(nAnnotFlag & ANNOTFLAG_INVISIBLE);
+      bParseStream = !(nAnnotFlag & pdfium::annotation_flags::kInvisible);
     else
-      bParseStream = !!(nAnnotFlag & ANNOTFLAG_PRINT);
+      bParseStream = !!(nAnnotFlag & pdfium::annotation_flags::kPrint);
     if (bParseStream)
       ParserStream(pPageDic, pAnnotDict, pRectArray, pObjectArray);
   }

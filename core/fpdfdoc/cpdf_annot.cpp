@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "constants/annotation_common.h"
+#include "constants/annotation_flags.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -178,7 +179,7 @@ uint32_t CPDF_Annot::GetFlags() const {
 }
 
 bool CPDF_Annot::IsHidden() const {
-  return !!(GetFlags() & ANNOTFLAG_HIDDEN);
+  return !!(GetFlags() & pdfium::annotation_flags::kHidden);
 }
 
 CPDF_Stream* GetAnnotAP(CPDF_Dictionary* pAnnotDict,
@@ -438,15 +439,15 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     return;
 
   uint32_t annot_flags = GetFlags();
-  if (annot_flags & ANNOTFLAG_HIDDEN) {
+  if (annot_flags & pdfium::annotation_flags::kHidden)
     return;
-  }
+
   bool bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER ||
                    (pOptions && pOptions->GetOptions().bPrintPreview);
-  if (bPrinting && (annot_flags & ANNOTFLAG_PRINT) == 0) {
+  if (bPrinting && (annot_flags & pdfium::annotation_flags::kPrint) == 0) {
     return;
   }
-  if (!bPrinting && (annot_flags & ANNOTFLAG_NOVIEW)) {
+  if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView)) {
     return;
   }
   CPDF_Dictionary* pBS = m_pAnnotDict->GetDictFor("BS");

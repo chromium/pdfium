@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "constants/annotation_common.h"
+#include "constants/annotation_flags.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -218,8 +219,9 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
 
 bool CPDFSDK_BAAnnot::IsVisible() const {
   uint32_t nFlags = GetFlags();
-  return !((nFlags & ANNOTFLAG_INVISIBLE) || (nFlags & ANNOTFLAG_HIDDEN) ||
-           (nFlags & ANNOTFLAG_NOVIEW));
+  return !((nFlags & pdfium::annotation_flags::kInvisible) ||
+           (nFlags & pdfium::annotation_flags::kHidden) ||
+           (nFlags & pdfium::annotation_flags::kNoView));
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAction() const {

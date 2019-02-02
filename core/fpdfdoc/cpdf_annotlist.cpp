@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "constants/annotation_common.h"
+#include "constants/annotation_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -230,13 +231,13 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       continue;
 
     uint32_t annot_flags = pAnnot->GetFlags();
-    if (annot_flags & ANNOTFLAG_HIDDEN)
+    if (annot_flags & pdfium::annotation_flags::kHidden)
       continue;
 
-    if (bPrinting && (annot_flags & ANNOTFLAG_PRINT) == 0)
+    if (bPrinting && (annot_flags & pdfium::annotation_flags::kPrint) == 0)
       continue;
 
-    if (!bPrinting && (annot_flags & ANNOTFLAG_NOVIEW))
+    if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView))
       continue;
 
     if (pOptions) {
@@ -274,11 +275,11 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    uint32_t dwAnnotFlags,
                                    CPDF_RenderOptions* pOptions,
                                    FX_RECT* pClipRect) {
-  if (dwAnnotFlags & ANNOTFLAG_INVISIBLE) {
+  if (dwAnnotFlags & pdfium::annotation_flags::kInvisible) {
     DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, false,
                 pOptions, pClipRect);
   }
-  if (dwAnnotFlags & ANNOTFLAG_HIDDEN) {
+  if (dwAnnotFlags & pdfium::annotation_flags::kHidden) {
     DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, true,
                 pOptions, pClipRect);
   }
@@ -290,8 +291,9 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    const CFX_Matrix* pMatrix,
                                    bool bShowWidget,
                                    CPDF_RenderOptions* pOptions) {
-  uint32_t dwAnnotFlags = bShowWidget ? ANNOTFLAG_INVISIBLE | ANNOTFLAG_HIDDEN
-                                      : ANNOTFLAG_INVISIBLE;
+  uint32_t dwAnnotFlags = bShowWidget ? pdfium::annotation_flags::kInvisible |
+                                            pdfium::annotation_flags::kHidden
+                                      : pdfium::annotation_flags::kInvisible;
   DisplayAnnots(pPage, nullptr, pContext, bPrinting, pMatrix, dwAnnotFlags,
                 pOptions, nullptr);
 }

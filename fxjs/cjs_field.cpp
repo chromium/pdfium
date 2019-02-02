@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "constants/annotation_flags.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -150,26 +151,27 @@ bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
   uint32_t dwFlag = pWidget->GetFlags();
   switch (value) {
     case 0:
-      dwFlag &= ~ANNOTFLAG_INVISIBLE;
-      dwFlag &= ~ANNOTFLAG_HIDDEN;
-      dwFlag &= ~ANNOTFLAG_NOVIEW;
-      dwFlag |= ANNOTFLAG_PRINT;
+      dwFlag &= ~pdfium::annotation_flags::kInvisible;
+      dwFlag &= ~pdfium::annotation_flags::kHidden;
+      dwFlag &= ~pdfium::annotation_flags::kNoView;
+      dwFlag |= pdfium::annotation_flags::kPrint;
       break;
     case 1:
-      dwFlag &= ~ANNOTFLAG_INVISIBLE;
-      dwFlag &= ~ANNOTFLAG_NOVIEW;
-      dwFlag |= (ANNOTFLAG_HIDDEN | ANNOTFLAG_PRINT);
+      dwFlag &= ~pdfium::annotation_flags::kInvisible;
+      dwFlag &= ~pdfium::annotation_flags::kNoView;
+      dwFlag |= (pdfium::annotation_flags::kHidden |
+                 pdfium::annotation_flags::kPrint);
       break;
     case 2:
-      dwFlag &= ~ANNOTFLAG_INVISIBLE;
-      dwFlag &= ~ANNOTFLAG_PRINT;
-      dwFlag &= ~ANNOTFLAG_HIDDEN;
-      dwFlag &= ~ANNOTFLAG_NOVIEW;
+      dwFlag &= ~pdfium::annotation_flags::kInvisible;
+      dwFlag &= ~pdfium::annotation_flags::kPrint;
+      dwFlag &= ~pdfium::annotation_flags::kHidden;
+      dwFlag &= ~pdfium::annotation_flags::kNoView;
       break;
     case 3:
-      dwFlag |= ANNOTFLAG_NOVIEW;
-      dwFlag |= ANNOTFLAG_PRINT;
-      dwFlag &= ~ANNOTFLAG_HIDDEN;
+      dwFlag |= pdfium::annotation_flags::kNoView;
+      dwFlag |= pdfium::annotation_flags::kPrint;
+      dwFlag &= ~pdfium::annotation_flags::kHidden;
       break;
   }
 
@@ -1147,11 +1149,13 @@ CJS_Result CJS_Field::get_display(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   uint32_t dwFlag = pWidget->GetFlags();
-  if (ANNOTFLAG_INVISIBLE & dwFlag || ANNOTFLAG_HIDDEN & dwFlag)
+  if (pdfium::annotation_flags::kInvisible & dwFlag ||
+      pdfium::annotation_flags::kHidden & dwFlag) {
     return CJS_Result::Success(pRuntime->NewNumber(1));
+  }
 
-  if (ANNOTFLAG_PRINT & dwFlag) {
-    if (ANNOTFLAG_NOVIEW & dwFlag)
+  if (pdfium::annotation_flags::kPrint & dwFlag) {
+    if (pdfium::annotation_flags::kNoView & dwFlag)
       return CJS_Result::Success(pRuntime->NewNumber(3));
     return CJS_Result::Success(pRuntime->NewNumber(0));
   }
@@ -1339,8 +1343,9 @@ CJS_Result CJS_Field::get_hidden(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   uint32_t dwFlags = pWidget->GetFlags();
-  return CJS_Result::Success(pRuntime->NewBoolean(
-      ANNOTFLAG_INVISIBLE & dwFlags || ANNOTFLAG_HIDDEN & dwFlags));
+  return CJS_Result::Success(
+      pRuntime->NewBoolean(pdfium::annotation_flags::kInvisible & dwFlags ||
+                           pdfium::annotation_flags::kHidden & dwFlags));
 }
 
 CJS_Result CJS_Field::set_hidden(CJS_Runtime* pRuntime,
@@ -1565,8 +1570,8 @@ CJS_Result CJS_Field::get_print(CJS_Runtime* pRuntime) {
   if (!pWidget)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  return CJS_Result::Success(
-      pRuntime->NewBoolean(!!(pWidget->GetFlags() & ANNOTFLAG_PRINT)));
+  return CJS_Result::Success(pRuntime->NewBoolean(
+      !!(pWidget->GetFlags() & pdfium::annotation_flags::kPrint)));
 }
 
 CJS_Result CJS_Field::set_print(CJS_Runtime* pRuntime,
@@ -1587,9 +1592,9 @@ CJS_Result CJS_Field::set_print(CJS_Runtime* pRuntime,
                 pForm->GetWidget(pFormField->GetControl(i))) {
           uint32_t dwFlags = pWidget->GetFlags();
           if (pRuntime->ToBoolean(vp))
-            dwFlags |= ANNOTFLAG_PRINT;
+            dwFlags |= pdfium::annotation_flags::kPrint;
           else
-            dwFlags &= ~ANNOTFLAG_PRINT;
+            dwFlags &= ~pdfium::annotation_flags::kPrint;
 
           if (dwFlags != pWidget->GetFlags()) {
             pWidget->SetFlags(dwFlags);
@@ -1612,9 +1617,9 @@ CJS_Result CJS_Field::set_print(CJS_Runtime* pRuntime,
       if (CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl)) {
         uint32_t dwFlags = pWidget->GetFlags();
         if (pRuntime->ToBoolean(vp))
-          dwFlags |= ANNOTFLAG_PRINT;
+          dwFlags |= pdfium::annotation_flags::kPrint;
         else
-          dwFlags &= ~ANNOTFLAG_PRINT;
+          dwFlags &= ~pdfium::annotation_flags::kPrint;
 
         if (dwFlags != pWidget->GetFlags()) {
           pWidget->SetFlags(dwFlags);

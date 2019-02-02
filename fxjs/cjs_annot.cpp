@@ -6,6 +6,7 @@
 
 #include "fxjs/cjs_annot.h"
 
+#include "constants/annotation_flags.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_object.h"
@@ -61,15 +62,15 @@ CJS_Result CJS_Annot::set_hidden(CJS_Runtime* pRuntime,
 
   uint32_t flags = pBAAnnot->GetFlags();
   if (bHidden) {
-    flags |= ANNOTFLAG_HIDDEN;
-    flags |= ANNOTFLAG_INVISIBLE;
-    flags |= ANNOTFLAG_NOVIEW;
-    flags &= ~ANNOTFLAG_PRINT;
+    flags |= pdfium::annotation_flags::kHidden;
+    flags |= pdfium::annotation_flags::kInvisible;
+    flags |= pdfium::annotation_flags::kNoView;
+    flags &= ~pdfium::annotation_flags::kPrint;
   } else {
-    flags &= ~ANNOTFLAG_HIDDEN;
-    flags &= ~ANNOTFLAG_INVISIBLE;
-    flags &= ~ANNOTFLAG_NOVIEW;
-    flags |= ANNOTFLAG_PRINT;
+    flags &= ~pdfium::annotation_flags::kHidden;
+    flags &= ~pdfium::annotation_flags::kInvisible;
+    flags &= ~pdfium::annotation_flags::kNoView;
+    flags |= pdfium::annotation_flags::kPrint;
   }
   pBAAnnot->SetFlags(flags);
   return CJS_Result::Success();

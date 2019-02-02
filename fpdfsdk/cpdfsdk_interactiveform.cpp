@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/annotation_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cfdf_document.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -440,12 +441,12 @@ bool CPDFSDK_InteractiveForm::DoAction_Hide(const CPDF_Action& action) {
 
       if (CPDFSDK_Widget* pWidget = GetWidget(pControl)) {
         uint32_t nFlags = pWidget->GetFlags();
-        nFlags &= ~ANNOTFLAG_INVISIBLE;
-        nFlags &= ~ANNOTFLAG_NOVIEW;
+        nFlags &= ~pdfium::annotation_flags::kInvisible;
+        nFlags &= ~pdfium::annotation_flags::kNoView;
         if (bHide)
-          nFlags |= ANNOTFLAG_HIDDEN;
+          nFlags |= pdfium::annotation_flags::kHidden;
         else
-          nFlags &= ~ANNOTFLAG_HIDDEN;
+          nFlags &= ~pdfium::annotation_flags::kHidden;
         pWidget->SetFlags(nFlags);
         pWidget->GetPageView()->UpdateView(pWidget);
         bChanged = true;

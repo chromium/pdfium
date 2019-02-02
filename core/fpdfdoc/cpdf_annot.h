@@ -25,11 +25,6 @@ class CPDF_RenderContext;
 class CPDF_RenderOptions;
 class CPDF_Stream;
 
-#define ANNOTFLAG_INVISIBLE 0x0001
-#define ANNOTFLAG_HIDDEN 0x0002
-#define ANNOTFLAG_PRINT 0x0004
-#define ANNOTFLAG_NOVIEW 0x0020
-
 class CPDF_Annot {
  public:
   enum AppearanceMode { Normal, Rollover, Down };
