@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "constants/annotation_common.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -226,8 +227,8 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
     return nullptr;
 
   auto pDict = pPage->GetDocument()->New<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>("Type", "Annot");
-  pDict->SetNewFor<CPDF_Name>("Subtype",
+  pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
+  pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
                               CPDF_Annot::AnnotSubtypeToString(
                                   static_cast<CPDF_Annot::Subtype>(subtype)));
   auto pNewAnnot =
@@ -321,8 +322,8 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
   if (!pAnnotDict)
     return FPDF_ANNOT_UNKNOWN;
 
-  return static_cast<FPDF_ANNOTATION_SUBTYPE>(
-      CPDF_Annot::StringToAnnotSubtype(pAnnotDict->GetStringFor("Subtype")));
+  return static_cast<FPDF_ANNOTATION_SUBTYPE>(CPDF_Annot::StringToAnnotSubtype(
+      pAnnotDict->GetStringFor(pdfium::annotation::kSubtype)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -543,7 +544,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
     // Use default color. The default colors must be consistent with the ones
     // used to generate AP. See calls to GetColorStringWithDefault() in
     // CPVT_GenerateAP::Generate*AP().
-    if (pAnnotDict->GetStringFor("Subtype") == "Highlight") {
+    if (pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) == "Highlight") {
       *R = 255;
       *G = 255;
       *B = 0;
@@ -669,7 +670,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   CFX_FloatRect newRect = CFXFloatRectFromFSRECTF(*rect);
 
   // Update the "Rect" entry in the annotation dictionary.
-  pAnnotDict->SetRectFor("Rect", newRect);
+  pAnnotDict->SetRectFor(pdfium::annotation::kRect, newRect);
 
   // If the annotation's appearance stream is defined, the annotation is of a
   // type that does not have quadpoints, and the new rectangle is bigger than
@@ -696,7 +697,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"), rect);
+  FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor(pdfium::annotation::kRect),
+                          rect);
   return true;
 }
 
@@ -777,13 +779,13 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
                 "FPDF_ANNOT_APPEARANCEMODE_COUNT");
   const char* modeKey = modeKeyForMode[appearanceMode];
 
-  CPDF_Dictionary* pApDict = pAnnotDict->GetDictFor("AP");
+  CPDF_Dictionary* pApDict = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
 
   // If value is null, we're in remove mode. Otherwise, we're in add/update
   // mode.
   if (value) {
     if (!pApDict)
-      pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+      pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
     ByteString newValue = PDF_EncodeText(WideStringFromFPDFWideString(value));
     auto pNewApStream = pdfium::MakeUnique<CPDF_Stream>();
@@ -792,7 +794,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   } else {
     if (pApDict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)
-        pAnnotDict->RemoveFor("AP");
+        pAnnotDict->RemoveFor(pdfium::annotation::kAP);
       else
         pApDict->RemoveFor(modeKey);
     }
@@ -848,7 +850,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetFlags(FPDF_ANNOTATION annot) {
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  return pAnnotDict ? pAnnotDict->GetIntegerFor("F") : FPDF_ANNOT_FLAG_NONE;
+  return pAnnotDict ? pAnnotDict->GetIntegerFor(pdfium::annotation::kF)
+                    : FPDF_ANNOT_FLAG_NONE;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,
@@ -861,7 +864,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  pAnnotDict->SetNewFor<CPDF_Number>("F", flags);
+  pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF, flags);
   return true;
 }
 

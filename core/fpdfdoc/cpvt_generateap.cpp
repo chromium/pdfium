@@ -11,6 +11,7 @@
 #include <sstream>
 #include <utility>
 
+#include "constants/annotation_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -318,7 +319,8 @@ float GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
       return pBorderStyleDict->GetNumberFor("W");
   }
 
-  if (const CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
+  if (const CPDF_Array* pBorderArray =
+          pAnnotDict.GetArrayFor(pdfium::annotation::kBorder)) {
     if (pBorderArray->size() > 2)
       return pBorderArray->GetNumberAt(2);
   }
@@ -332,7 +334,8 @@ const CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
       return pBorderStyleDict->GetArrayFor("D");
   }
 
-  if (const CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
+  if (const CPDF_Array* pBorderArray =
+          pAnnotDict.GetArrayFor(pdfium::annotation::kBorder)) {
     if (pBorderArray->size() == 4)
       return pBorderArray->GetArrayAt(3);
   }
@@ -363,13 +366,13 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
                                   const ByteString& sFontName) {
   WideString swValue(pAnnotDict.GetUnicodeTextFor("T"));
   swValue += L'\n';
-  swValue += pAnnotDict.GetUnicodeTextFor("Contents");
+  swValue += pAnnotDict.GetUnicodeTextFor(pdfium::annotation::kContents);
   CPVT_FontMap map(pDoc, nullptr, pDefFont, sFontName);
 
   CPDF_VariableText::Provider prd(&map);
   CPDF_VariableText vt;
   vt.SetProvider(&prd);
-  vt.SetPlateRect(pAnnotDict.GetRectFor("Rect"));
+  vt.SetPlateRect(pAnnotDict.GetRectFor(pdfium::annotation::kRect));
   vt.SetFontSize(12);
   vt.SetAutoReturn(true);
   vt.SetMultiLine(true);
@@ -504,9 +507,9 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
   pNormalStream->SetDataFromStringstream(psAppStream);
 
-  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor("AP");
+  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
   if (!pAPDict)
-    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
   pAPDict->SetFor("N", pNormalStream->MakeReference(pDoc));
 
@@ -518,7 +521,7 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
 
   CFX_FloatRect rect = bIsTextMarkupAnnotation
                            ? CPDF_Annot::BoundingRectFromQuadPoints(pAnnotDict)
-                           : pAnnotDict->GetRectFor("Rect");
+                           : pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   pStreamDict->SetRectFor("BBox", rect);
   pStreamDict->SetFor("Resources", std::move(pResourceDict));
 }
@@ -532,9 +535,9 @@ bool GenerateCircleAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   sAppStream << GetColorStringWithDefault(
       pInteriorColor, CFX_Color(CFX_Color::kTransparent), PaintOperation::FILL);
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
-                                          PaintOperation::STROKE);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   float fBorderWidth = GetBorderWidth(*pAnnotDict);
   bool bIsStrokeRect = fBorderWidth > 0;
@@ -544,7 +547,7 @@ bool GenerateCircleAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     sAppStream << GetDashPatternString(*pAnnotDict);
   }
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   rect.Normalize();
 
   if (bIsStrokeRect) {
@@ -600,9 +603,9 @@ bool GenerateHighlightAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 1, 1, 0),
-                                          PaintOperation::FILL);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 1, 1, 0), PaintOperation::FILL);
 
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
@@ -642,18 +645,18 @@ bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
-                                          PaintOperation::STROKE);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   sAppStream << fBorderWidth << " w ";
   sAppStream << GetDashPatternString(*pAnnotDict);
 
   // Set inflated rect as a new rect because paths near the border with large
   // width should not be clipped to the original rect.
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   rect.Inflate(fBorderWidth / 2, fBorderWidth / 2);
-  pAnnotDict->SetRectFor("Rect", rect);
+  pAnnotDict->SetRectFor(pdfium::annotation::kRect, rect);
 
   for (size_t i = 0; i < pInkList->size(); i++) {
     CPDF_Array* pInkCoordList = pInkList->GetArrayAt(i);
@@ -685,11 +688,11 @@ bool GenerateTextAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   const float fNoteLength = 20;
   CFX_FloatRect noteRect(rect.left, rect.bottom, rect.left + fNoteLength,
                          rect.bottom + fNoteLength);
-  pAnnotDict->SetRectFor("Rect", noteRect);
+  pAnnotDict->SetRectFor(pdfium::annotation::kRect, noteRect);
 
   sAppStream << GenerateTextSymbolAP(noteRect);
 
@@ -707,9 +710,9 @@ bool GenerateUnderlineAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
-                                          PaintOperation::STROKE);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
@@ -746,7 +749,7 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   const float fBorderWidth = 1;
   sAppStream << fBorderWidth << " w\n";
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   rect.Normalize();
   rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
 
@@ -779,9 +782,9 @@ bool GenerateSquareAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   sAppStream << GetColorStringWithDefault(
       pInteriorColor, CFX_Color(CFX_Color::kTransparent), PaintOperation::FILL);
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
-                                          PaintOperation::STROKE);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   float fBorderWidth = GetBorderWidth(*pAnnotDict);
   bool bIsStrokeRect = fBorderWidth > 0;
@@ -791,7 +794,7 @@ bool GenerateSquareAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     sAppStream << GetDashPatternString(*pAnnotDict);
   }
 
-  CFX_FloatRect rect = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   rect.Normalize();
 
   if (bIsStrokeRect) {
@@ -821,9 +824,9 @@ bool GenerateSquigglyAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
-                                          PaintOperation::STROKE);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
@@ -871,9 +874,9 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
 
-  sAppStream << GetColorStringWithDefault(pAnnotDict->GetArrayFor("C"),
-                                          CFX_Color(CFX_Color::kRGB, 0, 0, 0),
-                                          PaintOperation::STROKE);
+  sAppStream << GetColorStringWithDefault(
+      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
+      CFX_Color(CFX_Color::kRGB, 0, 0, 0), PaintOperation::STROKE);
 
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
@@ -950,7 +953,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
   if (!pDefFont)
     return;
 
-  CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor("Rect");
+  CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   int32_t nRotate = 0;
   if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDictFor("MK"))
     nRotate = pMKDict->GetIntegerFor("R");
@@ -1046,9 +1049,9 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
                     rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
   rcBody.Normalize();
 
-  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor("AP");
+  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
   if (!pAPDict)
-    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
   CPDF_Stream* pNormalStream = pAPDict->GetStreamFor("N");
   if (!pNormalStream) {

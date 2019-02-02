@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "constants/annotation_common.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
@@ -172,7 +173,7 @@ void CBA_FontMap::Initialize() {
 
 CPDF_Font* CBA_FontMap::FindFontSameCharset(ByteString* sFontAlias,
                                             int32_t nCharset) {
-  if (m_pAnnotDict->GetStringFor("Subtype") != "Widget")
+  if (m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) != "Widget")
     return nullptr;
 
   const CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
@@ -229,7 +230,8 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(const CPDF_Dictionary* pResDict,
 
 CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   CPDF_Dictionary* pAcroFormDict = nullptr;
-  const bool bWidget = (m_pAnnotDict->GetStringFor("Subtype") == "Widget");
+  const bool bWidget =
+      (m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) == "Widget");
   if (bWidget) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict)
@@ -256,7 +258,8 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   *sAlias = font.value_or(ByteString());
 
   CPDF_Dictionary* pFontDict = nullptr;
-  if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP")) {
+  if (CPDF_Dictionary* pAPDict =
+          m_pAnnotDict->GetDictFor(pdfium::annotation::kAP)) {
     if (CPDF_Dictionary* pNormalDict = pAPDict->GetDictFor("N")) {
       if (CPDF_Dictionary* pNormalResDict =
               pNormalDict->GetDictFor("Resources")) {
@@ -279,9 +282,9 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   if (!pFont)
     return;
 
-  CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP");
+  CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor(pdfium::annotation::kAP);
   if (!pAPDict)
-    pAPDict = m_pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+    pAPDict = m_pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
   // to avoid checkbox and radiobutton
   if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))

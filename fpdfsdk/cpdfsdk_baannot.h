@@ -46,8 +46,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   CPDF_Dictionary* GetAnnotDict() const;
   CPDF_Annot* GetPDFPopupAnnot() const;
 
-  CPDF_Dictionary* GetAPDict() const;
-
   void SetAnnotName(const WideString& sName);
   WideString GetAnnotName() const;
 
@@ -72,6 +70,8 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetOpenState(bool bState);
 
  protected:
+  CPDF_Dictionary* GetAPDict() const;
+
   UnownedPtr<CPDF_Annot> const m_pAnnot;
 };
 

@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/annotation_common.h"
 #include "constants/page_object.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -91,15 +92,16 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
 
   CPDF_ArrayLocker locker(pAnnots);
   for (const auto& pAnnot : locker) {
-    CPDF_Dictionary* pAnnotDic = ToDictionary(pAnnot->GetDirect());
-    if (!pAnnotDic)
+    CPDF_Dictionary* pAnnotDict = ToDictionary(pAnnot->GetDirect());
+    if (!pAnnotDict)
       continue;
 
-    ByteString sSubtype = pAnnotDic->GetStringFor("Subtype");
+    ByteString sSubtype =
+        pAnnotDict->GetStringFor(pdfium::annotation::kSubtype);
     if (sSubtype == "Popup")
       continue;
 
-    int nAnnotFlag = pAnnotDic->GetIntegerFor("F");
+    int nAnnotFlag = pAnnotDict->GetIntegerFor("F");
     if (nAnnotFlag & ANNOTFLAG_HIDDEN)
       continue;
 
@@ -109,7 +111,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     else
       bParseStream = !!(nAnnotFlag & ANNOTFLAG_PRINT);
     if (bParseStream)
-      ParserStream(pPageDic, pAnnotDic, pRectArray, pObjectArray);
+      ParserStream(pPageDic, pAnnotDict, pRectArray, pObjectArray);
   }
   return FLATTEN_SUCCESS;
 }
@@ -323,29 +325,29 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   }
 
   for (size_t i = 0; i < ObjectArray.size(); ++i) {
-    CPDF_Dictionary* pAnnotDic = ObjectArray[i];
-    if (!pAnnotDic)
+    CPDF_Dictionary* pAnnotDict = ObjectArray[i];
+    if (!pAnnotDict)
       continue;
 
-    CFX_FloatRect rcAnnot = pAnnotDic->GetRectFor("Rect");
+    CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
     rcAnnot.Normalize();
 
-    ByteString sAnnotState = pAnnotDic->GetStringFor("AS");
-    CPDF_Dictionary* pAnnotAP = pAnnotDic->GetDictFor("AP");
+    ByteString sAnnotState = pAnnotDict->GetStringFor("AS");
+    CPDF_Dictionary* pAnnotAP = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
     if (!pAnnotAP)
       continue;
 
     CPDF_Stream* pAPStream = pAnnotAP->GetStreamFor("N");
     if (!pAPStream) {
-      CPDF_Dictionary* pAPDic = pAnnotAP->GetDictFor("N");
-      if (!pAPDic)
+      CPDF_Dictionary* pAPDict = pAnnotAP->GetDictFor("N");
+      if (!pAPDict)
         continue;
 
       if (!sAnnotState.IsEmpty()) {
-        pAPStream = pAPDic->GetStreamFor(sAnnotState);
+        pAPStream = pAPDict->GetStreamFor(sAnnotState);
       } else {
-        if (pAPDic->size() > 0) {
-          CPDF_DictionaryLocker locker(pAPDic);
+        if (pAPDict->size() > 0) {
+          CPDF_DictionaryLocker locker(pAPDict);
           CPDF_Object* pFirstObj = locker.begin()->second.get();
           if (pFirstObj) {
             if (pFirstObj->IsReference())
@@ -360,12 +362,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (!pAPStream)
       continue;
 
-    CPDF_Dictionary* pAPDic = pAPStream->GetDict();
+    CPDF_Dictionary* pAPDict = pAPStream->GetDict();
     CFX_FloatRect rcStream;
-    if (pAPDic->KeyExist("Rect"))
-      rcStream = pAPDic->GetRectFor("Rect");
-    else if (pAPDic->KeyExist("BBox"))
-      rcStream = pAPDic->GetRectFor("BBox");
+    if (pAPDict->KeyExist("Rect"))
+      rcStream = pAPDict->GetRectFor("Rect");
+    else if (pAPDict->KeyExist("BBox"))
+      rcStream = pAPDict->GetRectFor("BBox");
     rcStream.Normalize();
 
     if (rcStream.IsEmpty())
@@ -378,10 +380,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       pDocument->AddIndirectObject(std::move(pNew));
     }
 
-    CPDF_Dictionary* pObjDic = pObj->GetDict();
-    if (pObjDic) {
-      pObjDic->SetNewFor<CPDF_Name>("Type", "XObject");
-      pObjDic->SetNewFor<CPDF_Name>("Subtype", "Form");
+    CPDF_Dictionary* pObjDict = pObj->GetDict();
+    if (pObjDict) {
+      pObjDict->SetNewFor<CPDF_Name>("Type", "XObject");
+      pObjDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     }
 
     CPDF_Dictionary* pXObject = pNewXORes->GetDictFor("XObject");
@@ -397,7 +399,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       pAcc->LoadAllDataFiltered();
       sStream = ByteString(pAcc->GetSpan());
     }
-    CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
+    CFX_Matrix matrix = pAPDict->GetMatrixFor("Matrix");
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
     sStream += ByteString::Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d,
                                   m.e, m.f, sFormName.c_str());

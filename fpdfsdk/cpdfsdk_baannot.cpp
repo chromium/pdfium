@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "constants/annotation_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -43,18 +44,20 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
 }
 
 CPDF_Dictionary* CPDFSDK_BAAnnot::GetAPDict() const {
-  CPDF_Dictionary* pAPDict = GetAnnotDict()->GetDictFor("AP");
-  if (!pAPDict)
-    pAPDict = GetAnnotDict()->SetNewFor<CPDF_Dictionary>("AP");
-  return pAPDict;
+  CPDF_Dictionary* pAPDict =
+      GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
+  if (pAPDict)
+    return pAPDict;
+  return GetAnnotDict()->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 }
 
 void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
   ASSERT(rect.right - rect.left >= 1.0f);
   ASSERT(rect.top - rect.bottom >= 1.0f);
   CPDF_Dictionary* pDict = GetAnnotDict();
-  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("Rect"));
-  pDict->SetRectFor("Rect", rect);
+  m_pAnnot->GetDocument()->AddOrphan(
+      pDict->RemoveFor(pdfium::annotation::kRect));
+  pDict->SetRectFor(pdfium::annotation::kRect, rect);
 }
 
 CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
@@ -74,11 +77,11 @@ void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
 }
 
 bool CPDFSDK_BAAnnot::IsAppearanceValid() {
-  return !!GetAnnotDict()->GetDictFor("AP");
+  return !!GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
 }
 
 bool CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = GetAnnotDict()->GetDictFor("AP");
+  CPDF_Dictionary* pAP = GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
   if (!pAP)
     return false;
 
@@ -98,38 +101,40 @@ bool CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 
 void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
   CPDF_Dictionary* pDict = GetAnnotDict();
-  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("NM"));
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor(pdfium::annotation::kNM));
   if (!sName.IsEmpty())
-    pDict->SetNewFor<CPDF_String>("NM", sName);
+    pDict->SetNewFor<CPDF_String>(pdfium::annotation::kNM, sName);
 }
 
 WideString CPDFSDK_BAAnnot::GetAnnotName() const {
-  return GetAnnotDict()->GetUnicodeTextFor("NM");
+  return GetAnnotDict()->GetUnicodeTextFor(pdfium::annotation::kNM);
 }
 
 void CPDFSDK_BAAnnot::SetFlags(uint32_t nFlags) {
   CPDF_Dictionary* pDict = GetAnnotDict();
-  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("F"));
-  pDict->SetNewFor<CPDF_Number>("F", static_cast<int>(nFlags));
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor(pdfium::annotation::kF));
+  pDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF,
+                                static_cast<int>(nFlags));
 }
 
 uint32_t CPDFSDK_BAAnnot::GetFlags() const {
-  return GetAnnotDict()->GetIntegerFor("F");
+  return GetAnnotDict()->GetIntegerFor(pdfium::annotation::kF);
 }
 
 void CPDFSDK_BAAnnot::SetAppState(const ByteString& str) {
   CPDF_Dictionary* pDict = GetAnnotDict();
-  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor("AS"));
+  m_pAnnot->GetDocument()->AddOrphan(pDict->RemoveFor(pdfium::annotation::kAS));
   if (!str.IsEmpty())
-    pDict->SetNewFor<CPDF_String>("AS", str, false);
+    pDict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, str, false);
 }
 
 ByteString CPDFSDK_BAAnnot::GetAppState() const {
-  return GetAnnotDict()->GetStringFor("AS");
+  return GetAnnotDict()->GetStringFor(pdfium::annotation::kAS);
 }
 
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
-  CPDF_Array* pBorder = GetAnnotDict()->GetArrayFor("Border");
+  CPDF_Array* pBorder =
+      GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
   if (pBorder) {
     pBorder->SetNewAt<CPDF_Number>(2, nWidth);
   } else {
@@ -142,8 +147,10 @@ void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
 }
 
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
-  if (CPDF_Array* pBorder = GetAnnotDict()->GetArrayFor("Border"))
+  if (const CPDF_Array* pBorder =
+          GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder)) {
     return pBorder->GetIntegerAt(2);
+  }
 
   if (CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS"))
     return pBSDict->GetIntegerFor("W", 1);
@@ -196,10 +203,11 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
       return BorderStyle::UNDERLINE;
   }
 
-  CPDF_Array* pBorder = GetAnnotDict()->GetArrayFor("Border");
+  const CPDF_Array* pBorder =
+      GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
   if (pBorder) {
     if (pBorder->size() >= 4) {
-      CPDF_Array* pDP = pBorder->GetArrayAt(3);
+      const CPDF_Array* pDP = pBorder->GetArrayAt(3);
       if (pDP && pDP->size() > 0)
         return BorderStyle::DASH;
     }

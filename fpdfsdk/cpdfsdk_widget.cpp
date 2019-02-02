@@ -9,6 +9,7 @@
 #include <memory>
 #include <sstream>
 
+#include "constants/annotation_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -304,7 +305,8 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 #endif  // PDF_ENABLE_XFA
 
 bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = GetAnnotDict()->GetDictFor("AP");
+  const CPDF_Dictionary* pAP =
+      GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
   if (!pAP)
     return false;
 
@@ -318,8 +320,8 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
     ap_entry = "N";
 
   // Get the AP stream or subdirectory
-  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
-  if (!psub)
+  const CPDF_Object* pSub = pAP->GetDirectObjectFor(ap_entry);
+  if (!pSub)
     return false;
 
   FormFieldType fieldType = GetFieldType();
@@ -329,10 +331,10 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
     case FormFieldType::kListBox:
     case FormFieldType::kTextField:
     case FormFieldType::kSignature:
-      return psub->IsStream();
+      return pSub->IsStream();
     case FormFieldType::kCheckBox:
     case FormFieldType::kRadioButton:
-      if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
+      if (const CPDF_Dictionary* pSubDict = pSub->AsDictionary()) {
         return !!pSubDict->GetStreamFor(GetAppState());
       }
       return false;

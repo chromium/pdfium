@@ -49,6 +49,7 @@ jumbo_source_set("fontmap") {
   configs += [ "../../:pdfium_core_config" ]
   deps = [
     "../../:pdfium_public_headers",
+    "../../constants",
     "../../core/fpdfapi",
     "../../core/fpdfapi/font",
     "../../core/fpdfapi/page",
