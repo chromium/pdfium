@@ -116,8 +116,7 @@ class CXFA_TextLayout {
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
-  int32_t& GetBlockIndex(int32_t index) { return m_Blocks[index].iIndex; }
-  int32_t& GetBlockLength(int32_t index) { return m_Blocks[index].iLength; }
+  int GetNextIndexForLastBlockData() const;
 
   bool m_bHasBlock = false;
   bool m_bRichText = false;
