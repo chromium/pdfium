@@ -903,8 +903,8 @@ class SkiaState {
       sk_sp<SkTypeface> typeface(SkSafeRef(m_pTypeFace.Get()));
       skPaint.setTypeface(typeface);
     }
-    skPaint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    skPaint.setHinting(SkPaint::kNo_Hinting);
+    skPaint.setTextEncoding(kGlyphID_SkTextEncoding);
+    skPaint.setHinting(kNo_SkFontHinting);
     skPaint.setTextScaleX(m_scaleX);
     skPaint.setTextSize(SkTAbs(m_fontSize));
     skPaint.setSubpixelText(true);
@@ -1553,8 +1553,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   paint.setAntiAlias(true);
   paint.setColor(color);
   paint.setTypeface(typeface);
-  paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-  paint.setHinting(SkPaint::kNo_Hinting);
+  paint.setTextEncoding(kGlyphID_SkTextEncoding);
+  paint.setHinting(kNo_SkFontHinting);
   paint.setTextSize(SkTAbs(font_size));
   paint.setSubpixelText(true);
   m_pCanvas->save();
