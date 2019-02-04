@@ -3475,9 +3475,8 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     }
     CXFA_TextLayout* pTextLayout =
         m_pLayoutData->AsTextLayoutData()->GetTextLayout();
-    *pCalcHeight =
-        pTextLayout->DoLayout(iBlockIndex, *pCalcHeight, *pCalcHeight,
-                              m_pLayoutData->m_fWidgetHeight - fTopInset);
+    *pCalcHeight = pTextLayout->DoSplitLayout(
+        iBlockIndex, *pCalcHeight, m_pLayoutData->m_fWidgetHeight - fTopInset);
     if (*pCalcHeight != 0) {
       if (iBlockIndex == 0)
         *pCalcHeight += fTopInset;
@@ -3710,7 +3709,7 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
     pTextLayout->StartLayout(fWidth);
     fTextHeight = *pCalcHeight;
     fTextHeight = GetHeightWithoutMargin(fTextHeight);
-    pTextLayout->DoLayout(0, fTextHeight, -1, fTextHeight);
+    pTextLayout->DoLayout(fTextHeight);
     return;
   }
   if (*pCalcWidth > 0 && *pCalcHeight < 0) {
@@ -3735,7 +3734,7 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
   }
   fTextHeight = m_pLayoutData->m_fWidgetHeight;
   fTextHeight = GetHeightWithoutMargin(fTextHeight);
-  pTextLayout->DoLayout(0, fTextHeight, -1, fTextHeight);
+  pTextLayout->DoLayout(fTextHeight);
   *pCalcHeight = m_pLayoutData->m_fWidgetHeight;
 }
 

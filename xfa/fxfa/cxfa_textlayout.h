@@ -38,10 +38,10 @@ class CXFA_TextLayout {
 
   float GetLayoutHeight();
   float StartLayout(float fWidth);
-  float DoLayout(int32_t iBlockIndex,
-                 float fCalcHeight,
-                 float fContentAreaHeight,
-                 float fTextHeight);
+  float DoLayout(float fTextHeight);
+  float DoSplitLayout(int32_t iBlockIndex,
+                      float fCalcHeight,
+                      float fTextHeight);
   float Layout(const CFX_SizeF& size);
 
   CFX_SizeF CalcSize(const CFX_SizeF& minSize, const CFX_SizeF& maxSize);
@@ -116,7 +116,8 @@ class CXFA_TextLayout {
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
-  int GetNextIndexForLastBlockData() const;
+  int GetNextIndexFromLastBlockData() const;
+  void UpdateLoaderHeight(float fTextHeight);
 
   bool m_bHasBlock = false;
   bool m_bRichText = false;
