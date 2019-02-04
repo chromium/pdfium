@@ -334,6 +334,7 @@ float CXFA_TextLayout::DoSplitLayout(int32_t iBlockIndex,
   if (fCalcHeight < 0)
     return fCalcHeight;
 
+  size_t szBlockIndex = static_cast<size_t>(iBlockIndex);
   m_bHasBlock = true;
   if (m_Blocks.empty() && m_pLoader->fHeight > 0) {
     float fHeight = fTextHeight - GetLayoutHeight();
@@ -347,16 +348,15 @@ float CXFA_TextLayout::DoSplitLayout(int32_t iBlockIndex,
     }
   }
 
-  int32_t iBlockCount = pdfium::CollectionSize<int32_t>(m_Blocks);
   float fLinePos = m_pLoader->fStartLineOffset;
   int32_t iLineIndex = 0;
-  if (iBlockCount > 0) {
-    if (iBlockIndex < iBlockCount)
-      iLineIndex = m_Blocks[iBlockIndex].iIndex;
+  if (!m_Blocks.empty()) {
+    if (szBlockIndex < m_Blocks.size())
+      iLineIndex = m_Blocks[szBlockIndex].iIndex;
     else
       iLineIndex = GetNextIndexFromLastBlockData();
     if (!m_pLoader->blockHeights.empty()) {
-      for (int32_t i = 0; i < iBlockIndex; i++)
+      for (size_t i = 0; i < szBlockIndex; ++i)
         fLinePos -= m_pLoader->blockHeights[i].fHeight;
     }
   }
@@ -375,8 +375,8 @@ float CXFA_TextLayout::DoSplitLayout(int32_t iBlockIndex,
       continue;
     }
 
-    if (iBlockIndex < iBlockCount)
-      m_Blocks[iBlockIndex] = {iLineIndex, i - iLineIndex};
+    if (szBlockIndex < m_Blocks.size())
+      m_Blocks[szBlockIndex] = {iLineIndex, i - iLineIndex};
     else
       m_Blocks.push_back({iLineIndex, i - iLineIndex});
 
@@ -386,12 +386,11 @@ float CXFA_TextLayout::DoSplitLayout(int32_t iBlockIndex,
     if (fCalcHeight > fLinePos)
       return fCalcHeight;
 
-    if (iBlockIndex <
-            pdfium::CollectionSize<int32_t>(m_pLoader->blockHeights) &&
-        m_pLoader->blockHeights[iBlockIndex].iBlockIndex == iBlockIndex) {
-      m_pLoader->blockHeights[iBlockIndex].fHeight = fCalcHeight;
+    if (szBlockIndex < m_pLoader->blockHeights.size() &&
+        m_pLoader->blockHeights[szBlockIndex].szBlockIndex == szBlockIndex) {
+      m_pLoader->blockHeights[szBlockIndex].fHeight = fCalcHeight;
     } else {
-      m_pLoader->blockHeights.push_back({iBlockIndex, fCalcHeight});
+      m_pLoader->blockHeights.push_back({szBlockIndex, fCalcHeight});
     }
     return fCalcHeight;
   }

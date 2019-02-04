@@ -18,7 +18,7 @@ class CFX_XMLNode;
 class CXFA_Node;
 
 struct CXFA_BlockHeight {
-  int iBlockIndex;
+  size_t szBlockIndex;
   float fHeight;
 };
 
