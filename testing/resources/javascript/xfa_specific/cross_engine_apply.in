@@ -39,27 +39,6 @@ stream
         }
       </script>
     </event>
-    <subform layout="tb" name="subform_combox_0">
-      <occur initial="1" max="10" min="0" name="occur_subform_combox_0">
-      </occur>
-      <field h="10mm" name="combox" w="40mm" x="10mm" y="10mm">
-        <ui>
-          <choiceList open="onEntry">
-            <border>
-              <edge/>
-            </border>
-          </choiceList>
-        </ui>
-        <items save="1">
-          <text>apples</text>
-          <text>bananas</text>
-          <text>pears</text>
-        </items>
-        <value>
-          <text>apples</text>
-        </value>
-      </field>
-    </subform>
   </subform>
 </template>
 endstream
