@@ -1,0 +1,72 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+>>
+stream
+<template>
+  <subform layout="tb" name="my_doc">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+      <pageArea id="Page2" name="Page2">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+    </pageSet>
+    <event activity="docReady" ref="$host">
+      <script contentType="application/x-javascript">
+        app.alert('Applying app method to xfa.host');
+        try {
+          var result = app.setTimeOut.apply(xfa.host, 'var x = 3;', 10);
+          app.alert('unexpectedly returned ' + result);
+        }
+        catch (e) {
+          app.alert('Caught: ' + e);
+        }
+        app.alert('Applying xfa.host method to app');
+        try {
+          var result = xfa.host.setFocus.apply(app);
+          app.alert('unexpectedly returned ' + result);
+        }
+        catch (e) {
+          app.alert('Caught: ' + e);
+        }
+      </script>
+    </event>
+    <subform layout="tb" name="subform_combox_0">
+      <occur initial="1" max="10" min="0" name="occur_subform_combox_0">
+      </occur>
+      <field h="10mm" name="combox" w="40mm" x="10mm" y="10mm">
+        <ui>
+          <choiceList open="onEntry">
+            <border>
+              <edge/>
+            </border>
+          </choiceList>
+        </ui>
+        <items save="1">
+          <text>apples</text>
+          <text>bananas</text>
+          <text>pears</text>
+        </items>
+        <value>
+          <text>apples</text>
+        </value>
+      </field>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
