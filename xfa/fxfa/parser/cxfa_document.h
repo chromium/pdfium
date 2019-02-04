@@ -104,7 +104,7 @@ class CXFA_Document final : public CXFA_NodeOwner {
   std::vector<CXFA_Node*> m_pPendingPageSet;
 
  private:
-  UnownedPtr<CXFA_FFNotify> notify_;
+  UnownedPtr<CXFA_FFNotify> const notify_;
   CXFA_Node* m_pRootNode;
   std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
