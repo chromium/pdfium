@@ -1,0 +1,23 @@
+Alert: property appType is Exchange
+Alert: expected error setting appType is Error: Invalid property set operation.
+Alert: property calculationsEnabled is true
+Alert: property calculationsEnabled was settable as expected
+Alert: property currentPage is -1
+Alert: property currentPage was settable as expected
+Alert: property language is 
+Alert: expected error setting language is Error: Unable to set language value.
+Alert: property name is Acrobat
+Alert: expected error setting name is Error: Invalid property set operation.
+Alert: property numPages is 2
+Alert: expected error setting numPages is Error: Unable to set numPages value.
+Alert: property platform is 
+Alert: expected error setting platform is Error: Unable to set platform value.
+Alert: property title is 
+Alert: property title was settable as expected
+Alert: property validationsEnabled is true
+Alert: property validationsEnabled was settable as expected
+Alert: property variation is Full
+Alert: expected error setting variation is Error: Unable to set variation value.
+Alert: property version is 11
+Alert: expected error setting version is Error: Unable to set version value.
+BEEP!!! 4
