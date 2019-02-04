@@ -1550,6 +1550,33 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFAnnotEmbedderTest, BUG_1206) {
+  static constexpr size_t kExpectedSize = 1609;
+  static const char kExpectedBitmap[] = "0d9fc05c6762fd788bd23fd87a4967bc";
+
+  ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  EXPECT_EQ(kExpectedSize, GetString().size());
+  ClearString();
+
+  for (size_t i = 0; i < 10; ++i) {
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, kExpectedBitmap);
+
+    ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    // TODO(https://crbug.com/pdfium/1206): This is wrong. The size should be
+    // equal, not bigger.
+    EXPECT_LT(kExpectedSize, GetString().size());
+    ClearString();
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
