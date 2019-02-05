@@ -49,11 +49,59 @@ FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(const RetainPtr<CFX_DIBBase>& pDib,
 
 FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
 
-CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
-    : m_pDocEnvironment(pDocEnvironment), m_pApp(pApp) {}
+// static
+std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
+    CXFA_FFApp* pApp,
+    IXFA_DocEnvironment* pDocEnvironment,
+    CPDF_Document* pPDFDoc) {
+  ASSERT(pApp);
+  ASSERT(pDocEnvironment);
+  ASSERT(pPDFDoc);
+
+  const CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
+  if (!pRoot)
+    return nullptr;
+
+  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  if (!pAcroForm)
+    return nullptr;
+
+  const CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
+  if (!pElementXFA)
+    return nullptr;
+
+  // Use WrapUnique() to keep constructor private.
+  auto result =
+      pdfium::WrapUnique(new CXFA_FFDoc(pApp, pDocEnvironment, pPDFDoc));
+  if (!result->OpenDoc(pElementXFA))
+    return nullptr;
+
+  return result;
+}
+
+CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
+                       IXFA_DocEnvironment* pDocEnvironment,
+                       CPDF_Document* pPDFDoc)
+    : m_pDocEnvironment(pDocEnvironment),
+      m_pApp(pApp),
+      m_pPDFDoc(pPDFDoc),
+      m_pNotify(pdfium::MakeUnique<CXFA_FFNotify>(this)),
+      m_pDocument(pdfium::MakeUnique<CXFA_Document>(m_pNotify.get())) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
-  CloseDoc();
+  if (m_DocView) {
+    m_DocView->RunDocClose();
+    m_DocView.reset();
+  }
+  if (m_pDocument)
+    m_pDocument->ClearLayoutData();
+
+  m_pDocument.reset();
+  m_pXMLDoc.reset();
+  m_pNotify.reset();
+  m_pPDFFontMgr.reset();
+  m_HashToDibDpiMap.clear();
+  m_pApp->ClearEventTargets();
 }
 
 bool CXFA_FFDoc::ParseDoc(const CPDF_Object* pElementXFA) {
@@ -103,30 +151,9 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return m_DocView.get();
 }
 
-bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
-  if (!pPDFDoc)
+bool CXFA_FFDoc::OpenDoc(const CPDF_Object* pElementXFA) {
+  if (!ParseDoc(pElementXFA))
     return false;
-
-  const CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
-  if (!pRoot)
-    return false;
-
-  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
-  if (!pAcroForm)
-    return false;
-
-  const CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
-  if (!pElementXFA)
-    return false;
-
-  m_pPDFDoc = pPDFDoc;
-
-  m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
-  m_pDocument = pdfium::MakeUnique<CXFA_Document>(m_pNotify.get());
-  if (!ParseDoc(pElementXFA)) {
-    CloseDoc();
-    return false;
-  }
 
   CFGAS_FontMgr* mgr = GetApp()->GetFDEFontMgr();
   if (!mgr)
@@ -164,28 +191,9 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   return true;
 }
 
-void CXFA_FFDoc::CloseDoc() {
-  if (m_DocView) {
-    m_DocView->RunDocClose();
-    m_DocView.reset();
-  }
-  if (m_pDocument)
-    m_pDocument->ClearLayoutData();
-
-  m_pDocument.reset();
-  m_pXMLDoc.reset();
-  m_pNotify.reset();
-  m_pPDFFontMgr.reset();
-  m_HashToDibDpiMap.clear();
-  m_pApp->ClearEventTargets();
-}
-
 RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
                                                      int32_t& iImageXDpi,
                                                      int32_t& iImageYDpi) {
-  if (!m_pPDFDoc)
-    return nullptr;
-
   uint32_t dwHash = FX_HashCode_GetW(wsName, false);
   auto it = m_HashToDibDpiMap.find(dwHash);
   if (it != m_HashToDibDpiMap.end()) {

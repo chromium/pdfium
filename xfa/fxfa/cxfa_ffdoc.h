@@ -41,7 +41,11 @@ struct FX_IMAGEDIB_AND_DPI {
 
 class CXFA_FFDoc {
  public:
-  CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment);
+  static std::unique_ptr<CXFA_FFDoc> CreateAndOpen(
+      CXFA_FFApp* pApp,
+      IXFA_DocEnvironment* pDocEnvironment,
+      CPDF_Document* pPDFDoc);
+
   ~CXFA_FFDoc();
 
   IXFA_DocEnvironment* GetDocEnvironment() const {
@@ -51,9 +55,6 @@ class CXFA_FFDoc {
   CFX_XMLDocument* GetXMLDocument() const { return m_pXMLDoc.get(); }
 
   CXFA_FFDocView* CreateDocView();
-
-  bool OpenDoc(CPDF_Document* pPDFDoc);
-  void CloseDoc();
 
   CXFA_Document* GetXFADoc() const { return m_pDocument.get(); }
   CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
@@ -69,11 +70,15 @@ class CXFA_FFDoc {
                    const RetainPtr<IFX_SeekableStream>& pFile);
 
  private:
+  CXFA_FFDoc(CXFA_FFApp* pApp,
+             IXFA_DocEnvironment* pDocEnvironment,
+             CPDF_Document* pPDFDoc);
+  bool OpenDoc(const CPDF_Object* pElementXFA);
   bool ParseDoc(const CPDF_Object* pElementXFA);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
   UnownedPtr<CXFA_FFApp> const m_pApp;
-  UnownedPtr<CPDF_Document> m_pPDFDoc;
+  UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::unique_ptr<CFX_XMLDocument> m_pXMLDoc;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
   std::unique_ptr<CXFA_Document> m_pDocument;
