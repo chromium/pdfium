@@ -19,6 +19,8 @@ jumbo_source_set("test_support") {
     "test_support.h",
     "utils/bitmap_saver.cpp",
     "utils/bitmap_saver.h",
+    "utils/hash.cpp",
+    "utils/hash.h",
     "utils/path_service.cpp",
     "utils/path_service.h",
   ]

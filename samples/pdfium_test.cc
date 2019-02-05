@@ -33,6 +33,7 @@
 #include "samples/pdfium_test_event_helper.h"
 #include "samples/pdfium_test_write_helper.h"
 #include "testing/test_support.h"
+#include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/optional.h"

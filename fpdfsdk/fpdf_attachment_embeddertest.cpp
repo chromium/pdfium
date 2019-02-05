@@ -9,6 +9,7 @@
 #include "public/fpdf_attachment.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
+#include "testing/utils/hash.h"
 
 static constexpr char kDateKey[] = "CreationDate";
 static constexpr char kChecksumKey[] = "CheckSum";

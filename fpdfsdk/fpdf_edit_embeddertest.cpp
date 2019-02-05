@@ -26,6 +26,7 @@
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "testing/utils/hash.h"
 
 class FPDFEditEmbedderTest : public EmbedderTest {
  protected:

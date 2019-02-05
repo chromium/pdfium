@@ -80,9 +80,6 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
 std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
     const std::wstring& wstr);
 
-std::string CryptToBase16(const uint8_t* digest);
-std::string GenerateMD5Base16(const uint8_t* data, uint32_t size);
-
 class TestLoader {
  public:
   TestLoader(const char* pBuf, size_t len);

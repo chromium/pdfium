@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "core/fdrm/fx_crypt.h"
 #include "core/fxcrt/fx_string.h"
 
 std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
@@ -89,24 +88,6 @@ std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
   ptr[i++] = 0;
   ptr[i] = 0;
   return result;
-}
-
-std::string CryptToBase16(const uint8_t* digest) {
-  static char const zEncode[] = "0123456789abcdef";
-  std::string ret;
-  ret.resize(32);
-  for (int i = 0, j = 0; i < 16; i++, j += 2) {
-    uint8_t a = digest[i];
-    ret[j] = zEncode[(a >> 4) & 0xf];
-    ret[j + 1] = zEncode[a & 0xf];
-  }
-  return ret;
-}
-
-std::string GenerateMD5Base16(const uint8_t* data, uint32_t size) {
-  uint8_t digest[16];
-  CRYPT_MD5Generate(data, size, digest);
-  return CryptToBase16(digest);
 }
 
 TestLoader::TestLoader(const char* pBuf, size_t len)
