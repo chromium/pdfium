@@ -1,0 +1,45 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+>>
+stream
+<template>
+  <subform layout="tb" name="my_doc">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+      <pageArea id="Page2" name="Page2">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+    </pageSet>
+    <event activity="docReady" ref="$host">
+      <script contentType="application/x-javascript">
+        try {
+          xfa.signature.clear("foo");
+          xfa.signature.enumerate();
+          xfa.signature.sign("foo", "bar", "bam");
+          xfa.signature.verify("foo");
+          app.alert("finished testing methods");
+        } catch (e) {
+          app.alert("error testing methods: " + e);
+        }
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
