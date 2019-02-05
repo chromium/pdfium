@@ -93,7 +93,7 @@ void EmbedderTest::TearDown() {
 
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
-  delete loader_;
+  loader_.reset();
 }
 
 #ifdef PDF_ENABLE_V8
@@ -150,12 +150,13 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
     return false;
 
   EXPECT_TRUE(!loader_);
-  loader_ = new TestLoader(file_contents_.get(), file_length_);
+  loader_ = pdfium::MakeUnique<TestLoader>(
+      pdfium::make_span(file_contents_.get(), file_length_));
 
   memset(&file_access_, 0, sizeof(file_access_));
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
   file_access_.m_GetBlock = TestLoader::GetBlock;
-  file_access_.m_Param = loader_;
+  file_access_.m_Param = loader_.get();
 
   fake_file_access_ = pdfium::MakeUnique<FakeFileAccess>(&file_access_);
   return OpenDocumentHelper(password, linearize_option, javascript_option,

@@ -225,7 +225,7 @@ class EmbedderTest : public ::testing::Test,
   std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive |avail_|.
 
   void* external_isolate_ = nullptr;
-  TestLoader* loader_ = nullptr;
+  std::unique_ptr<TestLoader> loader_;
   size_t file_length_ = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   PageNumberToHandleMap page_map_;

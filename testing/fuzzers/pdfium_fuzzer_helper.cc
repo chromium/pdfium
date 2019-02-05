@@ -138,7 +138,7 @@ void PDFiumFuzzerHelper::RenderPdf(const char* pBuf, size_t len) {
   form_callbacks.version = GetFormCallbackVersion();
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
-  TestLoader loader(pBuf, len);
+  TestLoader loader({pBuf, len});
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);

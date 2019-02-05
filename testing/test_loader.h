@@ -5,19 +5,19 @@
 #ifndef TESTING_TEST_LOADER_H_
 #define TESTING_TEST_LOADER_H_
 
-#include <stdlib.h>
+#include "third_party/base/span.h"
 
 class TestLoader {
  public:
-  TestLoader(const char* pBuf, size_t len);
+  explicit TestLoader(pdfium::span<const char> span);
+
   static int GetBlock(void* param,
                       unsigned long pos,
                       unsigned char* pBuf,
                       unsigned long size);
 
  private:
-  const char* const m_pBuf;
-  const size_t m_Len;
+  const pdfium::span<const char> m_Span;
 };
 
 #endif  // TESTING_TEST_LOADER_H_

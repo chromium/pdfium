@@ -8,8 +8,7 @@
 
 #include "third_party/base/logging.h"
 
-TestLoader::TestLoader(const char* pBuf, size_t len)
-    : m_pBuf(pBuf), m_Len(len) {}
+TestLoader::TestLoader(pdfium::span<const char> span) : m_Span(span) {}
 
 // static
 int TestLoader::GetBlock(void* param,
@@ -17,11 +16,11 @@ int TestLoader::GetBlock(void* param,
                          unsigned char* pBuf,
                          unsigned long size) {
   TestLoader* pLoader = static_cast<TestLoader*>(param);
-  if (pos + size < pos || pos + size > pLoader->m_Len) {
+  if (pos + size < pos || pos + size > pLoader->m_Span.size()) {
     NOTREACHED();
     return 0;
   }
 
-  memcpy(pBuf, pLoader->m_pBuf + pos, size);
+  memcpy(pBuf, &pLoader->m_Span[pos], size);
   return 1;
 }
