@@ -10,7 +10,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
 TEST(CFX_SeekableMultiStreamTest, NoStreams) {

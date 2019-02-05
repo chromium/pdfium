@@ -5,7 +5,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(fpdf_parser_utility, PDF_NameDecode) {
   EXPECT_EQ("", PDF_NameDecode(""));

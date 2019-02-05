@@ -5,7 +5,6 @@
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(CFX_CSSDeclarationTest, HexEncodingParsing) {
   FX_ARGB color;

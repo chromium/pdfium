@@ -14,7 +14,6 @@
 #include "testing/embedder_test.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 class FPDFSaveEmbedderTest : public EmbedderTest {};
 

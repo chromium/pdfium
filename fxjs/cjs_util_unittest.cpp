@@ -5,7 +5,6 @@
 #include "fxjs/cjs_util.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(CJS_Util, ParseDataType) {
   struct ParseDataTypeCase {

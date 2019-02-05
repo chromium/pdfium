@@ -12,7 +12,6 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 class CFX_XMLParserTest : public testing::Test {
  public:

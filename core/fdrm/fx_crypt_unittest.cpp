@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "testing/utils/hash.h"
 
 namespace {

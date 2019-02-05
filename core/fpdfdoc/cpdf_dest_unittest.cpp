@@ -8,7 +8,6 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_dest.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
 TEST(cpdf_dest, GetXYZ) {

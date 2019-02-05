@@ -6,7 +6,6 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 namespace {
 

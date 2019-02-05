@@ -14,7 +14,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "testing/utils/bitmap_saver.h"
 #include "testing/utils/hash.h"
 #include "third_party/base/ptr_util.h"

@@ -19,7 +19,6 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
 class CPDF_PageContentGeneratorTest : public testing::Test {

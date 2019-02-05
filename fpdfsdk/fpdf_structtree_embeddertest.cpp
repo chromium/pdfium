@@ -5,7 +5,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
-#include "testing/test_support.h"
 #include "third_party/base/optional.h"
 
 class FPDFStructTreeEmbedderTest : public EmbedderTest {};

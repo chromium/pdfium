@@ -10,7 +10,6 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"

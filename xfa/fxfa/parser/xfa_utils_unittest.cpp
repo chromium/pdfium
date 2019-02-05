@@ -5,7 +5,6 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(XfaUtilsImpTest, XFA_MapRotation) {
   struct TestCase {

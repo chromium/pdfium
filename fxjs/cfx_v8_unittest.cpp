@@ -8,7 +8,6 @@
 
 #include "fxjs/cfx_v8.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
 void FXV8UnitTest::V8IsolateDeleter::operator()(v8::Isolate* ptr) const {

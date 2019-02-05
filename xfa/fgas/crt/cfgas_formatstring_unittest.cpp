@@ -13,7 +13,6 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 

@@ -6,7 +6,6 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 namespace {
 

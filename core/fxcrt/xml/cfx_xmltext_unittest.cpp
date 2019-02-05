@@ -6,7 +6,6 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
-#include "testing/test_support.h"
 
 TEST(CFX_XMLTextTest, GetType) {
   CFX_XMLText text(L"My Text");

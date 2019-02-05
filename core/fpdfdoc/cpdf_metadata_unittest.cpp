@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(CPDF_MetadataTest, CheckSharedFormEmailAtTopLevel) {
   static const char data[] =

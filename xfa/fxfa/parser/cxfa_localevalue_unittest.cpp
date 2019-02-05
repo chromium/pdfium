@@ -5,7 +5,6 @@
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 namespace {
 

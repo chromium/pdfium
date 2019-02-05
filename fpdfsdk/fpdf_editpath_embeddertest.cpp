@@ -6,7 +6,6 @@
 #include "public/fpdf_edit.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 class FPDFEditPathEmbedderTest : public EmbedderTest {};
 

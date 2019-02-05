@@ -4,7 +4,6 @@
 
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(CFX_XMLNodeTest, GetParent) {
   CFX_XMLElement node1(L"node");

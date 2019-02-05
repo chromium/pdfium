@@ -6,7 +6,6 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 TEST(CFX_XMLDocumentTest, Root) {
   CFX_XMLDocument doc;
