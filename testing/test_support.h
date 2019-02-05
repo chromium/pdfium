@@ -5,14 +5,6 @@
 #ifndef TESTING_TEST_SUPPORT_H_
 #define TESTING_TEST_SUPPORT_H_
 
-#include <stdlib.h>
-
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "public/fpdfview.h"
-
 namespace pdfium {
 
 #define STR_IN_TEST_CASE(input_literal, ...)               \
@@ -50,30 +42,6 @@ struct NullTermWstrFuncTestData {
   const wchar_t* expected;
 };
 
-// Used with std::unique_ptr to free() objects that can't be deleted.
-struct FreeDeleter {
-  inline void operator()(void* ptr) const { free(ptr); }
-};
-
 }  // namespace pdfium
-
-// Reads the entire contents of a file into a newly alloc'd buffer.
-std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
-                                                           size_t* retlen);
-
-std::vector<std::string> StringSplit(const std::string& str, char delimiter);
-
-// Converts a FPDF_WIDESTRING to a std::string.
-// Deals with differences between UTF16LE and UTF8.
-std::string GetPlatformString(FPDF_WIDESTRING wstr);
-
-// Converts a FPDF_WIDESTRING to a std::wstring.
-// Deals with differences between UTF16LE and wchar_t.
-std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
-
-// Returns a newly allocated FPDF_WIDESTRING.
-// Deals with differences between UTF16LE and wchar_t.
-std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
-    const std::wstring& wstr);
 
 #endif  // TESTING_TEST_SUPPORT_H_

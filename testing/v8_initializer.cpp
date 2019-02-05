@@ -4,7 +4,8 @@
 
 #include "testing/v8_initializer.h"
 
-#include "testing/test_support.h"
+#include "public/fpdfview.h"
+#include "testing/utils/file_util.h"
 #include "testing/utils/path_service.h"
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"

@@ -13,8 +13,8 @@
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
 #include "public/fpdf_edit.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/image_diff/image_diff_png.h"
-#include "testing/test_support.h"
 #include "third_party/base/logging.h"
 
 namespace {

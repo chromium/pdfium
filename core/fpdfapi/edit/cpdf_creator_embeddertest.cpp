@@ -16,6 +16,7 @@
 #include "testing/fake_file_access.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/file_util.h"
 #include "testing/utils/path_service.h"
 
 namespace {

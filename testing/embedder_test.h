@@ -17,8 +17,8 @@
 #include "public/fpdf_save.h"
 #include "public/fpdfview.h"
 #include "testing/fake_file_access.h"
+#include "testing/free_deleter.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 class TestLoader;
 

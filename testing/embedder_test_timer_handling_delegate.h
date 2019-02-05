@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "testing/embedder_test.h"
-#include "testing/test_support.h"
+#include "testing/fx_string_testhelpers.h"
 
 class EmbedderTestTimerHandlingDelegate final : public EmbedderTest::Delegate {
  public:

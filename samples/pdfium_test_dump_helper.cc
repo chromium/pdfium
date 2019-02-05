@@ -14,7 +14,7 @@
 
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_transformpage.h"
-#include "testing/test_support.h"
+#include "testing/fx_string_testhelpers.h"
 
 using GetBoxInfoFunc =
     std::function<bool(FPDF_PAGE, float*, float*, float*, float*)>;

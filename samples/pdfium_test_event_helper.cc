@@ -11,7 +11,7 @@
 
 #include "public/fpdf_fwlevent.h"
 #include "public/fpdfview.h"
-#include "testing/test_support.h"
+#include "testing/fx_string_testhelpers.h"
 
 namespace {
 void SendCharCodeEvent(FPDF_FORMHANDLE form,
