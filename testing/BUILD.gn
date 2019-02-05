@@ -15,6 +15,8 @@ jumbo_source_set("test_support") {
     "pseudo_retainable.h",
     "string_write_stream.cpp",
     "string_write_stream.h",
+    "test_loader.cpp",
+    "test_loader.h",
     "test_support.cpp",
     "test_support.h",
     "utils/bitmap_saver.cpp",

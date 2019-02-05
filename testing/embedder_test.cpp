@@ -19,6 +19,7 @@
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"
+#include "testing/test_loader.h"
 #include "testing/test_support.h"
 #include "testing/utils/bitmap_saver.h"
 #include "testing/utils/hash.h"

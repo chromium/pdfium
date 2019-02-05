@@ -80,19 +80,6 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
 std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
     const std::wstring& wstr);
 
-class TestLoader {
- public:
-  TestLoader(const char* pBuf, size_t len);
-  static int GetBlock(void* param,
-                      unsigned long pos,
-                      unsigned char* pBuf,
-                      unsigned long size);
-
- private:
-  const char* const m_pBuf;
-  const size_t m_Len;
-};
-
 #ifdef PDF_ENABLE_XFA
 CFGAS_FontMgr* GetGlobalFontManager();
 #endif  // PDF_ENABLE_XFA

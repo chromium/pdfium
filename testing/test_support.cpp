@@ -5,7 +5,6 @@
 #include "testing/test_support.h"
 
 #include <stdio.h>
-#include <string.h>
 
 #include "core/fxcrt/fx_string.h"
 
@@ -88,23 +87,4 @@ std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
   ptr[i++] = 0;
   ptr[i] = 0;
   return result;
-}
-
-TestLoader::TestLoader(const char* pBuf, size_t len)
-    : m_pBuf(pBuf), m_Len(len) {
-}
-
-// static
-int TestLoader::GetBlock(void* param,
-                         unsigned long pos,
-                         unsigned char* pBuf,
-                         unsigned long size) {
-  TestLoader* pLoader = static_cast<TestLoader*>(param);
-  if (pos + size < pos || pos + size > pLoader->m_Len) {
-    NOTREACHED();
-    return 0;
-  }
-
-  memcpy(pBuf, pLoader->m_pBuf + pos, size);
-  return 1;
 }
