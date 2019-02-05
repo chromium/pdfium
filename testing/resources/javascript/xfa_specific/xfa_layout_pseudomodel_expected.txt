@@ -1,0 +1,3 @@
+Alert: PASS: ready = true
+Alert: PASS: ready threw Error: Unable to set ready value.
+Alert: finished testing methods
