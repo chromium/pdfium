@@ -15,8 +15,8 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_stream.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/invalid_seekable_read_stream.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,9 +30,8 @@ class TestReadValidator final : public CPDF_ReadValidator {
 
  private:
   TestReadValidator()
-      : CPDF_ReadValidator(
-            pdfium::MakeRetain<CFX_InvalidSeekableReadStream>(100),
-            nullptr) {}
+      : CPDF_ReadValidator(pdfium::MakeRetain<InvalidSeekableReadStream>(100),
+                           nullptr) {}
   ~TestReadValidator() override {}
 };
 

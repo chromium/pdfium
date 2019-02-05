@@ -10,6 +10,8 @@ jumbo_source_set("test_support") {
   sources = [
     "fx_string_testhelpers.cpp",
     "fx_string_testhelpers.h",
+    "invalid_seekable_read_stream.cpp",
+    "invalid_seekable_read_stream.h",
     "pseudo_retainable.h",
     "string_write_stream.cpp",
     "string_write_stream.h",
