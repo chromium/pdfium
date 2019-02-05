@@ -5,7 +5,7 @@
 #include "xfa/fde/cfde_texteditengine.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
+#include "testing/xfa_unit_test_support.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 

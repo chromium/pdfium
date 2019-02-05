@@ -252,10 +252,10 @@ test("pdfium_unittests") {
     "core/fxcodec:unittests",
     "core/fxcrt",
     "core/fxcrt:unittests",
-    "core/fxge",
     "core/fxge:unittests",
     "fpdfsdk:unittests",
     "testing:test_support",
+    "testing:unit_test_support",
     "//testing/gmock",
     "//testing/gtest",
   ]
@@ -277,7 +277,6 @@ test("pdfium_unittests") {
     deps += [
       "fxbarcode:unittests",
       "xfa/fde:unittests",
-      "xfa/fgas",
       "xfa/fgas:unittests",
       "xfa/fgas/layout:unittests",
       "xfa/fwl:unittests",

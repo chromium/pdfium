@@ -13,10 +13,6 @@
 
 #include "public/fpdfview.h"
 
-#ifdef PDF_ENABLE_XFA
-class CFGAS_FontMgr;
-#endif  // PDF_ENABLE_XFA
-
 namespace pdfium {
 
 #define STR_IN_TEST_CASE(input_literal, ...)               \
@@ -79,9 +75,5 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
 // Deals with differences between UTF16LE and wchar_t.
 std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
     const std::wstring& wstr);
-
-#ifdef PDF_ENABLE_XFA
-CFGAS_FontMgr* GetGlobalFontManager();
-#endif  // PDF_ENABLE_XFA
 
 #endif  // TESTING_TEST_SUPPORT_H_
