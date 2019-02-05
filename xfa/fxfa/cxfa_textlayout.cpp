@@ -545,7 +545,6 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
   if (iCountHeight == 0)
     return;
 
-  bool bEndItem = true;
   float fLinePos = m_pLoader->fStartLineOffset;
   int32_t iLineIndex = 0;
   if (iBlockIndex > 0) {
@@ -565,12 +564,11 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
     float fLineHeight = m_pLoader->lineHeights[i];
     if (fLinePos + fLineHeight - rtText.height > kHeightTolerance) {
       m_Blocks.push_back({iLineIndex, i - iLineIndex});
-      bEndItem = false;
-      break;
+      return;
     }
     fLinePos += fLineHeight;
   }
-  if (iCountHeight > 0 && (i - iLineIndex) > 0 && bEndItem)
+  if (i > iLineIndex)
     m_Blocks.push_back({iLineIndex, i - iLineIndex});
 }
 
