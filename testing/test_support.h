@@ -83,28 +83,6 @@ std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
 std::string CryptToBase16(const uint8_t* digest);
 std::string GenerateMD5Base16(const uint8_t* data, uint32_t size);
 
-#ifdef PDF_ENABLE_V8
-namespace v8 {
-class Platform;
-}
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-namespace v8 {
-class StartupData;
-}
-
-// |natives_blob| and |snapshot_blob| are optional out parameters. They should
-// either both be valid or both be nullptrs.
-std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
-    const std::string& exe_path,
-    const std::string& bin_dir,
-    v8::StartupData* natives_blob,
-    v8::StartupData* snapshot_blob);
-#else   // V8_USE_EXTERNAL_STARTUP_DATA
-std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
-    const std::string& exe_path);
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
-
 class TestLoader {
  public:
   TestLoader(const char* pBuf, size_t len);

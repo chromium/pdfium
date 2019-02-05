@@ -31,8 +31,12 @@
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
 #include "testing/test_support.h"
+
+#ifdef PDF_ENABLE_V8
+#include "testing/v8_initializer.h"
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
+#endif
 
 namespace {
 
@@ -254,9 +258,12 @@ struct TestCase {
     FSDK_SetUnSpObjProcessHandler(&unsupport_info);
   }
 
+#ifdef PDF_ENABLE_V8
   std::unique_ptr<v8::Platform> platform;
   v8::StartupData natives_blob;
   v8::StartupData snapshot_blob;
+#endif
+
   FPDF_LIBRARY_CONFIG config;
   UNSUPPORT_INFO unsupport_info;
 };

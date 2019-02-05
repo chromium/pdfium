@@ -36,6 +36,10 @@ jumbo_source_set("test_support") {
   visibility = [ "../*" ]
 
   if (pdf_enable_v8) {
+    sources += [
+      "v8_initializer.cpp",
+      "v8_initializer.h",
+    ]
     deps += [
       "//v8",
       "//v8:v8_libplatform",

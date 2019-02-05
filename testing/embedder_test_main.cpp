@@ -8,9 +8,9 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
 
 #ifdef PDF_ENABLE_V8
+#include "testing/v8_initializer.h"
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_v8

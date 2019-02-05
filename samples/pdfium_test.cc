@@ -48,6 +48,7 @@
 #endif  // ENABLE_CALLGRIND
 
 #ifdef PDF_ENABLE_V8
+#include "testing/v8_initializer.h"
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
