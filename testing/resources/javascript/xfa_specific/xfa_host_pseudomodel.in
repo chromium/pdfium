@@ -21,46 +21,18 @@ stream
     </pageSet>
     <event activity="docReady" ref="$host">
       <script contentType="application/x-javascript">
-        function say(what) {
-          app.alert(what, "xfa.host says");
-        }
-        function testReadProperty(prop) {
-          try {
-            var actual = xfa.host[prop];
-            say("property " + prop + " is " + actual);
-          } catch (e) {
-            say("unexpected error: " + e);
-          }
-        }
-        function testROProperty(prop) {
-          testReadProperty(prop);
-          try {
-            xfa.host[prop] = "bogus";
-            say("error: property " + prop + " was settable");
-          } catch (e) {
-            say("expected error setting " + prop + " is " + e);
-          }
-        }
-        function testRWProperty(prop) {
-          testReadProperty(prop);
-          try {
-            xfa.host[prop] = "bogus";
-            say("property " + prop + " was settable as expected");
-          } catch (e) {
-            say("error setting " + prop + " is " + e);
-          }
-        }
-        testROProperty("appType");
-        testRWProperty("calculationsEnabled");
-        testRWProperty("currentPage");
-        testROProperty("language");
-        testROProperty("name");
-        testROProperty("numPages");
-        testROProperty("platform");
-        testRWProperty("title");
-        testRWProperty("validationsEnabled");
-        testROProperty("variation");
-        testROProperty("version");
+        {{include ../property_test_helpers.js}}
+        testROProperty(xfa.host, "appType", "Exchange");
+        testRWProperty(xfa.host, "calculationsEnabled", true, false);
+        testRIProperty(xfa.host, "currentPage", -1, 0);
+        testROProperty(xfa.host, "language", "");
+        testROProperty(xfa.host, "name", "Acrobat");
+        testROProperty(xfa.host, "numPages", 2);
+        testROProperty(xfa.host, "platform", "");
+        testRIProperty(xfa.host, "title", "");
+        testRWProperty(xfa.host, "validationsEnabled", true, false);
+        testROProperty(xfa.host, "variation", "Full");
+        testROProperty(xfa.host, "version", "11");
         try {
           xfa.host.beep();
           xfa.host.documentCountInBatch();
@@ -71,8 +43,9 @@ stream
           xfa.host.gotoURL('http://example.com');
           xfa.host.setFocus("my_doc.subform_combox_0.combox");
           xfa.host.openList("my_doc.subform_combox_0.combox");
+          app.alert("finished testing methods");
         } catch (e) {
-          say("error testing methods: " + e);
+          app.alert("error testing methods: " + e);
         }
       </script>
     </event>
