@@ -63,8 +63,8 @@ class CXFA_TextLayout {
 
  private:
   struct BlockData {
-    int32_t iIndex;
-    int32_t iLength;
+    size_t szIndex;
+    size_t szLength;
   };
 
   void GetTextDataNode();
@@ -116,7 +116,7 @@ class CXFA_TextLayout {
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
-  int GetNextIndexFromLastBlockData() const;
+  size_t GetNextIndexFromLastBlockData() const;
   void UpdateLoaderHeight(float fTextHeight);
 
   bool m_bHasBlock = false;
