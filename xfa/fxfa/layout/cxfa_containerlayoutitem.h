@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_CONTAINERLAYOUTITEM_H_
-#define XFA_FXFA_PARSER_CXFA_CONTAINERLAYOUTITEM_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_CONTAINERLAYOUTITEM_H_
+#define XFA_FXFA_LAYOUT_CXFA_CONTAINERLAYOUTITEM_H_
 
-#include "xfa/fxfa/parser/cxfa_layoutitem.h"
+#include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
 class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
  public:
@@ -22,4 +22,4 @@ class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
   UnownedPtr<CXFA_Node> m_pOldSubform;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_CONTAINERLAYOUTITEM_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_CONTAINERLAYOUTITEM_H_

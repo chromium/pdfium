@@ -4,18 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
+#include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
 
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_traversestrategy_contentareacontainerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentarea.h"
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
-#include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_medium.h"
@@ -25,8 +27,6 @@
 #include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/cxfa_pageset.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
-#include "xfa/fxfa/parser/cxfa_traversestrategy_contentareacontainerlayoutitem.h"
-#include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
@@ -213,8 +213,8 @@ bool CheckContentAreaNotUsed(
     CXFA_ContainerLayoutItem* pPageAreaLayoutItem,
     CXFA_Node* pContentArea,
     CXFA_ContainerLayoutItem*& pContentAreaLayoutItem) {
-  for (CXFA_LayoutItem* pChild = pPageAreaLayoutItem->m_pFirstChild;
-       pChild; pChild = pChild->m_pNextSibling) {
+  for (CXFA_LayoutItem* pChild = pPageAreaLayoutItem->m_pFirstChild; pChild;
+       pChild = pChild->m_pNextSibling) {
     CXFA_ContainerLayoutItem* pLayoutItem = pChild->AsContainerLayoutItem();
     if (pLayoutItem && pLayoutItem->GetFormNode() == pContentArea) {
       if (!pLayoutItem->m_pFirstChild) {
@@ -610,9 +610,8 @@ void CXFA_LayoutPageMgr::AddContentAreaLayoutItem(
 void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
   for (CXFA_ContainerLayoutItem* pRootPageSetLayoutItem =
            m_pPageSetLayoutItemRoot;
-       pRootPageSetLayoutItem;
-       pRootPageSetLayoutItem =
-           ToContainerLayoutItem(pRootPageSetLayoutItem->m_pNextSibling)) {
+       pRootPageSetLayoutItem; pRootPageSetLayoutItem = ToContainerLayoutItem(
+                                   pRootPageSetLayoutItem->m_pNextSibling)) {
     PageSetIterator sIterator(pRootPageSetLayoutItem);
     for (CXFA_ContainerLayoutItem* pPageSetLayoutItem = sIterator.GetCurrent();
          pPageSetLayoutItem; pPageSetLayoutItem = sIterator.MoveToNext()) {
@@ -621,7 +620,9 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
               XFA_Attribute::Relation);
       switch (ePageRelation) {
         case XFA_AttributeValue::OrderedOccurrence:
-        default: { ProcessLastPageSet(); } break;
+        default: {
+          ProcessLastPageSet();
+        } break;
         case XFA_AttributeValue::SimplexPaginated:
         case XFA_AttributeValue::DuplexPaginated: {
           CXFA_LayoutItem* pLastPageAreaLayoutItem = nullptr;
@@ -1890,9 +1891,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
 
 void CXFA_LayoutPageMgr::LayoutPageSetContents() {
   for (CXFA_ContainerLayoutItem* pRootLayoutItem = GetRootLayoutItem();
-       pRootLayoutItem;
-       pRootLayoutItem =
-           ToContainerLayoutItem(pRootLayoutItem->m_pNextSibling)) {
+       pRootLayoutItem; pRootLayoutItem = ToContainerLayoutItem(
+                            pRootLayoutItem->m_pNextSibling)) {
     CXFA_NodeIteratorTemplate<
         CXFA_ContainerLayoutItem,
         CXFA_TraverseStrategy_ContentAreaContainerLayoutItem>
@@ -1918,9 +1918,8 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
   CXFA_FFNotify* pNotify = m_pTemplatePageSetRoot->GetDocument()->GetNotify();
   int32_t nPageIdx = -1;
   for (CXFA_ContainerLayoutItem* pRootLayoutItem = GetRootLayoutItem();
-       pRootLayoutItem;
-       pRootLayoutItem =
-           ToContainerLayoutItem(pRootLayoutItem->m_pNextSibling)) {
+       pRootLayoutItem; pRootLayoutItem = ToContainerLayoutItem(
+                            pRootLayoutItem->m_pNextSibling)) {
     CXFA_NodeIteratorTemplate<
         CXFA_ContainerLayoutItem,
         CXFA_TraverseStrategy_ContentAreaContainerLayoutItem>

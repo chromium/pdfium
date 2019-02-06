@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
-#define XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTPROCESSOR_H_
+#define XFA_FXFA_LAYOUT_CXFA_LAYOUTPROCESSOR_H_
 
 #include <memory>
 #include <vector>
@@ -53,4 +53,4 @@ class CXFA_LayoutProcessor {
   bool m_bNeedLayout;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTPROCESSOR_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTPROCESSOR_H_

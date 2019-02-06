@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"

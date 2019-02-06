@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_layoutitem.h"
+#include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

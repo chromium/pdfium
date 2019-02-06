@@ -10,9 +10,9 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
-#include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
+#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
 
 class CXFA_FFWidget;
 class CXFA_FFDocView;

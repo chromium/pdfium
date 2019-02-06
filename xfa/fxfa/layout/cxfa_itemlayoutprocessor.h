@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_
-#define XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_
+#define XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_
 
 #include <float.h>
 
@@ -190,4 +190,4 @@ class CXFA_ItemLayoutProcessor {
   bool m_bHasAvailHeight = true;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_

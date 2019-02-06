@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
 
 #include "fxjs/xfa/cjx_object.h"
-#include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
-#include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
+#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_medium.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

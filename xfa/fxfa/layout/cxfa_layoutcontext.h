@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTCONTEXT_H_
-#define XFA_FXFA_PARSER_CXFA_LAYOUTCONTEXT_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTCONTEXT_H_
+#define XFA_FXFA_LAYOUT_CXFA_LAYOUTCONTEXT_H_
 
 #include <vector>
 
@@ -26,4 +26,4 @@ class CXFA_LayoutContext {
   UnownedPtr<CXFA_Node> m_pOverflowNode;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTCONTEXT_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTCONTEXT_H_

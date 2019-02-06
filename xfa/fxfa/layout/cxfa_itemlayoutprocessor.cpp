@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
 
 #include <algorithm>
 #include <memory>
@@ -18,12 +18,12 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_layoutcontext.h"
+#include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_keep.h"
-#include "xfa/fxfa/parser/cxfa_layoutcontext.h"
-#include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -233,9 +233,9 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
       fColSpanWidth += rgSpecifiedColumnWidths[nCurrentColIdx + i];
 
     if (nColSpan != nOriginalColSpan) {
-      fColSpanWidth =
-          bMetWholeRowCell ? 0 : std::max(fColSpanWidth,
-                                          pLayoutChild->m_sSize.height);
+      fColSpanWidth = bMetWholeRowCell ? 0
+                                       : std::max(fColSpanWidth,
+                                                  pLayoutChild->m_sSize.height);
     }
     if (nOriginalColSpan == -1)
       bMetWholeRowCell = true;

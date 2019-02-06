@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_CONTENTLAYOUTITEM_H_
-#define XFA_FXFA_PARSER_CXFA_CONTENTLAYOUTITEM_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_
+#define XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fxfa/parser/cxfa_layoutitem.h"
+#include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
 class CXFA_FFWidget;
 
@@ -43,4 +43,4 @@ inline CXFA_FFWidget* ToFFWidget(CXFA_ContentLayoutItem* item) {
   return item ? item->AsFFWidget() : nullptr;
 }
 
-#endif  // XFA_FXFA_PARSER_CXFA_CONTENTLAYOUTITEM_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_

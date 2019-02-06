@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
-#define XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTPAGEMGR_H_
+#define XFA_FXFA_LAYOUT_CXFA_LAYOUTPAGEMGR_H_
 
 #include <iterator>
 #include <list>
 #include <map>
 #include <vector>
 
-#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
 
 class CXFA_ContainerRecord;
 class CXFA_LayoutItem;
@@ -144,4 +144,4 @@ class CXFA_LayoutPageMgr {
   std::vector<CXFA_ContainerLayoutItem*> m_PageArray;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTPAGEMGR_H_

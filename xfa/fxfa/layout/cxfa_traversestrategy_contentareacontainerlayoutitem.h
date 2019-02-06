@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_CONTENTAREACONTAINERLAYOUTITEM_H_
-#define XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_CONTENTAREACONTAINERLAYOUTITEM_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_TRAVERSESTRATEGY_CONTENTAREACONTAINERLAYOUTITEM_H_
+#define XFA_FXFA_LAYOUT_CXFA_TRAVERSESTRATEGY_CONTENTAREACONTAINERLAYOUTITEM_H_
 
-#include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
 
 class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
  public:
@@ -41,4 +41,4 @@ class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
   }
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_CONTENTAREACONTAINERLAYOUTITEM_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_TRAVERSESTRATEGY_CONTENTAREACONTAINERLAYOUTITEM_H_

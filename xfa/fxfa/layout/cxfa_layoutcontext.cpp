@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_layoutcontext.h"
+#include "xfa/fxfa/layout/cxfa_layoutcontext.h"
 
 CXFA_LayoutContext::CXFA_LayoutContext() = default;
 

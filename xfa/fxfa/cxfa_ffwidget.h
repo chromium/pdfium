@@ -15,7 +15,7 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fxfa/fxfa.h"
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
 class CFX_DIBitmap;
 class CXFA_Box;

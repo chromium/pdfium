@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
-#include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -90,9 +90,10 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
     m_bNeedLayout = false;
     m_rgChangedContainers.clear();
   }
-  return 100 * (eStatus == XFA_ItemLayoutProcessorResult::Done
-                    ? m_nProgressCounter
-                    : m_nProgressCounter - 1) /
+  return 100 *
+         (eStatus == XFA_ItemLayoutProcessorResult::Done
+              ? m_nProgressCounter
+              : m_nProgressCounter - 1) /
          m_nProgressCounter;
 }
 

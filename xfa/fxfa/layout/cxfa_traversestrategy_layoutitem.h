@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
-#define XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
+#define XFA_FXFA_LAYOUT_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
 
-#include "xfa/fxfa/parser/cxfa_layoutitem.h"
+#include "xfa/fxfa/layout/cxfa_layoutitem.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 
 class CXFA_TraverseStrategy_LayoutItem {
@@ -27,4 +27,4 @@ using CXFA_LayoutItemIterator =
     CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
                               CXFA_TraverseStrategy_LayoutItem>;
 
-#endif  // XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_

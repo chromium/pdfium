@@ -116,6 +116,7 @@ jumbo_source_set("fxfa") {
     "../fgas/layout",
     "../fwl",
     "../fxgraphics",
+    "layout",
     "parser",
   ]
   allow_circular_includes_from = [
@@ -123,6 +124,7 @@ jumbo_source_set("fxfa") {
     "../fgas",
     "../fgas/layout",
     "../fwl",
+    "layout",
     "parser",
   ]
   configs += [

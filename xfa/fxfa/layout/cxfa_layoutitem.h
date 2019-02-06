@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
-#define XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
+#define XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -55,4 +55,4 @@ inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* item) {
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
-#endif  // XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
