@@ -103,12 +103,12 @@ class CXFA_TextLayout {
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFX_RenderDevice* pDevice,
                     CXFA_PieceLine* pPieceLine,
-                    int32_t iPiece,
+                    size_t szPiece,
                     FXTEXT_CHARPOS* pCharPos,
                     const CFX_Matrix& tmDoc2Device);
   void RenderPath(CFX_RenderDevice* pDevice,
                   CXFA_PieceLine* pPieceLine,
-                  int32_t iPiece,
+                  size_t szPiece,
                   FXTEXT_CHARPOS* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
   size_t GetDisplayPos(const CXFA_TextPiece* pPiece, FXTEXT_CHARPOS* pCharPos);

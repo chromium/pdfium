@@ -581,27 +581,25 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   }
 
   FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, 1);
-  // TODO(thestig): Make these size_t.
+  // TODO(thestig): Make this size_t.
   int32_t iCharCount = 1;
-  int32_t iLineStart = 0;
-  int32_t iPieceLines = pdfium::CollectionSize<int32_t>(m_pieceLines);
+  size_t szLineStart = 0;
+  size_t szPieceLines = m_pieceLines.size();
   if (!m_Blocks.empty()) {
     if (szBlockIndex < m_Blocks.size()) {
-      iLineStart = m_Blocks[szBlockIndex].szIndex;
-      iPieceLines = m_Blocks[szBlockIndex].szLength;
+      szLineStart = m_Blocks[szBlockIndex].szIndex;
+      szPieceLines = m_Blocks[szBlockIndex].szLength;
     } else {
-      iPieceLines = 0;
+      szPieceLines = 0;
     }
   }
 
-  for (int32_t i = 0; i < iPieceLines; i++) {
-    if (i + iLineStart >= pdfium::CollectionSize<int32_t>(m_pieceLines))
+  for (size_t i = 0; i < szPieceLines; ++i) {
+    if (i + szLineStart >= m_pieceLines.size())
       break;
 
-    CXFA_PieceLine* pPieceLine = m_pieceLines[i + iLineStart].get();
-    int32_t iPieces = pdfium::CollectionSize<int32_t>(pPieceLine->m_textPieces);
-    int32_t j = 0;
-    for (j = 0; j < iPieces; j++) {
+    CXFA_PieceLine* pPieceLine = m_pieceLines[i + szLineStart].get();
+    for (size_t j = 0; j < pPieceLine->m_textPieces.size(); ++j) {
       const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[j].get();
       int32_t iChars = pPiece->iChars;
       if (iCharCount < iChars) {
@@ -611,12 +609,12 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
       memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
       RenderString(pFxDevice, pPieceLine, j, pCharPos, tmDoc2Device);
     }
-    for (j = 0; j < iPieces; j++)
+    for (size_t j = 0; j < pPieceLine->m_textPieces.size(); ++j)
       RenderPath(pFxDevice, pPieceLine, j, pCharPos, tmDoc2Device);
   }
   pFxDevice->RestoreState(false);
   FX_Free(pCharPos);
-  return iPieceLines > 0;
+  return szPieceLines > 0;
 }
 
 void CXFA_TextLayout::UpdateAlign(float fHeight, float fBottom) {
@@ -1127,10 +1125,10 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
 
 void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
                                    CXFA_PieceLine* pPieceLine,
-                                   int32_t iPiece,
+                                   size_t szPiece,
                                    FXTEXT_CHARPOS* pCharPos,
                                    const CFX_Matrix& tmDoc2Device) {
-  const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
+  const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
     CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont,
@@ -1142,10 +1140,10 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
 
 void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
                                  CXFA_PieceLine* pPieceLine,
-                                 int32_t iPiece,
+                                 size_t szPiece,
                                  FXTEXT_CHARPOS* pCharPos,
                                  const CFX_Matrix& tmDoc2Device) {
-  CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPiece].get();
+  CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   bool bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
   bool bNoLineThrough = pPiece->iLineThrough < 1 || pPiece->iLineThrough > 2;
   if (bNoUnderline && bNoLineThrough)
@@ -1194,11 +1192,11 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
       return;
     }
     bool bHasCount = false;
-    int32_t iPiecePrev = iPiece;
-    int32_t iPieceNext = iPiece;
-    while (iPiecePrev > 0) {
-      iPiecePrev--;
-      if (pPieceLine->m_charCounts[iPiecePrev] > 0) {
+    size_t szPiecePrev = szPiece;
+    size_t szPieceNext = szPiece;
+    while (szPiecePrev > 0) {
+      szPiecePrev--;
+      if (pPieceLine->m_charCounts[szPiecePrev] > 0) {
         bHasCount = true;
         break;
       }
@@ -1207,10 +1205,9 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
       return;
 
     bHasCount = false;
-    int32_t iPieces = pdfium::CollectionSize<int32_t>(pPieceLine->m_textPieces);
-    while (iPieceNext < iPieces - 1) {
-      iPieceNext++;
-      if (pPieceLine->m_charCounts[iPieceNext] > 0) {
+    while (szPieceNext < pPieceLine->m_textPieces.size() - 1) {
+      szPieceNext++;
+      if (pPieceLine->m_charCounts[szPieceNext] > 0) {
         bHasCount = true;
         break;
       }
@@ -1220,14 +1217,14 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
 
     float fOrgX = 0.0f;
     float fEndX = 0.0f;
-    pPiece = pPieceLine->m_textPieces[iPiecePrev].get();
+    pPiece = pPieceLine->m_textPieces[szPiecePrev].get();
     szChars = GetDisplayPos(pPiece, pCharPos);
     if (szChars < 1)
       return;
 
     fOrgX = pCharPos[szChars - 1].m_Origin.x +
             pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
-    pPiece = pPieceLine->m_textPieces[iPieceNext].get();
+    pPiece = pPieceLine->m_textPieces[szPieceNext].get();
     szChars = GetDisplayPos(pPiece, pCharPos);
     if (szChars < 1)
       return;
