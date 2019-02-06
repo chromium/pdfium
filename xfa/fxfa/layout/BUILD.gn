@@ -36,4 +36,9 @@ jumbo_source_set("layout") {
     "../../../fxjs",
     "../parser",
   ]
+  configs += [
+    "../../../:pdfium_core_config",
+    "../../:xfa_warnings",
+  ]
+  visibility = [ "../../../*" ]
 }
