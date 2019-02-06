@@ -1863,6 +1863,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         FX_RECT rect =
             matrix.TransformRect(pType3Char->form()->CalcBoundingBox())
                 .GetOuterRect();
+        if (!rect.Valid())
+          continue;
+
         CFX_DefaultRenderDevice bitmap_device;
         if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Argb,
                                   nullptr)) {
