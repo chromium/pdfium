@@ -34,8 +34,6 @@ jumbo_source_set("test_support") {
     "../:pdfium",
     "../core/fdrm",
     "image_diff",
-    "//testing/gmock",
-    "//testing/gtest",
   ]
   configs += [ "../:pdfium_core_config" ]
   visibility = [ "../*" ]

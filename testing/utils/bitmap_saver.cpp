@@ -7,8 +7,8 @@
 #include <fstream>
 #include <vector>
 
-#include "testing/gtest/include/gtest/gtest.h"
 #include "testing/image_diff/image_diff_png.h"
+#include "third_party/base/logging.h"
 
 // static
 void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
@@ -30,14 +30,14 @@ void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
                                             &png_encoding);
   }
 
-  ASSERT_TRUE(encoded);
-  ASSERT_LT(filename.size(), 256u);
+  DCHECK(encoded);
+  DCHECK(filename.size() < 256u);
 
   std::ofstream png_file;
   png_file.open(filename, std::ios_base::out | std::ios_base::binary);
   png_file.write(reinterpret_cast<char*>(&png_encoding.front()),
                  png_encoding.size());
-  ASSERT_TRUE(png_file.good());
+  DCHECK(png_file.good());
   png_file.close();
 }
 
