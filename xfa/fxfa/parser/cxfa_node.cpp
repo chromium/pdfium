@@ -42,7 +42,6 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
-#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_accessiblecontent.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_acrobat7.h"
@@ -1900,10 +1899,6 @@ Optional<void*> CXFA_Node::GetDefaultValue(XFA_Attribute attr,
 
 void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
                                            bool bScriptModify) {
-  CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
-  if (!pLayoutPro)
-    return;
-
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -1998,7 +1993,7 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
     case XFA_Element::Field:
     case XFA_Element::Subform:
     case XFA_Element::SubformSet:
-      pLayoutPro->AddChangedContainer(this);
+      pNotify->OnContainerChanged(this);
       pNotify->OnValueChanged(this, eAttribute, this, this);
       break;
     case XFA_Element::Sharptext:
@@ -2046,7 +2041,7 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
     pParent = pParent->GetParent();
 
   if (pParent)
-    pLayoutPro->AddChangedContainer(pParent);
+    pNotify->OnContainerChanged(pParent);
 }
 
 void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {

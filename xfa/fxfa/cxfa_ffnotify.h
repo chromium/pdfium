@@ -38,6 +38,7 @@ class CXFA_FFNotify {
                       XFA_Attribute eAttr,
                       CXFA_Node* pParentNode,
                       CXFA_Node* pWidgetNode);
+  void OnContainerChanged(CXFA_Node* pNode);
   void OnChildAdded(CXFA_Node* pSender);
   void OnChildRemoved();
 

@@ -35,6 +35,7 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
+#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_barcode.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
 #include "xfa/fxfa/parser/cxfa_button.h"
@@ -407,6 +408,12 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     pWidget->PerformLayout();
     pWidget->InvalidateRect();
   }
+}
+
+void CXFA_FFNotify::OnContainerChanged(CXFA_Node* pNode) {
+  CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetLayoutProcessor();
+  if (pLayout)
+    pLayout->AddChangedContainer(pNode);
 }
 
 void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender) {
