@@ -29,14 +29,16 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   int Rows = GetInteger(data + 16);
   bool EndOfLine = !(data[20] & 0x01);
   bool ByteAlign = !(data[20] & 0x02);
-  bool BlackIs1 = !(data[20] & 0x04);
+  // This controls if CCodec_FaxDecoder::InvertBuffer() gets called. The method
+  // is not interesting, and calling it doubles the runtime.
+  const bool kBlackIs1 = false;
   data += kParameterSize;
   size -= kParameterSize;
 
   CCodec_FaxModule fax_module;
   std::unique_ptr<CCodec_ScanlineDecoder> decoder(
       fax_module.CreateDecoder({data, size}, width, height, K, EndOfLine,
-                               ByteAlign, BlackIs1, Columns, Rows));
+                               ByteAlign, kBlackIs1, Columns, Rows));
 
   if (decoder) {
     int line = 0;

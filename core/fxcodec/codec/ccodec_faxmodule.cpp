@@ -469,6 +469,8 @@ class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
   uint32_t GetSrcOffset() override;
 
  private:
+  void InvertBuffer();
+
   const int m_Encoding;
   int m_bitpos = 0;
   bool m_bByteAlign = false;
@@ -549,18 +551,21 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
     if (m_bByteAlign)
       m_bitpos = bitpos1;
   }
-  if (m_bBlack) {
-    ASSERT(m_Pitch == m_ScanlineBuf.size());
-    ASSERT(m_Pitch % 4 == 0);
-    uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
-    for (size_t i = 0; i < m_ScanlineBuf.size() / 4; ++i)
-      data[i] = ~data[i];
-  }
+  if (m_bBlack)
+    InvertBuffer();
   return m_ScanlineBuf.data();
 }
 
 uint32_t CCodec_FaxDecoder::GetSrcOffset() {
   return std::min(static_cast<size_t>((m_bitpos + 7) / 8), m_SrcSpan.size());
+}
+
+void CCodec_FaxDecoder::InvertBuffer() {
+  ASSERT(m_Pitch == m_ScanlineBuf.size());
+  ASSERT(m_Pitch % 4 == 0);
+  uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
+  for (size_t i = 0; i < m_ScanlineBuf.size() / 4; ++i)
+    data[i] = ~data[i];
 }
 
 }  // namespace
