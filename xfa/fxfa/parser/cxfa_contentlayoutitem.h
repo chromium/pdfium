@@ -26,8 +26,7 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   void InsertAfter(CXFA_ContentLayoutItem* pNext);
 
   CFX_RectF GetRect(bool bRelative) const;
-  int32_t GetIndex() const;
-  int32_t GetCount() const;
+  size_t GetIndex() const;
 
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;

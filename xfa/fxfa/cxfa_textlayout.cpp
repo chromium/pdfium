@@ -321,11 +321,9 @@ float CXFA_TextLayout::DoLayout(float fTextHeight) {
   return fTextHeight;
 }
 
-float CXFA_TextLayout::DoSplitLayout(int32_t iBlockIndex,
+float CXFA_TextLayout::DoSplitLayout(size_t szBlockIndex,
                                      float fCalcHeight,
                                      float fTextHeight) {
-  ASSERT(iBlockIndex >= 0);
-
   if (!m_pLoader)
     return fCalcHeight;
 
@@ -334,7 +332,6 @@ float CXFA_TextLayout::DoSplitLayout(int32_t iBlockIndex,
   if (fCalcHeight < 0)
     return fCalcHeight;
 
-  size_t szBlockIndex = static_cast<size_t>(iBlockIndex);
   m_bHasBlock = true;
   if (m_Blocks.empty() && m_pLoader->fHeight > 0) {
     float fHeight = fTextHeight - GetLayoutHeight();
@@ -535,7 +532,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
   return true;
 }
 
-void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
+void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, size_t szBlockIndex) {
   if (!m_pLoader)
     return;
 
@@ -544,12 +541,9 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
 
   float fLinePos = m_pLoader->fStartLineOffset;
   size_t szLineIndex = 0;
-  if (iBlockIndex > 0) {
-    // TODO(thestig): Check this code for correctness, and convert to size_t.
-    int32_t iBlockHeightCount =
-        pdfium::CollectionSize<int32_t>(m_pLoader->blockHeights);
-    if (iBlockIndex <= iBlockHeightCount) {
-      for (int32_t i = 0; i < iBlockIndex; i++)
+  if (szBlockIndex > 0) {
+    if (szBlockIndex <= m_pLoader->blockHeights.size()) {
+      for (size_t i = 0; i < szBlockIndex; ++i)
         fLinePos -= m_pLoader->blockHeights[i].fHeight;
     } else {
       fLinePos = 0;
@@ -573,7 +567,7 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
 bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
                                  const CFX_Matrix& tmDoc2Device,
                                  const CFX_RectF& rtClip,
-                                 int32_t iBlock) {
+                                 size_t szBlockIndex) {
   if (!pFxDevice)
     return false;
 
@@ -592,9 +586,9 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   int32_t iLineStart = 0;
   int32_t iPieceLines = pdfium::CollectionSize<int32_t>(m_pieceLines);
   if (!m_Blocks.empty()) {
-    if (iBlock < pdfium::CollectionSize<int32_t>(m_Blocks)) {
-      iLineStart = m_Blocks[iBlock].szIndex;
-      iPieceLines = m_Blocks[iBlock].szLength;
+    if (szBlockIndex < m_Blocks.size()) {
+      iLineStart = m_Blocks[szBlockIndex].szIndex;
+      iPieceLines = m_Blocks[szBlockIndex].szLength;
     } else {
       iPieceLines = 0;
     }

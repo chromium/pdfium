@@ -33,23 +33,23 @@ struct FX_RTFTEXTOBJ;
 
 class CXFA_TextLayout {
  public:
-  explicit CXFA_TextLayout(CXFA_FFDoc* doc, CXFA_TextProvider* pTextProvider);
+  CXFA_TextLayout(CXFA_FFDoc* doc, CXFA_TextProvider* pTextProvider);
   ~CXFA_TextLayout();
 
   float GetLayoutHeight();
   float StartLayout(float fWidth);
   float DoLayout(float fTextHeight);
-  float DoSplitLayout(int32_t iBlockIndex,
+  float DoSplitLayout(size_t szBlockIndex,
                       float fCalcHeight,
                       float fTextHeight);
   float Layout(const CFX_SizeF& size);
 
   CFX_SizeF CalcSize(const CFX_SizeF& minSize, const CFX_SizeF& maxSize);
-  void ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex);
+  void ItemBlocks(const CFX_RectF& rtText, size_t szBlockIndex);
   bool DrawString(CFX_RenderDevice* pFxDevice,
                   const CFX_Matrix& tmDoc2Device,
                   const CFX_RectF& rtClip,
-                  int32_t iBlock);
+                  size_t szBlockIndex);
   bool IsLoaded() const { return !m_pieceLines.empty(); }
   void Unload();
 

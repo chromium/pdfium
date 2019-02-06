@@ -283,7 +283,7 @@ class CXFA_Node : public CXFA_Object {
                          float* pCalcWidth,
                          float* pCalcHeight);
   bool FindSplitPos(CXFA_FFDocView* docView,
-                    int32_t iBlockIndex,
+                    size_t szBlockIndex,
                     float* pCalcHeight);
 
   bool LoadCaption(CXFA_FFDoc* doc);

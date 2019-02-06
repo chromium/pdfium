@@ -3438,7 +3438,7 @@ CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
 }
 
 bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
-                             int32_t iBlockIndex,
+                             size_t szBlockIndex,
                              float* pCalcHeight) {
   if (GetFFWidgetType() == XFA_FFWidgetType::kSubform)
     return false;
@@ -3456,7 +3456,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
 
   float fTopInset = 0;
   float fBottomInset = 0;
-  if (iBlockIndex == 0) {
+  if (szBlockIndex == 0) {
     CXFA_Margin* margin = GetMarginIfExists();
     if (margin) {
       fTopInset = margin->GetTopInset();
@@ -3469,16 +3469,16 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
   }
   if (GetFFWidgetType() == XFA_FFWidgetType::kText) {
     float fHeight = *pCalcHeight;
-    if (iBlockIndex == 0) {
+    if (szBlockIndex == 0) {
       *pCalcHeight -= fTopInset;
       *pCalcHeight = std::max(*pCalcHeight, 0.0f);
     }
     CXFA_TextLayout* pTextLayout =
         m_pLayoutData->AsTextLayoutData()->GetTextLayout();
     *pCalcHeight = pTextLayout->DoSplitLayout(
-        iBlockIndex, *pCalcHeight, m_pLayoutData->m_fWidgetHeight - fTopInset);
+        szBlockIndex, *pCalcHeight, m_pLayoutData->m_fWidgetHeight - fTopInset);
     if (*pCalcHeight != 0) {
-      if (iBlockIndex == 0)
+      if (szBlockIndex == 0)
         *pCalcHeight += fTopInset;
       if (fabs(fHeight - *pCalcHeight) < kXFAWidgetPrecision)
         return false;
@@ -3488,7 +3488,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
 
   XFA_AttributeValue iCapPlacement = XFA_AttributeValue::Unknown;
   float fCapReserve = 0;
-  if (iBlockIndex == 0) {
+  if (szBlockIndex == 0) {
     CXFA_Caption* caption = GetCaptionIfExists();
     if (caption && !caption->IsHidden()) {
       iCapPlacement = caption->GetPlacementType();
@@ -3522,11 +3522,11 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
   }
   std::vector<float>* pFieldArray = &pFieldData->m_FieldSplitArray;
-  int32_t iFieldSplitCount = pdfium::CollectionSize<int32_t>(*pFieldArray);
-  if (iFieldSplitCount < (iBlockIndex * 3))
+  size_t szFieldSplitCount = pFieldArray->size();
+  if (szFieldSplitCount < szBlockIndex * 3)
     return false;
 
-  for (int32_t i = 0; i < iBlockIndex * 3; i += 3) {
+  for (size_t i = 0; i < szBlockIndex * 3; i += 3) {
     iLinesCount -= (int32_t)(*pFieldArray)[i + 1];
     fHeight -= (*pFieldArray)[i + 2];
   }
@@ -3538,7 +3538,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
   float fTextHeight = iLinesCount * fLineHeight - fLineHeight + fFontSize;
   float fSpaceAbove = 0;
   float fStartOffset = 0;
-  if (fHeight > 0.1f && iBlockIndex == 0) {
+  if (fHeight > 0.1f && szBlockIndex == 0) {
     fStartOffset = fTopInset;
     fHeight -= (fTopInset + fBottomInset);
     CXFA_Para* para = GetParaIfExists();
@@ -3564,12 +3564,13 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     if (fStartOffset < 0.1f)
       fStartOffset = 0;
   }
-  for (int32_t i = iBlockIndex - 1; iBlockIndex > 0 && i < iBlockIndex; i++) {
+  if (szBlockIndex > 0) {
+    size_t i = szBlockIndex - 1;
     fStartOffset = (*pFieldArray)[i * 3] - (*pFieldArray)[i * 3 + 2];
     if (fStartOffset < 0.1f)
       fStartOffset = 0;
   }
-  if (iFieldSplitCount / 3 == (iBlockIndex + 1))
+  if (szFieldSplitCount / 3 == (szBlockIndex + 1))
     (*pFieldArray)[0] = fStartOffset;
   else
     pFieldArray->push_back(fStartOffset);
@@ -3602,9 +3603,9 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
       return true;
     }
     if (fStartOffset + kXFAWidgetPrecision >= *pCalcHeight) {
-      if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
-        (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
+      if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+        (*pFieldArray)[szBlockIndex * 3 + 1] = 0;
+        (*pFieldArray)[szBlockIndex * 3 + 2] = *pCalcHeight;
       } else {
         pFieldArray->push_back(0);
         pFieldArray->push_back(*pCalcHeight);
@@ -3613,9 +3614,9 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     }
     if (*pCalcHeight - fStartOffset < fLineHeight) {
       *pCalcHeight = fStartOffset;
-      if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
-        (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
+      if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+        (*pFieldArray)[szBlockIndex * 3 + 1] = 0;
+        (*pFieldArray)[szBlockIndex * 3 + 2] = *pCalcHeight;
       } else {
         pFieldArray->push_back(0);
         pFieldArray->push_back(*pCalcHeight);
@@ -3628,9 +3629,9 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
         (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
     if (iLineNum >= iLinesCount) {
       if (*pCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
-        if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-          (*pFieldArray)[iBlockIndex * 3 + 1] = iLinesCount;
-          (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
+        if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+          (*pFieldArray)[szBlockIndex * 3 + 1] = iLinesCount;
+          (*pFieldArray)[szBlockIndex * 3 + 2] = *pCalcHeight;
         } else {
           pFieldArray->push_back(iLinesCount);
           pFieldArray->push_back(*pCalcHeight);
@@ -3649,9 +3650,9 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     }
     if (iLineNum > 0) {
       float fSplitHeight = iLineNum * fLineHeight + fCapReserve + fStartOffset;
-      if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        (*pFieldArray)[iBlockIndex * 3 + 1] = iLineNum;
-        (*pFieldArray)[iBlockIndex * 3 + 2] = fSplitHeight;
+      if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+        (*pFieldArray)[szBlockIndex * 3 + 1] = iLineNum;
+        (*pFieldArray)[szBlockIndex * 3 + 2] = fSplitHeight;
       } else {
         pFieldArray->push_back(iLineNum);
         pFieldArray->push_back(fSplitHeight);

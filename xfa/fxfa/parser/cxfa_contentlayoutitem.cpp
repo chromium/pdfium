@@ -97,22 +97,12 @@ CFX_RectF CXFA_ContentLayoutItem::GetRect(bool bRelative) const {
   return CFX_RectF(sPos, sSize);
 }
 
-int32_t CXFA_ContentLayoutItem::GetIndex() const {
-  int32_t iIndex = 0;
+size_t CXFA_ContentLayoutItem::GetIndex() const {
+  size_t szIndex = 0;
   const CXFA_ContentLayoutItem* pCurNode = this;
   while (auto* pPrev = pCurNode->GetPrev()) {
     pCurNode = pPrev;
-    ++iIndex;
+    ++szIndex;
   }
-  return iIndex;
-}
-
-int32_t CXFA_ContentLayoutItem::GetCount() const {
-  int32_t iCount = GetIndex() + 1;
-  const CXFA_ContentLayoutItem* pCurNode = this;
-  while (auto* pNext = pCurNode->GetNext()) {
-    pCurNode = pNext;
-    iCount++;
-  }
-  return iCount;
+  return szIndex;
 }
