@@ -13,6 +13,7 @@
 
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/logging.h"
@@ -36,7 +37,10 @@ const uint8_t OneLeadPos[256] = {
 };
 
 // Limit of image dimension. Use the same limit as the JBIG2 codecs.
-const int kMaxImageDimension = 65535;
+constexpr int kMaxImageDimension = 65535;
+
+constexpr int kFaxBpc = 1;
+constexpr int kFaxComps = 1;
 
 int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
   ASSERT(start_pos >= 0);
@@ -448,14 +452,11 @@ void FaxGet1DLine(const uint8_t* src_buf,
   }
 }
 
-}  // namespace
-
 class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
  public:
   CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
                     int width,
                     int height,
-                    uint32_t pitch,
                     int K,
                     bool EndOfLine,
                     bool EncodedByteAlign,
@@ -481,21 +482,26 @@ class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
 CCodec_FaxDecoder::CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
                                      int width,
                                      int height,
-                                     uint32_t pitch,
                                      int K,
                                      bool EndOfLine,
                                      bool EncodedByteAlign,
                                      bool BlackIs1)
-    : CCodec_ScanlineDecoder(width, height, width, height, 1, 1, pitch),
+    : CCodec_ScanlineDecoder(width,
+                             height,
+                             width,
+                             height,
+                             kFaxComps,
+                             kFaxBpc,
+                             CalculatePitch32(kFaxBpc, width).ValueOrDie()),
       m_Encoding(K),
       m_bByteAlign(EncodedByteAlign),
       m_bEndOfLine(EndOfLine),
       m_bBlack(BlackIs1),
       m_SrcSpan(src_span),
-      m_ScanlineBuf(pitch),
-      m_RefBuf(pitch) {}
+      m_ScanlineBuf(m_Pitch),
+      m_RefBuf(m_Pitch) {}
 
-CCodec_FaxDecoder::~CCodec_FaxDecoder() {}
+CCodec_FaxDecoder::~CCodec_FaxDecoder() = default;
 
 bool CCodec_FaxDecoder::v_Rewind() {
   memset(m_RefBuf.data(), 0xff, m_RefBuf.size());
@@ -557,6 +563,8 @@ uint32_t CCodec_FaxDecoder::GetSrcOffset() {
   return std::min(static_cast<size_t>((m_bitpos + 7) / 8), m_SrcSpan.size());
 }
 
+}  // namespace
+
 // static
 int CCodec_FaxModule::FaxG4Decode(const uint8_t* src_buf,
                                   uint32_t src_size,
@@ -599,10 +607,9 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
   if (actual_width > kMaxImageDimension || actual_height > kMaxImageDimension)
     return nullptr;
 
-  uint32_t pitch = (static_cast<uint32_t>(actual_width) + 31) / 32 * 4;
-  return pdfium::MakeUnique<CCodec_FaxDecoder>(
-      src_span, actual_width, actual_height, pitch, K, EndOfLine,
-      EncodedByteAlign, BlackIs1);
+  return pdfium::MakeUnique<CCodec_FaxDecoder>(src_span, actual_width,
+                                               actual_height, K, EndOfLine,
+                                               EncodedByteAlign, BlackIs1);
 }
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
