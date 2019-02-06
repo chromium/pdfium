@@ -81,7 +81,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
   if (chartype != FX_CHARTYPE::kCombination &&
       GetUnifiedCharType(m_eCharType) != GetUnifiedCharType(chartype) &&
       m_eCharType != FX_CHARTYPE::kUnknown &&
-      m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance &&
+      IsGreaterThanLineWidth(m_pCurLine->GetLineEnd()) &&
       (m_eCharType != FX_CHARTYPE::kSpace ||
        chartype != FX_CHARTYPE::kControl)) {
     dwRet1 = EndBreak(CFX_BreakType::Line);
@@ -261,7 +261,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   m_pCurLine->m_iWidth = checked_width.ValueOrDie();
   m_pCurLine->m_iArabicChars++;
 
-  if (m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance)
+  if (IsGreaterThanLineWidth(m_pCurLine->GetLineEnd()))
     return EndBreak(CFX_BreakType::Line);
   return CFX_BreakType::None;
 }
@@ -291,7 +291,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
 
   m_pCurLine->m_iWidth = checked_width.ValueOrDie();
   if (chartype != FX_CHARTYPE::kSpace &&
-      m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance) {
+      IsGreaterThanLineWidth(m_pCurLine->GetLineEnd())) {
     return EndBreak(CFX_BreakType::Line);
   }
   return CFX_BreakType::None;
@@ -347,7 +347,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
                                       bool bAllChars,
                                       CFX_BreakType dwStatus) {
   bool bDone = false;
-  if (m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance) {
+  if (IsGreaterThanLineWidth(m_pCurLine->GetLineEnd())) {
     const CFX_Char* tc =
         m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
     switch (tc->GetCharType()) {

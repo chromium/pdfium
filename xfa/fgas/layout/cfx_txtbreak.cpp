@@ -183,7 +183,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   pCurChar->m_iCharWidth = iCharWidthValid;
   iLineWidth += iCharWidthValid;
   m_pCurLine->m_iArabicChars++;
-  if (!m_bSingleLine && iLineWidth > m_iLineWidth + m_iTolerance)
+  if (!m_bSingleLine && IsGreaterThanLineWidth(iLineWidth))
     return EndBreak(CFX_BreakType::Line);
   return CFX_BreakType::None;
 }
@@ -216,7 +216,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
   pCurChar->m_iCharWidth = iCharWidthValid;
   iLineWidth += iCharWidthValid;
   if (!m_bSingleLine && chartype != FX_CHARTYPE::kSpace &&
-      iLineWidth > m_iLineWidth + m_iTolerance) {
+      IsGreaterThanLineWidth(iLineWidth)) {
     return EndBreak(CFX_BreakType::Line);
   }
 
@@ -233,8 +233,8 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
   CFX_BreakType dwRet1 = CFX_BreakType::None;
   if (chartype != FX_CHARTYPE::kCombination &&
       GetUnifiedCharType(m_eCharType) != GetUnifiedCharType(chartype) &&
-      m_eCharType != FX_CHARTYPE::kUnknown &&
-      m_pCurLine->m_iWidth > m_iLineWidth + m_iTolerance && !m_bSingleLine &&
+      m_eCharType != FX_CHARTYPE::kUnknown && !m_bSingleLine &&
+      IsGreaterThanLineWidth(m_pCurLine->m_iWidth) &&
       (m_eCharType != FX_CHARTYPE::kSpace ||
        chartype != FX_CHARTYPE::kControl)) {
     dwRet1 = EndBreak(CFX_BreakType::Line);
@@ -284,7 +284,7 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
                                       bool bAllChars) {
   bool bDone = false;
   CFX_Char* pTC;
-  if (!m_bSingleLine && m_pCurLine->m_iWidth > m_iLineWidth + m_iTolerance) {
+  if (!m_bSingleLine && IsGreaterThanLineWidth(m_pCurLine->m_iWidth)) {
     pTC = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
     switch (pTC->GetCharType()) {
       case FX_CHARTYPE::kTab:

@@ -70,6 +70,7 @@ class CFX_Break {
 
   void SetBreakStatus();
   bool HasLine() const { return m_iReadyLineIndex >= 0; }
+  bool IsGreaterThanLineWidth(int32_t width) const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
 
   FX_CHARTYPE m_eCharType = FX_CHARTYPE::kUnknown;

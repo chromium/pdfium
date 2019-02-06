@@ -82,6 +82,10 @@ void CFX_Break::SetBreakStatus() {
     tc->m_dwStatus = CFX_BreakType::Piece;
 }
 
+bool CFX_Break::IsGreaterThanLineWidth(int32_t width) const {
+  return width > m_iLineWidth + m_iTolerance;
+}
+
 FX_CHARTYPE CFX_Break::GetUnifiedCharType(FX_CHARTYPE chartype) const {
   return chartype >= FX_CHARTYPE::kArabicAlef ? FX_CHARTYPE::kArabic : chartype;
 }
