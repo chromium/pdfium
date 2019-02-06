@@ -1062,8 +1062,7 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
 #ifdef PDF_ENABLE_V8
 FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags() {
   // Reduce exposure since no PDF should contain web assembly.
-  // Use interpreted JS only to avoid RWX pages in our address space.
-  return "--no-expose-wasm --jitless";
+  return "--no-expose-wasm";
 }
 #endif  // PDF_ENABLE_V8
 
