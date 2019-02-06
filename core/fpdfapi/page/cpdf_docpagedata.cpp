@@ -465,10 +465,16 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
     return it->second;
 
   const CPDF_Dictionary* pFontDict = pFontStream->GetDict();
-  int32_t org_size = pFontDict->GetIntegerFor("Length1") +
-                     pFontDict->GetIntegerFor("Length2") +
-                     pFontDict->GetIntegerFor("Length3");
-  org_size = std::max(org_size, 0);
+  int32_t len1 = pFontDict->GetIntegerFor("Length1");
+  int32_t len2 = pFontDict->GetIntegerFor("Length2");
+  int32_t len3 = pFontDict->GetIntegerFor("Length3");
+  uint32_t org_size = 0;
+  if (len1 >= 0 && len2 >= 0 && len3 >= 0) {
+    FX_SAFE_UINT32 safe_org_size = len1;
+    safe_org_size += len2;
+    safe_org_size += len3;
+    org_size = safe_org_size.ValueOrDefault(0);
+  }
 
   auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream);
   pFontAcc->LoadAllDataFilteredWithEstimatedSize(org_size);

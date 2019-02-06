@@ -14,3 +14,10 @@ TEST_F(CPDF_DocPageDataEmbedderTest, Crasher_828206) {
   RenderLoadedPage(page);
   UnloadPage(page);
 }
+
+TEST_F(CPDF_DocPageDataEmbedderTest, BUG_925736) {
+  EXPECT_TRUE(OpenDocument("bug_925736.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  UnloadPage(page);
+}
