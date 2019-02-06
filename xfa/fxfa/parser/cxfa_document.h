@@ -60,17 +60,19 @@ class CXFA_Document final : public CXFA_NodeOwner {
   ~CXFA_Document() override;
 
   CFXJSE_Engine* InitScriptContext(CJS_Runtime* fxjs_runtime);
+  CFXJSE_Engine* GetScriptContext() const;
 
-  CXFA_Node* GetRoot() const { return m_pRootNode; }
   CXFA_FFNotify* GetNotify() const { return notify_.Get(); }
   CXFA_LocaleMgr* GetLocaleMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, WideStringView wsID) const;
   CXFA_Node* GetNotBindNode(
       const std::vector<UnownedPtr<CXFA_Object>>& arrayNodes) const;
-  CXFA_LayoutProcessor* GetLayoutProcessor();
-  CFXJSE_Engine* GetScriptContext() const;
 
+  // Creates if not present, never returns NULL.
+  CXFA_LayoutProcessor* GetLayoutProcessor();
+
+  CXFA_Node* GetRoot() const { return m_pRootNode; }
   void SetRoot(CXFA_Node* pNewRoot) { m_pRootNode = pNewRoot; }
 
   bool HasFlag(uint32_t dwFlag) const {

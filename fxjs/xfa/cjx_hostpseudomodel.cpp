@@ -299,9 +299,6 @@ CJS_Result CJX_HostPseudoModel::openList(
   }
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  if (!pDocLayout)
-    return CJS_Result::Success();
-
   CXFA_FFWidget* hWidget =
       XFA_GetWidgetFromLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!hWidget)

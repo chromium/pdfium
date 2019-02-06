@@ -97,9 +97,6 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
   }
   int32_t iIndex = params.size() >= 3 ? runtime->ToInt32(params[2]) : 0;
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  if (!pDocLayout)
-    return CJS_Result::Success();
-
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
@@ -163,9 +160,6 @@ CJS_Result CJX_LayoutPseudoModel::y(
 CJS_Result CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
                                                     bool bNumbered) {
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  if (!pDocLayout)
-    return CJS_Result::Success();
-
   int32_t iPageCount = 0;
   int32_t iPageNum = pDocLayout->CountPages();
   if (bNumbered) {
@@ -202,9 +196,6 @@ CJS_Result CJX_LayoutPseudoModel::pageSpan(
     return CJS_Result::Success();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  if (!pDocLayout)
-    return CJS_Result::Success();
-
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
@@ -376,9 +367,6 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
     return CJS_Result::Success();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  if (!pDocLayout)
-    return CJS_Result::Success();
-
   auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(GetDocument());
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
@@ -484,9 +472,6 @@ CJS_Result CJX_LayoutPseudoModel::PageInternals(
     return CJS_Result::Success(runtime->NewNumber(0));
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  if (!pDocLayout)
-    return CJS_Result::Success();
-
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)

@@ -1815,8 +1815,7 @@ void CXFA_Document::DoDataRemerge(bool bDoDataMerge) {
   if (bDoDataMerge)
     DoDataMerge();
 
-  CXFA_LayoutProcessor* pLayoutProcessor = GetLayoutProcessor();
-  pLayoutProcessor->SetForceReLayout(true);
+  GetLayoutProcessor()->SetForceReLayout(true);
 }
 
 CXFA_Node* CXFA_Document::GetGlobalBinding(uint32_t dwNameHash) {
