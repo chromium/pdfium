@@ -92,7 +92,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   bool ContinueDIBits(CFX_ImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;
   bool DrawDeviceText(int nChars,
-                      const FXTEXT_CHARPOS* pCharPos,
+                      const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
                       float font_size,

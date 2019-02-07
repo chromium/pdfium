@@ -1800,7 +1800,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   FX_ARGB fill_argb = GetFillArgbForType3(textobj);
   int fill_alpha = FXARGB_A(fill_argb);
   int device_class = m_pDevice->GetDeviceClass();
-  std::vector<FXTEXT_GLYPHPOS> glyphs;
+  std::vector<TextGlyphPos> glyphs;
   if (device_class == FXDC_DISPLAY)
     glyphs.resize(textobj->GetCharCodes().size());
   else if (fill_alpha < 255)
@@ -1823,7 +1823,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     if (!pType3Char->LoadBitmap(m_pContext.Get())) {
       if (!glyphs.empty()) {
         for (size_t i = 0; i < iChar; ++i) {
-          const FXTEXT_GLYPHPOS& glyph = glyphs[i];
+          const TextGlyphPos& glyph = glyphs[i];
           if (!glyph.m_pGlyph)
             continue;
 
@@ -1927,7 +1927,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     return true;
 
   pBitmap->Clear(0);
-  for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
+  for (const TextGlyphPos& glyph : glyphs) {
     if (!glyph.m_pGlyph)
       continue;
 
@@ -1981,7 +1981,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   CharPosList.Load(textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
                    font_size);
   for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
-    FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
+    TextCharPos& charpos = CharPosList.m_pCharPos[i];
     auto* font = charpos.m_FallbackFontPosition == -1
                      ? pFont->GetFont()
                      : pFont->GetFontFallback(charpos.m_FallbackFontPosition);

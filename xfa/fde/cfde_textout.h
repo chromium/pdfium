@@ -38,7 +38,7 @@ class CFDE_TextOut {
   static bool DrawString(CFX_RenderDevice* device,
                          FX_ARGB color,
                          const RetainPtr<CFGAS_GEFont>& pFont,
-                         pdfium::span<FXTEXT_CHARPOS> pCharPos,
+                         pdfium::span<TextCharPos> pCharPos,
                          float fFontSize,
                          const CFX_Matrix* pMatrix);
 
@@ -114,7 +114,7 @@ class CFDE_TextOut {
   int32_t m_iCurLine = 0;
   int32_t m_iCurPiece = 0;
   int32_t m_iTotalLines = 0;
-  std::vector<FXTEXT_CHARPOS> m_CharPos;
+  std::vector<TextCharPos> m_CharPos;
 };
 
 #endif  // XFA_FDE_CFDE_TEXTOUT_H_

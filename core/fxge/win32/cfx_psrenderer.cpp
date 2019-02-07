@@ -528,7 +528,7 @@ void CFX_PSRenderer::SetColor(uint32_t color) {
 
 void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
                                      CFX_Font* pFont,
-                                     const FXTEXT_CHARPOS& charpos,
+                                     const TextCharPos& charpos,
                                      int* ps_fontnum,
                                      int* ps_glyphindex) {
   int i = 0;
@@ -634,7 +634,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
 }
 
 bool CFX_PSRenderer::DrawText(int nChars,
-                              const FXTEXT_CHARPOS* pCharPos,
+                              const TextCharPos* pCharPos,
                               CFX_Font* pFont,
                               const CFX_Matrix* pObject2Device,
                               float font_size,

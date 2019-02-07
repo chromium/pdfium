@@ -14,13 +14,13 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 
 class CFX_ClipRgn;
-class FXTEXT_CHARPOS;
 class SkCanvas;
 class SkMatrix;
 class SkPaint;
 class SkPath;
 class SkPictureRecorder;
 class SkiaState;
+class TextCharPos;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
@@ -131,7 +131,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                         BlendMode blend_type);
 
   bool DrawDeviceText(int nChars,
-                      const FXTEXT_CHARPOS* pCharPos,
+                      const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
                       float font_size,

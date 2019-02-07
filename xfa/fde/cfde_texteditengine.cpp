@@ -1054,10 +1054,10 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
   return text_break_.GetCharRects(&tr, false);
 }
 
-std::vector<FXTEXT_CHARPOS> CFDE_TextEditEngine::GetDisplayPos(
+std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
     const FDE_TEXTEDITPIECE& piece) {
   if (piece.nCount < 1)
-    return std::vector<FXTEXT_CHARPOS>();
+    return std::vector<TextCharPos>();
 
   CFX_TxtBreak::Run tr;
   tr.pEdtEngine = this;
@@ -1069,7 +1069,7 @@ std::vector<FXTEXT_CHARPOS> CFDE_TextEditEngine::GetDisplayPos(
   tr.dwCharStyles = piece.dwCharStyles;
   tr.pRect = &piece.rtPiece;
 
-  std::vector<FXTEXT_CHARPOS> data(text_break_.GetDisplayPos(&tr, nullptr));
+  std::vector<TextCharPos> data(text_break_.GetDisplayPos(&tr, nullptr));
   text_break_.GetDisplayPos(&tr, data.data());
   return data;
 }

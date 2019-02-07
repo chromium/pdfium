@@ -14,16 +14,16 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
-class CFX_DIBitmap;
 class CFX_DIBBase;
+class CFX_DIBitmap;
 class CFX_Font;
 class CFX_GraphStateData;
 class CFX_ImageRenderer;
 class CFX_Matrix;
 class CFX_PathData;
 class CPDF_ShadingPattern;
-class FXTEXT_CHARPOS;
 class PauseIndicatorIface;
+class TextCharPos;
 struct FX_RECT;
 
 class RenderDeviceDriverIface {
@@ -89,7 +89,7 @@ class RenderDeviceDriverIface {
   virtual bool ContinueDIBits(CFX_ImageRenderer* handle,
                               PauseIndicatorIface* pPause);
   virtual bool DrawDeviceText(int nChars,
-                              const FXTEXT_CHARPOS* pCharPos,
+                              const TextCharPos* pCharPos,
                               CFX_Font* pFont,
                               const CFX_Matrix* pObject2Device,
                               float font_size,

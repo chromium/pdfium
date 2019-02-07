@@ -136,7 +136,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   int32_t leftPosition = 3 * multiple + leftPadding;
   ByteString str = FX_UTF8Encode(contents);
   size_t length = str.GetLength();
-  std::vector<FXTEXT_CHARPOS> charpos(length);
+  std::vector<TextCharPos> charpos(length);
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
   ByteString tempStr = str.Mid(1, 6);

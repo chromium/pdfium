@@ -29,19 +29,19 @@
 
 namespace {
 
-void AdjustGlyphSpace(std::vector<FXTEXT_GLYPHPOS>* pGlyphAndPos) {
+void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
   ASSERT(pGlyphAndPos->size() > 1);
-  std::vector<FXTEXT_GLYPHPOS>& glyphs = *pGlyphAndPos;
+  std::vector<TextGlyphPos>& glyphs = *pGlyphAndPos;
   bool bVertical = glyphs.back().m_Origin.x == glyphs.front().m_Origin.x;
   if (!bVertical && (glyphs.back().m_Origin.y != glyphs.front().m_Origin.y))
     return;
 
   for (size_t i = glyphs.size() - 1; i > 1; --i) {
-    FXTEXT_GLYPHPOS& next = glyphs[i];
+    TextGlyphPos& next = glyphs[i];
     int next_origin = bVertical ? next.m_Origin.y : next.m_Origin.x;
     float next_origin_f = bVertical ? next.m_fOrigin.y : next.m_fOrigin.x;
 
-    FXTEXT_GLYPHPOS& current = glyphs[i - 1];
+    TextGlyphPos& current = glyphs[i - 1];
     int& current_origin = bVertical ? current.m_Origin.y : current.m_Origin.x;
     float current_origin_f =
         bVertical ? current.m_fOrigin.y : current.m_fOrigin.x;
@@ -351,7 +351,7 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
 
 }  // namespace
 
-FXTEXT_CHARPOS::FXTEXT_CHARPOS()
+TextCharPos::TextCharPos()
     : m_Unicode(0),
       m_GlyphIndex(0),
       m_FontCharWidth(0),
@@ -363,9 +363,9 @@ FXTEXT_CHARPOS::FXTEXT_CHARPOS()
       m_bFontStyle(false) {
 }
 
-FXTEXT_CHARPOS::FXTEXT_CHARPOS(const FXTEXT_CHARPOS&) = default;
+TextCharPos::TextCharPos(const TextCharPos&) = default;
 
-FXTEXT_CHARPOS::~FXTEXT_CHARPOS() = default;
+TextCharPos::~TextCharPos() = default;
 
 CFX_RenderDevice::CFX_RenderDevice() = default;
 
@@ -854,7 +854,7 @@ bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
 #endif
 
 bool CFX_RenderDevice::DrawNormalText(int nChars,
-                                      const FXTEXT_CHARPOS* pCharPos,
+                                      const TextCharPos* pCharPos,
                                       CFX_Font* pFont,
                                       float font_size,
                                       const CFX_Matrix* pText2Device,
@@ -922,12 +922,12 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       }
     }
   }
-  std::vector<FXTEXT_GLYPHPOS> glyphs(nChars);
+  std::vector<TextGlyphPos> glyphs(nChars);
   CFX_Matrix deviceCtm = char2device;
 
   for (size_t i = 0; i < glyphs.size(); ++i) {
-    FXTEXT_GLYPHPOS& glyph = glyphs[i];
-    const FXTEXT_CHARPOS& charpos = pCharPos[i];
+    TextGlyphPos& glyph = glyphs[i];
+    const TextCharPos& charpos = pCharPos[i];
 
     glyph.m_fOrigin = text2Device.Transform(charpos.m_Origin);
     if (anti_alias < FXFT_RENDER_MODE_LCD)
@@ -967,7 +967,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_1bppMask))
       return false;
     bitmap->Clear(0);
-    for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
+    for (const TextGlyphPos& glyph : glyphs) {
       if (!glyph.m_pGlyph)
         continue;
       const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
@@ -1003,7 +1003,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   if (anti_alias == FXFT_RENDER_MODE_LCD)
     std::tie(a, r, g, b) = ArgbDecode(fill_color);
 
-  for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
+  for (const TextGlyphPos& glyph : glyphs) {
     if (!glyph.m_pGlyph)
       continue;
 
@@ -1057,7 +1057,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
 }
 
 bool CFX_RenderDevice::DrawTextPath(int nChars,
-                                    const FXTEXT_CHARPOS* pCharPos,
+                                    const TextCharPos* pCharPos,
                                     CFX_Font* pFont,
                                     float font_size,
                                     const CFX_Matrix* pText2User,
@@ -1068,7 +1068,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
                                     CFX_PathData* pClippingPath,
                                     int nFlag) {
   for (int iChar = 0; iChar < nChars; ++iChar) {
-    const FXTEXT_CHARPOS& charpos = pCharPos[iChar];
+    const TextCharPos& charpos = pCharPos[iChar];
     CFX_Matrix matrix;
     if (charpos.m_bGlyphAdjust) {
       matrix = CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],

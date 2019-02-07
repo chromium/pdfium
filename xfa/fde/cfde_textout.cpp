@@ -37,7 +37,7 @@ bool IsTextAlignmentTop(const FDE_TextAlignment align) {
 bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               FX_ARGB color,
                               const RetainPtr<CFGAS_GEFont>& pFont,
-                              pdfium::span<FXTEXT_CHARPOS> pCharPos,
+                              pdfium::span<TextCharPos> pCharPos,
                               float fFontSize,
                               const CFX_Matrix* pMatrix) {
   ASSERT(pFont);
@@ -64,7 +64,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
   RetainPtr<CFGAS_GEFont> pCurFont;
-  FXTEXT_CHARPOS* pCurCP = nullptr;
+  TextCharPos* pCurCP = nullptr;
   int32_t iCurCount = 0;
   for (auto& pos : pCharPos) {
     RetainPtr<CFGAS_GEFont> pSTFont =
@@ -505,7 +505,7 @@ size_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
   ASSERT(pPiece->iChars >= 0);
 
   if (pdfium::CollectionSize<int32_t>(m_CharPos) < pPiece->iChars)
-    m_CharPos.resize(pPiece->iChars, FXTEXT_CHARPOS());
+    m_CharPos.resize(pPiece->iChars, TextCharPos());
 
   CFX_TxtBreak::Run tr;
   tr.wsStr = m_wsText + pPiece->iStartChar;

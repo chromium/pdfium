@@ -114,7 +114,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   int32_t leftPosition = 10 * multiple + leftPadding;
   ByteString str = FX_UTF8Encode(contents);
   size_t length = str.GetLength();
-  std::vector<FXTEXT_CHARPOS> charpos(length);
+  std::vector<TextCharPos> charpos(length);
   ByteString tempStr = str.Mid(1, 5);
   float strWidth = (float)35 * multiple;
   float blank = 0.0;

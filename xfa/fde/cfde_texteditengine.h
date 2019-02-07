@@ -178,7 +178,7 @@ class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
     return text_piece_info_;
   }
 
-  std::vector<FXTEXT_CHARPOS> GetDisplayPos(const FDE_TEXTEDITPIECE& info);
+  std::vector<TextCharPos> GetDisplayPos(const FDE_TEXTEDITPIECE& info);
 
   void SetMaxEditOperationsForTesting(size_t max);
 

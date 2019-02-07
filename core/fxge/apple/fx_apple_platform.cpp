@@ -32,7 +32,7 @@ void DoNothing(void* info, const void* data, size_t size) {}
 
 bool CGDrawGlyphRun(CGContextRef pContext,
                     int nChars,
-                    const FXTEXT_CHARPOS* pCharPos,
+                    const TextCharPos* pCharPos,
                     CFX_Font* pFont,
                     const CFX_Matrix* pObject2Device,
                     float font_size,
@@ -104,7 +104,7 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
 }
 
 bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
-                                         const FXTEXT_CHARPOS* pCharPos,
+                                         const TextCharPos* pCharPos,
                                          CFX_Font* pFont,
                                          const CFX_Matrix* pObject2Device,
                                          float font_size,

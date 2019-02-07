@@ -69,11 +69,11 @@ struct CFX_Color;
 
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
-class FXTEXT_CHARPOS {
+class TextCharPos {
  public:
-  FXTEXT_CHARPOS();
-  FXTEXT_CHARPOS(const FXTEXT_CHARPOS&);
-  ~FXTEXT_CHARPOS();
+  TextCharPos();
+  TextCharPos(const TextCharPos&);
+  ~TextCharPos();
 
   CFX_PointF m_Origin;
   uint32_t m_Unicode;
@@ -217,14 +217,14 @@ class CFX_RenderDevice {
   bool ContinueDIBits(CFX_ImageRenderer* handle, PauseIndicatorIface* pPause);
 
   bool DrawNormalText(int nChars,
-                      const FXTEXT_CHARPOS* pCharPos,
+                      const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       float font_size,
                       const CFX_Matrix* pText2Device,
                       uint32_t fill_color,
                       uint32_t text_flags);
   bool DrawTextPath(int nChars,
-                    const FXTEXT_CHARPOS* pCharPos,
+                    const TextCharPos* pCharPos,
                     CFX_Font* pFont,
                     float font_size,
                     const CFX_Matrix* pText2User,

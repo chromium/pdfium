@@ -781,14 +781,14 @@ class SkiaState {
   }
 
   bool HasRSX(int nChars,
-              const FXTEXT_CHARPOS* pCharPos,
+              const TextCharPos* pCharPos,
               float* scaleXPtr,
               bool* oneAtATimePtr) {
     bool useRSXform = false;
     bool oneAtATime = false;
     float scaleX = 1;
     for (int index = 0; index < nChars; ++index) {
-      const FXTEXT_CHARPOS& cp = pCharPos[index];
+      const TextCharPos& cp = pCharPos[index];
       if (!cp.m_bGlyphAdjust)
         continue;
       bool upright = 0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2];
@@ -813,7 +813,7 @@ class SkiaState {
   }
 
   bool DrawText(int nChars,
-                const FXTEXT_CHARPOS* pCharPos,
+                const TextCharPos* pCharPos,
                 CFX_Font* pFont,
                 const CFX_Matrix* pMatrix,
                 float font_size,
@@ -860,7 +860,7 @@ class SkiaState {
     if (pFont->IsVertical())
       vFlip *= -1;
     for (int index = 0; index < nChars; ++index) {
-      const FXTEXT_CHARPOS& cp = pCharPos[index];
+      const TextCharPos& cp = pCharPos[index];
       m_positions[index + count] = {cp.m_Origin.x * flip,
                                     cp.m_Origin.y * vFlip};
       m_glyphs[index + count] = static_cast<uint16_t>(cp.m_GlyphIndex);
@@ -876,7 +876,7 @@ class SkiaState {
     }
     if (hasRSX) {
       for (int index = 0; index < nChars; ++index) {
-        const FXTEXT_CHARPOS& cp = pCharPos[index];
+        const TextCharPos& cp = pCharPos[index];
         SkRSXform* rsxform = &m_rsxform[index + count];
         if (cp.m_bGlyphAdjust) {
           rsxform->fSCos = cp.m_AdjustMatrix[0];
@@ -1539,7 +1539,7 @@ void CFX_SkiaDeviceDriver::PreMultiply() {
 }
 
 bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
-                                          const FXTEXT_CHARPOS* pCharPos,
+                                          const TextCharPos* pCharPos,
                                           CFX_Font* pFont,
                                           const CFX_Matrix* pObject2Device,
                                           float font_size,
@@ -1571,7 +1571,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   bool useRSXform = false;
   bool oneAtATime = false;
   for (int index = 0; index < nChars; ++index) {
-    const FXTEXT_CHARPOS& cp = pCharPos[index];
+    const TextCharPos& cp = pCharPos[index];
     positions[index] = {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip};
     if (cp.m_bGlyphAdjust) {
       useRSXform = true;
@@ -1603,7 +1603,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
     SkTDArray<SkRSXform> xforms;
     xforms.setCount(nChars);
     for (int index = 0; index < nChars; ++index) {
-      const FXTEXT_CHARPOS& cp = pCharPos[index];
+      const TextCharPos& cp = pCharPos[index];
       SkRSXform* rsxform = &xforms[index];
       if (cp.m_bGlyphAdjust) {
         rsxform->fSCos = cp.m_AdjustMatrix[0];
@@ -1621,7 +1621,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                nullptr, paint);
   } else if (oneAtATime) {
     for (int index = 0; index < nChars; ++index) {
-      const FXTEXT_CHARPOS& cp = pCharPos[index];
+      const TextCharPos& cp = pCharPos[index];
       if (cp.m_bGlyphAdjust) {
         if (0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2] &&
             1 == cp.m_AdjustMatrix[3]) {

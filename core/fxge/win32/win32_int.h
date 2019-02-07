@@ -21,7 +21,7 @@
 
 class CCodec_ModuleMgr;
 class CFX_ImageRenderer;
-class FXTEXT_CHARPOS;
+class TextCharPos;
 struct WINDIB_Open_Args_;
 
 RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
@@ -195,7 +195,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
-                      const FXTEXT_CHARPOS* pCharPos,
+                      const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
                       float font_size,
@@ -257,7 +257,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
-                      const FXTEXT_CHARPOS* pCharPos,
+                      const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
                       float font_size,
@@ -320,7 +320,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
-                      const FXTEXT_CHARPOS* pCharPos,
+                      const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
                       float font_size,

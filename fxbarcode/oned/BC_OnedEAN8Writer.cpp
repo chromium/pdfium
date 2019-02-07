@@ -135,7 +135,7 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
   int32_t leftPosition = 3 * multiple;
   ByteString str = FX_UTF8Encode(contents);
   size_t iLength = str.GetLength();
-  std::vector<FXTEXT_CHARPOS> charpos(iLength);
+  std::vector<TextCharPos> charpos(iLength);
   ByteString tempStr = str.Left(4);
   size_t iLen = tempStr.GetLength();
   int32_t strWidth = 7 * multiple * 4;

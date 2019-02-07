@@ -198,7 +198,7 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 }
 
 bool CGdiPrinterDriver::DrawDeviceText(int nChars,
-                                       const FXTEXT_CHARPOS* pCharPos,
+                                       const TextCharPos* pCharPos,
                                        CFX_Font* pFont,
                                        const CFX_Matrix* pObject2Device,
                                        float font_size,
@@ -293,7 +293,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   for (int i = 0; i < nChars; ++i) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
-    const FXTEXT_CHARPOS& charpos = pCharPos[i];
+    const TextCharPos& charpos = pCharPos[i];
     ASSERT(charpos.m_AdjustMatrix[0] == 0);
     ASSERT(charpos.m_AdjustMatrix[1] == 0);
     ASSERT(charpos.m_AdjustMatrix[2] == 0);
@@ -501,7 +501,7 @@ bool CPSPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
 }
 
 bool CPSPrinterDriver::DrawDeviceText(int nChars,
-                                      const FXTEXT_CHARPOS* pCharPos,
+                                      const TextCharPos* pCharPos,
                                       CFX_Font* pFont,
                                       const CFX_Matrix* pObject2Device,
                                       float font_size,
@@ -610,7 +610,7 @@ bool CTextOnlyPrinterDriver::StartDIBits(
 }
 
 bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
-                                            const FXTEXT_CHARPOS* pCharPos,
+                                            const TextCharPos* pCharPos,
                                             CFX_Font* pFont,
                                             const CFX_Matrix* pObject2Device,
                                             float font_size,
@@ -643,7 +643,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
   for (int i = 0; i < nChars; ++i) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
-    const FXTEXT_CHARPOS& charpos = pCharPos[i];
+    const TextCharPos& charpos = pCharPos[i];
     ASSERT(charpos.m_AdjustMatrix[0] == 0);
     ASSERT(charpos.m_AdjustMatrix[1] == 0);
     ASSERT(charpos.m_AdjustMatrix[2] == 0);

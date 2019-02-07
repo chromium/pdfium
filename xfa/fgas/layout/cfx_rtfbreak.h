@@ -17,7 +17,7 @@
 #include "xfa/fxfa/cxfa_textuserdata.h"
 
 class CFGAS_GEFont;
-class FXTEXT_CHARPOS;
+class TextCharPos;
 
 enum class CFX_RTFLineAlignment {
   Left = 0,
@@ -58,7 +58,7 @@ class CFX_RTFBreak final : public CFX_Break {
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
 
   int32_t GetDisplayPos(const FX_RTFTEXTOBJ* pText,
-                        FXTEXT_CHARPOS* pCharPos,
+                        TextCharPos* pCharPos,
                         bool bCharCode) const;
 
   CFX_BreakType AppendChar(wchar_t wch);

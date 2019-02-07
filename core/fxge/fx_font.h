@@ -81,18 +81,18 @@ class CFX_GlyphBitmap {
   RetainPtr<CFX_DIBitmap> m_pBitmap;
 };
 
-class FXTEXT_GLYPHPOS {
+class TextGlyphPos {
  public:
-  FXTEXT_GLYPHPOS();
-  FXTEXT_GLYPHPOS(const FXTEXT_GLYPHPOS&);
-  ~FXTEXT_GLYPHPOS();
+  TextGlyphPos();
+  TextGlyphPos(const TextGlyphPos&);
+  ~TextGlyphPos();
 
   const CFX_GlyphBitmap* m_pGlyph;
   CFX_Point m_Origin;
   CFX_PointF m_fOrigin;
 };
 
-FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
+FX_RECT FXGE_GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs,
                            int anti_alias);
 
 ByteString GetNameFromTT(const uint8_t* name_table,

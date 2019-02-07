@@ -459,7 +459,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
     if (!rtDocClip.IntersectWith(info.rtPiece))
       continue;
 
-    std::vector<FXTEXT_CHARPOS> char_pos = m_EdtEngine.GetDisplayPos(info);
+    std::vector<TextCharPos> char_pos = m_EdtEngine.GetDisplayPos(info);
     if (char_pos.empty())
       continue;
 

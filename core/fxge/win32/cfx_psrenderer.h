@@ -25,7 +25,7 @@ class CFX_FontCache;
 class CFX_Matrix;
 class CFX_PathData;
 class CPSFont;
-class FXTEXT_CHARPOS;
+class TextCharPos;
 struct FXDIB_ResampleOptions;
 
 class CFX_PSRenderer {
@@ -71,7 +71,7 @@ class CFX_PSRenderer {
                   const CFX_Matrix& matrix,
                   const FXDIB_ResampleOptions& options);
   bool DrawText(int nChars,
-                const FXTEXT_CHARPOS* pCharPos,
+                const TextCharPos* pCharPos,
                 CFX_Font* pFont,
                 const CFX_Matrix* pObject2Device,
                 float font_size,
@@ -84,7 +84,7 @@ class CFX_PSRenderer {
   void SetColor(uint32_t color);
   void FindPSFontGlyph(CFX_FaceCache* pFaceCache,
                        CFX_Font* pFont,
-                       const FXTEXT_CHARPOS& charpos,
+                       const TextCharPos& charpos,
                        int* ps_fontnum,
                        int* ps_glyphindex);
   void WritePSBinary(const uint8_t* data, int len);

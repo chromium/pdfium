@@ -103,7 +103,7 @@ int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
 }
 
 void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
-                                    FXTEXT_CHARPOS* charPos,
+                                    TextCharPos* charPos,
                                     CFX_Font* cFont,
                                     float geWidth,
                                     int32_t fontSize,
@@ -152,7 +152,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        const CFX_Matrix* matrix,
                                        const ByteString str,
                                        float geWidth,
-                                       FXTEXT_CHARPOS* pCharPos,
+                                       TextCharPos* pCharPos,
                                        float locX,
                                        float locY,
                                        int32_t barWidth) {
@@ -184,7 +184,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
     return false;
 
   ByteString str = FX_UTF8Encode(contents);
-  std::vector<FXTEXT_CHARPOS> charpos(str.GetLength());
+  std::vector<TextCharPos> charpos(str.GetLength());
   float charsLen = 0;
   float geWidth = 0;
   if (m_locTextLoc == BC_TEXT_LOC_ABOVEEMBED ||

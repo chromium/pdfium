@@ -58,7 +58,7 @@ bool RenderDeviceDriverIface::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 bool RenderDeviceDriverIface::DrawDeviceText(int nChars,
-                                             const FXTEXT_CHARPOS* pCharPos,
+                                             const TextCharPos* pCharPos,
                                              CFX_Font* pFont,
                                              const CFX_Matrix* pObject2Device,
                                              float font_size,

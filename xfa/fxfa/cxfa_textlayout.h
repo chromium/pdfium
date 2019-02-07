@@ -27,7 +27,7 @@ class CXFA_PieceLine;
 class CXFA_TextPiece;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
-class FXTEXT_CHARPOS;
+class TextCharPos;
 struct CXFA_LoaderContext;
 struct FX_RTFTEXTOBJ;
 
@@ -104,14 +104,14 @@ class CXFA_TextLayout {
   void RenderString(CFX_RenderDevice* pDevice,
                     CXFA_PieceLine* pPieceLine,
                     size_t szPiece,
-                    FXTEXT_CHARPOS* pCharPos,
+                    TextCharPos* pCharPos,
                     const CFX_Matrix& tmDoc2Device);
   void RenderPath(CFX_RenderDevice* pDevice,
                   CXFA_PieceLine* pPieceLine,
                   size_t szPiece,
-                  FXTEXT_CHARPOS* pCharPos,
+                  TextCharPos* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
-  size_t GetDisplayPos(const CXFA_TextPiece* pPiece, FXTEXT_CHARPOS* pCharPos);
+  size_t GetDisplayPos(const CXFA_TextPiece* pPiece, TextCharPos* pCharPos);
   bool ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);

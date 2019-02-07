@@ -28,11 +28,11 @@ void ResetTransform(FT_Face face) {
 
 }  // namespace
 
-FXTEXT_GLYPHPOS::FXTEXT_GLYPHPOS() : m_pGlyph(nullptr) {}
+TextGlyphPos::TextGlyphPos() : m_pGlyph(nullptr) {}
 
-FXTEXT_GLYPHPOS::FXTEXT_GLYPHPOS(const FXTEXT_GLYPHPOS&) = default;
+TextGlyphPos::TextGlyphPos(const TextGlyphPos&) = default;
 
-FXTEXT_GLYPHPOS::~FXTEXT_GLYPHPOS(){};
+TextGlyphPos::~TextGlyphPos() {}
 
 ScopedFontTransform::ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix)
     : m_Face(face) {
@@ -43,11 +43,11 @@ ScopedFontTransform::~ScopedFontTransform() {
   ResetTransform(m_Face);
 }
 
-FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
+FX_RECT FXGE_GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs,
                            int anti_alias) {
   FX_RECT rect(0, 0, 0, 0);
   bool bStarted = false;
-  for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
+  for (const TextGlyphPos& glyph : glyphs) {
     const CFX_GlyphBitmap* pGlyph = glyph.m_pGlyph;
     if (!pGlyph)
       continue;

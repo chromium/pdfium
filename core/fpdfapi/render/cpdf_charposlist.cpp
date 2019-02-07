@@ -21,7 +21,7 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
                             const std::vector<float>& charPos,
                             CPDF_Font* pFont,
                             float FontSize) {
-  m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, charCodes.size());
+  m_pCharPos = FX_Alloc(TextCharPos, charCodes.size());
   m_nChars = 0;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
@@ -31,7 +31,7 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
       continue;
 
     bool bVert = false;
-    FXTEXT_CHARPOS& charpos = m_pCharPos[m_nChars++];
+    TextCharPos& charpos = m_pCharPos[m_nChars++];
     if (pCIDFont)
       charpos.m_bFontStyle = true;
     WideString unicode = pFont->UnicodeFromCharCode(CharCode);

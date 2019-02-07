@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Font;
-class FXTEXT_CHARPOS;
+class TextCharPos;
 
 class CPDF_CharPosList {
  public:
@@ -25,7 +25,7 @@ class CPDF_CharPosList {
             float font_size);
 
   // TODO(thestig): Convert to unique_ptr or vector.
-  FXTEXT_CHARPOS* m_pCharPos = nullptr;
+  TextCharPos* m_pCharPos = nullptr;
   uint32_t m_nChars = 0;
 };
 

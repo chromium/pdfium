@@ -716,7 +716,7 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
 }
 
 int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
-                                    FXTEXT_CHARPOS* pCharPos,
+                                    TextCharPos* pCharPos,
                                     bool bCharCode) const {
   if (!pText || pText->iLength < 1)
     return 0;

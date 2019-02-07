@@ -1144,7 +1144,7 @@ void CFX_AggDeviceDriver::InitPlatform() {}
 void CFX_AggDeviceDriver::DestroyPlatform() {}
 
 bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
-                                         const FXTEXT_CHARPOS* pCharPos,
+                                         const TextCharPos* pCharPos,
                                          CFX_Font* pFont,
                                          const CFX_Matrix* pObject2Device,
                                          float font_size,

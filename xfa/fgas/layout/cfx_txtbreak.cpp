@@ -657,7 +657,7 @@ struct FX_FORMCHAR {
 };
 
 size_t CFX_TxtBreak::GetDisplayPos(const Run* pTxtRun,
-                                   FXTEXT_CHARPOS* pCharPos) const {
+                                   TextCharPos* pCharPos) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
 
