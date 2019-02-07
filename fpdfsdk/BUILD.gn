@@ -125,6 +125,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "fpdf_ppo_embeddertest.cpp",
     "fpdf_save_embeddertest.cpp",
     "fpdf_structtree_embeddertest.cpp",
+    "fpdf_sysfontinfo_embeddertest.cpp",
     "fpdf_text_embeddertest.cpp",
     "fpdf_transformpage_embeddertest.cpp",
     "fpdf_view_c_api_test.c",
