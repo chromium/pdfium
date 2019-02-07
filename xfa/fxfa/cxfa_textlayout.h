@@ -114,8 +114,8 @@ class CXFA_TextLayout {
   size_t GetDisplayPos(const CXFA_TextPiece* pPiece, TextCharPos* pCharPos);
   bool ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
-  bool Layout(int32_t iBlock);
-  int32_t CountBlocks() const;
+  bool LayoutInternal(size_t szBlockIndex);
+  size_t CountBlocks() const;
   size_t GetNextIndexFromLastBlockData() const;
   void UpdateLoaderHeight(float fTextHeight);
 

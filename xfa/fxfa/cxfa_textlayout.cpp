@@ -393,9 +393,9 @@ float CXFA_TextLayout::DoSplitLayout(size_t szBlockIndex,
   return fCalcHeight;
 }
 
-int32_t CXFA_TextLayout::CountBlocks() const {
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_Blocks);
-  return iCount > 0 ? iCount : 1;
+size_t CXFA_TextLayout::CountBlocks() const {
+  size_t szCount = m_Blocks.size();
+  return szCount > 0 ? szCount : 1;
 }
 
 size_t CXFA_TextLayout::GetNextIndexFromLastBlockData() const {
@@ -445,10 +445,10 @@ float CXFA_TextLayout::Layout(const CFX_SizeF& size) {
   return fLinePos;
 }
 
-bool CXFA_TextLayout::Layout(int32_t iBlock) {
-  if (!m_pLoader || iBlock < 0 || iBlock >= CountBlocks())
-    return false;
-  if (m_pLoader->fWidth < 1)
+bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
+  ASSERT(szBlockIndex < CountBlocks());
+
+  if (!m_pLoader || m_pLoader->fWidth < 1)
     return false;
 
   m_pLoader->iTotalLines = -1;
@@ -456,28 +456,25 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
   float fLinePos = 0;
   CXFA_Node* pNode = nullptr;
   CFX_SizeF szText(m_pLoader->fWidth, m_pLoader->fHeight);
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_Blocks);
-  int32_t iBlocksHeightCount =
-      pdfium::CollectionSize<int32_t>(m_pLoader->blockHeights);
-  if (iBlock < iBlocksHeightCount)
+  if (szBlockIndex < m_pLoader->blockHeights.size())
     return true;
-  if (iBlock == iBlocksHeightCount) {
+  if (szBlockIndex == m_pLoader->blockHeights.size()) {
     Unload();
     m_pBreak = CreateBreak(true);
     fLinePos = m_pLoader->fStartLineOffset;
-    for (int32_t i = 0; i < iBlocksHeightCount; i++)
+    for (size_t i = 0; i < m_pLoader->blockHeights.size(); ++i)
       fLinePos -= m_pLoader->blockHeights[i].fHeight;
 
     m_pLoader->iChar = 0;
-    if (iCount > 0)
-      m_pLoader->iTotalLines = m_Blocks[iBlock].szLength;
+    if (!m_Blocks.empty())
+      m_pLoader->iTotalLines = m_Blocks[szBlockIndex].szLength;
 
     Loader(szText.width, &fLinePos, true);
-    if (iCount == 0 && m_pLoader->fStartLineOffset < 0.1f)
+    if (m_Blocks.empty() && m_pLoader->fStartLineOffset < 0.1f)
       UpdateAlign(szText.height, fLinePos);
   } else if (m_pTextDataNode) {
-    if (iBlock < iCount - 1)
-      m_pLoader->iTotalLines = m_Blocks[iBlock].szLength;
+    if (!m_Blocks.empty() && szBlockIndex < m_Blocks.size() - 1)
+      m_pLoader->iTotalLines = m_Blocks[szBlockIndex].szLength;
 
     m_pBreak->Reset();
     if (m_bRichText) {
@@ -525,7 +522,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
       LoadText(pNode, szText.width, &fLinePos, true);
     }
   }
-  if (iBlock == iCount) {
+  if (szBlockIndex == m_Blocks.size()) {
     m_pTabstopContext.reset();
     m_pLoader.reset();
   }
@@ -575,9 +572,9 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   pFxDevice->SetClip_Rect(rtClip);
 
   if (m_pieceLines.empty()) {
-    int32_t iBlockCount = CountBlocks();
-    for (int32_t i = 0; i < iBlockCount; i++)
-      Layout(i);
+    size_t szBlockCount = CountBlocks();
+    for (size_t i = 0; i < szBlockCount; ++i)
+      LayoutInternal(i);
   }
 
   TextCharPos* pCharPos = FX_Alloc(TextCharPos, 1);
