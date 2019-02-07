@@ -22,18 +22,7 @@ constexpr float kDefaultFontSize = 9.0f;
 }  // namespace
 
 CPWL_Wnd::CreateParams::CreateParams()
-    : rcRectWnd(0, 0, 0, 0),
-      dwFlags(0),
-      sBackgroundColor(),
-      nBorderStyle(BorderStyle::SOLID),
-      dwBorderWidth(1),
-      sBorderColor(),
-      sTextColor(),
-      nTransparency(255),
-      fFontSize(kDefaultFontSize),
-      sDash(3, 0, 0),
-      pMsgControl(nullptr),
-      eCursorType(FXCT_ARROW) {}
+    : fFontSize(kDefaultFontSize), sDash(3, 0, 0) {}
 
 CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 

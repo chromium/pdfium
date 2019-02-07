@@ -1653,7 +1653,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
   m_offSet = 0;
   m_SrcWidth = m_SrcHeight = 0;
   m_SrcComponents = m_SrcBPC = 0;
-  m_clipBox = FX_RECT(0, 0, 0, 0);
+  m_clipBox = FX_RECT();
   m_startX = m_startY = 0;
   m_sizeX = m_sizeY = 0;
   m_SrcPassNumber = 0;
@@ -1686,7 +1686,7 @@ void CCodec_ProgressiveDecoder::SetClipBox(FX_RECT* clip) {
     return;
 
   if (clip->IsEmpty()) {
-    m_clipBox = FX_RECT(0, 0, 0, 0);
+    m_clipBox = FX_RECT();
     return;
   }
   clip->left = std::max(clip->left, 0);
@@ -1694,7 +1694,7 @@ void CCodec_ProgressiveDecoder::SetClipBox(FX_RECT* clip) {
   clip->top = std::max(clip->top, 0);
   clip->bottom = std::min(clip->bottom, m_SrcHeight);
   if (clip->IsEmpty()) {
-    m_clipBox = FX_RECT(0, 0, 0, 0);
+    m_clipBox = FX_RECT();
     return;
   }
   m_clipBox = *clip;
