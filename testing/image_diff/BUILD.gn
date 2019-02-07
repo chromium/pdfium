@@ -15,6 +15,6 @@ jumbo_source_set("image_diff") {
   deps = [
     "../../third_party:pdfium_base",
     "../../third_party:png",
-    "//third_party/zlib",
+    "../../third_party:zlib",
   ]
 }
