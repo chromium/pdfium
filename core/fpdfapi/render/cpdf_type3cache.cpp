@@ -14,9 +14,9 @@
 #include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/render/cpdf_type3glyphs.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

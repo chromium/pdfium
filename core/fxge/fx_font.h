@@ -44,62 +44,19 @@
 #define GET_TT_LONG(w) \
   (uint32_t)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
 
-class CFX_DIBitmap;
-
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 class SkTypeface;
 
 using CFX_TypeFace = SkTypeface;
 #endif
 
-// Sets the given transform on the font, and resets it to the identity when it
-// goes out of scope.
-class ScopedFontTransform {
- public:
-  ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix);
-  ~ScopedFontTransform();
+class TextGlyphPos;
 
- private:
-  FT_Face m_Face;
-};
-
-class CFX_GlyphBitmap {
- public:
-  CFX_GlyphBitmap(int left, int top);
-  ~CFX_GlyphBitmap();
-
-  CFX_GlyphBitmap(const CFX_GlyphBitmap&) = delete;
-  CFX_GlyphBitmap& operator=(const CFX_GlyphBitmap&) = delete;
-
-  const RetainPtr<CFX_DIBitmap>& GetBitmap() const { return m_pBitmap; }
-  int left() const { return m_Left; }
-  int top() const { return m_Top; }
-
- private:
-  const int m_Left;
-  const int m_Top;
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-};
-
-class TextGlyphPos {
- public:
-  TextGlyphPos();
-  TextGlyphPos(const TextGlyphPos&);
-  ~TextGlyphPos();
-
-  const CFX_GlyphBitmap* m_pGlyph;
-  CFX_Point m_Origin;
-  CFX_PointF m_fOrigin;
-};
-
-FX_RECT FXGE_GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs,
-                           int anti_alias);
+FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias);
 
 ByteString GetNameFromTT(const uint8_t* name_table,
                          uint32_t name_table_size,
                          uint32_t name);
-
-int PDF_GetStandardFontName(ByteString* name);
 
 inline bool FontStyleIsBold(uint32_t style) {
   return !!(style & FXFONT_BOLD);

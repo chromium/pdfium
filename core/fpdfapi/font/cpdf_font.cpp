@@ -24,6 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/logging.h"
@@ -283,7 +284,7 @@ uint32_t CPDF_Font::GetStringWidth(ByteStringView pString) {
 // static
 CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
   ByteString fontname(name);
-  int font_id = PDF_GetStandardFontName(&fontname);
+  int font_id = CFX_FontMapper::GetStandardFontName(&fontname);
   if (font_id < 0)
     return nullptr;
 

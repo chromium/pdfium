@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <map>
 
+#include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/fx_font.h"
 
 namespace {

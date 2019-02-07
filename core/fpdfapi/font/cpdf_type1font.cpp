@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
@@ -84,7 +85,7 @@ CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
 }
 
 bool CPDF_Type1Font::Load() {
-  m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
+  m_Base14Font = CFX_FontMapper::GetStandardFontName(&m_BaseFont);
   if (!IsBase14Font())
     return LoadCommon();
 

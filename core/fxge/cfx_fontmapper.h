@@ -23,6 +23,8 @@ class CFX_FontMapper {
   explicit CFX_FontMapper(CFX_FontMgr* mgr);
   ~CFX_FontMapper();
 
+  static int GetStandardFontName(ByteString* name);
+
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   SystemFontInfoIface* GetSystemFontInfo() { return m_pFontInfo.get(); }
   void AddInstalledFont(const ByteString& name, int charset);

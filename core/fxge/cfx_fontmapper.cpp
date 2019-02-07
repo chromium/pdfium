@@ -403,7 +403,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   SubstName.Remove(' ');
   if (bTrueType && name.GetLength() > 0 && name[0] == '@')
     SubstName = name.Right(name.GetLength() - 1);
-  PDF_GetStandardFontName(&SubstName);
+  GetStandardFontName(&SubstName);
   if (SubstName == "Symbol" && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
     pSubstFont->m_Charset = FX_CHARSET_Symbol;
@@ -423,7 +423,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
     Optional<size_t> pos = SubstName.Find(",", 0);
     if (pos.has_value()) {
       family = SubstName.Left(pos.value());
-      PDF_GetStandardFontName(&family);
+      GetStandardFontName(&family);
       style = SubstName.Right(SubstName.GetLength() - (pos.value() + 1));
       bHasComma = true;
     } else {
@@ -727,7 +727,8 @@ FXFT_Face CFX_FontMapper::GetCachedFace(void* hFont,
                                    m_pFontInfo->GetFaceIndex(hFont));
 }
 
-int PDF_GetStandardFontName(ByteString* name) {
+// static
+int CFX_FontMapper::GetStandardFontName(ByteString* name) {
   const auto* end = std::end(g_AltFontNames);
   const auto* found =
       std::lower_bound(std::begin(g_AltFontNames), end, name->c_str(),

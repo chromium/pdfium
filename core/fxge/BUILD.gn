@@ -37,6 +37,8 @@ jumbo_source_set("fxge") {
     "cfx_fontmgr.h",
     "cfx_gemodule.cpp",
     "cfx_gemodule.h",
+    "cfx_glyphbitmap.cpp",
+    "cfx_glyphbitmap.h",
     "cfx_graphstate.cpp",
     "cfx_graphstate.h",
     "cfx_graphstatedata.cpp",
@@ -96,10 +98,14 @@ jumbo_source_set("fxge") {
     "fx_font.h",
     "fx_freetype.h",
     "fx_ge_fontmap.cpp",
-    "fx_ge_text.cpp",
     "renderdevicedriver_iface.cpp",
     "renderdevicedriver_iface.h",
+    "scoped_font_transform.cpp",
+    "scoped_font_transform.h",
+    "scoped_font_transform.h",
     "systemfontinfo_iface.h",
+    "text_glyph_pos.cpp",
+    "text_glyph_pos.h",
   ]
 
   configs += [
