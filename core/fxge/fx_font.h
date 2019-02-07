@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_freetype.h"
 
 /* Font pitch and family flags */

@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
