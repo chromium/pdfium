@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFPF_SkiaFont;
 class CFPF_SkiaPathFont;

@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"

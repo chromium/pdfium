@@ -141,6 +141,7 @@ if (pdf_enable_v8) {
         "pdf_bidi_fuzzer.cc",
       ]
       deps = [
+        "../../core/fxge",
         "../../xfa/fgas",
         "../../xfa/fgas/layout",
       ]

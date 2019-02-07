@@ -11,7 +11,8 @@
 #include <memory>
 
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxge/fx_font.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxge/fx_freetype.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 

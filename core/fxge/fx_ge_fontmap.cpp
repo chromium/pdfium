@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
 static ByteString GetStringFromTable(const uint8_t* string_ptr,

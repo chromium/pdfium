@@ -9,6 +9,7 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/cfx_substfont.h"
 
 CPDF_CharPosList::CPDF_CharPosList() = default;
 

@@ -20,6 +20,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
+#include "core/fxge/fx_font.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_

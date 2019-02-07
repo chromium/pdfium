@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_font.h"
+#include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"

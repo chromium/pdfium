@@ -7,12 +7,14 @@
 #ifndef CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 #define CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/fx_font.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFPF_SkiaFontMgr;
 class CFPF_SkiaPathFont;
+struct FX_RECT;
 
 class CFPF_SkiaFont {
  public:

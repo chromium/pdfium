@@ -11,14 +11,17 @@
 #include <memory>
 #include <tuple>
 
-#include "core/fxge/fx_font.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_freetype.h"
 
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+#include "core/fxge/fx_font.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 #endif
 
 class CFX_Font;
+class CFX_GlyphBitmap;
+class CFX_Matrix;
 class CFX_PathData;
 
 class CFX_FaceCache {

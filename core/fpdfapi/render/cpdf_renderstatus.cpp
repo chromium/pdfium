@@ -57,6 +57,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/fx_font.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"

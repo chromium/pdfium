@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 
+#include "core/fxge/fx_font.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 

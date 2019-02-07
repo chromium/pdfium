@@ -11,7 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxge/fx_font.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxge/fx_freetype.h"
 
 class CFX_FontMgr;
 class CFX_SubstFont;
