@@ -990,8 +990,9 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         continue;
 
       const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
-      bitmap->TransferBitmap(point->x, point->y, pGlyph->GetWidth(),
-                             pGlyph->GetHeight(), pGlyph, 0, 0);
+      bitmap->TransferBitmap(point.value().x, point.value().y,
+                             pGlyph->GetWidth(), pGlyph->GetHeight(), pGlyph, 0,
+                             0);
     }
     return SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
   }
@@ -1032,9 +1033,9 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     int ncols = pGlyph->GetWidth();
     int nrows = pGlyph->GetHeight();
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
-      if (!bitmap->CompositeMask(point->x, point->y, ncols, nrows, pGlyph,
-                                 fill_color, 0, 0, BlendMode::kNormal, nullptr,
-                                 false, 0)) {
+      if (!bitmap->CompositeMask(point.value().x, point.value().y, ncols, nrows,
+                                 pGlyph, fill_color, 0, 0, BlendMode::kNormal,
+                                 nullptr, false, 0)) {
         return false;
       }
       continue;

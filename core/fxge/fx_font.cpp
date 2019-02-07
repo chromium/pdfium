@@ -4,6 +4,8 @@
 
 #include "core/fxge/fx_font.h"
 
+#include <algorithm>
+
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/text_glyph_pos.h"
@@ -23,56 +25,43 @@ ByteString GetStringFromTable(const uint8_t* string_ptr,
 }  // namespace
 
 FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
-  FX_RECT rect(0, 0, 0, 0);
+  FX_RECT rect;
   bool bStarted = false;
   for (const TextGlyphPos& glyph : glyphs) {
-    const CFX_GlyphBitmap* pGlyph = glyph.m_pGlyph;
-    if (!pGlyph)
+    if (!glyph.m_pGlyph)
       continue;
 
-    FX_SAFE_INT32 char_left = glyph.m_Origin.x;
-    char_left += pGlyph->left();
-    if (!char_left.IsValid())
+    Optional<CFX_Point> point = glyph.GetOrigin({0, 0});
+    if (!point.has_value())
       continue;
 
-    FX_SAFE_INT32 char_width = pGlyph->GetBitmap()->GetWidth();
+    int char_width = glyph.m_pGlyph->GetBitmap()->GetWidth();
     if (anti_alias == FXFT_RENDER_MODE_LCD)
       char_width /= 3;
-    if (!char_width.IsValid())
-      continue;
 
-    FX_SAFE_INT32 char_right = char_left + char_width;
+    FX_SAFE_INT32 char_right = point.value().x;
+    char_right += char_width;
     if (!char_right.IsValid())
       continue;
 
-    FX_SAFE_INT32 char_top = glyph.m_Origin.y;
-    char_top -= pGlyph->top();
-    if (!char_top.IsValid())
-      continue;
-
-    FX_SAFE_INT32 char_height = pGlyph->GetBitmap()->GetHeight();
-    if (!char_height.IsValid())
-      continue;
-
-    FX_SAFE_INT32 char_bottom = char_top + char_height;
+    FX_SAFE_INT32 char_bottom = point.value().y;
+    char_bottom += glyph.m_pGlyph->GetBitmap()->GetHeight();
     if (!char_bottom.IsValid())
       continue;
 
     if (bStarted) {
-      rect.left = pdfium::base::ValueOrDieForType<int32_t>(
-          pdfium::base::CheckMin(rect.left, char_left));
+      rect.left = std::min(rect.left, point.value().x);
+      rect.top = std::min(rect.top, point.value().y);
       rect.right = pdfium::base::ValueOrDieForType<int32_t>(
           pdfium::base::CheckMax(rect.right, char_right));
-      rect.top = pdfium::base::ValueOrDieForType<int32_t>(
-          pdfium::base::CheckMin(rect.top, char_top));
       rect.bottom = pdfium::base::ValueOrDieForType<int32_t>(
           pdfium::base::CheckMax(rect.bottom, char_bottom));
       continue;
     }
 
-    rect.left = char_left.ValueOrDie();
+    rect.left = point.value().x;
+    rect.top = point.value().y;
     rect.right = char_right.ValueOrDie();
-    rect.top = char_top.ValueOrDie();
     rect.bottom = char_bottom.ValueOrDie();
     bStarted = true;
   }
