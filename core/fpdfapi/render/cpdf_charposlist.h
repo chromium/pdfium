@@ -22,14 +22,12 @@ class CPDF_CharPosList {
                    float font_size);
   ~CPDF_CharPosList();
 
-  uint32_t empty() const { return m_nChars == 0; }
+  uint32_t empty() const { return m_CharPos.empty(); }
   uint32_t GetCount() const;
   const TextCharPos& GetAt(size_t index) const;
 
  private:
-  // TODO(thestig): Convert to unique_ptr or vector.
-  TextCharPos* m_pCharPos = nullptr;
-  uint32_t m_nChars = 0;
+  std::vector<TextCharPos> m_CharPos;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_CHARPOSLIST_H_
