@@ -65,11 +65,19 @@ class ScopedFontTransform {
 
 class CFX_GlyphBitmap {
  public:
-  CFX_GlyphBitmap();
+  CFX_GlyphBitmap(int left, int top);
   ~CFX_GlyphBitmap();
 
-  int m_Top;
-  int m_Left;
+  CFX_GlyphBitmap(const CFX_GlyphBitmap&) = delete;
+  CFX_GlyphBitmap& operator=(const CFX_GlyphBitmap&) = delete;
+
+  const RetainPtr<CFX_DIBitmap>& GetBitmap() const { return m_pBitmap; }
+  int left() const { return m_Left; }
+  int top() const { return m_Top; }
+
+ private:
+  const int m_Left;
+  const int m_Top;
   RetainPtr<CFX_DIBitmap> m_pBitmap;
 };
 

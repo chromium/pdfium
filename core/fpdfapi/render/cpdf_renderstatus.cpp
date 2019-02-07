@@ -1827,9 +1827,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           if (!glyph.m_pGlyph)
             continue;
 
-          m_pDevice->SetBitMask(glyph.m_pGlyph->m_pBitmap,
-                                glyph.m_Origin.x + glyph.m_pGlyph->m_Left,
-                                glyph.m_Origin.y - glyph.m_pGlyph->m_Top,
+          m_pDevice->SetBitMask(glyph.m_pGlyph->GetBitmap(),
+                                glyph.m_Origin.x + glyph.m_pGlyph->left(),
+                                glyph.m_Origin.y - glyph.m_pGlyph->top(),
                                 fill_argb);
         }
         glyphs.clear();
@@ -1897,8 +1897,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
         CFX_Point origin(FXSYS_round(matrix.e), FXSYS_round(matrix.f));
         if (glyphs.empty()) {
-          m_pDevice->SetBitMask(pBitmap->m_pBitmap, origin.x + pBitmap->m_Left,
-                                origin.y - pBitmap->m_Top, fill_argb);
+          m_pDevice->SetBitMask(pBitmap->GetBitmap(),
+                                origin.x + pBitmap->left(),
+                                origin.y - pBitmap->top(), fill_argb);
         } else {
           glyphs[iChar].m_pGlyph = pBitmap;
           glyphs[iChar].m_Origin = origin;
@@ -1931,21 +1932,21 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       continue;
 
     pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
-    left += glyph.m_pGlyph->m_Left;
+    left += glyph.m_pGlyph->left();
     left -= rect.left;
     if (!left.IsValid())
       continue;
 
     pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
-    top -= glyph.m_pGlyph->m_Top;
+    top -= glyph.m_pGlyph->top();
     top -= rect.top;
     if (!top.IsValid())
       continue;
 
     pBitmap->CompositeMask(left.ValueOrDie(), top.ValueOrDie(),
-                           glyph.m_pGlyph->m_pBitmap->GetWidth(),
-                           glyph.m_pGlyph->m_pBitmap->GetHeight(),
-                           glyph.m_pGlyph->m_pBitmap, fill_argb, 0, 0,
+                           glyph.m_pGlyph->GetBitmap()->GetWidth(),
+                           glyph.m_pGlyph->GetBitmap()->GetHeight(),
+                           glyph.m_pGlyph->GetBitmap(), fill_argb, 0, 0,
                            BlendMode::kNormal, nullptr, false, 0);
   }
   m_pDevice->SetBitMask(pBitmap, rect.left, rect.top, fill_argb);

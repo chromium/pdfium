@@ -53,11 +53,11 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
       continue;
 
     FX_SAFE_INT32 char_left = glyph.m_Origin.x;
-    char_left += pGlyph->m_Left;
+    char_left += pGlyph->left();
     if (!char_left.IsValid())
       continue;
 
-    FX_SAFE_INT32 char_width = pGlyph->m_pBitmap->GetWidth();
+    FX_SAFE_INT32 char_width = pGlyph->GetBitmap()->GetWidth();
     if (anti_alias == FXFT_RENDER_MODE_LCD)
       char_width /= 3;
     if (!char_width.IsValid())
@@ -68,11 +68,11 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
       continue;
 
     FX_SAFE_INT32 char_top = glyph.m_Origin.y;
-    char_top -= pGlyph->m_Top;
+    char_top -= pGlyph->top();
     if (!char_top.IsValid())
       continue;
 
-    FX_SAFE_INT32 char_height = pGlyph->m_pBitmap->GetHeight();
+    FX_SAFE_INT32 char_height = pGlyph->GetBitmap()->GetHeight();
     if (!char_height.IsValid())
       continue;
 

@@ -5,9 +5,8 @@
 #include "core/fxge/fx_font.h"
 
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/dib/cfx_imagestretcher.h"
 
-CFX_GlyphBitmap::CFX_GlyphBitmap()
-    : m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()) {}
+CFX_GlyphBitmap::CFX_GlyphBitmap(int left, int top)
+    : m_Left(left), m_Top(top), m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()) {}
 
 CFX_GlyphBitmap::~CFX_GlyphBitmap() = default;

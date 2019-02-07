@@ -159,9 +159,7 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
   if (!pResBitmap)
     return nullptr;
 
-  auto pGlyph = pdfium::MakeUnique<CFX_GlyphBitmap>();
-  pGlyph->m_Left = left;
-  pGlyph->m_Top = -top;
-  pGlyph->m_pBitmap->TakeOver(std::move(pResBitmap));
+  auto pGlyph = pdfium::MakeUnique<CFX_GlyphBitmap>(left, -top);
+  pGlyph->GetBitmap()->TakeOver(std::move(pResBitmap));
   return pGlyph;
 }
