@@ -7,10 +7,7 @@
 
 #include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
-
-static int GetInteger(const uint8_t* data) {
-  return data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
-}
+#include "testing/fuzzers/pdfium_fuzzer_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   static constexpr size_t kParameterSize = 21;

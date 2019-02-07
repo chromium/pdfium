@@ -5,6 +5,8 @@
 #ifndef TESTING_FUZZERS_PDFIUM_FUZZER_HELPER_H_
 #define TESTING_FUZZERS_PDFIUM_FUZZER_HELPER_H_
 
+#include <stdint.h>
+
 #include "public/fpdfview.h"
 
 class PDFiumFuzzerHelper {

@@ -67,6 +67,15 @@ group("fuzzers") {
   }
 }
 
+jumbo_source_set("utils") {
+  sources = [
+    "pdfium_fuzzer_util.cc",
+    "pdfium_fuzzer_util.h",
+  ]
+
+  testonly = true
+}
+
 template("pdfium_public_fuzzer") {
   jumbo_source_set(target_name) {
     sources = invoker.sources + [
@@ -291,6 +300,7 @@ pdfium_fuzzer("pdf_codec_fax_fuzzer_src") {
     "pdf_codec_fax_fuzzer.cc",
   ]
   deps = [
+    ":utils",
     "../../core/fxcodec",
   ]
 }
@@ -310,6 +320,7 @@ pdfium_fuzzer("pdf_codec_jbig2_fuzzer_src") {
     "pdf_codec_jbig2_fuzzer.cc",
   ]
   deps = [
+    ":utils",
     "../../core/fpdfapi/parser",
     "../../core/fxcodec",
     "../../core/fxge",
