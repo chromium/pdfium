@@ -23,6 +23,8 @@ class SystemFontInfoIface;
 
 class CFX_FontMgr {
  public:
+  static Optional<pdfium::span<const uint8_t>> GetBuiltinFont(size_t index);
+
   CFX_FontMgr();
   ~CFX_FontMgr();
 
@@ -57,7 +59,6 @@ class CFX_FontMgr {
                           int italic_angle,
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
-  Optional<pdfium::span<const uint8_t>> GetBuiltinFont(size_t index);
 
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }

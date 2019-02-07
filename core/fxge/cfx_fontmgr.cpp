@@ -76,9 +76,8 @@ int GetTTCIndex(const uint8_t* pFontData,
 
 }  // namespace
 
-CFX_FontMgr::CFX_FontMgr() {
-  m_pBuiltinMapper = pdfium::MakeUnique<CFX_FontMapper>(this);
-}
+CFX_FontMgr::CFX_FontMgr()
+    : m_pBuiltinMapper(pdfium::MakeUnique<CFX_FontMapper>(this)) {}
 
 CFX_FontMgr::~CFX_FontMgr() {
   // |m_FaceMap| and |m_pBuiltinMapper| reference |m_FTLibrary|, so they must
@@ -217,6 +216,7 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
     FXFT_Done_Face(face);
 }
 
+// static
 Optional<pdfium::span<const uint8_t>> CFX_FontMgr::GetBuiltinFont(
     size_t index) {
   if (index < FX_ArraySize(g_FoxitFonts)) {
