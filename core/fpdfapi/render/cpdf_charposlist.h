@@ -16,14 +16,17 @@ class TextCharPos;
 
 class CPDF_CharPosList {
  public:
-  CPDF_CharPosList();
+  CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
+                   const std::vector<float>& charPos,
+                   CPDF_Font* pFont,
+                   float font_size);
   ~CPDF_CharPosList();
 
-  void Load(const std::vector<uint32_t>& charCodes,
-            const std::vector<float>& charPos,
-            CPDF_Font* pFont,
-            float font_size);
+  uint32_t empty() const { return m_nChars == 0; }
+  uint32_t GetCount() const;
+  const TextCharPos& GetAt(size_t index) const;
 
+ private:
   // TODO(thestig): Convert to unique_ptr or vector.
   TextCharPos* m_pCharPos = nullptr;
   uint32_t m_nChars = 0;

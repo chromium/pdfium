@@ -37,34 +37,33 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                      FX_ARGB stroke_argb,
                                      CFX_PathData* pClippingPath,
                                      int nFlag) {
-  CPDF_CharPosList CharPosList;
-  CharPosList.Load(charCodes, charPos, pFont, font_size);
-  if (CharPosList.m_nChars == 0)
+  CPDF_CharPosList CharPosList(charCodes, charPos, pFont, font_size);
+  if (CharPosList.empty())
     return true;
 
   bool bDraw = true;
-  int32_t fontPosition = CharPosList.m_pCharPos[0].m_FallbackFontPosition;
+  int32_t fontPosition = CharPosList.GetAt(0).m_FallbackFontPosition;
   uint32_t startIndex = 0;
-  for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
-    int32_t curFontPosition = CharPosList.m_pCharPos[i].m_FallbackFontPosition;
+  for (uint32_t i = 0; i < CharPosList.GetCount(); ++i) {
+    int32_t curFontPosition = CharPosList.GetAt(i).m_FallbackFontPosition;
     if (fontPosition == curFontPosition)
       continue;
 
     CFX_Font* font = GetFont(pFont, fontPosition);
-    if (!pDevice->DrawTextPath(i - startIndex,
-                               CharPosList.m_pCharPos + startIndex, font,
-                               font_size, pText2User, pUser2Device, pGraphState,
-                               fill_argb, stroke_argb, pClippingPath, nFlag)) {
+    if (!pDevice->DrawTextPath(i - startIndex, &CharPosList.GetAt(startIndex),
+                               font, font_size, pText2User, pUser2Device,
+                               pGraphState, fill_argb, stroke_argb,
+                               pClippingPath, nFlag)) {
       bDraw = false;
     }
     fontPosition = curFontPosition;
     startIndex = i;
   }
   CFX_Font* font = GetFont(pFont, fontPosition);
-  if (!pDevice->DrawTextPath(CharPosList.m_nChars - startIndex,
-                             CharPosList.m_pCharPos + startIndex, font,
-                             font_size, pText2User, pUser2Device, pGraphState,
-                             fill_argb, stroke_argb, pClippingPath, nFlag)) {
+  if (!pDevice->DrawTextPath(CharPosList.GetCount() - startIndex,
+                             &CharPosList.GetAt(startIndex), font, font_size,
+                             pText2User, pUser2Device, pGraphState, fill_argb,
+                             stroke_argb, pClippingPath, nFlag)) {
     bDraw = false;
   }
   return bDraw;
@@ -116,9 +115,8 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix* pText2Device,
                                        FX_ARGB fill_argb,
                                        const CPDF_RenderOptions* pOptions) {
-  CPDF_CharPosList CharPosList;
-  CharPosList.Load(charCodes, charPos, pFont, font_size);
-  if (CharPosList.m_nChars == 0)
+  CPDF_CharPosList CharPosList(charCodes, charPos, pFont, font_size);
+  if (CharPosList.empty())
     return true;
   int FXGE_flags = 0;
   if (pOptions) {
@@ -141,27 +139,26 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   if (pFont->IsCIDFont())
     FXGE_flags |= FXFONT_CIDFONT;
   bool bDraw = true;
-  int32_t fontPosition = CharPosList.m_pCharPos[0].m_FallbackFontPosition;
+  int32_t fontPosition = CharPosList.GetAt(0).m_FallbackFontPosition;
   uint32_t startIndex = 0;
-  for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
-    int32_t curFontPosition = CharPosList.m_pCharPos[i].m_FallbackFontPosition;
+  for (uint32_t i = 0; i < CharPosList.GetCount(); ++i) {
+    int32_t curFontPosition = CharPosList.GetAt(i).m_FallbackFontPosition;
     if (fontPosition == curFontPosition)
       continue;
 
     CFX_Font* font = GetFont(pFont, fontPosition);
-    if (!pDevice->DrawNormalText(
-            i - startIndex, CharPosList.m_pCharPos + startIndex, font,
-            font_size, pText2Device, fill_argb, FXGE_flags)) {
+    if (!pDevice->DrawNormalText(i - startIndex, &CharPosList.GetAt(startIndex),
+                                 font, font_size, pText2Device, fill_argb,
+                                 FXGE_flags)) {
       bDraw = false;
     }
     fontPosition = curFontPosition;
     startIndex = i;
   }
   CFX_Font* font = GetFont(pFont, fontPosition);
-  if (!pDevice->DrawNormalText(CharPosList.m_nChars - startIndex,
-                               CharPosList.m_pCharPos + startIndex, font,
-                               font_size, pText2Device, fill_argb,
-                               FXGE_flags)) {
+  if (!pDevice->DrawNormalText(CharPosList.GetCount() - startIndex,
+                               &CharPosList.GetAt(startIndex), font, font_size,
+                               pText2Device, fill_argb, FXGE_flags)) {
     bDraw = false;
   }
   return bDraw;

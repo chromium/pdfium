@@ -11,16 +11,10 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 
-CPDF_CharPosList::CPDF_CharPosList() = default;
-
-CPDF_CharPosList::~CPDF_CharPosList() {
-  FX_Free(m_pCharPos);
-}
-
-void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
-                            const std::vector<float>& charPos,
-                            CPDF_Font* pFont,
-                            float FontSize) {
+CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
+                                   const std::vector<float>& charPos,
+                                   CPDF_Font* pFont,
+                                   float FontSize) {
   m_pCharPos = FX_Alloc(TextCharPos, charCodes.size());
   m_nChars = 0;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
@@ -117,4 +111,16 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
       charpos.m_bGlyphAdjust = true;
     }
   }
+}
+
+CPDF_CharPosList::~CPDF_CharPosList() {
+  FX_Free(m_pCharPos);
+}
+
+uint32_t CPDF_CharPosList::GetCount() const {
+  return m_nChars;
+}
+
+const TextCharPos& CPDF_CharPosList::GetAt(size_t index) const {
+  return m_pCharPos[index];
 }
