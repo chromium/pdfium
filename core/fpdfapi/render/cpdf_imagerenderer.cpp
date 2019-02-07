@@ -40,14 +40,25 @@
 #include "core/fxge/skia/fx_skia_device.h"
 #endif
 
+namespace {
+
+bool IsImageValueTooBig(int val) {
+  // Likely large enough for any real rendering need, but sufficiently small
+  // that operations like val1 + val2 or -val will not overflow.
+  constexpr int kLimit = 256 * 1024 * 1024;
+  FX_SAFE_INT32 safe_val = val;
+  safe_val = safe_val.Abs();
+  return safe_val.ValueOrDefault(kLimit) >= kLimit;
+}
+
+}  // namespace
+
 CPDF_ImageRenderer::CPDF_ImageRenderer() = default;
 
 CPDF_ImageRenderer::~CPDF_ImageRenderer() = default;
 
 bool CPDF_ImageRenderer::StartLoadDIBBase() {
-  CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOuterRect();
-  if (!image_rect.Valid())
+  if (!GetUnitRect().has_value())
     return false;
 
   if (m_Loader.Start(m_pImageObject.Get(),
@@ -400,10 +411,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     return false;
   }
 #endif
-  CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOuterRect();
-  int dest_width = image_rect.Width();
-  int dest_height = image_rect.Height();
+
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
     if (NotDrawing()) {
@@ -411,21 +419,31 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       return false;
     }
 
+    Optional<FX_RECT> image_rect = GetUnitRect();
+    if (!image_rect.has_value())
+      return false;
+
     FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
-    clip_box.Intersect(image_rect);
+    clip_box.Intersect(image_rect.value());
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
         m_pDIBBase, m_ImageMatrix, m_ResampleOptions, &clip_box);
     return true;
   }
-  if (m_ImageMatrix.a < 0)
-    dest_width = -dest_width;
 
-  if (m_ImageMatrix.d > 0)
-    dest_height = -dest_height;
+  Optional<FX_RECT> image_rect = GetUnitRect();
+  if (!image_rect.has_value())
+    return false;
 
-  int dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
-  int dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
+  int dest_left;
+  int dest_top;
+  int dest_width;
+  int dest_height;
+  if (!GetDimensionsFromUnitRect(image_rect.value(), &dest_left, &dest_top,
+                                 &dest_width, &dest_height)) {
+    return false;
+  }
+
   if (m_pDIBBase->IsOpaqueImage() && m_BitmapAlpha == 255) {
     if (m_pRenderStatus->GetRenderDevice()->StretchDIBitsWithFlagsAndBlend(
             m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
@@ -449,10 +467,10 @@ bool CPDF_ImageRenderer::StartDIBBase() {
 
   FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
   FX_RECT dest_rect = clip_box;
-  dest_rect.Intersect(image_rect);
+  dest_rect.Intersect(image_rect.value());
   FX_RECT dest_clip(
-      dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
-      dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
+      dest_rect.left - image_rect->left, dest_rect.top - image_rect->top,
+      dest_rect.right - image_rect->left, dest_rect.bottom - image_rect->top);
   RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
       dest_width, dest_height, m_ResampleOptions, &dest_clip);
   if (pStretched) {
@@ -493,14 +511,20 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
     return false;
   }
-  CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOuterRect();
-  int dest_width =
-      m_ImageMatrix.a > 0 ? image_rect.Width() : -image_rect.Width();
-  int dest_height =
-      m_ImageMatrix.d > 0 ? -image_rect.Height() : image_rect.Height();
-  int left = dest_width > 0 ? image_rect.left : image_rect.right;
-  int top = dest_height > 0 ? image_rect.top : image_rect.bottom;
+
+  Optional<FX_RECT> image_rect = GetUnitRect();
+  if (!image_rect.has_value())
+    return false;
+
+  int left;
+  int top;
+  int dest_width;
+  int dest_height;
+  if (!GetDimensionsFromUnitRect(image_rect.value(), &left, &top, &dest_width,
+                                 &dest_height)) {
+    return false;
+  }
+
   m_pRenderStatus->GetRenderDevice()->StretchBitMask(
       pAlphaMask, left, top, dest_width, dest_height,
       ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
@@ -571,4 +595,42 @@ void CPDF_ImageRenderer::HandleFilters() {
       break;
     }
   }
+}
+
+Optional<FX_RECT> CPDF_ImageRenderer::GetUnitRect() const {
+  CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
+  FX_RECT image_rect = image_rect_f.GetOuterRect();
+  if (!image_rect.Valid())
+    return {};
+  return image_rect;
+}
+
+bool CPDF_ImageRenderer::GetDimensionsFromUnitRect(const FX_RECT& rect,
+                                                   int* left,
+                                                   int* top,
+                                                   int* width,
+                                                   int* height) const {
+  ASSERT(rect.Valid());
+
+  int dest_width = rect.Width();
+  int dest_height = rect.Height();
+  if (IsImageValueTooBig(dest_width) || IsImageValueTooBig(dest_height))
+    return false;
+
+  if (m_ImageMatrix.a < 0)
+    dest_width = -dest_width;
+
+  if (m_ImageMatrix.d > 0)
+    dest_height = -dest_height;
+
+  int dest_left = dest_width > 0 ? rect.left : rect.right;
+  int dest_top = dest_height > 0 ? rect.top : rect.bottom;
+  if (IsImageValueTooBig(dest_left) || IsImageValueTooBig(dest_top))
+    return false;
+
+  *left = dest_left;
+  *top = dest_top;
+  *width = dest_width;
+  *height = dest_height;
+  return true;
 }

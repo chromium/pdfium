@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/optional.h"
 
 class CFX_DIBitmap;
 class CFX_DIBBase;
@@ -65,6 +66,12 @@ class CPDF_ImageRenderer {
                           const FX_RECT& rect) const;
   const CPDF_RenderOptions& GetRenderOptions() const;
   void HandleFilters();
+  Optional<FX_RECT> GetUnitRect() const;
+  bool GetDimensionsFromUnitRect(const FX_RECT& rect,
+                                 int* left,
+                                 int* top,
+                                 int* width,
+                                 int* height) const;
 
   UnownedPtr<CPDF_RenderStatus> m_pRenderStatus;
   UnownedPtr<CPDF_ImageObject> m_pImageObject;
