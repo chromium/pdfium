@@ -246,15 +246,15 @@ std::ostream& operator<<(std::ostream& os, const StrictNumeric<T>& value) {
                        typename UnderlyingType<R>::type>(lhs, rhs);  \
   }
 
-STRICT_COMPARISON_OP(IsLess, <);
-STRICT_COMPARISON_OP(IsLessOrEqual, <=);
-STRICT_COMPARISON_OP(IsGreater, >);
-STRICT_COMPARISON_OP(IsGreaterOrEqual, >=);
-STRICT_COMPARISON_OP(IsEqual, ==);
-STRICT_COMPARISON_OP(IsNotEqual, !=);
+STRICT_COMPARISON_OP(IsLess, <)
+STRICT_COMPARISON_OP(IsLessOrEqual, <=)
+STRICT_COMPARISON_OP(IsGreater, >)
+STRICT_COMPARISON_OP(IsGreaterOrEqual, >=)
+STRICT_COMPARISON_OP(IsEqual, ==)
+STRICT_COMPARISON_OP(IsNotEqual, !=)
 
 #undef STRICT_COMPARISON_OP
-};
+}  // namespace internal
 
 using internal::strict_cast;
 using internal::saturated_cast;
