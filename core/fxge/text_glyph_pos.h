@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
 class CFX_GlyphBitmap;
@@ -21,7 +22,7 @@ class TextGlyphPos {
 
   Optional<CFX_Point> GetOrigin(const CFX_Point& offset) const;
 
-  const CFX_GlyphBitmap* m_pGlyph = nullptr;
+  UnownedPtr<const CFX_GlyphBitmap> m_pGlyph;
   CFX_Point m_Origin;
   CFX_PointF m_fOrigin;
 };

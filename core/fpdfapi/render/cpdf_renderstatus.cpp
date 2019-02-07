@@ -1795,20 +1795,23 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   if (pdfium::ContainsValue(m_Type3FontCache, pType3Font))
     return true;
 
+  int device_class = m_pDevice->GetDeviceClass();
+  FX_ARGB fill_argb = GetFillArgbForType3(textobj);
+  int fill_alpha = FXARGB_A(fill_argb);
+  if (device_class != FXDC_DISPLAY && fill_alpha < 255)
+    return false;
+
   CFX_Matrix text_matrix = textobj->GetTextMatrix();
   CFX_Matrix char_matrix = pType3Font->GetFontMatrix();
   float font_size = textobj->m_TextState.GetFontSize();
   char_matrix.Scale(font_size, font_size);
-  FX_ARGB fill_argb = GetFillArgbForType3(textobj);
-  int fill_alpha = FXARGB_A(fill_argb);
-  int device_class = m_pDevice->GetDeviceClass();
+
+  // Must come before |glyphs|, because |glyphs| points into |refTypeCache|.
+  CPDF_RefType3Cache refTypeCache(pType3Font);
   std::vector<TextGlyphPos> glyphs;
   if (device_class == FXDC_DISPLAY)
     glyphs.resize(textobj->GetCharCodes().size());
-  else if (fill_alpha < 255)
-    return false;
 
-  CPDF_RefType3Cache refTypeCache(pType3Font);
   for (size_t iChar = 0; iChar < textobj->GetCharCodes().size(); ++iChar) {
     uint32_t charcode = textobj->GetCharCodes()[iChar];
     if (charcode == static_cast<uint32_t>(-1))
