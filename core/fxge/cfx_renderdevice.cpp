@@ -1009,25 +1009,17 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!glyph.m_pGlyph)
       continue;
 
-    pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
-    left += glyph.m_pGlyph->left();
-    left -= pixel_left;
-    if (!left.IsValid())
-      return false;
-
-    pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
-    top -= glyph.m_pGlyph->top();
-    top -= pixel_top;
-    if (!top.IsValid())
+    Optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
+    if (!point.has_value())
       return false;
 
     const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
     int ncols = pGlyph->GetWidth();
     int nrows = pGlyph->GetHeight();
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
-      if (!bitmap->CompositeMask(left.ValueOrDie(), top.ValueOrDie(), ncols,
-                                 nrows, pGlyph, fill_color, 0, 0,
-                                 BlendMode::kNormal, nullptr, false, 0)) {
+      if (!bitmap->CompositeMask(point->x, point->y, ncols, nrows, pGlyph,
+                                 fill_color, 0, 0, BlendMode::kNormal, nullptr,
+                                 false, 0)) {
         return false;
       }
       continue;
@@ -1035,21 +1027,18 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
     int x_subpixel = static_cast<int>(glyph.m_fOrigin.x * 3) % 3;
-    int start_col =
-        pdfium::base::ValueOrDieForType<int>(pdfium::base::CheckMax(left, 0));
-    pdfium::base::CheckedNumeric<int> end_col_safe = left;
+    int start_col = std::max(point->x, 0);
+    FX_SAFE_INT32 end_col_safe = point->x;
     end_col_safe += ncols;
     if (!end_col_safe.IsValid())
       return false;
 
-    int end_col =
-        std::min(static_cast<int>(end_col_safe.ValueOrDie<int>()), dest_width);
+    int end_col = std::min<int>(end_col_safe.ValueOrDie(), dest_width);
     if (start_col >= end_col)
       continue;
 
-    DrawNormalTextHelper(bitmap, pGlyph, nrows, left.ValueOrDie(),
-                         top.ValueOrDie(), start_col, end_col, bNormal,
-                         bBGRStripe, x_subpixel, a, r, g, b);
+    DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
+                         end_col, bNormal, bBGRStripe, x_subpixel, a, r, g, b);
   }
   if (bitmap->IsAlphaMask())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);

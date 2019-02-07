@@ -6,8 +6,27 @@
 
 #include "core/fxge/text_glyph_pos.h"
 
+#include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_glyphbitmap.h"
+
 TextGlyphPos::TextGlyphPos() = default;
 
 TextGlyphPos::TextGlyphPos(const TextGlyphPos&) = default;
 
 TextGlyphPos::~TextGlyphPos() = default;
+
+Optional<CFX_Point> TextGlyphPos::GetOrigin(const CFX_Point& offset) const {
+  FX_SAFE_INT32 left = m_Origin.x;
+  left += m_pGlyph->left();
+  left -= offset.x;
+  if (!left.IsValid())
+    return {};
+
+  FX_SAFE_INT32 top = m_Origin.y;
+  top -= m_pGlyph->top();
+  top -= offset.y;
+  if (!top.IsValid())
+    return {};
+
+  return CFX_Point(left.ValueOrDie(), top.ValueOrDie());
+}

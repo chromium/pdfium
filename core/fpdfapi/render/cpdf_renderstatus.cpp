@@ -1933,23 +1933,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     if (!glyph.m_pGlyph)
       continue;
 
-    pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
-    left += glyph.m_pGlyph->left();
-    left -= rect.left;
-    if (!left.IsValid())
+    Optional<CFX_Point> point = glyph.GetOrigin({rect.left, rect.top});
+    if (!point.has_value())
       continue;
 
-    pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
-    top -= glyph.m_pGlyph->top();
-    top -= rect.top;
-    if (!top.IsValid())
-      continue;
-
-    pBitmap->CompositeMask(left.ValueOrDie(), top.ValueOrDie(),
-                           glyph.m_pGlyph->GetBitmap()->GetWidth(),
-                           glyph.m_pGlyph->GetBitmap()->GetHeight(),
-                           glyph.m_pGlyph->GetBitmap(), fill_argb, 0, 0,
-                           BlendMode::kNormal, nullptr, false, 0);
+    pBitmap->CompositeMask(
+        point->x, point->y, glyph.m_pGlyph->GetBitmap()->GetWidth(),
+        glyph.m_pGlyph->GetBitmap()->GetHeight(), glyph.m_pGlyph->GetBitmap(),
+        fill_argb, 0, 0, BlendMode::kNormal, nullptr, false, 0);
   }
   m_pDevice->SetBitMask(pBitmap, rect.left, rect.top, fill_argb);
   return true;
