@@ -972,11 +972,14 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     for (const TextGlyphPos& glyph : glyphs) {
       if (!glyph.m_pGlyph)
         continue;
+
+      Optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
+      if (!point.has_value())
+        continue;
+
       const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
-      bitmap->TransferBitmap(
-          glyph.m_Origin.x + glyph.m_pGlyph->left() - pixel_left,
-          glyph.m_Origin.y - glyph.m_pGlyph->top() - pixel_top,
-          pGlyph->GetWidth(), pGlyph->GetHeight(), pGlyph, 0, 0);
+      bitmap->TransferBitmap(point->x, point->y, pGlyph->GetWidth(),
+                             pGlyph->GetHeight(), pGlyph, 0, 0);
     }
     return SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
   }

@@ -1829,9 +1829,11 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           if (!glyph.m_pGlyph)
             continue;
 
-          m_pDevice->SetBitMask(glyph.m_pGlyph->GetBitmap(),
-                                glyph.m_Origin.x + glyph.m_pGlyph->left(),
-                                glyph.m_Origin.y - glyph.m_pGlyph->top(),
+          Optional<CFX_Point> point = glyph.GetOrigin({0, 0});
+          if (!point.has_value())
+            continue;
+
+          m_pDevice->SetBitMask(glyph.m_pGlyph->GetBitmap(), point->x, point->y,
                                 fill_argb);
         }
         glyphs.clear();
