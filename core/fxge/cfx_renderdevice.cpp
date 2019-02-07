@@ -1014,7 +1014,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
 
     Optional<CFX_Point> point = glyph.GetOrigin({pixel_left, pixel_top});
     if (!point.has_value())
-      return false;
+      continue;
 
     const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
     int ncols = pGlyph->GetWidth();
@@ -1034,7 +1034,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     FX_SAFE_INT32 end_col_safe = point->x;
     end_col_safe += ncols;
     if (!end_col_safe.IsValid())
-      return false;
+      continue;
 
     int end_col = std::min<int>(end_col_safe.ValueOrDie(), dest_width);
     if (start_col >= end_col)
