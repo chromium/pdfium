@@ -1,0 +1,71 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+>>
+stream
+<template>
+  <subform layout="tb" name="my_doc">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+      <pageArea id="Page2" name="Page2">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+    </pageSet>
+    <event activity="docReady" ref="$host">
+      <script contentType="application/x-javascript">
+        {{include ../expect.js}}
+        {{include ../property_test_helpers.js}}
+        testRWProperty(my_doc, "locale", "en_US", "FR");
+        testRIProperty(my_doc, "instanceIndex", 0);
+        testRWProperty(my_doc, "layout", "tb", "landscape");
+        testRWProperty(my_doc, "validationMessage", "", "totally valid");
+        expect("typeof my_doc.execEvent", "function");
+        expect("typeof my_doc.execInitialize", "function");
+        expect("typeof my_doc.execCalculate", "function");
+        expect("typeof my_doc.execValidate", "function");
+        expectError("my_doc.execEvent()");
+        expectError("my_doc.execEvent('foo', 'bar')");
+        expect("my_doc.execEvent(undefined)", undefined);
+        expect("my_doc.execEvent({value: 'bogus'})", undefined);
+        expect("my_doc.execEvent('bogus')", undefined);
+        expect("my_doc.execEvent('change')", undefined);
+        expect("my_doc.execEvent('click')", undefined);
+        expect("my_doc.execEvent('enter')", undefined);
+        expect("my_doc.execEvent('exit')", undefined);
+        expect("my_doc.execEvent('full')", undefined);
+        expect("my_doc.execEvent('indexChange')", undefined);
+        expect("my_doc.execEvent('initialize')", undefined);
+        expect("my_doc.execEvent('mouseDown')", undefined);
+        expect("my_doc.execEvent('mouseEnter')", undefined);
+        expect("my_doc.execEvent('mouseExit')", undefined);
+        expect("my_doc.execEvent('postOpen')", undefined);
+        expect("my_doc.execEvent('postSign')", undefined);
+        expect("my_doc.execEvent('preOpen')", undefined);
+        expect("my_doc.execEvent('preSign')", undefined);
+        expectError("my_doc.execInitialize('foo')");
+        expect("my_doc.execInitialize()", undefined);
+        expectError("my_doc.execCalculate('foo')");
+        expect("my_doc.execCalculate()", undefined);
+        expectError("my_doc.execValidate('foo')");
+        expect("my_doc.execValidate()", true);
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

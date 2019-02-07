@@ -1,0 +1,37 @@
+Alert: PASS: locale = en_US
+Alert: PASS: locale = FR
+Alert: PASS: instanceIndex = 0
+Alert: PASS: instanceIndex = 0
+Alert: PASS: layout = tb
+Alert: PASS: layout = landscape
+Alert: PASS: validationMessage = 
+Alert: PASS: validationMessage = totally valid
+Alert: PASS: typeof my_doc.execEvent = function
+Alert: PASS: typeof my_doc.execInitialize = function
+Alert: PASS: typeof my_doc.execCalculate = function
+Alert: PASS: typeof my_doc.execValidate = function
+Alert: PASS: my_doc.execEvent() threw XFAObject.execEvent: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.execEvent('foo', 'bar') threw XFAObject.execEvent: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.execEvent(undefined) = undefined
+Alert: PASS: my_doc.execEvent({value: 'bogus'}) = undefined
+Alert: PASS: my_doc.execEvent('bogus') = undefined
+Alert: PASS: my_doc.execEvent('change') = undefined
+Alert: PASS: my_doc.execEvent('click') = undefined
+Alert: PASS: my_doc.execEvent('enter') = undefined
+Alert: PASS: my_doc.execEvent('exit') = undefined
+Alert: PASS: my_doc.execEvent('full') = undefined
+Alert: PASS: my_doc.execEvent('indexChange') = undefined
+Alert: PASS: my_doc.execEvent('initialize') = undefined
+Alert: PASS: my_doc.execEvent('mouseDown') = undefined
+Alert: PASS: my_doc.execEvent('mouseEnter') = undefined
+Alert: PASS: my_doc.execEvent('mouseExit') = undefined
+Alert: PASS: my_doc.execEvent('postOpen') = undefined
+Alert: PASS: my_doc.execEvent('postSign') = undefined
+Alert: PASS: my_doc.execEvent('preOpen') = undefined
+Alert: PASS: my_doc.execEvent('preSign') = undefined
+Alert: PASS: my_doc.execInitialize('foo') threw XFAObject.execInitialize: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.execInitialize() = undefined
+Alert: PASS: my_doc.execCalculate('foo') threw XFAObject.execCalculate: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.execCalculate() = undefined
+Alert: PASS: my_doc.execValidate('foo') threw XFAObject.execValidate: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.execValidate() = true
