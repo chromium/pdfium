@@ -63,9 +63,16 @@ stream
         expect("my_doc.saveXML('pretty').length > 9000", true);  // Really long string.
         expectError("my_doc.saveXML('bogus')");
         expectError("my_doc.setAttribute()");
-        expect("my_doc.setAttribute('ns', 'something')", undefined);
-        expectError("my_doc.setElement()", undefined);
+        expectError("my_doc.setElement()");
         expect("my_doc.setElement('ns', 'something')", undefined);
+
+        // Test setting attributes in the XFA schema.
+        expect("my_doc.setAttribute('something', 'ns')", undefined);
+        expect("my_doc.getAttribute('ns')", 'something');
+
+        // Test free-form attributes outside of the XFA schema.
+        expect("my_doc.setAttribute('fake_value', 'fake_attr')", undefined);
+        expect("my_doc.getAttribute('fake_attr')", 'fake_value');
       </script>
     </event>
   </subform>

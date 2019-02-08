@@ -43,6 +43,9 @@ Alert: PASS: my_doc.saveXML().length > 9000 = true
 Alert: PASS: my_doc.saveXML('pretty').length > 9000 = true
 Alert: PASS: my_doc.saveXML('bogus') threw XFAObject.saveXML: Incorrect parameter value.
 Alert: PASS: my_doc.setAttribute() threw XFAObject.setAttribute: Incorrect number of parameters passed to function.
-Alert: PASS: my_doc.setAttribute('ns', 'something') = undefined
 Alert: PASS: my_doc.setElement() threw XFAObject.setElement: Incorrect number of parameters passed to function.
 Alert: PASS: my_doc.setElement('ns', 'something') = undefined
+Alert: PASS: my_doc.setAttribute('something', 'ns') = undefined
+Alert: PASS: my_doc.getAttribute('ns') = something
+Alert: PASS: my_doc.setAttribute('fake_value', 'fake_attr') = undefined
+Alert: PASS: my_doc.getAttribute('fake_attr') = fake_value

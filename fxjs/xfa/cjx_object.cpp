@@ -252,8 +252,8 @@ void CJX_Object::SetMapModuleString(void* pKey, WideStringView wsValue) {
 void CJX_Object::SetAttribute(WideStringView wsAttr,
                               WideStringView wsValue,
                               bool bNotify) {
-  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsValue);
-  if (!attr.has_value()) {
+  Optional<XFA_ATTRIBUTEINFO> attr = XFA_GetAttributeByName(wsAttr);
+  if (attr.has_value()) {
     SetAttribute(attr.value().attribute, wsValue, bNotify);
     return;
   }
