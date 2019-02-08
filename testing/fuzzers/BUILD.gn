@@ -74,6 +74,7 @@ jumbo_source_set("utils") {
   ]
 
   testonly = true
+  include_dirs = [ "../.." ]
 }
 
 template("pdfium_public_fuzzer") {
