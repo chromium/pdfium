@@ -1,0 +1,81 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+>>
+stream
+<template>
+  <subform layout="tb" name="my_doc">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+      <pageArea id="Page2" name="Page2">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+    </pageSet>
+    <event activity="docReady" ref="$host">
+      <script contentType="application/x-javascript">
+        {{include ../expect.js}}
+        {{include ../property_test_helpers.js}}
+        testROProperty(my_doc, "isContainer", true);
+        testROProperty(my_doc, "isNull", false);
+        testROProperty(my_doc, "model", "[object XFAObject]");
+        testROProperty(my_doc, "ns", "");
+        testROProperty(my_doc, "oneOfChild", false);
+        expect("typeof my_doc.applyXSL", "function");
+        expect("typeof my_doc.assignNode", "function");
+        expect("typeof my_doc.clone", "function");
+        expect("typeof my_doc.getAttribute", "function");
+        expect("typeof my_doc.getElement", "function");
+        expect("typeof my_doc.isPropertySpecified", "function");
+        expect("typeof my_doc.loadXML", "function");
+        expect("typeof my_doc.saveFilteredXML", "function");
+        expect("typeof my_doc.saveXML", "function");
+        expect("typeof my_doc.setAttribute", "function");
+        expect("typeof my_doc.setElement", "function");
+        expectError("my_doc.applyXSL()");
+        expect("my_doc.applyXSL(42)", undefined);
+        expectError("my_doc.assignNode()");
+        expect("my_doc.assignNode(42)", undefined);
+        expectError("my_doc.clone()");
+        expect("my_doc.clone(true)", "[object XFAObject]");
+        expect("my_doc.clone(false)", "[object XFAObject]");
+        expectError("my_doc.getAttribute()");
+        expect("my_doc.getAttribute('bogus')", "");
+        expect("my_doc.getAttribute('layout')", "tb");
+        expectError("my_doc.getElement()");
+        expect("my_doc.getElement('bogus')", undefined);
+        expect("my_doc.getElement('pageSet')", "[object XFAObject]");
+        expectError("my_doc.isPropertySpecified()");
+        expect("my_doc.isPropertySpecified('bogus')", false);
+        expect("my_doc.isPropertySpecified('pageSet')", true);
+        expectError("my_doc.loadXML()");
+        expect("my_doc.loadXML('bogus')", undefined);
+        expect("my_doc.loadXML('\u003cpageSet\u003e\u003d/pageSet\u003e')", undefined);
+        expect("my_doc.saveFilteredXML('undefined', 'regardless', 'of', 'args')", undefined);
+        expect("my_doc.saveXML().length > 9000", true);          // Really long string.
+        expect("my_doc.saveXML('pretty').length > 9000", true);  // Really long string.
+        expectError("my_doc.saveXML('bogus')");
+        expectError("my_doc.setAttribute()");
+        expect("my_doc.setAttribute('ns', 'something')", undefined);
+        expectError("my_doc.setElement()", undefined);
+        expect("my_doc.setElement('ns', 'something')", undefined);
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

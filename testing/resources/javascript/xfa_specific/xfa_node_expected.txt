@@ -1,0 +1,48 @@
+Alert: PASS: isContainer = true
+Alert: PASS: isContainer threw Error: Invalid property set operation.
+Alert: PASS: isNull = false
+Alert: PASS: isNull threw Error: Invalid property set operation.
+Alert: PASS: model = [object XFAObject]
+Alert: PASS: model threw Error: Invalid property set operation.
+Alert: PASS: ns = 
+Alert: PASS: ns threw Error: Invalid property set operation.
+Alert: FAIL: oneOfChild = undefined, expected = false
+Alert: PASS: oneOfChild threw Error: Invalid property set operation.
+Alert: PASS: typeof my_doc.applyXSL = function
+Alert: PASS: typeof my_doc.assignNode = function
+Alert: PASS: typeof my_doc.clone = function
+Alert: PASS: typeof my_doc.getAttribute = function
+Alert: PASS: typeof my_doc.getElement = function
+Alert: PASS: typeof my_doc.isPropertySpecified = function
+Alert: PASS: typeof my_doc.loadXML = function
+Alert: PASS: typeof my_doc.saveFilteredXML = function
+Alert: PASS: typeof my_doc.saveXML = function
+Alert: PASS: typeof my_doc.setAttribute = function
+Alert: PASS: typeof my_doc.setElement = function
+Alert: PASS: my_doc.applyXSL() threw XFAObject.applyXSL: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.applyXSL(42) = undefined
+Alert: PASS: my_doc.assignNode() threw XFAObject.assignNode: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.assignNode(42) = undefined
+Alert: PASS: my_doc.clone() threw XFAObject.clone: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.clone(true) = [object XFAObject]
+Alert: PASS: my_doc.clone(false) = [object XFAObject]
+Alert: PASS: my_doc.getAttribute() threw XFAObject.getAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.getAttribute('bogus') = 
+Alert: PASS: my_doc.getAttribute('layout') = tb
+Alert: PASS: my_doc.getElement() threw XFAObject.getElement: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.getElement('bogus') = null
+Alert: PASS: my_doc.getElement('pageSet') = [object XFAObject]
+Alert: PASS: my_doc.isPropertySpecified() threw XFAObject.isPropertySpecified: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.isPropertySpecified('bogus') = false
+Alert: PASS: my_doc.isPropertySpecified('pageSet') = true
+Alert: PASS: my_doc.loadXML() threw XFAObject.loadXML: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.loadXML('bogus') = undefined
+Alert: PASS: my_doc.loadXML('<pageSet>=/pageSet>') = undefined
+Alert: PASS: my_doc.saveFilteredXML('undefined', 'regardless', 'of', 'args') = undefined
+Alert: PASS: my_doc.saveXML().length > 9000 = true
+Alert: PASS: my_doc.saveXML('pretty').length > 9000 = true
+Alert: PASS: my_doc.saveXML('bogus') threw XFAObject.saveXML: Incorrect parameter value.
+Alert: PASS: my_doc.setAttribute() threw XFAObject.setAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.setAttribute('ns', 'something') = undefined
+Alert: PASS: my_doc.setElement() threw XFAObject.setElement: Incorrect number of parameters passed to function.
+Alert: PASS: my_doc.setElement('ns', 'something') = undefined
