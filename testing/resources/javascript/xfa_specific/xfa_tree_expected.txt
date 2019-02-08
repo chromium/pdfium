@@ -1,0 +1,21 @@
+Alert: PASS: all = [object XFAObject]
+Alert: PASS: all threw Error: Invalid property set operation.
+Alert: PASS: classAll = [object XFAObject]
+Alert: PASS: classAll threw Error: Invalid property set operation.
+Alert: PASS: classIndex = 0
+Alert: PASS: classIndex threw Error: Invalid property set operation.
+Alert: PASS: index = 0
+Alert: PASS: index threw Error: Invalid property set operation.
+Alert: PASS: nodes = [object XFAObject]
+Alert: PASS: nodes threw Error: Unable to set 
+Alert: PASS: parent = [object XFAObject]
+Alert: PASS: parent threw Error: Invalid property set operation.
+Alert: PASS: somExpression = xfa[0].form[0]
+Alert: PASS: somExpression threw Error: Invalid property set operation.
+Alert: PASS: typeof xfa.form.resolveNode = function
+Alert: PASS: typeof xfa.form.resolveNodes = function
+Alert: PASS: xfa.form.resolveNode() threw XFAObject.resolveNode: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.form.resolveNode('bogus') = null
+Alert: PASS: xfa.form.resolveNodes() threw XFAObject.resolveNodes: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.form.resolveNodes('bogus') = [object XFAObject]
+Alert: PASS: xfa.form.resolveNodes('bogus').length = 0
