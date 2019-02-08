@@ -112,7 +112,6 @@ class CXFA_TextLayout {
                   TextCharPos* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
   size_t GetDisplayPos(const CXFA_TextPiece* pPiece, TextCharPos* pCharPos);
-  bool ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool LayoutInternal(size_t szBlockIndex);
   size_t CountBlocks() const;

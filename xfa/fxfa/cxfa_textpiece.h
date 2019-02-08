@@ -7,34 +7,22 @@
 #ifndef XFA_FXFA_CXFA_TEXTPIECE_H_
 #define XFA_FXFA_CXFA_TEXTPIECE_H_
 
-#include <vector>
-
-#include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "xfa/fgas/layout/cfx_textpiece.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CFGAS_GEFont;
 class CFX_LinkUserData;
 
-class CXFA_TextPiece {
+class CXFA_TextPiece : public CFX_TextPiece {
  public:
   CXFA_TextPiece();
   ~CXFA_TextPiece();
 
-  WideString szText;
-  std::vector<int32_t> Widths;
-  int32_t iChars;
-  int32_t iHorScale;
-  int32_t iVerScale;
-  int32_t iBidiLevel;
   int32_t iUnderline;
-  XFA_AttributeValue iPeriod;
   int32_t iLineThrough;
+  XFA_AttributeValue iPeriod;
   FX_ARGB dwColor;
-  float fFontSize;
-  CFX_RectF rtPiece;
-  RetainPtr<CFGAS_GEFont> pFont;
   RetainPtr<CFX_LinkUserData> pLinkData;
 };
 

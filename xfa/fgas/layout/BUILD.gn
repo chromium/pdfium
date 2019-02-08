@@ -22,6 +22,8 @@ jumbo_source_set("layout") {
     "cfx_linkuserdata.h",
     "cfx_rtfbreak.cpp",
     "cfx_rtfbreak.h",
+    "cfx_textpiece.cpp",
+    "cfx_textpiece.h",
     "cfx_textuserdata.cpp",
     "cfx_textuserdata.h",
     "cfx_txtbreak.cpp",

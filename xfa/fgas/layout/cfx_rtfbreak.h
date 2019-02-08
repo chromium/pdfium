@@ -17,6 +17,7 @@
 
 class CFGAS_GEFont;
 class CFX_TextUserData;
+class CFX_TextPiece;
 class TextCharPos;
 
 enum class CFX_RTFLineAlignment {
@@ -25,22 +26,6 @@ enum class CFX_RTFLineAlignment {
   Right,
   Justified,
   Distributed
-};
-
-struct FX_RTFTEXTOBJ {
-  FX_RTFTEXTOBJ();
-  ~FX_RTFTEXTOBJ();
-
-  WideString pStr;
-  std::vector<int32_t> pWidths;
-  RetainPtr<CFGAS_GEFont> pFont;
-  const CFX_RectF* pRect;
-  wchar_t wLineBreakChar;
-  float fFontSize;
-  int32_t iLength;
-  int32_t iBidiLevel;
-  int32_t iHorizontalScale;
-  int32_t iVerticalScale;
 };
 
 class CFX_RTFBreak final : public CFX_Break {
@@ -57,9 +42,8 @@ class CFX_RTFBreak final : public CFX_Break {
 
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
 
-  int32_t GetDisplayPos(const FX_RTFTEXTOBJ* pText,
-                        TextCharPos* pCharPos,
-                        bool bCharCode) const;
+  size_t GetDisplayPos(const CFX_TextPiece* pPiece,
+                       TextCharPos* pCharPos) const;
 
   CFX_BreakType AppendChar(wchar_t wch);
 

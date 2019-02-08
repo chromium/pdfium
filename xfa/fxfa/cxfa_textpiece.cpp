@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/cxfa_textpiece.h"
 
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_linkuserdata.h"
 
-CXFA_TextPiece::CXFA_TextPiece() {}
+CXFA_TextPiece::CXFA_TextPiece() = default;
 
-CXFA_TextPiece::~CXFA_TextPiece() {}
+CXFA_TextPiece::~CXFA_TextPiece() = default;
