@@ -1,0 +1,4 @@
+Alert: PASS: typeof my_doc.getDelta = function
+Alert: PASS: typeof my_doc.getDeltas = function
+Alert: PASS: my_doc.getDelta('args', 'not', 'checked') = undefined
+Alert: PASS: my_doc.getDeltas('args', 'not', 'checked') = [object XFAObject]
