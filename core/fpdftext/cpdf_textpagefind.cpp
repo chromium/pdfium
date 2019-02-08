@@ -35,13 +35,7 @@ bool IsIgnoreSpaceCharacter(wchar_t curChar) {
 }  // namespace
 
 CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
-    : m_pTextPage(pTextPage),
-      m_flags(0),
-      m_bMatchCase(false),
-      m_bMatchWholeWord(false),
-      m_resStart(0),
-      m_resEnd(-1),
-      m_IsFind(false) {
+    : m_pTextPage(pTextPage) {
   m_strText = m_pTextPage->GetAllPageText();
   int nCount = pTextPage->CountChars();
   if (nCount)
