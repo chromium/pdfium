@@ -15,7 +15,7 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFGAS_GEFont;
-class CXFA_LinkUserData;
+class CFX_LinkUserData;
 
 class CXFA_TextPiece {
  public:
@@ -35,7 +35,7 @@ class CXFA_TextPiece {
   float fFontSize;
   CFX_RectF rtPiece;
   RetainPtr<CFGAS_GEFont> pFont;
-  RetainPtr<CXFA_LinkUserData> pLinkData;
+  RetainPtr<CFX_LinkUserData> pLinkData;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTPIECE_H_

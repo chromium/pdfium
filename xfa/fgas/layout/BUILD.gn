@@ -18,8 +18,12 @@ jumbo_source_set("layout") {
     "cfx_breakpiece.h",
     "cfx_char.cpp",
     "cfx_char.h",
+    "cfx_linkuserdata.cpp",
+    "cfx_linkuserdata.h",
     "cfx_rtfbreak.cpp",
     "cfx_rtfbreak.h",
+    "cfx_textuserdata.cpp",
+    "cfx_textuserdata.h",
     "cfx_txtbreak.cpp",
     "cfx_txtbreak.h",
     "fx_arabic.cpp",
@@ -30,6 +34,7 @@ jumbo_source_set("layout") {
   deps = [
     "../:fgas",
     "../../../core/fxcrt",
+    "../../../core/fxcrt/css",
     "../../../core/fxge",
   ]
   configs += [

@@ -21,7 +21,7 @@ class CFX_CSSComputedStyle;
 class CFX_RTFBreak;
 class CFX_RenderDevice;
 class CFX_XMLNode;
-class CXFA_LinkUserData;
+class CFX_LinkUserData;
 class CXFA_Node;
 class CXFA_PieceLine;
 class CXFA_TextPiece;
@@ -86,7 +86,7 @@ class CXFA_TextLayout {
                     float* pLinePos,
                     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
-                    RetainPtr<CXFA_LinkUserData> pLinkData,
+                    RetainPtr<CFX_LinkUserData> pLinkData,
                     bool bEndBreak,
                     bool bIsOl,
                     int32_t iLiCount);

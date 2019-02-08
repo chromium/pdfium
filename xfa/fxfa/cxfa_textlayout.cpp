@@ -21,15 +21,15 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfx_linkuserdata.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
-#include "xfa/fxfa/cxfa_linkuserdata.h"
+#include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
 #include "xfa/fxfa/cxfa_pieceline.h"
 #include "xfa/fxfa/cxfa_textparsecontext.h"
 #include "xfa/fxfa/cxfa_textpiece.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
-#include "xfa/fxfa/cxfa_textuserdata.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
@@ -700,7 +700,7 @@ bool CXFA_TextLayout::LoadRichText(
     float* pLinePos,
     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
     bool bSavePieces,
-    RetainPtr<CXFA_LinkUserData> pLinkData,
+    RetainPtr<CFX_LinkUserData> pLinkData,
     bool bEndBreak,
     bool bIsOl,
     int32_t iLiCount) {
@@ -761,7 +761,7 @@ bool CXFA_TextLayout::LoadRichText(
           WideString wsLinkContent = pElement->GetAttribute(L"href");
           if (!wsLinkContent.IsEmpty()) {
             pLinkData =
-                pdfium::MakeRetain<CXFA_LinkUserData>(wsLinkContent.c_str());
+                pdfium::MakeRetain<CFX_LinkUserData>(wsLinkContent.c_str());
           }
         }
 
@@ -815,7 +815,7 @@ bool CXFA_TextLayout::LoadRichText(
 
         if (wsText.GetLength() > 0) {
           if (!m_pLoader || m_pLoader->iChar == 0) {
-            auto pUserData = pdfium::MakeRetain<CXFA_TextUserData>(
+            auto pUserData = pdfium::MakeRetain<CFX_TextUserData>(
                 bContentNode ? pParentStyle : pStyle, pLinkData);
             m_pBreak->SetUserData(pUserData);
           }
@@ -1005,7 +1005,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
     int32_t i = 0;
     for (i = 0; i < iPieces; i++) {
       const CFX_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
-      CXFA_TextUserData* pUserData = pPiece->m_pUserData.Get();
+      CFX_TextUserData* pUserData = pPiece->m_pUserData.Get();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
@@ -1057,7 +1057,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
     float fLineWidth = 0;
     for (int32_t i = 0; i < iPieces; i++) {
       const CFX_BreakPiece* pPiece = m_pBreak->GetBreakPieceUnstable(i);
-      CXFA_TextUserData* pUserData = pPiece->m_pUserData.Get();
+      CFX_TextUserData* pUserData = pPiece->m_pUserData.Get();
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;

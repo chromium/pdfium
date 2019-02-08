@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/cxfa_linkuserdata.h"
+#include "xfa/fgas/layout/cfx_linkuserdata.h"
 
-CXFA_LinkUserData::CXFA_LinkUserData(const wchar_t* pszText)
+CFX_LinkUserData::CFX_LinkUserData(const wchar_t* pszText)
     : m_wsURLContent(pszText) {}
 
-CXFA_LinkUserData::~CXFA_LinkUserData() {}
+CFX_LinkUserData::~CFX_LinkUserData() {}

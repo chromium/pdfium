@@ -7,7 +7,7 @@
 #include "xfa/fxfa/cxfa_textpiece.h"
 
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fxfa/cxfa_linkuserdata.h"
+#include "xfa/fgas/layout/cfx_linkuserdata.h"
 
 CXFA_TextPiece::CXFA_TextPiece() {}
 

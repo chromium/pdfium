@@ -13,6 +13,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_char.h"
+#include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fgas/layout/fx_arabic.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
 
@@ -43,7 +44,7 @@ void CFX_RTFBreak::AddPositionedTab(float fTabPos) {
   m_PositionedTabs.insert(it, iTabPos);
 }
 
-void CFX_RTFBreak::SetUserData(const RetainPtr<CXFA_TextUserData>& pUserData) {
+void CFX_RTFBreak::SetUserData(const RetainPtr<CFX_TextUserData>& pUserData) {
   if (m_pUserData == pUserData)
     return;
 
@@ -389,7 +390,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
       tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData.As<CXFA_TextUserData>();
+      tp.m_pUserData = pTC->m_pUserData.As<CFX_TextUserData>();
       j = i;
       bNew = false;
     }
@@ -462,7 +463,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData.As<CXFA_TextUserData>();
+      tp.m_pUserData = pTC->m_pUserData.As<CFX_TextUserData>();
       tp.m_dwStatus = CFX_BreakType::Piece;
       ++i;
     } else if (iBidiLevel != pTC->m_iBidiLevel ||

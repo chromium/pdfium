@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_CXFA_LINKUSERDATA_H_
-#define XFA_FXFA_CXFA_LINKUSERDATA_H_
+#ifndef XFA_FGAS_LAYOUT_CFX_LINKUSERDATA_H_
+#define XFA_FGAS_LAYOUT_CFX_LINKUSERDATA_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CXFA_LinkUserData final : public Retainable {
+class CFX_LinkUserData final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -19,10 +19,10 @@ class CXFA_LinkUserData final : public Retainable {
   const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
 
  private:
-  explicit CXFA_LinkUserData(const wchar_t* pszText);
-  ~CXFA_LinkUserData() override;
+  explicit CFX_LinkUserData(const wchar_t* pszText);
+  ~CFX_LinkUserData() override;
 
   WideString m_wsURLContent;
 };
 
-#endif  // XFA_FXFA_CXFA_LINKUSERDATA_H_
+#endif  // XFA_FGAS_LAYOUT_CFX_LINKUSERDATA_H_

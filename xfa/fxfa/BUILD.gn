@@ -72,8 +72,6 @@ jumbo_source_set("fxfa") {
     "cxfa_fwltheme.h",
     "cxfa_imagerenderer.cpp",
     "cxfa_imagerenderer.h",
-    "cxfa_linkuserdata.cpp",
-    "cxfa_linkuserdata.h",
     "cxfa_loadercontext.cpp",
     "cxfa_loadercontext.h",
     "cxfa_pieceline.cpp",
@@ -94,8 +92,6 @@ jumbo_source_set("fxfa") {
     "cxfa_textprovider.h",
     "cxfa_texttabstopscontext.cpp",
     "cxfa_texttabstopscontext.h",
-    "cxfa_textuserdata.cpp",
-    "cxfa_textuserdata.h",
     "fxfa.h",
     "fxfa_basic.h",
   ]
@@ -121,8 +117,6 @@ jumbo_source_set("fxfa") {
   ]
   allow_circular_includes_from = [
     "../../fxjs",
-    "../fgas",
-    "../fgas/layout",
     "../fwl",
     "layout",
     "parser",

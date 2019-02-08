@@ -14,9 +14,9 @@
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/layout/cfx_break.h"
-#include "xfa/fxfa/cxfa_textuserdata.h"
 
 class CFGAS_GEFont;
+class CFX_TextUserData;
 class TextCharPos;
 
 enum class CFX_RTFLineAlignment {
@@ -51,7 +51,7 @@ class CFX_RTFBreak final : public CFX_Break {
   void SetLineStartPos(float fLinePos);
 
   void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
-  void SetUserData(const RetainPtr<CXFA_TextUserData>& pUserData);
+  void SetUserData(const RetainPtr<CFX_TextUserData>& pUserData);
 
   void AddPositionedTab(float fTabPos);
 
@@ -90,7 +90,7 @@ class CFX_RTFBreak final : public CFX_Break {
   bool m_bPagination;
   std::vector<int32_t> m_PositionedTabs;
   CFX_RTFLineAlignment m_iAlignment;
-  RetainPtr<CXFA_TextUserData> m_pUserData;
+  RetainPtr<CFX_TextUserData> m_pUserData;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_

@@ -6,6 +6,8 @@
 
 #include "xfa/fgas/layout/cfx_breakpiece.h"
 
+#include "xfa/fgas/layout/cfx_textuserdata.h"
+
 CFX_BreakPiece::CFX_BreakPiece()
     : m_dwStatus(CFX_BreakType::Piece),
       m_iStartPos(0),
