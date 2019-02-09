@@ -83,7 +83,9 @@ void CFX_Break::SetBreakStatus() {
 }
 
 bool CFX_Break::IsGreaterThanLineWidth(int32_t width) const {
-  return width > m_iLineWidth + m_iTolerance;
+  FX_SAFE_INT32 line_width = m_iLineWidth;
+  line_width += m_iTolerance;
+  return line_width.IsValid() && width > line_width.ValueOrDie();
 }
 
 FX_CHARTYPE CFX_Break::GetUnifiedCharType(FX_CHARTYPE chartype) const {
