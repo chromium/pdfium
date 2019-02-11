@@ -1855,8 +1855,8 @@ bool CFGAS_FormatString::FormatText(const WideString& wsSrcText,
 bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
                                       const WideString& wsPattern,
                                       WideString* wsOutput) const {
-  if (wsInputNum.IsEmpty() || wsPattern.IsEmpty())
-    return false;
+  ASSERT(!wsInputNum.IsEmpty());
+  ASSERT(!wsPattern.IsEmpty());
 
   int32_t dot_index_f = -1;
   uint32_t dwNumStyle = 0;
@@ -2019,6 +2019,9 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
 
           ccf -= 2;
           bAddNeg = true;
+        } else {
+          wsOutput->InsertAtFront('r');
+          ccf--;
         }
         break;
       case 'R':
@@ -2026,6 +2029,9 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
           *wsOutput = bNeg ? L"CR" : L"  " + *wsOutput;
           ccf -= 2;
           bAddNeg = true;
+        } else {
+          wsOutput->InsertAtFront('R');
+          ccf--;
         }
         break;
       case 'b':
@@ -2035,6 +2041,9 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
 
           ccf -= 2;
           bAddNeg = true;
+        } else {
+          wsOutput->InsertAtFront('b');
+          ccf--;
         }
         break;
       case 'B':
@@ -2042,6 +2051,9 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
           *wsOutput = bNeg ? L"DB" : L"  " + *wsOutput;
           ccf -= 2;
           bAddNeg = true;
+        } else {
+          wsOutput->InsertAtFront('B');
+          ccf--;
         }
         break;
       case '%': {
@@ -2234,6 +2246,7 @@ bool CFGAS_FormatString::FormatNum(const WideString& wsSrcNum,
                                    WideString* wsOutput) const {
   if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty())
     return false;
+
   return FormatStrNum(wsSrcNum.AsStringView(), wsPattern, wsOutput);
 }
 

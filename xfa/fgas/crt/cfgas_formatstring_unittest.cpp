@@ -509,6 +509,11 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
       // {L"en", L"-123.5", L"zzz.z)", L"123.5)"},
       {L"en", L"123.5", L"zzz.z)", L"123.5 "},
       {L"en", L"123.5", L"zzz.z(", L"123.5 "},
+      // https://crbug.com/pdfium/1233
+      {L"en", L"1", L"r9", L"r1"},
+      {L"en", L"1", L"R9", L"R1"},
+      {L"en", L"1", L"b9", L"b1"},
+      {L"en", L"1", L"B9", L"B1"},
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
