@@ -514,6 +514,10 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
       {L"en", L"1", L"R9", L"R1"},
       {L"en", L"1", L"b9", L"b1"},
       {L"en", L"1", L"B9", L"B1"},
+      {L"en", L"1", L"9.c", L"1"},
+      {L"en", L"1", L"9.C", L"1"},
+      {L"en", L"1", L"9.d", L"1"},
+      {L"en", L"1", L"9.D", L"1"},
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {

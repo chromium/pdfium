@@ -1866,7 +1866,7 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
 
-  int32_t cc = 0, ccf = 0;
+  int32_t cc = 0;
   const wchar_t* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
   WideString wsSrcNum(wsInputNum);
@@ -1883,7 +1883,7 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
   int32_t exponent = 0;
   if (dwNumStyle & FX_NUMSTYLE_Exponent) {
     int fixed_count = 0;
-    while (ccf < dot_index_f) {
+    for (int ccf = 0; ccf < dot_index_f; ++ccf) {
       switch (strf[ccf]) {
         case '\'':
           GetLiteralText(strf, &ccf, dot_index_f);
@@ -1894,7 +1894,6 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
           fixed_count++;
           break;
       }
-      ccf++;
     }
 
     int threshold = 1;
@@ -1947,9 +1946,8 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
   if (!dot_index.has_value())
     dot_index = len;
 
-  ccf = dot_index_f - 1;
   cc = dot_index.value() - 1;
-  while (ccf >= 0) {
+  for (int ccf = dot_index_f - 1; ccf >= 0; --ccf) {
     switch (strf[ccf]) {
       case '9':
         if (cc >= 0) {
@@ -1961,18 +1959,16 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         } else {
           wsOutput->InsertAtFront(L'0');
         }
-        ccf--;
         break;
       case 'z':
         if (cc >= 0) {
           if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
+
           if (str[0] != '0')
             wsOutput->InsertAtFront(str[cc]);
-
           cc--;
         }
-        ccf--;
         break;
       case 'Z':
         if (cc >= 0) {
@@ -1984,7 +1980,6 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         } else {
           wsOutput->InsertAtFront(L' ');
         }
-        ccf--;
         break;
       case 'S':
         if (bNeg) {
@@ -1993,96 +1988,77 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         } else {
           wsOutput->InsertAtFront(L' ');
         }
-        ccf--;
         break;
       case 's':
         if (bNeg) {
           *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
           bAddNeg = true;
         }
-        ccf--;
         break;
-      case 'E': {
+      case 'E':
         *wsOutput = WideString::Format(L"E%+d", exponent) + *wsOutput;
-        ccf--;
         break;
-      }
-      case '$': {
+      case '$':
         *wsOutput = pLocale->GetCurrencySymbol() + *wsOutput;
-        ccf--;
         break;
-      }
       case 'r':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'c') {
           if (bNeg)
             *wsOutput = L"CR" + *wsOutput;
-
-          ccf -= 2;
+          ccf--;
           bAddNeg = true;
         } else {
           wsOutput->InsertAtFront('r');
-          ccf--;
         }
         break;
       case 'R':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'C') {
           *wsOutput = bNeg ? L"CR" : L"  " + *wsOutput;
-          ccf -= 2;
+          ccf--;
           bAddNeg = true;
         } else {
           wsOutput->InsertAtFront('R');
-          ccf--;
         }
         break;
       case 'b':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'd') {
           if (bNeg)
             *wsOutput = L"db" + *wsOutput;
-
-          ccf -= 2;
+          ccf--;
           bAddNeg = true;
         } else {
           wsOutput->InsertAtFront('b');
-          ccf--;
         }
         break;
       case 'B':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'D') {
           *wsOutput = bNeg ? L"DB" : L"  " + *wsOutput;
-          ccf -= 2;
+          ccf--;
           bAddNeg = true;
         } else {
           wsOutput->InsertAtFront('B');
-          ccf--;
         }
         break;
-      case '%': {
+      case '%':
         *wsOutput = pLocale->GetPercentSymbol() + *wsOutput;
-        ccf--;
         break;
-      }
       case ',':
         if (cc >= 0)
           *wsOutput = wsGroupSymbol + *wsOutput;
-
-        ccf--;
         break;
       case '(':
         wsOutput->InsertAtFront(bNeg ? L'(' : L' ');
         bAddNeg = true;
-        ccf--;
         break;
       case ')':
         wsOutput->InsertAtFront(bNeg ? L')' : L' ');
-        ccf--;
         break;
       case '\'':
         *wsOutput = GetLiteralTextReverse(strf, &ccf) + *wsOutput;
-        ccf--;
         break;
       default:
         wsOutput->InsertAtFront(strf[ccf]);
-        ccf--;
+        break;
     }
   }
 
@@ -2122,13 +2098,11 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
       *wsOutput += wsDotSymbol;
   }
 
-  ccf = dot_index_f + 1;
   cc = dot_index.value() + 1;
-  while (ccf < lenf) {
+  for (int ccf = dot_index_f + 1; ccf < lenf; ++ccf) {
     switch (strf[ccf]) {
       case '\'':
         *wsOutput += GetLiteralText(strf, &ccf, lenf);
-        ccf++;
         break;
       case '9':
         if (cc < len) {
@@ -2140,7 +2114,6 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         } else {
           *wsOutput += L'0';
         }
-        ccf++;
         break;
       case 'z':
         if (cc < len) {
@@ -2150,7 +2123,6 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
           *wsOutput += str[cc];
           cc++;
         }
-        ccf++;
         break;
       case 'Z':
         if (cc < len) {
@@ -2162,30 +2134,26 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         } else {
           *wsOutput += L'0';
         }
-        ccf++;
         break;
       case 'E': {
         *wsOutput += WideString::Format(L"E%+d", exponent);
-        ccf++;
         break;
       }
       case '$':
         *wsOutput += pLocale->GetCurrencySymbol();
-        ccf++;
         break;
       case 'c':
         if (ccf + 1 < lenf && strf[ccf + 1] == 'r') {
           if (bNeg)
             *wsOutput += L"CR";
-
-          ccf += 2;
+          ccf++;
           bAddNeg = true;
         }
         break;
       case 'C':
         if (ccf + 1 < lenf && strf[ccf + 1] == 'R') {
           *wsOutput += bNeg ? L"CR" : L"  ";
-          ccf += 2;
+          ccf++;
           bAddNeg = true;
         }
         break;
@@ -2193,24 +2161,22 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         if (ccf + 1 < lenf && strf[ccf + 1] == 'b') {
           if (bNeg)
             *wsOutput += L"db";
-
-          ccf += 2;
+          ccf++;
           bAddNeg = true;
         }
         break;
       case 'D':
         if (ccf + 1 < lenf && strf[ccf + 1] == 'B') {
           *wsOutput += bNeg ? L"DB" : L"  ";
-          ccf += 2;
+          ccf++;
           bAddNeg = true;
         }
         break;
       case '%':
         *wsOutput += pLocale->GetPercentSymbol();
-        ccf++;
         break;
       case '8':
-        while (ccf < lenf && strf[ccf] == '8')
+        while (ccf + 1 < lenf && strf[ccf + 1] == '8')
           ccf++;
         while (cc < len && FXSYS_IsDecimalDigit(str[cc])) {
           *wsOutput += str[cc];
@@ -2219,19 +2185,16 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
         break;
       case ',':
         *wsOutput += wsGroupSymbol;
-        ccf++;
         break;
       case '(':
         *wsOutput += bNeg ? '(' : ' ';
         bAddNeg = true;
-        ccf++;
         break;
       case ')':
         *wsOutput += bNeg ? ')' : ' ';
-        ccf++;
         break;
       default:
-        ccf++;
+        break;
     }
   }
   if (!bAddNeg && bNeg) {
