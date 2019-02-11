@@ -20,5 +20,40 @@ Alert: PASS: variation = Full
 Alert: PASS: variation threw Error: Unable to set variation value.
 Alert: PASS: version = 11
 Alert: PASS: version threw Error: Unable to set version value.
+Alert: finished testing properties
+Alert: PASS: xfa.host.beep(1, 1) threw XFAObject.beep: Incorrect number of parameters passed to function.
+BEEP!!! 42
+Alert: PASS: xfa.host.beep(42) = undefined
 BEEP!!! 4
+Alert: PASS: xfa.host.beep() = undefined
+Alert: PASS: xfa.host.documentCountInBatch() = 0
+Alert: PASS: xfa.host.documentCountInBatch(42, 'args', ['ignored']) = 0
+Alert: PASS: xfa.host.documentInBatch() = 0
+Alert: PASS: xfa.host.documentInBatch(42, 'args', ['ignored']) = 0
+Alert: PASS: xfa.host.exportData() threw XFAObject.exportData: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.exportData(1, 2, 3) threw XFAObject.exportData: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.exportData('to-evil-place') = undefined
+Alert: PASS: xfa.host.exportData('to-evil-place', false) = undefined
+Alert: PASS: xfa.host.getFocus() = undefined
+Alert: PASS: xfa.host.getFocus('args', 'ignored') = undefined
+Alert: PASS: xfa.host.gotoURL() threw XFAObject.gotoURL: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.gotoURL(1, 2) threw XFAObject.gotoURL: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.gotoURL('http://example.com') = undefined
+Alert: PASS: xfa.host.importData() threw XFAObject.importData: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.importData(1, 2) threw XFAObject.importData: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.importData('from-good-place') = undefined
+Alert: PASS: xfa.host.openList() threw XFAObject.openList: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.openList(1, 2) threw XFAObject.openList: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.openList('my_doc.subform_combox_0.combox') = undefined
+Alert: PASS: xfa.host.openList(eval('my_doc.subform_combox_0')) = undefined
+Alert: PASS: xfa.host.print(1, 2, 3, 4, 5, 6, 7) threw XFAObject.print: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.print(1, 2, 3, 4, 5, 6, 7, 8, 9) threw XFAObject.print: Incorrect number of parameters passed to function.
+Doc Print: 1, 1, 1, 2, 4, 8, 16, 32
+Alert: PASS: xfa.host.print(true, 1, 1, true, true, true, true, true) = undefined
+Alert: PASS: xfa.host.setFocus() threw XFAObject.setFocus: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.setFocus('one', 'two') threw XFAObject.setFocus: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.setFocus('my_doc.subform_combox_0') = undefined
+Alert: PASS: xfa.host.getFocus() = [object XFAObject]
+Alert: PASS: xfa.host.setFocus(eval('my_doc.subform_combox_0')) = undefined
+Alert: PASS: xfa.host.getFocus() = [object XFAObject]
 Alert: finished testing methods

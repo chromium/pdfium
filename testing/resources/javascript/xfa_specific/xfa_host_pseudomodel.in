@@ -21,6 +21,7 @@ stream
     </pageSet>
     <event activity="docReady" ref="$host">
       <script contentType="application/x-javascript">
+        {{include ../expect.js}}
         {{include ../property_test_helpers.js}}
         testROProperty(xfa.host, "appType", "Exchange");
         testRWProperty(xfa.host, "calculationsEnabled", true, false);
@@ -33,22 +34,59 @@ stream
         testRWProperty(xfa.host, "validationsEnabled", true, false);
         testROProperty(xfa.host, "variation", "Full");
         testROProperty(xfa.host, "version", "11");
-        try {
-          xfa.host.beep();
-          xfa.host.documentCountInBatch();
-          xfa.host.documentInBatch();
-          xfa.host.exportData('to-evil-place');
-          xfa.host.importData('from-good-place');
-          xfa.host.getFocus();
-          xfa.host.gotoURL('http://example.com');
-          xfa.host.setFocus("my_doc.subform_combox_0.combox");
-          xfa.host.openList("my_doc.subform_combox_0.combox");
-          app.alert("finished testing methods");
-        } catch (e) {
-          app.alert("error testing methods: " + e);
-        }
+        app.alert("finished testing properties");
+
+        expectError("xfa.host.beep(1, 1)");
+        expect("xfa.host.beep(42)");
+        expect("xfa.host.beep()");
+
+        expect("xfa.host.documentCountInBatch()", 0);
+        expect("xfa.host.documentCountInBatch(42, 'args', ['ignored'])", 0);
+
+        expect("xfa.host.documentInBatch()", 0);
+        expect("xfa.host.documentInBatch(42, 'args', ['ignored'])", 0);
+
+        expectError("xfa.host.exportData()");
+        expectError("xfa.host.exportData(1, 2, 3)");
+        expect("xfa.host.exportData('to-evil-place')");
+        expect("xfa.host.exportData('to-evil-place', false)");
+
+        expect("xfa.host.getFocus()");
+        expect("xfa.host.getFocus('args', 'ignored')");
+
+        expectError("xfa.host.gotoURL()");
+        expectError("xfa.host.gotoURL(1, 2)");
+        expect("xfa.host.gotoURL('http://example.com')");
+
+        expectError("xfa.host.importData()");
+        expectError("xfa.host.importData(1, 2)");
+        expect("xfa.host.importData('from-good-place')");
+
+        expectError("xfa.host.openList()");
+        expectError("xfa.host.openList(1, 2)");
+        expect("xfa.host.openList('my_doc.subform_combox_0.combox')");
+        expect("xfa.host.openList(eval('my_doc.subform_combox_0'))");
+
+        expectError("xfa.host.print(1, 2, 3, 4, 5, 6, 7)");
+        expectError("xfa.host.print(1, 2, 3, 4, 5, 6, 7, 8, 9)");
+        expect("xfa.host.print(true, 1, 1, true, true, true, true, true)");
+
+        expectError("xfa.host.setFocus()");
+        expectError("xfa.host.setFocus('one', 'two')");
+        expect("xfa.host.setFocus('my_doc.subform_combox_0')");
+        expect("xfa.host.getFocus()", "[object XFAObject]");
+        expect("xfa.host.setFocus(eval('my_doc.subform_combox_0'))");
+        expect("xfa.host.getFocus()", "[object XFAObject]");
+
+        app.alert("finished testing methods");
       </script>
     </event>
+    <subform layout="tb" name="subform_combox_0">
+      <occur initial="1" max="10" min="0" name="occur_subform_combox_0">
+      </occur>
+      <field h="10mm" name="combox" w="40mm" x="10mm" y="10mm">
+      </field>
+    </subform>
   </subform>
 </template>
 endstream
