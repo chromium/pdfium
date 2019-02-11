@@ -209,94 +209,104 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> world_substr =
       GetFPDFWideString(L"orld");
 
-  // No occurences of "nope" in test page.
-  FPDF_SCHHANDLE search = FPDFText_FindStart(textpage, nope.get(), 0, 0);
-  EXPECT_TRUE(search);
-  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(0, FPDFText_GetSchCount(search));
+  {
+    // No occurences of "nope" in test page.
+    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, nope.get(), 0, 0));
+    EXPECT_TRUE(search);
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
 
-  // Advancing finds nothing.
-  EXPECT_FALSE(FPDFText_FindNext(search));
-  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(0, FPDFText_GetSchCount(search));
+    // Advancing finds nothing.
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
 
-  // Retreating finds nothing.
-  EXPECT_FALSE(FPDFText_FindPrev(search));
-  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(0, FPDFText_GetSchCount(search));
-  FPDFText_FindClose(search);
+    // Retreating finds nothing.
+    EXPECT_FALSE(FPDFText_FindPrev(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+  }
 
-  // Two occurences of "world" in test page.
-  search = FPDFText_FindStart(textpage, world.get(), 0, 2);
-  EXPECT_TRUE(search);
+  {
+    // Two occurences of "world" in test page.
+    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, world.get(), 0, 2));
+    EXPECT_TRUE(search);
 
-  // Remains not found until advanced.
-  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(0, FPDFText_GetSchCount(search));
+    // Remains not found until advanced.
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
 
-  // First occurence of "world" in this test page.
-  EXPECT_TRUE(FPDFText_FindNext(search));
-  EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
+    // First occurence of "world" in this test page.
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
 
-  // Last occurence of "world" in this test page.
-  EXPECT_TRUE(FPDFText_FindNext(search));
-  EXPECT_EQ(24, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
+    // Last occurence of "world" in this test page.
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(24, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
 
-  // Found position unchanged when fails to advance.
-  EXPECT_FALSE(FPDFText_FindNext(search));
-  EXPECT_EQ(24, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
+    // Found position unchanged when fails to advance.
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(24, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
 
-  // Back to first occurence.
-  EXPECT_TRUE(FPDFText_FindPrev(search));
-  EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
+    // Back to first occurence.
+    EXPECT_TRUE(FPDFText_FindPrev(search.get()));
+    EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
 
-  // Found position unchanged when fails to retreat.
-  EXPECT_FALSE(FPDFText_FindPrev(search));
-  EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
-  FPDFText_FindClose(search);
+    // Found position unchanged when fails to retreat.
+    EXPECT_FALSE(FPDFText_FindPrev(search.get()));
+    EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
+  }
 
-  // Exact search unaffected by case sensitiity and whole word flags.
-  search = FPDFText_FindStart(textpage, world.get(),
-                              FPDF_MATCHCASE | FPDF_MATCHWHOLEWORD, 0);
-  EXPECT_TRUE(search);
-  EXPECT_TRUE(FPDFText_FindNext(search));
-  EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
-  FPDFText_FindClose(search);
+  {
+    // Exact search unaffected by case sensitiity and whole word flags.
+    ScopedFPDFTextFind search(FPDFText_FindStart(
+        textpage, world.get(), FPDF_MATCHCASE | FPDF_MATCHWHOLEWORD, 0));
+    EXPECT_TRUE(search);
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
+  }
 
-  // Default is case-insensitive, so matching agaist caps works.
-  search = FPDFText_FindStart(textpage, world_caps.get(), 0, 0);
-  EXPECT_TRUE(search);
-  EXPECT_TRUE(FPDFText_FindNext(search));
-  EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(5, FPDFText_GetSchCount(search));
-  FPDFText_FindClose(search);
+  {
+    // Default is case-insensitive, so matching agaist caps works.
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage, world_caps.get(), 0, 0));
+    EXPECT_TRUE(search);
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
+  }
 
-  // But can be made case sensitive, in which case this fails.
-  search = FPDFText_FindStart(textpage, world_caps.get(), FPDF_MATCHCASE, 0);
-  EXPECT_FALSE(FPDFText_FindNext(search));
-  EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(0, FPDFText_GetSchCount(search));
-  FPDFText_FindClose(search);
+  {
+    // But can be made case sensitive, in which case this fails.
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage, world_caps.get(), FPDF_MATCHCASE, 0));
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+  }
 
-  // Default is match anywhere within word, so matching substirng works.
-  search = FPDFText_FindStart(textpage, world_substr.get(), 0, 0);
-  EXPECT_TRUE(FPDFText_FindNext(search));
-  EXPECT_EQ(8, FPDFText_GetSchResultIndex(search));
-  EXPECT_EQ(4, FPDFText_GetSchCount(search));
-  FPDFText_FindClose(search);
+  {
+    // Default is match anywhere within word, so matching substring works.
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage, world_substr.get(), 0, 0));
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(8, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
+  }
 
-  // But can be made to mach word boundaries, in which case this fails.
-  search =
-      FPDFText_FindStart(textpage, world_substr.get(), FPDF_MATCHWHOLEWORD, 0);
-  EXPECT_FALSE(FPDFText_FindNext(search));
-  // TODO(tsepez): investigate strange index/count values in this state.
-  FPDFText_FindClose(search);
+  {
+    // But can be made to mach word boundaries, in which case this fails.
+    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, world_substr.get(),
+                                                 FPDF_MATCHWHOLEWORD, 0));
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+    // TODO(tsepez): investigate strange index/count values in this state.
+  }
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);

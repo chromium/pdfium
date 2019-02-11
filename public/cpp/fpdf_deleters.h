@@ -61,6 +61,10 @@ struct FPDFStructTreeDeleter {
   inline void operator()(FPDF_STRUCTTREE tree) { FPDF_StructTree_Close(tree); }
 };
 
+struct FPDFTextFindDeleter {
+  inline void operator()(FPDF_SCHHANDLE handle) { FPDFText_FindClose(handle); }
+};
+
 struct FPDFTextPageDeleter {
   inline void operator()(FPDF_TEXTPAGE text) { FPDFText_ClosePage(text); }
 };
