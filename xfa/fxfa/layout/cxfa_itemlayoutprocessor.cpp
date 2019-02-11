@@ -1718,7 +1718,8 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
         if (!pLayoutNext->m_pNextSibling && m_pCurChildPreprocessor &&
             m_pCurChildPreprocessor->GetFormNode() ==
                 pLayoutNext->GetFormNode()) {
-          pLayoutNext->InsertAfter(m_pCurChildPreprocessor->m_pLayoutItem);
+          if (m_pCurChildPreprocessor->m_pLayoutItem)
+            pLayoutNext->InsertAfter(m_pCurChildPreprocessor->m_pLayoutItem);
           m_pCurChildPreprocessor->m_pLayoutItem = pLayoutNext;
           break;
         }
