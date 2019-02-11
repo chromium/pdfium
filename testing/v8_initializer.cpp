@@ -4,6 +4,8 @@
 
 #include "testing/v8_initializer.h"
 
+#include <cstring>
+
 #include "public/fpdfview.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/path_service.h"
