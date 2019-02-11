@@ -158,7 +158,7 @@ float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
   int w = std::min(baseline.w(), actual.w());
   int h = std::min(baseline.h(), actual.h());
 
-  // Count occurences of each RGBA pixel value of baseline in the overlap.
+  // Count occurrences of each RGBA pixel value of baseline in the overlap.
   std::map<uint32_t, int32_t> baseline_histogram;
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {

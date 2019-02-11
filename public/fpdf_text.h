@@ -294,10 +294,13 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
                                                       int buflen);
 
 // Flags used by FPDFText_FindStart function.
-#define FPDF_MATCHCASE \
-  0x00000001  // If not set, it will not match case by default.
-#define FPDF_MATCHWHOLEWORD \
-  0x00000002  // If not set, it will not match the whole word by default.
+//
+// If not set, it will not match case by default.
+#define FPDF_MATCHCASE 0x00000001
+// If not set, it will not match the whole word by default.
+#define FPDF_MATCHWHOLEWORD 0x00000002
+// If not set, it will skip past the current match to look for the next match.
+#define FPDF_CONSECUTIVE 0x00000004
 
 // Function: FPDFText_FindStart
 //          Start a search.
