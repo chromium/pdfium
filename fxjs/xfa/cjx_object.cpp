@@ -426,6 +426,11 @@ CXFA_Measurement CJX_Object::GetMeasure(XFA_Attribute eAttr) const {
   return TryMeasure(eAttr, true).value_or(CXFA_Measurement());
 }
 
+float CJX_Object::GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const {
+  auto measure = TryMeasure(eAttr, true).value_or(CXFA_Measurement());
+  return measure.ToUnit(unit);
+}
+
 WideString CJX_Object::GetCData(XFA_Attribute eAttr) {
   return TryCData(eAttr, true).value_or(WideString());
 }

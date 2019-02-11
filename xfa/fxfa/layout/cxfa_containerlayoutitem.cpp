@@ -36,12 +36,9 @@ CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
   if (!pMedium)
     return size;
 
-  size = CFX_SizeF(pMedium->JSObject()
-                       ->GetMeasure(XFA_Attribute::Short)
-                       .ToUnit(XFA_Unit::Pt),
-                   pMedium->JSObject()
-                       ->GetMeasure(XFA_Attribute::Long)
-                       .ToUnit(XFA_Unit::Pt));
+  size = CFX_SizeF(
+      pMedium->JSObject()->GetMeasureInUnit(XFA_Attribute::Short, XFA_Unit::Pt),
+      pMedium->JSObject()->GetMeasureInUnit(XFA_Attribute::Long, XFA_Unit::Pt));
   if (pMedium->JSObject()->GetEnum(XFA_Attribute::Orientation) ==
       XFA_AttributeValue::Landscape) {
     size = CFX_SizeF(size.height, size.width);

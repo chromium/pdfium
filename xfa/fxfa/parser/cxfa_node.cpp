@@ -3833,9 +3833,8 @@ bool CXFA_Node::IsRadioButton() {
 float CXFA_Node::GetCheckButtonSize() {
   CXFA_Node* pUIChild = GetUIChildNode();
   if (pUIChild) {
-    return pUIChild->JSObject()
-        ->GetMeasure(XFA_Attribute::Size)
-        .ToUnit(XFA_Unit::Pt);
+    return pUIChild->JSObject()->GetMeasureInUnit(XFA_Attribute::Size,
+                                                  XFA_Unit::Pt);
   }
   return CXFA_Measurement(10, XFA_Unit::Pt).ToUnit(XFA_Unit::Pt);
 }

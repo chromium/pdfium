@@ -217,6 +217,7 @@ class CJX_Object {
   Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
   void SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
+  float GetMeasureInUnit(XFA_Attribute eAttr, XFA_Unit unit) const;
 
   void MergeAllData(CXFA_Object* pDstModule);
 

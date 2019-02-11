@@ -187,18 +187,14 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
   float fRightInset = 0;
   float fBottomInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSObject()
-                     ->GetMeasure(XFA_Attribute::LeftInset)
-                     .ToUnit(XFA_Unit::Pt);
-    fTopInset = pMarginNode->JSObject()
-                    ->GetMeasure(XFA_Attribute::TopInset)
-                    .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSObject()
-                      ->GetMeasure(XFA_Attribute::RightInset)
-                      .ToUnit(XFA_Unit::Pt);
-    fBottomInset = pMarginNode->JSObject()
-                       ->GetMeasure(XFA_Attribute::BottomInset)
-                       .ToUnit(XFA_Unit::Pt);
+    fLeftInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::LeftInset, XFA_Unit::Pt);
+    fTopInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::TopInset, XFA_Unit::Pt);
+    fRightInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::RightInset, XFA_Unit::Pt);
+    fBottomInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::BottomInset, XFA_Unit::Pt);
   }
 
   float fContentWidthLimit =
@@ -486,12 +482,10 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
       CXFA_Margin* pMarginNode =
           pFormNode->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
       if (pMarginNode && bCalculateMargin) {
-        fCurTopMargin = pMarginNode->JSObject()
-                            ->GetMeasure(XFA_Attribute::TopInset)
-                            .ToUnit(XFA_Unit::Pt);
-        fCurBottomMargin = pMarginNode->JSObject()
-                               ->GetMeasure(XFA_Attribute::BottomInset)
-                               .ToUnit(XFA_Unit::Pt);
+        fCurTopMargin = pMarginNode->JSObject()->GetMeasureInUnit(
+            XFA_Attribute::TopInset, XFA_Unit::Pt);
+        fCurBottomMargin = pMarginNode->JSObject()->GetMeasureInUnit(
+            XFA_Attribute::BottomInset, XFA_Unit::Pt);
       }
       bool bChanged = true;
       while (bChanged) {
@@ -592,8 +586,8 @@ CFX_PointF CalculatePositionedContainerPos(CXFA_Node* pNode,
                                          {2, 5, 8, 1, 4, 7, 0, 3, 6}};
 
   CFX_PointF pos(
-      pNode->JSObject()->GetMeasure(XFA_Attribute::X).ToUnit(XFA_Unit::Pt),
-      pNode->JSObject()->GetMeasure(XFA_Attribute::Y).ToUnit(XFA_Unit::Pt));
+      pNode->JSObject()->GetMeasureInUnit(XFA_Attribute::X, XFA_Unit::Pt),
+      pNode->JSObject()->GetMeasureInUnit(XFA_Attribute::Y, XFA_Unit::Pt));
   int32_t nRotate =
       XFA_MapRotation(pNode->JSObject()->GetInteger(XFA_Attribute::Rotate)) /
       90;
@@ -691,12 +685,10 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
       pLayoutItem->GetFormNode()->GetFirstChildByClass<CXFA_Margin>(
           XFA_Element::Margin);
   if (pMarginNode && bCalculateMargin) {
-    fCurTopMargin = pMarginNode->JSObject()
-                        ->GetMeasure(XFA_Attribute::TopInset)
-                        .ToUnit(XFA_Unit::Pt);
-    fCurBottomMargin = pMarginNode->JSObject()
-                           ->GetMeasure(XFA_Attribute::BottomInset)
-                           .ToUnit(XFA_Unit::Pt);
+    fCurTopMargin = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::TopInset, XFA_Unit::Pt);
+    fCurBottomMargin = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::BottomInset, XFA_Unit::Pt);
   }
 
   CXFA_ContentLayoutItem* pSecondLayoutItem = nullptr;
@@ -1188,12 +1180,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   float fLeftInset = 0;
   float fRightInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSObject()
-                     ->GetMeasure(XFA_Attribute::LeftInset)
-                     .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSObject()
-                      ->GetMeasure(XFA_Attribute::RightInset)
-                      .ToUnit(XFA_Unit::Pt);
+    fLeftInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::LeftInset, XFA_Unit::Pt);
+    fRightInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::RightInset, XFA_Unit::Pt);
   }
 
   float fContentWidthLimit =
@@ -1587,18 +1577,14 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
   float fRightInset = 0;
   float fBottomInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSObject()
-                     ->GetMeasure(XFA_Attribute::LeftInset)
-                     .ToUnit(XFA_Unit::Pt);
-    fTopInset = pMarginNode->JSObject()
-                    ->GetMeasure(XFA_Attribute::TopInset)
-                    .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSObject()
-                      ->GetMeasure(XFA_Attribute::RightInset)
-                      .ToUnit(XFA_Unit::Pt);
-    fBottomInset = pMarginNode->JSObject()
-                       ->GetMeasure(XFA_Attribute::BottomInset)
-                       .ToUnit(XFA_Unit::Pt);
+    fLeftInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::LeftInset, XFA_Unit::Pt);
+    fTopInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::TopInset, XFA_Unit::Pt);
+    fRightInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::RightInset, XFA_Unit::Pt);
+    fBottomInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::BottomInset, XFA_Unit::Pt);
   }
   float fContentWidthLimit =
       bContainerWidthAutoSize ? FLT_MAX
@@ -2285,18 +2271,14 @@ void CXFA_ItemLayoutProcessor::AddTrailerBeforeSplit(
   float fRightInset = 0;
   float fBottomInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSObject()
-                     ->GetMeasure(XFA_Attribute::LeftInset)
-                     .ToUnit(XFA_Unit::Pt);
-    fTopInset = pMarginNode->JSObject()
-                    ->GetMeasure(XFA_Attribute::TopInset)
-                    .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSObject()
-                      ->GetMeasure(XFA_Attribute::RightInset)
-                      .ToUnit(XFA_Unit::Pt);
-    fBottomInset = pMarginNode->JSObject()
-                       ->GetMeasure(XFA_Attribute::BottomInset)
-                       .ToUnit(XFA_Unit::Pt);
+    fLeftInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::LeftInset, XFA_Unit::Pt);
+    fTopInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::TopInset, XFA_Unit::Pt);
+    fRightInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::RightInset, XFA_Unit::Pt);
+    fBottomInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::BottomInset, XFA_Unit::Pt);
   }
 
   if (!IsAddNewRowForTrailer(pTrailerLayoutItem)) {
@@ -2349,12 +2331,10 @@ void CXFA_ItemLayoutProcessor::AddLeaderAfterSplit(
   float fLeftInset = 0;
   float fRightInset = 0;
   if (pMarginNode) {
-    fLeftInset = pMarginNode->JSObject()
-                     ->GetMeasure(XFA_Attribute::LeftInset)
-                     .ToUnit(XFA_Unit::Pt);
-    fRightInset = pMarginNode->JSObject()
-                      ->GetMeasure(XFA_Attribute::RightInset)
-                      .ToUnit(XFA_Unit::Pt);
+    fLeftInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::LeftInset, XFA_Unit::Pt);
+    fRightInset = pMarginNode->JSObject()->GetMeasureInUnit(
+        XFA_Attribute::RightInset, XFA_Unit::Pt);
   }
 
   float fHeight = pLeaderLayoutItem->m_sSize.height;

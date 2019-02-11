@@ -66,9 +66,8 @@ CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Font::~CXFA_Font() = default;
 
 float CXFA_Font::GetBaselineShift() const {
-  return JSObject()
-      ->GetMeasure(XFA_Attribute::BaselineShift)
-      .ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::BaselineShift,
+                                      XFA_Unit::Pt);
 }
 
 float CXFA_Font::GetHorizontalScale() {
@@ -106,7 +105,7 @@ XFA_AttributeValue CXFA_Font::GetUnderlinePeriod() {
 }
 
 float CXFA_Font::GetFontSize() const {
-  return JSObject()->GetMeasure(XFA_Attribute::Size).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::Size, XFA_Unit::Pt);
 }
 
 WideString CXFA_Font::GetTypeface() {

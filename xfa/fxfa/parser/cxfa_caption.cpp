@@ -62,7 +62,7 @@ XFA_AttributeValue CXFA_Caption::GetPlacementType() {
 }
 
 float CXFA_Caption::GetReserve() const {
-  return JSObject()->GetMeasure(XFA_Attribute::Reserve).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::Reserve, XFA_Unit::Pt);
 }
 
 CXFA_Margin* CXFA_Caption::GetMarginIfExists() {

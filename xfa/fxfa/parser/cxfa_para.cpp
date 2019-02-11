@@ -65,27 +65,25 @@ XFA_AttributeValue CXFA_Para::GetVerticalAlign() {
 }
 
 float CXFA_Para::GetLineHeight() {
-  return JSObject()->GetMeasure(XFA_Attribute::LineHeight).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::LineHeight, XFA_Unit::Pt);
 }
 
 float CXFA_Para::GetMarginLeft() {
-  return JSObject()->GetMeasure(XFA_Attribute::MarginLeft).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::MarginLeft, XFA_Unit::Pt);
 }
 
 float CXFA_Para::GetMarginRight() {
-  return JSObject()
-      ->GetMeasure(XFA_Attribute::MarginRight)
-      .ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::MarginRight, XFA_Unit::Pt);
 }
 
 float CXFA_Para::GetSpaceAbove() {
-  return JSObject()->GetMeasure(XFA_Attribute::SpaceAbove).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::SpaceAbove, XFA_Unit::Pt);
 }
 
 float CXFA_Para::GetSpaceBelow() {
-  return JSObject()->GetMeasure(XFA_Attribute::SpaceBelow).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::SpaceBelow, XFA_Unit::Pt);
 }
 
 float CXFA_Para::GetTextIndent() {
-  return JSObject()->GetMeasure(XFA_Attribute::TextIndent).ToUnit(XFA_Unit::Pt);
+  return JSObject()->GetMeasureInUnit(XFA_Attribute::TextIndent, XFA_Unit::Pt);
 }
