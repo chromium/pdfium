@@ -833,15 +833,15 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
 }
 
 void CXFA_ItemLayoutProcessor::GotoNextContainerNodeSimple(bool bUsePageBreak) {
-  GotoNextContainerNode(&m_pCurChildNode, &m_nCurChildNodeStage, GetFormNode(),
-                        bUsePageBreak);
+  GotoNextContainerNode(bUsePageBreak, GetFormNode(), &m_pCurChildNode,
+                        &m_nCurChildNodeStage);
 }
 
 void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
-    CXFA_Node** pCurActionNode,
-    XFA_ItemLayoutProcessorStages* nCurStage,
+    bool bUsePageBreak,
     CXFA_Node* pParentContainer,
-    bool bUsePageBreak) {
+    CXFA_Node** pCurActionNode,
+    XFA_ItemLayoutProcessorStages* nCurStage) {
   CXFA_Node* pChildContainer = nullptr;
   switch (*nCurStage) {
     case XFA_ItemLayoutProcessorStages::BreakBefore:
@@ -859,77 +859,51 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
   }
 
   switch (*nCurStage) {
-    case XFA_ItemLayoutProcessorStages::Keep: {
-      CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
-      if (!m_bKeepBreakFinish &&
-          FindBreakNode(pBreakAfterNode, false, pCurActionNode, nCurStage)) {
+    case XFA_ItemLayoutProcessorStages::Keep:
+      if (HandleKeep(pChildContainer->GetFirstChild(), pCurActionNode,
+                     nCurStage)) {
         return;
       }
       goto CheckNextChildContainer;
-    }
-    case XFA_ItemLayoutProcessorStages::None: {
+
+    case XFA_ItemLayoutProcessorStages::None:
       *pCurActionNode = nullptr;
       FALLTHROUGH;
-      case XFA_ItemLayoutProcessorStages::BookendLeader:
-        for (CXFA_Node* pBookendNode = *pCurActionNode
-                                           ? (*pCurActionNode)->GetNextSibling()
-                                           : pParentContainer->GetFirstChild();
-             pBookendNode; pBookendNode = pBookendNode->GetNextSibling()) {
-          switch (pBookendNode->GetElementType()) {
-            case XFA_Element::Bookend:
-            case XFA_Element::Break:
-              *pCurActionNode = pBookendNode;
-              *nCurStage = XFA_ItemLayoutProcessorStages::BookendLeader;
-              return;
-            default:
-              break;
-          }
+
+    case XFA_ItemLayoutProcessorStages::BookendLeader:
+      if (HandleBookendLeader(pParentContainer, pCurActionNode, nCurStage))
+        return;
+
+      *pCurActionNode = nullptr;
+      FALLTHROUGH;
+
+    case XFA_ItemLayoutProcessorStages::BreakBefore:
+      if (*pCurActionNode) {
+        CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
+        if (!m_bKeepBreakFinish &&
+            FindBreakNode(pBreakBeforeNode, true, pCurActionNode, nCurStage)) {
+          return;
         }
-    }
-      {
-        *pCurActionNode = nullptr;
-        FALLTHROUGH;
-        case XFA_ItemLayoutProcessorStages::BreakBefore:
-          if (*pCurActionNode) {
-            CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
-            if (!m_bKeepBreakFinish &&
-                FindBreakNode(pBreakBeforeNode, true, pCurActionNode,
-                              nCurStage)) {
-              return;
-            }
-            if (m_bIsProcessKeep) {
-              if (ProcessKeepNodesForBreakBefore(pCurActionNode, nCurStage,
-                                                 pChildContainer)) {
-                return;
-              }
-              goto CheckNextChildContainer;
-            }
-            *pCurActionNode = pChildContainer;
-            *nCurStage = XFA_ItemLayoutProcessorStages::Container;
+        if (m_bIsProcessKeep) {
+          if (ProcessKeepNodesForBreakBefore(pCurActionNode, nCurStage,
+                                             pChildContainer)) {
             return;
           }
           goto CheckNextChildContainer;
+        }
+        *pCurActionNode = pChildContainer;
+        *nCurStage = XFA_ItemLayoutProcessorStages::Container;
+        return;
       }
-    case XFA_ItemLayoutProcessorStages::Container: {
+      goto CheckNextChildContainer;
+
+    case XFA_ItemLayoutProcessorStages::Container:
       *pCurActionNode = nullptr;
       FALLTHROUGH;
-      case XFA_ItemLayoutProcessorStages::BreakAfter: {
-        if (*pCurActionNode) {
-          CXFA_Node* pBreakAfterNode = (*pCurActionNode)->GetNextSibling();
-          if (FindBreakNode(pBreakAfterNode, false, pCurActionNode,
-                            nCurStage)) {
-            return;
-          }
-        } else {
-          CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
-          if (!m_bKeepBreakFinish && FindBreakNode(pBreakAfterNode, false,
-                                                   pCurActionNode, nCurStage)) {
-            return;
-          }
-        }
-        goto CheckNextChildContainer;
-      }
-    }
+
+    case XFA_ItemLayoutProcessorStages::BreakAfter:
+      if (HandleBreakAfter(pChildContainer, pCurActionNode, nCurStage))
+        return;
 
     CheckNextChildContainer : {
       CXFA_Node* pNextChildContainer =
@@ -965,25 +939,14 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       *pCurActionNode = nullptr;
       FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BookendTrailer:
-        for (CXFA_Node* pBookendNode = *pCurActionNode
-                                           ? (*pCurActionNode)->GetNextSibling()
-                                           : pParentContainer->GetFirstChild();
-             pBookendNode; pBookendNode = pBookendNode->GetNextSibling()) {
-          switch (pBookendNode->GetElementType()) {
-            case XFA_Element::Bookend:
-            case XFA_Element::Break:
-              *pCurActionNode = pBookendNode;
-              *nCurStage = XFA_ItemLayoutProcessorStages::BookendTrailer;
-              return;
-            default:
-              break;
-          }
-        }
+        if (HandleBookendTrailer(pParentContainer, pCurActionNode, nCurStage))
+          return;
     }
       FALLTHROUGH;
     default:
       *pCurActionNode = nullptr;
       *nCurStage = XFA_ItemLayoutProcessorStages::Done;
+      break;
   }
 }
 
@@ -1050,10 +1013,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
   XFA_ItemLayoutProcessorStages nCurChildNodeStage =
       XFA_ItemLayoutProcessorStages::None;
   CXFA_LayoutItem* pBeforeItem = nullptr;
-  for (GotoNextContainerNode(&pCurChildNode, &nCurChildNodeStage, pFormNode,
-                             false);
-       pCurChildNode; GotoNextContainerNode(&pCurChildNode, &nCurChildNodeStage,
-                                            pFormNode, false)) {
+  for (GotoNextContainerNode(false, pFormNode, &pCurChildNode,
+                             &nCurChildNodeStage);
+       pCurChildNode; GotoNextContainerNode(false, pFormNode, &pCurChildNode,
+                                            &nCurChildNodeStage)) {
     if (nCurChildNodeStage != XFA_ItemLayoutProcessorStages::Container)
       continue;
     if (pCurChildNode->GetElementType() == XFA_Element::Variables)
@@ -2789,4 +2752,67 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::InsertFlowedItem(
     m_bUseInheriated = true;
   }
   return XFA_ItemLayoutProcessorResult::PageFullBreak;
+}
+
+bool CXFA_ItemLayoutProcessor::HandleKeep(
+    CXFA_Node* pBreakAfterNode,
+    CXFA_Node** pCurActionNode,
+    XFA_ItemLayoutProcessorStages* nCurStage) {
+  return !m_bKeepBreakFinish &&
+         FindBreakNode(pBreakAfterNode, false, pCurActionNode, nCurStage);
+}
+
+bool CXFA_ItemLayoutProcessor::HandleBookendLeader(
+    CXFA_Node* pParentContainer,
+    CXFA_Node** pCurActionNode,
+    XFA_ItemLayoutProcessorStages* nCurStage) {
+  for (CXFA_Node* pBookendNode = *pCurActionNode
+                                     ? (*pCurActionNode)->GetNextSibling()
+                                     : pParentContainer->GetFirstChild();
+       pBookendNode; pBookendNode = pBookendNode->GetNextSibling()) {
+    switch (pBookendNode->GetElementType()) {
+      case XFA_Element::Bookend:
+      case XFA_Element::Break:
+        *pCurActionNode = pBookendNode;
+        *nCurStage = XFA_ItemLayoutProcessorStages::BookendLeader;
+        return true;
+      default:
+        break;
+    }
+  }
+  return false;
+}
+
+bool CXFA_ItemLayoutProcessor::HandleBreakAfter(
+    CXFA_Node* pChildContainer,
+    CXFA_Node** pCurActionNode,
+    XFA_ItemLayoutProcessorStages* nCurStage) {
+  if (*pCurActionNode) {
+    CXFA_Node* pBreakAfterNode = (*pCurActionNode)->GetNextSibling();
+    return FindBreakNode(pBreakAfterNode, false, pCurActionNode, nCurStage);
+  }
+
+  CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
+  return HandleKeep(pBreakAfterNode, pCurActionNode, nCurStage);
+}
+
+bool CXFA_ItemLayoutProcessor::HandleBookendTrailer(
+    CXFA_Node* pParentContainer,
+    CXFA_Node** pCurActionNode,
+    XFA_ItemLayoutProcessorStages* nCurStage) {
+  for (CXFA_Node* pBookendNode = *pCurActionNode
+                                     ? (*pCurActionNode)->GetNextSibling()
+                                     : pParentContainer->GetFirstChild();
+       pBookendNode; pBookendNode = pBookendNode->GetNextSibling()) {
+    switch (pBookendNode->GetElementType()) {
+      case XFA_Element::Bookend:
+      case XFA_Element::Break:
+        *pCurActionNode = pBookendNode;
+        *nCurStage = XFA_ItemLayoutProcessorStages::BookendTrailer;
+        return true;
+      default:
+        break;
+    }
+  }
+  return false;
 }

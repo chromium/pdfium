@@ -120,10 +120,10 @@ class CXFA_ItemLayoutProcessor {
   void DoLayoutField();
 
   void GotoNextContainerNodeSimple(bool bUsePageBreak);
-  void GotoNextContainerNode(CXFA_Node** pCurActionNode,
-                             XFA_ItemLayoutProcessorStages* nCurStage,
+  void GotoNextContainerNode(bool bUsePageBreak,
                              CXFA_Node* pParentContainer,
-                             bool bUsePageBreak);
+                             CXFA_Node** pCurActionNode,
+                             XFA_ItemLayoutProcessorStages* nCurStage);
 
   bool ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
                                     XFA_ItemLayoutProcessorStages* nCurStage,
@@ -162,6 +162,19 @@ class CXFA_ItemLayoutProcessor {
       bool* bForceEndPage,
       CXFA_LayoutContext* pLayoutContext,
       bool bNewRow);
+
+  bool HandleKeep(CXFA_Node* pBreakAfterNode,
+                  CXFA_Node** pCurActionNode,
+                  XFA_ItemLayoutProcessorStages* nCurStage);
+  bool HandleBookendLeader(CXFA_Node* pParentContainer,
+                           CXFA_Node** pCurActionNode,
+                           XFA_ItemLayoutProcessorStages* nCurStage);
+  bool HandleBreakAfter(CXFA_Node* pChildContainer,
+                        CXFA_Node** pCurActionNode,
+                        XFA_ItemLayoutProcessorStages* nCurStage);
+  bool HandleBookendTrailer(CXFA_Node* pParentContainer,
+                            CXFA_Node** pCurActionNode,
+                            XFA_ItemLayoutProcessorStages* nCurStage);
 
   CXFA_Node* m_pFormNode;
   CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
