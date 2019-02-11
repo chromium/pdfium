@@ -217,6 +217,9 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
     int32_t nOriginalColSpan =
         pLayoutChild->GetFormNode()->JSObject()->GetInteger(
             XFA_Attribute::ColSpan);
+    if (nOriginalColSpan <= 0 && nOriginalColSpan != -1)
+      continue;
+
     int32_t nColSpan = nOriginalColSpan;
     float fColSpanWidth = 0;
     if (nColSpan == -1 ||
