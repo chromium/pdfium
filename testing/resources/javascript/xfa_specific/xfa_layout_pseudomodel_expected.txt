@@ -1,3 +1,62 @@
 Alert: PASS: ready = true
 Alert: PASS: ready threw Error: Unable to set ready value.
+Alert: PASS: xfa.layout.absPage() threw XFAObject.absPage: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.absPage(1, 2) threw XFAObject.absPage: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.absPage(1) = 0
+Alert: PASS: xfa.layout.absPageCount() = 2
+Alert: PASS: xfa.layout.absPageCount('args', [42], 'ignored') = 2
+Alert: PASS: xfa.layout.absPageCountInBatch() = 0
+Alert: PASS: xfa.layout.absPageCountInBatch('args', [42], 'ignored') = 0
+Alert: PASS: xfa.layout.absPageInBatch() threw XFAObject.absPageInBatch: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.absPageInBatch(1, 2) threw XFAObject.absPageInBatch: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.absPageInBatch(1) = 0
+Alert: PASS: xfa.layout.absPageSpan() threw XFAObject.absPageSpan: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.absPageSpan(1, 2) threw XFAObject.absPageSpan: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.absPageSpan(1) = undefined
+Alert: PASS: xfa.layout.h() threw XFAObject.h: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.h(4, 'is', 'toomany', 'args') threw XFAObject.h: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.h(my_doc, 'bogounits') threw XFAObject.h: Incorrect parameter value.
+Alert: PASS: xfa.layout.h(my_doc, 'cm') = 0
+Alert: PASS: xfa.layout.h(my_doc, 'in', 2) = 0
+Alert: PASS: xfa.layout.page() threw XFAObject.page: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.page(1, 2) threw XFAObject.page: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.page(my_doc) = 1
+Alert: PASS: xfa.layout.pageContent() threw XFAObject.pageContent: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.pageContent(4, 'is', 'too', 'many') threw XFAObject.pageContent: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.pageContent(1) = [object XFAObject]
+Alert: PASS: xfa.layout.pageContent(1).length = 2
+Alert: PASS: xfa.layout.pageCount() = 2
+Alert: PASS: xfa.layout.pageCount('all', 'args', ['ignored']) = 2
+Alert: PASS: xfa.layout.pageSpan() threw XFAObject.pageSpan: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.pageSpan(2, 'toomany') threw XFAObject.pageSpan: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.pageSpan(my_doc) = 1
+Alert: PASS: xfa.layout.relayout() = undefined
+Alert: PASS: xfa.layout.relayout('args', ['ignored'], 42) = undefined
+Alert: PASS: xfa.layout.relayoutPageArea() = undefined
+Alert: PASS: xfa.layout.relayoutPageArea('args', ['ignored'], 42) = undefined
+Alert: PASS: xfa.layout.sheet() threw XFAObject.sheet: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.sheet(1, 2) threw XFAObject.sheet: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.sheet(my_doc) = 0
+Alert: PASS: xfa.layout.sheetCount() = 2
+Alert: PASS: xfa.layout.sheetCount('args', ['ignored'], 42) = 2
+Alert: PASS: xfa.layout.sheetCountInBatch() = 0
+Alert: PASS: xfa.layout.sheetCountInBatch('args', ['ignored'], 42) = 0
+Alert: PASS: xfa.layout.sheetInBatch() threw XFAObject.sheetInBatch: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.sheetInBatch(2, 'toomany') threw XFAObject.sheetInBatch: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.sheetInBatch(1) = 0
+Alert: PASS: xfa.layout.w() threw XFAObject.w: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.w(4, 'is', 'toomany', 'args') threw XFAObject.w: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.w(my_doc, 'bogounits') threw XFAObject.w: Incorrect parameter value.
+Alert: PASS: xfa.layout.w(my_doc, 'cm') = 0
+Alert: PASS: xfa.layout.w(my_doc, 'in', 2) = 0
+Alert: PASS: xfa.layout.x() threw XFAObject.x: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.x(4, 'is', 'toomany', 'args') threw XFAObject.x: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.x(my_doc, 'bogounits') threw XFAObject.x: Incorrect parameter value.
+Alert: PASS: xfa.layout.x(my_doc, 'cm') = 0
+Alert: PASS: xfa.layout.x(my_doc, 'in', 2) = 0
+Alert: PASS: xfa.layout.y() threw XFAObject.y: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.y(4, 'is', 'toomany', 'args') threw XFAObject.y: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.layout.y(my_doc, 'bogounits') threw XFAObject.y: Incorrect parameter value.
+Alert: PASS: xfa.layout.y(my_doc, 'cm') = 0
+Alert: PASS: xfa.layout.y(my_doc, 'in', 2) = 0
 Alert: finished testing methods

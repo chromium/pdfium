@@ -21,32 +21,89 @@ stream
     </pageSet>
     <event activity="docReady" ref="$host">
       <script contentType="application/x-javascript">
+        {{include ../expect.js}}
         {{include ../property_test_helpers.js}}
         testROProperty(xfa.layout, "ready", true);
-        try {
-         xfa.layout.absPage(1);
-         xfa.layout.absPageCount();
-         xfa.layout.absPageCountInBatch();
-         xfa.layout.absPageInBatch(1);
-         xfa.layout.absPageSpan(1);
-         xfa.layout.h(100, 'pt');
-         xfa.layout.page(1);
-         xfa.layout.pageContent(1);
-         xfa.layout.pageCount();
-         xfa.layout.pageSpan(1);
-         xfa.layout.relayout();
-         xfa.layout.relayoutPageArea();
-         xfa.layout.sheet(1);
-         xfa.layout.sheetCount();
-         xfa.layout.sheetCountInBatch();
-         xfa.layout.sheetInBatch(1);
-         xfa.layout.w(100, 'px');
-         xfa.layout.x(100, 'mm');
-         xfa.layout.y(100, 'bogus');
-         app.alert("finished testing methods");
-        } catch (e) {
-          app.alert("error testing methods: " + e);
-        }
+
+        expectError("xfa.layout.absPage()");
+        expectError("xfa.layout.absPage(1, 2)");
+        expect("xfa.layout.absPage(1)", 0);
+
+        expect("xfa.layout.absPageCount()", 2);
+        expect("xfa.layout.absPageCount('args', [42], 'ignored')", 2);
+
+        expect("xfa.layout.absPageCountInBatch()", 0);
+        expect("xfa.layout.absPageCountInBatch('args', [42], 'ignored')", 0);
+
+        expectError("xfa.layout.absPageInBatch()");
+        expectError("xfa.layout.absPageInBatch(1, 2)");
+        expect("xfa.layout.absPageInBatch(1)", 0);
+
+        expectError("xfa.layout.absPageSpan()");
+        expectError("xfa.layout.absPageSpan(1, 2)");
+        expect("xfa.layout.absPageSpan(1)");
+
+        expectError("xfa.layout.h()");
+        expectError("xfa.layout.h(4, 'is', 'toomany', 'args')");
+        expectError("xfa.layout.h(my_doc, 'bogounits')", 0);
+        expect("xfa.layout.h(my_doc, 'cm')", 0);
+        expect("xfa.layout.h(my_doc, 'in', 2)", 0);
+
+        expectError("xfa.layout.page()");
+        expectError("xfa.layout.page(1, 2)");
+        expect("xfa.layout.page(my_doc)", 1);
+
+        expectError("xfa.layout.pageContent()");
+        expectError("xfa.layout.pageContent(4, 'is', 'too', 'many')");
+        expect("xfa.layout.pageContent(1)", "[object XFAObject]");
+        expect("xfa.layout.pageContent(1).length", 2);
+
+        expect("xfa.layout.pageCount()", 2);
+        expect("xfa.layout.pageCount('all', 'args', ['ignored'])", 2);
+
+        expectError("xfa.layout.pageSpan()");
+        expectError("xfa.layout.pageSpan(2, 'toomany')");
+        expect("xfa.layout.pageSpan(my_doc)", 1);
+
+        expect("xfa.layout.relayout()");
+        expect("xfa.layout.relayout('args', ['ignored'], 42)");
+
+        expect("xfa.layout.relayoutPageArea()");
+        expect("xfa.layout.relayoutPageArea('args', ['ignored'], 42)");
+
+        expectError("xfa.layout.sheet()");
+        expectError("xfa.layout.sheet(1, 2)");
+        expect("xfa.layout.sheet(my_doc)", 0);
+
+        expect("xfa.layout.sheetCount()", 2);
+        expect("xfa.layout.sheetCount('args', ['ignored'], 42)", 2);
+
+        expect("xfa.layout.sheetCountInBatch()", 0);
+        expect("xfa.layout.sheetCountInBatch('args', ['ignored'], 42)", 0);
+
+        expectError("xfa.layout.sheetInBatch()");
+        expectError("xfa.layout.sheetInBatch(2, 'toomany')");
+        expect("xfa.layout.sheetInBatch(1)", 0);
+
+        expectError("xfa.layout.w()");
+        expectError("xfa.layout.w(4, 'is', 'toomany', 'args')");
+        expectError("xfa.layout.w(my_doc, 'bogounits')", 0);
+        expect("xfa.layout.w(my_doc, 'cm')", 0);
+        expect("xfa.layout.w(my_doc, 'in', 2)", 0);
+
+        expectError("xfa.layout.x()");
+        expectError("xfa.layout.x(4, 'is', 'toomany', 'args')");
+        expectError("xfa.layout.x(my_doc, 'bogounits')", 0);
+        expect("xfa.layout.x(my_doc, 'cm')", 0);
+        expect("xfa.layout.x(my_doc, 'in', 2)", 0);
+
+        expectError("xfa.layout.y()");
+        expectError("xfa.layout.y(4, 'is', 'toomany', 'args')");
+        expectError("xfa.layout.y(my_doc, 'bogounits')", 0);
+        expect("xfa.layout.y(my_doc, 'cm')", 0);
+        expect("xfa.layout.y(my_doc, 'in', 2)", 0);
+
+        app.alert("finished testing methods");
       </script>
     </event>
   </subform>

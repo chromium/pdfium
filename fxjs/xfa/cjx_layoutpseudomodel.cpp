@@ -127,8 +127,11 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
       break;
   }
 
-  float fValue =
-      measure.ToUnit(CXFA_Measurement::GetUnitFromString(unit.AsStringView()));
+  XFA_Unit eUnit = CXFA_Measurement::GetUnitFromString(unit.AsStringView());
+  if (eUnit == XFA_Unit::Unknown)
+    return CJS_Result::Failure(JSMessage::kValueError);
+
+  float fValue = measure.ToUnit(eUnit);
   return CJS_Result::Success(
       runtime->NewNumber(FXSYS_round(fValue * 1000) / 1000.0f));
 }
