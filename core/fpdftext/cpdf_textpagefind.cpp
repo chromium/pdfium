@@ -75,16 +75,16 @@ int CPDF_TextPageFind::GetCharIndex(int index) const {
 }
 
 bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
-                                  int flags,
+                                  const Options& options,
                                   Optional<size_t> startPos) {
   if (!m_pTextPage)
     return false;
-  if (m_strText.IsEmpty() || m_bMatchCase != (flags & FPDFTEXT_MATCHCASE))
+  if (m_strText.IsEmpty() || m_bMatchCase != options.bMatchCase)
     m_strText = m_pTextPage->GetAllPageText();
   WideString findwhatStr = findwhat;
   m_findWhat = findwhatStr;
-  m_flags = flags;
-  m_bMatchCase = flags & FPDFTEXT_MATCHCASE;
+  m_options = options;
+  m_bMatchCase = options.bMatchCase;
   if (m_strText.IsEmpty()) {
     m_IsFind = false;
     return true;
@@ -94,7 +94,7 @@ bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
     findwhatStr.MakeLower();
     m_strText.MakeLower();
   }
-  m_bMatchWholeWord = !!(flags & FPDFTEXT_MATCHWHOLEWORD);
+  m_bMatchWholeWord = options.bMatchWholeWord;
   m_findNextStart = startPos;
   if (!startPos.has_value()) {
     if (!m_strText.IsEmpty())
@@ -212,7 +212,7 @@ bool CPDF_TextPageFind::FindNext() {
   int resStart = GetCharIndex(m_resStart);
   int resEnd = GetCharIndex(m_resEnd);
   m_resArray = m_pTextPage->GetRectArray(resStart, resEnd - resStart + 1);
-  if (m_flags & FPDFTEXT_CONSECUTIVE) {
+  if (m_options.bConsecutive) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
   } else {
@@ -231,7 +231,7 @@ bool CPDF_TextPageFind::FindPrev() {
     return m_IsFind;
   }
   CPDF_TextPageFind findEngine(m_pTextPage.Get());
-  bool ret = findEngine.FindFirst(m_findWhat, m_flags, Optional<size_t>(0));
+  bool ret = findEngine.FindFirst(m_findWhat, m_options, 0);
   if (!ret) {
     m_IsFind = false;
     return m_IsFind;
@@ -258,7 +258,7 @@ bool CPDF_TextPageFind::FindPrev() {
   m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + MatchedCount - 1);
   m_IsFind = true;
   m_resArray = m_pTextPage->GetRectArray(order, MatchedCount);
-  if (m_flags & FPDFTEXT_CONSECUTIVE) {
+  if (m_options.bConsecutive) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
   } else {

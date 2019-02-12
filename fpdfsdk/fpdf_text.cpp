@@ -279,11 +279,15 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   if (!text_page)
     return nullptr;
 
+  CPDF_TextPageFind::Options options;
+  options.bMatchCase = !!(flags & FPDF_MATCHCASE);
+  options.bMatchWholeWord = !!(flags & FPDF_MATCHWHOLEWORD);
+  options.bConsecutive = !!(flags & FPDF_CONSECUTIVE);
   CPDF_TextPageFind* textpageFind =
       new CPDF_TextPageFind(CPDFTextPageFromFPDFTextPage(text_page));
   textpageFind->FindFirst(
-      WideStringFromFPDFWideString(findwhat), flags,
-      start_index >= 0 ? Optional<size_t>(start_index) : Optional<size_t>());
+      WideStringFromFPDFWideString(findwhat), options,
+      start_index >= 0 ? Optional<size_t>(start_index) : pdfium::nullopt);
   return FPDFSchHandleFromCPDFTextPageFind(textpageFind);
 }
 

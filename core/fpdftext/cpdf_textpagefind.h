@@ -19,11 +19,17 @@ class CPDF_TextPage;
 
 class CPDF_TextPageFind {
  public:
+  struct Options {
+    bool bMatchCase = false;
+    bool bMatchWholeWord = false;
+    bool bConsecutive = false;
+  };
+
   explicit CPDF_TextPageFind(const CPDF_TextPage* pTextPage);
   ~CPDF_TextPageFind();
 
   bool FindFirst(const WideString& findwhat,
-                 int flags,
+                 const Options& options,
                  Optional<size_t> startPos);
   bool FindNext();
   bool FindPrev();
@@ -51,7 +57,7 @@ class CPDF_TextPageFind {
   Optional<size_t> m_findPreStart;
   int m_resStart = 0;
   int m_resEnd = -1;
-  int m_flags = 0;
+  Options m_options;
   bool m_bMatchCase = false;
   bool m_bMatchWholeWord = false;
   bool m_IsFind = false;
