@@ -39,7 +39,7 @@ class CPDF_TextPageFind {
   int GetCurOrder() const;
   int GetMatchedCount() const;
 
- protected:
+ private:
   CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
                     const std::vector<WideString>& findwhat_array,
                     const Options& options,
@@ -48,12 +48,8 @@ class CPDF_TextPageFind {
   // Should be called immediately after construction.
   bool FindFirst();
 
-  bool IsMatchWholeWord(const WideString& csPageText,
-                        size_t startPos,
-                        size_t endPos);
   int GetCharIndex(int index) const;
 
- private:
   UnownedPtr<const CPDF_TextPage> const m_pTextPage;
   const WideString m_strText;
   const std::vector<WideString> m_csFindWhatArray;

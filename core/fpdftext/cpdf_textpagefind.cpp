@@ -33,6 +33,51 @@ bool IsIgnoreSpaceCharacter(wchar_t curChar) {
   return true;
 }
 
+bool IsMatchWholeWord(const WideString& csPageText,
+                      size_t startPos,
+                      size_t endPos) {
+  if (startPos > endPos)
+    return false;
+  wchar_t char_left = 0;
+  wchar_t char_right = 0;
+  size_t char_count = endPos - startPos + 1;
+  if (char_count == 0)
+    return false;
+  if (char_count == 1 && csPageText[startPos] > 255)
+    return true;
+  if (startPos >= 1)
+    char_left = csPageText[startPos - 1];
+  if (startPos + char_count < csPageText.GetLength())
+    char_right = csPageText[startPos + char_count];
+  if ((char_left > 'A' && char_left < 'a') ||
+      (char_left > 'a' && char_left < 'z') ||
+      (char_left > 0xfb00 && char_left < 0xfb06) ||
+      FXSYS_IsDecimalDigit(char_left) ||
+      (char_right > 'A' && char_right < 'a') ||
+      (char_right > 'a' && char_right < 'z') ||
+      (char_right > 0xfb00 && char_right < 0xfb06) ||
+      FXSYS_IsDecimalDigit(char_right)) {
+    return false;
+  }
+  if (!(('A' > char_left || char_left > 'Z') &&
+        ('a' > char_left || char_left > 'z') &&
+        ('A' > char_right || char_right > 'Z') &&
+        ('a' > char_right || char_right > 'z'))) {
+    return false;
+  }
+  if (char_count > 0) {
+    if (FXSYS_IsDecimalDigit(char_left) &&
+        FXSYS_IsDecimalDigit(csPageText[startPos])) {
+      return false;
+    }
+    if (FXSYS_IsDecimalDigit(char_right) &&
+        FXSYS_IsDecimalDigit(csPageText[endPos])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 WideString GetStringCase(const WideString& wsOriginal, bool bMatchCase) {
   if (bMatchCase)
     return wsOriginal;
@@ -162,9 +207,7 @@ bool CPDF_TextPageFind::FindFirst() {
 }
 
 bool CPDF_TextPageFind::FindNext() {
-  if (!m_findNextStart.has_value())
-    return false;
-  if (m_strText.IsEmpty())
+  if (m_strText.IsEmpty() || !m_findNextStart.has_value())
     return false;
 
   size_t strLen = m_strText.GetLength();
@@ -229,16 +272,14 @@ bool CPDF_TextPageFind::FindNext() {
         }
       }
     }
-    if (m_options.bMatchWholeWord && bMatch) {
+    if (m_options.bMatchWholeWord && bMatch)
       bMatch = IsMatchWholeWord(m_strText, nResultPos.value(), endIndex);
-    }
+
     nStartPos = endIndex + 1;
     if (!bMatch) {
       iWord = -1;
-      if (bSpaceStart)
-        nStartPos = m_resStart + m_csFindWhatArray[1].GetLength();
-      else
-        nStartPos = m_resStart + m_csFindWhatArray[0].GetLength();
+      size_t index = bSpaceStart ? 1 : 0;
+      nStartPos = m_resStart + m_csFindWhatArray[index].GetLength();
     }
   }
   m_resEnd = nResultPos.value() + m_csFindWhatArray.back().GetLength() - 1;
@@ -284,51 +325,6 @@ bool CPDF_TextPageFind::FindPrev() {
   } else {
     m_findNextStart = m_resEnd + 1;
     m_findPreStart = m_resStart - 1;
-  }
-  return true;
-}
-
-bool CPDF_TextPageFind::IsMatchWholeWord(const WideString& csPageText,
-                                         size_t startPos,
-                                         size_t endPos) {
-  if (startPos > endPos)
-    return false;
-  wchar_t char_left = 0;
-  wchar_t char_right = 0;
-  size_t char_count = endPos - startPos + 1;
-  if (char_count == 0)
-    return false;
-  if (char_count == 1 && csPageText[startPos] > 255)
-    return true;
-  if (startPos >= 1)
-    char_left = csPageText[startPos - 1];
-  if (startPos + char_count < csPageText.GetLength())
-    char_right = csPageText[startPos + char_count];
-  if ((char_left > 'A' && char_left < 'a') ||
-      (char_left > 'a' && char_left < 'z') ||
-      (char_left > 0xfb00 && char_left < 0xfb06) ||
-      FXSYS_IsDecimalDigit(char_left) ||
-      (char_right > 'A' && char_right < 'a') ||
-      (char_right > 'a' && char_right < 'z') ||
-      (char_right > 0xfb00 && char_right < 0xfb06) ||
-      FXSYS_IsDecimalDigit(char_right)) {
-    return false;
-  }
-  if (!(('A' > char_left || char_left > 'Z') &&
-        ('a' > char_left || char_left > 'z') &&
-        ('A' > char_right || char_right > 'Z') &&
-        ('a' > char_right || char_right > 'z'))) {
-    return false;
-  }
-  if (char_count > 0) {
-    if (FXSYS_IsDecimalDigit(char_left) &&
-        FXSYS_IsDecimalDigit(csPageText[startPos])) {
-      return false;
-    }
-    if (FXSYS_IsDecimalDigit(char_right) &&
-        FXSYS_IsDecimalDigit(csPageText[endPos])) {
-      return false;
-    }
   }
   return true;
 }
