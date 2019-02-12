@@ -456,8 +456,8 @@ WideString CPDF_TextPage::GetTextByObject(
   });
 }
 
-void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
-  if (!m_bIsParsed || !pdfium::IndexInBounds(m_CharList, index))
+void CPDF_TextPage::GetCharInfo(size_t index, FPDF_CHAR_INFO* info) const {
+  if (!m_bIsParsed || index >= size())
     return;
 
   const PAGECHAR_INFO& charinfo = m_CharList[index];

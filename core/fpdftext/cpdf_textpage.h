@@ -89,8 +89,9 @@ class CPDF_TextPage {
   bool IsParsed() const { return m_bIsParsed; }
   int CharIndexFromTextIndex(int TextIndex) const;
   int TextIndexFromCharIndex(int CharIndex) const;
+  size_t size() const { return m_CharList.size(); }
   int CountChars() const;
-  void GetCharInfo(int index, FPDF_CHAR_INFO* info) const;
+  void GetCharInfo(size_t index, FPDF_CHAR_INFO* info) const;
   std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
   int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;
   WideString GetTextByRect(const CFX_FloatRect& rect) const;
