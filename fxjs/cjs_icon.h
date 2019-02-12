@@ -21,7 +21,7 @@ class CJS_Icon final : public CJS_Object {
   WideString GetIconName() const { return m_swIconName; }
   void SetIconName(WideString name) { m_swIconName = name; }
 
-  JS_STATIC_PROP(name, name, CJS_Icon);
+  JS_STATIC_PROP(name, name, CJS_Icon)
 
  private:
   static int ObjDefnID;

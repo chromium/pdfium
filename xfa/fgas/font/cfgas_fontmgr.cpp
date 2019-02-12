@@ -357,7 +357,7 @@ unsigned long ftStreamRead(FXFT_Stream stream,
 
 void ftStreamClose(FXFT_Stream stream) {}
 
-};  // extern "C"
+}  // extern "C"
 
 // TODO(thestig): Pass in |name_table| as a std::vector?
 std::vector<WideString> GetNames(const uint8_t* name_table) {

@@ -31,11 +31,11 @@ class CJS_Util final : public CJS_Object {
   static WideString StringPrintx(const WideString& cFormat,
                                  const WideString& cSource);
 
-  JS_STATIC_METHOD(printd, CJS_Util);
-  JS_STATIC_METHOD(printf, CJS_Util);
-  JS_STATIC_METHOD(printx, CJS_Util);
-  JS_STATIC_METHOD(scand, CJS_Util);
-  JS_STATIC_METHOD(byteToChar, CJS_Util);
+  JS_STATIC_METHOD(printd, CJS_Util)
+  JS_STATIC_METHOD(printf, CJS_Util)
+  JS_STATIC_METHOD(printx, CJS_Util)
+  JS_STATIC_METHOD(scand, CJS_Util)
+  JS_STATIC_METHOD(byteToChar, CJS_Util)
 
  private:
   static int ObjDefnID;

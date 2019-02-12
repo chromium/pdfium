@@ -18,26 +18,26 @@ class CJS_Event final : public CJS_Object {
   CJS_Event(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Event() override;
 
-  JS_STATIC_PROP(change, change, CJS_Event);
-  JS_STATIC_PROP(changeEx, change_ex, CJS_Event);
-  JS_STATIC_PROP(commitKey, commit_key, CJS_Event);
-  JS_STATIC_PROP(fieldFull, field_full, CJS_Event);
-  JS_STATIC_PROP(keyDown, key_down, CJS_Event);
-  JS_STATIC_PROP(modifier, modifier, CJS_Event);
-  JS_STATIC_PROP(name, name, CJS_Event);
-  JS_STATIC_PROP(rc, rc, CJS_Event);
-  JS_STATIC_PROP(richChange, rich_change, CJS_Event);
-  JS_STATIC_PROP(richChangeEx, rich_change_ex, CJS_Event);
-  JS_STATIC_PROP(richValue, rich_value, CJS_Event);
-  JS_STATIC_PROP(selEnd, sel_end, CJS_Event);
-  JS_STATIC_PROP(selStart, sel_start, CJS_Event);
-  JS_STATIC_PROP(shift, shift, CJS_Event);
-  JS_STATIC_PROP(source, source, CJS_Event);
-  JS_STATIC_PROP(target, target, CJS_Event);
-  JS_STATIC_PROP(targetName, target_name, CJS_Event);
-  JS_STATIC_PROP(type, type, CJS_Event);
-  JS_STATIC_PROP(value, value, CJS_Event);
-  JS_STATIC_PROP(willCommit, will_commit, CJS_Event);
+  JS_STATIC_PROP(change, change, CJS_Event)
+  JS_STATIC_PROP(changeEx, change_ex, CJS_Event)
+  JS_STATIC_PROP(commitKey, commit_key, CJS_Event)
+  JS_STATIC_PROP(fieldFull, field_full, CJS_Event)
+  JS_STATIC_PROP(keyDown, key_down, CJS_Event)
+  JS_STATIC_PROP(modifier, modifier, CJS_Event)
+  JS_STATIC_PROP(name, name, CJS_Event)
+  JS_STATIC_PROP(rc, rc, CJS_Event)
+  JS_STATIC_PROP(richChange, rich_change, CJS_Event)
+  JS_STATIC_PROP(richChangeEx, rich_change_ex, CJS_Event)
+  JS_STATIC_PROP(richValue, rich_value, CJS_Event)
+  JS_STATIC_PROP(selEnd, sel_end, CJS_Event)
+  JS_STATIC_PROP(selStart, sel_start, CJS_Event)
+  JS_STATIC_PROP(shift, shift, CJS_Event)
+  JS_STATIC_PROP(source, source, CJS_Event)
+  JS_STATIC_PROP(target, target, CJS_Event)
+  JS_STATIC_PROP(targetName, target_name, CJS_Event)
+  JS_STATIC_PROP(type, type, CJS_Event)
+  JS_STATIC_PROP(value, value, CJS_Event)
+  JS_STATIC_PROP(willCommit, will_commit, CJS_Event)
 
  private:
   static int ObjDefnID;

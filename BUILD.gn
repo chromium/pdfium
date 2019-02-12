@@ -80,6 +80,9 @@ config("pdfium_core_config") {
   defines = []
   if (is_clang) {
     cflags += [ "-Wshadow" ]
+
+    # TODO(thakis): Remove once this is on globally, https://crbug.com/926235
+    cflags += [ "-Wextra-semi" ]
   }
   if (is_linux) {
     if (current_cpu == "x64") {

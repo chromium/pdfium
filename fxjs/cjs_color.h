@@ -24,21 +24,21 @@ class CJS_Color final : public CJS_Object {
   CJS_Color(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Color() override;
 
-  JS_STATIC_PROP(black, black, CJS_Color);
-  JS_STATIC_PROP(blue, blue, CJS_Color);
-  JS_STATIC_PROP(cyan, cyan, CJS_Color);
-  JS_STATIC_PROP(dkGray, dark_gray, CJS_Color);
-  JS_STATIC_PROP(gray, gray, CJS_Color);
-  JS_STATIC_PROP(green, green, CJS_Color);
-  JS_STATIC_PROP(ltGray, light_gray, CJS_Color);
-  JS_STATIC_PROP(magenta, magenta, CJS_Color);
-  JS_STATIC_PROP(red, red, CJS_Color);
-  JS_STATIC_PROP(transparent, transparent, CJS_Color);
-  JS_STATIC_PROP(white, white, CJS_Color);
-  JS_STATIC_PROP(yellow, yellow, CJS_Color);
+  JS_STATIC_PROP(black, black, CJS_Color)
+  JS_STATIC_PROP(blue, blue, CJS_Color)
+  JS_STATIC_PROP(cyan, cyan, CJS_Color)
+  JS_STATIC_PROP(dkGray, dark_gray, CJS_Color)
+  JS_STATIC_PROP(gray, gray, CJS_Color)
+  JS_STATIC_PROP(green, green, CJS_Color)
+  JS_STATIC_PROP(ltGray, light_gray, CJS_Color)
+  JS_STATIC_PROP(magenta, magenta, CJS_Color)
+  JS_STATIC_PROP(red, red, CJS_Color)
+  JS_STATIC_PROP(transparent, transparent, CJS_Color)
+  JS_STATIC_PROP(white, white, CJS_Color)
+  JS_STATIC_PROP(yellow, yellow, CJS_Color)
 
-  JS_STATIC_METHOD(convert, CJS_Color);
-  JS_STATIC_METHOD(equal, CJS_Color);
+  JS_STATIC_METHOD(convert, CJS_Color)
+  JS_STATIC_METHOD(equal, CJS_Color)
 
  private:
   static int ObjDefnID;

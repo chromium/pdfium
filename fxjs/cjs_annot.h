@@ -22,9 +22,9 @@ class CJS_Annot final : public CJS_Object {
 
   void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
 
-  JS_STATIC_PROP(hidden, hidden, CJS_Annot);
-  JS_STATIC_PROP(name, name, CJS_Annot);
-  JS_STATIC_PROP(type, type, CJS_Annot);
+  JS_STATIC_PROP(hidden, hidden, CJS_Annot)
+  JS_STATIC_PROP(name, name, CJS_Annot)
+  JS_STATIC_PROP(type, type, CJS_Annot)
 
  private:
   static int ObjDefnID;

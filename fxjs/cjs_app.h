@@ -30,40 +30,40 @@ class CJS_App final : public CJS_Object {
 
   static WideString SysPathToPDFPath(const WideString& sOldPath);
 
-  JS_STATIC_PROP(activeDocs, active_docs, CJS_App);
-  JS_STATIC_PROP(calculate, calculate, CJS_App);
-  JS_STATIC_PROP(formsVersion, forms_version, CJS_App);
-  JS_STATIC_PROP(fs, fs, CJS_App);
-  JS_STATIC_PROP(fullscreen, fullscreen, CJS_App);
-  JS_STATIC_PROP(language, language, CJS_App);
-  JS_STATIC_PROP(media, media, CJS_App);
-  JS_STATIC_PROP(platform, platform, CJS_App);
-  JS_STATIC_PROP(runtimeHighlight, runtime_highlight, CJS_App);
-  JS_STATIC_PROP(viewerType, viewer_type, CJS_App);
-  JS_STATIC_PROP(viewerVariation, viewer_variation, CJS_App);
-  JS_STATIC_PROP(viewerVersion, viewer_version, CJS_App);
+  JS_STATIC_PROP(activeDocs, active_docs, CJS_App)
+  JS_STATIC_PROP(calculate, calculate, CJS_App)
+  JS_STATIC_PROP(formsVersion, forms_version, CJS_App)
+  JS_STATIC_PROP(fs, fs, CJS_App)
+  JS_STATIC_PROP(fullscreen, fullscreen, CJS_App)
+  JS_STATIC_PROP(language, language, CJS_App)
+  JS_STATIC_PROP(media, media, CJS_App)
+  JS_STATIC_PROP(platform, platform, CJS_App)
+  JS_STATIC_PROP(runtimeHighlight, runtime_highlight, CJS_App)
+  JS_STATIC_PROP(viewerType, viewer_type, CJS_App)
+  JS_STATIC_PROP(viewerVariation, viewer_variation, CJS_App)
+  JS_STATIC_PROP(viewerVersion, viewer_version, CJS_App)
 
-  JS_STATIC_METHOD(alert, CJS_App);
-  JS_STATIC_METHOD(beep, CJS_App);
-  JS_STATIC_METHOD(browseForDoc, CJS_App);
-  JS_STATIC_METHOD(clearInterval, CJS_App);
-  JS_STATIC_METHOD(clearTimeOut, CJS_App);
-  JS_STATIC_METHOD(execDialog, CJS_App);
-  JS_STATIC_METHOD(execMenuItem, CJS_App);
-  JS_STATIC_METHOD(findComponent, CJS_App);
-  JS_STATIC_METHOD(goBack, CJS_App);
-  JS_STATIC_METHOD(goForward, CJS_App);
-  JS_STATIC_METHOD(launchURL, CJS_App);
-  JS_STATIC_METHOD(mailMsg, CJS_App);
-  JS_STATIC_METHOD(newFDF, CJS_App);
-  JS_STATIC_METHOD(newDoc, CJS_App);
-  JS_STATIC_METHOD(openDoc, CJS_App);
-  JS_STATIC_METHOD(openFDF, CJS_App);
-  JS_STATIC_METHOD(popUpMenuEx, CJS_App);
-  JS_STATIC_METHOD(popUpMenu, CJS_App);
-  JS_STATIC_METHOD(response, CJS_App);
-  JS_STATIC_METHOD(setInterval, CJS_App);
-  JS_STATIC_METHOD(setTimeOut, CJS_App);
+  JS_STATIC_METHOD(alert, CJS_App)
+  JS_STATIC_METHOD(beep, CJS_App)
+  JS_STATIC_METHOD(browseForDoc, CJS_App)
+  JS_STATIC_METHOD(clearInterval, CJS_App)
+  JS_STATIC_METHOD(clearTimeOut, CJS_App)
+  JS_STATIC_METHOD(execDialog, CJS_App)
+  JS_STATIC_METHOD(execMenuItem, CJS_App)
+  JS_STATIC_METHOD(findComponent, CJS_App)
+  JS_STATIC_METHOD(goBack, CJS_App)
+  JS_STATIC_METHOD(goForward, CJS_App)
+  JS_STATIC_METHOD(launchURL, CJS_App)
+  JS_STATIC_METHOD(mailMsg, CJS_App)
+  JS_STATIC_METHOD(newFDF, CJS_App)
+  JS_STATIC_METHOD(newDoc, CJS_App)
+  JS_STATIC_METHOD(openDoc, CJS_App)
+  JS_STATIC_METHOD(openFDF, CJS_App)
+  JS_STATIC_METHOD(popUpMenuEx, CJS_App)
+  JS_STATIC_METHOD(popUpMenu, CJS_App)
+  JS_STATIC_METHOD(response, CJS_App)
+  JS_STATIC_METHOD(setInterval, CJS_App)
+  JS_STATIC_METHOD(setTimeOut, CJS_App)
 
  private:
   static int ObjDefnID;

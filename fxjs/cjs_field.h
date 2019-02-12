@@ -40,85 +40,85 @@ class CJS_Field final : public CJS_Object {
 
   bool AttachField(CJS_Document* pDocument, const WideString& csFieldName);
 
-  JS_STATIC_PROP(alignment, alignment, CJS_Field);
-  JS_STATIC_PROP(borderStyle, border_style, CJS_Field);
-  JS_STATIC_PROP(buttonAlignX, button_align_x, CJS_Field);
-  JS_STATIC_PROP(buttonAlignY, button_align_y, CJS_Field);
-  JS_STATIC_PROP(buttonFitBounds, button_fit_bounds, CJS_Field);
-  JS_STATIC_PROP(buttonPosition, button_position, CJS_Field);
-  JS_STATIC_PROP(buttonScaleHow, button_scale_how, CJS_Field);
-  JS_STATIC_PROP(ButtonScaleWhen, button_scale_when, CJS_Field);
-  JS_STATIC_PROP(calcOrderIndex, calc_order_index, CJS_Field);
-  JS_STATIC_PROP(charLimit, char_limit, CJS_Field);
-  JS_STATIC_PROP(comb, comb, CJS_Field);
-  JS_STATIC_PROP(commitOnSelChange, commit_on_sel_change, CJS_Field);
-  JS_STATIC_PROP(currentValueIndices, current_value_indices, CJS_Field);
-  JS_STATIC_PROP(defaultStyle, default_style, CJS_Field);
-  JS_STATIC_PROP(defaultValue, default_value, CJS_Field);
-  JS_STATIC_PROP(doNotScroll, do_not_scroll, CJS_Field);
-  JS_STATIC_PROP(doNotSpellCheck, do_not_spell_check, CJS_Field);
-  JS_STATIC_PROP(delay, delay, CJS_Field);
-  JS_STATIC_PROP(display, display, CJS_Field);
-  JS_STATIC_PROP(doc, doc, CJS_Field);
-  JS_STATIC_PROP(editable, editable, CJS_Field);
-  JS_STATIC_PROP(exportValues, export_values, CJS_Field);
-  JS_STATIC_PROP(fileSelect, file_select, CJS_Field);
-  JS_STATIC_PROP(fillColor, fill_color, CJS_Field);
-  JS_STATIC_PROP(hidden, hidden, CJS_Field);
-  JS_STATIC_PROP(highlight, highlight, CJS_Field);
-  JS_STATIC_PROP(lineWidth, line_width, CJS_Field);
-  JS_STATIC_PROP(multiline, multiline, CJS_Field);
-  JS_STATIC_PROP(multipleSelection, multiple_selection, CJS_Field);
-  JS_STATIC_PROP(name, name, CJS_Field);
-  JS_STATIC_PROP(numItems, num_items, CJS_Field);
-  JS_STATIC_PROP(page, page, CJS_Field);
-  JS_STATIC_PROP(password, password, CJS_Field);
-  JS_STATIC_PROP(print, print, CJS_Field);
-  JS_STATIC_PROP(radiosInUnison, radios_in_unison, CJS_Field);
-  JS_STATIC_PROP(readonly, readonly, CJS_Field);
-  JS_STATIC_PROP(rect, rect, CJS_Field);
-  JS_STATIC_PROP(required, required, CJS_Field);
-  JS_STATIC_PROP(richText, rich_text, CJS_Field);
-  JS_STATIC_PROP(richValue, rich_value, CJS_Field);
-  JS_STATIC_PROP(rotation, rotation, CJS_Field);
-  JS_STATIC_PROP(source, source, CJS_Field);
-  JS_STATIC_PROP(strokeColor, stroke_color, CJS_Field);
-  JS_STATIC_PROP(style, style, CJS_Field);
-  JS_STATIC_PROP(submitName, submit_name, CJS_Field);
-  JS_STATIC_PROP(textColor, text_color, CJS_Field);
-  JS_STATIC_PROP(textFont, text_font, CJS_Field);
-  JS_STATIC_PROP(textSize, text_size, CJS_Field);
-  JS_STATIC_PROP(type, type, CJS_Field);
-  JS_STATIC_PROP(userName, user_name, CJS_Field);
-  JS_STATIC_PROP(value, value, CJS_Field);
-  JS_STATIC_PROP(valueAsString, value_as_string, CJS_Field);
+  JS_STATIC_PROP(alignment, alignment, CJS_Field)
+  JS_STATIC_PROP(borderStyle, border_style, CJS_Field)
+  JS_STATIC_PROP(buttonAlignX, button_align_x, CJS_Field)
+  JS_STATIC_PROP(buttonAlignY, button_align_y, CJS_Field)
+  JS_STATIC_PROP(buttonFitBounds, button_fit_bounds, CJS_Field)
+  JS_STATIC_PROP(buttonPosition, button_position, CJS_Field)
+  JS_STATIC_PROP(buttonScaleHow, button_scale_how, CJS_Field)
+  JS_STATIC_PROP(ButtonScaleWhen, button_scale_when, CJS_Field)
+  JS_STATIC_PROP(calcOrderIndex, calc_order_index, CJS_Field)
+  JS_STATIC_PROP(charLimit, char_limit, CJS_Field)
+  JS_STATIC_PROP(comb, comb, CJS_Field)
+  JS_STATIC_PROP(commitOnSelChange, commit_on_sel_change, CJS_Field)
+  JS_STATIC_PROP(currentValueIndices, current_value_indices, CJS_Field)
+  JS_STATIC_PROP(defaultStyle, default_style, CJS_Field)
+  JS_STATIC_PROP(defaultValue, default_value, CJS_Field)
+  JS_STATIC_PROP(doNotScroll, do_not_scroll, CJS_Field)
+  JS_STATIC_PROP(doNotSpellCheck, do_not_spell_check, CJS_Field)
+  JS_STATIC_PROP(delay, delay, CJS_Field)
+  JS_STATIC_PROP(display, display, CJS_Field)
+  JS_STATIC_PROP(doc, doc, CJS_Field)
+  JS_STATIC_PROP(editable, editable, CJS_Field)
+  JS_STATIC_PROP(exportValues, export_values, CJS_Field)
+  JS_STATIC_PROP(fileSelect, file_select, CJS_Field)
+  JS_STATIC_PROP(fillColor, fill_color, CJS_Field)
+  JS_STATIC_PROP(hidden, hidden, CJS_Field)
+  JS_STATIC_PROP(highlight, highlight, CJS_Field)
+  JS_STATIC_PROP(lineWidth, line_width, CJS_Field)
+  JS_STATIC_PROP(multiline, multiline, CJS_Field)
+  JS_STATIC_PROP(multipleSelection, multiple_selection, CJS_Field)
+  JS_STATIC_PROP(name, name, CJS_Field)
+  JS_STATIC_PROP(numItems, num_items, CJS_Field)
+  JS_STATIC_PROP(page, page, CJS_Field)
+  JS_STATIC_PROP(password, password, CJS_Field)
+  JS_STATIC_PROP(print, print, CJS_Field)
+  JS_STATIC_PROP(radiosInUnison, radios_in_unison, CJS_Field)
+  JS_STATIC_PROP(readonly, readonly, CJS_Field)
+  JS_STATIC_PROP(rect, rect, CJS_Field)
+  JS_STATIC_PROP(required, required, CJS_Field)
+  JS_STATIC_PROP(richText, rich_text, CJS_Field)
+  JS_STATIC_PROP(richValue, rich_value, CJS_Field)
+  JS_STATIC_PROP(rotation, rotation, CJS_Field)
+  JS_STATIC_PROP(source, source, CJS_Field)
+  JS_STATIC_PROP(strokeColor, stroke_color, CJS_Field)
+  JS_STATIC_PROP(style, style, CJS_Field)
+  JS_STATIC_PROP(submitName, submit_name, CJS_Field)
+  JS_STATIC_PROP(textColor, text_color, CJS_Field)
+  JS_STATIC_PROP(textFont, text_font, CJS_Field)
+  JS_STATIC_PROP(textSize, text_size, CJS_Field)
+  JS_STATIC_PROP(type, type, CJS_Field)
+  JS_STATIC_PROP(userName, user_name, CJS_Field)
+  JS_STATIC_PROP(value, value, CJS_Field)
+  JS_STATIC_PROP(valueAsString, value_as_string, CJS_Field)
 
-  JS_STATIC_METHOD(browseForFileToSubmit, CJS_Field);
-  JS_STATIC_METHOD(buttonGetCaption, CJS_Field);
-  JS_STATIC_METHOD(buttonGetIcon, CJS_Field);
-  JS_STATIC_METHOD(buttonImportIcon, CJS_Field);
-  JS_STATIC_METHOD(buttonSetCaption, CJS_Field);
-  JS_STATIC_METHOD(buttonSetIcon, CJS_Field);
-  JS_STATIC_METHOD(checkThisBox, CJS_Field);
-  JS_STATIC_METHOD(clearItems, CJS_Field);
-  JS_STATIC_METHOD(defaultIsChecked, CJS_Field);
-  JS_STATIC_METHOD(deleteItemAt, CJS_Field);
-  JS_STATIC_METHOD(getArray, CJS_Field);
-  JS_STATIC_METHOD(getItemAt, CJS_Field);
-  JS_STATIC_METHOD(getLock, CJS_Field);
-  JS_STATIC_METHOD(insertItemAt, CJS_Field);
-  JS_STATIC_METHOD(isBoxChecked, CJS_Field);
-  JS_STATIC_METHOD(isDefaultChecked, CJS_Field);
-  JS_STATIC_METHOD(setAction, CJS_Field);
-  JS_STATIC_METHOD(setFocus, CJS_Field);
-  JS_STATIC_METHOD(setItems, CJS_Field);
-  JS_STATIC_METHOD(setLock, CJS_Field);
-  JS_STATIC_METHOD(signatureGetModifications, CJS_Field);
-  JS_STATIC_METHOD(signatureGetSeedValue, CJS_Field);
-  JS_STATIC_METHOD(signatureInfo, CJS_Field);
-  JS_STATIC_METHOD(signatureSetSeedValue, CJS_Field);
-  JS_STATIC_METHOD(signatureSign, CJS_Field);
-  JS_STATIC_METHOD(signatureValidate, CJS_Field);
+  JS_STATIC_METHOD(browseForFileToSubmit, CJS_Field)
+  JS_STATIC_METHOD(buttonGetCaption, CJS_Field)
+  JS_STATIC_METHOD(buttonGetIcon, CJS_Field)
+  JS_STATIC_METHOD(buttonImportIcon, CJS_Field)
+  JS_STATIC_METHOD(buttonSetCaption, CJS_Field)
+  JS_STATIC_METHOD(buttonSetIcon, CJS_Field)
+  JS_STATIC_METHOD(checkThisBox, CJS_Field)
+  JS_STATIC_METHOD(clearItems, CJS_Field)
+  JS_STATIC_METHOD(defaultIsChecked, CJS_Field)
+  JS_STATIC_METHOD(deleteItemAt, CJS_Field)
+  JS_STATIC_METHOD(getArray, CJS_Field)
+  JS_STATIC_METHOD(getItemAt, CJS_Field)
+  JS_STATIC_METHOD(getLock, CJS_Field)
+  JS_STATIC_METHOD(insertItemAt, CJS_Field)
+  JS_STATIC_METHOD(isBoxChecked, CJS_Field)
+  JS_STATIC_METHOD(isDefaultChecked, CJS_Field)
+  JS_STATIC_METHOD(setAction, CJS_Field)
+  JS_STATIC_METHOD(setFocus, CJS_Field)
+  JS_STATIC_METHOD(setItems, CJS_Field)
+  JS_STATIC_METHOD(setLock, CJS_Field)
+  JS_STATIC_METHOD(signatureGetModifications, CJS_Field)
+  JS_STATIC_METHOD(signatureGetSeedValue, CJS_Field)
+  JS_STATIC_METHOD(signatureInfo, CJS_Field)
+  JS_STATIC_METHOD(signatureSetSeedValue, CJS_Field)
+  JS_STATIC_METHOD(signatureSign, CJS_Field)
+  JS_STATIC_METHOD(signatureValidate, CJS_Field)
 
   CJS_Result get_text_color(CJS_Runtime* pRuntime);
   CJS_Result set_text_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);

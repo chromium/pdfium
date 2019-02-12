@@ -20,10 +20,10 @@ class CJS_Console final : public CJS_Object {
   CJS_Console(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Console() override;
 
-  JS_STATIC_METHOD(clear, CJS_Console);
-  JS_STATIC_METHOD(hide, CJS_Console);
-  JS_STATIC_METHOD(println, CJS_Console);
-  JS_STATIC_METHOD(show, CJS_Console);
+  JS_STATIC_METHOD(clear, CJS_Console)
+  JS_STATIC_METHOD(hide, CJS_Console)
+  JS_STATIC_METHOD(println, CJS_Console)
+  JS_STATIC_METHOD(show, CJS_Console)
 
  private:
   static int ObjDefnID;
