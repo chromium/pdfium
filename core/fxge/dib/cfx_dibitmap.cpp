@@ -821,7 +821,6 @@ void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
 }
 
 bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
-  ASSERT(!IsAlphaMask());
   if (!m_pBuffer || IsAlphaMask())
     return false;
 
