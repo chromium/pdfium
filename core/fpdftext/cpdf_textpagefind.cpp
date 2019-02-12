@@ -185,30 +185,27 @@ bool CPDF_TextPageFind::FindPrev() {
   if (m_strText.IsEmpty() || !m_findPreStart.has_value())
     return false;
 
-  CPDF_TextPageFind findEngine(m_pTextPage.Get());
-  bool ret = findEngine.FindFirst(m_findWhat, m_options, 0);
-  if (!ret)
+  CPDF_TextPageFind find_engine(m_pTextPage.Get());
+  if (!find_engine.FindFirst(m_findWhat, m_options, 0))
     return false;
 
   int order = -1;
-  int MatchedCount = 0;
-  while (ret) {
-    ret = findEngine.FindNext();
-    if (ret) {
-      int order1 = findEngine.GetCurOrder();
-      int MatchedCount1 = findEngine.GetMatchedCount();
-      int temp = order1 + MatchedCount1;
-      if (temp < 0 || static_cast<size_t>(temp) > m_findPreStart.value() + 1)
-        break;
-      order = order1;
-      MatchedCount = MatchedCount1;
-    }
+  int matches = 0;
+  while (find_engine.FindNext()) {
+    int cur_order = find_engine.GetCurOrder();
+    int cur_match = find_engine.GetMatchedCount();
+    int temp = cur_order + cur_match;
+    if (temp < 0 || static_cast<size_t>(temp) > m_findPreStart.value() + 1)
+      break;
+
+    order = cur_order;
+    matches = cur_match;
   }
   if (order == -1)
     return false;
 
   m_resStart = m_pTextPage->TextIndexFromCharIndex(order);
-  m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + MatchedCount - 1);
+  m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + matches - 1);
   if (m_options.bConsecutive) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
