@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_datavalue.h"
 
-#include "fxjs/xfa/cjx_datavalue.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,6 +30,6 @@ CXFA_DataValue::CXFA_DataValue(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DataValue,
                 {},
                 kDataValueAttributeData,
-                pdfium::MakeUnique<CJX_DataValue>(this)) {}
+                pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_DataValue::~CXFA_DataValue() = default;

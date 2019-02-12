@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_float.h"
 
-#include "fxjs/xfa/cjx_float.h"
+#include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -28,6 +28,6 @@ CXFA_Float::CXFA_Float(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Float,
                 {},
                 kFloatAttributeData,
-                pdfium::MakeUnique<CJX_Float>(this)) {}
+                pdfium::MakeUnique<CJX_Object>(this)) {}
 
 CXFA_Float::~CXFA_Float() = default;

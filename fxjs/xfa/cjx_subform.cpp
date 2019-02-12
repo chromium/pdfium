@@ -135,12 +135,6 @@ void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pInstanceMgr));
 }
 
-void CJX_Subform::layout(CFXJSE_Value* pValue,
-                         bool bSetting,
-                         XFA_Attribute eAttribute) {
-  ScriptAttributeString(pValue, bSetting, eAttribute);
-}
-
 void CJX_Subform::validationMessage(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {

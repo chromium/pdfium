@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_picture.h"
 
-#include "fxjs/xfa/cjx_picture.h"
+#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,6 +30,6 @@ CXFA_Picture::CXFA_Picture(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Picture,
           {},
           kPictureAttributeData,
-          pdfium::MakeUnique<CJX_Picture>(this)) {}
+          pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Picture::~CXFA_Picture() = default;
