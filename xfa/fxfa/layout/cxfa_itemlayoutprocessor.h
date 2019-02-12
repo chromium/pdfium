@@ -120,10 +120,11 @@ class CXFA_ItemLayoutProcessor {
   void DoLayoutField();
 
   void GotoNextContainerNodeSimple(bool bUsePageBreak);
-  void GotoNextContainerNode(bool bUsePageBreak,
-                             CXFA_Node* pParentContainer,
-                             CXFA_Node** pCurActionNode,
-                             XFA_ItemLayoutProcessorStages* nCurStage);
+  XFA_ItemLayoutProcessorStages GotoNextContainerNode(
+      XFA_ItemLayoutProcessorStages nCurStage,
+      bool bUsePageBreak,
+      CXFA_Node* pParentContainer,
+      CXFA_Node** pCurActionNode);
 
   bool ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
                                     XFA_ItemLayoutProcessorStages* nCurStage,

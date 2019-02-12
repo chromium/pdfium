@@ -828,17 +828,17 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
 }
 
 void CXFA_ItemLayoutProcessor::GotoNextContainerNodeSimple(bool bUsePageBreak) {
-  GotoNextContainerNode(bUsePageBreak, GetFormNode(), &m_pCurChildNode,
-                        &m_nCurChildNodeStage);
+  m_nCurChildNodeStage = GotoNextContainerNode(
+      m_nCurChildNodeStage, bUsePageBreak, GetFormNode(), &m_pCurChildNode);
 }
 
-void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
+XFA_ItemLayoutProcessorStages CXFA_ItemLayoutProcessor::GotoNextContainerNode(
+    XFA_ItemLayoutProcessorStages nCurStage,
     bool bUsePageBreak,
     CXFA_Node* pParentContainer,
-    CXFA_Node** pCurActionNode,
-    XFA_ItemLayoutProcessorStages* nCurStage) {
+    CXFA_Node** pCurActionNode) {
   CXFA_Node* pChildContainer = nullptr;
-  switch (*nCurStage) {
+  switch (nCurStage) {
     case XFA_ItemLayoutProcessorStages::BreakBefore:
     case XFA_ItemLayoutProcessorStages::BreakAfter: {
       pChildContainer = (*pCurActionNode)->GetParent();
@@ -853,11 +853,11 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       break;
   }
 
-  switch (*nCurStage) {
+  XFA_ItemLayoutProcessorStages ret;
+  switch (nCurStage) {
     case XFA_ItemLayoutProcessorStages::Keep:
-      if (HandleKeep(pChildContainer->GetFirstChild(), pCurActionNode,
-                     nCurStage)) {
-        return;
+      if (HandleKeep(pChildContainer->GetFirstChild(), pCurActionNode, &ret)) {
+        return ret;
       }
       goto CheckNextChildContainer;
 
@@ -866,8 +866,8 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       FALLTHROUGH;
 
     case XFA_ItemLayoutProcessorStages::BookendLeader:
-      if (HandleBookendLeader(pParentContainer, pCurActionNode, nCurStage))
-        return;
+      if (HandleBookendLeader(pParentContainer, pCurActionNode, &ret))
+        return ret;
 
       *pCurActionNode = nullptr;
       FALLTHROUGH;
@@ -876,19 +876,18 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       if (*pCurActionNode) {
         CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
         if (!m_bKeepBreakFinish &&
-            FindBreakNode(pBreakBeforeNode, true, pCurActionNode, nCurStage)) {
-          return;
+            FindBreakNode(pBreakBeforeNode, true, pCurActionNode, &ret)) {
+          return ret;
         }
         if (m_bIsProcessKeep) {
-          if (ProcessKeepNodesForBreakBefore(pCurActionNode, nCurStage,
+          if (ProcessKeepNodesForBreakBefore(pCurActionNode, &ret,
                                              pChildContainer)) {
-            return;
+            return ret;
           }
           goto CheckNextChildContainer;
         }
         *pCurActionNode = pChildContainer;
-        *nCurStage = XFA_ItemLayoutProcessorStages::Container;
-        return;
+        return XFA_ItemLayoutProcessorStages::Container;
       }
       goto CheckNextChildContainer;
 
@@ -897,8 +896,8 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       FALLTHROUGH;
 
     case XFA_ItemLayoutProcessorStages::BreakAfter:
-      if (HandleBreakAfter(pChildContainer, pCurActionNode, nCurStage))
-        return;
+      if (HandleBreakAfter(pChildContainer, pCurActionNode, &ret))
+        return ret;
 
     CheckNextChildContainer : {
       CXFA_Node* pNextChildContainer =
@@ -915,33 +914,31 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
         goto NoMoreChildContainer;
 
       bool bLastKeep = false;
-      if (ProcessKeepNodesForCheckNext(pCurActionNode, nCurStage,
+      if (ProcessKeepNodesForCheckNext(pCurActionNode, &ret,
                                        &pNextChildContainer, &bLastKeep)) {
-        return;
+        return ret;
       }
       if (!m_bKeepBreakFinish && !bLastKeep &&
           FindBreakNode(pNextChildContainer->GetFirstChild(), true,
-                        pCurActionNode, nCurStage)) {
-        return;
+                        pCurActionNode, &ret)) {
+        return ret;
       }
       *pCurActionNode = pNextChildContainer;
-      *nCurStage = m_bIsProcessKeep ? XFA_ItemLayoutProcessorStages::Keep
-                                    : XFA_ItemLayoutProcessorStages::Container;
-      return;
+      return m_bIsProcessKeep ? XFA_ItemLayoutProcessorStages::Keep
+                              : XFA_ItemLayoutProcessorStages::Container;
     }
 
     NoMoreChildContainer : {
       *pCurActionNode = nullptr;
       FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BookendTrailer:
-        if (HandleBookendTrailer(pParentContainer, pCurActionNode, nCurStage))
-          return;
+        if (HandleBookendTrailer(pParentContainer, pCurActionNode, &ret))
+          return ret;
     }
       FALLTHROUGH;
     default:
       *pCurActionNode = nullptr;
-      *nCurStage = XFA_ItemLayoutProcessorStages::Done;
-      break;
+      return XFA_ItemLayoutProcessorStages::Done;
   }
 }
 
@@ -1005,13 +1002,13 @@ void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
     CXFA_ContainerLayoutItem* pPageAreaLayoutItem) {
   CXFA_Node* pFormNode = pPageAreaLayoutItem->GetFormNode();
   CXFA_Node* pCurChildNode = nullptr;
-  XFA_ItemLayoutProcessorStages nCurChildNodeStage =
-      XFA_ItemLayoutProcessorStages::None;
   CXFA_LayoutItem* pBeforeItem = nullptr;
-  for (GotoNextContainerNode(false, pFormNode, &pCurChildNode,
-                             &nCurChildNodeStage);
-       pCurChildNode; GotoNextContainerNode(false, pFormNode, &pCurChildNode,
-                                            &nCurChildNodeStage)) {
+  for (XFA_ItemLayoutProcessorStages nCurChildNodeStage =
+           GotoNextContainerNode(XFA_ItemLayoutProcessorStages::None, false,
+                                 pFormNode, &pCurChildNode);
+       pCurChildNode;
+       nCurChildNodeStage = GotoNextContainerNode(nCurChildNodeStage, false,
+                                                  pFormNode, &pCurChildNode)) {
     if (nCurChildNodeStage != XFA_ItemLayoutProcessorStages::Container)
       continue;
     if (pCurChildNode->GetElementType() == XFA_Element::Variables)
