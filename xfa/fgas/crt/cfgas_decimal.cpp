@@ -329,7 +329,7 @@ CFGAS_Decimal::CFGAS_Decimal(WideStringView strObj) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(negmet && IsNotZero(), scale);
 }
 
-CFGAS_Decimal::operator WideString() const {
+WideString CFGAS_Decimal::ToWideString() const {
   WideString retString;
   WideString tmpbuf;
   uint64_t phi = m_uHi;
@@ -355,7 +355,11 @@ CFGAS_Decimal::operator WideString() const {
   return retString;
 }
 
-CFGAS_Decimal::operator double() const {
+float CFGAS_Decimal::ToFloat() const {
+  return static_cast<float>(ToDouble());
+}
+
+double CFGAS_Decimal::ToDouble() const {
   double pow = (double)(1 << 16) * (1 << 16);
   double base = static_cast<double>(m_uHi) * pow * pow +
                 static_cast<double>(m_uMid) * pow + static_cast<double>(m_uLo);

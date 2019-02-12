@@ -49,6 +49,7 @@ jumbo_source_set("fgas") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "crt/cfgas_decimal_unittest.cpp",
     "crt/cfgas_formatstring_unittest.cpp",
   ]
   deps = [

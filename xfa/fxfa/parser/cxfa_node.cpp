@@ -4892,7 +4892,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
           if (iTread != -1) {
             CFGAS_Decimal wsDeci = CFGAS_Decimal(wsValue.AsStringView());
             wsDeci.SetScale(iTread);
-            wsRet = wsDeci;
+            wsRet = wsDeci.ToWideString();
           }
           return wsRet;
         }

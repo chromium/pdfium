@@ -18,8 +18,9 @@ class CFGAS_Decimal {
   CFGAS_Decimal(float val, uint8_t scale);
   explicit CFGAS_Decimal(WideStringView str);
 
-  operator WideString() const;
-  operator double() const;
+  WideString ToWideString() const;
+  float ToFloat() const;
+  double ToDouble() const;
 
   CFGAS_Decimal operator*(const CFGAS_Decimal& val) const;
   CFGAS_Decimal operator/(const CFGAS_Decimal& val) const;

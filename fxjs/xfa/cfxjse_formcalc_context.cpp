@@ -1753,7 +1753,7 @@ void CFXJSE_FormCalcContext::Round(CFXJSE_Value* pThis,
   }
 
   CFGAS_Decimal decimalValue(static_cast<float>(dValue), uPrecision);
-  args.GetReturnValue()->SetDouble(decimalValue);
+  args.GetReturnValue()->SetDouble(decimalValue.ToDouble());
 }
 
 // static

@@ -283,7 +283,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
       pValue->SetString(content.ToUTF8().AsStringView());
     } else {
       CFGAS_Decimal decimal(content.AsStringView());
-      pValue->SetFloat((float)(double)decimal);
+      pValue->SetFloat(decimal.ToFloat());
     }
   } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
     pValue->SetInteger(FXSYS_wtoi(content.c_str()));
@@ -291,7 +291,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
     pValue->SetBoolean(FXSYS_wtoi(content.c_str()) == 0 ? false : true);
   } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
     CFGAS_Decimal decimal(content.AsStringView());
-    pValue->SetFloat((float)(double)decimal);
+    pValue->SetFloat(decimal.ToFloat());
   } else {
     pValue->SetString(content.ToUTF8().AsStringView());
   }

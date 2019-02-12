@@ -1537,7 +1537,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
     if (bHavePercentSymbol)
       decimal = decimal / CFGAS_Decimal(100);
 
-    *wsValue = decimal;
+    *wsValue = decimal.ToWideString();
   }
   if (bNeg)
     wsValue->InsertAtFront(L'-');
@@ -1877,7 +1877,7 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
   CFGAS_Decimal decimal = CFGAS_Decimal(wsSrcNum.AsStringView());
   if (dwNumStyle & FX_NUMSTYLE_Percent) {
     decimal = decimal * CFGAS_Decimal(100);
-    wsSrcNum = decimal;
+    wsSrcNum = decimal.ToWideString();
   }
 
   int32_t exponent = 0;
@@ -1901,17 +1901,17 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
       threshold *= 10;
       fixed_count--;
     }
-    if (decimal != CFGAS_Decimal(0)) {
-      if (decimal < CFGAS_Decimal(threshold)) {
+    if (decimal.ToDouble() != 0.0) {
+      if (decimal.ToDouble() < threshold) {
         decimal = decimal * CFGAS_Decimal(10);
         exponent = -1;
-        while (decimal < CFGAS_Decimal(threshold)) {
+        while (decimal.ToDouble() < threshold) {
           decimal = decimal * CFGAS_Decimal(10);
           exponent -= 1;
         }
-      } else if (decimal > CFGAS_Decimal(threshold)) {
+      } else if (decimal.ToDouble() > threshold) {
         threshold *= 10;
-        while (decimal > CFGAS_Decimal(threshold)) {
+        while (decimal.ToDouble() > threshold) {
           decimal = decimal / CFGAS_Decimal(10);
           exponent += 1;
         }
@@ -1925,7 +1925,7 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
   int32_t scale = decimal.GetScale();
   if (iTreading < scale) {
     decimal.SetScale(iTreading);
-    wsSrcNum = decimal;
+    wsSrcNum = decimal.ToWideString();
   }
   if (bTrimTailZeros && scale > 0 && iTreading > 0) {
     wsSrcNum.TrimRight(L"0");
