@@ -39,35 +39,6 @@ CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
   ASSERT(m_pTextPage);
 
   m_strText = m_pTextPage->GetAllPageText();
-  int nCount = pTextPage->CountChars();
-  if (nCount)
-    m_CharIndex.push_back(0);
-  for (int i = 0; i < nCount; i++) {
-    FPDF_CHAR_INFO info;
-    pTextPage->GetCharInfo(i, &info);
-    int indexSize = pdfium::CollectionSize<int>(m_CharIndex);
-    if (info.m_Flag == FPDFTEXT_CHAR_NORMAL ||
-        info.m_Flag == FPDFTEXT_CHAR_GENERATED) {
-      if (indexSize % 2) {
-        m_CharIndex.push_back(1);
-      } else {
-        if (indexSize <= 0)
-          continue;
-        m_CharIndex[indexSize - 1] += 1;
-      }
-    } else {
-      if (indexSize % 2) {
-        if (indexSize <= 0)
-          continue;
-        m_CharIndex[indexSize - 1] = i + 1;
-      } else {
-        m_CharIndex.push_back(i + 1);
-      }
-    }
-  }
-  int indexSize = pdfium::CollectionSize<int>(m_CharIndex);
-  if (indexSize % 2)
-    m_CharIndex.erase(m_CharIndex.begin() + indexSize - 1);
 }
 
 CPDF_TextPageFind::~CPDF_TextPageFind() {}
@@ -85,10 +56,9 @@ bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
   m_findWhat = findwhatStr;
   m_options = options;
   m_bMatchCase = options.bMatchCase;
-  if (m_strText.IsEmpty()) {
-    m_IsFind = false;
+  if (m_strText.IsEmpty())
     return true;
-  }
+
   size_t len = findwhatStr.GetLength();
   if (!m_bMatchCase) {
     findwhatStr.MakeLower();
@@ -115,25 +85,21 @@ bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
   if (m_csFindWhatArray.empty())
     return false;
 
-  m_IsFind = true;
   m_resStart = 0;
   m_resEnd = -1;
   return true;
 }
 
 bool CPDF_TextPageFind::FindNext() {
-  m_resArray.clear();
   if (!m_findNextStart.has_value())
     return false;
-  if (m_strText.IsEmpty()) {
-    m_IsFind = false;
-    return m_IsFind;
-  }
+  if (m_strText.IsEmpty())
+    return false;
+
   size_t strLen = m_strText.GetLength();
-  if (m_findNextStart.value() > strLen - 1) {
-    m_IsFind = false;
-    return m_IsFind;
-  }
+  if (m_findNextStart.value() > strLen - 1)
+    return false;
+
   int nCount = pdfium::CollectionSize<int>(m_csFindWhatArray);
   Optional<size_t> nResultPos = 0;
   size_t nStartPos = m_findNextStart.value();
@@ -155,10 +121,9 @@ bool CPDF_TextPageFind::FindNext() {
       continue;
     }
     nResultPos = m_strText.Find(csWord.AsStringView(), nStartPos);
-    if (!nResultPos.has_value()) {
-      m_IsFind = false;
-      return m_IsFind;
-    }
+    if (!nResultPos.has_value())
+      return false;
+
     size_t endIndex = nResultPos.value() + csWord.GetLength() - 1;
     if (iWord == 0)
       m_resStart = nResultPos.value();
@@ -206,10 +171,6 @@ bool CPDF_TextPageFind::FindNext() {
     }
   }
   m_resEnd = nResultPos.value() + m_csFindWhatArray.back().GetLength() - 1;
-  m_IsFind = true;
-  int resStart = GetCharIndex(m_resStart);
-  int resEnd = GetCharIndex(m_resEnd);
-  m_resArray = m_pTextPage->GetRectArray(resStart, resEnd - resStart + 1);
   if (m_options.bConsecutive) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
@@ -217,21 +178,18 @@ bool CPDF_TextPageFind::FindNext() {
     m_findNextStart = m_resEnd + 1;
     m_findPreStart = m_resStart - 1;
   }
-  return m_IsFind;
+  return true;
 }
 
 bool CPDF_TextPageFind::FindPrev() {
-  m_resArray.clear();
-  if (m_strText.IsEmpty() || !m_findPreStart.has_value()) {
-    m_IsFind = false;
-    return m_IsFind;
-  }
+  if (m_strText.IsEmpty() || !m_findPreStart.has_value())
+    return false;
+
   CPDF_TextPageFind findEngine(m_pTextPage.Get());
   bool ret = findEngine.FindFirst(m_findWhat, m_options, 0);
-  if (!ret) {
-    m_IsFind = false;
-    return m_IsFind;
-  }
+  if (!ret)
+    return false;
+
   int order = -1;
   int MatchedCount = 0;
   while (ret) {
@@ -246,14 +204,11 @@ bool CPDF_TextPageFind::FindPrev() {
       MatchedCount = MatchedCount1;
     }
   }
-  if (order == -1) {
-    m_IsFind = false;
-    return m_IsFind;
-  }
+  if (order == -1)
+    return false;
+
   m_resStart = m_pTextPage->TextIndexFromCharIndex(order);
   m_resEnd = m_pTextPage->TextIndexFromCharIndex(order + MatchedCount - 1);
-  m_IsFind = true;
-  m_resArray = m_pTextPage->GetRectArray(order, MatchedCount);
   if (m_options.bConsecutive) {
     m_findNextStart = m_resStart + 1;
     m_findPreStart = m_resEnd - 1;
@@ -261,7 +216,7 @@ bool CPDF_TextPageFind::FindPrev() {
     m_findNextStart = m_resEnd + 1;
     m_findPreStart = m_resStart - 1;
   }
-  return m_IsFind;
+  return true;
 }
 
 void CPDF_TextPageFind::ExtractFindWhat(const WideString& findwhat) {
