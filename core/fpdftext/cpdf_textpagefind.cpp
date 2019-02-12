@@ -36,6 +36,8 @@ bool IsIgnoreSpaceCharacter(wchar_t curChar) {
 
 CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
     : m_pTextPage(pTextPage) {
+  ASSERT(m_pTextPage);
+
   m_strText = m_pTextPage->GetAllPageText();
   int nCount = pTextPage->CountChars();
   if (nCount)
@@ -77,8 +79,6 @@ int CPDF_TextPageFind::GetCharIndex(int index) const {
 bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
                                   const Options& options,
                                   Optional<size_t> startPos) {
-  if (!m_pTextPage)
-    return false;
   if (m_strText.IsEmpty() || m_bMatchCase != options.bMatchCase)
     m_strText = m_pTextPage->GetAllPageText();
   WideString findwhatStr = findwhat;
@@ -122,8 +122,6 @@ bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
 }
 
 bool CPDF_TextPageFind::FindNext() {
-  if (!m_pTextPage)
-    return false;
   m_resArray.clear();
   if (!m_findNextStart.has_value())
     return false;
@@ -223,8 +221,6 @@ bool CPDF_TextPageFind::FindNext() {
 }
 
 bool CPDF_TextPageFind::FindPrev() {
-  if (!m_pTextPage)
-    return false;
   m_resArray.clear();
   if (m_strText.IsEmpty() || !m_findPreStart.has_value()) {
     m_IsFind = false;

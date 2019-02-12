@@ -269,8 +269,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
   return size;
 }
 
-// Search
-// -1 for end
 FPDF_EXPORT FPDF_SCHHANDLE FPDF_CALLCONV
 FPDFText_FindStart(FPDF_TEXTPAGE text_page,
                    FPDF_WIDESTRING findwhat,
@@ -283,12 +281,13 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   options.bMatchCase = !!(flags & FPDF_MATCHCASE);
   options.bMatchWholeWord = !!(flags & FPDF_MATCHWHOLEWORD);
   options.bConsecutive = !!(flags & FPDF_CONSECUTIVE);
-  CPDF_TextPageFind* textpageFind =
-      new CPDF_TextPageFind(CPDFTextPageFromFPDFTextPage(text_page));
-  textpageFind->FindFirst(
+  auto find = pdfium::MakeUnique<CPDF_TextPageFind>(
+      CPDFTextPageFromFPDFTextPage(text_page));
+  find->FindFirst(
       WideStringFromFPDFWideString(findwhat), options,
       start_index >= 0 ? Optional<size_t>(start_index) : pdfium::nullopt);
-  return FPDFSchHandleFromCPDFTextPageFind(textpageFind);
+  // Caller takes ownership.
+  return FPDFSchHandleFromCPDFTextPageFind(find.release());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindNext(FPDF_SCHHANDLE handle) {
