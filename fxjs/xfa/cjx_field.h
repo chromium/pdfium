@@ -41,6 +41,7 @@ class CJX_Field final : public CJX_Container {
   JSE_PROP(fontColor);
   JSE_PROP(formatMessage);
   JSE_PROP(formattedValue);
+  JSE_PROP(length);
   JSE_PROP(mandatory);
   JSE_PROP(mandatoryMessage);
   JSE_PROP(parentSubform);

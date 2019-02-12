@@ -126,3 +126,16 @@ CJS_Result CJX_Form::execValidate(
                                                false, true);
   return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
+
+void CJX_Form::checksumS(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  if (bSetting) {
+    SetAttribute(XFA_Attribute::Checksum, pValue->ToWideString().AsStringView(),
+                 false);
+    return;
+  }
+
+  Optional<WideString> checksum = TryAttribute(XFA_Attribute::Checksum, false);
+  pValue->SetString(checksum ? checksum->ToUTF8().AsStringView() : "");
+}

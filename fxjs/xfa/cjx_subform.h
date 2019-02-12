@@ -26,6 +26,7 @@ class CJX_Subform final : public CJX_Container {
   JSE_METHOD(execValidate);
 
   JSE_PROP(instanceIndex);
+  JSE_PROP(instanceManager);
   JSE_PROP(layout);
   JSE_PROP(locale);
   JSE_PROP(validationMessage);

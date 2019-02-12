@@ -1393,22 +1393,6 @@ void CJX_Object::ScriptSomMandatoryMessage(CFXJSE_Value* pValue,
   ScriptSomMessage(pValue, bSetting, XFA_SOM_MandatoryMessage);
 }
 
-void CJX_Object::ScriptFieldLength(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-
-  CXFA_Node* node = ToNode(object_.Get());
-  if (!node->IsWidgetReady()) {
-    pValue->SetInteger(0);
-    return;
-  }
-  pValue->SetInteger(node->CountChoiceListItems(true));
-}
-
 void CJX_Object::ScriptSomDefaultValue(CFXJSE_Value* pValue,
                                        bool bSetting,
                                        XFA_Attribute /* unused */) {
@@ -1571,57 +1555,7 @@ void CJX_Object::ScriptSomInstanceIndex(CFXJSE_Value* pValue,
   }
 }
 
-void CJX_Object::ScriptSubformInstanceManager(CFXJSE_Value* pValue,
-                                              bool bSetting,
-                                              XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-
-  WideString wsName = GetCData(XFA_Attribute::Name);
-  CXFA_Node* pInstanceMgr = nullptr;
-  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetPrevSibling(); pNode;
-       pNode = pNode->GetPrevSibling()) {
-    if (pNode->GetElementType() == XFA_Element::InstanceManager) {
-      WideString wsInstMgrName =
-          pNode->JSObject()->GetCData(XFA_Attribute::Name);
-      if (wsInstMgrName.GetLength() >= 1 && wsInstMgrName[0] == '_' &&
-          wsInstMgrName.Right(wsInstMgrName.GetLength() - 1) == wsName) {
-        pInstanceMgr = pNode;
-      }
-      break;
-    }
-  }
-  if (!pInstanceMgr) {
-    pValue->SetNull();
-    return;
-  }
-
-  pValue->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pInstanceMgr));
-}
-
 void CJX_Object::ScriptSubmitFormatMode(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {}
 
-void CJX_Object::ScriptFormChecksumS(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
-  if (bSetting) {
-    SetAttribute(XFA_Attribute::Checksum, pValue->ToWideString().AsStringView(),
-                 false);
-    return;
-  }
-
-  Optional<WideString> checksum = TryAttribute(XFA_Attribute::Checksum, false);
-  pValue->SetString(checksum ? checksum->ToUTF8().AsStringView() : "");
-}
-
-void CJX_Object::ScriptExclGroupErrorText(CFXJSE_Value* pValue,
-                                          bool bSetting,
-                                          XFA_Attribute eAttribute) {
-  if (bSetting)
-    ThrowInvalidPropertyException();
-}

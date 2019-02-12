@@ -333,6 +333,22 @@ void CJX_Field::formattedValue(CFXJSE_Value* pValue,
       node->GetValue(XFA_VALUEPICTURE_Display).ToUTF8().AsStringView());
 }
 
+void CJX_Field::length(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+
+  CXFA_Node* node = GetXFANode();
+  if (!node->IsWidgetReady()) {
+    pValue->SetInteger(0);
+    return;
+  }
+  pValue->SetInteger(node->CountChoiceListItems(true));
+}
+
 void CJX_Field::parentSubform(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {

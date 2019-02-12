@@ -179,8 +179,6 @@ jumbo_source_set("fxjs") {
         "xfa/cjx_handler.h",
         "xfa/cjx_hostpseudomodel.cpp",
         "xfa/cjx_hostpseudomodel.h",
-        "xfa/cjx_image.cpp",
-        "xfa/cjx_image.h",
         "xfa/cjx_instancemanager.cpp",
         "xfa/cjx_instancemanager.h",
         "xfa/cjx_integer.cpp",

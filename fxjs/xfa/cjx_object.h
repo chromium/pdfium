@@ -175,16 +175,12 @@ class CJX_Object {
   JSE_PROP(ScriptSomBorderWidth);
   JSE_PROP(ScriptSomValidationMessage);
   JSE_PROP(ScriptSomMandatoryMessage);
-  JSE_PROP(ScriptFieldLength);
   JSE_PROP(ScriptSomDefaultValue);
   JSE_PROP(ScriptSomDefaultValue_Read);
   JSE_PROP(ScriptSomDataNode);
   JSE_PROP(ScriptSomMandatory);
   JSE_PROP(ScriptSomInstanceIndex);
-  JSE_PROP(ScriptSubformInstanceManager);
   JSE_PROP(ScriptSubmitFormatMode);
-  JSE_PROP(ScriptFormChecksumS);
-  JSE_PROP(ScriptExclGroupErrorText);
 
   void ScriptSomMessage(CFXJSE_Value* pValue,
                         bool bSetting,

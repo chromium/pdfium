@@ -27,6 +27,8 @@ class CJX_Form final : public CJX_Model {
   JSE_METHOD(recalculate);
   JSE_METHOD(remerge);
 
+  JSE_PROP(checksumS);
+
  private:
   using Type__ = CJX_Form;
   using ParentType__ = CJX_Model;

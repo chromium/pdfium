@@ -159,6 +159,13 @@ void CJX_ExclGroup::borderWidth(CFXJSE_Value* pValue,
   ScriptSomBorderWidth(pValue, bSetting, eAttribute);
 }
 
+void CJX_ExclGroup::errorText(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute) {
+  if (bSetting)
+    ThrowInvalidPropertyException();
+}
+
 void CJX_ExclGroup::fillColor(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
