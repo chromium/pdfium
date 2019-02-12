@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -64,21 +65,90 @@ Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
   return WideString(lpszFullString, static_cast<size_t>(nLen));
 }
 
+std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
+  std::vector<WideString> findwhat_array;
+
+  size_t len = findwhat.GetLength();
+  size_t i = 0;
+  for (i = 0; i < len; ++i)
+    if (findwhat[i] != ' ')
+      break;
+  if (i == len) {
+    findwhat_array.push_back(findwhat);
+    return findwhat_array;
+  }
+
+  int index = 0;
+  while (1) {
+    Optional<WideString> word = ExtractSubString(findwhat.c_str(), index);
+    if (!word)
+      break;
+
+    if (word->IsEmpty()) {
+      findwhat_array.push_back(L"");
+      index++;
+      continue;
+    }
+
+    size_t pos = 0;
+    while (pos < word->GetLength()) {
+      WideString curStr = word->Mid(pos, 1);
+      wchar_t curChar = (*word)[pos];
+      if (IsIgnoreSpaceCharacter(curChar)) {
+        if (pos > 0 && curChar == 0x2019) {
+          pos++;
+          continue;
+        }
+        if (pos > 0)
+          findwhat_array.push_back(word->Left(pos));
+        findwhat_array.push_back(curStr);
+        if (pos == word->GetLength() - 1) {
+          word->clear();
+          break;
+        }
+        word.emplace(word->Right(word->GetLength() - pos - 1));
+        pos = 0;
+        continue;
+      }
+      pos++;
+    }
+
+    if (!word->IsEmpty())
+      findwhat_array.push_back(word.value());
+    index++;
+  }
+  return findwhat_array;
+}
+
 }  // namespace
 
-CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
-                                     const WideString& findwhat,
-                                     const Options& options,
-                                     Optional<size_t> startPos)
+// static
+std::unique_ptr<CPDF_TextPageFind> CPDF_TextPageFind::Create(
+    const CPDF_TextPage* pTextPage,
+    const WideString& findwhat,
+    const Options& options,
+    Optional<size_t> startPos) {
+  std::vector<WideString> findwhat_array =
+      ExtractFindWhat(GetStringCase(findwhat, options.bMatchCase));
+  auto find = pdfium::WrapUnique(
+      new CPDF_TextPageFind(pTextPage, findwhat_array, options, startPos));
+  find->FindFirst();
+  return find;
+}
+
+CPDF_TextPageFind::CPDF_TextPageFind(
+    const CPDF_TextPage* pTextPage,
+    const std::vector<WideString>& findwhat_array,
+    const Options& options,
+    Optional<size_t> startPos)
     : m_pTextPage(pTextPage),
       m_strText(GetStringCase(pTextPage->GetAllPageText(), options.bMatchCase)),
-      m_findWhat(GetStringCase(findwhat, options.bMatchCase)),
+      m_csFindWhatArray(findwhat_array),
       m_options(options) {
   if (!m_strText.IsEmpty()) {
     m_findNextStart = startPos;
     m_findPreStart = startPos.value_or(m_strText.GetLength() - 1);
   }
-  ExtractFindWhat();
 }
 
 CPDF_TextPageFind::~CPDF_TextPageFind() = default;
@@ -186,7 +256,8 @@ bool CPDF_TextPageFind::FindPrev() {
   if (m_strText.IsEmpty() || !m_findPreStart.has_value())
     return false;
 
-  CPDF_TextPageFind find_engine(m_pTextPage.Get(), m_findWhat, m_options, 0);
+  CPDF_TextPageFind find_engine(m_pTextPage.Get(), m_csFindWhatArray, m_options,
+                                0);
   if (!find_engine.FindFirst())
     return false;
 
@@ -215,58 +286,6 @@ bool CPDF_TextPageFind::FindPrev() {
     m_findPreStart = m_resStart - 1;
   }
   return true;
-}
-
-void CPDF_TextPageFind::ExtractFindWhat() {
-  size_t len = m_findWhat.GetLength();
-  size_t i = 0;
-  for (i = 0; i < len; ++i)
-    if (m_findWhat[i] != ' ')
-      break;
-  if (i == len) {
-    m_csFindWhatArray.push_back(m_findWhat);
-    return;
-  }
-
-  int index = 0;
-  while (1) {
-    Optional<WideString> word = ExtractSubString(m_findWhat.c_str(), index);
-    if (!word)
-      break;
-
-    if (word->IsEmpty()) {
-      m_csFindWhatArray.push_back(L"");
-      index++;
-      continue;
-    }
-
-    size_t pos = 0;
-    while (pos < word->GetLength()) {
-      WideString curStr = word->Mid(pos, 1);
-      wchar_t curChar = (*word)[pos];
-      if (IsIgnoreSpaceCharacter(curChar)) {
-        if (pos > 0 && curChar == 0x2019) {
-          pos++;
-          continue;
-        }
-        if (pos > 0)
-          m_csFindWhatArray.push_back(word->Left(pos));
-        m_csFindWhatArray.push_back(curStr);
-        if (pos == word->GetLength() - 1) {
-          word->clear();
-          break;
-        }
-        word.emplace(word->Right(word->GetLength() - pos - 1));
-        pos = 0;
-        continue;
-      }
-      pos++;
-    }
-
-    if (!word->IsEmpty())
-      m_csFindWhatArray.push_back(word.value());
-    index++;
-  }
 }
 
 bool CPDF_TextPageFind::IsMatchWholeWord(const WideString& csPageText,

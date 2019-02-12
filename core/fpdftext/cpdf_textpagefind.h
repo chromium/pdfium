@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_
 #define CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
@@ -25,14 +26,13 @@ class CPDF_TextPageFind {
     bool bConsecutive = false;
   };
 
-  CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
-                    const WideString& findwhat,
-                    const Options& options,
-                    Optional<size_t> startPos);
-  ~CPDF_TextPageFind();
+  static std::unique_ptr<CPDF_TextPageFind> Create(
+      const CPDF_TextPage* pTextPage,
+      const WideString& findwhat,
+      const Options& options,
+      Optional<size_t> startPos);
 
-  // Should be called immediately after construction.
-  bool FindFirst();
+  ~CPDF_TextPageFind();
 
   bool FindNext();
   bool FindPrev();
@@ -40,7 +40,14 @@ class CPDF_TextPageFind {
   int GetMatchedCount() const;
 
  protected:
-  void ExtractFindWhat();
+  CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
+                    const std::vector<WideString>& findwhat_array,
+                    const Options& options,
+                    Optional<size_t> startPos);
+
+  // Should be called immediately after construction.
+  bool FindFirst();
+
   bool IsMatchWholeWord(const WideString& csPageText,
                         size_t startPos,
                         size_t endPos);
@@ -49,8 +56,7 @@ class CPDF_TextPageFind {
  private:
   UnownedPtr<const CPDF_TextPage> const m_pTextPage;
   const WideString m_strText;
-  const WideString m_findWhat;
-  std::vector<WideString> m_csFindWhatArray;
+  const std::vector<WideString> m_csFindWhatArray;
   Optional<size_t> m_findNextStart;
   Optional<size_t> m_findPreStart;
   int m_resStart = 0;
