@@ -718,7 +718,7 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
 }
 
 size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
-                                   TextCharPos* pCharPos) const {
+                                   std::vector<TextCharPos>* pCharPos) const {
   ASSERT(pPiece->iChars > 0);
   ASSERT(pPiece->pFont);
 
@@ -747,6 +747,7 @@ size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
   float fY = rtText.top + fAscent;
   size_t szCount = 0;
   for (int32_t i = 0; i < pPiece->iChars; ++i) {
+    TextCharPos& current_char_pos = (*pCharPos)[szCount];
     wchar_t wch = pPiece->szText[i];
     int32_t iWidth = pPiece->Widths[i];
     FX_CHARTYPE dwCharType = FX_GetCharType(wch);
@@ -757,66 +758,63 @@ size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
     }
 
     uint32_t iCharWidth = abs(iWidth);
-    bool bEmptyChar = (dwCharType >= FX_CHARTYPE::kTab &&
-                       dwCharType <= FX_CHARTYPE::kControl);
+    const bool bEmptyChar = (dwCharType >= FX_CHARTYPE::kTab &&
+                             dwCharType <= FX_CHARTYPE::kControl);
     if (!bEmptyChar)
       ++szCount;
 
-    if (pCharPos) {
-      iCharWidth /= iFontSize;
-      wchar_t wForm = wch;
-      if (dwCharType >= FX_CHARTYPE::kArabicAlef) {
-        if (i + 1 < pPiece->iChars) {
-          wNext = pPiece->szText[i + 1];
-          if (pPiece->Widths[i + 1] < 0 && i + 2 < pPiece->iChars)
-            wNext = pPiece->szText[i + 2];
-        } else {
-          wNext = 0xFEFF;
-        }
-        wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
-      } else if (bRTLPiece) {
-        wForm = FX_GetMirrorChar(wch);
+    iCharWidth /= iFontSize;
+    wchar_t wForm = wch;
+    if (dwCharType >= FX_CHARTYPE::kArabicAlef) {
+      if (i + 1 < pPiece->iChars) {
+        wNext = pPiece->szText[i + 1];
+        if (pPiece->Widths[i + 1] < 0 && i + 2 < pPiece->iChars)
+          wNext = pPiece->szText[i + 2];
+      } else {
+        wNext = 0xFEFF;
       }
+      wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
+    } else if (bRTLPiece) {
+      wForm = FX_GetMirrorChar(wch);
+    }
 
-      if (!bEmptyChar) {
-        pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm);
-        if (pCharPos->m_GlyphIndex == 0xFFFF)
-          pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wch);
+    if (!bEmptyChar) {
+      current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
+      if (current_char_pos.m_GlyphIndex == 0xFFFF)
+        current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wch);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-        pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
+      current_char_pos.m_ExtGID = current_char_pos.m_GlyphIndex;
 #endif
-        pCharPos->m_FontCharWidth = iCharWidth;
-      }
+      current_char_pos.m_FontCharWidth = iCharWidth;
+    }
 
-      float fCharWidth = fFontSize * iCharWidth / 1000.0f;
-      if (bRTLPiece && dwCharType != FX_CHARTYPE::kCombination)
-        fX -= fCharWidth;
+    float fCharWidth = fFontSize * iCharWidth / 1000.0f;
+    if (bRTLPiece && dwCharType != FX_CHARTYPE::kCombination)
+      fX -= fCharWidth;
 
-      if (!bEmptyChar)
-        pCharPos->m_Origin = CFX_PointF(fX, fY);
-      if (!bRTLPiece && dwCharType != FX_CHARTYPE::kCombination)
-        fX += fCharWidth;
+    if (!bEmptyChar)
+      current_char_pos.m_Origin = CFX_PointF(fX, fY);
+    if (!bRTLPiece && dwCharType != FX_CHARTYPE::kCombination)
+      fX += fCharWidth;
 
-      if (!bEmptyChar) {
-        pCharPos->m_bGlyphAdjust = true;
-        pCharPos->m_AdjustMatrix[0] = -1;
-        pCharPos->m_AdjustMatrix[1] = 0;
-        pCharPos->m_AdjustMatrix[2] = 0;
-        pCharPos->m_AdjustMatrix[3] = 1;
-        pCharPos->m_Origin.y += fAscent * iVerScale / 100.0f;
-        pCharPos->m_Origin.y -= fAscent;
+    if (!bEmptyChar) {
+      current_char_pos.m_bGlyphAdjust = true;
+      current_char_pos.m_AdjustMatrix[0] = -1;
+      current_char_pos.m_AdjustMatrix[1] = 0;
+      current_char_pos.m_AdjustMatrix[2] = 0;
+      current_char_pos.m_AdjustMatrix[3] = 1;
+      current_char_pos.m_Origin.y += fAscent * iVerScale / 100.0f;
+      current_char_pos.m_Origin.y -= fAscent;
 
-        if (iHorScale != 100 || iVerScale != 100) {
-          pCharPos->m_AdjustMatrix[0] =
-              pCharPos->m_AdjustMatrix[0] * iHorScale / 100.0f;
-          pCharPos->m_AdjustMatrix[1] =
-              pCharPos->m_AdjustMatrix[1] * iHorScale / 100.0f;
-          pCharPos->m_AdjustMatrix[2] =
-              pCharPos->m_AdjustMatrix[2] * iVerScale / 100.0f;
-          pCharPos->m_AdjustMatrix[3] =
-              pCharPos->m_AdjustMatrix[3] * iVerScale / 100.0f;
-        }
-        ++pCharPos;
+      if (iHorScale != 100 || iVerScale != 100) {
+        current_char_pos.m_AdjustMatrix[0] =
+            current_char_pos.m_AdjustMatrix[0] * iHorScale / 100.0f;
+        current_char_pos.m_AdjustMatrix[1] =
+            current_char_pos.m_AdjustMatrix[1] * iHorScale / 100.0f;
+        current_char_pos.m_AdjustMatrix[2] =
+            current_char_pos.m_AdjustMatrix[2] * iVerScale / 100.0f;
+        current_char_pos.m_AdjustMatrix[3] =
+            current_char_pos.m_AdjustMatrix[3] * iVerScale / 100.0f;
       }
     }
     if (iWidth > 0)

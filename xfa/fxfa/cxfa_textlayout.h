@@ -104,14 +104,15 @@ class CXFA_TextLayout {
   void RenderString(CFX_RenderDevice* pDevice,
                     CXFA_PieceLine* pPieceLine,
                     size_t szPiece,
-                    TextCharPos* pCharPos,
+                    std::vector<TextCharPos>* pCharPos,
                     const CFX_Matrix& tmDoc2Device);
   void RenderPath(CFX_RenderDevice* pDevice,
                   CXFA_PieceLine* pPieceLine,
                   size_t szPiece,
-                  TextCharPos* pCharPos,
+                  std::vector<TextCharPos>* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
-  size_t GetDisplayPos(const CXFA_TextPiece* pPiece, TextCharPos* pCharPos);
+  size_t GetDisplayPos(const CXFA_TextPiece* pPiece,
+                       std::vector<TextCharPos>* pCharPos);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool LayoutInternal(size_t szBlockIndex);
   size_t CountBlocks() const;

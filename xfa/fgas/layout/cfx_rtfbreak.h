@@ -43,7 +43,7 @@ class CFX_RTFBreak final : public CFX_Break {
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
 
   size_t GetDisplayPos(const CFX_TextPiece* pPiece,
-                       TextCharPos* pCharPos) const;
+                       std::vector<TextCharPos>* pCharPos) const;
 
   CFX_BreakType AppendChar(wchar_t wch);
 
