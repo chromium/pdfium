@@ -44,6 +44,7 @@ source_set("gtest") {
   testonly = true
   sources = [
     "src/googletest/include/gtest/gtest-death-test.h",
+    "src/googletest/include/gtest/gtest-matchers.h",
     "src/googletest/include/gtest/gtest-message.h",
     "src/googletest/include/gtest/gtest-param-test.h",
     "src/googletest/include/gtest/gtest-printers.h",
@@ -67,6 +68,7 @@ source_set("gtest") {
     "src/googletest/src/gtest-death-test.cc",
     "src/googletest/src/gtest-filepath.cc",
     "src/googletest/src/gtest-internal-inl.h",
+    "src/googletest/src/gtest-matchers.cc",
     "src/googletest/src/gtest-port.cc",
     "src/googletest/src/gtest-printers.cc",
     "src/googletest/src/gtest-test-part.cc",
