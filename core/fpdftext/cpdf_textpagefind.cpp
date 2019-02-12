@@ -41,6 +41,29 @@ WideString GetStringCase(const WideString& wsOriginal, bool bMatchCase) {
   return wsLower;
 }
 
+Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
+                                      int iSubString) {
+  ASSERT(lpszFullString);
+
+  while (iSubString--) {
+    lpszFullString = std::wcschr(lpszFullString, TEXT_SPACE_CHAR);
+    if (!lpszFullString)
+      return {};
+
+    lpszFullString++;
+    while (*lpszFullString == TEXT_SPACE_CHAR)
+      lpszFullString++;
+  }
+
+  const wchar_t* lpchEnd = std::wcschr(lpszFullString, TEXT_SPACE_CHAR);
+  int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
+                     : static_cast<int>(wcslen(lpszFullString));
+  if (nLen < 0)
+    return {};
+
+  return WideString(lpszFullString, static_cast<size_t>(nLen));
+}
+
 }  // namespace
 
 CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
@@ -55,6 +78,7 @@ CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
     m_findNextStart = startPos;
     m_findPreStart = startPos.value_or(m_strText.GetLength() - 1);
   }
+  ExtractFindWhat();
 }
 
 CPDF_TextPageFind::~CPDF_TextPageFind() = default;
@@ -64,19 +88,7 @@ int CPDF_TextPageFind::GetCharIndex(int index) const {
 }
 
 bool CPDF_TextPageFind::FindFirst() {
-  if (m_strText.IsEmpty())
-    return true;
-
-  size_t len = m_findWhat.GetLength();
-  size_t i = 0;
-  for (i = 0; i < len; ++i)
-    if (m_findWhat[i] != ' ')
-      break;
-  if (i < len)
-    ExtractFindWhat();
-  else
-    m_csFindWhatArray.push_back(m_findWhat);
-  return !m_csFindWhatArray.empty();
+  return m_strText.IsEmpty() || !m_csFindWhatArray.empty();
 }
 
 bool CPDF_TextPageFind::FindNext() {
@@ -206,13 +218,19 @@ bool CPDF_TextPageFind::FindPrev() {
 }
 
 void CPDF_TextPageFind::ExtractFindWhat() {
-  if (m_findWhat.IsEmpty())
+  size_t len = m_findWhat.GetLength();
+  size_t i = 0;
+  for (i = 0; i < len; ++i)
+    if (m_findWhat[i] != ' ')
+      break;
+  if (i == len) {
+    m_csFindWhatArray.push_back(m_findWhat);
     return;
+  }
 
   int index = 0;
   while (1) {
-    Optional<WideString> word =
-        ExtractSubString(m_findWhat.c_str(), index, TEXT_SPACE_CHAR);
+    Optional<WideString> word = ExtractSubString(m_findWhat.c_str(), index);
     if (!word)
       break;
 
@@ -294,32 +312,6 @@ bool CPDF_TextPageFind::IsMatchWholeWord(const WideString& csPageText,
     }
   }
   return true;
-}
-
-Optional<WideString> CPDF_TextPageFind::ExtractSubString(
-    const wchar_t* lpszFullString,
-    int iSubString,
-    wchar_t chSep) {
-  if (!lpszFullString)
-    return {};
-
-  while (iSubString--) {
-    lpszFullString = std::wcschr(lpszFullString, chSep);
-    if (!lpszFullString)
-      return {};
-
-    lpszFullString++;
-    while (*lpszFullString == chSep)
-      lpszFullString++;
-  }
-
-  const wchar_t* lpchEnd = std::wcschr(lpszFullString, chSep);
-  int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
-                     : static_cast<int>(wcslen(lpszFullString));
-  if (nLen < 0)
-    return {};
-
-  return {WideString(lpszFullString, static_cast<size_t>(nLen))};
 }
 
 int CPDF_TextPageFind::GetCurOrder() const {
