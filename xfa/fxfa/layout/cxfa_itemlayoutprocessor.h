@@ -15,6 +15,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 constexpr float kXFALayoutPrecision = 0.0005f;
@@ -126,14 +127,14 @@ class CXFA_ItemLayoutProcessor {
       CXFA_Node* pParentContainer,
       CXFA_Node** pCurActionNode);
 
-  bool ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
-                                    XFA_ItemLayoutProcessorStages* nCurStage,
-                                    CXFA_Node** pNextContainer,
-                                    bool* pLastKeepNode);
+  Optional<XFA_ItemLayoutProcessorStages> ProcessKeepNodesForCheckNext(
+      CXFA_Node** pCurActionNode,
+      CXFA_Node** pNextContainer,
+      bool* pLastKeepNode);
 
-  bool ProcessKeepNodesForBreakBefore(CXFA_Node** pCurActionNode,
-                                      XFA_ItemLayoutProcessorStages* nCurStage,
-                                      CXFA_Node* pContainerNode);
+  Optional<XFA_ItemLayoutProcessorStages> ProcessKeepNodesForBreakBefore(
+      CXFA_Node** pCurActionNode,
+      CXFA_Node* pContainerNode);
 
   CXFA_Node* GetSubformSetParent(CXFA_Node* pSubformSet);
 
@@ -164,18 +165,19 @@ class CXFA_ItemLayoutProcessor {
       CXFA_LayoutContext* pLayoutContext,
       bool bNewRow);
 
-  bool HandleKeep(CXFA_Node* pBreakAfterNode,
-                  CXFA_Node** pCurActionNode,
-                  XFA_ItemLayoutProcessorStages* nCurStage);
-  bool HandleBookendLeader(CXFA_Node* pParentContainer,
-                           CXFA_Node** pCurActionNode,
-                           XFA_ItemLayoutProcessorStages* nCurStage);
-  bool HandleBreakAfter(CXFA_Node* pChildContainer,
-                        CXFA_Node** pCurActionNode,
-                        XFA_ItemLayoutProcessorStages* nCurStage);
-  bool HandleBookendTrailer(CXFA_Node* pParentContainer,
-                            CXFA_Node** pCurActionNode,
-                            XFA_ItemLayoutProcessorStages* nCurStage);
+  Optional<XFA_ItemLayoutProcessorStages> HandleKeep(
+      CXFA_Node* pBreakAfterNode,
+      CXFA_Node** pCurActionNode);
+  Optional<XFA_ItemLayoutProcessorStages> HandleBookendLeader(
+      CXFA_Node* pParentContainer,
+      CXFA_Node** pCurActionNode);
+  Optional<XFA_ItemLayoutProcessorStages> HandleBreakAfter(
+      CXFA_Node* pChildContainer,
+      CXFA_Node** pCurActionNode);
+  Optional<XFA_ItemLayoutProcessorStages> HandleBookendTrailer(
+      CXFA_Node* pParentContainer,
+      CXFA_Node** pCurActionNode);
+  void ProcessKeepNodesEnd();
 
   CXFA_Node* m_pFormNode;
   CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
