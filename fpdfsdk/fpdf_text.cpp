@@ -276,10 +276,11 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   options.bMatchWholeWord = !!(flags & FPDF_MATCHWHOLEWORD);
   options.bConsecutive = !!(flags & FPDF_CONSECUTIVE);
   auto find = pdfium::MakeUnique<CPDF_TextPageFind>(
-      CPDFTextPageFromFPDFTextPage(text_page));
-  find->FindFirst(
+      CPDFTextPageFromFPDFTextPage(text_page),
       WideStringFromFPDFWideString(findwhat), options,
       start_index >= 0 ? Optional<size_t>(start_index) : pdfium::nullopt);
+  find->FindFirst();
+
   // Caller takes ownership.
   return FPDFSchHandleFromCPDFTextPageFind(find.release());
 }

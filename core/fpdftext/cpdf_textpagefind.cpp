@@ -32,62 +32,51 @@ bool IsIgnoreSpaceCharacter(wchar_t curChar) {
   return true;
 }
 
-}  // namespace
+WideString GetStringCase(const WideString& wsOriginal, bool bMatchCase) {
+  if (bMatchCase)
+    return wsOriginal;
 
-CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage)
-    : m_pTextPage(pTextPage) {
-  ASSERT(m_pTextPage);
-
-  m_strText = m_pTextPage->GetAllPageText();
+  WideString wsLower = wsOriginal;
+  wsLower.MakeLower();
+  return wsLower;
 }
 
-CPDF_TextPageFind::~CPDF_TextPageFind() {}
+}  // namespace
+
+CPDF_TextPageFind::CPDF_TextPageFind(const CPDF_TextPage* pTextPage,
+                                     const WideString& findwhat,
+                                     const Options& options,
+                                     Optional<size_t> startPos)
+    : m_pTextPage(pTextPage),
+      m_strText(GetStringCase(pTextPage->GetAllPageText(), options.bMatchCase)),
+      m_findWhat(GetStringCase(findwhat, options.bMatchCase)),
+      m_options(options) {
+  if (!m_strText.IsEmpty()) {
+    m_findNextStart = startPos;
+    m_findPreStart = startPos.value_or(m_strText.GetLength() - 1);
+  }
+}
+
+CPDF_TextPageFind::~CPDF_TextPageFind() = default;
 
 int CPDF_TextPageFind::GetCharIndex(int index) const {
   return m_pTextPage->CharIndexFromTextIndex(index);
 }
 
-bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
-                                  const Options& options,
-                                  Optional<size_t> startPos) {
-  if (m_strText.IsEmpty() || m_bMatchCase != options.bMatchCase)
-    m_strText = m_pTextPage->GetAllPageText();
-  WideString findwhatStr = findwhat;
-  m_findWhat = findwhatStr;
-  m_options = options;
-  m_bMatchCase = options.bMatchCase;
+bool CPDF_TextPageFind::FindFirst() {
   if (m_strText.IsEmpty())
     return true;
 
-  size_t len = findwhatStr.GetLength();
-  if (!m_bMatchCase) {
-    findwhatStr.MakeLower();
-    m_strText.MakeLower();
-  }
-  m_bMatchWholeWord = options.bMatchWholeWord;
-  m_findNextStart = startPos;
-  if (!startPos.has_value()) {
-    if (!m_strText.IsEmpty())
-      m_findPreStart = m_strText.GetLength() - 1;
-  } else {
-    m_findPreStart = startPos;
-  }
-
-  m_csFindWhatArray.clear();
+  size_t len = m_findWhat.GetLength();
   size_t i = 0;
   for (i = 0; i < len; ++i)
-    if (findwhatStr[i] != ' ')
+    if (m_findWhat[i] != ' ')
       break;
   if (i < len)
-    ExtractFindWhat(findwhatStr);
+    ExtractFindWhat();
   else
-    m_csFindWhatArray.push_back(findwhatStr);
-  if (m_csFindWhatArray.empty())
-    return false;
-
-  m_resStart = 0;
-  m_resEnd = -1;
-  return true;
+    m_csFindWhatArray.push_back(m_findWhat);
+  return !m_csFindWhatArray.empty();
 }
 
 bool CPDF_TextPageFind::FindNext() {
@@ -158,7 +147,7 @@ bool CPDF_TextPageFind::FindNext() {
         }
       }
     }
-    if (m_bMatchWholeWord && bMatch) {
+    if (m_options.bMatchWholeWord && bMatch) {
       bMatch = IsMatchWholeWord(m_strText, nResultPos.value(), endIndex);
     }
     nStartPos = endIndex + 1;
@@ -185,8 +174,8 @@ bool CPDF_TextPageFind::FindPrev() {
   if (m_strText.IsEmpty() || !m_findPreStart.has_value())
     return false;
 
-  CPDF_TextPageFind find_engine(m_pTextPage.Get());
-  if (!find_engine.FindFirst(m_findWhat, m_options, 0))
+  CPDF_TextPageFind find_engine(m_pTextPage.Get(), m_findWhat, m_options, 0);
+  if (!find_engine.FindFirst())
     return false;
 
   int order = -1;
@@ -216,13 +205,14 @@ bool CPDF_TextPageFind::FindPrev() {
   return true;
 }
 
-void CPDF_TextPageFind::ExtractFindWhat(const WideString& findwhat) {
-  if (findwhat.IsEmpty())
+void CPDF_TextPageFind::ExtractFindWhat() {
+  if (m_findWhat.IsEmpty())
     return;
+
   int index = 0;
   while (1) {
     Optional<WideString> word =
-        ExtractSubString(findwhat.c_str(), index, TEXT_SPACE_CHAR);
+        ExtractSubString(m_findWhat.c_str(), index, TEXT_SPACE_CHAR);
     if (!word)
       break;
 
