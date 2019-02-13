@@ -66,3 +66,61 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
     CloseSavedDocument();
   }
 }
+
+TEST_F(FPDFEditPageEmbedderTest, HasTransparencyImage) {
+  constexpr int kExpectedObjectCount = 39;
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));
+
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    EXPECT_FALSE(FPDFPageObj_HasTransparency(obj));
+
+    FPDFPageObj_SetFillColor(obj, 255, 0, 0, 127);
+    EXPECT_TRUE(FPDFPageObj_HasTransparency(obj));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditPageEmbedderTest, HasTransparencyInvalid) {
+  EXPECT_FALSE(FPDFPageObj_HasTransparency(nullptr));
+}
+
+TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
+  constexpr int kExpectedObjectCount = 8;
+  EXPECT_TRUE(OpenDocument("rectangles.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));
+
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    EXPECT_FALSE(FPDFPageObj_HasTransparency(obj));
+
+    FPDFPageObj_SetStrokeColor(obj, 63, 63, 0, 127);
+    EXPECT_TRUE(FPDFPageObj_HasTransparency(obj));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditPageEmbedderTest, HasTransparencyText) {
+  constexpr int kExpectedObjectCount = 2;
+  EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));
+
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    EXPECT_FALSE(FPDFPageObj_HasTransparency(obj));
+
+    FPDFPageObj_SetBlendMode(obj, "Lighten");
+    EXPECT_TRUE(FPDFPageObj_HasTransparency(obj));
+  }
+
+  UnloadPage(page);
+}
