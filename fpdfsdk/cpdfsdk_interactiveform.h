@@ -42,7 +42,6 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
     return m_pFormFillEnv.Get();
   }
 
-  CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const;
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
   void GetWidgets(const WideString& sFieldName,
                   std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
@@ -82,7 +81,6 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
 
   std::vector<CPDF_FormField*> GetFieldFromObjects(
       const std::vector<const CPDF_Object*>& objects) const;
-  bool IsValidField(CPDF_Dictionary* pFieldDict);
   bool SubmitFields(const WideString& csDestination,
                     const std::vector<CPDF_FormField*>& fields,
                     bool bIncludeOrExclude,

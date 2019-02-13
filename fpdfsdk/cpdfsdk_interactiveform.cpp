@@ -137,15 +137,6 @@ CPDFSDK_InteractiveForm::~CPDFSDK_InteractiveForm() {
 #endif  // PDF_ENABLE_XFA
 }
 
-CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetSibling(CPDFSDK_Widget* pWidget,
-                                                    bool bNext) const {
-  auto pIterator = pdfium::MakeUnique<CPDFSDK_AnnotIterator>(
-      pWidget->GetPageView(), CPDF_Annot::Subtype::WIDGET);
-
-  return ToCPDFSDKWidget(bNext ? pIterator->GetNextAnnot(pWidget)
-                               : pIterator->GetPrevAnnot(pWidget));
-}
-
 CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
     CPDF_FormControl* pControl) const {
   if (!pControl)
