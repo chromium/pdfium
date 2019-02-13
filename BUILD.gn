@@ -20,10 +20,13 @@ config("pdfium_common_config") {
   ldflags = []
   include_dirs = [ "." ]
   defines = [
-    "OPJ_STATIC",
     "PNG_PREFIX",
     "PNG_USE_READ_MACROS",
   ]
+
+  if (!use_system_libopenjpeg2) {
+    defines += [ "OPJ_STATIC" ]
+  }
 
   if (pdf_enable_click_logging) {
     defines += [ "PDF_ENABLE_CLICK_LOGGING" ]

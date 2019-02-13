@@ -13,7 +13,12 @@
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
+
+#ifdef USE_SYSTEM_LIBOPENJPEG2
+#include <openjpeg.h>
+#else
 #include "third_party/libopenjpeg20/openjpeg.h"
+#endif
 
 class CPDF_ColorSpace;
 

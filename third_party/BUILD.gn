@@ -387,6 +387,22 @@ group("lcms2") {
   }
 }
 
+if (use_system_libopenjpeg2) {
+  pkg_config("libopenjpeg2_from_pkgconfig") {
+    defines = [ "USE_SYSTEM_LIBOPENJPEG2" ]
+    packages = [ "libopenjp2" ]
+  }
+}
+group("libopenjpeg2") {
+  if (use_system_libopenjpeg2) {
+    public_configs = [ ":libopenjpeg2_from_pkgconfig" ]
+  } else {
+    public_deps = [
+      ":fx_libopenjpeg",
+    ]
+  }
+}
+
 config("fx_libopenjpeg_warnings") {
   visibility = [ ":*" ]
   if (is_win) {

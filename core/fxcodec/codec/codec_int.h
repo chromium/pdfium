@@ -10,7 +10,12 @@
 #include <limits.h>
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
+
+#ifdef USE_SYSTEM_LIBOPENJPEG2
+#include <openjpeg.h>
+#else
 #include "third_party/libopenjpeg20/openjpeg.h"
+#endif
 
 class CPDF_ColorSpace;
 

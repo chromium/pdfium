@@ -70,8 +70,8 @@ jumbo_source_set("fxcodec") {
   configs += [ "../../:pdfium_core_config" ]
   include_dirs = []
   deps = [
-    "../../third_party:fx_libopenjpeg",
     "../../third_party:lcms2",
+    "../../third_party:libopenjpeg2",
     "../../third_party:zlib",
     "../fxcrt",
     "../fxge",
