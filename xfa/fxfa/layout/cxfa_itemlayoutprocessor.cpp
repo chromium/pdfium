@@ -856,7 +856,7 @@ CXFA_ItemLayoutProcessor::Stage CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       ret = HandleKeep(pChildContainer->GetFirstChild(), pCurActionNode);
       if (ret.has_value())
         return ret.value();
-      goto CheckNextChildContainer;
+      break;
 
     case Stage::kNone:
       *pCurActionNode = nullptr;
@@ -874,7 +874,7 @@ CXFA_ItemLayoutProcessor::Stage CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       ret = HandleBreakBefore(pChildContainer, pCurActionNode);
       if (ret.has_value())
         return ret.value();
-      goto CheckNextChildContainer;
+      break;
 
     case Stage::kContainer:
       *pCurActionNode = nullptr;
@@ -884,26 +884,31 @@ CXFA_ItemLayoutProcessor::Stage CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       ret = HandleBreakAfter(pChildContainer, pCurActionNode);
       if (ret.has_value())
         return ret.value();
+      break;
 
-    CheckNextChildContainer : {
-      ret = HandleCheckNextChildContainer(pParentContainer, pChildContainer,
-                                          pCurActionNode);
+    case Stage::kBookendTrailer:
+      ret = HandleBookendTrailer(pParentContainer, pCurActionNode);
       if (ret.has_value())
         return ret.value();
-
-      *pCurActionNode = nullptr;
-      FALLTHROUGH;
-      case Stage::kBookendTrailer:
-        ret = HandleBookendTrailer(pParentContainer, pCurActionNode);
-        if (ret.has_value())
-          return ret.value();
-    }
       FALLTHROUGH;
 
     default:
       *pCurActionNode = nullptr;
       return Stage::kDone;
   }
+
+  ret = HandleCheckNextChildContainer(pParentContainer, pChildContainer,
+                                      pCurActionNode);
+  if (ret.has_value())
+    return ret.value();
+
+  *pCurActionNode = nullptr;
+  ret = HandleBookendTrailer(pParentContainer, pCurActionNode);
+  if (ret.has_value())
+    return ret.value();
+
+  *pCurActionNode = nullptr;
+  return Stage::kDone;
 }
 
 Optional<CXFA_ItemLayoutProcessor::Stage>
