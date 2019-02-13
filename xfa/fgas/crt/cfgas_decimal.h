@@ -25,8 +25,8 @@ class CFGAS_Decimal {
   CFGAS_Decimal operator*(const CFGAS_Decimal& val) const;
   CFGAS_Decimal operator/(const CFGAS_Decimal& val) const;
 
+  uint8_t GetScale() const { return m_uScale; }
   void SetScale(uint8_t newScale);
-  uint8_t GetScale();
   void SetNegate();
 
  private:
@@ -36,12 +36,12 @@ class CFGAS_Decimal {
                 bool neg,
                 uint8_t scale);
   bool IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
-  void Swap(CFGAS_Decimal& val);
 
-  uint32_t m_uHi;
-  uint32_t m_uLo;
-  uint32_t m_uMid;
-  uint32_t m_uFlags;
+  uint32_t m_uHi = 0;
+  uint32_t m_uMid = 0;
+  uint32_t m_uLo = 0;
+  bool m_bNeg = false;
+  uint8_t m_uScale = 0;
 };
 
 #endif  // XFA_FGAS_CRT_CFGAS_DECIMAL_H_
