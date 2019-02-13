@@ -272,18 +272,19 @@ CFGAS_Decimal::CFGAS_Decimal(int32_t val) {
 
 CFGAS_Decimal::CFGAS_Decimal(float val, uint8_t scale) {
   float newval = fabs(val);
-  uint64_t phi;
-  uint64_t pmid;
-  uint64_t plo;
-  plo = static_cast<uint64_t>(newval);
-  pmid = static_cast<uint64_t>(newval / 1e32);
-  phi = static_cast<uint64_t>(newval / 1e64);
-  newval = fmod(newval, 1.0f);
+  float divisor = powf(2.0, 64.0f);
+  uint64_t bottom64 = static_cast<uint64_t>(fmodf(newval, divisor));
+  uint64_t top64 = static_cast<uint64_t>(newval / divisor);
+  uint64_t plo = bottom64 & 0xFFFFFFFF;
+  uint64_t pmid = bottom64 >> 32;
+  uint64_t phi = top64 & 0xFFFFFFFF;
+
+  newval = fmodf(newval, 1.0f);
   for (uint8_t iter = 0; iter < scale; iter++) {
     decimal_helper_mul10(phi, pmid, plo);
     newval *= 10;
     plo += static_cast<uint64_t>(newval);
-    newval = fmod(newval, 1.0f);
+    newval = fmodf(newval, 1.0f);
   }
 
   plo += FXSYS_round(newval);
