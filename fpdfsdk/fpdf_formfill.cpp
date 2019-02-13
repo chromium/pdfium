@@ -238,12 +238,14 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                              FPDF_PAGE page,
                              double page_x,
                              double page_y) {
-  if (!hHandle)
-    return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
-    CPDF_InteractiveForm interactive_form(pPage->GetDocument());
-    CPDF_FormControl* pFormCtrl = interactive_form.GetControlAtPoint(
+    CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+    if (!pForm)
+      return -1;
+
+    CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+    CPDF_FormControl* pFormCtrl = pPDFForm->GetControlAtPoint(
         pPage,
         CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
         nullptr);
@@ -252,6 +254,9 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     CPDF_FormField* pFormField = pFormCtrl->GetField();
     return pFormField ? static_cast<int>(pFormField->GetFieldType()) : -1;
   }
+
+  if (!hHandle)
+    return -1;
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pXFAPage = ToXFAPage(IPDFPageFromFPDFPage(page));
@@ -299,14 +304,17 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
                                 FPDF_PAGE page,
                                 double page_x,
                                 double page_y) {
-  if (!hHandle)
+  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  if (!pForm)
     return -1;
+
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return -1;
-  CPDF_InteractiveForm interactive_form(pPage->GetDocument());
+
+  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
   int z_order = -1;
-  (void)interactive_form.GetControlAtPoint(
+  pPDFForm->GetControlAtPoint(
       pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
       &z_order);
   return z_order;
