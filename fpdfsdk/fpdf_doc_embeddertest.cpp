@@ -429,6 +429,15 @@ TEST_F(FPDFDocEmbedderTest, FindBookmarks_bug420) {
 TEST_F(FPDFDocEmbedderTest, DeletePage) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
+
+  FPDFPage_Delete(nullptr, 0);
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+
+  FPDFPage_Delete(document(), -1);
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+  FPDFPage_Delete(document(), 1);
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+
   FPDFPage_Delete(document(), 0);
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
 }
