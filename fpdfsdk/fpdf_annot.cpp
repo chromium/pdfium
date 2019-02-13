@@ -231,8 +231,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
                               CPDF_Annot::AnnotSubtypeToString(
                                   static_cast<CPDF_Annot::Subtype>(subtype)));
-  auto pNewAnnot =
-      pdfium::MakeUnique<CPDF_AnnotContext>(pDict.get(), pPage, nullptr);
+  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict.get(), pPage);
 
   CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
@@ -263,7 +262,7 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
     return nullptr;
 
   CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(index));
-  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict, pPage, nullptr);
+  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict, pPage);
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pNewAnnot.release());
@@ -837,8 +836,8 @@ FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
   if (!pLinkedDict || pLinkedDict->GetStringFor("Type") != "Annot")
     return nullptr;
 
-  auto pLinkedAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(
-      pLinkedDict, pAnnot->GetPage(), nullptr);
+  auto pLinkedAnnot =
+      pdfium::MakeUnique<CPDF_AnnotContext>(pLinkedDict, pAnnot->GetPage());
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pLinkedAnnot.release());
