@@ -166,8 +166,13 @@ class CXFA_ItemLayoutProcessor {
                              CXFA_Node** pCurActionNode);
   Optional<Stage> HandleBookendLeader(CXFA_Node* pParentContainer,
                                       CXFA_Node** pCurActionNode);
+  Optional<Stage> HandleBreakBefore(CXFA_Node* pChildContainer,
+                                    CXFA_Node** pCurActionNode);
   Optional<Stage> HandleBreakAfter(CXFA_Node* pChildContainer,
                                    CXFA_Node** pCurActionNode);
+  Optional<Stage> HandleCheckNextChildContainer(CXFA_Node* pParentContainer,
+                                                CXFA_Node* pChildContainer,
+                                                CXFA_Node** pCurActionNode);
   Optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
                                        CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();

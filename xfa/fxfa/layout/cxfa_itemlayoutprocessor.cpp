@@ -871,22 +871,9 @@ CXFA_ItemLayoutProcessor::Stage CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       FALLTHROUGH;
 
     case Stage::kBreakBefore:
-      if (*pCurActionNode) {
-        CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
-        if (!m_bKeepBreakFinish) {
-          ret = FindBreakNode(pBreakBeforeNode, true, pCurActionNode);
-          if (ret.has_value())
-            return ret.value();
-        }
-        if (m_bIsProcessKeep) {
-          ret = ProcessKeepNodesForBreakBefore(pCurActionNode, pChildContainer);
-          if (ret.has_value())
-            return ret.value();
-          goto CheckNextChildContainer;
-        }
-        *pCurActionNode = pChildContainer;
-        return Stage::kContainer;
-      }
+      ret = HandleBreakBefore(pChildContainer, pCurActionNode);
+      if (ret.has_value())
+        return ret.value();
       goto CheckNextChildContainer;
 
     case Stage::kContainer:
@@ -899,35 +886,11 @@ CXFA_ItemLayoutProcessor::Stage CXFA_ItemLayoutProcessor::GotoNextContainerNode(
         return ret.value();
 
     CheckNextChildContainer : {
-      CXFA_Node* pNextChildContainer =
-          pChildContainer ? pChildContainer->GetNextContainerSibling()
-                          : pParentContainer->GetFirstContainerChild();
-      while (pNextChildContainer &&
-             pNextChildContainer->IsLayoutGeneratedNode()) {
-        CXFA_Node* pSaveNode = pNextChildContainer;
-        pNextChildContainer = pNextChildContainer->GetNextContainerSibling();
-        if (pSaveNode->IsUnusedNode())
-          DeleteLayoutGeneratedNode(pSaveNode);
-      }
-      if (!pNextChildContainer)
-        goto NoMoreChildContainer;
-
-      bool bLastKeep = false;
-      ret = ProcessKeepNodesForCheckNext(pCurActionNode, &pNextChildContainer,
-                                         &bLastKeep);
+      ret = HandleCheckNextChildContainer(pParentContainer, pChildContainer,
+                                          pCurActionNode);
       if (ret.has_value())
         return ret.value();
-      if (!m_bKeepBreakFinish && !bLastKeep) {
-        ret = FindBreakNode(pNextChildContainer->GetFirstChild(), true,
-                            pCurActionNode);
-        if (ret.has_value())
-          return ret.value();
-      }
-      *pCurActionNode = pNextChildContainer;
-      return m_bIsProcessKeep ? Stage::kKeep : Stage::kContainer;
-    }
 
-    NoMoreChildContainer : {
       *pCurActionNode = nullptr;
       FALLTHROUGH;
       case Stage::kBookendTrailer:
@@ -936,6 +899,7 @@ CXFA_ItemLayoutProcessor::Stage CXFA_ItemLayoutProcessor::GotoNextContainerNode(
           return ret.value();
     }
       FALLTHROUGH;
+
     default:
       *pCurActionNode = nullptr;
       return Stage::kDone;
@@ -2759,6 +2723,25 @@ CXFA_ItemLayoutProcessor::HandleBookendLeader(CXFA_Node* pParentContainer,
 }
 
 Optional<CXFA_ItemLayoutProcessor::Stage>
+CXFA_ItemLayoutProcessor::HandleBreakBefore(CXFA_Node* pChildContainer,
+                                            CXFA_Node** pCurActionNode) {
+  if (!*pCurActionNode)
+    return {};
+
+  CXFA_Node* pBreakBeforeNode = (*pCurActionNode)->GetNextSibling();
+  if (!m_bKeepBreakFinish) {
+    Optional<Stage> ret = FindBreakNode(pBreakBeforeNode, true, pCurActionNode);
+    if (ret.has_value())
+      return ret.value();
+  }
+  if (m_bIsProcessKeep)
+    return ProcessKeepNodesForBreakBefore(pCurActionNode, pChildContainer);
+
+  *pCurActionNode = pChildContainer;
+  return Stage::kContainer;
+}
+
+Optional<CXFA_ItemLayoutProcessor::Stage>
 CXFA_ItemLayoutProcessor::HandleBreakAfter(CXFA_Node* pChildContainer,
                                            CXFA_Node** pCurActionNode) {
   if (*pCurActionNode) {
@@ -2768,6 +2751,39 @@ CXFA_ItemLayoutProcessor::HandleBreakAfter(CXFA_Node* pChildContainer,
 
   CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
   return HandleKeep(pBreakAfterNode, pCurActionNode);
+}
+
+Optional<CXFA_ItemLayoutProcessor::Stage>
+CXFA_ItemLayoutProcessor::HandleCheckNextChildContainer(
+    CXFA_Node* pParentContainer,
+    CXFA_Node* pChildContainer,
+    CXFA_Node** pCurActionNode) {
+  CXFA_Node* pNextChildContainer =
+      pChildContainer ? pChildContainer->GetNextContainerSibling()
+                      : pParentContainer->GetFirstContainerChild();
+  while (pNextChildContainer && pNextChildContainer->IsLayoutGeneratedNode()) {
+    CXFA_Node* pSaveNode = pNextChildContainer;
+    pNextChildContainer = pNextChildContainer->GetNextContainerSibling();
+    if (pSaveNode->IsUnusedNode())
+      DeleteLayoutGeneratedNode(pSaveNode);
+  }
+  if (!pNextChildContainer)
+    return {};
+
+  bool bLastKeep = false;
+  Optional<Stage> ret = ProcessKeepNodesForCheckNext(
+      pCurActionNode, &pNextChildContainer, &bLastKeep);
+  if (ret.has_value())
+    return ret.value();
+
+  if (!m_bKeepBreakFinish && !bLastKeep) {
+    ret = FindBreakNode(pNextChildContainer->GetFirstChild(), true,
+                        pCurActionNode);
+    if (ret.has_value())
+      return ret.value();
+  }
+  *pCurActionNode = pNextChildContainer;
+  return m_bIsProcessKeep ? Stage::kKeep : Stage::kContainer;
 }
 
 Optional<CXFA_ItemLayoutProcessor::Stage>
