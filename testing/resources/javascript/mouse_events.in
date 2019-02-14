@@ -53,37 +53,83 @@ endobj
 {{object 10 0}} <<
   /Type /Action
   /S /JavaScript
-  /JS (app.alert\("enter"\);)
+  /JS (
+    app.alert\("enter"\);
+    try {
+       this.submitForm\("myform", true, true, ["name", "age"]\);
+       app.alert\("ERROR: this.submitForm\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.submitForm blocked with " + e\);
+    }
+  )
 >>
 endobj
 {{object 11 0}} <<
   /Type /Action
   /S /JavaScript
-  /JS (app.alert\("exit"\);)
+  /JS (
+    app.alert\("exit"\);
+    try {
+       this.submitForm\("myform", true, true, ["name", "age"]\);
+       app.alert\("ERROR: this.submitForm\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.submitForm blocked with " + e\);
+    }
+  )
 >>
 endobj
 {{object 12 0}} <<
   /Type /Action
   /S /JavaScript
-  /JS (app.alert\("down"\);)
+  /JS (
+    app.alert\("down"\);
+    try {
+       this.submitForm\("myform", true, true, ["name", "age"]\);
+    } catch \(e\) {
+       app.alert\("ERROR: " + e\);
+    }
+  )
 >>
 endobj
 {{object 13 0}} <<
   /Type /Action
   /S /JavaScript
-  /JS (app.alert\("up"\);)
+  /JS (
+    app.alert\("up"\);
+    try {
+       this.submitForm\("myform", true, true, ["name", "age"]\);
+    } catch \(e\) {
+       app.alert\("ERROR: " + e\);
+    }
+  )
 >>
 endobj
 {{object 14 0}} <<
   /Type /Action
   /S /JavaScript
-  /JS (app.alert\("focus"\);)
+  /JS (
+    app.alert\("focus"\);
+    try {
+       this.submitForm\("myform", true, true, ["name", "age"]\);
+       app.alert\("ERROR: this.submitForm\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.submitForm blocked with " + e\);
+    }
+  )
 >>
 endobj
 {{object 15 0}} <<
   /Type /Action
   /S /JavaScript
-  /JS (app.alert\("blur"\);)
+  /JS (
+    app.alert\("blur"\);
+    try {
+       this.submitForm\("myform", true, true, ["name", "age"]\);
+       app.alert\("ERROR: this.submitForm\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.submitForm blocked with " + e\);
+    }
+  )
 >>
 endobj
 {{xref}}

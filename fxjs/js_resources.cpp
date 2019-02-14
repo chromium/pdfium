@@ -78,6 +78,9 @@ WideString JSGetStringFromID(JSMessage msg) {
     case JSMessage::kInvalidSetError:
       msg_string = "Set not possible, invalid or unknown.";
       break;
+    case JSMessage::kUserGestureRequiredError:
+      msg_string = "User gesture required.";
+      break;
 #ifdef PDF_ENABLE_XFA
     case JSMessage::kTooManyOccurances:
       msg_string = "Too many occurances.";

@@ -403,6 +403,21 @@ bool CJS_EventHandler::IsValid() const {
   return m_bValid;
 }
 
+bool CJS_EventHandler::IsUserGesture() const {
+  switch (m_eEventType) {
+    case JET_FIELD_MOUSEDOWN:
+    case JET_FIELD_MOUSEUP:
+    case JET_SCREEN_MOUSEDOWN:
+    case JET_SCREEN_MOUSEUP:
+    case JET_BOOKMARK_MOUSEUP:
+    case JET_LINK_MOUSEUP:
+    case JET_FIELD_KEYSTROKE:
+      return true;
+    default:
+      return false;
+  }
+}
+
 WideString& CJS_EventHandler::Change() {
   if (m_pWideStrChange) {
     return *m_pWideStrChange;

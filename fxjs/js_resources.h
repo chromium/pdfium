@@ -32,6 +32,7 @@ enum class JSMessage {
   kObjectTypeError,
   kUnknownProperty,
   kInvalidSetError,
+  kUserGestureRequiredError,
 #ifdef PDF_ENABLE_XFA
   kTooManyOccurances,
   kUnknownMethod,

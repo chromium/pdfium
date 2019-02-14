@@ -23,6 +23,7 @@
 #include "fxjs/cjs_annot.h"
 #include "fxjs/cjs_app.h"
 #include "fxjs/cjs_delaydata.h"
+#include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_icon.h"
 #include "fxjs/js_resources.h"
@@ -628,6 +629,11 @@ CJS_Result CJS_Document::submitForm(
     return CJS_Result::Failure(JSMessage::kParamError);
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+
+  CJS_EventHandler* pHandler =
+      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  if (!pHandler->IsUserGesture())
+    return CJS_Result::Failure(JSMessage::kUserGestureRequiredError);
 
   v8::Local<v8::Array> aFields;
   WideString strURL;

@@ -315,8 +315,8 @@ function testSubmitForm() {
   // Method requires at least one argument.
   expectError('this.submitForm()');
 
-  // TODO(tsepez): Add form to document to match these arguments.
-  expect('this.submitForm("myform", true, true, ["name", "age"])', undefined);
+  // Successful only when invoked by a user gesture.
+  expectError('this.submitForm("myform", true, true, ["name", "age"])');
 }
 
 try {

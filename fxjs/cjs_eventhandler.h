@@ -142,6 +142,8 @@ class CJS_EventHandler {
   void Destroy();
   bool IsValid() const;
 
+  JS_EVENT_T EventType() const { return m_eEventType; }
+  bool IsUserGesture() const;
   WideString& Change();
   WideString ChangeEx() const;
   int CommitKey() const;
@@ -162,14 +164,10 @@ class CJS_EventHandler {
   bool WillCommit() const;
   WideString TargetName() const;
 
-  JS_EVENT_T EventType() const { return m_eEventType; }
-
   void SetRCForTest(bool* pRC) { m_pbRc = pRC; }
-
   void SetStrChangeForTest(WideString* pStrChange) {
     m_pWideStrChange = pStrChange;
   }
-
   void ResetWillCommitForTest() { m_bWillCommit = false; }
 
   UnownedPtr<WideString> m_pValue;

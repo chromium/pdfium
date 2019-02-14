@@ -146,5 +146,4 @@ Alert: PASS: this.resetForm() = undefined
 Alert: PASS: this.resetForm("myform") = undefined
 Alert: PASS: typeof this.submitForm = function
 Alert: PASS: this.submitForm() threw Document.submitForm: Incorrect number of parameters passed to function.
-Doc Submit Form: url=myform
-Alert: PASS: this.submitForm("myform", true, true, ["name", "age"]) = undefined
+Alert: PASS: this.submitForm("myform", true, true, ["name", "age"]) threw Document.submitForm: User gesture required.

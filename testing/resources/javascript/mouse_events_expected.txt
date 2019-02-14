@@ -1,10 +1,20 @@
 Alert: enter
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: exit
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: enter
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: down
+Doc Submit Form: url=myform
 Alert: focus
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: up
+Doc Submit Form: url=myform
 Alert: exit
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: enter
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: focus
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: exit
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
