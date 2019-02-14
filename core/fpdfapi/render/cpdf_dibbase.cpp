@@ -291,14 +291,16 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
   if (m_Status == LoadState::kContinue)
     return ContinueLoadMaskDIB(pPause);
 
-  if (m_Status == LoadState::kFail)
-    return LoadState::kFail;
-
   ByteString decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder == "JPXDecode")
     return LoadState::kFail;
 
-  ASSERT(decoder == "JBIG2Decode");
+  if (decoder != "JBIG2Decode")
+    return LoadState::kSuccess;
+
+  if (m_Status == LoadState::kFail)
+    return LoadState::kFail;
+
   FXCODEC_STATUS iDecodeStatus;
   CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
   if (!m_pJbig2Context) {
