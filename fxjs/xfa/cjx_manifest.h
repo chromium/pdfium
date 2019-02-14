@@ -22,8 +22,6 @@ class CJX_Manifest final : public CJX_Node {
 
   JSE_METHOD(evaluate);
 
-  JSE_PROP(defaultValue); /* {default} */
-
  private:
   using Type__ = CJX_Manifest;
   using ParentType__ = CJX_Node;

@@ -98,12 +98,6 @@ void CJX_Subform::locale(CFXJSE_Value* pValue,
   pValue->SetString(wsLocaleName.ToUTF8().AsStringView());
 }
 
-void CJX_Subform::instanceIndex(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute) {
-  ScriptSomInstanceIndex(pValue, bSetting, eAttribute);
-}
-
 void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
@@ -133,10 +127,4 @@ void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
 
   pValue->Assign(
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pInstanceMgr));
-}
-
-void CJX_Subform::validationMessage(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute) {
-  ScriptSomValidationMessage(pValue, bSetting, eAttribute);
 }

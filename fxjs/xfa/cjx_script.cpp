@@ -26,15 +26,3 @@ void CJX_Script::stateless(CFXJSE_Value* pValue,
   }
   pValue->SetString(FX_UTF8Encode(WideStringView(L"0", 1)).AsStringView());
 }
-
-void CJX_Script::defaultValue(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptSomDefaultValue(pValue, bSetting, eAttribute);
-}
-
-void CJX_Script::value(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute) {
-  defaultValue(pValue, bSetting, eAttribute);
-}

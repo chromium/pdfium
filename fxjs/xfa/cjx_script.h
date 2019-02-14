@@ -20,9 +20,7 @@ class CJX_Script final : public CJX_Node {
   // CJX_Object:
   bool DynamicTypeIs(TypeTag eType) const override;
 
-  JSE_PROP(defaultValue); /* {default} */
   JSE_PROP(stateless);
-  JSE_PROP(value);
 
  private:
   using Type__ = CJX_Script;

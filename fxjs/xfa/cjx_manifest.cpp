@@ -35,9 +35,3 @@ CJS_Result CJX_Manifest::evaluate(
   return CJS_Result::Success(
       runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
-
-void CJX_Manifest::defaultValue(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute) {
-  ScriptSomDefaultValue(pValue, bSetting, eAttribute);
-}

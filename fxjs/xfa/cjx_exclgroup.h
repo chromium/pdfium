@@ -27,15 +27,9 @@ class CJX_ExclGroup final : public CJX_Node {
   JSE_METHOD(selectedMember);
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(borderColor);
-  JSE_PROP(borderWidth);
   JSE_PROP(errorText);
-  JSE_PROP(fillColor);
-  JSE_PROP(mandatory);
-  JSE_PROP(mandatoryMessage);
   JSE_PROP(rawValue);
   JSE_PROP(transient);
-  JSE_PROP(validationMessage);
 
  private:
   using Type__ = CJX_ExclGroup;

@@ -147,45 +147,9 @@ void CJX_ExclGroup::transient(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {}
 
-void CJX_ExclGroup::borderColor(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute) {
-  ScriptSomBorderColor(pValue, bSetting, eAttribute);
-}
-
-void CJX_ExclGroup::borderWidth(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute) {
-  ScriptSomBorderWidth(pValue, bSetting, eAttribute);
-}
-
 void CJX_ExclGroup::errorText(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
   if (bSetting)
     ThrowInvalidPropertyException();
-}
-
-void CJX_ExclGroup::fillColor(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptSomFillColor(pValue, bSetting, eAttribute);
-}
-
-void CJX_ExclGroup::mandatory(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute) {
-  ScriptSomMandatory(pValue, bSetting, eAttribute);
-}
-
-void CJX_ExclGroup::mandatoryMessage(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
-  ScriptSomMandatoryMessage(pValue, bSetting, eAttribute);
-}
-
-void CJX_ExclGroup::validationMessage(CFXJSE_Value* pValue,
-                                      bool bSetting,
-                                      XFA_Attribute eAttribute) {
-  ScriptSomValidationMessage(pValue, bSetting, eAttribute);
 }

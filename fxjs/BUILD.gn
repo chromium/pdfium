@@ -193,8 +193,6 @@ jumbo_source_set("fxjs") {
         "xfa/cjx_source.h",
         "xfa/cjx_subform.cpp",
         "xfa/cjx_subform.h",
-        "xfa/cjx_subformset.cpp",
-        "xfa/cjx_subformset.h",
         "xfa/cjx_template.cpp",
         "xfa/cjx_template.h",
         "xfa/cjx_textnode.cpp",

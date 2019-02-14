@@ -34,20 +34,13 @@ class CJX_Field final : public CJX_Container {
   JSE_METHOD(setItemState);
 
   JSE_PROP(defaultValue); /* {default} */
-  JSE_PROP(borderColor);
-  JSE_PROP(borderWidth);
   JSE_PROP(editValue);
-  JSE_PROP(fillColor);
-  JSE_PROP(fontColor);
   JSE_PROP(formatMessage);
   JSE_PROP(formattedValue);
   JSE_PROP(length);
-  JSE_PROP(mandatory);
-  JSE_PROP(mandatoryMessage);
   JSE_PROP(parentSubform);
   JSE_PROP(rawValue);
   JSE_PROP(selectedIndex);
-  JSE_PROP(validationMessage);
 
  private:
   using Type__ = CJX_Field;

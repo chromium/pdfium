@@ -380,50 +380,8 @@ void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
   node->SetItemState(iIndex, true, true, true, true);
 }
 
-void CJX_Field::borderColor(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptSomBorderColor(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::borderWidth(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute) {
-  ScriptSomBorderWidth(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::fillColor(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptSomFillColor(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::fontColor(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptSomFontColor(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::mandatory(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute) {
-  ScriptSomMandatory(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::mandatoryMessage(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute) {
-  ScriptSomMandatoryMessage(pValue, bSetting, eAttribute);
-}
-
 void CJX_Field::rawValue(CFXJSE_Value* pValue,
                          bool bSetting,
                          XFA_Attribute eAttribute) {
   defaultValue(pValue, bSetting, eAttribute);
-}
-
-void CJX_Field::validationMessage(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute) {
-  ScriptSomValidationMessage(pValue, bSetting, eAttribute);
 }
