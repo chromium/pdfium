@@ -159,12 +159,6 @@ static_assert(static_cast<int>(CPDF_AAction::kDocumentPrinted) ==
 
 namespace {
 
-CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
-  return pFormFillEnv ? pFormFillEnv->GetInteractiveForm() : nullptr;
-}
-
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
                                        FPDF_PAGE fpdf_page) {
   IPDF_Page* pPage = IPDFPageFromFPDFPage(fpdf_page);

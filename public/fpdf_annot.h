@@ -506,12 +506,16 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,
 // Get the annotation flags of |annot|, which is an interactive form
 // annotation in |page|.
 //
-//   page     - handle to a page.
-//   annot    - handle to an interactive form annotation.
+//    hHandle     -   handle to the form fill module, returned by
+//                    FPDFDOC_InitFormFillEnvironment().
+//    page        -   handle to a page.
+//    annot       -   handle to an interactive form annotation.
 //
 // Returns the annotation flags specific to interactive forms.
 FPDF_EXPORT int FPDF_CALLCONV
-FPDFAnnot_GetFormFieldFlags(FPDF_PAGE page, FPDF_ANNOTATION annot);
+FPDFAnnot_GetFormFieldFlags(FPDF_FORMHANDLE handle,
+                            FPDF_PAGE page,
+                            FPDF_ANNOTATION annot);
 
 // Experimental API.
 // Retrieves an interactive form annotation whose rectangle contains a given
@@ -520,7 +524,7 @@ FPDFAnnot_GetFormFieldFlags(FPDF_PAGE page, FPDF_ANNOTATION annot);
 //
 //
 //    hHandle     -   handle to the form fill module, returned by
-//                    FPDFDOC_InitFormFillEnvironment.
+//                    FPDFDOC_InitFormFillEnvironment().
 //    page        -   handle to the page, returned by FPDF_LoadPage function.
 //    page_x      -   X position in PDF "user space".
 //    page_y      -   Y position in PDF "user space".

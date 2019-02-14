@@ -38,6 +38,7 @@ class CPDF_StructTree;
 class CPDF_TextPage;
 class CPDF_TextPageFind;
 class CPDFSDK_FormFillEnvironment;
+class CPDFSDK_InteractiveForm;
 class IPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
 
@@ -205,6 +206,8 @@ inline CPDFSDK_FormFillEnvironment*
 CPDFSDKFormFillEnvironmentFromFPDFFormHandle(FPDF_FORMHANDLE handle) {
   return reinterpret_cast<CPDFSDK_FormFillEnvironment*>(handle);
 }
+
+CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);
 
 ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
