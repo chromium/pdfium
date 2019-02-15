@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde
@@ -1896,25 +1897,30 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
       }
     }
 
-    int threshold = 1;
+    FX_SAFE_UINT32 threshold = 1;
     while (fixed_count > 1) {
       threshold *= 10;
       fixed_count--;
     }
-    if (decimal.ToDouble() != 0.0) {
-      if (decimal.ToDouble() < threshold) {
-        decimal = decimal * CFGAS_Decimal(10);
-        exponent = -1;
-        while (decimal.ToDouble() < threshold) {
-          decimal = decimal * CFGAS_Decimal(10);
-          exponent -= 1;
-        }
-      } else if (decimal.ToDouble() > threshold) {
-        threshold *= 10;
-        while (decimal.ToDouble() > threshold) {
-          decimal = decimal / CFGAS_Decimal(10);
-          exponent += 1;
-        }
+    if (!threshold.IsValid())
+      return false;
+
+    bool bAdjusted = false;
+    while (decimal.IsNotZero() &&
+           fabs(decimal.ToDouble()) < threshold.ValueOrDie()) {
+      decimal = decimal * CFGAS_Decimal(10);
+      --exponent;
+      bAdjusted = true;
+    }
+    if (!bAdjusted) {
+      threshold *= 10;
+      if (!threshold.IsValid())
+        return false;
+
+      while (decimal.IsNotZero() &&
+             fabs(decimal.ToDouble()) > threshold.ValueOrDie()) {
+        decimal = decimal / CFGAS_Decimal(10);
+        ++exponent;
       }
     }
   }
@@ -2077,14 +2083,12 @@ bool CFGAS_FormatString::FormatStrNum(WideStringView wsInputNum,
     }
     if (bNeg)
       *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
-
-    return false;
+    return true;
   }
   if (dot_index_f ==
       pdfium::base::checked_cast<int32_t>(wsNumFormat.GetLength())) {
     if (!bAddNeg && bNeg)
       *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
-
     return true;
   }
 

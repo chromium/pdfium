@@ -303,12 +303,14 @@ TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
 }
 
 TEST_F(CFGAS_FormatStringTest, NumParse) {
-  struct {
+  struct TestCase {
     const wchar_t* locale;
     const wchar_t* input;
     const wchar_t* pattern;
     const wchar_t* output;
-  } tests[] = {
+  };
+
+  static const TestCase tests[] = {
       // {L"en", L"€100.00", L"num(en_GB){$z,zz9.99}", L"100"},
       // {L"en", L"1050", L"99V99", L"10.50"},
       // {L"en", L"3125", L"99V99", L"31.25"},
@@ -415,22 +417,24 @@ TEST_F(CFGAS_FormatStringTest, NumParse) {
       {L"en", L"123.545,4", L"zzz.zzz,z", L"123.5454"},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (const auto& test : tests) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->ParseNum(tests[i].input, tests[i].pattern, &result))
-        << " TEST: " << i;
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_TRUE(fmt(test.locale)->ParseNum(test.input, test.pattern, &result))
+        << " TEST: " << test.input << ", " << test.pattern;
+    EXPECT_STREQ(test.output, result.c_str())
+        << " TEST: " << test.input << ", " << test.pattern;
   }
 }
 
 TEST_F(CFGAS_FormatStringTest, NumFormat) {
-  struct {
+  struct TestCase {
     const wchar_t* locale;
     const wchar_t* input;
     const wchar_t* pattern;
     const wchar_t* output;
-  } tests[] = {
+  };
+
+  static const TestCase tests[] = {
       {L"en", L"1.234", L"zz9.zzz", L"1.234"},
       {L"en", L"1", L"num{z 'text'}", L"1 text"},
       {L"en", L"1", L"num{'text' z}", L"text 1"},
@@ -518,14 +522,21 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
       {L"en", L"1", L"9.C", L"1"},
       {L"en", L"1", L"9.d", L"1"},
       {L"en", L"1", L"9.D", L"1"},
+      // https://crbug.com/pdfium/1244
+      {L"en", L"1", L"E", L"1"},
+      {L"en", L"0", L"E", L"0"},
+      {L"en", L"-1", L"E", L"-1"},
+      {L"en", L"900000000000000000000", L"E", L"900,000,000,000,000,000,000"},
+      // TODO(tsepez): next one seems wrong
+      // {L"en", L".000000000000000000009", L"E", L"9"},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (const auto& test : tests) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatNum(tests[i].input, tests[i].pattern, &result))
-        << " TEST: " << i;
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_TRUE(fmt(test.locale)->FormatNum(test.input, test.pattern, &result))
+        << " TEST: " << test.input << ", " << test.pattern;
+    EXPECT_STREQ(test.output, result.c_str())
+        << " TEST: " << test.input << ", " << test.pattern;
   }
 }
 
