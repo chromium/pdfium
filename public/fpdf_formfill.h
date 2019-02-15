@@ -732,8 +732,10 @@ typedef struct _FPDF_FORMFILLINFO {
                            int sizeofArray);
 
   /**
-  *   pointer to IPDF_JSPLATFORM interface
-  **/
+   *   Pointer to IPDF_JSPLATFORM interface.
+   *   Unused if PDFium is built without V8 support. Otherwise, if NULL, then
+   *   JavaScript will be prevented from executing while rendering the document.
+   **/
   IPDF_JSPLATFORM* m_pJsPlatform;
 
 #ifdef PDF_ENABLE_XFA
