@@ -664,7 +664,8 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
         (*rndFind.m_ScriptAttribute.callback)(
             jsObject, pValue.get(), false, rndFind.m_ScriptAttribute.attribute);
-        rndFind.m_Objects.front() = ToObject(pValue.get());
+        if (!pValue->IsEmpty())
+          rndFind.m_Objects.front() = ToObject(pValue.get());
       }
       if (!m_upObjectArray.empty())
         m_upObjectArray.pop_back();

@@ -1,0 +1,24 @@
+%PDF
+2 0 obj<<
+>>
+endobj
+4 0 obj<<
+>>
+stream
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+  <template any="clams">
+    <proto use="xfa.context.!">
+endstream
+endobj
+5 0 obj <<
+  /XFA 4 0 R
+>>
+endobj
+6 0 obj <<
+ /AcroForm 5 0 R
+ /Pages 2 0 R
+/>>
+endobj
+trailer <<
+  /Root 6 0 R
+>>
