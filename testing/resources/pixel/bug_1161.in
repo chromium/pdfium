@@ -1,0 +1,83 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 3 0 R
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Pages
+  /Kids [4 0 R]
+  /Count 1
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Page
+  /Resources <<
+    /XObject << /X0 6 0 R >>
+  >>
+  /Parent 3 0 R
+  /Contents [5 0 R]
+  /MediaBox [0 0 400 400]
+>>
+endobj
+{{object 5 0}} <<
+{{streamlen}}
+>>
+stream
+q 1 0 0 1 50 50 cm /X0 Do Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /FormType 1
+  /Subtype /Form
+  /Resources <<
+    /ExtGState << /GS 7 0 R >>
+    /Pattern << /PAT 8 0 R >>
+  >>
+  /BBox [0 0 300 300]
+  {{streamlen}}
+>>
+stream
+/GS gs 0 0 0 RG 1 w
+/Pattern cs /PAT scn
+0 0 m
+200 0 l
+200 200 l
+0 200 l b
+endstream
+endobj
+{{object 7 0}} <<
+/Type /ExtGState
+/ca 0.2
+/CA 1
+>>
+endobj
+{{object 8 0}} <<
+/Type /Pattern
+/TilingType 1
+/PatternType 1
+/BBox [0 0 18 18]
+/PaintType 1
+/YStep 18
+/XStep 18
+{{streamlen}}
+>>
+stream
+0 0 0 rg
+0 0 18 18 re
+f 0 0 0 RG
+1 w
+3 -0.5 m
+3.25 -0.5 3.5 -0.25 3.5 0 c
+3.5 0.25 3.25 0.5 3 0.5 c
+2.75 0.5 2.5 0.25 2.5 0 c
+2.5 -0.25 2.75 -0.5 3 -0.5 c h
+0 0 0 rg
+f
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
