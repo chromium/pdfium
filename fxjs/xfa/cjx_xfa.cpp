@@ -25,7 +25,11 @@ void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
   if (bSetting)
     return;
 
-  CXFA_Object* pThis = GetDocument()->GetScriptContext()->GetThisObject();
-  ASSERT(pThis);
-  pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(pThis));
+  auto* pScriptContext = GetDocument()->GetScriptContext();
+  CXFA_Object* pThis = pScriptContext->GetThisObject();
+  if (!pThis) {
+    pValue->SetNull();
+    return;
+  }
+  pValue->Assign(pScriptContext->GetJSValueFromMap(pThis));
 }
