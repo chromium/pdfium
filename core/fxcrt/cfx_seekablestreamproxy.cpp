@@ -22,7 +22,8 @@
 
 namespace {
 
-// Returns {src bytes consumed, dst bytes produced}.
+// Returns {src bytes consumed, dst chars produced}.
+// Invalid sequences are silently not output.
 std::pair<size_t, size_t> UTF8Decode(const char* pSrc,
                                      size_t srcLen,
                                      wchar_t* pDst,
@@ -37,55 +38,40 @@ std::pair<size_t, size_t> UTF8Decode(const char* pSrc,
   int32_t iPending = 0;
   size_t iSrcNum = 0;
   size_t iDstNum = 0;
-  size_t iIndex = 0;
-  int32_t k = 1;
-  while (iIndex < srcLen) {
+  for (size_t iIndex = 0; iIndex < srcLen && iDstNum < dstLen; ++iIndex) {
+    ++iSrcNum;
     uint8_t byte = static_cast<uint8_t>(*(pSrc + iIndex));
     if (byte < 0x80) {
       iPending = 0;
-      k = 1;
-      iDstNum++;
-      iSrcNum += k;
+      ++iDstNum;
       *pDst++ = byte;
-      if (iDstNum >= dstLen)
-        break;
     } else if (byte < 0xc0) {
       if (iPending < 1)
-        break;
+        continue;
 
-      iPending--;
-      dwCode |= (byte & 0x3f) << (iPending * 6);
+      dwCode = dwCode << 6;
+      dwCode |= (byte & 0x3f);
+      --iPending;
       if (iPending == 0) {
-        iDstNum++;
-        iSrcNum += k;
+        ++iDstNum;
         *pDst++ = dwCode;
-        if (iDstNum >= dstLen)
-          break;
       }
     } else if (byte < 0xe0) {
       iPending = 1;
-      k = 2;
-      dwCode = (byte & 0x1f) << 6;
+      dwCode = (byte & 0x1f);
     } else if (byte < 0xf0) {
       iPending = 2;
-      k = 3;
-      dwCode = (byte & 0x0f) << 12;
+      dwCode = (byte & 0x0f);
     } else if (byte < 0xf8) {
       iPending = 3;
-      k = 4;
-      dwCode = (byte & 0x07) << 18;
+      dwCode = (byte & 0x07);
     } else if (byte < 0xfc) {
       iPending = 4;
-      k = 5;
-      dwCode = (byte & 0x03) << 24;
+      dwCode = (byte & 0x03);
     } else if (byte < 0xfe) {
       iPending = 5;
-      k = 6;
-      dwCode = (byte & 0x01) << 30;
-    } else {
-      break;
+      dwCode = (byte & 0x01);
     }
-    iIndex++;
   }
   return {iSrcNum, iDstNum};
 }
