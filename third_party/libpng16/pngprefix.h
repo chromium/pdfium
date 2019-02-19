@@ -70,6 +70,8 @@
 #define png_do_expand PDFIUM_png_do_expand
 #define png_do_expand_16 PDFIUM_png_do_expand_16
 #define png_do_expand_palette PDFIUM_png_do_expand_palette
+#define png_do_expand_palette_neon_rgb PDFIUM_png_do_expand_palette_neon_rgb
+#define png_do_expand_palette_neon_rgba PDFIUM_png_do_expand_palette_neon_rgba
 #define png_do_gamma PDFIUM_png_do_gamma
 #define png_do_gray_to_rgb PDFIUM_png_do_gray_to_rgb
 #define png_do_invert PDFIUM_png_do_invert
@@ -300,6 +302,7 @@
 #define png_reciprocal2 PDFIUM_png_reciprocal2
 #define png_reset_crc PDFIUM_png_reset_crc
 #define png_reset_zstream PDFIUM_png_reset_zstream
+#define png_riffle_palette_rgba PDFIUM_png_riffle_palette_rgba
 #define png_sRGB_base PDFIUM_png_sRGB_base
 #define png_sRGB_delta PDFIUM_png_sRGB_delta
 #define png_sRGB_table PDFIUM_png_sRGB_table
