@@ -13,7 +13,6 @@
 
 class CPDF_IndirectObjectHolder;
 class CPDF_Stream;
-class CPDF_StreamAcc;
 class IFX_SeekableReadStream;
 
 // Implementation of logic of PDF "Object Streams".

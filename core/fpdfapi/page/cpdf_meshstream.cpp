@@ -10,6 +10,7 @@
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 

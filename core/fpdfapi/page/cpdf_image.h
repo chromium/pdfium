@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -18,8 +17,10 @@
 
 class CFX_DIBBase;
 class CFX_DIBitmap;
+class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Page;
+class CPDF_Stream;
 class PauseIndicatorIface;
 class IFX_SeekableReadStream;
 

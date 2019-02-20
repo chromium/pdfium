@@ -14,23 +14,24 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
-#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/cfx_pathdata.h"
 
 class CPDF_AllStates;
+class CPDF_ColorSpace;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Font;
 class CPDF_Image;
 class CPDF_ImageObject;
+class CPDF_Object;
 class CPDF_PageObject;
 class CPDF_PageObjectHolder;
+class CPDF_Pattern;
+class CPDF_Stream;
 class CPDF_StreamParser;
 class CPDF_TextObject;
-class CPDF_ColorSpace;
-class CPDF_Pattern;
 
 class CPDF_StreamContentParser {
  public:

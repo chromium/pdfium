@@ -9,11 +9,11 @@
 
 #include <map>
 
-#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_CID2UnicodeMap;
+class CPDF_Stream;
 
 class CPDF_ToUnicodeMap {
  public:

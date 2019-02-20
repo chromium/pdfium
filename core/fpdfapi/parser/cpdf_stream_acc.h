@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
@@ -17,6 +16,7 @@
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;
+class CPDF_Stream;
 
 class CPDF_StreamAcc final : public Retainable {
  public:

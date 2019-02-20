@@ -9,8 +9,6 @@
 
 #include <memory>
 
-#include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
@@ -18,8 +16,6 @@
 
 class CFGAS_FontMgr;
 class CFWL_WidgetMgr;
-class CPDF_Document;
-class CXFA_FFDocHandler;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class IFWL_AdapterTimerMgr;

@@ -45,7 +45,6 @@ class CCodec_JpxModule;
 class CFX_DIBBase;
 class CJPX_Decoder;
 class CPDF_ColorSpace;
-class CPDF_StreamAcc;
 
 #ifdef PDF_ENABLE_XFA
 class CCodec_ProgressiveDecoder;

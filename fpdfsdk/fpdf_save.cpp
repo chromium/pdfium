@@ -24,6 +24,7 @@
 #include "third_party/base/optional.h"
 
 #ifdef PDF_ENABLE_XFA
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
