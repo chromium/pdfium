@@ -36,7 +36,7 @@ CPDF_Stream::CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                          uint32_t size,
                          std::unique_ptr<CPDF_Dictionary> pDict)
     : m_pDict(std::move(pDict)) {
-  SetData(std::move(pData), size);
+  TakeData(std::move(pData), size);
 }
 
 CPDF_Stream::~CPDF_Stream() {
@@ -134,11 +134,11 @@ void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
     data_copy.reset(FX_Alloc(uint8_t, pData.size()));
     memcpy(data_copy.get(), pData.data(), pData.size());
   }
-  SetData(std::move(data_copy), pData.size());
+  TakeData(std::move(data_copy), pData.size());
 }
 
-void CPDF_Stream::SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                          uint32_t size) {
+void CPDF_Stream::TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                           uint32_t size) {
   m_bMemoryBased = true;
   m_pFile = nullptr;
   m_pDataBuf = std::move(pData);

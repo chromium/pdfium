@@ -42,8 +42,11 @@ class CPDF_Stream final : public CPDF_Object {
 
   // Copies span into internally-owned buffer.
   void SetData(pdfium::span<const uint8_t> pData);
-  void SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, uint32_t size);
+
+  void TakeData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, uint32_t size);
+
   void SetDataFromStringstream(std::ostringstream* stream);
+
   // Set data and remove "Filter" and "DecodeParms" fields from stream
   // dictionary.
   void SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData);

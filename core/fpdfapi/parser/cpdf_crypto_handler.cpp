@@ -343,7 +343,7 @@ std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
         decrypt_result &= DecryptFinish(context, decrypted_buf);
         if (decrypt_result) {
           const uint32_t decrypted_size = decrypted_buf.GetSize();
-          stream->SetData(decrypted_buf.DetachBuffer(), decrypted_size);
+          stream->TakeData(decrypted_buf.DetachBuffer(), decrypted_size);
         } else {
           // Decryption failed, set the stream to empty
           stream->SetData({});
