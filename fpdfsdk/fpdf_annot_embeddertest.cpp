@@ -1673,3 +1673,189 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
     CloseSavedDocument();
   }
 }
+
+TEST_F(FPDFAnnotEmbedderTest, GetOptionCountCombobox) {
+  // Open a file with combobox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(3, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(26, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetOptionCountListbox) {
+  // Open a file with listbox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(3, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(26, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetOptionCountInvalidAnnotations) {
+  // Open a file with ink annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // annotations do not have "Opt" array and will return -1
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelCombobox) {
+  // Open a file with combobox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    int index = 0;
+    unsigned long len =
+        FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index, nullptr, 0);
+    std::vector<char> buf(len);
+    EXPECT_EQ(8u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index,
+                                           buf.data(), len));
+    EXPECT_STREQ(L"Foo", BufferToWString(buf).c_str());
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    index = 0;
+    len =
+        FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    EXPECT_EQ(12u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index,
+                                            buf.data(), len));
+    EXPECT_STREQ(L"Apple", BufferToWString(buf).c_str());
+
+    index = 25;
+    len =
+        FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    EXPECT_EQ(18u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index,
+                                            buf.data(), len));
+    EXPECT_STREQ(L"Zucchini", BufferToWString(buf).c_str());
+
+    // indices out of range
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), -1,
+                                           nullptr, 0));
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 26,
+                                           nullptr, 0));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelListbox) {
+  // Open a file with listbox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    int index = 0;
+    unsigned long len =
+        FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index, nullptr, 0);
+    std::vector<char> buf(len);
+    EXPECT_EQ(8u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index,
+                                           buf.data(), len));
+    EXPECT_STREQ(L"Foo", BufferToWString(buf).c_str());
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    index = 0;
+    len =
+        FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    EXPECT_EQ(12u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index,
+                                            buf.data(), len));
+    EXPECT_STREQ(L"Apple", BufferToWString(buf).c_str());
+
+    index = 25;
+    len =
+        FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    EXPECT_EQ(18u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), index,
+                                            buf.data(), len));
+    EXPECT_STREQ(L"Zucchini", BufferToWString(buf).c_str());
+
+    // indices out of range
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), -1,
+                                           nullptr, 0));
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 26,
+                                           nullptr, 0));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelInvalidAnnotations) {
+  // Open a file with ink annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // annotations do not have "Opt" array and will return 0
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 0,
+                                           nullptr, 0));
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 0,
+                                           nullptr, 0));
+  }
+
+  UnloadPage(page);
+}
