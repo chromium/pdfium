@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
@@ -16,13 +17,13 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
     EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
   }
   {
-    // 1 decoder is always valid.
+    // 1 decoder is almost always valid.
     CPDF_Array decoders;
     decoders.AddNew<CPDF_Name>("FlateEncode");
     EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
   }
   {
-    // 1 decoder is always valid, even with an unknown decoder.
+    // 1 decoder is almost always valid, even with an unknown decoder.
     CPDF_Array decoders;
     decoders.AddNew<CPDF_Name>("FooBar");
     EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
@@ -62,6 +63,12 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
     EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
   }
   {
+    // Invalid 1 decoder pipeline due to wrong type.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_String>("FlateEncode", false);
+    EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
+  }
+  {
     // Invalid 2 decoder pipeline, with 2 image decoders.
     CPDF_Array decoders;
     decoders.AddNew<CPDF_Name>("DCTDecode");
@@ -76,6 +83,13 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
     EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
   }
   {
+    // Invalid 2 decoder pipeline due to wrong type.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_String>("AHx", false);
+    decoders.AddNew<CPDF_Name>("LZWDecode");
+    EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
+  }
+  {
     // Invalid 5 decoder pipeline.
     CPDF_Array decoders;
     decoders.AddNew<CPDF_Name>("FlateDecode");
@@ -83,6 +97,16 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
     decoders.AddNew<CPDF_Name>("DCTDecode");
     decoders.AddNew<CPDF_Name>("FlateDecode");
     decoders.AddNew<CPDF_Name>("FlateDecode");
+    EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Invalid 5 decoder pipeline due to wrong type.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("ASCII85Decode");
+    decoders.AddNew<CPDF_Name>("A85");
+    decoders.AddNew<CPDF_Name>("RunLengthDecode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    decoders.AddNew<CPDF_String>("RL", false);
     EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
   }
 }

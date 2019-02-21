@@ -90,7 +90,15 @@ const uint16_t PDFDocEncoding[256] = {
 
 bool ValidateDecoderPipeline(const CPDF_Array* pDecoders) {
   size_t count = pDecoders->size();
-  if (count <= 1)
+  if (count == 0)
+    return true;
+
+  for (size_t i = 0; i < count; ++i) {
+    if (!pDecoders->GetObjectAt(i)->IsName())
+      return false;
+  }
+
+  if (count == 1)
     return true;
 
   // TODO(thestig): Consolidate all the places that use these filter names.
