@@ -5832,9 +5832,8 @@ float CFXJSE_FormCalcContext::ValueToFloat(CFXJSE_Value* pThis,
   }
   if (arg->IsString())
     return strtof(arg->ToString().c_str(), nullptr);
-  if (arg->IsUndefined())
-    return 0;
-
+  if (arg->IsUndefined() || arg->IsEmpty())
+    return 0.0f;
   return arg->ToFloat();
 }
 
@@ -5866,7 +5865,7 @@ double CFXJSE_FormCalcContext::ValueToDouble(CFXJSE_Value* pThis,
   }
   if (arg->IsString())
     return strtod(arg->ToString().c_str(), nullptr);
-  if (arg->IsUndefined())
+  if (arg->IsUndefined() || arg->IsEmpty())
     return 0;
   return arg->ToDouble();
 }
@@ -5908,7 +5907,7 @@ double CFXJSE_FormCalcContext::ExtractDouble(CFXJSE_Value* pThis,
 
 // static
 ByteString CFXJSE_FormCalcContext::ValueToUTF8String(CFXJSE_Value* arg) {
-  if (!arg || arg->IsNull() || arg->IsUndefined())
+  if (!arg || arg->IsNull() || arg->IsUndefined() || arg->IsEmpty())
     return ByteString();
   if (arg->IsBoolean())
     return arg->ToBoolean() ? "1" : "0";
