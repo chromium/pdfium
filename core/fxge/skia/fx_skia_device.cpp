@@ -2312,7 +2312,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   dest_clip.Intersect(*pClipRect);
   CFX_BitmapComposer composer;
   composer.Compose(m_pBitmap, m_pClipRgn.get(), 255, argb, dest_clip, false,
-                   false, false, m_bRgbByteOrder, 0, blend_type);
+                   false, false, m_bRgbByteOrder, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
                                dest_clip, options);

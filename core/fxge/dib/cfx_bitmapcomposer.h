@@ -33,7 +33,6 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
                bool bFlipX,
                bool bFlipY,
                bool bRgbByteOrder,
-               int alpha_flag,
                BlendMode blend_type);
 
   // ScanlineComposerIface
@@ -71,7 +70,6 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   bool m_bVertical;
   bool m_bFlipX;
   bool m_bFlipY;
-  int m_AlphaFlag;
   bool m_bRgbByteOrder = false;
   BlendMode m_BlendType = BlendMode::kNormal;
   std::vector<uint8_t> m_pScanlineV;
