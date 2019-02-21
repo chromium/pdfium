@@ -111,10 +111,12 @@ constexpr uint8_t FXSYS_GetBValue(uint32_t bgr) {
 #define FXSYS_GetYValue(cmyk) ((uint8_t)((cmyk) >> 8) & 0xff)
 #define FXSYS_GetKValue(cmyk) ((uint8_t)(cmyk)&0xff)
 
+// Bits per pixel, not bytes.
 inline int GetBppFromFormat(FXDIB_Format format) {
   return format & 0xff;
 }
 
+// AKA bytes per pixel, assuming 8-bits per component.
 inline int GetCompsFromFormat(FXDIB_Format format) {
   return (format & 0xff) / 8;
 }
