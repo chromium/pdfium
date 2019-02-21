@@ -24,9 +24,8 @@ class CFFL_Button : public CFFL_FormFiller {
   ~CFFL_Button() override;
 
   // CFFL_FormFiller
-  void OnMouseEnter(CPDFSDK_PageView* pPageView,
-                    CPDFSDK_Annot* pAnnot) override;
-  void OnMouseExit(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot) override;
+  void OnMouseEnter(CPDFSDK_PageView* pPageView) override;
+  void OnMouseExit(CPDFSDK_PageView* pPageView) override;
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot* pAnnot,
                      uint32_t nFlags,
@@ -36,7 +35,6 @@ class CFFL_Button : public CFFL_FormFiller {
                    uint32_t nFlags,
                    const CFX_PointF& point) override;
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot* pAnnot,
                    uint32_t nFlags,
                    const CFX_PointF& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,

@@ -30,15 +30,13 @@ std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
   return std::move(pWnd);
 }
 
-bool CFFL_CheckBox::OnKeyDown(CPDFSDK_Annot* pAnnot,
-                              uint32_t nKeyCode,
-                              uint32_t nFlags) {
+bool CFFL_CheckBox::OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) {
   switch (nKeyCode) {
     case FWL_VKEY_Return:
     case FWL_VKEY_Space:
       return true;
     default:
-      return CFFL_FormFiller::OnKeyDown(pAnnot, nKeyCode, nFlags);
+      return CFFL_FormFiller::OnKeyDown(nKeyCode, nFlags);
   }
 }
 bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,

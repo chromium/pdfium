@@ -12,16 +12,14 @@ CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_Button::~CFFL_Button() {}
 
-void CFFL_Button::OnMouseEnter(CPDFSDK_PageView* pPageView,
-                               CPDFSDK_Annot* pAnnot) {
+void CFFL_Button::OnMouseEnter(CPDFSDK_PageView* pPageView) {
   m_bMouseIn = true;
-  InvalidateRect(GetViewBBox(pPageView, pAnnot));
+  InvalidateRect(GetViewBBox(pPageView));
 }
 
-void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot) {
+void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView) {
   m_bMouseIn = false;
-  InvalidateRect(GetViewBBox(pPageView, pAnnot));
+  InvalidateRect(GetViewBBox(pPageView));
   EndTimer();
   ASSERT(m_pWidget);
 }
@@ -35,7 +33,7 @@ bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
 
   m_bMouseDown = true;
   m_bValid = true;
-  InvalidateRect(GetViewBBox(pPageView, pAnnot));
+  InvalidateRect(GetViewBBox(pPageView));
   return true;
 }
 
@@ -48,12 +46,11 @@ bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
 
   m_bMouseDown = false;
   m_pWidget->GetPDFPage();
-  InvalidateRect(GetViewBBox(pPageView, pAnnot));
+  InvalidateRect(GetViewBBox(pPageView));
   return true;
 }
 
 bool CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot,
                               uint32_t nFlags,
                               const CFX_PointF& point) {
   return true;

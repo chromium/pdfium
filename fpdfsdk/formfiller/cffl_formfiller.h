@@ -27,8 +27,6 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                   CPDFSDK_Widget* pWidget);
   ~CFFL_FormFiller() override;
 
-  virtual FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot* pAnnot);
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
@@ -38,8 +36,8 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                               CFX_RenderDevice* pDevice,
                               const CFX_Matrix& mtUser2Device);
 
-  virtual void OnMouseEnter(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
-  virtual void OnMouseExit(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
+  virtual void OnMouseEnter(CPDFSDK_PageView* pPageView);
+  virtual void OnMouseExit(CPDFSDK_PageView* pPageView);
 
   virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
@@ -50,45 +48,40 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                            uint32_t nFlags,
                            const CFX_PointF& point);
   virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                               CPDFSDK_Annot* pAnnot,
                                uint32_t nFlags,
                                const CFX_PointF& point);
   virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                           CPDFSDK_Annot* pAnnot,
                            uint32_t nFlags,
                            const CFX_PointF& point);
   virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
-                            CPDFSDK_Annot* pAnnot,
                             uint32_t nFlags,
                             short zDelta,
                             const CFX_PointF& point);
   virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
-                             CPDFSDK_Annot* pAnnot,
                              uint32_t nFlags,
                              const CFX_PointF& point);
   virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
-                           CPDFSDK_Annot* pAnnot,
                            uint32_t nFlags,
                            const CFX_PointF& point);
 
-  virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
-                         uint32_t nKeyCode,
-                         uint32_t nFlags);
+  virtual bool OnKeyDown(uint32_t nKeyCode, uint32_t nFlags);
   virtual bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
   virtual bool SetIndexSelected(int index, bool selected);
   virtual bool IsIndexSelected(int index);
 
-  WideString GetText(CPDFSDK_Annot* pAnnot);
-  WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
-  void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
+  FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView);
 
-  bool CanUndo(CPDFSDK_Annot* pAnnot);
-  bool CanRedo(CPDFSDK_Annot* pAnnot);
-  bool Undo(CPDFSDK_Annot* pAnnot);
-  bool Redo(CPDFSDK_Annot* pAnnot);
+  WideString GetText();
+  WideString GetSelectedText();
+  void ReplaceSelection(const WideString& text);
+
+  bool CanUndo();
+  bool CanRedo();
+  bool Undo();
+  bool Redo();
 
   void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
-  void KillFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
+  void KillFocusForAnnot(uint32_t nFlag);
 
   // CPWL_TimerHandler
   void TimerProc() override;
