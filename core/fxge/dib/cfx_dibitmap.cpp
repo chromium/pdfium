@@ -1020,7 +1020,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
     dst_color = FXCMYK_TODIB(color);
   else
     dst_color = FXARGB_TODIB(color);
-  uint8_t* color_p = (uint8_t*)&dst_color;
+  uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
   if (m_bpp == 8) {
     uint8_t gray = 255;
     if (!IsAlphaMask()) {
@@ -1110,14 +1110,13 @@ bool CFX_DIBitmap::CompositeRect(int left,
       uint8_t* dest_scan_alpha =
           m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(row) + rect.left
                        : nullptr;
-      if (dest_scan_alpha) {
+      if (dest_scan_alpha)
         memset(dest_scan_alpha, 0xff, width);
-      }
+
       if (Bpp == 4) {
-        uint32_t* scan = (uint32_t*)dest_scan;
-        for (int col = 0; col < width; col++) {
+        uint32_t* scan = reinterpret_cast<uint32_t*>(dest_scan);
+        for (int col = 0; col < width; col++)
           *scan++ = dst_color;
-        }
       } else {
         for (int col = 0; col < width; col++) {
           *dest_scan++ = color_p[0];

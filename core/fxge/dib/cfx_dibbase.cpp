@@ -1002,34 +1002,38 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     }
     if (m_bpp == 1) {
       memset(dest_scan, 0, m_Pitch);
-      for (int col = 0; col < m_Width; ++col)
+      for (int col = 0; col < m_Width; ++col) {
         if (src_scan[col / 8] & (1 << (7 - col % 8))) {
           int dest_col = m_Width - col - 1;
           dest_scan[dest_col / 8] |= (1 << (7 - dest_col % 8));
         }
+      }
+      continue;
+    }
+
+    dest_scan += (m_Width - 1) * Bpp;
+    if (Bpp == 1) {
+      for (int col = 0; col < m_Width; ++col) {
+        *dest_scan = *src_scan;
+        --dest_scan;
+        ++src_scan;
+      }
+    } else if (Bpp == 3) {
+      for (int col = 0; col < m_Width; ++col) {
+        dest_scan[0] = src_scan[0];
+        dest_scan[1] = src_scan[1];
+        dest_scan[2] = src_scan[2];
+        dest_scan -= 3;
+        src_scan += 3;
+      }
     } else {
-      dest_scan += (m_Width - 1) * Bpp;
-      if (Bpp == 1) {
-        for (int col = 0; col < m_Width; ++col) {
-          *dest_scan = *src_scan;
-          --dest_scan;
-          ++src_scan;
-        }
-      } else if (Bpp == 3) {
-        for (int col = 0; col < m_Width; ++col) {
-          dest_scan[0] = src_scan[0];
-          dest_scan[1] = src_scan[1];
-          dest_scan[2] = src_scan[2];
-          dest_scan -= 3;
-          src_scan += 3;
-        }
-      } else {
-        ASSERT(Bpp == 4);
-        for (int col = 0; col < m_Width; ++col) {
-          *(uint32_t*)dest_scan = *(uint32_t*)src_scan;
-          dest_scan -= 4;
-          src_scan += 4;
-        }
+      ASSERT(Bpp == 4);
+      for (int col = 0; col < m_Width; ++col) {
+        const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
+        uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
+        *dest_scan32 = *src_scan32;
+        dest_scan -= 4;
+        src_scan += 4;
       }
     }
   }
@@ -1142,7 +1146,8 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
         const uint32_t* src_scan =
             reinterpret_cast<const uint32_t*>(GetScanline(row)) + col_start;
         for (int col = col_start; col < col_end; ++col) {
-          *(uint32_t*)dest_scan = *src_scan++;
+          uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
+          *dest_scan32 = *src_scan++;
           dest_scan += dest_step;
         }
       } else {
