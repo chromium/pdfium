@@ -363,6 +363,8 @@ bool CPDF_DIBBase::LoadColorInfo(const CPDF_Dictionary* pFormResources,
         if (pFilter->IsName()) {
           filter = pFilter->GetString();
         } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
+          if (!ValidateDecoderPipeline(pArray))
+            return false;
           filter = pArray->GetStringAt(pArray->size() - 1);
         }
 
