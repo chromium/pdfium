@@ -2860,15 +2860,16 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
 
     InitSourcePalette(src_format, dest_format, pSrcPalette);
     m_iTransparency = (dest_format == FXDIB_Argb ? 1 : 0) +
-                      (dest_format & 0x0200 ? 2 : 0) +
+                      (GetIsAlphaFromFormat(dest_format) ? 2 : 0) +
                       (dest_format & 0x0400 ? 4 : 0) +
                       (GetBppFromFormat(src_format) == 1 ? 8 : 0);
     return true;
   }
-  m_iTransparency =
-      (src_format & 0x0200 ? 0 : 1) + (dest_format & 0x0200 ? 0 : 2) +
-      (blend_type == BlendMode::kNormal ? 4 : 0) + (bClip ? 8 : 0) +
-      (src_format & 0x0400 ? 16 : 0) + (dest_format & 0x0400 ? 32 : 0);
+  m_iTransparency = (GetIsAlphaFromFormat(src_format) ? 0 : 1) +
+                    (GetIsAlphaFromFormat(dest_format) ? 0 : 2) +
+                    (blend_type == BlendMode::kNormal ? 4 : 0) +
+                    (bClip ? 8 : 0) + (src_format & 0x0400 ? 16 : 0) +
+                    (dest_format & 0x0400 ? 32 : 0);
   return true;
 }
 
@@ -3037,7 +3038,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     return;
   }
   if (m_DestFormat == FXDIB_8bppMask) {
-    if (m_SrcFormat & 0x0200) {
+    if (GetIsAlphaFromFormat(m_SrcFormat)) {
       if (m_SrcFormat == FXDIB_Argb) {
         CompositeRow_AlphaToMask(dest_scan, src_scan, width, clip_scan, 4);
       } else {
@@ -3054,8 +3055,8 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
         dest_scan++;
       }
     }
-    if (m_SrcFormat & 0x0200) {
-      if (m_DestFormat & 0x0200) {
+    if (GetIsAlphaFromFormat(m_SrcFormat)) {
+      if (GetIsAlphaFromFormat(m_DestFormat)) {
         CompositeRow_Argb2Graya(dest_scan, src_scan, width, m_BlendType,
                                 clip_scan, src_extra_alpha, dst_extra_alpha);
       } else {
@@ -3063,7 +3064,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
                                clip_scan, src_extra_alpha);
       }
     } else {
-      if (m_DestFormat & 0x0200) {
+      if (GetIsAlphaFromFormat(m_DestFormat)) {
         CompositeRow_Rgb2Graya(dest_scan, src_scan, src_Bpp, width, m_BlendType,
                                clip_scan, dst_extra_alpha);
       } else {
@@ -3176,7 +3177,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
   }
   if ((m_DestFormat & 0xff) == 8) {
     if (m_iTransparency & 8) {
-      if (m_DestFormat & 0x0200) {
+      if (GetIsAlphaFromFormat(m_DestFormat)) {
         CompositeRow_1bppPal2Graya(
             dest_scan, src_scan, src_left,
             reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
@@ -3188,16 +3189,17 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
             m_BlendType, clip_scan);
       }
     } else {
-      if (m_DestFormat & 0x0200)
+      if (GetIsAlphaFromFormat(m_DestFormat)) {
         CompositeRow_8bppPal2Graya(
             dest_scan, src_scan,
             reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
             m_BlendType, clip_scan, dst_extra_alpha, src_extra_alpha);
-      else
+      } else {
         CompositeRow_8bppPal2Gray(
             dest_scan, src_scan,
             reinterpret_cast<const uint8_t*>(m_pSrcPalette.get()), width,
             m_BlendType, clip_scan, src_extra_alpha);
+      }
     }
   } else {
     switch (m_iTransparency) {
@@ -3230,7 +3232,6 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
                                           m_pSrcPalette.get(), clip_scan,
                                           dst_extra_alpha);
         break;
-        break;
     }
   }
 }
@@ -3244,7 +3245,7 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(uint8_t* dest_scan,
     CompositeRow_ByteMask2Mask(dest_scan, src_scan, m_MaskAlpha, width,
                                clip_scan);
   } else if ((m_DestFormat & 0xff) == 8) {
-    if (m_DestFormat & 0x0200) {
+    if (GetIsAlphaFromFormat(m_DestFormat)) {
       CompositeRow_ByteMask2Graya(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                   width, clip_scan, dst_extra_alpha);
     } else {
@@ -3261,7 +3262,6 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(uint8_t* dest_scan,
           dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen, m_MaskBlue,
           width, m_BlendType, (m_DestFormat & 0xff) >> 3, clip_scan);
     }
-    return;
   } else if (m_DestFormat == FXDIB_Argb) {
     CompositeRow_ByteMask2Argb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                m_MaskGreen, m_MaskBlue, width, m_BlendType,
@@ -3287,7 +3287,7 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(uint8_t* dest_scan,
     CompositeRow_BitMask2Mask(dest_scan, src_scan, m_MaskAlpha, src_left, width,
                               clip_scan);
   } else if ((m_DestFormat & 0xff) == 8) {
-    if (m_DestFormat & 0x0200) {
+    if (GetIsAlphaFromFormat(m_DestFormat)) {
       CompositeRow_BitMask2Graya(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                  src_left, width, clip_scan, dst_extra_alpha);
     } else {
@@ -3304,7 +3304,6 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(uint8_t* dest_scan,
           dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen, m_MaskBlue,
           src_left, width, m_BlendType, (m_DestFormat & 0xff) >> 3, clip_scan);
     }
-    return;
   } else if (m_DestFormat == FXDIB_Argb) {
     CompositeRow_BitMask2Argb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                               m_MaskGreen, m_MaskBlue, src_left, width,

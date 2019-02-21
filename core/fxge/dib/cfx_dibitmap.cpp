@@ -1230,7 +1230,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
         }
       }
     }
-  } else if (dest_format & 0x0200) {
+  } else if (GetIsAlphaFromFormat(dest_format)) {
     if (src_format == FXDIB_Argb) {
       pAlphaMask = CloneAlphaMask();
       if (!pAlphaMask)
