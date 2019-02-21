@@ -23,8 +23,7 @@ class CFX_ScanlineCompositor {
             uint32_t mask_color,
             BlendMode blend_type,
             bool bClip,
-            bool bRgbByteOrder,
-            int alpha_flag);
+            bool bRgbByteOrder);
 
   void CompositeRgbBitmapLine(uint8_t* dest_scan,
                               const uint8_t* src_scan,
@@ -59,7 +58,7 @@ class CFX_ScanlineCompositor {
                          FXDIB_Format dest_format,
                          const uint32_t* pSrcPalette);
 
-  void InitSourceMask(int alpha_flag, uint32_t mask_color);
+  void InitSourceMask(uint32_t mask_color);
 
   int m_iTransparency;
   FXDIB_Format m_SrcFormat;

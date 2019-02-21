@@ -2841,8 +2841,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                   uint32_t mask_color,
                                   BlendMode blend_type,
                                   bool bClip,
-                                  bool bRgbByteOrder,
-                                  int alpha_flag) {
+                                  bool bRgbByteOrder) {
   m_SrcFormat = src_format;
   m_DestFormat = dest_format;
   m_BlendType = blend_type;
@@ -2850,7 +2849,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   if (GetBppFromFormat(dest_format) == 1)
     return false;
   if (m_SrcFormat == FXDIB_1bppMask || m_SrcFormat == FXDIB_8bppMask) {
-    InitSourceMask(alpha_flag, mask_color);
+    InitSourceMask(mask_color);
     return true;
   }
   if ((~src_format & 0x0400) && (dest_format & 0x0400))
@@ -2873,49 +2872,18 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   return true;
 }
 
-void CFX_ScanlineCompositor::InitSourceMask(int alpha_flag,
-                                            uint32_t mask_color) {
-  int mask_black = 0;
-  if (alpha_flag >> 8) {
-    m_MaskAlpha = alpha_flag & 0xff;
-    m_MaskRed = FXSYS_GetCValue(mask_color);
-    m_MaskGreen = FXSYS_GetMValue(mask_color);
-    m_MaskBlue = FXSYS_GetYValue(mask_color);
-    mask_black = FXSYS_GetKValue(mask_color);
-  } else {
-    m_MaskAlpha = FXARGB_A(mask_color);
-    m_MaskRed = FXARGB_R(mask_color);
-    m_MaskGreen = FXARGB_G(mask_color);
-    m_MaskBlue = FXARGB_B(mask_color);
-  }
+void CFX_ScanlineCompositor::InitSourceMask(uint32_t mask_color) {
+  m_MaskAlpha = FXARGB_A(mask_color);
+  m_MaskRed = FXARGB_R(mask_color);
+  m_MaskGreen = FXARGB_G(mask_color);
+  m_MaskBlue = FXARGB_B(mask_color);
   if (m_DestFormat == FXDIB_8bppMask)
     return;
 
   if ((m_DestFormat & 0xff) == 8) {
-    if (alpha_flag >> 8) {
-      uint8_t r;
-      uint8_t g;
-      uint8_t b;
-      std::tie(r, g, b) =
-          AdobeCMYK_to_sRGB1(m_MaskRed, m_MaskGreen, m_MaskBlue, mask_black);
-      m_MaskRed = FXRGB2GRAY(r, g, b);
-    } else {
-      m_MaskRed = FXRGB2GRAY(m_MaskRed, m_MaskGreen, m_MaskBlue);
-    }
+    m_MaskRed = FXRGB2GRAY(m_MaskRed, m_MaskGreen, m_MaskBlue);
     if (m_DestFormat & 0x0400)
       m_MaskRed = FX_CCOLOR(m_MaskRed);
-    return;
-  }
-  uint8_t* mask_color_p = (uint8_t*)&mask_color;
-  mask_color =
-      (alpha_flag >> 8) ? FXCMYK_TODIB(mask_color) : FXARGB_TODIB(mask_color);
-  if (alpha_flag >> 8) {
-    std::tie(mask_color_p[2], mask_color_p[1], mask_color_p[0]) =
-        AdobeCMYK_to_sRGB1(mask_color_p[0], mask_color_p[1], mask_color_p[2],
-                           mask_color_p[3]);
-    m_MaskRed = mask_color_p[2];
-    m_MaskGreen = mask_color_p[1];
-    m_MaskBlue = mask_color_p[0];
   }
 }
 

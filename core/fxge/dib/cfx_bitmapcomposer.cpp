@@ -49,7 +49,7 @@ bool CFX_BitmapComposer::SetInfo(int width,
   if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, width, pSrcPalette,
                          m_MaskColor, BlendMode::kNormal,
                          m_pClipMask != nullptr || (m_BitmapAlpha < 255),
-                         m_bRgbByteOrder, 0)) {
+                         m_bRgbByteOrder)) {
     return false;
   }
   if (m_bVertical) {
