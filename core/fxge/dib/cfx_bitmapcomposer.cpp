@@ -84,7 +84,7 @@ void CFX_BitmapComposer::DoCompose(uint8_t* dest_scan,
   if (m_SrcFormat == FXDIB_8bppMask) {
     m_Compositor.CompositeByteMaskLine(dest_scan, src_scan, dest_width,
                                        clip_scan, dst_extra_alpha);
-  } else if ((m_SrcFormat & 0xff) == 8) {
+  } else if (GetBppFromFormat(m_SrcFormat) == 8) {
     m_Compositor.CompositePalBitmapLine(dest_scan, src_scan, 0, dest_width,
                                         clip_scan, src_extra_alpha,
                                         dst_extra_alpha);

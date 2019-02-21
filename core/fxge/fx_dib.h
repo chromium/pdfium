@@ -123,6 +123,10 @@ inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
   return format & 0x200;
 }
 
+inline bool GetIsCmykFromFormat(FXDIB_Format format) {
+  return format & 0x400;
+}
+
 inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
 }

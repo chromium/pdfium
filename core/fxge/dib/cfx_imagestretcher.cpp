@@ -58,7 +58,7 @@ CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
       m_DestHeight(dest_height),
       m_ClipRect(bitmap_rect),
       m_DestFormat(GetStretchedFormat(*pSource)),
-      m_DestBPP(m_DestFormat & 0xff),
+      m_DestBPP(GetBppFromFormat(m_DestFormat)),
       m_LineIndex(0) {}
 
 CFX_ImageStretcher::~CFX_ImageStretcher() {}

@@ -1265,9 +1265,9 @@ bool CFX_DIBBase::ConvertBuffer(
     }
     case FXDIB_Argb:
     case FXDIB_Rgb32: {
-      const bool cmyk = src_format & 0x0400;
-      return ConvertBuffer_Argb(bpp, cmyk, dest_format, dest_buf, dest_pitch,
-                                width, height, pSrcBitmap, src_left, src_top);
+      return ConvertBuffer_Argb(bpp, GetIsCmykFromFormat(src_format),
+                                dest_format, dest_buf, dest_pitch, width,
+                                height, pSrcBitmap, src_left, src_top);
     }
     default:
       NOTREACHED();
