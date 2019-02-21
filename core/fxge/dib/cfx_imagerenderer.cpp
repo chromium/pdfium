@@ -98,18 +98,12 @@ bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
     return false;
 
   if (pBitmap->IsAlphaMask()) {
-    if (m_BitmapAlpha != 255) {
-      if (m_AlphaFlag >> 8) {
-        m_AlphaFlag = (((uint8_t)((m_AlphaFlag & 0xff) * m_BitmapAlpha / 255)) |
-                       ((m_AlphaFlag >> 8) << 8));
-      } else {
-        m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
-      }
-    }
+    if (m_BitmapAlpha != 255)
+      m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
     m_pDevice->CompositeMask(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-        BlendMode::kNormal, m_pClipRgn.Get(), m_bRgbByteOrder, m_AlphaFlag);
+        BlendMode::kNormal, m_pClipRgn.Get(), m_bRgbByteOrder, 0);
   } else {
     if (m_BitmapAlpha != 255)
       pBitmap->MultiplyAlpha(m_BitmapAlpha);

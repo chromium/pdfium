@@ -44,7 +44,6 @@ class CFX_ImageRenderer {
   FX_RECT m_ClipBox;
   const int m_BitmapAlpha;
   int m_Status = 0;
-  int m_AlphaFlag = 0;
   uint32_t m_MaskColor;
   const bool m_bRgbByteOrder;
 };
