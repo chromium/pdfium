@@ -888,33 +888,33 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pTrailerTemplate = nullptr;
   CXFA_Node* pFormNode = pBreakNode->GetContainerParent();
-  if (pFormNode->PresenceRequiresSpace()) {
-    bCreatePage = ExecuteBreakBeforeOrAfter(pBreakNode, bBefore,
-                                            pLeaderTemplate, pTrailerTemplate);
-    CXFA_Document* pDocument = pBreakNode->GetDocument();
-    CXFA_Node* pDataScope = nullptr;
-    pFormNode = pFormNode->GetContainerParent();
-    if (pLeaderTemplate) {
-      if (!pDataScope)
-        pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
+  if (!pFormNode->PresenceRequiresSpace())
+    return false;
 
-      pBreakLeaderNode = pDocument->DataMerge_CopyContainer(
-          pLeaderTemplate, pFormNode, pDataScope, true, true, true);
-      pDocument->DataMerge_UpdateBindingRelations(pBreakLeaderNode);
-      SetLayoutGeneratedNodeFlag(pBreakLeaderNode);
-    }
-    if (pTrailerTemplate) {
-      if (!pDataScope)
-        pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
+  bCreatePage = ExecuteBreakBeforeOrAfter(pBreakNode, bBefore, pLeaderTemplate,
+                                          pTrailerTemplate);
+  CXFA_Document* pDocument = pBreakNode->GetDocument();
+  CXFA_Node* pDataScope = nullptr;
+  pFormNode = pFormNode->GetContainerParent();
+  if (pLeaderTemplate) {
+    if (!pDataScope)
+      pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
 
-      pBreakTrailerNode = pDocument->DataMerge_CopyContainer(
-          pTrailerTemplate, pFormNode, pDataScope, true, true, true);
-      pDocument->DataMerge_UpdateBindingRelations(pBreakTrailerNode);
-      SetLayoutGeneratedNodeFlag(pBreakTrailerNode);
-    }
-    return true;
+    pBreakLeaderNode = pDocument->DataMerge_CopyContainer(
+        pLeaderTemplate, pFormNode, pDataScope, true, true, true);
+    pDocument->DataMerge_UpdateBindingRelations(pBreakLeaderNode);
+    SetLayoutGeneratedNodeFlag(pBreakLeaderNode);
   }
-  return false;
+  if (pTrailerTemplate) {
+    if (!pDataScope)
+      pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
+
+    pBreakTrailerNode = pDocument->DataMerge_CopyContainer(
+        pTrailerTemplate, pFormNode, pDataScope, true, true, true);
+    pDocument->DataMerge_UpdateBindingRelations(pBreakTrailerNode);
+    SetLayoutGeneratedNodeFlag(pBreakTrailerNode);
+  }
+  return true;
 }
 
 bool CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
