@@ -1035,7 +1035,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
       if (!bitmap->CompositeMask(point.value().x, point.value().y, ncols, nrows,
                                  pGlyph, fill_color, 0, 0, BlendMode::kNormal,
-                                 nullptr, false, 0)) {
+                                 nullptr, false)) {
         return false;
       }
       continue;

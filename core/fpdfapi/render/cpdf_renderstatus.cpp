@@ -1946,7 +1946,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     pBitmap->CompositeMask(
         point->x, point->y, glyph.m_pGlyph->GetBitmap()->GetWidth(),
         glyph.m_pGlyph->GetBitmap()->GetHeight(), glyph.m_pGlyph->GetBitmap(),
-        fill_argb, 0, 0, BlendMode::kNormal, nullptr, false, 0);
+        fill_argb, 0, 0, BlendMode::kNormal, nullptr, false);
   }
   m_pDevice->SetBitMask(pBitmap, rect.left, rect.top, fill_argb);
   return true;
@@ -2314,7 +2314,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         } else {
           pScreen->CompositeMask(start_x, start_y, width, height,
                                  pPatternBitmap, fill_argb, 0, 0,
-                                 BlendMode::kNormal, nullptr, false, 0);
+                                 BlendMode::kNormal, nullptr, false);
         }
       }
     }
@@ -2442,7 +2442,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       if (pDIBitmap->IsAlphaMask()) {
         pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                               pDIBitmap, mask_argb, left, top, blend_mode,
-                              nullptr, false, 0);
+                              nullptr, false);
       } else {
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                                 pDIBitmap, left, top, blend_mode, nullptr,
@@ -2475,7 +2475,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     pBackdrop->CompositeMask(left - back_left, top - back_top,
                              pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
                              pDIBitmap, mask_argb, 0, 0, blend_mode, nullptr,
-                             false, 0);
+                             false);
   } else {
     pBackdrop->CompositeBitmap(left - back_left, top - back_top,
                                pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),

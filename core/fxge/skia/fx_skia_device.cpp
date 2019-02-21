@@ -2262,7 +2262,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
     return m_pBitmap->CompositeMask(left, top, src_rect.Width(),
                                     src_rect.Height(), pBitmap, argb,
                                     src_rect.left, src_rect.top, blend_type,
-                                    m_pClipRgn.get(), m_bRgbByteOrder, 0);
+                                    m_pClipRgn.get(), m_bRgbByteOrder);
   }
   return m_pBitmap->CompositeBitmap(
       left, top, src_rect.Width(), src_rect.Height(), pBitmap, src_rect.left,

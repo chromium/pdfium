@@ -939,8 +939,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  int src_top,
                                  BlendMode blend_type,
                                  const CFX_ClipRgn* pClipRgn,
-                                 bool bRgbByteOrder,
-                                 int alpha_flag) {
+                                 bool bRgbByteOrder) {
   if (!m_pBuffer)
     return false;
 
@@ -954,8 +953,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
     return true;
   }
 
-  int src_alpha =
-      (uint8_t)(alpha_flag >> 8) ? (alpha_flag & 0xff) : FXARGB_A(color);
+  int src_alpha = FXARGB_A(color);
   if (src_alpha == 0)
     return true;
 
@@ -970,8 +968,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   int Bpp = GetBPP() / 8;
   CFX_ScanlineCompositor compositor;
   if (!compositor.Init(GetFormat(), pMask->GetFormat(), width, nullptr, color,
-                       blend_type, pClipMask != nullptr, bRgbByteOrder,
-                       alpha_flag)) {
+                       blend_type, pClipMask != nullptr, bRgbByteOrder, 0)) {
     return false;
   }
   for (int row = 0; row < height; row++) {

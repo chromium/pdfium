@@ -1200,7 +1200,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       if (!background->Create(width, height, FXDIB_Rgb32) ||
           !GetDIBits(background, left, top) ||
           !background->CompositeMask(0, 0, width, height, pSource, color, 0, 0,
-                                     BlendMode::kNormal, nullptr, false, 0)) {
+                                     BlendMode::kNormal, nullptr, false)) {
         return false;
       }
       FX_RECT alpha_src_rect(0, 0, width, height);
@@ -1299,7 +1299,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                    image_rect.top + clip_rect.top) ||
         !background->CompositeMask(0, 0, clip_width, clip_height, pStretched,
                                    color, 0, 0, BlendMode::kNormal, nullptr,
-                                   false, 0)) {
+                                   false)) {
       return false;
     }
 

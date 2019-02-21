@@ -82,8 +82,7 @@ class CFX_DIBitmap : public CFX_DIBBase {
                      int src_top,
                      BlendMode blend_type,
                      const CFX_ClipRgn* pClipRgn,
-                     bool bRgbByteOrder,
-                     int alpha_flag);
+                     bool bRgbByteOrder);
 
   bool CompositeRect(int dest_left,
                      int dest_top,

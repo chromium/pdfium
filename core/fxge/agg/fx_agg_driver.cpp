@@ -1439,7 +1439,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                            draw_rect.Height(), m_pClipRgn->GetMask(),
                            fill_color, draw_rect.left - clip_rect.left,
                            draw_rect.top - clip_rect.top, BlendMode::kNormal,
-                           nullptr, m_bRgbByteOrder, 0);
+                           nullptr, m_bRgbByteOrder);
   return true;
 }
 
@@ -1504,7 +1504,7 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
     return m_pBitmap->CompositeMask(left, top, src_rect.Width(),
                                     src_rect.Height(), pBitmap, argb,
                                     src_rect.left, src_rect.top, blend_type,
-                                    m_pClipRgn.get(), m_bRgbByteOrder, 0);
+                                    m_pClipRgn.get(), m_bRgbByteOrder);
   }
   return m_pBitmap->CompositeBitmap(
       left, top, src_rect.Width(), src_rect.Height(), pBitmap, src_rect.left,
