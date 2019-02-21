@@ -1585,27 +1585,27 @@ CXFA_Node* CXFA_Document::DataMerge_CopyContainer(CXFA_Node* pTemplateNode,
                                                   bool bOneInstance,
                                                   bool bDataMerge,
                                                   bool bUpLevel) {
+  ASSERT(pTemplateNode->IsContainerNode());
   switch (pTemplateNode->GetElementType()) {
-    case XFA_Element::SubformSet:
-    case XFA_Element::Subform:
     case XFA_Element::Area:
     case XFA_Element::PageArea:
+    case XFA_Element::Subform:
+    case XFA_Element::SubformSet:
       return CopyContainer_SubformSet(this, pTemplateNode, pFormNode,
                                       pDataScope, bOneInstance, bDataMerge);
+    case XFA_Element::ContentArea:
+    case XFA_Element::Draw:
     case XFA_Element::ExclGroup:
     case XFA_Element::Field:
-    case XFA_Element::Draw:
-    case XFA_Element::ContentArea:
       return CopyContainer_Field(this, pTemplateNode, pFormNode, pDataScope,
                                  bDataMerge, bUpLevel);
     case XFA_Element::PageSet:
     case XFA_Element::Variables:
-      break;
+      return nullptr;
     default:
       NOTREACHED();
-      break;
+      return nullptr;
   }
-  return nullptr;
 }
 
 void CXFA_Document::DataMerge_UpdateBindingRelations(
