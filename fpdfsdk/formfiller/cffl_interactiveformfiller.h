@@ -111,6 +111,12 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   bool OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
+
+  bool SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                        int index,
+                        bool selected);
+  bool IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot, int index);
+
 #ifdef PDF_ENABLE_XFA
   bool OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
                CPDFSDK_PageView* pPageView,

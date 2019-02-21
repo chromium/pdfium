@@ -302,6 +302,10 @@ void CPWL_ListBox::Select(int32_t nItemIndex) {
   m_pList->Select(nItemIndex);
 }
 
+void CPWL_ListBox::Deselect(int32_t nItemIndex) {
+  m_pList->Deselect(nItemIndex);
+}
+
 void CPWL_ListBox::SetCaret(int32_t nItemIndex) {
   m_pList->SetCaret(nItemIndex);
 }

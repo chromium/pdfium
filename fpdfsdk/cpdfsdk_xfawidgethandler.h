@@ -94,6 +94,10 @@ class CPDFSDK_XFAWidgetHandler final : public IPDFSDK_AnnotHandler {
   bool OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag) override;
   bool OnXFAChangedFocus(CPDFSDK_Annot::ObservedPtr* pOldAnnot,
                          CPDFSDK_Annot::ObservedPtr* pNewAnnot) override;
+  bool SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                        int index,
+                        bool selected) override;
+  bool IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot, int index) override;
 
  private:
   CXFA_FFWidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);

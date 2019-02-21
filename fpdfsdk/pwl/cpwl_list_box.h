@@ -72,6 +72,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   void ResetContent();
   void Reset();
   void Select(int32_t nItemIndex);
+  void Deselect(int32_t nItemIndex);
   void SetCaret(int32_t nItemIndex);
   void SetHoverSel(bool bHoverSel);
 

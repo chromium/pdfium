@@ -97,6 +97,10 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
   bool OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
   bool OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag) override;
   bool OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag) override;
+  bool SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                        int index,
+                        bool selected) override;
+  bool IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot, int index) override;
 #ifdef PDF_ENABLE_XFA
   bool OnXFAChangedFocus(CPDFSDK_Annot::ObservedPtr* pOldAnnot,
                          CPDFSDK_Annot::ObservedPtr* pNewAnnot) override;

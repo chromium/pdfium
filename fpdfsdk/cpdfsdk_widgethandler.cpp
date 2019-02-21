@@ -240,6 +240,19 @@ bool CPDFSDK_WidgetHandler::OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
          m_pFormFiller->OnKillFocus(pAnnot, nFlag);
 }
 
+bool CPDFSDK_WidgetHandler::SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                             int index,
+                                             bool selected) {
+  return !(*pAnnot)->IsSignatureWidget() &&
+         m_pFormFiller->SetIndexSelected(pAnnot, index, selected);
+}
+
+bool CPDFSDK_WidgetHandler::IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                            int index) {
+  return !(*pAnnot)->IsSignatureWidget() &&
+         m_pFormFiller->IsIndexSelected(pAnnot, index);
+}
+
 #ifdef PDF_ENABLE_XFA
 bool CPDFSDK_WidgetHandler::OnXFAChangedFocus(
     CPDFSDK_Annot::ObservedPtr* pOldAnnot,

@@ -71,6 +71,7 @@ class CPWL_ListCtrl {
   void AddString(const WideString& str);
   void SetTopItem(int32_t nIndex);
   void Select(int32_t nItemIndex);
+  void Deselect(int32_t nItemIndex);
   void SetCaret(int32_t nItemIndex);
   void Empty();
   void Cancel();

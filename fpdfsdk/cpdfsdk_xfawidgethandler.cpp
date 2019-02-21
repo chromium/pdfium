@@ -375,6 +375,19 @@ bool CPDFSDK_XFAWidgetHandler::OnXFAChangedFocus(
   return bRet;
 }
 
+bool CPDFSDK_XFAWidgetHandler::SetIndexSelected(
+    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    int index,
+    bool selected) {
+  return false;
+}
+
+bool CPDFSDK_XFAWidgetHandler::IsIndexSelected(
+    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    int index) {
+  return false;
+}
+
 CXFA_FFWidgetHandler* CPDFSDK_XFAWidgetHandler::GetXFAWidgetHandler(
     CPDFSDK_Annot* pAnnot) {
   if (!pAnnot)

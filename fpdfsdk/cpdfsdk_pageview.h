@@ -82,6 +82,9 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                     const CFX_PointF& point,
                     int nFlag);
 
+  bool SetIndexSelected(int index, bool selected);
+  bool IsIndexSelected(int index);
+
   const CFX_Matrix& GetCurrentMatrix() const { return m_curMatrix; }
   void UpdateRects(const std::vector<CFX_FloatRect>& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);

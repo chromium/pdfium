@@ -94,6 +94,10 @@ class CPDFSDK_AnnotHandlerMgr {
   bool Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
   bool Annot_OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
   bool Annot_OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
+  bool Annot_SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                              int index,
+                              bool selected);
+  bool Annot_IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot, int index);
 
 #ifdef PDF_ENABLE_XFA
   bool Annot_OnChangeFocus(CPDFSDK_Annot::ObservedPtr* pSetAnnot,

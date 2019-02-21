@@ -725,3 +725,22 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
     pActionHandler->DoAction_Page(action, type, pFormFillEnv);
   }
 }
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FORM_SetIndexSelected(FPDF_FORMHANDLE hHandle,
+                      FPDF_PAGE page,
+                      int index,
+                      FPDF_BOOL selected) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return false;
+  return pPageView->SetIndexSelected(index, selected);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FORM_IsIndexSelected(FPDF_FORMHANDLE hHandle, FPDF_PAGE page, int index) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return false;
+  return pPageView->IsIndexSelected(index);
+}

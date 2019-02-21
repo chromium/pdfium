@@ -101,6 +101,13 @@ class IPDFSDK_AnnotHandler {
                           uint32_t nFlag) = 0;
   virtual bool OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
                            uint32_t nFlag) = 0;
+
+  virtual bool SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                int index,
+                                bool selected) = 0;
+  virtual bool IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                               int index) = 0;
+
 #ifdef PDF_ENABLE_XFA
   virtual bool OnXFAChangedFocus(CPDFSDK_Annot::ObservedPtr* pOldAnnot,
                                  CPDFSDK_Annot::ObservedPtr* pNewAnnot) = 0;

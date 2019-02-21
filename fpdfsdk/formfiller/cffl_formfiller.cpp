@@ -206,6 +206,14 @@ bool CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   return pWnd && pWnd->OnChar(nChar, nFlags);
 }
 
+bool CFFL_FormFiller::SetIndexSelected(int index, bool selected) {
+  return false;
+}
+
+bool CFFL_FormFiller::IsIndexSelected(int index) {
+  return false;
+}
+
 WideString CFFL_FormFiller::GetText(CPDFSDK_Annot* pAnnot) {
   if (!IsValid())
     return WideString();

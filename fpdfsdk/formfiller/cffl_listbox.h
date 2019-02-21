@@ -33,6 +33,8 @@ class CFFL_ListBox final : public CFFL_TextObject {
                      CPDFSDK_FieldAction& fa) override;
   void SaveState(CPDFSDK_PageView* pPageView) override;
   void RestoreState(CPDFSDK_PageView* pPageView) override;
+  bool SetIndexSelected(int index, bool selected) override;
+  bool IsIndexSelected(int index) override;
 
  private:
   std::set<int> m_OriginSelections;

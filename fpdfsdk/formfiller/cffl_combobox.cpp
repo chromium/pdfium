@@ -228,6 +228,43 @@ void CFFL_ComboBox::RestoreState(CPDFSDK_PageView* pPageView) {
   }
 }
 
+bool CFFL_ComboBox::SetIndexSelected(int index, bool selected) {
+  if (!IsValid() || !selected)
+    return false;
+
+  if (index < 0 || index >= m_pWidget->CountOptions())
+    return false;
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_ComboBox* pWnd =
+      static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, false));
+  if (!pWnd)
+    return false;
+
+  pWnd->SetSelect(index);
+  return true;
+}
+
+bool CFFL_ComboBox::IsIndexSelected(int index) {
+  if (!IsValid())
+    return false;
+
+  if (index < 0 || index >= m_pWidget->CountOptions())
+    return false;
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_ComboBox* pWnd =
+      static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, false));
+  if (!pWnd)
+    return false;
+
+  return index == pWnd->GetSelect();
+}
+
 #ifdef PDF_ENABLE_XFA
 bool CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
   if (CPWL_ComboBox* pComboBox =

@@ -180,6 +180,18 @@ bool CPDFSDK_BAAnnotHandler::OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return false;
 }
 
+bool CPDFSDK_BAAnnotHandler::SetIndexSelected(
+    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    int index,
+    bool selected) {
+  return false;
+}
+
+bool CPDFSDK_BAAnnotHandler::IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                             int index) {
+  return false;
+}
+
 #ifdef PDF_ENABLE_XFA
 bool CPDFSDK_BAAnnotHandler::OnXFAChangedFocus(
     CPDFSDK_Annot::ObservedPtr* pOldAnnot,

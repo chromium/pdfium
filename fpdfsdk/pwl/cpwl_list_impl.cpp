@@ -407,6 +407,16 @@ void CPWL_ListCtrl::Select(int32_t nItemIndex) {
   }
 }
 
+void CPWL_ListCtrl::Deselect(int32_t nItemIndex) {
+  if (!IsItemSelected(nItemIndex))
+    return;
+
+  SetMultipleSelect(nItemIndex, false);
+
+  if (!IsMultipleSel())
+    m_nSelItem = -1;
+}
+
 bool CPWL_ListCtrl::IsItemVisible(int32_t nItemIndex) const {
   CFX_FloatRect rcPlate = m_rcPlate;
   CFX_FloatRect rcItem = GetItemRect(nItemIndex);
