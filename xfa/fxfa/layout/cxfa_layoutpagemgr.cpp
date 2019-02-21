@@ -897,6 +897,9 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
   CXFA_Node* pDataScope = nullptr;
   pFormNode = pFormNode->GetContainerParent();
   if (pLeaderTemplate) {
+    if (!pLeaderTemplate->IsContainerNode())
+      return false;
+
     if (!pDataScope)
       pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
 
@@ -906,6 +909,9 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
     SetLayoutGeneratedNodeFlag(pBreakLeaderNode);
   }
   if (pTrailerTemplate) {
+    if (!pTrailerTemplate->IsContainerNode())
+      return false;
+
     if (!pDataScope)
       pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
 
