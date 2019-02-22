@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -24,6 +25,19 @@
 #endif
 
 namespace {
+
+// Used with std::unique_ptr to call opj_image_data_free on raw memory.
+struct OpjImageDataDeleter {
+  inline void operator()(void* ptr) const { opj_image_data_free(ptr); }
+};
+
+using ScopedOpjImageData = std::unique_ptr<int, OpjImageDataDeleter>;
+
+struct OpjImageRgbData {
+  ScopedOpjImageData r;
+  ScopedOpjImageData g;
+  ScopedOpjImageData b;
+};
 
 void fx_ignore_callback(const char* msg, void* client_data) {}
 
@@ -44,28 +58,21 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
   return stream;
 }
 
-bool alloc_rgb(int** out_r, int** out_g, int** out_b, size_t size) {
-  int* r = static_cast<int*>(opj_image_data_alloc(size));
-  if (!r)
-    return false;
+Optional<OpjImageRgbData> alloc_rgb(size_t size) {
+  OpjImageRgbData data;
+  data.r.reset(static_cast<int*>(opj_image_data_alloc(size)));
+  if (!data.r)
+    return {};
 
-  int* g = static_cast<int*>(opj_image_data_alloc(size));
-  if (!g) {
-    opj_image_data_free(r);
-    return false;
-  }
+  data.g.reset(static_cast<int*>(opj_image_data_alloc(size)));
+  if (!data.g)
+    return {};
 
-  int* b = static_cast<int*>(opj_image_data_alloc(size));
-  if (!b) {
-    opj_image_data_free(r);
-    opj_image_data_free(g);
-    return false;
-  }
+  data.b.reset(static_cast<int*>(opj_image_data_alloc(size)));
+  if (!data.b)
+    return {};
 
-  *out_r = r;
-  *out_g = g;
-  *out_b = b;
-  return true;
+  return data;
 }
 
 void sycc_to_rgb(int offset,
@@ -106,25 +113,23 @@ void sycc444_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  int* r;
-  int* g;
-  int* b;
-  if (!alloc_rgb(&r, &g, &b, max_size.ValueOrDie()))
+  Optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  if (!data.has_value())
     return;
 
-  int* d0 = r;
-  int* d1 = g;
-  int* d2 = b;
+  int* r = data.value().r.get();
+  int* g = data.value().g.get();
+  int* b = data.value().b.get();
   max_size /= sizeof(int);
-  for (size_t i = 0; i < max_size.ValueOrDie(); ++i) {
+  for (size_t i = 0; i < max_size.ValueOrDie(); ++i)
     sycc_to_rgb(offset, upb, *y++, *cb++, *cr++, r++, g++, b++);
-  }
+
   opj_image_data_free(img->comps[0].data);
   opj_image_data_free(img->comps[1].data);
   opj_image_data_free(img->comps[2].data);
-  img->comps[0].data = d0;
-  img->comps[1].data = d1;
-  img->comps[2].data = d2;
+  img->comps[0].data = data.value().r.release();
+  img->comps[1].data = data.value().g.release();
+  img->comps[2].data = data.value().b.release();
 }
 
 bool sycc420_422_size_is_valid(opj_image_t* img) {
@@ -168,15 +173,13 @@ void sycc422_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  int* r;
-  int* g;
-  int* b;
-  if (!alloc_rgb(&r, &g, &b, max_size.ValueOrDie()))
+  Optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  if (!data.has_value())
     return;
 
-  int* d0 = r;
-  int* d1 = g;
-  int* d2 = b;
+  int* r = data.value().r.get();
+  int* g = data.value().g.get();
+  int* b = data.value().b.get();
   for (uint32_t i = 0; i < maxh; ++i) {
     OPJ_UINT32 j;
     for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
@@ -187,12 +190,13 @@ void sycc422_to_rgb(opj_image_t* img) {
       sycc_to_rgb(offset, upb, *y++, *cb++, *cr++, r++, g++, b++);
     }
   }
+
   opj_image_data_free(img->comps[0].data);
   opj_image_data_free(img->comps[1].data);
   opj_image_data_free(img->comps[2].data);
-  img->comps[0].data = d0;
-  img->comps[1].data = d1;
-  img->comps[2].data = d2;
+  img->comps[0].data = data.value().r.release();
+  img->comps[1].data = data.value().g.release();
+  img->comps[2].data = data.value().b.release();
   img->comps[1].w = maxw;
   img->comps[1].h = maxh;
   img->comps[2].w = maxw;
@@ -336,27 +340,25 @@ void sycc420_to_rgb(opj_image_t* img) {
   OPJ_UINT32 crw = img->comps[2].w;
   bool extw = sycc420_must_extend_cbcr(yw, cbw);
   bool exth = sycc420_must_extend_cbcr(yh, cbh);
-  FX_SAFE_UINT32 safeSize = yw;
-  safeSize *= yh;
-  safeSize *= sizeof(int);
-  if (!safeSize.IsValid())
+  FX_SAFE_UINT32 safe_size = yw;
+  safe_size *= yh;
+  safe_size *= sizeof(int);
+  if (!safe_size.IsValid())
     return;
 
-  int* r;
-  int* g;
-  int* b;
-  if (!alloc_rgb(&r, &g, &b, safeSize.ValueOrDie()))
-    return;
-
-  int* d0 = r;
-  int* d1 = g;
-  int* d2 = b;
   const int* y = img->comps[0].data;
   const int* cb = img->comps[1].data;
   const int* cr = img->comps[2].data;
   if (!y || !cb || !cr)
     return;
 
+  Optional<OpjImageRgbData> data = alloc_rgb(safe_size.ValueOrDie());
+  if (!data.has_value())
+    return;
+
+  int* r = data.value().r.get();
+  int* g = data.value().g.get();
+  int* b = data.value().b.get();
   const int* ny = nullptr;
   int* nr = nullptr;
   int* ng = nullptr;
@@ -446,9 +448,9 @@ void sycc420_to_rgb(opj_image_t* img) {
   opj_image_data_free(img->comps[0].data);
   opj_image_data_free(img->comps[1].data);
   opj_image_data_free(img->comps[2].data);
-  img->comps[0].data = d0;
-  img->comps[1].data = d1;
-  img->comps[2].data = d2;
+  img->comps[0].data = data.value().r.release();
+  img->comps[1].data = data.value().g.release();
+  img->comps[2].data = data.value().b.release();
   img->comps[1].w = yw;
   img->comps[1].h = yh;
   img->comps[2].w = yw;
