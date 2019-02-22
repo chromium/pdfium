@@ -58,9 +58,166 @@ Alert: PASS: AFParseDateEx(1, 2, 3) threw AFParseDateEx: Incorrect number of par
 Alert: PASS: AFParseDateEx(1, 2) = 1399672130000
 Alert: **********************
 Alert: PASS: AFPercent_Format() threw AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: PASS: AFPercent_Format(1, 2, 3) threw AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: PASS: AFPercent_Format(0) threw AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
+Alert: FAIL: AFPercent_Format(-3, 0) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(-3, 1) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(-1, 3) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(0, -3) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(0, -1) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(0, 50) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(0, 51) = undefined, expected to throw
+Alert: FAIL: AFPercent_Format(1, 0) = , expected 0.0% 
+Alert: FAIL: AFPercent_Format(1, 1) = , expected 0.0% 
+Alert: FAIL: AFPercent_Format(1, 2) = , expected 0,0% 
+Alert: FAIL: AFPercent_Format(1, 3) = , expected 0,0% 
+Alert: FAIL: AFPercent_Format(1, 4) = , expected 0.0% 
+Alert: FAIL: AFPercent_Format(2, 0) = , expected 0.00% 
+Alert: FAIL: AFPercent_Format(2, 1) = , expected 0.00% 
+Alert: FAIL: AFPercent_Format(2, 2) = , expected 0,00% 
+Alert: FAIL: AFPercent_Format(2, 3) = , expected 0,00% 
+Alert: FAIL: AFPercent_Format(2, 4) = , expected 0.00% 
+Alert: FAIL: AFPercent_Format(3, 0) = , expected 0.000% 
+Alert: FAIL: AFPercent_Format(3, 1) = , expected 0.000% 
+Alert: FAIL: AFPercent_Format(3, 2) = , expected 0,000% 
+Alert: FAIL: AFPercent_Format(3, 3) = , expected 0,000% 
+Alert: FAIL: AFPercent_Format(3, 4) = , expected 0.000% 
+Alert: FAIL: AFPercent_Format(10, 0) = , expected 0.0000000000% 
+Alert: FAIL: AFPercent_Format(10, 1) = , expected 0.0000000000% 
+Alert: FAIL: AFPercent_Format(10, 2) = , expected 0,0000000000% 
+Alert: FAIL: AFPercent_Format(10, 3) = , expected 0,0000000000% 
+Alert: FAIL: AFPercent_Format(10, 4) = , expected 0.0000000000% 
+Alert: PASS: AFPercent_Format(1, 0) = 0.0%
+Alert: PASS: AFPercent_Format(1, 1) = 0.0%
+Alert: PASS: AFPercent_Format(1, 2) = 0,0%
+Alert: PASS: AFPercent_Format(1, 3) = 0,0%
+Alert: PASS: AFPercent_Format(1, 4) = 0.0%
+Alert: PASS: AFPercent_Format(2, 0) = 0.00%
+Alert: PASS: AFPercent_Format(2, 1) = 0.00%
+Alert: PASS: AFPercent_Format(2, 2) = 0,00%
+Alert: PASS: AFPercent_Format(2, 3) = 0,00%
+Alert: PASS: AFPercent_Format(2, 4) = 0.00%
+Alert: PASS: AFPercent_Format(3, 0) = 0.000%
+Alert: PASS: AFPercent_Format(3, 1) = 0.000%
+Alert: PASS: AFPercent_Format(3, 2) = 0,000%
+Alert: PASS: AFPercent_Format(3, 3) = 0,000%
+Alert: PASS: AFPercent_Format(3, 4) = 0.000%
+Alert: PASS: AFPercent_Format(10, 0) = 0.0000000000%
+Alert: PASS: AFPercent_Format(10, 1) = 0.0000000000%
+Alert: PASS: AFPercent_Format(10, 2) = 0,0000000000%
+Alert: PASS: AFPercent_Format(10, 3) = 0,0000000000%
+Alert: PASS: AFPercent_Format(10, 4) = 0.0000000000%
+Alert: PASS: AFPercent_Format(1, 0) = -512.3%
+Alert: PASS: AFPercent_Format(1, 1) = -512.3%
+Alert: PASS: AFPercent_Format(1, 2) = -512,3%
+Alert: PASS: AFPercent_Format(1, 3) = -512,3%
+Alert: PASS: AFPercent_Format(1, 4) = -512.3%
+Alert: PASS: AFPercent_Format(2, 0) = -512.34%
+Alert: PASS: AFPercent_Format(2, 1) = -512.34%
+Alert: PASS: AFPercent_Format(2, 2) = -512,34%
+Alert: PASS: AFPercent_Format(2, 3) = -512,34%
+Alert: PASS: AFPercent_Format(2, 4) = -512.34%
+Alert: PASS: AFPercent_Format(3, 0) = -512.340%
+Alert: PASS: AFPercent_Format(3, 1) = -512.340%
+Alert: PASS: AFPercent_Format(3, 2) = -512,340%
+Alert: PASS: AFPercent_Format(3, 3) = -512,340%
+Alert: PASS: AFPercent_Format(3, 4) = -512.340%
+Alert: PASS: AFPercent_Format(10, 0) = -512.3400000000%
+Alert: PASS: AFPercent_Format(10, 1) = -512.3400000000%
+Alert: PASS: AFPercent_Format(10, 2) = -512,3400000000%
+Alert: PASS: AFPercent_Format(10, 3) = -512,3400000000%
+Alert: PASS: AFPercent_Format(10, 4) = -512.3400000000%
+Alert: PASS: AFPercent_Format(1, 0) = 512.3%
+Alert: PASS: AFPercent_Format(1, 1) = 512.3%
+Alert: PASS: AFPercent_Format(1, 2) = 512,3%
+Alert: PASS: AFPercent_Format(1, 3) = 512,3%
+Alert: PASS: AFPercent_Format(1, 4) = 512.3%
+Alert: PASS: AFPercent_Format(2, 0) = 512.34%
+Alert: PASS: AFPercent_Format(2, 1) = 512.34%
+Alert: PASS: AFPercent_Format(2, 2) = 512,34%
+Alert: PASS: AFPercent_Format(2, 3) = 512,34%
+Alert: PASS: AFPercent_Format(2, 4) = 512.34%
+Alert: PASS: AFPercent_Format(3, 0) = 512.340%
+Alert: PASS: AFPercent_Format(3, 1) = 512.340%
+Alert: PASS: AFPercent_Format(3, 2) = 512,340%
+Alert: PASS: AFPercent_Format(3, 3) = 512,340%
+Alert: PASS: AFPercent_Format(3, 4) = 512.340%
+Alert: PASS: AFPercent_Format(10, 0) = 512.3400000000%
+Alert: PASS: AFPercent_Format(10, 1) = 512.3400000000%
+Alert: PASS: AFPercent_Format(10, 2) = 512,3400000000%
+Alert: PASS: AFPercent_Format(10, 3) = 512,3400000000%
+Alert: PASS: AFPercent_Format(10, 4) = 512.3400000000%
 Alert: PASS: AFPercent_Format(1, 0) = 1,234.6%
 Alert: PASS: AFPercent_Format(4, 1) = 1234.5600%
+Alert: PASS: AFPercent_Format(1, 0) = 1.0%
+Alert: PASS: AFPercent_Format(1, 1) = 1.0%
+Alert: PASS: AFPercent_Format(1, 2) = 1,0%
+Alert: PASS: AFPercent_Format(1, 3) = 1,0%
+Alert: PASS: AFPercent_Format(1, 4) = 1.0%
+Alert: PASS: AFPercent_Format(2, 0) = 0.99%
+Alert: PASS: AFPercent_Format(2, 1) = 0.99%
+Alert: PASS: AFPercent_Format(2, 2) = 0,99%
+Alert: PASS: AFPercent_Format(2, 3) = 0,99%
+Alert: PASS: AFPercent_Format(2, 4) = 0.99%
+Alert: PASS: AFPercent_Format(3, 0) = 0.988%
+Alert: PASS: AFPercent_Format(3, 1) = 0.988%
+Alert: PASS: AFPercent_Format(3, 2) = 0,988%
+Alert: PASS: AFPercent_Format(3, 3) = 0,988%
+Alert: PASS: AFPercent_Format(3, 4) = 0.988%
+Alert: PASS: AFPercent_Format(10, 0) = 0.9876000000%
+Alert: PASS: AFPercent_Format(10, 1) = 0.9876000000%
+Alert: PASS: AFPercent_Format(10, 2) = 0,9876000000%
+Alert: PASS: AFPercent_Format(10, 3) = 0,9876000000%
+Alert: PASS: AFPercent_Format(10, 4) = 0.9876000000%
+Alert: PASS: AFPercent_Format(1, 0) = 98,765,432,100.1%
+Alert: PASS: AFPercent_Format(1, 1) = 98765432100.1%
+Alert: PASS: AFPercent_Format(1, 2) = 98.765.432.100,1%
+Alert: PASS: AFPercent_Format(1, 3) = 98765432100,1%
+Alert: FAIL: AFPercent_Format(1, 4) = 98,765,432,100.1%, expected 98'765'432'100.1% 
+Alert: PASS: AFPercent_Format(2, 0) = 98,765,432,100.12%
+Alert: PASS: AFPercent_Format(2, 1) = 98765432100.12%
+Alert: PASS: AFPercent_Format(2, 2) = 98.765.432.100,12%
+Alert: PASS: AFPercent_Format(2, 3) = 98765432100,12%
+Alert: FAIL: AFPercent_Format(2, 4) = 98,765,432,100.12%, expected 98'765'432'100.12% 
+Alert: PASS: AFPercent_Format(3, 0) = 98,765,432,100.123%
+Alert: PASS: AFPercent_Format(3, 1) = 98765432100.123%
+Alert: PASS: AFPercent_Format(3, 2) = 98.765.432.100,123%
+Alert: PASS: AFPercent_Format(3, 3) = 98765432100,123%
+Alert: FAIL: AFPercent_Format(3, 4) = 98,765,432,100.123%, expected 98'765'432'100.123% 
+Alert: PASS: AFPercent_Format(10, 0) = 98,765,432,100.1234130859%
+Alert: PASS: AFPercent_Format(10, 1) = 98765432100.1234130859%
+Alert: PASS: AFPercent_Format(10, 2) = 98.765.432.100,1234130859%
+Alert: PASS: AFPercent_Format(10, 3) = 98765432100,1234130859%
+Alert: FAIL: AFPercent_Format(10, 4) = 98,765,432,100.1234130859%, expected 98'765'432'100.1234130859% 
+Alert: PASS: AFPercent_Format(1, 0) = 98,765,432,100.0%
+Alert: PASS: AFPercent_Format(1, 1) = 98765432100.0%
+Alert: PASS: AFPercent_Format(1, 2) = 98.765.432.100,0%
+Alert: PASS: AFPercent_Format(1, 3) = 98765432100,0%
+Alert: FAIL: AFPercent_Format(1, 4) = 98,765,432,100.0%, expected 98'765'432'100.0% 
+Alert: PASS: AFPercent_Format(2, 0) = 98,765,432,100.00%
+Alert: PASS: AFPercent_Format(2, 1) = 98765432100.00%
+Alert: PASS: AFPercent_Format(2, 2) = 98.765.432.100,00%
+Alert: PASS: AFPercent_Format(2, 3) = 98765432100,00%
+Alert: FAIL: AFPercent_Format(2, 4) = 98,765,432,100.00%, expected 98'765'432'100.00% 
+Alert: PASS: AFPercent_Format(3, 0) = 98,765,432,100.000%
+Alert: PASS: AFPercent_Format(3, 1) = 98765432100.000%
+Alert: PASS: AFPercent_Format(3, 2) = 98.765.432.100,000%
+Alert: PASS: AFPercent_Format(3, 3) = 98765432100,000%
+Alert: FAIL: AFPercent_Format(3, 4) = 98,765,432,100.000%, expected 98'765'432'100.000% 
+Alert: PASS: AFPercent_Format(10, 0) = 98,765,432,100.0000000000%
+Alert: PASS: AFPercent_Format(10, 1) = 98765432100.0000000000%
+Alert: PASS: AFPercent_Format(10, 2) = 98.765.432.100,0000000000%
+Alert: PASS: AFPercent_Format(10, 3) = 98765432100,0000000000%
+Alert: FAIL: AFPercent_Format(10, 4) = 98,765,432,100.0000000000%, expected 98'765'432'100.0000000000% 
 Alert: **********************
 Alert: PASS: AFPercent_Keystroke() threw AFPercent_Keystroke: Incorrect number of parameters passed to function.
 Alert: PASS: AFPercent_Keystroke(1) threw AFPercent_Keystroke: Incorrect number of parameters passed to function.

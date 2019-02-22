@@ -181,10 +181,243 @@ endobj
 
       app.alert("**********************");
 
+      // Requires at least 2 arguments.
       expectError('', "AFPercent_Format()");
-      expectError('', "AFPercent_Format(1, 2, 3)");
+      expectError('', "AFPercent_Format(0)");
+
+      // Extra arguments are ignored.
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0, 0)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0, 0, 0)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0, 0, 0, 0)", "-512.3%");
+
+      // There seems to be an extra currencyPrepend parameter that may have been
+      // added in later versions.
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 1)", "%-512.3");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0, 2)", "%-512.3");
+      expectEventValue('', "AFPercent_Format(10, 0, 0)", "0.0000000000%");
+      expectEventValue('', "AFPercent_Format(10, 0, 1)", "%0.0000000000");
+      expectEventValue('', "AFPercent_Format(10, 0, 2)", "%0.0000000000");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 0, 0)", "98,765,432,100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 1, 0)", "98765432100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 2, 0)", "98.765.432.100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 0, 1)", "%98,765,432,100");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 1, 1)", "%98765432100");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 2, 1)", "%98.765.432.100");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 0, 2)", "%98,765,432,100");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 1, 2)", "%98765432100");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 2, 2)", "%98.765.432.100");
+
+      // InvalidArgsError
+      expectError(0, "AFPercent_Format(-3, 0)");
+      expectError(0, "AFPercent_Format(-3, 1)");
+      expectError(0, "AFPercent_Format(-1, 3)");
+      expectError(0, "AFPercent_Format(0, -3)");
+      expectError(0, "AFPercent_Format(0, -1)");
+      expectError(0, "AFPercent_Format(0, 50)");
+      expectError(0, "AFPercent_Format(0, 51)");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue('', "AFPercent_Format(0, 0)", "0%");
+      // expectEventValue('', "AFPercent_Format(0, 1)", "0%");
+      // expectEventValue('', "AFPercent_Format(0, 2)", "0%");
+      // expectEventValue('', "AFPercent_Format(0, 3)", "0%");
+      // expectEventValue('', "AFPercent_Format(0, 4)", "0%");
+
+      expectEventValue('', "AFPercent_Format(1, 0)", "0.0%");
+      expectEventValue('', "AFPercent_Format(1, 1)", "0.0%");
+      expectEventValue('', "AFPercent_Format(1, 2)", "0,0%");
+      expectEventValue('', "AFPercent_Format(1, 3)", "0,0%");
+      expectEventValue('', "AFPercent_Format(1, 4)", "0.0%");
+      expectEventValue('', "AFPercent_Format(2, 0)", "0.00%");
+      expectEventValue('', "AFPercent_Format(2, 1)", "0.00%");
+      expectEventValue('', "AFPercent_Format(2, 2)", "0,00%");
+      expectEventValue('', "AFPercent_Format(2, 3)", "0,00%");
+      expectEventValue('', "AFPercent_Format(2, 4)", "0.00%");
+      expectEventValue('', "AFPercent_Format(3, 0)", "0.000%");
+      expectEventValue('', "AFPercent_Format(3, 1)", "0.000%");
+      expectEventValue('', "AFPercent_Format(3, 2)", "0,000%");
+      expectEventValue('', "AFPercent_Format(3, 3)", "0,000%");
+      expectEventValue('', "AFPercent_Format(3, 4)", "0.000%");
+      expectEventValue('', "AFPercent_Format(10, 0)", "0.0000000000%");
+      expectEventValue('', "AFPercent_Format(10, 1)", "0.0000000000%");
+      expectEventValue('', "AFPercent_Format(10, 2)", "0,0000000000%");
+      expectEventValue('', "AFPercent_Format(10, 3)", "0,0000000000%");
+      expectEventValue('', "AFPercent_Format(10, 4)", "0.0000000000%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(0, "AFPercent_Format(0, 0)", "0%");
+      // expectEventValue(0, "AFPercent_Format(0, 1)", "0%");
+      // expectEventValue(0, "AFPercent_Format(0, 2)", "0%");
+      // expectEventValue(0, "AFPercent_Format(0, 3)", "0%");
+      // expectEventValue(0, "AFPercent_Format(0, 4)", "0%");
+
+      expectEventValue(0, "AFPercent_Format(1, 0)", "0.0%");
+      expectEventValue(0, "AFPercent_Format(1, 1)", "0.0%");
+      expectEventValue(0, "AFPercent_Format(1, 2)", "0,0%");
+      expectEventValue(0, "AFPercent_Format(1, 3)", "0,0%");
+      expectEventValue(0, "AFPercent_Format(1, 4)", "0.0%");
+      expectEventValue(0, "AFPercent_Format(2, 0)", "0.00%");
+      expectEventValue(0, "AFPercent_Format(2, 1)", "0.00%");
+      expectEventValue(0, "AFPercent_Format(2, 2)", "0,00%");
+      expectEventValue(0, "AFPercent_Format(2, 3)", "0,00%");
+      expectEventValue(0, "AFPercent_Format(2, 4)", "0.00%");
+      expectEventValue(0, "AFPercent_Format(3, 0)", "0.000%");
+      expectEventValue(0, "AFPercent_Format(3, 1)", "0.000%");
+      expectEventValue(0, "AFPercent_Format(3, 2)", "0,000%");
+      expectEventValue(0, "AFPercent_Format(3, 3)", "0,000%");
+      expectEventValue(0, "AFPercent_Format(3, 4)", "0.000%");
+      expectEventValue(0, "AFPercent_Format(10, 0)", "0.0000000000%");
+      expectEventValue(0, "AFPercent_Format(10, 1)", "0.0000000000%");
+      expectEventValue(0, "AFPercent_Format(10, 2)", "0,0000000000%");
+      expectEventValue(0, "AFPercent_Format(10, 3)", "0,0000000000%");
+      expectEventValue(0, "AFPercent_Format(10, 4)", "0.0000000000%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(-5.1234, "AFPercent_Format(0, 0)", "-512%");
+      // expectEventValue(-5.1234, "AFPercent_Format(0, 1)", "-512%");
+      // expectEventValue(-5.1234, "AFPercent_Format(0, 2)", "-512%");
+      // expectEventValue(-5.1234, "AFPercent_Format(0, 3)", "-512%");
+      // expectEventValue(-5.1234, "AFPercent_Format(0, 4)", "-512%");
+
+      expectEventValue(-5.1234, "AFPercent_Format(1, 0)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 1)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 2)", "-512,3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 3)", "-512,3%");
+      expectEventValue(-5.1234, "AFPercent_Format(1, 4)", "-512.3%");
+      expectEventValue(-5.1234, "AFPercent_Format(2, 0)", "-512.34%");
+      expectEventValue(-5.1234, "AFPercent_Format(2, 1)", "-512.34%");
+      expectEventValue(-5.1234, "AFPercent_Format(2, 2)", "-512,34%");
+      expectEventValue(-5.1234, "AFPercent_Format(2, 3)", "-512,34%");
+      expectEventValue(-5.1234, "AFPercent_Format(2, 4)", "-512.34%");
+      expectEventValue(-5.1234, "AFPercent_Format(3, 0)", "-512.340%");
+      expectEventValue(-5.1234, "AFPercent_Format(3, 1)", "-512.340%");
+      expectEventValue(-5.1234, "AFPercent_Format(3, 2)", "-512,340%");
+      expectEventValue(-5.1234, "AFPercent_Format(3, 3)", "-512,340%");
+      expectEventValue(-5.1234, "AFPercent_Format(3, 4)", "-512.340%");
+      expectEventValue(-5.1234, "AFPercent_Format(10, 0)", "-512.3400000000%");
+      expectEventValue(-5.1234, "AFPercent_Format(10, 1)", "-512.3400000000%");
+      expectEventValue(-5.1234, "AFPercent_Format(10, 2)", "-512,3400000000%");
+      expectEventValue(-5.1234, "AFPercent_Format(10, 3)", "-512,3400000000%");
+      expectEventValue(-5.1234, "AFPercent_Format(10, 4)", "-512.3400000000%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(5.1234, "AFPercent_Format(0, 0)", "512%");
+      // expectEventValue(5.1234, "AFPercent_Format(0, 1)", "512%");
+      // expectEventValue(5.1234, "AFPercent_Format(0, 2)", "512%");
+      // expectEventValue(5.1234, "AFPercent_Format(0, 3)", "512%");
+      // expectEventValue(5.1234, "AFPercent_Format(0, 4)", "512%");
+
+      expectEventValue(5.1234, "AFPercent_Format(1, 0)", "512.3%");
+      expectEventValue(5.1234, "AFPercent_Format(1, 1)", "512.3%");
+      expectEventValue(5.1234, "AFPercent_Format(1, 2)", "512,3%");
+      expectEventValue(5.1234, "AFPercent_Format(1, 3)", "512,3%");
+      expectEventValue(5.1234, "AFPercent_Format(1, 4)", "512.3%");
+      expectEventValue(5.1234, "AFPercent_Format(2, 0)", "512.34%");
+      expectEventValue(5.1234, "AFPercent_Format(2, 1)", "512.34%");
+      expectEventValue(5.1234, "AFPercent_Format(2, 2)", "512,34%");
+      expectEventValue(5.1234, "AFPercent_Format(2, 3)", "512,34%");
+      expectEventValue(5.1234, "AFPercent_Format(2, 4)", "512.34%");
+      expectEventValue(5.1234, "AFPercent_Format(3, 0)", "512.340%");
+      expectEventValue(5.1234, "AFPercent_Format(3, 1)", "512.340%");
+      expectEventValue(5.1234, "AFPercent_Format(3, 2)", "512,340%");
+      expectEventValue(5.1234, "AFPercent_Format(3, 3)", "512,340%");
+      expectEventValue(5.1234, "AFPercent_Format(3, 4)", "512.340%");
+      expectEventValue(5.1234, "AFPercent_Format(10, 0)", "512.3400000000%");
+      expectEventValue(5.1234, "AFPercent_Format(10, 1)", "512.3400000000%");
+      expectEventValue(5.1234, "AFPercent_Format(10, 2)", "512,3400000000%");
+      expectEventValue(5.1234, "AFPercent_Format(10, 3)", "512,3400000000%");
+      expectEventValue(5.1234, "AFPercent_Format(10, 4)", "512.3400000000%");
+
       expectEventValue(12.3456, "AFPercent_Format(1, 0)", "1,234.6%");
       expectEventValue(12.3456, "AFPercent_Format(4, 1)", "1234.5600%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(0.009876, "AFPercent_Format(0, 0)", "1%");
+      // expectEventValue(0.009876, "AFPercent_Format(0, 1)", "1%");
+      // expectEventValue(0.009876, "AFPercent_Format(0, 2)", "1%");
+      // expectEventValue(0.009876, "AFPercent_Format(0, 3)", "1%");
+      // expectEventValue(0.009876, "AFPercent_Format(0, 4)", "1%");
+
+      expectEventValue(0.009876, "AFPercent_Format(1, 0)", "1.0%");
+      expectEventValue(0.009876, "AFPercent_Format(1, 1)", "1.0%");
+      expectEventValue(0.009876, "AFPercent_Format(1, 2)", "1,0%");
+      expectEventValue(0.009876, "AFPercent_Format(1, 3)", "1,0%");
+      expectEventValue(0.009876, "AFPercent_Format(1, 4)", "1.0%");
+      expectEventValue(0.009876, "AFPercent_Format(2, 0)", "0.99%");
+      expectEventValue(0.009876, "AFPercent_Format(2, 1)", "0.99%");
+      expectEventValue(0.009876, "AFPercent_Format(2, 2)", "0,99%");
+      expectEventValue(0.009876, "AFPercent_Format(2, 3)", "0,99%");
+      expectEventValue(0.009876, "AFPercent_Format(2, 4)", "0.99%");
+      expectEventValue(0.009876, "AFPercent_Format(3, 0)", "0.988%");
+      expectEventValue(0.009876, "AFPercent_Format(3, 1)", "0.988%");
+      expectEventValue(0.009876, "AFPercent_Format(3, 2)", "0,988%");
+      expectEventValue(0.009876, "AFPercent_Format(3, 3)", "0,988%");
+      expectEventValue(0.009876, "AFPercent_Format(3, 4)", "0.988%");
+      expectEventValue(0.009876, "AFPercent_Format(10, 0)", "0.9876000000%");
+      expectEventValue(0.009876, "AFPercent_Format(10, 1)", "0.9876000000%");
+      expectEventValue(0.009876, "AFPercent_Format(10, 2)", "0,9876000000%");
+      expectEventValue(0.009876, "AFPercent_Format(10, 3)", "0,9876000000%");
+      expectEventValue(0.009876, "AFPercent_Format(10, 4)", "0.9876000000%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 0)", "98,765,432,100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 1)", "98765432100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 2)", "98.765.432.100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 3)", "98765432100%");
+      // expectEventValue(987654321.001234, "AFPercent_Format(0, 4)", "98'765'432'100%");
+
+      expectEventValue(987654321.001234, "AFPercent_Format(1, 0)", "98,765,432,100.1%");
+      expectEventValue(987654321.001234, "AFPercent_Format(1, 1)", "98765432100.1%");
+      expectEventValue(987654321.001234, "AFPercent_Format(1, 2)", "98.765.432.100,1%");
+      expectEventValue(987654321.001234, "AFPercent_Format(1, 3)", "98765432100,1%");
+      expectEventValue(987654321.001234, "AFPercent_Format(1, 4)", "98'765'432'100.1%");
+      expectEventValue(987654321.001234, "AFPercent_Format(2, 0)", "98,765,432,100.12%");
+      expectEventValue(987654321.001234, "AFPercent_Format(2, 1)", "98765432100.12%");
+      expectEventValue(987654321.001234, "AFPercent_Format(2, 2)", "98.765.432.100,12%");
+      expectEventValue(987654321.001234, "AFPercent_Format(2, 3)", "98765432100,12%");
+      expectEventValue(987654321.001234, "AFPercent_Format(2, 4)", "98'765'432'100.12%");
+      expectEventValue(987654321.001234, "AFPercent_Format(3, 0)", "98,765,432,100.123%");
+      expectEventValue(987654321.001234, "AFPercent_Format(3, 1)", "98765432100.123%");
+      expectEventValue(987654321.001234, "AFPercent_Format(3, 2)", "98.765.432.100,123%");
+      expectEventValue(987654321.001234, "AFPercent_Format(3, 3)", "98765432100,123%");
+      expectEventValue(987654321.001234, "AFPercent_Format(3, 4)", "98'765'432'100.123%");
+      expectEventValue(987654321.001234, "AFPercent_Format(10, 0)", "98,765,432,100.1234130859%");
+      expectEventValue(987654321.001234, "AFPercent_Format(10, 1)", "98765432100.1234130859%");
+      expectEventValue(987654321.001234, "AFPercent_Format(10, 2)", "98.765.432.100,1234130859%");
+      expectEventValue(987654321.001234, "AFPercent_Format(10, 3)", "98765432100,1234130859%");
+      expectEventValue(987654321.001234, "AFPercent_Format(10, 4)", "98'765'432'100.1234130859%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(987654321, "AFPercent_Format(0, 0)", "98,765,432,100%");
+      // expectEventValue(987654321, "AFPercent_Format(0, 1)", "98765432100%");
+      // expectEventValue(987654321, "AFPercent_Format(0, 2)", "98.765.432.100%");
+      // expectEventValue(987654321, "AFPercent_Format(0, 3)", "98765432100%");
+      // expectEventValue(987654321, "AFPercent_Format(0, 4)", "98'765'432'100%");
+
+      expectEventValue(987654321, "AFPercent_Format(1, 0)", "98,765,432,100.0%");
+      expectEventValue(987654321, "AFPercent_Format(1, 1)", "98765432100.0%");
+      expectEventValue(987654321, "AFPercent_Format(1, 2)", "98.765.432.100,0%");
+      expectEventValue(987654321, "AFPercent_Format(1, 3)", "98765432100,0%");
+      expectEventValue(987654321, "AFPercent_Format(1, 4)", "98'765'432'100.0%");
+      expectEventValue(987654321, "AFPercent_Format(2, 0)", "98,765,432,100.00%");
+      expectEventValue(987654321, "AFPercent_Format(2, 1)", "98765432100.00%");
+      expectEventValue(987654321, "AFPercent_Format(2, 2)", "98.765.432.100,00%");
+      expectEventValue(987654321, "AFPercent_Format(2, 3)", "98765432100,00%");
+      expectEventValue(987654321, "AFPercent_Format(2, 4)", "98'765'432'100.00%");
+      expectEventValue(987654321, "AFPercent_Format(3, 0)", "98,765,432,100.000%");
+      expectEventValue(987654321, "AFPercent_Format(3, 1)", "98765432100.000%");
+      expectEventValue(987654321, "AFPercent_Format(3, 2)", "98.765.432.100,000%");
+      expectEventValue(987654321, "AFPercent_Format(3, 3)", "98765432100,000%");
+      expectEventValue(987654321, "AFPercent_Format(3, 4)", "98'765'432'100.000%");
+      expectEventValue(987654321, "AFPercent_Format(10, 0)", "98,765,432,100.0000000000%");
+      expectEventValue(987654321, "AFPercent_Format(10, 1)", "98765432100.0000000000%");
+      expectEventValue(987654321, "AFPercent_Format(10, 2)", "98.765.432.100,0000000000%");
+      expectEventValue(987654321, "AFPercent_Format(10, 3)", "98765432100,0000000000%");
+      expectEventValue(987654321, "AFPercent_Format(10, 4)", "98'765'432'100.0000000000%");
 
       app.alert("**********************");
 
