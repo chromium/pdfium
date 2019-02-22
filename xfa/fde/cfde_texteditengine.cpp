@@ -1005,7 +1005,7 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
     }
 
     // Point is not within the horizontal range of any characters, it's
-    // afterwards. Return the position after the the last character.
+    // afterwards. Return the position after the last character.
     // The last line has nCount equal to the number of characters + 1 (sentinel
     // character maybe?). Restrict to the text_length_ to account for that.
     size_t pos = std::min(
