@@ -378,9 +378,6 @@ component("skia") {
       "//third_party/skia/src/utils/mac/SkStream_mac.cpp",
     ]
     set_sources_assignment_filter(sources_assignment_filter)
-
-    # To disable warning "CGContextSelectFont' is deprecated"
-    cflags = [ "-Wno-deprecated-declarations" ]
   }
 
   if (skia_support_pdf) {
