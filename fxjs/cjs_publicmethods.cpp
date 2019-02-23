@@ -783,11 +783,6 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  WideString& Value = pEvent->Value();
-  ByteString strValue = StrTrim(Value.ToDefANSI());
-  if (strValue.IsEmpty())
-    return CJS_Result::Success();
-
   // Acrobat will accept this. Anything larger causes it to throw an error.
   static constexpr int kMaxSepStyle = 49;
 
@@ -797,6 +792,11 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
     return CJS_Result::Failure(JSMessage::kValueError);
 
   iSepStyle = ValidStyleOrZero(iSepStyle);
+
+  WideString& Value = pEvent->Value();
+  ByteString strValue = StrTrim(Value.ToDefANSI());
+  if (strValue.IsEmpty())
+    strValue = "0";
 
   // for processing decimal places
   double dValue = atof(strValue.c_str());
