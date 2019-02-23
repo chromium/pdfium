@@ -775,7 +775,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
 #if _FX_OS_ != _FX_OS_ANDROID_
-  if (params.size() != 2)
+  if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CJS_EventHandler* pEvent =
@@ -788,8 +788,15 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   if (strValue.IsEmpty())
     return CJS_Result::Success();
 
-  int iDec = abs(pRuntime->ToInt32(params[0]));
-  int iSepStyle = ValidStyleOrZero(pRuntime->ToInt32(params[1]));
+  // Acrobat will accept this. Anything larger causes it to throw an error.
+  static constexpr int kMaxSepStyle = 49;
+
+  int iDec = pRuntime->ToInt32(params[0]);
+  int iSepStyle = pRuntime->ToInt32(params[1]);
+  if (iDec < 0 || iSepStyle < 0 || iSepStyle > kMaxSepStyle)
+    return CJS_Result::Failure(JSMessage::kValueError);
+
+  iSepStyle = ValidStyleOrZero(iSepStyle);
 
   // for processing decimal places
   double dValue = atof(strValue.c_str());

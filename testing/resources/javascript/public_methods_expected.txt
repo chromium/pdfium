@@ -59,23 +59,23 @@ Alert: PASS: AFParseDateEx(1, 2) = 1399672130000
 Alert: **********************
 Alert: PASS: AFPercent_Format() threw AFPercent_Format: Incorrect number of parameters passed to function.
 Alert: PASS: AFPercent_Format(0) threw AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: ERROR: AFPercent_Format: Incorrect number of parameters passed to function.
-Alert: FAIL: AFPercent_Format(-3, 0) = undefined, expected to throw
-Alert: FAIL: AFPercent_Format(-3, 1) = undefined, expected to throw
-Alert: FAIL: AFPercent_Format(-1, 3) = undefined, expected to throw
-Alert: FAIL: AFPercent_Format(0, -3) = undefined, expected to throw
-Alert: FAIL: AFPercent_Format(0, -1) = undefined, expected to throw
-Alert: FAIL: AFPercent_Format(0, 50) = undefined, expected to throw
-Alert: FAIL: AFPercent_Format(0, 51) = undefined, expected to throw
+Alert: PASS: AFPercent_Format(1, 0, 0) = -512.3%
+Alert: PASS: AFPercent_Format(1, 0, 0, 0) = -512.3%
+Alert: PASS: AFPercent_Format(1, 0, 0, 0, 0) = -512.3%
+Alert: PASS: AFPercent_Format(1, 0, 0, 0, 0, 0) = -512.3%
+Alert: PASS: AFPercent_Format(1, 0, 0) = -512.3%
+Alert: FAIL: AFPercent_Format(1, 0, 1) = -512.3%, expected %-512.3 
+Alert: FAIL: AFPercent_Format(1, 0, 2) = -512.3%, expected %-512.3 
+Alert: FAIL: AFPercent_Format(10, 0, 0) = , expected 0.0000000000% 
+Alert: FAIL: AFPercent_Format(10, 0, 1) = , expected %0.0000000000 
+Alert: FAIL: AFPercent_Format(10, 0, 2) = , expected %0.0000000000 
+Alert: PASS: AFPercent_Format(-3, 0) threw AFPercent_Format: Incorrect parameter value.
+Alert: PASS: AFPercent_Format(-3, 1) threw AFPercent_Format: Incorrect parameter value.
+Alert: PASS: AFPercent_Format(-1, 3) threw AFPercent_Format: Incorrect parameter value.
+Alert: PASS: AFPercent_Format(0, -3) threw AFPercent_Format: Incorrect parameter value.
+Alert: PASS: AFPercent_Format(0, -1) threw AFPercent_Format: Incorrect parameter value.
+Alert: PASS: AFPercent_Format(0, 50) threw AFPercent_Format: Incorrect parameter value.
+Alert: PASS: AFPercent_Format(0, 51) threw AFPercent_Format: Incorrect parameter value.
 Alert: FAIL: AFPercent_Format(1, 0) = , expected 0.0% 
 Alert: FAIL: AFPercent_Format(1, 1) = , expected 0.0% 
 Alert: FAIL: AFPercent_Format(1, 2) = , expected 0,0% 
