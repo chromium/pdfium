@@ -419,6 +419,28 @@ endobj
       expectEventValue(987654321, "AFPercent_Format(10, 3)", "98765432100,0000000000%");
       expectEventValue(987654321, "AFPercent_Format(10, 4)", "98'765'432'100.0000000000%");
 
+      expectEventValue(0.01, "AFPercent_Format(1, 0)", "1.0%");
+      expectEventValue(0.001, "AFPercent_Format(1, 0)", "0.1%");
+      expectEventValue(0.0001, "AFPercent_Format(1, 0)", "0.0%");
+      expectEventValue(0.00001, "AFPercent_Format(1, 0)", "0.0%");
+      expectEventValue(0.000001, "AFPercent_Format(1, 0)", "0.0%");
+      expectEventValue(0.000001, "AFPercent_Format(10, 2)", "0,0001000000%");
+
+      // Acrobat behaves strangely with smaller values.
+      // expectEventValue(0.0000001, "AFPercent_Format(1, 0)", "-170.0%");
+      // expectEventValue(0.00000001, "AFPercent_Format(1, 0)", "-180.0%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(0, "AFPercent_Format(20, 0)", "0.00000000000000000000%");
+      // expectEventValue(0, "AFPercent_Format(308, 0)", "0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000%");
+      // Acrobat starts failing here.
+      // expectEventValue(0, "AFPercent_Format(309, 0)", "-1.#IND000...000%");
+
+      // Inconsistent with PDFium due to bug 138.
+      // expectEventValue(0.000001, "AFPercent_Format(308, 0)", "0.00009999999999999999123964644631712417321978136897087097167968750000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000%");
+      // After 512, Acrobat probably ran out of buffer space.
+      // expectEventValue(0, "AFPercent_Format(513, 0)", "%");
+
       app.alert("**********************");
 
       expectError('', "AFPercent_Keystroke()");

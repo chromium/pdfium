@@ -218,6 +218,12 @@ Alert: PASS: AFPercent_Format(10, 1) = 98765432100.0000000000%
 Alert: PASS: AFPercent_Format(10, 2) = 98.765.432.100,0000000000%
 Alert: PASS: AFPercent_Format(10, 3) = 98765432100,0000000000%
 Alert: PASS: AFPercent_Format(10, 4) = 98'765'432'100.0000000000%
+Alert: PASS: AFPercent_Format(1, 0) = 1.0%
+Alert: PASS: AFPercent_Format(1, 0) = 0.1%
+Alert: PASS: AFPercent_Format(1, 0) = 0.0%
+Alert: PASS: AFPercent_Format(1, 0) = 0.0%
+Alert: PASS: AFPercent_Format(1, 0) = 0.0%
+Alert: PASS: AFPercent_Format(10, 2) = 0,0001000000%
 Alert: **********************
 Alert: PASS: AFPercent_Keystroke() threw AFPercent_Keystroke: Incorrect number of parameters passed to function.
 Alert: PASS: AFPercent_Keystroke(1) threw AFPercent_Keystroke: Incorrect number of parameters passed to function.
