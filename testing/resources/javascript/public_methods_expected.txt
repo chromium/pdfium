@@ -64,11 +64,11 @@ Alert: PASS: AFPercent_Format(1, 0, 0, 0) = -512.3%
 Alert: PASS: AFPercent_Format(1, 0, 0, 0, 0) = -512.3%
 Alert: PASS: AFPercent_Format(1, 0, 0, 0, 0, 0) = -512.3%
 Alert: PASS: AFPercent_Format(1, 0, 0) = -512.3%
-Alert: FAIL: AFPercent_Format(1, 0, 1) = -512.3%, expected %-512.3 
-Alert: FAIL: AFPercent_Format(1, 0, 2) = -512.3%, expected %-512.3 
+Alert: PASS: AFPercent_Format(1, 0, 1) = %-512.3
+Alert: PASS: AFPercent_Format(1, 0, 2) = %-512.3
 Alert: PASS: AFPercent_Format(10, 0, 0) = 0.0000000000%
-Alert: FAIL: AFPercent_Format(10, 0, 1) = 0.0000000000%, expected %0.0000000000 
-Alert: FAIL: AFPercent_Format(10, 0, 2) = 0.0000000000%, expected %0.0000000000 
+Alert: PASS: AFPercent_Format(10, 0, 1) = %0.0000000000
+Alert: PASS: AFPercent_Format(10, 0, 2) = %0.0000000000
 Alert: PASS: AFPercent_Format(-3, 0) threw AFPercent_Format: Incorrect parameter value.
 Alert: PASS: AFPercent_Format(-3, 1) threw AFPercent_Format: Incorrect parameter value.
 Alert: PASS: AFPercent_Format(-1, 3) threw AFPercent_Format: Incorrect parameter value.

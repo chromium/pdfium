@@ -774,7 +774,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
   return CJS_Result::Success();
 }
 
-// function AFPercent_Format(nDec, sepStyle)
+// function AFPercent_Format(nDec, sepStyle, bPercentPrepend)
 CJS_Result CJS_PublicMethods::AFPercent_Format(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
@@ -792,6 +792,8 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
 
   int iDec = pRuntime->ToInt32(params[0]);
   int iSepStyle = pRuntime->ToInt32(params[1]);
+  // TODO(thestig): How do we handle negative raw |bPercentPrepend| values?
+  bool bPercentPrepend = params.size() > 2 && pRuntime->ToBoolean(params[2]);
   if (iDec < 0 || iSepStyle < 0 || iSepStyle > kMaxSepStyle)
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -855,7 +857,10 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   if (iNegative)
     strValue.InsertAtFront('-');
 
-  strValue += '%';
+  if (bPercentPrepend)
+    strValue.InsertAtFront('%');
+  else
+    strValue.InsertAtBack('%');
   Value = WideString::FromDefANSI(strValue.AsStringView());
 #endif
   return CJS_Result::Success();

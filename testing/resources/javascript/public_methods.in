@@ -191,7 +191,7 @@ endobj
       expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0, 0, 0)", "-512.3%");
       expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0, 0, 0, 0)", "-512.3%");
 
-      // There seems to be an extra currencyPrepend parameter that may have been
+      // There seems to be an extra bPercentPrepend parameter that may have been
       // added in later versions.
       expectEventValue(-5.1234, "AFPercent_Format(1, 0, 0)", "-512.3%");
       expectEventValue(-5.1234, "AFPercent_Format(1, 0, 1)", "%-512.3");
