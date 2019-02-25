@@ -797,7 +797,17 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   if (iDec < 0 || iSepStyle < 0 || iSepStyle > kMaxSepStyle)
     return CJS_Result::Failure(JSMessage::kValueError);
 
+  // When the |iDec| value is too big, Acrobat will just return "%".
+  static constexpr int kDecLimit = 512;
+  // TODO(thestig): Calculate this once C++14 can be used to declare variables
+  // in constexpr functions.
+  static constexpr size_t kDigitsInDecLimit = 3;
   WideString& Value = pEvent->Value();
+  if (iDec > kDecLimit) {
+    Value = L"%";
+    return CJS_Result::Success();
+  }
+
   ByteString strValue = StrTrim(Value.ToDefANSI());
   if (strValue.IsEmpty())
     strValue = "0";
@@ -805,57 +815,45 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   // for processing decimal places
   double dValue = atof(strValue.c_str());
   dValue *= 100;
-  if (iDec > 0)
-    dValue += kDoubleCorrect;
 
-  int iDec2;
-  int iNegative = 0;
-  strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
-  if (strValue.IsEmpty()) {
-    dValue = 0;
-    strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
-  }
+  size_t szNewSize;
+  {
+    // Figure out the format to use with FXSYS_snprintf() below.
+    // |format| is small because |iDec| is limited in size.
+    char format[sizeof("%.f") + kDigitsInDecLimit];  // e.g. "%.512f"
+    FXSYS_snprintf(format, sizeof(format), "%%.%df", iDec);
 
-  if (iDec2 < 0) {
-    ByteString zeros;
-    {
-      pdfium::span<char> zeros_ptr = zeros.GetBuffer(abs(iDec2));
-      std::fill(std::begin(zeros_ptr), std::end(zeros_ptr), '0');
+    // Calculate the new size for |strValue| and get a span.
+    size_t szBufferSize = iDec + 3;  // Negative sign, decimal point, and NUL.
+    double dValueCopy = fabs(dValue);
+    while (dValueCopy > 1) {
+      dValueCopy /= 10;
+      ++szBufferSize;
     }
-    zeros.ReleaseBuffer(abs(iDec2));
-    strValue = zeros + strValue;
-    iDec2 = 0;
-  }
-  int iMax = strValue.GetLength();
-  if (iDec2 > iMax) {
-    for (int iNum = 0; iNum <= iDec2 - iMax; iNum++)
-      strValue += '0';
 
-    iMax = iDec2 + 1;
+    // Write into |strValue|.
+    pdfium::span<char> span = strValue.GetBuffer(szBufferSize);
+    FXSYS_snprintf(span.data(), szBufferSize, format, dValue);
+    szNewSize = strlen(span.data());
   }
+  strValue.ReleaseBuffer(szNewSize);
 
-  // for processing seperator style
-  if (iDec2 < iMax) {
+  // for processing separator style
+  Optional<size_t> mark_pos = strValue.Find('.');
+  if (mark_pos.has_value()) {
     char mark = DecimalMarkForStyle(iSepStyle);
-    strValue.Insert(iDec2, mark);
-    iMax++;
-
-    if (iDec2 == 0)
-      strValue.Insert(iDec2, '0');
+    if (mark != '.')
+      strValue.SetAt(mark_pos.value(), mark);
   }
   bool bUseDigitSeparator = IsStyleWithDigitSeparator(iSepStyle);
   if (bUseDigitSeparator || IsStyleWithApostropheSeparator(iSepStyle)) {
     char cSeparator =
         bUseDigitSeparator ? DigitSeparatorForStyle(iSepStyle) : '\'';
-    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
-      strValue.Insert(iDecPositive, cSeparator);
-      iMax++;
-    }
+    int iEnd = mark_pos.value_or(strValue.GetLength());
+    int iStop = dValue < 0 ? 1 : 0;
+    for (int i = iEnd - 3; i > iStop; i -= 3)
+      strValue.Insert(i, cSeparator);
   }
-
-  // negative mark
-  if (iNegative)
-    strValue.InsertAtFront('-');
 
   if (bPercentPrepend)
     strValue.InsertAtFront('%');
