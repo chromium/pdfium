@@ -128,7 +128,7 @@ void SetSystemPagesAccessInternal(
     void* address,
     size_t length,
     PageAccessibilityConfiguration accessibility) {
-  CHECK(0 == mprotect(address, length, GetAccessFlags(accessibility)));
+  CHECK_EQ(0, mprotect(address, length, GetAccessFlags(accessibility)));
 }
 
 void FreePagesInternal(void* address, size_t length) {

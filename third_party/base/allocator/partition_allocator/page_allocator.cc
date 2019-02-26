@@ -12,6 +12,7 @@
 #include "third_party/base/allocator/partition_allocator/address_space_randomization.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator_internal.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
+#include "third_party/base/bits.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_math.h"
 
@@ -109,7 +110,7 @@ void* AllocPages(void* address,
   DCHECK(!(length & kPageAllocationGranularityOffsetMask));
   DCHECK(align >= kPageAllocationGranularity);
   // Alignment must be power of 2 for masking math to work.
-  DCHECK_EQ(align & (align - 1), 0UL);
+  DCHECK(pdfium::base::bits::IsPowerOfTwo(align));
   DCHECK(!(reinterpret_cast<uintptr_t>(address) &
            kPageAllocationGranularityOffsetMask));
   uintptr_t align_offset_mask = align - 1;
@@ -120,7 +121,7 @@ void* AllocPages(void* address,
   // On 64 bit Linux, we may need to adjust the address space limit for
   // guarded allocations.
   if (length >= kMinimumGuardedMemorySize) {
-    CHECK(PageInaccessible == accessibility);
+    CHECK_EQ(PageInaccessible, accessibility);
     CHECK(!commit);
     if (!AdjustAddressSpaceLimit(base::checked_cast<int64_t>(length))) {
       // Fall through. Try the allocation, since we may have a reserve.

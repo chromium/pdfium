@@ -84,7 +84,7 @@ void SetSystemPagesAccessInternal(
     if (!VirtualFree(address, length, MEM_DECOMMIT)) {
       // We check `GetLastError` for `ERROR_SUCCESS` here so that in a crash
       // report we get the error number.
-      CHECK(static_cast<uint32_t>(ERROR_SUCCESS) == GetLastError());
+      CHECK_EQ(static_cast<uint32_t>(ERROR_SUCCESS), GetLastError());
     }
   } else {
     if (!VirtualAlloc(address, length, MEM_COMMIT,
@@ -94,7 +94,7 @@ void SetSystemPagesAccessInternal(
         OOM_CRASH();
       // We check `GetLastError` for `ERROR_SUCCESS` here so that in a crash
       // report we get the error number.
-      CHECK(ERROR_SUCCESS == error);
+      CHECK_EQ(ERROR_SUCCESS, error);
     }
   }
 }

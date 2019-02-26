@@ -116,6 +116,7 @@
 #define DCHECK assert
 #endif
 
+#define CHECK_EQ(x, y) CHECK((x) == (y))
 #define DCHECK_EQ(x, y) DCHECK((x) == (y))
 #define NOTREACHED() DCHECK(false)
 

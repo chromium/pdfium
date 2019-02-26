@@ -23,9 +23,22 @@ namespace pdfium {
 namespace base {
 namespace bits {
 
+// Returns true iff |value| is a power of 2.
+template <typename T,
+          typename = typename std::enable_if<std::is_integral<T>::value>>
+constexpr inline bool IsPowerOfTwo(T value) {
+  // From "Hacker's Delight": Section 2.1 Manipulating Rightmost Bits.
+  //
+  // Only positive integers with a single bit set are powers of two. If only one
+  // bit is set in x (e.g. 0b00000100000000) then |x-1| will have that bit set
+  // to zero and all bits to its right set to 1 (e.g. 0b00000011111111). Hence
+  // |x & (x-1)| is 0 iff x is a power of two.
+  return value > 0 && (value & (value - 1)) == 0;
+}
+
 // Round up |size| to a multiple of alignment, which must be a power of two.
 inline size_t Align(size_t size, size_t alignment) {
-  DCHECK_EQ(alignment & (alignment - 1), 0u);
+  DCHECK(IsPowerOfTwo(alignment));
   return (size + alignment - 1) & ~(alignment - 1);
 }
 
