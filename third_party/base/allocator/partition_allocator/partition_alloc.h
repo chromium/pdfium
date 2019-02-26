@@ -272,6 +272,10 @@ ALWAYS_INLINE void* PartitionRoot::AllocFlags(int flags,
                                               size_t size,
                                               const char* type_name) {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+  // Make MEMORY_TOOL_REPLACES_ALLOCATOR behave the same for max size
+  // as other alloc code.
+  if (size > kGenericMaxDirectMapped)
+    return nullptr;
   void* result = malloc(size);
   CHECK(result);
   return result;
@@ -351,6 +355,10 @@ ALWAYS_INLINE void* PartitionAllocGenericFlags(PartitionRootGeneric* root,
   DCHECK(flags < PartitionAllocLastFlag << 1);
 
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+  // Make MEMORY_TOOL_REPLACES_ALLOCATOR behave the same for max size
+  // as other alloc code.
+  if (size > kGenericMaxDirectMapped)
+    return nullptr;
   const bool zero_fill = flags & PartitionAllocZeroFill;
   void* result = zero_fill ? calloc(1, size) : malloc(size);
   CHECK(result || flags & PartitionAllocReturnNull);

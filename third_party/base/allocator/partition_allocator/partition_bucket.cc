@@ -49,12 +49,12 @@ ALWAYS_INLINE PartitionPage* PartitionDirectMap(PartitionRootBase* root,
   root->IncreaseCommittedPages(committed_page_size);
 
   char* slot = ptr + kPartitionPageSize;
-  CHECK(SetSystemPagesAccess(ptr + (kSystemPageSize * 2),
-                             kPartitionPageSize - (kSystemPageSize * 2),
-                             PageInaccessible));
+  SetSystemPagesAccess(ptr + (kSystemPageSize * 2),
+                       kPartitionPageSize - (kSystemPageSize * 2),
+                       PageInaccessible);
 #if !defined(ARCH_CPU_64_BITS)
-  CHECK(SetSystemPagesAccess(ptr, kSystemPageSize, PageInaccessible));
-  CHECK(SetSystemPagesAccess(slot + size, kSystemPageSize, PageInaccessible));
+  SetSystemPagesAccess(ptr, kSystemPageSize, PageInaccessible);
+  SetSystemPagesAccess(slot + size, kSystemPageSize, PageInaccessible);
 #endif
 
   PartitionSuperPageExtentEntry* extent =
@@ -207,7 +207,7 @@ ALWAYS_INLINE void* PartitionBucket::AllocNewSlotSpan(
 
     // Fresh System Pages in the SuperPages are decommited. Commit them
     // before vending them back.
-    CHECK(SetSystemPagesAccess(ret, total_size, PageReadWrite));
+    SetSystemPagesAccess(ret, total_size, PageReadWrite);
 
     root->next_partition_page += total_size;
     root->IncreaseCommittedPages(total_size);
@@ -240,22 +240,22 @@ ALWAYS_INLINE void* PartitionBucket::AllocNewSlotSpan(
   // hole in the middle.
   // This is where we put page metadata and also a tiny amount of extent
   // metadata.
-  CHECK(SetSystemPagesAccess(super_page, kSystemPageSize, PageInaccessible));
-  CHECK(SetSystemPagesAccess(super_page + (kSystemPageSize * 2),
-                             kPartitionPageSize - (kSystemPageSize * 2),
-                             PageInaccessible));
-  //  CHECK(SetSystemPagesAccess(super_page + (kSuperPageSize -
+  SetSystemPagesAccess(super_page, kSystemPageSize, PageInaccessible);
+  SetSystemPagesAccess(super_page + (kSystemPageSize * 2),
+                       kPartitionPageSize - (kSystemPageSize * 2),
+                       PageInaccessible);
+  //  SetSystemPagesAccess(super_page + (kSuperPageSize -
   //  kPartitionPageSize),
-  //                             kPartitionPageSize, PageInaccessible));
+  //                             kPartitionPageSize, PageInaccessible);
   // All remaining slotspans for the unallocated PartitionPages inside the
   // SuperPage are conceptually decommitted. Correctly set the state here
   // so they do not occupy resources.
   //
   // TODO(ajwong): Refactor Page Allocator API so the SuperPage comes in
   // decommited initially.
-  CHECK(SetSystemPagesAccess(super_page + kPartitionPageSize + total_size,
-                             (kSuperPageSize - kPartitionPageSize - total_size),
-                             PageInaccessible));
+  SetSystemPagesAccess(super_page + kPartitionPageSize + total_size,
+                       (kSuperPageSize - kPartitionPageSize - total_size),
+                       PageInaccessible);
 
   // If we were after a specific address, but didn't get it, assume that
   // the system chose a lousy address. Here most OS'es have a default

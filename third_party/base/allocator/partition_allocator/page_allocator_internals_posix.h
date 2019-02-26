@@ -117,11 +117,18 @@ void* TrimMappingInternal(void* base,
   return ret;
 }
 
-bool SetSystemPagesAccessInternal(
+bool TrySetSystemPagesAccessInternal(
     void* address,
     size_t length,
     PageAccessibilityConfiguration accessibility) {
   return 0 == mprotect(address, length, GetAccessFlags(accessibility));
+}
+
+void SetSystemPagesAccessInternal(
+    void* address,
+    size_t length,
+    PageAccessibilityConfiguration accessibility) {
+  CHECK(0 == mprotect(address, length, GetAccessFlags(accessibility)));
 }
 
 void FreePagesInternal(void* address, size_t length) {

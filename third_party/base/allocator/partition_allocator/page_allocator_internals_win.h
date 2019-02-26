@@ -5,6 +5,7 @@
 #ifndef THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_PAGE_ALLOCATOR_INTERNALS_WIN_H_
 #define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_PAGE_ALLOCATOR_INTERNALS_WIN_H_
 
+#include "third_party/base/allocator/partition_allocator/oom.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator_internal.h"
 
 namespace pdfium {
@@ -65,15 +66,36 @@ void* TrimMappingInternal(void* base,
   return ret;
 }
 
-bool SetSystemPagesAccessInternal(
+bool TrySetSystemPagesAccessInternal(
+    void* address,
+    size_t length,
+    PageAccessibilityConfiguration accessibility) {
+  if (accessibility == PageInaccessible)
+    return VirtualFree(address, length, MEM_DECOMMIT) != 0;
+  return nullptr != VirtualAlloc(address, length, MEM_COMMIT,
+                                 GetAccessFlags(accessibility));
+}
+
+void SetSystemPagesAccessInternal(
     void* address,
     size_t length,
     PageAccessibilityConfiguration accessibility) {
   if (accessibility == PageInaccessible) {
-    return VirtualFree(address, length, MEM_DECOMMIT) != 0;
+    if (!VirtualFree(address, length, MEM_DECOMMIT)) {
+      // We check `GetLastError` for `ERROR_SUCCESS` here so that in a crash
+      // report we get the error number.
+      CHECK(static_cast<uint32_t>(ERROR_SUCCESS) == GetLastError());
+    }
   } else {
-    return nullptr != VirtualAlloc(address, length, MEM_COMMIT,
-                                   GetAccessFlags(accessibility));
+    if (!VirtualAlloc(address, length, MEM_COMMIT,
+                      GetAccessFlags(accessibility))) {
+      int32_t error = GetLastError();
+      if (error == ERROR_COMMITMENT_LIMIT)
+        OOM_CRASH();
+      // We check `GetLastError` for `ERROR_SUCCESS` here so that in a crash
+      // report we get the error number.
+      CHECK(ERROR_SUCCESS == error);
+    }
   }
 }
 
@@ -82,13 +104,13 @@ void FreePagesInternal(void* address, size_t length) {
 }
 
 void DecommitSystemPagesInternal(void* address, size_t length) {
-  CHECK(SetSystemPagesAccess(address, length, PageInaccessible));
+  SetSystemPagesAccess(address, length, PageInaccessible);
 }
 
 bool RecommitSystemPagesInternal(void* address,
                                  size_t length,
                                  PageAccessibilityConfiguration accessibility) {
-  return SetSystemPagesAccess(address, length, accessibility);
+  return TrySetSystemPagesAccess(address, length, accessibility);
 }
 
 void DiscardSystemPagesInternal(void* address, size_t length) {

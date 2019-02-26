@@ -200,11 +200,18 @@ void FreePages(void* address, size_t length) {
   FreePagesInternal(address, length);
 }
 
-bool SetSystemPagesAccess(void* address,
+bool TrySetSystemPagesAccess(void* address,
+                             size_t length,
+                             PageAccessibilityConfiguration accessibility) {
+  DCHECK(!(length & kSystemPageOffsetMask));
+  return TrySetSystemPagesAccessInternal(address, length, accessibility);
+}
+
+void SetSystemPagesAccess(void* address,
                           size_t length,
                           PageAccessibilityConfiguration accessibility) {
   DCHECK(!(length & kSystemPageOffsetMask));
-  return SetSystemPagesAccessInternal(address, length, accessibility);
+  SetSystemPagesAccessInternal(address, length, accessibility);
 }
 
 void DecommitSystemPages(void* address, size_t length) {
