@@ -916,16 +916,16 @@ FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetOptionCount(FPDF_FORMHANDLE hHandle,
                                                        FPDF_ANNOTATION annot) {
-  if (!hHandle || !annot)
+  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  if (!pForm)
+    return -1;
+
+  if (!annot)
     return -1;
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   if (!pAnnotDict)
-    return -1;
-
-  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
-  if (!pForm)
     return -1;
 
   CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
@@ -939,16 +939,16 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
                          int index,
                          void* buffer,
                          unsigned long buflen) {
-  if (!hHandle || !annot || index < 0)
+  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  if (!pForm)
+    return 0;
+
+  if (!annot || index < 0)
     return 0;
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   if (!pAnnotDict)
-    return 0;
-
-  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
-  if (!pForm)
     return 0;
 
   CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
