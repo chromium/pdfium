@@ -165,8 +165,14 @@ int DateFromTime(double t) {
 }
 
 size_t FindSubWordLength(const WideString& str, size_t nStart) {
+  // It is safer, but slower to use WideString::operator[]. Although this code
+  // is normally not performance critical, fuzzers will exercise this code with
+  // very long values for |str|. To keep the fuzzers from timing out, get the
+  // raw string here, and be very careful while accessing it.
+  const wchar_t* data = str.c_str();
+  size_t length = str.GetLength();
   size_t i = nStart;
-  while (i < str.GetLength() && std::iswalnum(str[i]))
+  while (i < length && std::iswalnum(data[i]))
     ++i;
   return i - nStart;
 }
