@@ -377,10 +377,8 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       break;
     case CPDF_Annot::Subtype::SCREEN: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-      ByteString cbString;
-      if (pAnnotDict->KeyExist("IT"))
-        cbString = pAnnotDict->GetStringFor("IT");
-      if (cbString.Compare("Img") != 0)
+      ByteString cbString = pAnnotDict->GetStringFor("IT");
+      if (cbString != "Img")
         RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
       break;
     }
@@ -392,10 +390,8 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       break;
     case CPDF_Annot::Subtype::WIDGET: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-      ByteString cbString;
-      if (pAnnotDict->KeyExist("FT"))
-        cbString = pAnnotDict->GetStringFor("FT");
-      if (cbString.Compare("Sig") == 0)
+      ByteString cbString = pAnnotDict->GetStringFor("FT");
+      if (cbString == "Sig")
         RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
       break;
     }
