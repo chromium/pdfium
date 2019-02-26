@@ -529,7 +529,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   const size_t nCount = m_pAnnotList->Count();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
-    CheckUnSupportAnnot(GetPDFDocument(), pPDFAnnot);
+    CheckForUnsupportedAnnot(pPDFAnnot);
     CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
     if (!pAnnot)
       continue;

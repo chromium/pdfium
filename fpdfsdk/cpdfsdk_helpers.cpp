@@ -364,32 +364,43 @@ void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
     RaiseUnSupportError(FPDF_UNSP_DOC_XFAFORM);
 }
 
-void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
-  CPDF_Annot::Subtype nAnnotSubtype = pPDFAnnot->GetSubtype();
-  if (nAnnotSubtype == CPDF_Annot::Subtype::THREED) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::SCREEN) {
-    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
-    ByteString cbString;
-    if (pAnnotDict->KeyExist("IT"))
-      cbString = pAnnotDict->GetStringFor("IT");
-    if (cbString.Compare("Img") != 0)
-      RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::MOVIE) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_MOVIE);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::SOUND) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_SOUND);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::RICHMEDIA) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::FILEATTACHMENT) {
-    RaiseUnSupportError(FPDF_UNSP_ANNOT_ATTACHMENT);
-  } else if (nAnnotSubtype == CPDF_Annot::Subtype::WIDGET) {
-    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
-    ByteString cbString;
-    if (pAnnotDict->KeyExist("FT"))
-      cbString = pAnnotDict->GetStringFor("FT");
-    if (cbString.Compare("Sig") == 0)
-      RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
+void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
+  switch (pAnnot->GetSubtype()) {
+    case CPDF_Annot::Subtype::FILEATTACHMENT:
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_ATTACHMENT);
+      break;
+    case CPDF_Annot::Subtype::MOVIE:
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_MOVIE);
+      break;
+    case CPDF_Annot::Subtype::RICHMEDIA:
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA);
+      break;
+    case CPDF_Annot::Subtype::SCREEN: {
+      const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
+      ByteString cbString;
+      if (pAnnotDict->KeyExist("IT"))
+        cbString = pAnnotDict->GetStringFor("IT");
+      if (cbString.Compare("Img") != 0)
+        RaiseUnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
+      break;
+    }
+    case CPDF_Annot::Subtype::SOUND:
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_SOUND);
+      break;
+    case CPDF_Annot::Subtype::THREED:
+      RaiseUnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
+      break;
+    case CPDF_Annot::Subtype::WIDGET: {
+      const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
+      ByteString cbString;
+      if (pAnnotDict->KeyExist("FT"))
+        cbString = pAnnotDict->GetStringFor("FT");
+      if (cbString.Compare("Sig") == 0)
+        RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
+      break;
+    }
+    default:
+      break;
   }
 }
 
