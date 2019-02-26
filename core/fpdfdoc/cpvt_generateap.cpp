@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "constants/annotation_common.h"
+#include "constants/form_fields.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -365,7 +366,7 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
                                   const CPDF_Dictionary& pAnnotDict,
                                   CPDF_Font* pDefFont,
                                   const ByteString& sFontName) {
-  WideString swValue(pAnnotDict.GetUnicodeTextFor("T"));
+  WideString swValue(pAnnotDict.GetUnicodeTextFor(pdfium::form_fields::kT));
   swValue += L'\n';
   swValue += pAnnotDict.GetUnicodeTextFor(pdfium::annotation::kContents);
   CPVT_FontMap map(pDoc, nullptr, pDefFont, sFontName);
@@ -1079,15 +1080,18 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   switch (type) {
     case CPVT_GenerateAP::kTextField: {
       WideString swValue =
-          FPDF_GetFieldAttr(pAnnotDict, "V")
-              ? FPDF_GetFieldAttr(pAnnotDict, "V")->GetUnicodeText()
+          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
+              ? FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
+                    ->GetUnicodeText()
               : WideString();
       int32_t nAlign = FPDF_GetFieldAttr(pAnnotDict, "Q")
                            ? FPDF_GetFieldAttr(pAnnotDict, "Q")->GetInteger()
                            : 0;
-      uint32_t dwFlags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
-                             ? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger()
-                             : 0;
+      uint32_t dwFlags =
+          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf)
+              ? FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf)
+                    ->GetInteger()
+              : 0;
       uint32_t dwMaxLen =
           FPDF_GetFieldAttr(pAnnotDict, "MaxLen")
               ? FPDF_GetFieldAttr(pAnnotDict, "MaxLen")->GetInteger()
@@ -1150,8 +1154,9 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     }
     case CPVT_GenerateAP::kComboBox: {
       WideString swValue =
-          FPDF_GetFieldAttr(pAnnotDict, "V")
-              ? FPDF_GetFieldAttr(pAnnotDict, "V")->GetUnicodeText()
+          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
+              ? FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
+                    ->GetUnicodeText()
               : WideString();
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,

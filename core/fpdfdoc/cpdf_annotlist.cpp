@@ -12,6 +12,7 @@
 
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
+#include "constants/form_fields.h"
 #include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -88,8 +89,9 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   auto pAnnotDict = pDocument->New<CPDF_Dictionary>();
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Popup");
-  pAnnotDict->SetNewFor<CPDF_String>("T", pParentDict->GetStringFor("T"),
-                                     false);
+  pAnnotDict->SetNewFor<CPDF_String>(
+      pdfium::form_fields::kT,
+      pParentDict->GetStringFor(pdfium::form_fields::kT), false);
   pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents,
                                      sContents.ToUTF8(), false);
 
@@ -126,7 +128,8 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     return;
   }
 
-  CPDF_Object* pFieldTypeObj = FPDF_GetFieldAttr(pAnnotDict, "FT");
+  CPDF_Object* pFieldTypeObj =
+      FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFT);
   if (!pFieldTypeObj)
     return;
 
@@ -137,7 +140,8 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     return;
   }
 
-  CPDF_Object* pFieldFlagsObj = FPDF_GetFieldAttr(pAnnotDict, "Ff");
+  CPDF_Object* pFieldFlagsObj =
+      FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
   if (field_type == "Ch") {
     auto type = (flags & pdfium::form_flags::kChoiceCombo)
@@ -154,7 +158,8 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (pAnnotDict->KeyExist(pdfium::annotation::kAS))
     return;
 
-  CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent");
+  CPDF_Dictionary* pParentDict =
+      pAnnotDict->GetDictFor(pdfium::form_fields::kParent);
   if (!pParentDict || !pParentDict->KeyExist(pdfium::annotation::kAS))
     return;
 

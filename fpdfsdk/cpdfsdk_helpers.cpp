@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
+#include "constants/form_fields.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -390,7 +391,7 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       break;
     case CPDF_Annot::Subtype::WIDGET: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-      ByteString cbString = pAnnotDict->GetStringFor("FT");
+      ByteString cbString = pAnnotDict->GetStringFor(pdfium::form_fields::kFT);
       if (cbString == "Sig")
         RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
       break;

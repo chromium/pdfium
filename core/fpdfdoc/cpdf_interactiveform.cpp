@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/form_fields.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
@@ -841,7 +842,7 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
     return;
 
   uint32_t dwParentObjNum = pFieldDict->GetObjNum();
-  CPDF_Array* pKids = pFieldDict->GetArrayFor("Kids");
+  CPDF_Array* pKids = pFieldDict->GetArrayFor(pdfium::form_fields::kKids);
   if (!pKids) {
     AddTerminalField(pFieldDict);
     return;
@@ -851,7 +852,8 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   if (!pFirstKid)
     return;
 
-  if (pFirstKid->KeyExist("T") || pFirstKid->KeyExist("Kids")) {
+  if (pFirstKid->KeyExist(pdfium::form_fields::kT) ||
+      pFirstKid->KeyExist(pdfium::form_fields::kKids)) {
     for (size_t i = 0; i < pKids->size(); i++) {
       CPDF_Dictionary* pChildDict = pKids->GetDictAt(i);
       if (pChildDict) {
@@ -885,10 +887,11 @@ void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
 }
 
 void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
-  if (!pFieldDict->KeyExist("FT")) {
+  if (!pFieldDict->KeyExist(pdfium::form_fields::kFT)) {
     // Key "FT" is required for terminal fields, it is also inheritable.
-    CPDF_Dictionary* pParentDict = pFieldDict->GetDictFor("Parent");
-    if (!pParentDict || !pParentDict->KeyExist("FT"))
+    CPDF_Dictionary* pParentDict =
+        pFieldDict->GetDictFor(pdfium::form_fields::kParent);
+    if (!pParentDict || !pParentDict->KeyExist(pdfium::form_fields::kFT))
       return;
   }
 
@@ -901,42 +904,45 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   pField = m_pFieldTree->GetField(csWName);
   if (!pField) {
     CPDF_Dictionary* pParent = pFieldDict;
-    if (!pFieldDict->KeyExist("T") &&
+    if (!pFieldDict->KeyExist(pdfium::form_fields::kT) &&
         pFieldDict->GetStringFor("Subtype") == "Widget") {
-      pParent = pFieldDict->GetDictFor("Parent");
+      pParent = pFieldDict->GetDictFor(pdfium::form_fields::kParent);
       if (!pParent)
         pParent = pFieldDict;
     }
 
-    if (pParent && pParent != pFieldDict && !pParent->KeyExist("FT")) {
-      if (pFieldDict->KeyExist("FT")) {
-        CPDF_Object* pFTValue = pFieldDict->GetDirectObjectFor("FT");
+    if (pParent && pParent != pFieldDict &&
+        !pParent->KeyExist(pdfium::form_fields::kFT)) {
+      if (pFieldDict->KeyExist(pdfium::form_fields::kFT)) {
+        CPDF_Object* pFTValue =
+            pFieldDict->GetDirectObjectFor(pdfium::form_fields::kFT);
         if (pFTValue)
-          pParent->SetFor("FT", pFTValue->Clone());
+          pParent->SetFor(pdfium::form_fields::kFT, pFTValue->Clone());
       }
 
-      if (pFieldDict->KeyExist("Ff")) {
-        CPDF_Object* pFfValue = pFieldDict->GetDirectObjectFor("Ff");
+      if (pFieldDict->KeyExist(pdfium::form_fields::kFf)) {
+        CPDF_Object* pFfValue =
+            pFieldDict->GetDirectObjectFor(pdfium::form_fields::kFf);
         if (pFfValue)
-          pParent->SetFor("Ff", pFfValue->Clone());
+          pParent->SetFor(pdfium::form_fields::kFf, pFfValue->Clone());
       }
     }
 
     auto newField = pdfium::MakeUnique<CPDF_FormField>(this, pParent);
     pField = newField.get();
-    CPDF_Object* pTObj = pDict->GetObjectFor("T");
+    CPDF_Object* pTObj = pDict->GetObjectFor(pdfium::form_fields::kT);
     if (ToReference(pTObj)) {
       std::unique_ptr<CPDF_Object> pClone = pTObj->CloneDirectObject();
       if (pClone)
-        pDict->SetFor("T", std::move(pClone));
+        pDict->SetFor(pdfium::form_fields::kT, std::move(pClone));
       else
-        pDict->SetNewFor<CPDF_Name>("T", ByteString());
+        pDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kT, ByteString());
     }
     if (!m_pFieldTree->SetField(csWName, std::move(newField)))
       return;
   }
 
-  CPDF_Array* pKids = pFieldDict->GetArrayFor("Kids");
+  CPDF_Array* pKids = pFieldDict->GetArrayFor(pdfium::form_fields::kKids);
   if (pKids) {
     for (size_t i = 0; i < pKids->size(); i++) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
@@ -990,8 +996,10 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
       bFind = pdfium::ContainsValue(*fields, pField);
     if (bIncludeOrExclude == bFind) {
       const CPDF_Dictionary* pFieldDict = pField->GetDict();
-      if (pField->IsRequired() && pFieldDict->GetStringFor("V").IsEmpty())
+      if (pField->IsRequired() &&
+          pFieldDict->GetStringFor(pdfium::form_fields::kV).IsEmpty()) {
         return false;
+      }
     }
   }
   return true;
@@ -1047,26 +1055,29 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       continue;
 
     if ((dwFlags & 0x02) != 0 &&
-        pField->GetDict()->GetStringFor("V").IsEmpty()) {
+        pField->GetDict()->GetStringFor(pdfium::form_fields::kV).IsEmpty()) {
       continue;
     }
 
     WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
     auto pFieldDict = pDoc->New<CPDF_Dictionary>();
-    pFieldDict->SetNewFor<CPDF_String>("T", fullname);
+    pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kT, fullname);
     if (pField->GetType() == CPDF_FormField::kCheckBox ||
         pField->GetType() == CPDF_FormField::kRadioButton) {
       WideString csExport = pField->GetCheckValue(false);
       ByteString csBExport = PDF_EncodeText(csExport);
       CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->GetDict(), "Opt");
-      if (pOpt)
-        pFieldDict->SetNewFor<CPDF_String>("V", csBExport, false);
-      else
-        pFieldDict->SetNewFor<CPDF_Name>("V", csBExport);
+      if (pOpt) {
+        pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport,
+                                           false);
+      } else {
+        pFieldDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV, csBExport);
+      }
     } else {
-      CPDF_Object* pV = FPDF_GetFieldAttr(pField->GetDict(), "V");
+      CPDF_Object* pV =
+          FPDF_GetFieldAttr(pField->GetDict(), pdfium::form_fields::kV);
       if (pV)
-        pFieldDict->SetFor("V", pV->CloneDirectObject());
+        pFieldDict->SetFor(pdfium::form_fields::kV, pV->CloneDirectObject());
     }
     pFields->Add(std::move(pFieldDict));
   }
