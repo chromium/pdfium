@@ -1079,23 +1079,16 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   }
   switch (type) {
     case CPVT_GenerateAP::kTextField: {
-      WideString swValue =
-          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
-              ? FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
-                    ->GetUnicodeText()
-              : WideString();
-      int32_t nAlign = FPDF_GetFieldAttr(pAnnotDict, "Q")
-                           ? FPDF_GetFieldAttr(pAnnotDict, "Q")->GetInteger()
-                           : 0;
-      uint32_t dwFlags =
-          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf)
-              ? FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf)
-                    ->GetInteger()
-              : 0;
-      uint32_t dwMaxLen =
-          FPDF_GetFieldAttr(pAnnotDict, "MaxLen")
-              ? FPDF_GetFieldAttr(pAnnotDict, "MaxLen")->GetInteger()
-              : 0;
+      const CPDF_Object* pV =
+          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
+      WideString swValue = pV ? pV->GetUnicodeText() : WideString();
+      const CPDF_Object* pQ = FPDF_GetFieldAttr(pAnnotDict, "Q");
+      int32_t nAlign = pQ ? pQ->GetInteger() : 0;
+      const CPDF_Object* pFf =
+          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
+      uint32_t dwFlags = pFf ? pFf->GetInteger() : 0;
+      const CPDF_Object* pMaxLen = FPDF_GetFieldAttr(pAnnotDict, "MaxLen");
+      uint32_t dwMaxLen = pMaxLen ? pMaxLen->GetInteger() : 0;
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
           pDefFont, font_name);
@@ -1153,11 +1146,9 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       break;
     }
     case CPVT_GenerateAP::kComboBox: {
-      WideString swValue =
-          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
-              ? FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV)
-                    ->GetUnicodeText()
-              : WideString();
+      const CPDF_Object* pV =
+          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
+      WideString swValue = pV ? pV->GetUnicodeText() : WideString();
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
           pDefFont, font_name);
