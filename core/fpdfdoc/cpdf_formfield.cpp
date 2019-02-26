@@ -131,7 +131,7 @@ void CPDF_FormField::InitFieldFlags() {
     m_bNoExport = true;
   }
 
-  if (type_name == "Btn") {
+  if (type_name == pdfium::form_fields::kBtn) {
     if (flags & 0x8000) {
       m_Type = kRadioButton;
       if (flags & 0x4000)
@@ -143,7 +143,7 @@ void CPDF_FormField::InitFieldFlags() {
     } else {
       m_Type = kCheckBox;
     }
-  } else if (type_name == "Tx") {
+  } else if (type_name == pdfium::form_fields::kTx) {
     if (flags & 0x100000) {
       m_Type = kFile;
     } else if (flags & 0x2000000) {
@@ -160,7 +160,7 @@ void CPDF_FormField::InitFieldFlags() {
         m_Flags |= kFormTextComb;
     }
     LoadDA();
-  } else if (type_name == "Ch") {
+  } else if (type_name == pdfium::form_fields::kCh) {
     if (flags & 0x20000) {
       m_Type = kComboBox;
       if (flags & 0x40000)
@@ -171,7 +171,7 @@ void CPDF_FormField::InitFieldFlags() {
         m_Flags |= kFormListMultiSelect;
     }
     LoadDA();
-  } else if (type_name == "Sig") {
+  } else if (type_name == pdfium::form_fields::kSig) {
     m_Type = kSign;
   }
 }

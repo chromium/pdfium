@@ -392,7 +392,7 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
     case CPDF_Annot::Subtype::WIDGET: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       ByteString cbString = pAnnotDict->GetStringFor(pdfium::form_fields::kFT);
-      if (cbString == "Sig")
+      if (cbString == pdfium::form_fields::kSig)
         RaiseUnSupportError(FPDF_UNSP_ANNOT_SIG);
       break;
     }

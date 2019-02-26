@@ -28,7 +28,6 @@ namespace {
 
 constexpr char kContentsKey[] = "Contents";
 constexpr char kTypeKey[] = "Type";
-constexpr char kSignTypeValue[] = "Sig";
 
 }  // namespace
 
@@ -40,7 +39,7 @@ bool CPDF_CryptoHandler::IsSignatureDictionary(
   const CPDF_Object* type_obj = dictionary->GetDirectObjectFor(kTypeKey);
   if (!type_obj)
     type_obj = dictionary->GetDirectObjectFor(pdfium::form_fields::kFT);
-  return type_obj && type_obj->GetString() == kSignTypeValue;
+  return type_obj && type_obj->GetString() == pdfium::form_fields::kSig;
 }
 
 void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,

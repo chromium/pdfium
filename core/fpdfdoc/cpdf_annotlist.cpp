@@ -134,7 +134,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     return;
 
   ByteString field_type = pFieldTypeObj->GetString();
-  if (field_type == "Tx") {
+  if (field_type == pdfium::form_fields::kTx) {
     CPVT_GenerateAP::GenerateFormAP(pDoc, pAnnotDict,
                                     CPVT_GenerateAP::kTextField);
     return;
@@ -143,7 +143,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   CPDF_Object* pFieldFlagsObj =
       FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
-  if (field_type == "Ch") {
+  if (field_type == pdfium::form_fields::kCh) {
     auto type = (flags & pdfium::form_flags::kChoiceCombo)
                     ? CPVT_GenerateAP::kComboBox
                     : CPVT_GenerateAP::kListBox;
@@ -151,7 +151,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     return;
   }
 
-  if (field_type != "Btn")
+  if (field_type != pdfium::form_fields::kBtn)
     return;
   if (flags & pdfium::form_flags::kButtonPushbutton)
     return;

@@ -21,6 +21,12 @@ constexpr char kV[] = "V";
 constexpr char kDV[] = "DV";
 constexpr char kAA[] = "AA";
 
+// FT values from PDF 1.7 spec, table 8.69.
+constexpr char kBtn[] = "Btn";
+constexpr char kTx[] = "Tx";
+constexpr char kCh[] = "Ch";
+constexpr char kSig[] = "Sig";
+
 }  // namespace form_fields
 }  // namespace pdfium
 
