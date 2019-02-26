@@ -1690,6 +1690,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionCountCombobox) {
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(26, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+
+    // Check bad form handle / annot.
+    EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(nullptr, nullptr));
+    EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), nullptr));
+    EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(nullptr, annot.get()));
   }
 
   UnloadPage(page);
@@ -1777,11 +1782,18 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelCombobox) {
                                             buf.data(), len));
     EXPECT_STREQ(L"Zucchini", BufferToWString(buf).c_str());
 
-    // indices out of range
+    // Indices out of range
     EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), -1,
                                            nullptr, 0));
     EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 26,
                                            nullptr, 0));
+
+    // Check bad form handle / annot.
+    EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(nullptr, nullptr, 0, nullptr, 0));
+    EXPECT_EQ(0u,
+              FPDFAnnot_GetOptionLabel(nullptr, annot.get(), 0, nullptr, 0));
+    EXPECT_EQ(0u,
+              FPDFAnnot_GetOptionLabel(form_handle(), nullptr, 0, nullptr, 0));
   }
 
   UnloadPage(page);

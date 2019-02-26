@@ -859,6 +859,49 @@ TEST_F(FPDFFormFillEmbedderTest, HasFormInfoXFAForeground) {
   EXPECT_EQ(FORMTYPE_XFA_FOREGROUND, FPDF_GetFormType(document_));
 }
 
+TEST_F(FPDFFormFillEmbedderTest, BadApiInputsText) {
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_FALSE(FORM_SetIndexSelected(nullptr, nullptr, 0, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(nullptr, page, 0, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), nullptr, 0, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, -1, true));
+  EXPECT_FALSE(FORM_IsIndexSelected(nullptr, nullptr, 0));
+  EXPECT_FALSE(FORM_IsIndexSelected(nullptr, page, 0));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), nullptr, 0));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, -1));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbedderTest, BadApiInputsComboBox) {
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, -1, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, 100, true));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, -1));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, 100));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbedderTest, BadApiInputsListBox) {
+  ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, -1, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, 100, true));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, -1));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, 100));
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextEmptyAndBasicKeyboard) {
   // Test empty selection.
   CheckFocusedFieldText(L"");
