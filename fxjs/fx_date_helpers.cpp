@@ -164,6 +164,18 @@ int DateFromTime(double t) {
   }
 }
 
+// TODO(thestig): Consider returning a WideStringView to make this even faster.
+WideString ParseStringString(const WideString& str,
+                             size_t nStart,
+                             size_t* pSkip) {
+  size_t i = nStart;
+  while (i < str.GetLength() && std::iswalnum(str[i]))
+    ++i;
+
+  *pSkip = i - nStart;
+  return str.Mid(nStart, *pSkip);
+}
+
 }  // namespace
 
 const wchar_t* const kMonths[12] = {L"Jan", L"Feb", L"Mar", L"Apr",
@@ -286,18 +298,6 @@ int FX_ParseStringInteger(const WideString& str,
 
   *pSkip = nSkip;
   return nRet;
-}
-
-// TODO(thestig): Consider returning a WideStringView to make this even faster.
-WideString FX_ParseStringString(const WideString& str,
-                                size_t nStart,
-                                size_t* pSkip) {
-  size_t i = nStart;
-  while (i < str.GetLength() && std::iswalnum(str[i]))
-    ++i;
-
-  *pSkip = i - nStart;
-  return str.Mid(nStart, *pSkip);
 }
 
 ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
@@ -438,9 +438,9 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
         } else if (remaining == 2 || format[i + 3] != c) {
           switch (c) {
             case 'm': {
-              WideString sMonth = FX_ParseStringString(value, j, &nSkip);
+              WideString sMonth = ParseStringString(value, j, &nSkip);
               bool bFind = false;
-              for (int m = 0; m < 12; m++) {
+              for (size_t m = 0; m < FX_ArraySize(kMonths); ++m) {
                 if (sMonth.CompareNoCase(kMonths[m]) == 0) {
                   nMonth = m + 1;
                   i += 3;
@@ -473,13 +473,11 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
             case 'm': {
               bool bFind = false;
 
-              WideString sMonth = FX_ParseStringString(value, j, &nSkip);
+              WideString sMonth = ParseStringString(value, j, &nSkip);
               sMonth.MakeLower();
-
-              for (int m = 0; m < 12; m++) {
+              for (size_t m = 0; m < FX_ArraySize(kFullMonths); ++m) {
                 WideString sFullMonths = WideString(kFullMonths[m]);
                 sFullMonths.MakeLower();
-
                 if (sFullMonths.Contains(sMonth.c_str())) {
                   nMonth = m + 1;
                   i += 4;
