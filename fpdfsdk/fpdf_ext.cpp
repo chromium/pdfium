@@ -75,7 +75,7 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
     return false;
 
   CPDF_ModuleMgr::Get()->SetUnsupportInfoAdapter(
-      pdfium::MakeUnique<CFSDK_UnsupportInfo_Adapter>(unsp_info));
+      pdfium::MakeUnique<fpdfapi::UnsupportedInfoAdapter>(unsp_info));
   return true;
 }
 
