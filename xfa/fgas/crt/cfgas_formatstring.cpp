@@ -851,15 +851,15 @@ void CFGAS_FormatString::SplitFormatString(
   const wchar_t* pStr = wsFormatString.c_str();
   const wchar_t* pToken = pStr;
   const wchar_t* pEnd = pStr + iStrLen;
-  bool iQuote = false;
+  bool bQuote = false;
   while (true) {
     if (pStr >= pEnd) {
       wsPatterns->push_back(WideString(pToken, pStr - pToken));
       return;
     }
     if (*pStr == '\'') {
-      iQuote = !iQuote;
-    } else if (*pStr == L'|' && !iQuote) {
+      bQuote = !bQuote;
+    } else if (*pStr == L'|' && !bQuote) {
       wsPatterns->push_back(WideString(pToken, pStr - pToken));
       pToken = pStr + 1;
     }

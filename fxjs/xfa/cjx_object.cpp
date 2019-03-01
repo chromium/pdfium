@@ -1160,13 +1160,13 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
   CXFA_Node* pProtoNode = nullptr;
   if (!wsSOM.IsEmpty()) {
     XFA_RESOLVENODE_RS resolveNodeRS;
-    bool iRet = GetDocument()->GetScriptContext()->ResolveObjects(
+    bool bRet = GetDocument()->GetScriptContext()->ResolveObjects(
         pProtoRoot, wsSOM.AsStringView(), &resolveNodeRS,
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
             XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
             XFA_RESOLVENODE_Siblings,
         nullptr);
-    if (iRet && resolveNodeRS.objects.front()->IsNode())
+    if (bRet && resolveNodeRS.objects.front()->IsNode())
       pProtoNode = resolveNodeRS.objects.front()->AsNode();
 
   } else if (!wsID.IsEmpty()) {

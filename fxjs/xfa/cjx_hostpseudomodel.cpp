@@ -289,10 +289,10 @@ CJS_Result CJX_HostPseudoModel::openList(
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
     XFA_RESOLVENODE_RS resolveNodeRS;
-    bool iRet = pScriptContext->ResolveObjects(
+    bool bRet = pScriptContext->ResolveObjects(
         pObject, runtime->ToWideString(params[0]).AsStringView(),
         &resolveNodeRS, dwFlag, nullptr);
-    if (!iRet || !resolveNodeRS.objects.front()->IsNode())
+    if (!bRet || !resolveNodeRS.objects.front()->IsNode())
       return CJS_Result::Success();
 
     pNode = resolveNodeRS.objects.front()->AsNode();
@@ -381,9 +381,9 @@ CJS_Result CJX_HostPseudoModel::resetData(
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
     XFA_RESOLVENODE_RS resolveNodeRS;
-    bool iRet = pScriptContext->ResolveObjects(pObject, wsName.AsStringView(),
+    bool bRet = pScriptContext->ResolveObjects(pObject, wsName.AsStringView(),
                                                &resolveNodeRS, dwFlag, nullptr);
-    if (!iRet || !resolveNodeRS.objects.front()->IsNode())
+    if (!bRet || !resolveNodeRS.objects.front()->IsNode())
       continue;
 
     pNode = resolveNodeRS.objects.front()->AsNode();
@@ -443,10 +443,10 @@ CJS_Result CJX_HostPseudoModel::setFocus(
       uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resolveNodeRS;
-      bool iRet = pScriptContext->ResolveObjects(
+      bool bRet = pScriptContext->ResolveObjects(
           pObject, runtime->ToWideString(params[0]).AsStringView(),
           &resolveNodeRS, dwFlag, nullptr);
-      if (!iRet || !resolveNodeRS.objects.front()->IsNode())
+      if (!bRet || !resolveNodeRS.objects.front()->IsNode())
         return CJS_Result::Success();
 
       pNode = resolveNodeRS.objects.front()->AsNode();
