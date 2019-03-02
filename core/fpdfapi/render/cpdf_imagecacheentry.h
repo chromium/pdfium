@@ -12,7 +12,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_DIBitmap;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Image;
@@ -25,7 +24,7 @@ class CPDF_ImageCacheEntry {
                        const RetainPtr<CPDF_Image>& pImage);
   ~CPDF_ImageCacheEntry();
 
-  void Reset(const RetainPtr<CFX_DIBitmap>& pBitmap);
+  void Reset();
   uint32_t EstimateSize() const { return m_dwCacheSize; }
   uint32_t GetTimeCount() const { return m_dwTimeCount; }
   CPDF_Image* GetImage() const { return m_pImage.Get(); }
@@ -44,8 +43,8 @@ class CPDF_ImageCacheEntry {
   RetainPtr<CFX_DIBBase> DetachBitmap();
   RetainPtr<CFX_DIBBase> DetachMask();
 
-  int m_dwTimeCount;
-  uint32_t m_MatteColor;
+  int m_dwTimeCount = 0;
+  uint32_t m_MatteColor = 0;
 
  private:
   void ContinueGetCachedBitmap(CPDF_RenderStatus* pRenderStatus);
@@ -57,7 +56,7 @@ class CPDF_ImageCacheEntry {
   RetainPtr<CFX_DIBBase> m_pCurMask;
   RetainPtr<CFX_DIBBase> m_pCachedBitmap;
   RetainPtr<CFX_DIBBase> m_pCachedMask;
-  uint32_t m_dwCacheSize;
+  uint32_t m_dwCacheSize = 0;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGECACHEENTRY_H_

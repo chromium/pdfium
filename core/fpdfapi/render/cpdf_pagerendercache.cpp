@@ -127,6 +127,6 @@ void CPDF_PageRenderCache::ResetBitmap(const RetainPtr<CPDF_Image>& pImage) {
 
   pEntry = it->second.get();
   m_nCacheSize -= pEntry->EstimateSize();
-  pEntry->Reset(nullptr);
+  pEntry->Reset();
   m_nCacheSize += pEntry->EstimateSize();
 }
