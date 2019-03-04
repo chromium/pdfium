@@ -50,10 +50,20 @@ class CPDF_ImageRenderer {
   bool GetResult() const { return m_Result; }
 
  private:
+  enum class Mode {
+    kNone = 0,
+    kDefault,
+    kBlend,
+    kTransform,
+  };
+
   bool StartBitmapAlpha();
   bool StartDIBBase();
   bool StartRenderDIBBase();
   bool StartLoadDIBBase();
+  bool ContinueDefault(PauseIndicatorIface* pPause);
+  bool ContinueBlend(PauseIndicatorIface* pPause);
+  bool ContinueTransform(PauseIndicatorIface* pPause);
   bool DrawMaskedImage();
   bool DrawPatternImage();
   bool NotDrawing() const;
@@ -82,7 +92,7 @@ class CPDF_ImageRenderer {
   CPDF_ImageLoader m_Loader;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
-  int m_Status = 0;
+  Mode m_Mode = Mode::kNone;
   int m_BitmapAlpha = 0;
   BlendMode m_BlendType = BlendMode::kNormal;
   FX_ARGB m_FillArgb = 0;

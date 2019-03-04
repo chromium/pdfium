@@ -66,7 +66,7 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
                      m_pRenderStatus->GetContext()->GetPageCache(), m_bStdCS,
                      m_pRenderStatus->GetGroupFamily(),
                      m_pRenderStatus->GetLoadMask(), m_pRenderStatus.Get())) {
-    m_Status = 4;
+    m_Mode = Mode::kDefault;
     return true;
   }
   return false;
@@ -396,7 +396,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
           premultiplied, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
           m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
-      m_Status = 3;
+      m_Mode = Mode::kBlend;
       return true;
     }
     return false;
@@ -406,7 +406,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
           m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
           m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
-      m_Status = 3;
+      m_Mode = Mode::kBlend;
       return true;
     }
     return false;
@@ -426,7 +426,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
 
     FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
     clip_box.Intersect(image_rect.value());
-    m_Status = 2;
+    m_Mode = Mode::kTransform;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
         m_pDIBBase, m_ImageMatrix, m_ResampleOptions, &clip_box);
     return true;
@@ -533,40 +533,53 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
 }
 
 bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
-  if (m_Status == 2) {
-    if (m_pTransformer->Continue(pPause))
-      return true;
-
-    RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
-    if (!pBitmap)
+  switch (m_Mode) {
+    case Mode::kNone:
       return false;
+    case Mode::kDefault:
+      return ContinueDefault(pPause);
+    case Mode::kBlend:
+      return ContinueBlend(pPause);
+    case Mode::kTransform:
+      return ContinueTransform(pPause);
+  }
+}
 
-    if (pBitmap->IsAlphaMask()) {
-      if (m_BitmapAlpha != 255)
-        m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
-      m_Result = m_pRenderStatus->GetRenderDevice()->SetBitMask(
-          pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-          m_FillArgb);
-    } else {
-      if (m_BitmapAlpha != 255)
-        pBitmap->MultiplyAlpha(m_BitmapAlpha);
-      m_Result = m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
-          pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-          m_BlendType);
-    }
+bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
+  if (m_Loader.Continue(pPause, m_pRenderStatus.Get()))
+    return true;
+
+  if (!StartRenderDIBBase())
     return false;
-  }
-  if (m_Status == 3) {
-    return m_pRenderStatus->GetRenderDevice()->ContinueDIBits(
-        m_DeviceHandle.get(), pPause);
-  }
 
-  if (m_Status == 4) {
-    if (m_Loader.Continue(pPause, m_pRenderStatus.Get()))
-      return true;
+  return Continue(pPause);
+}
 
-    if (StartRenderDIBBase())
-      return Continue(pPause);
+bool CPDF_ImageRenderer::ContinueBlend(PauseIndicatorIface* pPause) {
+  return m_pRenderStatus->GetRenderDevice()->ContinueDIBits(
+      m_DeviceHandle.get(), pPause);
+}
+
+bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
+  if (m_pTransformer->Continue(pPause))
+    return true;
+
+  RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
+  if (!pBitmap)
+    return false;
+
+  if (pBitmap->IsAlphaMask()) {
+    if (m_BitmapAlpha != 255)
+      m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
+    m_Result = m_pRenderStatus->GetRenderDevice()->SetBitMask(
+        pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
+        m_FillArgb);
+  } else {
+    if (m_BitmapAlpha != 255)
+      pBitmap->MultiplyAlpha(m_BitmapAlpha);
+    m_Result = m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
+        pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
+        m_BlendType);
   }
   return false;
 }
