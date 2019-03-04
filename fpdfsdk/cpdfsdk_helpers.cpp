@@ -200,16 +200,14 @@ RetainPtr<IFX_SeekableStream> MakeSeekableStream(
 
 const CPDF_Array* GetQuadPointsArrayFromDictionary(
     const CPDF_Dictionary* dict) {
-  return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
+  return dict->GetArrayFor("QuadPoints");
 }
 
 CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict) {
-  return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
+  return dict->GetArrayFor("QuadPoints");
 }
 
 CPDF_Array* AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {
-  if (!dict)
-    return nullptr;
   return dict->SetNewFor<CPDF_Array>(kQuadPoints);
 }
 

@@ -197,6 +197,7 @@ void AppendQuadPoints(CPDF_Array* array, const FS_QUADPOINTSF* quad_points) {
 }
 
 void UpdateBBox(CPDF_Dictionary* annot_dict) {
+  ASSERT(annot_dict);
   // Update BBox entry in appearance stream based on the bounding rectangle
   // of the annotation's quadpoints.
   CPDF_Stream* pStream =
@@ -343,7 +344,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
   CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(obj);
-  if (!pAnnot || !pAnnot->GetAnnotDict() || !pAnnot->HasForm() || !pObj)
+  if (!pAnnot || !pAnnot->HasForm() || !pObj)
     return false;
 
   // Check that the annotation type is supported by this method.
@@ -380,20 +381,17 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   if (!pAnnot || !pObj)
     return false;
 
-  CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-  CPDF_Page* pPage = pAnnot->GetPage();
-  if (!pAnnotDict || !pPage)
-    return false;
-
   // Check that the annotation type is supported by this method.
   if (!FPDFAnnot_IsObjectSupportedSubtype(FPDFAnnot_GetSubtype(annot)))
     return false;
 
   // If the annotation does not have an AP stream yet, generate and set it.
+  CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
   CPDF_Stream* pStream =
-      GetAnnotAP(pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
+      GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
   if (!pStream) {
-    CPVT_GenerateAP::GenerateEmptyAP(pPage->GetDocument(), pAnnotDict);
+    CPVT_GenerateAP::GenerateEmptyAP(pAnnot->GetPage()->GetDocument(),
+                                     pAnnotDict);
     pStream = GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)
       return false;
@@ -428,7 +426,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  if (!pAnnot || !pAnnot->GetAnnotDict())
+  if (!pAnnot)
     return 0;
 
   if (!pAnnot->HasForm()) {
@@ -445,7 +443,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFAnnot_GetObject(FPDF_ANNOTATION annot, int index) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  if (!pAnnot || !pAnnot->GetAnnotDict() || index < 0)
+  if (!pAnnot || index < 0)
     return nullptr;
 
   if (!pAnnot->HasForm()) {
@@ -464,7 +462,7 @@ FPDFAnnot_GetObject(FPDF_ANNOTATION annot, int index) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot, int index) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  if (!pAnnot || !pAnnot->GetAnnotDict() || !pAnnot->HasForm() || index < 0)
+  if (!pAnnot || !pAnnot->HasForm() || index < 0)
     return false;
 
   // Check that the annotation type is supported by this method.
@@ -646,9 +644,6 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  if (!pAnnotDict)
-    return false;
-
   const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
   if (!pArray)
     return false;
@@ -798,7 +793,7 @@ FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
 FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
   CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  if (!pAnnot || !pAnnot->GetAnnotDict())
+  if (!pAnnot)
     return nullptr;
 
   CPDF_Dictionary* pLinkedDict = pAnnot->GetAnnotDict()->GetDictFor(key);

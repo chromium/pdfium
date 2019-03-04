@@ -184,11 +184,13 @@ bool CPDF_Annot::IsHidden() const {
 
 CPDF_Stream* GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                         CPDF_Annot::AppearanceMode eMode) {
+  ASSERT(pAnnotDict);
   return GetAnnotAPInternal(pAnnotDict, eMode, true);
 }
 
 CPDF_Stream* GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
                                   CPDF_Annot::AppearanceMode eMode) {
+  ASSERT(pAnnotDict);
   return GetAnnotAPInternal(pAnnotDict, eMode, false);
 }
 
