@@ -72,11 +72,7 @@ TEST_F(FPDFAnnotEmbedderTest, BadAnnotsEntry) {
   ASSERT_TRUE(page);
 
   EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
-  {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
-    ASSERT_TRUE(annot);
-    EXPECT_EQ(-1, FPDFPage_GetAnnotIndex(page, annot.get()));
-  }
+  EXPECT_FALSE(FPDFPage_GetAnnot(page, 0));
 
   UnloadPage(page);
 }

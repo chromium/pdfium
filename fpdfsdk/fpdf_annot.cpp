@@ -269,6 +269,9 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
     return nullptr;
 
   CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(index));
+  if (!pDict)
+    return nullptr;
+
   auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict, pPage);
 
   // Caller takes ownership.
