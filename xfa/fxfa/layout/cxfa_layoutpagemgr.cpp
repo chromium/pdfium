@@ -1833,12 +1833,13 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
       }
     }
     if (!pPendingPageSet->GetParent()) {
-      CXFA_Node* pFormToplevelSubform =
-          pDocument->GetXFAObject(XFA_HASHCODE_Form)
-              ->AsNode()
-              ->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
-      if (pFormToplevelSubform)
-        pFormToplevelSubform->InsertChild(pPendingPageSet, nullptr);
+      CXFA_Node* pNode = ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form));
+      if (pNode) {
+        CXFA_Node* pFormToplevelSubform =
+            pNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
+        if (pFormToplevelSubform)
+          pFormToplevelSubform->InsertChild(pPendingPageSet, nullptr);
+      }
     }
     pDocument->DataMerge_UpdateBindingRelations(pPendingPageSet);
     pPendingPageSet->SetFlagAndNotify(XFA_NodeFlag_Initialized);

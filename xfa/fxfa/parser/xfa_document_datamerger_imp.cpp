@@ -90,6 +90,9 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
 }
 
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode) {
+  if (!pParentFormNode)
+    return nullptr;
+
   for (CXFA_Node* pRootBoundNode = pParentFormNode;
        pRootBoundNode && pRootBoundNode->IsContainerNode();
        pRootBoundNode = pRootBoundNode->GetParent()) {
