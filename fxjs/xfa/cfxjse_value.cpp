@@ -171,21 +171,6 @@ bool CFXJSE_Value::GetObjectProperty(ByteStringView szPropName,
   return true;
 }
 
-bool CFXJSE_Value::SetObjectProperty(uint32_t uPropIdx,
-                                     CFXJSE_Value* lpPropValue) {
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hObject =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  if (!hObject->IsObject())
-    return false;
-
-  v8::Local<v8::Value> hPropValue =
-      v8::Local<v8::Value>::New(GetIsolate(), lpPropValue->DirectGetValue());
-  return hObject.As<v8::Object>()
-      ->Set(GetIsolate()->GetCurrentContext(), uPropIdx, hPropValue)
-      .FromJust();
-}
-
 bool CFXJSE_Value::GetObjectPropertyByIdx(uint32_t uPropIdx,
                                           CFXJSE_Value* lpPropValue) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());

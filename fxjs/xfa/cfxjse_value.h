@@ -59,7 +59,6 @@ class CFXJSE_Value {
   bool GetObjectProperty(ByteStringView szPropName, CFXJSE_Value* lpPropValue);
   bool SetObjectProperty(ByteStringView szPropName, CFXJSE_Value* lpPropValue);
   bool GetObjectPropertyByIdx(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
-  bool SetObjectProperty(uint32_t uPropIdx, CFXJSE_Value* lpPropValue);
   bool DeleteObjectProperty(ByteStringView szPropName);
   bool HasObjectOwnProperty(ByteStringView szPropName, bool bUseTypeGetter);
   bool SetObjectOwnProperty(ByteStringView szPropName,
