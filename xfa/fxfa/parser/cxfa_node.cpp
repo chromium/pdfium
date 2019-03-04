@@ -1218,7 +1218,10 @@ LocaleIface* CXFA_Node::GetLocale() {
 }
 
 Optional<WideString> CXFA_Node::GetLocaleName() {
-  CXFA_Node* pForm = GetDocument()->GetXFAObject(XFA_HASHCODE_Form)->AsNode();
+  CXFA_Node* pForm = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
+  if (!pForm)
+    return {};
+
   CXFA_Subform* pTopSubform =
       pForm->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
   if (!pTopSubform)
@@ -1235,13 +1238,13 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
   } while (pLocaleNode && pLocaleNode != pTopSubform);
 
   CXFA_Node* pConfig = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
-  Optional<WideString> localeName = {
-      GetDocument()->GetLocaleMgr()->GetConfigLocaleName(pConfig)};
-  if (localeName && !localeName->IsEmpty())
-    return localeName;
+  WideString wsLocaleName =
+      GetDocument()->GetLocaleMgr()->GetConfigLocaleName(pConfig);
+  if (!wsLocaleName.IsEmpty())
+    return wsLocaleName;
 
   if (pTopSubform) {
-    localeName =
+    Optional<WideString> localeName =
         pTopSubform->JSObject()->TryCData(XFA_Attribute::Locale, false);
     if (localeName)
       return localeName;
@@ -1251,7 +1254,7 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
   if (!pLocale)
     return {};
 
-  return {pLocale->GetName()};
+  return pLocale->GetName();
 }
 
 XFA_AttributeValue CXFA_Node::GetIntact() {
