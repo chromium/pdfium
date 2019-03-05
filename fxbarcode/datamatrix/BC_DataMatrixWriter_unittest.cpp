@@ -21,8 +21,8 @@ class CBC_DataMatrixWriterTest : public testing::Test {
 
 TEST_F(CBC_DataMatrixWriterTest, Encode) {
   CBC_DataMatrixWriter writer;
-  int32_t width;
-  int32_t height;
+  int32_t width = -1;
+  int32_t height = -1;
 
   {
     static constexpr int kExpectedDimension = 10;
@@ -132,5 +132,65 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
   {
     std::vector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
     ASSERT_TRUE(data.empty());
+  }
+}
+
+TEST_F(CBC_DataMatrixWriterTest, EncodeLimitAlphaNumeric) {
+  CBC_DataMatrixWriter writer;
+  int32_t width = -1;
+  int32_t height = -1;
+
+  static constexpr int kMaxInputLength = 2335;  // Per spec.
+  WideString input;
+  for (size_t i = 0; i < kMaxInputLength; ++i)
+    input.InsertAtBack(L'a');
+
+  {
+    static constexpr int kExpectedDimension = 144;
+    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    EXPECT_EQ(20736u, data.size());
+    EXPECT_EQ(kExpectedDimension, width);
+    EXPECT_EQ(kExpectedDimension, height);
+  }
+
+  // Go over the limit.
+  input.InsertAtBack(L'a');
+  {
+    width = -1;
+    height = -1;
+    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    EXPECT_EQ(0u, data.size());
+    EXPECT_EQ(-1, width);
+    EXPECT_EQ(-1, height);
+  }
+}
+
+TEST_F(CBC_DataMatrixWriterTest, EncodeLimitNumbers) {
+  CBC_DataMatrixWriter writer;
+  int32_t width = -1;
+  int32_t height = -1;
+
+  static constexpr int kMaxInputLength = 3116;  // Per spec.
+  WideString input;
+  for (size_t i = 0; i < kMaxInputLength; ++i)
+    input.InsertAtBack(L'1');
+
+  {
+    static constexpr int kExpectedDimension = 144;
+    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    EXPECT_EQ(20736u, data.size());
+    EXPECT_EQ(kExpectedDimension, width);
+    EXPECT_EQ(kExpectedDimension, height);
+  }
+
+  // Go over the limit.
+  input.InsertAtBack(L'1');
+  {
+    width = -1;
+    height = -1;
+    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    EXPECT_EQ(0u, data.size());
+    EXPECT_EQ(-1, width);
+    EXPECT_EQ(-1, height);
   }
 }
