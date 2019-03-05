@@ -46,6 +46,7 @@ std::vector<WideString> CFX_V8::GetObjectPropertyNames(
 void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
+  ASSERT(!pPut.IsEmpty());
   if (pObj.IsEmpty())
     return;
   pObj->Set(m_pIsolate->GetCurrentContext(), NewString(bsUTF8PropertyName),
@@ -69,6 +70,7 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
 unsigned CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
                                  unsigned index,
                                  v8::Local<v8::Value> pValue) {
+  ASSERT(!pValue.IsEmpty());
   if (pArray.IsEmpty())
     return 0;
   if (pArray->Set(m_pIsolate->GetCurrentContext(), index, pValue).IsNothing())
@@ -101,7 +103,7 @@ v8::Local<v8::Number> CFX_V8::NewNumber(double number) {
 }
 
 v8::Local<v8::Number> CFX_V8::NewNumber(float number) {
-  return v8::Number::New(GetIsolate(), (float)number);
+  return v8::Number::New(GetIsolate(), number);
 }
 
 v8::Local<v8::Boolean> CFX_V8::NewBoolean(bool b) {

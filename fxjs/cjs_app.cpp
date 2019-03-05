@@ -95,11 +95,10 @@ CJS_App::~CJS_App() = default;
 CJS_Result CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
   auto pJSDocument = JSGetObject<CJS_Document>(pObj);
+  if (!pJSDocument)
+    return CJS_Result::Failure(JSMessage::kObjectTypeError);
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
-  pRuntime->PutArrayElement(
-      aDocs, 0,
-      pJSDocument ? v8::Local<v8::Value>(pJSDocument->ToV8Object())
-                  : v8::Local<v8::Value>());
+  pRuntime->PutArrayElement(aDocs, 0, pJSDocument->ToV8Object());
   if (pRuntime->GetArrayLength(aDocs) > 0)
     return CJS_Result::Success(aDocs);
 

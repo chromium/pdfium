@@ -248,6 +248,7 @@ if (pdf_enable_v8) {
 
     if (pdf_enable_xfa) {
       sources += [
+        "xfa/cfxjse_app_embeddertest.cpp",
         "xfa/cfxjse_formcalc_context_embeddertest.cpp",
         "xfa/cfxjse_value_embeddertest.cpp",
       ]
