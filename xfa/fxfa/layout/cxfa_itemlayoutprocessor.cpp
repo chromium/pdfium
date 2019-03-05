@@ -801,26 +801,24 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
     pLayoutItem->m_pNextSibling = nullptr;
   }
 
-  if (m_nCurChildNodeStage != Stage::kDone ||
-      !ToContentLayoutItem(m_pOldLayoutItem)) {
+  if (m_nCurChildNodeStage != Stage::kDone || !m_pOldLayoutItem)
     return pLayoutItem;
-  }
 
   CXFA_FFNotify* pNotify =
       m_pOldLayoutItem->GetFormNode()->GetDocument()->GetNotify();
   CXFA_LayoutProcessor* pDocLayout =
       m_pOldLayoutItem->GetFormNode()->GetDocument()->GetLayoutProcessor();
-  CXFA_ContentLayoutItem* pOldLayoutItem = m_pOldLayoutItem;
-  while (pOldLayoutItem) {
-    CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->GetNext();
-    pNotify->OnLayoutItemRemoving(pDocLayout, pOldLayoutItem);
-    if (pOldLayoutItem->m_pParent)
-      pOldLayoutItem->m_pParent->RemoveChild(pOldLayoutItem);
 
-    delete pOldLayoutItem;
-    pOldLayoutItem = pNextOldLayoutItem;
+  while (m_pOldLayoutItem) {
+    CXFA_ContentLayoutItem* pToDeleteItem = m_pOldLayoutItem;
+    m_pOldLayoutItem = pToDeleteItem->GetNext();
+    if (pToDeleteItem == pLayoutItem)
+      break;
+    pNotify->OnLayoutItemRemoving(pDocLayout, pToDeleteItem);
+    if (pToDeleteItem->m_pParent)
+      pToDeleteItem->m_pParent->RemoveChild(pToDeleteItem);
+    delete pToDeleteItem;
   }
-  m_pOldLayoutItem = nullptr;
   return pLayoutItem;
 }
 
