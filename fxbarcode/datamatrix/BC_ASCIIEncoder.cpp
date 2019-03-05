@@ -41,9 +41,13 @@ Optional<wchar_t> EncodeASCIIDigits(wchar_t digit1, wchar_t digit2) {
 }
 
 size_t DetermineConsecutiveDigitCount(const WideString& msg, size_t startpos) {
+  // This is faster in debug builds and helpful for fuzzers.
+  // Access |data| with care.
   size_t count = 0;
-  for (size_t i = startpos; i < msg.GetLength(); ++i) {
-    if (!FXSYS_IsDecimalDigit(msg[i]))
+  const size_t size = msg.GetLength();
+  const wchar_t* data = msg.c_str();
+  for (size_t i = startpos; i < size; ++i) {
+    if (!FXSYS_IsDecimalDigit(data[i]))
       break;
     ++count;
   }
