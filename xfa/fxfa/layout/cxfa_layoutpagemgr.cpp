@@ -473,14 +473,14 @@ void CXFA_LayoutPageMgr::ReorderPendingLayoutRecordToTail(
 
 void CXFA_LayoutPageMgr::SubmitContentItem(
     CXFA_ContentLayoutItem* pContentLayoutItem,
-    XFA_ItemLayoutProcessorResult eStatus) {
+    CXFA_ItemLayoutProcessor::Result eStatus) {
   if (pContentLayoutItem) {
     GetCurrentContainerRecord()->pCurContentArea->AddChild(pContentLayoutItem);
     m_bCreateOverFlowPage = false;
   }
 
-  if (eStatus != XFA_ItemLayoutProcessorResult::Done) {
-    if (eStatus == XFA_ItemLayoutProcessorResult::PageFullBreak &&
+  if (eStatus != CXFA_ItemLayoutProcessor::Result::kDone) {
+    if (eStatus == CXFA_ItemLayoutProcessor::Result::kPageFullBreak &&
         m_CurrentContainerRecordIter == GetTailPosition()) {
       AppendNewPage(false);
     }

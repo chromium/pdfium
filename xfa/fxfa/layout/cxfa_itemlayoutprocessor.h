@@ -11,6 +11,7 @@
 
 #include <list>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
@@ -28,16 +29,16 @@ class CXFA_LayoutPageMgr;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 
-enum class XFA_ItemLayoutProcessorResult {
-  Done,
-  PageFullBreak,
-  RowFullBreak,
-  ManualBreak,
-};
-
 class CXFA_ItemLayoutProcessor {
  public:
-  enum class Stage {
+  enum class Result : uint8_t {
+    kDone,
+    kPageFullBreak,
+    kRowFullBreak,
+    kManualBreak,
+  };
+
+  enum class Stage : uint8_t {
     kNone,
     kBookendLeader,
     kBreakBefore,
@@ -51,10 +52,10 @@ class CXFA_ItemLayoutProcessor {
   CXFA_ItemLayoutProcessor(CXFA_Node* pNode, CXFA_LayoutPageMgr* pPageMgr);
   ~CXFA_ItemLayoutProcessor();
 
-  XFA_ItemLayoutProcessorResult DoLayout(bool bUseBreakControl,
-                                         float fHeightLimit,
-                                         float fRealHeight,
-                                         CXFA_LayoutContext* pContext);
+  Result DoLayout(bool bUseBreakControl,
+                  float fHeightLimit,
+                  float fRealHeight,
+                  CXFA_LayoutContext* pContext);
   void DoLayoutPageArea(CXFA_ContainerLayoutItem* pPageAreaLayoutItem);
 
   CXFA_Node* GetFormNode() { return m_pFormNode; }
@@ -69,14 +70,14 @@ class CXFA_ItemLayoutProcessor {
 
   bool ProcessKeepForSplit(
       CXFA_ItemLayoutProcessor* pChildProcessor,
-      XFA_ItemLayoutProcessorResult eRetValue,
+      Result eRetValue,
       std::vector<CXFA_ContentLayoutItem*>* rgCurLineLayoutItem,
       float* fContentCurRowAvailWidth,
       float* fContentCurRowHeight,
       float* fContentCurRowY,
       bool* bAddedItemInRow,
       bool* bForceEndPage,
-      XFA_ItemLayoutProcessorResult* result);
+      Result* result);
   void ProcessUnUseOverFlow(CXFA_Node* pLeaderNode,
                             CXFA_Node* pTrailerNode,
                             CXFA_ContentLayoutItem* pTrailerItem,
@@ -111,13 +112,12 @@ class CXFA_ItemLayoutProcessor {
 
   void DoLayoutPositionedContainer(CXFA_LayoutContext* pContext);
   void DoLayoutTableContainer(CXFA_Node* pLayoutNode);
-  XFA_ItemLayoutProcessorResult DoLayoutFlowedContainer(
-      bool bUseBreakControl,
-      XFA_AttributeValue eFlowStrategy,
-      float fHeightLimit,
-      float fRealHeight,
-      CXFA_LayoutContext* pContext,
-      bool bRootForceTb);
+  Result DoLayoutFlowedContainer(bool bUseBreakControl,
+                                 XFA_AttributeValue eFlowStrategy,
+                                 float fHeightLimit,
+                                 float fRealHeight,
+                                 CXFA_LayoutContext* pContext,
+                                 bool bRootForceTb);
   void DoLayoutField();
 
   void GotoNextContainerNodeSimple(bool bUsePageBreak);
@@ -142,7 +142,7 @@ class CXFA_ItemLayoutProcessor {
   void AddLeaderAfterSplit(CXFA_ContentLayoutItem* pLeaderLayoutItem);
   void AddPendingNode(CXFA_Node* pPendingNode, bool bBreakPending);
   float InsertPendingItems(CXFA_Node* pCurChildNode);
-  XFA_ItemLayoutProcessorResult InsertFlowedItem(
+  Result InsertFlowedItem(
       CXFA_ItemLayoutProcessor* pProcessor,
       bool bContainerWidthAutoSize,
       bool bContainerHeightAutoSize,
@@ -177,30 +177,29 @@ class CXFA_ItemLayoutProcessor {
                                        CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();
 
-  CXFA_Node* m_pFormNode;
-  CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
-  CXFA_Node* m_pCurChildNode = nullptr;
-  float m_fUsedSize = 0;
-  UnownedPtr<CXFA_LayoutPageMgr> m_pPageMgr;
-  std::list<CXFA_Node*> m_PendingNodes;
+  Stage m_nCurChildNodeStage = Stage::kNone;
+  Result m_ePreProcessRs = Result::kDone;
   bool m_bBreakPending = true;
-  std::vector<float> m_rgSpecifiedColumnWidths;
-  std::vector<CXFA_ContentLayoutItem*> m_arrayKeepItems;
-  float m_fLastRowWidth = 0;
-  float m_fLastRowY = 0;
   bool m_bUseInheriated = false;
-  XFA_ItemLayoutProcessorResult m_ePreProcessRs =
-      XFA_ItemLayoutProcessorResult::Done;
   bool m_bKeepBreakFinish = false;
   bool m_bIsProcessKeep = false;
+  bool m_bHasAvailHeight = true;
+  float m_fUsedSize = 0;
+  float m_fLastRowWidth = 0;
+  float m_fLastRowY = 0;
+  float m_fWidthLimit = 0;
+  CXFA_Node* m_pFormNode;
+  CXFA_Node* m_pCurChildNode = nullptr;
   CXFA_Node* m_pKeepHeadNode = nullptr;
   CXFA_Node* m_pKeepTailNode = nullptr;
+  CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
   CXFA_ContentLayoutItem* m_pOldLayoutItem = nullptr;
-  CXFA_ItemLayoutProcessor* m_pCurChildPreprocessor = nullptr;
-  Stage m_nCurChildNodeStage = Stage::kNone;
+  UnownedPtr<CXFA_LayoutPageMgr> m_pPageMgr;
+  std::vector<float> m_rgSpecifiedColumnWidths;
+  std::vector<CXFA_ContentLayoutItem*> m_arrayKeepItems;
+  std::list<CXFA_Node*> m_PendingNodes;
   std::map<CXFA_Node*, int32_t> m_PendingNodesCount;
-  float m_fWidthLimite = 0;
-  bool m_bHasAvailHeight = true;
+  std::unique_ptr<CXFA_ItemLayoutProcessor> m_pCurChildPreprocessor;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_

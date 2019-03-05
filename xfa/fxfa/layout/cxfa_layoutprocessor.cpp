@@ -63,7 +63,7 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
   if (m_nProgressCounter < 1)
     return -1;
 
-  XFA_ItemLayoutProcessorResult eStatus;
+  CXFA_ItemLayoutProcessor::Result eStatus;
   CXFA_Node* pFormNode = m_pRootItemLayoutProcessor->GetFormNode();
   float fPosX =
       pFormNode->JSObject()->GetMeasureInUnit(XFA_Attribute::X, XFA_Unit::Pt);
@@ -73,7 +73,7 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
     float fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
     eStatus = m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight,
                                                    fAvailHeight, nullptr);
-    if (eStatus != XFA_ItemLayoutProcessorResult::Done)
+    if (eStatus != CXFA_ItemLayoutProcessor::Result::kDone)
       m_nProgressCounter++;
 
     CXFA_ContentLayoutItem* pLayoutItem =
@@ -82,16 +82,16 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
       pLayoutItem->m_sPos = CFX_PointF(fPosX, fPosY);
 
     m_pLayoutPageMgr->SubmitContentItem(pLayoutItem, eStatus);
-  } while (eStatus != XFA_ItemLayoutProcessorResult::Done);
+  } while (eStatus != CXFA_ItemLayoutProcessor::Result::kDone);
 
-  if (eStatus == XFA_ItemLayoutProcessorResult::Done) {
+  if (eStatus == CXFA_ItemLayoutProcessor::Result::kDone) {
     m_pLayoutPageMgr->FinishPaginatedPageSets();
     m_pLayoutPageMgr->SyncLayoutData();
     m_bNeedLayout = false;
     m_rgChangedContainers.clear();
   }
   return 100 *
-         (eStatus == XFA_ItemLayoutProcessorResult::Done
+         (eStatus == CXFA_ItemLayoutProcessor::Result::kDone
               ? m_nProgressCounter
               : m_nProgressCounter - 1) /
          m_nProgressCounter;

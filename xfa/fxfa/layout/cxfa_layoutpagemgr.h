@@ -28,7 +28,7 @@ class CXFA_LayoutPageMgr {
   float GetAvailHeight();
   bool GetNextAvailContentHeight(float fChildHeight);
   void SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
-                         XFA_ItemLayoutProcessorResult eStatus);
+                         CXFA_ItemLayoutProcessor::Result eStatus);
   void FinishPaginatedPageSets();
   void SyncLayoutData();
   int32_t GetPageCount() const;
