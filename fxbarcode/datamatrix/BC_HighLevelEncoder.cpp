@@ -120,6 +120,13 @@ size_t EncoderIndex(CBC_HighLevelEncoder::Encoding encoding) {
 
 // static
 WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
+  // Per spec. Alpha numeric input is even shorter.
+  static constexpr size_t kMaxNumericInputLength = 3116;
+
+  // Exit early if the input is too long. It will fail no matter what.
+  if (msg.GetLength() > kMaxNumericInputLength)
+    return WideString();
+
   CBC_EncoderContext context(msg);
   if (context.HasCharactersOutsideISO88591Encoding())
     return WideString();
