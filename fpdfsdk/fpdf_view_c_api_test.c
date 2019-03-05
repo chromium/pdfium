@@ -47,6 +47,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetFormFieldAtPoint);
     CHK(FPDFAnnot_GetFormFieldFlags);
     CHK(FPDFAnnot_GetLinkedAnnot);
+    CHK(FPDFAnnot_GetNumberValue);
     CHK(FPDFAnnot_GetObject);
     CHK(FPDFAnnot_GetObjectCount);
     CHK(FPDFAnnot_GetOptionCount);

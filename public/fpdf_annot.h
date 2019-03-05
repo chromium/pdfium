@@ -432,6 +432,22 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
                          unsigned long buflen);
 
 // Experimental API.
+// Get the float value corresponding to |key| in |annot|'s dictionary. Writes
+// value to |value| and returns True if |key| exists in the dictionary and
+// |key|'s corresponding value is a number (FPDF_OBJECT_NUMBER), False
+// otherwise.
+//
+//   annot  - handle to an annotation.
+//   key    - the key to the requested dictionary entry, encoded in UTF-8.
+//   value  - receives the value, must not be NULL.
+//
+// Returns True if value found, False otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetNumberValue(FPDF_ANNOTATION annot,
+                         FPDF_BYTESTRING key,
+                         float* value);
+
+// Experimental API.
 // Set the AP (appearance string) in |annot|'s dictionary for a given
 // |appearanceMode|.
 //

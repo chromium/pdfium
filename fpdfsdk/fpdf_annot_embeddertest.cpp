@@ -1146,6 +1146,46 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   CloseSavedDocument();
 }
 
+TEST_F(FPDFAnnotEmbedderTest, GetNumberValue) {
+  // Open a file with three text annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  {
+    // First two annotations do not have "MaxLen" attribute.
+    for (int i = 0; i < 2; i++) {
+      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
+      ASSERT_TRUE(annot);
+
+      // Verify that no "MaxLen" key present.
+      EXPECT_FALSE(FPDFAnnot_HasKey(annot.get(), "MaxLen"));
+
+      float value;
+      EXPECT_FALSE(FPDFAnnot_GetNumberValue(annot.get(), "MaxLen", &value));
+    }
+
+    // Annotation in index 2 has "MaxLen" of 10.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+
+    // Verify that "MaxLen" key present.
+    EXPECT_TRUE(FPDFAnnot_HasKey(annot.get(), "MaxLen"));
+
+    float value;
+    EXPECT_TRUE(FPDFAnnot_GetNumberValue(annot.get(), "MaxLen", &value));
+    EXPECT_FLOAT_EQ(10.0f, value);
+
+    // Check bad inputs.
+    EXPECT_FALSE(FPDFAnnot_GetNumberValue(nullptr, "MaxLen", &value));
+    EXPECT_FALSE(FPDFAnnot_GetNumberValue(annot.get(), nullptr, &value));
+    EXPECT_FALSE(FPDFAnnot_GetNumberValue(annot.get(), "MaxLen", nullptr));
+    // Ask for key that exists but is not a number.
+    EXPECT_FALSE(FPDFAnnot_GetNumberValue(annot.get(), "V", &value));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));

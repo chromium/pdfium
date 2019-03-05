@@ -730,6 +730,25 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetNumberValue(FPDF_ANNOTATION annot,
+                         FPDF_BYTESTRING key,
+                         float* value) {
+  if (!value)
+    return false;
+
+  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!pAnnotDict)
+    return false;
+
+  const CPDF_Object* p = pAnnotDict->GetObjectFor(key);
+  if (!p || p->GetType() != FPDF_OBJECT_NUMBER)
+    return false;
+
+  *value = p->GetNumber();
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
                 FPDF_ANNOT_APPEARANCEMODE appearanceMode,
                 FPDF_WIDESTRING value) {
