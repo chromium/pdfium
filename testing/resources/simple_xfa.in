@@ -1,0 +1,31 @@
+{{header}}
+{{include xfa_catalog_1_0.fragment}}
+{{include xfa_object_2_0.fragment}}
+{{include xfa_preamble_3_0.fragment}}
+{{include xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
+  <subform name="form1" layout="tb" restoreState="auto">
+    <pageSet>
+      <pageArea name="Page1" id="Page1">
+        <contentArea x="0.25in" y="0.25in" w="8in" h="10.5in" />
+      </pageArea>
+    </pageSet>
+    <field name="TextField1" y="31.75mm" x="44.45mm" w="114.291mm" h="12.7mm">
+    </field>
+    <field name="TextField11" y="222.25mm" x="44.45mm" w="82.55mm" h="12.7mm">
+    </field>
+  </subform>
+</template>
+endstream
+endobj
+{{include xfa_locale_6_0.fragment}}
+{{include xfa_postamble_7_0.fragment}}
+{{include xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
