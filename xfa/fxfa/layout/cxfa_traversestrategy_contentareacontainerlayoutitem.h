@@ -13,8 +13,8 @@ class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
  public:
   static CXFA_ContainerLayoutItem* GetFirstChild(
       CXFA_ContainerLayoutItem* pLayoutItem) {
-    for (CXFA_LayoutItem* pChildItem = pLayoutItem->m_pFirstChild; pChildItem;
-         pChildItem = pChildItem->m_pNextSibling) {
+    for (CXFA_LayoutItem* pChildItem = pLayoutItem->GetFirstChild(); pChildItem;
+         pChildItem = pChildItem->GetNextSibling()) {
       if (CXFA_ContainerLayoutItem* pContainer =
               pChildItem->AsContainerLayoutItem()) {
         return pContainer;
@@ -25,8 +25,8 @@ class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
 
   static CXFA_ContainerLayoutItem* GetNextSibling(
       CXFA_ContainerLayoutItem* pLayoutItem) {
-    for (CXFA_LayoutItem* pChildItem = pLayoutItem->m_pNextSibling; pChildItem;
-         pChildItem = pChildItem->m_pNextSibling) {
+    for (CXFA_LayoutItem* pChildItem = pLayoutItem->GetNextSibling();
+         pChildItem; pChildItem = pChildItem->GetNextSibling()) {
       if (CXFA_ContainerLayoutItem* pContainer =
               pChildItem->AsContainerLayoutItem()) {
         return pContainer;
@@ -37,7 +37,7 @@ class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
 
   static CXFA_ContainerLayoutItem* GetParent(
       CXFA_ContainerLayoutItem* pLayoutItem) {
-    return ToContainerLayoutItem(pLayoutItem->m_pParent);
+    return ToContainerLayoutItem(pLayoutItem->GetParent());
   }
 };
 

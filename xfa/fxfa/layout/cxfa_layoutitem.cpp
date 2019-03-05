@@ -15,13 +15,13 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
+  CXFA_LayoutItem* pNode = pLayoutItem->GetFirstChild();
   CXFA_Document* pDocument = pLayoutItem->GetFormNode()->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
   CXFA_LayoutProcessor* pDocLayout = pDocument->GetLayoutProcessor();
   while (pNode) {
-    CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
-    pNode->m_pParent = nullptr;
+    CXFA_LayoutItem* pNext = pNode->GetNextSibling();
+    pNode->SetParent(nullptr);
     pNotify->OnLayoutItemRemoving(pDocLayout, pNode);
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;

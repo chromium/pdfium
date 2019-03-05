@@ -15,8 +15,9 @@ CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode)
 
 CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
   RemoveSelf();
-  if (m_pFormNode->JSObject()->GetLayoutItem() == this)
-    m_pFormNode->JSObject()->SetLayoutItem(nullptr);
+  CJX_Object* pJsObject = GetFormNode()->JSObject();
+  if (pJsObject->GetLayoutItem() == this)
+    pJsObject->SetLayoutItem(nullptr);
 }
 
 CXFA_FFWidget* CXFA_ContentLayoutItem::AsFFWidget() {
@@ -61,12 +62,12 @@ CFX_RectF CXFA_ContentLayoutItem::GetRect(bool bRelative) const {
   if (bRelative)
     return CFX_RectF(sPos, sSize);
 
-  for (CXFA_LayoutItem* pLayoutItem = m_pParent; pLayoutItem;
-       pLayoutItem = pLayoutItem->m_pParent) {
+  for (CXFA_LayoutItem* pLayoutItem = GetParent(); pLayoutItem;
+       pLayoutItem = pLayoutItem->GetParent()) {
     if (CXFA_ContentLayoutItem* pContent = pLayoutItem->AsContentLayoutItem()) {
       sPos += pContent->m_sPos;
       CXFA_Margin* pMarginNode =
-          pContent->m_pFormNode->GetFirstChildByClass<CXFA_Margin>(
+          pContent->GetFormNode()->GetFirstChildByClass<CXFA_Margin>(
               XFA_Element::Margin);
       if (pMarginNode) {
         sPos += CFX_PointF(pMarginNode->JSObject()->GetMeasureInUnit(

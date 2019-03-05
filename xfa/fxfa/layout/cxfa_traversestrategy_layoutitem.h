@@ -13,13 +13,13 @@
 class CXFA_TraverseStrategy_LayoutItem {
  public:
   static CXFA_LayoutItem* GetFirstChild(CXFA_LayoutItem* pLayoutItem) {
-    return pLayoutItem->m_pFirstChild;
+    return pLayoutItem->GetFirstChild();
   }
   static CXFA_LayoutItem* GetNextSibling(CXFA_LayoutItem* pLayoutItem) {
-    return pLayoutItem->m_pNextSibling;
+    return pLayoutItem->GetNextSibling();
   }
   static CXFA_LayoutItem* GetParent(CXFA_LayoutItem* pLayoutItem) {
-    return pLayoutItem->m_pParent;
+    return pLayoutItem->GetParent();
   }
 };
 

@@ -25,23 +25,30 @@ class CXFA_LayoutItem {
 
   CXFA_ContainerLayoutItem* GetPage() const;
   CXFA_LayoutItem* GetParent() const { return m_pParent; }
+  CXFA_LayoutItem* GetFirstChild() const { return m_pFirstChild; }
+  CXFA_LayoutItem* GetNextSibling() const { return m_pNextSibling; }
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
   void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
+
+  // TODO(tsepez) replace these calls with AddChild() etc.
+  void SetParent(CXFA_LayoutItem* pParent) { m_pParent = pParent; }
+  void SetFirstChild(CXFA_LayoutItem* pChild) { m_pFirstChild = pChild; }
+  void SetNextSibling(CXFA_LayoutItem* pSibling) { m_pNextSibling = pSibling; }
 
   void AddChild(CXFA_LayoutItem* pChildItem);
   void AddHeadChild(CXFA_LayoutItem* pChildItem);
   void RemoveChild(CXFA_LayoutItem* pChildItem);
   void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
 
-  CXFA_LayoutItem* m_pParent = nullptr;       // Raw, intra-tree pointer.
-  CXFA_LayoutItem* m_pNextSibling = nullptr;  // Raw, intra-tree pointer.
-  CXFA_LayoutItem* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
-
  protected:
   enum ItemType { kContainerItem, kContentItem };
   CXFA_LayoutItem(CXFA_Node* pNode, ItemType type);
 
+ private:
   const ItemType m_ItemType;
+  CXFA_LayoutItem* m_pParent = nullptr;       // Raw, intra-tree pointer.
+  CXFA_LayoutItem* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
+  CXFA_LayoutItem* m_pNextSibling = nullptr;  // Raw, intra-tree pointer.
   UnownedPtr<CXFA_Node> m_pFormNode;
 };
 

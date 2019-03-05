@@ -19,11 +19,12 @@ CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
 CXFA_ContainerLayoutItem::~CXFA_ContainerLayoutItem() = default;
 
 CXFA_LayoutProcessor* CXFA_ContainerLayoutItem::GetLayout() const {
-  return m_pFormNode->GetDocument()->GetLayoutProcessor();
+  return GetFormNode()->GetDocument()->GetLayoutProcessor();
 }
 
 int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
-  return m_pFormNode->GetDocument()
+  return GetFormNode()
+      ->GetDocument()
       ->GetLayoutProcessor()
       ->GetLayoutPageMgr()
       ->GetPageIndex(this);
@@ -32,7 +33,7 @@ int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
 CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
   CFX_SizeF size;
   CXFA_Medium* pMedium =
-      m_pFormNode->GetFirstChildByClass<CXFA_Medium>(XFA_Element::Medium);
+      GetFormNode()->GetFirstChildByClass<CXFA_Medium>(XFA_Element::Medium);
   if (!pMedium)
     return size;
 
@@ -47,5 +48,5 @@ CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
 }
 
 CXFA_Node* CXFA_ContainerLayoutItem::GetMasterPage() const {
-  return m_pFormNode.Get();
+  return GetFormNode();
 }

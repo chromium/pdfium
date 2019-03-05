@@ -232,8 +232,8 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
     return retArray;
   }
   if (wsType.EqualsASCII("contentArea")) {
-    for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
-         pItem = pItem->m_pNextSibling) {
+    for (CXFA_LayoutItem* pItem = pLayoutPage->GetFirstChild(); pItem;
+         pItem = pItem->GetNextSibling()) {
       if (pItem->GetFormNode()->GetElementType() == XFA_Element::ContentArea)
         retArray.push_back(pItem->GetFormNode());
     }
@@ -244,12 +244,12 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
     if (pLayoutPage->GetFormNode())
       retArray.push_back(pLayoutPage->GetFormNode());
 
-    for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
-         pItem = pItem->m_pNextSibling) {
+    for (CXFA_LayoutItem* pItem = pLayoutPage->GetFirstChild(); pItem;
+         pItem = pItem->GetNextSibling()) {
       if (pItem->GetFormNode()->GetElementType() == XFA_Element::ContentArea) {
         retArray.push_back(pItem->GetFormNode());
         if (!bOnPageArea) {
-          CXFA_LayoutItemIterator iterator(pItem->m_pFirstChild);
+          CXFA_LayoutItemIterator iterator(pItem->GetFirstChild());
           for (CXFA_LayoutItem* pChild = iterator.GetCurrent(); pChild;
                pChild = iterator.MoveToNext()) {
             CXFA_ContentLayoutItem* pItemChild = pChild->AsContentLayoutItem();
@@ -305,11 +305,11 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
     eType = XFA_Element::Area;
 
   if (eType != XFA_Element::Unknown) {
-    for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
-         pItem = pItem->m_pNextSibling) {
+    for (CXFA_LayoutItem* pItem = pLayoutPage->GetFirstChild(); pItem;
+         pItem = pItem->GetNextSibling()) {
       if (pItem->GetFormNode()->GetElementType() == XFA_Element::ContentArea) {
         if (!bOnPageArea) {
-          CXFA_LayoutItemIterator iterator(pItem->m_pFirstChild);
+          CXFA_LayoutItemIterator iterator(pItem->GetFirstChild());
           for (CXFA_LayoutItem* pChild = iterator.GetCurrent(); pChild;
                pChild = iterator.MoveToNext()) {
             CXFA_ContentLayoutItem* pItemChild = pChild->AsContentLayoutItem();
