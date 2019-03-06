@@ -1366,9 +1366,8 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
   if (dot_index < len && (dwFormatStyle & FX_NUMSTYLE_DotVorv))
     *wsValue += '.';
   if (!bReverseParse) {
-    ccf = dot_index_f + 1;
     cc = (dot_index == len) ? len : dot_index + 1;
-    while (cc < len && ccf < lenf) {
+    for (ccf = dot_index_f + 1; cc < len && ccf < lenf; ++ccf) {
       switch (strf[ccf]) {
         case '\'': {
           WideString wsLiteral = GetLiteralText(strf, &ccf, lenf);
@@ -1378,7 +1377,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
             return false;
           }
           cc += iLiteralLen;
-          ccf++;
           break;
         }
         case '9':
@@ -1387,7 +1385,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
 
           *wsValue += str[cc];
           cc++;
-          ccf++;
           break;
         case 'z':
         case 'Z':
@@ -1399,7 +1396,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
           } else {
             cc++;
           }
-          ccf++;
           break;
         case 'S':
         case 's':
@@ -1413,7 +1409,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
             bNeg = true;
             cc += iMinusLen;
           }
-          ccf++;
           break;
         case 'E': {
           if (cc >= len || (str[cc] != 'E' && str[cc] != 'e'))
@@ -1437,7 +1432,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
             cc++;
           }
           iExponent = bExpSign ? -iExponent : iExponent;
-          ccf++;
           break;
         }
         case '$': {
@@ -1448,7 +1442,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
             return false;
           }
           cc += iSymbolLen;
-          ccf++;
           break;
         }
         case 'c':
@@ -1461,7 +1454,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
               bNeg = true;
               cc += 2;
             }
-            ccf += 2;
+            ccf++;
           }
           break;
         case 'd':
@@ -1474,7 +1467,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
               bNeg = true;
               cc += 2;
             }
-            ccf += 2;
+            ccf++;
           }
           break;
         case '.':
@@ -1488,11 +1481,10 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
               !wcsncmp(str + cc, wsSymbol.c_str(), iSysmbolLen)) {
             cc += iSysmbolLen;
           }
-          ccf++;
           bHavePercentSymbol = true;
         } break;
         case '8': {
-          while (ccf < lenf && strf[ccf] == '8')
+          while (ccf + 1 < lenf && strf[ccf + 1] == '8')
             ccf++;
 
           while (cc < len && FXSYS_IsDecimalDigit(str[cc])) {
@@ -1505,7 +1497,6 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
               wcsncmp(str + cc, wsGroupSymbol.c_str(), iGroupLen) == 0) {
             cc += iGroupLen;
           }
-          ccf++;
           break;
         }
         case '(':
@@ -1516,14 +1507,12 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
             return false;
 
           cc++;
-          ccf++;
           break;
         default:
           if (strf[ccf] != str[cc])
             return false;
 
           cc++;
-          ccf++;
       }
     }
     if (cc != len)

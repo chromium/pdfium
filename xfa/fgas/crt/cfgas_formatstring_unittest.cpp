@@ -417,11 +417,22 @@ TEST_F(CFGAS_FormatStringTest, NumParse) {
       {L"en", L"123.545,4", L"zzz.zzz,z", L"123.5454"},
   };
 
+  static const TestCase failures[] = {
+      // https://crbug.com/pdfium/1260
+      {L"en", L"..", L"VC", L"."},
+  };
+
   for (const auto& test : tests) {
     WideString result;
     EXPECT_TRUE(fmt(test.locale)->ParseNum(test.input, test.pattern, &result))
         << " TEST: " << test.input << ", " << test.pattern;
     EXPECT_STREQ(test.output, result.c_str())
+        << " TEST: " << test.input << ", " << test.pattern;
+  }
+
+  for (const auto& test : failures) {
+    WideString result;
+    EXPECT_FALSE(fmt(test.locale)->ParseNum(test.input, test.pattern, &result))
         << " TEST: " << test.input << ", " << test.pattern;
   }
 }
