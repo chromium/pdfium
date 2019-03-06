@@ -25,7 +25,7 @@ class CPDFSDK_CustomAccess final : public IFX_SeekableReadStream {
   explicit CPDFSDK_CustomAccess(FPDF_FILEACCESS* pFileAccess);
   ~CPDFSDK_CustomAccess() override;
 
-  UnownedPtr<FPDF_FILEACCESS> const m_pFileAccess;
+  FPDF_FILEACCESS m_FileAccess;
 };
 
 #endif  // FPDFSDK_CPDFSDK_CUSTOMACCESS_H_

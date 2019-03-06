@@ -453,10 +453,11 @@ typedef struct _FPDF_FILEHANDLER {
 // Return value:
 //          A handle to the loaded document, or NULL on failure.
 // Comments:
-//          The application must keep the file resources valid until the PDF
-//          document is closed.
+//          The application must keep the file resources |pFileAccess| points to
+//          valid until the returned FPDF_DOCUMENT is closed. |pFileAccess|
+//          itself does not need to outlive the FPDF_DOCUMENT.
 //
-//          The loaded document can be closed with FPDF_CloseDocument.
+//          The loaded document can be closed with FPDF_CloseDocument().
 //
 //          See the comments for FPDF_LoadDocument() regarding the encoding for
 //          |password|.

@@ -276,6 +276,37 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithoutFileAccess) {
   EXPECT_FALSE(FPDF_LoadCustomDocument(nullptr, ""));
 }
 
+// See https://crbug.com/pdfium/1261
+TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
+  std::string file_contents_string;  // Must outlive |doc|.
+  ScopedFPDFDocument doc;
+  {
+    // Read a PDF, and copy it into |file_contents_string|.
+    std::string pdf_path;
+    size_t pdf_length;
+    ASSERT_TRUE(PathService::GetTestFilePath("rectangles.pdf", &pdf_path));
+    auto file_contents = GetFileContents(pdf_path.c_str(), &pdf_length);
+    ASSERT_TRUE(file_contents);
+    for (size_t i = 0; i < pdf_length; ++i)
+      file_contents_string.push_back(file_contents.get()[i]);
+
+    // Define a FPDF_FILEACCESS object that will go out of scope, while the
+    // loaded document in |doc| remains valid.
+    FPDF_FILEACCESS file_access = {};
+    file_access.m_FileLen = pdf_length;
+    file_access.m_GetBlock = GetBlockFromString;
+    file_access.m_Param = &file_contents_string;
+    doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
+    ASSERT_TRUE(doc);
+  }
+
+  // Now try to access |doc| and make sure it still works.
+  ScopedFPDFPage page(FPDF_LoadPage(doc.get(), 0));
+  ASSERT_TRUE(page);
+  EXPECT_DOUBLE_EQ(200, FPDF_GetPageWidth(page.get()));
+  EXPECT_DOUBLE_EQ(300, FPDF_GetPageHeight(page.get()));
+}
+
 TEST_F(FPDFViewEmbedderTest, Page) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
