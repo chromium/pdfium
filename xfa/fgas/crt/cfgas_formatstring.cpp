@@ -1056,12 +1056,11 @@ LocaleIface* CFGAS_FormatString::GetNumericFormat(
     } else if (pStr[ccf] != '}') {
       *wsPurgePattern += pStr[ccf];
     }
-    if (!bFindDot) {
-      if (pStr[ccf] == '.' || pStr[ccf] == 'V' || pStr[ccf] == 'v') {
-        bFindDot = true;
-        *iDotIndex = wsPurgePattern->GetLength() - 1;
-        *dwStyle |= FX_NUMSTYLE_DotVorv;
-      }
+    if (!bFindDot && ccf < iLenf &&
+        (pStr[ccf] == '.' || pStr[ccf] == 'V' || pStr[ccf] == 'v')) {
+      bFindDot = true;
+      *iDotIndex = wsPurgePattern->GetLength() - 1;
+      *dwStyle |= FX_NUMSTYLE_DotVorv;
     }
     ccf++;
   }
