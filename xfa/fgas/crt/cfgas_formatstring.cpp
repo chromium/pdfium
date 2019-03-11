@@ -1030,7 +1030,8 @@ LocaleIface* CFGAS_FormatString::GetNumericFormat(
           wsSubCategory = pLocale->GetNumPattern(eSubCategory);
           auto result = wsSubCategory.Find('.');
           if (result.has_value() && result.value() != 0) {
-            *iDotIndex += wsPurgePattern->GetLength();
+            if (!bFindDot)
+              *iDotIndex = wsPurgePattern->GetLength() - 1;
             bFindDot = true;
             *dwStyle |= FX_NUMSTYLE_DotVorv;
           }

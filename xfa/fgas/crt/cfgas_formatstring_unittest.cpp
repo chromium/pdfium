@@ -423,6 +423,9 @@ TEST_F(CFGAS_FormatStringTest, NumParse) {
 
       // https://crbug.com/938626
       {L"en", L"PDF", L"num( ", L"."},
+
+      // https://crbug.com/938724
+      {L"en", L"1", L" num.().().}", L"."},
   };
 
   for (const auto& test : tests) {
@@ -543,6 +546,8 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
       {L"en", L"900000000000000000000", L"E", L"900,000,000,000,000,000,000"},
       // TODO(tsepez): next one seems wrong
       // {L"en", L".000000000000000000009", L"E", L"9"},
+      // https://crbug.com/938724
+      {L"en", L"1", L"| num.().().", L"1"},
   };
 
   for (const auto& test : tests) {
