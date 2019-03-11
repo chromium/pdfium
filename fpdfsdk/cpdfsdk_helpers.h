@@ -263,7 +263,7 @@ void RenderPageWithContext(CPDF_PageRenderContext* pContext,
                            IPDFSDK_PauseAdapter* pause);
 
 void ReportUnsupportedFeatures(CPDF_Document* pDoc);
-void CheckForUnsupportedAnnot(const CPDF_Annot* pPDFAnnot);
+void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
 
 #ifndef _WIN32
 void SetLastError(int err);
