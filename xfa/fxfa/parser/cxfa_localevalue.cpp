@@ -219,7 +219,7 @@ CFX_DateTime CXFA_LocaleValue::GetDate() const {
     return CFX_DateTime();
 
   CFX_DateTime dt;
-  FX_DateFromCanonical(m_wsValue, &dt);
+  FX_DateFromCanonical(m_wsValue.AsSpan(), &dt);
   return dt;
 }
 
@@ -228,8 +228,7 @@ CFX_DateTime CXFA_LocaleValue::GetTime() const {
     return CFX_DateTime();
 
   CFX_DateTime dt;
-  FX_TimeFromCanonical(m_wsValue.AsStringView(), &dt,
-                       m_pLocaleMgr->GetDefLocale());
+  FX_TimeFromCanonical(m_pLocaleMgr->GetDefLocale(), m_wsValue.AsSpan(), &dt);
   return dt;
 }
 

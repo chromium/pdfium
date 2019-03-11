@@ -107,7 +107,7 @@ int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
 WideString GetLiteralText(pdfium::span<const wchar_t> pStrPattern,
                           size_t* iPattern) {
   WideString wsOutput;
-  if (pStrPattern[*iPattern] != '\'')
+  if (*iPattern >= pStrPattern.size() || pStrPattern[*iPattern] != '\'')
     return wsOutput;
 
   (*iPattern)++;
@@ -199,13 +199,12 @@ bool GetNumericDotIndex(const WideString& wsNum,
   return result.has_value();
 }
 
-bool ExtractCountDigits(const wchar_t* str,
-                        int len,
+bool ExtractCountDigits(pdfium::span<const wchar_t> str,
                         int count,
                         int* cc,
                         uint32_t* value) {
   for (int i = count; i > 0; --i) {
-    if (*cc >= len)
+    if (*cc >= pdfium::CollectionSize<int32_t>(str))
       return false;
     if (!FXSYS_IsDecimalDigit(str[*cc]))
       return false;
@@ -214,14 +213,13 @@ bool ExtractCountDigits(const wchar_t* str,
   return true;
 }
 
-bool ExtractCountDigitsWithOptional(const wchar_t* str,
-                                    int len,
+bool ExtractCountDigitsWithOptional(pdfium::span<const wchar_t> str,
                                     int count,
                                     int* cc,
                                     uint32_t* value) {
-  if (!ExtractCountDigits(str, len, count, cc, value))
+  if (!ExtractCountDigits(str, count, cc, value))
     return false;
-  ExtractCountDigits(str, len, 1, cc, value);
+  ExtractCountDigits(str, 1, cc, value);
   return true;
 }
 
@@ -234,7 +232,7 @@ bool ParseLocaleDate(const WideString& wsDate,
   uint32_t month = 1;
   uint32_t day = 1;
   size_t ccf = 0;
-  const wchar_t* str = wsDate.c_str();
+  pdfium::span<const wchar_t> spDate = wsDate.AsSpan();
   int32_t len = wsDate.GetLength();
   pdfium::span<const wchar_t> spDatePattern = wsDatePattern.AsSpan();
   WideStringView wsDateSymbols(gs_wsDateSymbols);
@@ -243,7 +241,7 @@ bool ParseLocaleDate(const WideString& wsDate,
       WideString wsLiteral = GetLiteralText(spDatePattern, &ccf);
       int32_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > len ||
-          wcsncmp(str + *cc, wsLiteral.c_str(), iLiteralLen)) {
+          wcsncmp(spDate.data() + *cc, wsLiteral.c_str(), iLiteralLen) != 0) {
         return false;
       }
       *cc += iLiteralLen;
@@ -251,7 +249,7 @@ bool ParseLocaleDate(const WideString& wsDate,
       continue;
     }
     if (!wsDateSymbols.Contains(spDatePattern[ccf])) {
-      if (spDatePattern[ccf] != str[*cc])
+      if (spDatePattern[ccf] != spDate[*cc])
         return false;
       (*cc)++;
       ccf++;
@@ -266,14 +264,14 @@ bool ParseLocaleDate(const WideString& wsDate,
     }
     if (symbol.EqualsASCII("D") || symbol.EqualsASCII("DD")) {
       day = 0;
-      if (!ExtractCountDigitsWithOptional(str, len, 1, cc, &day))
+      if (!ExtractCountDigitsWithOptional(spDate, 1, cc, &day))
         return false;
     } else if (symbol.EqualsASCII("J")) {
       uint32_t val = 0;
-      ExtractCountDigits(str, len, 3, cc, &val);
+      ExtractCountDigits(spDate, 3, cc, &val);
     } else if (symbol.EqualsASCII("M") || symbol.EqualsASCII("MM")) {
       month = 0;
-      if (!ExtractCountDigitsWithOptional(str, len, 1, cc, &month))
+      if (!ExtractCountDigitsWithOptional(spDate, 1, cc, &month))
         return false;
     } else if (symbol.EqualsASCII("MMM") || symbol.EqualsASCII("MMMM")) {
       for (uint16_t i = 0; i < 12; i++) {
@@ -281,7 +279,8 @@ bool ParseLocaleDate(const WideString& wsDate,
             pLocale->GetMonthName(i, symbol.EqualsASCII("MMM"));
         if (wsMonthName.IsEmpty())
           continue;
-        if (!wcsncmp(wsMonthName.c_str(), str + *cc, wsMonthName.GetLength())) {
+        if (wcsncmp(wsMonthName.c_str(), spDate.data() + *cc,
+                    wsMonthName.GetLength()) == 0) {
           *cc += wsMonthName.GetLength();
           month = i + 1;
           break;
@@ -293,7 +292,8 @@ bool ParseLocaleDate(const WideString& wsDate,
             pLocale->GetDayName(i, symbol.EqualsASCII("EEE"));
         if (wsDayName.IsEmpty())
           continue;
-        if (!wcsncmp(wsDayName.c_str(), str + *cc, wsDayName.GetLength())) {
+        if (wcsncmp(wsDayName.c_str(), spDate.data() + *cc,
+                    wsDayName.GetLength()) == 0) {
           *cc += wsDayName.GetLength();
           break;
         }
@@ -303,7 +303,7 @@ bool ParseLocaleDate(const WideString& wsDate,
         return false;
 
       year = 0;
-      if (!ExtractCountDigits(str, len, symbol.GetLength(), cc, &year))
+      if (!ExtractCountDigits(spDate, symbol.GetLength(), cc, &year))
         return false;
       if (symbol.EqualsASCII("YY")) {
         if (year <= 29)
@@ -326,7 +326,7 @@ bool ParseLocaleDate(const WideString& wsDate,
 }
 
 void ResolveZone(FX_TIMEZONE tzDiff,
-                 LocaleIface* pLocale,
+                 const LocaleIface* pLocale,
                  uint32_t* wHour,
                  uint32_t* wMinute) {
   int32_t iMinuteDiff = *wHour * 60 + *wMinute;
@@ -354,18 +354,18 @@ bool ParseLocaleTime(const WideString& wsTime,
   uint32_t second = 0;
   uint32_t millisecond = 0;
   size_t ccf = 0;
-  const wchar_t* str = wsTime.c_str();
-  int len = wsTime.GetLength();
+  pdfium::span<const wchar_t> spTime = wsTime.AsSpan();
   pdfium::span<const wchar_t> spTimePattern = wsTimePattern.AsSpan();
   bool bHasA = false;
   bool bPM = false;
   WideStringView wsTimeSymbols(gs_wsTimeSymbols);
-  while (*cc < len && ccf < spTimePattern.size()) {
+  while (*cc < pdfium::CollectionSize<int32_t>(spTime) &&
+         ccf < spTimePattern.size()) {
     if (spTimePattern[ccf] == '\'') {
       WideString wsLiteral = GetLiteralText(spTimePattern, &ccf);
       int32_t iLiteralLen = wsLiteral.GetLength();
-      if (*cc + iLiteralLen > len ||
-          wcsncmp(str + *cc, wsLiteral.c_str(), iLiteralLen)) {
+      if (*cc + iLiteralLen > pdfium::CollectionSize<int32_t>(spTime) ||
+          wcsncmp(spTime.data() + *cc, wsLiteral.c_str(), iLiteralLen)) {
         return false;
       }
       *cc += iLiteralLen;
@@ -373,7 +373,7 @@ bool ParseLocaleTime(const WideString& wsTime,
       continue;
     }
     if (!wsTimeSymbols.Contains(spTimePattern[ccf])) {
-      if (spTimePattern[ccf] != str[*cc])
+      if (spTimePattern[ccf] != spTime[*cc])
         return false;
       (*cc)++;
       ccf++;
@@ -388,66 +388,65 @@ bool ParseLocaleTime(const WideString& wsTime,
 
     if (symbol.EqualsASCIINoCase("k") || symbol.EqualsASCIINoCase("h")) {
       hour = 0;
-      if (!ExtractCountDigitsWithOptional(str, len, 1, cc, &hour))
+      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &hour))
         return false;
       if (symbol.EqualsASCII("K") && hour == 24)
         hour = 0;
     } else if (symbol.EqualsASCIINoCase("kk") ||
                symbol.EqualsASCIINoCase("hh")) {
       hour = 0;
-      if (!ExtractCountDigits(str, len, 2, cc, &hour))
+      if (!ExtractCountDigits(spTime, 2, cc, &hour))
         return false;
       if (symbol.EqualsASCII("KK") && hour == 24)
         hour = 0;
     } else if (symbol.EqualsASCII("M")) {
       minute = 0;
-      if (!ExtractCountDigitsWithOptional(str, len, 1, cc, &minute))
+      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &minute))
         return false;
     } else if (symbol.EqualsASCII("MM")) {
       minute = 0;
-      if (!ExtractCountDigits(str, len, 2, cc, &minute))
+      if (!ExtractCountDigits(spTime, 2, cc, &minute))
         return false;
     } else if (symbol.EqualsASCII("S")) {
       second = 0;
-      if (!ExtractCountDigitsWithOptional(str, len, 1, cc, &second))
+      if (!ExtractCountDigitsWithOptional(spTime, 1, cc, &second))
         return false;
     } else if (symbol.EqualsASCII("SS")) {
       second = 0;
-      if (!ExtractCountDigits(str, len, 2, cc, &second))
+      if (!ExtractCountDigits(spTime, 2, cc, &second))
         return false;
     } else if (symbol.EqualsASCII("FFF")) {
       millisecond = 0;
-      if (!ExtractCountDigits(str, len, 3, cc, &millisecond))
+      if (!ExtractCountDigits(spTime, 3, cc, &millisecond))
         return false;
     } else if (symbol.EqualsASCII("A")) {
       WideString wsAM = pLocale->GetMeridiemName(true);
       WideString wsPM = pLocale->GetMeridiemName(false);
-      if ((*cc + pdfium::base::checked_cast<int32_t>(wsAM.GetLength()) <=
-           len) &&
-          (WideStringView(str + *cc, wsAM.GetLength()) == wsAM)) {
+      if (*cc + wsAM.GetLength() <= spTime.size() &&
+          WideStringView(spTime.data() + *cc, wsAM.GetLength()) == wsAM) {
         *cc += wsAM.GetLength();
         bHasA = true;
-      } else if ((*cc + pdfium::base::checked_cast<int32_t>(wsPM.GetLength()) <=
-                  len) &&
-                 (WideStringView(str + *cc, wsPM.GetLength()) == wsPM)) {
+      } else if (*cc + wsPM.GetLength() <= spTime.size() &&
+                 WideStringView(spTime.data() + *cc, wsPM.GetLength()) ==
+                     wsPM) {
         *cc += wsPM.GetLength();
         bHasA = true;
         bPM = true;
       }
     } else if (symbol.EqualsASCII("Z")) {
-      if (*cc + 3 > len)
+      if (*cc + 3 > pdfium::CollectionSize<int32_t>(spTime))
         continue;
 
-      WideString tz(str[(*cc)++]);
-      tz += str[(*cc)++];
-      tz += str[(*cc)++];
+      WideString tz(spTime[(*cc)++]);
+      tz += spTime[(*cc)++];
+      tz += spTime[(*cc)++];
       if (tz.EqualsASCII("GMT")) {
         FX_TIMEZONE tzDiff;
         tzDiff.tzHour = 0;
         tzDiff.tzMinute = 0;
-        if (*cc < len && (str[*cc] == '-' || str[*cc] == '+')) {
-          *cc += ParseTimeZone({str + *cc, static_cast<size_t>(len - *cc)},
-                               &tzDiff);
+        if (*cc < pdfium::CollectionSize<int32_t>(spTime) &&
+            (spTime[*cc] == '-' || spTime[*cc] == '+')) {
+          *cc += ParseTimeZone(spTime.subspan(*cc), &tzDiff);
         }
         ResolveZone(tzDiff, pLocale, &hour, &minute);
       } else {
@@ -463,10 +462,9 @@ bool ParseLocaleTime(const WideString& wsTime,
         }
       }
     } else if (symbol.EqualsASCII("z")) {
-      if (str[*cc] != 'Z') {
+      if (spTime[*cc] != 'Z') {
         FX_TIMEZONE tzDiff;
-        *cc +=
-            ParseTimeZone({str + *cc, static_cast<size_t>(len - *cc)}, &tzDiff);
+        *cc += ParseTimeZone(spTime.subspan(*cc), &tzDiff);
         ResolveZone(tzDiff, pLocale, &hour, &minute);
       } else {
         (*cc)++;
@@ -714,41 +712,40 @@ WideString FormatDateTimeInternal(const CFX_DateTime& dt,
 
 }  // namespace
 
-bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime) {
-  const wchar_t* str = wsDate.c_str();
-  int len = wsDate.GetLength();
-  if (len > 10)
+bool FX_DateFromCanonical(pdfium::span<const wchar_t> spDate,
+                          CFX_DateTime* datetime) {
+  if (spDate.size() > 10)
     return false;
 
   int cc = 0;
   uint32_t year = 0;
-  if (!ExtractCountDigits(str, len, 4, &cc, &year))
+  if (!ExtractCountDigits(spDate, 4, &cc, &year))
     return false;
   if (year < 1900)
     return false;
-  if (cc >= len) {
+  if (cc >= pdfium::CollectionSize<int32_t>(spDate)) {
     datetime->SetDate(year, 1, 1);
     return true;
   }
 
-  if (str[cc] == '-')
+  if (spDate[cc] == '-')
     cc++;
 
   uint32_t month = 0;
-  if (!ExtractCountDigits(str, len, 2, &cc, &month))
+  if (!ExtractCountDigits(spDate, 2, &cc, &month))
     return false;
   if (month > 12 || month < 1)
     return false;
-  if (cc >= len) {
+  if (cc >= pdfium::CollectionSize<int32_t>(spDate)) {
     datetime->SetDate(year, month, 1);
     return true;
   }
 
-  if (str[cc] == '-')
+  if (spDate[cc] == '-')
     cc++;
 
   uint32_t day = 0;
-  if (!ExtractCountDigits(str, len, 2, &cc, &day))
+  if (!ExtractCountDigits(spDate, 2, &cc, &day))
     return false;
   if (day < 1)
     return false;
@@ -763,70 +760,65 @@ bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime) {
   return true;
 }
 
-bool FX_TimeFromCanonical(WideStringView wsTime,
-                          CFX_DateTime* datetime,
-                          LocaleIface* pLocale) {
-  if (wsTime.GetLength() == 0)
+bool FX_TimeFromCanonical(const LocaleIface* pLocale,
+                          pdfium::span<const wchar_t> spTime,
+                          CFX_DateTime* datetime) {
+  if (spTime.empty())
     return false;
-
-  const wchar_t* str = wsTime.unterminated_c_str();
-  int len = wsTime.GetLength();
 
   int cc = 0;
   uint32_t hour = 0;
-  if (!ExtractCountDigits(str, len, 2, &cc, &hour))
+  if (!ExtractCountDigits(spTime, 2, &cc, &hour) || hour >= 24)
     return false;
-  if (hour >= 24)
-    return false;
-  if (cc >= len) {
+
+  if (cc >= pdfium::CollectionSize<int32_t>(spTime)) {
     datetime->SetTime(hour, 0, 0, 0);
     return true;
   }
 
-  if (str[cc] == ':')
+  if (spTime[cc] == ':')
     cc++;
 
   uint32_t minute = 0;
-  if (!ExtractCountDigits(str, len, 2, &cc, &minute))
+  if (!ExtractCountDigits(spTime, 2, &cc, &minute))
     return false;
   if (minute >= 60)
     return false;
 
-  if (cc >= len) {
+  if (cc >= pdfium::CollectionSize<int32_t>(spTime)) {
     datetime->SetTime(hour, minute, 0, 0);
     return true;
   }
 
-  if (str[cc] == ':')
+  if (spTime[cc] == ':')
     cc++;
 
   uint32_t second = 0;
   uint32_t millisecond = 0;
-  if (str[cc] != 'Z') {
-    if (!ExtractCountDigits(str, len, 2, &cc, &second))
+  if (spTime[cc] != 'Z') {
+    if (!ExtractCountDigits(spTime, 2, &cc, &second) || second >= 60)
       return false;
-    if (second >= 60)
-      return false;
-    if (cc < len && str[cc] == '.') {
+
+    if (cc < pdfium::CollectionSize<int32_t>(spTime) && spTime[cc] == '.') {
       cc++;
-      if (!ExtractCountDigits(str, len, 3, &cc, &millisecond))
+      if (!ExtractCountDigits(spTime, 3, &cc, &millisecond))
         return false;
     }
   }
 
   // Skip until we find a + or - for the time zone.
-  while (cc < len) {
-    if (str[cc] == '+' || str[cc] == '-')
+  while (cc < pdfium::CollectionSize<int32_t>(spTime)) {
+    if (spTime[cc] == '+' || spTime[cc] == '-')
       break;
     ++cc;
   }
 
-  if (cc < len) {
+  if (cc < pdfium::CollectionSize<int32_t>(spTime)) {
     FX_TIMEZONE tzDiff;
     tzDiff.tzHour = 0;
     tzDiff.tzMinute = 0;
-    if (str[cc] != 'Z')
-      cc += ParseTimeZone({str + cc, static_cast<size_t>(len - cc)}, &tzDiff);
+    if (spTime[cc] != 'Z')
+      cc += ParseTimeZone(spTime.subspan(cc), &tzDiff);
     ResolveZone(tzDiff, pLocale, &hour, &minute);
   }
 
@@ -2232,25 +2224,27 @@ bool CFGAS_FormatString::FormatDateTime(const WideString& wsSrcDateTime,
   auto iT = wsSrcDateTime.Find(L"T");
   if (!iT.has_value()) {
     if (eCategory == FX_DATETIMETYPE_Date &&
-        FX_DateFromCanonical(wsSrcDateTime, &dt)) {
+        FX_DateFromCanonical(wsSrcDateTime.AsSpan(), &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                          pLocale);
       return true;
     }
     if (eCategory == FX_DATETIMETYPE_Time &&
-        FX_TimeFromCanonical(wsSrcDateTime.AsStringView(), &dt, pLocale)) {
+        FX_TimeFromCanonical(pLocale, wsSrcDateTime.AsSpan(), &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                          pLocale);
       return true;
     }
   } else {
-    WideString wsSrcDate(wsSrcDateTime.c_str(), iT.value());
-    WideStringView wsSrcTime(wsSrcDateTime.c_str() + iT.value() + 1,
-                             wsSrcDateTime.GetLength() - iT.value() - 1);
-    if (wsSrcDate.IsEmpty() || wsSrcTime.IsEmpty())
+    pdfium::span<const wchar_t> wsSrcDate =
+        wsSrcDateTime.AsSpan().first(iT.value());
+    pdfium::span<const wchar_t> wsSrcTime =
+        wsSrcDateTime.AsSpan().subspan(iT.value() + 1);
+    if (wsSrcDate.empty() || wsSrcTime.empty())
       return false;
+
     if (FX_DateFromCanonical(wsSrcDate, &dt) &&
-        FX_TimeFromCanonical(wsSrcTime, &dt, pLocale)) {
+        FX_TimeFromCanonical(pLocale, wsSrcTime, &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,
                                          eCategory != FX_DATETIMETYPE_TimeDate,
                                          pLocale);
