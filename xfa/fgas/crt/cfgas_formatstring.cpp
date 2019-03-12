@@ -78,7 +78,7 @@ const wchar_t gs_wsTimeSymbols[] = L"hHkKMSFAzZ";
 const wchar_t gs_wsDateSymbols[] = L"DJMEeGgYwW";
 const wchar_t gs_wsConstChars[] = L",-:/. ";
 
-int32_t ParseTimeZone(pdfium::span<const wchar_t> pStr, FX_TIMEZONE* tz) {
+size_t ParseTimeZone(pdfium::span<const wchar_t> pStr, FX_TIMEZONE* tz) {
   tz->tzHour = 0;
   tz->tzMinute = 0;
   if (pStr.empty())
