@@ -905,6 +905,9 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
 
     pBreakLeaderNode = pDocument->DataMerge_CopyContainer(
         pLeaderTemplate, pFormNode, pDataScope, true, true, true);
+    if (!pBreakLeaderNode)
+      return false;
+
     pDocument->DataMerge_UpdateBindingRelations(pBreakLeaderNode);
     SetLayoutGeneratedNodeFlag(pBreakLeaderNode);
   }
@@ -917,6 +920,9 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
 
     pBreakTrailerNode = pDocument->DataMerge_CopyContainer(
         pTrailerTemplate, pFormNode, pDataScope, true, true, true);
+    if (!pBreakTrailerNode)
+      return false;
+
     pDocument->DataMerge_UpdateBindingRelations(pBreakTrailerNode);
     SetLayoutGeneratedNodeFlag(pBreakTrailerNode);
   }
@@ -938,6 +944,9 @@ bool CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
 
       pBookendAppendNode = pDocument->DataMerge_CopyContainer(
           pLeaderTemplate, pFormNode, pDataScope, true, true, true);
+      if (!pBookendAppendNode)
+        return false;
+
       pDocument->DataMerge_UpdateBindingRelations(pBookendAppendNode);
       SetLayoutGeneratedNodeFlag(pBookendAppendNode);
       return true;
@@ -1057,6 +1066,9 @@ bool CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
 
         pLeaderNode = pDocument->DataMerge_CopyContainer(
             pLeaderTemplate, pFormNode, pDataScope, true, true, true);
+        if (!pLeaderNode)
+          return false;
+
         pDocument->DataMerge_UpdateBindingRelations(pLeaderNode);
         SetLayoutGeneratedNodeFlag(pLeaderNode);
       }
@@ -1066,6 +1078,9 @@ bool CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
 
         pTrailerNode = pDocument->DataMerge_CopyContainer(
             pTrailerTemplate, pFormNode, pDataScope, true, true, true);
+        if (!pTrailerNode)
+          return false;
+
         pDocument->DataMerge_UpdateBindingRelations(pTrailerNode);
         SetLayoutGeneratedNodeFlag(pTrailerNode);
       }
