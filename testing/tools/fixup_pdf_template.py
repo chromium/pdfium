@@ -151,6 +151,7 @@ def insert_includes(input_path, output_file, visited_set):
           output_file.write(line)
   except IOError:
     print >> sys.stderr, 'failed to include %s' % input_path
+    raise
   visited_set.discard(input_path)
 
 
