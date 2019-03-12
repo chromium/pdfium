@@ -25,8 +25,7 @@ class CFGAS_StringFormatter {
   explicit CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr);
   ~CFGAS_StringFormatter();
 
-  void SplitFormatString(const WideString& wsFormatString,
-                         std::vector<WideString>* wsPatterns) const;
+  std::vector<WideString> SplitOnBars(const WideString& wsFormatString);
   FX_LOCALECATEGORY GetCategory(const WideString& wsPattern) const;
 
   bool ParseText(const WideString& wsSrcText,

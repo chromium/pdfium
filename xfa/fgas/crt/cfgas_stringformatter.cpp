@@ -829,27 +829,23 @@ CFGAS_StringFormatter::CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr)
 
 CFGAS_StringFormatter::~CFGAS_StringFormatter() {}
 
-void CFGAS_StringFormatter::SplitFormatString(
-    const WideString& wsFormatString,
-    std::vector<WideString>* wsPatterns) const {
-  int32_t iStrLen = wsFormatString.GetLength();
-  const wchar_t* pStr = wsFormatString.c_str();
-  const wchar_t* pToken = pStr;
-  const wchar_t* pEnd = pStr + iStrLen;
+std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
+    const WideString& wsFormatString) {
+  std::vector<WideString> wsPatterns;
+  pdfium::span<const wchar_t> spFormatString = wsFormatString.AsSpan();
+  size_t index = 0;
+  size_t token = 0;
   bool bQuote = false;
-  while (true) {
-    if (pStr >= pEnd) {
-      wsPatterns->push_back(WideString(pToken, pStr - pToken));
-      return;
-    }
-    if (*pStr == '\'') {
+  for (; index < spFormatString.size(); ++index) {
+    if (spFormatString[index] == '\'') {
       bQuote = !bQuote;
-    } else if (*pStr == L'|' && !bQuote) {
-      wsPatterns->push_back(WideString(pToken, pStr - pToken));
-      pToken = pStr + 1;
+    } else if (spFormatString[index] == L'|' && !bQuote) {
+      wsPatterns.emplace_back(spFormatString.data() + token, index - token);
+      token = index + 1;
     }
-    pStr++;
   }
+  wsPatterns.emplace_back(spFormatString.data() + token, index - token);
+  return wsPatterns;
 }
 
 FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory(

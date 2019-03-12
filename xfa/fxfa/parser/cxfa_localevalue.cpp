@@ -131,9 +131,7 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
   ScopedLocale scoped_locale(m_pLocaleMgr.Get(), pLocale);
 
   auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
-  std::vector<WideString> wsPatterns;
-  pFormat->SplitFormatString(wsPattern, &wsPatterns);
-
+  std::vector<WideString> wsPatterns = pFormat->SplitOnBars(wsPattern);
   bool bRet = false;
   size_t i = 0;
   for (; !bRet && i < wsPatterns.size(); i++) {
@@ -262,11 +260,9 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
                                       const WideString& wsFormat,
                                       LocaleIface* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
-  auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
-  std::vector<WideString> wsPatterns;
-  pFormat->SplitFormatString(wsFormat, &wsPatterns);
   wsResult.clear();
-  for (const auto& pattern : wsPatterns) {
+  auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
+  for (const auto& pattern : pFormat->SplitOnBars(wsFormat)) {
     if (FormatSinglePattern(wsResult, pattern, pLocale, eValueType))
       return true;
   }
@@ -547,10 +543,8 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
     return false;
 
   ScopedLocale scoped_locale(m_pLocaleMgr.Get(), pLocale);
-
   auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
-  std::vector<WideString> wsPatterns;
-  pFormat->SplitFormatString(wsPattern, &wsPatterns);
+  std::vector<WideString> wsPatterns = pFormat->SplitOnBars(wsPattern);
   bool bRet = false;
   for (size_t i = 0; !bRet && i < wsPatterns.size(); i++) {
     const WideString& wsFormat = wsPatterns[i];
