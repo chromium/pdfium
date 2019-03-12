@@ -298,6 +298,9 @@ CJS_Result CJX_HostPseudoModel::openList(
     pNode = resolveNodeRS.objects.front()->AsNode();
   }
 
+  if (!pNode)
+    return CJS_Result::Success();
+
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   CXFA_FFWidget* hWidget =
       XFA_GetWidgetFromLayoutItem(pDocLayout->GetLayoutItem(pNode));

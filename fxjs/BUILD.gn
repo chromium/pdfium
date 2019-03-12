@@ -251,6 +251,7 @@ if (pdf_enable_v8) {
         "xfa/cfxjse_app_embeddertest.cpp",
         "xfa/cfxjse_formcalc_context_embeddertest.cpp",
         "xfa/cfxjse_value_embeddertest.cpp",
+        "xfa/cjx_hostpseudomodel_embeddertest.cpp",
       ]
       deps += [ "..///xfa/fxfa" ]
     }
