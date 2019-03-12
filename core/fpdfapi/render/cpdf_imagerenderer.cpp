@@ -554,6 +554,9 @@ bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
   if (!StartRenderDIBBase())
     return false;
 
+  if (m_Mode == Mode::kDefault)
+    return false;
+
   return Continue(pPause);
 }
 
