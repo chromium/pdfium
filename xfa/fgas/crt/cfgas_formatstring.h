@@ -61,12 +61,9 @@ class CFGAS_FormatString {
   WideString GetTextFormat(const WideString& wsPattern,
                            WideStringView wsCategory) const;
   LocaleIface* GetNumericFormat(const WideString& wsPattern,
-                                int32_t* iDotIndex,
+                                size_t* iDotIndex,
                                 uint32_t* dwStyle,
                                 WideString* wsPurgePattern) const;
-  bool FormatStrNum(WideStringView wsInputNum,
-                    const WideString& wsPattern,
-                    WideString* wsOutput) const;
   FX_DATETIMETYPE GetDateTimeFormat(const WideString& wsPattern,
                                     LocaleIface** pLocale,
                                     WideString* wsDatePattern,
