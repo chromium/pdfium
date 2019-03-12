@@ -12,8 +12,8 @@ jumbo_source_set("fgas") {
   sources = [
     "crt/cfgas_decimal.cpp",
     "crt/cfgas_decimal.h",
-    "crt/cfgas_formatstring.cpp",
-    "crt/cfgas_formatstring.h",
+    "crt/cfgas_stringformatter.cpp",
+    "crt/cfgas_stringformatter.h",
     "crt/locale_iface.h",
     "crt/locale_mgr_iface.h",
     "font/cfgas_defaultfontmanager.cpp",
@@ -50,7 +50,7 @@ jumbo_source_set("fgas") {
 pdfium_unittest_source_set("unittests") {
   sources = [
     "crt/cfgas_decimal_unittest.cpp",
-    "crt/cfgas_formatstring_unittest.cpp",
+    "crt/cfgas_stringformatter_unittest.cpp",
   ]
   deps = [
     ":fgas",

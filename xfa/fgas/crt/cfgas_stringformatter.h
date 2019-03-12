@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
-#define XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
+#ifndef XFA_FGAS_CRT_CFGAS_STRINGFORMATTER_H_
+#define XFA_FGAS_CRT_CFGAS_STRINGFORMATTER_H_
 
 #include <vector>
 
@@ -20,10 +20,10 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
                           pdfium::span<const wchar_t> wsTime,
                           CFX_DateTime* datetime);
 
-class CFGAS_FormatString {
+class CFGAS_StringFormatter {
  public:
-  explicit CFGAS_FormatString(LocaleMgrIface* pLocaleMgr);
-  ~CFGAS_FormatString();
+  explicit CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr);
+  ~CFGAS_StringFormatter();
 
   void SplitFormatString(const WideString& wsFormatString,
                          std::vector<WideString>* wsPatterns) const;
@@ -72,4 +72,4 @@ class CFGAS_FormatString {
   UnownedPtr<LocaleMgrIface> const m_pLocaleMgr;
 };
 
-#endif  // XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
+#endif  // XFA_FGAS_CRT_CFGAS_STRINGFORMATTER_H_

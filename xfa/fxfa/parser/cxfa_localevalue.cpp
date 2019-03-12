@@ -14,7 +14,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fgas/crt/cfgas_formatstring.h"
+#include "xfa/fgas/crt/cfgas_stringformatter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -130,7 +130,7 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
   WideString wsOutput;
   ScopedLocale scoped_locale(m_pLocaleMgr.Get(), pLocale);
 
-  auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr.Get());
+  auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
   std::vector<WideString> wsPatterns;
   pFormat->SplitFormatString(wsPattern, &wsPatterns);
 
@@ -262,7 +262,7 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
                                       const WideString& wsFormat,
                                       LocaleIface* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
-  auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr.Get());
+  auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
   std::vector<WideString> wsPatterns;
   pFormat->SplitFormatString(wsFormat, &wsPatterns);
   wsResult.clear();
@@ -284,7 +284,7 @@ bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
 
   wsResult.clear();
   bool bRet = false;
-  auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr.Get());
+  auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
   FX_LOCALECATEGORY eCategory =
       ValueCategory(pFormat->GetCategory(wsFormat), m_dwType);
   switch (eCategory) {
@@ -548,7 +548,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
 
   ScopedLocale scoped_locale(m_pLocaleMgr.Get(), pLocale);
 
-  auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr.Get());
+  auto pFormat = pdfium::MakeUnique<CFGAS_StringFormatter>(m_pLocaleMgr.Get());
   std::vector<WideString> wsPatterns;
   pFormat->SplitFormatString(wsPattern, &wsPatterns);
   bool bRet = false;

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/crt/cfgas_formatstring.h"
+#include "xfa/fgas/crt/cfgas_stringformatter.h"
 
 #include <time.h>
 
@@ -16,14 +16,14 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
-class CFGAS_FormatStringTest : public testing::Test {
+class CFGAS_StringFormatterTest : public testing::Test {
  public:
-  CFGAS_FormatStringTest() {
+  CFGAS_StringFormatterTest() {
     SetTZ("UTC");
     CPDF_ModuleMgr::Get()->Init();
   }
 
-  ~CFGAS_FormatStringTest() override { CPDF_ModuleMgr::Get()->Destroy(); }
+  ~CFGAS_StringFormatterTest() override { CPDF_ModuleMgr::Get()->Destroy(); }
 
   void TearDown() override {
     fmt_.reset();
@@ -42,21 +42,21 @@ class CFGAS_FormatStringTest : public testing::Test {
 
   // Note, this re-creates the fmt on each call. If you need to multiple
   // times store it locally.
-  CFGAS_FormatString* fmt(const WideString& locale) {
+  CFGAS_StringFormatter* fmt(const WideString& locale) {
     fmt_.reset();  // Can't outlive |mgr_|.
     mgr_ = pdfium::MakeUnique<CXFA_LocaleMgr>(nullptr, locale);
-    fmt_ = pdfium::MakeUnique<CFGAS_FormatString>(mgr_.get());
+    fmt_ = pdfium::MakeUnique<CFGAS_StringFormatter>(mgr_.get());
     return fmt_.get();
   }
 
  protected:
   std::unique_ptr<CXFA_LocaleMgr> mgr_;
-  std::unique_ptr<CFGAS_FormatString> fmt_;
+  std::unique_ptr<CFGAS_StringFormatter> fmt_;
 };
 
 // TODO(dsinclair): Looks like the formatter/parser does not handle the various
 // 'g' flags.
-TEST_F(CFGAS_FormatStringTest, DateFormat) {
+TEST_F(CFGAS_StringFormatterTest, DateFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -120,7 +120,7 @@ TEST_F(CFGAS_FormatStringTest, DateFormat) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, TimeFormat) {
+TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -171,7 +171,7 @@ TEST_F(CFGAS_FormatStringTest, TimeFormat) {
   SetTZ("UTC");
 }
 
-TEST_F(CFGAS_FormatStringTest, DateTimeFormat) {
+TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -199,7 +199,7 @@ TEST_F(CFGAS_FormatStringTest, DateTimeFormat) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, DateParse) {
+TEST_F(CFGAS_StringFormatterTest, DateParse) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -262,7 +262,7 @@ TEST_F(CFGAS_FormatStringTest, DateParse) {
 
 // TODO(dsinclair): GetDateTimeFormat is broken and doesn't allow just returning
 // a parsed Time. It will assume it's a Date. The method needs to be re-written.
-// TEST_F(CFGAS_FormatStringTest, TimeParse) {
+// TEST_F(CFGAS_StringFormatterTest, TimeParse) {
 //   struct {
 //     const wchar_t* locale;
 //     const wchar_t* input;
@@ -287,7 +287,7 @@ TEST_F(CFGAS_FormatStringTest, DateParse) {
 //   }
 // }
 
-TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
+TEST_F(CFGAS_StringFormatterTest, SplitFormatString) {
   std::vector<WideString> results;
   fmt(L"en")->SplitFormatString(
       L"null{'No data'} | null{} | text{999*9999} | text{999*999*9999}",
@@ -302,7 +302,7 @@ TEST_F(CFGAS_FormatStringTest, SplitFormatString) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, NumParse) {
+TEST_F(CFGAS_StringFormatterTest, NumParse) {
   struct TestCase {
     const wchar_t* locale;
     const wchar_t* input;
@@ -443,7 +443,7 @@ TEST_F(CFGAS_FormatStringTest, NumParse) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, NumFormat) {
+TEST_F(CFGAS_StringFormatterTest, NumFormat) {
   struct TestCase {
     const wchar_t* locale;
     const wchar_t* input;
@@ -559,7 +559,7 @@ TEST_F(CFGAS_FormatStringTest, NumFormat) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, TextParse) {
+TEST_F(CFGAS_StringFormatterTest, TextParse) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -584,13 +584,13 @@ TEST_F(CFGAS_FormatStringTest, TextParse) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, InvalidTextParse) {
+TEST_F(CFGAS_StringFormatterTest, InvalidTextParse) {
   // Input does not match mask.
   WideString result;
   EXPECT_FALSE(fmt(L"en")->ParseText(L"123-4567-8", L"AAA-9999-X", &result));
 }
 
-TEST_F(CFGAS_FormatStringTest, TextFormat) {
+TEST_F(CFGAS_StringFormatterTest, TextFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -614,13 +614,14 @@ TEST_F(CFGAS_FormatStringTest, TextFormat) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, NullParse) {
+TEST_F(CFGAS_StringFormatterTest, NullParse) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
     const wchar_t* pattern;
   } tests[] = {
-      {L"en", L"", L"null{}"}, {L"en", L"No data", L"null{'No data'}"},
+      {L"en", L"", L"null{}"},
+      {L"en", L"No data", L"null{'No data'}"},
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
@@ -630,7 +631,7 @@ TEST_F(CFGAS_FormatStringTest, NullParse) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, NullFormat) {
+TEST_F(CFGAS_StringFormatterTest, NullFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* pattern;
@@ -644,7 +645,7 @@ TEST_F(CFGAS_FormatStringTest, NullFormat) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, ZeroParse) {
+TEST_F(CFGAS_StringFormatterTest, ZeroParse) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -660,7 +661,7 @@ TEST_F(CFGAS_FormatStringTest, ZeroParse) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, ZeroFormat) {
+TEST_F(CFGAS_StringFormatterTest, ZeroFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -682,8 +683,8 @@ TEST_F(CFGAS_FormatStringTest, ZeroFormat) {
   }
 }
 
-TEST_F(CFGAS_FormatStringTest, GetCategory) {
-  CFGAS_FormatString* f = fmt(L"en");
+TEST_F(CFGAS_StringFormatterTest, GetCategory) {
+  CFGAS_StringFormatter* f = fmt(L"en");
 
   EXPECT_EQ(FX_LOCALECATEGORY_Unknown, f->GetCategory(L"'just text'"));
   EXPECT_EQ(FX_LOCALECATEGORY_Null, f->GetCategory(L"null{}"));
