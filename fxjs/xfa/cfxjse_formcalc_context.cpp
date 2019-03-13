@@ -1877,19 +1877,19 @@ void CFXJSE_FormCalcContext::Date2Num(CFXJSE_Value* pThis,
     szFormat = ValueToUTF8String(formatValue.get());
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
-    if (ValueIsNull(pThis, localValue.get())) {
+    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(pThis, args, 2);
+    if (ValueIsNull(pThis, localeValue.get())) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(localValue.get());
+    szLocale = ValueToUTF8String(localeValue.get());
   }
 
   ByteString szIsoDate =
       Local2IsoDate(pThis, szDate.AsStringView(), szFormat.AsStringView(),
-                    szLocal.AsStringView());
+                    szLocale.AsStringView());
   args.GetReturnValue()->SetInteger(DateString2Num(szIsoDate.AsStringView()));
 }
 
@@ -1916,18 +1916,18 @@ void CFXJSE_FormCalcContext::DateFmt(CFXJSE_Value* pThis,
       iStyle = 0;
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
-    if (argLocal->IsNull()) {
+    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(pThis, args, 1);
+    if (argLocale->IsNull()) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(argLocal.get());
+    szLocale = ValueToUTF8String(argLocale.get());
   }
 
   ByteString formatStr =
-      GetStandardDateFormat(pThis, iStyle, szLocal.AsStringView());
+      GetStandardDateFormat(pThis, iStyle, szLocale.AsStringView());
   args.GetReturnValue()->SetString(formatStr.AsStringView());
 }
 
@@ -2024,18 +2024,18 @@ void CFXJSE_FormCalcContext::LocalDateFmt(CFXJSE_Value* pThis,
       iStyle = 0;
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
-    if (argLocal->IsNull()) {
+    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(pThis, args, 1);
+    if (argLocale->IsNull()) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(argLocal.get());
+    szLocale = ValueToUTF8String(argLocale.get());
   }
 
   ByteString formatStr =
-      GetLocalDateFormat(pThis, iStyle, szLocal.AsStringView(), false);
+      GetLocalDateFormat(pThis, iStyle, szLocale.AsStringView(), false);
   args.GetReturnValue()->SetString(formatStr.AsStringView());
 }
 
@@ -2061,18 +2061,18 @@ void CFXJSE_FormCalcContext::LocalTimeFmt(CFXJSE_Value* pThis,
       iStyle = 0;
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
-    if (argLocal->IsNull()) {
+    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(pThis, args, 1);
+    if (argLocale->IsNull()) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(argLocal.get());
+    szLocale = ValueToUTF8String(argLocale.get());
   }
 
   ByteString formatStr =
-      GetLocalTimeFormat(pThis, iStyle, szLocal.AsStringView(), false);
+      GetLocalTimeFormat(pThis, iStyle, szLocale.AsStringView(), false);
   args.GetReturnValue()->SetString(formatStr.AsStringView());
 }
 
@@ -2107,14 +2107,14 @@ void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
     szFormat = ValueToUTF8String(formatValue.get());
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
-    if (ValueIsNull(pThis, localValue.get())) {
+    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(pThis, args, 2);
+    if (ValueIsNull(pThis, localeValue.get())) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(localValue.get());
+    szLocale = ValueToUTF8String(localeValue.get());
   }
 
   int32_t iYear = 1900;
@@ -2212,7 +2212,7 @@ void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
   ByteString szLocalDate = IsoDate2Local(
       pThis,
       ByteString::Format("%d%02d%02d", iYear + i, iMonth, iDay).AsStringView(),
-      szFormat.AsStringView(), szLocal.AsStringView());
+      szFormat.AsStringView(), szLocale.AsStringView());
   args.GetReturnValue()->SetString(szLocalDate.AsStringView());
 }
 
@@ -2247,18 +2247,18 @@ void CFXJSE_FormCalcContext::Num2GMTime(CFXJSE_Value* pThis,
     szFormat = ValueToUTF8String(formatValue.get());
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
-    if (localValue->IsNull()) {
+    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(pThis, args, 2);
+    if (localeValue->IsNull()) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(localValue.get());
+    szLocale = ValueToUTF8String(localeValue.get());
   }
 
   ByteString szGMTTime = Num2AllTime(pThis, iTime, szFormat.AsStringView(),
-                                     szLocal.AsStringView(), true);
+                                     szLocale.AsStringView(), true);
   args.GetReturnValue()->SetString(szGMTTime.AsStringView());
 }
 
@@ -2293,19 +2293,19 @@ void CFXJSE_FormCalcContext::Num2Time(CFXJSE_Value* pThis,
     szFormat = ValueToUTF8String(formatValue.get());
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
-    if (localValue->IsNull()) {
+    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(pThis, args, 2);
+    if (localeValue->IsNull()) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(localValue.get());
+    szLocale = ValueToUTF8String(localeValue.get());
   }
 
   ByteString szLocalTime =
       Num2AllTime(pThis, static_cast<int32_t>(fTime), szFormat.AsStringView(),
-                  szLocal.AsStringView(), false);
+                  szLocale.AsStringView(), false);
   args.GetReturnValue()->SetString(szLocalTime.AsStringView());
 }
 
@@ -2354,25 +2354,25 @@ void CFXJSE_FormCalcContext::Time2Num(CFXJSE_Value* pThis,
     szFormat = ValueToUTF8String(formatValue.get());
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 2) {
-    std::unique_ptr<CFXJSE_Value> localValue = GetSimpleValue(pThis, args, 2);
-    if (ValueIsNull(pThis, localValue.get())) {
+    std::unique_ptr<CFXJSE_Value> localeValue = GetSimpleValue(pThis, args, 2);
+    if (ValueIsNull(pThis, localeValue.get())) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(localValue.get());
+    szLocale = ValueToUTF8String(localeValue.get());
   }
 
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = nullptr;
-  if (szLocal.IsEmpty()) {
+  if (szLocale.IsEmpty()) {
     CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
     pLocale = pThisNode->GetLocale();
   } else {
     pLocale =
-        pMgr->GetLocaleByName(WideString::FromUTF8(szLocal.AsStringView()));
+        pMgr->GetLocaleByName(WideString::FromUTF8(szLocale.AsStringView()));
   }
 
   WideString wsFormat;
@@ -2432,18 +2432,18 @@ void CFXJSE_FormCalcContext::TimeFmt(CFXJSE_Value* pThis,
       iStyle = 0;
   }
 
-  ByteString szLocal;
+  ByteString szLocale;
   if (argc > 1) {
-    std::unique_ptr<CFXJSE_Value> argLocal = GetSimpleValue(pThis, args, 1);
-    if (argLocal->IsNull()) {
+    std::unique_ptr<CFXJSE_Value> argLocale = GetSimpleValue(pThis, args, 1);
+    if (argLocale->IsNull()) {
       args.GetReturnValue()->SetNull();
       return;
     }
-    szLocal = ValueToUTF8String(argLocal.get());
+    szLocale = ValueToUTF8String(argLocale.get());
   }
 
   ByteString formatStr =
-      GetStandardTimeFormat(pThis, iStyle, szLocal.AsStringView());
+      GetStandardTimeFormat(pThis, iStyle, szLocale.AsStringView());
   args.GetReturnValue()->SetString(formatStr.AsStringView());
 }
 
@@ -2544,16 +2544,16 @@ ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
 ByteString CFXJSE_FormCalcContext::GetStandardDateFormat(
     CFXJSE_Value* pThis,
     int32_t iStyle,
-    ByteStringView szLocalStr) {
-  return GetLocalDateFormat(pThis, iStyle, szLocalStr, true);
+    ByteStringView szLocale) {
+  return GetLocalDateFormat(pThis, iStyle, szLocale, true);
 }
 
 // static
 ByteString CFXJSE_FormCalcContext::GetStandardTimeFormat(
     CFXJSE_Value* pThis,
     int32_t iStyle,
-    ByteStringView szLocalStr) {
-  return GetLocalTimeFormat(pThis, iStyle, szLocalStr, true);
+    ByteStringView szLocale) {
+  return GetLocalTimeFormat(pThis, iStyle, szLocale, true);
 }
 
 // static

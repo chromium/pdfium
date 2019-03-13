@@ -113,18 +113,18 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                                   ByteStringView szLocale);
   static ByteString GetLocalDateFormat(CFXJSE_Value* pThis,
                                        int32_t iStyle,
-                                       ByteStringView szLocalStr,
+                                       ByteStringView szLocale,
                                        bool bStandard);
   static ByteString GetLocalTimeFormat(CFXJSE_Value* pThis,
                                        int32_t iStyle,
-                                       ByteStringView szLocalStr,
+                                       ByteStringView szLocale,
                                        bool bStandard);
   static ByteString GetStandardDateFormat(CFXJSE_Value* pThis,
                                           int32_t iStyle,
-                                          ByteStringView szLocalStr);
+                                          ByteStringView szLocale);
   static ByteString GetStandardTimeFormat(CFXJSE_Value* pThis,
                                           int32_t iStyle,
-                                          ByteStringView szLocalStr);
+                                          ByteStringView szLocale);
   static ByteString Num2AllTime(CFXJSE_Value* pThis,
                                 int32_t iTime,
                                 ByteStringView szFormat,
