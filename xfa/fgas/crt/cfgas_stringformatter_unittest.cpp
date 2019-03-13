@@ -288,16 +288,16 @@ TEST_F(CFGAS_StringFormatterTest, DateParse) {
 // }
 
 TEST_F(CFGAS_StringFormatterTest, SplitFormatString) {
-  std::vector<WideString> results = fmt(L"en")->SplitOnBars(L"");
+  std::vector<WideString> results = CFGAS_StringFormatter::SplitOnBars(L"");
   EXPECT_EQ(1UL, results.size());
   EXPECT_TRUE(results[0].IsEmpty());
 
-  results = fmt(L"en")->SplitOnBars(L"|");
+  results = CFGAS_StringFormatter::SplitOnBars(L"|");
   EXPECT_EQ(2UL, results.size());
   EXPECT_TRUE(results[0].IsEmpty());
   EXPECT_TRUE(results[1].IsEmpty());
 
-  results = fmt(L"en")->SplitOnBars(
+  results = CFGAS_StringFormatter::SplitOnBars(
       L"null{'No|data'} | null{} | text{999*9999} | text{999*999*9999}");
   EXPECT_EQ(4UL, results.size());
 

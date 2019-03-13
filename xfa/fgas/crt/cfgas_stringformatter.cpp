@@ -829,6 +829,7 @@ CFGAS_StringFormatter::CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr)
 
 CFGAS_StringFormatter::~CFGAS_StringFormatter() {}
 
+// static
 std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
     const WideString& wsFormatString) {
   std::vector<WideString> wsPatterns;
