@@ -60,7 +60,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
     }
 
     m_pFormFiller =
-        pInteractiveFormFiller->GetFormFiller(pAnnotCombobox, false);
+        pInteractiveFormFiller->GetFormFillerForTesting(pAnnotCombobox);
     ASSERT_TRUE(m_pFormFiller);
 
     CPWL_Wnd* pWindow =

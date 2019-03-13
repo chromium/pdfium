@@ -30,9 +30,9 @@
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
     CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv), m_bNotifying(false) {}
+    : m_pFormFillEnv(pFormFillEnv) {}
 
-CFFL_InteractiveFormFiller::~CFFL_InteractiveFormFiller() {}
+CFFL_InteractiveFormFiller::~CFFL_InteractiveFormFiller() = default;
 
 bool CFFL_InteractiveFormFiller::Annot_HitTest(CPDFSDK_PageView* pPageView,
                                                CPDFSDK_Annot* pAnnot,
@@ -97,7 +97,6 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     return;
   }
 
-  pFormFiller = GetFormFiller(pAnnot, false);
   if (pFormFiller) {
     pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, mtUser2Device);
   } else {
@@ -483,8 +482,8 @@ bool CFFL_InteractiveFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget) {
 CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
     CPDFSDK_Annot* pAnnot,
     bool bRegister) {
-  auto it = m_Maps.find(pAnnot);
-  if (it != m_Maps.end())
+  auto it = m_Map.find(pAnnot);
+  if (it != m_Map.end())
     return it->second.get();
 
   if (!bRegister)
@@ -527,7 +526,7 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
     return nullptr;
 
   CFFL_FormFiller* result = pFormFiller.get();
-  m_Maps[pAnnot] = std::move(pFormFiller);
+  m_Map[pAnnot] = std::move(pFormFiller);
   return result;
 }
 
@@ -578,11 +577,11 @@ bool CFFL_InteractiveFormFiller::Redo(CPDFSDK_Annot* pAnnot) {
 }
 
 void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
-  auto it = m_Maps.find(pAnnot);
-  if (it == m_Maps.end())
+  auto it = m_Map.find(pAnnot);
+  if (it == m_Map.end())
     return;
 
-  m_Maps.erase(it);
+  m_Map.erase(it);
 }
 
 void CFFL_InteractiveFormFiller::QueryWherePopup(
