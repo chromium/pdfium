@@ -67,6 +67,9 @@ class CFGAS_StringFormatter {
                                     LocaleIface** pLocale,
                                     WideString* wsDatePattern,
                                     WideString* wsTimePattern) const;
+  bool FormatZeroOrNull(const wchar_t* what,
+                        const WideString& wsPattern,
+                        WideString* wsOutput) const;
 
   UnownedPtr<LocaleMgrIface> const m_pLocaleMgr;
 };
