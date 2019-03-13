@@ -71,34 +71,43 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             const ByteString& decoder,
                             const CPDF_Dictionary* pParam,
                             uint32_t orig_size) {
+  // |decoder| should not be an abbreviation.
+  ASSERT(decoder != "A85");
+  ASSERT(decoder != "AHx");
+  ASSERT(decoder != "CCF");
+  ASSERT(decoder != "DCT");
+  ASSERT(decoder != "Fl");
+  ASSERT(decoder != "LZW");
+  ASSERT(decoder != "RL");
+
   std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
   uint32_t ignored_size;
-  if (decoder == "FlateDecode" || decoder == "Fl") {
+  if (decoder == "FlateDecode") {
     return FlateOrLZWDecode(false, src_span, pParam, orig_size, &ignored_result,
                             &ignored_size);
   }
-  if (decoder == "LZWDecode" || decoder == "LZW") {
+  if (decoder == "LZWDecode") {
     return FlateOrLZWDecode(true, src_span, pParam, 0, &ignored_result,
                             &ignored_size);
   }
-  if (decoder == "DCTDecode" || decoder == "DCT") {
+  if (decoder == "DCTDecode") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
             src_span, width, height, 0,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder));
   }
-  if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
+  if (decoder == "CCITTFaxDecode") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
         CreateFaxDecoder(src_span, width, height, pParam);
     return DecodeAllScanlines(std::move(pDecoder));
   }
 
-  if (decoder == "ASCII85Decode" || decoder == "A85")
+  if (decoder == "ASCII85Decode")
     return A85Decode(src_span, &ignored_result, &ignored_size);
-  if (decoder == "ASCIIHexDecode" || decoder == "AHx")
+  if (decoder == "ASCIIHexDecode")
     return HexDecode(src_span, &ignored_result, &ignored_size);
-  if (decoder == "RunLengthDecode" || decoder == "RL")
+  if (decoder == "RunLengthDecode")
     return RunLengthDecode(src_span, &ignored_result, &ignored_size);
 
   return FX_INVALID_OFFSET;
