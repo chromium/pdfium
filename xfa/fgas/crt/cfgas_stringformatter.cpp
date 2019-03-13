@@ -108,67 +108,64 @@ int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
   return iKeyValue;
 }
 
-// Returns {next character position, literal text string}.
-std::pair<size_t, WideString> GetLiteralText(
-    pdfium::span<const wchar_t> pStrPattern,
-    size_t iPattern) {
+WideString GetLiteralText(pdfium::span<const wchar_t> pStrPattern,
+                          size_t* iPattern) {
   WideString wsOutput;
-  if (iPattern >= pStrPattern.size() || pStrPattern[iPattern] != '\'')
-    return {iPattern, wsOutput};
+  if (*iPattern >= pStrPattern.size() || pStrPattern[*iPattern] != '\'')
+    return wsOutput;
 
-  iPattern++;
+  (*iPattern)++;
   int32_t iQuote = 1;
-  while (iPattern < pStrPattern.size()) {
-    if (pStrPattern[iPattern] == '\'') {
+  while (*iPattern < pStrPattern.size()) {
+    if (pStrPattern[*iPattern] == '\'') {
       iQuote++;
-      if (iPattern + 1 >= pStrPattern.size() ||
-          ((pStrPattern[iPattern + 1] != '\'') && (iQuote % 2 == 0))) {
+      if ((*iPattern + 1 >= pStrPattern.size()) ||
+          ((pStrPattern[*iPattern + 1] != '\'') && (iQuote % 2 == 0))) {
         break;
       }
       iQuote++;
-      iPattern++;
-    } else if (pStrPattern[iPattern] == '\\' &&
-               iPattern + 1 < pStrPattern.size() &&
-               pStrPattern[iPattern + 1] == 'u') {
+      (*iPattern)++;
+    } else if (pStrPattern[*iPattern] == '\\' &&
+               (*iPattern + 1 < pStrPattern.size()) &&
+               pStrPattern[*iPattern + 1] == 'u') {
       int32_t iKeyValue = 0;
-      iPattern += 2;
-      for (size_t i = 0; iPattern < pStrPattern.size() && i < 4; ++i) {
-        wchar_t ch = pStrPattern[iPattern++];
+      *iPattern += 2;
+      for (int32_t i = 0; *iPattern < pStrPattern.size() && i < 4; ++i) {
+        wchar_t ch = pStrPattern[(*iPattern)++];
         iKeyValue = ConvertHex(iKeyValue, ch);
       }
       if (iKeyValue != 0)
         wsOutput += static_cast<wchar_t>(iKeyValue & 0x0000FFFF);
+
       continue;
     }
-    wsOutput += pStrPattern[iPattern++];
+    wsOutput += pStrPattern[(*iPattern)++];
   }
-  return {iPattern, wsOutput};
+  return wsOutput;
 }
 
-// Returns {next character position, literal text string}.
-std::pair<size_t, WideString> GetLiteralTextReverse(
-    pdfium::span<const wchar_t> pStrPattern,
-    size_t iPattern) {
+WideString GetLiteralTextReverse(pdfium::span<const wchar_t> pStrPattern,
+                                 size_t* iPattern) {
   WideString wsOutput;
-  if (iPattern >= pStrPattern.size() || pStrPattern[iPattern] != '\'')
-    return {iPattern, wsOutput};
+  if (*iPattern >= pStrPattern.size() || pStrPattern[*iPattern] != '\'')
+    return wsOutput;
 
-  iPattern--;
+  (*iPattern)--;
   int32_t iQuote = 1;
 
-  while (iPattern < pStrPattern.size()) {
-    if (pStrPattern[iPattern] == '\'') {
+  while (*iPattern < pStrPattern.size()) {
+    if (pStrPattern[*iPattern] == '\'') {
       iQuote++;
-      if (iPattern - 1 >= pStrPattern.size() ||
-          ((pStrPattern[iPattern - 1] != '\'') && (iQuote % 2 == 0))) {
+      if (*iPattern - 1 >= pStrPattern.size() ||
+          ((pStrPattern[*iPattern - 1] != '\'') && (iQuote % 2 == 0))) {
         break;
       }
       iQuote++;
-      iPattern--;
-    } else if (pStrPattern[iPattern] == '\\' &&
-               iPattern + 1 < pStrPattern.size() &&
-               pStrPattern[iPattern + 1] == 'u') {
-      iPattern--;
+      (*iPattern)--;
+    } else if (pStrPattern[*iPattern] == '\\' &&
+               *iPattern + 1 < pStrPattern.size() &&
+               pStrPattern[*iPattern + 1] == 'u') {
+      (*iPattern)--;
       int32_t iKeyValue = 0;
       int32_t iLen = wsOutput.GetLength();
       int32_t i = 1;
@@ -182,9 +179,9 @@ std::pair<size_t, WideString> GetLiteralTextReverse(
       }
       continue;
     }
-    wsOutput = pStrPattern[iPattern--] + wsOutput;
+    wsOutput = pStrPattern[(*iPattern)--] + wsOutput;
   }
-  return {iPattern, wsOutput};
+  return wsOutput;
 }
 
 bool GetNumericDotIndex(const WideString& wsNum,
@@ -194,7 +191,7 @@ bool GetNumericDotIndex(const WideString& wsNum,
   pdfium::span<const wchar_t> spDotSymbol = wsDotSymbol.AsSpan();
   for (size_t ccf = 0; ccf < spNum.size(); ++ccf) {
     if (spNum[ccf] == '\'') {
-      ccf = GetLiteralText(spNum, ccf).first;
+      GetLiteralText(spNum, &ccf);
       continue;
     }
     if (ccf + spDotSymbol.size() <= spNum.size() &&
@@ -244,8 +241,7 @@ bool ParseLocaleDate(const WideString& wsDate,
   WideStringView wsDateSymbols(gs_wsDateSymbols);
   while (*cc < spDate.size() && ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
-      WideString wsLiteral;
-      std::tie(ccf, wsLiteral) = GetLiteralText(spDatePattern, ccf);
+      WideString wsLiteral = GetLiteralText(spDatePattern, &ccf);
       int32_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > spDate.size() ||
           wcsncmp(spDate.data() + *cc, wsLiteral.c_str(), iLiteralLen) != 0) {
@@ -368,9 +364,8 @@ bool ParseLocaleTime(const WideString& wsTime,
   WideStringView wsTimeSymbols(gs_wsTimeSymbols);
   while (*cc < spTime.size() && ccf < spTimePattern.size()) {
     if (spTimePattern[ccf] == '\'') {
-      WideString wsLiteral;
-      std::tie(ccf, wsLiteral) = GetLiteralText(spTimePattern, ccf);
-      size_t iLiteralLen = wsLiteral.GetLength();
+      WideString wsLiteral = GetLiteralText(spTimePattern, &ccf);
+      int32_t iLiteralLen = wsLiteral.GetLength();
       if (*cc + iLiteralLen > spTime.size() ||
           wcsncmp(spTime.data() + *cc, wsLiteral.c_str(), iLiteralLen) != 0) {
         return false;
@@ -581,9 +576,7 @@ WideString DateFormat(const WideString& wsDatePattern,
   WideStringView wsDateSymbols(gs_wsDateSymbols);
   while (ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
-      WideString wsPiece;
-      std::tie(ccf, wsPiece) = GetLiteralText(spDatePattern, ccf);
-      wsResult += wsPiece;
+      wsResult += GetLiteralText(spDatePattern, &ccf);
       ccf++;
       continue;
     }
@@ -653,9 +646,7 @@ WideString TimeFormat(const WideString& wsTimePattern,
   WideStringView wsTimeSymbols(gs_wsTimeSymbols);
   while (ccf < spTimePattern.size()) {
     if (spTimePattern[ccf] == '\'') {
-      WideString wsPiece;
-      std::tie(ccf, wsPiece) = GetLiteralText(spTimePattern, ccf);
-      wsResult += wsPiece;
+      wsResult += GetLiteralText(spTimePattern, &ccf);
       ccf++;
       continue;
     }
@@ -866,7 +857,7 @@ FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory(
   WideStringView wsConstChars(gs_wsConstChars);
   while (ccf < spPattern.size()) {
     if (spPattern[ccf] == '\'') {
-      ccf = GetLiteralText(spPattern, ccf).first;
+      GetLiteralText(spPattern, &ccf);
     } else if (!bBraceOpen && !wsConstChars.Contains(spPattern[ccf])) {
       WideString wsCategory(spPattern[ccf]);
       ccf++;
@@ -922,7 +913,7 @@ WideString CFGAS_StringFormatter::GetTextFormat(
   while (ccf < spPattern.size()) {
     if (spPattern[ccf] == '\'') {
       int32_t iCurChar = ccf;
-      ccf = GetLiteralText(spPattern, ccf).first;
+      GetLiteralText(spPattern, &ccf);
       wsPurgePattern +=
           WideStringView(spPattern.data() + iCurChar, ccf - iCurChar + 1);
     } else if (!bBrackOpen && !wsConstChars.Contains(spPattern[ccf])) {
@@ -974,7 +965,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
   while (ccf < spPattern.size()) {
     if (spPattern[ccf] == '\'') {
       int32_t iCurChar = ccf;
-      ccf = GetLiteralText(spPattern, ccf).first;
+      GetLiteralText(spPattern, &ccf);
       *wsPurgePattern +=
           WideStringView(spPattern.data() + iCurChar, ccf - iCurChar + 1);
     } else if (!bBrackOpen && !wsConstChars.Contains(spPattern[ccf])) {
@@ -1083,9 +1074,8 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
   while (iPattern < spTextFormat.size() && iText < spSrcText.size()) {
     switch (spTextFormat[iPattern]) {
       case '\'': {
-        WideString wsLiteral;
-        std::tie(iPattern, wsLiteral) = GetLiteralText(spTextFormat, iPattern);
-        size_t iLiteralLen = wsLiteral.GetLength();
+        WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
+        int32_t iLiteralLen = wsLiteral.GetLength();
         if (iText + iLiteralLen > spSrcText.size() ||
             wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(), iLiteralLen) !=
                 0) {
@@ -1186,8 +1176,7 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
   while (ccf < spNumFormat.size() && cc < spSrcNum.size()) {
     switch (spNumFormat[ccf]) {
       case '\'': {
-        WideString wsLiteral;
-        std::tie(ccf, wsLiteral) = GetLiteralTextReverse(spNumFormat, ccf);
+        WideString wsLiteral = GetLiteralTextReverse(spNumFormat, &ccf);
         int32_t iLiteralLen = wsLiteral.GetLength();
         cc -= iLiteralLen - 1;
         if (cc >= spSrcNum.size() ||
@@ -1377,9 +1366,8 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
          cc < spSrcNum.size() && ccf < spNumFormat.size(); ++ccf) {
       switch (spNumFormat[ccf]) {
         case '\'': {
-          WideString wsLiteral;
-          std::tie(ccf, wsLiteral) = GetLiteralText(spNumFormat, ccf);
-          size_t iLiteralLen = wsLiteral.GetLength();
+          WideString wsLiteral = GetLiteralText(spNumFormat, &ccf);
+          int32_t iLiteralLen = wsLiteral.GetLength();
           if (cc + iLiteralLen > spSrcNum.size() ||
               wcsncmp(spSrcNum.data() + cc, wsLiteral.c_str(), iLiteralLen) !=
                   0) {
@@ -1569,7 +1557,7 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
   while (ccf < spPattern.size()) {
     if (spPattern[ccf] == '\'') {
       int32_t iCurChar = ccf;
-      ccf = GetLiteralText(spPattern, ccf).first;
+      GetLiteralText(spPattern, &ccf);
       wsTempPattern +=
           WideStringView(spPattern.data() + iCurChar, ccf - iCurChar + 1);
     } else if (!bBraceOpen && iFindCategory != 3 &&
@@ -1745,9 +1733,8 @@ bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText,
   size_t iPattern = 0;
   while (iPattern < spTextFormat.size() && iText < spSrcText.size()) {
     if (spTextFormat[iPattern] == '\'') {
-      WideString wsLiteral;
-      std::tie(iPattern, wsLiteral) = GetLiteralText(spTextFormat, iPattern);
-      size_t iLiteralLen = wsLiteral.GetLength();
+      WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
+      int32_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > spSrcText.size() ||
           wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(), iLiteralLen)) {
         return false;
@@ -1775,9 +1762,8 @@ bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText,
   size_t iPattern = 0;
   while (iPattern < spTextFormat.size() && iText < spSrcText.size()) {
     if (spTextFormat[iPattern] == '\'') {
-      WideString wsLiteral;
-      std::tie(iPattern, wsLiteral) = GetLiteralText(spTextFormat, iPattern);
-      size_t iLiteralLen = wsLiteral.GetLength();
+      WideString wsLiteral = GetLiteralText(spTextFormat, &iPattern);
+      int32_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > spSrcText.size() ||
           wcsncmp(spSrcText.data() + iText, wsLiteral.c_str(), iLiteralLen)) {
         return false;
@@ -1810,9 +1796,7 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
   while (iPattern < spTextFormat.size()) {
     switch (spTextFormat[iPattern]) {
       case '\'': {
-        WideString wsPiece;
-        std::tie(iPattern, wsPiece) = GetLiteralText(spTextFormat, iPattern);
-        *wsOutput += wsPiece;
+        *wsOutput += GetLiteralText(spTextFormat, &iPattern);
         iPattern++;
         break;
       }
@@ -1888,7 +1872,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
     for (size_t ccf = 0; ccf < dot_index_f; ++ccf) {
       switch (spNumFormat[ccf]) {
         case '\'':
-          ccf = GetLiteralText(spNumFormat, ccf).first;
+          GetLiteralText(spNumFormat, &ccf);
           break;
         case '9':
         case 'z':
@@ -2056,12 +2040,9 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
       case ')':
         wsOutput->InsertAtFront(bNeg ? L')' : L' ');
         break;
-      case '\'': {
-        WideString wsPiece;
-        std::tie(ccf, wsPiece) = GetLiteralTextReverse(spNumFormat, ccf);
-        *wsOutput = wsPiece + *wsOutput;
+      case '\'':
+        *wsOutput = GetLiteralTextReverse(spNumFormat, &ccf) + *wsOutput;
         break;
-      }
       default:
         wsOutput->InsertAtFront(spNumFormat[ccf]);
         break;
@@ -2105,12 +2086,9 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   cc = dot_index.value() + 1;
   for (size_t ccf = dot_index_f + 1; ccf < spNumFormat.size(); ++ccf) {
     switch (spNumFormat[ccf]) {
-      case '\'': {
-        WideString wsPiece;
-        std::tie(ccf, wsPiece) = GetLiteralText(spNumFormat, ccf);
-        *wsOutput += wsPiece;
+      case '\'':
+        *wsOutput += GetLiteralText(spNumFormat, &ccf);
         break;
-      }
       case '9':
         if (cc < spSrcNum.size()) {
           if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
@@ -2224,12 +2202,12 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
     return false;
 
   if (eCategory == FX_DATETIMETYPE_Unknown) {
-    if (eDateTimeType == FX_DATETIMETYPE_Unknown)
-      return false;
-
     if (eDateTimeType == FX_DATETIMETYPE_Time)
       wsTimePattern = std::move(wsDatePattern);
+
     eCategory = eDateTimeType;
+    if (eCategory == FX_DATETIMETYPE_Unknown)
+      return false;
   }
 
   CFX_DateTime dt;
@@ -2247,49 +2225,52 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
                                          pLocale);
       return true;
     }
-    return false;
-  }
+  } else {
+    pdfium::span<const wchar_t> wsSrcDate =
+        wsSrcDateTime.AsSpan().first(iT.value());
+    pdfium::span<const wchar_t> wsSrcTime =
+        wsSrcDateTime.AsSpan().subspan(iT.value() + 1);
+    if (wsSrcDate.empty() || wsSrcTime.empty())
+      return false;
 
-  pdfium::span<const wchar_t> wsSrcDate =
-      wsSrcDateTime.AsSpan().first(iT.value());
-  pdfium::span<const wchar_t> wsSrcTime =
-      wsSrcDateTime.AsSpan().subspan(iT.value() + 1);
-  if (wsSrcDate.empty() || wsSrcTime.empty())
-    return false;
-
-  if (FX_DateFromCanonical(wsSrcDate, &dt) &&
-      FX_TimeFromCanonical(pLocale, wsSrcTime, &dt)) {
-    *wsOutput =
-        FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,
-                               eCategory != FX_DATETIMETYPE_TimeDate, pLocale);
-    return true;
+    if (FX_DateFromCanonical(wsSrcDate, &dt) &&
+        FX_TimeFromCanonical(pLocale, wsSrcTime, &dt)) {
+      *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,
+                                         eCategory != FX_DATETIMETYPE_TimeDate,
+                                         pLocale);
+      return true;
+    }
   }
   return false;
 }
 
 bool CFGAS_StringFormatter::FormatZero(const WideString& wsPattern,
                                        WideString* wsOutput) const {
-  return FormatZeroOrNull(L"zero", wsPattern, wsOutput);
+  if (wsPattern.IsEmpty())
+    return false;
+
+  WideString wsTextFormat = GetTextFormat(wsPattern, L"zero");
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  for (size_t iPattern = 0; iPattern < spTextFormat.size(); ++iPattern) {
+    if (spTextFormat[iPattern] == '\'') {
+      *wsOutput += GetLiteralText(spTextFormat, &iPattern);
+      continue;
+    }
+    *wsOutput += spTextFormat[iPattern];
+  }
+  return true;
 }
 
 bool CFGAS_StringFormatter::FormatNull(const WideString& wsPattern,
                                        WideString* wsOutput) const {
-  return FormatZeroOrNull(L"null", wsPattern, wsOutput);
-}
-
-bool CFGAS_StringFormatter::FormatZeroOrNull(const wchar_t* what,
-                                             const WideString& wsPattern,
-                                             WideString* wsOutput) const {
   if (wsPattern.IsEmpty())
     return false;
 
-  WideString wsTextFormat = GetTextFormat(wsPattern, what);
+  WideString wsTextFormat = GetTextFormat(wsPattern, L"null");
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
   for (size_t iPattern = 0; iPattern < spTextFormat.size(); ++iPattern) {
     if (spTextFormat[iPattern] == '\'') {
-      WideString wsPiece;
-      std::tie(iPattern, wsPiece) = GetLiteralText(spTextFormat, iPattern);
-      *wsOutput += wsPiece;
+      *wsOutput += GetLiteralText(spTextFormat, &iPattern);
       continue;
     }
     *wsOutput += spTextFormat[iPattern];
