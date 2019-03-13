@@ -141,13 +141,13 @@ struct AbbrPair {
   const char* full_name;
 };
 
-const AbbrPair InlineKeyAbbr[] = {
+const AbbrPair kInlineKeyAbbr[] = {
     {"BPC", "BitsPerComponent"}, {"CS", "ColorSpace"}, {"D", "Decode"},
     {"DP", "DecodeParms"},       {"F", "Filter"},      {"H", "Height"},
     {"IM", "ImageMask"},         {"I", "Interpolate"}, {"W", "Width"},
 };
 
-const AbbrPair InlineValueAbbr[] = {
+const AbbrPair kInlineValueAbbr[] = {
     {"G", "DeviceGray"},       {"RGB", "DeviceRGB"},
     {"CMYK", "DeviceCMYK"},    {"I", "Indexed"},
     {"AHx", "ASCIIHexDecode"}, {"A85", "ASCII85Decode"},
@@ -171,72 +171,77 @@ ByteStringView FindFullName(const AbbrPair* table,
   return it != table + count ? ByteStringView(it->full_name) : ByteStringView();
 }
 
-void ReplaceAbbr(CPDF_Object* pObj) {
-  switch (pObj->GetType()) {
-    case CPDF_Object::kDictionary: {
-      std::vector<AbbrReplacementOp> replacements;
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
-      {
-        CPDF_DictionaryLocker locker(pDict);
-        for (const auto& it : locker) {
-          ByteString key = it.first;
-          CPDF_Object* value = it.second.get();
-          ByteStringView fullname = FindFullName(
-              InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), key.AsStringView());
-          if (!fullname.IsEmpty()) {
-            AbbrReplacementOp op;
-            op.is_replace_key = true;
-            op.key = std::move(key);
-            op.replacement = fullname;
-            replacements.push_back(op);
-            key = fullname;
-          }
+void ReplaceAbbr(CPDF_Object* pObj);
 
-          if (value->IsName()) {
-            ByteString name = value->GetString();
-            fullname =
-                FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr),
-                             name.AsStringView());
-            if (!fullname.IsEmpty()) {
-              AbbrReplacementOp op;
-              op.is_replace_key = false;
-              op.key = key;
-              op.replacement = fullname;
-              replacements.push_back(op);
-            }
-          } else {
-            ReplaceAbbr(value);
-          }
+void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
+  std::vector<AbbrReplacementOp> replacements;
+  {
+    CPDF_DictionaryLocker locker(pDict);
+    for (const auto& it : locker) {
+      ByteString key = it.first;
+      CPDF_Object* value = it.second.get();
+      ByteStringView fullname = FindFullName(
+          kInlineKeyAbbr, FX_ArraySize(kInlineKeyAbbr), key.AsStringView());
+      if (!fullname.IsEmpty()) {
+        AbbrReplacementOp op;
+        op.is_replace_key = true;
+        op.key = std::move(key);
+        op.replacement = fullname;
+        replacements.push_back(op);
+        key = fullname;
+      }
+
+      if (value->IsName()) {
+        ByteString name = value->GetString();
+        fullname =
+            FindFullName(kInlineValueAbbr, FX_ArraySize(kInlineValueAbbr),
+                         name.AsStringView());
+        if (!fullname.IsEmpty()) {
+          AbbrReplacementOp op;
+          op.is_replace_key = false;
+          op.key = key;
+          op.replacement = fullname;
+          replacements.push_back(op);
         }
+      } else {
+        ReplaceAbbr(value);
       }
-      for (const auto& op : replacements) {
-        if (op.is_replace_key)
-          pDict->ReplaceKey(op.key, ByteString(op.replacement));
-        else
-          pDict->SetNewFor<CPDF_Name>(op.key, ByteString(op.replacement));
-      }
-      break;
     }
-    case CPDF_Object::kArray: {
-      CPDF_Array* pArray = pObj->AsArray();
-      for (size_t i = 0; i < pArray->size(); i++) {
-        CPDF_Object* pElement = pArray->GetObjectAt(i);
-        if (pElement->IsName()) {
-          ByteString name = pElement->GetString();
-          ByteStringView fullname =
-              FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr),
-                           name.AsStringView());
-          if (!fullname.IsEmpty())
-            pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
-        } else {
-          ReplaceAbbr(pElement);
-        }
-      }
-      break;
-    }
-    default:
-      break;
   }
+  for (const auto& op : replacements) {
+    if (op.is_replace_key)
+      pDict->ReplaceKey(op.key, ByteString(op.replacement));
+    else
+      pDict->SetNewFor<CPDF_Name>(op.key, ByteString(op.replacement));
+  }
+}
+
+void ReplaceAbbrInArray(CPDF_Array* pArray) {
+  for (size_t i = 0; i < pArray->size(); ++i) {
+    CPDF_Object* pElement = pArray->GetObjectAt(i);
+    if (pElement->IsName()) {
+      ByteString name = pElement->GetString();
+      ByteStringView fullname =
+          FindFullName(kInlineValueAbbr, FX_ArraySize(kInlineValueAbbr),
+                       name.AsStringView());
+      if (!fullname.IsEmpty())
+        pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
+    } else {
+      ReplaceAbbr(pElement);
+    }
+  }
+}
+
+void ReplaceAbbr(CPDF_Object* pObj) {
+  CPDF_Dictionary* pDict = pObj->AsDictionary();
+  if (pDict) {
+    ReplaceAbbrInDictionary(pDict);
+    return;
+  }
+
+  CPDF_Array* pArray = pObj->AsArray();
+  if (pArray)
+    ReplaceAbbrInArray(pArray);
 }
 
 }  // namespace
@@ -1622,13 +1627,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
 // static
 ByteStringView CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), abbr);
+  return FindFullName(kInlineKeyAbbr, FX_ArraySize(kInlineKeyAbbr), abbr);
 }
 
 // static
 ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr), abbr);
+  return FindFullName(kInlineValueAbbr, FX_ArraySize(kInlineValueAbbr), abbr);
 }
 
 CPDF_StreamContentParser::ContentParam::ContentParam() {}

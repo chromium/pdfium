@@ -51,9 +51,10 @@ class CPDF_StreamParser {
   ByteString ReadString();
   ByteString ReadHexString();
   bool PositionIsInBounds() const;
+  bool WordBufferMatches(const char* pWord) const;
 
-  uint32_t m_Pos = 0;       // Current byte position within m_pBuf.
-  uint32_t m_WordSize = 0;  // Current byte position within m_WordBuffer.
+  uint32_t m_Pos = 0;       // Current byte position within |m_pBuf|.
+  uint32_t m_WordSize = 0;  // Current byte position within |m_WordBuffer|.
   WeakPtr<ByteStringPool> m_pPool;
   std::unique_ptr<CPDF_Object> m_pLastObj;
   pdfium::span<const uint8_t> m_pBuf;
