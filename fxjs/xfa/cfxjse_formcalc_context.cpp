@@ -3948,23 +3948,27 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
       return;
     }
     default: {
-      WideString wsTestPattern = L"num{" + wsPattern + L"}";
-      CXFA_LocaleValue localeValue(XFA_VT_FLOAT, wsValue, wsTestPattern,
-                                   pLocale, pMgr);
-      if (localeValue.IsValid()) {
-        args.GetReturnValue()->SetDouble(localeValue.GetDoubleNum());
-        return;
+      {
+        WideString wsTestPattern = L"num{" + wsPattern + L"}";
+        CXFA_LocaleValue localeValue(XFA_VT_FLOAT, wsValue, wsTestPattern,
+                                     pLocale, pMgr);
+        if (localeValue.IsValid()) {
+          args.GetReturnValue()->SetDouble(localeValue.GetDoubleNum());
+          return;
+        }
       }
 
-      wsTestPattern = L"text{" + wsPattern + L"}";
-      CXFA_LocaleValue localeValue2(XFA_VT_TEXT, wsValue, wsTestPattern,
-                                    pLocale, pMgr);
-      if (!localeValue2.IsValid()) {
-        args.GetReturnValue()->SetString("");
-        return;
+      {
+        WideString wsTestPattern = L"text{" + wsPattern + L"}";
+        CXFA_LocaleValue localeValue(XFA_VT_TEXT, wsValue, wsTestPattern,
+                                     pLocale, pMgr);
+        if (localeValue.IsValid()) {
+          args.GetReturnValue()->SetString(
+              localeValue.GetValue().ToUTF8().AsStringView());
+          return;
+        }
       }
-      args.GetReturnValue()->SetString(
-          localeValue2.GetValue().ToUTF8().AsStringView());
+      args.GetReturnValue()->SetString("");
       return;
     }
   }
