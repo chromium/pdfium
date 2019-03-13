@@ -15,3 +15,5 @@ Local Modifications:
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0027-build-config.patch: #define variables so their value can be used by #if.
 0028-nstrips-OOM.patch: return error for excess number of tiles/strips.
+0029-CVE-2018-17000.patch: Avoid a null pointer dereference in TIFFWriteDirectoryTagTransferfunction().
+0030-CVE-2018-19210.patch: Avoid a null pointer dereference inside _TIFFVSetField().
