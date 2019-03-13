@@ -20,7 +20,7 @@ CBC_OneDimEANWriter* CBC_EANCode::GetOneDimEANWriter() {
 }
 
 bool CBC_EANCode::Encode(WideStringView contents) {
-  if (contents.IsEmpty())
+  if (contents.IsEmpty() || contents.GetLength() > kMaxInputLengthBytes)
     return false;
 
   BCFORMAT format = GetFormat();

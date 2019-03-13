@@ -32,7 +32,7 @@ CBC_Code128::CBC_Code128(BC_TYPE type)
 CBC_Code128::~CBC_Code128() {}
 
 bool CBC_Code128::Encode(WideStringView contents) {
-  if (contents.IsEmpty())
+  if (contents.IsEmpty() || contents.GetLength() > kMaxInputLengthBytes)
     return false;
 
   BCFORMAT format = BCFORMAT_CODE_128;

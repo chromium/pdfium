@@ -18,6 +18,10 @@ class CFX_Font;
 
 class CBC_OneCode : public CBC_CodeBase {
  public:
+  // Limit the size of 1D barcodes. Typical 1D barcodes are short so this should
+  // be sufficient for most use cases.
+  static constexpr size_t kMaxInputLengthBytes = 8192;
+
   explicit CBC_OneCode(std::unique_ptr<CBC_Writer> pWriter);
   ~CBC_OneCode() override;
 
