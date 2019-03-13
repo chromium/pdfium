@@ -771,15 +771,15 @@ bool IsIsoDateTimeFormat(const char* pData,
                          &iSecond, &iMilliSecond, &iZoneHour, &iZoneMinute);
 }
 
-int32_t DateString2Num(ByteStringView szDateString) {
-  int32_t iLength = szDateString.GetLength();
+int32_t DateString2Num(ByteStringView szDate) {
+  int32_t iLength = szDate.GetLength();
   int32_t iYear = 0;
   int32_t iMonth = 0;
   int32_t iDay = 0;
   if (iLength <= 10) {
     int32_t iStyle = -1;
-    if (!IsIsoDateFormat(szDateString.unterminated_c_str(), iLength, &iStyle,
-                         &iYear, &iMonth, &iDay)) {
+    if (!IsIsoDateFormat(szDate.unterminated_c_str(), iLength, &iStyle, &iYear,
+                         &iMonth, &iDay)) {
       return 0;
     }
   } else {
@@ -789,7 +789,7 @@ int32_t DateString2Num(ByteStringView szDateString) {
     int32_t iMilliSecond = 0;
     int32_t iZoneHour = 0;
     int32_t iZoneMinute = 0;
-    if (!IsIsoDateTimeFormat(szDateString.unterminated_c_str(), iLength, &iYear,
+    if (!IsIsoDateTimeFormat(szDate.unterminated_c_str(), iLength, &iYear,
                              &iMonth, &iDay, &iHour, &iMinute, &iSecond,
                              &iMilliSecond, &iZoneHour, &iZoneMinute)) {
       return 0;
@@ -870,9 +870,9 @@ bool HTMLCode2STR(uint32_t iCode, WideString* wsHTMLReserve) {
   return false;
 }
 
-WideString DecodeURL(const WideString& wsURLString) {
-  const wchar_t* pData = wsURLString.c_str();
-  size_t iLen = wsURLString.GetLength();
+WideString DecodeURL(const WideString& wsURL) {
+  const wchar_t* pData = wsURL.c_str();
+  size_t iLen = wsURL.GetLength();
   CFX_WideTextBuf wsResultBuf;
   for (size_t i = 0; i < iLen; ++i) {
     wchar_t ch = pData[i];
@@ -899,9 +899,9 @@ WideString DecodeURL(const WideString& wsURLString) {
   return wsResultBuf.MakeString();
 }
 
-WideString DecodeMLInternal(const WideString& wsHTMLString, bool bIsHTML) {
-  const wchar_t* pData = wsHTMLString.c_str();
-  size_t iLen = wsHTMLString.GetLength();
+WideString DecodeMLInternal(const WideString& wsHTML, bool bIsHTML) {
+  const wchar_t* pData = wsHTML.c_str();
+  size_t iLen = wsHTML.GetLength();
   CFX_WideTextBuf wsResultBuf;
   for (size_t i = 0; i < iLen; ++i) {
     wchar_t ch = pData[i];
@@ -968,27 +968,27 @@ WideString DecodeMLInternal(const WideString& wsHTMLString, bool bIsHTML) {
   return wsResultBuf.MakeString();
 }
 
-WideString DecodeHTML(const WideString& wsHTMLString) {
-  return DecodeMLInternal(wsHTMLString, true);
+WideString DecodeHTML(const WideString& wsHTML) {
+  return DecodeMLInternal(wsHTML, true);
 }
 
-WideString DecodeXML(const WideString& wsXMLString) {
-  return DecodeMLInternal(wsXMLString, false);
+WideString DecodeXML(const WideString& wsXML) {
+  return DecodeMLInternal(wsXML, false);
 }
 
-WideString EncodeURL(const ByteString& szURLString) {
+WideString EncodeURL(const ByteString& szURL) {
   static const wchar_t kStrUnsafe[] = {' ', '<',  '>', '"', '#', '%', '{', '}',
                                        '|', '\\', '^', '~', '[', ']', '`'};
   static const wchar_t kStrReserved[] = {';', '/', '?', ':', '@', '=', '&'};
   static const wchar_t kStrSpecial[] = {'$',  '-', '+', '!', '*',
                                         '\'', '(', ')', ','};
 
-  WideString wsURLString = WideString::FromUTF8(szURLString.AsStringView());
+  WideString wsURL = WideString::FromUTF8(szURL.AsStringView());
   CFX_WideTextBuf wsResultBuf;
   wchar_t strEncode[4];
   strEncode[0] = '%';
   strEncode[3] = 0;
-  for (wchar_t ch : wsURLString) {
+  for (wchar_t ch : wsURL) {
     size_t i = 0;
     size_t iCount = FX_ArraySize(kStrUnsafe);
     while (i < iCount) {
@@ -1074,8 +1074,8 @@ WideString EncodeURL(const ByteString& szURLString) {
   return wsResultBuf.MakeString();
 }
 
-WideString EncodeHTML(const ByteString& szHTMLString) {
-  WideString wsHTMLString = WideString::FromUTF8(szHTMLString.AsStringView());
+WideString EncodeHTML(const ByteString& szHTML) {
+  WideString wsHTML = WideString::FromUTF8(szHTML.AsStringView());
   wchar_t strEncode[9];
   strEncode[0] = '&';
   strEncode[1] = '#';
@@ -1085,9 +1085,9 @@ WideString EncodeHTML(const ByteString& szHTMLString) {
   strEncode[7] = ';';
   strEncode[8] = 0;
   CFX_WideTextBuf wsResultBuf;
-  int32_t iLen = wsHTMLString.GetLength();
+  int32_t iLen = wsHTML.GetLength();
   int32_t i = 0;
-  const wchar_t* pData = wsHTMLString.c_str();
+  const wchar_t* pData = wsHTML.c_str();
   while (i < iLen) {
     uint32_t ch = pData[i];
     WideString htmlReserve;
@@ -1119,8 +1119,8 @@ WideString EncodeHTML(const ByteString& szHTMLString) {
   return wsResultBuf.MakeString();
 }
 
-WideString EncodeXML(const ByteString& szXMLString) {
-  WideString wsXMLString = WideString::FromUTF8(szXMLString.AsStringView());
+WideString EncodeXML(const ByteString& szXML) {
+  WideString wsXML = WideString::FromUTF8(szXML.AsStringView());
   CFX_WideTextBuf wsResultBuf;
   wchar_t strEncode[9];
   strEncode[0] = '&';
@@ -1130,7 +1130,7 @@ WideString EncodeXML(const ByteString& szXMLString) {
   strEncode[6] = 0;
   strEncode[7] = ';';
   strEncode[8] = 0;
-  for (wchar_t ch : wsXMLString) {
+  for (wchar_t ch : wsXML) {
     switch (ch) {
       case '"':
         wsResultBuf.AppendChar('&');
@@ -1887,11 +1887,10 @@ void CFXJSE_FormCalcContext::Date2Num(CFXJSE_Value* pThis,
     localString = ValueToUTF8String(localValue.get());
   }
 
-  ByteString szIsoDateString =
+  ByteString szIsoDate =
       Local2IsoDate(pThis, dateString.AsStringView(),
                     formatString.AsStringView(), localString.AsStringView());
-  args.GetReturnValue()->SetInteger(
-      DateString2Num(szIsoDateString.AsStringView()));
+  args.GetReturnValue()->SetInteger(DateString2Num(szIsoDate.AsStringView()));
 }
 
 // static
@@ -1945,8 +1944,8 @@ void CFXJSE_FormCalcContext::IsoDate2Num(CFXJSE_Value* pThis,
     args.GetReturnValue()->SetNull();
     return;
   }
-  ByteString szArgString = ValueToUTF8String(argOne.get());
-  args.GetReturnValue()->SetInteger(DateString2Num(szArgString.AsStringView()));
+  ByteString szArg = ValueToUTF8String(argOne.get());
+  args.GetReturnValue()->SetInteger(DateString2Num(szArg.AsStringView()));
 }
 
 // static
@@ -1967,16 +1966,16 @@ void CFXJSE_FormCalcContext::IsoTime2Num(CFXJSE_Value* pThis,
 
   CXFA_Document* pDoc = pContext->GetDocument();
   CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
-  ByteString szArgString = ValueToUTF8String(argOne.get());
-  auto pos = szArgString.Find('T', 0);
-  if (!pos.has_value() || pos.value() == szArgString.GetLength() - 1) {
+  ByteString szArg = ValueToUTF8String(argOne.get());
+  auto pos = szArg.Find('T', 0);
+  if (!pos.has_value() || pos.value() == szArg.GetLength() - 1) {
     args.GetReturnValue()->SetInteger(0);
     return;
   }
-  szArgString = szArgString.Right(szArgString.GetLength() - (pos.value() + 1));
+  szArg = szArg.Right(szArg.GetLength() - (pos.value() + 1));
 
-  CXFA_LocaleValue timeValue(
-      XFA_VT_TIME, WideString::FromUTF8(szArgString.AsStringView()), pMgr);
+  CXFA_LocaleValue timeValue(XFA_VT_TIME,
+                             WideString::FromUTF8(szArg.AsStringView()), pMgr);
   if (!timeValue.IsValid()) {
     args.GetReturnValue()->SetInteger(0);
     return;
@@ -2210,11 +2209,11 @@ void CFXJSE_FormCalcContext::Num2Date(CFXJSE_Value* pThis,
     }
   }
 
-  ByteString szLocalDateString = IsoDate2Local(
+  ByteString szLocalDate = IsoDate2Local(
       pThis,
       ByteString::Format("%d%02d%02d", iYear + i, iMonth, iDay).AsStringView(),
       formatString.AsStringView(), localString.AsStringView());
-  args.GetReturnValue()->SetString(szLocalDateString.AsStringView());
+  args.GetReturnValue()->SetString(szLocalDate.AsStringView());
 }
 
 // static
@@ -2258,10 +2257,9 @@ void CFXJSE_FormCalcContext::Num2GMTime(CFXJSE_Value* pThis,
     localString = ValueToUTF8String(localValue.get());
   }
 
-  ByteString szGMTTimeString =
-      Num2AllTime(pThis, iTime, formatString.AsStringView(),
-                  localString.AsStringView(), true);
-  args.GetReturnValue()->SetString(szGMTTimeString.AsStringView());
+  ByteString szGMTTime = Num2AllTime(pThis, iTime, formatString.AsStringView(),
+                                     localString.AsStringView(), true);
+  args.GetReturnValue()->SetString(szGMTTime.AsStringView());
 }
 
 // static
@@ -2305,10 +2303,10 @@ void CFXJSE_FormCalcContext::Num2Time(CFXJSE_Value* pThis,
     localString = ValueToUTF8String(localValue.get());
   }
 
-  ByteString szLocalTimeString = Num2AllTime(pThis, static_cast<int32_t>(fTime),
-                                             formatString.AsStringView(),
-                                             localString.AsStringView(), false);
-  args.GetReturnValue()->SetString(szLocalTimeString.AsStringView());
+  ByteString szLocalTime = Num2AllTime(pThis, static_cast<int32_t>(fTime),
+                                       formatString.AsStringView(),
+                                       localString.AsStringView(), false);
+  args.GetReturnValue()->SetString(szLocalTime.AsStringView());
 }
 
 // static
@@ -3302,10 +3300,10 @@ void CFXJSE_FormCalcContext::UnitType(CFXJSE_Value* pThis,
     VALUETYPE_ISIN,
   };
   unitspanString.MakeLower();
-  WideString wsTypeString = WideString::FromUTF8(unitspanString.AsStringView());
-  const wchar_t* pData = wsTypeString.c_str();
+  WideString wsType = WideString::FromUTF8(unitspanString.AsStringView());
+  const wchar_t* pData = wsType.c_str();
   int32_t u = 0;
-  int32_t uLen = wsTypeString.GetLength();
+  int32_t uLen = wsType.GetLength();
   while (IsWhitespace(pData[u]))
     u++;
 
@@ -3805,8 +3803,8 @@ void CFXJSE_FormCalcContext::Lower(CFXJSE_Value* pThis,
 
   CFX_WideTextBuf lowStringBuf;
   ByteString argString = ValueToUTF8String(argOne.get());
-  WideString wsArgString = WideString::FromUTF8(argString.AsStringView());
-  for (wchar_t ch : wsArgString) {
+  WideString wsArg = WideString::FromUTF8(argString.AsStringView());
+  for (wchar_t ch : wsArg) {
     if ((ch >= 0x41 && ch <= 0x5A) || (ch >= 0xC0 && ch <= 0xDE))
       ch += 32;
     else if (ch == 0x100 || ch == 0x102 || ch == 0x104)
@@ -4287,8 +4285,8 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
 
   int32_t iStart = 0;
   int32_t iCount = 0;
-  ByteString szSourceStr = ValueToUTF8String(stringValue.get());
-  int32_t iLength = szSourceStr.GetLength();
+  ByteString szSource = ValueToUTF8String(stringValue.get());
+  int32_t iLength = szSource.GetLength();
   if (iLength == 0) {
     args.GetReturnValue()->SetString("");
     return;
@@ -4300,8 +4298,7 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
       std::max(0, static_cast<int32_t>(ValueToFloat(pThis, endValue.get())));
 
   iStart -= 1;
-  args.GetReturnValue()->SetString(
-      szSourceStr.Mid(iStart, iCount).AsStringView());
+  args.GetReturnValue()->SetString(szSource.Mid(iStart, iCount).AsStringView());
 }
 
 // static
@@ -4340,10 +4337,10 @@ void CFXJSE_FormCalcContext::Upper(CFXJSE_Value* pThis,
 
   CFX_WideTextBuf upperStringBuf;
   ByteString argString = ValueToUTF8String(argOne.get());
-  WideString wsArgString = WideString::FromUTF8(argString.AsStringView());
-  const wchar_t* pData = wsArgString.c_str();
+  WideString wsArg = WideString::FromUTF8(argString.AsStringView());
+  const wchar_t* pData = wsArg.c_str();
   size_t i = 0;
-  while (i < wsArgString.GetLength()) {
+  while (i < wsArg.GetLength()) {
     int32_t ch = pData[i];
     if ((ch >= 0x61 && ch <= 0x7A) || (ch >= 0xE0 && ch <= 0xFE))
       ch -= 32;
