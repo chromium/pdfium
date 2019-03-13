@@ -45,6 +45,7 @@ group("fuzzers") {
         ":pdf_codec_jpeg_fuzzer_src",
         ":pdf_css_fuzzer_src",
         ":pdf_fm2js_fuzzer_src",
+        ":pdf_formcalc_context_fuzzer_src",
         ":pdf_formcalc_fuzzer_src",
         ":pdfium_xfa_fuzzer_src",
       ]
@@ -258,6 +259,17 @@ if (pdf_enable_v8) {
       ]
       deps = [
         "../../fxjs",
+      ]
+    }
+
+    pdfium_public_fuzzer("pdf_formcalc_context_fuzzer_src") {
+      sources = [
+        "pdf_formcalc_context_fuzzer.cc",
+      ]
+      deps = [
+        "../../fpdfsdk/fpdfxfa",
+        "../../fxjs",
+        "../../xfa/fxfa",
       ]
     }
 

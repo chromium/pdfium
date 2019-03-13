@@ -223,6 +223,7 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
     }
     RenderPage(doc.get(), form.get(), i, render_flags, form_flags);
   }
+  OnRenderFinished(doc.get());
   FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
 }
 
