@@ -1646,3 +1646,10 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
 
   context->SetEventParam(nullptr);
 }
+
+// Should not crash.
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, BUG_1223) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  EXPECT_FALSE(Execute("!.somExpression=0"));
+}

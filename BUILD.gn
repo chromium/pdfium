@@ -349,6 +349,7 @@ test("pdfium_embeddertests") {
 
   if (pdf_enable_xfa) {
     deps += [
+      "fpdfsdk/fpdfxfa:embeddertests",
       "xfa/fwl:embeddertests",
       "xfa/fxfa/parser:embeddertests",
     ]

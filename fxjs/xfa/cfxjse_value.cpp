@@ -144,9 +144,9 @@ bool CFXJSE_Value::SetObjectProperty(ByteStringView szPropName,
           .ToLocalChecked();
   v8::Local<v8::Value> hPropValue =
       v8::Local<v8::Value>::New(GetIsolate(), lpPropValue->DirectGetValue());
-  return hObject.As<v8::Object>()
-      ->Set(GetIsolate()->GetCurrentContext(), hPropName, hPropValue)
-      .FromJust();
+  v8::Maybe<bool> result = hObject.As<v8::Object>()->Set(
+      GetIsolate()->GetCurrentContext(), hPropName, hPropValue);
+  return result.IsJust() && result.FromJust();
 }
 
 bool CFXJSE_Value::GetObjectProperty(ByteStringView szPropName,
