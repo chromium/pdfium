@@ -42,10 +42,11 @@ class CFGAS_StringFormatterTest : public testing::Test {
 
   // Note, this re-creates the fmt on each call. If you need to multiple
   // times store it locally.
-  CFGAS_StringFormatter* fmt(const WideString& locale) {
+  CFGAS_StringFormatter* fmt(const WideString& locale,
+                             const WideString& pattern) {
     fmt_.reset();  // Can't outlive |mgr_|.
     mgr_ = pdfium::MakeUnique<CXFA_LocaleMgr>(nullptr, locale);
-    fmt_ = pdfium::MakeUnique<CFGAS_StringFormatter>(mgr_.get());
+    fmt_ = pdfium::MakeUnique<CFGAS_StringFormatter>(mgr_.get(), pattern);
     return fmt_.get();
   }
 
@@ -113,9 +114,9 @@ TEST_F(CFGAS_StringFormatterTest, DateFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatDateTime(tests[i].input, tests[i].pattern,
-                                     FX_DATETIMETYPE_Date, &result));
+    EXPECT_TRUE(
+        fmt(tests[i].locale, tests[i].pattern)
+            ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_Date, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -162,9 +163,9 @@ TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatDateTime(tests[i].input, tests[i].pattern,
-                                     FX_DATETIMETYPE_Time, &result));
+    EXPECT_TRUE(
+        fmt(tests[i].locale, tests[i].pattern)
+            ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_Time, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 
@@ -192,9 +193,9 @@ TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatDateTime(tests[i].input, tests[i].pattern,
-                                     FX_DATETIMETYPE_TimeDate, &result));
+    EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
+                    ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_TimeDate,
+                                     &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -253,9 +254,9 @@ TEST_F(CFGAS_StringFormatterTest, DateParse) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     CFX_DateTime result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->ParseDateTime(tests[i].input, tests[i].pattern,
-                                    FX_DATETIMETYPE_Date, &result));
+    EXPECT_TRUE(
+        fmt(tests[i].locale, tests[i].pattern)
+            ->ParseDateTime(tests[i].input, FX_DATETIMETYPE_Date, &result));
     EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
@@ -436,7 +437,7 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
 
   for (const auto& test : tests) {
     WideString result;
-    EXPECT_TRUE(fmt(test.locale)->ParseNum(test.input, test.pattern, &result))
+    EXPECT_TRUE(fmt(test.locale, test.pattern)->ParseNum(test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
     EXPECT_STREQ(test.output, result.c_str())
         << " TEST: " << test.input << ", " << test.pattern;
@@ -444,7 +445,7 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
 
   for (const auto& test : failures) {
     WideString result;
-    EXPECT_FALSE(fmt(test.locale)->ParseNum(test.input, test.pattern, &result))
+    EXPECT_FALSE(fmt(test.locale, test.pattern)->ParseNum(test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
   }
 }
@@ -558,7 +559,7 @@ TEST_F(CFGAS_StringFormatterTest, NumFormat) {
 
   for (const auto& test : tests) {
     WideString result;
-    EXPECT_TRUE(fmt(test.locale)->FormatNum(test.input, test.pattern, &result))
+    EXPECT_TRUE(fmt(test.locale, test.pattern)->FormatNum(test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
     EXPECT_STREQ(test.output, result.c_str())
         << " TEST: " << test.input << ", " << test.pattern;
@@ -584,8 +585,8 @@ TEST_F(CFGAS_StringFormatterTest, TextParse) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->ParseText(tests[i].input, tests[i].pattern, &result));
+    EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
+                    ->ParseText(tests[i].input, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -593,7 +594,7 @@ TEST_F(CFGAS_StringFormatterTest, TextParse) {
 TEST_F(CFGAS_StringFormatterTest, InvalidTextParse) {
   // Input does not match mask.
   WideString result;
-  EXPECT_FALSE(fmt(L"en")->ParseText(L"123-4567-8", L"AAA-9999-X", &result));
+  EXPECT_FALSE(fmt(L"en", L"AAA-9999-X")->ParseText(L"123-4567-8", &result));
 }
 
 TEST_F(CFGAS_StringFormatterTest, TextFormat) {
@@ -614,8 +615,8 @@ TEST_F(CFGAS_StringFormatterTest, TextFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)
-                    ->FormatText(tests[i].input, tests[i].pattern, &result));
+    EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
+                    ->FormatText(tests[i].input, &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -632,7 +633,7 @@ TEST_F(CFGAS_StringFormatterTest, NullParse) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     EXPECT_TRUE(
-        fmt(tests[i].locale)->ParseNull(tests[i].input, tests[i].pattern))
+        fmt(tests[i].locale, tests[i].pattern)->ParseNull(tests[i].input))
         << " TEST: " << i;
   }
 }
@@ -646,7 +647,7 @@ TEST_F(CFGAS_StringFormatterTest, NullFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(fmt(tests[i].locale)->FormatNull(tests[i].pattern, &result));
+    EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)->FormatNull(&result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
@@ -662,7 +663,7 @@ TEST_F(CFGAS_StringFormatterTest, ZeroParse) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     EXPECT_TRUE(
-        fmt(tests[i].locale)->ParseZero(tests[i].input, tests[i].pattern))
+        fmt(tests[i].locale, tests[i].pattern)->ParseZero(tests[i].input))
         << " TEST: " << i;
   }
 }
@@ -682,26 +683,26 @@ TEST_F(CFGAS_StringFormatterTest, ZeroFormat) {
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
-    EXPECT_TRUE(
-        fmt(tests[i].locale)
-            ->FormatZero(/* tests[i].input,*/ tests[i].pattern, &result));
+    EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)->FormatZero(&result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
   }
 }
 
 TEST_F(CFGAS_StringFormatterTest, GetCategory) {
-  CFGAS_StringFormatter* f = fmt(L"en");
-
-  EXPECT_EQ(FX_LOCALECATEGORY_Unknown, f->GetCategory(L"'just text'"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Null, f->GetCategory(L"null{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Zero, f->GetCategory(L"zero{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Num, f->GetCategory(L"num{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Text, f->GetCategory(L"text{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_DateTime, f->GetCategory(L"datetime{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Time, f->GetCategory(L"time{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Date, f->GetCategory(L"date{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_DateTime, f->GetCategory(L"time{} date{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_DateTime, f->GetCategory(L"date{} time{}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Num, f->GetCategory(L"num(en_GB){}"));
-  EXPECT_EQ(FX_LOCALECATEGORY_Date, f->GetCategory(L"date.long{}"));
+  EXPECT_EQ(FX_LOCALECATEGORY_Unknown,
+            fmt(L"en", L"'just text'")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Null, fmt(L"en", L"null{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Zero, fmt(L"en", L"zero{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Num, fmt(L"en", L"num{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Text, fmt(L"en", L"text{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_DateTime,
+            fmt(L"en", L"datetime{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Time, fmt(L"en", L"time{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Date, fmt(L"en", L"date{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_DateTime,
+            fmt(L"en", L"time{} date{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_DateTime,
+            fmt(L"en", L"date{} time{}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Num, fmt(L"en", L"num(en_GB){}")->GetCategory());
+  EXPECT_EQ(FX_LOCALECATEGORY_Date, fmt(L"en", L"date.long{}")->GetCategory());
 }

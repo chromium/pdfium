@@ -824,10 +824,11 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
   return true;
 }
 
-CFGAS_StringFormatter::CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr)
-    : m_pLocaleMgr(pLocaleMgr) {}
+CFGAS_StringFormatter::CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr,
+                                             const WideString& wsPattern)
+    : m_pLocaleMgr(pLocaleMgr), m_wsPattern(wsPattern) {}
 
-CFGAS_StringFormatter::~CFGAS_StringFormatter() {}
+CFGAS_StringFormatter::~CFGAS_StringFormatter() = default;
 
 // static
 std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
@@ -849,10 +850,9 @@ std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
   return wsPatterns;
 }
 
-FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory(
-    const WideString& wsPattern) const {
+FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory() const {
   FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
-  pdfium::span<const wchar_t> spPattern = wsPattern.AsSpan();
+  pdfium::span<const wchar_t> spPattern = m_wsPattern.AsSpan();
   size_t ccf = 0;
   bool bBraceOpen = false;
   WideStringView wsConstChars(gs_wsConstChars);
@@ -904,10 +904,9 @@ FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory(
 }
 
 WideString CFGAS_StringFormatter::GetTextFormat(
-    const WideString& wsPattern,
     WideStringView wsCategory) const {
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spPattern = wsPattern.AsSpan();
+  pdfium::span<const wchar_t> spPattern = m_wsPattern.AsSpan();
   bool bBrackOpen = false;
   WideStringView wsConstChars(gs_wsConstChars);
   WideString wsPurgePattern;
@@ -946,22 +945,21 @@ WideString CFGAS_StringFormatter::GetTextFormat(
     ccf++;
   }
   if (!bBrackOpen)
-    wsPurgePattern = wsPattern;
+    wsPurgePattern = m_wsPattern;
 
   return wsPurgePattern;
 }
 
 LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
-    const WideString& wsPattern,
     size_t* iDotIndex,
     uint32_t* dwStyle,
     WideString* wsPurgePattern) const {
   *dwStyle = 0;
   LocaleIface* pLocale = nullptr;
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spPattern = wsPattern.AsSpan();
   bool bFindDot = false;
   bool bBrackOpen = false;
+  pdfium::span<const wchar_t> spPattern = m_wsPattern.AsSpan();
   WideStringView wsConstChars(gs_wsConstChars);
   while (ccf < spPattern.size()) {
     if (spPattern[ccf] == '\'') {
@@ -1057,13 +1055,12 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
 }
 
 bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
-                                      const WideString& wsPattern,
                                       WideString* wsValue) const {
   wsValue->clear();
-  if (wsSrcText.IsEmpty() || wsPattern.IsEmpty())
+  if (wsSrcText.IsEmpty() || m_wsPattern.IsEmpty())
     return false;
 
-  WideString wsTextFormat = GetTextFormat(wsPattern, L"text");
+  WideString wsTextFormat = GetTextFormat(L"text");
   if (wsTextFormat.IsEmpty())
     return false;
 
@@ -1129,17 +1126,16 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
 }
 
 bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
-                                     const WideString& wsPattern,
                                      WideString* wsValue) const {
   wsValue->clear();
-  if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty())
+  if (wsSrcNum.IsEmpty() || m_wsPattern.IsEmpty())
     return false;
 
-  size_t dot_index_f = wsPattern.GetLength();
+  size_t dot_index_f = m_wsPattern.GetLength();
   uint32_t dwFormatStyle = 0;
   WideString wsNumFormat;
   LocaleIface* pLocale =
-      GetNumericFormat(wsPattern, &dot_index_f, &dwFormatStyle, &wsNumFormat);
+      GetNumericFormat(&dot_index_f, &dwFormatStyle, &wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
 
@@ -1543,7 +1539,6 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
 }
 
 FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
-    const WideString& wsPattern,
     LocaleIface** pLocale,
     WideString* wsDatePattern,
     WideString* wsTimePattern) const {
@@ -1551,7 +1546,7 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
   WideString wsTempPattern;
   FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spPattern = wsPattern.AsSpan();
+  pdfium::span<const wchar_t> spPattern = m_wsPattern.AsSpan();
   int32_t iFindCategory = 0;
   bool bBraceOpen = false;
   WideStringView wsConstChars(gs_wsConstChars);
@@ -1568,8 +1563,8 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
       while (ccf < spPattern.size() && spPattern[ccf] != '{' &&
              spPattern[ccf] != '.' && spPattern[ccf] != '(') {
         if (spPattern[ccf] == 'T') {
-          *wsDatePattern = wsPattern.Left(ccf);
-          *wsTimePattern = wsPattern.Right(wsPattern.GetLength() - ccf);
+          *wsDatePattern = m_wsPattern.Left(ccf);
+          *wsTimePattern = m_wsPattern.Right(m_wsPattern.GetLength() - ccf);
           wsTimePattern->SetAt(0, ' ');
           if (!*pLocale)
             *pLocale = m_pLocaleMgr->GetDefLocale();
@@ -1674,24 +1669,23 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
     *pLocale = m_pLocaleMgr->GetDefLocale();
   if (!iFindCategory) {
     wsTimePattern->clear();
-    *wsDatePattern = wsPattern;
+    *wsDatePattern = m_wsPattern;
   }
   return (FX_DATETIMETYPE)iFindCategory;
 }
 
 bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
-                                          const WideString& wsPattern,
                                           FX_DATETIMETYPE eDateTimeType,
                                           CFX_DateTime* dtValue) const {
   dtValue->Reset();
-  if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty())
+  if (wsSrcDateTime.IsEmpty() || m_wsPattern.IsEmpty())
     return false;
 
   WideString wsDatePattern;
   WideString wsTimePattern;
   LocaleIface* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
-      GetDateTimeFormat(wsPattern, &pLocale, &wsDatePattern, &wsTimePattern);
+      GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
   if (eCategory == FX_DATETIMETYPE_Unknown)
@@ -1724,9 +1718,8 @@ bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
   return true;
 }
 
-bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText,
-                                      const WideString& wsPattern) const {
-  WideString wsTextFormat = GetTextFormat(wsPattern, L"zero");
+bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText) const {
+  WideString wsTextFormat = GetTextFormat(L"zero");
   pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
 
@@ -1753,9 +1746,8 @@ bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText,
   return iPattern == spTextFormat.size() && iText == spSrcText.size();
 }
 
-bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText,
-                                      const WideString& wsPattern) const {
-  WideString wsTextFormat = GetTextFormat(wsPattern, L"null");
+bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText) const {
+  WideString wsTextFormat = GetTextFormat(L"null");
   pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
 
@@ -1783,12 +1775,11 @@ bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText,
 }
 
 bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
-                                       const WideString& wsPattern,
                                        WideString* wsOutput) const {
-  if (wsPattern.IsEmpty() || wsSrcText.IsEmpty())
+  if (wsSrcText.IsEmpty() || m_wsPattern.IsEmpty())
     return false;
 
-  WideString wsTextFormat = GetTextFormat(wsPattern, L"text");
+  WideString wsTextFormat = GetTextFormat(L"text");
   pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
 
@@ -1842,16 +1833,15 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
 }
 
 bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
-                                      const WideString& wsPattern,
                                       WideString* wsOutput) const {
-  if (wsInputNum.IsEmpty() || wsPattern.IsEmpty())
+  if (wsInputNum.IsEmpty() || m_wsPattern.IsEmpty())
     return false;
 
-  size_t dot_index_f = wsPattern.GetLength();
+  size_t dot_index_f = m_wsPattern.GetLength();
   uint32_t dwNumStyle = 0;
   WideString wsNumFormat;
   LocaleIface* pLocale =
-      GetNumericFormat(wsPattern, &dot_index_f, &dwNumStyle, &wsNumFormat);
+      GetNumericFormat(&dot_index_f, &dwNumStyle, &wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
 
@@ -2188,17 +2178,16 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
 }
 
 bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
-                                           const WideString& wsPattern,
                                            FX_DATETIMETYPE eDateTimeType,
                                            WideString* wsOutput) const {
-  if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty())
+  if (wsSrcDateTime.IsEmpty() || m_wsPattern.IsEmpty())
     return false;
 
   WideString wsDatePattern;
   WideString wsTimePattern;
   LocaleIface* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
-      GetDateTimeFormat(wsPattern, &pLocale, &wsDatePattern, &wsTimePattern);
+      GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
 
@@ -2245,12 +2234,11 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
   return false;
 }
 
-bool CFGAS_StringFormatter::FormatZero(const WideString& wsPattern,
-                                       WideString* wsOutput) const {
-  if (wsPattern.IsEmpty())
+bool CFGAS_StringFormatter::FormatZero(WideString* wsOutput) const {
+  if (m_wsPattern.IsEmpty())
     return false;
 
-  WideString wsTextFormat = GetTextFormat(wsPattern, L"zero");
+  WideString wsTextFormat = GetTextFormat(L"zero");
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
   for (size_t iPattern = 0; iPattern < spTextFormat.size(); ++iPattern) {
     if (spTextFormat[iPattern] == '\'') {
@@ -2262,12 +2250,11 @@ bool CFGAS_StringFormatter::FormatZero(const WideString& wsPattern,
   return true;
 }
 
-bool CFGAS_StringFormatter::FormatNull(const WideString& wsPattern,
-                                       WideString* wsOutput) const {
-  if (wsPattern.IsEmpty())
+bool CFGAS_StringFormatter::FormatNull(WideString* wsOutput) const {
+  if (m_wsPattern.IsEmpty())
     return false;
 
-  WideString wsTextFormat = GetTextFormat(wsPattern, L"null");
+  WideString wsTextFormat = GetTextFormat(L"null");
   pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
   for (size_t iPattern = 0; iPattern < spTextFormat.size(); ++iPattern) {
     if (spTextFormat[iPattern] == '\'') {
