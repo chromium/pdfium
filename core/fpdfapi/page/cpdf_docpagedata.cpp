@@ -146,8 +146,9 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
   return pFontData->AddRef();
 }
 
-CPDF_Font* CPDF_DocPageData::GetStandardFont(const ByteString& fontName,
-                                             CPDF_FontEncoding* pEncoding) {
+CPDF_Font* CPDF_DocPageData::GetStandardFont(
+    const ByteString& fontName,
+    const CPDF_FontEncoding* pEncoding) {
   if (fontName.IsEmpty())
     return nullptr;
 

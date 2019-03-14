@@ -1676,12 +1676,12 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
   }
 }
 
-bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
+bool CPDF_FontEncoding::IsIdentical(const CPDF_FontEncoding* pAnother) const {
   return memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) == 0;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
-    WeakPtr<ByteStringPool> pPool) {
+    WeakPtr<ByteStringPool> pPool) const {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {
