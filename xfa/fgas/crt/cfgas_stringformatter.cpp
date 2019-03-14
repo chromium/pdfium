@@ -639,14 +639,13 @@ WideString TimeFormat(const WideString& wsTimePattern,
       bPM = true;
   }
 
-  WideStringView wsTimeSymbols(gs_wsTimeSymbols);
   while (ccf < spTimePattern.size()) {
     if (spTimePattern[ccf] == '\'') {
       wsResult += GetLiteralText(spTimePattern, &ccf);
       ccf++;
       continue;
     }
-    if (!wsTimeSymbols.Contains(spTimePattern[ccf])) {
+    if (!pdfium::ContainsValue(gs_wsTimeSymbols, spTimePattern[ccf])) {
       wsResult += spTimePattern[ccf++];
       continue;
     }
@@ -852,11 +851,11 @@ FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory() const {
   FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
   size_t ccf = 0;
   bool bBraceOpen = false;
-  WideStringView wsConstChars(gs_wsConstChars);
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
       GetLiteralText(m_spPattern, &ccf);
-    } else if (!bBraceOpen && !wsConstChars.Contains(m_spPattern[ccf])) {
+    } else if (!bBraceOpen &&
+               !pdfium::ContainsValue(gs_wsConstChars, m_spPattern[ccf])) {
       WideString wsCategory(m_spPattern[ccf]);
       ccf++;
       while (true) {
@@ -904,7 +903,6 @@ WideString CFGAS_StringFormatter::GetTextFormat(
     WideStringView wsCategory) const {
   size_t ccf = 0;
   bool bBrackOpen = false;
-  WideStringView wsConstChars(gs_wsConstChars);
   WideString wsPurgePattern;
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
@@ -912,7 +910,8 @@ WideString CFGAS_StringFormatter::GetTextFormat(
       GetLiteralText(m_spPattern, &ccf);
       wsPurgePattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
-    } else if (!bBrackOpen && !wsConstChars.Contains(m_spPattern[ccf])) {
+    } else if (!bBrackOpen &&
+               !pdfium::ContainsValue(gs_wsConstChars, m_spPattern[ccf])) {
       WideString wsSearchCategory(m_spPattern[ccf]);
       ccf++;
       while (ccf < m_spPattern.size() && m_spPattern[ccf] != '{' &&
@@ -955,14 +954,14 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
   size_t ccf = 0;
   bool bFindDot = false;
   bool bBrackOpen = false;
-  WideStringView wsConstChars(gs_wsConstChars);
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
       int32_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
       *wsPurgePattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
-    } else if (!bBrackOpen && !wsConstChars.Contains(m_spPattern[ccf])) {
+    } else if (!bBrackOpen &&
+               !pdfium::ContainsValue(gs_wsConstChars, m_spPattern[ccf])) {
       WideString wsCategory(m_spPattern[ccf]);
       ccf++;
       while (ccf < m_spPattern.size() && m_spPattern[ccf] != '{' &&
@@ -1543,7 +1542,6 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
   size_t ccf = 0;
   int32_t iFindCategory = 0;
   bool bBraceOpen = false;
-  WideStringView wsConstChars(gs_wsConstChars);
   while (ccf < m_spPattern.size()) {
     if (m_spPattern[ccf] == '\'') {
       int32_t iCurChar = ccf;
@@ -1551,7 +1549,7 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
       wsTempPattern +=
           WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1);
     } else if (!bBraceOpen && iFindCategory != 3 &&
-               !wsConstChars.Contains(m_spPattern[ccf])) {
+               !pdfium::ContainsValue(gs_wsConstChars, m_spPattern[ccf])) {
       WideString wsCategory(m_spPattern[ccf]);
       ccf++;
       while (ccf < m_spPattern.size() && m_spPattern[ccf] != '{' &&
