@@ -253,7 +253,7 @@ if (pdf_enable_v8) {
         "xfa/cfxjse_value_embeddertest.cpp",
         "xfa/cjx_hostpseudomodel_embeddertest.cpp",
       ]
-      deps += [ "..///xfa/fxfa" ]
+      deps += [ "../xfa/fxfa" ]
     }
   }
 }
