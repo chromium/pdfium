@@ -81,7 +81,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   bool OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
 
   CFFL_FormFiller* GetFormFillerForTesting(CPDFSDK_Annot* pAnnot) {
-    return GetFormFiller(pAnnot, false);
+    return GetFormFiller(pAnnot);
   }
 
   WideString GetText(CPDFSDK_Annot* pAnnot);
@@ -161,7 +161,8 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
 #endif  // PDF_ENABLE_XFA
 
-  CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, bool bRegister);
+  CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot);
+  CFFL_FormFiller* GetOrCreateFormFiller(CPDFSDK_Annot* pAnnot);
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
