@@ -60,7 +60,8 @@ class CFGAS_StringFormatter {
                                     WideString* wsTimePattern) const;
 
   UnownedPtr<LocaleMgrIface> const m_pLocaleMgr;
-  const WideString m_wsPattern;
+  const WideString m_wsPattern;                   // keep pattern string alive.
+  const pdfium::span<const wchar_t> m_spPattern;  // span into |m_wsPattern|.
 };
 
 #endif  // XFA_FGAS_CRT_CFGAS_STRINGFORMATTER_H_
