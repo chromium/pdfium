@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/span.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 
 // NOTE: Code uses the convention for backwards-looping with unsigned types
@@ -238,7 +238,6 @@ bool ParseLocaleDate(const WideString& wsDate,
   size_t ccf = 0;
   pdfium::span<const wchar_t> spDate = wsDate.AsSpan();
   pdfium::span<const wchar_t> spDatePattern = wsDatePattern.AsSpan();
-  WideStringView wsDateSymbols(gs_wsDateSymbols);
   while (*cc < spDate.size() && ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
       WideString wsLiteral = GetLiteralText(spDatePattern, &ccf);
@@ -251,7 +250,7 @@ bool ParseLocaleDate(const WideString& wsDate,
       ccf++;
       continue;
     }
-    if (!wsDateSymbols.Contains(spDatePattern[ccf])) {
+    if (!pdfium::ContainsValue(gs_wsDateSymbols, spDatePattern[ccf])) {
       if (spDatePattern[ccf] != spDate[*cc])
         return false;
       (*cc)++;
@@ -361,7 +360,6 @@ bool ParseLocaleTime(const WideString& wsTime,
   pdfium::span<const wchar_t> spTimePattern = wsTimePattern.AsSpan();
   bool bHasA = false;
   bool bPM = false;
-  WideStringView wsTimeSymbols(gs_wsTimeSymbols);
   while (*cc < spTime.size() && ccf < spTimePattern.size()) {
     if (spTimePattern[ccf] == '\'') {
       WideString wsLiteral = GetLiteralText(spTimePattern, &ccf);
@@ -374,7 +372,7 @@ bool ParseLocaleTime(const WideString& wsTime,
       ccf++;
       continue;
     }
-    if (!wsTimeSymbols.Contains(spTimePattern[ccf])) {
+    if (!pdfium::ContainsValue(gs_wsTimeSymbols, spTimePattern[ccf])) {
       if (spTimePattern[ccf] != spTime[*cc])
         return false;
       (*cc)++;
@@ -573,18 +571,16 @@ WideString DateFormat(const WideString& wsDatePattern,
   uint8_t day = datetime.GetDay();
   size_t ccf = 0;
   pdfium::span<const wchar_t> spDatePattern = wsDatePattern.AsSpan();
-  WideStringView wsDateSymbols(gs_wsDateSymbols);
   while (ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
       wsResult += GetLiteralText(spDatePattern, &ccf);
       ccf++;
       continue;
     }
-    if (!wsDateSymbols.Contains(spDatePattern[ccf])) {
+    if (!pdfium::ContainsValue(gs_wsDateSymbols, spDatePattern[ccf])) {
       wsResult += spDatePattern[ccf++];
       continue;
     }
-
     WideString symbol;
     symbol.Reserve(4);
     symbol += spDatePattern[ccf++];
