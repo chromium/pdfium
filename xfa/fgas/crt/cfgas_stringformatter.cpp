@@ -859,7 +859,7 @@ FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory() const {
       WideString wsCategory(m_spPattern[ccf]);
       ccf++;
       while (true) {
-        if (ccf == m_spPattern.size())
+        if (ccf >= m_spPattern.size())
           return eCategory;
         if (m_spPattern[ccf] == '.' || m_spPattern[ccf] == '(')
           break;
@@ -870,7 +870,6 @@ FX_LOCALECATEGORY CFGAS_StringFormatter::GetCategory() const {
         wsCategory += m_spPattern[ccf];
         ccf++;
       }
-
       uint32_t dwHash = FX_HashCode_GetW(wsCategory.AsStringView(), false);
       if (dwHash == FX_LOCALECATEGORY_DateTimeHash)
         return FX_LOCALECATEGORY_DateTime;
