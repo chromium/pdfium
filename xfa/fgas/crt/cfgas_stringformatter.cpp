@@ -484,22 +484,19 @@ bool ParseLocaleTime(const WideString& wsTime,
   return !!(*cc);
 }
 
-int32_t GetNumTrailingLimit(const WideString& wsFormat,
-                            int iDotPos,
-                            bool* bTrimTailZeros) {
-  if (iDotPos < 0)
-    return 0;
-
-  int32_t iCount = wsFormat.GetLength();
-  int32_t iTreading = 0;
-  for (iDotPos++; iDotPos < iCount; iDotPos++) {
-    wchar_t wc = wsFormat[iDotPos];
+size_t GetNumTrailingLimit(const WideString& wsFormat,
+                           size_t iDotPos,
+                           bool* bTrimTailZeros) {
+  const pdfium::span<const wchar_t> spFormat = wsFormat.AsSpan();
+  size_t iTrailing = 0;
+  for (++iDotPos; iDotPos < spFormat.size(); ++iDotPos) {
+    wchar_t wc = spFormat[iDotPos];
     if (wc == L'z' || wc == L'9' || wc == 'Z') {
-      iTreading++;
+      iTrailing++;
       *bTrimTailZeros = wc != L'9';
     }
   }
-  return iTreading;
+  return iTrailing;
 }
 
 bool IsLeapYear(uint32_t year) {
@@ -1050,7 +1047,7 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
 bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
                                       WideString* wsValue) const {
   wsValue->clear();
-  if (wsSrcText.IsEmpty() || m_wsPattern.IsEmpty())
+  if (wsSrcText.IsEmpty() || m_spPattern.empty())
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"text");
@@ -1121,10 +1118,10 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
 bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
                                      WideString* wsValue) const {
   wsValue->clear();
-  if (wsSrcNum.IsEmpty() || m_wsPattern.IsEmpty())
+  if (wsSrcNum.IsEmpty() || m_spPattern.empty())
     return false;
 
-  size_t dot_index_f = m_wsPattern.GetLength();
+  size_t dot_index_f = m_spPattern.size();
   uint32_t dwFormatStyle = 0;
   WideString wsNumFormat;
   LocaleIface* pLocale =
@@ -1669,7 +1666,7 @@ bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
                                           FX_DATETIMETYPE eDateTimeType,
                                           CFX_DateTime* dtValue) const {
   dtValue->Reset();
-  if (wsSrcDateTime.IsEmpty() || m_wsPattern.IsEmpty())
+  if (wsSrcDateTime.IsEmpty() || m_spPattern.empty())
     return false;
 
   WideString wsDatePattern;
@@ -1767,7 +1764,7 @@ bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText) const {
 
 bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
                                        WideString* wsOutput) const {
-  if (wsSrcText.IsEmpty() || m_wsPattern.IsEmpty())
+  if (wsSrcText.IsEmpty() || m_spPattern.empty())
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"text");
@@ -1825,10 +1822,10 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
 
 bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
                                       WideString* wsOutput) const {
-  if (wsInputNum.IsEmpty() || m_wsPattern.IsEmpty())
+  if (wsInputNum.IsEmpty() || m_spPattern.empty())
     return false;
 
-  size_t dot_index_f = m_wsPattern.GetLength();
+  size_t dot_index_f = m_spPattern.size();
   uint32_t dwNumStyle = 0;
   WideString wsNumFormat;
   LocaleIface* pLocale =
@@ -2172,7 +2169,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
 bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
                                            FX_DATETIMETYPE eDateTimeType,
                                            WideString* wsOutput) const {
-  if (wsSrcDateTime.IsEmpty() || m_wsPattern.IsEmpty())
+  if (wsSrcDateTime.IsEmpty() || m_spPattern.empty())
     return false;
 
   WideString wsDatePattern;
@@ -2227,7 +2224,7 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
 }
 
 bool CFGAS_StringFormatter::FormatZero(WideString* wsOutput) const {
-  if (m_wsPattern.IsEmpty())
+  if (m_spPattern.empty())
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"zero");
@@ -2243,7 +2240,7 @@ bool CFGAS_StringFormatter::FormatZero(WideString* wsOutput) const {
 }
 
 bool CFGAS_StringFormatter::FormatNull(WideString* wsOutput) const {
-  if (m_wsPattern.IsEmpty())
+  if (m_spPattern.empty())
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"null");
