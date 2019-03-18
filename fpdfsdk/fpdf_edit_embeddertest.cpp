@@ -1780,6 +1780,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
   FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page, text_object1);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
@@ -1790,6 +1791,9 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
     const char md5[] = "eacaa24573b8ce997b3882595f096f00";
 #endif
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
+
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    VerifySavedDocument(612, 792, md5);
   }
 
   // Try another font
@@ -1801,16 +1805,20 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
   FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
   FPDFPage_InsertObject(page, text_object2);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-    const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
+    const char md5[] = "a5c4ace4c6f27644094813fe1441a21c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-    const char md5_2[] = "3755dd35abd4c605755369401ee85b2d";
+    const char md5[] = "3755dd35abd4c605755369401ee85b2d";
 #else
-    const char md5_2[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
+    const char md5[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
 #endif
-    CompareBitmap(page_bitmap.get(), 612, 792, md5_2);
+    CompareBitmap(page_bitmap.get(), 612, 792, md5);
+
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    VerifySavedDocument(612, 792, md5);
   }
 
   // And some randomly transformed text
@@ -1822,16 +1830,20 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object3, text3.get()));
   FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
   FPDFPage_InsertObject(page, text_object3);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-    const char md5_3[] = "40b3ef04f915ff4c4208948001763544";
+    const char md5[] = "40b3ef04f915ff4c4208948001763544";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-    const char md5_3[] = "aba523a8110d01ed9bd7b7781ff74045";
+    const char md5[] = "aba523a8110d01ed9bd7b7781ff74045";
 #else
-    const char md5_3[] = "b8a21668f1dab625af7c072e07fcefc4";
+    const char md5[] = "b8a21668f1dab625af7c072e07fcefc4";
 #endif
-    CompareBitmap(page_bitmap.get(), 612, 792, md5_3);
+    CompareBitmap(page_bitmap.get(), 612, 792, md5);
+
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    VerifySavedDocument(612, 792, md5);
   }
 
   double matrix_a = 0;

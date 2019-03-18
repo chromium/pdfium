@@ -14,7 +14,8 @@
 
 #include "core/fpdfapi/edit/cpdf_pagecontentmanager.h"
 #include "core/fpdfapi/edit/cpdf_stringarchivestream.h"
-#include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/font/cpdf_truetypefont.h"
+#include "core/fpdfapi/font/cpdf_type1font.h"
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
@@ -508,17 +509,22 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   CPDF_Font* pFont = pTextObj->GetFont();
   if (!pFont)
     pFont = CPDF_Font::GetStockFont(m_pDocument.Get(), "Helvetica");
-  FontData fontD;
-  if (pFont->IsType1Font())
-    fontD.type = "Type1";
-  else if (pFont->IsTrueTypeFont())
-    fontD.type = "TrueType";
-  else if (pFont->IsCIDFont())
-    fontD.type = "Type0";
-  else
+
+  FontData data;
+  CPDF_FontEncoding* pEncoding = nullptr;
+  if (pFont->IsType1Font()) {
+    data.type = "Type1";
+    pEncoding = pFont->AsType1Font()->GetEncoding();
+  } else if (pFont->IsTrueTypeFont()) {
+    data.type = "TrueType";
+    pEncoding = pFont->AsTrueTypeFont()->GetEncoding();
+  } else if (pFont->IsCIDFont()) {
+    data.type = "Type0";
+  } else {
     return;
-  fontD.baseFont = pFont->GetBaseFont();
-  auto it = m_pObjHolder->m_FontsMap.find(fontD);
+  }
+  data.baseFont = pFont->GetBaseFont();
+  auto it = m_pObjHolder->m_FontsMap.find(data);
   ByteString dictName;
   if (it != m_pObjHolder->m_FontsMap.end()) {
     dictName = it->second;
@@ -526,14 +532,18 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
     CPDF_Object* pIndirectFont = pFont->GetFontDict();
     if (pIndirectFont->IsInline()) {
       // In this case we assume it must be a standard font
-      auto fontDict = pdfium::MakeUnique<CPDF_Dictionary>();
-      fontDict->SetNewFor<CPDF_Name>("Type", "Font");
-      fontDict->SetNewFor<CPDF_Name>("Subtype", fontD.type);
-      fontDict->SetNewFor<CPDF_Name>("BaseFont", fontD.baseFont);
-      pIndirectFont = m_pDocument->AddIndirectObject(std::move(fontDict));
+      auto pFontDict = pdfium::MakeUnique<CPDF_Dictionary>();
+      pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
+      pFontDict->SetNewFor<CPDF_Name>("Subtype", data.type);
+      pFontDict->SetNewFor<CPDF_Name>("BaseFont", data.baseFont);
+      if (pEncoding) {
+        pFontDict->SetFor("Encoding",
+                          pEncoding->Realize(m_pDocument->GetByteStringPool()));
+      }
+      pIndirectFont = m_pDocument->AddIndirectObject(std::move(pFontDict));
     }
     dictName = RealizeResource(pIndirectFont, "Font");
-    m_pObjHolder->m_FontsMap[fontD] = dictName;
+    m_pObjHolder->m_FontsMap[data] = dictName;
   }
   *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
        << " Tf ";

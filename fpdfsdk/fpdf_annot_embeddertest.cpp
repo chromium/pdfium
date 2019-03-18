@@ -976,15 +976,15 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_new_text[] = "e5680ed048c2cfd9a1d27212cdf41286";
+  const char md5_new_text[] = "60031c1b0330cf1e1575f7d46687d429";
   const char md5_modified_text[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5_original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  const char md5_new_text[] = "554d625b52144816aaabb0dd66962c55";
+  const char md5_new_text[] = "87d55e09f9096de7e6552f5ae79afd3b";
   const char md5_modified_text[] = "26e94fbd3af4b1e65479327507600114";
 #else
   const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_new_text[] = "00b14fa2dc1c90d1b0d034e1608efef5";
+  const char md5_new_text[] = "30f3f5b989612ca03827d95f184f0979";
   const char md5_modified_text[] = "076c8f24a09ddc0e49f7e758edead6f0";
 #endif
 
