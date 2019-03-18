@@ -555,6 +555,8 @@ TEST_F(CFGAS_StringFormatterTest, NumFormat) {
       // {L"en", L".000000000000000000009", L"E", L"9"},
       // https://crbug.com/938724
       {L"en", L"1", L"| num.().().", L"1"},
+      // https://crbug.com/942449
+      {L"en", L"1", L"9.", L"1"},
   };
 
   for (const auto& test : tests) {

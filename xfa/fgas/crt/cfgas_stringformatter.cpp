@@ -2059,8 +2059,9 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   } else if (spNumFormat[dot_index_f] == '.') {
     if (dot_index.value() < spSrcNum.size()) {
       *wsOutput += wsDotSymbol;
-    } else if (spNumFormat[dot_index_f + 1] == '9' ||
-               spNumFormat[dot_index_f + 1] == 'Z') {
+    } else if (dot_index_f + 1 < spNumFormat.size() &&
+               (spNumFormat[dot_index_f + 1] == '9' ||
+                spNumFormat[dot_index_f + 1] == 'Z')) {
       *wsOutput += wsDotSymbol;
     }
   }
