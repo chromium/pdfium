@@ -18,12 +18,11 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix* pImage2Device)
     : m_pDevice(pDevice), m_ImageMatrix(*pImage2Device), m_pDIBBase(pDIBBase) {}
 
-CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
+CXFA_ImageRenderer::~CXFA_ImageRenderer() = default;
 
 bool CXFA_ImageRenderer::Start() {
-  if (m_pDevice->StartDIBitsWithBlend(m_pDIBBase, 255, 0, m_ImageMatrix,
-                                      kBilinearInterpolation, &m_DeviceHandle,
-                                      BlendMode::kNormal)) {
+  if (m_pDevice->StartDIBits(m_pDIBBase, 255, 0, m_ImageMatrix,
+                             kBilinearInterpolation, &m_DeviceHandle)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
