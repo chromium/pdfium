@@ -173,14 +173,14 @@ void CPDF_Type1Font::LoadGlyphMap() {
       if (!name)
         continue;
 
-      m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
+      m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
       m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
-          m_Font.GetFace(), m_Encoding.m_Unicodes[charcode]);
+          m_Font.GetFace(), m_Encoding.UnicodeFromCharCode(charcode));
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
       CalcExtGID(charcode);
 #endif
       if (m_GlyphIndex[charcode] == 0 && strcmp(name, ".notdef") == 0) {
-        m_Encoding.m_Unicodes[charcode] = 0x20;
+        m_Encoding.SetUnicode(charcode, 0x20);
         m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), 0x20);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
         CalcExtGID(charcode);
@@ -201,7 +201,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
         const char* name =
             GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
         if (name) {
-          m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
+          m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
           m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
           SetExtGID(name, charcode);
         } else {
@@ -220,7 +220,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           if (unicode == 0 && name_glyph[0] != 0)
             unicode = PDF_UnicodeFromAdobeName(name_glyph);
 
-          m_Encoding.m_Unicodes[charcode] = unicode;
+          m_Encoding.SetUnicode(charcode, unicode);
           SetExtGID(name_glyph, charcode);
         }
       }
@@ -235,7 +235,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       if (!name)
         continue;
 
-      m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
+      m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
       const char* pStrUnicode = GlyphNameRemap(name);
       if (pStrUnicode && FXFT_Get_Name_Index(m_Font.GetFace(), name) == 0) {
         name = pStrUnicode;
@@ -248,10 +248,10 @@ void CPDF_Type1Font::LoadGlyphMap() {
       if (strcmp(name, ".notdef") != 0 && strcmp(name, "space") != 0) {
         m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
             m_Font.GetFace(),
-            bUnicode ? m_Encoding.m_Unicodes[charcode] : charcode);
+            bUnicode ? m_Encoding.UnicodeFromCharCode(charcode) : charcode);
         CalcExtGID(charcode);
       } else {
-        m_Encoding.m_Unicodes[charcode] = 0x20;
+        m_Encoding.SetUnicode(charcode, 0x20);
         m_GlyphIndex[charcode] =
             bUnicode ? FXFT_Get_Char_Index(m_Font.GetFace(), 0x20) : 0xffff;
         CalcExtGID(charcode);
@@ -265,7 +265,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       const char* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
       if (name) {
-        m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
+        m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
         m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
       } else {
         m_GlyphIndex[charcode] =
@@ -282,7 +282,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
             if (name_glyph[0] != 0)
               unicode = PDF_UnicodeFromAdobeName(name_glyph);
           }
-          m_Encoding.m_Unicodes[charcode] = unicode;
+          m_Encoding.SetUnicode(charcode, unicode);
         }
       }
     }
@@ -301,7 +301,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (!name)
       continue;
 
-    m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
+    m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
     m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
     if (m_GlyphIndex[charcode] != 0)
       continue;
@@ -309,9 +309,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (strcmp(name, ".notdef") != 0 && strcmp(name, "space") != 0) {
       m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
           m_Font.GetFace(),
-          bUnicode ? m_Encoding.m_Unicodes[charcode] : charcode);
+          bUnicode ? m_Encoding.UnicodeFromCharCode(charcode) : charcode);
     } else {
-      m_Encoding.m_Unicodes[charcode] = 0x20;
+      m_Encoding.SetUnicode(charcode, 0x20);
       m_GlyphIndex[charcode] = 0xffff;
     }
   }
