@@ -312,23 +312,24 @@ bool CXFA_NodeHelper::CreateNode(const WideString& wsName,
                                  const WideString& wsCondition,
                                  bool bLastNode,
                                  CFXJSE_Engine* pScriptContext) {
-  ASSERT(!wsName.IsEmpty());
-
   if (!m_pCreateParent)
     return false;
 
   WideStringView wsNameView = wsName.AsStringView();
   bool bIsClassName = false;
   bool bResult = false;
-  if (wsNameView[0] == '!') {
+  if (!wsNameView.IsEmpty() && wsNameView[0] == '!') {
     wsNameView = wsNameView.Right(wsNameView.GetLength() - 1);
     m_pCreateParent = ToNode(
         pScriptContext->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets));
   }
-  if (wsNameView[0] == '#') {
+  if (!wsNameView.IsEmpty() && wsNameView[0] == '#') {
     bIsClassName = true;
     wsNameView = wsNameView.Right(wsNameView.GetLength() - 1);
   }
+  if (wsNameView.IsEmpty())
+    return false;
+
   if (m_iCreateCount == 0)
     CreateNodeForCondition(wsCondition);
 
