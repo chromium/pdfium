@@ -192,7 +192,7 @@ size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   return new_pos.IsValid() ? iBufferSize : 0;
 }
 
-size_t CFX_SeekableStreamProxy::ReadBlock(void* pStr, size_t size) {
+size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
   if (!pStr || size == 0)
     return 0;
 
@@ -202,7 +202,7 @@ size_t CFX_SeekableStreamProxy::ReadBlock(void* pStr, size_t size) {
     size_t iLen = ReadData(reinterpret_cast<uint8_t*>(pStr), iBytes);
     size = iLen / 2;
     if (m_wCodePage == FX_CODEPAGE_UTF16BE)
-      SwapByteOrder(static_cast<uint16_t*>(pStr), size);
+      SwapByteOrder(reinterpret_cast<uint16_t*>(pStr), size);
 
     if (sizeof(wchar_t) > 2 && size > 0)
       UTF16ToWChar(pStr, size);
@@ -228,11 +228,4 @@ size_t CFX_SeekableStreamProxy::ReadBlock(void* pStr, size_t size) {
   }
 
   return size;
-}
-
-bool CFX_SeekableStreamProxy::ReadBlockAtOffset(void* pStr,
-                                                FX_FILESIZE offset,
-                                                size_t size) {
-  NOTREACHED();
-  return false;
 }
