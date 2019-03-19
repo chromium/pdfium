@@ -83,8 +83,10 @@ void UTF16ToWChar(void* pBuffer, size_t iLength) {
 
   uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
   wchar_t* pDst = static_cast<wchar_t*>(pBuffer);
-  for (size_t i = 0; i < iLength; i++)
-    pDst[i] = static_cast<wchar_t>(pSrc[i]);
+
+  // Peform self-intersecting copy in reverse order.
+  for (size_t i = iLength; i > 0; --i)
+    pDst[i - 1] = static_cast<wchar_t>(pSrc[i - 1]);
 }
 
 void SwapByteOrder(wchar_t* pStr, size_t iLength) {
