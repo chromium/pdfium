@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/stl_util.h"
@@ -76,18 +77,21 @@ std::pair<size_t, size_t> UTF8Decode(const char* pSrc,
   return {iSrcNum, iDstNum};
 }
 
+#if defined(WCHAR_T_IS_UTF32)
+static_assert(sizeof(wchar_t) > 2, "wchar_t is too small");
+
 void UTF16ToWChar(void* pBuffer, size_t iLength) {
   ASSERT(pBuffer);
   ASSERT(iLength > 0);
-  ASSERT(sizeof(wchar_t) > 2);
 
   uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
   wchar_t* pDst = static_cast<wchar_t*>(pBuffer);
 
-  // Peform self-intersecting copy in reverse order.
+  // Perform self-intersecting copy in reverse order.
   for (size_t i = iLength; i > 0; --i)
     pDst[i - 1] = static_cast<wchar_t>(pSrc[i - 1]);
 }
+#endif  // defined(WCHAR_T_IS_UTF32)
 
 void SwapByteOrder(uint16_t* pStr, size_t iLength) {
   while (iLength-- > 0) {
@@ -204,8 +208,10 @@ size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
     if (m_wCodePage == FX_CODEPAGE_UTF16BE)
       SwapByteOrder(reinterpret_cast<uint16_t*>(pStr), size);
 
-    if (sizeof(wchar_t) > 2 && size > 0)
+#if defined(WCHAR_T_IS_UTF32)
+    if (size > 0)
       UTF16ToWChar(pStr, size);
+#endif
   } else {
     FX_FILESIZE pos = GetPosition();
     size_t iBytes = std::min(size, static_cast<size_t>(GetSize() - pos));
