@@ -4976,236 +4976,14 @@ void CFXJSE_FormCalcContext::logical_not_operator(CFXJSE_Value* pThis,
 void CFXJSE_FormCalcContext::dot_accessor(CFXJSE_Value* pThis,
                                           ByteStringView bsFuncName,
                                           CFXJSE_Arguments& args) {
-  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  int32_t argc = args.GetLength();
-  if (argc < 4 || argc > 5) {
-    pContext->ThrowCompilerErrorException();
-    return;
-  }
-
-  bool bIsStar = true;
-  int32_t iIndexValue = 0;
-  if (argc > 4) {
-    bIsStar = false;
-    iIndexValue = ValueToInteger(pThis, args.GetValue(4).get());
-  }
-
-  ByteString bsName = args.GetUTF8String(2);
-  ByteString bsSomExp = GenerateSomExpression(
-      bsName.AsStringView(), args.GetInt32(3), iIndexValue, bIsStar);
-
-  std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
-  if (argAccessor->IsArray()) {
-    auto pLengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-    argAccessor->GetObjectProperty("length", pLengthValue.get());
-    int32_t iLength = pLengthValue->ToInteger();
-    if (iLength < 3) {
-      pContext->ThrowArgumentMismatchException();
-      return;
-    }
-
-    auto hJSObjValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-    std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
-        iLength - 2);
-    bool bAttribute = false;
-    int32_t iCounter = 0;
-    for (int32_t i = 2; i < iLength; i++) {
-      argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
-
-      XFA_RESOLVENODE_RS resolveNodeRS;
-      if (ResolveObjects(pThis, hJSObjValue.get(), bsSomExp.AsStringView(),
-                         &resolveNodeRS, true, bsName.IsEmpty())) {
-        ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
-                           &resolveValues[i - 2], &bAttribute);
-        iCounter += resolveValues[i - 2].size();
-      }
-    }
-    if (iCounter < 1) {
-      pContext->ThrowPropertyNotInObjectException(
-          WideString::FromUTF8(bsName.AsStringView()),
-          WideString::FromUTF8(bsSomExp.AsStringView()));
-      return;
-    }
-
-    std::vector<std::unique_ptr<CFXJSE_Value>> values;
-    for (int32_t i = 0; i < iCounter + 2; i++)
-      values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-
-    values[0]->SetInteger(1);
-    if (bAttribute)
-      values[1]->SetString(bsName.AsStringView());
-    else
-      values[1]->SetNull();
-
-    int32_t iIndex = 2;
-    for (int32_t i = 0; i < iLength - 2; i++) {
-      for (size_t j = 0; j < resolveValues[i].size(); j++) {
-        values[iIndex]->Assign(resolveValues[i][j].get());
-        iIndex++;
-      }
-    }
-    args.GetReturnValue()->SetArray(values);
-    return;
-  }
-
-  XFA_RESOLVENODE_RS resolveNodeRS;
-  bool bRet = false;
-  ByteString bsAccessorName = args.GetUTF8String(1);
-  if (argAccessor->IsObject() ||
-      (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
-    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
-                          &resolveNodeRS, true, bsName.IsEmpty());
-  } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
-             GetObjectForName(pThis, argAccessor.get(),
-                              bsAccessorName.AsStringView())) {
-    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
-                          &resolveNodeRS, true, bsName.IsEmpty());
-  }
-  if (!bRet) {
-    pContext->ThrowPropertyNotInObjectException(
-        WideString::FromUTF8(bsName.AsStringView()),
-        WideString::FromUTF8(bsSomExp.AsStringView()));
-    return;
-  }
-
-  std::vector<std::unique_ptr<CFXJSE_Value>> resolveValues;
-  bool bAttribute = false;
-  ParseResolveResult(pThis, resolveNodeRS, argAccessor.get(), &resolveValues,
-                     &bAttribute);
-
-  std::vector<std::unique_ptr<CFXJSE_Value>> values;
-  for (size_t i = 0; i < resolveValues.size() + 2; i++)
-    values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-
-  values[0]->SetInteger(1);
-  if (bAttribute)
-    values[1]->SetString(bsName.AsStringView());
-  else
-    values[1]->SetNull();
-
-  for (size_t i = 0; i < resolveValues.size(); i++)
-    values[i + 2]->Assign(resolveValues[i].get());
-
-  args.GetReturnValue()->SetArray(values);
+  DotAccessorCommon(pThis, bsFuncName, args, /*bDotAccessor=*/true);
 }
 
 // static
 void CFXJSE_FormCalcContext::dotdot_accessor(CFXJSE_Value* pThis,
                                              ByteStringView bsFuncName,
                                              CFXJSE_Arguments& args) {
-  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
-  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  int32_t argc = args.GetLength();
-  if (argc < 4 || argc > 5) {
-    pContext->ThrowCompilerErrorException();
-    return;
-  }
-
-  bool bIsStar = true;
-  int32_t iIndexValue = 0;
-  if (argc > 4) {
-    bIsStar = false;
-    iIndexValue = ValueToInteger(pThis, args.GetValue(4).get());
-  }
-
-  ByteString bsName = args.GetUTF8String(2);
-  ByteString bsSomExp = GenerateSomExpression(
-      bsName.AsStringView(), args.GetInt32(3), iIndexValue, bIsStar);
-
-  std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
-  if (argAccessor->IsArray()) {
-    auto pLengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-    argAccessor->GetObjectProperty("length", pLengthValue.get());
-    int32_t iLength = pLengthValue->ToInteger();
-    if (iLength < 3) {
-      pContext->ThrowArgumentMismatchException();
-      return;
-    }
-
-    int32_t iCounter = 0;
-
-    std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
-        iLength - 2);
-    auto hJSObjValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-    bool bAttribute = false;
-    for (int32_t i = 2; i < iLength; i++) {
-      argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
-      XFA_RESOLVENODE_RS resolveNodeRS;
-      if (ResolveObjects(pThis, hJSObjValue.get(), bsSomExp.AsStringView(),
-                         &resolveNodeRS, false, false)) {
-        ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
-                           &resolveValues[i - 2], &bAttribute);
-        iCounter += resolveValues[i - 2].size();
-      }
-    }
-    if (iCounter < 1) {
-      pContext->ThrowPropertyNotInObjectException(
-          WideString::FromUTF8(bsName.AsStringView()),
-          WideString::FromUTF8(bsSomExp.AsStringView()));
-      return;
-    }
-
-    std::vector<std::unique_ptr<CFXJSE_Value>> values;
-    for (int32_t i = 0; i < iCounter + 2; i++)
-      values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-
-    values[0]->SetInteger(1);
-    if (bAttribute)
-      values[1]->SetString(bsName.AsStringView());
-    else
-      values[1]->SetNull();
-
-    int32_t iIndex = 2;
-    for (int32_t i = 0; i < iLength - 2; i++) {
-      for (size_t j = 0; j < resolveValues[i].size(); j++) {
-        values[iIndex]->Assign(resolveValues[i][j].get());
-        iIndex++;
-      }
-    }
-    args.GetReturnValue()->SetArray(values);
-    return;
-  }
-
-  XFA_RESOLVENODE_RS resolveNodeRS;
-  bool bRet = false;
-  ByteString bsAccessorName = args.GetUTF8String(1);
-  if (argAccessor->IsObject() ||
-      (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
-    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
-                          &resolveNodeRS, false, false);
-  } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
-             GetObjectForName(pThis, argAccessor.get(),
-                              bsAccessorName.AsStringView())) {
-    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
-                          &resolveNodeRS, false, false);
-  }
-  if (!bRet) {
-    pContext->ThrowPropertyNotInObjectException(
-        WideString::FromUTF8(bsName.AsStringView()),
-        WideString::FromUTF8(bsSomExp.AsStringView()));
-    return;
-  }
-
-  std::vector<std::unique_ptr<CFXJSE_Value>> resolveValues;
-  bool bAttribute = false;
-  ParseResolveResult(pThis, resolveNodeRS, argAccessor.get(), &resolveValues,
-                     &bAttribute);
-
-  std::vector<std::unique_ptr<CFXJSE_Value>> values;
-  for (size_t i = 0; i < resolveValues.size() + 2; i++)
-    values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-
-  values[0]->SetInteger(1);
-  if (bAttribute)
-    values[1]->SetString(bsName.AsStringView());
-  else
-    values[1]->SetNull();
-
-  for (size_t i = 0; i < resolveValues.size(); i++)
-    values[i + 2]->Assign(resolveValues[i].get());
-
-  args.GetReturnValue()->SetArray(values);
+  DotAccessorCommon(pThis, bsFuncName, args, /*bDotAccessor=*/false);
 }
 
 // static
@@ -5678,7 +5456,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
                                             CFXJSE_Value* pRefValue,
                                             ByteStringView bsSomExp,
                                             XFA_RESOLVENODE_RS* resolveNodeRS,
-                                            bool bdotAccessor,
+                                            bool bDotAccessor,
                                             bool bHasNoResolveName) {
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
   if (!pDoc)
@@ -5688,7 +5466,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
   CFXJSE_Engine* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = nullptr;
   uint32_t dFlags = 0UL;
-  if (bdotAccessor) {
+  if (bDotAccessor) {
     if (pRefValue && pRefValue->IsNull()) {
       pNode = pScriptContext->GetThisObject();
       dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
@@ -5954,6 +5732,125 @@ CFXJSE_FormCalcContext* CFXJSE_FormCalcContext::AsFormCalcContext() {
 
 void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
   pValue->Assign(m_pValue.get());
+}
+
+// static
+void CFXJSE_FormCalcContext::DotAccessorCommon(CFXJSE_Value* pThis,
+                                               ByteStringView bsFuncName,
+                                               CFXJSE_Arguments& args,
+                                               bool bDotAccessor) {
+  CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
+  v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+  int32_t argc = args.GetLength();
+  if (argc < 4 || argc > 5) {
+    pContext->ThrowCompilerErrorException();
+    return;
+  }
+
+  bool bIsStar = true;
+  int32_t iIndexValue = 0;
+  if (argc > 4) {
+    bIsStar = false;
+    iIndexValue = ValueToInteger(pThis, args.GetValue(4).get());
+  }
+
+  const ByteString bsName = args.GetUTF8String(2);
+  const bool bHasNoResolveName = bDotAccessor && bsName.IsEmpty();
+  ByteString bsSomExp = GenerateSomExpression(
+      bsName.AsStringView(), args.GetInt32(3), iIndexValue, bIsStar);
+
+  std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
+  if (argAccessor->IsArray()) {
+    auto pLengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    argAccessor->GetObjectProperty("length", pLengthValue.get());
+    int32_t iLength = pLengthValue->ToInteger();
+    if (iLength < 3) {
+      pContext->ThrowArgumentMismatchException();
+      return;
+    }
+
+    int32_t iCounter = 0;
+    auto hJSObjValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
+        iLength - 2);
+    bool bAttribute = false;
+    for (int32_t i = 2; i < iLength; i++) {
+      argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
+      XFA_RESOLVENODE_RS resolveNodeRS;
+      if (ResolveObjects(pThis, hJSObjValue.get(), bsSomExp.AsStringView(),
+                         &resolveNodeRS, bDotAccessor, bHasNoResolveName)) {
+        ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
+                           &resolveValues[i - 2], &bAttribute);
+        iCounter += resolveValues[i - 2].size();
+      }
+    }
+    if (iCounter < 1) {
+      pContext->ThrowPropertyNotInObjectException(
+          WideString::FromUTF8(bsName.AsStringView()),
+          WideString::FromUTF8(bsSomExp.AsStringView()));
+      return;
+    }
+
+    std::vector<std::unique_ptr<CFXJSE_Value>> values;
+    for (int32_t i = 0; i < iCounter + 2; i++)
+      values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+
+    values[0]->SetInteger(1);
+    if (bAttribute)
+      values[1]->SetString(bsName.AsStringView());
+    else
+      values[1]->SetNull();
+
+    int32_t iIndex = 2;
+    for (int32_t i = 0; i < iLength - 2; i++) {
+      for (size_t j = 0; j < resolveValues[i].size(); j++) {
+        values[iIndex]->Assign(resolveValues[i][j].get());
+        iIndex++;
+      }
+    }
+    args.GetReturnValue()->SetArray(values);
+    return;
+  }
+
+  XFA_RESOLVENODE_RS resolveNodeRS;
+  bool bRet = false;
+  ByteString bsAccessorName = args.GetUTF8String(1);
+  if (argAccessor->IsObject() ||
+      (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
+    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
+                          &resolveNodeRS, bDotAccessor, bHasNoResolveName);
+  } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
+             GetObjectForName(pThis, argAccessor.get(),
+                              bsAccessorName.AsStringView())) {
+    bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),
+                          &resolveNodeRS, bDotAccessor, bHasNoResolveName);
+  }
+  if (!bRet) {
+    pContext->ThrowPropertyNotInObjectException(
+        WideString::FromUTF8(bsName.AsStringView()),
+        WideString::FromUTF8(bsSomExp.AsStringView()));
+    return;
+  }
+
+  std::vector<std::unique_ptr<CFXJSE_Value>> resolveValues;
+  bool bAttribute = false;
+  ParseResolveResult(pThis, resolveNodeRS, argAccessor.get(), &resolveValues,
+                     &bAttribute);
+
+  std::vector<std::unique_ptr<CFXJSE_Value>> values;
+  for (size_t i = 0; i < resolveValues.size() + 2; i++)
+    values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+
+  values[0]->SetInteger(1);
+  if (bAttribute)
+    values[1]->SetString(bsName.AsStringView());
+  else
+    values[1]->SetNull();
+
+  for (size_t i = 0; i < resolveValues.size(); i++)
+    values[i + 2]->Assign(resolveValues[i].get());
+
+  args.GetReturnValue()->SetArray(values);
 }
 
 void CFXJSE_FormCalcContext::ThrowNoDefaultPropertyException(

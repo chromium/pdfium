@@ -389,6 +389,11 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 
  private:
+  static void DotAccessorCommon(CFXJSE_Value* pThis,
+                                ByteStringView bsFuncName,
+                                CFXJSE_Arguments& args,
+                                bool bDotAccessor);
+
   v8::Isolate* GetScriptRuntime() const { return m_pIsolate.Get(); }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
