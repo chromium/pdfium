@@ -346,6 +346,7 @@ if (!build_with_chromium) {
     } else if (use_libjpeg_turbo) {
       public_deps = [
         "//third_party/libjpeg_turbo:libjpeg",
+        "//third_party/libjpeg_turbo:libjpeg_headers",
       ]
       public_configs = [ ":libjpeg_turbo_config" ]
     } else {
