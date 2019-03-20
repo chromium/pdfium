@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/font/cpdf_tounicodemap.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"

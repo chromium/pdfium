@@ -10,12 +10,13 @@
 #include <map>
 #include <memory>
 
-#include "core/fpdfapi/font/cpdf_type3font.h"
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
+class CFX_GlyphBitmap;
+class CFX_Matrix;
+class CPDF_Type3Font;
 class CPDF_Type3Glyphs;
 
 class CPDF_Type3Cache final : public Retainable {

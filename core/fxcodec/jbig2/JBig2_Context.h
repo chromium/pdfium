@@ -12,11 +12,11 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcodec/jbig2/JBig2_Page.h"
 #include "core/fxcodec/jbig2/JBig2_Segment.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;

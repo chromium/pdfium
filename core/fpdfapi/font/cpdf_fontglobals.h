@@ -11,9 +11,10 @@
 #include <memory>
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
-#include "core/fpdfapi/font/cfx_stockfontarray.h"
 #include "core/fpdfapi/font/cpdf_cmapmanager.h"
 #include "third_party/base/span.h"
+
+class CFX_StockFontArray;
 
 class CPDF_FontGlobals {
  public:

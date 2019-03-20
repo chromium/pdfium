@@ -12,9 +12,10 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_system.h"
+
+class CPDF_StreamAcc;
 
 class CPDF_MeshVertex {
  public:

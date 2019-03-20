@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -17,6 +16,7 @@
 
 class CPDF_Dictionary;
 class CPDF_Stream;
+class CPDF_StreamAcc;
 
 class CPDF_FlateEncoder {
  public:
