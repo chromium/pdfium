@@ -80,9 +80,6 @@ class CFXJSE_Value {
   }
 
  private:
-  friend class CFXJSE_Class;
-  friend class CFXJSE_Context;
-
   CFXJSE_Value() = delete;
   CFXJSE_Value(const CFXJSE_Value&) = delete;
   CFXJSE_Value& operator=(const CFXJSE_Value&) = delete;
