@@ -40,7 +40,10 @@ class CPDF_SampledFunc final : public CPDF_Function {
     return m_EncodeInfo;
   }
   uint32_t GetBitsPerSample() const { return m_nBitsPerSample; }
+
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   RetainPtr<CPDF_StreamAcc> GetSampleStream() const;
+#endif
 
  private:
   std::vector<SampleEncodeInfo> m_EncodeInfo;
