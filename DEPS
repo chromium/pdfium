@@ -19,7 +19,6 @@ vars = {
   'catapult_revision': '7c1d51b169edfb62a3e2f88730f1182240cfe981',
   'clang_revision': '207fd1e5dc049d231e12f4f0c8937b39ba549afb',
   'code_coverage_revision': '0e34d1463558f5a32308d0808e04e85cfe95f4a4',
-  'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'depot_tools_revision': '3580425baa288b482c1fe2155c005736b7abc372',
   'freetype_revision': '31757f969fba60d75404f31e8f1168bef5011770',
   'gtest_revision': '8b6d3f9c4a774bef3081195d422993323b6bb2e0',
@@ -120,10 +119,6 @@ deps_os = {
       Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
     "third_party/catapult":
       Var('chromium_git') + '/catapult.git' + '@' + Var('catapult_revision'),
-  },
-  "win": {
-    "v8/third_party/cygwin":
-      Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),
   },
 }
 
