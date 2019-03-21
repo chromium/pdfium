@@ -299,7 +299,7 @@ CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc,
                                        CPDF_Document* pSrcPDFDoc)
     : m_pDestPDFDoc(pDestPDFDoc), m_pSrcPDFDoc(pSrcPDFDoc) {}
 
-CPDF_PageOrganizer::~CPDF_PageOrganizer() {}
+CPDF_PageOrganizer::~CPDF_PageOrganizer() = default;
 
 bool CPDF_PageOrganizer::PDFDocInit() {
   ASSERT(m_pDestPDFDoc);
@@ -568,8 +568,11 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
                   const ByteString& bsContent,
                   const XObjectNameNumberMap& xObjNameNumberMap);
 
-  uint32_t m_xobjectNum = 0;
-  XObjectNameNumberMap m_xobjs;
+  // Counter for giving new XObjects unique names.
+  uint32_t m_nObjectNumber = 0;
+
+  // Keeps track of created XObjects.
+  XObjectNameNumberMap m_XObjectNameToNumberMap;
 };
 
 CPDF_NPageToOneExporter::CPDF_NPageToOneExporter(CPDF_Document* pDestPDFDoc,
@@ -651,13 +654,15 @@ void CPDF_NPageToOneExporter::AddSubPage(
   if (it != pPageXObjectMap->end()) {
     bsXObjectName = it->second;
   } else {
-    ++m_xobjectNum;
+    ++m_nObjectNumber;
     // TODO(Xlou): A better name schema to avoid possible object name collision.
-    bsXObjectName = ByteString::Format("X%d", m_xobjectNum);
-    m_xobjs[bsXObjectName] = MakeXObject(pSrcPageDict, pObjNumberMap);
+    bsXObjectName = ByteString::Format("X%d", m_nObjectNumber);
+    m_XObjectNameToNumberMap[bsXObjectName] =
+        MakeXObject(pSrcPageDict, pObjNumberMap);
     (*pPageXObjectMap)[dwPageObjnum] = bsXObjectName;
   }
-  (*pXObjNameNumberMap)[bsXObjectName] = m_xobjs[bsXObjectName];
+  (*pXObjNameNumberMap)[bsXObjectName] =
+      m_XObjectNameToNumberMap[bsXObjectName];
 
   CFX_Matrix matrix;
   matrix.Scale(settings.scale, settings.scale);
