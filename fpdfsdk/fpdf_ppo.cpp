@@ -549,30 +549,29 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
  private:
   // Map page object number to XObject object name.
   using PageXObjectMap = std::map<uint32_t, ByteString>;
-  // Map XObject's object name to it's object number.
-  using XObjectNameNumberMap = std::map<ByteString, uint32_t>;
 
   // Creates an XObject from |pSrcPageDict|, or find an existing XObject that
   // represents |pSrcPageDict|. The transformation matrix is specified in
   // |settings|.
   // Returns the XObject reference surrounded by the transformation matrix.
   ByteString AddSubPage(const CPDF_Dictionary* pSrcPageDict,
-                        const NupPageSettings& settings,
-                        XObjectNameNumberMap* pXObjNameNumberMap);
+                        const NupPageSettings& settings);
 
   // Creates an XObject from |pSrcPageDict|.
   // Returns the object number for the newly created XObject.
   uint32_t MakeXObjectFromPage(const CPDF_Dictionary* pSrcPageDict);
 
-  void FinishPage(CPDF_Dictionary* pDestPageDict,
-                  const ByteString& bsContent,
-                  const XObjectNameNumberMap& xObjNameNumberMap);
+  // Adds |bsContent| as the Contents key in |pDestPageDict|.
+  // Adds the objects in |m_XObjectNameToNumberMap| to the XObject dictionary in
+  // |pDestPageDict|'s Resources dictionary.
+  void FinishPage(CPDF_Dictionary* pDestPageDict, const ByteString& bsContent);
 
   // Counter for giving new XObjects unique names.
   uint32_t m_nObjectNumber = 0;
 
-  // Keeps track of created XObjects.
-  XObjectNameNumberMap m_XObjectNameToNumberMap;
+  // Keeps track of created XObjects in the current page.
+  // Map XObject's object name to it's object number.
+  std::map<ByteString, uint32_t> m_XObjectNameToNumberMap;
 
   // Mapping of source page object number and XObject object number.
   // The XObject is created from the source page.
@@ -613,6 +612,8 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
                                    destPageSize.height);
   for (size_t outerPage = 0; outerPage < pageNums.size();
        outerPage += numPagesPerSheet) {
+    m_XObjectNameToNumberMap.clear();
+
     // Create a new page
     CPDF_Dictionary* pDestPageDict = dest()->CreateNewPage(curpage);
     if (!pDestPageDict)
@@ -622,8 +623,6 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     ByteString bsContent;
     size_t innerPageMax =
         std::min(outerPage + numPagesPerSheet, pageNums.size());
-    // Mapping of XObject name and XObject object number of one page.
-    XObjectNameNumberMap xObjNameNumberMap;
     for (size_t innerPage = outerPage; innerPage < innerPageMax; ++innerPage) {
       auto* pSrcPageDict = src()->GetPageDictionary(pageNums[innerPage] - 1);
       if (!pSrcPageDict)
@@ -632,11 +631,10 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
       auto srcPage = pdfium::MakeRetain<CPDF_Page>(src(), pSrcPageDict, true);
       NupPageSettings settings =
           nupState.CalculateNewPagePosition(srcPage->GetPageSize());
-      bsContent += AddSubPage(pSrcPageDict, settings, &xObjNameNumberMap);
+      bsContent += AddSubPage(pSrcPageDict, settings);
     }
 
-    // Finish up the current page.
-    FinishPage(pDestPageDict, bsContent, xObjNameNumberMap);
+    FinishPage(pDestPageDict, bsContent);
     ++curpage;
   }
 
@@ -645,8 +643,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
 
 ByteString CPDF_NPageToOneExporter::AddSubPage(
     const CPDF_Dictionary* pSrcPageDict,
-    const NupPageSettings& settings,
-    XObjectNameNumberMap* pXObjNameNumberMap) {
+    const NupPageSettings& settings) {
   uint32_t dwPageObjnum = pSrcPageDict->GetObjNum();
   ByteString bsXObjectName;
   const auto it = m_SrcPageXObjectMap.find(dwPageObjnum);
@@ -659,8 +656,6 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
     m_XObjectNameToNumberMap[bsXObjectName] = MakeXObjectFromPage(pSrcPageDict);
     m_SrcPageXObjectMap[dwPageObjnum] = bsXObjectName;
   }
-  (*pXObjNameNumberMap)[bsXObjectName] =
-      m_XObjectNameToNumberMap[bsXObjectName];
 
   CFX_Matrix matrix;
   matrix.Scale(settings.scale, settings.scale);
@@ -723,10 +718,8 @@ uint32_t CPDF_NPageToOneExporter::MakeXObjectFromPage(
   return pNewXObject->GetObjNum();
 }
 
-void CPDF_NPageToOneExporter::FinishPage(
-    CPDF_Dictionary* pDestPageDict,
-    const ByteString& bsContent,
-    const XObjectNameNumberMap& xObjNameNumberMap) {
+void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
+                                         const ByteString& bsContent) {
   ASSERT(pDestPageDict);
 
   CPDF_Dictionary* pRes =
@@ -740,7 +733,7 @@ void CPDF_NPageToOneExporter::FinishPage(
   if (!pPageXObject)
     pPageXObject = pRes->SetNewFor<CPDF_Dictionary>("XObject");
 
-  for (auto& it : xObjNameNumberMap)
+  for (auto& it : m_XObjectNameToNumberMap)
     pPageXObject->SetNewFor<CPDF_Reference>(it.first, dest(), it.second);
 
   auto pDict = dest()->New<CPDF_Dictionary>();
