@@ -1672,41 +1672,39 @@ bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
   if (wsSrcDateTime.IsEmpty() || m_spPattern.empty())
     return false;
 
+  LocaleIface* pLocale = nullptr;
   WideString wsDatePattern;
   WideString wsTimePattern;
-  LocaleIface* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(&pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
     return false;
+
   if (eCategory == FX_DATETIMETYPE_Unknown)
     eCategory = eDateTimeType;
-  if (eCategory == FX_DATETIMETYPE_Unknown)
-    return false;
-  if (eCategory == FX_DATETIMETYPE_TimeDate) {
-    size_t iStart = 0;
-    if (!ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
-                         &iStart)) {
+
+  size_t iStart = 0;
+  switch (eCategory) {
+    case FX_DATETIMETYPE_Date:
+      return ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
+                             &iStart);
+    case FX_DATETIMETYPE_Time:
+      return ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
+                             &iStart);
+    case FX_DATETIMETYPE_DateTime:
+      return ParseLocaleDate(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
+                             &iStart) &&
+             ParseLocaleTime(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
+                             &iStart);
+    case FX_DATETIMETYPE_TimeDate:
+      return ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
+                             &iStart) &&
+             ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
+                             &iStart);
+    case FX_DATETIMETYPE_Unknown:
+    default:
       return false;
-    }
-    if (!ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
-                         &iStart)) {
-      return false;
-    }
-  } else {
-    size_t iStart = 0;
-    if ((eCategory & FX_DATETIMETYPE_Date) &&
-        !ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
-                         &iStart)) {
-      return false;
-    }
-    if ((eCategory & FX_DATETIMETYPE_Time) &&
-        !ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
-                         &iStart)) {
-      return false;
-    }
   }
-  return true;
 }
 
 bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText) const {

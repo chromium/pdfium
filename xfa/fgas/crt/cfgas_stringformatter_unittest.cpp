@@ -194,6 +194,34 @@ TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
+                    ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_DateTime,
+                                     &result));
+    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+  }
+}
+
+TEST_F(CFGAS_StringFormatterTest, TimeDateFormat) {
+  struct {
+    const wchar_t* locale;
+    const wchar_t* input;
+    const wchar_t* pattern;
+    const wchar_t* output;
+  } tests[] = {
+      {L"en", L"1999-07-16T10:30Z",
+       L"'At' time{HH:MM Z} 'on' date{MMM DD, YYYY}",
+       L"At 10:30 GMT on Jul 16, 1999"},
+      {L"en", L"1999-07-16T10:30", L"'At' time{HH:MM} 'on' date{MMM DD, YYYY}",
+       L"At 10:30 on Jul 16, 1999"},
+      {L"en", L"1999-07-16T10:30Z",
+       L"time{'At' HH:MM Z} date{'on' MMM DD, YYYY}",
+       L"At 10:30 GMT on Jul 16, 1999"},
+      {L"en", L"1999-07-16T10:30Z",
+       L"time{'At 'HH:MM Z}date{' on 'MMM DD, YYYY}",
+       L"At 10:30 GMT on Jul 16, 1999"}};
+
+  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+    WideString result;
+    EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
                     ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_TimeDate,
                                      &result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
