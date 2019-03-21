@@ -302,8 +302,11 @@ CJS_Result CJX_HostPseudoModel::openList(
     return CJS_Result::Success();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
-  CXFA_FFWidget* hWidget =
-      XFA_GetWidgetFromLayoutItem(pDocLayout->GetLayoutItem(pNode));
+  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  if (!pLayoutItem)
+    return CJS_Result::Success();
+
+  CXFA_FFWidget* hWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem);
   if (!hWidget)
     return CJS_Result::Success();
 

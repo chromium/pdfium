@@ -1,0 +1,19 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_single_2_0.fragment}}
+{{object 3 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+<template>
+<subform>
+<breakBefore>
+<script>host.openList("""")</script>
+endstream
+endobj
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
