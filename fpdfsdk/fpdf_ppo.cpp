@@ -552,13 +552,13 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   // Map XObject's object name to it's object number.
   using XObjectNameNumberMap = std::map<ByteString, uint32_t>;
 
-  // Creates a xobject from the source page dictionary, and appends the
-  // bsContent string with the xobject reference surrounded by the
-  // transformation matrix.
-  void AddSubPage(const CPDF_Dictionary* pSrcPageDict,
-                  const NupPageSettings& settings,
-                  XObjectNameNumberMap* pXObjNameNumberMap,
-                  ByteString* bsContent);
+  // Creates an XObject from |pSrcPageDict|, or find an existing XObject that
+  // represents |pSrcPageDict|. The transformation matrix is specified in
+  // |settings|.
+  // Returns the XObject reference surrounded by the transformation matrix.
+  ByteString AddSubPage(const CPDF_Dictionary* pSrcPageDict,
+                        const NupPageSettings& settings,
+                        XObjectNameNumberMap* pXObjNameNumberMap);
 
   // Creates an XObject from |pSrcPageDict|.
   // Returns the object number for the newly created XObject.
@@ -632,7 +632,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
       auto srcPage = pdfium::MakeRetain<CPDF_Page>(src(), pSrcPageDict, true);
       NupPageSettings settings =
           nupState.CalculateNewPagePosition(srcPage->GetPageSize());
-      AddSubPage(pSrcPageDict, settings, &xObjNameNumberMap, &bsContent);
+      bsContent += AddSubPage(pSrcPageDict, settings, &xObjNameNumberMap);
     }
 
     // Finish up the current page.
@@ -643,11 +643,10 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   return true;
 }
 
-void CPDF_NPageToOneExporter::AddSubPage(
+ByteString CPDF_NPageToOneExporter::AddSubPage(
     const CPDF_Dictionary* pSrcPageDict,
     const NupPageSettings& settings,
-    XObjectNameNumberMap* pXObjNameNumberMap,
-    ByteString* bsContent) {
+    XObjectNameNumberMap* pXObjNameNumberMap) {
   uint32_t dwPageObjnum = pSrcPageDict->GetObjNum();
   ByteString bsXObjectName;
   const auto it = m_SrcPageXObjectMap.find(dwPageObjnum);
@@ -672,7 +671,7 @@ void CPDF_NPageToOneExporter::AddSubPage(
                 << matrix.a << " " << matrix.b << " " << matrix.c << " "
                 << matrix.d << " " << matrix.e << " " << matrix.f << " cm\n"
                 << "/" << bsXObjectName << " Do Q\n";
-  *bsContent += ByteString(contentStream);
+  return ByteString(contentStream);
 }
 
 uint32_t CPDF_NPageToOneExporter::MakeXObjectFromPage(
