@@ -271,16 +271,13 @@ std::vector<uint32_t> GetPageNumbers(const CPDF_Document& doc,
 
 class CPDF_PageOrganizer {
  protected:
-  // Map source page object number to XObject object number.
-  using ObjectNumberMap = std::map<uint32_t, uint32_t>;
-
   CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
   ~CPDF_PageOrganizer();
 
   // Must be called after construction before doing anything else.
   bool PDFDocInit();
 
-  bool UpdateReference(CPDF_Object* pObj, ObjectNumberMap* pObjNumberMap);
+  bool UpdateReference(CPDF_Object* pObj);
 
   CPDF_Document* dest() { return m_pDestPDFDoc.Get(); }
   const CPDF_Document* dest() const { return m_pDestPDFDoc.Get(); }
@@ -288,11 +285,18 @@ class CPDF_PageOrganizer {
   CPDF_Document* src() { return m_pSrcPDFDoc.Get(); }
   const CPDF_Document* src() const { return m_pSrcPDFDoc.Get(); }
 
+  void AddObjectMapping(uint32_t dwOldPageObj, uint32_t dwNewPageObj) {
+    m_ObjectNumberMap[dwOldPageObj] = dwNewPageObj;
+  }
+
  private:
-  uint32_t GetNewObjId(ObjectNumberMap* pObjNumberMap, CPDF_Reference* pRef);
+  uint32_t GetNewObjId(CPDF_Reference* pRef);
 
   UnownedPtr<CPDF_Document> const m_pDestPDFDoc;
   UnownedPtr<CPDF_Document> const m_pSrcPDFDoc;
+
+  // Mapping of source object number to destination object number.
+  std::map<uint32_t, uint32_t> m_ObjectNumberMap;
 };
 
 CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc,
@@ -340,12 +344,11 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   return true;
 }
 
-bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
-                                         ObjectNumberMap* pObjNumberMap) {
+bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case CPDF_Object::kReference: {
       CPDF_Reference* pReference = pObj->AsReference();
-      uint32_t newobjnum = GetNewObjId(pObjNumberMap, pReference);
+      uint32_t newobjnum = GetNewObjId(pReference);
       if (newobjnum == 0)
         return false;
       pReference->SetRef(dest(), newobjnum);
@@ -363,7 +366,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
           CPDF_Object* pNextObj = it->second.get();
           if (!pNextObj)
             return false;
-          if (!UpdateReference(pNextObj, pObjNumberMap))
+          if (!UpdateReference(pNextObj))
             bad_keys.push_back(key);
         }
       }
@@ -377,7 +380,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
         CPDF_Object* pNextObj = pArray->GetObjectAt(i);
         if (!pNextObj)
           return false;
-        if (!UpdateReference(pNextObj, pObjNumberMap))
+        if (!UpdateReference(pNextObj))
           return false;
       }
       break;
@@ -387,7 +390,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       CPDF_Dictionary* pDict = pStream->GetDict();
       if (!pDict)
         return false;
-      if (!UpdateReference(pDict, pObjNumberMap))
+      if (!UpdateReference(pDict))
         return false;
       break;
     }
@@ -398,15 +401,14 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
   return true;
 }
 
-uint32_t CPDF_PageOrganizer::GetNewObjId(ObjectNumberMap* pObjNumberMap,
-                                         CPDF_Reference* pRef) {
+uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
   if (!pRef)
     return 0;
 
   uint32_t dwObjnum = pRef->GetRefObjNum();
   uint32_t dwNewObjNum = 0;
-  const auto it = pObjNumberMap->find(dwObjnum);
-  if (it != pObjNumberMap->end())
+  const auto it = m_ObjectNumberMap.find(dwObjnum);
+  if (it != m_ObjectNumberMap.end())
     dwNewObjNum = it->second;
   if (dwNewObjNum)
     return dwNewObjNum;
@@ -427,8 +429,8 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(ObjectNumberMap* pObjNumberMap,
   }
   CPDF_Object* pUnownedClone = dest()->AddIndirectObject(std::move(pClone));
   dwNewObjNum = pUnownedClone->GetObjNum();
-  (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
-  if (!UpdateReference(pUnownedClone, pObjNumberMap))
+  AddObjectMapping(dwObjnum, dwNewObjNum);
+  if (!UpdateReference(pUnownedClone))
     return 0;
 
   return dwNewObjNum;
@@ -460,7 +462,6 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
     return false;
 
   int curpage = nIndex;
-  auto pObjNumberMap = pdfium::MakeUnique<ObjectNumberMap>();
   for (size_t i = 0; i < pageNums.size(); ++i) {
     CPDF_Dictionary* pDestPageDict = dest()->CreateNewPage(curpage);
     auto* pSrcPageDict = src()->GetPageDictionary(pageNums[i] - 1);
@@ -517,8 +518,8 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
     // Update the reference
     uint32_t dwOldPageObj = pSrcPageDict->GetObjNum();
     uint32_t dwNewPageObj = pDestPageDict->GetObjNum();
-    (*pObjNumberMap)[dwOldPageObj] = dwNewPageObj;
-    UpdateReference(pDestPageDict, pObjNumberMap.get());
+    AddObjectMapping(dwOldPageObj, dwNewPageObj);
+    UpdateReference(pDestPageDict);
     ++curpage;
   }
 
@@ -572,10 +573,6 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   // Keeps track of created XObjects in the current page.
   // Map XObject's object name to it's object number.
   std::map<ByteString, uint32_t> m_XObjectNameToNumberMap;
-
-  // Mapping of source page object number and XObject object number.
-  // The XObject is created from the source page.
-  ObjectNumberMap m_ObjectNumberMap;
 
   // Mapping of source page object number and XObject name of the entire doc.
   // If there are multiple source pages that reference the same object number,
@@ -679,8 +676,8 @@ ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
   }
   uint32_t dwSrcPageObj = pSrcPageDict->GetObjNum();
   uint32_t dwNewXobjectObj = pNewXObjectDict->GetObjNum();
-  m_ObjectNumberMap[dwSrcPageObj] = dwNewXobjectObj;
-  UpdateReference(pNewXObjectDict, &m_ObjectNumberMap);
+  AddObjectMapping(dwSrcPageObj, dwNewXobjectObj);
+  UpdateReference(pNewXObjectDict);
 
   pNewXObjectDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pNewXObjectDict->SetNewFor<CPDF_Name>("Subtype", "Form");
