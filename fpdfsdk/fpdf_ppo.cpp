@@ -557,9 +557,9 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   ByteString AddSubPage(const CPDF_Dictionary* pSrcPageDict,
                         const NupPageSettings& settings);
 
-  // Creates an XObject from |pSrcPageDict|.
-  // Returns the object number for the newly created XObject.
-  uint32_t MakeXObjectFromPage(const CPDF_Dictionary* pSrcPageDict);
+  // Creates an XObject from |pSrcPageDict|. Updates mapping as needed.
+  // Returns the name of the newly created XObject.
+  ByteString MakeXObjectFromPage(const CPDF_Dictionary* pSrcPageDict);
 
   // Adds |bsContent| as the Contents key in |pDestPageDict|.
   // Adds the objects in |m_XObjectNameToNumberMap| to the XObject dictionary in
@@ -644,18 +644,11 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
 ByteString CPDF_NPageToOneExporter::AddSubPage(
     const CPDF_Dictionary* pSrcPageDict,
     const NupPageSettings& settings) {
-  uint32_t dwPageObjnum = pSrcPageDict->GetObjNum();
-  ByteString bsXObjectName;
-  const auto it = m_SrcPageXObjectMap.find(dwPageObjnum);
-  if (it != m_SrcPageXObjectMap.end()) {
-    bsXObjectName = it->second;
-  } else {
-    ++m_nObjectNumber;
-    // TODO(Xlou): A better name schema to avoid possible object name collision.
-    bsXObjectName = ByteString::Format("X%d", m_nObjectNumber);
-    m_XObjectNameToNumberMap[bsXObjectName] = MakeXObjectFromPage(pSrcPageDict);
-    m_SrcPageXObjectMap[dwPageObjnum] = bsXObjectName;
-  }
+  uint32_t dwSrcPageObjnum = pSrcPageDict->GetObjNum();
+  const auto it = m_SrcPageXObjectMap.find(dwSrcPageObjnum);
+  ByteString bsXObjectName = it != m_SrcPageXObjectMap.end()
+                                 ? it->second
+                                 : MakeXObjectFromPage(pSrcPageDict);
 
   CFX_Matrix matrix;
   matrix.Scale(settings.scale, settings.scale);
@@ -669,7 +662,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
   return ByteString(contentStream);
 }
 
-uint32_t CPDF_NPageToOneExporter::MakeXObjectFromPage(
+ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
     const CPDF_Dictionary* pSrcPageDict) {
   ASSERT(pSrcPageDict);
 
@@ -695,27 +688,31 @@ uint32_t CPDF_NPageToOneExporter::MakeXObjectFromPage(
   pNewXObjectDict->SetRectFor("BBox", GetCropBox(pSrcPageDict));
   // TODO(xlou): add matrix field to pNewXObjectDict.
 
-  if (!pSrcContentObj)
-    return pNewXObject->GetObjNum();
-
-  ByteString bsSrcContentStream;
-  const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj);
-  if (pSrcContentArray) {
-    for (size_t i = 0; i < pSrcContentArray->size(); ++i) {
-      const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
+  if (pSrcContentObj) {
+    ByteString bsSrcContentStream;
+    const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj);
+    if (pSrcContentArray) {
+      for (size_t i = 0; i < pSrcContentArray->size(); ++i) {
+        const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
+        auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+        pAcc->LoadAllDataFiltered();
+        bsSrcContentStream += ByteString(pAcc->GetData(), pAcc->GetSize());
+        bsSrcContentStream += "\n";
+      }
+    } else {
+      const CPDF_Stream* pStream = pSrcContentObj->AsStream();
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
       pAcc->LoadAllDataFiltered();
-      bsSrcContentStream += ByteString(pAcc->GetData(), pAcc->GetSize());
-      bsSrcContentStream += "\n";
+      bsSrcContentStream = ByteString(pAcc->GetData(), pAcc->GetSize());
     }
-  } else {
-    const CPDF_Stream* pStream = pSrcContentObj->AsStream();
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-    pAcc->LoadAllDataFiltered();
-    bsSrcContentStream = ByteString(pAcc->GetData(), pAcc->GetSize());
+    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.AsRawSpan());
   }
-  pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.AsRawSpan());
-  return pNewXObject->GetObjNum();
+
+  // TODO(xlou): A better name schema to avoid possible object name collision.
+  ByteString bsXObjectName = ByteString::Format("X%d", ++m_nObjectNumber);
+  m_XObjectNameToNumberMap[bsXObjectName] = pNewXObject->GetObjNum();
+  m_SrcPageXObjectMap[pSrcPageDict->GetObjNum()] = bsXObjectName;
+  return bsXObjectName;
 }
 
 void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
