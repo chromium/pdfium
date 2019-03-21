@@ -452,6 +452,8 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
       {L"en", L"123.5 ", L"zzz.z)", L"123.5"},
       {L"en", L"123.5 ", L"zzz.z(", L"123.5"},
       {L"en", L"123.545,4", L"zzz.zzz,z", L"123.5454"},
+      // https://crbug.com/938724
+      {L"en", L"1", L" num.().().}", L"1"},
   };
 
   static const TestCase failures[] = {
@@ -460,9 +462,6 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
 
       // https://crbug.com/938626
       {L"en", L"PDF", L"num( ", L"."},
-
-      // https://crbug.com/938724
-      {L"en", L"1", L" num.().().}", L"."},
   };
 
   for (const auto& test : tests) {
@@ -589,11 +588,22 @@ TEST_F(CFGAS_StringFormatterTest, NumFormat) {
       {L"en", L"1", L"9.", L"1"},
   };
 
+  static const TestCase failures[] = {
+      // https://crbug.com/pdfium/1271
+      {L"en", L"1", L"num.{E", L"1"},
+  };
+
   for (const auto& test : tests) {
     WideString result;
     EXPECT_TRUE(fmt(test.locale, test.pattern)->FormatNum(test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
     EXPECT_STREQ(test.output, result.c_str())
+        << " TEST: " << test.input << ", " << test.pattern;
+  }
+
+  for (const auto& test : failures) {
+    WideString result;
+    EXPECT_FALSE(fmt(test.locale, test.pattern)->FormatNum(test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
   }
 }
