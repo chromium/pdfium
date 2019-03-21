@@ -51,9 +51,19 @@ deps = {
   "testing/corpus":
     Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
 
+  "third_party/android_ndk": {
+    'url': Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
+    'condition': 'checkout_android',
+  },
+
   "third_party/binutils":
     Var('chromium_git') + "/chromium/src/third_party/binutils.git@" +
         Var('binutils_revision'),
+
+  "third_party/catapult": {
+    'url': Var('chromium_git') + '/catapult.git' + '@' + Var('catapult_revision'),
+    'condition': 'checkout_android',
+  },
 
   'third_party/depot_tools':
     Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' +
@@ -111,15 +121,6 @@ deps = {
 
   "v8":
     Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
-}
-
-deps_os = {
-  "android": {
-    "third_party/android_ndk":
-      Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
-    "third_party/catapult":
-      Var('chromium_git') + '/catapult.git' + '@' + Var('catapult_revision'),
-  },
 }
 
 recursedeps = [
