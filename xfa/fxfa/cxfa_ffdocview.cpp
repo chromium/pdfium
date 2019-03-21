@@ -601,7 +601,7 @@ void CXFA_FFDocView::RunBindItems() {
       continue;
 
     CXFA_Node* pWidgetNode = item->GetParent();
-    if (!pWidgetNode->IsWidgetReady())
+    if (!pWidgetNode || !pWidgetNode->IsWidgetReady())
       continue;
 
     CFXJSE_Engine* pScriptContext =
