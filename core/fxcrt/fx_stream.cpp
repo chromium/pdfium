@@ -123,7 +123,13 @@ FX_FolderHandle* FX_OpenFolder(const char* path) {
   pData->m_bEnd = false;
   return pData.release();
 #else
-  return opendir(path);
+  DIR* dir = opendir(path);
+  if (!dir)
+    return nullptr;
+  auto handle = pdfium::MakeUnique<FX_FolderHandle>();
+  handle->m_Path = path;
+  handle->m_Dir = dir;
+  return handle.release();
 #endif
 }
 
@@ -144,11 +150,16 @@ bool FX_GetNextFile(FX_FolderHandle* handle,
     handle->m_bEnd = true;
   return true;
 #else
-  struct dirent* de = readdir(handle);
+  struct dirent* de = readdir(handle->m_Dir);
   if (!de)
     return false;
+  ByteString fullpath = handle->m_Path + "/" + de->d_name;
+  struct stat deStat;
+  if (stat(fullpath.c_str(), &deStat) < 0)
+    return false;
+
   *filename = de->d_name;
-  *bFolder = de->d_type == DT_DIR;
+  *bFolder = S_ISDIR(deStat.st_mode);
   return true;
 #endif
 }
@@ -159,8 +170,8 @@ void FX_CloseFolder(FX_FolderHandle* handle) {
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   FindClose(handle->m_Handle);
-  delete handle;
 #else
-  closedir(handle);
+  closedir(handle->m_Dir);
 #endif
+  delete handle;
 }

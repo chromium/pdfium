@@ -19,8 +19,14 @@ typedef CFindFileDataA FX_FolderHandle;
 #else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #include <dirent.h>
+#include <sys/stat.h>
 #include <sys/types.h>
-typedef DIR FX_FolderHandle;
+#include <unistd.h>
+
+struct FX_FolderHandle {
+  ByteString m_Path;
+  DIR* m_Dir;
+};
 
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
