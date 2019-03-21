@@ -289,6 +289,8 @@ class CPDF_PageOrganizer {
     m_ObjectNumberMap[dwOldPageObj] = dwNewPageObj;
   }
 
+  void ClearObjectNumberMap() { m_ObjectNumberMap.clear(); }
+
  private:
   uint32_t GetNewObjId(CPDF_Reference* pRef);
 
@@ -598,7 +600,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   if (!safe_numPagesPerSheet.IsValid())
     return false;
 
-  m_ObjectNumberMap.clear();
+  ClearObjectNumberMap();
   m_SrcPageXObjectMap.clear();
   size_t numPagesPerSheet = safe_numPagesPerSheet.ValueOrDie();
   NupState nupState(destPageSize, numPagesOnXAxis, numPagesOnYAxis);
