@@ -349,7 +349,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(ByteStringView bsFile,
 }
 
 void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
-  std::unique_ptr<FX_FileHandle, FxFolderHandleCloser> handle(
+  std::unique_ptr<FX_FolderHandle, FxFolderHandleCloser> handle(
       FX_OpenFolder(path.c_str()));
   if (!handle)
     return;

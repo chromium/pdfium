@@ -139,7 +139,7 @@ bool CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
 }
 
 void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
-  std::unique_ptr<FX_FileHandle, FxFolderHandleCloser> handle(
+  std::unique_ptr<FX_FolderHandle, FxFolderHandleCloser> handle(
       FX_OpenFolder(path.c_str()));
   if (!handle)
     return;
