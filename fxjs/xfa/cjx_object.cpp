@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_object.h"
 
+#include <set>
 #include <tuple>
 
 #include "core/fxcrt/fx_extension.h"
@@ -892,8 +893,12 @@ void CJX_Object::SetMapModuleValue(void* pKey, void* pValue) {
 }
 
 Optional<void*> CJX_Object::GetMapModuleValue(void* pKey) const {
+  std::set<const CXFA_Node*> visited;
   for (const CXFA_Node* pNode = ToNode(GetXFAObject()); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
+    if (!visited.insert(pNode).second)
+      break;
+
     XFA_MAPMODULEDATA* pModule = pNode->JSObject()->GetMapModuleData();
     if (pModule) {
       auto it = pModule->m_ValueMap.find(pKey);
@@ -948,9 +953,13 @@ void CJX_Object::SetMapModuleBuffer(
 bool CJX_Object::GetMapModuleBuffer(void* pKey,
                                     void** pValue,
                                     int32_t* pBytes) const {
+  std::set<const CXFA_Node*> visited;
   XFA_MAPDATABLOCK* pBuffer = nullptr;
   for (const CXFA_Node* pNode = ToNode(GetXFAObject()); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
+    if (!visited.insert(pNode).second)
+      break;
+
     XFA_MAPMODULEDATA* pModule = pNode->JSObject()->GetMapModuleData();
     if (pModule) {
       auto it = pModule->m_BufferMap.find(pKey);
