@@ -271,19 +271,19 @@ std::vector<uint32_t> GetPageNumbers(const CPDF_Document& doc,
 
 class CPDF_PageOrganizer {
  protected:
-  CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
+  CPDF_PageOrganizer(CPDF_Document* pDestDoc, CPDF_Document* pSrcDoc);
   ~CPDF_PageOrganizer();
 
   // Must be called after construction before doing anything else.
-  bool PDFDocInit();
+  bool Init();
 
   bool UpdateReference(CPDF_Object* pObj);
 
-  CPDF_Document* dest() { return m_pDestPDFDoc.Get(); }
-  const CPDF_Document* dest() const { return m_pDestPDFDoc.Get(); }
+  CPDF_Document* dest() { return m_pDestDoc.Get(); }
+  const CPDF_Document* dest() const { return m_pDestDoc.Get(); }
 
-  CPDF_Document* src() { return m_pSrcPDFDoc.Get(); }
-  const CPDF_Document* src() const { return m_pSrcPDFDoc.Get(); }
+  CPDF_Document* src() { return m_pSrcDoc.Get(); }
+  const CPDF_Document* src() const { return m_pSrcDoc.Get(); }
 
   void AddObjectMapping(uint32_t dwOldPageObj, uint32_t dwNewPageObj) {
     m_ObjectNumberMap[dwOldPageObj] = dwNewPageObj;
@@ -292,22 +292,22 @@ class CPDF_PageOrganizer {
  private:
   uint32_t GetNewObjId(CPDF_Reference* pRef);
 
-  UnownedPtr<CPDF_Document> const m_pDestPDFDoc;
-  UnownedPtr<CPDF_Document> const m_pSrcPDFDoc;
+  UnownedPtr<CPDF_Document> const m_pDestDoc;
+  UnownedPtr<CPDF_Document> const m_pSrcDoc;
 
   // Mapping of source object number to destination object number.
   std::map<uint32_t, uint32_t> m_ObjectNumberMap;
 };
 
-CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestPDFDoc,
-                                       CPDF_Document* pSrcPDFDoc)
-    : m_pDestPDFDoc(pDestPDFDoc), m_pSrcPDFDoc(pSrcPDFDoc) {}
+CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* pDestDoc,
+                                       CPDF_Document* pSrcDoc)
+    : m_pDestDoc(pDestDoc), m_pSrcDoc(pSrcDoc) {}
 
 CPDF_PageOrganizer::~CPDF_PageOrganizer() = default;
 
-bool CPDF_PageOrganizer::PDFDocInit() {
-  ASSERT(m_pDestPDFDoc);
-  ASSERT(m_pSrcPDFDoc);
+bool CPDF_PageOrganizer::Init() {
+  ASSERT(m_pDestDoc);
+  ASSERT(m_pSrcDoc);
 
   CPDF_Dictionary* pNewRoot = dest()->GetRoot();
   if (!pNewRoot)
@@ -440,7 +440,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
 // This class is intended to be used once via ExportPage() and then destroyed.
 class CPDF_PageExporter final : public CPDF_PageOrganizer {
  public:
-  CPDF_PageExporter(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
+  CPDF_PageExporter(CPDF_Document* pDestDoc, CPDF_Document* pSrcDoc);
   ~CPDF_PageExporter();
 
   // For the pages from the source document with |pageNums| as their page
@@ -450,15 +450,15 @@ class CPDF_PageExporter final : public CPDF_PageOrganizer {
   bool ExportPage(const std::vector<uint32_t>& pageNums, int nIndex);
 };
 
-CPDF_PageExporter::CPDF_PageExporter(CPDF_Document* pDestPDFDoc,
-                                     CPDF_Document* pSrcPDFDoc)
-    : CPDF_PageOrganizer(pDestPDFDoc, pSrcPDFDoc) {}
+CPDF_PageExporter::CPDF_PageExporter(CPDF_Document* pDestDoc,
+                                     CPDF_Document* pSrcDoc)
+    : CPDF_PageOrganizer(pDestDoc, pSrcDoc) {}
 
 CPDF_PageExporter::~CPDF_PageExporter() = default;
 
 bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
                                    int nIndex) {
-  if (!PDFDocInit())
+  if (!Init())
     return false;
 
   int curpage = nIndex;
@@ -531,8 +531,7 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
 // intended to be used once via ExportNPagesToOne() and then destroyed.
 class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
  public:
-  CPDF_NPageToOneExporter(CPDF_Document* pDestPDFDoc,
-                          CPDF_Document* pSrcPDFDoc);
+  CPDF_NPageToOneExporter(CPDF_Document* pDestDoc, CPDF_Document* pSrcDoc);
   ~CPDF_NPageToOneExporter();
 
   // For the pages from the source document with |pageNums| as their page
@@ -580,9 +579,9 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   PageXObjectMap m_SrcPageXObjectMap;
 };
 
-CPDF_NPageToOneExporter::CPDF_NPageToOneExporter(CPDF_Document* pDestPDFDoc,
-                                                 CPDF_Document* pSrcPDFDoc)
-    : CPDF_PageOrganizer(pDestPDFDoc, pSrcPDFDoc) {}
+CPDF_NPageToOneExporter::CPDF_NPageToOneExporter(CPDF_Document* pDestDoc,
+                                                 CPDF_Document* pSrcDoc)
+    : CPDF_PageOrganizer(pDestDoc, pSrcDoc) {}
 
 CPDF_NPageToOneExporter::~CPDF_NPageToOneExporter() = default;
 
@@ -591,7 +590,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     const CFX_SizeF& destPageSize,
     unsigned int numPagesOnXAxis,
     unsigned int numPagesOnYAxis) {
-  if (!PDFDocInit())
+  if (!Init())
     return false;
 
   FX_SAFE_SIZE_T safe_numPagesPerSheet = numPagesOnXAxis;
