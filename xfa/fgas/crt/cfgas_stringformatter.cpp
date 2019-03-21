@@ -788,7 +788,7 @@ bool FX_TimeFromCanonical(const LocaleIface* pLocale,
 
   uint32_t second = 0;
   uint32_t millisecond = 0;
-  if (spTime[cc] != 'Z') {
+  if (cc < spTime.size() && spTime[cc] != 'Z') {
     if (!ExtractCountDigits(spTime, 2, &cc, &second) || second >= 60)
       return false;
 

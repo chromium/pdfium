@@ -189,7 +189,9 @@ TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
        L"At 10:30 GMT on Jul 16, 1999"},
       {L"en", L"1999-07-16T10:30Z",
        L"time{'At 'HH:MM Z}date{' on 'MMM DD, YYYY}",
-       L"At 10:30 GMT on Jul 16, 1999"}};
+       L"At 10:30 GMT on Jul 16, 1999"},
+      {L"en", L"9111T1111:", L"MMM D, YYYYTh:MM:SS A",
+       L"Jan 1, 9111 11:11:00 AM"}};
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
     WideString result;
