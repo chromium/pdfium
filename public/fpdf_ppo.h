@@ -49,8 +49,8 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
                        float output_width,
                        float output_height,
-                       unsigned int num_pages_on_x_axis,
-                       unsigned int num_pages_on_y_axis);
+                       size_t num_pages_on_x_axis,
+                       size_t num_pages_on_y_axis);
 
 // Copy the viewer preferences from |src_doc| into |dest_doc|.
 //
