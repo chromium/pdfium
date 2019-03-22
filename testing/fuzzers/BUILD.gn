@@ -41,6 +41,7 @@ group("fuzzers") {
     if (pdf_enable_xfa) {
       deps += [
         ":pdf_bidi_fuzzer_src",
+        ":pdf_cfgas_stringformatter_fuzzer_src",
         ":pdf_cfx_barcode_fuzzer_src",
         ":pdf_codec_jpeg_fuzzer_src",
         ":pdf_css_fuzzer_src",
@@ -155,6 +156,16 @@ if (pdf_enable_v8) {
         "../../core/fxge",
         "../../xfa/fgas",
         "../../xfa/fgas/layout",
+      ]
+    }
+
+    pdfium_fuzzer("pdf_cfgas_stringformatter_fuzzer_src") {
+      sources = [
+        "pdf_cfgas_stringformatter_fuzzer.cc",
+      ]
+      deps = [
+        "../../xfa/fgas",
+        "../../xfa/fxfa/parser",
       ]
     }
 
