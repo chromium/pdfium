@@ -629,7 +629,7 @@ FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot) {
   if (!FPDFAnnot_HasAttachmentPoints(annot))
     return 0;
 
-  CPDF_Dictionary* pAnnotDict =
+  const CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
   return pArray ? pArray->size() / 8 : 0;
@@ -642,7 +642,7 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
   if (!FPDFAnnot_HasAttachmentPoints(annot) || !quad_points)
     return false;
 
-  CPDF_Dictionary* pAnnotDict =
+  const CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
   if (!pArray)
