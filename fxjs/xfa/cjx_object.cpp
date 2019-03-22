@@ -1428,8 +1428,10 @@ void CJX_Object::ScriptSomDefaultValue(CFXJSE_Value* pValue,
 
   if (bSetting) {
     WideString wsNewValue;
-    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
+    if (pValue &&
+        !(pValue->IsEmpty() || pValue->IsNull() || pValue->IsUndefined())) {
       wsNewValue = pValue->ToWideString();
+    }
 
     WideString wsFormatValue(wsNewValue);
     CXFA_Node* pContainerNode = nullptr;

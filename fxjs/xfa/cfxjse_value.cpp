@@ -131,6 +131,9 @@ void CFXJSE_Value::SetFloat(float fFloat) {
 bool CFXJSE_Value::SetObjectProperty(ByteStringView szPropName,
                                      CFXJSE_Value* lpPropValue) {
   ASSERT(lpPropValue);
+  if (lpPropValue->IsEmpty())
+    return false;
+
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hObject =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);

@@ -5551,7 +5551,7 @@ void CFXJSE_FormCalcContext::ParseResolveResult(
 // static
 int32_t CFXJSE_FormCalcContext::ValueToInteger(CFXJSE_Value* pThis,
                                                CFXJSE_Value* pValue) {
-  if (!pValue)
+  if (!pValue || pValue->IsEmpty())
     return 0;
 
   v8::Isolate* pIsolate = ToFormCalcContext(pThis)->GetScriptRuntime();
