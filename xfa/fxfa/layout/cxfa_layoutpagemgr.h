@@ -41,7 +41,7 @@ class CXFA_LayoutPageMgr {
                                  bool bBefore,
                                  CXFA_Node*& pBreakLeaderNode,
                                  CXFA_Node*& pBreakTrailerNode,
-                                 bool& bCreatePage);
+                                 bool* pCreatePage);
   bool ProcessOverflow(CXFA_Node* pFormNode,
                        CXFA_Node*& pLeaderNode,
                        CXFA_Node*& pTrailerNode,

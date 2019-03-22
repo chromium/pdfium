@@ -1698,7 +1698,7 @@ CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           if (!bUseBreakControl || !m_pPageMgr ||
               !m_pPageMgr->ProcessBreakBeforeOrAfter(m_pCurChildNode, true,
                                                      pLeaderNode, pTrailerNode,
-                                                     bCreatePage) ||
+                                                     &bCreatePage) ||
               GetFormNode()->GetElementType() == XFA_Element::Form ||
               !bCreatePage) {
             break;
@@ -1737,7 +1737,7 @@ CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           if (!bUseBreakControl || !m_pPageMgr ||
               !m_pPageMgr->ProcessBreakBeforeOrAfter(m_pCurChildNode, false,
                                                      pLeaderNode, pTrailerNode,
-                                                     bCreatePage) ||
+                                                     &bCreatePage) ||
               GetFormNode()->GetElementType() == XFA_Element::Form) {
             break;
           }
