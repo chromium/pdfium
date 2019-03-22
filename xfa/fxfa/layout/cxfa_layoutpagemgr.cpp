@@ -888,24 +888,21 @@ bool CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
     CXFA_Node*& pBookendAppendNode) {
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pFormNode = pBookendNode->GetContainerParent();
-  if (ResolveBookendLeaderOrTrailer(pBookendNode, bLeader, pLeaderTemplate)) {
-    CXFA_Document* pDocument = pBookendNode->GetDocument();
-    CXFA_Node* pDataScope = nullptr;
-    if (pLeaderTemplate) {
-      if (!pDataScope)
-        pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
-
-      pBookendAppendNode = pDocument->DataMerge_CopyContainer(
-          pLeaderTemplate, pFormNode, pDataScope, true, true, true);
-      if (!pBookendAppendNode)
-        return false;
-
-      pDocument->DataMerge_UpdateBindingRelations(pBookendAppendNode);
-      SetLayoutGeneratedNodeFlag(pBookendAppendNode);
-      return true;
-    }
+  if (!ResolveBookendLeaderOrTrailer(pBookendNode, bLeader, pLeaderTemplate) ||
+      !pLeaderTemplate) {
+    return false;
   }
-  return false;
+
+  CXFA_Document* pDocument = pBookendNode->GetDocument();
+  CXFA_Node* pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
+  pBookendAppendNode = pDocument->DataMerge_CopyContainer(
+      pLeaderTemplate, pFormNode, pDataScope, true, true, true);
+  if (!pBookendAppendNode)
+    return false;
+
+  pDocument->DataMerge_UpdateBindingRelations(pBookendAppendNode);
+  SetLayoutGeneratedNodeFlag(pBookendAppendNode);
+  return true;
 }
 
 CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
