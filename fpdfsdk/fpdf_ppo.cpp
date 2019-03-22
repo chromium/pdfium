@@ -354,18 +354,18 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
       if (newobjnum == 0)
         return false;
       pReference->SetRef(dest(), newobjnum);
-      break;
+      return true;
     }
     case CPDF_Object::kDictionary: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
       std::vector<ByteString> bad_keys;
       {
         CPDF_DictionaryLocker locker(pDict);
-        for (auto it = locker.begin(); it != locker.end(); ++it) {
-          const ByteString& key = it->first;
+        for (const auto& it : locker) {
+          const ByteString& key = it.first;
           if (key == "Parent" || key == "Prev" || key == "First")
             continue;
-          CPDF_Object* pNextObj = it->second.get();
+          CPDF_Object* pNextObj = it.second.get();
           if (!pNextObj)
             return false;
           if (!UpdateReference(pNextObj))
@@ -374,33 +374,25 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
       }
       for (const auto& key : bad_keys)
         pDict->RemoveFor(key);
-      break;
+      return true;
     }
     case CPDF_Object::kArray: {
       CPDF_Array* pArray = pObj->AsArray();
       for (size_t i = 0; i < pArray->size(); ++i) {
         CPDF_Object* pNextObj = pArray->GetObjectAt(i);
-        if (!pNextObj)
-          return false;
-        if (!UpdateReference(pNextObj))
+        if (!pNextObj || !UpdateReference(pNextObj))
           return false;
       }
-      break;
+      return true;
     }
     case CPDF_Object::kStream: {
       CPDF_Stream* pStream = pObj->AsStream();
       CPDF_Dictionary* pDict = pStream->GetDict();
-      if (!pDict)
-        return false;
-      if (!UpdateReference(pDict))
-        return false;
-      break;
+      return pDict && UpdateReference(pDict);
     }
     default:
-      break;
+      return true;
   }
-
-  return true;
 }
 
 uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
