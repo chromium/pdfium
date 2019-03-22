@@ -80,9 +80,8 @@ class CXFA_LayoutPageMgr {
                            bool bCreatePage);
   CXFA_Node* ProcessBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
                                            bool bLeader);
-  bool ResolveBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
-                                     bool bLeader,
-                                     CXFA_Node*& pBookendAppendTemplate);
+  CXFA_Node* ResolveBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
+                                           bool bLeader);
   bool ExecuteBreakBeforeOrAfter(CXFA_Node* pCurNode,
                                  bool bBefore,
                                  CXFA_Node*& pBreakLeaderTemplate,

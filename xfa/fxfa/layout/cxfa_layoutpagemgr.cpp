@@ -895,12 +895,11 @@ CXFA_Node* CXFA_LayoutPageMgr::ProcessBookendTrailer(
 CXFA_Node* CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
     const CXFA_Node* pBookendNode,
     bool bLeader) {
-  CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pFormNode = pBookendNode->GetContainerParent();
-  if (!ResolveBookendLeaderOrTrailer(pBookendNode, bLeader, pLeaderTemplate) ||
-      !pLeaderTemplate) {
+  CXFA_Node* pLeaderTemplate =
+      ResolveBookendLeaderOrTrailer(pBookendNode, bLeader);
+  if (!pLeaderTemplate)
     return nullptr;
-  }
 
   CXFA_Document* pDocument = pBookendNode->GetDocument();
   CXFA_Node* pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
@@ -1052,29 +1051,25 @@ bool CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
   return false;
 }
 
-bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
+CXFA_Node* CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
     const CXFA_Node* pBookendNode,
-    bool bLeader,
-    CXFA_Node*& pBookendAppendTemplate) {
+    bool bLeader) {
   CXFA_Node* pContainer =
       pBookendNode->GetContainerParent()->GetTemplateNodeIfExists();
   if (pBookendNode->GetElementType() == XFA_Element::Break) {
     WideString leader = pBookendNode->JSObject()->GetCData(
         bLeader ? XFA_Attribute::BookendLeader : XFA_Attribute::BookendTrailer);
     if (leader.IsEmpty())
-      return false;
-
-    pBookendAppendTemplate = ResolveBreakTarget(pContainer, false, leader);
-    return true;
+      return nullptr;
+    return ResolveBreakTarget(pContainer, false, leader);
   }
 
   if (pBookendNode->GetElementType() != XFA_Element::Bookend)
-    return false;
+    return nullptr;
 
   WideString leader = pBookendNode->JSObject()->GetCData(
       bLeader ? XFA_Attribute::Leader : XFA_Attribute::Trailer);
-  pBookendAppendTemplate = ResolveBreakTarget(pContainer, true, leader);
-  return true;
+  return ResolveBreakTarget(pContainer, true, leader);
 }
 
 bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet(CXFA_Node* pPageSet,
