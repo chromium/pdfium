@@ -1787,13 +1787,15 @@ CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           goto SuspendAndCreateNewRow;
         }
         case Stage::kBookendLeader: {
-          CXFA_Node* pLeaderNode = nullptr;
           if (m_pCurChildPreprocessor) {
             pProcessor = std::move(m_pCurChildPreprocessor);
-          } else if (m_pPageMgr && m_pPageMgr->ProcessBookendLeaderOrTrailer(
-                                       m_pCurChildNode, true, pLeaderNode)) {
-            pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-                pLeaderNode, m_pPageMgr.Get());
+          } else if (m_pPageMgr) {
+            CXFA_Node* pLeaderNode =
+                m_pPageMgr->ProcessBookendLeader(m_pCurChildNode);
+            if (pLeaderNode) {
+              pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
+                  pLeaderNode, m_pPageMgr.Get());
+            }
           }
 
           if (pProcessor) {
@@ -1813,13 +1815,15 @@ CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           break;
         }
         case Stage::kBookendTrailer: {
-          CXFA_Node* pTrailerNode = nullptr;
           if (m_pCurChildPreprocessor) {
             pProcessor = std::move(m_pCurChildPreprocessor);
-          } else if (m_pPageMgr && m_pPageMgr->ProcessBookendLeaderOrTrailer(
-                                       m_pCurChildNode, false, pTrailerNode)) {
-            pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-                pTrailerNode, m_pPageMgr.Get());
+          } else if (m_pPageMgr) {
+            CXFA_Node* pTrailerNode =
+                m_pPageMgr->ProcessBookendTrailer(m_pCurChildNode);
+            if (pTrailerNode) {
+              pProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
+                  pTrailerNode, m_pPageMgr.Get());
+            }
           }
           if (pProcessor) {
             if (InsertFlowedItem(pProcessor.get(), bContainerWidthAutoSize,
