@@ -44,9 +44,21 @@ CXFA_ContainerLayoutItem* CXFA_LayoutItem::AsContainerLayoutItem() {
                                  : nullptr;
 }
 
+const CXFA_ContainerLayoutItem* CXFA_LayoutItem::AsContainerLayoutItem() const {
+  return IsContainerLayoutItem()
+             ? static_cast<const CXFA_ContainerLayoutItem*>(this)
+             : nullptr;
+}
+
 CXFA_ContentLayoutItem* CXFA_LayoutItem::AsContentLayoutItem() {
   return IsContentLayoutItem() ? static_cast<CXFA_ContentLayoutItem*>(this)
                                : nullptr;
+}
+
+const CXFA_ContentLayoutItem* CXFA_LayoutItem::AsContentLayoutItem() const {
+  return IsContentLayoutItem()
+             ? static_cast<const CXFA_ContentLayoutItem*>(this)
+             : nullptr;
 }
 
 CXFA_ContainerLayoutItem* CXFA_LayoutItem::GetPage() const {

@@ -251,6 +251,27 @@ bool RunBreakTestScript(CXFA_Script* pTestScript) {
       pTestScript, pTestScript->GetContainerParent());
 }
 
+float CalculateLayoutItemHeight(const CXFA_LayoutItem* pItem) {
+  float fHeight = 0;
+  for (const CXFA_LayoutItem* pChild = pItem->GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    const CXFA_ContentLayoutItem* pContent = pChild->AsContentLayoutItem();
+    if (pContent)
+      fHeight += pContent->m_sSize.height;
+  }
+  return fHeight;
+}
+
+std::vector<float> GetHeightsForContentAreas(const CXFA_LayoutItem* pItem) {
+  std::vector<float> heights;
+  for (const CXFA_LayoutItem* pChild = pItem->GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    if (pChild->GetFormNode()->GetElementType() == XFA_Element::ContentArea)
+      heights.push_back(CalculateLayoutItemHeight(pChild));
+  }
+  return heights;
+}
+
 }  // namespace
 
 class CXFA_ContainerRecord {
@@ -669,28 +690,8 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
             }
           }
           bool bUsable = true;
-          std::vector<float> rgUsedHeights;
-          for (CXFA_LayoutItem* pChildLayoutItem =
-                   pLastPageAreaLayoutItem->GetFirstChild();
-               pChildLayoutItem;
-               pChildLayoutItem = pChildLayoutItem->GetNextSibling()) {
-            if (pChildLayoutItem->GetFormNode()->GetElementType() !=
-                XFA_Element::ContentArea) {
-              continue;
-            }
-            float fUsedHeight = 0;
-            for (CXFA_LayoutItem* pContentChildLayoutItem =
-                     pChildLayoutItem->GetFirstChild();
-                 pContentChildLayoutItem;
-                 pContentChildLayoutItem =
-                     pContentChildLayoutItem->GetNextSibling()) {
-              if (CXFA_ContentLayoutItem* pContent =
-                      pContentChildLayoutItem->AsContentLayoutItem()) {
-                fUsedHeight += pContent->m_sSize.height;
-              }
-            }
-            rgUsedHeights.push_back(fUsedHeight);
-          }
+          std::vector<float> rgUsedHeights =
+              GetHeightsForContentAreas(pLastPageAreaLayoutItem);
           int32_t iCurContentAreaIndex = -1;
           for (CXFA_Node* pContentAreaNode = pNode->GetFirstChild();
                pContentAreaNode;

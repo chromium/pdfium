@@ -21,7 +21,9 @@ class CXFA_LayoutItem {
   bool IsContainerLayoutItem() const { return m_ItemType == kContainerItem; }
   bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
   CXFA_ContainerLayoutItem* AsContainerLayoutItem();
+  const CXFA_ContainerLayoutItem* AsContainerLayoutItem() const;
   CXFA_ContentLayoutItem* AsContentLayoutItem();
+  const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
   CXFA_ContainerLayoutItem* GetPage() const;
   CXFA_LayoutItem* GetParent() const { return m_pParent; }
