@@ -11,24 +11,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
-struct CFindFileDataA;
-typedef CFindFileDataA FX_FolderHandle;
-
-#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
-#include <dirent.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-struct FX_FolderHandle {
-  ByteString m_Path;
-  DIR* m_Dir;
-};
-
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+struct FX_FolderHandle;
 
 FX_FolderHandle* FX_OpenFolder(const char* path);
 bool FX_GetNextFile(FX_FolderHandle* handle,

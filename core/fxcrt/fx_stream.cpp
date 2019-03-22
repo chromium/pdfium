@@ -18,10 +18,20 @@
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include <direct.h>
 
-struct CFindFileDataA {
+struct FX_FolderHandle {
   HANDLE m_Handle;
   bool m_bEnd;
   WIN32_FIND_DATAA m_FindData;
+};
+#else
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+struct FX_FolderHandle {
+  ByteString m_Path;
+  DIR* m_Dir;
 };
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
@@ -112,25 +122,24 @@ bool IFX_SeekableStream::WriteString(ByteStringView str) {
 }
 
 FX_FolderHandle* FX_OpenFolder(const char* path) {
+  auto handle = pdfium::MakeUnique<FX_FolderHandle>();
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  auto pData = pdfium::MakeUnique<CFindFileDataA>();
-  pData->m_Handle =
+  handle->m_Handle =
       FindFirstFileExA((ByteString(path) + "/*.*").c_str(), FindExInfoStandard,
-                       &pData->m_FindData, FindExSearchNameMatch, nullptr, 0);
-  if (pData->m_Handle == INVALID_HANDLE_VALUE)
+                       &handle->m_FindData, FindExSearchNameMatch, nullptr, 0);
+  if (handle->m_Handle == INVALID_HANDLE_VALUE)
     return nullptr;
 
-  pData->m_bEnd = false;
-  return pData.release();
+  handle->m_bEnd = false;
 #else
   DIR* dir = opendir(path);
   if (!dir)
     return nullptr;
-  auto handle = pdfium::MakeUnique<FX_FolderHandle>();
+
   handle->m_Path = path;
   handle->m_Dir = dir;
-  return handle.release();
 #endif
+  return handle.release();
 }
 
 bool FX_GetNextFile(FX_FolderHandle* handle,
