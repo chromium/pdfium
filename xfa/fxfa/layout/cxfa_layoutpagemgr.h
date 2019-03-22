@@ -128,6 +128,9 @@ class CXFA_LayoutPageMgr {
   void LayoutPageSetContents();
   void PrepareLayout();
   void SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem);
+  void ProcessSimplexOrDuplexPageSets(
+      CXFA_ContainerLayoutItem* pPageSetLayoutItem,
+      bool bIsSimplex);
 
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pTemplatePageSetRoot;
