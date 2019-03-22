@@ -17,10 +17,10 @@ class CXFA_AttachNodeList final : public CXFA_TreeList {
   CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
   ~CXFA_AttachNodeList() override;
 
-  // From CXFA_TreeList.
+  // CXFA_TreeList:
   size_t GetLength() override;
   void Append(CXFA_Node* pNode) override;
-  void Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
+  bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
   void Remove(CXFA_Node* pNode) override;
   CXFA_Node* Item(size_t iIndex) override;
 

@@ -62,7 +62,9 @@ CJS_Result CJX_List::insert(CFX_V8* runtime,
 
   auto* pBeforeNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[1]));
-  GetXFAList()->Insert(pNewNode, pBeforeNode);
+  if (!GetXFAList()->Insert(pNewNode, pBeforeNode))
+    return CJS_Result::Failure(JSMessage::kValueError);
+
   return CJS_Result::Success();
 }
 

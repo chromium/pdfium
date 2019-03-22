@@ -27,14 +27,18 @@ void CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
   m_array.push_back(pNode);
 }
 
-void CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
+bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   if (!pBeforeNode) {
     m_array.push_back(pNewNode);
-  } else {
-    auto it = std::find(m_array.begin(), m_array.end(), pBeforeNode);
-    if (it != m_array.end())
-      m_array.insert(it, pNewNode);
+    return true;
   }
+
+  auto it = std::find(m_array.begin(), m_array.end(), pBeforeNode);
+  if (it == m_array.end())
+    return false;
+
+  m_array.insert(it, pNewNode);
+  return true;
 }
 
 void CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
