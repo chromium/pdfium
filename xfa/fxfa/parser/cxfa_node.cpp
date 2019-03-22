@@ -1379,9 +1379,8 @@ CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
 }
 
 void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
-  if (!pNode || pNode->parent_ != nullptr) {
-    PDFIUM_IMMEDIATE_CRASH();
-  }
+  CHECK(pNode);
+  CHECK(!pNode->parent_);
 
   pNode->parent_ = this;
   pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
@@ -1435,9 +1434,7 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
 }
 
 void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
-  if (pBeforeNode && pBeforeNode->parent_ != this) {
-    PDFIUM_IMMEDIATE_CRASH();
-  }
+  CHECK(!pBeforeNode || pBeforeNode->parent_ == this);
 
   int32_t index = -1;
   if (!first_child_ || pBeforeNode == first_child_) {
@@ -1456,9 +1453,8 @@ void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
 }
 
 void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
-  if (!pNode || pNode->parent_ != this) {
-    PDFIUM_IMMEDIATE_CRASH();
-  }
+  CHECK(pNode);
+  CHECK_EQ(pNode->parent_, this);
 
   pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren);
 
@@ -2772,7 +2768,7 @@ CXFA_Node* CXFA_Node::CreateUINodeIfNeeded(CXFA_Ui* ui, XFA_Element type) {
 void CXFA_Node::CreateValueNodeIfNeeded(CXFA_Value* value,
                                         CXFA_Node* pUIChild) {
   // Value nodes only have one child. If we have one already we're done.
-  if (value->GetFirstChild() != nullptr)
+  if (value->GetFirstChild())
     return;
 
   // Create the Value node for our UI if needed.
