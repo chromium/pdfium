@@ -70,9 +70,76 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
                                false);
   pPathObj->path().AppendPoint(CFX_PointF(0, 3.78f), FXPT_TYPE::LineTo, true);
   buf.str("");
-
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.2 3.78 re n Q\n", ByteString(buf));
+  EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.1999998 3.78 re n Q\n", ByteString(buf));
+}
+
+TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
+  static const std::vector<float> rgb = {0.000000000000000000001f, 0.7f, 0.35f};
+  CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+
+  {
+    auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+    pPathObj->set_filltype(FXFILL_WINDING);
+
+    // Test code in ProcessPath that generates re operator
+    pPathObj->path().AppendRect(0.000000000000000000001,
+                                0.000000000000000000001, 100, 100);
+
+    pPathObj->m_ColorState.SetFillColor(pCS, rgb);
+    pPathObj->m_ColorState.SetStrokeColor(pCS, rgb);
+    pPathObj->m_GraphState.SetLineWidth(200000000000000000001.0);
+    pPathObj->Transform(CFX_Matrix(1, 0, 0, 1, 0.000000000000000000001,
+                                   200000000000000.000002));
+
+    CPDF_Dictionary dummy_page_dict;
+    auto pTestPage =
+        pdfium::MakeRetain<CPDF_Page>(nullptr, &dummy_page_dict, false);
+    CPDF_PageContentGenerator generator(pTestPage.Get());
+    std::ostringstream buf;
+    TestProcessPath(&generator, &buf, pPathObj.get());
+    EXPECT_EQ(
+        "q 0 0.701961 0.34902 rg 0 0.701961 0.34902 RG 200000000000000000000 w"
+        " 1 0 0 1 .00000000000000000000099999997 200000000000000 cm .000000000"
+        "00000000000099999997 .00000000000000000000099999997 100 100 re f Q\n",
+        ByteString(buf));
+  }
+
+  {
+    // Test code in ProcessPath that handles bezier operator
+    auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+    pPathObj->m_ColorState.SetFillColor(pCS, rgb);
+    pPathObj->m_ColorState.SetStrokeColor(pCS, rgb);
+    pPathObj->m_GraphState.SetLineWidth(2.000000000000000000001);
+    pPathObj->Transform(CFX_Matrix(1, 0, 0, 1, 432, 500000000000000.000002));
+
+    pPathObj->set_filltype(FXFILL_WINDING);
+    pPathObj->path().AppendPoint(CFX_PointF(0.000000000000000000001f, 4.67f),
+                                 FXPT_TYPE::MoveTo, false);
+    pPathObj->path().AppendPoint(
+        CFX_PointF(0.000000000000000000001, 100000000000000.000002),
+        FXPT_TYPE::LineTo, false);
+    pPathObj->path().AppendPoint(CFX_PointF(0.0000000000001f, 3.15f),
+                                 FXPT_TYPE::BezierTo, false);
+    pPathObj->path().AppendPoint(CFX_PointF(3.57f, 2.98f), FXPT_TYPE::BezierTo,
+                                 false);
+    pPathObj->path().AppendPoint(
+        CFX_PointF(53.4f, 5000000000000000000.00000000000000004),
+        FXPT_TYPE::BezierTo, true);
+    CPDF_Dictionary dummy_page_dict;
+    auto pTestPage =
+        pdfium::MakeRetain<CPDF_Page>(nullptr, &dummy_page_dict, false);
+    CPDF_PageContentGenerator generator(pTestPage.Get());
+    std::ostringstream buf;
+
+    TestProcessPath(&generator, &buf, pPathObj.get());
+    EXPECT_EQ(
+        "q 0 0.701961 0.34902 rg 0 0.701961 0.34902 RG 2 w 1 0 0 1 432 4999999"
+        "90000000 cm .00000000000000000000099999997 4.6700001 m .0000000000000"
+        "0000000099999997 100000000000000 l .000000000000099999998 3.1500001 3"
+        ".5699999 2.98 53.400002 5000000000000000000 c h f Q\n",
+        ByteString(buf));
+  }
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
@@ -106,8 +173,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ(
       "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4499998 .28999999 l 4.2399998 "
-      "3.1500001 4.65 2.98 3.456 0.24 c 10.6000004 11.1499996 l 11 12.5 "
-      "l 11.46 12.6700001 11.84 12.96 12 13.64 c h f Q\n",
+      "3.1500001 4.6500001 2.98 3.4560001 .23999999 c 10.6000004 11.149999"
+      "6 l 11 12.5 l 11.46 12.6700001 11.8400002 12.96 12 13.6400003 c h f"
+      " Q\n",
       ByteString(buf));
 }
 
@@ -333,5 +401,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   CPDF_PageContentGenerator generator(pTestForm.get());
   std::ostringstream process_buf;
   generator.ProcessPageObjects(&process_buf);
-  EXPECT_STREQ(content, ByteString(process_buf).c_str());
+  EXPECT_STREQ(
+      "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 l 4.2399998 3.14"
+      "99999 4.6500001 2.98 3.4560001 .24000001 c 3.102 4.6700001 l h f Q\n",
+      ByteString(process_buf).c_str());
 }

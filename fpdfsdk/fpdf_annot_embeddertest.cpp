@@ -689,19 +689,19 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_modified_path[] = "873b92ea83ccf006e58415d866ce145b";
-  const char md5_two_paths[] = "6f1f1c91f50240e9cc9d7c87c48b93a7";
-  const char md5_new_annot[] = "078bf58f939645ac305854f31ee9a828";
+  const char md5_modified_path[] = "9059723a045e17478753d2f0eb33bc03";
+  const char md5_two_paths[] = "7eed0cfba780f1d4dd8068f717d3a6bf";
+  const char md5_new_annot[] = "1de8212d43b7066a6df042095c2aca61";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5_original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  const char md5_modified_path[] = "c66293426cbf1f568502d1f7c0728fc7";
-  const char md5_two_paths[] = "122ac4625393b1dfe4be8707b73cbb13";
-  const char md5_new_annot[] = "253c7fd739646ba2568e1e8bfc782336";
+  const char md5_modified_path[] = "c0c2eb2aba73ad15b3240e342fbe0d72";
+  const char md5_two_paths[] = "2306bf04915fe001b5f4726843d184c8";
+  const char md5_new_annot[] = "64a319f145768cb09944d2109efe394e";
 #else
   const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_modified_path[] = "5a4a6091cff648a4ece3ce7e245e3e38";
-  const char md5_two_paths[] = "d6e4072a4415cfc6ec17201fb6be0ee0";
-  const char md5_new_annot[] = "fc338b97bf66a656916c6198697a8a28";
+  const char md5_modified_path[] = "9a38048fb3ac1b2c9a4b34139caa993c";
+  const char md5_two_paths[] = "ece3d4df54b3395d6a2bf7a29b17239c";
+  const char md5_new_annot[] = "4299493de84c249f42f220f30f2bbb67";
 #endif
 
   // Open a file with two annotations and load its first page.

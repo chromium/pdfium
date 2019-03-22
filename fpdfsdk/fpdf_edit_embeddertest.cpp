@@ -689,10 +689,13 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char kNonPrimesMD5[] = "57e76dc7375d896704f0fd6d6d1b9e65";
+  const char kNonPrimesAfterSaveMD5[] = "6304512d0150bbd5578e8e22d3121103";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kNonPrimesMD5[] = "4d906b57fba36c70c600cf50d60f508c";
+  const char kNonPrimesAfterSaveMD5[] = "4d906b57fba36c70c600cf50d60f508c";
 #else
   const char kNonPrimesMD5[] = "33d9c45bec41ead92a295e252f6b7922";
+  const char kNonPrimesAfterSaveMD5[] = "33d9c45bec41ead92a295e252f6b7922";
 #endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
@@ -711,7 +714,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kNonPrimesMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kNonPrimesAfterSaveMD5);
   }
 
   CloseSavedPage(saved_page);
@@ -2668,7 +2671,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-    const char md5[] = "d60ba39f9698e32360d99e727dd93165";
+  const char md5[] = "d60ba39f9698e32360d99e727dd93165";
 #else
   const char md5[] = "70592859010ffbf532a2237b8118bcc4";
 #endif
