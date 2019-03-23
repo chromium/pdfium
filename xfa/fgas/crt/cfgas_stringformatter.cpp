@@ -2030,7 +2030,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   }
 
   if (cc < spSrcNum.size()) {
-    int nPos = dot_index.value() % 3;
+    size_t nPos = dot_index.value() % 3;
     wsOutput->clear();
     for (size_t i = 0; i < dot_index.value(); i++) {
       if (i % 3 == nPos && i != 0)
