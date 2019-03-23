@@ -45,7 +45,6 @@ class CXFA_LayoutPageMgr {
   bool ProcessOverflow(CXFA_Node* pFormNode,
                        CXFA_Node*& pLeaderNode,
                        CXFA_Node*& pTrailerNode,
-                       bool bDataMerge,
                        bool bCreatePage);
   CXFA_Node* QueryOverflow(CXFA_Node* pFormNode);
   CXFA_Node* ProcessBookendLeader(const CXFA_Node* pBookendNode);

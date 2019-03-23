@@ -2462,7 +2462,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
       bUseInherited = true;
     }
     if (m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,
-                                    pOverflowTrailerNode, false, false)) {
+                                    pOverflowTrailerNode, false)) {
       if (pProcessor->JudgeLeaderOrTrailerForOccur(pOverflowTrailerNode)) {
         if (pOverflowTrailerNode) {
           auto pOverflowLeaderProcessor =
@@ -2586,7 +2586,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
     if (m_pPageMgr && !pProcessor->m_bUseInheriated &&
         eRetValue != Result::kPageFullBreak) {
       m_pPageMgr->ProcessOverflow(pFormNode, pTempLeaderNode, pTempTrailerNode,
-                                  false, true);
+                                  true);
     }
     if (pTrailerLayoutItem && bIsAddTrailerHeight) {
       pProcessor->AddTrailerBeforeSplit(fSplitPos, pTrailerLayoutItem,
@@ -2636,7 +2636,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
           pFormNode = pLayoutContext->m_pOverflowProcessor->GetFormNode();
 
         m_pPageMgr->ProcessOverflow(pFormNode, pTempLeaderNode,
-                                    pTempTrailerNode, false, true);
+                                    pTempTrailerNode, true);
       }
       if (bUseInherited) {
         pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode,
@@ -2665,7 +2665,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
       eLayout == XFA_AttributeValue::Tb) {
     if (m_pPageMgr) {
       m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,
-                                  pOverflowTrailerNode, false, true);
+                                  pOverflowTrailerNode, true);
     }
     if (pTrailerLayoutItem)
       pProcessor->AddTrailerBeforeSplit(fSplitPos, pTrailerLayoutItem, false);
@@ -2682,7 +2682,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
     pFormNode = pLayoutContext->m_pOverflowProcessor->GetFormNode();
   if (m_pPageMgr) {
     m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,
-                                pOverflowTrailerNode, false, true);
+                                pOverflowTrailerNode, true);
   }
   if (bUseInherited) {
     pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode, pOverflowTrailerNode,

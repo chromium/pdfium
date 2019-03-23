@@ -996,18 +996,14 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
 bool CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
                                          CXFA_Node*& pLeaderNode,
                                          CXFA_Node*& pTrailerNode,
-                                         bool bDataMerge,
                                          bool bCreatePage) {
   if (!pFormNode)
     return false;
 
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pTrailerTemplate = nullptr;
-  bool bIsOverflowNode = false;
-  if (pFormNode->GetElementType() == XFA_Element::Overflow ||
-      pFormNode->GetElementType() == XFA_Element::Break) {
-    bIsOverflowNode = true;
-  }
+  bool bIsOverflowNode = pFormNode->GetElementType() == XFA_Element::Overflow ||
+                         pFormNode->GetElementType() == XFA_Element::Break;
   for (CXFA_Node* pCurNode = bIsOverflowNode ? pFormNode
                                              : pFormNode->GetFirstChild();
        pCurNode; pCurNode = pCurNode->GetNextSibling()) {
