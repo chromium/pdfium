@@ -188,7 +188,7 @@ class CXFA_ItemLayoutProcessor {
   float m_fLastRowWidth = 0;
   float m_fLastRowY = 0;
   float m_fWidthLimit = 0;
-  CXFA_Node* m_pFormNode;
+  CXFA_Node* const m_pFormNode;
   CXFA_Node* m_pCurChildNode = nullptr;
   CXFA_Node* m_pKeepHeadNode = nullptr;
   CXFA_Node* m_pKeepTailNode = nullptr;

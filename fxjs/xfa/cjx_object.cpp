@@ -351,12 +351,12 @@ void CJX_Object::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
   }
 }
 
-int32_t CJX_Object::GetInteger(XFA_Attribute eAttr) {
+int32_t CJX_Object::GetInteger(XFA_Attribute eAttr) const {
   return TryInteger(eAttr, true).value_or(0);
 }
 
 Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
-                                         bool bUseDefault) {
+                                         bool bUseDefault) const {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   Optional<void*> value = GetMapModuleValue(pKey);
   if (value.has_value())

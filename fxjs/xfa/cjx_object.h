@@ -175,9 +175,9 @@ class CJX_Object {
 
   Optional<WideString> TryNamespace();
 
-  Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
+  Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
-  int32_t GetInteger(XFA_Attribute eAttr);
+  int32_t GetInteger(XFA_Attribute eAttr) const;
 
   Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault) const;
   void SetCData(XFA_Attribute eAttr,

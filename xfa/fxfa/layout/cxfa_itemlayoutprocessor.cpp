@@ -1692,18 +1692,18 @@ CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
             fContentCalculatedHeight -= item->m_sSize.height;
           }
 
-          CXFA_Node* pLeaderNode = nullptr;
-          CXFA_Node* pTrailerNode = nullptr;
-          bool bCreatePage = false;
-          if (!bUseBreakControl || !m_pPageMgr ||
-              !m_pPageMgr->ProcessBreakBeforeOrAfter(m_pCurChildNode, true,
-                                                     pLeaderNode, pTrailerNode,
-                                                     &bCreatePage) ||
-              GetFormNode()->GetElementType() == XFA_Element::Form ||
-              !bCreatePage) {
+          if (!bUseBreakControl || !m_pPageMgr)
+            break;
+
+          Optional<CXFA_LayoutPageMgr::BreakData> break_data =
+              m_pPageMgr->ProcessBreakBefore(m_pCurChildNode);
+          if (!break_data.has_value() || !break_data.value().bCreatePage ||
+              GetFormNode()->GetElementType() == XFA_Element::Form) {
             break;
           }
 
+          CXFA_Node* pLeaderNode = break_data.value().pLeader;
+          CXFA_Node* pTrailerNode = break_data.value().pTrailer;
           if (JudgeLeaderOrTrailerForOccur(pLeaderNode))
             AddPendingNode(pLeaderNode, true);
 
@@ -1731,17 +1731,19 @@ CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           goto SuspendAndCreateNewRow;
         }
         case Stage::kBreakAfter: {
-          CXFA_Node* pLeaderNode = nullptr;
-          CXFA_Node* pTrailerNode = nullptr;
-          bool bCreatePage = false;
-          if (!bUseBreakControl || !m_pPageMgr ||
-              !m_pPageMgr->ProcessBreakBeforeOrAfter(m_pCurChildNode, false,
-                                                     pLeaderNode, pTrailerNode,
-                                                     &bCreatePage) ||
+          if (!bUseBreakControl || !m_pPageMgr)
+            break;
+
+          Optional<CXFA_LayoutPageMgr::BreakData> break_data =
+              m_pPageMgr->ProcessBreakAfter(m_pCurChildNode);
+          if (!break_data.has_value() ||
               GetFormNode()->GetElementType() == XFA_Element::Form) {
             break;
           }
 
+          CXFA_Node* pLeaderNode = break_data.value().pLeader;
+          CXFA_Node* pTrailerNode = break_data.value().pTrailer;
+          bool bCreatePage = break_data.value().bCreatePage;
           if (JudgeLeaderOrTrailerForOccur(pTrailerNode)) {
             auto pTempProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
                 pTrailerNode, nullptr);
