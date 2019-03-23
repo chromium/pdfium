@@ -180,7 +180,7 @@ class CXFA_ItemLayoutProcessor {
   Stage m_nCurChildNodeStage = Stage::kNone;
   Result m_ePreProcessRs = Result::kDone;
   bool m_bBreakPending = true;
-  bool m_bUseInheriated = false;
+  bool m_bUseInherited = false;
   bool m_bKeepBreakFinish = false;
   bool m_bIsProcessKeep = false;
   bool m_bHasAvailHeight = true;

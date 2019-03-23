@@ -2463,8 +2463,11 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
       pFormNode = pLayoutContext->m_pOverflowNode.Get();
       bUseInherited = true;
     }
-    if (m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,
-                                    pOverflowTrailerNode, false)) {
+    Optional<CXFA_LayoutPageMgr::OverflowData> overflow_data =
+        m_pPageMgr->ProcessOverflow(pFormNode, false);
+    if (overflow_data.has_value()) {
+      pOverflowLeaderNode = overflow_data.value().pLeader;
+      pOverflowTrailerNode = overflow_data.value().pTrailer;
       if (pProcessor->JudgeLeaderOrTrailerForOccur(pOverflowTrailerNode)) {
         if (pOverflowTrailerNode) {
           auto pOverflowLeaderProcessor =
@@ -2495,14 +2498,14 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
       (!bContainerHeightAutoSize &&
        m_fUsedSize + fAvailHeight + kXFALayoutPrecision >= fContainerHeight)) {
     if (!bTakeSpace || eRetValue == Result::kDone) {
-      if (pProcessor->m_bUseInheriated) {
+      if (pProcessor->m_bUseInherited) {
         if (pTrailerLayoutItem)
           pProcessor->AddTrailerBeforeSplit(childSize.height,
                                             pTrailerLayoutItem, false);
         if (pProcessor->JudgeLeaderOrTrailerForOccur(pOverflowLeaderNode))
           pProcessor->AddPendingNode(pOverflowLeaderNode, false);
 
-        pProcessor->m_bUseInheriated = false;
+        pProcessor->m_bUseInherited = false;
       } else {
         if (bIsAddTrailerHeight)
           childSize.height -= pTrailerLayoutItem->m_sSize.height;
@@ -2531,7 +2534,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
     }
 
     if (eRetValue == Result::kPageFullBreak) {
-      if (pProcessor->m_bUseInheriated) {
+      if (pProcessor->m_bUseInherited) {
         if (pTrailerLayoutItem) {
           pProcessor->AddTrailerBeforeSplit(childSize.height,
                                             pTrailerLayoutItem, false);
@@ -2539,7 +2542,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
         if (pProcessor->JudgeLeaderOrTrailerForOccur(pOverflowLeaderNode))
           pProcessor->AddPendingNode(pOverflowLeaderNode, false);
 
-        pProcessor->m_bUseInheriated = false;
+        pProcessor->m_bUseInherited = false;
       } else {
         if (bIsAddTrailerHeight)
           childSize.height -= pTrailerLayoutItem->m_sSize.height;
@@ -2583,12 +2586,9 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
       return Result::kPageFullBreak;
     }
 
-    CXFA_Node* pTempLeaderNode = nullptr;
-    CXFA_Node* pTempTrailerNode = nullptr;
-    if (m_pPageMgr && !pProcessor->m_bUseInheriated &&
+    if (m_pPageMgr && !pProcessor->m_bUseInherited &&
         eRetValue != Result::kPageFullBreak) {
-      m_pPageMgr->ProcessOverflow(pFormNode, pTempLeaderNode, pTempTrailerNode,
-                                  true);
+      m_pPageMgr->ProcessOverflow(pFormNode, true);
     }
     if (pTrailerLayoutItem && bIsAddTrailerHeight) {
       pProcessor->AddTrailerBeforeSplit(fSplitPos, pTrailerLayoutItem,
@@ -2601,7 +2601,7 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
       pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode,
                                        pOverflowTrailerNode, pTrailerLayoutItem,
                                        pFormNode);
-      m_bUseInheriated = true;
+      m_bUseInherited = true;
     } else {
       CXFA_LayoutItem* firstChild = pProcessor->m_pLayoutItem->GetFirstChild();
       if (firstChild && !firstChild->GetNextSibling() &&
@@ -2631,20 +2631,17 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
   if (*fContentCurRowY <= kXFALayoutPrecision) {
     childSize = pProcessor->GetCurrentComponentSize();
     if (pProcessor->m_pPageMgr->GetNextAvailContentHeight(childSize.height)) {
-      CXFA_Node* pTempLeaderNode = nullptr;
-      CXFA_Node* pTempTrailerNode = nullptr;
       if (m_pPageMgr) {
         if (!pFormNode && pLayoutContext)
           pFormNode = pLayoutContext->m_pOverflowProcessor->GetFormNode();
 
-        m_pPageMgr->ProcessOverflow(pFormNode, pTempLeaderNode,
-                                    pTempTrailerNode, true);
+        m_pPageMgr->ProcessOverflow(pFormNode, true);
       }
       if (bUseInherited) {
         pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode,
                                          pOverflowTrailerNode,
                                          pTrailerLayoutItem, pFormNode);
-        m_bUseInheriated = true;
+        m_bUseInherited = true;
       }
       return Result::kPageFullBreak;
     }
@@ -2666,8 +2663,12 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
   if (pProcessor->GetFormNode()->GetIntact() == XFA_AttributeValue::None &&
       eLayout == XFA_AttributeValue::Tb) {
     if (m_pPageMgr) {
-      m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,
-                                  pOverflowTrailerNode, true);
+      Optional<CXFA_LayoutPageMgr::OverflowData> overflow_data =
+          m_pPageMgr->ProcessOverflow(pFormNode, true);
+      if (overflow_data.has_value()) {
+        pOverflowLeaderNode = overflow_data.value().pLeader;
+        pOverflowTrailerNode = overflow_data.value().pTrailer;
+      }
     }
     if (pTrailerLayoutItem)
       pProcessor->AddTrailerBeforeSplit(fSplitPos, pTrailerLayoutItem, false);
@@ -2683,13 +2684,17 @@ CXFA_ItemLayoutProcessor::Result CXFA_ItemLayoutProcessor::InsertFlowedItem(
   if (!pFormNode && pLayoutContext)
     pFormNode = pLayoutContext->m_pOverflowProcessor->GetFormNode();
   if (m_pPageMgr) {
-    m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,
-                                pOverflowTrailerNode, true);
+    Optional<CXFA_LayoutPageMgr::OverflowData> overflow_data =
+        m_pPageMgr->ProcessOverflow(pFormNode, true);
+    if (overflow_data.has_value()) {
+      pOverflowLeaderNode = overflow_data.value().pLeader;
+      pOverflowTrailerNode = overflow_data.value().pTrailer;
+    }
   }
   if (bUseInherited) {
     pProcessor->ProcessUnUseOverFlow(pOverflowLeaderNode, pOverflowTrailerNode,
                                      pTrailerLayoutItem, pFormNode);
-    m_bUseInheriated = true;
+    m_bUseInherited = true;
   }
   return Result::kPageFullBreak;
 }

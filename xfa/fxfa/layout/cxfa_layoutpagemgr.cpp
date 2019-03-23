@@ -855,9 +855,7 @@ CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(const CXFA_Node* pBreakNode,
     if (!break_data.pLeader->IsContainerNode())
       return pdfium::nullopt;
 
-    if (!pDataScope)
-      pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
-
+    pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
     break_data.pLeader = pDocument->DataMerge_CopyContainer(
         break_data.pLeader, pFormNode, pDataScope, true, true, true);
     if (!break_data.pLeader)
@@ -915,10 +913,10 @@ CXFA_Node* CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
   return pBookendAppendNode;
 }
 
-CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
-                                             CXFA_Node*& pLeaderTemplate,
-                                             CXFA_Node*& pTrailerTemplate,
-                                             bool bCreatePage) {
+bool CXFA_LayoutPageMgr::BreakOverflow(const CXFA_Node* pOverflowNode,
+                                       bool bCreatePage,
+                                       CXFA_Node** pLeaderTemplate,
+                                       CXFA_Node** pTrailerTemplate) {
   CXFA_Node* pContainer =
       pOverflowNode->GetContainerParent()->GetTemplateNodeIfExists();
   if (pOverflowNode->GetElementType() == XFA_Element::Break) {
@@ -930,7 +928,7 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
         pOverflowNode->JSObject()->GetCData(XFA_Attribute::OverflowTrailer);
     if (wsOverflowTarget.IsEmpty() && wsOverflowLeader.IsEmpty() &&
         wsOverflowTrailer.IsEmpty()) {
-      return nullptr;
+      return false;
     }
 
     if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
@@ -953,15 +951,15 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
       }
     }
     if (!bCreatePage) {
-      pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsOverflowLeader);
-      pTrailerTemplate =
+      *pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsOverflowLeader);
+      *pTrailerTemplate =
           ResolveBreakTarget(pContainer, true, wsOverflowTrailer);
     }
-    return pOverflowNode;
+    return true;
   }
 
   if (pOverflowNode->GetElementType() != XFA_Element::Overflow)
-    return nullptr;
+    return false;
 
   WideString wsOverflowTarget =
       pOverflowNode->JSObject()->GetCData(XFA_Attribute::Target);
@@ -989,64 +987,62 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
         pOverflowNode->JSObject()->GetCData(XFA_Attribute::Leader);
     WideString wsTrailer =
         pOverflowNode->JSObject()->GetCData(XFA_Attribute::Trailer);
-    pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsLeader);
-    pTrailerTemplate = ResolveBreakTarget(pContainer, true, wsTrailer);
+    *pLeaderTemplate = ResolveBreakTarget(pContainer, true, wsLeader);
+    *pTrailerTemplate = ResolveBreakTarget(pContainer, true, wsTrailer);
   }
-  return pOverflowNode;
+  return true;
 }
 
-bool CXFA_LayoutPageMgr::ProcessOverflow(CXFA_Node* pFormNode,
-                                         CXFA_Node*& pLeaderNode,
-                                         CXFA_Node*& pTrailerNode,
-                                         bool bCreatePage) {
+Optional<CXFA_LayoutPageMgr::OverflowData> CXFA_LayoutPageMgr::ProcessOverflow(
+    CXFA_Node* pFormNode,
+    bool bCreatePage) {
   if (!pFormNode)
-    return false;
+    return pdfium::nullopt;
 
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pTrailerTemplate = nullptr;
   bool bIsOverflowNode = pFormNode->GetElementType() == XFA_Element::Overflow ||
                          pFormNode->GetElementType() == XFA_Element::Break;
+  OverflowData overflow_data{nullptr, nullptr};
   for (CXFA_Node* pCurNode = bIsOverflowNode ? pFormNode
                                              : pFormNode->GetFirstChild();
        pCurNode; pCurNode = pCurNode->GetNextSibling()) {
-    if (BreakOverflow(pCurNode, pLeaderTemplate, pTrailerTemplate,
-                      bCreatePage)) {
+    if (BreakOverflow(pCurNode, bCreatePage, &pLeaderTemplate,
+                      &pTrailerTemplate)) {
       if (bIsOverflowNode)
         pFormNode = pCurNode->GetParent();
 
       CXFA_Document* pDocument = pCurNode->GetDocument();
       CXFA_Node* pDataScope = nullptr;
       if (pLeaderTemplate) {
-        if (!pDataScope)
-          pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
+        pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
 
-        pLeaderNode = pDocument->DataMerge_CopyContainer(
+        overflow_data.pLeader = pDocument->DataMerge_CopyContainer(
             pLeaderTemplate, pFormNode, pDataScope, true, true, true);
-        if (!pLeaderNode)
-          return false;
+        if (!overflow_data.pLeader)
+          return pdfium::nullopt;
 
-        pDocument->DataMerge_UpdateBindingRelations(pLeaderNode);
-        SetLayoutGeneratedNodeFlag(pLeaderNode);
+        pDocument->DataMerge_UpdateBindingRelations(overflow_data.pLeader);
+        SetLayoutGeneratedNodeFlag(overflow_data.pLeader);
       }
       if (pTrailerTemplate) {
         if (!pDataScope)
           pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
 
-        pTrailerNode = pDocument->DataMerge_CopyContainer(
+        overflow_data.pTrailer = pDocument->DataMerge_CopyContainer(
             pTrailerTemplate, pFormNode, pDataScope, true, true, true);
-        if (!pTrailerNode)
-          return false;
+        if (!overflow_data.pTrailer)
+          return pdfium::nullopt;
 
-        pDocument->DataMerge_UpdateBindingRelations(pTrailerNode);
-        SetLayoutGeneratedNodeFlag(pTrailerNode);
+        pDocument->DataMerge_UpdateBindingRelations(overflow_data.pTrailer);
+        SetLayoutGeneratedNodeFlag(overflow_data.pTrailer);
       }
-      return true;
+      return overflow_data;
     }
-    if (bIsOverflowNode) {
+    if (bIsOverflowNode)
       break;
-    }
   }
-  return false;
+  return pdfium::nullopt;
 }
 
 CXFA_Node* CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(

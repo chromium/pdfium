@@ -27,6 +27,11 @@ class CXFA_LayoutPageMgr {
     bool bCreatePage;
   };
 
+  struct OverflowData {
+    CXFA_Node* pLeader;
+    CXFA_Node* pTrailer;
+  };
+
   explicit CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor);
   ~CXFA_LayoutPageMgr();
 
@@ -46,10 +51,8 @@ class CXFA_LayoutPageMgr {
   }
   Optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
   Optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
-  bool ProcessOverflow(CXFA_Node* pFormNode,
-                       CXFA_Node*& pLeaderNode,
-                       CXFA_Node*& pTrailerNode,
-                       bool bCreatePage);
+  Optional<OverflowData> ProcessOverflow(CXFA_Node* pFormNode,
+                                         bool bCreatePage);
   CXFA_Node* QueryOverflow(CXFA_Node* pFormNode);
   CXFA_Node* ProcessBookendLeader(const CXFA_Node* pBookendNode);
   CXFA_Node* ProcessBookendTrailer(const CXFA_Node* pBookendNode);
@@ -77,10 +80,10 @@ class CXFA_LayoutPageMgr {
                 XFA_AttributeValue eTargetType,
                 CXFA_Node* pTarget,
                 bool bStartNew);
-  CXFA_Node* BreakOverflow(CXFA_Node* pOverflowNode,
-                           CXFA_Node*& pLeaderTemplate,
-                           CXFA_Node*& pTrailerTemplate,
-                           bool bCreatePage);
+  bool BreakOverflow(const CXFA_Node* pOverflowNode,
+                     bool bCreatePage,
+                     CXFA_Node** pLeaderTemplate,
+                     CXFA_Node** pTrailerTemplate);
   CXFA_Node* ProcessBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
                                            bool bLeader);
   CXFA_Node* ResolveBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
