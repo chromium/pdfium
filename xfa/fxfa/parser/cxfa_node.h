@@ -147,7 +147,7 @@ class CXFA_Node : public CXFA_Object {
   void SetXMLMappingNode(CFX_XMLNode* node) { xml_node_ = node; }
   CFX_XMLNode* GetXMLMappingNode() const { return xml_node_.Get(); }
   CFX_XMLNode* CreateXMLMappingNode();
-  bool IsNeedSavingXMLNode();
+  bool IsNeedSavingXMLNode() const;
 
   void SetToXML(const WideString& value);
 
@@ -192,7 +192,7 @@ class CXFA_Node : public CXFA_Object {
   std::vector<CXFA_Node*>* GetBindItems() { return &binding_nodes_; }
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
-  bool HasBindItem();
+  bool HasBindItem() const;
   CXFA_Node* GetContainerNode();
   LocaleIface* GetLocale();
   Optional<WideString> GetLocaleName();
@@ -222,7 +222,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
   Optional<XFA_AttributeValue> GetDefaultEnum(XFA_Attribute attr) const;
 
-  bool IsOpenAccess();
+  bool IsOpenAccess() const;
 
   CXFA_Occur* GetOccurIfExists();
   CXFA_Border* GetBorderIfExists() const;
@@ -244,7 +244,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Value* GetFormValueIfExists() const;
   WideString GetRawValue();
 
-  int32_t GetRotate();
+  int32_t GetRotate() const;
   Optional<float> TryWidth();
 
   CXFA_Node* GetExclGroupIfExists();
@@ -403,14 +403,15 @@ class CXFA_Node : public CXFA_Object {
   WideString GetValidateMessage(bool bError, bool bVersionFlag);
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
-  CXFA_Node* Deprecated_GetPrevSibling();
   const PropertyData* GetPropertyData(XFA_Element property) const;
   const AttributeData* GetAttributeData(XFA_Attribute attr) const;
-  Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
-  void OnRemoved(bool bNotify);
+  Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag) const;
+  void OnRemoved(bool bNotify) const;
   Optional<void*> GetDefaultValue(XFA_Attribute attr,
                                   XFA_AttributeType eType) const;
-  CXFA_Node* GetChildInternal(size_t index, XFA_Element eType, bool bOnlyChild);
+  CXFA_Node* GetChildInternal(size_t index,
+                              XFA_Element eType,
+                              bool bOnlyChild) const;
   CXFA_Node* GetFirstChildByClassInternal(XFA_Element eType) const;
   CXFA_Node* GetNextSameNameSiblingInternal(WideStringView wsNodeName) const;
   CXFA_Node* GetNextSameClassSiblingInternal(XFA_Element eType) const;

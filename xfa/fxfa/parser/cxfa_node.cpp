@@ -960,7 +960,7 @@ uint8_t CXFA_Node::PropertyOccuranceCount(XFA_Element property) const {
   return data ? data->occurance_count : 0;
 }
 
-Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(uint8_t flag) {
+Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(uint8_t flag) const {
   for (const auto& prop : m_Properties) {
     if (prop.flags & flag)
       return prop.property;
@@ -1153,7 +1153,7 @@ int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   return 0;
 }
 
-bool CXFA_Node::HasBindItem() {
+bool CXFA_Node::HasBindItem() const {
   return GetPacketType() == XFA_PacketType::Datasets && GetBindingNode();
 }
 
@@ -1362,7 +1362,7 @@ size_t CXFA_Node::CountChildren(XFA_Element eType, bool bOnlyChild) {
 
 CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
                                        XFA_Element eType,
-                                       bool bOnlyChild) {
+                                       bool bOnlyChild) const {
   size_t count = 0;
   for (CXFA_Node* pNode = first_child_; pNode;
        pNode = pNode->GetNextSibling()) {
@@ -1628,7 +1628,7 @@ bool CXFA_Node::IsAttributeInXML() {
          XFA_AttributeValue::MetaData;
 }
 
-void CXFA_Node::OnRemoved(bool bNotify) {
+void CXFA_Node::OnRemoved(bool bNotify) const {
   if (!bNotify)
     return;
 
@@ -1654,7 +1654,7 @@ CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   return xml_node_.Get();
 }
 
-bool CXFA_Node::IsNeedSavingXMLNode() {
+bool CXFA_Node::IsNeedSavingXMLNode() const {
   return xml_node_ && (GetPacketType() == XFA_PacketType::Datasets ||
                        GetElementType() == XFA_Element::Xfa);
 }
@@ -2062,7 +2062,7 @@ WideString CXFA_Node::GetRawValue() {
   return JSObject()->GetContent(false);
 }
 
-int32_t CXFA_Node::GetRotate() {
+int32_t CXFA_Node::GetRotate() const {
   Optional<int32_t> degrees =
       JSObject()->TryInteger(XFA_Attribute::Rotate, false);
   return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
@@ -2118,7 +2118,7 @@ CXFA_Para* CXFA_Node::GetParaIfExists() const {
   return JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para);
 }
 
-bool CXFA_Node::IsOpenAccess() {
+bool CXFA_Node::IsOpenAccess() const {
   for (auto* pNode = this; pNode; pNode = pNode->GetContainerParent()) {
     XFA_AttributeValue iAcc = pNode->JSObject()->GetEnum(XFA_Attribute::Access);
     if (iAcc != XFA_AttributeValue::Open)
