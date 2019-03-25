@@ -96,11 +96,11 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
   bool bClassName = false;
   if (wsName.GetLength() && wsName[0] == '#') {
     bClassName = true;
-    findNode = m_pNodeHelper->GetOneChildOfClass(
+    findNode = CXFA_NodeHelper::GetOneChildOfClass(
         ToNode(rnd.m_CurObject.Get()), wsName.Right(wsName.GetLength() - 1));
   } else {
-    findNode =
-        m_pNodeHelper->GetOneChildNamed(ToNode(rnd.m_CurObject.Get()), wsName);
+    findNode = CXFA_NodeHelper::GetOneChildNamed(ToNode(rnd.m_CurObject.Get()),
+                                                 wsName);
   }
   if (!findNode)
     return false;
@@ -113,8 +113,8 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
   std::vector<CXFA_Node*> tempNodes;
   for (const auto& pObject : rnd.m_Objects)
     tempNodes.push_back(pObject->AsNode());
-  m_pNodeHelper->CountSiblings(findNode, XFA_LOGIC_Transparent, &tempNodes,
-                               bClassName);
+  CXFA_NodeHelper::CountSiblings(findNode, XFA_LOGIC_Transparent, &tempNodes,
+                                 bClassName);
   rnd.m_Objects =
       std::vector<UnownedPtr<CXFA_Object>>(tempNodes.begin(), tempNodes.end());
   FilterCondition(rnd, wsCondition);
@@ -284,7 +284,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
         rnd.m_Objects.emplace_back(child);
       }
 
-      if (m_pNodeHelper->NodeIsTransparent(child) &&
+      if (CXFA_NodeHelper::NodeIsTransparent(child) &&
           child->GetElementType() != XFA_Element::PageSet) {
         if (!bSetFlag) {
           SetStylesForChild(dwStyles, rndFind);
@@ -303,10 +303,10 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     if (rnd.m_Objects.size() > nNum) {
       if (!(dwStyles & XFA_RESOLVENODE_ALL)) {
         std::vector<CXFA_Node*> upArrayNodes;
-        if (m_pNodeHelper->NodeIsTransparent(ToNode(curNode))) {
-          m_pNodeHelper->CountSiblings(ToNode(rnd.m_Objects.front().Get()),
-                                       XFA_LOGIC_Transparent, &upArrayNodes,
-                                       !!(dwStyles & XFA_RESOLVENODE_TagName));
+        if (CXFA_NodeHelper::NodeIsTransparent(ToNode(curNode))) {
+          CXFA_NodeHelper::CountSiblings(
+              ToNode(rnd.m_Objects.front().Get()), XFA_LOGIC_Transparent,
+              &upArrayNodes, !!(dwStyles & XFA_RESOLVENODE_TagName));
         }
         if (upArrayNodes.size() > rnd.m_Objects.size()) {
           CXFA_Object* pSaveObject = rnd.m_Objects.front().Get();
@@ -366,7 +366,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
   }
 
   CXFA_Node* parentNode =
-      m_pNodeHelper->GetParent(curNode->AsNode(), XFA_LOGIC_NoTransparent);
+      CXFA_NodeHelper::GetParent(curNode->AsNode(), XFA_LOGIC_NoTransparent);
   uint32_t uCurClassHash = curNode->GetClassHashCode();
   if (!parentNode) {
     if (uCurClassHash == uNameHash) {
@@ -420,7 +420,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
              child->GetElementType() == XFA_Element::PageSet)) {
           bInnerSearch = true;
         }
-      } else if (m_pNodeHelper->NodeIsTransparent(child)) {
+      } else if (CXFA_NodeHelper::NodeIsTransparent(child)) {
         bInnerSearch = true;
       }
       if (bInnerSearch) {
@@ -438,11 +438,11 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       child = child->GetNextSibling();
     }
     if (rnd.m_Objects.size() > nNum) {
-      if (m_pNodeHelper->NodeIsTransparent(parentNode)) {
+      if (CXFA_NodeHelper::NodeIsTransparent(parentNode)) {
         std::vector<CXFA_Node*> upArrayNodes;
-        m_pNodeHelper->CountSiblings(ToNode(rnd.m_Objects.front().Get()),
-                                     XFA_LOGIC_Transparent, &upArrayNodes,
-                                     !!(dwStyles & XFA_RESOLVENODE_TagName));
+        CXFA_NodeHelper::CountSiblings(ToNode(rnd.m_Objects.front().Get()),
+                                       XFA_LOGIC_Transparent, &upArrayNodes,
+                                       !!(dwStyles & XFA_RESOLVENODE_TagName));
         if (upArrayNodes.size() > rnd.m_Objects.size()) {
           CXFA_Object* pSaveObject = rnd.m_Objects.front().Get();
           rnd.m_Objects = std::vector<UnownedPtr<CXFA_Object>>(
@@ -651,15 +651,12 @@ void CFXJSE_ResolveProcessor::FilterCondition(CFXJSE_ResolveNodeData& rnd,
   const std::vector<CXFA_Node*>* pArray = rnd.m_pSC->GetUpObjectArray();
   if (!pArray->empty()) {
     CXFA_Node* curNode = pArray->back();
-    bool bIsProperty = m_pNodeHelper->NodeIsProperty(curNode);
-    if (curNode->IsUnnamed() ||
-        (bIsProperty && curNode->GetElementType() != XFA_Element::PageSet)) {
-      iCurrIndex = m_pNodeHelper->GetIndex(curNode, XFA_LOGIC_Transparent,
-                                           bIsProperty, true);
-    } else {
-      iCurrIndex = m_pNodeHelper->GetIndex(curNode, XFA_LOGIC_Transparent,
-                                           bIsProperty, false);
-    }
+    bool bIsProperty = CXFA_NodeHelper::NodeIsProperty(curNode);
+    bool bIsClassIndex =
+        curNode->IsUnnamed() ||
+        (bIsProperty && curNode->GetElementType() != XFA_Element::PageSet);
+    iCurrIndex = CXFA_NodeHelper::GetIndex(curNode, XFA_LOGIC_Transparent,
+                                           bIsProperty, bIsClassIndex);
   }
 
   int32_t iFoundCount = pdfium::CollectionSize<int32_t>(rnd.m_Objects);
@@ -731,4 +728,4 @@ void CFXJSE_ResolveProcessor::SetIndexDataBind(WideString& wsNextCondition,
 CFXJSE_ResolveNodeData::CFXJSE_ResolveNodeData(CFXJSE_Engine* pSC)
     : m_pSC(pSC) {}
 
-CFXJSE_ResolveNodeData::~CFXJSE_ResolveNodeData() {}
+CFXJSE_ResolveNodeData::~CFXJSE_ResolveNodeData() = default;

@@ -758,20 +758,19 @@ CFXJSE_Value* CFXJSE_Engine::GetJSValueFromMap(CXFA_Object* pObject) {
 }
 
 int32_t CFXJSE_Engine::GetIndexByName(CXFA_Node* refNode) {
-  CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  return lpNodeHelper->GetIndex(refNode, XFA_LOGIC_Transparent,
-                                lpNodeHelper->NodeIsProperty(refNode), false);
+  return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
+                                   CXFA_NodeHelper::NodeIsProperty(refNode),
+                                   false);
 }
 
 int32_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
-  CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  return lpNodeHelper->GetIndex(refNode, XFA_LOGIC_Transparent,
-                                lpNodeHelper->NodeIsProperty(refNode), true);
+  return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
+                                   CXFA_NodeHelper::NodeIsProperty(refNode),
+                                   true);
 }
 
 WideString CFXJSE_Engine::GetSomExpression(CXFA_Node* refNode) {
-  CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  return lpNodeHelper->GetNameExpression(refNode, true);
+  return CXFA_NodeHelper::GetNameExpression(refNode);
 }
 
 void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {
