@@ -84,8 +84,8 @@ class CFXJSE_Engine final : public CFX_V8 {
   void AddToCacheList(std::unique_ptr<CXFA_List> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject.Get(); }
 
-  int32_t GetIndexByName(CXFA_Node* refNode);
-  int32_t GetIndexByClassName(CXFA_Node* refNode);
+  size_t GetIndexByName(CXFA_Node* refNode);
+  size_t GetIndexByClassName(CXFA_Node* refNode);
   WideString GetSomExpression(CXFA_Node* refNode);
 
   void SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray);

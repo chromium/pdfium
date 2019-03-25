@@ -168,7 +168,8 @@ void CJX_Tree::index(CFXJSE_Value* pValue,
   }
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  pValue->SetInteger(pScriptContext->GetIndexByName(ToNode(GetXFAObject())));
+  pValue->SetInteger(pdfium::base::checked_cast<int32_t>(
+      pScriptContext->GetIndexByName(ToNode(GetXFAObject()))));
 }
 
 void CJX_Tree::classIndex(CFXJSE_Value* pValue,
@@ -180,8 +181,8 @@ void CJX_Tree::classIndex(CFXJSE_Value* pValue,
   }
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  pValue->SetInteger(
-      pScriptContext->GetIndexByClassName(ToNode(GetXFAObject())));
+  pValue->SetInteger(pdfium::base::checked_cast<int32_t>(
+      pScriptContext->GetIndexByClassName(ToNode(GetXFAObject()))));
 }
 
 void CJX_Tree::somExpression(CFXJSE_Value* pValue,

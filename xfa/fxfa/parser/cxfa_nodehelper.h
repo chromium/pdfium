@@ -32,14 +32,13 @@ class CXFA_NodeHelper {
 
   static CXFA_Node* GetParent(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType);
 
-  static int32_t CountSiblings(CXFA_Node* pNode,
-                               XFA_LOGIC_TYPE eLogicType,
-                               std::vector<CXFA_Node*>* pSiblings,
-                               bool bIsClassName);
-  static int32_t GetIndex(CXFA_Node* pNode,
-                          XFA_LOGIC_TYPE eLogicType,
-                          bool bIsProperty,
-                          bool bIsClassIndex);
+  static std::vector<CXFA_Node*> GetSiblings(CXFA_Node* pNode,
+                                             XFA_LOGIC_TYPE eLogicType,
+                                             bool bIsClassName);
+  static size_t GetIndex(CXFA_Node* pNode,
+                         XFA_LOGIC_TYPE eLogicType,
+                         bool bIsProperty,
+                         bool bIsClassIndex);
   static WideString GetNameExpression(CXFA_Node* refNode);
   static bool NodeIsTransparent(CXFA_Node* refNode);
   static bool NodeIsProperty(CXFA_Node* refNode);
@@ -53,7 +52,7 @@ class CXFA_NodeHelper {
 
   XFA_Element m_eLastCreateType = XFA_Element::DataValue;
   XFA_ResolveNode_RSType m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
-  int32_t m_iCreateCount = 0;
+  size_t m_iCreateCount = 0;
   int32_t m_iCurAllStart = -1;
   UnownedPtr<CXFA_Node> m_pCreateParent;
   UnownedPtr<CXFA_Node> m_pAllStartParent;

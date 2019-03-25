@@ -757,13 +757,13 @@ CFXJSE_Value* CFXJSE_Engine::GetJSValueFromMap(CXFA_Object* pObject) {
   return pValue;
 }
 
-int32_t CFXJSE_Engine::GetIndexByName(CXFA_Node* refNode) {
+size_t CFXJSE_Engine::GetIndexByName(CXFA_Node* refNode) {
   return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
                                    CXFA_NodeHelper::NodeIsProperty(refNode),
                                    false);
 }
 
-int32_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
+size_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
   return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
                                    CXFA_NodeHelper::NodeIsProperty(refNode),
                                    true);

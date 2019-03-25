@@ -63,15 +63,11 @@ class CFXJSE_ResolveProcessor {
   bool ResolveNormal(CFXJSE_ResolveNodeData& rnd);
   void SetStylesForChild(uint32_t dwParentStyles, CFXJSE_ResolveNodeData& rnd);
 
-  void ConditionArray(int32_t iCurIndex,
+  void ConditionArray(size_t iCurIndex,
                       WideString wsCondition,
-                      int32_t iFoundCount,
-                      CFXJSE_ResolveNodeData& rnd);
-  void DoPredicateFilter(int32_t iCurIndex,
-                         WideString wsCondition,
-                         int32_t iFoundCount,
-                         CFXJSE_ResolveNodeData& rnd);
-  void FilterCondition(CFXJSE_ResolveNodeData& rnd, WideString wsCondition);
+                      size_t iFoundCount,
+                      CFXJSE_ResolveNodeData* pRnd);
+  void FilterCondition(WideString wsCondition, CFXJSE_ResolveNodeData* pRnd);
 
   int32_t m_iCurStart = 0;
   std::unique_ptr<CXFA_NodeHelper> const m_pNodeHelper;
