@@ -4917,7 +4917,7 @@ bool CXFA_Node::PresenceRequiresSpace() const {
 void CXFA_Node::SetToXML(const WideString& value) {
   auto* pNode = GetXMLMappingNode();
   switch (pNode->GetType()) {
-    case FX_XMLNODE_Element: {
+    case CFX_XMLNode::Type::kElement: {
       auto* elem = static_cast<CFX_XMLElement*>(pNode);
       if (IsAttributeInXML()) {
         elem->SetAttribute(JSObject()->GetCData(XFA_Attribute::QualifiedName),
@@ -4946,7 +4946,7 @@ void CXFA_Node::SetToXML(const WideString& value) {
       elem->AppendChild(text);
       break;
     }
-    case FX_XMLNODE_Text:
+    case CFX_XMLNode::Type::kText:
       ToXMLText(GetXMLMappingNode())->SetText(value);
       break;
     default:

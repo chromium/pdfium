@@ -304,7 +304,7 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
 
     return tagProvider;
   }
-  if (pXMLNode->GetType() == FX_XMLNODE_Text) {
+  if (pXMLNode->GetType() == CFX_XMLNode::Type::kText) {
     tagProvider->m_bTagAvailable = true;
     tagProvider->m_bContent = true;
   }

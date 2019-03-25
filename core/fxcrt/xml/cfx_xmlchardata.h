@@ -18,13 +18,13 @@ class CFX_XMLCharData final : public CFX_XMLText {
   ~CFX_XMLCharData() override;
 
   // CFX_XMLNode
-  FX_XMLNODETYPE GetType() const override;
+  Type GetType() const override;
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 };
 
 inline CFX_XMLCharData* ToXMLCharData(CFX_XMLNode* pNode) {
-  return pNode && pNode->GetType() == FX_XMLNODE_CharData
+  return pNode && pNode->GetType() == CFX_XMLNode::Type::kCharData
              ? static_cast<CFX_XMLCharData*>(pNode)
              : nullptr;
 }

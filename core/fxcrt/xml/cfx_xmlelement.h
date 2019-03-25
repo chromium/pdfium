@@ -20,7 +20,7 @@ class CFX_XMLElement final : public CFX_XMLNode {
   ~CFX_XMLElement() override;
 
   // CFX_XMLNode
-  FX_XMLNODETYPE GetType() const override;
+  Type GetType() const override;
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 
@@ -52,13 +52,13 @@ class CFX_XMLElement final : public CFX_XMLNode {
 };
 
 inline CFX_XMLElement* ToXMLElement(CFX_XMLNode* pNode) {
-  return pNode && pNode->GetType() == FX_XMLNODE_Element
+  return pNode && pNode->GetType() == CFX_XMLNode::Type::kElement
              ? static_cast<CFX_XMLElement*>(pNode)
              : nullptr;
 }
 
 inline const CFX_XMLElement* ToXMLElement(const CFX_XMLNode* pNode) {
-  return pNode && pNode->GetType() == FX_XMLNODE_Element
+  return pNode && pNode->GetType() == CFX_XMLNode::Type::kElement
              ? static_cast<const CFX_XMLElement*>(pNode)
              : nullptr;
 }

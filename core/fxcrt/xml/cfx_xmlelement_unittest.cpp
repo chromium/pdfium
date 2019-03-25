@@ -11,7 +11,7 @@
 
 TEST(CFX_XMLElementTest, GetType) {
   CFX_XMLElement node(L"node");
-  EXPECT_EQ(FX_XMLNODE_Element, node.GetType());
+  EXPECT_EQ(CFX_XMLNode::Type::kElement, node.GetType());
 }
 
 TEST(CFX_XMLElementTest, GetName) {
@@ -85,7 +85,7 @@ TEST(CFX_XMLElementTest, Clone) {
 
   CFX_XMLNode* clone = node.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
-  ASSERT_EQ(FX_XMLNODE_Element, clone->GetType());
+  ASSERT_EQ(CFX_XMLNode::Type::kElement, clone->GetType());
 
   CFX_XMLElement* inst = ToXMLElement(clone);
   EXPECT_EQ(L"test:node", inst->GetName());
@@ -102,7 +102,7 @@ TEST(CFX_XMLElementTest, Clone) {
   ASSERT_TRUE(inst->GetFirstChild() != nullptr);
   EXPECT_TRUE(inst->GetFirstChild()->GetNextSibling() == nullptr);
 
-  ASSERT_EQ(FX_XMLNODE_Text, inst->GetFirstChild()->GetType());
+  ASSERT_EQ(CFX_XMLNode::Type::kText, inst->GetFirstChild()->GetType());
   auto* text = ToXMLText(inst->GetFirstChild());
   EXPECT_EQ(L"Text Child", text->GetText());
 }

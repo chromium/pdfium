@@ -17,8 +17,8 @@ CFX_XMLInstruction::CFX_XMLInstruction(const WideString& wsTarget)
 
 CFX_XMLInstruction::~CFX_XMLInstruction() = default;
 
-FX_XMLNODETYPE CFX_XMLInstruction::GetType() const {
-  return FX_XMLNODE_Instruction;
+CFX_XMLNode::Type CFX_XMLInstruction::GetType() const {
+  return Type::kInstruction;
 }
 
 CFX_XMLNode* CFX_XMLInstruction::Clone(CFX_XMLDocument* doc) {

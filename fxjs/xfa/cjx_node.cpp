@@ -282,7 +282,7 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   top_xml_doc->AppendNodesFrom(pParser->GetXMLDoc().get());
 
   if (bIgnoreRoot &&
-      (pXMLNode->GetType() != FX_XMLNODE_Element ||
+      (pXMLNode->GetType() != CFX_XMLNode::Type::kElement ||
        XFA_RecognizeRichText(static_cast<CFX_XMLElement*>(pXMLNode)))) {
     bIgnoreRoot = false;
   }
@@ -405,7 +405,7 @@ CJS_Result CJX_Node::saveXML(CFX_V8* runtime,
   CFX_XMLNode* pElement = nullptr;
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
     pElement = GetXFANode()->GetXMLMappingNode();
-    if (!pElement || pElement->GetType() != FX_XMLNODE_Element) {
+    if (!pElement || pElement->GetType() != CFX_XMLNode::Type::kElement) {
       return CJS_Result::Success(
           runtime->NewString(bsXMLHeader.AsStringView()));
     }

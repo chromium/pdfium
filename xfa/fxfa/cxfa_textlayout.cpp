@@ -716,9 +716,9 @@ bool CXFA_TextLayout::LoadRichText(
       if (m_bBlockContinue || (m_pLoader && pXMLNode == m_pLoader->pXMLNode)) {
         m_bBlockContinue = true;
       }
-      if (pXMLNode->GetType() == FX_XMLNODE_Text) {
+      if (pXMLNode->GetType() == CFX_XMLNode::Type::kText) {
         bContentNode = true;
-      } else if (pXMLNode->GetType() == FX_XMLNODE_Element) {
+      } else if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement) {
         pElement = static_cast<const CFX_XMLElement*>(pXMLNode);
         wsName = pElement->GetLocalTagName();
       }

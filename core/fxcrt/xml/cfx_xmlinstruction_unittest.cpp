@@ -15,7 +15,7 @@
 
 TEST(CFX_XMLInstructionTest, GetType) {
   CFX_XMLInstruction node(L"acrobat");
-  EXPECT_EQ(FX_XMLNODE_Instruction, node.GetType());
+  EXPECT_EQ(CFX_XMLNode::Type::kInstruction, node.GetType());
 }
 
 TEST(CFX_XMLInstructionTest, AcrobatInstruction) {
@@ -53,7 +53,7 @@ TEST(CFX_XMLInstructionTest, Clone) {
   CFX_XMLNode* clone = node.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
 
-  ASSERT_EQ(FX_XMLNODE_Instruction, clone->GetType());
+  ASSERT_EQ(CFX_XMLNode::Type::kInstruction, clone->GetType());
   CFX_XMLInstruction* inst = ToXMLInstruction(clone);
   EXPECT_TRUE(inst->IsAcrobat());
 
@@ -96,7 +96,7 @@ TEST(CFX_XMLInstructionTest, ParseAndReSave) {
 
   CFX_XMLElement* root = doc->GetRoot();
   ASSERT_TRUE(root->GetFirstChild() != nullptr);
-  ASSERT_EQ(FX_XMLNODE_Instruction, root->GetFirstChild()->GetType());
+  ASSERT_EQ(CFX_XMLNode::Type::kInstruction, root->GetFirstChild()->GetType());
 
   CFX_XMLInstruction* node = ToXMLInstruction(root->GetFirstChild());
   ASSERT_TRUE(node != nullptr);
@@ -129,7 +129,7 @@ TEST(CFX_XMLInstructionTest, ParseAndReSaveInnerInstruction) {
 
   CFX_XMLElement* root = doc->GetRoot();
   ASSERT_TRUE(root->GetFirstChild() != nullptr);
-  ASSERT_TRUE(root->GetFirstChild()->GetType() == FX_XMLNODE_Element);
+  ASSERT_TRUE(root->GetFirstChild()->GetType() == CFX_XMLNode::Type::kElement);
 
   CFX_XMLElement* node = ToXMLElement(root->GetFirstChild());
   EXPECT_EQ(L"node", node->GetName());

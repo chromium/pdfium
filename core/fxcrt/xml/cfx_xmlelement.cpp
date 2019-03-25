@@ -20,8 +20,8 @@ CFX_XMLElement::CFX_XMLElement(const WideString& wsTag) : name_(wsTag) {
 
 CFX_XMLElement::~CFX_XMLElement() = default;
 
-FX_XMLNODETYPE CFX_XMLElement::GetType() const {
-  return FX_XMLNODE_Element;
+CFX_XMLNode::Type CFX_XMLElement::GetType() const {
+  return Type::kElement;
 }
 
 CFX_XMLNode* CFX_XMLElement::Clone(CFX_XMLDocument* doc) {
@@ -32,7 +32,7 @@ CFX_XMLNode* CFX_XMLElement::Clone(CFX_XMLDocument* doc) {
   // text nodes?
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
-    if (pChild->GetType() == FX_XMLNODE_Text)
+    if (pChild->GetType() == Type::kText)
       node->AppendChild(pChild->Clone(doc));
   }
   return node;
@@ -57,10 +57,7 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
     attr += wsPrefix;
   }
   const CFX_XMLNode* pNode = this;
-  while (pNode) {
-    if (pNode->GetType() != FX_XMLNODE_Element)
-      break;
-
+  while (pNode && pNode->GetType() == Type::kElement) {
     auto* pElement = static_cast<const CFX_XMLElement*>(pNode);
     if (!pElement->HasAttribute(attr)) {
       pNode = pNode->GetParent();

@@ -20,7 +20,7 @@ class CFX_XMLInstruction final : public CFX_XMLNode {
   ~CFX_XMLInstruction() override;
 
   // CFX_XMLNode
-  FX_XMLNODETYPE GetType() const override;
+  Type GetType() const override;
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 
@@ -36,7 +36,7 @@ class CFX_XMLInstruction final : public CFX_XMLNode {
 };
 
 inline CFX_XMLInstruction* ToXMLInstruction(CFX_XMLNode* pNode) {
-  return pNode && pNode->GetType() == FX_XMLNODE_Instruction
+  return pNode && pNode->GetType() == CFX_XMLNode::Type::kInstruction
              ? static_cast<CFX_XMLInstruction*>(pNode)
              : nullptr;
 }

@@ -10,21 +10,21 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 
-enum FX_XMLNODETYPE {
-  FX_XMLNODE_Instruction = 0,
-  FX_XMLNODE_Element,
-  FX_XMLNODE_Text,
-  FX_XMLNODE_CharData,
-};
-
 class CFX_XMLDocument;
 
 class CFX_XMLNode {
  public:
+  enum class Type {
+    kInstruction = 0,
+    kElement,
+    kText,
+    kCharData,
+  };
+
   CFX_XMLNode();
   virtual ~CFX_XMLNode();
 
-  virtual FX_XMLNODETYPE GetType() const = 0;
+  virtual Type GetType() const = 0;
   virtual CFX_XMLNode* Clone(CFX_XMLDocument* doc) = 0;
   virtual void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) = 0;
 

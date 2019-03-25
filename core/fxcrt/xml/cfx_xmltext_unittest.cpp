@@ -9,7 +9,7 @@
 
 TEST(CFX_XMLTextTest, GetType) {
   CFX_XMLText text(L"My Text");
-  EXPECT_EQ(FX_XMLNODE_Text, text.GetType());
+  EXPECT_EQ(CFX_XMLNode::Type::kText, text.GetType());
 }
 
 TEST(CFX_XMLTextTest, GetText) {
@@ -23,7 +23,7 @@ TEST(CFX_XMLTextTest, Clone) {
   CFX_XMLText data(L"My Data");
   CFX_XMLNode* clone = data.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
-  ASSERT_EQ(FX_XMLNODE_Text, clone->GetType());
+  ASSERT_EQ(CFX_XMLNode::Type::kText, clone->GetType());
   EXPECT_EQ(L"My Data", ToXMLText(clone)->GetText());
 }
 

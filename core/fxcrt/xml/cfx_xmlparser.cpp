@@ -100,7 +100,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
   buffer.resize(pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
 
   std::stack<wchar_t> character_to_skip_too_stack;
-  std::stack<FX_XMLNODETYPE> node_type_stack;
+  std::stack<CFX_XMLNode::Type> node_type_stack;
   WideString current_attribute_name;
   FDE_XmlSyntaxState current_parser_state = FDE_XmlSyntaxState::Text;
   int32_t iCount = 0;
@@ -149,11 +149,11 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_buffer_idx++;
             current_parser_state = FDE_XmlSyntaxState::CloseElement;
           } else if (ch == L'?') {
-            node_type_stack.push(FX_XMLNODE_Instruction);
+            node_type_stack.push(CFX_XMLNode::Type::kInstruction);
             current_buffer_idx++;
             current_parser_state = FDE_XmlSyntaxState::Target;
           } else {
-            node_type_stack.push(FX_XMLNODE_Element);
+            node_type_stack.push(CFX_XMLNode::Type::kElement);
             current_parser_state = FDE_XmlSyntaxState::Tag;
           }
           break;
@@ -198,12 +198,13 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           }
           if (!IsXMLNameChar(ch, current_text_.empty())) {
             if (current_text_.empty()) {
-              if (node_type_stack.top() == FX_XMLNODE_Element) {
+              if (node_type_stack.top() == CFX_XMLNode::Type::kElement) {
                 if (ch == L'>' || ch == L'/') {
                   current_parser_state = FDE_XmlSyntaxState::BreakElement;
                   break;
                 }
-              } else if (node_type_stack.top() == FX_XMLNODE_Instruction) {
+              } else if (node_type_stack.top() ==
+                         CFX_XMLNode::Type::kInstruction) {
                 if (ch == L'?') {
                   current_parser_state = FDE_XmlSyntaxState::CloseInstruction;
                   current_buffer_idx++;
@@ -214,7 +215,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
               }
               return false;
             } else {
-              if (node_type_stack.top() == FX_XMLNODE_Instruction) {
+              if (node_type_stack.top() == CFX_XMLNode::Type::kInstruction) {
                 if (ch != '=' && !IsXMLWhiteSpace(ch)) {
                   current_parser_state = FDE_XmlSyntaxState::TargetData;
                   break;
@@ -234,7 +235,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             break;
           }
           if (ch != L'=') {
-            if (node_type_stack.top() == FX_XMLNODE_Instruction) {
+            if (node_type_stack.top() == CFX_XMLNode::Type::kInstruction) {
               current_parser_state = FDE_XmlSyntaxState::TargetData;
               break;
             }
@@ -291,7 +292,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_parser_state = FDE_XmlSyntaxState::Text;
 
             if (current_node_ &&
-                current_node_->GetType() == FX_XMLNODE_Instruction)
+                current_node_->GetType() == CFX_XMLNode::Type::kInstruction)
               current_node_ = current_node_->GetParent();
           }
           break;

@@ -25,7 +25,7 @@ void CheckForSharedFormInternal(CFX_XMLElement* element,
   if (attr.EqualsASCII("http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/")) {
     for (const auto* child = element->GetFirstChild(); child;
          child = child->GetNextSibling()) {
-      if (child->GetType() != FX_XMLNODE_Element)
+      if (child->GetType() != CFX_XMLNode::Type::kElement)
         continue;
 
       const auto* child_elem = static_cast<const CFX_XMLElement*>(child);

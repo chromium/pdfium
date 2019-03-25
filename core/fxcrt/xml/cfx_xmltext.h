@@ -18,7 +18,7 @@ class CFX_XMLText : public CFX_XMLNode {
   ~CFX_XMLText() override;
 
   // CFX_XMLNode
-  FX_XMLNODETYPE GetType() const override;
+  Type GetType() const override;
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 
@@ -30,8 +30,9 @@ class CFX_XMLText : public CFX_XMLNode {
 };
 
 inline bool IsXMLText(const CFX_XMLNode* pNode) {
-  FX_XMLNODETYPE type = pNode->GetType();
-  return type == FX_XMLNODE_Text || type == FX_XMLNODE_CharData;
+  CFX_XMLNode::Type type = pNode->GetType();
+  return type == CFX_XMLNode::Type::kText ||
+         type == CFX_XMLNode::Type::kCharData;
 }
 
 inline CFX_XMLText* ToXMLText(CFX_XMLNode* pNode) {
