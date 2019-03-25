@@ -176,6 +176,13 @@ class CXFA_ItemLayoutProcessor {
   Optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
                                        CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();
+  void AdjustContainerSpecifiedSize(CXFA_LayoutContext* pContext,
+                                    CFX_SizeF* pSize,
+                                    bool* pContainerWidthAutoSize,
+                                    bool* pContainerHeightAutoSize);
+  CXFA_ContentLayoutItem* FindLastContentLayoutItem(
+      XFA_AttributeValue eFlowStrategy);
+  CFX_SizeF CalculateLayoutItemSize(const CXFA_ContentLayoutItem* pLayoutChild);
 
   Stage m_nCurChildNodeStage = Stage::kNone;
   Result m_ePreProcessRs = Result::kDone;
