@@ -31,7 +31,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       mgrs.push_back(pdfium::MakeUnique<CXFA_LocaleMgr>(nullptr, locale));
   }
 
-  uint8_t test_selector = data[0] % 3;
+  uint8_t test_selector = data[0] % 10;
   uint8_t locale_selector = data[1] % FX_ArraySize(kLocales);
   uint8_t type_selector = data[2] % FX_ArraySize(kTypes);
   data += 3;
@@ -43,9 +43,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       WideString::FromLatin1(ByteStringView(data, pattern_len));
   WideString value =
       WideString::FromLatin1(ByteStringView(data + pattern_len, value_len));
-  WideString result;
+
   auto fmt = pdfium::MakeUnique<CFGAS_StringFormatter>(
       mgrs[locale_selector].get(), pattern);
+
+  WideString result;
+  CFX_DateTime dt;
   switch (test_selector) {
     case 0:
       fmt->FormatText(value, &result);
@@ -55,6 +58,27 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       break;
     case 2:
       fmt->FormatDateTime(value, kTypes[type_selector], &result);
+      break;
+    case 3:
+      fmt->FormatNull(&result);
+      break;
+    case 4:
+      fmt->FormatZero(&result);
+      break;
+    case 5:
+      fmt->ParseText(value, &result);
+      break;
+    case 6:
+      fmt->ParseNum(value, &result);
+      break;
+    case 7:
+      fmt->ParseDateTime(value, kTypes[type_selector], &dt);
+      break;
+    case 8:
+      fmt->ParseNull(value);
+      break;
+    case 9:
+      fmt->ParseZero(value);
       break;
   }
   return 0;
