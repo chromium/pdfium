@@ -2160,10 +2160,9 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
         break;
     }
   }
-  if (!bAddNeg && bNeg) {
-    *wsOutput = pLocale->GetMinusSymbol() + (*wsOutput)[0] +
-                wsOutput->Right(wsOutput->GetLength() - 1);
-  }
+  if (!bAddNeg && bNeg)
+    *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
+
   return true;
 }
 
