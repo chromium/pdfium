@@ -241,7 +241,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
     return nullptr;
 
   pDict = pdfium::MakeUnique<CJBig2_SymbolDict>();
-  I = J = 0;
+  J = 0;
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (!EXFLAGS[I] || J >= SDNUMEXSYMS)
       continue;
@@ -508,7 +508,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   if (num_ex_syms > SDNUMEXSYMS)
     return nullptr;
 
-  I = J = 0;
+  J = 0;
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; ++I) {
     if (!EXFLAGS[I] || J >= SDNUMEXSYMS)
       continue;

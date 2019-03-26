@@ -1074,7 +1074,6 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       }
     } else {
       pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
-      pStreamResList = pStreamDict->GetDictFor("Resources");
     }
   }
   switch (type) {
@@ -1316,7 +1315,6 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
         }
       } else {
         pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
-        pStreamResList = pStreamDict->GetDictFor("Resources");
       }
     }
   }

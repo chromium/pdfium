@@ -75,8 +75,9 @@ bool CPDF_ObjectAvail::LoadRootObject() {
 }
 
 bool CPDF_ObjectAvail::CheckObjects() {
-  std::stack<uint32_t> objects_to_check = std::move(non_parsed_objects_);
   std::set<uint32_t> checked_objects;
+  std::stack<uint32_t> objects_to_check = std::move(non_parsed_objects_);
+  non_parsed_objects_ = std::stack<uint32_t>();
   while (!objects_to_check.empty()) {
     const uint32_t obj_num = objects_to_check.top();
     objects_to_check.pop();

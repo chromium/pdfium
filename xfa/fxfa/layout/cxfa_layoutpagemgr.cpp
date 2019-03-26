@@ -1200,7 +1200,6 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_SimplexDuplex(
         AddContentAreaLayoutItem(
             pNewRecord, pCurrentNode->GetFirstChildByClass<CXFA_ContentArea>(
                             XFA_Element::ContentArea));
-        pPreferredPageArea = pCurrentNode;
         return false;
       }
       if (ePreferredPosition == XFA_AttributeValue::Only) {
