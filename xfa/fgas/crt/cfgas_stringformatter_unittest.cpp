@@ -462,6 +462,9 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
 
       // https://crbug.com/938626
       {L"en", L"PDF", L"num( ", L"."},
+
+      // https://crbug.com/945836
+      {L"en", L"9.E99999999999", L"EdEE.E999", L""},
   };
 
   for (const auto& test : tests) {
@@ -590,7 +593,7 @@ TEST_F(CFGAS_StringFormatterTest, NumFormat) {
 
   static const TestCase failures[] = {
       // https://crbug.com/pdfium/1271
-      {L"en", L"1", L"num.{E", L"1"},
+      {L"en", L"1", L"num.{E", L""},
   };
 
   for (const auto& test : tests) {

@@ -7,6 +7,7 @@
 #include "xfa/fgas/crt/cfgas_stringformatter.h"
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -1220,6 +1221,8 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
           if (spSrcNum[cc] == 'E' || spSrcNum[cc] == 'e')
             break;
           if (FXSYS_IsDecimalDigit(spSrcNum[cc])) {
+            if (iExponent > std::numeric_limits<int>::max() / 10)
+              return false;
             iExponent = iExponent + FXSYS_DecimalCharToInt(spSrcNum[cc]) * 10;
             cc--;
             continue;
@@ -1417,6 +1420,8 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
           while (cc < spSrcNum.size()) {
             if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
               break;
+            if (iExponent > std::numeric_limits<int>::max() / 10)
+              return false;
             iExponent = iExponent * 10 + FXSYS_DecimalCharToInt(spSrcNum[cc]);
             cc++;
           }
