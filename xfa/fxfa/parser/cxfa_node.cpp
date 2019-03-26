@@ -218,6 +218,7 @@
 #include "xfa/fxfa/parser/cxfa_msgid.h"
 #include "xfa/fxfa/parser/cxfa_nameattr.h"
 #include "xfa/fxfa/parser/cxfa_neverembed.h"
+#include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_numberofcopies.h"
 #include "xfa/fxfa/parser/cxfa_numberpattern.h"
@@ -748,6 +749,28 @@ CXFA_Node* FindFirstSiblingOfClassInList(CXFA_Node* parent,
       return result;
   }
   return nullptr;
+}
+
+WideString GetNameExpressionSinglePath(CXFA_Node* pNode) {
+  const bool bIsProperty = pNode->IsProperty();
+  const bool bIsClassIndex =
+      pNode->IsUnnamed() ||
+      (bIsProperty && pNode->GetElementType() != XFA_Element::PageSet);
+  const wchar_t* pszFormat;
+  WideString ws;
+  if (bIsClassIndex) {
+    pszFormat = L"#%ls[%zu]";
+    ws = WideString::FromASCII(pNode->GetClassName());
+  } else {
+    pszFormat = L"%ls[%zu]";
+    ws = pNode->JSObject()->GetCData(XFA_Attribute::Name);
+    ws.Replace(L".", L"\\.");
+  }
+
+  return WideString::Format(
+      pszFormat, ws.c_str(),
+      CXFA_NodeHelper::GetIndex(pNode, XFA_LOGIC_Transparent, bIsProperty,
+                                bIsClassIndex));
 }
 
 }  // namespace
@@ -1364,6 +1387,19 @@ XFA_AttributeValue CXFA_Node::GetIntact() {
     default:
       return XFA_AttributeValue::None;
   }
+}
+
+WideString CXFA_Node::GetNameExpression() {
+  WideString wsName = GetNameExpressionSinglePath(this);
+  CXFA_Node* parent = GetParent();
+  while (parent) {
+    WideString wsParent = GetNameExpressionSinglePath(parent);
+    wsParent += L".";
+    wsParent += wsName;
+    wsName = std::move(wsParent);
+    parent = parent->GetParent();
+  }
+  return wsName;
 }
 
 CXFA_Node* CXFA_Node::GetDataDescriptionNode() {

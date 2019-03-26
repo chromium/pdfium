@@ -37,8 +37,8 @@ CXFA_Object* CXFA_Object::AsCXFAObject() {
 }
 
 WideString CXFA_Object::GetSOMExpression() {
-  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
-  return pScriptContext->GetSomExpression(ToNode(this));
+  CXFA_Node* pNode = AsNode();
+  return pNode ? pNode->GetNameExpression() : WideString();
 }
 
 CXFA_List* CXFA_Object::AsList() {

@@ -197,6 +197,7 @@ class CXFA_Node : public CXFA_Object {
   LocaleIface* GetLocale();
   Optional<WideString> GetLocaleName();
   XFA_AttributeValue GetIntact();
+  WideString GetNameExpression();
 
   CXFA_Node* GetFirstChildByName(WideStringView wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;

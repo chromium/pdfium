@@ -771,10 +771,6 @@ size_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
                                    refNode->IsProperty(), true);
 }
 
-WideString CFXJSE_Engine::GetSomExpression(CXFA_Node* refNode) {
-  return CXFA_NodeHelper::GetNameExpression(refNode);
-}
-
 void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {
   m_pScriptNodeArray = pArray;
 }

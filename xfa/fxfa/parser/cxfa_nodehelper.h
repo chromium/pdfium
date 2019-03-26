@@ -33,7 +33,6 @@ class CXFA_NodeHelper {
                          XFA_LOGIC_TYPE eLogicType,
                          bool bIsProperty,
                          bool bIsClassIndex);
-  static WideString GetNameExpression(CXFA_Node* refNode);
 
   bool CreateNode(const WideString& wsName,
                   const WideString& wsCondition,
