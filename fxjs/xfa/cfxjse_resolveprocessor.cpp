@@ -119,23 +119,22 @@ bool CFXJSE_ResolveProcessor::Resolve(CFXJSE_ResolveNodeData& rnd) {
 }
 
 bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
+  CXFA_Node* pParent = ToNode(rnd.m_CurObject.Get());
+  if (!pParent)
+    return false;
+
   WideStringView wsName = rnd.m_wsName.AsStringView();
   WideString wsCondition = rnd.m_wsCondition;
-  CXFA_Node* findNode = nullptr;
-  bool bClassName = false;
-  if (wsName.GetLength() && wsName[0] == '#') {
-    bClassName = true;
-    findNode = CXFA_NodeHelper::GetOneChildOfClass(
-        ToNode(rnd.m_CurObject.Get()), wsName.Right(wsName.GetLength() - 1));
-  } else {
-    findNode = CXFA_NodeHelper::GetOneChildNamed(ToNode(rnd.m_CurObject.Get()),
-                                                 wsName);
-  }
-  if (!findNode)
+  const bool bClassName = !wsName.IsEmpty() && wsName[0] == '#';
+  CXFA_Node* pChild =
+      bClassName
+          ? pParent->GetOneChildOfClass(wsName.Right(wsName.GetLength() - 1))
+          : pParent->GetOneChildNamed(wsName);
+  if (!pChild)
     return false;
 
   if (wsCondition.IsEmpty()) {
-    rnd.m_Objects.emplace_back(findNode);
+    rnd.m_Objects.emplace_back(pChild);
     return true;
   }
 
@@ -144,7 +143,7 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
     nodes.push_back(pObject->AsNode());
 
   std::vector<CXFA_Node*> siblings =
-      CXFA_NodeHelper::GetSiblings(findNode, XFA_LOGIC_Transparent, bClassName);
+      CXFA_NodeHelper::GetSiblings(pChild, XFA_LOGIC_Transparent, bClassName);
   nodes.insert(nodes.end(), siblings.begin(), siblings.end());
   rnd.m_Objects =
       std::vector<UnownedPtr<CXFA_Object>>(nodes.begin(), nodes.end());

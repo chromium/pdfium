@@ -214,6 +214,9 @@ class CXFA_Node : public CXFA_Object {
     return static_cast<T*>(GetNextSameClassSiblingInternal(eType));
   }
 
+  CXFA_Node* GetOneChildNamed(WideStringView wsName);
+  CXFA_Node* GetOneChildOfClass(WideStringView wsClass);
+
   CXFA_Node* GetInstanceMgrOfSubform();
 
   Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
