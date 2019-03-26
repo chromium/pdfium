@@ -152,21 +152,16 @@ WideString GetNameExpressionSinglePath(CXFA_Node* refNode) {
 }
 
 CXFA_Node* GetTransparentParent(CXFA_Node* pNode) {
-  CXFA_Node* parent;
-  CXFA_Node* node = pNode;
-  while (true) {
-    parent = node ? node->GetParent() : nullptr;
-    if (!parent)
-      return nullptr;
-
-    XFA_Element parentType = parent->GetElementType();
-    if ((!parent->IsUnnamed() && parentType != XFA_Element::SubformSet) ||
-        parentType == XFA_Element::Variables) {
-      break;
+  CXFA_Node* parent = pNode ? pNode->GetParent() : nullptr;
+  while (parent) {
+    XFA_Element type = parent->GetElementType();
+    if (type == XFA_Element::Variables ||
+        (type != XFA_Element::SubformSet && !parent->IsUnnamed())) {
+      return parent;
     }
-    node = parent;
+    parent = parent->GetParent();
   }
-  return parent;
+  return nullptr;
 }
 
 }  // namespace
