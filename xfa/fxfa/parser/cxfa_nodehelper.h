@@ -34,8 +34,6 @@ class CXFA_NodeHelper {
                          bool bIsProperty,
                          bool bIsClassIndex);
   static WideString GetNameExpression(CXFA_Node* refNode);
-  static bool NodeIsTransparent(CXFA_Node* refNode);
-  static bool NodeIsProperty(CXFA_Node* refNode);
 
   bool CreateNode(const WideString& wsName,
                   const WideString& wsCondition,

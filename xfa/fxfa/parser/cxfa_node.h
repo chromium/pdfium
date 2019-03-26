@@ -376,6 +376,9 @@ class CXFA_Node : public CXFA_Object {
 
   WideString NumericLimit(const WideString& wsValue);
 
+  bool IsTransparent() const;
+  bool IsProperty() const;
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,

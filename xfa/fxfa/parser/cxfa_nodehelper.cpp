@@ -68,7 +68,7 @@ void TraverseSiblings(CXFA_Node* parent,
     if (eLogicType == XFA_LOGIC_NoTransparent)
       continue;
 
-    if (CXFA_NodeHelper::NodeIsTransparent(child) &&
+    if (child->IsTransparent() &&
         child->GetElementType() != XFA_Element::PageSet) {
       TraverseSiblings(child, dwNameHash, pSiblings, eLogicType, bIsClassName,
                        false);
@@ -79,7 +79,7 @@ void TraverseSiblings(CXFA_Node* parent,
 
 WideString GetNameExpressionSinglePath(CXFA_Node* refNode) {
   WideString ws;
-  bool bIsProperty = CXFA_NodeHelper::NodeIsProperty(refNode);
+  bool bIsProperty = refNode->IsProperty();
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
     ws = WideString::FromASCII(refNode->GetClassName());
@@ -175,17 +175,6 @@ WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode) {
     parent = parent->GetParent();
   }
   return wsName;
-}
-
-// static
-bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {
-  if (!refNode)
-    return false;
-
-  XFA_Element refNodeType = refNode->GetElementType();
-  return (refNode->IsUnnamed() && refNode->IsContainerNode()) ||
-         refNodeType == XFA_Element::SubformSet ||
-         refNodeType == XFA_Element::Area || refNodeType == XFA_Element::Proto;
 }
 
 bool CXFA_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
@@ -302,10 +291,4 @@ void CXFA_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
   } else if (refNode->GetElementType() == XFA_Element::ExclGroup) {
     m_eLastCreateType = XFA_Element::DataValue;
   }
-}
-
-// static
-bool CXFA_NodeHelper::NodeIsProperty(CXFA_Node* refNode) {
-  CXFA_Node* parent = refNode ? refNode->GetParent() : nullptr;
-  return parent && parent->HasProperty(refNode->GetElementType());
 }

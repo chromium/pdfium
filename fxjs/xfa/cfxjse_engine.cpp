@@ -758,15 +758,17 @@ CFXJSE_Value* CFXJSE_Engine::GetJSValueFromMap(CXFA_Object* pObject) {
 }
 
 size_t CFXJSE_Engine::GetIndexByName(CXFA_Node* refNode) {
+  if (!refNode)
+    return 0;
   return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
-                                   CXFA_NodeHelper::NodeIsProperty(refNode),
-                                   false);
+                                   refNode->IsProperty(), false);
 }
 
 size_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
+  if (!refNode)
+    return 0;
   return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
-                                   CXFA_NodeHelper::NodeIsProperty(refNode),
-                                   true);
+                                   refNode->IsProperty(), true);
 }
 
 WideString CFXJSE_Engine::GetSomExpression(CXFA_Node* refNode) {

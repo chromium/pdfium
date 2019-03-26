@@ -313,8 +313,8 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
         rnd.m_Objects.emplace_back(child);
       }
 
-      if (CXFA_NodeHelper::NodeIsTransparent(child) &&
-          child->GetElementType() != XFA_Element::PageSet) {
+      if (child->GetElementType() != XFA_Element::PageSet &&
+          child->IsTransparent()) {
         if (!bSetFlag) {
           SetStylesForChild(dwStyles, rndFind);
           bSetFlag = true;
@@ -332,7 +332,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     if (rnd.m_Objects.size() > nNum) {
       if (!(dwStyles & XFA_RESOLVENODE_ALL)) {
         std::vector<CXFA_Node*> upArrayNodes;
-        if (CXFA_NodeHelper::NodeIsTransparent(ToNode(curNode))) {
+        if (curNode->IsTransparent()) {
           upArrayNodes = CXFA_NodeHelper::GetSiblings(
               ToNode(rnd.m_Objects.front().Get()), XFA_LOGIC_Transparent,
               !!(dwStyles & XFA_RESOLVENODE_TagName));
@@ -392,7 +392,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     }
   }
 
-  CXFA_Node* parentNode = curNode->GetParent();
+  CXFA_Node* const parentNode = curNode->GetParent();
   uint32_t uCurClassHash = curNode->GetClassHashCode();
   if (!parentNode) {
     if (uCurClassHash == uNameHash) {
@@ -446,7 +446,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
              child->GetElementType() == XFA_Element::PageSet)) {
           bInnerSearch = true;
         }
-      } else if (CXFA_NodeHelper::NodeIsTransparent(child)) {
+      } else if (child->IsTransparent()) {
         bInnerSearch = true;
       }
       if (bInnerSearch) {
@@ -464,7 +464,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       child = child->GetNextSibling();
     }
     if (rnd.m_Objects.size() > nNum) {
-      if (CXFA_NodeHelper::NodeIsTransparent(parentNode)) {
+      if (parentNode->IsTransparent()) {
         std::vector<CXFA_Node*> upArrayNodes = CXFA_NodeHelper::GetSiblings(
             ToNode(rnd.m_Objects.front().Get()), XFA_LOGIC_Transparent,
             !!(dwStyles & XFA_RESOLVENODE_TagName));
@@ -652,7 +652,7 @@ void CFXJSE_ResolveProcessor::FilterCondition(WideString wsCondition,
   const std::vector<CXFA_Node*>* pArray = pRnd->m_pSC->GetUpObjectArray();
   if (!pArray->empty()) {
     CXFA_Node* curNode = pArray->back();
-    bool bIsProperty = CXFA_NodeHelper::NodeIsProperty(curNode);
+    bool bIsProperty = curNode->IsProperty();
     bool bIsClassIndex =
         curNode->IsUnnamed() ||
         (bIsProperty && curNode->GetElementType() != XFA_Element::PageSet);
