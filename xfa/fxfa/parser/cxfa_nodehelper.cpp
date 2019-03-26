@@ -151,6 +151,24 @@ WideString GetNameExpressionSinglePath(CXFA_Node* refNode) {
                                 false));
 }
 
+CXFA_Node* GetTransparentParent(CXFA_Node* pNode) {
+  CXFA_Node* parent;
+  CXFA_Node* node = pNode;
+  while (true) {
+    parent = node ? node->GetParent() : nullptr;
+    if (!parent)
+      return nullptr;
+
+    XFA_Element parentType = parent->GetElementType();
+    if ((!parent->IsUnnamed() && parentType != XFA_Element::SubformSet) ||
+        parentType == XFA_Element::Variables) {
+      break;
+    }
+    node = parent;
+  }
+  return parent;
+}
+
 }  // namespace
 
 CXFA_NodeHelper::CXFA_NodeHelper() = default;
@@ -183,14 +201,12 @@ std::vector<CXFA_Node*> CXFA_NodeHelper::GetSiblings(CXFA_Node* pNode,
                                                      XFA_LOGIC_TYPE eLogicType,
                                                      bool bIsClassName) {
   std::vector<CXFA_Node*> siblings;
-  if (!pNode)
-    return siblings;
-  CXFA_Node* parent = GetParent(pNode, XFA_LOGIC_NoTransparent);
+  CXFA_Node* parent = pNode ? pNode->GetParent() : nullptr;
   if (!parent)
     return siblings;
   if (!parent->HasProperty(pNode->GetElementType()) &&
       eLogicType == XFA_LOGIC_Transparent) {
-    parent = GetParent(pNode, XFA_LOGIC_Transparent);
+    parent = GetTransparentParent(pNode);
     if (!parent)
       return siblings;
   }
@@ -203,42 +219,16 @@ std::vector<CXFA_Node*> CXFA_NodeHelper::GetSiblings(CXFA_Node* pNode,
 }
 
 // static
-CXFA_Node* CXFA_NodeHelper::GetParent(CXFA_Node* pNode,
-                                      XFA_LOGIC_TYPE eLogicType) {
-  if (!pNode)
-    return nullptr;
-
-  if (eLogicType == XFA_LOGIC_NoTransparent)
-    return pNode->GetParent();
-
-  CXFA_Node* parent;
-  CXFA_Node* node = pNode;
-  while (true) {
-    parent = GetParent(node, XFA_LOGIC_NoTransparent);
-    if (!parent)
-      return nullptr;
-
-    XFA_Element parentType = parent->GetElementType();
-    if ((!parent->IsUnnamed() && parentType != XFA_Element::SubformSet) ||
-        parentType == XFA_Element::Variables) {
-      break;
-    }
-    node = parent;
-  }
-  return parent;
-}
-
-// static
 size_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
                                  XFA_LOGIC_TYPE eLogicType,
                                  bool bIsProperty,
                                  bool bIsClassIndex) {
-  CXFA_Node* parent = GetParent(pNode, XFA_LOGIC_NoTransparent);
+  CXFA_Node* parent = pNode ? pNode->GetParent() : nullptr;
   if (!parent)
     return 0;
 
   if (!bIsProperty && eLogicType == XFA_LOGIC_Transparent) {
-    parent = GetParent(pNode, XFA_LOGIC_Transparent);
+    parent = GetTransparentParent(pNode);
     if (!parent)
       return 0;
   }
@@ -257,13 +247,13 @@ size_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
 // static
 WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode) {
   WideString wsName = GetNameExpressionSinglePath(refNode);
-  CXFA_Node* parent = GetParent(refNode, XFA_LOGIC_NoTransparent);
+  CXFA_Node* parent = refNode ? refNode->GetParent() : nullptr;
   while (parent) {
     WideString wsParent = GetNameExpressionSinglePath(parent);
     wsParent += L".";
     wsParent += wsName;
     wsName = std::move(wsParent);
-    parent = GetParent(parent, XFA_LOGIC_NoTransparent);
+    parent = parent->GetParent();
   }
   return wsName;
 }
@@ -397,9 +387,6 @@ void CXFA_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
 
 // static
 bool CXFA_NodeHelper::NodeIsProperty(CXFA_Node* refNode) {
-  if (!refNode)
-    return false;
-
-  CXFA_Node* parent = GetParent(refNode, XFA_LOGIC_NoTransparent);
+  CXFA_Node* parent = refNode ? refNode->GetParent() : nullptr;
   return parent && parent->HasProperty(refNode->GetElementType());
 }

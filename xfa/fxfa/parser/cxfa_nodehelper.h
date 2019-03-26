@@ -30,8 +30,6 @@ class CXFA_NodeHelper {
   static CXFA_Node* GetOneChildOfClass(CXFA_Node* parent,
                                        WideStringView wsClass);
 
-  static CXFA_Node* GetParent(CXFA_Node* pNode, XFA_LOGIC_TYPE eLogicType);
-
   static std::vector<CXFA_Node*> GetSiblings(CXFA_Node* pNode,
                                              XFA_LOGIC_TYPE eLogicType,
                                              bool bIsClassName);

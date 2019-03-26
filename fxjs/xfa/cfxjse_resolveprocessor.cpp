@@ -374,8 +374,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     CXFA_Node* pProp = nullptr;
     if (XFA_Element::Subform == curNode->GetElementType() &&
         XFA_HASHCODE_Occur == uNameHash) {
-      CXFA_Node* pInstanceManager =
-          curNode->AsNode()->GetInstanceMgrOfSubform();
+      CXFA_Node* pInstanceManager = curNode->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
         pProp = pInstanceManager->JSObject()->GetOrCreateProperty<CXFA_Occur>(
             0, XFA_Element::Occur);
@@ -383,10 +382,9 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     } else {
       XFA_Element eType = XFA_GetElementByName(wsName.AsStringView());
       if (eType == XFA_Element::PageSet) {
-        pProp = curNode->AsNode()->JSObject()->GetProperty<CXFA_Node>(0, eType);
+        pProp = curNode->JSObject()->GetProperty<CXFA_Node>(0, eType);
       } else if (eType != XFA_Element::Unknown) {
-        pProp = curNode->AsNode()->JSObject()->GetOrCreateProperty<CXFA_Node>(
-            0, eType);
+        pProp = curNode->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eType);
       }
     }
     if (pProp) {
@@ -395,12 +393,11 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     }
   }
 
-  CXFA_Node* parentNode =
-      CXFA_NodeHelper::GetParent(curNode->AsNode(), XFA_LOGIC_NoTransparent);
+  CXFA_Node* parentNode = curNode->GetParent();
   uint32_t uCurClassHash = curNode->GetClassHashCode();
   if (!parentNode) {
     if (uCurClassHash == uNameHash) {
-      rnd.m_Objects.emplace_back(curNode->AsNode());
+      rnd.m_Objects.emplace_back(curNode);
       FilterCondition(wsCondition, &rnd);
       if (!rnd.m_Objects.empty())
         return true;
