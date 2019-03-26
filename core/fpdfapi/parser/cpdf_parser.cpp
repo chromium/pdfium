@@ -453,22 +453,20 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   std::vector<char> buf(1024 * kEntryConstSize + 1);
   buf.back() = '\0';
 
-  int32_t nBlocks = count / 1024 + 1;
-  for (int32_t block = 0; block < nBlocks; block++) {
-    int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
+  uint32_t nBytesToRead = count;
+  while (nBytesToRead > 0) {
+    const uint32_t block_size = std::min(nBytesToRead, 1024u);
     if (!m_pSyntax->ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
                               block_size * kEntryConstSize)) {
       return false;
     }
 
-    for (int32_t i = 0; i < block_size; i++) {
+    for (uint32_t i = 0; i < block_size; i++) {
+      uint32_t iObjectIndex = count - nBytesToRead + i;
       CrossRefObjData& obj_data =
-          (*out_objects)[start_obj_index + block * 1024 + i];
-
-      const uint32_t objnum = start_objnum + block * 1024 + i;
-
+          (*out_objects)[start_obj_index + iObjectIndex];
+      const uint32_t objnum = start_objnum + iObjectIndex;
       obj_data.obj_num = objnum;
-
       ObjectInfo& info = obj_data.info;
 
       char* pEntry = &buf[i * kEntryConstSize];
@@ -496,6 +494,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
         info.type = ObjectType::kNotCompressed;
       }
     }
+    nBytesToRead -= block_size;
   }
   return true;
 }
