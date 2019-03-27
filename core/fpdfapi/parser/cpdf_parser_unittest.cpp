@@ -97,7 +97,7 @@ TEST(cpdf_parser, RebuildCrossRefFailed) {
 
 TEST(cpdf_parser, LoadCrossRefV4) {
   {
-    const unsigned char xref_table[] =
+    static const unsigned char kXrefTable[] =
         "xref \n"
         "0 6 \n"
         "0000000003 65535 f \n"
@@ -108,24 +108,26 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000000409 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
+    ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
-    const FX_FILESIZE offsets[] = {0, 17, 81, 0, 331, 409};
-    const CPDF_TestParser::ObjectType types[] = {
+    static const FX_FILESIZE kOffsets[] = {0, 17, 81, 0, 331, 409};
+    static const CPDF_TestParser::ObjectType kTypes[] = {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
+    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+                  "kOffsets / kTypes size mismatch");
+    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
   }
   {
-    const unsigned char xref_table[] =
+    static const unsigned char kXrefTable[] =
         "xref \n"
         "0 1 \n"
         "0000000000 65535 f \n"
@@ -138,12 +140,12 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
+    ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
-    const FX_FILESIZE offsets[] = {0, 0,     0,     25325, 0, 0,    0,
-                                   0, 25518, 25635, 0,     0, 25777};
-    const CPDF_TestParser::ObjectType types[] = {
+    static const FX_FILESIZE kOffsets[] = {0, 0,     0,     25325, 0, 0,    0,
+                                           0, 25518, 25635, 0,     0, 25777};
+    static const CPDF_TestParser::ObjectType kTypes[] = {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
@@ -157,13 +159,15 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
+    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+                  "kOffsets / kTypes size mismatch");
+    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
   }
   {
-    const unsigned char xref_table[] =
+    static const unsigned char kXrefTable[] =
         "xref \n"
         "0 1 \n"
         "0000000000 65535 f \n"
@@ -176,12 +180,12 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
+    ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
-    const FX_FILESIZE offsets[] = {0, 0, 0,     25325, 0, 0,    0,
-                                   0, 0, 25635, 0,     0, 25777};
-    const CPDF_TestParser::ObjectType types[] = {
+    static const FX_FILESIZE kOffsets[] = {0, 0, 0,     25325, 0, 0,    0,
+                                           0, 0, 25635, 0,     0, 25777};
+    static const CPDF_TestParser::ObjectType kTypes[] = {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
@@ -195,13 +199,15 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
+    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+                  "kOffsets / kTypes size mismatch");
+    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
   }
   {
-    const unsigned char xref_table[] =
+    static const unsigned char kXrefTable[] =
         "xref \n"
         "0 7 \n"
         "0000000002 65535 f \n"
@@ -213,11 +219,11 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000000179 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
+    ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
-    const FX_FILESIZE offsets[] = {0, 23, 0, 0, 0, 45, 179};
-    const CPDF_TestParser::ObjectType types[] = {
+    static const FX_FILESIZE kOffsets[] = {0, 23, 0, 0, 0, 45, 179};
+    static const CPDF_TestParser::ObjectType kTypes[] = {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kFree,
@@ -225,9 +231,11 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
+    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+                  "kOffsets / kTypes size mismatch");
+    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
   }
 }
