@@ -57,9 +57,9 @@ const CPDF_Object* GetResourceObject(const CPDF_Dictionary* pDict) {
 
 class HintsScope {
  public:
-  HintsScope(CPDF_ReadValidator* validator,
+  HintsScope(RetainPtr<CPDF_ReadValidator> validator,
              CPDF_DataAvail::DownloadHints* hints)
-      : validator_(validator) {
+      : validator_(std::move(validator)) {
     ASSERT(validator_);
     validator_->SetDownloadHints(hints);
   }
@@ -67,7 +67,7 @@ class HintsScope {
   ~HintsScope() { validator_->SetDownloadHints(nullptr); }
 
  private:
-  UnownedPtr<CPDF_ReadValidator> validator_;
+  RetainPtr<CPDF_ReadValidator> validator_;
 };
 
 }  // namespace
@@ -104,8 +104,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
   if (!m_dwFileLen)
     return DataError;
 
-  const HintsScope hints_scope(m_pFileRead.Get(), pHints);
-
+  const HintsScope hints_scope(GetValidator(), pHints);
   while (!m_bDocAvail) {
     if (!CheckDocStatus())
       return DataNotAvailable;
@@ -805,8 +804,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   if (pdfium::ContainsKey(m_pagesLoadState, dwPage))
     return DataAvailable;
 
-  const HintsScope hints_scope(GetValidator().Get(), pHints);
-
+  const HintsScope hints_scope(GetValidator(), pHints);
   if (m_pLinearized) {
     if (dwPage == m_pLinearized->GetFirstPageNo()) {
       auto* pPageDict = m_pDocument->GetPageDictionary(safePage.ValueOrDie());
@@ -954,7 +952,7 @@ CPDF_Dictionary* CPDF_DataAvail::GetPageDictionary(int index) const {
 
 CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
     DownloadHints* pHints) {
-  const HintsScope hints_scope(GetValidator().Get(), pHints);
+  const HintsScope hints_scope(GetValidator(), pHints);
   return CheckAcroForm();
 }
 
