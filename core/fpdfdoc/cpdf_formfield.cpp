@@ -564,11 +564,11 @@ bool CPDF_FormField::IsItemSelected(int index) const {
       break;
     }
   }
-  for (int i = 0; i < static_cast<int>(pArray->size()); i++)
-    if (pArray->GetDirectObjectAt(i)->GetUnicodeText() == opt_value &&
-        i == iPos) {
+  for (int i = 0; i < static_cast<int>(pArray->size()); i++) {
+    const CPDF_Object* pDirectObj = pArray->GetDirectObjectAt(i);
+    if (pDirectObj && pDirectObj->GetUnicodeText() == opt_value && i == iPos)
       return true;
-    }
+  }
   return false;
 }
 

@@ -1287,7 +1287,8 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   size_t n = pArray->size();
   size_t nsegs = 0;
   for (size_t i = 0; i < n; i++) {
-    if (pArray->GetDirectObjectAt(i)->IsString())
+    const CPDF_Object* pDirectObject = pArray->GetDirectObjectAt(i);
+    if (pDirectObject && pDirectObject->IsString())
       nsegs++;
   }
   if (nsegs == 0) {
@@ -1304,6 +1305,9 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   float fInitKerning = 0;
   for (size_t i = 0; i < n; i++) {
     CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
+    if (!pObj)
+      continue;
+
     if (pObj->IsString()) {
       ByteString str = pObj->GetString();
       if (str.IsEmpty())
