@@ -238,6 +238,30 @@ TEST(cpdf_parser, LoadCrossRefV4) {
       EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
   }
+  {
+    // Regression test for https://crbug.com/945624 - Make sure the parser
+    // can correctly handle table sizes that are multiples of the read size,
+    // which is 1024.
+    std::string xref_table = "xref \n 0 2048 \n";
+    xref_table.reserve(41000);
+    for (int i = 0; i < 2048; ++i) {
+      char buffer[21];
+      snprintf(buffer, sizeof(buffer), "%010d 00000 n \n", i + 1);
+      xref_table += buffer;
+    }
+    xref_table += "trail";  // Needed to end cross ref table reading.
+    CPDF_TestParser parser;
+    ASSERT_TRUE(parser.InitTestFromBuffer(
+        pdfium::make_span(reinterpret_cast<const uint8_t*>(xref_table.c_str()),
+                          xref_table.size())));
+
+    ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
+    for (size_t i = 0; i < 2048; ++i) {
+      EXPECT_EQ(static_cast<int>(i) + 1, GetObjInfo(parser, i).pos);
+      EXPECT_EQ(CPDF_TestParser::ObjectType::kNotCompressed,
+                GetObjInfo(parser, i).type);
+    }
+  }
 }
 
 TEST(cpdf_parser, ParseStartXRef) {
