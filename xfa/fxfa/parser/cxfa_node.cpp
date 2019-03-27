@@ -769,8 +769,7 @@ WideString GetNameExpressionSinglePath(CXFA_Node* pNode) {
 
   return WideString::Format(
       pszFormat, ws.c_str(),
-      CXFA_NodeHelper::GetIndex(pNode, XFA_LOGIC_Transparent, bIsProperty,
-                                bIsClassIndex));
+      CXFA_NodeHelper::GetIndex(pNode, bIsProperty, bIsClassIndex));
 }
 
 }  // namespace

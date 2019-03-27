@@ -760,15 +760,13 @@ CFXJSE_Value* CFXJSE_Engine::GetJSValueFromMap(CXFA_Object* pObject) {
 size_t CFXJSE_Engine::GetIndexByName(CXFA_Node* refNode) {
   if (!refNode)
     return 0;
-  return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
-                                   refNode->IsProperty(), false);
+  return CXFA_NodeHelper::GetIndex(refNode, refNode->IsProperty(), false);
 }
 
 size_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
   if (!refNode)
     return 0;
-  return CXFA_NodeHelper::GetIndex(refNode, XFA_LOGIC_Transparent,
-                                   refNode->IsProperty(), true);
+  return CXFA_NodeHelper::GetIndex(refNode, refNode->IsProperty(), true);
 }
 
 void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {

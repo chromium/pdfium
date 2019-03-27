@@ -16,21 +16,14 @@
 class CFXJSE_Engine;
 class CXFA_Node;
 
-enum XFA_LOGIC_TYPE {
-  XFA_LOGIC_NoTransparent,
-  XFA_LOGIC_Transparent,
-};
-
 class CXFA_NodeHelper {
  public:
   CXFA_NodeHelper();
   ~CXFA_NodeHelper();
 
   static std::vector<CXFA_Node*> GetSiblings(CXFA_Node* pNode,
-                                             XFA_LOGIC_TYPE eLogicType,
                                              bool bIsClassName);
   static size_t GetIndex(CXFA_Node* pNode,
-                         XFA_LOGIC_TYPE eLogicType,
                          bool bIsProperty,
                          bool bIsClassIndex);
 

@@ -23,7 +23,6 @@ namespace {
 void TraverseSiblings(CXFA_Node* parent,
                       uint32_t dwNameHash,
                       std::vector<CXFA_Node*>* pSiblings,
-                      XFA_LOGIC_TYPE eLogicType,
                       bool bIsClassName,
                       bool bIsFindProperty) {
   ASSERT(parent);
@@ -46,8 +45,7 @@ void TraverseSiblings(CXFA_Node* parent,
       }
       if (child->IsUnnamed() &&
           child->GetElementType() == XFA_Element::PageSet) {
-        TraverseSiblings(child, dwNameHash, pSiblings, eLogicType, bIsClassName,
-                         false);
+        TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName, false);
       }
     }
     if (!pSiblings->empty())
@@ -65,13 +63,10 @@ void TraverseSiblings(CXFA_Node* parent,
       if (child->GetNameHash() == dwNameHash)
         pSiblings->push_back(child);
     }
-    if (eLogicType == XFA_LOGIC_NoTransparent)
-      continue;
 
     if (child->IsTransparent() &&
         child->GetElementType() != XFA_Element::PageSet) {
-      TraverseSiblings(child, dwNameHash, pSiblings, eLogicType, bIsClassName,
-                       false);
+      TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName, false);
     }
   }
 }
@@ -97,14 +92,12 @@ CXFA_NodeHelper::~CXFA_NodeHelper() = default;
 
 // static
 std::vector<CXFA_Node*> CXFA_NodeHelper::GetSiblings(CXFA_Node* pNode,
-                                                     XFA_LOGIC_TYPE eLogicType,
                                                      bool bIsClassName) {
   std::vector<CXFA_Node*> siblings;
   CXFA_Node* parent = pNode ? pNode->GetParent() : nullptr;
   if (!parent)
     return siblings;
-  if (!parent->HasProperty(pNode->GetElementType()) &&
-      eLogicType == XFA_LOGIC_Transparent) {
+  if (!parent->HasProperty(pNode->GetElementType())) {
     parent = GetTransparentParent(pNode);
     if (!parent)
       return siblings;
@@ -112,21 +105,19 @@ std::vector<CXFA_Node*> CXFA_NodeHelper::GetSiblings(CXFA_Node* pNode,
 
   uint32_t dwNameHash =
       bIsClassName ? pNode->GetClassHashCode() : pNode->GetNameHash();
-  TraverseSiblings(parent, dwNameHash, &siblings, eLogicType, bIsClassName,
-                   true);
+  TraverseSiblings(parent, dwNameHash, &siblings, bIsClassName, true);
   return siblings;
 }
 
 // static
 size_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
-                                 XFA_LOGIC_TYPE eLogicType,
                                  bool bIsProperty,
                                  bool bIsClassIndex) {
   CXFA_Node* parent = pNode ? pNode->GetParent() : nullptr;
   if (!parent)
     return 0;
 
-  if (!bIsProperty && eLogicType == XFA_LOGIC_Transparent) {
+  if (!bIsProperty) {
     parent = GetTransparentParent(pNode);
     if (!parent)
       return 0;
@@ -134,8 +125,7 @@ size_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
   uint32_t dwHashName =
       bIsClassIndex ? pNode->GetClassHashCode() : pNode->GetNameHash();
   std::vector<CXFA_Node*> siblings;
-  TraverseSiblings(parent, dwHashName, &siblings, eLogicType, bIsClassIndex,
-                   true);
+  TraverseSiblings(parent, dwHashName, &siblings, bIsClassIndex, true);
   for (size_t i = 0; i < siblings.size(); ++i) {
     if (siblings[i] == pNode)
       return i;
