@@ -557,17 +557,11 @@ bool CPDF_FormField::IsItemSelected(int index) const {
   if (!pArray)
     return false;
 
-  int iPos = -1;
-  for (int j = 0; j < CountSelectedOptions(); j++) {
-    if (GetSelectedOptionIndex(j) == index) {
-      iPos = j;
-      break;
+  for (int i = 0; i < CountSelectedOptions(); ++i) {
+    if (GetSelectedOptionIndex(i) == index) {
+      const CPDF_Object* pDirectObj = pArray->GetDirectObjectAt(i);
+      return pDirectObj && pDirectObj->GetUnicodeText() == opt_value;
     }
-  }
-  for (int i = 0; i < static_cast<int>(pArray->size()); i++) {
-    const CPDF_Object* pDirectObj = pArray->GetDirectObjectAt(i);
-    if (pDirectObj && pDirectObj->GetUnicodeText() == opt_value && i == iPos)
-      return true;
   }
   return false;
 }
