@@ -22,7 +22,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(const CPDF_Stream* pStream,
     : m_pAcc(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)), m_dwSize(0) {
   m_pAcc->LoadAllDataRaw();
 
-  bool bHasFilter = pStream && pStream->HasFilter();
+  bool bHasFilter = pStream->HasFilter();
   if (bHasFilter && !bFlateEncode) {
     auto pDestAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pDestAcc->LoadAllDataFiltered();
