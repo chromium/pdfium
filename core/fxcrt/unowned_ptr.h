@@ -107,7 +107,7 @@ class UnownedPtr {
   inline void ProbeForLowSeverityLifetimeIssue() {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
     if (m_pObj)
-      (void)reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
+      reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
 #endif
   }
 
