@@ -84,9 +84,6 @@ class CFXJSE_Engine final : public CFX_V8 {
   void AddToCacheList(std::unique_ptr<CXFA_List> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject.Get(); }
 
-  size_t GetIndexByName(CXFA_Node* refNode);
-  size_t GetIndexByClassName(CXFA_Node* refNode);
-
   void SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }

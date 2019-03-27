@@ -218,6 +218,11 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetOneChildNamed(WideStringView wsName);
   CXFA_Node* GetOneChildOfClass(WideStringView wsClass);
 
+  std::vector<CXFA_Node*> GetSiblings(bool bIsClassName);
+  size_t GetIndex(bool bIsProperty, bool bIsClassIndex);
+  size_t GetIndexByName();
+  size_t GetIndexByClassName();
+
   CXFA_Node* GetInstanceMgrOfSubform();
 
   Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
@@ -467,6 +472,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<XFA_AttributeValue> GetIntactFromKeep(
       const CXFA_Keep* pKeep,
       XFA_AttributeValue eLayoutType) const;
+  CXFA_Node* GetTransparentParent();
 
   Optional<float> TryHeight();
   Optional<float> TryMinWidth();

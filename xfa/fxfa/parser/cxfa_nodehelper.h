@@ -21,12 +21,6 @@ class CXFA_NodeHelper {
   CXFA_NodeHelper();
   ~CXFA_NodeHelper();
 
-  static std::vector<CXFA_Node*> GetSiblings(CXFA_Node* pNode,
-                                             bool bIsClassName);
-  static size_t GetIndex(CXFA_Node* pNode,
-                         bool bIsProperty,
-                         bool bIsClassIndex);
-
   bool CreateNode(const WideString& wsName,
                   const WideString& wsCondition,
                   bool bLastNode,

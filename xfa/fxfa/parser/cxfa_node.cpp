@@ -218,7 +218,6 @@
 #include "xfa/fxfa/parser/cxfa_msgid.h"
 #include "xfa/fxfa/parser/cxfa_nameattr.h"
 #include "xfa/fxfa/parser/cxfa_neverembed.h"
-#include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_numberofcopies.h"
 #include "xfa/fxfa/parser/cxfa_numberpattern.h"
@@ -767,9 +766,59 @@ WideString GetNameExpressionSinglePath(CXFA_Node* pNode) {
     ws.Replace(L".", L"\\.");
   }
 
-  return WideString::Format(
-      pszFormat, ws.c_str(),
-      CXFA_NodeHelper::GetIndex(pNode, bIsProperty, bIsClassIndex));
+  return WideString::Format(pszFormat, ws.c_str(),
+                            pNode->GetIndex(bIsProperty, bIsClassIndex));
+}
+
+void TraverseSiblings(CXFA_Node* parent,
+                      uint32_t dwNameHash,
+                      std::vector<CXFA_Node*>* pSiblings,
+                      bool bIsClassName,
+                      bool bIsFindProperty) {
+  ASSERT(parent);
+  ASSERT(pSiblings);
+
+  if (bIsFindProperty) {
+    for (CXFA_Node* child :
+         parent->GetNodeList(XFA_NODEFILTER_Properties, XFA_Element::Unknown)) {
+      if (bIsClassName) {
+        if (child->GetClassHashCode() == dwNameHash)
+          pSiblings->push_back(child);
+      } else {
+        if (child->GetNameHash() == dwNameHash) {
+          if (child->GetElementType() != XFA_Element::PageSet &&
+              child->GetElementType() != XFA_Element::Extras &&
+              child->GetElementType() != XFA_Element::Items) {
+            pSiblings->push_back(child);
+          }
+        }
+      }
+      if (child->IsUnnamed() &&
+          child->GetElementType() == XFA_Element::PageSet) {
+        TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName, false);
+      }
+    }
+    if (!pSiblings->empty())
+      return;
+  }
+  for (CXFA_Node* child :
+       parent->GetNodeList(XFA_NODEFILTER_Children, XFA_Element::Unknown)) {
+    if (child->GetElementType() == XFA_Element::Variables)
+      continue;
+
+    if (bIsClassName) {
+      if (child->GetClassHashCode() == dwNameHash)
+        pSiblings->push_back(child);
+    } else {
+      if (child->GetNameHash() == dwNameHash)
+        pSiblings->push_back(child);
+    }
+
+    if (child->IsTransparent() &&
+        child->GetElementType() != XFA_Element::PageSet) {
+      TraverseSiblings(child, dwNameHash, pSiblings, bIsClassName, false);
+    }
+  }
 }
 
 }  // namespace
@@ -1662,6 +1711,50 @@ CXFA_Node* CXFA_Node::GetOneChildOfClass(WideStringView wsClass) {
     return nullptr;
 
   return FindFirstSiblingOfClass(this, element);
+}
+
+std::vector<CXFA_Node*> CXFA_Node::GetSiblings(bool bIsClassName) {
+  std::vector<CXFA_Node*> siblings;
+  CXFA_Node* parent = GetParent();
+  if (!parent)
+    return siblings;
+  if (!parent->HasProperty(GetElementType())) {
+    parent = GetTransparentParent();
+    if (!parent)
+      return siblings;
+  }
+
+  uint32_t dwNameHash = bIsClassName ? GetClassHashCode() : GetNameHash();
+  TraverseSiblings(parent, dwNameHash, &siblings, bIsClassName, true);
+  return siblings;
+}
+
+size_t CXFA_Node::GetIndex(bool bIsProperty, bool bIsClassIndex) {
+  CXFA_Node* parent = GetParent();
+  if (!parent)
+    return 0;
+
+  if (!bIsProperty) {
+    parent = GetTransparentParent();
+    if (!parent)
+      return 0;
+  }
+  uint32_t dwHashName = bIsClassIndex ? GetClassHashCode() : GetNameHash();
+  std::vector<CXFA_Node*> siblings;
+  TraverseSiblings(parent, dwHashName, &siblings, bIsClassIndex, true);
+  for (size_t i = 0; i < siblings.size(); ++i) {
+    if (siblings[i] == this)
+      return i;
+  }
+  return 0;
+}
+
+size_t CXFA_Node::GetIndexByName() {
+  return GetIndex(IsProperty(), /*bIsClassIndex=*/false);
+}
+
+size_t CXFA_Node::GetIndexByClassName() {
+  return GetIndex(IsProperty(), /*bIsClassIndex=*/true);
 }
 
 CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
@@ -5065,6 +5158,19 @@ void CXFA_Node::SetToXML(const WideString& value) {
     default:
       NOTREACHED();
   }
+}
+
+CXFA_Node* CXFA_Node::GetTransparentParent() {
+  CXFA_Node* parent = GetParent();
+  while (parent) {
+    XFA_Element type = parent->GetElementType();
+    if (type == XFA_Element::Variables ||
+        (type != XFA_Element::SubformSet && !parent->IsUnnamed())) {
+      return parent;
+    }
+    parent = parent->GetParent();
+  }
+  return nullptr;
 }
 
 // static

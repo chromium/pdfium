@@ -126,7 +126,7 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
   WideStringView wsName = rnd.m_wsName.AsStringView();
   WideString wsCondition = rnd.m_wsCondition;
   const bool bClassName = !wsName.IsEmpty() && wsName[0] == '#';
-  CXFA_Node* pChild =
+  CXFA_Node* const pChild =
       bClassName
           ? pParent->GetOneChildOfClass(wsName.Right(wsName.GetLength() - 1))
           : pParent->GetOneChildNamed(wsName);
@@ -142,8 +142,7 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
   for (const auto& pObject : rnd.m_Objects)
     nodes.push_back(pObject->AsNode());
 
-  std::vector<CXFA_Node*> siblings =
-      CXFA_NodeHelper::GetSiblings(pChild, bClassName);
+  std::vector<CXFA_Node*> siblings = pChild->GetSiblings(bClassName);
   nodes.insert(nodes.end(), siblings.begin(), siblings.end());
   rnd.m_Objects =
       std::vector<UnownedPtr<CXFA_Object>>(nodes.begin(), nodes.end());
@@ -333,9 +332,11 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       if (!(dwStyles & XFA_RESOLVENODE_ALL)) {
         std::vector<CXFA_Node*> upArrayNodes;
         if (curNode->IsTransparent()) {
-          upArrayNodes = CXFA_NodeHelper::GetSiblings(
-              ToNode(rnd.m_Objects.front().Get()),
-              !!(dwStyles & XFA_RESOLVENODE_TagName));
+          CXFA_Node* pCurrent = ToNode(rnd.m_Objects.front().Get());
+          if (pCurrent) {
+            upArrayNodes =
+                pCurrent->GetSiblings(!!(dwStyles & XFA_RESOLVENODE_TagName));
+          }
         }
         if (upArrayNodes.size() > rnd.m_Objects.size()) {
           CXFA_Object* pSaveObject = rnd.m_Objects.front().Get();
@@ -465,9 +466,12 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     }
     if (rnd.m_Objects.size() > nNum) {
       if (parentNode->IsTransparent()) {
-        std::vector<CXFA_Node*> upArrayNodes = CXFA_NodeHelper::GetSiblings(
-            ToNode(rnd.m_Objects.front().Get()),
-            !!(dwStyles & XFA_RESOLVENODE_TagName));
+        std::vector<CXFA_Node*> upArrayNodes;
+        CXFA_Node* pCurrent = ToNode(rnd.m_Objects.front().Get());
+        if (pCurrent) {
+          upArrayNodes =
+              pCurrent->GetSiblings(!!(dwStyles & XFA_RESOLVENODE_TagName));
+        }
         if (upArrayNodes.size() > rnd.m_Objects.size()) {
           CXFA_Object* pSaveObject = rnd.m_Objects.front().Get();
           rnd.m_Objects = std::vector<UnownedPtr<CXFA_Object>>(
@@ -651,12 +655,12 @@ void CFXJSE_ResolveProcessor::FilterCondition(WideString wsCondition,
   size_t iCurIndex = 0;
   const std::vector<CXFA_Node*>* pArray = pRnd->m_pSC->GetUpObjectArray();
   if (!pArray->empty()) {
-    CXFA_Node* curNode = pArray->back();
-    bool bIsProperty = curNode->IsProperty();
+    CXFA_Node* pNode = pArray->back();
+    bool bIsProperty = pNode->IsProperty();
     bool bIsClassIndex =
-        curNode->IsUnnamed() ||
-        (bIsProperty && curNode->GetElementType() != XFA_Element::PageSet);
-    iCurIndex = CXFA_NodeHelper::GetIndex(curNode, bIsProperty, bIsClassIndex);
+        pNode->IsUnnamed() ||
+        (bIsProperty && pNode->GetElementType() != XFA_Element::PageSet);
+    iCurIndex = pNode->GetIndex(bIsProperty, bIsClassIndex);
   }
 
   size_t iFoundCount = pRnd->m_Objects.size();

@@ -167,9 +167,9 @@ void CJX_Tree::index(CFXJSE_Value* pValue,
     return;
   }
 
-  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  pValue->SetInteger(pdfium::base::checked_cast<int32_t>(
-      pScriptContext->GetIndexByName(ToNode(GetXFAObject()))));
+  CXFA_Node* pNode = ToNode(GetXFAObject());
+  size_t iIndex = pNode ? pNode->GetIndexByName() : 0;
+  pValue->SetInteger(pdfium::base::checked_cast<int32_t>(iIndex));
 }
 
 void CJX_Tree::classIndex(CFXJSE_Value* pValue,
@@ -180,9 +180,9 @@ void CJX_Tree::classIndex(CFXJSE_Value* pValue,
     return;
   }
 
-  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  pValue->SetInteger(pdfium::base::checked_cast<int32_t>(
-      pScriptContext->GetIndexByClassName(ToNode(GetXFAObject()))));
+  CXFA_Node* pNode = ToNode(GetXFAObject());
+  size_t iIndex = pNode ? pNode->GetIndexByClassName() : 0;
+  pValue->SetInteger(pdfium::base::checked_cast<int32_t>(iIndex));
 }
 
 void CJX_Tree::somExpression(CFXJSE_Value* pValue,
