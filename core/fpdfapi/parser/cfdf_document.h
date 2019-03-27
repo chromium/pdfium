@@ -29,7 +29,7 @@ class CFDF_Document final : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
 
  private:
-  void ParseStream(const RetainPtr<IFX_SeekableReadStream>& pFile);
+  void ParseStream(RetainPtr<IFX_SeekableReadStream> pFile);
 
   UnownedPtr<CPDF_Dictionary> m_pRootDict;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
