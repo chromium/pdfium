@@ -2533,14 +2533,14 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!bitmap_device.Create(width, height, format, nullptr))
     return nullptr;
 
-  CFX_DIBitmap& bitmap = *bitmap_device.GetBitmap();
+  RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
   int nCSFamily = 0;
   if (bLuminosity) {
     FX_ARGB back_color =
         GetBackColor(pSMaskDict, pGroup->GetDict(), &nCSFamily);
-    bitmap.Clear(back_color);
+    bitmap->Clear(back_color);
   } else {
-    bitmap.Clear(0);
+    bitmap->Clear(0);
   }
 
   const CPDF_Dictionary* pFormResource = nullptr;
@@ -2565,8 +2565,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
 
   uint8_t* dest_buf = pMask->GetBuffer();
   int dest_pitch = pMask->GetPitch();
-  uint8_t* src_buf = bitmap.GetBuffer();
-  int src_pitch = bitmap.GetPitch();
+  uint8_t* src_buf = bitmap->GetBuffer();
+  int src_pitch = bitmap->GetPitch();
   std::vector<uint8_t> transfers(256);
   if (pFunc) {
     std::vector<float> results(pFunc->CountOutputs());
@@ -2582,7 +2582,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     }
   }
   if (bLuminosity) {
-    int Bpp = bitmap.GetBPP() / 8;
+    int Bpp = bitmap->GetBPP() / 8;
     for (int row = 0; row < height; row++) {
       uint8_t* dest_pos = dest_buf + row * dest_pitch;
       uint8_t* src_pos = src_buf + row * src_pitch;
