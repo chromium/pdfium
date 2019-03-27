@@ -44,18 +44,18 @@
 namespace {
 
 struct PacketRecord {
-  uint32_t hash;
-  const wchar_t* name;
   XFA_PacketType packet_type;
-  const wchar_t* uri;
+  uint32_t hash;
   uint32_t flags;
+  const wchar_t* name;
+  const wchar_t* uri;
 };
 
 const PacketRecord g_PacketTable[] = {
 #undef PCKT____
-#define PCKT____(a, b, c, d, e, f) \
-  {a, L##b, XFA_PacketType::c, d,  \
-   XFA_XDPPACKET_FLAGS_##e | XFA_XDPPACKET_FLAGS_##f},
+#define PCKT____(a, b, c, d, e, f)                                          \
+  {XFA_PacketType::c, a, XFA_XDPPACKET_FLAGS_##e | XFA_XDPPACKET_FLAGS_##f, \
+   L##b, d},
 #include "xfa/fxfa/parser/packets.inc"
 #undef PCKT____
 };
