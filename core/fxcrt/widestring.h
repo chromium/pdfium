@@ -15,6 +15,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
@@ -132,8 +133,8 @@ class WideString {
   bool operator<(const WideString& other) const;
 
   CharType operator[](const size_t index) const {
-    ASSERT(IsValidIndex(index));
-    return m_pData ? m_pData->m_String[index] : 0;
+    CHECK(IsValidIndex(index));
+    return m_pData->m_String[index];
   }
 
   CharType First() const { return GetLength() ? (*this)[0] : 0; }
