@@ -1,0 +1,124 @@
+Alert: Value is: string 
+Alert: Answer for "foo" is: string foo
+Alert: Answer for "bar" is: string bar
+Alert: Answer for "qux" is: string qux
+Alert: Answer for "bar" is: string bar
+Alert: Answer for "qux" is: string qux
+Alert: Value is: string qux
+Alert: Answer for "" is: string 
+Alert: Answer for "goats" is: string 
+Alert: Answer for "b4" is: string 
+Alert: Answer for "b4.5" is: string 
+Alert: Answer for "4x" is: string 
+Alert: Answer for "4.5x" is: string 
+Alert: Answer for "4" is: string 
+Alert: Answer for "4" is: string 
+Alert: Answer for " 4" is: string 
+Alert: Answer for "4 " is: string 
+Alert: Answer for "                          4                                      " is: string 
+Alert: Answer for "4 3 2 1" is: string 
+Alert: Answer for "-4" is: string 
+Alert: Answer for "23.00000001" is: string 
+Alert: Answer for "23.00000000000000001" is: string 
+Alert: Answer for "4e+25" is: string 
+Alert: Answer for "40000000000000000000000000" is: string 
+Alert: Answer for "25,5" is: string 
+Alert: Answer for "1e+5" is: string 
+Alert: Answer for "1e5" is: string 
+Alert: Answer for "1e-5" is: string 
+Alert: Answer for "-1e-5" is: string 
+Alert: Answer for "1.2e5" is: string 
+Alert: Answer for "Infinity" is: string 
+Alert: Answer for "Infinity" is: string 
+Alert: Answer for "INFINITY" is: string 
+Alert: Answer for "INF" is: string 
+Alert: Answer for "NaN" is: string 
+Alert: Answer for "NaN" is: string 
+Alert: Answer for "NAN" is: string 
+Alert: Answer for "0x100" is: string 
+Alert: Answer for "0x100.1" is: string 
+Alert: Answer for "0x100,1" is: string 
+Alert: Answer for "0x100x1" is: string 
+Alert: Answer for "123x6" is: string 
+Alert: Answer for "123xy6" is: string 
+Alert: Answer for "123.y6" is: string 
+Alert: Answer for "1,000,000" is: string 
+Alert: Answer for "1.2.3" is: string 
+Alert: Answer for "1-3" is: string 
+Alert: Answer for "1+3" is: string 
+Alert: Answer for "1.-3" is: string 
+Alert: Answer for "1.+3" is: string 
+Alert: Answer for "1,2,3,4" is: string 
+Alert: Answer for "[1, 2, 3, 4]" is: string 
+Alert: Answer for "[object Object]" is: string 
+Alert: Answer for "{a: 1, b: 2}" is: string 
+Alert: Answer for "function(x) { return x+1; }" is: string 
+Alert: Answer for "function(x) { return x+1; }" is: string 
+Alert: Answer for "Foo" is: string 
+Alert: Answer for "Bar" is: string 
+Alert: Answer for "Qux" is: string 
+Alert: Answer for "bar,qux" is: string qux
+Alert: Answer for "foo,1" is: string foo
+Alert: Value is: string foo
+Alert: Value is: string qux
+Alert: Answer for "foo" is: string foo
+Alert: Answer for "bar" is: string bar
+Alert: Answer for "qux" is: string qux
+Alert: Answer for "bar" is: string bar
+Alert: Answer for "bar,qux" is: object bar,qux
+Alert: Answer for "1,2,3,4" is: string 
+Alert: Answer for "foo,1" is: string foo
+Alert: Answer for "qux" is: string qux
+Alert: Value is: string qux
+Alert: Answer for "" is: string 
+Alert: Answer for "goats" is: string 
+Alert: Answer for "b4" is: string 
+Alert: Answer for "b4.5" is: string 
+Alert: Answer for "4x" is: string 
+Alert: Answer for "4.5x" is: string 
+Alert: Answer for "4" is: string 
+Alert: Answer for "4" is: string 
+Alert: Answer for " 4" is: string 
+Alert: Answer for "4 " is: string 
+Alert: Answer for "                          4                                      " is: string 
+Alert: Answer for "4 3 2 1" is: string 
+Alert: Answer for "-4" is: string 
+Alert: Answer for "23.00000001" is: string 
+Alert: Answer for "23.00000000000000001" is: string 
+Alert: Answer for "4e+25" is: string 
+Alert: Answer for "40000000000000000000000000" is: string 
+Alert: Answer for "25,5" is: string 
+Alert: Answer for "1e+5" is: string 
+Alert: Answer for "1e5" is: string 
+Alert: Answer for "1e-5" is: string 
+Alert: Answer for "-1e-5" is: string 
+Alert: Answer for "1.2e5" is: string 
+Alert: Answer for "Infinity" is: string 
+Alert: Answer for "Infinity" is: string 
+Alert: Answer for "INFINITY" is: string 
+Alert: Answer for "INF" is: string 
+Alert: Answer for "NaN" is: string 
+Alert: Answer for "NaN" is: string 
+Alert: Answer for "NAN" is: string 
+Alert: Answer for "0x100" is: string 
+Alert: Answer for "0x100.1" is: string 
+Alert: Answer for "0x100,1" is: string 
+Alert: Answer for "0x100x1" is: string 
+Alert: Answer for "123x6" is: string 
+Alert: Answer for "123xy6" is: string 
+Alert: Answer for "123.y6" is: string 
+Alert: Answer for "1,000,000" is: string 
+Alert: Answer for "1.2.3" is: string 
+Alert: Answer for "1-3" is: string 
+Alert: Answer for "1+3" is: string 
+Alert: Answer for "1.-3" is: string 
+Alert: Answer for "1.+3" is: string 
+Alert: Answer for "[1, 2, 3, 4]" is: string 
+Alert: Answer for "[object Object]" is: string 
+Alert: Answer for "{a: 1, b: 2}" is: string 
+Alert: Answer for "function(x) { return x+1; }" is: string 
+Alert: Answer for "function(x) { return x+1; }" is: string 
+Alert: Answer for "Foo" is: string 
+Alert: Answer for "Bar" is: string 
+Alert: Answer for "Qux" is: string 
+Alert: Value is: string 

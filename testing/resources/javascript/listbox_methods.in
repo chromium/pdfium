@@ -1,0 +1,231 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm 4 0 R
+  /OpenAction 10 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [
+    3 0 R
+  ]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [ 0 0 612 792 ]
+  /Annots [
+    5 0 R
+    6 0 R
+  ]
+>>
+endobj
+{{object 4 0}} <<
+  /Fields [ 5 0 R 6 0 R ]
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Ch
+  /Ff 0
+  /T (MyField)
+  /Rect [ 100 350 200 380 ]
+  /Opt [
+    [ (foo) (Foo) ]
+    [ (bar) (Bar) ]
+    [ (qux) (Qux) ]
+  ]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Ch
+  /Ff 2097152
+  /T (MyMultiSelectField)
+  /Rect [ 100 400 200 430 ]
+  /Opt [ (foo) (bar) (qux) ]
+  /V (qux)
+>>
+endobj
+{{object 10 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 11 0 R
+>>
+endobj
+{{object 11 0}} <<
+  {{streamlen}}
+>>
+stream
+
+function getFieldValue(name) {
+  try {
+    var field = this.getField(name);
+    var v = field.value;
+    app.alert('Value is: ' + typeof(v) + ' ' + v);
+  } catch (e) {
+    app.alert('For getField(' + name + ') ERROR: ' + e);
+  }
+}
+
+function testField(name, x) {
+  try {
+    var field = this.getField(name);
+    field.value = x;
+    var y = field.value;
+    app.alert('Answer for "' + x + '" is: ' + typeof(y) + ' ' + y);
+  } catch (e) {
+    app.alert('For testField(' + x + ') ERROR: ' + e);
+  }
+}
+
+getFieldValue('MyField');
+
+// Valid cases
+testField('MyField', 'foo');
+testField('MyField', 'bar');
+testField('MyField', 'qux');
+testField('MyField', ['bar']);
+testField('MyField', ['qux']);
+
+getFieldValue('MyField');
+
+// Invalid cases
+testField('MyField', '');
+testField('MyField', 'goats');
+testField('MyField', 'b4');
+testField('MyField', 'b4.5');
+testField('MyField', '4x');
+testField('MyField', '4.5x');
+testField('MyField', 4);
+testField('MyField', '4');
+testField('MyField', ' 4');
+testField('MyField', '4 ');
+testField('MyField', '                          4                                      ');
+testField('MyField', '4 3 2 1');
+testField('MyField', '-4');
+testField('MyField', '23.00000001');
+testField('MyField', '23.00000000000000001');
+testField('MyField', 40000000000000000000000000);
+testField('MyField', '40000000000000000000000000');
+testField('MyField', '25,5');
+testField('MyField', '1e+5');
+testField('MyField', '1e5');
+testField('MyField', '1e-5');
+testField('MyField', '-1e-5');
+testField('MyField', '1.2e5');
+testField('MyField', Infinity);
+testField('MyField', 'Infinity');
+testField('MyField', 'INFINITY');
+testField('MyField', 'INF');
+testField('MyField', NaN);
+testField('MyField', 'NaN');
+testField('MyField', 'NAN');
+testField('MyField', '0x100');
+testField('MyField', '0x100.1');
+testField('MyField', '0x100,1');
+testField('MyField', '0x100x1');
+testField('MyField', '123x6');
+testField('MyField', '123xy6');
+testField('MyField', '123.y6');
+testField('MyField', '1,000,000');
+testField('MyField', '1.2.3');
+testField('MyField', '1-3');
+testField('MyField', '1+3');
+testField('MyField', '1.-3');
+testField('MyField', '1.+3');
+testField('MyField', [1, 2, 3, 4]);
+testField('MyField', '[1, 2, 3, 4]');
+testField('MyField', {a: 1, b: 2});
+testField('MyField', '{a: 1, b: 2}');
+testField('MyField', function(x) { return x+1; });
+testField('MyField', 'function(x) { return x+1; }');
+testField('MyField', 'Foo');
+testField('MyField', 'Bar');
+testField('MyField', 'Qux');
+testField('MyField', ['bar', 'qux']);
+testField('MyField', ['foo', 1]);
+
+getFieldValue('MyField');
+
+getFieldValue('MyMultiSelectField');
+
+// Valid cases
+testField('MyMultiSelectField', 'foo');
+testField('MyMultiSelectField', 'bar');
+testField('MyMultiSelectField', 'qux');
+testField('MyMultiSelectField', ['bar']);
+testField('MyMultiSelectField', ['bar', 'qux']);
+testField('MyMultiSelectField', [1, 2, 3, 4]);
+testField('MyMultiSelectField', ['foo', 1]);
+testField('MyMultiSelectField', ['qux']);
+
+getFieldValue('MyMultiSelectField');
+
+// Invalid cases
+testField('MyMultiSelectField', '');
+testField('MyMultiSelectField', 'goats');
+testField('MyMultiSelectField', 'b4');
+testField('MyMultiSelectField', 'b4.5');
+testField('MyMultiSelectField', '4x');
+testField('MyMultiSelectField', '4.5x');
+testField('MyMultiSelectField', 4);
+testField('MyMultiSelectField', '4');
+testField('MyMultiSelectField', ' 4');
+testField('MyMultiSelectField', '4 ');
+testField('MyMultiSelectField', '                          4                                      ');
+testField('MyMultiSelectField', '4 3 2 1');
+testField('MyMultiSelectField', '-4');
+testField('MyMultiSelectField', '23.00000001');
+testField('MyMultiSelectField', '23.00000000000000001');
+testField('MyMultiSelectField', 40000000000000000000000000);
+testField('MyMultiSelectField', '40000000000000000000000000');
+testField('MyMultiSelectField', '25,5');
+testField('MyMultiSelectField', '1e+5');
+testField('MyMultiSelectField', '1e5');
+testField('MyMultiSelectField', '1e-5');
+testField('MyMultiSelectField', '-1e-5');
+testField('MyMultiSelectField', '1.2e5');
+testField('MyMultiSelectField', Infinity);
+testField('MyMultiSelectField', 'Infinity');
+testField('MyMultiSelectField', 'INFINITY');
+testField('MyMultiSelectField', 'INF');
+testField('MyMultiSelectField', NaN);
+testField('MyMultiSelectField', 'NaN');
+testField('MyMultiSelectField', 'NAN');
+testField('MyMultiSelectField', '0x100');
+testField('MyMultiSelectField', '0x100.1');
+testField('MyMultiSelectField', '0x100,1');
+testField('MyMultiSelectField', '0x100x1');
+testField('MyMultiSelectField', '123x6');
+testField('MyMultiSelectField', '123xy6');
+testField('MyMultiSelectField', '123.y6');
+testField('MyMultiSelectField', '1,000,000');
+testField('MyMultiSelectField', '1.2.3');
+testField('MyMultiSelectField', '1-3');
+testField('MyMultiSelectField', '1+3');
+testField('MyMultiSelectField', '1.-3');
+testField('MyMultiSelectField', '1.+3');
+testField('MyMultiSelectField', '[1, 2, 3, 4]');
+testField('MyMultiSelectField', {a: 1, b: 2});
+testField('MyMultiSelectField', '{a: 1, b: 2}');
+testField('MyMultiSelectField', function(x) { return x+1; });
+testField('MyMultiSelectField', 'function(x) { return x+1; }');
+testField('MyMultiSelectField', 'Foo');
+testField('MyMultiSelectField', 'Bar');
+testField('MyMultiSelectField', 'Qux');
+
+getFieldValue('MyMultiSelectField');
+
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
