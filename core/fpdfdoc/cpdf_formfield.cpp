@@ -396,7 +396,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
                               : pdfium::form_fields::kV);
       m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor(key));
       m_pDict->SetNewFor<CPDF_String>(key, csValue);
-      int iIndex = FindOptionValue(csValue);
+      int iIndex = FindOption(csValue);
       if (iIndex < 0) {
         if (m_Type == kRichText && !bDefault) {
           m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("RV"));
@@ -414,7 +414,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
       break;
     }
     case kListBox: {
-      int iIndex = FindOptionValue(value);
+      int iIndex = FindOption(value);
       if (iIndex < 0)
         return false;
 
@@ -701,15 +701,7 @@ WideString CPDF_FormField::GetOptionValue(int index) const {
   return GetOptionText(index, 0);
 }
 
-int CPDF_FormField::FindOption(WideString csOptLabel) const {
-  for (int i = 0; i < CountOptions(); i++) {
-    if (GetOptionValue(i) == csOptLabel)
-      return i;
-  }
-  return -1;
-}
-
-int CPDF_FormField::FindOptionValue(const WideString& csOptValue) const {
+int CPDF_FormField::FindOption(const WideString& csOptValue) const {
   for (int i = 0; i < CountOptions(); i++) {
     if (GetOptionValue(i) == csOptValue)
       return i;
