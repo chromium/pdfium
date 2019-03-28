@@ -369,60 +369,62 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
   static const uint16_t wCountY = 4;
   static const uint16_t wCountM = 2;
   static const uint16_t wCountD = 2;
-  int nLen = wsDate.GetLength();
-  if (nLen < wCountY || nLen > wCountY + wCountM + wCountD + 2)
+  pdfium::span<const wchar_t> spDate = wsDate.AsSpan();
+  if (spDate.size() < wCountY ||
+      spDate.size() > wCountY + wCountM + wCountD + 2) {
     return false;
-
+  }
   const bool bSymbol = wsDate.Contains(0x2D);
   uint16_t wYear = 0;
   uint16_t wMonth = 0;
   uint16_t wDay = 0;
-  const wchar_t* pDate = wsDate.c_str();
-  int nIndex = 0;
-  int nStart = 0;
-  while (pDate[nIndex] != '\0' && nIndex < wCountY) {
-    if (!FXSYS_IsDecimalDigit(pDate[nIndex]))
+  size_t nIndex = 0;
+  size_t nStart = 0;
+  while (nIndex < wCountY && spDate[nIndex] != '\0') {
+    if (!FXSYS_IsDecimalDigit(spDate[nIndex]))
       return false;
 
-    wYear = (pDate[nIndex] - '0') + wYear * 10;
+    wYear = (spDate[nIndex] - '0') + wYear * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (pDate[nIndex] != 0x2D)
+    if (nIndex >= spDate.size() || spDate[nIndex] != 0x2D)
       return false;
     nIndex++;
   }
 
   nStart = nIndex;
-  while (pDate[nIndex] != '\0' && nIndex - nStart < wCountM && nIndex < nLen) {
-    if (!FXSYS_IsDecimalDigit(pDate[nIndex]))
+  while (nIndex < spDate.size() && spDate[nIndex] != '\0' &&
+         nIndex - nStart < wCountM) {
+    if (!FXSYS_IsDecimalDigit(spDate[nIndex]))
       return false;
 
-    wMonth = (pDate[nIndex] - '0') + wMonth * 10;
+    wMonth = (spDate[nIndex] - '0') + wMonth * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (pDate[nIndex] != 0x2D)
+    if (nIndex >= spDate.size() || spDate[nIndex] != 0x2D)
       return false;
     nIndex++;
   }
 
   nStart = nIndex;
-  while (pDate[nIndex] != '\0' && nIndex - nStart < wCountD && nIndex < nLen) {
-    if (!FXSYS_IsDecimalDigit(pDate[nIndex]))
+  while (nIndex < spDate.size() && spDate[nIndex] != '\0' &&
+         nIndex - nStart < wCountD) {
+    if (!FXSYS_IsDecimalDigit(spDate[nIndex]))
       return false;
 
-    wDay = (pDate[nIndex] - '0') + wDay * 10;
+    wDay = (spDate[nIndex] - '0') + wDay * 10;
     nIndex++;
   }
-  if (nIndex != nLen)
+  if (nIndex != spDate.size())
     return false;
   if (wYear < 1900 || wYear > 2029)
     return false;
   if (wMonth < 1 || wMonth > 12)
-    return wMonth == 0 && nLen == wCountY;
+    return wMonth == 0 && spDate.size() == wCountY;
   if (wDay < 1)
-    return wDay == 0 && (nLen == wCountY + wCountM);
+    return wDay == 0 && spDate.size() == wCountY + wCountM;
   if (wMonth == 2) {
     if (wYear % 400 == 0 || (wYear % 100 != 0 && wYear % 4 == 0)) {
       if (wDay > 29)
@@ -440,8 +442,8 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
 }
 
 bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
-  int nLen = wsTime.GetLength();
-  if (nLen < 2)
+  pdfium::span<const wchar_t> spTime = wsTime.AsSpan();
+  if (spTime.size() < 2)
     return false;
 
   const uint16_t wCountH = 2;
@@ -453,85 +455,89 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
   uint16_t wMinute = 0;
   uint16_t wSecond = 0;
   uint16_t wFraction = 0;
-  const wchar_t* pTime = wsTime.c_str();
-  int nIndex = 0;
-  int nStart = 0;
-  while (nIndex - nStart < wCountH && pTime[nIndex]) {
-    if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
+  size_t nIndex = 0;
+  size_t nStart = 0;
+  while (nIndex - nStart < wCountH && spTime[nIndex]) {
+    if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
       return false;
-    wHour = pTime[nIndex] - '0' + wHour * 10;
+    wHour = spTime[nIndex] - '0' + wHour * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex < nLen && pTime[nIndex] != ':')
+    if (nIndex < spTime.size() && spTime[nIndex] != ':')
       return false;
     nIndex++;
   }
 
   nStart = nIndex;
-  while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
-    if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
+  while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
+         nIndex - nStart < wCountM) {
+    if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
       return false;
-    wMinute = pTime[nIndex] - '0' + wMinute * 10;
+    wMinute = spTime[nIndex] - '0' + wMinute * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex < nLen && pTime[nIndex] != ':')
+    if (nIndex >= spTime.size() || spTime[nIndex] != ':')
       return false;
     nIndex++;
   }
   nStart = nIndex;
-  while (nIndex - nStart < wCountS && nIndex < nLen && pTime[nIndex]) {
-    if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
+  while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
+         nIndex - nStart < wCountS) {
+    if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
       return false;
-    wSecond = pTime[nIndex] - '0' + wSecond * 10;
+    wSecond = spTime[nIndex] - '0' + wSecond * 10;
     nIndex++;
   }
   auto pos = wsTime.Find('.');
   if (pos.has_value() && pos.value() != 0) {
-    if (pTime[nIndex] != '.')
+    if (nIndex >= spTime.size() || spTime[nIndex] != '.')
       return false;
     nIndex++;
     nStart = nIndex;
-    while (nIndex - nStart < wCountF && nIndex < nLen && pTime[nIndex]) {
-      if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
+    while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
+           nIndex - nStart < wCountF) {
+      if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
         return false;
-      wFraction = pTime[nIndex] - '0' + wFraction * 10;
+      wFraction = spTime[nIndex] - '0' + wFraction * 10;
       nIndex++;
     }
   }
-  if (nIndex < nLen) {
-    if (pTime[nIndex] == 'Z') {
+  if (nIndex < spTime.size()) {
+    if (spTime[nIndex] == 'Z') {
       nIndex++;
-    } else if (pTime[nIndex] == '-' || pTime[nIndex] == '+') {
+    } else if (spTime[nIndex] == '-' || spTime[nIndex] == '+') {
       int16_t nOffsetH = 0;
       int16_t nOffsetM = 0;
       nIndex++;
       nStart = nIndex;
-      while (nIndex - nStart < wCountH && nIndex < nLen && pTime[nIndex]) {
-        if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
+      while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
+             nIndex - nStart < wCountH) {
+        if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
           return false;
-        nOffsetH = pTime[nIndex] - '0' + nOffsetH * 10;
+        nOffsetH = spTime[nIndex] - '0' + nOffsetH * 10;
         nIndex++;
       }
       if (bSymbol) {
-        if (nIndex < nLen && pTime[nIndex] != ':')
+        if (nIndex >= spTime.size() || spTime[nIndex] != ':')
           return false;
         nIndex++;
       }
       nStart = nIndex;
-      while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
-        if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
+      while (nIndex < spTime.size() && spTime[nIndex] != '\0' &&
+             nIndex - nStart < wCountM) {
+        if (!FXSYS_IsDecimalDigit(spTime[nIndex]))
           return false;
-        nOffsetM = pTime[nIndex] - '0' + nOffsetM * 10;
+        nOffsetM = spTime[nIndex] - '0' + nOffsetM * 10;
         nIndex++;
       }
       if (nOffsetH > 12 || nOffsetM >= 60)
         return false;
     }
   }
-  return nIndex == nLen && wHour < 24 && wMinute < 60 && wSecond < 60 &&
-         wFraction <= 999;
+  return nIndex == spTime.size() && wHour < 24 && wMinute < 60 &&
+         wSecond < 60 && wFraction <= 999;
 }
 
 bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
@@ -652,12 +658,12 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   if (wsFormat.IsEmpty() || wsNumeric.IsEmpty())
     return true;
 
-  const wchar_t* pNum = wsNumeric.c_str();
-  const wchar_t* pFmt = wsFormat.c_str();
+  pdfium::span<const wchar_t> spNum = wsNumeric.AsSpan();
+  pdfium::span<const wchar_t> spFmt = wsFormat.AsSpan();
   int32_t n = 0;
   int32_t nf = 0;
-  wchar_t c = pNum[n];
-  wchar_t cf = pFmt[nf];
+  wchar_t c = spNum[n];
+  wchar_t cf = spFmt[nf];
   if (cf == L's') {
     if (c == L'-' || c == L'+')
       ++n;
@@ -668,9 +674,9 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   int32_t nCount = wsNumeric.GetLength();
   int32_t nCountFmt = wsFormat.GetLength();
   while (n < nCount && (bLimit ? nf < nCountFmt : true) &&
-         FXSYS_IsDecimalDigit(c = pNum[n])) {
+         FXSYS_IsDecimalDigit(c = spNum[n])) {
     if (bLimit == true) {
-      if ((cf = pFmt[nf]) == L'*')
+      if ((cf = spFmt[nf]) == L'*')
         bLimit = false;
       else if (cf == L'z')
         nf++;
@@ -684,7 +690,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   if (nf == nCountFmt)
     return false;
 
-  while (nf < nCountFmt && (cf = pFmt[nf]) != L'.') {
+  while (nf < nCountFmt && (cf = spFmt[nf]) != L'.') {
     ASSERT(cf == L'z' || cf == L'*');
     ++nf;
   }
@@ -695,7 +701,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   else
     wsDecimalSymbol = WideString(L'.');
 
-  if (pFmt[nf] != L'.')
+  if (spFmt[nf] != L'.')
     return false;
   if (wsDecimalSymbol != WideStringView(c) && c != L'.')
     return false;
@@ -703,10 +709,10 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   ++nf;
   ++n;
   bLimit = true;
-  while (n < nCount && (bLimit ? nf < nCountFmt : true) &&
-         FXSYS_IsDecimalDigit(c = pNum[n])) {
-    if (bLimit == true) {
-      if ((cf = pFmt[nf]) == L'*')
+  while (n < nCount && (!bLimit || nf < nCountFmt) &&
+         FXSYS_IsDecimalDigit(spNum[n])) {
+    if (bLimit) {
+      if ((cf = spFmt[nf]) == L'*')
         bLimit = false;
       else if (cf == L'z')
         nf++;

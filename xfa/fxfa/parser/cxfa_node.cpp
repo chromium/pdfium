@@ -381,18 +381,13 @@ constexpr uint8_t g_inv_base64[128] = {
     49,  50,  51,  255, 255, 255, 255, 255,
 };
 
-uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
-  uint8_t* pCP;
-  int32_t i = 0, j = 0;
-  if (iLen == 0) {
-    iLen = strlen((char*)pStr);
-  }
-  pCP = FX_Alloc(uint8_t, iLen + 1);
-  for (; i < iLen; i++) {
-    if ((pStr[i] & 128) == 0) {
-      if (g_inv_base64[pStr[i]] != 0xFF || pStr[i] == '=') {
-        pCP[j++] = pStr[i];
-      }
+uint8_t* XFA_RemoveBase64Whitespace(pdfium::span<const uint8_t> spStr) {
+  uint8_t* pCP = FX_Alloc(uint8_t, spStr.size() + 1);
+  size_t j = 0;
+  for (size_t i = 0; i < spStr.size(); ++i) {
+    if ((spStr[i] & 128) == 0 &&
+        (g_inv_base64[spStr[i]] != 0xFF || spStr[i] == '=')) {
+      pCP[j++] = spStr[i];
     }
   }
   pCP[j] = '\0';
@@ -400,14 +395,11 @@ uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
 }
 
 int32_t XFA_Base64Decode(const char* pStr, uint8_t* pOutBuffer) {
-  if (!pStr) {
+  if (!pStr)
     return 0;
-  }
-  uint8_t* pBuffer =
-      XFA_RemoveBase64Whitespace((uint8_t*)pStr, strlen((char*)pStr));
-  if (!pBuffer) {
-    return 0;
-  }
+
+  uint8_t* pBuffer = XFA_RemoveBase64Whitespace(
+      {reinterpret_cast<const uint8_t*>(pStr), strlen(pStr)});
   int32_t iLen = strlen((char*)pBuffer);
   int32_t i = 0, j = 0;
   uint32_t dwLimb = 0;

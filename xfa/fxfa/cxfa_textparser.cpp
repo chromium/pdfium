@@ -283,9 +283,7 @@ bool CXFA_TextParser::TagValidate(const WideString& wsName) const {
       0xb182eaae,  // body
       0xdb8ac455,  // html
   };
-  static const int32_t s_iCount = FX_ArraySize(s_XFATagName);
-
-  return std::binary_search(s_XFATagName, s_XFATagName + s_iCount,
+  return std::binary_search(std::begin(s_XFATagName), std::end(s_XFATagName),
                             FX_HashCode_GetW(wsName.AsStringView(), true));
 }
 
