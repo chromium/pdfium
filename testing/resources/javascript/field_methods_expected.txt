@@ -6,3 +6,37 @@ Alert: MyField.Sub_A
 Alert: MyField.Sub_B
 Alert: MyField.Sub_X
 Alert: MyField.Sub_Z
+Alert: PASS: this.getField('MyField.Sub_A').buttonGetCaption() = 
+Alert: PASS: this.getField('MyField.Sub_A').buttonGetIcon() = [object Object]
+Alert: PASS: this.getField('MyField.Sub_A').buttonImportIcon() = undefined
+Alert: PASS: this.getField('MyField').checkThisBox() threw Field.checkThisBox: Incorrect number of parameters passed to function.
+Alert: PASS: this.getField('MyField').checkThisBox({}) threw Field.checkThisBox: Object is of the wrong type.
+Alert: PASS: this.getField('MyField').defaultIsChecked() threw Field.defaultIsChecked: Incorrect number of parameters passed to function.
+Alert: PASS: this.getField('MyField').defaultIsChecked(0) = false
+Alert: PASS: this.getField('MyField').isBoxChecked() threw Field.isBoxChecked: Incorrect parameter value.
+Alert: PASS: this.getField('MyField').isBoxChecked(20) threw Field.isBoxChecked: Incorrect parameter value.
+Alert: PASS: this.getField('MyField').isBoxChecked(0) = false
+Alert: PASS: this.getField('MyField').isDefaultChecked() threw Field.isDefaultChecked: Incorrect parameter value.
+Alert: PASS: this.getField('MyField').isDefaultChecked(20) threw Field.isDefaultChecked: Incorrect parameter value.
+Alert: PASS: this.getField('MyField').isDefaultChecked(0) = false
+Alert: PASS: this.getField('MyField').setFocus() = undefined
+Alert: PASS: this.getField('MyField.Sub_X').browseForFileToSubmit() threw Field.browseForFileToSubmit: Object is of the wrong type.
+Alert: PASS: this.getField('MyField').checkThisBox(0, true) threw Field.checkThisBox: Object is of the wrong type.
+Alert: PASS: this.getField('MyField').getItemAt(0) threw Field.getItemAt: Object is of the wrong type.
+Alert: These always succeed without actually doing anything:
+Alert: PASS: this.getField('MyField').clearItems() = undefined
+Alert: PASS: this.getField('MyField').deleteItemAt() = undefined
+Alert: PASS: this.getField('MyField').insertItemAt() = undefined
+Alert: PASS: this.getField('MyField').setAction() = undefined
+Alert: PASS: this.getField('MyField').setItems() = undefined
+Alert: These always throw operation not supported errors:
+Alert: PASS: this.getField('MyField').buttonSetCaption() threw Field.buttonSetCaption: Operation not supported.
+Alert: PASS: this.getField('MyField').buttonSetIcon() threw Field.buttonSetIcon: Operation not supported.
+Alert: PASS: this.getField('MyField').getLock() threw Field.getLock: Operation not supported.
+Alert: PASS: this.getField('MyField').setLock() threw Field.setLock: Operation not supported.
+Alert: PASS: this.getField('MyField').signatureGetModifications() threw Field.signatureGetModifications: Operation not supported.
+Alert: PASS: this.getField('MyField').signatureGetSeedValue() threw Field.signatureGetSeedValue: Operation not supported.
+Alert: PASS: this.getField('MyField').signatureInfo() threw Field.signatureInfo: Operation not supported.
+Alert: PASS: this.getField('MyField').signatureSetSeedValue() threw Field.signatureSetSeedValue: Operation not supported.
+Alert: PASS: this.getField('MyField').signatureSign() threw Field.signatureSign: Operation not supported.
+Alert: PASS: this.getField('MyField').signatureValidate() threw Field.signatureValidate: Operation not supported.

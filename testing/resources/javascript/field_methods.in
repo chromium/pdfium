@@ -5,6 +5,8 @@
   {{streamlen}}
 >>
 stream
+{{include expect.js}}
+
 function testGetField() {
   try {
     var field = this.getField("MyField");
@@ -30,17 +32,53 @@ function testGetArray() {
   }
 }
 
-function testMethods() {
-  try {
-    var field = this.getField("MyField");
-  } catch (e) {
-    app.alert("Unexpected error: " + e);
-  }
-}
-
 testGetField();
 testGetArray();
-testMethods();
+
+expect("this.getField('MyField.Sub_A').buttonGetCaption()", "");
+expect("this.getField('MyField.Sub_A').buttonGetIcon()", "[object Object]");
+expect("this.getField('MyField.Sub_A').buttonImportIcon()", undefined);
+
+expectError("this.getField('MyField').checkThisBox()");
+expectError("this.getField('MyField').checkThisBox({})");
+
+expectError("this.getField('MyField').defaultIsChecked()");
+expect("this.getField('MyField').defaultIsChecked(0)", false);
+
+expectError("this.getField('MyField').isBoxChecked()");
+expectError("this.getField('MyField').isBoxChecked(20)");
+expect("this.getField('MyField').isBoxChecked(0)", false);
+
+expectError("this.getField('MyField').isDefaultChecked()", false);
+expectError("this.getField('MyField').isDefaultChecked(20)", false);
+expect("this.getField('MyField').isDefaultChecked(0)", false);
+
+expect("this.getField('MyField').setFocus()", undefined);
+
+// TODO(tsepez): these need a different kind of object to pass
+expectError("this.getField('MyField.Sub_X').browseForFileToSubmit()");
+expectError("this.getField('MyField').checkThisBox(0, true)");
+expectError("this.getField('MyField').getItemAt(0)");
+
+app.alert("These always succeed without actually doing anything:");
+expect("this.getField('MyField').clearItems()", undefined);
+expect("this.getField('MyField').deleteItemAt()", undefined);
+expect("this.getField('MyField').insertItemAt()", undefined);
+expect("this.getField('MyField').setAction()", undefined);
+expect("this.getField('MyField').setItems()");
+
+app.alert("These always throw operation not supported errors:");
+expectError("this.getField('MyField').buttonSetCaption()");
+expectError("this.getField('MyField').buttonSetIcon()");
+expectError("this.getField('MyField').getLock()");
+expectError("this.getField('MyField').setLock()");
+expectError("this.getField('MyField').signatureGetModifications()");
+expectError("this.getField('MyField').signatureGetSeedValue()");
+expectError("this.getField('MyField').signatureInfo()");
+expectError("this.getField('MyField').signatureSetSeedValue()");
+expectError("this.getField('MyField').signatureSign()");
+expectError("this.getField('MyField').signatureValidate()");
+
 endstream
 endobj
 {{xref}}
