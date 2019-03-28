@@ -115,9 +115,6 @@ class CXFA_FFWidgetHandler {
                                 CXFA_Node* pParent,
                                 CXFA_Node* pBefore) const;
   CXFA_Node* CreateFontNode(CXFA_Node* pParent) const;
-  CXFA_Node* CreateMarginNode(CXFA_Node* pParent,
-                              uint32_t dwFlags,
-                              float fInsets[4]) const;
   CXFA_Node* CreateValueNode(XFA_Element eValue, CXFA_Node* pParent) const;
   CXFA_Document* GetObjFactory() const;
   CXFA_Document* GetXFADoc() const;

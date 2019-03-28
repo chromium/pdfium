@@ -556,29 +556,6 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
   return pFont;
 }
 
-CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
-                                                  uint32_t dwFlags,
-                                                  float fInsets[4]) const {
-  CXFA_Node* pMargin = CreateCopyNode(XFA_Element::Margin, pParent, nullptr);
-  if (dwFlags & 0x01)
-    pMargin->JSObject()->SetMeasure(XFA_Attribute::LeftInset,
-                                    CXFA_Measurement(fInsets[0], XFA_Unit::Pt),
-                                    false);
-  if (dwFlags & 0x02)
-    pMargin->JSObject()->SetMeasure(XFA_Attribute::TopInset,
-                                    CXFA_Measurement(fInsets[1], XFA_Unit::Pt),
-                                    false);
-  if (dwFlags & 0x04)
-    pMargin->JSObject()->SetMeasure(XFA_Attribute::RightInset,
-                                    CXFA_Measurement(fInsets[2], XFA_Unit::Pt),
-                                    false);
-  if (dwFlags & 0x08)
-    pMargin->JSObject()->SetMeasure(XFA_Attribute::BottomInset,
-                                    CXFA_Measurement(fInsets[3], XFA_Unit::Pt),
-                                    false);
-  return pMargin;
-}
-
 CXFA_Node* CXFA_FFWidgetHandler::CreateValueNode(XFA_Element eValue,
                                                  CXFA_Node* pParent) const {
   CXFA_Node* pValue = CreateCopyNode(XFA_Element::Value, pParent, nullptr);
