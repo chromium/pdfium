@@ -36,26 +36,22 @@
 
 namespace {
 
-std::vector<WideString> SeparateStringW(const wchar_t* pStr,
-                                        int32_t iStrLen,
-                                        wchar_t delimiter) {
+std::vector<WideString> SeparateStringOnSpace(
+    pdfium::span<const wchar_t> spStr) {
   std::vector<WideString> ret;
-  if (!pStr)
+  if (spStr.empty())
     return ret;
-  if (iStrLen < 0)
-    iStrLen = wcslen(pStr);
 
-  const wchar_t* pToken = pStr;
-  const wchar_t* pEnd = pStr + iStrLen;
-  while (true) {
-    if (pStr >= pEnd || delimiter == *pStr) {
-      ret.push_back(WideString(pToken, pStr - pToken));
-      pToken = pStr + 1;
-      if (pStr >= pEnd)
-        break;
+  size_t nPos = 0;
+  size_t nToken = 0;
+  while (nPos < spStr.size()) {
+    if (spStr[nPos] == L' ') {
+      ret.emplace_back(WideStringView(spStr.subspan(nToken, nPos - nToken)));
+      nToken = nPos + 1;
     }
-    pStr++;
+    nPos++;
   }
+  ret.emplace_back(WideStringView(spStr.subspan(nToken, nPos - nToken)));
   return ret;
 }
 
@@ -1160,9 +1156,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   WideString wsColumnWidths =
       pLayoutNode->JSObject()->GetCData(XFA_Attribute::ColumnWidths);
   if (!wsColumnWidths.IsEmpty()) {
-    auto widths = SeparateStringW(wsColumnWidths.c_str(),
-                                  wsColumnWidths.GetLength(), L' ');
-    for (auto& width : widths) {
+    for (auto& width : SeparateStringOnSpace(wsColumnWidths.AsSpan())) {
       width.TrimLeft(L' ');
       if (width.IsEmpty())
         continue;
