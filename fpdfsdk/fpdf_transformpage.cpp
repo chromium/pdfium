@@ -200,7 +200,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   CPDF_Stream* pEndStream =
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
-  pEndStream->SetData(ByteStringView(" Q").span());
+  pEndStream->SetData(ByteStringView(" Q").raw_span());
 
   if (CPDF_Array* pContentArray = ToArray(pContentObj)) {
     pContentArray->InsertAt(0, pStream->MakeReference(pDoc));

@@ -338,7 +338,7 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
 
 uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
   size_t& offset = *pOffset;
-  auto pBytes = pString.span();
+  auto pBytes = pString.raw_span();
   switch (m_CodingScheme) {
     case OneByte: {
       return offset < pBytes.size() ? pBytes[offset++] : 0;

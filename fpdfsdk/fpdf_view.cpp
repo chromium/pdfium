@@ -1056,7 +1056,7 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
   CPDF_NameTree name_tree(pDoc, "Dests");
   ByteStringView name_view(name);
   return FPDFDestFromCPDFArray(
-      name_tree.LookupNamedDest(pDoc, PDF_DecodeText(name_view.span())));
+      name_tree.LookupNamedDest(pDoc, PDF_DecodeText(name_view.raw_span())));
 }
 
 #ifdef PDF_ENABLE_V8
@@ -1160,7 +1160,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
         break;
       i++;
     }
-    wsName = PDF_DecodeText(bsName.span());
+    wsName = PDF_DecodeText(bsName.raw_span());
   } else {
     pDestObj = nameTree.LookupValueAndName(index, &wsName);
   }

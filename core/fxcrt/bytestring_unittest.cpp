@@ -1381,7 +1381,7 @@ TEST(ByteStringView, OperatorEQ) {
 
   pdfium::span<const uint8_t> span5(
       pdfium::as_bytes(pdfium::make_span("hello", 5)));
-  EXPECT_EQ(byte_string_c.span(), span5);
+  EXPECT_EQ(byte_string_c.raw_span(), span5);
 }
 
 TEST(ByteStringView, OperatorNE) {
