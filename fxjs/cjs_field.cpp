@@ -406,10 +406,10 @@ void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-              const WideString& swFieldName,
-              int nControlIndex,
-              const std::vector<WideString>& strArray) {
+void SetFieldValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                   const WideString& swFieldName,
+                   int nControlIndex,
+                   const std::vector<WideString>& strArray) {
   ASSERT(pFormFillEnv);
   if (strArray.empty())
     return;
@@ -2154,7 +2154,8 @@ CJS_Result CJS_Field::set_value(CJS_Runtime* pRuntime,
   if (m_bDelay) {
     AddDelay_WideStringArray(FP_VALUE, strArray);
   } else {
-    SetValue(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex, strArray);
+    SetFieldValue(m_pFormFillEnv.Get(), m_FieldName, m_nFormControlIndex,
+                  strArray);
   }
   return CJS_Result::Success();
 }
@@ -2651,8 +2652,8 @@ void CJS_Field::DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
               pData->rect);
       break;
     case FP_VALUE:
-      SetValue(pFormFillEnv, pData->sFieldName, pData->nControlIndex,
-               pData->widestringarray);
+      SetFieldValue(pFormFillEnv, pData->sFieldName, pData->nControlIndex,
+                    pData->widestringarray);
       break;
     default:
       NOTREACHED();
