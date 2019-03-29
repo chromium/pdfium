@@ -1420,9 +1420,10 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
           while (cc < spSrcNum.size()) {
             if (!FXSYS_IsDecimalDigit(spSrcNum[cc]))
               break;
-            if (iExponent > std::numeric_limits<int>::max() / 10)
+            int digit = FXSYS_DecimalCharToInt(spSrcNum[cc]);
+            if (iExponent > (std::numeric_limits<int>::max() - digit) / 10)
               return false;
-            iExponent = iExponent * 10 + FXSYS_DecimalCharToInt(spSrcNum[cc]);
+            iExponent = iExponent * 10 + digit;
             cc++;
           }
           iExponent = bExpSign ? -iExponent : iExponent;
