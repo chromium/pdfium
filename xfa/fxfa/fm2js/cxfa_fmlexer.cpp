@@ -130,28 +130,26 @@ WideString CXFA_FMToken::ToDebugString() const {
 #endif  // NDEBUG
 
 CXFA_FMLexer::CXFA_FMLexer(WideStringView wsFormCalc)
-    : m_cursor(wsFormCalc.unterminated_c_str()),
-      m_end(m_cursor + wsFormCalc.GetLength()),
-      m_lexer_error(false) {}
+    : m_spInput(wsFormCalc.span()) {}
 
 CXFA_FMLexer::~CXFA_FMLexer() = default;
 
 CXFA_FMToken CXFA_FMLexer::NextToken() {
-  if (m_lexer_error)
+  if (m_bLexerError)
     return CXFA_FMToken();
 
-  while (!IsComplete() && *m_cursor) {
-    if (!IsFormCalcCharacter(*m_cursor)) {
+  while (!IsComplete() && m_spInput[m_nCursor]) {
+    if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
       RaiseError();
       return CXFA_FMToken();
     }
 
-    switch (*m_cursor) {
+    switch (m_spInput[m_nCursor]) {
       case '\n':
-        ++m_cursor;
+        ++m_nCursor;
         break;
       case '\r':
-        ++m_cursor;
+        ++m_nCursor;
         break;
       case ';':
         AdvanceForComment();
@@ -170,129 +168,129 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
       case '9':
         return AdvanceForNumber();
       case '=':
-        ++m_cursor;
-        if (m_cursor >= m_end)
+        ++m_nCursor;
+        if (m_nCursor >= m_spInput.size())
           return CXFA_FMToken(TOKassign);
 
-        if (!IsFormCalcCharacter(*m_cursor)) {
+        if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
           RaiseError();
           return CXFA_FMToken();
         }
-        if (*m_cursor == '=') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '=') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKeq);
         }
         return CXFA_FMToken(TOKassign);
       case '<':
-        ++m_cursor;
-        if (m_cursor >= m_end)
+        ++m_nCursor;
+        if (m_nCursor >= m_spInput.size())
           return CXFA_FMToken(TOKlt);
 
-        if (!IsFormCalcCharacter(*m_cursor)) {
+        if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
           RaiseError();
           return CXFA_FMToken();
         }
-        if (*m_cursor == '=') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '=') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKle);
         }
-        if (*m_cursor == '>') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '>') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKne);
         }
         return CXFA_FMToken(TOKlt);
       case '>':
-        ++m_cursor;
-        if (m_cursor >= m_end)
+        ++m_nCursor;
+        if (m_nCursor >= m_spInput.size())
           return CXFA_FMToken(TOKgt);
 
-        if (!IsFormCalcCharacter(*m_cursor)) {
+        if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
           RaiseError();
           return CXFA_FMToken();
         }
-        if (*m_cursor == '=') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '=') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKge);
         }
         return CXFA_FMToken(TOKgt);
       case ',':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKcomma);
       case '(':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKlparen);
       case ')':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKrparen);
       case '[':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKlbracket);
       case ']':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKrbracket);
       case '&':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKand);
       case '|':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKor);
       case '+':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKplus);
       case '-':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKminus);
       case '*':
-        ++m_cursor;
+        ++m_nCursor;
         return CXFA_FMToken(TOKmul);
       case '/': {
-        ++m_cursor;
-        if (m_cursor >= m_end)
+        ++m_nCursor;
+        if (m_nCursor >= m_spInput.size())
           return CXFA_FMToken(TOKdiv);
 
-        if (!IsFormCalcCharacter(*m_cursor)) {
+        if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
           RaiseError();
           return CXFA_FMToken();
         }
-        if (*m_cursor != '/')
+        if (m_spInput[m_nCursor] != '/')
           return CXFA_FMToken(TOKdiv);
 
         AdvanceForComment();
         break;
       }
       case '.':
-        ++m_cursor;
-        if (m_cursor >= m_end)
+        ++m_nCursor;
+        if (m_nCursor >= m_spInput.size())
           return CXFA_FMToken(TOKdot);
 
-        if (!IsFormCalcCharacter(*m_cursor)) {
+        if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
           RaiseError();
           return CXFA_FMToken();
         }
 
-        if (*m_cursor == '.') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '.') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKdotdot);
         }
-        if (*m_cursor == '*') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '*') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKdotstar);
         }
-        if (*m_cursor == '#') {
-          ++m_cursor;
+        if (m_spInput[m_nCursor] == '#') {
+          ++m_nCursor;
           return CXFA_FMToken(TOKdotscream);
         }
-        if (FXSYS_IsDecimalDigit(*m_cursor)) {
-          --m_cursor;
+        if (FXSYS_IsDecimalDigit(m_spInput[m_nCursor])) {
+          --m_nCursor;
           return AdvanceForNumber();
         }
         return CXFA_FMToken(TOKdot);
       default:
-        if (IsWhitespaceCharacter(*m_cursor)) {
-          ++m_cursor;
+        if (IsWhitespaceCharacter(m_spInput[m_nCursor])) {
+          ++m_nCursor;
           break;
         }
-        if (!IsInitialIdentifierCharacter(*m_cursor)) {
+        if (!IsInitialIdentifierCharacter(m_spInput[m_nCursor])) {
           RaiseError();
           return CXFA_FMToken();
         }
@@ -305,51 +303,52 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
 CXFA_FMToken CXFA_FMLexer::AdvanceForNumber() {
   // This will set end to the character after the end of the number.
   int32_t used_length = 0;
-  if (m_cursor)
-    FXSYS_wcstof(m_cursor, m_end - m_cursor, &used_length);
-
-  const wchar_t* end = m_cursor + used_length;
-  if (used_length == 0 || !end || FXSYS_iswalpha(*end)) {
+  if (m_nCursor < m_spInput.size()) {
+    FXSYS_wcstof(&m_spInput[m_nCursor], m_spInput.size() - m_nCursor,
+                 &used_length);
+  }
+  size_t end = m_nCursor + used_length;
+  if (used_length == 0 ||
+      (end < m_spInput.size() && FXSYS_iswalpha(m_spInput[end]))) {
     RaiseError();
     return CXFA_FMToken();
   }
-
   CXFA_FMToken token(TOKnumber);
   token.m_string =
-      WideStringView(m_cursor, static_cast<size_t>(end - m_cursor));
-  m_cursor = end;
+      WideStringView(m_spInput.subspan(m_nCursor, end - m_nCursor));
+  m_nCursor = end;
   return token;
 }
 
 CXFA_FMToken CXFA_FMLexer::AdvanceForString() {
   CXFA_FMToken token(TOKstring);
-
-  const wchar_t* start = m_cursor;
-  ++m_cursor;
-  while (!IsComplete() && *m_cursor) {
-    if (!IsFormCalcCharacter(*m_cursor))
+  size_t start = m_nCursor;
+  ++m_nCursor;
+  while (!IsComplete() && m_spInput[m_nCursor]) {
+    if (!IsFormCalcCharacter(m_spInput[m_nCursor]))
       break;
 
-    if (*m_cursor == '"') {
+    if (m_spInput[m_nCursor] == '"') {
       // Check for escaped "s, i.e. "".
-      ++m_cursor;
+      ++m_nCursor;
       // If the end of the input has been reached it was not escaped.
-      if (m_cursor >= m_end) {
+      if (m_nCursor >= m_spInput.size()) {
         token.m_string =
-            WideStringView(start, static_cast<size_t>(m_cursor - start));
+            WideStringView(m_spInput.subspan(start, m_nCursor - start));
         return token;
       }
       // If the next character is not a " then the end of the string has been
       // found.
-      if (*m_cursor != '"') {
-        if (!IsFormCalcCharacter(*m_cursor))
+      if (m_spInput[m_nCursor] != '"') {
+        if (!IsFormCalcCharacter(m_spInput[m_nCursor]))
           break;
 
-        token.m_string = WideStringView(start, (m_cursor - start));
+        token.m_string =
+            WideStringView(m_spInput.subspan(start, m_nCursor - start));
         return token;
       }
     }
-    ++m_cursor;
+    ++m_nCursor;
   }
 
   // Didn't find the end of the string.
@@ -358,41 +357,41 @@ CXFA_FMToken CXFA_FMLexer::AdvanceForString() {
 }
 
 CXFA_FMToken CXFA_FMLexer::AdvanceForIdentifier() {
-  const wchar_t* start = m_cursor;
-  ++m_cursor;
-  while (!IsComplete() && *m_cursor) {
-    if (!IsFormCalcCharacter(*m_cursor)) {
+  size_t start = m_nCursor;
+  ++m_nCursor;
+  while (!IsComplete() && m_spInput[m_nCursor]) {
+    if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
       RaiseError();
       return CXFA_FMToken();
     }
-    if (!IsIdentifierCharacter(*m_cursor))
+    if (!IsIdentifierCharacter(m_spInput[m_nCursor]))
       break;
 
-    ++m_cursor;
+    ++m_nCursor;
   }
 
   WideStringView str =
-      WideStringView(start, static_cast<size_t>(m_cursor - start));
+      WideStringView(m_spInput.subspan(start, m_nCursor - start));
   CXFA_FMToken token(TokenizeIdentifier(str));
   token.m_string = str;
   return token;
 }
 
 void CXFA_FMLexer::AdvanceForComment() {
-  m_cursor++;
-  while (!IsComplete() && *m_cursor) {
-    if (!IsFormCalcCharacter(*m_cursor)) {
+  ++m_nCursor;
+  while (!IsComplete() && m_spInput[m_nCursor]) {
+    if (!IsFormCalcCharacter(m_spInput[m_nCursor])) {
       RaiseError();
       return;
     }
-    if (*m_cursor == L'\r') {
-      ++m_cursor;
+    if (m_spInput[m_nCursor] == L'\r') {
+      ++m_nCursor;
       return;
     }
-    if (*m_cursor == L'\n') {
-      ++m_cursor;
+    if (m_spInput[m_nCursor] == L'\n') {
+      ++m_nCursor;
       return;
     }
-    ++m_cursor;
+    ++m_nCursor;
   }
 }
