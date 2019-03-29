@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/font/fgas_fontutils.h"
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
@@ -1406,7 +1407,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      "Kokonor,Damascus,STIXNonUnicode,STHeiti,Arial Black", 0, 1252},
     {0xfef135f8, "AdobeHeitiStd-Regular", "Heiti TC,STHeiti", 0, 936},
 };
-#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
+#elif defined(OS_ANDROID)
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "Droid Sans Fallback", 0, 936},
     {0x01e4f102, "YouYuan", "Droid Sans Fallback", 1, 936},

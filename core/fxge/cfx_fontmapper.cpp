@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
@@ -151,7 +152,7 @@ const AltFontFamily g_AltFontFamilies[] = {
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 const char kNarrowFamily[] = "LiberationSansNarrow";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
+#elif defined(OS_ANDROID)
 const char kNarrowFamily[] = "RobotoCondensed";
 #else
 const char kNarrowFamily[] = "ArialNarrow";
@@ -597,8 +598,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
       }
     } else {
       if (Charset == FX_CHARSET_Symbol) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
-    _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || defined(OS_ANDROID)
         if (SubstName == "Symbol") {
           pSubstFont->m_Family = "Chrome Symbol";
           pSubstFont->m_Charset = FX_CHARSET_Symbol;

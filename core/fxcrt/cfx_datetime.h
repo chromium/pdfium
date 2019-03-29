@@ -91,15 +91,9 @@ class CFX_DateTime {
   uint16_t millisecond_;
 };
 
-#if _FX_OS_ != _FX_OS_ANDROID_
-#pragma pack(push, 1)
-#endif
 struct FX_TIMEZONE {
   int8_t tzHour;
   uint8_t tzMinute;
 };
-#if _FX_OS_ != _FX_OS_ANDROID_
-#pragma pack(pop)
-#endif
 
 #endif  // CORE_FXCRT_CFX_DATETIME_H_

@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "build/build_config.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -21,7 +22,7 @@ int SystemFontInfoIface::GetFaceIndex(void* hFont) {
   return 0;
 }
 
-#if _FX_OS_ == _FX_OS_ANDROID_
+#if defined(OS_ANDROID)
 std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {
   return nullptr;

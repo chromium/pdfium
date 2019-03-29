@@ -8,6 +8,8 @@
 
 #include <iterator>
 
+#include "build/build_config.h"
+
 namespace {
 
 constexpr char kFolderSeparator = '/';
@@ -18,7 +20,7 @@ constexpr const char* g_FontFolders[] = {
     "/usr/share/X11/fonts/TTF", "/usr/local/share/fonts",
 #elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     "~/Library/Fonts", "/Library/Fonts", "/System/Library/Fonts",
-#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
+#elif defined(OS_ANDROID)
     "/system/fonts",
 #endif
 };

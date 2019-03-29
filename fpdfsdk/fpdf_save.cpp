@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -37,7 +38,7 @@
 #include "xfa/fxfa/parser/cxfa_object.h"
 #endif
 
-#if _FX_OS_ == _FX_OS_ANDROID_
+#if defined(OS_ANDROID)
 #include <time.h>
 #else
 #include <ctime>
