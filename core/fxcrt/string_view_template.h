@@ -47,7 +47,7 @@ class StringViewTemplate {
       : m_Span(reinterpret_cast<const UnsignedType*>(ptr), len) {}
 
   explicit constexpr StringViewTemplate(
-      const pdfium::span<CharType>& other) noexcept
+      const pdfium::span<const CharType>& other) noexcept
       : m_Span(reinterpret_cast<const UnsignedType*>(other.data()),
                other.size()) {}
 
