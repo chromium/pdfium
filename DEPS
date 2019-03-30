@@ -28,7 +28,7 @@ vars = {
   'jpeg_turbo_revision': '61a2bbaa9aec89cb2c882d87ace6aba9aee49bb9',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
   'pdfium_tests_revision': '5a68e87859476eb75d3e068bd406c4921a6be8e2',
-  'skia_revision': 'ea8900e74ea7d817ce49cc684aa49946dd659af1',
+  'skia_revision': '191e64b6c6c2e791ff4d7dae0209a78eed0376f0',
   'tools_memory_revision': 'f7b00daf4df7f6c469f5fbc68d7f40f6bd15d6e6',
   'trace_event_revision': '936ba8a963284a6b3737cf2f0474a7131073abee',
   'v8_revision': '93306f1d7b2c10824e1e8876e5b8a3ab37c42b96',
