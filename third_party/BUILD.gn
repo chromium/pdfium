@@ -634,6 +634,13 @@ jumbo_source_set("pdfium_base") {
     "base/sys_byteorder.h",
     "base/template_util.h",
   ]
+
+  if (is_win) {
+    sources += [
+      "base/win/win_util.cc",
+      "base/win/win_util.h",
+    ]
+  }
 }
 
 jumbo_source_set("skia_shared") {
