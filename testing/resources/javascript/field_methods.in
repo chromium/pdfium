@@ -1,7 +1,8 @@
 {{header}}
 {{include field.fragment}}
+
 % JS program to exexute
-{{object 11 0}} <<
+{{object 16 0}} <<
   {{streamlen}}
 >>
 stream
