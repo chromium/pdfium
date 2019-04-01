@@ -497,8 +497,7 @@ ByteString GUIDString(bool bSeparator) {
   return bsGUID;
 }
 
-bool IsIsoDateFormat(const char* pData,
-                     int32_t iLength,
+bool IsIsoDateFormat(pdfium::span<const char> pData,
                      int32_t* pStyle,
                      int32_t* pYear,
                      int32_t* pMonth,
@@ -512,7 +511,7 @@ bool IsIsoDateFormat(const char* pData,
   iMonth = 1;
   iDay = 1;
 
-  if (iLength < 4)
+  if (pData.size() < 4)
     return false;
 
   char szYear[5];
@@ -525,17 +524,16 @@ bool IsIsoDateFormat(const char* pData,
   }
   iYear = FXSYS_atoi(szYear);
   iStyle = 0;
-  if (iLength == 4)
+  if (pData.size() == 4)
     return true;
 
   iStyle = pData[4] == '-' ? 1 : 0;
 
-  char szBuffer[3];
-  szBuffer[2] = '\0';
-  int32_t iPosOff = iStyle == 0 ? 4 : 5;
+  size_t iPosOff = iStyle == 0 ? 4 : 5;
   if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
     return false;
 
+  char szBuffer[3] = {};
   szBuffer[0] = pData[iPosOff];
   szBuffer[1] = pData[iPosOff + 1];
   iMonth = FXSYS_atoi(szBuffer);
@@ -544,11 +542,11 @@ bool IsIsoDateFormat(const char* pData,
 
   if (iStyle == 0) {
     iPosOff += 2;
-    if (iLength == 6)
+    if (pData.size() == 6)
       return true;
   } else {
     iPosOff += 3;
-    if (iLength == 7)
+    if (pData.size() == 7)
       return true;
   }
   if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
@@ -557,7 +555,7 @@ bool IsIsoDateFormat(const char* pData,
   szBuffer[0] = pData[iPosOff];
   szBuffer[1] = pData[iPosOff + 1];
   iDay = FXSYS_atoi(szBuffer);
-  if (iPosOff + 2 < iLength)
+  if (iPosOff + 2 < pData.size())
     return false;
 
   if (iMonth == 2) {
@@ -570,8 +568,7 @@ bool IsIsoDateFormat(const char* pData,
   return iDay <= (iMonth % 2 == 0 ? 31 : 30);
 }
 
-bool IsIsoTimeFormat(const char* pData,
-                     int32_t iLength,
+bool IsIsoTimeFormat(pdfium::span<const char> pData,
                      int32_t* pHour,
                      int32_t* pMinute,
                      int32_t* pSecond,
@@ -591,25 +588,25 @@ bool IsIsoTimeFormat(const char* pData,
   iMilliSecond = 0;
   iZoneHour = 0;
   iZoneMinute = 0;
-  if (!pData)
+
+  if (pData.empty())
     return false;
 
-  char szBuffer[3];
-  szBuffer[2] = '\0';
-  int32_t iZone = 0;
-  int32_t i = 0;
-  while (i < iLength) {
+  size_t iZone = 0;
+  size_t i = 0;
+  while (i < pData.size()) {
     if (!std::isdigit(pData[i]) && pData[i] != ':') {
       iZone = i;
       break;
     }
     ++i;
   }
-  if (i == iLength)
-    iZone = iLength;
+  if (i == pData.size())
+    iZone = pData.size();
 
-  int32_t iPos = 0;
-  int32_t iIndex = 0;
+  char szBuffer[3] = {};
+  size_t iPos = 0;
+  size_t iIndex = 0;
   while (iIndex < iZone) {
     if (!std::isdigit(pData[iIndex]))
       return false;
@@ -648,9 +645,9 @@ bool IsIsoTimeFormat(const char* pData,
     }
   }
 
-  if (iIndex < iLength && pData[iIndex] == '.') {
+  if (iIndex < pData.size() && pData[iIndex] == '.') {
     constexpr int kSubSecondLength = 3;
-    if (iIndex + kSubSecondLength >= iLength)
+    if (iIndex + kSubSecondLength >= pData.size())
       return false;
 
     ++iIndex;
@@ -671,11 +668,11 @@ bool IsIsoTimeFormat(const char* pData,
     iIndex += kSubSecondLength;
   }
 
-  if (iIndex < iLength && FXSYS_towlower(pData[iIndex]) == 'z')
+  if (iIndex < pData.size() && FXSYS_towlower(pData[iIndex]) == 'z')
     return true;
 
   int32_t iSign = 1;
-  if (iIndex < iLength) {
+  if (iIndex < pData.size()) {
     if (pData[iIndex] == '+') {
       ++iIndex;
     } else if (pData[iIndex] == '-') {
@@ -684,7 +681,7 @@ bool IsIsoTimeFormat(const char* pData,
     }
   }
   iPos = 0;
-  while (iIndex < iLength) {
+  while (iIndex < pData.size()) {
     if (!std::isdigit(pData[iIndex]))
       return false;
 
@@ -714,15 +711,14 @@ bool IsIsoTimeFormat(const char* pData,
       iIndex += 2;
     }
   }
-  if (iIndex < iLength)
+  if (iIndex < pData.size())
     return false;
 
   iZoneHour *= iSign;
   return true;
 }
 
-bool IsIsoDateTimeFormat(const char* pData,
-                         int32_t iLength,
+bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
                          int32_t* pYear,
                          int32_t* pMonth,
                          int32_t* pDay,
@@ -748,12 +744,13 @@ bool IsIsoDateTimeFormat(const char* pData,
   iHour = 0;
   iMinute = 0;
   iSecond = 0;
-  if (!pData)
+
+  if (pData.empty())
     return false;
 
-  int32_t iIndex = 0;
+  size_t iIndex = 0;
   while (pData[iIndex] != 'T' && pData[iIndex] != 't') {
-    if (iIndex >= iLength)
+    if (iIndex >= pData.size())
       return false;
     ++iIndex;
   }
@@ -761,14 +758,15 @@ bool IsIsoDateTimeFormat(const char* pData,
     return false;
 
   int32_t iStyle = -1;
-  if (!IsIsoDateFormat(pData, iIndex, &iStyle, &iYear, &iMonth, &iDay))
+  if (!IsIsoDateFormat(pData.subspan(0, iIndex), &iStyle, &iYear, &iMonth,
+                       &iDay)) {
     return false;
+  }
   if (pData[iIndex] != 'T' && pData[iIndex] != 't')
     return true;
 
-  ++iIndex;
-  return IsIsoTimeFormat(pData + iIndex, iLength - iIndex, &iHour, &iMinute,
-                         &iSecond, &iMilliSecond, &iZoneHour, &iZoneMinute);
+  return IsIsoTimeFormat(pData.subspan(iIndex + 1), &iHour, &iMinute, &iSecond,
+                         &iMilliSecond, &iZoneHour, &iZoneMinute);
 }
 
 int32_t DateString2Num(ByteStringView bsDate) {
@@ -778,10 +776,8 @@ int32_t DateString2Num(ByteStringView bsDate) {
   int32_t iDay = 0;
   if (iLength <= 10) {
     int32_t iStyle = -1;
-    if (!IsIsoDateFormat(bsDate.unterminated_c_str(), iLength, &iStyle, &iYear,
-                         &iMonth, &iDay)) {
+    if (!IsIsoDateFormat(bsDate.span(), &iStyle, &iYear, &iMonth, &iDay))
       return 0;
-    }
   } else {
     int32_t iHour = 0;
     int32_t iMinute = 0;
@@ -789,9 +785,9 @@ int32_t DateString2Num(ByteStringView bsDate) {
     int32_t iMilliSecond = 0;
     int32_t iZoneHour = 0;
     int32_t iZoneMinute = 0;
-    if (!IsIsoDateTimeFormat(bsDate.unterminated_c_str(), iLength, &iYear,
-                             &iMonth, &iDay, &iHour, &iMinute, &iSecond,
-                             &iMilliSecond, &iZoneHour, &iZoneMinute)) {
+    if (!IsIsoDateTimeFormat(bsDate.span(), &iYear, &iMonth, &iDay, &iHour,
+                             &iMinute, &iSecond, &iMilliSecond, &iZoneHour,
+                             &iZoneMinute)) {
       return 0;
     }
   }

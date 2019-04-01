@@ -161,8 +161,8 @@ bool CFXJSE_ResolveProcessor::ResolveDollar(CFXJSE_ResolveNodeData& rnd) {
   if (rnd.m_nLevel > 0)
     return false;
 
-  XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(FX_HashCode_GetW(
-      WideStringView(wsName.c_str() + 1, iNameLen - 1), false));
+  XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(
+      FX_HashCode_GetW(wsName.AsStringView().Right(iNameLen - 1), false));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     rnd.m_Objects.emplace_back(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
@@ -532,9 +532,9 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
     pdfium::span<wchar_t> pNameBuf = wsName.GetBuffer(iLength - nStart);
     pdfium::span<wchar_t> pConditionBuf =
         wsCondition.GetBuffer(iLength - nStart);
+    pdfium::span<const wchar_t> pSrc = wsExpression.span();
     std::vector<int32_t> stack;
     int32_t nType = -1;
-    const wchar_t* pSrc = wsExpression.unterminated_c_str();
     wchar_t wPrev = 0;
     wchar_t wCur;
     bool bIsCondition = false;
