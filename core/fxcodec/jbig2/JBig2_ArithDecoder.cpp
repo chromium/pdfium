@@ -52,7 +52,7 @@ int JBig2ArithCtx::DecodeNMPS(const JBig2ArithQe& qe) {
 }
 
 CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
-    : m_Complete(false), m_FinishedStream(false), m_pStream(pStream) {
+    : m_pStream(pStream) {
   m_B = m_pStream->getCurByte_arith();
   m_C = (m_B ^ 0xff) << 16;
   BYTEIN();
@@ -86,17 +86,26 @@ int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
 }
 
 void CJBig2_ArithDecoder::BYTEIN() {
-  unsigned char B1;
   if (m_B == 0xff) {
-    B1 = m_pStream->getNextByte_arith();
+    unsigned char B1 = m_pStream->getNextByte_arith();
     if (B1 > 0x8f) {
       m_CT = 8;
-      // If we are here, it means that we have finished decoding data (see JBIG2
-      // spec, Section E.3.4). If we arrive here a second time, we're looping,
-      // so complete decoding.
-      if (m_FinishedStream)
-        m_Complete = true;
-      m_FinishedStream = true;
+
+      switch (m_State) {
+        case StreamState::kDataAvailable:
+          // Finished decoding data (see JBIG2 spec, Section E.3.4).
+          m_State = StreamState::kDecodingFinished;
+          break;
+        case StreamState::kDecodingFinished:
+          // Allow one more call in the finished state. https://crbug.com/947622
+          m_State = StreamState::kLooping;
+          break;
+        case StreamState::kLooping:
+          // Looping state detected. Mark decoding as complete to bail out.
+          // https://crbug.com/767156
+          m_Complete = true;
+          break;
+      }
     } else {
       m_pStream->incByteIdx();
       m_B = B1;
