@@ -15,7 +15,7 @@ vars = {
   'android_ndk_revision': '4e2cea441bfd43f0863d14f57b1e1844260b9884',
   'binutils_revision': '2be73f7fbf783d7a0b288e174a5773b67c7656bc',
   'build_revision': 'ef1e2b8718ad4bfa0427b1ee6d93309a135c710b',
-  'buildtools_revision': '62f9eb0d64d6bf48f620b8233d9f7a1dc07f8414',
+  'buildtools_revision': 'c79f3482c8152172a31e5c17823a27835a511dac',
   'catapult_revision': 'ec795debc5c195658e95f5e750f6c0895c8171f2',
   'clang_revision': 'adc6ac450cea4f39ec778437696afbcd163d2a93',
   'code_coverage_revision': '0e34d1463558f5a32308d0808e04e85cfe95f4a4',
@@ -34,6 +34,9 @@ vars = {
   'v8_revision': '93306f1d7b2c10824e1e8876e5b8a3ab37c42b96',
   'yasm_source_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
   'zlib_revision': 'bb293c33b08c50896cc304d1d8050573628e5db8',
+
+  # GN CIPD package version.
+  'gn_version': 'git_revision:0790d3043387c762a6bacb1ae0a9ebe883188ab2',
 }
 
 deps = {
@@ -47,6 +50,39 @@ deps = {
   "buildtools":
     Var('chromium_git') + "/chromium/src/buildtools.git@" +
         Var('buildtools_revision'),
+
+  'pdfium/buildtools/linux64': {
+    'packages': [
+      {
+        'package': 'gn/gn/linux-amd64',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "linux"',
+  },
+
+  'pdfium/buildtools/mac': {
+    'packages': [
+      {
+        'package': 'gn/gn/mac-amd64',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "mac"',
+  },
+
+  'pdfium/buildtools/win': {
+    'packages': [
+      {
+        'package': 'gn/gn/windows-amd64',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "win"',
+  },
 
   "testing/corpus":
     Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
@@ -170,38 +206,6 @@ hooks = [
     'name': 'mac_toolchain',
     'pattern': '.',
     'action': ['python', 'pdfium/build/mac_toolchain.py'],
-  },
-  {
-    'name': 'gn_win',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=win32',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'pdfium/buildtools/win/gn.exe.sha1',
-    ],
-  },
-  {
-    'name': 'gn_mac',
-    'pattern': '.',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=darwin',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'pdfium/buildtools/mac/gn.sha1',
-    ],
-  },
-  {
-    'name': 'gn_linux64',
-    'pattern': '.',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=linux*',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'pdfium/buildtools/linux64/gn.sha1',
-    ],
   },
   {
     # Pull clang-format binaries using checked-in hashes.
