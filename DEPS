@@ -33,7 +33,7 @@ vars = {
   'trace_event_revision': '936ba8a963284a6b3737cf2f0474a7131073abee',
   'v8_revision': '93306f1d7b2c10824e1e8876e5b8a3ab37c42b96',
   'yasm_source_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
-  'zlib_revision': '1337da5314a9716c0653301cceeb835d17fd7ea4',
+  'zlib_revision': 'bb293c33b08c50896cc304d1d8050573628e5db8',
 }
 
 deps = {
