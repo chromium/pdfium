@@ -55,7 +55,7 @@ if (is_mac || is_ios) {
       "amd64",
     ]
   }
-} else if (is_posix) {
+} else if (is_posix || is_fuchsia) {
   if (current_cpu == "x86") {
     _yasm_flags = [
       "-felf32",
@@ -188,6 +188,9 @@ template("yasm_assemble") {
     }
 
     sources = get_target_outputs(":$action_name")
+
+    # Do not publicize any header to remove build dependency.
+    public = []
 
     deps = [
       ":$action_name",

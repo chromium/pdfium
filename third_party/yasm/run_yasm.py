@@ -18,6 +18,7 @@ specify that.
 """
 
 import argparse
+import os
 import sys
 import subprocess
 
@@ -29,6 +30,15 @@ options, _ = parser.parse_known_args()
 
 objfile = options.objfile
 depfile = objfile + '.d'
+
+# Set up environment for yasm.
+# Setting YASM_TEST_SUITE makes yasm output deterministic:
+# - the PE/COFF timestamp field is always 0 (this breaks link.exe /incremental,
+#   but we no longer user link.exe)
+# - in debug info, yasm identifies itself as "yasm HEAD" instead of e.g.
+#   "yasm 1.3.0" (we don't care much about this effect)
+# - in debug info, file paths are no longer absolute but relative to '.'
+os.environ['YASM_TEST_SUITE'] = '1'
 
 # Assemble.
 result_code = subprocess.call(sys.argv[1:])
