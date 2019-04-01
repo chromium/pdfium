@@ -12,8 +12,8 @@ function testGetField() {
   try {
     var field = this.getField("MyField");
     app.alert("field is " + field.name);
-    var sub_a = this.getField("MyField.Sub_A");
-    app.alert("sub_a is " + sub_a.name);
+    var button = this.getField("MyField.MyPushButton");
+    app.alert("button is " + button.name);
     var nonesuch = this.getField("MyField.nonesuch");
     app.alert("nonesuch is " + nonesuch);
   } catch (e) {
@@ -36,9 +36,9 @@ function testGetArray() {
 testGetField();
 testGetArray();
 
-expect("this.getField('MyField.Sub_A').buttonGetCaption()", "");
-expect("this.getField('MyField.Sub_A').buttonGetIcon()", "[object Object]");
-expect("this.getField('MyField.Sub_A').buttonImportIcon()", undefined);
+expect("this.getField('MyField.MyPushButton').buttonGetCaption()", "");
+expect("this.getField('MyField.MyPushButton').buttonGetIcon()", "[object Object]");
+expect("this.getField('MyField.MyPushButton').buttonImportIcon()", undefined);
 
 expectError("this.getField('MyField').checkThisBox()");
 expectError("this.getField('MyField').checkThisBox({})");
@@ -57,7 +57,7 @@ expect("this.getField('MyField').isDefaultChecked(0)", false);
 expect("this.getField('MyField').setFocus()", undefined);
 
 // TODO(tsepez): these need a different kind of object to pass
-expectError("this.getField('MyField.Sub_X').browseForFileToSubmit()");
+expectError("this.getField('MyField.MyText').browseForFileToSubmit()");
 expectError("this.getField('MyField').checkThisBox(0, true)");
 expectError("this.getField('MyField').getItemAt(0)");
 

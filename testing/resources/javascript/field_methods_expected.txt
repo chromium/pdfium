@@ -1,14 +1,14 @@
 Alert: field is MyField
-Alert: sub_a is MyField.Sub_A
+Alert: button is MyField.MyPushButton
 Alert: nonesuch is undefined
 Alert: found 4 sub-fields:
-Alert: MyField.Sub_A
-Alert: MyField.Sub_B
-Alert: MyField.Sub_X
-Alert: MyField.Sub_Z
-Alert: PASS: this.getField('MyField.Sub_A').buttonGetCaption() = 
-Alert: PASS: this.getField('MyField.Sub_A').buttonGetIcon() = [object Object]
-Alert: PASS: this.getField('MyField.Sub_A').buttonImportIcon() = undefined
+Alert: MyField.MyCheckBox
+Alert: MyField.MyPushButton
+Alert: MyField.MyRadio
+Alert: MyField.MyText
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption() = 
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon() = [object Object]
+Alert: PASS: this.getField('MyField.MyPushButton').buttonImportIcon() = undefined
 Alert: PASS: this.getField('MyField').checkThisBox() threw Field.checkThisBox: Incorrect number of parameters passed to function.
 Alert: PASS: this.getField('MyField').checkThisBox({}) threw Field.checkThisBox: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').defaultIsChecked() threw Field.defaultIsChecked: Incorrect number of parameters passed to function.
@@ -20,7 +20,7 @@ Alert: PASS: this.getField('MyField').isDefaultChecked() threw Field.isDefaultCh
 Alert: PASS: this.getField('MyField').isDefaultChecked(20) threw Field.isDefaultChecked: Incorrect parameter value.
 Alert: PASS: this.getField('MyField').isDefaultChecked(0) = false
 Alert: PASS: this.getField('MyField').setFocus() = undefined
-Alert: PASS: this.getField('MyField.Sub_X').browseForFileToSubmit() threw Field.browseForFileToSubmit: Object is of the wrong type.
+Alert: PASS: this.getField('MyField.MyText').browseForFileToSubmit() threw Field.browseForFileToSubmit: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').checkThisBox(0, true) threw Field.checkThisBox: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').getItemAt(0) threw Field.getItemAt: Object is of the wrong type.
 Alert: These always succeed without actually doing anything:
