@@ -25,6 +25,7 @@ endobj
     8 0 R
     9 0 R
     10 0 R
+    11 0 R
   ]
 >>
 endobj
@@ -45,6 +46,7 @@ endobj
     8 0 R
     9 0 R
     10 0 R
+    11 0 R
   ]
 >>
 endobj
@@ -98,6 +100,22 @@ endobj
   /Opt [ (foo) (bar) (qux) ]
   /V (qux)
 >>
+endobj
+{{object 11 0}} <<
+  /FT /Ch
+  /Ff 0
+  /Parent 5 0 R
+  /T (MySingleSelect)
+  /Type /Annot
+  /Subtype /Widget
+  /Rect [ 300 300 320 320 ]
+  /Opt [
+    [ (foo) (Foo) ]
+    [ (bar) (Bar) ]
+    [ (qux) (Qux) ]
+  ]
+>>
+endobj
 
 % OpenAction action
 {{object 15 0}} <<

@@ -1,11 +1,12 @@
 Alert: field is MyField
 Alert: button is MyField.MyPushButton
 Alert: nonesuch is undefined
-Alert: found 5 sub-fields:
+Alert: found 6 sub-fields:
 Alert: MyField.MyCheckBox
 Alert: MyField.MyMultiSelect
 Alert: MyField.MyPushButton
 Alert: MyField.MyRadio
+Alert: MyField.MySingleSelect
 Alert: MyField.MyText
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption() = 
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon() = [object Object]
