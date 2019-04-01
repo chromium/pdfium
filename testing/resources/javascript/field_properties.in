@@ -13,6 +13,7 @@ function testProperties() {
     var text = this.getField("MyField.MyText");
     var button = this.getField("MyField.MyPushButton");
     var radio = this.getField("MyField.MyRadio");
+    var list = this.getField("MyField.MyMultiSelect");
     var check = this.getField("MyField.MyCheckBox");
     app.alert('Testing properties under delay');
     testRWProperty(field, "delay", false, true);
@@ -24,6 +25,7 @@ function testProperties() {
     testPushButtonPropertiesCase(button);
     testRadioButtonPropertiesCase(radio);
     testCheckBoxPropertiesCase(check);
+    testListBoxPropertiesCase(list);
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }
@@ -113,6 +115,14 @@ function testCheckBoxPropertiesCase(field) {
     testROProperty(field, "type", "checkbox");
     testRIProperty(field, "value", "Off");
     testROProperty(field, "valueAsString", "Off");
+  } catch (e) {
+    app.alert("Unexpected error: " + e);
+  }
+}
+
+function testListBoxPropertiesCase(field) {
+  try {
+    testRWProperty(field, "currentValueIndices", 2, 1);
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }

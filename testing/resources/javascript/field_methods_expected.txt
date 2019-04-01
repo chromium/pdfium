@@ -1,8 +1,9 @@
 Alert: field is MyField
 Alert: button is MyField.MyPushButton
 Alert: nonesuch is undefined
-Alert: found 4 sub-fields:
+Alert: found 5 sub-fields:
 Alert: MyField.MyCheckBox
+Alert: MyField.MyMultiSelect
 Alert: MyField.MyPushButton
 Alert: MyField.MyRadio
 Alert: MyField.MyText

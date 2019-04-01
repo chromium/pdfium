@@ -2,7 +2,7 @@
   /Type /Catalog
   /Pages 2 0 R
   /AcroForm 4 0 R
-  /OpenAction 10 0 R
+  /OpenAction 15 0 R
 >>
 endobj
 {{object 2 0}} <<
@@ -24,6 +24,7 @@ endobj
     7 0 R
     8 0 R
     9 0 R
+    10 0 R
   ]
 >>
 endobj
@@ -43,6 +44,7 @@ endobj
     7 0 R
     8 0 R
     9 0 R
+    10 0 R
   ]
 >>
 endobj
@@ -85,8 +87,20 @@ endobj
   /Rect [260 260 280 280]
 >>
 endobj
-% OpenAction action
 {{object 10 0}} <<
+  /FT /Ch
+  /Ff 2097152
+  /Parent 5 0 R
+  /T (MyMultiSelect)
+  /Type /Annot
+  /Subtype /Widget
+  /Rect [ 280 280 300 300 ]
+  /Opt [ (foo) (bar) (qux) ]
+  /V (qux)
+>>
+
+% OpenAction action
+{{object 15 0}} <<
   /Type /Action
   /S /JavaScript
   /JS 16 0 R

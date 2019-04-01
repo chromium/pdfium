@@ -108,3 +108,5 @@ Alert: PASS: value = Off
 Alert: PASS: value = Off
 Alert: PASS: valueAsString = Off
 Alert: PASS: valueAsString threw Field.valueAsString: Operation not supported.
+Alert: PASS: currentValueIndices = 2
+Alert: PASS: currentValueIndices = 1
