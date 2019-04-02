@@ -77,7 +77,6 @@ pdfium_unittest_source_set("unittests") {
 
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [
-    "fpdf_render_loadimage_embeddertest.cpp",
     "fpdf_render_pattern_embeddertest.cpp",
   ]
   pdfium_root_dir = "../../../"
