@@ -46,11 +46,17 @@ class CJBig2_ArithDecoder {
   bool IsComplete() const { return m_Complete; }
 
  private:
+  enum class StreamState : uint8_t {
+    kDataAvailable,
+    kDecodingFinished,
+    kLooping,
+  };
+
   void BYTEIN();
   void ReadValueA();
 
-  bool m_Complete;
-  bool m_FinishedStream;
+  bool m_Complete = false;
+  StreamState m_State = StreamState::kDataAvailable;
   uint8_t m_B;
   unsigned int m_C;
   unsigned int m_A;
