@@ -335,13 +335,13 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           }
           current_buffer_idx++;
           break;
-        case FDE_XmlSyntaxState::SkipCommentOrDecl:
-          if (FXSYS_wcsnicmp(buffer.data() + current_buffer_idx, L"--", 2) ==
-              0) {
+        case FDE_XmlSyntaxState::SkipCommentOrDecl: {
+          auto current_span =
+              pdfium::make_span(buffer).subspan(current_buffer_idx);
+          if (FXSYS_wcsnicmp(current_span.data(), L"--", 2) == 0) {
             current_buffer_idx += 2;
             current_parser_state = FDE_XmlSyntaxState::SkipComment;
-          } else if (FXSYS_wcsnicmp(buffer.data() + current_buffer_idx,
-                                    L"[CDATA[", 7) == 0) {
+          } else if (FXSYS_wcsnicmp(current_span.data(), L"[CDATA[", 7) == 0) {
             current_buffer_idx += 7;
             current_parser_state = FDE_XmlSyntaxState::SkipCData;
           } else {
@@ -350,12 +350,13 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             character_to_skip_too_stack.push(L'>');
           }
           break;
+        }
         case FDE_XmlSyntaxState::SkipCData: {
-          if (FXSYS_wcsnicmp(buffer.data() + current_buffer_idx, L"]]>", 3) ==
-              0) {
+          auto current_span =
+              pdfium::make_span(buffer).subspan(current_buffer_idx);
+          if (FXSYS_wcsnicmp(current_span.data(), L"]]>", 3) == 0) {
             current_buffer_idx += 3;
             current_parser_state = FDE_XmlSyntaxState::Text;
-
             current_node_->AppendChild(
                 doc->CreateNode<CFX_XMLCharData>(GetTextData()));
           } else {
@@ -413,15 +414,16 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_buffer_idx++;
           }
           break;
-        case FDE_XmlSyntaxState::SkipComment:
-          if (FXSYS_wcsnicmp(buffer.data() + current_buffer_idx, L"-->", 3) ==
-              0) {
+        case FDE_XmlSyntaxState::SkipComment: {
+          auto current_span =
+              pdfium::make_span(buffer).subspan(current_buffer_idx);
+          if (FXSYS_wcsnicmp(current_span.data(), L"-->", 3) == 0) {
             current_buffer_idx += 2;
             current_parser_state = FDE_XmlSyntaxState::Text;
           }
-
           current_buffer_idx++;
           break;
+        }
         case FDE_XmlSyntaxState::TargetData:
           if (IsXMLWhiteSpace(ch)) {
             if (current_text_.empty()) {
