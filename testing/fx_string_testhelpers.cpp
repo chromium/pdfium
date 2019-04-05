@@ -8,6 +8,7 @@
 #include <ios>
 
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/span.h"
 
 std::ostream& operator<<(std::ostream& os, const CFX_DateTime& dt) {
   os << dt.GetYear() << "-" << std::to_string(dt.GetMonth()) << "-"
@@ -60,13 +61,14 @@ std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
   size_t length = sizeof(uint16_t) * (wstr.length() + 1);
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> result(
       static_cast<unsigned short*>(malloc(length)));
-  char* ptr = reinterpret_cast<char*>(result.get());
+  pdfium::span<uint8_t> result_span(reinterpret_cast<uint8_t*>(result.get()),
+                                    length);
   size_t i = 0;
   for (wchar_t w : wstr) {
-    ptr[i++] = w & 0xff;
-    ptr[i++] = (w >> 8) & 0xff;
+    result_span[i++] = w & 0xff;
+    result_span[i++] = (w >> 8) & 0xff;
   }
-  ptr[i++] = 0;
-  ptr[i] = 0;
+  result_span[i++] = 0;
+  result_span[i] = 0;
   return result;
 }
