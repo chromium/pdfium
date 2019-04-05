@@ -125,6 +125,6 @@ void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
     return;
   }
 
-  pValue->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pInstanceMgr));
+  pValue->Assign(GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+      pInstanceMgr));
 }

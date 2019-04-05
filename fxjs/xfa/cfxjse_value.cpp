@@ -82,8 +82,8 @@ CFXJSE_HostObject* CFXJSE_Value::ToHostObject() const {
   return FXJSE_RetrieveObjectBinding(pValue.As<v8::Object>());
 }
 
-void CFXJSE_Value::SetObject(CFXJSE_HostObject* lpObject,
-                             CFXJSE_Class* pClass) {
+void CFXJSE_Value::SetHostObject(CFXJSE_HostObject* lpObject,
+                                 CFXJSE_Class* pClass) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::FunctionTemplate> hClass =
       v8::Local<v8::FunctionTemplate>::New(GetIsolate(), pClass->m_hTemplate);
@@ -93,6 +93,13 @@ void CFXJSE_Value::SetObject(CFXJSE_HostObject* lpObject,
           .ToLocalChecked();
   FXJSE_UpdateObjectBinding(hObject, lpObject);
   m_hValue.Reset(GetIsolate(), hObject);
+}
+
+void CFXJSE_Value::ClearHostObject() {
+  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
+  FXJSE_ClearObjectBinding(m_hValue.Get(GetIsolate()).As<v8::Object>());
+  v8::Local<v8::Value> hValue = v8::Null(GetIsolate());
+  m_hValue.Reset(GetIsolate(), hValue);
 }
 
 void CFXJSE_Value::SetArray(

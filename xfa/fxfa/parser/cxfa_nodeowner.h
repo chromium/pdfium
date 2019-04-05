@@ -18,10 +18,12 @@ class CXFA_NodeOwner {
 
   CXFA_Node* AddOwnedNode(std::unique_ptr<CXFA_Node> node);
   void FreeOwnedNode(CXFA_Node* node);
+  bool IsBeingDestroyed() const { return is_being_destroyed_; }
 
  protected:
   CXFA_NodeOwner();
 
+  bool is_being_destroyed_ = false;
   std::set<std::unique_ptr<CXFA_Node>> nodes_;
 };
 

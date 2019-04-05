@@ -1437,8 +1437,6 @@ CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
   return m_pScriptContext.get();
 }
 
-// We have to call |InitScriptContext| before any calls to |GetScriptContext|
-// or the context won't have an isolate set into it.
 CFXJSE_Engine* CXFA_Document::GetScriptContext() const {
   ASSERT(m_pScriptContext);
   return m_pScriptContext.get();

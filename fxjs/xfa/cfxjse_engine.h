@@ -80,7 +80,10 @@ class CFXJSE_Engine final : public CFX_V8 {
                       XFA_RESOLVENODE_RS* resolveNodeRS,
                       uint32_t dwStyles,
                       CXFA_Node* bindNode);
-  CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
+
+  CFXJSE_Value* GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
+  void RemoveJSBindingFromMap(CXFA_Object* pObject);
+
   void AddToCacheList(std::unique_ptr<CXFA_List> pList);
   CXFA_Object* GetThisObject() const { return m_pThisObject.Get(); }
 

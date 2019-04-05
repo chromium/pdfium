@@ -1507,8 +1507,8 @@ void CJX_Object::ScriptSomDataNode(CFXJSE_Value* pValue,
     return;
   }
 
-  pValue->Assign(
-      GetDocument()->GetScriptContext()->GetJSValueFromMap(pDataNode));
+  pValue->Assign(GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
+      pDataNode));
 }
 
 void CJX_Object::ScriptSomMandatory(CFXJSE_Value* pValue,

@@ -144,6 +144,13 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
+void FXJSE_ClearObjectBinding(v8::Local<v8::Object> hObject) {
+  ASSERT(!hObject.IsEmpty());
+  ASSERT(hObject->InternalFieldCount() == 2);
+  hObject->SetAlignedPointerInInternalField(0, nullptr);
+  hObject->SetAlignedPointerInInternalField(1, nullptr);
+}
+
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
     v8::Local<v8::Object> hJSObject) {
   ASSERT(!hJSObject.IsEmpty());

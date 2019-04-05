@@ -31,5 +31,5 @@ void CJX_Xfa::thisValue(CFXJSE_Value* pValue,
     pValue->SetNull();
     return;
   }
-  pValue->Assign(pScriptContext->GetJSValueFromMap(pThis));
+  pValue->Assign(pScriptContext->GetOrCreateJSBindingFromMap(pThis));
 }
