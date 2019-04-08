@@ -33,4 +33,8 @@ using ScopedFPDFWideString = std::unique_ptr<FPDF_WCHAR, pdfium::FreeDeleter>;
 // Deals with differences between UTF16LE and wchar_t.
 ScopedFPDFWideString GetFPDFWideString(const std::wstring& wstr);
 
+// Returns a FPDF_WCHAR vector of |length_bytes| bytes. |length_bytes| must be a
+// multiple of sizeof(FPDF_WCHAR).
+std::vector<FPDF_WCHAR> GetFPDFWideStringBuffer(size_t length_bytes);
+
 #endif  // TESTING_FX_STRING_TESTHELPERS_H_

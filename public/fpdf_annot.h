@@ -422,13 +422,13 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
 //   annot  - handle to an annotation.
 //   key    - the key to the requested dictionary entry, encoded in UTF-8.
 //   buffer - buffer for holding the value string, encoded in UTF16-LE.
-//   buflen - length of the buffer.
+//   buflen - length of the buffer in bytes.
 //
-// Returns the length of the string value.
+// Returns the length of the string value in bytes.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
                          FPDF_BYTESTRING key,
-                         void* buffer,
+                         FPDF_WCHAR* buffer,
                          unsigned long buflen);
 
 // Experimental API.
@@ -478,13 +478,13 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 //   appearanceMode - the appearance mode (normal, rollover or down) for which
 //                    to get the AP.
 //   buffer         - buffer for holding the value string, encoded in UTF16-LE.
-//   buflen         - length of the buffer.
+//   buflen         - length of the buffer in bytes.
 //
-// Returns the length of the string value.
+// Returns the length of the string value in bytes.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
                 FPDF_ANNOT_APPEARANCEMODE appearanceMode,
-                void* buffer,
+                FPDF_WCHAR* buffer,
                 unsigned long buflen);
 
 // Experimental API.
@@ -579,15 +579,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetOptionCount(FPDF_FORMHANDLE hHandle,
 //   annot   - handle to an annotation.
 //   index   - numeric index of the option in the "Opt" array
 //   buffer  - buffer for holding the value string, encoded in UTF16-LE.
-//   buflen  - length of the buffer.
+//   buflen  - length of the buffer in bytes.
 //
-// Returns the length of the string value or 0 if annot does not have "Opt"
-// array, index is out of range or other error.
+// Returns the length of the string value in bytes.
+// If |annot| does not have an "Opt" array, |index| is out of range or if any
+// other error occurs, returns 0.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
                          FPDF_ANNOTATION annot,
                          int index,
-                         void* buffer,
+                         FPDF_WCHAR* buffer,
                          unsigned long buflen);
 
 #ifdef __cplusplus

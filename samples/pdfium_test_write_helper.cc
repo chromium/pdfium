@@ -297,20 +297,17 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
     // Retrieve the annotation's contents and author.
     static constexpr char kContentsKey[] = "Contents";
     static constexpr char kAuthorKey[] = "T";
-    unsigned long len =
+    unsigned long length_bytes =
         FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0);
-    std::vector<char> buf(len);
-    FPDFAnnot_GetStringValue(annot.get(), kContentsKey, buf.data(), len);
-    fprintf(fp, "Content: %ls\n",
-            GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
-                .c_str());
-    len = FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, nullptr, 0);
-    buf.clear();
-    buf.resize(len);
-    FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, buf.data(), len);
-    fprintf(fp, "Author: %ls\n",
-            GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
-                .c_str());
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    FPDFAnnot_GetStringValue(annot.get(), kContentsKey, buf.data(),
+                             length_bytes);
+    fprintf(fp, "Content: %ls\n", GetPlatformWString(buf.data()).c_str());
+    length_bytes =
+        FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, nullptr, 0);
+    buf = GetFPDFWideStringBuffer(length_bytes);
+    FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, buf.data(), length_bytes);
+    fprintf(fp, "Author: %ls\n", GetPlatformWString(buf.data()).c_str());
 
     // Retrieve the annotation's quadpoints if it is a markup annotation.
     if (FPDFAnnot_HasAttachmentPoints(annot.get())) {
