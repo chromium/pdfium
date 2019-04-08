@@ -210,7 +210,7 @@ std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(
     bool bRecursive) {
   int32_t iGlyphIndex = m_pFontEncoding->GlyphFromCharCode(wUnicode);
   if (iGlyphIndex > 0)
-    return {iGlyphIndex, RetainPtr<CFGAS_GEFont>(this)};
+    return {iGlyphIndex, pdfium::WrapRetain(this)};
 
   const FGAS_FONTUSB* pFontUSB = FGAS_GetUnicodeBitField(wUnicode);
   if (!pFontUSB)
@@ -267,6 +267,6 @@ int32_t CFGAS_GEFont::GetDescent() const {
 RetainPtr<CFGAS_GEFont> CFGAS_GEFont::GetSubstFont(int32_t iGlyphIndex) {
   iGlyphIndex = static_cast<uint32_t>(iGlyphIndex) >> 24;
   if (iGlyphIndex == 0)
-    return RetainPtr<CFGAS_GEFont>(this);
+    return pdfium::WrapRetain(this);
   return m_SubstFonts[iGlyphIndex - 1];
 }

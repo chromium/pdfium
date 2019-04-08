@@ -130,6 +130,12 @@ RetainPtr<T> MakeRetain(Args&&... args) {
   return RetainPtr<T>(new T(std::forward<Args>(args)...));
 }
 
+// Type-deducing wrapper to make a RetainPtr from an ordinary pointer.
+template <typename T>
+RetainPtr<T> WrapRetain(T* that) {
+  return RetainPtr<T>(that);
+}
+
 }  // namespace pdfium
 
 #endif  // CORE_FXCRT_RETAIN_PTR_H_
