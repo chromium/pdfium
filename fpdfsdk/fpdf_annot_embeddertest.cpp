@@ -52,7 +52,7 @@ TEST_F(FPDFAnnotEmbedderTest, BadParams) {
 
   EXPECT_FALSE(FPDFAnnot_HasKey(nullptr, "foo"));
 
-  static constexpr wchar_t kContents[] = L"Bar";
+  static const wchar_t kContents[] = L"Bar";
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
       GetFPDFWideString(kContents);
   EXPECT_FALSE(FPDFAnnot_SetStringValue(nullptr, "foo", text.get()));
@@ -94,14 +94,14 @@ TEST_F(FPDFAnnotEmbedderTest, RenderAnnotWithOnlyRolloverAP) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
-  const char md5_hash[] = "76512832d88017668d9acc7aacd13dae";
+  static const char kMd5[] = "76512832d88017668d9acc7aacd13dae";
   // Open a file with multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-  CompareBitmap(bitmap.get(), 595, 842, md5_hash);
+  CompareBitmap(bitmap.get(), 595, 842, kMd5);
 
   UnloadPage(page);
 }
@@ -134,7 +134,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     EXPECT_EQ(255u, A);
 
     // Check that the author is correct.
-    static constexpr char kAuthorKey[] = "T";
+    static const char kAuthorKey[] = "T";
     EXPECT_EQ(FPDF_OBJECT_STRING,
               FPDFAnnot_GetValueType(annot.get(), kAuthorKey));
     unsigned long len =
@@ -155,7 +155,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     EXPECT_EQ(2690u,
               FPDFAnnot_GetStringValue(
                   annot.get(), pdfium::annotation::kContents, buf.data(), len));
-    const wchar_t contents[] =
+    static const wchar_t kContents[] =
         L"This is a note for that highlight annotation. Very long highlight "
         "annotation. Long long long Long long longLong long longLong long "
         "longLong long longLong long longLong long longLong long longLong long "
@@ -176,7 +176,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
         "longLong long longLong long longLong long longLong long longLong long "
         "longLong long longLong long longLong long longLong long longLong long "
         "longLong long long. END";
-    EXPECT_STREQ(contents, BufferToWString(buf).c_str());
+    EXPECT_STREQ(kContents, BufferToWString(buf).c_str());
 
     // Check that the quadpoints are correct.
     FS_QUADPOINTSF quadpoints;
@@ -220,7 +220,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     EXPECT_EQ(2u, FPDFAnnot_GetStringValue(
                       annot.get(), pdfium::annotation::kContents, nullptr, 0));
 
-    // Check that the rectange coordinates are correct.
+    // Check that the rectangle coordinates are correct.
     // Note that upon rendering, the rectangle coordinates will be adjusted.
     FS_RECTF rect;
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
@@ -316,8 +316,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
     EXPECT_EQ(165.f, rect.top);
 
     // Set the content of the annotation.
-    static constexpr wchar_t kContents[] =
-        L"Hello! This is a customized content.";
+    static const wchar_t kContents[] = L"Hello! This is a customized content.";
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
         GetFPDFWideString(kContents);
     ASSERT_TRUE(FPDFAnnot_SetStringValue(
@@ -369,11 +368,11 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   UnloadPage(page);
 
   // Open the saved document.
-  const char md5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
+  static const char kMd5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
 
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
-  VerifySavedRendering(page, 612, 792, md5);
+  VerifySavedRendering(page, 612, 792, kMd5);
 
   // Check that the saved document has 2 annotations on the first page
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
@@ -483,17 +482,20 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
 
 TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char md5_original[] = "63af8432fab95a67cdebb7cd0e514941";
-  const char md5_modified_highlight[] = "aec26075011349dec9bace891856b5f2";
-  const char md5_modified_square[] = "057f57a32be95975775e5ec513fdcb56";
+  static const char kMd5Original[] = "63af8432fab95a67cdebb7cd0e514941";
+  static const char kMd5ModifiedHighlight[] =
+      "aec26075011349dec9bace891856b5f2";
+  static const char kMd5ModifiedSquare[] = "057f57a32be95975775e5ec513fdcb56";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "0e27376094f11490f74c65f3dc3a42c5";
-  const char md5_modified_highlight[] = "66f3caef3a7d488a4fa1ad37fc06310e";
-  const char md5_modified_square[] = "a456dad0bc6801ee2d6408a4394af563";
+  static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
+  static const char kMd5ModifiedHighlight[] =
+      "66f3caef3a7d488a4fa1ad37fc06310e";
+  static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
 #else
-  const char md5_original[] = "0e27376094f11490f74c65f3dc3a42c5";
-  const char md5_modified_highlight[] = "66f3caef3a7d488a4fa1ad37fc06310e";
-  const char md5_modified_square[] = "a456dad0bc6801ee2d6408a4394af563";
+  static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
+  static const char kMd5ModifiedHighlight[] =
+      "66f3caef3a7d488a4fa1ad37fc06310e";
+  static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
 #endif
 
   // Open a file with four annotations and load its first page.
@@ -505,7 +507,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
   // Check that the original file renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 612, 792, md5_original);
+    CompareBitmap(bitmap.get(), 612, 792, kMd5Original);
   }
 
   FS_RECTF rect;
@@ -545,7 +547,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
     // Check that updating quadpoints does not change the annotation's position.
     {
       ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-      CompareBitmap(bitmap.get(), 612, 792, md5_original);
+      CompareBitmap(bitmap.get(), 612, 792, kMd5Original);
     }
 
     // Verify its annotation rectangle.
@@ -566,7 +568,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
   // Check that updating the rectangle changes the annotation's position.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 612, 792, md5_modified_highlight);
+    CompareBitmap(bitmap.get(), 612, 792, kMd5ModifiedHighlight);
   }
 
   {
@@ -586,7 +588,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
     // Check that updating the rectangle changes the square annotation's
     // position.
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 612, 792, md5_modified_square);
+    CompareBitmap(bitmap.get(), 612, 792, kMd5ModifiedSquare);
   }
 
   UnloadPage(page);
@@ -688,20 +690,20 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_modified_path[] = "9059723a045e17478753d2f0eb33bc03";
-  const char md5_two_paths[] = "7eed0cfba780f1d4dd8068f717d3a6bf";
-  const char md5_new_annot[] = "1de8212d43b7066a6df042095c2aca61";
+  static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
+  static const char kMd5ModifiedPath[] = "9059723a045e17478753d2f0eb33bc03";
+  static const char kMd5TwoPaths[] = "7eed0cfba780f1d4dd8068f717d3a6bf";
+  static const char kMd5NewAnnot[] = "1de8212d43b7066a6df042095c2aca61";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  const char md5_modified_path[] = "c0c2eb2aba73ad15b3240e342fbe0d72";
-  const char md5_two_paths[] = "2306bf04915fe001b5f4726843d184c8";
-  const char md5_new_annot[] = "64a319f145768cb09944d2109efe394e";
+  static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
+  static const char kMd5ModifiedPath[] = "c0c2eb2aba73ad15b3240e342fbe0d72";
+  static const char kMd5TwoPaths[] = "2306bf04915fe001b5f4726843d184c8";
+  static const char kMd5NewAnnot[] = "64a319f145768cb09944d2109efe394e";
 #else
-  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_modified_path[] = "9a38048fb3ac1b2c9a4b34139caa993c";
-  const char md5_two_paths[] = "ece3d4df54b3395d6a2bf7a29b17239c";
-  const char md5_new_annot[] = "4299493de84c249f42f220f30f2bbb67";
+  static const char kMd5Original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  static const char kMd5ModifiedPath[] = "9a38048fb3ac1b2c9a4b34139caa993c";
+  static const char kMd5TwoPaths[] = "ece3d4df54b3395d6a2bf7a29b17239c";
+  static const char kMd5NewAnnot[] = "4299493de84c249f42f220f30f2bbb67";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -713,7 +715,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
   }
 
   {
@@ -737,7 +739,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     // Check that the page with the modified annotation renders correctly.
     {
       ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-      CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
+      CompareBitmap(bitmap.get(), 595, 842, kMd5ModifiedPath);
     }
 
     // Add a second path object to the same annotation.
@@ -756,7 +758,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     // Check that the page with an annotation with two paths renders correctly.
     {
       ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-      CompareBitmap(bitmap.get(), 595, 842, md5_two_paths);
+      CompareBitmap(bitmap.get(), 595, 842, kMd5TwoPaths);
     }
 
     // Delete the newly added path object.
@@ -768,7 +770,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   // Check that the page renders the same as before.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5ModifiedPath);
   }
 
   FS_RECTF rect;
@@ -811,7 +813,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   // Open the saved document.
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
-  VerifySavedRendering(page, 595, 842, md5_new_annot);
+  VerifySavedRendering(page, 595, 842, kMd5NewAnnot);
 
   // Check that the document has a correct count of annotations and objects.
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
@@ -890,17 +892,17 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_new_image[] = "ff012f5697436dfcaec25b32d1333596";
-  const char md5_modified_image[] = "86cf8cb2755a7a2046a543e66d9c1e61";
+  static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
+  static const char kMd5NewImage[] = "ff012f5697436dfcaec25b32d1333596";
+  static const char kMd5ModifiedImage[] = "86cf8cb2755a7a2046a543e66d9c1e61";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  const char md5_new_image[] = "d19c6fcfd9a170802fcfb9adfa13557e";
-  const char md5_modified_image[] = "1273cf2363570a50d1aa0c95b1318197";
+  static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
+  static const char kMd5NewImage[] = "d19c6fcfd9a170802fcfb9adfa13557e";
+  static const char kMd5ModifiedImage[] = "1273cf2363570a50d1aa0c95b1318197";
 #else
-  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_new_image[] = "9ea8732dc9d579f68853f16892856208";
-  const char md5_modified_image[] = "74239d2a8c55c9de1dbb9cd8781895aa";
+  static const char kMd5Original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  static const char kMd5NewImage[] = "9ea8732dc9d579f68853f16892856208";
+  static const char kMd5ModifiedImage[] = "74239d2a8c55c9de1dbb9cd8781895aa";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -912,7 +914,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
   }
 
   constexpr int kBitmapSize = 200;
@@ -946,7 +948,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   // Check that the page renders correctly with the new image object.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_new_image);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5NewImage);
   }
 
   {
@@ -970,22 +972,22 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   FPDFBitmap_Destroy(image_bitmap);
 
   // Test that the saved document renders the modified image object correctly.
-  VerifySavedDocument(595, 842, md5_modified_image);
+  VerifySavedDocument(595, 842, kMd5ModifiedImage);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_new_text[] = "60031c1b0330cf1e1575f7d46687d429";
-  const char md5_modified_text[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
+  static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
+  static const char kMd5NewText[] = "60031c1b0330cf1e1575f7d46687d429";
+  static const char kMd5ModifiedText[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  const char md5_new_text[] = "87d55e09f9096de7e6552f5ae79afd3b";
-  const char md5_modified_text[] = "26e94fbd3af4b1e65479327507600114";
+  static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
+  static const char kMd5NewText[] = "87d55e09f9096de7e6552f5ae79afd3b";
+  static const char kMd5ModifiedText[] = "26e94fbd3af4b1e65479327507600114";
 #else
-  const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_new_text[] = "30f3f5b989612ca03827d95f184f0979";
-  const char md5_modified_text[] = "076c8f24a09ddc0e49f7e758edead6f0";
+  static const char kMd5Original[] = "964f89bbe8911e540a465cf1a64b7f7e";
+  static const char kMd5NewText[] = "30f3f5b989612ca03827d95f184f0979";
+  static const char kMd5ModifiedText[] = "076c8f24a09ddc0e49f7e758edead6f0";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -997,7 +999,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
   }
 
   {
@@ -1026,7 +1028,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   // Check that the page renders correctly with the new text object.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_new_text);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5NewText);
   }
 
   {
@@ -1047,14 +1049,14 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   // Check that the page renders correctly with the modified text object.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_modified_text);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5ModifiedText);
   }
 
   // Remove the new annotation, and check that the page renders as before.
   EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
   }
 
   UnloadPage(page);
@@ -1066,7 +1068,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  static constexpr wchar_t kNewDate[] = L"D:201706282359Z00'00'";
+  static const wchar_t kNewDate[] = L"D:201706282359Z00'00'";
 
   {
     // Retrieve the first annotation.
@@ -1084,7 +1086,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
                                            nullptr, 0));
 
     // Check that the string value of the hash is correct.
-    static constexpr char kHashKey[] = "AAPL:Hash";
+    static const char kHashKey[] = "AAPL:Hash";
     EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot.get(), kHashKey));
     unsigned long len =
         FPDFAnnot_GetStringValue(annot.get(), kHashKey, nullptr, 0);
@@ -1116,17 +1118,17 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   UnloadPage(page);
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char md5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
+  static const char kMd5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5[] = "9ee141f698c3fcb56c050dffd6c82624";
+  static const char kMd5[] = "9ee141f698c3fcb56c050dffd6c82624";
 #else
-  const char md5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
+  static const char kMd5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
 #endif
 
   // Open the saved annotation.
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
-  VerifySavedRendering(page, 595, 842, md5);
+  VerifySavedRendering(page, 595, 842, kMd5);
   {
     ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
 
@@ -1249,17 +1251,17 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
     EXPECT_STREQ("", BufferToString(buf).c_str());
 
     // Check that setting the AP for an invalid appearance mode fails.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_text =
         GetFPDFWideString(L"new test ap");
-    EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), -1, apText.get()));
+    EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), -1, ap_text.get()));
     EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_COUNT,
-                                 apText.get()));
+                                 ap_text.get()));
     EXPECT_FALSE(FPDFAnnot_SetAP(
-        annot.get(), FPDF_ANNOT_APPEARANCEMODE_COUNT + 1, apText.get()));
+        annot.get(), FPDF_ANNOT_APPEARANCEMODE_COUNT + 1, ap_text.get()));
 
     // Set the AP correctly now.
     EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
-                                apText.get()));
+                                ap_text.get()));
 
     // Check that the new annotation value is equal to the value we just set.
     rollover_len = FPDFAnnot_GetAP(
@@ -1321,10 +1323,10 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveOptionalAP) {
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_text =
         GetFPDFWideString(L"new test ap");
     EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
-                                apText.get()));
+                                ap_text.get()));
     EXPECT_EQ(73970u,
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               nullptr, 0));
@@ -1357,10 +1359,10 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveRequiredAP) {
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_text =
         GetFPDFWideString(L"new test ap");
     EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
-                                apText.get()));
+                                ap_text.get()));
     EXPECT_EQ(73970u,
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               nullptr, 0));
@@ -1392,7 +1394,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot.get()));
-    static constexpr char kPopupKey[] = "Popup";
+    static const char kPopupKey[] = "Popup";
     ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), kPopupKey));
     ASSERT_EQ(FPDF_OBJECT_REFERENCE,
               FPDFAnnot_GetValueType(annot.get(), kPopupKey));
@@ -1410,7 +1412,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
 
     // Attempting to retrieve |annot|'s "IRT"-linked annotation would fail,
     // since "IRT" is not a key in |annot|'s dictionary.
-    static constexpr char kIRTKey[] = "IRT";
+    static const char kIRTKey[] = "IRT";
     ASSERT_FALSE(FPDFAnnot_HasKey(annot.get(), kIRTKey));
     EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), kIRTKey));
 
@@ -1636,7 +1638,7 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
 
   static const char kTestKey[] = "test";
-  static constexpr wchar_t kData[] = L"\xf6\xe4";
+  static const wchar_t kData[] = L"\xf6\xe4";
   std::vector<char> buf(12);
 
   {
