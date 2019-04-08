@@ -576,11 +576,15 @@ bool CXFA_FFDocView::RunValidate() {
   if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
     return false;
 
-  for (CXFA_Node* node : m_ValidateNodes) {
-    if (!node->HasRemovedChildren())
-      node->ProcessValidate(this, 0);
+  while (!m_ValidateNodes.empty()) {
+    std::vector<CXFA_Node*> nodes = std::move(m_ValidateNodes);
+    m_ValidateNodes.clear();
+    for (CXFA_Node* node : nodes) {
+      if (!node->HasRemovedChildren())
+        node->ProcessValidate(this, 0);
+    }
+    // May have created more nodes to validate, try again.
   }
-  m_ValidateNodes.clear();
   return true;
 }
 
