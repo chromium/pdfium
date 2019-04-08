@@ -27,9 +27,10 @@ std::string GetPlatformString(FPDF_WIDESTRING wstr);
 // Deals with differences between UTF16LE and wchar_t.
 std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
 
+using ScopedFPDFWideString = std::unique_ptr<FPDF_WCHAR, pdfium::FreeDeleter>;
+
 // Returns a newly allocated FPDF_WIDESTRING.
 // Deals with differences between UTF16LE and wchar_t.
-std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
-    const std::wstring& wstr);
+ScopedFPDFWideString GetFPDFWideString(const std::wstring& wstr);
 
 #endif  // TESTING_FX_STRING_TESTHELPERS_H_

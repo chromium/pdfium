@@ -53,8 +53,7 @@ TEST_F(FPDFAnnotEmbedderTest, BadParams) {
   EXPECT_FALSE(FPDFAnnot_HasKey(nullptr, "foo"));
 
   static const wchar_t kContents[] = L"Bar";
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-      GetFPDFWideString(kContents);
+  ScopedFPDFWideString text = GetFPDFWideString(kContents);
   EXPECT_FALSE(FPDFAnnot_SetStringValue(nullptr, "foo", text.get()));
 
   char buffer[128];
@@ -317,8 +316,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
 
     // Set the content of the annotation.
     static const wchar_t kContents[] = L"Hello! This is a customized content.";
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-        GetFPDFWideString(kContents);
+    ScopedFPDFWideString text = GetFPDFWideString(kContents);
     ASSERT_TRUE(FPDFAnnot_SetStringValue(
         annot.get(), pdfium::annotation::kContents, text.get()));
     // Check that the content has been set correctly.
@@ -1017,7 +1015,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
     FPDF_PAGEOBJECT text_object =
         FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
     EXPECT_TRUE(text_object);
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+    ScopedFPDFWideString text =
         GetFPDFWideString(L"I'm a translucent text laying on other text.");
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
     EXPECT_TRUE(FPDFText_SetFillColor(text_object, 0, 0, 255, 150));
@@ -1040,8 +1038,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
     EXPECT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
 
     // Modify the text in the new annotation.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> new_text =
-        GetFPDFWideString(L"New text!");
+    ScopedFPDFWideString new_text = GetFPDFWideString(L"New text!");
     EXPECT_TRUE(FPDFText_SetText(text_object, new_text.get()));
     EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), text_object));
   }
@@ -1107,8 +1104,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
     EXPECT_STREQ(L"D:201706071721Z00'00'", BufferToWString(buf).c_str());
 
     // Update the date entry for the annotation.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-        GetFPDFWideString(kNewDate);
+    ScopedFPDFWideString text = GetFPDFWideString(kNewDate);
     EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), pdfium::annotation::kM,
                                          text.get()));
   }
@@ -1251,8 +1247,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
     EXPECT_STREQ("", BufferToString(buf).c_str());
 
     // Check that setting the AP for an invalid appearance mode fails.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_text =
-        GetFPDFWideString(L"new test ap");
+    ScopedFPDFWideString ap_text = GetFPDFWideString(L"new test ap");
     EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), -1, ap_text.get()));
     EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_COUNT,
                                  ap_text.get()));
@@ -1323,8 +1318,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveOptionalAP) {
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_text =
-        GetFPDFWideString(L"new test ap");
+    ScopedFPDFWideString ap_text = GetFPDFWideString(L"new test ap");
     EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
                                 ap_text.get()));
     EXPECT_EQ(73970u,
@@ -1359,8 +1353,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveRequiredAP) {
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> ap_text =
-        GetFPDFWideString(L"new test ap");
+    ScopedFPDFWideString ap_text = GetFPDFWideString(L"new test ap");
     EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
                                 ap_text.get()));
     EXPECT_EQ(73970u,
@@ -1654,8 +1647,7 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
                                            buf.size()));
     EXPECT_STREQ(L"", BufferToWString(buf).c_str());
 
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-        GetFPDFWideString(kData);
+    ScopedFPDFWideString text = GetFPDFWideString(kData);
     EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), kTestKey, text.get()));
 
     std::fill(buf.begin(), buf.end(), 'x');
@@ -1676,8 +1668,7 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
                               buf.data(), buf.size()));
     EXPECT_STREQ(L"", BufferToWString(buf).c_str());
 
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-        GetFPDFWideString(kData);
+    ScopedFPDFWideString text = GetFPDFWideString(kData);
     EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
                                 text.get()));
 

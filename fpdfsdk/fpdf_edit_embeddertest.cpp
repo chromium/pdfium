@@ -440,8 +440,7 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
   FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
   ASSERT_TRUE(page_object);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text1 =
-      GetFPDFWideString(L"Changed for SetText test");
+  ScopedFPDFWideString text1 = GetFPDFWideString(L"Changed for SetText test");
   EXPECT_TRUE(FPDFText_SetText(page_object, text1.get()));
 
   // Verify the "Hello, world!" text is gone and "Changed for SetText test" is
@@ -1778,7 +1777,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   FPDF_PAGEOBJECT text_object1 =
       FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
   EXPECT_TRUE(text_object1);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text1 =
+  ScopedFPDFWideString text1 =
       GetFPDFWideString(L"I'm at the bottom of the page");
   EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
   FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
@@ -1803,7 +1802,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   FPDF_PAGEOBJECT text_object2 =
       FPDFPageObj_NewTextObj(document(), "TimesNewRomanBold", 15.0f);
   EXPECT_TRUE(text_object2);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text2 =
+  ScopedFPDFWideString text2 =
       GetFPDFWideString(L"Hi, I'm Bold. Times New Roman Bold.");
   EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
   FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
@@ -1828,8 +1827,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   FPDF_PAGEOBJECT text_object3 =
       FPDFPageObj_NewTextObj(document(), "Courier-Bold", 20.0f);
   EXPECT_TRUE(text_object3);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text3 =
-      GetFPDFWideString(L"Can you read me? <:)>");
+  ScopedFPDFWideString text3 = GetFPDFWideString(L"Can you read me? <:)>");
   EXPECT_TRUE(FPDFText_SetText(text_object3, text3.get()));
   FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
   FPDFPage_InsertObject(page, text_object3);
@@ -1999,7 +1997,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText2) {
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_CreateTextObj(document(), font, 12.0f);
   EXPECT_TRUE(text_object);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+  ScopedFPDFWideString text =
       GetFPDFWideString(L"I'm at the bottom of the page");
   EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 20, 20);
@@ -2156,7 +2154,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   // Add some text to the page
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+  ScopedFPDFWideString text =
       GetFPDFWideString(L"Something something #text# something");
   EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 300, 300);
@@ -2345,7 +2343,7 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
     FPDF_PAGEOBJECT text_object =
         FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
     EXPECT_TRUE(text_object);
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+    ScopedFPDFWideString text =
         GetFPDFWideString(L"I am testing my loaded font, WEE.");
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
@@ -2363,8 +2361,7 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
     // Add some more text, same font
     FPDF_PAGEOBJECT text_object2 =
         FPDFPageObj_CreateTextObj(document(), font.get(), 15.0f);
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text2 =
-        GetFPDFWideString(L"Bigger font size");
+    ScopedFPDFWideString text2 = GetFPDFWideString(L"Bigger font size");
     EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
     FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 200, 200);
     FPDFPage_InsertObject(page, text_object2);
@@ -2427,8 +2424,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
         FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
     ASSERT_TRUE(text_object);
     std::wstring wstr = L"ABCDEFGhijklmnop.";
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-        GetFPDFWideString(wstr);
+    ScopedFPDFWideString text = GetFPDFWideString(wstr);
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 200, 200);
     FPDFPage_InsertObject(page, text_object);
@@ -2440,8 +2436,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
     std::wstring wstr2 =
         L"\u3053\u3093\u306B\u3061\u306f\u4e16\u754C\u3002\u3053\u3053\u306B1"
         L"\u756A";
-    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text2 =
-        GetFPDFWideString(wstr2);
+    ScopedFPDFWideString text2 = GetFPDFWideString(wstr2);
     EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
     FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 500);
     FPDFPage_InsertObject(page, text_object2);
@@ -2606,7 +2601,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
       FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
 
   EXPECT_TRUE(text_object);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text1 =
+  ScopedFPDFWideString text1 =
       GetFPDFWideString(L"I am testing my loaded font, WEE.");
   EXPECT_TRUE(FPDFText_SetText(text_object, text1.get()));
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
