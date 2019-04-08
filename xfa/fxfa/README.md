@@ -3,8 +3,9 @@ xfa/fxfa contains a set of CXFA_LayoutItems that model forms containing widgets.
 The main hierarchy in this directory are the form elements:
 
 * CXFA_LayoutItem
-    * CXFA_ContentLayoutItem
+    * CXFA_ContainerLayoutItem
         * CXFA_FFPageView
+    * CXFA_ContentLayoutItem
         * CXFA_FFWidget
             * CXFA_FFArc
             * CXFA_FFImage
