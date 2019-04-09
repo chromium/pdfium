@@ -293,6 +293,9 @@ bool ContentAreasFitInPageAreas(const CXFA_Node* pNode,
     if (pContentAreaNode->GetElementType() != XFA_Element::ContentArea)
       continue;
 
+    if (iCurContentAreaIndex >= rgUsedHeights.size())
+      return false;
+
     const float fHeight = pContentAreaNode->JSObject()->GetMeasureInUnit(
                               XFA_Attribute::H, XFA_Unit::Pt) +
                           kXFALayoutPrecision;
