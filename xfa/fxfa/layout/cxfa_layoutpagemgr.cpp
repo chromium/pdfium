@@ -16,7 +16,6 @@
 #include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
-#include "xfa/fxfa/layout/cxfa_traversestrategy_viewlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentarea.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -35,6 +34,37 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 namespace {
+
+class TraverseStrategy_ViewLayoutItem {
+ public:
+  static CXFA_ViewLayoutItem* GetFirstChild(CXFA_ViewLayoutItem* pLayoutItem) {
+    for (CXFA_LayoutItem* pChildItem = pLayoutItem->GetFirstChild(); pChildItem;
+         pChildItem = pChildItem->GetNextSibling()) {
+      if (CXFA_ViewLayoutItem* pContainer = pChildItem->AsViewLayoutItem()) {
+        return pContainer;
+      }
+    }
+    return nullptr;
+  }
+
+  static CXFA_ViewLayoutItem* GetNextSibling(CXFA_ViewLayoutItem* pLayoutItem) {
+    for (CXFA_LayoutItem* pChildItem = pLayoutItem->GetNextSibling();
+         pChildItem; pChildItem = pChildItem->GetNextSibling()) {
+      if (CXFA_ViewLayoutItem* pContainer = pChildItem->AsViewLayoutItem()) {
+        return pContainer;
+      }
+    }
+    return nullptr;
+  }
+
+  static CXFA_ViewLayoutItem* GetParent(CXFA_ViewLayoutItem* pLayoutItem) {
+    return ToViewLayoutItem(pLayoutItem->GetParent());
+  }
+};
+
+using ViewLayoutItemIterator =
+    CXFA_NodeIteratorTemplate<CXFA_ViewLayoutItem,
+                              TraverseStrategy_ViewLayoutItem>;
 
 class TraverseStrategy_PageSet {
  public:
@@ -1662,9 +1692,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
   for (; pRootLayout;
        pRootLayout = ToViewLayoutItem(pRootLayout->GetNextSibling())) {
     CXFA_Node* pPendingPageSet = nullptr;
-    CXFA_NodeIteratorTemplate<CXFA_ViewLayoutItem,
-                              CXFA_TraverseStrategy_ViewLayoutItem>
-        iterator(pRootLayout);
+    ViewLayoutItemIterator iterator(pRootLayout);
     CXFA_ViewLayoutItem* pRootPageSetViewItem = iterator.GetCurrent();
     ASSERT(pRootPageSetViewItem->GetFormNode()->GetElementType() ==
            XFA_Element::PageSet);
@@ -1829,9 +1857,7 @@ void CXFA_LayoutPageMgr::LayoutPageSetContents() {
   for (CXFA_ViewLayoutItem* pRootLayoutItem = GetRootLayoutItem();
        pRootLayoutItem;
        pRootLayoutItem = ToViewLayoutItem(pRootLayoutItem->GetNextSibling())) {
-    CXFA_NodeIteratorTemplate<CXFA_ViewLayoutItem,
-                              CXFA_TraverseStrategy_ViewLayoutItem>
-        iterator(pRootLayoutItem);
+    ViewLayoutItemIterator iterator(pRootLayoutItem);
     for (CXFA_ViewLayoutItem* pViewItem = iterator.GetCurrent(); pViewItem;
          pViewItem = iterator.MoveToNext()) {
       XFA_Element type = pViewItem->GetFormNode()->GetElementType();
@@ -1852,9 +1878,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
   for (CXFA_ViewLayoutItem* pRootLayoutItem = GetRootLayoutItem();
        pRootLayoutItem;
        pRootLayoutItem = ToViewLayoutItem(pRootLayoutItem->GetNextSibling())) {
-    CXFA_NodeIteratorTemplate<CXFA_ViewLayoutItem,
-                              CXFA_TraverseStrategy_ViewLayoutItem>
-        iteratorParent(pRootLayoutItem);
+    ViewLayoutItemIterator iteratorParent(pRootLayoutItem);
     for (CXFA_ViewLayoutItem* pViewItem = iteratorParent.GetCurrent();
          pViewItem; pViewItem = iteratorParent.MoveToNext()) {
       XFA_Element type = pViewItem->GetFormNode()->GetElementType();

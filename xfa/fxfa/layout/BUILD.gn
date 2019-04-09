@@ -23,7 +23,6 @@ jumbo_source_set("layout") {
     "cxfa_layoutprocessor.cpp",
     "cxfa_layoutprocessor.h",
     "cxfa_traversestrategy_layoutitem.h",
-    "cxfa_traversestrategy_viewlayoutitem.h",
     "cxfa_viewlayoutitem.cpp",
     "cxfa_viewlayoutitem.h",
   ]
