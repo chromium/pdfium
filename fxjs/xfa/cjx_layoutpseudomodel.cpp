@@ -17,11 +17,11 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
+#include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 #include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -167,7 +167,7 @@ CJS_Result CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
   int32_t iPageNum = pDocLayout->CountPages();
   if (bNumbered) {
     for (int32_t i = 0; i < iPageNum; i++) {
-      CXFA_ContainerLayoutItem* pLayoutPage = pDocLayout->GetPage(i);
+      CXFA_ViewLayoutItem* pLayoutPage = pDocLayout->GetPage(i);
       if (!pLayoutPage)
         continue;
 
@@ -221,7 +221,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
     int32_t iPageNo,
     const WideString& wsType,
     bool bOnPageArea) {
-  CXFA_ContainerLayoutItem* pLayoutPage = pDocLayout->GetPage(iPageNo);
+  CXFA_ViewLayoutItem* pLayoutPage = pDocLayout->GetPage(iPageNo);
   if (!pLayoutPage)
     return std::vector<CXFA_Node*>();
 

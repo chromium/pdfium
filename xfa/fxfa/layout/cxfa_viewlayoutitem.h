@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_LAYOUT_CXFA_CONTAINERLAYOUTITEM_H_
-#define XFA_FXFA_LAYOUT_CXFA_CONTAINERLAYOUTITEM_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_
+#define XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_
 
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
-class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
+class CXFA_ViewLayoutItem : public CXFA_LayoutItem {
  public:
-  explicit CXFA_ContainerLayoutItem(CXFA_Node* pNode);
-  ~CXFA_ContainerLayoutItem() override;
+  explicit CXFA_ViewLayoutItem(CXFA_Node* pNode);
+  ~CXFA_ViewLayoutItem() override;
 
   CXFA_LayoutProcessor* GetLayout() const;
   int32_t GetPageIndex() const;
@@ -22,4 +22,4 @@ class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
   UnownedPtr<CXFA_Node> m_pOldSubform;
 };
 
-#endif  // XFA_FXFA_LAYOUT_CXFA_CONTAINERLAYOUTITEM_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_

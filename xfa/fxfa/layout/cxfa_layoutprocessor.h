@@ -13,12 +13,12 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CXFA_ContainerLayoutItem;
 class CXFA_Document;
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutItem;
 class CXFA_LayoutPageMgr;
 class CXFA_Node;
+class CXFA_ViewLayoutItem;
 
 class CXFA_LayoutProcessor {
  public:
@@ -30,11 +30,11 @@ class CXFA_LayoutProcessor {
   int32_t DoLayout();
   bool IncrementLayout();
   int32_t CountPages() const;
-  CXFA_ContainerLayoutItem* GetPage(int32_t index) const;
+  CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
   void AddChangedContainer(CXFA_Node* pContainer);
   void SetForceReLayout(bool bForceRestart) { m_bNeedLayout = bForceRestart; }
-  CXFA_ContainerLayoutItem* GetRootLayoutItem() const;
+  CXFA_ViewLayoutItem* GetRootLayoutItem() const;
   CXFA_ItemLayoutProcessor* GetRootRootItemLayoutProcessor() const {
     return m_pRootItemLayoutProcessor.get();
   }

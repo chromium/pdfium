@@ -18,10 +18,10 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_layoutcontext.h"
 #include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
+#include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_keep.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -964,7 +964,7 @@ CXFA_ItemLayoutProcessor::ProcessKeepNodesForBreakBefore(
 }
 
 void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
-    CXFA_ContainerLayoutItem* pPageAreaLayoutItem) {
+    CXFA_ViewLayoutItem* pPageAreaLayoutItem) {
   CXFA_Node* pFormNode = pPageAreaLayoutItem->GetFormNode();
   CXFA_Node* pCurChildNode = nullptr;
   CXFA_LayoutItem* pBeforeItem = nullptr;

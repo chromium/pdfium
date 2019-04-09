@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/layout/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
@@ -13,16 +13,16 @@
 #include "xfa/fxfa/parser/cxfa_medium.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
-    : CXFA_LayoutItem(pNode, kContainerItem) {}
+CXFA_ViewLayoutItem::CXFA_ViewLayoutItem(CXFA_Node* pNode)
+    : CXFA_LayoutItem(pNode, kViewItem) {}
 
-CXFA_ContainerLayoutItem::~CXFA_ContainerLayoutItem() = default;
+CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() = default;
 
-CXFA_LayoutProcessor* CXFA_ContainerLayoutItem::GetLayout() const {
+CXFA_LayoutProcessor* CXFA_ViewLayoutItem::GetLayout() const {
   return GetFormNode()->GetDocument()->GetLayoutProcessor();
 }
 
-int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
+int32_t CXFA_ViewLayoutItem::GetPageIndex() const {
   return GetFormNode()
       ->GetDocument()
       ->GetLayoutProcessor()
@@ -30,7 +30,7 @@ int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
       ->GetPageIndex(this);
 }
 
-CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
+CFX_SizeF CXFA_ViewLayoutItem::GetPageSize() const {
   CFX_SizeF size;
   CXFA_Medium* pMedium =
       GetFormNode()->GetFirstChildByClass<CXFA_Medium>(XFA_Element::Medium);
@@ -47,6 +47,6 @@ CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
   return size;
 }
 
-CXFA_Node* CXFA_ContainerLayoutItem::GetMasterPage() const {
+CXFA_Node* CXFA_ViewLayoutItem::GetMasterPage() const {
   return GetFormNode();
 }

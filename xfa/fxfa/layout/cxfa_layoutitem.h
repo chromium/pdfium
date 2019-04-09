@@ -10,22 +10,22 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
-class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
+class CXFA_ViewLayoutItem;
 
 class CXFA_LayoutItem {
  public:
   virtual ~CXFA_LayoutItem();
 
-  bool IsContainerLayoutItem() const { return m_ItemType == kContainerItem; }
+  bool IsViewLayoutItem() const { return m_ItemType == kViewItem; }
   bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
-  CXFA_ContainerLayoutItem* AsContainerLayoutItem();
-  const CXFA_ContainerLayoutItem* AsContainerLayoutItem() const;
+  CXFA_ViewLayoutItem* AsViewLayoutItem();
+  const CXFA_ViewLayoutItem* AsViewLayoutItem() const;
   CXFA_ContentLayoutItem* AsContentLayoutItem();
   const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
-  CXFA_ContainerLayoutItem* GetPage() const;
+  CXFA_ViewLayoutItem* GetPage() const;
   CXFA_LayoutItem* GetParent() const { return m_pParent; }
   CXFA_LayoutItem* GetFirstChild() const { return m_pFirstChild; }
   CXFA_LayoutItem* GetNextSibling() const { return m_pNextSibling; }
@@ -43,7 +43,7 @@ class CXFA_LayoutItem {
   void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
 
  protected:
-  enum ItemType { kContainerItem, kContentItem };
+  enum ItemType { kViewItem, kContentItem };
   CXFA_LayoutItem(CXFA_Node* pNode, ItemType type);
 
  private:
@@ -54,8 +54,8 @@ class CXFA_LayoutItem {
   UnownedPtr<CXFA_Node> m_pFormNode;
 };
 
-inline CXFA_ContainerLayoutItem* ToContainerLayoutItem(CXFA_LayoutItem* item) {
-  return item ? item->AsContainerLayoutItem() : nullptr;
+inline CXFA_ViewLayoutItem* ToViewLayoutItem(CXFA_LayoutItem* item) {
+  return item ? item->AsViewLayoutItem() : nullptr;
 }
 
 inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* item) {

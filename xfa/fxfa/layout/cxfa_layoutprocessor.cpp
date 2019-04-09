@@ -109,7 +109,7 @@ int32_t CXFA_LayoutProcessor::CountPages() const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPageCount() : 0;
 }
 
-CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
+CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPage(index) : nullptr;
 }
 
@@ -122,7 +122,7 @@ void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
     m_rgChangedContainers.push_back(pContainer);
 }
 
-CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
+CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetRootLayoutItem() : nullptr;
 }
 

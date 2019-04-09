@@ -111,7 +111,7 @@ bool IsLayoutElement(XFA_Element eElement, bool bLayoutContainer) {
 }  // namespace
 
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
-    : CXFA_ContainerLayoutItem(pPageArea), m_pDocView(pDocView) {}
+    : CXFA_ViewLayoutItem(pPageArea), m_pDocView(pDocView) {}
 
 CXFA_FFPageView::~CXFA_FFPageView() {}
 
@@ -380,7 +380,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
 
 void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     CXFA_LayoutItemIterator* sIterator,
-    CXFA_LayoutItem* pContainerItem,
+    CXFA_LayoutItem* pViewItem,
     CXFA_TabParam* pContainer,
     bool* bCurrentItem,
     bool* bContentArea,
@@ -402,7 +402,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
         pSearchItem = sIterator->MoveToNext();
         continue;
       }
-      if (pContainerItem && (pSearchItem->GetParent() != pContainerItem)) {
+      if (pViewItem && (pSearchItem->GetParent() != pViewItem)) {
         *bCurrentItem = true;
         break;
       }

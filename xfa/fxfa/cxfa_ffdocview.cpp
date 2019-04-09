@@ -431,7 +431,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
   return nullptr;
 }
 
-void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
+void CXFA_FFDocView::OnPageEvent(CXFA_ViewLayoutItem* pSender,
                                  uint32_t dwEvent) {
   CXFA_FFPageView* pFFPageView = static_cast<CXFA_FFPageView*>(pSender);
   m_pDoc->GetDocEnvironment()->PageViewEvent(pFFPageView, dwEvent);

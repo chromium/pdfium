@@ -16,13 +16,13 @@
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CXFA_BindItems;
-class CXFA_ContainerLayoutItem;
-class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;
+class CXFA_FFWidgetHandler;
 class CXFA_Node;
-class CXFA_Subform;
 class CXFA_ReadyNodeIterator;
+class CXFA_Subform;
+class CXFA_ViewLayoutItem;
 
 extern const XFA_AttributeValue gs_EventActivity[];
 enum XFA_DOCVIEW_LAYOUTSTATUS {
@@ -65,7 +65,7 @@ class CXFA_FFDocView {
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
                                  CXFA_FFWidget* pRefWidget);
   CXFA_LayoutProcessor* GetXFALayout() const;
-  void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
+  void OnPageEvent(CXFA_ViewLayoutItem* pSender, uint32_t dwEvent);
   void LockUpdate() { m_iLock++; }
   void UnlockUpdate() { m_iLock--; }
   void InvalidateRect(CXFA_FFPageView* pPageView,

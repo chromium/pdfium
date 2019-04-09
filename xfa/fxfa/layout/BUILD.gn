@@ -10,8 +10,6 @@ assert(pdf_enable_xfa)
 
 jumbo_source_set("layout") {
   sources = [
-    "cxfa_containerlayoutitem.cpp",
-    "cxfa_containerlayoutitem.h",
     "cxfa_contentlayoutitem.cpp",
     "cxfa_contentlayoutitem.h",
     "cxfa_itemlayoutprocessor.cpp",
@@ -24,8 +22,10 @@ jumbo_source_set("layout") {
     "cxfa_layoutpagemgr.h",
     "cxfa_layoutprocessor.cpp",
     "cxfa_layoutprocessor.h",
-    "cxfa_traversestrategy_contentareacontainerlayoutitem.h",
     "cxfa_traversestrategy_layoutitem.h",
+    "cxfa_traversestrategy_viewlayoutitem.h",
+    "cxfa_viewlayoutitem.cpp",
+    "cxfa_viewlayoutitem.h",
   ]
   deps = [
     "../../../core/fxcrt",
