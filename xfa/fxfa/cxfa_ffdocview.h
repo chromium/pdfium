@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFDOCVIEW_H_
 #define XFA_FXFA_CXFA_FFDOCVIEW_H_
 
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -119,10 +120,10 @@ class CXFA_FFDocView {
   UnownedPtr<CXFA_LayoutProcessor> m_pXFADocLayout;
   UnownedPtr<CXFA_Node> m_pFocusNode;
   UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
-  std::vector<CXFA_Node*> m_ValidateNodes;
+  std::deque<CXFA_Node*> m_ValidateNodes;
   std::vector<CXFA_Node*> m_CalculateNodes;
   std::vector<CXFA_BindItems*> m_BindItems;
-  std::vector<CXFA_Node*> m_NewAddedNodes;
+  std::deque<CXFA_Node*> m_NewAddedNodes;
   std::vector<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
   int32_t m_iLock = 0;

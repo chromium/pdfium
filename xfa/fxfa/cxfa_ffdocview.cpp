@@ -171,14 +171,11 @@ void CXFA_FFDocView::UpdateDocView() {
 
   LockUpdate();
   while (!m_NewAddedNodes.empty()) {
-    std::vector<CXFA_Node*> nodes = std::move(m_NewAddedNodes);
-    m_NewAddedNodes.clear();
-    for (CXFA_Node* pNode : nodes) {
-      InitCalculate(pNode);
-      InitValidate(pNode);
-      ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Ready, true, true);
-    }
-    // May have created more newly added nodes, try again.
+    CXFA_Node* pNode = m_NewAddedNodes.front();
+    m_NewAddedNodes.pop_front();
+    InitCalculate(pNode);
+    InitValidate(pNode);
+    ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Ready, true, true);
   }
 
   RunSubformIndexChange();
@@ -577,13 +574,10 @@ bool CXFA_FFDocView::RunValidate() {
     return false;
 
   while (!m_ValidateNodes.empty()) {
-    std::vector<CXFA_Node*> nodes = std::move(m_ValidateNodes);
-    m_ValidateNodes.clear();
-    for (CXFA_Node* node : nodes) {
-      if (!node->HasRemovedChildren())
-        node->ProcessValidate(this, 0);
-    }
-    // May have created more nodes to validate, try again.
+    CXFA_Node* node = m_ValidateNodes.front();
+    m_ValidateNodes.pop_front();
+    if (!node->HasRemovedChildren())
+      node->ProcessValidate(this, 0);
   }
   return true;
 }
