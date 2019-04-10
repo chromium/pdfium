@@ -77,6 +77,10 @@ class CXFA_LayoutPageMgr {
     auto iter = m_ProposedViewRecords.end();
     return !m_ProposedViewRecords.empty() ? std::prev(iter) : iter;
   }
+  CXFA_ViewRecord* AppendNewRecord(CXFA_ViewRecord* pNewRecord) {
+    m_ProposedViewRecords.push_back(pNewRecord);
+    return pNewRecord;
+  }
   CXFA_ViewRecord* CreateViewRecord(CXFA_Node* pPageNode, bool bCreateNew);
   CXFA_ViewRecord* CreateViewRecordSimple();
   void AddPageAreaLayoutItem(CXFA_ViewRecord* pNewRecord,

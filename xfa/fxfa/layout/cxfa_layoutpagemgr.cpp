@@ -591,48 +591,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
                                                       bool bCreateNew) {
   ASSERT(pPageNode);
   CXFA_ViewRecord* pNewRecord = new CXFA_ViewRecord();
-  if (HasCurrentViewRecord()) {
-    if (!IsPageSetRootOrderedOccurrence()) {
-      *pNewRecord = *GetCurrentViewRecord();
-      m_ProposedViewRecords.push_back(pNewRecord);
-      return pNewRecord;
-    }
-    CXFA_Node* pPageSet = pPageNode->GetParent();
-    if (!bCreateNew) {
-      if (pPageSet == m_pTemplatePageSetRoot) {
-        pNewRecord->pCurPageSet = m_pPageSetCurRoot;
-      } else {
-        CXFA_ViewLayoutItem* pParentLayoutItem =
-            ToViewLayoutItem(pPageSet->JSObject()->GetLayoutItem());
-        if (!pParentLayoutItem)
-          pParentLayoutItem = m_pPageSetCurRoot;
-
-        pNewRecord->pCurPageSet = pParentLayoutItem;
-      }
-    } else {
-      CXFA_ViewLayoutItem* pParentPageSetLayout = nullptr;
-      if (pPageSet == GetCurrentViewRecord()->pCurPageSet->GetFormNode()) {
-        pParentPageSetLayout =
-            ToViewLayoutItem(GetCurrentViewRecord()->pCurPageSet->GetParent());
-      } else {
-        pParentPageSetLayout = ToViewLayoutItem(
-            pPageSet->GetParent()->JSObject()->GetLayoutItem());
-      }
-      auto* pPageSetLayoutItem = new CXFA_ViewLayoutItem(pPageSet);
-      pPageSet->JSObject()->SetLayoutItem(pPageSetLayoutItem);
-      if (!pParentPageSetLayout) {
-        CXFA_ViewLayoutItem* pPrePageSet = m_pPageSetLayoutItemRoot;
-        while (pPrePageSet->GetNextSibling()) {
-          pPrePageSet = pPrePageSet->GetNextSibling()->AsViewLayoutItem();
-        }
-        pPrePageSet->SetNextSibling(pPageSetLayoutItem);
-        m_pPageSetCurRoot = pPageSetLayoutItem;
-      } else {
-        pParentPageSetLayout->AddChild(pPageSetLayoutItem);
-      }
-      pNewRecord->pCurPageSet = pPageSetLayoutItem;
-    }
-  } else {
+  if (!HasCurrentViewRecord()) {
     CXFA_Node* pPageSet = pPageNode->GetParent();
     if (pPageSet == m_pTemplatePageSetRoot) {
       pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
@@ -643,9 +602,51 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
       m_pPageSetLayoutItemRoot->AddChild(pPageSetLayoutItem);
       pNewRecord->pCurPageSet = pPageSetLayoutItem;
     }
+    return AppendNewRecord(pNewRecord);
   }
-  m_ProposedViewRecords.push_back(pNewRecord);
-  return pNewRecord;
+
+  if (!IsPageSetRootOrderedOccurrence()) {
+    *pNewRecord = *GetCurrentViewRecord();
+    return AppendNewRecord(pNewRecord);
+  }
+
+  CXFA_Node* pPageSet = pPageNode->GetParent();
+  if (!bCreateNew) {
+    if (pPageSet == m_pTemplatePageSetRoot) {
+      pNewRecord->pCurPageSet = m_pPageSetCurRoot;
+    } else {
+      CXFA_ViewLayoutItem* pParentLayoutItem =
+          ToViewLayoutItem(pPageSet->JSObject()->GetLayoutItem());
+      if (!pParentLayoutItem)
+        pParentLayoutItem = m_pPageSetCurRoot;
+
+      pNewRecord->pCurPageSet = pParentLayoutItem;
+    }
+    return AppendNewRecord(pNewRecord);
+  }
+
+  CXFA_ViewLayoutItem* pParentPageSetLayout = nullptr;
+  if (pPageSet == GetCurrentViewRecord()->pCurPageSet->GetFormNode()) {
+    pParentPageSetLayout =
+        ToViewLayoutItem(GetCurrentViewRecord()->pCurPageSet->GetParent());
+  } else {
+    pParentPageSetLayout =
+        ToViewLayoutItem(pPageSet->GetParent()->JSObject()->GetLayoutItem());
+  }
+  auto* pPageSetLayoutItem = new CXFA_ViewLayoutItem(pPageSet);
+  pPageSet->JSObject()->SetLayoutItem(pPageSetLayoutItem);
+  if (!pParentPageSetLayout) {
+    CXFA_ViewLayoutItem* pPrePageSet = m_pPageSetLayoutItemRoot;
+    while (pPrePageSet->GetNextSibling()) {
+      pPrePageSet = pPrePageSet->GetNextSibling()->AsViewLayoutItem();
+    }
+    pPrePageSet->SetNextSibling(pPageSetLayoutItem);
+    m_pPageSetCurRoot = pPageSetLayoutItem;
+  } else {
+    pParentPageSetLayout->AddChild(pPageSetLayoutItem);
+  }
+  pNewRecord->pCurPageSet = pPageSetLayoutItem;
+  return AppendNewRecord(pNewRecord);
 }
 
 CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecordSimple() {
@@ -654,8 +655,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecordSimple() {
     *pNewRecord = *GetCurrentViewRecord();
   else
     pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
-  m_ProposedViewRecords.push_back(pNewRecord);
-  return pNewRecord;
+  return AppendNewRecord(pNewRecord);
 }
 
 void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ViewRecord* pNewRecord,
