@@ -2607,14 +2607,14 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
     if (eNullTest != XFA_AttributeValue::Disabled)
       iRet = XFA_EVENTERROR_Error;
 
-    if (!wsNullMsg.IsEmpty()) {
-      if (eNullTest != XFA_AttributeValue::Disabled) {
-        pDocView->m_arrNullTestMsg.push_back(wsNullMsg);
-        return XFA_EVENTERROR_Error;
-      }
-      return XFA_EVENTERROR_Success;
+    if (wsNullMsg.IsEmpty())
+      return iRet;
+
+    if (eNullTest != XFA_AttributeValue::Disabled) {
+      pDocView->m_arrNullTestMsg.push_back(wsNullMsg);
+      return XFA_EVENTERROR_Error;
     }
-    return iRet;
+    return XFA_EVENTERROR_Success;
   }
   if (wsNullMsg.IsEmpty() && bVersionFlag &&
       eNullTest != XFA_AttributeValue::Disabled) {
@@ -3775,69 +3775,71 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
 
     bCanSplitNoContent = true;
   }
-  if (bCanSplitNoContent) {
-    if ((fCalcHeight - fTopInset - fSpaceAbove < fLineHeight))
-      return 0.0f;
+  if (!bCanSplitNoContent ||
+      fCalcHeight - fTopInset - fSpaceAbove < fLineHeight) {
+    return 0.0f;
+  }
 
-    if (fStartOffset + kXFAWidgetPrecision >= fCalcHeight) {
+  if (fStartOffset + kXFAWidgetPrecision >= fCalcHeight) {
+    if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+      (*pFieldArray)[szBlockIndex * 3 + 1] = 0;
+      (*pFieldArray)[szBlockIndex * 3 + 2] = fCalcHeight;
+    } else {
+      pFieldArray->push_back(0);
+      pFieldArray->push_back(fCalcHeight);
+    }
+    return pdfium::nullopt;
+  }
+
+  if (fCalcHeight - fStartOffset < fLineHeight) {
+    fCalcHeight = fStartOffset;
+    if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+      (*pFieldArray)[szBlockIndex * 3 + 1] = 0;
+      (*pFieldArray)[szBlockIndex * 3 + 2] = fCalcHeight;
+    } else {
+      pFieldArray->push_back(0);
+      pFieldArray->push_back(fCalcHeight);
+    }
+    return fCalcHeight;
+  }
+
+  float fTextNum =
+      fCalcHeight + kXFAWidgetPrecision - fCapReserve - fStartOffset;
+  int32_t iLineNum =
+      (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
+  if (iLineNum >= iLinesCount) {
+    if (fCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
       if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
-        (*pFieldArray)[szBlockIndex * 3 + 1] = 0;
+        (*pFieldArray)[szBlockIndex * 3 + 1] = iLinesCount;
         (*pFieldArray)[szBlockIndex * 3 + 2] = fCalcHeight;
       } else {
-        pFieldArray->push_back(0);
+        pFieldArray->push_back(iLinesCount);
         pFieldArray->push_back(fCalcHeight);
       }
       return pdfium::nullopt;
     }
-    if (fCalcHeight - fStartOffset < fLineHeight) {
-      fCalcHeight = fStartOffset;
-      if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
-        (*pFieldArray)[szBlockIndex * 3 + 1] = 0;
-        (*pFieldArray)[szBlockIndex * 3 + 2] = fCalcHeight;
-      } else {
-        pFieldArray->push_back(0);
-        pFieldArray->push_back(fCalcHeight);
-      }
-      return fCalcHeight;
-    }
-    float fTextNum =
-        fCalcHeight + kXFAWidgetPrecision - fCapReserve - fStartOffset;
-    int32_t iLineNum =
-        (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
-    if (iLineNum >= iLinesCount) {
-      if (fCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
-        if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
-          (*pFieldArray)[szBlockIndex * 3 + 1] = iLinesCount;
-          (*pFieldArray)[szBlockIndex * 3 + 2] = fCalcHeight;
-        } else {
-          pFieldArray->push_back(iLinesCount);
-          pFieldArray->push_back(fCalcHeight);
-        }
-        return pdfium::nullopt;
-      }
-      if (fHeight - fStartOffset - fTextHeight < fFontSize) {
-        iLineNum -= 1;
-        if (iLineNum == 0)
-          return 0.0f;
-      } else {
-        iLineNum = (int32_t)(fTextNum / fLineHeight);
-      }
-    }
-    if (iLineNum > 0) {
-      float fSplitHeight = iLineNum * fLineHeight + fCapReserve + fStartOffset;
-      if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
-        (*pFieldArray)[szBlockIndex * 3 + 1] = iLineNum;
-        (*pFieldArray)[szBlockIndex * 3 + 2] = fSplitHeight;
-      } else {
-        pFieldArray->push_back(iLineNum);
-        pFieldArray->push_back(fSplitHeight);
-      }
-      if (fabs(fSplitHeight - fCalcHeight) < kXFAWidgetPrecision)
-        return pdfium::nullopt;
-      return fSplitHeight;
+    if (fHeight - fStartOffset - fTextHeight < fFontSize) {
+      iLineNum -= 1;
+      if (iLineNum == 0)
+        return 0.0f;
+    } else {
+      iLineNum = (int32_t)(fTextNum / fLineHeight);
     }
   }
-  return 0.0f;
+  if (iLineNum <= 0)
+    return 0.0f;
+
+  float fSplitHeight = iLineNum * fLineHeight + fCapReserve + fStartOffset;
+  if (szFieldSplitCount / 3 == (szBlockIndex + 1)) {
+    (*pFieldArray)[szBlockIndex * 3 + 1] = iLineNum;
+    (*pFieldArray)[szBlockIndex * 3 + 2] = fSplitHeight;
+  } else {
+    pFieldArray->push_back(iLineNum);
+    pFieldArray->push_back(fSplitHeight);
+  }
+  if (fabs(fSplitHeight - fCalcHeight) < kXFAWidgetPrecision)
+    return pdfium::nullopt;
+  return fSplitHeight;
 }
 
 void CXFA_Node::InitLayoutData() {
