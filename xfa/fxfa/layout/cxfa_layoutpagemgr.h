@@ -67,6 +67,9 @@ class CXFA_LayoutPageMgr {
     return m_CurrentViewRecordIter != m_ProposedViewRecords.end();
   }
   CXFA_ViewRecord* GetCurrentViewRecord() { return *m_CurrentViewRecordIter; }
+  const CXFA_ViewRecord* GetCurrentViewRecord() const {
+    return *m_CurrentViewRecordIter;
+  }
   void ResetToFirstViewRecord() {
     m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
   }
@@ -83,6 +86,7 @@ class CXFA_LayoutPageMgr {
                 XFA_AttributeValue eTargetType,
                 CXFA_Node* pTarget,
                 bool bStartNew);
+  bool ShouldGetNextPageArea(CXFA_Node* pTarget, bool bStartNew) const;
   bool BreakOverflow(const CXFA_Node* pOverflowNode,
                      bool bCreatePage,
                      CXFA_Node** pLeaderTemplate,

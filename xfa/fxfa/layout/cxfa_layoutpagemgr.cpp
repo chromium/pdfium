@@ -735,9 +735,7 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
     case XFA_AttributeValue::ContentArea:
       if (pTarget && pTarget->GetElementType() != XFA_Element::ContentArea)
         pTarget = nullptr;
-      if (!pTarget || !HasCurrentViewRecord() ||
-          pTarget != GetCurrentViewRecord()->pCurContentArea->GetFormNode() ||
-          bStartNew) {
+      if (ShouldGetNextPageArea(pTarget, bStartNew)) {
         CXFA_Node* pPageArea = nullptr;
         if (pTarget)
           pPageArea = pTarget->GetParent();
@@ -749,9 +747,7 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
     case XFA_AttributeValue::PageArea:
       if (pTarget && pTarget->GetElementType() != XFA_Element::PageArea)
         pTarget = nullptr;
-      if (!pTarget || !HasCurrentViewRecord() ||
-          pTarget != GetCurrentViewRecord()->pCurPageArea->GetFormNode() ||
-          bStartNew) {
+      if (ShouldGetNextPageArea(pTarget, bStartNew)) {
         CXFA_Node* pPageArea =
             GetNextAvailPageArea(pTarget, nullptr, true, false);
         bRet = !!pPageArea;
@@ -770,6 +766,12 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
       break;
   }
   return bRet;
+}
+
+bool CXFA_LayoutPageMgr::ShouldGetNextPageArea(CXFA_Node* pTarget,
+                                               bool bStartNew) const {
+  return bStartNew || !pTarget || !HasCurrentViewRecord() ||
+         pTarget != GetCurrentViewRecord()->pCurPageArea->GetFormNode();
 }
 
 CXFA_LayoutPageMgr::BreakData CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
