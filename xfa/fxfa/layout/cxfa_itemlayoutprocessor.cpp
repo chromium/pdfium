@@ -18,6 +18,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_layoutcontext.h"
 #include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
@@ -639,9 +640,9 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     m_pOldLayoutItem = m_pOldLayoutItem->GetNext();
     return pLayoutItem;
   }
-  pLayoutItem = pFormNode->GetDocument()
-                    ->GetNotify()
-                    ->OnCreateContentLayoutItem(pFormNode)
+  CXFA_FFNotify* pNotify = pFormNode->GetDocument()->GetNotify();
+  pLayoutItem = pdfium::MakeUnique<CXFA_ContentLayoutItem>(
+                    pFormNode, pNotify->OnCreateContentLayoutItem(pFormNode))
                     .release();
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       ToContentLayoutItem(pFormNode->JSObject()->GetLayoutItem());

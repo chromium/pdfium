@@ -107,14 +107,14 @@ std::unique_ptr<CXFA_ViewLayoutItem> CXFA_FFNotify::OnCreateViewLayoutItem(
   return nullptr;
 }
 
-std::unique_ptr<CXFA_ContentLayoutItem>
-CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
+std::unique_ptr<CXFA_FFWidget> CXFA_FFNotify::OnCreateContentLayoutItem(
+    CXFA_Node* pNode) {
   ASSERT(pNode->GetElementType() != XFA_Element::ContentArea);
   ASSERT(pNode->GetElementType() != XFA_Element::PageArea);
 
   // We only need to create the widget for certain types of objects.
   if (!pNode->HasCreatedUIWidget())
-    return pdfium::MakeUnique<CXFA_ContentLayoutItem>(pNode);
+    return nullptr;
 
   std::unique_ptr<CXFA_FFWidget> pWidget;
   switch (pNode->GetFFWidgetType()) {

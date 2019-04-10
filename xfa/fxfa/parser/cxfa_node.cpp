@@ -3164,7 +3164,7 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
 }
 
 CXFA_FFWidget* CXFA_Node::GetNextWidget(CXFA_FFWidget* pWidget) {
-  return ToFFWidget(pWidget->GetNext());
+  return GetFFWidget(pWidget->GetLayoutItem()->GetNext());
 }
 
 void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* pDocView,

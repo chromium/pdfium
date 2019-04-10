@@ -197,8 +197,8 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetCurrentWidget() {
   return pLayoutItem ? XFA_GetWidgetFromLayoutItem(pLayoutItem) : nullptr;
 }
 
-bool CXFA_FFPageWidgetIterator::SetCurrentWidget(CXFA_FFWidget* hWidget) {
-  return hWidget && m_sIterator.SetCurrent(hWidget);
+bool CXFA_FFPageWidgetIterator::SetCurrentWidget(CXFA_FFWidget* pWidget) {
+  return pWidget && m_sIterator.SetCurrent(pWidget->GetLayoutItem());
 }
 
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetWidget(

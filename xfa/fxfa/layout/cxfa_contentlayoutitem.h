@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_
 #define XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_
 
+#include <memory>
+
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
@@ -14,10 +16,11 @@ class CXFA_FFWidget;
 
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
-  explicit CXFA_ContentLayoutItem(CXFA_Node* pNode);
+  CXFA_ContentLayoutItem(CXFA_Node* pNode,
+                         std::unique_ptr<CXFA_FFWidget> pFFWidget);
   ~CXFA_ContentLayoutItem() override;
 
-  virtual CXFA_FFWidget* AsFFWidget();
+  CXFA_FFWidget* GetFFWidget() { return m_pFFWidget.get(); }
 
   CXFA_ContentLayoutItem* GetFirst();
   CXFA_ContentLayoutItem* GetLast();
@@ -37,10 +40,11 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
 
   UnownedPtr<CXFA_ContentLayoutItem> m_pPrev;
   UnownedPtr<CXFA_ContentLayoutItem> m_pNext;
+  std::unique_ptr<CXFA_FFWidget> const m_pFFWidget;
 };
 
-inline CXFA_FFWidget* ToFFWidget(CXFA_ContentLayoutItem* item) {
-  return item ? item->AsFFWidget() : nullptr;
+inline CXFA_FFWidget* GetFFWidget(CXFA_ContentLayoutItem* item) {
+  return item ? item->GetFFWidget() : nullptr;
 }
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTITEM_H_

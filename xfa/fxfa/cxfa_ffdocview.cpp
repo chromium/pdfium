@@ -249,7 +249,7 @@ void CXFA_FFDocView::ResetNode(CXFA_Node* pNode) {
 }
 
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
-  return ToFFWidget(ToContentLayoutItem(GetXFALayout()->GetLayoutItem(node)));
+  return GetFFWidget(ToContentLayoutItem(GetXFALayout()->GetLayoutItem(node)));
 }
 
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {

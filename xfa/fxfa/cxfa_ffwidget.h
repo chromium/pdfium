@@ -61,15 +61,12 @@ class CXFA_CalcData {
   int32_t m_iRefCount;
 };
 
-class CXFA_FFWidget : public CXFA_ContentLayoutItem {
+class CXFA_FFWidget {
  public:
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
 
   explicit CXFA_FFWidget(CXFA_Node* pNode);
-  ~CXFA_FFWidget() override;
-
-  // CXFA_ContentLayoutItem:
-  CXFA_FFWidget* AsFFWidget() override;
+  virtual ~CXFA_FFWidget();
 
   virtual CFX_RectF GetBBox(uint32_t dwStatus, FocusOption focus);
   virtual void RenderWidget(CXFA_Graphics* pGS,
@@ -121,9 +118,11 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual void Delete();
   virtual void DeSelect();
   virtual WideString GetText();
-
   virtual FormFieldType GetFormFieldType();
 
+  CXFA_Node* GetNode() const { return m_pNode.Get(); }
+  CXFA_ContentLayoutItem* GetLayoutItem() const { return m_pLayoutItem.Get(); }
+  void SetLayoutItem(CXFA_ContentLayoutItem* pItem) { m_pLayoutItem = pItem; }
   CXFA_FFPageView* GetPageView() const { return m_pPageView.Get(); }
   void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
   CXFA_FFDocView* GetDocView() const { return m_pDocView.Get(); }
@@ -134,13 +133,13 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   uint32_t GetStatus();
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
 
-  CXFA_Node* GetNode() const { return m_pNode.Get(); }
-
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
   void InvalidateRect();
-  bool IsFocused() const { return !!(m_dwStatus & XFA_WidgetStatus_Focused); }
+  bool IsFocused() const {
+    return !!(GetLayoutItem()->m_dwStatus & XFA_WidgetStatus_Focused);
+  }
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
   CFX_Matrix GetRotateMatrix();
   bool IsLayoutRectEmpty();
@@ -167,6 +166,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   bool IsButtonDown();
   void SetButtonDown(bool bSet);
 
+  UnownedPtr<CXFA_ContentLayoutItem> m_pLayoutItem;
   UnownedPtr<CXFA_FFDocView> m_pDocView;
   UnownedPtr<CXFA_FFPageView> m_pPageView;
   UnownedPtr<CXFA_Node> const m_pNode;

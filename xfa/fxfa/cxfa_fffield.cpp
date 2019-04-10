@@ -35,8 +35,8 @@
 
 namespace {
 
-CXFA_FFField* ToField(CXFA_LayoutItem* widget) {
-  return static_cast<CXFA_FFField*>(widget);
+CXFA_FFField* ToField(CXFA_ContentLayoutItem* pItem) {
+  return pItem ? static_cast<CXFA_FFField*>(pItem->GetFFWidget()) : nullptr;
 }
 
 }  // namespace
@@ -103,7 +103,7 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
 }
 
 void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
-  if (!(m_dwStatus & XFA_WidgetStatus_Focused))
+  if (!(GetLayoutItem()->m_dwStatus & XFA_WidgetStatus_Focused))
     return;
 
   pGS->SetStrokeColor(CXFA_GEColor(0xFF000000));
@@ -142,13 +142,13 @@ void CXFA_FFField::SetEditScrollOffset() {
   }
 
   float fScrollOffset = 0;
-  CXFA_FFField* pPrev = ToField(GetPrev());
+  CXFA_FFField* pPrev = ToField(GetLayoutItem()->GetPrev());
   if (pPrev)
     fScrollOffset = -(m_pNode->GetUIMargin().top);
 
   while (pPrev) {
     fScrollOffset += pPrev->m_rtUI.height;
-    pPrev = ToField(pPrev->GetPrev());
+    pPrev = ToField(pPrev->GetLayoutItem()->GetPrev());
   }
   static_cast<CFWL_Edit*>(m_pNormalWidget.get())
       ->SetScrollOffset(fScrollOffset);
@@ -169,7 +169,7 @@ void CXFA_FFField::CapPlacement() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin) {
-    CXFA_ContentLayoutItem* pItem = this;
+    CXFA_ContentLayoutItem* pItem = GetLayoutItem();
     float fLeftInset = margin->GetLeftInset();
     float fRightInset = margin->GetRightInset();
     float fTopInset = margin->GetTopInset();
@@ -191,8 +191,10 @@ void CXFA_FFField::CapPlacement() {
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (caption && !caption->IsHidden()) {
     iCapPlacement = caption->GetPlacementType();
-    if ((iCapPlacement == XFA_AttributeValue::Top && GetPrev()) ||
-        (iCapPlacement == XFA_AttributeValue::Bottom && GetNext())) {
+    if ((iCapPlacement == XFA_AttributeValue::Top &&
+         GetLayoutItem()->GetPrev()) ||
+        (iCapPlacement == XFA_AttributeValue::Bottom &&
+         GetLayoutItem()->GetNext())) {
       m_rtCaption = CFX_RectF();
     } else {
       fCapReserve = caption->GetReserve();
@@ -202,7 +204,7 @@ void CXFA_FFField::CapPlacement() {
       } else {
         fCapReserve = std::min(fCapReserve, rtWidget.width);
       }
-      CXFA_ContentLayoutItem* pItem = this;
+      CXFA_ContentLayoutItem* pItem = GetLayoutItem();
       if (!pItem->GetPrev() && !pItem->GetNext()) {
         m_rtCaption = rtWidget;
       } else {
@@ -499,7 +501,7 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 
   CFWL_MessageSetFocus ms(nullptr, m_pNormalWidget.get());
   TranslateFWLMessage(&ms);
-  m_dwStatus |= XFA_WidgetStatus_Focused;
+  GetLayoutItem()->m_dwStatus |= XFA_WidgetStatus_Focused;
   InvalidateRect();
   return true;
 }
@@ -510,7 +512,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 
   CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget.get());
   TranslateFWLMessage(&ms);
-  m_dwStatus &= ~XFA_WidgetStatus_Focused;
+  GetLayoutItem()->m_dwStatus &= ~XFA_WidgetStatus_Focused;
   InvalidateRect();
   CXFA_FFWidget::OnKillFocus(pNewWidget);
   return true;

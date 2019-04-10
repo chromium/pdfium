@@ -150,7 +150,7 @@ CFX_RectF CXFA_FWLTheme::GetUIMargin(const CFWL_ThemePart& pThemePart) const {
   if (!pWidget)
     return CFX_RectF();
 
-  CXFA_ContentLayoutItem* pItem = pWidget;
+  CXFA_ContentLayoutItem* pItem = pWidget->GetLayoutItem();
   CXFA_Node* pNode = pWidget->GetNode();
   CFX_RectF rect = pNode->GetUIMargin();
   CXFA_Para* para = pNode->GetParaIfExists();
