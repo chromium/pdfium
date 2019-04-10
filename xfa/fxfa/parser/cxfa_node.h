@@ -291,9 +291,9 @@ class CXFA_Node : public CXFA_Object {
   void StartWidgetLayout(CXFA_FFDoc* doc,
                          float* pCalcWidth,
                          float* pCalcHeight);
-  bool FindSplitPos(CXFA_FFDocView* docView,
-                    size_t szBlockIndex,
-                    float* pCalcHeight);
+  Optional<float> FindSplitPos(CXFA_FFDocView* docView,
+                               size_t szBlockIndex,
+                               float fCalcHeight);
 
   bool LoadCaption(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetCaptionTextLayout();
