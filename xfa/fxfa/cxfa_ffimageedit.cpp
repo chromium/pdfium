@@ -54,7 +54,7 @@ bool CXFA_FFImageEdit::LoadWidget() {
 void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
                                     const CFX_Matrix& matrix,
                                     uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();

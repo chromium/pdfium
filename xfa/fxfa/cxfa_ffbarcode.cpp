@@ -136,7 +136,7 @@ bool CXFA_FFBarcode::LoadWidget() {
 void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
                                   const CFX_Matrix& matrix,
                                   uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();

@@ -18,7 +18,7 @@ CXFA_FFExclGroup::~CXFA_FFExclGroup() {}
 void CXFA_FFExclGroup::RenderWidget(CXFA_Graphics* pGS,
                                     const CFX_Matrix& matrix,
                                     uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();

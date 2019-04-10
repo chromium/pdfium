@@ -227,7 +227,7 @@ void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeValue iCapPlacement) {
 void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
                                       const CFX_Matrix& matrix,
                                       uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();

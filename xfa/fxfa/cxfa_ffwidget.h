@@ -161,7 +161,7 @@ class CXFA_FFWidget {
                           bool forceRound);
 
   CFX_RectF GetRectWithoutRotate();
-  bool IsMatchVisibleStatus(uint32_t dwStatus);
+  bool HasVisibleStatus() const;
   void EventKillFocus();
   bool IsButtonDown();
   void SetButtonDown(bool bSet);

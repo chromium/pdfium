@@ -26,7 +26,7 @@ CXFA_FFText::~CXFA_FFText() {}
 void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
                                const CFX_Matrix& matrix,
                                uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();

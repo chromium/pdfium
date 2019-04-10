@@ -64,7 +64,7 @@ CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, FocusOption focus) {
 void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
                                 const CFX_Matrix& matrix,
                                 uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();

@@ -295,7 +295,7 @@ CFX_RectF CXFA_FFWidget::GetBBox(uint32_t dwStatus, FocusOption focus) {
 void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
                                  const CFX_Matrix& matrix,
                                  uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus))
+  if (!HasVisibleStatus())
     return;
 
   CXFA_Border* border = m_pNode->GetBorderIfExists();
@@ -305,7 +305,6 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtBorder = GetRectWithoutRotate();
   CXFA_Margin* margin = border->GetMarginIfExists();
   XFA_RectWithoutMargin(&rtBorder, margin);
-
   rtBorder.Normalize();
   DrawBorder(pGS, border, rtBorder, matrix);
 }
@@ -597,7 +596,7 @@ IXFA_AppProvider* CXFA_FFWidget::GetAppProvider() {
   return GetApp()->GetAppProvider();
 }
 
-bool CXFA_FFWidget::IsMatchVisibleStatus(uint32_t dwStatus) {
+bool CXFA_FFWidget::HasVisibleStatus() const {
   return !!(GetLayoutItem()->m_dwStatus & XFA_WidgetStatus_Visible);
 }
 
