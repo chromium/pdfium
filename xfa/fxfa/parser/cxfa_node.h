@@ -258,15 +258,15 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* GetExclGroupIfExists();
 
-  int32_t ProcessEvent(CXFA_FFDocView* docView,
+  int32_t ProcessEvent(CXFA_FFDocView* pDocView,
                        XFA_AttributeValue iActivity,
                        CXFA_EventParam* pEventParam);
-  int32_t ProcessCalculate(CXFA_FFDocView* docView);
-  int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
-  int32_t ExecuteScript(CXFA_FFDocView* docView,
+  int32_t ProcessCalculate(CXFA_FFDocView* pDocView);
+  int32_t ProcessValidate(CXFA_FFDocView* pDocView, int32_t iFlags);
+  int32_t ExecuteScript(CXFA_FFDocView* pDocView,
                         CXFA_Script* script,
                         CXFA_EventParam* pEventParam);
-  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* docView,
+  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* pDocView,
                                              CXFA_Script* script,
                                              CXFA_EventParam* pEventParam);
 
@@ -291,7 +291,7 @@ class CXFA_Node : public CXFA_Object {
   void StartWidgetLayout(CXFA_FFDoc* doc,
                          float* pCalcWidth,
                          float* pCalcHeight);
-  Optional<float> FindSplitPos(CXFA_FFDocView* docView,
+  Optional<float> FindSplitPos(CXFA_FFDocView* pDocView,
                                size_t szBlockIndex,
                                float fCalcHeight);
 
@@ -308,7 +308,7 @@ class CXFA_Node : public CXFA_Object {
   RetainPtr<CFX_DIBitmap> GetImageEditImage();
   void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
-  void UpdateUIDisplay(CXFA_FFDocView* docView, CXFA_FFWidget* pExcept);
+  void UpdateUIDisplay(CXFA_FFDocView* pDocView, CXFA_FFWidget* pExcept);
 
   RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
 
@@ -399,15 +399,15 @@ class CXFA_Node : public CXFA_Object {
   virtual XFA_FFWidgetType GetDefaultFFWidgetType() const;
 
  private:
-  void ProcessScriptTestValidate(CXFA_FFDocView* docView,
+  void ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
                                  CXFA_Validate* validate,
                                  int32_t iRet,
                                  bool pRetValue,
                                  bool bVersionFlag);
-  int32_t ProcessFormatTestValidate(CXFA_FFDocView* docView,
+  int32_t ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
                                     CXFA_Validate* validate,
                                     bool bVersionFlag);
-  int32_t ProcessNullTestValidate(CXFA_FFDocView* docView,
+  int32_t ProcessNullTestValidate(CXFA_FFDocView* pDocView,
                                   CXFA_Validate* validate,
                                   int32_t iFlags,
                                   bool bVersionFlag);
@@ -479,7 +479,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<float> TryMinHeight();
   Optional<float> TryMaxWidth();
   Optional<float> TryMaxHeight();
-  int32_t ProcessEvent(CXFA_FFDocView* docView,
+  int32_t ProcessEvent(CXFA_FFDocView* pDocView,
                        XFA_AttributeValue iActivity,
                        CXFA_Event* event,
                        CXFA_EventParam* pEventParam);

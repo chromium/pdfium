@@ -2411,7 +2411,7 @@ CXFA_Node* CXFA_Node::GetExclGroupIfExists() {
   return pExcl;
 }
 
-int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
+int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* pDocView,
                                 XFA_AttributeValue iActivity,
                                 CXFA_EventParam* pEventParam) {
   if (GetElementType() == XFA_Element::Draw)
@@ -2422,7 +2422,7 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
   bool first = true;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   for (CXFA_Event* event : eventArray) {
-    int32_t result = ProcessEvent(docView, iActivity, event, pEventParam);
+    int32_t result = ProcessEvent(pDocView, iActivity, event, pEventParam);
     if (first || result == XFA_EVENTERROR_Success)
       iRet = result;
     first = false;
@@ -2430,7 +2430,7 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
   return iRet;
 }
 
-int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
+int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* pDocView,
                                 XFA_AttributeValue iActivity,
                                 CXFA_Event* event,
                                 CXFA_EventParam* pEventParam) {
@@ -2445,7 +2445,7 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
         // Too late, scripting engine already gone.
         return false;
       }
-      return ExecuteScript(docView, event->GetScriptIfExists(), pEventParam);
+      return ExecuteScript(pDocView, event->GetScriptIfExists(), pEventParam);
     case XFA_Element::SignData:
       break;
     case XFA_Element::Submit: {
@@ -2455,8 +2455,8 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
       CXFA_Submit* submit = event->GetSubmitIfExists();
       if (!submit)
         return XFA_EVENTERROR_NotExist;
-      return docView->GetDoc()->GetDocEnvironment()->Submit(docView->GetDoc(),
-                                                            submit);
+      return pDocView->GetDoc()->GetDocEnvironment()->Submit(pDocView->GetDoc(),
+                                                             submit);
 #else
       return XFA_EVENTERROR_Disabled;
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
@@ -2467,7 +2467,7 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
   return XFA_EVENTERROR_NotExist;
 }
 
-int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* docView) {
+int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
@@ -2479,18 +2479,19 @@ int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* docView) {
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
-  int32_t iRet = ExecuteScript(docView, calc->GetScriptIfExists(), &EventParam);
+  int32_t iRet =
+      ExecuteScript(pDocView, calc->GetScriptIfExists(), &EventParam);
   if (iRet != XFA_EVENTERROR_Success)
     return iRet;
 
   if (GetRawValue() != EventParam.m_wsResult) {
     SetValue(XFA_VALUEPICTURE_Raw, EventParam.m_wsResult);
-    UpdateUIDisplay(docView, nullptr);
+    UpdateUIDisplay(pDocView, nullptr);
   }
   return XFA_EVENTERROR_Success;
 }
 
-void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
+void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
                                           CXFA_Validate* validate,
                                           int32_t iRet,
                                           bool bRetValue,
@@ -2501,7 +2502,7 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
     return;
 
   IXFA_AppProvider* pAppProvider =
-      docView->GetDoc()->GetApp()->GetAppProvider();
+      pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
     return;
 
@@ -2535,7 +2536,7 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
                        static_cast<uint32_t>(AlertButton::kOK));
 }
 
-int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
+int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
                                              CXFA_Validate* validate,
                                              bool bVersionFlag) {
   WideString wsPicture = validate->GetPicture();
@@ -2555,7 +2556,7 @@ int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
     return XFA_EVENTERROR_Success;
 
   IXFA_AppProvider* pAppProvider =
-      docView->GetDoc()->GetApp()->GetAppProvider();
+      pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
     return XFA_EVENTERROR_NotExist;
 
@@ -2590,7 +2591,7 @@ int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
   return XFA_EVENTERROR_Error;
 }
 
-int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
+int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
                                            CXFA_Validate* validate,
                                            int32_t iFlags,
                                            bool bVersionFlag) {
@@ -2608,7 +2609,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
 
     if (!wsNullMsg.IsEmpty()) {
       if (eNullTest != XFA_AttributeValue::Disabled) {
-        docView->m_arrNullTestMsg.push_back(wsNullMsg);
+        pDocView->m_arrNullTestMsg.push_back(wsNullMsg);
         return XFA_EVENTERROR_Error;
       }
       return XFA_EVENTERROR_Success;
@@ -2620,7 +2621,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
     return XFA_EVENTERROR_Error;
   }
   IXFA_AppProvider* pAppProvider =
-      docView->GetDoc()->GetApp()->GetAppProvider();
+      pDocView->GetDoc()->GetApp()->GetAppProvider();
   if (!pAppProvider)
     return XFA_EVENTERROR_NotExist;
 
@@ -2662,7 +2663,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
   return XFA_EVENTERROR_Success;
 }
 
-int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
+int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView, int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
@@ -2671,7 +2672,7 @@ int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
     return XFA_EVENTERROR_NotExist;
 
   bool bInitDoc = validate->NeedsInitApp();
-  bool bStatus = docView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
+  bool bStatus = pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   CXFA_Script* script = validate->GetScriptIfExists();
@@ -2681,10 +2682,10 @@ int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Validate;
     eParam.m_pTarget = this;
-    std::tie(iRet, bRet) = ExecuteBoolScript(docView, script, &eParam);
+    std::tie(iRet, bRet) = ExecuteBoolScript(pDocView, script, &eParam);
   }
 
-  XFA_VERSION version = docView->GetDoc()->GetXFADoc()->GetCurVersionMode();
+  XFA_VERSION version = pDocView->GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bVersionFlag = false;
   if (version < XFA_VERSION_208)
     bVersionFlag = true;
@@ -2692,17 +2693,17 @@ int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
   if (bInitDoc) {
     validate->ClearFlag(XFA_NodeFlag_NeedsInitApp);
   } else {
-    iFormat = ProcessFormatTestValidate(docView, validate, bVersionFlag);
+    iFormat = ProcessFormatTestValidate(pDocView, validate, bVersionFlag);
     if (!bVersionFlag) {
       bVersionFlag =
-          docView->GetDoc()->GetXFADoc()->HasFlag(XFA_DOCFLAG_Scripting);
+          pDocView->GetDoc()->GetXFADoc()->HasFlag(XFA_DOCFLAG_Scripting);
     }
 
-    iRet |= ProcessNullTestValidate(docView, validate, iFlags, bVersionFlag);
+    iRet |= ProcessNullTestValidate(pDocView, validate, iFlags, bVersionFlag);
   }
 
   if (iFormat != XFA_EVENTERROR_Success && hasBoolResult)
-    ProcessScriptTestValidate(docView, validate, iRet, bRet, bVersionFlag);
+    ProcessScriptTestValidate(pDocView, validate, iRet, bRet, bVersionFlag);
 
   return iRet | iFormat;
 }
@@ -2739,17 +2740,17 @@ WideString CXFA_Node::GetValidateMessage(bool bError, bool bVersionFlag) {
   return result;
 }
 
-int32_t CXFA_Node::ExecuteScript(CXFA_FFDocView* docView,
+int32_t CXFA_Node::ExecuteScript(CXFA_FFDocView* pDocView,
                                  CXFA_Script* script,
                                  CXFA_EventParam* pEventParam) {
   bool bRet;
   int32_t iRet;
-  std::tie(iRet, bRet) = ExecuteBoolScript(docView, script, pEventParam);
+  std::tie(iRet, bRet) = ExecuteBoolScript(pDocView, script, pEventParam);
   return iRet;
 }
 
 std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
-    CXFA_FFDocView* docView,
+    CXFA_FFDocView* pDocView,
     CXFA_Script* script,
     CXFA_EventParam* pEventParam) {
   if (m_ExecuteRecursionDepth > kMaxExecuteRecursion)
@@ -2769,7 +2770,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
   if (eScriptType == CXFA_Script::Type::Unknown)
     return {XFA_EVENTERROR_Success, false};
 
-  CXFA_FFDoc* pDoc = docView->GetDoc();
+  CXFA_FFDoc* pDoc = pDocView->GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
   pContext->SetEventParam(pEventParam);
   pContext->SetRunAtType(script->GetRunAt());
@@ -2806,7 +2807,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
         if ((iRet == XFA_EVENTERROR_Success) &&
             (GetRawValue() != pEventParam->m_wsResult)) {
           SetValue(XFA_VALUEPICTURE_Raw, pEventParam->m_wsResult);
-          docView->AddValidateNode(this);
+          pDocView->AddValidateNode(this);
         }
       }
       for (CXFA_Node* pRefNode : refNodes) {
@@ -3166,9 +3167,9 @@ CXFA_FFWidget* CXFA_Node::GetNextWidget(CXFA_FFWidget* pWidget) {
   return ToFFWidget(pWidget->GetNext());
 }
 
-void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* docView,
+void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* pDocView,
                                 CXFA_FFWidget* pExcept) {
-  CXFA_FFWidget* pWidget = docView->GetWidgetForNode(this);
+  CXFA_FFWidget* pWidget = pDocView->GetWidgetForNode(this);
   for (; pWidget; pWidget = GetNextWidget(pWidget)) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
         (GetFFWidgetType() != XFA_FFWidgetType::kCheckButton &&
@@ -3619,7 +3620,7 @@ CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
   return sz;
 }
 
-Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
+Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
                                         size_t szBlockIndex,
                                         float fCalcHeight) {
   if (GetFFWidgetType() == XFA_FFWidgetType::kSubform)
@@ -3693,8 +3694,8 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     iLinesCount = 1;
   } else {
     if (!pFieldData->m_pTextOut) {
-      CFX_SizeF size =
-          CalculateAccWidthAndHeight(docView->GetDoc(), TryWidth().value_or(0));
+      CFX_SizeF size = CalculateAccWidthAndHeight(pDocView->GetDoc(),
+                                                  TryWidth().value_or(0));
       fHeight = size.height;
     }
 
@@ -3754,7 +3755,7 @@ Optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
   else
     pFieldArray->push_back(fStartOffset);
 
-  XFA_VERSION version = docView->GetDoc()->GetXFADoc()->GetCurVersionMode();
+  XFA_VERSION version = pDocView->GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
   auto value = GetParent()->JSObject()->TryEnum(XFA_Attribute::Layout, true);
   XFA_AttributeValue eLayoutMode = value.value_or(XFA_AttributeValue::Position);
