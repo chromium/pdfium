@@ -352,9 +352,9 @@ float CXFA_TextLayout::DoSplitLayout(size_t szBlockIndex,
       szLineIndex = m_Blocks[szBlockIndex].szIndex;
     else
       szLineIndex = GetNextIndexFromLastBlockData();
-    if (!m_pLoader->blockHeights.empty()) {
-      for (size_t i = 0; i < szBlockIndex; ++i)
-        fLinePos -= m_pLoader->blockHeights[i].fHeight;
+    for (size_t i = 0;
+         i < std::min(szBlockIndex, m_pLoader->blockHeights.size()); ++i) {
+      fLinePos -= m_pLoader->blockHeights[i].fHeight;
     }
   }
 
