@@ -124,7 +124,7 @@ class CXFA_FFDocView {
   std::vector<CXFA_Node*> m_CalculateNodes;
   std::vector<CXFA_BindItems*> m_BindItems;
   std::deque<CXFA_Node*> m_NewAddedNodes;
-  std::vector<CXFA_Node*> m_IndexChangedSubforms;
+  std::deque<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
   int32_t m_iLock = 0;
 };
