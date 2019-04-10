@@ -498,7 +498,7 @@ bool CXFA_LayoutPageMgr::PrepareFirstPage(CXFA_Node* pRootSubform) {
   if (pBreakBeforeNode) {
     BreakData ret = ExecuteBreakBeforeOrAfter(pBreakBeforeNode, true);
     if (ret.bCreatePage) {
-      m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
+      ResetToFirstViewRecord();
       return true;
     }
   }
@@ -513,11 +513,9 @@ bool CXFA_LayoutPageMgr::AppendNewPage(bool bFirstTemPage) {
   if (!pPageNode)
     return false;
 
-  if (bFirstTemPage && m_CurrentViewRecordIter == m_ProposedViewRecords.end()) {
-    m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
-  }
-  return !bFirstTemPage ||
-         m_CurrentViewRecordIter != m_ProposedViewRecords.end();
+  if (bFirstTemPage && !HasCurrentViewRecord())
+    ResetToFirstViewRecord();
+  return !bFirstTemPage || HasCurrentViewRecord();
 }
 
 void CXFA_LayoutPageMgr::RemoveLayoutRecord(CXFA_ViewRecord* pNewRecord,
@@ -592,7 +590,7 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
 CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
                                                       bool bCreateNew) {
   CXFA_ViewRecord* pNewRecord = new CXFA_ViewRecord();
-  if (m_CurrentViewRecordIter != m_ProposedViewRecords.end()) {
+  if (HasCurrentViewRecord()) {
     if (!IsPageSetRootOrderedOccurrence() || !pPageNode) {
       *pNewRecord = *GetCurrentViewRecord();
       m_ProposedViewRecords.push_back(pNewRecord);
@@ -737,7 +735,7 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
     case XFA_AttributeValue::ContentArea:
       if (pTarget && pTarget->GetElementType() != XFA_Element::ContentArea)
         pTarget = nullptr;
-      if (!pTarget || m_CurrentViewRecordIter == m_ProposedViewRecords.end() ||
+      if (!pTarget || !HasCurrentViewRecord() ||
           pTarget != GetCurrentViewRecord()->pCurContentArea->GetFormNode() ||
           bStartNew) {
         CXFA_Node* pPageArea = nullptr;
@@ -751,7 +749,7 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
     case XFA_AttributeValue::PageArea:
       if (pTarget && pTarget->GetElementType() != XFA_Element::PageArea)
         pTarget = nullptr;
-      if (!pTarget || m_CurrentViewRecordIter == m_ProposedViewRecords.end() ||
+      if (!pTarget || !HasCurrentViewRecord() ||
           pTarget != GetCurrentViewRecord()->pCurPageArea->GetFormNode() ||
           bStartNew) {
         CXFA_Node* pPageArea =
@@ -1096,10 +1094,9 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet(CXFA_Node* pPageSet,
                                            pTargetPageArea, pTargetContentArea,
                                            bNewPage, bQuery);
   }
-  XFA_AttributeValue ePreferredPosition =
-      m_CurrentViewRecordIter != m_ProposedViewRecords.end()
-          ? XFA_AttributeValue::Rest
-          : XFA_AttributeValue::First;
+  XFA_AttributeValue ePreferredPosition = HasCurrentViewRecord()
+                                              ? XFA_AttributeValue::Rest
+                                              : XFA_AttributeValue::First;
   return FindPageAreaFromPageSet_SimplexDuplex(
       pPageSet, pStartChild, pTargetPageArea, pTargetContentArea, bNewPage,
       bQuery, ePreferredPosition);

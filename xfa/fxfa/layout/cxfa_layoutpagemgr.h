@@ -63,7 +63,13 @@ class CXFA_LayoutPageMgr {
                                         CXFA_ViewRecord* pPrevRecord);
   void RemoveLayoutRecord(CXFA_ViewRecord* pNewRecord,
                           CXFA_ViewRecord* pPrevRecord);
+  bool HasCurrentViewRecord() const {
+    return m_CurrentViewRecordIter != m_ProposedViewRecords.end();
+  }
   CXFA_ViewRecord* GetCurrentViewRecord() { return *m_CurrentViewRecordIter; }
+  void ResetToFirstViewRecord() {
+    m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
+  }
   std::list<CXFA_ViewRecord*>::iterator GetTailPosition() {
     auto iter = m_ProposedViewRecords.end();
     return !m_ProposedViewRecords.empty() ? std::prev(iter) : iter;
