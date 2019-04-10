@@ -839,6 +839,29 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
   VerifySavedDocument(300, 300, md5_3);
 }
 
+// Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_FFLDraw(). The two rendered
+// bitmaps should be different.
+TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
+  const char kMd5Normal[] = "6c674642154408e877d88c6c082d67e9";
+  // TODO(https://crbug.com/pdfium/1281): This should be
+  // 24fff03d1e663b7ece5f6e69ad837124.
+  const char kMd5ReverseByteOrder[] = "6c674642154408e877d88c6c082d67e9";
+
+  ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFBitmap bitmap_normal = RenderLoadedPage(page);
+  CompareBitmap(bitmap_normal.get(), 200, 200, kMd5Normal);
+
+  ScopedFPDFBitmap bitmap_reverse_byte_order =
+      RenderLoadedPageWithFlags(page, FPDF_REVERSE_BYTE_ORDER);
+  CompareBitmap(bitmap_reverse_byte_order.get(), 200, 200,
+                kMd5ReverseByteOrder);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFFormFillEmbedderTest, HasFormInfoNone) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(FORMTYPE_NONE, FPDF_GetFormType(document_));
