@@ -843,9 +843,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
 // bitmaps should be different.
 TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
   const char kMd5Normal[] = "6c674642154408e877d88c6c082d67e9";
-  // TODO(https://crbug.com/pdfium/1281): This should be
-  // 24fff03d1e663b7ece5f6e69ad837124.
-  const char kMd5ReverseByteOrder[] = "6c674642154408e877d88c6c082d67e9";
+  const char kMd5ReverseByteOrder[] = "24fff03d1e663b7ece5f6e69ad837124";
 
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
   FPDF_PAGE page = LoadPage(0);

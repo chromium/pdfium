@@ -199,7 +199,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #endif
 
   RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->Attach(holder, false, nullptr, false);
+  pDevice->Attach(holder, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
   {
     CFX_RenderDevice::StateRestorer restorer(pDevice.get());
     pDevice->SetClip_Rect(rect);
