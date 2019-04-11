@@ -40,6 +40,7 @@
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkShader.h"
 #include "third_party/skia/include/core/SkStream.h"
+#include "third_party/skia/include/core/SkTextBlob.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
@@ -900,15 +901,17 @@ class SkiaState {
     SkPaint skPaint;
     skPaint.setAntiAlias(true);
     skPaint.setColor(m_fillColor);
+
+    SkFont font;
     if (m_pTypeFace) {  // exclude placeholder test fonts
       sk_sp<SkTypeface> typeface(SkSafeRef(m_pTypeFace.Get()));
-      skPaint.setTypeface(typeface);
+      font.setTypeface(typeface);
     }
-    skPaint.setTextEncoding(kGlyphID_SkTextEncoding);
-    skPaint.setHinting(kNo_SkFontHinting);
-    skPaint.setTextScaleX(m_scaleX);
-    skPaint.setTextSize(SkTAbs(m_fontSize));
-    skPaint.setSubpixelText(true);
+    font.setHinting(kNo_SkFontHinting);
+    font.setScaleX(m_scaleX);
+    font.setSize(SkTAbs(m_fontSize));
+    font.setSubpixel(true);
+
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
     skCanvas->save();
     SkScalar flip = m_fontSize < 0 ? -1 : 1;
@@ -925,13 +928,19 @@ class SkiaState {
       printf("%lc", m_glyphs[i]);
     printf("\n");
 #endif
+
+    sk_sp<SkTextBlob> blob;
     if (m_rsxform.count()) {
-      skCanvas->drawTextRSXform(m_glyphs.begin(), m_glyphs.bytes(),
-                                m_rsxform.begin(), nullptr, skPaint);
+      blob = SkTextBlob::MakeFromRSXform(m_glyphs.begin(), m_glyphs.bytes(),
+                                         m_rsxform.begin(), font,
+                                         kGlyphID_SkTextEncoding);
     } else {
-      skCanvas->drawPosText(m_glyphs.begin(), m_glyphs.bytes(),
-                            m_positions.begin(), skPaint);
+      blob = SkTextBlob::MakeFromPosText(m_glyphs.begin(), m_glyphs.bytes(),
+                                         m_positions.begin(), font,
+                                         kGlyphID_SkTextEncoding);
     }
+    skCanvas->drawTextBlob(blob, 0, 0, skPaint);
+
     skCanvas->restore();
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
@@ -1553,11 +1562,13 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setColor(color);
-  paint.setTypeface(typeface);
-  paint.setTextEncoding(kGlyphID_SkTextEncoding);
-  paint.setHinting(kNo_SkFontHinting);
-  paint.setTextSize(SkTAbs(font_size));
-  paint.setSubpixelText(true);
+
+  SkFont font;
+  font.setTypeface(typeface);
+  font.setHinting(kNo_SkFontHinting);
+  font.setSize(SkTAbs(font_size));
+  font.setSubpixel(true);
+
   m_pCanvas->save();
   SkScalar flip = font_size < 0 ? -1 : 1;
   SkScalar vFlip = flip;
@@ -1618,18 +1629,22 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
         rsxform->fTy = positions[index].fY;
       }
     }
-    m_pCanvas->drawTextRSXform(glyphs.begin(), nChars * 2, xforms.begin(),
-                               nullptr, paint);
+    m_pCanvas->drawTextBlob(
+        SkTextBlob::MakeFromRSXform(glyphs.begin(), nChars * 2, xforms.begin(),
+                                    font, kGlyphID_SkTextEncoding),
+        0, 0, paint);
   } else if (oneAtATime) {
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
       if (cp.m_bGlyphAdjust) {
         if (0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2] &&
             1 == cp.m_AdjustMatrix[3]) {
-          paint.setTextScaleX(cp.m_AdjustMatrix[0]);
-          m_pCanvas->drawText(&glyphs[index], 1, positions[index].fX,
-                              positions[index].fY, paint);
-          paint.setTextScaleX(1);
+          font.setScaleX(cp.m_AdjustMatrix[0]);
+          auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
+                                               kGlyphID_SkTextEncoding);
+          m_pCanvas->drawTextBlob(blob, positions[index].fX,
+                                  positions[index].fY, paint);
+          font.setScaleX(1);
         } else {
           m_pCanvas->save();
           SkMatrix adjust;
@@ -1640,17 +1655,23 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
           adjust.setScaleY(cp.m_AdjustMatrix[3]);
           adjust.preTranslate(positions[index].fX, positions[index].fY);
           m_pCanvas->concat(adjust);
-          m_pCanvas->drawText(&glyphs[index], 1, 0, 0, paint);
+          auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
+                                               kGlyphID_SkTextEncoding);
+          m_pCanvas->drawTextBlob(blob, 0, 0, paint);
           m_pCanvas->restore();
         }
       } else {
-        m_pCanvas->drawText(&glyphs[index], 1, positions[index].fX,
-                            positions[index].fY, paint);
+        auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
+                                             kGlyphID_SkTextEncoding);
+        m_pCanvas->drawTextBlob(blob, positions[index].fX, positions[index].fY,
+                                paint);
       }
     }
   } else {
-    m_pCanvas->drawPosText(glyphs.begin(), nChars * 2, positions.begin(),
-                           paint);
+    m_pCanvas->drawTextBlob(SkTextBlob::MakeFromPosText(
+                                glyphs.begin(), nChars * 2, positions.begin(),
+                                font, kGlyphID_SkTextEncoding),
+                            0, 0, paint);
   }
   m_pCanvas->restore();
 
