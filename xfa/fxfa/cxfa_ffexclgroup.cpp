@@ -17,12 +17,12 @@ CXFA_FFExclGroup::~CXFA_FFExclGroup() {}
 
 void CXFA_FFExclGroup::RenderWidget(CXFA_Graphics* pGS,
                                     const CFX_Matrix& matrix,
-                                    uint32_t dwStatus) {
+                                    HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 }

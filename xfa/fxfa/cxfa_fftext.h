@@ -24,7 +24,7 @@ class CXFA_FFText final : public CXFA_FFWidget {
   FWL_WidgetHit OnHitTest(const CFX_PointF& point) override;
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
-                    uint32_t dwStatus) override;
+                    HighlightOption highlight) override;
   bool IsLoaded() override;
   bool PerformLayout() override;
 

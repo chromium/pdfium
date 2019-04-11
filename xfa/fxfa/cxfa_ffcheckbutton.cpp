@@ -226,18 +226,19 @@ void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeValue iCapPlacement) {
 
 void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
                                       const CFX_Matrix& matrix,
-                                      uint32_t dwStatus) {
+                                      HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
   DrawBorderWithFlag(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate,
                      button_->IsRound());
   RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, dwStatus, button_->IsRound());
+  DrawHighlight(pGS, &mtRotate, highlight,
+                button_->IsRound() ? kRoundShape : kSquareShape);
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);

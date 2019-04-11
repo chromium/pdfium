@@ -135,14 +135,14 @@ bool CXFA_FFBarcode::LoadWidget() {
 
 void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
                                   const CFX_Matrix& matrix,
-                                  uint32_t dwStatus) {
+                                  HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();

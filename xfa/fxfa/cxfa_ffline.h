@@ -17,7 +17,7 @@ class CXFA_FFLine final : public CXFA_FFWidget {
   // CXFA_FFWidget
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
-                    uint32_t dwStatus) override;
+                    HighlightOption highlight) override;
 
  private:
   void GetRectFromHand(CFX_RectF& rect,

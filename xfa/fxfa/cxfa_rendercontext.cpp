@@ -23,12 +23,11 @@ CXFA_RenderContext::~CXFA_RenderContext() = default;
 
 void CXFA_RenderContext::DoRender(CXFA_Graphics* gs) {
   while (m_pWidget) {
-    CFX_RectF rtWidgetBox = m_pWidget->GetBBox(XFA_WidgetStatus_Visible,
-                                               CXFA_FFWidget::kDoNotDrawFocus);
+    CFX_RectF rtWidgetBox = m_pWidget->GetBBox(CXFA_FFWidget::kDoNotDrawFocus);
     ++rtWidgetBox.width;
     ++rtWidgetBox.height;
     if (rtWidgetBox.IntersectWith(m_rtClipRect))
-      m_pWidget->RenderWidget(gs, m_matrix, XFA_WidgetStatus_Highlight);
+      m_pWidget->RenderWidget(gs, m_matrix, CXFA_FFWidget::kHighlight);
 
     m_pWidget = m_pWidgetIterator->MoveToNext();
   }

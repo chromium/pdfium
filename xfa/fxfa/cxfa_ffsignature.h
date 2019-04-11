@@ -17,7 +17,7 @@ class CXFA_FFSignature final : public CXFA_FFField {
   // CXFA_FFField
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
-                    uint32_t dwStatus) override;
+                    HighlightOption highlight) override;
   bool LoadWidget() override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;

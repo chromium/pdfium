@@ -26,7 +26,7 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
   ~CXFA_FFDateTimeEdit() override;
 
   // CXFA_FFTextEdit
-  CFX_RectF GetBBox(uint32_t dwStatus, FocusOption focus) override;
+  CFX_RectF GetBBox(FocusOption focus) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
   void OnProcessEvent(CFWL_Event* pEvent) override;

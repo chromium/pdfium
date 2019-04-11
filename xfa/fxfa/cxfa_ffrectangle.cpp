@@ -15,7 +15,7 @@ CXFA_FFRectangle::~CXFA_FFRectangle() {}
 
 void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
                                     const CFX_Matrix& matrix,
-                                    uint32_t dwStatus) {
+                                    HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 

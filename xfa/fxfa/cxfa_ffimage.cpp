@@ -34,14 +34,14 @@ bool CXFA_FFImage::LoadWidget() {
 
 void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
                                 const CFX_Matrix& matrix,
-                                uint32_t dwStatus) {
+                                HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
   RetainPtr<CFX_DIBitmap> pDIBitmap = GetNode()->GetImageImage();
   if (!pDIBitmap)

@@ -198,8 +198,9 @@ void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                                         CXFA_Graphics* pGS,
                                         const CFX_Matrix& matrix,
                                         bool bHighlight) {
-  hWidget->RenderWidget(pGS, matrix,
-                        bHighlight ? XFA_WidgetStatus_Highlight : 0);
+  hWidget->RenderWidget(
+      pGS, matrix,
+      bHighlight ? CXFA_FFWidget::kHighlight : CXFA_FFWidget::kNoHighlight);
 }
 
 bool CXFA_FFWidgetHandler::HasEvent(CXFA_Node* pNode,

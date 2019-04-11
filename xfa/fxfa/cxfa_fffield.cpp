@@ -45,9 +45,9 @@ CXFA_FFField::CXFA_FFField(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFField::~CXFA_FFField() = default;
 
-CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, FocusOption focus) {
+CFX_RectF CXFA_FFField::GetBBox(FocusOption focus) {
   if (focus == kDoNotDrawFocus)
-    return CXFA_FFWidget::GetBBox(dwStatus, kDoNotDrawFocus);
+    return CXFA_FFWidget::GetBBox(kDoNotDrawFocus);
 
   switch (m_pNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kButton:
@@ -63,17 +63,17 @@ CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, FocusOption focus) {
 
 void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
                                 const CFX_Matrix& matrix,
-                                uint32_t dwStatus) {
+                                HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, dwStatus, false);
+  DrawHighlight(pGS, &mtRotate, highlight, kSquareShape);
 
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
@@ -83,18 +83,20 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
 
 void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
                                  CFX_Matrix* pMatrix,
-                                 uint32_t dwStatus,
-                                 bool bEllipse) {
-  if (m_rtUI.IsEmpty() || !GetDoc()->GetXFADoc()->IsInteractive())
-    return;
-  if (!(dwStatus & XFA_WidgetStatus_Highlight) || !m_pNode->IsOpenAccess())
+                                 HighlightOption highlight,
+                                 ShapeOption shape) {
+  if (highlight == kNoHighlight)
     return;
 
+  if (m_rtUI.IsEmpty() || !GetDoc()->GetXFADoc()->IsInteractive() ||
+      !m_pNode->IsOpenAccess()) {
+    return;
+  }
   CXFA_FFDoc* pDoc = GetDoc();
   pGS->SetFillColor(
       CXFA_GEColor(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc)));
   CXFA_GEPath path;
-  if (bEllipse)
+  if (shape == kRoundShape)
     path.AddEllipse(m_rtUI);
   else
     path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);

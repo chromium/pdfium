@@ -25,14 +25,14 @@ CXFA_FFText::~CXFA_FFText() {}
 
 void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
                                const CFX_Matrix& matrix,
-                               uint32_t dwStatus) {
+                               HighlightOption highlight) {
   if (!HasVisibleStatus())
     return;
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
+  CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
   CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
