@@ -10,6 +10,7 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "third_party/base/optional.h"
@@ -58,6 +59,8 @@ class CXFA_LayoutPageMgr {
   CXFA_Node* ProcessBookendTrailer(const CXFA_Node* pBookendNode);
 
  private:
+  using RecordList = std::list<std::unique_ptr<CXFA_ViewRecord>>;
+
   bool AppendNewPage(bool bFirstTemPage);
   void ReorderPendingLayoutRecordToTail(CXFA_ViewRecord* pNewRecord,
                                         CXFA_ViewRecord* pPrevRecord);
@@ -66,21 +69,20 @@ class CXFA_LayoutPageMgr {
   bool HasCurrentViewRecord() const {
     return m_CurrentViewRecordIter != m_ProposedViewRecords.end();
   }
-  CXFA_ViewRecord* GetCurrentViewRecord() { return *m_CurrentViewRecordIter; }
+  CXFA_ViewRecord* GetCurrentViewRecord() {
+    return m_CurrentViewRecordIter->get();
+  }
   const CXFA_ViewRecord* GetCurrentViewRecord() const {
-    return *m_CurrentViewRecordIter;
+    return m_CurrentViewRecordIter->get();
   }
   void ResetToFirstViewRecord() {
     m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
   }
-  std::list<CXFA_ViewRecord*>::iterator GetTailPosition() {
+  RecordList::iterator GetTailPosition() {
     auto iter = m_ProposedViewRecords.end();
     return !m_ProposedViewRecords.empty() ? std::prev(iter) : iter;
   }
-  CXFA_ViewRecord* AppendNewRecord(CXFA_ViewRecord* pNewRecord) {
-    m_ProposedViewRecords.push_back(pNewRecord);
-    return pNewRecord;
-  }
+  CXFA_ViewRecord* AppendNewRecord(std::unique_ptr<CXFA_ViewRecord> pNewRecord);
   CXFA_ViewRecord* CreateViewRecord(CXFA_Node* pPageNode, bool bCreateNew);
   CXFA_ViewRecord* CreateViewRecordSimple();
   void AddPageAreaLayoutItem(CXFA_ViewRecord* pNewRecord,
@@ -152,8 +154,8 @@ class CXFA_LayoutPageMgr {
   CXFA_Node* m_pTemplatePageSetRoot;
   CXFA_ViewLayoutItem* m_pPageSetLayoutItemRoot;
   CXFA_ViewLayoutItem* m_pPageSetCurRoot;
-  std::list<CXFA_ViewRecord*> m_ProposedViewRecords;
-  std::list<CXFA_ViewRecord*>::iterator m_CurrentViewRecordIter;
+  RecordList m_ProposedViewRecords;
+  RecordList::iterator m_CurrentViewRecordIter;
   CXFA_Node* m_pCurPageArea;
   int32_t m_nAvailPages;
   int32_t m_nCurPageCount;

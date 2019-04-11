@@ -10,6 +10,7 @@
 
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
@@ -587,10 +588,16 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
   return FLT_MAX;
 }
 
+CXFA_ViewRecord* CXFA_LayoutPageMgr::AppendNewRecord(
+    std::unique_ptr<CXFA_ViewRecord> pNewRecord) {
+  m_ProposedViewRecords.push_back(std::move(pNewRecord));
+  return m_ProposedViewRecords.back().get();
+}
+
 CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
                                                       bool bCreateNew) {
   ASSERT(pPageNode);
-  CXFA_ViewRecord* pNewRecord = new CXFA_ViewRecord();
+  auto pNewRecord = pdfium::MakeUnique<CXFA_ViewRecord>();
   if (!HasCurrentViewRecord()) {
     CXFA_Node* pPageSet = pPageNode->GetParent();
     if (pPageSet == m_pTemplatePageSetRoot) {
@@ -602,12 +609,12 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
       m_pPageSetLayoutItemRoot->AddChild(pPageSetLayoutItem);
       pNewRecord->pCurPageSet = pPageSetLayoutItem;
     }
-    return AppendNewRecord(pNewRecord);
+    return AppendNewRecord(std::move(pNewRecord));
   }
 
   if (!IsPageSetRootOrderedOccurrence()) {
     *pNewRecord = *GetCurrentViewRecord();
-    return AppendNewRecord(pNewRecord);
+    return AppendNewRecord(std::move(pNewRecord));
   }
 
   CXFA_Node* pPageSet = pPageNode->GetParent();
@@ -622,7 +629,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
 
       pNewRecord->pCurPageSet = pParentLayoutItem;
     }
-    return AppendNewRecord(pNewRecord);
+    return AppendNewRecord(std::move(pNewRecord));
   }
 
   CXFA_ViewLayoutItem* pParentPageSetLayout = nullptr;
@@ -646,16 +653,16 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
     pParentPageSetLayout->AddChild(pPageSetLayoutItem);
   }
   pNewRecord->pCurPageSet = pPageSetLayoutItem;
-  return AppendNewRecord(pNewRecord);
+  return AppendNewRecord(std::move(pNewRecord));
 }
 
 CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecordSimple() {
-  CXFA_ViewRecord* pNewRecord = new CXFA_ViewRecord();
+  auto pNewRecord = pdfium::MakeUnique<CXFA_ViewRecord>();
   if (HasCurrentViewRecord())
     *pNewRecord = *GetCurrentViewRecord();
   else
     pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
-  return AppendNewRecord(pNewRecord);
+  return AppendNewRecord(std::move(pNewRecord));
 }
 
 void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ViewRecord* pNewRecord,
@@ -1554,12 +1561,11 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(float fChildHeight) {
           GetNextAvailPageArea(nullptr, nullptr, false, true);
       m_pCurPageArea = pSrcPage;
       m_nCurPageCount = nSrcPageCount;
-      CXFA_ViewRecord* pPrevRecord = *psSrcIter++;
+      CXFA_ViewRecord* pPrevRecord = psSrcIter->get();
+      ++psSrcIter;
       while (psSrcIter != m_ProposedViewRecords.end()) {
-        auto psSaveIter = psSrcIter;
-        CXFA_ViewRecord* pInsertRecord = *psSrcIter++;
-        RemoveLayoutRecord(pInsertRecord, pPrevRecord);
-        delete pInsertRecord;
+        auto psSaveIter = psSrcIter++;
+        RemoveLayoutRecord(psSaveIter->get(), pPrevRecord);
         m_ProposedViewRecords.erase(psSaveIter);
       }
       if (pNextPage) {
@@ -1592,11 +1598,6 @@ void CXFA_LayoutPageMgr::ClearData() {
   if (!m_pTemplatePageSetRoot)
     return;
 
-  auto sPos = m_ProposedViewRecords.begin();
-  while (sPos != m_ProposedViewRecords.end()) {
-    CXFA_ViewRecord* pRecord = *sPos++;
-    delete pRecord;
-  }
   m_ProposedViewRecords.clear();
   m_CurrentViewRecordIter = m_ProposedViewRecords.end();
   m_pCurPageArea = nullptr;
