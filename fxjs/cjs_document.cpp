@@ -516,7 +516,6 @@ CJS_Result CJS_Document::print(
 // removes the specified field from the document.
 // comment:
 // note: if the filed name is not rational, adobe is dumb for it.
-
 CJS_Result CJS_Document::removeField(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
@@ -526,8 +525,9 @@ CJS_Result CJS_Document::removeField(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM)))
+        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM))) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
+  }
 
   WideString sFieldName = pRuntime->ToWideString(params[0]);
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
@@ -541,13 +541,6 @@ CJS_Result CJS_Document::removeField(
     if (!pWidget)
       continue;
 
-    CFX_FloatRect rcAnnot = pWidget->GetRect();
-    --rcAnnot.left;
-    --rcAnnot.bottom;
-    ++rcAnnot.right;
-    ++rcAnnot.top;
-
-    std::vector<CFX_FloatRect> aRefresh(1, rcAnnot);
     IPDF_Page* pPage = pWidget->GetPage();
     ASSERT(pPage);
 
@@ -555,8 +548,14 @@ CJS_Result CJS_Document::removeField(
     // do not create one. We may be in the process of tearing down the document
     // and creating a new pageview at this point will cause bad things.
     CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, false);
-    if (pPageView)
-      pPageView->UpdateRects(aRefresh);
+    if (!pPageView)
+      continue;
+
+    CFX_FloatRect rcAnnot = pWidget->GetRect();
+    rcAnnot.Inflate(1.0f, 1.0f, 1.0f, 1.0f);
+
+    std::vector<CFX_FloatRect> aRefresh(1, rcAnnot);
+    pPageView->UpdateRects(aRefresh);
   }
   m_pFormFillEnv->SetChangeMark();
   return CJS_Result::Success();
