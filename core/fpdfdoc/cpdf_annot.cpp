@@ -154,21 +154,14 @@ CPDF_Annot::Subtype CPDF_Annot::GetSubtype() const {
 }
 
 CFX_FloatRect CPDF_Annot::RectForDrawing() const {
-  if (!m_pAnnotDict)
-    return CFX_FloatRect();
-
   bool bShouldUseQuadPointsCoords =
       m_bIsTextMarkupAnnotation && m_bHasGeneratedAP;
   if (bShouldUseQuadPointsCoords)
     return BoundingRectFromQuadPoints(m_pAnnotDict.Get());
-
   return m_pAnnotDict->GetRectFor(pdfium::annotation::kRect);
 }
 
 CFX_FloatRect CPDF_Annot::GetRect() const {
-  if (!m_pAnnotDict)
-    return CFX_FloatRect();
-
   CFX_FloatRect rect = RectForDrawing();
   rect.Normalize();
   return rect;
