@@ -6,7 +6,9 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fpdf_view_c_api_test.h"
@@ -904,3 +906,21 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
     EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(doc.get()));
   }
 }
+
+#if defined(OS_WIN)
+// Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_RenderPage(). The two rendered
+// EMFs should be different.
+TEST_F(FPDFViewEmbedderTest, BUG_1281) {
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page, 0);
+  std::vector<uint8_t> emf_reverse_byte_order =
+      RenderPageWithFlagsToEmf(page, FPDF_REVERSE_BYTE_ORDER);
+  // TODO(https://crbug.com/pdfium/1281): These should not be equal.
+  EXPECT_EQ(emf_normal, emf_reverse_byte_order);
+
+  UnloadPage(page);
+}
+#endif

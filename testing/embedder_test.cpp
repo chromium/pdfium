@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "core/fdrm/fx_crypt.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -377,6 +378,34 @@ ScopedFPDFBitmap EmbedderTest::RenderPageWithFlags(FPDF_PAGE page,
 ScopedFPDFBitmap EmbedderTest::RenderPage(FPDF_PAGE page) {
   return RenderPageWithFlags(page, nullptr, 0);
 }
+
+#if defined(OS_WIN)
+// static
+std::vector<uint8_t> EmbedderTest::RenderPageWithFlagsToEmf(FPDF_PAGE page,
+                                                            int flags) {
+  HDC dc = CreateEnhMetaFileA(nullptr, nullptr, nullptr, nullptr);
+
+  int width = static_cast<int>(FPDF_GetPageWidth(page));
+  int height = static_cast<int>(FPDF_GetPageHeight(page));
+  HRGN rgn = CreateRectRgn(0, 0, width, height);
+  SelectClipRgn(dc, rgn);
+  DeleteObject(rgn);
+
+  SelectObject(dc, GetStockObject(NULL_PEN));
+  SelectObject(dc, GetStockObject(WHITE_BRUSH));
+  // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
+  Rectangle(dc, 0, 0, width + 1, height + 1);
+
+  FPDF_RenderPage(dc, page, 0, 0, width, height, 0, flags);
+
+  HENHMETAFILE emf = CloseEnhMetaFile(dc);
+  size_t size_in_bytes = GetEnhMetaFileBits(emf, 0, nullptr);
+  std::vector<uint8_t> buffer(size_in_bytes);
+  GetEnhMetaFileBits(emf, size_in_bytes, buffer.data());
+  DeleteEnhMetaFile(emf);
+  return buffer;
+}
+#endif  // defined(OS_WIN)
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocument() {
   return OpenSavedDocumentWithPassword(nullptr);

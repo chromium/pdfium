@@ -9,7 +9,9 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
+#include "build/build_config.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
@@ -159,6 +161,12 @@ class EmbedderTest : public ::testing::Test,
 
   // Simplified form of RenderPageWithFlags() with no handle and no flags.
   static ScopedFPDFBitmap RenderPage(FPDF_PAGE page);
+
+#if defined(OS_WIN)
+  // Convert |page| into EMF with the specified page rendering |flags|.
+  static std::vector<uint8_t> RenderPageWithFlagsToEmf(FPDF_PAGE page,
+                                                       int flags);
+#endif
 
  protected:
   using PageNumberToHandleMap = std::map<int, FPDF_PAGE>;
