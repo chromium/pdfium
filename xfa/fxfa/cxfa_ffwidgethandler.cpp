@@ -182,11 +182,11 @@ bool CXFA_FFWidgetHandler::Redo(CXFA_FFWidget* widget) {
   return widget->Redo();
 }
 
-FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
+FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* pWidget,
                                               const CFX_PointF& point) {
-  if (!(hWidget->GetStatus() & XFA_WidgetStatus_Visible))
+  if (!pWidget->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible))
     return FWL_WidgetHit::Unknown;
-  return hWidget->OnHitTest(hWidget->Rotate2Normal(point));
+  return pWidget->OnHitTest(pWidget->Rotate2Normal(point));
 }
 
 bool CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,

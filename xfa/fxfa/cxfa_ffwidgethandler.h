@@ -65,7 +65,7 @@ class CXFA_FFWidgetHandler {
   bool OnKeyDown(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
-  FWL_WidgetHit OnHitTest(CXFA_FFWidget* hWidget, const CFX_PointF& point);
+  FWL_WidgetHit OnHitTest(CXFA_FFWidget* pWidget, const CFX_PointF& point);
   bool OnSetCursor(CXFA_FFWidget* hWidget, const CFX_PointF& point);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CXFA_Graphics* pGS,

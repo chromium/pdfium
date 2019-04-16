@@ -121,7 +121,7 @@ bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
 
 void CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!IsFocused()) {
-    GetLayoutItem()->m_dwStatus |= XFA_WidgetStatus_Focused;
+    GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
     UpdateFWLData();
     InvalidateRect();
   }
@@ -136,7 +136,7 @@ void CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
 
 void CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!IsFocused()) {
-    GetLayoutItem()->m_dwStatus |= XFA_WidgetStatus_Focused;
+    GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
     UpdateFWLData();
     InvalidateRect();
   }
@@ -158,9 +158,9 @@ bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
-  GetLayoutItem()->m_dwStatus &= ~XFA_WidgetStatus_TextEditValueChanged;
+  GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_TextEditValueChanged);
   if (!IsFocused()) {
-    GetLayoutItem()->m_dwStatus |= XFA_WidgetStatus_Focused;
+    GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
     UpdateFWLData();
     InvalidateRect();
   }
@@ -173,15 +173,15 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget.get());
   TranslateFWLMessage(&ms);
-  GetLayoutItem()->m_dwStatus &= ~XFA_WidgetStatus_Focused;
-
+  GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
   SetEditScrollOffset();
   ProcessCommittedData();
   UpdateFWLData();
   InvalidateRect();
+
   CXFA_FFWidget::OnKillFocus(pNewWidget);
 
-  GetLayoutItem()->m_dwStatus &= ~XFA_WidgetStatus_TextEditValueChanged;
+  GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_TextEditValueChanged);
   return true;
 }
 
@@ -211,8 +211,7 @@ void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
 }
 
 bool CXFA_FFTextEdit::IsDataChanged() {
-  auto* pItem = GetLayoutItem();
-  return !!(pItem->m_dwStatus & XFA_WidgetStatus_TextEditValueChanged);
+  return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_TextEditValueChanged);
 }
 
 uint32_t CXFA_FFTextEdit::GetAlignment() {
@@ -300,7 +299,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
 
 void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,
                                        CFWL_EventTextWillChange* event) {
-  GetLayoutItem()->m_dwStatus |= XFA_WidgetStatus_TextEditValueChanged;
+  GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_TextEditValueChanged);
 
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;

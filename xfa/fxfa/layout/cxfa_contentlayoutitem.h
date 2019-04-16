@@ -31,13 +31,19 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   CFX_RectF GetRect(bool bRelative) const;
   size_t GetIndex() const;
 
+  void SetStatusBits(uint32_t val) { m_dwStatus |= val; }
+  void ClearStatusBits(uint32_t val) { m_dwStatus &= ~val; }
+
+  // TRUE if all (not any) bits set in |val| are set in |m_dwStatus|.
+  bool TestStatusBits(uint32_t val) const { return (m_dwStatus & val) == val; }
+
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;
-  mutable uint32_t m_dwStatus = 0;
 
  private:
   void RemoveSelf();
 
+  mutable uint32_t m_dwStatus = 0;
   UnownedPtr<CXFA_ContentLayoutItem> m_pPrev;
   UnownedPtr<CXFA_ContentLayoutItem> m_pNext;
   std::unique_ptr<CXFA_FFWidget> const m_pFFWidget;

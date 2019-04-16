@@ -131,7 +131,6 @@ class CXFA_FFWidget {
 
   const CFX_RectF& GetWidgetRect() const;
   const CFX_RectF& RecacheWidgetRect() const;
-  uint32_t GetStatus();
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
 
   CXFA_FFDoc* GetDoc();
@@ -139,7 +138,7 @@ class CXFA_FFWidget {
   IXFA_AppProvider* GetAppProvider();
   void InvalidateRect();
   bool IsFocused() const {
-    return !!(GetLayoutItem()->m_dwStatus & XFA_WidgetStatus_Focused);
+    return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Focused);
   }
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
   CFX_Matrix GetRotateMatrix();

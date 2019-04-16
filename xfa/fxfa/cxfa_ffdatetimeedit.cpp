@@ -172,7 +172,7 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
 }
 
 bool CXFA_FFDateTimeEdit::IsDataChanged() {
-  if (GetLayoutItem()->m_dwStatus & XFA_WidgetStatus_TextEditValueChanged)
+  if (GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_TextEditValueChanged))
     return true;
 
   WideString wsText = GetPickerWidget()->GetEditText();
