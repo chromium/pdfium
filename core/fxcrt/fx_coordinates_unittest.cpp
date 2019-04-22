@@ -8,6 +8,15 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+TEST(CFX_FloatRect, FromFXRect) {
+  FX_RECT downwards(10, 20, 30, 40);
+  CFX_FloatRect rect(downwards);
+  EXPECT_FLOAT_EQ(rect.left, 10.0f);
+  EXPECT_FLOAT_EQ(rect.bottom, 20.0f);
+  EXPECT_FLOAT_EQ(rect.right, 30.0f);
+  EXPECT_FLOAT_EQ(rect.top, 40.0f);
+}
+
 TEST(CFX_FloatRect, GetBBox) {
   CFX_FloatRect rect = CFX_FloatRect::GetBBox(nullptr, 0);
   EXPECT_FLOAT_EQ(0.0f, rect.left);

@@ -85,8 +85,7 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
           ? CXFA_FFWidget::kDrawFocus
           : CXFA_FFWidget::kDoNotDrawFocus);
 
-  CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
-                         rcBBox.top + rcBBox.height);
+  CFX_FloatRect rcWidget = rcBBox.ToFloatRect();
   rcWidget.Inflate(1.0f, 1.0f);
   return rcWidget;
 }

@@ -280,9 +280,7 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA)
       continue;
 
-    CFX_RectF rcBBox = pXFAAnnot->GetWidgetRect();
-    CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
-                           rcBBox.top + rcBBox.height);
+    CFX_FloatRect rcWidget = pXFAAnnot->GetWidgetRect().ToFloatRect();
     rcWidget.Inflate(1.0f, 1.0f);
     if (rcWidget.Contains(CFX_PointF(static_cast<float>(page_x),
                                      static_cast<float>(page_y)))) {
