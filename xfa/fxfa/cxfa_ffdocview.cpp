@@ -200,7 +200,8 @@ int32_t CXFA_FFDocView::CountPageViews() const {
 CXFA_FFPageView* CXFA_FFDocView::GetPageView(int32_t nIndex) const {
   if (!m_pXFADocLayout)
     return nullptr;
-  return static_cast<CXFA_FFPageView*>(m_pXFADocLayout->GetPage(nIndex));
+  auto* pPage = m_pXFADocLayout->GetPage(nIndex);
+  return pPage ? pPage->GetPageView() : nullptr;
 }
 
 CXFA_LayoutProcessor* CXFA_FFDocView::GetXFALayout() const {
@@ -431,7 +432,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
 
 void CXFA_FFDocView::OnPageEvent(CXFA_ViewLayoutItem* pSender,
                                  uint32_t dwEvent) {
-  CXFA_FFPageView* pFFPageView = static_cast<CXFA_FFPageView*>(pSender);
+  CXFA_FFPageView* pFFPageView = pSender ? pSender->GetPageView() : nullptr;
   m_pDoc->GetDocEnvironment()->PageViewEvent(pFFPageView, dwEvent);
 }
 

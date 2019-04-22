@@ -7,19 +7,28 @@
 #ifndef XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_
 #define XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_
 
+#include <memory>
+
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
+
+class CXFA_FFPageView;
 
 class CXFA_ViewLayoutItem : public CXFA_LayoutItem {
  public:
-  explicit CXFA_ViewLayoutItem(CXFA_Node* pNode);
+  CXFA_ViewLayoutItem(CXFA_Node* pNode,
+                      std::unique_ptr<CXFA_FFPageView> pPageView);
   ~CXFA_ViewLayoutItem() override;
 
+  CXFA_FFPageView* GetPageView() const { return m_pFFPageView.get(); }
   CXFA_LayoutProcessor* GetLayout() const;
   int32_t GetPageIndex() const;
   CFX_SizeF GetPageSize() const;
   CXFA_Node* GetMasterPage() const;
 
   UnownedPtr<CXFA_Node> m_pOldSubform;
+
+ private:
+  std::unique_ptr<CXFA_FFPageView> const m_pFFPageView;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTITEM_H_

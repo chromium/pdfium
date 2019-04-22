@@ -71,7 +71,7 @@ CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
 bool PageWidgetFilter(CXFA_FFWidget* pWidget,
                       uint32_t dwFilter,
                       bool bTraversal,
-                      bool bIgnorerelevant) {
+                      bool bIgnoreRelevant) {
   CXFA_Node* pNode = pWidget->GetNode();
 
   if ((dwFilter & XFA_WidgetStatus_Focused) &&
@@ -82,8 +82,7 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
   CXFA_ContentLayoutItem* pItem = pWidget->GetLayoutItem();
   if (bTraversal && pItem->TestStatusBits(XFA_WidgetStatus_Disabled))
     return false;
-
-  if (bIgnorerelevant)
+  if (bIgnoreRelevant)
     return pItem->TestStatusBits(XFA_WidgetStatus_Visible);
 
   dwFilter &= (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable |
@@ -112,7 +111,7 @@ bool IsLayoutElement(XFA_Element eElement, bool bLayoutContainer) {
 }  // namespace
 
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
-    : CXFA_ViewLayoutItem(pPageArea), m_pDocView(pDocView) {}
+    : m_pPageArea(pPageArea), m_pDocView(pDocView) {}
 
 CXFA_FFPageView::~CXFA_FFPageView() {}
 
@@ -121,12 +120,13 @@ CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
 }
 
 CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
-  return CFX_RectF(0, 0, GetPageSize());
+  return CFX_RectF(0, 0, GetLayoutItem()->GetPageSize());
 }
 
 CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
                                              int32_t iRotate) const {
-  return GetPageMatrix(CFX_RectF(0, 0, GetPageSize()), rtDisp, iRotate, 0);
+  return GetPageMatrix(CFX_RectF(0, 0, GetLayoutItem()->GetPageSize()), rtDisp,
+                       iRotate, 0);
 }
 
 std::unique_ptr<IXFA_WidgetIterator> CXFA_FFPageView::CreateWidgetIterator(
@@ -145,8 +145,10 @@ std::unique_ptr<IXFA_WidgetIterator> CXFA_FFPageView::CreateWidgetIterator(
 
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
                                                      uint32_t dwFilter)
-    : m_pPageView(pPageView), m_dwFilter(dwFilter), m_sIterator(pPageView) {
-  m_bIgnorerelevant =
+    : m_pPageView(pPageView),
+      m_dwFilter(dwFilter),
+      m_sIterator(pPageView->GetLayoutItem()) {
+  m_bIgnoreRelevant =
       m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
       XFA_VERSION_205;
 }
@@ -208,7 +210,7 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetWidget(
   if (!pWidget)
     return nullptr;
 
-  if (!PageWidgetFilter(pWidget, m_dwFilter, false, m_bIgnorerelevant))
+  if (!PageWidgetFilter(pWidget, m_dwFilter, false, m_bIgnoreRelevant))
     return nullptr;
 
   if (!pWidget->IsLoaded() &&
@@ -233,7 +235,7 @@ CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
     uint32_t dwFilter)
     : m_pPageView(pPageView), m_dwFilter(dwFilter), m_iCurWidget(-1) {
-  m_bIgnorerelevant =
+  m_bIgnoreRelevant =
       m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
       XFA_VERSION_205;
   Reset();
@@ -250,7 +252,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst() {
   for (int32_t i = 0;
        i < pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
-                         m_bIgnorerelevant)) {
+                         m_bIgnoreRelevant)) {
       m_iCurWidget = i;
       return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
@@ -262,7 +264,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToLast() {
   for (int32_t i = pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray) - 1;
        i >= 0; i--) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
-                         m_bIgnorerelevant)) {
+                         m_bIgnoreRelevant)) {
       m_iCurWidget = i;
       return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
@@ -274,7 +276,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToNext() {
   for (int32_t i = m_iCurWidget + 1;
        i < pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
-                         m_bIgnorerelevant)) {
+                         m_bIgnoreRelevant)) {
       m_iCurWidget = i;
       return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
@@ -286,7 +288,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToNext() {
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToPrevious() {
   for (int32_t i = m_iCurWidget - 1; i >= 0; i--) {
     if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
-                         m_bIgnorerelevant)) {
+                         m_bIgnoreRelevant)) {
       m_iCurWidget = i;
       return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
@@ -435,7 +437,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
 
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     std::vector<CXFA_FFWidget*>* WidgetArray) {
-  CXFA_LayoutItemIterator sIterator(m_pPageView.Get());
+  CXFA_LayoutItemIterator sIterator(m_pPageView->GetLayoutItem());
   auto pParam = pdfium::MakeUnique<CXFA_TabParam>(nullptr);
   bool bCurrentItem = false;
   bool bContentArea = false;

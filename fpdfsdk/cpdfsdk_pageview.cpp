@@ -555,7 +555,7 @@ int CPDFSDK_PageView::GetPageIndex() const {
   switch (pContext->GetFormType()) {
     case FormType::kXFAFull: {
       CXFA_FFPageView* pPageView = m_page->AsXFAPage()->GetXFAPageView();
-      return pPageView ? pPageView->GetPageIndex() : -1;
+      return pPageView ? pPageView->GetLayoutItem()->GetPageIndex() : -1;
     }
     case FormType::kNone:
     case FormType::kAcroForm:

@@ -17,10 +17,13 @@
 class CXFA_FFWidget;
 class CXFA_FFDocView;
 
-class CXFA_FFPageView final : public CXFA_ViewLayoutItem {
+class CXFA_FFPageView {
  public:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
-  ~CXFA_FFPageView() override;
+  ~CXFA_FFPageView();
+
+  CXFA_ViewLayoutItem* GetLayoutItem() const { return m_pLayoutItem.Get(); }
+  void SetLayoutItem(CXFA_ViewLayoutItem* pItem) { m_pLayoutItem = pItem; }
 
   CXFA_FFDocView* GetDocView() const;
   CFX_RectF GetPageViewRect() const;
@@ -30,7 +33,9 @@ class CXFA_FFPageView final : public CXFA_ViewLayoutItem {
       uint32_t dwWidgetFilter);
 
  private:
+  UnownedPtr<CXFA_Node> const m_pPageArea;
   UnownedPtr<CXFA_FFDocView> const m_pDocView;
+  UnownedPtr<CXFA_ViewLayoutItem> m_pLayoutItem;
 };
 
 class CXFA_FFPageWidgetIterator final : public IXFA_WidgetIterator {
@@ -52,7 +57,7 @@ class CXFA_FFPageWidgetIterator final : public IXFA_WidgetIterator {
   UnownedPtr<CXFA_FFPageView> m_pPageView;
   UnownedPtr<CXFA_FFWidget> m_hCurWidget;
   uint32_t m_dwFilter;
-  bool m_bIgnorerelevant;
+  bool m_bIgnoreRelevant;
   CXFA_LayoutItemIterator m_sIterator;
 };
 
@@ -103,7 +108,7 @@ class CXFA_FFTabOrderPageWidgetIterator final : public IXFA_WidgetIterator {
   UnownedPtr<CXFA_FFPageView> m_pPageView;
   uint32_t m_dwFilter;
   int32_t m_iCurWidget;
-  bool m_bIgnorerelevant;
+  bool m_bIgnoreRelevant;
 };
 
 #endif  // XFA_FXFA_CXFA_FFPAGEVIEW_H_

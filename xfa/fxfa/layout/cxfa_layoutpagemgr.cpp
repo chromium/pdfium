@@ -13,6 +13,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
@@ -393,7 +394,8 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     m_pPageSetLayoutItemRoot->SetNextSibling(nullptr);
     m_pPageSetLayoutItemRoot->SetFormNode(m_pTemplatePageSetRoot);
   } else {
-    m_pPageSetLayoutItemRoot = new CXFA_ViewLayoutItem(m_pTemplatePageSetRoot);
+    m_pPageSetLayoutItemRoot =
+        new CXFA_ViewLayoutItem(m_pTemplatePageSetRoot, nullptr);
   }
   m_pPageSetCurRoot = m_pPageSetLayoutItemRoot;
   m_pTemplatePageSetRoot->JSObject()->SetLayoutItem(m_pPageSetLayoutItemRoot);
@@ -604,7 +606,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
       pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
     } else {
       CXFA_ViewLayoutItem* pPageSetLayoutItem =
-          new CXFA_ViewLayoutItem(pPageSet);
+          new CXFA_ViewLayoutItem(pPageSet, nullptr);
       pPageSet->JSObject()->SetLayoutItem(pPageSetLayoutItem);
       m_pPageSetLayoutItemRoot->AddChild(pPageSetLayoutItem);
       pNewRecord->pCurPageSet = pPageSetLayoutItem;
@@ -640,7 +642,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
     pParentPageSetLayout =
         ToViewLayoutItem(pPageSet->GetParent()->JSObject()->GetLayoutItem());
   }
-  auto* pPageSetLayoutItem = new CXFA_ViewLayoutItem(pPageSet);
+  auto* pPageSetLayoutItem = new CXFA_ViewLayoutItem(pPageSet, nullptr);
   pPageSet->JSObject()->SetLayoutItem(pPageSetLayoutItem);
   if (!pParentPageSetLayout) {
     CXFA_ViewLayoutItem* pPrePageSet = m_pPageSetLayoutItemRoot;
@@ -675,7 +677,10 @@ void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ViewRecord* pNewRecord,
     pNewPageAreaLayoutItem = pViewItem;
   } else {
     CXFA_FFNotify* pNotify = pNewPageArea->GetDocument()->GetNotify();
-    auto* pViewItem = pNotify->OnCreateViewLayoutItem(pNewPageArea).release();
+    auto* pViewItem =
+        pdfium::MakeUnique<CXFA_ViewLayoutItem>(
+            pNewPageArea, pNotify->OnCreateViewLayoutItem(pNewPageArea))
+            .release();
     m_PageArray.push_back(pViewItem);
     m_nAvailPages++;
     pNotify->OnPageEvent(pViewItem, XFA_PAGEVIEWEVENT_PostRemoved);
@@ -692,11 +697,11 @@ void CXFA_LayoutPageMgr::AddContentAreaLayoutItem(CXFA_ViewRecord* pNewRecord,
     pNewRecord->pCurContentArea = nullptr;
     return;
   }
-  CXFA_ViewLayoutItem* pNewContentAreaLayoutItem =
-      new CXFA_ViewLayoutItem(pContentArea);
+  CXFA_ViewLayoutItem* pNewViewLayoutItem =
+      new CXFA_ViewLayoutItem(pContentArea, nullptr);
   ASSERT(pNewRecord->pCurPageArea);
-  pNewRecord->pCurPageArea->AddChild(pNewContentAreaLayoutItem);
-  pNewRecord->pCurContentArea = pNewContentAreaLayoutItem;
+  pNewRecord->pCurPageArea->AddChild(pNewViewLayoutItem);
+  pNewRecord->pCurContentArea = pNewViewLayoutItem;
 }
 
 void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {

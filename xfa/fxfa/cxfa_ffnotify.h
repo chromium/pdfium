@@ -42,7 +42,7 @@ class CXFA_FFNotify {
   void OnChildAdded(CXFA_Node* pSender);
   void OnChildRemoved();
 
-  std::unique_ptr<CXFA_ViewLayoutItem> OnCreateViewLayoutItem(CXFA_Node* pNode);
+  std::unique_ptr<CXFA_FFPageView> OnCreateViewLayoutItem(CXFA_Node* pNode);
   std::unique_ptr<CXFA_FFWidget> OnCreateContentLayoutItem(CXFA_Node* pNode);
 
   void OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,

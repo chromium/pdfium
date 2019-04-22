@@ -92,19 +92,14 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
   }
 }
 
-std::unique_ptr<CXFA_ViewLayoutItem> CXFA_FFNotify::OnCreateViewLayoutItem(
+std::unique_ptr<CXFA_FFPageView> CXFA_FFNotify::OnCreateViewLayoutItem(
     CXFA_Node* pNode) {
-  XFA_Element type = pNode->GetElementType();
-  if (type == XFA_Element::PageArea) {
-    CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetLayoutProcessor();
-    return pdfium::MakeUnique<CXFA_FFPageView>(m_pDoc->GetDocView(pLayout),
-                                               pNode);
-  }
-  if (type == XFA_Element::ContentArea)
-    return pdfium::MakeUnique<CXFA_ViewLayoutItem>(pNode);
+  if (pNode->GetElementType() != XFA_Element::PageArea)
+    return nullptr;
 
-  NOTREACHED();
-  return nullptr;
+  CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetLayoutProcessor();
+  return pdfium::MakeUnique<CXFA_FFPageView>(m_pDoc->GetDocView(pLayout),
+                                             pNode);
 }
 
 std::unique_ptr<CXFA_FFWidget> CXFA_FFNotify::OnCreateContentLayoutItem(
