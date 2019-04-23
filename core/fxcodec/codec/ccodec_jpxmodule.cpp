@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -278,22 +279,22 @@ OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   if (nb_bytes < 0)
     return static_cast<OPJ_OFF_T>(-1);
 
-  // FIXME: use std::make_unsigned<OPJ_OFF_T>::type once c++11 lib is OK'd.
-  uint64_t unsignedNbBytes = static_cast<uint64_t>(nb_bytes);
+  auto unsigned_nb_bytes =
+      static_cast<std::make_unsigned<OPJ_OFF_T>::type>(nb_bytes);
   // Additionally, the offset may take us beyond the range of a size_t (e.g.
   // 32-bit platforms). If so, just clamp at EOF.
-  if (unsignedNbBytes >
+  if (unsigned_nb_bytes >
       std::numeric_limits<OPJ_SIZE_T>::max() - srcData->offset) {
     srcData->offset = srcData->src_size;
   } else {
-    OPJ_SIZE_T checkedNbBytes = static_cast<OPJ_SIZE_T>(unsignedNbBytes);
+    OPJ_SIZE_T checked_nb_bytes = static_cast<OPJ_SIZE_T>(unsigned_nb_bytes);
     // Otherwise, mimic fseek() semantics to always succeed, even past EOF,
     // clamping at EOF.  We can get away with this since we don't actually
     // provide negative relative skips from beyond EOF back to inside the
     // data, which would be the only reason to need to know exactly how far
     // beyond EOF we are.
     srcData->offset =
-        std::min(srcData->offset + checkedNbBytes, srcData->src_size);
+        std::min(srcData->offset + checked_nb_bytes, srcData->src_size);
   }
   return nb_bytes;
 }
@@ -308,17 +309,17 @@ OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   if (nb_bytes < 0)
     return OPJ_FALSE;
 
-  // FIXME: use std::make_unsigned<OPJ_OFF_T>::type once c++11 lib is OK'd.
-  uint64_t unsignedNbBytes = static_cast<uint64_t>(nb_bytes);
+  auto unsigned_nb_bytes =
+      static_cast<std::make_unsigned<OPJ_OFF_T>::type>(nb_bytes);
   // Additionally, the offset may take us beyond the range of a size_t (e.g.
   // 32-bit platforms). If so, just clamp at EOF.
-  if (unsignedNbBytes > std::numeric_limits<OPJ_SIZE_T>::max()) {
+  if (unsigned_nb_bytes > std::numeric_limits<OPJ_SIZE_T>::max()) {
     srcData->offset = srcData->src_size;
   } else {
-    OPJ_SIZE_T checkedNbBytes = static_cast<OPJ_SIZE_T>(nb_bytes);
+    OPJ_SIZE_T checked_nb_bytes = static_cast<OPJ_SIZE_T>(nb_bytes);
     // Otherwise, mimic fseek() semantics to always succeed, even past EOF,
     // again clamping at EOF.
-    srcData->offset = std::min(checkedNbBytes, srcData->src_size);
+    srcData->offset = std::min(checked_nb_bytes, srcData->src_size);
   }
   return OPJ_TRUE;
 }
