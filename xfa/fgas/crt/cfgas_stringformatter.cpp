@@ -1216,6 +1216,7 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
         ccf--;
         break;
       case 'E': {
+        iExponent = 0;
         bool bExpSign = false;
         while (cc < spSrcNum.size()) {
           if (spSrcNum[cc] == 'E' || spSrcNum[cc] == 'e')
@@ -1407,6 +1408,7 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
               (spSrcNum[cc] != 'E' && spSrcNum[cc] != 'e')) {
             return false;
           }
+          iExponent = 0;
           bool bExpSign = false;
           cc++;
           if (cc < spSrcNum.size()) {

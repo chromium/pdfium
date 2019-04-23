@@ -465,6 +465,9 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
 
       // https://crbug.com/945836
       {L"en", L"9.E99999999999", L"EdEE.E999", L""},
+
+      // https://crbug.com/947188
+      {L"en", L"-3.E98998998 ", L" 35EEEE.EE98", L""},
   };
 
   for (const auto& test : tests) {
