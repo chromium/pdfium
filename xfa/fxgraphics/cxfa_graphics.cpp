@@ -303,7 +303,7 @@ void CXFA_Graphics::FillPathWithShading(const CXFA_GEPath* path,
             float x = static_cast<float>(column);
             scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
                     axis_len_square;
-            if (scale < 0.0f) {
+            if (std::isnan(scale) || scale < 0.0f) {
               if (!m_info.fillColor.GetShading()->m_isExtendedBegin)
                 continue;
               scale = 0.0f;

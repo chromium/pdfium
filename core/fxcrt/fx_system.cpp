@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/fx_system.h"
 
+#include <cmath>
 #include <limits>
 
 #include "core/fxcrt/fx_extension.h"
@@ -83,6 +84,8 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
 }  // namespace
 
 int FXSYS_round(float d) {
+  if (std::isnan(d))
+    return 0;
   if (d < static_cast<float>(std::numeric_limits<int>::min()))
     return std::numeric_limits<int>::min();
   if (d > static_cast<float>(std::numeric_limits<int>::max()))
