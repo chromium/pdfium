@@ -58,8 +58,9 @@ CPDFSDK_Annot* CPDFSDK_BAAnnotHandler::NewAnnot(CXFA_FFWidget* hWidget,
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_BAAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
-  delete pAnnot;
+void CPDFSDK_BAAnnotHandler::ReleaseAnnot(
+    std::unique_ptr<CPDFSDK_Annot> pAnnot) {
+  // pAnnot deleted by unique_ptr going out of scope.
 }
 
 void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,

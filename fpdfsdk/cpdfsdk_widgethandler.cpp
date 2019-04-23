@@ -77,11 +77,12 @@ CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CXFA_FFWidget* hWidget,
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_WidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
+void CPDFSDK_WidgetHandler::ReleaseAnnot(
+    std::unique_ptr<CPDFSDK_Annot> pAnnot) {
   ASSERT(pAnnot);
-  m_pFormFiller->OnDelete(pAnnot);
+  m_pFormFiller->OnDelete(pAnnot.get());
 
-  std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot));
+  std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot.release()));
   CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
   CPDF_FormControl* pControl = pWidget->GetFormControl();
   pForm->RemoveMap(pControl);

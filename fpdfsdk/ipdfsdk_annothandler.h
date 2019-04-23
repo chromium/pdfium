@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
 #define FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 
@@ -32,7 +34,7 @@ class IPDFSDK_AnnotHandler {
                                   CPDFSDK_PageView* pPage) = 0;
 #endif  // PDF_ENABLE_XFA
 
-  virtual void ReleaseAnnot(CPDFSDK_Annot* pAnnot) = 0;
+  virtual void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot) = 0;
   virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot) = 0;
   virtual WideString GetText(CPDFSDK_Annot* pAnnot) = 0;
