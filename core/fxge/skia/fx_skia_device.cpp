@@ -2052,9 +2052,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     float end_y = pCoords->GetNumberAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
     skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
-    paint.setShader(SkGradientShader::MakeLinear(
-        pts, skColors.begin(), skPos.begin(), skColors.count(),
-        SkShader::kClamp_TileMode));
+    paint.setShader(
+        SkGradientShader::MakeLinear(pts, skColors.begin(), skPos.begin(),
+                                     skColors.count(), SkTileMode::kClamp));
     if (clipStart || clipEnd) {
       // if the gradient is horizontal or vertical, modify the draw rectangle
       if (pts[0].fX == pts[1].fX) {  // vertical
@@ -2096,7 +2096,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
 
     paint.setShader(SkGradientShader::MakeTwoPointConical(
         pts[0], start_r, pts[1], end_r, skColors.begin(), skPos.begin(),
-        skColors.count(), SkShader::kClamp_TileMode));
+        skColors.count(), SkTileMode::kClamp));
     if (clipStart || clipEnd) {
       if (clipStart && start_r)
         skClip.addCircle(pts[0].fX, pts[0].fY, start_r);
@@ -2504,10 +2504,10 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
                  &paint);
   sk_sp<SkImage> skSrc = SkImage::MakeFromBitmap(skBitmap);
   sk_sp<SkShader> skSrcShader =
-      skSrc->makeShader(SkShader::kClamp_TileMode, SkShader::kClamp_TileMode);
+      skSrc->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
   sk_sp<SkImage> skMaskImage = SkImage::MakeFromBitmap(skMask);
-  sk_sp<SkShader> skMaskShader = skMaskImage->makeShader(
-      SkShader::kClamp_TileMode, SkShader::kClamp_TileMode);
+  sk_sp<SkShader> skMaskShader =
+      skMaskImage->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
   paint.setShader(SkShader::MakeComposeShader(skMaskShader, skSrcShader,
                                               SkBlendMode::kSrcIn));
   SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
