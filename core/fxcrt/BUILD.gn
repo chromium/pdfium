@@ -61,6 +61,7 @@ jumbo_source_set("fxcrt") {
     "string_data_template.h",
     "string_pool_template.h",
     "string_view_template.h",
+    "tree_node.h",
     "unowned_ptr.h",
     "weak_ptr.h",
     "widestring.cpp",

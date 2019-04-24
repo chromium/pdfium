@@ -6,6 +6,7 @@
 #define CORE_FXCRT_RETAINED_TREE_NODE_H_
 
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/tree_node.h"
 #include "third_party/base/logging.h"
 
 namespace fxcrt {
@@ -14,95 +15,36 @@ namespace fxcrt {
 // and the parent node also "retains" its children but doesn't always have
 // a direct pointer to them.
 template <typename T>
-class RetainedTreeNode {
+class RetainedTreeNode : public TreeNode<T> {
  public:
   template <typename U, typename... Args>
   friend RetainPtr<U> pdfium::MakeRetain(Args&&... args);
 
-  T* GetParent() const { return m_pParent; }
-  T* GetFirstChild() const { return m_pFirstChild; }
-  T* GetLastChild() const { return m_pLastChild; }
-  T* GetNextSibling() const { return m_pNextSibling; }
-  T* GetPrevSibling() const { return m_pPrevSibling; }
-
   void AppendFirstChild(const RetainPtr<T>& child) {
-    BecomeParent(child);
-    if (m_pFirstChild) {
-      m_pFirstChild->m_pPrevSibling = child.Get();
-      child->m_pNextSibling = m_pFirstChild;
-      m_pFirstChild = child.Get();
-    } else {
-      m_pFirstChild = child.Get();
-      m_pLastChild = child.Get();
-    }
+    TreeNode<T>::AppendFirstChild(child.Get());
   }
 
   void AppendLastChild(const RetainPtr<T>& child) {
-    BecomeParent(child);
-    if (m_pLastChild) {
-      m_pLastChild->m_pNextSibling = child.Get();
-      child->m_pPrevSibling = m_pLastChild;
-      m_pLastChild = child.Get();
-    } else {
-      m_pFirstChild = child.Get();
-      m_pLastChild = child.Get();
-    }
+    TreeNode<T>::AppendLastChild(child.Get());
   }
 
   void InsertBefore(const RetainPtr<T>& child, T* other) {
-    if (!other) {
-      AppendLastChild(child);
-      return;
-    }
-    CHECK(other->m_pParent == this);
-    BecomeParent(child);
-    child->m_pNextSibling = other;
-    child->m_pPrevSibling = other->m_pPrevSibling;
-    if (other->m_pPrevSibling)
-      other->m_pPrevSibling->m_pNextSibling = child.Get();
-    else
-      m_pFirstChild = child.Get();
-    other->m_pPrevSibling = child.Get();
+    TreeNode<T>::InsertBefore(child.Get(), other);
   }
 
   void InsertAfter(const RetainPtr<T>& child, T* other) {
-    if (!other) {
-      AppendFirstChild(child);
-      return;
-    }
-    CHECK(other->m_pParent == this);
-    BecomeParent(child);
-    child->m_pNextSibling = other->m_pNextSibling;
-    child->m_pPrevSibling = other;
-    if (other->m_pNextSibling)
-      other->m_pNextSibling->m_pPrevSibling = child.Get();
-    else
-      m_pLastChild = child.Get();
-    other->m_pNextSibling = child.Get();
+    TreeNode<T>::InsertAfter(child.Get(), other);
   }
 
   void RemoveChild(const RetainPtr<T>& child) {
-    CHECK(child->m_pParent == this);
-    if (child->m_pNextSibling)
-      child->m_pNextSibling->m_pPrevSibling = child->m_pPrevSibling;
-    else
-      m_pLastChild = child->m_pPrevSibling;
-
-    if (child->m_pPrevSibling)
-      child->m_pPrevSibling->m_pNextSibling = child->m_pNextSibling;
-    else
-      m_pFirstChild = child->m_pNextSibling;
-
-    child->m_pParent = nullptr;
-    child->m_pPrevSibling = nullptr;
-    child->m_pNextSibling = nullptr;
+    TreeNode<T>::RemoveChild(child.Get());
   }
 
  protected:
   RetainedTreeNode() = default;
-  virtual ~RetainedTreeNode() {
-    while (m_pFirstChild)
-      RemoveChild(pdfium::WrapRetain(m_pFirstChild));
+  ~RetainedTreeNode() override {
+    while (auto* pChild = TreeNode<T>::GetFirstChild())
+      RemoveChild(pdfium::WrapRetain(pChild));
   }
 
  private:
@@ -118,25 +60,11 @@ class RetainedTreeNode {
   void Retain() { ++m_nRefCount; }
   void Release() {
     ASSERT(m_nRefCount > 0);
-    if (--m_nRefCount == 0 && !m_pParent)
+    if (--m_nRefCount == 0 && !TreeNode<T>::GetParent())
       delete this;
   }
 
-  // Child left in state where sibling members need subsequent adjustment.
-  void BecomeParent(const RetainPtr<T>& child) {
-    if (child->m_pParent)
-      child->m_pParent->RemoveChild(child);
-    child->m_pParent = static_cast<T*>(this);
-    ASSERT(!child->m_pNextSibling);
-    ASSERT(!child->m_pPrevSibling);
-  }
-
   intptr_t m_nRefCount = 0;
-  T* m_pParent = nullptr;       // Raw, intra-tree pointer.
-  T* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
-  T* m_pLastChild = nullptr;    // Raw, intra-tree pointer.
-  T* m_pNextSibling = nullptr;  // Raw, intra-tree pointer
-  T* m_pPrevSibling = nullptr;  // Raw, intra-tree pointer
 };
 
 }  // namespace fxcrt
