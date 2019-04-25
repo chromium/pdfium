@@ -1,0 +1,64 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OCProperties <<
+    /Configs <<
+        /Creator (First Config)
+        /Name (First Config)
+        /OFF [5 0 R]
+    >>
+    /D <<
+        /ON [5 0 R]
+        /Order [5 0 R]
+        /RBGroups []
+    >>
+    /OCGs [5 0 R]
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+% Page number 0.
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 400 400]
+  /Contents [4 0 R]
+  /Resources << /XObject << /Fm0 6 0 R >> >>
+>>
+endobj
+% Page 0 contents stream
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+1 0 0 1 50 50 cm /Fm0 Do
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /OCG
+  /Name (Square)
+>>
+endobj
+% Fm0 XObject
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [0 0 100 100]
+  /OC << /OCGs [5 0 R] /Type /OCMD >>
+>>
+stream
+0 G 0 g
+0 0 100 100 re
+b*
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

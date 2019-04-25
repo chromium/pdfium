@@ -65,7 +65,7 @@ CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
 
   for (size_t i = 0; i < pConfigs->size(); i++) {
     CPDF_Dictionary* pFind = pConfigs->GetDictAt(i);
-    if (pFind && HasIntent(pFind, "View", "View"))
+    if (pFind && HasIntent(pFind, "View", ""))
       return pFind;
   }
   return pConfig;
