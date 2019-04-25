@@ -158,7 +158,7 @@ void SyncContainer(CXFA_FFNotify* pNotify,
   }
 }
 
-void ReorderLayoutItemToTail(CXFA_LayoutItem* pLayoutItem) {
+void ReorderLayoutItemToTail(CXFA_ViewLayoutItem* pLayoutItem) {
   CXFA_ViewLayoutItem* pParentLayoutItem =
       ToViewLayoutItem(pLayoutItem->GetParent());
   if (!pParentLayoutItem)
@@ -168,7 +168,7 @@ void ReorderLayoutItemToTail(CXFA_LayoutItem* pLayoutItem) {
   pParentLayoutItem->AddChild(pLayoutItem);
 }
 
-void RemoveLayoutItem(CXFA_LayoutItem* pLayoutItem) {
+void RemoveLayoutItem(CXFA_ViewLayoutItem* pLayoutItem) {
   CXFA_ViewLayoutItem* pParentLayoutItem =
       ToViewLayoutItem(pLayoutItem->GetParent());
   if (!pParentLayoutItem)
@@ -389,7 +389,9 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
   ASSERT(m_pTemplatePageSetRoot);
 
   if (m_pPageSetLayoutItemRoot) {
-    RemoveLayoutItem(m_pPageSetLayoutItemRoot);
+    m_pPageSetLayoutItemRoot->SetParent(nullptr);
+    m_pPageSetLayoutItemRoot->SetFirstChild(nullptr);
+    m_pPageSetLayoutItemRoot->SetNextSibling(nullptr);
     m_pPageSetLayoutItemRoot->SetFormNode(m_pTemplatePageSetRoot);
   } else {
     m_pPageSetLayoutItemRoot =
@@ -647,7 +649,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
     while (pPrePageSet->GetNextSibling()) {
       pPrePageSet = pPrePageSet->GetNextSibling()->AsViewLayoutItem();
     }
-    pPrePageSet->GetParent()->InsertChild(pPrePageSet, pPageSetLayoutItem);
+    pPrePageSet->SetNextSibling(pPageSetLayoutItem);
     m_pPageSetCurRoot = pPageSetLayoutItem;
   } else {
     pParentPageSetLayout->AddChild(pPageSetLayoutItem);
@@ -1642,7 +1644,9 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
     if (pCurLayoutItem->GetFirstChild())
       SaveLayoutItem(pCurLayoutItem);
 
-    RemoveLayoutItem(pCurLayoutItem);
+    pCurLayoutItem->SetParent(nullptr);
+    pCurLayoutItem->SetNextSibling(nullptr);
+    pCurLayoutItem->SetFirstChild(nullptr);
     if (!pCurLayoutItem->IsContentLayoutItem() &&
         pCurLayoutItem->GetFormNode()->GetElementType() !=
             XFA_Element::PageArea) {
@@ -1937,7 +1941,7 @@ void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->GetFirstChild();
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->GetNextSibling();
-    pLayoutItem->RemoveChild(pNode);
+    pNode->SetParent(nullptr);
     XFA_ReleaseLayoutItem_NoPageArea(pNode);
     pNode = pNext;
   }
