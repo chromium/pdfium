@@ -2507,8 +2507,8 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   sk_sp<SkImage> skMaskImage = SkImage::MakeFromBitmap(skMask);
   sk_sp<SkShader> skMaskShader =
       skMaskImage->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
-  paint.setShader(SkShader::MakeComposeShader(skMaskShader, skSrcShader,
-                                              SkBlendMode::kSrcIn));
+  paint.setShader(
+      SkShaders::Blend(SkBlendMode::kSrcIn, skMaskShader, skSrcShader));
   SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
   m_pCanvas->drawRect(r, paint);
   m_pCanvas->restore();
