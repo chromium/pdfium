@@ -1911,3 +1911,133 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelInvalidAnnotations) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, GetFontSizeCombobox) {
+  // Open a file with combobox annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // All 3 widgets have Tf font size 12.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    float value;
+    ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
+    EXPECT_EQ(12.0, value);
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    float value_two;
+    ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_two));
+    EXPECT_EQ(12.0, value_two);
+
+    annot.reset(FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+
+    float value_three;
+    ASSERT_TRUE(
+        FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_three));
+    EXPECT_EQ(12.0, value_three);
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFontSizeTextField) {
+  // Open a file with textfield annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // All 3 widgets have Tf font size 12.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    float value;
+    ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
+    EXPECT_EQ(12.0, value);
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    float value_two;
+    ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_two));
+    EXPECT_EQ(12.0, value_two);
+
+    annot.reset(FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+
+    float value_three;
+    ASSERT_TRUE(
+        FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_three));
+    EXPECT_EQ(12.0, value_three);
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFontSizeInvalidAnnotationTypes) {
+  // Open a file with ink annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Annotations that do not have variable text and will return -1.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    float value;
+    ASSERT_FALSE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
+
+    annot.reset(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    ASSERT_FALSE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFontSizeInvalidArguments) {
+  // Open a file with combobox annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // Check bad form handle / annot.
+    float value;
+    ASSERT_FALSE(FPDFAnnot_GetFontSize(nullptr, annot.get(), &value));
+    ASSERT_FALSE(FPDFAnnot_GetFontSize(form_handle(), nullptr, &value));
+    ASSERT_FALSE(FPDFAnnot_GetFontSize(nullptr, nullptr, &value));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFontSizeNegative) {
+  // Open a file with textfield annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("text_form_negative_fontsize.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Obtain the first annotation, a text field with negative font size, -12.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    float value;
+    ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
+    EXPECT_EQ(-12.0, value);
+  }
+
+  UnloadPage(page);
+}

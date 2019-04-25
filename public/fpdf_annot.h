@@ -591,6 +591,23 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
                          FPDF_WCHAR* buffer,
                          unsigned long buflen);
 
+// Experimental API.
+// Get the float value of the font size for an |annot| with variable text.
+// If 0, the font is to be auto-sized: its size is computed as a function of
+// the height of the annotation rectangle.
+//
+//   hHandle - handle to the form fill module, returned by
+//             FPDFDOC_InitFormFillEnvironment.
+//   annot   - handle to an annotation.
+//   value   - Required. Float which will be set to font size on success.
+//
+// Returns true if the font size was set in |value|, false on error or if
+// |value| not provided.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
+                      FPDF_ANNOTATION annot,
+                      float* value);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

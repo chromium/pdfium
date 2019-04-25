@@ -44,6 +44,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetAttachmentPoints);
     CHK(FPDFAnnot_GetColor);
     CHK(FPDFAnnot_GetFlags);
+    CHK(FPDFAnnot_GetFontSize);
     CHK(FPDFAnnot_GetFormFieldAtPoint);
     CHK(FPDFAnnot_GetFormFieldFlags);
     CHK(FPDFAnnot_GetLinkedAnnot);
