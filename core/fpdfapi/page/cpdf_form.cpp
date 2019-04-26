@@ -45,7 +45,7 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
 
 CPDF_Form::~CPDF_Form() = default;
 
-void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
+void CPDF_Form::ParseContent(const CPDF_AllStates* pGraphicStates,
                              const CFX_Matrix* pParentMatrix,
                              CPDF_Type3Char* pType3Char,
                              std::set<const uint8_t*>* parsedSet) {

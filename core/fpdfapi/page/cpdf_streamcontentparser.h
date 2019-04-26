@@ -42,7 +42,7 @@ class CPDF_StreamContentParser {
                            CPDF_PageObjectHolder* pObjectHolder,
                            CPDF_Dictionary* pResources,
                            const CFX_FloatRect& rcBBox,
-                           CPDF_AllStates* pAllStates,
+                           const CPDF_AllStates* pAllStates,
                            std::set<const uint8_t*>* parsedSet);
   ~CPDF_StreamContentParser();
 

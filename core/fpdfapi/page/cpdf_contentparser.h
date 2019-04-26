@@ -28,7 +28,7 @@ class CPDF_ContentParser {
  public:
   explicit CPDF_ContentParser(CPDF_Page* pPage);
   CPDF_ContentParser(CPDF_Form* pForm,
-                     CPDF_AllStates* pGraphicStates,
+                     const CPDF_AllStates* pGraphicStates,
                      const CFX_Matrix* pParentMatrix,
                      CPDF_Type3Char* pType3Char,
                      std::set<const uint8_t*>* parsedSet);

@@ -35,7 +35,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder {
             CPDF_Dictionary* pParentResources);
   ~CPDF_Form() override;
 
-  void ParseContent(CPDF_AllStates* pGraphicStates,
+  void ParseContent(const CPDF_AllStates* pGraphicStates,
                     const CFX_Matrix* pParentMatrix,
                     CPDF_Type3Char* pType3Char,
                     std::set<const uint8_t*>* parsedSet);
