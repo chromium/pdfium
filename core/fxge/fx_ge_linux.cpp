@@ -18,17 +18,19 @@
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 namespace {
 
-const size_t kLinuxGpNameSize = 6;
+enum JpFontFamily : uint8_t {
+  kJpFontPGothic,
+  kJpFontGothic,
+  kJpFontPMincho,
+  kJpFontMincho,
+  kCount
+};
 
-const char* const g_LinuxGpFontList[][kLinuxGpNameSize] = {
-    {"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic", "Kochi Gothic",
-     "VL Gothic regular"},
-    {"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", nullptr,
-     "VL Gothic regular"},
-    {"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho", nullptr,
-     "VL Gothic regular"},
-    {"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho", nullptr,
-     "VL Gothic regular"},
+const char* const g_LinuxJpFontList[][JpFontFamily::kCount] = {
+    {"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"},
+    {"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"},
+    {"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"},
+    {"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho"},
 };
 
 const char* const g_LinuxGbFontList[] = {
@@ -43,40 +45,42 @@ const char* const g_LinuxHGFontList[] = {
     "UnDotum",
 };
 
-size_t GetJapanesePreference(const char* facearr,
-                             int weight,
-                             int pitch_family) {
+uint8_t GetJapanesePreference(const char* facearr,
+                              int weight,
+                              int pitch_family) {
   ByteString face = facearr;
   if (face.Contains("Gothic") ||
       face.Contains("\x83\x53\x83\x56\x83\x62\x83\x4e")) {
     if (face.Contains("PGothic") ||
         face.Contains("\x82\x6f\x83\x53\x83\x56\x83\x62\x83\x4e")) {
-      return 0;
+      return kJpFontPGothic;
     }
-    return 1;
+    return kJpFontGothic;
   }
   if (face.Contains("Mincho") || face.Contains("\x96\xbe\x92\xa9")) {
     if (face.Contains("PMincho") || face.Contains("\x82\x6f\x96\xbe\x92\xa9")) {
-      return 2;
+      return kJpFontPMincho;
     }
-    return 3;
+    return kJpFontMincho;
   }
   if (!FontFamilyIsRoman(pitch_family) && weight > 400)
-    return 0;
+    return kJpFontPGothic;
 
-  return 2;
+  return kJpFontPMincho;
 }
 
 class CFX_LinuxFontInfo final : public CFX_FolderFontInfo {
  public:
-  CFX_LinuxFontInfo() {}
-  ~CFX_LinuxFontInfo() override {}
+  CFX_LinuxFontInfo() = default;
+  ~CFX_LinuxFontInfo() override = default;
 
+  // CFX_LinuxFontInfo:
   void* MapFont(int weight,
                 bool bItalic,
                 int charset,
                 int pitch_family,
                 const char* family) override;
+
   bool ParseFontCfg(const char** pUserPaths);
 };
 
@@ -92,10 +96,10 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   bool bCJK = true;
   switch (charset) {
     case FX_CHARSET_ShiftJIS: {
-      size_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
-      ASSERT(index < FX_ArraySize(g_LinuxGpFontList));
-      for (size_t i = 0; i < kLinuxGpNameSize; i++) {
-        auto it = m_FontList.find(g_LinuxGpFontList[index][i]);
+      uint8_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
+      ASSERT(index < FX_ArraySize(g_LinuxJpFontList));
+      for (const char* name : g_LinuxJpFontList[index]) {
+        auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
       }
