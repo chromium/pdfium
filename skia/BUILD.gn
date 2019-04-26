@@ -36,6 +36,7 @@ config("skia_config") {
     "//third_party/skia/include/pipe",
     "//third_party/skia/include/ports",
     "//third_party/skia/include/utils",
+    "//third_party/skia/third_party/skcms",
     "//third_party/skia/third_party/vulkan",
   ]
 
