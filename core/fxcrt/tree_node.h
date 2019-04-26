@@ -23,13 +23,19 @@ class TreeNode {
   T* GetNextSibling() const { return m_pNextSibling; }
   T* GetPrevSibling() const { return m_pPrevSibling; }
 
+  bool HasChild(const T* child) const {
+    return child != this && child->m_pParent == this;
+  }
+
   void AppendFirstChild(T* child) {
     BecomeParent(child);
     if (m_pFirstChild) {
+      CHECK(m_pLastChild);
       m_pFirstChild->m_pPrevSibling = child;
       child->m_pNextSibling = m_pFirstChild;
       m_pFirstChild = child;
     } else {
+      CHECK(!m_pLastChild);
       m_pFirstChild = child;
       m_pLastChild = child;
     }
@@ -38,10 +44,12 @@ class TreeNode {
   void AppendLastChild(T* child) {
     BecomeParent(child);
     if (m_pLastChild) {
+      CHECK(m_pFirstChild);
       m_pLastChild->m_pNextSibling = child;
       child->m_pPrevSibling = m_pLastChild;
       m_pLastChild = child;
     } else {
+      CHECK(!m_pFirstChild);
       m_pFirstChild = child;
       m_pLastChild = child;
     }
@@ -52,14 +60,16 @@ class TreeNode {
       AppendLastChild(child);
       return;
     }
-    CHECK(other->m_pParent == this);
     BecomeParent(child);
+    CHECK(HasChild(other));
     child->m_pNextSibling = other;
     child->m_pPrevSibling = other->m_pPrevSibling;
-    if (other->m_pPrevSibling)
-      other->m_pPrevSibling->m_pNextSibling = child;
-    else
+    if (m_pFirstChild == other) {
+      CHECK(!other->m_pPrevSibling);
       m_pFirstChild = child;
+    } else {
+      other->m_pPrevSibling->m_pNextSibling = child;
+    }
     other->m_pPrevSibling = child;
   }
 
@@ -68,29 +78,33 @@ class TreeNode {
       AppendFirstChild(child);
       return;
     }
-    CHECK(other->m_pParent == this);
     BecomeParent(child);
+    CHECK(HasChild(other));
     child->m_pNextSibling = other->m_pNextSibling;
     child->m_pPrevSibling = other;
-    if (other->m_pNextSibling)
-      other->m_pNextSibling->m_pPrevSibling = child;
-    else
+    if (m_pLastChild == other) {
+      CHECK(!other->m_pNextSibling);
       m_pLastChild = child;
+    } else {
+      other->m_pNextSibling->m_pPrevSibling = child;
+    }
     other->m_pNextSibling = child;
   }
 
   void RemoveChild(T* child) {
-    CHECK(child->m_pParent == this);
-    if (child->m_pNextSibling)
-      child->m_pNextSibling->m_pPrevSibling = child->m_pPrevSibling;
-    else
+    CHECK(HasChild(child));
+    if (m_pLastChild == child) {
+      CHECK(!child->m_pNextSibling);
       m_pLastChild = child->m_pPrevSibling;
-
-    if (child->m_pPrevSibling)
-      child->m_pPrevSibling->m_pNextSibling = child->m_pNextSibling;
-    else
+    } else {
+      child->m_pNextSibling->m_pPrevSibling = child->m_pPrevSibling;
+    }
+    if (m_pFirstChild == child) {
+      CHECK(!child->m_pPrevSibling);
       m_pFirstChild = child->m_pNextSibling;
-
+    } else {
+      child->m_pPrevSibling->m_pNextSibling = child->m_pNextSibling;
+    }
     child->m_pParent = nullptr;
     child->m_pPrevSibling = nullptr;
     child->m_pNextSibling = nullptr;
@@ -99,11 +113,12 @@ class TreeNode {
  private:
   // Child left in state where sibling members need subsequent adjustment.
   void BecomeParent(T* child) {
+    CHECK(child != this);  // Detect attempts at self-insertion.
     if (child->m_pParent)
       child->m_pParent->TreeNode<T>::RemoveChild(child);
     child->m_pParent = static_cast<T*>(this);
-    ASSERT(!child->m_pNextSibling);
-    ASSERT(!child->m_pPrevSibling);
+    CHECK(!child->m_pNextSibling);
+    CHECK(!child->m_pPrevSibling);
   }
 
   T* m_pParent = nullptr;       // Raw, intra-tree pointer.
