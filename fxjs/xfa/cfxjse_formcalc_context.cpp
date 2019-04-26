@@ -817,7 +817,7 @@ int32_t DateString2Num(ByteStringView bsDate) {
   }
   i = 0;
   while (iDay - i > 0) {
-    dDays += 1;
+    ++dDays;
     ++i;
   }
   return (int32_t)dDays;
@@ -1249,7 +1249,7 @@ ByteString TrillionUS(ByteStringView bsData) {
     iIndex += 2;
   } else if (iFirstCount == 1) {
     strBuf << pCapUnits[pData[iIndex] - '0'];
-    iIndex += 1;
+    ++iIndex;
   }
   if (iLength > 3 && iFirstCount > 0) {
     strBuf << pComm[iComm];
@@ -4246,7 +4246,7 @@ void CFXJSE_FormCalcContext::Stuff(CFXJSE_Value* pThis,
     bsInsert = ValueToUTF8String(insertValue.get());
   }
 
-  iStart -= 1;
+  --iStart;
   std::ostringstream szResult;
   int32_t i = 0;
   while (i < iStart) {
@@ -4282,8 +4282,6 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
     return;
   }
 
-  int32_t iStart = 0;
-  int32_t iCount = 0;
   ByteString bsSource = ValueToUTF8String(stringValue.get());
   int32_t iLength = bsSource.GetLength();
   if (iLength == 0) {
@@ -4291,12 +4289,12 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
     return;
   }
 
-  iStart = pdfium::clamp(
+  int32_t iStart = pdfium::clamp(
       iLength, 1, static_cast<int32_t>(ValueToFloat(pThis, startValue.get())));
-  iCount =
+  int32_t iCount =
       std::max(0, static_cast<int32_t>(ValueToFloat(pThis, endValue.get())));
 
-  iStart -= 1;
+  --iStart;
   args.GetReturnValue()->SetString(bsSource.Mid(iStart, iCount).AsStringView());
 }
 
@@ -5168,7 +5166,7 @@ void CFXJSE_FormCalcContext::concat_fm_object(CFXJSE_Value* pThis,
       int32_t length = lengthValue->ToInteger();
       iLength = iLength + ((length > 2) ? (length - 2) : 0);
     }
-    iLength += 1;
+    ++iLength;
   }
 
   std::vector<std::unique_ptr<CFXJSE_Value>> returnValues;
@@ -5324,7 +5322,7 @@ std::vector<std::unique_ptr<CFXJSE_Value>> CFXJSE_FormCalcContext::unfoldArgs(
       int32_t iLength = lengthValue->ToInteger();
       iCount += ((iLength > 2) ? (iLength - 2) : 0);
     } else {
-      iCount += 1;
+      ++iCount;
     }
   }
 
