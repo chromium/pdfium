@@ -112,7 +112,10 @@ struct Options {
   bool md5 = false;
 #ifdef ENABLE_CALLGRIND
   bool callgrind_delimiters = false;
-#endif  // ENABLE_CALLGRIND
+#endif
+#if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
+  bool linux_no_system_fonts = false;
+#endif
   OutputFormat output_format = OUTPUT_NONE;
   std::string scale_factor_as_string;
   std::string exe_path;
@@ -138,6 +141,22 @@ Optional<std::string> ExpandDirectoryPath(const std::string& path) {
 #else
   return {path};
 #endif  // WORDEXP_AVAILABLE
+}
+
+Optional<const char*> GetCustomFontPath(const Options& options) {
+#if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
+  // Set custom font path to an empty path. This avoids the fallback to default
+  // font paths.
+  if (options.linux_no_system_fonts)
+    return nullptr;
+#endif
+
+  // No custom font path. Use default.
+  if (options.font_directory.empty())
+    return pdfium::nullopt;
+
+  // Set custom font path to |options.font_directory|.
+  return options.font_directory.c_str();
 }
 
 struct FPDF_FORMFILLINFO_PDFiumTest final : public FPDF_FORMFILLINFO {
@@ -338,7 +357,11 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 #ifdef ENABLE_CALLGRIND
     } else if (cur_arg == "--callgrind-delim") {
       options->callgrind_delimiters = true;
-#endif  // ENABLE_CALLGRIND
+#endif
+#if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
+    } else if (cur_arg == "--no-system-fonts") {
+      options->linux_no_system_fonts = true;
+#endif
     } else if (cur_arg == "--ppm") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --ppm argument\n");
@@ -891,6 +914,9 @@ constexpr char kUsageString[] =
     "  --callgrind-delim    - delimit interesting section when using "
     "callgrind\n"
 #endif
+#if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
+    "  --no-system-fonts    - do not use system fonts, overrides --font-dir\n"
+#endif
     "  --bin-dir=<path>     - override path to v8 external data\n"
     "  --font-dir=<path>    - override path to external fonts\n"
     "  --scale=<number>     - scale output size by number (e.g. 0.5)\n"
@@ -956,12 +982,13 @@ int main(int argc, const char* argv[]) {
   config.m_pIsolate = nullptr;
   config.m_v8EmbedderSlot = 0;
 
-  const char* path_array[2];
-  if (!options.font_directory.empty()) {
-    path_array[0] = options.font_directory.c_str();
-    path_array[1] = nullptr;
+  const char* path_array[2] = {nullptr, nullptr};
+  Optional<const char*> custom_font_path = GetCustomFontPath(options);
+  if (custom_font_path.has_value()) {
+    path_array[0] = custom_font_path.value();
     config.m_pUserFontPaths = path_array;
   }
+
   FPDF_InitLibraryWithConfig(&config);
 
   UNSUPPORT_INFO unsupported_info = {};
