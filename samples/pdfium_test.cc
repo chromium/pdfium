@@ -871,28 +871,29 @@ void ShowConfig() {
 
 constexpr char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
-    "  --show-config       - print build options and exit\n"
-    "  --show-metadata     - print the file metadata\n"
-    "  --show-pageinfo     - print information about pages\n"
-    "  --show-structure    - print the structure elements from the document\n"
-    "  --send-events       - send input described by .evt file\n"
-    "  --render-oneshot    - render image without using progressive renderer\n"
-    "  --save-attachments  - write embedded attachments "
+    "  --show-config        - print build options and exit\n"
+    "  --show-metadata      - print the file metadata\n"
+    "  --show-pageinfo      - print information about pages\n"
+    "  --show-structure     - print the structure elements from the document\n"
+    "  --send-events        - send input described by .evt file\n"
+    "  --render-oneshot     - render image without using progressive renderer\n"
+    "  --save-attachments   - write embedded attachments "
     "<pdf-name>.attachment.<attachment-name>\n"
-    "  --save-images       - write embedded images "
+    "  --save-images        - write embedded images "
     "<pdf-name>.<page-number>.<object-number>.png\n"
 #ifdef PDF_ENABLE_V8
-    "  --disable-javascript- do not execute JS in PDF files\n"
+    "  --disable-javascript - do not execute JS in PDF files\n"
 #ifdef PDF_ENABLE_XFA
-    "  --disable-xfa       - do not process XFA forms\n"
+    "  --disable-xfa        - do not process XFA forms\n"
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 #ifdef ENABLE_CALLGRIND
-    "  --callgrind-delim   - delimit interesting section when using callgrind\n"
-#endif  // ENABLE_CALLGRIND
-    "  --bin-dir=<path>    - override path to v8 external data\n"
-    "  --font-dir=<path>   - override path to external fonts\n"
-    "  --scale=<number>    - scale output size by number (e.g. 0.5)\n"
+    "  --callgrind-delim    - delimit interesting section when using "
+    "callgrind\n"
+#endif
+    "  --bin-dir=<path>     - override path to v8 external data\n"
+    "  --font-dir=<path>    - override path to external fonts\n"
+    "  --scale=<number>     - scale output size by number (e.g. 0.5)\n"
     "  --pages=<number>(-<number>) - only render the given 0-based page(s)\n"
 #ifdef _WIN32
     "  --bmp   - write page images <pdf-name>.<page-number>.bmp\n"
@@ -901,7 +902,7 @@ constexpr char kUsageString[] =
     "<pdf-name>.<page-number>.ps\n"
     "  --ps3   - write page raw PostScript (Lvl 3) "
     "<pdf-name>.<page-number>.ps\n"
-#endif  // _WIN32
+#endif
     "  --txt   - write page text in UTF32-LE <pdf-name>.<page-number>.txt\n"
     "  --png   - write page images <pdf-name>.<page-number>.png\n"
     "  --ppm   - write page images <pdf-name>.<page-number>.ppm\n"
