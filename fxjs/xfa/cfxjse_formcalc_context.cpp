@@ -4272,29 +4272,34 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> stringValue = GetSimpleValue(pThis, args, 0);
-  std::unique_ptr<CFXJSE_Value> startValue = GetSimpleValue(pThis, args, 1);
-  std::unique_ptr<CFXJSE_Value> endValue = GetSimpleValue(pThis, args, 2);
-  if (ValueIsNull(pThis, stringValue.get()) ||
-      (ValueIsNull(pThis, startValue.get())) ||
-      (ValueIsNull(pThis, endValue.get()))) {
+  std::unique_ptr<CFXJSE_Value> string_value = GetSimpleValue(pThis, args, 0);
+  std::unique_ptr<CFXJSE_Value> start_value = GetSimpleValue(pThis, args, 1);
+  std::unique_ptr<CFXJSE_Value> end_value = GetSimpleValue(pThis, args, 2);
+  if (ValueIsNull(pThis, string_value.get()) ||
+      ValueIsNull(pThis, start_value.get()) ||
+      ValueIsNull(pThis, end_value.get())) {
     args.GetReturnValue()->SetNull();
     return;
   }
 
-  ByteString bsSource = ValueToUTF8String(stringValue.get());
-  int32_t iLength = bsSource.GetLength();
+  ByteString bsSource = ValueToUTF8String(string_value.get());
+  size_t iLength = bsSource.GetLength();
   if (iLength == 0) {
     args.GetReturnValue()->SetString("");
     return;
   }
 
-  int32_t iStart = pdfium::clamp(
-      iLength, 1, static_cast<int32_t>(ValueToFloat(pThis, startValue.get())));
-  int32_t iCount =
-      std::max(0, static_cast<int32_t>(ValueToFloat(pThis, endValue.get())));
+  // |start_value| is 1-based. Assume first character if |start_value| is less
+  // than 1, per spec. Subtract 1 since |iStart| is 0-based.
+  size_t iStart = std::max(ValueToInteger(pThis, start_value.get()), 1) - 1;
+  if (iStart >= iLength) {
+    args.GetReturnValue()->SetString("");
+    return;
+  }
 
-  --iStart;
+  // Negative values are treated as 0. Can't clamp() due to sign mismatches.
+  size_t iCount = std::max(ValueToInteger(pThis, end_value.get()), 0);
+  iCount = std::min(iCount, iLength - iStart);
   args.GetReturnValue()->SetString(bsSource.Mid(iStart, iCount).AsStringView());
 }
 

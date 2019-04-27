@@ -1402,13 +1402,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
   struct {
     const char* program;
     const char* result;
-  } static const kTests[] = {{"Substr(\"ABCDEFG\", -1, 4)", ""},
-                             {"Substr(\"ABCDEFG\", 0, 4)", ""},
+  } static const kTests[] = {{"Substr(\"ABCDEFG\", -1, 4)", "ABCD"},
+                             {"Substr(\"ABCDEFG\", 0, 4)", "ABCD"},
                              {"Substr(\"ABCDEFG\", 3, 4)", "CDEF"},
                              {"Substr(\"ABCDEFG\", 4, 4)", "DEFG"},
-                             {"Substr(\"ABCDEFG\", 5, 4)", ""},
-                             {"Substr(\"ABCDEFG\", 6, 4)", ""},
-                             {"Substr(\"ABCDEFG\", 7, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 5, 4)", "EFG"},
+                             {"Substr(\"ABCDEFG\", 6, 4)", "FG"},
+                             {"Substr(\"ABCDEFG\", 7, 4)", "G"},
                              {"Substr(\"ABCDEFG\", 8, 4)", ""},
                              {"Substr(\"ABCDEFG\", 5, -1)", ""},
                              {"Substr(\"ABCDEFG\", 5, 0)", ""},
