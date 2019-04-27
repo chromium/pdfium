@@ -8,7 +8,16 @@
 #include "testing/xfa_js_embedder_test.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
-class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {};
+class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
+ public:
+  CFXJSE_FormCalcContextEmbedderTest() = default;
+  ~CFXJSE_FormCalcContextEmbedderTest() override = default;
+
+ protected:
+  bool ExecuteExpectNull(ByteStringView input) {
+    return Execute(input) && GetValue()->IsNull();
+  }
+};
 
 // TODO(dsinclair): Comment out tests are broken and need to be fixed.
 
@@ -1375,21 +1384,46 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
+  // Test wrong number of parameters.
+  EXPECT_FALSE(Execute("Substr()"));
+  EXPECT_FALSE(Execute("Substr(1)"));
+  EXPECT_FALSE(Execute("Substr(1, 2)"));
+  EXPECT_FALSE(Execute("Substr(1, 2, 3, 4)"));
+
+  // Test null input.
+  EXPECT_TRUE(ExecuteExpectNull("Substr(null, 0, 4)"));
+  EXPECT_TRUE(ExecuteExpectNull("Substr(\"ABCDEFG\", null, 4)"));
+  EXPECT_TRUE(ExecuteExpectNull("Substr(\"ABCDEFG\", 0, null)"));
+  EXPECT_TRUE(ExecuteExpectNull("Substr(null, null, 4)"));
+  EXPECT_TRUE(ExecuteExpectNull("Substr(null, 0, null)"));
+  EXPECT_TRUE(ExecuteExpectNull("Substr(\"ABCDEFG\", null, null)"));
+  EXPECT_TRUE(ExecuteExpectNull("Substr(null, null, null)"));
+
   struct {
     const char* program;
     const char* result;
-  } tests[] = {{"Substr(\"ABCDEFG\", 3, 4)", "CDEF"},
-               {"Substr(3214, 2, 1)", "2"},
-               {"Substr(\"ABCDEFG\", 5, 0)", ""},
-               {"Substr(\"21 Waterloo St.\", 4, 5)", "Water"}};
+  } static const kTests[] = {{"Substr(\"ABCDEFG\", -1, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 0, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 3, 4)", "CDEF"},
+                             {"Substr(\"ABCDEFG\", 4, 4)", "DEFG"},
+                             {"Substr(\"ABCDEFG\", 5, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 6, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 7, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 8, 4)", ""},
+                             {"Substr(\"ABCDEFG\", 5, -1)", ""},
+                             {"Substr(\"ABCDEFG\", 5, 0)", ""},
+                             {"Substr(\"ABCDEFG\", 5, 1)", "E"},
+                             {"Substr(\"abcdefghi\", 5, 3)", "efg"},
+                             {"Substr(3214, 2, 1)", "2"},
+                             {"Substr(\"21 Waterloo St.\", 4, 5)", "Water"}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
-    EXPECT_TRUE(Execute(tests[i].program));
+  for (const auto& test : kTests) {
+    EXPECT_TRUE(Execute(test.program));
 
     CFXJSE_Value* value = GetValue();
     EXPECT_TRUE(value->IsString());
-    EXPECT_STREQ(tests[i].result, value->ToString().c_str())
-        << "Program: " << tests[i].program << " Result: '" << value->ToString()
+    EXPECT_STREQ(test.result, value->ToString().c_str())
+        << "Program: " << test.program << " Result: '" << value->ToString()
         << "'";
   }
 }
