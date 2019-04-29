@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/tree_node.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
@@ -71,7 +72,7 @@ enum XFA_NodeFlag {
   XFA_NodeFlag_LayoutGeneratedNode = 1 << 6
 };
 
-class CXFA_Node : public CXFA_Object {
+class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
  public:
   struct PropertyData {
     XFA_Element property;
@@ -168,12 +169,6 @@ class CXFA_Node : public CXFA_Object {
   void RemoveChild(CXFA_Node* pNode, bool bNotify);
 
   CXFA_Node* Clone(bool bRecursive);
-
-  CXFA_Node* GetNextSibling() const { return next_sibling_; }
-  CXFA_Node* GetPrevSibling() const { return prev_sibling_; }
-  CXFA_Node* GetFirstChild() const { return first_child_; }
-  CXFA_Node* GetLastChild() const { return last_child_; }
-  CXFA_Node* GetParent() const { return parent_; }
 
   CXFA_Node* GetNextContainerSibling() const;
   CXFA_Node* GetPrevContainerSibling() const;
@@ -487,17 +482,6 @@ class CXFA_Node : public CXFA_Object {
   pdfium::span<const PropertyData> const m_Properties;
   pdfium::span<const AttributeData> const m_Attributes;
   const uint32_t m_ValidPackets;
-
-  // These members are responsible for building the CXFA_Node tree. Node
-  // pointers within the tree (or in objects owned by nodes in the tree)
-  // can't be UnownedPtr<> because the cleanup process will remove the nodes
-  // in an order that doesn't necessarily match up to the tree structure.
-  CXFA_Node* parent_ = nullptr;        // Raw, intra-tree node pointer.
-  CXFA_Node* next_sibling_ = nullptr;  // Raw, intra-tree node pointer.
-  CXFA_Node* prev_sibling_ = nullptr;  // Raw, intra-tree node pointer.
-  CXFA_Node* first_child_ = nullptr;   // Raw, intra-tree node pointer.
-  CXFA_Node* last_child_ = nullptr;    // Raw, intra-tree node pointer.
-
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
@@ -509,7 +493,6 @@ class CXFA_Node : public CXFA_Object {
   bool m_bPreNull = true;
   bool is_widget_ready_ = false;
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
-
   CXFA_Ui* ui_ = nullptr;
   XFA_FFWidgetType ff_widget_type_ = XFA_FFWidgetType::kNone;
 };

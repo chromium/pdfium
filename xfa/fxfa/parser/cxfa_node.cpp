@@ -1014,7 +1014,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
 }
 
 CXFA_Node* CXFA_Node::GetNextContainerSibling() const {
-  for (auto* pNode = next_sibling_; pNode; pNode = pNode->next_sibling_) {
+  for (auto* pNode = GetNextSibling(); pNode; pNode = pNode->GetNextSibling()) {
     if (pNode->GetObjectType() == XFA_ObjectType::ContainerNode)
       return pNode;
   }
@@ -1022,7 +1022,7 @@ CXFA_Node* CXFA_Node::GetNextContainerSibling() const {
 }
 
 CXFA_Node* CXFA_Node::GetPrevContainerSibling() const {
-  for (auto* pNode = prev_sibling_; pNode; pNode = pNode->prev_sibling_) {
+  for (auto* pNode = GetPrevSibling(); pNode; pNode = pNode->GetPrevSibling()) {
     if (pNode->GetObjectType() == XFA_ObjectType::ContainerNode)
       return pNode;
   }
@@ -1030,7 +1030,7 @@ CXFA_Node* CXFA_Node::GetPrevContainerSibling() const {
 }
 
 CXFA_Node* CXFA_Node::GetFirstContainerChild() const {
-  for (auto* pNode = first_child_; pNode; pNode = pNode->next_sibling_) {
+  for (auto* pNode = GetFirstChild(); pNode; pNode = pNode->GetNextSibling()) {
     if (pNode->GetObjectType() == XFA_ObjectType::ContainerNode)
       return pNode;
   }
@@ -1038,7 +1038,7 @@ CXFA_Node* CXFA_Node::GetFirstContainerChild() const {
 }
 
 CXFA_Node* CXFA_Node::GetContainerParent() const {
-  for (auto* pNode = parent_; pNode; pNode = pNode->parent_) {
+  for (auto* pNode = GetParent(); pNode; pNode = pNode->GetParent()) {
     if (pNode->GetObjectType() == XFA_ObjectType::ContainerNode)
       return pNode;
   }
@@ -1109,8 +1109,8 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
                                                XFA_Element eTypeFilter) {
   if (eTypeFilter != XFA_Element::Unknown) {
     std::vector<CXFA_Node*> nodes;
-    for (CXFA_Node* pChild = first_child_; pChild;
-         pChild = pChild->next_sibling_) {
+    for (CXFA_Node* pChild = GetFirstChild(); pChild;
+         pChild = pChild->GetNextSibling()) {
       if (pChild->GetElementType() == eTypeFilter)
         nodes.push_back(pChild);
     }
@@ -1119,8 +1119,8 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
 
   if (dwTypeFilter == (XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties)) {
     std::vector<CXFA_Node*> nodes;
-    for (CXFA_Node* pChild = first_child_; pChild;
-         pChild = pChild->next_sibling_)
+    for (CXFA_Node* pChild = GetFirstChild(); pChild;
+         pChild = pChild->GetNextSibling())
       nodes.push_back(pChild);
     return nodes;
   }
@@ -1132,8 +1132,8 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   bool bFilterProperties = !!(dwTypeFilter & XFA_NODEFILTER_Properties);
   bool bFilterOneOfProperties = !!(dwTypeFilter & XFA_NODEFILTER_OneOfProperty);
   std::vector<CXFA_Node*> nodes;
-  for (CXFA_Node* pChild = first_child_; pChild;
-       pChild = pChild->next_sibling_) {
+  for (CXFA_Node* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
     if (HasProperty(pChild->GetElementType())) {
       if (bFilterProperties) {
         nodes.push_back(pChild);
@@ -1475,7 +1475,7 @@ CXFA_Node* CXFA_Node::GetModelNode() {
 
 size_t CXFA_Node::CountChildren(XFA_Element eType, bool bOnlyChild) {
   size_t count = 0;
-  for (CXFA_Node* pNode = first_child_; pNode;
+  for (CXFA_Node* pNode = GetFirstChild(); pNode;
        pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() != eType && eType != XFA_Element::Unknown)
       continue;
@@ -1490,7 +1490,7 @@ CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
                                        XFA_Element eType,
                                        bool bOnlyChild) const {
   size_t count = 0;
-  for (CXFA_Node* pNode = first_child_; pNode;
+  for (CXFA_Node* pNode = GetFirstChild(); pNode;
        pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() != eType && eType != XFA_Element::Unknown)
       continue;
@@ -1505,46 +1505,22 @@ CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
 }
 
 void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
-  CHECK(pNode);
-  CHECK(!pNode->parent_);
-
-  pNode->parent_ = this;
+  CHECK(!pNode->GetParent());
   pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
 
-  if (!first_child_) {
-    ASSERT(!last_child_);
-
-    pNode->prev_sibling_ = nullptr;
-    pNode->next_sibling_ = nullptr;
-    first_child_ = pNode;
-    last_child_ = pNode;
+  CXFA_Node* pPrev = GetFirstChild();
+  if (!pPrev) {
+    AppendFirstChild(pNode);
     index = 0;
-  } else if (index == 0) {
-    pNode->prev_sibling_ = nullptr;
-    pNode->next_sibling_ = first_child_;
-    first_child_->prev_sibling_ = pNode;
-    first_child_ = pNode;
   } else if (index < 0) {
-    pNode->prev_sibling_ = last_child_;
-    pNode->next_sibling_ = nullptr;
-    last_child_->next_sibling_ = pNode;
-    last_child_ = pNode;
+    AppendLastChild(pNode);
+  } else if (index == 0) {
+    AppendFirstChild(pNode);
   } else {
-    CXFA_Node* pPrev = first_child_;
     int32_t count = 0;
-    while (++count < index && pPrev->next_sibling_)
-      pPrev = pPrev->next_sibling_;
-
-    pNode->prev_sibling_ = pPrev;
-    pNode->next_sibling_ = pPrev->next_sibling_;
-    if (pPrev->next_sibling_)
-      pPrev->next_sibling_->prev_sibling_ = pNode;
-    pPrev->next_sibling_ = pNode;
-
-    // Move the last child pointer if needed.
-    if (pPrev == last_child_)
-      last_child_ = pNode;
-
+    while (++count < index && pPrev->GetNextSibling())
+      pPrev = pPrev->GetNextSibling();
+    InsertAfter(pNode, pPrev);
     index = count;
   }
 
@@ -1560,18 +1536,18 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
 }
 
 void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
-  CHECK(!pBeforeNode || pBeforeNode->parent_ == this);
+  CHECK(!pBeforeNode || pBeforeNode->GetParent() == this);
 
   int32_t index = -1;
-  if (!first_child_ || pBeforeNode == first_child_) {
+  if (!GetFirstChild() || pBeforeNode == GetFirstChild()) {
     index = 0;
   } else if (!pBeforeNode) {
     index = -1;
   } else {
     index = 0;
-    CXFA_Node* prev = first_child_;
+    CXFA_Node* prev = GetFirstChild();
     while (prev && prev != pBeforeNode) {
-      prev = prev->next_sibling_;
+      prev = prev->GetNextSibling();
       ++index;
     }
   }
@@ -1580,28 +1556,10 @@ void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
 
 void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   CHECK(pNode);
-  CHECK_EQ(pNode->parent_, this);
+  CHECK_EQ(pNode->GetParent(), this);
 
   pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren);
-
-  if (first_child_ == pNode && last_child_ == pNode) {
-    first_child_ = nullptr;
-    last_child_ = nullptr;
-  } else if (first_child_ == pNode) {
-    first_child_ = pNode->next_sibling_;
-    first_child_->prev_sibling_ = nullptr;
-  } else if (last_child_ == pNode) {
-    last_child_ = pNode->prev_sibling_;
-    last_child_->next_sibling_ = nullptr;
-  } else {
-    CXFA_Node* pPrev = pNode->prev_sibling_;
-    pPrev->next_sibling_ = pNode->next_sibling_;
-    pPrev->next_sibling_->prev_sibling_ = pPrev;
-  }
-  pNode->next_sibling_ = nullptr;
-  pNode->prev_sibling_ = nullptr;
-  pNode->parent_ = nullptr;
-
+  TreeNode<CXFA_Node>::RemoveChild(pNode);
   OnRemoved(bNotify);
 
   if (!IsNeedSavingXMLNode() || !pNode->xml_node_)
@@ -1781,7 +1739,7 @@ bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
   if (m_uNodeFlags & dwFlag)
     return true;
   if (dwFlag == XFA_NodeFlag_HasRemovedChildren)
-    return parent_ && parent_->HasFlag(dwFlag);
+    return GetParent() && GetParent()->HasFlag(dwFlag);
   return false;
 }
 
