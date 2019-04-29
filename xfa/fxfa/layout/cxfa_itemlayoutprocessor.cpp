@@ -707,6 +707,7 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
   if (pLayoutItem->GetFirstChild())
     pSecondLayoutItem->m_sSize.height += fCurTopMargin;
 
+  bool bOrphanedItem = false;
   if (pSecondParent) {
     pSecondParent->AddChild(pSecondLayoutItem);
     if (fCurTopMargin > 0 && pLayoutItem->GetFirstChild()) {
@@ -721,10 +722,14 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
         pContentItem->m_sSize.height += fCurTopMargin;
       }
     }
+  } else if (pLayoutItem->GetParent()) {
+    pLayoutItem->GetParent()->InsertChild(pLayoutItem, pSecondLayoutItem);
   } else {
-    pSecondLayoutItem->SetParent(pLayoutItem->GetParent());
-    pSecondLayoutItem->SetNextSibling(pLayoutItem->GetNextSibling());
-    pLayoutItem->SetNextSibling(pSecondLayoutItem);
+    // Parentless |pLayoutitem| would like to have |pSecondLayoutItem| as a
+    // sibling, but that would violate the tree invariant. Instead, keep
+    // it an orphan and add it as a child of |pLayoutItem| after performing
+    // the split.
+    bOrphanedItem = true;
   }
 
   CXFA_ContentLayoutItem* pChildren =
@@ -787,6 +792,8 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
     fAddMarginHeight = pSecondLayoutItem->m_sSize.height - fOldHeight;
     pLayoutItem->AddChild(pChildItem);
   }
+  if (bOrphanedItem)
+    pLayoutItem->AddChild(pSecondLayoutItem);
 }
 
 void CXFA_ItemLayoutProcessor::SplitLayoutItem(float fSplitPos) {
