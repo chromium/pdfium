@@ -389,7 +389,7 @@ void CPDF_SyntaxParser::ToNextWord() {
 }
 
 ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  const CPDF_ReadValidator::Session read_session(GetValidator());
   GetNextWordInternal(bIsNumber);
   ByteString ret;
   if (!GetValidator()->has_read_problems())
@@ -412,7 +412,7 @@ void CPDF_SyntaxParser::SetPos(FX_FILESIZE pos) {
 
 std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBody(
     CPDF_IndirectObjectHolder* pObjList) {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  const CPDF_ReadValidator::Session read_session(GetValidator());
   auto result = GetObjectBodyInternal(pObjList, ParseType::kLoose);
   if (GetValidator()->has_read_problems())
     return nullptr;
@@ -533,7 +533,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
 std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetIndirectObject(
     CPDF_IndirectObjectHolder* pObjList,
     ParseType parse_type) {
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  const CPDF_ReadValidator::Session read_session(GetValidator());
   const FX_FILESIZE saved_pos = GetPos();
   bool is_number = false;
   ByteString word = GetNextWord(&is_number);
@@ -667,7 +667,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   // Note, we allow zero length streams as we need to pass them through when we
   // are importing pages into a new document.
   if (len >= 0) {
-    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+    const CPDF_ReadValidator::Session read_session(GetValidator());
     m_Pos += ReadEOLMarkers(GetPos());
     memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
     GetNextWordInternal(nullptr);

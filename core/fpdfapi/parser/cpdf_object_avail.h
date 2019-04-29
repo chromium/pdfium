@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Object;
@@ -20,10 +21,10 @@ class CPDF_ReadValidator;
 // Helper for check availability of object tree.
 class CPDF_ObjectAvail {
  public:
-  CPDF_ObjectAvail(CPDF_ReadValidator* validator,
+  CPDF_ObjectAvail(const RetainPtr<CPDF_ReadValidator>& validator,
                    CPDF_IndirectObjectHolder* holder,
                    const CPDF_Object* root);
-  CPDF_ObjectAvail(CPDF_ReadValidator* validator,
+  CPDF_ObjectAvail(const RetainPtr<CPDF_ReadValidator>& validator,
                    CPDF_IndirectObjectHolder* holder,
                    uint32_t obj_num);
   virtual ~CPDF_ObjectAvail();
@@ -41,7 +42,7 @@ class CPDF_ObjectAvail {
   void CleanMemory();
   bool HasObjectParsed(uint32_t obj_num) const;
 
-  UnownedPtr<CPDF_ReadValidator> validator_;
+  RetainPtr<CPDF_ReadValidator> validator_;
   UnownedPtr<CPDF_IndirectObjectHolder> holder_;
   MaybeOwned<const CPDF_Object> root_;
   std::set<uint32_t> parsed_objnums_;

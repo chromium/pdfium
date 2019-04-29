@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 namespace fxcrt {
 
@@ -51,6 +52,7 @@ class RetainPtr {
   }
 
   T* Get() const { return m_pObj.get(); }
+  UnownedPtr<T> BackPointer() const { return UnownedPtr<T>(Get()); }
   void Swap(RetainPtr& that) { m_pObj.swap(that.m_pObj); }
 
   // Useful for passing notion of object ownership across a C API.

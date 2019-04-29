@@ -27,8 +27,9 @@ FX_FILESIZE AlignUp(FX_FILESIZE offset) {
 
 }  // namespace
 
-CPDF_ReadValidator::Session::Session(CPDF_ReadValidator* validator)
-    : validator_(validator) {
+CPDF_ReadValidator::Session::Session(
+    const RetainPtr<CPDF_ReadValidator>& validator)
+    : validator_(validator.BackPointer()) {
   ASSERT(validator_);
   saved_read_error_ = validator_->read_error_;
   saved_has_unavailable_data_ = validator_->has_unavailable_data_;

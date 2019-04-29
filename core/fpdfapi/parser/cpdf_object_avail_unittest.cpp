@@ -132,7 +132,7 @@ TEST(CPDF_ObjectAvailTest, OneObject) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeUnique<CPDF_String>(nullptr, "string", false),
                    TestHolder::ObjectState::Unavailable);
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
             avail.CheckAvail());
   holder.SetObjectState(1, TestHolder::ObjectState::Available);
@@ -145,7 +145,7 @@ TEST(CPDF_ObjectAvailTest, OneReferencedObject) {
                    TestHolder::ObjectState::Unavailable);
   holder.AddObject(2, pdfium::MakeUnique<CPDF_String>(nullptr, "string", false),
                    TestHolder::ObjectState::Unavailable);
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
             avail.CheckAvail());
 
@@ -166,7 +166,7 @@ TEST(CPDF_ObjectAvailTest, CycledReferences) {
   holder.AddObject(3, pdfium::MakeUnique<CPDF_Reference>(&holder, 1),
                    TestHolder::ObjectState::Unavailable);
 
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
             avail.CheckAvail());
 
@@ -192,7 +192,7 @@ TEST(CPDF_ObjectAvailTest, DoNotCheckParent) {
   holder.GetTestObject(2)->GetDict()->SetNewFor<CPDF_Reference>("Parent",
                                                                 &holder, 1);
 
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 2);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 2);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
             avail.CheckAvail());
 
@@ -215,8 +215,7 @@ TEST(CPDF_ObjectAvailTest, Generic) {
   holder.AddObject(kDepth, pdfium::MakeUnique<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Unavailable);
 
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 1);
-
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 1);
   for (uint32_t i = 1; i <= kDepth; ++i) {
     EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
               avail.CheckAvail());
@@ -229,7 +228,7 @@ TEST(CPDF_ObjectAvailTest, NotExcludeRoot) {
   TestHolder holder;
   holder.AddObject(1, pdfium::MakeUnique<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
-  CPDF_ObjectAvailFailOnExclude avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvailFailOnExclude avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable, avail.CheckAvail());
 }
 
@@ -239,7 +238,7 @@ TEST(CPDF_ObjectAvailTest, NotExcludeReferedRoot) {
                    TestHolder::ObjectState::Available);
   holder.AddObject(2, pdfium::MakeUnique<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
-  CPDF_ObjectAvailFailOnExclude avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvailFailOnExclude avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable, avail.CheckAvail());
 }
 
@@ -258,7 +257,7 @@ TEST(CPDF_ObjectAvailTest, Exclude) {
       3,
       pdfium::MakeUnique<CPDF_String>(nullptr, "Not available string", false),
       TestHolder::ObjectState::Unavailable);
-  CPDF_ObjectAvailExcludeArray avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvailExcludeArray avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable, avail.CheckAvail());
 }
 
@@ -287,7 +286,7 @@ TEST(CPDF_ObjectAvailTest, ReadErrorOnExclude) {
       pdfium::MakeUnique<CPDF_String>(nullptr, "Not available string", false),
       TestHolder::ObjectState::Unavailable);
 
-  CPDF_ObjectAvailExcludeTypeKey avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvailExcludeTypeKey avail(holder.GetValidator(), &holder, 1);
 
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
             avail.CheckAvail());
@@ -306,7 +305,7 @@ TEST(CPDF_ObjectAvailTest, IgnoreNotExistsObject) {
                    TestHolder::ObjectState::Available);
   holder.GetTestObject(1)->GetDict()->SetNewFor<CPDF_Reference>(
       "NotExistsObjRef", &holder, 2);
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 1);
   // Now object should be available, although the object '2' is not exists. But
   // all exists in file related data are checked.
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable, avail.CheckAvail());
@@ -317,7 +316,7 @@ TEST(CPDF_ObjectAvailTest, CheckTwice) {
   holder.AddObject(1, pdfium::MakeUnique<CPDF_String>(nullptr, "string", false),
                    TestHolder::ObjectState::Unavailable);
 
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, 1);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, 1);
   EXPECT_EQ(avail.CheckAvail(), avail.CheckAvail());
 
   holder.SetObjectState(1, TestHolder::ObjectState::Available);
@@ -339,7 +338,7 @@ TEST(CPDF_ObjectAvailTest, SelfReferedInlinedObject) {
   holder.AddObject(2, pdfium::MakeUnique<CPDF_String>(nullptr, "Data", false),
                    TestHolder::ObjectState::Unavailable);
 
-  CPDF_ObjectAvail avail(holder.GetValidator().Get(), &holder, root);
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, root);
 
   EXPECT_EQ(CPDF_DataAvail::DocAvailStatus::DataNotAvailable,
             avail.CheckAvail());

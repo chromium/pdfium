@@ -13,9 +13,10 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "third_party/base/ptr_util.h"
 
-CPDF_ObjectAvail::CPDF_ObjectAvail(CPDF_ReadValidator* validator,
-                                   CPDF_IndirectObjectHolder* holder,
-                                   const CPDF_Object* root)
+CPDF_ObjectAvail::CPDF_ObjectAvail(
+    const RetainPtr<CPDF_ReadValidator>& validator,
+    CPDF_IndirectObjectHolder* holder,
+    const CPDF_Object* root)
     : validator_(validator), holder_(holder), root_(root) {
   ASSERT(validator_);
   ASSERT(holder);
@@ -24,9 +25,10 @@ CPDF_ObjectAvail::CPDF_ObjectAvail(CPDF_ReadValidator* validator,
     parsed_objnums_.insert(root_->GetObjNum());
 }
 
-CPDF_ObjectAvail::CPDF_ObjectAvail(CPDF_ReadValidator* validator,
-                                   CPDF_IndirectObjectHolder* holder,
-                                   uint32_t obj_num)
+CPDF_ObjectAvail::CPDF_ObjectAvail(
+    const RetainPtr<CPDF_ReadValidator>& validator,
+    CPDF_IndirectObjectHolder* holder,
+    uint32_t obj_num)
     : validator_(validator),
       holder_(holder),
       root_(pdfium::MakeUnique<CPDF_Reference>(holder, obj_num)) {
@@ -58,7 +60,7 @@ bool CPDF_ObjectAvail::LoadRootObject() {
       return true;
     }
 
-    const CPDF_ReadValidator::Session parse_session(validator_.Get());
+    const CPDF_ReadValidator::Session parse_session(validator_);
     const CPDF_Object* direct = holder_->GetOrParseIndirectObject(ref_obj_num);
     if (validator_->has_read_problems())
       return false;
@@ -88,7 +90,7 @@ bool CPDF_ObjectAvail::CheckObjects() {
     if (!checked_objects.insert(obj_num).second)
       continue;
 
-    const CPDF_ReadValidator::Session parse_session(validator_.Get());
+    const CPDF_ReadValidator::Session parse_session(validator_);
     const CPDF_Object* direct = holder_->GetOrParseIndirectObject(obj_num);
     if (direct == root_.Get())
       continue;
@@ -111,7 +113,7 @@ bool CPDF_ObjectAvail::AppendObjectSubRefs(const CPDF_Object* object,
 
   CPDF_ObjectWalker walker(object);
   while (const CPDF_Object* obj = walker.GetNext()) {
-    const CPDF_ReadValidator::Session parse_session(validator_.Get());
+    const CPDF_ReadValidator::Session parse_session(validator_);
 
     // Skip if this object if it's an inlined root, the parent object or
     // explicitily excluded.

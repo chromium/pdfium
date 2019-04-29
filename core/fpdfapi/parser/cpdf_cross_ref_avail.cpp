@@ -40,7 +40,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_CrossRefAvail::CheckAvail() {
   if (current_status_ == CPDF_DataAvail::DataAvailable)
     return CPDF_DataAvail::DataAvailable;
 
-  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  const CPDF_ReadValidator::Session read_session(GetValidator());
   while (true) {
     bool check_result = false;
     switch (current_state_) {
