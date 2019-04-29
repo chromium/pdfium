@@ -1,0 +1,73 @@
+{{header}}
+{{object 1 0}} <<
+    /Type /Catalog
+    /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Contents 5 0 R
+  /MediaBox [0 0 600 850]
+  /Parent 3 0 R
+  /Resources <<
+    /ColorSpace << /CS0 [/Pattern] >>
+    /ExtGState << /GS0 6 0 R /GS1 7 0 R >>
+    /Pattern << /P0 4 0 R >>
+    /ProcSet [/PDF /Text]
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Pattern
+  /BBox [0 0 72 72]
+  /PaintType 1
+  /PatternType 1
+  /Resources << /ExtGState << /GS0 7 0 R >> >>
+  /TilingType 1
+  /XStep 72
+  /YStep 72
+  {{streamlen}}
+>>
+stream
+0 0 72 72 re B
+endstream
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/GS0 gs /Pattern cs /P0 scn
+50 700 100 100 re
+B
+Q
+
+q
+/GS1 gs /Pattern cs /P0 scn
+50 580 100 100 re
+B
+Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /ExtGState
+  /CA 0.199997
+  /ca 0.199997
+>>
+endobj
+{{object 7 0}} <<
+  /Type /ExtGState
+  /CA 1
+  /ca 1
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
