@@ -154,7 +154,7 @@ bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t* pWidth) {
   int32_t iGlyph;
   std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
   if (iGlyph != 0xFFFF && pFont) {
-    if (pFont.Get() == this) {
+    if (pFont == this) {
       *pWidth = m_pFont->GetGlyphWidth(iGlyph);
       if (*pWidth < 0)
         *pWidth = -1;
@@ -242,7 +242,7 @@ std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(
   if (!pFont)
     pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
 #endif
-  if (!pFont || pFont.Get() == this)  // Avoids direct cycles below.
+  if (!pFont || pFont == this)  // Avoids direct cycles below.
     return {0xFFFF, nullptr};
 
   m_FontMapper[wUnicode] = pFont;

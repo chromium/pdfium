@@ -110,7 +110,7 @@ size_t CPDF_ContentMarks::MarkData::CountItems() const {
 bool CPDF_ContentMarks::MarkData::ContainsItem(
     const CPDF_ContentMarkItem* pItem) const {
   for (const auto pMark : m_Marks) {
-    if (pMark.Get() == pItem)
+    if (pMark == pItem)
       return true;
   }
   return false;
@@ -158,7 +158,7 @@ void CPDF_ContentMarks::MarkData::AddMarkWithPropertiesHolder(
 
 bool CPDF_ContentMarks::MarkData::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {
   for (auto it = m_Marks.begin(); it != m_Marks.end(); ++it) {
-    if (it->Get() == pMarkItem) {
+    if (*it == pMarkItem) {
       m_Marks.erase(it);
       return true;
     }

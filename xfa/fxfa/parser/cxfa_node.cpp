@@ -1570,7 +1570,7 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
     return;
   }
 
-  ASSERT(pNode->xml_node_.Get() == xml_node_.Get());
+  ASSERT(pNode->xml_node_ == xml_node_);
   CFX_XMLElement* pXMLElement = ToXMLElement(pNode->xml_node_.Get());
   if (pXMLElement) {
     WideString wsAttributeName =

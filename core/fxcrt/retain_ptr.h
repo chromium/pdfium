@@ -73,6 +73,16 @@ class RetainPtr {
   bool operator==(const RetainPtr& that) const { return Get() == that.Get(); }
   bool operator!=(const RetainPtr& that) const { return !(*this == that); }
 
+  template <typename U>
+  bool operator==(const U& that) const {
+    return Get() == that;
+  }
+
+  template <typename U>
+  bool operator!=(const U& that) const {
+    return !(*this == that);
+  }
+
   bool operator<(const RetainPtr& that) const {
     return std::less<T*>()(Get(), that.Get());
   }
