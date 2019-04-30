@@ -620,7 +620,7 @@ void CPDF_Creator::InitID() {
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       m_pNewEncryptDict = ToDictionary(m_pEncryptDict->Clone());
       m_pEncryptDict = m_pNewEncryptDict.get();
-      m_pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
+      m_pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
       m_pSecurityHandler->OnCreate(m_pNewEncryptDict.get(), m_pIDArray.get(),
                                    m_pParser->GetPassword());
       m_bSecurityChanged = true;

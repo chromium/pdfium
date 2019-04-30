@@ -90,8 +90,8 @@ class CPDF_Parser {
   FX_FILESIZE GetObjectPositionOrZero(uint32_t objnum) const;
   uint16_t GetObjectGenNum(uint32_t objnum) const;
   bool IsObjectFreeOrNull(uint32_t objnum) const;
-  CPDF_SecurityHandler* GetSecurityHandler() const {
-    return m_pSecurityHandler.get();
+  const RetainPtr<CPDF_SecurityHandler>& GetSecurityHandler() const {
+    return m_pSecurityHandler;
   }
   bool IsObjectFree(uint32_t objnum) const;
 
@@ -183,7 +183,7 @@ class CPDF_Parser {
   // ownership of the ID array data.
   std::unique_ptr<CPDF_CrossRefTable> m_CrossRefTable;
   FX_FILESIZE m_LastXRefOffset;
-  std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
+  RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
   ByteString m_Password;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
 

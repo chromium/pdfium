@@ -251,8 +251,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   if (pEncryptDict->GetStringFor("Filter") != "Standard")
     return HANDLER_ERROR;
 
-  std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler =
-      pdfium::MakeUnique<CPDF_SecurityHandler>();
+  auto pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
   if (!pSecurityHandler->OnInit(pEncryptDict, GetIDArray(), m_Password))
     return PASSWORD_ERROR;
 
@@ -261,7 +260,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
 }
 
 void CPDF_Parser::ReleaseEncryptHandler() {
-  m_pSecurityHandler.reset();
+  m_pSecurityHandler.Reset();
 }
 
 // Ideally, all the cross reference entries should be verified.

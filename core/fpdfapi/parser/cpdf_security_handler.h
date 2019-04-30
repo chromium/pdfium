@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 #define FXCIPHER_NONE 0
 #define FXCIPHER_RC4 1
@@ -22,10 +23,10 @@ class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Parser;
 
-class CPDF_SecurityHandler {
+class CPDF_SecurityHandler : public Retainable {
  public:
-  CPDF_SecurityHandler();
-  ~CPDF_SecurityHandler();
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool OnInit(const CPDF_Dictionary* pEncryptDict,
               const CPDF_Array* pIdArray,
@@ -46,6 +47,9 @@ class CPDF_SecurityHandler {
   }
 
  private:
+  CPDF_SecurityHandler();
+  ~CPDF_SecurityHandler() override;
+
   bool LoadDict(const CPDF_Dictionary* pEncryptDict);
   bool LoadDict(const CPDF_Dictionary* pEncryptDict,
                 int& cipher,
