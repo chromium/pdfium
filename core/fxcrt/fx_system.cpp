@@ -9,6 +9,7 @@
 #include <cmath>
 #include <limits>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 
 namespace {
@@ -109,7 +110,27 @@ const char* FXSYS_i64toa(int64_t value, char* str, int radix) {
   return FXSYS_IntToStr<int64_t, uint64_t, char*>(value, str, radix);
 }
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
+
+size_t FXSYS_wcsftime(wchar_t* strDest,
+                      size_t maxsize,
+                      const wchar_t* format,
+                      const struct tm* timeptr) {
+  // Avoid tripping an invalid parameter handler and crashing process.
+  // Note: leap seconds may cause tm_sec == 60.
+  if (timeptr->tm_year < -1900 || timeptr->tm_year > 8099 ||
+      timeptr->tm_mon < 0 || timeptr->tm_mon > 11 || timeptr->tm_mday < 1 ||
+      timeptr->tm_mday > 31 || timeptr->tm_hour < 0 || timeptr->tm_hour > 23 ||
+      timeptr->tm_min < 0 || timeptr->tm_min > 59 || timeptr->tm_sec < 0 ||
+      timeptr->tm_sec > 60 || timeptr->tm_wday < 0 || timeptr->tm_wday > 6 ||
+      timeptr->tm_yday < 0 || timeptr->tm_yday > 365) {
+    strDest[0] = L'\0';
+    return 0;
+  }
+  return wcsftime(strDest, maxsize, format, timeptr);
+}
+
+#else  // defined(OS_WIN)
 
 int FXSYS_GetACP() {
   return 0;
@@ -222,24 +243,4 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
   return wlen;
 }
 
-#else  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
-
-size_t FXSYS_wcsftime(wchar_t* strDest,
-                      size_t maxsize,
-                      const wchar_t* format,
-                      const struct tm* timeptr) {
-  // Avoid tripping an invalid parameter handler and crashing process.
-  // Note: leap seconds may cause tm_sec == 60.
-  if (timeptr->tm_year < -1900 || timeptr->tm_year > 8099 ||
-      timeptr->tm_mon < 0 || timeptr->tm_mon > 11 || timeptr->tm_mday < 1 ||
-      timeptr->tm_mday > 31 || timeptr->tm_hour < 0 || timeptr->tm_hour > 23 ||
-      timeptr->tm_min < 0 || timeptr->tm_min > 59 || timeptr->tm_sec < 0 ||
-      timeptr->tm_sec > 60 || timeptr->tm_wday < 0 || timeptr->tm_wday > 6 ||
-      timeptr->tm_yday < 0 || timeptr->tm_yday > 365) {
-    strDest[0] = L'\0';
-    return 0;
-  }
-  return wcsftime(strDest, maxsize, format, timeptr);
-}
-
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)

@@ -23,16 +23,15 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
                                                uint32_t dwFontStyles,
                                                uint16_t wCodePage,
                                                CFGAS_FontMgr* pFontMgr) {
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
-  if (!pFontMgr)
-    return nullptr;
-
-  return pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
-#else
+#if defined(OS_WIN)
   auto pFont = pdfium::MakeRetain<CFGAS_GEFont>(pFontMgr);
   if (!pFont->LoadFontInternal(pszFontFamily, dwFontStyles, wCodePage))
     return nullptr;
   return pFont;
+#else
+  if (!pFontMgr)
+    return nullptr;
+  return pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
 #endif
 }
 
