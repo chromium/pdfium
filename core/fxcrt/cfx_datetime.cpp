@@ -9,8 +9,8 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_system.h"
 
-#if _FX_OS_ == _FX_OS_LINUX_ || defined(OS_ANDROID) || defined(OS_MACOSX) || \
-    _FX_OS_ == _FX_OS_WASM_
+#if defined(OS_ANDROID) || defined(OS_LINUX) || defined(OS_MACOSX) || \
+    defined(OS_ASMJS) || defined(__wasm__)
 #include <sys/time.h>
 #include <time.h>
 #endif

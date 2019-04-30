@@ -17,46 +17,28 @@
 #include <string.h>
 #include <wchar.h>
 
-// _FX_OS_ values:
-#define _FX_OS_WIN32_ 1
-#define _FX_OS_WIN64_ 2
-#define _FX_OS_LINUX_ 4
-#define _FX_OS_MACOSX_ 7
-#define _FX_OS_WASM_ 13
-
 // _FX_PLATFORM_ values;
-#define _FX_PLATFORM_WINDOWS_ 1  // _FX_OS_WIN32_ or _FX_OS_WIN64_.
-#define _FX_PLATFORM_LINUX_ 2    // _FX_OS_LINUX_ or _FX_OS_WASM_.
-#define _FX_PLATFORM_APPLE_ 3    // _FX_OS_MACOSX_ always.
+#define _FX_PLATFORM_WINDOWS_ 1
+#define _FX_PLATFORM_LINUX_ 2
+#define _FX_PLATFORM_APPLE_ 3
 
-#ifndef _FX_OS_
 #if defined(_WIN32)
-#define _FX_OS_ _FX_OS_WIN32_
 #define _FX_PLATFORM_ _FX_PLATFORM_WINDOWS_
 #elif defined(_WIN64)
-#define _FX_OS_ _FX_OS_WIN64_
 #define _FX_PLATFORM_ _FX_PLATFORM_WINDOWS_
 #elif defined(__linux__)
-#define _FX_OS_ _FX_OS_LINUX_
 #define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
 #elif defined(__APPLE__)
-#define _FX_OS_ _FX_OS_MACOSX_
 #define _FX_PLATFORM_ _FX_PLATFORM_APPLE_
 #elif defined(__asmjs__) || defined(__wasm__)
-#define _FX_OS_ _FX_OS_WASM_
 #define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
-#endif
-#endif  // _FX_OS_
-
-#if !defined(_FX_OS_) || _FX_OS_ == 0
-#error Sorry, can not figure out target OS. Please specify _FX_OS_ macro.
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #error Sorry, VC++ 2015 or later is required to compile PDFium.
 #endif  // defined(_MSC_VER) && _MSC_VER < 1900
 
-#if _FX_OS_ == _FX_OS_WASM_ && defined(PDF_ENABLE_V8)
+#if defined(__wasm__) && defined(PDF_ENABLE_V8)
 #error Cannot compile v8 with wasm.
 #endif  // PDF_ENABLE_V8
 
