@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
@@ -53,7 +54,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     }
   }
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
   auto SubstFxFont = pdfium::MakeUnique<CFX_SubstFont>();
@@ -62,7 +63,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
   SubstFxFont->m_bItalicCJK = FontStyleIsItalic(dwFontStyle);
   FxFont.SetSubstFont(std::move(SubstFxFont));
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif
 
   RetainPtr<CFGAS_GEFont> pCurFont;
   TextCharPos* pCurCP = nullptr;
@@ -77,12 +78,12 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
         pFxFont = pCurFont->GetDevFont();
 
         CFX_Font* font;
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
         FxFont.SetFace(pFxFont->GetFace());
         font = &FxFont;
 #else
         font = pFxFont;
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif
 
         device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, pMatrix,
                                color, FXTEXT_CLEARTYPE);
@@ -99,20 +100,20 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   if (pCurFont && iCurCount) {
     pFxFont = pCurFont->GetDevFont();
     CFX_Font* font;
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
     FxFont.SetFace(pFxFont->GetFace());
     font = &FxFont;
 #else
     font = pFxFont;
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif
 
     bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, pMatrix,
                                   color, FXTEXT_CLEARTYPE);
   }
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
   FxFont.SetFace(nullptr);
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif
 
   return bRet;
 }

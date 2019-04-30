@@ -24,7 +24,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
 #include "xfa/fgas/font/cfx_fontsourceenum_file.h"
 #endif
 
@@ -911,9 +911,9 @@ void CFGAS_FontMgr::RemoveFont(const RetainPtr<CFGAS_GEFont>& pEFont) {
   if (!pEFont)
     return;
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
   m_IFXFont2FileRead.erase(pEFont);
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif
 
   auto iter = m_Hash2Fonts.begin();
   while (iter != m_Hash2Fonts.end()) {
