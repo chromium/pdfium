@@ -143,7 +143,6 @@ if (pdf_enable_v8) {
       "pdf_fx_date_helpers_fuzzer.cc",
     ]
     deps = [
-      "../../fpdfsdk",
       "../../fxjs",
     ]
   }
@@ -346,7 +345,6 @@ pdfium_fuzzer("pdf_codec_jbig2_fuzzer_src") {
   ]
   deps = [
     ":utils",
-    "../../core/fpdfapi",
     "../../core/fpdfapi/parser",
     "../../core/fxcodec",
     "../../core/fxge",
@@ -409,9 +407,6 @@ pdfium_fuzzer("pdf_streamparser_fuzzer_src") {
 pdfium_fuzzer("pdf_xml_fuzzer_src") {
   sources = [
     "pdf_xml_fuzzer.cc",
-  ]
-  deps = [
-    "../../core/fxcrt",
   ]
 }
 

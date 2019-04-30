@@ -154,27 +154,12 @@ typedef int FPDF_ANNOT_APPEARANCEMODE;
 // Dictionary value types.
 typedef int FPDF_OBJECT_TYPE;
 
-#if defined(COMPONENT_BUILD)
-#if defined(WIN32)
-#if defined(FPDF_IMPLEMENTATION)
+#if defined(_WIN32) && defined(FPDFSDK_EXPORTS)
+// On Windows system, functions are exported in a DLL
 #define FPDF_EXPORT __declspec(dllexport)
-#else
-#define FPDF_EXPORT __declspec(dllimport)
-#endif  // defined(FPDF_IMPLEMENTATION)
-#else
-#if defined(FPDF_IMPLEMENTATION)
-#define FPDF_EXPORT __attribute__((visibility("default")))
-#else
-#define FPDF_EXPORT
-#endif  // defined(FPDF_IMPLEMENTATION)
-#endif  // defined(WIN32)
-#else
-#define FPDF_EXPORT
-#endif  // defined(COMPONENT_BUILD)
-
-#if defined(WIN32) && defined(FPDFSDK_EXPORTS)
 #define FPDF_CALLCONV __stdcall
 #else
+#define FPDF_EXPORT
 #define FPDF_CALLCONV
 #endif
 
