@@ -59,18 +59,45 @@ void UniqueKeyGen::Generate(int count, ...) {
   key_len_ = count * sizeof(uint32_t);
 }
 
-}  // namespace
+void GenKey(UniqueKeyGen* pKeyGen,
+            const CFX_Font* pFont,
+            const CFX_Matrix& matrix,
+            uint32_t dest_width,
+            int anti_alias,
+            bool bNative) {
+  int nMatrixA = static_cast<int>(matrix.a * 10000);
+  int nMatrixB = static_cast<int>(matrix.b * 10000);
+  int nMatrixC = static_cast<int>(matrix.c * 10000);
+  int nMatrixD = static_cast<int>(matrix.d * 10000);
 
-CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
-    : m_Face(face)
-#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
-      ,
-      m_pTypeface(nullptr)
-#endif
-{
+  if (bNative) {
+    if (pFont->GetSubstFont()) {
+      pKeyGen->Generate(10, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                        anti_alias, pFont->GetSubstFont()->m_Weight,
+                        pFont->GetSubstFont()->m_ItalicAngle,
+                        pFont->IsVertical(), 3);
+    } else {
+      pKeyGen->Generate(7, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                        anti_alias, 3);
+    }
+  } else {
+    if (pFont->GetSubstFont()) {
+      pKeyGen->Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                        anti_alias, pFont->GetSubstFont()->m_Weight,
+                        pFont->GetSubstFont()->m_ItalicAngle,
+                        pFont->IsVertical());
+    } else {
+      pKeyGen->Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                        anti_alias);
+    }
+  }
 }
 
-CFX_FaceCache::~CFX_FaceCache() {}
+}  // namespace
+
+CFX_FaceCache::CFX_FaceCache(FXFT_Face face) : m_Face(face) {}
+
+CFX_FaceCache::~CFX_FaceCache() = default;
 
 std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
     const CFX_Font* pFont,
@@ -171,8 +198,8 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   int src_pitch = FXFT_Get_Bitmap_Pitch(FXFT_Get_Glyph_Bitmap(m_Face));
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetBuffer();
-  uint8_t* pSrcBuf =
-      (uint8_t*)FXFT_Get_Bitmap_Buffer(FXFT_Get_Glyph_Bitmap(m_Face));
+  uint8_t* pSrcBuf = static_cast<uint8_t*>(
+      FXFT_Get_Bitmap_Buffer(FXFT_Get_Glyph_Bitmap(m_Face)));
   if (anti_alias != FXFT_RENDER_MODE_MONO &&
       FXFT_Get_Bitmap_PixelMode(FXFT_Get_Glyph_Bitmap(m_Face)) ==
           FXFT_PIXEL_MODE_MONO) {
@@ -221,57 +248,32 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
                                                       const CFX_Matrix& matrix,
                                                       uint32_t dest_width,
                                                       int anti_alias,
-                                                      int& text_flags) {
+                                                      int* pTextFlags) {
   if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
   UniqueKeyGen keygen;
-  int nMatrixA = static_cast<int>(matrix.a * 10000);
-  int nMatrixB = static_cast<int>(matrix.b * 10000);
-  int nMatrixC = static_cast<int>(matrix.c * 10000);
-  int nMatrixD = static_cast<int>(matrix.d * 10000);
 #if defined(OS_MACOSX)
-  if (text_flags & FXTEXT_NO_NATIVETEXT) {
-    if (pFont->GetSubstFont()) {
-      keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias, pFont->GetSubstFont()->m_Weight,
-                      pFont->GetSubstFont()->m_ItalicAngle,
-                      pFont->IsVertical());
-    } else {
-      keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias);
-    }
-  } else {
-    if (pFont->GetSubstFont()) {
-      keygen.Generate(10, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias, pFont->GetSubstFont()->m_Weight,
-                      pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical(),
-                      3);
-    } else {
-      keygen.Generate(7, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias, 3);
-    }
-  }
+  const bool bNative = !(*pTextFlags & FXTEXT_NO_NATIVETEXT);
 #else
-  if (pFont->GetSubstFont()) {
-    keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                    anti_alias, pFont->GetSubstFont()->m_Weight,
-                    pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical());
-  } else {
-    keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                    anti_alias);
-  }
+  const bool bNative = false;
 #endif
+  GenKey(&keygen, pFont, matrix, dest_width, anti_alias, bNative);
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
-#if !defined(OS_MACOSX) || defined _SKIA_SUPPORT_ || \
-    defined _SKIA_SUPPORT_PATHS_
-  return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey, glyph_index,
-                           bFontStyle, dest_width, anti_alias);
+
+#if defined(OS_MACOSX) && !defined _SKIA_SUPPORT_ && \
+    !defined _SKIA_SUPPORT_PATHS_
+  const bool bDoLookUp = !!(*pTextFlags & FXTEXT_NO_NATIVETEXT);
 #else
-  if (text_flags & FXTEXT_NO_NATIVETEXT) {
+  const bool bDoLookUp = true;
+#endif
+  if (bDoLookUp) {
     return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey, glyph_index,
                              bFontStyle, dest_width, anti_alias);
   }
+
+#if defined(OS_MACOSX) && !defined _SKIA_SUPPORT_ && \
+    !defined _SKIA_SUPPORT_PATHS_
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it != m_SizeMap.end()) {
@@ -300,16 +302,9 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
       return pResult;
     }
   }
-  if (pFont->GetSubstFont()) {
-    keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                    anti_alias, pFont->GetSubstFont()->m_Weight,
-                    pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical());
-  } else {
-    keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                    anti_alias);
-  }
+  GenKey(&keygen, pFont, matrix, dest_width, anti_alias, /*bNative=*/false);
   ByteString FaceGlyphsKey2(keygen.key_, keygen.key_len_);
-  text_flags |= FXTEXT_NO_NATIVETEXT;
+  *pTextFlags |= FXTEXT_NO_NATIVETEXT;
   return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);
 #endif

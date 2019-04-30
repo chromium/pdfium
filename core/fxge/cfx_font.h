@@ -66,7 +66,7 @@ class CFX_Font {
                                          const CFX_Matrix& matrix,
                                          uint32_t dest_width,
                                          int anti_alias,
-                                         int& text_flags) const;
+                                         int* pTextFlags) const;
   const CFX_PathData* LoadGlyphPath(uint32_t glyph_index,
                                     uint32_t dest_width) const;
 

@@ -34,7 +34,7 @@ class CFX_FaceCache {
                                          const CFX_Matrix& matrix,
                                          uint32_t dest_width,
                                          int anti_alias,
-                                         int& text_flags);
+                                         int* pTextFlags);
   const CFX_PathData* LoadGlyphPath(const CFX_Font* pFont,
                                     uint32_t glyph_index,
                                     uint32_t dest_width);
