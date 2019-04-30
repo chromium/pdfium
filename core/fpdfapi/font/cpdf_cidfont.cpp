@@ -605,9 +605,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     uint16_t cid = CIDFromCharCode(charcode);
     wchar_t unicode = 0;
     if (m_bCIDIsGID) {
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
-      return cid;
-#else
+#if defined(OS_MACOSX)
       if (FontStyleIsSymbolic(m_Flags))
         return cid;
 
@@ -616,6 +614,8 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         return cid;
 
       unicode = uni_str[0];
+#else
+      return cid;
 #endif
     } else {
       if (cid && m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded())

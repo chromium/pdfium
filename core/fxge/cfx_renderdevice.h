@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -76,15 +77,15 @@ class TextCharPos {
   ~TextCharPos();
 
   CFX_PointF m_Origin;
-  uint32_t m_Unicode;
-  uint32_t m_GlyphIndex;
-  uint32_t m_FontCharWidth;
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  uint32_t m_ExtGID;
+  uint32_t m_Unicode = 0;
+  uint32_t m_GlyphIndex = 0;
+  uint32_t m_FontCharWidth = 0;
+#if defined(OS_MACOSX)
+  uint32_t m_ExtGID = 0;
 #endif
-  int32_t m_FallbackFontPosition;
-  bool m_bGlyphAdjust;
-  bool m_bFontStyle;
+  int32_t m_FallbackFontPosition = 0;
+  bool m_bGlyphAdjust = false;
+  bool m_bFontStyle = false;
   float m_AdjustMatrix[4];
 };
 

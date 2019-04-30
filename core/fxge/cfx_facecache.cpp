@@ -230,16 +230,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   int nMatrixB = static_cast<int>(matrix.b * 10000);
   int nMatrixC = static_cast<int>(matrix.c * 10000);
   int nMatrixD = static_cast<int>(matrix.d * 10000);
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
-  if (pFont->GetSubstFont()) {
-    keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                    anti_alias, pFont->GetSubstFont()->m_Weight,
-                    pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical());
-  } else {
-    keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                    anti_alias);
-  }
-#else
+#if defined(OS_MACOSX)
   if (text_flags & FXTEXT_NO_NATIVETEXT) {
     if (pFont->GetSubstFont()) {
       keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
@@ -260,6 +251,15 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
       keygen.Generate(7, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
                       anti_alias, 3);
     }
+  }
+#else
+  if (pFont->GetSubstFont()) {
+    keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                    anti_alias, pFont->GetSubstFont()->m_Weight,
+                    pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical());
+  } else {
+    keygen.Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                    anti_alias);
   }
 #endif
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
