@@ -9,9 +9,10 @@
 #include <tuple>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
               "FX_COLORREF vs. COLORREF mismatch");
 #endif

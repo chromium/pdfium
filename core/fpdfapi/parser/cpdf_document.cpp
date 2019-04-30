@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -59,7 +60,7 @@ void InsertWidthArrayImpl(std::vector<int> widths, CPDF_Array* pWidthArray) {
     pWidthArray1->AddNew<CPDF_Number>(w);
 }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
   std::vector<int> widths(end - start + 1);
   GetCharWidth(hDC, start, end, widths.data());
@@ -77,7 +78,7 @@ ByteString FPDF_GetPSNameFromTT(HDC hDC) {
   }
   return result;
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 void InsertWidthArray1(CFX_Font* pFont,
                        CFX_UnicodeEncoding* pEncoding,
@@ -805,7 +806,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset) {
   return LoadFont(pBaseDict);
 }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
   pLogFont->lfHeight = -1000;
   pLogFont->lfWidth = 0;
@@ -885,7 +886,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
   DeleteDC(hDC);
   return LoadFont(pBaseDict);
 }
-#endif  //  _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  //  defined(OS_WIN)
 
 CPDF_Document::StockFontClearer::StockFontClearer(CPDF_Document* pDoc)
     : m_pDoc(pDoc) {}

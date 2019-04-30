@@ -23,7 +23,7 @@ TEST(cpdf_filespec, EncodeDecodeFileName) {
     {L"", L""},
     // only file name.
     {L"test.pdf", L"test.pdf"},
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
     // With drive identifier.
     {L"r:\\pdfdocs\\spec.pdf", L"/r/pdfdocs/spec.pdf"},
     // Relative path.
@@ -61,7 +61,7 @@ TEST(cpdf_filespec, GetFileName) {
   {
     // String object.
     static const pdfium::NullTermWstrFuncTestData test_data = {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
       L"/C/docs/test.pdf",
       L"C:\\docs\\test.pdf"
 #elif defined(OS_MACOSX)
@@ -79,7 +79,7 @@ TEST(cpdf_filespec, GetFileName) {
   {
     // Dictionary object.
     static const pdfium::NullTermWstrFuncTestData test_data[] = {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
       {L"/C/docs/test.pdf", L"C:\\docs\\test.pdf"},
       {L"/D/docs/test.pdf", L"D:\\docs\\test.pdf"},
       {L"/E/docs/test.pdf", L"E:\\docs\\test.pdf"},
@@ -126,7 +126,7 @@ TEST(cpdf_filespec, GetFileName) {
 
 TEST(cpdf_filespec, SetFileName) {
   static const pdfium::NullTermWstrFuncTestData test_data = {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
     L"C:\\docs\\test.pdf",
     L"/C/docs/test.pdf"
 #elif defined(OS_MACOSX)

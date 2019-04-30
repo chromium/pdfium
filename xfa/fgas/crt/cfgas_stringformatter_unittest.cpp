@@ -10,6 +10,7 @@
 
 #include <memory>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -31,7 +32,7 @@ class CFGAS_StringFormatterTest : public testing::Test {
   }
 
   void SetTZ(const char* tz) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
     _putenv_s("TZ", tz);
     _tzset();
 #else

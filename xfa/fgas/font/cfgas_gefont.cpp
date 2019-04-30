@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_substfont.h"
@@ -58,7 +59,7 @@ CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr) : m_pFontMgr(pFontMgr) {}
 
 CFGAS_GEFont::~CFGAS_GEFont() = default;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     uint16_t wCodePage) {
@@ -82,7 +83,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                      false);
   return m_pFont->GetFace() && InitFont();
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 bool CFGAS_GEFont::LoadFontInternal(CFX_Font* pExternalFont) {
   if (m_pFont || !pExternalFont)

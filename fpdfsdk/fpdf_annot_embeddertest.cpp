@@ -480,7 +480,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
   static const char kMd5ModifiedHighlight[] =
       "aec26075011349dec9bace891856b5f2";
   static const char kMd5ModifiedSquare[] = "057f57a32be95975775e5ec513fdcb56";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
   static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";
@@ -688,7 +688,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   static const char kMd5ModifiedPath[] = "9059723a045e17478753d2f0eb33bc03";
   static const char kMd5TwoPaths[] = "7eed0cfba780f1d4dd8068f717d3a6bf";
   static const char kMd5NewAnnot[] = "1de8212d43b7066a6df042095c2aca61";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
   static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
   static const char kMd5ModifiedPath[] = "c0c2eb2aba73ad15b3240e342fbe0d72";
   static const char kMd5TwoPaths[] = "2306bf04915fe001b5f4726843d184c8";
@@ -889,7 +889,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
   static const char kMd5NewImage[] = "ff012f5697436dfcaec25b32d1333596";
   static const char kMd5ModifiedImage[] = "86cf8cb2755a7a2046a543e66d9c1e61";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
   static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
   static const char kMd5NewImage[] = "d19c6fcfd9a170802fcfb9adfa13557e";
   static const char kMd5ModifiedImage[] = "1273cf2363570a50d1aa0c95b1318197";
@@ -974,7 +974,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
   static const char kMd5NewText[] = "60031c1b0330cf1e1575f7d46687d429";
   static const char kMd5ModifiedText[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
   static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
   static const char kMd5NewText[] = "87d55e09f9096de7e6552f5ae79afd3b";
   static const char kMd5ModifiedText[] = "26e94fbd3af4b1e65479327507600114";
@@ -1112,7 +1112,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
 #if defined(OS_MACOSX)
   static const char kMd5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
   static const char kMd5[] = "9ee141f698c3fcb56c050dffd6c82624";
 #else
   static const char kMd5[] = "c96ee1f316d7f5a1b154de9f9d467f01";

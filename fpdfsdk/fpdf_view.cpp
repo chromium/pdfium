@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -49,7 +50,7 @@
 #include "fxbarcode/BC_Library.h"
 #endif  // PDF_ENABLE_XFA
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "public/fpdf_edit.h"
 
@@ -68,7 +69,7 @@ static_assert(WindowsPrintMode::kModePostScript2PassThrough ==
 static_assert(WindowsPrintMode::kModePostScript3PassThrough ==
                   FPDF_PRINTMODE_POSTSCRIPT3_PASSTHROUGH,
               "WindowsPrintMode::kModePostScript3PassThrough value mismatch");
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 namespace {
 

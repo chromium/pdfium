@@ -11,11 +11,12 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #include <direct.h>
 
 struct FX_FolderHandle {
@@ -33,7 +34,7 @@ struct FX_FolderHandle {
   ByteString m_Path;
   DIR* m_Dir;
 };
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif
 
 namespace {
 
@@ -123,7 +124,7 @@ bool IFX_SeekableStream::WriteString(ByteStringView str) {
 
 FX_FolderHandle* FX_OpenFolder(const char* path) {
   auto handle = pdfium::MakeUnique<FX_FolderHandle>();
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   handle->m_Handle =
       FindFirstFileExA((ByteString(path) + "/*.*").c_str(), FindExInfoStandard,
                        &handle->m_FindData, FindExSearchNameMatch, nullptr, 0);
@@ -148,7 +149,7 @@ bool FX_GetNextFile(FX_FolderHandle* handle,
   if (!handle)
     return false;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   if (handle->m_bEnd)
     return false;
 
@@ -177,7 +178,7 @@ void FX_CloseFolder(FX_FolderHandle* handle) {
   if (!handle)
     return;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   FindClose(handle->m_Handle);
 #else
   closedir(handle->m_Dir);

@@ -8,10 +8,12 @@
 
 #include <time.h>
 
+#include "build/build_config.h"
+
 static bool g_bProviderTimeZoneSet = false;
 
 CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   if (!g_bProviderTimeZoneSet) {
     g_bProviderTimeZoneSet = true;
     _tzset();

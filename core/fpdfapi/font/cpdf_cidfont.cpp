@@ -262,7 +262,7 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
   if (m_pCID2UnicodeMap && m_pCID2UnicodeMap->IsLoaded() && m_pCMap->IsLoaded())
     return m_pCID2UnicodeMap->UnicodeFromCID(CIDFromCharCode(charcode));
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   wchar_t unicode;
   int charsize = 1;
   if (charcode > 255) {
@@ -310,7 +310,7 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
     return static_cast<uint32_t>(unicode);
   if (m_pCMap->GetCoding() == CIDCODING_CID)
     return 0;
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   uint8_t buffer[32];
   int ret = FXSYS_WideCharToMultiByte(
       g_CharsetCPs[m_pCMap->GetCoding()], 0, &unicode, 1,

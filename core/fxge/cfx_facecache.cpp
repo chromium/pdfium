@@ -29,7 +29,7 @@
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #include "third_party/skia/include/core/SkFontMgr.h"
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"
 #endif
@@ -322,17 +322,17 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
     m_pTypeface = SkTypeface::MakeFromStream(
         pdfium::MakeUnique<SkMemoryStream>(span.data(), span.size()));
   }
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   if (!m_pTypeface) {
     sk_sp<SkFontMgr> customMgr(SkFontMgr_New_Custom_Empty());
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
     m_pTypeface = customMgr->makeFromStream(
         pdfium::MakeUnique<SkMemoryStream>(span.data(), span.size()));
   }
-#endif
+#endif  // defined(OS_WIN)
   return m_pTypeface.get();
 }
-#endif
+#endif  // defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 
 #if !defined(OS_MACOSX)
 void CFX_FaceCache::InitPlatform() {}

@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/fx_random.h"
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -16,12 +17,12 @@
 #define MT_Upper_Mask 0x80000000
 #define MT_Lower_Mask 0x7fffffff
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #include <wincrypt.h>
-#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else
 #include <sys/time.h>
 #include <unistd.h>
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif
 
 namespace {
 
@@ -33,7 +34,7 @@ struct MTContext {
 bool g_bHaveGlobalSeed = false;
 uint32_t g_nGlobalSeed = 0;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 bool GenerateSeedFromCryptoRandom(uint32_t* pSeed) {
   HCRYPTPROV hCP = 0;
   if (!::CryptAcquireContext(&hCP, nullptr, nullptr, PROV_RSA_FULL, 0) ||
@@ -50,30 +51,30 @@ uint32_t GenerateSeedFromEnvironment() {
   char c;
   uintptr_t p = reinterpret_cast<uintptr_t>(&c);
   uint32_t seed = ~static_cast<uint32_t>(p >> 3);
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   SYSTEMTIME st;
   GetSystemTime(&st);
   seed ^= static_cast<uint32_t>(st.wSecond) * 1000000;
   seed ^= static_cast<uint32_t>(st.wMilliseconds) * 1000;
   seed ^= GetCurrentProcessId();
-#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else
   struct timeval tv;
   gettimeofday(&tv, 0);
   seed ^= static_cast<uint32_t>(tv.tv_sec) * 1000000;
   seed ^= static_cast<uint32_t>(tv.tv_usec);
   seed ^= static_cast<uint32_t>(getpid());
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif
   return seed;
 }
 
 void* ContextFromNextGlobalSeed() {
   if (!g_bHaveGlobalSeed) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
     if (!GenerateSeedFromCryptoRandom(&g_nGlobalSeed))
       g_nGlobalSeed = GenerateSeedFromEnvironment();
-#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else
     g_nGlobalSeed = GenerateSeedFromEnvironment();
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif
     g_bHaveGlobalSeed = true;
   }
   return FX_Random_MT_Start(++g_nGlobalSeed);

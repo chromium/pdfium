@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
@@ -125,7 +126,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
                              const CPDF_FontEncoding* pEncoding);
   CPDF_Font* AddFont(CFX_Font* pFont, int charset);
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont);
 #endif
 

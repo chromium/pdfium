@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
@@ -57,12 +58,12 @@ class CFGAS_GEFont final : public Retainable {
   explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
   ~CFGAS_GEFont() override;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   bool LoadFontInternal(const wchar_t* pszFontFamily,
                         uint32_t dwFontStyles,
                         uint16_t wCodePage);
   bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
   bool LoadFontInternal(CFX_Font* pExternalFont);
   bool InitFont();

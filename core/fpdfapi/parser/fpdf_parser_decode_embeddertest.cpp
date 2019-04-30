@@ -119,7 +119,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug_455199) {
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
 #if defined(OS_MACOSX)
   const char kExpectedMd5sum[] = "b90475ca64d1348c3bf5e2b77ad9187a";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
   const char kExpectedMd5sum[] = "795b7ce1626931aa06af0fa23b7d80bb";
 #else
   const char kExpectedMd5sum[] = "2baa4c0e1758deba1b9c908e1fbd04ed";

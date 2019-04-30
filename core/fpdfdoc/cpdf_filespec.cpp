@@ -20,7 +20,7 @@
 
 namespace {
 
-#if defined(OS_MACOSX) || _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_MACOSX) || defined(OS_WIN)
 WideString ChangeSlashToPlatform(const wchar_t* str) {
   WideString result;
   while (*str) {
@@ -50,7 +50,7 @@ WideString ChangeSlashToPDF(const wchar_t* str) {
   }
   return result;
 }
-#endif  // defined(OS_MACOSX) || _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_MACOSX) || defined(OS_WIN)
 
 }  // namespace
 
@@ -73,7 +73,7 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
   if (filepath.Left(sizeof("/Mac") - 1) == WideStringView(L"/Mac"))
     return ChangeSlashToPlatform(filepath.c_str() + 1);
   return ChangeSlashToPlatform(filepath.c_str());
-#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#elif defined(OS_WIN)
 
   if (filepath[0] != L'/')
     return ChangeSlashToPlatform(filepath.c_str());
@@ -170,7 +170,7 @@ WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
   if (filepath.GetLength() <= 1)
     return WideString();
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   if (filepath[1] == L':') {
     WideString result(L'/');
     result += filepath[0];

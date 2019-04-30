@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "constants/form_fields.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -340,7 +341,7 @@ class CFieldNameExtractor {
   const wchar_t* m_pEnd;
 };
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 struct PDF_FONTDATA {
   bool bFind;
   LOGFONTA lf;
@@ -386,7 +387,7 @@ bool RetrieveSpecificFont(uint8_t charSet,
   }
   return RetrieveSpecificFont(lf);
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 }  // namespace
 
@@ -626,7 +627,7 @@ CPDF_Font* CPDF_InteractiveForm::AddStandardFont(CPDF_Document* pDocument,
 ByteString CPDF_InteractiveForm::GetNativeFont(uint8_t charSet,
                                                void* pLogFont) {
   ByteString csFontName;
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   LOGFONTA lf = {};
   if (charSet == FX_CHARSET_ANSI) {
     csFontName = CFX_Font::kDefaultAnsiFontName;
@@ -667,7 +668,7 @@ CPDF_Font* CPDF_InteractiveForm::AddNativeFont(uint8_t charSet,
   if (!pDocument)
     return nullptr;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   LOGFONTA lf;
   ByteString csFontName = GetNativeFont(charSet, &lf);
   if (!csFontName.IsEmpty()) {

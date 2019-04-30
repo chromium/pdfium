@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
@@ -90,13 +91,13 @@ static void error_do_nothing1(j_common_ptr cinfo, int) {}
 
 static void error_do_nothing2(j_common_ptr cinfo, char*) {}
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 static void dest_do_nothing(j_compress_ptr cinfo) {}
 
 static boolean dest_empty(j_compress_ptr cinfo) {
   return false;
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 }  // extern "C"
 
 #ifdef PDF_ENABLE_XFA
@@ -474,7 +475,7 @@ jmp_buf* CCodec_JpegModule::GetJumpMark(Context* pContext) {
   return static_cast<CJpegContext*>(pContext)->GetJumpMark();
 }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #define JPEG_BLOCK_SIZE 1048576
 bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
                                    uint8_t** dest_buf,
@@ -575,4 +576,4 @@ bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
 
   return true;
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)

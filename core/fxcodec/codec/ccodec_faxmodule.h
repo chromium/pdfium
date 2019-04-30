@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
@@ -28,14 +29,14 @@ class CCodec_FaxModule {
       int Columns,
       int Rows);
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   static void FaxEncode(const uint8_t* src_buf,
                         int width,
                         int height,
                         int pitch,
                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                         uint32_t* dest_size);
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
   // Return the ending bit position.
   static int FaxG4Decode(const uint8_t* src_buf,

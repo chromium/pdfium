@@ -10,6 +10,7 @@
 #include <csetjmp>
 #include <memory>
 
+#include "build/build_config.h"
 #include "core/fxcodec/codec/codec_module_iface.h"
 #include "third_party/base/span.h"
 
@@ -53,11 +54,11 @@ class CCodec_JpegModule final : public CodecModuleIface {
   bool StartScanline(Context* pContext, int down_scale);
   bool ReadScanline(Context* pContext, uint8_t* dest_buf);
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   static bool JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
                          uint8_t** dest_buf,
                          size_t* dest_size);
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_JPEGMODULE_H_

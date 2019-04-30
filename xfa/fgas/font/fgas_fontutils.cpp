@@ -189,7 +189,7 @@ const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
     {0xFFA0, 0xFFEF, 68, 0xFFFF},
 };
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "Arial", 0, 936},
     {0x01e4f102, "YouYuan", "Arial", 1, 936},

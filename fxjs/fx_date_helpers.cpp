@@ -10,6 +10,7 @@
 
 #include <cmath>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -35,12 +36,12 @@ double GetLocalTZA() {
   time_t t = 0;
   FXSYS_time(&t);
   FXSYS_localtime(&t);
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   // In gcc 'timezone' is a global variable declared in time.h. In VC++, that
   // variable was removed in VC++ 2015, with _get_timezone replacing it.
   long timezone = 0;
   _get_timezone(&timezone);
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif
   return (double)(-(timezone * 1000));
 }
 

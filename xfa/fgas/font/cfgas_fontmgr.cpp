@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
@@ -44,7 +45,7 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
 
 }  // namespace
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 
 namespace {
 
@@ -248,7 +249,7 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
   return &m_FontFaces.back();
 }
 
-#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else  // defined(OS_WIN)
 
 namespace {
 
@@ -790,7 +791,7 @@ void CFGAS_FontMgr::RegisterFaces(
   } while (index < num_faces);
 }
 
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     uint16_t wCodePage,
@@ -808,7 +809,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     return nullptr;
   }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   const FX_FONTDESCRIPTOR* pFD =
       FindFont(pszFontFamily, dwFontStyles, true, wCodePage, 999, 0);
   if (!pFD)
@@ -820,7 +821,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
 
   RetainPtr<CFGAS_GEFont> pFont =
       CFGAS_GEFont::LoadFont(pFD->wsFontFace, dwFontStyles, wCodePage, this);
-#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else   // defined(OS_WIN)
   std::vector<CFX_FontDescriptorInfo>* sortedFontInfos =
       m_Hash2CandidateList[dwHash].get();
   if (!sortedFontInfos) {
@@ -836,7 +837,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   CFX_FontDescriptor* pDesc = (*sortedFontInfos)[0].pFont;
   RetainPtr<CFGAS_GEFont> pFont =
       LoadFontInternal(pDesc->m_wsFaceName, pDesc->m_nFaceIndex);
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
   if (!pFont)
     return nullptr;
@@ -878,7 +879,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
 RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const wchar_t* pszFontFamily,
                                                 uint32_t dwFontStyles,
                                                 uint16_t wCodePage) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
   ByteString bsHash = ByteString::Format("%d, %d", wCodePage, dwFontStyles);
   bsHash += FX_UTF8Encode(WideStringView(pszFontFamily));
   uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView(), false);
@@ -901,9 +902,9 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const wchar_t* pszFontFamily,
   pFont->SetLogicalFontStyle(dwFontStyles);
   pFontArray->push_back(pFont);
   return pFont;
-#else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else   // defined(OS_WIN)
   return GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 }
 
 void CFGAS_FontMgr::RemoveFont(const RetainPtr<CFGAS_GEFont>& pEFont) {
