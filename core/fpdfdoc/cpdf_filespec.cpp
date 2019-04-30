@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "build/build_config.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -19,13 +20,12 @@
 
 namespace {
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
-    _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_MACOSX) || _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 WideString ChangeSlashToPlatform(const wchar_t* str) {
   WideString result;
   while (*str) {
     if (*str == '/') {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
       result += L':';
 #else
       result += L'\\';
@@ -50,7 +50,7 @@ WideString ChangeSlashToPDF(const wchar_t* str) {
   }
   return result;
 }
-#endif  // _FX_PLATFORM_APPLE_ || _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_MACOSX) || _FX_PLATFORM_WINDOWS_
 
 }  // namespace
 
@@ -69,7 +69,7 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
   if (filepath.GetLength() <= 1)
     return WideString();
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   if (filepath.Left(sizeof("/Mac") - 1) == WideStringView(L"/Mac"))
     return ChangeSlashToPlatform(filepath.c_str() + 1);
   return ChangeSlashToPlatform(filepath.c_str());
@@ -186,7 +186,7 @@ WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
   if (filepath[0] == L'\\')
     return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
   if (filepath.Left(sizeof("Mac") - 1).EqualsASCII("Mac"))
     return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());

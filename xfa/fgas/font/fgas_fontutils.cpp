@@ -1020,7 +1020,7 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
      "Sharp,WenQuanYi Micro Hei",
      0, 936},
 };
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
 const FGAS_FontInfo g_XFAFontsMap[] = {
     {0x01d5d33e, "SimSun", "STHeiti,Heiti TC,STFangsong", 0, 936},
     {0x01e4f102, "YouYuan", "STHeiti,Heiti TC,STFangsong", 1, 936},

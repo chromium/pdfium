@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -94,7 +95,7 @@ class CFX_Font {
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
   CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
                                   uint32_t dest_width) const;
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   void* GetPlatformFont() const { return m_pPlatformFont; }
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }
 #endif
@@ -128,9 +129,9 @@ class CFX_Font {
   CFX_FaceCache* GetFaceCache() const;
   void DeleteFace();
   void ClearFaceCache();
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   void ReleasePlatformResource();
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#endif
 
   ByteString GetFamilyNameOrUntitled() const;
 
@@ -142,7 +143,7 @@ class CFX_Font {
   pdfium::span<uint8_t> m_FontData;
   bool m_bEmbedded = false;
   bool m_bVertical = false;
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   void* m_pPlatformFont = nullptr;
 #endif
 };

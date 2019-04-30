@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_edit.h"
@@ -66,7 +67,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   const char md5[] = "7048dca58e2ed8f93339008b91e4eb4e";
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
   const char md5[] = "6951b6c9891dfe0332a5b1983e484400";
 #else
   const char md5[] = "041c2fb541c8907cc22ce101b686c79e";

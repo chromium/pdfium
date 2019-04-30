@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -262,7 +263,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   }
 #endif
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_ || \
+#if !defined(OS_MACOSX) || defined _SKIA_SUPPORT_ || \
     defined _SKIA_SUPPORT_PATHS_
   return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey, glyph_index,
                            bFontStyle, dest_width, anti_alias);
@@ -333,7 +334,7 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
 }
 #endif
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
+#if !defined(OS_MACOSX)
 void CFX_FaceCache::InitPlatform() {}
 #endif
 

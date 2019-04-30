@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -1120,13 +1121,9 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
     const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
     bool bGroupKnockout)
     : m_pBitmap(pBitmap),
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-      m_pPlatformGraphics(nullptr),
-#endif
-      m_FillFlags(0),
       m_bRgbByteOrder(bRgbByteOrder),
-      m_pBackdropBitmap(pBackdropBitmap),
-      m_bGroupKnockout(bGroupKnockout) {
+      m_bGroupKnockout(bGroupKnockout),
+      m_pBackdropBitmap(pBackdropBitmap) {
   InitPlatform();
 }
 
@@ -1138,7 +1135,7 @@ uint8_t* CFX_AggDeviceDriver::GetBuffer() const {
   return m_pBitmap->GetBuffer();
 }
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
+#if !defined(OS_MACOSX)
 void CFX_AggDeviceDriver::InitPlatform() {}
 
 void CFX_AggDeviceDriver::DestroyPlatform() {}
@@ -1151,7 +1148,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                          uint32_t color) {
   return false;
 }
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
+#endif  // !defined(OS_MACOSX)
 
 int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {

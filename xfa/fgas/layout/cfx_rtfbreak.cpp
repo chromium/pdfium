@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "build/build_config.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
@@ -782,7 +783,7 @@ size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
       current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
       if (current_char_pos.m_GlyphIndex == 0xFFFF)
         current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wch);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
       current_char_pos.m_ExtGID = current_char_pos.m_GlyphIndex;
 #endif
       current_char_pos.m_FontCharWidth = iCharWidth;

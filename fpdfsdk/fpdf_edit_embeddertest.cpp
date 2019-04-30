@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -446,7 +447,7 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   // Verify the "Hello, world!" text is gone and "Changed for SetText test" is
   // now displayed.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kChangedMD5[] = "94c1e7a5af7dd9d77dc2223b1091acb7";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kChangedMD5[] = "3137fdb27962671f5c3963a5e965eff5";
@@ -485,7 +486,7 @@ TEST_F(FPDFEditEmbedderTest, RemovePageObject) {
 
   // Show what the original file looks like.
   {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char kOriginalMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
@@ -504,7 +505,7 @@ TEST_F(FPDFEditEmbedderTest, RemovePageObject) {
 
   // Verify the "Hello, world!" text is gone.
   {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char kRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char kRemovedMD5[] = "aae6c5334721f90ec30d3d59f4ef7deb";
@@ -641,7 +642,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 
   // Show what the original file looks like.
   {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char kOriginalMD5[] = "5a5eb63cb21cc15084fea1f14284b8df";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char kOriginalMD5[] = "587c507a40f613f9c530b2ce2d58d655";
@@ -686,7 +687,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 
   EXPECT_EQ(11, FPDFPage_CountObjects(page));
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kNonPrimesMD5[] = "57e76dc7375d896704f0fd6d6d1b9e65";
   const char kNonPrimesAfterSaveMD5[] = "6304512d0150bbd5578e8e22d3121103";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -963,7 +964,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsNotLonely) {
 
   // Verify the "Hello, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kHelloRemovedMD5[] = "e07a62d412728fc4d6e3ff42f2dd0e11";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kHelloRemovedMD5[] = "a97d4c72c969ba373c2dce675d277e65";
@@ -1010,7 +1011,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsLonely) {
 
   // Verify the "Greetings, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kGreetingsRemovedMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kGreetingsRemovedMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
@@ -1126,7 +1127,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
       EXPECT_EQ(1, cpdf_page_object->GetContentStream()) << i;
   }
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kStream1RemovedMD5[] = "d2e21fbd5a6de563f619feeeb6163331";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kStream1RemovedMD5[] = "b4140f203523e38793283a5943d8075b";
@@ -1258,7 +1259,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveFirstFromSingleStream) {
   cpdf_page_object = CPDFPageObjectFromFPDFPageObject(page_object);
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kFirstRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kFirstRemovedMD5[] = "aae6c5334721f90ec30d3d59f4ef7deb";
@@ -1326,7 +1327,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveLastFromSingleStream) {
   cpdf_page_object = CPDFPageObjectFromFPDFPageObject(page_object);
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char kLastRemovedMD5[] = "f8fbd14a048b9e2ea8e5f059f22a910e";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char kLastRemovedMD5[] = "93db13099042bafefb3c22a165bad684";
@@ -1640,7 +1641,7 @@ TEST_F(FPDFEditEmbedderTest, PathOnTopOfText) {
 
   // Render and check the result. Text is slightly different on Mac.
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char md5[] = "f9e6fa74230f234286bfcada9f7606d8";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5[] = "74dd9c393b8b2578d2b7feb032b7daad";
@@ -1785,7 +1786,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char md5[] = "08d1ff3e5a42801bee6077fd366bef00";
@@ -1810,7 +1811,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char md5[] = "a5c4ace4c6f27644094813fe1441a21c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char md5[] = "3755dd35abd4c605755369401ee85b2d";
@@ -1834,7 +1835,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char md5[] = "40b3ef04f915ff4c4208948001763544";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char md5[] = "aba523a8110d01ed9bd7b7781ff74045";
@@ -2003,7 +2004,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText2) {
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page.get(), text_object);
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5[] = "08d1ff3e5a42801bee6077fd366bef00";
@@ -2349,13 +2350,13 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
     FPDFPage_InsertObject(page, text_object);
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     const char md5[] = "d60ba39f9698e32360d99e727dd93165";
 #else
     const char md5[] = "70592859010ffbf532a2237b8118bcc4";
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#endif
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
 
     // Add some more text, same font
@@ -2367,13 +2368,13 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
     FPDFPage_InsertObject(page, text_object2);
   }
   ScopedFPDFBitmap page_bitmap2 = RenderPage(page);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5_2[] = "2199b579c49ab5f80c246a586a80ee90";
 #else
   const char md5_2[] = "c1d10cce1761c4a998a16b2562030568";
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#endif
   CompareBitmap(page_bitmap2.get(), 612, 792, md5_2);
 
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -2663,7 +2664,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   EXPECT_EQ(0, memcmp(block_value, buffer, kBlobLen));
 
 // Render and check the bitmap is the expected one.
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const char md5[] = "d60ba39f9698e32360d99e727dd93165";

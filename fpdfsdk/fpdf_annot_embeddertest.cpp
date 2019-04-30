@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "build/build_config.h"
 #include "constants/annotation_common.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -474,7 +475,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   static const char kMd5Original[] = "63af8432fab95a67cdebb7cd0e514941";
   static const char kMd5ModifiedHighlight[] =
       "aec26075011349dec9bace891856b5f2";
@@ -682,7 +683,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
   static const char kMd5ModifiedPath[] = "9059723a045e17478753d2f0eb33bc03";
   static const char kMd5TwoPaths[] = "7eed0cfba780f1d4dd8068f717d3a6bf";
@@ -884,7 +885,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
   static const char kMd5NewImage[] = "ff012f5697436dfcaec25b32d1333596";
   static const char kMd5ModifiedImage[] = "86cf8cb2755a7a2046a543e66d9c1e61";
@@ -969,7 +970,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   static const char kMd5Original[] = "c35408717759562d1f8bf33d317483d2";
   static const char kMd5NewText[] = "60031c1b0330cf1e1575f7d46687d429";
   static const char kMd5ModifiedText[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
@@ -1109,7 +1110,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   static const char kMd5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   static const char kMd5[] = "9ee141f698c3fcb56c050dffd6c82624";

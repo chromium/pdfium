@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_stream.h"
@@ -25,11 +26,11 @@
 namespace {
 
 #ifdef PDF_ENABLE_XFA_PNG
-#if _FX_OS_ == _FX_OS_MACOSX_
+#if defined(OS_MACOSX)
 const double kPngGamma = 1.7;
-#else   // _FX_OS_ == _FX_OS_MACOSX_
+#else
 const double kPngGamma = 2.2;
-#endif  // _FX_OS_ == _FX_OS_MACOSX_
+#endif  // defined(OS_MACOSX)
 #endif  // PDF_ENABLE_XFA_PNG
 
 void RGB2BGR(uint8_t* buffer, int width = 1) {

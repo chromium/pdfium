@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -33,7 +34,7 @@ TEST(cpdf_filespec, EncodeDecodeFileName) {
     {L"\\\\pdfdocs\\spec.pdf", L"/pdfdocs/spec.pdf"},
 // Network resource name. It is not supported yet.
 // {L"pclib/eng:\\pdfdocs\\spec.pdf", L"/pclib/eng/pdfdocs/spec.pdf"},
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
     // Absolute path with colon separator.
     {L"Mac HD:PDFDocs:spec.pdf", L"/Mac HD/PDFDocs/spec.pdf"},
     // Relative path with colon separator.
@@ -63,7 +64,7 @@ TEST(cpdf_filespec, GetFileName) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
       L"/C/docs/test.pdf",
       L"C:\\docs\\test.pdf"
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
       L"/Mac HD/docs/test.pdf",
       L"Mac HD:docs:test.pdf"
 #else
@@ -84,7 +85,7 @@ TEST(cpdf_filespec, GetFileName) {
       {L"/E/docs/test.pdf", L"E:\\docs\\test.pdf"},
       {L"/F/docs/test.pdf", L"F:\\docs\\test.pdf"},
       {L"/G/docs/test.pdf", L"G:\\docs\\test.pdf"},
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
       {L"/Mac HD/docs1/test.pdf", L"Mac HD:docs1:test.pdf"},
       {L"/Mac HD/docs2/test.pdf", L"Mac HD:docs2:test.pdf"},
       {L"/Mac HD/docs3/test.pdf", L"Mac HD:docs3:test.pdf"},
@@ -128,7 +129,7 @@ TEST(cpdf_filespec, SetFileName) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
     L"C:\\docs\\test.pdf",
     L"/C/docs/test.pdf"
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#elif defined(OS_MACOSX)
     L"Mac HD:docs:test.pdf",
     L"/Mac HD/docs/test.pdf"
 #else

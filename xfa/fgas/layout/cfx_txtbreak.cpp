@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "build/build_config.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -842,7 +843,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const Run* pTxtRun,
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
 #endif
         // TODO(npm): change widths in this method to unsigned to avoid implicit

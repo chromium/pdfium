@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/render/cpdf_devicebuffer.h"
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
@@ -28,7 +29,7 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   m_Rect = rect;
   m_pObject = pObj;
   m_Matrix.Translate(-rect.left, -rect.top);
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
+#if !defined(OS_MACOSX)
   int horz_size = pDevice->GetDeviceCaps(FXDC_HORZ_SIZE);
   int vert_size = pDevice->GetDeviceCaps(FXDC_VERT_SIZE);
   if (horz_size && vert_size && max_dpi) {

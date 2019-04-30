@@ -10,6 +10,7 @@
 #include <limits>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cfx_cttgsubtable.h"
@@ -669,7 +670,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     if (m_Charset == CIDSET_JAPAN1) {
       if (unicode == '\\') {
         unicode = '/';
-#if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
+#if !defined(OS_MACOSX)
       } else if (unicode == 0xa5) {
         unicode = 0x5c;
 #endif

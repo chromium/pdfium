@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_
 #define CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_
 
+#include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -19,7 +20,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   bool IsType1Font() const override;
   const CPDF_Type1Font* AsType1Font() const override;
   CPDF_Type1Font* AsType1Font() override;
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   int GlyphFromCharCodeExt(uint32_t charcode) override;
 #endif
 
@@ -32,7 +33,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
   void SetExtGID(const char* name, uint32_t charcode);
   void CalcExtGID(uint32_t charcode);
 

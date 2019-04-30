@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/render/cpdf_charposlist.h"
 
+#include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -32,7 +33,7 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
     charpos.m_Unicode = !unicode.IsEmpty() ? unicode[0] : CharCode;
     charpos.m_GlyphIndex = pFont->GlyphFromCharCode(CharCode, &bVert);
     uint32_t GlyphID = charpos.m_GlyphIndex;
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
     charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
     GlyphID = charpos.m_ExtGID != static_cast<uint32_t>(-1)
                   ? charpos.m_ExtGID
@@ -48,7 +49,7 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
       charpos.m_GlyphIndex = pFont->FallbackGlyphFromCharcode(
           charpos.m_FallbackFontPosition, CharCode);
       pCurrentFont = pFont->GetFontFallback(charpos.m_FallbackFontPosition);
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
       charpos.m_ExtGID = charpos.m_GlyphIndex;
 #endif
     }
