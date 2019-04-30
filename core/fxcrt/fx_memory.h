@@ -8,6 +8,7 @@
 #define CORE_FXCRT_FX_MEMORY_H_
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/compiler_specific.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +36,7 @@ pdfium::base::PartitionAllocatorGeneric& GetGeneralPartitionAllocator();
 pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator();
 
 void FXMEM_InitializePartitionAlloc();
-NEVER_INLINE void FX_OutOfMemoryTerminate();
+NOINLINE void FX_OutOfMemoryTerminate();
 
 inline void* FX_SafeAlloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;

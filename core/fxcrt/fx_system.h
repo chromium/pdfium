@@ -248,12 +248,4 @@ int FXSYS_round(float f);
 
 #endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
-// Prevent a function from ever being inlined, typically because we'd
-// like it to appear in stack traces.
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-#define NEVER_INLINE __declspec(noinline)
-#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-#define NEVER_INLINE __attribute__((__noinline__))
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
 #endif  // CORE_FXCRT_FX_SYSTEM_H_

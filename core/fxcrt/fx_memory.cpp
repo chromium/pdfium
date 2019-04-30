@@ -58,7 +58,7 @@ void FXMEM_DefaultFree(void* pointer) {
   pdfium::base::PartitionFree(pointer);
 }
 
-NEVER_INLINE void FX_OutOfMemoryTerminate() {
+NOINLINE void FX_OutOfMemoryTerminate() {
   // Convince the linker this should not be folded with similar functions using
   // Identical Code Folding.
   static int make_this_function_aliased = 0xbd;
