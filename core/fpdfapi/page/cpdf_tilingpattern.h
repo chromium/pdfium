@@ -16,19 +16,9 @@
 class CPDF_Document;
 class CPDF_Form;
 class CPDF_Object;
-class CPDF_PageObject;
 
 class CPDF_TilingPattern final : public CPDF_Pattern {
  public:
-  class Unloader {
-   public:
-    explicit Unloader(CPDF_TilingPattern* pTilingPattern);
-    ~Unloader();
-
-   private:
-    UnownedPtr<CPDF_TilingPattern> const m_pTilingPattern;
-  };
-
   CPDF_TilingPattern(CPDF_Document* pDoc,
                      CPDF_Object* pPatternObj,
                      const CFX_Matrix& parentMatrix);
@@ -37,8 +27,7 @@ class CPDF_TilingPattern final : public CPDF_Pattern {
   CPDF_TilingPattern* AsTilingPattern() override;
   CPDF_ShadingPattern* AsShadingPattern() override;
 
-  bool Load(CPDF_PageObject* pPageObj);
-  void Unload();
+  bool Load();
 
   bool colored() const { return m_bColored; }
   const CFX_FloatRect& bbox() const { return m_BBox; }

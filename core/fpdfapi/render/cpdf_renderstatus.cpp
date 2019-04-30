@@ -2143,8 +2143,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                                           CPDF_PageObject* pPageObj,
                                           const CFX_Matrix& mtObj2Device,
                                           bool bStroke) {
-  CPDF_TilingPattern::Unloader unloader(pPattern);
-  if (!pPattern->Load(pPageObj))
+  if (!pPattern->Load())
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
