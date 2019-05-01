@@ -149,7 +149,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
                     uint32_t objnum,
                     int* index,
                     int level) const;
-  std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
+  RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
   const CPDF_Dictionary* GetPagesDict() const;
   CPDF_Dictionary* GetPagesDict();

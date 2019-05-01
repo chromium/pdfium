@@ -239,7 +239,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
                               CPDF_Annot::AnnotSubtypeToString(
                                   static_cast<CPDF_Annot::Subtype>(subtype)));
-  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict.get(), pPage);
+  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict.Get(), pPage);
 
   CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
@@ -294,11 +294,10 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
     return -1;
 
   CPDF_ArrayLocker locker(pAnnots);
-  auto it =
-      std::find_if(locker.begin(), locker.end(),
-                   [pAnnotDict](const std::unique_ptr<CPDF_Object>& candidate) {
-                     return candidate->GetDirect() == pAnnotDict;
-                   });
+  auto it = std::find_if(locker.begin(), locker.end(),
+                         [pAnnotDict](const RetainPtr<CPDF_Object>& candidate) {
+                           return candidate->GetDirect() == pAnnotDict;
+                         });
 
   if (it == locker.end())
     return -1;
@@ -774,7 +773,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
       pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
     ByteString newValue = PDF_EncodeText(WideStringFromFPDFWideString(value));
-    auto pNewApStream = pdfium::MakeUnique<CPDF_Stream>();
+    auto pNewApStream = pdfium::MakeRetain<CPDF_Stream>();
     pNewApStream->SetData(newValue.AsRawSpan());
     pApDict->SetFor(modeKey, std::move(pNewApStream));
   } else {

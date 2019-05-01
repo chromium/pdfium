@@ -148,7 +148,7 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
                     bool bold,
                     bool italic,
                     ByteString basefont,
-                    std::unique_ptr<CPDF_Array> pWidths) {
+                    RetainPtr<CPDF_Array> pWidths) {
   if (bold && italic)
     basefont += ",BoldItalic";
   else if (bold)
@@ -162,15 +162,14 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
   pBaseDict->SetFor("Widths", std::move(pWidths));
 }
 
-std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
-    CPDF_Document* pDoc,
-    ByteString basefont,
-    int flags,
-    int italicangle,
-    int ascend,
-    int descend,
-    std::unique_ptr<CPDF_Array> bbox,
-    int32_t stemV) {
+RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
+                                             ByteString basefont,
+                                             int flags,
+                                             int italicangle,
+                                             int ascend,
+                                             int descend,
+                                             RetainPtr<CPDF_Array> bbox,
+                                             int32_t stemV) {
   auto pFontDesc = pDoc->New<CPDF_Dictionary>();
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", basefont);
@@ -192,8 +191,7 @@ CPDF_Document::CPDF_Document()
 
 CPDF_Document::~CPDF_Document() = default;
 
-std::unique_ptr<CPDF_Object> CPDF_Document::ParseIndirectObject(
-    uint32_t objnum) {
+RetainPtr<CPDF_Object> CPDF_Document::ParseIndirectObject(uint32_t objnum) {
   return m_pParser ? m_pParser->ParseIndirectObject(objnum) : nullptr;
 }
 
@@ -605,8 +603,9 @@ CPDF_Dictionary* CPDF_Document::GetInfo() {
   if (!m_pParser || !m_pParser->GetInfoObjNum())
     return nullptr;
 
-  CPDF_Reference ref(this, m_pParser->GetInfoObjNum());
-  m_pInfoDict = ToDictionary(ref.GetDirect());
+  auto ref =
+      pdfium::MakeRetain<CPDF_Reference>(this, m_pParser->GetInfoObjNum());
+  m_pInfoDict = ToDictionary(ref->GetDirect());
   return m_pInfoDict.Get();
 }
 
@@ -741,7 +740,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset) {
   auto pEncoding = pdfium::MakeUnique<CFX_UnicodeEncoding>(pFont);
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
-    auto pWidths = pdfium::MakeUnique<CPDF_Array>();
+    auto pWidths = pdfium::MakeRetain<CPDF_Array>();
     for (int charcode = 32; charcode < 128; charcode++) {
       int glyph_index = pEncoding->GlyphFromCharCode(charcode);
       int char_width = pFont->GetGlyphWidth(glyph_index);
@@ -779,7 +778,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset) {
       pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0;
   FX_RECT bbox;
   pFont->GetBBox(&bbox);
-  auto pBBox = pdfium::MakeUnique<CPDF_Array>();
+  auto pBBox = pdfium::MakeRetain<CPDF_Array>();
   pBBox->AddNew<CPDF_Number>(bbox.left);
   pBBox->AddNew<CPDF_Number>(bbox.bottom);
   pBBox->AddNew<CPDF_Number>(bbox.right);
@@ -859,7 +858,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
     }
     int char_widths[224];
     GetCharWidth(hDC, 32, 255, char_widths);
-    auto pWidths = pdfium::MakeUnique<CPDF_Array>();
+    auto pWidths = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 224; i++)
       pWidths->AddNew<CPDF_Number>(char_widths[i]);
     ProcessNonbCJK(pBaseDict, pLogFont->lfWeight > FW_MEDIUM,
@@ -871,10 +870,10 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
                       InsertWidthArray(hDC, start, end, widthArr);
                     });
   }
-  auto pBBox = pdfium::MakeUnique<CPDF_Array>();
+  auto pBBox = pdfium::MakeRetain<CPDF_Array>();
   for (int i = 0; i < 4; i++)
     pBBox->AddNew<CPDF_Number>(bbox[i]);
-  std::unique_ptr<CPDF_Dictionary> pFontDesc =
+  RetainPtr<CPDF_Dictionary> pFontDesc =
       CalculateFontDesc(this, basefont, flags, italicangle, ascend, descend,
                         std::move(pBBox), pLogFont->lfWeight / 5);
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", capheight);

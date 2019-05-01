@@ -443,11 +443,11 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   }
 
   if (m_pParser) {
-    std::unique_ptr<CPDF_Dictionary> p = m_pParser->GetCombinedTrailer();
-    CPDF_DictionaryLocker locker(p.get());
+    RetainPtr<CPDF_Dictionary> p = m_pParser->GetCombinedTrailer();
+    CPDF_DictionaryLocker locker(p.Get());
     for (const auto& it : locker) {
       const ByteString& key = it.first;
-      CPDF_Object* pValue = it.second.get();
+      CPDF_Object* pValue = it.second.Get();
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
           key == "XRefStm" || key == "ID" || key == "DecodeParms" ||
@@ -591,7 +591,7 @@ bool CPDF_Creator::Create(uint32_t flags) {
 void CPDF_Creator::InitID() {
   ASSERT(!m_pIDArray);
 
-  m_pIDArray = pdfium::MakeUnique<CPDF_Array>();
+  m_pIDArray = pdfium::MakeRetain<CPDF_Array>();
   const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
   const CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
   if (pID1) {
@@ -619,9 +619,9 @@ void CPDF_Creator::InitID() {
     ASSERT(m_pParser);
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       m_pNewEncryptDict = ToDictionary(m_pEncryptDict->Clone());
-      m_pEncryptDict = m_pNewEncryptDict.get();
+      m_pEncryptDict = m_pNewEncryptDict.Get();
       m_pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
-      m_pSecurityHandler->OnCreate(m_pNewEncryptDict.get(), m_pIDArray.get(),
+      m_pSecurityHandler->OnCreate(m_pNewEncryptDict.Get(), m_pIDArray.Get(),
                                    m_pParser->GetPassword());
       m_bSecurityChanged = true;
     }
@@ -666,7 +666,7 @@ void CPDF_Creator::RemoveSecurity() {
   m_pSecurityHandler.Reset();
   m_bSecurityChanged = true;
   m_pEncryptDict = nullptr;
-  m_pNewEncryptDict.reset();
+  m_pNewEncryptDict.Reset();
 }
 
 CPDF_CryptoHandler* CPDF_Creator::GetCryptoHandler() {

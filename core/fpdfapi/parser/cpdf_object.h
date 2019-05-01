@@ -27,7 +27,7 @@ class CPDF_Stream;
 class CPDF_String;
 class IFX_ArchiveStream;
 
-class CPDF_Object {
+class CPDF_Object : public Retainable {
  public:
   static const uint32_t kInvalidObjNum = static_cast<uint32_t>(-1);
   enum Type {
@@ -42,8 +42,6 @@ class CPDF_Object {
     kReference
   };
 
-  virtual ~CPDF_Object();
-
   virtual Type GetType() const = 0;
   uint32_t GetObjNum() const { return m_ObjNum; }
   void SetObjNum(uint32_t objnum) { m_ObjNum = objnum; }
@@ -52,11 +50,11 @@ class CPDF_Object {
   bool IsInline() const { return m_ObjNum == 0; }
 
   // Create a deep copy of the object.
-  virtual std::unique_ptr<CPDF_Object> Clone() const = 0;
+  virtual RetainPtr<CPDF_Object> Clone() const = 0;
 
   // Create a deep copy of the object except any reference object be
   // copied to the object it points to directly.
-  virtual std::unique_ptr<CPDF_Object> CloneDirectObject() const;
+  virtual RetainPtr<CPDF_Object> CloneDirectObject() const;
 
   virtual CPDF_Object* GetDirect();
   virtual const CPDF_Object* GetDirect() const;
@@ -105,20 +103,21 @@ class CPDF_Object {
   // Also check cyclic reference against |pVisited|, no copy if it is found.
   // Complex objects should implement their own CloneNonCyclic()
   // function to properly check for possible loop.
-  virtual std::unique_ptr<CPDF_Object> CloneNonCyclic(
+  virtual RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const;
 
   // Return a reference to itself.
   // The object must be direct (!IsInlined).
-  virtual std::unique_ptr<CPDF_Object> MakeReference(
+  virtual RetainPtr<CPDF_Object> MakeReference(
       CPDF_IndirectObjectHolder* holder) const;
 
  protected:
   CPDF_Object() = default;
   CPDF_Object(const CPDF_Object& src) = delete;
+  ~CPDF_Object() override;
 
-  std::unique_ptr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
+  RetainPtr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
 
   uint32_t m_ObjNum = 0;
   uint32_t m_GenNum = 0;

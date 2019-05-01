@@ -24,8 +24,8 @@ TEST(CFX_SeekableMultiStreamTest, NoStreams) {
 
 TEST(CXFAFileReadTest, EmptyStreams) {
   std::vector<const CPDF_Stream*> streams;
-  auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
-  streams.push_back(stream1.get());
+  auto stream1 = pdfium::MakeRetain<CPDF_Stream>();
+  streams.push_back(stream1.Get());
   auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
 
   uint8_t output_buffer[16];
@@ -36,21 +36,21 @@ TEST(CXFAFileReadTest, EmptyStreams) {
 
 TEST(CXFAFileReadTest, NormalStreams) {
   std::vector<const CPDF_Stream*> streams;
-  auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
-  auto stream2 = pdfium::MakeUnique<CPDF_Stream>();
-  auto stream3 = pdfium::MakeUnique<CPDF_Stream>();
+  auto stream1 = pdfium::MakeRetain<CPDF_Stream>();
+  auto stream2 = pdfium::MakeRetain<CPDF_Stream>();
+  auto stream3 = pdfium::MakeRetain<CPDF_Stream>();
 
   // 16 chars total.
   stream1->InitStream(ByteStringView("one t").raw_span(),
-                      pdfium::MakeUnique<CPDF_Dictionary>());
+                      pdfium::MakeRetain<CPDF_Dictionary>());
   stream2->InitStream(ByteStringView("wo ").raw_span(),
-                      pdfium::MakeUnique<CPDF_Dictionary>());
+                      pdfium::MakeRetain<CPDF_Dictionary>());
   stream3->InitStream(ByteStringView("three!!!").raw_span(),
-                      pdfium::MakeUnique<CPDF_Dictionary>());
+                      pdfium::MakeRetain<CPDF_Dictionary>());
 
-  streams.push_back(stream1.get());
-  streams.push_back(stream2.get());
-  streams.push_back(stream3.get());
+  streams.push_back(stream1.Get());
+  streams.push_back(stream2.Get());
+  streams.push_back(stream3.Get());
   auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
 
   uint8_t output_buffer[16];

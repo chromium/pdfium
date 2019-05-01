@@ -37,7 +37,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
     return 0;
 
-  auto stream = pdfium::MakeUnique<CPDF_Stream>();
+  auto stream = pdfium::MakeRetain<CPDF_Stream>();
   stream->AsStream()->SetData({data, size});
 
   auto src_stream = pdfium::MakeRetain<CPDF_StreamAcc>(stream->AsStream());

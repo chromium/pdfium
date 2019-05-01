@@ -24,7 +24,7 @@ namespace {
 
 const int kNumTestPages = 7;
 
-CPDF_Dictionary* CreatePageTreeNode(std::unique_ptr<CPDF_Array> kids,
+CPDF_Dictionary* CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
                                     CPDF_Document* pDoc,
                                     int count) {
   CPDF_Array* pUnowned = pDoc->AddIndirectObject(std::move(kids))->AsArray();
@@ -39,8 +39,8 @@ CPDF_Dictionary* CreatePageTreeNode(std::unique_ptr<CPDF_Array> kids,
   return pageNode;
 }
 
-std::unique_ptr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
-  auto page = pdfium::MakeUnique<CPDF_Dictionary>();
+RetainPtr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
+  auto page = pdfium::MakeRetain<CPDF_Dictionary>();
   page->SetNewFor<CPDF_String>("Type", "Page", false);
   page->SetNewFor<CPDF_Number>("PageNumbering", static_cast<int>(number));
   return page;
@@ -50,7 +50,7 @@ class CPDF_TestDocumentForPages final : public CPDF_Document {
  public:
   CPDF_TestDocumentForPages() : CPDF_Document() {
     // Set up test
-    auto zeroToTwo = pdfium::MakeUnique<CPDF_Array>();
+    auto zeroToTwo = pdfium::MakeRetain<CPDF_Array>();
     zeroToTwo->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(0))->GetObjNum());
     zeroToTwo->AddNew<CPDF_Reference>(
@@ -60,26 +60,26 @@ class CPDF_TestDocumentForPages final : public CPDF_Document {
     CPDF_Dictionary* branch1 =
         CreatePageTreeNode(std::move(zeroToTwo), this, 3);
 
-    auto zeroToThree = pdfium::MakeUnique<CPDF_Array>();
+    auto zeroToThree = pdfium::MakeRetain<CPDF_Array>();
     zeroToThree->AddNew<CPDF_Reference>(this, branch1->GetObjNum());
     zeroToThree->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(3))->GetObjNum());
     CPDF_Dictionary* branch2 =
         CreatePageTreeNode(std::move(zeroToThree), this, 4);
 
-    auto fourFive = pdfium::MakeUnique<CPDF_Array>();
+    auto fourFive = pdfium::MakeRetain<CPDF_Array>();
     fourFive->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(4))->GetObjNum());
     fourFive->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(5))->GetObjNum());
     CPDF_Dictionary* branch3 = CreatePageTreeNode(std::move(fourFive), this, 2);
 
-    auto justSix = pdfium::MakeUnique<CPDF_Array>();
+    auto justSix = pdfium::MakeRetain<CPDF_Array>();
     justSix->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(6))->GetObjNum());
     CPDF_Dictionary* branch4 = CreatePageTreeNode(std::move(justSix), this, 1);
 
-    auto allPages = pdfium::MakeUnique<CPDF_Array>();
+    auto allPages = pdfium::MakeRetain<CPDF_Array>();
     allPages->AddNew<CPDF_Reference>(this, branch2->GetObjNum());
     allPages->AddNew<CPDF_Reference>(this, branch3->GetObjNum());
     allPages->AddNew<CPDF_Reference>(this, branch4->GetObjNum());
@@ -102,7 +102,7 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_Document {
  public:
   CPDF_TestDocumentWithPageWithoutPageNum() : CPDF_Document() {
     // Set up test
-    auto allPages = pdfium::MakeUnique<CPDF_Array>();
+    auto allPages = pdfium::MakeRetain<CPDF_Array>();
     allPages->AddNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(0))->GetObjNum());
     allPages->AddNew<CPDF_Reference>(
@@ -219,11 +219,11 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   // ObjNum can be added in CPDF_DataAvail::IsPageAvail, and PagesDict
   // can be not exists in this case.
   // (case, when hint table is used to page check in CPDF_DataAvail).
-  auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
+  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Boolean>("Linearized", true);
   const int page_count = 100;
   dict->SetNewFor<CPDF_Number>("N", page_count);
-  auto linearized = pdfium::MakeUnique<TestLinearized>(dict.get());
+  auto linearized = pdfium::MakeUnique<TestLinearized>(dict.Get());
   auto parser = pdfium::MakeUnique<CPDF_Parser>();
   parser->SetLinearizedHeader(std::move(linearized));
   CPDF_TestDocumentAllowSetParser document;

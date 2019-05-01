@@ -27,7 +27,7 @@ std::unique_ptr<CPDF_CrossRefTable> CPDF_CrossRefTable::MergeUp(
 
 CPDF_CrossRefTable::CPDF_CrossRefTable() = default;
 
-CPDF_CrossRefTable::CPDF_CrossRefTable(std::unique_ptr<CPDF_Dictionary> trailer)
+CPDF_CrossRefTable::CPDF_CrossRefTable(RetainPtr<CPDF_Dictionary> trailer)
     : trailer_(std::move(trailer)) {}
 
 CPDF_CrossRefTable::~CPDF_CrossRefTable() = default;
@@ -88,7 +88,7 @@ void CPDF_CrossRefTable::SetFree(uint32_t obj_num) {
   info.pos = 0;
 }
 
-void CPDF_CrossRefTable::SetTrailer(std::unique_ptr<CPDF_Dictionary> trailer) {
+void CPDF_CrossRefTable::SetTrailer(RetainPtr<CPDF_Dictionary> trailer) {
   trailer_ = std::move(trailer);
 }
 
@@ -141,8 +141,7 @@ void CPDF_CrossRefTable::UpdateInfo(
   objects_info_ = std::move(new_objects_info);
 }
 
-void CPDF_CrossRefTable::UpdateTrailer(
-    std::unique_ptr<CPDF_Dictionary> new_trailer) {
+void CPDF_CrossRefTable::UpdateTrailer(RetainPtr<CPDF_Dictionary> new_trailer) {
   if (!new_trailer)
     return;
 

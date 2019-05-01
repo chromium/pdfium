@@ -236,7 +236,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
         return false;
       }
       if (pDV) {
-        std::unique_ptr<CPDF_Object> pClone = pDV->Clone();
+        RetainPtr<CPDF_Object> pClone = pDV->Clone();
         if (!pClone)
           return false;
 
@@ -329,7 +329,7 @@ ByteString CPDF_FormField::GetDefaultStyle() const {
   return pObj ? pObj->GetString() : ByteString();
 }
 
-void CPDF_FormField::SetOpt(std::unique_ptr<CPDF_Object> pOpt) {
+void CPDF_FormField::SetOpt(RetainPtr<CPDF_Object> pOpt) {
   m_pDict->SetFor("Opt", std::move(pOpt));
 }
 
@@ -637,7 +637,7 @@ void CPDF_FormField::SetItemSelectionUnselected(int index,
   if (!pValue->IsArray())
     return;
 
-  auto pArray = pdfium::MakeUnique<CPDF_Array>();
+  auto pArray = pdfium::MakeRetain<CPDF_Array>();
   for (int i = 0; i < CountOptions(); i++) {
     if (i != index && IsItemSelected(i))
       pArray->AddNew<CPDF_String>(GetOptionValue(i));

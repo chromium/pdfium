@@ -17,14 +17,12 @@
 
 class CPDF_String final : public CPDF_Object {
  public:
-  CPDF_String();
-  CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);
-  CPDF_String(WeakPtr<ByteStringPool> pPool, const WideString& str);
-  ~CPDF_String() override;
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // CPDF_Object:
   Type GetType() const override;
-  std::unique_ptr<CPDF_Object> Clone() const override;
+  RetainPtr<CPDF_Object> Clone() const override;
   ByteString GetString() const override;
   WideString GetUnicodeText() const override;
   void SetString(const ByteString& str) override;
@@ -37,6 +35,11 @@ class CPDF_String final : public CPDF_Object {
   bool IsHex() const { return m_bHex; }
 
  private:
+  CPDF_String();
+  CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);
+  CPDF_String(WeakPtr<ByteStringPool> pPool, const WideString& str);
+  ~CPDF_String() override;
+
   ByteString m_String;
   bool m_bHex;
 };

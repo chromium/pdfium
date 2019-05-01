@@ -23,10 +23,10 @@ CPDF_Object::Type CPDF_Number::GetType() const {
   return kNumber;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Number::Clone() const {
+RetainPtr<CPDF_Object> CPDF_Number::Clone() const {
   return m_Number.IsInteger()
-             ? pdfium::MakeUnique<CPDF_Number>(m_Number.GetSigned())
-             : pdfium::MakeUnique<CPDF_Number>(m_Number.GetFloat());
+             ? pdfium::MakeRetain<CPDF_Number>(m_Number.GetSigned())
+             : pdfium::MakeRetain<CPDF_Number>(m_Number.GetFloat());
 }
 
 float CPDF_Number::GetNumber() const {

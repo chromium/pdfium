@@ -124,9 +124,9 @@ CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span,
 
 CPDF_StreamParser::~CPDF_StreamParser() {}
 
-std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
+RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
-    std::unique_ptr<CPDF_Dictionary> pDict,
+    RetainPtr<CPDF_Dictionary> pDict,
     const CPDF_Object* pCSObj) {
   if (m_Pos < m_pBuf.size() && PDFCharIsWhitespace(m_pBuf[m_Pos]))
     m_Pos++;
@@ -210,12 +210,12 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(dwStreamSize));
-  return pdfium::MakeUnique<CPDF_Stream>(std::move(pData), dwStreamSize,
+  return pdfium::MakeRetain<CPDF_Stream>(std::move(pData), dwStreamSize,
                                          std::move(pDict));
 }
 
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
-  m_pLastObj.reset();
+  m_pLastObj.Reset();
   m_WordSize = 0;
   if (!PositionIsInBounds())
     return EndOfData;
@@ -276,23 +276,23 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   if (m_WordSize == 4) {
     if (WordBufferMatches(kTrue)) {
-      m_pLastObj = pdfium::MakeUnique<CPDF_Boolean>(true);
+      m_pLastObj = pdfium::MakeRetain<CPDF_Boolean>(true);
       return Others;
     }
     if (WordBufferMatches(kNull)) {
-      m_pLastObj = pdfium::MakeUnique<CPDF_Null>();
+      m_pLastObj = pdfium::MakeRetain<CPDF_Null>();
       return Others;
     }
   } else if (m_WordSize == 5) {
     if (WordBufferMatches(kFalse)) {
-      m_pLastObj = pdfium::MakeUnique<CPDF_Boolean>(false);
+      m_pLastObj = pdfium::MakeRetain<CPDF_Boolean>(false);
       return Others;
     }
   }
   return Keyword;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
+RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
     bool bAllowNestedArray,
     bool bInArray,
     uint32_t dwRecursionLevel) {
@@ -304,7 +304,7 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
 
   if (bIsNumber) {
     m_WordBuffer[m_WordSize] = 0;
-    return pdfium::MakeUnique<CPDF_Number>(
+    return pdfium::MakeRetain<CPDF_Number>(
         ByteStringView(m_WordBuffer, m_WordSize));
   }
 
@@ -312,19 +312,19 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
   if (first_char == '/') {
     ByteString name =
         PDF_NameDecode(ByteStringView(m_WordBuffer + 1, m_WordSize - 1));
-    return pdfium::MakeUnique<CPDF_Name>(m_pPool, name);
+    return pdfium::MakeRetain<CPDF_Name>(m_pPool, name);
   }
 
   if (first_char == '(') {
     ByteString str = ReadString();
-    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
+    return pdfium::MakeRetain<CPDF_String>(m_pPool, str, false);
   }
 
   if (first_char == '<') {
     if (m_WordSize == 1)
-      return pdfium::MakeUnique<CPDF_String>(m_pPool, ReadHexString(), true);
+      return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(), true);
 
-    auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
+    auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
     while (1) {
       GetNextWord(bIsNumber);
       if (m_WordSize == 2 && m_WordBuffer[0] == '>')
@@ -335,7 +335,7 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
 
       ByteString key =
           PDF_NameDecode(ByteStringView(m_WordBuffer + 1, m_WordSize - 1));
-      std::unique_ptr<CPDF_Object> pObj =
+      RetainPtr<CPDF_Object> pObj =
           ReadNextObject(true, bInArray, dwRecursionLevel + 1);
       if (!pObj)
         return nullptr;
@@ -350,9 +350,9 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
     if ((!bAllowNestedArray && bInArray))
       return nullptr;
 
-    auto pArray = pdfium::MakeUnique<CPDF_Array>();
+    auto pArray = pdfium::MakeRetain<CPDF_Array>();
     while (1) {
-      std::unique_ptr<CPDF_Object> pObj =
+      RetainPtr<CPDF_Object> pObj =
           ReadNextObject(bAllowNestedArray, true, dwRecursionLevel + 1);
       if (pObj) {
         pArray->Add(std::move(pObj));
@@ -365,11 +365,11 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
   }
 
   if (WordBufferMatches(kFalse))
-    return pdfium::MakeUnique<CPDF_Boolean>(false);
+    return pdfium::MakeRetain<CPDF_Boolean>(false);
   if (WordBufferMatches(kTrue))
-    return pdfium::MakeUnique<CPDF_Boolean>(true);
+    return pdfium::MakeRetain<CPDF_Boolean>(true);
   if (WordBufferMatches(kNull))
-    return pdfium::MakeUnique<CPDF_Null>();
+    return pdfium::MakeRetain<CPDF_Null>();
   return nullptr;
 }
 

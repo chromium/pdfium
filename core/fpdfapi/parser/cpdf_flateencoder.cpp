@@ -69,13 +69,13 @@ void CPDF_FlateEncoder::CloneDict() {
 
 CPDF_Dictionary* CPDF_FlateEncoder::GetClonedDict() {
   ASSERT(!m_pDict);
-  return m_pClonedDict.get();
+  return m_pClonedDict.Get();
 }
 
 const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
   if (m_pClonedDict) {
     ASSERT(!m_pDict);
-    return m_pClonedDict.get();
+    return m_pClonedDict.Get();
   }
 
   return m_pDict.Get();

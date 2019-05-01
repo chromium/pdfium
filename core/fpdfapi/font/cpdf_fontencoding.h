@@ -52,7 +52,7 @@ class CPDF_FontEncoding {
     m_Unicodes[charcode] = unicode;
   }
 
-  std::unique_ptr<CPDF_Object> Realize(WeakPtr<ByteStringPool> pPool) const;
+  RetainPtr<CPDF_Object> Realize(WeakPtr<ByteStringPool> pPool) const;
 
  private:
   wchar_t m_Unicodes[kEncodingTableSize];

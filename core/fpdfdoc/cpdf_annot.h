@@ -70,7 +70,7 @@ class CPDF_Annot {
   static size_t QuadPointCount(const CPDF_Array* pArray);
 
   // The second constructor does not take ownership of the dictionary.
-  CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);
+  CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);
   CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 
@@ -110,7 +110,7 @@ class CPDF_Annot {
 
   CFX_FloatRect RectForDrawing() const;
 
-  MaybeOwned<CPDF_Dictionary> const m_pAnnotDict;
+  RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
   UnownedPtr<CPDF_Document> const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;

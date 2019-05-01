@@ -77,7 +77,7 @@ void FillNameTreeDict(CPDF_Dictionary* pRootDict) {
 
 TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   // Set up the root dictionary with a Names array.
-  auto pRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
 
   // Add the key "1" (with BOM) and value 100 into the array.
@@ -89,7 +89,7 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   pNames->AddNew<CPDF_Number>(100);
 
   // Check that the key is as expected.
-  CPDF_NameTree nameTree(pRootDict.get());
+  CPDF_NameTree nameTree(pRootDict.Get());
   WideString storedName;
   nameTree.LookupValueAndName(0, &storedName);
   EXPECT_STREQ(L"1", storedName.c_str());
@@ -103,29 +103,29 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
 
 TEST(cpdf_nametree, AddIntoNames) {
   // Set up a name tree with a single Names array.
-  auto pRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
   AddNameKeyValue(pNames, "2.txt", 222);
   AddNameKeyValue(pNames, "7.txt", 777);
 
-  CPDF_NameTree nameTree(pRootDict.get());
+  CPDF_NameTree nameTree(pRootDict.Get());
   pNames = nameTree.GetRoot()->GetArrayFor("Names");
 
   // Insert a name that already exists in the names array.
   EXPECT_FALSE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(111), L"2.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(111), L"2.txt"));
 
   // Insert in the beginning of the names array.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(111), L"1.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(111), L"1.txt"));
 
   // Insert in the middle of the names array.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(555), L"5.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(555), L"5.txt"));
 
   // Insert at the end of the names array.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(999), L"9.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(999), L"9.txt"));
 
   // Check that the names array has the expected key-value pairs.
   CheckNameKeyValue(pNames, 0, "1.txt", 111);
@@ -137,35 +137,35 @@ TEST(cpdf_nametree, AddIntoNames) {
 
 TEST(cpdf_nametree, AddIntoKids) {
   // Set up a name tree with five nodes of three levels.
-  auto pRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
-  FillNameTreeDict(pRootDict.get());
-  CPDF_NameTree nameTree(pRootDict.get());
+  auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
+  FillNameTreeDict(pRootDict.Get());
+  CPDF_NameTree nameTree(pRootDict.Get());
 
   // Check that adding an existing name would fail.
   EXPECT_FALSE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(444), L"9.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(444), L"9.txt"));
 
   // Add a name within the limits of a leaf node.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(444), L"4.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(444), L"4.txt"));
   ASSERT_TRUE(nameTree.LookupValue(L"4.txt"));
   EXPECT_EQ(444, nameTree.LookupValue(L"4.txt")->GetInteger());
 
   // Add a name that requires changing the limits of two bottom levels.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(666), L"6.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(666), L"6.txt"));
   ASSERT_TRUE(nameTree.LookupValue(L"6.txt"));
   EXPECT_EQ(666, nameTree.LookupValue(L"6.txt")->GetInteger());
 
   // Add a name that requires changing the limits of two top levels.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(99), L"99.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(99), L"99.txt"));
   ASSERT_TRUE(nameTree.LookupValue(L"99.txt"));
   EXPECT_EQ(99, nameTree.LookupValue(L"99.txt")->GetInteger());
 
   // Add a name that requires changing the lower limit of all levels.
   EXPECT_TRUE(
-      nameTree.AddValueAndName(pdfium::MakeUnique<CPDF_Number>(-5), L"0.txt"));
+      nameTree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(-5), L"0.txt"));
   ASSERT_TRUE(nameTree.LookupValue(L"0.txt"));
   EXPECT_EQ(-5, nameTree.LookupValue(L"0.txt")->GetInteger());
 
@@ -211,9 +211,9 @@ TEST(cpdf_nametree, AddIntoKids) {
 
 TEST(cpdf_nametree, DeleteFromKids) {
   // Set up a name tree with five nodes of three levels.
-  auto pRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
-  FillNameTreeDict(pRootDict.get());
-  CPDF_NameTree nameTree(pRootDict.get());
+  auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
+  FillNameTreeDict(pRootDict.Get());
+  CPDF_NameTree nameTree(pRootDict.Get());
 
   // Retrieve the kid dictionaries.
   CPDF_Dictionary* pKid1 =

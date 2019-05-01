@@ -328,7 +328,7 @@ int CPDF_NameTree::GetIndex(const WideString& csName) const {
   return nIndex;
 }
 
-bool CPDF_NameTree::AddValueAndName(std::unique_ptr<CPDF_Object> pObj,
+bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
                                     const WideString& name) {
   if (!m_pRoot)
     return false;

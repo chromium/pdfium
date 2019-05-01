@@ -201,7 +201,8 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
     CPDF_String* stringValue = pParamsDict->GetObjectFor(bsKey)->AsString();
     if (stringValue->IsHex()) {
       ByteString encoded = PDF_EncodeString(stringValue->GetString(), true);
-      value = CPDF_String(nullptr, encoded, false).GetUnicodeText();
+      value = pdfium::MakeRetain<CPDF_String>(nullptr, encoded, false)
+                  ->GetUnicodeText();
     }
   }
 
@@ -223,7 +224,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
     return false;
 
   // Create a dictionary for the new embedded file stream.
-  auto pFileStreamDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  auto pFileStreamDict = pdfium::MakeRetain<CPDF_Dictionary>();
   CPDF_Dictionary* pParamsDict =
       pFileStreamDict->SetNewFor<CPDF_Dictionary>("Params");
 

@@ -92,7 +92,7 @@ CPDF_Stream* GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
 
 }  // namespace
 
-CPDF_Annot::CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict,
+CPDF_Annot::CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict,
                        CPDF_Document* pDocument)
     : m_pAnnotDict(std::move(pDict)), m_pDocument(pDocument) {
   Init();

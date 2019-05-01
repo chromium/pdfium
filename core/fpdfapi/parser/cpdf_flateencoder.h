@@ -41,7 +41,7 @@ class CPDF_FlateEncoder {
 
   // Only one of these two pointers is valid at any time.
   UnownedPtr<const CPDF_Dictionary> m_pDict;
-  std::unique_ptr<CPDF_Dictionary> m_pClonedDict;
+  RetainPtr<CPDF_Dictionary> m_pClonedDict;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_FLATEENCODER_H_

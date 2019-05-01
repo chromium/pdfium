@@ -1680,7 +1680,7 @@ bool CPDF_FontEncoding::IsIdentical(const CPDF_FontEncoding* pAnother) const {
   return memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) == 0;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
+RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
     WeakPtr<ByteStringPool> pPool) const {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
@@ -1709,11 +1709,11 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
     else
       return nullptr;
 
-    return pdfium::MakeUnique<CPDF_Name>(pPool, pName);
+    return pdfium::MakeRetain<CPDF_Name>(pPool, pName);
   }
   const uint16_t* pStandard =
       PDF_UnicodesForPredefinedCharSet(PDFFONT_ENCODING_WINANSI);
-  auto pDiff = pdfium::MakeUnique<CPDF_Array>();
+  auto pDiff = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < FX_ArraySize(m_Unicodes); i++) {
     if (pStandard[i] == m_Unicodes[i])
       continue;
@@ -1722,7 +1722,7 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
     pDiff->AddNew<CPDF_Name>(PDF_AdobeNameFromUnicode(m_Unicodes[i]));
   }
 
-  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(pPool);
+  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(pPool);
   pDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
   pDict->SetFor("Differences", std::move(pDiff));
   return std::move(pDict);

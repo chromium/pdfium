@@ -20,7 +20,7 @@ const CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
     case kPropertiesDict:
       return m_pPropertiesHolder->GetDictFor(m_PropertyName);
     case kDirectDict:
-      return m_pDirectDict.get();
+      return m_pDirectDict.Get();
     case kNone:
     default:
       return nullptr;
@@ -37,8 +37,7 @@ bool CPDF_ContentMarkItem::HasMCID() const {
   return pDict && pDict->KeyExist("MCID");
 }
 
-void CPDF_ContentMarkItem::SetDirectDict(
-    std::unique_ptr<CPDF_Dictionary> pDict) {
+void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {
   m_ParamType = kDirectDict;
   m_pDirectDict = std::move(pDict);
 }

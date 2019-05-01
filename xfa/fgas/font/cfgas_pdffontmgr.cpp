@@ -53,7 +53,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
   CPDF_DictionaryLocker locker(pFontSetDict);
   for (const auto& it : locker) {
     const ByteString& key = it.first;
-    CPDF_Object* pObj = it.second.get();
+    CPDF_Object* pObj = it.second.Get();
     if (!PsNameMatchDRFontName(name.AsStringView(), bBold, bItalic, key,
                                bStrictMatch)) {
       continue;

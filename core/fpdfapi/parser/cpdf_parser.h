@@ -71,7 +71,7 @@ class CPDF_Parser {
 
   // Returns a new trailer which combines the last read trailer with the /Root
   // and /Info from previous ones.
-  std::unique_ptr<CPDF_Dictionary> GetCombinedTrailer() const;
+  RetainPtr<CPDF_Dictionary> GetCombinedTrailer() const;
 
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
@@ -83,7 +83,7 @@ class CPDF_Parser {
 
   const CPDF_Dictionary* GetEncryptDict() const;
 
-  std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum);
+  RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum);
 
   uint32_t GetLastObjNum() const;
   bool IsValidObjectNumber(uint32_t objnum) const;
@@ -98,9 +98,8 @@ class CPDF_Parser {
   int GetFileVersion() const { return m_FileVersion; }
   bool IsXRefStream() const { return m_bXRefStream; }
 
-  std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
-      FX_FILESIZE pos,
-      uint32_t objnum);
+  RetainPtr<CPDF_Object> ParseIndirectObjectAt(FX_FILESIZE pos,
+                                               uint32_t objnum);
 
   uint32_t GetFirstPageNo() const;
   const CPDF_LinearizedHeader* GetLinearizedHeader() const {
@@ -143,7 +142,7 @@ class CPDF_Parser {
   bool LoadAllCrossRefV4(FX_FILESIZE pos);
   bool LoadAllCrossRefV5(FX_FILESIZE pos);
   bool LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef);
-  std::unique_ptr<CPDF_Dictionary> LoadTrailerV4();
+  RetainPtr<CPDF_Dictionary> LoadTrailerV4();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
   bool LoadLinearizedAllCrossRefV4(FX_FILESIZE pos);

@@ -118,7 +118,7 @@ CPDF_Dictionary* GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
   // If the Params dict does not exist, create a new one.
   if (!pParams) {
     auto new_dict = pDoc->New<CPDF_Dictionary>();
-    pParams = new_dict.get();
+    pParams = new_dict.Get();
     pMarkItem->SetDirectDict(std::move(new_dict));
   }
 

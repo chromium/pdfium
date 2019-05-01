@@ -19,7 +19,7 @@ TEST(cpdf_dest, GetXYZ) {
   float zoom;
 
   // |array| must outlive |dest|.
-  auto array = pdfium::MakeUnique<CPDF_Array>();
+  auto array = pdfium::MakeRetain<CPDF_Array>();
   array->AddNew<CPDF_Number>(0);  // Page Index.
   array->AddNew<CPDF_Name>("XYZ");
   array->AddNew<CPDF_Number>(4);  // X
@@ -29,13 +29,13 @@ TEST(cpdf_dest, GetXYZ) {
   }
   {
     // Not enough entries.
-    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.get());
+    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.Get());
     EXPECT_FALSE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
   }
   array->AddNew<CPDF_Number>(5);  // Y
   array->AddNew<CPDF_Number>(6);  // Zoom.
   {
-    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.get());
+    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.Get());
     EXPECT_TRUE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
     EXPECT_TRUE(hasX);
     EXPECT_TRUE(hasY);
@@ -47,7 +47,7 @@ TEST(cpdf_dest, GetXYZ) {
   // Set zoom to 0.
   array->SetNewAt<CPDF_Number>(4, 0);
   {
-    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.get());
+    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.Get());
     EXPECT_TRUE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
     EXPECT_FALSE(hasZoom);
   }
@@ -56,7 +56,7 @@ TEST(cpdf_dest, GetXYZ) {
   array->SetNewAt<CPDF_Null>(3);
   array->SetNewAt<CPDF_Null>(4);
   {
-    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.get());
+    auto dest = pdfium::MakeUnique<CPDF_Dest>(array.Get());
     EXPECT_TRUE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
     EXPECT_FALSE(hasX);
     EXPECT_FALSE(hasY);

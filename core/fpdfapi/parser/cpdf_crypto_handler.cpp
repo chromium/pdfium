@@ -279,10 +279,9 @@ bool CPDF_CryptoHandler::IsCipherAES() const {
   return m_Cipher == FXCIPHER_AES;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
-    std::unique_ptr<CPDF_Object> object) {
+bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
   if (!object)
-    return nullptr;
+    return false;
 
   struct MayBeSignature {
     const CPDF_Dictionary* parent;
@@ -293,7 +292,7 @@ std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
   const uint32_t obj_num = object->GetObjNum();
   const uint32_t gen_num = object->GetGenNum();
 
-  CPDF_Object* object_to_decrypt = object.get();
+  CPDF_Object* object_to_decrypt = object.Get();
   while (object_to_decrypt) {
     CPDF_NonConstObjectWalker walker(object_to_decrypt);
     object_to_decrypt = nullptr;
@@ -361,7 +360,7 @@ std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
       }
     }
   }
-  return object;
+  return true;
 }
 
 bool CPDF_CryptoHandler::DecryptStream(void* context,

@@ -62,7 +62,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   const int32_t* data32 = reinterpret_cast<const int32_t*>(data);
 
-  auto linearized_dict = pdfium::MakeUnique<CPDF_Dictionary>();
+  auto linearized_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   // Set initial value.
   linearized_dict->SetNewFor<CPDF_Boolean>("Linearized", true);
   // Set first page end offset
@@ -74,7 +74,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // Set first page no
   linearized_dict->SetNewFor<CPDF_Number>("P", GetData(&data32, &data, &size));
 
-  auto hint_info = pdfium::MakeUnique<CPDF_Array>();
+  auto hint_info = pdfium::MakeRetain<CPDF_Array>();
   // Add primary hint stream offset
   hint_info->AddNew<CPDF_Number>(GetData(&data32, &data, &size));
   // Add primary hint stream size
@@ -85,7 +85,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   const int shared_hint_table_offset = GetData(&data32, &data, &size);
 
   {
-    FakeLinearized linearized(linearized_dict.get());
+    FakeLinearized linearized(linearized_dict.Get());
     HintTableForFuzzing hint_table(&linearized, shared_hint_table_offset);
     hint_table.Fuzz(data, size);
   }

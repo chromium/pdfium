@@ -212,7 +212,7 @@ TEST_F(PDFDocTest, FindBookmark) {
 }
 
 TEST_F(PDFDocTest, GetLocationInPage) {
-  auto array = pdfium::MakeUnique<CPDF_Array>();
+  auto array = pdfium::MakeRetain<CPDF_Array>();
   array->AddNew<CPDF_Number>(0);  // Page Index.
   array->AddNew<CPDF_Name>("XYZ");
   array->AddNew<CPDF_Number>(4);  // X
@@ -226,7 +226,7 @@ TEST_F(PDFDocTest, GetLocationInPage) {
   FS_FLOAT y;
   FS_FLOAT zoom;
 
-  EXPECT_TRUE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.get()),
+  EXPECT_TRUE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.Get()),
                                          &hasX, &hasY, &hasZoom, &x, &y,
                                          &zoom));
   EXPECT_TRUE(hasX);
@@ -239,15 +239,15 @@ TEST_F(PDFDocTest, GetLocationInPage) {
   array->SetNewAt<CPDF_Null>(2);
   array->SetNewAt<CPDF_Null>(3);
   array->SetNewAt<CPDF_Null>(4);
-  EXPECT_TRUE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.get()),
+  EXPECT_TRUE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.Get()),
                                          &hasX, &hasY, &hasZoom, &x, &y,
                                          &zoom));
   EXPECT_FALSE(hasX);
   EXPECT_FALSE(hasY);
   EXPECT_FALSE(hasZoom);
 
-  array = pdfium::MakeUnique<CPDF_Array>();
-  EXPECT_FALSE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.get()),
+  array = pdfium::MakeRetain<CPDF_Array>();
+  EXPECT_FALSE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.Get()),
                                           &hasX, &hasY, &hasZoom, &x, &y,
                                           &zoom));
 }

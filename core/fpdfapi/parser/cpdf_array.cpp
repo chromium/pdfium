@@ -28,7 +28,7 @@ CPDF_Array::~CPDF_Array() {
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
     if (it && it->GetObjNum() == kInvalidObjNum)
-      it.release();
+      it.Leak();
   }
 }
 
@@ -48,23 +48,23 @@ const CPDF_Array* CPDF_Array::AsArray() const {
   return this;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Array::Clone() const {
+RetainPtr<CPDF_Object> CPDF_Array::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Array::CloneNonCyclic(
+RetainPtr<CPDF_Object> CPDF_Array::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  auto pCopy = pdfium::MakeUnique<CPDF_Array>();
+  auto pCopy = pdfium::MakeRetain<CPDF_Array>();
   for (const auto& pValue : m_Objects) {
-    if (!pdfium::ContainsKey(*pVisited, pValue.get())) {
+    if (!pdfium::ContainsKey(*pVisited, pValue.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
       if (auto obj = pValue->CloneNonCyclic(bDirect, &visited))
         pCopy->m_Objects.push_back(std::move(obj));
     }
   }
-  return std::move(pCopy);
+  return pCopy;
 }
 
 CFX_FloatRect CPDF_Array::GetRect() const {
@@ -90,13 +90,13 @@ CFX_Matrix CPDF_Array::GetMatrix() const {
 CPDF_Object* CPDF_Array::GetObjectAt(size_t i) {
   if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects[i].get();
+  return m_Objects[i].Get();
 }
 
 const CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {
   if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects[i].get();
+  return m_Objects[i].Get();
 }
 
 CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) {
@@ -197,7 +197,7 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
   m_Objects[i] = pNew->MakeReference(pHolder);
 }
 
-CPDF_Object* CPDF_Array::SetAt(size_t i, std::unique_ptr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::SetAt(size_t i, RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   ASSERT(IsArray());
   ASSERT(!pObj || pObj->IsInline());
@@ -205,17 +205,16 @@ CPDF_Object* CPDF_Array::SetAt(size_t i, std::unique_ptr<CPDF_Object> pObj) {
     NOTREACHED();
     return nullptr;
   }
-  CPDF_Object* pRet = pObj.get();
+  CPDF_Object* pRet = pObj.Get();
   m_Objects[i] = std::move(pObj);
   return pRet;
 }
 
-CPDF_Object* CPDF_Array::InsertAt(size_t index,
-                                  std::unique_ptr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
-  CPDF_Object* pRet = pObj.get();
+  CPDF_Object* pRet = pObj.Get();
   if (index >= m_Objects.size()) {
     // Allocate space first.
     m_Objects.resize(index + 1);
@@ -227,11 +226,11 @@ CPDF_Object* CPDF_Array::InsertAt(size_t index,
   return pRet;
 }
 
-CPDF_Object* CPDF_Array::Add(std::unique_ptr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::Add(RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
-  CPDF_Object* pRet = pObj.get();
+  CPDF_Object* pRet = pObj.Get();
   m_Objects.push_back(std::move(pObj));
   return pRet;
 }

@@ -27,17 +27,16 @@ const CPDF_Object* CPDF_Object::GetDirect() const {
   return this;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Object::CloneObjectNonCyclic(
-    bool bDirect) const {
+RetainPtr<CPDF_Object> CPDF_Object::CloneObjectNonCyclic(bool bDirect) const {
   std::set<const CPDF_Object*> visited_objs;
   return CloneNonCyclic(bDirect, &visited_objs);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Object::CloneDirectObject() const {
+RetainPtr<CPDF_Object> CPDF_Object::CloneDirectObject() const {
   return CloneObjectNonCyclic(true);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Object::CloneNonCyclic(
+RetainPtr<CPDF_Object> CPDF_Object::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   return Clone();
@@ -171,11 +170,11 @@ const CPDF_String* CPDF_Object::AsString() const {
   return nullptr;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Object::MakeReference(
+RetainPtr<CPDF_Object> CPDF_Object::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
   if (IsInline()) {
     NOTREACHED();
     return nullptr;
   }
-  return pdfium::MakeUnique<CPDF_Reference>(holder, GetObjNum());
+  return pdfium::MakeRetain<CPDF_Reference>(holder, GetObjNum());
 }

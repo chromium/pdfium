@@ -42,7 +42,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
   CPDF_DictionaryLocker locker(pGS);
   for (const auto& it : locker) {
     const ByteString& key_str = it.first;
-    CPDF_Object* pElement = it.second.get();
+    CPDF_Object* pElement = it.second.Get();
     CPDF_Object* pObject = pElement ? pElement->GetDirect() : nullptr;
     if (!pObject)
       continue;

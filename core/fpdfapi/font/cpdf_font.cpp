@@ -297,12 +297,13 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
   if (pFont)
     return pFont;
 
-  CPDF_Dictionary* pDict = pDoc->New<CPDF_Dictionary>().release();
+  auto pDict = pDoc->New<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "Font");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);
   pDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
-  return pFontGlobals->Set(pDoc, font_id, CPDF_Font::Create(nullptr, pDict));
+  return pFontGlobals->Set(pDoc, font_id,
+                           CPDF_Font::Create(nullptr, pDict.Get()));
 }
 
 // static

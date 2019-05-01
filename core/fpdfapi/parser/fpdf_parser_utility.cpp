@@ -196,7 +196,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << "<<";
       for (const auto& it : locker) {
         const ByteString& key = it.first;
-        CPDF_Object* pValue = it.second.get();
+        CPDF_Object* pValue = it.second.Get();
         buf << "/" << PDF_NameEncode(key);
         if (pValue && !pValue->IsInline()) {
           buf << " " << pValue->GetObjNum() << " 0 R ";

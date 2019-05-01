@@ -272,7 +272,7 @@ TEST(cpdf_parser, ParseStartXRef) {
   ASSERT_TRUE(parser.InitTestFromFile(test_file.c_str())) << test_file;
 
   EXPECT_EQ(100940, parser.ParseStartXRef());
-  std::unique_ptr<CPDF_Object> cross_ref_v5_obj =
+  RetainPtr<CPDF_Object> cross_ref_v5_obj =
       parser.ParseIndirectObjectAt(100940, 0);
   ASSERT_TRUE(cross_ref_v5_obj);
   EXPECT_EQ(75u, cross_ref_v5_obj->GetObjNum());
@@ -294,7 +294,7 @@ TEST(cpdf_parser, ParseStartXRefWithHeaderOffset) {
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
 
   EXPECT_EQ(100940, parser.ParseStartXRef());
-  std::unique_ptr<CPDF_Object> cross_ref_v5_obj =
+  RetainPtr<CPDF_Object> cross_ref_v5_obj =
       parser.ParseIndirectObjectAt(100940, 0);
   ASSERT_TRUE(cross_ref_v5_obj);
   EXPECT_EQ(75u, cross_ref_v5_obj->GetObjNum());

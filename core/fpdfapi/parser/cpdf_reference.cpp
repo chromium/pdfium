@@ -57,11 +57,11 @@ const CPDF_Reference* CPDF_Reference::AsReference() const {
   return this;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Reference::Clone() const {
+RetainPtr<CPDF_Object> CPDF_Reference::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
+RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
@@ -71,7 +71,7 @@ std::unique_ptr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
                ? pDirect->CloneNonCyclic(true, pVisited)
                : nullptr;
   }
-  return pdfium::MakeUnique<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
+  return pdfium::MakeRetain<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
 }
 
 CPDF_Object* CPDF_Reference::SafeGetDirect() {
@@ -105,10 +105,10 @@ bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive,
          archive->WriteString(" 0 R ");
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Reference::MakeReference(
+RetainPtr<CPDF_Object> CPDF_Reference::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
   ASSERT(holder == m_pObjList.Get());
   // Do not allow reference to reference, just create other reference for same
   // object.
-  return pdfium::MakeUnique<CPDF_Reference>(holder, GetRefObjNum());
+  return pdfium::MakeRetain<CPDF_Reference>(holder, GetRefObjNum());
 }

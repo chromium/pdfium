@@ -60,12 +60,12 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
       parser->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose));
 
   if (!pDict || !pDict->KeyExist("Linearized") ||
-      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "L", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "P", 0, false) ||
-      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "T", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "N", 1) ||
-      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "E", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "O", 1)) {
+      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "L", 1) ||
+      !IsValidNumericDictionaryValue<uint32_t>(pDict.Get(), "P", 0, false) ||
+      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "T", 1) ||
+      !IsValidNumericDictionaryValue<uint32_t>(pDict.Get(), "N", 1) ||
+      !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.Get(), "E", 1) ||
+      !IsValidNumericDictionaryValue<uint32_t>(pDict.Get(), "O", 1)) {
     return nullptr;
   }
   // Move parser to the start of the xref table for the documents first page.
@@ -74,7 +74,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
     return nullptr;
 
   auto result = pdfium::WrapUnique(
-      new CPDF_LinearizedHeader(pDict.get(), parser->GetPos()));
+      new CPDF_LinearizedHeader(pDict.Get(), parser->GetPos()));
 
   if (!IsLinearizedHeaderValid(result.get(), parser->GetDocumentSize()))
     return nullptr;

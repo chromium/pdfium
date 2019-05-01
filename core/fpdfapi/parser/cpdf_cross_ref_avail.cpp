@@ -136,7 +136,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefV4Item() {
 bool CPDF_CrossRefAvail::CheckCrossRefV4Trailer() {
   parser_->SetPos(current_offset_);
 
-  std::unique_ptr<CPDF_Dictionary> trailer =
+  RetainPtr<CPDF_Dictionary> trailer =
       ToDictionary(parser_->GetObjectBody(nullptr));
   if (CheckReadProblems())
     return false;
@@ -152,13 +152,13 @@ bool CPDF_CrossRefAvail::CheckCrossRefV4Trailer() {
   }
 
   const int32_t xrefpos =
-      GetDirectInteger(trailer.get(), kPrevCrossRefFieldKey);
+      GetDirectInteger(trailer.Get(), kPrevCrossRefFieldKey);
   if (xrefpos &&
       pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos))
     AddCrossRefForCheck(static_cast<FX_FILESIZE>(xrefpos));
 
   const int32_t stream_xref_offset =
-      GetDirectInteger(trailer.get(), kPrevCrossRefStreamOffsetFieldKey);
+      GetDirectInteger(trailer.Get(), kPrevCrossRefStreamOffsetFieldKey);
   if (stream_xref_offset &&
       pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(
           stream_xref_offset))

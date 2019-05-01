@@ -349,7 +349,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       } else {
         if (pAPDict->size() > 0) {
           CPDF_DictionaryLocker locker(pAPDict);
-          CPDF_Object* pFirstObj = locker.begin()->second.get();
+          CPDF_Object* pFirstObj = locker.begin()->second.Get();
           if (pFirstObj) {
             if (pFirstObj->IsReference())
               pFirstObj = pFirstObj->GetDirect();
@@ -376,8 +376,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CPDF_Object* pObj = pAPStream;
     if (pObj->IsInline()) {
-      std::unique_ptr<CPDF_Object> pNew = pObj->Clone();
-      pObj = pNew.get();
+      RetainPtr<CPDF_Object> pNew = pObj->Clone();
+      pObj = pNew.Get();
       pDocument->AddIndirectObject(std::move(pNew));
     }
 

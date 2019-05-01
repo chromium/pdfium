@@ -17,8 +17,8 @@ TEST(JBig2_BitStream, ReadNBits) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data(FX_Alloc(uint8_t, 1));
   data.get()[0] = 0xb1;  // 10110001
 
-  auto in_stream = pdfium::MakeUnique<CPDF_Stream>(std::move(data), 1, nullptr);
-  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.get());
+  auto in_stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), 1, nullptr);
+  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
   CJBig2_BitStream stream(acc);
@@ -42,8 +42,8 @@ TEST(JBig2_BitStream, ReadNBitsLargerThenData) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data(FX_Alloc(uint8_t, 1));
   data.get()[0] = 0xb1;
 
-  auto in_stream = pdfium::MakeUnique<CPDF_Stream>(std::move(data), 1, nullptr);
-  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.get());
+  auto in_stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), 1, nullptr);
+  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
   CJBig2_BitStream stream(acc);
@@ -54,8 +54,8 @@ TEST(JBig2_BitStream, ReadNBitsLargerThenData) {
 }
 
 TEST(JBig2_BitStream, ReadNBitsNullStream) {
-  auto in_stream = pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, nullptr);
-  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.get());
+  auto in_stream = pdfium::MakeRetain<CPDF_Stream>(nullptr, 0, nullptr);
+  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
   CJBig2_BitStream stream(acc);
@@ -70,8 +70,8 @@ TEST(JBig2_BitStream, ReadNBitsNullStream) {
 TEST(JBig2_BitStream, ReadNBitsEmptyStream) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data(FX_Alloc(uint8_t, 1));
 
-  auto in_stream = pdfium::MakeUnique<CPDF_Stream>(std::move(data), 0, nullptr);
-  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.get());
+  auto in_stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), 0, nullptr);
+  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
   CJBig2_BitStream stream(acc);
@@ -87,8 +87,8 @@ TEST(JBig2_BitStream, ReadNBitsOutOfBounds) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data(FX_Alloc(uint8_t, 1));
   data.get()[0] = 0xb1;  // 10110001
 
-  auto in_stream = pdfium::MakeUnique<CPDF_Stream>(std::move(data), 1, nullptr);
-  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.get());
+  auto in_stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), 1, nullptr);
+  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
   CJBig2_BitStream stream(acc);
@@ -108,8 +108,8 @@ TEST(JBig2_BitStream, ReadNBitsWhereNIs36) {
   data.get()[3] = 0x00;
   data.get()[4] = 0x40;
 
-  auto in_stream = pdfium::MakeUnique<CPDF_Stream>(std::move(data), 5, nullptr);
-  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.get());
+  auto in_stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), 5, nullptr);
+  auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
   CJBig2_BitStream stream(acc);

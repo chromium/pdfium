@@ -22,20 +22,20 @@ class CPDF_CIDFontTest : public testing::Test {
 
 TEST_F(CPDF_CIDFontTest, BUG_920636) {
   CPDF_Document doc;
-  CPDF_Dictionary font_dict;
-  font_dict.SetNewFor<CPDF_Name>("Encoding", "Identity−H");
+  auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  font_dict->SetNewFor<CPDF_Name>("Encoding", "Identity−H");
 
   {
-    auto descendant_fonts = pdfium::MakeUnique<CPDF_Array>();
+    auto descendant_fonts = pdfium::MakeRetain<CPDF_Array>();
     {
-      auto descendant_font = pdfium::MakeUnique<CPDF_Dictionary>();
+      auto descendant_font = pdfium::MakeRetain<CPDF_Dictionary>();
       descendant_font->SetNewFor<CPDF_Name>("BaseFont", "CourierStd");
       descendant_fonts->Add(std::move(descendant_font));
     }
-    font_dict.SetFor("DescendantFonts", std::move(descendant_fonts));
+    font_dict->SetFor("DescendantFonts", std::move(descendant_fonts));
   }
 
-  CPDF_CIDFont font(&doc, &font_dict);
+  CPDF_CIDFont font(&doc, font_dict.Get());
   ASSERT_TRUE(font.Load());
 
   // It would be nice if we can test more values here. However, the glyph

@@ -168,7 +168,7 @@ class CPDF_FormField {
 
   WideString GetCheckValue(bool bDefault) const;
 
-  void SetOpt(std::unique_ptr<CPDF_Object> pOpt);
+  void SetOpt(RetainPtr<CPDF_Object> pOpt);
 
  private:
   WideString GetValue(bool bDefault) const;

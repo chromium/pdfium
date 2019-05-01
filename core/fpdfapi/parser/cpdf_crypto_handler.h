@@ -27,9 +27,7 @@ class CPDF_CryptoHandler {
 
   static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
 
-  std::unique_ptr<CPDF_Object> DecryptObjectTree(
-      std::unique_ptr<CPDF_Object> object);
-
+  bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
   size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
   bool EncryptContent(uint32_t objnum,
                       uint32_t version,

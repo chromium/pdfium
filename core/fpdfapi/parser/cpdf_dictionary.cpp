@@ -35,7 +35,7 @@ CPDF_Dictionary::~CPDF_Dictionary() {
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Map) {
     if (it.second && it.second->GetObjNum() == kInvalidObjNum)
-      it.second.release();
+      it.second.Leak();
   }
 }
 
@@ -63,18 +63,18 @@ const CPDF_Dictionary* CPDF_Dictionary::AsDictionary() const {
   return this;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Dictionary::Clone() const {
+RetainPtr<CPDF_Object> CPDF_Dictionary::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
+RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  auto pCopy = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
+  auto pCopy = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
-    if (!pdfium::ContainsKey(*pVisited, it.second.get())) {
+    if (!pdfium::ContainsKey(*pVisited, it.second.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
       if (auto obj = it.second->CloneNonCyclic(bDirect, &visited))
         pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
@@ -85,7 +85,7 @@ std::unique_ptr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
 
 const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
   auto it = m_Map.find(key);
-  return it != m_Map.end() ? it->second.get() : nullptr;
+  return it != m_Map.end() ? it->second.Get() : nullptr;
 }
 
 CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) {
@@ -205,14 +205,14 @@ std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
 }
 
 CPDF_Object* CPDF_Dictionary::SetFor(const ByteString& key,
-                                     std::unique_ptr<CPDF_Object> pObj) {
+                                     RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   if (!pObj) {
     m_Map.erase(key);
     return nullptr;
   }
   ASSERT(pObj->IsInline());
-  CPDF_Object* pRet = pObj.get();
+  CPDF_Object* pRet = pObj.Get();
   m_Map[MaybeIntern(key)] = std::move(pObj);
   return pRet;
 }
@@ -229,9 +229,9 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
   it->second = pObj->MakeReference(pHolder);
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Dictionary::RemoveFor(const ByteString& key) {
+RetainPtr<CPDF_Object> CPDF_Dictionary::RemoveFor(const ByteString& key) {
   CHECK(!IsLocked());
-  std::unique_ptr<CPDF_Object> result;
+  RetainPtr<CPDF_Object> result;
   auto it = m_Map.find(key);
   if (it != m_Map.end()) {
     result = std::move(it->second);
@@ -289,7 +289,7 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
     const ByteString& key = it.first;
-    CPDF_Object* pValue = it.second.get();
+    CPDF_Object* pValue = it.second.Get();
     if (!archive->WriteString("/") ||
         !archive->WriteString(PDF_NameEncode(key).AsStringView())) {
       return false;

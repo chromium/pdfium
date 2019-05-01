@@ -19,8 +19,8 @@ CPDF_Object::Type CPDF_Boolean::GetType() const {
   return kBoolean;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Boolean::Clone() const {
-  return pdfium::MakeUnique<CPDF_Boolean>(m_bValue);
+RetainPtr<CPDF_Object> CPDF_Boolean::Clone() const {
+  return pdfium::MakeRetain<CPDF_Boolean>(m_bValue);
 }
 
 ByteString CPDF_Boolean::GetString() const {

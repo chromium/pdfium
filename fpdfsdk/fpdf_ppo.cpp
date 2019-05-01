@@ -365,7 +365,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj) {
           const ByteString& key = it.first;
           if (key == "Parent" || key == "Prev" || key == "First")
             continue;
-          CPDF_Object* pNextObj = it.second.get();
+          CPDF_Object* pNextObj = it.second.Get();
           if (!pNextObj)
             return false;
           if (!UpdateReference(pNextObj))
@@ -411,7 +411,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
   if (!pDirect)
     return 0;
 
-  std::unique_ptr<CPDF_Object> pClone = pDirect->Clone();
+  RetainPtr<CPDF_Object> pClone = pDirect->Clone();
   if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
     if (pDictClone->KeyExist("Type")) {
       ByteString strType = pDictClone->GetStringFor("Type");
@@ -471,7 +471,7 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
         continue;
       }
 
-      CPDF_Object* pObj = it.second.get();
+      CPDF_Object* pObj = it.second.Get();
       pDestPageDict->SetFor(cbSrcKeyStr, pObj->Clone());
     }
 

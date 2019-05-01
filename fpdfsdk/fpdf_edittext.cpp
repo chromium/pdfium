@@ -368,7 +368,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
     int w = it->second;
     if (std::next(it) == widths.end()) {
       // Only one char left, use format c [w]
-      auto oneW = pdfium::MakeUnique<CPDF_Array>();
+      auto oneW = pdfium::MakeRetain<CPDF_Array>();
       oneW->AddNew<CPDF_Number>(w);
       widthsArray->AddNew<CPDF_Number>(ch);
       widthsArray->Add(std::move(oneW));
@@ -398,7 +398,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
     // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
     // w1, c+1 has width w2, etc.
     widthsArray->AddNew<CPDF_Number>(ch);
-    auto curWidthArray = pdfium::MakeUnique<CPDF_Array>();
+    auto curWidthArray = pdfium::MakeRetain<CPDF_Array>();
     curWidthArray->AddNew<CPDF_Number>(w);
     curWidthArray->AddNew<CPDF_Number>(next_w);
     while (true) {
@@ -413,7 +413,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
   pCIDFont->SetFor("W", widthsArray->MakeReference(pDoc));
   // TODO(npm): Support vertical writing
 
-  auto pDescendant = pdfium::MakeUnique<CPDF_Array>();
+  auto pDescendant = pdfium::MakeRetain<CPDF_Array>();
   pDescendant->Add(pCIDFont->MakeReference(pDoc));
   pFontDict->SetFor("DescendantFonts", std::move(pDescendant));
   CPDF_Stream* toUnicodeStream = LoadUnicode(pDoc, to_unicode);

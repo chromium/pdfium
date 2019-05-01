@@ -15,8 +15,8 @@ CPDF_Object::Type CPDF_Null::GetType() const {
   return kNullobj;
 }
 
-std::unique_ptr<CPDF_Object> CPDF_Null::Clone() const {
-  return pdfium::MakeUnique<CPDF_Null>();
+RetainPtr<CPDF_Object> CPDF_Null::Clone() const {
+  return pdfium::MakeRetain<CPDF_Null>();
 }
 
 bool CPDF_Null::WriteTo(IFX_ArchiveStream* archive,

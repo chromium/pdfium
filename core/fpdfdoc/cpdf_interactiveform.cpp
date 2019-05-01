@@ -933,7 +933,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
     pField = newField.get();
     CPDF_Object* pTObj = pDict->GetObjectFor(pdfium::form_fields::kT);
     if (ToReference(pTObj)) {
-      std::unique_ptr<CPDF_Object> pClone = pTObj->CloneDirectObject();
+      RetainPtr<CPDF_Object> pClone = pTObj->CloneDirectObject();
       if (pClone)
         pDict->SetFor(pdfium::form_fields::kT, std::move(pClone));
       else
@@ -1035,7 +1035,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     } else {
       auto pNewDict = pDoc->New<CPDF_Dictionary>();
       pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
-      CPDF_FileSpec filespec(pNewDict.get());
+      CPDF_FileSpec filespec(pNewDict.Get());
       filespec.SetFileName(pdf_path);
       pMainDict->SetFor("F", std::move(pNewDict));
     }

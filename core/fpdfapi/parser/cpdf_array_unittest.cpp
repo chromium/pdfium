@@ -15,7 +15,7 @@
 TEST(cpdf_array, RemoveAt) {
   {
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->AddNew<CPDF_Number>(elems[i]);
     for (size_t i = 0; i < 3; ++i)
@@ -34,7 +34,7 @@ TEST(cpdf_array, RemoveAt) {
   {
     // When the range is out of bound, RemoveAt() has no effect.
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->AddNew<CPDF_Number>(elems[i]);
     arr->RemoveAt(11);
@@ -44,7 +44,7 @@ TEST(cpdf_array, RemoveAt) {
 
 TEST(cpdf_array, Clear) {
   const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  auto arr = pdfium::MakeUnique<CPDF_Array>();
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
   EXPECT_EQ(0U, arr->size());
   for (size_t i = 0; i < FX_ArraySize(elems); ++i)
     arr->AddNew<CPDF_Number>(elems[i]);
@@ -56,7 +56,7 @@ TEST(cpdf_array, Clear) {
 TEST(cpdf_array, InsertAt) {
   {
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertNewAt<CPDF_Number>(i, elems[i]);
     ASSERT_EQ(FX_ArraySize(elems), arr->size());
@@ -75,7 +75,7 @@ TEST(cpdf_array, InsertAt) {
     // an element is inserted at that position while other unfilled
     // positions have nullptr.
     const int elems[] = {1, 2};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertNewAt<CPDF_Number>(i, elems[i]);
     arr->InsertNewAt<CPDF_Number>(10, 10);
@@ -92,10 +92,10 @@ TEST(cpdf_array, Clone) {
   {
     // Basic case.
     const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertNewAt<CPDF_Number>(i, elems[i]);
-    std::unique_ptr<CPDF_Array> arr2 = ToArray(arr->Clone());
+    RetainPtr<CPDF_Array> arr2 = ToArray(arr->Clone());
     ASSERT_EQ(arr->size(), arr2->size());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i) {
       // Clone() always create new objects.
@@ -109,13 +109,13 @@ TEST(cpdf_array, Clone) {
     static const size_t kNumOfRowElems = 5;
     const int elems[kNumOfRows][kNumOfRowElems] = {
         {1, 2, 3, 4, 5}, {10, 9, 8, 7, 6}, {11, 12, 13, 14, 15}};
-    auto arr = pdfium::MakeUnique<CPDF_Array>();
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
     // Indirect references to indirect objects.
     auto obj_holder = pdfium::MakeUnique<CPDF_IndirectObjectHolder>();
     for (size_t i = 0; i < kNumOfRows; ++i) {
-      auto arr_elem = pdfium::MakeUnique<CPDF_Array>();
+      auto arr_elem = pdfium::MakeRetain<CPDF_Array>();
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
-        auto obj = pdfium::MakeUnique<CPDF_Number>(elems[i][j]);
+        auto obj = pdfium::MakeRetain<CPDF_Number>(elems[i][j]);
         // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
         obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
@@ -127,10 +127,10 @@ TEST(cpdf_array, Clone) {
     ASSERT_EQ(kNumOfRows, arr->size());
     // Not dereferencing reference objects means just creating new references
     // instead of new copies of direct objects.
-    std::unique_ptr<CPDF_Array> arr1 = ToArray(arr->Clone());
+    RetainPtr<CPDF_Array> arr1 = ToArray(arr->Clone());
     ASSERT_EQ(arr->size(), arr1->size());
     // Dereferencing reference objects creates new copies of direct objects.
-    std::unique_ptr<CPDF_Array> arr2 = ToArray(arr->CloneDirectObject());
+    RetainPtr<CPDF_Array> arr2 = ToArray(arr->CloneDirectObject());
     ASSERT_EQ(arr->size(), arr2->size());
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = arr->GetObjectAt(i)->AsArray();
@@ -155,7 +155,7 @@ TEST(cpdf_array, Clone) {
         EXPECT_EQ(elem_obj->GetInteger(), elem_obj2->GetInteger());
       }
     }
-    arr.reset();
+    arr.Reset();
     ASSERT_EQ(kNumOfRows, arr1->size());
     for (size_t i = 0; i < kNumOfRows; ++i) {
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
@@ -174,12 +174,12 @@ TEST(cpdf_array, Clone) {
 TEST(cpdf_array, Iterator) {
   const int elems[] = {-23, -11,     3,         455,   2345877,
                        0,   7895330, -12564334, 10000, -100000};
-  auto arr = pdfium::MakeUnique<CPDF_Array>();
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < FX_ArraySize(elems); ++i)
     arr->InsertNewAt<CPDF_Number>(i, elems[i]);
   size_t index = 0;
 
-  CPDF_ArrayLocker locker(arr.get());
+  CPDF_ArrayLocker locker(arr.Get());
   for (const auto& it : locker)
     EXPECT_EQ(elems[index++], it->AsNumber()->GetInteger());
   EXPECT_EQ(FX_ArraySize(elems), index);
