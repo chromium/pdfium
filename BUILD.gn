@@ -129,7 +129,7 @@ jumbo_source_set("pdfium_public_headers") {
   public_configs = [ ":pdfium_public_config" ]
 }
 
-jumbo_static_library("pdfium") {
+jumbo_component("pdfium") {
   sources = [
     "fpdfsdk/fpdf_annot.cpp",
     "fpdfsdk/fpdf_attachment.cpp",
@@ -183,6 +183,8 @@ jumbo_static_library("pdfium") {
     ":pdfium_public_headers",
     "core/fxcrt",
   ]
+
+  defines = [ "FPDF_IMPLEMENTATION" ]
 
   if (pdf_enable_xfa) {
     deps += [
@@ -359,6 +361,7 @@ executable("pdfium_diff") {
   ]
   deps = [
     ":pdfium",
+    "core/fxcrt",
     "testing/image_diff",
     "//build/win:default_exe_manifest",
   ]
