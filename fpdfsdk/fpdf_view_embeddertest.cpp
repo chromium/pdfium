@@ -908,17 +908,17 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
 }
 
 #if defined(OS_WIN)
-// Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_RenderPage(). The two rendered
-// EMFs should be different.
-TEST_F(FPDFViewEmbedderTest, BUG_1281) {
+TEST_F(FPDFViewEmbedderTest, FPDF_RenderPage) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page, 0);
+  EXPECT_EQ(3772u, emf_normal.size());
+
+  // FPDF_REVERSE_BYTE_ORDER is ignored since EMFs are always BGR.
   std::vector<uint8_t> emf_reverse_byte_order =
       RenderPageWithFlagsToEmf(page, FPDF_REVERSE_BYTE_ORDER);
-  // TODO(https://crbug.com/pdfium/1281): These should not be equal.
   EXPECT_EQ(emf_normal, emf_reverse_byte_order);
 
   UnloadPage(page);
