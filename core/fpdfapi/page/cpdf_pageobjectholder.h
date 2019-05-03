@@ -94,8 +94,8 @@ class CPDF_PageObjectHolder {
   const std::set<int32_t>& GetDirtyStreams() const { return m_DirtyStreams; }
   void ClearDirtyStreams() { m_DirtyStreams.clear(); }
 
-  UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  UnownedPtr<CPDF_Dictionary> m_pResources;
+  RetainPtr<CPDF_Dictionary> m_pPageResources;
+  RetainPtr<CPDF_Dictionary> m_pResources;
   std::map<GraphicsData, ByteString> m_GraphicsMap;
   std::map<FontData, ByteString> m_FontsMap;
 
@@ -108,7 +108,7 @@ class CPDF_PageObjectHolder {
  private:
   bool m_bBackgroundAlphaNeeded = false;
   ParseState m_ParseState = ParseState::kNotParsed;
-  UnownedPtr<CPDF_Dictionary> const m_pDict;
+  RetainPtr<CPDF_Dictionary> const m_pDict;
   UnownedPtr<CPDF_Document> m_pDocument;
   std::vector<CFX_FloatRect> m_MaskBoundingBoxes;
   std::unique_ptr<CPDF_ContentParser> m_pParser;

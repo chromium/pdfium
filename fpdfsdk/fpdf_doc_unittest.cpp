@@ -28,7 +28,7 @@ class CPDF_TestDocument final : public CPDF_Document {
  public:
   CPDF_TestDocument() : CPDF_Document() {}
 
-  void SetRoot(CPDF_Dictionary* root) { m_pRootDict = root; }
+  void SetRoot(CPDF_Dictionary* root) { m_pRootDict.Reset(root); }
   CPDF_IndirectObjectHolder* GetHolder() { return this; }
 };
 
@@ -43,7 +43,7 @@ class PDFDocTest : public testing::Test {
     CPDF_ModuleMgr::Get()->Init();
     auto pTestDoc = pdfium::MakeUnique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc->GetHolder();
-    m_pRootObj = m_pIndirectObjs->NewIndirect<CPDF_Dictionary>();
+    m_pRootObj.Reset(m_pIndirectObjs->NewIndirect<CPDF_Dictionary>());
     pTestDoc->SetRoot(m_pRootObj.Get());
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
   }
@@ -68,7 +68,7 @@ class PDFDocTest : public testing::Test {
  protected:
   ScopedFPDFDocument m_pDoc;
   UnownedPtr<CPDF_IndirectObjectHolder> m_pIndirectObjs;
-  UnownedPtr<CPDF_Dictionary> m_pRootObj;
+  RetainPtr<CPDF_Dictionary> m_pRootObj;
 };
 
 TEST_F(PDFDocTest, FindBookmark) {

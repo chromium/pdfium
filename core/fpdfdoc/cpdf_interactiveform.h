@@ -104,7 +104,7 @@ class CPDF_InteractiveForm {
 
   ByteString m_bsEncoding;
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Dictionary> m_pFormDict;
+  RetainPtr<CPDF_Dictionary> m_pFormDict;
   std::unique_ptr<CFieldTree> m_pFieldTree;
   std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
       m_ControlMap;

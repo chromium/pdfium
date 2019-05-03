@@ -184,7 +184,7 @@ class CPDF_RenderStatus {
 
   CPDF_RenderOptions m_Options;
   UnownedPtr<const CPDF_Dictionary> m_pFormResource;
-  UnownedPtr<CPDF_Dictionary> m_pPageResource;
+  RetainPtr<CPDF_Dictionary> m_pPageResource;
   std::vector<CPDF_Type3Font*> m_Type3FontCache;
   UnownedPtr<CPDF_RenderContext> const m_pContext;
   bool m_bStopped = false;

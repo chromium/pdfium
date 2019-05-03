@@ -86,7 +86,7 @@ class CPDF_TestDocumentForPages final : public CPDF_Document {
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, kNumTestPages);
 
-    m_pRootDict = NewIndirect<CPDF_Dictionary>();
+    m_pRootDict.Reset(NewIndirect<CPDF_Dictionary>());
     m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                            pagesDict->GetObjNum());
     m_PageList.resize(kNumTestPages);
@@ -111,7 +111,7 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_Document {
     inlined_page_ = allPages->Add(CreateNumberedPage(2));
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
-    m_pRootDict = NewIndirect<CPDF_Dictionary>();
+    m_pRootDict.Reset(NewIndirect<CPDF_Dictionary>());
     m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                            pagesDict->GetObjNum());
     m_PageList.resize(3);
@@ -136,7 +136,7 @@ class CPDF_TestDocPagesWithoutKids final : public CPDF_Document {
     pagesDict->SetNewFor<CPDF_Name>("Type", "Pages");
     pagesDict->SetNewFor<CPDF_Number>("Count", 3);
     m_PageList.resize(10);
-    m_pRootDict = NewIndirect<CPDF_Dictionary>();
+    m_pRootDict.Reset(NewIndirect<CPDF_Dictionary>());
     m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                            pagesDict->GetObjNum());
   }

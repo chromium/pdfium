@@ -22,7 +22,7 @@ CPDF_PageContentManager::CPDF_PageContentManager(
   CPDF_Object* contents_obj = page_dict->GetObjectFor("Contents");
   CPDF_Array* contents_array = ToArray(contents_obj);
   if (contents_array) {
-    contents_array_ = contents_array;
+    contents_array_.Reset(contents_array);
     return;
   }
 
@@ -34,9 +34,9 @@ CPDF_PageContentManager::CPDF_PageContentManager(
 
     contents_array = indirect_obj->AsArray();
     if (contents_array)
-      contents_array_ = contents_array;
+      contents_array_.Reset(contents_array);
     else if (indirect_obj->IsStream())
-      contents_stream_ = indirect_obj->AsStream();
+      contents_stream_.Reset(indirect_obj->AsStream());
   }
 }
 
@@ -72,7 +72,7 @@ size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
     CPDF_Dictionary* page_dict = obj_holder_->GetDict();
     page_dict->SetFor("Contents",
                       new_contents_array->MakeReference(doc_.Get()));
-    contents_array_ = new_contents_array;
+    contents_array_.Reset(new_contents_array);
     contents_stream_ = nullptr;
     return 1;
   }
@@ -87,7 +87,7 @@ size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
   // Its index is 0.
   CPDF_Dictionary* page_dict = obj_holder_->GetDict();
   page_dict->SetFor("Contents", new_stream->MakeReference(doc_.Get()));
-  contents_stream_ = new_stream;
+  contents_stream_.Reset(new_stream);
   return 0;
 }
 

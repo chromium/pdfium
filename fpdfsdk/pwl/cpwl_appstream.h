@@ -38,7 +38,7 @@ class CPWL_AppStream {
   ByteString GetBorderAppStream() const;
 
   UnownedPtr<CPDFSDK_Widget> const widget_;
-  UnownedPtr<CPDF_Dictionary> const dict_;
+  RetainPtr<CPDF_Dictionary> const dict_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_APPSTREAM_H_

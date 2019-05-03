@@ -307,7 +307,7 @@ CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category) {
   if (!pNames)
     return;
 
-  m_pRoot = pNames->GetDictFor(category);
+  m_pRoot.Reset(pNames->GetDictFor(category));
 }
 
 CPDF_NameTree::~CPDF_NameTree() {}

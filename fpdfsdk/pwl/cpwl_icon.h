@@ -20,7 +20,7 @@ class CPWL_Icon final : public CPWL_Wnd {
   ~CPWL_Icon() override;
 
   void SetIconFit(CPDF_IconFit* pIconFit) { m_pIconFit = pIconFit; }
-  void SetPDFStream(CPDF_Stream* pStream) { m_pPDFStream = pStream; }
+  void SetPDFStream(CPDF_Stream* pStream) { m_pPDFStream.Reset(pStream); }
 
   // horizontal scale, vertical scale
   std::pair<float, float> GetScale();
@@ -38,7 +38,7 @@ class CPWL_Icon final : public CPWL_Wnd {
   // width, height
   std::pair<float, float> GetImageSize();
 
-  UnownedPtr<CPDF_Stream> m_pPDFStream;
+  RetainPtr<CPDF_Stream> m_pPDFStream;
   UnownedPtr<CPDF_IconFit> m_pIconFit;
 };
 

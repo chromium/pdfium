@@ -10,7 +10,7 @@
 #include "core/fpdfdoc/cpdf_iconfit.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
@@ -69,7 +69,7 @@ class CPDF_ApSettings {
   CPDF_Stream* GetIcon(const ByteString& csEntry) const;
 
  private:
-  UnownedPtr<CPDF_Dictionary> const m_pDict;
+  RetainPtr<CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_APSETTINGS_H_

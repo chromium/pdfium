@@ -116,7 +116,7 @@ class CPDF_FormControl {
   CPDF_ApSettings GetMK() const;
 
   UnownedPtr<CPDF_FormField> const m_pField;
-  UnownedPtr<CPDF_Dictionary> const m_pWidgetDict;
+  RetainPtr<CPDF_Dictionary> const m_pWidgetDict;
   UnownedPtr<const CPDF_InteractiveForm> const m_pForm;
 };
 

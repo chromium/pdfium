@@ -66,7 +66,7 @@ class CPDF_RenderContext {
 
  protected:
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Dictionary> m_pPageResources;
+  RetainPtr<CPDF_Dictionary> m_pPageResources;
   UnownedPtr<CPDF_PageRenderCache> m_pPageCache;
   std::vector<Layer> m_Layers;
 };

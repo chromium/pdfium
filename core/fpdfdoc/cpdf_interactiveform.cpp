@@ -588,7 +588,7 @@ CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
   if (!pRoot)
     return;
 
-  m_pFormDict = pRoot->GetDictFor("AcroForm");
+  m_pFormDict.Reset(pRoot->GetDictFor("AcroForm"));
   if (!m_pFormDict)
     return;
 

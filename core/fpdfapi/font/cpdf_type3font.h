@@ -30,7 +30,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   FX_RECT GetCharBBox(uint32_t charcode) override;
 
   void SetPageResources(CPDF_Dictionary* pResources) {
-    m_pPageResources = pResources;
+    m_pPageResources.Reset(pResources);
   }
   CPDF_Type3Char* LoadChar(uint32_t charcode);
   void CheckType3FontMetrics();
@@ -46,9 +46,9 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
 
   CFX_Matrix m_FontMatrix;
   uint32_t m_CharWidthL[256];
-  UnownedPtr<CPDF_Dictionary> m_pCharProcs;
-  UnownedPtr<CPDF_Dictionary> m_pPageResources;
-  UnownedPtr<CPDF_Dictionary> m_pFontResources;
+  RetainPtr<CPDF_Dictionary> m_pCharProcs;
+  RetainPtr<CPDF_Dictionary> m_pPageResources;
+  RetainPtr<CPDF_Dictionary> m_pFontResources;
   std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
   // The depth char loading is in, to avoid recurive calling LoadChar().
   int m_CharLoadingDepth = 0;

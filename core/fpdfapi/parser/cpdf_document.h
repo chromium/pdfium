@@ -169,8 +169,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
   CPDF_Parser::Error HandleLoadResult(CPDF_Parser::Error error);
 
   std::unique_ptr<CPDF_Parser> m_pParser;
-  UnownedPtr<CPDF_Dictionary> m_pRootDict;
-  UnownedPtr<CPDF_Dictionary> m_pInfoDict;
+  RetainPtr<CPDF_Dictionary> m_pRootDict;
+  RetainPtr<CPDF_Dictionary> m_pInfoDict;
 
   // Vector of pairs to know current position in the page tree. The index in the
   // vector corresponds to the level being described. The pair contains a

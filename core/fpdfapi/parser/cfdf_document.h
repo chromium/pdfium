@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;
@@ -31,7 +31,7 @@ class CFDF_Document final : public CPDF_IndirectObjectHolder {
  private:
   void ParseStream(RetainPtr<IFX_SeekableReadStream> pFile);
 
-  UnownedPtr<CPDF_Dictionary> m_pRootDict;
+  RetainPtr<CPDF_Dictionary> m_pRootDict;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
 };
 

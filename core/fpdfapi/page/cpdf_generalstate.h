@@ -85,7 +85,7 @@ class CPDF_GeneralState {
 
     ByteString m_BlendMode = pdfium::transparency::kNormal;
     BlendMode m_BlendType = BlendMode::kNormal;
-    UnownedPtr<CPDF_Object> m_pSoftMask;
+    RetainPtr<CPDF_Object> m_pSoftMask;
     CFX_Matrix m_SMaskMatrix;
     float m_StrokeAlpha = 1.0f;
     float m_FillAlpha = 1.0f;

@@ -34,7 +34,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
   // CPDF_PageObjectHolder to finish initializing first.
   CPDF_Object* pPageAttr = GetPageAttr(pdfium::page_object::kResources);
-  m_pResources = pPageAttr ? pPageAttr->GetDict() : nullptr;
+  m_pResources.Reset(pPageAttr ? pPageAttr->GetDict() : nullptr);
   m_pPageResources = m_pResources;
 
   UpdateDimensions();

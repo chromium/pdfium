@@ -40,7 +40,7 @@ class CPVT_FontMap final : public IPVT_FontMap {
 
  private:
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Dictionary> const m_pResDict;
+  RetainPtr<CPDF_Dictionary> const m_pResDict;
   UnownedPtr<CPDF_Font> const m_pDefFont;
   UnownedPtr<CPDF_Font> m_pSysFont;
   const ByteString m_sDefFontAlias;

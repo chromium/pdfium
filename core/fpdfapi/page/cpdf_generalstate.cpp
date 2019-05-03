@@ -150,7 +150,7 @@ CPDF_Object* CPDF_GeneralState::GetSoftMask() const {
 }
 
 void CPDF_GeneralState::SetSoftMask(CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pSoftMask = pObject;
+  m_Ref.GetPrivateCopy()->m_pSoftMask.Reset(pObject);
 }
 
 const CPDF_Object* CPDF_GeneralState::GetTR() const {

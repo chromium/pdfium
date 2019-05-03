@@ -41,7 +41,7 @@ class CPDF_FileSpec {
 
  private:
   UnownedPtr<const CPDF_Object> const m_pObj;
-  UnownedPtr<CPDF_Object> const m_pWritableObj;
+  RetainPtr<CPDF_Object> const m_pWritableObj;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FILESPEC_H_

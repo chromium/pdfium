@@ -90,7 +90,7 @@ class CBA_FontMap final : public IPVT_FontMap {
   std::vector<std::unique_ptr<Native>> m_NativeFont;
   UnownedPtr<CFX_SystemHandler> const m_pSystemHandler;
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Dictionary> const m_pAnnotDict;
+  RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
   UnownedPtr<CPDF_Font> m_pDefaultFont;
   ByteString m_sDefaultFontName;
   ByteString m_sAPType = "N";

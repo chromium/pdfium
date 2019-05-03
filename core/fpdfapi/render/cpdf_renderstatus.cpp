@@ -1008,7 +1008,7 @@ CPDF_RenderStatus::~CPDF_RenderStatus() {}
 void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentState,
                                    const CPDF_GraphicStates* pInitialStates) {
   m_bPrint = m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
-  m_pPageResource = m_pContext->GetPageResources();
+  m_pPageResource.Reset(m_pContext->GetPageResources());
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates.CopyStates(*pInitialStates);
     if (pParentState) {

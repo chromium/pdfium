@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
@@ -33,7 +34,7 @@ class CPDF_AnnotContext {
 
  private:
   std::unique_ptr<CPDF_Form> m_pAnnotForm;
-  UnownedPtr<CPDF_Dictionary> const m_pAnnotDict;
+  RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
   UnownedPtr<CPDF_Page> const m_pPage;
 };
 

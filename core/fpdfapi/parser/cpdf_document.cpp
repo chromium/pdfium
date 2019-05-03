@@ -200,7 +200,7 @@ bool CPDF_Document::TryInit() {
 
   CPDF_Object* pRootObj = GetOrParseIndirectObject(m_pParser->GetRootObjNum());
   if (pRootObj)
-    m_pRootDict = pRootObj->GetDict();
+    m_pRootDict.Reset(pRootObj->GetDict());
 
   LoadPages();
   return GetRoot() && GetPageCount() > 0;
@@ -501,7 +501,7 @@ RetainPtr<CPDF_Image> CPDF_Document::LoadImageFromPageData(
 void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict);
   ASSERT(!m_pInfoDict);
-  m_pRootDict = NewIndirect<CPDF_Dictionary>();
+  m_pRootDict.Reset(NewIndirect<CPDF_Dictionary>());
   m_pRootDict->SetNewFor<CPDF_Name>("Type", "Catalog");
 
   CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>();
@@ -509,7 +509,7 @@ void CPDF_Document::CreateNewDoc() {
   pPages->SetNewFor<CPDF_Number>("Count", 0);
   pPages->SetNewFor<CPDF_Array>("Kids");
   m_pRootDict->SetFor("Pages", pPages->MakeReference(this));
-  m_pInfoDict = NewIndirect<CPDF_Dictionary>();
+  m_pInfoDict.Reset(NewIndirect<CPDF_Dictionary>());
 }
 
 CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
@@ -605,7 +605,7 @@ CPDF_Dictionary* CPDF_Document::GetInfo() {
 
   auto ref =
       pdfium::MakeRetain<CPDF_Reference>(this, m_pParser->GetInfoObjNum());
-  m_pInfoDict = ToDictionary(ref->GetDirect());
+  m_pInfoDict.Reset(ToDictionary(ref->GetDirect()));
   return m_pInfoDict.Get();
 }
 

@@ -23,7 +23,7 @@ CFDF_Document::~CFDF_Document() = default;
 
 std::unique_ptr<CFDF_Document> CFDF_Document::CreateNewDoc() {
   auto pDoc = pdfium::MakeUnique<CFDF_Document>();
-  pDoc->m_pRootDict = pDoc->NewIndirect<CPDF_Dictionary>();
+  pDoc->m_pRootDict.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
   pDoc->m_pRootDict->SetNewFor<CPDF_Dictionary>("FDF");
   return pDoc;
 }
@@ -69,7 +69,7 @@ void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {
       RetainPtr<CPDF_Dictionary> pMainDict =
           ToDictionary(parser.GetObjectBody(this));
       if (pMainDict)
-        m_pRootDict = pMainDict->GetDictFor("Root");
+        m_pRootDict.Reset(pMainDict->GetDictFor("Root"));
 
       break;
     }

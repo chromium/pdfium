@@ -46,6 +46,6 @@ void CPDF_ContentMarkItem::SetPropertiesHolder(
     CPDF_Dictionary* pHolder,
     const ByteString& property_name) {
   m_ParamType = kPropertiesDict;
-  m_pPropertiesHolder = pHolder;
+  m_pPropertiesHolder.Reset(pHolder);
   m_PropertyName = property_name;
 }

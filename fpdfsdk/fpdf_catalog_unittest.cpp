@@ -21,9 +21,7 @@ class CPDF_TestDocument final : public CPDF_Document {
  public:
   CPDF_TestDocument() : CPDF_Document() {}
 
-  void SetRoot(CPDF_Dictionary* root) {
-    m_pRootDict = root;
-  }
+  void SetRoot(CPDF_Dictionary* root) { m_pRootDict.Reset(root); }
 };
 
 class PDFCatalogTest : public testing::Test {

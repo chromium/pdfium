@@ -200,7 +200,7 @@ class CPDF_FormField {
   bool m_bNoExport = false;
 
   UnownedPtr<CPDF_InteractiveForm> const m_pForm;
-  UnownedPtr<CPDF_Dictionary> const m_pDict;
+  RetainPtr<CPDF_Dictionary> const m_pDict;
   float m_FontSize = 0;
   UnownedPtr<CPDF_Font> m_pFont;
 };

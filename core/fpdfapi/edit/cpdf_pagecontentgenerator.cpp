@@ -200,7 +200,8 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
     const ByteString& bsType) const {
   ASSERT(pResource);
   if (!m_pObjHolder->m_pResources) {
-    m_pObjHolder->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
+    m_pObjHolder->m_pResources.Reset(
+        m_pDocument->NewIndirect<CPDF_Dictionary>());
     m_pObjHolder->GetDict()->SetFor(
         "Resources",
         m_pObjHolder->m_pResources->MakeReference(m_pDocument.Get()));
