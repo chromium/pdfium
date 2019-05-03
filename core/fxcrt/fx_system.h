@@ -126,29 +126,19 @@ extern "C" {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define FXSYS_GetACP GetACP
 #define FXSYS_itoa _itoa
+#define FXSYS_WideCharToMultiByte WideCharToMultiByte
+#define FXSYS_MultiByteToWideChar MultiByteToWideChar
 #define FXSYS_strlwr _strlwr
 #define FXSYS_strupr _strupr
 #define FXSYS_stricmp _stricmp
+#define FXSYS_wcsicmp _wcsicmp
+#define FXSYS_wcslwr _wcslwr
+#define FXSYS_wcsupr _wcsupr
 #define FXSYS_pow(a, b) (float)powf(a, b)
 size_t FXSYS_wcsftime(wchar_t* strDest,
                       size_t maxsize,
                       const wchar_t* format,
                       const struct tm* timeptr);
-#ifdef _NATIVE_WCHAR_T_DEFINED
-#define FXSYS_wcsicmp(str1, str2) _wcsicmp((wchar_t*)(str1), (wchar_t*)(str2))
-#define FXSYS_WideCharToMultiByte(p1, p2, p3, p4, p5, p6, p7, p8) \
-  WideCharToMultiByte(p1, p2, (const wchar_t*)(p3), p4, p5, p6, p7, p8)
-#define FXSYS_MultiByteToWideChar(p1, p2, p3, p4, p5, p6) \
-  MultiByteToWideChar(p1, p2, p3, p4, (wchar_t*)(p5), p6)
-#define FXSYS_wcslwr(str) _wcslwr((wchar_t*)(str))
-#define FXSYS_wcsupr(str) _wcsupr((wchar_t*)(str))
-#else  // _NATIVE_WCHAR_T_DEFINED
-#define FXSYS_wcsicmp _wcsicmp
-#define FXSYS_WideCharToMultiByte WideCharToMultiByte
-#define FXSYS_MultiByteToWideChar MultiByteToWideChar
-#define FXSYS_wcslwr _wcslwr
-#define FXSYS_wcsupr _wcsupr
-#endif  // _NATIVE_WCHAR_T_DEFINED
 
 #else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
