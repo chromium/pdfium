@@ -1,7 +1,7 @@
 Name: Google Test: Google's C++ Testing Framework
 Short Name: googletest
 URL: https://github.com/google/googletest.git
-Version: 1.8.0.git-5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081
+Version: 1.8.0.git-9997a830ee5589c2da79198bc3b60d1c47e50118
 License: BSD
 License File: NOT_SHIPPED
 Security critical: no
