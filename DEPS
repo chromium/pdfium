@@ -14,7 +14,7 @@ vars = {
 
   'android_ndk_revision': '4e2cea441bfd43f0863d14f57b1e1844260b9884',
   'binutils_revision': '2be73f7fbf783d7a0b288e174a5773b67c7656bc',
-  'build_revision': 'ef1e2b8718ad4bfa0427b1ee6d93309a135c710b',
+  'build_revision': '578c661466b793e965955deee4cdb79f5fd3259b',
   'buildtools_revision': 'c79f3482c8152172a31e5c17823a27835a511dac',
   'catapult_revision': 'cca9447f62824814d1ae1dd6c6268a66745d9fab',
   'clang_revision': '4e32649d7a532a0aa550baedadc3309970fb7642',
