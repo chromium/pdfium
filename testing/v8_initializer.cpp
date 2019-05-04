@@ -61,14 +61,12 @@ std::unique_ptr<v8::Platform> InitializeV8Common(const std::string& exe_path) {
   v8::V8::InitializePlatform(platform.get());
 
   const char* recommended_v8_flags = FPDF_GetRecommendedV8Flags();
-  v8::V8::SetFlagsFromString(recommended_v8_flags,
-                             static_cast<int>(strlen(recommended_v8_flags)));
+  v8::V8::SetFlagsFromString(recommended_v8_flags);
 
   // By enabling predictable mode, V8 won't post any background tasks.
   // By enabling GC, it makes it easier to chase use-after-free.
   static const char kAdditionalV8Flags[] = "--predictable --expose-gc";
-  v8::V8::SetFlagsFromString(kAdditionalV8Flags,
-                             static_cast<int>(strlen(kAdditionalV8Flags)));
+  v8::V8::SetFlagsFromString(kAdditionalV8Flags);
 
   v8::V8::Initialize();
   return platform;
