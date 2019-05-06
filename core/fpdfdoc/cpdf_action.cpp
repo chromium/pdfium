@@ -113,12 +113,12 @@ uint32_t CPDF_Action::GetFlags() const {
 }
 
 WideString CPDF_Action::GetJavaScript() const {
-  WideString csJS;
   if (!m_pDict)
-    return csJS;
+    return WideString();
 
   const CPDF_Object* pJS = m_pDict->GetDirectObjectFor("JS");
-  return pJS ? pJS->GetUnicodeText() : csJS;
+  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS->GetUnicodeText()
+                                                       : WideString();
 }
 
 size_t CPDF_Action::GetSubActionsCount() const {
