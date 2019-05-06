@@ -11,7 +11,7 @@
 #include <functional>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_pageobjectlist.h"
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -128,15 +128,15 @@ class CPDF_TextPage {
   void ProcessTextObject(PDFTEXT_Obj pObj);
   void ProcessTextObject(CPDF_TextObject* pTextObj,
                          const CFX_Matrix& formMatrix,
-                         const CPDF_PageObjectList* pObjList,
-                         CPDF_PageObjectList::const_iterator ObjPos);
+                         const CPDF_PageObjectHolder* pObjList,
+                         CPDF_PageObjectHolder::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
   const PAGECHAR_INFO* GetPrevCharInfo() const;
   Optional<PAGECHAR_INFO> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
-                             const CPDF_PageObjectList* pObjList,
-                             CPDF_PageObjectList::const_iterator ObjPos);
+                             const CPDF_PageObjectHolder* pObjList,
+                             CPDF_PageObjectHolder::const_iterator ObjPos);
   bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);

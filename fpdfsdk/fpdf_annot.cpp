@@ -359,13 +359,12 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Check that the object is already in this annotation's object list.
   CPDF_Form* pForm = pAnnot->GetForm();
-  const CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
   auto it =
-      std::find_if(pObjList->begin(), pObjList->end(),
+      std::find_if(pForm->begin(), pForm->end(),
                    [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
                      return candidate.get() == pObj;
                    });
-  if (it == pObjList->end())
+  if (it == pForm->end())
     return false;
 
   // Update the content stream data in the annotation's AP stream.
@@ -406,13 +405,12 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   // Note that an object that came from a different annotation must not be
   // passed here, since an object cannot belong to more than one annotation.
   CPDF_Form* pForm = pAnnot->GetForm();
-  const CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
   auto it =
-      std::find_if(pObjList->begin(), pObjList->end(),
+      std::find_if(pForm->begin(), pForm->end(),
                    [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
                      return candidate.get() == pObj;
                    });
-  if (it != pObjList->end())
+  if (it != pForm->end())
     return false;
 
   // Append the object to the object list.
@@ -436,7 +434,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
 
     pAnnot->SetForm(pStream);
   }
-  return pdfium::CollectionSize<int>(*pAnnot->GetForm()->GetPageObjectList());
+  return pAnnot->GetForm()->GetPageObjectCount();
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV

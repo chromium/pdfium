@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/page/cpdf_pageobjectlist.h"
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -54,7 +54,7 @@ class CPDF_ProgressiveRenderer {
   CFX_FloatRect m_ClipRect;
   uint32_t m_LayerIndex;
   CPDF_RenderContext::Layer* m_pCurrentLayer;
-  CPDF_PageObjectList::const_iterator m_LastObjectRendered;
+  CPDF_PageObjectHolder::const_iterator m_LastObjectRendered;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_PROGRESSIVERENDERER_H_

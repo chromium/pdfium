@@ -40,10 +40,10 @@ bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (m_pBitmap || !m_pForm)
     return true;
 
-  if (m_pForm->GetPageObjectList()->size() != 1 || m_bColored)
+  if (m_pForm->GetPageObjectCount() != 1 || m_bColored)
     return false;
 
-  auto& pPageObj = m_pForm->GetPageObjectList()->front();
+  auto& pPageObj = *m_pForm->begin();
   if (!pPageObj->IsImage())
     return false;
 

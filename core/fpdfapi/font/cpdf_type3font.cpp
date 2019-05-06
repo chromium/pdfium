@@ -125,7 +125,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   pNewChar->Transform(m_FontMatrix);
   m_CacheMap[charcode] = std::move(pNewChar);
   CPDF_Type3Char* pCachedChar = m_CacheMap[charcode].get();
-  if (pCachedChar->form()->GetPageObjectList()->empty())
+  if (pCachedChar->form()->GetPageObjectCount() == 0)
     pCachedChar->ResetForm();
   return pCachedChar;
 }

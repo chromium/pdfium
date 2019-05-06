@@ -123,7 +123,9 @@ size_t CPDF_PageObjectHolder::GetPageObjectCount() const {
 
 CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
     size_t index) const {
-  return m_PageObjectList.GetPageObjectByIndex(index);
+  return pdfium::IndexInBounds(m_PageObjectList, index)
+             ? m_PageObjectList[index].get()
+             : nullptr;
 }
 
 void CPDF_PageObjectHolder::AppendPageObject(

@@ -1038,7 +1038,7 @@ void CPDF_RenderStatus::RenderObjectList(
 #endif
   CFX_FloatRect clip_rect = mtObj2Device.GetInverse().TransformRect(
       CFX_FloatRect(m_pDevice->GetClipBox()));
-  for (const auto& pCurObj : *pObjectHolder->GetPageObjectList()) {
+  for (const auto& pCurObj : *pObjectHolder) {
     if (pCurObj.get() == m_pStopObj) {
       m_bStopped = true;
       return;

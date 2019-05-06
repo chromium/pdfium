@@ -535,7 +535,7 @@ bool CPDF_TextPage::GetRect(int rectIndex, CFX_FloatRect* pRect) const {
 
 CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
     const {
-  if (m_pPage->GetPageObjectList()->empty())
+  if (m_pPage->GetPageObjectCount() == 0)
     return TextOrientation::Unknown;
 
   const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
@@ -550,7 +550,7 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
   int32_t nEndH = 0;
   int32_t nStartV = nPageHeight;
   int32_t nEndV = 0;
-  for (const auto& pPageObj : *m_pPage->GetPageObjectList()) {
+  for (const auto& pPageObj : *m_pPage) {
     if (!pPageObj->IsText())
       continue;
 
@@ -608,19 +608,18 @@ void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
 }
 
 void CPDF_TextPage::ProcessObject() {
-  if (m_pPage->GetPageObjectList()->empty())
+  if (m_pPage->GetPageObjectCount() == 0)
     return;
 
   m_TextlineDir = FindTextlineFlowOrientation();
-  const CPDF_PageObjectList* pObjList = m_pPage->GetPageObjectList();
-  for (auto it = pObjList->begin(); it != pObjList->end(); ++it) {
+  for (auto it = m_pPage->begin(); it != m_pPage->end(); ++it) {
     CPDF_PageObject* pObj = it->get();
     if (!pObj)
       continue;
 
     CFX_Matrix matrix;
     if (pObj->IsText())
-      ProcessTextObject(pObj->AsText(), matrix, pObjList, it);
+      ProcessTextObject(pObj->AsText(), matrix, m_pPage.Get(), it);
     else if (pObj->IsForm())
       ProcessFormObject(pObj->AsForm(), matrix);
   }
@@ -633,20 +632,15 @@ void CPDF_TextPage::ProcessObject() {
 
 void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
                                       const CFX_Matrix& formMatrix) {
-  const CPDF_PageObjectList* pObjectList =
-      pFormObj->form()->GetPageObjectList();
-  if (pObjectList->empty())
-    return;
-
   CFX_Matrix curFormMatrix = pFormObj->form_matrix() * formMatrix;
-
-  for (auto it = pObjectList->begin(); it != pObjectList->end(); ++it) {
+  const CPDF_PageObjectHolder* pHolder = pFormObj->form();
+  for (auto it = pHolder->begin(); it != pHolder->end(); ++it) {
     CPDF_PageObject* pPageObj = it->get();
     if (!pPageObj)
       continue;
 
     if (pPageObj->IsText())
-      ProcessTextObject(pPageObj->AsText(), curFormMatrix, pObjectList, it);
+      ProcessTextObject(pPageObj->AsText(), curFormMatrix, pHolder, it);
     else if (pPageObj->IsForm())
       ProcessFormObject(pPageObj->AsForm(), curFormMatrix);
   }
@@ -753,8 +747,8 @@ void CPDF_TextPage::CloseTempLine() {
 void CPDF_TextPage::ProcessTextObject(
     CPDF_TextObject* pTextObj,
     const CFX_Matrix& formMatrix,
-    const CPDF_PageObjectList* pObjList,
-    CPDF_PageObjectList::const_iterator ObjPos) {
+    const CPDF_PageObjectHolder* pObjList,
+    CPDF_PageObjectHolder::const_iterator ObjPos) {
   if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon)
     return;
 
@@ -1404,8 +1398,8 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
 
 bool CPDF_TextPage::IsSameAsPreTextObject(
     CPDF_TextObject* pTextObj,
-    const CPDF_PageObjectList* pObjList,
-    CPDF_PageObjectList::const_iterator iter) {
+    const CPDF_PageObjectHolder* pObjList,
+    CPDF_PageObjectHolder::const_iterator iter) {
   int i = 0;
   while (i < 5 && iter != pObjList->begin()) {
     --iter;

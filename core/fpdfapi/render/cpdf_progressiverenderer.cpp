@@ -52,8 +52,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
         return;
       }
       m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
-      m_LastObjectRendered =
-          m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
+      m_LastObjectRendered = m_pCurrentLayer->m_pObjectHolder->end();
       m_pRenderStatus = pdfium::MakeUnique<CPDF_RenderStatus>(m_pContext.Get(),
                                                               m_pDevice.Get());
       if (m_pOptions)
@@ -65,14 +64,14 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       m_ClipRect = m_pCurrentLayer->m_Matrix.GetInverse().TransformRect(
           CFX_FloatRect(m_pDevice->GetClipBox()));
     }
-    CPDF_PageObjectList::const_iterator iter;
-    CPDF_PageObjectList::const_iterator iterEnd =
-        m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
+    CPDF_PageObjectHolder::const_iterator iter;
+    CPDF_PageObjectHolder::const_iterator iterEnd =
+        m_pCurrentLayer->m_pObjectHolder->end();
     if (m_LastObjectRendered != iterEnd) {
       iter = m_LastObjectRendered;
       ++iter;
     } else {
-      iter = m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->begin();
+      iter = m_pCurrentLayer->m_pObjectHolder->begin();
     }
     int nObjsToGo = kStepLimit;
     bool is_mask = false;

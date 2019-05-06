@@ -136,7 +136,7 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
       stream_index_mapping[streams_left[i]] = i;
 
     // Update the page objects' content stream indexes.
-    for (const auto& obj : *obj_holder_->GetPageObjectList()) {
+    for (const auto& obj : *obj_holder_) {
       int32_t old_stream_index = obj->GetContentStream();
       size_t new_stream_index = stream_index_mapping[old_stream_index];
       obj->SetContentStream(new_stream_index);

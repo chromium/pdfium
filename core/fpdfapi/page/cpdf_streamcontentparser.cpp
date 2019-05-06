@@ -1512,13 +1512,12 @@ uint32_t CPDF_StreamContentParser::Parse(
   pdfium::ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
                                                           pDataStart);
 
-  uint32_t init_obj_count = m_pObjectHolder->GetPageObjectList()->size();
+  uint32_t init_obj_count = m_pObjectHolder->GetPageObjectCount();
   CPDF_StreamParser syntax(pdfium::make_span(pDataStart, size_left),
                            m_pDocument->GetByteStringPool());
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
-    uint32_t cost =
-        m_pObjectHolder->GetPageObjectList()->size() - init_obj_count;
+    uint32_t cost = m_pObjectHolder->GetPageObjectCount() - init_obj_count;
     if (max_cost && cost >= max_cost) {
       break;
     }
