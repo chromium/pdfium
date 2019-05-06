@@ -240,17 +240,13 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
         if (!pClone)
           return false;
 
-        m_pForm->GetDocument()->AddOrphan(
-            m_pDict->RemoveFor(pdfium::form_fields::kV));
         m_pDict->SetFor(pdfium::form_fields::kV, std::move(pClone));
         if (pRV) {
-          m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("RV"));
           m_pDict->SetFor("RV", pDV->Clone());
         }
       } else {
-        m_pForm->GetDocument()->AddOrphan(
-            m_pDict->RemoveFor(pdfium::form_fields::kV));
-        m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("RV"));
+        m_pDict->RemoveFor(pdfium::form_fields::kV);
+        m_pDict->RemoveFor("RV");
       }
       if (notify == NotificationOption::kNotify)
         NotifyAfterValueChange();
@@ -394,15 +390,13 @@ bool CPDF_FormField::SetValue(const WideString& value,
       }
       ByteString key(bDefault ? pdfium::form_fields::kDV
                               : pdfium::form_fields::kV);
-      m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor(key));
       m_pDict->SetNewFor<CPDF_String>(key, csValue);
       int iIndex = FindOption(csValue);
       if (iIndex < 0) {
         if (m_Type == kRichText && !bDefault) {
-          m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("RV"));
           m_pDict->SetFor("RV", m_pDict->GetObjectFor(key)->Clone());
         }
-        m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
+        m_pDict->RemoveFor("I");
       } else {
         if (!bDefault) {
           ClearSelection(NotificationOption::kDoNotNotify);
@@ -520,9 +514,8 @@ bool CPDF_FormField::ClearSelection(NotificationOption notify) {
     if (!NotifyListOrComboBoxBeforeChange(csValue))
       return false;
   }
-  m_pForm->GetDocument()->AddOrphan(
-      m_pDict->RemoveFor(pdfium::form_fields::kV));
-  m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
+  m_pDict->RemoveFor(pdfium::form_fields::kV);
+  m_pDict->RemoveFor("I");
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();
   return true;
@@ -619,17 +612,15 @@ void CPDF_FormField::SetItemSelectionUnselected(int index,
     return;
 
   if (GetType() != kListBox) {
-    m_pForm->GetDocument()->AddOrphan(
-        m_pDict->RemoveFor(pdfium::form_fields::kV));
-    m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
+    m_pDict->RemoveFor(pdfium::form_fields::kV);
+    m_pDict->RemoveFor("I");
     return;
   }
 
   SelectOption(index, false, NotificationOption::kDoNotNotify);
   if (pValue->IsString()) {
     if (pValue->GetUnicodeText() == opt_value) {
-      m_pForm->GetDocument()->AddOrphan(
-          m_pDict->RemoveFor(pdfium::form_fields::kV));
+      m_pDict->RemoveFor(pdfium::form_fields::kV);
     }
     return;
   }
@@ -643,8 +634,6 @@ void CPDF_FormField::SetItemSelectionUnselected(int index,
       pArray->AddNew<CPDF_String>(GetOptionValue(i));
   }
   if (pArray->size() > 0) {
-    m_pForm->GetDocument()->AddOrphan(
-        m_pDict->RemoveFor(pdfium::form_fields::kV));
     m_pDict->SetFor(pdfium::form_fields::kV, std::move(pArray));
   }
 }
@@ -882,7 +871,7 @@ bool CPDF_FormField::SelectOption(int iOptIndex,
     if (bSelected)
       pArray->AddNew<CPDF_Number>(iOptIndex);
     if (pArray->IsEmpty())
-      m_pForm->GetDocument()->AddOrphan(m_pDict->RemoveFor("I"));
+      m_pDict->RemoveFor("I");
   }
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();

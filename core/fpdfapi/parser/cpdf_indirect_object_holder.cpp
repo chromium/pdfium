@@ -70,9 +70,6 @@ CPDF_Object* CPDF_IndirectObjectHolder::AddIndirectObject(
   pObj->SetObjNum(++m_LastObjNum);
 
   auto& obj_holder = m_IndirectObjs[m_LastObjNum];
-  if (obj_holder)
-    m_OrphanObjs.push_back(std::move(obj_holder));
-
   obj_holder = std::move(pObj);
   return obj_holder.Get();
 }
@@ -90,7 +87,6 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     return false;
 
   pObj->SetObjNum(objnum);
-  AddOrphan(std::move(obj_holder));
   obj_holder = std::move(pObj);
   m_LastObjNum = std::max(m_LastObjNum, objnum);
   return true;
@@ -102,9 +98,4 @@ void CPDF_IndirectObjectHolder::DeleteIndirectObject(uint32_t objnum) {
     return;
 
   m_IndirectObjs.erase(it);
-}
-
-void CPDF_IndirectObjectHolder::AddOrphan(RetainPtr<CPDF_Object> pObject) {
-  if (pObject)
-    m_OrphanObjs.push_back(std::move(pObject));
 }
