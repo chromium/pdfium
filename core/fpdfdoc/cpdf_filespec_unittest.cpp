@@ -122,6 +122,17 @@ TEST(cpdf_filespec, GetFileName) {
     CPDF_FileSpec file_spec(name_obj.Get());
     EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
   }
+  {
+    // Invalid CPDF_Name objects in dictionary. See https://crbug.com/959183
+    auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
+    CPDF_FileSpec file_spec(dict_obj.Get());
+    for (const char* key : {"Unix", "Mac", "DOS", "F", "UF"}) {
+      dict_obj->SetNewFor<CPDF_Name>(key, "http://evil.org");
+      EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
+    }
+    dict_obj->SetNewFor<CPDF_String>("FS", "URL", false);
+    EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
+  }
 }
 
 TEST(cpdf_filespec, SetFileName) {

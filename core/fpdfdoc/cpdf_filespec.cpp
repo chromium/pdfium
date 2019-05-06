@@ -98,26 +98,30 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
 WideString CPDF_FileSpec::GetFileName() const {
   WideString csFileName;
   if (const CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    csFileName = pDict->GetUnicodeTextFor("UF");
+    const CPDF_String* pUF = ToString(pDict->GetDirectObjectFor("UF"));
+    if (pUF)
+      csFileName = pUF->GetUnicodeText();
     if (csFileName.IsEmpty()) {
-      csFileName = WideString::FromDefANSI(
-          pDict->GetStringFor(pdfium::stream::kF).AsStringView());
+      const CPDF_String* pK =
+          ToString(pDict->GetDirectObjectFor(pdfium::stream::kF));
+      if (pK)
+        csFileName = WideString::FromDefANSI(pK->GetString().AsStringView());
     }
     if (pDict->GetStringFor("FS") == "URL")
       return csFileName;
 
     if (csFileName.IsEmpty()) {
-      constexpr const char* keys[] = {"DOS", "Mac", "Unix"};
-      for (const auto* key : keys) {
-        if (pDict->KeyExist(key)) {
+      for (const auto* key : {"DOS", "Mac", "Unix"}) {
+        const CPDF_String* pValue = ToString(pDict->GetDirectObjectFor(key));
+        if (pValue) {
           csFileName =
-              WideString::FromDefANSI(pDict->GetStringFor(key).AsStringView());
+              WideString::FromDefANSI(pValue->GetString().AsStringView());
           break;
         }
       }
     }
-  } else if (m_pObj->IsString()) {
-    csFileName = WideString::FromDefANSI(m_pObj->GetString().AsStringView());
+  } else if (const CPDF_String* pString = m_pObj->AsString()) {
+    csFileName = WideString::FromDefANSI(pString->GetString().AsStringView());
   }
   return DecodeFileName(csFileName);
 }

@@ -94,8 +94,11 @@ ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
   const CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
   if (pURI) {
     auto result = csURI.Find(":");
-    if (!result.has_value() || result.value() == 0)
-      csURI = pURI->GetStringFor("Base") + csURI;
+    if (!result.has_value() || result.value() == 0) {
+      auto* pBase = pURI->GetDirectObjectFor("Base");
+      if (pBase && (pBase->IsString() || pBase->IsStream()))
+        csURI = pBase->GetString() + csURI;
+    }
   }
   return csURI;
 }
