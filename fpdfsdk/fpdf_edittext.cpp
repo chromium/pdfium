@@ -419,7 +419,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
   // TODO(npm): Support vertical writing
 
   auto* pDescendant = pFontDict->SetNewFor<CPDF_Array>("DescendantFonts");
-  pDescendant->Add(pCIDFont->MakeReference(pDoc));
+  pDescendant->AddNew<CPDF_Reference>(pDoc, pCIDFont->GetObjNum());
 
   CPDF_Stream* toUnicodeStream = LoadUnicode(pDoc, to_unicode);
   pFontDict->SetNewFor<CPDF_Reference>("ToUnicode", pDoc,

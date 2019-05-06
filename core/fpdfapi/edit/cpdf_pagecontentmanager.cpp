@@ -66,8 +66,10 @@ size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
   // create an array with the old and the new one. The new one's index is 1.
   if (contents_stream_) {
     CPDF_Array* new_contents_array = doc_->NewIndirect<CPDF_Array>();
-    new_contents_array->Add(contents_stream_->MakeReference(doc_.Get()));
-    new_contents_array->Add(new_stream->MakeReference(doc_.Get()));
+    new_contents_array->AddNew<CPDF_Reference>(doc_.Get(),
+                                               contents_stream_->GetObjNum());
+    new_contents_array->AddNew<CPDF_Reference>(doc_.Get(),
+                                               new_stream->GetObjNum());
 
     CPDF_Dictionary* page_dict = obj_holder_->GetDict();
     page_dict->SetNewFor<CPDF_Reference>("Contents", doc_.Get(),
@@ -79,7 +81,8 @@ size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
 
   // If there is an array, just add the new stream to it, at the last position.
   if (contents_array_) {
-    contents_array_->Add(new_stream->MakeReference(doc_.Get()));
+    contents_array_->AddNew<CPDF_Reference>(doc_.Get(),
+                                            new_stream->GetObjNum());
     return contents_array_->size() - 1;
   }
 

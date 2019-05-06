@@ -540,7 +540,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
         continue;
       }
       if (bInsert) {
-        pKidList->InsertAt(i, pPageDict->MakeReference(this));
+        pKidList->InsertNewAt<CPDF_Reference>(i, this, pPageDict->GetObjNum());
         pPageDict->SetNewFor<CPDF_Reference>("Parent", this,
                                              pPages->GetObjNum());
       } else {
@@ -584,7 +584,7 @@ bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
     CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
     if (!pPagesList)
       pPagesList = pPages->SetNewFor<CPDF_Array>("Kids");
-    pPagesList->Add(pPageDict->MakeReference(this));
+    pPagesList->AddNew<CPDF_Reference>(this, pPageDict->GetObjNum());
     pPages->SetNewFor<CPDF_Number>("Count", nPages + 1);
     pPageDict->SetNewFor<CPDF_Reference>("Parent", this, pPages->GetObjNum());
     ResetTraversal();
@@ -722,7 +722,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
 
   CPDF_Array* pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
-  pArray->Add(pFontDict->MakeReference(this));
+  pArray->AddNew<CPDF_Reference>(this, pFontDict->GetObjNum());
   return pFontDict;
 }
 

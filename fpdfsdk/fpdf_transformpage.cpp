@@ -203,13 +203,13 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   pEndStream->SetData(ByteStringView(" Q").raw_span());
 
   if (CPDF_Array* pContentArray = ToArray(pContentObj)) {
-    pContentArray->InsertAt(0, pStream->MakeReference(pDoc));
-    pContentArray->Add(pEndStream->MakeReference(pDoc));
+    pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
     pContentArray = pDoc->NewIndirect<CPDF_Array>();
-    pContentArray->Add(pStream->MakeReference(pDoc));
-    pContentArray->Add(pContentObj->MakeReference(pDoc));
-    pContentArray->Add(pEndStream->MakeReference(pDoc));
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
     pPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDoc,
                                          pContentArray->GetObjNum());
   }
@@ -359,11 +359,11 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   pStream->SetDataFromStringstream(&strClip);
 
   if (CPDF_Array* pArray = ToArray(pContentObj)) {
-    pArray->InsertAt(0, pStream->MakeReference(pDoc));
+    pArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
     CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
-    pContentArray->Add(pStream->MakeReference(pDoc));
-    pContentArray->Add(pContentObj->MakeReference(pDoc));
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
     pPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDoc,
                                          pContentArray->GetObjNum());
   }

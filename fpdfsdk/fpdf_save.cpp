@@ -140,7 +140,8 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         pData->InitStreamFromFile(pDsfileWrite, std::move(pDataDict));
         int iLast = pArray->size() - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "datasets", false);
-        pArray->InsertAt(iLast + 1, pData->MakeReference(pPDFDocument));
+        pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
+                                            pData->GetObjNum());
       }
       fileList->push_back(std::move(pDsfileWrite));
     }
@@ -164,7 +165,8 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         pData->InitStreamFromFile(pfileWrite, std::move(pDataDict));
         int iLast = pArray->size() - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "form", false);
-        pArray->InsertAt(iLast + 1, pData->MakeReference(pPDFDocument));
+        pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
+                                            pData->GetObjNum());
       }
       fileList->push_back(std::move(pfileWrite));
     }

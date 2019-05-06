@@ -54,14 +54,11 @@ class CPDF_Array final : public CPDF_Object {
   CFX_Matrix GetMatrix() const;
   CFX_FloatRect GetRect() const;
 
-  // Takes ownership of |pObj|, returns unowned pointer to it.
-  CPDF_Object* Add(RetainPtr<CPDF_Object> pObj);
-  CPDF_Object* SetAt(size_t index, RetainPtr<CPDF_Object> pObj);
-  CPDF_Object* InsertAt(size_t index, RetainPtr<CPDF_Object> pObj);
-
   // Creates object owned by the array, returns unowned pointer to it.
   // We have special cases for objects that can intern strings from
-  // a ByteStringPool.
+  // a ByteStringPool. Prefer using these templates over direct calls
+  // to Add()/SetAt()/InsertAt() since by creating a new object with no
+  // previous references, they ensure cycles can not be introduced.
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type AddNew(
       Args&&... args) {
@@ -102,6 +99,11 @@ class CPDF_Array final : public CPDF_Object {
     return static_cast<T*>(InsertAt(
         index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
   }
+
+  // Takes ownership of |pObj|, returns unowned pointer to it.
+  CPDF_Object* Add(RetainPtr<CPDF_Object> pObj);
+  CPDF_Object* SetAt(size_t index, RetainPtr<CPDF_Object> pObj);
+  CPDF_Object* InsertAt(size_t index, RetainPtr<CPDF_Object> pObj);
 
   void Clear();
   void RemoveAt(size_t index);
