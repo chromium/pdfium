@@ -773,9 +773,8 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
       pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
     ByteString newValue = PDF_EncodeText(WideStringFromFPDFWideString(value));
-    auto pNewApStream = pdfium::MakeRetain<CPDF_Stream>();
+    auto* pNewApStream = pApDict->SetNewFor<CPDF_Stream>(modeKey);
     pNewApStream->SetData(newValue.AsRawSpan());
-    pApDict->SetFor(modeKey, std::move(pNewApStream));
   } else {
     if (pApDict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)

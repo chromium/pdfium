@@ -70,8 +70,8 @@ size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
     new_contents_array->Add(new_stream->MakeReference(doc_.Get()));
 
     CPDF_Dictionary* page_dict = obj_holder_->GetDict();
-    page_dict->SetFor("Contents",
-                      new_contents_array->MakeReference(doc_.Get()));
+    page_dict->SetNewFor<CPDF_Reference>("Contents", doc_.Get(),
+                                         new_contents_array->GetObjNum());
     contents_array_.Reset(new_contents_array);
     contents_stream_ = nullptr;
     return 1;
@@ -86,7 +86,8 @@ size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
   // There were no Contents, so add the new stream as the single Content stream.
   // Its index is 0.
   CPDF_Dictionary* page_dict = obj_holder_->GetDict();
-  page_dict->SetFor("Contents", new_stream->MakeReference(doc_.Get()));
+  page_dict->SetNewFor<CPDF_Reference>("Contents", doc_.Get(),
+                                       new_stream->GetObjNum());
   contents_stream_.Reset(new_stream);
   return 0;
 }

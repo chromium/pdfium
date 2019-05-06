@@ -213,11 +213,10 @@ void SetPageContents(const ByteString& key,
       sStream += "\nQ";
     }
     pContentsStream->SetDataAndRemoveFilter(sStream.AsRawSpan());
-
     pContentsArray = pDocument->NewIndirect<CPDF_Array>();
     pContentsArray->Add(pContentsStream->MakeReference(pDocument));
-    pPage->SetFor(pdfium::page_object::kContents,
-                  pContentsArray->MakeReference(pDocument));
+    pPage->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDocument,
+                                     pContentsArray->GetObjNum());
   }
   if (!key.IsEmpty()) {
     pContentsArray->Add(
@@ -316,7 +315,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   CPDF_Dictionary* pNewXORes = nullptr;
   if (!key.IsEmpty()) {
-    pPageXObject->SetFor(key, pNewXObject->MakeReference(pDocument));
+    pPageXObject->SetNewFor<CPDF_Reference>(key, pDocument,
+                                            pNewXObject->GetObjNum());
+
     CPDF_Dictionary* pNewOXbjectDic = pNewXObject->GetDict();
     pNewXORes = pNewOXbjectDic->SetNewFor<CPDF_Dictionary>("Resources");
     pNewOXbjectDic->SetNewFor<CPDF_Name>("Type", "XObject");
@@ -392,7 +393,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       pXObject = pNewXORes->SetNewFor<CPDF_Dictionary>("XObject");
 
     ByteString sFormName = ByteString::Format("F%d", i);
-    pXObject->SetFor(sFormName, pObj->MakeReference(pDocument));
+    pXObject->SetNewFor<CPDF_Reference>(sFormName, pDocument,
+                                        pObj->GetObjNum());
 
     ByteString sStream;
     {

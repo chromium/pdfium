@@ -330,19 +330,19 @@ bool CPDF_PageOrganizer::Init() {
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
     pNewPages = dest()->NewIndirect<CPDF_Dictionary>();
-    pNewRoot->SetFor("Pages", pNewPages->MakeReference(dest()));
+    pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
+                                        pNewPages->GetObjNum());
   }
-
   ByteString cbPageType = pNewPages->GetStringFor("Type", ByteString());
   if (cbPageType.IsEmpty())
     pNewPages->SetNewFor<CPDF_Name>("Type", "Pages");
 
   if (!pNewPages->GetArrayFor("Kids")) {
+    auto* pNewArray = dest()->NewIndirect<CPDF_Array>();
     pNewPages->SetNewFor<CPDF_Number>("Count", 0);
-    pNewPages->SetFor("Kids",
-                      dest()->NewIndirect<CPDF_Array>()->MakeReference(dest()));
+    pNewPages->SetNewFor<CPDF_Reference>("Kids", dest(),
+                                         pNewArray->GetObjNum());
   }
-
   return true;
 }
 
@@ -727,8 +727,8 @@ void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
   CPDF_Stream* pStream =
       dest()->NewIndirect<CPDF_Stream>(nullptr, 0, std::move(pDict));
   pStream->SetData(bsContent.AsRawSpan());
-  pDestPageDict->SetFor(pdfium::page_object::kContents,
-                        pStream->MakeReference(dest()));
+  pDestPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents,
+                                           dest(), pStream->GetObjNum());
 }
 
 }  // namespace

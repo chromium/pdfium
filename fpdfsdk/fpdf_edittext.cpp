@@ -102,7 +102,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
                                                static_cast<int>(span.size()));
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
-  pFontDesc->SetFor(fontFile, pStream->MakeReference(pDoc));
+  pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
   return pFontDesc;
 }
 
@@ -298,11 +298,13 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
   }
   pFontDict->SetNewFor<CPDF_Number>("LastChar",
                                     static_cast<int>(dwCurrentChar));
-  pFontDict->SetFor("Widths", widthsArray->MakeReference(pDoc));
+  pFontDict->SetNewFor<CPDF_Reference>("Widths", pDoc,
+                                       widthsArray->GetObjNum());
   CPDF_Dictionary* pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
 
-  pFontDict->SetFor("FontDescriptor", pFontDesc->MakeReference(pDoc));
+  pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
+                                       pFontDesc->GetObjNum());
   return pDoc->LoadFont(pFontDict);
 }
 
@@ -335,11 +337,13 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
   pCIDSystemInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
   pCIDSystemInfo->SetNewFor<CPDF_String>("Ordering", "Identity", false);
   pCIDSystemInfo->SetNewFor<CPDF_Number>("Supplement", 0);
-  pCIDFont->SetFor("CIDSystemInfo", pCIDSystemInfo->MakeReference(pDoc));
+  pCIDFont->SetNewFor<CPDF_Reference>("CIDSystemInfo", pDoc,
+                                      pCIDSystemInfo->GetObjNum());
 
   CPDF_Dictionary* pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
-  pCIDFont->SetFor("FontDescriptor", pFontDesc->MakeReference(pDoc));
+  pCIDFont->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
+                                      pFontDesc->GetObjNum());
 
   uint32_t dwGlyphIndex;
   uint32_t dwCurrentChar = FXFT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
@@ -410,14 +414,16 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
     }
     widthsArray->Add(std::move(curWidthArray));
   }
-  pCIDFont->SetFor("W", widthsArray->MakeReference(pDoc));
+  pCIDFont->SetNewFor<CPDF_Reference>("W", pDoc, widthsArray->GetObjNum());
+
   // TODO(npm): Support vertical writing
 
-  auto pDescendant = pdfium::MakeRetain<CPDF_Array>();
+  auto* pDescendant = pFontDict->SetNewFor<CPDF_Array>("DescendantFonts");
   pDescendant->Add(pCIDFont->MakeReference(pDoc));
-  pFontDict->SetFor("DescendantFonts", std::move(pDescendant));
+
   CPDF_Stream* toUnicodeStream = LoadUnicode(pDoc, to_unicode);
-  pFontDict->SetFor("ToUnicode", toUnicodeStream->MakeReference(pDoc));
+  pFontDict->SetNewFor<CPDF_Reference>("ToUnicode", pDoc,
+                                       toUnicodeStream->GetObjNum());
   return pDoc->LoadFont(pFontDict);
 }
 

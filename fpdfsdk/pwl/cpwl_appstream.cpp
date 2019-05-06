@@ -1901,8 +1901,9 @@ void CPWL_AppStream::AddImage(const ByteString& sAPType, CPDF_Stream* pImage) {
 
   CPDF_Dictionary* pXObject =
       pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
-  pXObject->SetFor(sImageAlias, pImage->MakeReference(
-                                    widget_->GetPageView()->GetPDFDocument()));
+  pXObject->SetNewFor<CPDF_Reference>(sImageAlias,
+                                      widget_->GetPageView()->GetPDFDocument(),
+                                      pImage->GetObjNum());
 }
 
 void CPWL_AppStream::Write(const ByteString& sAPType,
@@ -1925,7 +1926,7 @@ void CPWL_AppStream::Write(const ByteString& sAPType,
   if (!pStream) {
     CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
     pStream = doc->NewIndirect<CPDF_Stream>();
-    pParentDict->SetFor(sAPType, pStream->MakeReference(doc));
+    pParentDict->SetNewFor<CPDF_Reference>(sAPType, doc, pStream->GetObjNum());
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();

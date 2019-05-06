@@ -75,14 +75,15 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
   if (!pNames) {
     pNames = pDoc->NewIndirect<CPDF_Dictionary>();
-    pRoot->SetFor("Names", pNames->MakeReference(pDoc));
+    pRoot->SetNewFor<CPDF_Reference>("Names", pDoc, pNames->GetObjNum());
   }
 
   // Create the EmbeddedFiles dictionary if missing.
   if (!pNames->GetDictFor("EmbeddedFiles")) {
     CPDF_Dictionary* pFiles = pDoc->NewIndirect<CPDF_Dictionary>();
     pFiles->SetNewFor<CPDF_Array>("Names");
-    pNames->SetFor("EmbeddedFiles", pFiles->MakeReference(pDoc));
+    pNames->SetNewFor<CPDF_Reference>("EmbeddedFiles", pDoc,
+                                      pFiles->GetObjNum());
   }
 
   // Set up the basic entries in the filespec dictionary.
@@ -255,7 +256,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
       std::move(stream), len, std::move(pFileStreamDict));
   CPDF_Dictionary* pEFDict =
       pFile->AsDictionary()->SetNewFor<CPDF_Dictionary>("EF");
-  pEFDict->SetFor("F", pFileStream->MakeReference(pDoc));
+  pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());
   return true;
 }
 

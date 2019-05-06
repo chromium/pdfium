@@ -210,8 +210,8 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     pContentArray->Add(pStream->MakeReference(pDoc));
     pContentArray->Add(pContentObj->MakeReference(pDoc));
     pContentArray->Add(pEndStream->MakeReference(pDoc));
-    pPageDict->SetFor(pdfium::page_object::kContents,
-                      pContentArray->MakeReference(pDoc));
+    pPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDoc,
+                                         pContentArray->GetObjNum());
   }
 
   // Need to transform the patterns as well.
@@ -364,7 +364,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
     CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->Add(pStream->MakeReference(pDoc));
     pContentArray->Add(pContentObj->MakeReference(pDoc));
-    pPageDict->SetFor(pdfium::page_object::kContents,
-                      pContentArray->MakeReference(pDoc));
+    pPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDoc,
+                                         pContentArray->GetObjNum());
   }
 }

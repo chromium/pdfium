@@ -202,9 +202,9 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   if (!m_pObjHolder->m_pResources) {
     m_pObjHolder->m_pResources.Reset(
         m_pDocument->NewIndirect<CPDF_Dictionary>());
-    m_pObjHolder->GetDict()->SetFor(
-        "Resources",
-        m_pObjHolder->m_pResources->MakeReference(m_pDocument.Get()));
+    m_pObjHolder->GetDict()->SetNewFor<CPDF_Reference>(
+        "Resources", m_pDocument.Get(),
+        m_pObjHolder->m_pResources->GetObjNum());
   }
   CPDF_Dictionary* pResList = m_pObjHolder->m_pResources->GetDictFor(bsType);
   if (!pResList)
@@ -219,7 +219,8 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
 
     idnum++;
   }
-  pResList->SetFor(name, pResource->MakeReference(m_pDocument.Get()));
+  pResList->SetNewFor<CPDF_Reference>(name, m_pDocument.Get(),
+                                      pResource->GetObjNum());
   return name;
 }
 
