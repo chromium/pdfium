@@ -168,6 +168,7 @@ jumbo_source_set("fxge") {
       "apple/fx_mac_imp.cpp",
       "apple/fx_quartz_device.cpp",
     ]
+    libs = [ "CoreGraphics.framework" ]
   }
 
   if (is_win) {
