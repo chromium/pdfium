@@ -353,6 +353,7 @@ test("pdfium_embeddertests") {
     deps += [
       "fpdfsdk/fpdfxfa:embeddertests",
       "xfa/fwl:embeddertests",
+      "xfa/fxfa/layout:embeddertests",
       "xfa/fxfa/parser:embeddertests",
     ]
   }

@@ -41,3 +41,10 @@ jumbo_source_set("layout") {
   ]
   visibility = [ "../../../*" ]
 }
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "cxfa_layoutitem_embeddertest.cpp",
+  ]
+  pdfium_root_dir = "../../../"
+}

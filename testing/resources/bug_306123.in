@@ -1,0 +1,1059 @@
+{{header}}
+{{include xfa_catalog_1_0.fragment}}
+{{include xfa_object_2_0.fragment}}
+{{include xfa_preamble_3_0.fragment}}
+{{include xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.8/">
+  <subform layout="tb" locale="en_GB_EURO">
+    <pageSet>
+      <pageArea>
+        <contentArea x="3mm" w="204mm" h="277mm" y="5mm"/>
+        <medium stock="a4" short="210mm" long="297mm"/>
+        <draw w="210mm" h="297mm"/>
+        <field y="0mm" x="0mm" w="62mm" h="9mm">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <field y="0mm" x="0mm" w="62mm" h="9mm">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <field y="0mm" x="0mm" w="62mm" h="9mm">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <field y="0mm" x="0mm" w="62mm" h="9mm">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <draw y="284mm" x="5mm" w="68mm" h="12mm">
+          <ui>
+            <textEdit/>
+          </ui>
+          <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+        </draw>
+        <field y="283mm" x="47mm" w="62mm" h="9mm" presence="invisible">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <draw y="284mm" x="73mm" w="69mm" h="12mm">
+          <ui>
+            <textEdit/>
+          </ui>
+          <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+        </draw>
+        <field w="62mm" h="9mm" access="readOnly">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <field w="62mm" h="9mm" access="readOnly">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <draw y="284mm" x="142mm" w="65mm" h="8mm">
+          <ui>
+            <textEdit/>
+          </ui>
+          <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+        </draw>
+        <field w="62mm" h="9mm" access="readOnly">
+          <ui>
+            <textEdit>
+            </textEdit>
+          </ui>
+          <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+        </field>
+        <draw y="292mm" x="176mm" w="31mm" h="4.528mm">
+          <ui>
+            <textEdit/>
+          </ui>
+          <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+        </draw>
+      </pageArea>
+    </pageSet>
+    <subform w="203mm" layout="tb">
+      <field w="0.5mm" h="0.5mm" relevant="-print">
+        <ui>
+          <button highlight="inverted"/>
+        </ui>
+      </field>
+      <subform w="203mm" layout="tb">
+        <overflow leader="Bloog"/>
+      </subform>
+      <subform w="203mm" layout="tb" presence="hidden">
+        <breakBefore targetType="pageArea" startNew="1"/>
+      </subform>
+      <subform w="203mm" minH="6.421mm" layout="tb">
+        <subform y="6.421mm" w="203mm" minH="52.27mm" layout="tb">
+          <margin leftInset="1mm"/>
+          <subform w="203mm" layout="lr-tb">
+            <draw w="127mm" h="0.375472in">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+            </draw>
+            <exclGroup name="RadioButtonList" layout="lr-tb">
+              <field w="30mm" h="6mm" name="yes">
+                <ui>
+                  <checkButton shape="round">
+                  </checkButton>
+                </ui>
+                <margin leftInset="3mm" rightInset="1mm"/>
+                <items>
+                  <text>Agree</text>
+                </items>
+              </field>
+              <field w="30mm" h="6mm" name="no">
+                <ui>
+                  <checkButton shape="round">
+                  </checkButton>
+                </ui>
+                <margin leftInset="3mm" rightInset="1mm"/>
+                <items>
+                  <text>Disagree</text>
+                </items>
+              </field>
+              <validate nullTest="error"/>
+            </exclGroup>
+            <margin bottomInset="2mm"/>
+          </subform>
+          <subform w="203mm" layout="lr-tb">
+            <draw w="127mm" minH="9.537mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+            </draw>
+            <exclGroup name="RadioButtonList" layout="lr-tb">
+              <field w="30mm" h="6mm" name="yes">
+                <ui>
+                  <checkButton shape="round">
+                  </checkButton>
+                </ui>
+                <margin leftInset="3mm" rightInset="1mm"/>
+                <items>
+                  <text>Agree</text>
+                </items>
+              </field>
+              <field w="30mm" h="6mm" name="no">
+                <ui>
+                  <checkButton shape="round">
+                  </checkButton>
+                </ui>
+                <margin leftInset="3mm" rightInset="1mm"/>
+                <items>
+                  <text>Disagree</text>
+                </items>
+              </field>
+              <validate nullTest="error"/>
+            </exclGroup>
+            <margin bottomInset="2mm"/>
+          </subform>
+          <subform w="203mm" layout="lr-tb">
+            <draw w="127mm" minH="10.462mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+            </draw>
+            <exclGroup name="RadioButtonList" layout="lr-tb">
+              <field w="30mm" h="6mm" name="yes">
+                <ui>
+                  <checkButton shape="round">
+                  </checkButton>
+                </ui>
+                <margin leftInset="3mm" rightInset="1mm"/>
+                <items>
+                  <text>Agree</text>
+                </items>
+              </field>
+              <field w="30mm" h="6mm" name="no">
+                <ui>
+                  <checkButton shape="round">
+                  </checkButton>
+                </ui>
+                <margin leftInset="3mm" rightInset="1mm"/>
+                <items>
+                  <text>Disagree</text>
+                </items>
+              </field>
+              <validate nullTest="error"/>
+            </exclGroup>
+            <margin bottomInset="2mm"/>
+          </subform>
+          <subform w="202mm" minH="34.081mm" layout="lr-tb">
+            <draw w="7.95275in" h="9.537mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+            </draw>
+            <field w="202mm" minH="28mm">
+              <ui>
+                <textEdit multiLine="1">
+                </textEdit>
+              </ui>
+              <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+            </field>
+            <margin topInset="1mm" bottomInset="1mm"/>
+          </subform>
+          <subform w="202mm" minH="34.081mm" layout="lr-tb" y="3mm">
+            <draw w="7.95275in" h="9.537mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+            </draw>
+            <field w="202mm" minH="28mm">
+              <ui>
+                <textEdit multiLine="1">
+                </textEdit>
+              </ui>
+              <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+            </field>
+            <margin topInset="1mm" bottomInset="1mm"/>
+          </subform>
+          <subform w="202mm" minH="34.081mm" layout="lr-tb" y="37.081mm">
+            <draw w="7.95275in" h="9.537mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+            </draw>
+            <field w="202mm" minH="28mm">
+              <ui>
+                <textEdit multiLine="1">
+                </textEdit>
+              </ui>
+              <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+            </field>
+            <margin topInset="1mm" bottomInset="1mm"/>
+          </subform>
+          <subform w="203mm" minH="228.176mm" layout="tb">
+            <subform minH="8mm" layout="lr-tb" w="194mm">
+              <field w="53mm" h="8mm">
+                <ui>
+                  <button highlight="outline"/>
+                </ui>
+                <margin bottomInset="0mm"/>
+              </field>
+              <margin topInset="2mm" bottomInset="1mm"/>
+            </subform>
+            <margin topInset="3mm"/>
+          </subform>
+        </subform>
+        <overflow leader="Bloog"/>
+      </subform>
+      <subform w="203mm" layout="tb" presence="hidden">
+        <breakBefore targetType="pageArea" startNew="1"/>
+      </subform>
+      <subform w="203mm" layout="tb">
+        <subform w="203.999mm">
+          <draw minW="203mm" x="0.001mm" y="0mm" h="6.421mm">
+            <ui>
+              <textEdit/>
+            </ui>
+            <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1.27mm" rightInset="1.27mm"/>
+          </draw>
+          <draw h="7.479mm" minW="203mm" y="6.421mm" x="0.001mm">
+            <ui>
+              <textEdit/>
+            </ui>
+            <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1.27mm" rightInset="1.27mm"/>
+          </draw>
+          <draw h="7.427mm" w="7.992125in" y="0mm">
+            <ui>
+              <textEdit/>
+            </ui>
+            <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="2mm" rightInset="1.27mm"/>
+          </draw>
+          <margin leftInset="0mm"/>
+        </subform>
+        <subform w="203mm" minH="52.27mm" layout="lr-tb">
+          <subform w="201mm" h="48.807mm">
+            <draw y="0mm" x="0.001mm" w="7.913347in" h="1.826917in">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="2mm" bottomInset="2mm" leftInset="1mm" rightInset="1.5mm"/>
+            </draw>
+            <margin topInset="2mm" bottomInset="2mm"/>
+          </subform>
+          <margin leftInset="1mm"/>
+          <subform w="202mm" minH="48mm" layout="lr-tb">
+            <margin topInset="0mm" bottomInset="1mm"/>
+            <draw h="6.773mm" w="199mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1mm" rightInset="1.27mm"/>
+            </draw>
+            <subform minH="8mm" layout="lr-tb" name="Show" w="46mm">
+              <field h="8mm" w="45mm">
+                <ui>
+                  <button highlight="outline"/>
+                </ui>
+                <margin bottomInset="0mm"/>
+              </field>
+              <margin topInset="3mm" bottomInset="2mm"/>
+              <keep intact="contentArea"/>
+            </subform>
+            <subform minH="8mm" layout="lr-tb" name="Hide" w="25mm">
+              <margin topInset="3mm" bottomInset="2mm"/>
+              <keep intact="contentArea"/>
+              <field w="22mm" h="8mm">
+                <ui>
+                  <button highlight="outline"/>
+                </ui>
+                <margin bottomInset="0mm"/>
+              </field>
+            </subform>
+            <subform w="201mm" minH="55.309mm" layout="lr-tb" name="table">
+              <field w="62mm" h="9mm">
+                <ui>
+                  <textEdit>
+                  </textEdit>
+                </ui>
+                <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+              </field>
+              <draw w="201mm" minH="6.421mm">
+                <ui>
+                  <textEdit/>
+                </ui>
+                <margin topInset="1mm" bottomInset="3mm" leftInset="1mm" rightInset="1mm"/>
+              </draw>
+              <subform layout="table" columnWidths="30mm 171mm">
+                <subform layout="row"  x="0.074mm" y="0.006mm">
+                  <draw h="8mm">
+                    <ui>
+                      <textEdit>
+                      </textEdit>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                  </draw>
+                  <draw h="8mm" x="0.001mm" y="0mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                  </draw>
+                  <occur max="-1"/>
+                </subform>
+                <subform layout="row" x="0.074mm" y="0mm">
+                  <field w="67mm" minH="7.234mm" access="protected" x="0.005mm" y="0mm">
+                    <ui>
+                      <textEdit>
+                      </textEdit>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                  </field>
+                  <field w="67mm" x="0.004mm" y="0mm" locale="en_GB" access="protected" minH="8mm">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <occur min="0" max="-1"/>
+                </subform>
+                <subform layout="row" x="0.034mm" y="0mm">
+                  <draw minH="7.234mm" w="67mm">
+                    <ui>
+                      <textEdit>
+                      </textEdit>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                  </draw>
+                  <draw minH="7.234mm" w="67mm" presence="invisible" x="0.001mm">
+                    <ui>
+                      <textEdit>
+                      </textEdit>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                  </draw>
+                </subform>
+                <overflow leader="HeaderRow"/>
+              </subform>
+            </subform>
+            <event activity="initialize">
+              <script contentType="application/x-javascript">
+                Show.presence = "visible";
+                Hide.presence = "hidden";
+                table.presence = "hidden";
+              </script>
+            </event>
+          </subform>
+          <subform w="202mm" minH="48mm" layout="lr-tb" y="3mm">
+            <margin topInset="0mm" bottomInset="1mm"/>
+            <draw h="6.773mm" w="108mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1mm" rightInset="1.27mm"/>
+            </draw>
+            <subform w="201mm" minH="19.001mm" layout="lr-tb">
+              <subform minH="8mm" layout="lr-tb" name="show">
+                <field w="41mm" h="8mm">
+                  <ui>
+                    <button highlight="outline"/>
+                  </ui>
+                  <margin bottomInset="0mm"/>
+                </field>
+                <margin topInset="3mm" bottomInset="2mm"/>
+                <keep intact="contentArea"/>
+              </subform>
+              <subform w="22mm" minH="8mm" layout="lr-tb" name="hide">
+                <field w="22mm" h="8mm">
+                  <ui>
+                    <button highlight="outline"/>
+                  </ui>
+                  <margin bottomInset="0mm"/>
+                </field>
+                <margin topInset="3mm" bottomInset="2mm"/>
+                <keep intact="contentArea"/>
+              </subform>
+              <field w="62mm" h="9mm" access="protected" presence="hidden">
+                <ui>
+                  <textEdit>
+                  </textEdit>
+                </ui>
+                <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+              </field>
+              <subform w="201mm" minH="55.309mm" layout="lr-tb" name="table">
+                <field w="62mm" h="9mm">
+                  <ui>
+                    <textEdit>
+                    </textEdit>
+                  </ui>
+                  <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                </field>
+                <field y="0mm" x="0mm" w="62mm" h="9mm">
+                  <ui>
+                    <textEdit>
+                    </textEdit>
+                  </ui>
+                  <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                </field>
+                <draw h="0.252778in" w="201mm">
+                  <ui>
+                    <textEdit/>
+                  </ui>
+                  <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1mm" rightInset="1.27mm"/>
+                </draw>
+                <subform layout="table" columnWidths="52.5mm 2.066931in 25mm 71mm">
+                  <subform layout="row" x="0.056mm">
+                    <draw h="15mm">
+                      <ui>
+                        <textEdit/>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <draw h="15mm">
+                      <ui>
+                        <textEdit/>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <draw h="15mm">
+                      <ui>
+                        <textEdit>
+                        </textEdit>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <draw h="15mm">
+                      <ui>
+                        <textEdit/>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <occur max="-1"/>
+                  </subform>
+                  <subform layout="row" x="0.056mm">
+                    <field w="67mm" minH="7.234mm" x="0.004mm" y="0mm" locale="en_GB" access="protected">
+                      <ui>
+                        <textEdit multiLine="1">
+                        </textEdit>
+                      </ui>
+                      <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                    </field>
+                    <field w="67mm" minH="7.234mm" y="0mm" access="protected">
+                      <ui>
+                        <textEdit multiLine="1">
+                        </textEdit>
+                      </ui>
+                      <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                    </field>
+                    <field w="67mm" minH="7.234mm" access="protected">
+                      <ui>
+                        <dateTimeEdit>
+                        </dateTimeEdit>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                      <format>
+                        <picture
+                            >date{DD/MM/YYYY}</picture>
+                      </format>
+                    </field>
+                    <field w="67mm" minH="7.234mm" y="0mm" access="protected">
+                      <ui>
+                        <textEdit multiLine="1">
+                        </textEdit>
+                      </ui>
+                      <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                    </field>
+                    <occur min="0" max="-1"/>
+                  </subform>
+                  <subform layout="row" x="0.016mm">
+                    <draw minH="7.234mm" w="67mm" presence="invisible" x="0.001mm">
+                      <ui>
+                        <textEdit>
+                        </textEdit>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <draw minH="7.234mm" w="67mm" presence="invisible">
+                      <ui>
+                        <textEdit>
+                        </textEdit>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <draw minH="7.234mm" w="67mm">
+                      <ui>
+                        <textEdit>
+                        </textEdit>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                    <draw minH="7.234mm" w="67mm" presence="invisible">
+                      <ui>
+                        <textEdit>
+                        </textEdit>
+                      </ui>
+                      <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+                    </draw>
+                  </subform>
+                  <overflow leader="HeaderRow"/>
+                </subform>
+              </subform>
+              <occur min="0" max="-1"/>
+            </subform>
+          </subform>
+          <subform w="202mm" minH="147.001mm" layout="lr-tb">
+            <draw h="6.773mm" w="108mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1mm" rightInset="1.27mm"/>
+            </draw>
+            <subform minH="237.19mm" layout="lr-tb" w="202mm">
+              <subform minH="8mm" layout="lr-tb" name="show">
+                <field w="89mm" h="8mm">
+                  <ui>
+                    <button highlight="outline"/>
+                  </ui>
+                  <margin bottomInset="0mm"/>
+                </field>
+                <margin topInset="3mm" bottomInset="2mm"/>
+                <keep intact="contentArea"/>
+              </subform>
+              <subform minH="8mm" layout="lr-tb" name="hide">
+                <field w="22mm" h="8mm">
+                  <ui>
+                    <button highlight="outline"/>
+                  </ui>
+                  <margin bottomInset="0mm"/>
+                </field>
+                <margin topInset="3mm" bottomInset="2mm"/>
+                <keep intact="contentArea"/>
+              </subform>
+              <field w="62mm" h="9mm" access="protected" presence="hidden">
+                <ui>
+                  <textEdit>
+                  </textEdit>
+                </ui>
+                <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+              </field>
+              <subform w="202mm" minH="224.19mm" layout="lr-tb">
+                <subform w="202mm" minH="34.081mm" layout="lr-tb">
+                  <draw w="7.95275in" h="6mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb">
+                  <draw w="7.95275in" h="6.875mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb" y="3mm">
+                  <draw w="7.95275in" h="6.875mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb" y="3mm">
+                  <draw w="7.95275in" h="6.875mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb">
+                  <draw w="7.95275in" h="6.036mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+              </subform>
+              <occur min="0" max="-1"/>
+            </subform>
+          </subform>
+          <subform w="202mm" minH="147.001mm" layout="lr-tb">
+            <draw h="6.773mm" w="108mm">
+              <ui>
+                <textEdit/>
+              </ui>
+              <margin topInset="1.27mm" bottomInset="1.27mm" leftInset="1mm" rightInset="1.27mm"/>
+            </draw>
+            <subform minH="237.19mm" layout="lr-tb" w="202mm">
+              <subform minH="8mm" layout="lr-tb" name="show">
+                <field w="60mm" h="8mm">
+                  <ui>
+                    <button highlight="outline"/>
+                  </ui>
+                  <margin bottomInset="0mm"/>
+                </field>
+                <margin topInset="3mm" bottomInset="2mm"/>
+                <keep intact="contentArea"/>
+              </subform>
+              <subform minH="8mm" layout="lr-tb" name="hide">
+                <field w="22mm" h="8mm">
+                  <ui>
+                    <button highlight="outline"/>
+                  </ui>
+                  <margin bottomInset="0mm"/>
+                </field>
+                <margin topInset="3mm" bottomInset="2mm"/>
+                <keep intact="contentArea"/>
+              </subform>
+              <field w="62mm" h="9mm" access="protected" presence="hidden">
+                <ui>
+                  <textEdit>
+                  </textEdit>
+                </ui>
+                <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+              </field>
+              <subform w="202mm" minH="224.19mm" layout="lr-tb">
+                <subform w="127mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="51mm" minH="9mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="26mm" minH="9mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="0mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="127mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="51mm" minH="9mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="76mm" minH="9mm" access="protected">
+                    <ui>
+                      <dateTimeEdit>
+                      </dateTimeEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="0mm" rightInset="1mm"/>
+                    <format>
+                      <picture
+                          >date{DD/MM/YYYY}</picture>
+                    </format>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="127mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="51mm" minH="9mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="76mm" minH="9mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="0mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="202mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="127mm" h="17.439mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="25mm" minH="17.578mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="10mm" bottomInset="1mm" leftInset="3mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="202mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="127mm" minH="20.35mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="25mm" minH="17.578mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="15mm" bottomInset="1mm" leftInset="3mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="202mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="127mm" minH="11.651mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="25mm" minH="11.651mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="7mm" bottomInset="1mm" leftInset="3mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="202mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="127mm" minH="17.578mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="25mm" minH="17.578mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="10mm" bottomInset="1mm" leftInset="3mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                </subform>
+                <subform w="202mm" minH="15.694mm" layout="lr-tb">
+                  <draw w="127mm" minH="11.192mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="2mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="25mm" minH="11mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="6mm" bottomInset="1mm" leftInset="3mm" rightInset="1mm"/>
+                  </field>
+                  <keep intact="contentArea"/>
+                  <margin bottomInset="2mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb">
+                  <draw w="7.95275in" h="9.537mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb">
+                  <draw w="7.95275in" h="9.537mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+                <subform w="202mm" minH="34.081mm" layout="lr-tb">
+                  <draw w="7.95275in" h="6.875mm">
+                    <ui>
+                      <textEdit/>
+                    </ui>
+                    <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="1mm" rightInset="0.5mm"/>
+                  </draw>
+                  <field w="202mm" minH="28mm" access="protected">
+                    <ui>
+                      <textEdit multiLine="1">
+                      </textEdit>
+                    </ui>
+                    <margin topInset="1mm" bottomInset="1mm" leftInset="1mm" rightInset="1mm"/>
+                  </field>
+                  <margin topInset="1mm" bottomInset="1mm"/>
+                </subform>
+              </subform>
+              <occur min="0" max="-1"/>
+            </subform>
+          </subform>
+          <subform w="22mm" minH="8mm" layout="lr-tb" name="save" y="3mm">
+            <field w="22mm" h="8mm">
+              <ui>
+                <button highlight="outline"/>
+              </ui>
+              <margin bottomInset="0mm"/>
+            </field>
+            <margin topInset="3mm" bottomInset="2mm"/>
+          </subform>
+        </subform>
+        <overflow leader="Bloog"/>
+      </subform>
+      <subform layout="tb" w="203mm">
+        <margin bottomInset="0mm" leftInset="0mm" topInset="0mm"/>
+        <variables>
+        </variables>
+        <subform layout="lr-tb" minH="8.802mm" w="203mm">
+          <keep intact="contentArea"/>
+          <margin leftInset="0mm"/>
+          <draw h="0.238889in" name="tbd" w="203mm">
+            <margin bottomInset="1mm" leftInset="2mm" rightInset="1mm" topInset="1mm"/>
+            <ui>
+              <textEdit/>
+            </ui>
+          </draw>
+          <draw h="8mm" w="203mm">
+            <margin bottomInset="0.5mm" leftInset="2mm" rightInset="0.5mm" topInset="2mm"/>
+            <ui>
+              <textEdit/>
+            </ui>
+          </draw>
+          <subform layout="lr-tb" name="fieldCaption" w="50mm" presence="hidden">
+            <keep intact="contentArea"/>
+            <margin leftInset="2mm"/>
+            <draw h="8.802mm" name="Normal" w="48mm">
+              <margin bottomInset="0.5mm" leftInset="0mm" rightInset="0.5mm" topInset="0.5mm"/>
+              <ui>
+                <textEdit/>
+              </ui>
+            </draw>
+            <draw h="8.802mm" name="Star" w="48mm">
+              <margin bottomInset="0.5mm" leftInset="0mm" rightInset="0.5mm" topInset="0.5mm"/>
+              <ui>
+                <textEdit/>
+              </ui>
+            </draw>
+          </subform>
+          <field access="readOnly" h="9mm" w="62mm">
+            <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+            <ui>
+              <textEdit>
+              </textEdit>
+            </ui>
+          </field>
+          <field h="6mm" name="Button1" w="28.575mm">
+            <ui>
+              <button highlight="inverted"/>
+            </ui>
+          </field>
+          <field h="6mm" name="Button2" w="28.575mm">
+            <ui>
+              <button highlight="inverted"/>
+            </ui>
+          </field>
+          <field h="6mm" name="verifySig" w="28.575mm">
+            <ui>
+              <button highlight="inverted"/>
+            </ui>
+          </field>
+          <field h="0.1mm" name="concat" w="0.1mm">
+            <calculate>
+              <script contentType="application/x-javascript">
+	        fieldCaption.Star.presence = "hidden";
+	        fieldCaption.Normal.presence = "visible";
+	        this.rawValue = "Sig Not Required";
+              </script>
+            </calculate>
+            <margin bottomInset="0mm" leftInset="0mm" rightInset="0mm" topInset="0mm"/>
+            <validate>
+              <message>
+                <text name="scriptTest"/>
+              </message>
+            </validate>
+          </field>
+        </subform>
+        <subform layout="lr-tb" w="203mm" presence="hidden">
+          <keep intact="contentArea"/>
+          <margin bottomInset="1mm"/>
+          <draw h="6.269mm" w="7.992125in">
+            <margin bottomInset="0mm" leftInset="2mm" rightInset="0.5mm" topInset="2mm"/>
+            <ui>
+              <textEdit/>
+            </ui>
+          </draw>
+          <draw h="5mm" name="Text1" w="139.483mm">
+            <margin bottomInset="0mm" leftInset="2mm" rightInset="0mm" topInset="0.5mm"/>
+            <ui>
+              <textEdit/>
+            </ui>
+          </draw>
+          <field access="readOnly" h="0.217639in" name="TextField1" w="0.604861in">
+            <margin bottomInset="0mm" leftInset="0mm" rightInset="0mm" topInset="0mm"/>
+            <ui>
+              <textEdit>
+              </textEdit>
+            </ui>
+            <validate>
+              <message>
+                <text name="scriptTest"/>
+              </message>
+            </validate>
+          </field>
+          <draw h="5mm" name="Text1" w="0.786167in">
+            <margin bottomInset="0mm" leftInset="0mm" rightInset="0.5mm" topInset="0.5mm"/>
+            <ui>
+              <textEdit/>
+            </ui>
+          </draw>
+          <field h="9mm" name="url" w="62mm">
+            <margin bottomInset="1mm" leftInset="1mm" rightInset="1mm" topInset="1mm"/>
+            <ui>
+              <textEdit>
+              </textEdit>
+            </ui>
+          </field>
+        </subform>
+      </subform>
+    </subform>
+    <proto>
+      <subform w="202.001mm" name="Bloog" x="0.003mm" y="0.008mm">
+        <occur max="-1"/>
+        <draw w="202mm" h="6mm" x="0.001mm" y="0.001mm">
+          <ui>
+            <textEdit/>
+          </ui>
+          <margin topInset="0.5mm" bottomInset="0.5mm" leftInset="0.5mm" rightInset="0.5mm"/>
+        </draw>
+      </subform>
+    </proto>
+  </subform>
+</template>
+endstream
+endobj
+{{include xfa_locale_6_0.fragment}}
+{{include xfa_postamble_7_0.fragment}}
+{{include xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
