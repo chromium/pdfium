@@ -16,21 +16,21 @@
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->GetFirstChild();
-  CXFA_Document* pDocument = pLayoutItem->GetFormNode()->GetDocument();
-  CXFA_FFNotify* pNotify = pDocument->GetNotify();
-  CXFA_LayoutProcessor* pDocLayout = pDocument->GetLayoutProcessor();
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->GetNextSibling();
-    pNode->SetParent(nullptr);
-    pNotify->OnLayoutItemRemoving(pDocLayout, pNode);
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
   }
+  CXFA_Document* pDocument = pLayoutItem->GetFormNode()->GetDocument();
+  CXFA_FFNotify* pNotify = pDocument->GetNotify();
+  CXFA_LayoutProcessor* pDocLayout = pDocument->GetLayoutProcessor();
   pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
   if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea) {
     pNotify->OnPageEvent(ToViewLayoutItem(pLayoutItem),
                          XFA_PAGEVIEWEVENT_PostRemoved);
   }
+  if (pLayoutItem->GetParent())
+    pLayoutItem->GetParent()->RemoveChild(pLayoutItem);
   delete pLayoutItem;
 }
 
