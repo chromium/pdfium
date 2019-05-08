@@ -7,7 +7,7 @@
 
 class CXFALayoutItemEmbedderTest : public EmbedderTest {};
 
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#if defined(LEAK_SANITIZER)
 
 // Leaks. See https://crbug.com/pdfium/1265
 #define MAYBE_Bug_1265 DISABLED_Bug_1265
