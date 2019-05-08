@@ -158,9 +158,8 @@ void SyncContainer(CXFA_FFNotify* pNotify,
   }
 }
 
-void ReorderLayoutItemToTail(CXFA_ViewLayoutItem* pLayoutItem) {
-  CXFA_ViewLayoutItem* pParentLayoutItem =
-      ToViewLayoutItem(pLayoutItem->GetParent());
+void ReorderLayoutItemToTail(CXFA_LayoutItem* pLayoutItem) {
+  CXFA_LayoutItem* pParentLayoutItem = pLayoutItem->GetParent();
   if (!pParentLayoutItem)
     return;
 
@@ -168,9 +167,8 @@ void ReorderLayoutItemToTail(CXFA_ViewLayoutItem* pLayoutItem) {
   pParentLayoutItem->AddChild(pLayoutItem);
 }
 
-void RemoveLayoutItem(CXFA_ViewLayoutItem* pLayoutItem) {
-  CXFA_ViewLayoutItem* pParentLayoutItem =
-      ToViewLayoutItem(pLayoutItem->GetParent());
+void RemoveLayoutItem(CXFA_LayoutItem* pLayoutItem) {
+  CXFA_LayoutItem* pParentLayoutItem = pLayoutItem->GetParent();
   if (!pParentLayoutItem)
     return;
 
@@ -1935,18 +1933,6 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
     delete pPage;
   }
   ClearData();
-}
-
-void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem* pNode = pLayoutItem->GetFirstChild();
-  while (pNode) {
-    CXFA_LayoutItem* pNext = pNode->GetNextSibling();
-    pNode->SetParent(nullptr);
-    XFA_ReleaseLayoutItem_NoPageArea(pNode);
-    pNode = pNext;
-  }
-  if (pLayoutItem->GetFormNode()->GetElementType() != XFA_Element::PageArea)
-    delete pLayoutItem;
 }
 
 void CXFA_LayoutPageMgr::PrepareLayout() {
