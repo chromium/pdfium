@@ -19,7 +19,7 @@
 //    an unowned ptr will fail to compile rather than silently succeeding,
 //    since it is a class and not a raw pointer.
 //
-// 2. When built for a memory tool like ASAN, the class provides a destructor
+// 2. When built using the memory tool ASAN, the class provides a destructor
 //    which checks that the object being pointed to is still alive.
 //
 // Hence, when using UnownedPtr, no dangling pointers are ever permitted,
@@ -105,14 +105,14 @@ class UnownedPtr {
   friend class pdfium::span<T>;
 
   inline void ProbeForLowSeverityLifetimeIssue() {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#if defined(ADDRESS_SANITIZER)
     if (m_pObj)
       reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
 #endif
   }
 
   inline void ReleaseBadPointer() {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#if defined(ADDRESS_SANITIZER)
     m_pObj = nullptr;
 #endif
   }
