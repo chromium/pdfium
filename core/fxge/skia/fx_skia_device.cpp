@@ -907,7 +907,7 @@ class SkiaState {
       sk_sp<SkTypeface> typeface(SkSafeRef(m_pTypeFace.Get()));
       font.setTypeface(typeface);
     }
-    font.setHinting(kNo_SkFontHinting);
+    font.setHinting(SkFontHinting::kNone);
     font.setScaleX(m_scaleX);
     font.setSize(SkTAbs(m_fontSize));
     font.setSubpixel(true);
@@ -933,11 +933,11 @@ class SkiaState {
     if (m_rsxform.count()) {
       blob = SkTextBlob::MakeFromRSXform(m_glyphs.begin(), m_glyphs.bytes(),
                                          m_rsxform.begin(), font,
-                                         kGlyphID_SkTextEncoding);
+                                         SkTextEncoding::kGlyphID);
     } else {
       blob = SkTextBlob::MakeFromPosText(m_glyphs.begin(), m_glyphs.bytes(),
                                          m_positions.begin(), font,
-                                         kGlyphID_SkTextEncoding);
+                                         SkTextEncoding::kGlyphID);
     }
     skCanvas->drawTextBlob(blob, 0, 0, skPaint);
 
@@ -1565,7 +1565,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
 
   SkFont font;
   font.setTypeface(typeface);
-  font.setHinting(kNo_SkFontHinting);
+  font.setHinting(SkFontHinting::kNone);
   font.setSize(SkTAbs(font_size));
   font.setSubpixel(true);
 
@@ -1631,7 +1631,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
     }
     m_pCanvas->drawTextBlob(
         SkTextBlob::MakeFromRSXform(glyphs.begin(), nChars * 2, xforms.begin(),
-                                    font, kGlyphID_SkTextEncoding),
+                                    font, SkTextEncoding::kGlyphID),
         0, 0, paint);
   } else if (oneAtATime) {
     for (int index = 0; index < nChars; ++index) {
@@ -1641,7 +1641,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
             1 == cp.m_AdjustMatrix[3]) {
           font.setScaleX(cp.m_AdjustMatrix[0]);
           auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
-                                               kGlyphID_SkTextEncoding);
+                                               SkTextEncoding::kGlyphID);
           m_pCanvas->drawTextBlob(blob, positions[index].fX,
                                   positions[index].fY, paint);
           font.setScaleX(1);
@@ -1656,13 +1656,13 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
           adjust.preTranslate(positions[index].fX, positions[index].fY);
           m_pCanvas->concat(adjust);
           auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
-                                               kGlyphID_SkTextEncoding);
+                                               SkTextEncoding::kGlyphID);
           m_pCanvas->drawTextBlob(blob, 0, 0, paint);
           m_pCanvas->restore();
         }
       } else {
         auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
-                                             kGlyphID_SkTextEncoding);
+                                             SkTextEncoding::kGlyphID);
         m_pCanvas->drawTextBlob(blob, positions[index].fX, positions[index].fY,
                                 paint);
       }
@@ -1670,7 +1670,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   } else {
     m_pCanvas->drawTextBlob(SkTextBlob::MakeFromPosText(
                                 glyphs.begin(), nChars * 2, positions.begin(),
-                                font, kGlyphID_SkTextEncoding),
+                                font, SkTextEncoding::kGlyphID),
                             0, 0, paint);
   }
   m_pCanvas->restore();
