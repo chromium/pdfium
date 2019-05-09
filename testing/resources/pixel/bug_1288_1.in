@@ -1,0 +1,62 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 200 200]
+  /Resources <<
+    /ColorSpace << /CS1 [/Pattern /DeviceRGB] >>
+    /Pattern << /P1 5 0 R >>
+  >>
+  /Contents 4 0 R
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+4 w /CS1 cs 1 1 1 /P1 scn
+q 75 75 100 100 re f Q
+q 75 75 100 100 re S Q
+Q
+q
+4 w /CS1 cs 1 1 1 /P1 scn
+q 25 25 100 100 re f Q
+q 25 25 100 100 re S Q
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Pattern
+  /PatternType 1
+  /PaintType 2
+  /TilingType 3
+  /BBox [0 0 8 8]
+  /YStep 8
+  /XStep 8
+  {{streamlen}}
+>>
+stream
+q
+0 0 m 8 0 l S
+0 2 m 8 2 l S
+0 4 m 8 4 l S
+0 6 m 8 6 l S
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

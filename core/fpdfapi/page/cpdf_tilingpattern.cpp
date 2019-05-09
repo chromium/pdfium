@@ -6,7 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 
+#include "core/fpdfapi/page/cpdf_allstates.h"
 #include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -31,13 +33,10 @@ CPDF_ShadingPattern* CPDF_TilingPattern::AsShadingPattern() {
   return nullptr;
 }
 
-bool CPDF_TilingPattern::Load() {
-  if (m_pForm)
-    return true;
-
+std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
   if (!pDict)
-    return false;
+    return nullptr;
 
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
   m_XStep = static_cast<float>(fabs(pDict->GetNumberFor("XStep")));
@@ -45,11 +44,16 @@ bool CPDF_TilingPattern::Load() {
 
   CPDF_Stream* pStream = pattern_obj()->AsStream();
   if (!pStream)
-    return false;
+    return nullptr;
 
   const CFX_Matrix& matrix = parent_matrix();
-  m_pForm = pdfium::MakeUnique<CPDF_Form>(document(), nullptr, pStream);
-  m_pForm->ParseContent(nullptr, &matrix, nullptr, nullptr);
+  auto form = pdfium::MakeUnique<CPDF_Form>(document(), nullptr, pStream);
+
+  CPDF_AllStates allStates;
+  allStates.m_ColorState.Emplace();
+  allStates.m_GraphState.Emplace();
+  allStates.m_GeneralState = pPageObj->m_GeneralState;
+  form->ParseContent(&allStates, &matrix, nullptr, nullptr);
   m_BBox = pDict->GetRectFor("BBox");
-  return true;
+  return form;
 }
