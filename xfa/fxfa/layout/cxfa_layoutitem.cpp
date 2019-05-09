@@ -52,7 +52,9 @@ void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
 CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, ItemType type)
     : m_ItemType(type), m_pFormNode(pNode) {}
 
-CXFA_LayoutItem::~CXFA_LayoutItem() = default;
+CXFA_LayoutItem::~CXFA_LayoutItem() {
+  CHECK(!GetParent());
+}
 
 CXFA_ViewLayoutItem* CXFA_LayoutItem::AsViewLayoutItem() {
   return IsViewLayoutItem() ? static_cast<CXFA_ViewLayoutItem*>(this) : nullptr;

@@ -645,7 +645,7 @@ CXFA_ViewRecord* CXFA_LayoutPageMgr::CreateViewRecord(CXFA_Node* pPageNode,
     while (pPrePageSet->GetNextSibling()) {
       pPrePageSet = pPrePageSet->GetNextSibling()->AsViewLayoutItem();
     }
-    pPrePageSet->SetNextSibling(pPageSetLayoutItem);
+    pPrePageSet->GetParent()->InsertChild(pPrePageSet, pPageSetLayoutItem);
     m_pPageSetCurRoot = pPageSetLayoutItem;
   } else {
     pParentPageSetLayout->AddChild(pPageSetLayoutItem);
