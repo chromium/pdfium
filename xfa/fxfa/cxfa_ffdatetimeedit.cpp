@@ -44,7 +44,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   auto pNewPicker = pdfium::MakeUnique<CFWL_DateTimePicker>(GetFWLApp());
   CFWL_DateTimePicker* pWidget = pNewPicker.get();
   m_pNormalWidget = std::move(pNewPicker);
-  m_pNormalWidget->SetLayoutItem(this);
+  m_pNormalWidget->SetFFWidget(this);
 
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();

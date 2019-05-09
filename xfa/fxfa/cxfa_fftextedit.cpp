@@ -47,7 +47,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   CFWL_Edit* pFWLEdit = pNewWidget.get();
   m_pNormalWidget = std::move(pNewWidget);
-  m_pNormalWidget->SetLayoutItem(this);
+  m_pNormalWidget->SetFFWidget(this);
 
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();

@@ -55,7 +55,7 @@ bool CXFA_FFPushButton::LoadWidget() {
   m_pOldDelegate = pPushButton->GetDelegate();
   pPushButton->SetDelegate(this);
   m_pNormalWidget = std::move(pNew);
-  m_pNormalWidget->SetLayoutItem(this);
+  m_pNormalWidget->SetFFWidget(this);
 
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();

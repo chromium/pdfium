@@ -42,7 +42,7 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
   CFWL_Widget* pOuter = pWidget;
   while (pOuter && pOuter->GetOuter())
     pOuter = pOuter->GetOuter();
-  return pOuter ? pOuter->GetLayoutItem() : nullptr;
+  return pOuter ? pOuter->GetFFWidget() : nullptr;
 }
 
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)

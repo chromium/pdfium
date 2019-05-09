@@ -114,8 +114,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   uint32_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint32_t key) { m_nEventKey = key; }
 
-  CXFA_FFWidget* GetLayoutItem() const { return m_pLayoutItem; }
-  void SetLayoutItem(CXFA_FFWidget* pItem) { m_pLayoutItem = pItem; }
+  CXFA_FFWidget* GetFFWidget() const { return m_pFFWidget; }
+  void SetFFWidget(CXFA_FFWidget* pItem) { m_pFFWidget = pItem; }
 
   void RepaintRect(const CFX_RectF& pRect);
 
@@ -166,7 +166,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   bool IsParent(CFWL_Widget* pParent);
 
   uint32_t m_nEventKey = 0;
-  CXFA_FFWidget* m_pLayoutItem = nullptr;
+  CXFA_FFWidget* m_pFFWidget = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };
 
