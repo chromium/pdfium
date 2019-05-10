@@ -81,9 +81,6 @@ int g_CurrentRecursionDepth = 0;
 
 void ReleaseCachedType3(CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
-  if (!pDoc)
-    return;
-
   pDoc->GetRenderData()->MaybePurgeCachedType3(pFont);
   pDoc->GetPageData()->ReleaseFont(pFont->GetFontDict());
 }
@@ -1784,9 +1781,6 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
 RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
     CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
-  if (!pDoc)
-    return nullptr;
-
   pDoc->GetPageData()->GetFont(pFont->GetFontDict());
   return pDoc->GetRenderData()->GetCachedType3(pFont);
 }

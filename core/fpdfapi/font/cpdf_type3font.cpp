@@ -26,10 +26,11 @@ constexpr int kMaxType3FormLevel = 4;
 CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
                                CPDF_Dictionary* pFontDict)
     : CPDF_SimpleFont(pDocument, pFontDict) {
+  ASSERT(GetDocument());
   memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 
-CPDF_Type3Font::~CPDF_Type3Font() {}
+CPDF_Type3Font::~CPDF_Type3Font() = default;
 
 bool CPDF_Type3Font::IsType3Font() const {
   return true;
