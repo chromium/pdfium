@@ -15,6 +15,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+// Values used in PDFs except for |kInvalidShading| and |kMaxShading|.
+// Do not change.
 enum ShadingType {
   kInvalidShading = 0,
   kFunctionBasedShading = 1,

@@ -20,7 +20,8 @@ class CPDF_TilingPattern;
 
 class CPDF_Pattern {
  public:
-  enum PatternType { TILING = 1, SHADING };
+  // Values used in PDFs. Do not change.
+  enum PatternType { kTiling = 1, kShading = 2 };
 
   virtual ~CPDF_Pattern();
 

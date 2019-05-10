@@ -23,7 +23,7 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
   SetPatternToFormMatrix();
 }
 
-CPDF_TilingPattern::~CPDF_TilingPattern() {}
+CPDF_TilingPattern::~CPDF_TilingPattern() = default;
 
 CPDF_TilingPattern* CPDF_TilingPattern::AsTilingPattern() {
   return this;
@@ -35,9 +35,6 @@ CPDF_ShadingPattern* CPDF_TilingPattern::AsShadingPattern() {
 
 std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
-  if (!pDict)
-    return nullptr;
-
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
   m_XStep = static_cast<float>(fabs(pDict->GetNumberFor("XStep")));
   m_YStep = static_cast<float>(fabs(pDict->GetNumberFor("YStep")));

@@ -365,10 +365,10 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
       return nullptr;
 
     int type = pDict->GetIntegerFor("PatternType");
-    if (type == CPDF_Pattern::TILING) {
+    if (type == CPDF_Pattern::kTiling) {
       pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(m_pPDFDoc.Get(),
                                                         pPatternObj, matrix);
-    } else if (type == CPDF_Pattern::SHADING) {
+    } else if (type == CPDF_Pattern::kShading) {
       pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
           m_pPDFDoc.Get(), pPatternObj, false, matrix);
     } else {
