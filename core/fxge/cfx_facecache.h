@@ -12,6 +12,8 @@
 #include <tuple>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/observable.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_freetype.h"
 
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
@@ -24,10 +26,13 @@ class CFX_GlyphBitmap;
 class CFX_Matrix;
 class CFX_PathData;
 
-class CFX_FaceCache {
+class CFX_FaceCache : public Retainable, public Observable<CFX_FaceCache> {
  public:
-  explicit CFX_FaceCache(FXFT_Face face);
-  ~CFX_FaceCache();
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
+  ~CFX_FaceCache() override;
+
   const CFX_GlyphBitmap* LoadGlyphBitmap(const CFX_Font* pFont,
                                          uint32_t glyph_index,
                                          bool bFontStyle,
@@ -44,6 +49,8 @@ class CFX_FaceCache {
 #endif
 
  private:
+  explicit CFX_FaceCache(FXFT_Face face);
+
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
   // <glyph_index, width, weight, angle, vertical>
   using PathMapKey = std::tuple<uint32_t, uint32_t, int, int, bool>;

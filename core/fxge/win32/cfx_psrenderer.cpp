@@ -664,11 +664,11 @@ bool CFX_PSRenderer::DrawText(int nChars,
       << pObject2Device->e << " " << pObject2Device->f << "]cm\n";
 
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
-  CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);
+  RetainPtr<CFX_FaceCache> pFaceCache = pCache->GetCachedFace(pFont);
   int last_fontnum = -1;
   for (int i = 0; i < nChars; i++) {
     int ps_fontnum, ps_glyphindex;
-    FindPSFontGlyph(pFaceCache, pFont, pCharPos[i], &ps_fontnum,
+    FindPSFontGlyph(pFaceCache.Get(), pFont, pCharPos[i], &ps_fontnum,
                     &ps_glyphindex);
     if (last_fontnum != ps_fontnum) {
       buf << "/X" << ps_fontnum << " Ff " << font_size << " Fs Sf ";
@@ -680,7 +680,6 @@ bool CFX_PSRenderer::DrawText(int nChars,
   }
   buf << "Q\n";
   WriteToStream(&buf);
-  pCache->ReleaseCachedFace(pFont);
   return true;
 }
 

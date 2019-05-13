@@ -581,18 +581,14 @@ bool CFX_Font::GetBBox(FX_RECT* pBBox) {
   return true;
 }
 
-CFX_FaceCache* CFX_Font::GetFaceCache() const {
+RetainPtr<CFX_FaceCache> CFX_Font::GetOrCreateFaceCache() const {
   if (!m_FaceCache)
     m_FaceCache = CFX_GEModule::Get()->GetFontCache()->GetCachedFace(this);
-  return m_FaceCache.Get();
+  return m_FaceCache;
 }
 
 void CFX_Font::ClearFaceCache() {
-  if (!m_FaceCache)
-    return;
-
   m_FaceCache = nullptr;
-  CFX_GEModule::Get()->GetFontCache()->ReleaseCachedFace(this);
 }
 
 void CFX_Font::AdjustMMParams(int glyph_index,
@@ -713,17 +709,18 @@ const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(uint32_t glyph_index,
                                                  uint32_t dest_width,
                                                  int anti_alias,
                                                  int* pTextFlags) const {
-  return GetFaceCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle, matrix,
-                                         dest_width, anti_alias, pTextFlags);
+  return GetOrCreateFaceCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle,
+                                                 matrix, dest_width, anti_alias,
+                                                 pTextFlags);
 }
 
 const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
                                             uint32_t dest_width) const {
-  return GetFaceCache()->LoadGlyphPath(this, glyph_index, dest_width);
+  return GetOrCreateFaceCache()->LoadGlyphPath(this, glyph_index, dest_width);
 }
 
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
 CFX_TypeFace* CFX_Font::GetDeviceCache() const {
-  return GetFaceCache()->GetDeviceCache(this);
+  return GetOrCreateFaceCache()->GetDeviceCache(this);
 }
 #endif

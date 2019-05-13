@@ -11,32 +11,24 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_font.h"
+#include "core/fxge/cfx_facecache.h"
 #include "core/fxge/fx_freetype.h"
 
-class CFX_FaceCache;
+class CFX_Font;
 
 class CFX_FontCache {
  public:
   CFX_FontCache();
   ~CFX_FontCache();
-  CFX_FaceCache* GetCachedFace(const CFX_Font* pFont);
-  void ReleaseCachedFace(const CFX_Font* pFont);
+
+  RetainPtr<CFX_FaceCache> GetCachedFace(const CFX_Font* pFont);
 #ifdef _SKIA_SUPPORT_
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
 #endif
 
  private:
-  struct CountedFaceCache {
-    CountedFaceCache();
-    ~CountedFaceCache();
-    std::unique_ptr<CFX_FaceCache> m_Obj;
-    uint32_t m_nCount;
-  };
-
-  using CFX_FTCacheMap = std::map<FXFT_Face, std::unique_ptr<CountedFaceCache>>;
-  CFX_FTCacheMap m_FTFaceMap;
-  CFX_FTCacheMap m_ExtFaceMap;
+  std::map<FXFT_Face, CFX_FaceCache::ObservedPtr> m_FTFaceMap;
+  std::map<FXFT_Face, CFX_FaceCache::ObservedPtr> m_ExtFaceMap;
 };
 
 #endif  // CORE_FXGE_CFX_FONTCACHE_H_
