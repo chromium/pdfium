@@ -147,6 +147,56 @@ differences on the various platforms. These tests are reliable on the bots. If
 you see failures, it can be a good idea to run the tests on the tip-of-tree
 checkout to see if the same failures appear.
 
+### Pixel Tests
+
+If your change affects rendering, a pixel test should be added. Simply add a
+`.in` or `.pdf` file in `testing/resources/pixel` and the pixel runner will
+pick it up at the next run.
+
+Make sure that your test case doesn't have any copyright issues. It should also
+be a minimal test case focusing on the bug that renders the same way in many
+PDF viewers. Try to avoid binary data in streams by using the `ASCIIHexDecode`
+simply because it makes the PDF more readable in a text editor.
+
+To try out your new test, you can call the `run_pixel_tests.py` script:
+
+```bash
+$ ./testing/tools/run_pixel_tests.py your_new_file.in
+```
+
+To generate the expected image, you can use the `make_expected.sh` script:
+
+```bash
+$ ./testing/tools/make_expected.sh your_new_file.pdf
+```
+
+Please make sure to have `optipng` installed which optimized the file size of
+the resulting png.
+
+### `.in` files
+
+`.in` files are PDF template files. PDF files contain many byte offsets that
+have to be kept correct or the file won't be valid. The template makes this
+easier by replacing the byte offsets with certain keywords.
+
+This saves space and also allows an easy way to reduce the test case to the
+essentials as you can simply remove everything that is not necessary.
+
+A simple example can be found [here](https://pdfium.googlesource.com/pdfium/+/refs/heads/master/testing/resources/rectangles.in).
+
+To transform this into a PDF, you can use the `fixup_pdf_template.py` tool:
+
+```bash
+$ ./testing/tools/fixup_pdf_template.py your_file.in
+```
+
+This will create a `your_file.pdf` in the same directory as `your_file.in`.
+
+There is no official style guide for the .in file, but a consistent style is
+preferred simply to help with readability. If possible, object numbers should
+be consecutive and `/Type` and `/SubType` should be on top of a dictionary to
+make object identification easier.
+
 ## Embedding PDFium in your own projects
 
 The public/ directory contains header files for the APIs available for use by
@@ -198,7 +248,7 @@ and add the "Cr-Internals-Plugins-PDF" label.
 ## Contributing code
 
 For contributing code, we will follow
-[Chromium's process](http://dev.chromium.org/developers/contributing-code)
+[Chromium's process](https://chromium.googlesource.com/chromium/src/+/master/docs/contributing.md)
 as much as possible. The main exceptions are:
 
 1. Code has to conform to the existing style and not Chromium/Google style.
@@ -206,3 +256,7 @@ as much as possible. The main exceptions are:
 this Gerrit instance need to be generated before uploading changes.
 3. PDFium is currently holding at C++11 compatibility, rejecting features that
 are only present in C++14 (onto which Chromium is now slowly moving).
+
+Before submitting a fix for a bug, it can help if you create an issue in the
+bug tracker. This allows easier discussion about the problem and also helps
+with statistics tracking.
