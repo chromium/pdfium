@@ -32,10 +32,12 @@ class CXFA_LayoutItem {
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
   void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
 
-  void AddChild(CXFA_LayoutItem* pChildItem);
-  void AddHeadChild(CXFA_LayoutItem* pChildItem);
+  void AppendLastChild(CXFA_LayoutItem* pChildItem);
+  void AppendFirstChild(CXFA_LayoutItem* pChildItem);
   void RemoveChild(CXFA_LayoutItem* pChildItem);
-  void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
+
+  // Insert |pThisChild| after |pThatChild|.
+  void InsertAfter(CXFA_LayoutItem* pThisChild, CXFA_LayoutItem* pThatChild);
 
  protected:
   enum ItemType { kViewItem, kContentItem };

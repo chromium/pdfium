@@ -84,7 +84,7 @@ CXFA_ViewLayoutItem* CXFA_LayoutItem::GetPage() const {
   }
   return nullptr;
 }
-void CXFA_LayoutItem::AddChild(CXFA_LayoutItem* pChildItem) {
+void CXFA_LayoutItem::AppendLastChild(CXFA_LayoutItem* pChildItem) {
   if (pChildItem->m_pParent)
     pChildItem->m_pParent->RemoveChild(pChildItem);
 
@@ -101,7 +101,7 @@ void CXFA_LayoutItem::AddChild(CXFA_LayoutItem* pChildItem) {
   pExistingChildItem->m_pNextSibling = pChildItem;
 }
 
-void CXFA_LayoutItem::AddHeadChild(CXFA_LayoutItem* pChildItem) {
+void CXFA_LayoutItem::AppendFirstChild(CXFA_LayoutItem* pChildItem) {
   if (pChildItem->m_pParent)
     pChildItem->m_pParent->RemoveChild(pChildItem);
 
@@ -116,18 +116,19 @@ void CXFA_LayoutItem::AddHeadChild(CXFA_LayoutItem* pChildItem) {
   m_pFirstChild->m_pNextSibling = pExistingChildItem;
 }
 
-void CXFA_LayoutItem::InsertChild(CXFA_LayoutItem* pBeforeItem,
-                                  CXFA_LayoutItem* pChildItem) {
-  if (pBeforeItem->m_pParent != this)
+void CXFA_LayoutItem::InsertAfter(CXFA_LayoutItem* pThisChild,
+                                  CXFA_LayoutItem* pThatChild) {
+  if (pThatChild->m_pParent != this)
     return;
-  if (pChildItem->m_pParent)
-    pChildItem->m_pParent = nullptr;
 
-  pChildItem->m_pParent = this;
+  if (pThisChild->m_pParent)
+    pThisChild->m_pParent = nullptr;
 
-  CXFA_LayoutItem* pExistingChildItem = pBeforeItem->m_pNextSibling;
-  pBeforeItem->m_pNextSibling = pChildItem;
-  pChildItem->m_pNextSibling = pExistingChildItem;
+  pThisChild->m_pParent = this;
+
+  CXFA_LayoutItem* pExistingChild = pThatChild->m_pNextSibling;
+  pThatChild->m_pNextSibling = pThisChild;
+  pThisChild->m_pNextSibling = pExistingChild;
 }
 
 void CXFA_LayoutItem::RemoveChild(CXFA_LayoutItem* pChildItem) {
