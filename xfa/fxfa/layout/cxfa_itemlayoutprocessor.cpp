@@ -445,7 +445,7 @@ void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
       pCurLayoutItem = pNextLayoutItem;
     }
   }
-  pGenerateNode->GetParent()->RemoveChild(pGenerateNode, true);
+  pGenerateNode->GetParent()->RemoveChildAndNotify(pGenerateNode, true);
 }
 
 uint8_t HAlignEnumToInt(XFA_AttributeValue eHAlign) {
@@ -1490,9 +1490,9 @@ void CXFA_ItemLayoutProcessor::ProcessUnUseOverFlow(
     pFormNode = pFormNode->GetParent();
   }
   if (pLeaderNode && pFormNode)
-    pFormNode->RemoveChild(pLeaderNode, true);
+    pFormNode->RemoveChildAndNotify(pLeaderNode, true);
   if (pTrailerNode && pFormNode)
-    pFormNode->RemoveChild(pTrailerNode, true);
+    pFormNode->RemoveChildAndNotify(pTrailerNode, true);
   if (pTrailerItem)
     XFA_ReleaseLayoutItem(pTrailerItem);
 }

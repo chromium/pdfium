@@ -91,7 +91,7 @@ bool CXFA_NodeHelper::CreateNode(const WideString& wsName,
     for (size_t i = 0; i < m_iCreateCount; ++i) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eType);
       if (pNewNode) {
-        m_pCreateParent->InsertChild(pNewNode, nullptr);
+        m_pCreateParent->InsertChildAndNotify(pNewNode, nullptr);
         if (i == m_iCreateCount - 1) {
           m_pCreateParent = pNewNode;
         }
@@ -109,7 +109,7 @@ bool CXFA_NodeHelper::CreateNode(const WideString& wsName,
         pNewNode->JSObject()->SetAttribute(XFA_Attribute::Name, wsNameView,
                                            false);
         pNewNode->CreateXMLMappingNode();
-        m_pCreateParent->InsertChild(pNewNode, nullptr);
+        m_pCreateParent->InsertChildAndNotify(pNewNode, nullptr);
         if (i == m_iCreateCount - 1) {
           m_pCreateParent = pNewNode;
         }

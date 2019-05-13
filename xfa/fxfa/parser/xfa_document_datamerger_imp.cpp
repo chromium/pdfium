@@ -55,10 +55,10 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
   }
   if (pExistingNode) {
     if (pSubformArray) {
-      pFormParent->InsertChild(pExistingNode, nullptr);
+      pFormParent->InsertChildAndNotify(pExistingNode, nullptr);
     } else if (pExistingNode->IsContainerNode()) {
-      pFormParent->RemoveChild(pExistingNode, true);
-      pFormParent->InsertChild(pExistingNode, nullptr);
+      pFormParent->RemoveChildAndNotify(pExistingNode, true);
+      pFormParent->InsertChildAndNotify(pExistingNode, nullptr);
     }
     pExistingNode->ClearFlag(XFA_NodeFlag_UnusedNode);
     pExistingNode->SetTemplateNode(pTemplateNode);
@@ -76,13 +76,13 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
   }
 
   CXFA_Node* pNewNode = pTemplateNode->CloneTemplateToForm(false);
-  pFormParent->InsertChild(pNewNode, nullptr);
+  pFormParent->InsertChildAndNotify(pNewNode, nullptr);
   if (bRecursive) {
     for (CXFA_Node* pTemplateChild = pTemplateNode->GetFirstChild();
          pTemplateChild; pTemplateChild = pTemplateChild->GetNextSibling()) {
       if (XFA_DataMerge_NeedGenerateForm(pTemplateChild, true)) {
         CXFA_Node* pNewChild = pTemplateChild->CloneTemplateToForm(true);
-        pNewNode->InsertChild(pNewChild, nullptr);
+        pNewNode->InsertChildAndNotify(pNewChild, nullptr);
       }
     }
   }

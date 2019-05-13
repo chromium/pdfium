@@ -331,16 +331,16 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     int32_t index = 0;
     while (pNewChild) {
       CXFA_Node* pItem = pNewChild->GetNextSibling();
-      pFakeRoot->RemoveChild(pNewChild, true);
-      GetXFANode()->InsertChild(index++, pNewChild);
+      pFakeRoot->RemoveChildAndNotify(pNewChild, true);
+      GetXFANode()->InsertChildAndNotify(index++, pNewChild);
       pNewChild->SetFlagAndNotify(XFA_NodeFlag_Initialized);
       pNewChild = pItem;
     }
 
     while (pChild) {
       CXFA_Node* pItem = pChild->GetNextSibling();
-      GetXFANode()->RemoveChild(pChild, true);
-      pFakeRoot->InsertChild(pChild, nullptr);
+      GetXFANode()->RemoveChildAndNotify(pChild, true);
+      pFakeRoot->InsertChildAndNotify(pChild, nullptr);
       pChild = pItem;
     }
 
@@ -359,8 +359,8 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     CXFA_Node* pChild = pFakeRoot->GetFirstChild();
     while (pChild) {
       CXFA_Node* pItem = pChild->GetNextSibling();
-      pFakeRoot->RemoveChild(pChild, true);
-      GetXFANode()->InsertChild(pChild, nullptr);
+      pFakeRoot->RemoveChildAndNotify(pChild, true);
+      GetXFANode()->InsertChildAndNotify(pChild, nullptr);
       pChild->SetFlagAndNotify(XFA_NodeFlag_Initialized);
       pChild = pItem;
     }

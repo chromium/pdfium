@@ -519,7 +519,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
 
   CXFA_Node* pNewFormItem = pTemplateParent->CloneTemplateToForm(false);
   if (pParent)
-    pParent->InsertChild(pNewFormItem, pBefore);
+    pParent->InsertChildAndNotify(pNewFormItem, pBefore);
   return pNewFormItem;
 }
 
@@ -535,7 +535,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_Element eElement,
                          pBefore ? pBefore->GetTemplateNodeIfExists() : nullptr)
           ->Clone(false);
   if (pParent)
-    pParent->InsertChild(pNewNode, pBefore);
+    pParent->InsertChildAndNotify(pNewNode, pBefore);
   return pNewNode;
 }
 
@@ -546,7 +546,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_Element eElement,
   CXFA_Node* pNewTemplateNode =
       pXFADoc->CreateNode(XFA_PacketType::Template, eElement);
   if (pParent)
-    pParent->InsertChild(pNewTemplateNode, pBefore);
+    pParent->InsertChildAndNotify(pNewTemplateNode, pBefore);
   return pNewTemplateNode;
 }
 
