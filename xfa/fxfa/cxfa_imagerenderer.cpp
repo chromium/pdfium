@@ -21,8 +21,10 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
 CXFA_ImageRenderer::~CXFA_ImageRenderer() = default;
 
 bool CXFA_ImageRenderer::Start() {
-  if (m_pDevice->StartDIBits(m_pDIBBase, 255, 0, m_ImageMatrix,
-                             kBilinearInterpolation, &m_DeviceHandle)) {
+  FXDIB_ResampleOptions options;
+  options.bInterpolateBilinear = true;
+  if (m_pDevice->StartDIBits(m_pDIBBase, 255, 0, m_ImageMatrix, options,
+                             &m_DeviceHandle)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
@@ -49,7 +51,7 @@ bool CXFA_ImageRenderer::Start() {
     clip_box.Intersect(image_rect);
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pDib, m_ImageMatrix, kBilinearInterpolation, &clip_box);
+        pDib, m_ImageMatrix, options, &clip_box);
     return true;
   }
   if (m_ImageMatrix.a < 0)
@@ -61,15 +63,15 @@ bool CXFA_ImageRenderer::Start() {
   dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
   if (m_pDIBBase->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
-            m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
-            kBilinearInterpolation, BlendMode::kNormal)) {
+            m_pDIBBase, dest_left, dest_top, dest_width, dest_height, options,
+            BlendMode::kNormal)) {
       return false;
     }
   }
   if (m_pDIBBase->IsAlphaMask()) {
     if (m_pDevice->StretchBitMaskWithFlags(m_pDIBBase, dest_left, dest_top,
                                            dest_width, dest_height, 0,
-                                           kBilinearInterpolation)) {
+                                           options)) {
       return false;
     }
   }
@@ -80,8 +82,8 @@ bool CXFA_ImageRenderer::Start() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
-      dest_width, dest_height, kBilinearInterpolation, &dest_clip);
+  RetainPtr<CFX_DIBitmap> pStretched =
+      m_pDIBBase->StretchTo(dest_width, dest_height, options, &dest_clip);
   if (pStretched)
     CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top);
 
