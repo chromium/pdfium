@@ -1,7 +1,7 @@
 {{header}}
 {{object 1 0}} <<
-    /Type /Catalog
-    /Pages 2 0 R
+  /Type /Catalog
+  /Pages 2 0 R
 >>
 endobj
 {{object 2 0}} <<
@@ -14,7 +14,7 @@ endobj
   /Type /Page
   /Contents 5 0 R
   /MediaBox [0 0 600 850]
-  /Parent 3 0 R
+  /Parent 2 0 R
   /Resources <<
     /ColorSpace << /CS0 [/Pattern] >>
     /ExtGState << /GS0 6 0 R /GS1 7 0 R >>
@@ -47,7 +47,6 @@ q
 50 700 100 100 re
 B
 Q
-
 q
 /GS1 gs /Pattern cs /P0 scn
 50 580 100 100 re
