@@ -146,7 +146,7 @@ class CXFA_LayoutPageMgr {
   void MergePageSetContents();
   void LayoutPageSetContents();
   void PrepareLayout();
-  void SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem);
+  void SaveLayoutItemChildren(CXFA_LayoutItem* pParentLayoutItem);
   void ProcessSimplexOrDuplexPageSets(CXFA_ViewLayoutItem* pPageSetLayoutItem,
                                       bool bIsSimplex);
 
