@@ -80,7 +80,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
     ASSERT_TRUE(page);
     FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
     ASSERT_TRUE(red_rect);
-    EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+    EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
     EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
     FPDFPage_InsertObject(page, red_rect);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);

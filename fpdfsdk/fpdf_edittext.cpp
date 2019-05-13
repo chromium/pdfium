@@ -506,15 +506,6 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
       CPDF_Font::GetStockFont(pDoc, ByteStringView(font)));
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
-                      unsigned int R,
-                      unsigned int G,
-                      unsigned int B,
-                      unsigned int A) {
-  return FPDFPageObj_SetFillColor(text_object, R, G, B, A);
-}
-
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
                                                        double* a,
                                                        double* b,

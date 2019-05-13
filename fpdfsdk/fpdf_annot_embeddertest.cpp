@@ -727,7 +727,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     EXPECT_TRUE(path);
 
     // Modify the color of the path object.
-    EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 0, 0, 0, 255));
+    EXPECT_TRUE(FPDFPageObj_SetStrokeColor(path, 0, 0, 0, 255));
     EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), path));
 
     // Check that the page with the modified annotation renders correctly.
@@ -739,8 +739,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     // Add a second path object to the same annotation.
     FPDF_PAGEOBJECT dot = FPDFPageObj_CreateNewPath(7, 84);
     EXPECT_TRUE(FPDFPath_BezierTo(dot, 9, 86, 10, 87, 11, 88));
-    EXPECT_TRUE(FPDFPath_SetStrokeColor(dot, 255, 0, 0, 100));
-    EXPECT_TRUE(FPDFPath_SetStrokeWidth(dot, 14));
+    EXPECT_TRUE(FPDFPageObj_SetStrokeColor(dot, 255, 0, 0, 100));
+    EXPECT_TRUE(FPDFPageObj_SetStrokeWidth(dot, 14));
     EXPECT_TRUE(FPDFPath_SetDrawMode(dot, 0, 1));
     EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), dot));
     EXPECT_EQ(2, FPDFAnnot_GetObjectCount(annot.get()));
@@ -785,8 +785,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     EXPECT_TRUE(FPDFPath_LineTo(check, 500, 600));
     EXPECT_TRUE(FPDFPath_MoveTo(check, 350, 550));
     EXPECT_TRUE(FPDFPath_LineTo(check, 450, 450));
-    EXPECT_TRUE(FPDFPath_SetStrokeColor(check, 0, 255, 255, 180));
-    EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
+    EXPECT_TRUE(FPDFPageObj_SetStrokeColor(check, 0, 255, 255, 180));
+    EXPECT_TRUE(FPDFPageObj_SetStrokeWidth(check, 8.35f));
     EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
     EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), check));
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
@@ -1014,7 +1014,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
     ScopedFPDFWideString text =
         GetFPDFWideString(L"I'm a translucent text laying on other text.");
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
-    EXPECT_TRUE(FPDFText_SetFillColor(text_object, 0, 0, 255, 150));
+    EXPECT_TRUE(FPDFPageObj_SetFillColor(text_object, 0, 0, 255, 150));
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 200, 600);
     EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), text_object));
   }

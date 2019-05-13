@@ -244,11 +244,11 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
   ASSERT_TRUE(red_rect);
   // Expect false when trying to set colors out of range
-  EXPECT_FALSE(FPDFPath_SetStrokeColor(red_rect, 100, 100, 100, 300));
-  EXPECT_FALSE(FPDFPath_SetFillColor(red_rect, 200, 256, 200, 0));
+  EXPECT_FALSE(FPDFPageObj_SetStrokeColor(red_rect, 100, 100, 100, 300));
+  EXPECT_FALSE(FPDFPageObj_SetFillColor(red_rect, 200, 256, 200, 0));
 
   // Fill rectangle with red and insert to the page
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
 
   int fillmode = FPDF_FILLMODE_NONE;
@@ -304,7 +304,7 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
 
   // Now add to that a green rectangle with some medium alpha
   FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(100, 100, 40, 40);
-  EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 128));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(green_rect, 0, 255, 0, 128));
 
   // Make sure the type of the rectangle is a path.
   EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(green_rect));
@@ -314,7 +314,7 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   unsigned int G;
   unsigned int B;
   unsigned int A;
-  EXPECT_TRUE(FPDFPath_GetFillColor(green_rect, &R, &G, &B, &A));
+  EXPECT_TRUE(FPDFPageObj_GetFillColor(green_rect, &R, &G, &B, &A));
   EXPECT_EQ(0u, R);
   EXPECT_EQ(255u, G);
   EXPECT_EQ(0u, B);
@@ -367,7 +367,7 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
 
   // Add a black triangle.
   FPDF_PAGEOBJECT black_path = FPDFPageObj_CreateNewPath(400, 100);
-  EXPECT_TRUE(FPDFPath_SetFillColor(black_path, 0, 0, 0, 200));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(black_path, 0, 0, 0, 200));
   EXPECT_TRUE(FPDFPath_SetDrawMode(black_path, FPDF_FILLMODE_ALTERNATE, 0));
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 400, 200));
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 300, 100));
@@ -407,7 +407,7 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
 
   // Now add a more complex blue path.
   FPDF_PAGEOBJECT blue_path = FPDFPageObj_CreateNewPath(200, 200);
-  EXPECT_TRUE(FPDFPath_SetFillColor(blue_path, 0, 0, 255, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(blue_path, 0, 0, 255, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(blue_path, FPDF_FILLMODE_WINDING, 0));
   EXPECT_TRUE(FPDFPath_LineTo(blue_path, 230, 230));
   EXPECT_TRUE(FPDFPath_BezierTo(blue_path, 250, 250, 280, 280, 300, 300));
@@ -1422,7 +1422,7 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectAndSave) {
   // Add a red rectangle.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
   FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
@@ -1451,7 +1451,7 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectEditAndSave) {
   // Add a red rectangle.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
   FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 100, 100, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 100, 100, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
@@ -1460,7 +1460,7 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectEditAndSave) {
 
   // Generate content but change it again
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
 
   // Save the file
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -1491,7 +1491,7 @@ TEST_F(FPDFEditEmbedderTest, InsertAndRemoveLargeFile) {
   // Add a black rectangle.
   ASSERT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(page));
   FPDF_PAGEOBJECT black_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(black_rect, 0, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(black_rect, 0, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(black_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, black_rect);
 
@@ -1565,7 +1565,7 @@ TEST_F(FPDFEditEmbedderTest, AddAndRemovePaths) {
   // Add a red rectangle.
   FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
   ASSERT_TRUE(red_rect);
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
   const char kRedRectangleMD5[] = "66d02eaa6181e2c069ce2ea99beda497";
@@ -1626,13 +1626,13 @@ TEST_F(FPDFEditEmbedderTest, PathOnTopOfText) {
 
   // Add an opaque rectangle on top of some of the text.
   FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
   // Add a transparent triangle on top of other part of the text.
   FPDF_PAGEOBJECT black_path = FPDFPageObj_CreateNewPath(20, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(black_path, 0, 0, 0, 100));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(black_path, 0, 0, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(black_path, FPDF_FILLMODE_ALTERNATE, 0));
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 30, 80));
   EXPECT_TRUE(FPDFPath_LineTo(black_path, 40, 10));
@@ -1660,13 +1660,13 @@ TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
 
   // Add a transparent rectangle on top of the existing content
   FPDF_PAGEOBJECT red_rect2 = FPDFPageObj_CreateNewRect(90, 700, 25, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect2, 255, 0, 0, 100));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect2, 255, 0, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect2);
 
   // Add an opaque rectangle on top of the existing content
   FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(115, 700, 25, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
@@ -1686,13 +1686,13 @@ TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
   ClearString();
   // Add another opaque rectangle on top of the existing content
   FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(150, 700, 25, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(green_rect, 0, 255, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(saved_page, green_rect);
 
   // Add another transparent rectangle on top of existing content
   FPDF_PAGEOBJECT green_rect2 = FPDFPageObj_CreateNewRect(175, 700, 25, 50);
-  EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(saved_page, green_rect2);
   const char kLastMD5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
@@ -1718,9 +1718,9 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
 
   // Add a large stroked rectangle (fill color should not affect it).
   FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(20, 20, 200, 400);
-  EXPECT_TRUE(FPDFPath_SetFillColor(rect, 255, 0, 0, 255));
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(rect, 0, 255, 0, 255));
-  EXPECT_TRUE(FPDFPath_SetStrokeWidth(rect, 15.0f));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeColor(rect, 0, 255, 0, 255));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeWidth(rect, 15.0f));
 
   float width = 0;
   EXPECT_TRUE(FPDFPageObj_GetStrokeWidth(rect, &width));
@@ -1740,8 +1740,8 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_LineTo(check, 600, 600));
   EXPECT_TRUE(FPDFPath_MoveTo(check, 400, 600));
   EXPECT_TRUE(FPDFPath_LineTo(check, 600, 400));
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(check, 128, 128, 128, 180));
-  EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeColor(check, 128, 128, 128, 180));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeWidth(check, 8.35f));
   EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
   FPDFPage_InsertObject(page, check);
   {
@@ -1756,9 +1756,9 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_LineTo(path, 255, 305));
   EXPECT_TRUE(FPDFPath_BezierTo(path, 325, 233, 325, 166, 255, 105));
   EXPECT_TRUE(FPDFPath_Close(path));
-  EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 128, 128, 100));
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 128, 200, 128, 150));
-  EXPECT_TRUE(FPDFPath_SetStrokeWidth(path, 10.5f));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(path, 200, 128, 128, 100));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeColor(path, 128, 200, 128, 150));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeWidth(path, 10.5f));
   EXPECT_TRUE(FPDFPath_SetDrawMode(path, FPDF_FILLMODE_ALTERNATE, 1));
   FPDFPage_InsertObject(page, path);
   {
@@ -2075,7 +2075,7 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
   // Only alpha, the last component, matters for the graphics dictionary. And
   // the default value is 255.
-  EXPECT_TRUE(FPDFText_SetFillColor(text1, 100, 100, 100, 255));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(text1, 100, 100, 100, 255));
   FPDFPage_InsertObject(page.get(), text1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_EQ(2u, graphics_dict->size());
@@ -2085,14 +2085,14 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
       FPDFPageObj_NewTextObj(document(), "Times-Roman", 12.0f);
   FPDFPage_InsertObject(page.get(), text2);
   FPDFPageObj_SetBlendMode(text2, "Darken");
-  EXPECT_TRUE(FPDFText_SetFillColor(text2, 0, 0, 255, 150));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(text2, 0, 0, 255, 150));
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_EQ(3u, graphics_dict->size());
 
   // Add a path that should reuse graphics
   FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
   FPDFPageObj_SetBlendMode(path, "Darken");
-  EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 200, 100, 150));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(path, 200, 200, 100, 150));
   FPDFPage_InsertObject(page.get(), path);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_EQ(3u, graphics_dict->size());
@@ -2100,8 +2100,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   // Add a rect increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT rect2 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
   FPDFPageObj_SetBlendMode(rect2, "Darken");
-  EXPECT_TRUE(FPDFPath_SetFillColor(rect2, 0, 0, 255, 150));
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(rect2, 0, 0, 0, 200));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(rect2, 0, 0, 255, 150));
+  EXPECT_TRUE(FPDFPageObj_SetStrokeColor(rect2, 0, 0, 0, 200));
   FPDFPage_InsertObject(page.get(), rect2);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_EQ(4u, graphics_dict->size());
@@ -2113,7 +2113,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // Add a red rectangle with some non-default alpha
   FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
-  EXPECT_TRUE(FPDFPath_SetFillColor(rect, 255, 0, 0, 128));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(rect, 255, 0, 0, 128));
   EXPECT_TRUE(FPDFPath_SetDrawMode(rect, FPDF_FILLMODE_WINDING, 0));
   FPDFPage_InsertObject(page, rect);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -2132,7 +2132,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   }
 
   // Never mind, my new favorite color is blue, increase alpha
-  EXPECT_TRUE(FPDFPath_SetFillColor(rect, 0, 0, 255, 180));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(rect, 0, 0, 255, 180));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_EQ(3u, graphics_dict->size());
 
@@ -2468,7 +2468,7 @@ TEST_F(FPDFEditEmbedderTest, SaveAndRender) {
 
     // Now add a more complex blue path.
     FPDF_PAGEOBJECT green_path = FPDFPageObj_CreateNewPath(20, 20);
-    EXPECT_TRUE(FPDFPath_SetFillColor(green_path, 0, 255, 0, 200));
+    EXPECT_TRUE(FPDFPageObj_SetFillColor(green_path, 0, 255, 0, 200));
     // TODO(npm): stroking will cause the MD5s to differ.
     EXPECT_TRUE(FPDFPath_SetDrawMode(green_path, FPDF_FILLMODE_WINDING, 0));
     EXPECT_TRUE(FPDFPath_LineTo(green_path, 20, 63));

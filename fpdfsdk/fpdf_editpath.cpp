@@ -69,19 +69,6 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewRect(float x,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
-                        unsigned int R,
-                        unsigned int G,
-                        unsigned int B,
-                        unsigned int A) {
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
-    return false;
-
-  return FPDFPageObj_SetStrokeColor(path, R, G, B, A);
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
                         unsigned int* R,
                         unsigned int* G,
@@ -92,39 +79,6 @@ FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
     return false;
 
   return FPDFPageObj_GetStrokeColor(path, R, G, B, A);
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width) {
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
-    return false;
-
-  return FPDFPageObj_SetStrokeWidth(path, width);
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
-                                                          unsigned int R,
-                                                          unsigned int G,
-                                                          unsigned int B,
-                                                          unsigned int A) {
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
-    return false;
-
-  return FPDFPageObj_SetFillColor(path, R, G, B, A);
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
-                                                          unsigned int* R,
-                                                          unsigned int* G,
-                                                          unsigned int* B,
-                                                          unsigned int* A) {
-  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
-  if (!pPathObj)
-    return false;
-
-  return FPDFPageObj_GetFillColor(path, R, G, B, A);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path) {
