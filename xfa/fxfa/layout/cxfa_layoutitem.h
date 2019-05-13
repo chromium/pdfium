@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 #define XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 
+#include "core/fxcrt/tree_node.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -14,9 +15,9 @@ class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_ViewLayoutItem;
 
-class CXFA_LayoutItem {
+class CXFA_LayoutItem : public TreeNode<CXFA_LayoutItem> {
  public:
-  virtual ~CXFA_LayoutItem();
+  ~CXFA_LayoutItem() override;
 
   bool IsViewLayoutItem() const { return m_ItemType == kViewItem; }
   bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
@@ -26,18 +27,8 @@ class CXFA_LayoutItem {
   const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
   CXFA_ViewLayoutItem* GetPage() const;
-  CXFA_LayoutItem* GetParent() const { return m_pParent; }
-  CXFA_LayoutItem* GetFirstChild() const { return m_pFirstChild; }
-  CXFA_LayoutItem* GetNextSibling() const { return m_pNextSibling; }
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
   void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
-
-  void AppendLastChild(CXFA_LayoutItem* pChildItem);
-  void AppendFirstChild(CXFA_LayoutItem* pChildItem);
-  void RemoveChild(CXFA_LayoutItem* pChildItem);
-
-  // Insert |pThisChild| after |pThatChild|.
-  void InsertAfter(CXFA_LayoutItem* pThisChild, CXFA_LayoutItem* pThatChild);
 
  protected:
   enum ItemType { kViewItem, kContentItem };
@@ -45,9 +36,6 @@ class CXFA_LayoutItem {
 
  private:
   const ItemType m_ItemType;
-  CXFA_LayoutItem* m_pParent = nullptr;       // Raw, intra-tree pointer.
-  CXFA_LayoutItem* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
-  CXFA_LayoutItem* m_pNextSibling = nullptr;  // Raw, intra-tree pointer.
   UnownedPtr<CXFA_Node> m_pFormNode;
 };
 
