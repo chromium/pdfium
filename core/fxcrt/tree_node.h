@@ -27,6 +27,15 @@ class TreeNode {
     return child != this && child->m_pParent == this;
   }
 
+  T* GetNthChild(size_t n) {
+    T* result = GetFirstChild();
+    while (n && result) {
+      result = result->GetNextSibling();
+      --n;
+    }
+    return result;
+  }
+
   void AppendFirstChild(T* child) {
     BecomeParent(child);
     if (m_pFirstChild) {
@@ -108,6 +117,16 @@ class TreeNode {
     child->m_pParent = nullptr;
     child->m_pPrevSibling = nullptr;
     child->m_pNextSibling = nullptr;
+  }
+
+  void RemoveAllChildren() {
+    while (T* child = GetFirstChild())
+      RemoveChild(child);
+  }
+
+  void RemoveSelfIfParented() {
+    if (T* parent = GetParent())
+      parent->RemoveChild(static_cast<T*>(this));
   }
 
  private:

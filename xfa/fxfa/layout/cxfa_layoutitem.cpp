@@ -29,8 +29,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
     pNotify->OnPageEvent(ToViewLayoutItem(pLayoutItem),
                          XFA_PAGEVIEWEVENT_PostRemoved);
   }
-  if (pLayoutItem->GetParent())
-    pLayoutItem->GetParent()->RemoveChild(pLayoutItem);
+  pLayoutItem->RemoveSelfIfParented();
   delete pLayoutItem;
 }
 
@@ -44,8 +43,7 @@ void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
   if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea)
     return;
 
-  if (pLayoutItem->GetParent())
-    pLayoutItem->GetParent()->RemoveChild(pLayoutItem);
+  pLayoutItem->RemoveSelfIfParented();
   delete pLayoutItem;
 }
 

@@ -167,14 +167,6 @@ void ReorderLayoutItemToTail(CXFA_LayoutItem* pLayoutItem) {
   pParentLayoutItem->AppendLastChild(pLayoutItem);
 }
 
-void RemoveLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem* pParentLayoutItem = pLayoutItem->GetParent();
-  if (!pParentLayoutItem)
-    return;
-
-  pParentLayoutItem->RemoveChild(pLayoutItem);
-}
-
 CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
                               bool bNewExprStyle,
                               WideString* pTargetAll) {
@@ -262,7 +254,7 @@ void SyncRemoveLayoutItem(CXFA_LayoutItem* pParentLayoutItem,
       SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
 
     pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
-    RemoveLayoutItem(pCurLayoutItem);
+    pCurLayoutItem->RemoveSelfIfParented();
     delete pCurLayoutItem;
     pCurLayoutItem = pNextLayoutItem;
   }
@@ -388,7 +380,7 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
   ASSERT(m_pTemplatePageSetRoot);
 
   if (m_pPageSetLayoutItemRoot) {
-    RemoveLayoutItem(m_pPageSetLayoutItemRoot);
+    m_pPageSetLayoutItemRoot->RemoveSelfIfParented();
   } else {
     m_pPageSetLayoutItemRoot =
         new CXFA_ViewLayoutItem(m_pTemplatePageSetRoot, nullptr);
@@ -522,15 +514,15 @@ void CXFA_LayoutPageMgr::RemoveLayoutRecord(CXFA_ViewRecord* pNewRecord,
   if (!pNewRecord || !pPrevRecord)
     return;
   if (pNewRecord->pCurPageSet != pPrevRecord->pCurPageSet) {
-    RemoveLayoutItem(pNewRecord->pCurPageSet);
+    pNewRecord->pCurPageSet->RemoveSelfIfParented();
     return;
   }
   if (pNewRecord->pCurPageArea != pPrevRecord->pCurPageArea) {
-    RemoveLayoutItem(pNewRecord->pCurPageArea);
+    pNewRecord->pCurPageArea->RemoveSelfIfParented();
     return;
   }
   if (pNewRecord->pCurContentArea != pPrevRecord->pCurContentArea) {
-    RemoveLayoutItem(pNewRecord->pCurContentArea);
+    pNewRecord->pCurContentArea->RemoveSelfIfParented();
     return;
   }
 }
@@ -1622,7 +1614,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
           SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
 
         pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
-        RemoveLayoutItem(pCurLayoutItem);
+        pCurLayoutItem->RemoveSelfIfParented();
         delete pCurLayoutItem;
         pCurLayoutItem = pNextLayoutItem;
         continue;
@@ -1641,7 +1633,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
     if (pCurLayoutItem->GetFirstChild())
       SaveLayoutItem(pCurLayoutItem);
 
-    RemoveLayoutItem(pCurLayoutItem);
+    pCurLayoutItem->RemoveSelfIfParented();
     if (!pCurLayoutItem->IsContentLayoutItem() &&
         pCurLayoutItem->GetFormNode()->GetElementType() !=
             XFA_Element::PageArea) {
@@ -1768,7 +1760,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                       pIter->JSObject()->GetLayoutItem();
                   if (pLayoutItem) {
                     pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
-                    RemoveLayoutItem(pLayoutItem);
+                    pLayoutItem->RemoveSelfIfParented();
                     delete pLayoutItem;
                   }
                 }
@@ -1834,7 +1826,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
                   pChildNode->JSObject()->GetLayoutItem();
               if (pLayoutItem) {
                 pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
-                RemoveLayoutItem(pLayoutItem);
+                pLayoutItem->RemoveSelfIfParented();
                 delete pLayoutItem;
               }
             }
@@ -1842,7 +1834,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
             CXFA_LayoutItem* pLayoutItem = pNode->JSObject()->GetLayoutItem();
             if (pLayoutItem) {
               pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
-              RemoveLayoutItem(pLayoutItem);
+              pLayoutItem->RemoveSelfIfParented();
               delete pLayoutItem;
             }
           }
@@ -1971,7 +1963,7 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
   for (; pRootLayoutItem; pRootLayoutItem = pNextLayout) {
     pNextLayout = ToViewLayoutItem(pRootLayoutItem->GetNextSibling());
     SaveLayoutItem(pRootLayoutItem);
-    RemoveLayoutItem(pRootLayoutItem);
+    pRootLayoutItem->RemoveSelfIfParented();
     delete pRootLayoutItem;
   }
   m_pPageSetLayoutItemRoot = nullptr;
