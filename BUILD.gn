@@ -46,6 +46,11 @@ config("pdfium_common_config") {
   }
 }
 
+config("pdfium_implementation_config") {
+  defines = [ "FPDF_IMPLEMENTATION" ]
+  visibility = [ ":pdfium_public_headers" ]
+}
+
 config("pdfium_public_config") {
   defines = []
 
@@ -101,7 +106,7 @@ config("pdfium_core_config") {
   configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 }
 
-jumbo_source_set("pdfium_public_headers") {
+jumbo_source_set("pdfium_public_headers_impl") {
   sources = [
     "public/cpp/fpdf_deleters.h",
     "public/cpp/fpdf_scopers.h",
@@ -125,16 +130,24 @@ jumbo_source_set("pdfium_public_headers") {
     "public/fpdf_transformpage.h",
     "public/fpdfview.h",
   ]
+}
 
-  public_configs = [ ":pdfium_public_config" ]
+group("pdfium_public_headers") {
+  public_deps = [
+    ":pdfium_public_headers_impl",
+  ]
+  public_configs = [
+    ":pdfium_public_config",
+    ":pdfium_implementation_config",
+  ]
 }
 
 jumbo_component("pdfium") {
   libs = []
   configs += [ ":pdfium_core_config" ]
+  public_configs = [ ":pdfium_public_config" ]
 
   deps = [
-    ":pdfium_public_headers",
     "constants",
     "core/fpdfapi",
     "core/fpdfapi/page",
@@ -151,7 +164,7 @@ jumbo_component("pdfium") {
   ]
 
   public_deps = [
-    ":pdfium_public_headers",
+    ":pdfium_public_headers_impl",
     "core/fxcrt",
   ]
 
@@ -288,11 +301,11 @@ test("pdfium_embeddertests") {
     "testing/embedder_test_main.cpp",
   ]
   deps = [
-    ":pdfium",
     "core/fpdfapi/edit:embeddertests",
     "core/fpdfapi/parser:embeddertests",
     "core/fpdfapi/render:embeddertests",
     "core/fxcodec:embeddertests",
+    "core/fxcrt",
     "core/fxge:embeddertests",
     "fpdfsdk:embeddertests",
     "fpdfsdk/pwl:embeddertests",

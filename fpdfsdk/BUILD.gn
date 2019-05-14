@@ -70,8 +70,6 @@ jumbo_source_set("fpdfsdk") {
     "ipdfsdk_pauseadapter.h",
   ]
 
-  defines = [ "FPDF_IMPLEMENTATION" ]
-
   configs += [ "../:pdfium_core_config" ]
   deps = [
     "../:pdfium_public_headers",

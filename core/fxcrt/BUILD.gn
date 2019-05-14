@@ -88,7 +88,7 @@ jumbo_source_set("fxcrt") {
     "../../fpdfsdk/*",
     "../../fxbarcode:*",
     "../../fxjs:*",
-    "../../testing:test_support",
+    "../../testing:*",
     "../../testing/fuzzers/*",
     "../../third_party:fx_agg",
     "../../third_party:fx_lcms2",

@@ -31,8 +31,9 @@ jumbo_source_set("test_support") {
     "resources/",
   ]
   deps = [
-    "../:pdfium",
+    "../:pdfium_public_headers",
     "../core/fdrm",
+    "../core/fxcrt",
     "image_diff",
   ]
   configs += [ "../:pdfium_core_config" ]
@@ -88,8 +89,10 @@ jumbo_source_set("embedder_test_support") {
 
   deps = [
     ":test_support",
-    "../:pdfium",
+    "../:pdfium_public_headers",
     "../core/fdrm",
+    "../core/fxcrt",
+    "../third_party:pdfium_base",
     "//testing/gmock",
     "//testing/gtest",
   ]

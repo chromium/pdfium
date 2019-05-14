@@ -15,9 +15,7 @@ config("fuzzer_config") {
   include_dirs = [ "../.." ]
 }
 
-# "pdfium_fuzzer"s (which may depend on PDFium internals) should be added to
-# |fuzzer_list|.  "pdfium_public_fuzzer"s (which can only depend on PDFium's
-# public API) should be added to |public_fuzzer_list|.
+# All possible "pdfium_fuzzer"s.
 fuzzer_list = [
   "pdf_cmap_fuzzer",
   "pdf_codec_a85_fuzzer",
@@ -31,8 +29,8 @@ fuzzer_list = [
   "pdf_psengine_fuzzer",
   "pdf_streamparser_fuzzer",
   "pdf_xml_fuzzer",
+  "pdfium_fuzzer",
 ]
-public_fuzzer_list = [ "pdfium_fuzzer" ]
 if (pdf_enable_v8) {
   fuzzer_list += [
     "pdf_cjs_util_fuzzer",
@@ -46,10 +44,8 @@ if (pdf_enable_v8) {
       "pdf_codec_jpeg_fuzzer",
       "pdf_css_fuzzer",
       "pdf_fm2js_fuzzer",
-      "pdf_formcalc_fuzzer",
-    ]
-    public_fuzzer_list += [
       "pdf_formcalc_context_fuzzer",
+      "pdf_formcalc_fuzzer",
       "pdfium_xfa_fuzzer",
     ]
     if (pdf_enable_xfa_bmp) {
@@ -73,8 +69,38 @@ if (pdf_enable_v8) {
 group("fuzzers") {
   testonly = true
   deps = []
-  foreach(fuzzer, fuzzer_list + public_fuzzer_list) {
+  foreach(fuzzer, fuzzer_list) {
     deps += [ ":${fuzzer}_src" ]
+  }
+}
+
+jumbo_source_set("fuzzer_init") {
+  testonly = true
+  sources = [
+    "pdf_fuzzer_init.cc",
+  ]
+  include_dirs = [ "../.." ]
+  deps = [
+    "../../:pdfium_public_headers",
+  ]
+}
+
+jumbo_source_set("fuzzer_init_public") {
+  testonly = true
+  sources = [
+    "pdf_fuzzer_init_public.cc",
+  ]
+  include_dirs = [ "../.." ]
+  deps = [
+    "../../:pdfium_public_headers",
+  ]
+  if (pdf_enable_v8) {
+    configs += [ "//v8:external_startup_data" ]
+    deps += [
+      "../:test_support",
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
   }
 }
 
@@ -87,53 +113,40 @@ if (is_component_build) {
   }
 }
 
-jumbo_source_set("utils") {
+jumbo_source_set("fuzzer_helper") {
+  testonly = !is_component_build
+  sources = [
+    "pdfium_fuzzer_helper.cc",
+    "pdfium_fuzzer_helper.h",
+  ]
+  configs += [ ":fuzzer_config" ]
+  deps = [
+    "../../:pdfium_public_headers",
+    "../../third_party:pdfium_base",
+  ]
+}
+
+jumbo_source_set("fuzzer_utils") {
+  # In component builds, the pdfium target (which is not testonly) depends on
+  # the fuzzer sources, which may depend on this target, so add testonly only in
+  # non-component builds.
+  testonly = !is_component_build
   sources = [
     "pdfium_fuzzer_util.cc",
     "pdfium_fuzzer_util.h",
   ]
-
+  deps = [
+    "../../:pdfium_public_headers",
+  ]
   include_dirs = [ "../.." ]
-
-  # In component builds, the pdfium target (which is not testonly) depends on
-  # the fuzzer sources, which may depend on this target, so add testonly only in
-  # non-component builds.
-  if (!is_component_build) {
-    testonly = true
-  }
-}
-
-template("pdfium_public_fuzzer") {
-  jumbo_source_set(target_name + "_src") {
-    sources = invoker.sources + [
-                "pdfium_fuzzer_helper.cc",
-                "pdfium_fuzzer_helper.h",
-                "pdf_fuzzer_init_public.cc",
-              ]
-    deps = [
-      "../:test_support",
-      "../../:pdfium",
-    ]
-    if (defined(invoker.deps)) {
-      deps += invoker.deps
-    }
-    testonly = true
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":fuzzer_config",
-    ]
-    if (pdf_enable_v8) {
-      configs += [ "//v8:external_startup_data" ]
-      deps += [
-        "//v8",
-        "//v8:v8_libplatform",
-      ]
-    }
-  }
 }
 
 template("pdfium_fuzzer") {
+  if (defined(invoker.public_fuzzer) && invoker.public_fuzzer) {
+    init_dep = ":fuzzer_init_public"
+  } else {
+    init_dep = ":fuzzer_init"
+  }
   if (is_component_build) {
     # In component builds, fuzzers are split into "_impl" and "_src" targets.
     # The "_impl" target exports the fuzzer implementation and gets statically
@@ -141,16 +154,17 @@ template("pdfium_fuzzer") {
     # wrapper that imports the fuzzer from PDFium; this gets linked into the
     # real fuzzer executable.  In static builds, there's only a single "_src"
     # target that contains the implementation and statically links in PDFium.
+
     impl_name = target_name + "_impl"
     template_target_name = target_name
     jumbo_source_set("${target_name}_src") {
       testonly = true
       sources = [
         "component_fuzzer_template.cc",
-        "pdf_fuzzer_init.cc",
       ]
       deps = [
         "../../:pdfium",
+        init_dep,
       ]
       configs += [ ":fuzzer_config" ]
       defines = [ "FUZZER_IMPL=${template_target_name}" ]
@@ -169,9 +183,6 @@ template("pdfium_fuzzer") {
       "//build/config/compiler:no_chromium_code",
       ":fuzzer_config",
     ]
-    if (pdf_enable_v8) {
-      configs += [ "//v8:external_startup_data" ]
-    }
     if (is_component_build) {
       # |export| should be consistent with FPDF_EXPORT In public/fpdfview.h.
       if (is_win) {
@@ -179,14 +190,14 @@ template("pdfium_fuzzer") {
       } else {
         export = "__attribute__((visibility(\"default\")))"
       }
-      defines = [
-        "FPDF_IMPLEMENTATION",
-        "LLVMFuzzerTestOneInput=${export} ${template_target_name}",
-      ]
+      defines = [ "LLVMFuzzerTestOneInput=${export} ${template_target_name}" ]
+      deps += [ "../../:pdfium_public_headers" ]
     } else {
-      sources += [ "pdf_fuzzer_init.cc" ]
       testonly = true
-      deps += [ "../../:pdfium" ]
+      deps += [
+        "../../:pdfium",
+        init_dep,
+      ]
     }
   }
 }
@@ -351,11 +362,12 @@ if (pdf_enable_v8) {
       ]
     }
 
-    pdfium_public_fuzzer("pdf_formcalc_context_fuzzer") {
+    pdfium_fuzzer("pdf_formcalc_context_fuzzer") {
       sources = [
         "pdf_formcalc_context_fuzzer.cc",
       ]
       deps = [
+        ":fuzzer_helper",
         "../../:pdfium_public_headers",
         "../../core/fxcrt",
         "../../fpdfsdk",
@@ -363,6 +375,7 @@ if (pdf_enable_v8) {
         "../../fxjs",
         "../../xfa/fxfa",
       ]
+      public_fuzzer = true
     }
 
     pdfium_fuzzer("pdf_formcalc_fuzzer") {
@@ -375,13 +388,15 @@ if (pdf_enable_v8) {
       ]
     }
 
-    pdfium_public_fuzzer("pdfium_xfa_fuzzer") {
+    pdfium_fuzzer("pdfium_xfa_fuzzer") {
       sources = [
         "pdfium_xfa_fuzzer.cc",
       ]
       deps = [
+        ":fuzzer_helper",
         "../../:pdfium_public_headers",
       ]
+      public_fuzzer = true
     }
   }
 }
@@ -412,7 +427,7 @@ pdfium_fuzzer("pdf_codec_fax_fuzzer") {
     "pdf_codec_fax_fuzzer.cc",
   ]
   deps = [
-    ":utils",
+    ":fuzzer_utils",
     "../../core/fxcodec",
   ]
 }
@@ -433,7 +448,7 @@ pdfium_fuzzer("pdf_codec_jbig2_fuzzer") {
     "pdf_codec_jbig2_fuzzer.cc",
   ]
   deps = [
-    ":utils",
+    ":fuzzer_utils",
     "../../core/fpdfapi/parser",
     "../../core/fxcodec",
     "../../core/fxcrt",
@@ -514,8 +529,12 @@ pdfium_fuzzer("pdf_xml_fuzzer") {
   ]
 }
 
-pdfium_public_fuzzer("pdfium_fuzzer") {
+pdfium_fuzzer("pdfium_fuzzer") {
   sources = [
     "pdfium_fuzzer.cc",
   ]
+  deps = [
+    ":fuzzer_helper",
+  ]
+  public_fuzzer = true
 }
