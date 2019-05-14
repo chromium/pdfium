@@ -44,20 +44,47 @@ jumbo_source_set("fpdfsdk") {
     "cpdfsdk_widget.h",
     "cpdfsdk_widgethandler.cpp",
     "cpdfsdk_widgethandler.h",
+    "fpdf_annot.cpp",
+    "fpdf_attachment.cpp",
+    "fpdf_catalog.cpp",
+    "fpdf_dataavail.cpp",
+    "fpdf_doc.cpp",
+    "fpdf_editimg.cpp",
+    "fpdf_editpage.cpp",
+    "fpdf_editpath.cpp",
+    "fpdf_edittext.cpp",
+    "fpdf_ext.cpp",
+    "fpdf_flatten.cpp",
+    "fpdf_formfill.cpp",
+    "fpdf_ppo.cpp",
+    "fpdf_progressive.cpp",
+    "fpdf_save.cpp",
+    "fpdf_searchex.cpp",
+    "fpdf_structtree.cpp",
+    "fpdf_sysfontinfo.cpp",
+    "fpdf_text.cpp",
+    "fpdf_transformpage.cpp",
+    "fpdf_view.cpp",
     "ipdfsdk_annothandler.h",
     "ipdfsdk_pauseadapter.cpp",
     "ipdfsdk_pauseadapter.h",
   ]
 
+  defines = [ "FPDF_IMPLEMENTATION" ]
+
   configs += [ "../:pdfium_core_config" ]
   deps = [
     "../:pdfium_public_headers",
     "../constants",
+    "../core/fdrm",
     "../core/fpdfapi",
+    "../core/fpdfapi/edit",
+    "../core/fpdfapi/font",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",
     "../core/fpdfapi/render",
     "../core/fpdfdoc",
+    "../core/fpdftext",
     "../core/fxcrt",
     "../core/fxge",
     "../fxjs",
@@ -82,6 +109,7 @@ jumbo_source_set("fpdfsdk") {
     ]
 
     deps += [
+      "../fxbarcode",
       "../xfa/fwl",
       "../xfa/fxfa",
       "../xfa/fxfa/parser",

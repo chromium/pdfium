@@ -130,45 +130,16 @@ jumbo_source_set("pdfium_public_headers") {
 }
 
 jumbo_component("pdfium") {
-  sources = [
-    "fpdfsdk/fpdf_annot.cpp",
-    "fpdfsdk/fpdf_attachment.cpp",
-    "fpdfsdk/fpdf_catalog.cpp",
-    "fpdfsdk/fpdf_dataavail.cpp",
-    "fpdfsdk/fpdf_doc.cpp",
-    "fpdfsdk/fpdf_editimg.cpp",
-    "fpdfsdk/fpdf_editpage.cpp",
-    "fpdfsdk/fpdf_editpath.cpp",
-    "fpdfsdk/fpdf_edittext.cpp",
-    "fpdfsdk/fpdf_ext.cpp",
-    "fpdfsdk/fpdf_flatten.cpp",
-    "fpdfsdk/fpdf_formfill.cpp",
-    "fpdfsdk/fpdf_ppo.cpp",
-    "fpdfsdk/fpdf_progressive.cpp",
-    "fpdfsdk/fpdf_save.cpp",
-    "fpdfsdk/fpdf_searchex.cpp",
-    "fpdfsdk/fpdf_structtree.cpp",
-    "fpdfsdk/fpdf_sysfontinfo.cpp",
-    "fpdfsdk/fpdf_text.cpp",
-    "fpdfsdk/fpdf_transformpage.cpp",
-    "fpdfsdk/fpdf_view.cpp",
-  ]
-
   libs = []
   configs += [ ":pdfium_core_config" ]
 
   deps = [
     ":pdfium_public_headers",
     "constants",
-    "core/fdrm",
     "core/fpdfapi",
-    "core/fpdfapi/edit",
-    "core/fpdfapi/font",
     "core/fpdfapi/page",
     "core/fpdfapi/parser",
-    "core/fpdfapi/render",
     "core/fpdfdoc",
-    "core/fpdftext",
     "core/fxcodec",
     "core/fxcrt",
     "core/fxge",
@@ -184,12 +155,9 @@ jumbo_component("pdfium") {
     "core/fxcrt",
   ]
 
-  defines = [ "FPDF_IMPLEMENTATION" ]
-
   if (pdf_enable_xfa) {
     deps += [
       "fpdfsdk/fpdfxfa",
-      "fxbarcode",
       "xfa/fxfa",
       "xfa/fxfa/parser",
     ]
