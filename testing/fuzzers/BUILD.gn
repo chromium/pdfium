@@ -108,6 +108,7 @@ template("pdfium_public_fuzzer") {
     sources = invoker.sources + [
                 "pdfium_fuzzer_helper.cc",
                 "pdfium_fuzzer_helper.h",
+                "pdf_fuzzer_init_public.cc",
               ]
     deps = [
       "../:test_support",

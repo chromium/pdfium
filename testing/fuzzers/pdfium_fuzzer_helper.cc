@@ -13,33 +13,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#elif defined(__APPLE__)
-#include <mach-o/dyld.h>
-#else  // Linux
-#include <unistd.h>
-#endif  // _WIN32
-
 #include <memory>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <utility>
 
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
-#include "testing/test_loader.h"
-
-#ifdef PDF_ENABLE_V8
-#include "testing/free_deleter.h"
-#include "testing/v8_initializer.h"
-#include "v8/include/v8-platform.h"
-#include "v8/include/v8.h"
-#endif
+#include "third_party/base/span.h"
 
 namespace {
+
+class FuzzerTestLoader {
+ public:
+  explicit FuzzerTestLoader(pdfium::span<const char> span) : m_Span(span) {}
+
+  static int GetBlock(void* param,
+                      unsigned long pos,
+                      unsigned char* pBuf,
+                      unsigned long size) {
+    FuzzerTestLoader* pLoader = static_cast<FuzzerTestLoader*>(param);
+    if (pos + size < pos || pos + size > pLoader->m_Span.size()) {
+      NOTREACHED();
+      return 0;
+    }
+
+    memcpy(pBuf, &pLoader->m_Span[pos], size);
+    return 1;
+  }
+
+ private:
+  const pdfium::span<const char> m_Span;
+};
 
 int ExampleAppAlert(IPDF_JSPLATFORM*,
                     FPDF_WIDESTRING,
@@ -78,41 +86,11 @@ void ExampleDocMail(IPDF_JSPLATFORM*,
                     FPDF_WIDESTRING BCC,
                     FPDF_WIDESTRING Msg) {}
 
-void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {}
-
 FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
   return true;
 }
 
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
-
-#ifdef PDF_ENABLE_V8
-std::string ProgramPath() {
-  std::string result;
-
-#ifdef _WIN32
-  char path[MAX_PATH];
-  DWORD len = GetModuleFileNameA(NULL, path, MAX_PATH);
-  if (len != 0)
-    result = std::string(path, len);
-#elif defined(__APPLE__)
-  char path[PATH_MAX];
-  unsigned int len = PATH_MAX;
-  if (!_NSGetExecutablePath(path, &len)) {
-    std::unique_ptr<char, pdfium::FreeDeleter> resolved_path(
-        realpath(path, nullptr));
-    if (resolved_path.get())
-      result = std::string(resolved_path.get());
-  }
-#else  // Linux
-  char path[PATH_MAX];
-  ssize_t len = readlink("/proc/self/exe", path, PATH_MAX);
-  if (len > 0)
-    result = std::string(path, len);
-#endif
-  return result;
-}
-#endif  // PDF_ENABLE_V8
 
 std::pair<int, int> GetRenderingAndFormFlagFromData(const char* data,
                                                     size_t len) {
@@ -155,11 +133,11 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
   form_callbacks.version = GetFormCallbackVersion();
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
-  TestLoader loader({data, len});
+  FuzzerTestLoader loader({data, len});
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);
-  file_access.m_GetBlock = TestLoader::GetBlock;
+  file_access.m_GetBlock = FuzzerTestLoader::GetBlock;
   file_access.m_Param = &loader;
 
   FX_FILEAVAIL file_avail;
@@ -255,43 +233,3 @@ bool PDFiumFuzzerHelper::RenderPage(FPDF_DOCUMENT doc,
   FORM_OnBeforeClosePage(page.get(), form);
   return !!bitmap;
 }
-
-// Initialize the library once for all runs of the fuzzer.
-struct TestCase {
-  TestCase() {
-#ifdef PDF_ENABLE_V8
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-    platform = InitializeV8ForPDFiumWithStartupData(
-        ProgramPath(), "", &natives_blob, &snapshot_blob);
-#else
-    platform = InitializeV8ForPDFium(ProgramPath());
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
-
-    memset(&config, '\0', sizeof(config));
-    config.version = 2;
-    config.m_pUserFontPaths = nullptr;
-    config.m_pIsolate = nullptr;
-    config.m_v8EmbedderSlot = 0;
-    FPDF_InitLibraryWithConfig(&config);
-
-    memset(&unsupport_info, '\0', sizeof(unsupport_info));
-    unsupport_info.version = 1;
-    unsupport_info.FSDK_UnSupport_Handler = ExampleUnsupportedHandler;
-    FSDK_SetUnSpObjProcessHandler(&unsupport_info);
-  }
-
-#ifdef PDF_ENABLE_V8
-  std::unique_ptr<v8::Platform> platform;
-  v8::StartupData natives_blob;
-  v8::StartupData snapshot_blob;
-#endif
-
-  FPDF_LIBRARY_CONFIG config;
-  UNSUPPORT_INFO unsupport_info;
-};
-
-// pdf_fuzzer_init.cc and pdfium_fuzzer_helper.cc are mutually exclusive and
-// should not be built together. They deliberately have the same global
-// variable.
-static TestCase* g_test_case = new TestCase();

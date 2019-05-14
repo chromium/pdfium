@@ -19,7 +19,7 @@ struct TestCase {
   FPDF_LIBRARY_CONFIG config;
 };
 
-// pdf_fuzzer_init.cc and pdfium_fuzzer_helper.cc are mutually exclusive and
-// should not be built together. They deliberately have the same global
+// pdf_fuzzer_init.cc and pdfium_fuzzer_init_public.cc are mutually exclusive
+// and should not be built together. They deliberately have the same global
 // variable.
 static TestCase* g_test_case = new TestCase();
