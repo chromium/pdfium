@@ -74,7 +74,7 @@ const CXFA_ContentLayoutItem* CXFA_LayoutItem::AsContentLayoutItem() const {
              : nullptr;
 }
 
-CXFA_ViewLayoutItem* CXFA_LayoutItem::GetPage() const {
+const CXFA_ViewLayoutItem* CXFA_LayoutItem::GetPage() const {
   for (CXFA_LayoutItem* pCurNode = const_cast<CXFA_LayoutItem*>(this); pCurNode;
        pCurNode = pCurNode->GetParent()) {
     if (pCurNode->m_pFormNode->GetElementType() == XFA_Element::PageArea)

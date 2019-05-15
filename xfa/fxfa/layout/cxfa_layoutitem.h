@@ -26,7 +26,7 @@ class CXFA_LayoutItem : public TreeNode<CXFA_LayoutItem> {
   CXFA_ContentLayoutItem* AsContentLayoutItem();
   const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
-  CXFA_ViewLayoutItem* GetPage() const;
+  const CXFA_ViewLayoutItem* GetPage() const;
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
   void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
 
