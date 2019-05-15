@@ -19,7 +19,7 @@ CFX_FontCache::CFX_FontCache() = default;
 
 CFX_FontCache::~CFX_FontCache() = default;
 
-RetainPtr<CFX_FaceCache> CFX_FontCache::GetCachedFace(const CFX_Font* pFont) {
+RetainPtr<CFX_FaceCache> CFX_FontCache::GetFaceCache(const CFX_Font* pFont) {
   FXFT_Face face = pFont->GetFace();
   const bool bExternal = !face;
   auto& map = bExternal ? m_ExtFaceMap : m_FTFaceMap;
@@ -34,6 +34,6 @@ RetainPtr<CFX_FaceCache> CFX_FontCache::GetCachedFace(const CFX_Font* pFont) {
 
 #ifdef _SKIA_SUPPORT_
 CFX_TypeFace* CFX_FontCache::GetDeviceCache(const CFX_Font* pFont) {
-  return GetCachedFace(pFont)->GetDeviceCache(pFont);
+  return GetFaceCache(pFont)->GetDeviceCache(pFont);
 }
 #endif

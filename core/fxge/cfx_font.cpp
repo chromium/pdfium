@@ -583,7 +583,7 @@ bool CFX_Font::GetBBox(FX_RECT* pBBox) {
 
 RetainPtr<CFX_FaceCache> CFX_Font::GetOrCreateFaceCache() const {
   if (!m_FaceCache)
-    m_FaceCache = CFX_GEModule::Get()->GetFontCache()->GetCachedFace(this);
+    m_FaceCache = CFX_GEModule::Get()->GetFontCache()->GetFaceCache(this);
   return m_FaceCache;
 }
 

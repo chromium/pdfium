@@ -664,7 +664,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
       << pObject2Device->e << " " << pObject2Device->f << "]cm\n";
 
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
-  RetainPtr<CFX_FaceCache> pFaceCache = pCache->GetCachedFace(pFont);
+  RetainPtr<CFX_FaceCache> pFaceCache = pCache->GetFaceCache(pFont);
   int last_fontnum = -1;
   for (int i = 0; i < nChars; i++) {
     int ps_fontnum, ps_glyphindex;

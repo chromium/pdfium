@@ -21,7 +21,7 @@ class CFX_FontCache {
   CFX_FontCache();
   ~CFX_FontCache();
 
-  RetainPtr<CFX_FaceCache> GetCachedFace(const CFX_Font* pFont);
+  RetainPtr<CFX_FaceCache> GetFaceCache(const CFX_Font* pFont);
 #ifdef _SKIA_SUPPORT_
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
 #endif
