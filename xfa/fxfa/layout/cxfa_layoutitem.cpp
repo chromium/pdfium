@@ -33,20 +33,6 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   delete pLayoutItem;
 }
 
-void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem* pNode = pLayoutItem->GetFirstChild();
-  while (pNode) {
-    CXFA_LayoutItem* pNext = pNode->GetNextSibling();
-    XFA_ReleaseLayoutItem_NoPageArea(pNode);
-    pNode = pNext;
-  }
-  if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea)
-    return;
-
-  pLayoutItem->RemoveSelfIfParented();
-  delete pLayoutItem;
-}
-
 CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, ItemType type)
     : m_ItemType(type), m_pFormNode(pNode) {}
 

@@ -48,6 +48,5 @@ inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* item) {
 }
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
-void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem);
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
