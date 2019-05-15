@@ -26,6 +26,7 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 

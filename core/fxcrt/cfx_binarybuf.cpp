@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/fx_safe_types.h"
+
 CFX_BinaryBuf::CFX_BinaryBuf() = default;
 
 CFX_BinaryBuf::~CFX_BinaryBuf() = default;

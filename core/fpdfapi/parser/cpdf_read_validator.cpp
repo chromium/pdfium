@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/logging.h"
 
 namespace {
