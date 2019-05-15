@@ -65,12 +65,12 @@ FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document, int index);
 //
 //   attachment - handle to an attachment.
 //   buffer     - buffer for holding the file name, encoded in UTF16-LE.
-//   buflen     - length of the buffer.
+//   buflen     - length of the buffer in bytes.
 //
-// Returns the length of the file name.
+// Returns the length of the file name in bytes.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
-                       void* buffer,
+                       FPDF_WCHAR* buffer,
                        unsigned long buflen);
 
 // Experimental API.
@@ -122,13 +122,13 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
 //   attachment - handle to an attachment.
 //   key        - the key to the requested string value, encoded in UTF-8.
 //   buffer     - buffer for holding the string value encoded in UTF16-LE.
-//   buflen     - length of the buffer.
+//   buflen     - length of the buffer in bytes.
 //
-// Returns the length of the dictionary value string.
+// Returns the length of the dictionary value string in bytes.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
                               FPDF_BYTESTRING key,
-                              void* buffer,
+                              FPDF_WCHAR* buffer,
                               unsigned long buflen);
 
 // Experimental API.

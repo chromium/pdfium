@@ -131,7 +131,7 @@ FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document, int index) {
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
-                       void* buffer,
+                       FPDF_WCHAR* buffer,
                        unsigned long buflen) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   if (!pFile)
@@ -186,7 +186,7 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
                               FPDF_BYTESTRING key,
-                              void* buffer,
+                              FPDF_WCHAR* buffer,
                               unsigned long buflen) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   if (!pFile)

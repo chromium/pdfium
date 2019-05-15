@@ -511,15 +511,13 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
 
     // Retrieve the attachment file name.
     std::string attachment_name;
-    unsigned long len = FPDFAttachment_GetName(attachment, nullptr, 0);
-    if (len) {
-      std::vector<char> buf(len);
-      unsigned long actual_len =
-          FPDFAttachment_GetName(attachment, buf.data(), len);
-      if (actual_len == len) {
-        attachment_name =
-            GetPlatformString(reinterpret_cast<unsigned short*>(buf.data()));
-      }
+    unsigned long length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
+    if (length_bytes) {
+      std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+      unsigned long actual_length_bytes =
+          FPDFAttachment_GetName(attachment, buf.data(), length_bytes);
+      if (actual_length_bytes == length_bytes)
+        attachment_name = GetPlatformString(buf.data());
     }
     if (attachment_name.empty()) {
       fprintf(stderr, "Attachment #%d has an empty file name.\n", i + 1);
@@ -538,12 +536,12 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
     }
 
     // Retrieve the attachment.
-    len = FPDFAttachment_GetFile(attachment, nullptr, 0);
-    std::vector<char> data_buf(len);
-    if (len) {
-      unsigned long actual_len =
-          FPDFAttachment_GetFile(attachment, data_buf.data(), len);
-      if (actual_len != len)
+    length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+    std::vector<char> data_buf(length_bytes);
+    if (length_bytes) {
+      unsigned long actual_length_bytes =
+          FPDFAttachment_GetFile(attachment, data_buf.data(), length_bytes);
+      if (actual_length_bytes != length_bytes)
         data_buf.clear();
     }
     if (data_buf.empty()) {
@@ -558,8 +556,8 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
       continue;
     }
 
-    size_t written_len = fwrite(data_buf.data(), 1, len, fp);
-    if (written_len == len) {
+    size_t written_len = fwrite(data_buf.data(), 1, length_bytes, fp);
+    if (written_len == length_bytes) {
       fprintf(stderr, "Saved attachment \"%s\" as: %s.\n",
               attachment_name.c_str(), save_name);
     } else {
