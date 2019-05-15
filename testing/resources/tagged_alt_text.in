@@ -1,6 +1,5 @@
-%PDF-1.7
-% ò¤ô
-1 0 obj <<
+{{header}}
+{{object 1 0}} <<
   /Type /Catalog
   /Pages 2 0 R
   /StructTreeRoot 8 0 R
@@ -10,13 +9,13 @@
   >>
 >>
 endobj
-2 0 obj <<
+{{object 2 0}} <<
   /Type /Pages
   /Count 1
   /Kids [3 0 R]
 >>
 endobj
-3 0 obj <<
+{{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
   /Contents 4 0 R
@@ -39,8 +38,8 @@ endobj
   /StructParents 0
 >>
 endobj
-4 0 obj <<
-  /Length 162
+{{object 4 0}} <<
+  {{streamlen}}
 >>
 stream
 0.1 w
@@ -67,7 +66,7 @@ EGS9 gs /Tr8 Do
 Q
 endstream
 endobj
-5 0 obj <<
+{{object 5 0}} <<
   /Type /XObject
   /Subtype /Form
   /BBox [-140 395 753 395.1]
@@ -76,12 +75,12 @@ endobj
     /K true
     /S /Transparency
   >>
-  /Length 0
+  {{streamlen}}
 >>
 stream
 endstream
 endobj
-6 0 obj <<
+{{object 6 0}} <<
   /Type /XObject
   /Subtype /Image
   /Width 50
@@ -89,18 +88,18 @@ endobj
   /BitsPerComponent 8
   /ColorSpace /DeviceRGB
   /Filter [/ASCIIHexDecode /FlateDecode]
-  /Length 61
+  {{streamlen}}
 >>
 stream
 789cedc13101000000c2a0f54fed6f06a00000000000000078031d4c0001
 endstream
 endobj
-7 0 obj <<
+{{object 7 0}} <<
   /ca 0.5
   /CA 0.5
 >>
 endobj
-8 0 obj <<
+{{object 8 0}} <<
   /Type /StructTreeRoot
   /ParentTree 9 0 R
   /K [11 0 R]
@@ -111,11 +110,11 @@ endobj
   >>
 >>
 endobj
-9 0 obj <<
+{{object 9 0}} <<
   /Nums [0 [10 0 R]]
 >>
 endobj
-10 0 obj <<
+{{object 10 0}} <<
   /Type /StructElem
   /S /Figure
   /A 13 0 R
@@ -125,7 +124,7 @@ endobj
   /Pg 3 0 R
 >>
 endobj
-11 0 obj <<
+{{object 11 0}} <<
   /Type /StructElem
   /S /Document
   /K [12 0 R]
@@ -133,7 +132,7 @@ endobj
   /Pg 3 0 R
 >>
 endobj
-12 0 obj <<
+{{object 12 0}} <<
   /Type /StructElem
   /S /Standard
   /A 14 0 R
@@ -142,7 +141,7 @@ endobj
   /Pg 3 0 R
 >>
 endobj
-13 0 obj <<
+{{object 13 0}} <<
   /O /Layout
   /Placement /Block
   /BBox [281.1 685.3 331.1 735.3]
@@ -150,32 +149,12 @@ endobj
   /Height 99.9
 >>
 endobj
-14 0 obj <<
+{{object 14 0}} <<
   /O /Layout
   /Placement /Block
 >>
 endobj
-xref
-0 15
-0000000000 65535 f 
-0000000015 00000 n 
-0000000145 00000 n 
-0000000208 00000 n 
-0000000556 00000 n 
-0000000770 00000 n 
-0000000952 00000 n 
-0000001212 00000 n 
-0000001253 00000 n 
-0000001412 00000 n 
-0000001454 00000 n 
-0000001612 00000 n 
-0000001706 00000 n 
-0000001813 00000 n 
-0000001931 00000 n 
-trailer <<
-  /Root 1 0 R
-  /Size 15
->>
-startxref
-1986
+{{xref}}
+{{trailer}}
+{{startxref}}
 %%EOF
