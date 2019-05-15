@@ -132,6 +132,19 @@ TEST(RetainedTreeNode, GrandChildCleanedUp) {
   EXPECT_FALSE(watcher.Get());
 }
 
+TEST(RetainedTreeNode, RemoveSelf) {
+  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  auto parent = pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
+  {
+    auto child = pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
+    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(child.Get());
+    parent->AppendFirstChild(child);
+  }
+  EXPECT_TRUE(watcher.Get());
+  watcher->RemoveSelfIfParented();
+  EXPECT_FALSE(watcher.Get());
+}
+
 TEST(RetainedTreeNode, InsertBeforeAfter) {
   ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
   RetainPtr<ObservableRetainedTreeNodeForTest> parent =

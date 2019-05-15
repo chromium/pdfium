@@ -40,6 +40,13 @@ class RetainedTreeNode : public TreeNode<T> {
     TreeNode<T>::RemoveChild(child.Get());
   }
 
+  void RemoveSelfIfParented() {
+    if (T* parent = TreeNode<T>::GetParent()) {
+      parent->TreeNode<T>::RemoveChild(
+          pdfium::WrapRetain(static_cast<T*>(this)).Get());
+    }
+  }
+
  protected:
   RetainedTreeNode() = default;
   ~RetainedTreeNode() override {
