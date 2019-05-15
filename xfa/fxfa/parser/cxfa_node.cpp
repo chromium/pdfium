@@ -1505,24 +1505,14 @@ CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
 }
 
 void CXFA_Node::InsertChildAndNotify(int32_t index, CXFA_Node* pNode) {
-  CHECK(!pNode->GetParent());
-  pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
+  InsertChildAndNotify(pNode, GetNthChild(index));
+}
 
-  CXFA_Node* pPrev = GetFirstChild();
-  if (!pPrev) {
-    AppendFirstChild(pNode);
-    index = 0;
-  } else if (index < 0) {
-    AppendLastChild(pNode);
-  } else if (index == 0) {
-    AppendFirstChild(pNode);
-  } else {
-    int32_t count = 0;
-    while (++count < index && pPrev->GetNextSibling())
-      pPrev = pPrev->GetNextSibling();
-    InsertAfter(pNode, pPrev);
-    index = count;
-  }
+void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
+  CHECK(!pNode->GetParent());
+  CHECK(!pBeforeNode || pBeforeNode->GetParent() == this);
+  pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
+  InsertBefore(pNode, pBeforeNode);
 
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (pNotify)
@@ -1532,26 +1522,8 @@ void CXFA_Node::InsertChildAndNotify(int32_t index, CXFA_Node* pNode) {
     return;
 
   ASSERT(!pNode->xml_node_->GetParent());
-  xml_node_->InsertChildNode(pNode->xml_node_.Get(), index);
-}
-
-void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
-  CHECK(!pBeforeNode || pBeforeNode->GetParent() == this);
-
-  int32_t index = -1;
-  if (!GetFirstChild() || pBeforeNode == GetFirstChild()) {
-    index = 0;
-  } else if (!pBeforeNode) {
-    index = -1;
-  } else {
-    index = 0;
-    CXFA_Node* prev = GetFirstChild();
-    while (prev && prev != pBeforeNode) {
-      prev = prev->GetNextSibling();
-      ++index;
-    }
-  }
-  InsertChildAndNotify(index, pNode);
+  xml_node_->InsertBefore(pNode->xml_node_.Get(),
+                          pBeforeNode ? pBeforeNode->xml_node_.Get() : nullptr);
 }
 
 void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
