@@ -308,16 +308,13 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild();
     while (pXMLChild) {
       CFX_XMLNode* pXMLSibling = pXMLChild->GetNextSibling();
-      pXMLNode->RemoveChildNode(pXMLChild);
-      pFakeXMLRoot->AppendChild(pXMLChild);
+      pXMLNode->RemoveChild(pXMLChild);
+      pFakeXMLRoot->AppendLastChild(pXMLChild);
       pXMLChild = pXMLSibling;
     }
   } else {
-    CFX_XMLNode* pXMLParent = pXMLNode->GetParent();
-    if (pXMLParent)
-      pXMLParent->RemoveChildNode(pXMLNode);
-
-    pFakeXMLRoot->AppendChild(pXMLNode);
+    pXMLNode->RemoveSelfIfParented();
+    pFakeXMLRoot->AppendLastChild(pXMLNode);
   }
 
   pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot);

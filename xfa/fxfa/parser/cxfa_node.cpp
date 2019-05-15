@@ -989,11 +989,10 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
                          ->GetHDOC()
                          ->GetXMLDocument()
                          ->CreateNode<CFX_XMLText>(wsValue);
-        pCloneXMLElement->AppendChild(text);
+        pCloneXMLElement->AppendLastChild(text);
       }
 
       pCloneXML = pCloneXMLElement;
-
       pClone->JSObject()->SetEnum(XFA_Attribute::Contains,
                                   XFA_AttributeValue::Unknown, false);
     } else {
@@ -1567,7 +1566,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
     return;
 
   if (!pNode->IsAttributeInXML()) {
-    xml_node_->RemoveChildNode(pNode->xml_node_.Get());
+    xml_node_->RemoveChild(pNode->xml_node_.Get());
     return;
   }
 
@@ -1595,7 +1594,7 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
                      ->GetHDOC()
                      ->GetXMLDocument()
                      ->CreateNode<CFX_XMLText>(wsValue);
-    pNewXMLElement->AppendChild(text);
+    pNewXMLElement->AppendLastChild(text);
   }
   pNode->xml_node_ = pNewXMLElement;
   pNode->JSObject()->SetEnum(XFA_Attribute::Contains,
@@ -5080,14 +5079,14 @@ void CXFA_Node::SetToXML(const WideString& value) {
         }
       }
       if (bDeleteChildren)
-        elem->DeleteChildren();
+        elem->RemoveAllChildren();
 
       auto* text = GetDocument()
                        ->GetNotify()
                        ->GetHDOC()
                        ->GetXMLDocument()
                        ->CreateNode<CFX_XMLText>(value);
-      elem->AppendChild(text);
+      elem->AppendLastChild(text);
       break;
     }
     case CFX_XMLNode::Type::kText:

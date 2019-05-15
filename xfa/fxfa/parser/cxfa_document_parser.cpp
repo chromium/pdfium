@@ -569,16 +569,14 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_Data(
     pDataXMLNode = pXMLDocumentNode;
   } else {
     auto* pDataElement = xml_doc_->CreateNode<CFX_XMLElement>(L"xfa:data");
-    CFX_XMLNode* pParentXMLNode = pXMLDocumentNode->GetParent();
-    if (pParentXMLNode)
-      pParentXMLNode->RemoveChildNode(pXMLDocumentNode);
+    pXMLDocumentNode->RemoveSelfIfParented();
 
     CFX_XMLElement* pElement = ToXMLElement(pXMLDocumentNode);
     pElement->RemoveAttribute(L"xmlns:xfa");
 
     // The node was either removed from the parent above, or already has no
     // parent so we can take ownership.
-    pDataElement->AppendChild(pXMLDocumentNode);
+    pDataElement->AppendLastChild(pXMLDocumentNode);
     pDataXMLNode = pDataElement;
   }
   if (!pDataXMLNode)

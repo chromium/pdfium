@@ -83,7 +83,7 @@ void CJX_Packet::content(CFXJSE_Value* pValue,
   CFX_XMLElement* element = ToXMLElement(GetXFANode()->GetXMLMappingNode());
   if (bSetting) {
     if (element) {
-      element->AppendChild(
+      element->AppendLastChild(
           GetXFANode()
               ->GetDocument()
               ->GetNotify()

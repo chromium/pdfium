@@ -126,7 +126,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
         case FDE_XmlSyntaxState::Text:
           if (ch == L'<') {
             if (!current_text_.empty()) {
-              current_node_->AppendChild(
+              current_node_->AppendLastChild(
                   doc->CreateNode<CFX_XMLText>(GetTextData()));
             } else {
               current_buffer_idx++;
@@ -168,7 +168,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             if (target_name.EqualsASCII("originalXFAVersion") ||
                 target_name.EqualsASCII("acrobat")) {
               auto* node = doc->CreateNode<CFX_XMLInstruction>(target_name);
-              current_node_->AppendChild(node);
+              current_node_->AppendLastChild(node);
               current_node_ = node;
             }
           } else {
@@ -184,7 +184,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_parser_state = FDE_XmlSyntaxState::AttriName;
 
             auto* child = doc->CreateNode<CFX_XMLElement>(GetTextData());
-            current_node_->AppendChild(child);
+            current_node_->AppendLastChild(child);
             current_node_ = child;
           } else {
             current_text_.push_back(ch);
@@ -357,7 +357,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           if (FXSYS_wcsnicmp(current_span.data(), L"]]>", 3) == 0) {
             current_buffer_idx += 3;
             current_parser_state = FDE_XmlSyntaxState::Text;
-            current_node_->AppendChild(
+            current_node_->AppendLastChild(
                 doc->CreateNode<CFX_XMLCharData>(GetTextData()));
           } else {
             current_text_.push_back(ch);
@@ -461,7 +461,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
     }
   }
 
-  current_node_->AppendChild(doc->CreateNode<CFX_XMLText>(GetTextData()));
+  current_node_->AppendLastChild(doc->CreateNode<CFX_XMLText>(GetTextData()));
   return true;
 }
 

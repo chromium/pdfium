@@ -101,6 +101,7 @@ TEST(TreeNode, RemoveAllChildren) {
 
 TEST(TreeNode, NthChild) {
   auto pParent = pdfium::MakeUnique<TestTreeNode>();
+  EXPECT_EQ(nullptr, pParent->GetNthChild(-1));
   EXPECT_EQ(nullptr, pParent->GetNthChild(0));
 
   auto p0 = pdfium::MakeUnique<TestTreeNode>();
@@ -111,6 +112,7 @@ TEST(TreeNode, NthChild) {
   pParent->AppendLastChild(p1.get());
   pParent->AppendLastChild(p2.get());
   pParent->AppendLastChild(p3.get());
+  EXPECT_EQ(nullptr, pParent->GetNthChild(-1));
   EXPECT_EQ(p0.get(), pParent->GetNthChild(0));
   EXPECT_EQ(p1.get(), pParent->GetNthChild(1));
   EXPECT_EQ(p2.get(), pParent->GetNthChild(2));

@@ -78,10 +78,10 @@ TEST(CFX_XMLElementTest, Clone) {
   node.SetAttribute(L"xmlns:test", L"https://example.org/test");
 
   CFX_XMLText text_child1(L"Text Child");
-  node.AppendChild(&text_child1);
+  node.AppendLastChild(&text_child1);
 
   CFX_XMLElement node_child1(L"Node child");
-  node.AppendChild(&node_child1);
+  node.AppendLastChild(&node_child1);
 
   CFX_XMLNode* clone = node.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
@@ -130,16 +130,16 @@ TEST(CFX_XMLElementTest, SaveWithChildren) {
   CFX_XMLElement node(L"node");
 
   CFX_XMLText text_child1(L"Text Child 1");
-  node.AppendChild(&text_child1);
+  node.AppendLastChild(&text_child1);
 
   CFX_XMLElement node_child1(L"node-child");
-  node.AppendChild(&node_child1);
+  node.AppendLastChild(&node_child1);
 
   CFX_XMLText text_child2(L"Text Child 2");
-  node_child1.AppendChild(&text_child2);
+  node_child1.AppendLastChild(&text_child2);
 
   CFX_XMLCharData char_data1(L"Char Data");
-  node.AppendChild(&char_data1);
+  node.AppendLastChild(&char_data1);
 
   node.Save(stream);
   EXPECT_EQ(
@@ -164,7 +164,7 @@ TEST(CFX_XMLElementTest, SaveWithNamespace) {
 TEST(CFX_XMLElementTest, GetFirstChildNamed) {
   CFX_XMLElement node(L"node");
   CFX_XMLElement node_child1(L"node-child");
-  node.AppendChild(&node_child1);
+  node.AppendLastChild(&node_child1);
 
   auto* found = node.GetFirstChildNamed(L"node-child");
   EXPECT_TRUE(found != nullptr);
@@ -174,7 +174,7 @@ TEST(CFX_XMLElementTest, GetFirstChildNamed) {
 TEST(CFX_XMLElementTest, GetFirstChildNamedMissing) {
   CFX_XMLElement node(L"node");
   CFX_XMLElement node_child1(L"node-child");
-  node.AppendChild(&node_child1);
+  node.AppendLastChild(&node_child1);
 
   auto* found = node.GetFirstChildNamed(L"node-sibling");
   EXPECT_TRUE(found == nullptr);
@@ -185,9 +185,9 @@ TEST(CFX_XMLElementTest, GetNthChildNamed) {
   CFX_XMLElement node_child1(L"node-child");
   CFX_XMLElement node_child2(L"node-child");
   CFX_XMLElement node_child3(L"node-child");
-  node.AppendChild(&node_child1);
-  node.AppendChild(&node_child2);
-  node.AppendChild(&node_child3);
+  node.AppendLastChild(&node_child1);
+  node.AppendLastChild(&node_child2);
+  node.AppendLastChild(&node_child3);
 
   auto* found = node.GetNthChildNamed(L"node-child", 2);
   EXPECT_TRUE(found != nullptr);
@@ -199,9 +199,9 @@ TEST(CFX_XMLElementTest, GetNthChildNamedMissingChild) {
   CFX_XMLElement node_child1(L"node-child");
   CFX_XMLElement node_child2(L"node-child");
   CFX_XMLElement node_child3(L"node-child");
-  node.AppendChild(&node_child1);
-  node.AppendChild(&node_child2);
-  node.AppendChild(&node_child3);
+  node.AppendLastChild(&node_child1);
+  node.AppendLastChild(&node_child2);
+  node.AppendLastChild(&node_child3);
 
   auto* found = node.GetNthChildNamed(L"node-child", 5);
   EXPECT_TRUE(found == nullptr);
@@ -211,16 +211,16 @@ TEST(CFX_XMLElementTest, GetTextData) {
   CFX_XMLElement node(L"node");
 
   CFX_XMLText text_child1(L"Text Child 1");
-  node.AppendChild(&text_child1);
+  node.AppendLastChild(&text_child1);
 
   CFX_XMLElement node_child1(L"Node child");
-  node.AppendChild(&node_child1);
+  node.AppendLastChild(&node_child1);
 
   CFX_XMLText text_child2(L"Text Child 2");
-  node_child1.AppendChild(&text_child2);
+  node_child1.AppendLastChild(&text_child2);
 
   CFX_XMLCharData char_data1(L"Char Data");
-  node.AppendChild(&char_data1);
+  node.AppendLastChild(&char_data1);
 
   EXPECT_EQ(L"Text Child 1Char Data", node.GetTextData());
 }

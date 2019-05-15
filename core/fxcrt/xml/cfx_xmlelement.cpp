@@ -33,7 +33,7 @@ CFX_XMLNode* CFX_XMLElement::Clone(CFX_XMLDocument* doc) {
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
     if (pChild->GetType() == Type::kText)
-      node->AppendChild(pChild->Clone(doc));
+      node->AppendLastChild(pChild->Clone(doc));
   }
   return node;
 }

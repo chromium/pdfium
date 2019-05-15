@@ -27,11 +27,12 @@ class TreeNode {
     return child != this && child->m_pParent == this;
   }
 
-  T* GetNthChild(size_t n) {
+  T* GetNthChild(int32_t n) {
+    if (n < 0)
+      return nullptr;
     T* result = GetFirstChild();
-    while (n && result) {
+    while (n-- && result) {
       result = result->GetNextSibling();
-      --n;
     }
     return result;
   }
