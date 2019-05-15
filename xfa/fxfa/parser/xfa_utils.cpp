@@ -30,7 +30,7 @@
 
 namespace {
 
-constexpr const char kFormNS[] = "http://www.xfa.org/schema/xfa-form/";
+const char kFormNS[] = "http://www.xfa.org/schema/xfa-form/";
 
 WideString ExportEncodeAttribute(const WideString& str) {
   CFX_WideTextBuf textBuf;

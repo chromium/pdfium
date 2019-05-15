@@ -2016,7 +2016,7 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText2) {
 
 TEST_F(FPDFEditEmbedderTest, LoadStandardFonts) {
   CreateNewDocument();
-  static constexpr const char* standard_font_names[] = {
+  static constexpr const char* kStandardFontNames[] = {
       "Arial",
       "Arial-Bold",
       "Arial-BoldItalic",
@@ -2039,16 +2039,16 @@ TEST_F(FPDFEditEmbedderTest, LoadStandardFonts) {
       "TimesNewRoman-BoldItalic",
       "TimesNewRoman-Italic",
       "ZapfDingbats"};
-  for (const char* font_name : standard_font_names) {
+  for (const char* font_name : kStandardFontNames) {
     FPDF_FONT font = FPDFText_LoadStandardFont(document(), font_name);
     EXPECT_TRUE(font) << font_name << " should be considered a standard font.";
   }
-  static constexpr const char* not_standard_font_names[] = {
+  static constexpr const char* kNotStandardFontNames[] = {
       "Abcdefg",      "ArialB",    "Arial-Style",
       "Font Name",    "FontArial", "NotAStandardFontName",
       "TestFontName", "Quack",     "Symbol-Italic",
       "Zapf"};
-  for (const char* font_name : not_standard_font_names) {
+  for (const char* font_name : kNotStandardFontNames) {
     FPDF_FONT font = FPDFText_LoadStandardFont(document(), font_name);
     EXPECT_FALSE(font) << font_name
                        << " should not be considered a standard font.";
@@ -2626,7 +2626,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   // - int "IntKey" : 42
   // - string "StringKey": "StringValue"
   // - blob "BlobKey": "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0"
-  constexpr const size_t kBlobLen = 28;
+  constexpr size_t kBlobLen = 28;
   char block_value[kBlobLen];
   memcpy(block_value, "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0", kBlobLen);
   EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));

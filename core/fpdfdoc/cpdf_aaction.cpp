@@ -10,7 +10,7 @@
 
 namespace {
 
-constexpr const char* g_sAATypes[] = {
+constexpr const char* kAATypes[] = {
     "E",   // kCursorEnter
     "X",   // kCursorExit
     "D",   // kButtonDown
@@ -34,10 +34,10 @@ constexpr const char* g_sAATypes[] = {
     "DP",  // kDocumentPrinted
 };
 
-// |g_sAATypes| should have one less element than enum AActionType due to
-// kDocumentOpen, which is an artificial type.
-static_assert(FX_ArraySize(g_sAATypes) == CPDF_AAction::kNumberOfActions - 1,
-              "g_sAATypes count mismatch");
+// |kAATypes| should have one less element than enum AActionType due to
+// |kDocumentOpen|, which is an artificial type.
+static_assert(FX_ArraySize(kAATypes) == CPDF_AAction::kNumberOfActions - 1,
+              "kAATypes count mismatch");
 
 }  // namespace
 
@@ -48,12 +48,11 @@ CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
 CPDF_AAction::~CPDF_AAction() = default;
 
 bool CPDF_AAction::ActionExist(AActionType eType) const {
-  return m_pDict && m_pDict->KeyExist(g_sAATypes[eType]);
+  return m_pDict && m_pDict->KeyExist(kAATypes[eType]);
 }
 
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
-  return CPDF_Action(m_pDict ? m_pDict->GetDictFor(g_sAATypes[eType])
-                             : nullptr);
+  return CPDF_Action(m_pDict ? m_pDict->GetDictFor(kAATypes[eType]) : nullptr);
 }
 
 // static

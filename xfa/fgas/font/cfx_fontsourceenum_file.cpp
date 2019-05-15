@@ -14,10 +14,12 @@ namespace {
 
 constexpr char kFolderSeparator = '/';
 
-constexpr const char* g_FontFolders[] = {
+constexpr const char* kFontFolders[] = {
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
-    "/usr/share/fonts", "/usr/share/X11/fonts/Type1",
-    "/usr/share/X11/fonts/TTF", "/usr/local/share/fonts",
+    "/usr/share/fonts",
+    "/usr/share/X11/fonts/Type1",
+    "/usr/share/X11/fonts/TTF",
+    "/usr/local/share/fonts",
 #elif defined(OS_MACOSX)
     "~/Library/Fonts",
     "/Library/Fonts",
@@ -30,7 +32,7 @@ constexpr const char* g_FontFolders[] = {
 }  // namespace
 
 CFX_FontSourceEnum_File::CFX_FontSourceEnum_File()
-    : m_FolderPaths(std::begin(g_FontFolders), std::end(g_FontFolders)) {}
+    : m_FolderPaths(std::begin(kFontFolders), std::end(kFontFolders)) {}
 
 CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() = default;
 

@@ -103,7 +103,7 @@ TEST_F(FPDFPPOEmbedderTest, BadNupParams) {
 TEST_F(FPDFPPOEmbedderTest, NupRenderImage) {
   ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
   const int kPageCount = 2;
-  constexpr const char* kExpectedMD5s[kPageCount] = {
+  static constexpr const char* kExpectedMD5s[kPageCount] = {
       "4d225b961da0f1bced7c83273e64c9b6", "fb18142190d770cfbc329d2b071aee4d"};
   ScopedFPDFDocument output_doc_3up(
       FPDF_ImportNPagesToOne(document(), 792, 612, 3, 1));

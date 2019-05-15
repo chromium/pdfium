@@ -716,20 +716,20 @@ TEST(PDFArrayTest, AddInteger) {
 }
 
 TEST(PDFArrayTest, AddStringAndName) {
-  static constexpr const char* vals[] = {
+  static constexpr const char* kVals[] = {
       "",        "a", "ehjhRIOYTTFdfcdnv",  "122323",
       "$#%^&**", " ", "This is a test.\r\n"};
   auto string_array = pdfium::MakeRetain<CPDF_Array>();
   auto name_array = pdfium::MakeRetain<CPDF_Array>();
-  for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
-    string_array->AddNew<CPDF_String>(vals[i], false);
-    name_array->AddNew<CPDF_Name>(vals[i]);
+  for (const char* val : kVals) {
+    string_array->AddNew<CPDF_String>(val, false);
+    name_array->AddNew<CPDF_Name>(val);
   }
-  for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
+  for (size_t i = 0; i < FX_ArraySize(kVals); ++i) {
     EXPECT_EQ(CPDF_Object::kString, string_array->GetObjectAt(i)->GetType());
-    EXPECT_STREQ(vals[i], string_array->GetObjectAt(i)->GetString().c_str());
+    EXPECT_STREQ(kVals[i], string_array->GetObjectAt(i)->GetString().c_str());
     EXPECT_EQ(CPDF_Object::kName, name_array->GetObjectAt(i)->GetType());
-    EXPECT_STREQ(vals[i], name_array->GetObjectAt(i)->GetString().c_str());
+    EXPECT_STREQ(kVals[i], name_array->GetObjectAt(i)->GetString().c_str());
   }
 }
 

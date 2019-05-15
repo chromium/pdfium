@@ -76,7 +76,7 @@ class CXFA_DocumentParser {
   std::unique_ptr<CFX_XMLDocument> xml_doc_;
   // TODO(dsinclair): Figure out who owns this.
   CXFA_Node* m_pRootNode = nullptr;
-  unsigned long m_ExecuteRecursionDepth = 0;
+  size_t m_ExecuteRecursionDepth = 0;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_

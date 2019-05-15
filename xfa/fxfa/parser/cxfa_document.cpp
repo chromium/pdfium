@@ -49,8 +49,7 @@
 
 namespace {
 
-constexpr const wchar_t kTemplateNS[] =
-    L"http://www.xfa.org/schema/xfa-template/";
+const wchar_t kTemplateNS[] = L"http://www.xfa.org/schema/xfa-template/";
 
 struct RecurseRecord {
   CXFA_Node* pTemplateChild;

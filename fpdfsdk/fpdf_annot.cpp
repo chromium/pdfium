@@ -756,11 +756,12 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   if (appearanceMode < 0 || appearanceMode >= FPDF_ANNOT_APPEARANCEMODE_COUNT)
     return false;
 
-  constexpr const char* modeKeyForMode[] = {"N", "R", "D"};
-  static_assert(FX_ArraySize(modeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
-                "length of modeKeyForMode should be equal to "
-                "FPDF_ANNOT_APPEARANCEMODE_COUNT");
-  const char* modeKey = modeKeyForMode[appearanceMode];
+  static constexpr const char* kModeKeyForMode[] = {"N", "R", "D"};
+  static_assert(
+      FX_ArraySize(kModeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
+      "length of kModeKeyForMode should be equal to "
+      "FPDF_ANNOT_APPEARANCEMODE_COUNT");
+  const char* modeKey = kModeKeyForMode[appearanceMode];
 
   CPDF_Dictionary* pApDict = pAnnotDict->GetDictFor(pdfium::annotation::kAP);
 

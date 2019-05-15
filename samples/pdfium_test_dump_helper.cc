@@ -101,10 +101,10 @@ void DumpPageStructure(FPDF_PAGE page, int page_idx) {
 }
 
 void DumpMetaData(FPDF_DOCUMENT doc) {
-  constexpr const char* meta_tags[] = {"Title",        "Author",  "Subject",
-                                       "Keywords",     "Creator", "Producer",
-                                       "CreationDate", "ModDate"};
-  for (const char* meta_tag : meta_tags) {
+  static constexpr const char* kMetaTags[] = {
+      "Title",   "Author",   "Subject",      "Keywords",
+      "Creator", "Producer", "CreationDate", "ModDate"};
+  for (const char* meta_tag : kMetaTags) {
     char meta_buffer[4096];
     unsigned long len =
         FPDF_GetMetaText(doc, meta_tag, meta_buffer, sizeof(meta_buffer));
