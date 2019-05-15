@@ -458,7 +458,6 @@ pdfium_fuzzer("pdf_codec_jbig2_fuzzer") {
 
 pdfium_fuzzer("pdf_codec_rle_fuzzer") {
   sources = [
-    "../../core/fxcrt",
     "pdf_codec_rle_fuzzer.cc",
   ]
   deps = [
