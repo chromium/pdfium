@@ -688,9 +688,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           }
           CXFA_ExData* exData =
               defValue ? defValue->GetExDataIfExists() : nullptr;
-          ASSERT(exData);
-
-          exData->SetContentType(single ? L"text/plain" : L"text/xml");
+          if (exData)
+            exData->SetContentType(single ? L"text/plain" : L"text/xml");
         }
         FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                       XFA_Element::ExData);
