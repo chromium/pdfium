@@ -144,7 +144,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     ASSERT_NE(nullptr, element);
 
     // test nullptr inputs
-    unsigned short buffer[12];
+    unsigned short buffer[13];
     ASSERT_EQ(0U, FPDF_StructElement_GetTitle(nullptr, buffer, sizeof(buffer)));
     ASSERT_EQ(0U, FPDF_StructElement_GetTitle(nullptr, nullptr, 0));
     ASSERT_EQ(20U, FPDF_StructElement_GetTitle(element, nullptr, 0));
@@ -162,6 +162,17 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     const wchar_t kExpected[] = L"TitleText";
     EXPECT_EQ(WideString(kExpected),
               WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(element));
+    FPDF_STRUCTELEMENT child_element =
+        FPDF_StructElement_GetChildAtIndex(element, 0);
+    ASSERT_NE(nullptr, element);
+
+    ASSERT_EQ(26U, FPDF_StructElement_GetTitle(child_element, buffer,
+                                               sizeof(buffer)));
+    const wchar_t kChildExpected[] = L"symbol: 100k";
+    EXPECT_EQ(WideString(kChildExpected),
+              WideString::FromUTF16LE(buffer, FXSYS_len(kChildExpected)));
   }
 
   UnloadPage(page);

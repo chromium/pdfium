@@ -33,8 +33,7 @@ CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
     : m_pTree(pTree),
       m_pParent(pParent),
       m_pDict(pDict),
-      m_Type(pDict->GetStringFor("S")),
-      m_Title(pDict->GetStringFor("T")) {
+      m_Type(pDict->GetStringFor("S")) {
   if (pTree->GetRoleMap()) {
     ByteString mapped = pTree->GetRoleMap()->GetStringFor(m_Type);
     if (!mapped.IsEmpty())
@@ -44,6 +43,10 @@ CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
 }
 
 CPDF_StructElement::~CPDF_StructElement() = default;
+
+WideString CPDF_StructElement::GetTitle() const {
+  return GetDict()->GetUnicodeTextFor("T");
+}
 
 size_t CPDF_StructElement::CountKids() const {
   return m_Kids.size();
