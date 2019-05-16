@@ -27,23 +27,6 @@
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
 #include "third_party/base/ptr_util.h"
 
-CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeField = nullptr;
-CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::DataMatrixField = nullptr;
-
-void CBC_ReedSolomonGF256::Initialize() {
-  QRCodeField = new CBC_ReedSolomonGF256(0x011D);
-  QRCodeField->Init();
-  DataMatrixField = new CBC_ReedSolomonGF256(0x012D);
-  DataMatrixField->Init();
-}
-
-void CBC_ReedSolomonGF256::Finalize() {
-  delete QRCodeField;
-  QRCodeField = nullptr;
-  delete DataMatrixField;
-  DataMatrixField = nullptr;
-}
-
 CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(int32_t primitive) {
   int32_t x = 1;
   for (int32_t j = 0; j < 256; j++) {
@@ -67,14 +50,6 @@ void CBC_ReedSolomonGF256::Init() {
 }
 
 CBC_ReedSolomonGF256::~CBC_ReedSolomonGF256() {}
-
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::GetZero() const {
-  return m_zero.get();
-}
-
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::GetOne() const {
-  return m_one.get();
-}
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256::BuildMonomial(
     int32_t degree,
