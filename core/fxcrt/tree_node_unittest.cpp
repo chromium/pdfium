@@ -121,4 +121,44 @@ TEST(TreeNode, NthChild) {
   pParent->RemoveAllChildren();
 }
 
+TEST(TreeNode, AppendFirstChild) {
+  auto parent = pdfium::MakeUnique<TestTreeNode>();
+  auto child0 = pdfium::MakeUnique<TestTreeNode>();
+  auto child1 = pdfium::MakeUnique<TestTreeNode>();
+  parent->AppendFirstChild(child0.get());
+  EXPECT_EQ(child0.get(), parent->GetFirstChild());
+  parent->AppendFirstChild(child1.get());
+  EXPECT_EQ(child1.get(), parent->GetFirstChild());
+  EXPECT_EQ(child1.get(), parent->GetNthChild(0));
+  EXPECT_EQ(child0.get(), parent->GetNthChild(1));
+}
+
+TEST(TreeNode, RemoveChild) {
+  auto parent = pdfium::MakeUnique<TestTreeNode>();
+  auto child0 = pdfium::MakeUnique<TestTreeNode>();
+  auto child1 = pdfium::MakeUnique<TestTreeNode>();
+
+  parent->AppendFirstChild(child0.get());
+  parent->AppendLastChild(child1.get());
+  EXPECT_EQ(child0.get(), parent->GetFirstChild());
+  EXPECT_EQ(child1.get(), parent->GetLastChild());
+  parent->RemoveChild(child0.get());
+  EXPECT_EQ(child1.get(), parent->GetFirstChild());
+  EXPECT_EQ(child1.get(), parent->GetLastChild());
+  parent->RemoveChild(child1.get());
+  EXPECT_EQ(nullptr, parent->GetFirstChild());
+  EXPECT_EQ(nullptr, parent->GetLastChild());
+
+  parent->AppendFirstChild(child0.get());
+  parent->AppendLastChild(child1.get());
+  EXPECT_EQ(child0.get(), parent->GetFirstChild());
+  EXPECT_EQ(child1.get(), parent->GetLastChild());
+  parent->RemoveChild(child1.get());
+  EXPECT_EQ(child0.get(), parent->GetFirstChild());
+  EXPECT_EQ(child0.get(), parent->GetLastChild());
+  parent->RemoveChild(child0.get());
+  EXPECT_EQ(nullptr, parent->GetFirstChild());
+  EXPECT_EQ(nullptr, parent->GetLastChild());
+}
+
 }  // namespace fxcrt
