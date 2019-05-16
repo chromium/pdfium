@@ -19,7 +19,7 @@
 
 class CCodec_ModuleMgr;
 class CFX_DIBBase;
-class CFX_FaceCache;
+class CFX_GlyphCache;
 class CFX_Font;
 class CFX_FontCache;
 class CFX_Matrix;
@@ -82,7 +82,7 @@ class CFX_PSRenderer {
                   const CFX_Matrix* pObject2Device);
   void SetGraphState(const CFX_GraphStateData* pGraphState);
   void SetColor(uint32_t color);
-  void FindPSFontGlyph(CFX_FaceCache* pFaceCache,
+  void FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
                        CFX_Font* pFont,
                        const TextCharPos& charpos,
                        int* ps_fontnum,

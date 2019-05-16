@@ -15,10 +15,10 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_stream.h"
-#include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
@@ -322,7 +322,7 @@ bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
 
 #if !defined(OS_WIN)
 void CFX_Font::SetFace(FXFT_Face face) {
-  ClearFaceCache();
+  ClearGlyphCache();
   m_Face = face;
 }
 
@@ -343,7 +343,7 @@ CFX_Font::~CFX_Font() {
 }
 
 void CFX_Font::DeleteFace() {
-  ClearFaceCache();
+  ClearGlyphCache();
   if (m_bEmbedded)
     FXFT_Done_Face(m_Face.Release());
   else
@@ -581,14 +581,14 @@ bool CFX_Font::GetBBox(FX_RECT* pBBox) {
   return true;
 }
 
-RetainPtr<CFX_FaceCache> CFX_Font::GetOrCreateFaceCache() const {
-  if (!m_FaceCache)
-    m_FaceCache = CFX_GEModule::Get()->GetFontCache()->GetFaceCache(this);
-  return m_FaceCache;
+RetainPtr<CFX_GlyphCache> CFX_Font::GetOrCreateGlyphCache() const {
+  if (!m_GlyphCache)
+    m_GlyphCache = CFX_GEModule::Get()->GetFontCache()->GetGlyphCache(this);
+  return m_GlyphCache;
 }
 
-void CFX_Font::ClearFaceCache() {
-  m_FaceCache = nullptr;
+void CFX_Font::ClearGlyphCache() {
+  m_GlyphCache = nullptr;
 }
 
 void CFX_Font::AdjustMMParams(int glyph_index,
@@ -709,18 +709,18 @@ const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(uint32_t glyph_index,
                                                  uint32_t dest_width,
                                                  int anti_alias,
                                                  int* pTextFlags) const {
-  return GetOrCreateFaceCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle,
-                                                 matrix, dest_width, anti_alias,
-                                                 pTextFlags);
+  return GetOrCreateGlyphCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle,
+                                                  matrix, dest_width,
+                                                  anti_alias, pTextFlags);
 }
 
 const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
                                             uint32_t dest_width) const {
-  return GetOrCreateFaceCache()->LoadGlyphPath(this, glyph_index, dest_width);
+  return GetOrCreateGlyphCache()->LoadGlyphPath(this, glyph_index, dest_width);
 }
 
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
 CFX_TypeFace* CFX_Font::GetDeviceCache() const {
-  return GetOrCreateFaceCache()->GetDeviceCache(this);
+  return GetOrCreateGlyphCache()->GetDeviceCache(this);
 }
 #endif

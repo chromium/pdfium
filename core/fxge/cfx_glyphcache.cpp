@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/cfx_facecache.h"
+#include "core/fxge/cfx_glyphcache.h"
 
 #include <algorithm>
 #include <limits>
@@ -95,11 +95,11 @@ void GenKey(UniqueKeyGen* pKeyGen,
 
 }  // namespace
 
-CFX_FaceCache::CFX_FaceCache(FXFT_Face face) : m_Face(face) {}
+CFX_GlyphCache::CFX_GlyphCache(FXFT_Face face) : m_Face(face) {}
 
-CFX_FaceCache::~CFX_FaceCache() = default;
+CFX_GlyphCache::~CFX_GlyphCache() = default;
 
-std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
+std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
     const CFX_Font* pFont,
     uint32_t glyph_index,
     bool bFontStyle,
@@ -221,9 +221,9 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
   return pGlyphBitmap;
 }
 
-const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
-                                                 uint32_t glyph_index,
-                                                 uint32_t dest_width) {
+const CFX_PathData* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* pFont,
+                                                  uint32_t glyph_index,
+                                                  uint32_t dest_width) {
   if (!m_Face || glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
@@ -242,13 +242,13 @@ const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
   return pGlyphPath;
 }
 
-const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
-                                                      uint32_t glyph_index,
-                                                      bool bFontStyle,
-                                                      const CFX_Matrix& matrix,
-                                                      uint32_t dest_width,
-                                                      int anti_alias,
-                                                      int* pTextFlags) {
+const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(const CFX_Font* pFont,
+                                                       uint32_t glyph_index,
+                                                       bool bFontStyle,
+                                                       const CFX_Matrix& matrix,
+                                                       uint32_t dest_width,
+                                                       int anti_alias,
+                                                       int* pTextFlags) {
   if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
@@ -311,7 +311,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
 }
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
+CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
     m_pTypeface = SkTypeface::MakeFromStream(
@@ -330,10 +330,10 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
 #endif  // defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 
 #if !defined(OS_MACOSX)
-void CFX_FaceCache::InitPlatform() {}
+void CFX_GlyphCache::InitPlatform() {}
 #endif
 
-CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
+CFX_GlyphBitmap* CFX_GlyphCache::LookUpGlyphBitmap(
     const CFX_Font* pFont,
     const CFX_Matrix& matrix,
     const ByteString& FaceGlyphsKey,

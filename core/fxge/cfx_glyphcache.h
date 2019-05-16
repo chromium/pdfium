@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_CFX_FACECACHE_H_
-#define CORE_FXGE_CFX_FACECACHE_H_
+#ifndef CORE_FXGE_CFX_GLYPHCACHE_H_
+#define CORE_FXGE_CFX_GLYPHCACHE_H_
 
 #include <map>
 #include <memory>
@@ -26,12 +26,12 @@ class CFX_GlyphBitmap;
 class CFX_Matrix;
 class CFX_PathData;
 
-class CFX_FaceCache : public Retainable, public Observable<CFX_FaceCache> {
+class CFX_GlyphCache : public Retainable, public Observable<CFX_GlyphCache> {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~CFX_FaceCache() override;
+  ~CFX_GlyphCache() override;
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(const CFX_Font* pFont,
                                          uint32_t glyph_index,
@@ -49,7 +49,7 @@ class CFX_FaceCache : public Retainable, public Observable<CFX_FaceCache> {
 #endif
 
  private:
-  explicit CFX_FaceCache(FXFT_Face face);
+  explicit CFX_GlyphCache(FXFT_Face face);
 
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
   // <glyph_index, width, weight, angle, vertical>
@@ -85,4 +85,4 @@ class CFX_FaceCache : public Retainable, public Observable<CFX_FaceCache> {
 #endif
 };
 
-#endif  //  CORE_FXGE_CFX_FACECACHE_H_
+#endif  //  CORE_FXGE_CFX_GLYPHCACHE_H_

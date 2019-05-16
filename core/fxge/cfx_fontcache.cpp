@@ -9,8 +9,8 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_font.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/ptr_util.h"
@@ -19,21 +19,21 @@ CFX_FontCache::CFX_FontCache() = default;
 
 CFX_FontCache::~CFX_FontCache() = default;
 
-RetainPtr<CFX_FaceCache> CFX_FontCache::GetFaceCache(const CFX_Font* pFont) {
+RetainPtr<CFX_GlyphCache> CFX_FontCache::GetGlyphCache(const CFX_Font* pFont) {
   FXFT_Face face = pFont->GetFace();
   const bool bExternal = !face;
-  auto& map = bExternal ? m_ExtFaceMap : m_FTFaceMap;
+  auto& map = bExternal ? m_ExtGlyphCacheMap : m_GlyphCacheMap;
   auto it = map.find(face);
   if (it != map.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
-  auto new_cache = pdfium::MakeRetain<CFX_FaceCache>(face);
+  auto new_cache = pdfium::MakeRetain<CFX_GlyphCache>(face);
   map[face].Reset(new_cache.Get());
   return new_cache;
 }
 
 #ifdef _SKIA_SUPPORT_
 CFX_TypeFace* CFX_FontCache::GetDeviceCache(const CFX_Font* pFont) {
-  return GetFaceCache(pFont)->GetDeviceCache(pFont);
+  return GetGlyphCache(pFont)->GetDeviceCache(pFont);
 }
 #endif

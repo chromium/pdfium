@@ -17,9 +17,9 @@
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/maybe_owned.h"
-#include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
@@ -526,7 +526,7 @@ void CFX_PSRenderer::SetColor(uint32_t color) {
   }
 }
 
-void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
+void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
                                      CFX_Font* pFont,
                                      const TextCharPos& charpos,
                                      int* ps_fontnum,
@@ -594,7 +594,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
         CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
                    charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
   }
-  const CFX_PathData* pPathData = pFaceCache->LoadGlyphPath(
+  const CFX_PathData* pPathData = pGlyphCache->LoadGlyphPath(
       pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
   if (!pPathData)
     return;
@@ -664,11 +664,11 @@ bool CFX_PSRenderer::DrawText(int nChars,
       << pObject2Device->e << " " << pObject2Device->f << "]cm\n";
 
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
-  RetainPtr<CFX_FaceCache> pFaceCache = pCache->GetFaceCache(pFont);
+  RetainPtr<CFX_GlyphCache> pGlyphCache = pCache->GetGlyphCache(pFont);
   int last_fontnum = -1;
   for (int i = 0; i < nChars; i++) {
     int ps_fontnum, ps_glyphindex;
-    FindPSFontGlyph(pFaceCache.Get(), pFont, pCharPos[i], &ps_fontnum,
+    FindPSFontGlyph(pGlyphCache.Get(), pFont, pCharPos[i], &ps_fontnum,
                     &ps_glyphindex);
     if (last_fontnum != ps_fontnum) {
       buf << "/X" << ps_fontnum << " Ff " << font_size << " Fs Sf ";

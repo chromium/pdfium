@@ -11,10 +11,10 @@
 
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/cfx_cliprgn.h"
-#include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -165,11 +165,11 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
 
 #endif  // _SKIA_SUPPORT_
 
-void CFX_FaceCache::InitPlatform() {}
+void CFX_GlyphCache::InitPlatform() {}
 
-void CFX_FaceCache::DestroyPlatform() {}
+void CFX_GlyphCache::DestroyPlatform() {}
 
-std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph_Nativetext(
+std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph_Nativetext(
     const CFX_Font* pFont,
     uint32_t glyph_index,
     const CFX_Matrix& matrix,
