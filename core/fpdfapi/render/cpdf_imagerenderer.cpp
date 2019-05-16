@@ -112,7 +112,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   m_ResampleOptions = FXDIB_ResampleOptions();
   if (GetRenderOptions().GetOptions().bForceDownsample)
     m_ResampleOptions.bInterpolateDownsample = true;
-  else if (GetRenderOptions().GetOptions().bForceDownsample)
+  else if (GetRenderOptions().GetOptions().bForceHalftone)
     m_ResampleOptions.bHalftone = true;
 
   if (m_pRenderStatus->GetRenderDevice()->GetDeviceClass() != FXDC_DISPLAY)
