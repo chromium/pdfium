@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 
 namespace fxcrt {
 namespace {
@@ -18,39 +19,39 @@ class Clink {
 };
 
 void DeleteDangling() {
-  Clink* ptr1 = new Clink();
-  Clink* ptr2 = new Clink();
-  ptr2->next_ = ptr1;
-  delete ptr1;
-  delete ptr2;
+  auto ptr2 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr1 = pdfium::MakeUnique<Clink>();
+    ptr2->next_ = ptr1.get();
+  }
 }
 
 void AssignDangling() {
-  Clink* ptr1 = new Clink();
-  Clink* ptr2 = new Clink();
-  ptr2->next_ = ptr1;
-  delete ptr1;
+  auto ptr2 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr1 = pdfium::MakeUnique<Clink>();
+    ptr2->next_ = ptr1.get();
+  }
   ptr2->next_ = nullptr;
-  delete ptr2;
 }
 
 void ReleaseDangling() {
-  Clink* ptr1 = new Clink();
-  Clink* ptr2 = new Clink();
-  ptr2->next_ = ptr1;
-  delete ptr1;
+  auto ptr2 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr1 = pdfium::MakeUnique<Clink>();
+    ptr2->next_ = ptr1.get();
+  }
   ptr2->next_.Release();
-  delete ptr2;
 }
 
 }  // namespace
 
 TEST(UnownedPtr, PtrOk) {
-  Clink* ptr1 = new Clink();
-  Clink* ptr2 = new Clink();
-  ptr2->next_ = ptr1;
-  delete ptr2;
-  delete ptr1;
+  auto ptr1 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr2 = pdfium::MakeUnique<Clink>();
+    ptr2->next_ = ptr1.get();
+  }
 }
 
 TEST(UnownedPtr, PtrNotOk) {
@@ -62,12 +63,12 @@ TEST(UnownedPtr, PtrNotOk) {
 }
 
 TEST(UnownedPtr, AssignOk) {
-  Clink* ptr1 = new Clink();
-  Clink* ptr2 = new Clink();
-  ptr2->next_ = ptr1;
-  ptr2->next_ = nullptr;
-  delete ptr2;
-  delete ptr1;
+  auto ptr1 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr2 = pdfium::MakeUnique<Clink>();
+    ptr2->next_ = ptr1.get();
+    ptr2->next_ = nullptr;
+  }
 }
 
 TEST(UnownedPtr, AssignNotOk) {
@@ -79,12 +80,12 @@ TEST(UnownedPtr, AssignNotOk) {
 }
 
 TEST(UnownedPtr, ReleaseOk) {
-  Clink* ptr1 = new Clink();
-  Clink* ptr2 = new Clink();
-  ptr2->next_ = ptr1;
-  ptr2->next_.Release();
-  delete ptr1;
-  delete ptr2;
+  auto ptr2 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr1 = pdfium::MakeUnique<Clink>();
+    ptr2->next_ = ptr1.get();
+    ptr2->next_.Release();
+  }
 }
 
 TEST(UnownedPtr, ReleaseNotOk) {

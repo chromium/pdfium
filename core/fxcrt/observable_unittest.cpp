@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 
 namespace fxcrt {
 namespace {
@@ -31,11 +32,13 @@ TEST(ObservePtr, Null) {
 }
 
 TEST(ObservePtr, LivesLonger) {
-  PseudoObservable* pObs = new PseudoObservable;
-  PseudoObservable::ObservedPtr ptr(pObs);
-  EXPECT_NE(nullptr, ptr.Get());
-  EXPECT_EQ(1u, pObs->ActiveObservedPtrs());
-  delete pObs;
+  PseudoObservable::ObservedPtr ptr;
+  {
+    auto pObs = pdfium::MakeUnique<PseudoObservable>();
+    ptr.Reset(pObs.get());
+    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_EQ(1u, pObs->ActiveObservedPtrs());
+  }
   EXPECT_EQ(nullptr, ptr.Get());
 }
 
