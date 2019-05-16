@@ -39,6 +39,7 @@ class CPDF_StructElement final : public Retainable {
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   ByteString GetType() const { return m_Type; }
+  WideString GetAltText() const;
   WideString GetTitle() const;
 
   // Never returns nullptr.
@@ -62,7 +63,7 @@ class CPDF_StructElement final : public Retainable {
   UnownedPtr<CPDF_StructTree> const m_pTree;
   UnownedPtr<CPDF_StructElement> const m_pParent;
   UnownedPtr<const CPDF_Dictionary> const m_pDict;
-  ByteString m_Type;
+  const ByteString m_Type;
   std::vector<CPDF_StructKid> m_Kids;
 };
 

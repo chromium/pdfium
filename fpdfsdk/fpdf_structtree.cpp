@@ -74,9 +74,7 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
                               unsigned long buflen) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  return elem ? WideStringToBuffer(elem->GetDict()->GetUnicodeTextFor("Alt"),
-                                   buffer, buflen)
-              : 0;
+  return elem ? WideStringToBuffer(elem->GetAltText(), buffer, buflen) : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

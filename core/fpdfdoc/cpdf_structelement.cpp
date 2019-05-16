@@ -17,6 +17,21 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_structtree.h"
 
+namespace {
+
+ByteString GetStructElementType(CPDF_StructTree* pTree,
+                                const CPDF_Dictionary* pDict) {
+  ByteString type = pDict->GetStringFor("S");
+  if (pTree->GetRoleMap()) {
+    ByteString mapped = pTree->GetRoleMap()->GetStringFor(type);
+    if (!mapped.IsEmpty())
+      type = std::move(mapped);
+  }
+  return type;
+}
+
+}  // namespace
+
 CPDF_StructKid::CPDF_StructKid()
     : m_Type(Invalid),
       m_PageObjNum(0),
@@ -33,16 +48,15 @@ CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
     : m_pTree(pTree),
       m_pParent(pParent),
       m_pDict(pDict),
-      m_Type(pDict->GetStringFor("S")) {
-  if (pTree->GetRoleMap()) {
-    ByteString mapped = pTree->GetRoleMap()->GetStringFor(m_Type);
-    if (!mapped.IsEmpty())
-      m_Type = std::move(mapped);
-  }
-  LoadKids(pDict);
+      m_Type(GetStructElementType(m_pTree.Get(), m_pDict.Get())) {
+  LoadKids(m_pDict.Get());
 }
 
 CPDF_StructElement::~CPDF_StructElement() = default;
+
+WideString CPDF_StructElement::GetAltText() const {
+  return GetDict()->GetUnicodeTextFor("Alt");
+}
 
 WideString CPDF_StructElement::GetTitle() const {
   return GetDict()->GetUnicodeTextFor("T");
