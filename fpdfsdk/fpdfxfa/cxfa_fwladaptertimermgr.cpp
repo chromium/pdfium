@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -13,6 +14,8 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
 namespace {
+
+std::vector<std::unique_ptr<CFWL_TimerInfo>>* g_TimerArray = nullptr;
 
 class CFWL_FWLAdapterTimerInfo final : public CFWL_TimerInfo {
  public:
@@ -25,29 +28,41 @@ class CFWL_FWLAdapterTimerInfo final : public CFWL_TimerInfo {
   CFWL_Timer* pTimer;
 };
 
+void TimerProc(int32_t idEvent) {
+  if (!g_TimerArray)
+    return;
+
+  for (const auto& info : *g_TimerArray) {
+    auto* pInfo = static_cast<CFWL_FWLAdapterTimerInfo*>(info.get());
+    if (pInfo->idEvent == idEvent) {
+      pInfo->pTimer->Run(pInfo);
+      break;
+    }
+  }
+}
+
 }  // namespace
 
-std::vector<CFWL_TimerInfo*>* CXFA_FWLAdapterTimerMgr::s_TimerArray = nullptr;
 
 CXFA_FWLAdapterTimerMgr::CXFA_FWLAdapterTimerMgr(
     CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv) {}
 
-CXFA_FWLAdapterTimerMgr::~CXFA_FWLAdapterTimerMgr() {}
+CXFA_FWLAdapterTimerMgr::~CXFA_FWLAdapterTimerMgr() = default;
 
-void CXFA_FWLAdapterTimerMgr::Start(CFWL_Timer* pTimer,
-                                    uint32_t dwElapse,
-                                    bool bImmediately,
-                                    CFWL_TimerInfo** pTimerInfo) {
+CFWL_TimerInfo* CXFA_FWLAdapterTimerMgr::Start(CFWL_Timer* pTimer,
+                                               uint32_t dwElapse,
+                                               bool bImmediately) {
+  if (!g_TimerArray)
+    g_TimerArray = new std::vector<std::unique_ptr<CFWL_TimerInfo>>;
+
   if (!m_pFormFillEnv)
-    return;
+    return nullptr;
 
   int32_t id_event = m_pFormFillEnv->SetTimer(dwElapse, TimerProc);
-  if (!s_TimerArray)
-    s_TimerArray = new std::vector<CFWL_TimerInfo*>;
-
-  *pTimerInfo = new CFWL_FWLAdapterTimerInfo(this, id_event, pTimer);
-  s_TimerArray->push_back(*pTimerInfo);
+  g_TimerArray->push_back(
+      pdfium::MakeUnique<CFWL_FWLAdapterTimerInfo>(this, id_event, pTimer));
+  return g_TimerArray->back().get();
 }
 
 void CXFA_FWLAdapterTimerMgr::Stop(CFWL_TimerInfo* pTimerInfo) {
@@ -57,27 +72,11 @@ void CXFA_FWLAdapterTimerMgr::Stop(CFWL_TimerInfo* pTimerInfo) {
   CFWL_FWLAdapterTimerInfo* pInfo =
       static_cast<CFWL_FWLAdapterTimerInfo*>(pTimerInfo);
   m_pFormFillEnv->KillTimer(pInfo->idEvent);
-  if (!s_TimerArray)
+  if (!g_TimerArray)
     return;
 
-  auto it = std::find(s_TimerArray->begin(), s_TimerArray->end(), pInfo);
-  if (it != s_TimerArray->end()) {
-    s_TimerArray->erase(it);
-    delete pInfo;
-  }
-}
-
-// static
-void CXFA_FWLAdapterTimerMgr::TimerProc(int32_t idEvent) {
-  if (!s_TimerArray)
-    return;
-
-  for (auto* info : *s_TimerArray) {
-    CFWL_FWLAdapterTimerInfo* pInfo =
-        static_cast<CFWL_FWLAdapterTimerInfo*>(info);
-    if (pInfo->idEvent == idEvent) {
-      pInfo->pTimer->Run(pInfo);
-      break;
-    }
-  }
+  pdfium::FakeUniquePtr<CFWL_TimerInfo> fake(pInfo);
+  auto it = std::find(g_TimerArray->begin(), g_TimerArray->end(), fake);
+  if (it != g_TimerArray->end())
+    g_TimerArray->erase(it);
 }

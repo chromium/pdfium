@@ -19,16 +19,12 @@ class CXFA_FWLAdapterTimerMgr final : public IFWL_AdapterTimerMgr {
   explicit CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CXFA_FWLAdapterTimerMgr() override;
 
-  void Start(CFWL_Timer* pTimer,
-             uint32_t dwElapse,
-             bool bImmediately,
-             CFWL_TimerInfo** pTimerInfo) override;
+  CFWL_TimerInfo* Start(CFWL_Timer* pTimer,
+                        uint32_t dwElapse,
+                        bool bImmediately) override;
   void Stop(CFWL_TimerInfo* pTimerInfo) override;
 
  private:
-  static void TimerProc(int32_t idEvent);
-
-  static std::vector<CFWL_TimerInfo*>* s_TimerArray;
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
 };
 

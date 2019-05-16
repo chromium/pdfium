@@ -27,7 +27,5 @@ CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   if (!m_pAdapterTimerMgr)
     return nullptr;
 
-  CFWL_TimerInfo* pTimerInfo = nullptr;
-  m_pAdapterTimerMgr->Start(this, dwElapse, bImmediately, &pTimerInfo);
-  return pTimerInfo;
+  return m_pAdapterTimerMgr->Start(this, dwElapse, bImmediately);
 }
