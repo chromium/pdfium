@@ -20,6 +20,7 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 
 CJBig2_SDDProc::CJBig2_SDDProc() = default;
@@ -279,7 +280,6 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   uint32_t IDI;
   int32_t RDXI, RDYI;
   uint32_t BMSIZE;
-  uint32_t stride;
   uint32_t num_ex_syms;
   // Pointers are not owned
   std::vector<CJBig2_Image*> SBSYMS;
@@ -453,16 +453,22 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
       pStream->alignByte();
       std::unique_ptr<CJBig2_Image> BHC;
       if (BMSIZE == 0) {
-        stride = (TOTWIDTH + 7) >> 3;
-        if (pStream->getByteLeft() >= stride * HCHEIGHT) {
-          BHC = pdfium::MakeUnique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
-          for (I = 0; I < HCHEIGHT; I++) {
-            memcpy(BHC->data() + I * BHC->stride(), pStream->getPointer(),
-                   stride);
-            pStream->offset(stride);
-          }
-        } else {
+        FX_SAFE_UINT32 safe_stride = TOTWIDTH;
+        safe_stride += 7;
+        safe_stride /= 8;
+        FX_SAFE_UINT32 safe_image_size = safe_stride;
+        safe_image_size *= HCHEIGHT;
+        if (!safe_image_size.IsValid() ||
+            pStream->getByteLeft() < safe_image_size.ValueOrDie()) {
           return nullptr;
+        }
+
+        const uint32_t stride = safe_stride.ValueOrDie();
+        BHC = pdfium::MakeUnique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
+        for (I = 0; I < HCHEIGHT; I++) {
+          memcpy(BHC->data() + I * BHC->stride(), pStream->getPointer(),
+                 stride);
+          pStream->offset(stride);
         }
       } else {
         auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
