@@ -11,11 +11,7 @@
 
 #include "third_party/skia/include/core/SkTypes.h"
 
-void SkDebugf_FileLine(const char* file,
-                       int line,
-                       bool fatal,
-                       const char* format,
-                       ...) {
+void SkDebugf_FileLine(const char* file, int line, const char* format, ...) {
   va_list ap;
   va_start(ap, format);
 

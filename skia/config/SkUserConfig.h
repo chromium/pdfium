@@ -1,27 +1,20 @@
+
 /*
- * Copyright (C) 2006 The Android Open Source Project
+ * Copyright 2006 The Android Open Source Project
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
  */
+
 
 #ifndef SKIA_CONFIG_SKUSERCONFIG_H_
 #define SKIA_CONFIG_SKUSERCONFIG_H_
 
 /*  SkTypes.h, the root of the public header files, does the following trick:
 
-    #include <SkPreConfig.h>
-    #include <SkUserConfig.h>
-    #include <SkPostConfig.h>
+    #include "SkPreConfig.h"
+    #include "SkUserConfig.h"
+    #include "SkPostConfig.h"
 
     SkPreConfig.h runs first, and it is responsible for initializing certain
     skia defines.
@@ -56,16 +49,14 @@
 // #define SK_DEBUG
 // #define SK_RELEASE
 
-// #ifdef DCHECK_ALWAYS_ON
-//     #undef SK_RELEASE
-//     #define SK_DEBUG
-// #endif
-
-/*  If, in debugging mode, Skia needs to stop (presumably to invoke a debugger)
-    it will call SK_CRASH(). If this is not defined it, it is defined in
-    SkPostConfig.h to write to an illegal address
+/*  Skia has certain debug-only code that is extremely intensive even for debug
+    builds.  This code is useful for diagnosing specific issues, but is not
+    generally applicable, therefore it must be explicitly enabled to avoid
+    the performance impact. By default these flags are undefined, but can be
+    enabled by uncommenting them below.
  */
-// #define SK_CRASH() *(int *)(uintptr_t)0 = 0
+// #define SK_DEBUG_GLYPH_CACHE
+// #define SK_DEBUG_PATH
 
 /*  preconfig will have attempted to determine the endianness of the system,
     but you can change these mutually exclusive flags here.
@@ -73,22 +64,15 @@
 // #define SK_CPU_BENDIAN
 // #define SK_CPU_LENDIAN
 
-/*  If zlib is available and you want to support the flate compression
-    algorithm (used in PDF generation), define SK_ZLIB_INCLUDE to be the
-    include path.
- */
-// #define SK_ZLIB_INCLUDE <zlib.h>
+/*  Most compilers use the same bit endianness for bit flags in a byte as the
+    system byte endianness, and this is the default. If for some reason this
+    needs to be overridden, specify which of the mutually exclusive flags to
+    use. For example, some atom processors in certain configurations have big
+    endian byte order but little endian bit orders.
+*/
+// #define SK_UINT8_BITFIELD_BENDIAN
+// #define SK_UINT8_BITFIELD_LENDIAN
 
-/*  Define this to allow PDF scalars above 32k.  The PDF/A spec doesn't allow
-    them, but modern PDF interpreters should handle them just fine.
- */
-// #define SK_ALLOW_LARGE_PDF_SCALARS
-
-/*  Define this to provide font subsetter for font subsetting when generating
-    PDF documents.
- */
-// #define SK_SFNTLY_SUBSETTER \
-//    "third_party/sfntly/src/cpp/src/sample/chromium/font_subsetter.h"
 
 /*  To write debug messages to a console, skia will call SkDebugf(...) following
     printf conventions (e.g. const char* format, ...). If you want to redirect
@@ -96,34 +80,52 @@
  */
 // #define SkDebugf(...)  MyFunction(__VA_ARGS__)
 
-/*  If SK_DEBUG is defined, then you can optionally define SK_SUPPORT_UNITTEST
-    which will run additional self-tests at startup. These can take a long time,
-    so this flag is optional.
+/*
+ *  To specify a different default font cache limit, define this. If this is
+ *  undefined, skia will use a built-in value.
  */
-#ifdef SK_DEBUG
-#define SK_SUPPORT_UNITTEST
-#endif
+// #define SK_DEFAULT_FONT_CACHE_LIMIT   (1024 * 1024)
 
-/* If cross process SkPictureImageFilters are not explicitly enabled then
-   they are always disabled.
+/*
+ *  To specify the default size of the image cache, undefine this and set it to
+ *  the desired value (in bytes). SkGraphics.h as a runtime API to set this
+ *  value as well. If this is undefined, a built-in value will be used.
  */
-#ifndef SK_ALLOW_CROSSPROCESS_PICTUREIMAGEFILTERS
-#ifndef SK_DISALLOW_CROSSPROCESS_PICTUREIMAGEFILTERS
-#define SK_DISALLOW_CROSSPROCESS_PICTUREIMAGEFILTERS
-#endif
-#endif
+// #define SK_DEFAULT_IMAGE_CACHE_LIMIT (1024 * 1024)
 
-/* If your system embeds skia and has complex event logging, define this
-   symbol to name a file that maps the following macros to your system's
-   equivalents:
-       SK_TRACE_EVENT0(event)
-       SK_TRACE_EVENT1(event, name1, value1)
-       SK_TRACE_EVENT2(event, name1, value1, name2, value2)
-   src/utils/SkDebugTrace.h has a trivial implementation that writes to
-   the debug output stream. If SK_USER_TRACE_INCLUDE_FILE is not defined,
-   SkTrace.h will define the above three macros to do nothing.
-*/
-#undef SK_USER_TRACE_INCLUDE_FILE
+/*  Define this to set the upper limit for text to support LCD. Values that
+    are very large increase the cost in the font cache and draw slower, without
+    improving readability. If this is undefined, Skia will use its default
+    value (e.g. 48)
+ */
+// #define SK_MAX_SIZE_FOR_LCDTEXT     48
+
+/*  Change the ordering to work in X windows.
+ */
+// #ifdef SK_SAMPLES_FOR_X
+//         #define SK_R32_SHIFT    16
+//         #define SK_G32_SHIFT    8
+//         #define SK_B32_SHIFT    0
+//         #define SK_A32_SHIFT    24
+// #endif
+
+
+/* Determines whether to build code that supports the GPU backend. Some classes
+   that are not GPU-specific, such as SkShader subclasses, have optional code
+   that is used allows them to interact with the GPU backend. If you'd like to
+   omit this code set SK_SUPPORT_GPU to 0. This also allows you to omit the gpu
+   directories from your include search path when you're not building the GPU
+   backend. Defaults to 1 (build the GPU code).
+ */
+// #define SK_SUPPORT_GPU 1
+
+/* Skia makes use of histogram logging macros to trace the frequency of
+ * events. By default, Skia provides no-op versions of these macros.
+ * Skia consumers can provide their own definitions of these macros to
+ * integrate with their histogram collection backend.
+ */
+// #define SK_HISTOGRAM_BOOLEAN(name, value)
+// #define SK_HISTOGRAM_ENUMERATION(name, value, boundary_value)
 
 // ===== Begin Chrome-specific definitions =====
 
@@ -133,23 +135,11 @@
 #define GR_MAX_OFFSCREEN_AA_DIM 512
 
 // Log the file and line number for assertions.
-#define SkDebugf(...) SkDebugf_FileLine(__FILE__, __LINE__, false, __VA_ARGS__)
+#define SkDebugf(...) SkDebugf_FileLine(__FILE__, __LINE__, __VA_ARGS__)
 SK_API void SkDebugf_FileLine(const char* file,
                               int line,
-                              bool fatal,
                               const char* format,
                               ...);
-
-// Marking the debug print as "fatal" will cause a debug break, so we don't need
-// a separate crash call here.
-#define SK_DEBUGBREAK(cond)                                           \
-  do {                                                                \
-    if (!(cond)) {                                                    \
-      SkDebugf_FileLine(__FILE__, __LINE__, true,                     \
-                        "%s:%d: failed assertion \"%s\"\n", __FILE__, \
-                        __LINE__, #cond);                             \
-    }                                                                 \
-  } while (false)
 
 #if !defined(ANDROID)  // On Android, we use the skia default settings.
 #define SK_A32_SHIFT 24
@@ -189,11 +179,6 @@ SK_API void SkDebugf_FileLine(const char* file,
 #endif
 
 #endif
-
-// The default crash macro writes to badbeef which can cause some strange
-// problems. Instead, pipe this through to the logging function as a fatal
-// assertion.
-#define SK_CRASH() SkDebugf_FileLine(__FILE__, __LINE__, true, "SK_CRASH")
 
 // These flags are no longer defined in Skia, but we have them (temporarily)
 // until we update our call-sites (typically these are for API changes).
