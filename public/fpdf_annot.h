@@ -402,7 +402,7 @@ FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key);
 //
 //   annot  - handle to an annotation.
 //   key    - the key to the dictionary entry to be set, encoded in UTF-8.
-//   value  - the string value to be set, encoded in UTF16-LE.
+//   value  - the string value to be set, encoded in UTF-16LE.
 //
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -421,7 +421,7 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
 //
 //   annot  - handle to an annotation.
 //   key    - the key to the requested dictionary entry, encoded in UTF-8.
-//   buffer - buffer for holding the value string, encoded in UTF16-LE.
+//   buffer - buffer for holding the value string, encoded in UTF-16LE.
 //   buflen - length of the buffer in bytes.
 //
 // Returns the length of the string value in bytes.
@@ -454,7 +454,7 @@ FPDFAnnot_GetNumberValue(FPDF_ANNOTATION annot,
 //   annot          - handle to an annotation.
 //   appearanceMode - the appearance mode (normal, rollover or down) for which
 //                    to get the AP.
-//   value          - the string value to be set, encoded in UTF16-LE. If
+//   value          - the string value to be set, encoded in UTF-16LE. If
 //                    nullptr is passed, the AP is cleared for that mode. If the
 //                    mode is Normal, APs for all modes are cleared.
 //
@@ -477,7 +477,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 //   annot          - handle to an annotation.
 //   appearanceMode - the appearance mode (normal, rollover or down) for which
 //                    to get the AP.
-//   buffer         - buffer for holding the value string, encoded in UTF16-LE.
+//   buffer         - buffer for holding the value string, encoded in UTF-16LE.
 //   buflen         - length of the buffer in bytes.
 //
 // Returns the length of the string value in bytes.
@@ -578,7 +578,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetOptionCount(FPDF_FORMHANDLE hHandle,
 //             FPDFDOC_InitFormFillEnvironment.
 //   annot   - handle to an annotation.
 //   index   - numeric index of the option in the "Opt" array
-//   buffer  - buffer for holding the value string, encoded in UTF16-LE.
+//   buffer  - buffer for holding the value string, encoded in UTF-16LE.
 //   buflen  - length of the buffer in bytes.
 //
 // Returns the length of the string value in bytes.

@@ -1434,7 +1434,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnChar(FPDF_FORMHANDLE hHandle,
  *          page        -   Handle to the page. Returned by FPDF_LoadPage
  *                          function.
  *          buffer      -   Buffer for holding the form text, encoded in
- *                          UTF16-LE. If NULL, |buffer| is not modified.
+ *                          UTF-16LE. If NULL, |buffer| is not modified.
  *          buflen      -   Length of |buffer| in bytes. If |buflen| is less
                             than the length of the form text string, |buffer| is
                             not modified.
@@ -1457,7 +1457,7 @@ FORM_GetFocusedText(FPDF_FORMHANDLE hHandle,
  *          page        -   Handle to the page. Returned by FPDF_LoadPage
  *                          function.
  *          buffer      -   Buffer for holding the selected text, encoded in
- *                          UTF16-LE. If NULL, |buffer| is not modified.
+ *                          UTF-16LE. If NULL, |buffer| is not modified.
  *          buflen      -   Length of |buffer| in bytes. If |buflen| is less
                             than the length of the selected text string,
                             |buffer| is not modified.

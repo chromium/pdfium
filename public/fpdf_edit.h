@@ -335,7 +335,7 @@ FPDFPageObj_RemoveMark(FPDF_PAGEOBJECT page_object, FPDF_PAGEOBJECTMARK mark);
 // Get the name of a content mark.
 //
 //   mark       - handle to a content mark.
-//   buffer     - buffer for holding the returned name in UTF16-LE. This is only
+//   buffer     - buffer for holding the returned name in UTF-16LE. This is only
 //                modified if |buflen| is longer than the length of the name.
 //                Optional, pass null to just retrieve the size of the buffer
 //                needed.
@@ -365,7 +365,7 @@ FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark);
 //
 //   mark       - handle to a content mark.
 //   index      - index of the property.
-//   buffer     - buffer for holding the returned key in UTF16-LE. This is only
+//   buffer     - buffer for holding the returned key in UTF-16LE. This is only
 //                modified if |buflen| is longer than the length of the key.
 //                Optional, pass null to just retrieve the size of the buffer
 //                needed.
@@ -413,7 +413,7 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
 //
 //   mark       - handle to a content mark.
 //   key        - string key of the property.
-//   buffer     - buffer for holding the returned value in UTF16-LE. This is
+//   buffer     - buffer for holding the returned value in UTF-16LE. This is
 //                only modified if |buflen| is longer than the length of the
 //                value.
 //                Optional, pass null to just retrieve the size of the buffer
@@ -1204,7 +1204,7 @@ FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
 // Returns the number of bytes in the text (including the trailing NUL
 // character) on success, 0 on error.
 //
-// Regardless of the platform, the |buffer| is always in UTF16-LE encoding.
+// Regardless of the platform, the |buffer| is always in UTF-16LE encoding.
 // If |length| is less than the returned length, or |buffer| is NULL, |buffer|
 // will not be modified.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
