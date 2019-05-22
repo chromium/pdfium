@@ -9,9 +9,10 @@
 
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
+class CPDF_ColorSpace;
 class CPDF_Pattern;
 
 class CPDF_Color {
@@ -25,7 +26,7 @@ class CPDF_Color {
 
   bool IsNull() const { return !m_pBuffer; }
   bool IsPattern() const;
-  void SetColorSpace(CPDF_ColorSpace* pCS);
+  void SetColorSpace(const RetainPtr<CPDF_ColorSpace>& pCS);
   void SetValueForNonPattern(const std::vector<float>& values);
   void SetValueForPattern(CPDF_Pattern* pPattern,
                           const std::vector<float>& values);
@@ -38,14 +39,13 @@ class CPDF_Color {
 
  protected:
   void ReleaseBuffer();
-  void ReleaseColorSpace();
   bool IsPatternInternal() const;
 
   // TODO(thestig): Convert this to a smart pointer or vector.
   // |m_pBuffer| is created by |m_pCS|, so if it is non-null, then so is
-  // |m_pCS|.
+  // |m_pCS|, since SetColorSpace() prohibits setting to null.
   float* m_pBuffer = nullptr;
-  CPDF_ColorSpace* m_pCS = nullptr;
+  RetainPtr<CPDF_ColorSpace> m_pCS;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_COLOR_H_

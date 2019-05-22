@@ -475,7 +475,7 @@ RetainPtr<CPDF_StreamAcc> CPDF_Document::LoadFontFile(
   return m_pDocPage->GetFontFileStreamAcc(pStream);
 }
 
-CPDF_ColorSpace* CPDF_Document::LoadColorSpace(
+RetainPtr<CPDF_ColorSpace> CPDF_Document::LoadColorSpace(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources) {
   return m_pDocPage->GetColorSpace(pCSObj, pResources);

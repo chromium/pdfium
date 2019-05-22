@@ -46,10 +46,6 @@ CPDF_DocPageData::~CPDF_DocPageData() {
   for (auto& it : m_FontMap)
     delete it.second;
   m_FontMap.clear();
-
-  for (auto& it : m_ColorSpaceMap)
-    delete it.second;
-  m_ColorSpaceMap.clear();
 }
 
 void CPDF_DocPageData::Clear(bool bForceRelease) {
@@ -88,15 +84,7 @@ void CPDF_DocPageData::Clear(bool bForceRelease) {
     }
   }
 
-  for (auto& it : m_ColorSpaceMap) {
-    CPDF_CountedColorSpace* csData = it.second;
-    if (!csData->get())
-      continue;
-    if (bForceRelease || csData->use_count() < 2) {
-      csData->get()->Release();
-      csData->reset(nullptr);
-    }
-  }
+  m_ColorSpaceMap.clear();
 
   for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end();) {
     auto curr_it = it++;
@@ -212,14 +200,14 @@ void CPDF_DocPageData::ReleaseFont(const CPDF_Dictionary* pFontDict) {
   pFontData->clear();
 }
 
-CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
+RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpace(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources) {
   std::set<const CPDF_Object*> visited;
   return GetColorSpaceGuarded(pCSObj, pResources, &visited);
 }
 
-CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
+RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceGuarded(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources,
     std::set<const CPDF_Object*>* pVisited) {
@@ -227,7 +215,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
   return GetColorSpaceInternal(pCSObj, pResources, pVisited, &visitedLocal);
 }
 
-CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
+RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     const CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources,
     std::set<const CPDF_Object*>* pVisited,
@@ -243,7 +231,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
 
   if (pCSObj->IsName()) {
     ByteString name = pCSObj->GetString();
-    CPDF_ColorSpace* pCS = CPDF_ColorSpace::ColorspaceFromName(name);
+    RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::ColorspaceFromName(name);
     if (!pCS && pResources) {
       const CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
       if (pList) {
@@ -286,60 +274,29 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
                                  pVisited, pVisitedInternal);
   }
 
-  CPDF_CountedColorSpace* csData = nullptr;
   auto it = m_ColorSpaceMap.find(pCSObj);
-  if (it != m_ColorSpaceMap.end()) {
-    csData = it->second;
-    if (csData->get()) {
-      return csData->AddRef();
-    }
-  }
+  if (it != m_ColorSpaceMap.end() && it->second)
+    return pdfium::WrapRetain(it->second.Get());
 
-  std::unique_ptr<CPDF_ColorSpace> pCS =
+  RetainPtr<CPDF_ColorSpace> pCS =
       CPDF_ColorSpace::Load(m_pPDFDoc.Get(), pArray, pVisited);
   if (!pCS)
     return nullptr;
 
-  if (csData) {
-    csData->reset(std::move(pCS));
-  } else {
-    csData = new CPDF_CountedColorSpace(std::move(pCS));
-    m_ColorSpaceMap[pCSObj] = csData;
-  }
-  return csData->AddRef();
+  m_ColorSpaceMap[pCSObj].Reset(pCS.Get());
+  return pCS;
 }
 
-CPDF_ColorSpace* CPDF_DocPageData::GetCopiedColorSpace(
+RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetCopiedColorSpace(
     const CPDF_Object* pCSObj) {
   if (!pCSObj)
     return nullptr;
 
   auto it = m_ColorSpaceMap.find(pCSObj);
-  if (it != m_ColorSpaceMap.end())
-    return it->second->AddRef();
+  if (it == m_ColorSpaceMap.end() || !it->second)
+    return nullptr;
 
-  return nullptr;
-}
-
-void CPDF_DocPageData::ReleaseColorSpace(const CPDF_Object* pColorSpace) {
-  if (!pColorSpace)
-    return;
-
-  auto it = m_ColorSpaceMap.find(pColorSpace);
-  if (it == m_ColorSpaceMap.end())
-    return;
-
-  CPDF_CountedColorSpace* pCountedColorSpace = it->second;
-  if (!pCountedColorSpace->get())
-    return;
-
-  pCountedColorSpace->RemoveRef();
-  if (pCountedColorSpace->use_count() > 1)
-    return;
-
-  // We have item only in m_ColorSpaceMap cache. Clean it.
-  pCountedColorSpace->get()->Release();
-  pCountedColorSpace->reset(nullptr);
+  return pdfium::WrapRetain(it->second.Get());
 }
 
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
@@ -495,13 +452,16 @@ void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
     m_FontFileMap.erase(it);
 }
 
-CPDF_CountedColorSpace* CPDF_DocPageData::FindColorSpacePtr(
+RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::FindColorSpacePtr(
     const CPDF_Object* pCSObj) const {
   if (!pCSObj)
     return nullptr;
 
   auto it = m_ColorSpaceMap.find(pCSObj);
-  return it != m_ColorSpaceMap.end() ? it->second : nullptr;
+  if (it == m_ColorSpaceMap.end() || !it->second)
+    return nullptr;
+
+  return pdfium::WrapRetain(it->second.Get());
 }
 
 CPDF_CountedPattern* CPDF_DocPageData::FindPatternPtr(

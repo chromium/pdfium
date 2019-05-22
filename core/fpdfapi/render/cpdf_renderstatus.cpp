@@ -111,7 +111,7 @@ uint32_t CountOutputsFromFunctions(
 
 uint32_t GetValidatedOutputsCount(
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const CPDF_ColorSpace* pCS) {
+    const RetainPtr<CPDF_ColorSpace>& pCS) {
   uint32_t funcs_outputs = CountOutputsFromFunctions(funcs);
   return funcs_outputs ? std::max(funcs_outputs, pCS->CountComponents()) : 0;
 }
@@ -119,7 +119,7 @@ uint32_t GetValidatedOutputsCount(
 void GetShadingSteps(float t_min,
                      float t_max,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-                     const CPDF_ColorSpace* pCS,
+                     const RetainPtr<CPDF_ColorSpace>& pCS,
                      int alpha,
                      size_t results_count,
                      uint32_t* rgb_array) {
@@ -151,7 +151,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       const CFX_Matrix& mtObject2Bitmap,
                       const CPDF_Dictionary* pDict,
                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-                      const CPDF_ColorSpace* pCS,
+                      const RetainPtr<CPDF_ColorSpace>& pCS,
                       int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
@@ -222,7 +222,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        const CFX_Matrix& mtObject2Bitmap,
                        const CPDF_Dictionary* pDict,
                        const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-                       const CPDF_ColorSpace* pCS,
+                       const RetainPtr<CPDF_ColorSpace>& pCS,
                        int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
@@ -325,7 +325,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                      const CFX_Matrix& mtObject2Bitmap,
                      const CPDF_Dictionary* pDict,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-                     const CPDF_ColorSpace* pCS,
+                     const RetainPtr<CPDF_ColorSpace>& pCS,
                      int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
@@ -485,7 +485,7 @@ void DrawFreeGouraudShading(
     const CFX_Matrix& mtObject2Bitmap,
     const CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const CPDF_ColorSpace* pCS,
+    const RetainPtr<CPDF_ColorSpace>& pCS,
     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
@@ -526,7 +526,7 @@ void DrawLatticeGouraudShading(
     const CFX_Matrix& mtObject2Bitmap,
     const CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const CPDF_ColorSpace* pCS,
+    const RetainPtr<CPDF_ColorSpace>& pCS,
     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
@@ -843,7 +843,7 @@ void DrawCoonPatchMeshes(
     const CFX_Matrix& mtObject2Bitmap,
     const CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const CPDF_ColorSpace* pCS,
+    const RetainPtr<CPDF_ColorSpace>& pCS,
     bool bNoPathSmooth,
     int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
@@ -1481,7 +1481,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                                     ->GetStream()
                                     ->GetDict()
                                     ->GetDirectObjectFor("ColorSpace");
-    const CPDF_ColorSpace* pColorSpace =
+    RetainPtr<CPDF_ColorSpace> pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
     if (pColorSpace) {
       int format = pColorSpace->GetFamily();
@@ -1489,7 +1489,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
           format == PDFCS_DEVICEN) {
         blend_type = BlendMode::kDarken;
       }
-      pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
     }
   }
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
@@ -2012,7 +2011,7 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
                                     bool bAlphaMode) {
   const auto& funcs = pPattern->GetFuncs();
   const CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
-  const CPDF_ColorSpace* pColorSpace = pPattern->GetCS();
+  RetainPtr<CPDF_ColorSpace> pColorSpace = pPattern->GetCS();
   if (!pColorSpace)
     return;
 
@@ -2612,7 +2611,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
       pGroupDict ? pGroupDict->GetDictFor("Group") : nullptr;
   if (pGroup)
     pCSObj = pGroup->GetDirectObjectFor(pdfium::transparency::kCS);
-  const CPDF_ColorSpace* pCS =
+  RetainPtr<CPDF_ColorSpace> pCS =
       m_pContext->GetDocument()->LoadColorSpace(pCSObj, nullptr);
   if (!pCS)
     return kDefaultColor;
@@ -2636,7 +2635,6 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   float G;
   float B;
   pCS->GetRGB(floats.data(), &R, &G, &B);
-  m_pContext->GetDocument()->GetPageData()->ReleaseColorSpace(pCSObj);
   return ArgbEncode(255, static_cast<int>(R * 255), static_cast<int>(G * 255),
                     static_cast<int>(B * 255));
 }

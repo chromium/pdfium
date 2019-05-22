@@ -156,14 +156,9 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   uint32_t bpc = 1;
   uint32_t nComponents = 1;
   if (pCSObj) {
+    RetainPtr<CPDF_ColorSpace> pCS = pDoc->LoadColorSpace(pCSObj, nullptr);
+    nComponents = pCS ? pCS->CountComponents() : 3;
     bpc = pDict->GetIntegerFor("BitsPerComponent");
-    CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj, nullptr);
-    if (pCS) {
-      nComponents = pCS->CountComponents();
-      pDoc->GetPageData()->ReleaseColorSpace(pCSObj);
-    } else {
-      nComponents = 3;
-    }
   }
   FX_SAFE_UINT32 size = CalculatePitch8(bpc, nComponents, width);
   size *= height;

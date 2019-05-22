@@ -147,16 +147,15 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   CPDF_Object* pCSObj =
       m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
           "ColorSpace");
-  CPDF_ColorSpace* pColorSpace =
+  RetainPtr<CPDF_ColorSpace> pColorSpace =
       pDocument->LoadColorSpace(pCSObj, pPageResources);
-  if (!pColorSpace)
-    return StartDIBBase();
-  int format = pColorSpace->GetFamily();
-  if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
-      format == PDFCS_DEVICEN) {
-    m_BlendType = BlendMode::kDarken;
+  if (pColorSpace) {
+    int format = pColorSpace->GetFamily();
+    if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
+        format == PDFCS_DEVICEN) {
+      m_BlendType = BlendMode::kDarken;
+    }
   }
-  pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
   return StartDIBBase();
 }
 

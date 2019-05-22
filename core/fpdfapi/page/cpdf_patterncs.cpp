@@ -11,19 +11,9 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_PATTERN),
-      m_pBaseCS(nullptr),
-      m_pCountedBaseCS(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_PATTERN) {}
 
-CPDF_PatternCS::~CPDF_PatternCS() {
-  const CPDF_ColorSpace* pCS =
-      m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
-  if (pCS && m_pDocument) {
-    auto* pPageData = m_pDocument->GetPageData();
-    if (pPageData)
-      pPageData->ReleaseColorSpace(pCS->GetArray());
-  }
-}
+CPDF_PatternCS::~CPDF_PatternCS() = default;
 
 void CPDF_PatternCS::InitializeStockPattern() {
   SetComponentsForStockCS(1);
@@ -44,7 +34,6 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
   if (m_pBaseCS->GetFamily() == PDFCS_PATTERN)
     return 0;
 
-  m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
   if (m_pBaseCS->CountComponents() > kMaxPatternColorComps)
     return 0;
 

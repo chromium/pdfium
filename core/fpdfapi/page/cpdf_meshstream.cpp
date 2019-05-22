@@ -98,7 +98,7 @@ CPDF_MeshStream::CPDF_MeshStream(
     ShadingType type,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     const CPDF_Stream* pShadingStream,
-    const CPDF_ColorSpace* pCS)
+    const RetainPtr<CPDF_ColorSpace>& pCS)
     : m_type(type),
       m_funcs(funcs),
       m_pShadingStream(pShadingStream),

@@ -8,11 +8,12 @@
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
-#include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fpdfapi/page/cpdf_devicecs.h"
-#include "core/fpdfapi/page/cpdf_patterncs.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
+class CPDF_ColorSpace;
+class CPDF_DeviceCS;
+class CPDF_PatternCS;
 
 class CPDF_PageModule {
  public:
@@ -20,15 +21,15 @@ class CPDF_PageModule {
   ~CPDF_PageModule();
 
   CPDF_FontGlobals* GetFontGlobals();
-  CPDF_ColorSpace* GetStockCS(int family);
+  RetainPtr<CPDF_ColorSpace> GetStockCS(int family);
   void ClearStockFont(CPDF_Document* pDoc);
 
  private:
   CPDF_FontGlobals m_FontGlobals;
-  CPDF_DeviceCS m_StockGrayCS;
-  CPDF_DeviceCS m_StockRGBCS;
-  CPDF_DeviceCS m_StockCMYKCS;
-  CPDF_PatternCS m_StockPatternCS;
+  RetainPtr<CPDF_DeviceCS> m_StockGrayCS;
+  RetainPtr<CPDF_DeviceCS> m_StockRGBCS;
+  RetainPtr<CPDF_DeviceCS> m_StockCMYKCS;
+  RetainPtr<CPDF_PatternCS> m_StockPatternCS;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_

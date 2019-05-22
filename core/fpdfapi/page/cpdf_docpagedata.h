@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
@@ -40,18 +41,18 @@ class CPDF_DocPageData {
   void ReleaseFont(const CPDF_Dictionary* pFontDict);
 
   // Loads a colorspace.
-  CPDF_ColorSpace* GetColorSpace(const CPDF_Object* pCSObj,
-                                 const CPDF_Dictionary* pResources);
+  RetainPtr<CPDF_ColorSpace> GetColorSpace(const CPDF_Object* pCSObj,
+                                           const CPDF_Dictionary* pResources);
 
   // Loads a colorspace in a context that might be while loading another
   // colorspace. |pVisited| is passed recursively to avoid circular calls
   // involving CPDF_ColorSpace::Load().
-  CPDF_ColorSpace* GetColorSpaceGuarded(const CPDF_Object* pCSObj,
-                                        const CPDF_Dictionary* pResources,
-                                        std::set<const CPDF_Object*>* pVisited);
+  RetainPtr<CPDF_ColorSpace> GetColorSpaceGuarded(
+      const CPDF_Object* pCSObj,
+      const CPDF_Dictionary* pResources,
+      std::set<const CPDF_Object*>* pVisited);
 
-  CPDF_ColorSpace* GetCopiedColorSpace(const CPDF_Object* pCSObj);
-  void ReleaseColorSpace(const CPDF_Object* pColorSpace);
+  RetainPtr<CPDF_ColorSpace> GetCopiedColorSpace(const CPDF_Object* pCSObj);
 
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
                            bool bShading,
@@ -68,7 +69,7 @@ class CPDF_DocPageData {
       const CPDF_Stream* pFontStream);
   void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream);
 
-  CPDF_CountedColorSpace* FindColorSpacePtr(const CPDF_Object* pCSObj) const;
+  RetainPtr<CPDF_ColorSpace> FindColorSpacePtr(const CPDF_Object* pCSObj) const;
   CPDF_CountedPattern* FindPatternPtr(const CPDF_Object* pPatternObj) const;
 
  private:
@@ -79,7 +80,7 @@ class CPDF_DocPageData {
   // is passed recursively to avoid circular calls involving
   // CPDF_ColorSpace::Load() and |pVisitedInternal| is also passed recursively
   // to avoid circular calls with this method calling itself.
-  CPDF_ColorSpace* GetColorSpaceInternal(
+  RetainPtr<CPDF_ColorSpace> GetColorSpaceInternal(
       const CPDF_Object* pCSObj,
       const CPDF_Dictionary* pResources,
       std::set<const CPDF_Object*>* pVisited,
@@ -88,7 +89,7 @@ class CPDF_DocPageData {
   bool m_bForceClear;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::map<ByteString, const CPDF_Stream*> m_HashProfileMap;
-  std::map<const CPDF_Object*, CPDF_CountedColorSpace*> m_ColorSpaceMap;
+  std::map<const CPDF_Object*, CPDF_ColorSpace::ObservedPtr> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_IccProfile>> m_IccProfileMap;

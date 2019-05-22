@@ -109,17 +109,9 @@ class JpxBitMapContext {
 
 }  // namespace
 
-CPDF_DIBBase::CPDF_DIBBase() {}
+CPDF_DIBBase::CPDF_DIBBase() = default;
 
-CPDF_DIBBase::~CPDF_DIBBase() {
-  if (m_pColorSpace && m_pDocument) {
-    auto* pPageData = m_pDocument->GetPageData();
-    if (pPageData) {
-      auto* pSpace = m_pColorSpace.Release();
-      pPageData->ReleaseColorSpace(pSpace->GetArray());
-    }
-  }
-}
+CPDF_DIBBase::~CPDF_DIBBase() = default;
 
 bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!pStream)
@@ -596,7 +588,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
   CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
   auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
   context->set_decoder(
-      pJpxModule->CreateDecoder(m_pStreamAcc->GetSpan(), m_pColorSpace.Get()));
+      pJpxModule->CreateDecoder(m_pStreamAcc->GetSpan(), m_pColorSpace));
   if (!context->decoder())
     return nullptr;
 

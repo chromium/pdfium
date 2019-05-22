@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/render/cpdf_imageloader.h"
@@ -58,7 +59,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
                           int clip_left,
                           int clip_width) const override;
 
-  const CPDF_ColorSpace* GetColorSpace() const { return m_pColorSpace.Get(); }
+  RetainPtr<CPDF_ColorSpace> GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
   LoadState StartLoadDIBBase(CPDF_Document* pDoc,
@@ -128,7 +129,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   UnownedPtr<const CPDF_Stream> m_pStream;
   UnownedPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  UnownedPtr<CPDF_ColorSpace> m_pColorSpace;
+  RetainPtr<CPDF_ColorSpace> m_pColorSpace;
   uint32_t m_Family = 0;
   uint32_t m_bpc = 0;
   uint32_t m_bpc_orig = 0;

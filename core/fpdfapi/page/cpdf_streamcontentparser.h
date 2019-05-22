@@ -16,6 +16,7 @@
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_pathdata.h"
 
 class CPDF_AllStates;
@@ -116,7 +117,7 @@ class CPDF_StreamContentParser {
                         bool bColor,
                         bool bText,
                         bool bGraph);
-  CPDF_ColorSpace* FindColorSpace(const ByteString& name);
+  RetainPtr<CPDF_ColorSpace> FindColorSpace(const ByteString& name);
   CPDF_Pattern* FindPattern(const ByteString& name, bool bShading);
   CPDF_Dictionary* FindResourceHolder(const ByteString& type);
   CPDF_Object* FindResourceObj(const ByteString& type, const ByteString& name);

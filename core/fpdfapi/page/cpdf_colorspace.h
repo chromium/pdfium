@@ -13,6 +13,8 @@
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/observable.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 #define PDFCS_DEVICEGRAY 1
@@ -41,18 +43,16 @@ struct PatternValue {
   float m_Comps[kMaxPatternColorComps];
 };
 
-class CPDF_ColorSpace {
+class CPDF_ColorSpace : public Retainable, public Observable<CPDF_ColorSpace> {
  public:
-  static CPDF_ColorSpace* GetStockCS(int Family);
-  static CPDF_ColorSpace* ColorspaceFromName(const ByteString& name);
-  static std::unique_ptr<CPDF_ColorSpace> Load(CPDF_Document* pDoc,
-                                               CPDF_Object* pCSObj);
-  static std::unique_ptr<CPDF_ColorSpace> Load(
+  static RetainPtr<CPDF_ColorSpace> GetStockCS(int Family);
+  static RetainPtr<CPDF_ColorSpace> ColorspaceFromName(const ByteString& name);
+  static RetainPtr<CPDF_ColorSpace> Load(CPDF_Document* pDoc,
+                                         CPDF_Object* pCSObj);
+  static RetainPtr<CPDF_ColorSpace> Load(
       CPDF_Document* pDoc,
       const CPDF_Object* pCSObj,
       std::set<const CPDF_Object*>* pVisited);
-
-  void Release();
 
   size_t GetBufSize() const;
   float* CreateBuf() const;
@@ -104,7 +104,7 @@ class CPDF_ColorSpace {
 
  protected:
   CPDF_ColorSpace(CPDF_Document* pDoc, int family);
-  virtual ~CPDF_ColorSpace();
+  ~CPDF_ColorSpace() override;
 
   // Returns the number of components, or 0 on failure.
   virtual uint32_t v_Load(CPDF_Document* pDoc,
@@ -123,20 +123,5 @@ class CPDF_ColorSpace {
  private:
   uint32_t m_nComponents = 0;
 };
-using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace>;
-
-namespace std {
-
-// Make std::unique_ptr<CPDF_ColorSpace> call Release() rather than
-// simply deleting the object.
-template <>
-struct default_delete<CPDF_ColorSpace> {
-  void operator()(CPDF_ColorSpace* pColorSpace) const {
-    if (pColorSpace)
-      pColorSpace->Release();
-  }
-};
-
-}  // namespace std
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_COLORSPACE_H_

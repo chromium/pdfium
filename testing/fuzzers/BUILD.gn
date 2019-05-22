@@ -491,6 +491,7 @@ pdfium_fuzzer("pdf_jpx_fuzzer") {
     "pdf_jpx_fuzzer.cc",
   ]
   deps = [
+    "../../core/fpdfapi/page",
     "../../core/fxcodec",
     "../../core/fxcrt",
     "../../core/fxge",

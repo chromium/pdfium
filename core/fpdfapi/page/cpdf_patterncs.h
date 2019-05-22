@@ -10,6 +10,7 @@
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
 
@@ -35,8 +36,7 @@ class CPDF_PatternCS final : public CPDF_ColorSpace {
                      float* B) const override;
 
  private:
-  const CPDF_ColorSpace* m_pBaseCS;
-  const CPDF_CountedColorSpace* m_pCountedBaseCS;
+  RetainPtr<CPDF_ColorSpace> m_pBaseCS;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATTERNCS_H_

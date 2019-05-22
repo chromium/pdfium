@@ -20,7 +20,6 @@ CPDF_Color::CPDF_Color(const CPDF_Color& that) {
 
 CPDF_Color::~CPDF_Color() {
   ReleaseBuffer();
-  ReleaseColorSpace();
 }
 
 bool CPDF_Color::IsPattern() const {
@@ -45,38 +44,19 @@ void CPDF_Color::ReleaseBuffer() {
   m_pBuffer = nullptr;
 }
 
-void CPDF_Color::ReleaseColorSpace() {
-  if (!m_pCS)
-    return;
-
-  CPDF_Document* pDoc = m_pCS->GetDocument();
-  if (!pDoc)
-    return;
-
-  auto* pPageData = pDoc->GetPageData();
-  if (pPageData)
-    pPageData->ReleaseColorSpace(m_pCS->GetArray());
-
-  m_pCS = nullptr;
-}
-
 bool CPDF_Color::IsPatternInternal() const {
   return m_pCS->GetFamily() == PDFCS_PATTERN;
 }
 
-void CPDF_Color::SetColorSpace(CPDF_ColorSpace* pCS) {
+void CPDF_Color::SetColorSpace(const RetainPtr<CPDF_ColorSpace>& pCS) {
   ASSERT(pCS);
   if (m_pCS == pCS) {
     if (!m_pBuffer)
       m_pBuffer = pCS->CreateBuf();
-
-    ReleaseColorSpace();
     m_pCS = pCS;
     return;
   }
   ReleaseBuffer();
-  ReleaseColorSpace();
-
   m_pCS = pCS;
   if (IsPatternInternal())
     m_pBuffer = pCS->CreateBuf();
@@ -128,7 +108,6 @@ CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
     return *this;
 
   ReleaseBuffer();
-  ReleaseColorSpace();
   m_pCS = that.m_pCS;
   if (!m_pCS)
     return *this;
