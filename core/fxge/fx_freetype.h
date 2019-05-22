@@ -62,23 +62,20 @@ using FXFT_Outline_Funcs = FT_Outline_Funcs;
 
 #define FXFT_GLYPH_BBOX_PIXELS FT_GLYPH_BBOX_PIXELS
 
-#define FXFT_Open_Face(library, args, index, face)            \
-  FT_Open_Face(static_cast<FT_Library>(library), args, index, \
-               static_cast<FT_Face*>(face))
-#define FXFT_Done_Face(face) FT_Done_Face(static_cast<FT_Face>(face))
-#define FXFT_Done_FreeType(library) \
-  FT_Done_FreeType(static_cast<FT_Library>(library))
 #define FXFT_Init_FreeType(library) \
   FT_Init_FreeType(reinterpret_cast<FT_Library*>(library))
+#define FXFT_Done_FreeType(library) \
+  FT_Done_FreeType(static_cast<FT_Library>(library))
 #define FXFT_Library_Version(library, amajor, aminor, apatch)               \
   FT_Library_Version(reinterpret_cast<FT_Library>(library), amajor, aminor, \
                      apatch)
 #define FXFT_New_Memory_Face(library, base, size, index, face)            \
   FT_New_Memory_Face(static_cast<FT_Library>(library), base, size, index, \
                      static_cast<FT_Face*>(face))
-#define FXFT_New_Face(library, filename, index, face)            \
-  FT_New_Face(static_cast<FT_Library>(library), filename, index, \
-              static_cast<FT_Face*>(face))
+#define FXFT_Open_Face(library, args, index, face)            \
+  FT_Open_Face(static_cast<FT_Library>(library), args, index, \
+               static_cast<FT_Face*>(face))
+#define FXFT_Done_Face(face) FT_Done_Face(static_cast<FT_Face>(face))
 #define FXFT_Select_Charmap(face, encoding)     \
   FT_Select_Charmap(static_cast<FT_Face>(face), \
                     static_cast<FT_Encoding>(encoding))
