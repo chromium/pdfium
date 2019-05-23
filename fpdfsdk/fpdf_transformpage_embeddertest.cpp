@@ -341,18 +341,19 @@ TEST_F(FPDFTransformEmbedderTest, ClipPath) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_CLIPPATH clip = FPDF_CreateClipPath(10.0f, 10.0f, 90.0f, 90.0f);
-  EXPECT_TRUE(clip);
+  {
+    ScopedFPDFClipPath clip(FPDF_CreateClipPath(10.0f, 10.0f, 90.0f, 90.0f));
+    EXPECT_TRUE(clip);
 
-  // NULL arg call is a no-op.
-  FPDFPage_InsertClipPath(nullptr, clip);
+    // NULL arg call is a no-op.
+    FPDFPage_InsertClipPath(nullptr, clip.get());
 
-  // Do actual work.
-  FPDFPage_InsertClipPath(page, clip);
+    // Do actual work.
+    FPDFPage_InsertClipPath(page, clip.get());
 
-  // TODO(tsepez): test how inserting path affects page rendering.
+    // TODO(tsepez): test how inserting path affects page rendering.
+  }
 
-  FPDF_DestroyClipPath(clip);
   UnloadPage(page);
 }
 
