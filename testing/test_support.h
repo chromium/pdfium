@@ -5,8 +5,6 @@
 #ifndef TESTING_TEST_SUPPORT_H_
 #define TESTING_TEST_SUPPORT_H_
 
-#include <stdint.h>
-
 namespace pdfium {
 
 #define STR_IN_TEST_CASE(input_literal, ...)               \
@@ -45,8 +43,5 @@ struct NullTermWstrFuncTestData {
 };
 
 }  // namespace pdfium
-
-void InitializePDFTestEnvironment();
-void DestroyPDFTestEnvironment();
 
 #endif  // TESTING_TEST_SUPPORT_H_

@@ -158,8 +158,12 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
     return;
 
   FXMEM_InitializePartitionAlloc();
-  CFX_GEModule::Create(cfg ? cfg->m_pUserFontPaths : nullptr);
-  CPDF_ModuleMgr::Create();
+
+  CFX_GEModule* pModule = CFX_GEModule::Get();
+  pModule->Init(cfg ? cfg->m_pUserFontPaths : nullptr);
+
+  CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
+  pModuleMgr->Init();
 
 #ifdef PDF_ENABLE_XFA
   BC_Library_Init();
@@ -180,6 +184,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
 
   CPDF_ModuleMgr::Destroy();
   CFX_GEModule::Destroy();
+
   IJS_Runtime::Destroy();
 
   g_bLibraryInitialized = false;

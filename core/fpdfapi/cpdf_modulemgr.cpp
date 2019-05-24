@@ -37,31 +37,28 @@ CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
 }  // namespace
 
 // static
-void CPDF_ModuleMgr::Create() {
-  ASSERT(!g_pDefaultMgr);
-  g_pDefaultMgr = new CPDF_ModuleMgr;
-  g_pDefaultMgr->InitCodecModule();
-  g_pDefaultMgr->InitPageModule();
-  g_pDefaultMgr->LoadEmbeddedMaps();
-  g_pDefaultMgr->LoadCodecModules();
+CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
+  if (!g_pDefaultMgr)
+    g_pDefaultMgr = new CPDF_ModuleMgr;
+  return g_pDefaultMgr;
 }
 
 // static
 void CPDF_ModuleMgr::Destroy() {
-  ASSERT(g_pDefaultMgr);
   delete g_pDefaultMgr;
   g_pDefaultMgr = nullptr;
 }
 
-// static
-CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
-  ASSERT(g_pDefaultMgr);
-  return g_pDefaultMgr;
+CPDF_ModuleMgr::CPDF_ModuleMgr() {}
+
+CPDF_ModuleMgr::~CPDF_ModuleMgr() {}
+
+void CPDF_ModuleMgr::Init() {
+  InitCodecModule();
+  InitPageModule();
+  LoadEmbeddedMaps();
+  LoadCodecModules();
 }
-
-CPDF_ModuleMgr::CPDF_ModuleMgr() = default;
-
-CPDF_ModuleMgr::~CPDF_ModuleMgr() = default;
 
 CCodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
   return m_pCodecModule->GetFaxModule();

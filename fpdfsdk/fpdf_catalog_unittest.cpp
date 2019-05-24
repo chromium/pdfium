@@ -27,7 +27,7 @@ class CPDF_TestDocument final : public CPDF_Document {
 class PDFCatalogTest : public testing::Test {
  public:
   void SetUp() override {
-    CPDF_ModuleMgr::Create();
+    CPDF_ModuleMgr::Get()->Init();
     auto pTestDoc = pdfium::MakeUnique<CPDF_TestDocument>();
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
     m_pRootObj = pdfium::MakeRetain<CPDF_Dictionary>();

@@ -40,7 +40,7 @@ class PDFDocTest : public testing::Test {
   };
 
   void SetUp() override {
-    CPDF_ModuleMgr::Create();
+    CPDF_ModuleMgr::Get()->Init();
     auto pTestDoc = pdfium::MakeUnique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc->GetHolder();
     m_pRootObj.Reset(m_pIndirectObjs->NewIndirect<CPDF_Dictionary>());

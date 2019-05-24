@@ -21,10 +21,10 @@ class CFGAS_StringFormatterTest : public testing::Test {
  public:
   CFGAS_StringFormatterTest() {
     SetTZ("UTC");
-    CPDF_ModuleMgr::Create();
+    CPDF_ModuleMgr::Get()->Init();
   }
 
-  ~CFGAS_StringFormatterTest() override { CPDF_ModuleMgr::Destroy(); }
+  ~CFGAS_StringFormatterTest() override { CPDF_ModuleMgr::Get()->Destroy(); }
 
   void TearDown() override {
     fmt_.reset();

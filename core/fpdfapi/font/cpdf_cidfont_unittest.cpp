@@ -15,7 +15,8 @@
 
 class CPDF_CIDFontTest : public testing::Test {
  protected:
-  void SetUp() override { CPDF_ModuleMgr::Create(); }
+  void SetUp() override { CPDF_ModuleMgr::Get()->Init(); }
+
   void TearDown() override { CPDF_ModuleMgr::Destroy(); }
 };
 
