@@ -14,21 +14,31 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "third_party/base/ptr_util.h"
 
-void CFX_GEModule::InitPlatform() {
-  CFPF_SkiaDeviceModule* pDeviceModule = CFPF_GetSkiaDeviceModule();
-  if (!pDeviceModule)
-    return;
+class CAndroidPlatform : public CFX_GEModule::PlatformIface {
+ public:
+  CAndroidPlatform() = default;
+  ~CAndroidPlatform() override {
+    if (m_pDeviceModule)
+      m_pDeviceModule->Destroy();
+  }
 
-  CFPF_SkiaFontMgr* pFontMgr = pDeviceModule->GetFontMgr();
-  if (pFontMgr) {
+  void Init() override {
+    m_pDeviceModule = CFPF_GetSkiaDeviceModule();
+    CFPF_SkiaFontMgr* pFontMgr = m_pDeviceModule->GetFontMgr();
+    if (!pFontMgr)
+      return;
+
     auto pFontInfo = pdfium::MakeUnique<CFX_AndroidFontInfo>();
     pFontInfo->Init(pFontMgr);
-    m_pFontMgr->SetSystemFontInfo(std::move(pFontInfo));
+    CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(std::move(pFontInfo));
   }
-  m_pPlatformData = pDeviceModule;
-}
 
-void CFX_GEModule::DestroyPlatform() {
-  if (m_pPlatformData)
-    static_cast<CFPF_SkiaDeviceModule*>(m_pPlatformData)->Destroy();
+ private:
+  CFPF_SkiaDeviceModule* m_pDeviceModule = nullptr;
+};
+
+// static
+std::unique_ptr<CFX_GEModule::PlatformIface>
+CFX_GEModule::PlatformIface::Create() {
+  return pdfium::MakeUnique<CAndroidPlatform>();
 }

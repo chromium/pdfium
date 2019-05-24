@@ -302,7 +302,7 @@ Gdiplus::GpFillMode GdiFillType2Gdip(int fill_type) {
 
 const CGdiplusExt& GetGdiplusExt() {
   auto* pData =
-      reinterpret_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatformData());
+      static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   return pData->m_GdiplusExt;
 }
 

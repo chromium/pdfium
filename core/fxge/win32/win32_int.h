@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/renderdevicedriver_iface.h"
@@ -59,9 +60,15 @@ class CGdiplusExt {
   HMODULE m_GdiModule = nullptr;
 };
 
-class CWin32Platform {
+class CWin32Platform : public CFX_GEModule::PlatformIface {
  public:
-  bool m_bHalfTone;
+  CWin32Platform();
+  ~CWin32Platform() override;
+
+  // CFX_GEModule::PlatformIface:
+  void Init() override;
+
+  bool m_bHalfTone = false;
   CGdiplusExt m_GdiplusExt;
 };
 

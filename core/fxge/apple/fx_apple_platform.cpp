@@ -50,7 +50,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.Concat(*pObject2Device);
 
   CQuartz2D& quartz2d =
-      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
   if (!pFont->GetPlatformFont()) {
     if (pFont->GetPsName() == "DFHeiStd-W5")
@@ -89,14 +89,14 @@ bool CGDrawGlyphRun(CGContextRef pContext,
 
 void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =
-      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
   m_pPlatformGraphics = quartz2d.createGraphics(m_pBitmap);
 }
 
 void CFX_AggDeviceDriver::DestroyPlatform() {
   CQuartz2D& quartz2d =
-      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
   if (m_pPlatformGraphics) {
     quartz2d.destroyGraphics(m_pPlatformGraphics);
@@ -181,7 +181,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph_Nativetext(
 void CFX_Font::ReleasePlatformResource() {
   if (m_pPlatformFont) {
     CQuartz2D& quartz2d =
-        static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+        static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
             ->m_quartz2d;
     quartz2d.DestroyFont(m_pPlatformFont);
     m_pPlatformFont = nullptr;

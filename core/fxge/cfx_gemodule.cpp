@@ -19,12 +19,9 @@ CFX_GEModule* g_pGEModule = nullptr;
 
 CFX_GEModule::CFX_GEModule()
     : m_pFontMgr(pdfium::MakeUnique<CFX_FontMgr>()),
-      m_pPlatformData(nullptr),
-      m_pUserFontPaths(nullptr) {}
+      m_pPlatform(PlatformIface::Create()) {}
 
-CFX_GEModule::~CFX_GEModule() {
-  DestroyPlatform();
-}
+CFX_GEModule::~CFX_GEModule() = default;
 
 // static
 CFX_GEModule* CFX_GEModule::Get() {
@@ -43,7 +40,7 @@ void CFX_GEModule::Destroy() {
 void CFX_GEModule::Init(const char** userFontPaths) {
   ASSERT(g_pGEModule);
   m_pUserFontPaths = userFontPaths;
-  InitPlatform();
+  m_pPlatform->Init();
 }
 
 CFX_FontCache* CFX_GEModule::GetFontCache() {

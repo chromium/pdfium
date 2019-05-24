@@ -11,6 +11,7 @@
 
 #include <Carbon/Carbon.h>
 
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/fx_dib.h"
@@ -35,10 +36,13 @@ class CQuartz2D {
   void restoreGraphicsState(void* graphics);
 };
 
-class CApplePlatform {
+class CApplePlatform : public CFX_GEModule::PlatformIface {
  public:
-  CApplePlatform() {}
-  ~CApplePlatform() {}
+  CApplePlatform();
+  ~CApplePlatform() override;
+
+  // CFX_GEModule::PlatformIface:
+  void Init() override;
 
   CQuartz2D m_quartz2d;
 };

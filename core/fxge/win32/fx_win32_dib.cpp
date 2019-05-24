@@ -120,8 +120,8 @@ void GetBitmapSize(HBITMAP hBitmap, int& w, int& h) {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const wchar_t* filename) {
-  CWin32Platform* pPlatform =
-      (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
+  auto* pPlatform =
+      static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
     WINDIB_Open_Args_ args;
     args.flags = WINDIB_OPEN_PATHNAME;
@@ -156,8 +156,8 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const char* filename) {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
-  CWin32Platform* pPlatform =
-      (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
+  auto* pPlatform =
+      static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
     return pPlatform->m_GdiplusExt.LoadDIBitmap(args);
   }
