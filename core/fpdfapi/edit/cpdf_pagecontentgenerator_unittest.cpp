@@ -25,11 +25,8 @@
 
 class CPDF_PageContentGeneratorTest : public testing::Test {
  protected:
-  void SetUp() override { CPDF_ModuleMgr::Get()->Init(); }
-
-  void TearDown() override {
-    CPDF_ModuleMgr::Destroy();
-  }
+  void SetUp() override { CPDF_ModuleMgr::Create(); }
+  void TearDown() override { CPDF_ModuleMgr::Destroy(); }
 
   void TestProcessPath(CPDF_PageContentGenerator* pGen,
                        std::ostringstream* buf,

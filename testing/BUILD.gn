@@ -17,6 +17,7 @@ jumbo_source_set("test_support") {
     "string_write_stream.h",
     "test_loader.cpp",
     "test_loader.h",
+    "test_support.cpp",
     "test_support.h",
     "utils/bitmap_saver.cpp",
     "utils/bitmap_saver.h",
@@ -34,6 +35,7 @@ jumbo_source_set("test_support") {
     "../:pdfium_public_headers",
     "../core/fdrm",
     "../core/fxcrt",
+    "../core/fxge",
     "image_diff",
   ]
   configs += [ "../:pdfium_core_config" ]
