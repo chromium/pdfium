@@ -7,6 +7,8 @@
 #include "core/fpdfapi/page/cpdf_allstates.h"
 
 #include <algorithm>
+#include <utility>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
@@ -16,10 +18,9 @@
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_AllStates::CPDF_AllStates()
-    : m_TextLeading(0), m_TextRise(0), m_TextHorzScale(1.0f) {}
+CPDF_AllStates::CPDF_AllStates() = default;
 
-CPDF_AllStates::~CPDF_AllStates() {}
+CPDF_AllStates::~CPDF_AllStates() = default;
 
 void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   CopyStates(src);
@@ -33,8 +34,13 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   m_TextHorzScale = src.m_TextHorzScale;
 }
 
-void CPDF_AllStates::SetLineDash(CPDF_Array* pArray, float phase, float scale) {
-  m_GraphState.SetLineDash(pArray, phase, scale);
+void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray,
+                                 float phase,
+                                 float scale) {
+  std::vector<float> dashes(pArray->size());
+  for (size_t i = 0; i < pArray->size(); ++i)
+    dashes[i] = pArray->GetNumberAt(i);
+  m_GraphState.SetLineDash(std::move(dashes), phase, scale);
 }
 
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,

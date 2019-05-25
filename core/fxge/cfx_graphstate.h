@@ -7,10 +7,10 @@
 #ifndef CORE_FXGE_CFX_GRAPHSTATE_H_
 #define CORE_FXGE_CFX_GRAPHSTATE_H_
 
+#include <vector>
+
 #include "core/fxcrt/shared_copy_on_write.h"
 #include "core/fxge/cfx_graphstatedata.h"
-
-class CPDF_Array;
 
 class CFX_GraphState {
  public:
@@ -20,7 +20,7 @@ class CFX_GraphState {
 
   void Emplace();
 
-  void SetLineDash(CPDF_Array* pArray, float phase, float scale);
+  void SetLineDash(std::vector<float> dashes, float phase, float scale);
 
   float GetLineWidth() const;
   void SetLineWidth(float width);

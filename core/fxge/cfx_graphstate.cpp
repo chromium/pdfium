@@ -6,25 +6,27 @@
 
 #include "core/fxge/cfx_graphstate.h"
 
-#include "core/fpdfapi/parser/cpdf_array.h"
+#include <utility>
 
-CFX_GraphState::CFX_GraphState() {}
+CFX_GraphState::CFX_GraphState() = default;
 
 CFX_GraphState::CFX_GraphState(const CFX_GraphState& that)
     : m_Ref(that.m_Ref) {}
 
-CFX_GraphState::~CFX_GraphState() {}
+CFX_GraphState::~CFX_GraphState() = default;
 
 void CFX_GraphState::Emplace() {
   m_Ref.Emplace();
 }
 
-void CFX_GraphState::SetLineDash(CPDF_Array* pArray, float phase, float scale) {
+void CFX_GraphState::SetLineDash(std::vector<float> dashes,
+                                 float phase,
+                                 float scale) {
   CFX_GraphStateData* pData = m_Ref.GetPrivateCopy();
   pData->m_DashPhase = phase * scale;
-  pData->m_DashArray.resize(pArray->size());
-  for (size_t i = 0; i < pArray->size(); i++)
-    pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
+  for (float& val : dashes)
+    val *= scale;
+  pData->m_DashArray = std::move(dashes);
 }
 
 float CFX_GraphState::GetLineWidth() const {
