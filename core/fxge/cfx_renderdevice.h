@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
@@ -67,6 +66,8 @@ class CFX_PathData;
 class PauseIndicatorIface;
 class RenderDeviceDriverIface;
 struct CFX_Color;
+
+enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
 
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 

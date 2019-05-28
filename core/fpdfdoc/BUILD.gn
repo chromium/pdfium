@@ -26,6 +26,8 @@ jumbo_source_set("fpdfdoc") {
     "cpdf_bookmark.h",
     "cpdf_bookmarktree.cpp",
     "cpdf_bookmarktree.h",
+    "cpdf_color_utils.cpp",
+    "cpdf_color_utils.h",
     "cpdf_defaultappearance.cpp",
     "cpdf_defaultappearance.h",
     "cpdf_dest.cpp",
@@ -94,7 +96,6 @@ jumbo_source_set("fpdfdoc") {
     "../fxge",
   ]
   allow_circular_includes_from = [
-    "../fxge",
     "../fpdfapi/parser",
     "../fpdfapi/page",
     "../fpdfapi/render",

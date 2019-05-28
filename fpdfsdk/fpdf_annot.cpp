@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_color_utils.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
@@ -550,7 +551,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
     return true;
   }
 
-  CFX_Color color = CFX_Color::ParseColor(*pColor);
+  CFX_Color color = fpdfdoc::CFXColorFromArray(*pColor);
   switch (color.nColorType) {
     case CFX_Color::kRGB:
       *R = color.fColor1 * 255.f;

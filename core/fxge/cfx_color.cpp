@@ -8,9 +8,6 @@
 
 #include <algorithm>
 
-#include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfdoc/cpdf_defaultappearance.h"
-
 // Color types are orded by increasing number of components so we can
 // choose a best color type during some conversions.
 static_assert(CFX_Color::kTransparent < CFX_Color::kGray,
@@ -71,46 +68,6 @@ CFX_Color ConvertRGB2CMYK(float dR, float dG, float dB) {
 }
 
 }  // namespace
-
-// Static.
-CFX_Color CFX_Color::ParseColor(const CPDF_Array& array) {
-  CFX_Color rt;
-  switch (array.size()) {
-    case 1:
-      rt = CFX_Color(CFX_Color::kGray, array.GetNumberAt(0));
-      break;
-    case 3:
-      rt = CFX_Color(CFX_Color::kRGB, array.GetNumberAt(0),
-                     array.GetNumberAt(1), array.GetNumberAt(2));
-      break;
-    case 4:
-      rt = CFX_Color(CFX_Color::kCMYK, array.GetNumberAt(0),
-                     array.GetNumberAt(1), array.GetNumberAt(2),
-                     array.GetNumberAt(3));
-      break;
-  }
-  return rt;
-}
-
-// Static.
-CFX_Color CFX_Color::ParseColor(const ByteString& str) {
-  CPDF_DefaultAppearance appearance(str);
-  float values[4];
-  Optional<CFX_Color::Type> color_type = appearance.GetColor(values);
-  if (!color_type || *color_type == CFX_Color::kTransparent)
-    return CFX_Color(CFX_Color::kTransparent);
-  if (*color_type == CFX_Color::kGray)
-    return CFX_Color(CFX_Color::kGray, values[0]);
-  if (*color_type == CFX_Color::kRGB)
-    return CFX_Color(CFX_Color::kRGB, values[0], values[1], values[2]);
-  if (*color_type == CFX_Color::kCMYK) {
-    return CFX_Color(CFX_Color::kCMYK, values[0], values[1], values[2],
-                     values[3]);
-  }
-
-  NOTREACHED();
-  return CFX_Color(CFX_Color::kTransparent);
-}
 
 CFX_Color CFX_Color::ConvertColorType(int32_t nConvertColorType) const {
   if (nColorType == nConvertColorType)

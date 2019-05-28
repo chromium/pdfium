@@ -15,8 +15,6 @@
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/fx_dib.h"
 
-enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
-
 class CPDF_DefaultAppearance {
  public:
   CPDF_DefaultAppearance() {}

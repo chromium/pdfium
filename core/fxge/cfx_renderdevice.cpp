@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
