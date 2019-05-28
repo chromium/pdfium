@@ -50,7 +50,6 @@ class CPDF_Array final : public CPDF_Object {
   const CPDF_Stream* GetStreamAt(size_t index) const;
   CPDF_Array* GetArrayAt(size_t index);
   const CPDF_Array* GetArrayAt(size_t index) const;
-  float GetFloatAt(size_t index) const { return GetNumberAt(index); }
   CFX_Matrix GetMatrix() const;
   CFX_FloatRect GetRect() const;
 

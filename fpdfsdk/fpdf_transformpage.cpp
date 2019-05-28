@@ -50,10 +50,10 @@ bool GetBoundingBox(CPDF_Page* page,
   if (!pArray)
     return false;
 
-  *left = pArray->GetFloatAt(0);
-  *bottom = pArray->GetFloatAt(1);
-  *right = pArray->GetFloatAt(2);
-  *top = pArray->GetFloatAt(3);
+  *left = pArray->GetNumberAt(0);
+  *bottom = pArray->GetNumberAt(1);
+  *right = pArray->GetNumberAt(2);
+  *top = pArray->GetNumberAt(3);
   return true;
 }
 

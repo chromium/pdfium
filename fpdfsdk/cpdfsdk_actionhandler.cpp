@@ -375,7 +375,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(
   std::vector<float> posArray;
   if (pMyArray) {
     for (size_t i = 2; i < pMyArray->size(); i++)
-      posArray.push_back(pMyArray->GetFloatAt(i));
+      posArray.push_back(pMyArray->GetNumberAt(i));
   }
   pFormFillEnv->DoGoToAction(nPageIndex, nFitType, posArray.data(),
                              posArray.size());

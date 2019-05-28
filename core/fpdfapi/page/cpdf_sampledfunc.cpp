@@ -67,8 +67,8 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
     m_EncodeInfo[i].sizes = size;
     nTotalSampleBits *= m_EncodeInfo[i].sizes;
     if (pEncode) {
-      m_EncodeInfo[i].encode_min = pEncode->GetFloatAt(i * 2);
-      m_EncodeInfo[i].encode_max = pEncode->GetFloatAt(i * 2 + 1);
+      m_EncodeInfo[i].encode_min = pEncode->GetNumberAt(i * 2);
+      m_EncodeInfo[i].encode_max = pEncode->GetNumberAt(i * 2 + 1);
     } else {
       m_EncodeInfo[i].encode_min = 0;
       m_EncodeInfo[i].encode_max =
@@ -89,8 +89,8 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
   m_DecodeInfo.resize(m_nOutputs);
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     if (pDecode) {
-      m_DecodeInfo[i].decode_min = pDecode->GetFloatAt(2 * i);
-      m_DecodeInfo[i].decode_max = pDecode->GetFloatAt(2 * i + 1);
+      m_DecodeInfo[i].decode_min = pDecode->GetNumberAt(2 * i);
+      m_DecodeInfo[i].decode_max = pDecode->GetNumberAt(2 * i + 1);
     } else {
       m_DecodeInfo[i].decode_min = m_Ranges[i * 2];
       m_DecodeInfo[i].decode_max = m_Ranges[i * 2 + 1];

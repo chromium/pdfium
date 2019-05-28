@@ -677,7 +677,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMask() {
       m_pColorSpace->CountComponents() <= m_nComponents) {
     std::vector<float> colors(m_nComponents);
     for (uint32_t i = 0; i < m_nComponents; i++)
-      colors[i] = pMatte->GetFloatAt(i);
+      colors[i] = pMatte->GetNumberAt(i);
 
     float R;
     float G;
