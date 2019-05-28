@@ -54,8 +54,6 @@ jumbo_source_set("fpdfdoc") {
     "cpdf_nametree.h",
     "cpdf_numbertree.cpp",
     "cpdf_numbertree.h",
-    "cpdf_occontext.cpp",
-    "cpdf_occontext.h",
     "cpdf_pagelabel.cpp",
     "cpdf_pagelabel.h",
     "cpdf_structelement.cpp",
@@ -95,7 +93,6 @@ jumbo_source_set("fpdfdoc") {
     "../fxcrt",
     "../fxge",
   ]
-  allow_circular_includes_from = [ "../fpdfapi/render" ]
   visibility = [ "../../*" ]
 }
 

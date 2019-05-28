@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CPDF_OCCONTEXT_H_
-#define CORE_FPDFDOC_CPDF_OCCONTEXT_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_OCCONTEXT_H_
+#define CORE_FPDFAPI_RENDER_CPDF_OCCONTEXT_H_
 
 #include <map>
 
@@ -43,4 +43,4 @@ class CPDF_OCContext final : public Retainable {
   mutable std::map<const CPDF_Dictionary*, bool> m_OGCStateCache;
 };
 
-#endif  // CORE_FPDFDOC_CPDF_OCCONTEXT_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_OCCONTEXT_H_
