@@ -28,7 +28,7 @@
 
 namespace {
 
-const uint8_t g_CMYK[81 * 81 * 3] = {
+constexpr uint8_t kCMYK[81 * 81 * 3] = {
     255, 255, 255, 225, 226, 228, 199, 200, 202, 173, 174, 178, 147, 149, 152,
     123, 125, 128, 99,  99,  102, 69,  70,  71,  34,  30,  31,  255, 253, 229,
     226, 224, 203, 200, 199, 182, 173, 173, 158, 149, 148, 135, 125, 124, 113,
@@ -1733,9 +1733,9 @@ std::tuple<uint8_t, uint8_t, uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   int y_index = (fix_y + 4096) >> 13;
   int k_index = (fix_k + 4096) >> 13;
   int pos = (c_index * 9 * 9 * 9 + m_index * 9 * 9 + y_index * 9 + k_index) * 3;
-  int fix_r = g_CMYK[pos] << 8;
-  int fix_g = g_CMYK[pos + 1] << 8;
-  int fix_b = g_CMYK[pos + 2] << 8;
+  int fix_r = kCMYK[pos] << 8;
+  int fix_g = kCMYK[pos + 1] << 8;
+  int fix_b = kCMYK[pos + 2] << 8;
   int c1_index = fix_c >> 13;
   if (c1_index == c_index)
     c1_index = c1_index == 8 ? c1_index - 1 : c1_index + 1;
@@ -1753,21 +1753,21 @@ std::tuple<uint8_t, uint8_t, uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   int y1_pos = pos + (y1_index - y_index) * 9 * 3;
   int k1_pos = pos + (k1_index - k_index) * 3;
   int c_rate = (fix_c - (c_index << 13)) * (c_index - c1_index);
-  fix_r += (g_CMYK[pos] - g_CMYK[c1_pos]) * c_rate / 32;
-  fix_g += (g_CMYK[pos + 1] - g_CMYK[c1_pos + 1]) * c_rate / 32;
-  fix_b += (g_CMYK[pos + 2] - g_CMYK[c1_pos + 2]) * c_rate / 32;
+  fix_r += (kCMYK[pos] - kCMYK[c1_pos]) * c_rate / 32;
+  fix_g += (kCMYK[pos + 1] - kCMYK[c1_pos + 1]) * c_rate / 32;
+  fix_b += (kCMYK[pos + 2] - kCMYK[c1_pos + 2]) * c_rate / 32;
   int m_rate = (fix_m - (m_index << 13)) * (m_index - m1_index);
-  fix_r += (g_CMYK[pos] - g_CMYK[m1_pos]) * m_rate / 32;
-  fix_g += (g_CMYK[pos + 1] - g_CMYK[m1_pos + 1]) * m_rate / 32;
-  fix_b += (g_CMYK[pos + 2] - g_CMYK[m1_pos + 2]) * m_rate / 32;
+  fix_r += (kCMYK[pos] - kCMYK[m1_pos]) * m_rate / 32;
+  fix_g += (kCMYK[pos + 1] - kCMYK[m1_pos + 1]) * m_rate / 32;
+  fix_b += (kCMYK[pos + 2] - kCMYK[m1_pos + 2]) * m_rate / 32;
   int y_rate = (fix_y - (y_index << 13)) * (y_index - y1_index);
-  fix_r += (g_CMYK[pos] - g_CMYK[y1_pos]) * y_rate / 32;
-  fix_g += (g_CMYK[pos + 1] - g_CMYK[y1_pos + 1]) * y_rate / 32;
-  fix_b += (g_CMYK[pos + 2] - g_CMYK[y1_pos + 2]) * y_rate / 32;
+  fix_r += (kCMYK[pos] - kCMYK[y1_pos]) * y_rate / 32;
+  fix_g += (kCMYK[pos + 1] - kCMYK[y1_pos + 1]) * y_rate / 32;
+  fix_b += (kCMYK[pos + 2] - kCMYK[y1_pos + 2]) * y_rate / 32;
   int k_rate = (fix_k - (k_index << 13)) * (k_index - k1_index);
-  fix_r += (g_CMYK[pos] - g_CMYK[k1_pos]) * k_rate / 32;
-  fix_g += (g_CMYK[pos + 1] - g_CMYK[k1_pos + 1]) * k_rate / 32;
-  fix_b += (g_CMYK[pos + 2] - g_CMYK[k1_pos + 2]) * k_rate / 32;
+  fix_r += (kCMYK[pos] - kCMYK[k1_pos]) * k_rate / 32;
+  fix_g += (kCMYK[pos + 1] - kCMYK[k1_pos + 1]) * k_rate / 32;
+  fix_b += (kCMYK[pos + 2] - kCMYK[k1_pos + 2]) * k_rate / 32;
   fix_r = std::max(fix_r, 0);
   fix_g = std::max(fix_g, 0);
   fix_b = std::max(fix_b, 0);
