@@ -77,7 +77,7 @@ jumbo_source_set("fxcodec") {
     "../fxge",
     "//third_party:jpeg",
   ]
-  allow_circular_includes_from = [ "../fxge" ]
+  allow_circular_includes_from = []
 
   if (pdf_enable_xfa) {
     sources += [
@@ -123,6 +123,11 @@ jumbo_source_set("fxcodec") {
       deps += [ "../../third_party:fx_tiff" ]
     }
   }
+
+  if (is_win) {
+    allow_circular_includes_from += [ "../fxge" ]
+  }
+
   visibility = [ "../../*" ]
 }
 

@@ -52,7 +52,6 @@ jumbo_source_set("font") {
     libs = [ "CoreFoundation.framework" ]
   }
   allow_circular_includes_from = [
-    "../../fxge",
     "../cmaps",
     "../parser",
   ]
