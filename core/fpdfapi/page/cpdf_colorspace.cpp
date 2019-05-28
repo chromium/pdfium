@@ -28,7 +28,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfdoc/cpdf_action.h"
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
