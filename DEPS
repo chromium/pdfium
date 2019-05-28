@@ -19,7 +19,7 @@ vars = {
   'catapult_revision': 'cca9447f62824814d1ae1dd6c6268a66745d9fab',
   'clang_revision': '4e32649d7a532a0aa550baedadc3309970fb7642',
   'code_coverage_revision': '90f3a1ede923558ce02fa6e92ed9689ed52b199f',
-  'depot_tools_revision': 'ccd2b4da9a7e6ddf126c0b4437db75201836154c',
+  'depot_tools_revision': '26af0d34d281440ad0dc6d2e43fe60f32ef62da0',
   'freetype_revision': '31757f969fba60d75404f31e8f1168bef5011770',
   'gtest_revision': 'f71fb4f9a912ec945401cc49a287a759b6131026',
   'icu_revision': '64e5d7d43a1ff205e3787ab6150bbc1a1837332b',
