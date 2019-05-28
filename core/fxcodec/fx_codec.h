@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <tuple>
 #include <utility>
 
 #include "core/fxcodec/fx_codec_def.h"
@@ -137,14 +136,6 @@ class CCodec_ModuleMgr {
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 uint32_t ComponentsForFamily(int family);
-std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
-                                                  float m,
-                                                  float y,
-                                                  float k);
-std::tuple<uint8_t, uint8_t, uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
-                                                         uint8_t m,
-                                                         uint8_t y,
-                                                         uint8_t k);
 
 FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width);
 FX_SAFE_UINT32 CalculatePitch32(int bpp, int width);

@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/fxcodec/fx_codec.h"
+#include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 
 #define FX_CCOLOR(val) (255 - (val))
 #define FXDIB_ALPHA_UNION(dest, src) ((dest) + (src) - (dest) * (src) / 255)

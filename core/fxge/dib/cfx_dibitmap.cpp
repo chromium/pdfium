@@ -11,8 +11,8 @@
 #include <utility>
 
 #include "build/build_config.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_cliprgn.h"
+#include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 
 namespace {

@@ -11,9 +11,9 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
+#include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"

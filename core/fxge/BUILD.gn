@@ -57,6 +57,8 @@ jumbo_source_set("fxge") {
     "dib/cfx_bitmapcomposer.h",
     "dib/cfx_bitmapstorer.cpp",
     "dib/cfx_bitmapstorer.h",
+    "dib/cfx_cmyk_to_srgb.cpp",
+    "dib/cfx_cmyk_to_srgb.h",
     "dib/cfx_dibbase.cpp",
     "dib/cfx_dibbase.h",
     "dib/cfx_dibitmap.cpp",
@@ -195,6 +197,7 @@ jumbo_source_set("fxge") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "dib/cfx_cmyk_to_srgb_unittest.cpp",
     "dib/cfx_dibitmap_unittest.cpp",
     "dib/cstretchengine_unittest.cpp",
   ]
