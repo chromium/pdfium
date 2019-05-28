@@ -10,16 +10,17 @@
 #include <map>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_link.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Page;
 class CPDF_Dictionary;
 
-class CPDF_LinkList {
+class CPDF_LinkList : public CPDF_Document::LinkListIface {
  public:
   CPDF_LinkList();
-  ~CPDF_LinkList();
+  ~CPDF_LinkList() override;
 
   CPDF_Link GetLinkAtPoint(CPDF_Page* pPage,
                            const CFX_PointF& point,

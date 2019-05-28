@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <set>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -17,6 +18,7 @@
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_bookmarktree.h"
 #include "core/fpdfdoc/cpdf_dest.h"
+#include "core/fpdfdoc/cpdf_linklist.h"
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/ptr_util.h"
@@ -53,10 +55,14 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
 
 CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   CPDF_Document* pDoc = page->GetDocument();
-  std::unique_ptr<CPDF_LinkList>* pHolder = pDoc->LinksContext();
-  if (!pHolder->get())
-    *pHolder = pdfium::MakeUnique<CPDF_LinkList>();
-  return pHolder->get();
+  auto* pList = static_cast<CPDF_LinkList*>(pDoc->GetLinksContext());
+  if (pList)
+    return pList;
+
+  auto pNewList = pdfium::MakeUnique<CPDF_LinkList>();
+  pList = pNewList.get();
+  pDoc->SetLinksContext(std::move(pNewList));
+  return pList;
 }
 
 }  // namespace

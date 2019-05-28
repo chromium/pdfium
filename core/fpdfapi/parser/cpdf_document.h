@@ -18,7 +18,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
-#include "core/fpdfdoc/cpdf_linklist.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -56,6 +55,12 @@ class CPDF_Document : public Observable<CPDF_Document>,
     virtual uint32_t GetUserPermissions() const = 0;
   };
 
+  class LinkListIface {
+   public:
+    // CPDF_Document merely helps manage the lifetime.
+    virtual ~LinkListIface() = default;
+  };
+
   static const int kPageMaxNum = 0xFFFFF;
 
   CPDF_Document();
@@ -85,7 +90,10 @@ class CPDF_Document : public Observable<CPDF_Document>,
   std::unique_ptr<JBig2_DocumentContext>* CodecContext() {
     return &m_pCodecContext;
   }
-  std::unique_ptr<CPDF_LinkList>* LinksContext() { return &m_pLinksContext; }
+  LinkListIface* GetLinksContext() const { return m_pLinksContext.get(); }
+  void SetLinksContext(std::unique_ptr<LinkListIface> pContext) {
+    m_pLinksContext = std::move(pContext);
+  }
 
   CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
 
@@ -192,7 +200,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
   std::unique_ptr<CPDF_DocPageData> m_pDocPage;
 
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
-  std::unique_ptr<CPDF_LinkList> m_pLinksContext;
+  std::unique_ptr<LinkListIface> m_pLinksContext;
   std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.
 
   // Must be second to last.

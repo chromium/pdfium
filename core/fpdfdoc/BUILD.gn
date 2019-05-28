@@ -95,10 +95,7 @@ jumbo_source_set("fpdfdoc") {
     "../fxcrt",
     "../fxge",
   ]
-  allow_circular_includes_from = [
-    "../fpdfapi/parser",
-    "../fpdfapi/render",
-  ]
+  allow_circular_includes_from = [ "../fpdfapi/render" ]
   visibility = [ "../../*" ]
 }
 
