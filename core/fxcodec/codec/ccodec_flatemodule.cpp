@@ -761,6 +761,7 @@ void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
 
 }  // namespace
 
+// static
 std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
@@ -781,6 +782,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
       BitsPerComponent, Columns);
 }
 
+// static
 uint32_t CCodec_FlateModule::FlateOrLZWDecode(
     bool bLZW,
     pdfium::span<const uint8_t> src_span,
@@ -834,6 +836,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(
   return ret ? offset : FX_INVALID_OFFSET;
 }
 
+// static
 bool CCodec_FlateModule::Encode(
     const uint8_t* src_buf,
     uint32_t src_size,

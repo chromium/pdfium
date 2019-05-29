@@ -63,8 +63,8 @@ void PSCompressData(CCodec_ModuleMgr* pEncoders,
   uint32_t dest_size = src_size;
   if (PSLevel >= 3) {
     std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
-    if (pEncoders->GetFlateModule()->Encode(src_buf, src_size, &dest_buf_unique,
-                                            &dest_size)) {
+    if (CCodec_FlateModule::Encode(src_buf, src_size, &dest_buf_unique,
+                                   &dest_size)) {
       dest_buf = dest_buf_unique.release();
       *filter = "/FlateDecode filter ";
     }

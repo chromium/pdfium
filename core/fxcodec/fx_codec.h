@@ -36,7 +36,6 @@
 
 class CCodec_BasicModule;
 class CCodec_FaxModule;
-class CCodec_FlateModule;
 class CCodec_IccModule;
 class CCodec_Jbig2Module;
 class CCodec_JpegModule;
@@ -71,7 +70,6 @@ class CCodec_ModuleMgr {
   CCodec_JpxModule* GetJpxModule() const { return m_pJpxModule.get(); }
   CCodec_Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
   CCodec_IccModule* GetIccModule() const { return m_pIccModule.get(); }
-  CCodec_FlateModule* GetFlateModule() const { return m_pFlateModule.get(); }
 
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<CCodec_ProgressiveDecoder> CreateProgressiveDecoder();
@@ -130,8 +128,6 @@ class CCodec_ModuleMgr {
   std::unique_ptr<CCodec_TiffModule> m_pTiffModule;
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
-
-  std::unique_ptr<CCodec_FlateModule> m_pFlateModule;
 };
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);

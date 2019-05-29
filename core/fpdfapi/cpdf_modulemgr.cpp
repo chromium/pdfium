@@ -80,10 +80,6 @@ CCodec_IccModule* CPDF_ModuleMgr::GetIccModule() {
   return m_pCodecModule->GetIccModule();
 }
 
-CCodec_FlateModule* CPDF_ModuleMgr::GetFlateModule() {
-  return m_pCodecModule->GetFlateModule();
-}
-
 void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule = pdfium::MakeUnique<CPDF_PageModule>();
 }

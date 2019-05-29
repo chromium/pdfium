@@ -17,7 +17,7 @@ class CCodec_ScanlineDecoder;
 
 class CCodec_FlateModule {
  public:
-  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
+  static std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
       int width,
       int height,
@@ -28,21 +28,26 @@ class CCodec_FlateModule {
       int BitsPerComponent,
       int Columns);
 
-  uint32_t FlateOrLZWDecode(bool bLZW,
-                            pdfium::span<const uint8_t> src_buf,
-                            bool bEarlyChange,
-                            int predictor,
-                            int Colors,
-                            int BitsPerComponent,
-                            int Columns,
-                            uint32_t estimated_size,
-                            std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                            uint32_t* dest_size);
+  static uint32_t FlateOrLZWDecode(
+      bool bLZW,
+      pdfium::span<const uint8_t> src_buf,
+      bool bEarlyChange,
+      int predictor,
+      int Colors,
+      int BitsPerComponent,
+      int Columns,
+      uint32_t estimated_size,
+      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+      uint32_t* dest_size);
 
-  bool Encode(const uint8_t* src_buf,
-              uint32_t src_size,
-              std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-              uint32_t* dest_size);
+  static bool Encode(const uint8_t* src_buf,
+                     uint32_t src_size,
+                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                     uint32_t* dest_size);
+
+  CCodec_FlateModule() = delete;
+  CCodec_FlateModule(const CCodec_FlateModule&) = delete;
+  CCodec_FlateModule& operator=(const CCodec_FlateModule&) = delete;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
