@@ -34,7 +34,6 @@
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
-class CCodec_BasicModule;
 class CCodec_FaxModule;
 class CCodec_IccModule;
 class CCodec_Jbig2Module;
@@ -64,7 +63,6 @@ class CCodec_ModuleMgr {
   CCodec_ModuleMgr();
   ~CCodec_ModuleMgr();
 
-  CCodec_BasicModule* GetBasicModule() const { return m_pBasicModule.get(); }
   CCodec_FaxModule* GetFaxModule() const { return m_pFaxModule.get(); }
   CCodec_JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
   CCodec_JpxModule* GetJpxModule() const { return m_pJpxModule.get(); }
@@ -104,7 +102,6 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA
 
  protected:
-  std::unique_ptr<CCodec_BasicModule> m_pBasicModule;
   std::unique_ptr<CCodec_FaxModule> m_pFaxModule;
   std::unique_ptr<CCodec_JpegModule> m_pJpegModule;
   std::unique_ptr<CCodec_JpxModule> m_pJpxModule;

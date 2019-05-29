@@ -487,8 +487,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
     m_pDecoder = CreateFlateDecoder(src_span, m_Width, m_Height, m_nComponents,
                                     m_bpc, pParams);
   } else if (decoder == "RunLengthDecode") {
-    CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-    m_pDecoder = pEncoders->GetBasicModule()->CreateRunLengthDecoder(
+    m_pDecoder = CCodec_BasicModule::CreateRunLengthDecoder(
         src_span, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
     if (!CreateDCTDecoder(src_span, pParams))

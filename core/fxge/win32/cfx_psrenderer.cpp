@@ -15,7 +15,6 @@
 #include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_flatemodule.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -46,8 +45,7 @@ bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
   return true;
 }
 
-void PSCompressData(CCodec_ModuleMgr* pEncoders,
-                    int PSLevel,
+void PSCompressData(int PSLevel,
                     uint8_t* src_buf,
                     uint32_t src_size,
                     uint8_t** output_buf,
@@ -70,8 +68,8 @@ void PSCompressData(CCodec_ModuleMgr* pEncoders,
     }
   } else {
     std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
-    if (pEncoders->GetBasicModule()->RunLengthEncode(
-            {src_buf, src_size}, &dest_buf_unique, &dest_size)) {
+    if (CCodec_BasicModule::RunLengthEncode({src_buf, src_size},
+                                            &dest_buf_unique, &dest_size)) {
       dest_buf = dest_buf_unique.release();
       *filter = "/RunLengthDecode filter ";
     }
@@ -100,8 +98,7 @@ class CPSFont {
   PSGlyph m_Glyphs[256];
 };
 
-CFX_PSRenderer::CFX_PSRenderer(CCodec_ModuleMgr* pModuleMgr)
-    : m_pModuleMgr(pModuleMgr) {}
+CFX_PSRenderer::CFX_PSRenderer() = default;
 
 CFX_PSRenderer::~CFX_PSRenderer() = default;
 
@@ -480,8 +477,8 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       }
       uint8_t* compressed_buf;
       uint32_t compressed_size;
-      PSCompressData(m_pModuleMgr.Get(), m_PSLevel, output_buf, output_size,
-                     &compressed_buf, &compressed_size, &filter);
+      PSCompressData(m_PSLevel, output_buf, output_size, &compressed_buf,
+                     &compressed_size, &filter);
       if (output_buf != compressed_buf)
         FX_Free(output_buf);
 
@@ -686,8 +683,8 @@ bool CFX_PSRenderer::DrawText(int nChars,
 void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size;
-  if (m_pModuleMgr->GetBasicModule()->A85Encode(
-          {data, static_cast<size_t>(len)}, &dest_buf, &dest_size)) {
+  if (CCodec_BasicModule::A85Encode({data, static_cast<size_t>(len)}, &dest_buf,
+                                    &dest_size)) {
     m_pStream->WriteBlock(dest_buf.get(), dest_size);
   } else {
     m_pStream->WriteBlock(data, len);

@@ -20,7 +20,6 @@
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
 
-class CCodec_ModuleMgr;
 class CFX_ImageRenderer;
 class TextCharPos;
 struct WINDIB_Open_Args_;
@@ -214,10 +213,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
 
 class CPSPrinterDriver final : public RenderDeviceDriverIface {
  public:
-  CPSPrinterDriver(CCodec_ModuleMgr* pModuleMgr,
-                   HDC hDC,
-                   WindowsPrintMode mode,
-                   bool bCmykOutput);
+  CPSPrinterDriver(HDC hDC, WindowsPrintMode mode, bool bCmykOutput);
   ~CPSPrinterDriver() override;
 
  private:

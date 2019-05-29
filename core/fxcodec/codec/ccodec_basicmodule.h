@@ -17,20 +17,24 @@ class CCodec_ScanlineDecoder;
 
 class CCodec_BasicModule {
  public:
-  std::unique_ptr<CCodec_ScanlineDecoder> CreateRunLengthDecoder(
+  static std::unique_ptr<CCodec_ScanlineDecoder> CreateRunLengthDecoder(
       pdfium::span<const uint8_t> src_buf,
       int width,
       int height,
       int nComps,
       int bpc);
 
-  bool RunLengthEncode(pdfium::span<const uint8_t> src_buf,
-                       std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                       uint32_t* dest_size);
+  static bool RunLengthEncode(pdfium::span<const uint8_t> src_buf,
+                              std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                              uint32_t* dest_size);
 
-  bool A85Encode(pdfium::span<const uint8_t> src_buf,
-                 std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                 uint32_t* dest_size);
+  static bool A85Encode(pdfium::span<const uint8_t> src_buf,
+                        std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                        uint32_t* dest_size);
+
+  CCodec_BasicModule() = delete;
+  CCodec_BasicModule(const CCodec_BasicModule&) = delete;
+  CCodec_BasicModule& operator=(const CCodec_BasicModule&) = delete;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_BASICMODULE_H_

@@ -9,6 +9,7 @@ import("../../testing/test.gni")
 jumbo_source_set("fxcodec") {
   sources = [
     "JBig2_DocumentContext.h",
+    "codec/ccodec_basicmodule.cpp",
     "codec/ccodec_basicmodule.h",
     "codec/ccodec_faxmodule.cpp",
     "codec/ccodec_faxmodule.h",

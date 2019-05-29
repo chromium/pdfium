@@ -545,8 +545,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       pContext->m_pOptions->GetOptions().bBreakForMasks = true;
     }
   } else {
-    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(
-        CPDF_ModuleMgr::Get()->GetCodecModule(), dc);
+    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
   }
 
   RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
@@ -573,8 +572,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     // pause after each image mask.
     pPage->SetRenderContext(pdfium::MakeUnique<CPDF_PageRenderContext>());
     pContext = pPage->GetRenderContext();
-    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(
-        CPDF_ModuleMgr::Get()->GetCodecModule(), dc);
+    pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
     pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 
@@ -591,7 +589,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       pContext->m_pRenderer->Continue(nullptr);
     }
   } else if (bNewBitmap) {
-    CFX_WindowsRenderDevice WinDC(CPDF_ModuleMgr::Get()->GetCodecModule(), dc);
+    CFX_WindowsRenderDevice WinDC(dc);
     bool bitsStretched = false;
     if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();

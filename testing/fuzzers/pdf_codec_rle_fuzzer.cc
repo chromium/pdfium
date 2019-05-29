@@ -11,7 +11,6 @@
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size = 0;
-  CCodec_BasicModule encoder_module;
-  encoder_module.RunLengthEncode({data, size}, &dest_buf, &dest_size);
+  CCodec_BasicModule::RunLengthEncode({data, size}, &dest_buf, &dest_size);
   return 0;
 }
