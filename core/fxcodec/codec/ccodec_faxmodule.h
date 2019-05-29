@@ -18,7 +18,7 @@ class CCodec_ScanlineDecoder;
 
 class CCodec_FaxModule {
  public:
-  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
+  static std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
       int width,
       int height,
@@ -29,6 +29,15 @@ class CCodec_FaxModule {
       int Columns,
       int Rows);
 
+  // Return the ending bit position.
+  static int FaxG4Decode(const uint8_t* src_buf,
+                         uint32_t src_size,
+                         int starting_bitpos,
+                         int width,
+                         int height,
+                         int pitch,
+                         uint8_t* dest_buf);
+
 #if defined(OS_WIN)
   static void FaxEncode(const uint8_t* src_buf,
                         int width,
@@ -38,14 +47,9 @@ class CCodec_FaxModule {
                         uint32_t* dest_size);
 #endif  // defined(OS_WIN)
 
-  // Return the ending bit position.
-  static int FaxG4Decode(const uint8_t* src_buf,
-                         uint32_t src_size,
-                         int starting_bitpos,
-                         int width,
-                         int height,
-                         int pitch,
-                         uint8_t* dest_buf);
+  CCodec_FaxModule() = delete;
+  CCodec_FaxModule(const CCodec_FaxModule&) = delete;
+  CCodec_FaxModule& operator=(const CCodec_FaxModule&) = delete;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_

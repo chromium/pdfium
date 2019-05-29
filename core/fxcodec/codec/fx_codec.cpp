@@ -11,7 +11,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
@@ -23,8 +22,7 @@
 #include "third_party/base/ptr_util.h"
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()
-    : m_pFaxModule(pdfium::MakeUnique<CCodec_FaxModule>()),
-      m_pJpegModule(pdfium::MakeUnique<CCodec_JpegModule>()),
+    : m_pJpegModule(pdfium::MakeUnique<CCodec_JpegModule>()),
       m_pJpxModule(pdfium::MakeUnique<CCodec_JpxModule>()),
       m_pJbig2Module(pdfium::MakeUnique<CCodec_Jbig2Module>()),
       m_pIccModule(pdfium::MakeUnique<CCodec_IccModule>()) {}
@@ -32,7 +30,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 CCodec_ModuleMgr::~CCodec_ModuleMgr() = default;
 
 #ifdef PDF_ENABLE_XFA
-CFX_DIBAttribute::CFX_DIBAttribute() {}
+CFX_DIBAttribute::CFX_DIBAttribute() = default;
 
 CFX_DIBAttribute::~CFX_DIBAttribute() {
   for (const auto& pair : m_Exif)

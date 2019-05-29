@@ -313,9 +313,8 @@ std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
     if (Rows > USHRT_MAX)
       Rows = 0;
   }
-  return CPDF_ModuleMgr::Get()->GetFaxModule()->CreateDecoder(
-      src_span, width, height, K, EndOfLine, ByteAlign, BlackIs1, Columns,
-      Rows);
+  return CCodec_FaxModule::CreateDecoder(src_span, width, height, K, EndOfLine,
+                                         ByteAlign, BlackIs1, Columns, Rows);
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(

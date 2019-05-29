@@ -60,10 +60,6 @@ void CPDF_ModuleMgr::Init() {
   LoadCodecModules();
 }
 
-CCodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
-  return m_pCodecModule->GetFaxModule();
-}
-
 CCodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
   return m_pCodecModule->GetJpegModule();
 }
