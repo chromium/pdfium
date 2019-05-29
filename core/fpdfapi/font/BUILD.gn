@@ -51,10 +51,7 @@ jumbo_source_set("font") {
   if (is_mac) {
     libs = [ "CoreFoundation.framework" ]
   }
-  allow_circular_includes_from = [
-    "../cmaps",
-    "../parser",
-  ]
+  allow_circular_includes_from = [ "../parser" ]
   visibility = [ "../../../*" ]
 }
 

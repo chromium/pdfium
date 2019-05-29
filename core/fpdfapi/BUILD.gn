@@ -26,7 +26,6 @@ jumbo_source_set("fpdfapi") {
     "render",
   ]
   allow_circular_includes_from = [
-    "cmaps",
     "font",
     "page",
     "parser",
