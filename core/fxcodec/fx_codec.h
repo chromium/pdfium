@@ -34,7 +34,6 @@
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
-class CCodec_IccModule;
 class CCodec_Jbig2Module;
 class CCodec_JpegModule;
 
@@ -60,7 +59,6 @@ class CCodec_ModuleMgr {
 
   CCodec_JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
   CCodec_Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
-  CCodec_IccModule* GetIccModule() const { return m_pIccModule.get(); }
 
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<CCodec_ProgressiveDecoder> CreateProgressiveDecoder();
@@ -97,7 +95,6 @@ class CCodec_ModuleMgr {
  protected:
   std::unique_ptr<CCodec_JpegModule> m_pJpegModule;
   std::unique_ptr<CCodec_Jbig2Module> m_pJbig2Module;
-  std::unique_ptr<CCodec_IccModule> m_pIccModule;
 
 #ifdef PDF_ENABLE_XFA
 #ifdef PDF_ENABLE_XFA_BMP

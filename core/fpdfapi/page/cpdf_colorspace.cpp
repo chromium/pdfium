@@ -915,9 +915,8 @@ bool CPDF_ICCBasedCS::GetRGB(const float* pBuf,
   }
   if (m_pProfile->transform()) {
     float rgb[3];
-    CCodec_IccModule* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
-    pIccModule->SetComponents(CountComponents());
-    pIccModule->Translate(m_pProfile->transform(), pBuf, rgb);
+    CCodec_IccModule::Translate(m_pProfile->transform(), CountComponents(),
+                                pBuf, rgb);
     *R = rgb[0];
     *G = rgb[1];
     *B = rgb[2];
@@ -972,8 +971,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
       bTranslate = nPixelCount.ValueOrDie() < nMaxColors * 3 / 2;
   }
   if (bTranslate) {
-    CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-        m_pProfile->transform(), pDestBuf, pSrcBuf, pixels);
+    CCodec_IccModule::TranslateScanline(m_pProfile->transform(), pDestBuf,
+                                        pSrcBuf, pixels);
     return;
   }
 
@@ -990,7 +989,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
         order /= 52;
       }
     }
-    CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
+    CCodec_IccModule::TranslateScanline(
         m_pProfile->transform(), m_pCache.data(), temp_src.data(), nMaxColors);
   }
   for (int i = 0; i < pixels; i++) {

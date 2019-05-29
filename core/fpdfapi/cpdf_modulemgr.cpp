@@ -68,10 +68,6 @@ CCodec_Jbig2Module* CPDF_ModuleMgr::GetJbig2Module() {
   return m_pCodecModule->GetJbig2Module();
 }
 
-CCodec_IccModule* CPDF_ModuleMgr::GetIccModule() {
-  return m_pCodecModule->GetIccModule();
-}
-
 void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule = pdfium::MakeUnique<CPDF_PageModule>();
 }

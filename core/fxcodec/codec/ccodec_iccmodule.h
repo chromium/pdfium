@@ -42,22 +42,20 @@ class CLcmsCmm {
 
 class CCodec_IccModule {
  public:
-  CCodec_IccModule();
-  ~CCodec_IccModule();
-
-  std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(
+  static std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(
       pdfium::span<const uint8_t> span);
-  void Translate(CLcmsCmm* pTransform,
-                 const float* pSrcValues,
-                 float* pDestValues);
-  void TranslateScanline(CLcmsCmm* pTransform,
-                         uint8_t* pDest,
-                         const uint8_t* pSrc,
-                         int pixels);
-  void SetComponents(uint32_t nComponents) { m_nComponents = nComponents; }
+  static void Translate(CLcmsCmm* pTransform,
+                        uint32_t nSrcComponents,
+                        const float* pSrcValues,
+                        float* pDestValues);
+  static void TranslateScanline(CLcmsCmm* pTransform,
+                                uint8_t* pDest,
+                                const uint8_t* pSrc,
+                                int pixels);
 
- protected:
-  uint32_t m_nComponents = 0;
+  CCodec_IccModule() = delete;
+  CCodec_IccModule(const CCodec_IccModule&) = delete;
+  CCodec_IccModule& operator=(const CCodec_IccModule&) = delete;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_ICCMODULE_H_

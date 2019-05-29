@@ -11,7 +11,6 @@
 #include <utility>
 
 class CCodec_FlateModule;
-class CCodec_IccModule;
 class CCodec_Jbig2Module;
 class CCodec_JpegModule;
 class CCodec_ModuleMgr;
@@ -52,7 +51,6 @@ class CPDF_ModuleMgr {
 
   CCodec_JpegModule* GetJpegModule();
   CCodec_Jbig2Module* GetJbig2Module();
-  CCodec_IccModule* GetIccModule();
   CCodec_FlateModule* GetFlateModule();
 
  private:

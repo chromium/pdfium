@@ -48,10 +48,7 @@ CLcmsCmm::~CLcmsCmm() {
   cmsDeleteTransform(m_hTransform);
 }
 
-CCodec_IccModule::CCodec_IccModule() {}
-
-CCodec_IccModule::~CCodec_IccModule() {}
-
+// static
 std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     pdfium::span<const uint8_t> span) {
   ScopedCmsProfile srcProfile(cmsOpenProfileFromMem(span.data(), span.size()));
@@ -110,17 +107,18 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
                                       bNormal);
 }
 
+// static
 void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
+                                 uint32_t nSrcComponents,
                                  const float* pSrcValues,
                                  float* pDestValues) {
   if (!pTransform)
     return;
 
-  uint32_t nSrcComponents = m_nComponents;
   uint8_t output[4];
   // TODO(npm): Currently the CmsDoTransform method is part of LCMS and it will
   // apply some member of m_hTransform to the input. We need to go over all the
-  // places which set transform to verify that only nSrcComponents are used.
+  // places which set transform to verify that only |nSrcComponents| are used.
   if (pTransform->IsLab()) {
     std::vector<double> inputs(std::max(nSrcComponents, 16u));
     for (uint32_t i = 0; i < nSrcComponents; ++i)
@@ -139,6 +137,7 @@ void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
   pDestValues[2] = output[0] / 255.0f;
 }
 
+// static
 void CCodec_IccModule::TranslateScanline(CLcmsCmm* pTransform,
                                          unsigned char* pDest,
                                          const unsigned char* pSrc,
