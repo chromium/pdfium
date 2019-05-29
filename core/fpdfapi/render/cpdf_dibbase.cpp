@@ -84,29 +84,6 @@ bool AreColorIndicesOutOfBounds(const uint8_t* indices,
   return false;
 }
 
-// Wrapper class to use with std::unique_ptr for CJPX_Decoder.
-class JpxBitMapContext {
- public:
-  explicit JpxBitMapContext(CCodec_JpxModule* jpx_module)
-      : jpx_module_(jpx_module), decoder_(nullptr) {}
-
-  ~JpxBitMapContext() {}
-
-  void set_decoder(std::unique_ptr<CJPX_Decoder> decoder) {
-    decoder_ = std::move(decoder);
-  }
-
-  CJPX_Decoder* decoder() { return decoder_.get(); }
-
- private:
-  CCodec_JpxModule* const jpx_module_;  // Weak pointer.
-  std::unique_ptr<CJPX_Decoder> decoder_;
-
-  // Disallow evil constructors
-  JpxBitMapContext(const JpxBitMapContext&);
-  void operator=(const JpxBitMapContext&);
-};
-
 }  // namespace
 
 CPDF_DIBBase::CPDF_DIBBase() = default;
@@ -584,20 +561,18 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
-  CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
-  auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
-  context->set_decoder(
-      pJpxModule->CreateDecoder(m_pStreamAcc->GetSpan(), m_pColorSpace));
-  if (!context->decoder())
+  std::unique_ptr<CJPX_Decoder> decoder =
+      CCodec_JpxModule::CreateDecoder(m_pStreamAcc->GetSpan(), m_pColorSpace);
+  if (!decoder)
     return nullptr;
 
-  if (!context->decoder()->StartDecode())
+  if (!decoder->StartDecode())
     return nullptr;
 
   uint32_t width = 0;
   uint32_t height = 0;
   uint32_t components = 0;
-  pJpxModule->GetImageInfo(context->decoder(), &width, &height, &components);
+  decoder->GetInfo(&width, &height, &components);
   if (static_cast<int>(width) < m_Width || static_cast<int>(height) < m_Height)
     return nullptr;
 
@@ -643,8 +618,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
     output_offsets[0] = 2;
     output_offsets[2] = 0;
   }
-  if (!pJpxModule->Decode(context->decoder(), pCachedBitmap->GetBuffer(),
-                          pCachedBitmap->GetPitch(), output_offsets)) {
+  if (!decoder->Decode(pCachedBitmap->GetBuffer(), pCachedBitmap->GetPitch(),
+                       output_offsets)) {
     return nullptr;
   }
 

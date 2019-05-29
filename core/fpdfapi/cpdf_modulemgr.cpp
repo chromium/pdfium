@@ -64,10 +64,6 @@ CCodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
   return m_pCodecModule->GetJpegModule();
 }
 
-CCodec_JpxModule* CPDF_ModuleMgr::GetJpxModule() {
-  return m_pCodecModule->GetJpxModule();
-}
-
 CCodec_Jbig2Module* CPDF_ModuleMgr::GetJbig2Module() {
   return m_pCodecModule->GetJbig2Module();
 }

@@ -19,21 +19,13 @@ class CPDF_ColorSpace;
 
 class CCodec_JpxModule {
  public:
-  CCodec_JpxModule();
-  ~CCodec_JpxModule();
-
-  std::unique_ptr<CJPX_Decoder> CreateDecoder(
+  static std::unique_ptr<CJPX_Decoder> CreateDecoder(
       pdfium::span<const uint8_t> src_span,
       const RetainPtr<CPDF_ColorSpace>& cs);
 
-  void GetImageInfo(CJPX_Decoder* pDecoder,
-                    uint32_t* width,
-                    uint32_t* height,
-                    uint32_t* components);
-  bool Decode(CJPX_Decoder* pDecoder,
-              uint8_t* dest_data,
-              uint32_t pitch,
-              const std::vector<uint8_t>& offsets);
+  CCodec_JpxModule() = delete;
+  CCodec_JpxModule(const CCodec_JpxModule&) = delete;
+  CCodec_JpxModule& operator=(const CCodec_JpxModule&) = delete;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_JPXMODULE_H_

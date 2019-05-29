@@ -13,9 +13,8 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 
-CCodec_JpxModule g_module;
-
 namespace {
+
 const uint32_t kMaxJPXFuzzSize = 100 * 1024 * 1024;  // 100 MB
 
 bool CheckImageSize(uint32_t width, uint32_t height, uint32_t components) {
@@ -25,11 +24,12 @@ bool CheckImageSize(uint32_t width, uint32_t height, uint32_t components) {
   mem *= components;
   return mem.IsValid() && mem.ValueOrDie() <= kMemLimitBytes;
 }
+
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<CJPX_Decoder> decoder =
-      g_module.CreateDecoder({data, size}, nullptr);
+      CCodec_JpxModule::CreateDecoder({data, size}, nullptr);
   if (!decoder)
     return 0;
 
@@ -38,7 +38,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   uint32_t width;
   uint32_t height;
   uint32_t components;
-  g_module.GetImageInfo(decoder.get(), &width, &height, &components);
+  decoder->GetInfo(&width, &height, &components);
   if (!CheckImageSize(width, height, components))
     return 0;
 
@@ -46,7 +46,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   // StartDecode() could change image size, so check again.
-  g_module.GetImageInfo(decoder.get(), &width, &height, &components);
+  decoder->GetInfo(&width, &height, &components);
   if (!CheckImageSize(width, height, components))
     return 0;
 
@@ -74,7 +74,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   for (uint32_t i = 0; i < components; ++i)
     output_offsets[i] = i;
 
-  g_module.Decode(decoder.get(), bitmap->GetBuffer(), bitmap->GetPitch(),
-                  output_offsets);
+  decoder->Decode(bitmap->GetBuffer(), bitmap->GetPitch(), output_offsets);
   return 0;
 }

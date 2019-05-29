@@ -650,10 +650,7 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
   return true;
 }
 
-CCodec_JpxModule::CCodec_JpxModule() {}
-
-CCodec_JpxModule::~CCodec_JpxModule() {}
-
+// static
 std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     const RetainPtr<CPDF_ColorSpace>& cs) {
@@ -662,18 +659,4 @@ std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
     return nullptr;
 
   return decoder;
-}
-
-void CCodec_JpxModule::GetImageInfo(CJPX_Decoder* pDecoder,
-                                    uint32_t* width,
-                                    uint32_t* height,
-                                    uint32_t* components) {
-  pDecoder->GetInfo(width, height, components);
-}
-
-bool CCodec_JpxModule::Decode(CJPX_Decoder* pDecoder,
-                              uint8_t* dest_data,
-                              uint32_t pitch,
-                              const std::vector<uint8_t>& offsets) {
-  return pDecoder->Decode(dest_data, pitch, offsets);
 }

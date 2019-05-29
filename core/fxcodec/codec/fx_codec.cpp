@@ -14,7 +14,6 @@
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
-#include "core/fxcodec/codec/ccodec_jpxmodule.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -23,7 +22,6 @@
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()
     : m_pJpegModule(pdfium::MakeUnique<CCodec_JpegModule>()),
-      m_pJpxModule(pdfium::MakeUnique<CCodec_JpxModule>()),
       m_pJbig2Module(pdfium::MakeUnique<CCodec_Jbig2Module>()),
       m_pIccModule(pdfium::MakeUnique<CCodec_IccModule>()) {}
 
