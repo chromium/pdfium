@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
@@ -27,7 +28,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
-#ifdef _WIN32
+#if defined(OS_WIN)
 #include <tchar.h>
 #endif
 

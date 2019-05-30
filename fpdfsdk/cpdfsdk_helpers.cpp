@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
+#include "build/build_config.h"
 #include "constants/form_fields.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -29,11 +30,11 @@ namespace {
 constexpr char kQuadPoints[] = "QuadPoints";
 
 // 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
-static uint32_t g_sandbox_policy = 0xFFFFFFFF;
+uint32_t g_sandbox_policy = 0xFFFFFFFF;
 
-#ifndef _WIN32
-int g_last_error;
-#endif  // _WIN32
+#if !defined(OS_WIN)
+int g_last_error = 0;
+#endif
 
 bool RaiseUnsupportedError(int nError) {
   auto* pAdapter = CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter();
@@ -377,7 +378,7 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
   }
 }
 
-#ifndef _WIN32
+#if !defined(OS_WIN)
 void SetLastError(int err) {
   g_last_error = err;
 }
@@ -385,7 +386,7 @@ void SetLastError(int err) {
 int GetLastError() {
   return g_last_error;
 }
-#endif  // _WIN32
+#endif
 
 void ProcessParseError(CPDF_Parser::Error err) {
   uint32_t err_code = FPDF_ERR_SUCCESS;

@@ -6,6 +6,7 @@
 
 #include <limits>
 
+#include "build/build_config.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -59,7 +60,7 @@ TEST(fxcrt, DISABLED_FX_TryAllocOOM) {
   FX_Free(ptr);
 }
 
-#if !defined(__GNUC__)
+#if !defined(COMPILER_GCC)
 TEST(fxcrt, FX_TryAllocOverflow) {
   // |ptr| needs to be defined and used to avoid Clang optimizes away the
   // calloc() statement overzealously for optimized builds.

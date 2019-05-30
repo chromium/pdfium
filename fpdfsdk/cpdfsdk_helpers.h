@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_CPDFSDK_HELPERS_H_
 #define FPDFSDK_CPDFSDK_HELPERS_H_
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -17,7 +18,7 @@
 #include "core/fxcrt/fx_stream.h"
 #endif  // PDF_ENABLE_XFA
 
-#ifdef _WIN32
+#if defined(OS_WIN)
 #include <math.h>
 #include <tchar.h>
 #endif
@@ -265,10 +266,10 @@ void RenderPageWithContext(CPDF_PageRenderContext* pContext,
 void ReportUnsupportedFeatures(CPDF_Document* pDoc);
 void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
 
-#ifndef _WIN32
+#if !defined(OS_WIN)
 void SetLastError(int err);
 int GetLastError();
-#endif  // _WIN32
+#endif
 
 void ProcessParseError(CPDF_Parser::Error err);
 
