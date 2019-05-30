@@ -66,9 +66,108 @@ subtle::SpinLock* GetLock() {
 static bool g_initialized = false;
 
 void (*internal::PartitionRootBase::gOomHandlingFunction)() = nullptr;
-PartitionAllocHooks::AllocationHook* PartitionAllocHooks::allocation_hook_ =
-    nullptr;
-PartitionAllocHooks::FreeHook* PartitionAllocHooks::free_hook_ = nullptr;
+std::atomic<bool> PartitionAllocHooks::hooks_enabled_(false);
+subtle::SpinLock PartitionAllocHooks::set_hooks_lock_;
+std::atomic<PartitionAllocHooks::AllocationObserverHook*>
+    PartitionAllocHooks::allocation_observer_hook_(nullptr);
+std::atomic<PartitionAllocHooks::FreeObserverHook*>
+    PartitionAllocHooks::free_observer_hook_(nullptr);
+std::atomic<PartitionAllocHooks::AllocationOverrideHook*>
+    PartitionAllocHooks::allocation_override_hook_(nullptr);
+std::atomic<PartitionAllocHooks::FreeOverrideHook*>
+    PartitionAllocHooks::free_override_hook_(nullptr);
+std::atomic<PartitionAllocHooks::ReallocOverrideHook*>
+    PartitionAllocHooks::realloc_override_hook_(nullptr);
+
+void PartitionAllocHooks::SetObserverHooks(AllocationObserverHook* alloc_hook,
+                                           FreeObserverHook* free_hook) {
+  subtle::SpinLock::Guard guard(set_hooks_lock_);
+
+  // Chained hooks are not supported. Registering a non-null hook when a
+  // non-null hook is already registered indicates somebody is trying to
+  // overwrite a hook.
+  CHECK((!allocation_observer_hook_ && !free_observer_hook_) ||
+        (!alloc_hook && !free_hook));
+  allocation_observer_hook_ = alloc_hook;
+  free_observer_hook_ = free_hook;
+
+  hooks_enabled_ = allocation_observer_hook_ || allocation_override_hook_;
+}
+
+void PartitionAllocHooks::SetOverrideHooks(AllocationOverrideHook* alloc_hook,
+                                           FreeOverrideHook* free_hook,
+                                           ReallocOverrideHook realloc_hook) {
+  subtle::SpinLock::Guard guard(set_hooks_lock_);
+
+  CHECK((!allocation_override_hook_ && !free_override_hook_ &&
+         !realloc_override_hook_) ||
+        (!alloc_hook && !free_hook && !realloc_hook));
+  allocation_override_hook_ = alloc_hook;
+  free_override_hook_ = free_hook;
+  realloc_override_hook_ = realloc_hook;
+
+  hooks_enabled_ = allocation_observer_hook_ || allocation_override_hook_;
+}
+
+void PartitionAllocHooks::AllocationObserverHookIfEnabled(
+    void* address,
+    size_t size,
+    const char* type_name) {
+  if (AllocationObserverHook* hook =
+          allocation_observer_hook_.load(std::memory_order_relaxed)) {
+    hook(address, size, type_name);
+  }
+}
+
+bool PartitionAllocHooks::AllocationOverrideHookIfEnabled(
+    void** out,
+    int flags,
+    size_t size,
+    const char* type_name) {
+  if (AllocationOverrideHook* hook =
+          allocation_override_hook_.load(std::memory_order_relaxed)) {
+    return hook(out, flags, size, type_name);
+  }
+  return false;
+}
+
+void PartitionAllocHooks::FreeObserverHookIfEnabled(void* address) {
+  if (FreeObserverHook* hook =
+          free_observer_hook_.load(std::memory_order_relaxed)) {
+    hook(address);
+  }
+}
+
+bool PartitionAllocHooks::FreeOverrideHookIfEnabled(void* address) {
+  if (FreeOverrideHook* hook =
+          free_override_hook_.load(std::memory_order_relaxed)) {
+    return hook(address);
+  }
+  return false;
+}
+
+void PartitionAllocHooks::ReallocObserverHookIfEnabled(void* old_address,
+                                                       void* new_address,
+                                                       size_t size,
+                                                       const char* type_name) {
+  // Report a reallocation as a free followed by an allocation.
+  AllocationObserverHook* allocation_hook =
+      allocation_observer_hook_.load(std::memory_order_relaxed);
+  FreeObserverHook* free_hook =
+      free_observer_hook_.load(std::memory_order_relaxed);
+  if (allocation_hook && free_hook) {
+    free_hook(old_address);
+    allocation_hook(new_address, size, type_name);
+  }
+}
+bool PartitionAllocHooks::ReallocOverrideHookIfEnabled(size_t* out,
+                                                       void* address) {
+  if (ReallocOverrideHook* hook =
+          realloc_override_hook_.load(std::memory_order_relaxed)) {
+    return hook(out, address);
+  }
+  return false;
+}
 
 static void PartitionAllocBaseInit(internal::PartitionRootBase* root) {
   DCHECK(!root->initialized);
@@ -282,39 +381,51 @@ void* PartitionReallocGenericFlags(PartitionRootGeneric* root,
     internal::PartitionExcessiveAllocationSize();
   }
 
-  internal::PartitionPage* page = internal::PartitionPage::FromPointer(
-      internal::PartitionCookieFreePointerAdjust(ptr));
-  // TODO(palmer): See if we can afford to make this a CHECK.
-  DCHECK(root->IsValidPage(page));
+  const bool hooks_enabled = PartitionAllocHooks::AreHooksEnabled();
+  bool overridden = false;
+  size_t actual_old_size;
+  if (UNLIKELY(hooks_enabled)) {
+    overridden = PartitionAllocHooks::ReallocOverrideHookIfEnabled(
+        &actual_old_size, ptr);
+  }
+  if (LIKELY(!overridden)) {
+    internal::PartitionPage* page = internal::PartitionPage::FromPointer(
+        internal::PartitionCookieFreePointerAdjust(ptr));
+    // TODO(palmer): See if we can afford to make this a CHECK.
+    DCHECK(root->IsValidPage(page));
 
-  if (UNLIKELY(page->bucket->is_direct_mapped())) {
-    // We may be able to perform the realloc in place by changing the
-    // accessibility of memory pages and, if reducing the size, decommitting
-    // them.
-    if (PartitionReallocDirectMappedInPlace(root, page, new_size)) {
-      PartitionAllocHooks::ReallocHookIfEnabled(ptr, ptr, new_size, type_name);
+    if (UNLIKELY(page->bucket->is_direct_mapped())) {
+      // We may be able to perform the realloc in place by changing the
+      // accessibility of memory pages and, if reducing the size, decommitting
+      // them.
+      if (PartitionReallocDirectMappedInPlace(root, page, new_size)) {
+        if (UNLIKELY(hooks_enabled)) {
+          PartitionAllocHooks::ReallocObserverHookIfEnabled(ptr, ptr, new_size,
+                                                            type_name);
+        }
+        return ptr;
+      }
+    }
+
+    const size_t actual_new_size = root->ActualSize(new_size);
+    actual_old_size = PartitionAllocGetSize(ptr);
+
+    // TODO: note that tcmalloc will "ignore" a downsizing realloc() unless the
+    // new size is a significant percentage smaller. We could do the same if we
+    // determine it is a win.
+    if (actual_new_size == actual_old_size) {
+      // Trying to allocate a block of size |new_size| would give us a block of
+      // the same size as the one we've already got, so re-use the allocation
+      // after updating statistics (and cookies, if present).
+      page->set_raw_size(internal::PartitionCookieSizeAdjustAdd(new_size));
+#if DCHECK_IS_ON()
+      // Write a new trailing cookie when it is possible to keep track of
+      // |new_size| via the raw size pointer.
+      if (page->get_raw_size_ptr())
+        internal::PartitionCookieWriteValue(static_cast<char*>(ptr) + new_size);
+#endif
       return ptr;
     }
-  }
-
-  size_t actual_new_size = root->ActualSize(new_size);
-  size_t actual_old_size = PartitionAllocGetSize(ptr);
-
-  // TODO: note that tcmalloc will "ignore" a downsizing realloc() unless the
-  // new size is a significant percentage smaller. We could do the same if we
-  // determine it is a win.
-  if (actual_new_size == actual_old_size) {
-    // Trying to allocate a block of size |new_size| would give us a block of
-    // the same size as the one we've already got, so re-use the allocation
-    // after updating statistics (and cookies, if present).
-    page->set_raw_size(internal::PartitionCookieSizeAdjustAdd(new_size));
-#if DCHECK_IS_ON()
-    // Write a new trailing cookie when it is possible to keep track of
-    // |new_size| via the raw size pointer.
-    if (page->get_raw_size_ptr())
-      internal::PartitionCookieWriteValue(static_cast<char*>(ptr) + new_size);
-#endif
-    return ptr;
   }
 
   // This realloc cannot be resized in-place. Sadness.

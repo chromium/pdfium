@@ -212,56 +212,74 @@ class BASE_EXPORT PartitionStatsDumper {
 
 BASE_EXPORT void PartitionAllocGlobalInit(void (*oom_handling_function)());
 
+// PartitionAlloc supports setting hooks to observe allocations/frees as they
+// occur as well as 'override' hooks that allow overriding those operations.
 class BASE_EXPORT PartitionAllocHooks {
  public:
-  typedef void AllocationHook(void* address, size_t, const char* type_name);
-  typedef void FreeHook(void* address);
-
-  // To unhook, call Set*Hook with nullptr.
-  static void SetAllocationHook(AllocationHook* hook) {
-    // Chained allocation hooks are not supported. Registering a non-null
-    // hook when a non-null hook is already registered indicates somebody is
-    // trying to overwrite a hook.
-    CHECK(!hook || !allocation_hook_);
-    allocation_hook_ = hook;
-  }
-  static void SetFreeHook(FreeHook* hook) {
-    CHECK(!hook || !free_hook_);
-    free_hook_ = hook;
-  }
-
-  static void AllocationHookIfEnabled(void* address,
+  // Log allocation and free events.
+  typedef void AllocationObserverHook(void* address,
                                       size_t size,
-                                      const char* type_name) {
-    AllocationHook* hook = allocation_hook_;
-    if (UNLIKELY(hook != nullptr))
-      hook(address, size, type_name);
+                                      const char* type_name);
+  typedef void FreeObserverHook(void* address);
+
+  // If it returns true, the allocation has been overridden with the pointer in
+  // *out.
+  typedef bool AllocationOverrideHook(void** out,
+                                      int flags,
+                                      size_t size,
+                                      const char* type_name);
+  // If it returns true, then the allocation was overridden and has been freed.
+  typedef bool FreeOverrideHook(void* address);
+  // If it returns true, the underlying allocation is overridden and *out holds
+  // the size of the underlying allocation.
+  typedef bool ReallocOverrideHook(size_t* out, void* address);
+
+  // To unhook, call Set*Hooks with nullptrs.
+  static void SetObserverHooks(AllocationObserverHook* alloc_hook,
+                               FreeObserverHook* free_hook);
+  static void SetOverrideHooks(AllocationOverrideHook* alloc_hook,
+                               FreeOverrideHook* free_hook,
+                               ReallocOverrideHook realloc_hook);
+
+  // Helper method to check whether hooks are enabled. This is an optimization
+  // so that if a function needs to call observer and override hooks in two
+  // different places this value can be cached and only loaded once.
+  static bool AreHooksEnabled() {
+    return hooks_enabled_.load(std::memory_order_relaxed);
   }
 
-  static void FreeHookIfEnabled(void* address) {
-    FreeHook* hook = free_hook_;
-    if (UNLIKELY(hook != nullptr))
-      hook(address);
-  }
+  static void AllocationObserverHookIfEnabled(void* address,
+                                              size_t size,
+                                              const char* type_name);
+  static bool AllocationOverrideHookIfEnabled(void** out,
+                                              int flags,
+                                              size_t size,
+                                              const char* type_name);
 
-  static void ReallocHookIfEnabled(void* old_address,
-                                   void* new_address,
-                                   size_t size,
-                                   const char* type_name) {
-    // Report a reallocation as a free followed by an allocation.
-    AllocationHook* allocation_hook = allocation_hook_;
-    FreeHook* free_hook = free_hook_;
-    if (UNLIKELY(allocation_hook && free_hook)) {
-      free_hook(old_address);
-      allocation_hook(new_address, size, type_name);
-    }
-  }
+  static void FreeObserverHookIfEnabled(void* address);
+  static bool FreeOverrideHookIfEnabled(void* address);
+
+  static void ReallocObserverHookIfEnabled(void* old_address,
+                                           void* new_address,
+                                           size_t size,
+                                           const char* type_name);
+  static bool ReallocOverrideHookIfEnabled(size_t* out, void* address);
 
  private:
-  // Pointers to hook functions that PartitionAlloc will call on allocation and
-  // free if the pointers are non-null.
-  static AllocationHook* allocation_hook_;
-  static FreeHook* free_hook_;
+  // Single bool that is used to indicate whether observer or allocation hooks
+  // are set to reduce the numbers of loads required to check whether hooking is
+  // enabled.
+  static std::atomic<bool> hooks_enabled_;
+
+  // Lock used to synchronize Set*Hooks calls.
+  static subtle::SpinLock set_hooks_lock_;
+
+  static std::atomic<AllocationObserverHook*> allocation_observer_hook_;
+  static std::atomic<FreeObserverHook*> free_observer_hook_;
+
+  static std::atomic<AllocationOverrideHook*> allocation_override_hook_;
+  static std::atomic<FreeOverrideHook*> free_override_hook_;
+  static std::atomic<ReallocOverrideHook*> realloc_override_hook_;
 };
 
 ALWAYS_INLINE void* PartitionRoot::Alloc(size_t size, const char* type_name) {
@@ -280,6 +298,16 @@ ALWAYS_INLINE void* PartitionRoot::AllocFlags(int flags,
   CHECK(result);
   return result;
 #else
+  void* result;
+  const bool hooks_enabled = PartitionAllocHooks::AreHooksEnabled();
+  if (UNLIKELY(hooks_enabled)) {
+    if (PartitionAllocHooks::AllocationOverrideHookIfEnabled(&result, flags,
+                                                             size, type_name)) {
+      PartitionAllocHooks::AllocationObserverHookIfEnabled(result, size,
+                                                           type_name);
+      return result;
+    }
+  }
   size_t requested_size = size;
   size = internal::PartitionCookieSizeAdjustAdd(size);
   DCHECK(this->initialized);
@@ -287,9 +315,11 @@ ALWAYS_INLINE void* PartitionRoot::AllocFlags(int flags,
   DCHECK(index < this->num_buckets);
   DCHECK(size == index << kBucketShift);
   internal::PartitionBucket* bucket = &this->buckets()[index];
-  void* result = AllocFromBucket(bucket, flags, size);
-  PartitionAllocHooks::AllocationHookIfEnabled(result, requested_size,
-                                               type_name);
+  result = AllocFromBucket(bucket, flags, size);
+  if (UNLIKELY(hooks_enabled)) {
+    PartitionAllocHooks::AllocationObserverHookIfEnabled(result, requested_size,
+                                                         type_name);
+  }
   return result;
 #endif  // defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
 }
@@ -318,10 +348,14 @@ ALWAYS_INLINE void PartitionFree(void* ptr) {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
   free(ptr);
 #else
-  void* original_ptr = ptr;
   // TODO(palmer): Check ptr alignment before continuing. Shall we do the check
   // inside PartitionCookieFreePointerAdjust?
-  PartitionAllocHooks::FreeHookIfEnabled(original_ptr);
+  if (PartitionAllocHooks::AreHooksEnabled()) {
+    PartitionAllocHooks::FreeObserverHookIfEnabled(ptr);
+    if (PartitionAllocHooks::FreeOverrideHookIfEnabled(ptr))
+      return;
+  }
+
   ptr = internal::PartitionCookieFreePointerAdjust(ptr);
   internal::PartitionPage* page = internal::PartitionPage::FromPointer(ptr);
   // TODO(palmer): See if we can afford to make this a CHECK.
@@ -365,17 +399,29 @@ ALWAYS_INLINE void* PartitionAllocGenericFlags(PartitionRootGeneric* root,
   return result;
 #else
   DCHECK(root->initialized);
+  void* result;
+  const bool hooks_enabled = PartitionAllocHooks::AreHooksEnabled();
+  if (UNLIKELY(hooks_enabled)) {
+    if (PartitionAllocHooks::AllocationOverrideHookIfEnabled(&result, flags,
+                                                             size, type_name)) {
+      PartitionAllocHooks::AllocationObserverHookIfEnabled(result, size,
+                                                           type_name);
+      return result;
+    }
+  }
   size_t requested_size = size;
   size = internal::PartitionCookieSizeAdjustAdd(size);
   internal::PartitionBucket* bucket = PartitionGenericSizeToBucket(root, size);
-  void* ret = nullptr;
   {
     subtle::SpinLock::Guard guard(root->lock);
-    ret = root->AllocFromBucket(bucket, flags, size);
+    result = root->AllocFromBucket(bucket, flags, size);
   }
-  PartitionAllocHooks::AllocationHookIfEnabled(ret, requested_size, type_name);
+  if (UNLIKELY(hooks_enabled)) {
+    PartitionAllocHooks::AllocationObserverHookIfEnabled(result, requested_size,
+                                                         type_name);
+  }
 
-  return ret;
+  return result;
 #endif
 }
 
@@ -399,7 +445,12 @@ ALWAYS_INLINE void PartitionRootGeneric::Free(void* ptr) {
   if (UNLIKELY(!ptr))
     return;
 
-  PartitionAllocHooks::FreeHookIfEnabled(ptr);
+  if (PartitionAllocHooks::AreHooksEnabled()) {
+    PartitionAllocHooks::FreeObserverHookIfEnabled(ptr);
+    if (PartitionAllocHooks::FreeOverrideHookIfEnabled(ptr))
+      return;
+  }
+
   ptr = internal::PartitionCookieFreePointerAdjust(ptr);
   internal::PartitionPage* page = internal::PartitionPage::FromPointer(ptr);
   // TODO(palmer): See if we can afford to make this a CHECK.
