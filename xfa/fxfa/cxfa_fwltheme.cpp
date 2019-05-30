@@ -36,14 +36,12 @@ const wchar_t* const g_FWLTheme_CalFonts[] = {
 
 const float kLineHeight = 12.0f;
 
-}  // namespace
-
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
-  CFWL_Widget* pOuter = pWidget;
-  while (pOuter && pOuter->GetOuter())
-    pOuter = pOuter->GetOuter();
+  CFWL_Widget* pOuter = pWidget ? pWidget->GetOutmost() : nullptr;
   return pOuter ? static_cast<CXFA_FFWidget*>(pOuter->GetFFWidget()) : nullptr;
 }
+
+}  // namespace
 
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
     : m_pCheckBoxTP(pdfium::MakeUnique<CFWL_CheckBoxTP>()),

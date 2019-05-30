@@ -200,6 +200,13 @@ bool CFWL_Widget::IsChild() const {
   return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
 }
 
+CFWL_Widget* CFWL_Widget::GetOutmost() const {
+  CFWL_Widget* pOuter = const_cast<CFWL_Widget*>(this);
+  while (pOuter->GetOuter())
+    pOuter = pOuter->GetOuter();
+  return pOuter;
+}
+
 CFX_RectF CFWL_Widget::GetEdgeRect() const {
   CFX_RectF rtEdge(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);

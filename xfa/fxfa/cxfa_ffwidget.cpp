@@ -28,6 +28,7 @@
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_box.h"
+#include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -555,6 +556,20 @@ void CXFA_FFWidget::DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) {
     return;
 
   pDocEnvironment->DisplayCaret(this, bVisible, pRtAnchor);
+}
+
+void CXFA_FFWidget::GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) {
+  ASSERT(GetNode()->IsWidgetReady());
+  CXFA_Border* borderUI = GetNode()->GetUIBorder();
+  if (!borderUI)
+    return;
+
+  CXFA_Edge* edge = borderUI->GetEdgeIfExists(0);
+  if (!edge)
+    return;
+
+  *cr = edge->GetColor();
+  *fWidth = edge->GetThickness();
 }
 
 bool CXFA_FFWidget::IsLayoutRectEmpty() {

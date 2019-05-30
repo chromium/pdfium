@@ -73,6 +73,7 @@ class CXFA_FFWidget : public CFWL_Widget::AdapterIface {
   // CFWL_Widget::AdapterIface:
   CFX_Matrix GetRotateMatrix() override;
   void DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) override;
+  void GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) override;
 
   virtual CFX_RectF GetBBox(FocusOption focus);
   virtual void RenderWidget(CXFA_Graphics* pGS,

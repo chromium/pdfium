@@ -67,6 +67,4 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   CFX_RectF m_Rect;
 };
 
-CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget);
-
 #endif  // XFA_FXFA_CXFA_FWLTHEME_H_

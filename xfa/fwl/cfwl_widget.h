@@ -55,6 +55,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
     virtual ~AdapterIface() {}
     virtual CFX_Matrix GetRotateMatrix() = 0;
     virtual void DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) = 0;
+    virtual void GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) = 0;
   };
 
   ~CFWL_Widget() override;
@@ -92,6 +93,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   CFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
+  CFWL_Widget* GetOutmost() const;
 
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
   uint32_t GetStylesEx() const;
