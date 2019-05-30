@@ -52,6 +52,18 @@ int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {
   }
 }
 
+#if defined(OS_WIN)
+int CALLBACK GetRecordProc(HDC hdc,
+                           HANDLETABLE* handle_table,
+                           const ENHMETARECORD* record,
+                           int objects_count,
+                           LPARAM param) {
+  auto& records = *reinterpret_cast<std::vector<const ENHMETARECORD*>*>(param);
+  records.push_back(record);
+  return 1;
+}
+#endif  // defined(OS_WIN)
+
 }  // namespace
 
 EmbedderTest::EmbedderTest()
@@ -404,6 +416,40 @@ std::vector<uint8_t> EmbedderTest::RenderPageWithFlagsToEmf(FPDF_PAGE page,
   GetEnhMetaFileBits(emf, size_in_bytes, buffer.data());
   DeleteEnhMetaFile(emf);
   return buffer;
+}
+
+// static
+std::string EmbedderTest::GetPostScriptFromEmf(
+    const std::vector<uint8_t>& emf_data) {
+  // This comes from Emf::InitFromData() in Chromium.
+  HENHMETAFILE emf = SetEnhMetaFileBits(emf_data.size(), emf_data.data());
+  if (!emf)
+    return std::string();
+
+  // This comes from Emf::Enumerator::Enumerator() in Chromium.
+  std::vector<const ENHMETARECORD*> records;
+  if (!EnumEnhMetaFile(nullptr, emf, &GetRecordProc, &records, nullptr)) {
+    DeleteEnhMetaFile(emf);
+    return std::string();
+  }
+
+  // This comes from PostScriptMetaFile::SafePlayback() in Chromium.
+  std::string ps_data;
+  for (const auto* record : records) {
+    if (record->iType != EMR_GDICOMMENT)
+      continue;
+
+    // PostScript data is encapsulated inside EMF comment records.
+    // The first two bytes of the comment indicate the string length. The rest
+    // is the actual string data.
+    const auto* comment = reinterpret_cast<const EMRGDICOMMENT*>(record);
+    const char* data = reinterpret_cast<const char*>(comment->Data);
+    uint16_t size = *reinterpret_cast<const uint16_t*>(data);
+    data += 2;
+    ps_data.append(data, size);
+  }
+  DeleteEnhMetaFile(emf);
+  return ps_data;
 }
 #endif  // defined(OS_WIN)
 

@@ -21,6 +21,55 @@
 
 namespace {
 
+#if defined(OS_WIN)
+const char kExpectedRectanglePostScript[] = R"(
+save
+/im/initmatrix load def
+/n/newpath load def/m/moveto load def/l/lineto load def/c/curveto load def/h/closepath load def
+/f/fill load def/F/eofill load def/s/stroke load def/W/clip load def/W*/eoclip load def
+/rg/setrgbcolor load def/k/setcmykcolor load def
+/J/setlinecap load def/j/setlinejoin load def/w/setlinewidth load def/M/setmiterlimit load def/d/setdash load def
+/q/gsave load def/Q/grestore load def/iM/imagemask load def
+/Tj/show load def/Ff/findfont load def/Fs/scalefont load def/Sf/setfont load def
+/cm/concat load def/Cm/currentmatrix load def/mx/matrix load def/sm/setmatrix load def
+0 300 m 0 0 l 200 0 l 200 300 l 0 300 l h W n
+q
+0 300 m 0 0 l 200 0 l 200 300 l 0 300 l h W n
+q
+0 J
+[]0 d
+0 j
+1 w
+10 M
+mx Cm [1 0 0 -1 0 300]cm 0 290 m 10 290 l 10 300 l 0 300 l 0 290 l h 0 0 0 rg
+q F Q s sm
+mx Cm [1 0 0 -1 0 300]cm 10 150 m 60 150 l 60 180 l 10 180 l 10 150 l h q F Q s sm
+mx Cm [1 0 0 -1 0 300]cm 190 290 m 200 290 l 200 300 l 190 300 l 190 290 l h 0 0 1 rg
+q F Q 0 0 0 rg
+s sm
+mx Cm [1 0 0 -1 0 300]cm 70 232 m 120 232 l 120 262 l 70 262 l 70 232 l h 0 0 1 rg
+q F Q 0 0 0 rg
+s sm
+mx Cm [1 0 0 -1 0 300]cm 190 0 m 200 0 l 200 10 l 190 10 l 190 0 l h 0 1 0 rg
+q F Q 0 0 0 rg
+s sm
+mx Cm [1 0 0 -1 0 300]cm 130 150 m 180 150 l 180 180 l 130 180 l 130 150 l h 0 1 0 rg
+q F Q 0 0 0 rg
+s sm
+mx Cm [1 0 0 -1 0 300]cm 0 0 m 10 0 l 10 10 l 0 10 l 0 0 l h 1 0 0 rg
+q F Q 0 0 0 rg
+s sm
+mx Cm [1 0 0 -1 0 300]cm 70 67 m 120 67 l 120 97 l 70 97 l 70 67 l h 1 0 0 rg
+q F Q 0 0 0 rg
+s sm
+Q
+Q
+Q
+
+restore
+)";
+#endif  // defined(OS_WIN)
+
 class MockDownloadHints final : public FX_DOWNLOADHINTS {
  public:
   static void SAddSegment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
@@ -908,7 +957,7 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
 }
 
 #if defined(OS_WIN)
-TEST_F(FPDFViewEmbedderTest, FPDF_RenderPage) {
+TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -923,4 +972,75 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPage) {
 
   UnloadPage(page);
 }
-#endif
+
+class PostScriptRenderEmbedderTestBase : public FPDFViewEmbedderTest {
+ protected:
+  ~PostScriptRenderEmbedderTestBase() override = default;
+
+  // FPDFViewEmbedderTest:
+  void TearDown() override {
+    FPDF_SetPrintMode(FPDF_PRINTMODE_EMF);
+    FPDFViewEmbedderTest::TearDown();
+  }
+};
+
+class PostScriptLevel2EmbedderTest : public PostScriptRenderEmbedderTestBase {
+ public:
+  PostScriptLevel2EmbedderTest() = default;
+  ~PostScriptLevel2EmbedderTest() override = default;
+
+ protected:
+  // FPDFViewEmbedderTest:
+  void SetUp() override {
+    FPDFViewEmbedderTest::SetUp();
+    FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT2);
+  }
+};
+
+class PostScriptLevel3EmbedderTest : public PostScriptRenderEmbedderTestBase {
+ public:
+  PostScriptLevel3EmbedderTest() = default;
+  ~PostScriptLevel3EmbedderTest() override = default;
+
+ protected:
+  // FPDFViewEmbedderTest:
+  void SetUp() override {
+    FPDFViewEmbedderTest::SetUp();
+    FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT3);
+  }
+};
+
+TEST_F(PostScriptLevel2EmbedderTest, Rectangles) {
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page, 0);
+  std::string ps_data = GetPostScriptFromEmf(emf_normal);
+  EXPECT_STREQ(kExpectedRectanglePostScript, ps_data.c_str());
+
+  // FPDF_REVERSE_BYTE_ORDER is ignored since PostScript is not bitmap-based.
+  std::vector<uint8_t> emf_reverse_byte_order =
+      RenderPageWithFlagsToEmf(page, FPDF_REVERSE_BYTE_ORDER);
+  EXPECT_EQ(emf_normal, emf_reverse_byte_order);
+
+  UnloadPage(page);
+}
+
+TEST_F(PostScriptLevel3EmbedderTest, Rectangles) {
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page, 0);
+  std::string ps_data = GetPostScriptFromEmf(emf_normal);
+  EXPECT_STREQ(kExpectedRectanglePostScript, ps_data.c_str());
+
+  // FPDF_REVERSE_BYTE_ORDER is ignored since PostScript is not bitmap-based.
+  std::vector<uint8_t> emf_reverse_byte_order =
+      RenderPageWithFlagsToEmf(page, FPDF_REVERSE_BYTE_ORDER);
+  EXPECT_EQ(emf_normal, emf_reverse_byte_order);
+
+  UnloadPage(page);
+}
+#endif  // defined(OS_WIN)

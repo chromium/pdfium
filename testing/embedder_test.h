@@ -166,6 +166,9 @@ class EmbedderTest : public ::testing::Test,
   // Convert |page| into EMF with the specified page rendering |flags|.
   static std::vector<uint8_t> RenderPageWithFlagsToEmf(FPDF_PAGE page,
                                                        int flags);
+
+  // Get the PostScript data from |emf_data|.
+  static std::string GetPostScriptFromEmf(const std::vector<uint8_t>& emf_data);
 #endif
 
  protected:
