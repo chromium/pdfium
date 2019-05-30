@@ -746,7 +746,7 @@ class SkiaState {
     if (stroke_alpha)
       m_pDriver->PaintStroke(&skPaint, &m_drawState, skMatrix);
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
-    skCanvas->save();
+    SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
     skCanvas->concat(skMatrix);
     if (m_fillPath) {
       SkPath strokePath;
@@ -777,7 +777,6 @@ class SkiaState {
       DebugShowSkiaDrawPath(m_pDriver.Get(), skCanvas, skPaint, m_skPath);
       skCanvas->drawPath(m_skPath, skPaint);
     }
-    skCanvas->restore();
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
   }
@@ -913,7 +912,7 @@ class SkiaState {
     font.setSubpixel(true);
 
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
-    skCanvas->save();
+    SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
     SkScalar flip = m_fontSize < 0 ? -1 : 1;
     SkMatrix skMatrix = ToFlippedSkMatrix(m_drawMatrix, flip);
     skCanvas->concat(skMatrix);
@@ -941,7 +940,6 @@ class SkiaState {
     }
     skCanvas->drawTextBlob(blob, 0, 0, skPaint);
 
-    skCanvas->restore();
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
   }
@@ -1569,7 +1567,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   font.setSize(SkTAbs(font_size));
   font.setSubpixel(true);
 
-  m_pCanvas->save();
+  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
   SkScalar flip = font_size < 0 ? -1 : 1;
   SkScalar vFlip = flip;
   if (pFont->IsVertical())
@@ -1646,7 +1644,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                   positions[index].fY, paint);
           font.setScaleX(1);
         } else {
-          m_pCanvas->save();
+          SkAutoCanvasRestore scoped_save_restore2(m_pCanvas, /*doSave=*/true);
           SkMatrix adjust;
           adjust.reset();
           adjust.setScaleX(cp.m_AdjustMatrix[0]);
@@ -1658,7 +1656,6 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
           auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
                                                SkTextEncoding::kGlyphID);
           m_pCanvas->drawTextBlob(blob, 0, 0, paint);
-          m_pCanvas->restore();
         }
       } else {
         auto blob = SkTextBlob::MakeFromText(&glyphs[index], 1, font,
@@ -1673,7 +1670,6 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                 font, SkTextEncoding::kGlyphID),
                             0, 0, paint);
   }
-  m_pCanvas->restore();
 
   return true;
 }
@@ -1923,7 +1919,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   if (pGraphState && stroke_alpha)
     PaintStroke(&skPaint, pGraphState, skMatrix);
   SkPath skPath = BuildPath(pPathData);
-  m_pCanvas->save();
+  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
   m_pCanvas->concat(skMatrix);
   if ((fill_mode & 3) && fill_color) {
     skPath.setFillType((fill_mode & 3) == FXFILL_ALTERNATE
@@ -1957,7 +1953,6 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, skPath);
     m_pCanvas->drawPath(skPath, skPaint);
   }
-  m_pCanvas->restore();
   return true;
 }
 
@@ -2122,7 +2117,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       return false;
     SkPoint cubics[12];
     SkColor colors[4];
-    m_pCanvas->save();
+    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
     if (!skClip.isEmpty())
       m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
     m_pCanvas->concat(skMatrix);
@@ -2155,15 +2150,13 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       }
       m_pCanvas->drawPatch(cubics, colors, nullptr, paint);
     }
-    m_pCanvas->restore();
     return true;
   }
-  m_pCanvas->save();
+  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
   if (!skClip.isEmpty())
     m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
   m_pCanvas->concat(skMatrix);
   m_pCanvas->drawPath(skPath, paint);
-  m_pCanvas->restore();
   return true;
 }
 
@@ -2307,16 +2300,13 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
                                                  dest_left, dest_top);
-  m_pCanvas->save();
+  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
   m_pCanvas->clipRect(skClipRect, SkClipOp::kIntersect, true);
   std::unique_ptr<CFX_ImageRenderer> dummy;
-  bool result = StartDIBits(pSource, 0xFF, argb, m, FXDIB_ResampleOptions(),
-                            &dummy, blend_type);
-  m_pCanvas->restore();
-
-  return result;
+  return StartDIBits(pSource, 0xFF, argb, m, FXDIB_ResampleOptions(), &dummy,
+                     blend_type);
 #endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -2362,31 +2352,32 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
                 false)) {
     return false;
   }
-  m_pCanvas->save();
-  SkMatrix skMatrix;
-  SetBitmapMatrix(matrix, width, height, &skMatrix);
-  m_pCanvas->concat(skMatrix);
-  SkPaint paint;
-  SetBitmapPaint(pSource->IsAlphaMask(), argb, bitmap_alpha, blend_type,
-                 &paint);
-  // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
-  if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
-    SkMatrix inv;
-    SkAssertResult(skMatrix.invert(&inv));
-    for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
-      for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
-        SkPoint src = {x + 0.5f, y + 0.5f};
-        inv.mapPoints(&src, 1);
-        // TODO(caryclark) Why does the matrix map require clamping?
-        src.fX = SkTMax(0.5f, SkTMin(src.fX, width - 0.5f));
-        src.fY = SkTMax(0.5f, SkTMin(src.fY, height - 0.5f));
-        m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
+  {
+    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    SkMatrix skMatrix;
+    SetBitmapMatrix(matrix, width, height, &skMatrix);
+    m_pCanvas->concat(skMatrix);
+    SkPaint paint;
+    SetBitmapPaint(pSource->IsAlphaMask(), argb, bitmap_alpha, blend_type,
+                   &paint);
+    // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
+    if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
+      SkMatrix inv;
+      SkAssertResult(skMatrix.invert(&inv));
+      for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
+        for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
+          SkPoint src = {x + 0.5f, y + 0.5f};
+          inv.mapPoints(&src, 1);
+          // TODO(caryclark) Why does the matrix map require clamping?
+          src.fX = SkTMax(0.5f, SkTMin(src.fX, width - 0.5f));
+          src.fY = SkTMax(0.5f, SkTMin(src.fY, height - 0.5f));
+          m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
+        }
       }
+    } else {
+      m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
     }
-  } else {
-    m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
   }
-  m_pCanvas->restore();
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
 #endif  // _SKIA_SUPPORT_
 
@@ -2495,24 +2486,25 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
                 &maskHeight, true)) {
     return false;
   }
-  m_pCanvas->save();
-  SkMatrix skMatrix;
-  SetBitmapMatrix(matrix, srcWidth, srcHeight, &skMatrix);
-  m_pCanvas->concat(skMatrix);
-  SkPaint paint;
-  SetBitmapPaint(pSource->IsAlphaMask(), 0xFFFFFFFF, bitmap_alpha, blend_type,
-                 &paint);
-  sk_sp<SkImage> skSrc = SkImage::MakeFromBitmap(skBitmap);
-  sk_sp<SkShader> skSrcShader =
-      skSrc->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
-  sk_sp<SkImage> skMaskImage = SkImage::MakeFromBitmap(skMask);
-  sk_sp<SkShader> skMaskShader =
-      skMaskImage->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
-  paint.setShader(
-      SkShaders::Blend(SkBlendMode::kSrcIn, skMaskShader, skSrcShader));
-  SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
-  m_pCanvas->drawRect(r, paint);
-  m_pCanvas->restore();
+  {
+    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    SkMatrix skMatrix;
+    SetBitmapMatrix(matrix, srcWidth, srcHeight, &skMatrix);
+    m_pCanvas->concat(skMatrix);
+    SkPaint paint;
+    SetBitmapPaint(pSource->IsAlphaMask(), 0xFFFFFFFF, bitmap_alpha, blend_type,
+                   &paint);
+    sk_sp<SkImage> skSrc = SkImage::MakeFromBitmap(skBitmap);
+    sk_sp<SkShader> skSrcShader =
+        skSrc->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
+    sk_sp<SkImage> skMaskImage = SkImage::MakeFromBitmap(skMask);
+    sk_sp<SkShader> skMaskShader =
+        skMaskImage->makeShader(SkTileMode::kClamp, SkTileMode::kClamp);
+    paint.setShader(
+        SkShaders::Blend(SkBlendMode::kSrcIn, skMaskShader, skSrcShader));
+    SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
+    m_pCanvas->drawRect(r, paint);
+  }
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;
 }
