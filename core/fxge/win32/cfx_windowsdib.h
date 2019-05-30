@@ -6,10 +6,8 @@
 
 #ifndef CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
 #define CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_
-#ifdef _WIN32
-#ifndef _WINDOWS_
+
 #include <windows.h>
-#endif
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -50,7 +48,5 @@ class CFX_WindowsDIB final : public CFX_DIBitmap {
   HBITMAP m_hBitmap;
   HBITMAP m_hOldBitmap;
 };
-
-#endif  // _WIN32
 
 #endif  // CORE_FXGE_WIN32_CFX_WINDOWSDIB_H_

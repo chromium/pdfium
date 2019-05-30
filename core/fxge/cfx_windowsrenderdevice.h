@@ -7,10 +7,7 @@
 #ifndef CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
 #define CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
 
-#ifdef _WIN32
-#ifndef _WINDOWS_
 #include <windows.h>
-#endif
 
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -44,7 +41,5 @@ class CFX_WindowsRenderDevice final : public CFX_RenderDevice {
  private:
   static RenderDeviceDriverIface* CreateDriver(HDC hDC);
 };
-
-#endif  // _WIN32
 
 #endif  // CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_
