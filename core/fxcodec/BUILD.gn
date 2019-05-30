@@ -146,11 +146,15 @@ pdfium_unittest_source_set("unittests") {
   ]
   pdfium_root_dir = "../../"
 
-  if (pdf_enable_xfa && pdf_enable_xfa_gif) {
-    sources += [
-      "gif/cfx_gifcontext_unittest.cpp",
-      "gif/cfx_lzwdecompressor_unittest.cpp",
-    ]
+  if (pdf_enable_xfa) {
+    sources += [ "codec/ccodec_progressivedecoder_unittest.cpp" ]
+    deps += [ "../fxge" ]
+    if (pdf_enable_xfa_gif) {
+      sources += [
+        "gif/cfx_gifcontext_unittest.cpp",
+        "gif/cfx_lzwdecompressor_unittest.cpp",
+      ]
+    }
   }
 }
 
