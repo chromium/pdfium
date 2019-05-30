@@ -907,17 +907,12 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
     pRect->Offset(rtOuter.left, rtOuter.top);
   }
 
-  CXFA_FFWidget* pXFAWidget = pOuter->GetFFWidget();
+  CFWL_Widget::AdapterIface* pXFAWidget = pOuter->GetFFWidget();
   if (!pXFAWidget)
     return;
 
-  IXFA_DocEnvironment* pDocEnvironment =
-      pXFAWidget->GetDoc()->GetDocEnvironment();
-  if (!pDocEnvironment)
-    return;
-
   CFX_RectF rt = pXFAWidget->GetRotateMatrix().TransformRect(*pRect);
-  pDocEnvironment->DisplayCaret(pXFAWidget, true, &rt);
+  pXFAWidget->DisplayCaret(true, &rt);
 }
 
 void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
@@ -931,16 +926,11 @@ void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
   while (pOuter->GetOuter())
     pOuter = pOuter->GetOuter();
 
-  CXFA_FFWidget* pXFAWidget = pOuter->GetFFWidget();
+  CFWL_Widget::AdapterIface* pXFAWidget = pOuter->GetFFWidget();
   if (!pXFAWidget)
     return;
 
-  IXFA_DocEnvironment* pDocEnvironment =
-      pXFAWidget->GetDoc()->GetDocEnvironment();
-  if (!pDocEnvironment)
-    return;
-
-  pDocEnvironment->DisplayCaret(pXFAWidget, false, pRect);
+  pXFAWidget->DisplayCaret(false, pRect);
 }
 
 bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {

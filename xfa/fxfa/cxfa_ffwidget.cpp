@@ -549,6 +549,14 @@ CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
   return mt;
 }
 
+void CXFA_FFWidget::DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) {
+  IXFA_DocEnvironment* pDocEnvironment = GetDoc()->GetDocEnvironment();
+  if (!pDocEnvironment)
+    return;
+
+  pDocEnvironment->DisplayCaret(this, bVisible, pRtAnchor);
+}
+
 bool CXFA_FFWidget::IsLayoutRectEmpty() {
   CFX_RectF rtLayout = GetRectWithoutRotate();
   return rtLayout.width < 0.1f && rtLayout.height < 0.1f;

@@ -14,6 +14,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
+#include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
@@ -61,13 +62,17 @@ class CXFA_CalcData {
   int32_t m_iRefCount;
 };
 
-class CXFA_FFWidget {
+class CXFA_FFWidget : public CFWL_Widget::AdapterIface {
  public:
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
   enum HighlightOption { kNoHighlight = 0, kHighlight };
 
   explicit CXFA_FFWidget(CXFA_Node* pNode);
-  virtual ~CXFA_FFWidget();
+  ~CXFA_FFWidget() override;
+
+  // CFWL_Widget::AdapterIface:
+  CFX_Matrix GetRotateMatrix() override;
+  void DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) override;
 
   virtual CFX_RectF GetBBox(FocusOption focus);
   virtual void RenderWidget(CXFA_Graphics* pGS,
@@ -141,7 +146,6 @@ class CXFA_FFWidget {
     return GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Focused);
   }
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
-  CFX_Matrix GetRotateMatrix();
   bool IsLayoutRectEmpty();
   CXFA_LayoutItem* GetParent();
   bool IsAncestorOf(CXFA_FFWidget* pWidget);
