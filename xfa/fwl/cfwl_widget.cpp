@@ -27,7 +27,6 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fxfa/cxfa_ffapp.h"
 
 #define FWL_WGT_CalcHeight 2048
 #define FWL_WGT_CalcWidth 2048

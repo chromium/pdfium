@@ -60,13 +60,13 @@ CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme(CXFA_FFDoc* doc) {
   return m_pFWLTheme.get();
 }
 
-CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetFWLAdapterWidgetMgr() {
+CFWL_WidgetMgr::AdapterIface* CXFA_FFApp::GetWidgetMgrAdapter() {
   if (!m_pAdapterWidgetMgr)
     m_pAdapterWidgetMgr = pdfium::MakeUnique<CXFA_FWLAdapterWidgetMgr>();
   return m_pAdapterWidgetMgr.get();
 }
 
-std::unique_ptr<IFWL_AdapterTimerMgr> CXFA_FFApp::NewTimerMgr() const {
+std::unique_ptr<IFWL_AdapterTimerMgr> CXFA_FFApp::NewTimerMgr() {
   return m_pProvider->NewTimerMgr();
 }
 

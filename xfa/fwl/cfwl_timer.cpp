@@ -10,14 +10,14 @@
 #include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_adaptertimermgr.h"
-#include "xfa/fxfa/cxfa_ffapp.h"
 
 CFWL_Timer::CFWL_Timer(CFWL_Widget* parent) : m_pWidget(parent) {}
 
 CFWL_Timer::~CFWL_Timer() {}
 
 CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
-  CXFA_FFApp* pAdapterNative = m_pWidget->GetOwnerApp()->GetAdapterNative();
+  CFWL_App::AdapterIface* pAdapterNative =
+      m_pWidget->GetOwnerApp()->GetAdapterNative();
   if (!pAdapterNative)
     return nullptr;
 

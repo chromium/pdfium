@@ -15,15 +15,24 @@
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFWL_Message;
-class CXFA_FFApp;
-class CXFA_FWLAdapterWidgetMgr;
 class CXFA_Graphics;
 class CFX_Matrix;
 class CFWL_Widget;
 
 class CFWL_WidgetMgr {
  public:
-  explicit CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
+  class AdapterIface {
+   public:
+    virtual ~AdapterIface() {}
+    virtual void RepaintWidget(CFWL_Widget* pWidget) = 0;
+    virtual bool GetPopupPos(CFWL_Widget* pWidget,
+                             float fMinHeight,
+                             float fMaxHeight,
+                             const CFX_RectF& rtAnchor,
+                             CFX_RectF* pPopupRect) = 0;
+  };
+
+  explicit CFWL_WidgetMgr(AdapterIface* pAdapterNative);
   ~CFWL_WidgetMgr();
 
   void OnProcessMessageToForm(CFWL_Message* pMessage);
@@ -89,7 +98,7 @@ class CFWL_WidgetMgr {
   bool IsAbleNative(CFWL_Widget* pWidget) const;
 
   std::map<const CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
-  UnownedPtr<CXFA_FWLAdapterWidgetMgr> const m_pAdapter;
+  UnownedPtr<AdapterIface> const m_pAdapter;
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETMGR_H_

@@ -20,23 +20,24 @@ class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class IFWL_AdapterTimerMgr;
 
-class CXFA_FFApp {
+class CXFA_FFApp : public CFWL_App::AdapterIface {
  public:
   static void SkipFontLoadForTesting(bool skip);
 
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
-  ~CXFA_FFApp();
+  ~CXFA_FFApp() override;
 
-  CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr();
+  // CFWL_App::AdapterIface:
+  CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() override;
+  std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() override;
+
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
-
   CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme(CXFA_FFDoc* doc);
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   CXFA_FontMgr* GetXFAFontMgr() { return &m_pFontMgr; }
-  std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() const;
 
   void ClearEventTargets();
 

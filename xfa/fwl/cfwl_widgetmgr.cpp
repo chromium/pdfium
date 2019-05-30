@@ -12,11 +12,9 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_notedriver.h"
-#include "xfa/fxfa/cxfa_ffapp.h"
-#include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 
-CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
-    : m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
+CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapterNative)
+    : m_pAdapter(pAdapterNative) {
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
 }
 

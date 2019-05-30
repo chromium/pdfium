@@ -10,12 +10,12 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
+#include "xfa/fwl/cfwl_widgetmgr.h"
 
 class CFWL_NoteDriver;
 class CFWL_WidgetMgr;
-class CXFA_FFApp;
-class CXFA_FWLAdapterWidgetMgr;
 class CFWL_Widget;
+class IFWL_AdapterTimerMgr;
 
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,
@@ -29,15 +29,22 @@ enum FWL_KeyFlag {
 
 class CFWL_App {
  public:
-  explicit CFWL_App(CXFA_FFApp* pAdapter);
+  class AdapterIface {
+   public:
+    virtual ~AdapterIface() {}
+    virtual CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() = 0;
+    virtual std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() = 0;
+  };
+
+  explicit CFWL_App(AdapterIface* pAdapter);
   ~CFWL_App();
 
-  CXFA_FFApp* GetAdapterNative() const { return m_pAdapterNative.Get(); }
+  AdapterIface* GetAdapterNative() const { return m_pAdapterNative.Get(); }
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
   CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
  private:
-  UnownedPtr<CXFA_FFApp> const m_pAdapterNative;
+  UnownedPtr<AdapterIface> const m_pAdapterNative;
   std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
   std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
 };
