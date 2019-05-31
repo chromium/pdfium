@@ -2,13 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
-#define PDFIUM_THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
+#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
+#define THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
 
 #include <stdint.h>
 
 #include <limits>
 #include <type_traits>
+
+#if defined(__GNUC__) || defined(__clang__)
+#define BASE_NUMERICS_LIKELY(x) __builtin_expect(!!(x), 1)
+#define BASE_NUMERICS_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#define BASE_NUMERICS_LIKELY(x) (x)
+#define BASE_NUMERICS_UNLIKELY(x) (x)
+#endif
 
 namespace pdfium {
 namespace base {
@@ -77,6 +85,48 @@ constexpr typename std::make_unsigned<T>::type SafeUnsignedAbs(T value) {
                                 : static_cast<UnsignedT>(value);
 }
 
+// This allows us to switch paths on known compile-time constants.
+#if defined(__clang__) || defined(__GNUC__)
+constexpr bool CanDetectCompileTimeConstant() {
+  return true;
+}
+template <typename T>
+constexpr bool IsCompileTimeConstant(const T v) {
+  return __builtin_constant_p(v);
+}
+#else
+constexpr bool CanDetectCompileTimeConstant() {
+  return false;
+}
+template <typename T>
+constexpr bool IsCompileTimeConstant(const T) {
+  return false;
+}
+#endif
+template <typename T>
+constexpr bool MustTreatAsConstexpr(const T v) {
+  // Either we can't detect a compile-time constant, and must always use the
+  // constexpr path, or we know we have a compile-time constant.
+  return !CanDetectCompileTimeConstant() || IsCompileTimeConstant(v);
+}
+
+// Forces a crash, like a CHECK(false). Used for numeric boundary errors.
+// Also used in a constexpr template to trigger a compilation failure on
+// an error condition.
+struct CheckOnFailure {
+  template <typename T>
+  static T HandleFailure() {
+#if defined(_MSC_VER)
+    __debugbreak();
+#elif defined(__GNUC__) || defined(__clang__)
+    __builtin_trap();
+#else
+    ((void)(*(volatile char*)0 = 0));
+#endif
+    return T();
+  }
+};
+
 enum IntegerRepresentation {
   INTEGER_REPRESENTATION_UNSIGNED,
   INTEGER_REPRESENTATION_SIGNED
@@ -143,7 +193,7 @@ class RangeCheck {
  public:
   constexpr RangeCheck(bool is_in_lower_bound, bool is_in_upper_bound)
       : is_underflow_(!is_in_lower_bound), is_overflow_(!is_in_upper_bound) {}
-  constexpr RangeCheck() : is_underflow_(false), is_overflow_(false) {}
+  constexpr RangeCheck() : is_underflow_(0), is_overflow_(0) {}
   constexpr bool IsValid() const { return !is_overflow_ && !is_underflow_; }
   constexpr bool IsInvalid() const { return is_overflow_ && is_underflow_; }
   constexpr bool IsOverflow() const { return is_overflow_ && !is_underflow_; }
@@ -338,6 +388,13 @@ struct DstRangeRelationToSrcRangeImpl<Dst,
   }
 };
 
+// Simple wrapper for statically checking if a type's range is contained.
+template <typename Dst, typename Src>
+struct IsTypeInRangeForNumericType {
+  static const bool value = StaticDstRangeRelationToSrcRange<Dst, Src>::value ==
+                            NUMERIC_RANGE_CONTAINED;
+};
+
 template <typename Dst,
           template <typename> class Bounds = std::numeric_limits,
           typename Src>
@@ -518,37 +575,15 @@ struct FastIntegerArithmeticPromotion<Lhs, Rhs, false> {
   static const bool is_contained = false;
 };
 
-// This hacks around libstdc++ 4.6 missing stuff in type_traits.
-#if defined(__GLIBCXX__)
-#define PRIV_GLIBCXX_4_7_0 20120322
-#define PRIV_GLIBCXX_4_5_4 20120702
-#define PRIV_GLIBCXX_4_6_4 20121127
-#if (__GLIBCXX__ < PRIV_GLIBCXX_4_7_0 || __GLIBCXX__ == PRIV_GLIBCXX_4_5_4 || \
-     __GLIBCXX__ == PRIV_GLIBCXX_4_6_4)
-#define PRIV_USE_FALLBACKS_FOR_OLD_GLIBCXX
-#undef PRIV_GLIBCXX_4_7_0
-#undef PRIV_GLIBCXX_4_5_4
-#undef PRIV_GLIBCXX_4_6_4
-#endif
-#endif
-
 // Extracts the underlying type from an enum.
 template <typename T, bool is_enum = std::is_enum<T>::value>
 struct ArithmeticOrUnderlyingEnum;
 
 template <typename T>
 struct ArithmeticOrUnderlyingEnum<T, true> {
-#if defined(PRIV_USE_FALLBACKS_FOR_OLD_GLIBCXX)
-  using type = __underlying_type(T);
-#else
   using type = typename std::underlying_type<T>::type;
-#endif
   static const bool value = std::is_arithmetic<type>::value;
 };
-
-#if defined(PRIV_USE_FALLBACKS_FOR_OLD_GLIBCXX)
-#undef PRIV_USE_FALLBACKS_FOR_OLD_GLIBCXX
-#endif
 
 template <typename T>
 struct ArithmeticOrUnderlyingEnum<T, false> {
@@ -561,6 +596,9 @@ template <typename T>
 class CheckedNumeric;
 
 template <typename T>
+class ClampedNumeric;
+
+template <typename T>
 class StrictNumeric;
 
 // Used to treat CheckedNumeric and arithmetic underlying types the same.
@@ -569,6 +607,7 @@ struct UnderlyingType {
   using type = typename ArithmeticOrUnderlyingEnum<T>::type;
   static const bool is_numeric = std::is_arithmetic<type>::value;
   static const bool is_checked = false;
+  static const bool is_clamped = false;
   static const bool is_strict = false;
 };
 
@@ -577,6 +616,16 @@ struct UnderlyingType<CheckedNumeric<T>> {
   using type = T;
   static const bool is_numeric = true;
   static const bool is_checked = true;
+  static const bool is_clamped = false;
+  static const bool is_strict = false;
+};
+
+template <typename T>
+struct UnderlyingType<ClampedNumeric<T>> {
+  using type = T;
+  static const bool is_numeric = true;
+  static const bool is_checked = false;
+  static const bool is_clamped = true;
   static const bool is_strict = false;
 };
 
@@ -585,6 +634,7 @@ struct UnderlyingType<StrictNumeric<T>> {
   using type = T;
   static const bool is_numeric = true;
   static const bool is_checked = false;
+  static const bool is_clamped = false;
   static const bool is_strict = true;
 };
 
@@ -596,11 +646,45 @@ struct IsCheckedOp {
 };
 
 template <typename L, typename R>
+struct IsClampedOp {
+  static const bool value =
+      UnderlyingType<L>::is_numeric && UnderlyingType<R>::is_numeric &&
+      (UnderlyingType<L>::is_clamped || UnderlyingType<R>::is_clamped) &&
+      !(UnderlyingType<L>::is_checked || UnderlyingType<R>::is_checked);
+};
+
+template <typename L, typename R>
 struct IsStrictOp {
   static const bool value =
       UnderlyingType<L>::is_numeric && UnderlyingType<R>::is_numeric &&
-      (UnderlyingType<L>::is_strict || UnderlyingType<R>::is_strict);
+      (UnderlyingType<L>::is_strict || UnderlyingType<R>::is_strict) &&
+      !(UnderlyingType<L>::is_checked || UnderlyingType<R>::is_checked) &&
+      !(UnderlyingType<L>::is_clamped || UnderlyingType<R>::is_clamped);
 };
+
+// as_signed<> returns the supplied integral value (or integral castable
+// Numeric template) cast as a signed integral of equivalent precision.
+// I.e. it's mostly an alias for: static_cast<std::make_signed<T>::type>(t)
+template <typename Src>
+constexpr typename std::make_signed<
+    typename base::internal::UnderlyingType<Src>::type>::type
+as_signed(const Src value) {
+  static_assert(std::is_integral<decltype(as_signed(value))>::value,
+                "Argument must be a signed or unsigned integer type.");
+  return static_cast<decltype(as_signed(value))>(value);
+}
+
+// as_unsigned<> returns the supplied integral value (or integral castable
+// Numeric template) cast as an unsigned integral of equivalent precision.
+// I.e. it's mostly an alias for: static_cast<std::make_unsigned<T>::type>(t)
+template <typename Src>
+constexpr typename std::make_unsigned<
+    typename base::internal::UnderlyingType<Src>::type>::type
+as_unsigned(const Src value) {
+  static_assert(std::is_integral<decltype(as_unsigned(value))>::value,
+                "Argument must be a signed or unsigned integer type.");
+  return static_cast<decltype(as_unsigned(value))>(value);
+}
 
 template <typename L, typename R>
 constexpr bool IsLessImpl(const L lhs,
@@ -727,8 +811,42 @@ constexpr bool SafeCompare(const L lhs, const R rhs) {
              : C<L, R>::Test(lhs, rhs);
 }
 
+template <typename Dst, typename Src>
+constexpr bool IsMaxInRangeForNumericType() {
+  return IsGreaterOrEqual<Dst, Src>::Test(std::numeric_limits<Dst>::max(),
+                                          std::numeric_limits<Src>::max());
+}
+
+template <typename Dst, typename Src>
+constexpr bool IsMinInRangeForNumericType() {
+  return IsLessOrEqual<Dst, Src>::Test(std::numeric_limits<Dst>::lowest(),
+                                       std::numeric_limits<Src>::lowest());
+}
+
+template <typename Dst, typename Src>
+constexpr Dst CommonMax() {
+  return !IsMaxInRangeForNumericType<Dst, Src>()
+             ? Dst(std::numeric_limits<Dst>::max())
+             : Dst(std::numeric_limits<Src>::max());
+}
+
+template <typename Dst, typename Src>
+constexpr Dst CommonMin() {
+  return !IsMinInRangeForNumericType<Dst, Src>()
+             ? Dst(std::numeric_limits<Dst>::lowest())
+             : Dst(std::numeric_limits<Src>::lowest());
+}
+
+// This is a wrapper to generate return the max or min for a supplied type.
+// If the argument is false, the returned value is the maximum. If true the
+// returned value is the minimum.
+template <typename Dst, typename Src = Dst>
+constexpr Dst CommonMaxOrMin(bool is_min) {
+  return is_min ? CommonMin<Dst, Src>() : CommonMax<Dst, Src>();
+}
+
 }  // namespace internal
 }  // namespace base
 }  // namespace pdfium
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
+#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_

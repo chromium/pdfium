@@ -625,6 +625,7 @@ jumbo_source_set("pdfium_base") {
     "base/debug/alias.h",
     "base/logging.h",
     "base/numerics/safe_conversions.h",
+    "base/numerics/safe_conversions_arm_impl.h",
     "base/numerics/safe_conversions_impl.h",
     "base/numerics/safe_math.h",
     "base/numerics/safe_math_impl.h",
