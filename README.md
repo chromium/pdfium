@@ -102,7 +102,7 @@ pdf_use_skia_paths = false
 pdf_enable_xfa = true  # Set false to remove XFA support (implies JS support).
 pdf_enable_v8 = true  # Set false to remove Javascript support.
 pdf_is_standalone = true  # Set for a non-embedded build.
-is_component_build = false # Disable component build (must be false)
+is_component_build = false # Disable component build (Though it should work)
 
 clang_use_chrome_plugins = false  # Currently must be false.
 ```
