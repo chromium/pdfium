@@ -27,6 +27,7 @@ jumbo_source_set("fxcodec") {
     "codec/ccodec_scanlinedecoder.h",
     "codec/cfx_codec_memory.cpp",
     "codec/cfx_codec_memory.h",
+    "codec/cjpx_decoder.cpp",
     "codec/cjpx_decoder.h",
     "codec/codec_int.h",
     "codec/codec_module_iface.h",
