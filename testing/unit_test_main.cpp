@@ -8,6 +8,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_initializer.h"
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
+  InitializePDFTestEnvironment();
 #ifdef PDF_ENABLE_XFA
   InitializeXFATestEnvironment();
 #endif  // PDF_ENABLE_XFA
@@ -44,6 +46,9 @@ int main(int argc, char** argv) {
   testing::InitGoogleMock(&argc, argv);
 
   int ret_val = RUN_ALL_TESTS();
+
+  DestroyPDFTestEnvironment();
+  // NOTE: XFA test environment, if present, destroyed by gtest.
 
 #ifdef PDF_ENABLE_V8
   v8::V8::ShutdownPlatform();

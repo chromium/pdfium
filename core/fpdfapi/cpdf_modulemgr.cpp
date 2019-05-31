@@ -37,28 +37,31 @@ CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
 }  // namespace
 
 // static
-CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
-  if (!g_pDefaultMgr)
-    g_pDefaultMgr = new CPDF_ModuleMgr;
-  return g_pDefaultMgr;
+void CPDF_ModuleMgr::Create() {
+  ASSERT(!g_pDefaultMgr);
+  g_pDefaultMgr = new CPDF_ModuleMgr;
+  g_pDefaultMgr->InitCodecModule();
+  g_pDefaultMgr->InitPageModule();
+  g_pDefaultMgr->LoadEmbeddedMaps();
+  g_pDefaultMgr->LoadCodecModules();
 }
 
 // static
 void CPDF_ModuleMgr::Destroy() {
+  ASSERT(g_pDefaultMgr);
   delete g_pDefaultMgr;
   g_pDefaultMgr = nullptr;
 }
 
-CPDF_ModuleMgr::CPDF_ModuleMgr() {}
-
-CPDF_ModuleMgr::~CPDF_ModuleMgr() {}
-
-void CPDF_ModuleMgr::Init() {
-  InitCodecModule();
-  InitPageModule();
-  LoadEmbeddedMaps();
-  LoadCodecModules();
+// static
+CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
+  ASSERT(g_pDefaultMgr);
+  return g_pDefaultMgr;
 }
+
+CPDF_ModuleMgr::CPDF_ModuleMgr() = default;
+
+CPDF_ModuleMgr::~CPDF_ModuleMgr() = default;
 
 CCodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
   return m_pCodecModule->GetJpegModule();
