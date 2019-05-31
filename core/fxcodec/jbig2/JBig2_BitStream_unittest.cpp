@@ -21,7 +21,7 @@ TEST(JBig2_BitStream, ReadNBits) {
   auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
-  CJBig2_BitStream stream(acc);
+  CJBig2_BitStream stream(acc->GetSpan(), in_stream->GetObjNum());
 
   uint32_t val1;
   EXPECT_EQ(0, stream.readNBits(1, &val1));
@@ -46,7 +46,7 @@ TEST(JBig2_BitStream, ReadNBitsLargerThenData) {
   auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
-  CJBig2_BitStream stream(acc);
+  CJBig2_BitStream stream(acc->GetSpan(), in_stream->GetObjNum());
 
   uint32_t val1;
   EXPECT_EQ(0, stream.readNBits(10, &val1));
@@ -58,7 +58,7 @@ TEST(JBig2_BitStream, ReadNBitsNullStream) {
   auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
-  CJBig2_BitStream stream(acc);
+  CJBig2_BitStream stream(acc->GetSpan(), in_stream->GetObjNum());
 
   uint32_t val1;
   EXPECT_EQ(-1, stream.readNBits(1, &val1));
@@ -74,7 +74,7 @@ TEST(JBig2_BitStream, ReadNBitsEmptyStream) {
   auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
-  CJBig2_BitStream stream(acc);
+  CJBig2_BitStream stream(acc->GetSpan(), in_stream->GetObjNum());
 
   uint32_t val1;
   EXPECT_EQ(-1, stream.readNBits(1, &val1));
@@ -91,7 +91,7 @@ TEST(JBig2_BitStream, ReadNBitsOutOfBounds) {
   auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
-  CJBig2_BitStream stream(acc);
+  CJBig2_BitStream stream(acc->GetSpan(), in_stream->GetObjNum());
 
   uint32_t val1;
   EXPECT_EQ(0, stream.readNBits(8, &val1));
@@ -112,7 +112,7 @@ TEST(JBig2_BitStream, ReadNBitsWhereNIs36) {
   auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(in_stream.Get());
   acc->LoadAllDataFiltered();
 
-  CJBig2_BitStream stream(acc);
+  CJBig2_BitStream stream(acc->GetSpan(), in_stream->GetObjNum());
 
   // This will shift off the top two bits and they end up lost.
   uint32_t val1;

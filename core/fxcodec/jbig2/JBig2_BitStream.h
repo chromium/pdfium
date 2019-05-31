@@ -8,12 +8,11 @@
 #define CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 
 #include "core/fxcrt/retain_ptr.h"
-
-class CPDF_StreamAcc;
+#include "third_party/base/span.h"
 
 class CJBig2_BitStream {
  public:
-  explicit CJBig2_BitStream(const RetainPtr<CPDF_StreamAcc>& pSrcStream);
+  CJBig2_BitStream(pdfium::span<const uint8_t> pSrcStream, uint32_t dwObjNum);
   ~CJBig2_BitStream();
 
   // TODO(thestig): readFoo() should return bool.
@@ -34,22 +33,20 @@ class CJBig2_BitStream {
   uint32_t getBitPos() const;
   void setBitPos(uint32_t dwBitPos);
   const uint8_t* getBuf() const;
-  uint32_t getLength() const { return m_dwLength; }
+  uint32_t getLength() const { return m_Span.size(); }
   const uint8_t* getPointer() const;
   void offset(uint32_t dwOffset);
   uint32_t getByteLeft() const;
   uint32_t getObjNum() const;
-
   bool IsInBounds() const;
 
  private:
   void AdvanceBit();
   uint32_t LengthInBits() const;
 
-  const uint8_t* m_pBuf;
-  uint32_t m_dwLength;
-  uint32_t m_dwByteIdx;
-  uint32_t m_dwBitIdx;
+  pdfium::span<const uint8_t> m_Span;
+  uint32_t m_dwByteIdx = 0;
+  uint32_t m_dwBitIdx = 0;
   const uint32_t m_dwObjNum;
 
   CJBig2_BitStream(const CJBig2_BitStream&) = delete;
