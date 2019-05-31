@@ -51,26 +51,29 @@ static const size_t kSymbolDictCacheMaxSize = 2;
 static_assert(kSymbolDictCacheMaxSize > 0,
               "Symbol Dictionary Cache must have non-zero size");
 
-CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
-                               const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+// static
+std::unique_ptr<CJBig2_Context> CJBig2_Context::Create(
+    const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
+    const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+    std::list<CJBig2_CachePair>* pSymbolDictCache) {
+  auto result = pdfium::WrapUnique(
+      new CJBig2_Context(pSrcStream, pSymbolDictCache, false));
+  if (pGlobalStream && pGlobalStream->GetSize() > 0) {
+    result->m_pGlobalContext = pdfium::WrapUnique(
+        new CJBig2_Context(pGlobalStream, pSymbolDictCache, true));
+  }
+  return result;
+}
+
+CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pSrcStream,
                                std::list<CJBig2_CachePair>* pSymbolDictCache,
                                bool bIsGlobal)
     : m_pStream(pdfium::MakeUnique<CJBig2_BitStream>(
           pSrcStream->GetSpan(),
           pSrcStream->GetStream() ? pSrcStream->GetStream()->GetObjNum() : 0)),
       m_HuffmanTables(CJBig2_HuffmanTable::kNumHuffmanTables),
-      m_bInPage(false),
-      m_bBufSpecified(false),
-      m_PauseStep(10),
-      m_ProcessingStatus(FXCODEC_STATUS_FRAME_READY),
-      m_dwOffset(0),
-      m_pSymbolDictCache(pSymbolDictCache),
-      m_bIsGlobal(bIsGlobal) {
-  if (pGlobalStream && pGlobalStream->GetSize() > 0) {
-    m_pGlobalContext = pdfium::MakeUnique<CJBig2_Context>(
-        nullptr, pGlobalStream, pSymbolDictCache, true);
-  }
-}
+      m_bIsGlobal(bIsGlobal),
+      m_pSymbolDictCache(pSymbolDictCache) {}
 
 CJBig2_Context::~CJBig2_Context() {}
 

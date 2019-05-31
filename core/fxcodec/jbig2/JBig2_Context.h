@@ -34,10 +34,11 @@ enum class JBig2_Result { kSuccess, kFailure, kEndReached };
 
 class CJBig2_Context {
  public:
-  CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
-                 const RetainPtr<CPDF_StreamAcc>& pSrcStream,
-                 std::list<CJBig2_CachePair>* pSymbolDictCache,
-                 bool bIsGlobal);
+  static std::unique_ptr<CJBig2_Context> Create(
+      const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
+      const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+      std::list<CJBig2_CachePair>* pSymbolDictCache);
+
   ~CJBig2_Context();
 
   static bool HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES, uint32_t NTEMP);
@@ -52,6 +53,10 @@ class CJBig2_Context {
   FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:
+  CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+                 std::list<CJBig2_CachePair>* pSymbolDictCache,
+                 bool bIsGlobal);
+
   JBig2_Result DecodeSequential(PauseIndicatorIface* pPause);
 
   CJBig2_Segment* FindSegmentByNumber(uint32_t dwNumber);
@@ -76,7 +81,6 @@ class CJBig2_Context {
   JBig2_Result ParseRegionInfo(JBig2RegionInfo* pRI);
 
   std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
-
   const CJBig2_HuffmanTable* GetHuffmanTable(size_t idx);
 
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;
@@ -85,18 +89,18 @@ class CJBig2_Context {
   std::vector<std::unique_ptr<JBig2PageInfo>> m_PageInfoList;
   std::unique_ptr<CJBig2_Image> m_pPage;
   std::vector<std::unique_ptr<CJBig2_HuffmanTable>> m_HuffmanTables;
-  bool m_bInPage;
-  bool m_bBufSpecified;
-  int32_t m_PauseStep;
-  FXCODEC_STATUS m_ProcessingStatus;
+  const bool m_bIsGlobal;
+  bool m_bInPage = false;
+  bool m_bBufSpecified = false;
+  int32_t m_PauseStep = 10;
+  FXCODEC_STATUS m_ProcessingStatus = FXCODEC_STATUS_FRAME_READY;
   std::vector<JBig2ArithCtx> m_gbContext;
   std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
   std::unique_ptr<CJBig2_GRDProc> m_pGRD;
   std::unique_ptr<CJBig2_Segment> m_pSegment;
-  FX_SAFE_UINT32 m_dwOffset;
+  FX_SAFE_UINT32 m_dwOffset = 0;
   JBig2RegionInfo m_ri;
   std::list<CJBig2_CachePair>* const m_pSymbolDictCache;
-  bool m_bIsGlobal;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
