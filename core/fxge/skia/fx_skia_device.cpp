@@ -784,7 +784,7 @@ class SkiaState {
   bool HasRSX(int nChars,
               const TextCharPos* pCharPos,
               float* scaleXPtr,
-              bool* oneAtATimePtr) {
+              bool* oneAtATimePtr) const {
     bool useRSXform = false;
     bool oneAtATime = false;
     float scaleX = 1;
@@ -944,7 +944,7 @@ class SkiaState {
     m_type = Accumulator::kNone;
   }
 
-  bool IsEmpty() { return !m_commands.count(); }
+  bool IsEmpty() const { return !m_commands.count(); }
 
   bool SetClipFill(const CFX_PathData* pPathData,
                    const CFX_Matrix* pMatrix,
@@ -1085,9 +1085,8 @@ class SkiaState {
                    int fill_mode,
                    BlendMode blend_type,
                    bool group_knockout) const {
-    return MatrixChanged(pMatrix, m_drawMatrix) ||
-           StateChanged(pState, m_drawState) || fill_color != m_fillColor ||
-           stroke_color != m_strokeColor ||
+    return MatrixChanged(pMatrix) || StateChanged(pState, m_drawState) ||
+           fill_color != m_fillColor || stroke_color != m_strokeColor ||
            ((fill_mode & 3) == FXFILL_ALTERNATE) !=
                (m_skPath.getFillType() == SkPath::kEvenOdd_FillType) ||
            blend_type != m_blendType || group_knockout != m_groupKnockout;
@@ -1100,18 +1099,17 @@ class SkiaState {
                    uint32_t color) const {
     CFX_TypeFace* typeface =
         pFont->GetFace() ? pFont->GetDeviceCache() : nullptr;
-    return typeface != m_pTypeFace || MatrixChanged(pMatrix, m_drawMatrix) ||
+    return typeface != m_pTypeFace || MatrixChanged(pMatrix) ||
            font_size != m_fontSize || scaleX != m_scaleX ||
            color != m_fillColor;
   }
 
-  bool MatrixChanged(const CFX_Matrix* pMatrix,
-                     const CFX_Matrix& refMatrix) const {
+  bool MatrixChanged(const CFX_Matrix* pMatrix) const {
     CFX_Matrix identityMatrix;
     if (!pMatrix)
       pMatrix = &identityMatrix;
-    return pMatrix->a != refMatrix.a || pMatrix->b != refMatrix.b ||
-           pMatrix->c != refMatrix.c || pMatrix->d != refMatrix.d;
+    return pMatrix->a != m_drawMatrix.a || pMatrix->b != m_drawMatrix.b ||
+           pMatrix->c != m_drawMatrix.c || pMatrix->d != m_drawMatrix.d;
   }
 
   bool StateChanged(const CFX_GraphStateData* pState,
