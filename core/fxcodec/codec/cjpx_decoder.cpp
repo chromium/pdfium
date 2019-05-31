@@ -13,7 +13,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
@@ -461,12 +460,8 @@ void sycc420_to_rgb(opj_image_t* img) {
   img->comps[2].dy = img->comps[0].dy;
 }
 
-CJPX_Decoder::CJPX_Decoder(const RetainPtr<CPDF_ColorSpace>& cs)
-    : m_Image(nullptr),
-      m_Codec(nullptr),
-      m_DecodeData(nullptr),
-      m_Stream(nullptr),
-      m_ColorSpace(cs) {}
+CJPX_Decoder::CJPX_Decoder(ColorSpaceOption option)
+    : m_ColorSpaceOption(option) {}
 
 CJPX_Decoder::~CJPX_Decoder() {
   if (m_Codec)
@@ -503,7 +498,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
   if (!m_Codec)
     return false;
 
-  if (m_ColorSpace && m_ColorSpace->GetFamily() == PDFCS_INDEXED)
+  if (m_ColorSpaceOption == kIndexedColorSpace)
     m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
   opj_set_info_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
   opj_set_warning_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
@@ -518,7 +513,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
 
   m_Image = pTempImage;
 #ifndef USE_SYSTEM_LIBOPENJPEG2
-  m_Image->pdfium_use_colorspace = !!m_ColorSpace;
+  m_Image->pdfium_use_colorspace = (m_ColorSpaceOption != kNoColorSpace);
 #endif
   return true;
 }

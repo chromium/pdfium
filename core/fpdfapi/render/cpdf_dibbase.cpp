@@ -85,6 +85,15 @@ bool AreColorIndicesOutOfBounds(const uint8_t* indices,
   return false;
 }
 
+CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
+    CPDF_ColorSpace* pCS) {
+  if (!pCS)
+    return CJPX_Decoder::kNoColorSpace;
+  if (pCS->GetFamily() == PDFCS_INDEXED)
+    return CJPX_Decoder::kIndexedColorSpace;
+  return CJPX_Decoder::kNormalColorSpace;
+}
+
 }  // namespace
 
 CPDF_DIBBase::CPDF_DIBBase() = default;
@@ -562,8 +571,9 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
-  std::unique_ptr<CJPX_Decoder> decoder =
-      CCodec_JpxModule::CreateDecoder(m_pStreamAcc->GetSpan(), m_pColorSpace);
+  std::unique_ptr<CJPX_Decoder> decoder = CCodec_JpxModule::CreateDecoder(
+      m_pStreamAcc->GetSpan(),
+      ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()));
   if (!decoder)
     return nullptr;
 

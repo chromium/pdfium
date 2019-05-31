@@ -17,8 +17,6 @@
 #include "third_party/libopenjpeg20/openjpeg.h"
 #endif
 
-class CPDF_ColorSpace;
-
 struct DecodeData {
   DecodeData(const uint8_t* data, OPJ_SIZE_T size)
       : src_data(data), src_size(size), offset(0) {}

@@ -10,18 +10,15 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
-
-class CJPX_Decoder;
-class CPDF_ColorSpace;
 
 class CCodec_JpxModule {
  public:
   static std::unique_ptr<CJPX_Decoder> CreateDecoder(
       pdfium::span<const uint8_t> src_span,
-      const RetainPtr<CPDF_ColorSpace>& cs);
+      CJPX_Decoder::ColorSpaceOption option);
 
   CCodec_JpxModule() = delete;
   CCodec_JpxModule(const CCodec_JpxModule&) = delete;

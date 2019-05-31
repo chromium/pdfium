@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcodec/codec/codec_int.h"
-#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
@@ -21,11 +20,15 @@
 #include "third_party/libopenjpeg20/openjpeg.h"
 #endif
 
-class CPDF_ColorSpace;
-
 class CJPX_Decoder {
  public:
-  explicit CJPX_Decoder(const RetainPtr<CPDF_ColorSpace>& cs);
+  enum ColorSpaceOption {
+    kNoColorSpace,
+    kNormalColorSpace,
+    kIndexedColorSpace
+  };
+
+  explicit CJPX_Decoder(ColorSpaceOption option);
   ~CJPX_Decoder();
 
   bool Init(pdfium::span<const uint8_t> src_data);
@@ -36,13 +39,13 @@ class CJPX_Decoder {
               const std::vector<uint8_t>& offsets);
 
  private:
+  const ColorSpaceOption m_ColorSpaceOption;
   pdfium::span<const uint8_t> m_SrcData;
   UnownedPtr<opj_image_t> m_Image;
   UnownedPtr<opj_codec_t> m_Codec;
   std::unique_ptr<DecodeData> m_DecodeData;
   UnownedPtr<opj_stream_t> m_Stream;
   opj_dparameters_t m_Parameters;
-  RetainPtr<CPDF_ColorSpace> const m_ColorSpace;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CJPX_DECODER_H_
