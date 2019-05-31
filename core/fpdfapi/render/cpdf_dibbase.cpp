@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
@@ -649,9 +650,8 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMask() {
   const CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
   if (pMatte && m_pColorSpace && m_Family != PDFCS_PATTERN &&
       m_pColorSpace->CountComponents() <= m_nComponents) {
-    std::vector<float> colors(m_nComponents);
-    for (uint32_t i = 0; i < m_nComponents; i++)
-      colors[i] = pMatte->GetNumberAt(i);
+    std::vector<float> colors =
+        ReadArrayElementsToVector(pMatte, m_nComponents);
 
     float R;
     float G;

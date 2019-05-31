@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/stl_util.h"
@@ -37,9 +38,7 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
 void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray,
                                  float phase,
                                  float scale) {
-  std::vector<float> dashes(pArray->size());
-  for (size_t i = 0; i < pArray->size(); ++i)
-    dashes[i] = pArray->GetNumberAt(i);
+  std::vector<float> dashes = ReadArrayElementsToVector(pArray, pArray->size());
   m_GraphState.SetLineDash(std::move(dashes), phase, scale);
 }
 

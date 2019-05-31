@@ -37,6 +37,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/render/cpdf_charposlist.h"
 #include "core/fpdfapi/render/cpdf_devicebuffer.h"
 #include "core/fpdfapi/render/cpdf_dibbase.h"
@@ -2019,9 +2020,9 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
   if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
     const CPDF_Array* pBackColor = pDict->GetArrayFor("Background");
     if (pBackColor && pBackColor->size() >= pColorSpace->CountComponents()) {
-      std::vector<float> comps(pColorSpace->CountComponents());
-      for (uint32_t i = 0; i < pColorSpace->CountComponents(); i++)
-        comps[i] = pBackColor->GetNumberAt(i);
+      std::vector<float> comps =
+          ReadArrayElementsToVector(pBackColor, pColorSpace->CountComponents());
+
       float R = 0.0f;
       float G = 0.0f;
       float B = 0.0f;
@@ -2626,10 +2627,9 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   *pCSFamily = family;
 
   uint32_t comps = std::max(8u, pCS->CountComponents());
-  std::vector<float> floats(comps);
   size_t count = std::min<size_t>(8, pBC->size());
-  for (size_t i = 0; i < count; i++)
-    floats[i] = pBC->GetNumberAt(i);
+  std::vector<float> floats = ReadArrayElementsToVector(pBC, count);
+  floats.resize(comps);
 
   float R;
   float G;

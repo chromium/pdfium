@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
@@ -497,18 +498,10 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   graph_state.m_LineWidth = width;
   if (style_char == 'D') {
     if (pDashArray) {
-      size_t dash_count = pDashArray->size();
-      if (dash_count % 2) {
-        dash_count++;
-      }
-      graph_state.m_DashArray.resize(dash_count);
-      size_t i;
-      for (i = 0; i < pDashArray->size(); ++i) {
-        graph_state.m_DashArray[i] = pDashArray->GetNumberAt(i);
-      }
-      if (i < dash_count) {
-        graph_state.m_DashArray[i] = graph_state.m_DashArray[i - 1];
-      }
+      graph_state.m_DashArray =
+          ReadArrayElementsToVector(pDashArray, pDashArray->size());
+      if (graph_state.m_DashArray.size() % 2)
+        graph_state.m_DashArray.push_back(graph_state.m_DashArray.back());
     } else {
       graph_state.m_DashArray = {3.0f, 3.0f};
     }

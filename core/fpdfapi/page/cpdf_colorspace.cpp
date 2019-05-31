@@ -28,6 +28,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
@@ -1062,13 +1063,11 @@ std::vector<float> CPDF_ICCBasedCS::GetRanges(const CPDF_Dictionary* pDict,
   ASSERT(IsValidComponents(nComponents));
 
   std::vector<float> ranges;
-  ranges.reserve(nComponents * 2);
   const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
   if (pRanges) {
-    for (uint32_t i = 0; i < nComponents * 2; i++) {
-      ranges.push_back(pRanges->GetNumberAt(i));
-    }
+    ranges = ReadArrayElementsToVector(pRanges, nComponents * 2);
   } else {
+    ranges.reserve(nComponents * 2);
     for (uint32_t i = 0; i < nComponents; i++) {
       ranges.push_back(0.0f);
       ranges.push_back(1.0f);

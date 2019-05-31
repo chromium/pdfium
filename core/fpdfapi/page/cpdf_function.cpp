@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -92,9 +93,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
     return false;
 
   size_t nInputs = m_nInputs * 2;
-  m_Domains = std::vector<float>(nInputs);
-  for (size_t i = 0; i < nInputs; ++i)
-    m_Domains[i] = pDomains->GetNumberAt(i);
+  m_Domains = ReadArrayElementsToVector(pDomains, nInputs);
 
   const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
   m_nOutputs = pRanges ? pRanges->size() / 2 : 0;
@@ -108,9 +107,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
 
   if (m_nOutputs > 0) {
     size_t nOutputs = m_nOutputs * 2;
-    m_Ranges = std::vector<float>(nOutputs);
-    for (size_t i = 0; i < nOutputs; ++i)
-      m_Ranges[i] = pRanges->GetNumberAt(i);
+    m_Ranges = ReadArrayElementsToVector(pRanges, nOutputs);
   }
 
   uint32_t old_outputs = m_nOutputs;
