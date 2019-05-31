@@ -318,6 +318,23 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
   rasterizer->add_path_transformed(stroke, pObject2Device);
 }
 
+constexpr int kAlternateOrWindingFillModeMask =
+    FXFILL_ALTERNATE | FXFILL_WINDING;
+
+int GetAlternateOrWindingFillMode(int fill_mode) {
+  return fill_mode & kAlternateOrWindingFillModeMask;
+}
+
+bool IsAlternateOrWindingFillMode(int fill_mode) {
+  return !!GetAlternateOrWindingFillMode(fill_mode);
+}
+
+agg::filling_rule_e GetAlternateOrWindingFillType(int fill_mode) {
+  return GetAlternateOrWindingFillMode(fill_mode) == FXFILL_WINDING
+             ? agg::fill_non_zero
+             : agg::fill_even_odd;
+}
+
 class CFX_Renderer {
  public:
   // Needed for agg caller
@@ -1229,6 +1246,10 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
 bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                            const CFX_Matrix* pObject2Device,
                                            int fill_mode) {
+  ASSERT(IsAlternateOrWindingFillMode(fill_mode));
+  ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
+         kAlternateOrWindingFillModeMask);
+
   m_FillFlags = fill_mode;
   if (!m_pClipRgn) {
     m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(
@@ -1254,9 +1275,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   rasterizer.add_path(path_data.m_PathData);
-  rasterizer.filling_rule((fill_mode & 3) == FXFILL_WINDING
-                              ? agg::fill_non_zero
-                              : agg::fill_even_odd);
+  rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_mode));
   SetClipMask(rasterizer);
   return true;
 }
@@ -1310,6 +1329,9 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                    uint32_t stroke_color,
                                    int fill_mode,
                                    BlendMode blend_type) {
+  ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
+         kAlternateOrWindingFillModeMask);
+
   if (blend_type != BlendMode::kNormal)
     return false;
 
@@ -1317,7 +1339,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     return true;
 
   m_FillFlags = fill_mode;
-  if ((fill_mode & 3) && fill_color) {
+  if (IsAlternateOrWindingFillMode(fill_mode) && fill_color) {
     CAgg_PathData path_data;
     path_data.BuildPath(pPathData, pObject2Device);
     agg::rasterizer_scanline_aa rasterizer;
@@ -1325,9 +1347,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     rasterizer.add_path(path_data.m_PathData);
-    rasterizer.filling_rule((fill_mode & 3) == FXFILL_WINDING
-                                ? agg::fill_non_zero
-                                : agg::fill_even_odd);
+    rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_mode));
     if (!RenderRasterizer(rasterizer, fill_color,
                           !!(fill_mode & FXFILL_FULLCOVER), false)) {
       return false;
