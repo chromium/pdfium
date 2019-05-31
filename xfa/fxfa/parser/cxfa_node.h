@@ -21,6 +21,7 @@
 
 class CFGAS_GEFont;
 class CFX_DIBitmap;
+class CFX_XMLDocument;
 class CFX_XMLNode;
 class CXFA_Bind;
 class CXFA_Border;
@@ -478,6 +479,8 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
                        XFA_AttributeValue iActivity,
                        CXFA_Event* event,
                        CXFA_EventParam* pEventParam);
+
+  CFX_XMLDocument* GetXMLDocument() const;
 
   pdfium::span<const PropertyData> const m_Properties;
   pdfium::span<const AttributeData> const m_Attributes;

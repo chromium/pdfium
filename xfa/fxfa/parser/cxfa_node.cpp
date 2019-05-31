@@ -976,19 +976,12 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       WideString wsName = JSObject()
                               ->TryAttribute(XFA_Attribute::Name, false)
                               .value_or(WideString());
-      auto* pCloneXMLElement = GetDocument()
-                                   ->GetNotify()
-                                   ->GetHDOC()
-                                   ->GetXMLDocument()
-                                   ->CreateNode<CFX_XMLElement>(wsName);
+      auto* pCloneXMLElement =
+          GetXMLDocument()->CreateNode<CFX_XMLElement>(wsName);
 
       WideString wsValue = JSObject()->GetCData(XFA_Attribute::Value);
       if (!wsValue.IsEmpty()) {
-        auto* text = GetDocument()
-                         ->GetNotify()
-                         ->GetHDOC()
-                         ->GetXMLDocument()
-                         ->CreateNode<CFX_XMLText>(wsValue);
+        auto* text = GetXMLDocument()->CreateNode<CFX_XMLText>(wsValue);
         pCloneXMLElement->AppendLastChild(text);
       }
 
@@ -996,8 +989,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       pClone->JSObject()->SetEnum(XFA_Attribute::Contains,
                                   XFA_AttributeValue::Unknown, false);
     } else {
-      pCloneXML = xml_node_->Clone(
-          GetDocument()->GetNotify()->GetHDOC()->GetXMLDocument());
+      pCloneXML = xml_node_->Clone(GetXMLDocument());
     }
     pClone->SetXMLMappingNode(pCloneXML);
   }
@@ -1554,18 +1546,10 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
                           ->TryAttribute(XFA_Attribute::Name, false)
                           .value_or(WideString());
 
-  auto* pNewXMLElement = GetDocument()
-                             ->GetNotify()
-                             ->GetHDOC()
-                             ->GetXMLDocument()
-                             ->CreateNode<CFX_XMLElement>(wsName);
+  auto* pNewXMLElement = GetXMLDocument()->CreateNode<CFX_XMLElement>(wsName);
   WideString wsValue = JSObject()->GetCData(XFA_Attribute::Value);
   if (!wsValue.IsEmpty()) {
-    auto* text = GetDocument()
-                     ->GetNotify()
-                     ->GetHDOC()
-                     ->GetXMLDocument()
-                     ->CreateNode<CFX_XMLText>(wsValue);
+    auto* text = GetXMLDocument()->CreateNode<CFX_XMLText>(wsValue);
     pNewXMLElement->AppendLastChild(text);
   }
   pNode->xml_node_ = pNewXMLElement;
@@ -1756,12 +1740,8 @@ void CXFA_Node::UpdateNameHash() {
 
 CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   if (!xml_node_) {
-    xml_node_ = GetDocument()
-                    ->GetNotify()
-                    ->GetHDOC()
-                    ->GetXMLDocument()
-                    ->CreateNode<CFX_XMLElement>(
-                        JSObject()->GetCData(XFA_Attribute::Name));
+    xml_node_ = GetXMLDocument()->CreateNode<CFX_XMLElement>(
+        JSObject()->GetCData(XFA_Attribute::Name));
   }
   return xml_node_.Get();
 }
@@ -5053,11 +5033,7 @@ void CXFA_Node::SetToXML(const WideString& value) {
       if (bDeleteChildren)
         elem->RemoveAllChildren();
 
-      auto* text = GetDocument()
-                       ->GetNotify()
-                       ->GetHDOC()
-                       ->GetXMLDocument()
-                       ->CreateNode<CFX_XMLText>(value);
+      auto* text = GetXMLDocument()->CreateNode<CFX_XMLText>(value);
       elem->AppendLastChild(text);
       break;
     }
@@ -5080,6 +5056,10 @@ CXFA_Node* CXFA_Node::GetTransparentParent() {
     parent = parent->GetParent();
   }
   return nullptr;
+}
+
+CFX_XMLDocument* CXFA_Node::GetXMLDocument() const {
+  return GetDocument()->GetNotify()->GetHDOC()->GetXMLDocument();
 }
 
 // static
