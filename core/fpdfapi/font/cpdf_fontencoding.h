@@ -26,9 +26,6 @@
 uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
 wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
 
-wchar_t PDF_UnicodeFromAdobeName(const char* name);
-ByteString PDF_AdobeNameFromUnicode(wchar_t unicode);
-
 const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding);
 const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
 

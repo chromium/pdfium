@@ -200,6 +200,7 @@ pdfium_unittest_source_set("unittests") {
     "dib/cfx_cmyk_to_srgb_unittest.cpp",
     "dib/cfx_dibitmap_unittest.cpp",
     "dib/cstretchengine_unittest.cpp",
+    "fx_font_unittest.cpp",
   ]
   deps = [
     ":fxge",

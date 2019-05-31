@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/ptr_util.h"
 
@@ -1767,16 +1768,6 @@ const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding) {
       return MSSymbolEncoding;
   }
   return nullptr;
-}
-
-wchar_t PDF_UnicodeFromAdobeName(const char* name) {
-  return (wchar_t)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
-}
-
-ByteString PDF_AdobeNameFromUnicode(wchar_t unicode) {
-  char glyph_name[64];
-  FXFT_adobe_name_from_unicode(glyph_name, unicode);
-  return ByteString(glyph_name);
 }
 
 const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode) {

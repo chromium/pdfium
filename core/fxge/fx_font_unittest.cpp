@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fpdfapi/font/cpdf_fontencoding.h"
+#include "core/fxge/fx_font.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CPDFFontEncodingTest, PDF_AdobeNameFromUnicode) {
+TEST(FXFontTest, PDF_AdobeNameFromUnicode) {
   EXPECT_STREQ("", PDF_AdobeNameFromUnicode(0x0000).c_str());
   EXPECT_STREQ("divide", PDF_AdobeNameFromUnicode(0x00f7).c_str());
   EXPECT_STREQ("Lslash", PDF_AdobeNameFromUnicode(0x0141).c_str());

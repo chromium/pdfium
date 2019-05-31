@@ -93,4 +93,7 @@ inline bool FontFamilyIsScript(int32_t family) {
   return !!(family & FXFONT_FF_SCRIPT);
 }
 
+wchar_t PDF_UnicodeFromAdobeName(const char* name);
+ByteString PDF_AdobeNameFromUnicode(wchar_t unicode);
+
 #endif  // CORE_FXGE_FX_FONT_H_

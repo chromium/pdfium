@@ -13,7 +13,6 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
