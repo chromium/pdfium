@@ -28,8 +28,12 @@ bool CheckImageSize(uint32_t width, uint32_t height, uint32_t components) {
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
+  if (size < 1)
+    return 0;
+
   std::unique_ptr<CJPX_Decoder> decoder = CCodec_JpxModule::CreateDecoder(
-      {data, size}, CJPX_Decoder::kNoColorSpace);
+      {data + 1, size - 1},
+      static_cast<CJPX_Decoder::ColorSpaceOption>(data[0] % 3));
   if (!decoder)
     return 0;
 
