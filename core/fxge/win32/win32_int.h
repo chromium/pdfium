@@ -213,7 +213,10 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
 
 class CPSPrinterDriver final : public RenderDeviceDriverIface {
  public:
-  CPSPrinterDriver(HDC hDC, WindowsPrintMode mode, bool bCmykOutput);
+  CPSPrinterDriver(HDC hDC,
+                   WindowsPrintMode mode,
+                   bool bCmykOutput,
+                   const EncoderIface* pEncoderIface);
   ~CPSPrinterDriver() override;
 
  private:

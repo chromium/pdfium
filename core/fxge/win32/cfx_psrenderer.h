@@ -24,9 +24,32 @@ class CPSFont;
 class TextCharPos;
 struct FXDIB_ResampleOptions;
 
+struct EncoderIface {
+  bool (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_buf,
+                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                         uint32_t* dest_size);
+  void (*pFaxEncodeFunc)(const uint8_t* src_buf,
+                         int width,
+                         int height,
+                         int pitch,
+                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                         uint32_t* dest_size);
+  bool (*pFlateEncodeFunc)(const uint8_t* src_buf,
+                           uint32_t src_size,
+                           std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                           uint32_t* dest_size);
+  bool (*pJpegEncodeFunc)(const RetainPtr<CFX_DIBBase>& pSource,
+                          uint8_t** dest_buf,
+                          size_t* dest_size);
+  bool (*pRunLengthEncodeFunc)(
+      pdfium::span<const uint8_t> src_buf,
+      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+      uint32_t* dest_size);
+};
+
 class CFX_PSRenderer {
  public:
-  CFX_PSRenderer();
+  explicit CFX_PSRenderer(const EncoderIface* pEncoderIface);
   ~CFX_PSRenderer();
 
   void Init(const RetainPtr<IFX_RetainableWriteStream>& stream,
@@ -83,6 +106,16 @@ class CFX_PSRenderer {
                        const TextCharPos& charpos,
                        int* ps_fontnum,
                        int* ps_glyphindex);
+  bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
+                       int width,
+                       int height,
+                       std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                       uint32_t* dest_size) const;
+  void PSCompressData(uint8_t* src_buf,
+                      uint32_t src_size,
+                      uint8_t** output_buf,
+                      uint32_t* output_size,
+                      const char** filter) const;
   void WritePSBinary(const uint8_t* data, int len);
   void WriteToStream(std::ostringstream* stringStream);
 
@@ -94,6 +127,7 @@ class CFX_PSRenderer {
   uint32_t m_LastColor = 0;
   FX_RECT m_ClipBox;
   CFX_GraphStateData m_CurGraphState;
+  const EncoderIface* const m_pEncoderIface;
   RetainPtr<IFX_RetainableWriteStream> m_pStream;
   std::vector<std::unique_ptr<CPSFont>> m_PSFontList;
   std::vector<FX_RECT> m_ClipBoxStack;

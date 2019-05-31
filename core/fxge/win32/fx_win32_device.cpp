@@ -1337,15 +1337,18 @@ bool CGdiDisplayDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   return false;
 }
 
-CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(HDC hDC) {
-  SetDeviceDriver(pdfium::WrapUnique(CreateDriver(hDC)));
+CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(
+    HDC hDC,
+    const EncoderIface* pEncoderIface) {
+  SetDeviceDriver(pdfium::WrapUnique(CreateDriver(hDC, pEncoderIface)));
 }
 
 CFX_WindowsRenderDevice::~CFX_WindowsRenderDevice() = default;
 
 // static
 RenderDeviceDriverIface* CFX_WindowsRenderDevice::CreateDriver(
-    HDC hDC) {
+    HDC hDC,
+    const EncoderIface* pEncoderIface) {
   int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||
@@ -1361,5 +1364,5 @@ RenderDeviceDriverIface* CFX_WindowsRenderDevice::CreateDriver(
   if (g_pdfium_print_mode == WindowsPrintMode::kModeTextOnly)
     return new CTextOnlyPrinterDriver(hDC);
 
-  return new CPSPrinterDriver(hDC, g_pdfium_print_mode, false);
+  return new CPSPrinterDriver(hDC, g_pdfium_print_mode, false, pEncoderIface);
 }
