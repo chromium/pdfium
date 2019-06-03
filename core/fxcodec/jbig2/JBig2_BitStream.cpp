@@ -8,15 +8,21 @@
 
 #include <algorithm>
 
-CJBig2_BitStream::CJBig2_BitStream(pdfium::span<const uint8_t> pSrcStream,
-                                   uint32_t dwObjNum)
-    : m_Span(pSrcStream), m_dwObjNum(dwObjNum) {
-  if (m_Span.size() > 256 * 1024 * 1024) {
-    m_Span = {};
-  }
+namespace {
+
+pdfium::span<const uint8_t> ValidatedSpan(pdfium::span<const uint8_t> sp) {
+  if (sp.size() > 256 * 1024 * 1024)
+    return {};
+  return sp;
 }
 
-CJBig2_BitStream::~CJBig2_BitStream() {}
+}  // namespace
+
+CJBig2_BitStream::CJBig2_BitStream(pdfium::span<const uint8_t> pSrcStream,
+                                   uint32_t dwObjNum)
+    : m_Span(ValidatedSpan(pSrcStream)), m_dwObjNum(dwObjNum) {}
+
+CJBig2_BitStream::~CJBig2_BitStream() = default;
 
 int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, uint32_t* dwResult) {
   if (!IsInBounds())
