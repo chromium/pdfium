@@ -1922,7 +1922,8 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   if (fill_mode & FXFILL_FULLCOVER)
     skPaint.setBlendMode(SkBlendMode::kPlus);
   int stroke_alpha = FXARGB_A(stroke_color);
-  if (pGraphState && stroke_alpha)
+  bool is_paint_stroke = !!(pGraphState && stroke_alpha);
+  if (is_paint_stroke)
     PaintStroke(&skPaint, pGraphState, skMatrix);
   SkPath skPath = BuildPath(pPathData);
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
@@ -1931,7 +1932,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     skPath.setFillType(GetAlternateOrWindingFillType(fill_mode));
     SkPath strokePath;
     const SkPath* fillPath = &skPath;
-    if (pGraphState && stroke_alpha) {
+    if (is_paint_stroke) {
       if (m_bGroupKnockout) {
         skPaint.getFillPath(skPath, &strokePath);
         if (Op(skPath, strokePath, SkPathOp::kDifference_SkPathOp,
@@ -1948,7 +1949,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, *fillPath);
     m_pCanvas->drawPath(*fillPath, skPaint);
   }
-  if (pGraphState && stroke_alpha) {
+  if (is_paint_stroke) {
     skPaint.setStyle(SkPaint::kStroke_Style);
     skPaint.setColor(stroke_color);
 #ifdef _SKIA_SUPPORT_PATHS_
