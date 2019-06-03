@@ -12,13 +12,12 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/cmaps/cmap_int.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cfx_cttgsubtable.h"
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -127,10 +126,6 @@ constexpr long kMaxCBox = 2147483;
 // Boundary value to avoid integer overflow when adding 1/64th of the value.
 constexpr int kMaxRectTop = 2114445437;
 
-CPDF_FontGlobals* GetFontGlobals() {
-  return CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-}
-
 #if !defined(OS_WIN)
 
 bool IsValidEmbeddedCharcodeFromUnicodeCharset(CIDSet charset) {
@@ -157,7 +152,7 @@ wchar_t EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
     return 0;
 
   pdfium::span<const uint16_t> map =
-      GetFontGlobals()->GetEmbeddedToUnicode(charset);
+      CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(charset);
   return cid < map.size() ? map[cid] : 0;
 }
 
@@ -168,7 +163,7 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
     return 0;
 
   pdfium::span<const uint16_t> map =
-      GetFontGlobals()->GetEmbeddedToUnicode(charset);
+      CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(charset);
   for (uint32_t i = 0; i < map.size(); ++i) {
     if (map[i] == unicode) {
       uint32_t charCode = CharCodeFromCID(pEmbedMap, i);
@@ -361,7 +356,7 @@ bool CPDF_CIDFont::Load() {
   ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
   m_bType1 = (subtype == "CIDFontType0");
 
-  CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
+  CPDF_CMapManager* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
   if (pEncoding->IsName()) {
     ByteString cmap = pEncoding->GetString();
     m_pCMap = manager->GetPredefinedCMap(cmap);
@@ -830,7 +825,7 @@ void CPDF_CIDFont::LoadGB2312() {
 
   m_Charset = CIDSET_GB1;
 
-  CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
+  CPDF_CMapManager* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
   m_pCMap = manager->GetPredefinedCMap("GBK-EUC-H");
   m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset);
   if (!IsEmbedded())

@@ -18,8 +18,10 @@ class CFX_StockFontArray;
 
 class CPDF_FontGlobals {
  public:
-  CPDF_FontGlobals();
-  ~CPDF_FontGlobals();
+  // Per-process singleton which must be managed by callers.
+  static void Create();
+  static void Destroy();
+  static CPDF_FontGlobals* GetInstance();
 
   void Clear(CPDF_Document* pDoc);
   CPDF_Font* Find(CPDF_Document* pDoc, uint32_t index);
@@ -45,6 +47,9 @@ class CPDF_FontGlobals {
   CPDF_CMapManager* GetCMapManager() { return &m_CMapManager; }
 
  private:
+  CPDF_FontGlobals();
+  ~CPDF_FontGlobals();
+
   CPDF_CMapManager m_CMapManager;
   pdfium::span<const FXCMAP_CMap> m_EmbeddedCharsets[CIDSET_NUM_SETS];
   pdfium::span<const uint16_t> m_EmbeddedToUnicodes[CIDSET_NUM_SETS];

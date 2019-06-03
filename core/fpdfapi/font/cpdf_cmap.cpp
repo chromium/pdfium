@@ -11,11 +11,9 @@
 #include <vector>
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_cmapmanager.h"
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 
 namespace {
@@ -285,10 +283,8 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
         m_MixedTwoByteLeadingBytes[b] = true;
     }
   }
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  m_pEmbedMap =
-      FindEmbeddedCMap(pFontGlobals->GetEmbeddedCharset(m_Charset), bsName);
+  m_pEmbedMap = FindEmbeddedCMap(
+      CPDF_FontGlobals::GetInstance()->GetEmbeddedCharset(m_Charset), bsName);
   if (!m_pEmbedMap)
     return;
 

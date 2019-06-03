@@ -8,9 +8,8 @@
 
 #include <utility>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_extension.h"
@@ -224,11 +223,9 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
     }
   }
   if (cid_set) {
-    m_pBaseMap = CPDF_ModuleMgr::Get()
-                     ->GetPageModule()
-                     ->GetFontGlobals()
-                     ->GetCMapManager()
-                     ->GetCID2UnicodeMap(cid_set);
+    m_pBaseMap =
+        CPDF_FontGlobals::GetInstance()->GetCMapManager()->GetCID2UnicodeMap(
+            cid_set);
   } else {
     m_pBaseMap = nullptr;
   }

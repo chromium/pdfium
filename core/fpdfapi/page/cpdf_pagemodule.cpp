@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 
+#include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_devicecs.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
@@ -16,12 +17,11 @@ CPDF_PageModule::CPDF_PageModule()
       m_StockCMYKCS(pdfium::MakeRetain<CPDF_DeviceCS>(PDFCS_DEVICECMYK)),
       m_StockPatternCS(pdfium::MakeRetain<CPDF_PatternCS>(nullptr)) {
   m_StockPatternCS->InitializeStockPattern();
+  CPDF_FontGlobals::Create();
 }
 
-CPDF_PageModule::~CPDF_PageModule() = default;
-
-CPDF_FontGlobals* CPDF_PageModule::GetFontGlobals() {
-  return &m_FontGlobals;
+CPDF_PageModule::~CPDF_PageModule() {
+  CPDF_FontGlobals::Destroy();
 }
 
 RetainPtr<CPDF_ColorSpace> CPDF_PageModule::GetStockCS(int family) {
@@ -37,5 +37,5 @@ RetainPtr<CPDF_ColorSpace> CPDF_PageModule::GetStockCS(int family) {
 }
 
 void CPDF_PageModule::ClearStockFont(CPDF_Document* pDoc) {
-  m_FontGlobals.Clear(pDoc);
+  CPDF_FontGlobals::GetInstance()->Clear(pDoc);
 }

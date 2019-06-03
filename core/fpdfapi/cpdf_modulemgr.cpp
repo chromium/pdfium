@@ -10,6 +10,7 @@
 #include "core/fpdfapi/cmaps/GB1/cmaps_gb1.h"
 #include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
+#include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "third_party/base/ptr_util.h"
@@ -105,8 +106,7 @@ void CPDF_ModuleMgr::LoadEmbeddedMaps() {
 }
 
 void CPDF_ModuleMgr::LoadEmbeddedGB1CMaps() {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   pFontGlobals->SetEmbeddedCharset(
       CIDSET_GB1,
       pdfium::make_span(g_FXCMAP_GB1_cmaps, g_FXCMAP_GB1_cmaps_size));
@@ -114,8 +114,7 @@ void CPDF_ModuleMgr::LoadEmbeddedGB1CMaps() {
 }
 
 void CPDF_ModuleMgr::LoadEmbeddedCNS1CMaps() {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   pFontGlobals->SetEmbeddedCharset(
       CIDSET_CNS1,
       pdfium::make_span(g_FXCMAP_CNS1_cmaps, g_FXCMAP_CNS1_cmaps_size));
@@ -123,8 +122,7 @@ void CPDF_ModuleMgr::LoadEmbeddedCNS1CMaps() {
 }
 
 void CPDF_ModuleMgr::LoadEmbeddedJapan1CMaps() {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   pFontGlobals->SetEmbeddedCharset(
       CIDSET_JAPAN1,
       pdfium::make_span(g_FXCMAP_Japan1_cmaps, g_FXCMAP_Japan1_cmaps_size));
@@ -133,8 +131,7 @@ void CPDF_ModuleMgr::LoadEmbeddedJapan1CMaps() {
 }
 
 void CPDF_ModuleMgr::LoadEmbeddedKorea1CMaps() {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
+  auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   pFontGlobals->SetEmbeddedCharset(
       CIDSET_KOREA1,
       pdfium::make_span(g_FXCMAP_Korea1_cmaps, g_FXCMAP_Korea1_cmaps_size));
