@@ -290,14 +290,28 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
       const CPDF_Stream* pGlobals =
           m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
       if (pGlobals) {
-        m_pGlobalStream = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
-        m_pGlobalStream->LoadAllDataFiltered();
+        m_pGlobalAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
+        m_pGlobalAcc->LoadAllDataFiltered();
       }
+    }
+    uint32_t nSrcObjNum = 0;
+    pdfium::span<const uint8_t> pSrcSpan;
+    if (m_pStreamAcc) {
+      pSrcSpan = m_pStreamAcc->GetSpan();
+      if (m_pStreamAcc->GetStream())
+        nSrcObjNum = m_pStreamAcc->GetStream()->GetObjNum();
+    }
+    uint32_t nGlobalObjNum = 0;
+    pdfium::span<const uint8_t> pGlobalSpan;
+    if (m_pGlobalAcc) {
+      pGlobalSpan = m_pGlobalAcc->GetSpan();
+      if (m_pGlobalAcc->GetStream())
+        nGlobalObjNum = m_pGlobalAcc->GetStream()->GetObjNum();
     }
     iDecodeStatus = pJbig2Module->StartDecode(
         m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
-        m_pStreamAcc, m_pGlobalStream, m_pCachedBitmap->GetBuffer(),
-        m_pCachedBitmap->GetPitch(), pPause);
+        pSrcSpan, nSrcObjNum, pGlobalSpan, nGlobalObjNum,
+        m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
   } else {
     iDecodeStatus = pJbig2Module->ContinueDecode(m_pJbig2Context.get(), pPause);
   }
@@ -305,7 +319,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
   if (iDecodeStatus < 0) {
     m_pJbig2Context.reset();
     m_pCachedBitmap.Reset();
-    m_pGlobalStream.Reset();
+    m_pGlobalAcc.Reset();
     return LoadState::kFail;
   }
   if (iDecodeStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)

@@ -83,7 +83,7 @@ jumbo_source_set("parser") {
     "../../fxcrt",
     "../../fxge",
   ]
-  allow_circular_includes_from = [ "../../fxcodec" ]
+  allow_circular_includes_from = []
   visibility = [ "../../../*" ]
 
   if (pdf_use_skia || pdf_use_skia_paths) {

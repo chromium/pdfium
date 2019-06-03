@@ -9,7 +9,6 @@
 #include <list>
 #include <memory>
 
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
@@ -26,25 +25,23 @@ JBig2_DocumentContext* GetJBig2DocumentContext(
   return pContextHolder->get();
 }
 
-CCodec_Jbig2Context::CCodec_Jbig2Context()
-    : m_width(0),
-      m_height(0),
-      m_pGlobalStream(nullptr),
-      m_pSrcStream(nullptr),
-      m_dest_buf(0),
-      m_dest_pitch(0) {}
+CCodec_Jbig2Context::CCodec_Jbig2Context() = default;
 
-CCodec_Jbig2Context::~CCodec_Jbig2Context() {}
+CCodec_Jbig2Context::~CCodec_Jbig2Context() = default;
 
-CCodec_Jbig2Module::~CCodec_Jbig2Module() {}
+CCodec_Jbig2Module::CCodec_Jbig2Module() = default;
+
+CCodec_Jbig2Module::~CCodec_Jbig2Module() = default;
 
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
     CCodec_Jbig2Context* pJbig2Context,
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
     uint32_t width,
     uint32_t height,
-    const RetainPtr<CPDF_StreamAcc>& src_stream,
-    const RetainPtr<CPDF_StreamAcc>& global_stream,
+    pdfium::span<const uint8_t> src_span,
+    uint32_t src_objnum,
+    pdfium::span<const uint8_t> global_span,
+    uint32_t global_objnum,
     uint8_t* dest_buf,
     uint32_t dest_pitch,
     PauseIndicatorIface* pPause) {
@@ -55,13 +52,16 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
       GetJBig2DocumentContext(pContextHolder);
   pJbig2Context->m_width = width;
   pJbig2Context->m_height = height;
-  pJbig2Context->m_pSrcStream = src_stream;
-  pJbig2Context->m_pGlobalStream = global_stream;
+  pJbig2Context->m_pSrcSpan = src_span;
+  pJbig2Context->m_nSrcObjNum = src_objnum;
+  pJbig2Context->m_pGlobalSpan = global_span;
+  pJbig2Context->m_nGlobalObjNum = global_objnum;
   pJbig2Context->m_dest_buf = dest_buf;
   pJbig2Context->m_dest_pitch = dest_pitch;
   memset(dest_buf, 0, height * dest_pitch);
-  pJbig2Context->m_pContext = CJBig2_Context::Create(
-      global_stream, src_stream, pJBig2DocumentContext->GetSymbolDictCache());
+  pJbig2Context->m_pContext =
+      CJBig2_Context::Create(global_span, global_objnum, src_span, src_objnum,
+                             pJBig2DocumentContext->GetSymbolDictCache());
   bool succeeded = pJbig2Context->m_pContext->GetFirstPage(
       dest_buf, width, height, dest_pitch, pPause);
   return Decode(pJbig2Context, succeeded);

@@ -16,7 +16,7 @@
 #include "core/fxcodec/jbig2/JBig2_Page.h"
 #include "core/fxcodec/jbig2/JBig2_Segment.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
@@ -35,8 +35,10 @@ enum class JBig2_Result { kSuccess, kFailure, kEndReached };
 class CJBig2_Context {
  public:
   static std::unique_ptr<CJBig2_Context> Create(
-      const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
-      const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+      pdfium::span<const uint8_t> pGlobalSpan,
+      uint32_t dwGlobalObjNum,
+      pdfium::span<const uint8_t> pSrcSpan,
+      uint32_t dwSrcObjNum,
       std::list<CJBig2_CachePair>* pSymbolDictCache);
 
   ~CJBig2_Context();
@@ -53,7 +55,8 @@ class CJBig2_Context {
   FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:
-  CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+  CJBig2_Context(pdfium::span<const uint8_t> pSrcSpan,
+                 uint32_t dwObjNum,
                  std::list<CJBig2_CachePair>* pSymbolDictCache,
                  bool bIsGlobal);
 

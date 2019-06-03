@@ -14,8 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
@@ -53,24 +51,25 @@ static_assert(kSymbolDictCacheMaxSize > 0,
 
 // static
 std::unique_ptr<CJBig2_Context> CJBig2_Context::Create(
-    const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
-    const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+    pdfium::span<const uint8_t> pGlobalSpan,
+    uint32_t dwGlobalObjNum,
+    pdfium::span<const uint8_t> pSrcSpan,
+    uint32_t dwSrcObjNum,
     std::list<CJBig2_CachePair>* pSymbolDictCache) {
   auto result = pdfium::WrapUnique(
-      new CJBig2_Context(pSrcStream, pSymbolDictCache, false));
-  if (pGlobalStream && pGlobalStream->GetSize() > 0) {
-    result->m_pGlobalContext = pdfium::WrapUnique(
-        new CJBig2_Context(pGlobalStream, pSymbolDictCache, true));
+      new CJBig2_Context(pSrcSpan, dwSrcObjNum, pSymbolDictCache, false));
+  if (!pGlobalSpan.empty()) {
+    result->m_pGlobalContext = pdfium::WrapUnique(new CJBig2_Context(
+        pGlobalSpan, dwGlobalObjNum, pSymbolDictCache, true));
   }
   return result;
 }
 
-CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pSrcStream,
+CJBig2_Context::CJBig2_Context(pdfium::span<const uint8_t> pSrcSpan,
+                               uint32_t dwObjNum,
                                std::list<CJBig2_CachePair>* pSymbolDictCache,
                                bool bIsGlobal)
-    : m_pStream(pdfium::MakeUnique<CJBig2_BitStream>(
-          pSrcStream->GetSpan(),
-          pSrcStream->GetStream() ? pSrcStream->GetStream()->GetObjNum() : 0)),
+    : m_pStream(pdfium::MakeUnique<CJBig2_BitStream>(pSrcSpan, dwObjNum)),
       m_HuffmanTables(CJBig2_HuffmanTable::kNumHuffmanTables),
       m_bIsGlobal(bIsGlobal),
       m_pSymbolDictCache(pSymbolDictCache) {}

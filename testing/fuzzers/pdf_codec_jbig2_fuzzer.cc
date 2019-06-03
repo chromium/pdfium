@@ -4,8 +4,6 @@
 
 #include <cstdint>
 
-#include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
@@ -37,17 +35,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
     return 0;
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->AsStream()->SetData({data, size});
-
-  auto src_stream = pdfium::MakeRetain<CPDF_StreamAcc>(stream->AsStream());
-  src_stream->LoadAllDataRaw();
-
   CCodec_Jbig2Module module;
   CCodec_Jbig2Context jbig2_context;
   std::unique_ptr<JBig2_DocumentContext> document_context;
   FXCODEC_STATUS status = module.StartDecode(
-      &jbig2_context, &document_context, width, height, src_stream, nullptr,
+      &jbig2_context, &document_context, width, height, {data, size}, 1, {}, 0,
       bitmap->GetBuffer(), bitmap->GetPitch(), nullptr);
 
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)

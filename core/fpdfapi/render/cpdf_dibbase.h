@@ -148,7 +148,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskedLine;
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
   RetainPtr<CPDF_DIBBase> m_pMask;
-  RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
+  RetainPtr<CPDF_StreamAcc> m_pGlobalAcc;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
 
   // Must come after |m_pCachedBitmap|.
