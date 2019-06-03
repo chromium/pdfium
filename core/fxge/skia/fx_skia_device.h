@@ -159,6 +159,13 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   bool GetGroupKnockout() const { return m_bGroupKnockout; }
 
+#ifdef _SKIA_SUPPORT_PATHS_
+  const CFX_ClipRgn* clip_region() const { return m_pClipRgn.get(); }
+  const std::vector<std::unique_ptr<CFX_ClipRgn>>& stack() const {
+    return m_StateStack;
+  }
+#endif
+
  private:
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;

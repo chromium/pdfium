@@ -1210,9 +1210,9 @@ class SkiaState {
     printf(
         "\n%s\nSkia Save Count %d  Agg Save Stack/Count %d/%d"
         "  Cache Save Index/Count %d/%d\n",
-        where, m_pDriver->m_pCanvas->getSaveCount(),
-        (int)m_pDriver->m_StateStack.size(), AggSaveCount(m_pDriver),
-        m_commandIndex, CacheSaveCount(m_commands, m_commandIndex));
+        where, m_pDriver->SkiaCanvas()->getSaveCount(),
+        (int)m_pDriver->stack().size(), AggSaveCount(m_pDriver), m_commandIndex,
+        CacheSaveCount(m_commands, m_commandIndex));
     printf("Cache:\n");
 #if SHOW_SKIA_PATH_SHORTHAND
     bool dumpedPath = false;
@@ -1246,7 +1246,7 @@ class SkiaState {
       printf("\n");
 #endif
     DumpEndPrefix();
-    int skCanvasSaveCount = m_pDriver->m_pCanvas->getSaveCount();
+    int skCanvasSaveCount = m_pDriver->SkiaCanvas()->getSaveCount();
     int cacheSaveCount = 1;
     SkASSERT(m_clipIndex <= m_commands.count());
     for (int index = 0; index < m_clipIndex; ++index)
@@ -1260,26 +1260,26 @@ class SkiaState {
     FX_RECT last;
     int aggSaveCount = 0;
     bool foundLast = false;
-    for (int index = 0; index < (int)driver->m_StateStack.size(); ++index) {
-      if (!driver->m_StateStack[index]) {
+    for (int index = 0; index < (int)driver->stack().size(); ++index) {
+      if (!driver->stack()[index]) {
         continue;
       }
-      if (driver->m_StateStack[index]->GetType() != CFX_ClipRgn::RectI) {
+      if (driver->stack()[index]->GetType() != CFX_ClipRgn::RectI) {
         aggSaveCount += 1;
         foundLast = false;
         continue;
       }
-      if (!foundLast || memcmp(&last, &driver->m_StateStack[index]->GetBox(),
-                               sizeof(FX_RECT))) {
+      if (!foundLast ||
+          memcmp(&last, &driver->stack()[index]->GetBox(), sizeof(FX_RECT))) {
         aggSaveCount += 1;
         foundLast = true;
-        last = driver->m_StateStack[index]->GetBox();
+        last = driver->stack()[index]->GetBox();
       }
     }
-    if (driver->m_pClipRgn) {
-      CFX_ClipRgn::ClipType clipType = driver->m_pClipRgn->GetType();
+    if (driver->clip_region()) {
+      CFX_ClipRgn::ClipType clipType = driver->clip_region()->GetType();
       if (clipType != CFX_ClipRgn::RectI || !foundLast ||
-          memcmp(&last, &driver->m_pClipRgn->GetBox(), sizeof(FX_RECT))) {
+          memcmp(&last, &driver->clip_region()->GetBox(), sizeof(FX_RECT))) {
         aggSaveCount += 1;
       }
     }
@@ -1315,13 +1315,13 @@ class SkiaState {
              cacheSaveCount);
       DumpClipStacks();
     }
-    for (int aggIndex = 0; aggIndex < (int)m_pDriver->m_StateStack.size();
+    for (int aggIndex = 0; aggIndex < (int)m_pDriver->stack().size();
          ++aggIndex) {
-      if (!m_pDriver->m_StateStack[aggIndex])
+      if (!m_pDriver->stack()[aggIndex])
         continue;
-      if (m_pDriver->m_StateStack[aggIndex]->GetType() != CFX_ClipRgn::RectI)
+      if (m_pDriver->stack()[aggIndex]->GetType() != CFX_ClipRgn::RectI)
         continue;
-      const FX_RECT& aggRect = m_pDriver->m_StateStack[aggIndex]->GetBox();
+      const FX_RECT& aggRect = m_pDriver->stack()[aggIndex]->GetBox();
       SkRect skRect = SkRect::MakeLTRB(aggRect.left, aggRect.top, aggRect.right,
                                        aggRect.bottom);
       bool foundMatch = false;
@@ -1365,23 +1365,22 @@ class SkiaState {
       }
     }
     printf("\nagg\n");
-    for (int index = 0; index < (int)m_pDriver->m_StateStack.size(); ++index) {
-      if (!m_pDriver->m_StateStack[index]) {
+    for (int index = 0; index < (int)m_pDriver->stack().size(); ++index) {
+      if (!m_pDriver->stack()[index]) {
         printf("null\n");
         continue;
       }
-      CFX_ClipRgn::ClipType clipType =
-          m_pDriver->m_StateStack[index]->GetType();
-      const FX_RECT& box = m_pDriver->m_StateStack[index]->GetBox();
+      CFX_ClipRgn::ClipType clipType = m_pDriver->stack()[index]->GetType();
+      const FX_RECT& box = m_pDriver->stack()[index]->GetBox();
       printf("stack rect: %d,%d,%d,%d mask=%s\n", box.left, box.top, box.right,
              box.bottom,
              CFX_ClipRgn::MaskF == clipType
                  ? "1"
                  : CFX_ClipRgn::RectI == clipType ? "0" : "?");
     }
-    if (m_pDriver->m_pClipRgn) {
-      const FX_RECT& box = m_pDriver->m_pClipRgn->GetBox();
-      CFX_ClipRgn::ClipType clipType = m_pDriver->m_pClipRgn->GetType();
+    if (m_pDriver->clip_region()) {
+      const FX_RECT& box = m_pDriver->clip_region()->GetBox();
+      CFX_ClipRgn::ClipType clipType = m_pDriver->clip_region()->GetType();
       printf("clip rect: %d,%d,%d,%d mask=%s\n", box.left, box.top, box.right,
              box.bottom,
              CFX_ClipRgn::MaskF == clipType
@@ -1742,7 +1741,7 @@ void CFX_SkiaDeviceDriver::SaveState() {
 
 #ifdef _SKIA_SUPPORT_PATHS_
 #if SHOW_SKIA_PATH
-  printf("SaveState %zd\n", m_StateStack.size());
+  printf("SaveState %zd\n", stack().size());
 #endif
   std::unique_ptr<CFX_ClipRgn> pClip;
   if (m_pClipRgn)
