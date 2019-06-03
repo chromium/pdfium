@@ -12,7 +12,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_devicecs.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_function.h"
@@ -432,7 +431,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::ColorspaceFromName(
 
 // static
 RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::GetStockCS(int family) {
-  return CPDF_ModuleMgr::Get()->GetPageModule()->GetStockCS(family);
+  return CPDF_PageModule::GetInstance()->GetStockCS(family);
 }
 
 // static

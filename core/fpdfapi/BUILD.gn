@@ -28,7 +28,6 @@ jumbo_source_set("fpdfapi") {
   allow_circular_includes_from = [
     "page",
     "parser",
-    "render",
   ]
   visibility = [ "../../*" ]
 }

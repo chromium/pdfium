@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
@@ -895,5 +894,5 @@ CPDF_Document::StockFontClearer::StockFontClearer(CPDF_Document* pDoc)
     : m_pDoc(pDoc) {}
 
 CPDF_Document::StockFontClearer::~StockFontClearer() {
-  CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(m_pDoc.Get());
+  CPDF_PageModule::GetInstance()->ClearStockFont(m_pDoc.Get());
 }

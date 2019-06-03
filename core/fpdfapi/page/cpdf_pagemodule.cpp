@@ -11,6 +11,31 @@
 #include "core/fpdfapi/page/cpdf_devicecs.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
 
+namespace {
+
+CPDF_PageModule* g_PageModule = nullptr;
+
+}  // namespace
+
+// static
+void CPDF_PageModule::Create() {
+  ASSERT(!g_PageModule);
+  g_PageModule = new CPDF_PageModule();
+}
+
+// static
+void CPDF_PageModule::Destroy() {
+  ASSERT(g_PageModule);
+  delete g_PageModule;
+  g_PageModule = nullptr;
+}
+
+// static
+CPDF_PageModule* CPDF_PageModule::GetInstance() {
+  ASSERT(g_PageModule);
+  return g_PageModule;
+}
+
 CPDF_PageModule::CPDF_PageModule()
     : m_StockGrayCS(pdfium::MakeRetain<CPDF_DeviceCS>(PDFCS_DEVICEGRAY)),
       m_StockRGBCS(pdfium::MakeRetain<CPDF_DeviceCS>(PDFCS_DEVICERGB)),

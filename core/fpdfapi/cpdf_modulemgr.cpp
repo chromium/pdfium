@@ -26,13 +26,14 @@ void CPDF_ModuleMgr::Create() {
   ASSERT(!g_pDefaultMgr);
   g_pDefaultMgr = new CPDF_ModuleMgr;
   CCodec_ModuleMgr::Create();
-  g_pDefaultMgr->InitPageModule();
+  CPDF_PageModule::Create();
   g_pDefaultMgr->LoadEmbeddedMaps();
 }
 
 // static
 void CPDF_ModuleMgr::Destroy() {
   ASSERT(g_pDefaultMgr);
+  CPDF_PageModule::Destroy();
   CCodec_ModuleMgr::Destroy();
   delete g_pDefaultMgr;
   g_pDefaultMgr = nullptr;
@@ -47,10 +48,6 @@ CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
 CPDF_ModuleMgr::CPDF_ModuleMgr() = default;
 
 CPDF_ModuleMgr::~CPDF_ModuleMgr() = default;
-
-void CPDF_ModuleMgr::InitPageModule() {
-  m_pPageModule = pdfium::MakeUnique<CPDF_PageModule>();
-}
 
 void CPDF_ModuleMgr::LoadEmbeddedMaps() {
   LoadEmbeddedGB1CMaps();

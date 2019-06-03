@@ -10,8 +10,6 @@
 #include <memory>
 #include <utility>
 
-class CPDF_PageModule;
-
 namespace fpdfapi {
 
 class UnsupportedInfoAdapter {
@@ -41,8 +39,6 @@ class CPDF_ModuleMgr {
     return m_pUnsupportInfoAdapter.get();
   }
 
-  CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
-
  private:
   CPDF_ModuleMgr();
   ~CPDF_ModuleMgr();
@@ -54,7 +50,6 @@ class CPDF_ModuleMgr {
   void LoadEmbeddedJapan1CMaps();
   void LoadEmbeddedKorea1CMaps();
 
-  std::unique_ptr<CPDF_PageModule> m_pPageModule;
   std::unique_ptr<fpdfapi::UnsupportedInfoAdapter> m_pUnsupportInfoAdapter;
 };
 
