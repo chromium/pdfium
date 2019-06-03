@@ -368,32 +368,36 @@ TEST(CCodec_ProgressiveDecoder, BUG_895009) {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  auto mgr = pdfium::MakeUnique<CCodec_ModuleMgr>();
-  mgr->SetGifModule(pdfium::MakeUnique<CCodec_GifModule>());
+  CCodec_ModuleMgr::Create();
+  CCodec_ModuleMgr::GetInstance()->SetGifModule(
+      pdfium::MakeUnique<CCodec_GifModule>());
+  {
+    std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
+        CCodec_ModuleMgr::GetInstance()->CreateProgressiveDecoder();
 
-  std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
-      mgr->CreateProgressiveDecoder();
-  auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
-  CFX_DIBAttribute attr;
-  FXCODEC_STATUS status =
-      decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
-  ASSERT_EQ(FXCODEC_STATUS_FRAME_READY, status);
+    auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
+    CFX_DIBAttribute attr;
+    FXCODEC_STATUS status =
+        decoder->LoadImageInfo(source, FXCODEC_IMAGE_GIF, &attr, true);
+    ASSERT_EQ(FXCODEC_STATUS_FRAME_READY, status);
 
-  ASSERT_EQ(98, decoder->GetWidth());
-  ASSERT_EQ(6945, decoder->GetHeight());
+    ASSERT_EQ(98, decoder->GetWidth());
+    ASSERT_EQ(6945, decoder->GetHeight());
 
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  bitmap->Create(decoder->GetWidth(), decoder->GetHeight(), FXDIB_Argb);
+    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    bitmap->Create(decoder->GetWidth(), decoder->GetHeight(), FXDIB_Argb);
 
-  size_t frames;
-  std::tie(status, frames) = decoder->GetFrames();
-  ASSERT_EQ(FXCODEC_STATUS_DECODE_READY, status);
-  ASSERT_EQ(1u, frames);
+    size_t frames;
+    std::tie(status, frames) = decoder->GetFrames();
+    ASSERT_EQ(FXCODEC_STATUS_DECODE_READY, status);
+    ASSERT_EQ(1u, frames);
 
-  status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
-                                bitmap->GetHeight());
-  while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-    status = decoder->ContinueDecode();
-  EXPECT_EQ(FXCODEC_STATUS_DECODE_FINISH, status);
+    status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
+                                  bitmap->GetHeight());
+    while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
+      status = decoder->ContinueDecode();
+    EXPECT_EQ(FXCODEC_STATUS_DECODE_FINISH, status);
+  }
+  CCodec_ModuleMgr::Destroy();
 }
 #endif  // PDF_ENABLE_XFA_GIF

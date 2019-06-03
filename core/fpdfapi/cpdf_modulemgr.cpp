@@ -15,22 +15,6 @@
 #include "core/fxcodec/fx_codec.h"
 #include "third_party/base/ptr_util.h"
 
-#ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/codec/ccodec_pngmodule.h"
-#endif
-
-#ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
-#endif
-
 namespace {
 
 CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
@@ -41,15 +25,15 @@ CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
 void CPDF_ModuleMgr::Create() {
   ASSERT(!g_pDefaultMgr);
   g_pDefaultMgr = new CPDF_ModuleMgr;
-  g_pDefaultMgr->InitCodecModule();
+  CCodec_ModuleMgr::Create();
   g_pDefaultMgr->InitPageModule();
   g_pDefaultMgr->LoadEmbeddedMaps();
-  g_pDefaultMgr->LoadCodecModules();
 }
 
 // static
 void CPDF_ModuleMgr::Destroy() {
   ASSERT(g_pDefaultMgr);
+  CCodec_ModuleMgr::Destroy();
   delete g_pDefaultMgr;
   g_pDefaultMgr = nullptr;
 }
@@ -64,38 +48,8 @@ CPDF_ModuleMgr::CPDF_ModuleMgr() = default;
 
 CPDF_ModuleMgr::~CPDF_ModuleMgr() = default;
 
-CCodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
-  return m_pCodecModule->GetJpegModule();
-}
-
-CCodec_Jbig2Module* CPDF_ModuleMgr::GetJbig2Module() {
-  return m_pCodecModule->GetJbig2Module();
-}
-
 void CPDF_ModuleMgr::InitPageModule() {
   m_pPageModule = pdfium::MakeUnique<CPDF_PageModule>();
-}
-
-void CPDF_ModuleMgr::InitCodecModule() {
-  m_pCodecModule = pdfium::MakeUnique<CCodec_ModuleMgr>();
-}
-
-void CPDF_ModuleMgr::LoadCodecModules() {
-#ifdef PDF_ENABLE_XFA_BMP
-  m_pCodecModule->SetBmpModule(pdfium::MakeUnique<CCodec_BmpModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_GIF
-  m_pCodecModule->SetGifModule(pdfium::MakeUnique<CCodec_GifModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_PNG
-  m_pCodecModule->SetPngModule(pdfium::MakeUnique<CCodec_PngModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_TIFF
-  m_pCodecModule->SetTiffModule(pdfium::MakeUnique<CCodec_TiffModule>());
-#endif
 }
 
 void CPDF_ModuleMgr::LoadEmbeddedMaps() {

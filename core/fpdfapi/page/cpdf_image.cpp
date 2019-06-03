@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "constants/stream_dict_common.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -26,6 +25,7 @@
 #include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
@@ -88,7 +88,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
   int32_t num_comps;
   int32_t bits;
   bool color_trans;
-  if (!CPDF_ModuleMgr::Get()->GetJpegModule()->LoadInfo(
+  if (!CCodec_ModuleMgr::GetInstance()->GetJpegModule()->LoadInfo(
           src_span, &width, &height, &num_comps, &bits, &color_trans)) {
     return nullptr;
   }

@@ -37,7 +37,16 @@ const int kXFACodecFuzzerPixelLimit = 64000000;
 class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
-    auto mgr = pdfium::MakeUnique<CCodec_ModuleMgr>();
+    CCodec_ModuleMgr::Create();
+    int sts = FuzzInternal(CCodec_ModuleMgr::GetInstance(), data, size, type);
+    CCodec_ModuleMgr::Destroy();
+    return sts;
+  }
+
+  static int FuzzInternal(CCodec_ModuleMgr* mgr,
+                          const uint8_t* data,
+                          size_t size,
+                          FXCODEC_IMAGE_TYPE type) {
 #ifdef PDF_ENABLE_XFA_BMP
     mgr->SetBmpModule(pdfium::MakeUnique<CCodec_BmpModule>());
 #endif  // PDF_ENABLE_XFA_BMP

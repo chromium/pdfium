@@ -14,7 +14,6 @@
 #include <utility>
 
 #include "constants/stream_dict_common.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -93,7 +92,7 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
   }
   if (decoder == "DCTDecode") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
-        CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
+        CCodec_ModuleMgr::GetInstance()->GetJpegModule()->CreateDecoder(
             src_span, width, height, 0,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder));

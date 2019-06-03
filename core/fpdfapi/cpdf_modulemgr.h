@@ -10,10 +10,6 @@
 #include <memory>
 #include <utility>
 
-class CCodec_FlateModule;
-class CCodec_Jbig2Module;
-class CCodec_JpegModule;
-class CCodec_ModuleMgr;
 class CPDF_PageModule;
 
 namespace fpdfapi {
@@ -45,27 +41,19 @@ class CPDF_ModuleMgr {
     return m_pUnsupportInfoAdapter.get();
   }
 
-  CCodec_ModuleMgr* GetCodecModule() const { return m_pCodecModule.get(); }
   CPDF_PageModule* GetPageModule() const { return m_pPageModule.get(); }
-
-  CCodec_JpegModule* GetJpegModule();
-  CCodec_Jbig2Module* GetJbig2Module();
-  CCodec_FlateModule* GetFlateModule();
 
  private:
   CPDF_ModuleMgr();
   ~CPDF_ModuleMgr();
 
   void InitPageModule();
-  void InitCodecModule();
-  void LoadCodecModules();
   void LoadEmbeddedMaps();
   void LoadEmbeddedGB1CMaps();
   void LoadEmbeddedCNS1CMaps();
   void LoadEmbeddedJapan1CMaps();
   void LoadEmbeddedKorea1CMaps();
 
-  std::unique_ptr<CCodec_ModuleMgr> m_pCodecModule;
   std::unique_ptr<CPDF_PageModule> m_pPageModule;
   std::unique_ptr<fpdfapi::UnsupportedInfoAdapter> m_pUnsupportInfoAdapter;
 };

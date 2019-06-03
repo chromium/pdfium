@@ -54,8 +54,10 @@ class CFX_DIBAttribute {
 
 class CCodec_ModuleMgr {
  public:
-  CCodec_ModuleMgr();
-  ~CCodec_ModuleMgr();
+  // Per-process singleton managed by callers.
+  static void Create();
+  static void Destroy();
+  static CCodec_ModuleMgr* GetInstance();
 
   CCodec_JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
   CCodec_Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
@@ -92,7 +94,10 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
- protected:
+ private:
+  CCodec_ModuleMgr();
+  ~CCodec_ModuleMgr();
+
   std::unique_ptr<CCodec_JpegModule> m_pJpegModule;
   std::unique_ptr<CCodec_Jbig2Module> m_pJbig2Module;
 
