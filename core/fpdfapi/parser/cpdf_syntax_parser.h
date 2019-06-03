@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
 
@@ -113,7 +113,7 @@ class CPDF_SyntaxParser {
   FX_FILESIZE m_BufOffset = 0;
   uint32_t m_WordSize = 0;
   uint8_t m_WordBuffer[257];
-  uint32_t m_ReadBufferSize = CPDF_ModuleMgr::kFileBufSize;
+  uint32_t m_ReadBufferSize = CPDF_Stream::kFileBufSize;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_

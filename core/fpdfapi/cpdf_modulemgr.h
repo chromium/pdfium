@@ -29,7 +29,6 @@ class CPDF_ModuleMgr {
   static void Create();
   static void Destroy();
   static CPDF_ModuleMgr* Get();
-  static const int kFileBufSize = 512;
 
   void SetUnsupportInfoAdapter(
       std::unique_ptr<fpdfapi::UnsupportedInfoAdapter> pAdapter) {

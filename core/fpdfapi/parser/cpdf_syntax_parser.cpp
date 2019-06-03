@@ -148,8 +148,8 @@ bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
 
   if (!IsPositionRead(pos)) {
     FX_FILESIZE block_start = 0;
-    if (pos >= CPDF_ModuleMgr::kFileBufSize)
-      block_start = pos - CPDF_ModuleMgr::kFileBufSize + 1;
+    if (pos >= CPDF_Stream::kFileBufSize)
+      block_start = pos - CPDF_Stream::kFileBufSize + 1;
     if (!ReadBlockAt(block_start) || !IsPositionRead(pos))
       return false;
   }
