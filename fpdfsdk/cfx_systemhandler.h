@@ -14,7 +14,6 @@
 
 class CFFL_FormFiller;
 class CPDF_Document;
-class CPDF_Font;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Widget;
 
@@ -31,11 +30,6 @@ class CFX_SystemHandler {
                           const CFX_FloatRect& rect);
   bool IsSelectionImplemented() const;
   void SetCursor(int32_t nCursorType);
-  bool FindNativeTrueTypeFont(ByteString sFontFaceName);
-  CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
-                                        ByteString sFontFaceName,
-                                        uint8_t nCharset);
-
   int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc);
   void KillTimer(int32_t nID);
 

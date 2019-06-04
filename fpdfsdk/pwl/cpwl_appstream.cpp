@@ -1231,14 +1231,11 @@ void CPWL_AppStream::SetAsPushButton() {
   SetDefaultIconName(pRolloverIcon, "ImgB");
   SetDefaultIconName(pDownIcon, "ImgC");
 
-  CPDF_IconFit iconFit = pControl->GetIconFit();
-  CBA_FontMap font_map(
-      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler(),
-      widget_->GetPDFPage()->GetDocument(),
-      widget_->GetPDFAnnot()->GetAnnotDict());
-
+  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                       widget_->GetPDFAnnot()->GetAnnotDict());
   font_map.SetAPType("N");
 
+  CPDF_IconFit iconFit = pControl->GetIconFit();
   ByteString csAP =
       GetRectFillAppStream(rcWindow, crBackground) +
       GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1591,10 +1588,8 @@ void CPWL_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   rcButton.Normalize();
 
   // Font map must outlive |pEdit|.
-  CBA_FontMap font_map(
-      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler(),
-      widget_->GetPDFPage()->GetDocument(),
-      widget_->GetPDFAnnot()->GetAnnotDict());
+  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                       widget_->GetPDFAnnot()->GetAnnotDict());
 
   auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1659,10 +1654,8 @@ void CPWL_AppStream::SetAsListBox() {
   std::ostringstream sBody;
 
   // Font map must outlive |pEdit|.
-  CBA_FontMap font_map(
-      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler(),
-      widget_->GetPDFPage()->GetDocument(),
-      widget_->GetPDFAnnot()->GetAnnotDict());
+  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                       widget_->GetPDFAnnot()->GetAnnotDict());
 
   auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1745,10 +1738,8 @@ void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   std::ostringstream sLines;
 
   // Font map must outlive |pEdit|.
-  CBA_FontMap font_map(
-      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler(),
-      widget_->GetPDFPage()->GetDocument(),
-      widget_->GetPDFAnnot()->GetAnnotDict());
+  CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
+                       widget_->GetPDFAnnot()->GetAnnotDict());
 
   auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);

@@ -24,17 +24,50 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_substfont.h"
-#include "fpdfsdk/cfx_systemhandler.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CBA_FontMap::CBA_FontMap(CFX_SystemHandler* pSystemHandler,
-                         CPDF_Document* pDocument,
-                         CPDF_Dictionary* pAnnotDict)
-    : m_pSystemHandler(pSystemHandler),
-      m_pDocument(pDocument),
-      m_pAnnotDict(pAnnotDict) {
+namespace {
+
+bool FindNativeTrueTypeFont(ByteString sFontFaceName) {
+  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
+  if (!pFontMgr)
+    return false;
+
+  CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
+  pFontMapper->LoadInstalledFonts();
+
+  for (const auto& font : pFontMapper->m_InstalledTTFonts) {
+    if (font.Compare(sFontFaceName.AsStringView()))
+      return true;
+  }
+  for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
+    if (fontPair.first.Compare(sFontFaceName.AsStringView()))
+      return true;
+  }
+  return false;
+}
+
+CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
+                                      ByteString sFontFaceName,
+                                      uint8_t nCharset) {
+  if (!pDoc)
+    return nullptr;
+
+  auto pFXFont = pdfium::MakeUnique<CFX_Font>();
+  pFXFont->LoadSubst(sFontFaceName, true, 0, 0, 0,
+                     FX_GetCodePageFromCharset(nCharset), false);
+  return pDoc->AddFont(pFXFont.get(), nCharset);
+}
+
+}  // namespace
+
+CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict)
+    : m_pDocument(pDocument), m_pAnnotDict(pAnnotDict) {
   Initialize();
 }
 
@@ -389,7 +422,7 @@ ByteString CBA_FontMap::GetNativeFont(int32_t nCharset) {
     nCharset = GetNativeCharset();
 
   ByteString sFontName = CFX_Font::GetDefaultFontNameByCharset(nCharset);
-  if (!m_pSystemHandler->FindNativeTrueTypeFont(sFontName))
+  if (!FindNativeTrueTypeFont(sFontName))
     return ByteString();
 
   return sFontName;
@@ -469,9 +502,9 @@ CPDF_Font* CBA_FontMap::AddSystemFont(CPDF_Document* pDoc,
 
   if (sFontName.IsEmpty())
     sFontName = GetNativeFont(nCharset);
+
   if (nCharset == FX_CHARSET_Default)
     nCharset = GetNativeCharset();
 
-  return m_pSystemHandler->AddNativeTrueTypeFontToPDF(pDoc, sFontName,
-                                                      nCharset);
+  return AddNativeTrueTypeFontToPDF(pDoc, sFontName, nCharset);
 }

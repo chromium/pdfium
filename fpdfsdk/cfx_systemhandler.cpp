@@ -10,9 +10,6 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxge/cfx_font.h"
-#include "core/fxge/cfx_fontmapper.h"
-#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -68,38 +65,6 @@ bool CFX_SystemHandler::IsSelectionImplemented() const {
 
 void CFX_SystemHandler::SetCursor(int32_t nCursorType) {
   m_pFormFillEnv->SetCursor(nCursorType);
-}
-
-bool CFX_SystemHandler::FindNativeTrueTypeFont(ByteString sFontFaceName) {
-  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  if (!pFontMgr)
-    return false;
-
-  CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
-  pFontMapper->LoadInstalledFonts();
-
-  for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font.Compare(sFontFaceName.AsStringView()))
-      return true;
-  }
-  for (const auto& fontPair : pFontMapper->m_LocalizedTTFonts) {
-    if (fontPair.first.Compare(sFontFaceName.AsStringView()))
-      return true;
-  }
-  return false;
-}
-
-CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(
-    CPDF_Document* pDoc,
-    ByteString sFontFaceName,
-    uint8_t nCharset) {
-  if (!pDoc)
-    return nullptr;
-
-  auto pFXFont = pdfium::MakeUnique<CFX_Font>();
-  pFXFont->LoadSubst(sFontFaceName, true, 0, 0, 0,
-                     FX_GetCodePageFromCharset(nCharset), false);
-  return pDoc->AddFont(pFXFont.get(), nCharset);
 }
 
 int32_t CFX_SystemHandler::SetTimer(int32_t uElapse,

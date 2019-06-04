@@ -15,15 +15,12 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_sysfontinfo.h"
 
-class CFX_SystemHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 
 class CBA_FontMap final : public IPVT_FontMap {
  public:
-  CBA_FontMap(CFX_SystemHandler* pSystemHandler,
-              CPDF_Document* pDocument,
-              CPDF_Dictionary* pAnnotDict);
+  CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict);
   ~CBA_FontMap() override;
 
   // IPVT_FontMap
@@ -89,7 +86,6 @@ class CBA_FontMap final : public IPVT_FontMap {
 
   std::vector<std::unique_ptr<Data>> m_Data;
   std::vector<std::unique_ptr<Native>> m_NativeFont;
-  UnownedPtr<CFX_SystemHandler> const m_pSystemHandler;
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
   UnownedPtr<CPDF_Font> m_pDefaultFont;
