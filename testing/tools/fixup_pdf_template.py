@@ -23,8 +23,6 @@ import os
 import re
 import sys
 
-SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))
-
 
 class StreamLenState:
   START = 1
