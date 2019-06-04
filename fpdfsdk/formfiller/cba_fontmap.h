@@ -16,13 +16,14 @@
 #include "public/fpdf_sysfontinfo.h"
 
 class CFX_SystemHandler;
-class CPDFSDK_Annot;
 class CPDF_Dictionary;
 class CPDF_Document;
 
 class CBA_FontMap final : public IPVT_FontMap {
  public:
-  CBA_FontMap(CPDFSDK_Annot* pAnnot, CFX_SystemHandler* pSystemHandler);
+  CBA_FontMap(CFX_SystemHandler* pSystemHandler,
+              CPDF_Document* pDocument,
+              CPDF_Dictionary* pAnnotDict);
   ~CBA_FontMap() override;
 
   // IPVT_FontMap

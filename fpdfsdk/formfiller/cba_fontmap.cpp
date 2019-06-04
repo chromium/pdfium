@@ -26,15 +26,15 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/cpdfsdk_annot.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
-                         CFX_SystemHandler* pSystemHandler)
+CBA_FontMap::CBA_FontMap(CFX_SystemHandler* pSystemHandler,
+                         CPDF_Document* pDocument,
+                         CPDF_Dictionary* pAnnotDict)
     : m_pSystemHandler(pSystemHandler),
-      m_pDocument(pAnnot->GetPDFPage()->GetDocument()),
-      m_pAnnotDict(pAnnot->GetPDFAnnot()->GetAnnotDict()) {
+      m_pDocument(pDocument),
+      m_pAnnotDict(pAnnotDict) {
   Initialize();
 }
 
