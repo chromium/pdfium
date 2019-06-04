@@ -9,9 +9,9 @@
 #include <utility>
 
 #include "constants/form_flags.h"
+#include "core/fpdfdoc/cba_fontmap.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "third_party/base/ptr_util.h"

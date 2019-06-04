@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "core/fpdfdoc/cba_fontmap.h"
 
 #include <memory>
 #include <utility>

@@ -50,7 +50,6 @@ jumbo_source_set("pwl") {
     "../../core/fpdfdoc",
     "../../core/fxcrt",
     "../../core/fxge",
-    "../formfiller:fontmap",
   ]
   visibility = [ "../../*" ]
 }

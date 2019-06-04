@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
-#define FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
+#ifndef CORE_FPDFDOC_CBA_FONTMAP_H_
+#define CORE_FPDFDOC_CBA_FONTMAP_H_
 
 #include <memory>
 #include <vector>
@@ -13,7 +13,6 @@
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "public/fpdf_sysfontinfo.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -93,4 +92,4 @@ class CBA_FontMap final : public IPVT_FontMap {
   ByteString m_sAPType = "N";
 };
 
-#endif  // FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
+#endif  // CORE_FPDFDOC_CBA_FONTMAP_H_

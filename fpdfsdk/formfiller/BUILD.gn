@@ -30,34 +30,14 @@ jumbo_source_set("formfiller") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
-    ":fontmap",
     "../../:pdfium_public_headers",
     "../../constants",
-    "../../core/fpdfapi/page",
-    "../../core/fpdfapi/parser",
-    "../../core/fxcrt",
-    "../../core/fxge",
-    "../pwl",
-  ]
-  visibility = [ "../../*" ]
-}
-
-jumbo_source_set("fontmap") {
-  sources = [
-    "cba_fontmap.cpp",
-    "cba_fontmap.h",
-  ]
-  configs += [ "../../:pdfium_core_config" ]
-  deps = [
-    "../../:pdfium_public_headers",
-    "../../constants",
-    "../../core/fpdfapi",
-    "../../core/fpdfapi/font",
     "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",
     "../../core/fpdfdoc",
     "../../core/fxcrt",
     "../../core/fxge",
+    "../pwl",
   ]
   visibility = [ "../../*" ]
 }

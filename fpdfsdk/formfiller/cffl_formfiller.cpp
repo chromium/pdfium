@@ -10,11 +10,11 @@
 
 #include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfdoc/cba_fontmap.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "fpdfsdk/formfiller/cba_fontmap.h"
 
 CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDFSDK_Widget* pWidget)

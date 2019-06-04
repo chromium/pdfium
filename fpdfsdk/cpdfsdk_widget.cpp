@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfdoc/cba_fontmap.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -29,7 +30,6 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/pwl/cpwl_appstream.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
