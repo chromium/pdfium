@@ -682,7 +682,6 @@ jumbo_source_set("parser") {
     "xfa_utils.h",
   ]
   deps = [
-    "../../../core/fpdfapi",
     "../../../core/fxcodec",
     "../../../core/fxcrt",
     "../../../core/fxge",
