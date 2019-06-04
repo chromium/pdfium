@@ -12,8 +12,8 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -121,10 +121,12 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
   pContext->m_pContext->AppendLayer(pPage, &matrix);
 
   if (flags & FPDF_ANNOT) {
-    pContext->m_pAnnots = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
+    auto pOwnedList = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
+    CPDF_AnnotList* pList = pOwnedList.get();
+    pContext->m_pAnnots = std::move(pOwnedList);
     bool bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
-    pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
-                                       bPrinting, &matrix, false, nullptr);
+    pList->DisplayAnnots(pPage, pContext->m_pContext.get(), bPrinting, &matrix,
+                         false, nullptr);
   }
 
   pContext->m_pRenderer = pdfium::MakeUnique<CPDF_ProgressiveRenderer>(

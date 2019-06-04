@@ -9,12 +9,9 @@ jumbo_source_set("fpdfapi") {
   sources = [
     "cpdf_modulemgr.cpp",
     "cpdf_modulemgr.h",
-    "cpdf_pagerendercontext.cpp",
-    "cpdf_pagerendercontext.h",
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
-    "../fpdfdoc",
     "../fxcodec",
     "../fxcrt",
     "../fxge",
@@ -25,6 +22,5 @@ jumbo_source_set("fpdfapi") {
     "parser",
     "render",
   ]
-  allow_circular_includes_from = [ "page" ]
   visibility = [ "../../*" ]
 }
