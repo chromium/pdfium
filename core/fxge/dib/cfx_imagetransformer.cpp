@@ -244,20 +244,29 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
     m_Status = 2;
     return;
   }
+
   int stretch_width =
       static_cast<int>(ceil(FXSYS_sqrt2(m_matrix.a, m_matrix.b)));
   int stretch_height =
       static_cast<int>(ceil(FXSYS_sqrt2(m_matrix.c, m_matrix.d)));
-  CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, stretch_height);
-  stretch2dest.Concat(
+  CFX_Matrix stretch_to_dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, stretch_height);
+  stretch_to_dest.Concat(
       CFX_Matrix(m_matrix.a / stretch_width, m_matrix.b / stretch_width,
                  m_matrix.c / stretch_height, m_matrix.d / stretch_height,
                  m_matrix.e, m_matrix.f));
-  m_dest2stretch = stretch2dest.GetInverse();
+  CFX_Matrix dest_to_strech = stretch_to_dest.GetInverse();
 
-  m_StretchClip =
-      m_dest2stretch.TransformRect(CFX_FloatRect(result_clip)).GetOuterRect();
-  m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
+  FX_RECT stretch_clip =
+      dest_to_strech.TransformRect(CFX_FloatRect(result_clip)).GetOuterRect();
+  if (!stretch_clip.Valid())
+    return;
+
+  stretch_clip.Intersect(0, 0, stretch_width, stretch_height);
+  if (!stretch_clip.Valid())
+    return;
+
+  m_dest2stretch = dest_to_strech;
+  m_StretchClip = stretch_clip;
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
       m_ResampleOptions);

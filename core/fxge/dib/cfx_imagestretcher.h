@@ -51,7 +51,7 @@ class CFX_ImageStretcher {
   bool m_bFlipY;
   int m_DestWidth;
   int m_DestHeight;
-  FX_RECT m_ClipRect;
+  const FX_RECT m_ClipRect;
   const FXDIB_Format m_DestFormat;
   const int m_DestBPP;
   int m_LineIndex;
