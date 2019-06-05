@@ -14,22 +14,6 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
-#ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
-#endif  // PDF_ENABLE_XFA_BMP
-
-#ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
-#endif  // PDF_ENABLE_XFA_GIF
-
-#ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/codec/ccodec_pngmodule.h"
-#endif  // PDF_ENABLE_XFA_PNG
-
-#ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
-#endif  // PDF_ENABLE_XFA_TIFF
-
 // Support up to 64 MB. This prevents trivial OOM when MSAN is on and
 // time outs.
 const int kXFACodecFuzzerPixelLimit = 64000000;
@@ -38,19 +22,6 @@ class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
     auto* mgr = CCodec_ModuleMgr::GetInstance();
-#ifdef PDF_ENABLE_XFA_BMP
-    mgr->SetBmpModule(pdfium::MakeUnique<CCodec_BmpModule>());
-#endif  // PDF_ENABLE_XFA_BMP
-#ifdef PDF_ENABLE_XFA_GIF
-    mgr->SetGifModule(pdfium::MakeUnique<CCodec_GifModule>());
-#endif  // PDF_ENABLE_XFA_GIF
-#ifdef PDF_ENABLE_XFA_PNG
-    mgr->SetPngModule(pdfium::MakeUnique<CCodec_PngModule>());
-#endif  // PDF_ENABLE_XFA_PNG
-#ifdef PDF_ENABLE_XFA_TIFF
-    mgr->SetTiffModule(pdfium::MakeUnique<CCodec_TiffModule>());
-#endif  // PDF_ENABLE_XFA_TIFF
-
     std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
         mgr->CreateProgressiveDecoder();
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
