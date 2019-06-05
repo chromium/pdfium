@@ -13,7 +13,6 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
-#include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -26,7 +25,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -485,17 +483,6 @@ CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
                                          bool bShading,
                                          const CFX_Matrix& matrix) {
   return m_pDocPage->GetPattern(pPatternObj, bShading, matrix);
-}
-
-RetainPtr<CPDF_IccProfile> CPDF_Document::LoadIccProfile(
-    const CPDF_Stream* pStream) {
-  return m_pDocPage->GetIccProfile(pStream);
-}
-
-RetainPtr<CPDF_Image> CPDF_Document::LoadImageFromPageData(
-    uint32_t dwStreamObjNum) {
-  ASSERT(dwStreamObjNum);
-  return m_pDocPage->GetImage(dwStreamObjNum);
 }
 
 void CPDF_Document::CreateNewDoc() {

@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"

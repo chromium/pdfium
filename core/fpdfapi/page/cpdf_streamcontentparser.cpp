@@ -813,7 +813,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
   auto pImageObj =
       pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
-  pImageObj->SetImage(m_pDocument->LoadImageFromPageData(streamObjNum));
+  pImageObj->SetImage(m_pDocument->GetPageData()->GetImage(streamObjNum));
   return AddImageObject(std::move(pImageObj));
 }
 

@@ -7,10 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_
 
+#include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxcrt/fx_coordinates.h"
-
-class CPDF_Image;
 
 class CPDF_ImageObject final : public CPDF_PageObject {
  public:

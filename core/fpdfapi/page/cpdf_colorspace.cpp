@@ -876,7 +876,7 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
-  m_pProfile = pDoc->LoadIccProfile(pStream);
+  m_pProfile = pDoc->GetPageData()->GetIccProfile(pStream);
   if (!m_pProfile)
     return 0;
 
