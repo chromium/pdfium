@@ -29,6 +29,7 @@ jumbo_source_set("fgas") {
   ]
   deps = [
     "../../core/fpdfapi/font",
+    "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",
     "../../core/fxcrt",
     "../../core/fxge",

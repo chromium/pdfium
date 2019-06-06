@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -213,7 +214,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
     if (pFonts) {
       CPDF_Dictionary* pElement = pFonts->GetDictFor(*csFontNameTag);
       if (pElement) {
-        CPDF_Font* pFont = m_pForm->GetDocument()->LoadFont(pElement);
+        CPDF_Font* pFont =
+            m_pForm->GetDocument()->GetPageData()->GetFont(pElement);
         if (pFont)
           return pFont;
       }
@@ -229,7 +231,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
     if (pFonts) {
       CPDF_Dictionary* pElement = pFonts->GetDictFor(*csFontNameTag);
       if (pElement) {
-        CPDF_Font* pFont = m_pForm->GetDocument()->LoadFont(pElement);
+        CPDF_Font* pFont =
+            m_pForm->GetDocument()->GetPageData()->GetFont(pElement);
         if (pFont)
           return pFont;
       }

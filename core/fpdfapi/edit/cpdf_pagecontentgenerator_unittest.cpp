@@ -10,6 +10,7 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
@@ -317,7 +318,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
                                      pDesc->GetObjNum());
 
-    CPDF_Font* loadedFont = pDoc->LoadFont(pDict);
+    CPDF_Font* loadedFont = pDoc->GetPageData()->GetFont(pDict);
     pTextObj->m_TextState.SetFont(loadedFont);
     pTextObj->m_TextState.SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");

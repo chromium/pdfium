@@ -1483,7 +1483,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                                     ->GetDict()
                                     ->GetDirectObjectFor("ColorSpace");
     RetainPtr<CPDF_ColorSpace> pColorSpace =
-        pDocument->LoadColorSpace(pCSObj, pPageResources);
+        pDocument->GetPageData()->GetColorSpace(pCSObj, pPageResources);
     if (pColorSpace) {
       int format = pColorSpace->GetFamily();
       if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
@@ -2622,7 +2622,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   if (pGroup)
     pCSObj = pGroup->GetDirectObjectFor(pdfium::transparency::kCS);
   RetainPtr<CPDF_ColorSpace> pCS =
-      m_pContext->GetDocument()->LoadColorSpace(pCSObj, nullptr);
+      m_pContext->GetDocument()->GetPageData()->GetColorSpace(pCSObj, nullptr);
   if (!pCS)
     return kDefaultColor;
 

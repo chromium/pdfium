@@ -21,14 +21,10 @@
 
 class CFX_Font;
 class CFX_Matrix;
-class CPDF_ColorSpace;
 class CPDF_DocPageData;
 class CPDF_DocRenderData;
-class CPDF_Font;
-class CPDF_FontEncoding;
 class CPDF_LinearizedHeader;
 class CPDF_Object;
-class CPDF_Pattern;
 class CPDF_ReadValidator;
 class CPDF_StreamAcc;
 class IFX_SeekableReadStream;
@@ -94,15 +90,6 @@ class CPDF_Document : public Observable<CPDF_Document>,
 
   CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
 
-  // |pFontDict| must not be null.
-  CPDF_Font* LoadFont(CPDF_Dictionary* pFontDict);
-  RetainPtr<CPDF_ColorSpace> LoadColorSpace(const CPDF_Object* pCSObj,
-                                            const CPDF_Dictionary* pResources);
-
-  CPDF_Pattern* LoadPattern(CPDF_Object* pObj,
-                            bool bShading,
-                            const CFX_Matrix& matrix);
-
   RetainPtr<CPDF_StreamAcc> LoadFontFile(const CPDF_Stream* pStream);
 
   //  CPDF_Parser::ParsedObjectsHolder overrides:
@@ -125,14 +112,6 @@ class CPDF_Document : public Observable<CPDF_Document>,
   void IncrementParsedPageCount() { ++m_ParsedPageCount; }
   uint32_t GetParsedPageCountForTesting() { return m_ParsedPageCount; }
 
-  CPDF_Font* AddStandardFont(const char* font,
-                             const CPDF_FontEncoding* pEncoding);
-  CPDF_Font* AddFont(CFX_Font* pFont, int charset);
-
-#if defined(OS_WIN)
-  CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont);
-#endif
-
  protected:
   class StockFontClearer {
    public:
@@ -153,14 +132,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
                     int* index,
                     int level) const;
   RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
-  size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
   const CPDF_Dictionary* GetPagesDict() const;
   CPDF_Dictionary* GetPagesDict();
-  CPDF_Dictionary* ProcessbCJK(
-      CPDF_Dictionary* pBaseDict,
-      int charset,
-      ByteString basefont,
-      std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
   bool InsertDeletePDFPage(CPDF_Dictionary* pPages,
                            int nPagesToGo,
                            CPDF_Dictionary* pPageDict,

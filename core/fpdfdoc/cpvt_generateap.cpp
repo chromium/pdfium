@@ -14,6 +14,7 @@
 #include "constants/annotation_common.h"
 #include "constants/form_fields.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -763,7 +764,7 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   ByteString sFontName = "FONT";
   auto pResourceFontDict = GenerateResourceFontDict(pDoc, sFontName);
-  CPDF_Font* pDefFont = pDoc->LoadFont(pResourceFontDict.Get());
+  CPDF_Font* pDefFont = pDoc->GetPageData()->GetFont(pResourceFontDict.Get());
   if (!pDefFont)
     return false;
 
@@ -955,7 +956,7 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     pDRFontDict->SetNewFor<CPDF_Reference>(font_name, pDoc,
                                            pFontDict->GetObjNum());
   }
-  CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
+  CPDF_Font* pDefFont = pDoc->GetPageData()->GetFont(pFontDict);
   if (!pDefFont)
     return;
 

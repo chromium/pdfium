@@ -12,6 +12,7 @@
 
 #include "constants/form_fields.h"
 #include "constants/form_flags.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cfdf_document.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -911,7 +912,7 @@ void CPDF_FormField::LoadDA() {
   if (!pFontDict)
     return;
 
-  m_pFont = m_pForm->GetDocument()->LoadFont(pFontDict);
+  m_pFont = m_pForm->GetDocument()->GetPageData()->GetFont(pFontDict);
 }
 
 bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {

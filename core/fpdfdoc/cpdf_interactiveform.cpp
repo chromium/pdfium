@@ -14,6 +14,7 @@
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cfdf_document.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -136,9 +137,10 @@ CPDF_Font* GetFont(CPDF_Dictionary* pFormDict,
   if (!pElement)
     return nullptr;
 
-  if (pElement->GetStringFor("Type") == "Font")
-    return pDocument->LoadFont(pElement);
-  return nullptr;
+  if (pElement->GetStringFor("Type") != "Font")
+    return nullptr;
+
+  return pDocument->GetPageData()->GetFont(pElement);
 }
 
 CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
@@ -167,7 +169,7 @@ CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
       continue;
     if (pElement->GetStringFor("Type") != "Font")
       continue;
-    CPDF_Font* pFind = pDocument->LoadFont(pElement);
+    CPDF_Font* pFind = pDocument->GetPageData()->GetFont(pElement);
     if (!pFind)
       continue;
 
@@ -245,7 +247,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
       continue;
     if (pElement->GetStringFor("Type") != "Font")
       continue;
-    pFont = pDocument->LoadFont(pElement);
+    pFont = pDocument->GetPageData()->GetFont(pElement);
     if (!pFont)
       continue;
 
@@ -618,11 +620,12 @@ CPDF_Font* CPDF_InteractiveForm::AddStandardFont(CPDF_Document* pDocument,
   if (!pDocument || csFontName.IsEmpty())
     return nullptr;
 
+  CPDF_DocPageData* pPageData = pDocument->GetPageData();
   if (csFontName == "ZapfDingbats")
-    return pDocument->AddStandardFont(csFontName.c_str(), nullptr);
+    return pPageData->AddStandardFont(csFontName.c_str(), nullptr);
 
   CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
-  return pDocument->AddStandardFont(csFontName.c_str(), &encoding);
+  return pPageData->AddStandardFont(csFontName.c_str(), &encoding);
 }
 
 ByteString CPDF_InteractiveForm::GetNativeFont(uint8_t charSet,
@@ -675,7 +678,7 @@ CPDF_Font* CPDF_InteractiveForm::AddNativeFont(uint8_t charSet,
   if (!csFontName.IsEmpty()) {
     if (csFontName == CFX_Font::kDefaultAnsiFontName)
       return AddStandardFont(pDocument, csFontName);
-    return pDocument->AddWindowsFont(&lf);
+    return pDocument->GetPageData()->AddWindowsFont(&lf);
   }
 #endif
   return nullptr;

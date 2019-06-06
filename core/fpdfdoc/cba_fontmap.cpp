@@ -13,6 +13,7 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -61,7 +62,7 @@ CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
   auto pFXFont = pdfium::MakeUnique<CFX_Font>();
   pFXFont->LoadSubst(sFontFaceName, true, 0, 0, 0,
                      FX_GetCodePageFromCharset(nCharset), false);
-  return pDoc->AddFont(pFXFont.get(), nCharset);
+  return pDoc->GetPageData()->AddFont(pFXFont.get(), nCharset);
 }
 
 }  // namespace
@@ -247,7 +248,7 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(const CPDF_Dictionary* pResDict,
     if (pElement->GetStringFor("Type") != "Font")
       continue;
 
-    CPDF_Font* pFont = m_pDocument->LoadFont(pElement);
+    CPDF_Font* pFont = m_pDocument->GetPageData()->GetFont(pElement);
     if (!pFont)
       continue;
     const CFX_SubstFont* pSubst = pFont->GetSubstFont();
@@ -307,7 +308,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
         pFontDict = pDRFontDict->GetDictFor(*sAlias);
     }
   }
-  return pFontDict ? m_pDocument->LoadFont(pFontDict) : nullptr;
+  return pFontDict ? m_pDocument->GetPageData()->GetFont(pFontDict) : nullptr;
 }
 
 void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
@@ -483,14 +484,13 @@ CPDF_Font* CBA_FontMap::AddStandardFont(CPDF_Document* pDoc,
     return nullptr;
 
   CPDF_Font* pFont = nullptr;
-
+  CPDF_DocPageData* pPageData = pDoc->GetPageData();
   if (sFontName == "ZapfDingbats") {
-    pFont = pDoc->AddStandardFont(sFontName.c_str(), nullptr);
+    pFont = pPageData->AddStandardFont(sFontName.c_str(), nullptr);
   } else {
     CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
-    pFont = pDoc->AddStandardFont(sFontName.c_str(), &fe);
+    pFont = pPageData->AddStandardFont(sFontName.c_str(), &fe);
   }
-
   return pFont;
 }
 

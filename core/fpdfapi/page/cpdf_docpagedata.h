@@ -16,6 +16,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+class CFX_Font;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Font;
@@ -35,10 +36,17 @@ class CPDF_DocPageData {
   void Clear(bool bRelease);
   bool IsForceClear() const { return m_bForceClear; }
 
+  CPDF_Font* AddFont(CFX_Font* pFont, int charset);
   CPDF_Font* GetFont(CPDF_Dictionary* pFontDict);
+  CPDF_Font* AddStandardFont(const char* font,
+                             const CPDF_FontEncoding* pEncoding);
   CPDF_Font* GetStandardFont(const ByteString& fontName,
                              const CPDF_FontEncoding* pEncoding);
   void ReleaseFont(const CPDF_Dictionary* pFontDict);
+
+#if defined(OS_WIN)
+  CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont);
+#endif
 
   // Loads a colorspace.
   RetainPtr<CPDF_ColorSpace> GetColorSpace(const CPDF_Object* pCSObj,
@@ -85,6 +93,13 @@ class CPDF_DocPageData {
       const CPDF_Dictionary* pResources,
       std::set<const CPDF_Object*>* pVisited,
       std::set<const CPDF_Object*>* pVisitedInternal);
+
+  size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
+  CPDF_Dictionary* ProcessbCJK(
+      CPDF_Dictionary* pBaseDict,
+      int charset,
+      ByteString basefont,
+      std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
 
   bool m_bForceClear;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
