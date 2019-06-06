@@ -19,7 +19,6 @@
 #include "core/fpdfapi/font/cpdf_truetypefont.h"
 #include "core/fpdfapi/font/cpdf_type1font.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -53,7 +52,7 @@ CPDF_Font::CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
 
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {
-    auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+    auto* pPageData = m_pDocument->GetPageData();
     if (pPageData) {
       pPageData->MaybePurgeFontFileStreamAcc(
           m_pFontFile->GetStream()->AsStream());
@@ -209,7 +208,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   if (!pFontFile)
     return;
 
-  auto* pData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+  auto* pData = m_pDocument->GetPageData();
   m_pFontFile = pData->GetFontFileStreamAcc(pFontFile);
   if (!m_pFontFile)
     return;
