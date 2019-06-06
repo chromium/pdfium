@@ -101,7 +101,6 @@ jumbo_source_set("fxfa") {
     "../../core/fpdfdoc",
     "../../core/fxcodec",
     "../../core/fxcrt",
-    "../../core/fxcrt:seekablemultistream",
     "../../core/fxcrt/css",
     "../../core/fxge",
     "../../fxbarcode",

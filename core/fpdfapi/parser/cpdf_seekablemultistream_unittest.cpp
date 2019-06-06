@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/cfx_seekablemultistream.h"
+#include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 
 #include <memory>
 #include <vector>
@@ -12,9 +12,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
-TEST(CFX_SeekableMultiStreamTest, NoStreams) {
+TEST(CPDFSeekableMultiStreamTest, NoStreams) {
   std::vector<const CPDF_Stream*> streams;
-  auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
+  auto fileread = pdfium::MakeRetain<CPDF_SeekableMultiStream>(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -26,7 +26,7 @@ TEST(CXFAFileReadTest, EmptyStreams) {
   std::vector<const CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeRetain<CPDF_Stream>();
   streams.push_back(stream1.Get());
-  auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
+  auto fileread = pdfium::MakeRetain<CPDF_SeekableMultiStream>(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -51,7 +51,7 @@ TEST(CXFAFileReadTest, NormalStreams) {
   streams.push_back(stream1.Get());
   streams.push_back(stream2.Get());
   streams.push_back(stream3.Get());
-  auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
+  auto fileread = pdfium::MakeRetain<CPDF_SeekableMultiStream>(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));

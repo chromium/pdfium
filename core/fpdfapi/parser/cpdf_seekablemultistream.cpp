@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/cfx_seekablemultistream.h"
+#include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 
 #include <algorithm>
 
@@ -12,7 +12,7 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 
-CFX_SeekableMultiStream::CFX_SeekableMultiStream(
+CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(
     const std::vector<const CPDF_Stream*>& streams) {
   for (const CPDF_Stream* pStream : streams) {
     m_Data.push_back(pdfium::MakeRetain<CPDF_StreamAcc>(pStream));
@@ -20,18 +20,18 @@ CFX_SeekableMultiStream::CFX_SeekableMultiStream(
   }
 }
 
-CFX_SeekableMultiStream::~CFX_SeekableMultiStream() {}
+CPDF_SeekableMultiStream::~CPDF_SeekableMultiStream() {}
 
-FX_FILESIZE CFX_SeekableMultiStream::GetSize() {
+FX_FILESIZE CPDF_SeekableMultiStream::GetSize() {
   uint32_t dwSize = 0;
   for (const auto& acc : m_Data)
     dwSize += acc->GetSize();
   return dwSize;
 }
 
-bool CFX_SeekableMultiStream::ReadBlockAtOffset(void* buffer,
-                                                FX_FILESIZE offset,
-                                                size_t size) {
+bool CPDF_SeekableMultiStream::ReadBlockAtOffset(void* buffer,
+                                                 FX_FILESIZE offset,
+                                                 size_t size) {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Data);
   int32_t index = 0;
   while (index < iCount) {
@@ -59,27 +59,27 @@ bool CFX_SeekableMultiStream::ReadBlockAtOffset(void* buffer,
   return false;
 }
 
-size_t CFX_SeekableMultiStream::ReadBlock(void* buffer, size_t size) {
+size_t CPDF_SeekableMultiStream::ReadBlock(void* buffer, size_t size) {
   NOTREACHED();
   return 0;
 }
 
-FX_FILESIZE CFX_SeekableMultiStream::GetPosition() {
+FX_FILESIZE CPDF_SeekableMultiStream::GetPosition() {
   return 0;
 }
 
-bool CFX_SeekableMultiStream::IsEOF() {
+bool CPDF_SeekableMultiStream::IsEOF() {
   return false;
 }
 
-bool CFX_SeekableMultiStream::Flush() {
+bool CPDF_SeekableMultiStream::Flush() {
   NOTREACHED();
   return false;
 }
 
-bool CFX_SeekableMultiStream::WriteBlockAtOffset(const void* pData,
-                                                 FX_FILESIZE offset,
-                                                 size_t size) {
+bool CPDF_SeekableMultiStream::WriteBlockAtOffset(const void* pData,
+                                                  FX_FILESIZE offset,
+                                                  size_t size) {
   NOTREACHED();
   return false;
 }

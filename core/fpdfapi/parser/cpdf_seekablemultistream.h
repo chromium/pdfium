@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_CFX_SEEKABLEMULTISTREAM_H_
-#define CORE_FXCRT_CFX_SEEKABLEMULTISTREAM_H_
+#ifndef CORE_FPDFAPI_PARSER_CPDF_SEEKABLEMULTISTREAM_H_
+#define CORE_FPDFAPI_PARSER_CPDF_SEEKABLEMULTISTREAM_H_
 
 #include <vector>
 
@@ -15,11 +15,11 @@
 class CPDF_Stream;
 class CPDF_StreamAcc;
 
-class CFX_SeekableMultiStream final : public IFX_SeekableStream {
+class CPDF_SeekableMultiStream final : public IFX_SeekableStream {
  public:
-  explicit CFX_SeekableMultiStream(
+  explicit CPDF_SeekableMultiStream(
       const std::vector<const CPDF_Stream*>& streams);
-  ~CFX_SeekableMultiStream() override;
+  ~CPDF_SeekableMultiStream() override;
 
   // IFX_SeekableReadStream
   FX_FILESIZE GetPosition() override;
@@ -38,4 +38,4 @@ class CFX_SeekableMultiStream final : public IFX_SeekableStream {
   std::vector<RetainPtr<CPDF_StreamAcc>> m_Data;
 };
 
-#endif  // CORE_FXCRT_CFX_SEEKABLEMULTISTREAM_H_
+#endif  // CORE_FPDFAPI_PARSER_CPDF_SEEKABLEMULTISTREAM_H_

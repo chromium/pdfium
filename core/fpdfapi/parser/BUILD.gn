@@ -86,6 +86,12 @@ jumbo_source_set("parser") {
   allow_circular_includes_from = []
   visibility = [ "../../../*" ]
 
+  if (pdf_enable_xfa) {
+    sources += [
+      "cpdf_seekablemultistream.cpp",
+      "cpdf_seekablemultistream.h",
+    ]
+  }
   if (pdf_use_skia || pdf_use_skia_paths) {
     allow_circular_includes_from += [ "../../fxge" ]
   }
@@ -117,6 +123,9 @@ pdfium_unittest_source_set("unittests") {
   ]
   pdfium_root_dir = "../../../"
 
+  if (pdf_enable_xfa) {
+    sources += [ "cpdf_seekablemultistream_unittest.cpp" ]
+  }
   if (is_clang) {
     # Suppress no override warning for overridden functions.
     cflags = [ "-Wno-inconsistent-missing-override" ]
