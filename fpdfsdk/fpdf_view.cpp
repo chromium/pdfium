@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -20,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_occontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
@@ -145,7 +147,10 @@ FPDF_DOCUMENT LoadDocumentImpl(
     return nullptr;
   }
 
-  auto pDocument = pdfium::MakeUnique<CPDF_Document>();
+  auto pDocument = pdfium::MakeUnique<CPDF_Document>(
+      pdfium::MakeUnique<CPDF_DocRenderData>(),
+      pdfium::MakeUnique<CPDF_DocPageData>());
+
   CPDF_Parser::Error error = pDocument->LoadDoc(pFileAccess, password);
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);

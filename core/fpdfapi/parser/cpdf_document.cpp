@@ -6,13 +6,11 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 
-#include <memory>
 #include <set>
 #include <utility>
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -25,7 +23,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
@@ -65,9 +62,10 @@ int CountPages(CPDF_Dictionary* pPages,
 
 }  // namespace
 
-CPDF_Document::CPDF_Document()
-    : m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>()),
-      m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>()),
+CPDF_Document::CPDF_Document(std::unique_ptr<RenderDataIface> pRenderData,
+                             std::unique_ptr<PageDataIface> pPageData)
+    : m_pDocRender(std::move(pRenderData)),
+      m_pDocPage(std::move(pPageData)),
       m_StockFontClearer(this) {
   m_pDocRender->SetDocument(this);
   m_pDocPage->SetDocument(this);

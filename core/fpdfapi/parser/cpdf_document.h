@@ -79,7 +79,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
 
   static const int kPageMaxNum = 0xFFFFF;
 
-  CPDF_Document();
+  CPDF_Document(std::unique_ptr<RenderDataIface> pRenderData,
+                std::unique_ptr<PageDataIface> pPageData);
   ~CPDF_Document() override;
 
   Extension* GetExtension() const { return m_pExtension.get(); }

@@ -7,10 +7,12 @@
 #include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class CPDF_CIDFontTest : public testing::Test {
@@ -20,7 +22,8 @@ class CPDF_CIDFontTest : public testing::Test {
 };
 
 TEST_F(CPDF_CIDFontTest, BUG_920636) {
-  CPDF_Document doc;
+  CPDF_Document doc(pdfium::MakeUnique<CPDF_DocRenderData>(),
+                    pdfium::MakeUnique<CPDF_DocPageData>());
   auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   font_dict->SetNewFor<CPDF_Name>("Encoding", "Identity−H");
 

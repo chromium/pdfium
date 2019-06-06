@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -17,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
@@ -48,7 +50,9 @@ RetainPtr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
 
 class CPDF_TestDocumentForPages final : public CPDF_Document {
  public:
-  CPDF_TestDocumentForPages() : CPDF_Document() {
+  CPDF_TestDocumentForPages()
+      : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
+                      pdfium::MakeUnique<CPDF_DocPageData>()) {
     // Set up test
     auto zeroToTwo = pdfium::MakeRetain<CPDF_Array>();
     zeroToTwo->AddNew<CPDF_Reference>(
@@ -100,7 +104,9 @@ class CPDF_TestDocumentForPages final : public CPDF_Document {
 
 class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_Document {
  public:
-  CPDF_TestDocumentWithPageWithoutPageNum() : CPDF_Document() {
+  CPDF_TestDocumentWithPageWithoutPageNum()
+      : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
+                      pdfium::MakeUnique<CPDF_DocPageData>()) {
     // Set up test
     auto allPages = pdfium::MakeRetain<CPDF_Array>();
     allPages->AddNew<CPDF_Reference>(
@@ -131,7 +137,9 @@ class TestLinearized final : public CPDF_LinearizedHeader {
 
 class CPDF_TestDocPagesWithoutKids final : public CPDF_Document {
  public:
-  CPDF_TestDocPagesWithoutKids() : CPDF_Document() {
+  CPDF_TestDocPagesWithoutKids()
+      : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
+                      pdfium::MakeUnique<CPDF_DocPageData>()) {
     CPDF_Dictionary* pagesDict = NewIndirect<CPDF_Dictionary>();
     pagesDict->SetNewFor<CPDF_Name>("Type", "Pages");
     pagesDict->SetNewFor<CPDF_Number>("Count", 3);
@@ -144,6 +152,10 @@ class CPDF_TestDocPagesWithoutKids final : public CPDF_Document {
 
 class CPDF_TestDocumentAllowSetParser final : public CPDF_Document {
  public:
+  CPDF_TestDocumentAllowSetParser()
+      : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
+                      pdfium::MakeUnique<CPDF_DocPageData>()) {}
+
   using CPDF_Document::SetParser;
 };
 

@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -17,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfdoc/cpdf_dest.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -26,7 +28,9 @@
 
 class CPDF_TestDocument final : public CPDF_Document {
  public:
-  CPDF_TestDocument() : CPDF_Document() {}
+  CPDF_TestDocument()
+      : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
+                      pdfium::MakeUnique<CPDF_DocPageData>()) {}
 
   void SetRoot(CPDF_Dictionary* root) { m_pRootDict.Reset(root); }
   CPDF_IndirectObjectHolder* GetHolder() { return this; }

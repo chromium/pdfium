@@ -14,6 +14,7 @@
 #include "constants/page_object.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
@@ -26,6 +27,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fxcrt/fx_extension.h"
@@ -151,7 +153,9 @@ const CPDF_PageObjectHolder* CPDFPageObjHolderFromFPDFFormObject(
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
-  auto pDoc = pdfium::MakeUnique<CPDF_Document>();
+  auto pDoc = pdfium::MakeUnique<CPDF_Document>(
+      pdfium::MakeUnique<CPDF_DocRenderData>(),
+      pdfium::MakeUnique<CPDF_DocPageData>());
   pDoc->CreateNewDoc();
 
   time_t currentTime;

@@ -9,8 +9,10 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -161,7 +163,9 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
     return nullptr;
   CPDF_Parser::Error error;
   std::unique_ptr<CPDF_Document> document;
-  std::tie(error, document) = pDataAvail->m_pDataAvail->ParseDocument(password);
+  std::tie(error, document) = pDataAvail->m_pDataAvail->ParseDocument(
+      pdfium::MakeUnique<CPDF_DocRenderData>(),
+      pdfium::MakeUnique<CPDF_DocPageData>(), password);
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;

@@ -59,10 +59,7 @@ jumbo_source_set("render") {
     "../page",
     "../parser",
   ]
-  allow_circular_includes_from = [
-    "../parser",
-    "../page",
-  ]
+  allow_circular_includes_from = [ "../page" ]
   visibility = [ "../../../*" ]
 }
 

@@ -1001,12 +1001,16 @@ bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
 }
 
 std::pair<CPDF_Parser::Error, std::unique_ptr<CPDF_Document>>
-CPDF_DataAvail::ParseDocument(const char* password) {
+CPDF_DataAvail::ParseDocument(
+    std::unique_ptr<CPDF_Document::RenderDataIface> pRenderData,
+    std::unique_ptr<CPDF_Document::PageDataIface> pPageData,
+    const char* password) {
   if (m_pDocument) {
     // We already returned parsed document.
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
-  auto document = pdfium::MakeUnique<CPDF_Document>();
+  auto document = pdfium::MakeUnique<CPDF_Document>(std::move(pRenderData),
+                                                    std::move(pPageData));
   document->AddObserver(this);
 
   CPDF_ReadValidator::Session read_session(GetValidator());

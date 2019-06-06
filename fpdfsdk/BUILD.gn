@@ -128,7 +128,9 @@ pdfium_unittest_source_set("unittests") {
     ":fpdfsdk",
     "../:pdfium_public_headers",
     "../core/fpdfapi",
+    "../core/fpdfapi/page",
     "../core/fpdfapi/parser",
+    "../core/fpdfapi/render",
     "../core/fpdfdoc",
   ]
   pdfium_root_dir = "../"
