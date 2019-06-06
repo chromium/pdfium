@@ -25,10 +25,13 @@
 extern "C" {
 #undef FAR
 #if defined(USE_SYSTEM_LIBJPEG)
+#include <jerror.h>
 #include <jpeglib.h>
 #elif defined(USE_LIBJPEG_TURBO)
+#include "third_party/libjpeg_turbo/jerror.h"
 #include "third_party/libjpeg_turbo/jpeglib.h"
 #else
+#include "third_party/libjpeg/jerror.h"
 #include "third_party/libjpeg/jpeglib.h"
 #endif
 }  // extern "C"
@@ -175,7 +178,7 @@ class CCodec_JpegDecoder final : public CCodec_ScanlineDecoder {
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
-  bool InitDecode();
+  bool InitDecode(bool bAcceptKnownBadHeader);
 
   jmp_buf m_JmpBuf;
   jpeg_decompress_struct m_Cinfo;
@@ -189,6 +192,20 @@ class CCodec_JpegDecoder final : public CCodec_ScanlineDecoder {
 
  private:
   void CalcPitch();
+  void InitDecompressSrc();
+
+  // Can only be called inside a jpeg_read_header() setjmp handler.
+  bool HasKnownBadHeaderWithInvalidHeight() const;
+
+  // Patch up the in-memory JPEG header for known bad JPEGs.
+  void PatchUpKnownBadHeaderWithInvalidHeight();
+
+  // Patch up the JPEG trailer, even if it is correct.
+  void PatchUpTrailer();
+
+  uint8_t* GetWritableSrcData();
+
+  static const int kKnownBadHeaderWithInvalidHeightByteOffsetStart = 163;
 
   uint32_t m_nDefaultScaleDenom = 1;
 };
@@ -204,21 +221,29 @@ CCodec_JpegDecoder::~CCodec_JpegDecoder() {
     jpeg_destroy_decompress(&m_Cinfo);
 }
 
-bool CCodec_JpegDecoder::InitDecode() {
+bool CCodec_JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   m_Cinfo.err = &m_Jerr;
   m_Cinfo.client_data = &m_JmpBuf;
   if (setjmp(m_JmpBuf) == -1)
     return false;
 
   jpeg_create_decompress(&m_Cinfo);
+  InitDecompressSrc();
   m_bInited = true;
-  m_Cinfo.src = &m_Src;
-  m_Src.bytes_in_buffer = m_SrcSpan.size();
-  m_Src.next_input_byte = m_SrcSpan.data();
+
   if (setjmp(m_JmpBuf) == -1) {
+    bool bHasKnownBadHeader =
+        bAcceptKnownBadHeader && HasKnownBadHeaderWithInvalidHeight();
     jpeg_destroy_decompress(&m_Cinfo);
-    m_bInited = false;
-    return false;
+    if (!bHasKnownBadHeader) {
+      m_bInited = false;
+      return false;
+    }
+
+    PatchUpKnownBadHeaderWithInvalidHeight();
+
+    jpeg_create_decompress(&m_Cinfo);
+    InitDecompressSrc();
   }
   m_Cinfo.image_width = m_OrigWidth;
   m_Cinfo.image_height = m_OrigHeight;
@@ -246,6 +271,11 @@ bool CCodec_JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
                                 int nComps,
                                 bool ColorTransform) {
   m_SrcSpan = JpegScanSOI(src_span);
+  if (m_SrcSpan.size() < 2)
+    return false;
+
+  PatchUpTrailer();
+
   m_Jerr.error_exit = error_fatal;
   m_Jerr.emit_message = error_do_nothing1;
   m_Jerr.output_message = error_do_nothing;
@@ -257,13 +287,9 @@ bool CCodec_JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
   m_Src.fill_input_buffer = src_fill_buffer;
   m_Src.resync_to_restart = src_resync;
   m_bJpegTransform = ColorTransform;
-  if (m_SrcSpan.size() >= 2) {
-    const_cast<uint8_t*>(m_SrcSpan.data())[m_SrcSpan.size() - 2] = 0xFF;
-    const_cast<uint8_t*>(m_SrcSpan.data())[m_SrcSpan.size() - 1] = 0xD9;
-  }
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
-  if (!InitDecode())
+  if (!InitDecode(/*bAcceptKnownBadHeader=*/true))
     return false;
 
   if (m_Cinfo.num_components < nComps)
@@ -283,7 +309,7 @@ bool CCodec_JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
 bool CCodec_JpegDecoder::v_Rewind() {
   if (m_bStarted) {
     jpeg_destroy_decompress(&m_Cinfo);
-    if (!InitDecode()) {
+    if (!InitDecode(/*bAcceptKnownBadHeader=*/false)) {
       return false;
     }
   }
@@ -323,6 +349,56 @@ void CCodec_JpegDecoder::CalcPitch() {
   m_Pitch += 3;
   m_Pitch /= 4;
   m_Pitch *= 4;
+}
+
+void CCodec_JpegDecoder::InitDecompressSrc() {
+  m_Cinfo.src = &m_Src;
+  m_Src.bytes_in_buffer = m_SrcSpan.size();
+  m_Src.next_input_byte = m_SrcSpan.data();
+}
+
+bool CCodec_JpegDecoder::HasKnownBadHeaderWithInvalidHeight() const {
+  // Perform lots of possibly redundant checks to make sure this has no false
+  // positives.
+  bool bDimensionChecks = m_Cinfo.err->msg_code == JERR_IMAGE_TOO_BIG &&
+                          m_Cinfo.image_width < JPEG_MAX_DIMENSION &&
+                          m_Cinfo.image_height == 0xffff && m_OrigWidth > 0 &&
+                          m_OrigWidth <= JPEG_MAX_DIMENSION &&
+                          m_OrigHeight > 0 &&
+                          m_OrigHeight <= JPEG_MAX_DIMENSION;
+  if (!bDimensionChecks)
+    return false;
+
+  if (m_SrcSpan.size() <= kKnownBadHeaderWithInvalidHeightByteOffsetStart + 3)
+    return false;
+
+  const uint8_t* pHeaderDimensions =
+      &m_SrcSpan[kKnownBadHeaderWithInvalidHeightByteOffsetStart];
+  uint8_t nExpectedWidthByte1 = (m_OrigWidth >> 8) & 0xff;
+  uint8_t nExpectedWidthByte2 = m_OrigWidth & 0xff;
+  // Height high byte, height low byte, width high byte, width low byte.
+  return pHeaderDimensions[0] == 0xff && pHeaderDimensions[1] == 0xff &&
+         pHeaderDimensions[2] == nExpectedWidthByte1 &&
+         pHeaderDimensions[3] == nExpectedWidthByte2;
+}
+
+void CCodec_JpegDecoder::PatchUpKnownBadHeaderWithInvalidHeight() {
+  ASSERT(m_SrcSpan.size() >
+         kKnownBadHeaderWithInvalidHeightByteOffsetStart + 1);
+  uint8_t* pData =
+      GetWritableSrcData() + kKnownBadHeaderWithInvalidHeightByteOffsetStart;
+  pData[0] = (m_OrigHeight >> 8) & 0xff;
+  pData[1] = m_OrigHeight & 0xff;
+}
+
+void CCodec_JpegDecoder::PatchUpTrailer() {
+  uint8_t* pData = GetWritableSrcData();
+  pData[m_SrcSpan.size() - 2] = 0xff;
+  pData[m_SrcSpan.size() - 1] = 0xd9;
+}
+
+uint8_t* CCodec_JpegDecoder::GetWritableSrcData() {
+  return const_cast<uint8_t*>(m_SrcSpan.data());
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> CCodec_JpegModule::CreateDecoder(
