@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
+#include "core/fpdfapi/page/cpdf_transparency.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fpdfapi/render/cpdf_transparency.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 

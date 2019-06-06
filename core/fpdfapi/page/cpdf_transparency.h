@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_TRANSPARENCY_H_
-#define CORE_FPDFAPI_RENDER_CPDF_TRANSPARENCY_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_TRANSPARENCY_H_
+#define CORE_FPDFAPI_PAGE_CPDF_TRANSPARENCY_H_
 
 class CPDF_Transparency {
  public:
@@ -22,4 +22,4 @@ class CPDF_Transparency {
   bool m_bIsolated = false;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_TRANSPARENCY_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSPARENCY_H_

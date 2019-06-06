@@ -89,6 +89,8 @@ jumbo_source_set("page") {
     "cpdf_textstate.h",
     "cpdf_tilingpattern.cpp",
     "cpdf_tilingpattern.h",
+    "cpdf_transparency.cpp",
+    "cpdf_transparency.h",
     "ipdf_page.h",
   ]
   configs += [ "../../../:pdfium_core_config" ]

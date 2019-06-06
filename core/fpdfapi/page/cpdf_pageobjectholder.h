@@ -13,7 +13,7 @@
 #include <set>
 #include <vector>
 
-#include "core/fpdfapi/render/cpdf_transparency.h"
+#include "core/fpdfapi/page/cpdf_transparency.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"

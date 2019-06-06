@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fpdfapi/render/cpdf_transparency.h"
+#include "core/fpdfapi/page/cpdf_transparency.h"
 
 CPDF_Transparency::CPDF_Transparency() = default;
 

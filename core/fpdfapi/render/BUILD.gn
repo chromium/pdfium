@@ -42,8 +42,6 @@ jumbo_source_set("render") {
     "cpdf_textrenderer.h",
     "cpdf_transferfunc.cpp",
     "cpdf_transferfunc.h",
-    "cpdf_transparency.cpp",
-    "cpdf_transparency.h",
     "cpdf_type3cache.cpp",
     "cpdf_type3cache.h",
     "cpdf_type3glyphs.cpp",
