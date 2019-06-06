@@ -58,6 +58,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
     PageDataIface();
     virtual ~PageDataIface();
 
+    virtual void ClearStockFont() = 0;
+
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
     CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
 
@@ -136,11 +138,11 @@ class CPDF_Document : public Observable<CPDF_Document>,
  protected:
   class StockFontClearer {
    public:
-    explicit StockFontClearer(CPDF_Document* pDoc);
+    explicit StockFontClearer(CPDF_Document::PageDataIface* pPageData);
     ~StockFontClearer();
 
    private:
-    UnownedPtr<CPDF_Document> const m_pDoc;
+    UnownedPtr<CPDF_Document::PageDataIface> const m_pPageData;
   };
 
   // Retrieve page count information by getting count value from the tree nodes

@@ -35,6 +35,9 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
   CPDF_DocPageData();
   ~CPDF_DocPageData() override;
 
+  // CPDF_Document::PageDataIface:
+  void ClearStockFont() override;
+
   void Clear(bool bRelease);
   bool IsForceClear() const { return m_bForceClear; }
 

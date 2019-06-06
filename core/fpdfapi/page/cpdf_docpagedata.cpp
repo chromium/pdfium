@@ -176,6 +176,10 @@ CPDF_DocPageData::~CPDF_DocPageData() {
   m_FontMap.clear();
 }
 
+void CPDF_DocPageData::ClearStockFont() {
+  CPDF_PageModule::GetInstance()->ClearStockFont(GetDocument());
+}
+
 void CPDF_DocPageData::Clear(bool bForceRelease) {
   m_bForceClear = bForceRelease;
 
