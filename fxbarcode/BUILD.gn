@@ -143,6 +143,7 @@ jumbo_source_set("fxbarcode") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "cbc_pdf417i_unittest.cpp",
     "datamatrix/BC_DataMatrixWriter_unittest.cpp",
     "oned/BC_OnedCodaBarWriter_unittest.cpp",
     "oned/BC_OnedCode128Writer_unittest.cpp",
