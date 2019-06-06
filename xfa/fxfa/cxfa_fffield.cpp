@@ -17,6 +17,7 @@
 #include "xfa/fwl/cfwl_messagesetfocus.h"
 #include "xfa/fwl/cfwl_picturebox.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
@@ -547,7 +548,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
 bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
-  if (dwChar == FWL_VKEY_Tab)
+  if (dwChar == XFA_FWL_VKEY_Tab)
     return true;
   if (!m_pNormalWidget)
     return false;

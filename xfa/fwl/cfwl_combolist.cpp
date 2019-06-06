@@ -15,6 +15,7 @@
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 
 CFWL_ComboList::CFWL_ComboList(
     const CFWL_App* app,
@@ -187,13 +188,13 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
   if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
     uint32_t dwKeyCode = pKey->m_dwKeyCode;
     switch (dwKeyCode) {
-      case FWL_VKEY_Return:
-      case FWL_VKEY_Escape: {
+      case XFA_FWL_VKEY_Return:
+      case XFA_FWL_VKEY_Escape: {
         pOuter->ShowDropList(false);
         return true;
       }
-      case FWL_VKEY_Up:
-      case FWL_VKEY_Down: {
+      case XFA_FWL_VKEY_Up:
+      case XFA_FWL_VKEY_Down: {
         OnDropListKeyDown(pKey);
         pOuter->ProcessSelChanged(false);
         return true;
@@ -217,10 +218,10 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
 void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
   uint32_t dwKeyCode = pKey->m_dwKeyCode;
   switch (dwKeyCode) {
-    case FWL_VKEY_Up:
-    case FWL_VKEY_Down:
-    case FWL_VKEY_Home:
-    case FWL_VKEY_End: {
+    case XFA_FWL_VKEY_Up:
+    case XFA_FWL_VKEY_Down:
+    case XFA_FWL_VKEY_Home:
+    case XFA_FWL_VKEY_End: {
       CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(m_pOuter);
       CFWL_ListItem* hItem = GetItem(this, pOuter->GetCurrentSelection());
       hItem = GetListItem(hItem, dwKeyCode);

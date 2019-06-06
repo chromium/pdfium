@@ -18,6 +18,7 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themetext.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_PushButton::CFWL_PushButton(const CFWL_App* app)
@@ -215,7 +216,7 @@ void CFWL_PushButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
-  if (pMsg->m_dwKeyCode != FWL_VKEY_Return)
+  if (pMsg->m_dwKeyCode != XFA_FWL_VKEY_Return)
     return;
 
   CFWL_EventMouse wmMouse(this);

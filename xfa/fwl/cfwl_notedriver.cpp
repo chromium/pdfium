@@ -22,6 +22,7 @@
 #include "xfa/fwl/cfwl_messagesetfocus.h"
 #include "xfa/fwl/cfwl_noteloop.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 
 CFWL_NoteDriver::CFWL_NoteDriver()
     : m_pNoteLoop(pdfium::MakeUnique<CFWL_NoteLoop>()) {
@@ -196,7 +197,7 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
 #if !defined(OS_MACOSX)
   if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
-      pMsg->m_dwKeyCode == FWL_VKEY_Tab) {
+      pMsg->m_dwKeyCode == XFA_FWL_VKEY_Tab) {
     CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
     CFWL_Widget* pForm = GetMessageForm(pMsg->GetDstTarget());
     CFWL_Widget* pFocus = m_pFocus.Get();
@@ -219,7 +220,7 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
 
   if (!m_pFocus) {
     if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
-        pMsg->m_dwKeyCode == FWL_VKEY_Return) {
+        pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return) {
       CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
       CFWL_Widget* defButton = pWidgetMgr->GetDefaultButton(pMessageForm);
       if (defButton) {

@@ -20,6 +20,7 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_themetext.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 namespace {
@@ -169,17 +170,17 @@ CFWL_ListItem* CFWL_ListBox::GetListItem(CFWL_ListItem* pItem,
                                          uint32_t dwKeyCode) {
   CFWL_ListItem* hRet = nullptr;
   switch (dwKeyCode) {
-    case FWL_VKEY_Up:
-    case FWL_VKEY_Down:
-    case FWL_VKEY_Home:
-    case FWL_VKEY_End: {
-      const bool bUp = dwKeyCode == FWL_VKEY_Up;
-      const bool bDown = dwKeyCode == FWL_VKEY_Down;
-      const bool bHome = dwKeyCode == FWL_VKEY_Home;
+    case XFA_FWL_VKEY_Up:
+    case XFA_FWL_VKEY_Down:
+    case XFA_FWL_VKEY_Home:
+    case XFA_FWL_VKEY_End: {
+      const bool bUp = dwKeyCode == XFA_FWL_VKEY_Up;
+      const bool bDown = dwKeyCode == XFA_FWL_VKEY_Down;
+      const bool bHome = dwKeyCode == XFA_FWL_VKEY_Home;
       int32_t iDstItem = -1;
       if (bUp || bDown) {
         int32_t index = GetItemIndex(this, pItem);
-        iDstItem = dwKeyCode == FWL_VKEY_Up ? index - 1 : index + 1;
+        iDstItem = dwKeyCode == XFA_FWL_VKEY_Up ? index - 1 : index + 1;
       } else if (bHome) {
         iDstItem = 0;
       } else {
@@ -779,11 +780,11 @@ void CFWL_ListBox::OnMouseWheel(CFWL_MessageMouseWheel* pMsg) {
 void CFWL_ListBox::OnKeyDown(CFWL_MessageKey* pMsg) {
   uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   switch (dwKeyCode) {
-    case FWL_VKEY_Tab:
-    case FWL_VKEY_Up:
-    case FWL_VKEY_Down:
-    case FWL_VKEY_Home:
-    case FWL_VKEY_End: {
+    case XFA_FWL_VKEY_Tab:
+    case XFA_FWL_VKEY_Up:
+    case XFA_FWL_VKEY_Down:
+    case XFA_FWL_VKEY_Home:
+    case XFA_FWL_VKEY_End: {
       CFWL_ListItem* pItem = GetFocusedItem();
       pItem = GetListItem(pItem, dwKeyCode);
       bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);

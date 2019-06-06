@@ -27,6 +27,7 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
+#include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
@@ -1175,28 +1176,28 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
   }
 
   switch (pMsg->m_dwKeyCode) {
-    case FWL_VKEY_Left:
+    case XFA_FWL_VKEY_Left:
       SetCursorPosition(m_EdtEngine.GetIndexLeft(m_CursorPosition));
       break;
-    case FWL_VKEY_Right:
+    case XFA_FWL_VKEY_Right:
       SetCursorPosition(m_EdtEngine.GetIndexRight(m_CursorPosition));
       break;
-    case FWL_VKEY_Up:
+    case XFA_FWL_VKEY_Up:
       SetCursorPosition(m_EdtEngine.GetIndexUp(m_CursorPosition));
       break;
-    case FWL_VKEY_Down:
+    case XFA_FWL_VKEY_Down:
       SetCursorPosition(m_EdtEngine.GetIndexDown(m_CursorPosition));
       break;
-    case FWL_VKEY_Home:
+    case XFA_FWL_VKEY_Home:
       SetCursorPosition(
           bCtrl ? 0 : m_EdtEngine.GetIndexAtStartOfLine(m_CursorPosition));
       break;
-    case FWL_VKEY_End:
+    case XFA_FWL_VKEY_End:
       SetCursorPosition(
           bCtrl ? m_EdtEngine.GetLength()
                 : m_EdtEngine.GetIndexAtEndOfLine(m_CursorPosition));
       break;
-    case FWL_VKEY_Delete: {
+    case XFA_FWL_VKEY_Delete: {
       if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
           (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
         break;
@@ -1206,9 +1207,9 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
       UpdateCaret();
       break;
     }
-    case FWL_VKEY_Insert:
-    case FWL_VKEY_F2:
-    case FWL_VKEY_Tab:
+    case XFA_FWL_VKEY_Insert:
+    case XFA_FWL_VKEY_F2:
+    case XFA_FWL_VKEY_Tab:
     default:
       break;
   }
