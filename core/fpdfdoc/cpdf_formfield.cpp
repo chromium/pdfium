@@ -912,7 +912,8 @@ void CPDF_FormField::LoadDA() {
   if (!pFontDict)
     return;
 
-  m_pFont = m_pForm->GetDocument()->GetPageData()->GetFont(pFontDict);
+  auto* pData = CPDF_DocPageData::FromDocument(m_pForm->GetDocument());
+  m_pFont = pData->GetFont(pFontDict);
 }
 
 bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {

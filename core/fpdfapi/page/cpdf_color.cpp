@@ -35,7 +35,7 @@ void CPDF_Color::ReleaseBuffer() {
     CPDF_Pattern* pPattern =
         pvalue->m_pCountedPattern ? pvalue->m_pCountedPattern->get() : nullptr;
     if (pPattern) {
-      CPDF_DocPageData* pPageData = pPattern->document()->GetPageData();
+      auto* pPageData = CPDF_DocPageData::FromDocument(pPattern->document());
       if (pPageData)
         pPageData->ReleasePattern(pPattern->pattern_obj());
     }
@@ -85,7 +85,8 @@ void CPDF_Color::SetValueForPattern(CPDF_Pattern* pPattern,
   CPDF_DocPageData* pDocPageData = nullptr;
   PatternValue* pvalue = reinterpret_cast<PatternValue*>(m_pBuffer);
   if (pvalue->m_pPattern) {
-    pDocPageData = pvalue->m_pPattern->document()->GetPageData();
+    pDocPageData =
+        CPDF_DocPageData::FromDocument(pvalue->m_pPattern->document());
     pDocPageData->ReleasePattern(pvalue->m_pPattern->pattern_obj());
   }
   pvalue->m_nComps = values.size();
@@ -96,7 +97,7 @@ void CPDF_Color::SetValueForPattern(CPDF_Pattern* pPattern,
   pvalue->m_pCountedPattern = nullptr;
   if (pPattern) {
     if (!pDocPageData)
-      pDocPageData = pPattern->document()->GetPageData();
+      pDocPageData = CPDF_DocPageData::FromDocument(pPattern->document());
 
     pvalue->m_pCountedPattern =
         pDocPageData->FindPatternPtr(pPattern->pattern_obj());
@@ -115,7 +116,7 @@ CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
   CPDF_Document* pDoc = m_pCS->GetDocument();
   const CPDF_Array* pArray = m_pCS->GetArray();
   if (pDoc && pArray) {
-    m_pCS = pDoc->GetPageData()->GetCopiedColorSpace(pArray);
+    m_pCS = CPDF_DocPageData::FromDocument(pDoc)->GetCopiedColorSpace(pArray);
     if (!m_pCS)
       return *this;
   }
@@ -129,8 +130,9 @@ CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
   if (!pPattern)
     return *this;
 
-  pValue->m_pPattern = pPattern->document()->GetPageData()->GetPattern(
-      pPattern->pattern_obj(), false, pPattern->parent_matrix());
+  pValue->m_pPattern = CPDF_DocPageData::FromDocument(pPattern->document())
+                           ->GetPattern(pPattern->pattern_obj(), false,
+                                        pPattern->parent_matrix());
 
   return *this;
 }

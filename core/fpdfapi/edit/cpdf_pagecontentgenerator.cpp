@@ -345,8 +345,8 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
 
   ByteString name = RealizeResource(pStream, "XObject");
   if (bWasInline) {
-    pImageObj->SetImage(
-        m_pDocument->GetPageData()->GetImage(pStream->GetObjNum()));
+    auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+    pImageObj->SetImage(pPageData->GetImage(pStream->GetObjNum()));
   }
 
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";

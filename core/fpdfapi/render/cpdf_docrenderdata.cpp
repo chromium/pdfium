@@ -25,8 +25,13 @@ const int kMaxOutputs = 16;
 
 }  // namespace
 
-CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
-    : m_pPDFDoc(pPDFDoc) {}
+// static
+CPDF_DocRenderData* CPDF_DocRenderData::FromDocument(
+    const CPDF_Document* pDoc) {
+  return static_cast<CPDF_DocRenderData*>(pDoc->GetRenderData());
+}
+
+CPDF_DocRenderData::CPDF_DocRenderData() = default;
 
 CPDF_DocRenderData::~CPDF_DocRenderData() = default;
 
@@ -121,6 +126,6 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
   }
 
   return pdfium::MakeRetain<CPDF_TransferFunc>(
-      m_pPDFDoc.Get(), bIdentity, std::move(samples_r), std::move(samples_g),
+      GetDocument(), bIdentity, std::move(samples_r), std::move(samples_g),
       std::move(samples_b));
 }

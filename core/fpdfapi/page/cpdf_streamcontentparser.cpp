@@ -807,13 +807,16 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
       pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
   pImageObj->SetImage(
       pdfium::MakeRetain<CPDF_Image>(m_pDocument.Get(), std::move(pStream)));
+
   return AddImageObject(std::move(pImageObj));
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
   auto pImageObj =
       pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
-  pImageObj->SetImage(m_pDocument->GetPageData()->GetImage(streamObjNum));
+  pImageObj->SetImage(CPDF_DocPageData::FromDocument(m_pDocument.Get())
+                          ->GetImage(streamObjNum));
+
   return AddImageObject(std::move(pImageObj));
 }
 
@@ -824,8 +827,8 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
 
   auto pImageObj =
       pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
-  pImageObj->SetImage(
-      m_pDocument->GetPageData()->GetImage(pImage->GetStream()->GetObjNum()));
+  pImageObj->SetImage(CPDF_DocPageData::FromDocument(m_pDocument.Get())
+                          ->GetImage(pImage->GetStream()->GetObjNum()));
 
   return AddImageObject(std::move(pImageObj));
 }
@@ -1159,8 +1162,8 @@ CPDF_Font* CPDF_StreamContentParser::FindFont(const ByteString& name) {
     return CPDF_Font::GetStockFont(m_pDocument.Get(),
                                    CFX_Font::kDefaultAnsiFontName);
   }
-
-  CPDF_Font* pFont = m_pDocument->GetPageData()->GetFont(pFontDict);
+  CPDF_Font* pFont =
+      CPDF_DocPageData::FromDocument(m_pDocument.Get())->GetFont(pFontDict);
   if (pFont && pFont->IsType3Font()) {
     pFont->AsType3Font()->SetPageResources(m_pResources.Get());
     pFont->AsType3Font()->CheckType3FontMetrics();
@@ -1186,14 +1189,16 @@ RetainPtr<CPDF_ColorSpace> CPDF_StreamContentParser::FindColorSpace(
 
       return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
     }
-    return m_pDocument->GetPageData()->GetColorSpace(pDefObj, nullptr);
+    return CPDF_DocPageData::FromDocument(m_pDocument.Get())
+        ->GetColorSpace(pDefObj, nullptr);
   }
   const CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
   if (!pCSObj) {
     m_bResourceMissing = true;
     return nullptr;
   }
-  return m_pDocument->GetPageData()->GetColorSpace(pCSObj, nullptr);
+  return CPDF_DocPageData::FromDocument(m_pDocument.Get())
+      ->GetColorSpace(pCSObj, nullptr);
 }
 
 CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const ByteString& name,
@@ -1204,8 +1209,8 @@ CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const ByteString& name,
     m_bResourceMissing = true;
     return nullptr;
   }
-  return m_pDocument->GetPageData()->GetPattern(pPattern, bShading,
-                                                m_pCurStates->m_ParentMatrix);
+  return CPDF_DocPageData::FromDocument(m_pDocument.Get())
+      ->GetPattern(pPattern, bShading, m_pCurStates->m_ParentMatrix);
 }
 
 void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,

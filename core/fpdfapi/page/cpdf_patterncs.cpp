@@ -26,7 +26,7 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
   if (pBaseCS == m_pArray)
     return 0;
 
-  CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
+  auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
   m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseCS, nullptr, pVisited);
   if (!m_pBaseCS)
     return 1;

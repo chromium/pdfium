@@ -147,8 +147,9 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   CPDF_Object* pCSObj =
       m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
           "ColorSpace");
+  auto* pData = CPDF_DocPageData::FromDocument(pDocument);
   RetainPtr<CPDF_ColorSpace> pColorSpace =
-      pDocument->GetPageData()->GetColorSpace(pCSObj, pPageResources);
+      pData->GetColorSpace(pCSObj, pPageResources);
   if (pColorSpace) {
     int format = pColorSpace->GetFamily();
     if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||

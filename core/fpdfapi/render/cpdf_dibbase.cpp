@@ -379,7 +379,7 @@ bool CPDF_DIBBase::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   if (!pCSObj)
     return false;
 
-  CPDF_DocPageData* pDocPageData = m_pDocument->GetPageData();
+  auto* pDocPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
   if (pFormResources)
     m_pColorSpace = pDocPageData->GetColorSpace(pCSObj, pFormResources);
   if (!m_pColorSpace)

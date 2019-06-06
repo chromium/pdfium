@@ -284,8 +284,8 @@ CPDF_GeneralState::StateData::StateData(const StateData& that)
   m_SMaskMatrix = that.m_SMaskMatrix;
 
   if (that.m_pTransferFunc && that.m_pTransferFunc->GetDocument()) {
-    CPDF_DocRenderData* pDocCache =
-        that.m_pTransferFunc->GetDocument()->GetRenderData();
+    auto* pDocCache =
+        CPDF_DocRenderData::FromDocument(that.m_pTransferFunc->GetDocument());
     if (pDocCache)
       m_pTransferFunc = pDocCache->GetTransferFunc(m_pTR.Get());
   }
@@ -293,8 +293,8 @@ CPDF_GeneralState::StateData::StateData(const StateData& that)
 
 CPDF_GeneralState::StateData::~StateData() {
   if (m_pTransferFunc && m_pTransferFunc->GetDocument()) {
-    CPDF_DocRenderData* pDocCache =
-        m_pTransferFunc->GetDocument()->GetRenderData();
+    auto* pDocCache =
+        CPDF_DocRenderData::FromDocument(m_pTransferFunc->GetDocument());
     if (pDocCache) {
       m_pTransferFunc.Reset();  // Give up our reference first.
       pDocCache->MaybePurgeTransferFunc(m_pTR.Get());

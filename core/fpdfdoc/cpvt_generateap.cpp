@@ -764,7 +764,8 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   ByteString sFontName = "FONT";
   auto pResourceFontDict = GenerateResourceFontDict(pDoc, sFontName);
-  CPDF_Font* pDefFont = pDoc->GetPageData()->GetFont(pResourceFontDict.Get());
+  auto* pData = CPDF_DocPageData::FromDocument(pDoc);
+  CPDF_Font* pDefFont = pData->GetFont(pResourceFontDict.Get());
   if (!pDefFont)
     return false;
 
@@ -956,7 +957,8 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     pDRFontDict->SetNewFor<CPDF_Reference>(font_name, pDoc,
                                            pFontDict->GetObjNum());
   }
-  CPDF_Font* pDefFont = pDoc->GetPageData()->GetFont(pFontDict);
+  auto* pData = CPDF_DocPageData::FromDocument(pDoc);
+  CPDF_Font* pDefFont = pData->GetFont(pFontDict);
   if (!pDefFont)
     return;
 

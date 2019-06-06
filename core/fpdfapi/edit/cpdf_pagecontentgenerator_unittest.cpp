@@ -318,7 +318,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
                                      pDesc->GetObjNum());
 
-    CPDF_Font* loadedFont = pDoc->GetPageData()->GetFont(pDict);
+    CPDF_Font* loadedFont =
+        CPDF_DocPageData::FromDocument(pDoc.get())->GetFont(pDict);
     pTextObj->m_TextState.SetFont(loadedFont);
     pTextObj->m_TextState.SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");

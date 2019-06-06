@@ -58,7 +58,7 @@ void CPDF_ImageObject::MaybePurgeCache() {
   if (!m_pImage)
     return;
 
-  CPDF_DocPageData* pPageData = m_pImage->GetDocument()->GetPageData();
+  auto* pPageData = CPDF_DocPageData::FromDocument(m_pImage->GetDocument());
   if (!pPageData)
     return;
 

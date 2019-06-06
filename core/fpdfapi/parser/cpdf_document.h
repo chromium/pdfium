@@ -18,11 +18,10 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFX_Font;
 class CFX_Matrix;
-class CPDF_DocPageData;
-class CPDF_DocRenderData;
 class CPDF_LinearizedHeader;
 class CPDF_Object;
 class CPDF_ReadValidator;
@@ -54,6 +53,30 @@ class CPDF_Document : public Observable<CPDF_Document>,
     virtual ~LinkListIface() = default;
   };
 
+  class PageDataIface {
+   public:
+    PageDataIface();
+    virtual ~PageDataIface();
+
+    void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
+    CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
+
+   private:
+    UnownedPtr<CPDF_Document> m_pDoc;
+  };
+
+  class RenderDataIface {
+   public:
+    RenderDataIface();
+    virtual ~RenderDataIface();
+
+    void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
+    CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
+
+   private:
+    UnownedPtr<CPDF_Document> m_pDoc;
+  };
+
   static const int kPageMaxNum = 0xFFFFF;
 
   CPDF_Document();
@@ -76,7 +99,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
   uint32_t GetUserPermissions() const;
 
   // Returns a valid pointer, unless it is called during destruction.
-  CPDF_DocPageData* GetPageData() const { return m_pDocPage.get(); }
+  PageDataIface* GetPageData() const { return m_pDocPage.get(); }
+  RenderDataIface* GetRenderData() const { return m_pDocRender.get(); }
 
   void SetPageObjNum(int iPage, uint32_t objNum);
 
@@ -87,10 +111,6 @@ class CPDF_Document : public Observable<CPDF_Document>,
   void SetLinksContext(std::unique_ptr<LinkListIface> pContext) {
     m_pLinksContext = std::move(pContext);
   }
-
-  CPDF_DocRenderData* GetRenderData() const { return m_pDocRender.get(); }
-
-  RetainPtr<CPDF_StreamAcc> LoadFontFile(const CPDF_Stream* pStream);
 
   //  CPDF_Parser::ParsedObjectsHolder overrides:
   bool TryInit() override;
@@ -163,10 +183,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
   int m_iNextPageToTraverse = 0;
   uint32_t m_ParsedPageCount = 0;
 
-  std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
-  // Must be after |m_pDocRender|.
-  std::unique_ptr<CPDF_DocPageData> m_pDocPage;
-
+  std::unique_ptr<RenderDataIface> m_pDocRender;
+  std::unique_ptr<PageDataIface> m_pDocPage;  // Must be after |m_pDocRender|.
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<LinkListIface> m_pLinksContext;
   std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.

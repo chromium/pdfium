@@ -53,7 +53,7 @@ CPDF_Font::CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
 
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {
-    auto* pPageData = m_pDocument->GetPageData();
+    auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
     if (pPageData) {
       pPageData->MaybePurgeFontFileStreamAcc(
           m_pFontFile->GetStream()->AsStream());
@@ -209,13 +209,13 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   if (!pFontFile)
     return;
 
-  m_pFontFile = m_pDocument->LoadFontFile(pFontFile);
+  auto* pData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+  m_pFontFile = pData->GetFontFileStreamAcc(pFontFile);
   if (!m_pFontFile)
     return;
 
   if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan())) {
-    m_pDocument->GetPageData()->MaybePurgeFontFileStreamAcc(
-        m_pFontFile->GetStream()->AsStream());
+    pData->MaybePurgeFontFileStreamAcc(m_pFontFile->GetStream()->AsStream());
     m_pFontFile = nullptr;
   }
 }

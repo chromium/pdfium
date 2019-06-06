@@ -23,7 +23,6 @@
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -157,10 +156,12 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
 
 }  // namespace
 
-CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
-    : m_bForceClear(false), m_pPDFDoc(pPDFDoc) {
-  ASSERT(m_pPDFDoc);
+// static
+CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* pDoc) {
+  return static_cast<CPDF_DocPageData*>(pDoc->GetPageData());
 }
+
+CPDF_DocPageData::CPDF_DocPageData() = default;
 
 CPDF_DocPageData::~CPDF_DocPageData() {
   Clear(false);
@@ -249,7 +250,7 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
     }
   }
   std::unique_ptr<CPDF_Font> pFont =
-      CPDF_Font::Create(m_pPDFDoc.Get(), pFontDict);
+      CPDF_Font::Create(GetDocument(), pFontDict);
   if (!pFont)
     return nullptr;
 
@@ -289,16 +290,16 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(
     return fontData->AddRef();
   }
 
-  CPDF_Dictionary* pDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
+  CPDF_Dictionary* pDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "Font");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontName);
   if (pEncoding) {
     pDict->SetFor("Encoding",
-                  pEncoding->Realize(m_pPDFDoc->GetByteStringPool()));
+                  pEncoding->Realize(GetDocument()->GetByteStringPool()));
   }
 
-  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc.Get(), pDict);
+  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(GetDocument(), pDict);
   if (!pFont)
     return nullptr;
 
@@ -406,7 +407,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     return pdfium::WrapRetain(it->second.Get());
 
   RetainPtr<CPDF_ColorSpace> pCS =
-      CPDF_ColorSpace::Load(m_pPDFDoc.Get(), pArray, pVisited);
+      CPDF_ColorSpace::Load(GetDocument(), pArray, pVisited);
   if (!pCS)
     return nullptr;
 
@@ -443,7 +444,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   std::unique_ptr<CPDF_Pattern> pPattern;
   if (bShading) {
     pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
-        m_pPDFDoc.Get(), pPatternObj, true, matrix);
+        GetDocument(), pPatternObj, true, matrix);
   } else {
     CPDF_Dictionary* pDict = pPatternObj->GetDict();
     if (!pDict)
@@ -451,11 +452,11 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
 
     int type = pDict->GetIntegerFor("PatternType");
     if (type == CPDF_Pattern::kTiling) {
-      pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(m_pPDFDoc.Get(),
+      pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(GetDocument(),
                                                         pPatternObj, matrix);
     } else if (type == CPDF_Pattern::kShading) {
       pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
-          m_pPDFDoc.Get(), pPatternObj, false, matrix);
+          GetDocument(), pPatternObj, false, matrix);
     } else {
       return nullptr;
     }
@@ -496,7 +497,7 @@ RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
   if (it != m_ImageMap.end())
     return it->second;
 
-  auto pImage = pdfium::MakeRetain<CPDF_Image>(m_pPDFDoc.Get(), dwStreamObjNum);
+  auto pImage = pdfium::MakeRetain<CPDF_Image>(GetDocument(), dwStreamObjNum);
   m_ImageMap[dwStreamObjNum] = pImage;
   return pImage;
 }
@@ -620,7 +621,7 @@ CPDF_Font* CPDF_DocPageData::AddFont(CFX_Font* pFont, int charset) {
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
                      false, false, charset == FX_CHARSET_Symbol);
 
-  CPDF_Dictionary* pBaseDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
+  CPDF_Dictionary* pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   auto pEncoding = pdfium::MakeUnique<CFX_UnicodeEncoding>(pFont);
   CPDF_Dictionary* pFontDict = pBaseDict;
@@ -684,10 +685,10 @@ CPDF_Font* CPDF_DocPageData::AddFont(CFX_Font* pFont, int charset) {
     }
   }
   CPDF_Dictionary* pFontDesc =
-      ToDictionary(m_pPDFDoc->AddIndirectObject(CalculateFontDesc(
-          m_pPDFDoc.Get(), basefont, flags, italicangle, pFont->GetAscent(),
+      ToDictionary(GetDocument()->AddIndirectObject(CalculateFontDesc(
+          GetDocument(), basefont, flags, italicangle, pFont->GetAscent(),
           pFont->GetDescent(), std::move(pBBox), nStemV)));
-  pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", m_pPDFDoc.Get(),
+  pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", GetDocument(),
                                        pFontDesc->GetObjNum());
   return GetFont(pBaseDict);
 }
@@ -732,7 +733,7 @@ CPDF_Font* CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
                  ptm->otmrcFontBox.right, ptm->otmrcFontBox.top};
   FX_Free(tm_buf);
   basefont.Replace(" ", "");
-  CPDF_Dictionary* pBaseDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
+  CPDF_Dictionary* pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
@@ -761,12 +762,13 @@ CPDF_Font* CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
   for (int i = 0; i < 4; i++)
     pBBox->AddNew<CPDF_Number>(bbox[i]);
   RetainPtr<CPDF_Dictionary> pFontDesc =
-      CalculateFontDesc(m_pPDFDoc.Get(), basefont, flags, italicangle, ascend,
+      CalculateFontDesc(GetDocument(), basefont, flags, italicangle, ascend,
                         descend, std::move(pBBox), pLogFont->lfWeight / 5);
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", capheight);
   pFontDict->SetFor("FontDescriptor",
-                    m_pPDFDoc->AddIndirectObject(std::move(pFontDesc))
-                        ->MakeReference(m_pPDFDoc.Get()));
+                    GetDocument()
+                        ->AddIndirectObject(std::move(pFontDesc))
+                        ->MakeReference(GetDocument()));
   hFont = SelectObject(hDC, hFont);
   DeleteObject(hFont);
   DeleteDC(hDC);
@@ -784,7 +786,8 @@ size_t CPDF_DocPageData::CalculateEncodingDict(int charset,
   if (i == FX_ArraySize(g_FX_CharsetUnicodes))
     return i;
 
-  CPDF_Dictionary* pEncodingDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
+  CPDF_Dictionary* pEncodingDict =
+      GetDocument()->NewIndirect<CPDF_Dictionary>();
   pEncodingDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
 
   CPDF_Array* pArray = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
@@ -795,7 +798,7 @@ size_t CPDF_DocPageData::CalculateEncodingDict(int charset,
     ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
     pArray->AddNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
-  pBaseDict->SetNewFor<CPDF_Reference>("Encoding", m_pPDFDoc.Get(),
+  pBaseDict->SetNewFor<CPDF_Reference>("Encoding", GetDocument(),
                                        pEncodingDict->GetObjNum());
   return i;
 }
@@ -805,7 +808,7 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
     int charset,
     ByteString basefont,
     std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
-  CPDF_Dictionary* pFontDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
+  CPDF_Dictionary* pFontDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   ByteString cmap;
   ByteString ordering;
   int supplement = 0;
@@ -862,6 +865,6 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
   pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
 
   CPDF_Array* pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
-  pArray->AddNew<CPDF_Reference>(m_pPDFDoc.Get(), pFontDict->GetObjNum());
+  pArray->AddNew<CPDF_Reference>(GetDocument(), pFontDict->GetObjNum());
   return pFontDict;
 }

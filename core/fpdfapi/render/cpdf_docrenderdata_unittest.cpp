@@ -158,7 +158,7 @@ RetainPtr<CPDF_Stream> CreateBadType4FunctionStream() {
 
 class TestDocRenderData : public CPDF_DocRenderData {
  public:
-  TestDocRenderData() : CPDF_DocRenderData(nullptr) {}
+  TestDocRenderData() : CPDF_DocRenderData() {}
 
   RetainPtr<CPDF_TransferFunc> CreateTransferFuncForTesting(
       const CPDF_Object* pObj) const {

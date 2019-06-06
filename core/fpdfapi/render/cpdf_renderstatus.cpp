@@ -82,21 +82,21 @@ int g_CurrentRecursionDepth = 0;
 
 void ReleaseCachedType3(CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
-  pDoc->GetRenderData()->MaybePurgeCachedType3(pFont);
-  pDoc->GetPageData()->ReleaseFont(pFont->GetFontDict());
+  CPDF_DocRenderData::FromDocument(pDoc)->MaybePurgeCachedType3(pFont);
+  CPDF_DocPageData::FromDocument(pDoc)->ReleaseFont(pFont->GetFontDict());
 }
 
 class CPDF_RefType3Cache {
  public:
   explicit CPDF_RefType3Cache(CPDF_Type3Font* pType3Font)
-      : m_dwCount(0), m_pType3Font(pType3Font) {}
+      : m_pType3Font(pType3Font) {}
 
   ~CPDF_RefType3Cache() {
     while (m_dwCount--)
       ReleaseCachedType3(m_pType3Font.Get());
   }
 
-  uint32_t m_dwCount;
+  uint32_t m_dwCount = 0;
   UnownedPtr<CPDF_Type3Font> const m_pType3Font;
 };
 
@@ -1284,7 +1284,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
     const CPDF_Object* pObj) const {
   ASSERT(pObj);
-  CPDF_DocRenderData* pDocCache = m_pContext->GetDocument()->GetRenderData();
+  auto* pDocCache = CPDF_DocRenderData::FromDocument(m_pContext->GetDocument());
   return pDocCache ? pDocCache->GetTransferFunc(pObj) : nullptr;
 }
 
@@ -1483,7 +1483,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                                     ->GetDict()
                                     ->GetDirectObjectFor("ColorSpace");
     RetainPtr<CPDF_ColorSpace> pColorSpace =
-        pDocument->GetPageData()->GetColorSpace(pCSObj, pPageResources);
+        CPDF_DocPageData::FromDocument(pDocument)->GetColorSpace(
+            pCSObj, pPageResources);
     if (pColorSpace) {
       int format = pColorSpace->GetFamily();
       if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
@@ -1781,8 +1782,8 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
 RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
     CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
-  pDoc->GetPageData()->GetFont(pFont->GetFontDict());
-  return pDoc->GetRenderData()->GetCachedType3(pFont);
+  CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFont->GetFontDict());
+  return CPDF_DocRenderData::FromDocument(pDoc)->GetCachedType3(pFont);
 }
 
 // TODO(npm): Font fallback for type 3 fonts? (Completely separate code!!)
@@ -2622,7 +2623,8 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   if (pGroup)
     pCSObj = pGroup->GetDirectObjectFor(pdfium::transparency::kCS);
   RetainPtr<CPDF_ColorSpace> pCS =
-      m_pContext->GetDocument()->GetPageData()->GetColorSpace(pCSObj, nullptr);
+      CPDF_DocPageData::FromDocument(m_pContext->GetDocument())
+          ->GetColorSpace(pCSObj, nullptr);
   if (!pCS)
     return kDefaultColor;
 

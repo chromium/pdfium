@@ -66,9 +66,12 @@ int CountPages(CPDF_Dictionary* pPages,
 }  // namespace
 
 CPDF_Document::CPDF_Document()
-    : m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)),
-      m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
-      m_StockFontClearer(this) {}
+    : m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>()),
+      m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>()),
+      m_StockFontClearer(this) {
+  m_pDocRender->SetDocument(this);
+  m_pDocPage->SetDocument(this);
+}
 
 CPDF_Document::~CPDF_Document() = default;
 
@@ -346,12 +349,6 @@ uint32_t CPDF_Document::GetUserPermissions() const {
   return m_pExtension ? m_pExtension->GetUserPermissions() : 0;
 }
 
-RetainPtr<CPDF_StreamAcc> CPDF_Document::LoadFontFile(
-    const CPDF_Stream* pStream) {
-  return m_pDocPage->GetFontFileStreamAcc(pStream);
-}
-
-
 void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict);
   ASSERT(!m_pInfoDict);
@@ -486,3 +483,11 @@ CPDF_Document::StockFontClearer::StockFontClearer(CPDF_Document* pDoc)
 CPDF_Document::StockFontClearer::~StockFontClearer() {
   CPDF_PageModule::GetInstance()->ClearStockFont(m_pDoc.Get());
 }
+
+CPDF_Document::PageDataIface::PageDataIface() = default;
+
+CPDF_Document::PageDataIface::~PageDataIface() = default;
+
+CPDF_Document::RenderDataIface::RenderDataIface() = default;
+
+CPDF_Document::RenderDataIface::~RenderDataIface() = default;

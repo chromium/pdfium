@@ -305,7 +305,7 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
 
   pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
                                        pFontDesc->GetObjNum());
-  return pDoc->GetPageData()->GetFont(pFontDict);
+  return CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFontDict);
 }
 
 CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
@@ -424,7 +424,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
   CPDF_Stream* toUnicodeStream = LoadUnicode(pDoc, to_unicode);
   pFontDict->SetNewFor<CPDF_Reference>("ToUnicode", pDoc,
                                        toUnicodeStream->GetObjNum());
-  return pDoc->GetPageData()->GetFont(pFontDict);
+  return CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFontDict);
 }
 
 CPDF_TextObject* CPDFTextObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
@@ -577,7 +577,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
   if (!pDoc)
     return;
 
-  CPDF_DocPageData* pPageData = pDoc->GetPageData();
+  auto* pPageData = CPDF_DocPageData::FromDocument(pDoc);
   if (!pPageData->IsForceClear())
     pPageData->ReleaseFont(pFont->GetFontDict());
 }
@@ -593,7 +593,7 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
 
   auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
   pTextObj->m_TextState.SetFont(
-      pDoc->GetPageData()->GetFont(pFont->GetFontDict()));
+      CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFont->GetFontDict()));
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());

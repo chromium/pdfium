@@ -854,7 +854,7 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
   if (m_pProfile && m_pDocument) {
     const CPDF_Stream* pStream = m_pProfile->GetStream();
     m_pProfile.Reset();  // Give up our reference first.
-    auto* pPageData = m_pDocument->GetPageData();
+    auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
     if (pPageData)
       pPageData->MaybePurgeIccProfile(pStream);
   }
@@ -876,7 +876,7 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
-  m_pProfile = pDoc->GetPageData()->GetIccProfile(pStream);
+  m_pProfile = CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream);
   if (!m_pProfile)
     return 0;
 
@@ -1090,7 +1090,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   if (pBaseObj == m_pArray)
     return 0;
 
-  CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
+  auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
   m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseObj, nullptr, pVisited);
   if (!m_pBaseCS)
     return 0;

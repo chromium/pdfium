@@ -11,6 +11,7 @@
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -18,7 +19,6 @@
 
 class CFX_Font;
 class CPDF_Dictionary;
-class CPDF_Document;
 class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_IccProfile;
@@ -28,10 +28,12 @@ class CPDF_Pattern;
 class CPDF_Stream;
 class CPDF_StreamAcc;
 
-class CPDF_DocPageData {
+class CPDF_DocPageData : public CPDF_Document::PageDataIface {
  public:
-  explicit CPDF_DocPageData(CPDF_Document* pPDFDoc);
-  ~CPDF_DocPageData();
+  static CPDF_DocPageData* FromDocument(const CPDF_Document* pDoc);
+
+  CPDF_DocPageData();
+  ~CPDF_DocPageData() override;
 
   void Clear(bool bRelease);
   bool IsForceClear() const { return m_bForceClear; }
@@ -101,8 +103,7 @@ class CPDF_DocPageData {
       ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
 
-  bool m_bForceClear;
-  UnownedPtr<CPDF_Document> const m_pPDFDoc;
+  bool m_bForceClear = false;
   std::map<ByteString, const CPDF_Stream*> m_HashProfileMap;
   std::map<const CPDF_Object*, CPDF_ColorSpace::ObservedPtr> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;

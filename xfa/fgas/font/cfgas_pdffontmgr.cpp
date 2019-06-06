@@ -63,7 +63,8 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
     if (!pFontDict || pFontDict->GetStringFor("Type") != "Font")
       return nullptr;
 
-    CPDF_Font* pPDFFont = m_pDoc->GetPageData()->GetFont(pFontDict);
+    auto* pData = CPDF_DocPageData::FromDocument(m_pDoc.Get());
+    CPDF_Font* pPDFFont = pData->GetFont(pFontDict);
     if (!pPDFFont)
       return nullptr;
 

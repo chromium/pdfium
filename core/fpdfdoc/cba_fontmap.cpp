@@ -62,7 +62,7 @@ CPDF_Font* AddNativeTrueTypeFontToPDF(CPDF_Document* pDoc,
   auto pFXFont = pdfium::MakeUnique<CFX_Font>();
   pFXFont->LoadSubst(sFontFaceName, true, 0, 0, 0,
                      FX_GetCodePageFromCharset(nCharset), false);
-  return pDoc->GetPageData()->AddFont(pFXFont.get(), nCharset);
+  return CPDF_DocPageData::FromDocument(pDoc)->AddFont(pFXFont.get(), nCharset);
 }
 
 }  // namespace
@@ -243,17 +243,18 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(const CPDF_Dictionary* pResDict,
       continue;
 
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement)
-      continue;
-    if (pElement->GetStringFor("Type") != "Font")
+    if (!pElement || pElement->GetStringFor("Type") != "Font")
       continue;
 
-    CPDF_Font* pFont = m_pDocument->GetPageData()->GetFont(pElement);
+    auto* pData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+    CPDF_Font* pFont = pData->GetFont(pElement);
     if (!pFont)
       continue;
+
     const CFX_SubstFont* pSubst = pFont->GetSubstFont();
     if (!pSubst)
       continue;
+
     if (pSubst->m_Charset == nCharset) {
       *sFontAlias = csKey;
       pFind = pFont;
@@ -308,7 +309,10 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
         pFontDict = pDRFontDict->GetDictFor(*sAlias);
     }
   }
-  return pFontDict ? m_pDocument->GetPageData()->GetFont(pFontDict) : nullptr;
+  if (!pFontDict)
+    return nullptr;
+
+  return CPDF_DocPageData::FromDocument(m_pDocument.Get())->GetFont(pFontDict);
 }
 
 void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
@@ -484,7 +488,7 @@ CPDF_Font* CBA_FontMap::AddStandardFont(CPDF_Document* pDoc,
     return nullptr;
 
   CPDF_Font* pFont = nullptr;
-  CPDF_DocPageData* pPageData = pDoc->GetPageData();
+  auto* pPageData = CPDF_DocPageData::FromDocument(pDoc);
   if (sFontName == "ZapfDingbats") {
     pFont = pPageData->AddStandardFont(sFontName.c_str(), nullptr);
   } else {

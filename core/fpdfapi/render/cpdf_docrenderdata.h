@@ -10,21 +10,23 @@
 #include <map>
 
 #include "core/fpdfapi/page/cpdf_countedobject.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CPDF_Document;
 class CPDF_Font;
 class CPDF_Object;
 class CPDF_TransferFunc;
 class CPDF_Type3Cache;
 class CPDF_Type3Font;
 
-class CPDF_DocRenderData {
+class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
  public:
-  explicit CPDF_DocRenderData(CPDF_Document* pPDFDoc);
-  ~CPDF_DocRenderData();
+  static CPDF_DocRenderData* FromDocument(const CPDF_Document* pDoc);
+
+  CPDF_DocRenderData();
+  ~CPDF_DocRenderData() override;
 
   CPDF_DocRenderData(const CPDF_DocRenderData&) = delete;
   CPDF_DocRenderData& operator=(const CPDF_DocRenderData&) = delete;
@@ -41,7 +43,6 @@ class CPDF_DocRenderData {
       const CPDF_Object* pObj) const;
 
  private:
-  UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::map<CPDF_Font*, RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
   std::map<const CPDF_Object*, RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
 };
