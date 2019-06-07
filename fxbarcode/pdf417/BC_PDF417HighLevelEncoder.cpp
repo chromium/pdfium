@@ -121,9 +121,8 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
           return {};
 
         size_t b_value = b.value();
-        if (b_value == 0) {
+        if (b_value == 0)
           b_value = 1;
-        }
         if (b_value == 1 && encodingMode == EncodingMode::kText) {
           EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
         } else {

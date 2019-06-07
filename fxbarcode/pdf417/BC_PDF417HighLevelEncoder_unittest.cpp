@@ -7,7 +7,45 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(PDF417HighLevelEncoderTest, EncodeHighLevel) {
-  // TODO(tsepez): implement test cases.
+  static constexpr struct EncodeHighLevelCase {
+    const wchar_t* input;
+    const wchar_t* expected;
+    int expected_length;
+  } kEncodeHighLevelCases[] = {
+      // Empty string encodes as empty string.
+      {L"", L"", 0},
+
+      // Binary mode with digit.
+      {L"\x000b\x000b\x0030", L"\x0385\x000b\x000b\x0030", 4},
+
+      // Text mode.
+      {L"xxxxxxXx", L"\x0384\x0341\x02c9\x02c9\x02cd\x02c9", 6},
+
+      // Text mode with punctuation.
+      {L"xxxxxx!x", L"\x0384\x0341\x02c9\x02c9\x02cf\x0143", 6},
+
+      // Text mode with mixed submode.
+      {L"xxxxxx0x", L"\x0384\x0341\x02c9\x02c9\x02ce\x001b\x02cf", 7},
+
+      // Text mode with mixed submode, and space in alpha submode.
+      {L"xxxxxx0X ", L"\x0384\x0341\x02c9\x02c9\x02ce\x001c\x02cc", 7},
+
+      // Text mode to binary mode.
+      {L"xxxxxx\x0b", L"\x0384\x0341\x02c9\x02c9\x02cf\x0391\x0385\x000b", 8},
+
+      // 13 consecutive digits triggers numeric encoding.
+      {L"0000000000000", L"\x0386\x000f\x00d9\x017b\x000b\x0064", 6},
+  };
+
+  for (size_t i = 0; i < FX_ArraySize(kEncodeHighLevelCases); ++i) {
+    const EncodeHighLevelCase& testcase = kEncodeHighLevelCases[i];
+    WideStringView input(testcase.input);
+    WideString expected(testcase.expected, testcase.expected_length);
+    Optional<WideString> result =
+        CBC_PDF417HighLevelEncoder::EncodeHighLevel(input);
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(expected, result.value()) << " for case number " << i;
+  }
 }
 
 TEST(PDF417HighLevelEncoderTest, EncodeText) {
@@ -15,22 +53,26 @@ TEST(PDF417HighLevelEncoderTest, EncodeText) {
 }
 
 TEST(PDF417HighLevelEncoderTest, EncodeBinary) {
-  struct EncodeBinaryCase {
+  static constexpr struct EncodeBinaryCase {
     const char* input;
     int offset;
     int count;
     CBC_PDF417HighLevelEncoder::EncodingMode startmode;
     const wchar_t* expected;
     int expected_length;
-  } encode_binary_cases[] = {
+  } kEncodeBinaryCases[] = {
       // Empty string encodes as empty string.
       {"", 0, 0, CBC_PDF417HighLevelEncoder::EncodingMode::kText, L"", 0},
+
+      // Single digit encodes with a shift-to byte.
+      {"x", 0, 1, CBC_PDF417HighLevelEncoder::EncodingMode::kText,
+       L"\x0391\x0385x", 3},
 
       // Fewer than 6 characters encodes as prefix without compaction.
       {"xxxxx", 0, 5, CBC_PDF417HighLevelEncoder::EncodingMode::kText,
        L"\x0385xxxxx", 6},
 
-      // 6 charcters triggerst text encoding compaction.
+      // 6 charcters triggers text encoding compaction.
       {"xxxxxx", 0, 6, CBC_PDF417HighLevelEncoder::EncodingMode::kText,
        L"\u039c\u00c9\u031f\u012a\u00d2\u02d0", 6},
 
@@ -39,30 +81,31 @@ TEST(PDF417HighLevelEncoderTest, EncodeBinary) {
        L"\u039c\u00c9\u031f\u012a\u00d2\u02d0", 6},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(encode_binary_cases); ++i) {
-    EncodeBinaryCase* ptr = &encode_binary_cases[i];
+  for (size_t i = 0; i < FX_ArraySize(kEncodeBinaryCases); ++i) {
+    const EncodeBinaryCase& testcase = kEncodeBinaryCases[i];
     std::vector<uint8_t> input_array;
-    size_t input_length = strlen(ptr->input);
+    size_t input_length = strlen(testcase.input);
     input_array.resize(input_length);
     for (size_t j = 0; j < input_length; ++j) {
-      input_array[j] = ptr->input[j];
+      input_array[j] = testcase.input[j];
     }
-    WideString expected(ptr->expected, ptr->expected_length);
+    WideString expected(testcase.expected, testcase.expected_length);
     WideString result;
-    CBC_PDF417HighLevelEncoder::EncodeBinary(
-        input_array, ptr->offset, ptr->count, ptr->startmode, &result);
+    CBC_PDF417HighLevelEncoder::EncodeBinary(input_array, testcase.offset,
+                                             testcase.count, testcase.startmode,
+                                             &result);
     EXPECT_EQ(expected, result) << " for case number " << i;
   }
 }
 
 TEST(PDF417HighLevelEncoderTest, EncodeNumeric) {
-  struct EncodeNumericCase {
+  static constexpr struct EncodeNumericCase {
     const wchar_t* input;
     int offset;
     int count;
     const wchar_t* expected;
     int expected_length;
-  } encode_numeric_cases[] = {
+  } kEncodeNumericCases[] = {
       // Empty string encodes as empty string.
       {L"", 0, 0, L"", 0},
 
@@ -105,24 +148,24 @@ TEST(PDF417HighLevelEncoderTest, EncodeNumeric) {
        18},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(encode_numeric_cases); ++i) {
-    EncodeNumericCase* ptr = &encode_numeric_cases[i];
-    WideString input(ptr->input);
-    WideString expected(ptr->expected, ptr->expected_length);
+  for (size_t i = 0; i < FX_ArraySize(kEncodeNumericCases); ++i) {
+    const EncodeNumericCase& testcase = kEncodeNumericCases[i];
+    WideString input(testcase.input);
+    WideString expected(testcase.expected, testcase.expected_length);
     WideString result;
-    CBC_PDF417HighLevelEncoder::EncodeNumeric(input, ptr->offset, ptr->count,
-                                              &result);
+    CBC_PDF417HighLevelEncoder::EncodeNumeric(input, testcase.offset,
+                                              testcase.count, &result);
     EXPECT_EQ(expected, result) << " for case number " << i;
   }
 }
 
 TEST(PDF417HighLevelEncoderTest, ConsecutiveDigitCount) {
-  struct ConsecutiveDigitCase {
+  static constexpr struct ConsecutiveDigitCase {
     const wchar_t* input;
     int offset;
     int expected_count;
-  } consecutive_digit_cases[] = {
-      // Empty string contains 0 consecuitve digits.
+  } kConsecutiveDigitCases[] = {
+      // Empty string contains 0 consecutive digits.
       {L"", 0, 0},
 
       // Single non-digit character contains 0 consecutive digits.
@@ -150,22 +193,23 @@ TEST(PDF417HighLevelEncoderTest, ConsecutiveDigitCount) {
       {L"123FOO45678", 6, 5},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(consecutive_digit_cases); ++i) {
-    ConsecutiveDigitCase* ptr = &consecutive_digit_cases[i];
-    WideString input(ptr->input);
+  for (size_t i = 0; i < FX_ArraySize(kConsecutiveDigitCases); ++i) {
+    const ConsecutiveDigitCase& testcase = kConsecutiveDigitCases[i];
+    WideString input(testcase.input);
     int actual_count =
-        CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(input,
-                                                                   ptr->offset);
-    EXPECT_EQ(ptr->expected_count, actual_count) << " for case number " << i;
+        CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(
+            input, testcase.offset);
+    EXPECT_EQ(testcase.expected_count, actual_count)
+        << " for case number " << i;
   }
 }
 
 TEST(PDF417HighLevelEncoderTest, ConsecutiveTextCount) {
-  struct ConsecutiveTextCase {
+  static constexpr struct ConsecutiveTextCase {
     const wchar_t* input;
     int offset;
     int expected_count;
-  } consecutive_text_cases[] = {
+  } kConsecutiveTextCases[] = {
       // Empty string contains 0 consecutive text characters.
       {L"", 0, 0},
 
@@ -209,13 +253,14 @@ TEST(PDF417HighLevelEncoderTest, ConsecutiveTextCount) {
       {L"XXX121XXX12345678901234", 0, 9},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(consecutive_text_cases); ++i) {
-    ConsecutiveTextCase* ptr = &consecutive_text_cases[i];
-    WideString input(ptr->input);
+  for (size_t i = 0; i < FX_ArraySize(kConsecutiveTextCases); ++i) {
+    const ConsecutiveTextCase& testcase = kConsecutiveTextCases[i];
+    WideString input(testcase.input);
     int actual_count =
-        CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(input,
-                                                                  ptr->offset);
-    EXPECT_EQ(ptr->expected_count, actual_count) << " for case number " << i;
+        CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
+            input, testcase.offset);
+    EXPECT_EQ(testcase.expected_count, actual_count)
+        << " for case number " << i;
   }
 }
 
