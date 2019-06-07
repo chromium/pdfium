@@ -520,7 +520,8 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     }
 
     AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
-    if (GetNextWord(nullptr) != "stream") return pDict;
+    if (GetNextWord(nullptr) != "stream")
+      return pDict;
     pos_restorer.AbandonRestoration();
     return ReadStream(std::move(pDict));
   }
