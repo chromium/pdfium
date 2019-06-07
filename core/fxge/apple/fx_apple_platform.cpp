@@ -77,7 +77,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.d = -new_matrix.d;
   }
   quartz2d.SetGraphicsTextMatrix(pContext, new_matrix);
-  return quartz2d.drawGraphicsString(pContext, pFont->GetPlatformFont(),
+  return quartz2d.DrawGraphicsString(pContext, pFont->GetPlatformFont(),
                                      font_size, glyph_indices.data(),
                                      glyph_positions.data(), nChars, argb);
 }
@@ -88,7 +88,7 @@ void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
-  m_pPlatformGraphics = quartz2d.createGraphics(m_pBitmap);
+  m_pPlatformGraphics = quartz2d.CreateGraphics(m_pBitmap);
 }
 
 void CFX_AggDeviceDriver::DestroyPlatform() {
@@ -96,7 +96,7 @@ void CFX_AggDeviceDriver::DestroyPlatform() {
       static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatform())
           ->m_quartz2d;
   if (m_pPlatformGraphics) {
-    quartz2d.destroyGraphics(m_pPlatformGraphics);
+    quartz2d.DestroyGraphics(m_pPlatformGraphics);
     m_pPlatformGraphics = nullptr;
   }
 }

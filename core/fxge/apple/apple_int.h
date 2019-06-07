@@ -19,21 +19,19 @@
 
 class CQuartz2D {
  public:
-  void* createGraphics(const RetainPtr<CFX_DIBitmap>& bitmap);
-  void destroyGraphics(void* graphics);
+  void* CreateGraphics(const RetainPtr<CFX_DIBitmap>& bitmap);
+  void DestroyGraphics(void* graphics);
 
   void* CreateFont(const uint8_t* pFontData, uint32_t dwFontSize);
   void DestroyFont(void* pFont);
   void SetGraphicsTextMatrix(void* graphics, const CFX_Matrix& matrix);
-  bool drawGraphicsString(void* graphics,
+  bool DrawGraphicsString(void* graphics,
                           void* font,
                           float fontSize,
                           uint16_t* glyphIndices,
                           CGPoint* glyphPositions,
                           int32_t chars,
                           FX_ARGB argb);
-  void saveGraphicsState(void* graphics);
-  void restoreGraphicsState(void* graphics);
 };
 
 class CApplePlatform : public CFX_GEModule::PlatformIface {

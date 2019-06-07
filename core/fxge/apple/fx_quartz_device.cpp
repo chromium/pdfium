@@ -21,7 +21,7 @@
 #error Expected CGFLOAT_IS_DOUBLE to be defined by CoreGraphics headers
 #endif
 
-void* CQuartz2D::createGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
+void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   if (!pBitmap)
     return nullptr;
   CGBitmapInfo bmpInfo = kCGBitmapByteOrder32Little;
@@ -41,7 +41,7 @@ void* CQuartz2D::createGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   return context;
 }
 
-void CQuartz2D::destroyGraphics(void* graphics) {
+void CQuartz2D::DestroyGraphics(void* graphics) {
   if (graphics)
     CGContextRelease((CGContextRef)graphics);
 }
@@ -72,7 +72,7 @@ void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
                                      matrix.e, ty));
 }
 
-bool CQuartz2D::drawGraphicsString(void* graphics,
+bool CQuartz2D::DrawGraphicsString(void* graphics,
                                    void* font,
                                    float fontSize,
                                    uint16_t* glyphIndices,
@@ -100,23 +100,14 @@ bool CQuartz2D::drawGraphicsString(void* graphics,
     glyphPositionsCG[index].y = glyphPositions[index].y;
   }
 #else
-  CGPoint* glyphPositionsCG = (CGPoint*)glyphPositions;
+  CGPoint* glyphPositionsCG = glyphPositions;
 #endif
-  CGContextShowGlyphsAtPositions(context, (CGGlyph*)glyphIndices,
+  CGContextShowGlyphsAtPositions(context,
+                                 reinterpret_cast<CGGlyph*>(glyphIndices),
                                  glyphPositionsCG, charsCount);
 #if CGFLOAT_IS_DOUBLE
   delete[] glyphPositionsCG;
 #endif
   CGContextRestoreGState(context);
   return true;
-}
-
-void CQuartz2D::saveGraphicsState(void* graphics) {
-  if (graphics)
-    CGContextSaveGState((CGContextRef)graphics);
-}
-
-void CQuartz2D::restoreGraphicsState(void* graphics) {
-  if (graphics)
-    CGContextRestoreGState((CGContextRef)graphics);
 }
