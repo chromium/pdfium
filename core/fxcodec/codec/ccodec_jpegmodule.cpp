@@ -54,8 +54,7 @@ class CJpegContext final : public CodecModuleIface::Context {
 
 static pdfium::span<const uint8_t> JpegScanSOI(
     pdfium::span<const uint8_t> src_span) {
-  if (src_span.empty())
-    return {};
+  ASSERT(!src_span.empty());
 
   for (size_t offset = 0; offset < src_span.size() - 1; ++offset) {
     if (src_span[offset] == 0xff && src_span[offset + 1] == 0xd8)
@@ -407,8 +406,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_JpegModule::CreateDecoder(
     int height,
     int nComps,
     bool ColorTransform) {
-  if (src_span.empty())
-    return nullptr;
+  ASSERT(!src_span.empty());
 
   auto pDecoder = pdfium::MakeUnique<CCodec_JpegDecoder>();
   if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform))
