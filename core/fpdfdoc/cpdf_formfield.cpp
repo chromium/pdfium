@@ -635,7 +635,7 @@ void CPDF_FormField::SetItemSelectionUnselected(int index,
       pArray->AddNew<CPDF_String>(GetOptionValue(i));
   }
   if (pArray->size() > 0) {
-    m_pDict->SetFor(pdfium::form_fields::kV, std::move(pArray));
+    m_pDict->SetFor(pdfium::form_fields::kV, pArray);
   }
 }
 

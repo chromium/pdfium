@@ -348,7 +348,7 @@ bool CFX_DIBitmap::LoadChannelFromAlpha(
     if (!pSrcMatched)
       return false;
 
-    pSrcClone = std::move(pSrcMatched);
+    pSrcClone = pSrcMatched;
   }
   RetainPtr<CFX_DIBitmap> pDst(this);
   if (destChannel == FXDIB_Alpha && m_pAlphaMask) {

@@ -339,7 +339,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       if (!key.IsEmpty())
         pDict->SetFor(key, std::move(pObj));
     }
-    return std::move(pDict);
+    return pDict;
   }
 
   if (first_char == '[') {
@@ -357,7 +357,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       if (!m_WordSize || m_WordBuffer[0] == ']')
         break;
     }
-    return std::move(pArray);
+    return pArray;
   }
 
   if (WordBufferMatches(kFalse))

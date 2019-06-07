@@ -489,7 +489,7 @@ RetainPtr<CPDF_Dictionary> GenerateExtGStateDict(
 
   auto pExtGStateDict =
       pdfium::MakeRetain<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
-  pExtGStateDict->SetFor(sExtGSDictName, std::move(pGSDict));
+  pExtGStateDict->SetFor(sExtGSDictName, pGSDict);
   return pExtGStateDict;
 }
 
@@ -498,10 +498,8 @@ RetainPtr<CPDF_Dictionary> GenerateResourceDict(
     RetainPtr<CPDF_Dictionary> pExtGStateDict,
     RetainPtr<CPDF_Dictionary> pResourceFontDict) {
   auto pResourceDict = pDoc->New<CPDF_Dictionary>();
-  if (pExtGStateDict)
-    pResourceDict->SetFor("ExtGState", std::move(pExtGStateDict));
-  if (pResourceFontDict)
-    pResourceDict->SetFor("Font", std::move(pResourceFontDict));
+  if (pExtGStateDict) pResourceDict->SetFor("ExtGState", pExtGStateDict);
+  if (pResourceFontDict) pResourceDict->SetFor("Font", pResourceFontDict);
   return pResourceDict;
 }
 
@@ -529,7 +527,7 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
                            ? CPDF_Annot::BoundingRectFromQuadPoints(pAnnotDict)
                            : pAnnotDict->GetRectFor(pdfium::annotation::kRect);
   pStreamDict->SetRectFor("BBox", rect);
-  pStreamDict->SetFor("Resources", std::move(pResourceDict));
+  pStreamDict->SetFor("Resources", pResourceDict);
 }
 
 bool GenerateCircleAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {

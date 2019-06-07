@@ -1037,7 +1037,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
       CPDF_FileSpec filespec(pNewDict.Get());
       filespec.SetFileName(pdf_path);
-      pMainDict->SetFor("F", std::move(pNewDict));
+      pMainDict->SetFor("F", pNewDict);
     }
   }
 
@@ -1080,7 +1080,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       if (pV)
         pFieldDict->SetFor(pdfium::form_fields::kV, pV->CloneDirectObject());
     }
-    pFields->Add(std::move(pFieldDict));
+    pFields->Add(pFieldDict);
   }
   return pDoc;
 }

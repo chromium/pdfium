@@ -375,7 +375,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
       auto oneW = pdfium::MakeRetain<CPDF_Array>();
       oneW->AddNew<CPDF_Number>(w);
       widthsArray->AddNew<CPDF_Number>(ch);
-      widthsArray->Add(std::move(oneW));
+      widthsArray->Add(oneW);
       break;
     }
     ++it;
@@ -412,7 +412,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
       ++it;
       curWidthArray->AddNew<CPDF_Number>(static_cast<int>(it->second));
     }
-    widthsArray->Add(std::move(curWidthArray));
+    widthsArray->Add(curWidthArray);
   }
   pCIDFont->SetNewFor<CPDF_Reference>("W", pDoc, widthsArray->GetObjNum());
 

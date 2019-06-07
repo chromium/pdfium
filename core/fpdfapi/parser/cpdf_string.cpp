@@ -40,7 +40,7 @@ RetainPtr<CPDF_Object> CPDF_String::Clone() const {
   auto pRet = pdfium::MakeRetain<CPDF_String>();
   pRet->m_String = m_String;
   pRet->m_bHex = m_bHex;
-  return std::move(pRet);
+  return pRet;
 }
 
 ByteString CPDF_String::GetString() const {

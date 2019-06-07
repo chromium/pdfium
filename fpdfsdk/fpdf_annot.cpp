@@ -245,7 +245,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
     pAnnotList = pPage->GetDict()->SetNewFor<CPDF_Array>("Annots");
-  pAnnotList->Add(std::move(pDict));
+  pAnnotList->Add(pDict);
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pNewAnnot.release());

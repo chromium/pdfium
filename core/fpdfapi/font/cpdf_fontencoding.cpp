@@ -1725,8 +1725,8 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
 
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(pPool);
   pDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
-  pDict->SetFor("Differences", std::move(pDiff));
-  return std::move(pDict);
+  pDict->SetFor("Differences", pDiff);
+  return pDict;
 }
 
 uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode) {

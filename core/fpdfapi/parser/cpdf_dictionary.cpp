@@ -80,7 +80,7 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
         pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
     }
   }
-  return std::move(pCopy);
+  return pCopy;
 }
 
 const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
