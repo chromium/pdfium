@@ -573,18 +573,18 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
 bool CFX_PSRenderer::DrawText(int nChars,
                               const TextCharPos* pCharPos,
                               CFX_Font* pFont,
-                              const CFX_Matrix* pObject2Device,
+                              const CFX_Matrix& mtObject2Device,
                               float font_size,
                               uint32_t color) {
   // Check object to device matrix first, since it can scale the font size.
-  if ((pObject2Device->a == 0 && pObject2Device->b == 0) ||
-      (pObject2Device->c == 0 && pObject2Device->d == 0)) {
+  if ((mtObject2Device.a == 0 && mtObject2Device.b == 0) ||
+      (mtObject2Device.c == 0 && mtObject2Device.d == 0)) {
     return true;
   }
 
   // Do not send near zero font sizes to printers. See crbug.com/767343.
   float scale =
-      std::min(pObject2Device->GetXUnit(), pObject2Device->GetYUnit());
+      std::min(mtObject2Device.GetXUnit(), mtObject2Device.GetYUnit());
   static constexpr float kEpsilon = 0.01f;
   if (std::fabs(font_size * scale) < kEpsilon)
     return true;
@@ -596,9 +596,9 @@ bool CFX_PSRenderer::DrawText(int nChars,
 
   SetColor(color);
   std::ostringstream buf;
-  buf << "q[" << pObject2Device->a << " " << pObject2Device->b << " "
-      << pObject2Device->c << " " << pObject2Device->d << " "
-      << pObject2Device->e << " " << pObject2Device->f << "]cm\n";
+  buf << "q[" << mtObject2Device.a << " " << mtObject2Device.b << " "
+      << mtObject2Device.c << " " << mtObject2Device.d << " "
+      << mtObject2Device.e << " " << mtObject2Device.f << "]cm\n";
 
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
   RetainPtr<CFX_GlyphCache> pGlyphCache = pCache->GetGlyphCache(pFont);

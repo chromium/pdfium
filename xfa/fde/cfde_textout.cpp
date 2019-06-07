@@ -41,7 +41,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               const RetainPtr<CFGAS_GEFont>& pFont,
                               pdfium::span<TextCharPos> pCharPos,
                               float fFontSize,
-                              const CFX_Matrix* pMatrix) {
+                              const CFX_Matrix& matrix) {
   ASSERT(pFont);
   ASSERT(!pCharPos.empty());
 
@@ -85,7 +85,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
         font = pFxFont;
 #endif
 
-        device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, pMatrix,
+        device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
                                color, FXTEXT_CLEARTYPE);
       }
       pCurFont = pSTFont;
@@ -107,7 +107,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     font = pFxFont;
 #endif
 
-    bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, pMatrix,
+    bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
                                   color, FXTEXT_CLEARTYPE);
   }
 
@@ -306,7 +306,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
       if (szCount > 0) {
         CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
                                  {m_CharPos.data(), szCount}, m_fFontSize,
-                                 &m_Matrix);
+                                 m_Matrix);
       }
     }
   }

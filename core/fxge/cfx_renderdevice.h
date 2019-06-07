@@ -222,7 +222,7 @@ class CFX_RenderDevice {
                       const TextCharPos* pCharPos,
                       CFX_Font* pFont,
                       float font_size,
-                      const CFX_Matrix* pText2Device,
+                      const CFX_Matrix& mtText2Device,
                       uint32_t fill_color,
                       uint32_t text_flags);
   bool DrawTextPath(int nChars,

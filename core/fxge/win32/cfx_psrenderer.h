@@ -92,7 +92,7 @@ class CFX_PSRenderer {
   bool DrawText(int nChars,
                 const TextCharPos* pCharPos,
                 CFX_Font* pFont,
-                const CFX_Matrix* pObject2Device,
+                const CFX_Matrix& mtObject2Device,
                 float font_size,
                 uint32_t color);
 

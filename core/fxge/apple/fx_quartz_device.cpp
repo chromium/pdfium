@@ -61,14 +61,15 @@ void CQuartz2D::DestroyFont(void* pFont) {
   CGFontRelease((CGFontRef)pFont);
 }
 
-void CQuartz2D::setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix) {
-  if (!graphics || !matrix)
+void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
+                                      const CFX_Matrix& matrix) {
+  if (!graphics)
     return;
-  CGContextRef context = (CGContextRef)graphics;
-  CGFloat ty = CGBitmapContextGetHeight(context) - matrix->f;
+  CGContextRef context = reinterpret_cast<CGContextRef>(graphics);
+  CGFloat ty = CGBitmapContextGetHeight(context) - matrix.f;
   CGContextSetTextMatrix(
-      context, CGAffineTransformMake(matrix->a, matrix->b, matrix->c, matrix->d,
-                                     matrix->e, ty));
+      context, CGAffineTransformMake(matrix.a, matrix.b, matrix.c, matrix.d,
+                                     matrix.e, ty));
 }
 
 bool CQuartz2D::drawGraphicsString(void* graphics,

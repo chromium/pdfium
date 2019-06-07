@@ -40,7 +40,7 @@ class CFDE_TextOut {
                          const RetainPtr<CFGAS_GEFont>& pFont,
                          pdfium::span<TextCharPos> pCharPos,
                          float fFontSize,
-                         const CFX_Matrix* pMatrix);
+                         const CFX_Matrix& matrix);
 
   CFDE_TextOut();
   ~CFDE_TextOut();

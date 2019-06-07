@@ -102,7 +102,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   CFX_Matrix new_matrix = matrix;
   new_matrix.e = origin_x;
   new_matrix.f = origin_y;
-  DrawNormalText(pDevice, codes, positions, pFont, font_size, &new_matrix,
+  DrawNormalText(pDevice, codes, positions, pFont, font_size, new_matrix,
                  fill_argb, pOptions);
 }
 
@@ -112,7 +112,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                        const std::vector<float>& charPos,
                                        CPDF_Font* pFont,
                                        float font_size,
-                                       const CFX_Matrix* pText2Device,
+                                       const CFX_Matrix& mtText2Device,
                                        FX_ARGB fill_argb,
                                        const CPDF_RenderOptions* pOptions) {
   CPDF_CharPosList CharPosList(charCodes, charPos, pFont, font_size);
@@ -148,7 +148,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
 
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawNormalText(i - startIndex, &CharPosList.GetAt(startIndex),
-                                 font, font_size, pText2Device, fill_argb,
+                                 font, font_size, mtText2Device, fill_argb,
                                  FXGE_flags)) {
       bDraw = false;
     }
@@ -158,7 +158,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   CFX_Font* font = GetFont(pFont, fontPosition);
   if (!pDevice->DrawNormalText(CharPosList.GetCount() - startIndex,
                                &CharPosList.GetAt(startIndex), font, font_size,
-                               pText2Device, fill_argb, FXGE_flags)) {
+                               mtText2Device, fill_argb, FXGE_flags)) {
     bDraw = false;
   }
   return bDraw;

@@ -562,7 +562,7 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, size_t szBlockIndex) {
 }
 
 bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
-                                 const CFX_Matrix& tmDoc2Device,
+                                 const CFX_Matrix& mtDoc2Device,
                                  const CFX_RectF& rtClip,
                                  size_t szBlockIndex) {
   if (!pFxDevice)
@@ -599,10 +599,10 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
       int32_t iChars = pPiece->iChars;
       if (pdfium::CollectionSize<int32_t>(char_pos) < iChars)
         char_pos.resize(iChars);
-      RenderString(pFxDevice, pPieceLine, j, &char_pos, tmDoc2Device);
+      RenderString(pFxDevice, pPieceLine, j, &char_pos, mtDoc2Device);
     }
     for (size_t j = 0; j < pPieceLine->m_textPieces.size(); ++j)
-      RenderPath(pFxDevice, pPieceLine, j, &char_pos, tmDoc2Device);
+      RenderPath(pFxDevice, pPieceLine, j, &char_pos, mtDoc2Device);
   }
   pFxDevice->RestoreState(false);
   return szPieceLines > 0;
@@ -1118,13 +1118,13 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
                                    CXFA_PieceLine* pPieceLine,
                                    size_t szPiece,
                                    std::vector<TextCharPos>* pCharPos,
-                                   const CFX_Matrix& tmDoc2Device) {
+                                   const CFX_Matrix& mtDoc2Device) {
   const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
     auto span = pdfium::make_span(pCharPos->data(), szCount);
     CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont, span,
-                             pPiece->fFontSize, &tmDoc2Device);
+                             pPiece->fFontSize, mtDoc2Device);
   }
   pPieceLine->m_charCounts.push_back(szCount);
 }
@@ -1133,7 +1133,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
                                  CXFA_PieceLine* pPieceLine,
                                  size_t szPiece,
                                  std::vector<TextCharPos>* pCharPos,
-                                 const CFX_Matrix& tmDoc2Device) {
+                                 const CFX_Matrix& mtDoc2Device) {
   CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   bool bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
   bool bNoLineThrough = pPiece->iLineThrough < 1 || pPiece->iLineThrough > 2;
@@ -1249,7 +1249,7 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   graphState.m_LineWidth = 1;
   graphState.m_MiterLimit = 10;
   graphState.m_DashPhase = 0;
-  pDevice->DrawPath(&path, &tmDoc2Device, &graphState, 0, pPiece->dwColor, 0);
+  pDevice->DrawPath(&path, &mtDoc2Device, &graphState, 0, pPiece->dwColor, 0);
 }
 
 size_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,

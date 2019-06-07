@@ -863,15 +863,15 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       const TextCharPos* pCharPos,
                                       CFX_Font* pFont,
                                       float font_size,
-                                      const CFX_Matrix* pText2Device,
+                                      const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
                                       uint32_t text_flags) {
   int nativetext_flags = text_flags;
   if (m_DeviceClass != FXDC_DISPLAY) {
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
       if (ShouldDrawDeviceText(pFont, text_flags) &&
-          m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pText2Device,
-                                          font_size, fill_color)) {
+          m_pDeviceDriver->DrawDeviceText(
+              nChars, pCharPos, pFont, mtText2Device, font_size, fill_color)) {
         return true;
       }
     }
@@ -879,18 +879,13 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       return false;
   } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
     if (ShouldDrawDeviceText(pFont, text_flags) &&
-        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, pText2Device,
+        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
                                         font_size, fill_color)) {
       return true;
     }
   }
-  CFX_Matrix char2device;
-  CFX_Matrix text2Device;
-  if (pText2Device) {
-    char2device = *pText2Device;
-    text2Device = *pText2Device;
-  }
-
+  CFX_Matrix char2device = mtText2Device;
+  CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
       ((m_DeviceClass == FXDC_PRINTER) &&
@@ -898,7 +893,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (pFont->GetFace()) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
-      return DrawTextPath(nChars, pCharPos, pFont, font_size, pText2Device,
+      return DrawTextPath(nChars, pCharPos, pFont, font_size, &mtText2Device,
                           nullptr, nullptr, fill_color, 0, nullptr, nPathFlags);
     }
   }

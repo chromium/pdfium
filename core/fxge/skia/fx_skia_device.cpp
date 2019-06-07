@@ -829,7 +829,7 @@ class SkiaState {
   bool DrawText(int nChars,
                 const TextCharPos* pCharPos,
                 CFX_Font* pFont,
-                const CFX_Matrix* pMatrix,
+                const CFX_Matrix& matrix,
                 float font_size,
                 uint32_t color) {
     if (m_debugDisable)
@@ -845,7 +845,7 @@ class SkiaState {
     int drawIndex = SkTMin(m_drawIndex, m_commands.count());
     if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kText == m_type &&
-         (FontChanged(pFont, pMatrix, font_size, scaleX, color) ||
+         (FontChanged(pFont, matrix, font_size, scaleX, color) ||
           hasRSX == m_rsxform.isEmpty()))) {
       Flush();
     }
@@ -856,7 +856,7 @@ class SkiaState {
       m_fontSize = font_size;
       m_scaleX = scaleX;
       m_fillColor = color;
-      m_drawMatrix = *pMatrix;
+      m_drawMatrix = matrix;
       m_drawIndex = m_commandIndex;
       m_type = Accumulator::kText;
     }
@@ -884,7 +884,7 @@ class SkiaState {
 #endif
     }
     SkPoint delta;
-    if (MatrixOffset(pMatrix, &delta)) {
+    if (MatrixOffset(&matrix, &delta)) {
       for (int index = 0; index < nChars; ++index)
         m_positions[index + count].offset(delta.fX * flip, -delta.fY * flip);
     }
@@ -1104,13 +1104,13 @@ class SkiaState {
   }
 
   bool FontChanged(CFX_Font* pFont,
-                   const CFX_Matrix* pMatrix,
+                   const CFX_Matrix& matrix,
                    float font_size,
                    float scaleX,
                    uint32_t color) const {
     CFX_TypeFace* typeface =
         pFont->GetFace() ? pFont->GetDeviceCache() : nullptr;
-    return typeface != m_pTypeFace || MatrixChanged(pMatrix) ||
+    return typeface != m_pTypeFace || MatrixChanged(&matrix) ||
            font_size != m_fontSize || scaleX != m_scaleX ||
            color != m_fillColor;
   }
@@ -1557,10 +1557,10 @@ void CFX_SkiaDeviceDriver::PreMultiply() {
 bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                           const TextCharPos* pCharPos,
                                           CFX_Font* pFont,
-                                          const CFX_Matrix* pObject2Device,
+                                          const CFX_Matrix& mtObject2Device,
                                           float font_size,
                                           uint32_t color) {
-  if (m_pCache->DrawText(nChars, pCharPos, pFont, pObject2Device, font_size,
+  if (m_pCache->DrawText(nChars, pCharPos, pFont, mtObject2Device, font_size,
                          color)) {
     return true;
   }
@@ -1580,7 +1580,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   SkScalar vFlip = flip;
   if (pFont->IsVertical())
     vFlip *= -1;
-  SkMatrix skMatrix = ToFlippedSkMatrix(*pObject2Device, flip);
+  SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, flip);
   m_pCanvas->concat(skMatrix);
   SkTDArray<SkPoint> positions;
   positions.setCount(nChars);

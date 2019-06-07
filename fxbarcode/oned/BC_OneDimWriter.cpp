@@ -172,7 +172,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
     affine_matrix.Concat(*matrix);
   }
   device->DrawNormalText(str.GetLength(), pCharPos, m_pFont.Get(),
-                         static_cast<float>(iFontSize), &affine_matrix,
+                         static_cast<float>(iFontSize), affine_matrix,
                          m_fontColor, FXTEXT_CLEARTYPE);
 }
 

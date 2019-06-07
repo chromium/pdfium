@@ -24,7 +24,7 @@ class CQuartz2D {
 
   void* CreateFont(const uint8_t* pFontData, uint32_t dwFontSize);
   void DestroyFont(void* pFont);
-  void setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix);
+  void SetGraphicsTextMatrix(void* graphics, const CFX_Matrix& matrix);
   bool drawGraphicsString(void* graphics,
                           void* font,
                           float fontSize,

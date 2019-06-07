@@ -51,9 +51,13 @@ class CPDF_TextRenderer {
                              const std::vector<float>& charPos,
                              CPDF_Font* pFont,
                              float font_size,
-                             const CFX_Matrix* pText2Device,
+                             const CFX_Matrix& mtText2Device,
                              FX_ARGB fill_argb,
                              const CPDF_RenderOptions* pOptions);
+
+  CPDF_TextRenderer() = delete;
+  CPDF_TextRenderer(const CPDF_TextRenderer&) = delete;
+  CPDF_TextRenderer& operator=(const CPDF_TextRenderer&) = delete;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_TEXTRENDERER_H_

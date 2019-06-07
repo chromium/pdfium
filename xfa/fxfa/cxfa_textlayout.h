@@ -47,7 +47,7 @@ class CXFA_TextLayout {
   CFX_SizeF CalcSize(const CFX_SizeF& minSize, const CFX_SizeF& maxSize);
   void ItemBlocks(const CFX_RectF& rtText, size_t szBlockIndex);
   bool DrawString(CFX_RenderDevice* pFxDevice,
-                  const CFX_Matrix& tmDoc2Device,
+                  const CFX_Matrix& mtDoc2Device,
                   const CFX_RectF& rtClip,
                   size_t szBlockIndex);
   bool IsLoaded() const { return !m_pieceLines.empty(); }
@@ -105,12 +105,12 @@ class CXFA_TextLayout {
                     CXFA_PieceLine* pPieceLine,
                     size_t szPiece,
                     std::vector<TextCharPos>* pCharPos,
-                    const CFX_Matrix& tmDoc2Device);
+                    const CFX_Matrix& mtDoc2Device);
   void RenderPath(CFX_RenderDevice* pDevice,
                   CXFA_PieceLine* pPieceLine,
                   size_t szPiece,
                   std::vector<TextCharPos>* pCharPos,
-                  const CFX_Matrix& tmDoc2Device);
+                  const CFX_Matrix& mtDoc2Device);
   size_t GetDisplayPos(const CXFA_TextPiece* pPiece,
                        std::vector<TextCharPos>* pCharPos);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);

@@ -200,7 +200,7 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 bool CGdiPrinterDriver::DrawDeviceText(int nChars,
                                        const TextCharPos* pCharPos,
                                        CFX_Font* pFont,
-                                       const CFX_Matrix* pObject2Device,
+                                       const CFX_Matrix& mtObject2Device,
                                        float font_size,
                                        uint32_t color) {
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
@@ -273,12 +273,12 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   // Transforms
   SetGraphicsMode(m_hDC, GM_ADVANCED);
   XFORM xform;
-  xform.eM11 = pObject2Device->a / kScaleFactor;
-  xform.eM12 = pObject2Device->b / kScaleFactor;
-  xform.eM21 = -pObject2Device->c / kScaleFactor;
-  xform.eM22 = -pObject2Device->d / kScaleFactor;
-  xform.eDx = pObject2Device->e;
-  xform.eDy = pObject2Device->f;
+  xform.eM11 = mtObject2Device.a / kScaleFactor;
+  xform.eM12 = mtObject2Device.b / kScaleFactor;
+  xform.eM21 = -mtObject2Device.c / kScaleFactor;
+  xform.eM22 = -mtObject2Device.d / kScaleFactor;
+  xform.eDx = mtObject2Device.e;
+  xform.eDy = mtObject2Device.f;
   ModifyWorldTransform(m_hDC, &xform, MWT_LEFTMULTIPLY);
 
   // Color
@@ -503,10 +503,10 @@ bool CPSPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
 bool CPSPrinterDriver::DrawDeviceText(int nChars,
                                       const TextCharPos* pCharPos,
                                       CFX_Font* pFont,
-                                      const CFX_Matrix* pObject2Device,
+                                      const CFX_Matrix& mtObject2Device,
                                       float font_size,
                                       uint32_t color) {
-  return m_PSRenderer.DrawText(nChars, pCharPos, pFont, pObject2Device,
+  return m_PSRenderer.DrawText(nChars, pCharPos, pFont, mtObject2Device,
                                font_size, color);
 }
 
@@ -612,7 +612,7 @@ bool CTextOnlyPrinterDriver::StartDIBits(
 bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
                                             const TextCharPos* pCharPos,
                                             CFX_Font* pFont,
-                                            const CFX_Matrix* pObject2Device,
+                                            const CFX_Matrix& mtObject2Device,
                                             float font_size,
                                             uint32_t color) {
   if (g_pdfium_print_mode != 1)
@@ -631,12 +631,12 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
   // These characters are removed by SkPDF, but the new line information is
   // preserved in the text location. clrf characters seem to be ignored by
   // label printers that use this driver.
-  if (m_SetOrigin &&
-      FXSYS_round(m_OriginY) != FXSYS_round(pObject2Device->f * kScaleFactor)) {
+  float fOffsetY = mtObject2Device.f * kScaleFactor;
+  if (m_SetOrigin && FXSYS_round(m_OriginY) != FXSYS_round(fOffsetY)) {
     wsText += L"\r\n";
     totalLength += 2;
   }
-  m_OriginY = pObject2Device->f * kScaleFactor;
+  m_OriginY = fOffsetY;
   m_SetOrigin = true;
 
   // Text
