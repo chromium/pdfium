@@ -30,7 +30,6 @@ fuzzer_list = [
   "pdf_streamparser_fuzzer",
   "pdf_xml_fuzzer",
   "pdfium_fuzzer",
-  "pdfium_lpm_fuzzer",
 ]
 if (pdf_enable_v8) {
   fuzzer_list += [
@@ -48,6 +47,7 @@ if (pdf_enable_v8) {
       "pdf_formcalc_context_fuzzer",
       "pdf_formcalc_fuzzer",
       "pdfium_xfa_fuzzer",
+      "pdfium_xfa_lpm_fuzzer",
     ]
     if (pdf_enable_xfa_bmp) {
       fuzzer_list += [ "pdf_codec_bmp_fuzzer" ]
@@ -399,6 +399,18 @@ if (pdf_enable_v8) {
       ]
       public_fuzzer = true
     }
+
+    pdfium_fuzzer("pdfium_xfa_lpm_fuzzer") {
+      sources = [
+        "pdfium_xfa_lpm_fuzz_stub.cc",
+        "pdfium_xfa_lpm_fuzz_stub.h",
+      ]
+      deps = [
+        ":fuzzer_helper",
+        "../../:pdfium_public_headers",
+      ]
+      public_fuzzer = true
+    }
   }
 }
 
@@ -536,18 +548,6 @@ pdfium_fuzzer("pdfium_fuzzer") {
   ]
   deps = [
     ":fuzzer_helper",
-  ]
-  public_fuzzer = true
-}
-
-pdfium_fuzzer("pdfium_lpm_fuzzer") {
-  sources = [
-    "pdfium_lpm_fuzz_stub.cc",
-    "pdfium_lpm_fuzz_stub.h",
-  ]
-  deps = [
-    ":fuzzer_helper",
-    "../../:pdfium_public_headers",
   ]
   public_fuzzer = true
 }

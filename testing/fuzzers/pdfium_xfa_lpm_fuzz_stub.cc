@@ -5,18 +5,24 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "public/fpdf_formfill.h"
 #include "testing/fuzzers/pdfium_fuzzer_helper.h"
-#include "testing/fuzzers/pdfium_lpm_fuzz_stub.h"
+#include "testing/fuzzers/pdfium_xfa_lpm_fuzz_stub.h"
 
 class PDFiumLpmFuzzStub : public PDFiumFuzzerHelper {
  public:
   PDFiumLpmFuzzStub() = default;
   ~PDFiumLpmFuzzStub() override = default;
 
-  int GetFormCallbackVersion() const override { return 1; }
+  int GetFormCallbackVersion() const override { return 2; }
+  // Allow fuzzer to fuzz XFA but don't require it to fuzz.
+  bool OnFormFillEnvLoaded(FPDF_DOCUMENT doc) override {
+    FPDF_LoadXFA(doc);
+    return true;
+  }
 };
 
-void FuzzPdf(const char* pdf, size_t size) {
+void PdfiumXFALPMFuzzStub(const char* pdf, size_t size) {
   PDFiumLpmFuzzStub fuzz_stub;
   fuzz_stub.RenderPdf(pdf, size);
 }
