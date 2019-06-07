@@ -37,7 +37,7 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
       continue;
 
     int char_width = glyph.m_pGlyph->GetBitmap()->GetWidth();
-    if (anti_alias == FXFT_RENDER_MODE_LCD)
+    if (anti_alias == FT_RENDER_MODE_LCD)
       char_width /= 3;
 
     FX_SAFE_INT32 char_right = point.value().x;

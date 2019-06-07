@@ -21,7 +21,7 @@ CTTFontDesc::~CTTFontDesc() {
   ASSERT(m_RefCount == 0);
   for (size_t i = 0; i < FX_ArraySize(m_TTCFaces); i++) {
     if (m_TTCFaces[i])
-      FXFT_Done_Face(m_TTCFaces[i]);
+      FT_Done_Face(m_TTCFaces[i]);
   }
 }
 

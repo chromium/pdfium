@@ -265,12 +265,12 @@ CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
 CFX_FontMapper::~CFX_FontMapper() {
   for (size_t i = 0; i < FX_ArraySize(m_FoxitFaces); ++i) {
     if (m_FoxitFaces[i])
-      FXFT_Done_Face(m_FoxitFaces[i]);
+      FT_Done_Face(m_FoxitFaces[i]);
   }
   if (m_MMFaces[0])
-    FXFT_Done_Face(m_MMFaces[0]);
+    FT_Done_Face(m_MMFaces[0]);
   if (m_MMFaces[1])
-    FXFT_Done_Face(m_MMFaces[1]);
+    FT_Done_Face(m_MMFaces[1]);
 }
 
 void CFX_FontMapper::SetSystemFontInfo(

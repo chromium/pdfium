@@ -72,9 +72,9 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
     return;
   }
   FXFT_FaceRec* face = m_Font.GetFace();
-  int err = FXFT_Load_Glyph(
-      face, glyph_index,
-      FXFT_LOAD_NO_SCALE | FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+  int err =
+      FT_Load_Glyph(face, glyph_index,
+                    FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
   if (err)
     return;
 

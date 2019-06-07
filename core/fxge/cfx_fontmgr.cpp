@@ -84,14 +84,14 @@ CFX_FontMgr::~CFX_FontMgr() {
   // be destroyed first.
   m_FaceMap.clear();
   m_pBuiltinMapper.reset();
-  FXFT_Done_FreeType(m_FTLibrary);
+  FT_Done_FreeType(m_FTLibrary);
 }
 
 void CFX_FontMgr::InitFTLibrary() {
   if (m_FTLibrary)
     return;
 
-  FXFT_Init_FreeType(&m_FTLibrary);
+  FT_Init_FreeType(&m_FTLibrary);
   m_FTLibrarySupportsHinting =
       SetLcdFilterMode() || FreeTypeVersionSupportsHinting();
 }
@@ -138,11 +138,11 @@ FXFT_FaceRec* CFX_FontMgr::AddCachedFace(
 
   FXFT_FaceRec* face = nullptr;
   int ret =
-      FXFT_New_Memory_Face(m_FTLibrary, pData.get(), size, face_index, &face);
+      FT_New_Memory_Face(m_FTLibrary, pData.get(), size, face_index, &face);
   if (ret)
     return nullptr;
 
-  ret = FXFT_Set_Pixel_Sizes(face, 64, 64);
+  ret = FT_Set_Pixel_Sizes(face, 64, 64);
   if (ret)
     return nullptr;
 
@@ -192,11 +192,11 @@ FXFT_FaceRec* CFX_FontMgr::GetFixedFace(pdfium::span<const uint8_t> span,
                                         int face_index) {
   InitFTLibrary();
   FXFT_FaceRec* face = nullptr;
-  if (FXFT_New_Memory_Face(m_FTLibrary, span.data(), span.size(), face_index,
-                           &face)) {
+  if (FT_New_Memory_Face(m_FTLibrary, span.data(), span.size(), face_index,
+                         &face)) {
     return nullptr;
   }
-  return FXFT_Set_Pixel_Sizes(face, 64, 64) ? nullptr : face;
+  return FT_Set_Pixel_Sizes(face, 64, 64) ? nullptr : face;
 }
 
 void CFX_FontMgr::ReleaseFace(FXFT_FaceRec* face) {
@@ -213,7 +213,7 @@ void CFX_FontMgr::ReleaseFace(FXFT_FaceRec* face) {
     break;
   }
   if (bNeedFaceDone && !m_pBuiltinMapper->IsBuiltinFace(face))
-    FXFT_Done_Face(face);
+    FT_Done_Face(face);
 }
 
 // static
@@ -235,7 +235,7 @@ bool CFX_FontMgr::FreeTypeVersionSupportsHinting() const {
   FT_Int major;
   FT_Int minor;
   FT_Int patch;
-  FXFT_Library_Version(m_FTLibrary, &major, &minor, &patch);
+  FT_Library_Version(m_FTLibrary, &major, &minor, &patch);
   // Freetype versions >= 2.8.1 support hinting even if subpixel rendering is
   // disabled. https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/
   return major > 2 || (major == 2 && minor > 8) ||
@@ -243,6 +243,6 @@ bool CFX_FontMgr::FreeTypeVersionSupportsHinting() const {
 }
 
 bool CFX_FontMgr::SetLcdFilterMode() const {
-  return FXFT_Library_SetLcdFilter(m_FTLibrary, FT_LCD_FILTER_DEFAULT) !=
+  return FT_Library_SetLcdFilter(m_FTLibrary, FT_LCD_FILTER_DEFAULT) !=
          FT_Err_Unimplemented_Feature;
 }

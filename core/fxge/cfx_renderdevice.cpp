@@ -897,7 +897,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                           nullptr, nullptr, fill_color, 0, nullptr, nPathFlags);
     }
   }
-  int anti_alias = FXFT_RENDER_MODE_MONO;
+  int anti_alias = FT_RENDER_MODE_MONO;
   bool bNormal = false;
   if ((text_flags & FXTEXT_NOSMOOTH) == 0) {
     if (m_DeviceClass == FXDC_DISPLAY && m_bpp > 1) {
@@ -907,14 +907,14 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         // 6225973, 6243070, 6393145, 6421054, 6282327, and 6624828; the latest
         // one expires 10/7/19.  This makes LCD antialiasing very ugly, so we
         // instead fall back on NORMAL antialiasing.
-        anti_alias = FXFT_RENDER_MODE_NORMAL;
+        anti_alias = FT_RENDER_MODE_NORMAL;
       } else if ((m_RenderCaps & (FXRC_ALPHA_OUTPUT | FXRC_CMYK_OUTPUT))) {
-        anti_alias = FXFT_RENDER_MODE_LCD;
+        anti_alias = FT_RENDER_MODE_LCD;
         bNormal = true;
       } else if (m_bpp < 16) {
-        anti_alias = FXFT_RENDER_MODE_NORMAL;
+        anti_alias = FT_RENDER_MODE_NORMAL;
       } else {
-        anti_alias = FXFT_RENDER_MODE_LCD;
+        anti_alias = FT_RENDER_MODE_LCD;
 
         bool bClearType = false;
         if (pFont->GetFace())
@@ -931,7 +931,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     const TextCharPos& charpos = pCharPos[i];
 
     glyph.m_fOrigin = text2Device.Transform(charpos.m_Origin);
-    if (anti_alias < FXFT_RENDER_MODE_LCD)
+    if (anti_alias < FT_RENDER_MODE_LCD)
       glyph.m_Origin.x = FXSYS_round(glyph.m_fOrigin.x);
     else
       glyph.m_Origin.x = static_cast<int>(floor(glyph.m_fOrigin.x));
@@ -951,7 +951,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
           charpos.m_FontCharWidth, anti_alias, &nativetext_flags);
     }
   }
-  if (anti_alias < FXFT_RENDER_MODE_LCD && glyphs.size() > 1)
+  if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1)
     AdjustGlyphSpace(&glyphs);
 
   FX_RECT bmp_rect = GetGlyphsBBox(glyphs, anti_alias);
@@ -963,7 +963,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   int pixel_height = bmp_rect.Height();
   int pixel_left = bmp_rect.left;
   int pixel_top = bmp_rect.top;
-  if (anti_alias == FXFT_RENDER_MODE_MONO) {
+  if (anti_alias == FT_RENDER_MODE_MONO) {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_1bppMask))
       return false;
@@ -1005,7 +1005,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   int r = 0;
   int g = 0;
   int b = 0;
-  if (anti_alias == FXFT_RENDER_MODE_LCD)
+  if (anti_alias == FT_RENDER_MODE_LCD)
     std::tie(a, r, g, b) = ArgbDecode(fill_color);
 
   for (const TextGlyphPos& glyph : glyphs) {
@@ -1019,7 +1019,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
     int ncols = pGlyph->GetWidth();
     int nrows = pGlyph->GetHeight();
-    if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
+    if (anti_alias == FT_RENDER_MODE_NORMAL) {
       if (!bitmap->CompositeMask(point.value().x, point.value().y, ncols, nrows,
                                  pGlyph, fill_color, 0, 0, BlendMode::kNormal,
                                  nullptr, false)) {

@@ -275,7 +275,7 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   uint32_t dwGlyphIndex;
-  uint32_t dwCurrentChar = FXFT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
+  uint32_t dwCurrentChar = FT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
   static constexpr uint32_t kMaxSimpleFontChar = 0xFF;
   if (dwCurrentChar > kMaxSimpleFontChar || dwGlyphIndex == 0)
     return nullptr;
@@ -288,7 +288,7 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
                  static_cast<uint32_t>(std::numeric_limits<int>::max()));
     widthsArray->AddNew<CPDF_Number>(static_cast<int>(width));
     uint32_t nextChar =
-        FXFT_Get_Next_Char(pFont->GetFace(), dwCurrentChar, &dwGlyphIndex);
+        FT_Get_Next_Char(pFont->GetFace(), dwCurrentChar, &dwGlyphIndex);
     // Simple fonts have 1-byte charcodes only.
     if (nextChar > kMaxSimpleFontChar || dwGlyphIndex == 0)
       break;
@@ -346,7 +346,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
                                       pFontDesc->GetObjNum());
 
   uint32_t dwGlyphIndex;
-  uint32_t dwCurrentChar = FXFT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
+  uint32_t dwCurrentChar = FT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
   static constexpr uint32_t kMaxUnicode = 0x10FFFF;
   // If it doesn't have a single char, just fail
   if (dwGlyphIndex == 0 || dwCurrentChar > kMaxUnicode)
@@ -362,7 +362,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
       widths[dwGlyphIndex] = pFont->GetGlyphWidth(dwGlyphIndex);
     to_unicode[dwGlyphIndex] = dwCurrentChar;
     dwCurrentChar =
-        FXFT_Get_Next_Char(pFont->GetFace(), dwCurrentChar, &dwGlyphIndex);
+        FT_Get_Next_Char(pFont->GetFace(), dwCurrentChar, &dwGlyphIndex);
     if (dwGlyphIndex == 0)
       break;
   }

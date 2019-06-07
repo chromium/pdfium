@@ -9,19 +9,19 @@
 namespace {
 
 void ResetTransform(FT_Face face) {
-  FXFT_Matrix matrix;
+  FT_Matrix matrix;
   matrix.xx = 0x10000L;
   matrix.xy = 0;
   matrix.yx = 0;
   matrix.yy = 0x10000L;
-  FXFT_Set_Transform(face, &matrix, 0);
+  FT_Set_Transform(face, &matrix, 0);
 }
 
 }  // namespace
 
-ScopedFontTransform::ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix)
+ScopedFontTransform::ScopedFontTransform(FT_Face face, FT_Matrix* matrix)
     : m_Face(face) {
-  FXFT_Set_Transform(m_Face, matrix, 0);
+  FT_Set_Transform(m_Face, matrix, 0);
 }
 
 ScopedFontTransform::~ScopedFontTransform() {

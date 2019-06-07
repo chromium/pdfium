@@ -233,12 +233,12 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
   m_FamilyFonts.clear();
   m_FontFaces.clear();
   if (m_FTLibrary)
-    FXFT_Done_FreeType(m_FTLibrary);
+    FT_Done_FreeType(m_FTLibrary);
 }
 
 bool CFPF_SkiaFontMgr::InitFTLibrary() {
   if (!m_FTLibrary)
-    FXFT_Init_FreeType(&m_FTLibrary);
+    FT_Init_FreeType(&m_FTLibrary);
   return !!m_FTLibrary;
 }
 
@@ -338,13 +338,13 @@ FXFT_FaceRec* CFPF_SkiaFontMgr::GetFontFace(ByteStringView bsFile,
     return nullptr;
   if (iFaceIndex < 0)
     return nullptr;
-  FXFT_Open_Args args;
+  FT_Open_Args args;
   args.flags = FT_OPEN_PATHNAME;
   args.pathname = const_cast<FT_String*>(bsFile.unterminated_c_str());
   FXFT_FaceRec* face;
-  if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face))
+  if (FT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face))
     return nullptr;
-  FXFT_Set_Pixel_Sizes(face, 0, 64);
+  FT_Set_Pixel_Sizes(face, 0, 64);
   return face;
 }
 
@@ -382,7 +382,7 @@ void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
     return;
 
   m_FontFaces.push_back(ReportFace(face, file));
-  FXFT_Done_Face(face);
+  FT_Done_Face(face);
 }
 
 std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(

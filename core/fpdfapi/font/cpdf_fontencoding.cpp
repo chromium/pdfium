@@ -1731,19 +1731,19 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
 
 uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode) {
   switch (encoding) {
-    case FXFT_ENCODING_UNICODE:
+    case FT_ENCODING_UNICODE:
       return unicode;
-    case FXFT_ENCODING_ADOBE_STANDARD:
+    case FT_ENCODING_ADOBE_STANDARD:
       return PDF_FindCode(StandardEncoding, unicode);
-    case FXFT_ENCODING_ADOBE_EXPERT:
+    case FT_ENCODING_ADOBE_EXPERT:
       return PDF_FindCode(MacExpertEncoding, unicode);
-    case FXFT_ENCODING_ADOBE_LATIN_1:
+    case FT_ENCODING_ADOBE_LATIN_1:
       return PDF_FindCode(AdobeWinAnsiEncoding, unicode);
-    case FXFT_ENCODING_APPLE_ROMAN:
+    case FT_ENCODING_APPLE_ROMAN:
       return PDF_FindCode(MacRomanEncoding, unicode);
-    case FXFT_ENCODING_ADOBE_CUSTOM:
+    case FT_ENCODING_ADOBE_CUSTOM:
       return PDF_FindCode(PDFDocEncoding, unicode);
-    case FXFT_ENCODING_MS_SYMBOL:
+    case FT_ENCODING_MS_SYMBOL:
       return PDF_FindCode(MSSymbolEncoding, unicode);
   }
   return 0;
@@ -1803,15 +1803,15 @@ const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode) {
 
 wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode) {
   switch (encoding) {
-    case FXFT_ENCODING_UNICODE:
+    case FT_ENCODING_UNICODE:
       return (uint16_t)charcode;
-    case FXFT_ENCODING_ADOBE_STANDARD:
+    case FT_ENCODING_ADOBE_STANDARD:
       return StandardEncoding[(uint8_t)charcode];
-    case FXFT_ENCODING_ADOBE_EXPERT:
+    case FT_ENCODING_ADOBE_EXPERT:
       return MacExpertEncoding[(uint8_t)charcode];
-    case FXFT_ENCODING_ADOBE_LATIN_1:
+    case FT_ENCODING_ADOBE_LATIN_1:
       return AdobeWinAnsiEncoding[(uint8_t)charcode];
-    case FXFT_ENCODING_APPLE_ROMAN:
+    case FT_ENCODING_APPLE_ROMAN:
       return MacRomanEncoding[(uint8_t)charcode];
     case PDFFONT_ENCODING_PDFDOC:
       return PDFDocEncoding[(uint8_t)charcode];

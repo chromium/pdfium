@@ -13,7 +13,7 @@
 // goes out of scope.
 class ScopedFontTransform {
  public:
-  ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix);
+  ScopedFontTransform(FT_Face face, FT_Matrix* matrix);
   ~ScopedFontTransform();
 
  private:

@@ -389,7 +389,7 @@ int CPDF_Font::FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode) {
   WideString str = UnicodeFromCharCode(charcode);
   uint32_t unicode = !str.IsEmpty() ? str[0] : charcode;
   int glyph =
-      FXFT_Get_Char_Index(m_FontFallbacks[fallbackFont]->GetFace(), unicode);
+      FT_Get_Char_Index(m_FontFallbacks[fallbackFont]->GetFace(), unicode);
   if (glyph == 0)
     return -1;
 
@@ -422,7 +422,7 @@ bool CPDF_Font::FT_UseTTCharmap(FXFT_FaceRec* face,
   for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
     if (FXFT_Get_Charmap_PlatformID(pCharMap[i]) == platform_id &&
         FXFT_Get_Charmap_EncodingID(pCharMap[i]) == encoding_id) {
-      FXFT_Set_Charmap(face, pCharMap[i]);
+      FT_Set_Charmap(face, pCharMap[i]);
       return true;
     }
   }

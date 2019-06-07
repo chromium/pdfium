@@ -63,7 +63,7 @@ class CFX_FontMgr {
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
 
-  FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
+  FXFT_LibraryRec* GetFTLibrary() const { return m_FTLibrary; }
   bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
 
  private:
@@ -72,7 +72,7 @@ class CFX_FontMgr {
 
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
-  FXFT_Library m_FTLibrary = nullptr;
+  FXFT_LibraryRec* m_FTLibrary = nullptr;
   bool m_FTLibrarySupportsHinting = false;
 };
 

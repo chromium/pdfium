@@ -32,12 +32,12 @@ namespace {
 
 bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
   FXFT_FaceRec* pFace = pFont->GetDevFont()->GetFace();
-  FXFT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
-  if (FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE) != 0)
+  FT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
+  if (FXFT_Select_Charmap(pFace, FT_ENCODING_UNICODE) != 0)
     return false;
 
-  if (FXFT_Get_Char_Index(pFace, wcUnicode) == 0) {
-    FXFT_Set_Charmap(pFace, charmap);
+  if (FT_Get_Char_Index(pFace, wcUnicode) == 0) {
+    FT_Set_Charmap(pFace, charmap);
     return false;
   }
   return true;
@@ -341,7 +341,7 @@ inline uint16_t GetUInt16(const uint8_t* p) {
 
 extern "C" {
 
-unsigned long ftStreamRead(FXFT_Stream stream,
+unsigned long ftStreamRead(FXFT_StreamRec* stream,
                            unsigned long offset,
                            unsigned char* buffer,
                            unsigned long count) {
@@ -356,7 +356,7 @@ unsigned long ftStreamRead(FXFT_Stream stream,
   return count;
 }
 
-void ftStreamClose(FXFT_Stream stream) {}
+void ftStreamClose(FXFT_StreamRec* stream) {}
 
 }  // extern "C"
 
@@ -484,7 +484,7 @@ FXFT_FaceRec* LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   pFontMgr->InitFTLibrary();
 
-  FXFT_Library library = pFontMgr->GetFTLibrary();
+  FXFT_LibraryRec* library = pFontMgr->GetFTLibrary();
   if (!library)
     return nullptr;
 
@@ -492,8 +492,8 @@ FXFT_FaceRec* LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
   // Ultimately, we want to change this to:
   //   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
   // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
-  FXFT_Stream ftStream =
-      static_cast<FXFT_Stream>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
+  FXFT_StreamRec* ftStream =
+      static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
   memset(ftStream, 0, sizeof(FXFT_StreamRec));
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
@@ -502,18 +502,18 @@ FXFT_FaceRec* LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
   ftStream->read = ftStreamRead;
   ftStream->close = ftStreamClose;
 
-  FXFT_Open_Args ftArgs;
-  memset(&ftArgs, 0, sizeof(FXFT_Open_Args));
+  FT_Open_Args ftArgs;
+  memset(&ftArgs, 0, sizeof(FT_Open_Args));
   ftArgs.flags |= FT_OPEN_STREAM;
   ftArgs.stream = ftStream;
 
   FXFT_FaceRec* pFace = nullptr;
-  if (FXFT_Open_Face(library, &ftArgs, iFaceIndex, &pFace)) {
+  if (FT_Open_Face(library, &ftArgs, iFaceIndex, &pFace)) {
     ft_sfree(ftStream);
     return nullptr;
   }
 
-  FXFT_Set_Pixel_Sizes(pFace, 0, 64);
+  FT_Set_Pixel_Sizes(pFace, 0, 64);
   return pFace;
 }
 
@@ -528,13 +528,13 @@ bool VerifyUnicodeForFontDescriptor(CFX_FontDescriptor* pDesc,
   if (!pFace)
     return false;
 
-  FT_Error retCharmap = FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE);
-  FT_Error retIndex = FXFT_Get_Char_Index(pFace, wcUnicode);
+  FT_Error retCharmap = FXFT_Select_Charmap(pFace, FT_ENCODING_UNICODE);
+  FT_Error retIndex = FT_Get_Char_Index(pFace, wcUnicode);
 
   if (FXFT_Get_Face_External_Stream(pFace))
     FXFT_Clear_Face_External_Stream(pFace);
 
-  FXFT_Done_Face(pFace);
+  FT_Done_Face(pFace);
   return !retCharmap && retIndex;
 }
 
@@ -758,17 +758,17 @@ void CFGAS_FontMgr::RegisterFace(FXFT_FaceRec* pFace,
 
   std::vector<uint8_t> table;
   unsigned long nLength = 0;
-  unsigned int error = FXFT_Load_Sfnt_Table(pFace, dwTag, 0, nullptr, &nLength);
+  unsigned int error = FT_Load_Sfnt_Table(pFace, dwTag, 0, nullptr, &nLength);
   if (error == 0 && nLength != 0) {
     table.resize(nLength);
-    if (FXFT_Load_Sfnt_Table(pFace, dwTag, 0, table.data(), nullptr))
+    if (FT_Load_Sfnt_Table(pFace, dwTag, 0, table.data(), nullptr))
       table.clear();
   }
   pFont->m_wsFamilyNames = GetNames(table.empty() ? nullptr : table.data());
   pFont->m_wsFamilyNames.push_back(WideString::FromUTF8(pFace->family_name));
   pFont->m_wsFaceName =
       pFaceName ? *pFaceName
-                : WideString::FromDefANSI(FXFT_Get_Postscript_Name(pFace));
+                : WideString::FromDefANSI(FT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
   m_InstalledFonts.push_back(std::move(pFont));
 }
@@ -788,7 +788,7 @@ void CFGAS_FontMgr::RegisterFaces(
     RegisterFace(pFace, pFaceName);
     if (FXFT_Get_Face_External_Stream(pFace))
       FXFT_Clear_Face_External_Stream(pFace);
-    FXFT_Done_Face(pFace);
+    FT_Done_Face(pFace);
   } while (index < num_faces);
 }
 
