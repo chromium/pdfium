@@ -24,8 +24,6 @@ jumbo_source_set("render") {
     "cpdf_imageloader.h",
     "cpdf_imagerenderer.cpp",
     "cpdf_imagerenderer.h",
-    "cpdf_occontext.cpp",
-    "cpdf_occontext.h",
     "cpdf_pagerendercache.cpp",
     "cpdf_pagerendercache.h",
     "cpdf_progressiverenderer.cpp",

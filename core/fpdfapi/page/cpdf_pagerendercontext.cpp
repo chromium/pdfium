@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_pagerendercontext.h"
 
-#include "core/fpdfapi/render/cpdf_occontext.h"
+#include "core/fpdfapi/page/cpdf_occontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"

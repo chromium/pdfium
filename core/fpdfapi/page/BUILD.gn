@@ -49,6 +49,8 @@ jumbo_source_set("page") {
     "cpdf_imageobject.h",
     "cpdf_meshstream.cpp",
     "cpdf_meshstream.h",
+    "cpdf_occontext.cpp",
+    "cpdf_occontext.h",
     "cpdf_page.cpp",
     "cpdf_page.h",
     "cpdf_pagemodule.cpp",
