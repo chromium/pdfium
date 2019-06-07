@@ -25,7 +25,7 @@ CTTFontDesc::~CTTFontDesc() {
   }
 }
 
-void CTTFontDesc::SetFace(size_t index, FXFT_Face face) {
+void CTTFontDesc::SetFace(size_t index, FXFT_FaceRec* face) {
   ASSERT(index < FX_ArraySize(m_TTCFaces));
   m_TTCFaces[index] = face;
 }
@@ -35,7 +35,7 @@ void CTTFontDesc::AddRef() {
   ++m_RefCount;
 }
 
-CTTFontDesc::ReleaseStatus CTTFontDesc::ReleaseFace(FXFT_Face face) {
+CTTFontDesc::ReleaseStatus CTTFontDesc::ReleaseFace(FXFT_FaceRec* face) {
   if (!pdfium::ContainsValue(m_TTCFaces, face))
     return kNotAppropriate;
 
@@ -43,7 +43,7 @@ CTTFontDesc::ReleaseStatus CTTFontDesc::ReleaseFace(FXFT_Face face) {
   return --m_RefCount == 0 ? kReleased : kNotReleased;
 }
 
-FXFT_Face CTTFontDesc::GetFace(size_t index) const {
+FXFT_FaceRec* CTTFontDesc::GetFace(size_t index) const {
   ASSERT(index < FX_ArraySize(m_TTCFaces));
   return m_TTCFaces[index];
 }

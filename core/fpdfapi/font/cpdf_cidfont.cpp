@@ -176,7 +176,7 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
 
 #endif  // !defined(OS_WIN)
 
-void FT_UseCIDCharmap(FXFT_Face face, int coding) {
+void FT_UseCIDCharmap(FXFT_FaceRec* face, int coding) {
   int encoding;
   switch (coding) {
     case CIDCODING_GB:
@@ -426,14 +426,14 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
   FX_RECT rect;
   bool bVert = false;
   int glyph_index = GlyphFromCharCode(charcode, &bVert);
-  FXFT_Face face = m_Font.GetFace();
+  FXFT_FaceRec* face = m_Font.GetFace();
   if (face) {
     if (FXFT_Is_Face_Tricky(face)) {
       int err = FXFT_Load_Glyph(face, glyph_index,
                                 FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
       if (!err) {
         FXFT_Glyph glyph;
-        err = FXFT_Get_Glyph(((FXFT_Face)face)->glyph, &glyph);
+        err = FXFT_Get_Glyph(face->glyph, &glyph);
         if (!err) {
           FXFT_BBox cbox;
           FXFT_Glyph_Get_CBox(glyph, FXFT_GLYPH_BBOX_PIXELS, &cbox);
@@ -441,8 +441,8 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
           cbox.xMax = pdfium::clamp(cbox.xMax, kMinCBox, kMaxCBox);
           cbox.yMin = pdfium::clamp(cbox.yMin, kMinCBox, kMaxCBox);
           cbox.yMax = pdfium::clamp(cbox.yMax, kMinCBox, kMaxCBox);
-          int pixel_size_x = ((FXFT_Face)face)->size->metrics.x_ppem;
-          int pixel_size_y = ((FXFT_Face)face)->size->metrics.y_ppem;
+          int pixel_size_x = face->size->metrics.x_ppem;
+          int pixel_size_y = face->size->metrics.y_ppem;
           if (pixel_size_x == 0 || pixel_size_y == 0) {
             rect = FX_RECT(cbox.xMin, cbox.yMax, cbox.xMax, cbox.yMin);
           } else {
@@ -554,7 +554,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (pVertGlyph)
     *pVertGlyph = false;
 
-  FXFT_Face face = m_Font.GetFace();
+  FXFT_FaceRec* face = m_Font.GetFace();
   int index = FXFT_Get_Char_Index(face, unicode);
   if (unicode == 0x2502)
     return index;
@@ -623,7 +623,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
           unicode = unicode_str[0];
       }
     }
-    FXFT_Face face = m_Font.GetFace();
+    FXFT_FaceRec* face = m_Font.GetFace();
     if (unicode == 0) {
       if (!m_bAdobeCourierStd)
         return charcode ? static_cast<int>(charcode) : -1;

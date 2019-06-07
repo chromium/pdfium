@@ -222,7 +222,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
 void CPDF_Font::CheckFontMetrics() {
   if (m_FontBBox.top == 0 && m_FontBBox.bottom == 0 && m_FontBBox.left == 0 &&
       m_FontBBox.right == 0) {
-    FXFT_Face face = m_Font.GetFace();
+    FXFT_FaceRec* face = m_Font.GetFace();
     if (face) {
       m_FontBBox.left = TT2PDF(FXFT_Get_Face_xMin(face), face);
       m_FontBBox.bottom = TT2PDF(FXFT_Get_Face_yMin(face), face);
@@ -403,7 +403,7 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
 }
 
 // static
-int CPDF_Font::TT2PDF(int m, FXFT_Face face) {
+int CPDF_Font::TT2PDF(int m, FXFT_FaceRec* face) {
   int upm = FXFT_Get_Face_UnitsPerEM(face);
   if (upm == 0)
     return m;
@@ -415,7 +415,7 @@ int CPDF_Font::TT2PDF(int m, FXFT_Face face) {
 }
 
 // static
-bool CPDF_Font::FT_UseTTCharmap(FXFT_Face face,
+bool CPDF_Font::FT_UseTTCharmap(FXFT_FaceRec* face,
                                 int platform_id,
                                 int encoding_id) {
   auto** pCharMap = FXFT_Get_Face_Charmaps(face);

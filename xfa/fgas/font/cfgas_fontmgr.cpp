@@ -31,7 +31,7 @@
 namespace {
 
 bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
-  FXFT_Face pFace = pFont->GetDevFont()->GetFace();
+  FXFT_FaceRec* pFace = pFont->GetDevFont()->GetFace();
   FXFT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
   if (FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE) != 0)
     return false;
@@ -398,7 +398,7 @@ std::vector<WideString> GetNames(const uint8_t* name_table) {
   return results;
 }
 
-void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB) {
+void GetUSBCSB(FXFT_FaceRec* pFace, uint32_t* USB, uint32_t* CSB) {
   TT_OS2* pOS2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(pFace, ft_sfnt_os2));
   if (!pOS2) {
     USB[0] = 0;
@@ -417,7 +417,7 @@ void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB) {
   CSB[1] = pOS2->ulCodePageRange2;
 }
 
-uint32_t GetFlags(FXFT_Face pFace) {
+uint32_t GetFlags(FXFT_FaceRec* pFace) {
   uint32_t flags = 0;
   if (FXFT_Is_Face_Bold(pFace))
     flags |= FXFONT_BOLD;
@@ -476,8 +476,8 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
   return nullptr;
 }
 
-FXFT_Face LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
-                   int32_t iFaceIndex) {
+FXFT_FaceRec* LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
+                       int32_t iFaceIndex) {
   if (!pFontStream)
     return nullptr;
 
@@ -507,7 +507,7 @@ FXFT_Face LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
   ftArgs.flags |= FT_OPEN_STREAM;
   ftArgs.stream = ftStream;
 
-  FXFT_Face pFace = nullptr;
+  FXFT_FaceRec* pFace = nullptr;
   if (FXFT_Open_Face(library, &ftArgs, iFaceIndex, &pFace)) {
     ft_sfree(ftStream);
     return nullptr;
@@ -524,7 +524,7 @@ bool VerifyUnicodeForFontDescriptor(CFX_FontDescriptor* pDesc,
   if (!pFileRead)
     return false;
 
-  FXFT_Face pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
+  FXFT_FaceRec* pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
   if (!pFace)
     return false;
 
@@ -743,7 +743,8 @@ void CFGAS_FontMgr::MatchFonts(
   std::sort(pMatchedFonts->begin(), pMatchedFonts->end());
 }
 
-void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace, const WideString* pFaceName) {
+void CFGAS_FontMgr::RegisterFace(FXFT_FaceRec* pFace,
+                                 const WideString* pFaceName) {
   if ((pFace->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
     return;
 
@@ -778,7 +779,7 @@ void CFGAS_FontMgr::RegisterFaces(
   int32_t index = 0;
   int32_t num_faces = 0;
   do {
-    FXFT_Face pFace = LoadFace(pFontStream, index++);
+    FXFT_FaceRec* pFace = LoadFace(pFontStream, index++);
     if (!pFace)
       continue;
     // All faces keep number of faces. It can be retrieved from any one face.

@@ -71,7 +71,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
     }
     return;
   }
-  FXFT_Face face = m_Font.GetFace();
+  FXFT_FaceRec* face = m_Font.GetFace();
   int err = FXFT_Load_Glyph(
       face, glyph_index,
       FXFT_LOAD_NO_SCALE | FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);

@@ -133,7 +133,7 @@ class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
 #else   // defined(OS_WIN)
   bool EnumFontsFromFontMapper();
   bool EnumFontsFromFiles();
-  void RegisterFace(FXFT_Face pFace, const WideString* pFaceName);
+  void RegisterFace(FXFT_FaceRec* pFace, const WideString* pFaceName);
   void RegisterFaces(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
                      const WideString* pFaceName);
   void MatchFonts(std::vector<CFX_FontDescriptorInfo>* MatchedFonts,

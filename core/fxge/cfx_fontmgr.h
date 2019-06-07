@@ -30,35 +30,35 @@ class CFX_FontMgr {
 
   void InitFTLibrary();
 
-  FXFT_Face GetCachedFace(const ByteString& face_name,
-                          int weight,
-                          bool bItalic,
-                          uint8_t** pFontData);
-  FXFT_Face AddCachedFace(const ByteString& face_name,
-                          int weight,
-                          bool bItalic,
-                          std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                          uint32_t size,
-                          int face_index);
-  FXFT_Face GetCachedTTCFace(int ttc_size,
-                             uint32_t checksum,
-                             int font_offset,
-                             uint8_t** pFontData);
-  FXFT_Face AddCachedTTCFace(int ttc_size,
-                             uint32_t checksum,
-                             std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                             uint32_t size,
-                             int font_offset);
-  FXFT_Face GetFixedFace(pdfium::span<const uint8_t> span, int face_index);
-  void ReleaseFace(FXFT_Face face);
+  FXFT_FaceRec* GetCachedFace(const ByteString& face_name,
+                              int weight,
+                              bool bItalic,
+                              uint8_t** pFontData);
+  FXFT_FaceRec* AddCachedFace(const ByteString& face_name,
+                              int weight,
+                              bool bItalic,
+                              std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                              uint32_t size,
+                              int face_index);
+  FXFT_FaceRec* GetCachedTTCFace(int ttc_size,
+                                 uint32_t checksum,
+                                 int font_offset,
+                                 uint8_t** pFontData);
+  FXFT_FaceRec* AddCachedTTCFace(int ttc_size,
+                                 uint32_t checksum,
+                                 std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                                 uint32_t size,
+                                 int font_offset);
+  FXFT_FaceRec* GetFixedFace(pdfium::span<const uint8_t> span, int face_index);
+  void ReleaseFace(FXFT_FaceRec* face);
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
-  FXFT_Face FindSubstFont(const ByteString& face_name,
-                          bool bTrueType,
-                          uint32_t flags,
-                          int weight,
-                          int italic_angle,
-                          int CharsetCP,
-                          CFX_SubstFont* pSubstFont);
+  FXFT_FaceRec* FindSubstFont(const ByteString& face_name,
+                              bool bTrueType,
+                              uint32_t flags,
+                              int weight,
+                              int italic_angle,
+                              int CharsetCP,
+                              CFX_SubstFont* pSubstFont);
 
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }

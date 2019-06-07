@@ -43,7 +43,7 @@ class CFPF_SkiaFont {
  private:
   UnownedPtr<CFPF_SkiaFontMgr> const m_pFontMgr;
   UnownedPtr<const CFPF_SkiaPathFont> const m_pFont;
-  const FXFT_Face m_Face;
+  FXFT_FaceRec* const m_Face;
   const uint32_t m_dwStyle;
   const uint8_t m_uCharset;
 };

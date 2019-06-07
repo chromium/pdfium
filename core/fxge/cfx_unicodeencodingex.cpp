@@ -42,7 +42,7 @@ CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
 CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() {}
 
 uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
-  FXFT_Face face = m_pFont->GetFace();
+  FXFT_FaceRec* face = m_pFont->GetFace();
   FT_UInt nIndex = FXFT_Get_Char_Index(face, charcode);
   if (nIndex > 0)
     return nIndex;
@@ -71,7 +71,7 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
       m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
     return Unicode;
   }
-  FXFT_Face face = m_pFont->GetFace();
+  FXFT_FaceRec* face = m_pFont->GetFace();
   int nmaps = FXFT_Get_Face_CharmapCount(face);
   for (int i = 0; i < nmaps; i++) {
     int nEncodingID =

@@ -95,7 +95,7 @@ void GenKey(UniqueKeyGen* pKeyGen,
 
 }  // namespace
 
-CFX_GlyphCache::CFX_GlyphCache(FXFT_Face face) : m_Face(face) {}
+CFX_GlyphCache::CFX_GlyphCache(FXFT_FaceRec* face) : m_Face(face) {}
 
 CFX_GlyphCache::~CFX_GlyphCache() = default;
 

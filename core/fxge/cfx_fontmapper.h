@@ -30,15 +30,15 @@ class CFX_FontMapper {
   void AddInstalledFont(const ByteString& name, int charset);
   void LoadInstalledFonts();
 
-  FXFT_Face FindSubstFont(const ByteString& face_name,
-                          bool bTrueType,
-                          uint32_t flags,
-                          int weight,
-                          int italic_angle,
-                          int CharsetCP,
-                          CFX_SubstFont* pSubstFont);
+  FXFT_FaceRec* FindSubstFont(const ByteString& face_name,
+                              bool bTrueType,
+                              uint32_t flags,
+                              int weight,
+                              int italic_angle,
+                              int CharsetCP,
+                              CFX_SubstFont* pSubstFont);
 
-  bool IsBuiltinFace(const FXFT_Face face) const;
+  bool IsBuiltinFace(const FXFT_FaceRec* face) const;
   int GetFaceSize() const;
   ByteString GetFaceName(int index) const { return m_FaceArray[index].name; }
 
@@ -51,20 +51,20 @@ class CFX_FontMapper {
 
   ByteString GetPSNameFromTT(void* hFont);
   ByteString MatchInstalledFonts(const ByteString& norm_name);
-  FXFT_Face UseInternalSubst(CFX_SubstFont* pSubstFont,
-                             int iBaseFont,
-                             int italic_angle,
-                             int weight,
-                             int picthfamily);
-  FXFT_Face GetCachedTTCFace(void* hFont,
-                             const uint32_t tableTTCF,
-                             uint32_t ttc_size,
-                             uint32_t font_size);
-  FXFT_Face GetCachedFace(void* hFont,
-                          ByteString SubstName,
-                          int weight,
-                          bool bItalic,
-                          uint32_t font_size);
+  FXFT_FaceRec* UseInternalSubst(CFX_SubstFont* pSubstFont,
+                                 int iBaseFont,
+                                 int italic_angle,
+                                 int weight,
+                                 int picthfamily);
+  FXFT_FaceRec* GetCachedTTCFace(void* hFont,
+                                 const uint32_t tableTTCF,
+                                 uint32_t ttc_size,
+                                 uint32_t font_size);
+  FXFT_FaceRec* GetCachedFace(void* hFont,
+                              ByteString SubstName,
+                              int weight,
+                              bool bItalic,
+                              uint32_t font_size);
 
   struct FaceData {
     ByteString name;
@@ -76,8 +76,8 @@ class CFX_FontMapper {
   std::vector<FaceData> m_FaceArray;
   std::unique_ptr<SystemFontInfoIface> m_pFontInfo;
   UnownedPtr<CFX_FontMgr> const m_pFontMgr;
-  FXFT_Face m_MMFaces[MM_FACE_COUNT];
-  FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
+  FXFT_FaceRec* m_MMFaces[MM_FACE_COUNT];
+  FXFT_FaceRec* m_FoxitFaces[FOXIT_FACE_COUNT];
 };
 
 #endif  // CORE_FXGE_CFX_FONTMAPPER_H_

@@ -94,8 +94,10 @@ class CPDF_Font {
  protected:
   CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
 
-  static int TT2PDF(int m, FXFT_Face face);
-  static bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
+  static int TT2PDF(int m, FXFT_FaceRec* face);
+  static bool FT_UseTTCharmap(FXFT_FaceRec* face,
+                              int platform_id,
+                              int encoding_id);
   static const char* GetAdobeCharName(int iBaseEncoding,
                                       const std::vector<ByteString>& charnames,
                                       uint32_t charcode);

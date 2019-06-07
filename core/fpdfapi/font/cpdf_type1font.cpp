@@ -43,7 +43,7 @@ const char* GlyphNameRemap(const char* pStrAdobe) {
 
 #endif  // defined(OS_MACOSX)
 
-bool FT_UseType1Charmap(FXFT_Face face) {
+bool FT_UseType1Charmap(FXFT_FaceRec* face) {
   if (FXFT_Get_Face_CharmapCount(face) == 0) {
     return false;
   }

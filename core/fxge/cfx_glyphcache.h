@@ -49,7 +49,7 @@ class CFX_GlyphCache : public Retainable, public Observable<CFX_GlyphCache> {
 #endif
 
  private:
-  explicit CFX_GlyphCache(FXFT_Face face);
+  explicit CFX_GlyphCache(FXFT_FaceRec* face);
 
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
   // <glyph_index, width, weight, angle, vertical>
@@ -77,7 +77,7 @@ class CFX_GlyphCache : public Retainable, public Observable<CFX_GlyphCache> {
   void InitPlatform();
   void DestroyPlatform();
 
-  FXFT_Face const m_Face;
+  FXFT_FaceRec* const m_Face;
   std::map<ByteString, SizeGlyphCache> m_SizeMap;
   std::map<PathMapKey, std::unique_ptr<CFX_PathData>> m_PathMap;
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_

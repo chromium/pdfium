@@ -49,14 +49,14 @@ class CFX_Font {
                  bool bVertical);
 
   bool LoadEmbedded(pdfium::span<const uint8_t> src_span);
-  FXFT_Face GetFace() const { return m_Face.Get(); }
+  FXFT_FaceRec* GetFace() const { return m_Face.Get(); }
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
 #ifdef PDF_ENABLE_XFA
   bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
 
 #if !defined(OS_WIN)
-  void SetFace(FXFT_Face face);
+  void SetFace(FXFT_FaceRec* face);
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
 #endif  // !defined(OS_WIN)
 #endif  // PDF_ENABLE_XFA

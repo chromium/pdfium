@@ -55,10 +55,10 @@ unsigned long FTStreamRead(FXFT_Stream stream,
 
 void FTStreamClose(FXFT_Stream stream) {}
 
-FXFT_Face LoadFileImp(FXFT_Library library,
-                      const RetainPtr<IFX_SeekableReadStream>& pFile,
-                      int32_t faceIndex,
-                      std::unique_ptr<FXFT_StreamRec>* stream) {
+FXFT_FaceRec* LoadFileImp(FXFT_Library library,
+                          const RetainPtr<IFX_SeekableReadStream>& pFile,
+                          int32_t faceIndex,
+                          std::unique_ptr<FXFT_StreamRec>* stream) {
   auto stream1 = pdfium::MakeUnique<FXFT_StreamRec>();
   stream1->base = nullptr;
   stream1->size = static_cast<unsigned long>(pFile->GetSize());
@@ -71,7 +71,7 @@ FXFT_Face LoadFileImp(FXFT_Library library,
   args.flags = FT_OPEN_STREAM;
   args.stream = stream1.get();
 
-  FXFT_Face face;
+  FXFT_FaceRec* face;
   if (FXFT_Open_Face(library, &args, faceIndex, &face))
     return nullptr;
 
@@ -321,7 +321,7 @@ bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
 }
 
 #if !defined(OS_WIN)
-void CFX_Font::SetFace(FXFT_Face face) {
+void CFX_Font::SetFace(FXFT_FaceRec* face) {
   ClearGlyphCache();
   m_Face = face;
 }
