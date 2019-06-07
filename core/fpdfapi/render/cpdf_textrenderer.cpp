@@ -78,8 +78,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& matrix,
                                        const ByteString& str,
                                        FX_ARGB fill_argb,
-                                       const CFX_GraphStateData* pGraphState,
-                                       const CPDF_RenderOptions* pOptions) {
+                                       const CPDF_RenderOptions& options) {
   if (pFont->IsType3Font())
     return;
 
@@ -103,7 +102,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   new_matrix.e = origin_x;
   new_matrix.f = origin_y;
   DrawNormalText(pDevice, codes, positions, pFont, font_size, new_matrix,
-                 fill_argb, pOptions);
+                 fill_argb, options);
 }
 
 // static
@@ -114,30 +113,27 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                        float font_size,
                                        const CFX_Matrix& mtText2Device,
                                        FX_ARGB fill_argb,
-                                       const CPDF_RenderOptions* pOptions) {
+                                       const CPDF_RenderOptions& options) {
   CPDF_CharPosList CharPosList(charCodes, charPos, pFont, font_size);
   if (CharPosList.empty())
     return true;
-  int FXGE_flags = 0;
-  if (pOptions) {
-    if (pOptions->GetOptions().bClearType) {
-      FXGE_flags |= FXTEXT_CLEARTYPE;
-      if (pOptions->GetOptions().bBGRStripe)
-        FXGE_flags |= FXTEXT_BGR_STRIPE;
-    }
-    if (pOptions->GetOptions().bNoTextSmooth)
-      FXGE_flags |= FXTEXT_NOSMOOTH;
-    if (pOptions->GetOptions().bPrintGraphicText)
-      FXGE_flags |= FXTEXT_PRINTGRAPHICTEXT;
-    if (pOptions->GetOptions().bNoNativeText)
-      FXGE_flags |= FXTEXT_NO_NATIVETEXT;
-    if (pOptions->GetOptions().bPrintImageText)
-      FXGE_flags |= FXTEXT_PRINTIMAGETEXT;
-  } else {
-    FXGE_flags = FXTEXT_CLEARTYPE;
+  int fxge_flags = 0;
+  if (options.GetOptions().bClearType) {
+    fxge_flags |= FXTEXT_CLEARTYPE;
+    if (options.GetOptions().bBGRStripe)
+      fxge_flags |= FXTEXT_BGR_STRIPE;
   }
+  if (options.GetOptions().bNoTextSmooth)
+    fxge_flags |= FXTEXT_NOSMOOTH;
+  if (options.GetOptions().bPrintGraphicText)
+    fxge_flags |= FXTEXT_PRINTGRAPHICTEXT;
+  if (options.GetOptions().bNoNativeText)
+    fxge_flags |= FXTEXT_NO_NATIVETEXT;
+  if (options.GetOptions().bPrintImageText)
+    fxge_flags |= FXTEXT_PRINTIMAGETEXT;
+
   if (pFont->IsCIDFont())
-    FXGE_flags |= FXFONT_CIDFONT;
+    fxge_flags |= FXFONT_CIDFONT;
   bool bDraw = true;
   int32_t fontPosition = CharPosList.GetAt(0).m_FallbackFontPosition;
   uint32_t startIndex = 0;
@@ -149,7 +145,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawNormalText(i - startIndex, &CharPosList.GetAt(startIndex),
                                  font, font_size, mtText2Device, fill_argb,
-                                 FXGE_flags)) {
+                                 fxge_flags)) {
       bDraw = false;
     }
     fontPosition = curFontPosition;
@@ -158,7 +154,7 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   CFX_Font* font = GetFont(pFont, fontPosition);
   if (!pDevice->DrawNormalText(CharPosList.GetCount() - startIndex,
                                &CharPosList.GetAt(startIndex), font, font_size,
-                               mtText2Device, fill_argb, FXGE_flags)) {
+                               mtText2Device, fill_argb, fxge_flags)) {
     bDraw = false;
   }
   return bDraw;

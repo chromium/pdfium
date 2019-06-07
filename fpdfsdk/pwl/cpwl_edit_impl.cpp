@@ -51,8 +51,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
   ASSERT(ro.GetOptions().bClearType);
   ro.SetColorMode(CPDF_RenderOptions::kNormal);
   CPDF_TextRenderer::DrawTextString(pDevice, pos.x, pos.y, pFont, fFontSize,
-                                    mtUser2Device, str, crTextFill, nullptr,
-                                    &ro);
+                                    mtUser2Device, str, crTextFill, ro);
 }
 
 }  // namespace

@@ -1776,7 +1776,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
   text_matrix.Concat(mtObj2Device);
   return CPDF_TextRenderer::DrawNormalText(
       m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
-      font_size, text_matrix, fill_argb, &m_Options);
+      font_size, text_matrix, fill_argb, m_Options);
 }
 
 RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
