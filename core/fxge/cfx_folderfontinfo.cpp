@@ -245,23 +245,23 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (os2.GetLength() >= 86) {
     const uint8_t* p = os2.raw_str() + 78;
     uint32_t codepages = GET_TT_LONG(p);
-    if (codepages & (1 << 17)) {
+    if (codepages & (1U << 17)) {
       m_pMapper->AddInstalledFont(facename, FX_CHARSET_ShiftJIS);
       pInfo->m_Charsets |= CHARSET_FLAG_SHIFTJIS;
     }
-    if (codepages & (1 << 18)) {
+    if (codepages & (1U << 18)) {
       m_pMapper->AddInstalledFont(facename, FX_CHARSET_ChineseSimplified);
       pInfo->m_Charsets |= CHARSET_FLAG_GB;
     }
-    if (codepages & (1 << 20)) {
+    if (codepages & (1U << 20)) {
       m_pMapper->AddInstalledFont(facename, FX_CHARSET_ChineseTraditional);
       pInfo->m_Charsets |= CHARSET_FLAG_BIG5;
     }
-    if ((codepages & (1 << 19)) || (codepages & (1 << 21))) {
+    if ((codepages & (1U << 19)) || (codepages & (1U << 21))) {
       m_pMapper->AddInstalledFont(facename, FX_CHARSET_Hangul);
       pInfo->m_Charsets |= CHARSET_FLAG_KOREAN;
     }
-    if (codepages & (1 << 31)) {
+    if (codepages & (1U << 31)) {
       m_pMapper->AddInstalledFont(facename, FX_CHARSET_Symbol);
       pInfo->m_Charsets |= CHARSET_FLAG_SYMBOL;
     }

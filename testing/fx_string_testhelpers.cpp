@@ -42,7 +42,7 @@ std::string GetPlatformString(FPDF_WIDESTRING wstr) {
 
 std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
   if (!wstr)
-    return nullptr;
+    return std::wstring();
 
   size_t characters = 0;
   while (wstr[characters])

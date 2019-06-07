@@ -154,5 +154,5 @@ FX_ARGB StringToFXARGB(WideStringView wsValue) {
       }
     }
   }
-  return (0xff << 24) | (r << 16) | (g << 8) | b;
+  return (0xffU << 24) | (r << 16) | (g << 8) | b;
 }
