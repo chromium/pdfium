@@ -229,7 +229,7 @@ class CFX_RenderDevice {
                     const TextCharPos* pCharPos,
                     CFX_Font* pFont,
                     float font_size,
-                    const CFX_Matrix* pText2User,
+                    const CFX_Matrix& mtText2User,
                     const CFX_Matrix* pUser2Device,
                     const CFX_GraphStateData* pGraphState,
                     uint32_t fill_color,

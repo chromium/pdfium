@@ -30,7 +30,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                      const std::vector<float>& charPos,
                                      CPDF_Font* pFont,
                                      float font_size,
-                                     const CFX_Matrix* pText2User,
+                                     const CFX_Matrix& mtText2User,
                                      const CFX_Matrix* pUser2Device,
                                      const CFX_GraphStateData* pGraphState,
                                      FX_ARGB fill_argb,
@@ -51,7 +51,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
 
     CFX_Font* font = GetFont(pFont, fontPosition);
     if (!pDevice->DrawTextPath(i - startIndex, &CharPosList.GetAt(startIndex),
-                               font, font_size, pText2User, pUser2Device,
+                               font, font_size, mtText2User, pUser2Device,
                                pGraphState, fill_argb, stroke_argb,
                                pClippingPath, nFlag)) {
       bDraw = false;
@@ -62,7 +62,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
   CFX_Font* font = GetFont(pFont, fontPosition);
   if (!pDevice->DrawTextPath(CharPosList.GetCount() - startIndex,
                              &CharPosList.GetAt(startIndex), font, font_size,
-                             pText2User, pUser2Device, pGraphState, fill_argb,
+                             mtText2User, pUser2Device, pGraphState, fill_argb,
                              stroke_argb, pClippingPath, nFlag)) {
     bDraw = false;
   }

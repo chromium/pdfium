@@ -893,7 +893,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (pFont->GetFace()) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
-      return DrawTextPath(nChars, pCharPos, pFont, font_size, &mtText2Device,
+      return DrawTextPath(nChars, pCharPos, pFont, font_size, mtText2Device,
                           nullptr, nullptr, fill_color, 0, nullptr, nPathFlags);
     }
   }
@@ -1054,7 +1054,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
                                     const TextCharPos* pCharPos,
                                     CFX_Font* pFont,
                                     float font_size,
-                                    const CFX_Matrix* pText2User,
+                                    const CFX_Matrix& mtText2User,
                                     const CFX_Matrix* pUser2Device,
                                     const CFX_GraphStateData* pGraphState,
                                     uint32_t fill_color,
@@ -1076,7 +1076,7 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
     if (!pPath)
       continue;
 
-    matrix.Concat(*pText2User);
+    matrix.Concat(mtText2User);
 
     CFX_PathData TransformedPath(*pPath);
     TransformedPath.Transform(matrix);

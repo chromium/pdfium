@@ -37,7 +37,7 @@ class CPDF_TextRenderer {
                            const std::vector<float>& charPos,
                            CPDF_Font* pFont,
                            float font_size,
-                           const CFX_Matrix* pText2User,
+                           const CFX_Matrix& mtText2User,
                            const CFX_Matrix* pUser2Device,
                            const CFX_GraphStateData* pGraphState,
                            FX_ARGB fill_argb,
