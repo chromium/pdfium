@@ -79,19 +79,15 @@ int GetTTCIndex(const uint8_t* pFontData,
 CFX_FontMgr::CFX_FontMgr()
     : m_pBuiltinMapper(pdfium::MakeUnique<CFX_FontMapper>(this)) {}
 
-CFX_FontMgr::~CFX_FontMgr() {
-  // |m_FaceMap| and |m_pBuiltinMapper| reference |m_FTLibrary|, so they must
-  // be destroyed first.
-  m_FaceMap.clear();
-  m_pBuiltinMapper.reset();
-  FT_Done_FreeType(m_FTLibrary);
-}
+CFX_FontMgr::~CFX_FontMgr() = default;
 
 void CFX_FontMgr::InitFTLibrary() {
   if (m_FTLibrary)
     return;
 
-  FT_Init_FreeType(&m_FTLibrary);
+  FXFT_LibraryRec* pLibrary = nullptr;
+  FT_Init_FreeType(&pLibrary);
+  m_FTLibrary.reset(pLibrary);
   m_FTLibrarySupportsHinting =
       SetLcdFilterMode() || FreeTypeVersionSupportsHinting();
 }
@@ -137,8 +133,8 @@ FXFT_FaceRec* CFX_FontMgr::AddCachedFace(
   InitFTLibrary();
 
   FXFT_FaceRec* face = nullptr;
-  int ret =
-      FT_New_Memory_Face(m_FTLibrary, pData.get(), size, face_index, &face);
+  int ret = FT_New_Memory_Face(m_FTLibrary.get(), pData.get(), size, face_index,
+                               &face);
   if (ret)
     return nullptr;
 
@@ -192,8 +188,8 @@ FXFT_FaceRec* CFX_FontMgr::GetFixedFace(pdfium::span<const uint8_t> span,
                                         int face_index) {
   InitFTLibrary();
   FXFT_FaceRec* face = nullptr;
-  if (FT_New_Memory_Face(m_FTLibrary, span.data(), span.size(), face_index,
-                         &face)) {
+  if (FT_New_Memory_Face(m_FTLibrary.get(), span.data(), span.size(),
+                         face_index, &face)) {
     return nullptr;
   }
   return FT_Set_Pixel_Sizes(face, 64, 64) ? nullptr : face;
@@ -235,7 +231,7 @@ bool CFX_FontMgr::FreeTypeVersionSupportsHinting() const {
   FT_Int major;
   FT_Int minor;
   FT_Int patch;
-  FT_Library_Version(m_FTLibrary, &major, &minor, &patch);
+  FT_Library_Version(m_FTLibrary.get(), &major, &minor, &patch);
   // Freetype versions >= 2.8.1 support hinting even if subpixel rendering is
   // disabled. https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/
   return major > 2 || (major == 2 && minor > 8) ||
@@ -243,6 +239,6 @@ bool CFX_FontMgr::FreeTypeVersionSupportsHinting() const {
 }
 
 bool CFX_FontMgr::SetLcdFilterMode() const {
-  return FT_Library_SetLcdFilter(m_FTLibrary, FT_LCD_FILTER_DEFAULT) !=
+  return FT_Library_SetLcdFilter(m_FTLibrary.get(), FT_LCD_FILTER_DEFAULT) !=
          FT_Err_Unimplemented_Feature;
 }

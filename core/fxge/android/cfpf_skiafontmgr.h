@@ -37,7 +37,7 @@ class CFPF_SkiaFontMgr {
                                                 const ByteString& file);
 
   bool m_bLoaded = false;
-  FXFT_LibraryRec* m_FTLibrary = nullptr;
+  ScopedFXFTLibraryRec m_FTLibrary;
   std::vector<std::unique_ptr<CFPF_SkiaPathFont>> m_FontFaces;
   std::map<uint32_t, std::unique_ptr<CFPF_SkiaFont>> m_FamilyFonts;
 };

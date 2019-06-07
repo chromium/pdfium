@@ -255,23 +255,9 @@ void UpdatePitchFamily(uint32_t flags, int* PitchFamily) {
 
 }  // namespace
 
-CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
-    : m_bListLoaded(false), m_pFontMgr(mgr) {
-  m_MMFaces[0] = nullptr;
-  m_MMFaces[1] = nullptr;
-  memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
-}
+CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr) : m_pFontMgr(mgr) {}
 
-CFX_FontMapper::~CFX_FontMapper() {
-  for (size_t i = 0; i < FX_ArraySize(m_FoxitFaces); ++i) {
-    if (m_FoxitFaces[i])
-      FT_Done_Face(m_FoxitFaces[i]);
-  }
-  if (m_MMFaces[0])
-    FT_Done_Face(m_MMFaces[0]);
-  if (m_MMFaces[1])
-    FT_Done_Face(m_MMFaces[1]);
-}
+CFX_FontMapper::~CFX_FontMapper() = default;
 
 void CFX_FontMapper::SetSystemFontInfo(
     std::unique_ptr<SystemFontInfoIface> pFontInfo) {
@@ -357,12 +343,13 @@ FXFT_FaceRec* CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
                                                int pitch_family) {
   if (iBaseFont < kNumStandardFonts) {
     if (m_FoxitFaces[iBaseFont])
-      return m_FoxitFaces[iBaseFont];
+      return m_FoxitFaces[iBaseFont].get();
     Optional<pdfium::span<const uint8_t>> font_data =
         m_pFontMgr->GetBuiltinFont(iBaseFont);
     if (font_data.has_value()) {
-      m_FoxitFaces[iBaseFont] = m_pFontMgr->GetFixedFace(font_data.value(), 0);
-      return m_FoxitFaces[iBaseFont];
+      m_FoxitFaces[iBaseFont].reset(
+          m_pFontMgr->GetFixedFace(font_data.value(), 0));
+      return m_FoxitFaces[iBaseFont].get();
     }
   }
   pSubstFont->m_bFlagMM = true;
@@ -373,17 +360,17 @@ FXFT_FaceRec* CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
     pSubstFont->m_Weight = pSubstFont->m_Weight * 4 / 5;
     pSubstFont->m_Family = "Chrome Serif";
     if (!m_MMFaces[1]) {
-      m_MMFaces[1] =
-          m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(14).value(), 0);
+      m_MMFaces[1].reset(
+          m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(14).value(), 0));
     }
-    return m_MMFaces[1];
+    return m_MMFaces[1].get();
   }
   pSubstFont->m_Family = "Chrome Sans";
   if (!m_MMFaces[0]) {
-    m_MMFaces[0] =
-        m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(15).value(), 0);
+    m_MMFaces[0].reset(
+        m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(15).value(), 0));
   }
-  return m_MMFaces[0];
+  return m_MMFaces[0].get();
 }
 
 FXFT_FaceRec* CFX_FontMapper::FindSubstFont(const ByteString& name,
@@ -673,11 +660,11 @@ int CFX_FontMapper::GetFaceSize() const {
 
 bool CFX_FontMapper::IsBuiltinFace(const FXFT_FaceRec* face) const {
   for (size_t i = 0; i < MM_FACE_COUNT; ++i) {
-    if (m_MMFaces[i] == face)
+    if (m_MMFaces[i].get() == face)
       return true;
   }
   for (size_t i = 0; i < FOXIT_FACE_COUNT; ++i) {
-    if (m_FoxitFaces[i] == face)
+    if (m_FoxitFaces[i].get() == face)
       return true;
   }
   return false;

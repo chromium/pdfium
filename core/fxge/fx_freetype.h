@@ -8,6 +8,9 @@
 #define CORE_FXGE_FX_FREETYPE_H_
 
 #include <ft2build.h>
+
+#include <memory>
+
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_LCD_FILTER_H
@@ -19,6 +22,24 @@ using FXFT_LibraryRec = struct FT_LibraryRec_;
 using FXFT_FaceRec = struct FT_FaceRec_;
 using FXFT_StreamRec = struct FT_StreamRec_;
 using FXFT_MM_VarPtr = FT_MM_Var*;
+
+struct FXFTFaceRecDeleter {
+  inline void operator()(FXFT_FaceRec* pRec) {
+    if (pRec)
+      FT_Done_Face(pRec);
+  }
+};
+
+struct FXFTLibraryRecDeleter {
+  inline void operator()(FXFT_LibraryRec* pRec) {
+    if (pRec)
+      FT_Done_FreeType(pRec);
+  }
+};
+
+using ScopedFXFTFaceRec = std::unique_ptr<FXFT_FaceRec, FXFTFaceRecDeleter>;
+using ScopedFXFTLibraryRec =
+    std::unique_ptr<FXFT_LibraryRec, FXFTLibraryRecDeleter>;
 
 #define FXFT_Select_Charmap(face, encoding) \
   FT_Select_Charmap(face, static_cast<FT_Encoding>(encoding))

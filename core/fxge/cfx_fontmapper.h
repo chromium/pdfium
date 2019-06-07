@@ -71,13 +71,13 @@ class CFX_FontMapper {
     uint32_t charset;
   };
 
-  bool m_bListLoaded;
+  bool m_bListLoaded = false;
   ByteString m_LastFamily;
   std::vector<FaceData> m_FaceArray;
   std::unique_ptr<SystemFontInfoIface> m_pFontInfo;
   UnownedPtr<CFX_FontMgr> const m_pFontMgr;
-  FXFT_FaceRec* m_MMFaces[MM_FACE_COUNT];
-  FXFT_FaceRec* m_FoxitFaces[FOXIT_FACE_COUNT];
+  ScopedFXFTFaceRec m_MMFaces[MM_FACE_COUNT];
+  ScopedFXFTFaceRec m_FoxitFaces[FOXIT_FACE_COUNT];
 };
 
 #endif  // CORE_FXGE_CFX_FONTMAPPER_H_

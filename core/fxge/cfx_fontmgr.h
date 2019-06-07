@@ -63,16 +63,18 @@ class CFX_FontMgr {
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
 
-  FXFT_LibraryRec* GetFTLibrary() const { return m_FTLibrary; }
+  FXFT_LibraryRec* GetFTLibrary() const { return m_FTLibrary.get(); }
   bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }
 
  private:
   bool FreeTypeVersionSupportsHinting() const;
   bool SetLcdFilterMode() const;
 
+  // Must come before |m_pBuiltinMapper| and |m_FaceMap|.
+  ScopedFXFTLibraryRec m_FTLibrary;
+
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
-  FXFT_LibraryRec* m_FTLibrary = nullptr;
   bool m_FTLibrarySupportsHinting = false;
 };
 
