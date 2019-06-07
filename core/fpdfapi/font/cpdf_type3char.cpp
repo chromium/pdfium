@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -21,10 +22,14 @@ constexpr float kTextUnitInGlyphUnit = 1000.0f;
 
 }  // namespace
 
-CPDF_Type3Char::CPDF_Type3Char(std::unique_ptr<CPDF_Form> pForm)
-    : m_pForm(std::move(pForm)) {}
+CPDF_Type3Char::CPDF_Type3Char(CPDF_Document* pDocument,
+                               CPDF_Dictionary* pPageResources,
+                               CPDF_Stream* pFormStream)
+    : m_pForm(pdfium::MakeUnique<CPDF_Form>(pDocument,
+                                            pPageResources,
+                                            pFormStream)) {}
 
-CPDF_Type3Char::~CPDF_Type3Char() {}
+CPDF_Type3Char::~CPDF_Type3Char() = default;
 
 // static
 float CPDF_Type3Char::TextUnitToGlyphUnit(float fTextUnit) {
@@ -93,6 +98,14 @@ void CPDF_Type3Char::Transform(const CFX_Matrix& matrix) {
 
 void CPDF_Type3Char::ResetForm() {
   m_pForm.reset();
+}
+
+void CPDF_Type3Char::ParseContent() {
+  m_pForm->ParseContent(nullptr, nullptr, this, nullptr);
+}
+
+bool CPDF_Type3Char::HasPageObjects() const {
+  return !!m_pForm->GetPageObjectCount();
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_Type3Char::GetBitmap() {

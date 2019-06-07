@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
-#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -107,17 +106,16 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!pStream)
     return nullptr;
 
-  auto pNewChar =
-      pdfium::MakeUnique<CPDF_Type3Char>(pdfium::MakeUnique<CPDF_Form>(
-          m_pDocument.Get(),
-          m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
-          pStream, nullptr));
+  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>(
+      m_pDocument.Get(),
+      m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
+      pStream);
 
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for
   // a cache hit.
   m_CharLoadingDepth++;
-  pNewChar->form()->ParseContent(nullptr, nullptr, pNewChar.get(), nullptr);
+  pNewChar->ParseContent();
   m_CharLoadingDepth--;
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
@@ -126,7 +124,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   pNewChar->Transform(m_FontMatrix);
   m_CacheMap[charcode] = std::move(pNewChar);
   CPDF_Type3Char* pCachedChar = m_CacheMap[charcode].get();
-  if (pCachedChar->form()->GetPageObjectCount() == 0)
+  if (!pCachedChar->HasPageObjects())
     pCachedChar->ResetForm();
   return pCachedChar;
 }
