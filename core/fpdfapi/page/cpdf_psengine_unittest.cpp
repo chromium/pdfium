@@ -96,17 +96,48 @@ TEST(CPDF_PSEngine, Basic) {
 TEST(CPDF_PSEngine, Ceiling) {
   CPDF_PSEngine engine;
 
+  // Smallest positive float value.
+  float min_float = std::numeric_limits<float>::min();
+  // Largest positive float value.
+  float max_float = std::numeric_limits<float>::max();
+  EXPECT_FLOAT_EQ(1.0f, DoOperator1(&engine, min_float, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(max_float, DoOperator1(&engine, max_float, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, -min_float, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(-max_float, DoOperator1(&engine, -max_float, PSOP_CEILING));
   EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, -0.9f, PSOP_CEILING));
   EXPECT_FLOAT_EQ(1.0f, DoOperator1(&engine, 0.0000000001f, PSOP_CEILING));
   EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, 0.0f, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(3.0f, DoOperator1(&engine, 2.3f, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(4.0f, DoOperator1(&engine, 3.8f, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(6.0f, DoOperator1(&engine, 5.5f, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(-2.0f, DoOperator1(&engine, -2.3f, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(-3.0f, DoOperator1(&engine, -3.8f, PSOP_CEILING));
+  EXPECT_FLOAT_EQ(-5.0f, DoOperator1(&engine, -5.5f, PSOP_CEILING));
 }
 
 TEST(CPDF_PSEngine, Floor) {
   CPDF_PSEngine engine;
 
+  // Smallest positive float value.
+  float min_float = std::numeric_limits<float>::min();
+  // Largest positive float value.
+  float max_float = std::numeric_limits<float>::max();
+  EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, min_float, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(max_float, DoOperator1(&engine, max_float, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(-1.0f, DoOperator1(&engine, -min_float, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(-max_float, DoOperator1(&engine, -max_float, PSOP_FLOOR));
   EXPECT_FLOAT_EQ(5.0f, DoOperator1(&engine, 5.9f, PSOP_FLOOR));
   EXPECT_FLOAT_EQ(-4.0f, DoOperator1(&engine, -4.0000000001f, PSOP_FLOOR));
   EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, 0.0f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(-1.0f, DoOperator1(&engine, -0.9f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, 0.0000000001f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator1(&engine, 0.0f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(2.0f, DoOperator1(&engine, 2.3f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(3.0f, DoOperator1(&engine, 3.8f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(5.0f, DoOperator1(&engine, 5.5f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(-3.0f, DoOperator1(&engine, -2.3f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(-4.0f, DoOperator1(&engine, -3.8f, PSOP_FLOOR));
+  EXPECT_FLOAT_EQ(-6.0f, DoOperator1(&engine, -5.5f, PSOP_FLOOR));
 }
 
 TEST(CPDF_PSEngine, Round) {
