@@ -2054,9 +2054,11 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
           pPattern, &mtMatrix, clip_rect_bbox, alpha, bAlphaMode)) {
     return;
   }
-  CPDF_DeviceBuffer buffer;
-  buffer.Initialize(m_pContext.Get(), m_pDevice, clip_rect_bbox,
-                    m_pCurObj.Get(), 150);
+  CPDF_DeviceBuffer buffer(m_pContext.Get(), m_pDevice, clip_rect_bbox,
+                           m_pCurObj.Get(), 150);
+  if (!buffer.Initialize())
+    return;
+
   CFX_Matrix FinalMatrix = mtMatrix * buffer.GetMatrix();
   RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
   if (!pBitmap->GetBuffer())

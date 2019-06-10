@@ -18,25 +18,30 @@ class CPDF_RenderContext;
 
 class CPDF_DeviceBuffer {
  public:
-  CPDF_DeviceBuffer();
+  static CFX_Matrix CalculateMatrix(CFX_RenderDevice* pDevice,
+                                    const FX_RECT& rect,
+                                    int max_dpi,
+                                    bool scale);
+
+  CPDF_DeviceBuffer(CPDF_RenderContext* pContext,
+                    CFX_RenderDevice* pDevice,
+                    const FX_RECT& rect,
+                    const CPDF_PageObject* pObj,
+                    int max_dpi);
   ~CPDF_DeviceBuffer();
 
-  bool Initialize(CPDF_RenderContext* pContext,
-                  CFX_RenderDevice* pDevice,
-                  const FX_RECT& rect,
-                  const CPDF_PageObject* pObj,
-                  int max_dpi);
+  bool Initialize();
   void OutputToDevice();
   RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
   const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
  private:
-  UnownedPtr<CFX_RenderDevice> m_pDevice;
-  UnownedPtr<CPDF_RenderContext> m_pContext;
-  UnownedPtr<const CPDF_PageObject> m_pObject;
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
-  FX_RECT m_Rect;
-  CFX_Matrix m_Matrix;
+  UnownedPtr<CFX_RenderDevice> const m_pDevice;
+  UnownedPtr<CPDF_RenderContext> const m_pContext;
+  UnownedPtr<const CPDF_PageObject> const m_pObject;
+  RetainPtr<CFX_DIBitmap> const m_pBitmap;
+  const FX_RECT m_Rect;
+  const CFX_Matrix m_Matrix;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DEVICEBUFFER_H_

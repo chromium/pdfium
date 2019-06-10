@@ -55,7 +55,7 @@ class CPDF_RenderContext {
   void GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
                      const CPDF_PageObject* pObj,
                      const CPDF_RenderOptions* pOptions,
-                     CFX_Matrix* pFinalMatrix);
+                     const CFX_Matrix& mtFinal);
 
   size_t CountLayers() const { return m_Layers.size(); }
   Layer* GetLayer(uint32_t index) { return &m_Layers[index]; }
