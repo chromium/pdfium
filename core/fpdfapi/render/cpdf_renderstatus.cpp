@@ -945,7 +945,7 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   bitmap_device.Attach(pBitmap, false, nullptr, false);
   pBitmap->Clear(0);
   CFX_FloatRect cell_bbox =
-      pPattern->pattern_to_form()->TransformRect(pPattern->bbox());
+      pPattern->pattern_to_form().TransformRect(pPattern->bbox());
   cell_bbox = mtObject2Device.TransformRect(cell_bbox);
   CFX_FloatRect bitmap_rect(0.0f, 0.0f, (float)width, (float)height);
   CFX_Matrix mtAdjust;
@@ -2126,7 +2126,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   if (rect.IsEmpty())
     return;
 
-  CFX_Matrix matrix = *pattern->pattern_to_form() * mtObj2Device;
+  CFX_Matrix matrix = pattern->pattern_to_form() * mtObj2Device;
   int alpha =
       FXSYS_round(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
                                  : pPageObj->m_GeneralState.GetFillAlpha()));
@@ -2164,7 +2164,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (clip_box.IsEmpty())
     return;
 
-  CFX_Matrix mtPattern2Device = *pPattern->pattern_to_form() * mtObj2Device;
+  CFX_Matrix mtPattern2Device = pPattern->pattern_to_form() * mtObj2Device;
 
   bool bAligned =
       pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&
