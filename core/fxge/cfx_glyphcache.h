@@ -44,6 +44,8 @@ class CFX_GlyphCache : public Retainable, public Observable<CFX_GlyphCache> {
                                     uint32_t glyph_index,
                                     uint32_t dest_width);
 
+  FXFT_FaceRec* GetFaceRec() { return m_Face; }
+
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
 #endif
