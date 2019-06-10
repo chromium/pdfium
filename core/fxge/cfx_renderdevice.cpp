@@ -890,7 +890,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
       ((m_DeviceClass == FXDC_PRINTER) &&
        !(text_flags & FXTEXT_PRINTIMAGETEXT))) {
-    if (pFont->GetFace()) {
+    if (pFont->GetFaceRec()) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
       return DrawTextPath(nChars, pCharPos, pFont, font_size, mtText2Device,
@@ -917,7 +917,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         anti_alias = FT_RENDER_MODE_LCD;
 
         bool bClearType = false;
-        if (pFont->GetFace())
+        if (pFont->GetFaceRec())
           bClearType = !!(text_flags & FXTEXT_CLEARTYPE);
         bNormal = !bClearType;
       }

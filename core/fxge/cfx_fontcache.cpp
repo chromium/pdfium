@@ -20,7 +20,7 @@ CFX_FontCache::CFX_FontCache() = default;
 CFX_FontCache::~CFX_FontCache() = default;
 
 RetainPtr<CFX_GlyphCache> CFX_FontCache::GetGlyphCache(const CFX_Font* pFont) {
-  FXFT_FaceRec* face = pFont->GetFace();
+  FXFT_FaceRec* face = pFont->GetFaceRec();
   const bool bExternal = !face;
   auto& map = bExternal ? m_ExtGlyphCacheMap : m_GlyphCacheMap;
   auto it = map.find(face);

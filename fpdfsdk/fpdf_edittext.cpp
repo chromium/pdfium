@@ -67,13 +67,13 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
-  if (FXFT_Is_Face_fixedwidth(pFont->GetFace()))
+  if (FXFT_Is_Face_fixedwidth(pFont->GetFaceRec()))
     flags |= FXFONT_FIXED_PITCH;
   if (font_name.Contains("Serif"))
     flags |= FXFONT_SERIF;
-  if (FXFT_Is_Face_Italic(pFont->GetFace()))
+  if (FXFT_Is_Face_Italic(pFont->GetFaceRec()))
     flags |= FXFONT_ITALIC;
-  if (FXFT_Is_Face_Bold(pFont->GetFace()))
+  if (FXFT_Is_Face_Bold(pFont->GetFaceRec()))
     flags |= FXFONT_BOLD;
 
   // TODO(npm): How do I know if a  font is symbolic, script, allcap, smallcap
@@ -275,7 +275,8 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   uint32_t dwGlyphIndex;
-  uint32_t dwCurrentChar = FT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
+  uint32_t dwCurrentChar =
+      FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex);
   static constexpr uint32_t kMaxSimpleFontChar = 0xFF;
   if (dwCurrentChar > kMaxSimpleFontChar || dwGlyphIndex == 0)
     return nullptr;
@@ -288,7 +289,7 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
                  static_cast<uint32_t>(std::numeric_limits<int>::max()));
     widthsArray->AddNew<CPDF_Number>(static_cast<int>(width));
     uint32_t nextChar =
-        FT_Get_Next_Char(pFont->GetFace(), dwCurrentChar, &dwGlyphIndex);
+        FT_Get_Next_Char(pFont->GetFaceRec(), dwCurrentChar, &dwGlyphIndex);
     // Simple fonts have 1-byte charcodes only.
     if (nextChar > kMaxSimpleFontChar || dwGlyphIndex == 0)
       break;
@@ -346,7 +347,8 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
                                       pFontDesc->GetObjNum());
 
   uint32_t dwGlyphIndex;
-  uint32_t dwCurrentChar = FT_Get_First_Char(pFont->GetFace(), &dwGlyphIndex);
+  uint32_t dwCurrentChar =
+      FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex);
   static constexpr uint32_t kMaxUnicode = 0x10FFFF;
   // If it doesn't have a single char, just fail
   if (dwGlyphIndex == 0 || dwCurrentChar > kMaxUnicode)
@@ -362,7 +364,7 @@ CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
       widths[dwGlyphIndex] = pFont->GetGlyphWidth(dwGlyphIndex);
     to_unicode[dwGlyphIndex] = dwCurrentChar;
     dwCurrentChar =
-        FT_Get_Next_Char(pFont->GetFace(), dwCurrentChar, &dwGlyphIndex);
+        FT_Get_Next_Char(pFont->GetFaceRec(), dwCurrentChar, &dwGlyphIndex);
     if (dwGlyphIndex == 0)
       break;
   }

@@ -49,7 +49,7 @@ class CFX_Font {
                  bool bVertical);
 
   bool LoadEmbedded(pdfium::span<const uint8_t> src_span);
-  FXFT_FaceRec* GetFace() const { return m_Face.Get(); }
+  FXFT_FaceRec* GetFaceRec() const { return m_Face.Get(); }
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
 #ifdef PDF_ENABLE_XFA

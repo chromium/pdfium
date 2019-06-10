@@ -31,7 +31,7 @@
 namespace {
 
 bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
-  FXFT_FaceRec* pFace = pFont->GetDevFont()->GetFace();
+  FXFT_FaceRec* pFace = pFont->GetDevFont()->GetFaceRec();
   FT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
   if (FXFT_Select_Charmap(pFace, FT_ENCODING_UNICODE) != 0)
     return false;

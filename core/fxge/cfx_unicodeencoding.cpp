@@ -17,7 +17,7 @@ CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {}
 CFX_UnicodeEncoding::~CFX_UnicodeEncoding() {}
 
 uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
-  FXFT_FaceRec* face = m_pFont->GetFace();
+  FXFT_FaceRec* face = m_pFont->GetFaceRec();
   if (!face)
     return charcode;
 

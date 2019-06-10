@@ -852,7 +852,7 @@ class SkiaState {
     if (Accumulator::kText != m_type) {
       m_positions.setCount(0);
       m_glyphs.setCount(0);
-      m_pTypeFace = pFont->GetFace() ? pFont->GetDeviceCache() : nullptr;
+      m_pTypeFace = pFont->GetFaceRec() ? pFont->GetDeviceCache() : nullptr;
       m_fontSize = font_size;
       m_scaleX = scaleX;
       m_fillColor = color;
@@ -1109,7 +1109,7 @@ class SkiaState {
                    float scaleX,
                    uint32_t color) const {
     CFX_TypeFace* typeface =
-        pFont->GetFace() ? pFont->GetDeviceCache() : nullptr;
+        pFont->GetFaceRec() ? pFont->GetDeviceCache() : nullptr;
     return typeface != m_pTypeFace || MatrixChanged(&matrix) ||
            font_size != m_fontSize || scaleX != m_scaleX ||
            color != m_fillColor;
