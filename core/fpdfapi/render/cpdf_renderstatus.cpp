@@ -2164,13 +2164,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (clip_box.IsEmpty())
     return;
 
-  CFX_Matrix mtPattern2Device = pPattern->pattern_to_form() * mtObj2Device;
-
-  bool bAligned =
-      pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&
-      pPattern->bbox().right == pPattern->x_step() &&
-      pPattern->bbox().top == pPattern->y_step() &&
-      (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated());
+  const CFX_Matrix mtPattern2Device =
+      pPattern->pattern_to_form() * mtObj2Device;
 
   CFX_FloatRect cell_bbox = mtPattern2Device.TransformRect(pPattern->bbox());
 
@@ -2192,14 +2187,14 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 
   CFX_FloatRect clip_box_p =
       mtPattern2Device.GetInverse().TransformRect(CFX_FloatRect(clip_box));
-  int min_col = (int)ceil((clip_box_p.left - pPattern->bbox().right) /
-                          pPattern->x_step());
-  int max_col = (int)floor((clip_box_p.right - pPattern->bbox().left) /
-                           pPattern->x_step());
-  int min_row = (int)ceil((clip_box_p.bottom - pPattern->bbox().top) /
-                          pPattern->y_step());
-  int max_row = (int)floor((clip_box_p.top - pPattern->bbox().bottom) /
-                           pPattern->y_step());
+  int min_col = static_cast<int>(
+      ceil((clip_box_p.left - pPattern->bbox().right) / pPattern->x_step()));
+  int max_col = static_cast<int>(
+      floor((clip_box_p.right - pPattern->bbox().left) / pPattern->x_step()));
+  int min_row = static_cast<int>(
+      ceil((clip_box_p.bottom - pPattern->bbox().top) / pPattern->y_step()));
+  int max_row = static_cast<int>(
+      floor((clip_box_p.top - pPattern->bbox().bottom) / pPattern->y_step()));
 
   // Make sure we can fit the needed width * height into an int.
   if (height > std::numeric_limits<int>::max() / width)
@@ -2233,6 +2228,12 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     }
     return;
   }
+
+  bool bAligned =
+      pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&
+      pPattern->bbox().right == pPattern->x_step() &&
+      pPattern->bbox().top == pPattern->y_step() &&
+      (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated());
   if (bAligned) {
     int orig_x = FXSYS_round(mtPattern2Device.e);
     int orig_y = FXSYS_round(mtPattern2Device.f);
@@ -2281,10 +2282,11 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
 
   pScreen->Clear(0);
-  uint32_t* src_buf = (uint32_t*)pPatternBitmap->GetBuffer();
+  const uint8_t* const src_buf = pPatternBitmap->GetBuffer();
   for (int col = min_col; col <= max_col; col++) {
     for (int row = min_row; row <= max_row; row++) {
-      int start_x, start_y;
+      int start_x;
+      int start_y;
       if (bAligned) {
         start_x = FXSYS_round(mtPattern2Device.e) + col * width - clip_box.left;
         start_y = FXSYS_round(mtPattern2Device.f) + row * height - clip_box.top;
@@ -2310,13 +2312,14 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
             start_y >= clip_box.Height()) {
           continue;
         }
-        uint32_t* dest_buf =
-            (uint32_t*)(pScreen->GetBuffer() + pScreen->GetPitch() * start_y +
-                        start_x * 4);
-        if (pPattern->colored())
-          *dest_buf = *src_buf;
-        else
-          *dest_buf = (*(uint8_t*)src_buf << 24) | (fill_argb & 0xffffff);
+        uint32_t* dest_buf = reinterpret_cast<uint32_t*>(
+            pScreen->GetBuffer() + pScreen->GetPitch() * start_y + start_x * 4);
+        if (pPattern->colored()) {
+          const auto* src_buf32 = reinterpret_cast<const uint32_t*>(src_buf);
+          *dest_buf = *src_buf32;
+        } else {
+          *dest_buf = (*src_buf << 24) | (fill_argb & 0xffffff);
+        }
       } else {
         if (pPattern->colored()) {
           pScreen->CompositeBitmap(start_x, start_y, width, height,
