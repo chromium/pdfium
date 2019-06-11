@@ -8,7 +8,6 @@
 #define FXJS_CJS_OBJECT_H_
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cjs_runtime.h"
 #include "third_party/base/span.h"
 
