@@ -792,6 +792,7 @@ class SkiaState {
     }
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
+    m_drawMatrix = CFX_Matrix();
   }
 
   bool HasRSX(int nChars,
@@ -955,6 +956,7 @@ class SkiaState {
 
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
+    m_drawMatrix = CFX_Matrix();
   }
 
   bool IsEmpty() const { return !m_commands.count(); }
