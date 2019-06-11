@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_FAXMODULE_H_
+#define CORE_FXCODEC_CODEC_FAXMODULE_H_
 
 #include <memory>
 
@@ -16,7 +16,9 @@
 
 class CCodec_ScanlineDecoder;
 
-class CCodec_FaxModule {
+namespace fxcodec {
+
+class FaxModule {
  public:
   static std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
@@ -47,9 +49,13 @@ class CCodec_FaxModule {
                         uint32_t* dest_size);
 #endif  // defined(OS_WIN)
 
-  CCodec_FaxModule() = delete;
-  CCodec_FaxModule(const CCodec_FaxModule&) = delete;
-  CCodec_FaxModule& operator=(const CCodec_FaxModule&) = delete;
+  FaxModule() = delete;
+  FaxModule(const FaxModule&) = delete;
+  FaxModule& operator=(const FaxModule&) = delete;
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
+}  // namespace fxcodec
+
+using FaxModule = fxcodec::FaxModule;
+
+#endif  // CORE_FXCODEC_CODEC_FAXMODULE_H_

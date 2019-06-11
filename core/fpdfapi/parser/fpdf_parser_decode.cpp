@@ -17,8 +17,8 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/codec/faxmodule.h"
 #include "core/fxcodec/codec/flatemodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
@@ -312,8 +312,8 @@ std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
     if (Rows > USHRT_MAX)
       Rows = 0;
   }
-  return CCodec_FaxModule::CreateDecoder(src_span, width, height, K, EndOfLine,
-                                         ByteAlign, BlackIs1, Columns, Rows);
+  return FaxModule::CreateDecoder(src_span, width, height, K, EndOfLine,
+                                  ByteAlign, BlackIs1, Columns, Rows);
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(

@@ -54,7 +54,7 @@
 
 #if defined(OS_WIN)
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
+#include "core/fxcodec/codec/faxmodule.h"
 #include "core/fxcodec/codec/flatemodule.h"
 #include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
@@ -84,9 +84,8 @@ bool g_bLibraryInitialized = false;
 
 #if defined(OS_WIN)
 constexpr EncoderIface kEncoderIface = {
-    CCodec_BasicModule::A85Encode, CCodec_FaxModule::FaxEncode,
-    FlateModule::Encode, JpegModule::JpegEncode,
-    CCodec_BasicModule::RunLengthEncode};
+    CCodec_BasicModule::A85Encode, FaxModule::FaxEncode, FlateModule::Encode,
+    JpegModule::JpegEncode, CCodec_BasicModule::RunLengthEncode};
 #endif  // defined(OS_WIN)
 
 void RenderPageImpl(CPDF_PageRenderContext* pContext,

@@ -5,8 +5,8 @@
 #include <cstdint>
 #include <memory>
 
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/codec/faxmodule.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
@@ -26,15 +26,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   int Rows = GetInteger(data + 16);
   bool EndOfLine = !(data[20] & 0x01);
   bool ByteAlign = !(data[20] & 0x02);
-  // This controls if CCodec_FaxDecoder::InvertBuffer() gets called. The method
-  // is not interesting, and calling it doubles the runtime.
+  // This controls if fxcodec::FaxDecoder::InvertBuffer() gets called.
+  // The method is not interesting, and calling it doubles the runtime.
   const bool kBlackIs1 = false;
   data += kParameterSize;
   size -= kParameterSize;
 
   std::unique_ptr<CCodec_ScanlineDecoder> decoder =
-      CCodec_FaxModule::CreateDecoder({data, size}, width, height, K, EndOfLine,
-                                      ByteAlign, kBlackIs1, Columns, Rows);
+      FaxModule::CreateDecoder({data, size}, width, height, K, EndOfLine,
+                               ByteAlign, kBlackIs1, Columns, Rows);
 
   if (decoder) {
     int line = 0;

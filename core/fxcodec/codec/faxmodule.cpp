@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
+#include "core/fxcodec/codec/faxmodule.h"
 
 #include <algorithm>
 #include <iterator>
@@ -20,6 +20,8 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+
+namespace fxcodec {
 
 namespace {
 
@@ -453,16 +455,16 @@ void FaxGet1DLine(const uint8_t* src_buf,
   }
 }
 
-class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
+class FaxDecoder final : public CCodec_ScanlineDecoder {
  public:
-  CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
-                    int width,
-                    int height,
-                    int K,
-                    bool EndOfLine,
-                    bool EncodedByteAlign,
-                    bool BlackIs1);
-  ~CCodec_FaxDecoder() override;
+  FaxDecoder(pdfium::span<const uint8_t> src_span,
+             int width,
+             int height,
+             int K,
+             bool EndOfLine,
+             bool EncodedByteAlign,
+             bool BlackIs1);
+  ~FaxDecoder() override;
 
   // CCodec_ScanlineDecoder
   bool v_Rewind() override;
@@ -482,13 +484,13 @@ class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
   std::vector<uint8_t> m_RefBuf;
 };
 
-CCodec_FaxDecoder::CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
-                                     int width,
-                                     int height,
-                                     int K,
-                                     bool EndOfLine,
-                                     bool EncodedByteAlign,
-                                     bool BlackIs1)
+FaxDecoder::FaxDecoder(pdfium::span<const uint8_t> src_span,
+                       int width,
+                       int height,
+                       int K,
+                       bool EndOfLine,
+                       bool EncodedByteAlign,
+                       bool BlackIs1)
     : CCodec_ScanlineDecoder(width,
                              height,
                              width,
@@ -504,15 +506,15 @@ CCodec_FaxDecoder::CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
       m_ScanlineBuf(m_Pitch),
       m_RefBuf(m_Pitch) {}
 
-CCodec_FaxDecoder::~CCodec_FaxDecoder() = default;
+FaxDecoder::~FaxDecoder() = default;
 
-bool CCodec_FaxDecoder::v_Rewind() {
+bool FaxDecoder::v_Rewind() {
   memset(m_RefBuf.data(), 0xff, m_RefBuf.size());
   m_bitpos = 0;
   return true;
 }
 
-uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
+uint8_t* FaxDecoder::v_GetNextLine() {
   int bitsize = m_SrcSpan.size() * 8;
   FaxSkipEOL(m_SrcSpan.data(), bitsize, &m_bitpos);
   if (m_bitpos >= bitsize)
@@ -557,11 +559,11 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
   return m_ScanlineBuf.data();
 }
 
-uint32_t CCodec_FaxDecoder::GetSrcOffset() {
+uint32_t FaxDecoder::GetSrcOffset() {
   return std::min(static_cast<size_t>((m_bitpos + 7) / 8), m_SrcSpan.size());
 }
 
-void CCodec_FaxDecoder::InvertBuffer() {
+void FaxDecoder::InvertBuffer() {
   ASSERT(m_Pitch == m_ScanlineBuf.size());
   ASSERT(m_Pitch % 4 == 0);
   uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
@@ -572,7 +574,7 @@ void CCodec_FaxDecoder::InvertBuffer() {
 }  // namespace
 
 // static
-std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> FaxModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -593,19 +595,19 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
   if (actual_width > kMaxImageDimension || actual_height > kMaxImageDimension)
     return nullptr;
 
-  return pdfium::MakeUnique<CCodec_FaxDecoder>(src_span, actual_width,
-                                               actual_height, K, EndOfLine,
-                                               EncodedByteAlign, BlackIs1);
+  return pdfium::MakeUnique<FaxDecoder>(src_span, actual_width, actual_height,
+                                        K, EndOfLine, EncodedByteAlign,
+                                        BlackIs1);
 }
 
 // static
-int CCodec_FaxModule::FaxG4Decode(const uint8_t* src_buf,
-                                  uint32_t src_size,
-                                  int starting_bitpos,
-                                  int width,
-                                  int height,
-                                  int pitch,
-                                  uint8_t* dest_buf) {
+int FaxModule::FaxG4Decode(const uint8_t* src_buf,
+                           uint32_t src_size,
+                           int starting_bitpos,
+                           int width,
+                           int height,
+                           int pitch,
+                           uint8_t* dest_buf) {
   ASSERT(pitch != 0);
 
   std::vector<uint8_t> ref_buf(pitch, 0xff);
@@ -663,10 +665,10 @@ const uint8_t WhiteRunMarkup[80] = {
     0x17, 12, 0x1c, 12, 0x1d, 12, 0x1e, 12, 0x1f, 12,
 };
 
-class CCodec_FaxEncoder {
+class FaxEncoder {
  public:
-  CCodec_FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);
-  ~CCodec_FaxEncoder();
+  FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);
+  ~FaxEncoder();
   void Encode(std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
               uint32_t* dest_size);
 
@@ -685,10 +687,7 @@ class CCodec_FaxEncoder {
   const uint8_t* m_pSrcBuf;
 };
 
-CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
-                                     int width,
-                                     int height,
-                                     int pitch)
+FaxEncoder::FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch)
     : m_Cols(width), m_Rows(height), m_Pitch(pitch), m_pSrcBuf(src_buf) {
   m_RefLine.resize(pitch);
   std::fill(std::begin(m_RefLine), std::end(m_RefLine), 0xff);
@@ -696,16 +695,16 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
   m_DestBuf.SetAllocStep(10240);
 }
 
-CCodec_FaxEncoder::~CCodec_FaxEncoder() = default;
+FaxEncoder::~FaxEncoder() = default;
 
-void CCodec_FaxEncoder::AddBitStream(int data, int bitlen) {
+void FaxEncoder::AddBitStream(int data, int bitlen) {
   for (int i = bitlen - 1; i >= 0; --i, ++m_DestBitpos) {
     if (data & (1 << i))
       m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
   }
 }
 
-void CCodec_FaxEncoder::FaxEncodeRun(int run, bool bWhite) {
+void FaxEncoder::FaxEncodeRun(int run, bool bWhite) {
   while (run >= 2560) {
     AddBitStream(0x1f, 12);
     run -= 2560;
@@ -722,7 +721,7 @@ void CCodec_FaxEncoder::FaxEncodeRun(int run, bool bWhite) {
   AddBitStream(*p, p[1]);
 }
 
-void CCodec_FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
+void FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
   int a0 = -1;
   bool a0color = true;
   while (1) {
@@ -777,9 +776,8 @@ void CCodec_FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
   }
 }
 
-void CCodec_FaxEncoder::Encode(
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) {
+void FaxEncoder::Encode(std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                        uint32_t* dest_size) {
   m_DestBitpos = 0;
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; ++i) {
@@ -801,15 +799,16 @@ void CCodec_FaxEncoder::Encode(
 }  // namespace
 
 // static
-void CCodec_FaxModule::FaxEncode(
-    const uint8_t* src_buf,
-    int width,
-    int height,
-    int pitch,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) {
-  CCodec_FaxEncoder encoder(src_buf, width, height, pitch);
+void FaxModule::FaxEncode(const uint8_t* src_buf,
+                          int width,
+                          int height,
+                          int pitch,
+                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                          uint32_t* dest_size) {
+  FaxEncoder encoder(src_buf, width, height, pitch);
   encoder.Encode(dest_buf, dest_size);
 }
 
 #endif  // defined(OS_WIN)
+
+}  // namespace fxcodec

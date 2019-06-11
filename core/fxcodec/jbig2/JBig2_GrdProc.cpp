@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
+#include "core/fxcodec/codec/faxmodule.h"
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
@@ -458,9 +458,9 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
     return m_ProssiveStatus;
   }
   int bitpos = static_cast<int>(pStream->getBitPos());
-  bitpos = CCodec_FaxModule::FaxG4Decode(pStream->getBuf(),
-                                         pStream->getLength(), bitpos, GBW, GBH,
-                                         image->stride(), image->data());
+  bitpos =
+      FaxModule::FaxG4Decode(pStream->getBuf(), pStream->getLength(), bitpos,
+                             GBW, GBH, image->stride(), image->data());
   pStream->setBitPos(bitpos);
   for (uint32_t i = 0; i < image->stride() * GBH; ++i)
     image->data()[i] = ~image->data()[i];
