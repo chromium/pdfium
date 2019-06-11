@@ -4,14 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_PNGMODULE_H_
+#define CORE_FXCODEC_CODEC_PNGMODULE_H_
 
 #include <memory>
 
 #include "core/fxcodec/codec/codec_module_iface.h"
 
-class CCodec_PngModule final : public CodecModuleIface {
+namespace fxcodec {
+
+class PngModule final : public CodecModuleIface {
  public:
   class Delegate {
    public:
@@ -29,6 +31,9 @@ class CCodec_PngModule final : public CodecModuleIface {
     virtual void PngFillScanlineBufCompleted(int pass, int line) = 0;
   };
 
+  PngModule();
+  ~PngModule() override;
+
   // CodecModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
@@ -38,4 +43,8 @@ class CCodec_PngModule final : public CodecModuleIface {
   std::unique_ptr<Context> Start(Delegate* pDelegate);
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
+}  // namespace fxcodec
+
+using PngModule = fxcodec::PngModule;
+
+#endif  // CORE_FXCODEC_CODEC_PNGMODULE_H_

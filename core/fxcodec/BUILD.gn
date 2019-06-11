@@ -111,8 +111,8 @@ jumbo_source_set("fxcodec") {
     }
     if (pdf_enable_xfa_png) {
       sources += [
-        "codec/ccodec_pngmodule.cpp",
-        "codec/ccodec_pngmodule.h",
+        "codec/pngmodule.cpp",
+        "codec/pngmodule.h",
       ]
       deps += [ "../../third_party:png" ]
     }

@@ -56,7 +56,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 #endif
 
 #ifdef PDF_ENABLE_XFA_PNG
-  SetPngModule(pdfium::MakeUnique<CCodec_PngModule>());
+  SetPngModule(pdfium::MakeUnique<PngModule>());
 #endif
 
 #ifdef PDF_ENABLE_XFA_TIFF

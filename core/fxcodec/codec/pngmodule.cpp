@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_pngmodule.h"
+#include "core/fxcodec/codec/pngmodule.h"
 
 #include <algorithm>
 
@@ -26,12 +26,12 @@
 
 class CPngContext final : public CodecModuleIface::Context {
  public:
-  explicit CPngContext(CCodec_PngModule::Delegate* pDelegate);
+  explicit CPngContext(PngModule::Delegate* pDelegate);
   ~CPngContext() override;
 
   png_structp m_pPng = nullptr;
   png_infop m_pInfo = nullptr;
-  UnownedPtr<CCodec_PngModule::Delegate> const m_pDelegate;
+  UnownedPtr<PngModule::Delegate> const m_pDelegate;
   char m_szLastError[PNG_ERROR_SIZE];
 };
 
@@ -173,7 +173,7 @@ void _png_get_row_func(png_structp png_ptr,
 
 }  // extern "C"
 
-CPngContext::CPngContext(CCodec_PngModule::Delegate* pDelegate)
+CPngContext::CPngContext(PngModule::Delegate* pDelegate)
     : m_pDelegate(pDelegate) {
   memset(m_szLastError, 0, sizeof(m_szLastError));
 }
@@ -183,7 +183,13 @@ CPngContext::~CPngContext() {
                           m_pInfo ? &m_pInfo : nullptr, nullptr);
 }
 
-std::unique_ptr<CodecModuleIface::Context> CCodec_PngModule::Start(
+namespace fxcodec {
+
+PngModule::PngModule() = default;
+
+PngModule::~PngModule() = default;
+
+std::unique_ptr<CodecModuleIface::Context> PngModule::Start(
     Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
   p->m_pPng =
@@ -205,14 +211,14 @@ std::unique_ptr<CodecModuleIface::Context> CCodec_PngModule::Start(
   return p;
 }
 
-FX_FILESIZE CCodec_PngModule::GetAvailInput(Context* pContext) const {
+FX_FILESIZE PngModule::GetAvailInput(Context* pContext) const {
   NOTREACHED();
   return 0;
 }
 
-bool CCodec_PngModule::Input(Context* pContext,
-                             RetainPtr<CFX_CodecMemory> codec_memory,
-                             CFX_DIBAttribute* pAttribute) {
+bool PngModule::Input(Context* pContext,
+                      RetainPtr<CFX_CodecMemory> codec_memory,
+                      CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   if (setjmp(png_jmpbuf(ctx->m_pPng))) {
     if (pAttribute &&
@@ -225,3 +231,5 @@ bool CCodec_PngModule::Input(Context* pContext,
   png_process_data(ctx->m_pPng, ctx->m_pInfo, src_buf.data(), src_buf.size());
   return true;
 }
+
+}  // namespace fxcodec

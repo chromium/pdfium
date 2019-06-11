@@ -27,7 +27,7 @@
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/codec/ccodec_pngmodule.h"
+#include "core/fxcodec/codec/pngmodule.h"
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
@@ -49,7 +49,7 @@ class CCodec_ProgressiveDecoder :
     public GifModule::Delegate,
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
-    public CCodec_PngModule::Delegate,
+    public PngModule::Delegate,
 #endif  // PDF_ENABLE_XFA_PNG
     public CCodec_Dummy {
  public:
@@ -146,7 +146,7 @@ class CCodec_ProgressiveDecoder :
   };
 
 #ifdef PDF_ENABLE_XFA_PNG
-  // CCodec_PngModule::Delegate
+  // PngModule::Delegate
   bool PngReadHeader(int width,
                      int height,
                      int bpc,

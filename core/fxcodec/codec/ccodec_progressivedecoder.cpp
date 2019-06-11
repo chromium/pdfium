@@ -1251,7 +1251,7 @@ void CCodec_ProgressiveDecoder::PngOneOneMapResampleHorz(
 
 bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+  PngModule* pPngModule = m_pCodecMgr->GetPngModule();
   if (!pPngModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
@@ -1290,7 +1290,7 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::PngStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+  PngModule* pPngModule = m_pCodecMgr->GetPngModule();
   if (!pPngModule) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
@@ -1337,7 +1337,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngStartDecode(
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
-  CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+  PngModule* pPngModule = m_pCodecMgr->GetPngModule();
   if (!pPngModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return m_status;
