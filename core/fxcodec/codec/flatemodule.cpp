@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_flatemodule.h"
+#include "core/fxcodec/codec/flatemodule.h"
 
 #include <algorithm>
 #include <limits>
@@ -38,6 +38,8 @@ static void my_free_func(void* opaque, void* address) {
 }
 
 }  // extern "C"
+
+namespace fxcodec {
 
 namespace {
 
@@ -568,14 +570,14 @@ static PredictorType GetPredictor(int predictor) {
   return PredictorType::kNone;
 }
 
-class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
+class FlateScanlineDecoder : public CCodec_ScanlineDecoder {
  public:
-  CCodec_FlateScanlineDecoder(pdfium::span<const uint8_t> src_buf,
-                              int width,
-                              int height,
-                              int nComps,
-                              int bpc);
-  ~CCodec_FlateScanlineDecoder() override;
+  FlateScanlineDecoder(pdfium::span<const uint8_t> src_buf,
+                       int width,
+                       int height,
+                       int nComps,
+                       int bpc);
+  ~FlateScanlineDecoder() override;
 
   // CCodec_ScanlineDecoder:
   bool v_Rewind() override;
@@ -588,12 +590,11 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
   std::unique_ptr<uint8_t, FxFreeDeleter> const m_pScanline;
 };
 
-CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(
-    pdfium::span<const uint8_t> src_span,
-    int width,
-    int height,
-    int nComps,
-    int bpc)
+FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
+                                           int width,
+                                           int height,
+                                           int nComps,
+                                           int bpc)
     : CCodec_ScanlineDecoder(width,
                              height,
                              width,
@@ -604,9 +605,9 @@ CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(
       m_SrcBuf(src_span),
       m_pScanline(FX_Alloc(uint8_t, m_Pitch)) {}
 
-CCodec_FlateScanlineDecoder::~CCodec_FlateScanlineDecoder() = default;
+FlateScanlineDecoder::~FlateScanlineDecoder() = default;
 
-bool CCodec_FlateScanlineDecoder::v_Rewind() {
+bool FlateScanlineDecoder::v_Rewind() {
   m_pFlate.reset(FlateInit());
   if (!m_pFlate)
     return false;
@@ -615,28 +616,27 @@ bool CCodec_FlateScanlineDecoder::v_Rewind() {
   return true;
 }
 
-uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
+uint8_t* FlateScanlineDecoder::v_GetNextLine() {
   FlateOutput(m_pFlate.get(), m_pScanline.get(), m_Pitch);
   return m_pScanline.get();
 }
 
-uint32_t CCodec_FlateScanlineDecoder::GetSrcOffset() {
+uint32_t FlateScanlineDecoder::GetSrcOffset() {
   return FlateGetPossiblyTruncatedTotalIn(m_pFlate.get());
 }
 
-class CCodec_FlatePredictorScanlineDecoder final
-    : public CCodec_FlateScanlineDecoder {
+class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
  public:
-  CCodec_FlatePredictorScanlineDecoder(pdfium::span<const uint8_t> src_buf,
-                                       int width,
-                                       int height,
-                                       int comps,
-                                       int bpc,
-                                       PredictorType predictor,
-                                       int Colors,
-                                       int BitsPerComponent,
-                                       int Columns);
-  ~CCodec_FlatePredictorScanlineDecoder() override;
+  FlatePredictorScanlineDecoder(pdfium::span<const uint8_t> src_buf,
+                                int width,
+                                int height,
+                                int comps,
+                                int bpc,
+                                PredictorType predictor,
+                                int Colors,
+                                int BitsPerComponent,
+                                int Columns);
+  ~FlatePredictorScanlineDecoder() override;
 
   // CCodec_ScanlineDecoder:
   bool v_Rewind() override;
@@ -657,7 +657,7 @@ class CCodec_FlatePredictorScanlineDecoder final
   std::vector<uint8_t> m_PredictRaw;
 };
 
-CCodec_FlatePredictorScanlineDecoder::CCodec_FlatePredictorScanlineDecoder(
+FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -667,7 +667,7 @@ CCodec_FlatePredictorScanlineDecoder::CCodec_FlatePredictorScanlineDecoder(
     int Colors,
     int BitsPerComponent,
     int Columns)
-    : CCodec_FlateScanlineDecoder(src_span, width, height, comps, bpc),
+    : FlateScanlineDecoder(src_span, width, height, comps, bpc),
       m_Predictor(predictor) {
   ASSERT(m_Predictor != PredictorType::kNone);
   if (BitsPerComponent * Colors * Columns == 0) {
@@ -685,18 +685,17 @@ CCodec_FlatePredictorScanlineDecoder::CCodec_FlatePredictorScanlineDecoder(
   m_PredictRaw.resize(m_PredictPitch + 1);
 }
 
-CCodec_FlatePredictorScanlineDecoder::~CCodec_FlatePredictorScanlineDecoder() =
-    default;
+FlatePredictorScanlineDecoder::~FlatePredictorScanlineDecoder() = default;
 
-bool CCodec_FlatePredictorScanlineDecoder::v_Rewind() {
-  if (!CCodec_FlateScanlineDecoder::v_Rewind())
+bool FlatePredictorScanlineDecoder::v_Rewind() {
+  if (!FlateScanlineDecoder::v_Rewind())
     return false;
 
   m_LeftOver = 0;
   return true;
 }
 
-uint8_t* CCodec_FlatePredictorScanlineDecoder::v_GetNextLine() {
+uint8_t* FlatePredictorScanlineDecoder::v_GetNextLine() {
   if (m_Pitch == m_PredictPitch)
     GetNextLineWithPredictedPitch();
   else
@@ -704,7 +703,7 @@ uint8_t* CCodec_FlatePredictorScanlineDecoder::v_GetNextLine() {
   return m_pScanline.get();
 }
 
-void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
+void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
   switch (m_Predictor) {
     case PredictorType::kPng:
       FlateOutput(m_pFlate.get(), m_PredictRaw.data(), m_PredictPitch + 1);
@@ -723,7 +722,7 @@ void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
   }
 }
 
-void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
+void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
   size_t bytes_to_go = m_Pitch;
   size_t read_leftover = m_LeftOver > bytes_to_go ? bytes_to_go : m_LeftOver;
   if (read_leftover) {
@@ -762,7 +761,7 @@ void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
 }  // namespace
 
 // static
-std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> FlateModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -774,16 +773,16 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
     int Columns) {
   PredictorType predictor_type = GetPredictor(predictor);
   if (predictor_type == PredictorType::kNone) {
-    return pdfium::MakeUnique<CCodec_FlateScanlineDecoder>(src_span, width,
-                                                           height, nComps, bpc);
+    return pdfium::MakeUnique<FlateScanlineDecoder>(src_span, width, height,
+                                                    nComps, bpc);
   }
-  return pdfium::MakeUnique<CCodec_FlatePredictorScanlineDecoder>(
+  return pdfium::MakeUnique<FlatePredictorScanlineDecoder>(
       src_span, width, height, nComps, bpc, predictor_type, Colors,
       BitsPerComponent, Columns);
 }
 
 // static
-uint32_t CCodec_FlateModule::FlateOrLZWDecode(
+uint32_t FlateModule::FlateOrLZWDecode(
     bool bLZW,
     pdfium::span<const uint8_t> src_span,
     bool bEarlyChange,
@@ -837,11 +836,10 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(
 }
 
 // static
-bool CCodec_FlateModule::Encode(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) {
+bool FlateModule::Encode(const uint8_t* src_buf,
+                         uint32_t src_size,
+                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                         uint32_t* dest_size) {
   *dest_size = src_size + src_size / 1000 + 12;
   dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
   unsigned long temp_size = *dest_size;
@@ -851,3 +849,5 @@ bool CCodec_FlateModule::Encode(
   *dest_size = (uint32_t)temp_size;
   return true;
 }
+
+}  // namespace fxcodec

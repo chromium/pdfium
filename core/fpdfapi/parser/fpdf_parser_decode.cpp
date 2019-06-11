@@ -18,8 +18,8 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/codec/ccodec_faxmodule.h"
-#include "core/fxcodec/codec/ccodec_flatemodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/codec/flatemodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -335,9 +335,9 @@ std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns))
       return nullptr;
   }
-  return CCodec_FlateModule::CreateDecoder(src_span, width, height, nComps, bpc,
-                                           predictor, Colors, BitsPerComponent,
-                                           Columns);
+  return FlateModule::CreateDecoder(src_span, width, height, nComps, bpc,
+                                    predictor, Colors, BitsPerComponent,
+                                    Columns);
 }
 
 uint32_t FlateOrLZWDecode(bool bLZW,
@@ -360,9 +360,9 @@ uint32_t FlateOrLZWDecode(bool bLZW,
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns))
       return FX_INVALID_OFFSET;
   }
-  return CCodec_FlateModule::FlateOrLZWDecode(
-      bLZW, src_span, bEarlyChange, predictor, Colors, BitsPerComponent,
-      Columns, estimated_size, dest_buf, dest_size);
+  return FlateModule::FlateOrLZWDecode(bLZW, src_span, bEarlyChange, predictor,
+                                       Colors, BitsPerComponent, Columns,
+                                       estimated_size, dest_buf, dest_size);
 }
 
 bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
@@ -585,13 +585,13 @@ ByteString PDF_EncodeString(const ByteString& src, bool bHex) {
 bool FlateEncode(pdfium::span<const uint8_t> src_span,
                  std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                  uint32_t* dest_size) {
-  return CCodec_FlateModule::Encode(src_span.data(), src_span.size(), dest_buf,
-                                    dest_size);
+  return FlateModule::Encode(src_span.data(), src_span.size(), dest_buf,
+                             dest_size);
 }
 
 uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
                      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                      uint32_t* dest_size) {
-  return CCodec_FlateModule::FlateOrLZWDecode(false, src_span, false, 0, 0, 0,
-                                              0, 0, dest_buf, dest_size);
+  return FlateModule::FlateOrLZWDecode(false, src_span, false, 0, 0, 0, 0, 0,
+                                       dest_buf, dest_size);
 }

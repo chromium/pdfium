@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_FLATEMODULE_H_
+#define CORE_FXCODEC_CODEC_FLATEMODULE_H_
 
 #include <memory>
 
@@ -15,7 +15,9 @@
 
 class CCodec_ScanlineDecoder;
 
-class CCodec_FlateModule {
+namespace fxcodec {
+
+class FlateModule {
  public:
   static std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
@@ -45,9 +47,13 @@ class CCodec_FlateModule {
                      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                      uint32_t* dest_size);
 
-  CCodec_FlateModule() = delete;
-  CCodec_FlateModule(const CCodec_FlateModule&) = delete;
-  CCodec_FlateModule& operator=(const CCodec_FlateModule&) = delete;
+  FlateModule() = delete;
+  FlateModule(const FlateModule&) = delete;
+  FlateModule& operator=(const FlateModule&) = delete;
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
+}  // namespace fxcodec
+
+using FlateModule = fxcodec::FlateModule;
+
+#endif  // CORE_FXCODEC_CODEC_FLATEMODULE_H_

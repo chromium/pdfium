@@ -11,7 +11,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/ccodec_flatemodule.h"
+#include "core/fxcodec/codec/flatemodule.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
@@ -1071,8 +1071,8 @@ std::unique_ptr<LocaleIface> GetLocaleFromBuffer(
 
   std::unique_ptr<uint8_t, FxFreeDeleter> output;
   uint32_t dwSize;
-  CCodec_FlateModule::FlateOrLZWDecode(false, src_span, true, 0, 0, 0, 0, 0,
-                                       &output, &dwSize);
+  FlateModule::FlateOrLZWDecode(false, src_span, true, 0, 0, 0, 0, 0, &output,
+                                &dwSize);
   if (!output)
     return nullptr;
 
