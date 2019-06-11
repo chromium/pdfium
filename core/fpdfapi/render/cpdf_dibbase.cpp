@@ -26,9 +26,9 @@
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
-#include "core/fxcodec/codec/ccodec_jpxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
+#include "core/fxcodec/codec/jpxmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -586,7 +586,7 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
-  std::unique_ptr<CJPX_Decoder> decoder = CCodec_JpxModule::CreateDecoder(
+  std::unique_ptr<CJPX_Decoder> decoder = JpxModule::CreateDecoder(
       m_pStreamAcc->GetSpan(),
       ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()));
   if (!decoder)

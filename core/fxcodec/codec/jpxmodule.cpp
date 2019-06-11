@@ -4,12 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_jpxmodule.h"
+#include "core/fxcodec/codec/jpxmodule.h"
 
 #include "third_party/base/ptr_util.h"
 
+namespace fxcodec {
+
 // static
-std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
+std::unique_ptr<CJPX_Decoder> JpxModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     CJPX_Decoder::ColorSpaceOption option) {
   auto decoder = pdfium::MakeUnique<CJPX_Decoder>(option);
@@ -18,3 +20,5 @@ std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
 
   return decoder;
 }
+
+}  // namespace fxcodec
