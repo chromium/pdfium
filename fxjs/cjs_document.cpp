@@ -629,8 +629,8 @@ CJS_Result CJS_Document::submitForm(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CJS_EventHandler* pHandler =
-      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  CJS_EventRecorder* pHandler =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
   if (!pHandler->IsUserGesture())
     return CJS_Result::Failure(JSMessage::kUserGestureRequiredError);
 

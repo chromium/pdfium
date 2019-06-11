@@ -14,7 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/ijs_event_context.h"
 
-class CJS_EventHandler;
+class CJS_EventRecorder;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 
@@ -123,13 +123,13 @@ class CJS_EventContext final : public IJS_EventContext {
   void OnExternal_Exec() override;
 
   CJS_Runtime* GetJSRuntime() const { return m_pRuntime.Get(); }
-  CJS_EventHandler* GetEventHandler() const { return m_pEventHandler.get(); }
+  CJS_EventRecorder* GetEventRecorder() const { return m_pEventRecorder.get(); }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv();
 
  private:
   UnownedPtr<CJS_Runtime> const m_pRuntime;
-  std::unique_ptr<CJS_EventHandler> m_pEventHandler;
+  std::unique_ptr<CJS_EventRecorder> m_pEventRecorder;
   bool m_bBusy;
 };
 

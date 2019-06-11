@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJS_EVENTHANDLER_H_
-#define FXJS_CJS_EVENTHANDLER_H_
+#ifndef FXJS_CJS_EVENTRECORDER_H_
+#define FXJS_CJS_EVENTRECORDER_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -59,10 +59,10 @@ enum JS_EVENT_T {
   JET_LINK_MOUSEUP
 };
 
-class CJS_EventHandler {
+class CJS_EventRecorder {
  public:
-  explicit CJS_EventHandler(CJS_EventContext* pContext);
-  virtual ~CJS_EventHandler();
+  explicit CJS_EventRecorder(CJS_EventContext* pContext);
+  virtual ~CJS_EventRecorder();
 
   void OnApp_Init();
 
@@ -201,4 +201,4 @@ class CJS_EventHandler {
   CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;
 };
 
-#endif  // FXJS_CJS_EVENTHANDLER_H_
+#endif  // FXJS_CJS_EVENTRECORDER_H_

@@ -26,7 +26,7 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/cjs_color.h"
 #include "fxjs/cjs_event_context.h"
-#include "fxjs/cjs_eventhandler.h"
+#include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_runtime.h"
@@ -121,7 +121,7 @@ ByteString CalculateString(double dValue,
 }
 #endif
 
-WideString CalcMergedString(const CJS_EventHandler* event,
+WideString CalcMergedString(const CJS_EventRecorder* event,
                             const WideString& value,
                             const WideString& change) {
   WideString prefix = value.Left(event->SelStart());
@@ -587,8 +587,8 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
   if (params.size() != 6)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CJS_EventHandler* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  CJS_EventRecorder* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(WideString::FromASCII("No event handler"));
 
@@ -695,7 +695,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -783,8 +783,8 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CJS_EventHandler* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  CJS_EventRecorder* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -880,7 +880,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -955,7 +955,7 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
   }
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
   if (!pEvent->WillCommit())
     return CJS_Result::Success();
 
@@ -1051,8 +1051,8 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CJS_EventHandler* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  CJS_EventRecorder* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1088,7 +1088,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1169,8 +1169,8 @@ CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CJS_EventHandler* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  CJS_EventRecorder* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1204,18 +1204,18 @@ CJS_Result CJS_PublicMethods::AFMergeChange(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CJS_EventHandler* pEventHandler =
-      pRuntime->GetCurrentEventContext()->GetEventHandler();
+  CJS_EventRecorder* pEventRecorder =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
 
   WideString swValue;
-  if (pEventHandler->m_pValue)
-    swValue = pEventHandler->Value();
+  if (pEventRecorder->m_pValue)
+    swValue = pEventRecorder->Value();
 
-  if (pEventHandler->WillCommit())
+  if (pEventRecorder->WillCommit())
     return CJS_Result::Success(pRuntime->NewString(swValue.AsStringView()));
 
   return CJS_Result::Success(pRuntime->NewString(
-      CalcMergedString(pEventHandler, swValue, pEventHandler->Change())
+      CalcMergedString(pEventRecorder, swValue, pEventRecorder->Change())
           .AsStringView()));
 }
 
@@ -1364,8 +1364,8 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
   dValue = floor(dValue * FXSYS_pow(10, 6) + 0.49) / FXSYS_pow(10, 6);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  if (pContext->GetEventHandler()->m_pValue) {
-    pContext->GetEventHandler()->Value() =
+  if (pContext->GetEventRecorder()->m_pValue) {
+    pContext->GetEventRecorder()->Value() =
         pRuntime->ToWideString(pRuntime->NewNumber(dValue));
   }
 
@@ -1381,7 +1381,7 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
