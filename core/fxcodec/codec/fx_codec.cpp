@@ -60,7 +60,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 #endif
 
 #ifdef PDF_ENABLE_XFA_TIFF
-  SetTiffModule(pdfium::MakeUnique<CCodec_TiffModule>());
+  SetTiffModule(pdfium::MakeUnique<TiffModule>());
 #endif
 }
 

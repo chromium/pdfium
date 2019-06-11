@@ -30,7 +30,7 @@
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+#include "core/fxcodec/codec/tiffmodule.h"
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
@@ -87,8 +87,8 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-  CCodec_TiffModule* GetTiffModule() const { return m_pTiffModule.get(); }
-  void SetTiffModule(std::unique_ptr<CCodec_TiffModule> module) {
+  TiffModule* GetTiffModule() const { return m_pTiffModule.get(); }
+  void SetTiffModule(std::unique_ptr<TiffModule> module) {
     m_pTiffModule = std::move(module);
   }
 #endif  // PDF_ENABLE_XFA_TIFF
@@ -115,7 +115,7 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<CCodec_TiffModule> m_pTiffModule;
+  std::unique_ptr<TiffModule> m_pTiffModule;
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 };

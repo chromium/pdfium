@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_TIFFMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_TIFFMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_TIFFMODULE_H_
+#define CORE_FXCODEC_CODEC_TIFFMODULE_H_
 
 #include <memory>
 
@@ -15,7 +15,9 @@ class CFX_DIBAttribute;
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
-class CCodec_TiffModule final : public CodecModuleIface {
+namespace fxcodec {
+
+class TiffModule final : public CodecModuleIface {
  public:
   std::unique_ptr<Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
@@ -36,4 +38,8 @@ class CCodec_TiffModule final : public CodecModuleIface {
   bool Decode(Context* ctx, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_TIFFMODULE_H_
+}  // namespace fxcodec
+
+using TiffModule = fxcodec::TiffModule;
+
+#endif  // CORE_FXCODEC_CODEC_TIFFMODULE_H_

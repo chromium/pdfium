@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+#include "core/fxcodec/codec/tiffmodule.h"
 
 #include <limits>
 #include <memory>
@@ -486,7 +486,9 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   return false;
 }
 
-std::unique_ptr<CodecModuleIface::Context> CCodec_TiffModule::CreateDecoder(
+namespace fxcodec {
+
+std::unique_ptr<CodecModuleIface::Context> TiffModule::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = pdfium::MakeUnique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))
@@ -495,33 +497,35 @@ std::unique_ptr<CodecModuleIface::Context> CCodec_TiffModule::CreateDecoder(
   return pDecoder;
 }
 
-FX_FILESIZE CCodec_TiffModule::GetAvailInput(Context* pContext) const {
+FX_FILESIZE TiffModule::GetAvailInput(Context* pContext) const {
   NOTREACHED();
   return 0;
 }
 
-bool CCodec_TiffModule::Input(Context* pContext,
-                              RetainPtr<CFX_CodecMemory> codec_memory,
-                              CFX_DIBAttribute*) {
+bool TiffModule::Input(Context* pContext,
+                       RetainPtr<CFX_CodecMemory> codec_memory,
+                       CFX_DIBAttribute*) {
   NOTREACHED();
   return false;
 }
 
-bool CCodec_TiffModule::LoadFrameInfo(Context* pContext,
-                                      int32_t frame,
-                                      int32_t* width,
-                                      int32_t* height,
-                                      int32_t* comps,
-                                      int32_t* bpc,
-                                      CFX_DIBAttribute* pAttribute) {
+bool TiffModule::LoadFrameInfo(Context* pContext,
+                               int32_t frame,
+                               int32_t* width,
+                               int32_t* height,
+                               int32_t* comps,
+                               int32_t* bpc,
+                               CFX_DIBAttribute* pAttribute) {
   ASSERT(pAttribute);
 
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
 }
 
-bool CCodec_TiffModule::Decode(Context* pContext,
-                               const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+bool TiffModule::Decode(Context* pContext,
+                        const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->Decode(pDIBitmap);
 }
+
+}  // namespace fxcodec

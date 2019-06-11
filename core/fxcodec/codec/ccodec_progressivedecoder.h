@@ -31,7 +31,7 @@
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+#include "core/fxcodec/codec/tiffmodule.h"
 #endif  // PDF_ENABLE_XFA_TIFF
 
 class CCodec_ModuleMgr;

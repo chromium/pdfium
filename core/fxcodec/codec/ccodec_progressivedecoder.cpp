@@ -1379,7 +1379,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
 #ifdef PDF_ENABLE_XFA_TIFF
 bool CCodec_ProgressiveDecoder::TiffDetectImageTypeFromFile(
     CFX_DIBAttribute* pAttribute) {
-  CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
+  TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
   if (!pTiffModule) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
@@ -1404,7 +1404,7 @@ bool CCodec_ProgressiveDecoder::TiffDetectImageTypeFromFile(
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::TiffContinueDecode() {
-  CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
+  TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
   if (!pTiffModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return m_status;

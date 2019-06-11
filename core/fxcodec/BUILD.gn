@@ -118,8 +118,8 @@ jumbo_source_set("fxcodec") {
     }
     if (pdf_enable_xfa_tiff) {
       sources += [
-        "codec/ccodec_tiffmodule.cpp",
-        "codec/ccodec_tiffmodule.h",
+        "codec/tiffmodule.cpp",
+        "codec/tiffmodule.h",
       ]
       deps += [ "../../third_party:fx_tiff" ]
     }
