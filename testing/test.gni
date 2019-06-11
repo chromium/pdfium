@@ -62,9 +62,6 @@ template("test") {
 
         # Don't output to the root or else conflict with the group() below.
         output_name = rebase_path(_exec_output, root_out_dir)
-        if (is_component_build || is_asan) {
-          data_deps += [ "//build/android:cpplib_stripped" ]
-        }
       }
 
       create_native_executable_dist(_dist_target) {
