@@ -28,7 +28,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/codec/ccodec_iccmodule.h"
+#include "core/fxcodec/codec/iccmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -915,8 +915,7 @@ bool CPDF_ICCBasedCS::GetRGB(const float* pBuf,
   }
   if (m_pProfile->transform()) {
     float rgb[3];
-    CCodec_IccModule::Translate(m_pProfile->transform(), CountComponents(),
-                                pBuf, rgb);
+    IccModule::Translate(m_pProfile->transform(), CountComponents(), pBuf, rgb);
     *R = rgb[0];
     *G = rgb[1];
     *B = rgb[2];
@@ -971,8 +970,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
       bTranslate = nPixelCount.ValueOrDie() < nMaxColors * 3 / 2;
   }
   if (bTranslate) {
-    CCodec_IccModule::TranslateScanline(m_pProfile->transform(), pDestBuf,
-                                        pSrcBuf, pixels);
+    IccModule::TranslateScanline(m_pProfile->transform(), pDestBuf, pSrcBuf,
+                                 pixels);
     return;
   }
 
@@ -989,8 +988,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
         order /= 52;
       }
     }
-    CCodec_IccModule::TranslateScanline(
-        m_pProfile->transform(), m_pCache.data(), temp_src.data(), nMaxColors);
+    IccModule::TranslateScanline(m_pProfile->transform(), m_pCache.data(),
+                                 temp_src.data(), nMaxColors);
   }
   for (int i = 0; i < pixels; i++) {
     int index = 0;

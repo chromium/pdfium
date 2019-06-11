@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_iccmodule.h"
+#include "core/fxcodec/codec/iccmodule.h"
 
 #include <algorithm>
 #include <memory>
@@ -13,6 +13,8 @@
 #include "core/fxcodec/codec/codec_int.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+
+namespace fxcodec {
 
 namespace {
 
@@ -49,7 +51,7 @@ CLcmsCmm::~CLcmsCmm() {
 }
 
 // static
-std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
+std::unique_ptr<CLcmsCmm> IccModule::CreateTransform_sRGB(
     pdfium::span<const uint8_t> span) {
   ScopedCmsProfile srcProfile(cmsOpenProfileFromMem(span.data(), span.size()));
   if (!srcProfile)
@@ -108,10 +110,10 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
 }
 
 // static
-void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
-                                 uint32_t nSrcComponents,
-                                 const float* pSrcValues,
-                                 float* pDestValues) {
+void IccModule::Translate(CLcmsCmm* pTransform,
+                          uint32_t nSrcComponents,
+                          const float* pSrcValues,
+                          float* pDestValues) {
   if (!pTransform)
     return;
 
@@ -138,10 +140,12 @@ void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
 }
 
 // static
-void CCodec_IccModule::TranslateScanline(CLcmsCmm* pTransform,
-                                         unsigned char* pDest,
-                                         const unsigned char* pSrc,
-                                         int32_t pixels) {
+void IccModule::TranslateScanline(CLcmsCmm* pTransform,
+                                  unsigned char* pDest,
+                                  const unsigned char* pSrc,
+                                  int32_t pixels) {
   if (pTransform)
     cmsDoTransform(pTransform->transform(), pSrc, pDest, pixels);
 }
+
+}  // namespace fxcodec

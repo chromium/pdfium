@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_ICCMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_ICCMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_ICCMODULE_H_
+#define CORE_FXCODEC_CODEC_ICCMODULE_H_
 
 #include <memory>
 
@@ -19,6 +19,8 @@
 #else
 #include "third_party/lcms/include/lcms2.h"
 #endif
+
+namespace fxcodec {
 
 class CLcmsCmm {
  public:
@@ -40,7 +42,7 @@ class CLcmsCmm {
   const bool m_bNormal;
 };
 
-class CCodec_IccModule {
+class IccModule {
  public:
   static std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(
       pdfium::span<const uint8_t> span);
@@ -53,9 +55,14 @@ class CCodec_IccModule {
                                 const uint8_t* pSrc,
                                 int pixels);
 
-  CCodec_IccModule() = delete;
-  CCodec_IccModule(const CCodec_IccModule&) = delete;
-  CCodec_IccModule& operator=(const CCodec_IccModule&) = delete;
+  IccModule() = delete;
+  IccModule(const IccModule&) = delete;
+  IccModule& operator=(const IccModule&) = delete;
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_ICCMODULE_H_
+}  // namespace fxcodec
+
+using CLcmsCmm = fxcodec::CLcmsCmm;
+using IccModule = fxcodec::IccModule;
+
+#endif  // CORE_FXCODEC_CODEC_ICCMODULE_H_

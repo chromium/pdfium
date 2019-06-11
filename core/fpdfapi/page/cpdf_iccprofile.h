@@ -13,8 +13,11 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-class CLcmsCmm;
 class CPDF_Stream;
+
+namespace fxcodec {
+class CLcmsCmm;
+}
 
 class CPDF_IccProfile final : public Retainable {
  public:
@@ -25,7 +28,7 @@ class CPDF_IccProfile final : public Retainable {
   bool IsValid() const { return IsSRGB() || IsSupported(); }
   bool IsSRGB() const { return m_bsRGB; }
   bool IsSupported() const { return !!m_Transform; }
-  CLcmsCmm* transform() { return m_Transform.get(); }
+  fxcodec::CLcmsCmm* transform() { return m_Transform.get(); }
   uint32_t GetComponents() const { return m_nSrcComponents; }
 
  private:
@@ -34,7 +37,7 @@ class CPDF_IccProfile final : public Retainable {
 
   const bool m_bsRGB;
   UnownedPtr<const CPDF_Stream> const m_pStream;
-  std::unique_ptr<CLcmsCmm> m_Transform;
+  std::unique_ptr<fxcodec::CLcmsCmm> m_Transform;
   uint32_t m_nSrcComponents = 0;
 };
 
