@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_renderdevice.h"

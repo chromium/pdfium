@@ -15,7 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/systemfontinfo_iface.h"

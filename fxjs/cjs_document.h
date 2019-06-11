@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 

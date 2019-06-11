@@ -4,7 +4,7 @@
 
 #include "core/fxcrt/retained_tree_node.h"
 
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 

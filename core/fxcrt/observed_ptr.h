@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCRT_OBSERVABLE_H_
-#define CORE_FXCRT_OBSERVABLE_H_
+#ifndef CORE_FXCRT_OBSERVED_PTR_H_
+#define CORE_FXCRT_OBSERVED_PTR_H_
 
 #include <set>
 
@@ -93,4 +93,4 @@ class Observable {
 
 using fxcrt::Observable;
 
-#endif  // CORE_FXCRT_OBSERVABLE_H_
+#endif  // CORE_FXCRT_OBSERVED_PTR_H_

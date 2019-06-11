@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_eventrecorder.h"

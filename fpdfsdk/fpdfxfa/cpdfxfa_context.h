@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"

@@ -10,7 +10,7 @@
 #include <map>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/observable.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFGAS_FontMgr;
