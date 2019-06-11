@@ -6,18 +6,12 @@
 
 #include "fxjs/cjs_eventrecorder.h"
 
+#include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "fxjs/cjs_document.h"
-#include "fxjs/cjs_event_context.h"
-#include "fxjs/cjs_field.h"
-#include "fxjs/cjs_object.h"
-#include "fxjs/cjs_runtime.h"
-#include "fxjs/js_define.h"
 
-CJS_EventRecorder::CJS_EventRecorder(CJS_EventContext* pContext)
-    : m_pJSEventContext(pContext) {}
+CJS_EventRecorder::CJS_EventRecorder() = default;
 
-CJS_EventRecorder::~CJS_EventRecorder() {}
+CJS_EventRecorder::~CJS_EventRecorder() = default;
 
 void CJS_EventRecorder::OnApp_Init() {
   Initialize(JET_APP_INIT);
@@ -598,66 +592,10 @@ bool CJS_EventRecorder::Shift() const {
   return m_bShift;
 }
 
-CJS_Field* CJS_EventRecorder::Source() {
-  CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
-  v8::Local<v8::Object> pDocObj = pRuntime->NewFXJSBoundObject(
-      CJS_Document::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pDocObj.IsEmpty())
-    return nullptr;
-
-  v8::Local<v8::Object> pFieldObj = pRuntime->NewFXJSBoundObject(
-      CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pFieldObj.IsEmpty())
-    return nullptr;
-
-  auto* pJSDocument =
-      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
-
-  auto* pJSField =
-      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
-
-  pJSDocument->SetFormFillEnv(m_pTargetFormFillEnv
-                                  ? m_pTargetFormFillEnv.Get()
-                                  : m_pJSEventContext->GetFormFillEnv());
-
-  pJSField->AttachField(pJSDocument, m_strSourceName);
-  return pJSField;
-}
-
-CJS_Field* CJS_EventRecorder::Target_Field() {
-  CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
-  v8::Local<v8::Object> pDocObj = pRuntime->NewFXJSBoundObject(
-      CJS_Document::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pDocObj.IsEmpty())
-    return nullptr;
-
-  v8::Local<v8::Object> pFieldObj = pRuntime->NewFXJSBoundObject(
-      CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pFieldObj.IsEmpty())
-    return nullptr;
-
-  auto* pJSDocument =
-      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
-
-  auto* pJSField =
-      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
-
-  pJSDocument->SetFormFillEnv(m_pTargetFormFillEnv
-                                  ? m_pTargetFormFillEnv.Get()
-                                  : m_pJSEventContext->GetFormFillEnv());
-
-  pJSField->AttachField(pJSDocument, m_strTargetName);
-  return pJSField;
-}
-
 WideString& CJS_EventRecorder::Value() {
   return *m_pValue;
 }
 
 bool CJS_EventRecorder::WillCommit() const {
   return m_bWillCommit;
-}
-
-WideString CJS_EventRecorder::TargetName() const {
-  return m_strTargetName;
 }

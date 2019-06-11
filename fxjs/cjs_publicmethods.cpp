@@ -587,8 +587,8 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
   if (params.size() != 6)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CJS_EventRecorder* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventRecorder();
+  CJS_EventContext* pEventContext = pRuntime->GetCurrentEventContext();
+  CJS_EventRecorder* pEvent = pEventContext->GetEventRecorder();
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(WideString::FromASCII("No event handler"));
 
@@ -654,7 +654,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
       Value += L')';
     }
     if (iNegStyle == 1 || iNegStyle == 3) {
-      if (CJS_Field* fTarget = pEvent->Target_Field()) {
+      if (CJS_Field* fTarget = pEventContext->TargetField()) {
         v8::Local<v8::Array> arColor = pRuntime->NewArray();
         pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString("RGB"));
         pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(1));
@@ -665,7 +665,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
     }
   } else {
     if (iNegStyle == 1 || iNegStyle == 3) {
-      if (CJS_Field* fTarget = pEvent->Target_Field()) {
+      if (CJS_Field* fTarget = pEventContext->TargetField()) {
         v8::Local<v8::Array> arColor = pRuntime->NewArray();
         pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString("RGB"));
         pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(0));

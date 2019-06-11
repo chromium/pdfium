@@ -15,6 +15,7 @@
 #include "fxjs/ijs_event_context.h"
 
 class CJS_EventRecorder;
+class CJS_Field;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 
@@ -124,13 +125,14 @@ class CJS_EventContext final : public IJS_EventContext {
 
   CJS_Runtime* GetJSRuntime() const { return m_pRuntime.Get(); }
   CJS_EventRecorder* GetEventRecorder() const { return m_pEventRecorder.get(); }
-
   CPDFSDK_FormFillEnvironment* GetFormFillEnv();
+  CJS_Field* SourceField();
+  CJS_Field* TargetField();
 
  private:
   UnownedPtr<CJS_Runtime> const m_pRuntime;
   std::unique_ptr<CJS_EventRecorder> m_pEventRecorder;
-  bool m_bBusy;
+  bool m_bBusy = false;
 };
 
 #endif  // FXJS_CJS_EVENT_CONTEXT_H_

@@ -10,11 +10,9 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
-class CJS_EventContext;
-class CJS_Field;
-class CPDFSDK_Annot;
 class CPDF_Bookmark;
 class CPDF_FormField;
 
@@ -61,8 +59,8 @@ enum JS_EVENT_T {
 
 class CJS_EventRecorder {
  public:
-  explicit CJS_EventRecorder(CJS_EventContext* pContext);
-  virtual ~CJS_EventRecorder();
+  CJS_EventRecorder();
+  ~CJS_EventRecorder();
 
   void OnApp_Init();
 
@@ -146,6 +144,8 @@ class CJS_EventRecorder {
   bool IsUserGesture() const;
   WideString& Change();
   WideString ChangeEx() const;
+  WideString SourceName() const { return m_strSourceName; }
+  WideString TargetName() const { return m_strTargetName; }
   int CommitKey() const;
   bool FieldFull() const;
   bool KeyDown() const;
@@ -158,12 +158,11 @@ class CJS_EventRecorder {
   void SetSelEnd(int value);
   void SetSelStart(int value);
   bool Shift() const;
-  CJS_Field* Source();
-  CJS_Field* Target_Field();
   WideString& Value();
   bool WillCommit() const;
-  WideString TargetName() const;
-
+  CPDFSDK_FormFillEnvironment* GetFormFillEnvironment() const {
+    return m_pTargetFormFillEnv.Get();
+  }
   void SetRCForTest(bool* pRC) { m_pbRc = pRC; }
   void SetStrChangeForTest(WideString* pStrChange) {
     m_pWideStrChange = pStrChange;
@@ -174,12 +173,11 @@ class CJS_EventRecorder {
 
  private:
   void Initialize(JS_EVENT_T type);
-  UnownedPtr<CJS_EventContext> const m_pJSEventContext;
+
   JS_EVENT_T m_eEventType = JET_UNKNOWN;
   bool m_bValid = false;
-
-  WideString m_strTargetName;
   WideString m_strSourceName;
+  WideString m_strTargetName;
   UnownedPtr<WideString> m_pWideStrChange;
   WideString m_WideStrChangeDu;
   WideString m_WideStrChangeEx;
@@ -195,7 +193,6 @@ class CJS_EventRecorder {
   bool m_bFieldFull = false;
   UnownedPtr<bool> m_pbRc;
   bool m_bRcDu = false;
-
   UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;
   CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;

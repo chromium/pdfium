@@ -232,9 +232,10 @@ CJS_Result CJS_Event::set_shift(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Event::get_source(CJS_Runtime* pRuntime) {
-  CJS_EventRecorder* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventRecorder();
-  return CJS_Result::Success(pEvent->Source()->ToV8Object());
+  CJS_Field* pField = pRuntime->GetCurrentEventContext()->SourceField();
+  if (!pField)
+    return CJS_Result::Failure(JSMessage::kBadObjectError);
+  return CJS_Result::Success(pField->ToV8Object());
 }
 
 CJS_Result CJS_Event::set_source(CJS_Runtime* pRuntime,
@@ -243,9 +244,10 @@ CJS_Result CJS_Event::set_source(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Event::get_target(CJS_Runtime* pRuntime) {
-  CJS_EventRecorder* pEvent =
-      pRuntime->GetCurrentEventContext()->GetEventRecorder();
-  return CJS_Result::Success(pEvent->Target_Field()->ToV8Object());
+  CJS_Field* pField = pRuntime->GetCurrentEventContext()->TargetField();
+  if (!pField)
+    return CJS_Result::Failure(JSMessage::kBadObjectError);
+  return CJS_Result::Success(pField->ToV8Object());
 }
 
 CJS_Result CJS_Event::set_target(CJS_Runtime* pRuntime,

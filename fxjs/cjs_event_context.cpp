@@ -8,18 +8,19 @@
 
 #include "core/fxcrt/autorestorer.h"
 #include "fxjs/cjs_eventrecorder.h"
+#include "fxjs/cjs_field.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/ptr_util.h"
 
 CJS_EventContext::CJS_EventContext(CJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime),
-      m_pEventRecorder(new CJS_EventRecorder(this)),
-      m_bBusy(false) {
+      m_pEventRecorder(pdfium::MakeUnique<CJS_EventRecorder>()) {
   ASSERT(pRuntime);
 }
 
-CJS_EventContext::~CJS_EventContext() {}
+CJS_EventContext::~CJS_EventContext() = default;
 
 CPDFSDK_FormFillEnvironment* CJS_EventContext::GetFormFillEnv() {
   return m_pRuntime->GetFormFillEnv();
@@ -55,6 +56,56 @@ Optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
   m_pRuntime->RemoveEventFromSet(event);
   m_pEventRecorder->Destroy();
   return err;
+}
+
+CJS_Field* CJS_EventContext::SourceField() {
+  v8::Local<v8::Object> pDocObj = m_pRuntime->NewFXJSBoundObject(
+      CJS_Document::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
+  if (pDocObj.IsEmpty())
+    return nullptr;
+
+  v8::Local<v8::Object> pFieldObj = m_pRuntime->NewFXJSBoundObject(
+      CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
+  if (pFieldObj.IsEmpty())
+    return nullptr;
+
+  auto* pFormFillEnv = m_pEventRecorder->GetFormFillEnvironment();
+  if (!pFormFillEnv)
+    pFormFillEnv = GetFormFillEnv();
+
+  auto* pJSDocument =
+      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
+  pJSDocument->SetFormFillEnv(pFormFillEnv);
+
+  auto* pJSField =
+      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
+  pJSField->AttachField(pJSDocument, m_pEventRecorder->SourceName());
+  return pJSField;
+}
+
+CJS_Field* CJS_EventContext::TargetField() {
+  v8::Local<v8::Object> pDocObj = m_pRuntime->NewFXJSBoundObject(
+      CJS_Document::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
+  if (pDocObj.IsEmpty())
+    return nullptr;
+
+  v8::Local<v8::Object> pFieldObj = m_pRuntime->NewFXJSBoundObject(
+      CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
+  if (pFieldObj.IsEmpty())
+    return nullptr;
+
+  auto* pFormFillEnv = m_pEventRecorder->GetFormFillEnvironment();
+  if (!pFormFillEnv)
+    pFormFillEnv = GetFormFillEnv();
+
+  auto* pJSDocument =
+      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
+  pJSDocument->SetFormFillEnv(pFormFillEnv);
+
+  auto* pJSField =
+      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
+  pJSField->AttachField(pJSDocument, m_pEventRecorder->TargetName());
+  return pJSField;
 }
 
 void CJS_EventContext::OnApp_Init() {
