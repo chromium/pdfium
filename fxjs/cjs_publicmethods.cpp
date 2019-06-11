@@ -589,7 +589,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
 
   CJS_EventContext* pEventContext = pRuntime->GetCurrentEventContext();
   CJS_EventRecorder* pEvent = pEventContext->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(WideString::FromASCII("No event handler"));
 
   WideString& Value = pEvent->Value();
@@ -696,7 +696,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   WideString& val = pEvent->Value();
@@ -785,7 +785,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
 
   CJS_EventRecorder* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   // Acrobat will accept this. Anything larger causes it to throw an error.
@@ -881,7 +881,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   WideString& val = pEvent->Value();
@@ -959,7 +959,7 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
   if (!pEvent->WillCommit())
     return CJS_Result::Success();
 
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   const WideString& strValue = pEvent->Value();
@@ -1053,7 +1053,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
 
   CJS_EventRecorder* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   const WideString& wsSource = pEvent->Value();
@@ -1089,7 +1089,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   const WideString& valEvent = pEvent->Value();
@@ -1171,7 +1171,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
 
   CJS_EventRecorder* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   const char* cFormat = "";
@@ -1208,7 +1208,7 @@ CJS_Result CJS_PublicMethods::AFMergeChange(
       pRuntime->GetCurrentEventContext()->GetEventRecorder();
 
   WideString swValue;
-  if (pEventRecorder->m_pValue)
+  if (pEventRecorder->HasValue())
     swValue = pEventRecorder->Value();
 
   if (pEventRecorder->WillCommit())
@@ -1364,7 +1364,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
   dValue = floor(dValue * FXSYS_pow(10, 6) + 0.49) / FXSYS_pow(10, 6);
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
-  if (pContext->GetEventRecorder()->m_pValue) {
+  if (pContext->GetEventRecorder()->HasValue()) {
     pContext->GetEventRecorder()->Value() =
         pRuntime->ToWideString(pRuntime->NewNumber(dValue));
   }
@@ -1382,7 +1382,7 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
 
   CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   CJS_EventRecorder* pEvent = pContext->GetEventRecorder();
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   if (pEvent->Value().IsEmpty())

@@ -363,7 +363,6 @@ void CJS_EventRecorder::OnConsole_Exec() {
 
 void CJS_EventRecorder::Initialize(JS_EVENT_T type) {
   m_eEventType = type;
-
   m_strTargetName.clear();
   m_strSourceName.clear();
   m_pWideStrChange = nullptr;
@@ -382,20 +381,14 @@ void CJS_EventRecorder::Initialize(JS_EVENT_T type) {
   m_bFieldFull = false;
   m_pbRc = nullptr;
   m_bRcDu = false;
-
   m_pTargetBookMark = nullptr;
   m_pTargetFormFillEnv.Reset();
   m_pTargetAnnot.Reset();
-
   m_bValid = true;
 }
 
 void CJS_EventRecorder::Destroy() {
   m_bValid = false;
-}
-
-bool CJS_EventRecorder::IsValid() const {
-  return m_bValid;
 }
 
 bool CJS_EventRecorder::IsUserGesture() const {
@@ -414,30 +407,7 @@ bool CJS_EventRecorder::IsUserGesture() const {
 }
 
 WideString& CJS_EventRecorder::Change() {
-  if (m_pWideStrChange) {
-    return *m_pWideStrChange;
-  }
-  return m_WideStrChangeDu;
-}
-
-WideString CJS_EventRecorder::ChangeEx() const {
-  return m_WideStrChangeEx;
-}
-
-int CJS_EventRecorder::CommitKey() const {
-  return m_nCommitKey;
-}
-
-bool CJS_EventRecorder::FieldFull() const {
-  return m_bFieldFull;
-}
-
-bool CJS_EventRecorder::KeyDown() const {
-  return m_bKeyDown;
-}
-
-bool CJS_EventRecorder::Modifier() const {
-  return m_bModifier;
+  return m_pWideStrChange ? *m_pWideStrChange : m_WideStrChangeDu;
 }
 
 ByteStringView CJS_EventRecorder::Name() const {
@@ -586,16 +556,4 @@ void CJS_EventRecorder::SetSelEnd(int value) {
 void CJS_EventRecorder::SetSelStart(int value) {
   int& target = m_pISelStart ? *m_pISelStart : m_nSelStartDu;
   target = value;
-}
-
-bool CJS_EventRecorder::Shift() const {
-  return m_bShift;
-}
-
-WideString& CJS_EventRecorder::Value() {
-  return *m_pValue;
-}
-
-bool CJS_EventRecorder::WillCommit() const {
-  return m_bWillCommit;
 }

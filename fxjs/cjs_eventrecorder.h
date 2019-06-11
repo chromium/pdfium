@@ -138,18 +138,18 @@ class CJS_EventRecorder {
   void OnExternal_Exec();
 
   void Destroy();
-  bool IsValid() const;
 
   JS_EVENT_T EventType() const { return m_eEventType; }
+  bool IsValid() const { return m_bValid; }
   bool IsUserGesture() const;
   WideString& Change();
-  WideString ChangeEx() const;
+  WideString ChangeEx() const { return m_WideStrChangeEx; }
   WideString SourceName() const { return m_strSourceName; }
   WideString TargetName() const { return m_strTargetName; }
-  int CommitKey() const;
-  bool FieldFull() const;
-  bool KeyDown() const;
-  bool Modifier() const;
+  int CommitKey() const { return m_nCommitKey; }
+  bool FieldFull() const { return m_bFieldFull; }
+  bool KeyDown() const { return m_bKeyDown; }
+  bool Modifier() const { return m_bModifier; }
   ByteStringView Name() const;
   ByteStringView Type() const;
   bool& Rc();
@@ -157,42 +157,44 @@ class CJS_EventRecorder {
   int SelStart() const;
   void SetSelEnd(int value);
   void SetSelStart(int value);
-  bool Shift() const;
-  WideString& Value();
-  bool WillCommit() const;
+  bool Shift() const { return m_bShift; }
+  bool HasValue() const { return !!m_pValue; }
+  WideString& Value() { return *m_pValue; }
+  bool WillCommit() const { return m_bWillCommit; }
   CPDFSDK_FormFillEnvironment* GetFormFillEnvironment() const {
     return m_pTargetFormFillEnv.Get();
   }
+
+  void SetValueForTest(WideString* pStr) { m_pValue = pStr; }
   void SetRCForTest(bool* pRC) { m_pbRc = pRC; }
   void SetStrChangeForTest(WideString* pStrChange) {
     m_pWideStrChange = pStrChange;
   }
   void ResetWillCommitForTest() { m_bWillCommit = false; }
 
-  UnownedPtr<WideString> m_pValue;
-
  private:
   void Initialize(JS_EVENT_T type);
 
   JS_EVENT_T m_eEventType = JET_UNKNOWN;
   bool m_bValid = false;
+  UnownedPtr<WideString> m_pValue;
   WideString m_strSourceName;
   WideString m_strTargetName;
-  UnownedPtr<WideString> m_pWideStrChange;
   WideString m_WideStrChangeDu;
   WideString m_WideStrChangeEx;
+  UnownedPtr<WideString> m_pWideStrChange;
   int m_nCommitKey = -1;
   bool m_bKeyDown = false;
   bool m_bModifier = false;
   bool m_bShift = false;
-  UnownedPtr<int> m_pISelEnd;
   int m_nSelEndDu = 0;
-  UnownedPtr<int> m_pISelStart;
   int m_nSelStartDu = 0;
+  UnownedPtr<int> m_pISelEnd;
+  UnownedPtr<int> m_pISelStart;
   bool m_bWillCommit = false;
   bool m_bFieldFull = false;
-  UnownedPtr<bool> m_pbRc;
   bool m_bRcDu = false;
+  UnownedPtr<bool> m_pbRc;
   UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;
   CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;

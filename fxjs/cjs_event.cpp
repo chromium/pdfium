@@ -283,7 +283,7 @@ CJS_Result CJS_Event::get_value(CJS_Runtime* pRuntime) {
   if (pEvent->Type() != "Field")
     return CJS_Result::Failure(L"Bad event type.");
 
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   return CJS_Result::Success(
@@ -297,7 +297,7 @@ CJS_Result CJS_Event::set_value(CJS_Runtime* pRuntime,
   if (pEvent->Type() != "Field")
     return CJS_Result::Failure(L"Bad event type.");
 
-  if (!pEvent->m_pValue)
+  if (!pEvent->HasValue())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   if (vp.IsEmpty())
