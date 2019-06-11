@@ -11,8 +11,8 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/codec/jbig2module.h"
 #include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -46,7 +46,7 @@ CCodec_ModuleMgr* CCodec_ModuleMgr::GetInstance() {
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()
     : m_pJpegModule(pdfium::MakeUnique<JpegModule>()),
-      m_pJbig2Module(pdfium::MakeUnique<CCodec_Jbig2Module>()) {
+      m_pJbig2Module(pdfium::MakeUnique<Jbig2Module>()) {
 #ifdef PDF_ENABLE_XFA_BMP
   SetBmpModule(pdfium::MakeUnique<BmpModule>());
 #endif

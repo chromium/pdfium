@@ -24,9 +24,9 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
-#include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
+#include "core/fxcodec/codec/jbig2module.h"
 #include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxcodec/codec/jpxmodule.h"
 #include "core/fxcodec/fx_codec.h"
@@ -282,10 +282,9 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
     return LoadState::kFail;
 
   FXCODEC_STATUS iDecodeStatus;
-  CCodec_Jbig2Module* pJbig2Module =
-      CCodec_ModuleMgr::GetInstance()->GetJbig2Module();
+  Jbig2Module* pJbig2Module = CCodec_ModuleMgr::GetInstance()->GetJbig2Module();
   if (!m_pJbig2Context) {
-    m_pJbig2Context = pdfium::MakeUnique<CCodec_Jbig2Context>();
+    m_pJbig2Context = pdfium::MakeUnique<Jbig2Context>();
     if (m_pStreamAcc->GetImageParam()) {
       const CPDF_Stream* pGlobals =
           m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");

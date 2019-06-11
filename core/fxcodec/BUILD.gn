@@ -8,6 +8,7 @@ import("../../testing/test.gni")
 
 jumbo_source_set("fxcodec") {
   sources = [
+    "JBig2_DocumentContext.cpp",
     "JBig2_DocumentContext.h",
     "codec/ccodec_basicmodule.cpp",
     "codec/ccodec_basicmodule.h",
@@ -15,8 +16,6 @@ jumbo_source_set("fxcodec") {
     "codec/ccodec_faxmodule.h",
     "codec/ccodec_flatemodule.cpp",
     "codec/ccodec_flatemodule.h",
-    "codec/ccodec_jbig2module.cpp",
-    "codec/ccodec_jbig2module.h",
     "codec/ccodec_scanlinedecoder.cpp",
     "codec/ccodec_scanlinedecoder.h",
     "codec/cfx_codec_memory.cpp",
@@ -28,6 +27,8 @@ jumbo_source_set("fxcodec") {
     "codec/fx_codec.cpp",
     "codec/iccmodule.cpp",
     "codec/iccmodule.h",
+    "codec/jbig2module.cpp",
+    "codec/jbig2module.h",
     "codec/jpegmodule.cpp",
     "codec/jpegmodule.h",
     "codec/jpxmodule.cpp",

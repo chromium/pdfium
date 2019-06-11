@@ -4,19 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_jbig2module.h"
-
-#include <list>
-#include <memory>
+#include "core/fxcodec/codec/jbig2module.h"
 
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
-#include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "third_party/base/ptr_util.h"
 
-JBig2_DocumentContext::JBig2_DocumentContext() {}
-
-JBig2_DocumentContext::~JBig2_DocumentContext() {}
+namespace fxcodec {
 
 JBig2_DocumentContext* GetJBig2DocumentContext(
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder) {
@@ -25,16 +19,16 @@ JBig2_DocumentContext* GetJBig2DocumentContext(
   return pContextHolder->get();
 }
 
-CCodec_Jbig2Context::CCodec_Jbig2Context() = default;
+Jbig2Context::Jbig2Context() = default;
 
-CCodec_Jbig2Context::~CCodec_Jbig2Context() = default;
+Jbig2Context::~Jbig2Context() = default;
 
-CCodec_Jbig2Module::CCodec_Jbig2Module() = default;
+Jbig2Module::Jbig2Module() = default;
 
-CCodec_Jbig2Module::~CCodec_Jbig2Module() = default;
+Jbig2Module::~Jbig2Module() = default;
 
-FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
-    CCodec_Jbig2Context* pJbig2Context,
+FXCODEC_STATUS Jbig2Module::StartDecode(
+    Jbig2Context* pJbig2Context,
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
     uint32_t width,
     uint32_t height,
@@ -67,15 +61,14 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
   return Decode(pJbig2Context, succeeded);
 }
 
-FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(
-    CCodec_Jbig2Context* pJbig2Context,
-    PauseIndicatorIface* pPause) {
+FXCODEC_STATUS Jbig2Module::ContinueDecode(Jbig2Context* pJbig2Context,
+                                           PauseIndicatorIface* pPause) {
   bool succeeded = pJbig2Context->m_pContext->Continue(pPause);
   return Decode(pJbig2Context, succeeded);
 }
 
-FXCODEC_STATUS CCodec_Jbig2Module::Decode(CCodec_Jbig2Context* pJbig2Context,
-                                          bool decode_success) {
+FXCODEC_STATUS Jbig2Module::Decode(Jbig2Context* pJbig2Context,
+                                   bool decode_success) {
   FXCODEC_STATUS status = pJbig2Context->m_pContext->GetProcessingStatus();
   if (status != FXCODEC_STATUS_DECODE_FINISH)
     return status;
@@ -90,3 +83,5 @@ FXCODEC_STATUS CCodec_Jbig2Module::Decode(CCodec_Jbig2Context* pJbig2Context,
     dword_buf[i] = ~dword_buf[i];
   return FXCODEC_STATUS_DECODE_FINISH;
 }
+
+}  // namespace fxcodec

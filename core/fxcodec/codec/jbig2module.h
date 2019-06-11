@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
+#ifndef CORE_FXCODEC_CODEC_JBIG2MODULE_H_
+#define CORE_FXCODEC_CODEC_JBIG2MODULE_H_
 
 #include <memory>
 
@@ -14,13 +14,15 @@
 
 class CJBig2_Context;
 class CJBig2_Image;
-class PauseIndicatorIface;
 class JBig2_DocumentContext;
+class PauseIndicatorIface;
 
-class CCodec_Jbig2Context {
+namespace fxcodec {
+
+class Jbig2Context {
  public:
-  CCodec_Jbig2Context();
-  ~CCodec_Jbig2Context();
+  Jbig2Context();
+  ~Jbig2Context();
 
   uint32_t m_width = 0;
   uint32_t m_height = 0;
@@ -33,13 +35,13 @@ class CCodec_Jbig2Context {
   std::unique_ptr<CJBig2_Context> m_pContext;
 };
 
-class CCodec_Jbig2Module {
+class Jbig2Module {
  public:
-  CCodec_Jbig2Module();
-  ~CCodec_Jbig2Module();
+  Jbig2Module();
+  ~Jbig2Module();
 
   FXCODEC_STATUS StartDecode(
-      CCodec_Jbig2Context* pJbig2Context,
+      Jbig2Context* pJbig2Context,
       std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
       uint32_t width,
       uint32_t height,
@@ -51,12 +53,16 @@ class CCodec_Jbig2Module {
       uint32_t dest_pitch,
       PauseIndicatorIface* pPause);
 
-  FXCODEC_STATUS ContinueDecode(CCodec_Jbig2Context* pJbig2Context,
+  FXCODEC_STATUS ContinueDecode(Jbig2Context* pJbig2Context,
                                 PauseIndicatorIface* pPause);
 
  private:
-  FXCODEC_STATUS Decode(CCodec_Jbig2Context* pJbig2Context,
-                        bool decode_success);
+  FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success);
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
+}  // namespace fxcodec
+
+using Jbig2Context = fxcodec::Jbig2Context;
+using Jbig2Module = fxcodec::Jbig2Module;
+
+#endif  // CORE_FXCODEC_CODEC_JBIG2MODULE_H_

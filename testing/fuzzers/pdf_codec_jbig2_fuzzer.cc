@@ -5,7 +5,7 @@
 #include <cstdint>
 
 #include "core/fxcodec/JBig2_DocumentContext.h"
-#include "core/fxcodec/codec/ccodec_jbig2module.h"
+#include "core/fxcodec/codec/jbig2module.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -35,8 +35,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
     return 0;
 
-  CCodec_Jbig2Module module;
-  CCodec_Jbig2Context jbig2_context;
+  Jbig2Module module;
+  Jbig2Context jbig2_context;
   std::unique_ptr<JBig2_DocumentContext> document_context;
   FXCODEC_STATUS status = module.StartDecode(
       &jbig2_context, &document_context, width, height, {data, size}, 1, {}, 0,
