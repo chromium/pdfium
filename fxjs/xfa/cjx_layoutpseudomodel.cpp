@@ -96,7 +96,7 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
       unit = std::move(tmp_unit);
   }
   int32_t iIndex = params.size() >= 3 ? runtime->ToInt32(params[2]) : 0;
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
@@ -162,7 +162,7 @@ CJS_Result CJX_LayoutPseudoModel::y(
 
 CJS_Result CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
                                                     bool bNumbered) {
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   int32_t iPageCount = 0;
   int32_t iPageNum = pDocLayout->CountPages();
   if (bNumbered) {
@@ -198,7 +198,7 @@ CJS_Result CJX_LayoutPseudoModel::pageSpan(
   if (!pNode)
     return CJS_Result::Success();
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
@@ -369,7 +369,7 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(GetDocument());
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
@@ -402,7 +402,7 @@ CJS_Result CJX_LayoutPseudoModel::relayout(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
-  CXFA_LayoutProcessor* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
+  auto* pLayoutProcessor = CXFA_LayoutProcessor::FromDocument(GetDocument());
   CXFA_Form* pFormRoot =
       pRootNode->GetFirstChildByClass<CXFA_Form>(XFA_Element::Form);
   if (pFormRoot) {
@@ -410,7 +410,7 @@ CJS_Result CJX_LayoutPseudoModel::relayout(
     if (pContentRootNode)
       pLayoutProcessor->AddChangedContainer(pContentRootNode);
   }
-  pLayoutProcessor->SetForceReLayout(true);
+  pLayoutProcessor->SetForceRelayout(true);
   return CJS_Result::Success();
 }
 
@@ -474,7 +474,7 @@ CJS_Result CJX_LayoutPseudoModel::PageInternals(
   if (!pNode)
     return CJS_Result::Success(runtime->NewNumber(0));
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)

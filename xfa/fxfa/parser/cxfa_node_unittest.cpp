@@ -31,7 +31,7 @@ class TestNode final : public CXFA_Node {
 class CXFANodeTest : public testing::Test {
  public:
   void SetUp() override {
-    doc_ = pdfium::MakeUnique<CXFA_Document>(nullptr);
+    doc_ = pdfium::MakeUnique<CXFA_Document>(nullptr, nullptr);
     node_ = pdfium::MakeUnique<TestNode>(doc_.get());
   }
 

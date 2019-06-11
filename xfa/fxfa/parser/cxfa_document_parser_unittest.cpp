@@ -13,7 +13,7 @@
 class CXFA_DocumentParserTest : public testing::Test {
  public:
   void SetUp() override {
-    doc_ = pdfium::MakeUnique<CXFA_Document>(nullptr);
+    doc_ = pdfium::MakeUnique<CXFA_Document>(nullptr, nullptr);
     parser_ = pdfium::MakeUnique<CXFA_DocumentParser>(doc_.get());
   }
 

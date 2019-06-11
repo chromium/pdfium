@@ -205,7 +205,7 @@ CXFA_FFPageView* CXFA_FFDocView::GetPageView(int32_t nIndex) const {
 }
 
 CXFA_LayoutProcessor* CXFA_FFDocView::GetXFALayout() const {
-  return m_pDoc->GetXFADoc()->GetLayoutProcessor();
+  return CXFA_LayoutProcessor::FromDocument(m_pDoc->GetXFADoc());
 }
 
 bool CXFA_FFDocView::ResetSingleNodeData(CXFA_Node* pNode) {

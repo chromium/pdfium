@@ -15,6 +15,7 @@
 class CXFA_ContentLayoutItem;
 class CXFA_FFWidgetHandler;
 class CXFA_LayoutItem;
+class CXFA_LayoutProcessor;
 class CXFA_Script;
 class CXFA_ViewLayoutItem;
 

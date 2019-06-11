@@ -20,13 +20,18 @@
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
-    : m_pDocument(pDocument), m_nProgressCounter(0), m_bNeedLayout(true) {}
+// static
+CXFA_LayoutProcessor* CXFA_LayoutProcessor::FromDocument(
+    const CXFA_Document* pXFADoc) {
+  return static_cast<CXFA_LayoutProcessor*>(pXFADoc->GetLayoutProcessor());
+}
 
-CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {}
+CXFA_LayoutProcessor::CXFA_LayoutProcessor() = default;
 
-CXFA_Document* CXFA_LayoutProcessor::GetDocument() const {
-  return m_pDocument.Get();
+CXFA_LayoutProcessor::~CXFA_LayoutProcessor() = default;
+
+void CXFA_LayoutProcessor::SetForceRelayout(bool bForceRestart) {
+  m_bNeedLayout = bForceRestart;
 }
 
 int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
@@ -36,7 +41,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   m_pRootItemLayoutProcessor.reset();
   m_nProgressCounter = 0;
   CXFA_Node* pFormPacketNode =
-      ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
+      ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pFormPacketNode)
     return -1;
 

@@ -1608,8 +1608,8 @@ void CXFA_LayoutPageMgr::SaveLayoutItemChildren(
       if (pCurLayoutItem->GetFormNode()->HasRemovedChildren()) {
         CXFA_FFNotify* pNotify =
             m_pTemplatePageSetRoot->GetDocument()->GetNotify();
-        CXFA_LayoutProcessor* pDocLayout =
-            m_pTemplatePageSetRoot->GetDocument()->GetLayoutProcessor();
+        auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(
+            m_pTemplatePageSetRoot->GetDocument());
         SyncRemoveLayoutItemChildren(pCurLayoutItem, pNotify, pDocLayout);
         pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
         pCurLayoutItem->RemoveSelfIfParented();
@@ -1663,7 +1663,7 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
 void CXFA_LayoutPageMgr::MergePageSetContents() {
   CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
-  CXFA_LayoutProcessor* pDocLayout = pDocument->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
   CXFA_ViewLayoutItem* pRootLayout = GetRootLayoutItem();
   for (CXFA_Node* pPageNode : pDocument->m_pPendingPageSet) {
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>

@@ -22,6 +22,7 @@
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_layoutcontext.h"
 #include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
+#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_keep.h"
@@ -431,8 +432,8 @@ Optional<CXFA_ItemLayoutProcessor::Stage> FindBreakNode(
 
 void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   CXFA_FFNotify* pNotify = pGenerateNode->GetDocument()->GetNotify();
-  CXFA_LayoutProcessor* pDocLayout =
-      pGenerateNode->GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout =
+      CXFA_LayoutProcessor::FromDocument(pGenerateNode->GetDocument());
   CXFA_NodeIterator sIterator(pGenerateNode);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
@@ -811,8 +812,8 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
 
   CXFA_FFNotify* pNotify =
       m_pOldLayoutItem->GetFormNode()->GetDocument()->GetNotify();
-  CXFA_LayoutProcessor* pDocLayout =
-      m_pOldLayoutItem->GetFormNode()->GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(
+      m_pOldLayoutItem->GetFormNode()->GetDocument());
 
   while (m_pOldLayoutItem) {
     CXFA_ContentLayoutItem* pToDeleteItem = m_pOldLayoutItem;

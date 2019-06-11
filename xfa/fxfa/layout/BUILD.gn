@@ -31,10 +31,7 @@ jumbo_source_set("layout") {
     "../../../fxjs",
     "../parser",
   ]
-  allow_circular_includes_from = [
-    "../../../fxjs",
-    "../parser",
-  ]
+  allow_circular_includes_from = [ "../../../fxjs" ]
   configs += [
     "../../../:pdfium_core_config",
     "../../:xfa_warnings",

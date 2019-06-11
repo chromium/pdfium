@@ -50,13 +50,26 @@ class CScript_LayoutPseudoModel;
 class CScript_LogPseudoModel;
 class CScript_SignaturePseudoModel;
 class CXFA_FFNotify;
-class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_Object;
 
 class CXFA_Document final : public CXFA_NodeOwner {
  public:
-  explicit CXFA_Document(CXFA_FFNotify* notify);
+  class LayoutProcessorIface {
+   public:
+    LayoutProcessorIface();
+    virtual ~LayoutProcessorIface();
+    virtual void SetForceRelayout(bool enable) = 0;
+
+    void SetDocument(CXFA_Document* pDocument) { m_pDocument = pDocument; }
+    CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
+
+   private:
+    UnownedPtr<CXFA_Document> m_pDocument;
+  };
+
+  CXFA_Document(CXFA_FFNotify* notify,
+                std::unique_ptr<LayoutProcessorIface> pLayout);
   ~CXFA_Document() override;
 
   bool HasScriptContext() const { return !!m_pScriptContext; }
@@ -75,8 +88,9 @@ class CXFA_Document final : public CXFA_NodeOwner {
   CXFA_Node* GetNotBindNode(
       const std::vector<UnownedPtr<CXFA_Object>>& arrayNodes) const;
 
-  // Creates if not present, never returns NULL.
-  CXFA_LayoutProcessor* GetLayoutProcessor();
+  LayoutProcessorIface* GetLayoutProcessor() const {
+    return m_pLayoutProcessor.get();
+  }
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
   void SetRoot(CXFA_Node* pNewRoot) { m_pRootNode = pNewRoot; }
@@ -113,10 +127,10 @@ class CXFA_Document final : public CXFA_NodeOwner {
 
  private:
   UnownedPtr<CXFA_FFNotify> const notify_;
-  CXFA_Node* m_pRootNode;
+  CXFA_Node* m_pRootNode = nullptr;
   std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
-  std::unique_ptr<CXFA_LayoutProcessor> m_pLayoutProcessor;
+  std::unique_ptr<LayoutProcessorIface> m_pLayoutProcessor;
   std::unique_ptr<CXFA_LocaleMgr> m_pLocaleMgr;
   std::unique_ptr<CScript_DataWindow> m_pScriptDataWindow;
   std::unique_ptr<CScript_EventPseudoModel> m_pScriptEvent;
@@ -124,8 +138,8 @@ class CXFA_Document final : public CXFA_NodeOwner {
   std::unique_ptr<CScript_LogPseudoModel> m_pScriptLog;
   std::unique_ptr<CScript_LayoutPseudoModel> m_pScriptLayout;
   std::unique_ptr<CScript_SignaturePseudoModel> m_pScriptSignature;
-  XFA_VERSION m_eCurVersionMode;
-  uint32_t m_dwDocFlags;
+  XFA_VERSION m_eCurVersionMode = XFA_VERSION_DEFAULT;
+  uint32_t m_dwDocFlags = 0;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_H_

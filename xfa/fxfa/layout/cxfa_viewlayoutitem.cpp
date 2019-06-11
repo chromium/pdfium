@@ -27,15 +27,13 @@ CXFA_ViewLayoutItem::CXFA_ViewLayoutItem(
 CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() = default;
 
 CXFA_LayoutProcessor* CXFA_ViewLayoutItem::GetLayout() const {
-  return GetFormNode()->GetDocument()->GetLayoutProcessor();
+  return CXFA_LayoutProcessor::FromDocument(GetFormNode()->GetDocument());
 }
 
 int32_t CXFA_ViewLayoutItem::GetPageIndex() const {
-  return GetFormNode()
-      ->GetDocument()
-      ->GetLayoutProcessor()
-      ->GetLayoutPageMgr()
-      ->GetPageIndex(this);
+  auto* pLayout =
+      CXFA_LayoutProcessor::FromDocument(GetFormNode()->GetDocument());
+  return pLayout->GetLayoutPageMgr()->GetPageIndex(this);
 }
 
 CFX_SizeF CXFA_ViewLayoutItem::GetPageSize() const {

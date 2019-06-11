@@ -301,7 +301,7 @@ CJS_Result CJX_HostPseudoModel::openList(
   if (!pNode)
     return CJS_Result::Success();
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem)
     return CJS_Result::Success();

@@ -25,6 +25,7 @@ class CPDF_Object;
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
+class CXFA_LayoutProcessor;
 
 struct FX_IMAGEDIB_AND_DPI {
   FX_IMAGEDIB_AND_DPI();

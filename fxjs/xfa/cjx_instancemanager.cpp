@@ -103,7 +103,8 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
       pNotify->RunNodeInitialize(pNewInstance);
     }
   }
-  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
+  auto* pLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
+  pLayout->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   return 0;
 }
@@ -125,7 +126,8 @@ int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
 
   GetXFANode()->RemoveItem(pMoveInstance, false);
   GetXFANode()->InsertItem(pMoveInstance, iTo, iCount - 1, true);
-  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
+  auto* pLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
+  pLayout->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   return 0;
 }
@@ -197,7 +199,8 @@ CJS_Result CJX_InstanceManager::removeInstance(
       }
     }
   }
-  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
+  auto* pLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
+  pLayout->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   return CJS_Result::Success();
 }
@@ -245,8 +248,9 @@ CJS_Result CJX_InstanceManager::addInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->RunNodeInitialize(pNewInstance);
-    GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+    CXFA_LayoutProcessor::FromDocument(GetDocument())
+        ->AddChangedContainer(
+            ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
 
   CFXJSE_Value* value =
@@ -290,8 +294,9 @@ CJS_Result CJX_InstanceManager::insertInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->RunNodeInitialize(pNewInstance);
-    GetDocument()->GetLayoutProcessor()->AddChangedContainer(
-        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+    CXFA_LayoutProcessor::FromDocument(GetDocument())
+        ->AddChangedContainer(
+            ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
 
   CFXJSE_Value* value =
