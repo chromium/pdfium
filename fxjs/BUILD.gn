@@ -243,6 +243,7 @@ if (pdf_enable_v8) {
     configs = [ "//v8:external_startup_data" ]
     deps = [
       ":fxjs",
+      "//fpdfsdk",
     ]
     pdfium_root_dir = "../"
 

@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/cpdfsdk_helpers.h"
 
 namespace {
 

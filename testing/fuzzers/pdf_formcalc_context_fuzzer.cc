@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"

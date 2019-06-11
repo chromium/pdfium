@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_publicmethods.h"
 #include "testing/gtest/include/gtest/gtest.h"

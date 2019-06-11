@@ -16,7 +16,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
 
 class CFFL_InteractiveFormFiller;
@@ -26,6 +25,10 @@ class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
+
+#if defined(PDF_ENABLE_XFA)
+class CPDFXFA_Context;
+#endif  // defined(PDF_ENABLE_XFA)
 
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
 // since modifying the result would impact |bsUTF16LE|.

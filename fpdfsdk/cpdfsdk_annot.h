@@ -13,7 +13,6 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/cpdfsdk_helpers.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;
@@ -21,6 +20,8 @@ class CPDF_Page;
 class CPDF_RenderOptions;
 class CPDFSDK_BAAnnot;
 class CPDFSDK_PageView;
+class CPDFXFA_Page;
+class IPDF_Page;
 
 #ifdef PDF_ENABLE_XFA
 class CXFA_FFWidget;
