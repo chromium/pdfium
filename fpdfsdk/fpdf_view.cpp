@@ -56,7 +56,7 @@
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
 #include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_flatemodule.h"
-#include "core/fxcodec/codec/ccodec_jpegmodule.h"
+#include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "public/fpdf_edit.h"
@@ -85,7 +85,7 @@ bool g_bLibraryInitialized = false;
 #if defined(OS_WIN)
 constexpr EncoderIface kEncoderIface = {
     CCodec_BasicModule::A85Encode, CCodec_FaxModule::FaxEncode,
-    CCodec_FlateModule::Encode, CCodec_JpegModule::JpegEncode,
+    CCodec_FlateModule::Encode, JpegModule::JpegEncode,
     CCodec_BasicModule::RunLengthEncode};
 #endif  // defined(OS_WIN)
 

@@ -24,7 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
-#include "core/fxcodec/codec/ccodec_jpegmodule.h"
+#include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"

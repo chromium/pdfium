@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_JPEGMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_JPEGMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_JPEGMODULE_H_
+#define CORE_FXCODEC_CODEC_JPEGMODULE_H_
 
 #include <csetjmp>
 #include <memory>
@@ -18,7 +18,9 @@ class CCodec_ScanlineDecoder;
 class CFX_DIBAttribute;
 class CFX_DIBBase;
 
-class CCodec_JpegModule final : public CodecModuleIface {
+namespace fxcodec {
+
+class JpegModule final : public CodecModuleIface {
  public:
   std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
@@ -61,4 +63,8 @@ class CCodec_JpegModule final : public CodecModuleIface {
 #endif  // defined(OS_WIN)
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_JPEGMODULE_H_
+}  // namespace fxcodec
+
+using JpegModule = fxcodec::JpegModule;
+
+#endif  // CORE_FXCODEC_CODEC_JPEGMODULE_H_

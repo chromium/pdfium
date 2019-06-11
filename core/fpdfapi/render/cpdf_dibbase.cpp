@@ -25,9 +25,9 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
-#include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
+#include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxcodec/codec/jpxmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_fixedbufgrow.h"
@@ -512,8 +512,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
 
 bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                                     const CPDF_Dictionary* pParams) {
-  CCodec_JpegModule* pJpegModule =
-      CCodec_ModuleMgr::GetInstance()->GetJpegModule();
+  JpegModule* pJpegModule = CCodec_ModuleMgr::GetInstance()->GetJpegModule();
   m_pDecoder = pJpegModule->CreateDecoder(
       src_span, m_Width, m_Height, m_nComponents,
       !pParams || pParams->GetIntegerFor("ColorTransform", 1));

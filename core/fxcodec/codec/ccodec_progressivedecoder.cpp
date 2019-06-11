@@ -1038,14 +1038,14 @@ void CCodec_ProgressiveDecoder::GifDoubleLineResampleVert(
 }
 #endif  // PDF_ENABLE_XFA_GIF
 
-bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
+bool CCodec_ProgressiveDecoder::JpegReadMoreData(JpegModule* pJpegModule,
                                                  FXCODEC_STATUS& err_status) {
   return ReadMoreData(pJpegModule, m_pJpegContext.get(), false, err_status);
 }
 
 bool CCodec_ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   m_pJpegContext = pJpegModule->Start();
   if (!m_pJpegContext) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
@@ -1086,7 +1086,7 @@ bool CCodec_ProgressiveDecoder::JpegDetectImageTypeInBuffer(
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   int down_scale = 1;
   GetDownScale(down_scale);
   // Setting jump marker before calling StartScanLine, since a longjmp to
@@ -1133,7 +1133,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegStartDecode(
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegContinueDecode() {
-  CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   // Setting jump marker before calling ReadScanLine, since a longjmp to
   // the marker indicates a fatal error.
   if (setjmp(*pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {

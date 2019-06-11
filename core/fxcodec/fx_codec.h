@@ -35,7 +35,6 @@
 #endif  // PDF_ENABLE_XFA
 
 class CCodec_Jbig2Module;
-class CCodec_JpegModule;
 
 #ifdef PDF_ENABLE_XFA
 class CCodec_ProgressiveDecoder;
@@ -52,6 +51,10 @@ class CFX_DIBAttribute {
 };
 #endif  // PDF_ENABLE_XFA
 
+namespace fxcodec {
+class JpegModule;
+}
+
 class CCodec_ModuleMgr {
  public:
   // Per-process singleton managed by callers.
@@ -59,7 +62,7 @@ class CCodec_ModuleMgr {
   static void Destroy();
   static CCodec_ModuleMgr* GetInstance();
 
-  CCodec_JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
+  fxcodec::JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
   CCodec_Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
 
 #ifdef PDF_ENABLE_XFA
@@ -98,7 +101,7 @@ class CCodec_ModuleMgr {
   CCodec_ModuleMgr();
   ~CCodec_ModuleMgr();
 
-  std::unique_ptr<CCodec_JpegModule> m_pJpegModule;
+  std::unique_ptr<fxcodec::JpegModule> m_pJpegModule;
   std::unique_ptr<CCodec_Jbig2Module> m_pJbig2Module;
 
 #ifdef PDF_ENABLE_XFA

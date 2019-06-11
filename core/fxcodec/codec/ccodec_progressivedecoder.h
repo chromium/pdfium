@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/codec/ccodec_jpegmodule.h"
+#include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -214,8 +214,7 @@ class CCodec_ProgressiveDecoder :
   FXCODEC_STATUS TiffContinueDecode();
 #endif  // PDF_ENABLE_XFA_TIFF
 
-  bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
-                        FXCODEC_STATUS& err_status);
+  bool JpegReadMoreData(JpegModule* pJpegModule, FXCODEC_STATUS& err_status);
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS JpegContinueDecode();
