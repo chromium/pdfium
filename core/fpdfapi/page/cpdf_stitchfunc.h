@@ -27,6 +27,7 @@ class CPDF_StitchFunc final : public CPDF_Function {
     return m_pSubFunctions;
   }
   float GetBound(size_t i) const { return m_bounds[i]; }
+  float GetEncode(size_t i) const { return m_encode[i]; }
 
  private:
   std::vector<std::unique_ptr<CPDF_Function>> m_pSubFunctions;
