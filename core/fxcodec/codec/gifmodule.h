@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_GIFMODULE_H_
+#define CORE_FXCODEC_CODEC_GIFMODULE_H_
 
 #include <memory>
 #include <utility>
@@ -16,7 +16,9 @@
 
 class CFX_DIBAttribute;
 
-class CCodec_GifModule final : public CodecModuleIface {
+namespace fxcodec {
+
+class GifModule final : public CodecModuleIface {
  public:
   class Delegate {
    public:
@@ -33,8 +35,8 @@ class CCodec_GifModule final : public CodecModuleIface {
     virtual void GifReadScanline(int32_t row_num, uint8_t* row_buf) = 0;
   };
 
-  CCodec_GifModule();
-  ~CCodec_GifModule() override;
+  GifModule();
+  ~GifModule() override;
 
   // CodecModuleIface:
   FX_FILESIZE GetAvailInput(Context* context) const override;
@@ -53,4 +55,8 @@ class CCodec_GifModule final : public CodecModuleIface {
   CFX_GifDecodeStatus LoadFrame(Context* context, size_t frame_num);
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
+}  // namespace fxcodec
+
+using GifModule = fxcodec::GifModule;
+
+#endif  // CORE_FXCODEC_CODEC_GIFMODULE_H_

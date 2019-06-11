@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/gifmodule.h"
 
 #include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/codec/codec_int.h"
@@ -14,21 +14,23 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
-CCodec_GifModule::CCodec_GifModule() {}
+namespace fxcodec {
 
-CCodec_GifModule::~CCodec_GifModule() {}
+GifModule::GifModule() = default;
 
-std::unique_ptr<CodecModuleIface::Context> CCodec_GifModule::Start(
+GifModule::~GifModule() = default;
+
+std::unique_ptr<CodecModuleIface::Context> GifModule::Start(
     Delegate* pDelegate) {
   return pdfium::MakeUnique<CFX_GifContext>(this, pDelegate);
 }
 
-CFX_GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
-                                                 int* width,
-                                                 int* height,
-                                                 int* pal_num,
-                                                 CFX_GifPalette** pal_pp,
-                                                 int* bg_index) {
+CFX_GifDecodeStatus GifModule::ReadHeader(Context* pContext,
+                                          int* width,
+                                          int* height,
+                                          int* pal_num,
+                                          CFX_GifPalette** pal_pp,
+                                          int* bg_index) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->ReadHeader();
   if (ret != CFX_GifDecodeStatus::Success)
@@ -43,7 +45,7 @@ CFX_GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
   return CFX_GifDecodeStatus::Success;
 }
 
-std::pair<CFX_GifDecodeStatus, size_t> CCodec_GifModule::LoadFrameInfo(
+std::pair<CFX_GifDecodeStatus, size_t> GifModule::LoadFrameInfo(
     Context* pContext) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->GetFrame();
@@ -52,19 +54,20 @@ std::pair<CFX_GifDecodeStatus, size_t> CCodec_GifModule::LoadFrameInfo(
   return {CFX_GifDecodeStatus::Success, context->GetFrameNum()};
 }
 
-CFX_GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
-                                                size_t frame_num) {
+CFX_GifDecodeStatus GifModule::LoadFrame(Context* pContext, size_t frame_num) {
   return static_cast<CFX_GifContext*>(pContext)->LoadFrame(frame_num);
 }
 
-FX_FILESIZE CCodec_GifModule::GetAvailInput(Context* pContext) const {
+FX_FILESIZE GifModule::GetAvailInput(Context* pContext) const {
   return static_cast<CFX_GifContext*>(pContext)->GetAvailInput();
 }
 
-bool CCodec_GifModule::Input(Context* pContext,
-                             RetainPtr<CFX_CodecMemory> codec_memory,
-                             CFX_DIBAttribute*) {
+bool GifModule::Input(Context* pContext,
+                      RetainPtr<CFX_CodecMemory> codec_memory,
+                      CFX_DIBAttribute*) {
   auto* ctx = static_cast<CFX_GifContext*>(pContext);
   ctx->SetInputBuffer(std::move(codec_memory));
   return true;
 }
+
+}  // namespace fxcodec

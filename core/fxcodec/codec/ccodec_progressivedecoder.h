@@ -23,7 +23,7 @@
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/gifmodule.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
@@ -46,7 +46,7 @@ class CCodec_ProgressiveDecoder :
     public BmpModule::Delegate,
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-    public CCodec_GifModule::Delegate,
+    public GifModule::Delegate,
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
     public CCodec_PngModule::Delegate,
@@ -158,7 +158,7 @@ class CCodec_ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_GIF
-  // CCodec_GifModule::Delegate
+  // GifModule::Delegate
   void GifRecordCurrentPosition(uint32_t& cur_pos) override;
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                  const FX_RECT& img_rc,
@@ -190,8 +190,7 @@ class CCodec_ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  bool GifReadMoreData(CCodec_GifModule* pGifModule,
-                       FXCODEC_STATUS& err_status);
+  bool GifReadMoreData(GifModule* pGifModule, FXCODEC_STATUS& err_status);
   bool GifDetectImageTypeInBuffer();
   FXCODEC_STATUS GifStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS GifContinueDecode();

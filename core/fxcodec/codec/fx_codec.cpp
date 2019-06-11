@@ -52,7 +52,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 #endif
 
 #ifdef PDF_ENABLE_XFA_GIF
-  SetGifModule(pdfium::MakeUnique<CCodec_GifModule>());
+  SetGifModule(pdfium::MakeUnique<GifModule>());
 #endif
 
 #ifdef PDF_ENABLE_XFA_PNG

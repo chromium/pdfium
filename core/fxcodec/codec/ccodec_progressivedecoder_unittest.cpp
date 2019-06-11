@@ -12,7 +12,7 @@
 #include "third_party/base/span.h"
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/gifmodule.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_GIF
@@ -370,7 +370,7 @@ TEST(CCodec_ProgressiveDecoder, BUG_895009) {
 
   CCodec_ModuleMgr::Create();
   CCodec_ModuleMgr::GetInstance()->SetGifModule(
-      pdfium::MakeUnique<CCodec_GifModule>());
+      pdfium::MakeUnique<GifModule>());
   {
     std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
         CCodec_ModuleMgr::GetInstance()->CreateProgressiveDecoder();

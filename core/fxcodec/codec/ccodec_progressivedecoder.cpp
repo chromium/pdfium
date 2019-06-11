@@ -851,7 +851,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
+bool CCodec_ProgressiveDecoder::GifReadMoreData(GifModule* pGifModule,
                                                 FXCODEC_STATUS& err_status) {
   if (!ReadMoreData(pGifModule, m_pGifContext.get(), m_InvalidateGifBuffer,
                     err_status)) {
@@ -862,7 +862,7 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
 }
 
 bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer() {
-  CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+  GifModule* pGifModule = m_pCodecMgr->GetGifModule();
   if (!pGifModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
@@ -896,7 +896,7 @@ bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer() {
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::GifStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+  GifModule* pGifModule = m_pCodecMgr->GetGifModule();
   if (!pGifModule) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
@@ -916,7 +916,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GifStartDecode(
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::GifContinueDecode() {
-  CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+  GifModule* pGifModule = m_pCodecMgr->GetGifModule();
   if (!pGifModule) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
@@ -2203,7 +2203,7 @@ std::pair<FXCODEC_STATUS, size_t> CCodec_ProgressiveDecoder::GetFrames() {
       return {m_status, 1};
 #ifdef PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_GIF: {
-      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+      GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return {m_status, 0};

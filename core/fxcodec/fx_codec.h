@@ -22,7 +22,7 @@
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/gifmodule.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
@@ -73,8 +73,8 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  CCodec_GifModule* GetGifModule() const { return m_pGifModule.get(); }
-  void SetGifModule(std::unique_ptr<CCodec_GifModule> module) {
+  GifModule* GetGifModule() const { return m_pGifModule.get(); }
+  void SetGifModule(std::unique_ptr<GifModule> module) {
     m_pGifModule = std::move(module);
   }
 #endif  // PDF_ENABLE_XFA_GIF
@@ -107,7 +107,7 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<CCodec_GifModule> m_pGifModule;
+  std::unique_ptr<GifModule> m_pGifModule;
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
