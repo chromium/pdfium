@@ -707,6 +707,7 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
   }
   return !m_pFocusAnnot;
 }
+
 #ifdef PDF_ENABLE_XFA
 CPDFXFA_Context* CPDFSDK_FormFillEnvironment::GetXFAContext() const {
   if (!m_pCPDFDoc)
@@ -716,6 +717,10 @@ CPDFXFA_Context* CPDFSDK_FormFillEnvironment::GetXFAContext() const {
 
 int CPDFSDK_FormFillEnvironment::GetPageViewCount() const {
   return pdfium::CollectionSize<int>(m_PageMap);
+}
+
+bool CPDFSDK_FormFillEnvironment::ContainsXFAForm() const {
+  return GetXFAContext()->ContainsXFAForm();
 }
 #endif  // PDF_ENABLE_XFA
 

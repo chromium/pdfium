@@ -17,10 +17,6 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-#endif  // PDF_ENABLE_XFA
-
 #define JS_STR_VIEWERTYPE L"pdfium"
 #define JS_STR_VIEWERVARIATION L"Full"
 #define JS_STR_PLATFORM L"WIN"
@@ -151,8 +147,7 @@ CJS_Result CJS_App::set_viewer_variation(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::get_viewer_version(CJS_Runtime* pRuntime) {
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Context* pXFAContext = pRuntime->GetFormFillEnv()->GetXFAContext();
-  if (pXFAContext->ContainsXFAForm())
+  if (pRuntime->GetFormFillEnv()->ContainsXFAForm())
     return CJS_Result::Success(pRuntime->NewNumber(JS_NUM_VIEWERVERSION_XFA));
 #endif  // PDF_ENABLE_XFA
   return CJS_Result::Success(pRuntime->NewNumber(JS_NUM_VIEWERVERSION));

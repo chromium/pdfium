@@ -112,6 +112,7 @@ class CPDFSDK_FormFillEnvironment final
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* GetXFAContext() const;
   int GetPageViewCount() const;
+  bool ContainsXFAForm() const;
 
   void DisplayCaret(CPDFXFA_Page* page,
                     FPDF_BOOL bVisible,
