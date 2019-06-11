@@ -93,8 +93,8 @@ jumbo_source_set("fxcodec") {
         "bmp/cfx_bmpdecompressor.h",
         "bmp/fx_bmp.cpp",
         "bmp/fx_bmp.h",
-        "codec/ccodec_bmpmodule.cpp",
-        "codec/ccodec_bmpmodule.h",
+        "codec/bmpmodule.cpp",
+        "codec/bmpmodule.h",
       ]
     }
     if (pdf_enable_xfa_gif) {

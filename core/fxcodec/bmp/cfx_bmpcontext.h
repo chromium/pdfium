@@ -9,17 +9,17 @@
 
 #include "core/fxcodec/bmp/cfx_bmpdecompressor.h"
 #include "core/fxcodec/bmp/fx_bmp.h"
+#include "core/fxcodec/codec/bmpmodule.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFX_BmpContext final : public CodecModuleIface::Context {
  public:
-  CFX_BmpContext(CCodec_BmpModule* pModule,
-                 CCodec_BmpModule::Delegate* pDelegate);
+  CFX_BmpContext(BmpModule* pModule, BmpModule::Delegate* pDelegate);
   ~CFX_BmpContext() override;
 
   CFX_BmpDecompressor m_Bmp;
-  UnownedPtr<CCodec_BmpModule> const m_pModule;
-  UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
+  UnownedPtr<BmpModule> const m_pModule;
+  UnownedPtr<BmpModule::Delegate> const m_pDelegate;
 };
 
 #endif  // CORE_FXCODEC_BMP_CFX_BMPCONTEXT_H_

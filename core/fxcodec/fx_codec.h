@@ -18,7 +18,7 @@
 
 #ifdef PDF_ENABLE_XFA
 #ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#include "core/fxcodec/codec/bmpmodule.h"
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
@@ -66,8 +66,8 @@ class CCodec_ModuleMgr {
   std::unique_ptr<CCodec_ProgressiveDecoder> CreateProgressiveDecoder();
 
 #ifdef PDF_ENABLE_XFA_BMP
-  CCodec_BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
-  void SetBmpModule(std::unique_ptr<CCodec_BmpModule> module) {
+  BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
+  void SetBmpModule(std::unique_ptr<BmpModule> module) {
     m_pBmpModule = std::move(module);
   }
 #endif  // PDF_ENABLE_XFA_BMP
@@ -103,7 +103,7 @@ class CCodec_ModuleMgr {
 
 #ifdef PDF_ENABLE_XFA
 #ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<CCodec_BmpModule> m_pBmpModule;
+  std::unique_ptr<BmpModule> m_pBmpModule;
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF

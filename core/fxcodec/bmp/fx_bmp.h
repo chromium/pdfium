@@ -7,7 +7,7 @@
 #ifndef CORE_FXCODEC_BMP_FX_BMP_H_
 #define CORE_FXCODEC_BMP_FX_BMP_H_
 
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#include <stdint.h>
 
 #define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4
 #define BMP_PAL_ENCODE(a, r, g, b) \

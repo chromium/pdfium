@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcodec/bmp/fx_bmp.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_BmpContext;
 class CFX_CodecMemory;

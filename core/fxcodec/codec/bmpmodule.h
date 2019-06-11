@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_BMPMODULE_H_
+#define CORE_FXCODEC_CODEC_BMPMODULE_H_
 
 #include <memory>
 #include <vector>
@@ -14,7 +14,9 @@
 
 class CFX_DIBAttribute;
 
-class CCodec_BmpModule final : public CodecModuleIface {
+namespace fxcodec {
+
+class BmpModule final : public CodecModuleIface {
  public:
   class Delegate {
    public:
@@ -23,8 +25,8 @@ class CCodec_BmpModule final : public CodecModuleIface {
                                  const std::vector<uint8_t>& row_buf) = 0;
   };
 
-  CCodec_BmpModule();
-  ~CCodec_BmpModule() override;
+  BmpModule();
+  ~BmpModule() override;
 
   // CodecModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
@@ -44,4 +46,8 @@ class CCodec_BmpModule final : public CodecModuleIface {
   int32_t LoadImage(Context* pContext);
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
+}  // namespace fxcodec
+
+using BmpModule = fxcodec::BmpModule;
+
+#endif  // CORE_FXCODEC_CODEC_BMPMODULE_H_

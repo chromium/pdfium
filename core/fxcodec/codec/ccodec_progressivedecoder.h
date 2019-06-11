@@ -19,7 +19,7 @@
 #include "core/fxge/fx_dib.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#include "core/fxcodec/codec/bmpmodule.h"
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
@@ -43,7 +43,7 @@ class CCodec_Dummy {};  // Placeholder to work around C++ syntax issues
 
 class CCodec_ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_BMP
-    public CCodec_BmpModule::Delegate,
+    public BmpModule::Delegate,
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
     public CCodec_GifModule::Delegate,
@@ -173,7 +173,7 @@ class CCodec_ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_BMP
-  // CCodec_BmpModule::Delegate
+  // BmpModule::Delegate
   bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
   void BmpReadScanline(uint32_t row_num,
                        const std::vector<uint8_t>& row_buf) override;
@@ -181,7 +181,7 @@ class CCodec_ProgressiveDecoder :
 
  private:
 #ifdef PDF_ENABLE_XFA_BMP
-  bool BmpReadMoreData(CCodec_BmpModule* pBmpModule,
+  bool BmpReadMoreData(BmpModule* pBmpModule,
                        CodecModuleIface::Context* pBmpContext,
                        FXCODEC_STATUS& err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);

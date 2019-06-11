@@ -48,7 +48,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
     : m_pJpegModule(pdfium::MakeUnique<CCodec_JpegModule>()),
       m_pJbig2Module(pdfium::MakeUnique<CCodec_Jbig2Module>()) {
 #ifdef PDF_ENABLE_XFA_BMP
-  SetBmpModule(pdfium::MakeUnique<CCodec_BmpModule>());
+  SetBmpModule(pdfium::MakeUnique<BmpModule>());
 #endif
 
 #ifdef PDF_ENABLE_XFA_GIF

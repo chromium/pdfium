@@ -714,7 +714,7 @@ void CCodec_ProgressiveDecoder::ResampleVertBT(
 
 bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+  BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
   if (!pBmpModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
@@ -793,7 +793,7 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 }
 
 bool CCodec_ProgressiveDecoder::BmpReadMoreData(
-    CCodec_BmpModule* pBmpModule,
+    BmpModule* pBmpModule,
     CodecModuleIface::Context* pContext,
     FXCODEC_STATUS& err_status) {
   return ReadMoreData(pBmpModule, pContext, false, err_status);
@@ -801,7 +801,7 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+  BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
   if (!pBmpModule) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
@@ -819,7 +819,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
-  CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+  BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
   if (!pBmpModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return m_status;
