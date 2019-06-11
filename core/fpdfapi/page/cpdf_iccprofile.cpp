@@ -26,7 +26,7 @@ CPDF_IccProfile::CPDF_IccProfile(const CPDF_Stream* pStream,
     return;
   }
 
-  m_Transform = IccModule::CreateTransform_sRGB(span);
+  m_Transform = IccModule::CreateTransformSRGB(span);
   if (m_Transform)
     m_nSrcComponents = m_Transform->components();
 }

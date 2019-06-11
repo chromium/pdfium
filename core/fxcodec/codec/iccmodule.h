@@ -44,7 +44,7 @@ class CLcmsCmm {
 
 class IccModule {
  public:
-  static std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(
+  static std::unique_ptr<CLcmsCmm> CreateTransformSRGB(
       pdfium::span<const uint8_t> span);
   static void Translate(CLcmsCmm* pTransform,
                         uint32_t nSrcComponents,

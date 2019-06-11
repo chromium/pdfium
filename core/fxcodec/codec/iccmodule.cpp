@@ -51,7 +51,7 @@ CLcmsCmm::~CLcmsCmm() {
 }
 
 // static
-std::unique_ptr<CLcmsCmm> IccModule::CreateTransform_sRGB(
+std::unique_ptr<CLcmsCmm> IccModule::CreateTransformSRGB(
     pdfium::span<const uint8_t> span) {
   ScopedCmsProfile srcProfile(cmsOpenProfileFromMem(span.data(), span.size()));
   if (!srcProfile)
