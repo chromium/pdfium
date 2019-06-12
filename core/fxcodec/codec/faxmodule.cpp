@@ -40,7 +40,7 @@ const uint8_t OneLeadPos[256] = {
 };
 
 // Limit of image dimension. Use the same limit as the JBIG2 codecs.
-constexpr int kMaxImageDimension = 65535;
+constexpr int kFaxMaxImageDimension = 65535;
 
 constexpr int kFaxBpc = 1;
 constexpr int kFaxComps = 1;
@@ -592,8 +592,10 @@ std::unique_ptr<ScanlineDecoder> FaxModule::CreateDecoder(
     return nullptr;
 
   // Reject unreasonable large input.
-  if (actual_width > kMaxImageDimension || actual_height > kMaxImageDimension)
+  if (actual_width > kFaxMaxImageDimension ||
+      actual_height > kFaxMaxImageDimension) {
     return nullptr;
+  }
 
   return pdfium::MakeUnique<FaxDecoder>(src_span, actual_width, actual_height,
                                         K, EndOfLine, EncodedByteAlign,

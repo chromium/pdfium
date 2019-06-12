@@ -42,6 +42,9 @@ constexpr uint32_t kBmpRle8 = 1L;
 constexpr uint32_t kBmpRle4 = 2L;
 constexpr uint32_t kBmpBitfields = 3L;
 
+// Limit of image dimension. Use the same limit as the JBIG2 codecs.
+constexpr uint32_t kBmpMaxImageDimension = 65535;
+
 uint8_t HalfRoundUp(uint8_t value) {
   uint16_t value16 = value;
   return static_cast<uint8_t>((value16 + 1) / 2);
@@ -185,7 +188,8 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
       }
     }
 
-    if (compress_flag_ > kBmpBitfields) {
+    if (width_ > kBmpMaxImageDimension || height_ > kBmpMaxImageDimension ||
+        compress_flag_ > kBmpBitfields) {
       Error();
       NOTREACHED();
     }
