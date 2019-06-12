@@ -79,7 +79,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 
         CFX_Font* font;
 #if !defined(OS_WIN)
-        FxFont.SetFace(pFxFont->GetFaceRec());
+        FxFont.SetFace(pFxFont->GetFace());
         font = &FxFont;
 #else
         font = pFxFont;
@@ -101,7 +101,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     pFxFont = pCurFont->GetDevFont();
     CFX_Font* font;
 #if !defined(OS_WIN)
-    FxFont.SetFace(pFxFont->GetFaceRec());
+    FxFont.SetFace(pFxFont->GetFace());
     font = &FxFont;
 #else
     font = pFxFont;

@@ -336,20 +336,19 @@ ByteString CFX_FontMapper::MatchInstalledFonts(const ByteString& norm_name) {
   return ByteString();
 }
 
-FXFT_FaceRec* CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
-                                               int iBaseFont,
-                                               int italic_angle,
-                                               int weight,
-                                               int pitch_family) {
+RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
+                                                     int iBaseFont,
+                                                     int italic_angle,
+                                                     int weight,
+                                                     int pitch_family) {
   if (iBaseFont < kNumStandardFonts) {
     if (m_FoxitFaces[iBaseFont])
-      return m_FoxitFaces[iBaseFont].get();
+      return m_FoxitFaces[iBaseFont];
     Optional<pdfium::span<const uint8_t>> font_data =
         m_pFontMgr->GetBuiltinFont(iBaseFont);
     if (font_data.has_value()) {
-      m_FoxitFaces[iBaseFont].reset(
-          m_pFontMgr->GetFixedFace(font_data.value(), 0));
-      return m_FoxitFaces[iBaseFont].get();
+      m_FoxitFaces[iBaseFont] = m_pFontMgr->GetFixedFace(font_data.value(), 0);
+      return m_FoxitFaces[iBaseFont];
     }
   }
   pSubstFont->m_bFlagMM = true;
@@ -360,26 +359,26 @@ FXFT_FaceRec* CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
     pSubstFont->m_Weight = pSubstFont->m_Weight * 4 / 5;
     pSubstFont->m_Family = "Chrome Serif";
     if (!m_MMFaces[1]) {
-      m_MMFaces[1].reset(
-          m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(14).value(), 0));
+      m_MMFaces[1] =
+          m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(14).value(), 0);
     }
-    return m_MMFaces[1].get();
+    return m_MMFaces[1];
   }
   pSubstFont->m_Family = "Chrome Sans";
   if (!m_MMFaces[0]) {
-    m_MMFaces[0].reset(
-        m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(15).value(), 0));
+    m_MMFaces[0] =
+        m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(15).value(), 0);
   }
-  return m_MMFaces[0].get();
+  return m_MMFaces[0];
 }
 
-FXFT_FaceRec* CFX_FontMapper::FindSubstFont(const ByteString& name,
-                                            bool bTrueType,
-                                            uint32_t flags,
-                                            int weight,
-                                            int italic_angle,
-                                            int WindowCP,
-                                            CFX_SubstFont* pSubstFont) {
+RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
+                                                  bool bTrueType,
+                                                  uint32_t flags,
+                                                  int weight,
+                                                  int italic_angle,
+                                                  int WindowCP,
+                                                  CFX_SubstFont* pSubstFont) {
   if (weight == 0)
     weight = FXFONT_FW_NORMAL;
 
@@ -625,7 +624,7 @@ FXFT_FaceRec* CFX_FontMapper::FindSubstFont(const ByteString& name,
     m_pFontInfo->DeleteFont(hFont);
     return nullptr;
   }
-  FXFT_FaceRec* face = nullptr;
+  RetainPtr<CFX_Face> face;
   if (ttc_size)
     face = GetCachedTTCFace(hFont, kTableTTCF, ttc_size, font_size);
   else
@@ -637,13 +636,13 @@ FXFT_FaceRec* CFX_FontMapper::FindSubstFont(const ByteString& name,
   pSubstFont->m_Family = SubstName;
   pSubstFont->m_Charset = Charset;
   bool bNeedUpdateWeight = false;
-  if (FXFT_Is_Face_Bold(face))
+  if (FXFT_Is_Face_Bold(face->GetRec()))
     bNeedUpdateWeight = weight != FXFONT_FW_BOLD;
   else
     bNeedUpdateWeight = weight != FXFONT_FW_NORMAL;
   if (bNeedUpdateWeight)
     pSubstFont->m_Weight = weight;
-  if (bItalic && !FXFT_Is_Face_Italic(face)) {
+  if (bItalic && !FXFT_Is_Face_Italic(face->GetRec())) {
     if (italic_angle == 0)
       italic_angle = -12;
     else if (abs(italic_angle) < 5)
@@ -658,22 +657,22 @@ int CFX_FontMapper::GetFaceSize() const {
   return pdfium::CollectionSize<int>(m_FaceArray);
 }
 
-bool CFX_FontMapper::IsBuiltinFace(const FXFT_FaceRec* face) const {
+bool CFX_FontMapper::IsBuiltinFace(const RetainPtr<CFX_Face>& face) const {
   for (size_t i = 0; i < MM_FACE_COUNT; ++i) {
-    if (m_MMFaces[i].get() == face)
+    if (m_MMFaces[i] == face)
       return true;
   }
   for (size_t i = 0; i < FOXIT_FACE_COUNT; ++i) {
-    if (m_FoxitFaces[i].get() == face)
+    if (m_FoxitFaces[i] == face)
       return true;
   }
   return false;
 }
 
-FXFT_FaceRec* CFX_FontMapper::GetCachedTTCFace(void* hFont,
-                                               const uint32_t tableTTCF,
-                                               uint32_t ttc_size,
-                                               uint32_t font_size) {
+RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
+                                                     const uint32_t tableTTCF,
+                                                     uint32_t ttc_size,
+                                                     uint32_t font_size) {
   uint32_t checksum = 0;
   {
     uint8_t buffer[1024];
@@ -683,7 +682,7 @@ FXFT_FaceRec* CFX_FontMapper::GetCachedTTCFace(void* hFont,
       checksum += pBuffer[i];
   }
   uint8_t* pIgnore = nullptr;
-  FXFT_FaceRec* face = m_pFontMgr->GetCachedTTCFace(
+  RetainPtr<CFX_Face> face = m_pFontMgr->GetCachedTTCFace(
       ttc_size, checksum, ttc_size - font_size, &pIgnore);
   if (face)
     return face;
@@ -695,13 +694,13 @@ FXFT_FaceRec* CFX_FontMapper::GetCachedTTCFace(void* hFont,
                                       ttc_size, ttc_size - font_size);
 }
 
-FXFT_FaceRec* CFX_FontMapper::GetCachedFace(void* hFont,
-                                            ByteString SubstName,
-                                            int weight,
-                                            bool bItalic,
-                                            uint32_t font_size) {
+RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
+                                                  ByteString SubstName,
+                                                  int weight,
+                                                  bool bItalic,
+                                                  uint32_t font_size) {
   uint8_t* pIgnore = nullptr;
-  FXFT_FaceRec* face =
+  RetainPtr<CFX_Face> face =
       m_pFontMgr->GetCachedFace(SubstName, weight, bItalic, &pIgnore);
   if (face)
     return face;

@@ -10,6 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
 
 class CFPF_SkiaFontMgr;
@@ -39,11 +40,12 @@ class CFPF_SkiaFont {
   int32_t GetHeight() const;
   int32_t GetItalicAngle() const;
   uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
+  FXFT_FaceRec* GetFaceRec() const { return m_Face->GetRec(); }
 
  private:
   UnownedPtr<CFPF_SkiaFontMgr> const m_pFontMgr;
   UnownedPtr<const CFPF_SkiaPathFont> const m_pFont;
-  FXFT_FaceRec* const m_Face;
+  RetainPtr<CFX_Face> const m_Face;
   const uint32_t m_dwStyle;
   const uint8_t m_uCharset;
 };

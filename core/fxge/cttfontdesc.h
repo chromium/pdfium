@@ -11,33 +11,20 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/fx_freetype.h"
+#include "core/fxge/cfx_face.h"
 
 class CTTFontDesc {
  public:
-  enum ReleaseStatus {
-    kNotAppropriate,  // ReleaseFace() not appropriate for given object.
-    kReleased,
-    kNotReleased  // Object still alive.
-  };
-
   explicit CTTFontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData);
   ~CTTFontDesc();
 
-  void SetFace(size_t index, FXFT_FaceRec* face);
-
-  void AddRef();
-
-  // May not decrement refcount, depending on the value of |face|.
-  ReleaseStatus ReleaseFace(FXFT_FaceRec* face);
-
   uint8_t* FontData() const { return m_pFontData.get(); }
-  FXFT_FaceRec* GetFace(size_t index) const;
+  void SetFace(size_t index, const RetainPtr<CFX_Face>& face);
+  RetainPtr<CFX_Face> GetFace(size_t index) const;
 
  private:
-  int m_RefCount = 1;
   std::unique_ptr<uint8_t, FxFreeDeleter> const m_pFontData;
-  FXFT_FaceRec* m_TTCFaces[16];
+  CFX_Face::ObservedPtr m_TTCFaces[16];
 };
 
 #endif  // CORE_FXGE_CTTFONTDESC_H_

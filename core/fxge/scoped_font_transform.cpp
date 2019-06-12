@@ -6,6 +6,8 @@
 
 #include "core/fxge/scoped_font_transform.h"
 
+#include <utility>
+
 namespace {
 
 void ResetTransform(FT_Face face) {
@@ -19,11 +21,12 @@ void ResetTransform(FT_Face face) {
 
 }  // namespace
 
-ScopedFontTransform::ScopedFontTransform(FT_Face face, FT_Matrix* matrix)
-    : m_Face(face) {
-  FT_Set_Transform(m_Face, matrix, 0);
+ScopedFontTransform::ScopedFontTransform(RetainPtr<CFX_Face> face,
+                                         FT_Matrix* matrix)
+    : m_Face(std::move(face)) {
+  FT_Set_Transform(m_Face->GetRec(), matrix, 0);
 }
 
 ScopedFontTransform::~ScopedFontTransform() {
-  ResetTransform(m_Face);
+  ResetTransform(m_Face->GetRec());
 }

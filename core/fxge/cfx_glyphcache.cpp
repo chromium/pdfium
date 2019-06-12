@@ -95,7 +95,7 @@ void GenKey(UniqueKeyGen* pKeyGen,
 
 }  // namespace
 
-CFX_GlyphCache::CFX_GlyphCache(FXFT_FaceRec* face) : m_Face(face) {}
+CFX_GlyphCache::CFX_GlyphCache(RetainPtr<CFX_Face> face) : m_Face(face) {}
 
 CFX_GlyphCache::~CFX_GlyphCache() = default;
 
@@ -142,7 +142,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
                             pFont->GetSubstFont()->m_Weight);
     }
   }
-  ScopedFontTransform scoped_transform(GetFaceRec(), &ft_matrix);
+  ScopedFontTransform scoped_transform(GetFace(), &ft_matrix);
   int load_flags = (GetFaceRec()->face_flags & FT_FACE_FLAG_SFNT)
                        ? FT_LOAD_NO_BITMAP
                        : (FT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING);

@@ -13,7 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
 
@@ -49,17 +49,20 @@ class CFX_Font {
                  bool bVertical);
 
   bool LoadEmbedded(pdfium::span<const uint8_t> src_span);
-  FXFT_FaceRec* GetFaceRec() const { return m_Face.Get(); }
+  RetainPtr<CFX_Face> GetFace() const { return m_Face; }
+  FXFT_FaceRec* GetFaceRec() const {
+    return m_Face ? m_Face->GetRec() : nullptr;
+  }
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
-#ifdef PDF_ENABLE_XFA
+#if defined(PDF_ENABLE_XFA)
   bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
 
 #if !defined(OS_WIN)
-  void SetFace(FXFT_FaceRec* face);
+  void SetFace(RetainPtr<CFX_Face> face);
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
 #endif  // !defined(OS_WIN)
-#endif  // PDF_ENABLE_XFA
+#endif  // defined(PDF_ENABLE_XFA)
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,
                                          bool bFontStyle,
@@ -120,24 +123,20 @@ class CFX_Font {
    **/
   static const CharsetFontMap defaultTTFMap[];
 
-#ifdef PDF_ENABLE_XFA
- protected:
-  std::unique_ptr<FXFT_StreamRec> m_pOwnedStream;
-#endif  // PDF_ENABLE_XFA
-
  private:
   RetainPtr<CFX_GlyphCache> GetOrCreateGlyphCache() const;
-  void DeleteFace();
   void ClearGlyphCache();
 #if defined(OS_MACOSX)
   void ReleasePlatformResource();
 #endif
-
   ByteString GetFamilyNameOrUntitled() const;
 
-  mutable UnownedPtr<FXFT_FaceRec> m_Face;
+  mutable RetainPtr<CFX_Face> m_Face;
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
+#if defined(PDF_ENABLE_XFA)
+  std::unique_ptr<FXFT_StreamRec> m_pOwnedStream;
+#endif  // defined(PDF_ENABLE_XFA)
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pGsubData;
   std::vector<uint8_t> m_pFontDataAllocation;
   pdfium::span<uint8_t> m_FontData;
