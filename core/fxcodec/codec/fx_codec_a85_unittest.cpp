@@ -7,7 +7,7 @@
 #include <limits>
 #include <memory>
 
-#include "core/fxcodec/codec/ccodec_basicmodule.h"
+#include "core/fxcodec/codec/basicmodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, A85TestBadInputs) {
@@ -16,9 +16,9 @@ TEST(fxcodec, A85TestBadInputs) {
   uint32_t dest_size = 0;
 
   // Error codes, not segvs, should callers pass us a nullptr pointer.
-  EXPECT_FALSE(CCodec_BasicModule::A85Encode(src_buf, &dest_buf, nullptr));
-  EXPECT_FALSE(CCodec_BasicModule::A85Encode(src_buf, nullptr, &dest_size));
-  EXPECT_FALSE(CCodec_BasicModule::A85Encode({}, &dest_buf, &dest_size));
+  EXPECT_FALSE(BasicModule::A85Encode(src_buf, &dest_buf, nullptr));
+  EXPECT_FALSE(BasicModule::A85Encode(src_buf, nullptr, &dest_size));
+  EXPECT_FALSE(BasicModule::A85Encode({}, &dest_buf, &dest_size));
 }
 
 // No leftover bytes, just translate 2 sets of symbols.
@@ -27,7 +27,7 @@ TEST(fxcodec, A85TestBasic) {
   const uint8_t src_buf[] = {1, 2, 3, 4, 255, 255, 255, 255};
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size = 0;
-  EXPECT_TRUE(CCodec_BasicModule::A85Encode(src_buf, &dest_buf, &dest_size));
+  EXPECT_TRUE(BasicModule::A85Encode(src_buf, &dest_buf, &dest_size));
 
   // Should have 5 chars for each set of 4 and 2 terminators.
   const uint8_t expected_out[] = {33, 60, 78, 63, 43,  115,
@@ -48,8 +48,8 @@ TEST(fxcodec, A85TestLeftoverBytes) {
   {
     // 1 Leftover Byte:
     const uint8_t src_buf_1leftover[] = {1, 2, 3, 4, 255};
-    EXPECT_TRUE(CCodec_BasicModule::A85Encode(src_buf_1leftover, &dest_buf,
-                                              &dest_size));
+    EXPECT_TRUE(
+        BasicModule::A85Encode(src_buf_1leftover, &dest_buf, &dest_size));
 
     // 5 chars for first symbol + 2 + 2 terminators.
     uint8_t expected_out_1leftover[] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
@@ -66,8 +66,8 @@ TEST(fxcodec, A85TestLeftoverBytes) {
     const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(CCodec_BasicModule::A85Encode(src_buf_2leftover, &dest_buf,
-                                              &dest_size));
+    EXPECT_TRUE(
+        BasicModule::A85Encode(src_buf_2leftover, &dest_buf, &dest_size));
     // 5 chars for first symbol + 3 + 2 terminators.
     const uint8_t expected_out_2leftover[] = {33,  60, 78, 63,  43,
                                               115, 56, 68, 126, 62};
@@ -84,8 +84,8 @@ TEST(fxcodec, A85TestLeftoverBytes) {
     const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(CCodec_BasicModule::A85Encode(src_buf_3leftover, &dest_buf,
-                                              &dest_size));
+    EXPECT_TRUE(
+        BasicModule::A85Encode(src_buf_3leftover, &dest_buf, &dest_size));
     // 5 chars for first symbol + 4 + 2 terminators.
     const uint8_t expected_out_3leftover[] = {33, 60, 78,  63,  43, 115,
                                               56, 77, 114, 126, 62};
@@ -106,7 +106,7 @@ TEST(fxcodec, A85TestZeros) {
   {
     // Make sure really big values don't break.
     const uint8_t src_buf[] = {1, 2, 3, 4, 0, 0, 0, 0};
-    EXPECT_TRUE(CCodec_BasicModule::A85Encode(src_buf, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::A85Encode(src_buf, &dest_buf, &dest_size));
 
     // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
     const uint8_t expected_out[] = {33, 60, 78, 63, 43, 122, 126, 62};
@@ -123,8 +123,7 @@ TEST(fxcodec, A85TestZeros) {
     const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::A85Encode(src_buf_2, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::A85Encode(src_buf_2, &dest_buf, &dest_size));
 
     // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
     const uint8_t expected_out_2[] = {122, 33, 60, 78, 63, 43, 126, 62};
@@ -141,8 +140,7 @@ TEST(fxcodec, A85TestZeros) {
     const uint8_t src_buf_3[] = {1, 2, 3, 4, 0, 0};
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::A85Encode(src_buf_3, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::A85Encode(src_buf_3, &dest_buf, &dest_size));
 
     // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
     const uint8_t expected_out_leftover[] = {33, 60, 78, 63,  43,
@@ -178,7 +176,7 @@ TEST(fxcodec, A85TestLineBreaks) {
   uint32_t dest_size = 0;
 
   // Should succeed.
-  EXPECT_TRUE(CCodec_BasicModule::A85Encode(src_buf, &dest_buf, &dest_size));
+  EXPECT_TRUE(BasicModule::A85Encode(src_buf, &dest_buf, &dest_size));
 
   // Should have 75 chars in the first row plus 2 char return,
   // 76 chars in the second row plus 2 char return,

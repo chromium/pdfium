@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
-#include "core/fxcodec/codec/ccodec_basicmodule.h"
+#include "core/fxcodec/codec/basicmodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, RLETestBadInputs) {
@@ -17,11 +17,9 @@ TEST(fxcodec, RLETestBadInputs) {
   uint32_t dest_size = 0;
 
   // Error codes, not segvs, should callers pass us a nullptr pointer.
-  EXPECT_FALSE(
-      CCodec_BasicModule::RunLengthEncode(src_buf, &dest_buf, nullptr));
-  EXPECT_FALSE(
-      CCodec_BasicModule::RunLengthEncode(src_buf, nullptr, &dest_size));
-  EXPECT_FALSE(CCodec_BasicModule::RunLengthEncode({}, &dest_buf, &dest_size));
+  EXPECT_FALSE(BasicModule::RunLengthEncode(src_buf, &dest_buf, nullptr));
+  EXPECT_FALSE(BasicModule::RunLengthEncode(src_buf, nullptr, &dest_size));
+  EXPECT_FALSE(BasicModule::RunLengthEncode({}, &dest_buf, &dest_size));
 }
 
 // Check length 1 input works. Check terminating character is applied.
@@ -30,8 +28,7 @@ TEST(fxcodec, RLETestShortInput) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size = 0;
 
-  EXPECT_TRUE(
-      CCodec_BasicModule::RunLengthEncode(src_buf, &dest_buf, &dest_size));
+  EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf, &dest_buf, &dest_size));
   ASSERT_EQ(3u, dest_size);
   auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
   EXPECT_EQ(0, dest_buf_span[0]);
@@ -50,8 +47,7 @@ TEST(fxcodec, RLETestNormalInputs) {
   {
     // Case 1: Match, match
     const uint8_t src_buf_1[] = {2, 2, 2, 2, 4, 4, 4, 4, 4, 4};
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_1, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_1, &dest_buf, &dest_size));
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);
     ASSERT_EQ(sizeof(src_buf_1), decoded_size);
     auto decoded_buf_span = pdfium::make_span(decoded_buf.get(), decoded_size);
@@ -64,8 +60,7 @@ TEST(fxcodec, RLETestNormalInputs) {
     const uint8_t src_buf_2[] = {2, 2, 2, 2, 1, 2, 3, 4, 5, 6};
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_2, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_2, &dest_buf, &dest_size));
     decoded_buf.reset();
     decoded_size = 0;
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);
@@ -80,8 +75,7 @@ TEST(fxcodec, RLETestNormalInputs) {
     const uint8_t src_buf_3[] = {1, 2, 3, 4, 5, 3, 3, 3, 3, 3};
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_3, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_3, &dest_buf, &dest_size));
     decoded_buf.reset();
     decoded_size = 0;
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);
@@ -103,8 +97,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
   {
     // Case 1: Match, match
     const uint8_t src_buf_1[260] = {1};
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_1, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_1, &dest_buf, &dest_size));
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);
     ASSERT_EQ(sizeof(src_buf_1), decoded_size);
     auto decoded_buf_span = pdfium::make_span(decoded_buf.get(), decoded_size);
@@ -119,8 +112,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       src_buf_2[i] = static_cast<uint8_t>(i - 125);
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_2, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_2, &dest_buf, &dest_size));
     decoded_buf.reset();
     decoded_size = 0;
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);
@@ -137,8 +129,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       src_buf_3[i] = i;
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_3, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_3, &dest_buf, &dest_size));
     decoded_buf.reset();
     decoded_size = 0;
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);
@@ -155,8 +146,7 @@ TEST(fxcodec, RLETestFullLengthInputs) {
       src_buf_4[i] = static_cast<uint8_t>(i);
     dest_buf.reset();
     dest_size = 0;
-    EXPECT_TRUE(
-        CCodec_BasicModule::RunLengthEncode(src_buf_4, &dest_buf, &dest_size));
+    EXPECT_TRUE(BasicModule::RunLengthEncode(src_buf_4, &dest_buf, &dest_size));
     decoded_buf.reset();
     decoded_size = 0;
     RunLengthDecode({dest_buf.get(), dest_size}, &decoded_buf, &decoded_size);

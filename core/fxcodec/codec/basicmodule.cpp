@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcodec/codec/ccodec_basicmodule.h"
+#include "core/fxcodec/codec/basicmodule.h"
 
 #include <algorithm>
 #include <utility>
@@ -10,12 +10,14 @@
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "third_party/base/ptr_util.h"
 
+namespace fxcodec {
+
 namespace {
 
-class CCodec_RLScanlineDecoder final : public CCodec_ScanlineDecoder {
+class RLScanlineDecoder final : public CCodec_ScanlineDecoder {
  public:
-  CCodec_RLScanlineDecoder();
-  ~CCodec_RLScanlineDecoder() override;
+  RLScanlineDecoder();
+  ~RLScanlineDecoder() override;
 
   bool Create(pdfium::span<const uint8_t> src_buf,
               int width,
@@ -41,11 +43,11 @@ class CCodec_RLScanlineDecoder final : public CCodec_ScanlineDecoder {
   uint8_t m_Operator = 0;
 };
 
-CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder() = default;
+RLScanlineDecoder::RLScanlineDecoder() = default;
 
-CCodec_RLScanlineDecoder::~CCodec_RLScanlineDecoder() = default;
+RLScanlineDecoder::~RLScanlineDecoder() = default;
 
-bool CCodec_RLScanlineDecoder::CheckDestSize() {
+bool RLScanlineDecoder::CheckDestSize() {
   size_t i = 0;
   uint32_t old_size = 0;
   uint32_t dest_size = 0;
@@ -75,11 +77,11 @@ bool CCodec_RLScanlineDecoder::CheckDestSize() {
   return true;
 }
 
-bool CCodec_RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
-                                      int width,
-                                      int height,
-                                      int nComps,
-                                      int bpc) {
+bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
+                               int width,
+                               int height,
+                               int nComps,
+                               int bpc) {
   m_SrcBuf = src_buf;
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
@@ -102,7 +104,7 @@ bool CCodec_RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
   return CheckDestSize();
 }
 
-bool CCodec_RLScanlineDecoder::v_Rewind() {
+bool RLScanlineDecoder::v_Rewind() {
   memset(m_pScanline.get(), 0, m_Pitch);
   m_SrcOffset = 0;
   m_bEOD = false;
@@ -110,7 +112,7 @@ bool CCodec_RLScanlineDecoder::v_Rewind() {
   return true;
 }
 
-uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
+uint8_t* RLScanlineDecoder::v_GetNextLine() {
   if (m_SrcOffset == 0) {
     GetNextOperator();
   } else if (m_bEOD) {
@@ -155,7 +157,7 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
   return m_pScanline.get();
 }
 
-void CCodec_RLScanlineDecoder::GetNextOperator() {
+void RLScanlineDecoder::GetNextOperator() {
   if (m_SrcOffset >= m_SrcBuf.size()) {
     m_Operator = 128;
     return;
@@ -163,7 +165,7 @@ void CCodec_RLScanlineDecoder::GetNextOperator() {
   m_Operator = m_SrcBuf[m_SrcOffset];
   m_SrcOffset++;
 }
-void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
+void RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
   if (used_bytes == 0) {
     return;
   }
@@ -195,13 +197,13 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
 }  // namespace
 
 // static
-std::unique_ptr<CCodec_ScanlineDecoder>
-CCodec_BasicModule::CreateRunLengthDecoder(pdfium::span<const uint8_t> src_buf,
-                                           int width,
-                                           int height,
-                                           int nComps,
-                                           int bpc) {
-  auto pDecoder = pdfium::MakeUnique<CCodec_RLScanlineDecoder>();
+std::unique_ptr<CCodec_ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
+    pdfium::span<const uint8_t> src_buf,
+    int width,
+    int height,
+    int nComps,
+    int bpc) {
+  auto pDecoder = pdfium::MakeUnique<RLScanlineDecoder>();
   if (!pDecoder->Create(src_buf, width, height, nComps, bpc))
     return nullptr;
 
@@ -209,7 +211,7 @@ CCodec_BasicModule::CreateRunLengthDecoder(pdfium::span<const uint8_t> src_buf,
 }
 
 // static
-bool CCodec_BasicModule::RunLengthEncode(
+bool BasicModule::RunLengthEncode(
     pdfium::span<const uint8_t> src_span,
     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
     uint32_t* dest_size) {
@@ -295,10 +297,9 @@ bool CCodec_BasicModule::RunLengthEncode(
 }
 
 // static
-bool CCodec_BasicModule::A85Encode(
-    pdfium::span<const uint8_t> src_span,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) {
+bool BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
+                            std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                            uint32_t* dest_size) {
   // Check inputs.
   if (!dest_buf || !dest_size)
     return false;
@@ -370,3 +371,5 @@ bool CCodec_BasicModule::A85Encode(
   *dest_size = out - dest_buf->get();
   return true;
 }
+
+}  // namespace fxcodec

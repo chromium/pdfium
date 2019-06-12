@@ -53,7 +53,7 @@
 #endif  // PDF_ENABLE_XFA
 
 #if defined(OS_WIN)
-#include "core/fxcodec/codec/ccodec_basicmodule.h"
+#include "core/fxcodec/codec/basicmodule.h"
 #include "core/fxcodec/codec/faxmodule.h"
 #include "core/fxcodec/codec/flatemodule.h"
 #include "core/fxcodec/codec/jpegmodule.h"
@@ -84,8 +84,8 @@ bool g_bLibraryInitialized = false;
 
 #if defined(OS_WIN)
 constexpr EncoderIface kEncoderIface = {
-    CCodec_BasicModule::A85Encode, FaxModule::FaxEncode, FlateModule::Encode,
-    JpegModule::JpegEncode, CCodec_BasicModule::RunLengthEncode};
+    BasicModule::A85Encode, FaxModule::FaxEncode, FlateModule::Encode,
+    JpegModule::JpegEncode, BasicModule::RunLengthEncode};
 #endif  // defined(OS_WIN)
 
 void RenderPageImpl(CPDF_PageRenderContext* pContext,

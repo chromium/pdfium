@@ -23,7 +23,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
-#include "core/fxcodec/codec/ccodec_basicmodule.h"
+#include "core/fxcodec/codec/basicmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/codec/jbig2module.h"
@@ -487,7 +487,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
     m_pDecoder = CreateFlateDecoder(src_span, m_Width, m_Height, m_nComponents,
                                     m_bpc, pParams);
   } else if (decoder == "RunLengthDecode") {
-    m_pDecoder = CCodec_BasicModule::CreateRunLengthDecoder(
+    m_pDecoder = BasicModule::CreateRunLengthDecoder(
         src_span, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
     if (!CreateDCTDecoder(src_span, pParams))

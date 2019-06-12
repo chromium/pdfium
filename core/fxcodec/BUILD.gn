@@ -10,8 +10,8 @@ jumbo_source_set("fxcodec") {
   sources = [
     "JBig2_DocumentContext.cpp",
     "JBig2_DocumentContext.h",
-    "codec/ccodec_basicmodule.cpp",
-    "codec/ccodec_basicmodule.h",
+    "codec/basicmodule.cpp",
+    "codec/basicmodule.h",
     "codec/ccodec_scanlinedecoder.cpp",
     "codec/ccodec_scanlinedecoder.h",
     "codec/cfx_codec_memory.cpp",

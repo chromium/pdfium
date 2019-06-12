@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_BASICMODULE_H_
-#define CORE_FXCODEC_CODEC_CCODEC_BASICMODULE_H_
+#ifndef CORE_FXCODEC_CODEC_BASICMODULE_H_
+#define CORE_FXCODEC_CODEC_BASICMODULE_H_
 
 #include <memory>
 
@@ -15,7 +15,9 @@
 
 class CCodec_ScanlineDecoder;
 
-class CCodec_BasicModule {
+namespace fxcodec {
+
+class BasicModule {
  public:
   static std::unique_ptr<CCodec_ScanlineDecoder> CreateRunLengthDecoder(
       pdfium::span<const uint8_t> src_buf,
@@ -32,9 +34,13 @@ class CCodec_BasicModule {
                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                         uint32_t* dest_size);
 
-  CCodec_BasicModule() = delete;
-  CCodec_BasicModule(const CCodec_BasicModule&) = delete;
-  CCodec_BasicModule& operator=(const CCodec_BasicModule&) = delete;
+  BasicModule() = delete;
+  BasicModule(const BasicModule&) = delete;
+  BasicModule& operator=(const BasicModule&) = delete;
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_BASICMODULE_H_
+}  // namespace fxcodec
+
+using BasicModule = fxcodec::BasicModule;
+
+#endif  // CORE_FXCODEC_CODEC_BASICMODULE_H_
