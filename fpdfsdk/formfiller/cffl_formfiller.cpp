@@ -502,7 +502,7 @@ bool CFFL_FormFiller::CommitData(CPDFSDK_PageView* pPageView, uint32_t nFlag) {
 
   CFFL_InteractiveFormFiller* pFormFiller =
       m_pFormFillEnv->GetInteractiveFormFiller();
-  CPDFSDK_Annot::ObservedPtr pObserved(m_pWidget.Get());
+  ObservedPtr<CPDFSDK_Annot> pObserved(m_pWidget.Get());
 
   if (!pFormFiller->OnKeyStrokeCommit(&pObserved, pPageView, nFlag)) {
     if (!pObserved)

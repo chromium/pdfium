@@ -44,9 +44,9 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
 
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
   void GetWidgets(const WideString& sFieldName,
-                  std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
+                  std::vector<ObservedPtr<CPDFSDK_Annot>>* widgets) const;
   void GetWidgets(CPDF_FormField* pField,
-                  std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
+                  std::vector<ObservedPtr<CPDFSDK_Annot>>* widgets) const;
 
   void AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget);
   void RemoveMap(CPDF_FormControl* pControl);

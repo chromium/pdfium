@@ -53,6 +53,7 @@ jumbo_source_set("fxcrt") {
     "fx_unicode.cpp",
     "fx_unicode.h",
     "maybe_owned.h",
+    "observed_ptr.cpp",
     "observed_ptr.h",
     "pauseindicator_iface.h",
     "retain_ptr.h",

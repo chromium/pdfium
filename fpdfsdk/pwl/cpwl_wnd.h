@@ -93,7 +93,7 @@ struct CPWL_Dash {
 #define PWL_DEFAULT_BLACKCOLOR CFX_Color(CFX_Color::kGray, 0)
 #define PWL_DEFAULT_WHITECOLOR CFX_Color(CFX_Color::kGray, 1)
 
-class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
+class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
  public:
   class PrivateData {
    public:
@@ -101,7 +101,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     virtual std::unique_ptr<PrivateData> Clone() const = 0;
   };
 
-  class ProviderIface : public Observable<ProviderIface> {
+  class ProviderIface : public Observable {
    public:
     virtual ~ProviderIface() = default;
 
@@ -124,11 +124,11 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     CFX_FloatRect rcRectWnd;                          // required
     UnownedPtr<CFX_SystemHandler> pSystemHandler;     // required
     UnownedPtr<IPVT_FontMap> pFontMap;                // required
-    ProviderIface::ObservedPtr pProvider;             // required
+    ObservedPtr<ProviderIface> pProvider;             // required
     UnownedPtr<FocusHandlerIface> pFocusHandler;      // optional
     uint32_t dwFlags = 0;                             // optional
     CFX_Color sBackgroundColor;                       // optional
-    CPDFSDK_Widget::ObservedPtr pAttachedWidget;      // required
+    ObservedPtr<CPDFSDK_Widget> pAttachedWidget;      // required
     BorderStyle nBorderStyle = BorderStyle::SOLID;    // optional
     int32_t dwBorderWidth = 1;                        // optional
     CFX_Color sBorderColor;                           // optional

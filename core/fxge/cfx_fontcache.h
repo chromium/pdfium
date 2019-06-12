@@ -27,8 +27,8 @@ class CFX_FontCache {
 #endif
 
  private:
-  std::map<CFX_Face*, CFX_GlyphCache::ObservedPtr> m_GlyphCacheMap;
-  std::map<CFX_Face*, CFX_GlyphCache::ObservedPtr> m_ExtGlyphCacheMap;
+  std::map<CFX_Face*, ObservedPtr<CFX_GlyphCache>> m_GlyphCacheMap;
+  std::map<CFX_Face*, ObservedPtr<CFX_GlyphCache>> m_ExtGlyphCacheMap;
 };
 
 #endif  // CORE_FXGE_CFX_FONTCACHE_H_

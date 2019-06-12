@@ -43,7 +43,7 @@ struct PatternValue {
   float m_Comps[kMaxPatternColorComps];
 };
 
-class CPDF_ColorSpace : public Retainable, public Observable<CPDF_ColorSpace> {
+class CPDF_ColorSpace : public Retainable, public Observable {
  public:
   static RetainPtr<CPDF_ColorSpace> GetStockCS(int Family);
   static RetainPtr<CPDF_ColorSpace> ColorspaceFromName(const ByteString& name);

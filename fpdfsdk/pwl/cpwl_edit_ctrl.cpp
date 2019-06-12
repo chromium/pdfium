@@ -331,7 +331,7 @@ bool CPWL_EditCtrl::SetCaret(bool bVisible,
   if (!IsFocused() || m_pEdit->IsSelected())
     bVisible = false;
 
-  ObservedPtr thisObserved(this);
+  ObservedPtr<CPWL_EditCtrl> thisObserved(this);
   m_pEditCaret->SetCaret(bVisible, ptHead, ptFoot);
   if (!thisObserved)
     return false;

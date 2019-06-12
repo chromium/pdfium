@@ -107,7 +107,7 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
 
   bool m_bForceClear = false;
   std::map<ByteString, const CPDF_Stream*> m_HashProfileMap;
-  std::map<const CPDF_Object*, CPDF_ColorSpace::ObservedPtr> m_ColorSpaceMap;
+  std::map<const CPDF_Object*, ObservedPtr<CPDF_ColorSpace>> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_IccProfile>> m_IccProfileMap;

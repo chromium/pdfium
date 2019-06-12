@@ -48,8 +48,8 @@ class GlobalTimer {
   const Type m_nType;
   const uint32_t m_dwTimeOut;
   const WideString m_swJScript;
-  CJS_Runtime::ObservedPtr m_pRuntime;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
+  ObservedPtr<CJS_Runtime> m_pRuntime;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };
 
 #endif  // FXJS_GLOBAL_TIMER_H_

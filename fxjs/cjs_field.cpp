@@ -52,7 +52,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
 
   if (bResetAP) {
-    std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
+    std::vector<ObservedPtr<CPDFSDK_Annot>> widgets;
     pForm->GetWidgets(pFormField, &widgets);
 
     if (IsComboBoxOrTextField(pFormField)) {
@@ -77,7 +77,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     // Refresh the widget list. The calls in |bResetAP| may have caused widgets
     // to be removed from the list. We need to call |GetWidgets| again to be
     // sure none of the widgets have been deleted.
-    std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
+    std::vector<ObservedPtr<CPDFSDK_Annot>> widgets;
     pForm->GetWidgets(pFormField, &widgets);
 
     // TODO(dsinclair): Determine if all widgets share the same
@@ -107,7 +107,7 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
 
   if (pWidget) {
-    CPDFSDK_Widget::ObservedPtr observed_widget(pWidget);
+    ObservedPtr<CPDFSDK_Widget> observed_widget(pWidget);
     if (bResetAP) {
       FormFieldType fieldType = pWidget->GetFieldType();
       if (fieldType == FormFieldType::kComboBox ||
@@ -1515,7 +1515,7 @@ CJS_Result CJS_Field::get_page(CJS_Runtime* pRuntime) {
   if (!pFormField)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
+  std::vector<ObservedPtr<CPDFSDK_Annot>> widgets;
   m_pFormFillEnv->GetInteractiveForm()->GetWidgets(pFormField, &widgets);
   if (widgets.empty())
     return CJS_Result::Success(pRuntime->NewNumber(-1));
@@ -2526,7 +2526,7 @@ CJS_Result CJS_Field::setFocus(
   }
 
   if (pWidget) {
-    CPDFSDK_Annot::ObservedPtr pObserved(pWidget);
+    ObservedPtr<CPDFSDK_Annot> pObserved(pWidget);
     m_pFormFillEnv->SetFocusAnnot(&pObserved);
   }
 

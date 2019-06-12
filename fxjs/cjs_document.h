@@ -20,7 +20,7 @@ class CPDF_InteractiveForm;
 class CPDF_TextObject;
 struct CJS_DelayData;
 
-class CJS_Document final : public CJS_Object, public Observable<CJS_Document> {
+class CJS_Document final : public CJS_Object, public Observable {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
@@ -311,7 +311,7 @@ class CJS_Document final : public CJS_Object, public Observable<CJS_Document> {
   CPDFSDK_InteractiveForm* GetSDKInteractiveForm();
 
   WideString m_cwBaseURL;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
   // Needs to be a std::list for iterator stability.
   std::list<WideString> m_IconNames;

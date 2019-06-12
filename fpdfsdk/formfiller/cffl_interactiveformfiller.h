@@ -38,46 +38,46 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   void OnDelete(CPDFSDK_Annot* pAnnot);
 
   void OnMouseEnter(CPDFSDK_PageView* pPageView,
-                    CPDFSDK_Annot::ObservedPtr* pAnnot,
+                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
                     uint32_t nFlag);
   void OnMouseExit(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    uint32_t nFlag);
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
-                     CPDFSDK_Annot::ObservedPtr* pAnnot,
+                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
                      uint32_t nFlags,
                      const CFX_PointF& point);
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    uint32_t nFlags,
                    const CFX_PointF& point);
   bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                       CPDFSDK_Annot::ObservedPtr* pAnnot,
+                       ObservedPtr<CPDFSDK_Annot>* pAnnot,
                        uint32_t nFlags,
                        const CFX_PointF& point);
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    uint32_t nFlags,
                    const CFX_PointF& point);
   bool OnMouseWheel(CPDFSDK_PageView* pPageView,
-                    CPDFSDK_Annot::ObservedPtr* pAnnot,
+                    ObservedPtr<CPDFSDK_Annot>* pAnnot,
                     uint32_t nFlags,
                     short zDelta,
                     const CFX_PointF& point);
   bool OnRButtonDown(CPDFSDK_PageView* pPageView,
-                     CPDFSDK_Annot::ObservedPtr* pAnnot,
+                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
                      uint32_t nFlags,
                      const CFX_PointF& point);
   bool OnRButtonUp(CPDFSDK_PageView* pPageView,
-                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    uint32_t nFlags,
                    const CFX_PointF& point);
 
   bool OnKeyDown(CPDFSDK_Annot* pAnnot, uint32_t nKeyCode, uint32_t nFlags);
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
 
-  bool OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
-  bool OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
+  bool OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
+  bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot, uint32_t nFlag);
 
   CFFL_FormFiller* GetFormFillerForTesting(CPDFSDK_Annot* pAnnot) {
     return GetFormFiller(pAnnot);
@@ -97,38 +97,38 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   static bool IsFillingAllowed(CPDFSDK_Widget* pWidget);
   static bool IsValidAnnot(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
 
-  bool OnKeyStrokeCommit(CPDFSDK_Annot::ObservedPtr* pWidget,
+  bool OnKeyStrokeCommit(ObservedPtr<CPDFSDK_Annot>* pWidget,
                          CPDFSDK_PageView* pPageView,
                          uint32_t nFlag);
-  bool OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
-  void OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  void OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    CPDFSDK_PageView* pPageView,
                    uint32_t nFlag);
-  void OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  void OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                 CPDFSDK_PageView* pPageView,
                 uint32_t nFlag);
-  bool OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
 
-  bool SetIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                         int index,
                         bool selected);
-  bool IsIndexSelected(CPDFSDK_Annot::ObservedPtr* pAnnot, int index);
+  bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot, int index);
 
 #ifdef PDF_ENABLE_XFA
-  bool OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                CPDFSDK_PageView* pPageView,
                uint32_t nFlag);
-  bool OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnFull(ObservedPtr<CPDFSDK_Annot>* pAnnot,
               CPDFSDK_PageView* pPageView,
               uint32_t nFlag);
-  bool OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                  CPDFSDK_PageView* pPageView,
                  uint32_t nFlag);
-  bool OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+  bool OnPostOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                   CPDFSDK_PageView* pPageView,
                   uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA

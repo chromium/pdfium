@@ -82,7 +82,7 @@ class CJS_Global final : public CJS_Object {
   std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
   WideString m_sFilePath;
   CFX_GlobalData* m_pGlobalData;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
 };
 
 #endif  // FXJS_CJS_GLOBAL_H_

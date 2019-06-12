@@ -196,8 +196,8 @@ class CJS_EventRecorder {
   bool m_bRcDu = false;
   UnownedPtr<bool> m_pbRc;
   UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;
-  CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pTargetFormFillEnv;
+  ObservedPtr<CPDFSDK_Annot> m_pTargetAnnot;
 };
 
 #endif  // FXJS_CJS_EVENTRECORDER_H_

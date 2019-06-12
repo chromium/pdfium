@@ -550,7 +550,7 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
     return;
 
   if (!hWidget) {
-    CPDFSDK_Annot::ObservedPtr pNull;
+    ObservedPtr<CPDFSDK_Annot> pNull;
     m_pContext->GetFormFillEnv()->SetFocusAnnot(&pNull);
     return;
   }
@@ -561,7 +561,7 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
     if (!pPageView)
       continue;
 
-    CPDFSDK_Annot::ObservedPtr pAnnot(pPageView->GetAnnotByXFAWidget(hWidget));
+    ObservedPtr<CPDFSDK_Annot> pAnnot(pPageView->GetAnnotByXFAWidget(hWidget));
     if (pAnnot) {
       m_pContext->GetFormFillEnv()->SetFocusAnnot(&pAnnot);
       break;

@@ -24,7 +24,7 @@ class CTTFontDesc {
 
  private:
   std::unique_ptr<uint8_t, FxFreeDeleter> const m_pFontData;
-  CFX_Face::ObservedPtr m_TTCFaces[16];
+  ObservedPtr<CFX_Face> m_TTCFaces[16];
 };
 
 #endif  // CORE_FXGE_CTTFONTDESC_H_

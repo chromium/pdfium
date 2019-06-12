@@ -55,7 +55,7 @@ class CJS_Object {
  private:
   UnownedPtr<v8::Isolate> m_pIsolate;
   v8::Global<v8::Object> m_pV8Object;
-  CJS_Runtime::ObservedPtr m_pRuntime;
+  ObservedPtr<CJS_Runtime> m_pRuntime;
 };
 
 #endif  // FXJS_CJS_OBJECT_H_

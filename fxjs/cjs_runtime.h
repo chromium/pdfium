@@ -22,7 +22,7 @@ class CJS_EventContext;
 
 class CJS_Runtime final : public IJS_Runtime,
                           public CFXJS_Engine,
-                          public Observable<CJS_Runtime> {
+                          public Observable {
  public:
   using FieldEvent = std::pair<WideString, JS_EVENT_T>;
 
@@ -63,7 +63,7 @@ class CJS_Runtime final : public IJS_Runtime,
   void SetFormFillEnvToDocument();
 
   std::vector<std::unique_ptr<CJS_EventContext>> m_EventContextArray;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   bool m_bBlocking = false;
   bool m_isolateManaged = false;
   std::set<FieldEvent> m_FieldEventSet;

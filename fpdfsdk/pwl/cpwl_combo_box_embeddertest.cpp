@@ -56,7 +56,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
     CFFL_InteractiveFormFiller* pInteractiveFormFiller =
         m_pFormFillEnv->GetInteractiveFormFiller();
     {
-      CPDFSDK_Annot::ObservedPtr pObserved(pAnnotCombobox);
+      ObservedPtr<CPDFSDK_Annot> pObserved(pAnnotCombobox);
       EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(&pObserved, 0));
     }
 

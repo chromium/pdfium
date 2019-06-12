@@ -105,7 +105,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   int GetPageIndexForStaticPDF() const;
 
   void EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
-                   CPDFSDK_Annot::ObservedPtr* pAnnot,
+                   ObservedPtr<CPDFSDK_Annot>* pAnnot,
                    uint32_t nFlag);
   void ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
                   bool callExitCallback,
@@ -116,7 +116,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_SDKAnnotArray;
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  CPDFSDK_Annot::ObservedPtr m_pCaptureWidget;
+  ObservedPtr<CPDFSDK_Annot> m_pCaptureWidget;
   RetainPtr<CPDF_Page> m_pOwnsPage;
   bool m_bOnWidget = false;
   bool m_bValid = false;

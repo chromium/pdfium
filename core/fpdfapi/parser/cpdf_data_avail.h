@@ -49,7 +49,7 @@ enum PDF_PAGENODE_TYPE {
   PDF_PAGENODE_ARRAY,
 };
 
-class CPDF_DataAvail final : public CPDF_Document::Observer {
+class CPDF_DataAvail final : public Observable::ObserverIface {
  public:
   // Must match PDF_DATA_* definitions in public/fpdf_dataavail.h, but cannot
   // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts

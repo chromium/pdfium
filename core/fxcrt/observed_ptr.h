@@ -12,66 +12,23 @@
 
 namespace fxcrt {
 
-template <class T>
 class Observable {
  public:
   // General-purpose interface for more complicated cleanup.
-  class Observer {
+  class ObserverIface {
    public:
-    virtual ~Observer() = default;
+    virtual ~ObserverIface() = default;
     virtual void OnObservableDestroyed() = 0;
   };
 
-  // Simple case of a self-nulling pointer.
-  class ObservedPtr final : public Observer {
-   public:
-    ObservedPtr() = default;
-    explicit ObservedPtr(T* pObservable) : m_pObservable(pObservable) {
-      if (m_pObservable)
-        m_pObservable->AddObserver(this);
-    }
-    ObservedPtr(const ObservedPtr& that) : ObservedPtr(that.Get()) {}
-    ~ObservedPtr() override {
-      if (m_pObservable)
-        m_pObservable->RemoveObserver(this);
-    }
-    void Reset(T* pObservable = nullptr) {
-      if (m_pObservable)
-        m_pObservable->RemoveObserver(this);
-      m_pObservable = pObservable;
-      if (m_pObservable)
-        m_pObservable->AddObserver(this);
-    }
-    void OnObservableDestroyed() override {
-      ASSERT(m_pObservable);
-      m_pObservable = nullptr;
-    }
-    bool HasObservable() const { return !!m_pObservable; }
-    ObservedPtr& operator=(const ObservedPtr& that) {
-      Reset(that.Get());
-      return *this;
-    }
-    bool operator==(const ObservedPtr& that) const {
-      return m_pObservable == that.m_pObservable;
-    }
-    bool operator!=(const ObservedPtr& that) const { return !(*this == that); }
-    explicit operator bool() const { return HasObservable(); }
-    T* Get() const { return m_pObservable; }
-    T& operator*() const { return *m_pObservable; }
-    T* operator->() const { return m_pObservable; }
-
-   private:
-    T* m_pObservable = nullptr;
-  };
-
-  Observable() = default;
+  Observable();
   Observable(const Observable& that) = delete;
-  ~Observable() { NotifyObservers(); }
-  void AddObserver(Observer* pObserver) {
+  ~Observable();
+  void AddObserver(ObserverIface* pObserver) {
     ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
     m_Observers.insert(pObserver);
   }
-  void RemoveObserver(Observer* pObserver) {
+  void RemoveObserver(ObserverIface* pObserver) {
     ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
     m_Observers.erase(pObserver);
   }
@@ -86,11 +43,55 @@ class Observable {
   size_t ActiveObserversForTesting() const { return m_Observers.size(); }
 
  private:
-  std::set<Observer*> m_Observers;
+  std::set<ObserverIface*> m_Observers;
+};
+
+// Simple case of a self-nulling pointer.
+template <typename T>
+class ObservedPtr final : public Observable::ObserverIface {
+ public:
+  ObservedPtr() = default;
+  explicit ObservedPtr(T* pObservable) : m_pObservable(pObservable) {
+    if (m_pObservable)
+      m_pObservable->AddObserver(this);
+  }
+  ObservedPtr(const ObservedPtr& that) : ObservedPtr(that.Get()) {}
+  ~ObservedPtr() override {
+    if (m_pObservable)
+      m_pObservable->RemoveObserver(this);
+  }
+  void Reset(T* pObservable = nullptr) {
+    if (m_pObservable)
+      m_pObservable->RemoveObserver(this);
+    m_pObservable = pObservable;
+    if (m_pObservable)
+      m_pObservable->AddObserver(this);
+  }
+  void OnObservableDestroyed() override {
+    ASSERT(m_pObservable);
+    m_pObservable = nullptr;
+  }
+  bool HasObservable() const { return !!m_pObservable; }
+  ObservedPtr& operator=(const ObservedPtr& that) {
+    Reset(that.Get());
+    return *this;
+  }
+  bool operator==(const ObservedPtr& that) const {
+    return m_pObservable == that.m_pObservable;
+  }
+  bool operator!=(const ObservedPtr& that) const { return !(*this == that); }
+  explicit operator bool() const { return HasObservable(); }
+  T* Get() const { return m_pObservable; }
+  T& operator*() const { return *m_pObservable; }
+  T* operator->() const { return m_pObservable; }
+
+ private:
+  T* m_pObservable = nullptr;
 };
 
 }  // namespace fxcrt
 
 using fxcrt::Observable;
+using fxcrt::ObservedPtr;
 
 #endif  // CORE_FXCRT_OBSERVED_PTR_H_

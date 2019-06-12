@@ -56,7 +56,7 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     CFFL_InteractiveFormFiller* pInteractiveFormFiller =
         m_pFormFillEnv->GetInteractiveFormFiller();
     {
-      CPDFSDK_Annot::ObservedPtr pObserved(pAnnotTextField);
+      ObservedPtr<CPDFSDK_Annot> pObserved(pAnnotTextField);
       EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(&pObserved, 0));
     }
 

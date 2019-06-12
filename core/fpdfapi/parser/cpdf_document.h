@@ -34,7 +34,7 @@ class JBig2_DocumentContext;
 #define FPDFPERM_FILL_FORM 0x0100
 #define FPDFPERM_EXTRACT_ACCESS 0x0200
 
-class CPDF_Document : public Observable<CPDF_Document>,
+class CPDF_Document : public Observable,
                       public CPDF_Parser::ParsedObjectsHolder {
  public:
   // Type from which the XFA extension can subclass itself.

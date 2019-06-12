@@ -96,7 +96,7 @@ class CFX_FontDescriptorInfo {
 
 #endif  // defined(OS_WIN)
 
-class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
+class CFGAS_FontMgr final : public Observable {
  public:
   CFGAS_FontMgr();
   ~CFGAS_FontMgr();

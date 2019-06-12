@@ -13,26 +13,26 @@
 namespace fxcrt {
 namespace {
 
-class PseudoObservable final : public Observable<PseudoObservable> {
+class PseudoObservable final : public Observable {
  public:
   int SomeMethod() { return 42; }
   size_t ActiveObservedPtrs() const { return ActiveObserversForTesting(); }
 };
 
-class SelfObservable final : public Observable<SelfObservable> {
+class SelfObservable final : public Observable {
  public:
-  ObservedPtr m_pOther;
+  ObservedPtr<SelfObservable> m_pOther;
 };
 
 }  // namespace
 
 TEST(ObservePtr, Null) {
-  PseudoObservable::ObservedPtr ptr;
+  ObservedPtr<PseudoObservable> ptr;
   EXPECT_EQ(nullptr, ptr.Get());
 }
 
 TEST(ObservePtr, LivesLonger) {
-  PseudoObservable::ObservedPtr ptr;
+  ObservedPtr<PseudoObservable> ptr;
   {
     auto pObs = pdfium::MakeUnique<PseudoObservable>();
     ptr.Reset(pObs.get());
@@ -45,7 +45,7 @@ TEST(ObservePtr, LivesLonger) {
 TEST(ObservePtr, LivesShorter) {
   PseudoObservable obs;
   {
-    PseudoObservable::ObservedPtr ptr(&obs);
+    ObservedPtr<PseudoObservable> ptr(&obs);
     EXPECT_NE(nullptr, ptr.Get());
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
   }
@@ -55,11 +55,11 @@ TEST(ObservePtr, LivesShorter) {
 TEST(ObservePtr, CopyConstruct) {
   PseudoObservable obs;
   {
-    PseudoObservable::ObservedPtr ptr(&obs);
+    ObservedPtr<PseudoObservable> ptr(&obs);
     EXPECT_NE(nullptr, ptr.Get());
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
     {
-      PseudoObservable::ObservedPtr ptr2(ptr);
+      ObservedPtr<PseudoObservable> ptr2(ptr);
       EXPECT_NE(nullptr, ptr2.Get());
       EXPECT_EQ(2u, obs.ActiveObservedPtrs());
     }
@@ -71,11 +71,11 @@ TEST(ObservePtr, CopyConstruct) {
 TEST(ObservePtr, CopyAssign) {
   PseudoObservable obs;
   {
-    PseudoObservable::ObservedPtr ptr(&obs);
+    ObservedPtr<PseudoObservable> ptr(&obs);
     EXPECT_NE(nullptr, ptr.Get());
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
     {
-      PseudoObservable::ObservedPtr ptr2;
+      ObservedPtr<PseudoObservable> ptr2;
       ptr2 = ptr;
       EXPECT_NE(nullptr, ptr2.Get());
       EXPECT_EQ(2u, obs.ActiveObservedPtrs());
@@ -88,8 +88,8 @@ TEST(ObservePtr, CopyAssign) {
 TEST(ObservePtr, Vector) {
   PseudoObservable obs;
   {
-    std::vector<PseudoObservable::ObservedPtr> vec1;
-    std::vector<PseudoObservable::ObservedPtr> vec2;
+    std::vector<ObservedPtr<PseudoObservable>> vec1;
+    std::vector<ObservedPtr<PseudoObservable>> vec2;
     vec1.emplace_back(&obs);
     vec1.emplace_back(&obs);
     EXPECT_NE(nullptr, vec1[0].Get());
@@ -110,7 +110,7 @@ TEST(ObservePtr, Vector) {
 }
 
 TEST(ObservePtr, VectorAutoClear) {
-  std::vector<PseudoObservable::ObservedPtr> vec1;
+  std::vector<ObservedPtr<PseudoObservable>> vec1;
   {
     PseudoObservable obs;
     vec1.emplace_back(&obs);
@@ -125,7 +125,7 @@ TEST(ObservePtr, VectorAutoClear) {
 
 TEST(ObservePtr, ResetNull) {
   PseudoObservable obs;
-  PseudoObservable::ObservedPtr ptr(&obs);
+  ObservedPtr<PseudoObservable> ptr(&obs);
   EXPECT_EQ(1u, obs.ActiveObservedPtrs());
   ptr.Reset();
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
@@ -134,7 +134,7 @@ TEST(ObservePtr, ResetNull) {
 TEST(ObservePtr, Reset) {
   PseudoObservable obs1;
   PseudoObservable obs2;
-  PseudoObservable::ObservedPtr ptr(&obs1);
+  ObservedPtr<PseudoObservable> ptr(&obs1);
   EXPECT_EQ(1u, obs1.ActiveObservedPtrs());
   EXPECT_EQ(0u, obs2.ActiveObservedPtrs());
   ptr.Reset(&obs2);
@@ -145,17 +145,17 @@ TEST(ObservePtr, Reset) {
 TEST(ObservePtr, Equals) {
   PseudoObservable obj1;
   PseudoObservable obj2;
-  PseudoObservable::ObservedPtr null_ptr1;
-  PseudoObservable::ObservedPtr obj1_ptr1(&obj1);
-  PseudoObservable::ObservedPtr obj2_ptr1(&obj2);
+  ObservedPtr<PseudoObservable> null_ptr1;
+  ObservedPtr<PseudoObservable> obj1_ptr1(&obj1);
+  ObservedPtr<PseudoObservable> obj2_ptr1(&obj2);
   {
-    PseudoObservable::ObservedPtr null_ptr2;
+    ObservedPtr<PseudoObservable> null_ptr2;
     EXPECT_TRUE(null_ptr1 == null_ptr2);
 
-    PseudoObservable::ObservedPtr obj1_ptr2(&obj1);
+    ObservedPtr<PseudoObservable> obj1_ptr2(&obj1);
     EXPECT_TRUE(obj1_ptr1 == obj1_ptr2);
 
-    PseudoObservable::ObservedPtr obj2_ptr2(&obj2);
+    ObservedPtr<PseudoObservable> obj2_ptr2(&obj2);
     EXPECT_TRUE(obj2_ptr1 == obj2_ptr2);
   }
   EXPECT_FALSE(null_ptr1 == obj1_ptr1);
@@ -166,13 +166,13 @@ TEST(ObservePtr, Equals) {
 TEST(ObservePtr, NotEquals) {
   PseudoObservable obj1;
   PseudoObservable obj2;
-  PseudoObservable::ObservedPtr null_ptr1;
-  PseudoObservable::ObservedPtr obj1_ptr1(&obj1);
-  PseudoObservable::ObservedPtr obj2_ptr1(&obj2);
+  ObservedPtr<PseudoObservable> null_ptr1;
+  ObservedPtr<PseudoObservable> obj1_ptr1(&obj1);
+  ObservedPtr<PseudoObservable> obj2_ptr1(&obj2);
   {
-    PseudoObservable::ObservedPtr null_ptr2;
-    PseudoObservable::ObservedPtr obj1_ptr2(&obj1);
-    PseudoObservable::ObservedPtr obj2_ptr2(&obj2);
+    ObservedPtr<PseudoObservable> null_ptr2;
+    ObservedPtr<PseudoObservable> obj1_ptr2(&obj1);
+    ObservedPtr<PseudoObservable> obj2_ptr2(&obj2);
     EXPECT_FALSE(null_ptr1 != null_ptr2);
     EXPECT_FALSE(obj1_ptr1 != obj1_ptr2);
     EXPECT_FALSE(obj2_ptr1 != obj2_ptr2);
@@ -184,8 +184,8 @@ TEST(ObservePtr, NotEquals) {
 
 TEST(ObservePtr, Bool) {
   PseudoObservable obj1;
-  PseudoObservable::ObservedPtr null_ptr;
-  PseudoObservable::ObservedPtr obj1_ptr(&obj1);
+  ObservedPtr<PseudoObservable> null_ptr;
+  ObservedPtr<PseudoObservable> obj1_ptr(&obj1);
   bool null_bool = !!null_ptr;
   bool obj1_bool = !!obj1_ptr;
   EXPECT_FALSE(null_bool);

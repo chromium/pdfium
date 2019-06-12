@@ -647,7 +647,7 @@ void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
 }
 
 bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
-    CPDFSDK_Annot::ObservedPtr* pAnnot) {
+    ObservedPtr<CPDFSDK_Annot>* pAnnot) {
   if (m_bBeingDestroyed)
     return false;
   if (m_pFocusAnnot == *pAnnot)
@@ -666,7 +666,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return false;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Annot::ObservedPtr pLastFocusAnnot(m_pFocusAnnot.Get());
+  ObservedPtr<CPDFSDK_Annot> pLastFocusAnnot(m_pFocusAnnot.Get());
   if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
     return false;
 #endif  // PDF_ENABLE_XFA
@@ -684,11 +684,11 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
     return false;
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
-  CPDFSDK_Annot::ObservedPtr pFocusAnnot(m_pFocusAnnot.Get());
+  ObservedPtr<CPDFSDK_Annot> pFocusAnnot(m_pFocusAnnot.Get());
   m_pFocusAnnot.Reset();
 
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Annot::ObservedPtr pNull;
+  ObservedPtr<CPDFSDK_Annot> pNull;
   if (!pAnnotHandler->Annot_OnChangeFocus(&pNull, &pFocusAnnot))
     return false;
 #endif  // PDF_ENABLE_XFA

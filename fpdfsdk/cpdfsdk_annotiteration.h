@@ -16,7 +16,7 @@ class CPDFSDK_PageView;
 class CPDFSDK_AnnotIteration {
  public:
   using const_iterator =
-      std::vector<CPDFSDK_Annot::ObservedPtr>::const_iterator;
+      std::vector<ObservedPtr<CPDFSDK_Annot>>::const_iterator;
 
   CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView, bool bReverse);
   ~CPDFSDK_AnnotIteration();
@@ -25,7 +25,7 @@ class CPDFSDK_AnnotIteration {
   const_iterator end() const { return m_List.end(); }
 
  private:
-  std::vector<CPDFSDK_Annot::ObservedPtr> m_List;
+  std::vector<ObservedPtr<CPDFSDK_Annot>> m_List;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOTITERATION_H_

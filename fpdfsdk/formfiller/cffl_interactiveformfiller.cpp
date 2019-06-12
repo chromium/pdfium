@@ -114,7 +114,7 @@ void CFFL_InteractiveFormFiller::OnDelete(CPDFSDK_Annot* pAnnot) {
 
 void CFFL_InteractiveFormFiller::OnMouseEnter(
     CPDFSDK_PageView* pPageView,
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlag) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   if (!m_bNotifying) {
@@ -147,7 +147,7 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
 }
 
 void CFFL_InteractiveFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
-                                             CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                              uint32_t nFlag) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   if (!m_bNotifying) {
@@ -181,7 +181,7 @@ void CFFL_InteractiveFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
 
 bool CFFL_InteractiveFormFiller::OnLButtonDown(
     CPDFSDK_PageView* pPageView,
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -220,7 +220,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
 }
 
 bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
-                                             CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                              uint32_t nFlags,
                                              const CFX_PointF& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -257,7 +257,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
   return bRet;
 }
 
-bool CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnButtonUp(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                             CPDFSDK_PageView* pPageView,
                                             uint32_t nFlag) {
   if (m_bNotifying)
@@ -290,7 +290,7 @@ bool CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
 }
 
 bool CFFL_InteractiveFormFiller::SetIndexSelected(
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     int index,
     bool selected) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -300,7 +300,7 @@ bool CFFL_InteractiveFormFiller::SetIndexSelected(
 }
 
 bool CFFL_InteractiveFormFiller::IsIndexSelected(
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     int index) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
 
@@ -310,7 +310,7 @@ bool CFFL_InteractiveFormFiller::IsIndexSelected(
 
 bool CFFL_InteractiveFormFiller::OnLButtonDblClk(
     CPDFSDK_PageView* pPageView,
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -319,7 +319,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDblClk(
 }
 
 bool CFFL_InteractiveFormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
-                                             CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                              uint32_t nFlags,
                                              const CFX_PointF& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -329,7 +329,7 @@ bool CFFL_InteractiveFormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
 
 bool CFFL_InteractiveFormFiller::OnMouseWheel(
     CPDFSDK_PageView* pPageView,
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlags,
     short zDelta,
     const CFX_PointF& point) {
@@ -341,7 +341,7 @@ bool CFFL_InteractiveFormFiller::OnMouseWheel(
 
 bool CFFL_InteractiveFormFiller::OnRButtonDown(
     CPDFSDK_PageView* pPageView,
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -350,7 +350,7 @@ bool CFFL_InteractiveFormFiller::OnRButtonDown(
 }
 
 bool CFFL_InteractiveFormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
-                                             CPDFSDK_Annot::ObservedPtr* pAnnot,
+                                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                              uint32_t nFlags,
                                              const CFX_PointF& point) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
@@ -378,7 +378,7 @@ bool CFFL_InteractiveFormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   return pFormFiller && pFormFiller->OnChar(pAnnot, nChar, nFlags);
 }
 
-bool CFFL_InteractiveFormFiller::OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                             uint32_t nFlag) {
   if (!pAnnot->HasObservable())
     return false;
@@ -423,7 +423,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return true;
 }
 
-bool CFFL_InteractiveFormFiller::OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                              uint32_t nFlag) {
   if (!pAnnot->HasObservable())
     return false;
@@ -644,7 +644,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
 }
 
 bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
+    ObservedPtr<CPDFSDK_Annot>* pAnnot,
     CPDFSDK_PageView* pPageView,
     uint32_t nFlag) {
   if (m_bNotifying)
@@ -676,7 +676,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
   return fa.bRC;
 }
 
-bool CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnValidate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                             CPDFSDK_PageView* pPageView,
                                             uint32_t nFlag) {
   if (m_bNotifying)
@@ -707,7 +707,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return fa.bRC;
 }
 
-void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
+void CFFL_InteractiveFormFiller::OnCalculate(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                              CPDFSDK_PageView* pPageView,
                                              uint32_t nFlag) {
   if (m_bNotifying)
@@ -722,7 +722,7 @@ void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
   m_bNotifying = false;
 }
 
-void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
+void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                           CPDFSDK_PageView* pPageView,
                                           uint32_t nFlag) {
   if (m_bNotifying)
@@ -746,7 +746,7 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
 }
 
 #ifdef PDF_ENABLE_XFA
-bool CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnClick(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                          CPDFSDK_PageView* pPageView,
                                          uint32_t nFlag) {
   if (m_bNotifying)
@@ -776,7 +776,7 @@ bool CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return false;
 }
 
-bool CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         CPDFSDK_PageView* pPageView,
                                         uint32_t nFlag) {
   if (m_bNotifying)
@@ -813,7 +813,7 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
 
-  CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
+  ObservedPtr<CPDFSDK_Annot> pObserved(pData->pWidget);
   return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
@@ -823,11 +823,11 @@ bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
 
-  CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
+  ObservedPtr<CPDFSDK_Annot> pObserved(pData->pWidget);
   return OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
-bool CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                            CPDFSDK_PageView* pPageView,
                                            uint32_t nFlag) {
   if (m_bNotifying)
@@ -858,7 +858,7 @@ bool CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
   return true;
 }
 
-bool CFFL_InteractiveFormFiller::OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
+bool CFFL_InteractiveFormFiller::OnPostOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                             CPDFSDK_PageView* pPageView,
                                             uint32_t nFlag) {
   if (m_bNotifying)
@@ -912,7 +912,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 
 #ifdef PDF_ENABLE_XFA
   if (pFormFiller->IsFieldFull(privateData.pPageView)) {
-    CPDFSDK_Annot::ObservedPtr pObserved(privateData.pWidget);
+    ObservedPtr<CPDFSDK_Annot> pObserved(privateData.pWidget);
     if (OnFull(&pObserved, privateData.pPageView, nFlag) || !pObserved)
       return {true, true};
   }
@@ -945,7 +945,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
                              fa);
   pFormFiller->SaveState(privateData.pPageView);
 
-  CPDFSDK_Annot::ObservedPtr pObserved(privateData.pWidget);
+  ObservedPtr<CPDFSDK_Annot> pObserved(privateData.pWidget);
   bool action_status = privateData.pWidget->OnAAction(
       CPDF_AAction::kKeyStroke, &fa, privateData.pPageView);
 

@@ -46,8 +46,7 @@ bool CPWL_Edit::RePosChildWnd() {
         CFX_FloatRect(rcWindow.right, rcWindow.bottom,
                       rcWindow.right + PWL_SCROLLBAR_WIDTH, rcWindow.top);
 
-    ObservedPtr thisObserved(this);
-
+    ObservedPtr<CPWL_Edit> thisObserved(this);
     pVSB->Move(rcVScroll, true, false);
     if (!thisObserved)
       return false;
@@ -290,7 +289,7 @@ bool CPWL_Edit::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 }
 
 void CPWL_Edit::OnSetFocus() {
-  ObservedPtr observed_ptr(this);
+  ObservedPtr<CPWL_Edit> observed_ptr(this);
   SetEditCaret(true);
   if (!observed_ptr)
     return;
@@ -306,8 +305,7 @@ void CPWL_Edit::OnSetFocus() {
 }
 
 void CPWL_Edit::OnKillFocus() {
-  ObservedPtr observed_ptr(this);
-
+  ObservedPtr<CPWL_Edit> observed_ptr(this);
   CPWL_ScrollBar* pScroll = GetVScrollBar();
   if (pScroll && pScroll->IsVisible()) {
     pScroll->SetVisible(false);
@@ -437,7 +435,7 @@ bool CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
       if (nSelStart == nSelEnd)
         nSelEnd = nSelStart + 1;
 
-      CPWL_Wnd::ObservedPtr thisObserved(this);
+      ObservedPtr<CPWL_Wnd> thisObserved(this);
 
       bool bRC;
       bool bExit;
@@ -520,7 +518,7 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
           break;
       }
 
-      CPWL_Wnd::ObservedPtr thisObserved(this);
+      ObservedPtr<CPWL_Wnd> thisObserved(this);
 
       WideString strChangeEx;
       std::tie(bRC, bExit) = m_pFillerNotify->OnBeforeKeyStroke(

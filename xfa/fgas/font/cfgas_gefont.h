@@ -74,7 +74,7 @@ class CFGAS_GEFont final : public Retainable {
 
   Optional<uint32_t> m_dwLogFontStyle;
   MaybeOwned<CFX_Font> m_pFont;  // Must come before |m_pFontEncoding|.
-  CFGAS_FontMgr::ObservedPtr const m_pFontMgr;
+  ObservedPtr<CFGAS_FontMgr> const m_pFontMgr;
   std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;
   std::map<wchar_t, FX_RECT> m_BBoxMap;

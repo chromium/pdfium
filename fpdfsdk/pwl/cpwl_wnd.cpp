@@ -28,7 +28,7 @@ CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 
 CPWL_Wnd::CreateParams::~CreateParams() = default;
 
-class CPWL_MsgControl final : public Observable<CPWL_MsgControl> {
+class CPWL_MsgControl final : public Observable {
  public:
   explicit CPWL_MsgControl(CPWL_Wnd* pWnd) : m_pCreatedWnd(pWnd) {}
   ~CPWL_MsgControl() {}
@@ -65,7 +65,7 @@ class CPWL_MsgControl final : public Observable<CPWL_MsgControl> {
   }
 
   void KillFocus() {
-    ObservedPtr observed_ptr(this);
+    ObservedPtr<CPWL_MsgControl> observed_ptr(this);
     if (!m_aKeyboardPath.empty())
       if (CPWL_Wnd* pWnd = m_aKeyboardPath[0])
         pWnd->OnKillFocus();
@@ -239,13 +239,13 @@ bool CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
     if (!IsValid())
     return true;
 
-  ObservedPtr thisObserved(this);
-  CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
-  if (!HasFlag(PWS_NOREFRESHCLIP)) {
-    CFX_FloatRect rcClip = GetClipRect();
-    if (!rcClip.IsEmpty())
-      rcRefresh.Intersect(rcClip);
-  }
+    ObservedPtr<CPWL_Wnd> thisObserved(this);
+    CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
+    if (!HasFlag(PWS_NOREFRESHCLIP)) {
+      CFX_FloatRect rcClip = GetClipRect();
+      if (!rcClip.IsEmpty())
+        rcRefresh.Intersect(rcClip);
+    }
 
   CFX_FloatRect rcWin = PWLtoWnd(rcRefresh);
   rcWin.Inflate(1, 1);
@@ -531,7 +531,7 @@ bool CPWL_Wnd::SetVisible(bool bVisible) {
   if (!IsValid())
     return true;
 
-  ObservedPtr thisObserved(this);
+  ObservedPtr<CPWL_Wnd> thisObserved(this);
   for (const auto& pChild : m_Children) {
     pChild->SetVisible(bVisible);
     if (!thisObserved)
@@ -577,8 +577,7 @@ bool CPWL_Wnd::RePosChildWnd() {
       CFX_FloatRect(rcContent.right - PWL_SCROLLBAR_WIDTH, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
 
-  ObservedPtr thisObserved(this);
-
+  ObservedPtr<CPWL_Wnd> thisObserved(this);
   pVSB->Move(rcVScroll, true, false);
   if (!thisObserved)
     return false;

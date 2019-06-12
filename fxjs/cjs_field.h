@@ -368,8 +368,8 @@ class CJS_Field final : public CJS_Object {
 
   void DoDelay();
 
-  CJS_Document::ObservedPtr m_pJSDoc;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
+  ObservedPtr<CJS_Document> m_pJSDoc;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   WideString m_FieldName;
   int m_nFormControlIndex = -1;
   bool m_bCanSet = false;

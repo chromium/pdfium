@@ -13,7 +13,7 @@ namespace {
 
 class ObservableRetainedTreeNodeForTest
     : public RetainedTreeNode<ObservableRetainedTreeNodeForTest>,
-      public Observable<ObservableRetainedTreeNodeForTest> {
+      public Observable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -41,25 +41,25 @@ void AddClutterToBack(
 }  // namespace
 
 TEST(RetainedTreeNode, NoParent) {
-  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  ObservedPtr<ObservableRetainedTreeNodeForTest> watcher;
   {
     RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
         pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
     EXPECT_FALSE(ptr->HasChild(ptr.Get()));
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
     EXPECT_TRUE(watcher.Get());
   }
   EXPECT_FALSE(watcher.Get());
 }
 
 TEST(RetainedTreeNode, FirstHasParent) {
-  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  ObservedPtr<ObservableRetainedTreeNodeForTest> watcher;
   RetainPtr<ObservableRetainedTreeNodeForTest> parent =
       pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
   {
     RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
         pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
     parent->AppendFirstChild(ptr);
     EXPECT_FALSE(parent->HasChild(parent.Get()));
     EXPECT_TRUE(parent->HasChild(ptr.Get()));
@@ -72,7 +72,7 @@ TEST(RetainedTreeNode, FirstHasParent) {
   {
     RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
         pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
     parent->AppendFirstChild(ptr);
     AddClutterToFront(parent);
     AddClutterToBack(parent);
@@ -84,13 +84,13 @@ TEST(RetainedTreeNode, FirstHasParent) {
 }
 
 TEST(RetainedTreeNode, LastHasParent) {
-  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  ObservedPtr<ObservableRetainedTreeNodeForTest> watcher;
   RetainPtr<ObservableRetainedTreeNodeForTest> parent =
       pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
   {
     RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
         pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
     parent->AppendLastChild(ptr);
     EXPECT_FALSE(parent->HasChild(parent.Get()));
     EXPECT_TRUE(parent->HasChild(ptr.Get()));
@@ -100,7 +100,7 @@ TEST(RetainedTreeNode, LastHasParent) {
     // Now add some clutter.
     RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
         pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
     parent->AppendLastChild(ptr);
     AddClutterToFront(parent);
     AddClutterToBack(parent);
@@ -112,7 +112,7 @@ TEST(RetainedTreeNode, LastHasParent) {
 }
 
 TEST(RetainedTreeNode, GrandChildCleanedUp) {
-  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  ObservedPtr<ObservableRetainedTreeNodeForTest> watcher;
   RetainPtr<ObservableRetainedTreeNodeForTest> grandparent =
       pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
   {
@@ -122,7 +122,7 @@ TEST(RetainedTreeNode, GrandChildCleanedUp) {
     {
       RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
           pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-      watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+      watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
       parent->AppendFirstChild(ptr);
       EXPECT_TRUE(watcher.Get());
     }
@@ -133,11 +133,11 @@ TEST(RetainedTreeNode, GrandChildCleanedUp) {
 }
 
 TEST(RetainedTreeNode, RemoveSelf) {
-  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  ObservedPtr<ObservableRetainedTreeNodeForTest> watcher;
   auto parent = pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
   {
     auto child = pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(child.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(child.Get());
     parent->AppendFirstChild(child);
   }
   EXPECT_TRUE(watcher.Get());
@@ -146,7 +146,7 @@ TEST(RetainedTreeNode, RemoveSelf) {
 }
 
 TEST(RetainedTreeNode, InsertBeforeAfter) {
-  ObservableRetainedTreeNodeForTest::ObservedPtr watcher;
+  ObservedPtr<ObservableRetainedTreeNodeForTest> watcher;
   RetainPtr<ObservableRetainedTreeNodeForTest> parent =
       pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
 
@@ -154,7 +154,7 @@ TEST(RetainedTreeNode, InsertBeforeAfter) {
   {
     RetainPtr<ObservableRetainedTreeNodeForTest> ptr =
         pdfium::MakeRetain<ObservableRetainedTreeNodeForTest>();
-    watcher = ObservableRetainedTreeNodeForTest::ObservedPtr(ptr.Get());
+    watcher = ObservedPtr<ObservableRetainedTreeNodeForTest>(ptr.Get());
     parent->AppendFirstChild(ptr);
     parent->InsertBefore(pdfium::WrapRetain(parent->GetFirstChild()),
                          parent->GetLastChild());
