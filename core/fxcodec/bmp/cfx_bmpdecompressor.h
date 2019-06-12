@@ -40,13 +40,21 @@ class CFX_BmpDecompressor {
   int32_t dpi_y() const { return dpi_y_; }
 
  private:
+  enum class DecodeStatus : uint8_t {
+    kHeader,
+    kPal,
+    kDataPre,
+    kData,
+    kTail,
+  };
+
   bool GetDataPosition(uint32_t cur_pos);
   void ReadScanline(uint32_t row_num, const std::vector<uint8_t>& row_buf);
   int32_t DecodeRGB();
   int32_t DecodeRLE8();
   int32_t DecodeRLE4();
   bool ReadData(uint8_t* destination, uint32_t size);
-  void SaveDecodingStatus(int32_t status);
+  void SaveDecodingStatus(DecodeStatus status);
   bool ValidateColorIndex(uint8_t val);
   bool ValidateFlag() const;
   void SetHeight(int32_t signed_height);
@@ -76,7 +84,7 @@ class CFX_BmpDecompressor {
   uint32_t mask_red_ = 0;
   uint32_t mask_green_ = 0;
   uint32_t mask_blue_ = 0;
-  int32_t decode_status_ = BMP_D_STATUS_HEADER;
+  DecodeStatus decode_status_ = DecodeStatus::kHeader;
   RetainPtr<CFX_CodecMemory> input_buffer_;
 };
 

@@ -9,26 +9,6 @@
 
 #include <stdint.h>
 
-#define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4
-#define BMP_PAL_ENCODE(a, r, g, b) \
-  (((uint32_t)(a) << 24) | ((r) << 16) | ((g) << 8) | (b))
-#define BMP_D_STATUS_HEADER 0x01
-#define BMP_D_STATUS_PAL 0x02
-#define BMP_D_STATUS_DATA_PRE 0x03
-#define BMP_D_STATUS_DATA 0x04
-#define BMP_D_STATUS_TAIL 0x00
-#define BMP_SIGNATURE 0x4D42
-#define BMP_PAL_OLD 1
-#define RLE_MARKER 0
-#define RLE_EOL 0
-#define RLE_EOI 1
-#define RLE_DELTA 2
-#define BMP_RGB 0L
-#define BMP_RLE8 1L
-#define BMP_RLE4 2L
-#define BMP_BITFIELDS 3L
-// Limit width to (MAXINT32 - 31) / 32
-#define BMP_MAX_WIDTH 67108863
 #pragma pack(1)
 struct BmpFileHeader {
   uint16_t bfType;
@@ -60,5 +40,9 @@ struct BmpInfoHeader {
   uint32_t biClrImportant;
 };
 #pragma pack()
+
+static_assert(sizeof(BmpFileHeader) == 14, "BmpFileHeader has wrong size");
+static_assert(sizeof(BmpCoreHeader) == 12, "BmpCoreHeader has wrong size");
+static_assert(sizeof(BmpInfoHeader) == 40, "BmpInfoHeader has wrong size");
 
 #endif  // CORE_FXCODEC_BMP_FX_BMP_H_
