@@ -34,7 +34,8 @@ uint8_t HalfRoundUp(uint8_t value) {
 
 }  // namespace
 
-CFX_BmpDecompressor::CFX_BmpDecompressor() = default;
+CFX_BmpDecompressor::CFX_BmpDecompressor(CFX_BmpContext* context)
+    : context_(context) {}
 
 CFX_BmpDecompressor::~CFX_BmpDecompressor() = default;
 

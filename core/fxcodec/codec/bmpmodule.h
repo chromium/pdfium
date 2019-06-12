@@ -41,7 +41,7 @@ class BmpModule final : public CodecModuleIface {
                      bool* tb_flag,
                      int32_t* components,
                      int32_t* pal_num,
-                     std::vector<uint32_t>* palette,
+                     const std::vector<uint32_t>** palette,
                      CFX_DIBAttribute* pAttribute);
   int32_t LoadImage(Context* pContext);
 };

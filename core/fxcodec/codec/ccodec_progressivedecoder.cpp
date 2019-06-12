@@ -724,7 +724,7 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
       pBmpModule->Start(this);
   pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
-  std::vector<uint32_t> palette;
+  const std::vector<uint32_t>* palette;
   int32_t readResult = pBmpModule->ReadHeader(
       pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
       &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
@@ -784,7 +784,7 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   m_pBmpContext = std::move(pBmpContext);
   if (m_SrcPaletteNumber) {
     m_pSrcPalette.reset(FX_Alloc(FX_ARGB, m_SrcPaletteNumber));
-    memcpy(m_pSrcPalette.get(), palette.data(),
+    memcpy(m_pSrcPalette.get(), palette->data(),
            m_SrcPaletteNumber * sizeof(FX_ARGB));
   } else {
     m_pSrcPalette.reset();

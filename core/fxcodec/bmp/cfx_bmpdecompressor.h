@@ -20,7 +20,7 @@ class CFX_CodecMemory;
 
 class CFX_BmpDecompressor {
  public:
-  CFX_BmpDecompressor();
+  explicit CFX_BmpDecompressor(CFX_BmpContext* context);
   ~CFX_BmpDecompressor();
 
   void Error();
@@ -29,8 +29,30 @@ class CFX_BmpDecompressor {
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   FX_FILESIZE GetAvailInput() const;
 
+  jmp_buf* jmpbuf() { return &jmpbuf_; }
+  const std::vector<uint32_t>* palette() const { return &palette_; }
+  uint32_t width() const { return width_; }
+  uint32_t height() const { return height_; }
+  int32_t components() const { return components_; }
+  bool img_tb_flag() const { return img_tb_flag_; }
+  int32_t pal_num() const { return pal_num_; }
+  int32_t dpi_x() const { return dpi_x_; }
+  int32_t dpi_y() const { return dpi_y_; }
+
+ private:
+  bool GetDataPosition(uint32_t cur_pos);
+  void ReadScanline(uint32_t row_num, const std::vector<uint8_t>& row_buf);
+  int32_t DecodeRGB();
+  int32_t DecodeRLE8();
+  int32_t DecodeRLE4();
+  bool ReadData(uint8_t* destination, uint32_t size);
+  void SaveDecodingStatus(int32_t status);
+  bool ValidateColorIndex(uint8_t val);
+  bool ValidateFlag() const;
+  void SetHeight(int32_t signed_height);
+
   jmp_buf jmpbuf_;
-  UnownedPtr<CFX_BmpContext> context_;
+  UnownedPtr<CFX_BmpContext> const context_;
   std::vector<uint8_t> out_row_buffer_;
   std::vector<uint32_t> palette_;
   uint32_t header_offset_ = 0;
@@ -55,19 +77,6 @@ class CFX_BmpDecompressor {
   uint32_t mask_green_ = 0;
   uint32_t mask_blue_ = 0;
   int32_t decode_status_ = BMP_D_STATUS_HEADER;
-
- private:
-  bool GetDataPosition(uint32_t cur_pos);
-  void ReadScanline(uint32_t row_num, const std::vector<uint8_t>& row_buf);
-  int32_t DecodeRGB();
-  int32_t DecodeRLE8();
-  int32_t DecodeRLE4();
-  bool ReadData(uint8_t* destination, uint32_t size);
-  void SaveDecodingStatus(int32_t status);
-  bool ValidateColorIndex(uint8_t val);
-  bool ValidateFlag() const;
-  void SetHeight(int32_t signed_height);
-
   RetainPtr<CFX_CodecMemory> input_buffer_;
 };
 
