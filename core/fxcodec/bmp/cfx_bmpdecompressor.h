@@ -49,7 +49,7 @@ class CFX_BmpDecompressor {
   };
 
   bool GetDataPosition(uint32_t cur_pos);
-  void ReadScanline(uint32_t row_num, const std::vector<uint8_t>& row_buf);
+  void ReadNextScanline();
   int32_t DecodeRGB();
   int32_t DecodeRLE8();
   int32_t DecodeRLE4();
@@ -77,8 +77,8 @@ class CFX_BmpDecompressor {
   int32_t pal_type_ = 0;
   uint32_t data_size_ = 0;
   uint32_t img_ifh_size_ = 0;
-  size_t row_num_ = 0;
-  size_t col_num_ = 0;
+  uint32_t row_num_ = 0;
+  uint32_t col_num_ = 0;
   int32_t dpi_x_ = 0;
   int32_t dpi_y_ = 0;
   uint32_t mask_red_ = 0;

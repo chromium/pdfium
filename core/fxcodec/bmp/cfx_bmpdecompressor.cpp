@@ -61,9 +61,10 @@ void CFX_BmpDecompressor::Error() {
   longjmp(jmpbuf_, 1);
 }
 
-void CFX_BmpDecompressor::ReadScanline(uint32_t row_num,
-                                       const std::vector<uint8_t>& row_buf) {
-  context_->m_pDelegate->BmpReadScanline(row_num, row_buf);
+void CFX_BmpDecompressor::ReadNextScanline() {
+  uint32_t row = img_tb_flag_ ? row_num_ : (height_ - 1 - row_num_);
+  context_->m_pDelegate->BmpReadScanline(row, out_row_buffer_);
+  ++row_num_;
 }
 
 bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
@@ -440,8 +441,7 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
       if (!ValidateColorIndex(byte))
         return 0;
     }
-    ReadScanline(img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                 out_row_buffer_);
+    ReadNextScanline();
   }
   SaveDecodingStatus(DecodeStatus::kTail);
   return 1;
@@ -467,19 +467,15 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
               NOTREACHED();
             }
 
-            ReadScanline(img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                         out_row_buffer_);
+            ReadNextScanline();
             col_num_ = 0;
             std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
           case kRleEoi: {
-            if (row_num_ < height_) {
-              ReadScanline(
-                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                  out_row_buffer_);
-            }
+            if (row_num_ < height_)
+              ReadNextScanline();
             SaveDecodingStatus(DecodeStatus::kTail);
             return 1;
           }
@@ -497,9 +493,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
 
             while (row_num_ < bmp_row_num__next) {
               std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
-              ReadScanline(
-                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                  out_row_buffer_);
+              ReadNextScanline();
             }
             break;
           }
@@ -571,19 +565,15 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
               NOTREACHED();
             }
 
-            ReadScanline(img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                         out_row_buffer_);
+            ReadNextScanline();
             col_num_ = 0;
             std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
           case kRleEoi: {
-            if (row_num_ < height_) {
-              ReadScanline(
-                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                  out_row_buffer_);
-            }
+            if (row_num_ < height_)
+              ReadNextScanline();
             SaveDecodingStatus(DecodeStatus::kTail);
             return 1;
           }
@@ -601,9 +591,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
 
             while (row_num_ < bmp_row_num__next) {
               std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
-              ReadScanline(
-                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
-                  out_row_buffer_);
+              ReadNextScanline();
             }
             break;
           }
