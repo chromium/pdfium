@@ -14,15 +14,16 @@
 #include "core/fxcodec/codec/codec_module_iface.h"
 #include "third_party/base/span.h"
 
-class CCodec_ScanlineDecoder;
 class CFX_DIBAttribute;
 class CFX_DIBBase;
 
 namespace fxcodec {
 
+class ScanlineDecoder;
+
 class JpegModule final : public CodecModuleIface {
  public:
-  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
+  std::unique_ptr<ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
       int width,
       int height,

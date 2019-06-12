@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory.h"
@@ -455,7 +455,7 @@ void FaxGet1DLine(const uint8_t* src_buf,
   }
 }
 
-class FaxDecoder final : public CCodec_ScanlineDecoder {
+class FaxDecoder final : public ScanlineDecoder {
  public:
   FaxDecoder(pdfium::span<const uint8_t> src_span,
              int width,
@@ -466,7 +466,7 @@ class FaxDecoder final : public CCodec_ScanlineDecoder {
              bool BlackIs1);
   ~FaxDecoder() override;
 
-  // CCodec_ScanlineDecoder
+  // ScanlineDecoder:
   bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
@@ -491,13 +491,13 @@ FaxDecoder::FaxDecoder(pdfium::span<const uint8_t> src_span,
                        bool EndOfLine,
                        bool EncodedByteAlign,
                        bool BlackIs1)
-    : CCodec_ScanlineDecoder(width,
-                             height,
-                             width,
-                             height,
-                             kFaxComps,
-                             kFaxBpc,
-                             CalculatePitch32(kFaxBpc, width).ValueOrDie()),
+    : ScanlineDecoder(width,
+                      height,
+                      width,
+                      height,
+                      kFaxComps,
+                      kFaxBpc,
+                      CalculatePitch32(kFaxBpc, width).ValueOrDie()),
       m_Encoding(K),
       m_bByteAlign(EncodedByteAlign),
       m_bEndOfLine(EndOfLine),
@@ -574,7 +574,7 @@ void FaxDecoder::InvertBuffer() {
 }  // namespace
 
 // static
-std::unique_ptr<CCodec_ScanlineDecoder> FaxModule::CreateDecoder(
+std::unique_ptr<ScanlineDecoder> FaxModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,

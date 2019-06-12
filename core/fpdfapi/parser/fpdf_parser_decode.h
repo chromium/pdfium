@@ -14,9 +14,12 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-class CCodec_ScanlineDecoder;
 class CPDF_Array;
 class CPDF_Dictionary;
+
+namespace fxcodec {
+class ScanlineDecoder;
+}
 
 // Indexed by 8-bit char code, contains unicode code points.
 extern const uint16_t PDFDocEncoding[256];
@@ -27,13 +30,13 @@ ByteString PDF_EncodeString(const ByteString& src, bool bHex);
 WideString PDF_DecodeText(pdfium::span<const uint8_t> span);
 ByteString PDF_EncodeText(const WideString& str);
 
-std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
+std::unique_ptr<fxcodec::ScanlineDecoder> CreateFaxDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     const CPDF_Dictionary* pParams);
 
-std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(
+std::unique_ptr<fxcodec::ScanlineDecoder> CreateFlateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,

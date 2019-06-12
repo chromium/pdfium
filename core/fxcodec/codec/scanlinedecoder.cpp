@@ -4,33 +4,32 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 
 #include "core/fxcrt/pauseindicator_iface.h"
 
-CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
-    : CCodec_ScanlineDecoder(0, 0, 0, 0, 0, 0, 0) {}
+namespace fxcodec {
 
-CCodec_ScanlineDecoder::CCodec_ScanlineDecoder(int nOrigWidth,
-                                               int nOrigHeight,
-                                               int nOutputWidth,
-                                               int nOutputHeight,
-                                               int nComps,
-                                               int nBpc,
-                                               uint32_t nPitch)
+ScanlineDecoder::ScanlineDecoder() : ScanlineDecoder(0, 0, 0, 0, 0, 0, 0) {}
+
+ScanlineDecoder::ScanlineDecoder(int nOrigWidth,
+                                 int nOrigHeight,
+                                 int nOutputWidth,
+                                 int nOutputHeight,
+                                 int nComps,
+                                 int nBpc,
+                                 uint32_t nPitch)
     : m_OrigWidth(nOrigWidth),
       m_OrigHeight(nOrigHeight),
       m_OutputWidth(nOutputWidth),
       m_OutputHeight(nOutputHeight),
       m_nComps(nComps),
       m_bpc(nBpc),
-      m_Pitch(nPitch),
-      m_NextLine(-1),
-      m_pLastScanline(nullptr) {}
+      m_Pitch(nPitch) {}
 
-CCodec_ScanlineDecoder::~CCodec_ScanlineDecoder() {}
+ScanlineDecoder::~ScanlineDecoder() = default;
 
-const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
+const uint8_t* ScanlineDecoder::GetScanline(int line) {
   if (m_NextLine == line + 1)
     return m_pLastScanline;
 
@@ -48,8 +47,7 @@ const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
   return m_pLastScanline;
 }
 
-bool CCodec_ScanlineDecoder::SkipToScanline(int line,
-                                            PauseIndicatorIface* pPause) {
+bool ScanlineDecoder::SkipToScanline(int line, PauseIndicatorIface* pPause) {
   if (m_NextLine == line || m_NextLine == line + 1)
     return false;
 
@@ -68,6 +66,8 @@ bool CCodec_ScanlineDecoder::SkipToScanline(int line,
   return false;
 }
 
-uint8_t* CCodec_ScanlineDecoder::ReadNextLine() {
+uint8_t* ScanlineDecoder::ReadNextLine() {
   return v_GetNextLine();
 }
+
+}  // namespace fxcodec

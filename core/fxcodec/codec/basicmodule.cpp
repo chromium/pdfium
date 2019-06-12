@@ -7,14 +7,14 @@
 #include <algorithm>
 #include <utility>
 
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
 
 namespace {
 
-class RLScanlineDecoder final : public CCodec_ScanlineDecoder {
+class RLScanlineDecoder final : public ScanlineDecoder {
  public:
   RLScanlineDecoder();
   ~RLScanlineDecoder() override;
@@ -25,7 +25,7 @@ class RLScanlineDecoder final : public CCodec_ScanlineDecoder {
               int nComps,
               int bpc);
 
-  // CCodec_ScanlineDecoder
+  // ScanlineDecoder:
   bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override { return m_SrcOffset; }
@@ -197,7 +197,7 @@ void RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
 }  // namespace
 
 // static
-std::unique_ptr<CCodec_ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
+std::unique_ptr<ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
     pdfium::span<const uint8_t> src_buf,
     int width,
     int height,

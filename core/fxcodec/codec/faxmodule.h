@@ -14,13 +14,13 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
-class CCodec_ScanlineDecoder;
-
 namespace fxcodec {
+
+class ScanlineDecoder;
 
 class FaxModule {
  public:
-  static std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
+  static std::unique_ptr<ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
       int width,
       int height,

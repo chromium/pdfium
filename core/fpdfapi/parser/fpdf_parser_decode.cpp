@@ -17,9 +17,9 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/faxmodule.h"
 #include "core/fxcodec/codec/flatemodule.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -291,7 +291,7 @@ uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
   return std::min(i + 1, src_span.size());
 }
 
-std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
+std::unique_ptr<ScanlineDecoder> CreateFaxDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -316,7 +316,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
                                   ByteAlign, BlackIs1, Columns, Rows);
 }
 
-std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(
+std::unique_ptr<ScanlineDecoder> CreateFlateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,

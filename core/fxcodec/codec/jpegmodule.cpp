@@ -12,8 +12,8 @@
 #include <utility>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/cfx_codec_memory.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -215,7 +215,7 @@ namespace fxcodec {
 
 namespace {
 
-class JpegDecoder final : public CCodec_ScanlineDecoder {
+class JpegDecoder final : public ScanlineDecoder {
  public:
   JpegDecoder();
   ~JpegDecoder() override;
@@ -226,7 +226,7 @@ class JpegDecoder final : public CCodec_ScanlineDecoder {
               int nComps,
               bool ColorTransform);
 
-  // CCodec_ScanlineDecoder
+  // ScanlineDecoder:
   bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
@@ -456,7 +456,7 @@ uint8_t* JpegDecoder::GetWritableSrcData() {
 
 }  // namespace
 
-std::unique_ptr<CCodec_ScanlineDecoder> JpegModule::CreateDecoder(
+std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,

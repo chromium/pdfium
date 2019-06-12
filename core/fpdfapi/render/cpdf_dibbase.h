@@ -21,7 +21,6 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "third_party/base/span.h"
 
-class CCodec_ScanlineDecoder;
 class CPDF_Color;
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -37,6 +36,7 @@ struct DIB_COMP_DATA {
 
 namespace fxcodec {
 class Jbig2Context;
+class ScanlineDecoder;
 }
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000
@@ -152,7 +152,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
   RetainPtr<CPDF_DIBBase> m_pMask;
   RetainPtr<CPDF_StreamAcc> m_pGlobalAcc;
-  std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
+  std::unique_ptr<fxcodec::ScanlineDecoder> m_pDecoder;
 
   // Must come after |m_pCachedBitmap|.
   std::unique_ptr<fxcodec::Jbig2Context> m_pJbig2Context;

@@ -5,8 +5,8 @@
 #include <cstdint>
 #include <memory>
 
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/faxmodule.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
@@ -32,7 +32,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   data += kParameterSize;
   size -= kParameterSize;
 
-  std::unique_ptr<CCodec_ScanlineDecoder> decoder =
+  std::unique_ptr<ScanlineDecoder> decoder =
       FaxModule::CreateDecoder({data, size}, width, height, K, EndOfLine,
                                ByteAlign, kBlackIs1, Columns, Rows);
 

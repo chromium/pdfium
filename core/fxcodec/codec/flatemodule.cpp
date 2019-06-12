@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -570,7 +570,7 @@ static PredictorType GetPredictor(int predictor) {
   return PredictorType::kNone;
 }
 
-class FlateScanlineDecoder : public CCodec_ScanlineDecoder {
+class FlateScanlineDecoder : public ScanlineDecoder {
  public:
   FlateScanlineDecoder(pdfium::span<const uint8_t> src_buf,
                        int width,
@@ -579,7 +579,7 @@ class FlateScanlineDecoder : public CCodec_ScanlineDecoder {
                        int bpc);
   ~FlateScanlineDecoder() override;
 
-  // CCodec_ScanlineDecoder:
+  // ScanlineDecoder:
   bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
@@ -595,13 +595,13 @@ FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
                                            int height,
                                            int nComps,
                                            int bpc)
-    : CCodec_ScanlineDecoder(width,
-                             height,
-                             width,
-                             height,
-                             nComps,
-                             bpc,
-                             CalculatePitch8(bpc, nComps, width).ValueOrDie()),
+    : ScanlineDecoder(width,
+                      height,
+                      width,
+                      height,
+                      nComps,
+                      bpc,
+                      CalculatePitch8(bpc, nComps, width).ValueOrDie()),
       m_SrcBuf(src_span),
       m_pScanline(FX_Alloc(uint8_t, m_Pitch)) {}
 
@@ -638,7 +638,7 @@ class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
                                 int Columns);
   ~FlatePredictorScanlineDecoder() override;
 
-  // CCodec_ScanlineDecoder:
+  // ScanlineDecoder:
   bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
 
@@ -761,7 +761,7 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
 }  // namespace
 
 // static
-std::unique_ptr<CCodec_ScanlineDecoder> FlateModule::CreateDecoder(
+std::unique_ptr<ScanlineDecoder> FlateModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,

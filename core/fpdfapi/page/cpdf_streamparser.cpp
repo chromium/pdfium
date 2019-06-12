@@ -26,8 +26,8 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/jpegmodule.h"
+#include "core/fxcodec/codec/scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -42,7 +42,7 @@ const char kTrue[] = "true";
 const char kFalse[] = "false";
 const char kNull[] = "null";
 
-uint32_t DecodeAllScanlines(std::unique_ptr<CCodec_ScanlineDecoder> pDecoder) {
+uint32_t DecodeAllScanlines(std::unique_ptr<ScanlineDecoder> pDecoder) {
   if (!pDecoder)
     return FX_INVALID_OFFSET;
 
@@ -91,14 +91,14 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             &ignored_size);
   }
   if (decoder == "DCTDecode") {
-    std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
+    std::unique_ptr<ScanlineDecoder> pDecoder =
         CCodec_ModuleMgr::GetInstance()->GetJpegModule()->CreateDecoder(
             src_span, width, height, 0,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder));
   }
   if (decoder == "CCITTFaxDecode") {
-    std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
+    std::unique_ptr<ScanlineDecoder> pDecoder =
         CreateFaxDecoder(src_span, width, height, pParam);
     return DecodeAllScanlines(std::move(pDecoder));
   }
