@@ -20,6 +20,7 @@
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
 #else  // Linux
+#include <linux/limits.h>
 #include <unistd.h>
 #endif  // _WIN32
 
