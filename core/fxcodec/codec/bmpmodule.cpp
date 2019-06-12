@@ -40,9 +40,8 @@ int32_t BmpModule::ReadHeader(Context* pContext,
   if (setjmp(*ctx->m_Bmp.jmpbuf()))
     return 0;
 
-  int32_t ret = ctx->m_Bmp.ReadHeader();
-  if (ret != 1)
-    return ret;
+  if (!ctx->m_Bmp.ReadHeader())
+    return 2;
 
   *width = ctx->m_Bmp.width();
   *height = ctx->m_Bmp.height();

@@ -71,12 +71,12 @@ bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
   return context_->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
 }
 
-int32_t CFX_BmpDecompressor::ReadHeader() {
+bool CFX_BmpDecompressor::ReadHeader() {
   if (decode_status_ == DecodeStatus::kHeader) {
     BmpFileHeader bmp_header;
     if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_header),
                   sizeof(BmpFileHeader))) {
-      return 2;
+      return false;
     }
 
     bmp_header.bfType =
@@ -92,7 +92,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
 
     if (!ReadData(reinterpret_cast<uint8_t*>(&img_ifh_size_),
                   sizeof(img_ifh_size_))) {
-      return 2;
+      return false;
     }
 
     img_ifh_size_ =
@@ -104,7 +104,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         BmpCoreHeader bmp_core_header;
         if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_core_header),
                       sizeof(BmpCoreHeader))) {
-          return 2;
+          return false;
         }
 
         width_ = FXWORD_GET_LSBFIRST(
@@ -121,7 +121,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         BmpInfoHeader bmp_info_header;
         if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
                       sizeof(BmpInfoHeader))) {
-          return 2;
+          return false;
         }
 
         width_ = FXDWORD_GET_LSBFIRST(
@@ -151,7 +151,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         BmpInfoHeader bmp_info_header;
         if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
                       sizeof(bmp_info_header))) {
-          return 2;
+          return false;
         }
 
         new_pos += img_ifh_size_;
@@ -161,7 +161,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         }
 
         if (!input_buffer_->Seek(new_pos.ValueOrDie()))
-          return 2;
+          return false;
 
         uint16_t bi_planes;
         width_ = FXDWORD_GET_LSBFIRST(
@@ -259,7 +259,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     SaveDecodingStatus(DecodeStatus::kPal);
   }
   if (decode_status_ != DecodeStatus::kPal)
-    return 1;
+    return true;
 
   if (compress_flag_ == kBmpBitfields) {
     if (bit_counts_ != 16 && bit_counts_ != 32) {
@@ -269,7 +269,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
 
     uint32_t masks[3];
     if (!ReadData(reinterpret_cast<uint8_t*>(masks), sizeof(masks)))
-      return 2;
+      return false;
 
     mask_red_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[0]));
     mask_green_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[1]));
@@ -281,7 +281,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     }
     header_offset_ = std::max(header_offset_, 26 + img_ifh_size_);
     SaveDecodingStatus(DecodeStatus::kDataPre);
-    return 1;
+    return true;
   }
 
   if (bit_counts_ == 16) {
@@ -298,7 +298,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     std::vector<uint8_t> src_pal(src_pal_size);
     uint8_t* src_pal_data = src_pal.data();
     if (!ReadData(src_pal_data, src_pal_size)) {
-      return 2;
+      return false;
     }
 
     palette_.resize(pal_num_);
@@ -320,7 +320,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
   header_offset_ = std::max(
       header_offset_, 14 + img_ifh_size_ + pal_num_ * (pal_type_ ? 3 : 4));
   SaveDecodingStatus(DecodeStatus::kDataPre);
-  return 1;
+  return true;
 }
 
 bool CFX_BmpDecompressor::ValidateFlag() const {

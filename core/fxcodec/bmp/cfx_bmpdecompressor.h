@@ -25,7 +25,7 @@ class CFX_BmpDecompressor {
 
   void Error();
   int32_t DecodeImage();
-  int32_t ReadHeader();
+  bool ReadHeader();
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   FX_FILESIZE GetAvailInput() const;
 
