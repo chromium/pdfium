@@ -24,7 +24,7 @@ BmpModule::~BmpModule() = default;
 std::unique_ptr<CodecModuleIface::Context> BmpModule::Start(
     Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CFX_BmpContext>(this, pDelegate);
-  p->m_Bmp.context_ptr_ = p.get();
+  p->m_Bmp.context_ = p.get();
   return p;
 }
 
@@ -48,7 +48,7 @@ int32_t BmpModule::ReadHeader(Context* pContext,
 
   *width = ctx->m_Bmp.width_;
   *height = ctx->m_Bmp.height_;
-  *tb_flag = ctx->m_Bmp.imgTB_flag_;
+  *tb_flag = ctx->m_Bmp.img_tb_flag_;
   *components = ctx->m_Bmp.components_;
   *pal_num = ctx->m_Bmp.pal_num_;
   *palette = ctx->m_Bmp.palette_;

@@ -19,8 +19,8 @@
 
 namespace {
 
-const size_t kBmpCoreHeaderSize = 12;
-const size_t kBmpInfoHeaderSize = 40;
+constexpr size_t kBmpCoreHeaderSize = 12;
+constexpr size_t kBmpInfoHeaderSize = 40;
 
 static_assert(sizeof(BmpCoreHeader) == kBmpCoreHeaderSize,
               "BmpCoreHeader has wrong size");
@@ -34,33 +34,9 @@ uint8_t HalfRoundUp(uint8_t value) {
 
 }  // namespace
 
-CFX_BmpDecompressor::CFX_BmpDecompressor()
-    : context_ptr_(nullptr),
-      header_offset_(0),
-      width_(0),
-      height_(0),
-      compress_flag_(0),
-      components_(0),
-      src_row_bytes_(0),
-      out_row_bytes_(0),
-      bit_counts_(0),
-      color_used_(0),
-      imgTB_flag_(false),
-      pal_num_(0),
-      pal_type_(0),
-      data_size_(0),
-      img_data_offset_(0),
-      img_ifh_size_(0),
-      row_num_(0),
-      col_num_(0),
-      dpi_x_(0),
-      dpi_y_(0),
-      mask_red_(0),
-      mask_green_(0),
-      mask_blue_(0),
-      decode_status_(BMP_D_STATUS_HEADER) {}
+CFX_BmpDecompressor::CFX_BmpDecompressor() = default;
 
-CFX_BmpDecompressor::~CFX_BmpDecompressor() {}
+CFX_BmpDecompressor::~CFX_BmpDecompressor() = default;
 
 void CFX_BmpDecompressor::Error() {
   longjmp(jmpbuf_, 1);
@@ -68,11 +44,11 @@ void CFX_BmpDecompressor::Error() {
 
 void CFX_BmpDecompressor::ReadScanline(uint32_t row_num,
                                        const std::vector<uint8_t>& row_buf) {
-  context_ptr_->m_pDelegate->BmpReadScanline(row_num, row_buf);
+  context_->m_pDelegate->BmpReadScanline(row_num, row_buf);
 }
 
 bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
-  return context_ptr_->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
+  return context_->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
 }
 
 int32_t CFX_BmpDecompressor::ReadHeader() {
@@ -118,8 +94,9 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         bit_counts_ = FXWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_core_header.bcBitCount));
         compress_flag_ = BMP_RGB;
-        imgTB_flag_ = false;
-      } break;
+        img_tb_flag_ = false;
+        break;
+      }
       case kBmpInfoHeaderSize: {
         BmpInfoHeader bmp_info_header;
         if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
@@ -142,7 +119,8 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         dpi_y_ = static_cast<int32_t>(FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_info_header.biYPelsPerMeter)));
         SetHeight(signed_height);
-      } break;
+        break;
+      }
       default: {
         if (img_ifh_size_ <= sizeof(BmpInfoHeader)) {
           Error();
@@ -165,7 +143,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         if (!input_buffer_->Seek(new_pos.ValueOrDie()))
           return 2;
 
-        uint16_t biPlanes;
+        uint16_t bi_planes;
         width_ = FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_info_header.biWidth));
         int32_t signed_height = FXDWORD_GET_LSBFIRST(
@@ -176,17 +154,18 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
             reinterpret_cast<uint8_t*>(&bmp_info_header.biCompression));
         color_used_ = FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_info_header.biClrUsed));
-        biPlanes = FXWORD_GET_LSBFIRST(
+        bi_planes = FXWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_info_header.biPlanes));
         dpi_x_ = FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_info_header.biXPelsPerMeter));
         dpi_y_ = FXDWORD_GET_LSBFIRST(
             reinterpret_cast<uint8_t*>(&bmp_info_header.biYPelsPerMeter));
         SetHeight(signed_height);
-        if (compress_flag_ != BMP_RGB || biPlanes != 1 || color_used_ != 0) {
+        if (compress_flag_ != BMP_RGB || bi_planes != 1 || color_used_ != 0) {
           Error();
           NOTREACHED();
         }
+        break;
       }
     }
 
@@ -242,66 +221,68 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     out_row_buffer_.resize(out_row_bytes_);
     SaveDecodingStatus(BMP_D_STATUS_PAL);
   }
-  if (decode_status_ == BMP_D_STATUS_PAL) {
-    if (compress_flag_ == BMP_BITFIELDS) {
-      if (bit_counts_ != 16 && bit_counts_ != 32) {
-        Error();
-        NOTREACHED();
-      }
+  if (decode_status_ != BMP_D_STATUS_PAL)
+    return 1;
 
-      uint32_t masks[3];
-      if (!ReadData(reinterpret_cast<uint8_t*>(masks), sizeof(masks)))
-        return 2;
-
-      mask_red_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[0]));
-      mask_green_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[1]));
-      mask_blue_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[2]));
-      if (mask_red_ & mask_green_ || mask_red_ & mask_blue_ ||
-          mask_green_ & mask_blue_) {
-        Error();
-        NOTREACHED();
-      }
-      header_offset_ = std::max(header_offset_, 26 + img_ifh_size_);
-      SaveDecodingStatus(BMP_D_STATUS_DATA_PRE);
-      return 1;
-    } else if (bit_counts_ == 16) {
-      mask_red_ = 0x7C00;
-      mask_green_ = 0x03E0;
-      mask_blue_ = 0x001F;
+  if (compress_flag_ == BMP_BITFIELDS) {
+    if (bit_counts_ != 16 && bit_counts_ != 32) {
+      Error();
+      NOTREACHED();
     }
-    pal_num_ = 0;
-    if (bit_counts_ < 16) {
-      pal_num_ = 1 << bit_counts_;
-      if (color_used_ != 0)
-        pal_num_ = color_used_;
-      uint32_t src_pal_size = pal_num_ * (pal_type_ ? 3 : 4);
-      std::vector<uint8_t> src_pal(src_pal_size);
-      uint8_t* src_pal_data = src_pal.data();
-      if (!ReadData(src_pal_data, src_pal_size)) {
-        return 2;
-      }
 
-      palette_.resize(pal_num_);
-      int32_t src_pal_index = 0;
-      if (pal_type_ == BMP_PAL_OLD) {
-        while (src_pal_index < pal_num_) {
-          palette_[src_pal_index++] = BMP_PAL_ENCODE(
-              0x00, src_pal_data[2], src_pal_data[1], src_pal_data[0]);
-          src_pal_data += 3;
-        }
-      } else {
-        while (src_pal_index < pal_num_) {
-          palette_[src_pal_index++] =
-              BMP_PAL_ENCODE(src_pal_data[3], src_pal_data[2], src_pal_data[1],
-                             src_pal_data[0]);
-          src_pal_data += 4;
-        }
-      }
+    uint32_t masks[3];
+    if (!ReadData(reinterpret_cast<uint8_t*>(masks), sizeof(masks)))
+      return 2;
+
+    mask_red_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[0]));
+    mask_green_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[1]));
+    mask_blue_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[2]));
+    if (mask_red_ & mask_green_ || mask_red_ & mask_blue_ ||
+        mask_green_ & mask_blue_) {
+      Error();
+      NOTREACHED();
     }
-    header_offset_ = std::max(
-        header_offset_, 14 + img_ifh_size_ + pal_num_ * (pal_type_ ? 3 : 4));
+    header_offset_ = std::max(header_offset_, 26 + img_ifh_size_);
     SaveDecodingStatus(BMP_D_STATUS_DATA_PRE);
+    return 1;
   }
+
+  if (bit_counts_ == 16) {
+    mask_red_ = 0x7C00;
+    mask_green_ = 0x03E0;
+    mask_blue_ = 0x001F;
+  }
+  pal_num_ = 0;
+  if (bit_counts_ < 16) {
+    pal_num_ = 1 << bit_counts_;
+    if (color_used_ != 0)
+      pal_num_ = color_used_;
+    uint32_t src_pal_size = pal_num_ * (pal_type_ ? 3 : 4);
+    std::vector<uint8_t> src_pal(src_pal_size);
+    uint8_t* src_pal_data = src_pal.data();
+    if (!ReadData(src_pal_data, src_pal_size)) {
+      return 2;
+    }
+
+    palette_.resize(pal_num_);
+    int32_t src_pal_index = 0;
+    if (pal_type_ == BMP_PAL_OLD) {
+      while (src_pal_index < pal_num_) {
+        palette_[src_pal_index++] = BMP_PAL_ENCODE(
+            0x00, src_pal_data[2], src_pal_data[1], src_pal_data[0]);
+        src_pal_data += 3;
+      }
+    } else {
+      while (src_pal_index < pal_num_) {
+        palette_[src_pal_index++] = BMP_PAL_ENCODE(
+            src_pal_data[3], src_pal_data[2], src_pal_data[1], src_pal_data[0]);
+        src_pal_data += 4;
+      }
+    }
+  }
+  header_offset_ = std::max(
+      header_offset_, 14 + img_ifh_size_ + pal_num_ * (pal_type_ ? 3 : 4));
+  SaveDecodingStatus(BMP_D_STATUS_DATA_PRE);
   return 1;
 }
 
@@ -369,14 +350,16 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
         for (uint32_t col = 0; col < width_; ++col)
           out_row_buffer_[idx++] =
               dest_buf[col >> 3] & (0x80 >> (col % 8)) ? 0x01 : 0x00;
-      } break;
+        break;
+      }
       case 4: {
         for (uint32_t col = 0; col < width_; ++col) {
           out_row_buffer_[idx++] = (col & 0x01)
                                        ? (dest_buf[col >> 1] & 0x0F)
                                        : ((dest_buf[col >> 1] & 0xF0) >> 4);
         }
-      } break;
+        break;
+      }
       case 16: {
         uint16_t* buf = reinterpret_cast<uint16_t*>(dest_buf.data());
         uint8_t blue_bits = 0;
@@ -406,7 +389,8 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
           out_row_buffer_[idx++] =
               static_cast<uint8_t>((*buf++ & mask_red_) >> red_bits);
         }
-      } break;
+        break;
+      }
       case 8:
       case 24:
       case 32:
@@ -420,7 +404,7 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
       if (!ValidateColorIndex(byte))
         return 0;
     }
-    ReadScanline(imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+    ReadScanline(img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                  out_row_buffer_);
   }
   SaveDecodingStatus(BMP_D_STATUS_TAIL);
@@ -447,7 +431,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
               NOTREACHED();
             }
 
-            ReadScanline(imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+            ReadScanline(img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                          out_row_buffer_);
             col_num_ = 0;
             std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
@@ -457,7 +441,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
           case RLE_EOI: {
             if (row_num_ < height_) {
               ReadScanline(
-                  imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                   out_row_buffer_);
             }
             SaveDecodingStatus(BMP_D_STATUS_TAIL);
@@ -478,10 +462,11 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
             while (row_num_ < bmp_row_num__next) {
               std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
               ReadScanline(
-                  imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                   out_row_buffer_);
             }
-          } break;
+            break;
+          }
           default: {
             int32_t avail_size = out_row_bytes_ - col_num_;
             if (!avail_size || static_cast<int32_t>(first_part) > avail_size) {
@@ -505,7 +490,8 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
             col_num_ += first_part;
           }
         }
-      } break;
+        break;
+      }
       default: {
         int32_t avail_size = out_row_bytes_ - col_num_;
         if (!avail_size || static_cast<int32_t>(first_part) > avail_size) {
@@ -549,7 +535,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
               NOTREACHED();
             }
 
-            ReadScanline(imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+            ReadScanline(img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                          out_row_buffer_);
             col_num_ = 0;
             std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
@@ -559,7 +545,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
           case RLE_EOI: {
             if (row_num_ < height_) {
               ReadScanline(
-                  imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                   out_row_buffer_);
             }
             SaveDecodingStatus(BMP_D_STATUS_TAIL);
@@ -580,10 +566,11 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
             while (row_num_ < bmp_row_num__next) {
               std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
               ReadScanline(
-                  imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
+                  img_tb_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                   out_row_buffer_);
             }
-          } break;
+            break;
+          }
           default: {
             int32_t avail_size = out_row_bytes_ - col_num_;
             if (!avail_size) {
@@ -615,7 +602,8 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
             }
           }
         }
-      } break;
+        break;
+      }
       default: {
         int32_t avail_size = out_row_bytes_ - col_num_;
         if (!avail_size) {
@@ -682,5 +670,5 @@ void CFX_BmpDecompressor::SetHeight(int32_t signed_height) {
     NOTREACHED();
   }
   height_ = -signed_height;
-  imgTB_flag_ = true;
+  img_tb_flag_ = true;
 }
