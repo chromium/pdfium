@@ -589,7 +589,6 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
       dest_scan++;
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, r, cover_scan[col]);
       dest_scan += Bpp - 2;
-      continue;
     }
     return;
   }

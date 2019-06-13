@@ -550,7 +550,6 @@ void PrintLastError() {
       fprintf(stderr, "Unknown error %ld", err);
   }
   fprintf(stderr, ".\n");
-  return;
 }
 
 FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* avail, size_t offset, size_t size) {

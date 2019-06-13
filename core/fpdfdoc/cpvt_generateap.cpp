@@ -1327,7 +1327,6 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       }
     }
   }
-  return;
 }
 
 // static

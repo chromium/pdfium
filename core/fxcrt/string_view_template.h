@@ -74,7 +74,7 @@ class StringViewTemplate {
 
   // Any changes to |vec| invalidate the string.
   explicit StringViewTemplate(const std::vector<UnsignedType>& vec) noexcept
-      : m_Span(vec.size() ? vec.data() : nullptr, vec.size()) {}
+      : m_Span(!vec.empty() ? vec.data() : nullptr, vec.size()) {}
 
   StringViewTemplate& operator=(const CharType* src) {
     m_Span = pdfium::span<const UnsignedType>(
@@ -147,7 +147,7 @@ class StringViewTemplate {
   }
 
   uint32_t GetID() const {
-    if (m_Span.size() == 0)
+    if (m_Span.empty())
       return 0;
 
     uint32_t strid = 0;
@@ -177,9 +177,9 @@ class StringViewTemplate {
     return m_Span[index];
   }
 
-  UnsignedType First() const { return m_Span.size() ? m_Span[0] : 0; }
+  UnsignedType First() const { return !m_Span.empty() ? m_Span[0] : 0; }
   UnsignedType Last() const {
-    return m_Span.size() ? m_Span[m_Span.size() - 1] : 0;
+    return !m_Span.empty() ? m_Span[m_Span.size() - 1] : 0;
   }
 
   const CharType CharAt(const size_t index) const {

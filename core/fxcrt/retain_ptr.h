@@ -88,7 +88,7 @@ class RetainPtr {
   }
 
   explicit operator bool() const { return !!m_pObj; }
-  T& operator*() const { return *m_pObj.get(); }
+  T& operator*() const { return *m_pObj; }
   T* operator->() const { return m_pObj.get(); }
 
  private:

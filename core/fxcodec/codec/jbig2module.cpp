@@ -14,7 +14,7 @@ namespace fxcodec {
 
 JBig2_DocumentContext* GetJBig2DocumentContext(
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder) {
-  if (!pContextHolder->get())
+  if (!*pContextHolder)
     *pContextHolder = pdfium::MakeUnique<JBig2_DocumentContext>();
   return pContextHolder->get();
 }
