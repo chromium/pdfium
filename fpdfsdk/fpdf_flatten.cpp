@@ -14,6 +14,7 @@
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
 #include "constants/page_object.h"
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -405,8 +406,13 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     }
     CFX_Matrix matrix = pAPDict->GetMatrixFor("Matrix");
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
-    sStream += ByteString::Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d,
-                                  m.e, m.f, sFormName.c_str());
+    m.b = 0;
+    m.c = 0;
+    std::ostringstream buf;
+    buf << m;
+    ByteString str(buf);
+    sStream += ByteString::Format("q %s cm /%s Do Q\n", str.c_str(),
+                                  sFormName.c_str());
     pNewXObject->SetDataAndRemoveFilter(sStream.AsRawSpan());
   }
   pPageDict->RemoveFor("Annots");

@@ -8,11 +8,11 @@
 
 #include <map>
 #include <memory>
-#include <ostream>
 #include <set>
 #include <tuple>
 #include <utility>
 
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentmanager.h"
 #include "core/fpdfapi/edit/cpdf_stringarchivestream.h"
 #include "core/fpdfapi/font/cpdf_truetypefont.h"
@@ -36,32 +36,8 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "third_party/skia_shared/SkFloatToDecimal.h"
 
 namespace {
-
-std::ostream& WriteFloat(std::ostream& stream, float value) {
-  char buffer[pdfium::skia::kMaximumSkFloatToDecimalLength];
-  unsigned size = pdfium::skia::SkFloatToDecimal(value, buffer);
-  stream.write(buffer, size);
-  return stream;
-}
-
-std::ostream& operator<<(std::ostream& ar, const CFX_Matrix& matrix) {
-  WriteFloat(ar, matrix.a) << " ";
-  WriteFloat(ar, matrix.b) << " ";
-  WriteFloat(ar, matrix.c) << " ";
-  WriteFloat(ar, matrix.d) << " ";
-  WriteFloat(ar, matrix.e) << " ";
-  WriteFloat(ar, matrix.f);
-  return ar;
-}
-
-std::ostream& operator<<(std::ostream& ar, const CFX_PointF& point) {
-  WriteFloat(ar, point.x) << " ";
-  WriteFloat(ar, point.y);
-  return ar;
-}
 
 bool GetColor(const CPDF_Color* pColor, float* rgb) {
   int intRGB[3];

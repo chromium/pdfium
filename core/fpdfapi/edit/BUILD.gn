@@ -8,6 +8,8 @@ import("../../../testing/test.gni")
 
 jumbo_source_set("edit") {
   sources = [
+    "cpdf_contentstream_write_utils.cpp",
+    "cpdf_contentstream_write_utils.h",
     "cpdf_creator.cpp",
     "cpdf_creator.h",
     "cpdf_pagecontentgenerator.cpp",
