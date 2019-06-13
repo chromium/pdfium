@@ -48,6 +48,11 @@ class CFX_BmpDecompressor {
     kTail,
   };
 
+  bool ReadBmpHeader();
+  bool ReadBmpHeaderIfh();
+  bool ReadBmpHeaderDimensions();
+  bool ReadBmpBitfields();
+  bool ReadBmpPalette();
   bool GetDataPosition(uint32_t cur_pos);
   void ReadNextScanline();
   int32_t DecodeRGB();
