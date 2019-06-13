@@ -131,7 +131,7 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
   pBaseDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
   pBaseDict->SetNewFor<CPDF_Number>("FirstChar", 32);
   pBaseDict->SetNewFor<CPDF_Number>("LastChar", 255);
-  pBaseDict->SetFor("Widths", std::move(pWidths));
+  pBaseDict->SetFor("Widths", pWidths);
 }
 
 RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
@@ -146,7 +146,7 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", basefont);
   pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
-  pFontDesc->SetFor("FontBBox", std::move(bbox));
+  pFontDesc->SetFor("FontBBox", bbox);
   pFontDesc->SetNewFor<CPDF_Number>("ItalicAngle", italicangle);
   pFontDesc->SetNewFor<CPDF_Number>("Ascent", ascend);
   pFontDesc->SetNewFor<CPDF_Number>("Descent", descend);
