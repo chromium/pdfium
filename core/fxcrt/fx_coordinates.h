@@ -13,6 +13,10 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
+#ifndef NDEBUG
+#include <ostream>
+#endif
+
 template <class BaseType>
 class CFX_PTemplate {
  public:

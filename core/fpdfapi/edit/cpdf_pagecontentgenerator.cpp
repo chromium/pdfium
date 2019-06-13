@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include <ostream>
 #include <set>
 #include <tuple>
 #include <utility>

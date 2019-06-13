@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <iterator>
+#include <ostream>
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
