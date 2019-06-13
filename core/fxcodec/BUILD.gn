@@ -92,7 +92,6 @@ jumbo_source_set("fxcodec") {
         "bmp/cfx_bmpcontext.h",
         "bmp/cfx_bmpdecompressor.cpp",
         "bmp/cfx_bmpdecompressor.h",
-        "bmp/fx_bmp.cpp",
         "bmp/fx_bmp.h",
         "codec/bmpmodule.cpp",
         "codec/bmpmodule.h",
