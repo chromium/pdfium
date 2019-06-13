@@ -57,6 +57,12 @@ std::ostream& operator<<(std::ostream& ar, const CFX_Matrix& matrix) {
   return ar;
 }
 
+std::ostream& operator<<(std::ostream& ar, const CFX_PointF& point) {
+  WriteFloat(ar, point.x) << " ";
+  WriteFloat(ar, point.y);
+  return ar;
+}
+
 bool GetColor(const CPDF_Color* pColor, float* rgb) {
   int intRGB[3];
   if (!pColor || !pColor->IsColorSpaceRGB() ||
@@ -373,17 +379,13 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
   const auto& pPoints = pPathObj->path().GetPoints();
   if (pPathObj->path().IsRect()) {
     CFX_PointF diff = pPoints[2].m_Point - pPoints[0].m_Point;
-    WriteFloat(*buf, pPoints[0].m_Point.x) << " ";
-    WriteFloat(*buf, pPoints[0].m_Point.y) << " ";
-    WriteFloat(*buf, diff.x) << " ";
-    WriteFloat(*buf, diff.y) << " re";
+    *buf << pPoints[0].m_Point << " " << diff << " re";
   } else {
     for (size_t i = 0; i < pPoints.size(); i++) {
       if (i > 0)
         *buf << " ";
 
-      WriteFloat(*buf, pPoints[i].m_Point.x) << " ";
-      WriteFloat(*buf, pPoints[i].m_Point.y);
+      *buf << pPoints[i].m_Point;
 
       FXPT_TYPE pointType = pPoints[i].m_Type;
       if (pointType == FXPT_TYPE::MoveTo) {
@@ -400,10 +402,8 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
           break;
         }
         *buf << " ";
-        WriteFloat(*buf, pPoints[i + 1].m_Point.x) << " ";
-        WriteFloat(*buf, pPoints[i + 1].m_Point.y) << " ";
-        WriteFloat(*buf, pPoints[i + 2].m_Point.x) << " ";
-        WriteFloat(*buf, pPoints[i + 2].m_Point.y) << " c";
+        *buf << pPoints[i + 1].m_Point << " ";
+        *buf << pPoints[i + 2].m_Point << " c";
         i += 2;
       }
       if (pPoints[i].m_CloseFigure)
