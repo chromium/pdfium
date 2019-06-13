@@ -6,9 +6,11 @@
 
 #include "fpdfsdk/formfiller/cffl_button.h"
 
-CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pApp,
+CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CPDFSDK_Widget* pWidget)
-    : CFFL_FormFiller(pApp, pWidget), m_bMouseIn(false), m_bMouseDown(false) {}
+    : CFFL_FormFiller(pFormFillEnv, pWidget),
+      m_bMouseIn(false),
+      m_bMouseDown(false) {}
 
 CFFL_Button::~CFFL_Button() {}
 

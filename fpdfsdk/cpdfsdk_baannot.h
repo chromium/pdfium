@@ -66,7 +66,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   CPDF_AAction GetAAction() const;
 
-  void SetOpenState(bool bState);
+  void SetOpenState(bool bOpenState);
 
  protected:
   CPDF_Dictionary* GetAPDict() const;

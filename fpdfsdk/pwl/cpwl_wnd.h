@@ -206,7 +206,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
   CFX_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
   CFX_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
 
-  void SetBorderStyle(BorderStyle eBorderStyle);
+  void SetBorderStyle(BorderStyle nBorderStyle);
   BorderStyle GetBorderStyle() const;
   const CPWL_Dash& GetBorderDash() const;
 

@@ -30,9 +30,9 @@ void PWL_FLOATRANGE::Reset() {
   fMax = 0.0f;
 }
 
-void PWL_FLOATRANGE::Set(float f1, float f2) {
-  fMin = std::min(f1, f2);
-  fMax = std::max(f1, f2);
+void PWL_FLOATRANGE::Set(float min, float max) {
+  fMin = std::min(min, max);
+  fMax = std::max(min, max);
 }
 
 bool PWL_FLOATRANGE::In(float x) const {

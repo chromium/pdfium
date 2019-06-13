@@ -54,12 +54,12 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   static bool IsCTRLKeyDown(uint32_t nFlag);
   static bool IsALTKeyDown(uint32_t nFlag);
 
-  CPDFSDK_PageView* GetPageView(IPDF_Page* pPage, bool renew);
+  CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
 #ifdef PDF_ENABLE_V8
   CPDFSDK_PageView* GetCurrentView();
 #endif
-  void RemovePageView(IPDF_Page* pPage);
+  void RemovePageView(IPDF_Page* pUnderlyingPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
   CPDFSDK_Annot* GetFocusAnnot() const { return m_pFocusAnnot.Get(); }

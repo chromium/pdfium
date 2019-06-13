@@ -27,7 +27,7 @@ class CXFA_FFWidget;
 
 class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
  public:
-  explicit CPDFSDK_WidgetHandler(CPDFSDK_FormFillEnvironment* pApp);
+  explicit CPDFSDK_WidgetHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CPDFSDK_WidgetHandler() override;
 
   bool CanAnswer(CPDFSDK_Annot* pAnnot) override;

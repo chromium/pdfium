@@ -145,7 +145,7 @@ class CPWL_ListCtrl {
   void SetScrollPosY(float fy);
   void AddItem(const WideString& str);
   WideString GetItemText(int32_t nIndex) const;
-  void SetItemSelect(int32_t nItemIndex, bool bSelected);
+  void SetItemSelect(int32_t nIndex, bool bSelected);
   int32_t GetLastSelected() const;
   CFX_PointF GetBTPoint() const {
     return CFX_PointF(m_rcPlate.left, m_rcPlate.top);

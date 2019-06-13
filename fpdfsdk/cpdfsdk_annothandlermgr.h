@@ -28,7 +28,7 @@ class CXFA_FFWidget;
 
 class CPDFSDK_AnnotHandlerMgr {
  public:
-  explicit CPDFSDK_AnnotHandlerMgr(CPDFSDK_FormFillEnvironment* pApp);
+  explicit CPDFSDK_AnnotHandlerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CPDFSDK_AnnotHandlerMgr();
 
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
@@ -111,7 +111,8 @@ class CPDFSDK_AnnotHandlerMgr {
                        const CFX_PointF& point);
 
  private:
-  IPDFSDK_AnnotHandler* GetAnnotHandler(CPDF_Annot::Subtype nSubtype) const;
+  IPDFSDK_AnnotHandler* GetAnnotHandler(
+      CPDF_Annot::Subtype nAnnotSubtype) const;
   CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
 
   std::unique_ptr<CPDFSDK_BAAnnotHandler> m_pBAAnnotHandler;

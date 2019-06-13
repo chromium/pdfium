@@ -76,7 +76,7 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   void CutText();
 
   void SetText(const WideString& csText);
-  void ReplaceSel(const WideString& csText);
+  void ReplaceSel(const WideString& wsText);
 
   bool IsTextFull() const;
 
