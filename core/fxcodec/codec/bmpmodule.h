@@ -25,6 +25,8 @@ class BmpModule final : public CodecModuleIface {
                                  const std::vector<uint8_t>& row_buf) = 0;
   };
 
+  enum class Status : uint8_t { kFail, kSuccess, kContinue };
+
   BmpModule();
   ~BmpModule() override;
 
@@ -35,15 +37,15 @@ class BmpModule final : public CodecModuleIface {
              CFX_DIBAttribute* pAttribute) override;
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);
-  int32_t ReadHeader(Context* pContext,
-                     int32_t* width,
-                     int32_t* height,
-                     bool* tb_flag,
-                     int32_t* components,
-                     int32_t* pal_num,
-                     const std::vector<uint32_t>** palette,
-                     CFX_DIBAttribute* pAttribute);
-  int32_t LoadImage(Context* pContext);
+  Status ReadHeader(Context* pContext,
+                    int32_t* width,
+                    int32_t* height,
+                    bool* tb_flag,
+                    int32_t* components,
+                    int32_t* pal_num,
+                    const std::vector<uint32_t>** palette,
+                    CFX_DIBAttribute* pAttribute);
+  Status LoadImage(Context* pContext);
 };
 
 }  // namespace fxcodec

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcodec/bmp/fx_bmp.h"
+#include "core/fxcodec/codec/bmpmodule.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -24,7 +25,7 @@ class CFX_BmpDecompressor {
   ~CFX_BmpDecompressor();
 
   void Error();
-  int32_t DecodeImage();
+  BmpModule::Status DecodeImage();
   bool ReadHeader();
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   FX_FILESIZE GetAvailInput() const;
@@ -55,9 +56,9 @@ class CFX_BmpDecompressor {
   bool ReadBmpPalette();
   bool GetDataPosition(uint32_t cur_pos);
   void ReadNextScanline();
-  int32_t DecodeRGB();
-  int32_t DecodeRLE8();
-  int32_t DecodeRLE4();
+  BmpModule::Status DecodeRGB();
+  BmpModule::Status DecodeRLE8();
+  BmpModule::Status DecodeRLE4();
   bool ReadData(uint8_t* destination, uint32_t size);
   void SaveDecodingStatus(DecodeStatus status);
   bool ValidateColorIndex(uint8_t val);

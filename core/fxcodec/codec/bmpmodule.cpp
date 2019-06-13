@@ -26,22 +26,22 @@ std::unique_ptr<CodecModuleIface::Context> BmpModule::Start(
   return pdfium::MakeUnique<CFX_BmpContext>(this, pDelegate);
 }
 
-int32_t BmpModule::ReadHeader(Context* pContext,
-                              int32_t* width,
-                              int32_t* height,
-                              bool* tb_flag,
-                              int32_t* components,
-                              int32_t* pal_num,
-                              const std::vector<uint32_t>** palette,
-                              CFX_DIBAttribute* pAttribute) {
+BmpModule::Status BmpModule::ReadHeader(Context* pContext,
+                                        int32_t* width,
+                                        int32_t* height,
+                                        bool* tb_flag,
+                                        int32_t* components,
+                                        int32_t* pal_num,
+                                        const std::vector<uint32_t>** palette,
+                                        CFX_DIBAttribute* pAttribute) {
   ASSERT(pAttribute);
 
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   if (setjmp(*ctx->m_Bmp.jmpbuf()))
-    return 0;
+    return Status::kFail;
 
   if (!ctx->m_Bmp.ReadHeader())
-    return 2;
+    return Status::kContinue;
 
   *width = ctx->m_Bmp.width();
   *height = ctx->m_Bmp.height();
@@ -52,13 +52,13 @@ int32_t BmpModule::ReadHeader(Context* pContext,
   pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_METER;
   pAttribute->m_nXDPI = ctx->m_Bmp.dpi_x();
   pAttribute->m_nYDPI = ctx->m_Bmp.dpi_y();
-  return 1;
+  return Status::kSuccess;
 }
 
-int32_t BmpModule::LoadImage(Context* pContext) {
+BmpModule::Status BmpModule::LoadImage(Context* pContext) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   if (setjmp(*ctx->m_Bmp.jmpbuf()))
-    return 0;
+    return Status::kFail;
 
   return ctx->m_Bmp.DecodeImage();
 }

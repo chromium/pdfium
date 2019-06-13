@@ -725,21 +725,21 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
   const std::vector<uint32_t>* palette;
-  int32_t readResult = pBmpModule->ReadHeader(
+  BmpModule::Status read_result = pBmpModule->ReadHeader(
       pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
       &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
-  while (readResult == 2) {
+  while (read_result == BmpModule::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
     if (!BmpReadMoreData(pBmpModule, pBmpContext.get(), error_status)) {
       m_status = error_status;
       return false;
     }
-    readResult = pBmpModule->ReadHeader(
+    read_result = pBmpModule->ReadHeader(
         pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
         &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
   }
 
-  if (readResult != 1) {
+  if (read_result != BmpModule::Status::kSuccess) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
@@ -825,8 +825,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
     return m_status;
   }
   while (true) {
-    int32_t readRes = pBmpModule->LoadImage(m_pBmpContext.get());
-    while (readRes == 2) {
+    BmpModule::Status read_res = pBmpModule->LoadImage(m_pBmpContext.get());
+    while (read_res == BmpModule::Status::kContinue) {
       FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
       if (!BmpReadMoreData(pBmpModule, m_pBmpContext.get(), error_status)) {
         m_pDeviceBitmap = nullptr;
@@ -834,9 +834,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
         m_status = error_status;
         return m_status;
       }
-      readRes = pBmpModule->LoadImage(m_pBmpContext.get());
+      read_res = pBmpModule->LoadImage(m_pBmpContext.get());
     }
-    if (readRes == 1) {
+    if (read_res == BmpModule::Status::kSuccess) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
       m_status = FXCODEC_STATUS_DECODE_FINISH;
