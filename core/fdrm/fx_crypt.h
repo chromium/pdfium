@@ -54,7 +54,7 @@ void CRYPT_ArcFourCryptBlock(uint8_t* data,
                              uint32_t keylen);
 void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
                         const uint8_t* key,
-                        uint32_t length);
+                        uint32_t size);
 void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
                         uint8_t* data,
                         uint32_t size);

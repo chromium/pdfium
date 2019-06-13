@@ -361,13 +361,13 @@ void sha384_process(CRYPT_sha2_context* ctx, const uint8_t data[128]) {
 
 }  // namespace
 
-void CRYPT_SHA1Start(CRYPT_sha1_context* s) {
-  SHA_Core_Init(s->h);
-  s->blkused = 0;
-  s->lenhi = s->lenlo = 0;
+void CRYPT_SHA1Start(CRYPT_sha1_context* context) {
+  SHA_Core_Init(context->h);
+  context->blkused = 0;
+  context->lenhi = context->lenlo = 0;
 }
 
-void CRYPT_SHA1Update(CRYPT_sha1_context* s,
+void CRYPT_SHA1Update(CRYPT_sha1_context* context,
                       const uint8_t* data,
                       uint32_t size) {
   unsigned char* q = (unsigned char*)data;
@@ -375,45 +375,45 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* s,
   int len = size;
   unsigned int lenw = len;
   int i;
-  s->lenlo += lenw;
-  s->lenhi += (s->lenlo < lenw);
-  if (s->blkused && s->blkused + len < 64) {
-    memcpy(s->block + s->blkused, q, len);
-    s->blkused += len;
+  context->lenlo += lenw;
+  context->lenhi += (context->lenlo < lenw);
+  if (context->blkused && context->blkused + len < 64) {
+    memcpy(context->block + context->blkused, q, len);
+    context->blkused += len;
   } else {
-    while (s->blkused + len >= 64) {
-      memcpy(s->block + s->blkused, q, 64 - s->blkused);
-      q += 64 - s->blkused;
-      len -= 64 - s->blkused;
+    while (context->blkused + len >= 64) {
+      memcpy(context->block + context->blkused, q, 64 - context->blkused);
+      q += 64 - context->blkused;
+      len -= 64 - context->blkused;
       for (i = 0; i < 16; i++) {
-        wordblock[i] = (((unsigned int)s->block[i * 4 + 0]) << 24) |
-                       (((unsigned int)s->block[i * 4 + 1]) << 16) |
-                       (((unsigned int)s->block[i * 4 + 2]) << 8) |
-                       (((unsigned int)s->block[i * 4 + 3]) << 0);
+        wordblock[i] = (((unsigned int)context->block[i * 4 + 0]) << 24) |
+                       (((unsigned int)context->block[i * 4 + 1]) << 16) |
+                       (((unsigned int)context->block[i * 4 + 2]) << 8) |
+                       (((unsigned int)context->block[i * 4 + 3]) << 0);
       }
-      SHATransform(s->h, wordblock);
-      s->blkused = 0;
+      SHATransform(context->h, wordblock);
+      context->blkused = 0;
     }
-    memcpy(s->block, q, len);
-    s->blkused = len;
+    memcpy(context->block, q, len);
+    context->blkused = len;
   }
 }
 
-void CRYPT_SHA1Finish(CRYPT_sha1_context* s, uint8_t digest[20]) {
+void CRYPT_SHA1Finish(CRYPT_sha1_context* context, uint8_t digest[20]) {
   int i;
   int pad;
   unsigned char c[64];
   unsigned int lenhi, lenlo;
-  if (s->blkused >= 56) {
-    pad = 56 + 64 - s->blkused;
+  if (context->blkused >= 56) {
+    pad = 56 + 64 - context->blkused;
   } else {
-    pad = 56 - s->blkused;
+    pad = 56 - context->blkused;
   }
-  lenhi = (s->lenhi << 3) | (s->lenlo >> (32 - 3));
-  lenlo = (s->lenlo << 3);
+  lenhi = (context->lenhi << 3) | (context->lenlo >> (32 - 3));
+  lenlo = (context->lenlo << 3);
   memset(c, 0, pad);
   c[0] = 0x80;
-  CRYPT_SHA1Update(s, c, pad);
+  CRYPT_SHA1Update(context, c, pad);
   c[0] = (lenhi >> 24) & 0xFF;
   c[1] = (lenhi >> 16) & 0xFF;
   c[2] = (lenhi >> 8) & 0xFF;
@@ -422,12 +422,12 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* s, uint8_t digest[20]) {
   c[5] = (lenlo >> 16) & 0xFF;
   c[6] = (lenlo >> 8) & 0xFF;
   c[7] = (lenlo >> 0) & 0xFF;
-  CRYPT_SHA1Update(s, c, 8);
+  CRYPT_SHA1Update(context, c, 8);
   for (i = 0; i < 5; i++) {
-    digest[i * 4] = (s->h[i] >> 24) & 0xFF;
-    digest[i * 4 + 1] = (s->h[i] >> 16) & 0xFF;
-    digest[i * 4 + 2] = (s->h[i] >> 8) & 0xFF;
-    digest[i * 4 + 3] = (s->h[i]) & 0xFF;
+    digest[i * 4] = (context->h[i] >> 24) & 0xFF;
+    digest[i * 4 + 1] = (context->h[i] >> 16) & 0xFF;
+    digest[i * 4 + 2] = (context->h[i] >> 8) & 0xFF;
+    digest[i * 4 + 3] = (context->h[i]) & 0xFF;
   }
 }
 void CRYPT_SHA1Generate(const uint8_t* data,
@@ -438,66 +438,66 @@ void CRYPT_SHA1Generate(const uint8_t* data,
   CRYPT_SHA1Update(&s, data, size);
   CRYPT_SHA1Finish(&s, digest);
 }
-void CRYPT_SHA256Start(CRYPT_sha2_context* ctx) {
-  ctx->total[0] = 0;
-  ctx->total[1] = 0;
-  ctx->state[0] = 0x6A09E667;
-  ctx->state[1] = 0xBB67AE85;
-  ctx->state[2] = 0x3C6EF372;
-  ctx->state[3] = 0xA54FF53A;
-  ctx->state[4] = 0x510E527F;
-  ctx->state[5] = 0x9B05688C;
-  ctx->state[6] = 0x1F83D9AB;
-  ctx->state[7] = 0x5BE0CD19;
+void CRYPT_SHA256Start(CRYPT_sha2_context* context) {
+  context->total[0] = 0;
+  context->total[1] = 0;
+  context->state[0] = 0x6A09E667;
+  context->state[1] = 0xBB67AE85;
+  context->state[2] = 0x3C6EF372;
+  context->state[3] = 0xA54FF53A;
+  context->state[4] = 0x510E527F;
+  context->state[5] = 0x9B05688C;
+  context->state[6] = 0x1F83D9AB;
+  context->state[7] = 0x5BE0CD19;
 }
 
-void CRYPT_SHA256Update(CRYPT_sha2_context* ctx,
-                        const uint8_t* input,
-                        uint32_t length) {
-  if (!length)
+void CRYPT_SHA256Update(CRYPT_sha2_context* context,
+                        const uint8_t* data,
+                        uint32_t size) {
+  if (!size)
     return;
 
-  uint32_t left = ctx->total[0] & 0x3F;
+  uint32_t left = context->total[0] & 0x3F;
   uint32_t fill = 64 - left;
-  ctx->total[0] += length;
-  ctx->total[0] &= 0xFFFFFFFF;
-  if (ctx->total[0] < length)
-    ctx->total[1]++;
+  context->total[0] += size;
+  context->total[0] &= 0xFFFFFFFF;
+  if (context->total[0] < size)
+    context->total[1]++;
 
-  if (left && length >= fill) {
-    memcpy(ctx->buffer + left, input, fill);
-    sha256_process(ctx, ctx->buffer);
-    length -= fill;
-    input += fill;
+  if (left && size >= fill) {
+    memcpy(context->buffer + left, data, fill);
+    sha256_process(context, context->buffer);
+    size -= fill;
+    data += fill;
     left = 0;
   }
-  while (length >= 64) {
-    sha256_process(ctx, input);
-    length -= 64;
-    input += 64;
+  while (size >= 64) {
+    sha256_process(context, data);
+    size -= 64;
+    data += 64;
   }
-  if (length)
-    memcpy(ctx->buffer + left, input, length);
+  if (size)
+    memcpy(context->buffer + left, data, size);
 }
 
-void CRYPT_SHA256Finish(CRYPT_sha2_context* ctx, uint8_t digest[32]) {
+void CRYPT_SHA256Finish(CRYPT_sha2_context* context, uint8_t digest[32]) {
   uint8_t msglen[8];
-  uint32_t high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
-  uint32_t low = (ctx->total[0] << 3);
+  uint32_t high = (context->total[0] >> 29) | (context->total[1] << 3);
+  uint32_t low = (context->total[0] << 3);
   SHA_PUT_UINT32(high, msglen, 0);
   SHA_PUT_UINT32(low, msglen, 4);
-  uint32_t last = ctx->total[0] & 0x3F;
+  uint32_t last = context->total[0] & 0x3F;
   uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
-  CRYPT_SHA256Update(ctx, sha256_padding, padn);
-  CRYPT_SHA256Update(ctx, msglen, 8);
-  SHA_PUT_UINT32(ctx->state[0], digest, 0);
-  SHA_PUT_UINT32(ctx->state[1], digest, 4);
-  SHA_PUT_UINT32(ctx->state[2], digest, 8);
-  SHA_PUT_UINT32(ctx->state[3], digest, 12);
-  SHA_PUT_UINT32(ctx->state[4], digest, 16);
-  SHA_PUT_UINT32(ctx->state[5], digest, 20);
-  SHA_PUT_UINT32(ctx->state[6], digest, 24);
-  SHA_PUT_UINT32(ctx->state[7], digest, 28);
+  CRYPT_SHA256Update(context, sha256_padding, padn);
+  CRYPT_SHA256Update(context, msglen, 8);
+  SHA_PUT_UINT32(context->state[0], digest, 0);
+  SHA_PUT_UINT32(context->state[1], digest, 4);
+  SHA_PUT_UINT32(context->state[2], digest, 8);
+  SHA_PUT_UINT32(context->state[3], digest, 12);
+  SHA_PUT_UINT32(context->state[4], digest, 16);
+  SHA_PUT_UINT32(context->state[5], digest, 20);
+  SHA_PUT_UINT32(context->state[6], digest, 24);
+  SHA_PUT_UINT32(context->state[7], digest, 28);
 }
 
 void CRYPT_SHA256Generate(const uint8_t* data,
@@ -509,65 +509,65 @@ void CRYPT_SHA256Generate(const uint8_t* data,
   CRYPT_SHA256Finish(&ctx, digest);
 }
 
-void CRYPT_SHA384Start(CRYPT_sha2_context* ctx) {
-  memset(ctx, 0, sizeof(CRYPT_sha2_context));
-  ctx->state[0] = 0xcbbb9d5dc1059ed8ULL;
-  ctx->state[1] = 0x629a292a367cd507ULL;
-  ctx->state[2] = 0x9159015a3070dd17ULL;
-  ctx->state[3] = 0x152fecd8f70e5939ULL;
-  ctx->state[4] = 0x67332667ffc00b31ULL;
-  ctx->state[5] = 0x8eb44a8768581511ULL;
-  ctx->state[6] = 0xdb0c2e0d64f98fa7ULL;
-  ctx->state[7] = 0x47b5481dbefa4fa4ULL;
+void CRYPT_SHA384Start(CRYPT_sha2_context* context) {
+  memset(context, 0, sizeof(CRYPT_sha2_context));
+  context->state[0] = 0xcbbb9d5dc1059ed8ULL;
+  context->state[1] = 0x629a292a367cd507ULL;
+  context->state[2] = 0x9159015a3070dd17ULL;
+  context->state[3] = 0x152fecd8f70e5939ULL;
+  context->state[4] = 0x67332667ffc00b31ULL;
+  context->state[5] = 0x8eb44a8768581511ULL;
+  context->state[6] = 0xdb0c2e0d64f98fa7ULL;
+  context->state[7] = 0x47b5481dbefa4fa4ULL;
 }
 
-void CRYPT_SHA384Update(CRYPT_sha2_context* ctx,
-                        const uint8_t* input,
-                        uint32_t length) {
-  if (!length)
+void CRYPT_SHA384Update(CRYPT_sha2_context* context,
+                        const uint8_t* data,
+                        uint32_t size) {
+  if (!size)
     return;
 
-  uint32_t left = static_cast<uint32_t>(ctx->total[0]) & 0x7F;
+  uint32_t left = static_cast<uint32_t>(context->total[0]) & 0x7F;
   uint32_t fill = 128 - left;
-  ctx->total[0] += length;
-  if (ctx->total[0] < length)
-    ctx->total[1]++;
+  context->total[0] += size;
+  if (context->total[0] < size)
+    context->total[1]++;
 
-  if (left && length >= fill) {
-    memcpy(ctx->buffer + left, input, fill);
-    sha384_process(ctx, ctx->buffer);
-    length -= fill;
-    input += fill;
+  if (left && size >= fill) {
+    memcpy(context->buffer + left, data, fill);
+    sha384_process(context, context->buffer);
+    size -= fill;
+    data += fill;
     left = 0;
   }
-  while (length >= 128) {
-    sha384_process(ctx, input);
-    length -= 128;
-    input += 128;
+  while (size >= 128) {
+    sha384_process(context, data);
+    size -= 128;
+    data += 128;
   }
-  if (length)
-    memcpy(ctx->buffer + left, input, length);
+  if (size)
+    memcpy(context->buffer + left, data, size);
 }
 
-void CRYPT_SHA384Finish(CRYPT_sha2_context* ctx, uint8_t digest[48]) {
+void CRYPT_SHA384Finish(CRYPT_sha2_context* context, uint8_t digest[48]) {
   uint32_t last, padn;
   uint8_t msglen[16];
   memset(msglen, 0, 16);
   uint64_t high, low;
-  high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
-  low = (ctx->total[0] << 3);
+  high = (context->total[0] >> 29) | (context->total[1] << 3);
+  low = (context->total[0] << 3);
   PUT_UINT64(high, msglen, 0);
   PUT_UINT64(low, msglen, 8);
-  last = (uint32_t)ctx->total[0] & 0x7F;
+  last = (uint32_t)context->total[0] & 0x7F;
   padn = (last < 112) ? (112 - last) : (240 - last);
-  CRYPT_SHA384Update(ctx, sha384_padding, padn);
-  CRYPT_SHA384Update(ctx, msglen, 16);
-  PUT_UINT64(ctx->state[0], digest, 0);
-  PUT_UINT64(ctx->state[1], digest, 8);
-  PUT_UINT64(ctx->state[2], digest, 16);
-  PUT_UINT64(ctx->state[3], digest, 24);
-  PUT_UINT64(ctx->state[4], digest, 32);
-  PUT_UINT64(ctx->state[5], digest, 40);
+  CRYPT_SHA384Update(context, sha384_padding, padn);
+  CRYPT_SHA384Update(context, msglen, 16);
+  PUT_UINT64(context->state[0], digest, 0);
+  PUT_UINT64(context->state[1], digest, 8);
+  PUT_UINT64(context->state[2], digest, 16);
+  PUT_UINT64(context->state[3], digest, 24);
+  PUT_UINT64(context->state[4], digest, 32);
+  PUT_UINT64(context->state[5], digest, 40);
 }
 
 void CRYPT_SHA384Generate(const uint8_t* data,
@@ -579,45 +579,45 @@ void CRYPT_SHA384Generate(const uint8_t* data,
   CRYPT_SHA384Finish(&context, digest);
 }
 
-void CRYPT_SHA512Start(CRYPT_sha2_context* ctx) {
-  memset(ctx, 0, sizeof(CRYPT_sha2_context));
-  ctx->state[0] = 0x6a09e667f3bcc908ULL;
-  ctx->state[1] = 0xbb67ae8584caa73bULL;
-  ctx->state[2] = 0x3c6ef372fe94f82bULL;
-  ctx->state[3] = 0xa54ff53a5f1d36f1ULL;
-  ctx->state[4] = 0x510e527fade682d1ULL;
-  ctx->state[5] = 0x9b05688c2b3e6c1fULL;
-  ctx->state[6] = 0x1f83d9abfb41bd6bULL;
-  ctx->state[7] = 0x5be0cd19137e2179ULL;
+void CRYPT_SHA512Start(CRYPT_sha2_context* context) {
+  memset(context, 0, sizeof(CRYPT_sha2_context));
+  context->state[0] = 0x6a09e667f3bcc908ULL;
+  context->state[1] = 0xbb67ae8584caa73bULL;
+  context->state[2] = 0x3c6ef372fe94f82bULL;
+  context->state[3] = 0xa54ff53a5f1d36f1ULL;
+  context->state[4] = 0x510e527fade682d1ULL;
+  context->state[5] = 0x9b05688c2b3e6c1fULL;
+  context->state[6] = 0x1f83d9abfb41bd6bULL;
+  context->state[7] = 0x5be0cd19137e2179ULL;
 }
 
-void CRYPT_SHA512Update(CRYPT_sha2_context* ctx,
+void CRYPT_SHA512Update(CRYPT_sha2_context* context,
                         const uint8_t* data,
                         uint32_t size) {
-  CRYPT_SHA384Update(ctx, data, size);
+  CRYPT_SHA384Update(context, data, size);
 }
 
-void CRYPT_SHA512Finish(CRYPT_sha2_context* ctx, uint8_t digest[64]) {
+void CRYPT_SHA512Finish(CRYPT_sha2_context* context, uint8_t digest[64]) {
   uint32_t last, padn;
   uint8_t msglen[16];
   memset(msglen, 0, 16);
   uint64_t high, low;
-  high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
-  low = (ctx->total[0] << 3);
+  high = (context->total[0] >> 29) | (context->total[1] << 3);
+  low = (context->total[0] << 3);
   PUT_UINT64(high, msglen, 0);
   PUT_UINT64(low, msglen, 8);
-  last = (uint32_t)ctx->total[0] & 0x7F;
+  last = (uint32_t)context->total[0] & 0x7F;
   padn = (last < 112) ? (112 - last) : (240 - last);
-  CRYPT_SHA512Update(ctx, sha384_padding, padn);
-  CRYPT_SHA512Update(ctx, msglen, 16);
-  PUT_UINT64(ctx->state[0], digest, 0);
-  PUT_UINT64(ctx->state[1], digest, 8);
-  PUT_UINT64(ctx->state[2], digest, 16);
-  PUT_UINT64(ctx->state[3], digest, 24);
-  PUT_UINT64(ctx->state[4], digest, 32);
-  PUT_UINT64(ctx->state[5], digest, 40);
-  PUT_UINT64(ctx->state[6], digest, 48);
-  PUT_UINT64(ctx->state[7], digest, 56);
+  CRYPT_SHA512Update(context, sha384_padding, padn);
+  CRYPT_SHA512Update(context, msglen, 16);
+  PUT_UINT64(context->state[0], digest, 0);
+  PUT_UINT64(context->state[1], digest, 8);
+  PUT_UINT64(context->state[2], digest, 16);
+  PUT_UINT64(context->state[3], digest, 24);
+  PUT_UINT64(context->state[4], digest, 32);
+  PUT_UINT64(context->state[5], digest, 40);
+  PUT_UINT64(context->state[6], digest, 48);
+  PUT_UINT64(context->state[7], digest, 56);
 }
 
 void CRYPT_SHA512Generate(const uint8_t* data,
