@@ -171,6 +171,15 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pPage)
     return false;
 
+  CPDF_Dictionary* pPageDict = pPage->GetDict();
+  CPDF_Object* pContentObj = GetPageContent(pPageDict);
+  if (!pContentObj)
+    return false;
+
+  CPDF_Document* pDoc = pPage->GetDocument();
+  if (!pDoc)
+    return false;
+
   std::ostringstream text_buf;
   text_buf << "q ";
 
@@ -187,15 +196,6 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     CFX_Matrix m = CFXMatrixFromFSMatrix(*matrix);
     text_buf << m << " cm ";
   }
-
-  CPDF_Dictionary* pPageDict = pPage->GetDict();
-  CPDF_Object* pContentObj = GetPageContent(pPageDict);
-  if (!pContentObj)
-    return false;
-
-  CPDF_Document* pDoc = pPage->GetDocument();
-  if (!pDoc)
-    return false;
 
   CPDF_Stream* pStream =
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
