@@ -284,6 +284,7 @@ group("pdfium_embeddertest_deps") {
     "core/fxcrt",
     "testing:embedder_test_support",
     "testing:test_support",
+    "third_party:pdfium_base_test_support",
     "//testing/gmock",
     "//testing/gtest",
   ]

@@ -651,6 +651,25 @@ jumbo_source_set("pdfium_base") {
   }
 }
 
+jumbo_source_set("pdfium_base_test_support") {
+  testonly = true
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":pdfium_third_party_config",
+  ]
+  sources = []
+  deps = []
+
+  if (is_posix || is_fuchsia) {
+    sources += [
+      "base/test/scoped_locale.cc",
+      "base/test/scoped_locale.h",
+    ]
+    deps += [ "//testing/gtest" ]
+  }
+}
+
 jumbo_source_set("skia_shared") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
