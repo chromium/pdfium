@@ -108,11 +108,11 @@ struct FlateDeleter {
 
 class CLZWDecoder {
  public:
-  int Decode(uint8_t* dest_buf,
-             uint32_t* dest_size,
-             const uint8_t* src_buf,
-             uint32_t* src_size,
-             bool early_change);
+  bool Decode(uint8_t* dest_buf,
+              uint32_t* dest_size,
+              const uint8_t* src_buf,
+              uint32_t* src_size,
+              bool early_change);
 
  private:
   void AddCode(uint32_t prefix_code, uint8_t append_char);
@@ -163,11 +163,11 @@ void CLZWDecoder::DecodeString(uint32_t code) {
   m_DecodeStack[m_StackLen++] = (uint8_t)code;
 }
 
-int CLZWDecoder::Decode(uint8_t* dest_buf,
-                        uint32_t* dest_size,
-                        const uint8_t* src_buf,
-                        uint32_t* src_size,
-                        bool early_change) {
+bool CLZWDecoder::Decode(uint8_t* dest_buf,
+                         uint32_t* dest_size,
+                         const uint8_t* src_buf,
+                         uint32_t* src_size,
+                         bool early_change) {
   m_CodeLen = 9;
   m_InPos = 0;
   m_OutPos = 0;
@@ -193,19 +193,17 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
     } else {
       bit_left -= 8;
       code |= m_pInput[byte_pos++] << bit_left;
-      if (bit_left) {
+      if (bit_left)
         code |= m_pInput[byte_pos] >> (8 - bit_left);
-      }
     }
     m_InPos += m_CodeLen;
 
     if (code < 256) {
-      if (m_OutPos == *dest_size) {
-        return -5;
-      }
-      if (m_pOutput) {
+      if (m_OutPos == *dest_size)
+        return false;
+
+      if (m_pOutput)
         m_pOutput[m_OutPos] = (uint8_t)code;
-      }
       m_OutPos++;
       last_char = (uint8_t)code;
       if (old_code != 0xFFFFFFFF)
@@ -224,7 +222,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
 
     // Case where |code| is 258 or greater.
     if (old_code == 0xFFFFFFFF)
-      return 2;
+      return false;
 
     m_StackLen = 0;
     if (code - 258 >= m_nCodes) {
@@ -236,7 +234,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       DecodeString(code);
     }
     if (m_OutPos + m_StackLen > *dest_size)
-      return -5;
+      return false;
 
     if (m_pOutput) {
       for (uint32_t i = 0; i < m_StackLen; i++)
@@ -253,7 +251,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
   }
   *dest_size = m_OutPos;
   *src_size = (m_InPos + 7) / 8;
-  return 0;
+  return true;
 }
 
 uint8_t PathPredictor(int a, int b, int c) {
@@ -800,9 +798,9 @@ uint32_t FlateModule::FlateOrLZWDecode(
     auto decoder = pdfium::MakeUnique<CLZWDecoder>();
     *dest_size = 0xFFFFFFFF;
     offset = src_span.size();
-    int err = decoder->Decode(nullptr, dest_size, src_span.data(), &offset,
-                              bEarlyChange);
-    if (err || *dest_size == 0 || *dest_size + 1 < *dest_size)
+    bool success = decoder->Decode(nullptr, dest_size, src_span.data(), &offset,
+                                   bEarlyChange);
+    if (!success || *dest_size == 0 || *dest_size + 1 < *dest_size)
       return FX_INVALID_OFFSET;
 
     decoder = pdfium::MakeUnique<CLZWDecoder>();
