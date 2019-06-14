@@ -108,11 +108,11 @@ struct FlateDeleter {
 
 class CLZWDecoder {
  public:
-  int Decode(uint8_t* output,
-             uint32_t& outlen,
-             const uint8_t* input,
-             uint32_t& size,
-             bool bEarlyChange);
+  int Decode(uint8_t* dest_buf,
+             uint32_t* dest_size,
+             const uint8_t* src_buf,
+             uint32_t* src_size,
+             bool early_change);
 
  private:
   void AddCode(uint32_t prefix_code, uint8_t append_char);
@@ -164,21 +164,21 @@ void CLZWDecoder::DecodeString(uint32_t code) {
 }
 
 int CLZWDecoder::Decode(uint8_t* dest_buf,
-                        uint32_t& dest_size,
+                        uint32_t* dest_size,
                         const uint8_t* src_buf,
-                        uint32_t& src_size,
-                        bool bEarlyChange) {
+                        uint32_t* src_size,
+                        bool early_change) {
   m_CodeLen = 9;
   m_InPos = 0;
   m_OutPos = 0;
   m_pInput = src_buf;
   m_pOutput = dest_buf;
-  m_Early = bEarlyChange ? 1 : 0;
+  m_Early = early_change;
   m_nCodes = 0;
   uint32_t old_code = 0xFFFFFFFF;
   uint8_t last_char = 0;
   while (1) {
-    if (m_InPos + m_CodeLen > src_size * 8) {
+    if (m_InPos + m_CodeLen > *src_size * 8) {
       break;
     }
     int byte_pos = m_InPos / 8;
@@ -201,7 +201,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
     if (code == 257)
       break;
     if (code < 256) {
-      if (m_OutPos == dest_size) {
+      if (m_OutPos == *dest_size) {
         return -5;
       }
       if (m_pOutput) {
@@ -230,7 +230,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       } else {
         DecodeString(code);
       }
-      if (m_OutPos + m_StackLen > dest_size) {
+      if (m_OutPos + m_StackLen > *dest_size) {
         return -5;
       }
       if (m_pOutput) {
@@ -243,8 +243,8 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       if (old_code < 256) {
         AddCode(old_code, last_char);
       } else if (old_code - 258 >= m_nCodes) {
-        dest_size = m_OutPos;
-        src_size = (m_InPos + 7) / 8;
+        *dest_size = m_OutPos;
+        *src_size = (m_InPos + 7) / 8;
         return 0;
       } else {
         AddCode(old_code, last_char);
@@ -252,8 +252,8 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       old_code = code;
     }
   }
-  dest_size = m_OutPos;
-  src_size = (m_InPos + 7) / 8;
+  *dest_size = m_OutPos;
+  *src_size = (m_InPos + 7) / 8;
   return 0;
 }
 
@@ -801,7 +801,7 @@ uint32_t FlateModule::FlateOrLZWDecode(
     auto decoder = pdfium::MakeUnique<CLZWDecoder>();
     *dest_size = 0xFFFFFFFF;
     offset = src_span.size();
-    int err = decoder->Decode(nullptr, *dest_size, src_span.data(), offset,
+    int err = decoder->Decode(nullptr, dest_size, src_span.data(), &offset,
                               bEarlyChange);
     if (err || *dest_size == 0 || *dest_size + 1 < *dest_size)
       return FX_INVALID_OFFSET;
@@ -810,7 +810,7 @@ uint32_t FlateModule::FlateOrLZWDecode(
     dest_buf->reset(FX_Alloc(uint8_t, *dest_size + 1));
     uint8_t* dest_buf_ptr = dest_buf->get();
     dest_buf_ptr[*dest_size] = '\0';
-    decoder->Decode(dest_buf_ptr, *dest_size, src_span.data(), offset,
+    decoder->Decode(dest_buf_ptr, dest_size, src_span.data(), &offset,
                     bEarlyChange);
   } else {
     FlateUncompress(src_span, estimated_size, dest_buf, dest_size, &offset);
