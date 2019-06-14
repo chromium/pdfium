@@ -98,8 +98,8 @@ class CPDF_PageObjectHolder {
   void AddImageMaskBoundingBox(const CFX_FloatRect& box);
   void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
-  const std::set<int32_t>& GetDirtyStreams() const { return m_DirtyStreams; }
-  void ClearDirtyStreams() { m_DirtyStreams.clear(); }
+  bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
+  std::set<int32_t> TakeDirtyStreams();
 
   RetainPtr<CPDF_Dictionary> m_pPageResources;
   RetainPtr<CPDF_Dictionary> m_pResources;

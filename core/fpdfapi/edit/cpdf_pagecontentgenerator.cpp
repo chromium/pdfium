@@ -84,8 +84,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     if (pPageObj->IsDirty())
       all_dirty_streams.insert(pPageObj->GetContentStream());
   }
-  const std::set<int32_t>& marked_dirty_streams =
-      m_pObjHolder->GetDirtyStreams();
+  std::set<int32_t> marked_dirty_streams = m_pObjHolder->TakeDirtyStreams();
   all_dirty_streams.insert(marked_dirty_streams.begin(),
                            marked_dirty_streams.end());
 
@@ -139,9 +138,6 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
       *buf << "Q\n";
     }
   }
-
-  // Clear dirty streams in m_pObjHolder
-  m_pObjHolder->ClearDirtyStreams();
 
   return streams;
 }
