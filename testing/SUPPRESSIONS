@@ -328,6 +328,9 @@ bug_492.in * nov8 *
 # TODO(pdfium:632): Remove after associated bug is fixed
 bug_632.in * * *
 
+# TODO(pdfium:1321): Remove after associated bug is fixed
+bug_1321.in * * *
+
 # xfa_specific
 
 # TODO(pdfium:1107): Remove after associated bug is fixed
