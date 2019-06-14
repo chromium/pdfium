@@ -130,12 +130,8 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
   }
 
   bool PresenceRequiresSpace() const;
-
-  void SetBindingNode(CXFA_Node* node) {
-    binding_nodes_.clear();
-    if (node)
-      binding_nodes_.emplace_back(node);
-  }
+  void SetBindingNode(CXFA_Node* node);
+  void SetNodeAndDescendantsUnused();
 
   bool HasRemovedChildren() const {
     return HasFlag(XFA_NodeFlag_HasRemovedChildren);

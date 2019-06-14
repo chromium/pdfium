@@ -329,6 +329,7 @@
 #include "xfa/fxfa/parser/cxfa_traversal.h"
 #include "xfa/fxfa/parser/cxfa_traverse.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
+#include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/cxfa_type.h"
 #include "xfa/fxfa/parser/cxfa_typeface.h"
 #include "xfa/fxfa/parser/cxfa_typefaces.h"
@@ -5007,6 +5008,20 @@ bool CXFA_Node::PresenceRequiresSpace() const {
   XFA_AttributeValue ePresence = value.value_or(XFA_AttributeValue::Visible);
   return ePresence == XFA_AttributeValue::Visible ||
          ePresence == XFA_AttributeValue::Invisible;
+}
+
+void CXFA_Node::SetBindingNode(CXFA_Node* node) {
+  binding_nodes_.clear();
+  if (node)
+    binding_nodes_.emplace_back(node);
+}
+
+void CXFA_Node::SetNodeAndDescendantsUnused() {
+  CXFA_NodeIterator sIterator(this);
+  for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
+       pNode = sIterator.MoveToNext()) {
+    pNode->SetFlag(XFA_NodeFlag_UnusedNode);
+  }
 }
 
 void CXFA_Node::SetToXML(const WideString& value) {

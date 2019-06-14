@@ -1818,6 +1818,23 @@ void CXFA_Document::RegisterGlobalBinding(uint32_t dwNameHash,
   m_rgGlobalBinding[dwNameHash] = pDataNode;
 }
 
+void CXFA_Document::SetPendingNodesUnusedAndUnbound() {
+  for (CXFA_Node* pPageNode : m_pPendingPageSet) {
+    CXFA_NodeIterator sIterator(pPageNode);
+    for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
+         pNode = sIterator.MoveToNext()) {
+      if (pNode->IsContainerNode()) {
+        CXFA_Node* pBindNode = pNode->GetBindData();
+        if (pBindNode) {
+          pBindNode->RemoveBindItem(pNode);
+          pNode->SetBindingNode(nullptr);
+        }
+      }
+      pNode->SetFlag(XFA_NodeFlag_UnusedNode);
+    }
+  }
+}
+
 CXFA_Document::LayoutProcessorIface::LayoutProcessorIface() = default;
 
 CXFA_Document::LayoutProcessorIface::~LayoutProcessorIface() = default;

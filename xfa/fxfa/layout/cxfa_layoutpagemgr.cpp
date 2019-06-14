@@ -1600,27 +1600,20 @@ void CXFA_LayoutPageMgr::ClearData() {
 
 void CXFA_LayoutPageMgr::SaveLayoutItemChildren(
     CXFA_LayoutItem* pParentLayoutItem) {
+  CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
+  CXFA_FFNotify* pNotify = pDocument->GetNotify();
+  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
   CXFA_LayoutItem* pCurLayoutItem = pParentLayoutItem->GetFirstChild();
   while (pCurLayoutItem) {
     CXFA_LayoutItem* pNextLayoutItem = pCurLayoutItem->GetNextSibling();
     if (pCurLayoutItem->IsContentLayoutItem()) {
       if (pCurLayoutItem->GetFormNode()->HasRemovedChildren()) {
-        CXFA_FFNotify* pNotify =
-            m_pTemplatePageSetRoot->GetDocument()->GetNotify();
-        auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(
-            m_pTemplatePageSetRoot->GetDocument());
         SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
         pCurLayoutItem = pNextLayoutItem;
         continue;
       }
-      if (pCurLayoutItem->GetFormNode()->IsLayoutGeneratedNode()) {
-        CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>
-            sIterator(pCurLayoutItem->GetFormNode());
-        for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
-             pNode = sIterator.MoveToNext()) {
-          pNode->SetFlag(XFA_NodeFlag_UnusedNode);
-        }
-      }
+      if (pCurLayoutItem->GetFormNode()->IsLayoutGeneratedNode())
+        pCurLayoutItem->GetFormNode()->SetNodeAndDescendantsUnused();
     }
     SaveLayoutItemChildren(pCurLayoutItem);
     pCurLayoutItem->RemoveSelfIfParented();
@@ -1658,24 +1651,11 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
 
 void CXFA_LayoutPageMgr::MergePageSetContents() {
   CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
+  pDocument->SetPendingNodesUnusedAndUnbound();
+
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
   CXFA_ViewLayoutItem* pRootLayout = GetRootLayoutItem();
-  for (CXFA_Node* pPageNode : pDocument->m_pPendingPageSet) {
-    CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>
-        sIterator(pPageNode);
-    for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
-         pNode = sIterator.MoveToNext()) {
-      if (pNode->IsContainerNode()) {
-        CXFA_Node* pBindNode = pNode->GetBindData();
-        if (pBindNode) {
-          pBindNode->RemoveBindItem(pNode);
-          pNode->SetBindingNode(nullptr);
-        }
-      }
-      pNode->SetFlag(XFA_NodeFlag_UnusedNode);
-    }
-  }
 
   int32_t iIndex = 0;
   for (; pRootLayout;
