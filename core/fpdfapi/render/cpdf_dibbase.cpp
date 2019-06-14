@@ -124,7 +124,7 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
     return false;
 
   FX_SAFE_UINT32 src_size =
-      CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
   if (!src_size.IsValid())
     return false;
 
@@ -148,7 +148,7 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   } else {
     m_bpp = 24;
   }
-  FX_SAFE_UINT32 pitch = CalculatePitch32(m_bpp, m_Width);
+  FX_SAFE_UINT32 pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
   if (!pitch.IsValid())
     return false;
 
@@ -157,7 +157,7 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (m_bColorKey) {
     m_bpp = 32;
     m_AlphaFlag = 2;
-    pitch = CalculatePitch32(m_bpp, m_Width);
+    pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
     if (!pitch.IsValid())
       return false;
 
@@ -183,7 +183,7 @@ bool CPDF_DIBBase::ContinueToLoadMask() {
   if (!m_bpc || !m_nComponents) {
     return false;
   }
-  FX_SAFE_UINT32 pitch = CalculatePitch32(m_bpp, m_Width);
+  FX_SAFE_UINT32 pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
   if (!pitch.IsValid())
     return false;
 
@@ -195,7 +195,7 @@ bool CPDF_DIBBase::ContinueToLoadMask() {
   if (m_bColorKey) {
     m_bpp = 32;
     m_AlphaFlag = 2;
-    pitch = CalculatePitch32(m_bpp, m_Width);
+    pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
     if (!pitch.IsValid())
       return false;
     m_pMaskedLine.reset(FX_Alloc(uint8_t, pitch.ValueOrDie()));
@@ -237,7 +237,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadDIBBase(
     return LoadState::kFail;
 
   FX_SAFE_UINT32 src_size =
-      CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
   if (!src_size.IsValid())
     return LoadState::kFail;
 
@@ -497,10 +497,10 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
     return LoadState::kFail;
 
   FX_SAFE_UINT32 requested_pitch =
-      CalculatePitch8(m_bpc, m_nComponents, m_Width);
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!requested_pitch.IsValid())
     return LoadState::kFail;
-  FX_SAFE_UINT32 provided_pitch = CalculatePitch8(
+  FX_SAFE_UINT32 provided_pitch = fxcodec::CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
   if (!provided_pitch.IsValid())
     return LoadState::kFail;
@@ -961,7 +961,8 @@ const uint8_t* CPDF_DIBBase::GetScanline(int line) const {
   if (m_bpc == 0)
     return nullptr;
 
-  FX_SAFE_UINT32 src_pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width);
+  FX_SAFE_UINT32 src_pitch =
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!src_pitch.IsValid())
     return nullptr;
   uint32_t src_pitch_value = src_pitch.ValueOrDie();
@@ -1093,7 +1094,8 @@ void CPDF_DIBBase::DownSampleScanline(int line,
   }
 
   uint32_t src_width = m_Width;
-  FX_SAFE_UINT32 pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width);
+  FX_SAFE_UINT32 pitch =
+      fxcodec::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!pitch.IsValid())
     return;
 

@@ -12,6 +12,8 @@
 #include "core/fxcodec/codec/bmpmodule.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+namespace fxcodec {
+
 class CFX_BmpContext final : public CodecModuleIface::Context {
  public:
   CFX_BmpContext(BmpModule* pModule, BmpModule::Delegate* pDelegate);
@@ -21,5 +23,7 @@ class CFX_BmpContext final : public CodecModuleIface::Context {
   UnownedPtr<BmpModule> const m_pModule;
   UnownedPtr<BmpModule::Delegate> const m_pDelegate;
 };
+
+}  // namespace fxcodec
 
 #endif  // CORE_FXCODEC_BMP_CFX_BMPCONTEXT_H_

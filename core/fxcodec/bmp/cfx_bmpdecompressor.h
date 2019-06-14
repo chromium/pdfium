@@ -16,8 +16,11 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_BmpContext;
 class CFX_CodecMemory;
+
+namespace fxcodec {
+
+class CFX_BmpContext;
 
 class CFX_BmpDecompressor {
  public:
@@ -93,5 +96,7 @@ class CFX_BmpDecompressor {
   DecodeStatus decode_status_ = DecodeStatus::kHeader;
   RetainPtr<CFX_CodecMemory> input_buffer_;
 };
+
+}  // namespace fxcodec
 
 #endif  // CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_

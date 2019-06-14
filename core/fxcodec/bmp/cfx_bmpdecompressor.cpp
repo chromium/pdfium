@@ -18,6 +18,8 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_math.h"
 
+namespace fxcodec {
+
 namespace {
 
 #define BMP_PAL_ENCODE(a, r, g, b) \
@@ -705,3 +707,5 @@ void CFX_BmpDecompressor::SetHeight(int32_t signed_height) {
   height_ = -signed_height;
   img_tb_flag_ = true;
 }
+
+}  // namespace fxcodec

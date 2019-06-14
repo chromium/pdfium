@@ -121,9 +121,13 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA
 };
 
+namespace fxcodec {
+
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 
 FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width);
 FX_SAFE_UINT32 CalculatePitch32(int bpp, int width);
+
+}  // namespace fxcodec
 
 #endif  // CORE_FXCODEC_FX_CODEC_H_

@@ -34,7 +34,7 @@ CPDF_DeviceCS::CPDF_DeviceCS(int family) : CPDF_ColorSpace(nullptr, family) {
   SetComponentsForStockCS(ComponentsForFamily(GetFamily()));
 }
 
-CPDF_DeviceCS::~CPDF_DeviceCS() {}
+CPDF_DeviceCS::~CPDF_DeviceCS() = default;
 
 uint32_t CPDF_DeviceCS::v_Load(CPDF_Document* pDoc,
                                const CPDF_Array* pArray,
@@ -93,7 +93,7 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
       }
       break;
     case PDFCS_DEVICERGB:
-      ReverseRGB(pDestBuf, pSrcBuf, pixels);
+      fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
       break;
     case PDFCS_DEVICECMYK:
       if (bTransMask) {

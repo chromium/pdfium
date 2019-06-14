@@ -75,6 +75,8 @@ CFX_DIBAttribute::~CFX_DIBAttribute() {
 }
 #endif  // PDF_ENABLE_XFA
 
+namespace fxcodec {
+
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
   if (pDestBuf == pSrcBuf) {
     for (int i = 0; i < pixels; i++) {
@@ -110,3 +112,5 @@ FX_SAFE_UINT32 CalculatePitch32(int bpp, int width) {
   pitch *= 4;   // and then back to bytes, (not just /8 in one step).
   return pitch;
 }
+
+}  // namespace fxcodec

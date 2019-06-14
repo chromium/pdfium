@@ -759,7 +759,7 @@ void CPDF_CalRGB::TranslateImageLine(uint8_t* pDestBuf,
       pDestBuf += 3;
     }
   }
-  ReverseRGB(pDestBuf, pSrcBuf, pixels);
+  fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
 }
 
 CPDF_LabCS::CPDF_LabCS(CPDF_Document* pDoc)
@@ -954,7 +954,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
                                          int image_height,
                                          bool bTransMask) const {
   if (m_pProfile->IsSRGB()) {
-    ReverseRGB(pDestBuf, pSrcBuf, pixels);
+    fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
     return;
   }
   if (!m_pProfile->transform()) {
