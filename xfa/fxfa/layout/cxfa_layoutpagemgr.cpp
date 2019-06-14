@@ -243,19 +243,18 @@ Optional<CXFA_ViewLayoutItem*> CheckContentAreaNotUsed(
   return nullptr;
 }
 
-void SyncRemoveLayoutItemChildren(CXFA_LayoutItem* pParentLayoutItem,
-                                  CXFA_FFNotify* pNotify,
-                                  CXFA_LayoutProcessor* pDocLayout) {
-  CXFA_LayoutItem* pNextLayoutItem;
-  CXFA_LayoutItem* pCurLayoutItem = pParentLayoutItem->GetFirstChild();
+void SyncRemoveLayoutItem(CXFA_LayoutItem* pLayoutItem,
+                          CXFA_FFNotify* pNotify,
+                          CXFA_LayoutProcessor* pDocLayout) {
+  CXFA_LayoutItem* pCurLayoutItem = pLayoutItem->GetFirstChild();
   while (pCurLayoutItem) {
-    pNextLayoutItem = pCurLayoutItem->GetNextSibling();
-    SyncRemoveLayoutItemChildren(pCurLayoutItem, pNotify, pDocLayout);
-    pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
-    pCurLayoutItem->RemoveSelfIfParented();
-    delete pCurLayoutItem;
+    CXFA_LayoutItem* pNextLayoutItem = pCurLayoutItem->GetNextSibling();
+    SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
     pCurLayoutItem = pNextLayoutItem;
   }
+  pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
+  pLayoutItem->RemoveSelfIfParented();
+  delete pLayoutItem;
 }
 
 bool RunBreakTestScript(CXFA_Script* pTestScript) {
@@ -1610,10 +1609,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItemChildren(
             m_pTemplatePageSetRoot->GetDocument()->GetNotify();
         auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(
             m_pTemplatePageSetRoot->GetDocument());
-        SyncRemoveLayoutItemChildren(pCurLayoutItem, pNotify, pDocLayout);
-        pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
-        pCurLayoutItem->RemoveSelfIfParented();
-        delete pCurLayoutItem;
+        SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
         pCurLayoutItem = pNextLayoutItem;
         continue;
       }
