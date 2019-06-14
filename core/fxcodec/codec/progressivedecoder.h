@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
-#define CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
+#ifndef CORE_FXCODEC_CODEC_PROGRESSIVEDECODER_H_
+#define CORE_FXCODEC_CODEC_PROGRESSIVEDECODER_H_
 
 #include <memory>
 #include <utility>
@@ -39,9 +39,11 @@ class CFX_DIBAttribute;
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
-class CCodec_Dummy {};  // Placeholder to work around C++ syntax issues
+namespace fxcodec {
 
-class CCodec_ProgressiveDecoder :
+class Dummy {};  // Placeholder to work around C++ syntax issues
+
+class ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_BMP
     public BmpModule::Delegate,
 #endif  // PDF_ENABLE_XFA_BMP
@@ -51,7 +53,7 @@ class CCodec_ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_PNG
     public PngModule::Delegate,
 #endif  // PDF_ENABLE_XFA_PNG
-    public CCodec_Dummy {
+    public Dummy {
  public:
   enum FXCodec_Format {
     FXCodec_Invalid = 0,
@@ -65,8 +67,8 @@ class CCodec_ProgressiveDecoder :
     FXCodec_Cmyk = 0x120
   };
 
-  explicit CCodec_ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
-  virtual ~CCodec_ProgressiveDecoder();
+  explicit ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
+  virtual ~ProgressiveDecoder();
 
   FXCODEC_STATUS LoadImageInfo(const RetainPtr<IFX_SeekableReadStream>& pFile,
                                FXCODEC_IMAGE_TYPE imageType,
@@ -299,4 +301,8 @@ class CCodec_ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_BMP
 };
 
-#endif  // CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_
+}  // namespace fxcodec
+
+using ProgressiveDecoder = fxcodec::ProgressiveDecoder;
+
+#endif  // CORE_FXCODEC_CODEC_PROGRESSIVEDECODER_H_

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcodec/codec/ccodec_progressivedecoder.h"
+#include "core/fxcodec/codec/progressivedecoder.h"
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
@@ -15,8 +15,10 @@
 #include "core/fxcodec/codec/gifmodule.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
+namespace fxcodec {
+
 #ifdef PDF_ENABLE_XFA_GIF
-TEST(CCodec_ProgressiveDecoder, BUG_895009) {
+TEST(ProgressiveDecoder, BUG_895009) {
   static constexpr uint8_t kInput[] = {
       0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x62, 0x00, 0x21, 0x1b, 0x27, 0x01,
       0x00, 0x2c, 0x3b, 0x00, 0x00, 0x00, 0x20, 0x00, 0x71, 0x00, 0xf8, 0x20,
@@ -372,7 +374,7 @@ TEST(CCodec_ProgressiveDecoder, BUG_895009) {
   CCodec_ModuleMgr::GetInstance()->SetGifModule(
       pdfium::MakeUnique<GifModule>());
   {
-    std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
+    std::unique_ptr<ProgressiveDecoder> decoder =
         CCodec_ModuleMgr::GetInstance()->CreateProgressiveDecoder();
 
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
@@ -401,3 +403,5 @@ TEST(CCodec_ProgressiveDecoder, BUG_895009) {
   CCodec_ModuleMgr::Destroy();
 }
 #endif  // PDF_ENABLE_XFA_GIF
+
+}  // namespace fxcodec

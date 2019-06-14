@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/ccodec_progressivedecoder.h"
+#include "core/fxcodec/codec/progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -22,7 +22,7 @@ class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
     auto* mgr = CCodec_ModuleMgr::GetInstance();
-    std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
+    std::unique_ptr<ProgressiveDecoder> decoder =
         mgr->CreateProgressiveDecoder();
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
         pdfium::make_span(data, size));
