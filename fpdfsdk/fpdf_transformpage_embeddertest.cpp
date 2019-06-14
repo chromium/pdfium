@@ -393,3 +393,60 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipWithPatterns) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
+  const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
+  const char kShrunkMD5[] = "f4136cc9209207ab60eb8381a3df2e69";
+
+  {
+    ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+    FPDF_PAGE page = LoadPage(0);
+    ASSERT_TRUE(page);
+
+    {
+      // Render the page as is.
+      const int page_width = static_cast<int>(FPDF_GetPageWidth(page));
+      const int page_height = static_cast<int>(FPDF_GetPageHeight(page));
+      EXPECT_EQ(200, page_width);
+      EXPECT_EQ(300, page_height);
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+      CompareBitmap(bitmap.get(), page_width, page_height, kOriginalMD5);
+    }
+
+    {
+      // Render the page after transforming.
+      // Note that the change should affect the rendering, but does not.
+      // It should behaves just like the case below, rather than the case above.
+      // TODO(bug_1328): The checksum below should be |kShrunkMD5|.
+      const FS_MATRIX half_matrix{0.5, 0, 0, 0.5, 0, 0};
+      EXPECT_TRUE(FPDFPage_TransFormWithClip(page, &half_matrix, nullptr));
+      const int page_width = static_cast<int>(FPDF_GetPageWidth(page));
+      const int page_height = static_cast<int>(FPDF_GetPageHeight(page));
+      EXPECT_EQ(200, page_width);
+      EXPECT_EQ(300, page_height);
+      ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+      CompareBitmap(bitmap.get(), page_width, page_height, kOriginalMD5);
+    }
+
+    UnloadPage(page);
+  }
+
+  {
+    // Save a copy, open the copy, and render it.
+    // Note that it renders the transform.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    const int page_width = static_cast<int>(FPDF_GetPageWidth(saved_page));
+    const int page_height = static_cast<int>(FPDF_GetPageHeight(saved_page));
+    EXPECT_EQ(200, page_width);
+    EXPECT_EQ(300, page_height);
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height, kShrunkMD5);
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+}
