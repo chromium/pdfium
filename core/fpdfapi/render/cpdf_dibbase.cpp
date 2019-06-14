@@ -544,7 +544,7 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
       case PDFCS_DEVICEGRAY:
       case PDFCS_DEVICERGB:
       case PDFCS_DEVICECMYK: {
-        uint32_t dwMinComps = ComponentsForFamily(m_Family);
+        uint32_t dwMinComps = CPDF_ColorSpace::ComponentsForFamily(m_Family);
         if (m_pColorSpace->CountComponents() < dwMinComps ||
             m_nComponents < dwMinComps) {
           return false;

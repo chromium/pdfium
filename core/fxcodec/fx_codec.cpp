@@ -75,6 +75,24 @@ CFX_DIBAttribute::~CFX_DIBAttribute() {
 }
 #endif  // PDF_ENABLE_XFA
 
+void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
+  if (pDestBuf == pSrcBuf) {
+    for (int i = 0; i < pixels; i++) {
+      uint8_t temp = pDestBuf[2];
+      pDestBuf[2] = pDestBuf[0];
+      pDestBuf[0] = temp;
+      pDestBuf += 3;
+    }
+  } else {
+    for (int i = 0; i < pixels; i++) {
+      *pDestBuf++ = pSrcBuf[2];
+      *pDestBuf++ = pSrcBuf[1];
+      *pDestBuf++ = pSrcBuf[0];
+      pSrcBuf += 3;
+    }
+  }
+}
+
 FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width) {
   FX_SAFE_UINT32 pitch = bpc;
   pitch *= components;

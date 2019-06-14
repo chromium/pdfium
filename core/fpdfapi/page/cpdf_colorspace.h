@@ -53,6 +53,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       CPDF_Document* pDoc,
       const CPDF_Object* pCSObj,
       std::set<const CPDF_Object*>* pVisited);
+  static uint32_t ComponentsForFamily(int family);
 
   size_t GetBufSize() const;
   float* CreateBuf() const;

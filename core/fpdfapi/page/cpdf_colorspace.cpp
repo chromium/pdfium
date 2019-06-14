@@ -525,6 +525,16 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   return pCS;
 }
 
+// static
+uint32_t CPDF_ColorSpace::ComponentsForFamily(int family) {
+  if (family == PDFCS_DEVICERGB)
+    return 3;
+  if (family == PDFCS_DEVICEGRAY)
+    return 1;
+  ASSERT(family == PDFCS_DEVICECMYK);
+  return 4;
+}
+
 size_t CPDF_ColorSpace::GetBufSize() const {
   if (m_Family == PDFCS_PATTERN)
     return sizeof(PatternValue);
