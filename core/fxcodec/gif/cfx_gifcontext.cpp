@@ -15,6 +15,8 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
+namespace fxcodec {
+
 namespace {
 
 constexpr int32_t kGifInterlaceStep[4] = {8, 8, 4, 2};
@@ -547,3 +549,5 @@ bool CFX_GifContext::ScanForTerminalMarker() {
 
   return true;
 }
+
+}  // namespace fxcodec

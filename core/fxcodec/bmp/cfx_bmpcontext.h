@@ -14,7 +14,7 @@
 
 namespace fxcodec {
 
-class CFX_BmpContext final : public CodecModuleIface::Context {
+class CFX_BmpContext final : public ModuleIface::Context {
  public:
   CFX_BmpContext(BmpModule* pModule, BmpModule::Delegate* pDelegate);
   ~CFX_BmpContext() override;

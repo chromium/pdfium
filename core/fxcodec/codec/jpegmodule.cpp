@@ -36,7 +36,7 @@ extern "C" {
 #endif
 }  // extern "C"
 
-class CJpegContext final : public CodecModuleIface::Context {
+class CJpegContext final : public ModuleIface::Context {
  public:
   CJpegContext();
   ~CJpegContext() override;
@@ -481,7 +481,7 @@ bool JpegModule::LoadInfo(pdfium::span<const uint8_t> src_span,
                       bits_per_components, color_transform);
 }
 
-std::unique_ptr<CodecModuleIface::Context> JpegModule::Start() {
+std::unique_ptr<ModuleIface::Context> JpegModule::Start() {
   // Use ordinary pointer until past the possibility of a longjump.
   auto* pContext = new CJpegContext();
   if (setjmp(pContext->m_JumpMark) == -1) {

@@ -12,11 +12,11 @@
 
 #include "core/fxcodec/codec/codec_module_iface.h"
 
-class CFX_DIBAttribute;
-
 namespace fxcodec {
 
-class BmpModule final : public CodecModuleIface {
+class CFX_DIBAttribute;
+
+class BmpModule final : public ModuleIface {
  public:
   class Delegate {
    public:
@@ -30,7 +30,7 @@ class BmpModule final : public CodecModuleIface {
   BmpModule();
   ~BmpModule() override;
 
-  // CodecModuleIface:
+  // ModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

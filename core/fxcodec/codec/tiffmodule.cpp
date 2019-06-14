@@ -33,7 +33,7 @@ struct TiffDeleter {
 
 }  // namespace
 
-class CTiffContext final : public CodecModuleIface::Context {
+class CTiffContext final : public ModuleIface::Context {
  public:
   CTiffContext() = default;
   ~CTiffContext() override = default;
@@ -488,7 +488,7 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
 
 namespace fxcodec {
 
-std::unique_ptr<CodecModuleIface::Context> TiffModule::CreateDecoder(
+std::unique_ptr<ModuleIface::Context> TiffModule::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = pdfium::MakeUnique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))

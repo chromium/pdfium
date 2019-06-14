@@ -11,16 +11,19 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_CodecMemory;
+
+namespace fxcodec {
+
 class CFX_DIBAttribute;
 
-class CodecModuleIface {
+class ModuleIface {
  public:
   class Context {
    public:
     virtual ~Context() = default;
   };
 
-  virtual ~CodecModuleIface() = default;
+  virtual ~ModuleIface() = default;
 
   // Returns the number of unprocessed bytes remaining in the input buffer.
   virtual FX_FILESIZE GetAvailInput(Context* pContext) const = 0;
@@ -32,5 +35,9 @@ class CodecModuleIface {
                      RetainPtr<CFX_CodecMemory> codec_memory,
                      CFX_DIBAttribute* pAttribute) = 0;
 };
+
+}  // namespace fxcodec
+
+using fxcodec::ModuleIface;
 
 #endif  // CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_

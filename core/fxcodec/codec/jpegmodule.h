@@ -14,14 +14,14 @@
 #include "core/fxcodec/codec/codec_module_iface.h"
 #include "third_party/base/span.h"
 
-class CFX_DIBAttribute;
 class CFX_DIBBase;
 
 namespace fxcodec {
 
+class CFX_DIBAttribute;
 class ScanlineDecoder;
 
-class JpegModule final : public CodecModuleIface {
+class JpegModule final : public ModuleIface {
  public:
   std::unique_ptr<ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
@@ -30,7 +30,7 @@ class JpegModule final : public CodecModuleIface {
       int nComps,
       bool ColorTransform);
 
-  // CodecModuleIface:
+  // ModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

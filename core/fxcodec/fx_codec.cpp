@@ -19,32 +19,34 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
+namespace fxcodec {
+
 namespace {
 
-CCodec_ModuleMgr* g_CCodecModuleMgr = nullptr;
+ModuleMgr* g_ModuleMgr = nullptr;
 
 }  // namespace
 
 // static
-void CCodec_ModuleMgr::Create() {
-  ASSERT(!g_CCodecModuleMgr);
-  g_CCodecModuleMgr = new CCodec_ModuleMgr();
+void ModuleMgr::Create() {
+  ASSERT(!g_ModuleMgr);
+  g_ModuleMgr = new ModuleMgr();
 }
 
 // static
-void CCodec_ModuleMgr::Destroy() {
-  ASSERT(g_CCodecModuleMgr);
-  delete g_CCodecModuleMgr;
-  g_CCodecModuleMgr = nullptr;
+void ModuleMgr::Destroy() {
+  ASSERT(g_ModuleMgr);
+  delete g_ModuleMgr;
+  g_ModuleMgr = nullptr;
 }
 
 // static
-CCodec_ModuleMgr* CCodec_ModuleMgr::GetInstance() {
-  ASSERT(g_CCodecModuleMgr);
-  return g_CCodecModuleMgr;
+ModuleMgr* ModuleMgr::GetInstance() {
+  ASSERT(g_ModuleMgr);
+  return g_ModuleMgr;
 }
 
-CCodec_ModuleMgr::CCodec_ModuleMgr()
+ModuleMgr::ModuleMgr()
     : m_pJpegModule(pdfium::MakeUnique<JpegModule>()),
       m_pJbig2Module(pdfium::MakeUnique<Jbig2Module>()) {
 #ifdef PDF_ENABLE_XFA_BMP
@@ -64,7 +66,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 #endif
 }
 
-CCodec_ModuleMgr::~CCodec_ModuleMgr() = default;
+ModuleMgr::~ModuleMgr() = default;
 
 #ifdef PDF_ENABLE_XFA
 CFX_DIBAttribute::CFX_DIBAttribute() = default;
@@ -74,8 +76,6 @@ CFX_DIBAttribute::~CFX_DIBAttribute() {
     FX_Free(pair.second);
 }
 #endif  // PDF_ENABLE_XFA
-
-namespace fxcodec {
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
   if (pDestBuf == pSrcBuf) {

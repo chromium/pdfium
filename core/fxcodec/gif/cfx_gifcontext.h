@@ -18,7 +18,9 @@
 
 class CFX_CodecMemory;
 
-class CFX_GifContext : public CodecModuleIface::Context {
+namespace fxcodec {
+
+class CFX_GifContext : public ModuleIface::Context {
  public:
   CFX_GifContext(GifModule* gif_module, GifModule::Delegate* delegate);
   ~CFX_GifContext() override;
@@ -75,5 +77,7 @@ class CFX_GifContext : public CodecModuleIface::Context {
   void DecodingFailureAtTailCleanup(CFX_GifImage* gif_image);
   bool ScanForTerminalMarker();
 };
+
+}  // namespace fxcodec
 
 #endif  // CORE_FXCODEC_GIF_CFX_GIFCONTEXT_H_

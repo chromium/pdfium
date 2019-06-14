@@ -34,12 +34,13 @@
 #include "core/fxcodec/codec/tiffmodule.h"
 #endif  // PDF_ENABLE_XFA_TIFF
 
-class CCodec_ModuleMgr;
-class CFX_DIBAttribute;
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
 namespace fxcodec {
+
+class CFX_DIBAttribute;
+class ModuleMgr;
 
 class Dummy {};  // Placeholder to work around C++ syntax issues
 
@@ -67,7 +68,7 @@ class ProgressiveDecoder :
     FXCodec_Cmyk = 0x120
   };
 
-  explicit ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
+  explicit ProgressiveDecoder(ModuleMgr* pCodecMgr);
   virtual ~ProgressiveDecoder();
 
   FXCODEC_STATUS LoadImageInfo(const RetainPtr<IFX_SeekableReadStream>& pFile,
@@ -184,7 +185,7 @@ class ProgressiveDecoder :
  private:
 #ifdef PDF_ENABLE_XFA_BMP
   bool BmpReadMoreData(BmpModule* pBmpModule,
-                       CodecModuleIface::Context* pBmpContext,
+                       ModuleIface::Context* pBmpContext,
                        FXCODEC_STATUS& err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
@@ -223,8 +224,8 @@ class ProgressiveDecoder :
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
-  bool ReadMoreData(CodecModuleIface* pModule,
-                    CodecModuleIface::Context* pContext,
+  bool ReadMoreData(ModuleIface* pModule,
+                    ModuleIface::Context* pContext,
                     bool invalidate_buffer,
                     FXCODEC_STATUS& err_status);
 
@@ -250,22 +251,22 @@ class ProgressiveDecoder :
   FXCODEC_IMAGE_TYPE m_imageType = FXCODEC_IMAGE_UNKNOWN;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
-  UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
+  UnownedPtr<ModuleMgr> m_pCodecMgr;
   RetainPtr<CFX_CodecMemory> m_pCodecMemory;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDecodeBuf;
   std::unique_ptr<FX_ARGB, FxFreeDeleter> m_pSrcPalette;
-  std::unique_ptr<CodecModuleIface::Context> m_pJpegContext;
+  std::unique_ptr<ModuleIface::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<CodecModuleIface::Context> m_pBmpContext;
+  std::unique_ptr<ModuleIface::Context> m_pBmpContext;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<CodecModuleIface::Context> m_pGifContext;
+  std::unique_ptr<ModuleIface::Context> m_pGifContext;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
-  std::unique_ptr<CodecModuleIface::Context> m_pPngContext;
+  std::unique_ptr<ModuleIface::Context> m_pPngContext;
 #endif  // PDF_ENABLE_XFA_PNG
 #ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<CodecModuleIface::Context> m_pTiffContext;
+  std::unique_ptr<ModuleIface::Context> m_pTiffContext;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t m_offSet = 0;
   int m_ScanlineSize = 0;

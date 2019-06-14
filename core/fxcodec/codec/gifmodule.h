@@ -14,11 +14,11 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
 
-class CFX_DIBAttribute;
-
 namespace fxcodec {
 
-class GifModule final : public CodecModuleIface {
+class CFX_DIBAttribute;
+
+class GifModule final : public ModuleIface {
  public:
   class Delegate {
    public:
@@ -38,7 +38,7 @@ class GifModule final : public CodecModuleIface {
   GifModule();
   ~GifModule() override;
 
-  // CodecModuleIface:
+  // ModuleIface:
   FX_FILESIZE GetAvailInput(Context* context) const override;
   bool Input(Context* context,
              RetainPtr<CFX_CodecMemory> codec_memory,

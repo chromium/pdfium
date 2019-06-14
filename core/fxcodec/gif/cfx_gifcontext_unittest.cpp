@@ -9,6 +9,8 @@
 #include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace fxcodec {
+
 class CFX_GifContextForTest final : public CFX_GifContext {
  public:
   CFX_GifContextForTest(GifModule* gif_module, GifModule::Delegate* delegate)
@@ -301,3 +303,5 @@ TEST(CFX_GifContext, ReadHeader) {
     context.SetTestInputBuffer({});
   }
 }
+
+}  // namespace fxcodec

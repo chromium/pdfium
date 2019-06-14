@@ -253,7 +253,7 @@ void ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len, int src_len) {
   }
 }
 
-ProgressiveDecoder::ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr)
+ProgressiveDecoder::ProgressiveDecoder(ModuleMgr* pCodecMgr)
     : m_pCodecMgr(pCodecMgr) {}
 
 ProgressiveDecoder::~ProgressiveDecoder() = default;
@@ -715,8 +715,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     return false;
   }
 
-  std::unique_ptr<CodecModuleIface::Context> pBmpContext =
-      pBmpModule->Start(this);
+  std::unique_ptr<ModuleIface::Context> pBmpContext = pBmpModule->Start(this);
   pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
   const std::vector<uint32_t>* palette;
@@ -788,7 +787,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 }
 
 bool ProgressiveDecoder::BmpReadMoreData(BmpModule* pBmpModule,
-                                         CodecModuleIface::Context* pContext,
+                                         ModuleIface::Context* pContext,
                                          FXCODEC_STATUS& err_status) {
   return ReadMoreData(pBmpModule, pContext, false, err_status);
 }
@@ -1579,8 +1578,8 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   return false;
 }
 
-bool ProgressiveDecoder::ReadMoreData(CodecModuleIface* pModule,
-                                      CodecModuleIface::Context* pContext,
+bool ProgressiveDecoder::ReadMoreData(ModuleIface* pModule,
+                                      ModuleIface::Context* pContext,
                                       bool invalidate_buffer,
                                       FXCODEC_STATUS& err_status) {
   // Check for EOF.
@@ -2333,9 +2332,8 @@ FXCODEC_STATUS ProgressiveDecoder::ContinueDecode() {
   }
 }
 
-}  // namespace fxcodec
-
-std::unique_ptr<ProgressiveDecoder>
-CCodec_ModuleMgr::CreateProgressiveDecoder() {
+std::unique_ptr<ProgressiveDecoder> ModuleMgr::CreateProgressiveDecoder() {
   return pdfium::MakeUnique<ProgressiveDecoder>(this);
 }
+
+}  // namespace fxcodec

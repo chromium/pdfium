@@ -92,7 +92,7 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
   }
   if (decoder == "DCTDecode") {
     std::unique_ptr<ScanlineDecoder> pDecoder =
-        CCodec_ModuleMgr::GetInstance()->GetJpegModule()->CreateDecoder(
+        fxcodec::ModuleMgr::GetInstance()->GetJpegModule()->CreateDecoder(
             src_span, width, height, 0,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder));

@@ -154,7 +154,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     FXCODEC_IMAGE_TYPE type,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi) {
-  auto* pCodecMgr = CCodec_ModuleMgr::GetInstance();
+  auto* pCodecMgr = fxcodec::ModuleMgr::GetInstance();
   std::unique_ptr<ProgressiveDecoder> pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
 

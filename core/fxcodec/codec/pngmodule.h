@@ -13,7 +13,7 @@
 
 namespace fxcodec {
 
-class PngModule final : public CodecModuleIface {
+class PngModule final : public ModuleIface {
  public:
   class Delegate {
    public:
@@ -34,7 +34,7 @@ class PngModule final : public CodecModuleIface {
   PngModule();
   ~PngModule() override;
 
-  // CodecModuleIface:
+  // ModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

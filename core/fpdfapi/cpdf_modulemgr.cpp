@@ -25,7 +25,7 @@ CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
 void CPDF_ModuleMgr::Create() {
   ASSERT(!g_pDefaultMgr);
   g_pDefaultMgr = new CPDF_ModuleMgr;
-  CCodec_ModuleMgr::Create();
+  fxcodec::ModuleMgr::Create();
   CPDF_PageModule::Create();
   g_pDefaultMgr->LoadEmbeddedMaps();
 }
@@ -34,7 +34,7 @@ void CPDF_ModuleMgr::Create() {
 void CPDF_ModuleMgr::Destroy() {
   ASSERT(g_pDefaultMgr);
   CPDF_PageModule::Destroy();
-  CCodec_ModuleMgr::Destroy();
+  fxcodec::ModuleMgr::Destroy();
   delete g_pDefaultMgr;
   g_pDefaultMgr = nullptr;
 }

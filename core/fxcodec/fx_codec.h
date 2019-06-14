@@ -34,6 +34,8 @@
 #endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
+namespace fxcodec {
+
 #ifdef PDF_ENABLE_XFA
 class CFX_DIBAttribute {
  public:
@@ -47,24 +49,22 @@ class CFX_DIBAttribute {
 };
 #endif  // PDF_ENABLE_XFA
 
-namespace fxcodec {
 class Jbig2Module;
 class JpegModule;
 class ProgressiveDecoder;
-}
 
-class CCodec_ModuleMgr {
+class ModuleMgr {
  public:
   // Per-process singleton managed by callers.
   static void Create();
   static void Destroy();
-  static CCodec_ModuleMgr* GetInstance();
+  static ModuleMgr* GetInstance();
 
-  fxcodec::JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
-  fxcodec::Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
+  JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
+  Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
 
 #ifdef PDF_ENABLE_XFA
-  std::unique_ptr<fxcodec::ProgressiveDecoder> CreateProgressiveDecoder();
+  std::unique_ptr<ProgressiveDecoder> CreateProgressiveDecoder();
 
 #ifdef PDF_ENABLE_XFA_BMP
   BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
@@ -96,11 +96,11 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA
 
  private:
-  CCodec_ModuleMgr();
-  ~CCodec_ModuleMgr();
+  ModuleMgr();
+  ~ModuleMgr();
 
-  std::unique_ptr<fxcodec::JpegModule> m_pJpegModule;
-  std::unique_ptr<fxcodec::Jbig2Module> m_pJbig2Module;
+  std::unique_ptr<JpegModule> m_pJpegModule;
+  std::unique_ptr<Jbig2Module> m_pJbig2Module;
 
 #ifdef PDF_ENABLE_XFA
 #ifdef PDF_ENABLE_XFA_BMP
@@ -121,13 +121,15 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA
 };
 
-namespace fxcodec {
-
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 
 FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width);
 FX_SAFE_UINT32 CalculatePitch32(int bpp, int width);
 
 }  // namespace fxcodec
+
+#ifdef PDF_ENABLE_XFA
+using CFX_DIBAttribute = fxcodec::CFX_DIBAttribute;
+#endif
 
 #endif  // CORE_FXCODEC_FX_CODEC_H_

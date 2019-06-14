@@ -11,18 +11,19 @@
 
 #include "core/fxcodec/codec/codec_module_iface.h"
 
-class CFX_DIBAttribute;
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
 namespace fxcodec {
 
-class TiffModule final : public CodecModuleIface {
+class CFX_DIBAttribute;
+
+class TiffModule final : public ModuleIface {
  public:
   std::unique_ptr<Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
-  // CodecModuleIface:
+  // ModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

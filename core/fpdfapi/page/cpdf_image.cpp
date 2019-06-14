@@ -88,7 +88,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
   int32_t num_comps;
   int32_t bits;
   bool color_trans;
-  if (!CCodec_ModuleMgr::GetInstance()->GetJpegModule()->LoadInfo(
+  if (!fxcodec::ModuleMgr::GetInstance()->GetJpegModule()->LoadInfo(
           src_span, &width, &height, &num_comps, &bits, &color_trans)) {
     return nullptr;
   }

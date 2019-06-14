@@ -24,7 +24,7 @@
 
 #define PNG_ERROR_SIZE 256
 
-class CPngContext final : public CodecModuleIface::Context {
+class CPngContext final : public ModuleIface::Context {
  public:
   explicit CPngContext(PngModule::Delegate* pDelegate);
   ~CPngContext() override;
@@ -189,8 +189,7 @@ PngModule::PngModule() = default;
 
 PngModule::~PngModule() = default;
 
-std::unique_ptr<CodecModuleIface::Context> PngModule::Start(
-    Delegate* pDelegate) {
+std::unique_ptr<ModuleIface::Context> PngModule::Start(Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
   p->m_pPng =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);

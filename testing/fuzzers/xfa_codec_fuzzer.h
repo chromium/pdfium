@@ -21,7 +21,7 @@ const int kXFACodecFuzzerPixelLimit = 64000000;
 class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
-    auto* mgr = CCodec_ModuleMgr::GetInstance();
+    auto* mgr = fxcodec::ModuleMgr::GetInstance();
     std::unique_ptr<ProgressiveDecoder> decoder =
         mgr->CreateProgressiveDecoder();
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(

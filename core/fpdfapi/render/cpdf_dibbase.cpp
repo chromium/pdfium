@@ -282,7 +282,8 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
     return LoadState::kFail;
 
   FXCODEC_STATUS iDecodeStatus;
-  Jbig2Module* pJbig2Module = CCodec_ModuleMgr::GetInstance()->GetJbig2Module();
+  Jbig2Module* pJbig2Module =
+      fxcodec::ModuleMgr::GetInstance()->GetJbig2Module();
   if (!m_pJbig2Context) {
     m_pJbig2Context = pdfium::MakeUnique<Jbig2Context>();
     if (m_pStreamAcc->GetImageParam()) {
@@ -511,7 +512,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
 
 bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                                     const CPDF_Dictionary* pParams) {
-  JpegModule* pJpegModule = CCodec_ModuleMgr::GetInstance()->GetJpegModule();
+  JpegModule* pJpegModule = fxcodec::ModuleMgr::GetInstance()->GetJpegModule();
   m_pDecoder = pJpegModule->CreateDecoder(
       src_span, m_Width, m_Height, m_nComponents,
       !pParams || pParams->GetIntegerFor("ColorTransform", 1));
