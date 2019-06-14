@@ -178,9 +178,9 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
   uint32_t old_code = 0xFFFFFFFF;
   uint8_t last_char = 0;
   while (1) {
-    if (m_InPos + m_CodeLen > *src_size * 8) {
+    if (m_InPos + m_CodeLen > *src_size * 8)
       break;
-    }
+
     int byte_pos = m_InPos / 8;
     int bit_pos = m_InPos % 8, bit_left = m_CodeLen;
     uint32_t code = 0;
@@ -198,8 +198,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       }
     }
     m_InPos += m_CodeLen;
-    if (code == 257)
-      break;
+
     if (code < 256) {
       if (m_OutPos == *dest_size) {
         return -5;
@@ -212,45 +211,45 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       if (old_code != 0xFFFFFFFF)
         AddCode(old_code, last_char);
       old_code = code;
-    } else if (code == 256) {
+      continue;
+    }
+    if (code == 256) {
       m_CodeLen = 9;
       m_nCodes = 0;
       old_code = 0xFFFFFFFF;
-    } else {
-      // Else 257 or greater.
-      if (old_code == 0xFFFFFFFF)
-        return 2;
-
-      m_StackLen = 0;
-      if (code >= m_nCodes + 258) {
-        if (m_StackLen < sizeof(m_DecodeStack)) {
-          m_DecodeStack[m_StackLen++] = last_char;
-        }
-        DecodeString(old_code);
-      } else {
-        DecodeString(code);
-      }
-      if (m_OutPos + m_StackLen > *dest_size) {
-        return -5;
-      }
-      if (m_pOutput) {
-        for (uint32_t i = 0; i < m_StackLen; i++) {
-          m_pOutput[m_OutPos + i] = m_DecodeStack[m_StackLen - i - 1];
-        }
-      }
-      m_OutPos += m_StackLen;
-      last_char = m_DecodeStack[m_StackLen - 1];
-      if (old_code < 256) {
-        AddCode(old_code, last_char);
-      } else if (old_code - 258 >= m_nCodes) {
-        *dest_size = m_OutPos;
-        *src_size = (m_InPos + 7) / 8;
-        return 0;
-      } else {
-        AddCode(old_code, last_char);
-      }
-      old_code = code;
+      continue;
     }
+    if (code == 257)
+      break;
+
+    // Case where |code| is 258 or greater.
+    if (old_code == 0xFFFFFFFF)
+      return 2;
+
+    m_StackLen = 0;
+    if (code - 258 >= m_nCodes) {
+      if (m_StackLen < sizeof(m_DecodeStack)) {
+        m_DecodeStack[m_StackLen++] = last_char;
+      }
+      DecodeString(old_code);
+    } else {
+      DecodeString(code);
+    }
+    if (m_OutPos + m_StackLen > *dest_size)
+      return -5;
+
+    if (m_pOutput) {
+      for (uint32_t i = 0; i < m_StackLen; i++)
+        m_pOutput[m_OutPos + i] = m_DecodeStack[m_StackLen - i - 1];
+    }
+    m_OutPos += m_StackLen;
+    last_char = m_DecodeStack[m_StackLen - 1];
+    // TODO(thestig): What happens if |old_code| is 257?
+    if (old_code >= 256 && old_code - 258 >= m_nCodes)
+      break;
+
+    AddCode(old_code, last_char);
+    old_code = code;
   }
   *dest_size = m_OutPos;
   *src_size = (m_InPos + 7) / 8;
