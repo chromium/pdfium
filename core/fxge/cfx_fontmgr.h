@@ -54,7 +54,6 @@ class CFX_FontMgr {
       int font_offset);
   RetainPtr<CFX_Face> GetFixedFace(pdfium::span<const uint8_t> span,
                                    int face_index);
-  void ReleaseFace(RetainPtr<CFX_Face> face);
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   RetainPtr<CFX_Face> FindSubstFont(const ByteString& face_name,
                                     bool bTrueType,
