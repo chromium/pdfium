@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_BMPMODULE_H_
-#define CORE_FXCODEC_CODEC_BMPMODULE_H_
+#ifndef CORE_FXCODEC_BMP_BMPMODULE_H_
+#define CORE_FXCODEC_BMP_BMPMODULE_H_
 
 #include <memory>
 #include <vector>
@@ -52,4 +52,4 @@ class BmpModule final : public ModuleIface {
 
 using BmpModule = fxcodec::BmpModule;
 
-#endif  // CORE_FXCODEC_CODEC_BMPMODULE_H_
+#endif  // CORE_FXCODEC_BMP_BMPMODULE_H_

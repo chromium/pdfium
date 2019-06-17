@@ -12,7 +12,7 @@
 #include "third_party/base/span.h"
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/gifmodule.h"
+#include "core/fxcodec/gif/gifmodule.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 namespace fxcodec {

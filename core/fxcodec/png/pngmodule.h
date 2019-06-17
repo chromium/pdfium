@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_PNGMODULE_H_
-#define CORE_FXCODEC_CODEC_PNGMODULE_H_
+#ifndef CORE_FXCODEC_PNG_PNGMODULE_H_
+#define CORE_FXCODEC_PNG_PNGMODULE_H_
 
 #include <memory>
 
@@ -47,4 +47,4 @@ class PngModule final : public ModuleIface {
 
 using PngModule = fxcodec::PngModule;
 
-#endif  // CORE_FXCODEC_CODEC_PNGMODULE_H_
+#endif  // CORE_FXCODEC_PNG_PNGMODULE_H_

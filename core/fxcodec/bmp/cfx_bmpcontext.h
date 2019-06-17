@@ -7,9 +7,9 @@
 #ifndef CORE_FXCODEC_BMP_CFX_BMPCONTEXT_H_
 #define CORE_FXCODEC_BMP_CFX_BMPCONTEXT_H_
 
+#include "core/fxcodec/bmp/bmpmodule.h"
 #include "core/fxcodec/bmp/cfx_bmpdecompressor.h"
 #include "core/fxcodec/bmp/fx_bmp.h"
-#include "core/fxcodec/codec/bmpmodule.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 namespace fxcodec {

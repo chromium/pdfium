@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/pngmodule.h"
+#include "core/fxcodec/png/pngmodule.h"
 
 #include <algorithm>
 

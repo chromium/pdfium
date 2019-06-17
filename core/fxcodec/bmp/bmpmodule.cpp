@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/bmpmodule.h"
+#include "core/fxcodec/bmp/bmpmodule.h"
 
 #include <utility>
 

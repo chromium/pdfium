@@ -11,8 +11,8 @@
 
 #include <vector>
 
+#include "core/fxcodec/bmp/bmpmodule.h"
 #include "core/fxcodec/bmp/fx_bmp.h"
-#include "core/fxcodec/codec/bmpmodule.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 

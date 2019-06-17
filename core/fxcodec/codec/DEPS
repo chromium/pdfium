@@ -3,6 +3,4 @@ include_rules = [
   '+third_party/libjpeg/jpeglib.h',
   '+third_party/libjpeg_turbo/jerror.h',
   '+third_party/libjpeg_turbo/jpeglib.h',
-  '+third_party/libpng16/png.h',
-  '+third_party/libtiff/tiffiop.h',
 ]

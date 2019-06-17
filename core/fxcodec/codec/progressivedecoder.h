@@ -19,19 +19,19 @@
 #include "core/fxge/fx_dib.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/codec/bmpmodule.h"
+#include "core/fxcodec/bmp/bmpmodule.h"
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/codec/gifmodule.h"
+#include "core/fxcodec/gif/gifmodule.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-#include "core/fxcodec/codec/pngmodule.h"
+#include "core/fxcodec/png/pngmodule.h"
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/codec/tiffmodule.h"
+#include "core/fxcodec/tiff/tiffmodule.h"
 #endif  // PDF_ENABLE_XFA_TIFF
 
 class CFX_DIBitmap;

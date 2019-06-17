@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/gifmodule.h"
+#include "core/fxcodec/gif/gifmodule.h"
 
 #include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/codec/codec_int.h"

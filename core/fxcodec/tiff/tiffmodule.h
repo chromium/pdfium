@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_TIFFMODULE_H_
-#define CORE_FXCODEC_CODEC_TIFFMODULE_H_
+#ifndef CORE_FXCODEC_TIFF_TIFFMODULE_H_
+#define CORE_FXCODEC_TIFF_TIFFMODULE_H_
 
 #include <memory>
 
@@ -43,4 +43,4 @@ class TiffModule final : public ModuleIface {
 
 using TiffModule = fxcodec::TiffModule;
 
-#endif  // CORE_FXCODEC_CODEC_TIFFMODULE_H_
+#endif  // CORE_FXCODEC_TIFF_TIFFMODULE_H_

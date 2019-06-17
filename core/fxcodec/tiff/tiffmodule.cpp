@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/tiffmodule.h"
+#include "core/fxcodec/tiff/tiffmodule.h"
 
 #include <limits>
 #include <memory>
