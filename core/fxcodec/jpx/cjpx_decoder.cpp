@@ -8,20 +8,19 @@
 
 #include <algorithm>
 #include <limits>
-#include <memory>
-#include <type_traits>
 #include <utility>
-#include <vector>
 
+#include "core/fxcodec/jpx/jpx_decode_utils.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-#ifndef USE_SYSTEM_LIBOPENJPEG2
-#include "third_party/libopenjpeg20/openjpeg.h"
+#if !defined(USE_SYSTEM_LIBOPENJPEG2)
 #include "third_party/libopenjpeg20/opj_malloc.h"
 #endif
+
+namespace fxcodec {
 
 namespace {
 
@@ -144,182 +143,8 @@ bool sycc420_size_is_valid(opj_image_t* img) {
          (img->comps[0].h + 1) / 2 == img->comps[1].h;
 }
 
-bool sycc422_size_is_valid(opj_image_t* img) {
-  return sycc420_422_size_is_valid(img) && img->comps[0].h == img->comps[1].h;
-}
-
-void sycc422_to_rgb(opj_image_t* img) {
-  if (!sycc422_size_is_valid(img))
-    return;
-
-  int prec = img->comps[0].prec;
-  if (prec <= 0 || prec >= 32)
-    return;
-
-  int offset = 1 << (prec - 1);
-  int upb = (1 << prec) - 1;
-  OPJ_UINT32 maxw = img->comps[0].w;
-  OPJ_UINT32 maxh = img->comps[0].h;
-  FX_SAFE_SIZE_T max_size = maxw;
-  max_size *= maxh;
-  max_size *= sizeof(int);
-  if (!max_size.IsValid())
-    return;
-
-  const int* y = img->comps[0].data;
-  const int* cb = img->comps[1].data;
-  const int* cr = img->comps[2].data;
-  if (!y || !cb || !cr)
-    return;
-
-  Optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
-  if (!data.has_value())
-    return;
-
-  int* r = data.value().r.get();
-  int* g = data.value().g.get();
-  int* b = data.value().b.get();
-  for (uint32_t i = 0; i < maxh; ++i) {
-    OPJ_UINT32 j;
-    for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
-      sycc_to_rgb(offset, upb, *y++, *cb, *cr, r++, g++, b++);
-      sycc_to_rgb(offset, upb, *y++, *cb++, *cr++, r++, g++, b++);
-    }
-    if (j < maxw) {
-      sycc_to_rgb(offset, upb, *y++, *cb++, *cr++, r++, g++, b++);
-    }
-  }
-
-  opj_image_data_free(img->comps[0].data);
-  opj_image_data_free(img->comps[1].data);
-  opj_image_data_free(img->comps[2].data);
-  img->comps[0].data = data.value().r.release();
-  img->comps[1].data = data.value().g.release();
-  img->comps[2].data = data.value().b.release();
-  img->comps[1].w = maxw;
-  img->comps[1].h = maxh;
-  img->comps[2].w = maxw;
-  img->comps[2].h = maxh;
-  img->comps[1].dx = img->comps[0].dx;
-  img->comps[2].dx = img->comps[0].dx;
-  img->comps[1].dy = img->comps[0].dy;
-  img->comps[2].dy = img->comps[0].dy;
-}
-
 bool sycc420_must_extend_cbcr(OPJ_UINT32 y, OPJ_UINT32 cbcr) {
   return (y & 1) && (cbcr == y / 2);
-}
-
-bool is_sycc420(const opj_image_t* img) {
-  return img->comps[0].dx == 1 && img->comps[0].dy == 1 &&
-         img->comps[1].dx == 2 && img->comps[1].dy == 2 &&
-         img->comps[2].dx == 2 && img->comps[2].dy == 2;
-}
-
-bool is_sycc422(const opj_image_t* img) {
-  return img->comps[0].dx == 1 && img->comps[0].dy == 1 &&
-         img->comps[1].dx == 2 && img->comps[1].dy == 1 &&
-         img->comps[2].dx == 2 && img->comps[2].dy == 1;
-}
-
-bool is_sycc444(const opj_image_t* img) {
-  return img->comps[0].dx == 1 && img->comps[0].dy == 1 &&
-         img->comps[1].dx == 1 && img->comps[1].dy == 1 &&
-         img->comps[2].dx == 1 && img->comps[2].dy == 1;
-}
-
-void color_sycc_to_rgb(opj_image_t* img) {
-  if (img->numcomps < 3) {
-    img->color_space = OPJ_CLRSPC_GRAY;
-    return;
-  }
-  if (is_sycc420(img))
-    sycc420_to_rgb(img);
-  else if (is_sycc422(img))
-    sycc422_to_rgb(img);
-  else if (is_sycc444(img))
-    sycc444_to_rgb(img);
-  else
-    return;
-
-  img->color_space = OPJ_CLRSPC_SRGB;
-}
-
-}  // namespace
-
-OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
-                                OPJ_SIZE_T nb_bytes,
-                                void* p_user_data) {
-  DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0)
-    return static_cast<OPJ_SIZE_T>(-1);
-
-  // Reads at EOF return an error code.
-  if (srcData->offset >= srcData->src_size)
-    return static_cast<OPJ_SIZE_T>(-1);
-
-  OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
-  OPJ_SIZE_T readlength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
-  memcpy(p_buffer, &srcData->src_data[srcData->offset], readlength);
-  srcData->offset += readlength;
-  return readlength;
-}
-
-OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
-  DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0)
-    return static_cast<OPJ_OFF_T>(-1);
-
-  // Offsets are signed and may indicate a negative skip. Do not support this
-  // because of the strange return convention where either bytes skipped or
-  // -1 is returned. Following that convention, a successful relative seek of
-  // -1 bytes would be required to to give the same result as the error case.
-  if (nb_bytes < 0)
-    return static_cast<OPJ_OFF_T>(-1);
-
-  auto unsigned_nb_bytes =
-      static_cast<std::make_unsigned<OPJ_OFF_T>::type>(nb_bytes);
-  // Additionally, the offset may take us beyond the range of a size_t (e.g.
-  // 32-bit platforms). If so, just clamp at EOF.
-  if (unsigned_nb_bytes >
-      std::numeric_limits<OPJ_SIZE_T>::max() - srcData->offset) {
-    srcData->offset = srcData->src_size;
-  } else {
-    OPJ_SIZE_T checked_nb_bytes = static_cast<OPJ_SIZE_T>(unsigned_nb_bytes);
-    // Otherwise, mimic fseek() semantics to always succeed, even past EOF,
-    // clamping at EOF.  We can get away with this since we don't actually
-    // provide negative relative skips from beyond EOF back to inside the
-    // data, which would be the only reason to need to know exactly how far
-    // beyond EOF we are.
-    srcData->offset =
-        std::min(srcData->offset + checked_nb_bytes, srcData->src_size);
-  }
-  return nb_bytes;
-}
-
-OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
-  DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0)
-    return OPJ_FALSE;
-
-  // Offsets are signed and may indicate a negative position, which would
-  // be before the start of the file. Do not support this.
-  if (nb_bytes < 0)
-    return OPJ_FALSE;
-
-  auto unsigned_nb_bytes =
-      static_cast<std::make_unsigned<OPJ_OFF_T>::type>(nb_bytes);
-  // Additionally, the offset may take us beyond the range of a size_t (e.g.
-  // 32-bit platforms). If so, just clamp at EOF.
-  if (unsigned_nb_bytes > std::numeric_limits<OPJ_SIZE_T>::max()) {
-    srcData->offset = srcData->src_size;
-  } else {
-    OPJ_SIZE_T checked_nb_bytes = static_cast<OPJ_SIZE_T>(nb_bytes);
-    // Otherwise, mimic fseek() semantics to always succeed, even past EOF,
-    // again clamping at EOF.
-    srcData->offset = std::min(checked_nb_bytes, srcData->src_size);
-  }
-  return OPJ_TRUE;
 }
 
 void sycc420_to_rgb(opj_image_t* img) {
@@ -460,6 +285,110 @@ void sycc420_to_rgb(opj_image_t* img) {
   img->comps[2].dy = img->comps[0].dy;
 }
 
+bool sycc422_size_is_valid(opj_image_t* img) {
+  return sycc420_422_size_is_valid(img) && img->comps[0].h == img->comps[1].h;
+}
+
+void sycc422_to_rgb(opj_image_t* img) {
+  if (!sycc422_size_is_valid(img))
+    return;
+
+  int prec = img->comps[0].prec;
+  if (prec <= 0 || prec >= 32)
+    return;
+
+  int offset = 1 << (prec - 1);
+  int upb = (1 << prec) - 1;
+  OPJ_UINT32 maxw = img->comps[0].w;
+  OPJ_UINT32 maxh = img->comps[0].h;
+  FX_SAFE_SIZE_T max_size = maxw;
+  max_size *= maxh;
+  max_size *= sizeof(int);
+  if (!max_size.IsValid())
+    return;
+
+  const int* y = img->comps[0].data;
+  const int* cb = img->comps[1].data;
+  const int* cr = img->comps[2].data;
+  if (!y || !cb || !cr)
+    return;
+
+  Optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  if (!data.has_value())
+    return;
+
+  int* r = data.value().r.get();
+  int* g = data.value().g.get();
+  int* b = data.value().b.get();
+  for (uint32_t i = 0; i < maxh; ++i) {
+    OPJ_UINT32 j;
+    for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
+      sycc_to_rgb(offset, upb, *y++, *cb, *cr, r++, g++, b++);
+      sycc_to_rgb(offset, upb, *y++, *cb++, *cr++, r++, g++, b++);
+    }
+    if (j < maxw) {
+      sycc_to_rgb(offset, upb, *y++, *cb++, *cr++, r++, g++, b++);
+    }
+  }
+
+  opj_image_data_free(img->comps[0].data);
+  opj_image_data_free(img->comps[1].data);
+  opj_image_data_free(img->comps[2].data);
+  img->comps[0].data = data.value().r.release();
+  img->comps[1].data = data.value().g.release();
+  img->comps[2].data = data.value().b.release();
+  img->comps[1].w = maxw;
+  img->comps[1].h = maxh;
+  img->comps[2].w = maxw;
+  img->comps[2].h = maxh;
+  img->comps[1].dx = img->comps[0].dx;
+  img->comps[2].dx = img->comps[0].dx;
+  img->comps[1].dy = img->comps[0].dy;
+  img->comps[2].dy = img->comps[0].dy;
+}
+
+bool is_sycc420(const opj_image_t* img) {
+  return img->comps[0].dx == 1 && img->comps[0].dy == 1 &&
+         img->comps[1].dx == 2 && img->comps[1].dy == 2 &&
+         img->comps[2].dx == 2 && img->comps[2].dy == 2;
+}
+
+bool is_sycc422(const opj_image_t* img) {
+  return img->comps[0].dx == 1 && img->comps[0].dy == 1 &&
+         img->comps[1].dx == 2 && img->comps[1].dy == 1 &&
+         img->comps[2].dx == 2 && img->comps[2].dy == 1;
+}
+
+bool is_sycc444(const opj_image_t* img) {
+  return img->comps[0].dx == 1 && img->comps[0].dy == 1 &&
+         img->comps[1].dx == 1 && img->comps[1].dy == 1 &&
+         img->comps[2].dx == 1 && img->comps[2].dy == 1;
+}
+
+void color_sycc_to_rgb(opj_image_t* img) {
+  if (img->numcomps < 3) {
+    img->color_space = OPJ_CLRSPC_GRAY;
+    return;
+  }
+  if (is_sycc420(img))
+    sycc420_to_rgb(img);
+  else if (is_sycc422(img))
+    sycc422_to_rgb(img);
+  else if (is_sycc444(img))
+    sycc444_to_rgb(img);
+  else
+    return;
+
+  img->color_space = OPJ_CLRSPC_SRGB;
+}
+
+}  // namespace
+
+// static
+void CJPX_Decoder::Sycc420ToRgbForTesting(opj_image_t* img) {
+  sycc420_to_rgb(img);
+}
+
 CJPX_Decoder::CJPX_Decoder(ColorSpaceOption option)
     : m_ColorSpaceOption(option) {}
 
@@ -512,7 +441,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
     return false;
 
   m_Image = pTempImage;
-#ifndef USE_SYSTEM_LIBOPENJPEG2
+#if !defined(USE_SYSTEM_LIBOPENJPEG2)
   m_Image->pdfium_use_colorspace = (m_ColorSpaceOption != kNoColorSpace);
 #endif
   return true;
@@ -551,7 +480,7 @@ bool CJPX_Decoder::StartDecode() {
     // TODO(palmer): Using |opj_free| here resolves the crash described in
     // https://crbug.com/737033, but ultimately we need to harmonize the
     // memory allocation strategy across OpenJPEG and its PDFium callers.
-#ifndef USE_SYSTEM_LIBOPENJPEG2
+#if !defined(USE_SYSTEM_LIBOPENJPEG2)
     opj_free(m_Image->icc_profile_buf);
 #else
     free(m_Image->icc_profile_buf);
@@ -643,3 +572,5 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
   }
   return true;
 }
+
+}  // namespace fxcodec

@@ -11,7 +11,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/jbig2/jbig2module.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/fx_extension.h"

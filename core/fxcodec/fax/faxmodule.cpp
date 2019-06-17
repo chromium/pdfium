@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/codec/scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_binarybuf.h"

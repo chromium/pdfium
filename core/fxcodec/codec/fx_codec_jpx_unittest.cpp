@@ -6,9 +6,13 @@
 
 #include <limits>
 
-#include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/jpx/cjpx_decoder.h"
+#include "core/fxcodec/jpx/jpx_decode_utils.h"
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/libopenjpeg20/opj_malloc.h"
+
+namespace fxcodec {
 
 static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
 static const OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);
@@ -425,7 +429,7 @@ TEST(fxcodec, YUV420ToRGB) {
     img.comps[0] = y;
     img.comps[1] = u;
     img.comps[2] = v;
-    sycc420_to_rgb(&img);
+    CJPX_Decoder::Sycc420ToRgbForTesting(&img);
     if (testcase.expected) {
       EXPECT_EQ(img.comps[0].w, img.comps[1].w);
       EXPECT_EQ(img.comps[0].h, img.comps[1].h);
@@ -443,3 +447,5 @@ TEST(fxcodec, YUV420ToRGB) {
   }
   FX_Free(img.comps);
 }
+
+}  // namespace fxcodec

@@ -7,7 +7,6 @@
 #include "core/fxcodec/gif/gifmodule.h"
 
 #include "core/fxcodec/codec/cfx_codec_memory.h"
-#include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/gif/cfx_gifcontext.h"

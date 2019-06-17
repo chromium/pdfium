@@ -12,7 +12,6 @@ jumbo_source_set("fxcodec") {
     "basic/basicmodule.h",
     "codec/cfx_codec_memory.cpp",
     "codec/cfx_codec_memory.h",
-    "codec/codec_int.h",
     "codec/codec_module_iface.h",
     "codec/scanlinedecoder.cpp",
     "codec/scanlinedecoder.h",
@@ -67,6 +66,8 @@ jumbo_source_set("fxcodec") {
     "jpeg/jpegmodule.h",
     "jpx/cjpx_decoder.cpp",
     "jpx/cjpx_decoder.h",
+    "jpx/jpx_decode_utils.cpp",
+    "jpx/jpx_decode_utils.h",
     "jpx/jpxmodule.cpp",
     "jpx/jpxmodule.h",
   ]

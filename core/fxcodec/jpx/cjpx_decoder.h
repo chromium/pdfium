@@ -10,15 +10,18 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-#ifdef USE_SYSTEM_LIBOPENJPEG2
+#if defined(USE_SYSTEM_LIBOPENJPEG2)
 #include <openjpeg.h>
 #else
 #include "third_party/libopenjpeg20/openjpeg.h"
 #endif
+
+namespace fxcodec {
+
+struct DecodeData;
 
 class CJPX_Decoder {
  public:
@@ -27,6 +30,8 @@ class CJPX_Decoder {
     kNormalColorSpace,
     kIndexedColorSpace
   };
+
+  static void Sycc420ToRgbForTesting(opj_image_t* img);
 
   explicit CJPX_Decoder(ColorSpaceOption option);
   ~CJPX_Decoder();
@@ -47,5 +52,9 @@ class CJPX_Decoder {
   UnownedPtr<opj_stream_t> m_Stream;
   opj_dparameters_t m_Parameters;
 };
+
+}  // namespace fxcodec
+
+using fxcodec::CJPX_Decoder;
 
 #endif  // CORE_FXCODEC_JPX_CJPX_DECODER_H_
