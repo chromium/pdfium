@@ -29,8 +29,6 @@ class CFX_FontMgr {
   CFX_FontMgr();
   ~CFX_FontMgr();
 
-  void InitFTLibrary();
-
   RetainPtr<CFX_Face> GetCachedFace(const ByteString& face_name,
                                     int weight,
                                     bool bItalic,
@@ -73,11 +71,10 @@ class CFX_FontMgr {
   bool SetLcdFilterMode() const;
 
   // Must come before |m_pBuiltinMapper| and |m_FaceMap|.
-  ScopedFXFTLibraryRec m_FTLibrary;
-
+  ScopedFXFTLibraryRec const m_FTLibrary;
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
-  bool m_FTLibrarySupportsHinting = false;
+  const bool m_FTLibrarySupportsHinting;
 };
 
 #endif  // CORE_FXGE_CFX_FONTMGR_H_

@@ -306,8 +306,6 @@ bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
   m_bEmbedded = false;
 
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  pFontMgr->InitFTLibrary();
-
   std::unique_ptr<FXFT_StreamRec> stream;
   m_Face = LoadFileImp(pFontMgr->GetFTLibrary(), pFile, nFaceIndex, &stream);
   if (!m_Face)

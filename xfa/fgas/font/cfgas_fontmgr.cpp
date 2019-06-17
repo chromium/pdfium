@@ -487,8 +487,6 @@ RetainPtr<CFX_Face> LoadFace(
     return nullptr;
 
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  pFontMgr->InitFTLibrary();
-
   FXFT_LibraryRec* library = pFontMgr->GetFTLibrary();
   if (!library)
     return nullptr;
@@ -653,7 +651,6 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
 }
 
 bool CFGAS_FontMgr::EnumFontsFromFiles() {
-  CFX_GEModule::Get()->GetFontMgr()->InitFTLibrary();
   m_pFontSource->GetNext();
   while (m_pFontSource->HasNext()) {
     RetainPtr<IFX_SeekableStream> stream = m_pFontSource->GetStream();

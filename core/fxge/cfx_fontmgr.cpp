@@ -74,23 +74,21 @@ int GetTTCIndex(const uint8_t* pFontData,
   return index < nfont ? index : 0;
 }
 
+FXFT_LibraryRec* FTLibraryInitHelper() {
+  FXFT_LibraryRec* pLibrary = nullptr;
+  FT_Init_FreeType(&pLibrary);
+  return pLibrary;
+}
+
 }  // namespace
 
 CFX_FontMgr::CFX_FontMgr()
-    : m_pBuiltinMapper(pdfium::MakeUnique<CFX_FontMapper>(this)) {}
+    : m_FTLibrary(FTLibraryInitHelper()),
+      m_pBuiltinMapper(pdfium::MakeUnique<CFX_FontMapper>(this)),
+      m_FTLibrarySupportsHinting(SetLcdFilterMode() ||
+                                 FreeTypeVersionSupportsHinting()) {}
 
 CFX_FontMgr::~CFX_FontMgr() = default;
-
-void CFX_FontMgr::InitFTLibrary() {
-  if (m_FTLibrary)
-    return;
-
-  FXFT_LibraryRec* pLibrary = nullptr;
-  FT_Init_FreeType(&pLibrary);
-  m_FTLibrary.reset(pLibrary);
-  m_FTLibrarySupportsHinting =
-      SetLcdFilterMode() || FreeTypeVersionSupportsHinting();
-}
 
 void CFX_FontMgr::SetSystemFontInfo(
     std::unique_ptr<SystemFontInfoIface> pFontInfo) {
@@ -104,7 +102,6 @@ RetainPtr<CFX_Face> CFX_FontMgr::FindSubstFont(const ByteString& face_name,
                                                int italic_angle,
                                                int CharsetCP,
                                                CFX_SubstFont* pSubstFont) {
-  InitFTLibrary();
   return m_pBuiltinMapper->FindSubstFont(face_name, bTrueType, flags, weight,
                                          italic_angle, CharsetCP, pSubstFont);
 }
@@ -129,8 +126,6 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedFace(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     uint32_t size,
     int face_index) {
-  InitFTLibrary();
-
   RetainPtr<CFX_Face> face =
       CFX_Face::New(m_FTLibrary.get(), {pData.get(), size}, face_index);
   if (!face)
@@ -186,7 +181,6 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedTTCFace(
 
 RetainPtr<CFX_Face> CFX_FontMgr::GetFixedFace(pdfium::span<const uint8_t> span,
                                               int face_index) {
-  InitFTLibrary();
   RetainPtr<CFX_Face> face = CFX_Face::New(m_FTLibrary.get(), span, face_index);
   if (!face)
     return nullptr;
