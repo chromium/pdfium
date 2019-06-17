@@ -12,8 +12,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/codec/progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/progressivedecoder.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"

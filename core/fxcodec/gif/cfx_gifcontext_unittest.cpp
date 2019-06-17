@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "core/fxcodec/codec/cfx_codec_memory.h"
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace fxcodec {

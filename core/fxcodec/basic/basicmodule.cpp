@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "core/fxcodec/codec/scanlinedecoder.h"
+#include "core/fxcodec/scanlinedecoder.h"
 #include "third_party/base/ptr_util.h"
 
 namespace fxcodec {

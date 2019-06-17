@@ -10,11 +10,9 @@ jumbo_source_set("fxcodec") {
   sources = [
     "basic/basicmodule.cpp",
     "basic/basicmodule.h",
-    "codec/cfx_codec_memory.cpp",
-    "codec/cfx_codec_memory.h",
-    "codec/codec_module_iface.h",
-    "codec/scanlinedecoder.cpp",
-    "codec/scanlinedecoder.h",
+    "cfx_codec_memory.cpp",
+    "cfx_codec_memory.h",
+    "codec_module_iface.h",
     "fax/faxmodule.cpp",
     "fax/faxmodule.h",
     "flate/flatemodule.cpp",
@@ -70,6 +68,8 @@ jumbo_source_set("fxcodec") {
     "jpx/jpx_decode_utils.h",
     "jpx/jpxmodule.cpp",
     "jpx/jpxmodule.h",
+    "scanlinedecoder.cpp",
+    "scanlinedecoder.h",
   ]
   configs += [ "../../:pdfium_core_config" ]
   include_dirs = []
@@ -84,8 +84,8 @@ jumbo_source_set("fxcodec") {
 
   if (pdf_enable_xfa) {
     sources += [
-      "codec/progressivedecoder.cpp",
-      "codec/progressivedecoder.h",
+      "progressivedecoder.cpp",
+      "progressivedecoder.h",
     ]
     if (pdf_enable_xfa_bmp) {
       sources += [
@@ -144,7 +144,7 @@ pdfium_unittest_source_set("unittests") {
   pdfium_root_dir = "../../"
 
   if (pdf_enable_xfa) {
-    sources += [ "codec/progressivedecoder_unittest.cpp" ]
+    sources += [ "progressivedecoder_unittest.cpp" ]
     deps += [ "../fxge" ]
     if (pdf_enable_xfa_gif) {
       sources += [

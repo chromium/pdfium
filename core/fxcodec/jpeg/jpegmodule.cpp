@@ -12,9 +12,9 @@
 #include <utility>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec/cfx_codec_memory.h"
-#include "core/fxcodec/codec/scanlinedecoder.h"
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"

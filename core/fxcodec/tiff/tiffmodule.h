@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/codec_module_iface.h"
+#include "core/fxcodec/codec_module_iface.h"
 
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;

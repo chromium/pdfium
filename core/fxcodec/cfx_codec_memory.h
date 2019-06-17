@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FXCODEC_CODEC_CFX_CODEC_MEMORY_H_
-#define CORE_FXCODEC_CODEC_CFX_CODEC_MEMORY_H_
+#ifndef CORE_FXCODEC_CFX_CODEC_MEMORY_H_
+#define CORE_FXCODEC_CFX_CODEC_MEMORY_H_
 
 #include <memory>
 
@@ -41,4 +41,4 @@ class CFX_CodecMemory final : public Retainable {
   size_t pos_ = 0;
 };
 
-#endif  // CORE_FXCODEC_CODEC_CFX_CODEC_MEMORY_H_
+#endif  // CORE_FXCODEC_CFX_CODEC_MEMORY_H_

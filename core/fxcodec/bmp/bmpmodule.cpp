@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
-#include "core/fxcodec/codec/cfx_codec_memory.h"
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"

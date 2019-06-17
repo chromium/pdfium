@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/scanlinedecoder.h"
+#include "core/fxcodec/scanlinedecoder.h"
 
 #include "core/fxcrt/pauseindicator_iface.h"
 

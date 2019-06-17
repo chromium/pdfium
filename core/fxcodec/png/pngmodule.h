@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/codec_module_iface.h"
+#include "core/fxcodec/codec_module_iface.h"
 
 namespace fxcodec {
 

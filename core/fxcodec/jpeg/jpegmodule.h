@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec/codec_module_iface.h"
+#include "core/fxcodec/codec_module_iface.h"
 #include "third_party/base/span.h"
 
 class CFX_DIBBase;

@@ -7,8 +7,8 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/progressivedecoder.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/ptr_util.h"

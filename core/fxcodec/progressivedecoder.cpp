@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/progressivedecoder.h"
+#include "core/fxcodec/progressivedecoder.h"
 
 #include <algorithm>
 #include <memory>
@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec/cfx_codec_memory.h"
+#include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"

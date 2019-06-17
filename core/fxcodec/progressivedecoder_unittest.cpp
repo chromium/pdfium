@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcodec/codec/progressivedecoder.h"
+#include "core/fxcodec/progressivedecoder.h"
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"

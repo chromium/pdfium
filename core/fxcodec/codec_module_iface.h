@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
-#define CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
+#ifndef CORE_FXCODEC_CODEC_MODULE_IFACE_H_
+#define CORE_FXCODEC_CODEC_MODULE_IFACE_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -40,4 +40,4 @@ class ModuleIface {
 
 using fxcodec::ModuleIface;
 
-#endif  // CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
+#endif  // CORE_FXCODEC_CODEC_MODULE_IFACE_H_

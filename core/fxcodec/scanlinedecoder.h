@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_SCANLINEDECODER_H_
-#define CORE_FXCODEC_CODEC_SCANLINEDECODER_H_
+#ifndef CORE_FXCODEC_SCANLINEDECODER_H_
+#define CORE_FXCODEC_SCANLINEDECODER_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -56,4 +56,4 @@ class ScanlineDecoder {
 
 using ScanlineDecoder = fxcodec::ScanlineDecoder;
 
-#endif  // CORE_FXCODEC_CODEC_SCANLINEDECODER_H_
+#endif  // CORE_FXCODEC_SCANLINEDECODER_H_

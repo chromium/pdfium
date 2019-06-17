@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/codec_module_iface.h"
+#include "core/fxcodec/codec_module_iface.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
 
