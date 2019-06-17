@@ -131,11 +131,11 @@ jumbo_source_set("fxcodec") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
-    "codec/fx_codec_a85_unittest.cpp",
-    "codec/fx_codec_jpx_unittest.cpp",
-    "codec/fx_codec_rle_unittest.cpp",
+    "basic/a85_unittest.cpp",
+    "basic/rle_unittest.cpp",
     "jbig2/JBig2_BitStream_unittest.cpp",
     "jbig2/JBig2_Image_unittest.cpp",
+    "jpx/jpx_unittest.cpp",
   ]
   deps = [
     ":fxcodec",
@@ -157,7 +157,7 @@ pdfium_unittest_source_set("unittests") {
 
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [
-    "codec/fx_codec_embeddertest.cpp",
+    "jbig2/jbig2_embeddertest.cpp",
   ]
   pdfium_root_dir = "../../"
 }
