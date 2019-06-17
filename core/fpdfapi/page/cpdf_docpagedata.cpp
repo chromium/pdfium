@@ -609,7 +609,7 @@ CPDF_Font* CPDF_DocPageData::AddStandardFont(
     const char* font,
     const CPDF_FontEncoding* pEncoding) {
   ByteString name(font);
-  if (CFX_FontMapper::GetStandardFontName(&name) < 0)
+  if (!CFX_FontMapper::GetStandardFontName(&name))
     return nullptr;
   return GetStandardFont(name, pEncoding);
 }

@@ -91,18 +91,20 @@ bool CPDF_Type1Font::Load() {
     return LoadCommon();
 
   const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
-  if (pFontDesc && pFontDesc->KeyExist("Flags"))
+  if (pFontDesc && pFontDesc->KeyExist("Flags")) {
     m_Flags = pFontDesc->GetIntegerFor("Flags");
-  else
-    m_Flags = m_Base14Font >= 12 ? FXFONT_SYMBOLIC : FXFONT_NONSYMBOLIC;
-
-  if (m_Base14Font < 4) {
+  } else if (IsSymbolicFont()) {
+    m_Flags = FXFONT_SYMBOLIC;
+  } else {
+    m_Flags = FXFONT_NONSYMBOLIC;
+  }
+  if (IsFixedFont()) {
     for (int i = 0; i < 256; i++)
       m_CharWidth[i] = 600;
   }
-  if (m_Base14Font == 12)
+  if (m_Base14Font == CFX_FontMapper::kSymbol)
     m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
-  else if (m_Base14Font == 13)
+  else if (m_Base14Font == CFX_FontMapper::kDingbats)
     m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
   else if (FontStyleIsNonSymbolic(m_Flags))
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
@@ -138,7 +140,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       bCoreText = false;
   }
 #endif
-  if (!IsEmbedded() && (m_Base14Font < 12) && m_Font.IsTTFont()) {
+  if (!IsEmbedded() && !IsSymbolicFont() && m_Font.IsTTFont()) {
     if (FT_UseTTCharmap(m_Font.GetFaceRec(), 3, 0)) {
       bool bGotOne = false;
       for (uint32_t charcode = 0; charcode < 256; charcode++) {
@@ -321,6 +323,16 @@ void CPDF_Type1Font::LoadGlyphMap() {
   if (!bCoreText)
     memcpy(m_ExtGID, m_GlyphIndex, 256);
 #endif
+}
+
+bool CPDF_Type1Font::IsSymbolicFont() const {
+  return m_Base14Font.has_value() &&
+         CFX_FontMapper::IsSymbolicFont(m_Base14Font.value());
+}
+
+bool CPDF_Type1Font::IsFixedFont() const {
+  return m_Base14Font.has_value() &&
+         CFX_FontMapper::IsFixedFont(m_Base14Font.value());
 }
 
 #if defined(OS_MACOSX)

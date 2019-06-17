@@ -9,6 +9,8 @@
 
 #include <memory>
 
+#include "core/fxge/cfx_fontmapper.h"
+
 class CPDF_Font;
 
 class CFX_StockFontArray {
@@ -17,8 +19,9 @@ class CFX_StockFontArray {
   ~CFX_StockFontArray();
 
   // Takes ownership of |pFont|, returns unowned pointer to it.
-  CPDF_Font* SetFont(uint32_t index, std::unique_ptr<CPDF_Font> pFont);
-  CPDF_Font* GetFont(uint32_t index) const;
+  CPDF_Font* SetFont(CFX_FontMapper::StandardFont index,
+                     std::unique_ptr<CPDF_Font> pFont);
+  CPDF_Font* GetFont(CFX_FontMapper::StandardFont index) const;
 
  private:
   std::unique_ptr<CPDF_Font> m_StockFonts[14];

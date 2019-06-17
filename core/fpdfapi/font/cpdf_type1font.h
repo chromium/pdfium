@@ -10,6 +10,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_fontmapper.h"
 
 class CPDF_Type1Font final : public CPDF_SimpleFont {
  public:
@@ -24,7 +25,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   int GlyphFromCharCodeExt(uint32_t charcode) override;
 #endif
 
-  bool IsBase14Font() const { return m_Base14Font >= 0; }
+  bool IsBase14Font() const { return m_Base14Font.has_value(); }
 
  private:
   // CPDF_Font:
@@ -33,6 +34,9 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
 
+  bool IsSymbolicFont() const;
+  bool IsFixedFont() const;
+
 #if defined(OS_MACOSX)
   void SetExtGID(const char* name, uint32_t charcode);
   void CalcExtGID(uint32_t charcode);
@@ -40,7 +44,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   uint16_t m_ExtGID[256];
 #endif
 
-  int m_Base14Font = -1;
+  Optional<CFX_FontMapper::StandardFont> m_Base14Font;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_

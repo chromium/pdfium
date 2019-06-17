@@ -45,7 +45,8 @@ CPDF_FontGlobals::CPDF_FontGlobals() {
 
 CPDF_FontGlobals::~CPDF_FontGlobals() = default;
 
-CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, uint32_t index) {
+CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc,
+                                  CFX_FontMapper::StandardFont index) {
   auto it = m_StockMap.find(pDoc);
   if (it == m_StockMap.end())
     return nullptr;
@@ -53,7 +54,7 @@ CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, uint32_t index) {
 }
 
 CPDF_Font* CPDF_FontGlobals::Set(CPDF_Document* pDoc,
-                                 uint32_t index,
+                                 CFX_FontMapper::StandardFont index,
                                  std::unique_ptr<CPDF_Font> pFont) {
   if (!pdfium::ContainsKey(m_StockMap, pDoc))
     m_StockMap[pDoc] = pdfium::MakeUnique<CFX_StockFontArray>();

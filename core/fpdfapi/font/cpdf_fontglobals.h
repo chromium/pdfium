@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/font/cpdf_cmapmanager.h"
+#include "core/fxge/cfx_fontmapper.h"
 #include "third_party/base/span.h"
 
 class CFX_StockFontArray;
@@ -24,11 +25,11 @@ class CPDF_FontGlobals {
   static CPDF_FontGlobals* GetInstance();
 
   void Clear(CPDF_Document* pDoc);
-  CPDF_Font* Find(CPDF_Document* pDoc, uint32_t index);
+  CPDF_Font* Find(CPDF_Document* pDoc, CFX_FontMapper::StandardFont index);
 
   // Takes ownership of |pFont|, returns unowned pointer to it.
   CPDF_Font* Set(CPDF_Document* key,
-                 uint32_t index,
+                 CFX_FontMapper::StandardFont index,
                  std::unique_ptr<CPDF_Font> pFont);
 
   void SetEmbeddedCharset(size_t idx, pdfium::span<const FXCMAP_CMap> map) {

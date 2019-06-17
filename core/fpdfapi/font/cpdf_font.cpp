@@ -286,12 +286,13 @@ uint32_t CPDF_Font::GetStringWidth(ByteStringView pString) {
 // static
 CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
   ByteString fontname(name);
-  int font_id = CFX_FontMapper::GetStandardFontName(&fontname);
-  if (font_id < 0)
+  Optional<CFX_FontMapper::StandardFont> font_id =
+      CFX_FontMapper::GetStandardFontName(&fontname);
+  if (!font_id.has_value())
     return nullptr;
 
   auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
-  CPDF_Font* pFont = pFontGlobals->Find(pDoc, font_id);
+  CPDF_Font* pFont = pFontGlobals->Find(pDoc, font_id.value());
   if (pFont)
     return pFont;
 
@@ -300,7 +301,7 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);
   pDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
-  return pFontGlobals->Set(pDoc, font_id,
+  return pFontGlobals->Set(pDoc, font_id.value(),
                            CPDF_Font::Create(nullptr, pDict.Get()));
 }
 
