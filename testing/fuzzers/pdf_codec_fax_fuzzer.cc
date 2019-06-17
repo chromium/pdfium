@@ -5,8 +5,8 @@
 #include <cstdint>
 #include <memory>
 
-#include "core/fxcodec/codec/faxmodule.h"
 #include "core/fxcodec/codec/scanlinedecoder.h"
+#include "core/fxcodec/fax/faxmodule.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

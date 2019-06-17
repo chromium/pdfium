@@ -53,10 +53,10 @@
 #endif  // PDF_ENABLE_XFA
 
 #if defined(OS_WIN)
-#include "core/fxcodec/codec/basicmodule.h"
-#include "core/fxcodec/codec/faxmodule.h"
-#include "core/fxcodec/codec/flatemodule.h"
-#include "core/fxcodec/codec/jpegmodule.h"
+#include "core/fxcodec/basic/basicmodule.h"
+#include "core/fxcodec/fax/faxmodule.h"
+#include "core/fxcodec/flate/flatemodule.h"
+#include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "public/fpdf_edit.h"

@@ -4,7 +4,7 @@
 //
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/JBig2_DocumentContext.h"
+#include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"

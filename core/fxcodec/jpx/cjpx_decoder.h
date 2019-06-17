@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_CJPX_DECODER_H_
-#define CORE_FXCODEC_CODEC_CJPX_DECODER_H_
+#ifndef CORE_FXCODEC_JPX_CJPX_DECODER_H_
+#define CORE_FXCODEC_JPX_CJPX_DECODER_H_
 
 #include <memory>
 #include <vector>
@@ -48,4 +48,4 @@ class CJPX_Decoder {
   opj_dparameters_t m_Parameters;
 };
 
-#endif  // CORE_FXCODEC_CODEC_CJPX_DECODER_H_
+#endif  // CORE_FXCODEC_JPX_CJPX_DECODER_H_

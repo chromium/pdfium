@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/flatemodule.h"
+#include "core/fxcodec/flate/flatemodule.h"
 
 #include <algorithm>
 #include <limits>

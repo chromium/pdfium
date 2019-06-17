@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/codec/jpegmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

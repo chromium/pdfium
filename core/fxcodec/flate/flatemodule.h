@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_FLATEMODULE_H_
-#define CORE_FXCODEC_CODEC_FLATEMODULE_H_
+#ifndef CORE_FXCODEC_FLATE_FLATEMODULE_H_
+#define CORE_FXCODEC_FLATE_FLATEMODULE_H_
 
 #include <memory>
 
@@ -56,4 +56,4 @@ class FlateModule {
 
 using FlateModule = fxcodec::FlateModule;
 
-#endif  // CORE_FXCODEC_CODEC_FLATEMODULE_H_
+#endif  // CORE_FXCODEC_FLATE_FLATEMODULE_H_

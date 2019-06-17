@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/iccmodule.h"
+#include "core/fxcodec/icc/iccmodule.h"
 
 #include <algorithm>
 #include <memory>

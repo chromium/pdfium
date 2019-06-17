@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "core/fxcodec/codec/basicmodule.h"
+#include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcrt/fx_memory.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

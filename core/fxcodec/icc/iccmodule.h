@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_ICCMODULE_H_
-#define CORE_FXCODEC_CODEC_ICCMODULE_H_
+#ifndef CORE_FXCODEC_ICC_ICCMODULE_H_
+#define CORE_FXCODEC_ICC_ICCMODULE_H_
 
 #include <memory>
 
@@ -65,4 +65,4 @@ class IccModule {
 using CLcmsCmm = fxcodec::CLcmsCmm;
 using IccModule = fxcodec::IccModule;
 
-#endif  // CORE_FXCODEC_CODEC_ICCMODULE_H_
+#endif  // CORE_FXCODEC_ICC_ICCMODULE_H_

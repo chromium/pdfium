@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_JBIG2MODULE_H_
-#define CORE_FXCODEC_CODEC_JBIG2MODULE_H_
+#ifndef CORE_FXCODEC_JBIG2_JBIG2MODULE_H_
+#define CORE_FXCODEC_JBIG2_JBIG2MODULE_H_
 
 #include <memory>
 
@@ -65,4 +65,4 @@ class Jbig2Module {
 using Jbig2Context = fxcodec::Jbig2Context;
 using Jbig2Module = fxcodec::Jbig2Module;
 
-#endif  // CORE_FXCODEC_CODEC_JBIG2MODULE_H_
+#endif  // CORE_FXCODEC_JBIG2_JBIG2MODULE_H_

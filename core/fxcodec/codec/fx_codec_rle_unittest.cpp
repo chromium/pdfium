@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
-#include "core/fxcodec/codec/basicmodule.h"
+#include "core/fxcodec/basic/basicmodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, RLETestBadInputs) {

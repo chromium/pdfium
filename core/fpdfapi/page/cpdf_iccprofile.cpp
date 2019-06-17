@@ -7,7 +7,7 @@
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcodec/codec/iccmodule.h"
+#include "core/fxcodec/icc/iccmodule.h"
 
 namespace {
 

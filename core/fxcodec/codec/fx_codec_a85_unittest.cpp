@@ -7,7 +7,7 @@
 #include <limits>
 #include <memory>
 
-#include "core/fxcodec/codec/basicmodule.h"
+#include "core/fxcodec/basic/basicmodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, A85TestBadInputs) {

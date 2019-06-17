@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/jbig2module.h"
+#include "core/fxcodec/jbig2/jbig2module.h"
 
-#include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
+#include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "third_party/base/ptr_util.h"
 
 namespace fxcodec {

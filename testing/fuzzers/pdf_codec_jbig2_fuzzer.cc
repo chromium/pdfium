@@ -4,9 +4,9 @@
 
 #include <cstdint>
 
-#include "core/fxcodec/JBig2_DocumentContext.h"
-#include "core/fxcodec/codec/jbig2module.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
+#include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
+#include "core/fxcodec/jbig2/jbig2module.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"

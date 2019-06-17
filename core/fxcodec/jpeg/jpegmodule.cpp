@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/jpegmodule.h"
+#include "core/fxcodec/jpeg/jpegmodule.h"
 
 #include <setjmp.h>
 

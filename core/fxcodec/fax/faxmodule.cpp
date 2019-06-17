@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/faxmodule.h"
+#include "core/fxcodec/fax/faxmodule.h"
 
 #include <algorithm>
 #include <iterator>

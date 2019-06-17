@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_CODEC_JPEGMODULE_H_
-#define CORE_FXCODEC_CODEC_JPEGMODULE_H_
+#ifndef CORE_FXCODEC_JPEG_JPEGMODULE_H_
+#define CORE_FXCODEC_JPEG_JPEGMODULE_H_
 
 #include <csetjmp>
 #include <memory>
@@ -68,4 +68,4 @@ class JpegModule final : public ModuleIface {
 
 using JpegModule = fxcodec::JpegModule;
 
-#endif  // CORE_FXCODEC_CODEC_JPEGMODULE_H_
+#endif  // CORE_FXCODEC_JPEG_JPEGMODULE_H_

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/jpxmodule.h"
+#include "core/fxcodec/jpx/jpxmodule.h"
 
 #include "third_party/base/ptr_util.h"
 

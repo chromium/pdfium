@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#include "core/fxcodec/codec/iccmodule.h"
+#include "core/fxcodec/icc/iccmodule.h"
 #include "third_party/base/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

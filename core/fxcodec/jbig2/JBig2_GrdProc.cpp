@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/faxmodule.h"
+#include "core/fxcodec/fax/faxmodule.h"
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"

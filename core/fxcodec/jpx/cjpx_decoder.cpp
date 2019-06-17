@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/cjpx_decoder.h"
+#include "core/fxcodec/jpx/cjpx_decoder.h"
 
 #include <algorithm>
 #include <limits>

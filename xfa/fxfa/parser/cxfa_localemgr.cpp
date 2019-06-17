@@ -11,7 +11,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/flatemodule.h"
+#include "core/fxcodec/flate/flatemodule.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
