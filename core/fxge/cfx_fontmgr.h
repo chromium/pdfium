@@ -44,14 +44,13 @@ class CFX_FontMgr {
       int face_index);
   RetainPtr<CFX_Face> GetCachedTTCFace(int ttc_size,
                                        uint32_t checksum,
-                                       int font_offset,
-                                       uint8_t** pFontData);
+                                       uint32_t font_offset);
   RetainPtr<CFX_Face> AddCachedTTCFace(
       int ttc_size,
       uint32_t checksum,
       std::unique_ptr<uint8_t, FxFreeDeleter> pData,
       uint32_t size,
-      int font_offset);
+      uint32_t font_offset);
   RetainPtr<CFX_Face> GetFixedFace(pdfium::span<const uint8_t> span,
                                    int face_index);
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);

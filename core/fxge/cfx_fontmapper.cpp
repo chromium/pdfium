@@ -628,7 +628,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
   RetainPtr<CFX_Face> face;
   if (ttc_size)
-    face = GetCachedTTCFace(hFont, kTableTTCF, ttc_size, font_size);
+    face = GetCachedTTCFace(hFont, ttc_size, font_size);
   else
     face = GetCachedFace(hFont, SubstName, weight, bItalic, font_size);
   if (!face) {
@@ -672,28 +672,28 @@ bool CFX_FontMapper::IsBuiltinFace(const RetainPtr<CFX_Face>& face) const {
 }
 
 RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
-                                                     const uint32_t tableTTCF,
                                                      uint32_t ttc_size,
                                                      uint32_t font_size) {
   uint32_t checksum = 0;
   {
     uint8_t buffer[1024];
-    m_pFontInfo->GetFontData(hFont, tableTTCF, buffer, sizeof(buffer));
+    m_pFontInfo->GetFontData(hFont, kTableTTCF, buffer, sizeof(buffer));
     uint32_t* pBuffer = reinterpret_cast<uint32_t*>(buffer);
     for (int i = 0; i < 256; i++)
       checksum += pBuffer[i];
   }
-  uint8_t* pIgnore = nullptr;
-  RetainPtr<CFX_Face> face = m_pFontMgr->GetCachedTTCFace(
-      ttc_size, checksum, ttc_size - font_size, &pIgnore);
+  ASSERT(ttc_size >= font_size);
+  uint32_t font_offset = ttc_size - font_size;
+  RetainPtr<CFX_Face> face =
+      m_pFontMgr->GetCachedTTCFace(ttc_size, checksum, font_offset);
   if (face)
     return face;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
       FX_Alloc(uint8_t, ttc_size));
-  m_pFontInfo->GetFontData(hFont, tableTTCF, pFontData.get(), ttc_size);
+  m_pFontInfo->GetFontData(hFont, kTableTTCF, pFontData.get(), ttc_size);
   return m_pFontMgr->AddCachedTTCFace(ttc_size, checksum, std::move(pFontData),
-                                      ttc_size, ttc_size - font_size);
+                                      ttc_size, font_offset);
 }
 
 RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,

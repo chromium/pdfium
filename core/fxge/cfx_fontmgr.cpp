@@ -147,14 +147,12 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedFace(
 
 RetainPtr<CFX_Face> CFX_FontMgr::GetCachedTTCFace(int ttc_size,
                                                   uint32_t checksum,
-                                                  int font_offset,
-                                                  uint8_t** pFontData) {
+                                                  uint32_t font_offset) {
   auto it = m_FaceMap.find(KeyNameFromSize(ttc_size, checksum));
   if (it == m_FaceMap.end())
     return nullptr;
 
   CTTFontDesc* pFontDesc = it->second.get();
-  *pFontData = pFontDesc->FontData();
   int face_index = GetTTCIndex(pFontDesc->FontData(), ttc_size, font_offset);
   return pdfium::WrapRetain(pFontDesc->GetFace(face_index));
 }
@@ -164,7 +162,7 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedTTCFace(
     uint32_t checksum,
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     uint32_t size,
-    int font_offset) {
+    uint32_t font_offset) {
   int face_index = GetTTCIndex(pData.get(), ttc_size, font_offset);
   RetainPtr<CFX_Face> face =
       GetFixedFace({pData.get(), static_cast<size_t>(ttc_size)}, face_index);

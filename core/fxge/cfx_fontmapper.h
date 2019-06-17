@@ -77,7 +77,6 @@ class CFX_FontMapper {
                                        int weight,
                                        int picthfamily);
   RetainPtr<CFX_Face> GetCachedTTCFace(void* hFont,
-                                       const uint32_t tableTTCF,
                                        uint32_t ttc_size,
                                        uint32_t font_size);
   RetainPtr<CFX_Face> GetCachedFace(void* hFont,
