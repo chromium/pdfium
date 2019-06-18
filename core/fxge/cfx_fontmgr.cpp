@@ -126,12 +126,8 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedFace(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     uint32_t size,
     int face_index) {
-  RetainPtr<CFX_Face> face =
-      CFX_Face::New(m_FTLibrary.get(), {pData.get(), size}, face_index);
+  RetainPtr<CFX_Face> face = GetFixedFace({pData.get(), size}, face_index);
   if (!face)
-    return nullptr;
-
-  if (FT_Set_Pixel_Sizes(face->GetRec(), 64, 64) != 0)
     return nullptr;
 
   auto pFontDesc = pdfium::MakeUnique<CTTFontDesc>(std::move(pData));
