@@ -181,4 +181,13 @@ TEST(CPDF_PSEngine, Truncate) {
   EXPECT_FLOAT_EQ(-2.0f, DoOperator1(&engine, -2.3f, PSOP_TRUNCATE));
   EXPECT_FLOAT_EQ(-3.0f, DoOperator1(&engine, -3.8f, PSOP_TRUNCATE));
   EXPECT_FLOAT_EQ(-5.0f, DoOperator1(&engine, -5.5f, PSOP_TRUNCATE));
+
+  // Truncate does not behave according to the PostScript Language Reference for
+  // values beyond the range of integers. This seems to match Acrobat's
+  // behavior. See https://crbug.com/1314.
+  float max_int = std::numeric_limits<int>::max();
+  EXPECT_FLOAT_EQ(-max_int,
+                  DoOperator1(&engine, max_int * 2.0f, PSOP_TRUNCATE));
+  EXPECT_FLOAT_EQ(-max_int,
+                  DoOperator1(&engine, max_int * -1.5f, PSOP_TRUNCATE));
 }
