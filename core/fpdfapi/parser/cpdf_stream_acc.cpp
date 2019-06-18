@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -118,8 +119,14 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
 
   std::unique_ptr<uint8_t, FxFreeDeleter> pDecodedData;
   uint32_t dwDecodedSize = 0;
-  if (!PDF_DataDecode({pSrcData.Get(), dwSrcSize}, m_pStream->GetDict(),
-                      estimated_size, bImageAcc, &pDecodedData, &dwDecodedSize,
+
+  Optional<std::vector<std::pair<ByteString, const CPDF_Object*>>>
+      decoder_array = GetDecoderArray(m_pStream->GetDict());
+  if (!decoder_array.has_value())
+    return;
+
+  if (!PDF_DataDecode({pSrcData.Get(), dwSrcSize}, estimated_size, bImageAcc,
+                      decoder_array.value(), &pDecodedData, &dwDecodedSize,
                       &m_ImageDecoder, &m_pImageParam)) {
     m_pData = std::move(pSrcData);
     m_dwSize = dwSrcSize;

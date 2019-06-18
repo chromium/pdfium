@@ -365,46 +365,52 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                                        estimated_size, dest_buf, dest_size);
 }
 
-bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
-                    const CPDF_Dictionary* pDict,
-                    uint32_t last_estimated_size,
-                    bool bImageAcc,
-                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                    uint32_t* dest_size,
-                    ByteString* ImageEncoding,
-                    UnownedPtr<const CPDF_Dictionary>* pImageParams) {
+Optional<std::vector<std::pair<ByteString, const CPDF_Object*>>>
+GetDecoderArray(const CPDF_Dictionary* pDict) {
   const CPDF_Object* pDecoder = pDict->GetDirectObjectFor("Filter");
   if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
-    return false;
+    return {};
 
   const CPDF_Object* pParams =
       pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms);
 
-  std::vector<std::pair<ByteString, const CPDF_Object*>> DecoderArray;
+  std::vector<std::pair<ByteString, const CPDF_Object*>> decoder_array;
   if (const CPDF_Array* pDecoders = pDecoder->AsArray()) {
     if (!ValidateDecoderPipeline(pDecoders))
-      return false;
+      return {};
 
     const CPDF_Array* pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->size(); ++i) {
-      DecoderArray.push_back(
+      decoder_array.push_back(
           {pDecoders->GetStringAt(i),
            pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});
     }
   } else {
-    DecoderArray.push_back(
+    decoder_array.push_back(
         {pDecoder->GetString(), pParams ? pParams->GetDict() : nullptr});
   }
 
+  return decoder_array;
+}
+
+bool PDF_DataDecode(
+    pdfium::span<const uint8_t> src_span,
+    uint32_t last_estimated_size,
+    bool bImageAcc,
+    const std::vector<std::pair<ByteString, const CPDF_Object*>>& decoder_array,
+    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+    uint32_t* dest_size,
+    ByteString* ImageEncoding,
+    UnownedPtr<const CPDF_Dictionary>* pImageParams) {
   std::unique_ptr<uint8_t, FxFreeDeleter> result;
   // May be changed to point to |result| in the for-loop below. So put it below
   // |result| and let it get destroyed first.
   pdfium::span<const uint8_t> last_span = src_span;
-  size_t nSize = DecoderArray.size();
+  size_t nSize = decoder_array.size();
   for (size_t i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
-    ByteString decoder = DecoderArray[i].first;
-    const CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
+    ByteString decoder = decoder_array[i].first;
+    const CPDF_Dictionary* pParam = ToDictionary(decoder_array[i].second);
     std::unique_ptr<uint8_t, FxFreeDeleter> new_buf;
     uint32_t new_size = 0xFFFFFFFF;
     uint32_t offset = FX_INVALID_OFFSET;
