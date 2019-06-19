@@ -154,12 +154,6 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedTTCFace(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     uint32_t size,
     uint32_t font_offset) {
-  int face_index = GetTTCIndex(pData.get(), ttc_size, font_offset);
-  RetainPtr<CFX_Face> face =
-      GetFixedFace({pData.get(), static_cast<size_t>(ttc_size)}, face_index);
-  if (!face)
-    return nullptr;
-
   CTTFontDesc* pFontDesc = nullptr;
   ByteString keyname = KeyNameFromSize(ttc_size, checksum);
   auto it = m_FaceMap.find(keyname);
@@ -171,6 +165,13 @@ RetainPtr<CFX_Face> CFX_FontMgr::AddCachedTTCFace(
     pFontDesc = pNewDesc.get();
     m_FaceMap[keyname] = std::move(pNewDesc);
   }
+
+  int face_index = GetTTCIndex(pFontDesc->FontData(), ttc_size, font_offset);
+  RetainPtr<CFX_Face> face = GetFixedFace(
+      {pFontDesc->FontData(), static_cast<size_t>(ttc_size)}, face_index);
+  if (!face)
+    return nullptr;
+
   pFontDesc->SetFace(face_index, face.Get());
   return face;
 }
