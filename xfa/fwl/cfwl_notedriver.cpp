@@ -174,9 +174,12 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
     if (m_pFocus && pWidgetMgr->GetSystemFormWidget(m_pFocus.Get()) != pForm)
       pFocus = nullptr;
 
-    CFWL_Widget* pNextTabStop = CFWL_WidgetMgr::NextTab(pForm, pFocus);
-    if (!pNextTabStop)
-      pNextTabStop = CFWL_WidgetMgr::NextTab(pForm, nullptr);
+    CFWL_Widget* pNextTabStop = nullptr;
+    if (pForm) {
+      pNextTabStop = CFWL_WidgetMgr::NextTab(pForm, pFocus);
+      if (!pNextTabStop)
+        pNextTabStop = CFWL_WidgetMgr::NextTab(pForm, nullptr);
+    }
     if (pNextTabStop == pFocus)
       return true;
     if (pNextTabStop)
