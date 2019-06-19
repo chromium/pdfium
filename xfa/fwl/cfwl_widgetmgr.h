@@ -35,6 +35,8 @@ class CFWL_WidgetMgr {
   explicit CFWL_WidgetMgr(AdapterIface* pAdapterNative);
   ~CFWL_WidgetMgr();
 
+  static CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus);
+
   void OnProcessMessageToForm(CFWL_Message* pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
                     CXFA_Graphics* pGraphics,
@@ -55,7 +57,6 @@ class CFWL_WidgetMgr {
 
   CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent,
                                 const CFX_PointF& point) const;
-  CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus);
 
   CFWL_Widget* GetDefaultButton(CFWL_Widget* pParent) const;
   void AddRedrawCounts(CFWL_Widget* pWidget);

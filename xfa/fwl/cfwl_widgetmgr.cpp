@@ -18,7 +18,21 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapterNative)
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
 }
 
-CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
+CFWL_WidgetMgr::~CFWL_WidgetMgr() = default;
+
+// static
+CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent, CFWL_Widget* focus) {
+  CFWL_WidgetMgr* pMgr = parent->GetOwnerApp()->GetWidgetMgr();
+  CFWL_Widget* child = pMgr->GetFirstChildWidget(parent);
+  while (child) {
+    CFWL_Widget* bRet = NextTab(child, focus);
+    if (bRet)
+      return bRet;
+
+    child = pMgr->GetNextSiblingWidget(child);
+  }
+  return nullptr;
+}
 
 CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
@@ -242,19 +256,6 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
     child = GetPriorSiblingWidget(child);
   }
   return parent;
-}
-
-CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent, CFWL_Widget* focus) {
-  CFWL_WidgetMgr* pMgr = parent->GetOwnerApp()->GetWidgetMgr();
-  CFWL_Widget* child = pMgr->GetFirstChildWidget(parent);
-  while (child) {
-    CFWL_Widget* bRet = NextTab(child, focus);
-    if (bRet)
-      return bRet;
-
-    child = pMgr->GetNextSiblingWidget(child);
-  }
-  return nullptr;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {
