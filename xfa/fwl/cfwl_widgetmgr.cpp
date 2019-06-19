@@ -244,16 +244,11 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
   return parent;
 }
 
-CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent,
-                                     CFWL_Widget* focus,
-                                     bool& bFind) {
+CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent, CFWL_Widget* focus) {
   CFWL_WidgetMgr* pMgr = parent->GetOwnerApp()->GetWidgetMgr();
   CFWL_Widget* child = pMgr->GetFirstChildWidget(parent);
   while (child) {
-    if (focus == child)
-      bFind = true;
-
-    CFWL_Widget* bRet = NextTab(child, focus, bFind);
+    CFWL_Widget* bRet = NextTab(child, focus);
     if (bRet)
       return bRet;
 

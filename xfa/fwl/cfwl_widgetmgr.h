@@ -55,7 +55,7 @@ class CFWL_WidgetMgr {
 
   CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent,
                                 const CFX_PointF& point) const;
-  CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus, bool& bFind);
+  CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus);
 
   CFWL_Widget* GetDefaultButton(CFWL_Widget* pParent) const;
   void AddRedrawCounts(CFWL_Widget* pWidget);
