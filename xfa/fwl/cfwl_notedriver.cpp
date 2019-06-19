@@ -20,13 +20,10 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_messagemousewheel.h"
 #include "xfa/fwl/cfwl_messagesetfocus.h"
-#include "xfa/fwl/cfwl_noteloop.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 
-CFWL_NoteDriver::CFWL_NoteDriver()
-    : m_pNoteLoop(pdfium::MakeUnique<CFWL_NoteLoop>()) {
-}
+CFWL_NoteDriver::CFWL_NoteDriver() = default;
 
 CFWL_NoteDriver::~CFWL_NoteDriver() = default;
 
@@ -83,17 +80,6 @@ bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus) {
   return true;
 }
 
-void CFWL_NoteDriver::Run() {
-#if defined(OS_LINUX) || defined(OS_WIN)
-  for (;;) {
-    CFWL_NoteLoop* pTopLoop = GetTopLoop();
-    if (!pTopLoop || !pTopLoop->ContinueModal())
-      break;
-    UnqueueMessageAndProcess(pTopLoop);
-  }
-#endif  // defined(OS_LINUX) || defined(OS_WIN)
-}
-
 void CFWL_NoteDriver::NotifyTargetHide(CFWL_Widget* pNoteTarget) {
   if (m_pFocus == pNoteTarget)
     m_pFocus = nullptr;
@@ -112,22 +98,6 @@ void CFWL_NoteDriver::NotifyTargetDestroy(CFWL_Widget* pNoteTarget) {
     m_pGrab = nullptr;
 
   UnregisterEventTarget(pNoteTarget);
-}
-
-void CFWL_NoteDriver::QueueMessage(std::unique_ptr<CFWL_Message> pMessage) {
-  m_NoteQueue.push_back(std::move(pMessage));
-}
-
-void CFWL_NoteDriver::UnqueueMessageAndProcess(CFWL_NoteLoop* pNoteLoop) {
-  if (m_NoteQueue.empty())
-    return;
-
-  std::unique_ptr<CFWL_Message> pMessage = std::move(m_NoteQueue.front());
-  m_NoteQueue.pop_front();
-  if (!IsValidMessage(pMessage.get()))
-    return;
-
-  ProcessMessage(std::move(pMessage));
 }
 
 void CFWL_NoteDriver::ProcessMessage(std::unique_ptr<CFWL_Message> pMessage) {
@@ -307,18 +277,12 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   DispatchMessage(&msHover, nullptr);
 }
 
-bool CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
-  CFWL_Widget* pForm = m_pNoteLoop->GetForm();
-  return pForm && pForm == pMessage->GetDstTarget();
-}
-
 CFWL_Widget* CFWL_NoteDriver::GetMessageForm(CFWL_Widget* pDstTarget) {
-  CFWL_Widget* pMessageForm = m_pNoteLoop->GetForm();
-  if (!pMessageForm && pDstTarget) {
-    CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
-    pMessageForm = pWidgetMgr->GetSystemFormWidget(pDstTarget);
-  }
-  return pMessageForm;
+  if (!pDstTarget)
+    return nullptr;
+
+  CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
+  return pWidgetMgr->GetSystemFormWidget(pDstTarget);
 }
 
 void CFWL_NoteDriver::ClearEventTargets() {

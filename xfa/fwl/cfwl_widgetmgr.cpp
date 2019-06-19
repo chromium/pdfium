@@ -323,12 +323,6 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
 
   CFWL_NoteDriver* pNoteDriver = pDstWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->ProcessMessage(pMessage->Clone());
-
-#if defined(OS_MACOSX)
-  CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
-  if (pTopLoop)
-    pNoteDriver->UnqueueMessageAndProcess(pTopLoop);
-#endif
 }
 
 void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,

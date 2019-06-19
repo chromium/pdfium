@@ -64,8 +64,6 @@ jumbo_source_set("fwl") {
     "cfwl_monthcalendar.h",
     "cfwl_notedriver.cpp",
     "cfwl_notedriver.h",
-    "cfwl_noteloop.cpp",
-    "cfwl_noteloop.h",
     "cfwl_picturebox.cpp",
     "cfwl_picturebox.h",
     "cfwl_pushbutton.cpp",
