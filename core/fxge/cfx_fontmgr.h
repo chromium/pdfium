@@ -32,7 +32,7 @@ class CFX_FontMgr {
   RetainPtr<CFX_Face> GetCachedFace(const ByteString& face_name,
                                     int weight,
                                     bool bItalic,
-                                    uint8_t** pFontData);
+                                    const uint8_t** pFontData);
   RetainPtr<CFX_Face> AddCachedFace(
       const ByteString& face_name,
       int weight,
@@ -49,7 +49,7 @@ class CFX_FontMgr {
       std::unique_ptr<uint8_t, FxFreeDeleter> pData,
       uint32_t size,
       uint32_t font_offset);
-  RetainPtr<CFX_Face> GetFixedFace(pdfium::span<const uint8_t> span,
+  RetainPtr<CFX_Face> NewFixedFace(pdfium::span<const uint8_t> span,
                                    int face_index);
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   RetainPtr<CFX_Face> FindSubstFont(const ByteString& face_name,

@@ -349,7 +349,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
     Optional<pdfium::span<const uint8_t>> font_data =
         m_pFontMgr->GetBuiltinFont(iBaseFont);
     if (font_data.has_value()) {
-      m_FoxitFaces[iBaseFont] = m_pFontMgr->GetFixedFace(font_data.value(), 0);
+      m_FoxitFaces[iBaseFont] = m_pFontMgr->NewFixedFace(font_data.value(), 0);
       return m_FoxitFaces[iBaseFont];
     }
   }
@@ -362,14 +362,14 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
     pSubstFont->m_Family = "Chrome Serif";
     if (!m_MMFaces[1]) {
       m_MMFaces[1] =
-          m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(14).value(), 0);
+          m_pFontMgr->NewFixedFace(m_pFontMgr->GetBuiltinFont(14).value(), 0);
     }
     return m_MMFaces[1];
   }
   pSubstFont->m_Family = "Chrome Sans";
   if (!m_MMFaces[0]) {
     m_MMFaces[0] =
-        m_pFontMgr->GetFixedFace(m_pFontMgr->GetBuiltinFont(15).value(), 0);
+        m_pFontMgr->NewFixedFace(m_pFontMgr->GetBuiltinFont(15).value(), 0);
   }
   return m_MMFaces[0];
 }
@@ -701,7 +701,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
                                                   int weight,
                                                   bool bItalic,
                                                   uint32_t font_size) {
-  uint8_t* pIgnore = nullptr;
+  const uint8_t* pIgnore = nullptr;
   RetainPtr<CFX_Face> face =
       m_pFontMgr->GetCachedFace(SubstName, weight, bItalic, &pIgnore);
   if (face)

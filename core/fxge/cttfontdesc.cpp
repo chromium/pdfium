@@ -10,9 +10,9 @@
 
 #include "core/fxge/cfx_face.h"
 
-CTTFontDesc::CTTFontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData)
-    : m_pFontData(std::move(pData)) {
-}
+CTTFontDesc::CTTFontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                         size_t size)
+    : m_pFontData(std::move(pData)), m_Size(size) {}
 
 CTTFontDesc::~CTTFontDesc() = default;
 

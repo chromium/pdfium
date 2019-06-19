@@ -378,7 +378,7 @@ bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span) {
   m_pFontDataAllocation =
       std::vector<uint8_t>(src_span.begin(), src_span.end());
   m_Face =
-      CFX_GEModule::Get()->GetFontMgr()->GetFixedFace(m_pFontDataAllocation, 0);
+      CFX_GEModule::Get()->GetFontMgr()->NewFixedFace(m_pFontDataAllocation, 0);
   m_bEmbedded = true;
   m_FontData = m_pFontDataAllocation;
   return !!m_Face;
