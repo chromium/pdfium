@@ -185,20 +185,21 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   }
 #endif
 
-  if (!m_pFocus) {
-    if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
-        pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return) {
-      CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
-      CFWL_Widget* defButton = pWidgetMgr->GetDefaultButton(pMessageForm);
-      if (defButton) {
-        pMsg->SetDstTarget(defButton);
-        return true;
-      }
-    }
-    return false;
+  if (m_pFocus) {
+    pMsg->SetDstTarget(m_pFocus.Get());
+    return true;
   }
-  pMsg->SetDstTarget(m_pFocus.Get());
-  return true;
+
+  if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
+      pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return) {
+    CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
+    CFWL_Widget* pDefButton = pWidgetMgr->GetDefaultButton(pMessageForm);
+    if (pDefButton) {
+      pMsg->SetDstTarget(pDefButton);
+      return true;
+    }
+  }
+  return false;
 }
 
 bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
