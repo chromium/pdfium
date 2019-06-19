@@ -240,6 +240,9 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     AddCode(old_code, last_char);
     old_code = code;
   }
+  if (dest_byte_pos_ == 0)
+    return false;
+
   *dest_size = dest_byte_pos_;
   *src_size = (src_bit_pos_ + 7) / 8;
   return true;
@@ -789,15 +792,12 @@ uint32_t FlateModule::FlateOrLZWDecode(
     auto decoder = pdfium::MakeUnique<CLZWDecoder>(src_span, bEarlyChange);
     *dest_size = 0xFFFFFFFF;
     offset = src_span.size();
-    bool success = decoder->Decode(nullptr, dest_size, &offset);
-    if (!success || *dest_size == 0 || *dest_size + 1 < *dest_size)
+    if (!decoder->Decode(nullptr, dest_size, &offset))
       return FX_INVALID_OFFSET;
 
     decoder = pdfium::MakeUnique<CLZWDecoder>(src_span, bEarlyChange);
-    dest_buf->reset(FX_Alloc(uint8_t, *dest_size + 1));
-    uint8_t* dest_buf_ptr = dest_buf->get();
-    dest_buf_ptr[*dest_size] = '\0';
-    decoder->Decode(dest_buf_ptr, dest_size, &offset);
+    dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
+    decoder->Decode(dest_buf->get(), dest_size, &offset);
   } else {
     FlateUncompress(src_span, estimated_size, dest_buf, dest_size, &offset);
   }
