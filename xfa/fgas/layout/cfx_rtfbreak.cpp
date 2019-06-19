@@ -70,7 +70,6 @@ bool CFX_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
 }
 
 CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
-  ASSERT(m_pFont);
   ASSERT(m_pCurLine);
 
   FX_CHARTYPE chartype = FX_GetCharType(wch);
@@ -128,7 +127,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
 void CFX_RTFBreak::AppendChar_Combination(CFX_Char* pCurChar) {
   FX_SAFE_INT32 iCharWidth = 0;
   int32_t iCharWidthOut;
-  if (m_pFont->GetCharWidth(pCurChar->char_code(), &iCharWidthOut))
+  if (m_pFont && m_pFont->GetCharWidth(pCurChar->char_code(), &iCharWidthOut))
     iCharWidth = iCharWidthOut;
 
   iCharWidth *= m_iFontSize;
@@ -214,8 +213,9 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
                pLastChar->GetCharType() == FX_CHARTYPE::kArabicAlef);
       FX_SAFE_INT32 iCharWidth;
       int32_t iCharWidthOut;
-      if (m_pFont->GetCharWidth(wForm, &iCharWidthOut) ||
-          m_pFont->GetCharWidth(pLastChar->char_code(), &iCharWidthOut)) {
+      if (m_pFont &&
+          (m_pFont->GetCharWidth(wForm, &iCharWidthOut) ||
+           m_pFont->GetCharWidth(pLastChar->char_code(), &iCharWidthOut))) {
         iCharWidth = iCharWidthOut;
       } else {
         iCharWidth = m_iDefChar;
@@ -243,8 +243,9 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
                                       nullptr);
   FX_SAFE_INT32 iCharWidth;
   int32_t iCharWidthOut;
-  if (m_pFont->GetCharWidth(wForm, &iCharWidthOut) ||
-      m_pFont->GetCharWidth(pCurChar->char_code(), &iCharWidthOut)) {
+  if (m_pFont &&
+      (m_pFont->GetCharWidth(wForm, &iCharWidthOut) ||
+       m_pFont->GetCharWidth(pCurChar->char_code(), &iCharWidthOut))) {
     iCharWidth = iCharWidthOut;
   } else {
     iCharWidth = m_iDefChar;
@@ -275,7 +276,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
   wchar_t wForm = pCurChar->char_code();
   FX_SAFE_INT32 iCharWidth;
   int32_t iCharWidthOut;
-  if (m_pFont->GetCharWidth(wForm, &iCharWidthOut))
+  if (m_pFont && m_pFont->GetCharWidth(wForm, &iCharWidthOut))
     iCharWidth = iCharWidthOut;
   else
     iCharWidth = m_iDefChar;
