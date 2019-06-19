@@ -116,89 +116,87 @@ class CLZWDecoder {
   void AddCode(uint32_t prefix_code, uint8_t append_char);
   void DecodeString(uint32_t code);
 
-  pdfium::span<const uint8_t> const m_spSrc;
-  uint32_t m_InPos = 0;
-  uint32_t m_OutPos = 0;
-  uint8_t* m_pOutput;
-  const uint8_t m_nEarly;
-  uint32_t m_nCodes = 0;
-  uint32_t m_StackLen;
-  uint8_t m_CodeLen = 9;
-  uint32_t m_CodeArray[5021];
-  uint8_t m_DecodeStack[4000];
+  pdfium::span<const uint8_t> const src_span_;
+  uint32_t src_bit_pos_ = 0;
+  uint32_t dest_byte_pos_ = 0;
+  uint32_t stack_len_ = 0;
+  uint8_t decode_stack_[4000];
+  const uint8_t early_change_;
+  uint8_t code_len_ = 9;
+  uint32_t current_code_ = 0;
+  uint32_t codes_[5021];
 };
 
 CLZWDecoder::CLZWDecoder(pdfium::span<const uint8_t> src_span,
                          bool early_change)
-    : m_spSrc(src_span), m_nEarly(early_change ? 1 : 0) {}
+    : src_span_(src_span), early_change_(early_change ? 1 : 0) {}
 
 void CLZWDecoder::AddCode(uint32_t prefix_code, uint8_t append_char) {
-  if (m_nCodes + m_nEarly == 4094)
+  if (current_code_ + early_change_ == 4094)
     return;
 
-  m_CodeArray[m_nCodes++] = (prefix_code << 16) | append_char;
-  if (m_nCodes + m_nEarly == 512 - 258)
-    m_CodeLen = 10;
-  else if (m_nCodes + m_nEarly == 1024 - 258)
-    m_CodeLen = 11;
-  else if (m_nCodes + m_nEarly == 2048 - 258)
-    m_CodeLen = 12;
+  codes_[current_code_++] = (prefix_code << 16) | append_char;
+  if (current_code_ + early_change_ == 512 - 258)
+    code_len_ = 10;
+  else if (current_code_ + early_change_ == 1024 - 258)
+    code_len_ = 11;
+  else if (current_code_ + early_change_ == 2048 - 258)
+    code_len_ = 12;
 }
 
 void CLZWDecoder::DecodeString(uint32_t code) {
   while (1) {
     int index = code - 258;
-    if (index < 0 || static_cast<uint32_t>(index) >= m_nCodes)
+    if (index < 0 || static_cast<uint32_t>(index) >= current_code_)
       break;
 
-    uint32_t data = m_CodeArray[index];
-    if (m_StackLen >= sizeof(m_DecodeStack))
+    uint32_t data = codes_[index];
+    if (stack_len_ >= sizeof(decode_stack_))
       return;
 
-    m_DecodeStack[m_StackLen++] = static_cast<uint8_t>(data);
+    decode_stack_[stack_len_++] = static_cast<uint8_t>(data);
     code = data >> 16;
   }
-  if (m_StackLen >= sizeof(m_DecodeStack))
+  if (stack_len_ >= sizeof(decode_stack_))
     return;
 
-  m_DecodeStack[m_StackLen++] = static_cast<uint8_t>(code);
+  decode_stack_[stack_len_++] = static_cast<uint8_t>(code);
 }
 
 bool CLZWDecoder::Decode(uint8_t* dest_buf,
                          uint32_t* dest_size,
                          uint32_t* src_size) {
-  m_pOutput = dest_buf;
   uint32_t old_code = 0xFFFFFFFF;
   uint8_t last_char = 0;
   while (1) {
-    if (m_InPos + m_CodeLen > *src_size * 8)
+    if (src_bit_pos_ + code_len_ > *src_size * 8)
       break;
 
-    int byte_pos = m_InPos / 8;
-    int bit_pos = m_InPos % 8;
-    uint8_t bit_left = m_CodeLen;
+    int byte_pos = src_bit_pos_ / 8;
+    int bit_pos = src_bit_pos_ % 8;
+    uint8_t bit_left = code_len_;
     uint32_t code = 0;
     if (bit_pos) {
       bit_left -= 8 - bit_pos;
-      code = (m_spSrc[byte_pos++] & ((1 << (8 - bit_pos)) - 1)) << bit_left;
+      code = (src_span_[byte_pos++] & ((1 << (8 - bit_pos)) - 1)) << bit_left;
     }
     if (bit_left < 8) {
-      code |= m_spSrc[byte_pos] >> (8 - bit_left);
+      code |= src_span_[byte_pos] >> (8 - bit_left);
     } else {
       bit_left -= 8;
-      code |= m_spSrc[byte_pos++] << bit_left;
+      code |= src_span_[byte_pos++] << bit_left;
       if (bit_left)
-        code |= m_spSrc[byte_pos] >> (8 - bit_left);
+        code |= src_span_[byte_pos] >> (8 - bit_left);
     }
-    m_InPos += m_CodeLen;
+    src_bit_pos_ += code_len_;
 
     if (code < 256) {
-      if (m_OutPos == *dest_size)
+      if (dest_byte_pos_ == *dest_size)
         return false;
 
-      if (m_pOutput)
-        m_pOutput[m_OutPos] = (uint8_t)code;
-      m_OutPos++;
+      if (dest_buf)
+        dest_buf[dest_byte_pos_] = (uint8_t)code;
+      dest_byte_pos_++;
       last_char = (uint8_t)code;
       if (old_code != 0xFFFFFFFF)
         AddCode(old_code, last_char);
@@ -206,8 +204,8 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
       continue;
     }
     if (code == 256) {
-      m_CodeLen = 9;
-      m_nCodes = 0;
+      code_len_ = 9;
+      current_code_ = 0;
       old_code = 0xFFFFFFFF;
       continue;
     }
@@ -218,33 +216,32 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     if (old_code == 0xFFFFFFFF)
       return false;
 
-    m_StackLen = 0;
-    if (code - 258 >= m_nCodes) {
-      if (m_StackLen < sizeof(m_DecodeStack)) {
-        m_DecodeStack[m_StackLen++] = last_char;
-      }
+    stack_len_ = 0;
+    if (code - 258 >= current_code_) {
+      if (stack_len_ < sizeof(decode_stack_))
+        decode_stack_[stack_len_++] = last_char;
       DecodeString(old_code);
     } else {
       DecodeString(code);
     }
-    if (m_OutPos + m_StackLen > *dest_size)
+    if (dest_byte_pos_ + stack_len_ > *dest_size)
       return false;
 
-    if (m_pOutput) {
-      for (uint32_t i = 0; i < m_StackLen; i++)
-        m_pOutput[m_OutPos + i] = m_DecodeStack[m_StackLen - i - 1];
+    if (dest_buf) {
+      for (uint32_t i = 0; i < stack_len_; i++)
+        dest_buf[dest_byte_pos_ + i] = decode_stack_[stack_len_ - i - 1];
     }
-    m_OutPos += m_StackLen;
-    last_char = m_DecodeStack[m_StackLen - 1];
+    dest_byte_pos_ += stack_len_;
+    last_char = decode_stack_[stack_len_ - 1];
     // TODO(thestig): What happens if |old_code| is 257?
-    if (old_code >= 256 && old_code - 258 >= m_nCodes)
+    if (old_code >= 256 && old_code - 258 >= current_code_)
       break;
 
     AddCode(old_code, last_char);
     old_code = code;
   }
-  *dest_size = m_OutPos;
-  *src_size = (m_InPos + 7) / 8;
+  *dest_size = dest_byte_pos_;
+  *src_size = (src_bit_pos_ + 7) / 8;
   return true;
 }
 
