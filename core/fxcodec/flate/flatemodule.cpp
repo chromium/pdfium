@@ -110,7 +110,9 @@ class CLZWDecoder {
  public:
   CLZWDecoder(pdfium::span<const uint8_t> src_span, bool early_change);
 
-  bool Decode(uint8_t* dest_buf, uint32_t* dest_size, uint32_t* src_size);
+  bool Decode(uint8_t* dest_buf, uint32_t dest_size, uint32_t src_size);
+  uint32_t GetSrcSize() const { return (src_bit_pos_ + 7) / 8; }
+  uint32_t GetDestSize() const { return dest_byte_pos_; }
 
  private:
   void AddCode(uint32_t prefix_code, uint8_t append_char);
@@ -164,12 +166,12 @@ void CLZWDecoder::DecodeString(uint32_t code) {
 }
 
 bool CLZWDecoder::Decode(uint8_t* dest_buf,
-                         uint32_t* dest_size,
-                         uint32_t* src_size) {
+                         uint32_t dest_size,
+                         uint32_t src_size) {
   uint32_t old_code = 0xFFFFFFFF;
   uint8_t last_char = 0;
   while (1) {
-    if (src_bit_pos_ + code_len_ > *src_size * 8)
+    if (src_bit_pos_ + code_len_ > src_size * 8)
       break;
 
     int byte_pos = src_bit_pos_ / 8;
@@ -191,7 +193,7 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     src_bit_pos_ += code_len_;
 
     if (code < 256) {
-      if (dest_byte_pos_ == *dest_size)
+      if (dest_byte_pos_ == dest_size)
         return false;
 
       if (dest_buf)
@@ -224,7 +226,7 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     } else {
       DecodeString(code);
     }
-    if (dest_byte_pos_ + stack_len_ > *dest_size)
+    if (dest_byte_pos_ + stack_len_ > dest_size)
       return false;
 
     if (dest_buf) {
@@ -240,12 +242,7 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     AddCode(old_code, last_char);
     old_code = code;
   }
-  if (dest_byte_pos_ == 0)
-    return false;
-
-  *dest_size = dest_byte_pos_;
-  *src_size = (src_bit_pos_ + 7) / 8;
-  return true;
+  return dest_byte_pos_ != 0;
 }
 
 uint8_t PathPredictor(int a, int b, int c) {
@@ -792,12 +789,14 @@ uint32_t FlateModule::FlateOrLZWDecode(
     auto decoder = pdfium::MakeUnique<CLZWDecoder>(src_span, bEarlyChange);
     *dest_size = 0xFFFFFFFF;
     offset = src_span.size();
-    if (!decoder->Decode(nullptr, dest_size, &offset))
+    if (!decoder->Decode(nullptr, *dest_size, offset))
       return FX_INVALID_OFFSET;
 
+    offset = decoder->GetSrcSize();
+    *dest_size = decoder->GetDestSize();
     decoder = pdfium::MakeUnique<CLZWDecoder>(src_span, bEarlyChange);
     dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
-    decoder->Decode(dest_buf->get(), dest_size, &offset);
+    decoder->Decode(dest_buf->get(), *dest_size, offset);
   } else {
     FlateUncompress(src_span, estimated_size, dest_buf, dest_size, &offset);
   }
