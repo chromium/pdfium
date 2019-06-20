@@ -17,6 +17,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
+class CFX_DIBitmap;
 class CFX_PathData;
 class CFX_RenderDevice;
 class CPDF_Color;
@@ -38,6 +39,7 @@ class CPDF_TransferFunc;
 class CPDF_Type3Cache;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
+class PauseIndicatorIface;
 
 class CPDF_RenderStatus {
  public:

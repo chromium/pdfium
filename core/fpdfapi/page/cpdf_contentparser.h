@@ -23,6 +23,7 @@ class CPDF_PageObjectHolder;
 class CPDF_Stream;
 class CPDF_StreamAcc;
 class CPDF_Type3Char;
+class PauseIndicatorIface;
 
 class CPDF_ContentParser {
  public:

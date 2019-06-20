@@ -11,7 +11,9 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxcrt/retain_ptr.h"
+
+enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
 class FX_PATHPOINT {
  public:

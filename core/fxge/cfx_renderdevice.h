@@ -14,46 +14,8 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "core/fxge/render_defines.h"
 #include "core/fxge/renderdevicedriver_iface.h"
-
-#define FXDC_PIXEL_WIDTH 2
-#define FXDC_PIXEL_HEIGHT 3
-#define FXDC_BITS_PIXEL 4
-#define FXDC_HORZ_SIZE 5
-#define FXDC_VERT_SIZE 6
-#define FXDC_RENDER_CAPS 7
-
-#define FXRC_GET_BITS 0x01
-#define FXRC_BIT_MASK 0x02
-#define FXRC_ALPHA_PATH 0x10
-#define FXRC_ALPHA_IMAGE 0x20
-#define FXRC_ALPHA_OUTPUT 0x40
-#define FXRC_BLEND_MODE 0x80
-#define FXRC_SOFT_CLIP 0x100
-#define FXRC_CMYK_OUTPUT 0x200
-#define FXRC_BITMASK_OUTPUT 0x400
-#define FXRC_BYTEMASK_OUTPUT 0x800
-#define FXRENDER_IMAGE_LOSSY 0x1000
-#define FXRC_FILLSTROKE_PATH 0x2000
-#define FXRC_SHADING 0x4000
-
-#define FXFILL_ALTERNATE 1
-#define FXFILL_WINDING 2
-#define FXFILL_FULLCOVER 4
-#define FXFILL_RECT_AA 8
-#define FX_FILL_STROKE 16
-#define FX_STROKE_ADJUST 32
-#define FX_STROKE_TEXT_MODE 64
-#define FX_FILL_TEXT_MODE 128
-#define FX_ZEROAREA_FILL 256
-#define FXFILL_NOPATHSMOOTH 512
-
-#define FXTEXT_CLEARTYPE 0x01
-#define FXTEXT_BGR_STRIPE 0x02
-#define FXTEXT_PRINTGRAPHICTEXT 0x04
-#define FXTEXT_NO_NATIVETEXT 0x08
-#define FXTEXT_PRINTIMAGETEXT 0x10
-#define FXTEXT_NOSMOOTH 0x20
 
 class CFX_DIBBase;
 class CFX_DIBitmap;
@@ -65,8 +27,6 @@ class PauseIndicatorIface;
 struct CFX_Color;
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
-
-enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
 class TextCharPos {
  public:

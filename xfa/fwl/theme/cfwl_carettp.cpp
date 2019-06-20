@@ -6,14 +6,16 @@
 
 #include "xfa/fwl/theme/cfwl_carettp.h"
 
+#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
-CFWL_CaretTP::CFWL_CaretTP() {}
-CFWL_CaretTP::~CFWL_CaretTP() {}
+CFWL_CaretTP::CFWL_CaretTP() = default;
+
+CFWL_CaretTP::~CFWL_CaretTP() = default;
 
 void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {

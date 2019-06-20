@@ -24,6 +24,7 @@ jumbo_source_set("edit") {
     "../../../constants",
     "../../../third_party:skia_shared",
     "../../fxcrt",
+    "../../fxge",
     "../font",
     "../page",
     "../parser",
@@ -38,6 +39,7 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":edit",
     "../",
+    "../../fxge",
     "../font",
     "../page",
     "../parser",

@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
+#include "core/fxge/render_defines.h"
 #include "third_party/base/ptr_util.h"
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
