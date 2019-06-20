@@ -1,0 +1,42 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{steamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
+  <subform name="form1" layout="tb" locale="en_US" restoreState="auto">
+    <event activity="docReady" ref="$form">
+      <script>
+        Field0.rawValue = "dog"
+      </script>
+    </event>
+    <field x="0" y="0" w="1000pt" h="1000pt" name="Field0">
+      <event activity="change">
+        <script contentType="application/x-javascript">
+          xfa.host.setFocus('form1.Field1');
+        </script>
+      </event>
+    </field>
+    <field x="100pt" y="100pt" w="100pt" h="100pt" name="Field1">
+      <event activity="enter"  listen="refAndDescendents">
+        <script contentType="application/x-javascript">
+          xfa.host.setFocus('form1.Field0')
+          Field0.rawValue="m9";
+        </script>
+      </event>
+    </field>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
