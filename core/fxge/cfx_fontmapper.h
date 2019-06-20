@@ -69,6 +69,7 @@ class CFX_FontMapper {
   static const size_t MM_FACE_COUNT = 2;
   static const size_t FOXIT_FACE_COUNT = 14;
 
+  uint32_t GetChecksumFromTT(void* hFont);
   ByteString GetPSNameFromTT(void* hFont);
   ByteString MatchInstalledFonts(const ByteString& norm_name);
   RetainPtr<CFX_Face> UseInternalSubst(CFX_SubstFont* pSubstFont,

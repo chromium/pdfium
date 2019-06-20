@@ -269,10 +269,19 @@ void CFX_FontMapper::SetSystemFontInfo(
   m_pFontInfo = std::move(pFontInfo);
 }
 
-ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
-  if (!m_pFontInfo)
-    return ByteString();
+uint32_t CFX_FontMapper::GetChecksumFromTT(void* hFont) {
+  uint32_t buffer[256];
+  m_pFontInfo->GetFontData(hFont, kTableTTCF,
+                           reinterpret_cast<uint8_t*>(buffer), sizeof(buffer));
 
+  uint32_t checksum = 0;
+  for (auto x : buffer)
+    checksum += x;
+
+  return checksum;
+}
+
+ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
   uint32_t size = m_pFontInfo->GetFontData(hFont, kTableNAME, nullptr, 0);
   if (!size)
     return ByteString();
@@ -674,14 +683,7 @@ bool CFX_FontMapper::IsBuiltinFace(const RetainPtr<CFX_Face>& face) const {
 RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
                                                      uint32_t ttc_size,
                                                      uint32_t font_size) {
-  uint32_t checksum = 0;
-  {
-    uint8_t buffer[1024];
-    m_pFontInfo->GetFontData(hFont, kTableTTCF, buffer, sizeof(buffer));
-    uint32_t* pBuffer = reinterpret_cast<uint32_t*>(buffer);
-    for (int i = 0; i < 256; i++)
-      checksum += pBuffer[i];
-  }
+  uint32_t checksum = GetChecksumFromTT(hFont);
   CFX_FontMgr::FontDesc* pFontDesc =
       m_pFontMgr->GetCachedTTCFontDesc(ttc_size, checksum);
   if (!pFontDesc) {
