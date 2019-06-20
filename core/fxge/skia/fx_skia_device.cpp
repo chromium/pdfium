@@ -285,8 +285,11 @@ static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
 }
 #endif  // _SKIA_SUPPORT_
 
+constexpr int kAlternateOrWindingFillModeMask =
+    FXFILL_ALTERNATE | FXFILL_WINDING;
+
 int GetAlternateOrWindingFillMode(int fill_mode) {
-  return fill_mode & (FXFILL_ALTERNATE | FXFILL_WINDING);
+  return fill_mode & kAlternateOrWindingFillModeMask;
 }
 
 bool IsAlternateFillMode(int fill_mode) {
@@ -1924,6 +1927,9 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     uint32_t stroke_color,                  // stroke color
     int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
     BlendMode blend_type) {
+  ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
+         kAlternateOrWindingFillModeMask);
+
   if (fill_mode & FX_ZEROAREA_FILL)
     return true;
   if (m_pCache->DrawPath(pPathData, pObject2Device, pGraphState, fill_color,
