@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
-#include "core/fxge/cfx_face.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
@@ -25,10 +25,12 @@ class SystemFontInfoIface;
 
 class CFX_FontMgr {
  public:
-  class FontDesc {
+  class FontDesc final : public Retainable, public Observable {
    public:
-    FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
-    ~FontDesc();
+    template <typename T, typename... Args>
+    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
+    ~FontDesc() override;
 
     pdfium::span<uint8_t> FontData() const {
       return {m_pFontData.get(), m_Size};
@@ -37,6 +39,8 @@ class CFX_FontMgr {
     CFX_Face* GetFace(size_t index) const;
 
    private:
+    FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
+
     const size_t m_Size;
     std::unique_ptr<uint8_t, FxFreeDeleter> const m_pFontData;
     ObservedPtr<CFX_Face> m_TTCFaces[16];
@@ -47,22 +51,25 @@ class CFX_FontMgr {
   CFX_FontMgr();
   ~CFX_FontMgr();
 
-  FontDesc* GetCachedFontDesc(const ByteString& face_name,
-                              int weight,
-                              bool bItalic);
-  FontDesc* AddCachedFontDesc(const ByteString& face_name,
-                              int weight,
-                              bool bItalic,
-                              std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                              uint32_t size);
+  RetainPtr<FontDesc> GetCachedFontDesc(const ByteString& face_name,
+                                        int weight,
+                                        bool bItalic);
+  RetainPtr<FontDesc> AddCachedFontDesc(
+      const ByteString& face_name,
+      int weight,
+      bool bItalic,
+      std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+      uint32_t size);
 
-  FontDesc* GetCachedTTCFontDesc(int ttc_size, uint32_t checksum);
-  FontDesc* AddCachedTTCFontDesc(int ttc_size,
-                                 uint32_t checksum,
-                                 std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                                 uint32_t size);
+  RetainPtr<FontDesc> GetCachedTTCFontDesc(int ttc_size, uint32_t checksum);
+  RetainPtr<FontDesc> AddCachedTTCFontDesc(
+      int ttc_size,
+      uint32_t checksum,
+      std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+      uint32_t size);
 
-  RetainPtr<CFX_Face> NewFixedFace(pdfium::span<const uint8_t> span,
+  RetainPtr<CFX_Face> NewFixedFace(const RetainPtr<FontDesc>& pDesc,
+                                   pdfium::span<const uint8_t> span,
                                    int face_index);
   RetainPtr<CFX_Face> FindSubstFont(const ByteString& face_name,
                                     bool bTrueType,
@@ -87,7 +94,7 @@ class CFX_FontMgr {
   // Must come before |m_pBuiltinMapper| and |m_FaceMap|.
   ScopedFXFTLibraryRec const m_FTLibrary;
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
-  std::map<ByteString, std::unique_ptr<FontDesc>> m_FaceMap;
+  std::map<ByteString, ObservedPtr<FontDesc>> m_FaceMap;
   const bool m_FTLibrarySupportsHinting;
 };
 

@@ -13,6 +13,7 @@
 class CFX_Face : public Retainable, public Observable {
  public:
   static RetainPtr<CFX_Face> New(FT_Library library,
+                                 const RetainPtr<Retainable>& pDesc,
                                  pdfium::span<const FT_Byte> file_span,
                                  FT_Long face_index);
 
@@ -25,9 +26,10 @@ class CFX_Face : public Retainable, public Observable {
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }
 
  private:
-  explicit CFX_Face(FXFT_FaceRec* pRec);
+  CFX_Face(FXFT_FaceRec* pRec, const RetainPtr<Retainable>& pDesc);
 
   ScopedFXFTFaceRec const m_pRec;
+  RetainPtr<Retainable> const m_pDesc;
 };
 
 #endif  // CORE_FXGE_CFX_FACE_H_
