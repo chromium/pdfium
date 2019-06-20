@@ -76,7 +76,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   CGdiDeviceDriver(HDC hDC, int device_class);
   ~CGdiDeviceDriver() override;
 
-  // RenderDeviceDriverIface
+  // RenderDeviceDriverIface:
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
@@ -121,12 +121,12 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                           int dest_height,
                           uint32_t bitmap_color);
 
-  HDC m_hDC;
+  const HDC m_hDC;
   bool m_bMetafileDCType;
   int m_Width;
   int m_Height;
   int m_nBitsPerPixel;
-  int m_DeviceClass;
+  const int m_DeviceClass;
   int m_RenderCaps;
 };
 
@@ -136,6 +136,8 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
   ~CGdiDisplayDriver() override;
 
  private:
+  // CGdiDisplayDriver:
+  int GetDeviceCaps(int caps_id) const override;
   bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int left,
                  int top) override;
@@ -177,6 +179,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
   ~CGdiPrinterDriver() override;
 
  private:
+  // CGdiPrinterDriver:
   int GetDeviceCaps(int caps_id) const override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
@@ -220,7 +223,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
   ~CPSPrinterDriver() override;
 
  private:
-  // RenderDeviceDriverIface
+  // RenderDeviceDriverIface:
   int GetDeviceCaps(int caps_id) const override;
   bool StartRendering() override;
   void EndRendering() override;
@@ -285,7 +288,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
   ~CTextOnlyPrinterDriver() override;
 
  private:
-  // RenderDeviceDriverIface
+  // RenderDeviceDriverIface:
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override {}
   void RestoreState(bool bKeepSaved) override {}

@@ -59,7 +59,7 @@ CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
       m_HorzSize(::GetDeviceCaps(m_hDC, HORZSIZE)),
       m_VertSize(::GetDeviceCaps(m_hDC, VERTSIZE)) {}
 
-CGdiPrinterDriver::~CGdiPrinterDriver() {}
+CGdiPrinterDriver::~CGdiPrinterDriver() = default;
 
 int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   if (caps_id == FXDC_HORZ_SIZE)
@@ -361,7 +361,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
   int ret = ::GetClipRgn(hDC, hRgn);
   if (ret == 1) {
-    ret = ::GetRegionData(hRgn, 0, NULL);
+    ret = ::GetRegionData(hRgn, 0, nullptr);
     if (ret) {
       RGNDATA* pData = reinterpret_cast<RGNDATA*>(FX_Alloc(uint8_t, ret));
       ret = ::GetRegionData(hRgn, ret, pData);

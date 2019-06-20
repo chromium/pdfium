@@ -300,8 +300,8 @@ unsigned clip_liang_barsky(float x1,
 
 class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
  public:
-  CFX_Win32FallbackFontInfo() {}
-  ~CFX_Win32FallbackFontInfo() override {}
+  CFX_Win32FallbackFontInfo() = default;
+  ~CFX_Win32FallbackFontInfo() override = default;
 
   // CFX_FolderFontInfo:
   void* MapFont(int weight,
@@ -704,9 +704,8 @@ CFX_GEModule::PlatformIface::Create() {
   return pdfium::MakeUnique<CWin32Platform>();
 }
 
-CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class) {
-  m_hDC = hDC;
-  m_DeviceClass = device_class;
+CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class)
+    : m_hDC(hDC), m_DeviceClass(device_class) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   SetStretchBltMode(hDC, pPlatform->m_bHalfTone ? HALFTONE : COLORONCOLOR);
@@ -734,7 +733,7 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class) {
   }
 }
 
-CGdiDeviceDriver::~CGdiDeviceDriver() {}
+CGdiDeviceDriver::~CGdiDeviceDriver() = default;
 
 int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
@@ -748,8 +747,10 @@ int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
       return m_nBitsPerPixel;
     case FXDC_RENDER_CAPS:
       return m_RenderCaps;
+    default:
+      NOTREACHED();
+      return 0;
   }
-  return 0;
 }
 
 void CGdiDeviceDriver::SaveState() {
@@ -1139,7 +1140,13 @@ CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
   }
 }
 
-CGdiDisplayDriver::~CGdiDisplayDriver() {}
+CGdiDisplayDriver::~CGdiDisplayDriver() = default;
+
+int CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
+  if (caps_id == FXDC_HORZ_SIZE || caps_id == FXDC_VERT_SIZE)
+    return 0;
+  return CGdiDeviceDriver::GetDeviceCaps(caps_id);
+}
 
 bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                   int left,
