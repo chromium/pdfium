@@ -250,6 +250,9 @@ class JpegDecoder final : public ScanlineDecoder {
   // Can only be called inside a jpeg_read_header() setjmp handler.
   bool HasKnownBadHeaderWithInvalidHeight() const;
 
+  // Is a JPEG SOFn marker, which is defined as 0xff, 0xc[0-9a-f].
+  bool IsSofSegment(int marker_offset) const;
+
   // Patch up the in-memory JPEG header for known bad JPEGs.
   void PatchUpKnownBadHeaderWithInvalidHeight();
 
@@ -257,6 +260,9 @@ class JpegDecoder final : public ScanlineDecoder {
   void PatchUpTrailer();
 
   uint8_t* GetWritableSrcData();
+
+  // Before |kKnownBadHeaderWithInvalidHeightByteOffsetStart|.
+  static const size_t kSofMarkerByteOffset = 5;
 
   static const int kKnownBadHeaderWithInvalidHeightByteOffsetStart = 163;
 
@@ -425,6 +431,11 @@ bool JpegDecoder::HasKnownBadHeaderWithInvalidHeight() const {
   if (m_SrcSpan.size() <= kKnownBadHeaderWithInvalidHeightByteOffsetStart + 3)
     return false;
 
+  if (!IsSofSegment(kKnownBadHeaderWithInvalidHeightByteOffsetStart -
+                    kSofMarkerByteOffset)) {
+    return false;
+  }
+
   const uint8_t* pHeaderDimensions =
       &m_SrcSpan[kKnownBadHeaderWithInvalidHeightByteOffsetStart];
   uint8_t nExpectedWidthByte1 = (m_OrigWidth >> 8) & 0xff;
@@ -433,6 +444,12 @@ bool JpegDecoder::HasKnownBadHeaderWithInvalidHeight() const {
   return pHeaderDimensions[0] == 0xff && pHeaderDimensions[1] == 0xff &&
          pHeaderDimensions[2] == nExpectedWidthByte1 &&
          pHeaderDimensions[3] == nExpectedWidthByte2;
+}
+
+bool JpegDecoder::IsSofSegment(int marker_offset) const {
+  const uint8_t* pHeaderMarker = &m_SrcSpan[marker_offset];
+  return pHeaderMarker[0] == 0xff && pHeaderMarker[1] >= 0xc0 &&
+         pHeaderMarker[1] <= 0xcf;
 }
 
 void JpegDecoder::PatchUpKnownBadHeaderWithInvalidHeight() {
