@@ -26,10 +26,17 @@ class PauseIndicatorIface;
 class TextCharPos;
 struct FX_RECT;
 
+enum class DeviceType : uint8_t {
+  kUnknown,
+  kDisplay,
+  kPrinter,
+};
+
 class RenderDeviceDriverIface {
  public:
   virtual ~RenderDeviceDriverIface();
 
+  virtual DeviceType GetDeviceType() const = 0;
   virtual int GetDeviceCaps(int caps_id) const = 0;
 
   virtual bool StartRendering();

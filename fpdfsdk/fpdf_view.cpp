@@ -125,7 +125,8 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     auto pOwnedList = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
     CPDF_AnnotList* pList = pOwnedList.get();
     pContext->m_pAnnots = std::move(pOwnedList);
-    bool bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
+    bool bPrinting =
+        pContext->m_pDevice->GetDeviceType() != DeviceType::kDisplay;
     pList->DisplayAnnots(pPage, pContext->m_pContext.get(), bPrinting, &matrix,
                          false, nullptr);
   }
@@ -508,7 +509,7 @@ void RenderBitmap(CFX_RenderDevice* device,
   pDst->CompositeBitmap(0, 0, size_x_bm, size_y_bm, pSrc, 0, 0,
                         BlendMode::kNormal, nullptr, false);
 
-  if (device->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
+  if (device->GetDeviceType() == DeviceType::kPrinter) {
     device->StretchDIBits(pDst, mask_area.left, mask_area.top, size_x_bm,
                           size_y_bm);
   } else {
@@ -606,7 +607,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   } else if (bNewBitmap) {
     CFX_WindowsRenderDevice WinDC(dc, &kEncoderIface);
     bool bitsStretched = false;
-    if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
+    if (WinDC.GetDeviceType() == DeviceType::kPrinter) {
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();
       if (pDst->Create(size_x, size_y, FXDIB_Rgb32)) {
         memset(pDst->GetBuffer(), -1, pBitmap->GetPitch() * size_y);

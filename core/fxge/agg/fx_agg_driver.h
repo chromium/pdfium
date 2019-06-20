@@ -42,7 +42,8 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   void InitPlatform();
   void DestroyPlatform();
 
-  // RenderDeviceDriverIface
+  // RenderDeviceDriverIface:
+  DeviceType GetDeviceType() const override;
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;

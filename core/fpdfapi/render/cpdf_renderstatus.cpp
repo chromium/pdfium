@@ -1009,7 +1009,7 @@ CPDF_RenderStatus::~CPDF_RenderStatus() {}
 
 void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentState,
                                    const CPDF_GraphicStates* pInitialStates) {
-  m_bPrint = m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
+  m_bPrint = m_pDevice->GetDeviceType() != DeviceType::kDisplay;
   m_pPageResource.Reset(m_pContext->GetPageResources());
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates.CopyStates(*pInitialStates);
@@ -1185,10 +1185,9 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
     return;
 
   int res = 300;
-  if (pObj->IsImage() &&
-      m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
+  if (pObj->IsImage() && m_pDevice->GetDeviceType() == DeviceType::kPrinter)
     res = 0;
-  }
+
   CPDF_ScaledRenderBuffer buffer;
   if (!buffer.Initialize(m_pContext.Get(), m_pDevice, rect, pObj, &m_Options,
                          res)) {
@@ -1378,7 +1377,7 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   if (ClipPath.GetTextCount() == 0)
     return;
 
-  if (m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
+  if (m_pDevice->GetDeviceType() == DeviceType::kDisplay &&
       !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP)) {
     return;
   }
@@ -1465,7 +1464,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bool bTextClip =
       (pPageObj->m_ClipPath.HasRef() &&
        pPageObj->m_ClipPath.GetTextCount() > 0 &&
-       m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
+       m_pDevice->GetDeviceType() == DeviceType::kDisplay &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if (m_Options.GetOptions().bOverprint && pPageObj->IsImage() &&
       pPageObj->m_GeneralState.GetFillOP() &&
@@ -1796,10 +1795,10 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   if (pdfium::ContainsValue(m_Type3FontCache, pType3Font))
     return true;
 
-  int device_class = m_pDevice->GetDeviceClass();
+  DeviceType device_type = m_pDevice->GetDeviceType();
   FX_ARGB fill_argb = GetFillArgbForType3(textobj);
   int fill_alpha = FXARGB_A(fill_argb);
-  if (device_class != FXDC_DISPLAY && fill_alpha < 255)
+  if (device_type != DeviceType::kDisplay && fill_alpha < 255)
     return false;
 
   CFX_Matrix text_matrix = textobj->GetTextMatrix();
@@ -1810,7 +1809,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   // Must come before |glyphs|, because |glyphs| points into |refTypeCache|.
   CPDF_RefType3Cache refTypeCache(pType3Font);
   std::vector<TextGlyphPos> glyphs;
-  if (device_class == FXDC_DISPLAY)
+  if (device_type == DeviceType::kDisplay)
     glyphs.resize(textobj->GetCharCodes().size());
 
   for (size_t iChar = 0; iChar < textobj->GetCharCodes().size(); ++iChar) {
@@ -1896,7 +1895,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
     } else if (pType3Char->GetBitmap()) {
-      if (device_class == FXDC_DISPLAY) {
+      if (device_type == DeviceType::kDisplay) {
         RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
         CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix);

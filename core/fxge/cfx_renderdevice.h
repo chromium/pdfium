@@ -14,16 +14,14 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "core/fxge/renderdevicedriver_iface.h"
 
-#define FXDC_DEVICE_CLASS 1
 #define FXDC_PIXEL_WIDTH 2
 #define FXDC_PIXEL_HEIGHT 3
 #define FXDC_BITS_PIXEL 4
 #define FXDC_HORZ_SIZE 5
 #define FXDC_VERT_SIZE 6
 #define FXDC_RENDER_CAPS 7
-#define FXDC_DISPLAY 1
-#define FXDC_PRINTER 2
 
 #define FXRC_GET_BITS 0x01
 #define FXRC_BIT_MASK 0x02
@@ -64,7 +62,6 @@ class CFX_GraphStateData;
 class CFX_ImageRenderer;
 class CFX_PathData;
 class PauseIndicatorIface;
-class RenderDeviceDriverIface;
 struct CFX_Color;
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
@@ -119,7 +116,7 @@ class CFX_RenderDevice {
 
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
-  int GetDeviceClass() const { return m_DeviceClass; }
+  DeviceType GetDeviceType() const { return m_DeviceType; }
   int GetRenderCaps() const { return m_RenderCaps; }
   int GetDeviceCaps(int id) const;
   RetainPtr<CFX_DIBitmap> GetBitmap() const;
@@ -309,7 +306,7 @@ class CFX_RenderDevice {
   int m_Height = 0;
   int m_bpp = 0;
   int m_RenderCaps = 0;
-  int m_DeviceClass = 0;
+  DeviceType m_DeviceType = DeviceType::kUnknown;
   FX_RECT m_ClipBox;
   std::unique_ptr<RenderDeviceDriverIface> m_pDeviceDriver;
 };

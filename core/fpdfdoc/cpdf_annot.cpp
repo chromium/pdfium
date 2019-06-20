@@ -438,7 +438,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (annot_flags & pdfium::annotation_flags::kHidden)
     return;
 
-  bool bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER ||
+  bool bPrinting = pDevice->GetDeviceType() == DeviceType::kPrinter ||
                    (pOptions && pOptions->GetOptions().bPrintPreview);
   if (bPrinting && (annot_flags & pdfium::annotation_flags::kPrint) == 0) {
     return;

@@ -704,8 +704,8 @@ CFX_GEModule::PlatformIface::Create() {
   return pdfium::MakeUnique<CWin32Platform>();
 }
 
-CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class)
-    : m_hDC(hDC), m_DeviceClass(device_class) {
+CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
+    : m_hDC(hDC), m_DeviceType(device_type) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   SetStretchBltMode(hDC, pPlatform->m_bHalfTone ? HALFTONE : COLORONCOLOR);
@@ -726,7 +726,7 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class)
     m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
     m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
   }
-  if (m_DeviceClass != FXDC_DISPLAY) {
+  if (m_DeviceType != DeviceType::kDisplay) {
     m_RenderCaps = FXRC_BIT_MASK;
   } else {
     m_RenderCaps = FXRC_GET_BITS | FXRC_BIT_MASK;
@@ -735,10 +735,12 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class)
 
 CGdiDeviceDriver::~CGdiDeviceDriver() = default;
 
+DeviceType CGdiDeviceDriver::GetDeviceType() const {
+  return m_DeviceType;
+}
+
 int CGdiDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
-    case FXDC_DEVICE_CLASS:
-      return m_DeviceClass;
     case FXDC_PIXEL_WIDTH:
       return m_Width;
     case FXDC_PIXEL_HEIGHT:
@@ -767,7 +769,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
                                      const FX_RECT& src_rect,
                                      int left,
                                      int top) {
-  if (m_DeviceClass == FXDC_PRINTER) {
+  if (m_DeviceType == DeviceType::kPrinter) {
     RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1->FlipImage(false, true);
     if (!pBitmap)
       return false;
@@ -826,7 +828,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
     SetStretchBltMode(m_hDC, COLORONCOLOR);
   }
   RetainPtr<CFX_DIBitmap> pToStrechBitmap = pBitmap;
-  if (m_DeviceClass == FXDC_PRINTER &&
+  if (m_DeviceType == DeviceType::kPrinter &&
       ((int64_t)pBitmap->GetWidth() * pBitmap->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
     pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height,
@@ -987,9 +989,9 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     return false;
 
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
-    if (bDrawAlpha ||
-        ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) ||
-         (pGraphState && !pGraphState->m_DashArray.empty()))) {
+    if (bDrawAlpha || ((m_DeviceType != DeviceType::kPrinter &&
+                        !(fill_mode & FXFILL_FULLCOVER)) ||
+                       (pGraphState && !pGraphState->m_DashArray.empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->m_LineWidth == 1.0f &&
             (pPathData->GetPoints().size() == 5 ||
@@ -1132,7 +1134,7 @@ bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
 }
 
 CGdiDisplayDriver::CGdiDisplayDriver(HDC hDC)
-    : CGdiDeviceDriver(hDC, FXDC_DISPLAY) {
+    : CGdiDeviceDriver(hDC, DeviceType::kDisplay) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   if (pPlatform->m_GdiplusExt.IsAvailable()) {

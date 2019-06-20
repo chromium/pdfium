@@ -55,7 +55,7 @@ PDFiumEnsureTypefaceCharactersAccessible g_pdfium_typeface_accessible_func =
 #endif
 
 CGdiPrinterDriver::CGdiPrinterDriver(HDC hDC)
-    : CGdiDeviceDriver(hDC, FXDC_PRINTER),
+    : CGdiDeviceDriver(hDC, DeviceType::kPrinter),
       m_HorzSize(::GetDeviceCaps(m_hDC, HORZSIZE)),
       m_VertSize(::GetDeviceCaps(m_hDC, VERTSIZE)) {}
 
@@ -387,10 +387,12 @@ CPSPrinterDriver::~CPSPrinterDriver() {
   EndRendering();
 }
 
+DeviceType CPSPrinterDriver::GetDeviceType() const {
+  return DeviceType::kPrinter;
+}
+
 int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
-    case FXDC_DEVICE_CLASS:
-      return FXDC_PRINTER;
     case FXDC_PIXEL_WIDTH:
       return m_Width;
     case FXDC_PIXEL_HEIGHT:
@@ -527,10 +529,12 @@ CTextOnlyPrinterDriver::~CTextOnlyPrinterDriver() {
   EndRendering();
 }
 
+DeviceType CTextOnlyPrinterDriver::GetDeviceType() const {
+  return DeviceType::kPrinter;
+}
+
 int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
-    case FXDC_DEVICE_CLASS:
-      return FXDC_PRINTER;
     case FXDC_PIXEL_WIDTH:
       return m_Width;
     case FXDC_PIXEL_HEIGHT:

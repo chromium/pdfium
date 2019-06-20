@@ -83,7 +83,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           pCurObj->GetRect().top >= m_ClipRect.bottom) {
         if (m_pOptions->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
-          if (m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
+          if (m_pDevice->GetDeviceType() == DeviceType::kPrinter) {
             m_LastObjectRendered = iter;
             m_pRenderStatus->ProcessClipPath(pCurObj->m_ClipPath,
                                              m_pCurrentLayer->m_Matrix);

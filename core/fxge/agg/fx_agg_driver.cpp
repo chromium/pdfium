@@ -1166,10 +1166,12 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
 }
 #endif  // !defined(OS_MACOSX)
 
+DeviceType CFX_AggDeviceDriver::GetDeviceType() const {
+  return DeviceType::kDisplay;
+}
+
 int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
-    case FXDC_DEVICE_CLASS:
-      return FXDC_DISPLAY;
     case FXDC_PIXEL_WIDTH:
       return m_pBitmap->GetWidth();
     case FXDC_PIXEL_HEIGHT:

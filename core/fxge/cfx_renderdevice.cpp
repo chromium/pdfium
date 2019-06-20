@@ -410,7 +410,7 @@ void CFX_RenderDevice::InitDeviceInfo() {
   m_Height = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
   m_bpp = m_pDeviceDriver->GetDeviceCaps(FXDC_BITS_PIXEL);
   m_RenderCaps = m_pDeviceDriver->GetDeviceCaps(FXDC_RENDER_CAPS);
-  m_DeviceClass = m_pDeviceDriver->GetDeviceCaps(FXDC_DEVICE_CLASS);
+  m_DeviceType = m_pDeviceDriver->GetDeviceType();
   if (!m_pDeviceDriver->GetClipBox(&m_ClipBox)) {
     m_ClipBox.left = 0;
     m_ClipBox.top = 0;
@@ -867,7 +867,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       uint32_t fill_color,
                                       uint32_t text_flags) {
   int nativetext_flags = text_flags;
-  if (m_DeviceClass != FXDC_DISPLAY) {
+  if (m_DeviceType != DeviceType::kDisplay) {
     if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
       if (ShouldDrawDeviceText(pFont, text_flags) &&
           m_pDeviceDriver->DrawDeviceText(
@@ -888,7 +888,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
-      ((m_DeviceClass == FXDC_PRINTER) &&
+      (m_DeviceType == DeviceType::kPrinter &&
        !(text_flags & FXTEXT_PRINTIMAGETEXT))) {
     if (pFont->GetFaceRec()) {
       int nPathFlags =
@@ -900,7 +900,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   int anti_alias = FT_RENDER_MODE_MONO;
   bool bNormal = false;
   if ((text_flags & FXTEXT_NOSMOOTH) == 0) {
-    if (m_DeviceClass == FXDC_DISPLAY && m_bpp > 1) {
+    if (m_DeviceType == DeviceType::kDisplay && m_bpp > 1) {
       if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
         // Some Freetype implementations (like the one packaged with Fedora) do
         // not support hinting due to patents 6219025, 6239783, 6307566,

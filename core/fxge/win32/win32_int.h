@@ -73,10 +73,11 @@ class CWin32Platform : public CFX_GEModule::PlatformIface {
 
 class CGdiDeviceDriver : public RenderDeviceDriverIface {
  protected:
-  CGdiDeviceDriver(HDC hDC, int device_class);
+  CGdiDeviceDriver(HDC hDC, DeviceType device_type);
   ~CGdiDeviceDriver() override;
 
   // RenderDeviceDriverIface:
+  DeviceType GetDeviceType() const override;
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
@@ -126,7 +127,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   int m_Width;
   int m_Height;
   int m_nBitsPerPixel;
-  const int m_DeviceClass;
+  const DeviceType m_DeviceType;
   int m_RenderCaps;
 };
 
@@ -224,6 +225,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
 
  private:
   // RenderDeviceDriverIface:
+  DeviceType GetDeviceType() const override;
   int GetDeviceCaps(int caps_id) const override;
   bool StartRendering() override;
   void EndRendering() override;
@@ -289,6 +291,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
 
  private:
   // RenderDeviceDriverIface:
+  DeviceType GetDeviceType() const override;
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override {}
   void RestoreState(bool bKeepSaved) override {}

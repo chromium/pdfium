@@ -36,6 +36,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   ~CFX_SkiaDeviceDriver() override;
 
   /** Options */
+  DeviceType GetDeviceType() const override;
   int GetDeviceCaps(int caps_id) const override;
 
   /** Save and restore all graphic states */

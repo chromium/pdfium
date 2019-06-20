@@ -1703,11 +1703,12 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   return true;
 }
 
+DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
+  return DeviceType::kDisplay;
+}
+
 int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
   switch (caps_id) {
-    case FXDC_DEVICE_CLASS:
-      return FXDC_DISPLAY;
-
 #ifdef _SKIA_SUPPORT_
     case FXDC_PIXEL_WIDTH:
       return m_pCanvas->imageInfo().width();

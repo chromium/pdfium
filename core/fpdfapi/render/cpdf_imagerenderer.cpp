@@ -115,8 +115,10 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   else if (GetRenderOptions().GetOptions().bForceHalftone)
     m_ResampleOptions.bHalftone = true;
 
-  if (m_pRenderStatus->GetRenderDevice()->GetDeviceClass() != FXDC_DISPLAY)
+  if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() !=
+      DeviceType::kDisplay) {
     HandleFilters();
+  }
 
   if (GetRenderOptions().GetOptions().bNoImageSmooth)
     m_ResampleOptions.bNoSmoothing = true;
