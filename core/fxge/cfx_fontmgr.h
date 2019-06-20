@@ -29,29 +29,24 @@ class CFX_FontMgr {
   CFX_FontMgr();
   ~CFX_FontMgr();
 
-  RetainPtr<CFX_Face> GetCachedFace(const ByteString& face_name,
-                                    int weight,
-                                    bool bItalic,
-                                    const uint8_t** pFontData);
-  RetainPtr<CFX_Face> AddCachedFace(
-      const ByteString& face_name,
-      int weight,
-      bool bItalic,
-      std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-      uint32_t size,
-      int face_index);
-  RetainPtr<CFX_Face> GetCachedTTCFace(int ttc_size,
-                                       uint32_t checksum,
-                                       uint32_t font_offset);
-  RetainPtr<CFX_Face> AddCachedTTCFace(
+  CTTFontDesc* GetCachedFontDesc(const ByteString& face_name,
+                                 int weight,
+                                 bool bItalic);
+  CTTFontDesc* AddCachedFontDesc(const ByteString& face_name,
+                                 int weight,
+                                 bool bItalic,
+                                 std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                                 uint32_t size);
+
+  CTTFontDesc* GetCachedTTCFontDesc(int ttc_size, uint32_t checksum);
+  CTTFontDesc* AddCachedTTCFontDesc(
       int ttc_size,
       uint32_t checksum,
       std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-      uint32_t size,
-      uint32_t font_offset);
+      uint32_t size);
+
   RetainPtr<CFX_Face> NewFixedFace(pdfium::span<const uint8_t> span,
                                    int face_index);
-  void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   RetainPtr<CFX_Face> FindSubstFont(const ByteString& face_name,
                                     bool bTrueType,
                                     uint32_t flags,
@@ -59,6 +54,8 @@ class CFX_FontMgr {
                                     int italic_angle,
                                     int CharsetCP,
                                     CFX_SubstFont* pSubstFont);
+
+  void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
 
   // Always present.
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }

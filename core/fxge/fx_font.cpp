@@ -102,6 +102,18 @@ ByteString GetNameFromTT(const uint8_t* name_table,
   return ByteString();
 }
 
+int GetTTCIndex(pdfium::span<const uint8_t> pFontData, uint32_t font_offset) {
+  const uint8_t* p = pFontData.data() + 8;
+  uint32_t nfont = GET_TT_LONG(p);
+  uint32_t index;
+  for (index = 0; index < nfont; index++) {
+    p = pFontData.data() + 12 + index * 4;
+    if (GET_TT_LONG(p) == font_offset)
+      return index;
+  }
+  return 0;
+}
+
 wchar_t PDF_UnicodeFromAdobeName(const char* name) {
   return (wchar_t)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
 }
