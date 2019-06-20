@@ -12,38 +12,55 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
+class CFX_Face;
 class CFX_FontMapper;
 class CFX_SubstFont;
-class CTTFontDesc;
 class SystemFontInfoIface;
 
 class CFX_FontMgr {
  public:
+  class FontDesc {
+   public:
+    FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
+    ~FontDesc();
+
+    pdfium::span<uint8_t> FontData() const {
+      return {m_pFontData.get(), m_Size};
+    }
+    void SetFace(size_t index, CFX_Face* face);
+    CFX_Face* GetFace(size_t index) const;
+
+   private:
+    const size_t m_Size;
+    std::unique_ptr<uint8_t, FxFreeDeleter> const m_pFontData;
+    ObservedPtr<CFX_Face> m_TTCFaces[16];
+  };
+
   static Optional<pdfium::span<const uint8_t>> GetBuiltinFont(size_t index);
 
   CFX_FontMgr();
   ~CFX_FontMgr();
 
-  CTTFontDesc* GetCachedFontDesc(const ByteString& face_name,
-                                 int weight,
-                                 bool bItalic);
-  CTTFontDesc* AddCachedFontDesc(const ByteString& face_name,
-                                 int weight,
-                                 bool bItalic,
+  FontDesc* GetCachedFontDesc(const ByteString& face_name,
+                              int weight,
+                              bool bItalic);
+  FontDesc* AddCachedFontDesc(const ByteString& face_name,
+                              int weight,
+                              bool bItalic,
+                              std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                              uint32_t size);
+
+  FontDesc* GetCachedTTCFontDesc(int ttc_size, uint32_t checksum);
+  FontDesc* AddCachedTTCFontDesc(int ttc_size,
+                                 uint32_t checksum,
                                  std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                                  uint32_t size);
-
-  CTTFontDesc* GetCachedTTCFontDesc(int ttc_size, uint32_t checksum);
-  CTTFontDesc* AddCachedTTCFontDesc(
-      int ttc_size,
-      uint32_t checksum,
-      std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-      uint32_t size);
 
   RetainPtr<CFX_Face> NewFixedFace(pdfium::span<const uint8_t> span,
                                    int face_index);
@@ -70,7 +87,7 @@ class CFX_FontMgr {
   // Must come before |m_pBuiltinMapper| and |m_FaceMap|.
   ScopedFXFTLibraryRec const m_FTLibrary;
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
-  std::map<ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
+  std::map<ByteString, std::unique_ptr<FontDesc>> m_FaceMap;
   const bool m_FTLibrarySupportsHinting;
 };
 

@@ -17,7 +17,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/cttfontdesc.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/stl_util.h"
@@ -683,7 +682,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
     for (int i = 0; i < 256; i++)
       checksum += pBuffer[i];
   }
-  CTTFontDesc* pFontDesc = m_pFontMgr->GetCachedTTCFontDesc(ttc_size, checksum);
+  CFX_FontMgr::FontDesc* pFontDesc =
+      m_pFontMgr->GetCachedTTCFontDesc(ttc_size, checksum);
   if (!pFontDesc) {
     std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
         FX_Alloc(uint8_t, ttc_size));
@@ -713,7 +713,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
                                                   int weight,
                                                   bool bItalic,
                                                   uint32_t font_size) {
-  CTTFontDesc* pFontDesc =
+  CFX_FontMgr::FontDesc* pFontDesc =
       m_pFontMgr->GetCachedFontDesc(SubstName, weight, bItalic);
   if (!pFontDesc) {
     std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(

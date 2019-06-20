@@ -9,9 +9,9 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxge/cfx_face.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/cttfontdesc.h"
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
@@ -68,6 +68,22 @@ FXFT_LibraryRec* FTLibraryInitHelper() {
 
 }  // namespace
 
+CFX_FontMgr::FontDesc::FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+                                size_t size)
+    : m_Size(size), m_pFontData(std::move(pData)) {}
+
+CFX_FontMgr::FontDesc::~FontDesc() = default;
+
+void CFX_FontMgr::FontDesc::SetFace(size_t index, CFX_Face* face) {
+  ASSERT(index < FX_ArraySize(m_TTCFaces));
+  m_TTCFaces[index].Reset(face);
+}
+
+CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
+  ASSERT(index < FX_ArraySize(m_TTCFaces));
+  return m_TTCFaces[index].Get();
+}
+
 CFX_FontMgr::CFX_FontMgr()
     : m_FTLibrary(FTLibraryInitHelper()),
       m_pBuiltinMapper(pdfium::MakeUnique<CFX_FontMapper>(this)),
@@ -92,37 +108,38 @@ RetainPtr<CFX_Face> CFX_FontMgr::FindSubstFont(const ByteString& face_name,
                                          italic_angle, CharsetCP, pSubstFont);
 }
 
-CTTFontDesc* CFX_FontMgr::GetCachedFontDesc(const ByteString& face_name,
-                                            int weight,
-                                            bool bItalic) {
+CFX_FontMgr::FontDesc* CFX_FontMgr::GetCachedFontDesc(
+    const ByteString& face_name,
+    int weight,
+    bool bItalic) {
   auto it = m_FaceMap.find(KeyNameFromFace(face_name, weight, bItalic));
   return it != m_FaceMap.end() ? it->second.get() : nullptr;
 }
 
-CTTFontDesc* CFX_FontMgr::AddCachedFontDesc(
+CFX_FontMgr::FontDesc* CFX_FontMgr::AddCachedFontDesc(
     const ByteString& face_name,
     int weight,
     bool bItalic,
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     uint32_t size) {
-  auto pFontDesc = pdfium::MakeUnique<CTTFontDesc>(std::move(pData), size);
+  auto pFontDesc = pdfium::MakeUnique<FontDesc>(std::move(pData), size);
   auto* result = pFontDesc.get();
   m_FaceMap[KeyNameFromFace(face_name, weight, bItalic)] = std::move(pFontDesc);
   return result;
 }
 
-CTTFontDesc* CFX_FontMgr::GetCachedTTCFontDesc(int ttc_size,
-                                               uint32_t checksum) {
+CFX_FontMgr::FontDesc* CFX_FontMgr::GetCachedTTCFontDesc(int ttc_size,
+                                                         uint32_t checksum) {
   auto it = m_FaceMap.find(KeyNameFromSize(ttc_size, checksum));
   return it != m_FaceMap.end() ? it->second.get() : nullptr;
 }
 
-CTTFontDesc* CFX_FontMgr::AddCachedTTCFontDesc(
+CFX_FontMgr::FontDesc* CFX_FontMgr::AddCachedTTCFontDesc(
     int ttc_size,
     uint32_t checksum,
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     uint32_t size) {
-  auto pNewDesc = pdfium::MakeUnique<CTTFontDesc>(std::move(pData), size);
+  auto pNewDesc = pdfium::MakeUnique<FontDesc>(std::move(pData), size);
   auto* pResult = pNewDesc.get();
   m_FaceMap[KeyNameFromSize(ttc_size, checksum)] = std::move(pNewDesc);
   return pResult;

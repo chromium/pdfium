@@ -54,8 +54,6 @@ jumbo_source_set("fxge") {
     "cfx_substfont.h",
     "cfx_unicodeencoding.cpp",
     "cfx_unicodeencoding.h",
-    "cttfontdesc.cpp",
-    "cttfontdesc.h",
     "dib/cfx_bitmapcomposer.cpp",
     "dib/cfx_bitmapcomposer.h",
     "dib/cfx_bitmapstorer.cpp",
