@@ -1,0 +1,55 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 612 792]
+  /Resources <<
+    /XObject <<
+      /Im0 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+612 0 0 792 0 0 cm
+/Im0 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Filter [/ASCIIHexDecode /LZWDecode /JPXDecode]
+  /Width 612
+  /Height 792
+  {{streamlen}}
+>>
+stream
+80002040c351404020068290e0a8100028663a1e4e06a380c8410d004522d0d16c68d10d0b1a4d06
+439408061881008c8000181c0f180003cc66f361c80330084358d1a31bfc9eff288005f189549a51
+30a24ae5947a44b00e0100d3ea3507f948000c86d400a040200002ff2e0002640201209050b35a2c
+f69b4bfe5625af10ce465309d0ca6410188f220279c0ca6e251408a47101d8ca72399a4de6e100c8
+5c33170c1fe9000432303faf3fd26cf5a14022502a2bdfe7f369a0b480980c12097d1801be801c05
+0005c57bf818daa6ee5fed9801
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
