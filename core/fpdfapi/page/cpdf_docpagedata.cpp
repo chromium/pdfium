@@ -72,7 +72,7 @@ ByteString FPDF_GetPSNameFromTT(HDC hDC) {
   if (size != GDI_ERROR) {
     LPBYTE buffer = FX_Alloc(BYTE, size);
     ::GetFontData(hDC, 'eman', 0, buffer, size);
-    result = GetNameFromTT(buffer, size, 6);
+    result = GetNameFromTT({buffer, size}, 6);
     FX_Free(buffer);
   }
   return result;

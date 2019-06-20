@@ -12,6 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/span.h"
 
 class CFPF_SkiaFontMgr;
 class CFPF_SkiaPathFont;
@@ -39,7 +40,7 @@ class CFPF_SkiaFont {
   bool GetBBox(FX_RECT& rtBBox);
   int32_t GetHeight() const;
   int32_t GetItalicAngle() const;
-  uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
+  uint32_t GetFontData(uint32_t dwTable, pdfium::span<uint8_t> pBuffer);
   FXFT_FaceRec* GetFaceRec() const { return m_Face->GetRec(); }
 
  private:

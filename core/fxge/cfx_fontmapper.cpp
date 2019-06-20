@@ -271,8 +271,8 @@ void CFX_FontMapper::SetSystemFontInfo(
 
 uint32_t CFX_FontMapper::GetChecksumFromTT(void* hFont) {
   uint32_t buffer[256];
-  m_pFontInfo->GetFontData(hFont, kTableTTCF,
-                           reinterpret_cast<uint8_t*>(buffer), sizeof(buffer));
+  m_pFontInfo->GetFontData(
+      hFont, kTableTTCF, pdfium::as_writable_bytes(pdfium::make_span(buffer)));
 
   uint32_t checksum = 0;
   for (auto x : buffer)
@@ -282,16 +282,13 @@ uint32_t CFX_FontMapper::GetChecksumFromTT(void* hFont) {
 }
 
 ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
-  uint32_t size = m_pFontInfo->GetFontData(hFont, kTableNAME, nullptr, 0);
+  uint32_t size = m_pFontInfo->GetFontData(hFont, kTableNAME, {});
   if (!size)
     return ByteString();
 
   std::vector<uint8_t> buffer(size);
-  uint8_t* buffer_ptr = buffer.data();
-  uint32_t bytes_read =
-      m_pFontInfo->GetFontData(hFont, kTableNAME, buffer_ptr, size);
-  return bytes_read == size ? GetNameFromTT(buffer_ptr, bytes_read, 6)
-                            : ByteString();
+  uint32_t bytes_read = m_pFontInfo->GetFontData(hFont, kTableNAME, buffer);
+  return bytes_read == size ? GetNameFromTT(buffer, 6) : ByteString();
 }
 
 void CFX_FontMapper::AddInstalledFont(const ByteString& name, int charset) {
@@ -629,8 +626,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   m_pFontInfo->GetFaceName(hFont, &SubstName);
   if (Charset == FX_CHARSET_Default)
     m_pFontInfo->GetFontCharset(hFont, &Charset);
-  uint32_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, nullptr, 0);
-  uint32_t font_size = m_pFontInfo->GetFontData(hFont, 0, nullptr, 0);
+  uint32_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, {});
+  uint32_t font_size = m_pFontInfo->GetFontData(hFont, 0, {});
   if (font_size == 0 && ttc_size == 0) {
     m_pFontInfo->DeleteFont(hFont);
     return nullptr;
@@ -689,7 +686,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* hFont,
   if (!pFontDesc) {
     std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
         FX_Alloc(uint8_t, ttc_size));
-    m_pFontInfo->GetFontData(hFont, kTableTTCF, pFontData.get(), ttc_size);
+    m_pFontInfo->GetFontData(hFont, kTableTTCF, {pFontData.get(), ttc_size});
     pFontDesc = m_pFontMgr->AddCachedTTCFontDesc(
         ttc_size, checksum, std::move(pFontData), ttc_size);
   }
@@ -720,7 +717,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* hFont,
   if (!pFontDesc) {
     std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
         FX_Alloc(uint8_t, font_size));
-    m_pFontInfo->GetFontData(hFont, 0, pFontData.get(), font_size);
+    m_pFontInfo->GetFontData(hFont, 0, {pFontData.get(), font_size});
     pFontDesc = m_pFontMgr->AddCachedFontDesc(SubstName, weight, bItalic,
                                               std::move(pFontData), font_size);
   }

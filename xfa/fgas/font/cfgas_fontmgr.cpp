@@ -453,14 +453,14 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
   if (!hFont)
     return nullptr;
 
-  uint32_t dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, nullptr, 0);
+  uint32_t dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, {});
   if (dwFileSize == 0)
     return nullptr;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer(
       FX_Alloc(uint8_t, dwFileSize + 1));
   dwFileSize =
-      pSystemFontInfo->GetFontData(hFont, 0, pBuffer.get(), dwFileSize);
+      pSystemFontInfo->GetFontData(hFont, 0, {pBuffer.get(), dwFileSize});
   return pdfium::MakeRetain<CFX_MemoryStream>(std::move(pBuffer), dwFileSize);
 }
 

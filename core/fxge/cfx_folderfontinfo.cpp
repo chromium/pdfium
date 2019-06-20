@@ -227,11 +227,11 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (names.IsEmpty())
     return;
 
-  ByteString facename = GetNameFromTT(names.raw_str(), names.GetLength(), 1);
+  ByteString facename = GetNameFromTT(names.AsRawSpan(), 1);
   if (facename.IsEmpty())
     return;
 
-  ByteString style = GetNameFromTT(names.raw_str(), names.GetLength(), 2);
+  ByteString style = GetNameFromTT(names.AsRawSpan(), 2);
   if (style != "Regular")
     facename += " " + style;
 
@@ -343,8 +343,7 @@ void* CFX_FolderFontInfo::GetFont(const char* face) {
 
 uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
                                          uint32_t table,
-                                         uint8_t* buffer,
-                                         uint32_t size) {
+                                         pdfium::span<uint8_t> buffer) {
   if (!hFont)
     return 0;
 
@@ -366,7 +365,7 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
     }
   }
 
-  if (!datasize || size < datasize)
+  if (!datasize || buffer.size() < datasize)
     return datasize;
 
   std::unique_ptr<FILE, FxFileCloser> pFile(
@@ -375,7 +374,7 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
     return 0;
 
   if (fseek(pFile.get(), offset, SEEK_SET) < 0 ||
-      fread(buffer, datasize, 1, pFile.get()) != 1) {
+      fread(buffer.data(), datasize, 1, pFile.get()) != 1) {
     return 0;
   }
   return datasize;

@@ -38,8 +38,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
   void* GetFont(const char* face) override;
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
-                       uint8_t* buffer,
-                       uint32_t size) override;
+                       pdfium::span<uint8_t> buffer) override;
   void DeleteFont(void* hFont) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
   bool GetFontCharset(void* hFont, int* charset) override;

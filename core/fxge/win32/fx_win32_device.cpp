@@ -27,6 +27,7 @@
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 #include "third_party/base/win/win_util.h"
 
 #ifndef _SKIA_SUPPORT_
@@ -326,8 +327,7 @@ class CFX_Win32FontInfo final : public SystemFontInfoIface {
   void* GetFont(const char* face) override { return nullptr; }
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
-                       uint8_t* buffer,
-                       uint32_t size) override;
+                       pdfium::span<uint8_t> buffer) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
   bool GetFontCharset(void* hFont, int* charset) override;
   void DeleteFont(void* hFont) override;
@@ -363,10 +363,10 @@ CFX_Win32FontInfo::~CFX_Win32FontInfo() {
 bool CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   bool ret = false;
-  uint32_t font_size = GetFontData(hFont, 0, nullptr, 0);
+  uint32_t font_size = GetFontData(hFont, 0, {});
   if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
     uint32_t lVersion = 0;
-    GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(uint32_t));
+    GetFontData(hFont, 0, {(uint8_t*)(&lVersion), sizeof(uint32_t)});
     lVersion = (((uint32_t)(uint8_t)(lVersion)) << 24) |
                ((uint32_t)((uint8_t)(lVersion >> 8))) << 16 |
                ((uint32_t)((uint8_t)(lVersion >> 16))) << 8 |
@@ -384,10 +384,10 @@ bool CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
 bool CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   bool ret = false;
-  uint32_t font_size = GetFontData(hFont, 0, nullptr, 0);
+  uint32_t font_size = GetFontData(hFont, 0, {});
   if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
     uint32_t lVersion = 0;
-    GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(uint32_t));
+    GetFontData(hFont, 0, {(uint8_t*)(&lVersion), sizeof(lVersion)});
     lVersion = (((uint32_t)(uint8_t)(lVersion)) << 24) |
                ((uint32_t)((uint8_t)(lVersion >> 8))) << 16 |
                ((uint32_t)((uint8_t)(lVersion >> 16))) << 8 |
@@ -627,11 +627,10 @@ void CFX_Win32FontInfo::DeleteFont(void* hFont) {
 
 uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
                                         uint32_t table,
-                                        uint8_t* buffer,
-                                        uint32_t size) {
+                                        pdfium::span<uint8_t> buffer) {
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   table = FXDWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
-  size = ::GetFontData(m_hDC, table, 0, buffer, size);
+  uint32_t size = ::GetFontData(m_hDC, table, 0, buffer.data(), buffer.size());
   ::SelectObject(m_hDC, hOldFont);
   if (size == GDI_ERROR) {
     return 0;

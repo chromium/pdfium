@@ -151,13 +151,12 @@ int32_t CFPF_SkiaFont::GetItalicAngle() const {
 }
 
 uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
-                                    uint8_t* pBuffer,
-                                    uint32_t dwSize) {
+                                    pdfium::span<uint8_t> pBuffer) {
   if (!m_Face)
     return 0;
 
-  FT_ULong ulSize = pdfium::base::checked_cast<FT_ULong>(dwSize);
-  if (FT_Load_Sfnt_Table(GetFaceRec(), dwTable, 0, pBuffer, &ulSize))
+  FT_ULong ulSize = pdfium::base::checked_cast<FT_ULong>(pBuffer.size());
+  if (FT_Load_Sfnt_Table(GetFaceRec(), dwTable, 0, pBuffer.data(), &ulSize))
     return 0;
   return pdfium::base::checked_cast<uint32_t>(ulSize);
 }

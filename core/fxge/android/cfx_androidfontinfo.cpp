@@ -55,11 +55,10 @@ void* CFX_AndroidFontInfo::GetFont(const char* face) {
 
 uint32_t CFX_AndroidFontInfo::GetFontData(void* hFont,
                                           uint32_t table,
-                                          uint8_t* buffer,
-                                          uint32_t size) {
+                                          pdfium::span<uint8_t> buffer) {
   if (!hFont)
     return 0;
-  return static_cast<CFPF_SkiaFont*>(hFont)->GetFontData(table, buffer, size);
+  return static_cast<CFPF_SkiaFont*>(hFont)->GetFontData(table, buffer);
 }
 
 bool CFX_AndroidFontInfo::GetFaceName(void* hFont, ByteString* name) {

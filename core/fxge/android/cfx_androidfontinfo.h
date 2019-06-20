@@ -11,6 +11,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/systemfontinfo_iface.h"
+#include "third_party/base/span.h"
 
 class CFPF_SkiaFontMgr;
 
@@ -31,8 +32,7 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   void* GetFont(const char* face) override;
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
-                       uint8_t* buffer,
-                       uint32_t size) override;
+                       pdfium::span<uint8_t> buffer) override;
   bool GetFaceName(void* hFont, ByteString* name) override;
   bool GetFontCharset(void* hFont, int* charset) override;
   void DeleteFont(void* hFont) override;

@@ -69,11 +69,11 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
 
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
-                       uint8_t* buffer,
-                       uint32_t size) override {
+                       pdfium::span<uint8_t> buffer) override {
     if (!m_pInfo->GetFontData)
       return 0;
-    return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
+    return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer.data(),
+                                buffer.size());
   }
 
   bool GetFaceName(void* hFont, ByteString* name) override {
@@ -163,7 +163,7 @@ static unsigned long DefaultGetFontData(struct _FPDF_SYSFONTINFO* pThis,
                                         unsigned char* buffer,
                                         unsigned long buf_size) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  return pDefault->m_pFontInfo->GetFontData(hFont, table, buffer, buf_size);
+  return pDefault->m_pFontInfo->GetFontData(hFont, table, {buffer, buf_size});
 }
 
 static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxge/cfx_fontmapper.h"
+#include "third_party/base/span.h"
 
 const uint32_t kTableNAME = FXDWORD_GET_MSBFIRST("name");
 const uint32_t kTableTTCF = FXDWORD_GET_MSBFIRST("ttcf");
@@ -38,8 +39,7 @@ class SystemFontInfoIface {
   virtual void* GetFont(const char* face) = 0;
   virtual uint32_t GetFontData(void* hFont,
                                uint32_t table,
-                               uint8_t* buffer,
-                               uint32_t size) = 0;
+                               pdfium::span<uint8_t> buffer) = 0;
   virtual bool GetFaceName(void* hFont, ByteString* name) = 0;
   virtual bool GetFontCharset(void* hFont, int* charset) = 0;
   virtual int GetFaceIndex(void* hFont);
