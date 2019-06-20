@@ -244,15 +244,7 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   if (!pImgStream)
     return 0;
 
-  auto streamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pImgStream);
-  streamAcc->LoadAllDataRaw();
-
-  const uint32_t len = streamAcc->GetSize();
-  if (!buffer || buflen < len)
-    return len;
-
-  memcpy(buffer, streamAcc->GetData(), len);
-  return len;
+  return GetRawStreamMaybeCopyAndReturnLength(pImgStream, buffer, buflen);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

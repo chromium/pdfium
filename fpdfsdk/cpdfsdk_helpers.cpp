@@ -47,6 +47,26 @@ bool RaiseUnsupportedError(int nError) {
   return true;
 }
 
+unsigned long GetStreamMaybeCopyAndReturnLengthImpl(const CPDF_Stream* stream,
+                                                    void* buffer,
+                                                    unsigned long buflen,
+                                                    bool decode) {
+  ASSERT(stream);
+  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
+
+  if (decode)
+    stream_acc->LoadAllDataFiltered();
+  else
+    stream_acc->LoadAllDataRaw();
+
+  const auto stream_data_size = stream_acc->GetSize();
+  if (!buffer || buflen < stream_data_size)
+    return stream_data_size;
+
+  memcpy(buffer, stream_acc->GetData(), stream_data_size);
+  return stream_data_size;
+}
+
 #ifdef PDF_ENABLE_XFA
 class FPDF_FileHandlerContext final : public IFX_SeekableStream {
  public:
@@ -262,18 +282,18 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
   return len;
 }
 
+unsigned long GetRawStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
+                                                   void* buffer,
+                                                   unsigned long buflen) {
+  return GetStreamMaybeCopyAndReturnLengthImpl(stream, buffer, buflen,
+                                               /*decode=*/false);
+}
+
 unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
                                                    void* buffer,
                                                    unsigned long buflen) {
-  ASSERT(stream);
-  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
-  stream_acc->LoadAllDataFiltered();
-  const auto stream_data_size = stream_acc->GetSize();
-  if (!buffer || buflen < stream_data_size)
-    return stream_data_size;
-
-  memcpy(buffer, stream_acc->GetData(), stream_data_size);
-  return stream_data_size;
+  return GetStreamMaybeCopyAndReturnLengthImpl(stream, buffer, buflen,
+                                               /*decode=*/true);
 }
 
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
