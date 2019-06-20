@@ -1195,6 +1195,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
       return flags;
     }
     default:
+      NOTREACHED();
       return 0;
   }
 }

@@ -403,8 +403,10 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
       return m_HorzSize;
     case FXDC_VERT_SIZE:
       return m_VertSize;
+    default:
+      NOTREACHED();
+      return 0;
   }
-  return 0;
 }
 
 bool CPSPrinterDriver::StartRendering() {
@@ -541,8 +543,10 @@ int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
       return m_HorzSize;
     case FXDC_VERT_SIZE:
       return m_VertSize;
+    default:
+      NOTREACHED();
+      return 0;
   }
-  return 0;
 }
 
 bool CTextOnlyPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
