@@ -49,6 +49,8 @@ class CPDF_ClipPath {
     template <typename T, typename... Args>
     friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+    RetainPtr<PathData> Clone() const;
+
     using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
 
     std::vector<PathAndTypeData> m_PathAndTypeList;

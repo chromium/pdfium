@@ -64,6 +64,8 @@ class CPDF_TextState {
     template <typename T, typename... Args>
     friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+    RetainPtr<TextData> Clone() const;
+
     void SetFont(CPDF_Font* pFont);
     float GetFontSizeV() const;
     float GetFontSizeH() const;

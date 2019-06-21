@@ -48,6 +48,8 @@ class CFX_RetainableGraphStateData : public Retainable,
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  RetainPtr<CFX_RetainableGraphStateData> Clone() const;
+
  private:
   CFX_RetainableGraphStateData();
   CFX_RetainableGraphStateData(const CFX_RetainableGraphStateData& src);

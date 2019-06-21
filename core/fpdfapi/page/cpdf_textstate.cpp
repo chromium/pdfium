@@ -10,8 +10,9 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 
-CPDF_TextState::CPDF_TextState() {}
-CPDF_TextState::~CPDF_TextState() {}
+CPDF_TextState::CPDF_TextState() = default;
+
+CPDF_TextState::~CPDF_TextState() = default;
 
 void CPDF_TextState::Emplace() {
   m_Ref.Emplace();
@@ -123,6 +124,10 @@ CPDF_TextState::TextData::TextData(const TextData& that)
 
 CPDF_TextState::TextData::~TextData() {
   ReleaseFont();
+}
+
+RetainPtr<CPDF_TextState::TextData> CPDF_TextState::TextData::Clone() const {
+  return pdfium::MakeRetain<CPDF_TextState::TextData>(*this);
 }
 
 void CPDF_TextState::TextData::SetFont(CPDF_Font* pFont) {

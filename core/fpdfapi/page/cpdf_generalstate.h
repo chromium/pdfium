@@ -83,6 +83,8 @@ class CPDF_GeneralState {
     template <typename T, typename... Args>
     friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+    RetainPtr<StateData> Clone() const;
+
     ByteString m_BlendMode = pdfium::transparency::kNormal;
     BlendMode m_BlendType = BlendMode::kNormal;
     RetainPtr<CPDF_Object> m_pSoftMask;

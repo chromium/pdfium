@@ -58,6 +58,8 @@ class CPDF_ColorState {
     template <typename T, typename... Args>
     friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+    RetainPtr<ColorData> Clone() const;
+
     void SetDefault();
 
     FX_COLORREF m_FillColorRef = 0;

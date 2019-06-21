@@ -509,3 +509,7 @@ CFX_RetainablePathData::CFX_RetainablePathData(
     : CFX_PathData(src) {}
 
 CFX_RetainablePathData::~CFX_RetainablePathData() = default;
+
+RetainPtr<CFX_RetainablePathData> CFX_RetainablePathData::Clone() const {
+  return pdfium::MakeRetain<CFX_RetainablePathData>(*this);
+}

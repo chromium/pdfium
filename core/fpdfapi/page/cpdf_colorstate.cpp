@@ -154,3 +154,8 @@ void CPDF_ColorState::ColorData::SetDefault() {
   m_FillColor.SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
   m_StrokeColor.SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
 }
+
+RetainPtr<CPDF_ColorState::ColorData> CPDF_ColorState::ColorData::Clone()
+    const {
+  return pdfium::MakeRetain<CPDF_ColorState::ColorData>(*this);
+}

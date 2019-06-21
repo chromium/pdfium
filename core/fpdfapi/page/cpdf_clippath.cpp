@@ -113,7 +113,7 @@ void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
   }
 }
 
-CPDF_ClipPath::PathData::PathData() {}
+CPDF_ClipPath::PathData::PathData() = default;
 
 CPDF_ClipPath::PathData::PathData(const PathData& that) {
   m_PathAndTypeList = that.m_PathAndTypeList;
@@ -125,4 +125,8 @@ CPDF_ClipPath::PathData::PathData(const PathData& that) {
   }
 }
 
-CPDF_ClipPath::PathData::~PathData() {}
+CPDF_ClipPath::PathData::~PathData() = default;
+
+RetainPtr<CPDF_ClipPath::PathData> CPDF_ClipPath::PathData::Clone() const {
+  return pdfium::MakeRetain<CPDF_ClipPath::PathData>(*this);
+}
