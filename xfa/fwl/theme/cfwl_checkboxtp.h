@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_Widget;
@@ -26,17 +25,6 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
   void DrawText(const CFWL_ThemeText& pParams) override;
 
  private:
-  struct CKBThemeData {
-    FX_ARGB clrSignBorderNormal;
-    FX_ARGB clrSignBorderDisable;
-    FX_ARGB clrSignCheck;
-    FX_ARGB clrSignNeutral;
-    FX_ARGB clrSignNeutralNormal;
-    FX_ARGB clrSignNeutralHover;
-    FX_ARGB clrSignNeutralPressed;
-    FX_ARGB clrBoxBk[13][2];
-  };
-
   void DrawCheckSign(CFWL_Widget* pWidget,
                      CXFA_Graphics* pGraphics,
                      const CFX_RectF& pRtBox,
@@ -68,9 +56,7 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
                     const CFX_Matrix& matrix);
 
   void InitCheckPath(float fCheckLen);
-  void SetThemeData();
 
-  std::unique_ptr<CKBThemeData> m_pThemeData;
   std::unique_ptr<CXFA_GEPath> m_pCheckPath;
 };
 

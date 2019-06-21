@@ -103,7 +103,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   void DrawCaption(CXFA_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
-  void DrawSeperator(CXFA_Graphics* pGraphics,
+  void DrawSeparator(CXFA_Graphics* pGraphics,
                      IFWL_ThemeProvider* pTheme,
                      const CFX_Matrix* pMatrix);
   void DrawDatesInBK(CXFA_Graphics* pGraphics,

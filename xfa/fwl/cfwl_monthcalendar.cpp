@@ -138,7 +138,7 @@ void CFWL_MonthCalendar::DrawWidget(CXFA_Graphics* pGraphics,
   DrawHeadBK(pGraphics, pTheme, &matrix);
   DrawLButton(pGraphics, pTheme, &matrix);
   DrawRButton(pGraphics, pTheme, &matrix);
-  DrawSeperator(pGraphics, pTheme, &matrix);
+  DrawSeparator(pGraphics, pTheme, &matrix);
   DrawDatesInBK(pGraphics, pTheme, &matrix);
   DrawDatesInCircle(pGraphics, pTheme, &matrix);
   DrawCaption(pGraphics, pTheme, &matrix);
@@ -231,7 +231,7 @@ void CFWL_MonthCalendar::DrawCaption(CXFA_Graphics* pGraphics,
   pTheme->DrawText(textParam);
 }
 
-void CFWL_MonthCalendar::DrawSeperator(CXFA_Graphics* pGraphics,
+void CFWL_MonthCalendar::DrawSeparator(CXFA_Graphics* pGraphics,
                                        IFWL_ThemeProvider* pTheme,
                                        const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;

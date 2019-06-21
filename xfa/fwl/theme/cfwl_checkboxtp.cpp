@@ -19,7 +19,7 @@
 
 namespace {
 
-const int kSignPath = 100;
+constexpr int kSignPath = 100;
 
 CFX_PointF ScaleBezierPoint(const CFX_PointF& point) {
   CFX_PointF scaled_point(point);
@@ -30,9 +30,7 @@ CFX_PointF ScaleBezierPoint(const CFX_PointF& point) {
 
 }  // namespace
 
-CFWL_CheckBoxTP::CFWL_CheckBoxTP() : m_pThemeData(new CKBThemeData) {
-  SetThemeData();
-}
+CFWL_CheckBoxTP::CFWL_CheckBoxTP() = default;
 
 CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
   if (m_pCheckPath)
@@ -170,44 +168,6 @@ void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));
   pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
   pGraphics->RestoreGraphState();
-}
-
-void CFWL_CheckBoxTP::SetThemeData() {
-  uint32_t* pData = (uint32_t*)&m_pThemeData->clrBoxBk;
-
-  *pData++ = 0;
-  *pData++ = 0;
-  *pData++ = ArgbEncode(255, 220, 220, 215),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 240, 207),
-  *pData++ = ArgbEncode(255, 248, 179, 48),
-  *pData++ = ArgbEncode(255, 176, 176, 167),
-  *pData++ = ArgbEncode(255, 241, 239, 239),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 220, 220, 215),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 240, 207),
-  *pData++ = ArgbEncode(255, 248, 179, 48),
-  *pData++ = ArgbEncode(255, 176, 176, 167),
-  *pData++ = ArgbEncode(255, 241, 239, 239),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 220, 220, 215),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 240, 207),
-  *pData++ = ArgbEncode(255, 248, 179, 48),
-  *pData++ = ArgbEncode(255, 176, 176, 167),
-  *pData++ = ArgbEncode(255, 241, 239, 239),
-  *pData++ = ArgbEncode(255, 255, 255, 255),
-  *pData++ = ArgbEncode(255, 255, 255, 255);
-  m_pThemeData->clrSignBorderNormal = ArgbEncode(255, 28, 81, 128);
-  m_pThemeData->clrSignBorderDisable = ArgbEncode(255, 202, 200, 187);
-  m_pThemeData->clrSignCheck = ArgbEncode(255, 28, 81, 128);
-  m_pThemeData->clrSignNeutral = ArgbEncode(255, 28, 134, 26);
-  m_pThemeData->clrSignNeutralNormal = ArgbEncode(255, 114, 192, 113);
-  m_pThemeData->clrSignNeutralHover = ArgbEncode(255, 33, 161, 33);
-  m_pThemeData->clrSignNeutralPressed = ArgbEncode(255, 28, 134, 26);
 }
 
 void CFWL_CheckBoxTP::InitCheckPath(float fCheckLen) {

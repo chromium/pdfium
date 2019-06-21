@@ -14,9 +14,9 @@
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
-CFWL_ListBoxTP::CFWL_ListBoxTP() {}
+CFWL_ListBoxTP::CFWL_ListBoxTP() = default;
 
-CFWL_ListBoxTP::~CFWL_ListBoxTP() {}
+CFWL_ListBoxTP::~CFWL_ListBoxTP() = default;
 
 void CFWL_ListBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {

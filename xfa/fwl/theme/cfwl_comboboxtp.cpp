@@ -14,9 +14,9 @@
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
-CFWL_ComboBoxTP::CFWL_ComboBoxTP() {}
+CFWL_ComboBoxTP::CFWL_ComboBoxTP() = default;
 
-CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
+CFWL_ComboBoxTP::~CFWL_ComboBoxTP() = default;
 
 void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {

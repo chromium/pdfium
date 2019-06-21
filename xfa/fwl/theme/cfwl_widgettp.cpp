@@ -24,10 +24,9 @@
 #include "xfa/fxgraphics/cxfa_gepath.h"
 #include "xfa/fxgraphics/cxfa_geshading.h"
 
-CFWL_WidgetTP::CFWL_WidgetTP()
-    : m_dwRefCount(1), m_pFDEFont(nullptr), m_pColorData(nullptr) {}
+CFWL_WidgetTP::CFWL_WidgetTP() = default;
 
-CFWL_WidgetTP::~CFWL_WidgetTP() {}
+CFWL_WidgetTP::~CFWL_WidgetTP() = default;
 
 void CFWL_WidgetTP::Initialize() {}
 
@@ -161,8 +160,8 @@ void CFWL_WidgetTP::DrawArrow(CXFA_Graphics* pGraphics,
                               const CFX_Matrix& matrix) {
   bool bVert =
       (eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down);
-  float fLeft = (float)(((rect.width - (bVert ? 9 : 6)) / 2 + rect.left) + 0.5);
-  float fTop = (float)(((rect.height - (bVert ? 6 : 9)) / 2 + rect.top) + 0.5);
+  float fLeft = ((rect.width - (bVert ? 9 : 6)) / 2 + rect.left) + 0.5f;
+  float fTop = ((rect.height - (bVert ? 6 : 9)) / 2 + rect.top) + 0.5f;
   CXFA_GEPath path;
   switch (eDict) {
     case FWLTHEME_DIRECTION_Down: {

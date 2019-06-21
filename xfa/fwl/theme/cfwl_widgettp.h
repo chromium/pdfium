@@ -76,7 +76,7 @@ class CFWL_WidgetTP {
                     FWLTHEME_STATE eState,
                     const CFX_Matrix& matrix);
 
-  uint32_t m_dwRefCount;
+  uint32_t m_dwRefCount = 1;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pFDEFont;
   std::unique_ptr<CColorData> m_pColorData;
