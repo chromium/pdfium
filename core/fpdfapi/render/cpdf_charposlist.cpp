@@ -9,8 +9,8 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
+#include "core/fxge/text_char_pos.h"
 
 CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
                                    const std::vector<float>& charPos,

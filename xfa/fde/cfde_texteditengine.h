@@ -18,6 +18,7 @@
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
 class CFGAS_GEFont;
+class TextCharPos;
 
 struct FDE_TEXTEDITPIECE {
   FDE_TEXTEDITPIECE();

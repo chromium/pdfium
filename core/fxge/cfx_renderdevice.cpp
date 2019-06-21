@@ -25,6 +25,7 @@
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/renderdevicedriver_iface.h"
+#include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
@@ -366,12 +367,6 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
 }
 
 }  // namespace
-
-TextCharPos::TextCharPos() = default;
-
-TextCharPos::TextCharPos(const TextCharPos&) = default;
-
-TextCharPos::~TextCharPos() = default;
 
 CFX_RenderDevice::CFX_RenderDevice() = default;
 

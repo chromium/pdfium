@@ -21,6 +21,7 @@ class CFDE_RenderDevice;
 class CFGAS_GEFont;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
+class TextCharPos;
 
 struct FDE_TTOPIECE {
   FDE_TTOPIECE();

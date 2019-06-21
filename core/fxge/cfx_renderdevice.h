@@ -24,28 +24,10 @@ class CFX_GraphStateData;
 class CFX_ImageRenderer;
 class CFX_PathData;
 class PauseIndicatorIface;
+class TextCharPos;
 struct CFX_Color;
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
-
-class TextCharPos {
- public:
-  TextCharPos();
-  TextCharPos(const TextCharPos&);
-  ~TextCharPos();
-
-  CFX_PointF m_Origin;
-  uint32_t m_Unicode = 0;
-  uint32_t m_GlyphIndex = 0;
-  uint32_t m_FontCharWidth = 0;
-#if defined(OS_MACOSX)
-  uint32_t m_ExtGID = 0;
-#endif
-  int32_t m_FallbackFontPosition = 0;
-  bool m_bGlyphAdjust = false;
-  bool m_bFontStyle = false;
-  float m_AdjustMatrix[4];
-};
 
 class CFX_RenderDevice {
  public:

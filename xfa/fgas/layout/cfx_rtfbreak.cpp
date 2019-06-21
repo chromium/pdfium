@@ -10,7 +10,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/text_char_pos.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
