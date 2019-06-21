@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/theme/cfwl_monthcalendartp.h"
 
+#include "core/fxge/render_defines.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_monthcalendar.h"
 #include "xfa/fwl/cfwl_themebackground.h"

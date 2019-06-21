@@ -7,6 +7,7 @@
 #include "xfa/fwl/theme/cfwl_listboxtp.h"
 
 #include "build/build_config.h"
+#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"

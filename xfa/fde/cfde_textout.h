@@ -11,7 +11,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/span.h"
 #include "xfa/fde/cfde_data.h"

@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
 #include "xfa/fwl/cfwl_messagekey.h"

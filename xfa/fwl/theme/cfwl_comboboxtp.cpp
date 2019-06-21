@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/theme/cfwl_comboboxtp.h"
 
+#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"

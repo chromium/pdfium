@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxge/render_defines.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"

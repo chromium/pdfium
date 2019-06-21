@@ -7,6 +7,7 @@
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"
 
 #include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/render_defines.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_checkbox.h"

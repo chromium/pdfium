@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/text_char_pos.h"
