@@ -505,6 +505,24 @@ std::string WriteSkp(const char* pdf_name,
 }
 #endif
 
+void WriteBufferToFile(const void* buf,
+                       size_t buflen,
+                       const char* filename,
+                       const char* filetype) {
+  FILE* fp = fopen(filename, "wb");
+  if (!fp) {
+    fprintf(stderr, "Failed to open %s for saving %s.", filename, filetype);
+    return;
+  }
+
+  size_t bytes_written = fwrite(buf, 1, buflen, fp);
+  if (bytes_written == buflen)
+    fprintf(stderr, "Successfully wrote %s %s.\n", filetype, filename);
+  else
+    fprintf(stderr, "Failed to write to %s.\n", filename);
+  fclose(fp);
+}
+
 void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
   for (int i = 0; i < FPDFDoc_GetAttachmentCount(doc); ++i) {
     FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(doc, i);
@@ -531,7 +549,7 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
                  attachment_name.c_str());
     if (chars_formatted < 0 ||
         static_cast<size_t>(chars_formatted) >= sizeof(save_name)) {
-      fprintf(stderr, "Filename %s is too long\n", save_name);
+      fprintf(stderr, "Filename %s is too long.\n", save_name);
       continue;
     }
 
@@ -550,20 +568,7 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
     }
 
     // Write the attachment file.
-    FILE* fp = fopen(save_name, "wb");
-    if (!fp) {
-      fprintf(stderr, "Failed to open %s for saving attachment.\n", save_name);
-      continue;
-    }
-
-    size_t written_len = fwrite(data_buf.data(), 1, length_bytes, fp);
-    if (written_len == length_bytes) {
-      fprintf(stderr, "Saved attachment \"%s\" as: %s.\n",
-              attachment_name.c_str(), save_name);
-    } else {
-      fprintf(stderr, "Failed to write to %s\n", save_name);
-    }
-    fclose(fp);
+    WriteBufferToFile(data_buf.data(), length_bytes, save_name, "attachment");
   }
 }
 
@@ -627,23 +632,11 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
                                    pdf_name, page_num, i);
     if (chars_formatted < 0 ||
         static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-      fprintf(stderr, "Filename %s for saving image is too long\n", filename);
+      fprintf(stderr, "Filename %s for saving image is too long.\n", filename);
       continue;
     }
 
-    FILE* fp = fopen(filename, "wb");
-    if (!fp) {
-      fprintf(stderr, "Failed to open %s for saving image.\n", filename);
-      continue;
-    }
-
-    size_t bytes_written =
-        fwrite(&png_encoding.front(), 1, png_encoding.size(), fp);
-    if (bytes_written != png_encoding.size())
-      fprintf(stderr, "Failed to write to %s.\n", filename);
-    else
-      fprintf(stderr, "Successfully wrote embedded image %s.\n", filename);
-
-    (void)fclose(fp);
+    WriteBufferToFile(&png_encoding.front(), png_encoding.size(), filename,
+                      "image");
   }
 }
