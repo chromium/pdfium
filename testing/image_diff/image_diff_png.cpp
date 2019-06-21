@@ -362,26 +362,26 @@ bool BuildPNGStruct(const unsigned char* input,
 }  // namespace
 
 // static
-bool Decode(const unsigned char* input,
-            size_t input_size,
-            ColorFormat format,
-            std::vector<unsigned char>* output,
-            int* w,
-            int* h) {
+std::vector<unsigned char> Decode(const unsigned char* input,
+                                  size_t input_size,
+                                  ColorFormat format,
+                                  int* w,
+                                  int* h) {
+  std::vector<unsigned char> output;
   png_struct* png_ptr = NULL;
   png_info* info_ptr = NULL;
   if (!BuildPNGStruct(input, input_size, &png_ptr, &info_ptr))
-    return false;
+    return output;
 
   PngReadStructDestroyer destroyer(&png_ptr, &info_ptr);
   if (setjmp(png_jmpbuf(png_ptr))) {
     // The destroyer will ensure that the structures are cleaned up in this
     // case, even though we may get here as a jump from random parts of the
     // PNG library called below.
-    return false;
+    return output;
   }
 
-  PngDecoderState state(format, output);
+  PngDecoderState state(format, &output);
 
   png_set_progressive_read_fn(png_ptr, &state, &DecodeInfoCallback,
                               &DecodeRowCallback, &DecodeEndCallback);
@@ -391,13 +391,13 @@ bool Decode(const unsigned char* input,
   if (!state.done) {
     // Fed it all the data but the library didn't think we got all the data, so
     // this file must be truncated.
-    output->clear();
-    return false;
+    output.clear();
+    return output;
   }
 
   *w = state.width;
   *h = state.height;
-  return true;
+  return output;
 }
 
 // Encoder
@@ -569,20 +569,23 @@ bool DoLibpngWrite(png_struct* png_ptr,
 }  // namespace
 
 // static
-bool EncodeWithCompressionLevel(const unsigned char* input,
-                                ColorFormat format,
-                                const int width,
-                                const int height,
-                                int row_byte_width,
-                                bool discard_transparency,
-                                const std::vector<Comment>& comments,
-                                int compression_level,
-                                std::vector<unsigned char>* output) {
+std::vector<unsigned char> EncodeWithCompressionLevel(
+    const unsigned char* input,
+    ColorFormat format,
+    const int width,
+    const int height,
+    int row_byte_width,
+    bool discard_transparency,
+    const std::vector<Comment>& comments,
+    int compression_level) {
+  std::vector<unsigned char> output;
+
   // Run to convert an input row into the output row format, NULL means no
   // conversion is necessary.
   FormatConverter converter = nullptr;
 
-  int input_color_components, output_color_components;
+  int input_color_components;
+  int output_color_components;
   int png_output_color_type;
   switch (format) {
     case FORMAT_BGR:
@@ -629,95 +632,86 @@ bool EncodeWithCompressionLevel(const unsigned char* input,
 
     default:
       NOTREACHED();
-      return false;
+      return output;
   }
 
   // Row stride should be at least as long as the length of the data.
   if (row_byte_width < input_color_components * width)
-    return false;
+    return output;
 
   png_struct* png_ptr =
       png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!png_ptr)
-    return false;
+    return output;
   png_info* info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     png_destroy_write_struct(&png_ptr, NULL);
-    return false;
+    return output;
   }
 
-  PngEncoderState state(output);
+  PngEncoderState state(&output);
   bool success =
       DoLibpngWrite(png_ptr, info_ptr, &state, width, height, row_byte_width,
                     input, compression_level, png_output_color_type,
                     output_color_components, converter, comments);
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
-  return success;
+  if (!success)
+    output.clear();
+  return output;
 }
 
 // static
-bool Encode(const unsigned char* input,
-            ColorFormat format,
-            const int width,
-            const int height,
-            int row_byte_width,
-            bool discard_transparency,
-            const std::vector<Comment>& comments,
-            std::vector<unsigned char>* output) {
+std::vector<unsigned char> Encode(const unsigned char* input,
+                                  ColorFormat format,
+                                  const int width,
+                                  const int height,
+                                  int row_byte_width,
+                                  bool discard_transparency,
+                                  const std::vector<Comment>& comments) {
   return EncodeWithCompressionLevel(input, format, width, height,
                                     row_byte_width, discard_transparency,
-                                    comments, Z_DEFAULT_COMPRESSION, output);
+                                    comments, Z_DEFAULT_COMPRESSION);
 }
 
-// Decode a PNG into an RGBA pixel array.
-bool DecodePNG(const unsigned char* input,
-               size_t input_size,
-               std::vector<unsigned char>* output,
-               int* width,
-               int* height) {
-  return Decode(input, input_size, FORMAT_RGBA, output, width, height);
+std::vector<unsigned char> DecodePNG(const unsigned char* input,
+                                     size_t input_size,
+                                     int* width,
+                                     int* height) {
+  return Decode(input, input_size, FORMAT_RGBA, width, height);
 }
 
-// Encode a BGR pixel array into a PNG.
-bool EncodeBGRPNG(const unsigned char* input,
-                  int width,
-                  int height,
-                  int row_byte_width,
-                  std::vector<unsigned char>* output) {
+std::vector<unsigned char> EncodeBGRPNG(const unsigned char* input,
+                                        int width,
+                                        int height,
+                                        int row_byte_width) {
   return Encode(input, FORMAT_BGR, width, height, row_byte_width, false,
-                std::vector<Comment>(), output);
+                std::vector<Comment>());
 }
 
-// Encode an RGBA pixel array into a PNG.
-bool EncodeRGBAPNG(const unsigned char* input,
-                   int width,
-                   int height,
-                   int row_byte_width,
-                   std::vector<unsigned char>* output) {
+std::vector<unsigned char> EncodeRGBAPNG(const unsigned char* input,
+                                         int width,
+                                         int height,
+                                         int row_byte_width) {
   return Encode(input, FORMAT_RGBA, width, height, row_byte_width, false,
-                std::vector<Comment>(), output);
+                std::vector<Comment>());
 }
 
-// Encode an BGRA pixel array into a PNG.
-bool EncodeBGRAPNG(const unsigned char* input,
-                   int width,
-                   int height,
-                   int row_byte_width,
-                   bool discard_transparency,
-                   std::vector<unsigned char>* output) {
+std::vector<unsigned char> EncodeBGRAPNG(const unsigned char* input,
+                                         int width,
+                                         int height,
+                                         int row_byte_width,
+                                         bool discard_transparency) {
   return Encode(input, FORMAT_BGRA, width, height, row_byte_width,
-                discard_transparency, std::vector<Comment>(), output);
+                discard_transparency, std::vector<Comment>());
 }
 
-// Encode a grayscale pixel array into a PNG.
-bool EncodeGrayPNG(const unsigned char* input,
-                   int width,
-                   int height,
-                   int row_byte_width,
-                   std::vector<unsigned char>* output) {
+std::vector<unsigned char> EncodeGrayPNG(const unsigned char* input,
+                                         int width,
+                                         int height,
+                                         int row_byte_width) {
   return Encode(input, FORMAT_GRAY, width, height, row_byte_width, false,
-                std::vector<Comment>(), output);
+                std::vector<Comment>());
 }
 
 }  // namespace image_diff_png

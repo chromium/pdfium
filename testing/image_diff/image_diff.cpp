@@ -63,8 +63,9 @@ class Image {
 
     fclose(f);
 
-    if (!image_diff_png::DecodePNG(compressed.data(), compressed.size(), &data_,
-                                   &w_, &h_)) {
+    data_ = image_diff_png::DecodePNG(compressed.data(), compressed.size(), &w_,
+                                      &h_);
+    if (data_.empty()) {
       Clear();
       return false;
     }
@@ -278,12 +279,10 @@ int DiffImages(const std::string& file1,
   if (same)
     return kStatusSame;
 
-  std::vector<unsigned char> png_encoding;
-  if (!image_diff_png::EncodeRGBAPNG(diff_image.data(), diff_image.w(),
-                                     diff_image.h(), diff_image.w() * 4,
-                                     &png_encoding)) {
+  std::vector<unsigned char> png_encoding = image_diff_png::EncodeRGBAPNG(
+      diff_image.data(), diff_image.w(), diff_image.h(), diff_image.w() * 4);
+  if (png_encoding.empty())
     return kStatusError;
-  }
 
   FILE* f = fopen(out_file.c_str(), "wb");
   if (!f)
