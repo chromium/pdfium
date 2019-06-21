@@ -55,6 +55,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       std::set<const CPDF_Object*>* pVisited);
   static uint32_t ComponentsForFamily(int family);
 
+  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   size_t GetBufSize() const;
   float* CreateBuf() const;
 
@@ -68,16 +70,15 @@ class CPDF_ColorSpace : public Retainable, public Observable {
            GetFamily() == PDFCS_INDEXED || GetFamily() == PDFCS_PATTERN;
   }
 
-  virtual void GetDefaultValue(int iComponent,
-                               float* value,
-                               float* min,
-                               float* max) const;
-
   virtual bool GetRGB(const float* pBuf,
                       float* R,
                       float* G,
                       float* B) const = 0;
 
+  virtual void GetDefaultValue(int iComponent,
+                               float* value,
+                               float* min,
+                               float* max) const;
   virtual void TranslateImageLine(uint8_t* dest_buf,
                                   const uint8_t* src_buf,
                                   int pixels,
@@ -85,10 +86,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
                                   int image_height,
                                   bool bTransMask) const;
   virtual void EnableStdConversion(bool bEnabled);
-
   virtual bool IsNormal() const;
-
-  // Only call these 3 methods below if GetFamily() returns |PDFCS_PATTERN|.
 
   // Returns |this| as a CPDF_PatternCS* if |this| is a pattern.
   virtual CPDF_PatternCS* AsPatternCS();
@@ -99,9 +97,6 @@ class CPDF_ColorSpace : public Retainable, public Observable {
                              float* R,
                              float* G,
                              float* B) const;
-
-  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  protected:
   CPDF_ColorSpace(CPDF_Document* pDoc, int family);
