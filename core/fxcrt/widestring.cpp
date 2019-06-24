@@ -385,58 +385,58 @@ WideString::WideString(const std::initializer_list<WideStringView>& list) {
 
 WideString::~WideString() {}
 
-const WideString& WideString::operator=(const wchar_t* pStr) {
-  if (!pStr || !pStr[0])
+WideString& WideString::operator=(const wchar_t* str) {
+  if (!str || !str[0])
     clear();
   else
-    AssignCopy(pStr, wcslen(pStr));
+    AssignCopy(str, wcslen(str));
 
   return *this;
 }
 
-const WideString& WideString::operator=(WideStringView stringSrc) {
-  if (stringSrc.IsEmpty())
+WideString& WideString::operator=(WideStringView str) {
+  if (str.IsEmpty())
     clear();
   else
-    AssignCopy(stringSrc.unterminated_c_str(), stringSrc.GetLength());
+    AssignCopy(str.unterminated_c_str(), str.GetLength());
 
   return *this;
 }
 
-const WideString& WideString::operator=(const WideString& that) {
+WideString& WideString::operator=(const WideString& that) {
   if (m_pData != that.m_pData)
     m_pData = that.m_pData;
 
   return *this;
 }
 
-const WideString& WideString::operator=(WideString&& that) {
+WideString& WideString::operator=(WideString&& that) {
   if (m_pData != that.m_pData)
     m_pData = std::move(that.m_pData);
 
   return *this;
 }
 
-const WideString& WideString::operator+=(const wchar_t* pStr) {
-  if (pStr)
-    Concat(pStr, wcslen(pStr));
+WideString& WideString::operator+=(const wchar_t* str) {
+  if (str)
+    Concat(str, wcslen(str));
 
   return *this;
 }
 
-const WideString& WideString::operator+=(wchar_t ch) {
+WideString& WideString::operator+=(wchar_t ch) {
   Concat(&ch, 1);
   return *this;
 }
 
-const WideString& WideString::operator+=(const WideString& str) {
+WideString& WideString::operator+=(const WideString& str) {
   if (str.m_pData)
     Concat(str.m_pData->m_String, str.m_pData->m_nDataLength);
 
   return *this;
 }
 
-const WideString& WideString::operator+=(WideStringView str) {
+WideString& WideString::operator+=(WideStringView str) {
   if (!str.IsEmpty())
     Concat(str.unterminated_c_str(), str.GetLength());
 

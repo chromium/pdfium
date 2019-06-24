@@ -111,15 +111,15 @@ class WideString {
   bool IsValidIndex(size_t index) const { return index < GetLength(); }
   bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
-  const WideString& operator=(const wchar_t* str);
-  const WideString& operator=(WideStringView stringSrc);
-  const WideString& operator=(const WideString& that);
-  const WideString& operator=(WideString&& that);
+  WideString& operator=(const wchar_t* str);
+  WideString& operator=(WideStringView str);
+  WideString& operator=(const WideString& that);
+  WideString& operator=(WideString&& that);
 
-  const WideString& operator+=(const wchar_t* str);
-  const WideString& operator+=(wchar_t ch);
-  const WideString& operator+=(const WideString& str);
-  const WideString& operator+=(WideStringView str);
+  WideString& operator+=(const wchar_t* str);
+  WideString& operator+=(wchar_t ch);
+  WideString& operator+=(const WideString& str);
+  WideString& operator+=(WideStringView str);
 
   bool operator==(const wchar_t* ptr) const;
   bool operator==(WideStringView str) const;

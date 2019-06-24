@@ -189,58 +189,58 @@ ByteString::ByteString(const std::ostringstream& outStream) {
 
 ByteString::~ByteString() {}
 
-const ByteString& ByteString::operator=(const char* pStr) {
-  if (!pStr || !pStr[0])
+ByteString& ByteString::operator=(const char* str) {
+  if (!str || !str[0])
     clear();
   else
-    AssignCopy(pStr, strlen(pStr));
+    AssignCopy(str, strlen(str));
 
   return *this;
 }
 
-const ByteString& ByteString::operator=(ByteStringView bstrc) {
-  if (bstrc.IsEmpty())
+ByteString& ByteString::operator=(ByteStringView str) {
+  if (str.IsEmpty())
     clear();
   else
-    AssignCopy(bstrc.unterminated_c_str(), bstrc.GetLength());
+    AssignCopy(str.unterminated_c_str(), str.GetLength());
 
   return *this;
 }
 
-const ByteString& ByteString::operator=(const ByteString& that) {
+ByteString& ByteString::operator=(const ByteString& that) {
   if (m_pData != that.m_pData)
     m_pData = that.m_pData;
 
   return *this;
 }
 
-const ByteString& ByteString::operator=(ByteString&& that) {
+ByteString& ByteString::operator=(ByteString&& that) {
   if (m_pData != that.m_pData)
     m_pData = std::move(that.m_pData);
 
   return *this;
 }
 
-const ByteString& ByteString::operator+=(const char* pStr) {
-  if (pStr)
-    Concat(pStr, strlen(pStr));
+ByteString& ByteString::operator+=(const char* str) {
+  if (str)
+    Concat(str, strlen(str));
 
   return *this;
 }
 
-const ByteString& ByteString::operator+=(char ch) {
+ByteString& ByteString::operator+=(char ch) {
   Concat(&ch, 1);
   return *this;
 }
 
-const ByteString& ByteString::operator+=(const ByteString& str) {
+ByteString& ByteString::operator+=(const ByteString& str) {
   if (str.m_pData)
     Concat(str.m_pData->m_String, str.m_pData->m_nDataLength);
 
   return *this;
 }
 
-const ByteString& ByteString::operator+=(ByteStringView str) {
+ByteString& ByteString::operator+=(ByteStringView str) {
   if (!str.IsEmpty())
     Concat(str.unterminated_c_str(), str.GetLength());
 

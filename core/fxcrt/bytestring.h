@@ -131,15 +131,15 @@ class ByteString {
   bool operator<(ByteStringView str) const;
   bool operator<(const ByteString& other) const;
 
-  const ByteString& operator=(const char* str);
-  const ByteString& operator=(ByteStringView bstrc);
-  const ByteString& operator=(const ByteString& that);
-  const ByteString& operator=(ByteString&& that);
+  ByteString& operator=(const char* str);
+  ByteString& operator=(ByteStringView str);
+  ByteString& operator=(const ByteString& that);
+  ByteString& operator=(ByteString&& that);
 
-  const ByteString& operator+=(char ch);
-  const ByteString& operator+=(const char* str);
-  const ByteString& operator+=(const ByteString& str);
-  const ByteString& operator+=(ByteStringView str);
+  ByteString& operator+=(char ch);
+  ByteString& operator+=(const char* str);
+  ByteString& operator+=(const ByteString& str);
+  ByteString& operator+=(ByteStringView str);
 
   CharType operator[](const size_t index) const {
     CHECK(IsValidIndex(index));

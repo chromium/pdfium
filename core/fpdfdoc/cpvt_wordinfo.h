@@ -15,7 +15,7 @@ struct CPVT_WordInfo {
   CPVT_WordInfo(const CPVT_WordInfo& word);
   ~CPVT_WordInfo();
 
-  void operator=(const CPVT_WordInfo& word);
+  CPVT_WordInfo& operator=(const CPVT_WordInfo& word);
 
   uint16_t Word;
   int32_t nCharset;
