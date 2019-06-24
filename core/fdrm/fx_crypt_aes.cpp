@@ -644,13 +644,13 @@ void CRYPT_AESSetIV(CRYPT_aes_context* context, const uint8_t* iv) {
 void CRYPT_AESDecrypt(CRYPT_aes_context* context,
                       uint8_t* dest,
                       const uint8_t* src,
-                      uint32_t len) {
-  aes_decrypt_cbc(dest, src, len, context);
+                      uint32_t size) {
+  aes_decrypt_cbc(dest, src, size, context);
 }
 
 void CRYPT_AESEncrypt(CRYPT_aes_context* context,
                       uint8_t* dest,
                       const uint8_t* src,
-                      uint32_t len) {
-  aes_encrypt_cbc(dest, src, len, context);
+                      uint32_t size) {
+  aes_encrypt_cbc(dest, src, size, context);
 }
