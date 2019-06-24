@@ -114,8 +114,8 @@ bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
   return GetObjectType(objnum) == ObjectType::kFree;
 }
 
-void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
-  m_CrossRefTable->ShrinkObjectMap(objnum);
+void CPDF_Parser::ShrinkObjectMap(uint32_t size) {
+  m_CrossRefTable->ShrinkObjectMap(size);
 }
 
 bool CPDF_Parser::InitSyntaxParser(

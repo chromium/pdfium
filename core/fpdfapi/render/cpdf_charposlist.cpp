@@ -15,7 +15,7 @@
 CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
                                    const std::vector<float>& charPos,
                                    CPDF_Font* pFont,
-                                   float FontSize) {
+                                   float font_size) {
   m_CharPos.reserve(charCodes.size());
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
@@ -72,7 +72,7 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
         // Move the initial x position by half of the excess (transformed to
         // text space coordinates).
         charpos.m_Origin.x +=
-            (pdfGlyphWidth - ftGlyphWidth) * FontSize / 2000.0f;
+            (pdfGlyphWidth - ftGlyphWidth) * font_size / 2000.0f;
       } else if (pdfGlyphWidth && ftGlyphWidth &&
                  pdfGlyphWidth < ftGlyphWidth) {
         scalingFactor = static_cast<float>(pdfGlyphWidth) / ftGlyphWidth;
@@ -93,8 +93,8 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
       short vx;
       short vy;
       pCIDFont->GetVertOrigin(CID, vx, vy);
-      charpos.m_Origin.x -= FontSize * vx / 1000;
-      charpos.m_Origin.y -= FontSize * vy / 1000;
+      charpos.m_Origin.x -= font_size * vx / 1000;
+      charpos.m_Origin.y -= font_size * vy / 1000;
     }
 
     const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
@@ -106,9 +106,9 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
       charpos.m_AdjustMatrix[2] = pCIDFont->CIDTransformToFloat(pTransform[2]);
       charpos.m_AdjustMatrix[3] = pCIDFont->CIDTransformToFloat(pTransform[3]);
       charpos.m_Origin.x +=
-          pCIDFont->CIDTransformToFloat(pTransform[4]) * FontSize;
+          pCIDFont->CIDTransformToFloat(pTransform[4]) * font_size;
       charpos.m_Origin.y +=
-          pCIDFont->CIDTransformToFloat(pTransform[5]) * FontSize;
+          pCIDFont->CIDTransformToFloat(pTransform[5]) * font_size;
       charpos.m_bGlyphAdjust = true;
     }
   }

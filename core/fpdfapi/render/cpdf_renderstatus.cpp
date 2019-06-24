@@ -1007,24 +1007,24 @@ CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* pContext,
 
 CPDF_RenderStatus::~CPDF_RenderStatus() {}
 
-void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentState,
+void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
                                    const CPDF_GraphicStates* pInitialStates) {
   m_bPrint = m_pDevice->GetDeviceType() != DeviceType::kDisplay;
   m_pPageResource.Reset(m_pContext->GetPageResources());
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates.CopyStates(*pInitialStates);
-    if (pParentState) {
+    if (pParentStatus) {
       if (!m_InitialStates.m_ColorState.HasFillColor()) {
         m_InitialStates.m_ColorState.SetFillColorRef(
-            pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
+            pParentStatus->m_InitialStates.m_ColorState.GetFillColorRef());
         *m_InitialStates.m_ColorState.GetMutableFillColor() =
-            *pParentState->m_InitialStates.m_ColorState.GetFillColor();
+            *pParentStatus->m_InitialStates.m_ColorState.GetFillColor();
       }
       if (!m_InitialStates.m_ColorState.HasStrokeColor()) {
         m_InitialStates.m_ColorState.SetStrokeColorRef(
-            pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
+            pParentStatus->m_InitialStates.m_ColorState.GetFillColorRef());
         *m_InitialStates.m_ColorState.GetMutableStrokeColor() =
-            *pParentState->m_InitialStates.m_ColorState.GetStrokeColor();
+            *pParentStatus->m_InitialStates.m_ColorState.GetStrokeColor();
       }
     }
   } else {

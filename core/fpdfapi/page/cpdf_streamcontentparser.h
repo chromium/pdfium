@@ -40,10 +40,10 @@ class CPDF_StreamContentParser {
                            CPDF_Dictionary* pPageResources,
                            CPDF_Dictionary* pParentResources,
                            const CFX_Matrix* pmtContentToUser,
-                           CPDF_PageObjectHolder* pObjectHolder,
+                           CPDF_PageObjectHolder* pObjHolder,
                            CPDF_Dictionary* pResources,
                            const CFX_FloatRect& rcBBox,
-                           const CPDF_AllStates* pAllStates,
+                           const CPDF_AllStates* pStates,
                            std::set<const uint8_t*>* parsedSet);
   ~CPDF_StreamContentParser();
 
@@ -81,7 +81,7 @@ class CPDF_StreamContentParser {
   using OpCodes = std::map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();
 
-  void AddNameParam(ByteStringView str);
+  void AddNameParam(ByteStringView bsName);
   void AddNumberParam(ByteStringView str);
   void AddObjectParam(RetainPtr<CPDF_Object> pObj);
   int GetNextParamPos();

@@ -92,7 +92,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap();
   void LoadPalette();
   LoadState CreateDecoder();
-  bool CreateDCTDecoder(pdfium::span<const uint8_t> src_data,
+  bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                         const CPDF_Dictionary* pParams);
   void TranslateScanline24bpp(uint8_t* dest_scan,
                               const uint8_t* src_scan) const;

@@ -69,8 +69,8 @@ class CPDF_ImageRenderer {
   bool NotDrawing() const;
   FX_RECT GetDrawRect() const;
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
-  void CalculateDrawImage(CFX_DefaultRenderDevice* bitmap_device1,
-                          CFX_DefaultRenderDevice* bitmap_device2,
+  void CalculateDrawImage(CFX_DefaultRenderDevice* pBitmapDevice1,
+                          CFX_DefaultRenderDevice* pBitmapDevice2,
                           const RetainPtr<CFX_DIBBase>& pDIBBase,
                           const CFX_Matrix& mtNewMatrix,
                           const FX_RECT& rect) const;

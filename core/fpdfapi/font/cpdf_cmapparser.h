@@ -16,10 +16,10 @@
 
 class CPDF_CMapParser {
  public:
-  explicit CPDF_CMapParser(CPDF_CMap* pMap);
+  explicit CPDF_CMapParser(CPDF_CMap* pCMap);
   ~CPDF_CMapParser();
 
-  void ParseWord(ByteStringView str);
+  void ParseWord(ByteStringView word);
   bool HasAdditionalMappings() const {
     return !m_AdditionalCharcodeToCIDMappings.empty();
   }

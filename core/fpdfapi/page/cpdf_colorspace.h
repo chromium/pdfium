@@ -48,10 +48,10 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   static RetainPtr<CPDF_ColorSpace> GetStockCS(int Family);
   static RetainPtr<CPDF_ColorSpace> ColorspaceFromName(const ByteString& name);
   static RetainPtr<CPDF_ColorSpace> Load(CPDF_Document* pDoc,
-                                         CPDF_Object* pCSObj);
+                                         CPDF_Object* pObj);
   static RetainPtr<CPDF_ColorSpace> Load(
       CPDF_Document* pDoc,
-      const CPDF_Object* pCSObj,
+      const CPDF_Object* pObj,
       std::set<const CPDF_Object*>* pVisited);
   static uint32_t ComponentsForFamily(int family);
 

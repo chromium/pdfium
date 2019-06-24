@@ -47,7 +47,7 @@ class CPDF_Image final : public Retainable {
 
   RetainPtr<CFX_DIBBase> LoadDIBBase() const;
 
-  void SetImage(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  void SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap);
   void SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile);
   void SetJpegImageInline(const RetainPtr<IFX_SeekableReadStream>& pFile);
 

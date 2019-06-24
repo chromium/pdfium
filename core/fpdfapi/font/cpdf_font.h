@@ -105,7 +105,7 @@ class CPDF_Font {
   virtual bool Load() = 0;
 
   void LoadUnicodeMap() const;  // logically const only.
-  void LoadFontDescriptor(const CPDF_Dictionary* pDict);
+  void LoadFontDescriptor(const CPDF_Dictionary* pFontDesc);
   void CheckFontMetrics();
 
   UnownedPtr<CPDF_Document> const m_pDocument;

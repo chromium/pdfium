@@ -20,7 +20,7 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   // CPDF_PageObject
   Type GetType() const override;
-  void Transform(const CFX_Matrix& maxtrix) override;
+  void Transform(const CFX_Matrix& matrix) override;
   bool IsPath() const override;
   CPDF_PathObject* AsPath() override;
   const CPDF_PathObject* AsPath() const override;

@@ -55,7 +55,7 @@ class CPDF_Stream final : public CPDF_Object {
   void InitStreamFromFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
                           RetainPtr<CPDF_Dictionary> pDict);
 
-  bool ReadRawData(FX_FILESIZE start_pos,
+  bool ReadRawData(FX_FILESIZE offset,
                    uint8_t* pBuf,
                    uint32_t buf_size) const;
 

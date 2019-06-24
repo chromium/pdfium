@@ -19,7 +19,7 @@ class CPDF_PageObjectHolder;
 
 class CPDF_PageContentManager {
  public:
-  explicit CPDF_PageContentManager(const CPDF_PageObjectHolder* pObjHolder);
+  explicit CPDF_PageContentManager(const CPDF_PageObjectHolder* obj_holder);
   ~CPDF_PageContentManager();
 
   // Gets the Content stream at a given index. If Contents is a single stream

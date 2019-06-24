@@ -106,7 +106,8 @@ class CPDF_Array final : public CPDF_Object {
 
   void Clear();
   void RemoveAt(size_t index);
-  void ConvertToIndirectObjectAt(size_t index, CPDF_IndirectObjectHolder* pDoc);
+  void ConvertToIndirectObjectAt(size_t index,
+                                 CPDF_IndirectObjectHolder* pHolder);
   bool IsLocked() const { return !!m_LockCount; }
 
  private:

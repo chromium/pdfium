@@ -767,9 +767,9 @@ bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
   return true;
 }
 
-bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView tag,
+bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView word,
                                               FX_FILESIZE limit) {
-  int32_t taglen = tag.GetLength();
+  int32_t taglen = word.GetLength();
   if (taglen == 0)
     return false;
 
@@ -783,18 +783,18 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(ByteStringView tag,
     if (!GetCharAtBackward(pos, &byte))
       return false;
 
-    if (byte == tag[offset]) {
+    if (byte == word[offset]) {
       offset--;
       if (offset >= 0) {
         pos--;
         continue;
       }
-      if (IsWholeWord(pos, limit, tag, false)) {
+      if (IsWholeWord(pos, limit, word, false)) {
         m_Pos = pos;
         return true;
       }
     }
-    offset = byte == tag[taglen - 1] ? taglen - 2 : taglen - 1;
+    offset = byte == word[taglen - 1] ? taglen - 2 : taglen - 1;
     pos--;
     if (pos < 0)
       return false;

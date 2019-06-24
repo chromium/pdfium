@@ -121,7 +121,7 @@ class CPDF_RenderStatus {
   FX_ARGB GetFillArgbInternal(CPDF_PageObject* pObj, bool bType3) const;
   bool ProcessTransparency(CPDF_PageObject* PageObj,
                            const CFX_Matrix& mtObj2Device);
-  void ProcessObjectNoClip(CPDF_PageObject* PageObj,
+  void ProcessObjectNoClip(CPDF_PageObject* pObj,
                            const CFX_Matrix& mtObj2Device);
   void DrawObjWithBackground(CPDF_PageObject* pObj,
                              const CFX_Matrix& mtObj2Device);
@@ -178,7 +178,7 @@ class CPDF_RenderStatus {
                        int* pCSFamily);
   static RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   static std::unique_ptr<CPDF_GraphicStates> CloneObjStates(
-      const CPDF_GraphicStates* pPathObj,
+      const CPDF_GraphicStates* pSrcStates,
       bool bStroke);
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,

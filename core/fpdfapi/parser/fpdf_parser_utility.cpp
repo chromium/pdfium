@@ -90,23 +90,23 @@ int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {
   return pObj ? pObj->GetInteger() : 0;
 }
 
-ByteString PDF_NameDecode(ByteStringView bstr) {
-  if (!bstr.Contains('#'))
-    return ByteString(bstr);
+ByteString PDF_NameDecode(ByteStringView orig) {
+  if (!orig.Contains('#'))
+    return ByteString(orig);
 
-  size_t src_size = bstr.GetLength();
+  size_t src_size = orig.GetLength();
   size_t out_index = 0;
   ByteString result;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> pDest = result.GetBuffer(src_size);
     for (size_t i = 0; i < src_size; i++) {
-      if (bstr[i] == '#' && i + 2 < src_size) {
-        pDest[out_index++] = FXSYS_HexCharToInt(bstr[i + 1]) * 16 +
-                             FXSYS_HexCharToInt(bstr[i + 2]);
+      if (orig[i] == '#' && i + 2 < src_size) {
+        pDest[out_index++] = FXSYS_HexCharToInt(orig[i + 1]) * 16 +
+                             FXSYS_HexCharToInt(orig[i + 2]);
         i += 2;
       } else {
-        pDest[out_index++] = bstr[i];
+        pDest[out_index++] = orig[i];
       }
     }
   }

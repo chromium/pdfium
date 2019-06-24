@@ -32,7 +32,7 @@ const size_t kArchiveBufferSize = 32768;
 class CFX_FileBufferArchive final : public IFX_ArchiveStream {
  public:
   explicit CFX_FileBufferArchive(
-      const RetainPtr<IFX_RetainableWriteStream>& archive);
+      const RetainPtr<IFX_RetainableWriteStream>& file);
   ~CFX_FileBufferArchive() override;
 
   bool WriteBlock(const void* pBuf, size_t size) override;

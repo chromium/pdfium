@@ -45,12 +45,12 @@ class CPDF_RenderContext {
 
   void Render(CFX_RenderDevice* pDevice,
               const CPDF_RenderOptions* pOptions,
-              const CFX_Matrix* pFinalMatrix);
+              const CFX_Matrix* pLastMatrix);
 
   void Render(CFX_RenderDevice* pDevice,
               const CPDF_PageObject* pStopObj,
               const CPDF_RenderOptions* pOptions,
-              const CFX_Matrix* pFinalMatrix);
+              const CFX_Matrix* pLastMatrix);
 
   void GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
                      const CPDF_PageObject* pObj,

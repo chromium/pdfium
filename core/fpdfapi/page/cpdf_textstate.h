@@ -83,7 +83,7 @@ class CPDF_TextState {
 
    private:
     TextData();
-    TextData(const TextData& src);
+    TextData(const TextData& that);
     ~TextData() override;
 
     void ReleaseFont();
