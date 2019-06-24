@@ -659,7 +659,7 @@ void BigUnsigned::bitShiftRight(const BigUnsigned &a, int b) {
 // INCREMENT/DECREMENT OPERATORS
 
 // Prefix increment
-void BigUnsigned::operator ++() {
+BigUnsigned& BigUnsigned::operator ++() {
 	Index i;
 	bool carry = true;
 	for (i = 0; i < len && carry; i++) {
@@ -672,15 +672,18 @@ void BigUnsigned::operator ++() {
 		len++;
 		blk[i] = 1;
 	}
+	return *this;
 }
 
-// Postfix increment: same as prefix
-void BigUnsigned::operator ++(int) {
+// Postfix increment
+BigUnsigned BigUnsigned::operator ++(int) {
+	BigUnsigned temp(*this);
 	operator ++();
+	return temp;
 }
 
 // Prefix decrement
-void BigUnsigned::operator --() {
+BigUnsigned& BigUnsigned::operator --() {
 	if (len == 0)
         abort();
 	Index i;
@@ -692,9 +695,12 @@ void BigUnsigned::operator --() {
 	// Zap possible leading zero (there can only be one)
 	if (blk[len - 1] == 0)
 		len--;
+	return *this;
 }
 
-// Postfix decrement: same as prefix
-void BigUnsigned::operator --(int) {
+// Postfix decrement
+BigUnsigned BigUnsigned::operator --(int) {
+	BigUnsigned temp(*this);
 	operator --();
+	return temp;
 }

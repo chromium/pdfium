@@ -70,7 +70,7 @@ public:
 	NumberlikeArray(const NumberlikeArray<Blk> &x);
 
 	// Assignment operator
-	void operator=(const NumberlikeArray<Blk> &x);
+	NumberlikeArray<Blk>& operator=(const NumberlikeArray<Blk> &x);
 
 	// Constructor that copies from a given array of blocks
 	NumberlikeArray(const Blk *b, Index blen);
@@ -139,11 +139,11 @@ NumberlikeArray<Blk>::NumberlikeArray(const NumberlikeArray<Blk> &x)
 }
 
 template <class Blk>
-void NumberlikeArray<Blk>::operator=(const NumberlikeArray<Blk> &x) {
+NumberlikeArray<Blk>& NumberlikeArray<Blk>::operator=(const NumberlikeArray<Blk> &x) {
 	/* Calls like a = a have no effect; catch them before the aliasing
 	 * causes a problem */
 	if (this == &x)
-		return;
+		return *this;
 	// Copy length
 	len = x.len;
 	// Expand array if necessary
@@ -152,6 +152,7 @@ void NumberlikeArray<Blk>::operator=(const NumberlikeArray<Blk> &x) {
 	Index i;
 	for (i = 0; i < len; i++)
 		blk[i] = x.blk[i];
+	return *this;
 }
 
 template <class Blk>

@@ -6,14 +6,15 @@
 
 #include "BigInteger.hh"
 
-void BigInteger::operator =(const BigInteger &x) {
+BigInteger& BigInteger::operator =(const BigInteger &x) {
 	// Calls like a = a have no effect
 	if (this == &x)
-		return;
+		return *this;
 	// Copy sign
 	sign = x.sign;
 	// Copy the rest
 	mag = x.mag;
+	return *this;
 }
 
 BigInteger::BigInteger(const Blk *b, Index blen, Sign s) : mag(b, blen) {
@@ -374,7 +375,7 @@ void BigInteger::negate(const BigInteger &a) {
 // INCREMENT/DECREMENT OPERATORS
 
 // Prefix increment
-void BigInteger::operator ++() {
+BigInteger& BigInteger::operator ++() {
 	if (sign == negative) {
 		mag--;
 		if (mag == 0)
@@ -383,15 +384,18 @@ void BigInteger::operator ++() {
 		mag++;
 		sign = positive; // if not already
 	}
+	return *this;
 }
 
-// Postfix increment: same as prefix
-void BigInteger::operator ++(int) {
+// Postfix increment
+BigInteger BigInteger::operator ++(int) {
+	BigInteger temp(*this);
 	operator ++();
+	return temp;
 }
 
 // Prefix decrement
-void BigInteger::operator --() {
+BigInteger& BigInteger::operator --() {
 	if (sign == positive) {
 		mag--;
 		if (mag == 0)
@@ -400,10 +404,13 @@ void BigInteger::operator --() {
 		mag++;
 		sign = negative;
 	}
+	return *this;
 }
 
-// Postfix decrement: same as prefix
-void BigInteger::operator --(int) {
+// Postfix decrement
+BigInteger BigInteger::operator --(int) {
+	BigInteger temp(*this);
 	operator --();
+	return temp;
 }
 

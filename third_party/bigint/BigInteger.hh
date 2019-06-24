@@ -41,7 +41,7 @@ public:
 	BigInteger(const BigInteger &x) : sign(x.sign), mag(x.mag) {}
 
 	// Assignment operator
-	void operator=(const BigInteger &x);
+	BigInteger& operator=(const BigInteger &x);
 
 	// Constructor that copies from a given array of blocks with a sign.
 	BigInteger(const Blk *b, Index blen, Sign s);
@@ -129,18 +129,18 @@ public:
 	BigInteger operator %(const BigInteger &x) const;
 	BigInteger operator -() const;
 
-	void operator +=(const BigInteger &x);
-	void operator -=(const BigInteger &x);
-	void operator *=(const BigInteger &x);
-	void operator /=(const BigInteger &x);
-	void operator %=(const BigInteger &x);
+	BigInteger& operator +=(const BigInteger &x);
+	BigInteger& operator -=(const BigInteger &x);
+	BigInteger& operator *=(const BigInteger &x);
+	BigInteger& operator /=(const BigInteger &x);
+	BigInteger& operator %=(const BigInteger &x);
 	void flipSign();
 
 	// INCREMENT/DECREMENT OPERATORS
-	void operator ++(   );
-	void operator ++(int);
-	void operator --(   );
-	void operator --(int);
+	BigInteger& operator ++(   );
+	BigInteger operator ++(int);
+	BigInteger& operator --(   );
+	BigInteger operator --(int);
 };
 
 // NORMAL OPERATORS
@@ -191,16 +191,19 @@ inline BigInteger BigInteger::operator -() const {
  * belongs to the put-here operations.  See Assignment Operators in
  * BigUnsigned.hh.
  */
-inline void BigInteger::operator +=(const BigInteger &x) {
+inline BigInteger& BigInteger::operator +=(const BigInteger &x) {
 	add(*this, x);
+	return *this;
 }
-inline void BigInteger::operator -=(const BigInteger &x) {
+inline BigInteger& BigInteger::operator -=(const BigInteger &x) {
 	subtract(*this, x);
+	return *this;
 }
-inline void BigInteger::operator *=(const BigInteger &x) {
+inline BigInteger& BigInteger::operator *=(const BigInteger &x) {
 	multiply(*this, x);
+	return *this;
 }
-inline void BigInteger::operator /=(const BigInteger &x) {
+inline BigInteger& BigInteger::operator /=(const BigInteger &x) {
 	if (x.isZero())
         abort();
 	/* The following technique is slightly faster than copying *this first
@@ -209,13 +212,15 @@ inline void BigInteger::operator /=(const BigInteger &x) {
 	divideWithRemainder(x, q);
 	// *this contains the remainder, but we overwrite it with the quotient.
 	*this = q;
+	return *this;
 }
-inline void BigInteger::operator %=(const BigInteger &x) {
+inline BigInteger& BigInteger::operator %=(const BigInteger &x) {
 	if (x.isZero())
         abort();
 	BigInteger q;
 	// Mods *this by x.  Don't care about quotient left in q.
 	divideWithRemainder(x, q);
+	return *this;
 }
 // This one is trivial
 inline void BigInteger::flipSign() {

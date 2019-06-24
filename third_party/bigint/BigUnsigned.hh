@@ -46,8 +46,9 @@ public:
 	BigUnsigned(const BigUnsigned &x) : NumberlikeArray<Blk>(x) {}
 
 	// Assignment operator
-	void operator=(const BigUnsigned &x) {
+	BigUnsigned& operator=(const BigUnsigned &x) {
 		NumberlikeArray<Blk>::operator =(x);
+		return *this;
 	}
 
 	// Constructor that copies from a given array of blocks.
@@ -218,24 +219,24 @@ public:
 	BigUnsigned operator >>(int b) const;
 
 	// OVERLOADED ASSIGNMENT OPERATORS
-	void operator +=(const BigUnsigned &x);
-	void operator -=(const BigUnsigned &x);
-	void operator *=(const BigUnsigned &x);
-	void operator /=(const BigUnsigned &x);
-	void operator %=(const BigUnsigned &x);
-	void operator &=(const BigUnsigned &x);
-	void operator |=(const BigUnsigned &x);
-	void operator ^=(const BigUnsigned &x);
-	void operator <<=(int b);
-	void operator >>=(int b);
+	BigUnsigned& operator +=(const BigUnsigned &x);
+	BigUnsigned& operator -=(const BigUnsigned &x);
+	BigUnsigned& operator *=(const BigUnsigned &x);
+	BigUnsigned& operator /=(const BigUnsigned &x);
+	BigUnsigned& operator %=(const BigUnsigned &x);
+	BigUnsigned& operator &=(const BigUnsigned &x);
+	BigUnsigned& operator |=(const BigUnsigned &x);
+	BigUnsigned& operator ^=(const BigUnsigned &x);
+	BigUnsigned& operator <<=(int b);
+	BigUnsigned& operator >>=(int b);
 
 	/* INCREMENT/DECREMENT OPERATORS
 	 * To discourage messy coding, these do not return *this, so prefix
 	 * and postfix behave the same. */
-	void operator ++(   );
-	void operator ++(int);
-	void operator --(   );
-	void operator --(int);
+	BigUnsigned& operator ++(   );
+	BigUnsigned operator ++(int);
+	BigUnsigned& operator --(   );
+	BigUnsigned operator --(int);
 
 	// Helper function that needs access to BigUnsigned internals
 	friend Blk getShiftedBlock(const BigUnsigned &num, Index x,
@@ -307,16 +308,19 @@ inline BigUnsigned BigUnsigned::operator >>(int b) const {
 	return ans;
 }
 
-inline void BigUnsigned::operator +=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator +=(const BigUnsigned &x) {
 	add(*this, x);
+	return *this;
 }
-inline void BigUnsigned::operator -=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator -=(const BigUnsigned &x) {
 	subtract(*this, x);
+	return *this;
 }
-inline void BigUnsigned::operator *=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator *=(const BigUnsigned &x) {
 	multiply(*this, x);
+	return *this;
 }
-inline void BigUnsigned::operator /=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator /=(const BigUnsigned &x) {
 	if (x.isZero())
         abort();
 	/* The following technique is slightly faster than copying *this first
@@ -325,28 +329,35 @@ inline void BigUnsigned::operator /=(const BigUnsigned &x) {
 	divideWithRemainder(x, q);
 	// *this contains the remainder, but we overwrite it with the quotient.
 	*this = q;
+	return *this;
 }
-inline void BigUnsigned::operator %=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator %=(const BigUnsigned &x) {
 	if (x.isZero())
         abort();
 	BigUnsigned q;
 	// Mods *this by x.  Don't care about quotient left in q.
 	divideWithRemainder(x, q);
+	return *this;
 }
-inline void BigUnsigned::operator &=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator &=(const BigUnsigned &x) {
 	bitAnd(*this, x);
+	return *this;
 }
-inline void BigUnsigned::operator |=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator |=(const BigUnsigned &x) {
 	bitOr(*this, x);
+	return *this;
 }
-inline void BigUnsigned::operator ^=(const BigUnsigned &x) {
+inline BigUnsigned& BigUnsigned::operator ^=(const BigUnsigned &x) {
 	bitXor(*this, x);
+	return *this;
 }
-inline void BigUnsigned::operator <<=(int b) {
+inline BigUnsigned& BigUnsigned::operator <<=(int b) {
 	bitShiftLeft(*this, b);
+	return *this;
 }
-inline void BigUnsigned::operator >>=(int b) {
+inline BigUnsigned& BigUnsigned::operator >>=(int b) {
 	bitShiftRight(*this, b);
+	return *this;
 }
 
 /* Templates for conversions of BigUnsigned to and from primitive integers.
