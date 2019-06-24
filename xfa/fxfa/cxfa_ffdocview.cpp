@@ -597,7 +597,9 @@ bool CXFA_FFDocView::RunEventLayoutReady() {
 }
 
 void CXFA_FFDocView::RunBindItems() {
-  for (auto* item : m_BindItems) {
+  while (!m_BindItems.empty()) {
+    CXFA_BindItems* item = m_BindItems.front();
+    m_BindItems.pop_front();
     if (item->HasRemovedChildren())
       continue;
 
@@ -656,7 +658,6 @@ void CXFA_FFDocView::RunBindItems() {
       pWidgetNode->InsertItem(wsLabel, wsValue, false);
     }
   }
-  m_BindItems.clear();
 }
 
 void CXFA_FFDocView::SetChangeMark() {

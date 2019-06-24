@@ -122,7 +122,7 @@ class CXFA_FFDocView {
   UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
   std::deque<CXFA_Node*> m_ValidateNodes;
   std::vector<CXFA_Node*> m_CalculateNodes;
-  std::vector<CXFA_BindItems*> m_BindItems;
+  std::deque<CXFA_BindItems*> m_BindItems;
   std::deque<CXFA_Node*> m_NewAddedNodes;
   std::deque<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
