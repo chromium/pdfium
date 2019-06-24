@@ -68,36 +68,39 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
-FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
+FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_BookmarkTree tree(pDoc);
-  CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
-  return FPDFBookmarkFromCPDFDictionary(tree.GetFirstChild(bookmark).GetDict());
+  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  return FPDFBookmarkFromCPDFDictionary(
+      tree.GetFirstChild(cBookmark).GetDict());
 }
 
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
-FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
+FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
-  if (!pDict)
+  if (!bookmark)
     return nullptr;
 
   CPDF_BookmarkTree tree(pDoc);
-  CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
+  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
   return FPDFBookmarkFromCPDFDictionary(
-      tree.GetNextSibling(bookmark).GetDict());
+      tree.GetNextSibling(cBookmark).GetDict());
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFBookmark_GetTitle(FPDF_BOOKMARK pDict, void* buffer, unsigned long buflen) {
-  if (!pDict)
+FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
+                      void* buffer,
+                      unsigned long buflen) {
+  if (!bookmark)
     return 0;
-  CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
-  WideString title = bookmark.GetTitle();
+  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  WideString title = cBookmark.GetTitle();
   return Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen);
 }
 
@@ -117,42 +120,42 @@ FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
       FindBookmark(tree, CPDF_Bookmark(), encodedTitle, &visited).GetDict());
 }
 
-FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFBookmark_GetDest(FPDF_DOCUMENT document,
-                                                         FPDF_BOOKMARK pDict) {
+FPDF_EXPORT FPDF_DEST FPDF_CALLCONV
+FPDFBookmark_GetDest(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
-  if (!pDict)
+  if (!bookmark)
     return nullptr;
 
-  CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
-  CPDF_Dest dest = bookmark.GetDest(pDoc);
+  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Dest dest = cBookmark.GetDest(pDoc);
   if (dest.GetArray())
     return FPDFDestFromCPDFArray(dest.GetArray());
   // If this bookmark is not directly associated with a dest, we try to get
   // action
-  CPDF_Action action = bookmark.GetAction();
+  CPDF_Action action = cBookmark.GetAction();
   if (!action.GetDict())
     return nullptr;
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }
 
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV
-FPDFBookmark_GetAction(FPDF_BOOKMARK pDict) {
-  if (!pDict)
+FPDFBookmark_GetAction(FPDF_BOOKMARK bookmark) {
+  if (!bookmark)
     return nullptr;
 
-  CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
-  return FPDFActionFromCPDFDictionary(bookmark.GetAction().GetDict());
+  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  return FPDFActionFromCPDFDictionary(cBookmark.GetAction().GetDict());
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION pDict) {
-  if (!pDict)
+FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action) {
+  if (!action)
     return PDFACTION_UNSUPPORTED;
 
-  CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
-  CPDF_Action::ActionType type = action.GetType();
+  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  CPDF_Action::ActionType type = cAction.GetType();
   switch (type) {
     case CPDF_Action::GoTo:
       return PDFACTION_GOTO;
@@ -168,27 +171,27 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION pDict) {
 }
 
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
-                                                       FPDF_ACTION pDict) {
+                                                       FPDF_ACTION action) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
-  unsigned long type = FPDFAction_GetType(pDict);
+  unsigned long type = FPDFAction_GetType(action);
   if (type != PDFACTION_GOTO && type != PDFACTION_REMOTEGOTO)
     return nullptr;
 
-  CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
-  return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
+  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  return FPDFDestFromCPDFArray(cAction.GetDest(pDoc).GetArray());
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFAction_GetFilePath(FPDF_ACTION pDict, void* buffer, unsigned long buflen) {
-  unsigned long type = FPDFAction_GetType(pDict);
+FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen) {
+  unsigned long type = FPDFAction_GetType(action);
   if (type != PDFACTION_REMOTEGOTO && type != PDFACTION_LAUNCH)
     return 0;
 
-  CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
-  ByteString path = action.GetFilePath().ToUTF8();
+  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  ByteString path = cAction.GetFilePath().ToUTF8();
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
     memcpy(buffer, path.c_str(), len);
@@ -197,19 +200,19 @@ FPDFAction_GetFilePath(FPDF_ACTION pDict, void* buffer, unsigned long buflen) {
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAction_GetURIPath(FPDF_DOCUMENT document,
-                      FPDF_ACTION pDict,
+                      FPDF_ACTION action,
                       void* buffer,
                       unsigned long buflen) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
 
-  unsigned long type = FPDFAction_GetType(pDict);
+  unsigned long type = FPDFAction_GetType(action);
   if (type != PDFACTION_URI)
     return 0;
 
-  CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
-  ByteString path = action.GetURI(pDoc);
+  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  ByteString path = cAction.GetURI(pDoc);
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
     memcpy(buffer, path.c_str(), len);
@@ -230,15 +233,15 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFDest_GetView(FPDF_DEST pDict,
+FPDFDest_GetView(FPDF_DEST dest,
                  unsigned long* pNumParams,
                  FS_FLOAT* pParams) {
-  if (!pDict) {
+  if (!dest) {
     *pNumParams = 0;
     return 0;
   }
 
-  CPDF_Dest destination(CPDFArrayFromFPDFDest(pDict));
+  CPDF_Dest destination(CPDFArrayFromFPDFDest(dest));
   unsigned long nParams = destination.GetNumParams();
   ASSERT(nParams <= 4);
   *pNumParams = nParams;
@@ -248,23 +251,23 @@ FPDFDest_GetView(FPDF_DEST pDict,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFDest_GetLocationInPage(FPDF_DEST pDict,
+FPDFDest_GetLocationInPage(FPDF_DEST dest,
                            FPDF_BOOL* hasXVal,
                            FPDF_BOOL* hasYVal,
                            FPDF_BOOL* hasZoomVal,
                            FS_FLOAT* x,
                            FS_FLOAT* y,
                            FS_FLOAT* zoom) {
-  if (!pDict)
+  if (!dest)
     return false;
 
-  auto dest = pdfium::MakeUnique<CPDF_Dest>(CPDFArrayFromFPDFDest(pDict));
+  auto destination = pdfium::MakeUnique<CPDF_Dest>(CPDFArrayFromFPDFDest(dest));
 
   // FPDF_BOOL is an int, GetXYZ expects bools.
   bool bHasX;
   bool bHasY;
   bool bHasZoom;
-  if (!dest->GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom))
+  if (!destination->GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom))
     return false;
 
   *hasXVal = bHasX;
@@ -309,29 +312,29 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
 }
 
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFLink_GetDest(FPDF_DOCUMENT document,
-                                                     FPDF_LINK pDict) {
-  if (!pDict)
+                                                     FPDF_LINK link) {
+  if (!link)
     return nullptr;
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
-  CPDF_Link link(CPDFDictionaryFromFPDFLink(pDict));
-  FPDF_DEST dest = FPDFDestFromCPDFArray(link.GetDest(pDoc).GetArray());
+  CPDF_Link cLink(CPDFDictionaryFromFPDFLink(link));
+  FPDF_DEST dest = FPDFDestFromCPDFArray(cLink.GetDest(pDoc).GetArray());
   if (dest)
     return dest;
   // If this link is not directly associated with a dest, we try to get action
-  CPDF_Action action = link.GetAction();
+  CPDF_Action action = cLink.GetAction();
   if (!action.GetDict())
     return nullptr;
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }
 
-FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK pDict) {
-  if (!pDict)
+FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK link) {
+  if (!link)
     return nullptr;
 
-  CPDF_Link link(CPDFDictionaryFromFPDFLink(pDict));
-  return FPDFActionFromCPDFDictionary(link.GetAction().GetDict());
+  CPDF_Link cLink(CPDFDictionaryFromFPDFLink(link));
+  return FPDFActionFromCPDFDictionary(cLink.GetAction().GetDict());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,

@@ -107,10 +107,10 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
 };
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
-                                                     const char* name,
+                                                     const char* face,
                                                      int charset) {
   CFX_FontMapper* pMapper = static_cast<CFX_FontMapper*>(mapper);
-  pMapper->AddInstalledFont(name, charset);
+  pMapper->AddInstalledFont(face, charset);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
@@ -217,6 +217,6 @@ FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
-FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pDefaultFontInfo) {
-  FX_Free(static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pDefaultFontInfo));
+FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo) {
+  FX_Free(static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pFontInfo));
 }

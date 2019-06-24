@@ -172,19 +172,19 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_InitLibrary() {
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
-FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
+FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
   if (g_bLibraryInitialized)
     return;
 
   FXMEM_InitializePartitionAlloc();
-  CFX_GEModule::Create(cfg ? cfg->m_pUserFontPaths : nullptr);
+  CFX_GEModule::Create(config ? config->m_pUserFontPaths : nullptr);
   CPDF_ModuleMgr::Create();
 
 #ifdef PDF_ENABLE_XFA
   BC_Library_Init();
 #endif  // PDF_ENABLE_XFA
-  if (cfg && cfg->version >= 2)
-    IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
+  if (config && config->version >= 2)
+    IJS_Runtime::Initialize(config->m_v8EmbedderSlot, config->m_pIsolate);
 
   g_bLibraryInitialized = true;
 }

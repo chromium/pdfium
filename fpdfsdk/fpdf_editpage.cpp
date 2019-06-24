@@ -478,8 +478,8 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
+FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return false;
 
@@ -590,8 +590,8 @@ FPDFPageObjMark_RemoveParam(FPDF_PAGEOBJECT page_object,
   return true;
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
+FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   return pPageObj ? pPageObj->GetType() : FPDF_PAGEOBJ_UNKNOWN;
 }
 
@@ -714,12 +714,12 @@ FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
+FPDFPageObj_GetBounds(FPDF_PAGEOBJECT page_object,
                       float* left,
                       float* bottom,
                       float* right,
                       float* top) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return false;
 
@@ -839,8 +839,8 @@ FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
-FPDFFormObj_CountObjects(FPDF_PAGEOBJECT page_object) {
-  const auto* pObjectList = CPDFPageObjHolderFromFPDFFormObject(page_object);
+FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object) {
+  const auto* pObjectList = CPDFPageObjHolderFromFPDFFormObject(form_object);
   return pObjectList ? pObjectList->GetPageObjectCount() : -1;
 }
 

@@ -174,14 +174,14 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
-                                               int char_start,
+                                               int start_index,
                                                int char_count,
                                                unsigned short* result) {
-  if (!page || char_start < 0 || char_count < 0 || !result)
+  if (!page || start_index < 0 || char_count < 0 || !result)
     return 0;
 
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(page);
-  int char_available = textpage->CountChars() - char_start;
+  int char_available = textpage->CountChars() - start_index;
   if (char_available <= 0)
     return 0;
 
@@ -192,7 +192,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
     return 1;
   }
 
-  WideString str = textpage->GetPageText(char_start, char_count);
+  WideString str = textpage->GetPageText(start_index, char_count);
 
   if (str.GetLength() > static_cast<size_t>(char_count))
     str = str.Left(static_cast<size_t>(char_count));
