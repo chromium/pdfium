@@ -84,14 +84,14 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
 
 }  // namespace
 
-int FXSYS_round(float d) {
-  if (std::isnan(d))
+int FXSYS_round(float f) {
+  if (std::isnan(f))
     return 0;
-  if (d < static_cast<float>(std::numeric_limits<int>::min()))
+  if (f < static_cast<float>(std::numeric_limits<int>::min()))
     return std::numeric_limits<int>::min();
-  if (d > static_cast<float>(std::numeric_limits<int>::max()))
+  if (f > static_cast<float>(std::numeric_limits<int>::max()))
     return std::numeric_limits<int>::max();
-  return static_cast<int>(round(d));
+  return static_cast<int>(round(f));
 }
 
 int32_t FXSYS_atoi(const char* str) {
@@ -181,26 +181,26 @@ wchar_t* FXSYS_wcsupr(wchar_t* str) {
   return s;
 }
 
-int FXSYS_stricmp(const char* dst, const char* src) {
+int FXSYS_stricmp(const char* str1, const char* str2) {
   int f;
   int l;
   do {
-    f = toupper(*dst);
-    l = toupper(*src);
-    ++dst;
-    ++src;
+    f = toupper(*str1);
+    l = toupper(*str2);
+    ++str1;
+    ++str2;
   } while (f && f == l);
   return f - l;
 }
 
-int FXSYS_wcsicmp(const wchar_t* dst, const wchar_t* src) {
+int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2) {
   wchar_t f;
   wchar_t l;
   do {
-    f = FXSYS_towupper(*dst);
-    l = FXSYS_towupper(*src);
-    ++dst;
-    ++src;
+    f = FXSYS_towupper(*str1);
+    l = FXSYS_towupper(*str2);
+    ++str1;
+    ++str2;
   } while (f && f == l);
   return f - l;
 }

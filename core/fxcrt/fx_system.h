@@ -160,7 +160,7 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
                               int buflen);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
-int FXSYS_stricmp(const char*, const char*);
+int FXSYS_stricmp(const char* str1, const char* str2);
 int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);

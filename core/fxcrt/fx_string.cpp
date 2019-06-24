@@ -89,25 +89,25 @@ float StringToFloat(WideStringView wsStr) {
   return StringToFloat(FX_UTF8Encode(wsStr).c_str());
 }
 
-size_t FloatToString(float d, char* buf) {
+size_t FloatToString(float f, char* buf) {
   buf[0] = '0';
   buf[1] = '\0';
-  if (d == 0.0f) {
+  if (f == 0.0f) {
     return 1;
   }
   bool bNegative = false;
-  if (d < 0) {
+  if (f < 0) {
     bNegative = true;
-    d = -d;
+    f = -f;
   }
   int scale = 1;
-  int scaled = FXSYS_round(d);
+  int scaled = FXSYS_round(f);
   while (scaled < 100000) {
     if (scale == 1000000) {
       break;
     }
     scale *= 10;
-    scaled = FXSYS_round(d * scale);
+    scaled = FXSYS_round(f * scale);
   }
   if (scaled == 0) {
     return 1;

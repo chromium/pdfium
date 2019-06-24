@@ -738,16 +738,16 @@ void WideString::AllocCopy(WideString& dest,
   dest.m_pData.Swap(pNewData);
 }
 
-size_t WideString::Insert(size_t location, wchar_t ch) {
+size_t WideString::Insert(size_t index, wchar_t ch) {
   const size_t cur_length = GetLength();
-  if (!IsValidLength(location))
+  if (!IsValidLength(index))
     return cur_length;
 
   const size_t new_length = cur_length + 1;
   ReallocBeforeWrite(new_length);
-  wmemmove(m_pData->m_String + location + 1, m_pData->m_String + location,
-           new_length - location);
-  m_pData->m_String[location] = ch;
+  wmemmove(m_pData->m_String + index + 1, m_pData->m_String + index,
+           new_length - index);
+  m_pData->m_String[index] = ch;
   m_pData->m_nDataLength = new_length;
   return new_length;
 }
@@ -941,10 +941,10 @@ void WideString::SetAt(size_t index, wchar_t c) {
   m_pData->m_String[index] = c;
 }
 
-int WideString::Compare(const wchar_t* lpsz) const {
+int WideString::Compare(const wchar_t* str) const {
   if (m_pData)
-    return lpsz ? wcscmp(m_pData->m_String, lpsz) : 1;
-  return (!lpsz || lpsz[0] == 0) ? 0 : -1;
+    return str ? wcscmp(m_pData->m_String, str) : 1;
+  return (!str || str[0] == 0) ? 0 : -1;
 }
 
 int WideString::Compare(const WideString& str) const {
@@ -964,10 +964,10 @@ int WideString::Compare(const WideString& str) const {
   return this_len < that_len ? -1 : 1;
 }
 
-int WideString::CompareNoCase(const wchar_t* lpsz) const {
+int WideString::CompareNoCase(const wchar_t* str) const {
   if (m_pData)
-    return lpsz ? FXSYS_wcsicmp(m_pData->m_String, lpsz) : 1;
-  return (!lpsz || lpsz[0] == 0) ? 0 : -1;
+    return str ? FXSYS_wcsicmp(m_pData->m_String, str) : 1;
+  return (!str || str[0] == 0) ? 0 : -1;
 }
 
 size_t WideString::WStringLength(const unsigned short* str) {

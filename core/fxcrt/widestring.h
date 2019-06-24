@@ -35,7 +35,7 @@ class WideString {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  static WideString Format(const wchar_t* lpszFormat, ...) WARN_UNUSED_RESULT;
+  static WideString Format(const wchar_t* pFormat, ...) WARN_UNUSED_RESULT;
   static WideString FormatV(const wchar_t* lpszFormat,
                             va_list argList) WARN_UNUSED_RESULT;
 
@@ -53,7 +53,7 @@ class WideString {
   // NOLINTNEXTLINE(runtime/explicit)
   WideString(char) = delete;
 
-  WideString(const wchar_t* ptr, size_t len);
+  WideString(const wchar_t* pStr, size_t len);
 
   explicit WideString(WideStringView str);
   WideString(WideStringView str1, WideStringView str2);
@@ -175,12 +175,12 @@ class WideString {
 
   // Note: any modification of the string (including ReleaseBuffer()) may
   // invalidate the span, which must not outlive its buffer.
-  pdfium::span<wchar_t> GetBuffer(size_t len);
-  void ReleaseBuffer(size_t len);
+  pdfium::span<wchar_t> GetBuffer(size_t nMinBufLength);
+  void ReleaseBuffer(size_t nNewLength);
 
   int GetInteger() const;
 
-  Optional<size_t> Find(WideStringView pSub, size_t start = 0) const;
+  Optional<size_t> Find(WideStringView subStr, size_t start = 0) const;
   Optional<size_t> Find(wchar_t ch, size_t start = 0) const;
 
   bool Contains(WideStringView lpszSub, size_t start = 0) const {
@@ -215,11 +215,11 @@ class WideString {
  protected:
   using StringData = StringDataTemplate<wchar_t>;
 
-  void ReallocBeforeWrite(size_t nLen);
-  void AllocBeforeWrite(size_t nLen);
+  void ReallocBeforeWrite(size_t nNewLength);
+  void AllocBeforeWrite(size_t nNewLength);
   void AllocCopy(WideString& dest, size_t nCopyLen, size_t nCopyIndex) const;
   void AssignCopy(const wchar_t* pSrcData, size_t nSrcLen);
-  void Concat(const wchar_t* lpszSrcData, size_t nSrcLen);
+  void Concat(const wchar_t* pSrcData, size_t nSrcLen);
   intptr_t ReferenceCountForTesting() const;
 
   RetainPtr<StringData> m_pData;

@@ -74,9 +74,9 @@ ByteString ByteString::FormatInteger(int i) {
 }
 
 // static
-ByteString ByteString::FormatFloat(float d) {
+ByteString ByteString::FormatFloat(float f) {
   char buf[32];
-  return ByteString(buf, FloatToString(d, buf));
+  return ByteString(buf, FloatToString(f, buf));
 }
 
 // static
@@ -142,10 +142,10 @@ ByteString::ByteString(char ch) {
 ByteString::ByteString(const char* ptr)
     : ByteString(ptr, ptr ? strlen(ptr) : 0) {}
 
-ByteString::ByteString(ByteStringView stringSrc) {
-  if (!stringSrc.IsEmpty())
-    m_pData.Reset(StringData::Create(stringSrc.unterminated_c_str(),
-                                     stringSrc.GetLength()));
+ByteString::ByteString(ByteStringView bstrc) {
+  if (!bstrc.IsEmpty())
+    m_pData.Reset(StringData::Create(bstrc.unterminated_c_str(),
+                                     bstrc.GetLength()));
 }
 
 ByteString::ByteString(ByteStringView str1, ByteStringView str2) {
@@ -198,11 +198,11 @@ const ByteString& ByteString::operator=(const char* pStr) {
   return *this;
 }
 
-const ByteString& ByteString::operator=(ByteStringView stringSrc) {
-  if (stringSrc.IsEmpty())
+const ByteString& ByteString::operator=(ByteStringView bstrc) {
+  if (bstrc.IsEmpty())
     clear();
   else
-    AssignCopy(stringSrc.unterminated_c_str(), stringSrc.GetLength());
+    AssignCopy(bstrc.unterminated_c_str(), bstrc.GetLength());
 
   return *this;
 }
@@ -518,16 +518,16 @@ void ByteString::SetAt(size_t index, char c) {
   m_pData->m_String[index] = c;
 }
 
-size_t ByteString::Insert(size_t location, char ch) {
+size_t ByteString::Insert(size_t index, char ch) {
   const size_t cur_length = GetLength();
-  if (!IsValidLength(location))
+  if (!IsValidLength(index))
     return cur_length;
 
   const size_t new_length = cur_length + 1;
   ReallocBeforeWrite(new_length);
-  memmove(m_pData->m_String + location + 1, m_pData->m_String + location,
-          new_length - location);
-  m_pData->m_String[location] = ch;
+  memmove(m_pData->m_String + index + 1, m_pData->m_String + index,
+          new_length - index);
+  m_pData->m_String[index] = ch;
   m_pData->m_nDataLength = new_length;
   return new_length;
 }

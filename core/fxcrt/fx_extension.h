@@ -106,8 +106,8 @@ inline int FXSYS_DecimalCharToInt(wchar_t c) {
   return FXSYS_IsDecimalDigit(c) ? c - L'0' : 0;
 }
 
-void FXSYS_IntToTwoHexChars(uint8_t c, char* buf);
-void FXSYS_IntToFourHexChars(uint16_t c, char* buf);
+void FXSYS_IntToTwoHexChars(uint8_t n, char* buf);
+void FXSYS_IntToFourHexChars(uint16_t n, char* buf);
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
 
