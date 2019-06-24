@@ -32,7 +32,7 @@ public:
     pod_array() : m_size(0), m_capacity(0), m_array(0) {}
     pod_array(unsigned cap, unsigned extra_tail = 0);
     pod_array(const pod_array<T>&);
-    const pod_array<T>& operator = (const pod_array<T>&);
+    pod_array<T>& operator = (const pod_array<T>&);
     void capacity(unsigned cap, unsigned extra_tail = 0);
     unsigned capacity() const
     {
@@ -144,7 +144,7 @@ template<class T> pod_array<T>::pod_array(const pod_array<T>& v) :
 {
   memcpy(m_array, v.m_array, sizeof(T) * v.m_size);
 }
-template<class T> const pod_array<T>&
+template<class T> pod_array<T>&
 pod_array<T>::operator = (const pod_array<T>&v)
 {
     allocate(v.m_size);
@@ -166,7 +166,7 @@ public:
     pod_deque();
     pod_deque(unsigned block_ptr_inc);
     pod_deque(const pod_deque<T, S>& v);
-    const pod_deque<T, S>& operator = (const pod_deque<T, S>& v);
+    pod_deque<T, S>& operator = (const pod_deque<T, S>& v);
     void remove_all()
     {
         m_size = 0;
@@ -323,7 +323,7 @@ pod_deque<T, S>::pod_deque(const pod_deque<T, S>& v) :
     }
 }
 template<class T, unsigned S>
-const pod_deque<T, S>& pod_deque<T, S>::operator = (const pod_deque<T, S>& v)
+pod_deque<T, S>& pod_deque<T, S>::operator = (const pod_deque<T, S>& v)
 {
     unsigned i;
     for(i = m_num_blocks; i < v.m_num_blocks; ++i) {

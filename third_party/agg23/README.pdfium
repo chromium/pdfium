@@ -18,3 +18,5 @@ non-enumeral type in conditional.
 0003-ubsan-render-line-error.patch: Fix UBSan overflow error in render_line.
 0004-ubsan-sweep-scanline-error.patch: Fix UBSan left shift of negative value
 error in sweep_scanline.
+0005-assignment-return-values.patch: Fix assignment operator return values in
+agg_array.h.
