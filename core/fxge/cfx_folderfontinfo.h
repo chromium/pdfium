@@ -28,7 +28,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const char* face) override;
+                const char* family) override;
 #ifdef PDF_ENABLE_XFA
   void* MapFontByUnicode(uint32_t dwUnicode,
                          int weight,

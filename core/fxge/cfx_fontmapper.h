@@ -76,7 +76,7 @@ class CFX_FontMapper {
                                        int iBaseFont,
                                        int italic_angle,
                                        int weight,
-                                       int picthfamily);
+                                       int pitch_family);
   RetainPtr<CFX_Face> GetCachedTTCFace(void* hFont,
                                        uint32_t ttc_size,
                                        uint32_t font_size);

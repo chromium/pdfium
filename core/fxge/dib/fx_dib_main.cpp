@@ -104,14 +104,14 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
                     FXSYS_GetBValue(colorref));
 }
 
-FX_ARGB StringToFXARGB(WideStringView wsValue) {
+FX_ARGB StringToFXARGB(WideStringView view) {
   static constexpr FX_ARGB kDefaultValue = 0xff000000;
-  if (wsValue.GetLength() == 0)
+  if (view.GetLength() == 0)
     return kDefaultValue;
 
   int cc = 0;
-  const wchar_t* str = wsValue.unterminated_c_str();
-  int len = wsValue.GetLength();
+  const wchar_t* str = view.unterminated_c_str();
+  int len = view.GetLength();
   while (cc < len && FXSYS_iswspace(str[cc]))
     cc++;
 

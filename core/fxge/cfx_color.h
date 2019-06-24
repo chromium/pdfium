@@ -39,7 +39,7 @@ struct CFX_Color {
   CFX_Color operator/(float fColorDivide) const;
   CFX_Color operator-(float fColorSub) const;
 
-  CFX_Color ConvertColorType(int32_t other_nColorType) const;
+  CFX_Color ConvertColorType(int32_t nConvertColorType) const;
 
   FX_COLORREF ToFXColor(int32_t nTransparency) const;
 

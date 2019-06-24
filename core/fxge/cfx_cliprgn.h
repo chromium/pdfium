@@ -29,7 +29,7 @@ class CFX_ClipRgn {
 
  private:
   void IntersectMaskRect(FX_RECT rect,
-                         FX_RECT mask_box,
+                         FX_RECT mask_rect,
                          const RetainPtr<CFX_DIBitmap>& Mask);
 
   ClipType m_Type;

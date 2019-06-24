@@ -105,7 +105,7 @@ class CFX_RenderDevice {
   bool SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                           int left,
                           int top,
-                          BlendMode blend_type);
+                          BlendMode blend_mode);
   bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      int left,
                      int top,
@@ -121,11 +121,11 @@ class CFX_RenderDevice {
                                       int dest_width,
                                       int dest_height,
                                       const FXDIB_ResampleOptions& options,
-                                      BlendMode blend_type);
+                                      BlendMode blend_mode);
   bool SetBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                   int left,
                   int top,
-                  uint32_t color);
+                  uint32_t argb);
   bool StretchBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                       int left,
                       int top,
@@ -137,7 +137,7 @@ class CFX_RenderDevice {
                                int top,
                                int dest_width,
                                int dest_height,
-                               uint32_t color,
+                               uint32_t argb,
                                const FXDIB_ResampleOptions& options);
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
@@ -150,11 +150,11 @@ class CFX_RenderDevice {
   }
   bool StartDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                             int bitmap_alpha,
-                            uint32_t color,
+                            uint32_t argb,
                             const CFX_Matrix& matrix,
                             const FXDIB_ResampleOptions& options,
                             std::unique_ptr<CFX_ImageRenderer>* handle,
-                            BlendMode blend_type);
+                            BlendMode blend_mode);
   bool ContinueDIBits(CFX_ImageRenderer* handle, PauseIndicatorIface* pPause);
 
   bool DrawNormalText(int nChars,

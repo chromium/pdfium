@@ -70,13 +70,13 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                  int top) override;
   RetainPtr<CFX_DIBitmap> GetBackDrop() override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
-                 uint32_t color,
+                 uint32_t argb,
                  const FX_RECT& src_rect,
                  int left,
                  int top,
                  BlendMode blend_type) override;
-  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
-                     uint32_t color,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+                     uint32_t argb,
                      int dest_left,
                      int dest_top,
                      int dest_width,
@@ -84,9 +84,9 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                      const FX_RECT* pClipRect,
                      const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
-  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                    int bitmap_alpha,
-                   uint32_t color,
+                   uint32_t argb,
                    const CFX_Matrix& matrix,
                    const FXDIB_ResampleOptions& options,
                    std::unique_ptr<CFX_ImageRenderer>* handle,

@@ -386,7 +386,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
                                                   uint32_t flags,
                                                   int weight,
                                                   int italic_angle,
-                                                  int WindowCP,
+                                                  int CharsetCP,
                                                   CFX_SubstFont* pSubstFont) {
   if (weight == 0)
     weight = FXFONT_FW_NORMAL;
@@ -523,8 +523,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
 
   int Charset = FX_CHARSET_ANSI;
-  if (WindowCP)
-    Charset = FX_GetCharsetFromCodePage(WindowCP);
+  if (CharsetCP)
+    Charset = FX_GetCharsetFromCodePage(CharsetCP);
   else if (iBaseFont == kNumStandardFonts && FontStyleIsSymbolic(flags))
     Charset = FX_CHARSET_Symbol;
   const bool bCJK = FX_CharSetIsCJK(Charset);
