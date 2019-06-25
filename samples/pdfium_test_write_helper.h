@@ -48,5 +48,12 @@ std::string WriteSkp(const char* pdf_name,
 
 void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name);
 void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num);
+void WriteDecodedThumbnailStream(FPDF_PAGE page,
+                                 const char* pdf_name,
+                                 int page_num);
+void WriteRawThumbnailStream(FPDF_PAGE page,
+                             const char* pdf_name,
+                             int page_num);
+void WriteThumbnail(FPDF_PAGE page, const char* pdf_name, int page_num);
 
 #endif  // SAMPLES_PDFIUM_TEST_WRITE_HELPER_H_

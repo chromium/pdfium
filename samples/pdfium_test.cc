@@ -102,6 +102,9 @@ struct Options {
   bool render_oneshot = false;
   bool save_attachments = false;
   bool save_images = false;
+  bool save_thumbnails = false;
+  bool save_thumbnails_decoded = false;
+  bool save_thumbnails_raw = false;
 #ifdef PDF_ENABLE_V8
   bool disable_javascript = false;
 #ifdef PDF_ENABLE_XFA
@@ -346,6 +349,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->save_attachments = true;
     } else if (cur_arg == "--save-images") {
       options->save_images = true;
+    } else if (cur_arg == "--save-thumbs") {
+      options->save_thumbnails = true;
+    } else if (cur_arg == "--save-thumbs-dec") {
+      options->save_thumbnails_decoded = true;
+    } else if (cur_arg == "--save-thumbs-raw") {
+      options->save_thumbnails_raw = true;
 #ifdef PDF_ENABLE_V8
     } else if (cur_arg == "--disable-javascript") {
       options->disable_javascript = true;
@@ -603,7 +612,12 @@ bool RenderPage(const std::string& name,
     SendPageEvents(form, page, events);
   if (options.save_images)
     WriteImages(page, name.c_str(), page_index);
-
+  if (options.save_thumbnails)
+    WriteThumbnail(page, name.c_str(), page_index);
+  if (options.save_thumbnails_decoded)
+    WriteDecodedThumbnailStream(page, name.c_str(), page_index);
+  if (options.save_thumbnails_raw)
+    WriteRawThumbnailStream(page, name.c_str(), page_index);
   if (options.output_format == OUTPUT_PAGEINFO) {
     DumpPageInfo(page, page_index);
     return true;
@@ -903,6 +917,12 @@ constexpr char kUsageString[] =
     "<pdf-name>.attachment.<attachment-name>\n"
     "  --save-images        - write embedded images "
     "<pdf-name>.<page-number>.<object-number>.png\n"
+    "  --save-thumbs        - write page thumbnails "
+    "<pdf-name>.thumbnail.<page-number>.png\n"
+    "  --save-thumbs-dec    - write page thumbnails' decoded stream data"
+    "<pdf-name>.thumbnail.decoded.<page-number>.png\n"
+    "  --save-thumbs-raw    - write page thumbnails' raw stream data"
+    "<pdf-name>.thumbnail.raw.<page-number>.png\n"
 #ifdef PDF_ENABLE_V8
     "  --disable-javascript - do not execute JS in PDF files\n"
 #ifdef PDF_ENABLE_XFA

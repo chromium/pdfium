@@ -26,6 +26,7 @@
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_sysfontinfo.h"
 #include "public/fpdf_text.h"
+#include "public/fpdf_thumbnail.h"
 #include "public/fpdf_transformpage.h"
 #include "public/fpdfview.h"
 
@@ -332,6 +333,11 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_GetText);
     CHK(FPDFText_GetUnicode);
     CHK(FPDFText_LoadPage);
+
+    // fpdf_thumbnail.h
+    CHK(FPDFPage_GetDecodedThumbnailDataFromPage);
+    CHK(FPDFPage_GetRawThumbnailDataFromPage);
+    CHK(FPDFPage_GetThumbnailAsBitmapFromPage);
 
     // fpdf_transformpage.h
     CHK(FPDFPageObj_TransformClipPath);
