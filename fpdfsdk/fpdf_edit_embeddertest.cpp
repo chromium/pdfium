@@ -645,9 +645,9 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
 #if defined(OS_MACOSX)
     const char kOriginalMD5[] = "5a5eb63cb21cc15084fea1f14284b8df";
 #elif defined(OS_WIN)
-    const char kOriginalMD5[] = "587c507a40f613f9c530b2ce2d58d655";
+    const char kOriginalMD5[] = "00542ee435b37749c4453be63bf7bdb6";
 #else
-    const char kOriginalMD5[] = "2edc6e70d54889aa0c0b7bdf3e168f86";
+    const char kOriginalMD5[] = "41647268d5911d049801803b15c2dfb0";
 #endif
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
@@ -691,11 +691,11 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
   const char kNonPrimesMD5[] = "57e76dc7375d896704f0fd6d6d1b9e65";
   const char kNonPrimesAfterSaveMD5[] = "6304512d0150bbd5578e8e22d3121103";
 #elif defined(OS_WIN)
-  const char kNonPrimesMD5[] = "4d906b57fba36c70c600cf50d60f508c";
-  const char kNonPrimesAfterSaveMD5[] = "4d906b57fba36c70c600cf50d60f508c";
+  const char kNonPrimesMD5[] = "86e371fdae30c2471f476631f3f93413";
+  const char kNonPrimesAfterSaveMD5[] = "86e371fdae30c2471f476631f3f93413";
 #else
-  const char kNonPrimesMD5[] = "33d9c45bec41ead92a295e252f6b7922";
-  const char kNonPrimesAfterSaveMD5[] = "33d9c45bec41ead92a295e252f6b7922";
+  const char kNonPrimesMD5[] = "67ab13115d0cc34e99a1003c28047b40";
+  const char kNonPrimesAfterSaveMD5[] = "67ab13115d0cc34e99a1003c28047b40";
 #endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
@@ -1838,9 +1838,9 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
 #if defined(OS_MACOSX)
     const char md5[] = "40b3ef04f915ff4c4208948001763544";
 #elif defined(OS_WIN)
-    const char md5[] = "aba523a8110d01ed9bd7b7781ff74045";
+    const char md5[] = "5ded49fe157f89627903553771431e3d";
 #else
-    const char md5[] = "b8a21668f1dab625af7c072e07fcefc4";
+    const char md5[] = "344534539aa7c5cc78404cfff4bde7fb";
 #endif
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
 
@@ -2444,7 +2444,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   }
 
   // Check that the text renders properly.
-  const char md5[] = "c68cd79aa72bf83a7b25271370d46b21";
+  const char md5[] = "5159a72903fe57bf0cf645c894de8a74";
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792, md5);

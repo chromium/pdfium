@@ -77,7 +77,7 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
   EXPECT_STREQ(L"defgh", WideString::FromUTF16LE(buf, len).c_str());
 
   // TODO(hnakashima): This is incorrect. Visually 'abcdefgh' are selected.
-  const char kDraggedMD5[] = "69c13fe53b5fc422ebeab56d101a4658";
+  const char kDraggedMD5[] = "f131526c8edd04e44de17b2647ec54c8";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
@@ -87,7 +87,7 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
 
 TEST_F(CFWLEditEmbedderTest, SimpleFill) {
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
-  const char kBlankMD5[] = "eea5c72701270ac4a7edcc4df66d812a";
+  const char kBlankMD5[] = "8dda78a3afaf9f7b5210eb81cacc4600";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
@@ -98,7 +98,7 @@ TEST_F(CFWLEditEmbedderTest, SimpleFill) {
   for (size_t i = 0; i < 10; ++i)
     FORM_OnChar(form_handle(), page(), 'a' + i, 0);
 
-  const char kFilledMD5[] = "e73263fcea46c18d874b3d5a79f53805";
+  const char kFilledMD5[] = "211e4e46eb347aa2bc7c425556d600b0";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
@@ -115,7 +115,7 @@ TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
   for (size_t i = 5; i < 10; ++i)
     FORM_OnChar(form_handle(), page(), 'a' + i, 0);
 
-  const char kFilledMD5[] = "e73263fcea46c18d874b3d5a79f53805";
+  const char kFilledMD5[] = "211e4e46eb347aa2bc7c425556d600b0";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);

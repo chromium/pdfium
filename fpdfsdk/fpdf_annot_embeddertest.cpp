@@ -689,15 +689,15 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   static const char kMd5TwoPaths[] = "7eed0cfba780f1d4dd8068f717d3a6bf";
   static const char kMd5NewAnnot[] = "1de8212d43b7066a6df042095c2aca61";
 #elif defined(OS_WIN)
-  static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  static const char kMd5ModifiedPath[] = "c0c2eb2aba73ad15b3240e342fbe0d72";
-  static const char kMd5TwoPaths[] = "2306bf04915fe001b5f4726843d184c8";
-  static const char kMd5NewAnnot[] = "64a319f145768cb09944d2109efe394e";
+  static const char kMd5Original[] = "6aa001a77ec05d0f1b0d1d22e28744d4";
+  static const char kMd5ModifiedPath[] = "a7a8d675a6ddbcbdfecee65a33ba19e1";
+  static const char kMd5TwoPaths[] = "7c0bdd4552329704c47a7cce47edbbd6";
+  static const char kMd5NewAnnot[] = "3c48d492b4f62941fed0fb62f729f31e";
 #else
-  static const char kMd5Original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  static const char kMd5ModifiedPath[] = "9a38048fb3ac1b2c9a4b34139caa993c";
-  static const char kMd5TwoPaths[] = "ece3d4df54b3395d6a2bf7a29b17239c";
-  static const char kMd5NewAnnot[] = "4299493de84c249f42f220f30f2bbb67";
+  static const char kMd5Original[] = "b42cef463483e668eaf4055a65e4f1f5";
+  static const char kMd5ModifiedPath[] = "6ff77d6d1fec4ea571fabe0c7a19b517";
+  static const char kMd5TwoPaths[] = "ca37ad549e74ac5b359a055708f3e7b6";
+  static const char kMd5NewAnnot[] = "0d7a0e33fbf41ff7fa5d732ab2c5edff";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -890,13 +890,13 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   static const char kMd5NewImage[] = "ff012f5697436dfcaec25b32d1333596";
   static const char kMd5ModifiedImage[] = "86cf8cb2755a7a2046a543e66d9c1e61";
 #elif defined(OS_WIN)
-  static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  static const char kMd5NewImage[] = "d19c6fcfd9a170802fcfb9adfa13557e";
-  static const char kMd5ModifiedImage[] = "1273cf2363570a50d1aa0c95b1318197";
+  static const char kMd5Original[] = "6aa001a77ec05d0f1b0d1d22e28744d4";
+  static const char kMd5NewImage[] = "3d77d06a971bcb9fb54db082f1082c8b";
+  static const char kMd5ModifiedImage[] = "dc4f4afc26c345418330d31c065020e1";
 #else
-  static const char kMd5Original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  static const char kMd5NewImage[] = "9ea8732dc9d579f68853f16892856208";
-  static const char kMd5ModifiedImage[] = "74239d2a8c55c9de1dbb9cd8781895aa";
+  static const char kMd5Original[] = "b42cef463483e668eaf4055a65e4f1f5";
+  static const char kMd5NewImage[] = "528e6243dc29d54f36b61e0d3287d935";
+  static const char kMd5ModifiedImage[] = "6d9e59f3e57a1ff82fb258356b7eb731";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -975,13 +975,13 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   static const char kMd5NewText[] = "60031c1b0330cf1e1575f7d46687d429";
   static const char kMd5ModifiedText[] = "79f5cfb0b07caaf936f65f6a7a57ce77";
 #elif defined(OS_WIN)
-  static const char kMd5Original[] = "6f3cc2dd37479ce7cc072bfb0c63c275";
-  static const char kMd5NewText[] = "87d55e09f9096de7e6552f5ae79afd3b";
-  static const char kMd5ModifiedText[] = "26e94fbd3af4b1e65479327507600114";
+  static const char kMd5Original[] = "6aa001a77ec05d0f1b0d1d22e28744d4";
+  static const char kMd5NewText[] = "204cc01749a70b8afc246a4ca33c7eb6";
+  static const char kMd5ModifiedText[] = "641261a45e8dfd68c89b80bfd237660d";
 #else
-  static const char kMd5Original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  static const char kMd5NewText[] = "30f3f5b989612ca03827d95f184f0979";
-  static const char kMd5ModifiedText[] = "076c8f24a09ddc0e49f7e758edead6f0";
+  static const char kMd5Original[] = "b42cef463483e668eaf4055a65e4f1f5";
+  static const char kMd5NewText[] = "00197ad6206f763febad5719e5935306";
+  static const char kMd5ModifiedText[] = "85853bc0aaa5a4e3af04e58b9cbfff23";
 #endif
 
   // Open a file with two annotations and load its first page.
@@ -1113,9 +1113,9 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 #if defined(OS_MACOSX)
   static const char kMd5[] = "4d64e61c9c0f8c60ab3cc3234bb73b1c";
 #elif defined(OS_WIN)
-  static const char kMd5[] = "9ee141f698c3fcb56c050dffd6c82624";
+  static const char kMd5[] = "20b612ebd46babcb44c48c903e2c5a48";
 #else
-  static const char kMd5[] = "c96ee1f316d7f5a1b154de9f9d467f01";
+  static const char kMd5[] = "1d7bea2042c6fea0558ff2aef05811b5";
 #endif
 
   // Open the saved annotation.
