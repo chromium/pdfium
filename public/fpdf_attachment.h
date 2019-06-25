@@ -138,8 +138,8 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
 // INT_MAX is supported.
 //
 //   attachment - handle to an attachment.
-//   contents   - buffer holding the file data to be written in raw bytes.
-//   len        - length of file data.
+//   contents   - buffer holding the file data to write to |attachment|.
+//   len        - length of file data in bytes.
 //
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -154,8 +154,8 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
 // returned length is 0.
 //
 //   attachment - handle to an attachment.
-//   buffer     - buffer for holding the file data in raw bytes.
-//   buflen     - length of the buffer.
+//   buffer     - buffer for holding the file data from |attachment|.
+//   buflen     - length of the buffer in bytes.
 //
 // Returns the length of the file.
 FPDF_EXPORT unsigned long FPDF_CALLCONV

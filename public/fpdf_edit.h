@@ -645,8 +645,8 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object);
 // the decoded image data.
 //
 //   image_object - handle to an image object.
-//   buffer       - buffer for holding the decoded image data in raw bytes.
-//   buflen       - length of the buffer.
+//   buffer       - buffer for holding the decoded image data.
+//   buflen       - length of the buffer in bytes.
 //
 // Returns the length of the decoded image data.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -659,8 +659,8 @@ FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
 // |buflen| is longer than the length of the raw image data.
 //
 //   image_object - handle to an image object.
-//   buffer       - buffer for holding the raw image data in raw bytes.
-//   buflen       - length of the buffer.
+//   buffer       - buffer for holding the raw image data.
+//   buflen       - length of the buffer in bytes.
 //
 // Returns the length of the raw image data.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
