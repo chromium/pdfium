@@ -304,6 +304,11 @@ SkPath::FillType GetAlternateOrWindingFillType(int fill_mode) {
                                         : SkPath::kWinding_FillType;
 }
 
+bool IsEvenOddFillType(SkPath::FillType fill) {
+  return fill == SkPath::kEvenOdd_FillType ||
+         fill == SkPath::kInverseEvenOdd_FillType;
+}
+
 SkPath BuildPath(const CFX_PathData* pPathData) {
   SkPath skPath;
   const CFX_PathData* pFPath = pPathData;
@@ -1120,9 +1125,9 @@ class SkiaState {
                    bool group_knockout) const {
     return MatrixChanged(pMatrix) || StateChanged(pState, m_drawState) ||
            fill_color != m_fillColor || stroke_color != m_strokeColor ||
-           IsAlternateFillMode(fill_mode) !=
-               (m_skPath.getFillType() == SkPath::kEvenOdd_FillType) ||
-           blend_type != m_blendType || group_knockout != m_groupKnockout;
+           IsEvenOddFillType(m_skPath.getFillType()) ||
+           IsAlternateFillMode(fill_mode) || blend_type != m_blendType ||
+           group_knockout != m_groupKnockout;
   }
 
   bool FontChanged(CFX_Font* pFont,
