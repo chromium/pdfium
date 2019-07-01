@@ -64,9 +64,10 @@ public:
 	BigUnsignedInABase(const BigUnsignedInABase &x) : NumberlikeArray<Digit>(x), base(x.base) {}
 
 	// Assignment operator
-	void operator =(const BigUnsignedInABase &x) {
+	BigUnsignedInABase& operator =(const BigUnsignedInABase &x) {
 		NumberlikeArray<Digit>::operator =(x);
 		base = x.base;
+		return *this;
 	}
 
 	// Constructor that copies from a given array of digits.
