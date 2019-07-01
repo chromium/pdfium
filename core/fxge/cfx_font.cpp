@@ -75,9 +75,7 @@ RetainPtr<CFX_Face> LoadFileImp(FXFT_LibraryRec* library,
   if (!face)
     return nullptr;
 
-  if (stream)
-    *stream = std::move(stream1);
-
+  *stream = std::move(stream1);
   return face;
 }
 #endif  // PDF_ENABLE_XFA

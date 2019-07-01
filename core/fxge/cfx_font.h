@@ -131,12 +131,12 @@ class CFX_Font {
 #endif
   ByteString GetFamilyNameOrUntitled() const;
 
+#if defined(PDF_ENABLE_XFA)
+  std::unique_ptr<FXFT_StreamRec> m_pOwnedStream;  // Must outlive |m_Face|.
+#endif
   mutable RetainPtr<CFX_Face> m_Face;
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
-#if defined(PDF_ENABLE_XFA)
-  std::unique_ptr<FXFT_StreamRec> m_pOwnedStream;
-#endif  // defined(PDF_ENABLE_XFA)
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pGsubData;
   std::vector<uint8_t> m_pFontDataAllocation;
   pdfium::span<uint8_t> m_FontData;
