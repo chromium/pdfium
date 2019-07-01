@@ -31,7 +31,7 @@ public:
     typedef pod_deque<T, S> base_type;
     void add(const T& val);
     void modify_last(const T& val);
-    void close(bool remove_flag);
+    void close(bool closed);
 };
 template<class T, unsigned S>
 void vertex_sequence<T, S>::add(const T& val)

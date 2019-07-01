@@ -14,7 +14,7 @@ class CFX_Face : public Retainable, public Observable {
  public:
   static RetainPtr<CFX_Face> New(FT_Library library,
                                  const RetainPtr<Retainable>& pDesc,
-                                 pdfium::span<const FT_Byte> file_span,
+                                 pdfium::span<const FT_Byte> data,
                                  FT_Long face_index);
 
   static RetainPtr<CFX_Face> Open(FT_Library library,

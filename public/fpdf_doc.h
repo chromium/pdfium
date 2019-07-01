@@ -218,9 +218,9 @@ FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams);
 // hasYVal or hasZoomVal flags are true.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFDest_GetLocationInPage(FPDF_DEST dest,
-                           FPDF_BOOL* hasXCoord,
-                           FPDF_BOOL* hasYCoord,
-                           FPDF_BOOL* hasZoom,
+                           FPDF_BOOL* hasXVal,
+                           FPDF_BOOL* hasYVal,
+                           FPDF_BOOL* hasZoomVal,
                            FS_FLOAT* x,
                            FS_FLOAT* y,
                            FS_FLOAT* zoom);

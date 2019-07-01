@@ -582,13 +582,14 @@ FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
 // and used to scale, rotate, shear and translate the image.
 //
 // Returns TRUE on success.
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFImageObj_GetMatrix(FPDF_PAGEOBJECT path,
-                                                           double* a,
-                                                           double* b,
-                                                           double* c,
-                                                           double* d,
-                                                           double* e,
-                                                           double* f);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetMatrix(FPDF_PAGEOBJECT image_object,
+                       double* a,
+                       double* b,
+                       double* c,
+                       double* d,
+                       double* e,
+                       double* f);
 
 // Set the transform matrix of |image_object|.
 //

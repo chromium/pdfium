@@ -560,7 +560,7 @@ static PredictorType GetPredictor(int predictor) {
 
 class FlateScanlineDecoder : public ScanlineDecoder {
  public:
-  FlateScanlineDecoder(pdfium::span<const uint8_t> src_buf,
+  FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
                        int width,
                        int height,
                        int nComps,
@@ -615,7 +615,7 @@ uint32_t FlateScanlineDecoder::GetSrcOffset() {
 
 class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
  public:
-  FlatePredictorScanlineDecoder(pdfium::span<const uint8_t> src_buf,
+  FlatePredictorScanlineDecoder(pdfium::span<const uint8_t> src_span,
                                 int width,
                                 int height,
                                 int comps,

@@ -26,11 +26,11 @@ class BasicModule {
       int nComps,
       int bpc);
 
-  static bool RunLengthEncode(pdfium::span<const uint8_t> src_buf,
+  static bool RunLengthEncode(pdfium::span<const uint8_t> src_span,
                               std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                               uint32_t* dest_size);
 
-  static bool A85Encode(pdfium::span<const uint8_t> src_buf,
+  static bool A85Encode(pdfium::span<const uint8_t> src_span,
                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                         uint32_t* dest_size);
 

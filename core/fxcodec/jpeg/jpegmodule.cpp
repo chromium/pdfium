@@ -223,7 +223,7 @@ class JpegDecoder final : public ScanlineDecoder {
   JpegDecoder();
   ~JpegDecoder() override;
 
-  bool Create(pdfium::span<const uint8_t> src_buf,
+  bool Create(pdfium::span<const uint8_t> src_span,
               int width,
               int height,
               int nComps,

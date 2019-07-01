@@ -38,7 +38,7 @@ class CPDF_StructTree {
       std::map<const CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>;
 
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
-  RetainPtr<CPDF_StructElement> AddPageNode(const CPDF_Dictionary* pElement,
+  RetainPtr<CPDF_StructElement> AddPageNode(const CPDF_Dictionary* pDict,
                                             StructElementMap* map,
                                             int nLevel);
   bool AddTopLevelNode(const CPDF_Dictionary* pDict,

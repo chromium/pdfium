@@ -55,7 +55,7 @@ class CBA_FontMap final : public IPVT_FontMap {
   CPDF_Font* FindResFontSameCharset(const CPDF_Dictionary* pResDict,
                                     ByteString* sFontAlias,
                                     int32_t nCharset);
-  CPDF_Font* GetAnnotDefaultFont(ByteString* csNameTag);
+  CPDF_Font* GetAnnotDefaultFont(ByteString* sAlias);
   void AddFontToAnnotDict(CPDF_Font* pFont, const ByteString& sAlias);
 
   bool KnowWord(int32_t nFontIndex, uint16_t word);

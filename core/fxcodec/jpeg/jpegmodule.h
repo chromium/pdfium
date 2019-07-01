@@ -24,7 +24,7 @@ class ScanlineDecoder;
 class JpegModule final : public ModuleIface {
  public:
   std::unique_ptr<ScanlineDecoder> CreateDecoder(
-      pdfium::span<const uint8_t> src_buf,
+      pdfium::span<const uint8_t> src_span,
       int width,
       int height,
       int nComps,

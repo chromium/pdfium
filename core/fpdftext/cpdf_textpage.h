@@ -136,7 +136,7 @@ class CPDF_TextPage {
   Optional<PAGECHAR_INFO> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectHolder* pObjList,
-                             CPDF_PageObjectHolder::const_iterator ObjPos);
+                             CPDF_PageObjectHolder::const_iterator iter);
   bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);

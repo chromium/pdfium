@@ -28,7 +28,7 @@ class CPDF_FontGlobals {
   CPDF_Font* Find(CPDF_Document* pDoc, CFX_FontMapper::StandardFont index);
 
   // Takes ownership of |pFont|, returns unowned pointer to it.
-  CPDF_Font* Set(CPDF_Document* key,
+  CPDF_Font* Set(CPDF_Document* pDoc,
                  CFX_FontMapper::StandardFont index,
                  std::unique_ptr<CPDF_Font> pFont);
 

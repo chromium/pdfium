@@ -16,8 +16,8 @@ class CJBig2_BitStream {
   ~CJBig2_BitStream();
 
   // TODO(thestig): readFoo() should return bool.
-  int32_t readNBits(uint32_t nBits, uint32_t* dwResult);
-  int32_t readNBits(uint32_t nBits, int32_t* nResult);
+  int32_t readNBits(uint32_t dwBits, uint32_t* dwResult);
+  int32_t readNBits(uint32_t dwBits, int32_t* nResult);
   int32_t read1Bit(uint32_t* dwResult);
   int32_t read1Bit(bool* bResult);
   int32_t read1Byte(uint8_t* cResult);

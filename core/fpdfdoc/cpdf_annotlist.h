@@ -38,7 +38,7 @@ class CPDF_AnnotList : public CPDF_PageRenderContext::AnnotListIface {
                      CFX_RenderDevice* pDevice,
                      CPDF_RenderContext* pContext,
                      bool bPrinting,
-                     const CFX_Matrix* pMatrix,
+                     const CFX_Matrix* pUser2Device,
                      uint32_t dwAnnotFlags,
                      CPDF_RenderOptions* pOptions,
                      FX_RECT* pClipRect);

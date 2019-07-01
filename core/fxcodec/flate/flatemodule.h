@@ -20,7 +20,7 @@ class ScanlineDecoder;
 class FlateModule {
  public:
   static std::unique_ptr<ScanlineDecoder> CreateDecoder(
-      pdfium::span<const uint8_t> src_buf,
+      pdfium::span<const uint8_t> src_span,
       int width,
       int height,
       int nComps,
@@ -32,7 +32,7 @@ class FlateModule {
 
   static uint32_t FlateOrLZWDecode(
       bool bLZW,
-      pdfium::span<const uint8_t> src_buf,
+      pdfium::span<const uint8_t> src_span,
       bool bEarlyChange,
       int predictor,
       int Colors,
