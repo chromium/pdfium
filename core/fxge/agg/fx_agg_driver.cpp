@@ -254,7 +254,6 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
                      const CFX_Matrix* pObject2Device,
                      const CFX_GraphStateData* pGraphState,
                      float scale,
-                     bool bStrokeAdjust,
                      bool bTextMode) {
   agg::line_cap_e cap;
   switch (pGraphState->m_LineCap) {
@@ -1297,7 +1296,7 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(&rasterizer, &path_data.m_PathData, pObject2Device,
-                  pGraphState, 1.0f, false, false);
+                  pGraphState, 1.0f, false);
   rasterizer.filling_rule(agg::fill_non_zero);
   SetClipMask(rasterizer);
   return true;
@@ -1367,7 +1366,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     RasterizeStroke(&rasterizer, &path_data.m_PathData, nullptr, pGraphState, 1,
-                    false, !!(fill_mode & FX_STROKE_TEXT_MODE));
+                    !!(fill_mode & FX_STROKE_TEXT_MODE));
     return RenderRasterizer(rasterizer, stroke_color,
                             !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout);
   }
@@ -1390,7 +1389,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(&rasterizer, &path_data.m_PathData, &matrix2, pGraphState,
-                  matrix1.a, false, !!(fill_mode & FX_STROKE_TEXT_MODE));
+                  matrix1.a, !!(fill_mode & FX_STROKE_TEXT_MODE));
   return RenderRasterizer(rasterizer, stroke_color,
                           !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout);
 }
