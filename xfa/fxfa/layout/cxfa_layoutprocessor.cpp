@@ -10,8 +10,8 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
-#include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
-#include "xfa/fxfa/layout/cxfa_layoutpagemgr.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_viewlayoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -38,7 +38,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   if (!bForceRestart && !IsNeedLayout())
     return 100;
 
-  m_pRootItemLayoutProcessor.reset();
+  m_pContentLayoutProcessor.reset();
   m_nProgressCounter = 0;
   CXFA_Node* pFormPacketNode =
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
@@ -50,16 +50,16 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   if (!pFormRoot)
     return -1;
 
-  if (!m_pLayoutPageMgr)
-    m_pLayoutPageMgr = pdfium::MakeUnique<CXFA_LayoutPageMgr>(this);
-  if (!m_pLayoutPageMgr->InitLayoutPage(pFormRoot))
+  if (!m_pViewLayoutProcessor)
+    m_pViewLayoutProcessor = pdfium::MakeUnique<CXFA_ViewLayoutProcessor>(this);
+  if (!m_pViewLayoutProcessor->InitLayoutPage(pFormRoot))
     return -1;
 
-  if (!m_pLayoutPageMgr->PrepareFirstPage(pFormRoot))
+  if (!m_pViewLayoutProcessor->PrepareFirstPage(pFormRoot))
     return -1;
 
-  m_pRootItemLayoutProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
-      pFormRoot, m_pLayoutPageMgr.get());
+  m_pContentLayoutProcessor = pdfium::MakeUnique<CXFA_ContentLayoutProcessor>(
+      pFormRoot, m_pViewLayoutProcessor.get());
   m_nProgressCounter = 1;
   return 0;
 }
@@ -68,35 +68,35 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
   if (m_nProgressCounter < 1)
     return -1;
 
-  CXFA_ItemLayoutProcessor::Result eStatus;
-  CXFA_Node* pFormNode = m_pRootItemLayoutProcessor->GetFormNode();
+  CXFA_ContentLayoutProcessor::Result eStatus;
+  CXFA_Node* pFormNode = m_pContentLayoutProcessor->GetFormNode();
   float fPosX =
       pFormNode->JSObject()->GetMeasureInUnit(XFA_Attribute::X, XFA_Unit::Pt);
   float fPosY =
       pFormNode->JSObject()->GetMeasureInUnit(XFA_Attribute::Y, XFA_Unit::Pt);
   do {
-    float fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
-    eStatus = m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight,
-                                                   fAvailHeight, nullptr);
-    if (eStatus != CXFA_ItemLayoutProcessor::Result::kDone)
+    float fAvailHeight = m_pViewLayoutProcessor->GetAvailHeight();
+    eStatus = m_pContentLayoutProcessor->DoLayout(true, fAvailHeight,
+                                                  fAvailHeight, nullptr);
+    if (eStatus != CXFA_ContentLayoutProcessor::Result::kDone)
       m_nProgressCounter++;
 
     CXFA_ContentLayoutItem* pLayoutItem =
-        m_pRootItemLayoutProcessor->ExtractLayoutItem();
+        m_pContentLayoutProcessor->ExtractLayoutItem();
     if (pLayoutItem)
       pLayoutItem->m_sPos = CFX_PointF(fPosX, fPosY);
 
-    m_pLayoutPageMgr->SubmitContentItem(pLayoutItem, eStatus);
-  } while (eStatus != CXFA_ItemLayoutProcessor::Result::kDone);
+    m_pViewLayoutProcessor->SubmitContentItem(pLayoutItem, eStatus);
+  } while (eStatus != CXFA_ContentLayoutProcessor::Result::kDone);
 
-  if (eStatus == CXFA_ItemLayoutProcessor::Result::kDone) {
-    m_pLayoutPageMgr->FinishPaginatedPageSets();
-    m_pLayoutPageMgr->SyncLayoutData();
+  if (eStatus == CXFA_ContentLayoutProcessor::Result::kDone) {
+    m_pViewLayoutProcessor->FinishPaginatedPageSets();
+    m_pViewLayoutProcessor->SyncLayoutData();
     m_bNeedLayout = false;
     m_rgChangedContainers.clear();
   }
   return 100 *
-         (eStatus == CXFA_ItemLayoutProcessor::Result::kDone
+         (eStatus == CXFA_ContentLayoutProcessor::Result::kDone
               ? m_nProgressCounter
               : m_nProgressCounter - 1) /
          m_nProgressCounter;
@@ -111,11 +111,12 @@ bool CXFA_LayoutProcessor::IncrementLayout() {
 }
 
 int32_t CXFA_LayoutProcessor::CountPages() const {
-  return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPageCount() : 0;
+  return m_pViewLayoutProcessor ? m_pViewLayoutProcessor->GetPageCount() : 0;
 }
 
 CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
-  return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPage(index) : nullptr;
+  return m_pViewLayoutProcessor ? m_pViewLayoutProcessor->GetPage(index)
+                                : nullptr;
 }
 
 CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
@@ -128,7 +129,8 @@ void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
 }
 
 CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
-  return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetRootLayoutItem() : nullptr;
+  return m_pViewLayoutProcessor ? m_pViewLayoutProcessor->GetRootLayoutItem()
+                                : nullptr;
 }
 
 bool CXFA_LayoutProcessor::IsNeedLayout() {

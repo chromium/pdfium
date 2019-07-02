@@ -14,11 +14,11 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
-class CXFA_ItemLayoutProcessor;
+class CXFA_ContentLayoutProcessor;
 class CXFA_LayoutItem;
-class CXFA_LayoutPageMgr;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
+class CXFA_ViewLayoutProcessor;
 
 class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
  public:
@@ -38,18 +38,18 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
   CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
   void AddChangedContainer(CXFA_Node* pContainer);
   CXFA_ViewLayoutItem* GetRootLayoutItem() const;
-  CXFA_ItemLayoutProcessor* GetRootRootItemLayoutProcessor() const {
-    return m_pRootItemLayoutProcessor.get();
+  CXFA_ContentLayoutProcessor* GetRootContentLayoutProcessor() const {
+    return m_pContentLayoutProcessor.get();
   }
-  CXFA_LayoutPageMgr* GetLayoutPageMgr() const {
-    return m_pLayoutPageMgr.get();
+  CXFA_ViewLayoutProcessor* GetLayoutPageMgr() const {
+    return m_pViewLayoutProcessor.get();
   }
 
  private:
   bool IsNeedLayout();
 
-  std::unique_ptr<CXFA_LayoutPageMgr> m_pLayoutPageMgr;
-  std::unique_ptr<CXFA_ItemLayoutProcessor> m_pRootItemLayoutProcessor;
+  std::unique_ptr<CXFA_ViewLayoutProcessor> m_pViewLayoutProcessor;
+  std::unique_ptr<CXFA_ContentLayoutProcessor> m_pContentLayoutProcessor;
   std::vector<CXFA_Node*> m_rgChangedContainers;
   uint32_t m_nProgressCounter = 0;
   bool m_bNeedLayout = true;

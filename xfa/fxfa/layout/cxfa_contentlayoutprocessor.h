@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_
-#define XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTPROCESSOR_H_
+#define XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTPROCESSOR_H_
 
 #include <float.h>
 
@@ -22,14 +22,14 @@
 constexpr float kXFALayoutPrecision = 0.0005f;
 
 class CXFA_ContentLayoutItem;
-class CXFA_ItemLayoutProcessor;
+class CXFA_ContentLayoutProcessor;
 class CXFA_LayoutContext;
-class CXFA_LayoutPageMgr;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
+class CXFA_ViewLayoutProcessor;
 
-class CXFA_ItemLayoutProcessor {
+class CXFA_ContentLayoutProcessor {
  public:
   enum class Result : uint8_t {
     kDone,
@@ -49,8 +49,9 @@ class CXFA_ItemLayoutProcessor {
     kDone,
   };
 
-  CXFA_ItemLayoutProcessor(CXFA_Node* pNode, CXFA_LayoutPageMgr* pPageMgr);
-  ~CXFA_ItemLayoutProcessor();
+  CXFA_ContentLayoutProcessor(CXFA_Node* pNode,
+                              CXFA_ViewLayoutProcessor* pViewLayoutProcessor);
+  ~CXFA_ContentLayoutProcessor();
 
   Result DoLayout(bool bUseBreakControl,
                   float fHeightLimit,
@@ -69,7 +70,7 @@ class CXFA_ItemLayoutProcessor {
   float FindSplitPos(float fProposedSplitPos);
 
   bool ProcessKeepForSplit(
-      CXFA_ItemLayoutProcessor* pChildProcessor,
+      CXFA_ContentLayoutProcessor* pChildProcessor,
       Result eRetValue,
       std::vector<CXFA_ContentLayoutItem*>* rgCurLineLayoutItem,
       float* fContentCurRowAvailWidth,
@@ -143,7 +144,7 @@ class CXFA_ItemLayoutProcessor {
   void AddPendingNode(CXFA_Node* pPendingNode, bool bBreakPending);
   float InsertPendingItems(CXFA_Node* pCurChildNode);
   Result InsertFlowedItem(
-      CXFA_ItemLayoutProcessor* pProcessor,
+      CXFA_ContentLayoutProcessor* pProcessor,
       bool bContainerWidthAutoSize,
       bool bContainerHeightAutoSize,
       float fContainerHeight,
@@ -201,12 +202,12 @@ class CXFA_ItemLayoutProcessor {
   CXFA_Node* m_pKeepTailNode = nullptr;
   CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
   CXFA_ContentLayoutItem* m_pOldLayoutItem = nullptr;
-  UnownedPtr<CXFA_LayoutPageMgr> m_pPageMgr;
+  UnownedPtr<CXFA_ViewLayoutProcessor> m_pViewLayoutProcessor;
   std::vector<float> m_rgSpecifiedColumnWidths;
   std::vector<CXFA_ContentLayoutItem*> m_arrayKeepItems;
   std::list<CXFA_Node*> m_PendingNodes;
   std::map<CXFA_Node*, int32_t> m_PendingNodesCount;
-  std::unique_ptr<CXFA_ItemLayoutProcessor> m_pCurChildPreprocessor;
+  std::unique_ptr<CXFA_ContentLayoutProcessor> m_pCurChildPreprocessor;
 };
 
-#endif  // XFA_FXFA_LAYOUT_CXFA_ITEMLAYOUTPROCESSOR_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTPROCESSOR_H_

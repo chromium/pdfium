@@ -12,7 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
-class CXFA_ItemLayoutProcessor;
+class CXFA_ContentLayoutProcessor;
 class CXFA_Node;
 
 class CXFA_LayoutContext {
@@ -22,7 +22,7 @@ class CXFA_LayoutContext {
 
   Optional<float> m_fCurColumnWidth;
   UnownedPtr<std::vector<float>> m_prgSpecifiedColumnWidths;
-  UnownedPtr<CXFA_ItemLayoutProcessor> m_pOverflowProcessor;
+  UnownedPtr<CXFA_ContentLayoutProcessor> m_pOverflowProcessor;
   UnownedPtr<CXFA_Node> m_pOverflowNode;
 };
 

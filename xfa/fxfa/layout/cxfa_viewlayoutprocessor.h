@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTPAGEMGR_H_
-#define XFA_FXFA_LAYOUT_CXFA_LAYOUTPAGEMGR_H_
+#ifndef XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTPROCESSOR_H_
+#define XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTPROCESSOR_H_
 
 #include <iterator>
 #include <list>
@@ -14,13 +14,13 @@
 #include <vector>
 
 #include "third_party/base/optional.h"
-#include "xfa/fxfa/layout/cxfa_itemlayoutprocessor.h"
+#include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
 
 class CXFA_LayoutItem;
 class CXFA_Node;
 class CXFA_ViewRecord;
 
-class CXFA_LayoutPageMgr {
+class CXFA_ViewLayoutProcessor {
  public:
   struct BreakData {
     CXFA_Node* pLeader;
@@ -33,15 +33,15 @@ class CXFA_LayoutPageMgr {
     CXFA_Node* pTrailer;
   };
 
-  explicit CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor);
-  ~CXFA_LayoutPageMgr();
+  explicit CXFA_ViewLayoutProcessor(CXFA_LayoutProcessor* pLayoutProcessor);
+  ~CXFA_ViewLayoutProcessor();
 
   bool InitLayoutPage(CXFA_Node* pFormNode);
   bool PrepareFirstPage(CXFA_Node* pRootSubform);
   float GetAvailHeight();
   bool GetNextAvailContentHeight(float fChildHeight);
   void SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
-                         CXFA_ItemLayoutProcessor::Result eStatus);
+                         CXFA_ContentLayoutProcessor::Result eStatus);
   void FinishPaginatedPageSets();
   void SyncLayoutData();
   int32_t GetPageCount() const;
@@ -165,4 +165,4 @@ class CXFA_LayoutPageMgr {
   std::vector<CXFA_ViewLayoutItem*> m_PageArray;
 };
 
-#endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTPAGEMGR_H_
+#endif  // XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTPROCESSOR_H_
