@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
+#include "xfa/fxfa/fxfa.h"
 
 class CXFA_BindItems;
 class CXFA_FFDoc;
@@ -86,10 +87,10 @@ class CXFA_FFDocView {
   CXFA_Node* GetFocusNode() const { return m_pFocusNode.Get(); }
   void SetFocusNode(CXFA_Node* pNode);
   void DeleteLayoutItem(CXFA_FFWidget* pWidget);
-  int32_t ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
-                                       XFA_EVENTTYPE eEventType,
-                                       bool bIsFormReady,
-                                       bool bRecursive);
+  XFA_EventError ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
+                                              XFA_EVENTTYPE eEventType,
+                                              bool bIsFormReady,
+                                              bool bRecursive);
 
   void AddBindItem(CXFA_BindItems* item) { m_BindItems.push_back(item); }
 
@@ -112,7 +113,7 @@ class CXFA_FFDocView {
   bool IsUpdateLocked() { return m_iLock > 0; }
   bool InitValidate(CXFA_Node* pNode);
   bool RunValidate();
-  int32_t RunCalculateWidgets();
+  XFA_EventError RunCalculateWidgets();
   void RunSubformIndexChange();
 
   UnownedPtr<CXFA_FFDoc> const m_pDoc;

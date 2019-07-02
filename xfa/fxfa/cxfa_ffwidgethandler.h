@@ -72,7 +72,7 @@ class CXFA_FFWidgetHandler {
                     const CFX_Matrix& matrix,
                     bool bHighlight);
   bool HasEvent(CXFA_Node* pNode, XFA_EVENTTYPE eEventType);
-  int32_t ProcessEvent(CXFA_Node* pNode, CXFA_EventParam* pParam);
+  XFA_EventError ProcessEvent(CXFA_Node* pNode, CXFA_EventParam* pParam);
 
  private:
   CXFA_Node* CreateWidgetFormItem(XFA_WIDGETTYPE eType,

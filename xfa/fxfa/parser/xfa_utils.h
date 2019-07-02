@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_UTILS_H_
 
 #include "core/fxcrt/fx_stream.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFX_XMLElement;
@@ -30,5 +31,7 @@ void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
     const RetainPtr<IFX_SeekableStream>& pStream,
     bool bSaveXML);
+
+void XFA_EventErrorAccumulate(XFA_EventError* pAcc, XFA_EventError eNew);
 
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

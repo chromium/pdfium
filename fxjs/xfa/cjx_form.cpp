@@ -122,9 +122,10 @@ CJS_Result CJX_Form::execValidate(
   if (!pNotify)
     return CJS_Result::Success(runtime->NewBoolean(false));
 
-  int32_t iRet = pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
-                                               false, true);
-  return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  XFA_EventError iRet = pNotify->ExecEventByDeepFirst(
+      GetXFANode(), XFA_EVENT_Validate, false, true);
+  return CJS_Result::Success(
+      runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
 void CJX_Form::checksumS(CFXJSE_Value* pValue,

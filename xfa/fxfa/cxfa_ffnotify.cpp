@@ -215,19 +215,19 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Unknown;
 
-  int32_t iRet;
+  XFA_EventError iRet;
   bool bRet;
   std::tie(iRet, bRet) = item->ExecuteBoolScript(pDocView, script, &EventParam);
-  return iRet == XFA_EVENTERROR_Success && bRet;
+  return iRet == XFA_EventError::kSuccess && bRet;
 }
 
-int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
-                                            XFA_EVENTTYPE eEventType,
-                                            bool bIsFormReady,
-                                            bool bRecursive) {
+XFA_EventError CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
+                                                   XFA_EVENTTYPE eEventType,
+                                                   bool bIsFormReady,
+                                                   bool bRecursive) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
-    return XFA_EVENTERROR_NotExist;
+    return XFA_EventError::kNotExist;
   return pDocView->ExecEventActivityByDeepFirst(pFormNode, eEventType,
                                                 bIsFormReady, bRecursive);
 }

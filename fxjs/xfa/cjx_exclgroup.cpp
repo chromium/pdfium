@@ -81,9 +81,10 @@ CJS_Result CJX_ExclGroup::execValidate(
   if (!notify)
     return CJS_Result::Success(runtime->NewBoolean(false));
 
-  int32_t iRet = notify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
-                                              false, true);
-  return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  XFA_EventError iRet = notify->ExecEventByDeepFirst(
+      GetXFANode(), XFA_EVENT_Validate, false, true);
+  return CJS_Result::Success(
+      runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
 CJS_Result CJX_ExclGroup::selectedMember(

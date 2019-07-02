@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "xfa/fxfa/cxfa_eventparam.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_ContentLayoutItem;
@@ -57,10 +58,10 @@ class CXFA_FFNotify {
                             float* pCalcWidth,
                             float* pCalcHeight);
   bool RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem);
-  int32_t ExecEventByDeepFirst(CXFA_Node* pFormNode,
-                               XFA_EVENTTYPE eEventType,
-                               bool bIsFormReady,
-                               bool bRecursive);
+  XFA_EventError ExecEventByDeepFirst(CXFA_Node* pFormNode,
+                                      XFA_EVENTTYPE eEventType,
+                                      bool bIsFormReady,
+                                      bool bRecursive);
   void AddCalcValidate(CXFA_Node* pNode);
   CXFA_FFDoc* GetHDOC() const { return m_pDoc.Get(); }
   IXFA_AppProvider* GetAppProvider();

@@ -226,12 +226,12 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_Node* pNode,
               .empty();
 }
 
-int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
-                                           CXFA_EventParam* pParam) {
+XFA_EventError CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
+                                                  CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
-    return XFA_EVENTERROR_NotExist;
+    return XFA_EventError::kNotExist;
   if (!pNode || pNode->GetElementType() == XFA_Element::Draw)
-    return XFA_EVENTERROR_NotExist;
+    return XFA_EventError::kNotExist;
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
@@ -241,13 +241,13 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
               m_pDocView->GetDoc())) {
         return pNode->ProcessValidate(m_pDocView.Get(), 0);
       }
-      return XFA_EVENTERROR_Disabled;
+      return XFA_EventError::kDisabled;
     case XFA_EVENT_InitCalculate: {
       CXFA_Calculate* calc = pNode->GetCalculateIfExists();
       if (!calc)
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
       if (pNode->IsUserInteractive())
-        return XFA_EVENTERROR_Disabled;
+        return XFA_EventError::kDisabled;
       return pNode->ExecuteScript(m_pDocView.Get(), calc->GetScriptIfExists(),
                                   pParam);
     }

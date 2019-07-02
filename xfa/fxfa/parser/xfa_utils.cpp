@@ -532,3 +532,8 @@ int32_t XFA_MapRotation(int32_t nRotation) {
   nRotation = nRotation < 0 ? nRotation + 360 : nRotation;
   return nRotation;
 }
+
+void XFA_EventErrorAccumulate(XFA_EventError* pAcc, XFA_EventError eNew) {
+  if (*pAcc == XFA_EventError::kNotExist || eNew == XFA_EventError::kError)
+    *pAcc = eNew;
+}

@@ -9,6 +9,7 @@
 
 #include "fxjs/xfa/cjx_tree.h"
 #include "fxjs/xfa/jse_define.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Node;
@@ -42,7 +43,8 @@ class CJX_Node : public CJX_Tree {
   CXFA_Node* GetXFANode() const;
 
  protected:
-  int32_t execSingleEventByName(WideStringView wsEventName, XFA_Element eType);
+  XFA_EventError execSingleEventByName(WideStringView wsEventName,
+                                       XFA_Element eType);
 
  private:
   using Type__ = CJX_Node;

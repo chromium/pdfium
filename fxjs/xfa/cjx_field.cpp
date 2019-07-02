@@ -59,12 +59,13 @@ CJS_Result CJX_Field::execEvent(
     return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString eventString = runtime->ToWideString(params[0]);
-  int32_t iRet =
+  XFA_EventError iRet =
       execSingleEventByName(eventString.AsStringView(), XFA_Element::Field);
   if (!eventString.EqualsASCII("validate"))
     return CJS_Result::Success();
 
-  return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  return CJS_Result::Success(
+      runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
 CJS_Result CJX_Field::execInitialize(
@@ -235,9 +236,10 @@ CJS_Result CJX_Field::execValidate(
   if (!pNotify)
     return CJS_Result::Success(runtime->NewBoolean(false));
 
-  int32_t iRet = pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
-                                               false, false);
-  return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  XFA_EventError iRet = pNotify->ExecEventByDeepFirst(
+      GetXFANode(), XFA_EVENT_Validate, false, false);
+  return CJS_Result::Success(
+      runtime->NewBoolean(iRet != XFA_EventError::kError));
 }
 
 void CJX_Field::defaultValue(CFXJSE_Value* pValue,

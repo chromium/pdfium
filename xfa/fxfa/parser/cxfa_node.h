@@ -17,6 +17,7 @@
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 #include "xfa/fxfa/cxfa_ffwidget_type.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFGAS_GEFont;
@@ -250,17 +251,18 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
 
   CXFA_Node* GetExclGroupIfExists();
 
-  int32_t ProcessEvent(CXFA_FFDocView* pDocView,
-                       XFA_AttributeValue iActivity,
-                       CXFA_EventParam* pEventParam);
-  int32_t ProcessCalculate(CXFA_FFDocView* pDocView);
-  int32_t ProcessValidate(CXFA_FFDocView* pDocView, int32_t iFlags);
-  int32_t ExecuteScript(CXFA_FFDocView* pDocView,
-                        CXFA_Script* script,
-                        CXFA_EventParam* pEventParam);
-  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* pDocView,
-                                             CXFA_Script* script,
-                                             CXFA_EventParam* pEventParam);
+  XFA_EventError ProcessEvent(CXFA_FFDocView* pDocView,
+                              XFA_AttributeValue iActivity,
+                              CXFA_EventParam* pEventParam);
+  XFA_EventError ProcessCalculate(CXFA_FFDocView* pDocView);
+  XFA_EventError ProcessValidate(CXFA_FFDocView* pDocView, int32_t iFlags);
+  XFA_EventError ExecuteScript(CXFA_FFDocView* pDocView,
+                               CXFA_Script* script,
+                               CXFA_EventParam* pEventParam);
+  std::pair<XFA_EventError, bool> ExecuteBoolScript(
+      CXFA_FFDocView* pDocView,
+      CXFA_Script* script,
+      CXFA_EventParam* pEventParam);
 
   CXFA_Node* GetUIChildNode();
   XFA_FFWidgetType GetFFWidgetType();
@@ -393,16 +395,16 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
  private:
   void ProcessScriptTestValidate(CXFA_FFDocView* pDocView,
                                  CXFA_Validate* validate,
-                                 int32_t iRet,
+                                 XFA_EventError iRet,
                                  bool pRetValue,
                                  bool bVersionFlag);
-  int32_t ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
-                                    CXFA_Validate* validate,
-                                    bool bVersionFlag);
-  int32_t ProcessNullTestValidate(CXFA_FFDocView* pDocView,
-                                  CXFA_Validate* validate,
-                                  int32_t iFlags,
-                                  bool bVersionFlag);
+  XFA_EventError ProcessFormatTestValidate(CXFA_FFDocView* pDocView,
+                                           CXFA_Validate* validate,
+                                           bool bVersionFlag);
+  XFA_EventError ProcessNullTestValidate(CXFA_FFDocView* pDocView,
+                                         CXFA_Validate* validate,
+                                         int32_t iFlags,
+                                         bool bVersionFlag);
   WideString GetValidateCaptionName(bool bVersionFlag);
   WideString GetValidateMessage(bool bError, bool bVersionFlag);
 
@@ -471,10 +473,10 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
   Optional<float> TryMinHeight();
   Optional<float> TryMaxWidth();
   Optional<float> TryMaxHeight();
-  int32_t ProcessEvent(CXFA_FFDocView* pDocView,
-                       XFA_AttributeValue iActivity,
-                       CXFA_Event* event,
-                       CXFA_EventParam* pEventParam);
+  XFA_EventError ProcessEventInternal(CXFA_FFDocView* pDocView,
+                                      XFA_AttributeValue iActivity,
+                                      CXFA_Event* event,
+                                      CXFA_EventParam* pEventParam);
 
   CFX_XMLDocument* GetXMLDocument() const;
 

@@ -509,20 +509,20 @@ void CJX_Node::oneOfChild(CFXJSE_Value* pValue,
   }
 }
 
-int32_t CJX_Node::execSingleEventByName(WideStringView wsEventName,
-                                        XFA_Element eType) {
+XFA_EventError CJX_Node::execSingleEventByName(WideStringView wsEventName,
+                                               XFA_Element eType) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return XFA_EVENTERROR_NotExist;
+    return XFA_EventError::kNotExist;
 
   const XFA_ExecEventParaInfo* eventParaInfo =
       GetEventParaInfoByName(wsEventName);
   if (!eventParaInfo)
-    return XFA_EVENTERROR_NotExist;
+    return XFA_EventError::kNotExist;
 
   switch (eventParaInfo->m_validFlags) {
     case EventAppliesToo::kNone:
-      return XFA_EVENTERROR_NotExist;
+      return XFA_EventError::kNotExist;
     case EventAppliesToo::kAll:
     case EventAppliesToo::kAllNonRecursive:
       return pNotify->ExecEventByDeepFirst(
@@ -530,13 +530,13 @@ int32_t CJX_Node::execSingleEventByName(WideStringView wsEventName,
           eventParaInfo->m_validFlags == EventAppliesToo::kAll);
     case EventAppliesToo::kSubform:
       if (eType != XFA_Element::Subform)
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
 
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     case EventAppliesToo::kFieldOrExclusion: {
       if (eType != XFA_Element::ExclGroup && eType != XFA_Element::Field)
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
 
       CXFA_Node* pParentNode = GetXFANode()->GetParent();
       if (pParentNode &&
@@ -550,30 +550,30 @@ int32_t CJX_Node::execSingleEventByName(WideStringView wsEventName,
     }
     case EventAppliesToo::kField:
       if (eType != XFA_Element::Field)
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
 
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     case EventAppliesToo::kSignature: {
       if (!GetXFANode()->IsWidgetReady())
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
       if (GetXFANode()->GetUIChildNode()->GetElementType() !=
           XFA_Element::Signature) {
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
       }
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
     case EventAppliesToo::kChoiceList: {
       if (!GetXFANode()->IsWidgetReady())
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
       if (GetXFANode()->GetUIChildNode()->GetElementType() !=
           XFA_Element::ChoiceList) {
-        return XFA_EVENTERROR_NotExist;
+        return XFA_EventError::kNotExist;
       }
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
   }
-  return XFA_EVENTERROR_NotExist;
+  return XFA_EventError::kNotExist;
 }

@@ -239,13 +239,13 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
 
       param.m_pTarget = node;
       if (pXFAWidgetHandler->ProcessEvent(node, &param) !=
-          XFA_EVENTERROR_Success) {
+          XFA_EventError::kSuccess) {
         return false;
       }
     }
   }
 
-  int32_t nRet = XFA_EVENTERROR_NotExist;
+  XFA_EventError nRet = XFA_EventError::kNotExist;
   CXFA_Node* node = hWidget->GetNode();
   if (node->IsWidgetReady()) {
     param.m_pTarget = node;
@@ -254,7 +254,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
     pDocView->UpdateDocView();
 
-  return nRet == XFA_EVENTERROR_Success;
+  return nRet == XFA_EventError::kSuccess;
 }
 
 void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
@@ -814,7 +814,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
         param.m_bModifier = data->bModifier;
         param.m_wsPrevText = data->sValue;
 
-        int32_t nRet = XFA_EVENTERROR_NotExist;
+        XFA_EventError nRet = XFA_EventError::kNotExist;
         CXFA_Node* node = hWidget->GetNode();
         if (node->IsWidgetReady()) {
           param.m_pTarget = node;
@@ -824,7 +824,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
         if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
           pDocView->UpdateDocView();
 
-        if (nRet == XFA_EVENTERROR_Success)
+        if (nRet == XFA_EventError::kSuccess)
           return true;
       }
     }
