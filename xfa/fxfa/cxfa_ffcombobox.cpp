@@ -106,8 +106,7 @@ bool CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   if (!ProcessCommittedData())
     UpdateFWLData();
 
-  CXFA_FFField::OnKillFocus(pNewWidget);
-  return true;
+  return CXFA_FFField::OnKillFocus(pNewWidget);
 }
 
 void CXFA_FFComboBox::OpenDropDownList() {

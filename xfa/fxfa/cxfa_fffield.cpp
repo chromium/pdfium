@@ -513,15 +513,13 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 }
 
 bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  if (!m_pNormalWidget)
-    return CXFA_FFWidget::OnKillFocus(pNewWidget);
-
-  CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget.get());
-  TranslateFWLMessage(&ms);
-  GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
-  InvalidateRect();
-  CXFA_FFWidget::OnKillFocus(pNewWidget);
-  return true;
+  if (m_pNormalWidget) {
+    CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget.get());
+    TranslateFWLMessage(&ms);
+    GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
+    InvalidateRect();
+  }
+  return CXFA_FFWidget::OnKillFocus(pNewWidget);
 }
 
 bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {

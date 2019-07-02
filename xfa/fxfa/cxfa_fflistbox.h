@@ -15,9 +15,9 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
   explicit CXFA_FFListBox(CXFA_Node* pNode);
   ~CXFA_FFListBox() override;
 
-  // CXFA_FFField
+  // CXFA_FFField:
   bool LoadWidget() override;
-  bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
+  bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,

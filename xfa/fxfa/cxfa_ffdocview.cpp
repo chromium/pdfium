@@ -284,8 +284,10 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
         pOldFocus = nullptr;
     }
   }
-  if (pOldFocus)
-    pOldFocus->OnKillFocus(pNewFocus);
+  if (pOldFocus) {
+    if (!pOldFocus->OnKillFocus(pNewFocus))
+      return false;
+  }
 
   if (pNewFocus) {
     if (pNewFocus->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible)) {

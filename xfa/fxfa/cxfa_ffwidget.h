@@ -102,8 +102,10 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   virtual bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
 
-  virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget);
-  virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget);
+  // Returning false may imply |this| is gone, continue with caution.
+  virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget) WARN_UNUSED_RESULT;
+  virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget) WARN_UNUSED_RESULT;
+
   virtual bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags);
