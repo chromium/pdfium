@@ -499,7 +499,9 @@ bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
-  CXFA_FFWidget::OnSetFocus(pOldWidget);
+  if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
+    return false;
+
   if (!m_pNormalWidget)
     return false;
 

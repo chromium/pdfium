@@ -394,9 +394,14 @@ bool CXFA_FFWidget::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
+  // OnSetFocus event may remove this widget.
+  ObservedPtr<CXFA_FFWidget> pWatched(this);
   CXFA_FFWidget* pParent = GetFFWidget(ToContentLayoutItem(GetParent()));
   if (pParent && !pParent->IsAncestorOf(pOldWidget))
     pParent->OnSetFocus(pOldWidget);
+
+  if (!pWatched)
+    return false;
 
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
 
@@ -404,6 +409,9 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   eParam.m_eType = XFA_EVENT_Enter;
   eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
+  if (!pWatched)
+    return false;
+
   return true;
 }
 

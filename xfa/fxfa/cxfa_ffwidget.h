@@ -11,6 +11,7 @@
 
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -62,7 +63,7 @@ class CXFA_CalcData {
   int32_t m_iRefCount;
 };
 
-class CXFA_FFWidget : public CFWL_Widget::AdapterIface {
+class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
  public:
   enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
   enum HighlightOption { kNoHighlight = 0, kHighlight };

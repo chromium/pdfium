@@ -280,17 +280,22 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
         !pItem->TestStatusBits(XFA_WidgetStatus_Focused)) {
       if (!pOldFocus->IsLoaded())
         pOldFocus->LoadWidget();
-      pOldFocus->OnSetFocus(pOldFocus);
+      if (!pOldFocus->OnSetFocus(pOldFocus))
+        pOldFocus = nullptr;
     }
-    pOldFocus->OnKillFocus(pNewFocus);
   }
+  if (pOldFocus)
+    pOldFocus->OnKillFocus(pNewFocus);
 
   if (pNewFocus) {
     if (pNewFocus->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible)) {
       if (!pNewFocus->IsLoaded())
         pNewFocus->LoadWidget();
-      pNewFocus->OnSetFocus(pOldFocus);
+      if (!pNewFocus->OnSetFocus(pOldFocus))
+        pNewFocus = nullptr;
     }
+  }
+  if (pNewFocus) {
     CXFA_Node* node = pNewFocus->GetNode();
     m_pFocusNode = node->IsWidgetReady() ? node : nullptr;
     m_pFocusWidget = pNewFocus;
