@@ -14,8 +14,6 @@ jumbo_source_set("layout") {
     "cxfa_contentlayoutitem.h",
     "cxfa_contentlayoutprocessor.cpp",
     "cxfa_contentlayoutprocessor.h",
-    "cxfa_layoutcontext.cpp",
-    "cxfa_layoutcontext.h",
     "cxfa_layoutitem.cpp",
     "cxfa_layoutitem.h",
     "cxfa_layoutprocessor.cpp",

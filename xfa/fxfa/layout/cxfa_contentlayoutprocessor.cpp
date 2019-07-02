@@ -20,7 +20,6 @@
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
-#include "xfa/fxfa/layout/cxfa_layoutcontext.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutprocessor.h"
@@ -989,7 +988,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
 
     auto pProcessor =
         pdfium::MakeUnique<CXFA_ContentLayoutProcessor>(pCurChildNode, nullptr);
-    pProcessor->DoLayout(false, FLT_MAX, FLT_MAX, nullptr);
+    pProcessor->DoLayout(false, FLT_MAX, FLT_MAX);
     if (!pProcessor->HasLayoutItem())
       continue;
 
@@ -1028,7 +1027,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
 }
 
 void CXFA_ContentLayoutProcessor::DoLayoutPositionedContainer(
-    CXFA_LayoutContext* pContext) {
+    Context* pContext) {
   if (m_pLayoutItem)
     return;
 
@@ -1079,7 +1078,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutPositionedContainer(
       }
     }
 
-    pProcessor->DoLayout(false, FLT_MAX, FLT_MAX, pContext);
+    pProcessor->DoLayoutInternal(false, FLT_MAX, FLT_MAX, pContext);
     if (!pProcessor->HasLayoutItem())
       continue;
 
@@ -1178,9 +1177,9 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
 
   int32_t iSpecifiedColumnCount =
       pdfium::CollectionSize<int32_t>(m_rgSpecifiedColumnWidths);
-  CXFA_LayoutContext layoutContext;
+  Context layoutContext;
   layoutContext.m_prgSpecifiedColumnWidths = &m_rgSpecifiedColumnWidths;
-  CXFA_LayoutContext* pLayoutContext =
+  Context* pLayoutContext =
       iSpecifiedColumnCount > 0 ? &layoutContext : nullptr;
   if (!m_pCurChildNode)
     GotoNextContainerNodeSimple(false);
@@ -1192,7 +1191,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
 
     auto pProcessor = pdfium::MakeUnique<CXFA_ContentLayoutProcessor>(
         m_pCurChildNode, m_pViewLayoutProcessor.Get());
-    pProcessor->DoLayout(false, FLT_MAX, FLT_MAX, pLayoutContext);
+    pProcessor->DoLayoutInternal(false, FLT_MAX, FLT_MAX, pLayoutContext);
     if (!pProcessor->HasLayoutItem())
       continue;
 
@@ -1507,7 +1506,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
     XFA_AttributeValue eFlowStrategy,
     float fHeightLimit,
     float fRealHeight,
-    CXFA_LayoutContext* pContext,
+    Context* pContext,
     bool bRootForceTb) {
   m_bHasAvailHeight = true;
   if (m_pCurChildPreprocessor)
@@ -2043,8 +2042,15 @@ void CXFA_ContentLayoutProcessor::DoLayoutField() {
 CXFA_ContentLayoutProcessor::Result CXFA_ContentLayoutProcessor::DoLayout(
     bool bUseBreakControl,
     float fHeightLimit,
-    float fRealHeight,
-    CXFA_LayoutContext* pContext) {
+    float fRealHeight) {
+  return DoLayoutInternal(bUseBreakControl, fHeightLimit, fRealHeight, nullptr);
+}
+
+CXFA_ContentLayoutProcessor::Result
+CXFA_ContentLayoutProcessor::DoLayoutInternal(bool bUseBreakControl,
+                                              float fHeightLimit,
+                                              float fRealHeight,
+                                              Context* pContext) {
   switch (GetFormNode()->GetElementType()) {
     case XFA_Element::Subform:
     case XFA_Element::Area:
@@ -2269,7 +2275,7 @@ float CXFA_ContentLayoutProcessor::InsertPendingItems(
     auto pPendingProcessor = pdfium::MakeUnique<CXFA_ContentLayoutProcessor>(
         m_PendingNodes.front(), nullptr);
     m_PendingNodes.pop_front();
-    pPendingProcessor->DoLayout(false, FLT_MAX, FLT_MAX, nullptr);
+    pPendingProcessor->DoLayout(false, FLT_MAX, FLT_MAX);
     CXFA_ContentLayoutItem* pPendingLayoutItem =
         pPendingProcessor->HasLayoutItem()
             ? pPendingProcessor->ExtractLayoutItem()
@@ -2301,7 +2307,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
     float* fContentCurRowHeight,
     bool* bAddedItemInRow,
     bool* bForceEndPage,
-    CXFA_LayoutContext* pLayoutContext,
+    Context* pLayoutContext,
     bool bNewRow) {
   bool bTakeSpace = pProcessor->GetFormNode()->PresenceRequiresSpace();
   uint8_t uHAlign = HAlignEnumToInt(
@@ -2334,7 +2340,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   }
 
   bool bUseInherited = false;
-  CXFA_LayoutContext layoutContext;
+  Context layoutContext;
   if (m_pViewLayoutProcessor) {
     CXFA_Node* pOverflowNode =
         m_pViewLayoutProcessor->QueryOverflow(GetFormNode());
@@ -2347,7 +2353,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
 
   Result eRetValue = Result::kDone;
   if (!bNewRow || pProcessor->m_ePreProcessRs == Result::kDone) {
-    eRetValue = pProcessor->DoLayout(
+    eRetValue = pProcessor->DoLayoutInternal(
         bTakeSpace ? bUseBreakControl : false,
         bUseRealHeight ? fRealHeight - *fContentCurRowY : FLT_MAX,
         bIsTransHeight ? fRealHeight - *fContentCurRowY : FLT_MAX,
@@ -2394,7 +2400,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
           auto pOverflowLeaderProcessor =
               pdfium::MakeUnique<CXFA_ContentLayoutProcessor>(
                   pOverflowTrailerNode, nullptr);
-          pOverflowLeaderProcessor->DoLayout(false, FLT_MAX, FLT_MAX, nullptr);
+          pOverflowLeaderProcessor->DoLayout(false, FLT_MAX, FLT_MAX);
           pTrailerLayoutItem =
               pOverflowLeaderProcessor->HasLayoutItem()
                   ? pOverflowLeaderProcessor->ExtractLayoutItem()
@@ -2739,7 +2745,7 @@ void CXFA_ContentLayoutProcessor::ProcessKeepNodesEnd() {
 }
 
 void CXFA_ContentLayoutProcessor::AdjustContainerSpecifiedSize(
-    CXFA_LayoutContext* pContext,
+    Context* pContext,
     CFX_SizeF* pSize,
     bool* pContainerWidthAutoSize,
     bool* pContainerHeightAutoSize) {
@@ -2800,3 +2806,7 @@ CFX_SizeF CXFA_ContentLayoutProcessor::CalculateLayoutItemSize(
   }
   return size;
 }
+
+CXFA_ContentLayoutProcessor::Context::Context() = default;
+
+CXFA_ContentLayoutProcessor::Context::~Context() = default;

@@ -76,8 +76,8 @@ int32_t CXFA_LayoutProcessor::DoLayout() {
       pFormNode->JSObject()->GetMeasureInUnit(XFA_Attribute::Y, XFA_Unit::Pt);
   do {
     float fAvailHeight = m_pViewLayoutProcessor->GetAvailHeight();
-    eStatus = m_pContentLayoutProcessor->DoLayout(true, fAvailHeight,
-                                                  fAvailHeight, nullptr);
+    eStatus =
+        m_pContentLayoutProcessor->DoLayout(true, fAvailHeight, fAvailHeight);
     if (eStatus != CXFA_ContentLayoutProcessor::Result::kDone)
       m_nProgressCounter++;
 

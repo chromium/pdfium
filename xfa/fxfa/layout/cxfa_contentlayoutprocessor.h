@@ -23,7 +23,6 @@ constexpr float kXFALayoutPrecision = 0.0005f;
 
 class CXFA_ContentLayoutItem;
 class CXFA_ContentLayoutProcessor;
-class CXFA_LayoutContext;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_ViewLayoutItem;
@@ -53,16 +52,29 @@ class CXFA_ContentLayoutProcessor {
                               CXFA_ViewLayoutProcessor* pViewLayoutProcessor);
   ~CXFA_ContentLayoutProcessor();
 
-  Result DoLayout(bool bUseBreakControl,
-                  float fHeightLimit,
-                  float fRealHeight,
-                  CXFA_LayoutContext* pContext);
+  Result DoLayout(bool bUseBreakControl, float fHeightLimit, float fRealHeight);
   void DoLayoutPageArea(CXFA_ViewLayoutItem* pPageAreaLayoutItem);
 
   CXFA_Node* GetFormNode() { return m_pFormNode; }
   CXFA_ContentLayoutItem* ExtractLayoutItem();
 
  private:
+  class Context {
+   public:
+    Context();
+    ~Context();
+
+    Optional<float> m_fCurColumnWidth;
+    UnownedPtr<std::vector<float>> m_prgSpecifiedColumnWidths;
+    UnownedPtr<CXFA_ContentLayoutProcessor> m_pOverflowProcessor;
+    UnownedPtr<CXFA_Node> m_pOverflowNode;
+  };
+
+  Result DoLayoutInternal(bool bUseBreakControl,
+                          float fHeightLimit,
+                          float fRealHeight,
+                          Context* pContext);
+
   CFX_SizeF GetCurrentComponentSize();
   bool HasLayoutItem() const { return !!m_pLayoutItem; }
   void SplitLayoutItem(float fSplitPos);
@@ -111,13 +123,13 @@ class CXFA_ContentLayoutProcessor {
                         float fChildHeight,
                         std::vector<CXFA_ContentLayoutItem*>* pKeepItems);
 
-  void DoLayoutPositionedContainer(CXFA_LayoutContext* pContext);
+  void DoLayoutPositionedContainer(Context* pContext);
   void DoLayoutTableContainer(CXFA_Node* pLayoutNode);
   Result DoLayoutFlowedContainer(bool bUseBreakControl,
                                  XFA_AttributeValue eFlowStrategy,
                                  float fHeightLimit,
                                  float fRealHeight,
-                                 CXFA_LayoutContext* pContext,
+                                 Context* pContext,
                                  bool bRootForceTb);
   void DoLayoutField();
 
@@ -160,7 +172,7 @@ class CXFA_ContentLayoutProcessor {
       float* fContentCurRowHeight,
       bool* bAddedItemInRow,
       bool* bForceEndPage,
-      CXFA_LayoutContext* pLayoutContext,
+      Context* pLayoutContext,
       bool bNewRow);
 
   Optional<Stage> HandleKeep(CXFA_Node* pBreakAfterNode,
@@ -177,7 +189,7 @@ class CXFA_ContentLayoutProcessor {
   Optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
                                        CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();
-  void AdjustContainerSpecifiedSize(CXFA_LayoutContext* pContext,
+  void AdjustContainerSpecifiedSize(Context* pContext,
                                     CFX_SizeF* pSize,
                                     bool* pContainerWidthAutoSize,
                                     bool* pContainerHeightAutoSize);
