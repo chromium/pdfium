@@ -138,6 +138,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                       float font_size,
                       uint32_t color) override;
 
+  int GetDriverType() const override;
+
   bool DrawShading(const CPDF_ShadingPattern* pPattern,
                    const CFX_Matrix* pMatrix,
                    const FX_RECT& clip_rect,

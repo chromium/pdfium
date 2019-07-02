@@ -1709,6 +1709,10 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   return true;
 }
 
+int CFX_SkiaDeviceDriver::GetDriverType() const {
+  return 1;
+}
+
 DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;
 }
@@ -1940,9 +1944,6 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     BlendMode blend_type) {
   ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
          kAlternateOrWindingFillModeMask);
-
-  if (fill_mode & FX_ZEROAREA_FILL)
-    return true;
   if (m_pCache->DrawPath(pPathData, pObject2Device, pGraphState, fill_color,
                          stroke_color, fill_mode, blend_type)) {
     return true;
@@ -1957,7 +1958,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   if (fill_mode & FXFILL_FULLCOVER)
     skPaint.setBlendMode(SkBlendMode::kPlus);
   int stroke_alpha = FXARGB_A(stroke_color);
-  bool is_paint_stroke = !!(pGraphState && stroke_alpha);
+  bool is_paint_stroke = pGraphState && stroke_alpha;
   if (is_paint_stroke)
     PaintStroke(&skPaint, pGraphState, skMatrix);
   SkPath skPath = BuildPath(pPathData);
