@@ -442,6 +442,12 @@ void XYZ_to_sRGB_WhitePoint(float X,
 
 }  // namespace
 
+PatternValue::PatternValue() = default;
+
+PatternValue::PatternValue(const PatternValue& that) = default;
+
+PatternValue::~PatternValue() = default;
+
 // static
 RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::ColorspaceFromName(
     const ByteString& name) {
@@ -567,24 +573,15 @@ uint32_t CPDF_ColorSpace::ComponentsForFamily(int family) {
   }
 }
 
-size_t CPDF_ColorSpace::GetBufSize() const {
-  if (m_Family == PDFCS_PATTERN)
-    return sizeof(PatternValue);
-  return m_nComponents * sizeof(float);
-}
-
-float* CPDF_ColorSpace::CreateBuf() const {
-  return reinterpret_cast<float*>(FX_Alloc(uint8_t, GetBufSize()));
-}
-
-float* CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
+std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
   ASSERT(m_Family != PDFCS_PATTERN);
 
-  float* buf = CreateBuf();
   float min;
   float max;
+  std::vector<float> buf(m_nComponents);
   for (uint32_t i = 0; i < m_nComponents; i++)
     GetDefaultValue(i, &buf[i], &min, &max);
+
   return buf;
 }
 

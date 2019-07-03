@@ -38,13 +38,12 @@ class CPDF_Object;
 
 class CPDF_ShadingPattern final : public CPDF_Pattern {
  public:
-  CPDF_ShadingPattern(CPDF_Document* pDoc,
-                      CPDF_Object* pPatternObj,
-                      bool bShading,
-                      const CFX_Matrix& parentMatrix);
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   ~CPDF_ShadingPattern() override;
 
-  CPDF_TilingPattern* AsTilingPattern() override;
+  // CPDF_Pattern:
   CPDF_ShadingPattern* AsShadingPattern() override;
 
   bool IsMeshShading() const {
@@ -64,6 +63,13 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
   }
 
  private:
+  CPDF_ShadingPattern(CPDF_Document* pDoc,
+                      CPDF_Object* pPatternObj,
+                      bool bShading,
+                      const CFX_Matrix& parentMatrix);
+  CPDF_ShadingPattern(const CPDF_ShadingPattern&) = delete;
+  CPDF_ShadingPattern& operator=(const CPDF_ShadingPattern&) = delete;
+
   // Constraints in PDF 1.7 spec, 4.6.3 Shading Patterns, pages 308-331.
   bool Validate() const;
   bool ValidateFunctions(uint32_t nExpectedNumFunctions,

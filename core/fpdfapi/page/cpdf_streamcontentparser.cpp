@@ -1063,7 +1063,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
 
   // A valid |pLastParam| implies |m_ParamCount| > 0, so GetNamedColors() call
   // below is safe.
-  CPDF_Pattern* pPattern = FindPattern(GetString(0), false);
+  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0), false);
   if (pPattern)
     m_pCurStates->m_ColorState.SetFillPattern(pPattern, GetNamedColors());
 }
@@ -1080,13 +1080,13 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
 
   // A valid |pLastParam| implies |m_ParamCount| > 0, so GetNamedColors() call
   // below is safe.
-  CPDF_Pattern* pPattern = FindPattern(GetString(0), false);
+  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0), false);
   if (pPattern)
     m_pCurStates->m_ColorState.SetStrokePattern(pPattern, GetNamedColors());
 }
 
 void CPDF_StreamContentParser::Handle_ShadeFill() {
-  CPDF_Pattern* pPattern = FindPattern(GetString(0), true);
+  RetainPtr<CPDF_Pattern> pPattern = FindPattern(GetString(0), true);
   if (!pPattern)
     return;
 
@@ -1202,8 +1202,9 @@ RetainPtr<CPDF_ColorSpace> CPDF_StreamContentParser::FindColorSpace(
       ->GetColorSpace(pCSObj, nullptr);
 }
 
-CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const ByteString& name,
-                                                    bool bShading) {
+RetainPtr<CPDF_Pattern> CPDF_StreamContentParser::FindPattern(
+    const ByteString& name,
+    bool bShading) {
   CPDF_Object* pPattern =
       FindResourceObj(bShading ? "Shading" : "Pattern", name);
   if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {

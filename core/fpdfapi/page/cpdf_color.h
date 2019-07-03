@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_COLOR_H_
 #define CORE_FPDFAPI_PAGE_CPDF_COLOR_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
@@ -14,6 +15,7 @@
 
 class CPDF_ColorSpace;
 class CPDF_Pattern;
+class PatternValue;
 
 class CPDF_Color {
  public:
@@ -24,11 +26,11 @@ class CPDF_Color {
 
   CPDF_Color& operator=(const CPDF_Color& that);
 
-  bool IsNull() const { return !m_pBuffer; }
+  bool IsNull() const { return m_Buffer.empty() && !m_pValue; }
   bool IsPattern() const;
   void SetColorSpace(const RetainPtr<CPDF_ColorSpace>& pCS);
   void SetValueForNonPattern(const std::vector<float>& values);
-  void SetValueForPattern(CPDF_Pattern* pPattern,
+  void SetValueForPattern(const RetainPtr<CPDF_Pattern>& pPattern,
                           const std::vector<float>& values);
   uint32_t CountComponents() const;
   bool IsColorSpaceRGB() const;
@@ -38,13 +40,10 @@ class CPDF_Color {
   CPDF_Pattern* GetPattern() const;
 
  protected:
-  void ReleaseBuffer();
   bool IsPatternInternal() const;
 
-  // TODO(thestig): Convert this to a smart pointer or vector.
-  // |m_pBuffer| is created by |m_pCS|, so if it is non-null, then so is
-  // |m_pCS|, since SetColorSpace() prohibits setting to null.
-  float* m_pBuffer = nullptr;
+  std::vector<float> m_Buffer;             // Used for non-pattern colorspaces.
+  std::unique_ptr<PatternValue> m_pValue;  // Used for pattern colorspaces.
   RetainPtr<CPDF_ColorSpace> m_pCS;
 };
 

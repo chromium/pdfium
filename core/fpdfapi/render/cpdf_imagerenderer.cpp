@@ -96,7 +96,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   if (m_pDIBBase->IsAlphaMask()) {
     const CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
     if (pColor && pColor->IsPattern()) {
-      m_pPattern = pColor->GetPattern();
+      m_pPattern.Reset(pColor->GetPattern());
       if (m_pPattern)
         m_bPatternColor = true;
     }
