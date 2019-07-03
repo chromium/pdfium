@@ -2496,8 +2496,7 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjectCount = 19;
-  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+  CheckMarkCounts(page, 1, 19, 8, 4, 9, 1);
 
   // Add to the first page object a "Bounds" mark with "Position": "First".
   FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
@@ -2506,7 +2505,7 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
   EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), page_object, mark,
                                              "Position", "First"));
 
-  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 2);
+  CheckMarkCounts(page, 1, 19, 8, 4, 9, 2);
 
   // Save the file
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -2517,7 +2516,61 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
 
-  CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 8, 4, 9, 2);
+  CheckMarkCounts(saved_page, 1, 19, 8, 4, 9, 2);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFEditEmbedderTest, AddMarkCompressedStream) {
+#if defined(OS_MACOSX)
+  const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+#elif defined(OS_WIN)
+  const char kOriginalMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
+#else
+  const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+#endif
+
+  // Load document with some text in a compressed stream.
+  EXPECT_TRUE(OpenDocument("hello_world_compressed_stream.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Render and check there are no marks.
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page);
+    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+  }
+  CheckMarkCounts(page, 0, 2, 0, 0, 0, 0);
+
+  // Add to the first page object a "Bounds" mark with "Position": "First".
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_AddMark(page_object, "Bounds");
+  EXPECT_TRUE(mark);
+  EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), page_object, mark,
+                                             "Position", "First"));
+
+  // Render and check there is 1 mark.
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page);
+    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+  }
+  CheckMarkCounts(page, 0, 2, 0, 0, 0, 1);
+
+  // Save the file.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and check the new mark is present.
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
+    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+  }
+  CheckMarkCounts(saved_page, 0, 2, 0, 0, 0, 1);
 
   CloseSavedPage(saved_page);
   CloseSavedDocument();
