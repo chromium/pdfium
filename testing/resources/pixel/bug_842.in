@@ -1,0 +1,99 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 720 540]
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /ImageB /ImageC /ImageI]
+    /Pattern <<
+      /P25 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+{{streamlen}}
+>>
+stream
+q
+/Pattern cs /P25 scn
+461.25 480.37 253.13 31.5 re
+f*
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /PatternType 2
+  /Shading <<
+    /Coords [587.81 511.88 587.81 448.88]
+    /Function 6 0 R
+    /Extend [true true]
+    /ShadingType 2
+    /ColorSpace /DeviceRGB
+  >>
+>>
+endobj
+{{object 6 0}} <<
+  /FunctionType 3
+  /Functions [7 0 R 8 0 R 9 0 R 10 0 R 11 0 R]
+  /Encode [1 0 1 0 1 0 1 0 1 0]
+  /Bounds [0.325 0.5 0.5 0.675]
+  /Domain [0 1]
+>>
+endobj
+{{object 7 0}} <<
+  /FunctionType 2
+  /N 1
+  /C0 [0.81569 0.81569 0.81569]
+  /C1 [0.92941 0.92941 0.92941]
+  /Domain [0 1]
+>>
+endobj
+{{object 8 0}} <<
+  /FunctionType 2
+  /N 1
+  /C0 [0.73725 0.73725 0.73725]
+  /C1 [0.81569 0.81569 0.81569]
+  /Domain [0 1]
+>>
+endobj
+{{object 9 0}} <<
+  /FunctionType 2
+  /N 1
+  /C0 [0.73725 0.73725 0.73725]
+  /C1 [0.73725 0.73725 0.73725]
+  /Domain [0 1]
+>>
+endobj
+{{object 10 0}} <<
+  /FunctionType 2
+  /N 1
+  /C0 [0.81569 0.81569 0.81569]
+  /C1 [0.73725 0.73725 0.73725]
+  /Domain [0 1]
+>>
+endobj
+{{object 11 0}} <<
+  /FunctionType 2
+  /N 1
+  /C0 [0.92941 0.92941 0.92941]
+  /C1 [0.81569 0.81569 0.81569]
+  /Domain [0 1]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
