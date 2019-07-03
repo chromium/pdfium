@@ -1,8 +1,8 @@
 diff --git a/third_party/libopenjpeg20/jp2.c b/third_party/libopenjpeg20/jp2.c
-index 1fa607d66..78a2d22ff 100644
+index 8dc2b977f..3e23bc363 100644
 --- a/third_party/libopenjpeg20/jp2.c
 +++ b/third_party/libopenjpeg20/jp2.c
-@@ -1049,6 +1049,14 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1058,6 +1058,14 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
      }
  
      old_comps = image->comps;
@@ -17,7 +17,7 @@ index 1fa607d66..78a2d22ff 100644
      new_comps = (opj_image_comp_t*)
                  opj_malloc(nr_channels * sizeof(opj_image_comp_t));
      if (!new_comps) {
-@@ -1093,21 +1101,27 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1102,20 +1110,26 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
          cmp = cmap[i].cmp;
          pcol = cmap[i].pcol;
          src = old_comps[cmp].data;
@@ -37,7 +37,6 @@ index 1fa607d66..78a2d22ff 100644
 +
          /* Direct use: */
          if (cmap[i].mtyp == 0) {
-             assert( cmp == 0 ); // probably wrong.
 -            dst = new_comps[i].data;
 -            assert(dst);
              for (j = 0; j < max; ++j) {

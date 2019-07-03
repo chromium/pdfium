@@ -138,8 +138,6 @@ Forward 9-7 wavelet transform in 1-D
 */
 static void opj_dwt_encode_1_real(OPJ_INT32 *a, OPJ_SIZE_T a_count,
     OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas);
-
-
 /**
 Explicit calculation of the Quantization Stepsizes
 */
@@ -981,7 +979,7 @@ static void opj_idwt53_v(const opj_dwt_t *dwt,
 #if (defined(__SSE2__) || defined(__AVX2__))
         if (len > 1 && nb_cols == PARALLEL_COLS_53) {
             /* Same as below general case, except that thanks to SSE2/AVX2 */
-            /* we can efficently process 8/16 columns in parallel */
+            /* we can efficiently process 8/16 columns in parallel */
             opj_idwt53_v_cas0_mcols_SSE2_OR_AVX2(dwt->mem, sn, len, tiledp_col, stride);
             return;
         }
@@ -1024,7 +1022,7 @@ static void opj_idwt53_v(const opj_dwt_t *dwt,
 #if (defined(__SSE2__) || defined(__AVX2__))
         if (len > 2 && nb_cols == PARALLEL_COLS_53) {
             /* Same as below general case, except that thanks to SSE2/AVX2 */
-            /* we can efficently process 8/16 columns in parallel */
+            /* we can efficiently process 8/16 columns in parallel */
             opj_idwt53_v_cas1_mcols_SSE2_OR_AVX2(dwt->mem, sn, len, tiledp_col, stride);
             return;
         }
@@ -2052,7 +2050,7 @@ static OPJ_BOOL opj_dwt_decode_partial_tile(
         tr_hl_x0 = (OPJ_UINT32)tr->bands[0].x0;
         tr_lh_y0 = (OPJ_UINT32)tr->bands[1].y0;
 
-        /* Substract the origin of the bands for this tile, to the subwindow */
+        /* Subtract the origin of the bands for this tile, to the subwindow */
         /* of interest band coordinates, so as to get them relative to the */
         /* tile */
         win_ll_x0 = opj_uint_subs(win_ll_x0, tr_ll_x0);
@@ -2707,17 +2705,20 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
     /* overflow check */
     if (l_data_size > (SIZE_MAX - 5U)) {
         /* FIXME event manager error callback */
+        opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
     l_data_size += 5U;
     /* overflow check */
     if (l_data_size > (SIZE_MAX / sizeof(opj_v4_t))) {
         /* FIXME event manager error callback */
+        opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
     h.wavelet = (opj_v4_t*) opj_aligned_malloc(l_data_size * sizeof(opj_v4_t));
     if (!h.wavelet) {
         /* FIXME event manager error callback */
+        opj_sparse_array_int32_free(sa);
         return OPJ_FALSE;
     }
     v.wavelet = h.wavelet;
@@ -2770,7 +2771,7 @@ OPJ_BOOL opj_dwt_decode_partial_97(opj_tcd_tilecomp_t* OPJ_RESTRICT tilec,
         tr_hl_x0 = (OPJ_UINT32)tr->bands[0].x0;
         tr_lh_y0 = (OPJ_UINT32)tr->bands[1].y0;
 
-        /* Substract the origin of the bands for this tile, to the subwindow */
+        /* Subtract the origin of the bands for this tile, to the subwindow */
         /* of interest band coordinates, so as to get them relative to the */
         /* tile */
         win_ll_x0 = opj_uint_subs(win_ll_x0, tr_ll_x0);

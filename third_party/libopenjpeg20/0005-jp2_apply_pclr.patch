@@ -1,5 +1,5 @@
 diff --git a/third_party/libopenjpeg20/jp2.c b/third_party/libopenjpeg20/jp2.c
-index da4e05f82..c9562f705 100644
+index 8dc1ecbe6..61b3f5821 100644
 --- a/third_party/libopenjpeg20/jp2.c
 +++ b/third_party/libopenjpeg20/jp2.c
 @@ -1073,8 +1073,8 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
@@ -13,7 +13,7 @@ index da4e05f82..c9562f705 100644
          }
  
          /* Palette mapping: */
-@@ -1102,19 +1102,19 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
+@@ -1102,7 +1102,7 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
          pcol = cmap[i].pcol;
          src = old_comps[cmp].data;
          assert(src); /* verified above */
@@ -22,11 +22,7 @@ index da4e05f82..c9562f705 100644
  
          /* Direct use: */
          if (cmap[i].mtyp == 0) {
--            assert(cmp == 0);
-+            assert( cmp == 0 ); // probably wrong.
-             dst = new_comps[i].data;
-             assert(dst);
-             for (j = 0; j < max; ++j) {
+@@ -1112,8 +1112,8 @@ static OPJ_BOOL opj_jp2_apply_pclr(opj_image_t *image,
                  dst[j] = src[j];
              }
          } else {
