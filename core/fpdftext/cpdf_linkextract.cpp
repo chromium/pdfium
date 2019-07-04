@@ -317,3 +317,13 @@ std::vector<CFX_FloatRect> CPDF_LinkExtract::GetRects(size_t index) const {
   return m_pTextPage->GetRectArray(m_LinkArray[index].m_Start,
                                    m_LinkArray[index].m_Count);
 }
+
+bool CPDF_LinkExtract::GetTextRange(size_t index,
+                                    int* start_char_index,
+                                    int* char_count) const {
+  if (index >= m_LinkArray.size())
+    return false;
+  *start_char_index = m_LinkArray[index].m_Start;
+  *char_count = m_LinkArray[index].m_Count;
+  return true;
+}
