@@ -9,7 +9,6 @@
 
 #include <memory>
 #include <set>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fxcrt/fx_string.h"
@@ -17,7 +16,6 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/span.h"
 
 #define PDFCS_DEVICEGRAY 1
 #define PDFCS_DEVICERGB 2
@@ -38,23 +36,11 @@ class CPDF_PatternCS;
 
 constexpr size_t kMaxPatternColorComps = 16;
 
-class PatternValue {
- public:
-  PatternValue();
-  PatternValue(const PatternValue& that);
-  ~PatternValue();
-
-  pdfium::span<const float> GetComps() const { return m_Comps; }
-  void SetComps(const std::vector<float>& comps) { m_Comps = comps; }
-
-  CPDF_Pattern* GetPattern() const { return m_pRetainedPattern.Get(); }
-  void SetPattern(const RetainPtr<CPDF_Pattern>& pPattern) {
-    m_pRetainedPattern = pPattern;
-  }
-
- private:
-  std::vector<float> m_Comps;
-  RetainPtr<CPDF_Pattern> m_pRetainedPattern;
+struct PatternValue {
+  CPDF_Pattern* m_pPattern;
+  CPDF_CountedPattern* m_pCountedPattern;
+  int m_nComps;
+  float m_Comps[kMaxPatternColorComps];
 };
 
 class CPDF_ColorSpace : public Retainable, public Observable {
@@ -71,9 +57,11 @@ class CPDF_ColorSpace : public Retainable, public Observable {
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
+  size_t GetBufSize() const;
+  float* CreateBuf() const;
 
   // Should only be called if this colorspace is not a pattern.
-  std::vector<float> CreateBufAndSetDefaultColor() const;
+  float* CreateBufAndSetDefaultColor() const;
 
   uint32_t CountComponents() const;
   int GetFamily() const { return m_Family; }

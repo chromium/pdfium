@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 
+#include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -18,15 +18,15 @@ class CPDF_Object;
 class CPDF_ShadingPattern;
 class CPDF_TilingPattern;
 
-class CPDF_Pattern : public Retainable, public Observable {
+class CPDF_Pattern {
  public:
   // Values used in PDFs. Do not change.
   enum PatternType { kTiling = 1, kShading = 2 };
 
-  ~CPDF_Pattern() override;
+  virtual ~CPDF_Pattern();
 
-  virtual CPDF_TilingPattern* AsTilingPattern();
-  virtual CPDF_ShadingPattern* AsShadingPattern();
+  virtual CPDF_TilingPattern* AsTilingPattern() = 0;
+  virtual CPDF_ShadingPattern* AsShadingPattern() = 0;
 
   // All the getters that return pointers return non-NULL pointers.
   CPDF_Document* document() const { return m_pDocument.Get(); }
@@ -47,5 +47,6 @@ class CPDF_Pattern : public Retainable, public Observable {
   CFX_Matrix m_Pattern2Form;
   const CFX_Matrix m_ParentMatrix;
 };
+using CPDF_CountedPattern = CPDF_CountedObject<CPDF_Pattern>;
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_

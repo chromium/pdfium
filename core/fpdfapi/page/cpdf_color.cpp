@@ -18,10 +18,30 @@ CPDF_Color::CPDF_Color(const CPDF_Color& that) {
   *this = that;
 }
 
-CPDF_Color::~CPDF_Color() = default;
+CPDF_Color::~CPDF_Color() {
+  ReleaseBuffer();
+}
 
 bool CPDF_Color::IsPattern() const {
   return m_pCS && IsPatternInternal();
+}
+
+void CPDF_Color::ReleaseBuffer() {
+  if (!m_pBuffer)
+    return;
+
+  if (IsPatternInternal()) {
+    PatternValue* pvalue = reinterpret_cast<PatternValue*>(m_pBuffer);
+    CPDF_Pattern* pPattern =
+        pvalue->m_pCountedPattern ? pvalue->m_pCountedPattern->get() : nullptr;
+    if (pPattern) {
+      auto* pPageData = CPDF_DocPageData::FromDocument(pPattern->document());
+      if (pPageData)
+        pPageData->ReleasePattern(pPattern->pattern_obj());
+    }
+  }
+  FX_Free(m_pBuffer);
+  m_pBuffer = nullptr;
 }
 
 bool CPDF_Color::IsPatternInternal() const {
@@ -29,42 +49,91 @@ bool CPDF_Color::IsPatternInternal() const {
 }
 
 void CPDF_Color::SetColorSpace(const RetainPtr<CPDF_ColorSpace>& pCS) {
-  m_pCS = pCS;
-  if (IsPatternInternal()) {
-    m_Buffer.clear();
-    m_pValue = pdfium::MakeUnique<PatternValue>();
-  } else {
-    m_Buffer = pCS->CreateBufAndSetDefaultColor();
-    m_pValue.reset();
+  ASSERT(pCS);
+  if (m_pCS == pCS) {
+    if (!m_pBuffer)
+      m_pBuffer = pCS->CreateBuf();
+    m_pCS = pCS;
+    return;
   }
+  ReleaseBuffer();
+  m_pCS = pCS;
+  if (IsPatternInternal())
+    m_pBuffer = pCS->CreateBuf();
+  else
+    m_pBuffer = pCS->CreateBufAndSetDefaultColor();
 }
 
 void CPDF_Color::SetValueForNonPattern(const std::vector<float>& values) {
+  ASSERT(m_pBuffer);
   ASSERT(!IsPatternInternal());
   ASSERT(m_pCS->CountComponents() <= values.size());
-  m_Buffer = values;
+  memcpy(m_pBuffer, values.data(), m_pCS->CountComponents() * sizeof(float));
 }
 
-void CPDF_Color::SetValueForPattern(const RetainPtr<CPDF_Pattern>& pPattern,
+void CPDF_Color::SetValueForPattern(CPDF_Pattern* pPattern,
                                     const std::vector<float>& values) {
   if (values.size() > kMaxPatternColorComps)
     return;
 
-  if (!IsPattern())
-    SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN));
+  if (!IsPattern()) {
+    FX_Free(m_pBuffer);
+    m_pCS = CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
+    m_pBuffer = m_pCS->CreateBuf();
+  }
 
-  m_pValue->SetPattern(pPattern);
-  m_pValue->SetComps(values);
+  CPDF_DocPageData* pDocPageData = nullptr;
+  PatternValue* pvalue = reinterpret_cast<PatternValue*>(m_pBuffer);
+  if (pvalue->m_pPattern) {
+    pDocPageData =
+        CPDF_DocPageData::FromDocument(pvalue->m_pPattern->document());
+    pDocPageData->ReleasePattern(pvalue->m_pPattern->pattern_obj());
+  }
+  pvalue->m_nComps = values.size();
+  pvalue->m_pPattern = pPattern;
+  if (!values.empty())
+    memcpy(pvalue->m_Comps, values.data(), values.size() * sizeof(float));
+
+  pvalue->m_pCountedPattern = nullptr;
+  if (pPattern) {
+    if (!pDocPageData)
+      pDocPageData = CPDF_DocPageData::FromDocument(pPattern->document());
+
+    pvalue->m_pCountedPattern =
+        pDocPageData->FindPatternPtr(pPattern->pattern_obj());
+  }
 }
 
 CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
   if (this == &that)
     return *this;
 
-  m_Buffer = that.m_Buffer;
-  m_pValue = that.m_pValue ? pdfium::MakeUnique<PatternValue>(*that.m_pValue)
-                           : nullptr;
+  ReleaseBuffer();
   m_pCS = that.m_pCS;
+  if (!m_pCS)
+    return *this;
+
+  CPDF_Document* pDoc = m_pCS->GetDocument();
+  const CPDF_Array* pArray = m_pCS->GetArray();
+  if (pDoc && pArray) {
+    m_pCS = CPDF_DocPageData::FromDocument(pDoc)->GetCopiedColorSpace(pArray);
+    if (!m_pCS)
+      return *this;
+  }
+  m_pBuffer = m_pCS->CreateBuf();
+  memcpy(m_pBuffer, that.m_pBuffer, m_pCS->GetBufSize());
+  if (!IsPatternInternal())
+    return *this;
+
+  PatternValue* pValue = reinterpret_cast<PatternValue*>(m_pBuffer);
+  CPDF_Pattern* pPattern = pValue->m_pPattern;
+  if (!pPattern)
+    return *this;
+
+  pValue->m_pPattern = CPDF_DocPageData::FromDocument(pPattern->document())
+                           ->GetPattern(pPattern->pattern_obj(), false,
+                                        pPattern->parent_matrix());
+
   return *this;
 }
 
@@ -77,18 +146,19 @@ bool CPDF_Color::IsColorSpaceRGB() const {
 }
 
 bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
+  if (!m_pBuffer)
+    return false;
+
   float r = 0.0f;
   float g = 0.0f;
   float b = 0.0f;
-  bool result = false;
+  bool result;
   if (IsPatternInternal()) {
-    if (m_pValue) {
-      const CPDF_PatternCS* pPatternCS = m_pCS->AsPatternCS();
-      result = pPatternCS->GetPatternRGB(*m_pValue, &r, &g, &b);
-    }
+    const CPDF_PatternCS* pPatternCS = m_pCS->AsPatternCS();
+    const auto* pValue = reinterpret_cast<const PatternValue*>(m_pBuffer);
+    result = pPatternCS->GetPatternRGB(*pValue, &r, &g, &b);
   } else {
-    if (!m_Buffer.empty())
-      result = m_pCS->GetRGB(m_Buffer.data(), &r, &g, &b);
+    result = m_pCS->GetRGB(m_pBuffer, &r, &g, &b);
   }
   if (!result)
     return false;
@@ -101,5 +171,10 @@ bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
 
 CPDF_Pattern* CPDF_Color::GetPattern() const {
   ASSERT(IsPattern());
-  return m_pValue ? m_pValue->GetPattern() : nullptr;
+
+  if (!m_pBuffer)
+    return nullptr;
+
+  PatternValue* pvalue = reinterpret_cast<PatternValue*>(m_pBuffer);
+  return pvalue->m_pPattern;
 }

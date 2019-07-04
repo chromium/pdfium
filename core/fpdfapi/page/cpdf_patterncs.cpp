@@ -60,7 +60,7 @@ bool CPDF_PatternCS::GetPatternRGB(const PatternValue& value,
                                    float* R,
                                    float* G,
                                    float* B) const {
-  if (m_pBaseCS && m_pBaseCS->GetRGB(value.GetComps().data(), R, G, B))
+  if (m_pBaseCS && m_pBaseCS->GetRGB(value.m_Comps, R, G, B))
     return true;
 
   *R = 0.75f;
