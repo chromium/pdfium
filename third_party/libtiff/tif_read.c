@@ -558,6 +558,8 @@ _TIFFReadEncodedStripAndAllocBuffer(TIFF* tif, uint32 strip,
                                     void **buf, tmsize_t bufsizetoalloc,
                                     tmsize_t size_to_read)
 {
+    assert(size_to_read > 0);
+
     tmsize_t this_stripsize;
     uint16 plane;
 

@@ -132,13 +132,16 @@
 
 #if defined(_WIN64)
 #define TIFF_SSIZE_T signed __int64
+#define TIFF_SSIZE_T_MAX INT64_MAX
 #else
 #define TIFF_SSIZE_T signed int
+#define TIFF_SSIZE_T_MAX INT_MAX
 #endif
 
 #else
 
 #define TIFF_SSIZE_T signed long
+#define TIFF_SSIZE_T_MAX LONG_MAX
 
 #endif
 
