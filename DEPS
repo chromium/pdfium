@@ -33,7 +33,7 @@ vars = {
   'trace_event_revision': '936ba8a963284a6b3737cf2f0474a7131073abee',
   'v8_revision': 'c4c480a413d23f62301e839970be1378c2c7f1f0',
   'yasm_source_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
-  'zlib_revision': '8f2b9d41fbd341ab8ceaa726fb544bd72afd9b82',
+  'zlib_revision': 'abd51836c6dad6c460d236fff70f28cc578a1336',
 
   # GN CIPD package version.
   'gn_version': 'git_revision:0790d3043387c762a6bacb1ae0a9ebe883188ab2',
