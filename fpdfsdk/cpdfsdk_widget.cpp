@@ -176,8 +176,8 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
 }
 
 bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
-  CXFA_FFWidget* hWidget = GetMixXFAWidget();
-  if (!hWidget)
+  ObservedPtr<CXFA_FFWidget> pWidget(GetMixXFAWidget());
+  if (!pWidget)
     return false;
 
   CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler();
@@ -196,7 +196,12 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
       }
     }
   }
-  CXFA_Node* node = hWidget->GetNode();
+
+  // Check |pWidget| again because JS may have destroyed it in the block above.
+  if (!pWidget)
+    return false;
+
+  CXFA_Node* node = pWidget->GetNode();
   if (!node->IsWidgetReady())
     return false;
   return pXFAWidgetHandler->HasEvent(node, eEventType);
@@ -207,8 +212,8 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
                                   CPDFSDK_PageView* pPageView) {
   CPDFXFA_Context* pContext = m_pPageView->GetFormFillEnv()->GetXFAContext();
 
-  CXFA_FFWidget* hWidget = GetMixXFAWidget();
-  if (!hWidget)
+  ObservedPtr<CXFA_FFWidget> pWidget(GetMixXFAWidget());
+  if (!pWidget)
     return false;
 
   XFA_EVENTTYPE eEventType = GetXFAEventType(eXFAAAT);
@@ -245,8 +250,12 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
     }
   }
 
+  // Check |pWidget| again because JS may have destroyed it in the block above.
+  if (!pWidget)
+    return false;
+
   XFA_EventError nRet = XFA_EventError::kNotExist;
-  CXFA_Node* node = hWidget->GetNode();
+  CXFA_Node* node = pWidget->GetNode();
   if (node->IsWidgetReady()) {
     param.m_pTarget = node;
     nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
