@@ -25,9 +25,9 @@ extern "C" {
 //   buffer  - buffer for holding the decoded image data.
 //   buflen  - length of the buffer in bytes.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFPage_GetDecodedThumbnailDataFromPage(FPDF_PAGE page,
-                                         void* buffer,
-                                         unsigned long buflen);
+FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
+                                 void* buffer,
+                                 unsigned long buflen);
 
 // Experimental API.
 // Gets the raw data from the thumbnail of |page| if it exists.
@@ -40,9 +40,9 @@ FPDFPage_GetDecodedThumbnailDataFromPage(FPDF_PAGE page,
 //   buffer  - buffer for holding the raw image data.
 //   buflen  - length of the buffer in bytes.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFPage_GetRawThumbnailDataFromPage(FPDF_PAGE page,
-                                     void* buffer,
-                                     unsigned long buflen);
+FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
+                             void* buffer,
+                             unsigned long buflen);
 
 // Experimental API.
 // Returns the thumbnail of |page| as a FPDF_BITMAP. Returns a nullptr
@@ -50,7 +50,7 @@ FPDFPage_GetRawThumbnailDataFromPage(FPDF_PAGE page,
 //
 //   page - handle to a page.
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
-FPDFPage_GetThumbnailAsBitmapFromPage(FPDF_PAGE page);
+FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page);
 
 #ifdef __cplusplus
 }

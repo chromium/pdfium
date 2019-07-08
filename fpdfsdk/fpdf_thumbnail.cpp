@@ -32,9 +32,9 @@ const CPDF_Stream* CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
 }  // namespace
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFPage_GetDecodedThumbnailDataFromPage(FPDF_PAGE page,
-                                         void* buffer,
-                                         unsigned long buflen) {
+FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
+                                 void* buffer,
+                                 unsigned long buflen) {
   const CPDF_Stream* thumb_stream = CPDFStreamForThumbnailFromPage(page);
   if (!thumb_stream)
     return 0u;
@@ -43,9 +43,9 @@ FPDFPage_GetDecodedThumbnailDataFromPage(FPDF_PAGE page,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFPage_GetRawThumbnailDataFromPage(FPDF_PAGE page,
-                                     void* buffer,
-                                     unsigned long buflen) {
+FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
+                             void* buffer,
+                             unsigned long buflen) {
   const CPDF_Stream* thumb_stream = CPDFStreamForThumbnailFromPage(page);
   if (!thumb_stream)
     return 0u;
@@ -54,7 +54,7 @@ FPDFPage_GetRawThumbnailDataFromPage(FPDF_PAGE page,
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
-FPDFPage_GetThumbnailAsBitmapFromPage(FPDF_PAGE page) {
+FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
   const CPDF_Stream* thumb_stream = CPDFStreamForThumbnailFromPage(page);
   if (!thumb_stream)
     return nullptr;

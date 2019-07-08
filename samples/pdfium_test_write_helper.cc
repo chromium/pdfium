@@ -699,7 +699,7 @@ void WriteDecodedThumbnailStream(FPDF_PAGE page,
   }
 
   unsigned long decoded_data_size =
-      FPDFPage_GetDecodedThumbnailDataFromPage(page, nullptr, 0u);
+      FPDFPage_GetDecodedThumbnailData(page, nullptr, 0u);
 
   // Only continue if there actually is a thumbnail for this page
   if (decoded_data_size == 0) {
@@ -709,7 +709,7 @@ void WriteDecodedThumbnailStream(FPDF_PAGE page,
   }
 
   std::vector<uint8_t> thumb_buf(decoded_data_size);
-  if (FPDFPage_GetDecodedThumbnailDataFromPage(
+  if (FPDFPage_GetDecodedThumbnailData(
           page, thumb_buf.data(), decoded_data_size) != decoded_data_size) {
     fprintf(stderr, "Failed to get decoded thumbnail data for %s.\n", filename);
     return;
@@ -728,8 +728,7 @@ void WriteRawThumbnailStream(FPDF_PAGE page,
     return;
   }
 
-  unsigned long raw_data_size =
-      FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0u);
+  unsigned long raw_data_size = FPDFPage_GetRawThumbnailData(page, nullptr, 0u);
 
   // Only continue if there actually is a thumbnail for this page
   if (raw_data_size == 0) {
@@ -739,8 +738,8 @@ void WriteRawThumbnailStream(FPDF_PAGE page,
   }
 
   std::vector<uint8_t> thumb_buf(raw_data_size);
-  if (FPDFPage_GetRawThumbnailDataFromPage(page, thumb_buf.data(),
-                                           raw_data_size) != raw_data_size) {
+  if (FPDFPage_GetRawThumbnailData(page, thumb_buf.data(), raw_data_size) !=
+      raw_data_size) {
     fprintf(stderr, "Failed to get raw thumbnail data for %s.\n", filename);
     return;
   }
@@ -755,7 +754,7 @@ void WriteThumbnail(FPDF_PAGE page, const char* pdf_name, int page_num) {
     return;
   }
 
-  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
   if (!thumb_bitmap) {
     fprintf(stderr, "Thumbnail of page #%d has an empty bitmap.\n",
             page_num + 1);

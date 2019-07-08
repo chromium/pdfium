@@ -336,9 +336,9 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_LoadPage);
 
     // fpdf_thumbnail.h
-    CHK(FPDFPage_GetDecodedThumbnailDataFromPage);
-    CHK(FPDFPage_GetRawThumbnailDataFromPage);
-    CHK(FPDFPage_GetThumbnailAsBitmapFromPage);
+    CHK(FPDFPage_GetDecodedThumbnailData);
+    CHK(FPDFPage_GetRawThumbnailData);
+    CHK(FPDFPage_GetThumbnailAsBitmap);
 
     // fpdf_transformpage.h
     CHK(FPDFPageObj_TransformClipPath);

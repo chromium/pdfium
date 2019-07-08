@@ -22,11 +22,11 @@ TEST_F(FPDFThumbnailEmbedderTest, GetDecodedThumbnailDataFromPageWithFilters) {
     ASSERT_TRUE(page);
 
     unsigned long length_bytes =
-        FPDFPage_GetDecodedThumbnailDataFromPage(page, nullptr, 0);
+        FPDFPage_GetDecodedThumbnailData(page, nullptr, 0);
     ASSERT_EQ(kExpectedSize, length_bytes);
     std::vector<uint8_t> thumb_buf(length_bytes);
 
-    EXPECT_EQ(kExpectedSize, FPDFPage_GetDecodedThumbnailDataFromPage(
+    EXPECT_EQ(kExpectedSize, FPDFPage_GetDecodedThumbnailData(
                                  page, thumb_buf.data(), length_bytes));
     EXPECT_EQ(kHashedDecodedData,
               GenerateMD5Base16(thumb_buf.data(), kExpectedSize));
@@ -42,11 +42,11 @@ TEST_F(FPDFThumbnailEmbedderTest, GetDecodedThumbnailDataFromPageWithFilters) {
     ASSERT_TRUE(page);
 
     unsigned long length_bytes =
-        FPDFPage_GetDecodedThumbnailDataFromPage(page, nullptr, 0);
+        FPDFPage_GetDecodedThumbnailData(page, nullptr, 0);
     ASSERT_EQ(kExpectedSize, length_bytes);
     std::vector<uint8_t> thumb_buf(length_bytes);
 
-    EXPECT_EQ(kExpectedSize, FPDFPage_GetDecodedThumbnailDataFromPage(
+    EXPECT_EQ(kExpectedSize, FPDFPage_GetDecodedThumbnailData(
                                  page, thumb_buf.data(), length_bytes));
     EXPECT_EQ(kHashedDecodedData,
               GenerateMD5Base16(thumb_buf.data(), kExpectedSize));
@@ -66,11 +66,11 @@ TEST_F(FPDFThumbnailEmbedderTest,
   ASSERT_TRUE(page);
 
   unsigned long length_bytes =
-      FPDFPage_GetDecodedThumbnailDataFromPage(page, nullptr, 0);
+      FPDFPage_GetDecodedThumbnailData(page, nullptr, 0);
   ASSERT_EQ(kExpectedSize, length_bytes);
   std::vector<uint8_t> thumb_buf(length_bytes);
 
-  EXPECT_EQ(kExpectedSize, FPDFPage_GetDecodedThumbnailDataFromPage(
+  EXPECT_EQ(kExpectedSize, FPDFPage_GetDecodedThumbnailData(
                                page, thumb_buf.data(), length_bytes));
   EXPECT_EQ(kHashedDecodedData,
             GenerateMD5Base16(thumb_buf.data(), kExpectedSize));
@@ -85,13 +85,13 @@ TEST_F(FPDFThumbnailEmbedderTest,
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  EXPECT_EQ(0u, FPDFPage_GetDecodedThumbnailDataFromPage(page, nullptr, 0));
+  EXPECT_EQ(0u, FPDFPage_GetDecodedThumbnailData(page, nullptr, 0));
 
   UnloadPage(page);
 }
 
 TEST_F(FPDFThumbnailEmbedderTest, GetDecodedThumbnailDataFromPageNullPage) {
-  EXPECT_EQ(0u, FPDFPage_GetDecodedThumbnailDataFromPage(nullptr, nullptr, 0));
+  EXPECT_EQ(0u, FPDFPage_GetDecodedThumbnailData(nullptr, nullptr, 0));
 }
 
 TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithFilters) {
@@ -104,12 +104,11 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithFilters) {
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
 
-    unsigned long length_bytes =
-        FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0);
+    unsigned long length_bytes = FPDFPage_GetRawThumbnailData(page, nullptr, 0);
     ASSERT_EQ(kExpectedSize, length_bytes);
     std::vector<uint8_t> thumb_buf(length_bytes);
 
-    EXPECT_EQ(kExpectedSize, FPDFPage_GetRawThumbnailDataFromPage(
+    EXPECT_EQ(kExpectedSize, FPDFPage_GetRawThumbnailData(
                                  page, thumb_buf.data(), length_bytes));
     EXPECT_EQ(kHashedRawData,
               GenerateMD5Base16(thumb_buf.data(), kExpectedSize));
@@ -124,12 +123,11 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithFilters) {
     FPDF_PAGE page = LoadPage(1);
     ASSERT_TRUE(page);
 
-    unsigned long length_bytes =
-        FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0);
+    unsigned long length_bytes = FPDFPage_GetRawThumbnailData(page, nullptr, 0);
     ASSERT_EQ(kExpectedSize, length_bytes);
     std::vector<uint8_t> thumb_buf(length_bytes);
 
-    EXPECT_EQ(kExpectedSize, FPDFPage_GetRawThumbnailDataFromPage(
+    EXPECT_EQ(kExpectedSize, FPDFPage_GetRawThumbnailData(
                                  page, thumb_buf.data(), length_bytes));
     EXPECT_EQ(kHashedRawData,
               GenerateMD5Base16(thumb_buf.data(), kExpectedSize));
@@ -147,13 +145,12 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithNoFilters) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  unsigned long length_bytes =
-      FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0);
+  unsigned long length_bytes = FPDFPage_GetRawThumbnailData(page, nullptr, 0);
   ASSERT_EQ(kExpectedSize, length_bytes);
   std::vector<uint8_t> thumb_buf(length_bytes);
 
-  EXPECT_EQ(kExpectedSize, FPDFPage_GetRawThumbnailDataFromPage(
-                               page, thumb_buf.data(), length_bytes));
+  EXPECT_EQ(kExpectedSize,
+            FPDFPage_GetRawThumbnailData(page, thumb_buf.data(), length_bytes));
   EXPECT_EQ(kHashedRawData, GenerateMD5Base16(thumb_buf.data(), kExpectedSize));
 
   UnloadPage(page);
@@ -165,13 +162,13 @@ TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageWithNoThumbnails) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  EXPECT_EQ(0u, FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0));
+  EXPECT_EQ(0u, FPDFPage_GetRawThumbnailData(page, nullptr, 0));
 
   UnloadPage(page);
 }
 
 TEST_F(FPDFThumbnailEmbedderTest, GetRawThumbnailDataFromPageNullPage) {
-  EXPECT_EQ(0u, FPDFPage_GetRawThumbnailDataFromPage(nullptr, nullptr, 0));
+  EXPECT_EQ(0u, FPDFPage_GetRawThumbnailData(nullptr, nullptr, 0));
 }
 
 TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
@@ -181,7 +178,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
 
-    ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+    ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
 
     EXPECT_EQ(50, FPDFBitmap_GetWidth(thumb_bitmap.get()));
     EXPECT_EQ(50, FPDFBitmap_GetHeight(thumb_bitmap.get()));
@@ -196,7 +193,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
     FPDF_PAGE page = LoadPage(1);
     ASSERT_TRUE(page);
 
-    ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+    ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
 
     EXPECT_EQ(50, FPDFBitmap_GetWidth(thumb_bitmap.get()));
     EXPECT_EQ(50, FPDFBitmap_GetHeight(thumb_bitmap.get()));
@@ -215,7 +212,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
   ASSERT_EQ(nullptr, thumb_bitmap.get());
 
   UnloadPage(page);
@@ -228,7 +225,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
   ASSERT_EQ(nullptr, thumb_bitmap.get());
 
   UnloadPage(page);
@@ -241,7 +238,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
 
   EXPECT_EQ(10, FPDFBitmap_GetWidth(thumb_bitmap.get()));
   EXPECT_EQ(10, FPDFBitmap_GetHeight(thumb_bitmap.get()));
@@ -261,18 +258,17 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
   ASSERT_TRUE(page);
 
   // Get the raw data
-  unsigned long raw_size =
-      FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0);
+  unsigned long raw_size = FPDFPage_GetRawThumbnailData(page, nullptr, 0);
   ASSERT_EQ(kExpectedRawSize, raw_size);
   std::vector<uint8_t> raw_thumb_buf(raw_size);
 
-  EXPECT_EQ(kExpectedRawSize, FPDFPage_GetRawThumbnailDataFromPage(
-                                  page, raw_thumb_buf.data(), raw_size));
+  EXPECT_EQ(kExpectedRawSize,
+            FPDFPage_GetRawThumbnailData(page, raw_thumb_buf.data(), raw_size));
   EXPECT_EQ(kHashedRawData,
             GenerateMD5Base16(raw_thumb_buf.data(), kExpectedRawSize));
 
   // Get the thumbnail
-  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmapFromPage(page));
+  ScopedFPDFBitmap thumb_bitmap(FPDFPage_GetThumbnailAsBitmap(page));
 
   EXPECT_EQ(50, FPDFBitmap_GetWidth(thumb_bitmap.get()));
   EXPECT_EQ(50, FPDFBitmap_GetHeight(thumb_bitmap.get()));
@@ -280,14 +276,13 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
   CompareBitmap(thumb_bitmap.get(), 50, 50, "312a156389470c3c69435f836e370a45");
 
   // Get the raw data again
-  unsigned long new_raw_size =
-      FPDFPage_GetRawThumbnailDataFromPage(page, nullptr, 0);
+  unsigned long new_raw_size = FPDFPage_GetRawThumbnailData(page, nullptr, 0);
   ASSERT_EQ(kExpectedRawSize, new_raw_size);
   std::vector<uint8_t> new_raw_thumb_buf(new_raw_size);
 
   EXPECT_EQ(kExpectedRawSize,
-            FPDFPage_GetRawThumbnailDataFromPage(page, new_raw_thumb_buf.data(),
-                                                 new_raw_size));
+            FPDFPage_GetRawThumbnailData(page, new_raw_thumb_buf.data(),
+                                         new_raw_size));
   EXPECT_EQ(kHashedRawData,
             GenerateMD5Base16(new_raw_thumb_buf.data(), kExpectedRawSize));
 
@@ -295,5 +290,5 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
 }
 
 TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPageNullPage) {
-  EXPECT_EQ(nullptr, FPDFPage_GetThumbnailAsBitmapFromPage(nullptr));
+  EXPECT_EQ(nullptr, FPDFPage_GetThumbnailAsBitmap(nullptr));
 }
