@@ -126,13 +126,3 @@ pdfium_unittest_source_set("unittests") {
   ]
   pdfium_root_dir = "../../../"
 }
-
-pdfium_embeddertest_source_set("embeddertests") {
-  sources = [
-    "cpdf_colorspace_embeddertest.cpp",
-  ]
-  deps = [
-    ":page",
-  ]
-  pdfium_root_dir = "../../../"
-}
