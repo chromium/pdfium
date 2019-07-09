@@ -9,7 +9,7 @@
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_ShadingPattern;
 
@@ -33,7 +33,7 @@ class CPDF_ShadingObject final : public CPDF_PageObject {
   const CFX_Matrix& matrix() const { return m_Matrix; }
 
  private:
-  UnownedPtr<const CPDF_ShadingPattern> m_pShading;
+  RetainPtr<CPDF_ShadingPattern> m_pShading;
   CFX_Matrix m_Matrix;
 };
 

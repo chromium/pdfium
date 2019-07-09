@@ -11,6 +11,7 @@
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
+#include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -70,10 +71,9 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
 
   RetainPtr<CPDF_ColorSpace> GetCopiedColorSpace(const CPDF_Object* pCSObj);
 
-  CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
-                           bool bShading,
-                           const CFX_Matrix& matrix);
-  void ReleasePattern(const CPDF_Object* pPatternObj);
+  RetainPtr<CPDF_Pattern> GetPattern(CPDF_Object* pPatternObj,
+                                     bool bShading,
+                                     const CFX_Matrix& matrix);
 
   RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
   void MaybePurgeImage(uint32_t dwStreamObjNum);
@@ -82,7 +82,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
   void MaybePurgeIccProfile(const CPDF_Stream* pProfileStream);
 
   RetainPtr<CPDF_ColorSpace> FindColorSpacePtr(const CPDF_Object* pCSObj) const;
-  CPDF_CountedPattern* FindPatternPtr(const CPDF_Object* pPatternObj) const;
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
@@ -112,7 +111,7 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_IccProfile>> m_IccProfileMap;
   std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
-  std::map<const CPDF_Object*, CPDF_CountedPattern*> m_PatternMap;
+  std::map<const CPDF_Object*, ObservedPtr<CPDF_Pattern>> m_PatternMap;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_

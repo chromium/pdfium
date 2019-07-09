@@ -20,13 +20,13 @@ class CPDF_PageObject;
 
 class CPDF_TilingPattern final : public CPDF_Pattern {
  public:
-  CPDF_TilingPattern(CPDF_Document* pDoc,
-                     CPDF_Object* pPatternObj,
-                     const CFX_Matrix& parentMatrix);
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   ~CPDF_TilingPattern() override;
 
+  // CPDF_Pattern:
   CPDF_TilingPattern* AsTilingPattern() override;
-  CPDF_ShadingPattern* AsShadingPattern() override;
 
   std::unique_ptr<CPDF_Form> Load(CPDF_PageObject* pPageObj);
 
@@ -36,6 +36,12 @@ class CPDF_TilingPattern final : public CPDF_Pattern {
   float y_step() const { return m_YStep; }
 
  private:
+  CPDF_TilingPattern(CPDF_Document* pDoc,
+                     CPDF_Object* pPatternObj,
+                     const CFX_Matrix& parentMatrix);
+  CPDF_TilingPattern(const CPDF_TilingPattern&) = delete;
+  CPDF_TilingPattern& operator=(const CPDF_TilingPattern&) = delete;
+
   bool m_bColored;
   CFX_FloatRect m_BBox;
   float m_XStep;

@@ -167,12 +167,11 @@ CPDF_DocPageData::~CPDF_DocPageData() {
   Clear(false);
   Clear(true);
 
-  for (auto& it : m_PatternMap)
-    delete it.second;
   m_PatternMap.clear();
 
   for (auto& it : m_FontMap)
     delete it.second;
+
   m_FontMap.clear();
 }
 
@@ -183,29 +182,7 @@ void CPDF_DocPageData::ClearStockFont() {
 void CPDF_DocPageData::Clear(bool bForceRelease) {
   m_bForceClear = bForceRelease;
 
-  // This is needed because if |bForceRelease| is true we will destroy any
-  // pattern we see regardless of the ref-count. The tiling pattern owns a
-  // Form object which owns a ShadingObject. The ShadingObject has an unowned
-  // pointer to a ShadingPattern. The ShadingPattern is owned by the
-  // DocPageData. So, we loop through and clear any tiling patterns before we
-  // do the same for any shading patterns, otherwise we may free the
-  // ShadingPattern before the ShadingObject and trigger an unowned pointer
-  // probe warning.
-  for (auto& it : m_PatternMap) {
-    CPDF_CountedPattern* ptData = it.second;
-    if (!ptData->get() || !ptData->get()->AsTilingPattern())
-      continue;
-    if (bForceRelease || ptData->use_count() < 2)
-      ptData->clear();
-  }
-
-  for (auto& it : m_PatternMap) {
-    CPDF_CountedPattern* ptData = it.second;
-    if (!ptData->get())
-      continue;
-    if (bForceRelease || ptData->use_count() < 2)
-      ptData->clear();
-  }
+  m_PatternMap.clear();
 
   for (auto& it : m_FontMap) {
     CPDF_CountedFont* fontData = it.second;
@@ -431,23 +408,19 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetCopiedColorSpace(
   return pdfium::WrapRetain(it->second.Get());
 }
 
-CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
-                                           bool bShading,
-                                           const CFX_Matrix& matrix) {
+RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
+                                                     bool bShading,
+                                                     const CFX_Matrix& matrix) {
   if (!pPatternObj)
     return nullptr;
 
-  CPDF_CountedPattern* ptData = nullptr;
   auto it = m_PatternMap.find(pPatternObj);
-  if (it != m_PatternMap.end()) {
-    ptData = it->second;
-    if (ptData->get()) {
-      return ptData->AddRef();
-    }
-  }
-  std::unique_ptr<CPDF_Pattern> pPattern;
+  if (it != m_PatternMap.end() && it->second)
+    return pdfium::WrapRetain(it->second.Get());
+
+  RetainPtr<CPDF_Pattern> pPattern;
   if (bShading) {
-    pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
+    pPattern = pdfium::MakeRetain<CPDF_ShadingPattern>(
         GetDocument(), pPatternObj, true, matrix);
   } else {
     CPDF_Dictionary* pDict = pPatternObj->GetDict();
@@ -456,43 +429,18 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
 
     int type = pDict->GetIntegerFor("PatternType");
     if (type == CPDF_Pattern::kTiling) {
-      pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(GetDocument(),
+      pPattern = pdfium::MakeRetain<CPDF_TilingPattern>(GetDocument(),
                                                         pPatternObj, matrix);
     } else if (type == CPDF_Pattern::kShading) {
-      pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
+      pPattern = pdfium::MakeRetain<CPDF_ShadingPattern>(
           GetDocument(), pPatternObj, false, matrix);
     } else {
       return nullptr;
     }
   }
 
-  if (ptData) {
-    ptData->reset(std::move(pPattern));
-  } else {
-    ptData = new CPDF_CountedPattern(std::move(pPattern));
-    m_PatternMap[pPatternObj] = ptData;
-  }
-  return ptData->AddRef();
-}
-
-void CPDF_DocPageData::ReleasePattern(const CPDF_Object* pPatternObj) {
-  if (!pPatternObj)
-    return;
-
-  auto it = m_PatternMap.find(pPatternObj);
-  if (it == m_PatternMap.end())
-    return;
-
-  CPDF_CountedPattern* pPattern = it->second;
-  if (!pPattern->get())
-    return;
-
-  pPattern->RemoveRef();
-  if (pPattern->use_count() > 1)
-    return;
-
-  // We have item only in m_PatternMap cache. Clean it.
-  pPattern->clear();
+  m_PatternMap[pPatternObj].Reset(pPattern.Get());
+  return pPattern;
 }
 
 RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
@@ -594,15 +542,6 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::FindColorSpacePtr(
     return nullptr;
 
   return pdfium::WrapRetain(it->second.Get());
-}
-
-CPDF_CountedPattern* CPDF_DocPageData::FindPatternPtr(
-    const CPDF_Object* pPatternObj) const {
-  if (!pPatternObj)
-    return nullptr;
-
-  auto it = m_PatternMap.find(pPatternObj);
-  return it != m_PatternMap.end() ? it->second : nullptr;
 }
 
 CPDF_Font* CPDF_DocPageData::AddStandardFont(

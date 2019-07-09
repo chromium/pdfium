@@ -38,10 +38,6 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
 
 CPDF_ShadingPattern::~CPDF_ShadingPattern() = default;
 
-CPDF_TilingPattern* CPDF_ShadingPattern::AsTilingPattern() {
-  return nullptr;
-}
-
 CPDF_ShadingPattern* CPDF_ShadingPattern::AsShadingPattern() {
   return this;
 }

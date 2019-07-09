@@ -18,6 +18,14 @@ CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
 
 CPDF_Pattern::~CPDF_Pattern() = default;
 
+CPDF_TilingPattern* CPDF_Pattern::AsTilingPattern() {
+  return nullptr;
+}
+
+CPDF_ShadingPattern* CPDF_Pattern::AsShadingPattern() {
+  return nullptr;
+}
+
 void CPDF_Pattern::SetPatternToFormMatrix() {
   const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
   m_Pattern2Form = pDict->GetMatrixFor("Matrix") * m_ParentMatrix;

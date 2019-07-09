@@ -118,7 +118,7 @@ class CPDF_StreamContentParser {
                         bool bText,
                         bool bGraph);
   RetainPtr<CPDF_ColorSpace> FindColorSpace(const ByteString& name);
-  CPDF_Pattern* FindPattern(const ByteString& name, bool bShading);
+  RetainPtr<CPDF_Pattern> FindPattern(const ByteString& name, bool bShading);
   CPDF_Dictionary* FindResourceHolder(const ByteString& type);
   CPDF_Object* FindResourceObj(const ByteString& type, const ByteString& name);
 
