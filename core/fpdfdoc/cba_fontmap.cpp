@@ -106,7 +106,7 @@ int32_t CBA_FontMap::GetWordFontIndex(uint16_t word,
   }
 
   int32_t nNewFontIndex =
-      GetFontIndex(GetNativeFontName(nCharset), nCharset, true);
+      GetFontIndex(GetCachedNativeFontName(nCharset), nCharset, true);
   if (nNewFontIndex >= 0) {
     if (KnowWord(nNewFontIndex, word))
       return nNewFontIndex;
@@ -422,7 +422,7 @@ int32_t CBA_FontMap::FindFont(const ByteString& sFontName, int32_t nCharset) {
   return -1;
 }
 
-ByteString CBA_FontMap::GetNativeFont(int32_t nCharset) {
+ByteString CBA_FontMap::GetNativeFontName(int32_t nCharset) {
   if (nCharset == FX_CHARSET_Default)
     nCharset = GetNativeCharset();
 
@@ -433,13 +433,13 @@ ByteString CBA_FontMap::GetNativeFont(int32_t nCharset) {
   return sFontName;
 }
 
-ByteString CBA_FontMap::GetNativeFontName(int32_t nCharset) {
+ByteString CBA_FontMap::GetCachedNativeFontName(int32_t nCharset) {
   for (const auto& pData : m_NativeFont) {
     if (pData && pData->nCharset == nCharset)
       return pData->sFontName;
   }
 
-  ByteString sNew = GetNativeFont(nCharset);
+  ByteString sNew = GetNativeFontName(nCharset);
   if (sNew.IsEmpty())
     return ByteString();
 
@@ -505,7 +505,7 @@ CPDF_Font* CBA_FontMap::AddSystemFont(CPDF_Document* pDoc,
     return nullptr;
 
   if (sFontName.IsEmpty())
-    sFontName = GetNativeFont(nCharset);
+    sFontName = GetNativeFontName(nCharset);
 
   if (nCharset == FX_CHARSET_Default)
     nCharset = GetNativeCharset();

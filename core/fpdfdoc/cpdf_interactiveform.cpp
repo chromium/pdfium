@@ -98,7 +98,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
 
     if (charSet != FX_CHARSET_ANSI) {
       ByteString csFontName =
-          CPDF_InteractiveForm::GetNativeFont(charSet, nullptr);
+          CPDF_InteractiveForm::GetNativeFontName(charSet, nullptr);
       if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
         pFont = CPDF_InteractiveForm::AddNativeFont(pDocument);
         if (pFont) {
@@ -304,7 +304,8 @@ CPDF_Font* AddNativeFont(CPDF_Dictionary*& pFormDict,
     *csNameTag = std::move(csTemp);
     return pFont;
   }
-  ByteString csFontName = CPDF_InteractiveForm::GetNativeFont(charSet, nullptr);
+  ByteString csFontName =
+      CPDF_InteractiveForm::GetNativeFontName(charSet, nullptr);
   if (!csFontName.IsEmpty() &&
       FindFont(pFormDict, pDocument, csFontName, pFont, csNameTag)) {
     return pFont;
@@ -624,8 +625,8 @@ CPDF_Font* CPDF_InteractiveForm::AddStandardFont(CPDF_Document* pDocument,
   return pPageData->AddStandardFont(csFontName.c_str(), &encoding);
 }
 
-ByteString CPDF_InteractiveForm::GetNativeFont(uint8_t charSet,
-                                               void* pLogFont) {
+ByteString CPDF_InteractiveForm::GetNativeFontName(uint8_t charSet,
+                                                   void* pLogFont) {
   ByteString csFontName;
 #if defined(OS_WIN)
   LOGFONTA lf = {};
@@ -670,7 +671,7 @@ CPDF_Font* CPDF_InteractiveForm::AddNativeFont(uint8_t charSet,
 
 #if defined(OS_WIN)
   LOGFONTA lf;
-  ByteString csFontName = GetNativeFont(charSet, &lf);
+  ByteString csFontName = GetNativeFontName(charSet, &lf);
   if (!csFontName.IsEmpty()) {
     if (csFontName == CFX_Font::kDefaultAnsiFontName)
       return AddStandardFont(pDocument, csFontName);
