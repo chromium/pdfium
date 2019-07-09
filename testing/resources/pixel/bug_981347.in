@@ -1,0 +1,66 @@
+{{header}}
+{{object 1 0}} <<
+   /Type /Catalog
+   /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [ 4 0 R ]
+  /Resources <<
+    /ColorSpace <<
+      /Cs1P [ /Pattern 5 0 R ]
+    >>
+    /Pattern <<
+      /Pt1 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+/Cs1P cs
+/Pt1 scn
+endstream
+endobj
+{{object 5 0}} [
+  /DeviceN
+  [ /Black ]
+  /DeviceCMYK
+  7 0 R
+]
+endobj
+{{object 6 0}} <<
+  /Type /Pattern
+  /PaintType 1
+  /PatternType 1
+  {{streamlen}}
+>>
+stream
+endstream
+endobj
+{{object 7 0}} <<
+  /FunctionType 4
+  /Domain [ 0 1 ]
+  /Range [ 0 1 0 1 0 1 0 1 ]
+  {{streamlen}}
+>>
+stream
+{
+0 %c
+}
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
