@@ -388,39 +388,32 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
     }
 
     ASSERT(point_type == FXPT_TYPE::LineTo);
-    int next =
+    int next_index =
         (i + 1 - startPoint) % (m_Points.size() - startPoint) + startPoint;
-    if (m_Points[next].m_Type == FXPT_TYPE::BezierTo ||
-        m_Points[next].m_Type == FXPT_TYPE::MoveTo) {
+    const FX_PATHPOINT& next = m_Points[next_index];
+    if (next.m_Type == FXPT_TYPE::BezierTo || next.m_Type == FXPT_TYPE::MoveTo)
       continue;
-    }
 
-    if (IsFoldingVerticalLine(m_Points[i - 1].m_Point, m_Points[i].m_Point,
-                              m_Points[next].m_Point)) {
-      int pre = i;
-      if (fabs(m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) <
-          fabs(m_Points[i].m_Point.y - m_Points[next].m_Point.y)) {
-        pre--;
-        next--;
-      }
-
-      NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
-      NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo, false);
-    } else if (IsFoldingHorizontalLine(m_Points[i - 1].m_Point,
-                                       m_Points[i].m_Point,
-                                       m_Points[next].m_Point)) {
-      int pre = i;
-      if (fabs(m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) <
-          fabs(m_Points[i].m_Point.x - m_Points[next].m_Point.x)) {
-        pre--;
-        next--;
-      }
-
-      NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
-      NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo, false);
-    } else if (IsClosedFigure(m_Points[i - 1], m_Points[next])) {
-      NewPath->AppendPoint(m_Points[i - 1].m_Point, FXPT_TYPE::MoveTo, false);
-      NewPath->AppendPoint(m_Points[i].m_Point, FXPT_TYPE::LineTo, false);
+    const FX_PATHPOINT& prev = m_Points[i - 1];
+    const FX_PATHPOINT& cur = m_Points[i];
+    if (IsFoldingVerticalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
+      bool use_prev = fabs(cur.m_Point.y - prev.m_Point.y) <
+                      fabs(cur.m_Point.y - next.m_Point.y);
+      const FX_PATHPOINT& start = use_prev ? prev : cur;
+      const FX_PATHPOINT& end = use_prev ? m_Points[next_index - 1] : next;
+      NewPath->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(end.m_Point, FXPT_TYPE::LineTo, false);
+    } else if (IsFoldingHorizontalLine(prev.m_Point, cur.m_Point,
+                                       next.m_Point)) {
+      bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
+                      fabs(cur.m_Point.x - next.m_Point.x);
+      const FX_PATHPOINT& start = use_prev ? prev : cur;
+      const FX_PATHPOINT& end = use_prev ? m_Points[next_index - 1] : next;
+      NewPath->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(end.m_Point, FXPT_TYPE::LineTo, false);
+    } else if (IsClosedFigure(prev, next)) {
+      NewPath->AppendPoint(prev.m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(cur.m_Point, FXPT_TYPE::LineTo, false);
       *bThin = true;
     }
   }
