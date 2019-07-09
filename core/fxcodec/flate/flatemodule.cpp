@@ -227,7 +227,10 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     } else {
       DecodeString(code);
     }
-    if (dest_byte_pos_ + stack_len_ > dest_size)
+
+    FX_SAFE_UINT32 required_size = dest_byte_pos_;
+    required_size += stack_len_;
+    if (!required_size.IsValid() || required_size.ValueOrDie() > dest_size)
       return false;
 
     if (dest_buf) {
