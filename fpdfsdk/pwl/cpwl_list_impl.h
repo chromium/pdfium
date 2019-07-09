@@ -115,9 +115,9 @@ class CPWL_ListCtrl {
    private:
     CPWL_EditImpl_Iterator* GetIterator() const;
 
-    std::unique_ptr<CPWL_EditImpl> m_pEdit;
-    bool m_bSelected;
+    bool m_bSelected = false;
     CFX_FloatRect m_rcListItem;
+    std::unique_ptr<CPWL_EditImpl> const m_pEdit;
   };
 
   CFX_PointF InToOut(const CFX_PointF& point) const;

@@ -16,15 +16,12 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CPWL_ListCtrl::Item::Item()
-    : m_pEdit(new CPWL_EditImpl),
-      m_bSelected(false),
-      m_rcListItem(0.0f, 0.0f, 0.0f, 0.0f) {
+CPWL_ListCtrl::Item::Item() : m_pEdit(pdfium::MakeUnique<CPWL_EditImpl>()) {
   m_pEdit->SetAlignmentV(1, true);
   m_pEdit->Initialize();
 }
 
-CPWL_ListCtrl::Item::~Item() {}
+CPWL_ListCtrl::Item::~Item() = default;
 
 void CPWL_ListCtrl::Item::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pEdit->SetFontMap(pFontMap);
