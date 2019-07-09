@@ -218,6 +218,7 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     if (old_code == 0xFFFFFFFF)
       return false;
 
+    ASSERT(old_code < 256 || old_code >= 258);
     stack_len_ = 0;
     if (code - 258 >= current_code_) {
       if (stack_len_ < sizeof(decode_stack_))
@@ -235,8 +236,7 @@ bool CLZWDecoder::Decode(uint8_t* dest_buf,
     }
     dest_byte_pos_ += stack_len_;
     last_char = decode_stack_[stack_len_ - 1];
-    // TODO(thestig): What happens if |old_code| is 257?
-    if (old_code >= 256 && old_code - 258 >= current_code_)
+    if (old_code >= 258 && old_code - 258 >= current_code_)
       break;
 
     AddCode(old_code, last_char);
