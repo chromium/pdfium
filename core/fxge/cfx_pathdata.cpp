@@ -11,6 +11,23 @@
 
 namespace {
 
+bool IsFoldingVerticalLine(const CFX_PointF& a,
+                           const CFX_PointF& b,
+                           const CFX_PointF& c) {
+  return a.x == b.x && b.x == c.x && (b.y - a.y) * (b.y - c.y) > 0;
+}
+
+bool IsFoldingHorizontalLine(const CFX_PointF& a,
+                             const CFX_PointF& b,
+                             const CFX_PointF& c) {
+  return a.y == b.y && b.y == c.y && (b.x - a.x) * (b.x - c.x) > 0;
+}
+
+bool IsClosedFigure(const FX_PATHPOINT& prev, const FX_PATHPOINT& next) {
+  return prev.m_Type == FXPT_TYPE::MoveTo && next.m_Type == FXPT_TYPE::LineTo &&
+         prev.m_Point == next.m_Point && next.m_CloseFigure;
+}
+
 void UpdateLineEndPoints(CFX_FloatRect* rect,
                          const CFX_PointF& start_pos,
                          const CFX_PointF& end_pos,
@@ -378,11 +395,8 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
       continue;
     }
 
-    if ((m_Points[i - 1].m_Point.x == m_Points[i].m_Point.x &&
-         m_Points[i].m_Point.x == m_Points[next].m_Point.x) &&
-        ((m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) *
-             (m_Points[i].m_Point.y - m_Points[next].m_Point.y) >
-         0)) {
+    if (IsFoldingVerticalLine(m_Points[i - 1].m_Point, m_Points[i].m_Point,
+                              m_Points[next].m_Point)) {
       int pre = i;
       if (fabs(m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) <
           fabs(m_Points[i].m_Point.y - m_Points[next].m_Point.y)) {
@@ -392,11 +406,9 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
 
       NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
       NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo, false);
-    } else if ((m_Points[i - 1].m_Point.y == m_Points[i].m_Point.y &&
-                m_Points[i].m_Point.y == m_Points[next].m_Point.y) &&
-               ((m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) *
-                    (m_Points[i].m_Point.x - m_Points[next].m_Point.x) >
-                0)) {
+    } else if (IsFoldingHorizontalLine(m_Points[i - 1].m_Point,
+                                       m_Points[i].m_Point,
+                                       m_Points[next].m_Point)) {
       int pre = i;
       if (fabs(m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) <
           fabs(m_Points[i].m_Point.x - m_Points[next].m_Point.x)) {
@@ -406,10 +418,7 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
 
       NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
       NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo, false);
-    } else if (m_Points[i - 1].m_Type == FXPT_TYPE::MoveTo &&
-               m_Points[next].m_Type == FXPT_TYPE::LineTo &&
-               m_Points[i - 1].m_Point == m_Points[next].m_Point &&
-               m_Points[next].m_CloseFigure) {
+    } else if (IsClosedFigure(m_Points[i - 1], m_Points[next])) {
       NewPath->AppendPoint(m_Points[i - 1].m_Point, FXPT_TYPE::MoveTo, false);
       NewPath->AppendPoint(m_Points[i].m_Point, FXPT_TYPE::LineTo, false);
       *bThin = true;
