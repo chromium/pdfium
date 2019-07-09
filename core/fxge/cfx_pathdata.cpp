@@ -358,58 +358,61 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
   }
 
   int startPoint = 0;
-  int next = 0;
   for (size_t i = 0; i < m_Points.size(); i++) {
     FXPT_TYPE point_type = m_Points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       startPoint = i;
-    } else if (point_type == FXPT_TYPE::LineTo) {
-      next = (i + 1 - startPoint) % (m_Points.size() - startPoint) + startPoint;
-      if (m_Points[next].m_Type != FXPT_TYPE::BezierTo &&
-          m_Points[next].m_Type != FXPT_TYPE::MoveTo) {
-        if ((m_Points[i - 1].m_Point.x == m_Points[i].m_Point.x &&
-             m_Points[i].m_Point.x == m_Points[next].m_Point.x) &&
-            ((m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) *
-                 (m_Points[i].m_Point.y - m_Points[next].m_Point.y) >
-             0)) {
-          int pre = i;
-          if (fabs(m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) <
-              fabs(m_Points[i].m_Point.y - m_Points[next].m_Point.y)) {
-            pre--;
-            next--;
-          }
+      continue;
+    }
 
-          NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
-          NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo,
-                               false);
-        } else if ((m_Points[i - 1].m_Point.y == m_Points[i].m_Point.y &&
-                    m_Points[i].m_Point.y == m_Points[next].m_Point.y) &&
-                   ((m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) *
-                        (m_Points[i].m_Point.x - m_Points[next].m_Point.x) >
-                    0)) {
-          int pre = i;
-          if (fabs(m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) <
-              fabs(m_Points[i].m_Point.x - m_Points[next].m_Point.x)) {
-            pre--;
-            next--;
-          }
-
-          NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
-          NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo,
-                               false);
-        } else if (m_Points[i - 1].m_Type == FXPT_TYPE::MoveTo &&
-                   m_Points[next].m_Type == FXPT_TYPE::LineTo &&
-                   m_Points[i - 1].m_Point == m_Points[next].m_Point &&
-                   m_Points[next].m_CloseFigure) {
-          NewPath->AppendPoint(m_Points[i - 1].m_Point, FXPT_TYPE::MoveTo,
-                               false);
-          NewPath->AppendPoint(m_Points[i].m_Point, FXPT_TYPE::LineTo, false);
-          *bThin = true;
-        }
-      }
-    } else if (point_type == FXPT_TYPE::BezierTo) {
+    if (point_type == FXPT_TYPE::BezierTo) {
       i += 2;
       continue;
+    }
+
+    ASSERT(point_type == FXPT_TYPE::LineTo);
+    int next =
+        (i + 1 - startPoint) % (m_Points.size() - startPoint) + startPoint;
+    if (m_Points[next].m_Type == FXPT_TYPE::BezierTo ||
+        m_Points[next].m_Type == FXPT_TYPE::MoveTo) {
+      continue;
+    }
+
+    if ((m_Points[i - 1].m_Point.x == m_Points[i].m_Point.x &&
+         m_Points[i].m_Point.x == m_Points[next].m_Point.x) &&
+        ((m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) *
+             (m_Points[i].m_Point.y - m_Points[next].m_Point.y) >
+         0)) {
+      int pre = i;
+      if (fabs(m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) <
+          fabs(m_Points[i].m_Point.y - m_Points[next].m_Point.y)) {
+        pre--;
+        next--;
+      }
+
+      NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo, false);
+    } else if ((m_Points[i - 1].m_Point.y == m_Points[i].m_Point.y &&
+                m_Points[i].m_Point.y == m_Points[next].m_Point.y) &&
+               ((m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) *
+                    (m_Points[i].m_Point.x - m_Points[next].m_Point.x) >
+                0)) {
+      int pre = i;
+      if (fabs(m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) <
+          fabs(m_Points[i].m_Point.x - m_Points[next].m_Point.x)) {
+        pre--;
+        next--;
+      }
+
+      NewPath->AppendPoint(m_Points[pre].m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(m_Points[next].m_Point, FXPT_TYPE::LineTo, false);
+    } else if (m_Points[i - 1].m_Type == FXPT_TYPE::MoveTo &&
+               m_Points[next].m_Type == FXPT_TYPE::LineTo &&
+               m_Points[i - 1].m_Point == m_Points[next].m_Point &&
+               m_Points[next].m_CloseFigure) {
+      NewPath->AppendPoint(m_Points[i - 1].m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(m_Points[i].m_Point, FXPT_TYPE::LineTo, false);
+      *bThin = true;
     }
   }
 
