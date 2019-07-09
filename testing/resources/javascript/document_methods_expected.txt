@@ -131,14 +131,7 @@ Alert: PASS: this.mailForm({}) = undefined
 Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=LotteryWinner, body=You won the lottery!
 Alert: PASS: this.mailForm({"bUI": false, "cTo": "user@example.com", "cCc": "cc@example.com", "cBcc": "bcc@example.com", "cSubject": "LotteryWinner", "cMsg": "You won the lottery!", "bogus": "yes"}) = undefined
 Alert: PASS: typeof this.print = function
-Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
-Alert: PASS: this.print() = undefined
-Doc Print: 0, 1, 10, 1, 1, 1, 1, 1
-Alert: PASS: this.print(false, 1, 10, true, true, true, true, true) = undefined
-Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
-Alert: PASS: this.print({}) = undefined
-Doc Print: 1, 42, 17, 1, 1, 1, 1, 1
-Alert: PASS: this.print({"bUi": false, "nStart": 42, "nEnd": 17, "bSilent": true, "bShrinkToFit": true, "bPrintAsImage": true, "bReverse": true, "bAnnotations": true, "bogus": "yes"}) = undefined
+Alert: PASS: this.print() threw Document.print: User gesture required.
 Alert: PASS: typeof this.removeField = function
 Alert: PASS: this.removeField() threw Document.removeField: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.resetForm = function

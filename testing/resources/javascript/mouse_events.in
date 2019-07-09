@@ -61,6 +61,13 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
+
+    try {
+       this.print\(\);
+       app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.print blocked with " + e\);
+    }
   )
 >>
 endobj
@@ -75,6 +82,13 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
+
+    try {
+       this.print\(\);
+       app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.print blocked with " + e\);
+    }
   )
 >>
 endobj
@@ -88,6 +102,17 @@ endobj
     } catch \(e\) {
        app.alert\("ERROR: " + e\);
     }
+
+    try {
+       this.print\(\);
+       this.print\(false, 1, 10, true, true, true, true, true\);
+       this.print\({}\);
+       this.print\({"bUi": false, "nStart": 42, "nEnd": 17,
+            "bSilent": true, "bShrinkToFit": true, "bPrintAsImage": true,
+            "bReverse": true, "bAnnotations": true, "bogus": "yes"}\);
+    } catch \(e\) {
+       app.alert\("ERROR: " + e\);
+    }
   )
 >>
 endobj
@@ -98,6 +123,12 @@ endobj
     app.alert\("up"\);
     try {
        this.submitForm\("myform", true, true, ["name", "age"]\);
+    } catch \(e\) {
+       app.alert\("ERROR: " + e\);
+    }
+
+    try {
+       this.print\(\);
     } catch \(e\) {
        app.alert\("ERROR: " + e\);
     }
@@ -115,6 +146,13 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
+
+    try {
+       this.print\(\);
+       app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.print blocked with " + e\);
+    }
   )
 >>
 endobj
@@ -128,6 +166,13 @@ endobj
        app.alert\("ERROR: this.submitForm\(\) must not be allowed to execute"\);
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
+    }
+
+    try {
+       this.print\(\);
+       app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
+    } catch \(e\) {
+       app.alert\("PASS: this.print blocked with " + e\);
     }
   )
 >>

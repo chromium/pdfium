@@ -508,6 +508,11 @@ CJS_Result CJS_Document::print(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
+  CJS_EventRecorder* pHandler =
+      pRuntime->GetCurrentEventContext()->GetEventRecorder();
+  if (!pHandler->IsUserGesture())
+    return CJS_Result::Failure(JSMessage::kUserGestureRequiredError);
+
   m_pFormFillEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit,
                               bPrintAsImage, bReverse, bAnnotations);
   return CJS_Result::Success();

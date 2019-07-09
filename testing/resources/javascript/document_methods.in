@@ -274,16 +274,11 @@ function testMailForm() {
 }
 
 function testPrint() {
-   // Method is present.
-   expect('typeof this.print', 'function');
+  // Method is present.
+  expect('typeof this.print', 'function');
 
-  // TODO(tsepez): test success cases.
-  expect('this.print()', undefined);
-  expect('this.print(false, 1, 10, true, true, true, true, true)', undefined);
-  expect('this.print({})', undefined);
-  expect('this.print({"bUi": false, "nStart": 42, "nEnd": 17, ' +
-            '"bSilent": true, "bShrinkToFit": true, "bPrintAsImage": true, ' +
-            '"bReverse": true, "bAnnotations": true, "bogus": "yes"})', undefined);
+  // Successful only when invoked by a user gesture.
+  expectError('this.print()', undefined);
 }
 
 function testRemoveField() {
