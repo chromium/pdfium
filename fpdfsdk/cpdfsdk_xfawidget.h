@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 
@@ -35,7 +36,7 @@ class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
 
  private:
   UnownedPtr<CPDFSDK_InteractiveForm> const m_pInteractiveForm;
-  UnownedPtr<CXFA_FFWidget> const m_hXFAWidget;
+  ObservedPtr<CXFA_FFWidget> const m_pXFAWidget;
 };
 
 inline CPDFSDK_XFAWidget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {

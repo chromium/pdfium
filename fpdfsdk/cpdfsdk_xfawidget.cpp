@@ -14,7 +14,7 @@ CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
                                      CPDFSDK_InteractiveForm* pInteractiveForm)
     : CPDFSDK_Annot(pPageView),
       m_pInteractiveForm(pInteractiveForm),
-      m_hXFAWidget(pAnnot) {}
+      m_pXFAWidget(pAnnot) {}
 
 CPDFSDK_XFAWidget::~CPDFSDK_XFAWidget() = default;
 
@@ -23,7 +23,7 @@ bool CPDFSDK_XFAWidget::IsXFAField() const {
 }
 
 CXFA_FFWidget* CPDFSDK_XFAWidget::GetXFAWidget() const {
-  return m_hXFAWidget.Get();
+  return m_pXFAWidget.Get();
 }
 
 CPDF_Annot::Subtype CPDFSDK_XFAWidget::GetAnnotSubtype() const {
