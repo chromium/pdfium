@@ -23,6 +23,13 @@ bool IsFoldingHorizontalLine(const CFX_PointF& a,
   return a.y == b.y && b.y == c.y && (b.x - a.x) * (b.x - c.x) > 0;
 }
 
+bool IsFoldingDiagonalLine(const CFX_PointF& a,
+                           const CFX_PointF& b,
+                           const CFX_PointF& c) {
+  return a.x != b.x && c.x != b.x && a.y != b.y && c.y != b.y &&
+         (a.y - b.y) * (c.x - b.x) == (c.y - b.y) * (a.x - b.x);
+}
+
 bool IsClosedFigure(const FX_PATHPOINT& prev, const FX_PATHPOINT& next) {
   return prev.m_Type == FXPT_TYPE::MoveTo && next.m_Type == FXPT_TYPE::LineTo &&
          prev.m_Point == next.m_Point && next.m_CloseFigure;
@@ -405,6 +412,13 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
       NewPath->AppendPoint(end.m_Point, FXPT_TYPE::LineTo, false);
     } else if (IsFoldingHorizontalLine(prev.m_Point, cur.m_Point,
                                        next.m_Point)) {
+      bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
+                      fabs(cur.m_Point.x - next.m_Point.x);
+      const FX_PATHPOINT& start = use_prev ? prev : cur;
+      const FX_PATHPOINT& end = use_prev ? m_Points[next_index - 1] : next;
+      NewPath->AppendPoint(start.m_Point, FXPT_TYPE::MoveTo, false);
+      NewPath->AppendPoint(end.m_Point, FXPT_TYPE::LineTo, false);
+    } else if (IsFoldingDiagonalLine(prev.m_Point, cur.m_Point, next.m_Point)) {
       bool use_prev = fabs(cur.m_Point.x - prev.m_Point.x) <
                       fabs(cur.m_Point.x - next.m_Point.x);
       const FX_PATHPOINT& start = use_prev ? prev : cur;
