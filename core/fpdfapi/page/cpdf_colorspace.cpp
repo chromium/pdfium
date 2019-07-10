@@ -442,7 +442,9 @@ void XYZ_to_sRGB_WhitePoint(float X,
 
 }  // namespace
 
-PatternValue::PatternValue() = default;
+PatternValue::PatternValue() {
+  std::fill(std::begin(m_Comps), std::end(m_Comps), 0.0f);
+}
 
 PatternValue::PatternValue(const PatternValue& that) = default;
 
