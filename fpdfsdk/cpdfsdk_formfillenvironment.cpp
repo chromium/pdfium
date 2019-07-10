@@ -406,7 +406,7 @@ FS_RECTF CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page) {
 bool CPDFSDK_FormFillEnvironment::PopupMenu(CPDFXFA_Page* page,
                                             FPDF_WIDGET hWidget,
                                             int menuFlag,
-                                            CFX_PointF pt) {
+                                            const CFX_PointF& pt) {
   return m_pInfo && m_pInfo->FFI_PopupMenu &&
          m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromIPDFPage(page), hWidget,
                                 menuFlag, pt.x, pt.y);

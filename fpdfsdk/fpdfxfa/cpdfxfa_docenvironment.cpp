@@ -238,7 +238,7 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
 }
 
 bool CPDFXFA_DocEnvironment::PopupMenu(CXFA_FFWidget* hWidget,
-                                       CFX_PointF ptPopup) {
+                                       const CFX_PointF& ptPopup) {
   if (!hWidget)
     return false;
 

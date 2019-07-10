@@ -134,7 +134,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   bool PopupMenu(CPDFXFA_Page* page,
                  FPDF_WIDGET hWidget,
                  int menuFlag,
-                 CFX_PointF pt);
+                 const CFX_PointF& pt);
 
   void EmailTo(FPDF_FILEHANDLER* fileHandler,
                FPDF_WIDESTRING pTo,

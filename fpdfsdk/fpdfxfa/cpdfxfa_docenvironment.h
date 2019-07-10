@@ -33,7 +33,7 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
                    float fMaxPopup,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect) override;
-  bool PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) override;
+  bool PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) override;
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
   void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) override;
