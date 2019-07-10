@@ -2270,3 +2270,51 @@ TEST_F(FPDFFormFillListBoxFormEmbedderTest,
   }
   CheckFocusedFieldText(L"Banana");
 }
+
+TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
+  ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"XYZ");
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  TypeTextIntoTextField(2, RegularFormBegin());
+  CheckFocusedFieldText(L"AB");
+  CheckSelection(L"");
+  SelectTextWithKeyboard(1, FWL_VKEY_Right, RegularFormBegin());
+  CheckSelection(L"A");
+
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
+  CheckFocusedFieldText(L"XYZB");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"AB");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"A");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"");
+  CheckCanUndo(false);
+  CheckCanRedo(true);
+
+  PerformRedo();
+  CheckFocusedFieldText(L"A");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+
+  PerformRedo();
+  CheckFocusedFieldText(L"AB");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+
+  PerformRedo();
+  CheckFocusedFieldText(L"XYZB");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+}

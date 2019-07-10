@@ -98,8 +98,16 @@ class IFX_Edit_UndoItem {
  public:
   virtual ~IFX_Edit_UndoItem() = default;
 
-  virtual void Undo() = 0;
-  virtual void Redo() = 0;
+  // Undo/Redo the current undo item and returns the number of additional items
+  // to be processed in |m_UndoItemStack| to fully undo/redo the action. (An
+  // example is CFXEU_ReplaceSelection::Undo(), if CFXEU_ReplaceSelection marks
+  // the end of a replace action, CFXEU_ReplaceSelection::Undo() returns 3
+  // because 3 more undo items need to be processed to revert the replace
+  // action: insert text, clear selection and the CFXEU_ReplaceSelection which
+  // marks the beginning of replace action.) Implementations should return 0 by
+  // default.
+  virtual int Undo() = 0;
+  virtual int Redo() = 0;
 };
 
 class CFXEU_InsertWord final : public IFX_Edit_UndoItem {
@@ -112,8 +120,8 @@ class CFXEU_InsertWord final : public IFX_Edit_UndoItem {
   ~CFXEU_InsertWord() override;
 
   // IFX_Edit_UndoItem:
-  void Redo() override;
-  void Undo() override;
+  int Redo() override;
+  int Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
@@ -132,14 +140,30 @@ class CFXEU_InsertReturn final : public IFX_Edit_UndoItem {
   ~CFXEU_InsertReturn() override;
 
   // IFX_Edit_UndoItem:
-  void Redo() override;
-  void Undo() override;
+  int Redo() override;
+  int Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
 
   CPVT_WordPlace m_wpOld;
   CPVT_WordPlace m_wpNew;
+};
+
+class CFXEU_ReplaceSelection final : public IFX_Edit_UndoItem {
+ public:
+  CFXEU_ReplaceSelection(CPWL_EditImpl* pEdit, bool bIsEnd);
+  ~CFXEU_ReplaceSelection() override;
+
+  // IFX_Edit_UndoItem:
+  int Redo() override;
+  int Undo() override;
+
+ private:
+  bool IsEnd() const { return m_bEnd; }
+
+  UnownedPtr<CPWL_EditImpl> m_pEdit;
+  const bool m_bEnd;  // indicate whether this is the end of replace action
 };
 
 class CFXEU_Backspace final : public IFX_Edit_UndoItem {
@@ -152,8 +176,8 @@ class CFXEU_Backspace final : public IFX_Edit_UndoItem {
   ~CFXEU_Backspace() override;
 
   // IFX_Edit_UndoItem:
-  void Redo() override;
-  void Undo() override;
+  int Redo() override;
+  int Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
@@ -175,8 +199,8 @@ class CFXEU_Delete final : public IFX_Edit_UndoItem {
   ~CFXEU_Delete() override;
 
   // IFX_Edit_UndoItem:
-  void Redo() override;
-  void Undo() override;
+  int Redo() override;
+  int Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
@@ -196,8 +220,8 @@ class CFXEU_Clear final : public IFX_Edit_UndoItem {
   ~CFXEU_Clear() override;
 
   // IFX_Edit_UndoItem:
-  void Redo() override;
-  void Undo() override;
+  int Redo() override;
+  int Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
@@ -216,8 +240,8 @@ class CFXEU_InsertText final : public IFX_Edit_UndoItem {
   ~CFXEU_InsertText() override;
 
   // IFX_Edit_UndoItem:
-  void Redo() override;
-  void Undo() override;
+  int Redo() override;
+  int Undo() override;
 
  private:
   UnownedPtr<CPWL_EditImpl> m_pEdit;
@@ -289,6 +313,7 @@ class CPWL_EditImpl {
   bool Delete();
   bool ClearSelection();
   bool InsertText(const WideString& sText, int32_t charset);
+  void ReplaceSelection(const WideString& text);
   bool Redo();
   bool Undo();
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
