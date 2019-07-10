@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_substfont.h"
@@ -36,10 +37,10 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
 }
 
 // static
-RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(CFX_Font* pExternalFont,
+RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(CPDF_Font* pPDFFont,
                                                CFGAS_FontMgr* pFontMgr) {
   auto pFont = pdfium::MakeRetain<CFGAS_GEFont>(pFontMgr);
-  if (!pFont->LoadFontInternal(pExternalFont))
+  if (!pFont->LoadFontInternal(pPDFFont->GetFont()))
     return nullptr;
   return pFont;
 }

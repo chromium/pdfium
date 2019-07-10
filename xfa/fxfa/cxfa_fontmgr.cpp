@@ -64,11 +64,11 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
         ByteString::Format("%ls", WideString(wsFontFamily).c_str());
     CPDF_Font* stock_font =
         CPDF_Font::GetStockFont(hDoc->GetPDFDoc(), font_family.AsStringView());
-    if (stock_font)
-      pFont = CFGAS_GEFont::LoadFont(stock_font->GetFont(),
-                                     hDoc->GetApp()->GetFDEFontMgr());
+    if (stock_font) {
+      pFont =
+          CFGAS_GEFont::LoadFont(stock_font, hDoc->GetApp()->GetFDEFontMgr());
+    }
   }
-
   if (pFont)
     m_FontMap[bsKey] = pFont;
 

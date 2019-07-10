@@ -22,6 +22,7 @@
 
 class CFX_Font;
 class CFX_UnicodeEncodingEx;
+class CPDF_Font;
 
 class CFGAS_GEFont final : public Retainable {
  public:
@@ -32,7 +33,7 @@ class CFGAS_GEFont final : public Retainable {
                                           uint32_t dwFontStyles,
                                           uint16_t wCodePage,
                                           CFGAS_FontMgr* pFontMgr);
-  static RetainPtr<CFGAS_GEFont> LoadFont(CFX_Font* pExternalFont,
+  static RetainPtr<CFGAS_GEFont> LoadFont(CPDF_Font* pPDFFont,
                                           CFGAS_FontMgr* pFontMgr);
   static RetainPtr<CFGAS_GEFont> LoadFont(
       std::unique_ptr<CFX_Font> pInternalFont,
