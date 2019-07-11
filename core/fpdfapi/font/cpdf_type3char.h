@@ -14,17 +14,12 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
-class CPDF_Dictionary;
-class CPDF_Document;
 class CPDF_Form;
 class CPDF_RenderContext;
-class CPDF_Stream;
 
 class CPDF_Type3Char {
  public:
-  CPDF_Type3Char(CPDF_Document* pDocument,
-                 CPDF_Dictionary* pPageResources,
-                 CPDF_Stream* pFormStream);
+  explicit CPDF_Type3Char(std::unique_ptr<CPDF_Form> pForm);
   ~CPDF_Type3Char();
 
   static float TextUnitToGlyphUnit(float fTextUnit);
@@ -33,8 +28,6 @@ class CPDF_Type3Char {
   bool LoadBitmap(CPDF_RenderContext* pContext);
   void InitializeFromStreamData(bool bColored, const float* pData);
   void Transform(const CFX_Matrix& matrix);
-  void ResetForm();
-  void ParseContent();
   bool HasPageObjects() const;
 
   RetainPtr<CFX_DIBitmap> GetBitmap();
@@ -45,12 +38,11 @@ class CPDF_Type3Char {
   const CFX_Matrix& matrix() const { return m_ImageMatrix; }
   const FX_RECT& bbox() const { return m_BBox; }
 
- private:
-  friend class CPDF_RenderStatus;
-
   const CPDF_Form* form() const { return m_pForm.get(); }
   CPDF_Form* form() { return m_pForm.get(); }
+  void ResetForm();
 
+ private:
   std::unique_ptr<CPDF_Form> m_pForm;
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   bool m_bColored = false;

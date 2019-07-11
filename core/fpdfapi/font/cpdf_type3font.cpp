@@ -10,9 +10,11 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
+#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
 
@@ -106,17 +108,22 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!pStream)
     return nullptr;
 
-  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>(
+  auto form = pdfium::MakeUnique<CPDF_Form>(
       m_pDocument.Get(),
       m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
       pStream);
 
+  CPDF_Form* pForm = form.get();
+  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>(std::move(form));
+
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for
   // a cache hit.
-  m_CharLoadingDepth++;
-  pNewChar->ParseContent();
-  m_CharLoadingDepth--;
+  {
+    AutoRestorer<int> restorer(&m_CharLoadingDepth);
+    m_CharLoadingDepth++;
+    pForm->ParseContent(nullptr, nullptr, pNewChar.get(), nullptr);
+  }
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())
     return it->second.get();

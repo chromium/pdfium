@@ -22,12 +22,8 @@ constexpr float kTextUnitInGlyphUnit = 1000.0f;
 
 }  // namespace
 
-CPDF_Type3Char::CPDF_Type3Char(CPDF_Document* pDocument,
-                               CPDF_Dictionary* pPageResources,
-                               CPDF_Stream* pFormStream)
-    : m_pForm(pdfium::MakeUnique<CPDF_Form>(pDocument,
-                                            pPageResources,
-                                            pFormStream)) {}
+CPDF_Type3Char::CPDF_Type3Char(std::unique_ptr<CPDF_Form> pForm)
+    : m_pForm(std::move(pForm)) {}
 
 CPDF_Type3Char::~CPDF_Type3Char() = default;
 
@@ -98,10 +94,6 @@ void CPDF_Type3Char::Transform(const CFX_Matrix& matrix) {
 
 void CPDF_Type3Char::ResetForm() {
   m_pForm.reset();
-}
-
-void CPDF_Type3Char::ParseContent() {
-  m_pForm->ParseContent(nullptr, nullptr, this, nullptr);
 }
 
 bool CPDF_Type3Char::HasPageObjects() const {
