@@ -55,8 +55,7 @@ class CXFA_Object : public CFXJSE_HostObject {
            m_objectType == XFA_ObjectType::ModelNode ||
            m_objectType == XFA_ObjectType::TextNode ||
            m_objectType == XFA_ObjectType::ContainerNode ||
-           m_objectType == XFA_ObjectType::ContentNode ||
-           m_objectType == XFA_ObjectType::ThisProxy;
+           m_objectType == XFA_ObjectType::ContentNode;
   }
   bool IsTreeList() const { return m_objectType == XFA_ObjectType::TreeList; }
   bool IsContentNode() const {
