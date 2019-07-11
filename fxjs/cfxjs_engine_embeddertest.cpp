@@ -86,7 +86,7 @@ TEST_F(CFXJSEngineEmbedderTest, JSCompileError) {
   Optional<IJS_Runtime::JS_Error> err =
       engine()->Execute(L"functoon(x) { return x+1; }");
   EXPECT_TRUE(err);
-  EXPECT_EQ(L"SyntaxError: Unexpected token {", err->exception);
+  EXPECT_STREQ(L"SyntaxError: Unexpected token '{'", err->exception.c_str());
   EXPECT_EQ(1, err->line);
   EXPECT_EQ(12, err->column);
 }
