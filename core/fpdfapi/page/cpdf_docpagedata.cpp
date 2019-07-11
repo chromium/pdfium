@@ -396,18 +396,6 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
   return pCS;
 }
 
-RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetCopiedColorSpace(
-    const CPDF_Object* pCSObj) {
-  if (!pCSObj)
-    return nullptr;
-
-  auto it = m_ColorSpaceMap.find(pCSObj);
-  if (it == m_ColorSpaceMap.end() || !it->second)
-    return nullptr;
-
-  return pdfium::WrapRetain(it->second.Get());
-}
-
 RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
                                                      bool bShading,
                                                      const CFX_Matrix& matrix) {
@@ -530,18 +518,6 @@ void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
   auto it = m_FontFileMap.find(pFontStream);
   if (it != m_FontFileMap.end() && it->second->HasOneRef())
     m_FontFileMap.erase(it);
-}
-
-RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::FindColorSpacePtr(
-    const CPDF_Object* pCSObj) const {
-  if (!pCSObj)
-    return nullptr;
-
-  auto it = m_ColorSpaceMap.find(pCSObj);
-  if (it == m_ColorSpaceMap.end() || !it->second)
-    return nullptr;
-
-  return pdfium::WrapRetain(it->second.Get());
 }
 
 CPDF_Font* CPDF_DocPageData::AddStandardFont(

@@ -69,8 +69,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
       const CPDF_Dictionary* pResources,
       std::set<const CPDF_Object*>* pVisited);
 
-  RetainPtr<CPDF_ColorSpace> GetCopiedColorSpace(const CPDF_Object* pCSObj);
-
   RetainPtr<CPDF_Pattern> GetPattern(CPDF_Object* pPatternObj,
                                      bool bShading,
                                      const CFX_Matrix& matrix);
@@ -80,8 +78,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
 
   RetainPtr<CPDF_IccProfile> GetIccProfile(const CPDF_Stream* pProfileStream);
   void MaybePurgeIccProfile(const CPDF_Stream* pProfileStream);
-
-  RetainPtr<CPDF_ColorSpace> FindColorSpacePtr(const CPDF_Object* pCSObj) const;
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
