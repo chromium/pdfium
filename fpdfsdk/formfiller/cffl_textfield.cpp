@@ -196,7 +196,7 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
       if (CPWL_Edit* pEdit = GetEdit(pPageView, false)) {
         pEdit->SetFocus();
         pEdit->SetSelection(fa.nSelStart, fa.nSelEnd);
-        pEdit->ReplaceSel(fa.sChange);
+        pEdit->ReplaceSelection(fa.sChange);
       }
       break;
     default:

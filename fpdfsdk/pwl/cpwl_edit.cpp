@@ -405,10 +405,6 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
   m_pEdit->SetLimitChar(nLimitChar);
 }
 
-void CPWL_Edit::ReplaceSel(const WideString& wsText) {
-  m_pEdit->ReplaceSelection(wsText);
-}
-
 CFX_FloatRect CPWL_Edit::GetFocusRect() const {
   return CFX_FloatRect();
 }

@@ -588,7 +588,7 @@ bool CPWL_ComboBox::IsPopup() const {
 
 void CPWL_ComboBox::SetSelectText() {
   m_pEdit->SelectAll();
-  m_pEdit->ReplaceSel(m_pList->GetText());
+  m_pEdit->ReplaceSelection(m_pList->GetText());
   m_pEdit->SelectAll();
   m_nSelectItem = m_pList->GetCurSel();
 }

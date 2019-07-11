@@ -174,7 +174,7 @@ void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
               static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, false))) {
         if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
           pEdit->SetSelection(fa.nSelStart, fa.nSelEnd);
-          pEdit->ReplaceSel(fa.sChange);
+          pEdit->ReplaceSelection(fa.sChange);
         }
       }
       break;
