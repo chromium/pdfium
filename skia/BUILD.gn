@@ -21,23 +21,8 @@ skia_support_pdf = false  #!is_ios && (enable_basic_printing || enable_print_pre
 # External-facing config for dependent code.
 config("skia_config") {
   include_dirs = [
-    "config",
-    "ext",
     "//third_party/skia",
-    "//third_party/skia/include/c",
-    "//third_party/skia/include/codec",
-    "//third_party/skia/include/core",
-    "//third_party/skia/include/effects",
-    "//third_party/skia/include/encode",
-    "//third_party/skia/include/images",
-    "//third_party/skia/include/lazy",
-    "//third_party/skia/include/pathops",
-    "//third_party/skia/include/pdf",
-    "//third_party/skia/include/pipe",
-    "//third_party/skia/include/ports",
-    "//third_party/skia/include/utils",
     "//third_party/skia/third_party/skcms",
-    "//third_party/skia/third_party/vulkan",
   ]
 
   defines = [ "SK_USER_CONFIG_HEADER=\"../../skia/config/SkUserConfig.h\"" ]
@@ -54,10 +39,6 @@ config("skia_config") {
   }
 
   if (skia_support_gpu) {
-    include_dirs += [
-      "//third_party/skia/include/gpu",
-      "//third_party/skia/src/gpu",
-    ]
     defines += [ "SK_SUPPORT_GPU=1" ]
   } else {
     defines += [ "SK_SUPPORT_GPU=0" ]
@@ -81,33 +62,6 @@ config("skia_config") {
 
 # Internal-facing config for Skia library code.
 config("skia_library_config") {
-  # These include directories are only included for Skia code and are not
-  # exported to dependents.
-  include_dirs = [
-    "//third_party/skia/include/codec",
-    "//third_party/skia/include/docs",
-    "//third_party/skia/include/private",
-    "//third_party/skia/include/client/android",
-    "//third_party/skia/src/codec",
-    "//third_party/skia/src/core",
-    "//third_party/skia/src/image",
-    "//third_party/skia/src/lazy",
-    "//third_party/skia/src/opts",
-    "//third_party/skia/src/pdf",
-    "//third_party/skia/src/ports",
-    "//third_party/skia/src/sfnt",
-    "//third_party/skia/src/shaders",
-    "//third_party/skia/src/shaders/gradients",
-    "//third_party/skia/src/sksl",
-    "//third_party/skia/src/utils",
-  ]
-  if (is_mac || is_ios) {
-    include_dirs += [ "//third_party/skia/include/utils/mac" ]
-  }
-  if (is_mac) {
-    include_dirs += [ "//third_party/skia/include/utils/ios" ]
-  }
-
   defines = []
 
   if (is_component_build) {
@@ -158,11 +112,6 @@ config("skia_library_config") {
   }
 
   if (is_win) {
-    include_dirs += [
-      "//third_party/skia/include/utils/win",
-      "//third_party/skia/src/utils/win",
-    ]
-
     defines += [
       # On windows, GDI handles are a scarse system-wide resource so we have to
       # keep the glyph cache, which holds up to 4 GDI handles per entry, to a
