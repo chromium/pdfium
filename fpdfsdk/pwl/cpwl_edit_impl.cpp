@@ -209,6 +209,7 @@ bool CPWL_EditImpl_Undo::CanUndo() const {
 }
 
 void CPWL_EditImpl_Undo::Undo() {
+  ASSERT(!m_bWorking);
   m_bWorking = true;
   int nUndoRemain = 1;
   while (CanUndo() && nUndoRemain > 0) {
@@ -217,6 +218,7 @@ void CPWL_EditImpl_Undo::Undo() {
     nUndoRemain--;
   }
   ASSERT(nUndoRemain == 0);
+  ASSERT(m_bWorking);
   m_bWorking = false;
 }
 
@@ -225,6 +227,7 @@ bool CPWL_EditImpl_Undo::CanRedo() const {
 }
 
 void CPWL_EditImpl_Undo::Redo() {
+  ASSERT(!m_bWorking);
   m_bWorking = true;
   int nRedoRemain = 1;
   while (CanRedo() && nRedoRemain > 0) {
@@ -233,6 +236,7 @@ void CPWL_EditImpl_Undo::Redo() {
     nRedoRemain--;
   }
   ASSERT(nRedoRemain == 0);
+  ASSERT(m_bWorking);
   m_bWorking = false;
 }
 
