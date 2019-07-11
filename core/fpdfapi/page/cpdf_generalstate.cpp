@@ -7,7 +7,6 @@
 #include "core/fpdfapi/page/cpdf_generalstate.h"
 
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
 
