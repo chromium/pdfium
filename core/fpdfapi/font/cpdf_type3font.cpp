@@ -108,13 +108,12 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!pStream)
     return nullptr;
 
-  auto form = pdfium::MakeUnique<CPDF_Form>(
+  auto pForm = pdfium::MakeUnique<CPDF_Form>(
       m_pDocument.Get(),
       m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
       pStream);
 
-  CPDF_Form* pForm = form.get();
-  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>(std::move(form));
+  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>();
 
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for
@@ -128,11 +127,12 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (it != m_CacheMap.end())
     return it->second.get();
 
-  pNewChar->Transform(m_FontMatrix);
+  pNewChar->Transform(pForm.get(), m_FontMatrix);
+  if (pForm->GetPageObjectCount() != 0)
+    pNewChar->SetForm(std::move(pForm));
+
+  CPDF_Type3Char* pCachedChar = pNewChar.get();
   m_CacheMap[charcode] = std::move(pNewChar);
-  CPDF_Type3Char* pCachedChar = m_CacheMap[charcode].get();
-  if (!pCachedChar->HasPageObjects())
-    pCachedChar->ResetForm();
   return pCachedChar;
 }
 
