@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
-#include "core/fpdfapi/render/cpdf_type3glyphs.h"
+#include "core/fpdfapi/render/cpdf_type3glyphmap.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_glyphbitmap.h"
@@ -94,10 +94,10 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
       4, FXSYS_round(pMatrix->a * 10000), FXSYS_round(pMatrix->b * 10000),
       FXSYS_round(pMatrix->c * 10000), FXSYS_round(pMatrix->d * 10000));
   ByteString FaceGlyphsKey(keygen.m_Key, keygen.m_KeyLen);
-  CPDF_Type3Glyphs* pSizeCache;
+  CPDF_Type3GlyphMap* pSizeCache;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it == m_SizeMap.end()) {
-    auto pNew = pdfium::MakeUnique<CPDF_Type3Glyphs>();
+    auto pNew = pdfium::MakeUnique<CPDF_Type3GlyphMap>();
     pSizeCache = pNew.get();
     m_SizeMap[FaceGlyphsKey] = std::move(pNew);
   } else {
@@ -115,7 +115,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
 }
 
 std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
-    CPDF_Type3Glyphs* pSize,
+    CPDF_Type3GlyphMap* pSize,
     uint32_t charcode,
     const CFX_Matrix* pMatrix) {
   const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);

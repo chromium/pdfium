@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_type3glyphs.h"
+#include "core/fpdfapi/render/cpdf_type3glyphmap.h"
 
 #include <algorithm>
 #include <map>
@@ -36,11 +36,11 @@ int AdjustBlueHelper(float pos, std::vector<int>* blues) {
 
 }  // namespace
 
-CPDF_Type3Glyphs::CPDF_Type3Glyphs() {}
+CPDF_Type3GlyphMap::CPDF_Type3GlyphMap() {}
 
-CPDF_Type3Glyphs::~CPDF_Type3Glyphs() {}
+CPDF_Type3GlyphMap::~CPDF_Type3GlyphMap() {}
 
-std::pair<int, int> CPDF_Type3Glyphs::AdjustBlue(float top, float bottom) {
+std::pair<int, int> CPDF_Type3GlyphMap::AdjustBlue(float top, float bottom) {
   return std::make_pair(AdjustBlueHelper(top, &m_TopBlue),
                         AdjustBlueHelper(bottom, &m_BottomBlue));
 }

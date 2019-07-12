@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
-#define CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHMAP_H_
+#define CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHMAP_H_
 
 #include <map>
 #include <memory>
@@ -16,10 +16,10 @@
 
 class CFX_GlyphBitmap;
 
-class CPDF_Type3Glyphs {
+class CPDF_Type3GlyphMap {
  public:
-  CPDF_Type3Glyphs();
-  ~CPDF_Type3Glyphs();
+  CPDF_Type3GlyphMap();
+  ~CPDF_Type3GlyphMap();
 
   // Returns a pair of integers (top_line, bottom_line).
   std::pair<int, int> AdjustBlue(float top, float bottom);
@@ -31,4 +31,4 @@ class CPDF_Type3Glyphs {
   std::vector<int> m_BottomBlue;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHMAP_H_

@@ -42,8 +42,8 @@ jumbo_source_set("render") {
     "cpdf_transferfunc.h",
     "cpdf_type3cache.cpp",
     "cpdf_type3cache.h",
-    "cpdf_type3glyphs.cpp",
-    "cpdf_type3glyphs.h",
+    "cpdf_type3glyphmap.cpp",
+    "cpdf_type3glyphmap.h",
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
