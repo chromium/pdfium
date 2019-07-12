@@ -56,35 +56,20 @@ ProgressiveDecoder::CFXCODEC_WeightTable::CFXCODEC_WeightTable() = default;
 
 ProgressiveDecoder::CFXCODEC_WeightTable::~CFXCODEC_WeightTable() = default;
 
-void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
-                                                    int dest_min,
-                                                    int dest_max,
-                                                    int src_len,
-                                                    int src_min,
-                                                    int src_max) {
-  double scale, base;
-  scale = (float)src_len / (float)dest_len;
-  if (dest_len < 0) {
-    base = (float)(src_len);
-  } else {
-    base = 0.0f;
-  }
-  m_ItemSize =
-      (int)(sizeof(int) * 2 + sizeof(int) * (ceil(fabs((float)scale)) + 1));
-  m_DestMin = dest_min;
-  m_pWeightTables.resize((dest_max - dest_min) * m_ItemSize + 4);
-  if (fabs((float)scale) < 1.0f) {
-    for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
+void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len, int src_len) {
+  double scale = static_cast<double>(src_len) / dest_len;
+  double base = dest_len < 0 ? src_len : 0.0;
+  m_ItemSize = (int)(sizeof(int) * 2 + sizeof(int) * (ceil(fabs(scale)) + 1));
+  m_DestMin = 0;
+  m_pWeightTables.resize(dest_len * m_ItemSize + 4);
+  if (fabs(scale) < 1.0) {
+    for (int dest_pixel = 0; dest_pixel < dest_len; dest_pixel++) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
       pixel_weights.m_SrcStart = (int)floor((float)src_pos - 1.0f / 2);
       pixel_weights.m_SrcEnd = (int)floor((float)src_pos + 1.0f / 2);
-      if (pixel_weights.m_SrcStart < src_min) {
-        pixel_weights.m_SrcStart = src_min;
-      }
-      if (pixel_weights.m_SrcEnd >= src_max) {
-        pixel_weights.m_SrcEnd = src_max - 1;
-      }
+      pixel_weights.m_SrcStart = std::max(pixel_weights.m_SrcStart, 0);
+      pixel_weights.m_SrcEnd = std::min(pixel_weights.m_SrcEnd, src_len - 1);
       if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
         pixel_weights.m_Weights[0] = 65536;
       } else {
@@ -95,11 +80,12 @@ void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
     }
     return;
   }
-  for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
+  for (int dest_pixel = 0; dest_pixel < dest_len; dest_pixel++) {
     PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
     double src_start = dest_pixel * scale + base;
     double src_end = src_start + scale;
-    int start_i, end_i;
+    int start_i;
+    int end_i;
     if (src_start < src_end) {
       start_i = (int)floor((float)src_start);
       end_i = (int)ceil((float)src_end);
@@ -107,12 +93,8 @@ void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
       start_i = (int)floor((float)src_end);
       end_i = (int)ceil((float)src_start);
     }
-    if (start_i < src_min) {
-      start_i = src_min;
-    }
-    if (end_i >= src_max) {
-      end_i = src_max - 1;
-    }
+    start_i = std::max(start_i, 0);
+    end_i = std::min(end_i, src_len - 1);
     if (start_i > end_i) {
       pixel_weights.m_SrcStart = start_i;
       pixel_weights.m_SrcEnd = start_i;
@@ -133,7 +115,7 @@ void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
       double area_end = dest_end > (float)(dest_pixel + 1)
                             ? (float)(dest_pixel + 1)
                             : dest_end;
-      double weight = area_start >= area_end ? 0.0f : area_end - area_start;
+      double weight = area_start >= area_end ? 0.0 : area_end - area_start;
       if (weight == 0 && j == end_i) {
         pixel_weights.m_SrcEnd--;
         break;
@@ -804,8 +786,7 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
-  m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
-                    m_clipBox.Width());
+  m_WeightHorz.Calc(m_sizeX, m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
   return m_status;
@@ -900,8 +881,7 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
-                    m_clipBox.Width());
+  m_WeightHorz.Calc(m_sizeX, m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
   m_FrameCur = 0;
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1106,8 +1086,7 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
-                    m_clipBox.Width());
+  m_WeightHorz.Calc(m_sizeX, m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
   switch (m_SrcComponents) {
     case 1:

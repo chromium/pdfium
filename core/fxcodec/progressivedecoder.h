@@ -103,12 +103,7 @@ class ProgressiveDecoder :
     CFXCODEC_WeightTable();
     ~CFXCODEC_WeightTable();
 
-    void Calc(int dest_len,
-              int dest_min,
-              int dest_max,
-              int src_len,
-              int src_min,
-              int src_max);
+    void Calc(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
                                             (pixel - m_DestMin) * m_ItemSize);
