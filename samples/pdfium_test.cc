@@ -99,6 +99,7 @@ struct Options {
   bool show_config = false;
   bool show_metadata = false;
   bool send_events = false;
+  bool use_load_mem_document = false;
   bool render_oneshot = false;
   bool save_attachments = false;
   bool save_images = false;
@@ -343,6 +344,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->show_metadata = true;
     } else if (cur_arg == "--send-events") {
       options->send_events = true;
+    } else if (cur_arg == "--mem-document") {
+      options->use_load_mem_document = true;
     } else if (cur_arg == "--render-oneshot") {
       options->render_oneshot = true;
     } else if (cur_arg == "--save-attachments") {
@@ -755,28 +758,33 @@ void RenderPdf(const std::string& name,
   ScopedFPDFDocument doc;
 
   bool is_linearized = false;
-  if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
-    int avail_status = PDF_DATA_NOTAVAIL;
-    doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
-    if (doc) {
-      while (avail_status == PDF_DATA_NOTAVAIL)
-        avail_status = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
-
-      if (avail_status == PDF_DATA_ERROR) {
-        fprintf(stderr, "Unknown error in checking if doc was available.\n");
-        return;
-      }
-      avail_status = FPDFAvail_IsFormAvail(pdf_avail.get(), &hints);
-      if (avail_status == PDF_FORM_ERROR || avail_status == PDF_FORM_NOTAVAIL) {
-        fprintf(stderr,
-                "Error %d was returned in checking if form was available.\n",
-                avail_status);
-        return;
-      }
-      is_linearized = true;
-    }
+  if (options.use_load_mem_document) {
+    doc.reset(FPDF_LoadMemDocument(buf, len, nullptr));
   } else {
-    doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
+    if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
+      int avail_status = PDF_DATA_NOTAVAIL;
+      doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
+      if (doc) {
+        while (avail_status == PDF_DATA_NOTAVAIL)
+          avail_status = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
+
+        if (avail_status == PDF_DATA_ERROR) {
+          fprintf(stderr, "Unknown error in checking if doc was available.\n");
+          return;
+        }
+        avail_status = FPDFAvail_IsFormAvail(pdf_avail.get(), &hints);
+        if (avail_status == PDF_FORM_ERROR ||
+            avail_status == PDF_FORM_NOTAVAIL) {
+          fprintf(stderr,
+                  "Error %d was returned in checking if form was available.\n",
+                  avail_status);
+          return;
+        }
+        is_linearized = true;
+      }
+    } else {
+      doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
+    }
   }
 
   if (!doc) {
@@ -912,6 +920,7 @@ constexpr char kUsageString[] =
     "  --show-pageinfo      - print information about pages\n"
     "  --show-structure     - print the structure elements from the document\n"
     "  --send-events        - send input described by .evt file\n"
+    "  --mem-document       - load document with FPDF_LoadMemDocument()\n"
     "  --render-oneshot     - render image without using progressive renderer\n"
     "  --save-attachments   - write embedded attachments "
     "<pdf-name>.attachment.<attachment-name>\n"
