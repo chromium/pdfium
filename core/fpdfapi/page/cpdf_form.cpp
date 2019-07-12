@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_form.h"
 
 #include "core/fpdfapi/page/cpdf_contentparser.h"
+#include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -68,4 +69,8 @@ void CPDF_Form::ParseContent(const CPDF_AllStates* pGraphicStates,
 
 const CPDF_Stream* CPDF_Form::GetStream() const {
   return m_pFormStream.Get();
+}
+
+const CPDF_ImageObject* CPDF_Form::GetSoleImageOfForm() const {
+  return GetPageObjectCount() == 1 ? (*begin())->AsImage() : nullptr;
 }

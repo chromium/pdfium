@@ -12,6 +12,8 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxge/dib/cfx_dibbase.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 CPDF_ImageObject::CPDF_ImageObject(int32_t content_stream)
     : CPDF_PageObject(content_stream) {}
@@ -52,6 +54,21 @@ void CPDF_ImageObject::CalcBoundingBox() {
 void CPDF_ImageObject::SetImage(const RetainPtr<CPDF_Image>& pImage) {
   MaybePurgeCache();
   m_pImage = pImage;
+}
+
+RetainPtr<CPDF_Image> CPDF_ImageObject::GetImage() const {
+  return m_pImage;
+}
+
+RetainPtr<CFX_DIBitmap> CPDF_ImageObject::GetIndependentBitmap() const {
+  RetainPtr<CFX_DIBBase> pSource = GetImage()->LoadDIBBase();
+
+  // Clone() is non-virtual, and can't be overloaded by CPDF_DIBBase to
+  // return a clone of the subclass as one would typically expect from a
+  // such a method. Instead, it only clones the CFX_DIBBase, none of whose
+  // members point to objects owned by |this| or the form containing |this|.
+  // As a result, the clone may outlive them.
+  return pSource ? pSource->Clone(nullptr) : nullptr;
 }
 
 void CPDF_ImageObject::MaybePurgeCache() {

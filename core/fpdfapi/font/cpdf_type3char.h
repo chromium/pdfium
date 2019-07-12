@@ -24,7 +24,7 @@ class CPDF_Type3Char {
   static float TextUnitToGlyphUnit(float fTextUnit);
   static void TextUnitRectToGlyphUnitRect(CFX_FloatRect* pRect);
 
-  bool LoadBitmap();
+  bool LoadBitmapFromSoleImageOfForm();
   void InitializeFromStreamData(bool bColored, const float* pData);
   void Transform(CPDF_Form* pForm, const CFX_Matrix& matrix);
 

@@ -16,6 +16,7 @@ class CFX_Matrix;
 class CPDF_AllStates;
 class CPDF_Dictionary;
 class CPDF_Document;
+class CPDF_ImageObject;
 class CPDF_Stream;
 class CPDF_Type3Char;
 
@@ -42,9 +43,11 @@ class CPDF_Form final : public CPDF_PageObjectHolder {
 
   const CPDF_Stream* GetStream() const;
 
+  // Fast path helper for avoiding a full rendering of form.
+  const CPDF_ImageObject* GetSoleImageOfForm() const;
+
  private:
   std::unique_ptr<std::set<const uint8_t*>> m_ParsedSet;
-
   RetainPtr<CPDF_Stream> const m_pFormStream;
 };
 
