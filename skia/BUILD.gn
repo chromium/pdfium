@@ -20,10 +20,7 @@ skia_support_pdf = false  #!is_ios && (enable_basic_printing || enable_print_pre
 
 # External-facing config for dependent code.
 config("skia_config") {
-  include_dirs = [
-    "//third_party/skia",
-    "//third_party/skia/third_party/skcms",
-  ]
+  include_dirs = [ "//third_party/skia" ]
 
   defines = [ "SK_USER_CONFIG_HEADER=\"../../skia/config/SkUserConfig.h\"" ]
 
@@ -148,8 +145,9 @@ source_set("skcms") {
   }
 
   public = [
-    "//third_party/skia/third_party/skcms/skcms.h",
+    "//third_party/skia/include/third_party/skcms/skcms.h",
   ]
+  include_dirs = [ "//third_party/skia/include/third_party/skcms" ]
   sources =
       rebase_path(skcms_sources, ".", "//third_party/skia/third_party/skcms")
 }
