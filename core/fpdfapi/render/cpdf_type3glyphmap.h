@@ -24,11 +24,13 @@ class CPDF_Type3GlyphMap {
   // Returns a pair of integers (top_line, bottom_line).
   std::pair<int, int> AdjustBlue(float top, float bottom);
 
-  std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>> m_GlyphMap;
+  const CFX_GlyphBitmap* GetBitmap(uint32_t charcode) const;
+  void SetBitmap(uint32_t charcode, std::unique_ptr<CFX_GlyphBitmap> pMap);
 
  private:
   std::vector<int> m_TopBlue;
   std::vector<int> m_BottomBlue;
+  std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>> m_GlyphMap;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHMAP_H_

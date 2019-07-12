@@ -24,7 +24,8 @@ class CPDF_Type3Cache final : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  CFX_GlyphBitmap* LoadGlyph(uint32_t charcode, const CFX_Matrix* pMatrix);
+  const CFX_GlyphBitmap* LoadGlyph(uint32_t charcode,
+                                   const CFX_Matrix* pMatrix);
 
  private:
   explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);

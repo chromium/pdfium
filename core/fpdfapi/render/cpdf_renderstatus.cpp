@@ -1898,7 +1898,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       if (device_type == DeviceType::kDisplay) {
         RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
-        CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix);
+        const CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix);
         if (!pBitmap)
           continue;
 

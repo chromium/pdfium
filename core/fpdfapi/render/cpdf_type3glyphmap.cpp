@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <map>
+#include <utility>
 
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/fx_font.h"
@@ -43,4 +44,14 @@ CPDF_Type3GlyphMap::~CPDF_Type3GlyphMap() {}
 std::pair<int, int> CPDF_Type3GlyphMap::AdjustBlue(float top, float bottom) {
   return std::make_pair(AdjustBlueHelper(top, &m_TopBlue),
                         AdjustBlueHelper(bottom, &m_BottomBlue));
+}
+
+const CFX_GlyphBitmap* CPDF_Type3GlyphMap::GetBitmap(uint32_t charcode) const {
+  auto it = m_GlyphMap.find(charcode);
+  return it != m_GlyphMap.end() ? it->second.get() : nullptr;
+}
+
+void CPDF_Type3GlyphMap::SetBitmap(uint32_t charcode,
+                                   std::unique_ptr<CFX_GlyphBitmap> pMap) {
+  m_GlyphMap[charcode] = std::move(pMap);
 }
