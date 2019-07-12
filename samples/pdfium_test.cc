@@ -729,11 +729,11 @@ bool RenderPage(const std::string& name,
 }
 
 void RenderPdf(const std::string& name,
-               const char* pBuf,
+               const char* buf,
                size_t len,
                const Options& options,
                const std::string& events) {
-  TestLoader loader({pBuf, len});
+  TestLoader loader({buf, len});
 
   FPDF_FILEACCESS file_access = {};
   file_access.m_FileLen = static_cast<unsigned long>(len);
@@ -748,32 +748,32 @@ void RenderPdf(const std::string& name,
   hints.version = 1;
   hints.AddSegment = Add_Segment;
 
-  // The pdf_avail must outlive doc.
+  // |pdf_avail| must outlive |doc|.
   ScopedFPDFAvail pdf_avail(FPDFAvail_Create(&file_avail, &file_access));
 
-  // The document must outlive |form_callbacks.loaded_pages|.
+  // |doc| must outlive |form_callbacks.loaded_pages|.
   ScopedFPDFDocument doc;
 
-  int nRet = PDF_DATA_NOTAVAIL;
-  bool bIsLinearized = false;
+  bool is_linearized = false;
   if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
+    int avail_status = PDF_DATA_NOTAVAIL;
     doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
     if (doc) {
-      while (nRet == PDF_DATA_NOTAVAIL)
-        nRet = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
+      while (avail_status == PDF_DATA_NOTAVAIL)
+        avail_status = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
 
-      if (nRet == PDF_DATA_ERROR) {
+      if (avail_status == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if doc was available.\n");
         return;
       }
-      nRet = FPDFAvail_IsFormAvail(pdf_avail.get(), &hints);
-      if (nRet == PDF_FORM_ERROR || nRet == PDF_FORM_NOTAVAIL) {
+      avail_status = FPDFAvail_IsFormAvail(pdf_avail.get(), &hints);
+      if (avail_status == PDF_FORM_ERROR || avail_status == PDF_FORM_NOTAVAIL) {
         fprintf(stderr,
                 "Error %d was returned in checking if form was available.\n",
-                nRet);
+                avail_status);
         return;
       }
-      bIsLinearized = true;
+      is_linearized = true;
     }
   } else {
     doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
@@ -854,12 +854,12 @@ void RenderPdf(const std::string& name,
   int first_page = options.pages ? options.first_page : 0;
   int last_page = options.pages ? options.last_page + 1 : page_count;
   for (int i = first_page; i < last_page; ++i) {
-    if (bIsLinearized) {
-      nRet = PDF_DATA_NOTAVAIL;
-      while (nRet == PDF_DATA_NOTAVAIL)
-        nRet = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
+    if (is_linearized) {
+      int avail_status = PDF_DATA_NOTAVAIL;
+      while (avail_status == PDF_DATA_NOTAVAIL)
+        avail_status = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
 
-      if (nRet == PDF_DATA_ERROR) {
+      if (avail_status == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if page %d is available.\n",
                 i);
         return;
