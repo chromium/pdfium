@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_form.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -65,6 +67,24 @@ void CPDF_Form::ParseContent(const CPDF_AllStates* pGraphicStates,
 
   ASSERT(GetParseState() == ParseState::kParsing);
   ContinueParse(nullptr);
+}
+
+CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
+  if (GetPageObjectCount() == 0)
+    return CFX_FloatRect();
+
+  float left = 1000000.0f;
+  float right = -1000000.0f;
+  float bottom = 1000000.0f;
+  float top = -1000000.0f;
+  for (const auto& pObj : *this) {
+    const auto& rect = pObj->GetRect();
+    left = std::min(left, rect.left);
+    right = std::max(right, rect.right);
+    bottom = std::min(bottom, rect.bottom);
+    top = std::max(top, rect.top);
+  }
+  return CFX_FloatRect(left, bottom, right, top);
 }
 
 const CPDF_Stream* CPDF_Form::GetStream() const {

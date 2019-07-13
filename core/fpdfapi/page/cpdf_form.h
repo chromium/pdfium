@@ -41,6 +41,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder {
                     CPDF_Type3Char* pType3Char,
                     std::set<const uint8_t*>* parsedSet);
 
+  CFX_FloatRect CalcBoundingBox() const;
   const CPDF_Stream* GetStream() const;
 
   // Fast path helper for avoiding a full rendering of form.

@@ -82,24 +82,6 @@ void CPDF_PageObjectHolder::Transform(const CFX_Matrix& matrix) {
     pObj->Transform(matrix);
 }
 
-CFX_FloatRect CPDF_PageObjectHolder::CalcBoundingBox() const {
-  if (m_PageObjectList.empty())
-    return CFX_FloatRect();
-
-  float left = 1000000.0f;
-  float right = -1000000.0f;
-  float bottom = 1000000.0f;
-  float top = -1000000.0f;
-  for (const auto& pObj : m_PageObjectList) {
-    const auto& rect = pObj->GetRect();
-    left = std::min(left, rect.left);
-    right = std::max(right, rect.right);
-    bottom = std::min(bottom, rect.bottom);
-    top = std::max(top, rect.top);
-  }
-  return CFX_FloatRect(left, bottom, right, top);
-}
-
 std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
   auto dirty_streams = std::move(m_DirtyStreams);
   m_DirtyStreams.clear();
@@ -121,10 +103,6 @@ void CPDF_PageObjectHolder::LoadTransInfo() {
   m_Transparency.SetGroup();
   if (pGroup->GetIntegerFor(pdfium::transparency::kI))
     m_Transparency.SetIsolated();
-}
-
-size_t CPDF_PageObjectHolder::GetPageObjectCount() const {
-  return pdfium::CollectionSize<size_t>(m_PageObjectList);
 }
 
 CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
