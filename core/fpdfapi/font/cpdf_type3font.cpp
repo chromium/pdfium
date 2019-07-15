@@ -103,8 +103,10 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!name)
     return nullptr;
 
-  CPDF_Stream* pStream =
-      ToStream(m_pCharProcs ? m_pCharProcs->GetDirectObjectFor(name) : nullptr);
+  if (!m_pCharProcs)
+    return nullptr;
+
+  CPDF_Stream* pStream = ToStream(m_pCharProcs->GetDirectObjectFor(name));
   if (!pStream)
     return nullptr;
 

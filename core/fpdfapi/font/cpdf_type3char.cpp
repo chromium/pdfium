@@ -8,10 +8,7 @@
 
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_form.h"
-#include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
-#include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
@@ -63,7 +60,7 @@ void CPDF_Type3Char::InitializeFromStreamData(bool bColored,
   m_BBox.top = FXSYS_round(TextUnitToGlyphUnit(pData[5]));
 }
 
-void CPDF_Type3Char::Transform(CPDF_Form* pForm, const CFX_Matrix& matrix) {
+void CPDF_Type3Char::Transform(FormIface* pForm, const CFX_Matrix& matrix) {
   m_Width = m_Width * matrix.GetXUnit() + 0.5f;
 
   CFX_FloatRect char_rect;
@@ -77,7 +74,7 @@ void CPDF_Type3Char::Transform(CPDF_Form* pForm, const CFX_Matrix& matrix) {
   m_BBox = matrix.TransformRect(char_rect).ToRoundedFxRect();
 }
 
-void CPDF_Type3Char::SetForm(std::unique_ptr<CPDF_Form> pForm) {
+void CPDF_Type3Char::SetForm(std::unique_ptr<FormIface> pForm) {
   m_pForm = std::move(pForm);
 }
 

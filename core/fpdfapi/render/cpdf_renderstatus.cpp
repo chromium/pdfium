@@ -1850,13 +1850,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       options.GetOptions().bForceDownsample = false;
 
       const CPDF_Dictionary* pFormResource = nullptr;
-      if (pType3Char->form() && pType3Char->form()->GetDict()) {
-        pFormResource = pType3Char->form()->GetDict()->GetDictFor("Resources");
-      }
+      auto* pForm = static_cast<const CPDF_Form*>(pType3Char->form());
+      if (pForm->GetDict())
+        pFormResource = pForm->GetDict()->GetDictFor("Resources");
+
       if (fill_alpha == 255) {
         CPDF_RenderStatus status(m_pContext.Get(), m_pDevice);
         status.SetOptions(options);
-        status.SetTransparency(pType3Char->form()->GetTransparency());
+        status.SetTransparency(pForm->GetTransparency());
         status.SetType3Char(pType3Char);
         status.SetFillColor(fill_argb);
         status.SetDropObjects(m_bDropObjects);
@@ -1866,11 +1867,10 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.m_Type3FontCache.push_back(pType3Font);
 
         CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-        status.RenderObjectList(pType3Char->form(), matrix);
+        status.RenderObjectList(pForm, matrix);
       } else {
         FX_RECT rect =
-            matrix.TransformRect(pType3Char->form()->CalcBoundingBox())
-                .GetOuterRect();
+            matrix.TransformRect(pForm->CalcBoundingBox()).GetOuterRect();
         if (!rect.Valid())
           continue;
 
@@ -1882,7 +1882,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         bitmap_device.GetBitmap()->Clear(0);
         CPDF_RenderStatus status(m_pContext.Get(), &bitmap_device);
         status.SetOptions(options);
-        status.SetTransparency(pType3Char->form()->GetTransparency());
+        status.SetTransparency(pForm->GetTransparency());
         status.SetType3Char(pType3Char);
         status.SetFillColor(fill_argb);
         status.SetDropObjects(m_bDropObjects);
@@ -1891,7 +1891,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
         matrix.Translate(-rect.left, -rect.top);
-        status.RenderObjectList(pType3Char->form(), matrix);
+        status.RenderObjectList(pForm, matrix);
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
     } else if (pType3Char->GetBitmap()) {

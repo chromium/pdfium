@@ -14,10 +14,19 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
-class CPDF_Form;
+class CPDF_ImageObject;
 
 class CPDF_Type3Char {
  public:
+  class FormIface {
+   public:
+    virtual ~FormIface() {}
+
+    virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
+    virtual const CPDF_ImageObject* GetSoleImageOfForm() const = 0;
+    virtual CFX_FloatRect CalcBoundingBox() const = 0;
+  };
+
   CPDF_Type3Char();
   ~CPDF_Type3Char();
 
@@ -26,7 +35,7 @@ class CPDF_Type3Char {
 
   bool LoadBitmapFromSoleImageOfForm();
   void InitializeFromStreamData(bool bColored, const float* pData);
-  void Transform(CPDF_Form* pForm, const CFX_Matrix& matrix);
+  void Transform(FormIface* pForm, const CFX_Matrix& matrix);
 
   RetainPtr<CFX_DIBitmap> GetBitmap();
   const RetainPtr<CFX_DIBitmap>& GetBitmap() const;
@@ -36,12 +45,11 @@ class CPDF_Type3Char {
   const CFX_Matrix& matrix() const { return m_ImageMatrix; }
   const FX_RECT& bbox() const { return m_BBox; }
 
-  const CPDF_Form* form() const { return m_pForm.get(); }
-  CPDF_Form* form() { return m_pForm.get(); }
-  void SetForm(std::unique_ptr<CPDF_Form> pForm);
+  const FormIface* form() const { return m_pForm.get(); }
+  void SetForm(std::unique_ptr<FormIface> pForm);
 
  private:
-  std::unique_ptr<CPDF_Form> m_pForm;
+  std::unique_ptr<FormIface> m_pForm;
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   bool m_bColored = false;
   uint32_t m_Width = 0;
