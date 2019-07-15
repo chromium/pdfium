@@ -199,7 +199,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 
   auto pNewForm = pdfium::MakeUnique<CPDF_Form>(
       m_pDocument.Get(), pPage->m_pResources.Get(), pStream);
-  pNewForm->ParseContent(nullptr, nullptr, nullptr, nullptr);
+  pNewForm->ParseContent();
 
   CPDF_Form* pResult = pNewForm.get();
   m_APMap[pStream] = std::move(pNewForm);

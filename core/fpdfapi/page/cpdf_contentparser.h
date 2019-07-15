@@ -32,7 +32,7 @@ class CPDF_ContentParser {
                      const CPDF_AllStates* pGraphicStates,
                      const CFX_Matrix* pParentMatrix,
                      CPDF_Type3Char* pType3Char,
-                     std::set<const uint8_t*>* parsedSet);
+                     std::set<const uint8_t*>* pParsedSet);
   ~CPDF_ContentParser();
 
   const CPDF_AllStates* GetCurStates() const {
@@ -71,9 +71,9 @@ class CPDF_ContentParser {
   uint32_t m_CurrentOffset = 0;
 
   // Only used when parsing pages.
-  std::unique_ptr<std::set<const uint8_t*>> m_parsedSet;
+  std::unique_ptr<std::set<const uint8_t*>> m_pParsedSet;
 
-  // |m_pParser| has a reference to |m_parsedSet|, so must be below and thus
+  // |m_pParser| has a reference to |m_pParsedSet|, so must be below and thus
   // destroyed first.
   std::unique_ptr<CPDF_StreamContentParser> m_pParser;
 };

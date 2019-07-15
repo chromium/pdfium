@@ -48,21 +48,35 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
 
 CPDF_Form::~CPDF_Form() = default;
 
+void CPDF_Form::ParseContent() {
+  ParseContentInternal(nullptr, nullptr, nullptr, nullptr);
+}
+
 void CPDF_Form::ParseContent(const CPDF_AllStates* pGraphicStates,
                              const CFX_Matrix* pParentMatrix,
-                             CPDF_Type3Char* pType3Char,
-                             std::set<const uint8_t*>* parsedSet) {
+                             std::set<const uint8_t*>* pParsedSet) {
+  ParseContentInternal(pGraphicStates, pParentMatrix, nullptr, pParsedSet);
+}
+
+void CPDF_Form::ParseContentForType3Char(CPDF_Type3Char* pType3Char) {
+  ParseContentInternal(nullptr, nullptr, pType3Char, nullptr);
+}
+
+void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+                                     const CFX_Matrix* pParentMatrix,
+                                     CPDF_Type3Char* pType3Char,
+                                     std::set<const uint8_t*>* pParsedSet) {
   if (GetParseState() == ParseState::kParsed)
     return;
 
   if (GetParseState() == ParseState::kNotParsed) {
-    if (!parsedSet) {
+    if (!pParsedSet) {
       if (!m_ParsedSet)
         m_ParsedSet = pdfium::MakeUnique<std::set<const uint8_t*>>();
-      parsedSet = m_ParsedSet.get();
+      pParsedSet = m_ParsedSet.get();
     }
     StartParse(pdfium::MakeUnique<CPDF_ContentParser>(
-        this, pGraphicStates, pParentMatrix, pType3Char, parsedSet));
+        this, pGraphicStates, pParentMatrix, pType3Char, pParsedSet));
   }
 
   ASSERT(GetParseState() == ParseState::kParsing);

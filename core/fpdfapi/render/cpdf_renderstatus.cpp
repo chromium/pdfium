@@ -2530,7 +2530,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
 
   CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
                  pGroup);
-  form.ParseContent(nullptr, nullptr, nullptr, nullptr);
+  form.ParseContent();
 
   CFX_DefaultRenderDevice bitmap_device;
   bool bLuminosity =

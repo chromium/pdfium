@@ -54,7 +54,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
                                        const CPDF_AllStates* pGraphicStates,
                                        const CFX_Matrix* pParentMatrix,
                                        CPDF_Type3Char* pType3Char,
-                                       std::set<const uint8_t*>* parsedSet)
+                                       std::set<const uint8_t*>* pParsedSet)
     : m_CurrentStage(Stage::kParse),
       m_pObjectHolder(pForm),
       m_pType3Char(pType3Char) {
@@ -84,7 +84,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
       pForm->GetDocument(), pForm->m_pPageResources.Get(),
       pForm->m_pResources.Get(), pParentMatrix, pForm, pResources, form_bbox,
-      pGraphicStates, parsedSet);
+      pGraphicStates, pParsedSet);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
@@ -184,12 +184,12 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
 
 CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (!m_pParser) {
-    m_parsedSet = pdfium::MakeUnique<std::set<const uint8_t*>>();
+    m_pParsedSet = pdfium::MakeUnique<std::set<const uint8_t*>>();
     m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
         m_pObjectHolder->GetDocument(), m_pObjectHolder->m_pPageResources.Get(),
         nullptr, nullptr, m_pObjectHolder.Get(),
         m_pObjectHolder->m_pResources.Get(), m_pObjectHolder->GetBBox(),
-        nullptr, m_parsedSet.get());
+        nullptr, m_pParsedSet.get());
     m_pParser->GetCurStates()->m_ColorState.SetDefault();
   }
   if (m_CurrentOffset >= m_Size)

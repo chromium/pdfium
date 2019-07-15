@@ -121,7 +121,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   {
     AutoRestorer<int> restorer(&m_CharLoadingDepth);
     m_CharLoadingDepth++;
-    pForm->ParseContent(nullptr, nullptr, pNewChar.get(), nullptr);
+    pForm->ParseContentForType3Char(pNewChar.get());
   }
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())

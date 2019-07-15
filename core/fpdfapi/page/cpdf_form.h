@@ -36,10 +36,11 @@ class CPDF_Form final : public CPDF_PageObjectHolder {
             CPDF_Dictionary* pParentResources);
   ~CPDF_Form() override;
 
+  void ParseContent();
   void ParseContent(const CPDF_AllStates* pGraphicStates,
                     const CFX_Matrix* pParentMatrix,
-                    CPDF_Type3Char* pType3Char,
-                    std::set<const uint8_t*>* parsedSet);
+                    std::set<const uint8_t*>* pParsedSet);
+  void ParseContentForType3Char(CPDF_Type3Char* pType3Char);
 
   CFX_FloatRect CalcBoundingBox() const;
   const CPDF_Stream* GetStream() const;
@@ -48,6 +49,11 @@ class CPDF_Form final : public CPDF_PageObjectHolder {
   const CPDF_ImageObject* GetSoleImageOfForm() const;
 
  private:
+  void ParseContentInternal(const CPDF_AllStates* pGraphicStates,
+                            const CFX_Matrix* pParentMatrix,
+                            CPDF_Type3Char* pType3Char,
+                            std::set<const uint8_t*>* pParsedSet);
+
   std::unique_ptr<std::set<const uint8_t*>> m_ParsedSet;
   RetainPtr<CPDF_Stream> const m_pFormStream;
 };

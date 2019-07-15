@@ -256,7 +256,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Dictionary* pResources,
     const CFX_FloatRect& rcBBox,
     const CPDF_AllStates* pStates,
-    std::set<const uint8_t*>* parsedSet)
+    std::set<const uint8_t*>* pParsedSet)
     : m_pDocument(pDocument),
       m_pPageResources(pPageResources),
       m_pParentResources(pParentResources),
@@ -264,7 +264,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
                                                   pParentResources,
                                                   pPageResources)),
       m_pObjectHolder(pObjHolder),
-      m_ParsedSet(parsedSet),
+      m_ParsedSet(pParsedSet),
       m_BBox(rcBBox),
       m_ParamStartPos(0),
       m_ParamCount(0),
@@ -784,7 +784,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   status.m_TextState = m_pCurStates->m_TextState;
   auto form = pdfium::MakeUnique<CPDF_Form>(
       m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
-  form->ParseContent(&status, nullptr, nullptr, m_ParsedSet.Get());
+  form->ParseContent(&status, nullptr, m_ParsedSet.Get());
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
 
