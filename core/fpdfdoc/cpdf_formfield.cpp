@@ -298,7 +298,7 @@ FormFieldType CPDF_FormField::GetFieldType() const {
 }
 
 CPDF_AAction CPDF_FormField::GetAdditionalAction() const {
-  const CPDF_Object* pObj =
+  CPDF_Object* pObj =
       FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kAA);
   return CPDF_AAction(pObj ? pObj->GetDict() : nullptr);
 }

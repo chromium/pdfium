@@ -42,13 +42,13 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
   }
 
   // Go into children items.
-  CPDF_Bookmark child = tree.GetFirstChild(bookmark);
+  CPDF_Bookmark child = tree.GetFirstChild(&bookmark);
   while (child.GetDict() && !pdfium::ContainsKey(*visited, child.GetDict())) {
     // Check this item and its children.
     CPDF_Bookmark found = FindBookmark(tree, child, title, visited);
     if (found.GetDict())
       return found;
-    child = tree.GetNextSibling(child);
+    child = tree.GetNextSibling(&child);
   }
   return CPDF_Bookmark();
 }
@@ -75,7 +75,7 @@ FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_BookmarkTree tree(pDoc);
   CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
   return FPDFBookmarkFromCPDFDictionary(
-      tree.GetFirstChild(cBookmark).GetDict());
+      tree.GetFirstChild(&cBookmark).GetDict());
 }
 
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
@@ -90,7 +90,7 @@ FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   CPDF_BookmarkTree tree(pDoc);
   CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
   return FPDFBookmarkFromCPDFDictionary(
-      tree.GetNextSibling(cBookmark).GetDict());
+      tree.GetNextSibling(&cBookmark).GetDict());
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

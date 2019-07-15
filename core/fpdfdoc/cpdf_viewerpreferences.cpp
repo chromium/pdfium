@@ -30,8 +30,8 @@ int32_t CPDF_ViewerPreferences::NumCopies() const {
   return pDict ? pDict->GetIntegerFor("NumCopies") : 1;
 }
 
-const CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
+CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
+  CPDF_Dictionary* pDict = GetViewerPreferences();
   return pDict ? pDict->GetArrayFor("PrintPageRange") : nullptr;
 }
 
@@ -53,7 +53,7 @@ Optional<ByteString> CPDF_ViewerPreferences::GenericName(
   return pName->GetString();
 }
 
-const CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
-  const CPDF_Dictionary* pDict = m_pDoc->GetRoot();
+CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
+  CPDF_Dictionary* pDict = m_pDoc->GetRoot();
   return pDict ? pDict->GetDictFor("ViewerPreferences") : nullptr;
 }

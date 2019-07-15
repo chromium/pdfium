@@ -32,7 +32,6 @@ class CPDF_Font;
 class CPDF_LinkExtract;
 class CPDF_PageObject;
 class CPDF_PageRenderContext;
-class CPDF_PathObject;
 class CPDF_Stream;
 class CPDF_StructElement;
 class CPDF_StructTree;
@@ -57,11 +56,11 @@ FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
 
 // Conversions to/from incomplete FPDF_ API types.
-inline FPDF_ACTION FPDFActionFromCPDFDictionary(const CPDF_Dictionary* action) {
+inline FPDF_ACTION FPDFActionFromCPDFDictionary(CPDF_Dictionary* action) {
   return reinterpret_cast<FPDF_ACTION>(action);
 }
-inline const CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action) {
-  return reinterpret_cast<const CPDF_Dictionary*>(action);
+inline CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action) {
+  return reinterpret_cast<CPDF_Dictionary*>(action);
 }
 
 inline FPDF_ANNOTATION FPDFAnnotationFromCPDFAnnotContext(
@@ -87,13 +86,11 @@ inline CFX_DIBitmap* CFXDIBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return reinterpret_cast<CFX_DIBitmap*>(bitmap);
 }
 
-inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(
-    const CPDF_Dictionary* bookmark) {
+inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(CPDF_Dictionary* bookmark) {
   return reinterpret_cast<FPDF_BOOKMARK>(bookmark);
 }
-inline const CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(
-    FPDF_BOOKMARK bookmark) {
-  return reinterpret_cast<const CPDF_Dictionary*>(bookmark);
+inline CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark) {
+  return reinterpret_cast<CPDF_Dictionary*>(bookmark);
 }
 
 inline FPDF_CLIPPATH FPDFClipPathFromCPDFClipPath(CPDF_ClipPath* path) {
@@ -103,11 +100,11 @@ inline CPDF_ClipPath* CPDFClipPathFromFPDFClipPath(FPDF_CLIPPATH path) {
   return reinterpret_cast<CPDF_ClipPath*>(path);
 }
 
-inline FPDF_DEST FPDFDestFromCPDFArray(const CPDF_Array* dest) {
+inline FPDF_DEST FPDFDestFromCPDFArray(CPDF_Array* dest) {
   return reinterpret_cast<FPDF_DEST>(dest);
 }
-inline const CPDF_Array* CPDFArrayFromFPDFDest(FPDF_DEST dest) {
-  return reinterpret_cast<const CPDF_Array*>(dest);
+inline CPDF_Array* CPDFArrayFromFPDFDest(FPDF_DEST dest) {
+  return reinterpret_cast<CPDF_Array*>(dest);
 }
 
 inline FPDF_FONT FPDFFontFromCPDFFont(CPDF_Font* font) {
@@ -149,11 +146,11 @@ inline CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
   return reinterpret_cast<CPDF_ContentMarkItem*>(mark);
 }
 
-inline FPDF_PAGERANGE FPDFPageRangeFromCPDFArray(const CPDF_Array* range) {
+inline FPDF_PAGERANGE FPDFPageRangeFromCPDFArray(CPDF_Array* range) {
   return reinterpret_cast<FPDF_PAGERANGE>(range);
 }
-inline const CPDF_Array* CPDFArrayFromFPDFPageRange(FPDF_PAGERANGE range) {
-  return reinterpret_cast<const CPDF_Array*>(range);
+inline CPDF_Array* CPDFArrayFromFPDFPageRange(FPDF_PAGERANGE range) {
+  return reinterpret_cast<CPDF_Array*>(range);
 }
 
 inline FPDF_PATHSEGMENT FPDFPathSegmentFromFXPathPoint(

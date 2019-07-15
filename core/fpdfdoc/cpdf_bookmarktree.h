@@ -17,8 +17,8 @@ class CPDF_BookmarkTree {
   explicit CPDF_BookmarkTree(CPDF_Document* pDoc);
   ~CPDF_BookmarkTree();
 
-  CPDF_Bookmark GetFirstChild(const CPDF_Bookmark& parent) const;
-  CPDF_Bookmark GetNextSibling(const CPDF_Bookmark& bookmark) const;
+  CPDF_Bookmark GetFirstChild(CPDF_Bookmark* parent) const;
+  CPDF_Bookmark GetNextSibling(CPDF_Bookmark* bookmark) const;
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  private:
