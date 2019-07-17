@@ -14,14 +14,15 @@ def _IsApiTestFile(affected_file):
 
 def _CheckApiTestFile(input_api, output_api):
   """Checks that the public headers match the API tests."""
-  src_path = input_api.os_path.dirname(input_api.PresubmitLocalPath())
   if all([not _IsApiTestFile(f) for f in input_api.AffectedSourceFiles([])]):
     return []
 
+  src_path = input_api.os_path.dirname(input_api.PresubmitLocalPath())
   check_script = input_api.os_path.join(
       src_path, 'testing' , 'tools' , 'api_check.py')
+  cmd = [input_api.python_executable, check_script]
   try:
-    input_api.subprocess.check_output(check_script)
+    input_api.subprocess.check_output(cmd)
     return []
   except input_api.subprocess.CalledProcessError as error:
     return [output_api.PresubmitError('api_check.py failed:',
