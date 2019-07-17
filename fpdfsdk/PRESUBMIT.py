@@ -8,13 +8,14 @@ See http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts
 for more details about the presubmit API built into depot_tools.
 """
 
-def _IsApiTestFile(affected_file):
-  return affected_file.LocalPath() == 'fpdfsdk/fpdf_view_c_api_test.c'
-
-
 def _CheckApiTestFile(input_api, output_api):
   """Checks that the public headers match the API tests."""
-  if all([not _IsApiTestFile(f) for f in input_api.AffectedSourceFiles([])]):
+  api_test_file = input_api.os_path.normpath('fpdfsdk/fpdf_view_c_api_test.c')
+
+  def is_api_test_file(f):
+    return input_api.os_path.normpath(f.LocalPath()) == api_test_file
+
+  if all([not is_api_test_file(f) for f in input_api.AffectedSourceFiles([])]):
     return []
 
   src_path = input_api.os_path.dirname(input_api.PresubmitLocalPath())
