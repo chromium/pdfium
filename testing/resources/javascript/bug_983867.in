@@ -1,0 +1,73 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /AcroForm 4 0 R
+  /Pages 2 0 R
+  /OpenAction 7 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [ 3 0 R ]
+>>
+endobj
+{{object 3 0}} <<
+  /MediaBox [ 0 0 612 792 ]
+  /Parent 2 0 R
+  /Type /Page
+  /CropBox [ 0 0 612 792 ]
+  /Annots [ 5 0 R 6 0 R ]
+>>
+endobj
+{{object 4 0}} <<
+  /Fields [ 5 0 R 6 0 R ]
+>>
+endobj
+{{object 5 0}} <<
+  /AA 6 0 R
+  /DV (default value)
+  /T (textfld1)
+  /Rect [ 116 615 393 677 ]
+  /F 4
+  /V (default value)
+  /Subtype /Widget
+  /Type /Annot
+  /FT /Tx
+>>
+endobj
+{{object 6 0}} <<
+  /Ff 0
+  /RV (blah)
+  /Rect [ 226 735 373 771 ]
+  /T (textfld2)
+  /V <<
+    /S /JavaScript
+    /JS (
+      this.a += 1;
+      if (this.a == 3) this.resetForm();
+    )
+    /Type /Action
+  >>
+  /F 4
+  /Subtype /Widget
+  /Type /Annot
+  /FT /Tx
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS (
+    this.a = 1;
+    this.getField("textfld1").setFocus();
+    this.getField("textfld1").value = "1";
+    this.getField("textfld2").setFocus();
+    app.alert("Finished !!!");
+  )
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

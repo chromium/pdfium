@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
 class CPDF_Array;
@@ -41,7 +41,7 @@ class CPDF_Dest {
               float* pZoom) const;
 
  private:
-  UnownedPtr<CPDF_Array> const m_pArray;
+  RetainPtr<CPDF_Array> const m_pArray;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEST_H_
