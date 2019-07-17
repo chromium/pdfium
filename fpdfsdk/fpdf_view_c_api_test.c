@@ -60,6 +60,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetValueType);
     CHK(FPDFAnnot_HasAttachmentPoints);
     CHK(FPDFAnnot_HasKey);
+    CHK(FPDFAnnot_IsChecked);
     CHK(FPDFAnnot_IsObjectSupportedSubtype);
     CHK(FPDFAnnot_IsSupportedSubtype);
     CHK(FPDFAnnot_RemoveObject);

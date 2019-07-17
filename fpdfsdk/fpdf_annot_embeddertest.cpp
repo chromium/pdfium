@@ -2042,3 +2042,112 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeNegative) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, IsCheckedCheckbox) {
+  // Open a file with checkbox and radiobuttons widget annotations and load its
+  // first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, IsCheckedCheckboxReadOnly) {
+  // Open a file with checkbox and radiobutton widget annotations and load its
+  // first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    ASSERT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, IsCheckedRadioButton) {
+  // Open a file with checkbox and radiobutton widget annotations and load its
+  // first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 5));
+    ASSERT_TRUE(annot);
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 6));
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 7));
+    ASSERT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, IsCheckedRadioButtonReadOnly) {
+  // Open a file with checkbox and radiobutton widget annotations and load its
+  // first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 3));
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+
+    annot.reset(FPDFPage_GetAnnot(page, 4));
+    ASSERT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, IsCheckedInvalidArguments) {
+  // Open a file with checkbox and radiobuttons widget annotations and load its
+  // first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    ASSERT_FALSE(FPDFAnnot_IsChecked(nullptr, annot.get()));
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), nullptr));
+    ASSERT_FALSE(FPDFAnnot_IsChecked(nullptr, nullptr));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, IsCheckedInvalidWidgetType) {
+  // Open a file with text widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}

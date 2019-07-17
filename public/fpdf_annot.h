@@ -608,6 +608,18 @@ FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
                       FPDF_ANNOTATION annot,
                       float* value);
 
+// Experimental API.
+// Determine if |annot| is a form widget that is checked. Intended for use with
+// checkbox and radio button widgets.
+//
+//   hHandle - handle to the form fill module, returned by
+//             FPDFDOC_InitFormFillEnvironment.
+//   annot   - handle to an annotation.
+//
+// Returns true if |annot| is a form widget and is checked, false otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_IsChecked(FPDF_FORMHANDLE hHandle,
+                                                        FPDF_ANNOTATION annot);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
