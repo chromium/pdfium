@@ -18,3 +18,4 @@ Local Modifications:
 0029-CVE-2018-17000.patch: Avoid a null pointer dereference in TIFFWriteDirectoryTagTransferfunction().
 0030-CVE-2018-19210.patch: Avoid a null pointer dereference inside _TIFFVSetField().
 0031-safe_size_ingtStripContig.patch: return error if the size to read overflow from int32.
+0032-jpeg-decoding-size-check.patch: Avoid use of unintialized memory on corrupted files.
