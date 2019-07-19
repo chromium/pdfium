@@ -507,9 +507,8 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
 
 bool CFXJSE_ResolveProcessor::ResolveAsterisk(CFXJSE_ResolveNodeData& rnd) {
   CXFA_Node* curNode = ToNode(rnd.m_CurObject.Get());
-  std::vector<CXFA_Node*> array =
-      curNode->GetNodeList(XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties,
-                           XFA_Element::Unknown);
+  std::vector<CXFA_Node*> array = curNode->GetNodeListWithFilter(
+      XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties);
   rnd.m_Objects.insert(rnd.m_Objects.end(), array.begin(), array.end());
   return !rnd.m_Objects.empty();
 }

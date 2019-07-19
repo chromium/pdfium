@@ -703,7 +703,7 @@ CXFA_Node* FindFirstSiblingNamed(CXFA_Node* parent, uint32_t dwNameHash) {
 CXFA_Node* FindFirstSiblingNamedInList(CXFA_Node* parent,
                                        uint32_t dwNameHash,
                                        uint32_t dwFilter) {
-  for (CXFA_Node* child : parent->GetNodeList(dwFilter, XFA_Element::Unknown)) {
+  for (CXFA_Node* child : parent->GetNodeListWithFilter(dwFilter)) {
     if (child->GetNameHash() == dwNameHash)
       return child;
 
@@ -727,7 +727,7 @@ CXFA_Node* FindFirstSiblingOfClass(CXFA_Node* parent, XFA_Element element) {
 CXFA_Node* FindFirstSiblingOfClassInList(CXFA_Node* parent,
                                          XFA_Element element,
                                          uint32_t dwFilter) {
-  for (CXFA_Node* child : parent->GetNodeList(dwFilter, XFA_Element::Unknown)) {
+  for (CXFA_Node* child : parent->GetNodeListWithFilter(dwFilter)) {
     if (child->GetElementType() == element)
       return child;
 
@@ -768,7 +768,7 @@ void TraverseSiblings(CXFA_Node* parent,
 
   if (bIsFindProperty) {
     for (CXFA_Node* child :
-         parent->GetNodeList(XFA_NODEFILTER_Properties, XFA_Element::Unknown)) {
+         parent->GetNodeListWithFilter(XFA_NODEFILTER_Properties)) {
       if (bIsClassName) {
         if (child->GetClassHashCode() == dwNameHash)
           pSiblings->push_back(child);
@@ -790,7 +790,7 @@ void TraverseSiblings(CXFA_Node* parent,
       return;
   }
   for (CXFA_Node* child :
-       parent->GetNodeList(XFA_NODEFILTER_Children, XFA_Element::Unknown)) {
+       parent->GetNodeListWithFilter(XFA_NODEFILTER_Children)) {
     if (child->GetElementType() == XFA_Element::Variables)
       continue;
 
@@ -1097,20 +1097,20 @@ XFA_AttributeType CXFA_Node::GetAttributeType(XFA_Attribute type) const {
   return data ? data->type : XFA_AttributeType::CData;
 }
 
-std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
-                                               XFA_Element eTypeFilter) {
-  if (eTypeFilter != XFA_Element::Unknown) {
-    std::vector<CXFA_Node*> nodes;
-    for (CXFA_Node* pChild = GetFirstChild(); pChild;
-         pChild = pChild->GetNextSibling()) {
-      if (pChild->GetElementType() == eTypeFilter)
-        nodes.push_back(pChild);
-    }
-    return nodes;
+std::vector<CXFA_Node*> CXFA_Node::GetNodeListForType(XFA_Element eTypeFilter) {
+  std::vector<CXFA_Node*> nodes;
+  for (CXFA_Node* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    if (pChild->GetElementType() == eTypeFilter)
+      nodes.push_back(pChild);
   }
+  return nodes;
+}
 
+std::vector<CXFA_Node*> CXFA_Node::GetNodeListWithFilter(
+    uint32_t dwTypeFilter) {
+  std::vector<CXFA_Node*> nodes;
   if (dwTypeFilter == (XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties)) {
-    std::vector<CXFA_Node*> nodes;
     for (CXFA_Node* pChild = GetFirstChild(); pChild;
          pChild = pChild->GetNextSibling())
       nodes.push_back(pChild);
@@ -1118,12 +1118,11 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   }
 
   if (dwTypeFilter == 0)
-    return std::vector<CXFA_Node*>();
+    return nodes;
 
   bool bFilterChildren = !!(dwTypeFilter & XFA_NODEFILTER_Children);
   bool bFilterProperties = !!(dwTypeFilter & XFA_NODEFILTER_Properties);
   bool bFilterOneOfProperties = !!(dwTypeFilter & XFA_NODEFILTER_OneOfProperty);
-  std::vector<CXFA_Node*> nodes;
   for (CXFA_Node* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
     if (HasProperty(pChild->GetElementType())) {
@@ -2957,7 +2956,7 @@ std::vector<CXFA_Event*> CXFA_Node::GetEventByActivity(
     XFA_AttributeValue iActivity,
     bool bIsFormReady) {
   std::vector<CXFA_Event*> events;
-  for (CXFA_Node* node : GetNodeList(0, XFA_Element::Event)) {
+  for (CXFA_Node* node : GetNodeListForType(XFA_Element::Event)) {
     auto* event = static_cast<CXFA_Event*>(node);
     if (event->GetActivity() != iActivity)
       continue;

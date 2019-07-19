@@ -173,8 +173,8 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
   CXFA_Node* GetFirstContainerChild() const;
   CXFA_Node* GetContainerParent() const;
 
-  std::vector<CXFA_Node*> GetNodeList(uint32_t dwTypeFilter,
-                                      XFA_Element eTypeFilter);
+  std::vector<CXFA_Node*> GetNodeListForType(XFA_Element eTypeFilter);
+  std::vector<CXFA_Node*> GetNodeListWithFilter(uint32_t dwTypeFilter);
   CXFA_Node* CreateSamePacketNode(XFA_Element eType);
   CXFA_Node* CloneTemplateToForm(bool bRecursive);
   CXFA_Node* GetTemplateNodeIfExists() const;

@@ -500,8 +500,8 @@ void CJX_Node::oneOfChild(CFXJSE_Value* pValue,
     return;
   }
 
-  std::vector<CXFA_Node*> properties = GetXFANode()->GetNodeList(
-      XFA_NODEFILTER_OneOfProperty, XFA_Element::Unknown);
+  std::vector<CXFA_Node*> properties =
+      GetXFANode()->GetNodeListWithFilter(XFA_NODEFILTER_OneOfProperty);
   if (!properties.empty()) {
     pValue->Assign(
         GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(

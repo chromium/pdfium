@@ -584,8 +584,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
               pBind->RemoveChildAndNotify(pChildNode, true);
             }
           } else {
-            std::vector<CXFA_Node*> valueNodes = pBind->GetNodeList(
-                XFA_NODEFILTER_Children, XFA_Element::DataValue);
+            std::vector<CXFA_Node*> valueNodes =
+                pBind->GetNodeListForType(XFA_Element::DataValue);
             size_t iDatas = valueNodes.size();
             if (iDatas < iSize) {
               size_t iAddNodes = iSize - iDatas;
