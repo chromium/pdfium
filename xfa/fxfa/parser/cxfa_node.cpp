@@ -1520,7 +1520,8 @@ void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
 
 void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
   CHECK(pNode);
-  CHECK_EQ(pNode->GetParent(), this);
+  if (pNode->GetParent() != this)
+    return;
 
   pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren);
   TreeNode<CXFA_Node>::RemoveChild(pNode);

@@ -1,0 +1,72 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+>>
+stream
+<template>
+<subform allowMacro="1" layout="lr" mergeMode="consumeData" name="subform_0">
+  <pageSet name="page_0">
+    <pageArea name="pagearea_0">
+      <contentArea h="0.5in" w="0.25in" x="1.0in" y="10.0in"></contentArea>
+      <subform allowMacro="1" layout="table" mergeMode="consumeData" name="subform_1">
+        <validate>
+          <script contentType="application/x-javascript">
+            xfa.resolveNode("xfa.form.subform_0.subform_3.field_5").execCalculate();
+          </script>
+        </validate>
+      </subform>
+    </pageArea>
+  </pageSet>
+  <subform allowMacro="0" layout="position" mergeMode="matchTemplate" name="subform_2">
+    <field name="field_3">
+      <items presence="visible" save="0">
+        <text>a</text>
+        <text>b</text>
+        <text>c</text>
+        <text>d</text>
+      </items>
+      <ui>
+        <numericEdit hScrollPolicy="on"></numericEdit>
+      </ui>
+      <validate>
+        <script contentType="application/x-javascript">
+          xfa.template.remerge();
+        </script>
+      </validate>
+      <value override="0">
+      <text>37</text>
+      </value>
+    </field>
+  </subform>
+  <subform allowMacro="0" layout="tb" mergeMode="matchTemplate" name="subform_3">
+    <bind match="dataRef" ref="a"></bind>
+    <field name="field_5">
+      <bind match="dataRef" ref="a"></bind>
+      <calculate>
+        <script contentType="application/x-javascript">
+          xfa.resolveNode("xfa.form.subform_0.page_0.pagearea_0.subform_1").leader = "test";
+          app.alert("Finished !!!");
+        </script>
+      </calculate>
+      <items presence="invisible" save="0">
+        <text>254</text>
+      </items>
+      <ui>
+        <choiceList commitOn="select" open="multiSelect" textEntry="0"></choiceList>
+      </ui>
+    </field>
+  </subform>
+</subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

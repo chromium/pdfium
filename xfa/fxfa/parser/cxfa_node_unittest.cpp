@@ -376,5 +376,6 @@ TEST_F(CXFANodeTest, RemoveChildAnotherParent) {
       GetDoc()->CreateNode(XFA_PacketType::Form, XFA_Element::Ui);
   child0->InsertChildAndNotify(-1, child1);
 
-  EXPECT_DEATH_IF_SUPPORTED(GetNode()->RemoveChildAndNotify(child1, false), "");
+  GetNode()->RemoveChildAndNotify(child1, false);
+  EXPECT_EQ(child0, child1->GetParent());
 }
