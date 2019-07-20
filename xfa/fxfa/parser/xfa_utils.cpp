@@ -212,25 +212,12 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (!rawValue || rawValue->IsEmpty())
           break;
 
-        std::vector<WideString> wsSelTextArray;
-        size_t iStart = 0;
-        auto iEnd = rawValue->Find(L'\n', iStart);
-        iEnd = !iEnd.has_value() ? rawValue->GetLength() : iEnd;
-        while (iEnd.has_value() && iEnd >= iStart) {
-          wsSelTextArray.push_back(
-              rawValue->Mid(iStart, iEnd.value() - iStart));
-          iStart = iEnd.value() + 1;
-          if (iStart >= rawValue->GetLength())
-            break;
-          iEnd = rawValue->Find(L'\n', iStart);
-        }
+        std::vector<WideString> wsSelTextArray =
+            fxcrt::Split(rawValue.value(), L'\n');
 
         CXFA_Node* pParentNode = pNode->GetParent();
-        ASSERT(pParentNode);
         CXFA_Node* pGrandparentNode = pParentNode->GetParent();
-        ASSERT(pGrandparentNode);
-        WideString bodyTagName;
-        bodyTagName =
+        WideString bodyTagName =
             pGrandparentNode->JSObject()->GetCData(XFA_Attribute::Name);
         if (bodyTagName.IsEmpty())
           bodyTagName = L"ListBox1";

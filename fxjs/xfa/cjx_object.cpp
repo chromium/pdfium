@@ -557,26 +557,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
 
         CXFA_Node* pBind = ToNode(GetXFAObject())->GetBindData();
         if (bSyncData && pBind) {
-          std::vector<WideString> wsSaveTextArray;
-          if (!wsContent.IsEmpty()) {
-            size_t iStart = 0;
-            size_t iLength = wsContent.GetLength();
-            auto iEnd = wsContent.Find(L'\n', iStart);
-            iEnd = !iEnd.has_value() ? iLength : iEnd;
-            while (iEnd.value() >= iStart) {
-              wsSaveTextArray.push_back(
-                  wsContent.Mid(iStart, iEnd.value() - iStart));
-              iStart = iEnd.value() + 1;
-              if (iStart >= iLength)
-                break;
-
-              iEnd = wsContent.Find(L'\n', iStart);
-              if (!iEnd.has_value()) {
-                wsSaveTextArray.push_back(
-                    wsContent.Mid(iStart, iLength - iStart));
-              }
-            }
-          }
+          std::vector<WideString> wsSaveTextArray =
+              fxcrt::Split(wsContent, L'\n');
           std::vector<CXFA_Node*> valueNodes =
               pBind->GetNodeListForType(XFA_Element::DataValue);
 

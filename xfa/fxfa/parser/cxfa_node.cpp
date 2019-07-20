@@ -4258,27 +4258,12 @@ std::vector<int32_t> CXFA_Node::GetSelectedItems() {
 }
 
 std::vector<WideString> CXFA_Node::GetSelectedItemsValue() {
-  std::vector<WideString> wsSelTextArray;
   WideString wsValue = GetRawValue();
-  if (IsChoiceListMultiSelect()) {
-    if (!wsValue.IsEmpty()) {
-      size_t iStart = 0;
-      size_t iLength = wsValue.GetLength();
-      auto iEnd = wsValue.Find(L'\n', iStart);
-      iEnd = (!iEnd.has_value()) ? iLength : iEnd;
-      while (iEnd >= iStart) {
-        wsSelTextArray.push_back(wsValue.Mid(iStart, iEnd.value() - iStart));
-        iStart = iEnd.value() + 1;
-        if (iStart >= iLength)
-          break;
-        iEnd = wsValue.Find(L'\n', iStart);
-        if (!iEnd.has_value())
-          wsSelTextArray.push_back(wsValue.Mid(iStart, iLength - iStart));
-      }
-    }
-  } else {
-    wsSelTextArray.push_back(wsValue);
-  }
+  if (IsChoiceListMultiSelect())
+    return fxcrt::Split(wsValue, L'\n');
+
+  std::vector<WideString> wsSelTextArray;
+  wsSelTextArray.push_back(wsValue);
   return wsSelTextArray;
 }
 
