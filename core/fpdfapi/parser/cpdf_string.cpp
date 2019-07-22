@@ -64,13 +64,13 @@ const CPDF_String* CPDF_String::AsString() const {
 }
 
 WideString CPDF_String::GetUnicodeText() const {
-  return PDF_DecodeText(m_String.AsRawSpan());
+  return PDF_DecodeText(m_String.raw_span());
 }
 
 bool CPDF_String::WriteTo(IFX_ArchiveStream* archive,
                           const CPDF_Encryptor* encryptor) const {
   std::vector<uint8_t> encrypted_data;
-  pdfium::span<const uint8_t> data = m_String.AsRawSpan();
+  pdfium::span<const uint8_t> data = m_String.raw_span();
   if (encryptor) {
     encrypted_data = encryptor->Encrypt(data);
     data = encrypted_data;

@@ -32,7 +32,7 @@ constexpr char kChecksumKey[] = "CheckSum";
 ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   std::unique_ptr<uint8_t, FxFreeDeleter> result;
   uint32_t size = 0;
-  HexDecode(bsHex.AsRawSpan(), &result, &size);
+  HexDecode(bsHex.raw_span(), &result, &size);
   return ByteString(result.get(), size);
 }
 

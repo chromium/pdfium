@@ -402,7 +402,7 @@ std::vector<uint8_t> XFA_Base64Decode(const ByteString& bsStr) {
   if (bsStr.IsEmpty())
     return result;
 
-  std::vector<uint8_t> buffer = XFA_RemoveBase64Whitespace(bsStr.AsRawSpan());
+  std::vector<uint8_t> buffer = XFA_RemoveBase64Whitespace(bsStr.raw_span());
   result.reserve(3 * (buffer.size() / 4));
 
   uint32_t dwLimb = 0;
@@ -488,7 +488,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
     } else {
       bsData = wsImage.ToDefANSI();
       pImageFileRead =
-          pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(bsData.AsRawSpan());
+          pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(bsData.raw_span());
     }
   } else {
     WideString wsURL = wsHref;

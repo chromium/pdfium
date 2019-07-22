@@ -1165,7 +1165,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
   WideString wsColumnWidths =
       pLayoutNode->JSObject()->GetCData(XFA_Attribute::ColumnWidths);
   if (!wsColumnWidths.IsEmpty()) {
-    for (auto& width : SeparateStringOnSpace(wsColumnWidths.AsSpan())) {
+    for (auto& width : SeparateStringOnSpace(wsColumnWidths.span())) {
       width.TrimLeft(L' ');
       if (width.IsEmpty())
         continue;

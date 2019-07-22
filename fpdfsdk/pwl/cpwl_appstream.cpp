@@ -1937,7 +1937,7 @@ void CPWL_AppStream::Write(const ByteString& sAPType,
   }
   pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());
   pStreamDict->SetRectFor("BBox", widget_->GetRotatedRect());
-  pStream->SetDataAndRemoveFilter(sContents.AsRawSpan());
+  pStream->SetDataAndRemoveFilter(sContents.raw_span());
 }
 
 void CPWL_AppStream::Remove(const ByteString& sAPType) {

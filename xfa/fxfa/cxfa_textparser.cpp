@@ -554,7 +554,7 @@ bool CXFA_TextParser::GetTabstops(CFX_CSSComputedStyle* pStyle,
     return false;
   }
 
-  pdfium::span<const wchar_t> spTabStops = wsValue.AsSpan();
+  pdfium::span<const wchar_t> spTabStops = wsValue.span();
   size_t iCur = 0;
   size_t iLast = 0;
   WideString wsAlign;

@@ -774,7 +774,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 
     ByteString newValue = PDF_EncodeText(WideStringFromFPDFWideString(value));
     auto* pNewApStream = pApDict->SetNewFor<CPDF_Stream>(modeKey);
-    pNewApStream->SetData(newValue.AsRawSpan());
+    pNewApStream->SetData(newValue.raw_span());
   } else {
     if (pApDict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)

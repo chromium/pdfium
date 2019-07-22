@@ -166,7 +166,7 @@ int DateFromTime(double t) {
 }
 
 size_t FindSubWordLength(const WideString& str, size_t nStart) {
-  pdfium::span<const wchar_t> data = str.AsSpan();
+  pdfium::span<const wchar_t> data = str.span();
   size_t i = nStart;
   while (i < data.size() && std::iswalnum(data[i]))
     ++i;

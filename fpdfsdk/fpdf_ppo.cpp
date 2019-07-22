@@ -696,7 +696,7 @@ ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
       pAcc->LoadAllDataFiltered();
       bsSrcContentStream = ByteString(pAcc->GetData(), pAcc->GetSize());
     }
-    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.AsRawSpan());
+    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_span());
   }
 
   // TODO(xlou): A better name schema to avoid possible object name collision.
@@ -727,7 +727,7 @@ void CPDF_NPageToOneExporter::FinishPage(CPDF_Dictionary* pDestPageDict,
   auto pDict = dest()->New<CPDF_Dictionary>();
   CPDF_Stream* pStream =
       dest()->NewIndirect<CPDF_Stream>(nullptr, 0, std::move(pDict));
-  pStream->SetData(bsContent.AsRawSpan());
+  pStream->SetData(bsContent.raw_span());
   pDestPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents,
                                            dest(), pStream->GetObjNum());
 }

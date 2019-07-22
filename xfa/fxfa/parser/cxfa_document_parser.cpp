@@ -247,8 +247,7 @@ bool CXFA_DocumentParser::Parse(
 }
 
 CFX_XMLNode* CXFA_DocumentParser::ParseXMLData(const ByteString& wsXML) {
-  auto pStream =
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(wsXML.AsRawSpan());
+  auto pStream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(wsXML.raw_span());
   xml_doc_ = LoadXML(pStream);
   if (!xml_doc_)
     return nullptr;

@@ -25,7 +25,7 @@ TEST(WideString, ElementAccess) {
   EXPECT_DEATH({ abc[4]; }, ".*");
 #endif
 
-  pdfium::span<const wchar_t> abc_span = abc.AsSpan();
+  pdfium::span<const wchar_t> abc_span = abc.span();
   EXPECT_EQ(3u, abc_span.size());
   EXPECT_EQ(0, wmemcmp(abc_span.data(), L"abc", 3));
 
@@ -1567,7 +1567,7 @@ TEST(WideString, Empty) {
   EXPECT_NE(nullptr, cstr);
   EXPECT_EQ(0u, wcslen(cstr));
 
-  pdfium::span<const wchar_t> cspan = empty_str.AsSpan();
+  pdfium::span<const wchar_t> cspan = empty_str.span();
   EXPECT_TRUE(cspan.empty());
   EXPECT_EQ(nullptr, cspan.data());
 }

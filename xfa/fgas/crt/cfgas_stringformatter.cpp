@@ -191,8 +191,8 @@ WideString GetLiteralTextReverse(pdfium::span<const wchar_t> spStrPattern,
 bool GetNumericDotIndex(const WideString& wsNum,
                         const WideString& wsDotSymbol,
                         size_t* iDotIndex) {
-  pdfium::span<const wchar_t> spNum = wsNum.AsSpan();
-  pdfium::span<const wchar_t> spDotSymbol = wsDotSymbol.AsSpan();
+  pdfium::span<const wchar_t> spNum = wsNum.span();
+  pdfium::span<const wchar_t> spDotSymbol = wsDotSymbol.span();
   for (size_t ccf = 0; ccf < spNum.size(); ++ccf) {
     if (spNum[ccf] == '\'') {
       GetLiteralText(spNum, &ccf);
@@ -240,8 +240,8 @@ bool ParseLocaleDate(const WideString& wsDate,
   uint32_t month = 1;
   uint32_t day = 1;
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spDate = wsDate.AsSpan();
-  pdfium::span<const wchar_t> spDatePattern = wsDatePattern.AsSpan();
+  pdfium::span<const wchar_t> spDate = wsDate.span();
+  pdfium::span<const wchar_t> spDatePattern = wsDatePattern.span();
   while (*cc < spDate.size() && ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
       WideString wsLiteral = GetLiteralText(spDatePattern, &ccf);
@@ -360,8 +360,8 @@ bool ParseLocaleTime(const WideString& wsTime,
   uint32_t second = 0;
   uint32_t millisecond = 0;
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spTime = wsTime.AsSpan();
-  pdfium::span<const wchar_t> spTimePattern = wsTimePattern.AsSpan();
+  pdfium::span<const wchar_t> spTime = wsTime.span();
+  pdfium::span<const wchar_t> spTimePattern = wsTimePattern.span();
   bool bHasA = false;
   bool bPM = false;
   while (*cc < spTime.size() && ccf < spTimePattern.size()) {
@@ -491,7 +491,7 @@ bool ParseLocaleTime(const WideString& wsTime,
 size_t GetNumTrailingLimit(const WideString& wsFormat,
                            size_t iDotPos,
                            bool* bTrimTailZeros) {
-  const pdfium::span<const wchar_t> spFormat = wsFormat.AsSpan();
+  const pdfium::span<const wchar_t> spFormat = wsFormat.span();
   size_t iTrailing = 0;
   for (++iDotPos; iDotPos < spFormat.size(); ++iDotPos) {
     wchar_t wc = spFormat[iDotPos];
@@ -571,7 +571,7 @@ WideString DateFormat(const WideString& wsDatePattern,
   uint8_t month = datetime.GetMonth();
   uint8_t day = datetime.GetDay();
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spDatePattern = wsDatePattern.AsSpan();
+  pdfium::span<const wchar_t> spDatePattern = wsDatePattern.span();
   while (ccf < spDatePattern.size()) {
     if (spDatePattern[ccf] == '\'') {
       wsResult += GetLiteralText(spDatePattern, &ccf);
@@ -632,7 +632,7 @@ WideString TimeFormat(const WideString& wsTimePattern,
   uint8_t second = datetime.GetSecond();
   uint16_t millisecond = datetime.GetMillisecond();
   size_t ccf = 0;
-  pdfium::span<const wchar_t> spTimePattern = wsTimePattern.AsSpan();
+  pdfium::span<const wchar_t> spTimePattern = wsTimePattern.span();
   uint16_t wHour = hour;
   bool bPM = false;
   if (wsTimePattern.Contains('A')) {
@@ -824,7 +824,7 @@ CFGAS_StringFormatter::CFGAS_StringFormatter(LocaleMgrIface* pLocaleMgr,
                                              const WideString& wsPattern)
     : m_pLocaleMgr(pLocaleMgr),
       m_wsPattern(wsPattern),
-      m_spPattern(m_wsPattern.AsSpan()) {}
+      m_spPattern(m_wsPattern.span()) {}
 
 CFGAS_StringFormatter::~CFGAS_StringFormatter() = default;
 
@@ -832,7 +832,7 @@ CFGAS_StringFormatter::~CFGAS_StringFormatter() = default;
 std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
     const WideString& wsFormatString) {
   std::vector<WideString> wsPatterns;
-  pdfium::span<const wchar_t> spFormatString = wsFormatString.AsSpan();
+  pdfium::span<const wchar_t> spFormatString = wsFormatString.span();
   size_t index = 0;
   size_t token = 0;
   bool bQuote = false;
@@ -1058,8 +1058,8 @@ bool CFGAS_StringFormatter::ParseText(const WideString& wsSrcText,
   if (wsTextFormat.IsEmpty())
     return false;
 
-  pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
-  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  pdfium::span<const wchar_t> spSrcText = wsSrcText.span();
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
 
   size_t iText = 0;
   size_t iPattern = 0;
@@ -1140,8 +1140,8 @@ bool CFGAS_StringFormatter::ParseNum(const WideString& wsSrcNum,
   WideString wsMinus = pLocale->GetMinusSymbol();
   int32_t iMinusLen = wsMinus.GetLength();
 
-  pdfium::span<const wchar_t> spSrcNum = wsSrcNum.AsSpan();
-  pdfium::span<const wchar_t> spNumFormat = wsNumFormat.AsSpan();
+  pdfium::span<const wchar_t> spSrcNum = wsSrcNum.span();
+  pdfium::span<const wchar_t> spNumFormat = wsNumFormat.span();
 
   bool bHavePercentSymbol = false;
   bool bNeg = false;
@@ -1717,8 +1717,8 @@ bool CFGAS_StringFormatter::ParseDateTime(const WideString& wsSrcDateTime,
 
 bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText) const {
   WideString wsTextFormat = GetTextFormat(L"zero");
-  pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
-  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  pdfium::span<const wchar_t> spSrcText = wsSrcText.span();
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
 
   size_t iText = 0;
   size_t iPattern = 0;
@@ -1745,8 +1745,8 @@ bool CFGAS_StringFormatter::ParseZero(const WideString& wsSrcText) const {
 
 bool CFGAS_StringFormatter::ParseNull(const WideString& wsSrcText) const {
   WideString wsTextFormat = GetTextFormat(L"null");
-  pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
-  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  pdfium::span<const wchar_t> spSrcText = wsSrcText.span();
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
 
   size_t iText = 0;
   size_t iPattern = 0;
@@ -1777,8 +1777,8 @@ bool CFGAS_StringFormatter::FormatText(const WideString& wsSrcText,
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"text");
-  pdfium::span<const wchar_t> spSrcText = wsSrcText.AsSpan();
-  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  pdfium::span<const wchar_t> spSrcText = wsSrcText.span();
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
 
   size_t iText = 0;
   size_t iPattern = 0;
@@ -1842,7 +1842,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
 
-  pdfium::span<const wchar_t> spNumFormat = wsNumFormat.AsSpan();
+  pdfium::span<const wchar_t> spNumFormat = wsNumFormat.span();
   WideString wsSrcNum = wsInputNum;
   wsSrcNum.TrimLeft('0');
   if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.')
@@ -1919,7 +1919,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
   }
 
   bool bAddNeg = false;
-  pdfium::span<const wchar_t> spSrcNum = wsSrcNum.AsSpan();
+  pdfium::span<const wchar_t> spSrcNum = wsSrcNum.span();
   auto dot_index = wsSrcNum.Find('.');
   if (!dot_index.has_value())
     dot_index = spSrcNum.size();
@@ -2202,22 +2202,22 @@ bool CFGAS_StringFormatter::FormatDateTime(const WideString& wsSrcDateTime,
   auto iT = wsSrcDateTime.Find(L"T");
   if (!iT.has_value()) {
     if (eCategory == FX_DATETIMETYPE_Date &&
-        FX_DateFromCanonical(wsSrcDateTime.AsSpan(), &dt)) {
+        FX_DateFromCanonical(wsSrcDateTime.span(), &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                          pLocale);
       return true;
     }
     if (eCategory == FX_DATETIMETYPE_Time &&
-        FX_TimeFromCanonical(pLocale, wsSrcDateTime.AsSpan(), &dt)) {
+        FX_TimeFromCanonical(pLocale, wsSrcDateTime.span(), &dt)) {
       *wsOutput = FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                          pLocale);
       return true;
     }
   } else {
     pdfium::span<const wchar_t> wsSrcDate =
-        wsSrcDateTime.AsSpan().first(iT.value());
+        wsSrcDateTime.span().first(iT.value());
     pdfium::span<const wchar_t> wsSrcTime =
-        wsSrcDateTime.AsSpan().subspan(iT.value() + 1);
+        wsSrcDateTime.span().subspan(iT.value() + 1);
     if (wsSrcDate.empty() || wsSrcTime.empty())
       return false;
 
@@ -2237,7 +2237,7 @@ bool CFGAS_StringFormatter::FormatZero(WideString* wsOutput) const {
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"zero");
-  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
   for (size_t iPattern = 0; iPattern < spTextFormat.size(); ++iPattern) {
     if (spTextFormat[iPattern] == '\'') {
       *wsOutput += GetLiteralText(spTextFormat, &iPattern);
@@ -2253,7 +2253,7 @@ bool CFGAS_StringFormatter::FormatNull(WideString* wsOutput) const {
     return false;
 
   WideString wsTextFormat = GetTextFormat(L"null");
-  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.AsSpan();
+  pdfium::span<const wchar_t> spTextFormat = wsTextFormat.span();
   for (size_t iPattern = 0; iPattern < spTextFormat.size(); ++iPattern) {
     if (spTextFormat[iPattern] == '\'') {
       *wsOutput += GetLiteralText(spTextFormat, &iPattern);

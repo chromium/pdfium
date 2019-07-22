@@ -227,11 +227,11 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (names.IsEmpty())
     return;
 
-  ByteString facename = GetNameFromTT(names.AsRawSpan(), 1);
+  ByteString facename = GetNameFromTT(names.raw_span(), 1);
   if (facename.IsEmpty())
     return;
 
-  ByteString style = GetNameFromTT(names.AsRawSpan(), 2);
+  ByteString style = GetNameFromTT(names.raw_span(), 2);
   if (style != "Regular")
     facename += " " + style;
 

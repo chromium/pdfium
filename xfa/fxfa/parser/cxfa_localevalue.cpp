@@ -216,7 +216,7 @@ CFX_DateTime CXFA_LocaleValue::GetDate() const {
     return CFX_DateTime();
 
   CFX_DateTime dt;
-  FX_DateFromCanonical(m_wsValue.AsSpan(), &dt);
+  FX_DateFromCanonical(m_wsValue.span(), &dt);
   return dt;
 }
 
@@ -225,7 +225,7 @@ CFX_DateTime CXFA_LocaleValue::GetTime() const {
     return CFX_DateTime();
 
   CFX_DateTime dt;
-  FX_TimeFromCanonical(m_pLocaleMgr->GetDefLocale(), m_wsValue.AsSpan(), &dt);
+  FX_TimeFromCanonical(m_pLocaleMgr->GetDefLocale(), m_wsValue.span(), &dt);
   return dt;
 }
 
@@ -369,7 +369,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
   static const uint16_t wCountY = 4;
   static const uint16_t wCountM = 2;
   static const uint16_t wCountD = 2;
-  pdfium::span<const wchar_t> spDate = wsDate.AsSpan();
+  pdfium::span<const wchar_t> spDate = wsDate.span();
   if (spDate.size() < wCountY ||
       spDate.size() > wCountY + wCountM + wCountD + 2) {
     return false;
@@ -442,7 +442,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
 }
 
 bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
-  pdfium::span<const wchar_t> spTime = wsTime.AsSpan();
+  pdfium::span<const wchar_t> spTime = wsTime.span();
   if (spTime.size() < 2)
     return false;
 
@@ -658,8 +658,8 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   if (wsFormat.IsEmpty() || wsNumeric.IsEmpty())
     return true;
 
-  pdfium::span<const wchar_t> spNum = wsNumeric.AsSpan();
-  pdfium::span<const wchar_t> spFmt = wsFormat.AsSpan();
+  pdfium::span<const wchar_t> spNum = wsNumeric.span();
+  pdfium::span<const wchar_t> spFmt = wsFormat.span();
   int32_t n = 0;
   int32_t nf = 0;
   wchar_t c = spNum[n];

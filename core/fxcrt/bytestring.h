@@ -86,11 +86,11 @@ class ByteString {
 
   // Explicit conversion to span.
   // Note: Any subsequent modification of |this| will invalidate the result.
-  pdfium::span<const char> AsSpan() const {
+  pdfium::span<const char> span() const {
     return pdfium::make_span(m_pData ? m_pData->m_String : nullptr,
                              GetLength());
   }
-  pdfium::span<const uint8_t> AsRawSpan() const {
+  pdfium::span<const uint8_t> raw_span() const {
     return pdfium::make_span(raw_str(), GetLength());
   }
 

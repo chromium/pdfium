@@ -101,7 +101,7 @@ bool FDFToURLEncodedData(std::vector<uint8_t>* pBuffer) {
     name = pField->GetUnicodeTextFor("T");
     ByteString name_b = name.ToDefANSI();
     ByteString csBValue = pField->GetStringFor("V");
-    WideString csWValue = PDF_DecodeText(csBValue.AsRawSpan());
+    WideString csWValue = PDF_DecodeText(csBValue.raw_span());
     ByteString csValue_b = csWValue.ToDefANSI();
     fdfEncodedData << name_b << "=" << csValue_b;
     if (i != pFields->size() - 1)
