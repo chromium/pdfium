@@ -8,13 +8,14 @@
 #define CORE_FPDFAPI_FONT_CPDF_TYPE3CHAR_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/optional.h"
 
 class CFX_DIBitmap;
-class CPDF_ImageObject;
 
 class CPDF_Type3Char {
  public:
@@ -24,8 +25,9 @@ class CPDF_Type3Char {
 
     virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
     virtual bool HasPageObjects() const = 0;
-    virtual const CPDF_ImageObject* GetSoleImageOfForm() const = 0;
     virtual CFX_FloatRect CalcBoundingBox() const = 0;
+    virtual Optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+    GetBitmapAndMatrixFromSoleImageOfForm() const = 0;
   };
 
   CPDF_Type3Char();

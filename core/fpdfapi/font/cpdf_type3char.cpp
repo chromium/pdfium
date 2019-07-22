@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
@@ -40,12 +39,11 @@ bool CPDF_Type3Char::LoadBitmapFromSoleImageOfForm() {
   if (m_bColored)
     return false;
 
-  const CPDF_ImageObject* pImageObject = m_pForm->GetSoleImageOfForm();
-  if (!pImageObject)
+  auto result = m_pForm->GetBitmapAndMatrixFromSoleImageOfForm();
+  if (!result.has_value())
     return false;
 
-  m_ImageMatrix = pImageObject->matrix();
-  m_pBitmap = pImageObject->GetIndependentBitmap();
+  std::tie(m_pBitmap, m_ImageMatrix) = result.value();
   m_pForm.reset();
   return true;
 }
