@@ -105,6 +105,10 @@ const CPDF_Stream* CPDF_Form::GetStream() const {
   return m_pFormStream.Get();
 }
 
+bool CPDF_Form::HasPageObjects() const {
+  return GetPageObjectCount() != 0;
+}
+
 const CPDF_ImageObject* CPDF_Form::GetSoleImageOfForm() const {
   return GetPageObjectCount() == 1 ? (*begin())->AsImage() : nullptr;
 }

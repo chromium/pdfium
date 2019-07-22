@@ -40,6 +40,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
 
   // CPDF_Type3Char::FormIface:
   void ParseContentForType3Char(CPDF_Type3Char* pType3Char) override;
+  bool HasPageObjects() const override;
   const CPDF_ImageObject* GetSoleImageOfForm() const override;
   CFX_FloatRect CalcBoundingBox() const override;
 

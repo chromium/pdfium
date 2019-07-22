@@ -23,6 +23,7 @@ class CPDF_Type3Char {
     virtual ~FormIface() {}
 
     virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
+    virtual bool HasPageObjects() const = 0;
     virtual const CPDF_ImageObject* GetSoleImageOfForm() const = 0;
     virtual CFX_FloatRect CalcBoundingBox() const = 0;
   };

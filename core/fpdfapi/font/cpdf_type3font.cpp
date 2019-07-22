@@ -110,10 +110,11 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!pStream)
     return nullptr;
 
-  auto pForm = pdfium::MakeUnique<CPDF_Form>(
-      m_pDocument.Get(),
-      m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
-      pStream);
+  std::unique_ptr<CPDF_Type3Char::FormIface> pForm =
+      pdfium::MakeUnique<CPDF_Form>(
+          m_pDocument.Get(),
+          m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
+          pStream);
 
   auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>();
 
@@ -130,7 +131,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
     return it->second.get();
 
   pNewChar->Transform(pForm.get(), m_FontMatrix);
-  if (pForm->GetPageObjectCount() != 0)
+  if (pForm->HasPageObjects())
     pNewChar->SetForm(std::move(pForm));
 
   CPDF_Type3Char* pCachedChar = pNewChar.get();
