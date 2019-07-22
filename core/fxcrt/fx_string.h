@@ -30,15 +30,15 @@ namespace fxcrt {
 template <typename StrType>
 std::vector<StrType> Split(const StrType& that, typename StrType::CharType ch) {
   std::vector<StrType> result;
-  StrType remaining(that);
+  StringViewTemplate<typename StrType::CharType> remaining(that.span());
   while (1) {
     Optional<size_t> index = remaining.Find(ch);
     if (!index.has_value())
       break;
-    result.push_back(remaining.Left(index.value()));
+    result.emplace_back(remaining.Left(index.value()));
     remaining = remaining.Right(remaining.GetLength() - index.value() - 1);
   }
-  result.push_back(remaining);
+  result.emplace_back(remaining);
   return result;
 }
 
