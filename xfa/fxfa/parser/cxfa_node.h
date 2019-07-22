@@ -182,7 +182,8 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
   CXFA_Node* GetDataDescriptionNode();
   void SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode);
   CXFA_Node* GetBindData();
-  std::vector<CXFA_Node*>* GetBindItems() { return &binding_nodes_; }
+  bool HasBindItems() const { return !binding_nodes_.empty(); }
+  std::vector<CXFA_Node*> GetBindItemsCopy() { return binding_nodes_; }
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem() const;

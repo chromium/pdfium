@@ -1285,7 +1285,7 @@ CXFA_Node* CXFA_Node::GetContainerNode() {
       return nullptr;
 
     CXFA_Node* pFieldNode = nullptr;
-    for (auto* pFormNode : *(pDataNode->GetBindItems())) {
+    for (auto* pFormNode : pDataNode->GetBindItemsCopy()) {
       if (!pFormNode || pFormNode->HasRemovedChildren())
         continue;
       pFieldNode = pFormNode->IsWidgetReady() ? pFormNode : nullptr;
@@ -5024,7 +5024,7 @@ void CXFA_Node::SetToXML(const WideString& value) {
       if (GetPacketType() == XFA_PacketType::Datasets) {
         for (CXFA_Node* pChildDataNode = GetFirstChild(); pChildDataNode;
              pChildDataNode = pChildDataNode->GetNextSibling()) {
-          if (!pChildDataNode->GetBindItems()->empty()) {
+          if (pChildDataNode->HasBindItems()) {
             bDeleteChildren = false;
             break;
           }

@@ -592,7 +592,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
                 wsSaveTextArray[i], wsSaveTextArray[i], false, false);
             i++;
           }
-          for (auto* pArrayNode : *(pBind->GetBindItems())) {
+          for (auto* pArrayNode : pBind->GetBindItemsCopy()) {
             if (pArrayNode != ToNode(GetXFAObject())) {
               pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                                  bScriptModify, false);
@@ -618,7 +618,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
       if (pBindNode && bSyncData) {
         pBindNode->JSObject()->SetContent(wsContent, wsXMLValue, bNotify,
                                           bScriptModify, false);
-        for (auto* pArrayNode : *(pBindNode->GetBindItems())) {
+        for (auto* pArrayNode : pBindNode->GetBindItemsCopy()) {
           if (pArrayNode != ToNode(GetXFAObject())) {
             pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                                true, false);
@@ -692,7 +692,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
 
   SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
   if (pBindNode && bSyncData) {
-    for (auto* pArrayNode : *(pBindNode->GetBindItems())) {
+    for (auto* pArrayNode : pBindNode->GetBindItemsCopy()) {
       pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                          bScriptModify, false);
     }
@@ -1418,7 +1418,7 @@ void CJX_Object::ScriptSomDefaultValue(CFXJSE_Value* pValue,
     CXFA_Node* pContainerNode = nullptr;
     if (ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Datasets) {
       WideString wsPicture;
-      for (auto* pFormNode : *(ToNode(GetXFAObject())->GetBindItems())) {
+      for (auto* pFormNode : ToNode(GetXFAObject())->GetBindItemsCopy()) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
 
