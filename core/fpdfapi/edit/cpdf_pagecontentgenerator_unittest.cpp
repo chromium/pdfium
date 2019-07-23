@@ -58,7 +58,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
 
   auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   auto pTestPage =
-      pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get(), false);
+      pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
   CPDF_PageContentGenerator generator(pTestPage.Get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -94,7 +94,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
 
     auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
     auto pTestPage =
-        pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get(), false);
+        pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
     CPDF_PageContentGenerator generator(pTestPage.Get());
     std::ostringstream buf;
     TestProcessPath(&generator, &buf, pPathObj.get());
@@ -128,7 +128,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
         FXPT_TYPE::BezierTo, true);
     auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
     auto pTestPage =
-        pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get(), false);
+        pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
     CPDF_PageContentGenerator generator(pTestPage.Get());
     std::ostringstream buf;
 
@@ -167,7 +167,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
 
   auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   auto pTestPage =
-      pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get(), false);
+      pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
   CPDF_PageContentGenerator generator(pTestPage.Get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -202,7 +202,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
 
   pDoc->CreateNewDoc();
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict, false);
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -244,7 +244,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
 
   pDoc->CreateNewDoc();
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict, false);
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
   auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
   CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman");
@@ -310,7 +310,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   pDoc->CreateNewDoc();
 
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
-  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict, false);
+  auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict);
   CPDF_PageContentGenerator generator(pTestPage.Get());
 
   std::ostringstream buf;

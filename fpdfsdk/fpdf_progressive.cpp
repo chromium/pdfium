@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/page/cpdf_pagerendercontext.h"
+#include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -79,7 +79,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   if (!pPage)
     return FPDF_RENDER_FAILED;
 
-  CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
+  auto* pContext =
+      static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
   if (pContext && pContext->m_pRenderer) {
     IPDFSDK_PauseAdapter IPauseAdapter(pause);
     pContext->m_pRenderer->Continue(&IPauseAdapter);
@@ -98,7 +99,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
 #ifdef _SKIA_SUPPORT_PATHS_
-    CPDF_PageRenderContext* pContext = pPage->GetRenderContext();
+    auto* pContext =
+        static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
     if (pContext && pContext->m_pRenderer) {
       CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
       pDevice->Flush(true);

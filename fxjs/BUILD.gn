@@ -107,6 +107,7 @@ jumbo_source_set("fxjs") {
       "../core/fpdfapi/font",
       "../core/fpdfapi/page",
       "../core/fpdfapi/parser",
+      "../core/fpdfapi/render",
       "../core/fpdfdoc",
       "../core/fxge",
       "//v8",

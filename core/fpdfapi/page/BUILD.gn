@@ -59,8 +59,6 @@ jumbo_source_set("page") {
     "cpdf_pageobject.h",
     "cpdf_pageobjectholder.cpp",
     "cpdf_pageobjectholder.h",
-    "cpdf_pagerendercontext.cpp",
-    "cpdf_pagerendercontext.h",
     "cpdf_path.cpp",
     "cpdf_path.h",
     "cpdf_pathobject.cpp",

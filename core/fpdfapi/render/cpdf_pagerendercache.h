@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -22,14 +23,16 @@ class CPDF_RenderStatus;
 class CPDF_Stream;
 class PauseIndicatorIface;
 
-class CPDF_PageRenderCache {
+class CPDF_PageRenderCache : public CPDF_Page::RenderCacheIface {
  public:
   explicit CPDF_PageRenderCache(CPDF_Page* pPage);
-  ~CPDF_PageRenderCache();
+  ~CPDF_PageRenderCache() override;
+
+  // CPDF_Page::RenderCacheIface:
+  void ResetBitmapForImage(const RetainPtr<CPDF_Image>& pImage) override;
 
   void CacheOptimization(int32_t dwLimitCacheSize);
   uint32_t GetTimeCount() const { return m_nTimeCount; }
-  void ResetBitmap(const RetainPtr<CPDF_Image>& pImage);
   CPDF_Page* GetPage() const { return m_pPage.Get(); }
   CPDF_ImageCacheEntry* GetCurImageCacheEntry() const {
     return m_pCurImageCacheEntry.Get();

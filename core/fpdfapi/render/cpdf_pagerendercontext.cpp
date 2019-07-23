@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/cpdf_pagerendercontext.h"
+#include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 
 #include "core/fpdfapi/page/cpdf_occontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"

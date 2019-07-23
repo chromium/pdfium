@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_pagerendercontext.h"
+#include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"

@@ -24,7 +24,8 @@
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)
     : m_pDocument(pPage->GetDocument()),
       m_pPageResources(pPage->m_pPageResources.Get()),
-      m_pPageCache(pPage->GetRenderCache()) {}
+      m_pPageCache(
+          static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache())) {}
 
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
                                        CPDF_PageRenderCache* pPageCache)

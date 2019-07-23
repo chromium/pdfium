@@ -12,23 +12,17 @@
 #include "constants/page_object.h"
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
-#include "core/fpdfapi/page/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
-                     CPDF_Dictionary* pPageDict,
-                     bool bPageCache)
+CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
     : CPDF_PageObjectHolder(pDocument, pPageDict, nullptr, nullptr),
       m_PageSize(100, 100),
       m_pPDFDocument(pDocument) {
   ASSERT(pPageDict);
-  if (bPageCache)
-    m_pPageRender = pdfium::MakeUnique<CPDF_PageRenderCache>(this);
 
   // Cannot initialize |m_pResources| and |m_pPageResources| via the
   // CPDF_PageObjectHolder ctor because GetPageAttr() requires
@@ -77,11 +71,6 @@ void CPDF_Page::ParseContent() {
 
   ASSERT(GetParseState() == ParseState::kParsing);
   ContinueParse(nullptr);
-}
-
-void CPDF_Page::SetRenderContext(
-    std::unique_ptr<CPDF_PageRenderContext> pContext) {
-  m_pRenderContext = std::move(pContext);
 }
 
 CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {

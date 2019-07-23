@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
@@ -41,10 +42,9 @@ bool CPDFXFA_Page::LoadPDFPage() {
   if (!pDict)
     return false;
 
-  if (!m_pPDFPage || m_pPDFPage->GetDict() != pDict) {
-    m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(pPDFDoc, pDict, true);
-    m_pPDFPage->ParseContent();
-  }
+  if (!m_pPDFPage || m_pPDFPage->GetDict() != pDict)
+    LoadPDFPageFromDict(pDict);
+
   return true;
 }
 
@@ -68,7 +68,9 @@ bool CPDFXFA_Page::LoadPage() {
 
 void CPDFXFA_Page::LoadPDFPageFromDict(CPDF_Dictionary* pPageDict) {
   ASSERT(pPageDict);
-  m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(GetDocument(), pPageDict, true);
+  m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(GetDocument(), pPageDict);
+  m_pPDFPage->SetRenderCache(
+      pdfium::MakeUnique<CPDF_PageRenderCache>(m_pPDFPage.Get()));
   m_pPDFPage->ParseContent();
 }
 

@@ -23,6 +23,7 @@ jumbo_source_set("fpdfxfa") {
     "../../:pdfium_public_headers",
     "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",
+    "../../core/fpdfapi/render",
     "../../core/fxcrt",
     "../../fxjs",
     "../../xfa/fgas",
