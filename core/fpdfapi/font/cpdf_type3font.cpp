@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
-#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -25,8 +24,10 @@ constexpr int kMaxType3FormLevel = 4;
 }  // namespace
 
 CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
-                               CPDF_Dictionary* pFontDict)
-    : CPDF_SimpleFont(pDocument, pFontDict) {
+                               CPDF_Dictionary* pFontDict,
+                               std::unique_ptr<FormFactoryIface> pFormFactory)
+    : CPDF_SimpleFont(pDocument, pFontDict),
+      m_pFormFactory(std::move(pFormFactory)) {
   ASSERT(GetDocument());
   memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
@@ -110,11 +111,10 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!pStream)
     return nullptr;
 
-  std::unique_ptr<CPDF_Type3Char::FormIface> pForm =
-      pdfium::MakeUnique<CPDF_Form>(
-          m_pDocument.Get(),
-          m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
-          pStream);
+  std::unique_ptr<CPDF_Font::FormIface> pForm = m_pFormFactory->CreateForm(
+      m_pDocument.Get(),
+      m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
+      pStream);
 
   auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>();
 

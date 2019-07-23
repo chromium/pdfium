@@ -302,12 +302,14 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);
   pDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
   return pFontGlobals->Set(pDoc, font_id.value(),
-                           CPDF_Font::Create(nullptr, pDict.Get()));
+                           CPDF_Font::Create(nullptr, pDict.Get(), nullptr));
 }
 
 // static
-std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
-                                             CPDF_Dictionary* pFontDict) {
+std::unique_ptr<CPDF_Font> CPDF_Font::Create(
+    CPDF_Document* pDoc,
+    CPDF_Dictionary* pFontDict,
+    std::unique_ptr<FormFactoryIface> pFactory) {
   ByteString type = pFontDict->GetStringFor("Subtype");
   std::unique_ptr<CPDF_Font> pFont;
   if (type == "TrueType") {
@@ -324,7 +326,8 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
     if (!pFont)
       pFont = pdfium::MakeUnique<CPDF_TrueTypeFont>(pDoc, pFontDict);
   } else if (type == "Type3") {
-    pFont = pdfium::MakeUnique<CPDF_Type3Font>(pDoc, pFontDict);
+    pFont = pdfium::MakeUnique<CPDF_Type3Font>(pDoc, pFontDict,
+                                               std::move(pFactory));
   } else if (type == "Type0") {
     pFont = pdfium::MakeUnique<CPDF_CIDFont>(pDoc, pFontDict);
   } else {

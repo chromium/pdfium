@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FONT_CPDF_FONT_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "build/build_config.h"
@@ -18,19 +19,48 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_font.h"
 
+class CFX_DIBitmap;
 class CFX_SubstFont;
 class CPDF_CIDFont;
 class CPDF_Document;
 class CPDF_Object;
 class CPDF_TrueTypeFont;
 class CPDF_Type1Font;
+class CPDF_Type3Char;
 class CPDF_Type3Font;
 class CPDF_ToUnicodeMap;
 
 class CPDF_Font {
  public:
-  static std::unique_ptr<CPDF_Font> Create(CPDF_Document* pDoc,
-                                           CPDF_Dictionary* pFontDict);
+  // Callback mechanism for Type3 fonts to get pixels from forms.
+  class FormIface {
+   public:
+    virtual ~FormIface() {}
+
+    virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
+    virtual bool HasPageObjects() const = 0;
+    virtual CFX_FloatRect CalcBoundingBox() const = 0;
+    virtual Optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+    GetBitmapAndMatrixFromSoleImageOfForm() const = 0;
+  };
+
+  // Callback mechanism for Type3 fonts to get new forms from upper layers.
+  class FormFactoryIface {
+   public:
+    virtual ~FormFactoryIface() {}
+
+    virtual std::unique_ptr<FormIface> CreateForm(
+        CPDF_Document* pDocument,
+        CPDF_Dictionary* pPageResources,
+        CPDF_Stream* pFormStream) = 0;
+  };
+
+  // |pFactory| only required for Type3 fonts.
+  static std::unique_ptr<CPDF_Font> Create(
+      CPDF_Document* pDoc,
+      CPDF_Dictionary* pFontDict,
+      std::unique_ptr<FormFactoryIface> pFactory);
+
   static CPDF_Font* GetStockFont(CPDF_Document* pDoc, ByteStringView fontname);
   static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
 

@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fdrm/fx_crypt.h"
 #include "core/fpdfapi/font/cpdf_type1font.h"
+#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
@@ -154,6 +155,16 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
   return pFontDesc;
 }
 
+class FormFactory : public CPDF_Font::FormFactoryIface {
+  std::unique_ptr<CPDF_Font::FormIface> CreateForm(
+      CPDF_Document* pDocument,
+      CPDF_Dictionary* pPageResources,
+      CPDF_Stream* pFormStream) override {
+    return pdfium::MakeUnique<CPDF_Form>(pDocument, pPageResources,
+                                         pFormStream);
+  }
+};
+
 }  // namespace
 
 // static
@@ -230,8 +241,8 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
       return pFontData->AddRef();
     }
   }
-  std::unique_ptr<CPDF_Font> pFont =
-      CPDF_Font::Create(GetDocument(), pFontDict);
+  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(
+      GetDocument(), pFontDict, pdfium::MakeUnique<FormFactory>());
   if (!pFont)
     return nullptr;
 
@@ -280,7 +291,9 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(
                   pEncoding->Realize(GetDocument()->GetByteStringPool()));
   }
 
-  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(GetDocument(), pDict);
+  // Note: NULL FormFactoryIface OK since known Type1 font from above.
+  std::unique_ptr<CPDF_Font> pFont =
+      CPDF_Font::Create(GetDocument(), pDict, nullptr);
   if (!pFont)
     return nullptr;
 

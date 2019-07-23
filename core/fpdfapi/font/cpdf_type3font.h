@@ -15,11 +15,15 @@
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
+class CPDF_Document;
+class CPDF_Stream;
 class CPDF_Type3Char;
 
 class CPDF_Type3Font final : public CPDF_SimpleFont {
  public:
-  CPDF_Type3Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  CPDF_Type3Font(CPDF_Document* pDocument,
+                 CPDF_Dictionary* pFontDict,
+                 std::unique_ptr<FormFactoryIface> pFormFactory);
   ~CPDF_Type3Font() override;
 
   // CPDF_Font:
@@ -44,14 +48,15 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
 
+  // The depth char loading is in, to avoid recurive calling LoadChar().
+  int m_CharLoadingDepth = 0;
   CFX_Matrix m_FontMatrix;
-  uint32_t m_CharWidthL[256];
+  std::unique_ptr<FormFactoryIface> m_pFormFactory;
   RetainPtr<CPDF_Dictionary> m_pCharProcs;
   RetainPtr<CPDF_Dictionary> m_pPageResources;
   RetainPtr<CPDF_Dictionary> m_pFontResources;
   std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
-  // The depth char loading is in, to avoid recurive calling LoadChar().
-  int m_CharLoadingDepth = 0;
+  uint32_t m_CharWidthL[256];
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_

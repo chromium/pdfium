@@ -106,7 +106,7 @@ jumbo_source_set("page") {
     "../font",
     "../parser",
   ]
-  allow_circular_includes_from = [ "../font" ]
+  allow_circular_includes_from = []
   if (pdf_use_skia || pdf_use_skia_paths) {
     allow_circular_includes_from += [ "../../fxge" ]
   }

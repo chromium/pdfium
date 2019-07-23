@@ -84,6 +84,10 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
   ContinueParse(nullptr);
 }
 
+bool CPDF_Form::HasPageObjects() const {
+  return GetPageObjectCount() != 0;
+}
+
 CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
   if (GetPageObjectCount() == 0)
     return CFX_FloatRect();
@@ -104,10 +108,6 @@ CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
 
 const CPDF_Stream* CPDF_Form::GetStream() const {
   return m_pFormStream.Get();
-}
-
-bool CPDF_Form::HasPageObjects() const {
-  return GetPageObjectCount() != 0;
 }
 
 Optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
