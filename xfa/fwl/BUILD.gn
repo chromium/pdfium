@@ -123,7 +123,6 @@ jumbo_source_set("fwl") {
     "../../fxbarcode",
     "../fde",
     "../fgas",
-    "../fxfa/parser",
     "../fxgraphics",
   ]
   configs += [
