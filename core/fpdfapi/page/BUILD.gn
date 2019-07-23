@@ -102,7 +102,6 @@ jumbo_source_set("page") {
     "../../fxcodec",
     "../../fxcrt",
     "../../fxge",
-    "../cmaps",
     "../font",
     "../parser",
   ]
