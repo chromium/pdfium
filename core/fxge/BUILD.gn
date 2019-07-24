@@ -208,8 +208,8 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":fxge",
+    "../fpdfapi/page",
     "../fpdfapi/parser",
-    "../fpdfapi/render",
   ]
   pdfium_root_dir = "../../"
 }

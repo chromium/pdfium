@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_IMAGECACHEENTRY_H_
 #define CORE_FPDFAPI_RENDER_CPDF_IMAGECACHEENTRY_H_
 
-#include "core/fpdfapi/render/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dibbase.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

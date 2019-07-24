@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
-#define CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_DIBBASE_H_
+#define CORE_FPDFAPI_PAGE_CPDF_DIBBASE_H_
 
 #include <memory>
 #include <vector>
@@ -14,8 +14,6 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
-#include "core/fpdfapi/render/cpdf_imageloader.h"
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_dibbase.h"
@@ -37,7 +35,7 @@ struct DIB_COMP_DATA {
 namespace fxcodec {
 class Jbig2Context;
 class ScanlineDecoder;
-}
+}  // namespace fxcodec
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 
@@ -161,4 +159,4 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   LoadState m_Status = LoadState::kFail;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_DIBBASE_H_

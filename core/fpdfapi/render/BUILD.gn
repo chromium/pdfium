@@ -12,8 +12,6 @@ jumbo_source_set("render") {
     "cpdf_charposlist.h",
     "cpdf_devicebuffer.cpp",
     "cpdf_devicebuffer.h",
-    "cpdf_dibbase.cpp",
-    "cpdf_dibbase.h",
     "cpdf_dibtransferfunc.cpp",
     "cpdf_dibtransferfunc.h",
     "cpdf_docrenderdata.cpp",

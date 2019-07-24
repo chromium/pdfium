@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dibbase.h"
 
 #include <algorithm>
 #include <memory>
@@ -21,8 +21,6 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
-#include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jbig2/jbig2module.h"

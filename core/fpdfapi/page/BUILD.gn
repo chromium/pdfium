@@ -27,6 +27,8 @@ jumbo_source_set("page") {
     "cpdf_countedobject.h",
     "cpdf_devicecs.cpp",
     "cpdf_devicecs.h",
+    "cpdf_dibbase.cpp",
+    "cpdf_dibbase.h",
     "cpdf_docpagedata.cpp",
     "cpdf_docpagedata.h",
     "cpdf_expintfunc.cpp",
