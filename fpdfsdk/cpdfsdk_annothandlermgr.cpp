@@ -229,7 +229,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
       CPDFSDK_FormFillEnvironment::IsALTKeyDown(nFlag)) {
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
   }
-
+  ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pAnnot);
   CPDFSDK_PageView* pPage = pAnnot->GetPageView();
   CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
@@ -240,6 +240,10 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
       return true;
     }
   }
+
+  // Check |pAnnot| again because JS may have destroyed it in |GetNextAnnot|
+  if (!pObservedAnnot)
+    return false;
 
   return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
 }
@@ -310,6 +314,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView* pPageView,
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
                                                      bool bNext) {
 #ifdef PDF_ENABLE_XFA
+  ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
   CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
   CPDFXFA_Page* pPage = pPageView->GetPDFXFAPage();
   if (pPage && !pPage->AsPDFPage()) {
@@ -319,7 +324,9 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
             XFA_TRAVERSEWAY_Tranvalse, XFA_WidgetStatus_Visible |
                                            XFA_WidgetStatus_Viewable |
                                            XFA_WidgetStatus_Focused));
-    if (!pWidgetIterator)
+
+    // Check |pSDKAnnot| again because JS may have destroyed it
+    if (!pObservedAnnot || !pWidgetIterator)
       return nullptr;
     if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
       pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
