@@ -60,7 +60,6 @@ class CXFA_CalcData {
   ~CXFA_CalcData();
 
   std::vector<CXFA_Node*> m_Globals;
-  int32_t m_iRefCount;
 };
 
 class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {

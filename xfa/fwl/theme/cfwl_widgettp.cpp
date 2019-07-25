@@ -292,6 +292,3 @@ RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
   return m_FontsArray.back()->GetFont();
 }
 
-void FWLTHEME_Release() {
-  CFWL_FontManager::DestroyInstance();
-}
