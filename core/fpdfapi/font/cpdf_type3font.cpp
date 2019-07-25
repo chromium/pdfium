@@ -25,9 +25,8 @@ constexpr int kMaxType3FormLevel = 4;
 
 CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
                                CPDF_Dictionary* pFontDict,
-                               std::unique_ptr<FormFactoryIface> pFormFactory)
-    : CPDF_SimpleFont(pDocument, pFontDict),
-      m_pFormFactory(std::move(pFormFactory)) {
+                               FormFactoryIface* pFormFactory)
+    : CPDF_SimpleFont(pDocument, pFontDict), m_pFormFactory(pFormFactory) {
   ASSERT(GetDocument());
   memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }

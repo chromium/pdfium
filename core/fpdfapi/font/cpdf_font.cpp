@@ -306,10 +306,9 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc, ByteStringView name) {
 }
 
 // static
-std::unique_ptr<CPDF_Font> CPDF_Font::Create(
-    CPDF_Document* pDoc,
-    CPDF_Dictionary* pFontDict,
-    std::unique_ptr<FormFactoryIface> pFactory) {
+std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
+                                             CPDF_Dictionary* pFontDict,
+                                             FormFactoryIface* pFactory) {
   ByteString type = pFontDict->GetStringFor("Subtype");
   std::unique_ptr<CPDF_Font> pFont;
   if (type == "TrueType") {
@@ -326,8 +325,7 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(
     if (!pFont)
       pFont = pdfium::MakeUnique<CPDF_TrueTypeFont>(pDoc, pFontDict);
   } else if (type == "Type3") {
-    pFont = pdfium::MakeUnique<CPDF_Type3Font>(pDoc, pFontDict,
-                                               std::move(pFactory));
+    pFont = pdfium::MakeUnique<CPDF_Type3Font>(pDoc, pFontDict, pFactory);
   } else if (type == "Type0") {
     pFont = pdfium::MakeUnique<CPDF_CIDFont>(pDoc, pFontDict);
   } else {

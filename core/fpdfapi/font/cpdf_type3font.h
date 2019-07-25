@@ -13,6 +13,7 @@
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -23,7 +24,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
  public:
   CPDF_Type3Font(CPDF_Document* pDocument,
                  CPDF_Dictionary* pFontDict,
-                 std::unique_ptr<FormFactoryIface> pFormFactory);
+                 FormFactoryIface* pFormFactory);
   ~CPDF_Type3Font() override;
 
   // CPDF_Font:
@@ -51,7 +52,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   // The depth char loading is in, to avoid recurive calling LoadChar().
   int m_CharLoadingDepth = 0;
   CFX_Matrix m_FontMatrix;
-  std::unique_ptr<FormFactoryIface> m_pFormFactory;
+  UnownedPtr<FormFactoryIface> const m_pFormFactory;
   RetainPtr<CPDF_Dictionary> m_pCharProcs;
   RetainPtr<CPDF_Dictionary> m_pPageResources;
   RetainPtr<CPDF_Dictionary> m_pFontResources;

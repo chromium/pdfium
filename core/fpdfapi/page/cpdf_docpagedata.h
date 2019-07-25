@@ -8,8 +8,10 @@
 #define CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_
 
 #include <map>
+#include <memory>
 #include <set>
 
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -20,7 +22,6 @@
 
 class CFX_Font;
 class CPDF_Dictionary;
-class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_IccProfile;
 class CPDF_Image;
@@ -29,7 +30,8 @@ class CPDF_Pattern;
 class CPDF_Stream;
 class CPDF_StreamAcc;
 
-class CPDF_DocPageData : public CPDF_Document::PageDataIface {
+class CPDF_DocPageData : public CPDF_Document::PageDataIface,
+                         public CPDF_Font::FormFactoryIface {
  public:
   static CPDF_DocPageData* FromDocument(const CPDF_Document* pDoc);
 
@@ -41,6 +43,12 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface {
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
       const CPDF_Stream* pFontStream) override;
   void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream) override;
+
+  // CPDF_Font::FormFactoryIFace:
+  std::unique_ptr<CPDF_Font::FormIface> CreateForm(
+      CPDF_Document* pDocument,
+      CPDF_Dictionary* pPageResources,
+      CPDF_Stream* pFormStream) override;
 
   void Clear(bool bForceRelease);
   bool IsForceClear() const { return m_bForceClear; }

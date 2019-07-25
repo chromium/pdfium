@@ -155,16 +155,6 @@ RetainPtr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
   return pFontDesc;
 }
 
-class FormFactory : public CPDF_Font::FormFactoryIface {
-  std::unique_ptr<CPDF_Font::FormIface> CreateForm(
-      CPDF_Document* pDocument,
-      CPDF_Dictionary* pPageResources,
-      CPDF_Stream* pFormStream) override {
-    return pdfium::MakeUnique<CPDF_Form>(pDocument, pPageResources,
-                                         pFormStream);
-  }
-};
-
 }  // namespace
 
 // static
@@ -241,8 +231,8 @@ CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
       return pFontData->AddRef();
     }
   }
-  std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(
-      GetDocument(), pFontDict, pdfium::MakeUnique<FormFactory>());
+  std::unique_ptr<CPDF_Font> pFont =
+      CPDF_Font::Create(GetDocument(), pFontDict, this);
   if (!pFont)
     return nullptr;
 
@@ -531,6 +521,13 @@ void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
   auto it = m_FontFileMap.find(pFontStream);
   if (it != m_FontFileMap.end() && it->second->HasOneRef())
     m_FontFileMap.erase(it);
+}
+
+std::unique_ptr<CPDF_Font::FormIface> CPDF_DocPageData::CreateForm(
+    CPDF_Document* pDocument,
+    CPDF_Dictionary* pPageResources,
+    CPDF_Stream* pFormStream) {
+  return pdfium::MakeUnique<CPDF_Form>(pDocument, pPageResources, pFormStream);
 }
 
 CPDF_Font* CPDF_DocPageData::AddStandardFont(

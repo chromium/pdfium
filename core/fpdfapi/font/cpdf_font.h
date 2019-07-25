@@ -56,10 +56,9 @@ class CPDF_Font {
   };
 
   // |pFactory| only required for Type3 fonts.
-  static std::unique_ptr<CPDF_Font> Create(
-      CPDF_Document* pDoc,
-      CPDF_Dictionary* pFontDict,
-      std::unique_ptr<FormFactoryIface> pFactory);
+  static std::unique_ptr<CPDF_Font> Create(CPDF_Document* pDoc,
+                                           CPDF_Dictionary* pFontDict,
+                                           FormFactoryIface* pFactory);
 
   static CPDF_Font* GetStockFont(CPDF_Document* pDoc, ByteStringView fontname);
   static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
