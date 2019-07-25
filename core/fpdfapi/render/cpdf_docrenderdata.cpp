@@ -38,18 +38,12 @@ CPDF_DocRenderData::~CPDF_DocRenderData() = default;
 RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
     CPDF_Type3Font* pFont) {
   auto it = m_Type3FaceMap.find(pFont);
-  if (it != m_Type3FaceMap.end())
-    return it->second;
+  if (it != m_Type3FaceMap.end() && it->second)
+    return pdfium::WrapRetain(it->second.Get());
 
   auto pCache = pdfium::MakeRetain<CPDF_Type3Cache>(pFont);
-  m_Type3FaceMap[pFont] = pCache;
+  m_Type3FaceMap[pFont].Reset(pCache.Get());
   return pCache;
-}
-
-void CPDF_DocRenderData::MaybePurgeCachedType3(CPDF_Type3Font* pFont) {
-  auto it = m_Type3FaceMap.find(pFont);
-  if (it != m_Type3FaceMap.end() && it->second->HasOneRef())
-    m_Type3FaceMap.erase(it);
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(

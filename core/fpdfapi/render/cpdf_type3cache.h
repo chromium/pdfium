@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_GlyphBitmap;
@@ -19,7 +20,7 @@ class CFX_Matrix;
 class CPDF_Type3Font;
 class CPDF_Type3GlyphMap;
 
-class CPDF_Type3Cache final : public Retainable {
+class CPDF_Type3Cache final : public Retainable, public Observable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
