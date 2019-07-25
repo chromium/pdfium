@@ -12,8 +12,8 @@
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Font;
 class CPDF_Object;
@@ -35,7 +35,6 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
   void MaybePurgeCachedType3(CPDF_Type3Font* pFont);
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(const CPDF_Object* pObj);
-  void MaybePurgeTransferFunc(const CPDF_Object* pObj);
 
  protected:
   // protected for use by test subclasses.
@@ -44,7 +43,8 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
 
  private:
   std::map<CPDF_Font*, RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
-  std::map<const CPDF_Object*, RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
+  std::map<const CPDF_Object*, ObservedPtr<CPDF_TransferFunc>>
+      m_TransferFuncMap;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DOCRENDERDATA_H_

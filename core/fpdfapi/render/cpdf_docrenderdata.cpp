@@ -58,17 +58,12 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     return nullptr;
 
   auto it = m_TransferFuncMap.find(pObj);
-  if (it != m_TransferFuncMap.end())
-    return it->second;
+  if (it != m_TransferFuncMap.end() && it->second)
+    return pdfium::WrapRetain(it->second.Get());
 
-  m_TransferFuncMap[pObj] = CreateTransferFunc(pObj);
-  return m_TransferFuncMap[pObj];
-}
-
-void CPDF_DocRenderData::MaybePurgeTransferFunc(const CPDF_Object* pObj) {
-  auto it = m_TransferFuncMap.find(pObj);
-  if (it != m_TransferFuncMap.end() && it->second->HasOneRef())
-    m_TransferFuncMap.erase(it);
+  auto pFunc = CreateTransferFunc(pObj);
+  m_TransferFuncMap[pObj].Reset(pFunc.Get());
+  return pFunc;
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
