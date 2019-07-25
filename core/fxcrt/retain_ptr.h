@@ -115,14 +115,14 @@ class Retainable {
   Retainable(const Retainable& that) = delete;
   Retainable& operator=(const Retainable& that) = delete;
 
-  void Retain() { ++m_nRefCount; }
-  void Release() {
+  void Retain() const { ++m_nRefCount; }
+  void Release() const {
     ASSERT(m_nRefCount > 0);
     if (--m_nRefCount == 0)
       delete this;
   }
 
-  intptr_t m_nRefCount = 0;
+  mutable intptr_t m_nRefCount = 0;
 };
 
 }  // namespace fxcrt
