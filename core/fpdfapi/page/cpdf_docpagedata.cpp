@@ -167,39 +167,28 @@ CPDF_DocPageData::CPDF_DocPageData() = default;
 CPDF_DocPageData::~CPDF_DocPageData() {
   m_PatternMap.clear();
 
-  Clear(false);
-  Clear(true);
+  for (auto& it : m_FontMap) {
+    CPDF_CountedFont* fontData = it.second;
+    if (fontData->get() && fontData->use_count() < 2)
+      fontData->clear();
+  }
+
+  m_ColorSpaceMap.clear();
+  m_FontFileMap.clear();
+
+  m_bForceClear = true;
+  for (auto& it : m_FontMap) {
+    CPDF_CountedFont* fontData = it.second;
+    if (fontData->get())
+      fontData->clear();
+  }
 
   for (auto& it : m_FontMap)
     delete it.second;
-
-  m_FontMap.clear();
-  m_ImageMap.clear();
 }
 
 void CPDF_DocPageData::ClearStockFont() {
   CPDF_PageModule::GetInstance()->ClearStockFont(GetDocument());
-}
-
-void CPDF_DocPageData::Clear(bool bForceRelease) {
-  m_bForceClear = bForceRelease;
-
-  for (auto& it : m_FontMap) {
-    CPDF_CountedFont* fontData = it.second;
-    if (!fontData->get())
-      continue;
-    if (bForceRelease || fontData->use_count() < 2) {
-      fontData->clear();
-    }
-  }
-
-  m_ColorSpaceMap.clear();
-
-  for (auto it = m_FontFileMap.begin(); it != m_FontFileMap.end();) {
-    auto curr_it = it++;
-    if (bForceRelease || curr_it->second->HasOneRef())
-      m_FontFileMap.erase(curr_it);
-  }
 }
 
 CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {

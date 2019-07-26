@@ -108,13 +108,15 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
   void Clear(bool bForceRelease);
 
   bool m_bForceClear = false;
+
+  // Specific destruction order may be required between maps.
   std::map<ByteString, RetainPtr<const CPDF_Stream>> m_HashProfileMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_ColorSpace>> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
-  std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
   std::map<const CPDF_Stream*, ObservedPtr<CPDF_IccProfile>> m_IccProfileMap;
-  std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_Pattern>> m_PatternMap;
+  std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
+  std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_
