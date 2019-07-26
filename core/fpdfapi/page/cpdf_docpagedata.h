@@ -50,7 +50,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
       CPDF_Dictionary* pPageResources,
       CPDF_Stream* pFormStream) override;
 
-  void Clear(bool bForceRelease);
   bool IsForceClear() const { return m_bForceClear; }
 
   CPDF_Font* AddFont(CFX_Font* pFont, int charset);
@@ -107,6 +106,7 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
       int charset,
       ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
+  void Clear(bool bForceRelease);
 
   bool m_bForceClear = false;
   std::map<ByteString, const CPDF_Stream*> m_HashProfileMap;
