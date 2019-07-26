@@ -165,17 +165,13 @@ CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* pDoc) {
 CPDF_DocPageData::CPDF_DocPageData() = default;
 
 CPDF_DocPageData::~CPDF_DocPageData() {
-  m_PatternMap.clear();
-
   for (auto& it : m_FontMap) {
     CPDF_CountedFont* fontData = it.second;
     if (fontData->get() && fontData->use_count() < 2)
       fontData->clear();
   }
 
-  m_ColorSpaceMap.clear();
   m_FontFileMap.clear();
-
   m_bForceClear = true;
   for (auto& it : m_FontMap) {
     CPDF_CountedFont* fontData = it.second;
