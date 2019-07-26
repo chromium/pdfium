@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -386,6 +387,45 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
     EXPECT_FALSE(FPDFText_FindPrev(search.get()));
     EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
+  }
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
+
+// Fails on Windows. https://crbug.com/pdfium/1370
+#if defined(OS_WIN)
+#define MAYBE_TextSearchLatinExtended DISABLED_TextSearchLatinExtended
+#else
+#define MAYBE_TextSearchLatinExtended TextSearchLatinExtended
+#endif
+TEST_F(FPDFTextEmbedderTest, MAYBE_TextSearchLatinExtended) {
+  ASSERT_TRUE(OpenDocument("latin_extended.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  ASSERT_TRUE(textpage);
+
+  // Upper/lowercase 'a' with breve.
+  constexpr FPDF_WCHAR kNeedleUpper[] = {0x0102, 0x0000};
+  constexpr FPDF_WCHAR kNeedleLower[] = {0x0103, 0x0000};
+
+  for (const auto* needle : {kNeedleUpper, kNeedleLower}) {
+    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, needle, 0, 0));
+    EXPECT_TRUE(search);
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+
+    // Should find 2 results at position 21/22, both with length 1.
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(2, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(1, FPDFText_GetSchCount(search.get()));
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(3, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(1, FPDFText_GetSchCount(search.get()));
+    // And no more than 2 results.
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
   }
 
   FPDFText_ClosePage(textpage);
