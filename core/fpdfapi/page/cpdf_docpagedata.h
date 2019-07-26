@@ -84,7 +84,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
   void MaybePurgeImage(uint32_t dwStreamObjNum);
 
   RetainPtr<CPDF_IccProfile> GetIccProfile(const CPDF_Stream* pProfileStream);
-  void MaybePurgeIccProfile(const CPDF_Stream* pProfileStream);
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
@@ -109,11 +108,11 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
   void Clear(bool bForceRelease);
 
   bool m_bForceClear = false;
-  std::map<ByteString, const CPDF_Stream*> m_HashProfileMap;
+  std::map<ByteString, RetainPtr<const CPDF_Stream>> m_HashProfileMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_ColorSpace>> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
-  std::map<const CPDF_Stream*, RetainPtr<CPDF_IccProfile>> m_IccProfileMap;
+  std::map<const CPDF_Stream*, ObservedPtr<CPDF_IccProfile>> m_IccProfileMap;
   std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_Pattern>> m_PatternMap;
 };

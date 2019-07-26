@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
@@ -18,7 +19,7 @@ namespace fxcodec {
 class CLcmsCmm;
 }  // namespace fxcodec
 
-class CPDF_IccProfile final : public Retainable {
+class CPDF_IccProfile final : public Retainable, public Observable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
