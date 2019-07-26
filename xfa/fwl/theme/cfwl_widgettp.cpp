@@ -24,6 +24,12 @@
 #include "xfa/fxgraphics/cxfa_gepath.h"
 #include "xfa/fxgraphics/cxfa_geshading.h"
 
+namespace {
+
+CFWL_FontManager* g_FontManager = nullptr;
+
+}  // namespace
+
 CFWL_WidgetTP::CFWL_WidgetTP() = default;
 
 CFWL_WidgetTP::~CFWL_WidgetTP() = default;
@@ -261,21 +267,20 @@ RetainPtr<CFGAS_GEFont> CFWL_FontData::GetFont() const {
   return m_pFont;
 }
 
-CFWL_FontManager* CFWL_FontManager::s_FontManager = nullptr;
 CFWL_FontManager* CFWL_FontManager::GetInstance() {
-  if (!s_FontManager)
-    s_FontManager = new CFWL_FontManager;
-  return s_FontManager;
+  if (!g_FontManager)
+    g_FontManager = new CFWL_FontManager;
+  return g_FontManager;
 }
 
 void CFWL_FontManager::DestroyInstance() {
-  delete s_FontManager;
-  s_FontManager = nullptr;
+  delete g_FontManager;
+  g_FontManager = nullptr;
 }
 
-CFWL_FontManager::CFWL_FontManager() {}
+CFWL_FontManager::CFWL_FontManager() = default;
 
-CFWL_FontManager::~CFWL_FontManager() {}
+CFWL_FontManager::~CFWL_FontManager() = default;
 
 RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
                                                    uint32_t dwFontStyles,
