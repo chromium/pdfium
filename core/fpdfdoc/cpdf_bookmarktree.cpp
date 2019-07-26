@@ -14,7 +14,7 @@ CPDF_BookmarkTree::CPDF_BookmarkTree(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 CPDF_BookmarkTree::~CPDF_BookmarkTree() = default;
 
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(CPDF_Bookmark* parent) const {
-  CPDF_Dictionary* pParentDict = parent->GetDict();
+  const CPDF_Dictionary* pParentDict = parent->GetDict();
   if (pParentDict)
     return CPDF_Bookmark(pParentDict->GetDictFor("First"));
 
@@ -28,10 +28,10 @@ CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(CPDF_Bookmark* parent) const {
 }
 
 CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(CPDF_Bookmark* bookmark) const {
-  CPDF_Dictionary* pDict = bookmark->GetDict();
+  const CPDF_Dictionary* pDict = bookmark->GetDict();
   if (!pDict)
     return CPDF_Bookmark();
 
-  CPDF_Dictionary* pNext = pDict->GetDictFor("Next");
+  const CPDF_Dictionary* pNext = pDict->GetDictFor("Next");
   return pNext == pDict ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
 }

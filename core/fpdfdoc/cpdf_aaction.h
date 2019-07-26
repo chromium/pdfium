@@ -40,7 +40,7 @@ class CPDF_AAction {
     kNumberOfActions  // Must be last.
   };
 
-  explicit CPDF_AAction(CPDF_Dictionary* pDict);
+  explicit CPDF_AAction(const CPDF_Dictionary* pDict);
   CPDF_AAction(const CPDF_AAction& that);
   ~CPDF_AAction();
 
@@ -51,7 +51,7 @@ class CPDF_AAction {
   static bool IsUserClick(AActionType eType);
 
  private:
-  RetainPtr<CPDF_Dictionary> const m_pDict;
+  RetainPtr<const CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_AACTION_H_

@@ -19,7 +19,7 @@ CPDF_Bookmark::CPDF_Bookmark() = default;
 
 CPDF_Bookmark::CPDF_Bookmark(const CPDF_Bookmark& that) = default;
 
-CPDF_Bookmark::CPDF_Bookmark(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Bookmark::CPDF_Bookmark(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Bookmark::~CPDF_Bookmark() = default;
 
@@ -52,7 +52,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
   if (!m_pDict)
     return CPDF_Dest();
 
-  CPDF_Object* pDest = m_pDict->GetDirectObjectFor("Dest");
+  const CPDF_Object* pDest = m_pDict->GetDirectObjectFor("Dest");
   if (!pDest)
     return CPDF_Dest();
   if (pDest->IsString() || pDest->IsName()) {
@@ -60,7 +60,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
     return CPDF_Dest(
         name_tree.LookupNamedDest(pDocument, pDest->GetUnicodeText()));
   }
-  if (CPDF_Array* pArray = pDest->AsArray())
+  if (const CPDF_Array* pArray = pDest->AsArray())
     return CPDF_Dest(pArray);
   return CPDF_Dest();
 }

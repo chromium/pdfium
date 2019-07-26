@@ -17,11 +17,10 @@ class CPDF_Array;
 class CPDF_Dest {
  public:
   CPDF_Dest();
-  explicit CPDF_Dest(CPDF_Array* pArray);
+  explicit CPDF_Dest(const CPDF_Array* pArray);
   CPDF_Dest(const CPDF_Dest& that);
   ~CPDF_Dest();
 
-  CPDF_Array* GetArray() { return m_pArray.Get(); }
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
 
   ByteString GetRemoteName() const;
@@ -41,7 +40,7 @@ class CPDF_Dest {
               float* pZoom) const;
 
  private:
-  RetainPtr<CPDF_Array> const m_pArray;
+  RetainPtr<const CPDF_Array> const m_pArray;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEST_H_

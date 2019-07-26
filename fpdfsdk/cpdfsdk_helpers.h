@@ -56,8 +56,8 @@ FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
 
 // Conversions to/from incomplete FPDF_ API types.
-inline FPDF_ACTION FPDFActionFromCPDFDictionary(CPDF_Dictionary* action) {
-  return reinterpret_cast<FPDF_ACTION>(action);
+inline FPDF_ACTION FPDFActionFromCPDFDictionary(const CPDF_Dictionary* action) {
+  return reinterpret_cast<FPDF_ACTION>(const_cast<CPDF_Dictionary*>(action));
 }
 inline CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action) {
   return reinterpret_cast<CPDF_Dictionary*>(action);
@@ -86,8 +86,10 @@ inline CFX_DIBitmap* CFXDIBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return reinterpret_cast<CFX_DIBitmap*>(bitmap);
 }
 
-inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(CPDF_Dictionary* bookmark) {
-  return reinterpret_cast<FPDF_BOOKMARK>(bookmark);
+inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(
+    const CPDF_Dictionary* bookmark) {
+  return reinterpret_cast<FPDF_BOOKMARK>(
+      const_cast<CPDF_Dictionary*>(bookmark));
 }
 inline CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark) {
   return reinterpret_cast<CPDF_Dictionary*>(bookmark);
@@ -100,8 +102,8 @@ inline CPDF_ClipPath* CPDFClipPathFromFPDFClipPath(FPDF_CLIPPATH path) {
   return reinterpret_cast<CPDF_ClipPath*>(path);
 }
 
-inline FPDF_DEST FPDFDestFromCPDFArray(CPDF_Array* dest) {
-  return reinterpret_cast<FPDF_DEST>(dest);
+inline FPDF_DEST FPDFDestFromCPDFArray(const CPDF_Array* dest) {
+  return reinterpret_cast<FPDF_DEST>(const_cast<CPDF_Array*>(dest));
 }
 inline CPDF_Array* CPDFArrayFromFPDFDest(FPDF_DEST dest) {
   return reinterpret_cast<CPDF_Array*>(dest);

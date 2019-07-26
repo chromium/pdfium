@@ -23,7 +23,7 @@ const char* const g_sATypes[] = {
 
 }  // namespace
 
-CPDF_Action::CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Action::CPDF_Action(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
 
@@ -49,14 +49,14 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (type != GoTo && type != GoToR)
     return CPDF_Dest();
 
-  CPDF_Object* pDest = m_pDict->GetDirectObjectFor("D");
+  const CPDF_Object* pDest = m_pDict->GetDirectObjectFor("D");
   if (!pDest)
     return CPDF_Dest();
   if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDoc, "Dests");
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, pDest->GetUnicodeText()));
   }
-  if (CPDF_Array* pArray = pDest->AsArray())
+  if (const CPDF_Array* pArray = pDest->AsArray())
     return CPDF_Dest(pArray);
 
   return CPDF_Dest();
@@ -141,10 +141,10 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return CPDF_Action(nullptr);
 
-  CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
-  if (CPDF_Array* pArray = ToArray(pNext))
+  const CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
+  if (const CPDF_Array* pArray = ToArray(pNext))
     return CPDF_Action(pArray->GetDictAt(iIndex));
-  if (CPDF_Dictionary* pDict = ToDictionary(pNext)) {
+  if (const CPDF_Dictionary* pDict = ToDictionary(pNext)) {
     if (iIndex == 0)
       return CPDF_Action(pDict);
   }
