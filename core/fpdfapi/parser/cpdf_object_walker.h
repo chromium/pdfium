@@ -9,7 +9,7 @@
 #include <stack>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Object;
 
@@ -32,7 +32,7 @@ class CPDF_ObjectWalker {
     virtual void Start() = 0;
 
    private:
-    UnownedPtr<const CPDF_Object> object_;
+    RetainPtr<const CPDF_Object> object_;
     bool is_started_ = false;
   };
 
@@ -50,8 +50,8 @@ class CPDF_ObjectWalker {
   static std::unique_ptr<SubobjectIterator> MakeIterator(
       const CPDF_Object* object);
 
-  UnownedPtr<const CPDF_Object> next_object_;
-  UnownedPtr<const CPDF_Object> parent_object_;
+  RetainPtr<const CPDF_Object> next_object_;
+  RetainPtr<const CPDF_Object> parent_object_;
   ByteString dict_key_;
   size_t current_depth_ = 0;
   std::stack<std::unique_ptr<SubobjectIterator>> stack_;

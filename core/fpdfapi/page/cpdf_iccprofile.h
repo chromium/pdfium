@@ -10,14 +10,13 @@
 #include <memory>
 
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
 class CPDF_Stream;
 
 namespace fxcodec {
 class CLcmsCmm;
-}
+}  // namespace fxcodec
 
 class CPDF_IccProfile final : public Retainable {
  public:
@@ -36,9 +35,9 @@ class CPDF_IccProfile final : public Retainable {
   ~CPDF_IccProfile() override;
 
   const bool m_bsRGB;
-  UnownedPtr<const CPDF_Stream> const m_pStream;
-  std::unique_ptr<fxcodec::CLcmsCmm> m_Transform;
   uint32_t m_nSrcComponents = 0;
+  RetainPtr<const CPDF_Stream> const m_pStream;
+  std::unique_ptr<fxcodec::CLcmsCmm> m_Transform;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_ICCPROFILE_H_

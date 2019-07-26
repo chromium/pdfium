@@ -401,7 +401,7 @@ bool PDF_DataDecode(
     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
     uint32_t* dest_size,
     ByteString* ImageEncoding,
-    UnownedPtr<const CPDF_Dictionary>* pImageParams) {
+    RetainPtr<const CPDF_Dictionary>* pImageParams) {
   std::unique_ptr<uint8_t, FxFreeDeleter> result;
   // May be changed to point to |result| in the for-loop below. So put it below
   // |result| and let it get destroyed first.
@@ -421,7 +421,7 @@ bool PDF_DataDecode(
         *ImageEncoding = "FlateDecode";
         *dest_buf = std::move(result);
         *dest_size = last_span.size();
-        *pImageParams = pParam;
+        pImageParams->Reset(pParam);
         return true;
       }
       offset = FlateOrLZWDecode(false, last_span, pParam, estimated_size,
@@ -438,7 +438,7 @@ bool PDF_DataDecode(
         *ImageEncoding = "RunLengthDecode";
         *dest_buf = std::move(result);
         *dest_size = last_span.size();
-        *pImageParams = pParam;
+        pImageParams->Reset(pParam);
         return true;
       }
       offset = RunLengthDecode(last_span, &new_buf, &new_size);
@@ -449,7 +449,7 @@ bool PDF_DataDecode(
       else if (decoder == "CCF")
         decoder = "CCITTFaxDecode";
       *ImageEncoding = std::move(decoder);
-      *pImageParams = pParam;
+      pImageParams->Reset(pParam);
       *dest_buf = std::move(result);
       *dest_size = last_span.size();
       return true;

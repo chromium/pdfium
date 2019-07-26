@@ -182,7 +182,7 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
 }
 
 bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
-  m_pEncryptDict = pEncryptDict;
+  m_pEncryptDict.Reset(pEncryptDict);
   m_Version = pEncryptDict->GetIntegerFor("V");
   m_Revision = pEncryptDict->GetIntegerFor("R");
   m_Permissions = pEncryptDict->GetIntegerFor("P", -1);
@@ -200,7 +200,7 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
 bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
                                     int& cipher,
                                     int& key_len) {
-  m_pEncryptDict = pEncryptDict;
+  m_pEncryptDict.Reset(pEncryptDict);
   m_Version = pEncryptDict->GetIntegerFor("V");
   m_Revision = pEncryptDict->GetIntegerFor("R");
   m_Permissions = pEncryptDict->GetIntegerFor("P", -1);

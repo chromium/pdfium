@@ -44,7 +44,7 @@ CPDF_StructTree::CPDF_StructTree(const CPDF_Document* pDoc)
 CPDF_StructTree::~CPDF_StructTree() = default;
 
 void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
-  m_pPage = pPageDict;
+  m_pPage.Reset(pPageDict);
   if (!m_pTreeRoot)
     return;
 

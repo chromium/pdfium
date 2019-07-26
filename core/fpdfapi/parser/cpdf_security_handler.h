@@ -85,7 +85,7 @@ class CPDF_SecurityHandler : public Retainable {
   int m_Cipher;
   int m_KeyLen;
   bool m_bOwnerUnlocked;
-  UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
+  RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_EncryptKey[32];
 };

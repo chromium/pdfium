@@ -157,7 +157,7 @@ const CPDF_Object* CPDF_GeneralState::GetTR() const {
 }
 
 void CPDF_GeneralState::SetTR(CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pTR = pObject;
+  m_Ref.GetPrivateCopy()->m_pTR.Reset(pObject);
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_GeneralState::GetTransferFunc() const {
@@ -212,15 +212,15 @@ void CPDF_GeneralState::SetOPMode(int mode) {
 }
 
 void CPDF_GeneralState::SetBG(CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pBG = pObject;
+  m_Ref.GetPrivateCopy()->m_pBG.Reset(pObject);
 }
 
 void CPDF_GeneralState::SetUCR(CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pUCR = pObject;
+  m_Ref.GetPrivateCopy()->m_pUCR.Reset(pObject);
 }
 
 void CPDF_GeneralState::SetHT(CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pHT = pObject;
+  m_Ref.GetPrivateCopy()->m_pHT.Reset(pObject);
 }
 
 void CPDF_GeneralState::SetFlatness(float flatness) {

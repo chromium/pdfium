@@ -127,8 +127,8 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   bool TransMask() const;
 
   UnownedPtr<CPDF_Document> m_pDocument;
-  UnownedPtr<const CPDF_Stream> m_pStream;
-  UnownedPtr<const CPDF_Dictionary> m_pDict;
+  RetainPtr<const CPDF_Stream> m_pStream;
+  RetainPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   RetainPtr<CPDF_ColorSpace> m_pColorSpace;
   uint32_t m_Family = 0;
@@ -155,7 +155,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   // Must come after |m_pCachedBitmap|.
   std::unique_ptr<fxcodec::Jbig2Context> m_pJbig2Context;
 
-  UnownedPtr<const CPDF_Stream> m_pMaskStream;
+  RetainPtr<const CPDF_Stream> m_pMaskStream;
   LoadState m_Status = LoadState::kFail;
 };
 

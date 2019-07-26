@@ -13,7 +13,9 @@
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/page/cpdf_transparency.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
@@ -21,7 +23,6 @@ class CFX_DIBitmap;
 class CFX_PathData;
 class CFX_RenderDevice;
 class CPDF_Color;
-class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormObject;
 class CPDF_ImageCacheEntry;
@@ -50,7 +51,9 @@ class CPDF_RenderStatus {
   void SetOptions(const CPDF_RenderOptions& options) { m_Options = options; }
   void SetDeviceMatrix(const CFX_Matrix& matrix) { m_DeviceMatrix = matrix; }
   void SetStopObject(const CPDF_PageObject* pStopObj) { m_pStopObj = pStopObj; }
-  void SetFormResource(const CPDF_Dictionary* pRes) { m_pFormResource = pRes; }
+  void SetFormResource(const CPDF_Dictionary* pRes) {
+    m_pFormResource.Reset(pRes);
+  }
   void SetType3Char(CPDF_Type3Char* pType3Char) { m_pType3Char = pType3Char; }
   void SetFillColor(FX_ARGB color) { m_T3FillColor = color; }
   void SetDropObjects(bool bDropObjects) { m_bDropObjects = bDropObjects; }
@@ -185,7 +188,7 @@ class CPDF_RenderStatus {
                                const CFX_Matrix& mtObj2Device) const;
 
   CPDF_RenderOptions m_Options;
-  UnownedPtr<const CPDF_Dictionary> m_pFormResource;
+  RetainPtr<const CPDF_Dictionary> m_pFormResource;
   RetainPtr<CPDF_Dictionary> m_pPageResource;
   std::vector<CPDF_Type3Font*> m_Type3FontCache;
   UnownedPtr<CPDF_RenderContext> const m_pContext;

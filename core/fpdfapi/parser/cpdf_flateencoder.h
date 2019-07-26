@@ -40,7 +40,7 @@ class CPDF_FlateEncoder {
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
 
   // Only one of these two pointers is valid at any time.
-  UnownedPtr<const CPDF_Dictionary> m_pDict;
+  RetainPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_Dictionary> m_pClonedDict;
 };
 

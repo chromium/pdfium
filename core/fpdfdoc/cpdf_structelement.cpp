@@ -143,7 +143,7 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
   }
 
   pKid->m_Type = CPDF_StructKid::Element;
-  pKid->m_pDict = pKidDict;
+  pKid->m_pDict.Reset(pKidDict);
   if (m_pTree->GetPage()) {
     pKid->m_pElement = nullptr;
     return;

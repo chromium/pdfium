@@ -86,7 +86,7 @@ class CPDF_Image final : public Retainable {
   bool m_bInterpolate = false;
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Stream> m_pStream;
-  UnownedPtr<const CPDF_Dictionary> m_pOC;
+  RetainPtr<const CPDF_Dictionary> m_pOC;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_

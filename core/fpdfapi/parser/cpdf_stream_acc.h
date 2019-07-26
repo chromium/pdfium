@@ -58,8 +58,8 @@ class CPDF_StreamAcc final : public Retainable {
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   uint32_t m_dwSize = 0;
   ByteString m_ImageDecoder;
-  UnownedPtr<const CPDF_Dictionary> m_pImageParam;
-  UnownedPtr<const CPDF_Stream> const m_pStream;
+  RetainPtr<const CPDF_Dictionary> m_pImageParam;
+  RetainPtr<const CPDF_Stream> const m_pStream;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_

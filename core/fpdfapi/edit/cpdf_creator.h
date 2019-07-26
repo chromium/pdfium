@@ -74,10 +74,10 @@ class CPDF_Creator {
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   UnownedPtr<const CPDF_Parser> const m_pParser;
-  UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
+  RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   RetainPtr<CPDF_Dictionary> m_pNewEncryptDict;
   RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;
-  UnownedPtr<const CPDF_Object> m_pMetadata;
+  RetainPtr<const CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset = 0;

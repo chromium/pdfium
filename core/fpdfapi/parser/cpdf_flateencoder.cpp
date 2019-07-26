@@ -37,7 +37,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(const CPDF_Stream* pStream,
   if (bHasFilter || !bFlateEncode) {
     m_pData = m_pAcc->GetData();
     m_dwSize = m_pAcc->GetSize();
-    m_pDict = pStream->GetDict();
+    m_pDict.Reset(pStream->GetDict());
     ASSERT(!m_pClonedDict);
     return;
   }
@@ -64,7 +64,7 @@ void CPDF_FlateEncoder::CloneDict() {
 
   m_pClonedDict = ToDictionary(m_pDict->Clone());
   ASSERT(m_pClonedDict);
-  m_pDict.Release();
+  m_pDict.Reset();
 }
 
 CPDF_Dictionary* CPDF_FlateEncoder::GetClonedDict() {

@@ -154,7 +154,7 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
     return false;
 
   std::unique_ptr<CPDF_Encryptor> encryptor;
-  if (GetCryptoHandler() && pObj != m_pEncryptDict)
+  if (GetCryptoHandler() && pObj != m_pEncryptDict.Get())
     encryptor = pdfium::MakeUnique<CPDF_Encryptor>(GetCryptoHandler(), objnum);
 
   if (!pObj->WriteTo(m_Archive.get(), encryptor.get()))
@@ -232,7 +232,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
       m_IsIncremental = false;
 
     const CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
+    m_pMetadata.Reset(pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr);
     m_iStage = Stage::kWriteHeader10;
   }
   if (m_iStage == Stage::kWriteHeader10) {
@@ -619,7 +619,7 @@ void CPDF_Creator::InitID() {
     ASSERT(m_pParser);
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       m_pNewEncryptDict = ToDictionary(m_pEncryptDict->Clone());
-      m_pEncryptDict = m_pNewEncryptDict.Get();
+      m_pEncryptDict = m_pNewEncryptDict;
       m_pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
       m_pSecurityHandler->OnCreate(m_pNewEncryptDict.Get(), m_pIDArray.Get(),
                                    m_pParser->GetPassword());

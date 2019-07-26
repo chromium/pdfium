@@ -61,7 +61,7 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
 CPDF_Image::~CPDF_Image() = default;
 
 void CPDF_Image::FinishInitialization(CPDF_Dictionary* pStreamDict) {
-  m_pOC = pStreamDict->GetDictFor("OC");
+  m_pOC.Reset(pStreamDict->GetDictFor("OC"));
   m_bIsMask = !pStreamDict->KeyExist("ColorSpace") ||
               pStreamDict->GetIntegerFor("ImageMask");
   m_bInterpolate = !!pStreamDict->GetIntegerFor("Interpolate");

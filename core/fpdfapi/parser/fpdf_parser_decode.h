@@ -86,6 +86,6 @@ bool PDF_DataDecode(
     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
     uint32_t* dest_size,
     ByteString* ImageEncoding,
-    UnownedPtr<const CPDF_Dictionary>* pImageParams);
+    RetainPtr<const CPDF_Dictionary>* pImageParams);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_

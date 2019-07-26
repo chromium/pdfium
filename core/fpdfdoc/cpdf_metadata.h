@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Stream;
 
@@ -40,7 +40,7 @@ class CPDF_Metadata {
   std::vector<UnsupportedFeature> CheckForSharedForm() const;
 
  private:
-  UnownedPtr<const CPDF_Stream> stream_;
+  RetainPtr<const CPDF_Stream> stream_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_METADATA_H_

@@ -26,8 +26,8 @@ class CPDF_StructKid {
 
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
-  RetainPtr<CPDF_StructElement> m_pElement;      // For Element.
-  UnownedPtr<const CPDF_Dictionary> m_pDict;     // For Element.
+  RetainPtr<CPDF_StructElement> m_pElement;  // For Element.
+  RetainPtr<const CPDF_Dictionary> m_pDict;  // For Element.
   uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
   uint32_t m_RefObjNum;   // For StreamContent, Object.
   uint32_t m_ContentId;   // For PageContent, StreamContent.
@@ -62,7 +62,7 @@ class CPDF_StructElement final : public Retainable {
 
   UnownedPtr<CPDF_StructTree> const m_pTree;
   UnownedPtr<CPDF_StructElement> const m_pParent;
-  UnownedPtr<const CPDF_Dictionary> const m_pDict;
+  RetainPtr<const CPDF_Dictionary> const m_pDict;
   const ByteString m_Type;
   std::vector<CPDF_StructKid> m_Kids;
 };

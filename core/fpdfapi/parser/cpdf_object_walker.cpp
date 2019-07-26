@@ -149,8 +149,8 @@ const CPDF_Object* CPDF_ObjectWalker::GetNext() {
     if (it->IsFinished()) {
       stack_.pop();
     } else {
-      next_object_ = it->Increment();
-      parent_object_ = it->object();
+      next_object_.Reset(it->Increment());
+      parent_object_.Reset(it->object());
       dict_key_ = parent_object_->IsDictionary()
                       ? static_cast<DictionaryIterator*>(it)->dict_key()
                       : ByteString();
