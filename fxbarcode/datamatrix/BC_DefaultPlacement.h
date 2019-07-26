@@ -11,10 +11,10 @@
 
 #include "core/fxcrt/fx_string.h"
 
-class CBC_DefaultPlacement {
+class CBC_DefaultPlacement final {
  public:
   CBC_DefaultPlacement(WideString codewords, int32_t numcols, int32_t numrows);
-  virtual ~CBC_DefaultPlacement();
+  ~CBC_DefaultPlacement();
 
   int32_t getNumrows();
   int32_t getNumcols();

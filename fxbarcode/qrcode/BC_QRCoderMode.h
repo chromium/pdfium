@@ -11,9 +11,9 @@
 
 #include <vector>
 
-class CBC_QRCoderMode {
+class CBC_QRCoderMode final {
  public:
-  virtual ~CBC_QRCoderMode();
+  ~CBC_QRCoderMode();
 
   static void Initialize();
   static void Finalize();

@@ -20,13 +20,13 @@ class CPWL_EditImpl_Iterator;
 class CPWL_List_Notify;
 class IPVT_FontMap;
 
-class CPLST_Select {
+class CPLST_Select final {
  public:
   enum State { DESELECTING = -1, NORMAL = 0, SELECTING = 1 };
   using const_iterator = std::map<int32_t, State>::const_iterator;
 
   CPLST_Select();
-  virtual ~CPLST_Select();
+  ~CPLST_Select();
 
   void Add(int32_t nItemIndex);
   void Add(int32_t nBeginIndex, int32_t nEndIndex);

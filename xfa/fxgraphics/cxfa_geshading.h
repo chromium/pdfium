@@ -15,7 +15,7 @@
 
 enum CXFA_GEShading_Type { FX_SHADING_Axial = 1, FX_SHADING_Radial };
 
-class CXFA_GEShading {
+class CXFA_GEShading final {
  public:
   // Axial shading.
   CXFA_GEShading(const CFX_PointF& beginPoint,
@@ -34,7 +34,8 @@ class CXFA_GEShading {
                  bool isExtendedEnd,
                  const FX_ARGB beginArgb,
                  const FX_ARGB endArgb);
-  virtual ~CXFA_GEShading();
+
+  ~CXFA_GEShading();
 
  private:
   friend class CXFA_Graphics;

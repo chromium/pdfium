@@ -11,10 +11,10 @@
 
 #include <vector>
 
-class CBC_BarcodeRow {
+class CBC_BarcodeRow final {
  public:
   explicit CBC_BarcodeRow(size_t width);
-  virtual ~CBC_BarcodeRow();
+  ~CBC_BarcodeRow();
 
   void addBar(bool black, int32_t width);
   std::vector<uint8_t>& getRow();
