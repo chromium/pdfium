@@ -316,9 +316,9 @@ FPDF_EXPORT FPDF_FORMHANDLE FPDF_CALLCONV
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
 #ifdef PDF_ENABLE_XFA
-  const int kRequiredVersion = 2;
+  constexpr int kRequiredVersion = 2;
 #else   // PDF_ENABLE_XFA
-  const int kRequiredVersion = 1;
+  constexpr int kRequiredVersion = 1;
 #endif  // PDF_ENABLE_XFA
   if (!formInfo || formInfo->version != kRequiredVersion)
     return nullptr;
@@ -338,8 +338,8 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   }
 #endif
 
-  auto pFormFillEnv = pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(
-      CPDFDocumentFromFPDFDocument(document), formInfo);
+  auto pFormFillEnv =
+      pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(pDocument, formInfo);
 
 #ifdef PDF_ENABLE_XFA
   if (pContext)
