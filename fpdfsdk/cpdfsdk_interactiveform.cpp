@@ -348,14 +348,14 @@ Optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
   return {};
 }
 
-void CPDFSDK_InteractiveForm::ResetFieldAppearance(CPDF_FormField* pFormField,
-                                                   Optional<WideString> sValue,
-                                                   bool bValueChanged) {
+void CPDFSDK_InteractiveForm::ResetFieldAppearance(
+    CPDF_FormField* pFormField,
+    Optional<WideString> sValue) {
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     ASSERT(pFormCtrl);
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl))
-      pWidget->ResetAppearance(sValue, bValueChanged);
+      pWidget->ResetAppearance(sValue, true);
   }
 }
 
@@ -577,7 +577,7 @@ void CPDFSDK_InteractiveForm::AfterValueChange(CPDF_FormField* pField) {
     return;
 
   OnCalculate(pField);
-  ResetFieldAppearance(pField, OnFormat(pField), true);
+  ResetFieldAppearance(pField, OnFormat(pField));
   UpdateField(pField);
 }
 
@@ -595,7 +595,7 @@ void CPDFSDK_InteractiveForm::AfterSelectionChange(CPDF_FormField* pField) {
     return;
 
   OnCalculate(pField);
-  ResetFieldAppearance(pField, pdfium::nullopt, true);
+  ResetFieldAppearance(pField, pdfium::nullopt);
   UpdateField(pField);
 }
 

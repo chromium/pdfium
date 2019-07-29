@@ -71,8 +71,7 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
   Optional<WideString> OnFormat(CPDF_FormField* pFormField);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
-                            Optional<WideString> sValue,
-                            bool bValueChanged);
+                            Optional<WideString> sValue);
   void UpdateField(CPDF_FormField* pFormField);
 
   bool DoAction_Hide(const CPDF_Action& action);

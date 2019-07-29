@@ -641,7 +641,7 @@ Optional<WideString> CPDFSDK_Widget::OnFormat() {
 void CPDFSDK_Widget::ResetFieldAppearance() {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt, true);
+  m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,

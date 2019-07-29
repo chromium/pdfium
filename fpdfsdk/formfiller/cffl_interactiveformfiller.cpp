@@ -738,7 +738,7 @@ void CFFL_InteractiveFormFiller::OnFormat(ObservedPtr<CPDFSDK_Annot>* pAnnot,
     return;
 
   if (sValue.has_value()) {
-    pForm->ResetFieldAppearance(pWidget->GetFormField(), sValue, true);
+    pForm->ResetFieldAppearance(pWidget->GetFormField(), sValue);
     pForm->UpdateField(pWidget->GetFormField());
   }
 
