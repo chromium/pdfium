@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/observed_ptr.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
@@ -17,7 +18,7 @@
 class CXFA_FFWidget;
 class CXFA_FFDocView;
 
-class CXFA_FFPageView {
+class CXFA_FFPageView : public Observable {
  public:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
   ~CXFA_FFPageView();

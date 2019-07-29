@@ -669,6 +669,10 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
   ObservedPtr<CPDFSDK_Annot> pLastFocusAnnot(m_pFocusAnnot.Get());
   if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
     return false;
+
+  // |pAnnot| may be destroyed in |Annot_OnChangeFocus|.
+  if (!pAnnot->HasObservable())
+    return false;
 #endif  // PDF_ENABLE_XFA
   if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, 0))
     return false;

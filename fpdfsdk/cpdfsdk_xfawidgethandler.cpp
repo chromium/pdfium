@@ -537,9 +537,14 @@ bool CPDFSDK_XFAWidgetHandler::OnXFAChangedFocus(
   if (!pXFAPageView)
     return true;
 
+  ObservedPtr<CXFA_FFPageView> pObservedXFAPageView(pXFAPageView);
   bool bRet = pXFAPageView->GetDocView()->SetFocus(hWidget);
-  if (pXFAPageView->GetDocView()->GetFocusWidget() == hWidget)
+
+  // Check |pXFAPageView| again because |SetFocus| can trigger JS to destroy it.
+  if (pObservedXFAPageView &&
+      pXFAPageView->GetDocView()->GetFocusWidget() == hWidget){
     bRet = true;
+  }
 
   return bRet;
 }
