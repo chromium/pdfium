@@ -8,6 +8,7 @@
 #define CORE_FPDFDOC_CPDF_AACTION_H_
 
 #include "core/fpdfdoc/cpdf_action.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
 
@@ -50,7 +51,7 @@ class CPDF_AAction {
   static bool IsUserClick(AActionType eType);
 
  private:
-  UnownedPtr<const CPDF_Dictionary> const m_pDict;
+  RetainPtr<const CPDF_Dictionary> const m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_AACTION_H_
