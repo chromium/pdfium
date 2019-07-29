@@ -1213,3 +1213,41 @@ TEST_F(FPDFTextEmbedderTest, Bug_1139) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
+  ASSERT_TRUE(OpenDocument("rotated_text.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  ASSERT_TRUE(text_page);
+
+  static constexpr int kSubstringsSize[] = {FX_ArraySize("Hello,"),
+                                            FX_ArraySize(" world!\r\n"),
+                                            FX_ArraySize("Goodbye,")};
+
+  // -1 for CountChars not including the \0, but +1 for the extra control
+  // character.
+  EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page));
+
+  EXPECT_EQ(-1, FPDFText_GetCharAngle(nullptr, 0));
+  EXPECT_EQ(-1, FPDFText_GetCharAngle(text_page, -1));
+  EXPECT_EQ(-1, FPDFText_GetCharAngle(text_page, kHelloGoodbyeTextSize + 1));
+
+  // Test GetCharAngle for every quadrant
+  EXPECT_NEAR(FX_PI / 4.0, FPDFText_GetCharAngle(text_page, 0), 0.001);
+  EXPECT_NEAR(3 * FX_PI / 4.0,
+              FPDFText_GetCharAngle(text_page, kSubstringsSize[0]), 0.001);
+  EXPECT_NEAR(
+      5 * FX_PI / 4.0,
+      FPDFText_GetCharAngle(text_page, kSubstringsSize[0] + kSubstringsSize[1]),
+      0.001);
+  EXPECT_NEAR(
+      7 * FX_PI / 4.0,
+      FPDFText_GetCharAngle(text_page, kSubstringsSize[0] + kSubstringsSize[1] +
+                                           kSubstringsSize[2]),
+      0.001);
+
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}

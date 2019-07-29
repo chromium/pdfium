@@ -121,6 +121,27 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   return length;
 }
 
+FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
+                                                       int index) {
+  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
+  if (!textpage)
+    return -1;
+
+  FPDF_CHAR_INFO charinfo;
+  textpage->GetCharInfo(index, &charinfo);
+  // On the left is our current Matrix and on the right a generic rotation
+  // matrix for our coordinate space.
+  // | a  b  0 |    | cos(t)  -sin(t)  0 |
+  // | c  d  0 |    | sin(t)   cos(t)  0 |
+  // | e  f  1 |    |   0        0     1 |
+  // Calculate the angle of the vector
+  double angle = atan2(charinfo.m_Matrix.c, charinfo.m_Matrix.a);
+  if (angle < 0)
+    angle = 2 * FX_PI + angle;
+
+  return angle;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
                                                         int index,
                                                         double* left,

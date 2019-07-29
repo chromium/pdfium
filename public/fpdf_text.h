@@ -112,6 +112,20 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
                      unsigned long buflen,
                      int* flags);
 
+// Experimental API.
+// Function: FPDFText_GetCharAngle
+//          Get character rotation angle.
+// Parameters:
+//          text_page   -   Handle to a text page information structure.
+//                          Returned by FPDFText_LoadPage function.
+//          index       -   Zero-based index of the character.
+// Return Value:
+//          On success, return the angle value in radian. Value will always be
+//          greater or equal to 0. If |text_page| is invalid, or if |index| is
+//          out of bounds, then return -1.
+FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
+                                                       int index);
+
 // Function: FPDFText_GetCharBox
 //          Get bounding box of a particular character.
 // Parameters:
