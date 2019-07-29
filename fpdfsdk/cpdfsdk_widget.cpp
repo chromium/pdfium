@@ -638,11 +638,10 @@ Optional<WideString> CPDFSDK_Widget::OnFormat() {
   return m_pInteractiveForm->OnFormat(pFormField);
 }
 
-void CPDFSDK_Widget::ResetFieldAppearance(bool bValueChanged) {
+void CPDFSDK_Widget::ResetFieldAppearance() {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt,
-                                           bValueChanged);
+  m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt, true);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,

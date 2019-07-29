@@ -112,7 +112,7 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
   }
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
   ObservedPtr<CFFL_ComboBox> observed_this(this);
-  m_pWidget->ResetFieldAppearance(true);
+  m_pWidget->ResetFieldAppearance();
   if (!observed_widget)
     return;
 

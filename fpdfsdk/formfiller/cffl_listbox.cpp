@@ -129,7 +129,7 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
   if (!observed_widget)
     return;
 
-  m_pWidget->ResetFieldAppearance(true);
+  m_pWidget->ResetFieldAppearance();
   if (!observed_widget)
     return;
 
