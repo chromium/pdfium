@@ -532,7 +532,7 @@ void CPDFSDK_Widget::SetCheck(bool bChecked, NotificationOption notify) {
                            notify);
 #ifdef PDF_ENABLE_XFA
   if (!IsWidgetAppearanceValid(CPDF_Annot::Normal))
-    ResetAppearance(true);
+    ResetXFAAppearance(true);
   if (notify == NotificationOption::kDoNotNotify)
     Synchronize(true);
 #endif  // PDF_ENABLE_XFA
@@ -583,7 +583,7 @@ bool CPDFSDK_Widget::IsAppModified() const {
 }
 
 #ifdef PDF_ENABLE_XFA
-void CPDFSDK_Widget::ResetAppearance(bool bValueChanged) {
+void CPDFSDK_Widget::ResetXFAAppearance(bool bValueChanged) {
   switch (GetFieldType()) {
     case FormFieldType::kTextField:
     case FormFieldType::kComboBox: {

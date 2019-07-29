@@ -87,7 +87,8 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   void SetTopVisibleIndex(int index);
 
 #ifdef PDF_ENABLE_XFA
-  void ResetAppearance(bool bValueChanged);
+  // TODO(thestig): Figure out if the parameter should be used or removed.
+  void ResetXFAAppearance(bool bValueChanged);
 #endif  // PDF_ENABLE_XFA
   void ResetAppearance(Optional<WideString> sValue, bool bValueChanged);
   void ResetFieldAppearance();
