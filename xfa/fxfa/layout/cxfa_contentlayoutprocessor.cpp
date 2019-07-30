@@ -184,7 +184,7 @@ CFX_FloatRect GetMarginInset(const CXFA_Margin* pMargin) {
   return inset;
 }
 
-void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
+void RelocateTableRowCells(const RetainPtr<CXFA_ContentLayoutItem>& pLayoutRow,
                            const std::vector<float>& rgSpecifiedColumnWidths,
                            XFA_AttributeValue eLayout) {
   bool bContainerWidthAutoSize = true;
@@ -436,13 +436,12 @@ void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   CXFA_NodeIterator sIterator(pGenerateNode);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
-    CXFA_ContentLayoutItem* pCurLayoutItem =
-        ToContentLayoutItem(pNode->JSObject()->GetLayoutItem());
+    RetainPtr<CXFA_ContentLayoutItem> pCurLayoutItem(
+        ToContentLayoutItem(pNode->JSObject()->GetLayoutItem()));
     while (pCurLayoutItem) {
       CXFA_ContentLayoutItem* pNextLayoutItem = pCurLayoutItem->GetNext();
-      pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem);
-      delete pCurLayoutItem;
-      pCurLayoutItem = pNextLayoutItem;
+      pNotify->OnLayoutItemRemoving(pDocLayout, pCurLayoutItem.Get());
+      pCurLayoutItem.Reset(pNextLayoutItem);
     }
   }
   pGenerateNode->GetParent()->RemoveChildAndNotify(pGenerateNode, true);
@@ -624,35 +623,34 @@ CXFA_ContentLayoutProcessor::CXFA_ContentLayoutProcessor(
   ASSERT(GetFormNode());
   ASSERT(GetFormNode()->IsContainerNode() ||
          GetFormNode()->GetElementType() == XFA_Element::Form);
-  m_pOldLayoutItem =
-      ToContentLayoutItem(GetFormNode()->JSObject()->GetLayoutItem());
+  m_pOldLayoutItem.Reset(
+      ToContentLayoutItem(GetFormNode()->JSObject()->GetLayoutItem()));
 }
 
 CXFA_ContentLayoutProcessor::~CXFA_ContentLayoutProcessor() {}
 
-CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::CreateContentLayoutItem(
-    CXFA_Node* pFormNode) {
+RetainPtr<CXFA_ContentLayoutItem>
+CXFA_ContentLayoutProcessor::CreateContentLayoutItem(CXFA_Node* pFormNode) {
   if (!pFormNode)
     return nullptr;
 
-  CXFA_ContentLayoutItem* pLayoutItem = nullptr;
   if (m_pOldLayoutItem) {
-    pLayoutItem = m_pOldLayoutItem;
-    m_pOldLayoutItem = m_pOldLayoutItem->GetNext();
+    RetainPtr<CXFA_ContentLayoutItem> pLayoutItem = m_pOldLayoutItem;
+    m_pOldLayoutItem.Reset(m_pOldLayoutItem->GetNext());
     return pLayoutItem;
   }
   CXFA_FFNotify* pNotify = pFormNode->GetDocument()->GetNotify();
-  pLayoutItem = pdfium::MakeUnique<CXFA_ContentLayoutItem>(
-                    pFormNode, pNotify->OnCreateContentLayoutItem(pFormNode))
-                    .release();
+  auto pNewLayoutItem = pdfium::MakeRetain<CXFA_ContentLayoutItem>(
+      pFormNode, pNotify->OnCreateContentLayoutItem(pFormNode));
+
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       ToContentLayoutItem(pFormNode->JSObject()->GetLayoutItem());
   if (pPrevLayoutItem) {
-    pPrevLayoutItem->GetLast()->InsertAfter(pLayoutItem);
+    pPrevLayoutItem->GetLast()->InsertAfter(pNewLayoutItem.Get());
   } else {
-    pFormNode->JSObject()->SetLayoutItem(pLayoutItem);
+    pFormNode->JSObject()->SetLayoutItem(pNewLayoutItem.Get());
   }
-  return pLayoutItem;
+  return pNewLayoutItem;
 }
 
 float CXFA_ContentLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
@@ -662,7 +660,7 @@ float CXFA_ContentLayoutProcessor::FindSplitPos(float fProposedSplitPos) {
   bool bCalculateMargin = eLayout != XFA_AttributeValue::Position;
   while (fProposedSplitPos > kXFALayoutPrecision) {
     bool bAppChange = false;
-    if (!FindLayoutItemSplitPos(m_pLayoutItem, 0, &fProposedSplitPos,
+    if (!FindLayoutItemSplitPos(m_pLayoutItem.Get(), 0, &fProposedSplitPos,
                                 &bAppChange, bCalculateMargin)) {
       break;
     }
@@ -692,7 +690,7 @@ void CXFA_ContentLayoutProcessor::SplitLayoutItem(
         XFA_Attribute::BottomInset, XFA_Unit::Pt);
   }
 
-  CXFA_ContentLayoutItem* pSecondLayoutItem = nullptr;
+  RetainPtr<CXFA_ContentLayoutItem> pSecondLayoutItem;
   if (m_pCurChildPreprocessor &&
       m_pCurChildPreprocessor->GetFormNode() == pLayoutItem->GetFormNode()) {
     pSecondLayoutItem = m_pCurChildPreprocessor->CreateContentLayoutItem(
@@ -733,16 +731,16 @@ void CXFA_ContentLayoutProcessor::SplitLayoutItem(
     bOrphanedItem = true;
   }
 
-  std::vector<CXFA_ContentLayoutItem*> children;
+  std::vector<RetainPtr<CXFA_ContentLayoutItem>> children;
   while (auto* pFirst = ToContentLayoutItem(pLayoutItem->GetFirstChild())) {
-    children.push_back(pFirst);
-    pLayoutItem->RemoveChild(pFirst);
+    children.emplace_back(pFirst);
+    pLayoutItem->RemoveChild(children.back());
   }
 
   float lHeightForKeep = 0;
   float fAddMarginHeight = 0;
-  std::vector<CXFA_ContentLayoutItem*> keepLayoutItems;
-  for (auto* pChildItem : children) {
+  std::vector<RetainPtr<CXFA_ContentLayoutItem>> keepLayoutItems;
+  for (auto& pChildItem : children) {
     if (fSplitPos <= fCurTopMargin + pChildItem->m_sPos.y + fCurBottomMargin +
                          kXFALayoutPrecision) {
       if (!ExistContainerKeep(pChildItem->GetFormNode(), true)) {
@@ -753,7 +751,7 @@ void CXFA_ContentLayoutProcessor::SplitLayoutItem(
         continue;
       }
       if (lHeightForKeep < kXFALayoutPrecision) {
-        for (auto* pPreItem : keepLayoutItems) {
+        for (auto& pPreItem : keepLayoutItems) {
           pLayoutItem->RemoveChild(pPreItem);
           pPreItem->m_sPos.y -= fSplitPos;
           if (pPreItem->m_sPos.y < 0)
@@ -787,7 +785,7 @@ void CXFA_ContentLayoutProcessor::SplitLayoutItem(
 
     float fOldHeight = pSecondLayoutItem->m_sSize.height;
     SplitLayoutItem(
-        pChildItem, pSecondLayoutItem,
+        pChildItem.Get(), pSecondLayoutItem.Get(),
         fSplitPos - fCurTopMargin - fCurBottomMargin - pChildItem->m_sPos.y);
     fAddMarginHeight = pSecondLayoutItem->m_sSize.height - fOldHeight;
     pLayoutItem->AppendLastChild(pChildItem);
@@ -798,13 +796,14 @@ void CXFA_ContentLayoutProcessor::SplitLayoutItem(
 
 void CXFA_ContentLayoutProcessor::SplitLayoutItem(float fSplitPos) {
   ASSERT(m_pLayoutItem);
-  SplitLayoutItem(m_pLayoutItem, nullptr, fSplitPos);
+  SplitLayoutItem(m_pLayoutItem.Get(), nullptr, fSplitPos);
 }
 
-CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::ExtractLayoutItem() {
-  CXFA_ContentLayoutItem* pLayoutItem = m_pLayoutItem;
+RetainPtr<CXFA_ContentLayoutItem>
+CXFA_ContentLayoutProcessor::ExtractLayoutItem() {
+  RetainPtr<CXFA_ContentLayoutItem> pLayoutItem = m_pLayoutItem;
   if (pLayoutItem) {
-    m_pLayoutItem = ToContentLayoutItem(pLayoutItem->GetNextSibling());
+    m_pLayoutItem.Reset(ToContentLayoutItem(pLayoutItem->GetNextSibling()));
     pLayoutItem->RemoveSelfIfParented();
   }
   if (m_nCurChildNodeStage != Stage::kDone || !m_pOldLayoutItem)
@@ -816,13 +815,12 @@ CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::ExtractLayoutItem() {
       m_pOldLayoutItem->GetFormNode()->GetDocument());
 
   while (m_pOldLayoutItem) {
-    CXFA_ContentLayoutItem* pToDeleteItem = m_pOldLayoutItem;
-    m_pOldLayoutItem = pToDeleteItem->GetNext();
+    RetainPtr<CXFA_ContentLayoutItem> pToDeleteItem = m_pOldLayoutItem;
+    m_pOldLayoutItem.Reset(pToDeleteItem->GetNext());
     if (pToDeleteItem == pLayoutItem)
       break;
-    pNotify->OnLayoutItemRemoving(pDocLayout, pToDeleteItem);
+    pNotify->OnLayoutItemRemoving(pDocLayout, pToDeleteItem.Get());
     pToDeleteItem->RemoveSelfIfParented();
-    delete pToDeleteItem;
   }
   return pLayoutItem;
 }
@@ -994,21 +992,21 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
 
     pProcessor->SetCurrentComponentPos(CalculatePositionedContainerPos(
         pCurChildNode, pProcessor->GetCurrentComponentSize()));
-    CXFA_LayoutItem* pProcessItem = pProcessor->ExtractLayoutItem();
+    RetainPtr<CXFA_LayoutItem> pProcessItem = pProcessor->ExtractLayoutItem();
     if (!pBeforeItem)
       pPageAreaLayoutItem->AppendFirstChild(pProcessItem);
     else
       pPageAreaLayoutItem->InsertAfter(pProcessItem, pBeforeItem);
 
-    pBeforeItem = pProcessItem;
+    pBeforeItem = pProcessItem.Get();
   }
 
   pBeforeItem = nullptr;
-  CXFA_LayoutItem* pLayoutItem = pPageAreaLayoutItem->GetFirstChild();
+  RetainPtr<CXFA_LayoutItem> pLayoutItem(pPageAreaLayoutItem->GetFirstChild());
   while (pLayoutItem) {
     if (!pLayoutItem->IsContentLayoutItem() ||
         pLayoutItem->GetFormNode()->GetElementType() != XFA_Element::Draw) {
-      pLayoutItem = pLayoutItem->GetNextSibling();
+      pLayoutItem.Reset(pLayoutItem->GetNextSibling());
       continue;
     }
     if (pLayoutItem->GetFormNode()->GetElementType() != XFA_Element::Draw)
@@ -1021,8 +1019,8 @@ void CXFA_ContentLayoutProcessor::DoLayoutPageArea(
     else
       pPageAreaLayoutItem->InsertAfter(pLayoutItem, pBeforeItem);
 
-    pBeforeItem = pLayoutItem;
-    pLayoutItem = pNextLayoutItem;
+    pBeforeItem = pLayoutItem.Get();
+    pLayoutItem.Reset(pNextLayoutItem);
   }
 }
 
@@ -1299,10 +1297,9 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
   float fCurrentRowY = 0;
   for (CXFA_LayoutItem* pIter = m_pLayoutItem->GetFirstChild(); pIter;
        pIter = pIter->GetNextSibling()) {
-    CXFA_ContentLayoutItem* pLayoutChild = pIter->AsContentLayoutItem();
-    if (!pLayoutChild)
-      continue;
-    if (!pLayoutChild->GetFormNode()->PresenceRequiresSpace())
+    RetainPtr<CXFA_ContentLayoutItem> pLayoutChild(
+        pIter->AsContentLayoutItem());
+    if (!pLayoutChild || !pLayoutChild->GetFormNode()->PresenceRequiresSpace())
       continue;
 
     if (pLayoutChild->GetFormNode()->GetElementType() == XFA_Element::Subform) {
@@ -1371,7 +1368,7 @@ bool CXFA_ContentLayoutProcessor::IsAddNewRowForTrailer(
 }
 
 float CXFA_ContentLayoutProcessor::InsertKeepLayoutItems() {
-  if (m_arrayKeepItems.empty())
+  if (m_ArrayKeepItems.empty())
     return 0;
 
   if (!m_pLayoutItem) {
@@ -1380,12 +1377,12 @@ float CXFA_ContentLayoutProcessor::InsertKeepLayoutItems() {
   }
 
   float fTotalHeight = 0;
-  for (auto iter = m_arrayKeepItems.rbegin(); iter != m_arrayKeepItems.rend();
+  for (auto iter = m_ArrayKeepItems.rbegin(); iter != m_ArrayKeepItems.rend();
        iter++) {
     AddLeaderAfterSplit(*iter);
     fTotalHeight += (*iter)->m_sSize.height;
   }
-  m_arrayKeepItems.clear();
+  m_ArrayKeepItems.clear();
 
   return fTotalHeight;
 }
@@ -1393,7 +1390,7 @@ float CXFA_ContentLayoutProcessor::InsertKeepLayoutItems() {
 bool CXFA_ContentLayoutProcessor::ProcessKeepForSplit(
     CXFA_ContentLayoutProcessor* pChildProcessor,
     Result eRetValue,
-    std::vector<CXFA_ContentLayoutItem*>* rgCurLineLayoutItem,
+    std::vector<RetainPtr<CXFA_ContentLayoutItem>>* rgCurLineLayoutItem,
     float* fContentCurRowAvailWidth,
     float* fContentCurRowHeight,
     float* fContentCurRowY,
@@ -1411,14 +1408,14 @@ bool CXFA_ContentLayoutProcessor::ProcessKeepForSplit(
     return false;
 
   CFX_SizeF childSize = pChildProcessor->GetCurrentComponentSize();
-  std::vector<CXFA_ContentLayoutItem*> keepLayoutItems;
-  if (JudgePutNextPage(m_pLayoutItem, childSize.height, &keepLayoutItems)) {
-    m_arrayKeepItems.clear();
-
-    for (auto* item : keepLayoutItems) {
+  std::vector<RetainPtr<CXFA_ContentLayoutItem>> keepLayoutItems;
+  if (JudgePutNextPage(m_pLayoutItem.Get(), childSize.height,
+                       &keepLayoutItems)) {
+    m_ArrayKeepItems.clear();
+    for (auto& item : keepLayoutItems) {
       m_pLayoutItem->RemoveChild(item);
       *fContentCurRowY -= item->m_sSize.height;
-      m_arrayKeepItems.push_back(item);
+      m_ArrayKeepItems.push_back(item);
     }
     *bAddedItemInRow = true;
     *bForceEndPage = true;
@@ -1437,14 +1434,15 @@ bool CXFA_ContentLayoutProcessor::ProcessKeepForSplit(
 bool CXFA_ContentLayoutProcessor::JudgePutNextPage(
     CXFA_ContentLayoutItem* pParentLayoutItem,
     float fChildHeight,
-    std::vector<CXFA_ContentLayoutItem*>* pKeepItems) {
+    std::vector<RetainPtr<CXFA_ContentLayoutItem>>* pKeepItems) {
   if (!pParentLayoutItem)
     return false;
 
   float fItemsHeight = 0;
   for (CXFA_LayoutItem* pIter = pParentLayoutItem->GetFirstChild(); pIter;
        pIter = pIter->GetNextSibling()) {
-    CXFA_ContentLayoutItem* pChildLayoutItem = pIter->AsContentLayoutItem();
+    RetainPtr<CXFA_ContentLayoutItem> pChildLayoutItem(
+        pIter->AsContentLayoutItem());
     if (!pChildLayoutItem)
       continue;
 
@@ -1481,7 +1479,7 @@ void CXFA_ContentLayoutProcessor::ProcessUnUseBinds(CXFA_Node* pFormNode) {
 void CXFA_ContentLayoutProcessor::ProcessUnUseOverFlow(
     CXFA_Node* pLeaderNode,
     CXFA_Node* pTrailerNode,
-    CXFA_ContentLayoutItem* pTrailerItem,
+    const RetainPtr<CXFA_ContentLayoutItem>& pTrailerItem,
     CXFA_Node* pFormNode) {
   ProcessUnUseBinds(pLeaderNode);
   ProcessUnUseBinds(pTrailerNode);
@@ -1561,7 +1559,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
     float fContentCurRowHeight = 0;
     float fContentCurRowAvailWidth = fContentWidthLimit;
     m_fWidthLimit = fContentCurRowAvailWidth;
-    std::vector<CXFA_ContentLayoutItem*> rgCurLineLayoutItems[3];
+    std::vector<RetainPtr<CXFA_ContentLayoutItem>> rgCurLineLayoutItems[3];
     uint8_t uCurHAlignState =
         (eFlowStrategy != XFA_AttributeValue::Rl_tb ? 0 : 2);
     if (pLastChild) {
@@ -1574,14 +1572,15 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
             m_pCurChildPreprocessor->GetFormNode() ==
                 pLayoutNext->GetFormNode()) {
           if (m_pCurChildPreprocessor->m_pLayoutItem)
-            pLayoutNext->InsertAfter(m_pCurChildPreprocessor->m_pLayoutItem);
-          m_pCurChildPreprocessor->m_pLayoutItem = pLayoutNext;
+            pLayoutNext->InsertAfter(
+                m_pCurChildPreprocessor->m_pLayoutItem.Get());
+          m_pCurChildPreprocessor->m_pLayoutItem.Reset(pLayoutNext);
           break;
         }
         uint8_t uHAlign =
             HAlignEnumToInt(pLayoutNext->GetFormNode()->JSObject()->GetEnum(
                 XFA_Attribute::HAlign));
-        rgCurLineLayoutItems[uHAlign].push_back(pLayoutNext);
+        rgCurLineLayoutItems[uHAlign].emplace_back(pLayoutNext);
         if (eFlowStrategy == XFA_AttributeValue::Lr_tb) {
           if (uHAlign > uCurHAlignState)
             uCurHAlignState = uHAlign;
@@ -1595,12 +1594,12 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         }
       }
 
-      CXFA_ContentLayoutItem* pLayoutNextTemp = pLastChild;
+      RetainPtr<CXFA_ContentLayoutItem> pLayoutNextTemp(pLastChild);
       while (pLayoutNextTemp) {
         CXFA_ContentLayoutItem* pSaveLayoutNext =
             ToContentLayoutItem(pLayoutNextTemp->GetNextSibling());
         pLayoutNextTemp->RemoveSelfIfParented();
-        pLayoutNextTemp = pSaveLayoutNext;
+        pLayoutNextTemp.Reset(pSaveLayoutNext);
       }
       pLastChild = nullptr;
     }
@@ -1614,7 +1613,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         case Stage::kNone:
           break;
         case Stage::kBreakBefore: {
-          for (auto* item : m_arrayKeepItems) {
+          for (auto& item : m_ArrayKeepItems) {
             m_pLayoutItem->RemoveChild(item);
             calculated_size.height -= item->m_sSize.height;
           }
@@ -1871,7 +1870,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
 }
 
 bool CXFA_ContentLayoutProcessor::CalculateRowChildPosition(
-    std::vector<CXFA_ContentLayoutItem*> (&rgCurLineLayoutItems)[3],
+    std::vector<RetainPtr<CXFA_ContentLayoutItem>> (&rgCurLineLayoutItems)[3],
     XFA_AttributeValue eFlowStrategy,
     bool bContainerHeightAutoSize,
     bool bContainerWidthAutoSize,
@@ -2132,7 +2131,7 @@ bool CXFA_ContentLayoutProcessor::JudgeLeaderOrTrailerForOccur(
 }
 
 void CXFA_ContentLayoutProcessor::UpdatePendingItemLayout(
-    CXFA_ContentLayoutItem* pLayoutItem) {
+    const RetainPtr<CXFA_ContentLayoutItem>& pLayoutItem) {
   XFA_AttributeValue eLayout =
       pLayoutItem->GetFormNode()->JSObject()->GetEnum(XFA_Attribute::Layout);
   switch (eLayout) {
@@ -2147,7 +2146,7 @@ void CXFA_ContentLayoutProcessor::UpdatePendingItemLayout(
 
 void CXFA_ContentLayoutProcessor::AddTrailerBeforeSplit(
     float fSplitPos,
-    CXFA_ContentLayoutItem* pTrailerLayoutItem,
+    const RetainPtr<CXFA_ContentLayoutItem>& pTrailerLayoutItem,
     bool bUseInherited) {
   if (!pTrailerLayoutItem)
     return;
@@ -2166,7 +2165,7 @@ void CXFA_ContentLayoutProcessor::AddTrailerBeforeSplit(
   CXFA_Margin* pMargin =
       GetFormNode()->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
   CFX_FloatRect inset = GetMarginInset(pMargin);
-  if (!IsAddNewRowForTrailer(pTrailerLayoutItem)) {
+  if (!IsAddNewRowForTrailer(pTrailerLayoutItem.Get())) {
     pTrailerLayoutItem->m_sPos.y = m_fLastRowY;
     pTrailerLayoutItem->m_sPos.x = m_fLastRowWidth;
     m_pLayoutItem->m_sSize.width += pTrailerLayoutItem->m_sSize.width;
@@ -2208,7 +2207,7 @@ void CXFA_ContentLayoutProcessor::AddTrailerBeforeSplit(
 }
 
 void CXFA_ContentLayoutProcessor::AddLeaderAfterSplit(
-    CXFA_ContentLayoutItem* pLeaderLayoutItem) {
+    const RetainPtr<CXFA_ContentLayoutItem>& pLeaderLayoutItem) {
   UpdatePendingItemLayout(pLeaderLayoutItem);
 
   CXFA_Margin* pMarginNode =
@@ -2276,10 +2275,9 @@ float CXFA_ContentLayoutProcessor::InsertPendingItems(
         m_PendingNodes.front(), nullptr);
     m_PendingNodes.pop_front();
     pPendingProcessor->DoLayout(false, FLT_MAX, FLT_MAX);
-    CXFA_ContentLayoutItem* pPendingLayoutItem =
-        pPendingProcessor->HasLayoutItem()
-            ? pPendingProcessor->ExtractLayoutItem()
-            : nullptr;
+    RetainPtr<CXFA_ContentLayoutItem> pPendingLayoutItem;
+    if (pPendingProcessor->HasLayoutItem())
+      pPendingLayoutItem = pPendingProcessor->ExtractLayoutItem();
     if (pPendingLayoutItem) {
       AddLeaderAfterSplit(pPendingLayoutItem);
       if (m_bBreakPending)
@@ -2297,7 +2295,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
     float fContainerHeight,
     XFA_AttributeValue eFlowStrategy,
     uint8_t* uCurHAlignState,
-    std::vector<CXFA_ContentLayoutItem*> (&rgCurLineLayoutItems)[3],
+    std::vector<RetainPtr<CXFA_ContentLayoutItem>> (&rgCurLineLayoutItems)[3],
     bool bUseBreakControl,
     float fAvailHeight,
     float fRealHeight,
@@ -2380,7 +2378,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   CXFA_Node* pOverflowLeaderNode = nullptr;
   CXFA_Node* pOverflowTrailerNode = nullptr;
   CXFA_Node* pFormNode = nullptr;
-  CXFA_ContentLayoutItem* pTrailerLayoutItem = nullptr;
+  RetainPtr<CXFA_ContentLayoutItem> pTrailerLayoutItem;
   bool bIsAddTrailerHeight = false;
   if (m_pViewLayoutProcessor &&
       pProcessor->GetFormNode()->GetIntact() == XFA_AttributeValue::None) {
@@ -2409,8 +2407,8 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
 
         bIsAddTrailerHeight =
             bUseInherited
-                ? IsAddNewRowForTrailer(pTrailerLayoutItem)
-                : pProcessor->IsAddNewRowForTrailer(pTrailerLayoutItem);
+                ? IsAddNewRowForTrailer(pTrailerLayoutItem.Get())
+                : pProcessor->IsAddNewRowForTrailer(pTrailerLayoutItem.Get());
         if (bIsAddTrailerHeight) {
           childSize.height += pTrailerLayoutItem->m_sSize.height;
           bIsAddTrailerHeight = true;
@@ -2442,13 +2440,13 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
                                          pTrailerLayoutItem, pFormNode);
       }
 
-      CXFA_ContentLayoutItem* pChildLayoutItem =
+      RetainPtr<CXFA_ContentLayoutItem> pChildLayoutItem =
           pProcessor->ExtractLayoutItem();
       if (ExistContainerKeep(pProcessor->GetFormNode(), false) &&
           pProcessor->GetFormNode()->GetIntact() == XFA_AttributeValue::None) {
-        m_arrayKeepItems.push_back(pChildLayoutItem);
+        m_ArrayKeepItems.push_back(pChildLayoutItem);
       } else {
-        m_arrayKeepItems.clear();
+        m_ArrayKeepItems.clear();
       }
       rgCurLineLayoutItems[uHAlign].push_back(pChildLayoutItem);
       *bAddedItemInRow = true;

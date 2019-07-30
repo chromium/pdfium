@@ -235,8 +235,8 @@ void CPDFSDK_InteractiveForm::AddXFAMap(CXFA_FFWidget* hWidget,
 }
 
 void CPDFSDK_InteractiveForm::RemoveXFAMap(CXFA_FFWidget* hWidget) {
-  ASSERT(hWidget);
-  m_XFAMap.erase(hWidget);
+  if (hWidget)
+    m_XFAMap.erase(hWidget);
 }
 
 CPDFSDK_XFAWidget* CPDFSDK_InteractiveForm::GetXFAWidget(

@@ -7,7 +7,8 @@
 #ifndef XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 #define XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_
 
-#include "core/fxcrt/tree_node.h"
+#include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/retained_tree_node.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -15,7 +16,7 @@ class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_ViewLayoutItem;
 
-class CXFA_LayoutItem : public TreeNode<CXFA_LayoutItem> {
+class CXFA_LayoutItem : public RetainedTreeNode<CXFA_LayoutItem> {
  public:
   ~CXFA_LayoutItem() override;
 
@@ -47,6 +48,6 @@ inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* item) {
   return item ? item->AsContentLayoutItem() : nullptr;
 }
 
-void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
+void XFA_ReleaseLayoutItem(const RetainPtr<CXFA_LayoutItem>& pLayoutItem);
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTITEM_H_

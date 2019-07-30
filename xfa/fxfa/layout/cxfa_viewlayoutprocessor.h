@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
 
@@ -40,15 +41,16 @@ class CXFA_ViewLayoutProcessor {
   bool PrepareFirstPage(CXFA_Node* pRootSubform);
   float GetAvailHeight();
   bool GetNextAvailContentHeight(float fChildHeight);
-  void SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
-                         CXFA_ContentLayoutProcessor::Result eStatus);
+  void SubmitContentItem(
+      const RetainPtr<CXFA_ContentLayoutItem>& pContentLayoutItem,
+      CXFA_ContentLayoutProcessor::Result eStatus);
   void FinishPaginatedPageSets();
   void SyncLayoutData();
   int32_t GetPageCount() const;
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   int32_t GetPageIndex(const CXFA_ViewLayoutItem* pPage) const;
-  inline CXFA_ViewLayoutItem* GetRootLayoutItem() const {
-    return m_pPageSetLayoutItemRoot;
+  CXFA_ViewLayoutItem* GetRootLayoutItem() const {
+    return m_pPageSetLayoutItemRoot.Get();
   }
   Optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
   Optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
@@ -150,19 +152,19 @@ class CXFA_ViewLayoutProcessor {
   void ProcessSimplexOrDuplexPageSets(CXFA_ViewLayoutItem* pPageSetLayoutItem,
                                       bool bIsSimplex);
 
-  CXFA_LayoutProcessor* m_pLayoutProcessor;
-  CXFA_Node* m_pTemplatePageSetRoot;
-  CXFA_ViewLayoutItem* m_pPageSetLayoutItemRoot;
-  CXFA_ViewLayoutItem* m_pPageSetCurRoot;
+  CXFA_LayoutProcessor* m_pLayoutProcessor = nullptr;
+  CXFA_Node* m_pTemplatePageSetRoot = nullptr;
+  RetainPtr<CXFA_ViewLayoutItem> m_pPageSetLayoutItemRoot;
+  RetainPtr<CXFA_ViewLayoutItem> m_pPageSetCurRoot;
   RecordList m_ProposedViewRecords;
   RecordList::iterator m_CurrentViewRecordIter;
-  CXFA_Node* m_pCurPageArea;
-  int32_t m_nAvailPages;
-  int32_t m_nCurPageCount;
-  XFA_AttributeValue m_ePageSetMode;
-  bool m_bCreateOverFlowPage;
+  CXFA_Node* m_pCurPageArea = nullptr;
+  int32_t m_nAvailPages = 0;
+  int32_t m_nCurPageCount = 0;
+  XFA_AttributeValue m_ePageSetMode = XFA_AttributeValue::OrderedOccurrence;
+  bool m_bCreateOverFlowPage = false;
   std::map<CXFA_Node*, int32_t> m_pPageSetMap;
-  std::vector<CXFA_ViewLayoutItem*> m_PageArray;
+  std::vector<RetainPtr<CXFA_ViewLayoutItem>> m_PageArray;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTPROCESSOR_H_

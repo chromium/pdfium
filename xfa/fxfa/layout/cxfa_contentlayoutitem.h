@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
@@ -16,8 +17,9 @@ class CXFA_FFWidget;
 
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
-  CXFA_ContentLayoutItem(CXFA_Node* pNode,
-                         std::unique_ptr<CXFA_FFWidget> pFFWidget);
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   ~CXFA_ContentLayoutItem() override;
 
   CXFA_FFWidget* GetFFWidget() { return m_pFFWidget.get(); }
@@ -41,6 +43,9 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   CFX_SizeF m_sSize;
 
  private:
+  CXFA_ContentLayoutItem(CXFA_Node* pNode,
+                         std::unique_ptr<CXFA_FFWidget> pFFWidget);
+
   void RemoveSelf();
 
   mutable uint32_t m_dwStatus = 0;
