@@ -9,10 +9,10 @@
 #include "core/fpdfapi/page/cpdf_dibbase.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
-#include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CPDF_ImageLoader::CPDF_ImageLoader() = default;

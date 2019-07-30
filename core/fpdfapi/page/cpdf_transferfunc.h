@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_TRANSFERFUNC_H_
-#define CORE_FPDFAPI_RENDER_CPDF_TRANSFERFUNC_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_
+#define CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_
 
 #include <vector>
 
@@ -52,4 +52,4 @@ class CPDF_TransferFunc final : public Retainable, public Observable {
   const std::vector<uint8_t> m_SamplesB;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_TRANSFERFUNC_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_

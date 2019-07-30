@@ -12,8 +12,6 @@ jumbo_source_set("render") {
     "cpdf_charposlist.h",
     "cpdf_devicebuffer.cpp",
     "cpdf_devicebuffer.h",
-    "cpdf_dibtransferfunc.cpp",
-    "cpdf_dibtransferfunc.h",
     "cpdf_docrenderdata.cpp",
     "cpdf_docrenderdata.h",
     "cpdf_imagecacheentry.cpp",
@@ -38,8 +36,6 @@ jumbo_source_set("render") {
     "cpdf_scaledrenderbuffer.h",
     "cpdf_textrenderer.cpp",
     "cpdf_textrenderer.h",
-    "cpdf_transferfunc.cpp",
-    "cpdf_transferfunc.h",
     "cpdf_type3cache.cpp",
     "cpdf_type3cache.h",
     "cpdf_type3glyphmap.cpp",
@@ -55,7 +51,6 @@ jumbo_source_set("render") {
     "../page",
     "../parser",
   ]
-  allow_circular_includes_from = [ "../page" ]
   visibility = [ "../../../*" ]
 }
 
@@ -65,6 +60,7 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":render",
+    "../page",
     "../parser",
   ]
   pdfium_root_dir = "../../../"

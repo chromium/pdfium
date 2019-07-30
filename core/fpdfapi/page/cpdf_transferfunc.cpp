@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_transferfunc.h"
+#include "core/fpdfapi/page/cpdf_transferfunc.h"
 
 #include <utility>
 
+#include "core/fpdfapi/page/cpdf_dibtransferfunc.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/cpdf_dibtransferfunc.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc,

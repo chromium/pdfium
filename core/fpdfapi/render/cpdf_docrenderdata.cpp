@@ -14,9 +14,9 @@
 #include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/page/cpdf_dibbase.h"
 #include "core/fpdfapi/page/cpdf_function.h"
+#include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 
 namespace {

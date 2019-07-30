@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_DIBTRANSFERFUNC_H_
-#define CORE_FPDFAPI_RENDER_CPDF_DIBTRANSFERFUNC_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_DIBTRANSFERFUNC_H_
+#define CORE_FPDFAPI_PAGE_CPDF_DIBTRANSFERFUNC_H_
 
 #include <vector>
 
@@ -41,4 +41,4 @@ class CPDF_DIBTransferFunc final : public CFX_FilteredDIB {
   const pdfium::span<const uint8_t> m_RampB;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_DIBTRANSFERFUNC_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_DIBTRANSFERFUNC_H_

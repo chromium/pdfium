@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_dibtransferfunc.h"
+#include "core/fpdfapi/page/cpdf_dibtransferfunc.h"
 
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "third_party/base/compiler_specific.h"
 
 CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
