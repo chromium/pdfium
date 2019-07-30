@@ -58,6 +58,11 @@ void CPDF_Type3Char::InitializeFromStreamData(bool bColored,
   m_BBox.top = FXSYS_round(TextUnitToGlyphUnit(pData[5]));
 }
 
+void CPDF_Type3Char::WillBeDestroyed() {
+  // Break cycles.
+  m_pForm.reset();
+}
+
 void CPDF_Type3Char::Transform(CPDF_Font::FormIface* pForm,
                                const CFX_Matrix& matrix) {
   m_Width = m_Width * matrix.GetXUnit() + 0.5f;

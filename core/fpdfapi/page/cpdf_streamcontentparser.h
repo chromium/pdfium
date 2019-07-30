@@ -58,7 +58,7 @@ class CPDF_StreamContentParser {
   CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
   bool IsColored() const { return m_bColored; }
   const float* GetType3Data() const { return m_Type3Data; }
-  CPDF_Font* FindFont(const ByteString& name);
+  RetainPtr<CPDF_Font> FindFont(const ByteString& name);
 
   static ByteStringView FindKeyAbbreviationForTesting(ByteStringView abbr);
   static ByteStringView FindValueAbbreviationForTesting(ByteStringView abbr);

@@ -18,6 +18,7 @@
 #include "core/fpdfdoc/ipdf_formnotify.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 #define TEXTPOS_CAPTION 0
@@ -98,7 +99,7 @@ class CPDF_FormControl {
   CPDF_AAction GetAdditionalAction() const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
 
-  CPDF_Font* GetDefaultControlFont();
+  RetainPtr<CPDF_Font> GetDefaultControlFont();
   int GetControlAlignment() const;
 
   ByteString GetOnStateName() const;

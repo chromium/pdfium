@@ -13,10 +13,10 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -52,16 +52,14 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
 
   bool IsForceClear() const { return m_bForceClear; }
 
-  CPDF_Font* AddFont(CFX_Font* pFont, int charset);
-  CPDF_Font* GetFont(CPDF_Dictionary* pFontDict);
-  CPDF_Font* AddStandardFont(const char* font,
-                             const CPDF_FontEncoding* pEncoding);
-  CPDF_Font* GetStandardFont(const ByteString& fontName,
-                             const CPDF_FontEncoding* pEncoding);
-  void ReleaseFont(const CPDF_Dictionary* pFontDict);
-
+  RetainPtr<CPDF_Font> AddFont(std::unique_ptr<CFX_Font> pFont, int charset);
+  RetainPtr<CPDF_Font> GetFont(CPDF_Dictionary* pFontDict);
+  RetainPtr<CPDF_Font> AddStandardFont(const char* font,
+                                       const CPDF_FontEncoding* pEncoding);
+  RetainPtr<CPDF_Font> GetStandardFont(const ByteString& fontName,
+                                       const CPDF_FontEncoding* pEncoding);
 #if defined(OS_WIN)
-  CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont);
+  RetainPtr<CPDF_Font> AddWindowsFont(LOGFONTA* pLogFont);
 #endif
 
   // Loads a colorspace.
@@ -86,8 +84,6 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
   RetainPtr<CPDF_IccProfile> GetIccProfile(const CPDF_Stream* pProfileStream);
 
  private:
-  using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
-
   // Loads a colorspace in a context that might be while loading another
   // colorspace, or even in a recursive call from this method itself. |pVisited|
   // is passed recursively to avoid circular calls involving
@@ -116,7 +112,7 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
   std::map<const CPDF_Stream*, ObservedPtr<CPDF_IccProfile>> m_IccProfileMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_Pattern>> m_PatternMap;
   std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
-  std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
+  std::map<const CPDF_Dictionary*, ObservedPtr<CPDF_Font>> m_FontMap;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_

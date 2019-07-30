@@ -261,10 +261,10 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
   return stream;
 }
 
-CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
-                          std::unique_ptr<CFX_Font> pFont,
-                          pdfium::span<const uint8_t> span,
-                          int font_type) {
+RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
+                                    std::unique_ptr<CFX_Font> pFont,
+                                    pdfium::span<const uint8_t> span,
+                                    int font_type) {
   CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>(
@@ -309,10 +309,10 @@ CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
   return CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFontDict);
 }
 
-CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
-                             std::unique_ptr<CFX_Font> pFont,
-                             pdfium::span<const uint8_t> span,
-                             int font_type) {
+RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
+                                       std::unique_ptr<CFX_Font> pFont,
+                                       pdfium::span<const uint8_t> span,
+                                       int font_type) {
   CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
@@ -444,7 +444,8 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   if (!pDoc)
     return nullptr;
 
-  CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc, ByteStringView(font));
+  RetainPtr<CPDF_Font> pFont =
+      CPDF_Font::GetStockFont(pDoc, ByteStringView(font));
   if (!pFont)
     return nullptr;
 
@@ -493,9 +494,10 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
   if (!pFont->LoadEmbedded(span))
     return nullptr;
 
+  // Caller takes ownership.
   return FPDFFontFromCPDFFont(
-      cid ? LoadCompositeFont(pDoc, std::move(pFont), span, font_type)
-          : LoadSimpleFont(pDoc, std::move(pFont), span, font_type));
+      cid ? LoadCompositeFont(pDoc, std::move(pFont), span, font_type).Leak()
+          : LoadSimpleFont(pDoc, std::move(pFont), span, font_type).Leak());
 }
 
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
@@ -504,8 +506,9 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
   if (!pDoc)
     return nullptr;
 
+  // Caller takes ownership.
   return FPDFFontFromCPDFFont(
-      CPDF_Font::GetStockFont(pDoc, ByteStringView(font)));
+      CPDF_Font::GetStockFont(pDoc, ByteStringView(font)).Leak());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
@@ -539,17 +542,16 @@ FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
   if (!pTextObj)
     return 0;
 
-  CPDF_Font* pPdfFont = pTextObj->GetFont();
+  RetainPtr<CPDF_Font> pPdfFont = pTextObj->GetFont();
   if (!pPdfFont)
     return 0;
 
   CFX_Font* pFont = pPdfFont->GetFont();
-  ASSERT(pFont);
-
   ByteString name = pFont->GetFamilyName();
   unsigned long dwStringLen = name.GetLength() + 1;
   if (buffer && length >= dwStringLen)
     memcpy(buffer, name.c_str(), dwStringLen);
+
   return dwStringLen;
 }
 
@@ -571,17 +573,8 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
-  CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont)
-    return;
-
-  CPDF_Document* pDoc = pFont->GetDocument();
-  if (!pDoc)
-    return;
-
-  auto* pPageData = CPDF_DocPageData::FromDocument(pDoc);
-  if (!pPageData->IsForceClear())
-    pPageData->ReleaseFont(pFont->GetFontDict());
+  // Take back ownership from caller and release.
+  RetainPtr<CPDF_Font>().Unleak(CPDFFontFromFPDFFont(font));
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV

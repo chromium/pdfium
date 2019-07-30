@@ -34,7 +34,7 @@ namespace {
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
 int CountWords(const CPDF_TextObject* pTextObj) {
-  CPDF_Font* pFont = pTextObj->GetFont();
+  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   if (!pFont)
     return 0;
 
@@ -64,7 +64,7 @@ int CountWords(const CPDF_TextObject* pTextObj) {
 }
 
 WideString GetObjWordStr(const CPDF_TextObject* pTextObj, int nWordIndex) {
-  CPDF_Font* pFont = pTextObj->GetFont();
+  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   if (!pFont)
     return WideString();
 

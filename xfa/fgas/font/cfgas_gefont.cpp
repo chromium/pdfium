@@ -37,11 +37,13 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
 }
 
 // static
-RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(CPDF_Font* pPDFFont,
-                                               CFGAS_FontMgr* pFontMgr) {
+RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
+    const RetainPtr<CPDF_Font>& pPDFFont,
+    CFGAS_FontMgr* pFontMgr) {
   auto pFont = pdfium::MakeRetain<CFGAS_GEFont>(pFontMgr);
-  if (!pFont->LoadFontInternal(pPDFFont->GetFont()))
+  if (!pFont->LoadFontInternal(pPDFFont))
     return nullptr;
+
   return pFont;
 }
 
@@ -85,12 +87,17 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
 }
 #endif  // defined(OS_WIN)
 
-bool CFGAS_GEFont::LoadFontInternal(CFX_Font* pExternalFont) {
+bool CFGAS_GEFont::LoadFontInternal(const RetainPtr<CPDF_Font>& pPDFFont) {
+  CFX_Font* pExternalFont = pPDFFont->GetFont();
   if (m_pFont || !pExternalFont)
     return false;
 
   m_pFont = pExternalFont;
-  return InitFont();
+  if (!InitFont())
+    return false;
+
+  m_pPDFFont = pPDFFont;  // Keep pPDFFont alive for the duration.
+  return true;
 }
 
 bool CFGAS_GEFont::LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont) {

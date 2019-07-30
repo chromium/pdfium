@@ -16,7 +16,6 @@
 
 class CPDF_SimpleFont : public CPDF_Font {
  public:
-  CPDF_SimpleFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
   ~CPDF_SimpleFont() override;
 
   // CPDF_Font
@@ -32,6 +31,8 @@ class CPDF_SimpleFont : public CPDF_Font {
   bool HasFontWidths() const override;
 
  protected:
+  CPDF_SimpleFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+
   virtual void LoadGlyphMap() = 0;
 
   bool LoadCommon();

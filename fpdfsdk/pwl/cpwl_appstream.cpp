@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "constants/form_flags.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -1776,10 +1777,9 @@ void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   if (nMaxLen > 0) {
     if (bCharArray) {
       pEdit->SetCharArray(nMaxLen);
-
       if (IsFloatZero(fFontSize)) {
-        fFontSize = CPWL_Edit::GetCharArrayAutoFontSize(font_map.GetPDFFont(0),
-                                                        rcClient, nMaxLen);
+        fFontSize = CPWL_Edit::GetCharArrayAutoFontSize(
+            font_map.GetPDFFont(0).Get(), rcClient, nMaxLen);
       }
     } else {
       if (sValue.has_value())

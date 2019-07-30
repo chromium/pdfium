@@ -1125,14 +1125,13 @@ void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
 
 void CPDF_StreamContentParser::Handle_SetFont() {
   float fs = GetNumber(0);
-  if (fs == 0) {
+  if (fs == 0)
     fs = m_DefFontSize;
-  }
+
   m_pCurStates->m_TextState.SetFontSize(fs);
-  CPDF_Font* pFont = FindFont(GetString(1));
-  if (pFont) {
+  RetainPtr<CPDF_Font> pFont = FindFont(GetString(1));
+  if (pFont)
     m_pCurStates->m_TextState.SetFont(pFont);
-  }
 }
 
 CPDF_Dictionary* CPDF_StreamContentParser::FindResourceHolder(
@@ -1156,14 +1155,15 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const ByteString& type,
   return pHolder ? pHolder->GetDirectObjectFor(name) : nullptr;
 }
 
-CPDF_Font* CPDF_StreamContentParser::FindFont(const ByteString& name) {
+RetainPtr<CPDF_Font> CPDF_StreamContentParser::FindFont(
+    const ByteString& name) {
   CPDF_Dictionary* pFontDict = ToDictionary(FindResourceObj("Font", name));
   if (!pFontDict) {
     m_bResourceMissing = true;
     return CPDF_Font::GetStockFont(m_pDocument.Get(),
                                    CFX_Font::kDefaultAnsiFontName);
   }
-  CPDF_Font* pFont =
+  RetainPtr<CPDF_Font> pFont =
       CPDF_DocPageData::FromDocument(m_pDocument.Get())->GetFont(pFontDict);
   if (pFont && pFont->IsType3Font()) {
     pFont->AsType3Font()->SetPageResources(m_pResources.Get());
@@ -1219,7 +1219,7 @@ void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
                                              float fInitKerning,
                                              const std::vector<float>& kernings,
                                              size_t nSegs) {
-  CPDF_Font* pFont = m_pCurStates->m_TextState.GetFont();
+  RetainPtr<CPDF_Font> pFont = m_pCurStates->m_TextState.GetFont();
   if (!pFont)
     return;
 

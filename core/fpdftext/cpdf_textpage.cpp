@@ -771,14 +771,14 @@ void CPDF_TextPage::ProcessTextObject(
   CPDF_TextObjectItem item;
   prev_Obj.m_pTextObj->GetItemInfo(nItem - 1, &item);
   float prev_width =
-      GetCharWidth(item.m_CharCode, prev_Obj.m_pTextObj->GetFont()) *
+      GetCharWidth(item.m_CharCode, prev_Obj.m_pTextObj->GetFont().Get()) *
       prev_Obj.m_pTextObj->GetFontSize() / 1000;
 
   CFX_Matrix prev_matrix =
       prev_Obj.m_pTextObj->GetTextMatrix() * prev_Obj.m_formMatrix;
   prev_width = prev_matrix.TransformDistance(fabs(prev_width));
   pTextObj->GetItemInfo(0, &item);
-  float this_width = GetCharWidth(item.m_CharCode, pTextObj->GetFont()) *
+  float this_width = GetCharWidth(item.m_CharCode, pTextObj->GetFont().Get()) *
                      pTextObj->GetFontSize() / 1000;
   this_width = fabs(this_width);
 
@@ -845,7 +845,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   if (actText.IsEmpty())
     return FPDFText_MarkedContent::Pass;
 
-  CPDF_Font* pFont = pTextObj->GetFont();
+  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   bExist = false;
   for (size_t i = 0; i < actText.GetLength(); ++i) {
     if (pFont->CharCodeFromUnicode(actText[i]) != CPDF_Font::kInvalidCharCode) {
@@ -887,7 +887,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   if (actText.IsEmpty())
     return;
 
-  CPDF_Font* pFont = pTextObj->GetFont();
+  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   CFX_Matrix matrix = pTextObj->GetTextMatrix() * Obj.m_formMatrix;
 
   for (size_t k = 0; k < actText.GetLength(); ++k) {
@@ -939,10 +939,10 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj.Get();
   if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon)
     return;
-  CFX_Matrix formMatrix = Obj.m_formMatrix;
-  CPDF_Font* pFont = pTextObj->GetFont();
-  CFX_Matrix matrix = pTextObj->GetTextMatrix() * formMatrix;
 
+  CFX_Matrix formMatrix = Obj.m_formMatrix;
+  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
+  CFX_Matrix matrix = pTextObj->GetTextMatrix() * formMatrix;
   FPDFText_MarkedContent ePreMKC = PreMarkedContent(Obj);
   if (ePreMKC == FPDFText_MarkedContent::Done) {
     m_pPreTextObj = pTextObj;
@@ -1058,7 +1058,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       else
         threshold /= 2;
       if (threshold == 0) {
-        threshold = static_cast<float>(GetCharWidth(item.m_CharCode, pFont));
+        threshold =
+            static_cast<float>(GetCharWidth(item.m_CharCode, pFont.Get()));
         threshold = NormalizeThreshold(threshold, 300, 500, 700);
         threshold = fontsize_h * threshold / 1000;
       }
@@ -1259,10 +1260,10 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
 
   float last_pos = PrevItem.m_Origin.x;
   uint32_t nLastWidth =
-      GetCharWidth(PrevItem.m_CharCode, m_pPreTextObj->GetFont());
+      GetCharWidth(PrevItem.m_CharCode, m_pPreTextObj->GetFont().Get());
   float last_width = nLastWidth * m_pPreTextObj->GetFontSize() / 1000;
   last_width = fabs(last_width);
-  uint32_t nThisWidth = GetCharWidth(item.m_CharCode, pObj->GetFont());
+  uint32_t nThisWidth = GetCharWidth(item.m_CharCode, pObj->GetFont().Get());
   float this_width = fabs(nThisWidth * pObj->GetFontSize() / 1000);
   float threshold = std::max(last_width, this_width) / 4;
 
@@ -1389,7 +1390,8 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
 
   CFX_PointF diff = pTextObj1->GetPos() - pTextObj2->GetPos();
   float font_size = pTextObj2->GetFontSize();
-  float char_size = GetCharWidth(itemPer.m_CharCode, pTextObj2->GetFont());
+  float char_size =
+      GetCharWidth(itemPer.m_CharCode, pTextObj2->GetFont().Get());
   float max_pre_size =
       std::max(std::max(rcPreObj.Height(), rcPreObj.Width()), font_size);
   return fabs(diff.x) <= 0.9 * char_size * font_size / 1000 &&
@@ -1427,7 +1429,7 @@ Optional<PAGECHAR_INFO> CPDF_TextPage::GenerateCharInfo(wchar_t unicode) {
   int preWidth = 0;
   if (pPrevCharInfo->m_pTextObj && pPrevCharInfo->m_CharCode != -1) {
     preWidth = GetCharWidth(pPrevCharInfo->m_CharCode,
-                            pPrevCharInfo->m_pTextObj->GetFont());
+                            pPrevCharInfo->m_pTextObj->GetFont().Get());
   }
 
   float fFontSize = pPrevCharInfo->m_pTextObj

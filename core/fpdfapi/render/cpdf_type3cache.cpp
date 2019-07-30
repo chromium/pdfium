@@ -85,17 +85,9 @@ int DetectFirstLastScan(const RetainPtr<CFX_DIBitmap>& pBitmap, bool bFirst) {
 
 }  // namespace
 
-CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {
-  // Increments refcount in CPDF_DocPageData.
-  CPDF_Document* pDoc = m_pFont->GetDocument();
-  CPDF_DocPageData::FromDocument(pDoc)->GetFont(m_pFont->GetFontDict());
-}
+CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
 
-CPDF_Type3Cache::~CPDF_Type3Cache() {
-  // Decrements refcount in CPDF_DocPageData.
-  CPDF_Document* pDoc = m_pFont->GetDocument();
-  CPDF_DocPageData::FromDocument(pDoc)->ReleaseFont(m_pFont->GetFontDict());
-}
+CPDF_Type3Cache::~CPDF_Type3Cache() = default;
 
 const CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                                   const CFX_Matrix* pMatrix) {

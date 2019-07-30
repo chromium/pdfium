@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFieldTree;
@@ -28,9 +29,9 @@ class CPDF_Object;
 class CPDF_Page;
 class IPDF_FormNotify;
 
-CPDF_Font* AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
-                                        CPDF_Document* pDocument,
-                                        ByteString* csNameTag);
+RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
+                                                  CPDF_Document* pDocument,
+                                                  ByteString* csNameTag);
 
 class CPDF_InteractiveForm {
  public:
@@ -39,12 +40,13 @@ class CPDF_InteractiveForm {
 
   static void SetUpdateAP(bool bUpdateAP);
   static bool IsUpdateAPEnabled();
-  static CPDF_Font* AddStandardFont(CPDF_Document* pDocument,
-                                    ByteString csFontName);
-  static ByteString GetNativeFontName(uint8_t iCharSet, void* pLogFont);
   static uint8_t GetNativeCharSet();
-  static CPDF_Font* AddNativeFont(uint8_t iCharSet, CPDF_Document* pDocument);
-  static CPDF_Font* AddNativeFont(CPDF_Document* pDocument);
+  static ByteString GetNativeFontName(uint8_t iCharSet, void* pLogFont);
+  static RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDocument,
+                                              ByteString csFontName);
+  static RetainPtr<CPDF_Font> AddNativeFont(uint8_t iCharSet,
+                                            CPDF_Document* pDocument);
+  static RetainPtr<CPDF_Font> AddNativeFont(CPDF_Document* pDocument);
 
   size_t CountFields(const WideString& csFieldName) const;
   CPDF_FormField* GetField(uint32_t index, const WideString& csFieldName) const;
@@ -60,7 +62,7 @@ class CPDF_InteractiveForm {
   CPDF_FormField* GetFieldInCalculationOrder(int index);
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
 
-  CPDF_Font* GetFormFont(ByteString csNameTag) const;
+  RetainPtr<CPDF_Font> GetFormFont(ByteString csNameTag) const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
 

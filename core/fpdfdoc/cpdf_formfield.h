@@ -14,6 +14,7 @@
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
@@ -194,15 +195,14 @@ class CPDF_FormField {
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControls() const;
 
   CPDF_FormField::Type m_Type = kUnknown;
-  uint32_t m_Flags = 0;
   bool m_bReadOnly = false;
   bool m_bRequired = false;
   bool m_bNoExport = false;
-
+  uint32_t m_Flags = 0;
+  float m_FontSize = 0;
   UnownedPtr<CPDF_InteractiveForm> const m_pForm;
   RetainPtr<CPDF_Dictionary> const m_pDict;
-  float m_FontSize = 0;
-  UnownedPtr<CPDF_Font> m_pFont;
+  RetainPtr<CPDF_Font> m_pFont;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMFIELD_H_

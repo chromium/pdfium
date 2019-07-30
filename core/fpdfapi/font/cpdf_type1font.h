@@ -14,7 +14,9 @@
 
 class CPDF_Type1Font final : public CPDF_SimpleFont {
  public:
-  CPDF_Type1Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   ~CPDF_Type1Font() override;
 
   // CPDF_Font:
@@ -28,6 +30,8 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   bool IsBase14Font() const { return m_Base14Font.has_value(); }
 
  private:
+  CPDF_Type1Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+
   // CPDF_Font:
   bool Load() override;
 

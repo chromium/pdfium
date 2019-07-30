@@ -1984,7 +1984,7 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
   }
 
-  CPDF_Font* pFont = pFormControl->GetDefaultControlFont();
+  RetainPtr<CPDF_Font> pFont = pFormControl->GetDefaultControlFont();
   if (!pFont)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 

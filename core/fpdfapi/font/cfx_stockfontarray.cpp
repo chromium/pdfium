@@ -24,17 +24,15 @@ CFX_StockFontArray::~CFX_StockFontArray() {
   }
 }
 
-CPDF_Font* CFX_StockFontArray::GetFont(
+RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
     CFX_FontMapper::StandardFont index) const {
   if (index >= FX_ArraySize(m_StockFonts))
     return nullptr;
-  return m_StockFonts[index].get();
+  return m_StockFonts[index];
 }
 
-CPDF_Font* CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,
-                                       std::unique_ptr<CPDF_Font> pFont) {
-  CPDF_Font* result = pFont.get();
+void CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,
+                                 const RetainPtr<CPDF_Font>& pFont) {
   if (index < FX_ArraySize(m_StockFonts))
-    m_StockFonts[index] = std::move(pFont);
-  return result;
+    m_StockFonts[index] = pFont;
 }

@@ -24,7 +24,6 @@ jumbo_source_set("page") {
     "cpdf_contentmarks.h",
     "cpdf_contentparser.cpp",
     "cpdf_contentparser.h",
-    "cpdf_countedobject.h",
     "cpdf_devicecs.cpp",
     "cpdf_devicecs.h",
     "cpdf_dibbase.cpp",

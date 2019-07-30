@@ -108,16 +108,18 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   if (!charinfo.m_pTextObj)
     return 0;
 
-  CPDF_Font* font = charinfo.m_pTextObj->GetFont();
+  RetainPtr<CPDF_Font> font = charinfo.m_pTextObj->GetFont();
   if (!font)
     return 0;
 
   if (flags)
     *flags = font->GetFontFlags();
+
   ByteString basefont = font->GetBaseFont();
   unsigned long length = basefont.GetLength() + 1;
   if (buffer && buflen >= length)
     memcpy(buffer, basefont.c_str(), length);
+
   return length;
 }
 

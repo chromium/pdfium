@@ -18,11 +18,11 @@ void CPDF_TextState::Emplace() {
   m_Ref.Emplace();
 }
 
-CPDF_Font* CPDF_TextState::GetFont() const {
+RetainPtr<CPDF_Font> CPDF_TextState::GetFont() const {
   return m_Ref.GetObject()->m_pFont;
 }
 
-void CPDF_TextState::SetFont(CPDF_Font* pFont) {
+void CPDF_TextState::SetFont(const RetainPtr<CPDF_Font>& pFont) {
   m_Ref.GetPrivateCopy()->SetFont(pFont);
 }
 
@@ -122,16 +122,13 @@ CPDF_TextState::TextData::TextData(const TextData& that)
   }
 }
 
-CPDF_TextState::TextData::~TextData() {
-  ReleaseFont();
-}
+CPDF_TextState::TextData::~TextData() = default;
 
 RetainPtr<CPDF_TextState::TextData> CPDF_TextState::TextData::Clone() const {
   return pdfium::MakeRetain<CPDF_TextState::TextData>(*this);
 }
 
-void CPDF_TextState::TextData::SetFont(CPDF_Font* pFont) {
-  ReleaseFont();
+void CPDF_TextState::TextData::SetFont(const RetainPtr<CPDF_Font>& pFont) {
   m_pDocument = pFont ? pFont->GetDocument() : nullptr;
   m_pFont = pFont;
 }
@@ -150,15 +147,6 @@ float CPDF_TextState::TextData::GetBaselineAngle() const {
 
 float CPDF_TextState::TextData::GetShearAngle() const {
   return GetBaselineAngle() + atan2(m_Matrix[1], m_Matrix[3]);
-}
-
-void CPDF_TextState::TextData::ReleaseFont() {
-  if (!m_pDocument || !m_pFont)
-    return;
-
-  auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
-  if (pPageData && !pPageData->IsForceClear())
-    pPageData->ReleaseFont(m_pFont->GetFontDict());
 }
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode) {

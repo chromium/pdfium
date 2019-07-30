@@ -392,7 +392,7 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
   if (!pFontMap)
     return;
 
-  float fFontSize = GetCharArrayAutoFontSize(pFontMap->GetPDFFont(0),
+  float fFontSize = GetCharArrayAutoFontSize(pFontMap->GetPDFFont(0).Get(),
                                              GetClientRect(), nCharArray);
   if (fFontSize <= 0.0f)
     return;

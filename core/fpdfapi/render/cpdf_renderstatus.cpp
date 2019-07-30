@@ -1536,9 +1536,10 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       // TODO(thestig): Should we check the return value here?
       CPDF_TextRenderer::DrawTextPath(
           &text_device, textobj->GetCharCodes(), textobj->GetCharPositions(),
-          textobj->m_TextState.GetFont(), textobj->m_TextState.GetFontSize(),
-          textobj->GetTextMatrix(), &new_matrix,
-          textobj->m_GraphState.GetObject(), 0xffffffff, 0, nullptr, 0);
+          textobj->m_TextState.GetFont().Get(),
+          textobj->m_TextState.GetFontSize(), textobj->GetTextMatrix(),
+          &new_matrix, textobj->m_GraphState.GetObject(), 0xffffffff, 0,
+          nullptr, 0);
     }
   }
   CPDF_RenderStatus bitmap_render(m_pContext.Get(), &bitmap_device);
@@ -1664,7 +1665,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
   if (text_render_mode == TextRenderingMode::MODE_INVISIBLE)
     return true;
 
-  CPDF_Font* pFont = textobj->m_TextState.GetFont();
+  RetainPtr<CPDF_Font> pFont = textobj->m_TextState.GetFont();
   if (pFont->IsType3Font())
     return ProcessType3Text(textobj, mtObj2Device);
 
@@ -1724,7 +1725,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
 
   float font_size = textobj->m_TextState.GetFontSize();
   if (bPattern) {
-    DrawTextPathWithPattern(textobj, mtObj2Device, pFont, font_size,
+    DrawTextPathWithPattern(textobj, mtObj2Device, pFont.Get(), font_size,
                             &text_matrix, bFill, bStroke);
     return true;
   }
@@ -1750,15 +1751,15 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
     if (m_Options.GetOptions().bNoTextSmooth)
       flag |= FXFILL_NOPATHSMOOTH;
     return CPDF_TextRenderer::DrawTextPath(
-        m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
-        font_size, text_matrix, pDeviceMatrix,
+        m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(),
+        pFont.Get(), font_size, text_matrix, pDeviceMatrix,
         textobj->m_GraphState.GetObject(), fill_argb, stroke_argb,
         pClippingPath, flag);
   }
   text_matrix.Concat(mtObj2Device);
   return CPDF_TextRenderer::DrawNormalText(
-      m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(), pFont,
-      font_size, text_matrix, fill_argb, m_Options);
+      m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(),
+      pFont.Get(), font_size, text_matrix, fill_argb, m_Options);
 }
 
 // TODO(npm): Font fallback for type 3 fonts? (Completely separate code!!)
@@ -1872,11 +1873,12 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         CPDF_Document* pDoc = pType3Font->GetDocument();
         RetainPtr<CPDF_Type3Cache> pCache =
             CPDF_DocRenderData::FromDocument(pDoc)->GetCachedType3(pType3Font);
-        refTypeCache.insert(pCache);
 
         const CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix);
         if (!pBitmap)
           continue;
+
+        refTypeCache.insert(std::move(pCache));
 
         CFX_Point origin(FXSYS_round(matrix.e), FXSYS_round(matrix.f));
         if (glyphs.empty()) {

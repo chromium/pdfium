@@ -16,7 +16,7 @@
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,
-                           CPDF_Font* pDefFont,
+                           const RetainPtr<CPDF_Font>& pDefFont,
                            const ByteString& sDefFontAlias)
     : m_pDocument(pDoc),
       m_pResDict(pResDict),
@@ -26,14 +26,15 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
 CPVT_FontMap::~CPVT_FontMap() {}
 
 // static
-CPDF_Font* CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
-                                            CPDF_Dictionary* pResDict,
-                                            ByteString* sSysFontAlias) {
+RetainPtr<CPDF_Font> CPVT_FontMap::GetAnnotSysPDFFont(
+    CPDF_Document* pDoc,
+    CPDF_Dictionary* pResDict,
+    ByteString* sSysFontAlias) {
   if (!pDoc || !pResDict)
     return nullptr;
 
   CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDictFor("AcroForm");
-  CPDF_Font* pPDFFont =
+  RetainPtr<CPDF_Font> pPDFFont =
       AddNativeInteractiveFormFont(pFormDict, pDoc, sSysFontAlias);
   if (!pPDFFont)
     return nullptr;
@@ -46,16 +47,16 @@ CPDF_Font* CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
   return pPDFFont;
 }
 
-CPDF_Font* CPVT_FontMap::GetPDFFont(int32_t nFontIndex) {
+RetainPtr<CPDF_Font> CPVT_FontMap::GetPDFFont(int32_t nFontIndex) {
   switch (nFontIndex) {
     case 0:
-      return m_pDefFont.Get();
+      return m_pDefFont;
     case 1:
       if (!m_pSysFont) {
         m_pSysFont = GetAnnotSysPDFFont(m_pDocument.Get(), m_pResDict.Get(),
                                         &m_sSysFontAlias);
       }
-      return m_pSysFont.Get();
+      return m_pSysFont;
     default:
       return nullptr;
   }

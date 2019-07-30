@@ -36,7 +36,7 @@ class CPDF_Type3Cache final : public Retainable, public Observable {
                                                uint32_t charcode,
                                                const CFX_Matrix* pMatrix);
 
-  UnownedPtr<CPDF_Type3Font> const m_pFont;
+  RetainPtr<CPDF_Type3Font> const m_pFont;
   std::map<ByteString, std::unique_ptr<CPDF_Type3GlyphMap>> m_SizeMap;
 };
 

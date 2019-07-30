@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Font;
 
@@ -17,7 +18,7 @@ class IPVT_FontMap {
  public:
   virtual ~IPVT_FontMap() = default;
 
-  virtual CPDF_Font* GetPDFFont(int32_t nFontIndex) = 0;
+  virtual RetainPtr<CPDF_Font> GetPDFFont(int32_t nFontIndex) = 0;
   virtual ByteString GetPDFFontAlias(int32_t nFontIndex) = 0;
   virtual int32_t GetWordFontIndex(uint16_t word,
                                    int32_t charset,

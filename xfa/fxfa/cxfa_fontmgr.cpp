@@ -62,7 +62,7 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   if (!pFont) {
     ByteString font_family =
         ByteString::Format("%ls", WideString(wsFontFamily).c_str());
-    CPDF_Font* stock_font =
+    RetainPtr<CPDF_Font> stock_font =
         CPDF_Font::GetStockFont(hDoc->GetPDFDoc(), font_family.AsStringView());
     if (stock_font) {
       pFont =

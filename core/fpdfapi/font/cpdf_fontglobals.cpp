@@ -6,8 +6,6 @@
 
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 
-#include <utility>
-
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "third_party/base/ptr_util.h"
@@ -45,20 +43,22 @@ CPDF_FontGlobals::CPDF_FontGlobals() {
 
 CPDF_FontGlobals::~CPDF_FontGlobals() = default;
 
-CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc,
-                                  CFX_FontMapper::StandardFont index) {
+RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
+    CPDF_Document* pDoc,
+    CFX_FontMapper::StandardFont index) {
   auto it = m_StockMap.find(pDoc);
-  if (it == m_StockMap.end())
+  if (it == m_StockMap.end() || !it->second)
     return nullptr;
-  return it->second ? it->second->GetFont(index) : nullptr;
+
+  return it->second->GetFont(index);
 }
 
-CPDF_Font* CPDF_FontGlobals::Set(CPDF_Document* pDoc,
-                                 CFX_FontMapper::StandardFont index,
-                                 std::unique_ptr<CPDF_Font> pFont) {
+void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
+                           CFX_FontMapper::StandardFont index,
+                           const RetainPtr<CPDF_Font>& pFont) {
   if (!pdfium::ContainsKey(m_StockMap, pDoc))
     m_StockMap[pDoc] = pdfium::MakeUnique<CFX_StockFontArray>();
-  return m_StockMap[pDoc]->SetFont(index, std::move(pFont));
+  m_StockMap[pDoc]->SetFont(index, pFont);
 }
 
 void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {

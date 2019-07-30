@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_TextObjectItem {
  public:
@@ -48,7 +49,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
 
   CFX_PointF GetPos() const { return m_Pos; }
   CFX_Matrix GetTextMatrix() const;
-  CPDF_Font* GetFont() const;
+  RetainPtr<CPDF_Font> GetFont() const;
   float GetFontSize() const;
 
   void SetText(const ByteString& str);

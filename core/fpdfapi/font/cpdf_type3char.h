@@ -29,6 +29,7 @@ class CPDF_Type3Char {
   bool LoadBitmapFromSoleImageOfForm();
   void InitializeFromStreamData(bool bColored, const float* pData);
   void Transform(CPDF_Font::FormIface* pForm, const CFX_Matrix& matrix);
+  void WillBeDestroyed();
 
   RetainPtr<CFX_DIBitmap> GetBitmap();
   const RetainPtr<CFX_DIBitmap>& GetBitmap() const;

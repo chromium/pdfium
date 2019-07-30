@@ -1110,8 +1110,7 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
 // document   - handle to the document.
 // font       - string containing the font name, without spaces.
 //
-// The loaded font should NOT be closed using FPDFFont_Close. It will be
-// unloaded during the document's destruction.
+// The loaded font can be closed using FPDFFont_Close.
 //
 // Returns NULL on failure.
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV

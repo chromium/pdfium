@@ -112,33 +112,28 @@ IPVT_FontMap* CPWL_EditImpl_Provider::GetFontMap() const {
 
 uint32_t CPWL_EditImpl_Provider::GetCharWidth(int32_t nFontIndex,
                                               uint16_t word) {
-  if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
-    uint32_t charcode = word;
+  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  if (!pPDFFont)
+    return 0;
 
-    if (pPDFFont->IsUnicodeCompatible())
-      charcode = pPDFFont->CharCodeFromUnicode(word);
-    else
-      charcode = m_pFontMap->CharCodeFromUnicode(nFontIndex, word);
+  uint32_t charcode = pPDFFont->IsUnicodeCompatible()
+                          ? pPDFFont->CharCodeFromUnicode(word)
+                          : m_pFontMap->CharCodeFromUnicode(nFontIndex, word);
 
-    if (charcode != CPDF_Font::kInvalidCharCode)
-      return pPDFFont->GetCharWidthF(charcode);
-  }
+  if (charcode == CPDF_Font::kInvalidCharCode)
+    return 0;
 
-  return 0;
+  return pPDFFont->GetCharWidthF(charcode);
 }
 
 int32_t CPWL_EditImpl_Provider::GetTypeAscent(int32_t nFontIndex) {
-  if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex))
-    return pPDFFont->GetTypeAscent();
-
-  return 0;
+  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  return pPDFFont ? pPDFFont->GetTypeAscent() : 0;
 }
 
 int32_t CPWL_EditImpl_Provider::GetTypeDescent(int32_t nFontIndex) {
-  if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex))
-    return pPDFFont->GetTypeDescent();
-
-  return 0;
+  RetainPtr<CPDF_Font> pPDFFont = m_pFontMap->GetPDFFont(nFontIndex);
+  return pPDFFont ? pPDFFont->GetTypeDescent() : 0;
 }
 
 int32_t CPWL_EditImpl_Provider::GetWordFontIndex(uint16_t word,
@@ -536,7 +531,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
           if (sTextBuf.tellp() > 0) {
             DrawTextString(pDevice,
                            CFX_PointF(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                           pFontMap->GetPDFFont(nFontIndex), fFontSize,
+                           pFontMap->GetPDFFont(nFontIndex).Get(), fFontSize,
                            mtUser2Device, ByteString(sTextBuf), crOldFill);
 
             sTextBuf.str("");
@@ -552,7 +547,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
         DrawTextString(
             pDevice,
             CFX_PointF(word.ptWord.x + ptOffset.x, word.ptWord.y + ptOffset.y),
-            pFontMap->GetPDFFont(word.nFontIndex), fFontSize, mtUser2Device,
+            pFontMap->GetPDFFont(word.nFontIndex).Get(), fFontSize,
+            mtUser2Device,
             pEdit->GetPDFWordString(word.nFontIndex, word.Word, SubWord),
             crCurFill);
       }
@@ -563,8 +559,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   if (sTextBuf.tellp() > 0) {
     DrawTextString(pDevice,
                    CFX_PointF(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                   pFontMap->GetPDFFont(nFontIndex), fFontSize, mtUser2Device,
-                   ByteString(sTextBuf), crOldFill);
+                   pFontMap->GetPDFFont(nFontIndex).Get(), fFontSize,
+                   mtUser2Device, ByteString(sTextBuf), crOldFill);
   }
 }
 
@@ -1878,7 +1874,7 @@ ByteString CPWL_EditImpl::GetPDFWordString(int32_t nFontIndex,
                                            uint16_t Word,
                                            uint16_t SubWord) {
   IPVT_FontMap* pFontMap = GetFontMap();
-  CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex);
+  RetainPtr<CPDF_Font> pPDFFont = pFontMap->GetPDFFont(nFontIndex);
   if (!pPDFFont)
     return ByteString();
 
