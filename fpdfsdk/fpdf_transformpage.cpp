@@ -272,6 +272,59 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
   pPageObj->TransformGeneralState(matrix);
 }
 
+FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV
+FPDFPageObj_GetClipPath(FPDF_PAGEOBJECT page_object) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj)
+    return nullptr;
+
+  return FPDFClipPathFromCPDFClipPath(&pPageObj->m_ClipPath);
+}
+
+FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path) {
+  CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
+  if (!pClipPath)
+    return -1;
+
+  return pClipPath->GetPathCount();
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFClipPath_CountPathSegments(FPDF_CLIPPATH clip_path, int path_index) {
+  CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
+  if (!pClipPath)
+    return -1;
+
+  if (path_index < 0 ||
+      static_cast<size_t>(path_index) >= pClipPath->GetPathCount()) {
+    return -1;
+  }
+
+  return pdfium::CollectionSize<int>(
+      pClipPath->GetPath(path_index).GetPoints());
+}
+
+FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
+FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
+                            int path_index,
+                            int segment_index) {
+  CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
+  if (!pClipPath)
+    return nullptr;
+
+  if (path_index < 0 ||
+      static_cast<size_t>(path_index) >= pClipPath->GetPathCount()) {
+    return nullptr;
+  }
+
+  const std::vector<FX_PATHPOINT>& points =
+      pClipPath->GetPath(path_index).GetPoints();
+  if (!pdfium::IndexInBounds(points, segment_index))
+    return nullptr;
+
+  return FPDFPathSegmentFromFXPathPoint(&points[segment_index]);
+}
+
 FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV FPDF_CreateClipPath(float left,
                                                             float bottom,
                                                             float right,

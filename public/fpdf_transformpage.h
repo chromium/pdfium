@@ -220,6 +220,51 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
                               double e,
                               double f);
 
+// Experimental API.
+// Get the clip path of the page object.
+//
+//   page object - Handle to a page object. Returned by e.g.
+//                 FPDFPage_GetObject().
+//
+// Caller does not take ownership of the returned FPDF_CLIPPATH. Instead, it
+// remains valid until FPDF_ClosePage() is called for the page containing
+// page_object.
+FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV
+FPDFPageObj_GetClipPath(FPDF_PAGEOBJECT page_object);
+
+// Experimental API.
+// Get number of paths inside |clip_path|.
+//
+//   clip_path - handle to a clip_path.
+//
+// Returns the number of objects in |clip_path| or -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path);
+
+// Experimental API.
+// Get number of segments inside one path of |clip_path|.
+//
+//   clip_path  - handle to a clip_path.
+//   path_index - index into the array of paths of the clip path.
+//
+// Returns the number of segments or -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFClipPath_CountPathSegments(FPDF_CLIPPATH clip_path, int path_index);
+
+// Experimental API.
+// Get segment in one specific path of |clip_path| at index.
+//
+//   clip_path     - handle to a clip_path.
+//   path_index    - the index of a path.
+//   segment_index - the index of a segment.
+//
+// Returns the handle to the segment, or NULL on failure.  The caller does not
+// take ownership of the returned FPDF_CLIPPATH. Instead, it remains valid until
+// FPDF_ClosePage() is called for the page containing page_object.
+FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
+FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
+                            int path_index,
+                            int segment_index);
+
 /**
  * Create a new clip path, with a rectangle inserted.
  *

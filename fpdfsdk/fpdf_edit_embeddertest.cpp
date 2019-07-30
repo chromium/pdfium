@@ -431,6 +431,102 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   VerifySavedDocument(612, 792, kLastMD5);
 }
 
+TEST_F(FPDFEditEmbedderTest, ClipPath) {
+  // Load document with a clipped rectangle.
+  EXPECT_TRUE(OpenDocument("clip_path.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(1, FPDFPage_CountObjects(page));
+
+  FPDF_PAGEOBJECT triangle = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(triangle);
+
+  // Test that we got the expected triangle.
+  ASSERT_EQ(4, FPDFPath_CountSegments(triangle));
+
+  FPDF_PATHSEGMENT segment = FPDFPath_GetPathSegment(triangle, 0);
+  float x;
+  float y;
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(10, x);
+  EXPECT_EQ(10, y);
+  EXPECT_EQ(FPDF_SEGMENT_MOVETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFPath_GetPathSegment(triangle, 1);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(25, x);
+  EXPECT_EQ(40, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFPath_GetPathSegment(triangle, 2);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(40, x);
+  EXPECT_EQ(10, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFPath_GetPathSegment(triangle, 3);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_TRUE(FPDFPathSegment_GetClose(segment));
+
+  // Test FPDFPageObj_GetClipPath().
+  ASSERT_EQ(nullptr, FPDFPageObj_GetClipPath(nullptr));
+
+  FPDF_CLIPPATH clip_path = FPDFPageObj_GetClipPath(triangle);
+  ASSERT_TRUE(clip_path);
+
+  // Test FPDFClipPath_CountPaths().
+  ASSERT_EQ(-1, FPDFClipPath_CountPaths(nullptr));
+  ASSERT_EQ(1, FPDFClipPath_CountPaths(clip_path));
+
+  // Test FPDFClipPath_CountPathSegments().
+  ASSERT_EQ(-1, FPDFClipPath_CountPathSegments(nullptr, 0));
+  ASSERT_EQ(-1, FPDFClipPath_CountPathSegments(clip_path, -1));
+  ASSERT_EQ(-1, FPDFClipPath_CountPathSegments(clip_path, 1));
+  ASSERT_EQ(4, FPDFClipPath_CountPathSegments(clip_path, 0));
+
+  // FPDFClipPath_GetPathSegment() negative testing.
+  ASSERT_EQ(nullptr, FPDFClipPath_GetPathSegment(nullptr, 0, 0));
+  ASSERT_EQ(nullptr, FPDFClipPath_GetPathSegment(clip_path, -1, 0));
+  ASSERT_EQ(nullptr, FPDFClipPath_GetPathSegment(clip_path, 1, 0));
+  ASSERT_EQ(nullptr, FPDFClipPath_GetPathSegment(clip_path, 0, -1));
+  ASSERT_EQ(nullptr, FPDFClipPath_GetPathSegment(clip_path, 0, 4));
+
+  // FPDFClipPath_GetPathSegment() positive testing.
+  segment = FPDFClipPath_GetPathSegment(clip_path, 0, 0);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(10, x);
+  EXPECT_EQ(15, y);
+  EXPECT_EQ(FPDF_SEGMENT_MOVETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFClipPath_GetPathSegment(clip_path, 0, 1);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(40, x);
+  EXPECT_EQ(15, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFClipPath_GetPathSegment(clip_path, 0, 2);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(40, x);
+  EXPECT_EQ(35, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFClipPath_GetPathSegment(clip_path, 0, 3);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_EQ(10, x);
+  EXPECT_EQ(35, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbedderTest, SetText) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));

@@ -343,6 +343,10 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_GetThumbnailAsBitmap);
 
     // fpdf_transformpage.h
+    CHK(FPDFClipPath_CountPathSegments);
+    CHK(FPDFClipPath_CountPaths);
+    CHK(FPDFClipPath_GetPathSegment);
+    CHK(FPDFPageObj_GetClipPath);
     CHK(FPDFPageObj_TransformClipPath);
     CHK(FPDFPage_GetArtBox);
     CHK(FPDFPage_GetBleedBox);
