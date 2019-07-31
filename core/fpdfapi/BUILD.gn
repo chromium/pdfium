@@ -15,7 +15,6 @@ jumbo_source_set("fpdfapi") {
     "../fxcodec",
     "../fxcrt",
     "../fxge",
-    "cmaps",
     "edit",
     "font",
     "page",

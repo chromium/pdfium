@@ -43,11 +43,6 @@ class CPDF_ModuleMgr {
   ~CPDF_ModuleMgr();
 
   void InitPageModule();
-  void LoadEmbeddedMaps();
-  void LoadEmbeddedGB1CMaps();
-  void LoadEmbeddedCNS1CMaps();
-  void LoadEmbeddedJapan1CMaps();
-  void LoadEmbeddedKorea1CMaps();
 
   std::unique_ptr<fpdfapi::UnsupportedInfoAdapter> m_pUnsupportInfoAdapter;
 };

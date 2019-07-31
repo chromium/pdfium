@@ -25,6 +25,9 @@ class CPDF_FontGlobals {
   static void Destroy();
   static CPDF_FontGlobals* GetInstance();
 
+  // Caller must load the maps before using font globals.
+  void LoadEmbeddedMaps();
+
   void Clear(CPDF_Document* pDoc);
   RetainPtr<CPDF_Font> Find(CPDF_Document* pDoc,
                             CFX_FontMapper::StandardFont index);
@@ -50,6 +53,11 @@ class CPDF_FontGlobals {
  private:
   CPDF_FontGlobals();
   ~CPDF_FontGlobals();
+
+  void LoadEmbeddedGB1CMaps();
+  void LoadEmbeddedCNS1CMaps();
+  void LoadEmbeddedJapan1CMaps();
+  void LoadEmbeddedKorea1CMaps();
 
   CPDF_CMapManager m_CMapManager;
   pdfium::span<const FXCMAP_CMap> m_EmbeddedCharsets[CIDSET_NUM_SETS];
