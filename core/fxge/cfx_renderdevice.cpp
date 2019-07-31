@@ -840,7 +840,7 @@ bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
 
 #ifdef _SKIA_SUPPORT_
 void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
-  SkASSERT(0);
+  NOTREACHED();
 }
 
 bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
