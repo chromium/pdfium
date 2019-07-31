@@ -1,0 +1,73 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 100 100]
+  /Contents 4 0 R
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+0 0 0 rg
+50 50 m
+50 50 l
+50 50 l
+h
+50 51 m
+50 51 l
+50 51 l
+h
+50 52 m
+50 52 l
+50 52 l
+h
+50 53 m
+50 53 l
+50 53 l
+h
+50 54 m
+50 54 l
+50 54 l
+h
+50 55 m
+50 55 l
+50 55 l
+h
+50 56 m
+50 56 l
+50 56 l
+h
+50 57 m
+50 57 l
+50 57 l
+h
+50 58 m
+50 58 l
+50 58 l
+h
+50 59 m
+50 59 l
+50 59 l
+h
+f
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
