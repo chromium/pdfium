@@ -878,6 +878,7 @@ class SkiaState {
     if (Accumulator::kText != m_type) {
       m_positions.setCount(0);
       m_glyphs.setCount(0);
+      m_rsxform.setCount(0);
       if (pFont->GetFaceRec())
         m_pTypeFace.reset(SkSafeRef(pFont->GetDeviceCache()));
       else
