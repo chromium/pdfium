@@ -519,18 +519,15 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetFlags(FPDF_ANNOTATION annot,
                                                        int flags);
 
 // Experimental API.
-// Get the annotation flags of |annot|, which is an interactive form
-// annotation in |page|.
+// Get the annotation flags of |annot|.
 //
 //    hHandle     -   handle to the form fill module, returned by
 //                    FPDFDOC_InitFormFillEnvironment().
-//    page        -   handle to a page.
 //    annot       -   handle to an interactive form annotation.
 //
 // Returns the annotation flags specific to interactive forms.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFAnnot_GetFormFieldFlags(FPDF_FORMHANDLE handle,
-                            FPDF_PAGE page,
                             FPDF_ANNOTATION annot);
 
 // Experimental API.
