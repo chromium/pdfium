@@ -161,7 +161,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
 
   time_t currentTime;
   ByteString DateStr;
-  if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
+  if (IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
     if (FXSYS_time(&currentTime) != -1) {
       tm* pTM = FXSYS_localtime(&currentTime);
       if (pTM) {
@@ -174,7 +174,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
 
   CPDF_Dictionary* pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
-    if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+    if (IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
       pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr, false);
     pInfoDict->SetNewFor<CPDF_String>("Creator", L"PDFium");
   }

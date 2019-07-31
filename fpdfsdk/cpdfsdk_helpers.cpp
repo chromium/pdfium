@@ -296,7 +296,7 @@ unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
                                                /*decode=*/true);
 }
 
-void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
+void SetPDFSandboxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
   switch (policy) {
     case FPDF_POLICY_MACHINETIME_ACCESS: {
       if (enable)
@@ -309,7 +309,7 @@ void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
   }
 }
 
-FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
+FPDF_BOOL IsPDFSandboxPolicyEnabled(FPDF_DWORD policy) {
   switch (policy) {
     case FPDF_POLICY_MACHINETIME_ACCESS:
       return !!(g_sandbox_policy & 0x01);
