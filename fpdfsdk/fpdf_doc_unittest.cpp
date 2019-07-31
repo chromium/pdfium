@@ -7,8 +7,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
+#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -44,7 +44,7 @@ class PDFDocTest : public testing::Test {
   };
 
   void SetUp() override {
-    CPDF_ModuleMgr::Create();
+    CPDF_PageModule::Create();
     auto pTestDoc = pdfium::MakeUnique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc->GetHolder();
     m_pRootObj.Reset(m_pIndirectObjs->NewIndirect<CPDF_Dictionary>());
@@ -56,7 +56,7 @@ class PDFDocTest : public testing::Test {
     m_pRootObj = nullptr;
     m_pIndirectObjs = nullptr;
     m_pDoc.reset();
-    CPDF_ModuleMgr::Destroy();
+    CPDF_PageModule::Destroy();
   }
 
   std::vector<DictObjInfo> CreateDictObjs(int num) {

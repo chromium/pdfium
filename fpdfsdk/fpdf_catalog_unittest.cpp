@@ -6,8 +6,8 @@
 
 #include <memory>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
+#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -31,7 +31,7 @@ class CPDF_TestDocument final : public CPDF_Document {
 class PDFCatalogTest : public testing::Test {
  public:
   void SetUp() override {
-    CPDF_ModuleMgr::Create();
+    CPDF_PageModule::Create();
     auto pTestDoc = pdfium::MakeUnique<CPDF_TestDocument>();
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
     m_pRootObj = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -39,7 +39,7 @@ class PDFCatalogTest : public testing::Test {
 
   void TearDown() override {
     m_pDoc.reset();
-    CPDF_ModuleMgr::Destroy();
+    CPDF_PageModule::Destroy();
   }
 
  protected:

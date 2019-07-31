@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "build/build_config.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
@@ -21,10 +21,10 @@ class CFGAS_StringFormatterTest : public testing::Test {
  public:
   CFGAS_StringFormatterTest() {
     SetTZ("UTC");
-    CPDF_ModuleMgr::Create();
+    CPDF_PageModule::Create();
   }
 
-  ~CFGAS_StringFormatterTest() override { CPDF_ModuleMgr::Destroy(); }
+  ~CFGAS_StringFormatterTest() override { CPDF_PageModule::Destroy(); }
 
   void TearDown() override {
     fmt_.reset();

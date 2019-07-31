@@ -149,7 +149,6 @@ jumbo_component("pdfium") {
 
   deps = [
     "constants",
-    "core/fpdfapi",
     "core/fpdfapi/page",
     "core/fpdfapi/parser",
     "core/fpdfdoc",

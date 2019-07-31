@@ -11,10 +11,10 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_occontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -168,7 +168,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
 
   FXMEM_InitializePartitionAlloc();
   CFX_GEModule::Create(config ? config->m_pUserFontPaths : nullptr);
-  CPDF_ModuleMgr::Create();
+  CPDF_PageModule::Create();
 
 #ifdef PDF_ENABLE_XFA
   BC_Library_Init();
@@ -187,7 +187,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   BC_Library_Destroy();
 #endif  // PDF_ENABLE_XFA
 
-  CPDF_ModuleMgr::Destroy();
+  CPDF_PageModule::Destroy();
   CFX_GEModule::Destroy();
   IJS_Runtime::Destroy();
 

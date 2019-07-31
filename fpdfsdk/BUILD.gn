@@ -76,7 +76,6 @@ jumbo_source_set("fpdfsdk") {
     "../:pdfium_public_headers",
     "../constants",
     "../core/fdrm",
-    "../core/fpdfapi",
     "../core/fpdfapi/edit",
     "../core/fpdfapi/font",
     "../core/fpdfapi/page",
@@ -127,7 +126,6 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":fpdfsdk",
     "../:pdfium_public_headers",
-    "../core/fpdfapi",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",
     "../core/fpdfapi/render",

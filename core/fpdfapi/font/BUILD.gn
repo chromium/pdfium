@@ -62,7 +62,6 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":font",
-    "../../fpdfapi",
     "../page",
     "../parser",
     "../render",
