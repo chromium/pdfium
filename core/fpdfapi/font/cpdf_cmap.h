@@ -89,12 +89,12 @@ class CPDF_CMap final : public Retainable {
   CPDF_CMap();
   ~CPDF_CMap() override;
 
+  bool m_bLoaded = false;
+  bool m_bVertical = false;
+  CIDSet m_Charset = CIDSET_UNKNOWN;
+  CodingScheme m_CodingScheme = TwoBytes;
+  int m_Coding = CIDCODING_UNKNOWN;
   ByteString m_PredefinedCMap;
-  bool m_bLoaded;
-  bool m_bVertical;
-  CIDSet m_Charset;
-  CodingScheme m_CodingScheme;
-  int m_Coding;
   std::vector<bool> m_MixedTwoByteLeadingBytes;
   std::vector<CodeRange> m_MixedFourByteLeadingRanges;
   std::vector<uint16_t> m_DirectCharcodeToCIDTable;

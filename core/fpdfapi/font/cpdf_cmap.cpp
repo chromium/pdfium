@@ -238,15 +238,9 @@ size_t GetFourByteCharSizeImpl(
 
 }  // namespace
 
-CPDF_CMap::CPDF_CMap()
-    : m_bLoaded(false),
-      m_bVertical(false),
-      m_Charset(CIDSET_UNKNOWN),
-      m_CodingScheme(TwoBytes),
-      m_Coding(CIDCODING_UNKNOWN),
-      m_pEmbedMap(nullptr) {}
+CPDF_CMap::CPDF_CMap() = default;
 
-CPDF_CMap::~CPDF_CMap() {}
+CPDF_CMap::~CPDF_CMap() = default;
 
 void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
                                const ByteString& bsName) {
