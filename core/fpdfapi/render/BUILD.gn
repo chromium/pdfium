@@ -51,6 +51,12 @@ jumbo_source_set("render") {
     "../page",
     "../parser",
   ]
+  if (is_win) {
+    sources += [
+      "cpdf_windowsrenderdevice.cpp",
+      "cpdf_windowsrenderdevice.h",
+    ]
+  }
   visibility = [ "../../../*" ]
 }
 

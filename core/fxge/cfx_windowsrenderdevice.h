@@ -34,7 +34,7 @@ extern PDFiumEnsureTypefaceCharactersAccessible
 #endif
 extern WindowsPrintMode g_pdfium_print_mode;
 
-class CFX_WindowsRenderDevice final : public CFX_RenderDevice {
+class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:
   CFX_WindowsRenderDevice(HDC hDC, const EncoderIface* pEncoderIface);
   ~CFX_WindowsRenderDevice() override;

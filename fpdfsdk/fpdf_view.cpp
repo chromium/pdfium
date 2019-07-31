@@ -54,12 +54,7 @@
 #endif  // PDF_ENABLE_XFA
 
 #if defined(OS_WIN)
-#include "core/fxcodec/basic/basicmodule.h"
-#include "core/fxcodec/fax/faxmodule.h"
-#include "core/fxcodec/flate/flatemodule.h"
-#include "core/fxcodec/jpeg/jpegmodule.h"
-#include "core/fxge/cfx_windowsrenderdevice.h"
-#include "core/fxge/win32/cfx_psrenderer.h"
+#include "core/fpdfapi/render/cpdf_windowsrenderdevice.h"
 #include "public/fpdf_edit.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
@@ -82,12 +77,6 @@ static_assert(WindowsPrintMode::kModePostScript3PassThrough ==
 namespace {
 
 bool g_bLibraryInitialized = false;
-
-#if defined(OS_WIN)
-constexpr EncoderIface kEncoderIface = {
-    BasicModule::A85Encode, FaxModule::FaxEncode, FlateModule::Encode,
-    JpegModule::JpegEncode, BasicModule::RunLengthEncode};
-#endif  // defined(OS_WIN)
 
 void RenderPageImpl(CPDF_PageRenderContext* pContext,
                     CPDF_Page* pPage,
@@ -563,8 +552,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       pContext->m_pOptions->GetOptions().bBreakForMasks = true;
     }
   } else {
-    pContext->m_pDevice =
-        pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc, &kEncoderIface);
+    pContext->m_pDevice = pdfium::MakeUnique<CPDF_WindowsRenderDevice>(dc);
   }
 
   RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
@@ -592,8 +580,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
     pContext = pOwnedContext.get();
     pPage->SetRenderContext(std::move(pOwnedContext));
-    pContext->m_pDevice =
-        pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc, &kEncoderIface);
+    pContext->m_pDevice = pdfium::MakeUnique<CPDF_WindowsRenderDevice>(dc);
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
     pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 
@@ -610,7 +597,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       pContext->m_pRenderer->Continue(nullptr);
     }
   } else if (bNewBitmap) {
-    CFX_WindowsRenderDevice WinDC(dc, &kEncoderIface);
+    CPDF_WindowsRenderDevice WinDC(dc);
     bool bitsStretched = false;
     if (WinDC.GetDeviceType() == DeviceType::kPrinter) {
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();

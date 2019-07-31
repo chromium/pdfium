@@ -84,7 +84,6 @@ jumbo_source_set("fpdfsdk") {
     "../core/fpdfapi/render",
     "../core/fpdfdoc",
     "../core/fpdftext",
-    "../core/fxcodec",
     "../core/fxcrt",
     "../core/fxge",
     "../fxjs",
