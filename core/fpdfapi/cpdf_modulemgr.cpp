@@ -9,38 +9,26 @@
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fxcodec/fx_codec.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
-CPDF_ModuleMgr* g_pDefaultMgr = nullptr;
+bool g_bModuleMgrCreated = false;
 
 }  // namespace
 
 // static
 void CPDF_ModuleMgr::Create() {
-  ASSERT(!g_pDefaultMgr);
-  g_pDefaultMgr = new CPDF_ModuleMgr;
+  ASSERT(!g_bModuleMgrCreated);
   fxcodec::ModuleMgr::Create();
   CPDF_PageModule::Create();
   CPDF_FontGlobals::GetInstance()->LoadEmbeddedMaps();
+  g_bModuleMgrCreated = true;
 }
 
 // static
 void CPDF_ModuleMgr::Destroy() {
-  ASSERT(g_pDefaultMgr);
+  ASSERT(g_bModuleMgrCreated);
   CPDF_PageModule::Destroy();
   fxcodec::ModuleMgr::Destroy();
-  delete g_pDefaultMgr;
-  g_pDefaultMgr = nullptr;
+  g_bModuleMgrCreated = false;
 }
-
-// static
-CPDF_ModuleMgr* CPDF_ModuleMgr::Get() {
-  ASSERT(g_pDefaultMgr);
-  return g_pDefaultMgr;
-}
-
-CPDF_ModuleMgr::CPDF_ModuleMgr() = default;
-
-CPDF_ModuleMgr::~CPDF_ModuleMgr() = default;
