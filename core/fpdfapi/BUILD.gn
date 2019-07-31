@@ -13,13 +13,7 @@ jumbo_source_set("fpdfapi") {
   configs += [ "../../:pdfium_core_config" ]
   deps = [
     "../fxcodec",
-    "../fxcrt",
-    "../fxge",
-    "edit",
-    "font",
     "page",
-    "parser",
-    "render",
   ]
   visibility = [ "../../*" ]
 }

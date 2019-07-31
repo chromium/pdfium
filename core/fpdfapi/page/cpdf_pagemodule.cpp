@@ -10,6 +10,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_devicecs.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
+#include "core/fxcodec/fx_codec.h"
 
 namespace {
 
@@ -20,6 +21,7 @@ CPDF_PageModule* g_PageModule = nullptr;
 // static
 void CPDF_PageModule::Create() {
   ASSERT(!g_PageModule);
+  fxcodec::ModuleMgr::Create();
   g_PageModule = new CPDF_PageModule();
 }
 
@@ -28,6 +30,7 @@ void CPDF_PageModule::Destroy() {
   ASSERT(g_PageModule);
   delete g_PageModule;
   g_PageModule = nullptr;
+  fxcodec::ModuleMgr::Destroy();
 }
 
 // static
@@ -43,6 +46,7 @@ CPDF_PageModule::CPDF_PageModule()
       m_StockPatternCS(pdfium::MakeRetain<CPDF_PatternCS>(nullptr)) {
   m_StockPatternCS->InitializeStockPattern();
   CPDF_FontGlobals::Create();
+  CPDF_FontGlobals::GetInstance()->LoadEmbeddedMaps();
 }
 
 CPDF_PageModule::~CPDF_PageModule() {
