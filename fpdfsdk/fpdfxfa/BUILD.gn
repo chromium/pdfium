@@ -26,7 +26,6 @@ jumbo_source_set("fpdfxfa") {
     "../../core/fpdfapi/render",
     "../../core/fxcrt",
     "../../fxjs",
-    "../../xfa/fgas",
     "../../xfa/fwl",
     "../../xfa/fxfa",
     "../../xfa/fxfa/parser",
