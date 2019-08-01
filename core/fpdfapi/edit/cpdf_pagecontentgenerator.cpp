@@ -511,7 +511,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   } else {
     return;
   }
-  data.baseFont = pFont->GetBaseFont();
+  data.baseFont = pFont->GetBaseFontName();
   auto it = m_pObjHolder->m_FontsMap.find(data);
   ByteString dictName;
   if (it != m_pObjHolder->m_FontsMap.end()) {

@@ -1989,7 +1989,7 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   return CJS_Result::Success(pRuntime->NewString(
-      WideString::FromDefANSI(pFont->GetBaseFont().AsStringView())
+      WideString::FromDefANSI(pFont->GetBaseFontName().AsStringView())
           .AsStringView()));
 }
 

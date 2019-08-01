@@ -95,7 +95,7 @@ class CPDF_Font : public Retainable, public Observable {
   virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
   virtual bool HasFontWidths() const;
 
-  ByteString GetBaseFont() const { return m_BaseFont; }
+  ByteString GetBaseFontName() const { return m_BaseFontName; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict.Get(); }
@@ -146,7 +146,7 @@ class CPDF_Font : public Retainable, public Observable {
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
   RetainPtr<CPDF_StreamAcc> m_pFontFile;
   RetainPtr<CPDF_Dictionary> m_pFontDict;
-  ByteString m_BaseFont;
+  ByteString m_BaseFontName;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
   mutable bool m_bToUnicodeLoaded = false;
   int m_Flags = 0;

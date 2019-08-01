@@ -247,7 +247,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
     if (!pFont)
       continue;
 
-    ByteString csBaseFont = pFont->GetBaseFont();
+    ByteString csBaseFont = pFont->GetBaseFontName();
     csBaseFont.Remove(' ');
     if (csBaseFont == csFontName) {
       *csNameTag = csKey;
@@ -283,7 +283,7 @@ void AddFont(CPDF_Dictionary*& pFormDict,
     pFonts = pDR->SetNewFor<CPDF_Dictionary>("Font");
 
   if (csNameTag->IsEmpty())
-    *csNameTag = pFont->GetBaseFont();
+    *csNameTag = pFont->GetBaseFontName();
 
   csNameTag->Remove(' ');
   *csNameTag = GenerateNewFontResourceName(pDR, *csNameTag);

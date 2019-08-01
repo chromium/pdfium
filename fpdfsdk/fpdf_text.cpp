@@ -115,7 +115,7 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   if (flags)
     *flags = font->GetFontFlags();
 
-  ByteString basefont = font->GetBaseFont();
+  ByteString basefont = font->GetBaseFontName();
   unsigned long length = basefont.GetLength() + 1;
   if (buffer && buflen >= length)
     memcpy(buffer, basefont.c_str(), length);

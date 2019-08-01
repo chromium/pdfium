@@ -201,7 +201,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
     CPDF_Font* pFont = it.second.Get();
     if (!pFont)
       continue;
-    if (pFont->GetBaseFont() != fontName)
+    if (pFont->GetBaseFontName() != fontName)
       continue;
     if (pFont->IsEmbedded())
       continue;

@@ -337,11 +337,11 @@ bool CPDF_CIDFont::Load() {
   if (!pCIDFontDict)
     return false;
 
-  m_BaseFont = pCIDFontDict->GetStringFor("BaseFont");
-  if ((m_BaseFont.Compare("CourierStd") == 0 ||
-       m_BaseFont.Compare("CourierStd-Bold") == 0 ||
-       m_BaseFont.Compare("CourierStd-BoldOblique") == 0 ||
-       m_BaseFont.Compare("CourierStd-Oblique") == 0) &&
+  m_BaseFontName = pCIDFontDict->GetStringFor("BaseFont");
+  if ((m_BaseFontName.Compare("CourierStd") == 0 ||
+       m_BaseFontName.Compare("CourierStd-Bold") == 0 ||
+       m_BaseFontName.Compare("CourierStd-BoldOblique") == 0 ||
+       m_BaseFontName.Compare("CourierStd-Oblique") == 0) &&
       !IsEmbedded()) {
     m_bAdobeCourierStd = true;
   }
@@ -756,7 +756,7 @@ bool CPDF_CIDFont::IsUnicodeCompatible() const {
 void CPDF_CIDFont::LoadSubstFont() {
   pdfium::base::CheckedNumeric<int> safeStemV(m_StemV);
   safeStemV *= 5;
-  m_Font.LoadSubst(m_BaseFont, !m_bType1, m_Flags,
+  m_Font.LoadSubst(m_BaseFontName, !m_bType1, m_Flags,
                    safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle,
                    g_CharsetCPs[m_Charset], IsVertWriting());
 }
@@ -818,7 +818,7 @@ float CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
 }
 
 void CPDF_CIDFont::LoadGB2312() {
-  m_BaseFont = m_pFontDict->GetStringFor("BaseFont");
+  m_BaseFontName = m_pFontDict->GetStringFor("BaseFont");
   const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
     LoadFontDescriptor(pFontDesc);

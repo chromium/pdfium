@@ -86,7 +86,7 @@ CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
 }
 
 bool CPDF_Type1Font::Load() {
-  m_Base14Font = CFX_FontMapper::GetStandardFontName(&m_BaseFont);
+  m_Base14Font = CFX_FontMapper::GetStandardFontName(&m_BaseFontName);
   if (!IsBase14Font())
     return LoadCommon();
 

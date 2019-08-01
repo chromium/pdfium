@@ -48,7 +48,7 @@ const uint8_t kChineseFontNames[][kChineseFontNameSize] = {
 CPDF_Font::CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
     : m_pDocument(pDocument),
       m_pFontDict(pFontDict),
-      m_BaseFont(pFontDict->GetStringFor("BaseFont")) {}
+      m_BaseFontName(pFontDict->GetStringFor("BaseFont")) {}
 
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {

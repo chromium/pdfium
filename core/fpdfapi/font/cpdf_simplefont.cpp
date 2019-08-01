@@ -101,7 +101,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
 void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
   const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding) {
-    if (m_BaseFont == "Symbol") {
+    if (m_BaseFontName == "Symbol") {
       m_BaseEncoding = bTrueType ? PDFFONT_ENCODING_MS_SYMBOL
                                  : PDFFONT_ENCODING_ADOBE_SYMBOL;
     } else if (!bEmbedded && m_BaseEncoding == PDFFONT_ENCODING_BUILTIN) {
@@ -114,7 +114,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
         m_BaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
       return;
     }
-    if (FontStyleIsSymbolic(m_Flags) && m_BaseFont == "Symbol") {
+    if (FontStyleIsSymbolic(m_Flags) && m_BaseFontName == "Symbol") {
       if (!bTrueType)
         m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
       return;
@@ -212,8 +212,8 @@ bool CPDF_SimpleFont::LoadCommon() {
     }
   }
   if (m_pFontFile) {
-    if (m_BaseFont.GetLength() > 8 && m_BaseFont[7] == '+')
-      m_BaseFont = m_BaseFont.Right(m_BaseFont.GetLength() - 8);
+    if (m_BaseFontName.GetLength() > 8 && m_BaseFontName[7] == '+')
+      m_BaseFontName = m_BaseFontName.Right(m_BaseFontName.GetLength() - 8);
   } else {
     LoadSubstFont();
   }
@@ -267,7 +267,7 @@ void CPDF_SimpleFont::LoadSubstFont() {
     safeStemV *= 5;
   else
     safeStemV = safeStemV * 4 + 140;
-  m_Font.LoadSubst(m_BaseFont, IsTrueTypeFont(), m_Flags,
+  m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags,
                    safeStemV.ValueOrDefault(FXFONT_FW_NORMAL), m_ItalicAngle, 0,
                    false);
 }

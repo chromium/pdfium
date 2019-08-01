@@ -63,8 +63,8 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
   if (!pPDFFont)
     return ByteString();
 
-  if (pPDFFont->GetBaseFont().Compare("Symbol") == 0 ||
-      pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
+  if (pPDFFont->GetBaseFontName().Compare("Symbol") == 0 ||
+      pPDFFont->GetBaseFontName().Compare("ZapfDingbats") == 0) {
     return ByteString::Format("%c", Word);
   }
 
