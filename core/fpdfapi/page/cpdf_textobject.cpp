@@ -13,6 +13,8 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "third_party/base/ptr_util.h"
 
+#define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
+
 CPDF_TextObjectItem::CPDF_TextObjectItem() : m_CharCode(0) {}
 
 CPDF_TextObjectItem::~CPDF_TextObjectItem() = default;
@@ -97,6 +99,65 @@ void CPDF_TextObject::GetCharInfo(size_t index,
     GetItemInfo(i, pInfo);
     break;
   }
+}
+
+int CPDF_TextObject::CountWords() const {
+  RetainPtr<CPDF_Font> pFont = GetFont();
+  if (!pFont)
+    return 0;
+
+  bool bInLatinWord = false;
+  int nWords = 0;
+  for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
+    uint32_t charcode = CPDF_Font::kInvalidCharCode;
+    float unused_kerning;
+    GetCharInfo(i, &charcode, &unused_kerning);
+
+    WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
+    uint16_t unicode = 0;
+    if (swUnicode.GetLength() > 0)
+      unicode = swUnicode[0];
+
+    bool bIsLatin = ISLATINWORD(unicode);
+    if (bIsLatin && bInLatinWord)
+      continue;
+
+    bInLatinWord = bIsLatin;
+    if (unicode != 0x20)
+      nWords++;
+  }
+
+  return nWords;
+}
+
+WideString CPDF_TextObject::GetWordString(int nWordIndex) const {
+  RetainPtr<CPDF_Font> pFont = GetFont();
+  if (!pFont)
+    return WideString();
+
+  WideString swRet;
+  int nWords = 0;
+  bool bInLatinWord = false;
+  for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
+    uint32_t charcode = CPDF_Font::kInvalidCharCode;
+    float unused_kerning;
+    GetCharInfo(i, &charcode, &unused_kerning);
+
+    WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
+    uint16_t unicode = 0;
+    if (swUnicode.GetLength() > 0)
+      unicode = swUnicode[0];
+
+    bool bIsLatin = ISLATINWORD(unicode);
+    if (!bIsLatin || !bInLatinWord) {
+      bInLatinWord = bIsLatin;
+      if (unicode != 0x20)
+        nWords++;
+    }
+    if (nWords - 1 == nWordIndex)
+      swRet += unicode;
+  }
+  return swRet;
 }
 
 std::unique_ptr<CPDF_TextObject> CPDF_TextObject::Clone() const {
