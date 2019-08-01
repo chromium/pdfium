@@ -22,6 +22,8 @@ jumbo_source_set("fpdfsdk") {
     "cpdfsdk_annotiteration.h",
     "cpdfsdk_annotiterator.cpp",
     "cpdfsdk_annotiterator.h",
+    "cpdfsdk_appstream.cpp",
+    "cpdfsdk_appstream.h",
     "cpdfsdk_baannot.cpp",
     "cpdfsdk_baannot.h",
     "cpdfsdk_baannothandler.cpp",

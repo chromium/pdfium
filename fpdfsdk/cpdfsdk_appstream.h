@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PWL_CPWL_APPSTREAM_H_
-#define FPDFSDK_PWL_CPWL_APPSTREAM_H_
+#ifndef FPDFSDK_CPDFSDK_APPSTREAM_H_
+#define FPDFSDK_CPDFSDK_APPSTREAM_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -15,10 +15,10 @@ class CPDFSDK_Widget;
 class CPDF_Dictionary;
 class CPDF_Stream;
 
-class CPWL_AppStream {
+class CPDFSDK_AppStream {
  public:
-  CPWL_AppStream(CPDFSDK_Widget* widget, CPDF_Dictionary* dict);
-  ~CPWL_AppStream();
+  CPDFSDK_AppStream(CPDFSDK_Widget* widget, CPDF_Dictionary* dict);
+  ~CPDFSDK_AppStream();
 
   void SetAsPushButton();
   void SetAsCheckBox();
@@ -41,4 +41,4 @@ class CPWL_AppStream {
   RetainPtr<CPDF_Dictionary> const dict_;
 };
 
-#endif  // FPDFSDK_PWL_CPWL_APPSTREAM_H_
+#endif  // FPDFSDK_CPDFSDK_APPSTREAM_H_

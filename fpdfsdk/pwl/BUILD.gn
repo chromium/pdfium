@@ -8,8 +8,6 @@ import("../../testing/test.gni")
 
 jumbo_source_set("pwl") {
   sources = [
-    "cpwl_appstream.cpp",
-    "cpwl_appstream.h",
     "cpwl_button.cpp",
     "cpwl_button.h",
     "cpwl_caret.cpp",

@@ -17,5 +17,5 @@ classes are controllers for each widget. The hierarchy is:
     * CPWL_ScrollBar
 
 Widgets are rendered to Appearance Streams, with the case all centralized in
-CPWL_AppStream.
+CPDFSDK_AppStream.
 

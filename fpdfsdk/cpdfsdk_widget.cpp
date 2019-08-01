@@ -26,10 +26,10 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
+#include "fpdfsdk/cpdfsdk_appstream.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/pwl/cpwl_appstream.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -605,7 +605,7 @@ void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
   if (bValueChanged)
     m_nValueAge++;
 
-  CPWL_AppStream appStream(this, GetAPDict());
+  CPDFSDK_AppStream appStream(this, GetAPDict());
   switch (GetFieldType()) {
     case FormFieldType::kPushButton:
       appStream.SetAsPushButton();
