@@ -9,13 +9,6 @@
 #include <type_traits>
 
 #include "public/cpp/fpdf_deleters.h"
-#include "public/fpdf_annot.h"
-#include "public/fpdf_dataavail.h"
-#include "public/fpdf_edit.h"
-#include "public/fpdf_formfill.h"
-#include "public/fpdf_structtree.h"
-#include "public/fpdf_text.h"
-#include "public/fpdfview.h"
 
 // Versions of FPDF types that clean up the object at scope exit.
 
@@ -43,6 +36,10 @@ using ScopedFPDFFont =
 using ScopedFPDFFormHandle =
     std::unique_ptr<std::remove_pointer<FPDF_FORMHANDLE>::type,
                     FPDFFormHandleDeleter>;
+
+using ScopedFPDFJavaScriptAction =
+    std::unique_ptr<std::remove_pointer<FPDF_JAVASCRIPT_ACTION>::type,
+                    FPDFJavaScriptActionDeleter>;
 
 using ScopedFPDFPage =
     std::unique_ptr<std::remove_pointer<FPDF_PAGE>::type, FPDFPageDeleter>;

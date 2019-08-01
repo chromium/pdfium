@@ -9,6 +9,7 @@
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_formfill.h"
+#include "public/fpdf_javascript.h"
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
@@ -45,6 +46,12 @@ struct FPDFFontDeleter {
 struct FPDFFormHandleDeleter {
   inline void operator()(FPDF_FORMHANDLE form) {
     FPDFDOC_ExitFormFillEnvironment(form);
+  }
+};
+
+struct FPDFJavaScriptActionDeleter {
+  inline void operator()(FPDF_JAVASCRIPT_ACTION javascript) {
+    FPDFDoc_CloseJavaScriptAction(javascript);
   }
 };
 

@@ -120,6 +120,7 @@ jumbo_source_set("pdfium_public_headers_impl") {
     "public/fpdf_flatten.h",
     "public/fpdf_formfill.h",
     "public/fpdf_fwlevent.h",
+    "public/fpdf_javascript.h",
     "public/fpdf_ppo.h",
     "public/fpdf_progressive.h",
     "public/fpdf_save.h",

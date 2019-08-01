@@ -10,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 
@@ -32,6 +33,14 @@ CPDF_Action::~CPDF_Action() = default;
 CPDF_Action::ActionType CPDF_Action::GetType() const {
   if (!m_pDict)
     return Unknown;
+
+  // Validate |m_pDict|. Type is optional, but must be valid if present.
+  const CPDF_Object* pType = m_pDict->GetObjectFor("Type");
+  if (pType) {
+    const CPDF_Name* pName = pType->AsName();
+    if (!pName || pName->GetString() != "Action")
+      return Unknown;
+  }
 
   ByteString csType = m_pDict->GetStringFor("S");
   if (csType.IsEmpty())
@@ -115,13 +124,16 @@ uint32_t CPDF_Action::GetFlags() const {
   return m_pDict->GetIntegerFor("Flags");
 }
 
-WideString CPDF_Action::GetJavaScript() const {
-  if (!m_pDict)
-    return WideString();
+Optional<WideString> CPDF_Action::MaybeGetJavaScript() const {
+  const CPDF_Object* pObject = GetJavaScriptObject();
+  if (!pObject)
+    return pdfium::nullopt;
+  return pObject->GetUnicodeText();
+}
 
-  const CPDF_Object* pJS = m_pDict->GetDirectObjectFor("JS");
-  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS->GetUnicodeText()
-                                                       : WideString();
+WideString CPDF_Action::GetJavaScript() const {
+  const CPDF_Object* pObject = GetJavaScriptObject();
+  return pObject ? pObject->GetUnicodeText() : WideString();
 }
 
 size_t CPDF_Action::GetSubActionsCount() const {
@@ -149,4 +161,12 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
       return CPDF_Action(pDict);
   }
   return CPDF_Action(nullptr);
+}
+
+const CPDF_Object* CPDF_Action::GetJavaScriptObject() const {
+  if (!m_pDict)
+    return nullptr;
+
+  const CPDF_Object* pJS = m_pDict->GetDirectObjectFor("JS");
+  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS : nullptr;
 }

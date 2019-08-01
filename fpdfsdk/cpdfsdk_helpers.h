@@ -42,6 +42,7 @@ class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
 class IPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
+struct CPDF_JavaScript;
 
 #ifdef PDF_ENABLE_XFA
 class CPDFXFA_Context;
@@ -115,6 +116,15 @@ inline FPDF_FONT FPDFFontFromCPDFFont(CPDF_Font* font) {
 }
 inline CPDF_Font* CPDFFontFromFPDFFont(FPDF_FONT font) {
   return reinterpret_cast<CPDF_Font*>(font);
+}
+
+inline FPDF_JAVASCRIPT_ACTION FPDFJavaScriptActionFromCPDFJavaScriptAction(
+    CPDF_JavaScript* javascript) {
+  return reinterpret_cast<FPDF_JAVASCRIPT_ACTION>(javascript);
+}
+inline CPDF_JavaScript* CPDFJavaScriptActionFromFPDFJavaScriptAction(
+    FPDF_JAVASCRIPT_ACTION javascript) {
+  return reinterpret_cast<CPDF_JavaScript*>(javascript);
 }
 
 inline FPDF_LINK FPDFLinkFromCPDFDictionary(CPDF_Dictionary* link) {
