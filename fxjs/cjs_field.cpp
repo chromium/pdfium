@@ -12,7 +12,6 @@
 
 #include "constants/annotation_flags.h"
 #include "constants/form_flags.h"
-#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
@@ -1984,13 +1983,12 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
   }
 
-  RetainPtr<CPDF_Font> pFont = pFormControl->GetDefaultControlFont();
-  if (!pFont)
+  Optional<WideString> wsFontName = pFormControl->GetDefaultControlFontName();
+  if (!wsFontName.has_value())
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  return CJS_Result::Success(pRuntime->NewString(
-      WideString::FromDefANSI(pFont->GetBaseFontName().AsStringView())
-          .AsStringView()));
+  return CJS_Result::Success(
+      pRuntime->NewString(wsFontName.value().AsStringView()));
 }
 
 CJS_Result CJS_Field::set_text_font(CJS_Runtime* pRuntime,

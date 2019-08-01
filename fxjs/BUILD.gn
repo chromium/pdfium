@@ -104,7 +104,6 @@ jumbo_source_set("fxjs") {
     deps += [
       "../constants",
       "../core/fdrm",
-      "../core/fpdfapi/font",
       "../core/fpdfapi/page",
       "../core/fpdfapi/parser",
       "../core/fpdfapi/render",

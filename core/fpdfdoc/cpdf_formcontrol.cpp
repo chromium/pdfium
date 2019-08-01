@@ -202,7 +202,15 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
   return CPDF_DefaultAppearance(pObj->GetString());
 }
 
-RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() {
+Optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
+  RetainPtr<CPDF_Font> pFont = GetDefaultControlFont();
+  if (!pFont)
+    return {};
+
+  return WideString::FromDefANSI(pFont->GetBaseFontName().AsStringView());
+}
+
+RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   float fFontSize;
   CPDF_DefaultAppearance cDA = GetDefaultAppearance();
   Optional<ByteString> csFontNameTag = cDA.GetFont(&fFontSize);
