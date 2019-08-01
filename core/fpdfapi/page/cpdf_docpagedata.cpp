@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fdrm/fx_crypt.h"
 #include "core/fpdfapi/font/cpdf_type1font.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
@@ -388,10 +387,7 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   auto pAccessor = pdfium::MakeRetain<CPDF_StreamAcc>(pProfileStream);
   pAccessor->LoadAllDataFiltered();
 
-  uint8_t digest[20];
-  CRYPT_SHA1Generate(pAccessor->GetData(), pAccessor->GetSize(), digest);
-
-  ByteString bsDigest(digest, 20);
+  ByteString bsDigest = pAccessor->ComputeDigest();
   auto hash_it = m_HashProfileMap.find(bsDigest);
   if (hash_it != m_HashProfileMap.end()) {
     auto it_copied_stream = m_IccProfileMap.find(hash_it->second.Get());

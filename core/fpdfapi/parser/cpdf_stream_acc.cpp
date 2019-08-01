@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fdrm/fx_crypt.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -68,6 +69,12 @@ uint32_t CPDF_StreamAcc::GetSize() const {
     return m_dwSize;
   return (m_pStream && m_pStream->IsMemoryBased()) ? m_pStream->GetRawSize()
                                                    : 0;
+}
+
+ByteString CPDF_StreamAcc::ComputeDigest() const {
+  uint8_t digest[20];
+  CRYPT_SHA1Generate(GetData(), GetSize(), digest);
+  return ByteString(digest, 20);
 }
 
 std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::DetachData() {
