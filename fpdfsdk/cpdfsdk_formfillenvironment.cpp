@@ -21,7 +21,6 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fxjs/ijs_runtime.h"
-#include "public/fpdf_fwlevent.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -63,21 +62,6 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
 
   if (m_pInfo && m_pInfo->Release)
     m_pInfo->Release(m_pInfo);
-}
-
-// static
-bool CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(uint32_t nFlag) {
-  return !!(nFlag & FWL_EVENTFLAG_ShiftKey);
-}
-
-// static
-bool CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(uint32_t nFlag) {
-  return !!(nFlag & FWL_EVENTFLAG_ControlKey);
-}
-
-// static
-bool CPDFSDK_FormFillEnvironment::IsALTKeyDown(uint32_t nFlag) {
-  return !!(nFlag & FWL_EVENTFLAG_AltKey);
 }
 
 #ifdef PDF_ENABLE_V8

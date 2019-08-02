@@ -18,6 +18,7 @@
 #include "fpdfsdk/pwl/cpwl_list_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

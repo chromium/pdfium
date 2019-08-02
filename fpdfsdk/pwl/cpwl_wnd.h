@@ -15,7 +15,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/pwl/cpwl_timer.h"
 #include "fpdfsdk/pwl/cpwl_timer_handler.h"
@@ -140,6 +139,10 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
     int32_t eCursorType = FXCT_ARROW;                 // ignore
     CFX_Matrix mtChild;                               // ignore
   };
+
+  static bool IsSHIFTKeyDown(uint32_t nFlag);
+  static bool IsCTRLKeyDown(uint32_t nFlag);
+  static bool IsALTKeyDown(uint32_t nFlag);
 
   CPWL_Wnd(const CreateParams& cp, std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Wnd() override;
@@ -284,13 +287,13 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
 
   static bool IsCTRLpressed(uint32_t nFlag) {
-    return CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
+    return CPWL_Wnd::IsCTRLKeyDown(nFlag);
   }
   static bool IsSHIFTpressed(uint32_t nFlag) {
-    return CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
+    return CPWL_Wnd::IsSHIFTKeyDown(nFlag);
   }
   static bool IsALTpressed(uint32_t nFlag) {
-    return CPDFSDK_FormFillEnvironment::IsALTKeyDown(nFlag);
+    return CPWL_Wnd::IsALTKeyDown(nFlag);
   }
 
  private:

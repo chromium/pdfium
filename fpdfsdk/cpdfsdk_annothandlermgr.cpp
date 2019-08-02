@@ -19,6 +19,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/ptr_util.h"
 
@@ -225,16 +226,15 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
                                               int nKeyCode,
                                               int nFlag) {
-  if (CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag) ||
-      CPDFSDK_FormFillEnvironment::IsALTKeyDown(nFlag)) {
+  if (CPWL_Wnd::IsCTRLKeyDown(nFlag) || CPWL_Wnd::IsALTKeyDown(nFlag)) {
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
   }
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pAnnot);
   CPDFSDK_PageView* pPage = pAnnot->GetPageView();
   CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
-    ObservedPtr<CPDFSDK_Annot> pNext(GetNextAnnot(
-        pFocusAnnot, !CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag)));
+    ObservedPtr<CPDFSDK_Annot> pNext(
+        GetNextAnnot(pFocusAnnot, !CPWL_Wnd::IsSHIFTKeyDown(nFlag)));
     if (pNext && pNext.Get() != pFocusAnnot) {
       pPage->GetFormFillEnv()->SetFocusAnnot(&pNext);
       return true;

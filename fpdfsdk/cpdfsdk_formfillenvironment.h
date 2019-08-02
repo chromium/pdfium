@@ -50,10 +50,6 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFSDK_FormFillEnvironment();
 
-  static bool IsSHIFTKeyDown(uint32_t nFlag);
-  static bool IsCTRLKeyDown(uint32_t nFlag);
-  static bool IsALTKeyDown(uint32_t nFlag);
-
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
 #ifdef PDF_ENABLE_V8

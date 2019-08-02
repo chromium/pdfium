@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class CFFL_FormFiller;
 class CPDFSDK_FormFillEnvironment;
