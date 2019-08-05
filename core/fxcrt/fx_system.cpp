@@ -246,14 +246,12 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
   }
   return wlen;
 }
-#endif  // defined(OS_WIN)
 
-#if !defined(OS_WIN)
-void SetLastError(uint32_t err) {
+void FXSYS_SetLastError(uint32_t err) {
   g_last_error = err;
 }
 
-uint32_t GetLastError() {
+uint32_t FXSYS_GetLastError() {
   return g_last_error;
 }
-#endif  // !defined(OS_WIN)
+#endif  // defined(OS_WIN)

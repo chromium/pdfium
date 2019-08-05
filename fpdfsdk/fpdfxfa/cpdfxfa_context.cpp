@@ -103,13 +103,13 @@ bool CPDFXFA_Context::LoadXFADoc() {
   m_pXFADoc =
       CXFA_FFDoc::CreateAndOpen(m_pXFAApp.get(), &m_DocEnv, m_pPDFDoc.Get());
   if (!m_pXFADoc) {
-    SetLastError(FPDF_ERR_XFALOAD);
+    FXSYS_SetLastError(FPDF_ERR_XFALOAD);
     return false;
   }
 
   CJS_Runtime* actual_runtime = GetCJSRuntime();  // Null if a stub.
   if (!actual_runtime) {
-    SetLastError(FPDF_ERR_XFALOAD);
+    FXSYS_SetLastError(FPDF_ERR_XFALOAD);
     return false;
   }
 
@@ -122,7 +122,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
   m_pXFADocView = m_pXFADoc->CreateDocView();
   if (m_pXFADocView->StartLayout() < 0) {
     CloseXFADoc();
-    SetLastError(FPDF_ERR_XFALAYOUT);
+    FXSYS_SetLastError(FPDF_ERR_XFALAYOUT);
     return false;
   }
 

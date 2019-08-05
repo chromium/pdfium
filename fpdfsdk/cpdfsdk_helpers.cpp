@@ -420,5 +420,5 @@ void ProcessParseError(CPDF_Parser::Error err) {
       err_code = FPDF_ERR_SECURITY;
       break;
   }
-  SetLastError(err_code);
+  FXSYS_SetLastError(err_code);
 }
