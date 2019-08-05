@@ -21,7 +21,7 @@ std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
 }  // namespace
 
 CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached,
-                       CFX_SystemHandler* pSystemHandler)
+                       IPWL_SystemHandler* pSystemHandler)
     : m_pAttached(pAttached), m_pSystemHandler(pSystemHandler) {
   ASSERT(m_pAttached);
   ASSERT(m_pSystemHandler);
@@ -46,7 +46,7 @@ void CPWL_Timer::KillPWLTimer() {
 
   m_pSystemHandler->KillTimer(m_nTimerID);
   GetPWLTimeMap().erase(m_nTimerID);
-  m_nTimerID = CFX_SystemHandler::kInvalidTimerID;
+  m_nTimerID = IPWL_SystemHandler::kInvalidTimerID;
 }
 
 // static

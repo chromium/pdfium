@@ -8,7 +8,7 @@
 
 #include <map>
 
-#include "fpdfsdk/cfx_systemhandler.h"
+#include "core/fxcrt/timerhandler_iface.h"
 #include "fxjs/cjs_app.h"
 
 namespace {

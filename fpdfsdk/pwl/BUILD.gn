@@ -36,6 +36,7 @@ jumbo_source_set("pwl") {
     "cpwl_timer_handler.h",
     "cpwl_wnd.cpp",
     "cpwl_wnd.h",
+    "ipwl_systemhandler.h",
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [

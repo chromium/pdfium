@@ -237,7 +237,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     pRange = &wrRange;
   }
 
-  CFX_SystemHandler* pSysHandler = GetSystemHandler();
+  IPWL_SystemHandler* pSysHandler = GetSystemHandler();
   CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pEdit.get(),
                           GetTextColor().ToFXColor(GetTransparency()), rcClip,
                           CFX_PointF(), pRange, pSysHandler,
@@ -279,7 +279,7 @@ bool CPWL_Edit::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (!HasFlag(PES_TEXTOVERFLOW) && !ClientHitTest(point))
     return true;
 
-  CFX_SystemHandler* pSH = GetSystemHandler();
+  IPWL_SystemHandler* pSH = GetSystemHandler();
   if (!pSH)
     return false;
 

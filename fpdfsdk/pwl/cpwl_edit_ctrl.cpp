@@ -41,7 +41,7 @@ bool CPWL_EditCtrl::IsWndHorV() {
 
 void CPWL_EditCtrl::SetCursor() {
   if (IsValid()) {
-    if (CFX_SystemHandler* pSH = GetSystemHandler()) {
+    if (IPWL_SystemHandler* pSH = GetSystemHandler()) {
       if (IsWndHorV())
         pSH->SetCursor(FXCT_VBEAM);
       else

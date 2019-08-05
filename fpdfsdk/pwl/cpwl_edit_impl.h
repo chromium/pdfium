@@ -25,9 +25,9 @@ class CPWL_EditImpl;
 class CPWL_EditImpl_Iterator;
 class CPWL_EditImpl_Provider;
 class CFX_RenderDevice;
-class CFX_SystemHandler;
 class CPWL_Edit;
 class CPWL_EditCtrl;
+class IPWL_SystemHandler;
 class IFX_Edit_UndoItem;
 
 struct CPWL_EditImpl_LineRect {
@@ -261,7 +261,7 @@ class CPWL_EditImpl {
                        const CFX_FloatRect& rcClip,
                        const CFX_PointF& ptOffset,
                        const CPVT_WordRange* pRange,
-                       CFX_SystemHandler* pSystemHandler,
+                       IPWL_SystemHandler* pSystemHandler,
                        CFFL_FormFiller* pFFLData);
 
   CPWL_EditImpl();

@@ -580,7 +580,7 @@ CPWL_Wnd* CFFL_FormFiller::ResetPDFWindow(CPDFSDK_PageView* pPageView,
 
 void CFFL_FormFiller::TimerProc() {}
 
-CFX_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
+IPWL_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
   return m_pFormFillEnv->GetSysHandler();
 }
 

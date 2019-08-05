@@ -83,9 +83,9 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
   void KillFocusForAnnot(uint32_t nFlag);
 
-  // CPWL_TimerHandler
+  // CPWL_TimerHandler:
   void TimerProc() override;
-  CFX_SystemHandler* GetSystemHandler() const override;
+  IPWL_SystemHandler* GetSystemHandler() const override;
 
   // CPWL_Wnd::ProviderIface:
   CFX_Matrix GetWindowMatrix(const CPWL_Wnd::PrivateData* pAttached) override;

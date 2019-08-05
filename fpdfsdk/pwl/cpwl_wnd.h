@@ -22,8 +22,8 @@
 class CPWL_Edit;
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
-class CFX_SystemHandler;
 class IPVT_FontMap;
+class IPWL_SystemHandler;
 struct PWL_SCROLL_INFO;
 
 // window styles
@@ -121,7 +121,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
     ~CreateParams();
 
     CFX_FloatRect rcRectWnd;                          // required
-    UnownedPtr<CFX_SystemHandler> pSystemHandler;     // required
+    UnownedPtr<IPWL_SystemHandler> pSystemHandler;    // required
     UnownedPtr<IPVT_FontMap> pFontMap;                // required
     ObservedPtr<ProviderIface> pProvider;             // required
     UnownedPtr<FocusHandlerIface> pFocusHandler;      // optional
@@ -262,7 +262,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
 
  protected:
   // CPWL_TimerHandler:
-  CFX_SystemHandler* GetSystemHandler() const override;
+  IPWL_SystemHandler* GetSystemHandler() const override;
 
   virtual void CreateChildWnd(const CreateParams& cp);
 
