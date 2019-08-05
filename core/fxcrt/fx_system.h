@@ -220,4 +220,10 @@ int FXSYS_round(float f);
 
 #endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
+// Provide SetLastError() and GetLastError() fills for non-windows platforms.
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+void SetLastError(uint32_t err);
+uint32_t GetLastError();
+#endif
+
 #endif  // CORE_FXCRT_FX_SYSTEM_H_

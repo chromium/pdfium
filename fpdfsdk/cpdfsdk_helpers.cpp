@@ -32,10 +32,6 @@ uint32_t g_sandbox_policy = 0xFFFFFFFF;
 
 UNSUPPORT_INFO* g_unsupport_info = nullptr;
 
-#if !defined(OS_WIN)
-int g_last_error = 0;
-#endif
-
 bool RaiseUnsupportedError(int nError) {
   if (!g_unsupport_info)
     return false;
@@ -403,16 +399,6 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       break;
   }
 }
-
-#if !defined(OS_WIN)
-void SetLastError(int err) {
-  g_last_error = err;
-}
-
-int GetLastError() {
-  return g_last_error;
-}
-#endif
 
 void ProcessParseError(CPDF_Parser::Error err) {
   uint32_t err_code = FPDF_ERR_SUCCESS;

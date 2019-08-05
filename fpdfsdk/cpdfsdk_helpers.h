@@ -290,12 +290,6 @@ void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info);
 UNSUPPORT_INFO* GetPDFUnssuportInto();
 void ReportUnsupportedFeatures(CPDF_Document* pDoc);
 void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
-
-#if !defined(OS_WIN)
-void SetLastError(int err);
-int GetLastError();
-#endif
-
 void ProcessParseError(CPDF_Parser::Error err);
 
 #endif  // FPDFSDK_CPDFSDK_HELPERS_H_

@@ -14,6 +14,10 @@
 
 namespace {
 
+#if !defined(OS_WIN)
+uint32_t g_last_error = 0;
+#endif
+
 template <typename IntType, typename CharType>
 IntType FXSYS_StrToInt(const CharType* str) {
   if (!str)
@@ -242,5 +246,14 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
   }
   return wlen;
 }
-
 #endif  // defined(OS_WIN)
+
+#if !defined(OS_WIN)
+void SetLastError(uint32_t err) {
+  g_last_error = err;
+}
+
+uint32_t GetLastError() {
+  return g_last_error;
+}
+#endif  // !defined(OS_WIN)
