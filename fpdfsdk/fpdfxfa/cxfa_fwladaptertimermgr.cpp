@@ -10,7 +10,8 @@
 #include <utility>
 #include <vector>
 
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -42,10 +43,9 @@ void TimerProc(int32_t idEvent) {
 
 }  // namespace
 
-
 CXFA_FWLAdapterTimerMgr::CXFA_FWLAdapterTimerMgr(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {}
+    TimerHandlerIface* pTimerHandler)
+    : m_pTimerHandler(pTimerHandler) {}
 
 CXFA_FWLAdapterTimerMgr::~CXFA_FWLAdapterTimerMgr() = default;
 
@@ -55,22 +55,22 @@ CFWL_TimerInfo* CXFA_FWLAdapterTimerMgr::Start(CFWL_Timer* pTimer,
   if (!g_TimerArray)
     g_TimerArray = new std::vector<std::unique_ptr<CFWL_TimerInfo>>;
 
-  if (!m_pFormFillEnv)
+  if (!m_pTimerHandler)
     return nullptr;
 
-  int32_t id_event = m_pFormFillEnv->SetTimer(dwElapse, TimerProc);
+  int32_t id_event = m_pTimerHandler->SetTimer(dwElapse, TimerProc);
   g_TimerArray->push_back(
       pdfium::MakeUnique<CFWL_FWLAdapterTimerInfo>(this, id_event, pTimer));
   return g_TimerArray->back().get();
 }
 
 void CXFA_FWLAdapterTimerMgr::Stop(CFWL_TimerInfo* pTimerInfo) {
-  if (!pTimerInfo || !m_pFormFillEnv)
+  if (!pTimerInfo || !m_pTimerHandler)
     return;
 
   CFWL_FWLAdapterTimerInfo* pInfo =
       static_cast<CFWL_FWLAdapterTimerInfo*>(pTimerInfo);
-  m_pFormFillEnv->KillTimer(pInfo->idEvent);
+  m_pTimerHandler->KillTimer(pInfo->idEvent);
   if (!g_TimerArray)
     return;
 

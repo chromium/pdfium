@@ -9,14 +9,14 @@
 
 #include <vector>
 
+#include "core/fxcrt/timerhandler_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/ifwl_adaptertimermgr.h"
 
 class CXFA_FWLAdapterTimerMgr final : public IFWL_AdapterTimerMgr {
  public:
-  explicit CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  explicit CXFA_FWLAdapterTimerMgr(TimerHandlerIface* pTimerHandler);
   ~CXFA_FWLAdapterTimerMgr() override;
 
   CFWL_TimerInfo* Start(CFWL_Timer* pTimer,
@@ -25,7 +25,7 @@ class CXFA_FWLAdapterTimerMgr final : public IFWL_AdapterTimerMgr {
   void Stop(CFWL_TimerInfo* pTimerInfo) override;
 
  private:
-  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
+  UnownedPtr<TimerHandlerIface> const m_pTimerHandler;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CXFA_FWLADAPTERTIMERMGR_H_
