@@ -107,15 +107,13 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
     CFX_PointF ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
     if (CPWL_EditImpl* pEdit = m_pList->GetItemEdit(i)) {
       CFX_FloatRect rcContent = pEdit->GetContentRect();
-      if (rcContent.Width() > rcClient.Width())
-        rcItem.Intersect(rcList);
-      else
-        rcItem.Intersect(rcClient);
+      rcItem.Intersect(rcContent.Width() > rcClient.Width() ? rcList
+                                                            : rcClient);
     }
 
     IPWL_SystemHandler* pSysHandler = GetSystemHandler();
     if (m_pList->IsItemSelected(i)) {
-      if (pSysHandler && pSysHandler->IsSelectionImplemented()) {
+      if (pSysHandler->IsSelectionImplemented()) {
         CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pList->GetItemEdit(i),
                                 GetTextColor().ToFXColor(255), rcList, ptOffset,
                                 nullptr, pSysHandler, m_pFormFiller.Get());

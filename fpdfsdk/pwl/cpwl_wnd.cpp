@@ -269,15 +269,11 @@ bool CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
 
-  IPWL_SystemHandler* pSH = GetSystemHandler();
-  if (!pSH)
-    return true;
-
   CPDFSDK_Widget* widget = m_pAttachedData->GetWidget();
   if (!widget)
     return true;
 
-  pSH->InvalidateRect(widget, rcWin);
+  GetSystemHandler()->InvalidateRect(widget, rcWin);
   return !!thisObserved;
 }
 
@@ -605,10 +601,8 @@ bool CPWL_Wnd::RePosChildWnd() {
 void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}
 
 void CPWL_Wnd::SetCursor() {
-  if (IsValid()) {
-    if (IPWL_SystemHandler* pSH = GetSystemHandler())
-      pSH->SetCursor(GetCreationParams()->eCursorType);
-  }
+  if (IsValid())
+    GetSystemHandler()->SetCursor(GetCreationParams()->eCursorType);
 }
 
 void CPWL_Wnd::CreateMsgControl() {

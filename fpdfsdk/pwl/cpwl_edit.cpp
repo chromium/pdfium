@@ -172,7 +172,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     switch (GetBorderStyle()) {
       case BorderStyle::SOLID: {
         CFX_GraphStateData gsd;
-        gsd.m_LineWidth = (float)GetBorderWidth();
+        gsd.m_LineWidth = GetBorderWidth();
 
         CFX_PathData path;
 
@@ -237,10 +237,9 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     pRange = &wrRange;
   }
 
-  IPWL_SystemHandler* pSysHandler = GetSystemHandler();
   CPWL_EditImpl::DrawEdit(pDevice, mtUser2Device, m_pEdit.get(),
                           GetTextColor().ToFXColor(GetTransparency()), rcClip,
-                          CFX_PointF(), pRange, pSysHandler,
+                          CFX_PointF(), pRange, GetSystemHandler(),
                           m_pFormFiller.Get());
 }
 
@@ -278,10 +277,6 @@ bool CPWL_Edit::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 
   if (!HasFlag(PES_TEXTOVERFLOW) && !ClientHitTest(point))
     return true;
-
-  IPWL_SystemHandler* pSH = GetSystemHandler();
-  if (!pSH)
-    return false;
 
   SetFocus();
 

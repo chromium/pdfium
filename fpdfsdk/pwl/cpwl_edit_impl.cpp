@@ -498,7 +498,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
       bSelect = place > wrSelect.BeginPos && place <= wrSelect.EndPos;
       crCurFill = bSelect ? crWhite : crTextFill;
     }
-    if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
+    if (pSystemHandler->IsSelectionImplemented()) {
       crCurFill = crTextFill;
       crOldFill = crCurFill;
     }
@@ -508,7 +508,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
         CPVT_Line line;
         pIterator->GetLine(line);
 
-        if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
+        if (pSystemHandler->IsSelectionImplemented()) {
           CFX_FloatRect rc(word.ptWord.x, line.ptLine.y + line.fLineDescent,
                            word.ptWord.x + word.fWidth,
                            line.ptLine.y + line.fLineAscent);
