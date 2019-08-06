@@ -22,7 +22,7 @@ void CFFL_Button::OnMouseEnter(CPDFSDK_PageView* pPageView) {
 void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView) {
   m_bMouseIn = false;
   InvalidateRect(GetViewBBox(pPageView));
-  EndTimer();
+  m_pTimer.reset();
   ASSERT(m_pWidget);
 }
 

@@ -83,7 +83,7 @@ void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
 void CFFL_FormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView) {}
 
 void CFFL_FormFiller::OnMouseExit(CPDFSDK_PageView* pPageView) {
-  EndTimer();
+  m_pTimer.reset();
   ASSERT(m_pWidget);
 }
 
@@ -576,7 +576,7 @@ CPWL_Wnd* CFFL_FormFiller::ResetPDFWindow(CPDFSDK_PageView* pPageView,
   return GetPDFWindow(pPageView, false);
 }
 
-void CFFL_FormFiller::TimerProc() {}
+void CFFL_FormFiller::OnTimerFired() {}
 
 CFX_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
   return m_pFormFillEnv->GetSysHandler();

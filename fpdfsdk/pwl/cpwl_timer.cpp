@@ -8,8 +8,6 @@
 
 #include <map>
 
-#include "fpdfsdk/pwl/cpwl_timer_handler.h"
-
 namespace {
 
 std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
@@ -20,42 +18,27 @@ std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
 
 }  // namespace
 
-CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached,
-                       IPWL_SystemHandler* pSystemHandler)
-    : m_pAttached(pAttached), m_pSystemHandler(pSystemHandler) {
-  ASSERT(m_pAttached);
-  ASSERT(m_pSystemHandler);
+CPWL_Timer::CPWL_Timer(IPWL_SystemHandler* pSystemHandler,
+                       CallbackIface* pCallbackIface,
+                       int32_t nInterval)
+    : m_nTimerID(pSystemHandler->SetTimer(nInterval, TimerProc)),
+      m_pSystemHandler(pSystemHandler),
+      m_pCallbackIface(pCallbackIface) {
+  ASSERT(m_pCallbackIface);
+  if (HasValidID())
+    GetPWLTimeMap()[m_nTimerID] = this;
 }
 
 CPWL_Timer::~CPWL_Timer() {
-  KillPWLTimer();
-}
-
-int32_t CPWL_Timer::SetPWLTimer(int32_t nElapse) {
-  KillPWLTimer();
-
-  m_nTimerID = m_pSystemHandler->SetTimer(nElapse, TimerProc);
-  if (HasValidID())
-    GetPWLTimeMap()[m_nTimerID] = this;
-  return m_nTimerID;
-}
-
-void CPWL_Timer::KillPWLTimer() {
-  if (!HasValidID())
-    return;
-
-  m_pSystemHandler->KillTimer(m_nTimerID);
-  GetPWLTimeMap().erase(m_nTimerID);
-  m_nTimerID = IPWL_SystemHandler::kInvalidTimerID;
+  if (HasValidID()) {
+    m_pSystemHandler->KillTimer(m_nTimerID);
+    GetPWLTimeMap().erase(m_nTimerID);
+  }
 }
 
 // static
 void CPWL_Timer::TimerProc(int32_t idEvent) {
   auto it = GetPWLTimeMap().find(idEvent);
-  if (it == GetPWLTimeMap().end())
-    return;
-
-  CPWL_Timer* pTimer = it->second;
-  if (pTimer->m_pAttached)
-    pTimer->m_pAttached->TimerProc();
+  if (it != GetPWLTimeMap().end())
+    it->second->m_pCallbackIface->OnTimerFired();
 }

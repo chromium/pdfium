@@ -14,22 +14,27 @@ class CPWL_TimerHandler;
 
 class CPWL_Timer {
  public:
-  CPWL_Timer(CPWL_TimerHandler* pAttached, IPWL_SystemHandler* pSystemHandler);
+  class CallbackIface {
+   public:
+    virtual ~CallbackIface() = default;
+    virtual void OnTimerFired() = 0;
+  };
+
+  CPWL_Timer(IPWL_SystemHandler* pSystemHandler,
+             CallbackIface* pCallbackIface,
+             int32_t nInterval);
   ~CPWL_Timer();
 
+ private:
   static void TimerProc(int32_t idEvent);
 
-  int32_t SetPWLTimer(int32_t nElapse);
-  void KillPWLTimer();
-
- private:
   bool HasValidID() const {
     return m_nTimerID != IPWL_SystemHandler::kInvalidTimerID;
   }
 
-  int32_t m_nTimerID = IPWL_SystemHandler::kInvalidTimerID;
-  UnownedPtr<CPWL_TimerHandler> const m_pAttached;
+  const int32_t m_nTimerID;
   UnownedPtr<IPWL_SystemHandler> const m_pSystemHandler;
+  UnownedPtr<CallbackIface> const m_pCallbackIface;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_TIMER_H_

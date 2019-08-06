@@ -16,13 +16,15 @@
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
+#include "fpdfsdk/pwl/cpwl_timer.h"
+#include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 
 class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
-                        public CPWL_TimerHandler {
+                        public CPWL_Timer::CallbackIface {
  public:
   CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                   CPDFSDK_Widget* pWidget);
@@ -84,9 +86,8 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   void SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag);
   void KillFocusForAnnot(uint32_t nFlag);
 
-  // CPWL_TimerHandler:
-  void TimerProc() override;
-  CFX_SystemHandler* GetSystemHandler() const override;  // Covariant return.
+  // CPWL_Timer::CallbackIface:
+  void OnTimerFired() override;
 
   // CPWL_Wnd::ProviderIface:
   CFX_Matrix GetWindowMatrix(
@@ -133,10 +134,10 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   void DestroyPDFWindow(CPDFSDK_PageView* pPageView);
   void EscapeFiller(CPDFSDK_PageView* pPageView, bool bDestroyPDFWindow);
 
-
   bool IsValid() const;
   CFX_FloatRect GetPDFWindowRect() const;
 
+  CFX_SystemHandler* GetSystemHandler() const;
   CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
@@ -156,6 +157,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   bool m_bValid = false;
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   UnownedPtr<CPDFSDK_Widget> m_pWidget;
+  std::unique_ptr<CPWL_Timer> m_pTimer;
   std::map<CPDFSDK_PageView*, std::unique_ptr<CPWL_Wnd>> m_Maps;
 };
 

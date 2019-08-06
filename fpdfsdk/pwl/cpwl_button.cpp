@@ -8,8 +8,6 @@
 
 #include <utility>
 
-#include "fpdfsdk/pwl/cpwl_wnd.h"
-
 CPWL_Button::CPWL_Button(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)

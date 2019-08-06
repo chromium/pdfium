@@ -12,7 +12,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "third_party/base/ptr_util.h"
 
 CPWL_Caret::CPWL_Caret(
     const CreateParams& cp,
@@ -51,7 +51,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                     FXFILL_ALTERNATE);
 }
 
-void CPWL_Caret::TimerProc() {
+void CPWL_Caret::OnTimerFired() {
   m_bFlash = !m_bFlash;
   InvalidateRect(nullptr);
   // Note, |this| may no longer be viable at this point. If more work needs
@@ -73,7 +73,7 @@ void CPWL_Caret::SetCaret(bool bVisible,
     if (!IsVisible())
       return;
 
-    EndTimer();
+    m_pTimer.reset();
     CPWL_Wnd::SetVisible(false);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of SetVisible().
@@ -85,8 +85,8 @@ void CPWL_Caret::SetCaret(bool bVisible,
 
     m_ptHead = ptHead;
     m_ptFoot = ptFoot;
-    EndTimer();
-    BeginTimer(kCaretFlashIntervalMs);
+    m_pTimer = pdfium::MakeUnique<CPWL_Timer>(GetSystemHandler(), this,
+                                              kCaretFlashIntervalMs);
 
     if (!CPWL_Wnd::SetVisible(true))
       return;

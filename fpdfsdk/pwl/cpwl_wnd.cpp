@@ -652,10 +652,6 @@ void CPWL_Wnd::SetFontSize(float fFontSize) {
   m_CreationParams.fFontSize = fFontSize;
 }
 
-IPWL_SystemHandler* CPWL_Wnd::GetSystemHandler() const {
-  return m_CreationParams.pSystemHandler.Get();
-}
-
 CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
     case BorderStyle::BEVELED:
