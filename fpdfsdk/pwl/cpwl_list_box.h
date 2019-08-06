@@ -38,8 +38,9 @@ class CPWL_List_Notify {
 
 class CPWL_ListBox : public CPWL_Wnd {
  public:
-  CPWL_ListBox(const CreateParams& cp,
-               std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_ListBox(
+      const CreateParams& cp,
+      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_ListBox() override;
 
   // CPWL_Wnd

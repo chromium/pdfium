@@ -16,8 +16,9 @@
 
 class CPWL_CBListBox final : public CPWL_ListBox {
  public:
-  CPWL_CBListBox(const CreateParams& cp,
-                 std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_CBListBox(
+      const CreateParams& cp,
+      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_CBListBox() override;
 
   // CPWL_ListBox
@@ -31,8 +32,9 @@ class CPWL_CBListBox final : public CPWL_ListBox {
 
 class CPWL_CBButton final : public CPWL_Wnd {
  public:
-  CPWL_CBButton(const CreateParams& cp,
-                std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_CBButton(
+      const CreateParams& cp,
+      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_CBButton() override;
 
   // CPWL_Wnd
@@ -44,8 +46,9 @@ class CPWL_CBButton final : public CPWL_Wnd {
 
 class CPWL_ComboBox final : public CPWL_Wnd {
  public:
-  CPWL_ComboBox(const CreateParams& cp,
-                std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_ComboBox(
+      const CreateParams& cp,
+      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_ComboBox() override;
 
   CPWL_Edit* GetEdit() const { return m_pEdit.Get(); }

@@ -17,8 +17,9 @@
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/ptr_util.h"
 
-CPWL_EditCtrl::CPWL_EditCtrl(const CreateParams& cp,
-                             std::unique_ptr<PrivateData> pAttachedData)
+CPWL_EditCtrl::CPWL_EditCtrl(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_pEdit(pdfium::MakeUnique<CPWL_EditImpl>()) {
   GetCreationParams()->eCursorType = FXCT_VBEAM;

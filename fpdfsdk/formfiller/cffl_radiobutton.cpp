@@ -22,7 +22,7 @@ CFFL_RadioButton::~CFFL_RadioButton() {}
 
 std::unique_ptr<CPWL_Wnd> CFFL_RadioButton::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
-    std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) {
   auto pWnd =
       pdfium::MakeUnique<CPWL_RadioButton>(cp, std::move(pAttachedData));
   pWnd->Realize();

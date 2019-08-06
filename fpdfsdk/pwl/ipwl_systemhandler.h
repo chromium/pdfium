@@ -7,18 +7,25 @@
 #ifndef FPDFSDK_PWL_IPWL_SYSTEMHANDLER_H_
 #define FPDFSDK_PWL_IPWL_SYSTEMHANDLER_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/timerhandler_iface.h"
 
-class CPDFSDK_Widget;
 class CFFL_FormFiller;
 
 class IPWL_SystemHandler : public TimerHandlerIface {
  public:
+  class PerWindowData {
+   public:
+    virtual ~PerWindowData() = default;
+    virtual std::unique_ptr<PerWindowData> Clone() const = 0;
+  };
+
   ~IPWL_SystemHandler() override = default;
 
-  virtual void InvalidateRect(CPDFSDK_Widget* widget,
+  virtual void InvalidateRect(PerWindowData* pWidgetData,
                               const CFX_FloatRect& rect) = 0;
   virtual void OutputSelectedRect(CFFL_FormFiller* pFormFiller,
                                   const CFX_FloatRect& rect) = 0;

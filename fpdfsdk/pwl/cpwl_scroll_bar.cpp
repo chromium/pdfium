@@ -106,10 +106,11 @@ void PWL_SCROLL_PRIVATEDATA::SubBig() {
     SetPos(ScrollRange.fMin);
 }
 
-CPWL_SBButton::CPWL_SBButton(const CreateParams& cp,
-                             std::unique_ptr<PrivateData> pAttachedData,
-                             PWL_SCROLLBAR_TYPE eScrollBarType,
-                             PWL_SBBUTTON_TYPE eButtonType)
+CPWL_SBButton::CPWL_SBButton(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
+    PWL_SCROLLBAR_TYPE eScrollBarType,
+    PWL_SBBUTTON_TYPE eButtonType)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_eScrollBarType(eScrollBarType),
       m_eSBButtonType(eButtonType) {
@@ -298,9 +299,10 @@ bool CPWL_SBButton::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-CPWL_ScrollBar::CPWL_ScrollBar(const CreateParams& cp,
-                               std::unique_ptr<PrivateData> pAttachedData,
-                               PWL_SCROLLBAR_TYPE sbType)
+CPWL_ScrollBar::CPWL_ScrollBar(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData,
+    PWL_SCROLLBAR_TYPE sbType)
     : CPWL_Wnd(cp, std::move(pAttachedData)), m_sbType(sbType) {
   GetCreationParams()->eCursorType = FXCT_ARROW;
 }

@@ -14,8 +14,9 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-CPWL_Caret::CPWL_Caret(const CreateParams& cp,
-                       std::unique_ptr<PrivateData> pAttachedData)
+CPWL_Caret::CPWL_Caret(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_Caret::~CPWL_Caret() = default;

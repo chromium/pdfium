@@ -28,8 +28,9 @@ constexpr int kDefaultButtonWidth = 13;
 
 }  // namespace
 
-CPWL_CBListBox::CPWL_CBListBox(const CreateParams& cp,
-                               std::unique_ptr<PrivateData> pAttachedData)
+CPWL_CBListBox::CPWL_CBListBox(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_ListBox(cp, std::move(pAttachedData)) {}
 
 CPWL_CBListBox::~CPWL_CBListBox() = default;
@@ -102,8 +103,9 @@ bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
   return OnNotifySelectionChanged(true, nFlag);
 }
 
-CPWL_CBButton::CPWL_CBButton(const CreateParams& cp,
-                             std::unique_ptr<PrivateData> pAttachedData)
+CPWL_CBButton::CPWL_CBButton(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_CBButton::~CPWL_CBButton() = default;
@@ -159,8 +161,9 @@ bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-CPWL_ComboBox::CPWL_ComboBox(const CreateParams& cp,
-                             std::unique_ptr<PrivateData> pAttachedData)
+CPWL_ComboBox::CPWL_ComboBox(
+    const CreateParams& cp,
+    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)) {
   GetCreationParams()->dwFlags &= ~PWS_HSCROLL;
   GetCreationParams()->dwFlags &= ~PWS_VSCROLL;

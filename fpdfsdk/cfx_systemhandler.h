@@ -21,7 +21,7 @@ class CFX_SystemHandler final : public IPWL_SystemHandler {
   explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CFX_SystemHandler() override;
 
-  void InvalidateRect(CPDFSDK_Widget* widget,
+  void InvalidateRect(PerWindowData* pWidgetData,
                       const CFX_FloatRect& rect) override;
   void OutputSelectedRect(CFFL_FormFiller* pFormFiller,
                           const CFX_FloatRect& rect) override;

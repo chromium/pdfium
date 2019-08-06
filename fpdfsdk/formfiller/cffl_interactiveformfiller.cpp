@@ -583,13 +583,13 @@ void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
 }
 
 void CFFL_InteractiveFormFiller::QueryWherePopup(
-    const CPWL_Wnd::PrivateData* pAttached,
+    const IPWL_SystemHandler::PerWindowData* pAttached,
     float fPopupMin,
     float fPopupMax,
     bool* bBottom,
     float* fPopupRet) {
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  CPDFSDK_Widget* pWidget = pData->GetWidget();
+  CPDFSDK_Widget* pWidget = pData->pWidget.Get();
   CPDF_Page* pPage = pWidget->GetPDFPage();
 
   CFX_FloatRect rcPageView(0, pPage->GetPageHeight(), pPage->GetPageWidth(), 0);
@@ -808,7 +808,7 @@ bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 }
 
 bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
-    const CPWL_Wnd::PrivateData* pAttached,
+    const IPWL_SystemHandler::PerWindowData* pAttached,
     uint32_t nFlag) {
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
@@ -818,7 +818,7 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
 }
 
 bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
-    const CPWL_Wnd::PrivateData* pAttached,
+    const IPWL_SystemHandler::PerWindowData* pAttached,
     uint32_t nFlag) {
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
@@ -896,7 +896,7 @@ bool CFFL_InteractiveFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
 }
 
 std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
-    const CPWL_Wnd::PrivateData* pAttached,
+    const IPWL_SystemHandler::PerWindowData* pAttached,
     WideString& strChange,
     const WideString& strChangeEx,
     int nSelStart,
@@ -985,10 +985,7 @@ CFFL_PrivateData::CFFL_PrivateData(const CFFL_PrivateData& that) = default;
 
 CFFL_PrivateData::~CFFL_PrivateData() = default;
 
-std::unique_ptr<CPWL_Wnd::PrivateData> CFFL_PrivateData::Clone() const {
+std::unique_ptr<IPWL_SystemHandler::PerWindowData> CFFL_PrivateData::Clone()
+    const {
   return pdfium::MakeUnique<CFFL_PrivateData>(*this);
-}
-
-CPDFSDK_Widget* CFFL_PrivateData::GetWidget() const {
-  return pWidget.Get();
 }

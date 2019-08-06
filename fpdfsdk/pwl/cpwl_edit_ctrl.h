@@ -23,8 +23,9 @@ enum PWL_EDIT_ALIGNFORMAT_V { PEAV_TOP = 0, PEAV_CENTER, PEAV_BOTTOM };
 
 class CPWL_EditCtrl : public CPWL_Wnd {
  public:
-  CPWL_EditCtrl(const CreateParams& cp,
-                std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_EditCtrl(
+      const CreateParams& cp,
+      std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_EditCtrl() override;
 
   void SetSelection(int32_t nStartChar, int32_t nEndChar);

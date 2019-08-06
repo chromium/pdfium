@@ -25,8 +25,13 @@ CFX_SystemHandler::CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv)
 
 CFX_SystemHandler::~CFX_SystemHandler() = default;
 
-void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget,
+void CFX_SystemHandler::InvalidateRect(PerWindowData* pWidgetData,
                                        const CFX_FloatRect& rect) {
+  auto* pPrivateData = static_cast<CFFL_PrivateData*>(pWidgetData);
+  CPDFSDK_Widget* widget = pPrivateData->pWidget.Get();
+  if (!widget)
+    return;
+
   CPDFSDK_PageView* pPageView = widget->GetPageView();
   IPDF_Page* pPage = widget->GetPage();
   if (!pPage || !pPageView)

@@ -16,6 +16,7 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
 class CFFL_FormFiller;
 class CPDFSDK_FormFillEnvironment;
@@ -140,14 +141,14 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
       std::map<CPDFSDK_Annot*, std::unique_ptr<CFFL_FormFiller>>;
 
   // IPWL_Filler_Notify:
-  void QueryWherePopup(const CPWL_Wnd::PrivateData* pAttached,
+  void QueryWherePopup(const IPWL_SystemHandler::PerWindowData* pAttached,
                        float fPopupMin,
                        float fPopupMax,
                        bool* bBottom,
                        float* fPopupRet) override;
   // Returns {bRC, bExit}.
   std::pair<bool, bool> OnBeforeKeyStroke(
-      const CPWL_Wnd::PrivateData* pAttached,
+      const IPWL_SystemHandler::PerWindowData* pAttached,
       WideString& strChange,
       const WideString& strChangeEx,
       int nSelStart,
@@ -155,9 +156,9 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
       bool bKeyDown,
       uint32_t nFlag) override;
 #ifdef PDF_ENABLE_XFA
-  bool OnPopupPreOpen(const CPWL_Wnd::PrivateData* pAttached,
+  bool OnPopupPreOpen(const IPWL_SystemHandler::PerWindowData* pAttached,
                       uint32_t nFlag) override;
-  bool OnPopupPostOpen(const CPWL_Wnd::PrivateData* pAttached,
+  bool OnPopupPostOpen(const IPWL_SystemHandler::PerWindowData* pAttached,
                        uint32_t nFlag) override;
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
 #endif  // PDF_ENABLE_XFA
@@ -171,15 +172,16 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   bool m_bNotifying = false;
 };
 
-class CFFL_PrivateData final : public CPWL_Wnd::PrivateData {
+class CFFL_PrivateData final : public IPWL_SystemHandler::PerWindowData {
  public:
   CFFL_PrivateData();
   CFFL_PrivateData(const CFFL_PrivateData& that);
   ~CFFL_PrivateData() override;
 
   // CPWL_Wnd::PrivateData:
-  std::unique_ptr<CPWL_Wnd::PrivateData> Clone() const override;
-  CPDFSDK_Widget* GetWidget() const override;
+  std::unique_ptr<IPWL_SystemHandler::PerWindowData> Clone() const override;
+
+  CPDFSDK_Widget* GetWidget() const { return pWidget.Get(); }
 
   ObservedPtr<CPDFSDK_Widget> pWidget;
   CPDFSDK_PageView* pPageView = nullptr;

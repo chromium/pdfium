@@ -14,7 +14,7 @@
 class CPWL_Caret final : public CPWL_Wnd {
  public:
   CPWL_Caret(const CreateParams& cp,
-             std::unique_ptr<PrivateData> pAttachedData);
+             std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
   ~CPWL_Caret() override;
 
   // CPWL_Wnd
