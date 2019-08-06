@@ -12,13 +12,14 @@
 
 #include "core/fpdfdoc/cba_fontmap.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
-class CPDFSDK_Widget;
 
 class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                         public CPWL_TimerHandler {
@@ -85,7 +86,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
 
   // CPWL_TimerHandler:
   void TimerProc() override;
-  IPWL_SystemHandler* GetSystemHandler() const override;
+  CFX_SystemHandler* GetSystemHandler() const override;  // Covariant return.
 
   // CPWL_Wnd::ProviderIface:
   CFX_Matrix GetWindowMatrix(const CPWL_Wnd::PrivateData* pAttached) override;

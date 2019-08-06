@@ -378,10 +378,8 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
       return nullptr;
 
     CPWL_Wnd::CreateParams cp = GetCreateParam();
-    cp.pAttachedWidget.Reset(m_pWidget.Get());
-
     auto pPrivateData = pdfium::MakeUnique<CFFL_PrivateData>();
-    pPrivateData->pWidget = m_pWidget.Get();
+    pPrivateData->pWidget.Reset(m_pWidget.Get());
     pPrivateData->pPageView = pPageView;
     pPrivateData->nWidgetAppearanceAge = m_pWidget->GetAppearanceAge();
     pPrivateData->nWidgetValueAge = 0;
@@ -580,7 +578,7 @@ CPWL_Wnd* CFFL_FormFiller::ResetPDFWindow(CPDFSDK_PageView* pPageView,
 
 void CFFL_FormFiller::TimerProc() {}
 
-IPWL_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
+CFX_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
   return m_pFormFillEnv->GetSysHandler();
 }
 

@@ -15,10 +15,10 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/pwl/cpwl_timer.h"
 #include "fpdfsdk/pwl/cpwl_timer_handler.h"
 
+class CPDFSDK_Widget;
 class CPWL_Edit;
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
@@ -98,6 +98,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
    public:
     virtual ~PrivateData() = default;
     virtual std::unique_ptr<PrivateData> Clone() const = 0;
+    virtual CPDFSDK_Widget* GetWidget() const = 0;
   };
 
   class ProviderIface : public Observable {
@@ -127,7 +128,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable {
     UnownedPtr<FocusHandlerIface> pFocusHandler;      // optional
     uint32_t dwFlags = 0;                             // optional
     CFX_Color sBackgroundColor;                       // optional
-    ObservedPtr<CPDFSDK_Widget> pAttachedWidget;      // required
     BorderStyle nBorderStyle = BorderStyle::SOLID;    // optional
     int32_t dwBorderWidth = 1;                        // optional
     CFX_Color sBorderColor;                           // optional

@@ -589,7 +589,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
     bool* bBottom,
     float* fPopupRet) {
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  CPDFSDK_Widget* pWidget = pData->pWidget;
+  CPDFSDK_Widget* pWidget = pData->GetWidget();
   CPDF_Page* pPage = pWidget->GetPDFPage();
 
   CFX_FloatRect rcPageView(0, pPage->GetPageHeight(), pPage->GetPageWidth(), 0);
@@ -813,7 +813,7 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
 
-  ObservedPtr<CPDFSDK_Annot> pObserved(pData->pWidget);
+  ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
   return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
@@ -823,7 +823,7 @@ bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
   auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
 
-  ObservedPtr<CPDFSDK_Annot> pObserved(pData->pWidget);
+  ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
   return OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
 }
 
@@ -908,11 +908,11 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
       *static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(privateData.pWidget);
 
-  CFFL_FormFiller* pFormFiller = GetFormFiller(privateData.pWidget);
+  CFFL_FormFiller* pFormFiller = GetFormFiller(privateData.GetWidget());
 
 #ifdef PDF_ENABLE_XFA
   if (pFormFiller->IsFieldFull(privateData.pPageView)) {
-    ObservedPtr<CPDFSDK_Annot> pObserved(privateData.pWidget);
+    ObservedPtr<CPDFSDK_Annot> pObserved(privateData.GetWidget());
     if (OnFull(&pObserved, privateData.pPageView, nFlag) || !pObserved)
       return {true, true};
   }
@@ -945,13 +945,14 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
                              fa);
   pFormFiller->SaveState(privateData.pPageView);
 
-  ObservedPtr<CPDFSDK_Annot> pObserved(privateData.pWidget);
+  ObservedPtr<CPDFSDK_Annot> pObserved(privateData.GetWidget());
   bool action_status = privateData.pWidget->OnAAction(
       CPDF_AAction::kKeyStroke, &fa, privateData.pPageView);
 
-  if (!pObserved || !IsValidAnnot(privateData.pPageView, privateData.pWidget))
+  if (!pObserved ||
+      !IsValidAnnot(privateData.pPageView, privateData.GetWidget())) {
     return {true, true};
-
+  }
   if (!action_status)
     return {true, false};
 
@@ -971,7 +972,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   } else {
     pFormFiller->RestoreState(privateData.pPageView);
   }
-  if (pFormFillEnv->GetFocusAnnot() == privateData.pWidget)
+  if (pFormFillEnv->GetFocusAnnot() == privateData.GetWidget())
     return {false, bExit};
 
   pFormFiller->CommitData(privateData.pPageView, nFlag);
@@ -986,4 +987,8 @@ CFFL_PrivateData::~CFFL_PrivateData() = default;
 
 std::unique_ptr<CPWL_Wnd::PrivateData> CFFL_PrivateData::Clone() const {
   return pdfium::MakeUnique<CFFL_PrivateData>(*this);
+}
+
+CPDFSDK_Widget* CFFL_PrivateData::GetWidget() const {
+  return pWidget.Get();
 }

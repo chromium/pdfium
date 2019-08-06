@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
@@ -178,8 +179,9 @@ class CFFL_PrivateData final : public CPWL_Wnd::PrivateData {
 
   // CPWL_Wnd::PrivateData:
   std::unique_ptr<CPWL_Wnd::PrivateData> Clone() const override;
+  CPDFSDK_Widget* GetWidget() const override;
 
-  CPDFSDK_Widget* pWidget = nullptr;
+  ObservedPtr<CPDFSDK_Widget> pWidget;
   CPDFSDK_PageView* pPageView = nullptr;
   uint32_t nWidgetAppearanceAge = 0;
   uint32_t nWidgetValueAge = 0;
