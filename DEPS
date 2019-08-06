@@ -34,9 +34,6 @@ vars = {
   'v8_revision': '33faa512cb633005dd8e13a91ca4fb12033ba376',
   'yasm_source_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
   'zlib_revision': '2b4888a46ae73eb1261efc924ac13fe2faa6c480',
-
-  # GN CIPD package version.
-  'gn_version': 'git_revision:0790d3043387c762a6bacb1ae0a9ebe883188ab2',
 }
 
 deps = {
@@ -50,39 +47,6 @@ deps = {
   "buildtools":
     Var('chromium_git') + "/chromium/src/buildtools.git@" +
         Var('buildtools_revision'),
-
-  'pdfium/buildtools/linux64': {
-    'packages': [
-      {
-        'package': 'gn/gn/linux-amd64',
-        'version': Var('gn_version'),
-      }
-    ],
-    'dep_type': 'cipd',
-    'condition': 'host_os == "linux"',
-  },
-
-  'pdfium/buildtools/mac': {
-    'packages': [
-      {
-        'package': 'gn/gn/mac-amd64',
-        'version': Var('gn_version'),
-      }
-    ],
-    'dep_type': 'cipd',
-    'condition': 'host_os == "mac"',
-  },
-
-  'pdfium/buildtools/win': {
-    'packages': [
-      {
-        'package': 'gn/gn/windows-amd64',
-        'version': Var('gn_version'),
-      }
-    ],
-    'dep_type': 'cipd',
-    'condition': 'host_os == "win"',
-  },
 
   "testing/corpus":
     Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
