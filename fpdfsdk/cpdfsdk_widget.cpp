@@ -717,20 +717,20 @@ CFX_FloatRect CPDFSDK_Widget::GetRotatedRect() const {
   float fHeight = rectAnnot.Height();
 
   CPDF_FormControl* pControl = GetFormControl();
-  CFX_FloatRect rcPDFWindow;
+  CFX_FloatRect rcPWLWindow;
   switch (abs(pControl->GetRotation() % 360)) {
     case 0:
     case 180:
     default:
-      rcPDFWindow = CFX_FloatRect(0, 0, fWidth, fHeight);
+      rcPWLWindow = CFX_FloatRect(0, 0, fWidth, fHeight);
       break;
     case 90:
     case 270:
-      rcPDFWindow = CFX_FloatRect(0, 0, fHeight, fWidth);
+      rcPWLWindow = CFX_FloatRect(0, 0, fHeight, fWidth);
       break;
   }
 
-  return rcPDFWindow;
+  return rcPWLWindow;
 }
 
 CFX_Matrix CPDFSDK_Widget::GetMatrix() const {

@@ -16,7 +16,7 @@
 class CFFL_TextObject : public CFFL_FormFiller {
  public:
   // CFFL_FormFiller:
-  CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
+  CPWL_Wnd* ResetPWLWindow(CPDFSDK_PageView* pPageView,
                            bool bRestoreValue) override;
 
  protected:

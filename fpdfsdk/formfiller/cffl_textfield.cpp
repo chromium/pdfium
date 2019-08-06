@@ -107,7 +107,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
                                  pAnnot->GetRect().GetOuterRect());
 
       if (m_bValid) {
-        if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))
+        if (CPWL_Wnd* pWnd = GetPWLWindow(pPageView, true))
           pWnd->SetFocus();
         break;
       }
@@ -115,7 +115,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       if (!CommitData(pPageView, nFlags))
         return false;
 
-      DestroyPDFWindow(pPageView);
+      DestroyPWLWindow(pPageView);
       return true;
     }
     case FWL_VKEY_Escape: {
@@ -260,5 +260,5 @@ void CFFL_TextField::OnSetFocus(CPWL_Edit* pEdit) {
 }
 
 CPWL_Edit* CFFL_TextField::GetEdit(CPDFSDK_PageView* pPageView, bool bNew) {
-  return static_cast<CPWL_Edit*>(GetPDFWindow(pPageView, bNew));
+  return static_cast<CPWL_Edit*>(GetPWLWindow(pPageView, bNew));
 }

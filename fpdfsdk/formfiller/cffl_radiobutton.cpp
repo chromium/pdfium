@@ -118,5 +118,5 @@ void CFFL_RadioButton::SaveData(CPDFSDK_PageView* pPageView) {
 
 CPWL_RadioButton* CFFL_RadioButton::GetRadioButton(CPDFSDK_PageView* pPageView,
                                                    bool bNew) {
-  return static_cast<CPWL_RadioButton*>(GetPDFWindow(pPageView, bNew));
+  return static_cast<CPWL_RadioButton*>(GetPWLWindow(pPageView, bNew));
 }

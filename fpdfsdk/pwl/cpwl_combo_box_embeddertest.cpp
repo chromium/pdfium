@@ -65,7 +65,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
     ASSERT_TRUE(m_pFormFiller);
 
     CPWL_Wnd* pWindow =
-        m_pFormFiller->GetPDFWindow(m_pFormFillEnv->GetPageView(0), false);
+        m_pFormFiller->GetPWLWindow(m_pFormFillEnv->GetPageView(0), false);
     ASSERT_TRUE(pWindow);
     m_pComboBox = static_cast<CPWL_ComboBox*>(pWindow);
   }

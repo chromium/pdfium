@@ -7,16 +7,16 @@
 #include "fpdfsdk/formfiller/cffl_textobject.h"
 #include "third_party/base/ptr_util.h"
 
-CPWL_Wnd* CFFL_TextObject::ResetPDFWindow(CPDFSDK_PageView* pPageView,
+CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView,
                                           bool bRestoreValue) {
   if (bRestoreValue)
     SaveState(pPageView);
 
-  DestroyPDFWindow(pPageView);
+  DestroyPWLWindow(pPageView);
   if (bRestoreValue)
     RestoreState(pPageView);
 
-  ObservedPtr<CPWL_Wnd> pRet(GetPDFWindow(pPageView, !bRestoreValue));
+  ObservedPtr<CPWL_Wnd> pRet(GetPWLWindow(pPageView, !bRestoreValue));
   m_pWidget->UpdateField();  // May invoke JS, invalidating |pRet|.
   return pRet.Get();
 }
