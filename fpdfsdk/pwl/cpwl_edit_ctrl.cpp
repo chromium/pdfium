@@ -34,20 +34,14 @@ void CPWL_EditCtrl::OnCreated() {
   m_pEdit->Initialize();
 }
 
-bool CPWL_EditCtrl::IsWndHorV() {
+bool CPWL_EditCtrl::IsWndHorV() const {
   CFX_Matrix mt = GetWindowMatrix();
   return mt.Transform(CFX_PointF(1, 1)).y == mt.Transform(CFX_PointF(0, 1)).y;
 }
 
 void CPWL_EditCtrl::SetCursor() {
-  if (IsValid()) {
-    if (IPWL_SystemHandler* pSH = GetSystemHandler()) {
-      if (IsWndHorV())
-        pSH->SetCursor(FXCT_VBEAM);
-      else
-        pSH->SetCursor(FXCT_HBEAM);
-    }
-  }
+  if (IsValid())
+    GetSystemHandler()->SetCursor(IsWndHorV() ? FXCT_VBEAM : FXCT_HBEAM);
 }
 
 WideString CPWL_EditCtrl::GetSelectedText() {

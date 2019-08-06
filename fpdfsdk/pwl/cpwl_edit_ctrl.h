@@ -74,7 +74,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void CutText();
   void InsertWord(uint16_t word, int32_t nCharset);
   void InsertReturn();
-  bool IsWndHorV();
+  bool IsWndHorV() const;
   void Delete();
   void Backspace();
   void GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const;
