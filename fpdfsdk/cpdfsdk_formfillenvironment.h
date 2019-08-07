@@ -15,11 +15,11 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/observed_ptr.h"
+#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "public/fpdf_formfill.h"
 
 class CFFL_InteractiveFormFiller;
-class CFX_SystemHandler;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_AnnotHandlerMgr;
 class CPDFSDK_InteractiveForm;
@@ -197,7 +197,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   void JS_docSubmitForm(void* formData, int length, const WideString& URL);
 
   ByteString GetAppName() const { return ByteString(); }
-  CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
+  IPWL_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 
   // Creates if not present.
