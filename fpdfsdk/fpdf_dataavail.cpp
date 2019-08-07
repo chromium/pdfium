@@ -147,21 +147,21 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFAvail_Destroy(FPDF_AVAIL avail) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
                                                    FX_DOWNLOADHINTS* hints) {
-  if (!avail)
+  auto* avail_context = FPDFAvailContextFromFPDFAvail(avail);
+  if (!avail_context)
     return PDF_DATA_ERROR;
   FPDF_DownloadHintsContext hints_context(hints);
-  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsDocAvail(
-      &hints_context);
+  return avail_context->data_avail()->IsDocAvail(&hints_context);
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
-  auto* pDataAvail = FPDFAvailContextFromFPDFAvail(avail);
-  if (!pDataAvail)
+  auto* avail_context = FPDFAvailContextFromFPDFAvail(avail);
+  if (!avail_context)
     return nullptr;
   CPDF_Parser::Error error;
   std::unique_ptr<CPDF_Document> document;
-  std::tie(error, document) = pDataAvail->data_avail()->ParseDocument(
+  std::tie(error, document) = avail_context->data_avail()->ParseDocument(
       pdfium::MakeUnique<CPDF_DocRenderData>(),
       pdfium::MakeUnique<CPDF_DocPageData>(), password);
   if (error != CPDF_Parser::SUCCESS) {
@@ -185,26 +185,27 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
                                                     int page_index,
                                                     FX_DOWNLOADHINTS* hints) {
-  if (!avail)
+  auto* avail_context = FPDFAvailContextFromFPDFAvail(avail);
+  if (!avail_context)
     return PDF_DATA_ERROR;
   if (page_index < 0)
     return PDF_DATA_NOTAVAIL;
   FPDF_DownloadHintsContext hints_context(hints);
-  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsPageAvail(
-      page_index, &hints_context);
+  return avail_context->data_avail()->IsPageAvail(page_index, &hints_context);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
                                                     FX_DOWNLOADHINTS* hints) {
-  if (!avail)
+  auto* avail_context = FPDFAvailContextFromFPDFAvail(avail);
+  if (!avail_context)
     return PDF_FORM_ERROR;
   FPDF_DownloadHintsContext hints_context(hints);
-  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsFormAvail(
-      &hints_context);
+  return avail_context->data_avail()->IsFormAvail(&hints_context);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsLinearized(FPDF_AVAIL avail) {
-  if (!avail)
+  auto* avail_context = FPDFAvailContextFromFPDFAvail(avail);
+  if (!avail_context)
     return PDF_LINEARIZATION_UNKNOWN;
-  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsLinearizedPDF();
+  return avail_context->data_avail()->IsLinearizedPDF();
 }
