@@ -979,6 +979,22 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
                    (pChar->colored() && MissingStrokeColor(pColorState)));
 }
 
+#if defined(_SKIA_SUPPORT_)
+class ScopedSkiaDeviceFlush {
+ public:
+  explicit ScopedSkiaDeviceFlush(CFX_RenderDevice* pDevice)
+      : m_pDevice(pDevice) {}
+
+  ScopedSkiaDeviceFlush(const ScopedSkiaDeviceFlush&) = delete;
+  ScopedSkiaDeviceFlush& operator=(const ScopedSkiaDeviceFlush&) = delete;
+
+  ~ScopedSkiaDeviceFlush() { m_pDevice->Flush(/*release=*/false); }
+
+ private:
+  CFX_RenderDevice* const m_pDevice;
+};
+#endif
+
 }  // namespace
 
 CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* pContext,
@@ -2136,6 +2152,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
+#if defined(_SKIA_SUPPORT_)
+  ScopedSkiaDeviceFlush scoped_skia_device_flush(m_pDevice);
+#endif
   if (!ClipPattern(pPageObj, mtObj2Device, bStroke))
     return;
 
