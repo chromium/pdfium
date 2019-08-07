@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_PWL_CPWL_TIMER_H_
 #define FPDFSDK_PWL_CPWL_TIMER_H_
 
+#include "core/fxcrt/timerhandler_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
 class CPWL_TimerHandler;
 
@@ -20,7 +20,7 @@ class CPWL_Timer {
     virtual void OnTimerFired() = 0;
   };
 
-  CPWL_Timer(IPWL_SystemHandler* pSystemHandler,
+  CPWL_Timer(TimerHandlerIface* pTimerHandler,
              CallbackIface* pCallbackIface,
              int32_t nInterval);
   ~CPWL_Timer();
@@ -29,11 +29,11 @@ class CPWL_Timer {
   static void TimerProc(int32_t idEvent);
 
   bool HasValidID() const {
-    return m_nTimerID != IPWL_SystemHandler::kInvalidTimerID;
+    return m_nTimerID != TimerHandlerIface::kInvalidTimerID;
   }
 
   const int32_t m_nTimerID;
-  UnownedPtr<IPWL_SystemHandler> const m_pSystemHandler;
+  UnownedPtr<TimerHandlerIface> const m_pTimerHandler;
   UnownedPtr<CallbackIface> const m_pCallbackIface;
 };
 

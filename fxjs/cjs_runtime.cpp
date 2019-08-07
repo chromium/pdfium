@@ -143,7 +143,7 @@ CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
 }
 
 TimerHandlerIface* CJS_Runtime::GetTimerHandler() const {
-  return m_pFormFillEnv ? m_pFormFillEnv->GetSysHandler() : nullptr;
+  return m_pFormFillEnv ? m_pFormFillEnv->GetTimerHandler() : nullptr;
 }
 
 void CJS_Runtime::SetFormFillEnvToDocument() {

@@ -197,6 +197,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   void JS_docSubmitForm(void* formData, int length, const WideString& URL);
 
   ByteString GetAppName() const { return ByteString(); }
+  TimerHandlerIface* GetTimerHandler() const { return m_pSysHandler.get(); }
   IPWL_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 

@@ -114,6 +114,7 @@ class CPWL_Wnd : public Observable {
     ~CreateParams();
 
     CFX_FloatRect rcRectWnd;                          // required
+    UnownedPtr<TimerHandlerIface> pTimerHandler;      // required
     UnownedPtr<IPWL_SystemHandler> pSystemHandler;    // required
     UnownedPtr<IPVT_FontMap> pFontMap;                // required
     ObservedPtr<ProviderIface> pProvider;             // required
@@ -270,6 +271,9 @@ class CPWL_Wnd : public Observable {
   bool IsNotifying() const { return m_bNotifying; }
   bool IsValid() const { return m_bCreated; }
   CreateParams* GetCreationParams() { return &m_CreationParams; }
+  TimerHandlerIface* GetTimerHandler() const {
+    return m_CreationParams.pTimerHandler.Get();
+  }
   IPWL_SystemHandler* GetSystemHandler() const {
     return m_CreationParams.pSystemHandler.Get();
   }

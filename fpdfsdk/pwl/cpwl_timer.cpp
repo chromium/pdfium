@@ -18,11 +18,11 @@ std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
 
 }  // namespace
 
-CPWL_Timer::CPWL_Timer(IPWL_SystemHandler* pSystemHandler,
+CPWL_Timer::CPWL_Timer(TimerHandlerIface* pTimerHandler,
                        CallbackIface* pCallbackIface,
                        int32_t nInterval)
-    : m_nTimerID(pSystemHandler->SetTimer(nInterval, TimerProc)),
-      m_pSystemHandler(pSystemHandler),
+    : m_nTimerID(pTimerHandler->SetTimer(nInterval, TimerProc)),
+      m_pTimerHandler(pTimerHandler),
       m_pCallbackIface(pCallbackIface) {
   ASSERT(m_pCallbackIface);
   if (HasValidID())
@@ -31,7 +31,7 @@ CPWL_Timer::CPWL_Timer(IPWL_SystemHandler* pSystemHandler,
 
 CPWL_Timer::~CPWL_Timer() {
   if (HasValidID()) {
-    m_pSystemHandler->KillTimer(m_nTimerID);
+    m_pTimerHandler->KillTimer(m_nTimerID);
     GetPWLTimeMap().erase(m_nTimerID);
   }
 }

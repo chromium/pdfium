@@ -365,6 +365,7 @@ CPWL_Wnd::CreateParams CFFL_FormFiller::GetCreateParam() {
     dwCreateFlags |= PWS_AUTOFONTSIZE;
 
   cp.dwFlags = dwCreateFlags;
+  cp.pTimerHandler = m_pFormFillEnv->GetTimerHandler();
   cp.pSystemHandler = m_pFormFillEnv->GetSysHandler();
   return cp;
 }

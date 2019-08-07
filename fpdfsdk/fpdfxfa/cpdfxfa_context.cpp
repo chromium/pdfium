@@ -304,5 +304,5 @@ std::unique_ptr<IFWL_AdapterTimerMgr> CPDFXFA_Context::NewTimerMgr() {
   if (!m_pFormFillEnv)
     return nullptr;
   return pdfium::MakeUnique<CXFA_FWLAdapterTimerMgr>(
-      m_pFormFillEnv->GetSysHandler());
+      m_pFormFillEnv->GetTimerHandler());
 }

@@ -85,7 +85,7 @@ void CPWL_Caret::SetCaret(bool bVisible,
 
     m_ptHead = ptHead;
     m_ptFoot = ptFoot;
-    m_pTimer = pdfium::MakeUnique<CPWL_Timer>(GetSystemHandler(), this,
+    m_pTimer = pdfium::MakeUnique<CPWL_Timer>(GetTimerHandler(), this,
                                               kCaretFlashIntervalMs);
 
     if (!CPWL_Wnd::SetVisible(true))

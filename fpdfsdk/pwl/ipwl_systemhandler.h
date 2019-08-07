@@ -11,11 +11,10 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/timerhandler_iface.h"
 
 class CFFL_FormFiller;
 
-class IPWL_SystemHandler : public TimerHandlerIface {
+class IPWL_SystemHandler {
  public:
   class PerWindowData {
    public:
@@ -23,7 +22,7 @@ class IPWL_SystemHandler : public TimerHandlerIface {
     virtual std::unique_ptr<PerWindowData> Clone() const = 0;
   };
 
-  ~IPWL_SystemHandler() override = default;
+  virtual ~IPWL_SystemHandler() = default;
 
   virtual void InvalidateRect(PerWindowData* pWidgetData,
                               const CFX_FloatRect& rect) = 0;

@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/timerhandler_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
@@ -16,7 +17,8 @@ class CFFL_FormFiller;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_Widget;
 
-class CFX_SystemHandler final : public IPWL_SystemHandler {
+class CFX_SystemHandler final : public TimerHandlerIface,
+                                public IPWL_SystemHandler {
  public:
   explicit CFX_SystemHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CFX_SystemHandler() override;

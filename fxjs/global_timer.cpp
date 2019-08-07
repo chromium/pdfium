@@ -84,5 +84,5 @@ void GlobalTimer::Cancel(int32_t nTimerID) {
 }
 
 bool GlobalTimer::HasValidID() const {
-  return m_nTimerID != IPWL_SystemHandler::kInvalidTimerID;
+  return m_nTimerID != TimerHandlerIface::kInvalidTimerID;
 }
