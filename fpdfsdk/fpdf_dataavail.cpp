@@ -52,18 +52,16 @@ namespace {
 
 class FPDF_FileAvailContext final : public CPDF_DataAvail::FileAvail {
  public:
-  FPDF_FileAvailContext() : m_pfileAvail(nullptr) {}
-  ~FPDF_FileAvailContext() override {}
-
-  void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
+  explicit FPDF_FileAvailContext(FX_FILEAVAIL* avail) : avail_(avail) {}
+  ~FPDF_FileAvailContext() override = default;
 
   // CPDF_DataAvail::FileAvail:
   bool IsDataAvail(FX_FILESIZE offset, size_t size) override {
-    return !!m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
+    return !!avail_->IsDataAvail(avail_, offset, size);
   }
 
  private:
-  FX_FILEAVAIL* m_pfileAvail;
+  FX_FILEAVAIL* const avail_;
 };
 
 class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
@@ -71,10 +69,8 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  void Set(FPDF_FILEACCESS* pFile) { m_pFileAccess = pFile; }
-
-  // IFX_SeekableReadStream
-  FX_FILESIZE GetSize() override { return m_pFileAccess->m_FileLen; }
+  // IFX_SeekableReadStream:
+  FX_FILESIZE GetSize() override { return file_->m_FileLen; }
 
   bool ReadBlockAtOffset(void* buffer,
                          FX_FILESIZE offset,
@@ -85,15 +81,15 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
     FX_SAFE_FILESIZE new_pos = pdfium::base::checked_cast<FX_FILESIZE>(size);
     new_pos += offset;
     return new_pos.IsValid() && new_pos.ValueOrDie() <= GetSize() &&
-           m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
-                                     static_cast<uint8_t*>(buffer), size);
+           file_->m_GetBlock(file_->m_Param, offset,
+                             static_cast<uint8_t*>(buffer), size);
   }
 
  private:
-  FPDF_FileAccessContext() : m_pFileAccess(nullptr) {}
+  explicit FPDF_FileAccessContext(FPDF_FILEACCESS* file) : file_(file) {}
   ~FPDF_FileAccessContext() override = default;
 
-  FPDF_FILEACCESS* m_pFileAccess;
+  FPDF_FILEACCESS* const file_;
 };
 
 class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
@@ -116,14 +112,20 @@ class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
 
 class FPDF_AvailContext {
  public:
-  FPDF_AvailContext()
-      : m_FileAvail(pdfium::MakeUnique<FPDF_FileAvailContext>()),
-        m_FileRead(pdfium::MakeRetain<FPDF_FileAccessContext>()) {}
-  ~FPDF_AvailContext() {}
+  FPDF_AvailContext(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file)
+      : file_avail_(pdfium::MakeUnique<FPDF_FileAvailContext>(file_avail)),
+        file_read_(pdfium::MakeRetain<FPDF_FileAccessContext>(file)),
+        data_avail_(pdfium::MakeUnique<CPDF_DataAvail>(file_avail_.get(),
+                                                       file_read_,
+                                                       true)) {}
+  ~FPDF_AvailContext() = default;
 
-  std::unique_ptr<FPDF_FileAvailContext> m_FileAvail;
-  RetainPtr<FPDF_FileAccessContext> m_FileRead;
-  std::unique_ptr<CPDF_DataAvail> m_pDataAvail;
+  CPDF_DataAvail* data_avail() { return data_avail_.get(); }
+
+ private:
+  std::unique_ptr<FPDF_FileAvailContext> const file_avail_;
+  RetainPtr<FPDF_FileAccessContext> const file_read_;
+  std::unique_ptr<CPDF_DataAvail> const data_avail_;
 };
 
 FPDF_AvailContext* FPDFAvailContextFromFPDFAvail(FPDF_AVAIL avail) {
@@ -134,11 +136,7 @@ FPDF_AvailContext* FPDFAvailContextFromFPDFAvail(FPDF_AVAIL avail) {
 
 FPDF_EXPORT FPDF_AVAIL FPDF_CALLCONV FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                                       FPDF_FILEACCESS* file) {
-  auto pAvail = pdfium::MakeUnique<FPDF_AvailContext>();
-  pAvail->m_FileAvail->Set(file_avail);
-  pAvail->m_FileRead->Set(file);
-  pAvail->m_pDataAvail = pdfium::MakeUnique<CPDF_DataAvail>(
-      pAvail->m_FileAvail.get(), pAvail->m_FileRead, true);
+  auto pAvail = pdfium::MakeUnique<FPDF_AvailContext>(file_avail, file);
   return pAvail.release();  // Caller takes ownership.
 }
 
@@ -152,7 +150,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
   if (!avail)
     return PDF_DATA_ERROR;
   FPDF_DownloadHintsContext hints_context(hints);
-  return FPDFAvailContextFromFPDFAvail(avail)->m_pDataAvail->IsDocAvail(
+  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsDocAvail(
       &hints_context);
 }
 
@@ -163,7 +161,7 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
     return nullptr;
   CPDF_Parser::Error error;
   std::unique_ptr<CPDF_Document> document;
-  std::tie(error, document) = pDataAvail->m_pDataAvail->ParseDocument(
+  std::tie(error, document) = pDataAvail->data_avail()->ParseDocument(
       pdfium::MakeUnique<CPDF_DocRenderData>(),
       pdfium::MakeUnique<CPDF_DocPageData>(), password);
   if (error != CPDF_Parser::SUCCESS) {
@@ -192,7 +190,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
   if (page_index < 0)
     return PDF_DATA_NOTAVAIL;
   FPDF_DownloadHintsContext hints_context(hints);
-  return FPDFAvailContextFromFPDFAvail(avail)->m_pDataAvail->IsPageAvail(
+  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsPageAvail(
       page_index, &hints_context);
 }
 
@@ -201,12 +199,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
   if (!avail)
     return PDF_FORM_ERROR;
   FPDF_DownloadHintsContext hints_context(hints);
-  return FPDFAvailContextFromFPDFAvail(avail)->m_pDataAvail->IsFormAvail(
+  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsFormAvail(
       &hints_context);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsLinearized(FPDF_AVAIL avail) {
   if (!avail)
     return PDF_LINEARIZATION_UNKNOWN;
-  return FPDFAvailContextFromFPDFAvail(avail)->m_pDataAvail->IsLinearizedPDF();
+  return FPDFAvailContextFromFPDFAvail(avail)->data_avail()->IsLinearizedPDF();
 }
