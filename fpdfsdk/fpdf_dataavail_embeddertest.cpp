@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -30,7 +29,7 @@ class MockDownloadHints final : public FX_DOWNLOADHINTS {
     FX_DOWNLOADHINTS::AddSegment = SAddSegment;
   }
 
-  ~MockDownloadHints() {}
+  ~MockDownloadHints() = default;
 };
 
 class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
@@ -148,7 +147,7 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
   FPDF_FILEACCESS file_access_;
 
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
-  size_t file_length_;
+  size_t file_length_ = 0;
   std::vector<std::pair<size_t, size_t>> requested_segments_;
   size_t max_requested_bound_ = 0;
   bool is_new_data_available_ = true;
@@ -184,9 +183,8 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadUsingHintTables) {
 
   // No new data available, to prevent load "Pages" node.
   loader.set_is_new_data_available(false);
-  FPDF_PAGE page = FPDF_LoadPage(document(), 1);
+  ScopedFPDFPage page(FPDF_LoadPage(document(), 1));
   EXPECT_TRUE(page);
-  FPDF_ClosePage(page);
 }
 
 TEST_F(FPDFDataAvailEmbedderTest, CheckFormAvailIfLinearized) {
@@ -196,8 +194,8 @@ TEST_F(FPDFDataAvailEmbedderTest, CheckFormAvailIfLinearized) {
   document_ = FPDFAvail_GetDocument(avail_, nullptr);
   ASSERT_TRUE(document_);
 
-  // Prevent access to non requested data to coerce the parser to send new
-  // request for non available (non requested before) data.
+  // Prevent access to non-requested data to coerce the parser to send new
+  // request for non available (non-requested before) data.
   loader.set_is_new_data_available(false);
   loader.ClearRequestedSegments();
 
@@ -223,8 +221,8 @@ TEST_F(FPDFDataAvailEmbedderTest,
   EXPECT_GT(loader.file_access()->m_FileLen,
             loader.max_already_available_bound());
 
-  // Prevent access to non requested data to coerce the parser to send new
-  // request for non available (non requested before) data.
+  // Prevent access to non-requested data to coerce the parser to send new
+  // request for non available (non-requested before) data.
   loader.set_is_new_data_available(false);
   FPDFAvail_IsPageAvail(avail_, first_page_num, loader.hints());
 
@@ -244,9 +242,8 @@ TEST_F(FPDFDataAvailEmbedderTest,
 
   // Prevent loading data, while page loading.
   loader.set_is_new_data_available(false);
-  FPDF_PAGE page = FPDF_LoadPage(document(), first_page_num);
+  ScopedFPDFPage page(FPDF_LoadPage(document(), first_page_num));
   EXPECT_TRUE(page);
-  FPDF_ClosePage(page);
 }
 
 TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
@@ -258,8 +255,8 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
 
   static constexpr uint32_t kSecondPageNum = 1;
 
-  // Prevent access to non requested data to coerce the parser to send new
-  // request for non available (non requested before) data.
+  // Prevent access to non-requested data to coerce the parser to send new
+  // request for non available (non-requested before) data.
   loader.set_is_new_data_available(false);
   loader.ClearRequestedSegments();
 
@@ -272,9 +269,8 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadSecondPageIfLinearizedWithHints) {
 
   // Prevent loading data, while page loading.
   loader.set_is_new_data_available(false);
-  FPDF_PAGE page = FPDF_LoadPage(document(), kSecondPageNum);
+  ScopedFPDFPage page(FPDF_LoadPage(document(), kSecondPageNum));
   EXPECT_TRUE(page);
-  FPDF_ClosePage(page);
 }
 
 TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingWholeDocument) {
