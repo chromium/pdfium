@@ -12,7 +12,6 @@
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/cfx_systemhandler.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;

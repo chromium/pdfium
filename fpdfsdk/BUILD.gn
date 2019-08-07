@@ -8,8 +8,6 @@ import("../testing/test.gni")
 
 jumbo_source_set("fpdfsdk") {
   sources = [
-    "cfx_systemhandler.cpp",
-    "cfx_systemhandler.h",
     "cpdf_annotcontext.cpp",
     "cpdf_annotcontext.h",
     "cpdfsdk_actionhandler.cpp",

@@ -15,8 +15,9 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/observed_ptr.h"
-#include "fpdfsdk/cfx_systemhandler.h"
+#include "core/fxcrt/timerhandler_iface.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "public/fpdf_formfill.h"
 
 class CFFL_InteractiveFormFiller;
@@ -45,10 +46,24 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE);
 // hierarcy back to the form fill environment itself, so as to flag any
 // lingering lifetime issues via the memory tools.
 
-class CPDFSDK_FormFillEnvironment final : public Observable {
+class CPDFSDK_FormFillEnvironment final : public Observable,
+                                          public TimerHandlerIface,
+                                          public IPWL_SystemHandler {
  public:
   CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
-  ~CPDFSDK_FormFillEnvironment();
+  ~CPDFSDK_FormFillEnvironment() override;
+
+  // TimerHandlerIface:
+  int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) override;
+  void KillTimer(int32_t nID) override;
+
+  // IPWL_SystemHandler:
+  void InvalidateRect(PerWindowData* pWidgetData,
+                      const CFX_FloatRect& rect) override;
+  void OutputSelectedRect(CFFL_FormFiller* pFormFiller,
+                          const CFX_FloatRect& rect) override;
+  bool IsSelectionImplemented() const override;
+  void SetCursor(int32_t nCursorType) override;
 
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
@@ -81,13 +96,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
 
   void ProcJavascriptFun();
   bool ProcOpenAction();
-
   void Invalidate(IPDF_Page* page, const FX_RECT& rect);
-  void OutputSelectedRect(IPDF_Page* page, const CFX_FloatRect& rect);
-
-  void SetCursor(int nCursorType);
-  int SetTimer(int uElapse, TimerCallback lpTimerFunc);
-  void KillTimer(int nTimerID);
 
 #ifdef PDF_ENABLE_V8
   FPDF_PAGE GetCurrentPage() const;
@@ -197,8 +206,8 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   void JS_docSubmitForm(void* formData, int length, const WideString& URL);
 
   ByteString GetAppName() const { return ByteString(); }
-  TimerHandlerIface* GetTimerHandler() const { return m_pSysHandler.get(); }
-  IPWL_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
+  TimerHandlerIface* GetTimerHandler() { return this; }
+  IPWL_SystemHandler* GetSysHandler() { return this; }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 
   // Creates if not present.
@@ -220,7 +229,6 @@ class CPDFSDK_FormFillEnvironment final : public Observable {
   ObservedPtr<CPDFSDK_Annot> m_pFocusAnnot;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
-  std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
   bool m_bChangeMask = false;
   bool m_bBeingDestroyed = false;
 };
