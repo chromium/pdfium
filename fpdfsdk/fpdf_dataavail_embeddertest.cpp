@@ -378,3 +378,20 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadNonExistsInfo) {
   // Test that api is robust enough to handle the bad case.
   EXPECT_FALSE(FPDF_GetMetaText(document_, "Type", nullptr, 0));
 }
+
+TEST_F(FPDFDataAvailEmbedderTest, BadInputsToAPIs) {
+  EXPECT_EQ(PDF_DATA_ERROR, FPDFAvail_IsDocAvail(nullptr, nullptr));
+  EXPECT_FALSE(FPDFAvail_GetDocument(nullptr, nullptr));
+  EXPECT_EQ(0, FPDFAvail_GetFirstPageNum(nullptr));
+  EXPECT_EQ(PDF_DATA_ERROR, FPDFAvail_IsPageAvail(nullptr, 0, nullptr));
+  EXPECT_EQ(PDF_FORM_ERROR, FPDFAvail_IsFormAvail(nullptr, nullptr));
+  EXPECT_EQ(PDF_LINEARIZATION_UNKNOWN, FPDFAvail_IsLinearized(nullptr));
+}
+
+TEST_F(FPDFDataAvailEmbedderTest, NegativePageIndex) {
+  TestAsyncLoader loader("linearized.pdf");
+  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
+  EXPECT_EQ(PDF_DATA_NOTAVAIL,
+            FPDFAvail_IsPageAvail(avail_, -1, loader.hints()));
+}
