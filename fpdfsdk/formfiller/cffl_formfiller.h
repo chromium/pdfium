@@ -12,12 +12,12 @@
 
 #include "core/fpdfdoc/cba_fontmap.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/cfx_systemhandler.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_timer.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
+#include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
@@ -137,7 +137,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   bool IsValid() const;
   CFX_FloatRect GetPDFAnnotRect() const;
 
-  CFX_SystemHandler* GetSystemHandler() const;
+  IPWL_SystemHandler* GetSystemHandler() const;
   CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
