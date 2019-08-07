@@ -142,6 +142,10 @@ CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
                                      : m_EventContextArray.back().get();
 }
 
+TimerHandlerIface* CJS_Runtime::GetTimerHandler() const {
+  return m_pFormFillEnv ? m_pFormFillEnv->GetSysHandler() : nullptr;
+}
+
 void CJS_Runtime::SetFormFillEnvToDocument() {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());

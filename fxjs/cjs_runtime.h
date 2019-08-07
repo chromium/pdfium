@@ -13,12 +13,13 @@
 #include <vector>
 
 #include "core/fxcrt/observed_ptr.h"
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "core/fxcrt/timerhandler_iface.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/ijs_runtime.h"
 
 class CJS_EventContext;
+class CPDFSDK_FormFillEnvironment;
 
 class CJS_Runtime final : public IJS_Runtime,
                           public CFXJS_Engine,
@@ -37,6 +38,7 @@ class CJS_Runtime final : public IJS_Runtime,
       const WideString& script) override;
 
   CJS_EventContext* GetCurrentEventContext() const;
+  TimerHandlerIface* GetTimerHandler() const;
 
   // Returns true if the event isn't already found in the set.
   bool AddEventToSet(const FieldEvent& event);

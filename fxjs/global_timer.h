@@ -7,7 +7,6 @@
 #ifndef FXJS_GLOBAL_TIMER_H_
 #define FXJS_GLOBAL_TIMER_H_
 
-#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cjs_runtime.h"
 
 class CJS_App;
@@ -20,7 +19,6 @@ class GlobalTimer {
   };
 
   GlobalTimer(CJS_App* pObj,
-              CPDFSDK_FormFillEnvironment* pFormFillEnv,
               CJS_Runtime* pRuntime,
               Type nType,
               const WideString& script,
@@ -40,16 +38,13 @@ class GlobalTimer {
  private:
   bool HasValidID() const;
 
-  const int32_t m_nTimerID;
-  CJS_App* const m_pEmbedApp;
-  bool m_bProcessing = false;
-
-  // data
   const Type m_nType;
+  bool m_bProcessing = false;
+  const int32_t m_nTimerID;
   const uint32_t m_dwTimeOut;
   const WideString m_swJScript;
   ObservedPtr<CJS_Runtime> m_pRuntime;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  CJS_App* const m_pEmbedApp;
 };
 
 #endif  // FXJS_GLOBAL_TIMER_H_
