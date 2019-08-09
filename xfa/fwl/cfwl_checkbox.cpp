@@ -127,9 +127,7 @@ void CFWL_CheckBox::Layout() {
                           m_rtClient.right() - fTextLeft, m_rtClient.height);
   m_rtCaption.Inflate(-kCaptionMargin, -kCaptionMargin);
 
-  CFX_RectF rtFocus(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
-                    m_rtCaption.height);
-
+  CFX_RectF rtFocus = m_rtCaption;
   CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider.Get(), m_TTOStyles,
                m_iTTOAlign, &rtFocus);
 

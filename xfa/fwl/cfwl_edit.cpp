@@ -445,7 +445,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
   if (!font)
     return;
 
-  pRenderDev->SetClip_Rect(clipRect);
+  pRenderDev->SetClip_Rect(clipRect.GetOuterRect());
 
   CFX_RectF rtDocClip = clipRect;
   if (rtDocClip.IsEmpty()) {

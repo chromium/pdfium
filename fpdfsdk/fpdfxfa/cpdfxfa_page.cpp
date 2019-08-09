@@ -234,10 +234,7 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
                                   CPDFSDK_Annot* pAnnot,
                                   const CFX_Matrix& mtUser2Device,
                                   const FX_RECT& rtClip) {
-  CFX_RectF rectClip(
-      static_cast<float>(rtClip.left), static_cast<float>(rtClip.top),
-      static_cast<float>(rtClip.Width()), static_cast<float>(rtClip.Height()));
-
+  CFX_RectF rectClip(rtClip);
   CXFA_Graphics gs(pDevice);
   gs.SetClipRect(rectClip);
 

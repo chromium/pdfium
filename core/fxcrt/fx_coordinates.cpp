@@ -268,6 +268,13 @@ FX_RECT CFX_FloatRect::ToRoundedFxRect() const {
                  FXSYS_round(bottom));
 }
 
+FX_RECT CFX_RectF::GetOuterRect() const {
+  return FX_RECT(static_cast<int32_t>(floor(left)),
+                 static_cast<int32_t>(floor(top)),
+                 static_cast<int32_t>(ceil(right())),
+                 static_cast<int32_t>(ceil(bottom())));
+}
+
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect) {
   os << "rect[w " << rect.Width() << " x h " << rect.Height() << " (left "

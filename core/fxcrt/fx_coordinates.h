@@ -182,7 +182,7 @@ using CFX_VectorF = CFX_VTemplate<float>;
 // LTRB rectangles (y-axis runs downwards).
 // Struct layout is compatible with win32 RECT.
 struct FX_RECT {
-  FX_RECT() : left(0), top(0), right(0), bottom(0) {}
+  FX_RECT() = default;
   FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
 
   int Width() const { return right - left; }
@@ -198,7 +198,6 @@ struct FX_RECT {
   }
 
   void Normalize();
-
   void Intersect(const FX_RECT& src);
   void Intersect(int l, int t, int r, int b) { Intersect(FX_RECT(l, t, r, b)); }
 
@@ -218,16 +217,16 @@ struct FX_RECT {
     return x >= left && x < right && y >= top && y < bottom;
   }
 
-  int32_t left;
-  int32_t top;
-  int32_t right;
-  int32_t bottom;
+  int32_t left = 0;
+  int32_t top = 0;
+  int32_t right = 0;
+  int32_t bottom = 0;
 };
 
 // LTRB rectangles (y-axis runs upwards).
 class CFX_FloatRect {
  public:
-  constexpr CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
+  constexpr CFX_FloatRect() = default;
   constexpr CFX_FloatRect(float l, float b, float r, float t)
       : left(l), bottom(b), right(r), top(t) {}
 
@@ -310,10 +309,10 @@ class CFX_FloatRect {
   // Rounds LBRT values.
   FX_RECT ToRoundedFxRect() const;
 
-  float left;
-  float bottom;
-  float right;
-  float top;
+  float left = 0.0f;
+  float bottom = 0.0f;
+  float right = 0.0f;
+  float top = 0.0f;
 };
 
 #ifndef NDEBUG
@@ -326,7 +325,7 @@ class CFX_RectF {
   using PointType = CFX_PointF;
   using SizeType = CFX_SizeF;
 
-  CFX_RectF() : left(0), top(0), width(0), height(0) {}
+  CFX_RectF() = default;
   CFX_RectF(float dst_left, float dst_top, float dst_width, float dst_height)
       : left(dst_left), top(dst_top), width(dst_width), height(dst_height) {}
   CFX_RectF(float dst_left, float dst_top, const SizeType& dst_size)
@@ -338,13 +337,14 @@ class CFX_RectF {
       : left(p.x), top(p.y), width(dst_width), height(dst_height) {}
   CFX_RectF(const PointType& p1, const SizeType& s2)
       : left(p1.x), top(p1.y), width(s2.width), height(s2.height) {}
+  explicit CFX_RectF(const FX_RECT& that)
+      : left(static_cast<float>(that.left)),
+        top(static_cast<float>(that.top)),
+        width(static_cast<float>(that.Width())),
+        height(static_cast<float>(that.Height())) {}
 
   // NOLINTNEXTLINE(runtime/explicit)
-  CFX_RectF(const CFX_RectF& other)
-      : left(other.left),
-        top(other.top),
-        width(other.width),
-        height(other.height) {}
+  CFX_RectF(const CFX_RectF& other) = default;
 
   CFX_RectF& operator+=(const PointType& p) {
     left += p.x;
@@ -498,10 +498,14 @@ class CFX_RectF {
     return CFX_FloatRect(left, top, right(), bottom());
   }
 
-  float left;
-  float top;
-  float width;
-  float height;
+  // Returned rect has bounds rounded up/down such that the original is
+  // contained in it.
+  FX_RECT GetOuterRect() const;
+
+  float left = 0.0f;
+  float top = 0.0f;
+  float width = 0.0f;
+  float height = 0.0f;
 };
 
 #ifndef NDEBUG

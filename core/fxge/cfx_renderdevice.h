@@ -67,13 +67,10 @@ class CFX_RenderDevice {
                               int width,
                               int height) const;
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
+  bool SetClip_Rect(const FX_RECT& pRect);
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
                         int fill_mode);
-#ifdef PDF_ENABLE_XFA
-  bool SetClip_Rect(const CFX_RectF& rtClip);
-#endif
-  bool SetClip_Rect(const FX_RECT& pRect);
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
