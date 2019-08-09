@@ -496,7 +496,7 @@ RetainPtr<CPDF_Font> CBA_FontMap::AddStandardFont(CPDF_Document* pDoc,
   if (sFontName == "ZapfDingbats")
     return pPageData->AddStandardFont(sFontName.c_str(), nullptr);
 
-  CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
+  static const CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
   return pPageData->AddStandardFont(sFontName.c_str(), &fe);
 }
 

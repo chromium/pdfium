@@ -35,7 +35,6 @@ class CPDF_FontEncoding {
  public:
   static constexpr size_t kEncodingTableSize = 256;
 
-  CPDF_FontEncoding();
   explicit CPDF_FontEncoding(int PredefinedEncoding);
 
   bool IsIdentical(const CPDF_FontEncoding* pAnother) const;

@@ -499,7 +499,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
     pFont = CPDF_Font::GetStockFont(m_pDocument.Get(), "Helvetica");
 
   FontData data;
-  CPDF_FontEncoding* pEncoding = nullptr;
+  const CPDF_FontEncoding* pEncoding = nullptr;
   if (pFont->IsType1Font()) {
     data.type = "Type1";
     pEncoding = pFont->AsType1Font()->GetEncoding();

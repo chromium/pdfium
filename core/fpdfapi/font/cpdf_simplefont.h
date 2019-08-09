@@ -26,7 +26,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   WideString UnicodeFromCharCode(uint32_t charcode) const override;
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
-  CPDF_FontEncoding* GetEncoding() { return &m_Encoding; }
+  const CPDF_FontEncoding* GetEncoding() const { return &m_Encoding; }
 
   bool HasFontWidths() const override;
 
@@ -40,7 +40,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   void LoadCharMetrics(int charcode);
   void LoadPDFEncoding(bool bEmbedded, bool bTrueType);
 
-  CPDF_FontEncoding m_Encoding;
+  CPDF_FontEncoding m_Encoding{PDFFONT_ENCODING_BUILTIN};
   int m_BaseEncoding = PDFFONT_ENCODING_BUILTIN;
   bool m_bUseFontWidth;
   std::vector<ByteString> m_CharNames;
