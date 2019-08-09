@@ -24,8 +24,8 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/cpdfsdk_xfawidgethandler.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widgethandler.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
@@ -35,7 +35,7 @@ CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
 #ifdef PDF_ENABLE_XFA
       ,
       m_pXFAWidgetHandler(
-          pdfium::MakeUnique<CPDFSDK_XFAWidgetHandler>(pFormFillEnv))
+          pdfium::MakeUnique<CPDFXFA_WidgetHandler>(pFormFillEnv))
 #endif  // PDF_ENABLE_XFA
 {
 }

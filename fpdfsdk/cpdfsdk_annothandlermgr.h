@@ -22,7 +22,7 @@ class CPDFSDK_PageView;
 class IPDFSDK_AnnotHandler;
 
 #ifdef PDF_ENABLE_XFA
-class CPDFSDK_XFAWidgetHandler;
+class CPDFXFA_WidgetHandler;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
@@ -118,7 +118,7 @@ class CPDFSDK_AnnotHandlerMgr {
   std::unique_ptr<CPDFSDK_BAAnnotHandler> m_pBAAnnotHandler;
   std::unique_ptr<CPDFSDK_WidgetHandler> m_pWidgetHandler;
 #ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CPDFSDK_XFAWidgetHandler> m_pXFAWidgetHandler;
+  std::unique_ptr<CPDFXFA_WidgetHandler> m_pXFAWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 };
 

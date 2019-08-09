@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_
-#define FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_WIDGETHANDLER_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_WIDGETHANDLER_H_
 
 #include <memory>
 
@@ -22,10 +22,10 @@ class CPDFSDK_PageView;
 class CXFA_FFWidget;
 class CXFA_FFWidgetHandler;
 
-class CPDFSDK_XFAWidgetHandler final : public IPDFSDK_AnnotHandler {
+class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
  public:
-  explicit CPDFSDK_XFAWidgetHandler(CPDFSDK_FormFillEnvironment* pApp);
-  ~CPDFSDK_XFAWidgetHandler() override;
+  explicit CPDFXFA_WidgetHandler(CPDFSDK_FormFillEnvironment* pApp);
+  ~CPDFXFA_WidgetHandler() override;
 
   bool CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
@@ -108,4 +108,4 @@ class CPDFSDK_XFAWidgetHandler final : public IPDFSDK_AnnotHandler {
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
 };
 
-#endif  // FPDFSDK_CPDFSDK_XFAWIDGETHANDLER_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_WIDGETHANDLER_H_

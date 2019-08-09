@@ -100,8 +100,6 @@ jumbo_source_set("fpdfsdk") {
     sources += [
       "cpdfsdk_xfawidget.cpp",
       "cpdfsdk_xfawidget.h",
-      "cpdfsdk_xfawidgethandler.cpp",
-      "cpdfsdk_xfawidgethandler.h",
     ]
 
     deps += [
