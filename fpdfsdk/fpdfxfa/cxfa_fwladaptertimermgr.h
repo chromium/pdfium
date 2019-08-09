@@ -19,9 +19,7 @@ class CXFA_FWLAdapterTimerMgr final : public IFWL_AdapterTimerMgr {
   explicit CXFA_FWLAdapterTimerMgr(TimerHandlerIface* pTimerHandler);
   ~CXFA_FWLAdapterTimerMgr() override;
 
-  CFWL_TimerInfo* Start(CFWL_Timer* pTimer,
-                        uint32_t dwElapse,
-                        bool bImmediately) override;
+  CFWL_TimerInfo* Start(CFWL_Timer* pTimer, uint32_t dwElapse) override;
   void Stop(CFWL_TimerInfo* pTimerInfo) override;
 
  private:

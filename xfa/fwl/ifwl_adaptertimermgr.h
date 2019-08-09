@@ -13,9 +13,7 @@ class IFWL_AdapterTimerMgr {
  public:
   virtual ~IFWL_AdapterTimerMgr() = default;
 
-  virtual CFWL_TimerInfo* Start(CFWL_Timer* pTimer,
-                                uint32_t dwElapse,
-                                bool bImmediately) = 0;
+  virtual CFWL_TimerInfo* Start(CFWL_Timer* pTimer, uint32_t dwElapse) = 0;
   virtual void Stop(CFWL_TimerInfo* pTimerInfo) = 0;
 };
 

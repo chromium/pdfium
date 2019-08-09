@@ -63,7 +63,7 @@ void CFWL_Caret::ShowCaret() {
     pOldTimerInfo->StopTimer();
   }
 
-  m_pTimerInfo = m_pTimer->StartTimer(kBlinkPeriodMs, true);
+  m_pTimerInfo = m_pTimer->StartTimer(kBlinkPeriodMs);
   RemoveStates(FWL_WGTSTATE_Invisible);
   SetStates(kStateHighlight);
 }

@@ -50,8 +50,7 @@ CXFA_FWLAdapterTimerMgr::CXFA_FWLAdapterTimerMgr(
 CXFA_FWLAdapterTimerMgr::~CXFA_FWLAdapterTimerMgr() = default;
 
 CFWL_TimerInfo* CXFA_FWLAdapterTimerMgr::Start(CFWL_Timer* pTimer,
-                                               uint32_t dwElapse,
-                                               bool bImmediately) {
+                                               uint32_t dwElapse) {
   if (!g_TimerArray)
     g_TimerArray = new std::vector<std::unique_ptr<CFWL_TimerInfo>>;
 

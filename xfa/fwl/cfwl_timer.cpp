@@ -15,7 +15,7 @@ CFWL_Timer::CFWL_Timer(CFWL_Widget* parent) : m_pWidget(parent) {}
 
 CFWL_Timer::~CFWL_Timer() {}
 
-CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
+CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse) {
   CFWL_App::AdapterIface* pAdapterNative =
       m_pWidget->GetOwnerApp()->GetAdapterNative();
   if (!pAdapterNative)
@@ -27,5 +27,5 @@ CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   if (!m_pAdapterTimerMgr)
     return nullptr;
 
-  return m_pAdapterTimerMgr->Start(this, dwElapse, bImmediately);
+  return m_pAdapterTimerMgr->Start(this, dwElapse);
 }

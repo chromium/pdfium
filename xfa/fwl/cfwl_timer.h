@@ -22,7 +22,7 @@ class CFWL_Timer {
   virtual ~CFWL_Timer();
 
   virtual void Run(CFWL_TimerInfo* hTimer) = 0;
-  CFWL_TimerInfo* StartTimer(uint32_t dwElapse, bool bImmediately);
+  CFWL_TimerInfo* StartTimer(uint32_t dwElapse);
 
  protected:
   UnownedPtr<CFWL_Widget> m_pWidget;

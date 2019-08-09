@@ -357,7 +357,7 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
     DoMouseDown(4, m_rtMaxTrack, m_iMaxTrackState, point);
 
   if (!SendEvent())
-    m_pTimerInfo = m_Timer.StartTimer(FWL_SCROLLBAR_Elapse, true);
+    m_pTimerInfo = m_Timer.StartTimer(FWL_SCROLLBAR_Elapse);
 }
 
 void CFWL_ScrollBar::OnLButtonUp(const CFX_PointF& point) {
@@ -472,5 +472,5 @@ void CFWL_ScrollBar::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   }
 
   if (!pScrollBar->SendEvent())
-    pScrollBar->m_pTimerInfo = StartTimer(0, true);
+    pScrollBar->m_pTimerInfo = StartTimer(0);
 }
