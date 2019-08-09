@@ -6,13 +6,15 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 
+#include <memory>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
-#include "public/fpdf_formfill.h"
-#include "third_party/base/compiler_specific.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
@@ -165,4 +167,28 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
   }
 
   return CFX_Matrix();
+}
+
+CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot,
+                                             bool bNext) {
+  ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
+  CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
+  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
+      GetXFAPageView()->CreateWidgetIterator(XFA_TRAVERSEWAY_Tranvalse,
+                                             XFA_WidgetStatus_Visible |
+                                                 XFA_WidgetStatus_Viewable |
+                                                 XFA_WidgetStatus_Focused));
+
+  // Check |pSDKAnnot| again because JS may have destroyed it
+  if (!pObservedAnnot || !pWidgetIterator)
+    return nullptr;
+
+  if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
+    pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
+  CXFA_FFWidget* hNextFocus =
+      bNext ? pWidgetIterator->MoveToNext() : pWidgetIterator->MoveToPrevious();
+  if (!hNextFocus && pSDKAnnot)
+    hNextFocus = pWidgetIterator->MoveToFirst();
+
+  return pPageView->GetAnnotByXFAWidget(hNextFocus);
 }

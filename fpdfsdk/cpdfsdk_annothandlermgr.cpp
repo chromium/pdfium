@@ -26,8 +26,6 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/cpdfsdk_xfawidgethandler.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#include "xfa/fxfa/cxfa_ffpageview.h"
-#include "xfa/fxfa/cxfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
@@ -314,28 +312,10 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView* pPageView,
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
                                                      bool bNext) {
 #ifdef PDF_ENABLE_XFA
-  ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
-  CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
-  CPDFXFA_Page* pPage = pPageView->GetPDFXFAPage();
+  CPDFXFA_Page* pPage = pSDKAnnot->GetPageView()->GetPDFXFAPage();
   if (pPage && !pPage->AsPDFPage()) {
     // For xfa annots in XFA pages not backed by PDF pages.
-    std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
-        pPage->GetXFAPageView()->CreateWidgetIterator(
-            XFA_TRAVERSEWAY_Tranvalse, XFA_WidgetStatus_Visible |
-                                           XFA_WidgetStatus_Viewable |
-                                           XFA_WidgetStatus_Focused));
-
-    // Check |pSDKAnnot| again because JS may have destroyed it
-    if (!pObservedAnnot || !pWidgetIterator)
-      return nullptr;
-    if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
-      pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
-    CXFA_FFWidget* hNextFocus = bNext ? pWidgetIterator->MoveToNext()
-                                      : pWidgetIterator->MoveToPrevious();
-    if (!hNextFocus && pSDKAnnot)
-      hNextFocus = pWidgetIterator->MoveToFirst();
-
-    return pPageView->GetAnnotByXFAWidget(hNextFocus);
+    return pPage->GetNextXFAAnnot(pSDKAnnot, bNext);
   }
 #endif  // PDF_ENABLE_XFA
 

@@ -17,6 +17,7 @@
 #include "third_party/base/optional.h"
 
 class CPDF_Dictionary;
+class CPDFSDK_Annot;
 class CPDFXFA_Context;
 class CXFA_FFPageView;
 
@@ -47,6 +48,7 @@ class CPDFXFA_Page final : public IPDF_Page {
   int GetPageIndex() const { return m_iPageIndex; }
   void SetXFAPageViewIndex(int index) { m_iPageIndex = index; }
   CXFA_FFPageView* GetXFAPageView() const;
+  CPDFSDK_Annot* GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
 
  private:
   // Refcounted class.
