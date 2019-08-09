@@ -39,7 +39,9 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     CPDF_Document* pDoc,
     FPDF_FORMFILLINFO* pFFinfo)
-    : m_pInfo(pFFinfo), m_pCPDFDoc(pDoc) {}
+    : m_pInfo(pFFinfo), m_pCPDFDoc(pDoc) {
+  ASSERT(m_pCPDFDoc);
+}
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
   m_bBeingDestroyed = true;
@@ -590,9 +592,6 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
 }
 
 bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
-  if (!m_pCPDFDoc)
-    return false;
-
   CPDF_Dictionary* pRoot = m_pCPDFDoc->GetRoot();
   if (!pRoot)
     return false;

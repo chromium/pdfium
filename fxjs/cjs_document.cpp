@@ -823,14 +823,14 @@ CJS_Result CJS_Document::set_subject(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_title(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetPDFDocument())
+  if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   return getPropertyInternal(pRuntime, "Title");
 }
 
 CJS_Result CJS_Document::set_title(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetPDFDocument())
+  if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   return setPropertyInternal(pRuntime, vp, "Title");
 }
@@ -1230,9 +1230,6 @@ CJS_Result CJS_Document::getPageNthWord(
   bool bStrip = params.size() > 2 ? pRuntime->ToBoolean(params[2]) : true;
 
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
-  if (!pDocument)
-    return CJS_Result::Failure(JSMessage::kBadObjectError);
-
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -1371,9 +1368,6 @@ CJS_Result CJS_Document::gotoNamedDest(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
-  if (!pDocument)
-    return CJS_Result::Failure(JSMessage::kBadObjectError);
-
   CPDF_NameTree nameTree(pDocument, "Dests");
   CPDF_Array* destArray =
       nameTree.LookupNamedDest(pDocument, pRuntime->ToWideString(params[0]));
