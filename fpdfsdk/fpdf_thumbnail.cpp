@@ -23,7 +23,7 @@ const CPDF_Stream* CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
     return nullptr;
 
   const CPDF_Dictionary* page_dict = p_page->GetDict();
-  if (!page_dict || !page_dict->KeyExist("Type"))
+  if (!page_dict->KeyExist("Type"))
     return nullptr;
 
   return page_dict->GetStreamFor("Thumb");

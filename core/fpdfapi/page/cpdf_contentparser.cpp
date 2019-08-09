@@ -25,7 +25,7 @@
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
   ASSERT(pPage);
-  if (!pPage->GetDocument() || !pPage->GetDict()) {
+  if (!pPage->GetDocument()) {
     m_CurrentStage = Stage::kComplete;
     return;
   }

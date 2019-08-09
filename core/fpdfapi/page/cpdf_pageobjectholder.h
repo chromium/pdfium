@@ -66,8 +66,6 @@ class CPDF_PageObjectHolder {
 
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
-  // TODO(thestig): Can this return nullptr? If not, audit callers and simplify
-  // the ones that assume it can.
   CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   size_t GetPageObjectCount() const { return m_PageObjectList.size(); }
   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;

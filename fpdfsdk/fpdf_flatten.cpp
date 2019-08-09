@@ -84,7 +84,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
                  std::vector<CFX_FloatRect>* pRectArray,
                  std::vector<CPDF_Dictionary*>* pObjectArray,
                  int nUsage) {
-  if (!pSourceDoc || !pPageDic)
+  if (!pSourceDoc)
     return FLATTEN_FAIL;
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
@@ -253,7 +253,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   CPDF_Document* pDocument = pPage->GetDocument();
   CPDF_Dictionary* pPageDict = pPage->GetDict();
-  if (!pDocument || !pPageDict)
+  if (!pDocument)
     return FLATTEN_FAIL;
 
   std::vector<CPDF_Dictionary*> ObjectArray;

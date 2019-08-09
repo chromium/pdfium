@@ -879,11 +879,7 @@ bool CPDF_InteractiveForm::HasXFAForm() const {
 }
 
 void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
-  CPDF_Dictionary* pPageDict = pPage->GetDict();
-  if (!pPageDict)
-    return;
-
-  CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots");
+  CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnots)
     return;
 

@@ -1192,11 +1192,8 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   CFX_Matrix matrix = mtObj2Device * buffer.GetMatrix();
   const CPDF_Dictionary* pFormResource = nullptr;
   const CPDF_FormObject* pFormObj = pObj->AsForm();
-  if (pFormObj) {
-    const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
-    if (pFormDict)
-      pFormResource = pFormDict->GetDictFor("Resources");
-  }
+  if (pFormObj)
+    pFormResource = pFormObj->form()->GetDict()->GetDictFor("Resources");
   CPDF_RenderStatus status(m_pContext.Get(), buffer.GetDevice());
   status.SetOptions(m_Options);
   status.SetDeviceMatrix(buffer.GetMatrix());
@@ -1219,9 +1216,8 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
     return true;
   }
   CFX_Matrix matrix = pFormObj->form_matrix() * mtObj2Device;
-  const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
   const CPDF_Dictionary* pResources =
-      pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
+      pFormObj->form()->GetDict()->GetDictFor("Resources");
   CPDF_RenderStatus status(m_pContext.Get(), m_pDevice);
   status.SetOptions(m_Options);
   status.SetStopObject(m_pStopObj.Get());
@@ -1453,9 +1449,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     group_alpha = pFormObj->m_GeneralState.GetFillAlpha();
     transparency = pFormObj->form()->GetTransparency();
     bGroupTransparent = transparency.IsIsolated();
-    const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
-    if (pFormDict)
-      pFormResource = pFormDict->GetDictFor("Resources");
+    pFormResource = pFormObj->form()->GetDict()->GetDictFor("Resources");
   }
   bool bTextClip =
       (pPageObj->m_ClipPath.HasRef() &&
@@ -1475,11 +1469,9 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     }
     const CPDF_Dictionary* pPageResources =
         pPage ? pPage->m_pPageResources.Get() : nullptr;
-    const CPDF_Object* pCSObj = pPageObj->AsImage()
-                                    ->GetImage()
-                                    ->GetStream()
-                                    ->GetDict()
-                                    ->GetDirectObjectFor("ColorSpace");
+    auto* pImageStream = pPageObj->AsImage()->GetImage()->GetStream();
+    const CPDF_Object* pCSObj =
+        pImageStream->GetDict()->GetDirectObjectFor("ColorSpace");
     RetainPtr<CPDF_ColorSpace> pColorSpace =
         CPDF_DocPageData::FromDocument(pDocument)->GetColorSpace(
             pCSObj, pPageResources);
@@ -1839,10 +1831,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       options.GetOptions().bRectAA = true;
       options.GetOptions().bForceDownsample = false;
 
-      const CPDF_Dictionary* pFormResource = nullptr;
-      auto* pForm = static_cast<const CPDF_Form*>(pType3Char->form());
-      if (pForm->GetDict())
-        pFormResource = pForm->GetDict()->GetDictFor("Resources");
+      const auto* pForm = static_cast<const CPDF_Form*>(pType3Char->form());
+      const CPDF_Dictionary* pFormResource =
+          pForm->GetDict()->GetDictFor("Resources");
 
       if (fill_alpha == 255) {
         CPDF_RenderStatus status(m_pContext.Get(), m_pDevice);
@@ -2554,9 +2545,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     bitmap->Clear(0);
   }
 
-  const CPDF_Dictionary* pFormResource = nullptr;
-  if (form.GetDict())
-    pFormResource = form.GetDict()->GetDictFor("Resources");
+  const CPDF_Dictionary* pFormResource =
+      form.GetDict()->GetDictFor("Resources");
   CPDF_RenderOptions options;
   options.SetColorMode(bLuminosity ? CPDF_RenderOptions::kNormal
                                    : CPDF_RenderOptions::kAlpha);

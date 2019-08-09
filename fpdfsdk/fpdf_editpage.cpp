@@ -61,7 +61,7 @@ bool IsPageObject(CPDF_Page* pPage) {
     return false;
 
   const CPDF_Dictionary* pFormDict = pPage->GetDict();
-  if (!pFormDict || !pFormDict->KeyExist("Type"))
+  if (!pFormDict->KeyExist("Type"))
     return false;
 
   const CPDF_Object* pObject = pFormDict->GetObjectFor("Type")->GetDirect();

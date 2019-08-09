@@ -60,9 +60,7 @@ bool GetBoundingBox(CPDF_Page* page,
 }
 
 CPDF_Object* GetPageContent(CPDF_Dictionary* pPageDict) {
-  return pPageDict
-             ? pPageDict->GetDirectObjectFor(pdfium::page_object::kContents)
-             : nullptr;
+  return pPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
 }
 
 }  // namespace

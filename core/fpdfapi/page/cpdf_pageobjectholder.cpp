@@ -40,8 +40,7 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder(CPDF_Document* pDoc,
       m_pResources(pResources),
       m_pDict(pDict),
       m_pDocument(pDoc) {
-  // TODO(thestig): Check if |m_pDict| is never a nullptr and simplify
-  // callers that checks for that.
+  ASSERT(m_pDict);
 }
 
 CPDF_PageObjectHolder::~CPDF_PageObjectHolder() = default;
@@ -89,9 +88,6 @@ std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
 }
 
 void CPDF_PageObjectHolder::LoadTransInfo() {
-  if (!m_pDict)
-    return;
-
   CPDF_Dictionary* pGroup = m_pDict->GetDictFor("Group");
   if (!pGroup)
     return;
