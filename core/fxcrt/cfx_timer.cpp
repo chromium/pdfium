@@ -4,23 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pwl/cpwl_timer.h"
+#include "core/fxcrt/cfx_timer.h"
 
 #include <map>
 
 namespace {
 
-std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
+std::map<int32_t, CFX_Timer*>& GetPWLTimeMap() {
   // Leak the object at shutdown.
-  static auto* timeMap = new std::map<int32_t, CPWL_Timer*>;
+  static auto* timeMap = new std::map<int32_t, CFX_Timer*>;
   return *timeMap;
 }
 
 }  // namespace
 
-CPWL_Timer::CPWL_Timer(TimerHandlerIface* pTimerHandler,
-                       CallbackIface* pCallbackIface,
-                       int32_t nInterval)
+CFX_Timer::CFX_Timer(TimerHandlerIface* pTimerHandler,
+                     CallbackIface* pCallbackIface,
+                     int32_t nInterval)
     : m_nTimerID(pTimerHandler->SetTimer(nInterval, TimerProc)),
       m_pTimerHandler(pTimerHandler),
       m_pCallbackIface(pCallbackIface) {
@@ -29,7 +29,7 @@ CPWL_Timer::CPWL_Timer(TimerHandlerIface* pTimerHandler,
     GetPWLTimeMap()[m_nTimerID] = this;
 }
 
-CPWL_Timer::~CPWL_Timer() {
+CFX_Timer::~CFX_Timer() {
   if (HasValidID()) {
     m_pTimerHandler->KillTimer(m_nTimerID);
     GetPWLTimeMap().erase(m_nTimerID);
@@ -37,7 +37,7 @@ CPWL_Timer::~CPWL_Timer() {
 }
 
 // static
-void CPWL_Timer::TimerProc(int32_t idEvent) {
+void CFX_Timer::TimerProc(int32_t idEvent) {
   auto it = GetPWLTimeMap().find(idEvent);
   if (it != GetPWLTimeMap().end())
     it->second->m_pCallbackIface->OnTimerFired();

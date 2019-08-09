@@ -9,10 +9,10 @@
 
 #include <memory>
 
-#include "fpdfsdk/pwl/cpwl_timer.h"
+#include "core/fxcrt/cfx_timer.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class CPWL_Caret final : public CPWL_Wnd, public CPWL_Timer::CallbackIface {
+class CPWL_Caret final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
  public:
   CPWL_Caret(const CreateParams& cp,
              std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
@@ -24,7 +24,7 @@ class CPWL_Caret final : public CPWL_Wnd, public CPWL_Timer::CallbackIface {
   bool InvalidateRect(CFX_FloatRect* pRect) override;
   bool SetVisible(bool bVisible) override;
 
-  // CPWL_Timer::CallbackIface:
+  // CFX_Timer::CallbackIface:
   void OnTimerFired() override;
 
   void SetCaret(bool bVisible,
@@ -40,7 +40,7 @@ class CPWL_Caret final : public CPWL_Wnd, public CPWL_Timer::CallbackIface {
   CFX_PointF m_ptFoot;
   float m_fWidth = 0.4f;
   CFX_FloatRect m_rcInvalid;
-  std::unique_ptr<CPWL_Timer> m_pTimer;
+  std::unique_ptr<CFX_Timer> m_pTimer;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_CARET_H_

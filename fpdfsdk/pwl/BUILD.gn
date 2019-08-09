@@ -30,8 +30,6 @@ jumbo_source_set("pwl") {
     "cpwl_scroll_bar.h",
     "cpwl_special_button.cpp",
     "cpwl_special_button.h",
-    "cpwl_timer.cpp",
-    "cpwl_timer.h",
     "cpwl_wnd.cpp",
     "cpwl_wnd.h",
     "ipwl_systemhandler.h",

@@ -676,7 +676,7 @@ void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_PointF& point) {
 
   NotifyScrollWindow();
   m_bMinOrMax = true;
-  m_pTimer = pdfium::MakeUnique<CPWL_Timer>(GetTimerHandler(), this, 100);
+  m_pTimer = pdfium::MakeUnique<CFX_Timer>(GetTimerHandler(), this, 100);
 }
 
 void CPWL_ScrollBar::OnMinButtonLBUp(const CFX_PointF& point) {}
@@ -690,7 +690,7 @@ void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_PointF& point) {
 
   NotifyScrollWindow();
   m_bMinOrMax = false;
-  m_pTimer = pdfium::MakeUnique<CPWL_Timer>(GetTimerHandler(), this, 100);
+  m_pTimer = pdfium::MakeUnique<CFX_Timer>(GetTimerHandler(), this, 100);
 }
 
 void CPWL_ScrollBar::OnMaxButtonLBUp(const CFX_PointF& point) {}

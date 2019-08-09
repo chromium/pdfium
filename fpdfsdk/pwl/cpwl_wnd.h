@@ -11,11 +11,11 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/pwl/cpwl_timer.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
 class CPWL_Edit;

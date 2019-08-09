@@ -9,8 +9,8 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/pwl/cpwl_timer.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 struct PWL_SCROLL_INFO {
@@ -114,7 +114,7 @@ struct PWL_SCROLL_PRIVATEDATA {
   float fSmallStep;
 };
 
-class CPWL_ScrollBar final : public CPWL_Wnd, public CPWL_Timer::CallbackIface {
+class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
  public:
   CPWL_ScrollBar(
       const CreateParams& cp,
@@ -136,7 +136,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CPWL_Timer::CallbackIface {
   void NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void CreateChildWnd(const CreateParams& cp) override;
 
-  // CPWL_Timer::CallbackIface:
+  // CFX_Timer::CallbackIface:
   void OnTimerFired() override;
 
   float GetScrollBarWidth() const;
@@ -176,7 +176,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CPWL_Timer::CallbackIface {
   UnownedPtr<CPWL_SBButton> m_pMinButton;
   UnownedPtr<CPWL_SBButton> m_pMaxButton;
   UnownedPtr<CPWL_SBButton> m_pPosButton;
-  std::unique_ptr<CPWL_Timer> m_pTimer;
+  std::unique_ptr<CFX_Timer> m_pTimer;
   PWL_SCROLL_PRIVATEDATA m_sData;
   bool m_bMouseDown = false;
   bool m_bMinOrMax = false;
