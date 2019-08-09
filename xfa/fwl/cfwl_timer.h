@@ -21,7 +21,7 @@ class CFWL_Timer {
   explicit CFWL_Timer(CFWL_Widget* parent);
   virtual ~CFWL_Timer();
 
-  virtual void Run(CFWL_TimerInfo* hTimer) = 0;
+  virtual void OnTimerFired() = 0;
   CFWL_TimerInfo* StartTimer(uint32_t dwElapse);
 
  protected:

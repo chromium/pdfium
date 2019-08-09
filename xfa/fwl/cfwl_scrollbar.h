@@ -60,7 +60,7 @@ class CFWL_ScrollBar final : public CFWL_Widget {
     explicit Timer(CFWL_ScrollBar* pToolTip);
     ~Timer() override {}
 
-    void Run(CFWL_TimerInfo* pTimerInfo) override;
+    void OnTimerFired() override;
   };
   friend class CFWL_ScrollBar::Timer;
 

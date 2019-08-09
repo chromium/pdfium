@@ -35,7 +35,7 @@ void TimerProc(int32_t idEvent) {
   for (const auto& info : *g_TimerArray) {
     auto* pInfo = static_cast<CFWL_FWLAdapterTimerInfo*>(info.get());
     if (pInfo->idEvent == idEvent) {
-      pInfo->pTimer->Run(pInfo);
+      pInfo->pTimer->OnTimerFired();
       break;
     }
   }

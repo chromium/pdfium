@@ -464,7 +464,7 @@ void CFWL_ScrollBar::DoMouseHover(int32_t iItem,
 
 CFWL_ScrollBar::Timer::Timer(CFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}
 
-void CFWL_ScrollBar::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
+void CFWL_ScrollBar::Timer::OnTimerFired() {
   CFWL_ScrollBar* pScrollBar = static_cast<CFWL_ScrollBar*>(m_pWidget.Get());
   if (pScrollBar->m_pTimerInfo) {
     pScrollBar->m_pTimerInfo->StopTimer();

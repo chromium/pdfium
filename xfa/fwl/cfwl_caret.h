@@ -40,7 +40,7 @@ class CFWL_Caret final : public CFWL_Widget {
     explicit Timer(CFWL_Caret* pCaret);
     ~Timer() override {}
 
-    void Run(CFWL_TimerInfo* hTimer) override;
+    void OnTimerFired() override;
   };
   friend class CFWL_Caret::Timer;
 
