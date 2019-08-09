@@ -28,9 +28,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
-#include "xfa/fxfa/cxfa_ffwidgethandler.h"
-#include "xfa/fxfa/cxfa_rendercontext.h"
-#include "xfa/fxgraphics/cxfa_graphics.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -78,26 +75,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
   auto* pContext = static_cast<CPDFXFA_Context*>(pPage->GetDocumentExtension());
   if (pContext->GetFormType() == FormType::kXFAFull) {
-    CFX_RectF rectClip(
-        static_cast<float>(pClip.left), static_cast<float>(pClip.top),
-        static_cast<float>(pClip.Width()), static_cast<float>(pClip.Height()));
-
-    CXFA_Graphics gs(pDevice);
-    gs.SetClipRect(rectClip);
-
-    CXFA_FFPageView* xfaView = pPage->GetXFAPageView();
-    CXFA_RenderContext renderContext(xfaView, rectClip, mtUser2Device);
-    renderContext.DoRender(&gs);
-
-    CXFA_FFDocView* docView = xfaView->GetDocView();
-    if (!docView)
-      return;
-    CPDFSDK_Annot* annot = GetFocusAnnot();
-    if (!annot)
-      return;
-    // Render the focus widget
-    docView->GetWidgetHandler()->RenderWidget(annot->GetXFAWidget(), &gs,
-                                              mtUser2Device, false);
+    pPage->DrawFocusAnnot(pDevice, GetFocusAnnot(), mtUser2Device, pClip);
     return;
   }
 #endif  // PDF_ENABLE_XFA
