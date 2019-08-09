@@ -979,7 +979,7 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
                    (pChar->colored() && MissingStrokeColor(pColorState)));
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 class ScopedSkiaDeviceFlush {
  public:
   explicit ScopedSkiaDeviceFlush(CFX_RenderDevice* pDevice)
@@ -2152,7 +2152,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-#if defined(_SKIA_SUPPORT_)
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   ScopedSkiaDeviceFlush scoped_skia_device_flush(m_pDevice);
 #endif
   if (!ClipPattern(pPageObj, mtObj2Device, bStroke))
