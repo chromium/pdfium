@@ -17,6 +17,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_rendercontext.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
@@ -194,6 +195,39 @@ CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot,
     hNextFocus = pWidgetIterator->MoveToFirst();
 
   return pPageView->GetAnnotByXFAWidget(hNextFocus);
+}
+
+int CPDFXFA_Page::HasFormFieldAtPoint(const CFX_PointF& point) const {
+  CXFA_FFPageView* pPageView = GetXFAPageView();
+  if (!pPageView)
+    return -1;
+
+  CXFA_FFDocView* pDocView = pPageView->GetDocView();
+  if (!pDocView)
+    return -1;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
+  if (!pWidgetHandler)
+    return -1;
+
+  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
+      pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form,
+                                      XFA_WidgetStatus_Viewable));
+  if (!pWidgetIterator)
+    return -1;
+
+  CXFA_FFWidget* pXFAAnnot;
+  while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {
+    if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA)
+      continue;
+
+    CFX_FloatRect rcWidget = pXFAAnnot->GetWidgetRect().ToFloatRect();
+    rcWidget.Inflate(1.0f, 1.0f);
+    if (rcWidget.Contains(point))
+      return static_cast<int>(pXFAAnnot->GetFormFieldType());
+  }
+
+  return -1;
 }
 
 void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,

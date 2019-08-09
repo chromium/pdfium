@@ -29,9 +29,6 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#include "xfa/fxfa/cxfa_ffdocview.h"
-#include "xfa/fxfa/cxfa_ffpageview.h"
-#include "xfa/fxfa/cxfa_ffwidget.h"
 
 static_assert(static_cast<int>(AlertButton::kDefault) ==
                   JSPLATFORM_ALERT_BUTTON_DEFAULT,
@@ -249,45 +246,14 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     return pFormField ? static_cast<int>(pFormField->GetFieldType()) : -1;
   }
 
-  if (!hHandle)
-    return -1;
-
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pXFAPage = ToXFAPage(IPDFPageFromFPDFPage(page));
-  if (!pXFAPage)
-    return -1;
-
-  CXFA_FFPageView* pPageView = pXFAPage->GetXFAPageView();
-  if (!pPageView)
-    return -1;
-
-  CXFA_FFDocView* pDocView = pPageView->GetDocView();
-  if (!pDocView)
-    return -1;
-
-  CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
-  if (!pWidgetHandler)
-    return -1;
-
-  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
-      pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form,
-                                      XFA_WidgetStatus_Viewable));
-  if (!pWidgetIterator)
-    return -1;
-
-  CXFA_FFWidget* pXFAAnnot;
-  while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {
-    if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA)
-      continue;
-
-    CFX_FloatRect rcWidget = pXFAAnnot->GetWidgetRect().ToFloatRect();
-    rcWidget.Inflate(1.0f, 1.0f);
-    if (rcWidget.Contains(CFX_PointF(static_cast<float>(page_x),
-                                     static_cast<float>(page_y)))) {
-      return static_cast<int>(pXFAAnnot->GetFormFieldType());
-    }
+  if (pXFAPage) {
+    return pXFAPage->HasFormFieldAtPoint(
+        CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
   }
 #endif  // PDF_ENABLE_XFA
+
   return -1;
 }
 
