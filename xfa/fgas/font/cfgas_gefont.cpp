@@ -138,8 +138,6 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   if (pSubstFont) {
     if (pSubstFont->m_Weight == FXFONT_FW_BOLD)
       dwStyles |= FXFONT_BOLD;
-    if (pSubstFont->m_bFlagItalic)
-      dwStyles |= FXFONT_ITALIC;
   } else {
     if (m_pFont->IsBold())
       dwStyles |= FXFONT_BOLD;
