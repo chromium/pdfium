@@ -216,9 +216,13 @@ void CPDFSDK_FormFillEnvironment::JS_docgotoPage(int nPageNum) {
   }
   m_pInfo->m_pJsPlatform->Doc_gotoPage(m_pInfo->m_pJsPlatform, nPageNum);
 }
-#endif  // PDF_ENABLE_V8
 
 WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
+  return GetFilePath();
+}
+#endif  // PDF_ENABLE_V8
+
+WideString CPDFSDK_FormFillEnvironment::GetFilePath() const {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_getFilePath) {
     return WideString();
@@ -238,16 +242,16 @@ WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
   return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 
-void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
-                                                   int length,
-                                                   const WideString& URL) {
+void CPDFSDK_FormFillEnvironment::SubmitForm(pdfium::span<uint8_t> form_data,
+                                             const WideString& URL) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_submitForm) {
     return;
   }
   ByteString bsUrl = URL.ToUTF16LE();
-  m_pInfo->m_pJsPlatform->Doc_submitForm(m_pInfo->m_pJsPlatform, formData,
-                                         length, AsFPDFWideString(&bsUrl));
+  m_pInfo->m_pJsPlatform->Doc_submitForm(m_pInfo->m_pJsPlatform,
+                                         form_data.data(), form_data.size(),
+                                         AsFPDFWideString(&bsUrl));
 }
 
 IJS_Runtime* CPDFSDK_FormFillEnvironment::GetIJSRuntime() {

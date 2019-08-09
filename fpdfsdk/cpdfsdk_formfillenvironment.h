@@ -197,18 +197,17 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
                    FPDF_BOOL bReverse,
                    FPDF_BOOL bAnnotations);
   void JS_docgotoPage(int nPageNum);
+  WideString JS_docGetFilePath();
 #endif  // PDF_ENABLE_V8
 
   bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
 
-  // TODO(tsepez): required even if !V8, investigate.
-  WideString JS_docGetFilePath();
-  void JS_docSubmitForm(void* formData, int length, const WideString& URL);
-
+  WideString GetFilePath() const;
   ByteString GetAppName() const { return ByteString(); }
   TimerHandlerIface* GetTimerHandler() { return this; }
   IPWL_SystemHandler* GetSysHandler() { return this; }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
+  void SubmitForm(pdfium::span<uint8_t> form_data, const WideString& URL);
 
   // Creates if not present.
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
