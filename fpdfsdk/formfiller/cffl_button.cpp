@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/formfiller/cffl_button.h"
 
+#include "core/fpdfdoc/cpdf_formcontrol.h"
+
 CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CPDFSDK_Widget* pWidget)
     : CFFL_FormFiller(pFormFillEnv, pWidget),

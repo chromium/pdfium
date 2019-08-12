@@ -5,6 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fpdfsdk/formfiller/cffl_textobject.h"
+
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cba_fontmap.h"
 #include "third_party/base/ptr_util.h"
 

@@ -15,6 +15,8 @@
 #include "fpdfsdk/pwl/cpwl_edit_ctrl.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 
+class CPDF_Font;
+
 class IPWL_Filler_Notify {
  public:
   virtual ~IPWL_Filler_Notify() = default;

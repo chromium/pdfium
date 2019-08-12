@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfdoc/cpdf_iconfit.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 CPWL_Icon::CPWL_Icon(

@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cba_fontmap.h"
+#include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
