@@ -242,14 +242,13 @@ CPDF_CMap::CPDF_CMap() = default;
 CPDF_CMap::~CPDF_CMap() = default;
 
 void CPDF_CMap::LoadPredefined(const ByteString& bsName) {
-  m_PredefinedCMap = bsName;
-  if (m_PredefinedCMap == "Identity-H" || m_PredefinedCMap == "Identity-V") {
+  if (bsName == "Identity-H" || bsName == "Identity-V") {
     m_Coding = CIDCODING_CID;
     m_bVertical = bsName.Last() == 'V';
     m_bLoaded = true;
     return;
   }
-  ByteString cmapid = m_PredefinedCMap;
+  ByteString cmapid = bsName;
   m_bVertical = cmapid.Last() == 'V';
   if (cmapid.GetLength() > 2) {
     cmapid = cmapid.Left(cmapid.GetLength() - 2);
