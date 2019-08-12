@@ -10,12 +10,11 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/timerhandler_iface.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 class CFWL_NoteDriver;
 class CFWL_WidgetMgr;
-class CFWL_Widget;
-class IFWL_AdapterTimerMgr;
 
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,
@@ -31,9 +30,9 @@ class CFWL_App {
  public:
   class AdapterIface {
    public:
-    virtual ~AdapterIface() {}
+    virtual ~AdapterIface() = default;
     virtual CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() = 0;
-    virtual std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() = 0;
+    virtual TimerHandlerIface* GetTimerHandler() = 0;
   };
 
   explicit CFWL_App(AdapterIface* pAdapter);

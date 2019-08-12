@@ -9,9 +9,9 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themebackground.h"
-#include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
@@ -26,18 +26,11 @@ constexpr int kStateHighlight = (1 << 0);
 CFWL_Caret::CFWL_Caret(const CFWL_App* app,
                        std::unique_ptr<CFWL_WidgetProperties> properties,
                        CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter),
-      m_pTimer(pdfium::MakeUnique<CFWL_Caret::Timer>(this)),
-      m_pTimerInfo(nullptr) {
+    : CFWL_Widget(app, std::move(properties), pOuter) {
   SetStates(kStateHighlight);
 }
 
-CFWL_Caret::~CFWL_Caret() {
-  if (m_pTimerInfo) {
-    m_pTimerInfo->StopTimer();
-    m_pTimerInfo = nullptr;
-  }
-}
+CFWL_Caret::~CFWL_Caret() = default;
 
 FWL_Type CFWL_Caret::GetClassID() const {
   return FWL_Type::Caret;
@@ -58,22 +51,15 @@ void CFWL_Caret::DrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Caret::ShowCaret() {
-  if (m_pTimerInfo) {
-    CFWL_TimerInfo* pOldTimerInfo = m_pTimerInfo.Release();
-    pOldTimerInfo->StopTimer();
-  }
-
-  m_pTimerInfo = m_pTimer->StartTimer(kBlinkPeriodMs);
+  m_pTimer = pdfium::MakeUnique<CFX_Timer>(
+      GetOwnerApp()->GetAdapterNative()->GetTimerHandler(), this,
+      kBlinkPeriodMs);
   RemoveStates(FWL_WGTSTATE_Invisible);
   SetStates(kStateHighlight);
 }
 
 void CFWL_Caret::HideCaret() {
-  if (m_pTimerInfo) {
-    CFWL_TimerInfo* pOldTimerInfo = m_pTimerInfo.Release();
-    pOldTimerInfo->StopTimer();
-  }
-
+  m_pTimer.reset();
   SetStates(FWL_WGTSTATE_Invisible);
 }
 
@@ -101,15 +87,12 @@ void CFWL_Caret::OnDrawWidget(CXFA_Graphics* pGraphics,
   DrawWidget(pGraphics, matrix);
 }
 
-CFWL_Caret::Timer::Timer(CFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
-
-void CFWL_Caret::Timer::OnTimerFired() {
-  CFWL_Caret* pCaret = static_cast<CFWL_Caret*>(m_pWidget.Get());
-  if (!(pCaret->GetStates() & kStateHighlight))
-    pCaret->SetStates(kStateHighlight);
+void CFWL_Caret::OnTimerFired() {
+  if (!(GetStates() & kStateHighlight))
+    SetStates(kStateHighlight);
   else
-    pCaret->RemoveStates(kStateHighlight);
+    RemoveStates(kStateHighlight);
 
-  CFX_RectF rt = pCaret->GetWidgetRect();
-  pCaret->RepaintRect(CFX_RectF(0, 0, rt.width + 1, rt.height));
+  CFX_RectF rt = GetWidgetRect();
+  RepaintRect(CFX_RectF(0, 0, rt.width + 1, rt.height));
 }

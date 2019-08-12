@@ -10,13 +10,14 @@
 #include <memory>
 #include <utility>
 
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_messagemousewheel.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themepart.h"
-#include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 #define FWL_SCROLLBAR_Elapse 500
@@ -31,11 +32,9 @@ CFWL_ScrollBar::CFWL_ScrollBar(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter),
-      m_Timer(this) {
-}
+    : CFWL_Widget(app, std::move(properties), pOuter) {}
 
-CFWL_ScrollBar::~CFWL_ScrollBar() {}
+CFWL_ScrollBar::~CFWL_ScrollBar() = default;
 
 FWL_Type CFWL_ScrollBar::GetClassID() const {
   return FWL_Type::ScrollBar;
@@ -356,16 +355,15 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
   else
     DoMouseDown(4, m_rtMaxTrack, m_iMaxTrackState, point);
 
-  if (!SendEvent())
-    m_pTimerInfo = m_Timer.StartTimer(FWL_SCROLLBAR_Elapse);
+  if (!SendEvent()) {
+    m_pTimer = pdfium::MakeUnique<CFX_Timer>(
+        GetOwnerApp()->GetAdapterNative()->GetTimerHandler(), this,
+        FWL_SCROLLBAR_Elapse);
+  }
 }
 
 void CFWL_ScrollBar::OnLButtonUp(const CFX_PointF& point) {
-  if (m_pTimerInfo) {
-    m_pTimerInfo->StopTimer();
-    m_pTimerInfo = nullptr;
-  }
-
+  m_pTimer.reset();
   m_bMouseDown = false;
   DoMouseUp(0, m_rtMinBtn, m_iMinButtonState, point);
   DoMouseUp(1, m_rtThumb, m_iThumbButtonState, point);
@@ -462,15 +460,10 @@ void CFWL_ScrollBar::DoMouseHover(int32_t iItem,
   RepaintRect(rtItem);
 }
 
-CFWL_ScrollBar::Timer::Timer(CFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}
-
-void CFWL_ScrollBar::Timer::OnTimerFired() {
-  CFWL_ScrollBar* pScrollBar = static_cast<CFWL_ScrollBar*>(m_pWidget.Get());
-  if (pScrollBar->m_pTimerInfo) {
-    pScrollBar->m_pTimerInfo->StopTimer();
-    pScrollBar->m_pTimerInfo = nullptr;
+void CFWL_ScrollBar::OnTimerFired() {
+  m_pTimer.reset();
+  if (!SendEvent()) {
+    m_pTimer = pdfium::MakeUnique<CFX_Timer>(
+        GetOwnerApp()->GetAdapterNative()->GetTimerHandler(), this, 0);
   }
-
-  if (!pScrollBar->SendEvent())
-    pScrollBar->m_pTimerInfo = StartTimer(0);
 }

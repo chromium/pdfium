@@ -15,7 +15,6 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
-#include "xfa/fwl/ifwl_adaptertimermgr.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
@@ -66,8 +65,8 @@ CFWL_WidgetMgr::AdapterIface* CXFA_FFApp::GetWidgetMgrAdapter() {
   return m_pAdapterWidgetMgr.get();
 }
 
-std::unique_ptr<IFWL_AdapterTimerMgr> CXFA_FFApp::NewTimerMgr() {
-  return m_pProvider->NewTimerMgr();
+TimerHandlerIface* CXFA_FFApp::GetTimerHandler() {
+  return m_pProvider->GetTimerHandler();
 }
 
 void CXFA_FFApp::ClearEventTargets() {

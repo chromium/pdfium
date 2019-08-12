@@ -18,8 +18,6 @@ jumbo_source_set("fpdfxfa") {
     "cpdfxfa_page.h",
     "cpdfxfa_widgethandler.cpp",
     "cpdfxfa_widgethandler.h",
-    "cxfa_fwladaptertimermgr.cpp",
-    "cxfa_fwladaptertimermgr.h",
   ]
   deps = [
     "../../:pdfium_public_headers",

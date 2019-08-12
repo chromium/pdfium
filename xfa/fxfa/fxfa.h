@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
@@ -19,7 +20,6 @@ class CXFA_FFDoc;
 class CXFA_FFPageView;
 class CXFA_FFWidget;
 class CXFA_Submit;
-class IFWL_AdapterTimerMgr;
 class IFX_SeekableReadStream;
 
 // Note, values must match fpdf_formfill.h JSPLATFORM_ALERT_BUTTON_* flags.
@@ -217,7 +217,7 @@ class IXFA_AppProvider {
                              const WideString& wsData,
                              const WideString& wsEncode) = 0;
 
-  virtual std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() = 0;
+  virtual TimerHandlerIface* GetTimerHandler() const = 0;
 };
 
 class IXFA_DocEnvironment {

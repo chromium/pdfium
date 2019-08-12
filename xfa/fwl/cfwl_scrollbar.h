@@ -9,10 +9,10 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_eventscroll.h"
-#include "xfa/fwl/cfwl_timer.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
@@ -21,20 +21,24 @@ class CFWL_Widget;
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
-class CFWL_ScrollBar final : public CFWL_Widget {
+class CFWL_ScrollBar final : public CFWL_Widget,
+                             public CFX_Timer::CallbackIface {
  public:
   CFWL_ScrollBar(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  CFWL_Widget* pOuter);
   ~CFWL_ScrollBar() override;
 
-  // CFWL_Widget
+  // CFWL_Widget:
   FWL_Type GetClassID() const override;
   void Update() override;
   void DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
+
+  // CFX_Timer::CallbackIface:
+  void OnTimerFired() override;
 
   void GetRange(float* fMin, float* fMax) const {
     ASSERT(fMin);
@@ -55,15 +59,6 @@ class CFWL_ScrollBar final : public CFWL_Widget {
   void SetTrackPos(float fTrackPos);
 
  private:
-  class Timer final : public CFWL_Timer {
-   public:
-    explicit Timer(CFWL_ScrollBar* pToolTip);
-    ~Timer() override {}
-
-    void OnTimerFired() override;
-  };
-  friend class CFWL_ScrollBar::Timer;
-
   bool IsVertical() const {
     return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
   }
@@ -110,7 +105,6 @@ class CFWL_ScrollBar final : public CFWL_Widget {
   void DoMouseLeave(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
   void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
 
-  UnownedPtr<CFWL_TimerInfo> m_pTimerInfo;
   float m_fRangeMin = 0.0f;
   float m_fRangeMax = -1.0f;
   float m_fPageSize = 0.0f;
@@ -134,7 +128,7 @@ class CFWL_ScrollBar final : public CFWL_Widget {
   CFX_RectF m_rtMaxBtn;
   CFX_RectF m_rtMinTrack;
   CFX_RectF m_rtMaxTrack;
-  CFWL_ScrollBar::Timer m_Timer;
+  std::unique_ptr<CFX_Timer> m_pTimer;
 };
 
 #endif  // XFA_FWL_CFWL_SCROLLBAR_H_
