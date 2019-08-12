@@ -40,10 +40,7 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-#include "xfa/fxfa/cxfa_eventparam.h"
-#include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #endif  // PDF_ENABLE_XFA
 
 namespace {
