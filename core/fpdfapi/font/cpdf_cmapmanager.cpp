@@ -34,7 +34,7 @@ RetainPtr<CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(ByteString name) {
     name = name.Right(name.GetLength() - 1);
 
   auto pCMap = pdfium::MakeRetain<CPDF_CMap>();
-  pCMap->LoadPredefined(this, name);
+  pCMap->LoadPredefined(name);
   return pCMap;
 }
 
@@ -48,6 +48,6 @@ CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(CIDSet charset) {
 std::unique_ptr<CPDF_CID2UnicodeMap> CPDF_CMapManager::LoadCID2UnicodeMap(
     CIDSet charset) {
   auto pMap = pdfium::MakeUnique<CPDF_CID2UnicodeMap>();
-  pMap->Load(this, charset);
+  pMap->Load(charset);
   return pMap;
 }
