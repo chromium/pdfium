@@ -22,14 +22,6 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/optional.h"
 
-#define TEXTPOS_CAPTION 0
-#define TEXTPOS_ICON 1
-#define TEXTPOS_BELOW 2
-#define TEXTPOS_ABOVE 3
-#define TEXTPOS_RIGHT 4
-#define TEXTPOS_LEFT 5
-#define TEXTPOS_OVERLAID 6
-
 class CFX_RenderDevice;
 class CPDF_Dictionary;
 class CPDF_Font;
