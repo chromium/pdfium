@@ -10,7 +10,6 @@
 #include <map>
 #include <memory>
 
-#include "core/fpdfdoc/cba_fontmap.h"
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
