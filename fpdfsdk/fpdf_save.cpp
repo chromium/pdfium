@@ -30,11 +30,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
-#include "xfa/fxfa/cxfa_eventparam.h"
-#include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
-#include "xfa/fxfa/cxfa_ffwidgethandler.h"
-#include "xfa/fxfa/cxfa_readynodeiterator.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 #endif
 
@@ -173,49 +169,6 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   }
   return true;
 }
-
-bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
-  if (!pContext)
-    return false;
-
-  if (!pContext->ContainsXFAForm())
-    return true;
-
-  CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
-  if (!pXFADocView)
-    return false;
-
-  CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
-  auto it = pXFADocView->CreateReadyNodeIterator();
-  while (CXFA_Node* pNode = it->MoveToNext()) {
-    CXFA_EventParam preParam;
-    preParam.m_eType = XFA_EVENT_PostSave;
-    pWidgetHandler->ProcessEvent(pNode, &preParam);
-  }
-  pXFADocView->UpdateDocView();
-  pContext->ClearChangeMark();
-  return true;
-}
-
-bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
-                         std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (!pContext->ContainsXFAForm())
-    return true;
-
-  CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
-  if (!pXFADocView)
-    return true;
-
-  CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
-  auto it = pXFADocView->CreateReadyNodeIterator();
-  while (CXFA_Node* pNode = it->MoveToNext()) {
-    CXFA_EventParam preParam;
-    preParam.m_eType = XFA_EVENT_PreSave;
-    pWidgetHandler->ProcessEvent(pNode, &preParam);
-  }
-  pXFADocView->UpdateDocView();
-  return SaveXFADocumentData(pContext, fileList);
-}
 #endif  // PDF_ENABLE_XFA
 
 bool DoDocSave(FPDF_DOCUMENT document,
@@ -230,7 +183,8 @@ bool DoDocSave(FPDF_DOCUMENT document,
   auto* pContext = static_cast<CPDFXFA_Context*>(pPDFDoc->GetExtension());
   if (pContext) {
     std::vector<RetainPtr<IFX_SeekableStream>> fileList;
-    SendPreSaveToXFADoc(pContext, &fileList);
+    pContext->SendPreSaveToXFADoc(&fileList);
+    SaveXFADocumentData(pContext, &fileList);
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -249,7 +203,8 @@ bool DoDocSave(FPDF_DOCUMENT document,
   bool bRet = fileMaker.Create(flags);
 
 #ifdef PDF_ENABLE_XFA
-  SendPostSaveToXFADoc(pContext);
+  if (pContext)
+    pContext->SendPostSaveToXFADoc();
 #endif  // PDF_ENABLE_XFA
 
   return bRet;

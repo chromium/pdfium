@@ -90,6 +90,9 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
                      const WideString& wsEncode) override;
 
   std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() override;
+  void SendPostSaveToXFADoc();
+  void SendPreSaveToXFADoc(
+      std::vector<RetainPtr<IFX_SeekableStream>>* fileList);
 
  private:
   friend class CPDFXFA_DocEnvironment;
