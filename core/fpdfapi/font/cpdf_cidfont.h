@@ -75,7 +75,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   void LoadSubstFont();
   wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 
-  RetainPtr<CPDF_CMap> m_pCMap;
+  RetainPtr<const CPDF_CMap> m_pCMap;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;

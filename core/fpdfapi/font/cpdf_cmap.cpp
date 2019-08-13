@@ -237,22 +237,17 @@ size_t GetFourByteCharSizeImpl(
 
 }  // namespace
 
-CPDF_CMap::CPDF_CMap() = default;
-
-CPDF_CMap::~CPDF_CMap() = default;
-
-void CPDF_CMap::LoadPredefined(const ByteString& bsName) {
-  if (bsName == "Identity-H" || bsName == "Identity-V") {
+CPDF_CMap::CPDF_CMap(const ByteString& bsPredefinedName) {
+  if (bsPredefinedName == "Identity-H" || bsPredefinedName == "Identity-V") {
     m_Coding = CIDCODING_CID;
-    m_bVertical = bsName.Last() == 'V';
+    m_bVertical = bsPredefinedName.Last() == 'V';
     m_bLoaded = true;
     return;
   }
-  ByteString cmapid = bsName;
+  ByteString cmapid = bsPredefinedName;
   m_bVertical = cmapid.Last() == 'V';
-  if (cmapid.GetLength() > 2) {
+  if (cmapid.GetLength() > 2)
     cmapid = cmapid.Left(cmapid.GetLength() - 2);
-  }
   const PredefinedCMap* map = nullptr;
   for (size_t i = 0; i < FX_ArraySize(g_PredefinedCMaps); ++i) {
     if (cmapid == ByteStringView(g_PredefinedCMaps[i].m_pName)) {
@@ -275,24 +270,26 @@ void CPDF_CMap::LoadPredefined(const ByteString& bsName) {
     }
   }
   m_pEmbedMap = FindEmbeddedCMap(
-      CPDF_FontGlobals::GetInstance()->GetEmbeddedCharset(m_Charset), bsName);
+      CPDF_FontGlobals::GetInstance()->GetEmbeddedCharset(m_Charset),
+      bsPredefinedName);
   if (!m_pEmbedMap)
     return;
 
   m_bLoaded = true;
 }
 
-void CPDF_CMap::LoadEmbedded(pdfium::span<const uint8_t> data) {
-  m_DirectCharcodeToCIDTable = std::vector<uint16_t>(65536);
+CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
+    : m_DirectCharcodeToCIDTable(65536) {
   CPDF_CMapParser parser(this);
-  CPDF_SimpleParser syntax(data);
+  CPDF_SimpleParser syntax(spEmbeddedData);
   while (1) {
     ByteStringView word = syntax.GetWord();
-    if (word.IsEmpty()) {
+    if (word.IsEmpty())
       break;
-    }
+
     parser.ParseWord(word);
   }
+
   if (m_CodingScheme == MixedFourBytes && parser.HasAdditionalMappings()) {
     m_AdditionalCharcodeToCIDMappings = parser.TakeAdditionalMappings();
     std::sort(
@@ -303,6 +300,8 @@ void CPDF_CMap::LoadEmbedded(pdfium::span<const uint8_t> data) {
         });
   }
 }
+
+CPDF_CMap::~CPDF_CMap() = default;
 
 uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   if (m_Coding == CIDCODING_CID)

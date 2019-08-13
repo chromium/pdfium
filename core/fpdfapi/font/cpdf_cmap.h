@@ -50,9 +50,6 @@ class CPDF_CMap final : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  void LoadPredefined(const ByteString& name);
-  void LoadEmbedded(pdfium::span<const uint8_t> data);
-
   bool IsLoaded() const { return m_bLoaded; }
   bool IsVertWriting() const { return m_bVertical; }
 
@@ -85,7 +82,8 @@ class CPDF_CMap final : public Retainable {
   }
 
  private:
-  CPDF_CMap();
+  explicit CPDF_CMap(const ByteString& bsPredefinedName);
+  explicit CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData);
   ~CPDF_CMap() override;
 
   bool m_bLoaded = false;

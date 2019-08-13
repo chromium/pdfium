@@ -12,30 +12,28 @@
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "third_party/base/ptr_util.h"
 
-CPDF_CMapManager::CPDF_CMapManager() {}
+CPDF_CMapManager::CPDF_CMapManager() = default;
 
-CPDF_CMapManager::~CPDF_CMapManager() {}
+CPDF_CMapManager::~CPDF_CMapManager() = default;
 
-RetainPtr<CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
+RetainPtr<const CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
     const ByteString& name) {
   auto it = m_CMaps.find(name);
   if (it != m_CMaps.end())
     return it->second;
 
-  RetainPtr<CPDF_CMap> pCMap = LoadPredefinedCMap(name);
+  RetainPtr<const CPDF_CMap> pCMap = LoadPredefinedCMap(name);
   if (!name.IsEmpty())
     m_CMaps[name] = pCMap;
 
   return pCMap;
 }
 
-RetainPtr<CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(ByteString name) {
+RetainPtr<const CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(
+    ByteString name) {
   if (!name.IsEmpty() && name[0] == '/')
     name = name.Right(name.GetLength() - 1);
-
-  auto pCMap = pdfium::MakeRetain<CPDF_CMap>();
-  pCMap->LoadPredefined(name);
-  return pCMap;
+  return pdfium::MakeRetain<CPDF_CMap>(name);
 }
 
 CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(CIDSet charset) {
