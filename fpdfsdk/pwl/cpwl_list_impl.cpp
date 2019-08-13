@@ -299,7 +299,7 @@ CFX_FloatRect CPWL_ListCtrl::GetItemRect(int32_t nIndex) const {
 }
 
 CFX_FloatRect CPWL_ListCtrl::GetItemRectInternal(int32_t nIndex) const {
-  if (!IsValid(nIndex) || !m_ListItems[nIndex])
+  if (!IsValid(nIndex))
     return CFX_FloatRect();
 
   CFX_FloatRect rcItem = m_ListItems[nIndex]->GetRect();
@@ -497,16 +497,14 @@ CFX_FloatRect CPWL_ListCtrl::GetContentRect() const {
 
 void CPWL_ListCtrl::ReArrange(int32_t nItemIndex) {
   float fPosY = 0.0f;
-  if (IsValid(nItemIndex - 1) && m_ListItems[nItemIndex - 1])
+  if (IsValid(nItemIndex - 1))
     fPosY = m_ListItems[nItemIndex - 1]->GetRect().bottom;
 
   for (const auto& pListItem : m_ListItems) {
-    if (pListItem) {
-      float fListItemHeight = pListItem->GetItemHeight();
-      pListItem->SetRect(
-          CFX_FloatRect(0.0f, fPosY + fListItemHeight, 0.0f, fPosY));
-      fPosY += fListItemHeight;
-    }
+    float fListItemHeight = pListItem->GetItemHeight();
+    pListItem->SetRect(
+        CFX_FloatRect(0.0f, fPosY + fListItemHeight, 0.0f, fPosY));
+    fPosY += fListItemHeight;
   }
   SetContentRect(CFX_FloatRect(0.0f, fPosY, 0.0f, 0.0f));
   SetScrollInfo();
@@ -541,8 +539,6 @@ int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {
   bool bFirst = true;
   bool bLast = true;
   for (const auto& pListItem : m_ListItems) {
-    if (!pListItem)
-      continue;
     CFX_FloatRect rcListItem = pListItem->GetRect();
     if (IsFloatBigger(pt.y, rcListItem.top))
       bFirst = false;
@@ -573,7 +569,7 @@ void CPWL_ListCtrl::AddItem(const WideString& str) {
 }
 
 CPWL_EditImpl* CPWL_ListCtrl::GetItemEdit(int32_t nIndex) const {
-  if (!IsValid(nIndex) || !m_ListItems[nIndex])
+  if (!IsValid(nIndex))
     return nullptr;
   return m_ListItems[nIndex]->GetEdit();
 }
@@ -583,7 +579,7 @@ int32_t CPWL_ListCtrl::GetCount() const {
 }
 
 float CPWL_ListCtrl::GetFirstHeight() const {
-  if (m_ListItems.empty() || !m_ListItems.front())
+  if (m_ListItems.empty())
     return 1.0f;
   return m_ListItems.front()->GetItemHeight();
 }
@@ -591,7 +587,7 @@ float CPWL_ListCtrl::GetFirstHeight() const {
 int32_t CPWL_ListCtrl::GetFirstSelected() const {
   int32_t i = 0;
   for (const auto& pListItem : m_ListItems) {
-    if (pListItem && pListItem->IsSelected())
+    if (pListItem->IsSelected())
       return i;
     ++i;
   }
@@ -600,7 +596,7 @@ int32_t CPWL_ListCtrl::GetFirstSelected() const {
 
 int32_t CPWL_ListCtrl::GetLastSelected() const {
   for (auto iter = m_ListItems.rbegin(); iter != m_ListItems.rend(); ++iter) {
-    if (*iter && (*iter)->IsSelected())
+    if ((*iter)->IsSelected())
       return &*iter - &m_ListItems.front();
   }
   return -1;
@@ -624,12 +620,11 @@ int32_t CPWL_ListCtrl::FindNext(int32_t nIndex, wchar_t nChar) const {
 }
 
 bool CPWL_ListCtrl::IsItemSelected(int32_t nIndex) const {
-  return IsValid(nIndex) && m_ListItems[nIndex] &&
-         m_ListItems[nIndex]->IsSelected();
+  return IsValid(nIndex) && m_ListItems[nIndex]->IsSelected();
 }
 
 void CPWL_ListCtrl::SetItemSelect(int32_t nIndex, bool bSelected) {
-  if (IsValid(nIndex) && m_ListItems[nIndex])
+  if (IsValid(nIndex))
     m_ListItems[nIndex]->SetSelect(bSelected);
 }
 
@@ -638,7 +633,7 @@ bool CPWL_ListCtrl::IsValid(int32_t nItemIndex) const {
 }
 
 WideString CPWL_ListCtrl::GetItemText(int32_t nIndex) const {
-  if (IsValid(nIndex) && m_ListItems[nIndex])
+  if (IsValid(nIndex))
     return m_ListItems[nIndex]->GetText();
   return WideString();
 }
