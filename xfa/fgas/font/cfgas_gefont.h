@@ -22,6 +22,7 @@
 
 class CFX_Font;
 class CFX_UnicodeEncodingEx;
+class CPDF_Document;
 class CPDF_Font;
 
 class CFGAS_GEFont final : public Retainable {
@@ -38,6 +39,10 @@ class CFGAS_GEFont final : public Retainable {
   static RetainPtr<CFGAS_GEFont> LoadFont(
       std::unique_ptr<CFX_Font> pInternalFont,
       CFGAS_FontMgr* pFontMgr);
+
+  static RetainPtr<CFGAS_GEFont> LoadStockFont(CPDF_Document* pDoc,
+                                               CFGAS_FontMgr* pMgr,
+                                               const ByteString& font_family);
 
   uint32_t GetFontStyles() const;
   bool GetCharWidth(wchar_t wUnicode, int32_t* pWidth);

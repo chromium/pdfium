@@ -96,7 +96,6 @@ jumbo_source_set("fxfa") {
     "fxfa_basic.h",
   ]
   deps = [
-    "../../core/fpdfapi/font",
     "../../core/fpdfapi/parser",
     "../../core/fpdfdoc",
     "../../core/fxcodec",
