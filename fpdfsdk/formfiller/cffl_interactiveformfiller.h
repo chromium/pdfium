@@ -155,11 +155,12 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
       int nSelEnd,
       bool bKeyDown,
       uint32_t nFlag) override;
-#ifdef PDF_ENABLE_XFA
   bool OnPopupPreOpen(const IPWL_SystemHandler::PerWindowData* pAttached,
                       uint32_t nFlag) override;
   bool OnPopupPostOpen(const IPWL_SystemHandler::PerWindowData* pAttached,
                        uint32_t nFlag) override;
+
+#ifdef PDF_ENABLE_XFA
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
 #endif  // PDF_ENABLE_XFA
 

@@ -807,26 +807,6 @@ bool CFFL_InteractiveFormFiller::OnFull(ObservedPtr<CPDFSDK_Annot>* pAnnot,
   return true;
 }
 
-bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
-    const IPWL_SystemHandler::PerWindowData* pAttached,
-    uint32_t nFlag) {
-  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  ASSERT(pData->pWidget);
-
-  ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
-  return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
-}
-
-bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
-    const IPWL_SystemHandler::PerWindowData* pAttached,
-    uint32_t nFlag) {
-  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
-  ASSERT(pData->pWidget);
-
-  ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
-  return OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
-}
-
 bool CFFL_InteractiveFormFiller::OnPreOpen(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                            CPDFSDK_PageView* pPageView,
                                            uint32_t nFlag) {
@@ -977,6 +957,34 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 
   pFormFiller->CommitData(privateData.pPageView, nFlag);
   return {false, true};
+}
+
+bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
+    const IPWL_SystemHandler::PerWindowData* pAttached,
+    uint32_t nFlag) {
+#ifdef PDF_ENABLE_XFA
+  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
+  ASSERT(pData->pWidget);
+
+  ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
+  return OnPreOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
+#else
+  return false;
+#endif
+}
+
+bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
+    const IPWL_SystemHandler::PerWindowData* pAttached,
+    uint32_t nFlag) {
+#ifdef PDF_ENABLE_XFA
+  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
+  ASSERT(pData->pWidget);
+
+  ObservedPtr<CPDFSDK_Annot> pObserved(pData->GetWidget());
+  return OnPostOpen(&pObserved, pData->pPageView, nFlag) || !pObserved;
+#else
+  return false;
+#endif
 }
 
 CFFL_PrivateData::CFFL_PrivateData() = default;

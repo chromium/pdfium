@@ -28,6 +28,7 @@ class IPWL_Filler_Notify {
       float fPopupMax,
       bool* bBottom,
       float* fPopupRet) = 0;
+
   virtual std::pair<bool, bool> OnBeforeKeyStroke(
       const IPWL_SystemHandler::PerWindowData* pAttached,
       WideString& strChange,
@@ -37,14 +38,13 @@ class IPWL_Filler_Notify {
       bool bKeyDown,
       uint32_t nFlag) = 0;
 
-#ifdef PDF_ENABLE_XFA
   virtual bool OnPopupPreOpen(
       const IPWL_SystemHandler::PerWindowData* pAttached,
       uint32_t nFlag) = 0;
+
   virtual bool OnPopupPostOpen(
       const IPWL_SystemHandler::PerWindowData* pAttached,
       uint32_t nFlag) = 0;
-#endif  // PDF_ENABLE_XFA
 };
 
 class CPWL_Edit final : public CPWL_EditCtrl {

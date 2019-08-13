@@ -448,13 +448,10 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
     return true;
 
   ObservedPtr<CPWL_ComboBox> thisObserved(this);
-
-#ifdef PDF_ENABLE_XFA
   if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), 0))
     return !!thisObserved;
   if (!thisObserved)
     return false;
-#endif  // PDF_ENABLE_XFA
 
   float fBorderWidth = m_pList->GetBorderWidth() * 2;
   float fPopupMin = 0.0f;
@@ -482,12 +479,7 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (!Move(rcWindow, true, true))
     return false;
 
-#ifdef PDF_ENABLE_XFA
   m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), 0);
-  if (!thisObserved)
-    return false;
-#endif  // PDF_ENABLE_XFA
-
   return !!thisObserved;
 }
 
@@ -502,14 +494,12 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   switch (nChar) {
     case FWL_VKEY_Up:
       if (m_pList->GetCurSel() > 0) {
-#ifdef PDF_ENABLE_XFA
         if (m_pFillerNotify) {
           if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), nFlag))
             return false;
           if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
             return false;
         }
-#endif  // PDF_ENABLE_XFA
         if (m_pList->IsMovementKey(nChar)) {
           if (m_pList->OnMovementKeyDown(nChar, nFlag))
             return false;
@@ -519,14 +509,12 @@ bool CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
       return true;
     case FWL_VKEY_Down:
       if (m_pList->GetCurSel() < m_pList->GetCount() - 1) {
-#ifdef PDF_ENABLE_XFA
         if (m_pFillerNotify) {
           if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), nFlag))
             return false;
           if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
             return false;
         }
-#endif  // PDF_ENABLE_XFA
         if (m_pList->IsMovementKey(nChar)) {
           if (m_pList->OnMovementKeyDown(nChar, nFlag))
             return false;
@@ -553,14 +541,12 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
     return m_pEdit->OnChar(nChar, nFlag);
 
-#ifdef PDF_ENABLE_XFA
   if (m_pFillerNotify) {
     if (m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), nFlag))
       return false;
     if (m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), nFlag))
       return false;
   }
-#endif  // PDF_ENABLE_XFA
   if (!m_pList->IsChar(nChar, nFlag))
     return false;
   return m_pList->OnCharNotify(nChar, nFlag);
