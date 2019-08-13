@@ -299,7 +299,7 @@ CFX_FloatRect CPWL_ListCtrl::GetItemRect(int32_t nIndex) const {
 }
 
 CFX_FloatRect CPWL_ListCtrl::GetItemRectInternal(int32_t nIndex) const {
-  if (!pdfium::IndexInBounds(m_ListItems, nIndex) || !m_ListItems[nIndex])
+  if (!IsValid(nIndex) || !m_ListItems[nIndex])
     return CFX_FloatRect();
 
   CFX_FloatRect rcItem = m_ListItems[nIndex]->GetRect();
@@ -497,10 +497,9 @@ CFX_FloatRect CPWL_ListCtrl::GetContentRect() const {
 
 void CPWL_ListCtrl::ReArrange(int32_t nItemIndex) {
   float fPosY = 0.0f;
-  if (pdfium::IndexInBounds(m_ListItems, nItemIndex - 1) &&
-      m_ListItems[nItemIndex - 1]) {
+  if (IsValid(nItemIndex - 1) && m_ListItems[nItemIndex - 1])
     fPosY = m_ListItems[nItemIndex - 1]->GetRect().bottom;
-  }
+
   for (const auto& pListItem : m_ListItems) {
     if (pListItem) {
       float fListItemHeight = pListItem->GetItemHeight();
@@ -555,7 +554,7 @@ int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {
   if (bFirst)
     return 0;
   if (bLast)
-    return pdfium::CollectionSize<int32_t>(m_ListItems) - 1;
+    return GetCount() - 1;
   return -1;
 }
 
@@ -574,7 +573,7 @@ void CPWL_ListCtrl::AddItem(const WideString& str) {
 }
 
 CPWL_EditImpl* CPWL_ListCtrl::GetItemEdit(int32_t nIndex) const {
-  if (!pdfium::IndexInBounds(m_ListItems, nIndex) || !m_ListItems[nIndex])
+  if (!IsValid(nIndex) || !m_ListItems[nIndex])
     return nullptr;
   return m_ListItems[nIndex]->GetEdit();
 }
@@ -609,7 +608,7 @@ int32_t CPWL_ListCtrl::GetLastSelected() const {
 
 int32_t CPWL_ListCtrl::FindNext(int32_t nIndex, wchar_t nChar) const {
   int32_t nCircleIndex = nIndex;
-  int32_t sz = pdfium::CollectionSize<int32_t>(m_ListItems);
+  int32_t sz = GetCount();
   for (int32_t i = 0; i < sz; i++) {
     nCircleIndex++;
     if (nCircleIndex >= sz)
@@ -625,12 +624,12 @@ int32_t CPWL_ListCtrl::FindNext(int32_t nIndex, wchar_t nChar) const {
 }
 
 bool CPWL_ListCtrl::IsItemSelected(int32_t nIndex) const {
-  return pdfium::IndexInBounds(m_ListItems, nIndex) && m_ListItems[nIndex] &&
+  return IsValid(nIndex) && m_ListItems[nIndex] &&
          m_ListItems[nIndex]->IsSelected();
 }
 
 void CPWL_ListCtrl::SetItemSelect(int32_t nIndex, bool bSelected) {
-  if (pdfium::IndexInBounds(m_ListItems, nIndex) && m_ListItems[nIndex])
+  if (IsValid(nIndex) && m_ListItems[nIndex])
     m_ListItems[nIndex]->SetSelect(bSelected);
 }
 
@@ -639,7 +638,7 @@ bool CPWL_ListCtrl::IsValid(int32_t nItemIndex) const {
 }
 
 WideString CPWL_ListCtrl::GetItemText(int32_t nIndex) const {
-  if (pdfium::IndexInBounds(m_ListItems, nIndex) && m_ListItems[nIndex])
+  if (IsValid(nIndex) && m_ListItems[nIndex])
     return m_ListItems[nIndex]->GetText();
   return WideString();
 }
