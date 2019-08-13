@@ -33,92 +33,92 @@ class CXFA_DocumentParserTest : public testing::Test {
 };
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
-  static const char input[] =
+  static const char kInput[] =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
       "v2.7-scripting:0 ?>\n"
       "</config>";
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
+  EXPECT_FALSE(GetDoc()->is_scripting());
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-      pdfium::as_bytes(pdfium::make_span(input)));
+      pdfium::as_bytes(pdfium::make_span(kInput)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
-  ASSERT_TRUE(root != nullptr);
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
+  ASSERT_TRUE(root);
+  EXPECT_FALSE(GetDoc()->is_scripting());
 }
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOn) {
-  static const char input[] =
+  static const char kInput[] =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
       "v2.7-scripting:1 ?>\n"
       "</config>";
 
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
+  EXPECT_FALSE(GetDoc()->is_scripting());
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-      pdfium::as_bytes(pdfium::make_span(input)));
+      pdfium::as_bytes(pdfium::make_span(kInput)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
-  ASSERT_TRUE(root != nullptr);
-  EXPECT_TRUE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
+  ASSERT_TRUE(root);
+  EXPECT_TRUE(GetDoc()->is_scripting());
 }
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScope) {
-  static const char input[] =
+  static const char kInput[] =
       "<config>"
       "<?acrobat JavaScript strictScoping ?>\n"
       "</config>";
 
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
+  EXPECT_FALSE(GetDoc()->is_strict_scoping());
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-      pdfium::as_bytes(pdfium::make_span(input)));
+      pdfium::as_bytes(pdfium::make_span(kInput)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
-  ASSERT_TRUE(root != nullptr);
-  EXPECT_TRUE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
+  ASSERT_TRUE(root);
+  EXPECT_TRUE(GetDoc()->is_strict_scoping());
 }
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScopeBad) {
-  static const char input[] =
+  static const char kInput[] =
       "<config>"
       "<?acrobat JavaScript otherScoping ?>\n"
       "</config>";
 
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
+  EXPECT_FALSE(GetDoc()->is_strict_scoping());
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-      pdfium::as_bytes(pdfium::make_span(input)));
+      pdfium::as_bytes(pdfium::make_span(kInput)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
-  ASSERT_TRUE(root != nullptr);
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
+  ASSERT_TRUE(root);
+  EXPECT_FALSE(GetDoc()->is_strict_scoping());
 }
 
 TEST_F(CXFA_DocumentParserTest, MultipleXMLInstructions) {
-  static const char input[] =
+  static const char kInput[] =
       "<config>"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
       "v2.7-scripting:1 ?>\n"
       "<?acrobat JavaScript strictScoping ?>\n"
       "</config>";
 
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
-  EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
+  EXPECT_FALSE(GetDoc()->is_scripting());
+  EXPECT_FALSE(GetDoc()->is_strict_scoping());
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-      pdfium::as_bytes(pdfium::make_span(input)));
+      pdfium::as_bytes(pdfium::make_span(kInput)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
-  ASSERT_TRUE(root != nullptr);
+  ASSERT_TRUE(root);
 
-  EXPECT_TRUE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
-  EXPECT_TRUE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
+  EXPECT_TRUE(GetDoc()->is_scripting());
+  EXPECT_TRUE(GetDoc()->is_strict_scoping());
 }

@@ -1376,16 +1376,9 @@ CXFA_Node* CXFA_Document::CreateNode(XFA_PacketType packet,
   return AddOwnedNode(CXFA_Node::Create(this, eElement, packet));
 }
 
-void CXFA_Document::SetFlag(uint32_t dwFlag, bool bOn) {
-  if (bOn)
-    m_dwDocFlags |= dwFlag;
-  else
-    m_dwDocFlags &= ~dwFlag;
-}
-
 bool CXFA_Document::IsInteractive() {
-  if (m_dwDocFlags & XFA_DOCFLAG_HasInteractive)
-    return !!(m_dwDocFlags & XFA_DOCFLAG_Interactive);
+  if (m_Interactive.has_value())
+    return m_Interactive.value();
 
   CXFA_Node* pConfig = ToNode(GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig)
@@ -1402,16 +1395,13 @@ bool CXFA_Document::IsInteractive() {
 
   CXFA_Interactive* pFormFiller =
       pPDF->GetChild<CXFA_Interactive>(0, XFA_Element::Interactive, false);
-  if (pFormFiller) {
-    m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
+  if (!pFormFiller)
+    return false;
 
-    WideString wsInteractive = pFormFiller->JSObject()->GetContent(false);
-    if (wsInteractive.EqualsASCII("1")) {
-      m_dwDocFlags |= XFA_DOCFLAG_Interactive;
-      return true;
-    }
-  }
-  return false;
+  WideString wsInteractive = pFormFiller->JSObject()->GetContent(false);
+  bool bInteractive = wsInteractive.EqualsASCII("1");
+  m_Interactive = bInteractive;
+  return bInteractive;
 }
 
 CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {

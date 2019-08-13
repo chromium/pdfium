@@ -1028,14 +1028,14 @@ void CXFA_DocumentParser::ParseInstruction(CXFA_Node* pXFANode,
         (pXFANode->GetDocument()->RecognizeXFAVersionNumber(target_data[0]) !=
          XFA_VERSION_UNKNOWN) &&
         target_data[1].EqualsASCII("v2.7-scripting:1")) {
-      pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_Scripting, true);
+      pXFANode->GetDocument()->set_is_scripting();
     }
     return;
   }
   if (pXMLInstruction->IsAcrobat()) {
     if (target_data.size() > 1 && target_data[0].EqualsASCII("JavaScript") &&
         target_data[1].EqualsASCII("strictScoping")) {
-      pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_StrictScoping, true);
+      pXFANode->GetDocument()->set_is_strict_scoping();
     }
   }
 }

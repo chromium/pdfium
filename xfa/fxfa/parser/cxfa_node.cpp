@@ -2599,18 +2599,14 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
   }
 
   XFA_VERSION version = pDocView->GetDoc()->GetXFADoc()->GetCurVersionMode();
-  bool bVersionFlag = false;
-  if (version < XFA_VERSION_208)
-    bVersionFlag = true;
+  bool bVersionFlag = version < XFA_VERSION_208;
 
   if (bInitDoc) {
     validate->ClearFlag(XFA_NodeFlag_NeedsInitApp);
   } else {
     iFormat = ProcessFormatTestValidate(pDocView, validate, bVersionFlag);
-    if (!bVersionFlag) {
-      bVersionFlag =
-          pDocView->GetDoc()->GetXFADoc()->HasFlag(XFA_DOCFLAG_Scripting);
-    }
+    if (!bVersionFlag)
+      bVersionFlag = pDocView->GetDoc()->GetXFADoc()->is_scripting();
     XFA_EventErrorAccumulate(
         &iRet,
         ProcessNullTestValidate(pDocView, validate, iFlags, bVersionFlag));

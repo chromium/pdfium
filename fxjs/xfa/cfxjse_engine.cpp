@@ -460,7 +460,7 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
 }
 
 bool CFXJSE_Engine::IsStrictScopeInJavaScript() {
-  return m_pDocument->HasFlag(XFA_DOCFLAG_StrictScoping);
+  return m_pDocument->is_strict_scoping();
 }
 
 CXFA_Script::Type CFXJSE_Engine::GetType() {
