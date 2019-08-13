@@ -685,7 +685,6 @@ jumbo_source_set("parser") {
     "../../../core/fxcodec",
     "../../../core/fxcrt",
     "../../../core/fxge",
-    "../../../fxbarcode",
     "../../../fxjs",
     "../../fde",
     "../../fgas",

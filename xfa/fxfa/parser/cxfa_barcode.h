@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_BARCODE_H_
 #define XFA_FXFA_PARSER_CXFA_BARCODE_H_
 
-#include "fxbarcode/BC_Library.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -19,7 +18,7 @@ class CXFA_Barcode final : public CXFA_Node {
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
   WideString GetBarcodeType();
-  Optional<BC_CHAR_ENCODING> GetCharEncoding();
+  Optional<WideString> GetCharEncoding();
   Optional<bool> GetChecksum();
   Optional<int32_t> GetDataLength();
   Optional<char> GetStartChar();
@@ -28,7 +27,7 @@ class CXFA_Barcode final : public CXFA_Node {
   Optional<int32_t> GetModuleWidth();
   Optional<int32_t> GetModuleHeight();
   Optional<bool> GetPrintChecksum();
-  Optional<BC_TEXT_LOC> GetTextLocation();
+  Optional<XFA_AttributeValue> GetTextLocation();
   Optional<bool> GetTruncate();
   Optional<int8_t> GetWideNarrowRatio();
 };
