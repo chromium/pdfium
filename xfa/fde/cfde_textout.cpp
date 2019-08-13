@@ -82,6 +82,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
         CFX_Font* font;
 #if !defined(OS_WIN)
         FxFont.SetFace(pFxFont->GetFace());
+        FxFont.SetFontSpan(pFxFont->GetFontSpan());
         font = &FxFont;
 #else
         font = pFxFont;
@@ -104,6 +105,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     CFX_Font* font;
 #if !defined(OS_WIN)
     FxFont.SetFace(pFxFont->GetFace());
+    FxFont.SetFontSpan(pFxFont->GetFontSpan());
     font = &FxFont;
 #else
     font = pFxFont;
@@ -112,10 +114,6 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
                                   color, FXTEXT_CLEARTYPE);
   }
-
-#if !defined(OS_WIN)
-  FxFont.SetFace(nullptr);
-#endif
 
   return bRet;
 }

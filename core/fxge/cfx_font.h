@@ -60,6 +60,7 @@ class CFX_Font {
 
 #if !defined(OS_WIN)
   void SetFace(RetainPtr<CFX_Face> face);
+  void SetFontSpan(pdfium::span<uint8_t> pSpan) { m_FontData = pSpan; }
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
 #endif  // !defined(OS_WIN)
 #endif  // defined(PDF_ENABLE_XFA)
