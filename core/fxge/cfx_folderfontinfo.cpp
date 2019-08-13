@@ -327,15 +327,6 @@ void* CFX_FolderFontInfo::MapFont(int weight,
   return nullptr;
 }
 
-#ifdef PDF_ENABLE_XFA
-void* CFX_FolderFontInfo::MapFontByUnicode(uint32_t dwUnicode,
-                                           int weight,
-                                           bool bItalic,
-                                           int pitch_family) {
-  return nullptr;
-}
-#endif  // PDF_ENABLE_XFA
-
 void* CFX_FolderFontInfo::GetFont(const char* face) {
   auto it = m_FontList.find(face);
   return it != m_FontList.end() ? it->second.get() : nullptr;

@@ -9,15 +9,6 @@
 #include "build/build_config.h"
 #include "core/fxge/systemfontinfo_iface.h"
 
-#ifdef PDF_ENABLE_XFA
-void* SystemFontInfoIface::MapFontByUnicode(uint32_t dwUnicode,
-                                            int weight,
-                                            bool bItalic,
-                                            int pitch_family) {
-  return nullptr;
-}
-#endif  // PDF_ENABLE_XFA
-
 int SystemFontInfoIface::GetFaceIndex(void* hFont) {
   return 0;
 }

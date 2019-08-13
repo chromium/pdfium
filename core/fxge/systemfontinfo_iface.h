@@ -28,14 +28,6 @@ class SystemFontInfoIface {
                         int charset,
                         int pitch_family,
                         const char* face) = 0;
-
-#ifdef PDF_ENABLE_XFA
-  virtual void* MapFontByUnicode(uint32_t dwUnicode,
-                                 int weight,
-                                 bool bItalic,
-                                 int pitch_family);
-#endif  // PDF_ENABLE_XFA
-
   virtual void* GetFont(const char* face) = 0;
   virtual uint32_t GetFontData(void* hFont,
                                uint32_t table,
