@@ -31,7 +31,7 @@ struct PredefinedCMap {
   ByteRange m_LeadingSegs[2];
 };
 
-const PredefinedCMap g_PredefinedCMaps[] = {
+constexpr PredefinedCMap kPredefinedCMaps[] = {
     {"GB-EUC",
      CIDSET_GB1,
      CIDCODING_GB,
@@ -181,6 +181,27 @@ const PredefinedCMap g_PredefinedCMaps[] = {
     {"UniKS-UTF16", CIDSET_KOREA1, CIDCODING_UTF16, CPDF_CMap::TwoBytes, 0, {}},
 };
 
+const PredefinedCMap* GetPredefinedCMap(const ByteString& bsPredefinedName) {
+  ByteString cmapid = bsPredefinedName;
+  if (cmapid.GetLength() > 2)
+    cmapid = cmapid.Left(cmapid.GetLength() - 2);
+  for (const auto& map : kPredefinedCMaps) {
+    if (cmapid == ByteStringView(map.m_pName))
+      return &map;
+  }
+  return nullptr;
+}
+
+std::vector<bool> LoadLeadingSegments(const PredefinedCMap& map) {
+  std::vector<bool> segments(256);
+  for (uint32_t i = 0; i < map.m_LeadingSegCount; ++i) {
+    const ByteRange& seg = map.m_LeadingSegs[i];
+    for (int b = seg.m_First; b <= seg.m_Last; ++b)
+      segments[b] = true;
+  }
+  return segments;
+}
+
 int CheckFourByteCodeRange(uint8_t* codes,
                            size_t size,
                            const std::vector<CPDF_CMap::CodeRange>& ranges) {
@@ -237,38 +258,23 @@ size_t GetFourByteCharSizeImpl(
 
 }  // namespace
 
-CPDF_CMap::CPDF_CMap(const ByteString& bsPredefinedName) {
+CPDF_CMap::CPDF_CMap(const ByteString& bsPredefinedName)
+    : m_bVertical(bsPredefinedName.Last() == 'V') {
   if (bsPredefinedName == "Identity-H" || bsPredefinedName == "Identity-V") {
     m_Coding = CIDCODING_CID;
-    m_bVertical = bsPredefinedName.Last() == 'V';
     m_bLoaded = true;
     return;
   }
-  ByteString cmapid = bsPredefinedName;
-  m_bVertical = cmapid.Last() == 'V';
-  if (cmapid.GetLength() > 2)
-    cmapid = cmapid.Left(cmapid.GetLength() - 2);
-  const PredefinedCMap* map = nullptr;
-  for (size_t i = 0; i < FX_ArraySize(g_PredefinedCMaps); ++i) {
-    if (cmapid == ByteStringView(g_PredefinedCMaps[i].m_pName)) {
-      map = &g_PredefinedCMaps[i];
-      break;
-    }
-  }
+
+  const PredefinedCMap* map = GetPredefinedCMap(bsPredefinedName);
   if (!map)
     return;
 
   m_Charset = map->m_Charset;
   m_Coding = map->m_Coding;
   m_CodingScheme = map->m_CodingScheme;
-  if (m_CodingScheme == MixedTwoBytes) {
-    m_MixedTwoByteLeadingBytes = std::vector<bool>(256);
-    for (uint32_t i = 0; i < map->m_LeadingSegCount; ++i) {
-      const ByteRange& seg = map->m_LeadingSegs[i];
-      for (int b = seg.m_First; b <= seg.m_Last; ++b)
-        m_MixedTwoByteLeadingBytes[b] = true;
-    }
-  }
+  if (m_CodingScheme == MixedTwoBytes)
+    m_MixedTwoByteLeadingBytes = LoadLeadingSegments(*map);
   m_pEmbedMap = FindEmbeddedCMap(
       CPDF_FontGlobals::GetInstance()->GetEmbeddedCharset(m_Charset),
       bsPredefinedName);
