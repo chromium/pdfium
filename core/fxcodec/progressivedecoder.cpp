@@ -23,11 +23,11 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
-#define FXCODEC_BLOCK_SIZE 4096
-
 namespace fxcodec {
 
 namespace {
+
+constexpr size_t kBlockSize = 4096;
 
 #ifdef PDF_ENABLE_XFA_PNG
 #if defined(OS_MACOSX)
@@ -1235,8 +1235,7 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
   }
   while (pPngModule->Input(m_pPngContext.get(), m_pCodecMemory, pAttribute)) {
     uint32_t remain_size = static_cast<uint32_t>(m_pFile->GetSize()) - m_offSet;
-    uint32_t input_size =
-        remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
+    uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
       m_pPngContext.reset();
       m_status = FXCODEC_STATUS_ERR_FORMAT;
@@ -1316,8 +1315,7 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
   }
   while (true) {
     uint32_t remain_size = (uint32_t)m_pFile->GetSize() - m_offSet;
-    uint32_t input_size =
-        remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
+    uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
       m_pPngContext.reset();
       m_pDeviceBitmap = nullptr;
@@ -1525,7 +1523,7 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
     return TiffDetectImageTypeFromFile(pAttribute);
 #endif  // PDF_ENABLE_XFA_TIFF
 
-  size_t size = std::min<size_t>(m_pFile->GetSize(), FXCODEC_BLOCK_SIZE);
+  size_t size = std::min<size_t>(m_pFile->GetSize(), kBlockSize);
   m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(size);
   m_offSet = 0;
   if (!m_pFile->ReadBlockAtOffset(m_pCodecMemory->GetBuffer(), m_offSet,
@@ -1582,7 +1580,7 @@ bool ProgressiveDecoder::ReadMoreData(ModuleIface* pModule,
     // Increase the buffer size so that there might be enough contiguous
     // bytes to allow whatever operation is having difficulty to succeed.
     dwBytesToFetchFromFile =
-        std::min<uint32_t>(dwBytesToFetchFromFile, FXCODEC_BLOCK_SIZE);
+        std::min<uint32_t>(dwBytesToFetchFromFile, kBlockSize);
     size_t dwNewSize = m_pCodecMemory->GetSize() + dwBytesToFetchFromFile;
     if (!m_pCodecMemory->TryResize(dwNewSize)) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
