@@ -329,8 +329,10 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   pFormFillEnv->ClearAllFocusedAnnots();
   // If the document was closed first, it's possible the XFA document
   // is now a nullptr.
-  if (pFormFillEnv->GetXFAContext())
-    pFormFillEnv->GetXFAContext()->SetFormFillEnv(nullptr);
+  auto* pContext =
+      static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
+  if (pContext)
+    pContext->SetFormFillEnv(nullptr);
 #endif  // PDF_ENABLE_XFA
   delete pFormFillEnv;
 }

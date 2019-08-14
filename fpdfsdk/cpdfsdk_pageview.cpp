@@ -146,8 +146,8 @@ bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
   if (!pPage)
     return false;
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(pPage->GetDocumentExtension());
-  if (!pContext->ContainsXFAForm())
+  CPDF_Document::Extension* pContext = pPage->GetDocumentExtension();
+  if (!pContext->ContainsExtensionForm())
     return false;
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pAnnot);
@@ -475,7 +475,9 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
 #ifdef PDF_ENABLE_XFA
   RetainPtr<CPDFXFA_Page> protector(ToXFAPage(m_page));
-  if (m_pFormFillEnv->GetXFAContext()->GetFormType() == FormType::kXFAFull) {
+  auto* pContext =
+      static_cast<CPDFXFA_Context*>(m_pFormFillEnv->GetDocExtension());
+  if (pContext->GetFormType() == FormType::kXFAFull) {
     CXFA_FFPageView* pageView = protector->GetXFAPageView();
     std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler(
         pageView->CreateWidgetIterator(

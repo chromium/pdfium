@@ -27,10 +27,6 @@ class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
 
-#if defined(PDF_ENABLE_XFA)
-class CPDFXFA_Context;
-#endif  // defined(PDF_ENABLE_XFA)
-
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
 // since modifying the result would impact |bsUTF16LE|.
 FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE);
@@ -67,9 +63,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
 
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
-#ifdef PDF_ENABLE_V8
-  CPDFSDK_PageView* GetCurrentView();
-#endif
+
   void RemovePageView(IPDF_Page* pUnderlyingPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
@@ -98,10 +92,6 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   bool ProcOpenAction();
   void Invalidate(IPDF_Page* page, const FX_RECT& rect);
 
-#ifdef PDF_ENABLE_V8
-  FPDF_PAGE GetCurrentPage() const;
-#endif
-
   void OnChange();
   void ExecuteNamedAction(const char* namedAction);
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
@@ -114,58 +104,18 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
                     int sizeOfArray);
 
   CPDF_Document* GetPDFDocument() const { return m_pCPDFDoc.Get(); }
+  CPDF_Document::Extension* GetDocExtension() const {
+    return m_pCPDFDoc->GetExtension();
+  }
+
+  bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
 
 #ifdef PDF_ENABLE_V8
-#ifdef PDF_ENABLE_XFA
-  CPDFXFA_Context* GetXFAContext() const;
-  int GetPageViewCount() const;
-  bool ContainsXFAForm() const;
+  CPDFSDK_PageView* GetCurrentView();
+  FPDF_PAGE GetCurrentPage() const;
 
-  void DisplayCaret(CPDFXFA_Page* page,
-                    FPDF_BOOL bVisible,
-                    double left,
-                    double top,
-                    double right,
-                    double bottom);
-  int GetCurrentPageIndex() const;
-  void SetCurrentPage(int iCurPage);
-
-  // TODO(dsinclair): This should probably change to PDFium?
-  WideString FFI_GetAppName() const { return WideString(L"Acrobat"); }
-
-  WideString GetPlatform();
-  void GotoURL(const WideString& wsURL);
-  FS_RECTF GetPageViewRect(CPDFXFA_Page* page);
-  bool PopupMenu(CPDFXFA_Page* page,
-                 FPDF_WIDGET hWidget,
-                 int menuFlag,
-                 const CFX_PointF& pt);
-
-  void EmailTo(FPDF_FILEHANDLER* fileHandler,
-               FPDF_WIDESTRING pTo,
-               FPDF_WIDESTRING pSubject,
-               FPDF_WIDESTRING pCC,
-               FPDF_WIDESTRING pBcc,
-               FPDF_WIDESTRING pMsg);
-  void UploadTo(FPDF_FILEHANDLER* fileHandler,
-                int fileFlag,
-                FPDF_WIDESTRING uploadTo);
-  FPDF_FILEHANDLER* OpenFile(int fileType,
-                             FPDF_WIDESTRING wsURL,
-                             const char* mode);
-  RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const WideString& url);
-  WideString PostRequestURL(const WideString& wsURL,
-                            const WideString& wsData,
-                            const WideString& wsContentType,
-                            const WideString& wsEncode,
-                            const WideString& wsHeader);
-  FPDF_BOOL PutRequestURL(const WideString& wsURL,
-                          const WideString& wsData,
-                          const WideString& wsEncode);
   WideString GetLanguage();
-
-  void PageEvent(int iPageCount, uint32_t dwEventType) const;
-#endif  // PDF_ENABLE_XFA
+  WideString GetPlatform();
 
   int JS_appAlert(const WideString& Msg,
                   const WideString& Title,
@@ -198,9 +148,52 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
                    FPDF_BOOL bAnnotations);
   void JS_docgotoPage(int nPageNum);
   WideString JS_docGetFilePath();
-#endif  // PDF_ENABLE_V8
 
-  bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+#ifdef PDF_ENABLE_XFA
+  int GetPageViewCount() const;
+  void DisplayCaret(IPDF_Page* page,
+                    FPDF_BOOL bVisible,
+                    double left,
+                    double top,
+                    double right,
+                    double bottom);
+  int GetCurrentPageIndex() const;
+  void SetCurrentPage(int iCurPage);
+
+  // TODO(dsinclair): This should probably change to PDFium?
+  WideString FFI_GetAppName() const { return WideString(L"Acrobat"); }
+
+  void GotoURL(const WideString& wsURL);
+  FS_RECTF GetPageViewRect(IPDF_Page* page);
+  bool PopupMenu(IPDF_Page* page,
+                 FPDF_WIDGET hWidget,
+                 int menuFlag,
+                 const CFX_PointF& pt);
+  void EmailTo(FPDF_FILEHANDLER* fileHandler,
+               FPDF_WIDESTRING pTo,
+               FPDF_WIDESTRING pSubject,
+               FPDF_WIDESTRING pCC,
+               FPDF_WIDESTRING pBcc,
+               FPDF_WIDESTRING pMsg);
+  void UploadTo(FPDF_FILEHANDLER* fileHandler,
+                int fileFlag,
+                FPDF_WIDESTRING uploadTo);
+  FPDF_FILEHANDLER* OpenFile(int fileType,
+                             FPDF_WIDESTRING wsURL,
+                             const char* mode);
+  RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const WideString& url);
+  WideString PostRequestURL(const WideString& wsURL,
+                            const WideString& wsData,
+                            const WideString& wsContentType,
+                            const WideString& wsEncode,
+                            const WideString& wsHeader);
+  FPDF_BOOL PutRequestURL(const WideString& wsURL,
+                          const WideString& wsData,
+                          const WideString& wsEncode);
+
+  void PageEvent(int iPageCount, uint32_t dwEventType) const;
+#endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
 
   WideString GetFilePath() const;
   ByteString GetAppName() const { return ByteString(); }

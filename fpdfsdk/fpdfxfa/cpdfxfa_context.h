@@ -43,11 +43,6 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
   FormType GetFormType() const { return m_FormType; }
-  bool ContainsXFAForm() const {
-    return m_FormType == FormType::kXFAFull ||
-           m_FormType == FormType::kXFAForeground;
-  }
-
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }
@@ -62,6 +57,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   int GetPageCount() const override;
   void DeletePage(int page_index) override;
   uint32_t GetUserPermissions() const override;
+  bool ContainsExtensionForm() const override;
 
   // IFXA_AppProvider:
   WideString GetLanguage() override;

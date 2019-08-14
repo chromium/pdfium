@@ -47,7 +47,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pContext)
     return false;
 
-  if (!pContext->ContainsXFAForm())
+  if (!pContext->ContainsExtensionForm())
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();

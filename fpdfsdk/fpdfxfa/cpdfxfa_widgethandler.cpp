@@ -329,7 +329,8 @@ bool CPDFXFA_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
   if (!pFormFillEnv)
     return false;
 
-  CPDFXFA_Context* pContext = pFormFillEnv->GetXFAContext();
+  auto* pContext =
+      static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
   if (!pContext)
     return false;
 
@@ -570,7 +571,7 @@ CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAWidgetHandler(
   if (!pFormFillEnv)
     return nullptr;
 
-  CPDFXFA_Context* pDoc = pFormFillEnv->GetXFAContext();
+  auto* pDoc = static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
   if (!pDoc)
     return nullptr;
 

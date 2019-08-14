@@ -45,7 +45,6 @@ class FX_PATHPOINT;
 struct CPDF_JavaScript;
 
 #ifdef PDF_ENABLE_XFA
-class CPDFXFA_Context;
 class CPDFXFA_Page;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA

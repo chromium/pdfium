@@ -204,6 +204,11 @@ uint32_t CPDFXFA_Context::GetUserPermissions() const {
   return 0xFFFFFFFF;
 }
 
+bool CPDFXFA_Context::ContainsExtensionForm() const {
+  return m_FormType == FormType::kXFAFull ||
+         m_FormType == FormType::kXFAForeground;
+}
+
 void CPDFXFA_Context::ClearChangeMark() {
   if (m_pFormFillEnv)
     m_pFormFillEnv->ClearChangeMark();
@@ -305,7 +310,7 @@ TimerHandlerIface* CPDFXFA_Context::GetTimerHandler() const {
 }
 
 void CPDFXFA_Context::SendPostSaveToXFADoc() {
-  if (!ContainsXFAForm())
+  if (!ContainsExtensionForm())
     return;
 
   CXFA_FFDocView* pXFADocView = GetXFADocView();
@@ -325,7 +330,7 @@ void CPDFXFA_Context::SendPostSaveToXFADoc() {
 
 void CPDFXFA_Context::SendPreSaveToXFADoc(
     std::vector<RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (!ContainsXFAForm())
+  if (!ContainsExtensionForm())
     return;
 
   CXFA_FFDocView* pXFADocView = GetXFADocView();
