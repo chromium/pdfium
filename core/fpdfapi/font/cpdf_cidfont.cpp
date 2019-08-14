@@ -360,8 +360,6 @@ bool CPDF_CIDFont::Load() {
   if (pEncoding->IsName()) {
     ByteString cmap = pEncoding->GetString();
     m_pCMap = manager->GetPredefinedCMap(cmap);
-    if (!m_pCMap)
-      return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pAcc->LoadAllDataFiltered();

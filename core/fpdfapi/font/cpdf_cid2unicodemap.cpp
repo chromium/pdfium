@@ -8,7 +8,10 @@
 
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 
-CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap() = default;
+CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap(CIDSet charset)
+    : m_Charset(charset),
+      m_pEmbeddedMap(
+          CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(m_Charset)) {}
 
 CPDF_CID2UnicodeMap::~CPDF_CID2UnicodeMap() = default;
 
@@ -16,18 +19,8 @@ bool CPDF_CID2UnicodeMap::IsLoaded() const {
   return !m_pEmbeddedMap.empty();
 }
 
-wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) const {
+wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t cid) const {
   if (m_Charset == CIDSET_UNICODE)
-    return CID;
-
-  if (CID < m_pEmbeddedMap.size())
-    return m_pEmbeddedMap[CID];
-
-  return 0;
-}
-
-void CPDF_CID2UnicodeMap::Load(CIDSet charset) {
-  m_Charset = charset;
-  m_pEmbeddedMap =
-      CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(charset);
+    return cid;
+  return cid < m_pEmbeddedMap.size() ? m_pEmbeddedMap[cid] : 0;
 }
