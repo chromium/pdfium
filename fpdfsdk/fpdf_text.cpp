@@ -23,11 +23,6 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-#include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#endif  // PDF_ENABLE_XFA
-
 #if defined(OS_WIN)
 #include <tchar.h>
 #endif
