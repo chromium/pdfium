@@ -44,11 +44,6 @@ class IPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
 struct CPDF_JavaScript;
 
-#ifdef PDF_ENABLE_XFA
-class CPDFXFA_Page;
-class CXFA_FFWidget;
-#endif  // PDF_ENABLE_XFA
-
 // Conversions to/from underlying types.
 IPDF_Page* IPDFPageFromFPDFPage(FPDF_PAGE page);
 FPDF_PAGE FPDFPageFromIPDFPage(IPDF_Page* page);
@@ -220,17 +215,9 @@ CPDFSDKFormFillEnvironmentFromFPDFFormHandle(FPDF_FORMHANDLE handle) {
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);
 
 ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
-
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 #ifdef PDF_ENABLE_XFA
-inline FPDF_WIDGET FPDFWidgetFromCXFAFFWidget(CXFA_FFWidget* widget) {
-  return reinterpret_cast<FPDF_WIDGET>(widget);
-}
-inline CXFA_FFWidget* CXFAFFWidgetFromFPDFWidget(FPDF_WIDGET widget) {
-  return reinterpret_cast<CXFA_FFWidget*>(widget);
-}
-
 // Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't
 // be a static method of IFX_SeekableStream.
 RetainPtr<IFX_SeekableStream> MakeSeekableStream(

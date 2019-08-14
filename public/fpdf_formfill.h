@@ -889,7 +889,7 @@ typedef struct _FPDF_FORMFILLINFO {
    * Parameters:
    *     pThis           -   Pointer to the interface structure itself.
    *     page            -   Handle to page. Returned by FPDF_LoadPage().
-   *     hWidget         -   Handle to XFA fields.
+   *     hWidget         -   Always null, exists for compatibility.
    *     menuFlag        -   The menu flags. Please refer to macro definition
    *                         of FXFA_MENU_XXX and this can be one or a
    *                         combination of these macros.
