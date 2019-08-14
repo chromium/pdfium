@@ -10,6 +10,7 @@
 #include "core/fxge/skia/fx_skia_device.h"
 #include "core/fxge/text_char_pos.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
@@ -120,13 +121,13 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
              const State& state) {
   int h = 1;
   int w = 4;
-  FPDF_BITMAP bitmap = FPDFBitmap_Create(w, h, 1);
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(w, h, 1));
   EXPECT_NE(nullptr, bitmap);
   if (!bitmap)
     return;
-  FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0x00000000);
+  FPDFBitmap_FillRect(bitmap.get(), 0, 0, w, h, 0x00000000);
   CFX_DefaultRenderDevice geDevice;
-  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap.get()));
   geDevice.Attach(pBitmap, false, nullptr, false);
   CFX_SkiaDeviceDriver* driver =
       static_cast<CFX_SkiaDeviceDriver*>(geDevice.GetDeviceDriver());
