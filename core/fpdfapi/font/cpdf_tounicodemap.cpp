@@ -136,20 +136,7 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
         if (word.IsEmpty() || word == "endbfchar")
           break;
 
-        uint32_t srccode = StringToCode(word);
-        word = parser.GetWord();
-        WideString destcode = StringToWideString(word);
-        size_t len = destcode.GetLength();
-        if (len == 0)
-          continue;
-
-        if (len == 1) {
-          m_Map[srccode] = destcode[0];
-        } else {
-          m_Map[srccode] = GetUnicode();
-          m_MultiCharBuf.AppendChar(len);
-          m_MultiCharBuf << destcode;
-        }
+        SetCode(StringToCode(word), StringToWideString(parser.GetWord()));
       }
     } else if (word == "beginbfrange") {
       while (1) {
@@ -166,30 +153,15 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
 
         ByteStringView start = parser.GetWord();
         if (start == "[") {
-          for (uint32_t code = lowcode; code <= highcode; code++) {
-            ByteStringView dest = parser.GetWord();
-            WideString destcode = StringToWideString(dest);
-            size_t len = destcode.GetLength();
-            if (len == 0)
-              continue;
-
-            if (len == 1) {
-              m_Map[code] = destcode[0];
-            } else {
-              m_Map[code] = GetUnicode();
-              m_MultiCharBuf.AppendChar(len);
-              m_MultiCharBuf << destcode;
-            }
-          }
+          for (uint32_t code = lowcode; code <= highcode; code++)
+            SetCode(code, StringToWideString(parser.GetWord()));
           parser.GetWord();
           continue;
         }
 
         WideString destcode = StringToWideString(start);
-        size_t len = destcode.GetLength();
-        uint32_t value = 0;
-        if (len == 1) {
-          value = StringToCode(start);
+        if (destcode.GetLength() == 1) {
+          uint32_t value = StringToCode(start);
           for (uint32_t code = lowcode; code <= highcode; code++)
             m_Map[code] = value++;
         } else {
@@ -223,4 +195,18 @@ uint32_t CPDF_ToUnicodeMap::GetUnicode() const {
   FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
   uni = uni * 0x10000 + 0xffff;
   return uni.ValueOrDefault(0);
+}
+
+void CPDF_ToUnicodeMap::SetCode(uint32_t srccode, WideString destcode) {
+  size_t len = destcode.GetLength();
+  if (len == 0)
+    return;
+
+  if (len == 1) {
+    m_Map[srccode] = destcode[0];
+  } else {
+    m_Map[srccode] = GetUnicode();
+    m_MultiCharBuf.AppendChar(len);
+    m_MultiCharBuf << destcode;
+  }
 }
