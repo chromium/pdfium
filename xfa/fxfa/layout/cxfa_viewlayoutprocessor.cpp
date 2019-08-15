@@ -1855,9 +1855,7 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
       nPageIdx++;
       uint32_t dwRelevant =
           XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
-      CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
-                                CXFA_TraverseStrategy_LayoutItem>
-          iterator(pViewItem);
+      CXFA_LayoutItemIterator iterator(pViewItem);
       CXFA_LayoutItem* pChildLayoutItem = iterator.GetCurrent();
       while (pChildLayoutItem) {
         CXFA_ContentLayoutItem* pContentItem =
