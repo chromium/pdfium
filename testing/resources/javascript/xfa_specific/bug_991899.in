@@ -1,0 +1,69 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform layout="tb" locale="en_US" name="form1" restoreState="auto">
+    <pageSet>
+      <pageArea id="Page1" name="Page1">
+        <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+        <medium long="11in" short="8.5in" stock="letter"/>
+      </pageArea>
+    </pageSet>
+    <subform h="10.5in" w="8in" name="subform2">
+      <field h="9.0001mm" name="field1" w="47.625mm" x="6.35mm" y="92.075mm">
+        <ui>
+          <choiceList/>
+        </ui>
+        <items save="1">
+          <text>Single</text>
+          <text>Married</text>
+          <text>Other</text>
+        </items>
+      </field>
+      <field name="field3" h="10.625mm" w="30.625mm" x="5mm" y="50mm">
+        <event activity="exit">
+          <script contentType="application/x-javascript">
+            f3_exit += 1;
+            if (f3_exit == 1) {
+              f1 = xfa.resolveNode("xfa.form..field1");
+              xfa.host.setFocus(f1);
+              f4 = xfa.resolveNode("xfa.form..field4");
+              f4.instanceManager.addInstance(1);
+              f4.instanceManager.removeInstance(0);
+              xfa.host.openList(f1);
+            }
+          </script>
+        </event>
+      </field>
+      <subform name="field4" x="5mm" y="5mm">
+        <occur max="-1"/>
+        <field name="field5" w="64.77mm" h="6.35mm">
+        </field>
+      </subform>
+    </subform>
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+          f3_exit = 0;
+          f3 = xfa.resolveNode("xfa.form..field3");
+          xfa.host.setFocus(f3);
+          f5 = xfa.resolveNode("xfa.form..field5");
+          xfa.host.setFocus(f5);
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
