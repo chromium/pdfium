@@ -300,10 +300,10 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
   if (pNewFocus) {
     CXFA_Node* node = pNewFocus->GetNode();
     m_pFocusNode = node->IsWidgetReady() ? node : nullptr;
-    m_pFocusWidget = pNewFocus;
+    m_pFocusWidget.Reset(pNewFocus);
   } else {
     m_pFocusNode = nullptr;
-    m_pFocusWidget = nullptr;
+    m_pFocusWidget.Reset();
   }
 
   return true;
@@ -329,7 +329,7 @@ void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
     return;
 
   m_pFocusNode = nullptr;
-  m_pFocusWidget = nullptr;
+  m_pFocusWidget.Reset();
 }
 
 static XFA_EventError XFA_ProcessEvent(CXFA_FFDocView* pDocView,

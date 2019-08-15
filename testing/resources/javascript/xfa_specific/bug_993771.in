@@ -1,0 +1,78 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /NeedsRendering true
+  /AcroForm <<
+    /XFA 5 0 R
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [ 0 0 795 842 ]
+>>
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+<template>
+  <subform id="subformId_0" mergeMode="consumeData" name="subform_0">
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+        xfa.resolveNode("xfa.form.subform_0.subform_1").layout = "tb";
+      </script>
+    </event>
+    <subform id="subformId_1" layout="table" mergeMode="consumeData" name="subform_1" >
+      <field id="fieldId_2" name="field_2" >
+        <event activity="docReady" >
+          <script contentType="application/x-javascript">
+            xfa.resolveNode("xfa.form.subform_0.subform_2").execValidate();
+          </script>
+        </event>
+      </field>
+      <field id="fieldId_3" name="field_3" >
+          <validate scriptTest="disabled" >
+            <script contentType="application/x-javascript">
+              xfa.resolveNode("xfa.form.subform_0.subform_1").keep.next = "pageArea";
+            </script>
+          </validate>
+      </field>
+    </subform>
+    <subformSet>
+      <breakBefore id="breakBeforeId_3" startNew="0" ></breakBefore>
+      <subform allowMacro="1" id="subformId_2" mergeMode="consumeData" name="subform_2" >
+        <field id="fieldId_5" name="field_5" >
+          <validate scriptTest="disabled" >
+            <script contentType="application/x-javascript">
+              xfa.host.setFocus("xfa.form.subform_0.subform_1.field_3");
+            </script>
+          </validate>
+        </field>
+        <field id="fieldId_6" name="field_6" >
+          <validate scriptTest="disabled" >
+            <script contentType="application/x-javascript">
+              xfa.resolveNode("xfa.form.subform_0.subform_1").layout = "position";
+            </script>
+          </validate>
+        </field>
+      </subform>
+    </subformSet>
+  </subform>
+</template>
+</xdp:xdp>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
