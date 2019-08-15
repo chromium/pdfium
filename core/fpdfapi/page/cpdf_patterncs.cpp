@@ -23,7 +23,7 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
   const CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
-  if (pBaseCS == m_pArray.Get())
+  if (pBaseCS == m_pArray)
     return 0;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);

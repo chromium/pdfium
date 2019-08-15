@@ -1130,7 +1130,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   const CPDF_Object* pBaseObj = pArray->GetDirectObjectAt(1);
-  if (pBaseObj == m_pArray.Get())
+  if (pBaseObj == m_pArray)
     return 0;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
@@ -1229,7 +1229,7 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
 
   m_Type = Colorant;
   const CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
-  if (pAltCS == m_pArray.Get())
+  if (pAltCS == m_pArray)
     return 0;
 
   m_pAltCS = Load(pDoc, pAltCS, pVisited);
@@ -1309,7 +1309,7 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   const CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
-  if (!pAltCS || pAltCS == m_pArray.Get())
+  if (!pAltCS || pAltCS == m_pArray)
     return 0;
 
   m_pAltCS = Load(pDoc, pAltCS, pVisited);

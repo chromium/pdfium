@@ -92,7 +92,7 @@ bool CPDF_ObjectAvail::CheckObjects() {
 
     const CPDF_ReadValidator::Session parse_session(validator_);
     const CPDF_Object* direct = holder_->GetOrParseIndirectObject(obj_num);
-    if (direct == root_.Get())
+    if (direct == root_)
       continue;
 
     if (validator_->has_read_problems() ||
@@ -117,9 +117,9 @@ bool CPDF_ObjectAvail::AppendObjectSubRefs(const CPDF_Object* object,
 
     // Skip if this object if it's an inlined root, the parent object or
     // explicitily excluded.
-    const bool skip = (walker.GetParent() && obj == root_.Get()) ||
+    const bool skip = (walker.GetParent() && obj == root_) ||
                       walker.dictionary_key() == "Parent" ||
-                      (obj != root_.Get() && ExcludeObject(obj));
+                      (obj != root_ && ExcludeObject(obj));
 
     // We need to parse the object before we can do the exclusion check.
     // This is because the exclusion check may check against a referenced

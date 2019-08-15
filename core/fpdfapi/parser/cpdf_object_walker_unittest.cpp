@@ -112,7 +112,7 @@ TEST(CPDF_ObjectWalkerTest, SkipWalkIntoCurrentObject) {
   int non_array_objects = 0;
   CPDF_ObjectWalker walker(root_array.Get());
   while (const CPDF_Object* obj = walker.GetNext()) {
-    if (obj != root_array.Get() && obj->IsArray()) {
+    if (obj != root_array && obj->IsArray()) {
       // skip other array except root.
       walker.SkipWalkIntoCurrentObject();
     }

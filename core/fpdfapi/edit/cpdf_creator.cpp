@@ -154,7 +154,7 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
     return false;
 
   std::unique_ptr<CPDF_Encryptor> encryptor;
-  if (GetCryptoHandler() && pObj != m_pEncryptDict.Get())
+  if (GetCryptoHandler() && pObj != m_pEncryptDict)
     encryptor = pdfium::MakeUnique<CPDF_Encryptor>(GetCryptoHandler(), objnum);
 
   if (!pObj->WriteTo(m_Archive.get(), encryptor.get()))

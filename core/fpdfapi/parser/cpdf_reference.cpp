@@ -107,7 +107,7 @@ bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive,
 
 RetainPtr<CPDF_Object> CPDF_Reference::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
-  ASSERT(holder == m_pObjList.Get());
+  ASSERT(holder == m_pObjList);
   // Do not allow reference to reference, just create other reference for same
   // object.
   return pdfium::MakeRetain<CPDF_Reference>(holder, GetRefObjNum());

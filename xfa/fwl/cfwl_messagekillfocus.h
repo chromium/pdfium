@@ -23,7 +23,7 @@ class CFWL_MessageKillFocus final : public CFWL_Message {
   std::unique_ptr<CFWL_Message> Clone() override;
 
   bool IsFocusedOnWidget(const CFWL_Widget* pWidget) const {
-    return pWidget == m_pSetFocus.Get();
+    return pWidget == m_pSetFocus;
   }
 
  private:
