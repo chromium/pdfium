@@ -53,9 +53,9 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CXFA_FFWidget* pAnnot,
                                                  CPDFSDK_PageView* pPageView) {
   ASSERT(pAnnot);
   ASSERT(pPageView);
-
-  return GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET)
-      ->NewAnnot(pAnnot, pPageView);
+  auto* pHandler = static_cast<CPDFXFA_WidgetHandler*>(
+      GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET));
+  return pHandler->NewAnnotForXFA(pAnnot, pPageView);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -282,11 +282,11 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
               (*pKillAnnot && (*pKillAnnot)->GetXFAWidget());
 
   if (bXFA) {
-    if (IPDFSDK_AnnotHandler* pXFAAnnotHandler =
-            GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET))
+    auto* pXFAAnnotHandler = static_cast<CPDFXFA_WidgetHandler*>(
+        GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET));
+    if (pXFAAnnotHandler)
       return pXFAAnnotHandler->OnXFAChangedFocus(pKillAnnot, pSetAnnot);
   }
-
   return true;
 }
 #endif  // PDF_ENABLE_XFA

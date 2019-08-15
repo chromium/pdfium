@@ -215,8 +215,8 @@ CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
   return nullptr;
 }
 
-CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnot(CXFA_FFWidget* pAnnot,
-                                               CPDFSDK_PageView* pPage) {
+CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnotForXFA(CXFA_FFWidget* pAnnot,
+                                                     CPDFSDK_PageView* pPage) {
   CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
   CPDFSDK_XFAWidget* pWidget = new CPDFSDK_XFAWidget(pAnnot, pPage, pForm);
   pForm->AddXFAMap(pAnnot, pWidget);

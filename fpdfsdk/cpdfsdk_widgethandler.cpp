@@ -70,13 +70,6 @@ CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
   return pWidget;
 }
 
-#ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CXFA_FFWidget* hWidget,
-                                               CPDFSDK_PageView* pPage) {
-  return nullptr;
-}
-#endif  // PDF_ENABLE_XFA
-
 void CPDFSDK_WidgetHandler::ReleaseAnnot(
     std::unique_ptr<CPDFSDK_Annot> pAnnot) {
   ASSERT(pAnnot);
@@ -254,14 +247,6 @@ bool CPDFSDK_WidgetHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
   return !(*pAnnot)->IsSignatureWidget() &&
          m_pFormFiller->IsIndexSelected(pAnnot, index);
 }
-
-#ifdef PDF_ENABLE_XFA
-bool CPDFSDK_WidgetHandler::OnXFAChangedFocus(
-    ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
-    ObservedPtr<CPDFSDK_Annot>* pNewAnnot) {
-  return true;
-}
-#endif  // PDF_ENABLE_XFA
 
 CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot) {

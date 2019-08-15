@@ -17,10 +17,6 @@ class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDFSDK_PageView;
 
-#ifdef PDF_ENABLE_XFA
-class CXFA_FFWidget;
-#endif  // PDF_ENABLE_XFA
-
 class IPDFSDK_AnnotHandler {
  public:
   virtual ~IPDFSDK_AnnotHandler() = default;
@@ -28,12 +24,6 @@ class IPDFSDK_AnnotHandler {
   virtual bool CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPage) = 0;
-
-#ifdef PDF_ENABLE_XFA
-  virtual CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* hWidget,
-                                  CPDFSDK_PageView* pPage) = 0;
-#endif  // PDF_ENABLE_XFA
-
   virtual void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot) = 0;
   virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot) = 0;
@@ -54,7 +44,6 @@ class IPDFSDK_AnnotHandler {
                       const CFX_Matrix& mtUser2Device,
                       bool bDrawAnnots) = 0;
   virtual void OnLoad(CPDFSDK_Annot* pAnnot) = 0;
-
   virtual void OnMouseEnter(CPDFSDK_PageView* pPageView,
                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                             uint32_t nFlag) = 0;
@@ -103,17 +92,11 @@ class IPDFSDK_AnnotHandler {
                           uint32_t nFlag) = 0;
   virtual bool OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                            uint32_t nFlag) = 0;
-
   virtual bool SetIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                 int index,
                                 bool selected) = 0;
   virtual bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                int index) = 0;
-
-#ifdef PDF_ENABLE_XFA
-  virtual bool OnXFAChangedFocus(ObservedPtr<CPDFSDK_Annot>* pOldAnnot,
-                                 ObservedPtr<CPDFSDK_Annot>* pNewAnnot) = 0;
-#endif  // PDF_ENABLE_XFA
 };
 
 #endif  // FPDFSDK_IPDFSDK_ANNOTHANDLER_H_
