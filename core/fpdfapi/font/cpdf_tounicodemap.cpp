@@ -16,6 +16,32 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
+namespace {
+
+WideString StringDataAdd(WideString str) {
+  WideString ret;
+  int len = str.GetLength();
+  wchar_t value = 1;
+  for (int i = len - 1; i >= 0; --i) {
+    wchar_t ch = str[i] + value;
+    if (ch < str[i]) {
+      ret.InsertAtFront(0);
+    } else {
+      ret.InsertAtFront(ch);
+      value = 0;
+    }
+  }
+  if (value)
+    ret.InsertAtFront(value);
+  return ret;
+}
+
+}  // namespace
+
+CPDF_ToUnicodeMap::CPDF_ToUnicodeMap() : m_pBaseMap(nullptr) {}
+
+CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() {}
+
 WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   auto it = m_Map.find(charcode);
   if (it != m_Map.end()) {
@@ -72,24 +98,6 @@ uint32_t CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
   return result;
 }
 
-static WideString StringDataAdd(WideString str) {
-  WideString ret;
-  int len = str.GetLength();
-  wchar_t value = 1;
-  for (int i = len - 1; i >= 0; --i) {
-    wchar_t ch = str[i] + value;
-    if (ch < str[i]) {
-      ret.InsertAtFront(0);
-    } else {
-      ret.InsertAtFront(ch);
-      value = 0;
-    }
-  }
-  if (value)
-    ret.InsertAtFront(value);
-  return ret;
-}
-
 // Static.
 WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
   int len = str.GetLength();
@@ -112,16 +120,6 @@ WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
     return result;
   }
   return result;
-}
-
-CPDF_ToUnicodeMap::CPDF_ToUnicodeMap() : m_pBaseMap(nullptr) {}
-
-CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() {}
-
-uint32_t CPDF_ToUnicodeMap::GetUnicode() {
-  FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
-  uni = uni * 0x10000 + 0xffff;
-  return uni.ValueOrDefault(0);
 }
 
 void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
@@ -229,4 +227,10 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
   } else {
     m_pBaseMap = nullptr;
   }
+}
+
+uint32_t CPDF_ToUnicodeMap::GetUnicode() {
+  FX_SAFE_UINT32 uni = m_MultiCharBuf.GetLength();
+  uni = uni * 0x10000 + 0xffff;
+  return uni.ValueOrDefault(0);
 }
