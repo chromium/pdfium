@@ -33,10 +33,8 @@ enum class JSMessage {
   kUnknownProperty,
   kInvalidSetError,
   kUserGestureRequiredError,
-#ifdef PDF_ENABLE_XFA
   kTooManyOccurances,
   kUnknownMethod,
-#endif
 };
 
 WideString JSGetStringFromID(JSMessage msg);

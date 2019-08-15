@@ -51,5 +51,5 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
   if (!pData->m_pFXJSERuntimeData)
     pData->m_pFXJSERuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
-  return pData->m_pFXJSERuntimeData.get();
+  return static_cast<CFXJSE_RuntimeData*>(pData->m_pFXJSERuntimeData.get());
 }

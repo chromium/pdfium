@@ -24,11 +24,6 @@
 #include "fxjs/ijs_runtime.h"
 #include "v8/include/v8.h"
 
-#ifdef PDF_ENABLE_XFA
-// CFXJS_ENGINE doesn't interpret this class, it is just passed along to XFA.
-class CFXJSE_RuntimeData;
-#endif  // PDF_ENABLE_XFA
-
 class CFXJS_ObjDefinition;
 class CJS_Object;
 class V8TemplateMap;
@@ -45,6 +40,12 @@ enum FXJSOBJTYPE {
 
 class FXJS_PerIsolateData {
  public:
+  // Hook for XFA's data, when present.
+  class ExtensionIface {
+   public:
+    virtual ~ExtensionIface() = default;
+  };
+
   ~FXJS_PerIsolateData();
 
   static void SetUp(v8::Isolate* pIsolate);
@@ -56,9 +57,7 @@ class FXJS_PerIsolateData {
 
   std::vector<std::unique_ptr<CFXJS_ObjDefinition>> m_ObjectDefnArray;
   std::unique_ptr<V8TemplateMap> m_pDynamicObjsMap;
-#ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CFXJSE_RuntimeData> m_pFXJSERuntimeData;
-#endif  // PDF_ENABLE_XFA
+  std::unique_ptr<ExtensionIface> m_pFXJSERuntimeData;
 
  protected:
   explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);

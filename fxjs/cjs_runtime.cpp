@@ -39,14 +39,9 @@
 #include "fxjs/js_define.h"
 #include "third_party/base/ptr_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fxjs/xfa/cfxjse_value.h"
-#endif  // PDF_ENABLE_XFA
-
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv) {
   v8::Isolate* pIsolate = nullptr;
-
   IPDF_JSPLATFORM* pPlatform = m_pFormFillEnv->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
     unsigned int embedderDataSlot = 0;
@@ -60,11 +55,8 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
   m_isolateManaged = FXJS_GetIsolate(&pIsolate);
   SetIsolate(pIsolate);
 
-#ifdef PDF_ENABLE_XFA
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
-#endif
-
   if (m_isolateManaged || FXJS_GlobalIsolateRefCount() == 0)
     DefineJSObjects();
 
@@ -180,21 +172,13 @@ void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
   m_FieldEventSet.erase(event);
 }
 
-#ifdef PDF_ENABLE_XFA
-WideString ChangeObjName(const WideString& str) {
-  WideString sRet = str;
-  sRet.Replace(L"_", L".");
-  return sRet;
-}
-
 CJS_Runtime* CJS_Runtime::AsCJSRuntime() {
   return this;
 }
 
 bool CJS_Runtime::GetValueByNameFromGlobalObject(ByteStringView utf8Name,
-                                                 CFXJSE_Value* pValue) {
+                                                 v8::Local<v8::Value>* pValue) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
-  v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
   v8::Local<v8::String> str =
@@ -203,39 +187,29 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(ByteStringView utf8Name,
           .ToLocalChecked();
   v8::MaybeLocal<v8::Value> maybe_propvalue =
       context->Global()->Get(context, str);
-  if (maybe_propvalue.IsEmpty()) {
-    pValue->SetUndefined();
+  if (maybe_propvalue.IsEmpty())
     return false;
-  }
-  v8::Local<v8::Value> propvalue = maybe_propvalue.ToLocalChecked();
-  if (propvalue.IsEmpty()) {
-    pValue->SetUndefined();
-    return false;
-  }
-  pValue->ForceSetValue(propvalue);
+
+  *pValue = maybe_propvalue.ToLocalChecked();
   return true;
 }
 
 bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,
-                                               CFXJSE_Value* pValue) {
-  if (utf8Name.IsEmpty() || !pValue)
+                                               v8::Local<v8::Value> pValue) {
+  if (utf8Name.IsEmpty() || pValue.IsEmpty())
     return false;
 
   v8::Isolate* pIsolate = GetIsolate();
   v8::Isolate::Scope isolate_scope(pIsolate);
-  v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::Value> propvalue =
-      v8::Local<v8::Value>::New(pIsolate, pValue->DirectGetValue());
   v8::Local<v8::String> str =
       v8::String::NewFromUtf8(pIsolate, utf8Name.unterminated_c_str(),
                               v8::NewStringType::kNormal, utf8Name.GetLength())
           .ToLocalChecked();
-  v8::Maybe<bool> result = context->Global()->Set(context, str, propvalue);
+  v8::Maybe<bool> result = context->Global()->Set(context, str, pValue);
   return result.IsJust() && result.FromJust();
 }
-#endif  // PDF_ENABLE_XFA
 
 v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
     v8::Local<v8::Value> value) {

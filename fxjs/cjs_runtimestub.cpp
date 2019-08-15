@@ -26,21 +26,9 @@ CPDFSDK_FormFillEnvironment* CJS_RuntimeStub::GetFormFillEnv() const {
   return m_pFormFillEnv.Get();
 }
 
-#ifdef PDF_ENABLE_XFA
 CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
   return nullptr;
 }
-
-bool CJS_RuntimeStub::GetValueByNameFromGlobalObject(ByteStringView,
-                                                     CFXJSE_Value*) {
-  return false;
-}
-
-bool CJS_RuntimeStub::SetValueByNameInGlobalObject(ByteStringView,
-                                                   CFXJSE_Value*) {
-  return false;
-}
-#endif  // PDF_ENABLE_XFA
 
 Optional<IJS_Runtime::JS_Error> CJS_RuntimeStub::ExecuteScript(
     const WideString& script) {

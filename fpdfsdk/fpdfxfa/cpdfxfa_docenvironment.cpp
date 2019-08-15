@@ -21,7 +21,6 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#include "fxjs/ijs_runtime.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
@@ -233,7 +232,6 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
   }
 
   pPopupRect->height = popup_height;
-
   return true;
 }
 
@@ -600,96 +598,13 @@ FX_ARGB CPDFXFA_DocEnvironment::GetHighlightColor(CXFA_FFDoc* hDoc) {
                                 pForm->GetHighlightColor(FormFieldType::kXFA));
 }
 
-#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
-bool CPDFXFA_DocEnvironment::NotifySubmit(bool bPrevOrPost) {
-  if (bPrevOrPost)
-    return OnBeforeNotifySubmit();
+IJS_Runtime* CPDFXFA_DocEnvironment::GetIJSRuntime(CXFA_FFDoc* hDoc) const {
+  if (hDoc != m_pContext->GetXFADoc())
+    return nullptr;
 
-  OnAfterNotifySubmit();
-  return true;
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
+  return pFormFillEnv ? pFormFillEnv->GetIJSRuntime() : nullptr;
 }
-
-bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
-  if (!m_pContext->ContainsXFAForm())
-    return true;
-
-  CXFA_FFDocView* docView = m_pContext->GetXFADocView();
-  if (!docView)
-    return true;
-
-  CXFA_FFWidgetHandler* pWidgetHandler = docView->GetWidgetHandler();
-  if (!pWidgetHandler)
-    return true;
-
-  auto it = docView->CreateReadyNodeIterator();
-  if (it) {
-    CXFA_EventParam Param;
-    Param.m_eType = XFA_EVENT_PreSubmit;
-    while (CXFA_Node* pNode = it->MoveToNext())
-      pWidgetHandler->ProcessEvent(pNode, &Param);
-  }
-
-  it = docView->CreateReadyNodeIterator();
-  if (!it)
-    return true;
-
-  (void)it->MoveToNext();
-  CXFA_Node* pNode = it->MoveToNext();
-
-  while (pNode) {
-    if (pNode->ProcessValidate(docView, -1) == XFA_EventError::kError) {
-      CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-      if (!pFormFillEnv)
-        return false;
-
-      pFormFillEnv->JS_appAlert(WideString::FromDefANSI(IDS_XFA_Validate_Input),
-                                WideString(), JSPLATFORM_ALERT_BUTTON_OK,
-                                JSPLATFORM_ALERT_ICON_WARNING);
-      return false;
-    }
-    pNode = it->MoveToNext();
-  }
-
-  docView->UpdateDocView();
-  return true;
-}
-
-void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
-  if (!m_pContext->ContainsXFAForm())
-    return;
-
-  if (!m_pContext->GetXFADocView())
-    return;
-
-  CXFA_FFWidgetHandler* pWidgetHandler =
-      m_pContext->GetXFADocView()->GetWidgetHandler();
-  if (!pWidgetHandler)
-    return;
-
-  auto it = m_pContext->GetXFADocView()->CreateReadyNodeIterator();
-  if (!it)
-    return;
-
-  CXFA_EventParam Param;
-  Param.m_eType = XFA_EVENT_PostSubmit;
-  CXFA_Node* pNode = it->MoveToNext();
-  while (pNode) {
-    pWidgetHandler->ProcessEvent(pNode, &Param);
-    pNode = it->MoveToNext();
-  }
-  m_pContext->GetXFADocView()->UpdateDocView();
-}
-
-bool CPDFXFA_DocEnvironment::Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) {
-  if (!NotifySubmit(true) || !m_pContext->GetXFADocView())
-    return false;
-
-  m_pContext->GetXFADocView()->UpdateDocView();
-  bool ret = SubmitInternal(hDoc, submit);
-  NotifySubmit(false);
-  return ret;
-}
-#endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
 RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
@@ -705,6 +620,83 @@ RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
     return nullptr;
 
   return MakeSeekableStream(pFileHandler);
+}
+
+#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
+bool CPDFXFA_DocEnvironment::Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) {
+  if (!NotifySubmit(true) || !m_pContext->GetXFADocView())
+    return false;
+
+  m_pContext->GetXFADocView()->UpdateDocView();
+  bool ret = SubmitInternal(hDoc, submit);
+  NotifySubmit(false);
+  return ret;
+}
+#endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
+
+bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
+                                        WideString& csToAddress,
+                                        WideString& csCCAddress,
+                                        WideString& csBCCAddress,
+                                        WideString& csSubject,
+                                        WideString& csMsg) {
+  WideString srcURL = csURL;
+  srcURL.TrimLeft();
+  if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
+    return false;
+
+  auto pos = srcURL.Find(L'?');
+
+  {
+    WideString tmp;
+    if (!pos.has_value()) {
+      pos = srcURL.Find(L'@');
+      if (!pos.has_value())
+        return false;
+
+      tmp = srcURL.Right(csURL.GetLength() - 7);
+    } else {
+      tmp = srcURL.Left(pos.value());
+      tmp = tmp.Right(tmp.GetLength() - 7);
+    }
+    tmp.Trim();
+    csToAddress = std::move(tmp);
+  }
+
+  srcURL = srcURL.Right(srcURL.GetLength() - (pos.value() + 1));
+  while (!srcURL.IsEmpty()) {
+    srcURL.Trim();
+    pos = srcURL.Find(L'&');
+    WideString tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
+    tmp.Trim();
+    if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {
+      tmp = tmp.Right(tmp.GetLength() - 3);
+      if (!csCCAddress.IsEmpty())
+        csCCAddress += L';';
+      csCCAddress += tmp;
+    } else if (tmp.GetLength() >= 4 &&
+               tmp.Left(4).CompareNoCase(L"bcc=") == 0) {
+      tmp = tmp.Right(tmp.GetLength() - 4);
+      if (!csBCCAddress.IsEmpty())
+        csBCCAddress += L';';
+      csBCCAddress += tmp;
+    } else if (tmp.GetLength() >= 8 &&
+               tmp.Left(8).CompareNoCase(L"subject=") == 0) {
+      tmp = tmp.Right(tmp.GetLength() - 8);
+      csSubject += tmp;
+    } else if (tmp.GetLength() >= 5 &&
+               tmp.Left(5).CompareNoCase(L"body=") == 0) {
+      tmp = tmp.Right(tmp.GetLength() - 5);
+      csMsg += tmp;
+    }
+    srcURL = pos.has_value()
+                 ? srcURL.Right(csURL.GetLength() - (pos.value() + 1))
+                 : WideString();
+  }
+  csToAddress.Replace(L",", L";");
+  csCCAddress.Replace(L",", L";");
+  csBCCAddress.Replace(L",", L";");
+  return true;
 }
 
 bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
@@ -823,72 +815,86 @@ void CPDFXFA_DocEnvironment::ToXFAContentFlags(WideString csSrcContent,
   }
 }
 
-bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
-                                        WideString& csToAddress,
-                                        WideString& csCCAddress,
-                                        WideString& csBCCAddress,
-                                        WideString& csSubject,
-                                        WideString& csMsg) {
-  WideString srcURL = csURL;
-  srcURL.TrimLeft();
-  if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
-    return false;
+#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
+bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
+  if (!m_pContext->ContainsXFAForm())
+    return true;
 
-  auto pos = srcURL.Find(L'?');
+  CXFA_FFDocView* docView = m_pContext->GetXFADocView();
+  if (!docView)
+    return true;
 
-  {
-    WideString tmp;
-    if (!pos.has_value()) {
-      pos = srcURL.Find(L'@');
-      if (!pos.has_value())
+  CXFA_FFWidgetHandler* pWidgetHandler = docView->GetWidgetHandler();
+  if (!pWidgetHandler)
+    return true;
+
+  auto it = docView->CreateReadyNodeIterator();
+  if (it) {
+    CXFA_EventParam Param;
+    Param.m_eType = XFA_EVENT_PreSubmit;
+    while (CXFA_Node* pNode = it->MoveToNext())
+      pWidgetHandler->ProcessEvent(pNode, &Param);
+  }
+
+  it = docView->CreateReadyNodeIterator();
+  if (!it)
+    return true;
+
+  (void)it->MoveToNext();
+  CXFA_Node* pNode = it->MoveToNext();
+
+  while (pNode) {
+    if (pNode->ProcessValidate(docView, -1) == XFA_EventError::kError) {
+      CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
+      if (!pFormFillEnv)
         return false;
 
-      tmp = srcURL.Right(csURL.GetLength() - 7);
-    } else {
-      tmp = srcURL.Left(pos.value());
-      tmp = tmp.Right(tmp.GetLength() - 7);
+      pFormFillEnv->JS_appAlert(WideString::FromDefANSI(IDS_XFA_Validate_Input),
+                                WideString(), JSPLATFORM_ALERT_BUTTON_OK,
+                                JSPLATFORM_ALERT_ICON_WARNING);
+      return false;
     }
-    tmp.Trim();
-    csToAddress = std::move(tmp);
+    pNode = it->MoveToNext();
   }
 
-  srcURL = srcURL.Right(srcURL.GetLength() - (pos.value() + 1));
-  while (!srcURL.IsEmpty()) {
-    srcURL.Trim();
-    pos = srcURL.Find(L'&');
-    WideString tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
-    tmp.Trim();
-    if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {
-      tmp = tmp.Right(tmp.GetLength() - 3);
-      if (!csCCAddress.IsEmpty())
-        csCCAddress += L';';
-      csCCAddress += tmp;
-    } else if (tmp.GetLength() >= 4 &&
-               tmp.Left(4).CompareNoCase(L"bcc=") == 0) {
-      tmp = tmp.Right(tmp.GetLength() - 4);
-      if (!csBCCAddress.IsEmpty())
-        csBCCAddress += L';';
-      csBCCAddress += tmp;
-    } else if (tmp.GetLength() >= 8 &&
-               tmp.Left(8).CompareNoCase(L"subject=") == 0) {
-      tmp = tmp.Right(tmp.GetLength() - 8);
-      csSubject += tmp;
-    } else if (tmp.GetLength() >= 5 &&
-               tmp.Left(5).CompareNoCase(L"body=") == 0) {
-      tmp = tmp.Right(tmp.GetLength() - 5);
-      csMsg += tmp;
-    }
-    srcURL = pos.has_value()
-                 ? srcURL.Right(csURL.GetLength() - (pos.value() + 1))
-                 : WideString();
-  }
-  csToAddress.Replace(L",", L";");
-  csCCAddress.Replace(L",", L";");
-  csBCCAddress.Replace(L",", L";");
+  docView->UpdateDocView();
   return true;
 }
 
-#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
+void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
+  if (!m_pContext->ContainsXFAForm())
+    return;
+
+  if (!m_pContext->GetXFADocView())
+    return;
+
+  CXFA_FFWidgetHandler* pWidgetHandler =
+      m_pContext->GetXFADocView()->GetWidgetHandler();
+  if (!pWidgetHandler)
+    return;
+
+  auto it = m_pContext->GetXFADocView()->CreateReadyNodeIterator();
+  if (!it)
+    return;
+
+  CXFA_EventParam Param;
+  Param.m_eType = XFA_EVENT_PostSubmit;
+  CXFA_Node* pNode = it->MoveToNext();
+  while (pNode) {
+    pWidgetHandler->ProcessEvent(pNode, &Param);
+    pNode = it->MoveToNext();
+  }
+  m_pContext->GetXFADocView()->UpdateDocView();
+}
+
+bool CPDFXFA_DocEnvironment::NotifySubmit(bool bPrevOrPost) {
+  if (bPrevOrPost)
+    return OnBeforeNotifySubmit();
+
+  OnAfterNotifySubmit();
+  return true;
+}
+
 bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
                                             CXFA_Submit* submit) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
@@ -967,35 +973,3 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
   return true;
 }
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
-
-bool CPDFXFA_DocEnvironment::SetPropertyInNonXFAGlobalObject(
-    CXFA_FFDoc* hDoc,
-    ByteStringView szPropName,
-    CFXJSE_Value* pValue) {
-  if (hDoc != m_pContext->GetXFADoc())
-    return false;
-
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  if (!pFormFillEnv)
-    return false;
-
-  IJS_Runtime* pIJSRuntime = pFormFillEnv->GetIJSRuntime();
-  IJS_Runtime::ScopedEventContext pContext(pIJSRuntime);
-  return pIJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
-}
-
-bool CPDFXFA_DocEnvironment::GetPropertyFromNonXFAGlobalObject(
-    CXFA_FFDoc* hDoc,
-    ByteStringView szPropName,
-    CFXJSE_Value* pValue) {
-  if (hDoc != m_pContext->GetXFADoc())
-    return false;
-
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  if (!pFormFillEnv)
-    return false;
-
-  IJS_Runtime* pIJSRuntime = pFormFillEnv->GetIJSRuntime();
-  IJS_Runtime::ScopedEventContext pContext(pIJSRuntime);
-  return pIJSRuntime->GetValueByNameFromGlobalObject(szPropName, pValue);
-}

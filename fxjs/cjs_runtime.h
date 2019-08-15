@@ -30,7 +30,8 @@ class CJS_Runtime final : public IJS_Runtime,
   explicit CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CJS_Runtime() override;
 
-  // IJS_Runtime
+  // IJS_Runtime:
+  CJS_Runtime* AsCJSRuntime() override;
   IJS_EventContext* NewEventContext() override;
   void ReleaseEventContext(IJS_EventContext* pContext) override;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override;
@@ -52,13 +53,10 @@ class CJS_Runtime final : public IJS_Runtime,
   // value will be returned, otherwise |value| is returned.
   v8::Local<v8::Value> MaybeCoerceToNumber(v8::Local<v8::Value> value);
 
-#ifdef PDF_ENABLE_XFA
-  CJS_Runtime* AsCJSRuntime() override;
   bool GetValueByNameFromGlobalObject(ByteStringView utf8Name,
-                                      CFXJSE_Value* pValue) override;
+                                      v8::Local<v8::Value>* pValue);
   bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
-                                    CFXJSE_Value* pValue) override;
-#endif  // PDF_ENABLE_XFA
+                                    v8::Local<v8::Value> pValue);
 
  private:
   void DefineJSObjects();

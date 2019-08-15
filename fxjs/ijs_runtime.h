@@ -52,18 +52,11 @@ class IJS_Runtime {
 
   virtual ~IJS_Runtime();
 
+  virtual CJS_Runtime* AsCJSRuntime() = 0;
   virtual IJS_EventContext* NewEventContext() = 0;
   virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
   virtual Optional<JS_Error> ExecuteScript(const WideString& script) = 0;
-
-#ifdef PDF_ENABLE_XFA
-  virtual CJS_Runtime* AsCJSRuntime() = 0;
-  virtual bool GetValueByNameFromGlobalObject(ByteStringView utf8Name,
-                                              CFXJSE_Value* pValue) = 0;
-  virtual bool SetValueByNameInGlobalObject(ByteStringView utf8Name,
-                                            CFXJSE_Value* pValue) = 0;
-#endif  // PDF_ENABLE_XFA
 
  protected:
   IJS_Runtime() = default;

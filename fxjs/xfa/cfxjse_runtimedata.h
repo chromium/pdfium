@@ -9,13 +9,12 @@
 
 #include <memory>
 
+#include "fxjs/cfxjs_engine.h"
 #include "v8/include/v8.h"
 
-class CFXJSE_RuntimeList;
-
-class CFXJSE_RuntimeData {
+class CFXJSE_RuntimeData : public FXJS_PerIsolateData::ExtensionIface {
  public:
-  ~CFXJSE_RuntimeData();
+  ~CFXJSE_RuntimeData() override;
 
   static CFXJSE_RuntimeData* Get(v8::Isolate* pIsolate);
 
