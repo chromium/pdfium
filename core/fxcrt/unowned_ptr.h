@@ -59,16 +59,19 @@ class UnownedPtr {
 
   ~UnownedPtr() { ProbeForLowSeverityLifetimeIssue(); }
 
-  UnownedPtr& operator=(T* that) noexcept {
+  void Reset(T* obj = nullptr) {
     ProbeForLowSeverityLifetimeIssue();
-    m_pObj = that;
+    m_pObj = obj;
+  }
+
+  UnownedPtr& operator=(T* that) noexcept {
+    Reset(that);
     return *this;
   }
 
   UnownedPtr& operator=(const UnownedPtr& that) noexcept {
-    ProbeForLowSeverityLifetimeIssue();
     if (*this != that)
-      m_pObj = that.Get();
+      Reset(that.Get());
     return *this;
   }
 

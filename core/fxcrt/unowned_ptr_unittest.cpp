@@ -26,6 +26,15 @@ void DeleteDangling() {
   }
 }
 
+void ResetDangling() {
+  auto ptr2 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr1 = pdfium::MakeUnique<Clink>();
+    ptr2->next_.Reset(ptr1.get());
+  }
+  ptr2->next_.Reset();
+}
+
 void AssignDangling() {
   auto ptr2 = pdfium::MakeUnique<Clink>();
   {
@@ -59,6 +68,23 @@ TEST(UnownedPtr, PtrNotOk) {
   EXPECT_DEATH(DeleteDangling(), "");
 #else
   DeleteDangling();
+#endif
+}
+
+TEST(UnownedPtr, ResetOk) {
+  auto ptr1 = pdfium::MakeUnique<Clink>();
+  {
+    auto ptr2 = pdfium::MakeUnique<Clink>();
+    ptr2->next_.Reset(ptr1.get());
+    ptr2->next_.Reset(nullptr);
+  }
+}
+
+TEST(UnownedPtr, ResetNotOk) {
+#if defined(ADDRESS_SANITIZER)
+  EXPECT_DEATH(ResetDangling(), "");
+#else
+  ResetDangling();
 #endif
 }
 
