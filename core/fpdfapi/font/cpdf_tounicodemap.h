@@ -17,10 +17,8 @@ class CPDF_Stream;
 
 class CPDF_ToUnicodeMap {
  public:
-  CPDF_ToUnicodeMap();
+  explicit CPDF_ToUnicodeMap(const CPDF_Stream* pStream);
   ~CPDF_ToUnicodeMap();
-
-  void Load(const CPDF_Stream* pStream);
 
   WideString Lookup(uint32_t charcode) const;
   uint32_t ReverseLookup(wchar_t unicode) const;
@@ -32,7 +30,8 @@ class CPDF_ToUnicodeMap {
   static uint32_t StringToCode(ByteStringView str);
   static WideString StringToWideString(ByteStringView str);
 
-  uint32_t GetUnicode();
+  void Load(const CPDF_Stream* pStream);
+  uint32_t GetUnicode() const;
 
   std::map<uint32_t, uint32_t> m_Map;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;

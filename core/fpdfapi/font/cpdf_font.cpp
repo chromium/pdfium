@@ -273,8 +273,7 @@ void CPDF_Font::LoadUnicodeMap() const {
   if (!pStream)
     return;
 
-  m_pToUnicodeMap = pdfium::MakeUnique<CPDF_ToUnicodeMap>();
-  m_pToUnicodeMap->Load(pStream);
+  m_pToUnicodeMap = pdfium::MakeUnique<CPDF_ToUnicodeMap>(pStream);
 }
 
 uint32_t CPDF_Font::GetStringWidth(ByteStringView pString) {
