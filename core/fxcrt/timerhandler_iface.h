@@ -19,7 +19,7 @@ class TimerHandlerIface {
   virtual ~TimerHandlerIface() = default;
 
   virtual int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) = 0;
-  virtual void KillTimer(int32_t nID) = 0;
+  virtual void KillTimer(int32_t nTimerID) = 0;
 };
 
 }  // namespace fxcrt

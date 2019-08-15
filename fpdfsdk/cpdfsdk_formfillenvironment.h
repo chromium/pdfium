@@ -51,7 +51,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
 
   // TimerHandlerIface:
   int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) override;
-  void KillTimer(int32_t nID) override;
+  void KillTimer(int32_t nTimerID) override;
 
   // IPWL_SystemHandler:
   void InvalidateRect(PerWindowData* pWidgetData,
