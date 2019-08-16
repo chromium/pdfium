@@ -19,7 +19,6 @@
 
 class CXFA_LayoutItem;
 class CXFA_Node;
-struct CXFA_ViewRecord;
 
 class CXFA_ViewLayoutProcessor {
  public:
@@ -61,6 +60,15 @@ class CXFA_ViewLayoutProcessor {
   CXFA_Node* ProcessBookendTrailer(const CXFA_Node* pBookendNode);
 
  private:
+  struct CXFA_ViewRecord {
+    CXFA_ViewRecord();
+    ~CXFA_ViewRecord();
+
+    RetainPtr<CXFA_ViewLayoutItem> pCurPageSet;
+    RetainPtr<CXFA_ViewLayoutItem> pCurPageArea;
+    RetainPtr<CXFA_ViewLayoutItem> pCurContentArea;
+  };
+
   using RecordList = std::list<std::unique_ptr<CXFA_ViewRecord>>;
 
   bool AppendNewPage(bool bFirstTemPage);

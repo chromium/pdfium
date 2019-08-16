@@ -329,11 +329,9 @@ bool ContentAreasFitInPageAreas(const CXFA_Node* pNode,
 
 }  // namespace
 
-struct CXFA_ViewRecord {
-  RetainPtr<CXFA_ViewLayoutItem> pCurPageSet;
-  RetainPtr<CXFA_ViewLayoutItem> pCurPageArea;
-  RetainPtr<CXFA_ViewLayoutItem> pCurContentArea;
-};
+CXFA_ViewLayoutProcessor::CXFA_ViewRecord::CXFA_ViewRecord() = default;
+
+CXFA_ViewLayoutProcessor::CXFA_ViewRecord::~CXFA_ViewRecord() = default;
 
 CXFA_ViewLayoutProcessor::CXFA_ViewLayoutProcessor(
     CXFA_LayoutProcessor* pLayoutProcessor)
@@ -564,15 +562,16 @@ float CXFA_ViewLayoutProcessor::GetAvailHeight() {
   return FLT_MAX;
 }
 
-CXFA_ViewRecord* CXFA_ViewLayoutProcessor::AppendNewRecord(
+CXFA_ViewLayoutProcessor::CXFA_ViewRecord*
+CXFA_ViewLayoutProcessor::AppendNewRecord(
     std::unique_ptr<CXFA_ViewRecord> pNewRecord) {
   m_ProposedViewRecords.push_back(std::move(pNewRecord));
   return m_ProposedViewRecords.back().get();
 }
 
-CXFA_ViewRecord* CXFA_ViewLayoutProcessor::CreateViewRecord(
-    CXFA_Node* pPageNode,
-    bool bCreateNew) {
+CXFA_ViewLayoutProcessor::CXFA_ViewRecord*
+CXFA_ViewLayoutProcessor::CreateViewRecord(CXFA_Node* pPageNode,
+                                           bool bCreateNew) {
   ASSERT(pPageNode);
   auto pNewRecord = pdfium::MakeUnique<CXFA_ViewRecord>();
   if (!HasCurrentViewRecord()) {
@@ -637,7 +636,8 @@ CXFA_ViewRecord* CXFA_ViewLayoutProcessor::CreateViewRecord(
   return AppendNewRecord(std::move(pNewRecord));
 }
 
-CXFA_ViewRecord* CXFA_ViewLayoutProcessor::CreateViewRecordSimple() {
+CXFA_ViewLayoutProcessor::CXFA_ViewRecord*
+CXFA_ViewLayoutProcessor::CreateViewRecordSimple() {
   auto pNewRecord = pdfium::MakeUnique<CXFA_ViewRecord>();
   if (HasCurrentViewRecord())
     *pNewRecord = *GetCurrentViewRecord();
