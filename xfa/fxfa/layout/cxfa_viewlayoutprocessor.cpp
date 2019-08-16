@@ -532,6 +532,9 @@ void CXFA_ViewLayoutProcessor::SubmitContentItem(
     const RetainPtr<CXFA_ContentLayoutItem>& pContentLayoutItem,
     CXFA_ContentLayoutProcessor::Result eStatus) {
   if (pContentLayoutItem) {
+    if (!HasCurrentViewRecord())
+      return;
+
     GetCurrentViewRecord()->pCurContentArea->AppendLastChild(
         pContentLayoutItem);
     m_bCreateOverFlowPage = false;
@@ -548,6 +551,9 @@ void CXFA_ViewLayoutProcessor::SubmitContentItem(
 }
 
 float CXFA_ViewLayoutProcessor::GetAvailHeight() {
+  if (!HasCurrentViewRecord())
+    return 0.0f;
+
   RetainPtr<CXFA_ViewLayoutItem> pLayoutItem =
       GetCurrentViewRecord()->pCurContentArea;
   if (!pLayoutItem || !pLayoutItem->GetFormNode())
@@ -1305,7 +1311,6 @@ CXFA_Node* CXFA_ViewLayoutProcessor::GetNextAvailPageArea(
   if (!m_pCurPageArea) {
     FindPageAreaFromPageSet(m_pTemplatePageSetRoot, nullptr, pTargetPageArea,
                             pTargetContentArea, bNewPage, bQuery);
-    ASSERT(m_pCurPageArea);
     return m_pCurPageArea;
   }
 
@@ -1500,6 +1505,9 @@ void CXFA_ViewLayoutProcessor::CreateNextMinRecord(CXFA_Node* pRecordNode) {
 }
 
 void CXFA_ViewLayoutProcessor::ProcessLastPageSet() {
+  if (!m_pCurPageArea)
+    return;
+
   CreateMinPageRecord(m_pCurPageArea, false, true);
   CreateNextMinRecord(m_pCurPageArea);
   CXFA_Node* pPageSet = m_pCurPageArea->GetParent();
