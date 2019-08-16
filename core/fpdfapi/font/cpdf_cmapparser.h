@@ -35,9 +35,20 @@ class CPDF_CMapParser {
   static CIDSet CharsetFromOrdering(ByteStringView ordering);
 
  private:
+  enum Status {
+    kStart,
+    kProcessingCidChar,
+    kProcessingCidRange,
+    kProcessingRegistry,
+    kProcessingOrdering,
+    kProcessingSupplement,
+    kProcessingWMode,
+    kProcessingCodeSpaceRange,
+  };
+
+  Status m_Status = kStart;
+  int m_CodeSeq = 0;
   UnownedPtr<CPDF_CMap> const m_pCMap;
-  int m_Status;
-  int m_CodeSeq;
   std::vector<CPDF_CMap::CodeRange> m_PendingRanges;
   std::vector<CPDF_CMap::CIDRange> m_AdditionalCharcodeToCIDMappings;
   ByteString m_LastWord;
