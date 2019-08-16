@@ -19,10 +19,6 @@
 #include "core/fpdfdoc/cpdf_metadata.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-#endif
-
 namespace {
 
 constexpr char kQuadPoints[] = "QuadPoints";

@@ -11,7 +11,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
