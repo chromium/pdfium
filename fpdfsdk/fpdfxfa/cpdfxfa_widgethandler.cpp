@@ -10,8 +10,8 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "public/fpdf_fwlevent.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/fwl_widgetdef.h"
@@ -218,7 +218,7 @@ CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
 CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnotForXFA(CXFA_FFWidget* pAnnot,
                                                      CPDFSDK_PageView* pPage) {
   CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
-  CPDFSDK_XFAWidget* pWidget = new CPDFSDK_XFAWidget(pAnnot, pPage, pForm);
+  CPDFXFA_Widget* pWidget = new CPDFXFA_Widget(pAnnot, pPage, pForm);
   pForm->AddXFAMap(pAnnot, pWidget);
   return pWidget;
 }
@@ -247,7 +247,7 @@ void CPDFXFA_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFXFA_WidgetHandler::ReleaseAnnot(
     std::unique_ptr<CPDFSDK_Annot> pAnnot) {
-  CPDFSDK_XFAWidget* pWidget = ToXFAWidget(pAnnot.get());
+  CPDFXFA_Widget* pWidget = ToXFAWidget(pAnnot.get());
   pWidget->GetInteractiveForm()->RemoveXFAMap(pWidget->GetXFAWidget());
 }
 

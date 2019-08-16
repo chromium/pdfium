@@ -26,7 +26,7 @@ class CPDF_Object;
 class CPDFSDK_FormFillEnvironment;
 
 #ifdef PDF_ENABLE_XFA
-class CPDFSDK_XFAWidget;
+class CPDFXFA_Widget;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
@@ -55,9 +55,9 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
   bool IsCalculateEnabled() const;
 
 #ifdef PDF_ENABLE_XFA
-  void AddXFAMap(CXFA_FFWidget* hWidget, CPDFSDK_XFAWidget* pWidget);
+  void AddXFAMap(CXFA_FFWidget* hWidget, CPDFXFA_Widget* pWidget);
   void RemoveXFAMap(CXFA_FFWidget* hWidget);
-  CPDFSDK_XFAWidget* GetXFAWidget(CXFA_FFWidget* hWidget);
+  CPDFXFA_Widget* GetXFAWidget(CXFA_FFWidget* hWidget);
   void XfaEnableCalculate(bool bEnabled);
   bool IsXfaCalculateEnabled() const;
   bool IsXfaValidationsEnabled();
@@ -116,7 +116,7 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
   std::unique_ptr<CPDF_InteractiveForm> const m_pInteractiveForm;
   std::map<CPDF_FormControl*, CPDFSDK_Widget*> m_Map;
 #ifdef PDF_ENABLE_XFA
-  std::map<CXFA_FFWidget*, CPDFSDK_XFAWidget*> m_XFAMap;
+  std::map<CXFA_FFWidget*, CPDFXFA_Widget*> m_XFAMap;
   bool m_bXfaCalculate = true;
   bool m_bXfaValidationsEnabled = true;
 #endif  // PDF_ENABLE_XFA

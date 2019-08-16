@@ -4,32 +4,32 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/cpdfsdk_xfawidget.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
-                                     CPDFSDK_PageView* pPageView,
-                                     CPDFSDK_InteractiveForm* pInteractiveForm)
+CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pAnnot,
+                               CPDFSDK_PageView* pPageView,
+                               CPDFSDK_InteractiveForm* pInteractiveForm)
     : CPDFSDK_Annot(pPageView),
       m_pInteractiveForm(pInteractiveForm),
       m_pXFAWidget(pAnnot) {}
 
-CPDFSDK_XFAWidget::~CPDFSDK_XFAWidget() = default;
+CPDFXFA_Widget::~CPDFXFA_Widget() = default;
 
-bool CPDFSDK_XFAWidget::IsXFAField() const {
+bool CPDFXFA_Widget::IsXFAField() const {
   return true;
 }
 
-CXFA_FFWidget* CPDFSDK_XFAWidget::GetXFAWidget() const {
+CXFA_FFWidget* CPDFXFA_Widget::GetXFAWidget() const {
   return m_pXFAWidget.Get();
 }
 
-CPDF_Annot::Subtype CPDFSDK_XFAWidget::GetAnnotSubtype() const {
+CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
   return CPDF_Annot::Subtype::XFAWIDGET;
 }
 
-CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {
+CFX_FloatRect CPDFXFA_Widget::GetRect() const {
   return GetXFAWidget()->GetLayoutItem()->GetRect(false).ToFloatRect();
 }

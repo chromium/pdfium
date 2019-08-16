@@ -8,8 +8,6 @@ import("../testing/test.gni")
 
 jumbo_source_set("fpdfsdk") {
   sources = [
-    "cpdf_annotcontext.cpp",
-    "cpdf_annotcontext.h",
     "cpdfsdk_actionhandler.cpp",
     "cpdfsdk_actionhandler.h",
     "cpdfsdk_annot.cpp",
@@ -97,11 +95,6 @@ jumbo_source_set("fpdfsdk") {
   visibility = [ "../*" ]
 
   if (pdf_enable_xfa) {
-    sources += [
-      "cpdfsdk_xfawidget.cpp",
-      "cpdfsdk_xfawidget.h",
-    ]
-
     deps += [
       "../fxbarcode",
       "../xfa/fxfa",

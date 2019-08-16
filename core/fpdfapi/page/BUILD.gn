@@ -10,6 +10,8 @@ jumbo_source_set("page") {
   sources = [
     "cpdf_allstates.cpp",
     "cpdf_allstates.h",
+    "cpdf_annotcontext.cpp",
+    "cpdf_annotcontext.h",
     "cpdf_clippath.cpp",
     "cpdf_clippath.h",
     "cpdf_color.cpp",

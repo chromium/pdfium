@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/cpdf_annotcontext.h"
+#include "core/fpdfapi/page/cpdf_annotcontext.h"
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"

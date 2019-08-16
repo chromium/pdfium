@@ -39,7 +39,7 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/cpdfsdk_xfawidget.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
@@ -225,7 +225,7 @@ bool CPDFSDK_InteractiveForm::IsCalculateEnabled() const {
 
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_InteractiveForm::AddXFAMap(CXFA_FFWidget* hWidget,
-                                        CPDFSDK_XFAWidget* pWidget) {
+                                        CPDFXFA_Widget* pWidget) {
   ASSERT(hWidget);
   m_XFAMap[hWidget] = pWidget;
 }
@@ -235,8 +235,7 @@ void CPDFSDK_InteractiveForm::RemoveXFAMap(CXFA_FFWidget* hWidget) {
     m_XFAMap.erase(hWidget);
 }
 
-CPDFSDK_XFAWidget* CPDFSDK_InteractiveForm::GetXFAWidget(
-    CXFA_FFWidget* hWidget) {
+CPDFXFA_Widget* CPDFSDK_InteractiveForm::GetXFAWidget(CXFA_FFWidget* hWidget) {
   ASSERT(hWidget);
   auto it = m_XFAMap.find(hWidget);
   return it != m_XFAMap.end() ? it->second : nullptr;

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CPDF_ANNOTCONTEXT_H_
-#define FPDFSDK_CPDF_ANNOTCONTEXT_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_ANNOTCONTEXT_H_
+#define CORE_FPDFAPI_PAGE_CPDF_ANNOTCONTEXT_H_
 
 #include <memory>
 
@@ -38,4 +38,4 @@ class CPDF_AnnotContext {
   UnownedPtr<CPDF_Page> const m_pPage;
 };
 
-#endif  // FPDFSDK_CPDF_ANNOTCONTEXT_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_ANNOTCONTEXT_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CPDFSDK_XFAWIDGET_H_
-#define FPDFSDK_CPDFSDK_XFAWIDGET_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -17,12 +17,12 @@ class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 class CXFA_FFWidget;
 
-class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
+class CPDFXFA_Widget final : public CPDFSDK_Annot {
  public:
-  CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
-                    CPDFSDK_PageView* pPageView,
-                    CPDFSDK_InteractiveForm* pInteractiveForm);
-  ~CPDFSDK_XFAWidget() override;
+  CPDFXFA_Widget(CXFA_FFWidget* pAnnot,
+                 CPDFSDK_PageView* pPageView,
+                 CPDFSDK_InteractiveForm* pInteractiveForm);
+  ~CPDFXFA_Widget() override;
 
   // CPDFSDK_Annot:
   bool IsXFAField() const override;
@@ -39,9 +39,10 @@ class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
   ObservedPtr<CXFA_FFWidget> const m_pXFAWidget;
 };
 
-inline CPDFSDK_XFAWidget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {
+inline CPDFXFA_Widget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {
   return pAnnot && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::XFAWIDGET
-      ? static_cast<CPDFSDK_XFAWidget*>(pAnnot) : nullptr;
+             ? static_cast<CPDFXFA_Widget*>(pAnnot)
+             : nullptr;
 }
 
-#endif  // FPDFSDK_CPDFSDK_XFAWIDGET_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_
