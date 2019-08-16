@@ -33,7 +33,8 @@ class CPDFSDK_AnnotHandlerMgr {
 
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* pAnnot, CPDFSDK_PageView* pPageView);
+  CPDFSDK_Annot* NewXFAAnnot(CXFA_FFWidget* pAnnot,
+                             CPDFSDK_PageView* pPageView);
 #endif  // PDF_ENABLE_XFA
   void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot);
 
@@ -48,7 +49,6 @@ class CPDFSDK_AnnotHandlerMgr {
   bool Annot_Undo(CPDFSDK_Annot* pAnnot);
   bool Annot_Redo(CPDFSDK_Annot* pAnnot);
 
-  IPDFSDK_AnnotHandler* GetAnnotHandler(CPDFSDK_Annot* pAnnot) const;
   void Annot_OnDraw(CPDFSDK_PageView* pPageView,
                     CPDFSDK_Annot* pAnnot,
                     CFX_RenderDevice* pDevice,
@@ -111,14 +111,15 @@ class CPDFSDK_AnnotHandlerMgr {
                        const CFX_PointF& point);
 
  private:
-  IPDFSDK_AnnotHandler* GetAnnotHandler(
+  IPDFSDK_AnnotHandler* GetAnnotHandler(CPDFSDK_Annot* pAnnot) const;
+  IPDFSDK_AnnotHandler* GetAnnotHandlerOfType(
       CPDF_Annot::Subtype nAnnotSubtype) const;
   CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
 
-  std::unique_ptr<CPDFSDK_BAAnnotHandler> m_pBAAnnotHandler;
-  std::unique_ptr<CPDFSDK_WidgetHandler> m_pWidgetHandler;
+  std::unique_ptr<CPDFSDK_BAAnnotHandler> const m_pBAAnnotHandler;
+  std::unique_ptr<CPDFSDK_WidgetHandler> const m_pWidgetHandler;
 #ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CPDFXFA_WidgetHandler> m_pXFAWidgetHandler;
+  std::unique_ptr<CPDFXFA_WidgetHandler> const m_pXFAWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 };
 

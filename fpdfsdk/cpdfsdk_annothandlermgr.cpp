@@ -40,22 +40,22 @@ CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
 {
 }
 
-CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() {}
+CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() = default;
 
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
                                                  CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
-  return GetAnnotHandler(pAnnot->GetSubtype())->NewAnnot(pAnnot, pPageView);
+  return GetAnnotHandlerOfType(pAnnot->GetSubtype())
+      ->NewAnnot(pAnnot, pPageView);
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CXFA_FFWidget* pAnnot,
-                                                 CPDFSDK_PageView* pPageView) {
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewXFAAnnot(
+    CXFA_FFWidget* pAnnot,
+    CPDFSDK_PageView* pPageView) {
   ASSERT(pAnnot);
   ASSERT(pPageView);
-  auto* pHandler = static_cast<CPDFXFA_WidgetHandler*>(
-      GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET));
-  return pHandler->NewAnnotForXFA(pAnnot, pPageView);
+  return m_pXFAWidgetHandler->NewAnnotForXFA(pAnnot, pPageView);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -102,10 +102,10 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_Redo(CPDFSDK_Annot* pAnnot) {
 
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
     CPDFSDK_Annot* pAnnot) const {
-  return GetAnnotHandler(pAnnot->GetAnnotSubtype());
+  return GetAnnotHandlerOfType(pAnnot->GetAnnotSubtype());
 }
 
-IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
+IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandlerOfType(
     CPDF_Annot::Subtype nAnnotSubtype) const {
   if (nAnnotSubtype == CPDF_Annot::Subtype::WIDGET)
     return m_pWidgetHandler.get();
@@ -280,14 +280,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
     ObservedPtr<CPDFSDK_Annot>* pKillAnnot) {
   bool bXFA = (*pSetAnnot && (*pSetAnnot)->GetXFAWidget()) ||
               (*pKillAnnot && (*pKillAnnot)->GetXFAWidget());
-
-  if (bXFA) {
-    auto* pXFAAnnotHandler = static_cast<CPDFXFA_WidgetHandler*>(
-        GetAnnotHandler(CPDF_Annot::Subtype::XFAWIDGET));
-    if (pXFAAnnotHandler)
-      return pXFAAnnotHandler->OnXFAChangedFocus(pKillAnnot, pSetAnnot);
-  }
-  return true;
+  return !bXFA || m_pXFAWidgetHandler->OnXFAChangedFocus(pKillAnnot, pSetAnnot);
 }
 #endif  // PDF_ENABLE_XFA
 
