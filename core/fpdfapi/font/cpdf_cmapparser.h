@@ -13,6 +13,7 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/optional.h"
 
 class CPDF_CMapParser {
  public:
@@ -27,14 +28,12 @@ class CPDF_CMapParser {
     return std::move(m_AdditionalCharcodeToCIDMappings);
   }
 
-  uint32_t GetCode(ByteStringView word) const;
-  bool GetCodeRange(CPDF_CMap::CodeRange& range,
-                    ByteStringView first,
-                    ByteStringView second) const;
-
   static CIDSet CharsetFromOrdering(ByteStringView ordering);
 
  private:
+  friend class cpdf_cmapparser_GetCode_Test;
+  friend class cpdf_cmapparser_GetCodeRange_Test;
+
   enum Status {
     kStart,
     kProcessingCidChar,
@@ -45,6 +44,10 @@ class CPDF_CMapParser {
     kProcessingWMode,
     kProcessingCodeSpaceRange,
   };
+
+  static uint32_t GetCode(ByteStringView word);
+  static Optional<CPDF_CMap::CodeRange> GetCodeRange(ByteStringView first,
+                                                     ByteStringView second);
 
   Status m_Status = kStart;
   int m_CodeSeq = 0;

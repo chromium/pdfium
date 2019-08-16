@@ -116,9 +116,10 @@ void CPDF_CMapParser::ParseWord(ByteStringView word) {
         return;
 
       if (m_CodeSeq % 2) {
-        CPDF_CMap::CodeRange range;
-        if (GetCodeRange(range, m_LastWord.AsStringView(), word))
-          m_PendingRanges.push_back(range);
+        Optional<CPDF_CMap::CodeRange> range =
+            GetCodeRange(m_LastWord.AsStringView(), word);
+        if (range.has_value())
+          m_PendingRanges.push_back(range.value());
       }
       m_CodeSeq++;
     }
@@ -126,7 +127,8 @@ void CPDF_CMapParser::ParseWord(ByteStringView word) {
   m_LastWord = word;
 }
 
-uint32_t CPDF_CMapParser::GetCode(ByteStringView word) const {
+// static
+uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
   if (word.IsEmpty())
     return 0;
 
@@ -148,21 +150,24 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) const {
   return num.ValueOrDie();
 }
 
-bool CPDF_CMapParser::GetCodeRange(CPDF_CMap::CodeRange& range,
-                                   ByteStringView first,
-                                   ByteStringView second) const {
+// static
+Optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
+    ByteStringView first,
+    ByteStringView second) {
   if (first.GetLength() == 0 || first[0] != '<')
-    return false;
+    return pdfium::nullopt;
 
   size_t i;
   for (i = 1; i < first.GetLength(); ++i) {
     if (first[i] == '>')
       break;
   }
-  range.m_CharSize = (i - 1) / 2;
-  if (range.m_CharSize > 4)
-    return false;
+  size_t char_size = (i - 1) / 2;
+  if (char_size > 4)
+    return pdfium::nullopt;
 
+  CPDF_CMap::CodeRange range;
+  range.m_CharSize = char_size;
   for (i = 0; i < range.m_CharSize; ++i) {
     uint8_t digit1 = first[i * 2 + 1];
     uint8_t digit2 = first[i * 2 + 2];
@@ -179,7 +184,7 @@ bool CPDF_CMapParser::GetCodeRange(CPDF_CMap::CodeRange& range,
     range.m_Upper[i] =
         FXSYS_HexCharToInt(digit1) * 16 + FXSYS_HexCharToInt(digit2);
   }
-  return true;
+  return range;
 }
 
 // static
