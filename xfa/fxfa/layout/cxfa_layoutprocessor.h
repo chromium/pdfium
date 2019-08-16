@@ -46,7 +46,7 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
   }
 
  private:
-  bool IsNeedLayout();
+  bool NeedLayout() const;
 
   std::unique_ptr<CXFA_ViewLayoutProcessor> m_pViewLayoutProcessor;
   std::unique_ptr<CXFA_ContentLayoutProcessor> m_pContentLayoutProcessor;

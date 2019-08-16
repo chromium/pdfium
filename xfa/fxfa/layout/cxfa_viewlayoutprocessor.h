@@ -19,7 +19,7 @@
 
 class CXFA_LayoutItem;
 class CXFA_Node;
-class CXFA_ViewRecord;
+struct CXFA_ViewRecord;
 
 class CXFA_ViewLayoutProcessor {
  public:

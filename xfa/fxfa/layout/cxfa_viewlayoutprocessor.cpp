@@ -329,15 +329,7 @@ bool ContentAreasFitInPageAreas(const CXFA_Node* pNode,
 
 }  // namespace
 
-class CXFA_ViewRecord {
- public:
-  CXFA_ViewRecord(CXFA_ViewLayoutItem* pPageSet = nullptr,
-                  CXFA_ViewLayoutItem* pPageArea = nullptr,
-                  CXFA_ViewLayoutItem* pContentArea = nullptr)
-      : pCurPageSet(pPageSet),
-        pCurPageArea(pPageArea),
-        pCurContentArea(pContentArea) {}
-
+struct CXFA_ViewRecord {
   RetainPtr<CXFA_ViewLayoutItem> pCurPageSet;
   RetainPtr<CXFA_ViewLayoutItem> pCurPageArea;
   RetainPtr<CXFA_ViewLayoutItem> pCurContentArea;

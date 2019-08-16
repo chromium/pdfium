@@ -35,7 +35,7 @@ void CXFA_LayoutProcessor::SetForceRelayout(bool bForceRestart) {
 }
 
 int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
-  if (!bForceRestart && !IsNeedLayout())
+  if (!bForceRestart && !NeedLayout())
     return 100;
 
   m_pContentLayoutProcessor.reset();
@@ -133,6 +133,6 @@ CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
                                 : nullptr;
 }
 
-bool CXFA_LayoutProcessor::IsNeedLayout() {
+bool CXFA_LayoutProcessor::NeedLayout() const {
   return m_bNeedLayout || !m_rgChangedContainers.empty();
 }
