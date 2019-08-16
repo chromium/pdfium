@@ -481,8 +481,8 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
 
   CFX_XMLDocument* GetXMLDocument() const;
 
-  pdfium::span<const PropertyData> const m_Properties;
-  pdfium::span<const AttributeData> const m_Attributes;
+  const pdfium::span<const PropertyData> m_Properties;
+  const pdfium::span<const AttributeData> m_Attributes;
   const uint32_t m_ValidPackets;
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;

@@ -478,7 +478,7 @@ class FaxDecoder final : public ScanlineDecoder {
   bool m_bByteAlign = false;
   const bool m_bEndOfLine;
   const bool m_bBlack;
-  pdfium::span<const uint8_t> const m_SrcSpan;
+  const pdfium::span<const uint8_t> m_SrcSpan;
   std::vector<uint8_t> m_ScanlineBuf;
   std::vector<uint8_t> m_RefBuf;
 };

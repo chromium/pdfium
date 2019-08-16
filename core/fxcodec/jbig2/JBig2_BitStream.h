@@ -44,7 +44,7 @@ class CJBig2_BitStream {
   void AdvanceBit();
   uint32_t LengthInBits() const;
 
-  pdfium::span<const uint8_t> const m_Span;
+  const pdfium::span<const uint8_t> m_Span;
   uint32_t m_dwByteIdx = 0;
   uint32_t m_dwBitIdx = 0;
   const uint32_t m_dwObjNum;

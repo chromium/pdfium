@@ -605,7 +605,7 @@ class FlateScanlineDecoder : public ScanlineDecoder {
 
  protected:
   std::unique_ptr<z_stream, FlateDeleter> m_pFlate;
-  pdfium::span<const uint8_t> const m_SrcBuf;
+  const pdfium::span<const uint8_t> m_SrcBuf;
   std::unique_ptr<uint8_t, FxFreeDeleter> const m_pScanline;
 };
 
