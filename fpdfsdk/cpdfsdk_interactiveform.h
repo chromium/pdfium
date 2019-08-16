@@ -25,11 +25,6 @@ class CPDF_InteractiveForm;
 class CPDF_Object;
 class CPDFSDK_FormFillEnvironment;
 
-#ifdef PDF_ENABLE_XFA
-class CPDFXFA_Widget;
-class CXFA_FFWidget;
-#endif  // PDF_ENABLE_XFA
-
 class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
  public:
   explicit CPDFSDK_InteractiveForm(CPDFSDK_FormFillEnvironment* pFormFillEnv);
@@ -55,9 +50,6 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
   bool IsCalculateEnabled() const;
 
 #ifdef PDF_ENABLE_XFA
-  void AddXFAMap(CXFA_FFWidget* hWidget, CPDFXFA_Widget* pWidget);
-  void RemoveXFAMap(CXFA_FFWidget* hWidget);
-  CPDFXFA_Widget* GetXFAWidget(CXFA_FFWidget* hWidget);
   void XfaEnableCalculate(bool bEnabled);
   bool IsXfaCalculateEnabled() const;
   bool IsXfaValidationsEnabled();
@@ -116,13 +108,11 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
   std::unique_ptr<CPDF_InteractiveForm> const m_pInteractiveForm;
   std::map<CPDF_FormControl*, CPDFSDK_Widget*> m_Map;
 #ifdef PDF_ENABLE_XFA
-  std::map<CXFA_FFWidget*, CPDFXFA_Widget*> m_XFAMap;
   bool m_bXfaCalculate = true;
   bool m_bXfaValidationsEnabled = true;
 #endif  // PDF_ENABLE_XFA
   bool m_bCalculate = true;
   bool m_bBusy = false;
-
   uint8_t m_HighlightAlpha = 0;
   FX_COLORREF m_HighlightColor[kFormFieldTypeCount];
   bool m_NeedsHighlight[kFormFieldTypeCount];

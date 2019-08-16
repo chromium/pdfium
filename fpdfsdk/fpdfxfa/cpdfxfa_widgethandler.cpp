@@ -218,9 +218,7 @@ CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
 CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnotForXFA(CXFA_FFWidget* pAnnot,
                                                      CPDFSDK_PageView* pPage) {
   CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
-  CPDFXFA_Widget* pWidget = new CPDFXFA_Widget(pAnnot, pPage, pForm);
-  pForm->AddXFAMap(pAnnot, pWidget);
-  return pWidget;
+  return new CPDFXFA_Widget(pAnnot, pPage, pForm);
 }
 
 void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
@@ -247,8 +245,6 @@ void CPDFXFA_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFXFA_WidgetHandler::ReleaseAnnot(
     std::unique_ptr<CPDFSDK_Annot> pAnnot) {
-  CPDFXFA_Widget* pWidget = ToXFAWidget(pAnnot.get());
-  pWidget->GetInteractiveForm()->RemoveXFAMap(pWidget->GetXFAWidget());
 }
 
 CFX_FloatRect CPDFXFA_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,

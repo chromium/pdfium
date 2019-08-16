@@ -38,11 +38,6 @@
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
-#include "xfa/fxfa/cxfa_ffwidget.h"
-#endif  // PDF_ENABLE_XFA
-
 namespace {
 
 constexpr uint32_t kWhiteBGR = FXSYS_BGR(255, 255, 255);
@@ -125,12 +120,7 @@ CPDFSDK_InteractiveForm::CPDFSDK_InteractiveForm(
   RemoveAllHighLights();
 }
 
-CPDFSDK_InteractiveForm::~CPDFSDK_InteractiveForm() {
-  m_Map.clear();
-#ifdef PDF_ENABLE_XFA
-  m_XFAMap.clear();
-#endif  // PDF_ENABLE_XFA
-}
+CPDFSDK_InteractiveForm::~CPDFSDK_InteractiveForm() = default;
 
 CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
     CPDF_FormControl* pControl) const {
@@ -224,26 +214,10 @@ bool CPDFSDK_InteractiveForm::IsCalculateEnabled() const {
 }
 
 #ifdef PDF_ENABLE_XFA
-void CPDFSDK_InteractiveForm::AddXFAMap(CXFA_FFWidget* hWidget,
-                                        CPDFXFA_Widget* pWidget) {
-  ASSERT(hWidget);
-  m_XFAMap[hWidget] = pWidget;
-}
-
-void CPDFSDK_InteractiveForm::RemoveXFAMap(CXFA_FFWidget* hWidget) {
-  if (hWidget)
-    m_XFAMap.erase(hWidget);
-}
-
-CPDFXFA_Widget* CPDFSDK_InteractiveForm::GetXFAWidget(CXFA_FFWidget* hWidget) {
-  ASSERT(hWidget);
-  auto it = m_XFAMap.find(hWidget);
-  return it != m_XFAMap.end() ? it->second : nullptr;
-}
-
 void CPDFSDK_InteractiveForm::XfaEnableCalculate(bool bEnabled) {
   m_bXfaCalculate = bEnabled;
 }
+
 bool CPDFSDK_InteractiveForm::IsXfaCalculateEnabled() const {
   return m_bXfaCalculate;
 }
