@@ -130,64 +130,70 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
     if (word.IsEmpty())
       break;
 
-    if (word == "beginbfchar") {
-      while (1) {
-        word = parser.GetWord();
-        if (word.IsEmpty() || word == "endbfchar")
-          break;
-
-        SetCode(StringToCode(word), StringToWideString(parser.GetWord()));
-      }
-    } else if (word == "beginbfrange") {
-      while (1) {
-        ByteStringView low = parser.GetWord();
-        if (low.IsEmpty() || low == "endbfrange")
-          break;
-
-        ByteStringView high = parser.GetWord();
-        uint32_t lowcode = StringToCode(low);
-        uint32_t highcode =
-            (lowcode & 0xffffff00) | (StringToCode(high) & 0xff);
-        if (highcode == 0xffffffff)
-          break;
-
-        ByteStringView start = parser.GetWord();
-        if (start == "[") {
-          for (uint32_t code = lowcode; code <= highcode; code++)
-            SetCode(code, StringToWideString(parser.GetWord()));
-          parser.GetWord();
-          continue;
-        }
-
-        WideString destcode = StringToWideString(start);
-        if (destcode.GetLength() == 1) {
-          uint32_t value = StringToCode(start);
-          for (uint32_t code = lowcode; code <= highcode; code++)
-            m_Map[code] = value++;
-        } else {
-          for (uint32_t code = lowcode; code <= highcode; code++) {
-            WideString retcode =
-                code == lowcode ? destcode : StringDataAdd(destcode);
-            m_Map[code] = GetUnicode();
-            m_MultiCharBuf.AppendChar(retcode.GetLength());
-            m_MultiCharBuf << retcode;
-            destcode = std::move(retcode);
-          }
-        }
-      }
-    } else if (word == "/Adobe-Korea1-UCS2") {
+    if (word == "beginbfchar")
+      HandleBeginBFChar(&parser);
+    else if (word == "beginbfrange")
+      HandleBeginBFRange(&parser);
+    else if (word == "/Adobe-Korea1-UCS2")
       cid_set = CIDSET_KOREA1;
-    } else if (word == "/Adobe-Japan1-UCS2") {
+    else if (word == "/Adobe-Japan1-UCS2")
       cid_set = CIDSET_JAPAN1;
-    } else if (word == "/Adobe-CNS1-UCS2") {
+    else if (word == "/Adobe-CNS1-UCS2")
       cid_set = CIDSET_CNS1;
-    } else if (word == "/Adobe-GB1-UCS2") {
+    else if (word == "/Adobe-GB1-UCS2")
       cid_set = CIDSET_GB1;
-    }
   }
   if (cid_set) {
     auto* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
     m_pBaseMap = manager->GetCID2UnicodeMap(cid_set);
+  }
+}
+
+void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
+  while (1) {
+    ByteStringView word = pParser->GetWord();
+    if (word.IsEmpty() || word == "endbfchar")
+      return;
+
+    SetCode(StringToCode(word), StringToWideString(pParser->GetWord()));
+  }
+}
+
+void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
+  while (1) {
+    ByteStringView low = pParser->GetWord();
+    if (low.IsEmpty() || low == "endbfrange")
+      return;
+
+    ByteStringView high = pParser->GetWord();
+    uint32_t lowcode = StringToCode(low);
+    uint32_t highcode = (lowcode & 0xffffff00) | (StringToCode(high) & 0xff);
+    if (highcode == 0xffffffff)
+      return;
+
+    ByteStringView start = pParser->GetWord();
+    if (start == "[") {
+      for (uint32_t code = lowcode; code <= highcode; code++)
+        SetCode(code, StringToWideString(pParser->GetWord()));
+      pParser->GetWord();
+      continue;
+    }
+
+    WideString destcode = StringToWideString(start);
+    if (destcode.GetLength() == 1) {
+      uint32_t value = StringToCode(start);
+      for (uint32_t code = lowcode; code <= highcode; code++)
+        m_Map[code] = value++;
+    } else {
+      for (uint32_t code = lowcode; code <= highcode; code++) {
+        WideString retcode =
+            code == lowcode ? destcode : StringDataAdd(destcode);
+        m_Map[code] = GetUnicode();
+        m_MultiCharBuf.AppendChar(retcode.GetLength());
+        m_MultiCharBuf << retcode;
+        destcode = std::move(retcode);
+      }
+    }
   }
 }
 

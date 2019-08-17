@@ -13,6 +13,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_CID2UnicodeMap;
+class CPDF_SimpleParser;
 class CPDF_Stream;
 
 class CPDF_ToUnicodeMap {
@@ -31,6 +32,8 @@ class CPDF_ToUnicodeMap {
   static WideString StringToWideString(ByteStringView str);
 
   void Load(const CPDF_Stream* pStream);
+  void HandleBeginBFChar(CPDF_SimpleParser* pParser);
+  void HandleBeginBFRange(CPDF_SimpleParser* pParser);
   uint32_t GetUnicode() const;
   void SetCode(uint32_t srccode, WideString destcode);
 
