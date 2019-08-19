@@ -25,6 +25,9 @@ class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
   CPDFSDK_BAAnnotHandler();
   ~CPDFSDK_BAAnnotHandler() override;
 
+  // IPDFSDK_AnnotHandler:
+  void SetFormFillEnvironment(
+      CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
   bool CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
   void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot) override;

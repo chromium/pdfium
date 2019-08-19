@@ -23,9 +23,11 @@ class CPDFSDK_PageView;
 
 class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
  public:
-  explicit CPDFSDK_WidgetHandler(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  CPDFSDK_WidgetHandler();
   ~CPDFSDK_WidgetHandler() override;
 
+  void SetFormFillEnvironment(
+      CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
   bool CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
   void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot) override;
@@ -98,8 +100,8 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot, int index) override;
 
  private:
-  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  UnownedPtr<CFFL_InteractiveFormFiller> const m_pFormFiller;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  UnownedPtr<CFFL_InteractiveFormFiller> m_pFormFiller;
 };
 
 #endif  // FPDFSDK_CPDFSDK_WIDGETHANDLER_H_

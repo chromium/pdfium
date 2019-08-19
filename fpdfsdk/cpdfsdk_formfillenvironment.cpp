@@ -34,9 +34,13 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
 
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     CPDF_Document* pDoc,
-    FPDF_FORMFILLINFO* pFFinfo)
-    : m_pInfo(pFFinfo), m_pCPDFDoc(pDoc) {
+    FPDF_FORMFILLINFO* pFFinfo,
+    std::unique_ptr<CPDFSDK_AnnotHandlerMgr> pHandlerMgr)
+    : m_pInfo(pFFinfo),
+      m_pCPDFDoc(pDoc),
+      m_pAnnotHandlerMgr(std::move(pHandlerMgr)) {
   ASSERT(m_pCPDFDoc);
+  m_pAnnotHandlerMgr->SetFormFillEnv(this);
 }
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
@@ -316,8 +320,6 @@ IJS_Runtime* CPDFSDK_FormFillEnvironment::GetIJSRuntime() {
 }
 
 CPDFSDK_AnnotHandlerMgr* CPDFSDK_FormFillEnvironment::GetAnnotHandlerMgr() {
-  if (!m_pAnnotHandlerMgr)
-    m_pAnnotHandlerMgr = pdfium::MakeUnique<CPDFSDK_AnnotHandlerMgr>(this);
   return m_pAnnotHandlerMgr.get();
 }
 

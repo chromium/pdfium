@@ -200,11 +200,14 @@ CHECK_FWL_VKEY_ENUM____(FWL_VKEY_Unknown);
 
 #undef CHECK_FWL_VKEY_ENUM____
 
-CPDFXFA_WidgetHandler::CPDFXFA_WidgetHandler(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {}
+CPDFXFA_WidgetHandler::CPDFXFA_WidgetHandler() = default;
 
-CPDFXFA_WidgetHandler::~CPDFXFA_WidgetHandler() {}
+CPDFXFA_WidgetHandler::~CPDFXFA_WidgetHandler() = default;
+
+void CPDFXFA_WidgetHandler::SetFormFillEnvironment(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pFormFillEnv = pFormFillEnv;
+}
 
 bool CPDFXFA_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return !!pAnnot->GetXFAWidget();

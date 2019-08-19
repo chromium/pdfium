@@ -19,6 +19,7 @@
 class CFX_RenderDevice;
 class CPDF_AnnotList;
 class CPDF_RenderOptions;
+class CPDFSDK_FormFillEnvironment;
 
 class CPDFSDK_PageView final : public CPDF_Page::View {
  public:

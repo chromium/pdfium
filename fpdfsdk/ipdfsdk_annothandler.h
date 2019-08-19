@@ -15,12 +15,15 @@
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Annot;
+class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 
 class IPDFSDK_AnnotHandler {
  public:
   virtual ~IPDFSDK_AnnotHandler() = default;
 
+  virtual void SetFormFillEnvironment(
+      CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual bool CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPage) = 0;

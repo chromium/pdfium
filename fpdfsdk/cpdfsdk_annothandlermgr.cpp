@@ -29,18 +29,25 @@
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pBAAnnotHandler(pdfium::MakeUnique<CPDFSDK_BAAnnotHandler>()),
-      m_pWidgetHandler(pdfium::MakeUnique<CPDFSDK_WidgetHandler>(pFormFillEnv))
-#ifdef PDF_ENABLE_XFA
-      ,
-      m_pXFAWidgetHandler(
-          pdfium::MakeUnique<CPDFXFA_WidgetHandler>(pFormFillEnv))
-#endif  // PDF_ENABLE_XFA
-{
+    std::unique_ptr<CPDFSDK_BAAnnotHandler> pBAAnnotHandler,
+    std::unique_ptr<CPDFSDK_WidgetHandler> pWidgetHandler,
+    std::unique_ptr<IPDFSDK_AnnotHandler> pXFAWidgetHandler)
+    : m_pBAAnnotHandler(std::move(pBAAnnotHandler)),
+      m_pWidgetHandler(std::move(pWidgetHandler)),
+      m_pXFAWidgetHandler(std::move(pXFAWidgetHandler)) {
+  ASSERT(m_pBAAnnotHandler);
+  ASSERT(m_pWidgetHandler);
 }
 
 CPDFSDK_AnnotHandlerMgr::~CPDFSDK_AnnotHandlerMgr() = default;
+
+void CPDFSDK_AnnotHandlerMgr::SetFormFillEnv(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pBAAnnotHandler->SetFormFillEnvironment(pFormFillEnv);
+  m_pWidgetHandler->SetFormFillEnvironment(pFormFillEnv);
+  if (m_pXFAWidgetHandler)
+    m_pXFAWidgetHandler->SetFormFillEnvironment(pFormFillEnv);
+}
 
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
                                                  CPDFSDK_PageView* pPageView) {
@@ -55,7 +62,8 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewXFAAnnot(
     CPDFSDK_PageView* pPageView) {
   ASSERT(pAnnot);
   ASSERT(pPageView);
-  return m_pXFAWidgetHandler->NewAnnotForXFA(pAnnot, pPageView);
+  return static_cast<CPDFXFA_WidgetHandler*>(m_pXFAWidgetHandler.get())
+      ->NewAnnotForXFA(pAnnot, pPageView);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -280,7 +288,9 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
     ObservedPtr<CPDFSDK_Annot>* pKillAnnot) {
   bool bXFA = (*pSetAnnot && (*pSetAnnot)->GetXFAWidget()) ||
               (*pKillAnnot && (*pKillAnnot)->GetXFAWidget());
-  return !bXFA || m_pXFAWidgetHandler->OnXFAChangedFocus(pKillAnnot, pSetAnnot);
+
+  return !bXFA || static_cast<CPDFXFA_WidgetHandler*>(m_pXFAWidgetHandler.get())
+                      ->OnXFAChangedFocus(pKillAnnot, pSetAnnot);
 }
 #endif  // PDF_ENABLE_XFA
 

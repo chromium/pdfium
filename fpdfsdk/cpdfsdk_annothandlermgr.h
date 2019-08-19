@@ -22,14 +22,19 @@ class CPDFSDK_PageView;
 class IPDFSDK_AnnotHandler;
 
 #ifdef PDF_ENABLE_XFA
-class CPDFXFA_WidgetHandler;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
 class CPDFSDK_AnnotHandlerMgr {
  public:
-  explicit CPDFSDK_AnnotHandlerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  CPDFSDK_AnnotHandlerMgr(
+      std::unique_ptr<CPDFSDK_BAAnnotHandler> pBAAnnotHandler,
+      std::unique_ptr<CPDFSDK_WidgetHandler> pWidgetHandler,
+      std::unique_ptr<IPDFSDK_AnnotHandler> pXFAWidgetHandler);
+
   ~CPDFSDK_AnnotHandlerMgr();
+
+  void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
 #ifdef PDF_ENABLE_XFA
@@ -116,11 +121,11 @@ class CPDFSDK_AnnotHandlerMgr {
       CPDF_Annot::Subtype nAnnotSubtype) const;
   CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
 
+  // |m_pBAAnnotHandler| and |m_pWidgetHandler| are always present, but
+  // |m_pXFAWidgetHandler| is only present in XFA mode.
   std::unique_ptr<CPDFSDK_BAAnnotHandler> const m_pBAAnnotHandler;
   std::unique_ptr<CPDFSDK_WidgetHandler> const m_pWidgetHandler;
-#ifdef PDF_ENABLE_XFA
-  std::unique_ptr<CPDFXFA_WidgetHandler> const m_pXFAWidgetHandler;
-#endif  // PDF_ENABLE_XFA
+  std::unique_ptr<IPDFSDK_AnnotHandler> const m_pXFAWidgetHandler;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_

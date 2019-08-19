@@ -46,7 +46,11 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
                                           public TimerHandlerIface,
                                           public IPWL_SystemHandler {
  public:
-  CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
+  CPDFSDK_FormFillEnvironment(
+      CPDF_Document* pDoc,
+      FPDF_FORMFILLINFO* pFFinfo,
+      std::unique_ptr<CPDFSDK_AnnotHandlerMgr> pHandlerMgr);
+
   ~CPDFSDK_FormFillEnvironment() override;
 
   // TimerHandlerIface:
@@ -202,9 +206,10 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
   void SubmitForm(pdfium::span<uint8_t> form_data, const WideString& URL);
 
+  CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Always present.
+
   // Creates if not present.
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
-  CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
   IJS_Runtime* GetIJSRuntime();                   // Creates if not present.
   CPDFSDK_ActionHandler* GetActionHandler();      // Creates if not present.
   CPDFSDK_InteractiveForm* GetInteractiveForm();  // Creates if not present.
@@ -213,13 +218,13 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   IPDF_Page* GetPage(int nIndex);
 
   FPDF_FORMFILLINFO* const m_pInfo;
-  std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;
   std::map<IPDF_Page*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InteractiveForm> m_pInteractiveForm;
   ObservedPtr<CPDFSDK_Annot> m_pFocusAnnot;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;
+  std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   bool m_bChangeMask = false;
   bool m_bBeingDestroyed = false;

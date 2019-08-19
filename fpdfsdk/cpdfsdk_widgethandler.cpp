@@ -20,15 +20,15 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
-CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv),
-      m_pFormFiller(pFormFillEnv->GetInteractiveFormFiller()) {
-  ASSERT(m_pFormFillEnv);
-  ASSERT(m_pFormFiller);
-}
+CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler() = default;
 
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() = default;
+
+void CPDFSDK_WidgetHandler::SetFormFillEnvironment(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  m_pFormFillEnv = pFormFillEnv;
+  m_pFormFiller = m_pFormFillEnv->GetInteractiveFormFiller();
+}
 
 bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);

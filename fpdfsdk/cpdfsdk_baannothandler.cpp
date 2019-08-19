@@ -38,6 +38,11 @@ CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() {}
 
 CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() {}
 
+void CPDFSDK_BAAnnotHandler::SetFormFillEnvironment(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  // CPDFSDK_BAAnnotHandler does not need it.
+}
+
 bool CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return false;
 }

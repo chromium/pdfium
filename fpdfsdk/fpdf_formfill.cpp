@@ -7,6 +7,7 @@
 #include "public/fpdf_formfill.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_occontext.h"
@@ -19,16 +20,19 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
+#include "fpdfsdk/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_widgethandler.h"
 #include "public/fpdfview.h"
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widgethandler.h"
 
 static_assert(static_cast<int>(AlertButton::kDefault) ==
                   JSPLATFORM_ALERT_BUTTON_DEFAULT,
@@ -304,8 +308,16 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   }
 #endif
 
-  auto pFormFillEnv =
-      pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(pDocument, formInfo);
+  std::unique_ptr<IPDFSDK_AnnotHandler> pXFAHandler;
+#ifdef PDF_ENABLE_XFA
+  pXFAHandler = pdfium::MakeUnique<CPDFXFA_WidgetHandler>();
+#endif  // PDF_ENABLE_XFA
+
+  auto pFormFillEnv = pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(
+      pDocument, formInfo,
+      pdfium::MakeUnique<CPDFSDK_AnnotHandlerMgr>(
+          pdfium::MakeUnique<CPDFSDK_BAAnnotHandler>(),
+          pdfium::MakeUnique<CPDFSDK_WidgetHandler>(), std::move(pXFAHandler)));
 
 #ifdef PDF_ENABLE_XFA
   if (pContext)
