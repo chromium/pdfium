@@ -45,6 +45,9 @@ class CPDF_CMapParser {
     kProcessingCodeSpaceRange,
   };
 
+  void HandleCid(ByteStringView word);
+  void HandleCodeSpaceRange(ByteStringView word);
+
   static uint32_t GetCode(ByteStringView word);
   static Optional<CPDF_CMap::CodeRange> GetCodeRange(ByteStringView first,
                                                      ByteStringView second);

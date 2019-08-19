@@ -54,36 +54,10 @@ void CPDF_CMapParser::ParseWord(ByteStringView word) {
     m_Status = kProcessingCodeSpaceRange;
     m_CodeSeq = 0;
   } else if (word == "usecmap") {
-  } else if (m_Status == kProcessingCidChar ||
-             m_Status == kProcessingCidRange) {
-    m_CodePoints[m_CodeSeq] = GetCode(word);
-    m_CodeSeq++;
-    uint32_t StartCode, EndCode;
-    uint16_t StartCID;
-    if (m_Status == kProcessingCidChar) {
-      if (m_CodeSeq < 2)
-        return;
-
-      EndCode = StartCode = m_CodePoints[0];
-      StartCID = (uint16_t)m_CodePoints[1];
-    } else {
-      if (m_CodeSeq < 3)
-        return;
-
-      StartCode = m_CodePoints[0];
-      EndCode = m_CodePoints[1];
-      StartCID = (uint16_t)m_CodePoints[2];
-    }
-    if (EndCode < 0x10000) {
-      for (uint32_t code = StartCode; code <= EndCode; code++) {
-        m_pCMap->SetDirectCharcodeToCIDTable(
-            code, static_cast<uint16_t>(StartCID + code - StartCode));
-      }
-    } else {
-      m_AdditionalCharcodeToCIDMappings.push_back(
-          {StartCode, EndCode, StartCID});
-    }
-    m_CodeSeq = 0;
+  } else if (m_Status == kProcessingCidChar) {
+    HandleCid(word);
+  } else if (m_Status == kProcessingCidRange) {
+    HandleCid(word);
   } else if (m_Status == kProcessingRegistry) {
     m_Status = kStart;
   } else if (m_Status == kProcessingOrdering) {
@@ -95,36 +69,71 @@ void CPDF_CMapParser::ParseWord(ByteStringView word) {
     m_pCMap->SetVertical(GetCode(word) != 0);
     m_Status = kStart;
   } else if (m_Status == kProcessingCodeSpaceRange) {
-    if (word == "endcodespacerange") {
-      const auto& code_ranges = m_pCMap->GetMixedFourByteLeadingRanges();
-      size_t nSegs = code_ranges.size() + m_PendingRanges.size();
-      if (nSegs == 1) {
-        const auto& first_range =
-            !code_ranges.empty() ? code_ranges[0] : m_PendingRanges[0];
-        m_pCMap->SetCodingScheme((first_range.m_CharSize == 2)
-                                     ? CPDF_CMap::TwoBytes
-                                     : CPDF_CMap::OneByte);
-      } else if (nSegs > 1) {
-        m_pCMap->SetCodingScheme(CPDF_CMap::MixedFourBytes);
-        for (const auto& range : m_PendingRanges)
-          m_pCMap->AppendMixedFourByteLeadingRanges(range);
-        m_PendingRanges.clear();
-      }
-      m_Status = kStart;
-    } else {
-      if (word.GetLength() == 0 || word[0] != '<')
-        return;
-
-      if (m_CodeSeq % 2) {
-        Optional<CPDF_CMap::CodeRange> range =
-            GetCodeRange(m_LastWord.AsStringView(), word);
-        if (range.has_value())
-          m_PendingRanges.push_back(range.value());
-      }
-      m_CodeSeq++;
-    }
+    HandleCodeSpaceRange(word);
   }
   m_LastWord = word;
+}
+
+void CPDF_CMapParser::HandleCid(ByteStringView word) {
+  ASSERT(m_Status == kProcessingCidChar || m_Status == kProcessingCidRange);
+  bool bChar = m_Status == kProcessingCidChar;
+
+  m_CodePoints[m_CodeSeq] = GetCode(word);
+  m_CodeSeq++;
+  int nRequiredCodePoints = bChar ? 2 : 3;
+  if (m_CodeSeq < nRequiredCodePoints)
+    return;
+
+  uint32_t StartCode = m_CodePoints[0];
+  uint32_t EndCode;
+  uint16_t StartCID;
+  if (bChar) {
+    EndCode = StartCode;
+    StartCID = static_cast<uint16_t>(m_CodePoints[1]);
+  } else {
+    EndCode = m_CodePoints[1];
+    StartCID = static_cast<uint16_t>(m_CodePoints[2]);
+  }
+  if (EndCode < 0x10000) {
+    for (uint32_t code = StartCode; code <= EndCode; code++) {
+      m_pCMap->SetDirectCharcodeToCIDTable(
+          code, static_cast<uint16_t>(StartCID + code - StartCode));
+    }
+  } else {
+    m_AdditionalCharcodeToCIDMappings.push_back({StartCode, EndCode, StartCID});
+  }
+  m_CodeSeq = 0;
+}
+
+void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
+  if (word != "endcodespacerange") {
+    if (word.GetLength() == 0 || word[0] != '<')
+      return;
+
+    if (m_CodeSeq % 2) {
+      Optional<CPDF_CMap::CodeRange> range =
+          GetCodeRange(m_LastWord.AsStringView(), word);
+      if (range.has_value())
+        m_PendingRanges.push_back(range.value());
+    }
+    m_CodeSeq++;
+    return;
+  }
+
+  const auto& code_ranges = m_pCMap->GetMixedFourByteLeadingRanges();
+  size_t nSegs = code_ranges.size() + m_PendingRanges.size();
+  if (nSegs == 1) {
+    const auto& first_range =
+        !code_ranges.empty() ? code_ranges[0] : m_PendingRanges[0];
+    m_pCMap->SetCodingScheme(first_range.m_CharSize == 2 ? CPDF_CMap::TwoBytes
+                                                         : CPDF_CMap::OneByte);
+  } else if (nSegs > 1) {
+    m_pCMap->SetCodingScheme(CPDF_CMap::MixedFourBytes);
+    for (const auto& range : m_PendingRanges)
+      m_pCMap->AppendMixedFourByteLeadingRanges(range);
+    m_PendingRanges.clear();
+  }
+  m_Status = kStart;
 }
 
 // static
