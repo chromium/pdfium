@@ -25,6 +25,7 @@
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_widgethandler.h"
 #endif  // PDF_ENABLE_XFA
 
@@ -286,8 +287,10 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_IsIndexSelected(
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
     ObservedPtr<CPDFSDK_Annot>* pSetAnnot,
     ObservedPtr<CPDFSDK_Annot>* pKillAnnot) {
-  bool bXFA = (*pSetAnnot && (*pSetAnnot)->GetXFAWidget()) ||
-              (*pKillAnnot && (*pKillAnnot)->GetXFAWidget());
+  CPDFXFA_Widget* pSetXFAWidget = ToXFAWidget(pSetAnnot->Get());
+  CPDFXFA_Widget* pKillXFAWidget = ToXFAWidget(pKillAnnot->Get());
+  bool bXFA = (pSetXFAWidget && pSetXFAWidget->GetXFAFFWidget()) ||
+              (pKillXFAWidget && pKillXFAWidget->GetXFAFFWidget());
 
   return !bXFA || static_cast<CPDFXFA_WidgetHandler*>(m_pXFAWidgetHandler.get())
                       ->OnXFAChangedFocus(pKillAnnot, pSetAnnot);

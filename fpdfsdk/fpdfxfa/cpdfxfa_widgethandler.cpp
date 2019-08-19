@@ -210,7 +210,8 @@ void CPDFXFA_WidgetHandler::SetFormFillEnvironment(
 }
 
 bool CPDFXFA_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  return !!pAnnot->GetXFAWidget();
+  CPDFXFA_Widget* pWidget = ToXFAWidget(pAnnot);
+  return pWidget && pWidget->GetXFAFFWidget();
 }
 
 CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
@@ -229,17 +230,17 @@ void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                    CFX_RenderDevice* pDevice,
                                    const CFX_Matrix& mtUser2Device,
                                    bool bDrawAnnots) {
-  ASSERT(pPageView);
-  ASSERT(pAnnot);
-
-  CXFA_Graphics gs(pDevice);
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  ASSERT(pXFAWidget);
 
   bool bIsHighlight = false;
   if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
     bIsHighlight = true;
 
-  GetXFAWidgetHandler(pAnnot)->RenderWidget(pAnnot->GetXFAWidget(), &gs,
-                                            mtUser2Device, bIsHighlight);
+  CXFA_Graphics gs(pDevice);
+  GetXFAFFWidgetHandler(pXFAWidget)
+      ->RenderWidget(pXFAWidget->GetXFAFFWidget(), &gs, mtUser2Device,
+                     bIsHighlight);
 
   // to do highlight and shadow
 }
@@ -252,10 +253,11 @@ void CPDFXFA_WidgetHandler::ReleaseAnnot(
 
 CFX_FloatRect CPDFXFA_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot) {
-  CXFA_Node* node = pAnnot->GetXFAWidget()->GetNode();
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  CXFA_Node* node = pXFAWidget->GetXFAFFWidget()->GetNode();
   ASSERT(node->IsWidgetReady());
 
-  CFX_RectF rcBBox = pAnnot->GetXFAWidget()->GetBBox(
+  CFX_RectF rcBBox = pXFAWidget->GetXFAFFWidget()->GetBBox(
       node->GetFFWidgetType() == XFA_FFWidgetType::kSignature
           ? CXFA_FFWidget::kDrawFocus
           : CXFA_FFWidget::kDoNotDrawFocus);
@@ -266,62 +268,77 @@ CFX_FloatRect CPDFXFA_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
 }
 
 WideString CPDFXFA_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return WideString();
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->GetText(pAnnot->GetXFAWidget());
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->GetText(pXFAWidget->GetXFAFFWidget());
 }
 
 WideString CPDFXFA_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return WideString();
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->GetSelectedText(pAnnot->GetXFAWidget());
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->GetSelectedText(pXFAWidget->GetXFAFFWidget());
 }
 
 void CPDFXFA_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
                                              const WideString& text) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->PasteText(pAnnot->GetXFAWidget(), text);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->PasteText(pXFAWidget->GetXFAFFWidget(), text);
 }
 
 bool CPDFXFA_WidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->CanUndo(pAnnot->GetXFAWidget());
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->CanUndo(pXFAWidget->GetXFAFFWidget());
 }
 
 bool CPDFXFA_WidgetHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->CanRedo(pAnnot->GetXFAWidget());
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->CanRedo(pXFAWidget->GetXFAFFWidget());
 }
 
 bool CPDFXFA_WidgetHandler::Undo(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->Undo(pAnnot->GetXFAWidget());
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->Undo(pXFAWidget->GetXFAFFWidget());
 }
 
 bool CPDFXFA_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->Redo(pAnnot->GetXFAWidget());
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->Redo(pXFAWidget->GetXFAFFWidget());
 }
 
 bool CPDFXFA_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     const CFX_PointF& point) {
-  if (!pPageView || !pAnnot)
+  if (!pPageView)
+    return false;
+
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
@@ -342,38 +359,51 @@ bool CPDFXFA_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
     return false;
 
   FWL_WidgetHit dwHitTest =
-      pWidgetHandler->OnHitTest(pAnnot->GetXFAWidget(), point);
+      pWidgetHandler->OnHitTest(pXFAWidget->GetXFAFFWidget(), point);
   return dwHitTest != FWL_WidgetHit::Unknown;
 }
 
 void CPDFXFA_WidgetHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                          uint32_t nFlag) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return;
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  pWidgetHandler->OnMouseEnter((*pAnnot)->GetXFAWidget());
+
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  pWidgetHandler->OnMouseEnter(pXFAWidget->GetXFAFFWidget());
 }
 
 void CPDFXFA_WidgetHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
                                         ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         uint32_t nFlag) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  pWidgetHandler->OnMouseExit((*pAnnot)->GetXFAWidget());
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  pWidgetHandler->OnMouseExit(pXFAWidget->GetXFAFFWidget());
 }
 
 bool CPDFXFA_WidgetHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                           uint32_t nFlags,
                                           const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnLButtonDown((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnLButtonDown(pXFAWidget->GetXFAFFWidget(),
                                        GetFWLFlags(nFlags), point);
 }
 
@@ -381,11 +411,15 @@ bool CPDFXFA_WidgetHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                         ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         uint32_t nFlags,
                                         const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnLButtonUp((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnLButtonUp(pXFAWidget->GetXFAFFWidget(),
                                      GetFWLFlags(nFlags), point);
 }
 
@@ -393,11 +427,15 @@ bool CPDFXFA_WidgetHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                             uint32_t nFlags,
                                             const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnLButtonDblClk((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnLButtonDblClk(pXFAWidget->GetXFAFFWidget(),
                                          GetFWLFlags(nFlags), point);
 }
 
@@ -405,11 +443,15 @@ bool CPDFXFA_WidgetHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                         ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         uint32_t nFlags,
                                         const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnMouseMove((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnMouseMove(pXFAWidget->GetXFAFFWidget(),
                                      GetFWLFlags(nFlags), point);
 }
 
@@ -418,11 +460,15 @@ bool CPDFXFA_WidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                          uint32_t nFlags,
                                          short zDelta,
                                          const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnMouseWheel((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnMouseWheel(pXFAWidget->GetXFAFFWidget(),
                                       GetFWLFlags(nFlags), zDelta, point);
 }
 
@@ -430,11 +476,15 @@ bool CPDFXFA_WidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                           uint32_t nFlags,
                                           const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnRButtonDown((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnRButtonDown(pXFAWidget->GetXFAFFWidget(),
                                        GetFWLFlags(nFlags), point);
 }
 
@@ -442,11 +492,15 @@ bool CPDFXFA_WidgetHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                         ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         uint32_t nFlags,
                                         const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnRButtonUp((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnRButtonUp(pXFAWidget->GetXFAFFWidget(),
                                      GetFWLFlags(nFlags), point);
 }
 
@@ -454,44 +508,51 @@ bool CPDFXFA_WidgetHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                             uint32_t nFlags,
                                             const CFX_PointF& point) {
-  if (!pPageView || !pAnnot->HasObservable())
+  if (!pPageView)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnRButtonDblClk((*pAnnot)->GetXFAWidget(),
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnRButtonDblClk(pXFAWidget->GetXFAFFWidget(),
                                          GetFWLFlags(nFlags), point);
 }
 
 bool CPDFXFA_WidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,
                                    uint32_t nChar,
                                    uint32_t nFlags) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->OnChar(pAnnot->GetXFAWidget(), nChar,
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnChar(pXFAWidget->GetXFAFFWidget(), nChar,
                                 GetFWLFlags(nFlags));
 }
 
 bool CPDFXFA_WidgetHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                       int nKeyCode,
                                       int nFlag) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->OnKeyDown(pAnnot->GetXFAWidget(), nKeyCode,
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnKeyDown(pXFAWidget->GetXFAFFWidget(), nKeyCode,
                                    GetFWLFlags(nFlag));
 }
 
 bool CPDFXFA_WidgetHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
                                     int nKeyCode,
                                     int nFlag) {
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return false;
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
-  return pWidgetHandler->OnKeyUp(pAnnot->GetXFAWidget(), nKeyCode,
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->OnKeyUp(pXFAWidget->GetXFAFFWidget(), nKeyCode,
                                  GetFWLFlags(nFlag));
 }
 
@@ -502,7 +563,11 @@ bool CPDFXFA_WidgetHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
 
 bool CPDFXFA_WidgetHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         uint32_t nFlag) {
-  CXFA_FFWidget* hWidget = *pAnnot ? (*pAnnot)->GetXFAWidget() : nullptr;
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot->Get());
+  if (!pXFAWidget)
+    return true;
+
+  CXFA_FFWidget* hWidget = pXFAWidget->GetXFAFFWidget();
   if (!hWidget)
     return true;
 
@@ -519,14 +584,18 @@ bool CPDFXFA_WidgetHandler::OnXFAChangedFocus(
     ObservedPtr<CPDFSDK_Annot>* pNewAnnot) {
   CXFA_FFWidgetHandler* pWidgetHandler = nullptr;
   if (pOldAnnot->HasObservable())
-    pWidgetHandler = GetXFAWidgetHandler(pOldAnnot->Get());
+    pWidgetHandler = GetXFAFFWidgetHandler(pOldAnnot->Get());
   else if (pNewAnnot->HasObservable())
-    pWidgetHandler = GetXFAWidgetHandler(pNewAnnot->Get());
+    pWidgetHandler = GetXFAFFWidgetHandler(pNewAnnot->Get());
 
   if (!pWidgetHandler)
     return true;
 
-  CXFA_FFWidget* hWidget = *pNewAnnot ? (*pNewAnnot)->GetXFAWidget() : nullptr;
+  CPDFXFA_Widget* pNewXFAWidget = ToXFAWidget(pNewAnnot->Get());
+  if (!pNewXFAWidget)
+    return true;
+
+  CXFA_FFWidget* hWidget = pNewXFAWidget->GetXFAFFWidget();
   if (!hWidget)
     return true;
 
@@ -557,7 +626,7 @@ bool CPDFXFA_WidgetHandler::IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot,
   return false;
 }
 
-CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAWidgetHandler(
+CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAFFWidgetHandler(
     CPDFSDK_Annot* pAnnot) {
   if (!pAnnot)
     return nullptr;

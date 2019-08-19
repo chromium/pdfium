@@ -62,10 +62,9 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device,
                                     bool bDrawAnnots) {
-#ifdef PDF_ENABLE_XFA
-  if (pAnnot->IsXFAField())
+  if (pAnnot->AsXFAWidget())
     return;
-#endif  // PDF_ENABLE_XFA
+
   if (bDrawAnnots && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP) {
     pAnnot->AsBAAnnot()->DrawAppearance(pDevice, mtUser2Device,
                                         CPDF_Annot::Normal, nullptr);

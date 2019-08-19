@@ -9,21 +9,17 @@
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pAnnot,
+CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
                                CPDFSDK_PageView* pPageView,
                                CPDFSDK_InteractiveForm* pInteractiveForm)
     : CPDFSDK_Annot(pPageView),
       m_pInteractiveForm(pInteractiveForm),
-      m_pXFAWidget(pAnnot) {}
+      m_pXFAFFWidget(pXFAFFWidget) {}
 
 CPDFXFA_Widget::~CPDFXFA_Widget() = default;
 
-bool CPDFXFA_Widget::IsXFAField() const {
-  return true;
-}
-
-CXFA_FFWidget* CPDFXFA_Widget::GetXFAWidget() const {
-  return m_pXFAWidget.Get();
+CPDFXFA_Widget* CPDFXFA_Widget::AsXFAWidget() {
+  return this;
 }
 
 CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
@@ -31,5 +27,5 @@ CPDF_Annot::Subtype CPDFXFA_Widget::GetAnnotSubtype() const {
 }
 
 CFX_FloatRect CPDFXFA_Widget::GetRect() const {
-  return GetXFAWidget()->GetLayoutItem()->GetRect(false).ToFloatRect();
+  return GetXFAFFWidget()->GetLayoutItem()->GetRect(false).ToFloatRect();
 }

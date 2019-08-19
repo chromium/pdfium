@@ -19,15 +19,9 @@ CPDFSDK_BAAnnot* CPDFSDK_Annot::AsBAAnnot() {
   return nullptr;
 }
 
-#ifdef PDF_ENABLE_XFA
-bool CPDFSDK_Annot::IsXFAField() const {
-  return false;
-}
-
-CXFA_FFWidget* CPDFSDK_Annot::GetXFAWidget() const {
+CPDFXFA_Widget* CPDFSDK_Annot::AsXFAWidget() {
   return nullptr;
 }
-#endif  // PDF_ENABLE_XFA
 
 IPDF_Page* CPDFSDK_Annot::GetXFAPage() {
 #ifdef PDF_ENABLE_XFA

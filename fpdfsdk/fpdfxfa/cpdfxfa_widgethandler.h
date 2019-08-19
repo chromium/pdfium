@@ -105,7 +105,7 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
                          ObservedPtr<CPDFSDK_Annot>* pNewAnnot);
 
  private:
-  CXFA_FFWidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
+  CXFA_FFWidgetHandler* GetXFAFFWidgetHandler(CPDFSDK_Annot* pAnnot);
   uint32_t GetFWLFlags(uint32_t dwFlag);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;

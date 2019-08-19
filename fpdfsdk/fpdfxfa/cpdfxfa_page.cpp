@@ -13,6 +13,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_widget.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
@@ -175,6 +176,10 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
 
 CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot,
                                              bool bNext) {
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pSDKAnnot);
+  if (!pXFAWidget)
+    return nullptr;
+
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
   CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
   std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
@@ -187,8 +192,9 @@ CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot,
   if (!pObservedAnnot || !pWidgetIterator)
     return nullptr;
 
-  if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
-    pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
+  if (pWidgetIterator->GetCurrentWidget() != pXFAWidget->GetXFAFFWidget())
+    pWidgetIterator->SetCurrentWidget(pXFAWidget->GetXFAFFWidget());
+
   CXFA_FFWidget* hNextFocus =
       bNext ? pWidgetIterator->MoveToNext() : pWidgetIterator->MoveToPrevious();
   if (!hNextFocus && pSDKAnnot)
@@ -242,13 +248,14 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
   CXFA_RenderContext renderContext(xfaView, rectClip, mtUser2Device);
   renderContext.DoRender(&gs);
 
-  if (!pAnnot)
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
     return;
 
   CXFA_FFDocView* docView = xfaView->GetDocView();
   if (!docView)
     return;
 
-  docView->GetWidgetHandler()->RenderWidget(pAnnot->GetXFAWidget(), &gs,
+  docView->GetWidgetHandler()->RenderWidget(pXFAWidget->GetXFAFFWidget(), &gs,
                                             mtUser2Device, false);
 }
