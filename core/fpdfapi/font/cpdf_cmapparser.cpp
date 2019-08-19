@@ -31,8 +31,7 @@ CPDF_CMapParser::CPDF_CMapParser(CPDF_CMap* pCMap) : m_pCMap(pCMap) {}
 CPDF_CMapParser::~CPDF_CMapParser() = default;
 
 void CPDF_CMapParser::ParseWord(ByteStringView word) {
-  if (word.IsEmpty())
-    return;
+  ASSERT(!word.IsEmpty());
 
   if (word == "begincidchar") {
     m_Status = kProcessingCidChar;
