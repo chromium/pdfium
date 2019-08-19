@@ -209,6 +209,14 @@ bool CPDFXFA_Context::ContainsExtensionForm() const {
          m_FormType == FormType::kXFAForeground;
 }
 
+bool CPDFXFA_Context::ContainsExtensionFullForm() const {
+  return m_FormType == FormType::kXFAFull;
+}
+
+bool CPDFXFA_Context::ContainsExtensionForegroundForm() const {
+  return m_FormType == FormType::kXFAForeground;
+}
+
 void CPDFXFA_Context::ClearChangeMark() {
   if (m_pFormFillEnv)
     m_pFormFillEnv->ClearChangeMark();

@@ -24,7 +24,6 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
@@ -73,8 +72,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   if (!pPage)
     return;
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(pPage->GetDocumentExtension());
-  if (pContext->GetFormType() == FormType::kXFAFull) {
+  auto* pContext = pPage->GetDocumentExtension();
+  if (pContext->ContainsExtensionFullForm()) {
     pPage->DrawFocusAnnot(pDevice, GetFocusAnnot(), mtUser2Device, pClip);
     return;
   }
@@ -475,9 +474,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
 #ifdef PDF_ENABLE_XFA
   RetainPtr<CPDFXFA_Page> protector(ToXFAPage(m_page));
-  auto* pContext =
-      static_cast<CPDFXFA_Context*>(m_pFormFillEnv->GetDocExtension());
-  if (pContext->GetFormType() == FormType::kXFAFull) {
+  auto* pContext = m_pFormFillEnv->GetDocExtension();
+  if (pContext->ContainsExtensionFullForm()) {
     CXFA_FFPageView* pageView = protector->GetXFAPageView();
     std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler(
         pageView->CreateWidgetIterator(
@@ -531,17 +529,10 @@ void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {
 
 int CPDFSDK_PageView::GetPageIndex() const {
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(
-      m_page->AsXFAPage()->GetDocumentExtension());
-  switch (pContext->GetFormType()) {
-    case FormType::kXFAFull: {
-      CXFA_FFPageView* pPageView = m_page->AsXFAPage()->GetXFAPageView();
-      return pPageView ? pPageView->GetLayoutItem()->GetPageIndex() : -1;
-    }
-    case FormType::kNone:
-    case FormType::kAcroForm:
-    case FormType::kXFAForeground:
-      break;
+  auto* pContext = m_page->AsXFAPage()->GetDocumentExtension();
+  if (pContext->ContainsExtensionFullForm()) {
+    CXFA_FFPageView* pPageView = m_page->AsXFAPage()->GetXFAPageView();
+    return pPageView ? pPageView->GetLayoutItem()->GetPageIndex() : -1;
   }
 #endif  // PDF_ENABLE_XFA
   return GetPageIndexForStaticPDF();

@@ -51,12 +51,12 @@ CPDFSDK_Widget::~CPDFSDK_Widget() = default;
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
-  auto* pContext = static_cast<CPDFXFA_Context*>(
-      m_pPageView->GetFormFillEnv()->GetDocExtension());
-  if (pContext->GetFormType() != FormType::kXFAForeground)
+  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (!pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
-  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  CXFA_FFDocView* pDocView =
+      static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
   if (!pDocView)
     return nullptr;
 
@@ -76,12 +76,12 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
 }
 
 CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
-  auto* pContext = static_cast<CPDFXFA_Context*>(
-      m_pPageView->GetFormFillEnv()->GetDocExtension());
-  if (pContext->GetFormType() != FormType::kXFAForeground)
+  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (!pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
-  CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+  CXFA_FFDocView* pDocView =
+      static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
   if (!pDocView)
     return nullptr;
 
@@ -90,13 +90,13 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
 }
 
 CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
-  auto* pContext = static_cast<CPDFXFA_Context*>(
-      m_pPageView->GetFormFillEnv()->GetDocExtension());
-  if (pContext->GetFormType() != FormType::kXFAForeground)
+  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (!pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
   if (!m_pWidgetHandler) {
-    CXFA_FFDocView* pDocView = pContext->GetXFADocView();
+    CXFA_FFDocView* pDocView =
+        static_cast<CPDFXFA_Context*>(pContext)->GetXFADocView();
     if (pDocView)
       m_pWidgetHandler = pDocView->GetWidgetHandler();
   }
@@ -363,9 +363,8 @@ FormFieldType CPDFSDK_Widget::GetFieldType() const {
 
 bool CPDFSDK_Widget::IsAppearanceValid() {
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(
-      m_pPageView->GetFormFillEnv()->GetDocExtension());
-  if (pContext->GetFormType() == FormType::kXFAFull)
+  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (pContext->ContainsExtensionFullForm())
     return true;
 #endif  // PDF_ENABLE_XFA
   return CPDFSDK_BAAnnot::IsAppearanceValid();

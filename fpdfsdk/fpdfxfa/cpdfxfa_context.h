@@ -58,6 +58,8 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   void DeletePage(int page_index) override;
   uint32_t GetUserPermissions() const override;
   bool ContainsExtensionForm() const override;
+  bool ContainsExtensionFullForm() const override;
+  bool ContainsExtensionForegroundForm() const override;
 
   // IFXA_AppProvider:
   WideString GetLanguage() override;
