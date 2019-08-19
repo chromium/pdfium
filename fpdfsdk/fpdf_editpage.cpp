@@ -221,9 +221,8 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   pPageDict->SetNewFor<CPDF_Dictionary>(pdfium::page_object::kResources);
 
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
-  if (pContext) {
-    auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(pContext, page_index);
+  if (pDoc->GetExtension()) {
+    auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(pDoc, page_index);
     pXFAPage->LoadPDFPageFromDict(pPageDict);
     return FPDFPageFromIPDFPage(pXFAPage.Leak());  // Caller takes ownership.
   }

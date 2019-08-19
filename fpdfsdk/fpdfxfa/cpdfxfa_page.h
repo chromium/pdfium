@@ -9,7 +9,6 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/ipdf_page.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -18,8 +17,8 @@
 
 class CFX_RenderDevice;
 class CPDF_Dictionary;
+class CPDF_Document;
 class CPDFSDK_Annot;
-class CPDFXFA_Context;
 class CXFA_FFPageView;
 
 class CPDFXFA_Page final : public IPDF_Page {
@@ -45,7 +44,6 @@ class CPDFXFA_Page final : public IPDF_Page {
 
   bool LoadPage();
   void LoadPDFPageFromDict(CPDF_Dictionary* pPageDict);
-  CPDF_Document::Extension* GetDocumentExtension() const;
   int GetPageIndex() const { return m_iPageIndex; }
   void SetXFAPageViewIndex(int index) { m_iPageIndex = index; }
   CXFA_FFPageView* GetXFAPageView() const;
@@ -58,13 +56,13 @@ class CPDFXFA_Page final : public IPDF_Page {
 
  private:
   // Refcounted class.
-  CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index);
+  CPDFXFA_Page(CPDF_Document* pDocument, int page_index);
   ~CPDFXFA_Page() override;
 
   bool LoadPDFPage();
 
-  RetainPtr<CPDF_Page> m_pPDFPage;
-  UnownedPtr<CPDFXFA_Context> const m_pContext;
+  RetainPtr<CPDF_Page> m_pPDFPage;  // Backing page, if any.
+  UnownedPtr<CPDF_Document> const m_pDocument;
   int m_iPageIndex;
 };
 

@@ -157,7 +157,7 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(int page_index) {
     m_XFAPageList.resize(m_nPageCount);
   }
 
-  auto pPage = pdfium::MakeRetain<CPDFXFA_Page>(this, page_index);
+  auto pPage = pdfium::MakeRetain<CPDFXFA_Page>(GetPDFDoc(), page_index);
   if (!pPage->LoadPage())
     return nullptr;
 

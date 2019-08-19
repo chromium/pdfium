@@ -315,10 +315,10 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView* pPageView,
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
                                                      bool bNext) {
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Page* pPage = pSDKAnnot->GetPageView()->GetPDFXFAPage();
+  IPDF_Page* pPage = pSDKAnnot->GetPageView()->GetXFAPage();
   if (pPage && !pPage->AsPDFPage()) {
     // For xfa annots in XFA pages not backed by PDF pages.
-    return pPage->GetNextXFAAnnot(pSDKAnnot, bNext);
+    return static_cast<CPDFXFA_Page*>(pPage)->GetNextXFAAnnot(pSDKAnnot, bNext);
   }
 #endif  // PDF_ENABLE_XFA
 
