@@ -56,20 +56,11 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   if (unicode != 0xffff)
     return unicode;
 
-  const wchar_t* buf = m_MultiCharBuf.GetBuffer();
-  uint32_t buf_len = m_MultiCharBuf.GetLength();
-  if (!buf || buf_len == 0)
+  WideStringView buf = m_MultiCharBuf.AsStringView();
+  size_t index = value >> 16;
+  if (!buf.IsValidIndex(index))
     return WideString();
-
-  uint32_t index = value >> 16;
-  if (index >= buf_len)
-    return WideString();
-
-  uint32_t len = buf[index];
-  if (index + len < index || index + len >= buf_len)
-    return WideString();
-
-  return WideString(buf + index + 1, len);
+  return WideString(buf.Mid(index + 1, buf[index]));
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
