@@ -28,7 +28,9 @@ ByteStringView CMap_GetString(ByteStringView word) {
 
 CPDF_CMapParser::CPDF_CMapParser(CPDF_CMap* pCMap) : m_pCMap(pCMap) {}
 
-CPDF_CMapParser::~CPDF_CMapParser() = default;
+CPDF_CMapParser::~CPDF_CMapParser() {
+  m_pCMap->SetMixedFourByteLeadingRanges(std::move(m_Ranges));
+}
 
 void CPDF_CMapParser::ParseWord(ByteStringView word) {
   ASSERT(!word.IsEmpty());
@@ -119,17 +121,17 @@ void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
     return;
   }
 
-  const auto& code_ranges = m_pCMap->GetMixedFourByteLeadingRanges();
-  size_t nSegs = code_ranges.size() + m_PendingRanges.size();
+  size_t nSegs = m_Ranges.size() + m_PendingRanges.size();
   if (nSegs == 1) {
     const auto& first_range =
-        !code_ranges.empty() ? code_ranges[0] : m_PendingRanges[0];
+        !m_Ranges.empty() ? m_Ranges[0] : m_PendingRanges[0];
     m_pCMap->SetCodingScheme(first_range.m_CharSize == 2 ? CPDF_CMap::TwoBytes
                                                          : CPDF_CMap::OneByte);
   } else if (nSegs > 1) {
     m_pCMap->SetCodingScheme(CPDF_CMap::MixedFourBytes);
-    for (const auto& range : m_PendingRanges)
-      m_pCMap->AppendMixedFourByteLeadingRanges(range);
+    m_Ranges.reserve(nSegs);
+    std::move(m_PendingRanges.begin(), m_PendingRanges.end(),
+              std::back_inserter(m_Ranges));
     m_PendingRanges.clear();
   }
   m_Status = kStart;

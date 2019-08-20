@@ -62,12 +62,7 @@ class CPDF_CMap final : public Retainable {
 
   void SetVertical(bool vert) { m_bVertical = vert; }
   void SetCodingScheme(CodingScheme scheme) { m_CodingScheme = scheme; }
-  const std::vector<CodeRange>& GetMixedFourByteLeadingRanges() const {
-    return m_MixedFourByteLeadingRanges;
-  }
-  void AppendMixedFourByteLeadingRanges(const CodeRange& range) {
-    m_MixedFourByteLeadingRanges.push_back(range);
-  }
+  void SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges);
 
   int GetCoding() const { return m_Coding; }
   const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap.Get(); }

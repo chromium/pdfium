@@ -475,3 +475,7 @@ int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
   }
   return 0;
 }
+
+void CPDF_CMap::SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges) {
+  m_MixedFourByteLeadingRanges = std::move(ranges);
+}
