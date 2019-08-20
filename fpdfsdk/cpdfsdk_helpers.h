@@ -40,7 +40,7 @@ class CPDF_TextPage;
 class CPDF_TextPageFind;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
-class IPDFSDK_PauseAdapter;
+class CPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
 struct CPDF_JavaScript;
 
@@ -270,7 +270,7 @@ void RenderPageWithContext(CPDF_PageRenderContext* pContext,
                            int rotate,
                            int flags,
                            bool bNeedToRestore,
-                           IPDFSDK_PauseAdapter* pause);
+                           CPDFSDK_PauseAdapter* pause);
 
 void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info);
 UNSUPPORT_INFO* GetPDFUnssuportInto();

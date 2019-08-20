@@ -4,18 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_IPDFSDK_PAUSEADAPTER_H_
-#define FPDFSDK_IPDFSDK_PAUSEADAPTER_H_
+#ifndef FPDFSDK_CPDFSDK_PAUSEADAPTER_H_
+#define FPDFSDK_CPDFSDK_PAUSEADAPTER_H_
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_progressive.h"
 
-class IPDFSDK_PauseAdapter : public PauseIndicatorIface {
+class CPDFSDK_PauseAdapter final : public PauseIndicatorIface {
  public:
-  explicit IPDFSDK_PauseAdapter(IFSDK_PAUSE* IPause);
-  ~IPDFSDK_PauseAdapter() override;
+  explicit CPDFSDK_PauseAdapter(IFSDK_PAUSE* IPause);
+  ~CPDFSDK_PauseAdapter() override;
 
   bool NeedToPauseNow() override;
 
@@ -23,4 +23,4 @@ class IPDFSDK_PauseAdapter : public PauseIndicatorIface {
   UnownedPtr<IFSDK_PAUSE> const m_IPause;
 };
 
-#endif  // FPDFSDK_IPDFSDK_PAUSEADAPTER_H_
+#endif  // FPDFSDK_CPDFSDK_PAUSEADAPTER_H_

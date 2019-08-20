@@ -38,6 +38,8 @@ jumbo_source_set("fpdfsdk") {
     "cpdfsdk_interactiveform.h",
     "cpdfsdk_pageview.cpp",
     "cpdfsdk_pageview.h",
+    "cpdfsdk_pauseadapter.cpp",
+    "cpdfsdk_pauseadapter.h",
     "cpdfsdk_widget.cpp",
     "cpdfsdk_widget.h",
     "cpdfsdk_widgethandler.cpp",
@@ -66,8 +68,6 @@ jumbo_source_set("fpdfsdk") {
     "fpdf_transformpage.cpp",
     "fpdf_view.cpp",
     "ipdfsdk_annothandler.h",
-    "ipdfsdk_pauseadapter.cpp",
-    "ipdfsdk_pauseadapter.h",
   ]
 
   configs += [ "../:pdfium_core_config" ]

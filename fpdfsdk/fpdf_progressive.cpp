@@ -14,7 +14,7 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/ipdfsdk_pauseadapter.h"
+#include "fpdfsdk/cpdfsdk_pauseadapter.h"
 #include "public/fpdfview.h"
 #include "third_party/base/ptr_util.h"
 
@@ -55,9 +55,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   pContext->m_pDevice = std::move(pOwnedDevice);
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
-  IPDFSDK_PauseAdapter IPauseAdapter(pause);
+  CPDFSDK_PauseAdapter pause_adapter(pause);
   RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
-                        rotate, flags, false, &IPauseAdapter);
+                        rotate, flags, false, &pause_adapter);
 
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush(false);
@@ -82,8 +82,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   auto* pContext =
       static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
   if (pContext && pContext->m_pRenderer) {
-    IPDFSDK_PauseAdapter IPauseAdapter(pause);
-    pContext->m_pRenderer->Continue(&IPauseAdapter);
+    CPDFSDK_PauseAdapter pause_adapter(pause);
+    pContext->m_pRenderer->Continue(&pause_adapter);
 #ifdef _SKIA_SUPPORT_PATHS_
     CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
     pDevice->Flush(false);
