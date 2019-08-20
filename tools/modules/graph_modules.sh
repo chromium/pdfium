@@ -12,7 +12,8 @@ BUILD_DIR=out/Default
 function crunch {
   echo '  edge [color=black,constraint=true]'
   gn desc $BUILD_DIR $1 deps | grep -v '//:' | grep -v test | \
-      grep -v samples | grep -v matches | sed "s|\\(.*\\)|  \"$1\" -> \"\\1\"|"
+      grep -v constants | grep -v samples | grep -v matches | \
+      sed "s|\\(.*\\)|  \"$1\" -> \"\\1\"|"
   echo '  edge [color=red,constraint=false]'
   gn desc $BUILD_DIR $1 allow_circular_includes_from | grep -v '//:' | \
       grep -v test | grep -v samples | grep -v matches | \
