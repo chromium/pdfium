@@ -889,7 +889,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
 //
 //          This function allocates enough memory for holding all pixels in the
 //          bitmap, but it doesn't initialize the buffer. Applications can use
-//          FPDFBitmap_FillRect to fill the bitmap using any color.
+//          FPDFBitmap_FillRect() to fill the bitmap using any color. If the OS
+//          allows it, this function can allocate up to 4 GB of memory.
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,
                                                         int height,
                                                         int alpha);
