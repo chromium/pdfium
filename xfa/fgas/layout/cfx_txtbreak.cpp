@@ -186,7 +186,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   pCurChar->m_iCharWidth = iCharWidthValid;
   iLineWidth += iCharWidthValid;
 
-  m_pCurLine->m_iArabicChars++;
+  m_pCurLine->IncrementArabicCharCount();
   if (!m_bSingleLine && IsGreaterThanLineWidth(iLineWidth))
     return EndBreak(CFX_BreakType::Line);
   return CFX_BreakType::None;
@@ -316,7 +316,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   FX_TPO tpo;
   CFX_Char* pTC;
   std::vector<CFX_Char>& chars = m_pCurLine->m_LineChars;
-  if (m_pCurLine->m_iArabicChars <= 0) {
+  if (!m_pCurLine->HasArabicChar()) {
     tp.m_dwStatus = dwStatus;
     tp.m_iStartPos = m_pCurLine->m_iStart;
     tp.m_iWidth = m_pCurLine->m_iWidth;
@@ -643,8 +643,8 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
   int32_t iWidth = 0;
   for (size_t i = 0; i < pNextLine->m_LineChars.size(); ++i) {
     if (pNextLine->m_LineChars[i].GetCharType() >= FX_CHARTYPE::kArabicAlef) {
-      pCurLine->m_iArabicChars--;
-      pNextLine->m_iArabicChars++;
+      pCurLine->DecrementArabicCharCount();
+      pNextLine->IncrementArabicCharCount();
     }
     iWidth += std::max(0, pNextLine->m_LineChars[i].m_iCharWidth);
     pNextLine->m_LineChars[i].m_dwStatus = CFX_BreakType::None;

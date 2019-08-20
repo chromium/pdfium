@@ -22,11 +22,17 @@ class CFX_BreakLine {
 
   void Clear();
 
+  void IncrementArabicCharCount();
+  void DecrementArabicCharCount();
+  bool HasArabicChar() const { return m_iArabicChars > 0; }
+
   std::vector<CFX_Char> m_LineChars;
   std::vector<CFX_BreakPiece> m_LinePieces;
-  int32_t m_iStart;
-  int32_t m_iWidth;
-  int32_t m_iArabicChars;
+  int32_t m_iStart = 0;
+  int32_t m_iWidth = 0;
+
+ private:
+  int32_t m_iArabicChars = 0;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFX_BREAKLINE_H_
