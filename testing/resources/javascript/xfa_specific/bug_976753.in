@@ -4,7 +4,7 @@
 {{include ../../xfa_preamble_3_0.fragment}}
 {{include ../../xfa_config_4_0.fragment}}
 {{object 5 0}} <<
-  {{steamlen}}
+  {{streamlen}}
 >>
 stream
 <template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">

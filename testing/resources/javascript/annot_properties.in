@@ -26,6 +26,7 @@ endobj
 >>
 endobj
 {{object 21 0}} <<
+  {{streamlen}}
 >>
 stream
 app.alert("Test that non-existent annot fetch gives error");

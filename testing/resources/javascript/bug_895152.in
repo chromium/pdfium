@@ -47,7 +47,9 @@ endobj
   /JS 8 0 R
 >>
 endobj
-{{object 8 0}} <<>>
+{{object 8 0}} <<
+  {{streamlen}}
+>>
 stream
 function run() {
   var doc = this;
