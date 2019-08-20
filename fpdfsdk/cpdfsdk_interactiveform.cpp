@@ -115,8 +115,7 @@ CPDFSDK_InteractiveForm::CPDFSDK_InteractiveForm(
     : m_pFormFillEnv(pFormFillEnv),
       m_pInteractiveForm(pdfium::MakeUnique<CPDF_InteractiveForm>(
           m_pFormFillEnv->GetPDFDocument())) {
-  ASSERT(m_pFormFillEnv);
-  m_pInteractiveForm->SetFormNotify(this);
+  m_pInteractiveForm->SetNotifierIface(this);
   RemoveAllHighLights();
 }
 

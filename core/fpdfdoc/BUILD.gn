@@ -82,7 +82,6 @@ jumbo_source_set("fpdfdoc") {
     "csection.h",
     "ctypeset.cpp",
     "ctypeset.h",
-    "ipdf_formnotify.h",
     "ipvt_fontmap.h",
   ]
   configs += [ "../../:pdfium_core_config" ]

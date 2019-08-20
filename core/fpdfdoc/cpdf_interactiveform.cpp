@@ -1088,6 +1088,6 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
   return pDoc;
 }
 
-void CPDF_InteractiveForm::SetFormNotify(IPDF_FormNotify* pNotify) {
+void CPDF_InteractiveForm::SetNotifierIface(NotifierIface* pNotify) {
   m_pFormNotify = pNotify;
 }

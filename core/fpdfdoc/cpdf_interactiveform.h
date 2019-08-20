@@ -27,7 +27,6 @@ class CPDF_Font;
 class CPDF_FormControl;
 class CPDF_Object;
 class CPDF_Page;
-class IPDF_FormNotify;
 
 RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
                                                   CPDF_Document* pDocument,
@@ -35,6 +34,20 @@ RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
 
 class CPDF_InteractiveForm {
  public:
+  class NotifierIface {
+   public:
+    virtual ~NotifierIface() = default;
+
+    virtual bool BeforeValueChange(CPDF_FormField* pField,
+                                   const WideString& csValue) = 0;
+    virtual void AfterValueChange(CPDF_FormField* pField) = 0;
+    virtual bool BeforeSelectionChange(CPDF_FormField* pField,
+                                       const WideString& csValue) = 0;
+    virtual void AfterSelectionChange(CPDF_FormField* pField) = 0;
+    virtual void AfterCheckedStatusChange(CPDF_FormField* pField) = 0;
+    virtual void AfterFormReset(CPDF_InteractiveForm* pForm) = 0;
+  };
+
   explicit CPDF_InteractiveForm(CPDF_Document* pDocument);
   ~CPDF_InteractiveForm();
 
@@ -85,11 +98,11 @@ class CPDF_InteractiveForm {
                  bool bIncludeOrExclude,
                  NotificationOption notify);
 
-  void SetFormNotify(IPDF_FormNotify* pNotify);
+  void SetNotifierIface(NotifierIface* pNotify);
   bool HasXFAForm() const;
   void FixPageFields(CPDF_Page* pPage);
 
-  IPDF_FormNotify* GetFormNotify() const { return m_pFormNotify.Get(); }
+  NotifierIface* GetFormNotify() const { return m_pFormNotify.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
 
@@ -113,7 +126,7 @@ class CPDF_InteractiveForm {
   // Points into |m_ControlMap|.
   std::map<const CPDF_FormField*, std::vector<UnownedPtr<CPDF_FormControl>>>
       m_ControlLists;
-  UnownedPtr<IPDF_FormNotify> m_pFormNotify;
+  UnownedPtr<NotifierIface> m_pFormNotify;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_INTERACTIVEFORM_H_

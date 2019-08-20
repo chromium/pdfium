@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_action.h"
-#include "core/fpdfdoc/ipdf_formnotify.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
@@ -21,11 +21,11 @@
 class CPDF_Dictionary;
 class CPDF_FormControl;
 class CPDF_FormField;
-class CPDF_InteractiveForm;
 class CPDF_Object;
 class CPDFSDK_FormFillEnvironment;
 
-class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
+class CPDFSDK_InteractiveForm final
+    : public CPDF_InteractiveForm::NotifierIface {
  public:
   explicit CPDFSDK_InteractiveForm(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CPDFSDK_InteractiveForm() override;
@@ -91,7 +91,7 @@ class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
   FX_COLORREF GetHighlightColor(FormFieldType fieldType);
 
  private:
-  // IPDF_FormNotify:
+  // CPDF_InteractiveForm::NotifierIface:
   bool BeforeValueChange(CPDF_FormField* pField,
                          const WideString& csValue) override;
   void AfterValueChange(CPDF_FormField* pField) override;
