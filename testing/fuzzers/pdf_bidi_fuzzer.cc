@@ -28,10 +28,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   WideString input =
       WideString::FromUTF16LE(reinterpret_cast<const unsigned short*>(data),
                               size / sizeof(unsigned short));
-  for (auto& ch : input)
+  for (wchar_t ch : input)
     rtf_break.AppendChar(ch);
 
-  auto chars = rtf_break.GetCurrentLineForTesting()->m_LineChars;
+  std::vector<CFX_Char> chars =
+      rtf_break.GetCurrentLineForTesting()->m_LineChars;
   CFX_Char::BidiLine(&chars, chars.size());
   return 0;
 }

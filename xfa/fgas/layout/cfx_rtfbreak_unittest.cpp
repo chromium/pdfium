@@ -26,10 +26,10 @@ class CFX_RTFBreakTest : public testing::Test {
     ASSERT_TRUE(font_.Get());
   }
 
-  std::unique_ptr<CFX_RTFBreak> CreateBreak(int32_t args) {
-    auto b = pdfium::MakeUnique<CFX_RTFBreak>(args);
-    b->SetFont(font_);
-    return b;
+  std::unique_ptr<CFX_RTFBreak> CreateBreak(uint32_t layout_styles) {
+    auto rtf_break = pdfium::MakeUnique<CFX_RTFBreak>(layout_styles);
+    rtf_break->SetFont(font_);
+    return rtf_break;
   }
 
  private:
@@ -40,40 +40,41 @@ class CFX_RTFBreakTest : public testing::Test {
 // and must be consumed before you get any more characters ....
 
 TEST_F(CFX_RTFBreakTest, AddChars) {
-  auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
+  auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
 
   WideString str(L"Input String.");
-  for (const auto& c : str)
-    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(c));
+  for (wchar_t ch : str)
+    EXPECT_EQ(CFX_BreakType::None, rtf_break->AppendChar(ch));
 
-  EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(L'\n'));
-  ASSERT_EQ(1, b->CountBreakPieces());
-  EXPECT_EQ(str + L"\n", b->GetBreakPieceUnstable(0)->GetString());
+  EXPECT_EQ(CFX_BreakType::Paragraph, rtf_break->AppendChar(L'\n'));
+  ASSERT_EQ(1, rtf_break->CountBreakPieces());
+  EXPECT_EQ(str + L"\n", rtf_break->GetBreakPieceUnstable(0)->GetString());
 
-  b->ClearBreakPieces();
-  b->Reset();
-  EXPECT_EQ(0, b->GetCurrentLineForTesting()->GetLineEnd());
+  rtf_break->ClearBreakPieces();
+  rtf_break->Reset();
+  EXPECT_EQ(0, rtf_break->GetCurrentLineForTesting()->GetLineEnd());
 
   str = L"Second str.";
-  for (const auto& c : str)
-    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(c));
+  for (wchar_t ch : str)
+    EXPECT_EQ(CFX_BreakType::None, rtf_break->AppendChar(ch));
 
   // Force the end of the break at the end of the string.
-  b->EndBreak(CFX_BreakType::Paragraph);
-  ASSERT_EQ(1, b->CountBreakPieces());
-  EXPECT_EQ(str, b->GetBreakPieceUnstable(0)->GetString());
+  rtf_break->EndBreak(CFX_BreakType::Paragraph);
+  ASSERT_EQ(1, rtf_break->CountBreakPieces());
+  EXPECT_EQ(str, rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
 TEST_F(CFX_RTFBreakTest, ControlCharacters) {
-  auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
-  EXPECT_EQ(CFX_BreakType::Line, b->AppendChar(L'\v'));
-  EXPECT_EQ(CFX_BreakType::Page, b->AppendChar(L'\f'));
-  // 0x2029 is the Paragraph Separator unicode character.
-  EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(0x2029));
-  EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(L'\n'));
+  auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
+  EXPECT_EQ(CFX_BreakType::Line, rtf_break->AppendChar(L'\v'));
+  EXPECT_EQ(CFX_BreakType::Page, rtf_break->AppendChar(L'\f'));
+  const wchar_t kUnicodeParagraphSeparator = 0x2029;
+  EXPECT_EQ(CFX_BreakType::Paragraph,
+            rtf_break->AppendChar(kUnicodeParagraphSeparator));
+  EXPECT_EQ(CFX_BreakType::Paragraph, rtf_break->AppendChar(L'\n'));
 
-  ASSERT_EQ(1, b->CountBreakPieces());
-  EXPECT_EQ(L"\v", b->GetBreakPieceUnstable(0)->GetString());
+  ASSERT_EQ(1, rtf_break->CountBreakPieces());
+  EXPECT_EQ(L"\v", rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
 TEST_F(CFX_RTFBreakTest, BidiLine) {
@@ -82,10 +83,11 @@ TEST_F(CFX_RTFBreakTest, BidiLine) {
   rtf_break->SetFontSize(12);
 
   WideString input = WideString::FromUTF8(ByteStringView("\xa\x0\xa\xa", 4));
-  for (auto& ch : input)
+  for (wchar_t ch : input)
     rtf_break->AppendChar(ch);
 
-  auto chars = rtf_break->GetCurrentLineForTesting()->m_LineChars;
+  std::vector<CFX_Char> chars =
+      rtf_break->GetCurrentLineForTesting()->m_LineChars;
   CFX_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }

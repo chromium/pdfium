@@ -24,9 +24,9 @@ class CFX_TxtBreakTest : public testing::Test {
   }
 
   std::unique_ptr<CFX_TxtBreak> CreateBreak() {
-    auto b = pdfium::MakeUnique<CFX_TxtBreak>();
-    b->SetFont(font_);
-    return b;
+    auto txt_break = pdfium::MakeUnique<CFX_TxtBreak>();
+    txt_break->SetFont(font_);
+    return txt_break;
   }
 
  private:
@@ -39,10 +39,11 @@ TEST_F(CFX_TxtBreakTest, BidiLine) {
   txt_break->SetFontSize(12);
 
   WideString input = WideString::FromUTF8(ByteStringView("\xa\x0\xa\xa", 4));
-  for (auto& ch : input)
+  for (wchar_t ch : input)
     txt_break->AppendChar(ch);
 
-  auto chars = txt_break->GetCurrentLineForTesting()->m_LineChars;
+  std::vector<CFX_Char> chars =
+      txt_break->GetCurrentLineForTesting()->m_LineChars;
   CFX_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }
