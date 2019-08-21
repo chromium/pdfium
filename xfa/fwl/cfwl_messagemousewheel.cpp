@@ -19,11 +19,4 @@ CFWL_MessageMouseWheel::CFWL_MessageMouseWheel(CFWL_Widget* pDstTarget,
       m_pos(pos),
       m_delta(delta) {}
 
-CFWL_MessageMouseWheel::CFWL_MessageMouseWheel(const CFWL_MessageMouseWheel&) =
-    default;
-
 CFWL_MessageMouseWheel::~CFWL_MessageMouseWheel() = default;
-
-std::unique_ptr<CFWL_Message> CFWL_MessageMouseWheel::Clone() {
-  return pdfium::MakeUnique<CFWL_MessageMouseWheel>(*this);
-}

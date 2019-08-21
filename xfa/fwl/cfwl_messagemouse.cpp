@@ -24,10 +24,4 @@ CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
       m_dwFlags(flags),
       m_pos(pos) {}
 
-CFWL_MessageMouse::CFWL_MessageMouse(const CFWL_MessageMouse& other) = default;
-
 CFWL_MessageMouse::~CFWL_MessageMouse() = default;
-
-std::unique_ptr<CFWL_Message> CFWL_MessageMouse::Clone() {
-  return pdfium::MakeUnique<CFWL_MessageMouse>(*this);
-}

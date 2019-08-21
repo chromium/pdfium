@@ -32,11 +32,7 @@ class CFWL_MessageMouse final : public CFWL_Message {
                     FWL_MouseCommand cmd,
                     uint32_t flags,
                     CFX_PointF pos);
-  CFWL_MessageMouse(const CFWL_MessageMouse& other);
   ~CFWL_MessageMouse() override;
-
-  // CFWL_Message
-  std::unique_ptr<CFWL_Message> Clone() override;
 
   FWL_MouseCommand m_dwCmd;
   uint32_t m_dwFlags = 0;

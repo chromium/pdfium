@@ -18,11 +18,7 @@ class CFWL_MessageMouseWheel final : public CFWL_Message {
                          uint32_t flags,
                          CFX_PointF pos,
                          CFX_PointF delta);
-  CFWL_MessageMouseWheel(const CFWL_MessageMouseWheel&);
   ~CFWL_MessageMouseWheel() override;
-
-  // CFWL_Message
-  std::unique_ptr<CFWL_Message> Clone() override;
 
   uint32_t m_dwFlags;
   CFX_PointF m_pos;

@@ -698,7 +698,7 @@ bool CXFA_FFField::IsDataChanged() {
 
 void CXFA_FFField::SendMessageToFWLWidget(
     std::unique_ptr<CFWL_Message> pMessage) {
-  GetApp()->GetFWLWidgetMgr()->OnProcessMessageToForm(pMessage.get());
+  GetApp()->GetFWLWidgetMgr()->OnProcessMessageToForm(std::move(pMessage));
 }
 
 void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}

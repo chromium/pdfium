@@ -37,7 +37,7 @@ class CFWL_WidgetMgr {
 
   static CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus);
 
-  void OnProcessMessageToForm(CFWL_Message* pMessage);
+  void OnProcessMessageToForm(std::unique_ptr<CFWL_Message> pMessage);
   void OnDrawWidget(CFWL_Widget* pWidget,
                     CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix);

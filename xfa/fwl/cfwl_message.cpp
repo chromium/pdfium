@@ -11,6 +11,4 @@ CFWL_Message::CFWL_Message(Type type,
                            CFWL_Widget* pDstTarget)
     : m_type(type), m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget) {}
 
-CFWL_Message::CFWL_Message(const CFWL_Message& that) = default;
-
 CFWL_Message::~CFWL_Message() = default;

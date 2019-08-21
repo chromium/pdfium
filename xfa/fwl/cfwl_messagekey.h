@@ -19,11 +19,7 @@ class CFWL_MessageKey final : public CFWL_Message {
                   FWL_KeyCommand cmd,
                   uint32_t flags,
                   uint32_t keycode);
-  CFWL_MessageKey(const CFWL_MessageKey& that);
   ~CFWL_MessageKey() override;
-
-  // CFWL_Message
-  std::unique_ptr<CFWL_Message> Clone() override;
 
   FWL_KeyCommand m_dwCmd;
   uint32_t m_dwFlags;
