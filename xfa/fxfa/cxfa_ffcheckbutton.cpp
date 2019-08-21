@@ -250,11 +250,10 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
     return false;
 
   SetButtonDown(false);
-  CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
-  ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
-  ms.m_dwFlags = dwFlags;
-  ms.m_pos = FWLToClient(point);
-  TranslateFWLMessage(&ms);
+  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+      m_pNormalWidget.get(), FWL_MouseCommand::LeftButtonUp, dwFlags,
+      FWLToClient(point)));
+
   return true;
 }
 

@@ -10,9 +10,14 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pSrcTarget,
-                                 CFWL_Widget* pDstTarget)
-    : CFWL_Message(CFWL_Message::Type::Key, pSrcTarget, pDstTarget) {}
+CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
+                                 FWL_KeyCommand cmd,
+                                 uint32_t flags,
+                                 uint32_t keycode)
+    : CFWL_Message(CFWL_Message::Type::Key, nullptr, pDstTarget),
+      m_dwCmd(cmd),
+      m_dwFlags(flags),
+      m_dwKeyCode(keycode) {}
 
 CFWL_MessageKey::CFWL_MessageKey(const CFWL_MessageKey& that) = default;
 

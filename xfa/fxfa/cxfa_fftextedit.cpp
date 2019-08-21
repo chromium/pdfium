@@ -125,13 +125,10 @@ void CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     UpdateFWLData();
     InvalidateRect();
   }
-
   SetButtonDown(true);
-  CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
-  ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
-  ms.m_dwFlags = dwFlags;
-  ms.m_pos = FWLToClient(point);
-  TranslateFWLMessage(&ms);
+  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+      m_pNormalWidget.get(), FWL_MouseCommand::LeftButtonDown, dwFlags,
+      FWLToClient(point)));
 }
 
 void CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
@@ -140,13 +137,9 @@ void CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     UpdateFWLData();
     InvalidateRect();
   }
-
   SetButtonDown(true);
-  CFWL_MessageMouse ms(nullptr, nullptr);
-  ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
-  ms.m_dwFlags = dwFlags;
-  ms.m_pos = FWLToClient(point);
-  TranslateFWLMessage(&ms);
+  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+      nullptr, FWL_MouseCommand::RightButtonDown, dwFlags, FWLToClient(point)));
 }
 
 bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
@@ -167,17 +160,16 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
     return false;
 
-  CFWL_MessageSetFocus ms(nullptr, m_pNormalWidget.get());
-  TranslateFWLMessage(&ms);
+  SendMessageToFWLWidget(
+      pdfium::MakeUnique<CFWL_MessageSetFocus>(nullptr, m_pNormalWidget.get()));
+
   return true;
 }
 
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  {
-    // Message can't outlive the OnKillFocus call.
-    CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget.get());
-    TranslateFWLMessage(&ms);
-  }
+  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKillFocus>(
+      nullptr, m_pNormalWidget.get()));
+
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
   SetEditScrollOffset();
   ProcessCommittedData();

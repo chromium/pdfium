@@ -14,16 +14,19 @@
 
 class CFWL_MessageMouseWheel final : public CFWL_Message {
  public:
-  CFWL_MessageMouseWheel(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
+  CFWL_MessageMouseWheel(CFWL_Widget* pDstTarget,
+                         uint32_t flags,
+                         CFX_PointF pos,
+                         CFX_PointF delta);
   CFWL_MessageMouseWheel(const CFWL_MessageMouseWheel&);
   ~CFWL_MessageMouseWheel() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
 
+  uint32_t m_dwFlags;
   CFX_PointF m_pos;
   CFX_PointF m_delta;
-  uint32_t m_dwFlags;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGEMOUSEWHEEL_H_

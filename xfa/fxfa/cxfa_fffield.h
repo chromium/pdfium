@@ -86,7 +86,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                      HighlightOption highlight,
                      ShapeOption shape);
   void DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
-  void TranslateFWLMessage(CFWL_Message* pMessage);
+  void SendMessageToFWLWidget(std::unique_ptr<CFWL_Message> pMessage);
   void CapPlacement();
   void CapTopBottomPlacement(const CXFA_Margin* margin,
                              const CFX_RectF& rtWidget,
