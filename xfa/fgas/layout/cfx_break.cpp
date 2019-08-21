@@ -17,16 +17,14 @@ const float CFX_Break::kConversionFactor = 20000.0f;
 const int CFX_Break::kMinimumTabWidth = 160000;
 
 CFX_Break::CFX_Break(uint32_t dwLayoutStyles)
-    : m_dwLayoutStyles(dwLayoutStyles) {
-  m_pCurLine = &m_Line[0];
-}
+    : m_dwLayoutStyles(dwLayoutStyles), m_pCurLine(&m_Lines[0]) {}
 
 CFX_Break::~CFX_Break() = default;
 
 void CFX_Break::Reset() {
   m_eCharType = FX_CHARTYPE::kUnknown;
-  m_Line[0].Clear();
-  m_Line[1].Clear();
+  for (CFX_BreakLine& line : m_Lines)
+    line.Clear();
 }
 
 void CFX_Break::SetLayoutStyles(uint32_t dwLayoutStyles) {
@@ -169,20 +167,20 @@ CFX_Char* CFX_Break::GetLastChar(int32_t index,
 
 int32_t CFX_Break::CountBreakPieces() const {
   return HasLine() ? pdfium::CollectionSize<int32_t>(
-                         m_Line[m_iReadyLineIndex].m_LinePieces)
+                         m_Lines[m_iReadyLineIndex].m_LinePieces)
                    : 0;
 }
 
 const CFX_BreakPiece* CFX_Break::GetBreakPieceUnstable(int32_t index) const {
   if (!HasLine())
     return nullptr;
-  if (!pdfium::IndexInBounds(m_Line[m_iReadyLineIndex].m_LinePieces, index))
+  if (!pdfium::IndexInBounds(m_Lines[m_iReadyLineIndex].m_LinePieces, index))
     return nullptr;
-  return &m_Line[m_iReadyLineIndex].m_LinePieces[index];
+  return &m_Lines[m_iReadyLineIndex].m_LinePieces[index];
 }
 
 void CFX_Break::ClearBreakPieces() {
   if (HasLine())
-    m_Line[m_iReadyLineIndex].Clear();
+    m_Lines[m_iReadyLineIndex].Clear();
   m_iReadyLineIndex = -1;
 }

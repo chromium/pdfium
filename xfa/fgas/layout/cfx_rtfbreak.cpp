@@ -313,12 +313,12 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
   }
 
   if (HasLine()) {
-    if (!m_Line[m_iReadyLineIndex].m_LinePieces.empty()) {
-      if (dwStatus != CFX_BreakType::Piece)
-        m_Line[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus = dwStatus;
-      return m_Line[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus;
-    }
-    return CFX_BreakType::None;
+    if (m_Lines[m_iReadyLineIndex].m_LinePieces.empty())
+      return CFX_BreakType::None;
+
+    if (dwStatus != CFX_BreakType::Piece)
+      m_Lines[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus = dwStatus;
+    return m_Lines[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus;
   }
 
   if (m_pCurLine->m_LineChars.empty())
@@ -329,8 +329,8 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
   if (dwStatus == CFX_BreakType::Piece)
     return dwStatus;
 
-  m_iReadyLineIndex = m_pCurLine == &m_Line[0] ? 0 : 1;
-  CFX_BreakLine* pNextLine = &m_Line[1 - m_iReadyLineIndex];
+  m_iReadyLineIndex = m_pCurLine == &m_Lines[0] ? 0 : 1;
+  CFX_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
   bool bAllChars = m_iAlignment == CFX_RTFLineAlignment::Justified ||
                    m_iAlignment == CFX_RTFLineAlignment::Distributed;
 

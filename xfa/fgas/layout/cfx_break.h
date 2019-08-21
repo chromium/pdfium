@@ -92,7 +92,7 @@ class CFX_Break {
   RetainPtr<CFGAS_GEFont> m_pFont;
   UnownedPtr<CFX_BreakLine> m_pCurLine;
   int8_t m_iReadyLineIndex = -1;
-  CFX_BreakLine m_Line[2];
+  CFX_BreakLine m_Lines[2];
 
  private:
   void FontChanged();
