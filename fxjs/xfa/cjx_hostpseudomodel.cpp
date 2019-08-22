@@ -310,8 +310,13 @@ CJS_Result CJX_HostPseudoModel::openList(
   if (!hWidget)
     return CJS_Result::Success();
 
+  // SetFocusWidget() may destroy |hWidget| object by JS callback.
+  ObservedPtr<CXFA_FFWidget> pObservedWidget(hWidget);
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   hDoc->GetDocEnvironment()->SetFocusWidget(hDoc, hWidget);
+  if (!pObservedWidget)
+    return CJS_Result::Success();
+
   pNotify->OpenDropDownList(hWidget);
   return CJS_Result::Success();
 }
