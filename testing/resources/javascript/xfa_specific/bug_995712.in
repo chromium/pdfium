@@ -1,0 +1,67 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform name="form1">
+    <pageSet>
+      <pageArea id="Page1" name="Page1">
+        <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+        <medium long="11in" short="8.5in" stock="letter"/>
+      </pageArea>
+    </pageSet>
+    <subform h="10.5in" w="8in" name="subform2">
+      <field h="500mm" name="pushButton0" w="500mm" x="1mm" y="1mm">
+        <ui>
+          <button/>
+        </ui>
+        <caption>
+          <value>
+            <text>ClickMe</text>
+          </value>
+        </caption>
+        <border>
+          <edge stroke="raised"/>
+        </border>
+        <event activity="mouseUp">
+          <script contentType="application/x-javascript">
+            count_mouseUp += 1;
+            if (count_mouseUp == 2) {
+              f1 = xfa.resolveNode("xfa.form..field1");
+              xfa.host.setFocus(f1);
+              xfa.template.remerge();
+              xfa.host.openList(f1);
+            }
+          </script>
+        </event>
+      </field>
+      <field h="9.0001mm" name="field1" w="47.625mm" x="6.35mm" y="92.075mm">
+        <ui>
+          <choiceList/>
+        </ui>
+        <items>
+          <text>Foo</text>
+        </items>
+      </field>
+    </subform>
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+        count_mouseUp = 0;
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

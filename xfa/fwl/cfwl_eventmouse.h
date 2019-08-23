@@ -8,6 +8,7 @@
 #define XFA_FWL_CFWL_EVENTMOUSE_H_
 
 #include "xfa/fwl/cfwl_event.h"
+#include "xfa/fwl/cfwl_messagemouse.h"
 
 class CFWL_EventMouse final : public CFWL_Event {
  public:

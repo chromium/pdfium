@@ -11,6 +11,7 @@
 #include "build/build_config.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_app.h"
+#include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapterNative)

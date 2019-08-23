@@ -134,7 +134,9 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-  CFWL_Widget::OnProcessMessage(pMessage);
+  // Dst target could be |this|, continue only if not destroyed by above.
+  if (pMessage->GetDstTarget())
+    CFWL_Widget::OnProcessMessage(pMessage);
 }
 
 void CFWL_PushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
@@ -222,6 +224,8 @@ void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
   CFWL_EventMouse wmMouse(this);
   wmMouse.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   DispatchEvent(&wmMouse);
+  if (!wmMouse.GetSrcTarget())
+    return;
 
   CFWL_Event wmClick(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmClick);

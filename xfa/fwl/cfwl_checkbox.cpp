@@ -237,8 +237,9 @@ void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-
-  CFWL_Widget::OnProcessMessage(pMessage);
+  // Dst target could be |this|, continue only if not destroyed by above.
+  if (pMessage->GetDstTarget())
+    CFWL_Widget::OnProcessMessage(pMessage);
 }
 
 void CFWL_CheckBox::OnDrawWidget(CXFA_Graphics* pGraphics,

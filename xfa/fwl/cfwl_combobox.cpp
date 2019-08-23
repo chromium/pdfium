@@ -221,6 +221,8 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
   if (bActivate) {
     CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
     DispatchEvent(&preEvent);
+    if (!preEvent.GetSrcTarget())
+      return;
 
     CFWL_ComboList* pComboList = m_pListBox.get();
     int32_t iItems = pComboList->CountItems(nullptr);
@@ -479,7 +481,8 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-  if (backDefault)
+  // Dst target could be |this|, continue only if not destroyed by above.
+  if (backDefault && pMessage->GetDstTarget())
     CFWL_Widget::OnProcessMessage(pMessage);
 }
 

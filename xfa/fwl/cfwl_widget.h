@@ -11,14 +11,22 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fde/cfde_data.h"
-#include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fwl/ifwl_widgetdelegate.h"
+
+class CFWL_App;
+class CFWL_AppImp;
+class CFWL_Event;
+class CFWL_MessageKey;
+class CFWL_Widget;
+class CFWL_WidgetMgr;
+class IFWL_ThemeProvider;
 
 enum class FWL_Type {
   Unknown = 0,
@@ -40,15 +48,8 @@ enum class FWL_Type {
   ToolTip
 };
 
-class CFWL_App;
-class CFWL_AppImp;
-class CFWL_MessageKey;
-class CFWL_Widget;
-class CFWL_WidgetMgr;
-class IFWL_ThemeProvider;
-
 // NOTE: CFWL_Widget serves as its own delegate until replaced at runtime.
-class CFWL_Widget : public IFWL_WidgetDelegate {
+class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
  public:
   class AdapterIface {
    public:
