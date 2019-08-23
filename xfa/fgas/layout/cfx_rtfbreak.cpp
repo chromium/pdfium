@@ -199,6 +199,8 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Control(CFX_Char* pCurChar) {
 }
 
 CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
+  m_pCurLine->IncrementArabicCharCount();
+
   CFX_Char* pLastChar = nullptr;
   wchar_t wForm;
   bool bAlef = false;
@@ -264,7 +266,6 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
     return CFX_BreakType::None;
 
   m_pCurLine->m_iWidth = checked_width.ValueOrDie();
-  m_pCurLine->IncrementArabicCharCount();
 
   if (IsGreaterThanLineWidth(m_pCurLine->GetLineEnd()))
     return EndBreak(CFX_BreakType::Line);
