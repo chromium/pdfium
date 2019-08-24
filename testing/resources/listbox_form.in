@@ -3,7 +3,7 @@
 <<
   /Type /Catalog
   /Pages 2 0 R
-  /AcroForm << /Fields [ 8 0 R 9 0 R 10 0 R ] /DR 4 0 R >>
+  /AcroForm << /Fields [ 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ] /DR 4 0 R >>
 >>
 endobj
 {{object 2 0}}
@@ -16,7 +16,7 @@ endobj
   /Resources 4 0 R
   /MediaBox [ 0 0 300 600 ]
   /Contents 7 0 R
-  /Annots [ 8 0 R 9 0 R 10 0 R ]
+  /Annots [ 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ]
 >>
 endobj
 {{object 4 0}}
@@ -81,6 +81,35 @@ endobj
   /Rect [ 100 500 200 530 ]
   /Subtype /Widget
   /Opt [(Dog) (Elephant) (Frog)]
+>>
+endobj
+{{object 11 0}}
+<<
+  /Type /Annot
+  /FT /Ch
+  /Ff 2097152
+  /T (Listbox_MultiSelectMultipleSelected)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 200 200 230 ]
+  /Subtype /Widget
+  /Opt [(Alpha) (Beta) (Gamma) (Delta) (Epsilon)]
+  /V [(Epsilon) (Gamma)]
+>>
+endobj
+{{object 12 0}}
+<<
+  /Type /Annot
+  /FT /Ch
+  /Ff 0
+  /T (Listbox_SingleSelectLastSelected)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 100 200 130 ]
+  /Subtype /Widget
+  /Opt [(Alberta) (British Columbia) (Manitoba) (New Brunswick)
+        (Newfoundland and Labrador) (Nova Scotia) (Ontario)
+        (Prince Edward Island) (Quebec) (Saskatchewan) ]
+  /V (Saskatchewan)
+  /TI 9
 >>
 endobj
 {{xref}}

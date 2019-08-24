@@ -4,7 +4,7 @@
 <<
   /Type /Catalog
   /Pages 2 0 R
-  /AcroForm << /Fields [ 8 0 R 9 0 R 10 0 R ] /DR 4 0 R >>
+  /AcroForm << /Fields [ 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ] /DR 4 0 R >>
 >>
 endobj
 2 0 obj
@@ -17,7 +17,7 @@ endobj
   /Resources 4 0 R
   /MediaBox [ 0 0 300 600 ]
   /Contents 7 0 R
-  /Annots [ 8 0 R 9 0 R 10 0 R ]
+  /Annots [ 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ]
 >>
 endobj
 4 0 obj
@@ -84,23 +84,54 @@ endobj
   /Opt [(Dog) (Elephant) (Frog)]
 >>
 endobj
+11 0 obj
+<<
+  /Type /Annot
+  /FT /Ch
+  /Ff 2097152
+  /T (Listbox_MultiSelectMultipleSelected)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 200 200 230 ]
+  /Subtype /Widget
+  /Opt [(Alpha) (Beta) (Gamma) (Delta) (Epsilon)]
+  /V [(Epsilon) (Gamma)]
+>>
+endobj
+12 0 obj
+<<
+  /Type /Annot
+  /FT /Ch
+  /Ff 0
+  /T (Listbox_SingleSelectLastSelected)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 100 200 130 ]
+  /Subtype /Widget
+  /Opt [(Alberta) (British Columbia) (Manitoba) (New Brunswick)
+        (Newfoundland and Labrador) (Nova Scotia) (Ontario)
+        (Prince Edward Island) (Quebec) (Saskatchewan) ]
+  /V (Saskatchewan)
+  /TI 9
+>>
+endobj
 xref
-0 11
+0 13
 0000000000 65535 f 
 0000000015 00000 n 
-0000000127 00000 n 
-0000000186 00000 n 
-0000000335 00000 n 
-0000000368 00000 n 
-0000000399 00000 n 
-0000000475 00000 n 
-0000000575 00000 n 
-0000000782 00000 n 
-0000001252 00000 n 
+0000000141 00000 n 
+0000000200 00000 n 
+0000000363 00000 n 
+0000000396 00000 n 
+0000000427 00000 n 
+0000000503 00000 n 
+0000000603 00000 n 
+0000000810 00000 n 
+0000001280 00000 n 
+0000001466 00000 n 
+0000001719 00000 n 
 trailer <<
   /Root 1 0 R
-  /Size 11
+  /Size 13
 >>
 startxref
-1438
+2097
 %%EOF
