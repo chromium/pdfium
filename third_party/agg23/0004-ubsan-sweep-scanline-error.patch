@@ -1,13 +1,37 @@
+diff --git a/third_party/agg23/agg_rasterizer_scanline_aa.cpp b/third_party/agg23/agg_rasterizer_scanline_aa.cpp
+index c90bdafdd..1fe9a0c32 100644
+--- a/third_party/agg23/agg_rasterizer_scanline_aa.cpp
++++ b/third_party/agg23/agg_rasterizer_scanline_aa.cpp
+@@ -495,4 +495,11 @@ void outline_aa::sort_cells()
+     }
+     m_sorted = true;
+ }
++// static
++int rasterizer_scanline_aa::calculate_area(int cover, int shift)
++{
++    unsigned int result = cover;
++    result <<= shift;
++    return result;
++}
+ }
 diff --git a/third_party/agg23/agg_rasterizer_scanline_aa.h b/third_party/agg23/agg_rasterizer_scanline_aa.h
-index c747ee379..da166bb14 100644
+index c747ee379..281933710 100644
 --- a/third_party/agg23/agg_rasterizer_scanline_aa.h
 +++ b/third_party/agg23/agg_rasterizer_scanline_aa.h
-@@ -349,14 +349,14 @@ public:
+@@ -338,7 +338,6 @@ public:
+                 const cell_aa* cur_cell = *cells;
+                 int x    = cur_cell->x;
+                 int area = cur_cell->area;
+-                unsigned alpha;
+                 cover += cur_cell->cover;
+                 while(--num_cells) {
+                     cur_cell = *++cells;
+@@ -349,14 +348,14 @@ public:
                      cover += cur_cell->cover;
                  }
                  if(area) {
 -                    alpha = calculate_alpha((cover << (poly_base_shift + 1)) - area, no_smooth);
-+                    alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1) - area, no_smooth);
++                    unsigned alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1) - area, no_smooth);
                      if(alpha) {
                          sl.add_cell(x, alpha);
                      }
@@ -15,19 +39,16 @@ index c747ee379..da166bb14 100644
                  }
                  if(num_cells && cur_cell->x > x) {
 -                    alpha = calculate_alpha(cover << (poly_base_shift + 1), no_smooth);
-+                    alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1), no_smooth);
++                    unsigned alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1), no_smooth);
                      if(alpha) {
                          sl.add_span(x, cur_cell->x - x, alpha);
                      }
-@@ -458,6 +458,11 @@ private:
-         m_prev_x = x;
+@@ -459,6 +458,8 @@ private:
          m_prev_y = y;
      }
-+    static int calculate_area(int cover, int shift) {
-+        unsigned int result = cover;
-+        result <<= shift;
-+        return result;
-+    }
  private:
++    static int calculate_area(int cover, int shift);
++
      outline_aa     m_outline;
      filling_rule_e m_filling_rule;
+     int            m_clipped_start_x;

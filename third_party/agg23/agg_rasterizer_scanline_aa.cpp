@@ -495,4 +495,11 @@ void outline_aa::sort_cells()
     }
     m_sorted = true;
 }
+// static
+int rasterizer_scanline_aa::calculate_area(int cover, int shift)
+{
+    unsigned int result = cover;
+    result <<= shift;
+    return result;
+}
 }
