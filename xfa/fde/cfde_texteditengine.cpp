@@ -1116,19 +1116,17 @@ void CFDE_TextEditEngine::RebuildPieces() {
       const CFX_BreakPiece* piece = text_break_.GetBreakPieceUnstable(i);
 
       FDE_TEXTEDITPIECE txtEdtPiece;
-      memset(&txtEdtPiece, 0, sizeof(FDE_TEXTEDITPIECE));
-
-      txtEdtPiece.nBidiLevel = piece->m_iBidiLevel;
-      txtEdtPiece.nCount = piece->GetLength();
-      txtEdtPiece.nStart = current_piece_start;
-      txtEdtPiece.dwCharStyles = piece->m_dwCharStyles;
-      if (FX_IsOdd(piece->m_iBidiLevel))
-        txtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
-
       txtEdtPiece.rtPiece.left = piece->m_iStartPos / 20000.0f;
       txtEdtPiece.rtPiece.top = current_line_start;
       txtEdtPiece.rtPiece.width = piece->m_iWidth / 20000.0f;
       txtEdtPiece.rtPiece.height = line_spacing_;
+      txtEdtPiece.nStart = current_piece_start;
+      txtEdtPiece.nCount = piece->GetLength();
+      txtEdtPiece.nBidiLevel = piece->m_iBidiLevel;
+      txtEdtPiece.dwCharStyles = piece->m_dwCharStyles;
+      if (FX_IsOdd(piece->m_iBidiLevel))
+        txtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
+
       text_piece_info_.push_back(txtEdtPiece);
 
       if (initialized_bounding_box) {
