@@ -20,3 +20,5 @@ non-enumeral type in conditional.
 error in sweep_scanline.
 0005-assignment-return-values.patch: Fix assignment operator return values in
 agg_array.h.
+0006-ubsan-sweep-scanline-error.patch: Fix UBSan integer overflow error in
+sweep_scanline.

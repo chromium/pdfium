@@ -338,14 +338,33 @@ public:
                 const cell_aa* cur_cell = *cells;
                 int x    = cur_cell->x;
                 int area = cur_cell->area;
-                cover += cur_cell->cover;
+                bool seen_area_overflow = false;
+                bool seen_cover_overflow = false;
+                if(!safe_add(&cover, cur_cell->cover)) {
+                    break;
+                }
                 while(--num_cells) {
                     cur_cell = *++cells;
                     if(cur_cell->x != x) {
                         break;
                     }
-                    area  += cur_cell->area;
-                    cover += cur_cell->cover;
+                    if(seen_area_overflow) {
+                        continue;
+                    }
+                    if(!safe_add(&area, cur_cell->area)) {
+                        seen_area_overflow = true;
+                        continue;
+                    }
+                    if(!safe_add(&cover, cur_cell->cover)) {
+                        seen_cover_overflow = true;
+                        break;
+                    }
+                }
+                if(seen_area_overflow) {
+                    continue;
+                }
+                if(seen_cover_overflow) {
+                    break;
                 }
                 if(area) {
                     unsigned alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1) - area, no_smooth);
@@ -459,6 +478,7 @@ private:
     }
 private:
     static int calculate_area(int cover, int shift);
+    static bool safe_add(int* op1, int op2);
 
     outline_aa     m_outline;
     filling_rule_e m_filling_rule;
