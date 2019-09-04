@@ -1,0 +1,90 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 200 200]
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F1 4 0 R
+      /F2 6 0 R
+    >>
+  >>
+  /Contents 8 0 R
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /ABCXYZ+Calibri
+  /FirstChar 1
+  /LastChar 1
+  /Widths [300]
+  /FontDescriptor 5 0 R
+>>
+endobj
+{{object 5 0}} <<
+  /Type /FontDescriptor
+  /Ascent 680
+  /CapHeight 680
+  /Descent -177
+  /Flags 4
+  /FontBBox [0 -177 770 680]
+  /FontName /ABCXYZ+Calibri
+  /ItalicAngle 2147483649
+  /MissingWidth 506
+  /StemV 115
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /BCDEFG+Calibri
+  /FirstChar 1
+  /LastChar 1
+  /Widths [300]
+  /FontDescriptor 7 0 R
+>>
+endobj
+{{object 7 0}} <<
+  /Type /FontDescriptor
+  /Ascent 680
+  /CapHeight 680
+  /Descent -177
+  /Flags 4
+  /FontBBox [0 -177 770 680]
+  /FontName /BCDEFG+Calibri
+  /ItalicAngle -20
+  /MissingWidth 506
+  /StemV 115
+>>
+endobj
+{{object 8 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+50 100 Td
+1 Tr
+/F1 20 Tf
+(A) Tj
+/F2 20 Tf
+(A) Tj
+ET
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
