@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -876,6 +877,7 @@ class SkiaState {
       Flush();
     }
     if (Accumulator::kText != m_type) {
+      m_italicAngle = pFont->GetSubstFontItalicAngle();
       m_positions.setCount(0);
       m_glyphs.setCount(0);
       m_rsxform.setCount(0);
@@ -950,6 +952,7 @@ class SkiaState {
     }
     font.setHinting(SkFontHinting::kNone);
     font.setScaleX(m_scaleX);
+    font.setSkewX(tanf(m_italicAngle * FX_PI / 180.0));
     font.setSize(SkTAbs(m_fontSize));
     font.setSubpixel(true);
 
@@ -985,6 +988,7 @@ class SkiaState {
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
+    m_italicAngle = 0;
   }
 
   bool IsEmpty() const { return !m_commands.count(); }
@@ -1142,7 +1146,8 @@ class SkiaState {
         pFont->GetFaceRec() ? pFont->GetDeviceCache() : nullptr;
     return typeface != m_pTypeFace.get() || MatrixChanged(&matrix) ||
            font_size != m_fontSize || scaleX != m_scaleX ||
-           color != m_fillColor;
+           color != m_fillColor ||
+           pFont->GetSubstFontItalicAngle() != m_italicAngle;
   }
 
   bool MatrixChanged(const CFX_Matrix* pMatrix) const {
@@ -1442,6 +1447,7 @@ class SkiaState {
   int m_commandIndex = 0;     // active position in clip command stack
   int m_drawIndex = INT_MAX;  // position of the pending path or text draw
   int m_clipIndex = 0;        // position reflecting depth of canvas clip stacck
+  int m_italicAngle = 0;
   Accumulator m_type = Accumulator::kNone;  // type of pending draw
   bool m_fillFullCover = false;
   bool m_fillPath = false;
@@ -1604,6 +1610,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   font.setHinting(SkFontHinting::kNone);
   font.setSize(SkTAbs(font_size));
   font.setSubpixel(true);
+  font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FX_PI / 180.0));
 
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
   SkScalar flip = font_size < 0 ? -1 : 1;

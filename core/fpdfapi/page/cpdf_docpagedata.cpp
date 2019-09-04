@@ -503,8 +503,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
           InsertWidthArray1(pFont.get(), pEncoding.get(), start, end, widthArr);
         });
   }
-  int italicangle =
-      pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0;
+  int italicangle = pFont->GetSubstFontItalicAngle();
   FX_RECT bbox;
   pFont->GetBBox(&bbox);
   auto pBBox = pdfium::MakeRetain<CPDF_Array>();

@@ -298,6 +298,11 @@ uint8_t CFX_Font::GetCharSetFromUnicode(uint16_t word) {
 
 CFX_Font::CFX_Font() = default;
 
+int CFX_Font::GetSubstFontItalicAngle() const {
+  CFX_SubstFont* subst_font = GetSubstFont();
+  return subst_font ? subst_font->m_ItalicAngle : 0;
+}
+
 #ifdef PDF_ENABLE_XFA
 bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
                         int nFaceIndex) {

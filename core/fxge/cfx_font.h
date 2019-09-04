@@ -54,6 +54,7 @@ class CFX_Font {
     return m_Face ? m_Face->GetRec() : nullptr;
   }
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
+  int GetSubstFontItalicAngle() const;
 
 #if defined(PDF_ENABLE_XFA)
   bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
