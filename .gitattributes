@@ -6,7 +6,7 @@
 *.gn text eol=lf
 *.gni text eol=lf
 *.h text eol=lf
-# Temporarily disabled. https://crbug.com/pdfium/1299
+# Temporarily disabled. https://crbug.com/pdfium/1302
 # *.in text eol=lf
 *.js text eol=lf
 *.md text eol=lf
