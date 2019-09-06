@@ -13,6 +13,7 @@
 #include "fpdfsdk/formfiller/cffl_textobject.h"
 
 class CBA_FontMap;
+class CPWL_ComboBox;
 
 struct FFL_ComboBoxState {
   int nIndex;
@@ -58,6 +59,7 @@ class CFFL_ComboBox final : public CFFL_TextObject,
 
  private:
   WideString GetSelectExportText();
+  CPWL_ComboBox* GetComboBox(CPDFSDK_PageView* pPageView, bool bNew);
 
   FFL_ComboBoxState m_State;
 };
