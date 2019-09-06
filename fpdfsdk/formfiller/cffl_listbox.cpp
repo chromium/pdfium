@@ -16,8 +16,6 @@
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "third_party/base/ptr_util.h"
 
-#define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
-
 CFFL_ListBox::CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp,
                            CPDFSDK_Widget* pWidget)
     : CFFL_TextObject(pApp, pWidget) {}
@@ -32,8 +30,10 @@ CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
 
   cp.dwFlags |= PWS_VSCROLL;
 
-  if (cp.dwFlags & PWS_AUTOFONTSIZE)
-    cp.fFontSize = FFL_DEFAULTLISTBOXFONTSIZE;
+  if (cp.dwFlags & PWS_AUTOFONTSIZE) {
+    constexpr float kDefaultListBoxFontSize = 12.0f;
+    cp.fFontSize = kDefaultListBoxFontSize;
+  }
 
   cp.pFontMap = MaybeCreateFontMap();
   return cp;
