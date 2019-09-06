@@ -120,10 +120,8 @@ void CPDF_FormField::InitFieldFlags() {
   const CPDF_Object* ff_attr =
       FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kFf);
   uint32_t flags = ff_attr ? ff_attr->GetInteger() : 0;
-  if (flags & pdfium::form_flags::kReadOnly) {
+  if (flags & pdfium::form_flags::kReadOnly)
     m_Flags |= pdfium::form_flags::kReadOnly;
-    m_bReadOnly = true;
-  }
   if (flags & pdfium::form_flags::kRequired) {
     m_Flags |= pdfium::form_flags::kRequired;
     m_bRequired = true;

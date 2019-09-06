@@ -124,8 +124,6 @@ class CPDF_FormField {
   uint32_t GetFieldFlags() const;
   ByteString GetDefaultStyle() const;
 
-  // TODO(thestig): Figure out what to do with unused methods here.
-  bool IsReadOnly() const { return m_bReadOnly; }
   bool IsRequired() const { return m_bRequired; }
   bool IsNoExport() const { return m_bNoExport; }
 
@@ -195,7 +193,6 @@ class CPDF_FormField {
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControls() const;
 
   CPDF_FormField::Type m_Type = kUnknown;
-  bool m_bReadOnly = false;
   bool m_bRequired = false;
   bool m_bNoExport = false;
   uint32_t m_Flags = 0;
