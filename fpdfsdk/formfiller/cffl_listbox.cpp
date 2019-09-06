@@ -84,7 +84,7 @@ bool CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
 }
 
 bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
-  CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
+  CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return false;
 
@@ -105,7 +105,7 @@ bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
-  CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
+  CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;
 
@@ -147,7 +147,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
       if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
         fa.sValue.clear();
       } else {
-        CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
+        CPWL_ListBox* pListBox = GetListBox(pPageView);
         if (pListBox) {
           int32_t nCurSel = pListBox->GetCurSel();
           if (nCurSel >= 0)
@@ -171,9 +171,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
 }
 
 void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView);
-
-  CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
+  CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;
 
@@ -184,7 +182,7 @@ void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ListBox::RestoreState(CPDFSDK_PageView* pPageView) {
-  CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
+  CPWL_ListBox* pListBox = GetListBox(pPageView);
   if (!pListBox)
     return;
 
@@ -199,10 +197,7 @@ bool CFFL_ListBox::SetIndexSelected(int index, bool selected) {
   if (index < 0 || index >= m_pWidget->CountOptions())
     return false;
 
-  CPDFSDK_PageView* pPageView = GetCurPageView(true);
-  ASSERT(pPageView);
-
-  CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
+  CPWL_ListBox* pListBox = GetListBox(GetCurPageView(true));
   if (!pListBox)
     return false;
 
@@ -224,16 +219,10 @@ bool CFFL_ListBox::IsIndexSelected(int index) {
   if (index < 0 || index >= m_pWidget->CountOptions())
     return false;
 
-  CPDFSDK_PageView* pPageView = GetCurPageView(true);
-  ASSERT(pPageView);
-
-  CPWL_ListBox* pListBox = GetPWLListBox(pPageView);
-  if (!pListBox)
-    return false;
-
-  return pListBox->IsItemSelected(index);
+  CPWL_ListBox* pListBox = GetListBox(GetCurPageView(true));
+  return pListBox && pListBox->IsItemSelected(index);
 }
 
-CPWL_ListBox* CFFL_ListBox::GetPWLListBox(CPDFSDK_PageView* pPageView) {
+CPWL_ListBox* CFFL_ListBox::GetListBox(CPDFSDK_PageView* pPageView) {
   return static_cast<CPWL_ListBox*>(GetPWLWindow(pPageView, /*bNew=*/false));
 }
