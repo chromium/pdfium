@@ -195,6 +195,7 @@ class CPDF_FormField {
   CPDF_FormField::Type m_Type = kUnknown;
   bool m_bRequired = false;
   bool m_bNoExport = false;
+  bool m_bIsUnison = false;
   uint32_t m_Flags = 0;
   float m_FontSize = 0;
   UnownedPtr<CPDF_InteractiveForm> const m_pForm;

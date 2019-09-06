@@ -44,12 +44,6 @@ const int kFormTextPassword = 0x200;
 const int kFormTextNoScroll = 0x400;
 const int kFormTextComb = 0x800;
 
-bool IsUnison(CPDF_FormField* pField) {
-  if (pField->GetType() == CPDF_FormField::kCheckBox)
-    return true;
-  return (pField->GetFieldFlags() & 0x2000000) != 0;
-}
-
 const CPDF_Object* FPDF_GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
                                               const char* name,
                                               int nLevel) {
@@ -136,12 +130,15 @@ void CPDF_FormField::InitFieldFlags() {
       m_Type = kRadioButton;
       if (flags & 0x4000)
         m_Flags |= kFormRadioNoToggleOff;
-      if (flags & 0x2000000)
+      if (flags & 0x2000000) {
         m_Flags |= kFormRadioUnison;
+        m_bIsUnison = true;
+      }
     } else if (flags & 0x10000) {
       m_Type = kPushButton;
     } else {
       m_Type = kCheckBox;
+      m_bIsUnison = true;
     }
   } else if (type_name == pdfium::form_fields::kTx) {
     if (flags & 0x100000) {
@@ -186,7 +183,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
     case kRadioButton: {
       int iCount = CountControls();
       // TODO(weili): Check whether anything special needs to be done for
-      // unison field. (When IsUnison(this) returns true/false.)
+      // |m_bIsUnison|.
       for (int i = 0; i < iCount; i++) {
         CheckControl(i, GetControl(i)->IsDefaultChecked(),
                      NotificationOption::kDoNotNotify);
@@ -710,10 +707,9 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
 
   const WideString csWExport = pControl->GetExportValue();
   int iCount = CountControls();
-  bool bUnison = IsUnison(this);
   for (int i = 0; i < iCount; i++) {
     CPDF_FormControl* pCtrl = GetControl(i);
-    if (bUnison) {
+    if (m_bIsUnison) {
       WideString csEValue = pCtrl->GetExportValue();
       if (csEValue == csWExport) {
         if (pCtrl->GetOnStateName() == pControl->GetOnStateName())
