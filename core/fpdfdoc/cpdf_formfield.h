@@ -104,7 +104,6 @@ class CPDF_FormField {
   WideString GetFullName() const;
 
   Type GetType() const { return m_Type; }
-  uint32_t GetFlags() const { return m_Flags; }
 
   CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
 
@@ -195,8 +194,8 @@ class CPDF_FormField {
   CPDF_FormField::Type m_Type = kUnknown;
   bool m_bRequired = false;
   bool m_bNoExport = false;
+  bool m_bIsMultiSelectListBox = false;
   bool m_bIsUnison = false;
-  uint32_t m_Flags = 0;
   float m_FontSize = 0;
   UnownedPtr<CPDF_InteractiveForm> const m_pForm;
   RetainPtr<CPDF_Dictionary> const m_pDict;

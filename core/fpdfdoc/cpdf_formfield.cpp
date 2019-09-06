@@ -31,19 +31,6 @@
 
 namespace {
 
-// TODO(thestig): Move into constants/form_flags.h.
-const int kFormListMultiSelect = 0x100;
-
-const int kFormComboEdit = 0x100;
-
-const int kFormRadioNoToggleOff = 0x100;
-const int kFormRadioUnison = 0x200;
-
-const int kFormTextMultiLine = 0x100;
-const int kFormTextPassword = 0x200;
-const int kFormTextNoScroll = 0x400;
-const int kFormTextComb = 0x800;
-
 const CPDF_Object* FPDF_GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
                                               const char* name,
                                               int nLevel) {
@@ -114,26 +101,13 @@ void CPDF_FormField::InitFieldFlags() {
   const CPDF_Object* ff_attr =
       FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kFf);
   uint32_t flags = ff_attr ? ff_attr->GetInteger() : 0;
-  if (flags & pdfium::form_flags::kReadOnly)
-    m_Flags |= pdfium::form_flags::kReadOnly;
-  if (flags & pdfium::form_flags::kRequired) {
-    m_Flags |= pdfium::form_flags::kRequired;
-    m_bRequired = true;
-  }
-  if (flags & pdfium::form_flags::kNoExport) {
-    m_Flags |= pdfium::form_flags::kNoExport;
-    m_bNoExport = true;
-  }
+  m_bRequired = flags & pdfium::form_flags::kRequired;
+  m_bNoExport = flags & pdfium::form_flags::kNoExport;
 
   if (type_name == pdfium::form_fields::kBtn) {
     if (flags & 0x8000) {
       m_Type = kRadioButton;
-      if (flags & 0x4000)
-        m_Flags |= kFormRadioNoToggleOff;
-      if (flags & 0x2000000) {
-        m_Flags |= kFormRadioUnison;
-        m_bIsUnison = true;
-      }
+      m_bIsUnison = flags & 0x2000000;
     } else if (flags & 0x10000) {
       m_Type = kPushButton;
     } else {
@@ -141,31 +115,19 @@ void CPDF_FormField::InitFieldFlags() {
       m_bIsUnison = true;
     }
   } else if (type_name == pdfium::form_fields::kTx) {
-    if (flags & 0x100000) {
+    if (flags & 0x100000)
       m_Type = kFile;
-    } else if (flags & 0x2000000) {
+    else if (flags & 0x2000000)
       m_Type = kRichText;
-    } else {
+    else
       m_Type = kText;
-      if (flags & 0x1000)
-        m_Flags |= kFormTextMultiLine;
-      if (flags & 0x2000)
-        m_Flags |= kFormTextPassword;
-      if (flags & 0x800000)
-        m_Flags |= kFormTextNoScroll;
-      if (flags & 0x100000)
-        m_Flags |= kFormTextComb;
-    }
     LoadDA();
   } else if (type_name == pdfium::form_fields::kCh) {
     if (flags & 0x20000) {
       m_Type = kComboBox;
-      if (flags & 0x40000)
-        m_Flags |= kFormComboEdit;
     } else {
       m_Type = kListBox;
-      if (flags & 0x200000)
-        m_Flags |= kFormListMultiSelect;
+      m_bIsMultiSelectListBox = flags & 0x200000;
     }
     LoadDA();
   } else if (type_name == pdfium::form_fields::kSig) {
@@ -589,7 +551,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
   }
 
   SelectOption(index, true, NotificationOption::kDoNotNotify);
-  if (!(m_Flags & kFormListMultiSelect)) {
+  if (!m_bIsMultiSelectListBox) {
     m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, opt_value);
     return;
   }
