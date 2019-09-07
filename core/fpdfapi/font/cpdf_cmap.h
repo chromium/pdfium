@@ -62,6 +62,7 @@ class CPDF_CMap final : public Retainable {
 
   void SetVertical(bool vert) { m_bVertical = vert; }
   void SetCodingScheme(CodingScheme scheme) { m_CodingScheme = scheme; }
+  void SetAdditionalMappings(std::vector<CIDRange> mappings);
   void SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges);
 
   int GetCoding() const { return m_Coding; }

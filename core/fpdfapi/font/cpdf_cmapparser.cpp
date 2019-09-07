@@ -29,6 +29,7 @@ ByteStringView CMap_GetString(ByteStringView word) {
 CPDF_CMapParser::CPDF_CMapParser(CPDF_CMap* pCMap) : m_pCMap(pCMap) {}
 
 CPDF_CMapParser::~CPDF_CMapParser() {
+  m_pCMap->SetAdditionalMappings(std::move(m_AdditionalCharcodeToCIDMappings));
   m_pCMap->SetMixedFourByteLeadingRanges(std::move(m_Ranges));
 }
 

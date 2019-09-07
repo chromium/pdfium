@@ -21,12 +21,6 @@ class CPDF_CMapParser {
   ~CPDF_CMapParser();
 
   void ParseWord(ByteStringView word);
-  bool HasAdditionalMappings() const {
-    return !m_AdditionalCharcodeToCIDMappings.empty();
-  }
-  std::vector<CPDF_CMap::CIDRange> TakeAdditionalMappings() {
-    return std::move(m_AdditionalCharcodeToCIDMappings);
-  }
 
   static CIDSet CharsetFromOrdering(ByteStringView ordering);
 

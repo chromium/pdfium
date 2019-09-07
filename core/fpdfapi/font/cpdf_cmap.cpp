@@ -295,16 +295,6 @@ CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
 
     parser.ParseWord(word);
   }
-
-  if (m_CodingScheme == MixedFourBytes && parser.HasAdditionalMappings()) {
-    m_AdditionalCharcodeToCIDMappings = parser.TakeAdditionalMappings();
-    std::sort(
-        m_AdditionalCharcodeToCIDMappings.begin(),
-        m_AdditionalCharcodeToCIDMappings.end(),
-        [](const CPDF_CMap::CIDRange& arg1, const CPDF_CMap::CIDRange& arg2) {
-          return arg1.m_EndCode < arg2.m_EndCode;
-        });
-  }
 }
 
 CPDF_CMap::~CPDF_CMap() = default;
@@ -474,6 +464,19 @@ int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
       return 4;
   }
   return 0;
+}
+
+void CPDF_CMap::SetAdditionalMappings(std::vector<CIDRange> mappings) {
+  ASSERT(m_AdditionalCharcodeToCIDMappings.empty());
+  if (m_CodingScheme != MixedFourBytes || mappings.empty())
+    return;
+
+  std::sort(
+      mappings.begin(), mappings.end(),
+      [](const CPDF_CMap::CIDRange& arg1, const CPDF_CMap::CIDRange& arg2) {
+        return arg1.m_EndCode < arg2.m_EndCode;
+      });
+  m_AdditionalCharcodeToCIDMappings = std::move(mappings);
 }
 
 void CPDF_CMap::SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges) {
