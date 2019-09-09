@@ -181,6 +181,55 @@ TEST(fpdf_parser_decode, HexDecode) {
   }
 }
 
+TEST(fpdf_parser_decode, DecodeText) {
+  const struct DecodeTestData {
+    const char* input;
+    size_t input_length;
+    const wchar_t* expected_output;
+    size_t expected_length;
+  } kTestData[] = {
+      // Empty src string.
+      {"", 0, L"", 0},
+      // ASCII text.
+      {"the quick\tfox", 13, L"the quick\tfox", 13},
+      // Unicode text.
+      {"\xFE\xFF\x03\x30\x03\x31", 6, L"\x0330\x0331", 2},
+      // More Unicode text.
+      {"\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
+       "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB",
+       26,
+       L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
+       L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB",
+       12},
+      // Unicode escape sequence. https://crbug.com/pdfium/182
+      {"\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37", 14,
+       L"\x0020\x5370\x5237", 3},
+      {"\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37\x29", 15,
+       L"\x0020\x5370\x5237", 3},
+      {"\xFE\xFF\x00\x1B\x6A\x61\x4A\x50\x00\x1B\x00\x20\x53\x70\x52\x37", 16,
+       L"\x0020\x5370\x5237", 3},
+      {"\xFE\xFF\x00\x20\x00\x1B\x6A\x61\x4A\x50\x00\x1B\x52\x37", 14,
+       L"\x0020\x5237", 2},
+      // https://crbug.com/1001159
+      {"\xFE\xFF\x00\x1B\x00\x1B", 6, L"", 0},
+      {"\xFE\xFF\x00\x1B\x00\x1B\x20", 7, L"", 0},
+      {"\xFE\xFF\x00\x1B\x00\x1B\x00\x20", 8, L"\x0020", 1},
+  };
+
+  for (const auto& test_case : kTestData) {
+    WideString output = PDF_DecodeText(
+        pdfium::make_span(reinterpret_cast<const uint8_t*>(test_case.input),
+                          test_case.input_length));
+    ASSERT_EQ(test_case.expected_length, output.GetLength())
+        << "for case " << test_case.input;
+    const wchar_t* str_ptr = output.c_str();
+    for (size_t i = 0; i < test_case.expected_length; ++i) {
+      EXPECT_EQ(test_case.expected_output[i], str_ptr[i])
+          << "for case " << test_case.input << " char " << i;
+    }
+  }
+}
+
 TEST(fpdf_parser_decode, EncodeText) {
   const struct EncodeTestData {
     const wchar_t* input;

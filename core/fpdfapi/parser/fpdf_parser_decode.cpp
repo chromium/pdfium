@@ -472,7 +472,7 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   WideString result;
   if (span.size() >= 2 && ((span[0] == 0xfe && span[1] == 0xff) ||
                            (span[0] == 0xff && span[1] == 0xfe))) {
-    uint32_t max_chars = (span.size() - 2) / 2;
+    size_t max_chars = (span.size() - 2) / 2;
     if (!max_chars)
       return result;
 
@@ -481,7 +481,7 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
         span[0] == 0xfe ? GetUnicodeFromBigEndianBytes
                         : GetUnicodeFromLittleEndianBytes;
     const uint8_t* unicode_str = &span[2];
-    for (uint32_t i = 0; i < max_chars * 2; i += 2) {
+    for (size_t i = 0; i < max_chars * 2; i += 2) {
       uint16_t unicode = GetUnicodeFromBytes(unicode_str + i);
 
       // 0x001B is a begin/end marker for language metadata region that
@@ -492,7 +492,8 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
           unicode = GetUnicodeFromBytes(unicode_str + i);
           if (unicode == 0x001B) {
             i += 2;
-            unicode = GetUnicodeFromBytes(unicode_str + i);
+            if (i < max_chars * 2)
+              unicode = GetUnicodeFromBytes(unicode_str + i);
             break;
           }
         }
@@ -504,7 +505,7 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
     }
   } else {
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(span.size());
-    for (uint32_t i = 0; i < span.size(); ++i)
+    for (size_t i = 0; i < span.size(); ++i)
       dest_buf[i] = PDFDocEncoding[span[i]];
     dest_pos = span.size();
   }
