@@ -28,29 +28,14 @@ endobj
 >>
 stream
 q
-0 0 345.869995 344.348114 re
-W* n
-1 0 0 1 -5.669983 -493.817902 cm
 BT
-0 0 0 rg
-0 0 0 RG
 2.057 w
-/TT0 72 Tf
-2 Tr 33.394 736.212 Td
-( )Tj
+/TT0
+72 Tf
+2 Tr
+27.724017 242.394098 Td
+( ) Tj
 ET
-/TouchUp_TextEdit MP
-q
-1 0 0 1 0 841.95 cm
-17.85 0 559.65 -841.95 re
-W n
-q
-307.2 -330 116.6 -9.75 re
-W n
-1 0 0 1 0 -841.95 cm
-BT
-Q
-Q
 Q
 endstream
 endobj
@@ -61,8 +46,8 @@ endobj
   /BaseFont /AAAAAD+Test
   /FontDescriptor 6 0 R
   /ToUnicode 7 0 R
-  /LastChar 41
-  /Widths [1055 1055 1055 1055 1055 1055 1055 1055 1055 1055]
+  /LastChar 32
+  /Widths [1055]
 >>
 endobj
 {{object 6 0}} <<
@@ -86,18 +71,9 @@ stream
 /CIDInit /ProcSet findresource begin 12 dict begin begincmap /CIDSystemInfo <<
 /Registry (AAAAAB+Test) /Ordering (UCS) /Supplement 0 >> def
 /CMapName /AAAAAB+Test def
-1 begincodespacerange <20> <29> endcodespacerange
+1 begincodespacerange <20> <20> endcodespacerange
 10 beginbfrange
 <20> <20> <b0a9>
-<21> <21> <bd80>
-<22> <22> <c601>
-<23> <23> <c218>
-<24> <24> <c99d>
-<25> <25> <c11c>
-<26> <26> <c790>
-<27> <27> <c6a9>
-<28> <28> <ae30>
-<29> <29> <ad00>
 endbfrange
 endcmap CMapName currentdict /CMap defineresource pop end end
 endstream
