@@ -104,9 +104,6 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
     return 0;
 
   RetainPtr<CPDF_Font> font = charinfo.m_pTextObj->GetFont();
-  if (!font)
-    return 0;
-
   if (flags)
     *flags = font->GetFontFlags();
 

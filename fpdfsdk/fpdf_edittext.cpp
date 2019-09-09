@@ -542,9 +542,6 @@ FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
     return 0;
 
   RetainPtr<CPDF_Font> pPdfFont = pTextObj->GetFont();
-  if (!pPdfFont)
-    return 0;
-
   CFX_Font* pFont = pPdfFont->GetFont();
   ByteString name = pFont->GetFamilyName();
   unsigned long dwStringLen = name.GetLength() + 1;

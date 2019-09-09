@@ -42,7 +42,7 @@ void CPDF_TextObject::GetItemInfo(size_t index,
   if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode)
     return;
 
-  RetainPtr<CPDF_Font> pFont = m_TextState.GetFont();
+  RetainPtr<CPDF_Font> pFont = GetFont();
   if (!pFont->IsCIDFont() || !pFont->AsCIDFont()->IsVertWriting())
     return;
 
@@ -53,7 +53,7 @@ void CPDF_TextObject::GetItemInfo(size_t index,
   short vy;
   pFont->AsCIDFont()->GetVertOrigin(CID, vx, vy);
 
-  float fontsize = m_TextState.GetFontSize();
+  float fontsize = GetFontSize();
   pInfo->m_Origin.x -= fontsize * vx / 1000;
   pInfo->m_Origin.y -= fontsize * vy / 1000;
 }
@@ -103,9 +103,6 @@ void CPDF_TextObject::GetCharInfo(size_t index,
 
 int CPDF_TextObject::CountWords() const {
   RetainPtr<CPDF_Font> pFont = GetFont();
-  if (!pFont)
-    return 0;
-
   bool bInLatinWord = false;
   int nWords = 0;
   for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
@@ -132,9 +129,6 @@ int CPDF_TextObject::CountWords() const {
 
 WideString CPDF_TextObject::GetWordString(int nWordIndex) const {
   RetainPtr<CPDF_Font> pFont = GetFont();
-  if (!pFont)
-    return WideString();
-
   WideString swRet;
   int nWords = 0;
   bool bInLatinWord = false;
@@ -209,7 +203,7 @@ void CPDF_TextObject::SetSegments(const ByteString* pStrs,
                                   size_t nSegs) {
   m_CharCodes.clear();
   m_CharPos.clear();
-  RetainPtr<CPDF_Font> pFont = m_TextState.GetFont();
+  RetainPtr<CPDF_Font> pFont = GetFont();
   int nChars = 0;
   for (size_t i = 0; i < nSegs; ++i)
     nChars += pFont->CountChar(pStrs[i].AsStringView());
@@ -238,8 +232,8 @@ void CPDF_TextObject::SetText(const ByteString& str) {
 }
 
 float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
-  float fontsize = m_TextState.GetFontSize() / 1000;
-  RetainPtr<CPDF_Font> pFont = m_TextState.GetFont();
+  float fontsize = GetFontSize() / 1000;
+  RetainPtr<CPDF_Font> pFont = GetFont();
   bool bVertWriting = false;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont)
@@ -265,13 +259,13 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   float max_x = -10000 * 1.0f;
   float min_y = 10000 * 1.0f;
   float max_y = -10000 * 1.0f;
-  RetainPtr<CPDF_Font> pFont = m_TextState.GetFont();
+  RetainPtr<CPDF_Font> pFont = GetFont();
   bool bVertWriting = false;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont)
     bVertWriting = pCIDFont->IsVertWriting();
 
-  float fontsize = m_TextState.GetFontSize();
+  float fontsize = GetFontSize();
   for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     uint32_t charcode = m_CharCodes[i];
     if (i > 0) {
