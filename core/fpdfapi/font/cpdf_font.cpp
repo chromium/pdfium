@@ -436,3 +436,12 @@ bool CPDF_Font::FT_UseTTCharmap(FXFT_FaceRec* face,
   }
   return false;
 }
+
+int CPDF_Font::GetFontWeight() const {
+  pdfium::base::CheckedNumeric<int> safeStemV(m_StemV);
+  if (m_StemV < 140)
+    safeStemV *= 5;
+  else
+    safeStemV = safeStemV * 4 + 140;
+  return safeStemV.ValueOrDefault(FXFONT_FW_NORMAL);
+}

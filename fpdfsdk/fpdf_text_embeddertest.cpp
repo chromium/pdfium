@@ -1251,3 +1251,26 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbedderTest, GetFontWeight) {
+  ASSERT_TRUE(OpenDocument("font_weight.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  ASSERT_TRUE(text_page);
+
+  EXPECT_EQ(1, FPDFText_CountChars(text_page));
+
+  EXPECT_EQ(-1, FPDFText_GetFontWeight(nullptr, 0));
+  EXPECT_EQ(-1, FPDFText_GetFontWeight(text_page, -1));
+  EXPECT_EQ(-1, FPDFText_GetFontWeight(text_page, 314));
+
+  // The font used for this text only specifies /StemV (80); the weight value
+  // that is returned should be calculated from that (80*5 == 400).
+  int weight = FPDFText_GetFontWeight(text_page, 0);
+  EXPECT_EQ(400, weight);
+
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}

@@ -1,0 +1,58 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /MediaBox [ 0 0 200 200 ]
+  /Count 1
+  /Kids [ 3 0 R ]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Font <<
+      /F1 4 0 R
+    >>
+  >>
+  /Contents 6 0 R
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+  /FontDescriptor 5 0 R
+>>
+endobj
+{{object 5 0}} <<
+  /Type /FontDescriptor
+  /FontName /Helvetica
+  /StemV 80
+  /ItalicAngle 0
+  /Ascent 776
+  /Flags 0
+  /FontBBox [-250 -236 2827 1000]
+  /CapHeight 763
+  /Descent -223
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+0 30 Td
+/F1 12 Tf
+(1) Tj
+ET
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
