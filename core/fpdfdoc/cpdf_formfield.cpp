@@ -92,42 +92,40 @@ CPDF_FormField::CPDF_FormField(CPDF_InteractiveForm* pForm,
   InitFieldFlags();
 }
 
-CPDF_FormField::~CPDF_FormField() {}
+CPDF_FormField::~CPDF_FormField() = default;
 
 void CPDF_FormField::InitFieldFlags() {
   const CPDF_Object* ft_attr =
       FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kFT);
   ByteString type_name = ft_attr ? ft_attr->GetString() : ByteString();
-  const CPDF_Object* ff_attr =
-      FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kFf);
-  uint32_t flags = ff_attr ? ff_attr->GetInteger() : 0;
+  uint32_t flags = GetFieldFlags();
   m_bRequired = flags & pdfium::form_flags::kRequired;
   m_bNoExport = flags & pdfium::form_flags::kNoExport;
 
   if (type_name == pdfium::form_fields::kBtn) {
-    if (flags & 0x8000) {
+    if (flags & pdfium::form_flags::kButtonRadio) {
       m_Type = kRadioButton;
-      m_bIsUnison = flags & 0x2000000;
-    } else if (flags & 0x10000) {
+      m_bIsUnison = flags & pdfium::form_flags::kButtonRadiosInUnison;
+    } else if (flags & pdfium::form_flags::kButtonPushbutton) {
       m_Type = kPushButton;
     } else {
       m_Type = kCheckBox;
       m_bIsUnison = true;
     }
   } else if (type_name == pdfium::form_fields::kTx) {
-    if (flags & 0x100000)
+    if (flags & pdfium::form_flags::kTextFileSelect)
       m_Type = kFile;
-    else if (flags & 0x2000000)
+    else if (flags & pdfium::form_flags::kTextRichText)
       m_Type = kRichText;
     else
       m_Type = kText;
     LoadDA();
   } else if (type_name == pdfium::form_fields::kCh) {
-    if (flags & 0x20000) {
+    if (flags & pdfium::form_flags::kChoiceCombo) {
       m_Type = kComboBox;
     } else {
       m_Type = kListBox;
-      m_bIsMultiSelectListBox = flags & 0x200000;
+      m_bIsMultiSelectListBox = flags & pdfium::form_flags::kChoiceMultiSelect;
     }
     LoadDA();
   } else if (type_name == pdfium::form_fields::kSig) {
