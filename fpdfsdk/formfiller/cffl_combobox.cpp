@@ -195,8 +195,6 @@ bool CFFL_ComboBox::IsActionDataChanged(CPDF_AAction::AActionType type,
 }
 
 void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView);
-
   if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false)) {
     m_State.nIndex = pComboBox->GetSelect();
 
@@ -208,8 +206,6 @@ void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ComboBox::RestoreState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView);
-
   if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView, true)) {
     if (m_State.nIndex >= 0) {
       pComboBox->SetSelect(m_State.nIndex);
@@ -229,10 +225,7 @@ bool CFFL_ComboBox::SetIndexSelected(int index, bool selected) {
   if (index < 0 || index >= m_pWidget->CountOptions())
     return false;
 
-  CPDFSDK_PageView* pPageView = GetCurPageView(true);
-  ASSERT(pPageView);
-
-  CPWL_ComboBox* pWnd = GetComboBox(pPageView, false);
+  CPWL_ComboBox* pWnd = GetComboBox(GetCurPageView(true), false);
   if (!pWnd)
     return false;
 
@@ -247,10 +240,7 @@ bool CFFL_ComboBox::IsIndexSelected(int index) {
   if (index < 0 || index >= m_pWidget->CountOptions())
     return false;
 
-  CPDFSDK_PageView* pPageView = GetCurPageView(true);
-  ASSERT(pPageView);
-
-  CPWL_ComboBox* pWnd = GetComboBox(pPageView, false);
+  CPWL_ComboBox* pWnd = GetComboBox(GetCurPageView(true), false);
   if (!pWnd)
     return false;
 
@@ -281,8 +271,7 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Edit* pEdit) {
 WideString CFFL_ComboBox::GetSelectExportText() {
   WideString swRet;
 
-  CPDFSDK_PageView* pPageView = GetCurPageView(true);
-  CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false);
+  CPWL_ComboBox* pComboBox = GetComboBox(GetCurPageView(true), false);
   int nExport = pComboBox ? pComboBox->GetSelect() : -1;
 
   if (nExport >= 0) {

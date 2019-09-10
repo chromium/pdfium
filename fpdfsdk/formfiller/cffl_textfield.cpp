@@ -220,8 +220,6 @@ bool CFFL_TextField::IsActionDataChanged(CPDF_AAction::AActionType type,
 }
 
 void CFFL_TextField::SaveState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView);
-
   CPWL_Edit* pWnd = GetEdit(pPageView, false);
   if (!pWnd)
     return;
@@ -231,8 +229,6 @@ void CFFL_TextField::SaveState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_TextField::RestoreState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView);
-
   CPWL_Edit* pWnd = GetEdit(pPageView, true);
   if (!pWnd)
     return;
