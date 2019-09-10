@@ -7,6 +7,7 @@
       4 0 R
       10 0 R
       11 0 R
+      12 0 R
     ]
     /DR 5 0 R
   >>
@@ -28,6 +29,7 @@ endobj
     4 0 R
     10 0 R
     11 0 R
+    12 0 R
   ]
 >>
 endobj
@@ -36,7 +38,7 @@ endobj
   /FT /Tx
   /T (Text Box)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 100 200 130 ]
+  /Rect [ 100 160 200 190 ]
   /Subtype /Widget
   /AA <<
     /F 9 0 R
@@ -462,9 +464,15 @@ endobj
 
       app.alert("**********************");
 
+      // These two should throw "TypeError", not "AFSimple_Calculate".
+      // https://crbug.com/pdfium/1396
       expectError('', "AFSimple_Calculate()");
       expectError('', "AFSimple_Calculate(1)");
+      // This should "pass", but currently throws an error.
+      // https://crbug.com/pdfium/1396
       expectEventValue('', "AFSimple_Calculate('blooey', ['Text2', 'Text3'])", 0);
+      // This should fail with TypeError, since a field does not exist, but
+      // currently passes. https://crbug.com/pdfium/1396
       expectEventValue('', "AFSimple_Calculate('AVG', [1, 'nonesuch', {'crud': 32}])", 0);
       expectEventValue('', "AFSimple_Calculate('AVG', ['Text2', 'Text3'])", (123 + 456) / 2);
       expectEventValue('', "AFSimple_Calculate('SUM', ['Text2', 'Text3'])", 123 + 456);
@@ -472,6 +480,17 @@ endobj
       expectEventValue('', "AFSimple_Calculate('MIN', ['Text2', 'Text3'])", 123);
       expectEventValue('', "AFSimple_Calculate('MAX', ['Text2', 'Text3'])", 456);
       expectEventValue('', "AFSimple_Calculate('AVG', 'Text2, Text3')", (123 + 456) / 2);
+      // The next 6 currently have rounding issues. https://crbug.com/611744.
+      expectEventValue('', "AFSimple_Calculate('AVG', ['Text4'])", 407.96);
+      expectEventValue('', "AFSimple_Calculate('SUM', ['Text4'])", 407.96);
+      expectEventValue('', "AFSimple_Calculate('MIN', ['Text4'])", 407.96);
+      expectEventValue('', "AFSimple_Calculate('MAX', ['Text4'])", 407.96);
+      expectEventValue('', "AFSimple_Calculate('AVG', ['Text2', 'Text4'])", (123 + 407.96) / 2);
+      expectEventValue('', "AFSimple_Calculate('SUM', ['Text2', 'Text4'])", 123 + 407.96);
+      // Note: 123 * 407.96 = 50179.08, but Acrobat has rounding artifacts in
+      // its implementation as well. It returns 50179.0799999999994, which is
+      // effectively 50179.08.
+      expectEventValue('', "AFSimple_Calculate('PRD', ['Text2', 'Text4'])", 50179.0799999999994);
 
       app.alert("**********************");
 
@@ -539,7 +558,7 @@ endobj
   /FT /Tx
   /T (Text2)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [100 40 200 70]
+  /Rect [100 0 200 30]
   /Subtype /Widget
   /V (123)
 >>
@@ -549,9 +568,19 @@ endobj
   /FT /Tx
   /T (Text3)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [100 0 200 30]
+  /Rect [100 40 200 70]
   /Subtype /Widget
   /V (456)
+>>
+endobj
+{{object 12 0}} <<
+  /Type /Annot
+  /FT /Tx
+  /T (Text4)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 80 200 110]
+  /Subtype /Widget
+  /V (407.96)
 >>
 endobj
 {{xref}}
