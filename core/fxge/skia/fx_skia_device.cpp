@@ -878,8 +878,7 @@ class SkiaState {
     }
     if (Accumulator::kText != m_type) {
       m_italicAngle = pFont->GetSubstFontItalicAngle();
-      m_positions.setCount(0);
-      m_glyphs.setCount(0);
+      m_charDetails.SetCount(0);
       m_rsxform.setCount(0);
       if (pFont->GetFaceRec())
         m_pTypeFace.reset(SkSafeRef(pFont->GetDeviceCache()));
@@ -895,9 +894,8 @@ class SkiaState {
     if (!hasRSX && !m_rsxform.isEmpty())
       FlushText();
 
-    int count = m_positions.count();
-    m_positions.setCount(nChars + count);
-    m_glyphs.setCount(nChars + count);
+    int count = m_charDetails.Count();
+    m_charDetails.SetCount(nChars + count);
     if (hasRSX)
       m_rsxform.setCount(nChars + count);
 
@@ -907,33 +905,39 @@ class SkiaState {
       vFlip *= -1;
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
-      m_positions[index + count] = {cp.m_Origin.x * flip,
-                                    cp.m_Origin.y * vFlip};
-      m_glyphs[index + count] = static_cast<uint16_t>(cp.m_GlyphIndex);
+      int cur_index = index + count;
+      m_charDetails.SetPositionAt(
+          cur_index, {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
+      m_charDetails.SetGlyphAt(cur_index,
+                               static_cast<uint16_t>(cp.m_GlyphIndex));
 #if defined(OS_MACOSX)
-      if (cp.m_ExtGID)
-        m_glyphs[index + count] = static_cast<uint16_t>(cp.m_ExtGID);
+      if (cp.m_ExtGID) {
+        m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_ExtGID));
+      }
 #endif
     }
     SkPoint delta;
     if (MatrixOffset(&matrix, &delta)) {
-      for (int index = 0; index < nChars; ++index)
-        m_positions[index + count].offset(delta.fX * flip, -delta.fY * flip);
+      for (int index = 0; index < nChars; ++index) {
+        m_charDetails.OffsetPositionAt(index + count, delta.fX * flip,
+                                       -delta.fY * flip);
+      }
     }
     if (hasRSX) {
+      const SkTDArray<SkPoint>& positions = m_charDetails.GetPositions();
       for (int index = 0; index < nChars; ++index) {
         const TextCharPos& cp = pCharPos[index];
         SkRSXform* rsxform = &m_rsxform[index + count];
         if (cp.m_bGlyphAdjust) {
           rsxform->fSCos = cp.m_AdjustMatrix[0];
           rsxform->fSSin = cp.m_AdjustMatrix[1];
-          rsxform->fTx = cp.m_AdjustMatrix[0] * m_positions[index].fX;
-          rsxform->fTy = cp.m_AdjustMatrix[1] * m_positions[index].fY;
+          rsxform->fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
+          rsxform->fTy = cp.m_AdjustMatrix[1] * positions[index].fY;
         } else {
           rsxform->fSCos = 1;
           rsxform->fSSin = 0;
-          rsxform->fTx = m_positions[index].fX;
-          rsxform->fTy = m_positions[index].fY;
+          rsxform->fTx = positions[index].fX;
+          rsxform->fTy = positions[index].fY;
         }
       }
     }
@@ -961,11 +965,14 @@ class SkiaState {
     SkScalar flip = m_fontSize < 0 ? -1 : 1;
     SkMatrix skMatrix = ToFlippedSkMatrix(m_drawMatrix, flip);
     skCanvas->concat(skMatrix);
+    const SkTDArray<uint16_t>& glyphs = m_charDetails.GetGlyphs();
 #ifdef _SKIA_SUPPORT_PATHS_
     m_pDriver->PreMultiply();
 #endif  // _SKIA_SUPPORT_PATHS_
 #if SHOW_TEXT_GLYPHS
     SkTDArray<SkUnichar> text;
+    // TODO(nigi): |m_glyphs| are deprecated and glyphToUnichars() takes 4
+    // parameters now.
     text.setCount(m_glyphs.count());
     skPaint.glyphsToUnichars(m_glyphs.begin(), m_glyphs.count(), text.begin());
     for (int i = 0; i < m_glyphs.count(); ++i)
@@ -975,12 +982,13 @@ class SkiaState {
 
     sk_sp<SkTextBlob> blob;
     if (m_rsxform.count()) {
-      blob = SkTextBlob::MakeFromRSXform(m_glyphs.begin(), m_glyphs.bytes(),
+      blob = SkTextBlob::MakeFromRSXform(glyphs.begin(), glyphs.bytes(),
                                          m_rsxform.begin(), font,
                                          SkTextEncoding::kGlyphID);
     } else {
-      blob = SkTextBlob::MakeFromPosText(m_glyphs.begin(), m_glyphs.bytes(),
-                                         m_positions.begin(), font,
+      const SkTDArray<SkPoint>& positions = m_charDetails.GetPositions();
+      blob = SkTextBlob::MakeFromPosText(glyphs.begin(), glyphs.bytes(),
+                                         positions.begin(), font,
                                          SkTextEncoding::kGlyphID);
     }
     skCanvas->drawTextBlob(blob, 0, 0, skPaint);
@@ -1426,11 +1434,39 @@ class SkiaState {
 #endif  // SHOW_SKIA_PATH
 
  private:
+  class CharDetail {
+   public:
+    CharDetail() = default;
+    ~CharDetail() = default;
+
+    const SkTDArray<SkPoint>& GetPositions() const { return m_positions; }
+    void SetPositionAt(int index, const SkPoint& position) {
+      m_positions[index] = position;
+    }
+    void OffsetPositionAt(int index, SkScalar dx, SkScalar dy) {
+      m_positions[index].offset(dx, dy);
+    }
+    const SkTDArray<uint16_t>& GetGlyphs() const { return m_glyphs; }
+    void SetGlyphAt(int index, uint16_t glyph) { m_glyphs[index] = glyph; }
+    int Count() const {
+      ASSERT(m_positions.count() == m_glyphs.count());
+      return m_glyphs.count();
+    }
+    void SetCount(int count) {
+      ASSERT(count >= 0);
+      m_positions.setCount(count);
+      m_glyphs.setCount(count);
+    }
+
+   private:
+    SkTDArray<SkPoint> m_positions;  // accumulator for text positions
+    SkTDArray<uint16_t> m_glyphs;    // accumulator for text glyphs
+  };
+
   SkTArray<SkPath> m_clips;        // stack of clips that may be reused
   SkTDArray<Clip> m_commands;      // stack of clip-related commands
-  SkTDArray<SkPoint> m_positions;  // accumulator for text positions
+  CharDetail m_charDetails;
   SkTDArray<SkRSXform> m_rsxform;  // accumulator for txt rotate/scale/translate
-  SkTDArray<uint16_t> m_glyphs;    // accumulator for text glyphs
   SkPath m_skPath;                 // accumulator for path contours
   SkPath m_skEmptyPath;            // used as placehold in the clips array
   CFX_Matrix m_drawMatrix;
