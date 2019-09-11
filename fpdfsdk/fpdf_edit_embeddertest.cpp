@@ -1950,10 +1950,11 @@ TEST_F(FPDFEditEmbedderTest, AddStandardFontText) {
   double matrix_d = 0;
   double matrix_e = 0;
   double matrix_f = 0;
-  EXPECT_FALSE(FPDFText_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
-                                  &matrix_d, &matrix_e, &matrix_f));
-  EXPECT_TRUE(FPDFText_GetMatrix(text_object3, &matrix_a, &matrix_b, &matrix_c,
-                                 &matrix_d, &matrix_e, &matrix_f));
+  EXPECT_FALSE(FPDFTextObj_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
+                                     &matrix_d, &matrix_e, &matrix_f));
+  EXPECT_TRUE(FPDFTextObj_GetMatrix(text_object3, &matrix_a, &matrix_b,
+                                    &matrix_c, &matrix_d, &matrix_e,
+                                    &matrix_f));
   EXPECT_EQ(1., matrix_a);
   EXPECT_EQ(1.5, matrix_b);
   EXPECT_EQ(2., matrix_c);
@@ -1975,13 +1976,13 @@ TEST_F(FPDFEditEmbedderTest, TestGetTextRenderMode) {
   ASSERT_TRUE(page);
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 
-  ASSERT_EQ(-1, FPDFText_GetTextRenderMode(nullptr));
+  ASSERT_EQ(-1, FPDFTextObj_GetTextRenderMode(nullptr));
 
   FPDF_PAGEOBJECT fill = FPDFPage_GetObject(page, 0);
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_FILL, FPDFText_GetTextRenderMode(fill));
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_FILL, FPDFTextObj_GetTextRenderMode(fill));
 
   FPDF_PAGEOBJECT stroke = FPDFPage_GetObject(page, 1);
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_STROKE, FPDFText_GetTextRenderMode(stroke));
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_STROKE, FPDFTextObj_GetTextRenderMode(stroke));
 
   UnloadPage(page);
 }

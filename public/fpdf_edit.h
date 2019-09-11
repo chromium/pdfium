@@ -1133,13 +1133,13 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
 // and used to scale, rotate, shear and translate the text.
 //
 // Returns TRUE on success.
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
-                                                       double* a,
-                                                       double* b,
-                                                       double* c,
-                                                       double* d,
-                                                       double* e,
-                                                       double* f);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
+                                                          double* a,
+                                                          double* b,
+                                                          double* c,
+                                                          double* d,
+                                                          double* e,
+                                                          double* f);
 
 // Experimental API.
 // Get the font size of a text object.
@@ -1173,7 +1173,8 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
 // text     - the handle to the text object.
 //
 // Returns one of the FPDF_TEXTRENDERMODE_* flags on success, -1 on error.
-FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text);
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text);
 
 // Experimental API.
 // Get the font name of a text object.

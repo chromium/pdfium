@@ -510,13 +510,13 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
       CPDF_Font::GetStockFont(pDoc, ByteStringView(font)).Leak());
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
-                                                       double* a,
-                                                       double* b,
-                                                       double* c,
-                                                       double* d,
-                                                       double* e,
-                                                       double* f) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
+                                                          double* a,
+                                                          double* b,
+                                                          double* c,
+                                                          double* d,
+                                                          double* e,
+                                                          double* f) {
   if (!a || !b || !c || !d || !e || !f)
     return false;
 
@@ -590,7 +590,8 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text) {
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
   return pTextObj ? static_cast<int>(pTextObj->m_TextState.GetTextMode()) : -1;
 }
