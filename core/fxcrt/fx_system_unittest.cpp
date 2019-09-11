@@ -102,8 +102,7 @@ TEST(fxcrt, FXSYS_round) {
   EXPECT_EQ(2147483520, FXSYS_round(2.14748352e+9f));
 
   // Using a slightly larger value, expect to see it be capped at MAX_INT.
-  // Instead erroneously seeing a return of MIN_INT.  crbug.com/611744
-  EXPECT_EQ(-2147483648, FXSYS_round(2.14748365e+9f));
+  EXPECT_EQ(2147483647, FXSYS_round(2.14748365e+9f));
 
   EXPECT_EQ(2147483647, FXSYS_round(2.14748365e+10f));
   EXPECT_EQ(2147483647, FXSYS_round(std::numeric_limits<float>::max()));
