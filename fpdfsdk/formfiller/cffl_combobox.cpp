@@ -195,27 +195,36 @@ bool CFFL_ComboBox::IsActionDataChanged(CPDF_AAction::AActionType type,
 }
 
 void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
-  if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false)) {
-    m_State.nIndex = pComboBox->GetSelect();
+  CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false);
+  if (!pComboBox)
+    return;
 
-    if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
-      pEdit->GetSelection(m_State.nStart, m_State.nEnd);
-      m_State.sValue = pEdit->GetText();
-    }
-  }
+  m_State.nIndex = pComboBox->GetSelect();
+
+  CPWL_Edit* pEdit = pComboBox->GetEdit();
+  if (!pEdit)
+    return;
+
+  pEdit->GetSelection(m_State.nStart, m_State.nEnd);
+  m_State.sValue = pEdit->GetText();
 }
 
 void CFFL_ComboBox::RestoreState(CPDFSDK_PageView* pPageView) {
-  if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView, true)) {
-    if (m_State.nIndex >= 0) {
-      pComboBox->SetSelect(m_State.nIndex);
-    } else {
-      if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
-        pEdit->SetText(m_State.sValue);
-        pEdit->SetSelection(m_State.nStart, m_State.nEnd);
-      }
-    }
+  CPWL_ComboBox* pComboBox = GetComboBox(pPageView, true);
+  if (!pComboBox)
+    return;
+
+  if (m_State.nIndex >= 0) {
+    pComboBox->SetSelect(m_State.nIndex);
+    return;
   }
+
+  CPWL_Edit* pEdit = pComboBox->GetEdit();
+  if (!pEdit)
+    return;
+
+  pEdit->SetText(m_State.sValue);
+  pEdit->SetSelection(m_State.nStart, m_State.nEnd);
 }
 
 bool CFFL_ComboBox::SetIndexSelected(int index, bool selected) {
@@ -241,19 +250,17 @@ bool CFFL_ComboBox::IsIndexSelected(int index) {
     return false;
 
   CPWL_ComboBox* pWnd = GetComboBox(GetCurPageView(true), false);
-  if (!pWnd)
-    return false;
-
-  return index == pWnd->GetSelect();
+  return pWnd && index == pWnd->GetSelect();
 }
 
 #ifdef PDF_ENABLE_XFA
 bool CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
-  if (CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false)) {
-    if (CPWL_Edit* pEdit = pComboBox->GetEdit())
-      return pEdit->IsTextFull();
-  }
-  return false;
+  CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false);
+  if (!pComboBox)
+    return false;
+
+  CPWL_Edit* pEdit = pComboBox->GetEdit();
+  return pEdit && pEdit->IsTextFull();
 }
 #endif  // PDF_ENABLE_XFA
 
