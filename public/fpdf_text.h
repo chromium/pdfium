@@ -128,6 +128,20 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
                                                      int index);
 
 // Experimental API.
+// Function: FPDFText_GetTextRenderMode
+//          Get text rendering mode of character.
+// Parameters:
+//          text_page   -   Handle to a text page information structure.
+//                          Returned by FPDFText_LoadPage function.
+//          index       -   Zero-based index of the character.
+// Return Value:
+//          On success, return the render mode value. A valid value is of type
+//          FPDF_TEXT_RENDERMODE. If |text_page| is invalid, if |index| is out
+//          of bounds, or if the text object is undefined, then return -1.
+FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
+FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index);
+
+// Experimental API.
 // Function: FPDFText_GetCharAngle
 //          Get character rotation angle.
 // Parameters:

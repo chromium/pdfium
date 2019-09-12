@@ -253,6 +253,10 @@ float CPDF_TextObject::GetFontSize() const {
   return m_TextState.GetFontSize();
 }
 
+TextRenderingMode CPDF_TextObject::GetTextRenderMode() const {
+  return m_TextState.GetTextMode();
+}
+
 CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   float curpos = 0;
   float min_x = 10000 * 1.0f;

@@ -590,8 +590,10 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
 }
 
-FPDF_EXPORT int FPDF_CALLCONV
+FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  return pTextObj ? static_cast<int>(pTextObj->m_TextState.GetTextMode()) : -1;
+  if (!pTextObj)
+    return -1;
+  return static_cast<FPDF_TEXT_RENDERMODE>(pTextObj->m_TextState.GetTextMode());
 }
