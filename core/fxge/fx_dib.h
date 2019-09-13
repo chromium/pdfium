@@ -96,6 +96,10 @@ constexpr uint8_t FXSYS_GetBValue(uint32_t bgr) {
   return (bgr >> 16) & 0xff;
 }
 
+constexpr unsigned int FXSYS_GetUnsignedAlpha(float alpha) {
+  return static_cast<unsigned int>(alpha * 255.f + 0.5f);
+}
+
 #define FXSYS_GetCValue(cmyk) ((uint8_t)((cmyk) >> 24) & 0xff)
 #define FXSYS_GetMValue(cmyk) ((uint8_t)((cmyk) >> 16) & 0xff)
 #define FXSYS_GetYValue(cmyk) ((uint8_t)((cmyk) >> 8) & 0xff)

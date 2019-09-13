@@ -1297,3 +1297,69 @@ TEST_F(FPDFTextEmbedderTest, GetTextRenderMode) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbedderTest, GetFillColor) {
+  ASSERT_TRUE(OpenDocument("text_color.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  ASSERT_TRUE(text_page);
+
+  ASSERT_EQ(1, FPDFText_CountChars(text_page));
+
+  ASSERT_FALSE(
+      FPDFText_GetFillColor(nullptr, 0, nullptr, nullptr, nullptr, nullptr));
+  ASSERT_FALSE(
+      FPDFText_GetFillColor(text_page, -1, nullptr, nullptr, nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetFillColor(text_page, 314, nullptr, nullptr, nullptr,
+                                     nullptr));
+  ASSERT_FALSE(
+      FPDFText_GetFillColor(text_page, 0, nullptr, nullptr, nullptr, nullptr));
+
+  unsigned int r;
+  unsigned int g;
+  unsigned int b;
+  unsigned int a;
+  ASSERT_TRUE(FPDFText_GetFillColor(text_page, 0, &r, &g, &b, &a));
+  ASSERT_EQ(0xffu, r);
+  ASSERT_EQ(0u, g);
+  ASSERT_EQ(0u, b);
+  ASSERT_EQ(0xffu, a);
+
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
+  ASSERT_TRUE(OpenDocument("text_color.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  ASSERT_TRUE(text_page);
+
+  ASSERT_EQ(1, FPDFText_CountChars(text_page));
+
+  ASSERT_FALSE(
+      FPDFText_GetStrokeColor(nullptr, 0, nullptr, nullptr, nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page, -1, nullptr, nullptr, nullptr,
+                                       nullptr));
+  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page, 314, nullptr, nullptr,
+                                       nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page, 0, nullptr, nullptr, nullptr,
+                                       nullptr));
+
+  unsigned int r;
+  unsigned int g;
+  unsigned int b;
+  unsigned int a;
+  ASSERT_TRUE(FPDFText_GetStrokeColor(text_page, 0, &r, &g, &b, &a));
+  ASSERT_EQ(0u, r);
+  ASSERT_EQ(0xffu, g);
+  ASSERT_EQ(0u, b);
+  ASSERT_EQ(0xffu, a);
+
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}

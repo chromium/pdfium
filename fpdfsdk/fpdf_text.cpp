@@ -144,6 +144,57 @@ FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index) {
       charinfo.m_pTextObj->GetTextRenderMode());
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
+                      int index,
+                      unsigned int* R,
+                      unsigned int* G,
+                      unsigned int* B,
+                      unsigned int* A) {
+  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
+  if (!textpage || !R || !G || !B || !A)
+    return false;
+
+  FPDF_CHAR_INFO charinfo;
+  textpage->GetCharInfo(index, &charinfo);
+  if (!charinfo.m_pTextObj)
+    return false;
+
+  FX_COLORREF fill_color = charinfo.m_pTextObj->m_ColorState.GetFillColorRef();
+  *R = FXSYS_GetRValue(fill_color);
+  *G = FXSYS_GetGValue(fill_color);
+  *B = FXSYS_GetBValue(fill_color);
+  *A = FXSYS_GetUnsignedAlpha(
+      charinfo.m_pTextObj->m_GeneralState.GetFillAlpha());
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
+                        int index,
+                        unsigned int* R,
+                        unsigned int* G,
+                        unsigned int* B,
+                        unsigned int* A) {
+  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
+  if (!textpage || !R || !G || !B || !A)
+    return false;
+
+  FPDF_CHAR_INFO charinfo;
+  textpage->GetCharInfo(index, &charinfo);
+  if (!charinfo.m_pTextObj)
+    return false;
+
+  FX_COLORREF stroke_color =
+      charinfo.m_pTextObj->m_ColorState.GetStrokeColorRef();
+  *R = FXSYS_GetRValue(stroke_color);
+  *G = FXSYS_GetGValue(stroke_color);
+  *B = FXSYS_GetBValue(stroke_color);
+  *A = FXSYS_GetUnsignedAlpha(
+      charinfo.m_pTextObj->m_GeneralState.GetStrokeAlpha());
+  return true;
+}
+
 FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
                                                        int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);

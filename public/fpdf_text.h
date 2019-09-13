@@ -142,6 +142,60 @@ FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index);
 
 // Experimental API.
+// Function: FPDFText_GetFillColor
+//          Get the fill color of a particular character.
+// Parameters:
+//          text_page      -   Handle to a text page information structure.
+//                             Returned by FPDFText_LoadPage function.
+//          index          -   Zero-based index of the character.
+//          R              -   Pointer to an unsigned int number receiving the
+//                             red value of the fill color.
+//          G              -   Pointer to an unsigned int number receiving the
+//                             green value of the fill color.
+//          B              -   Pointer to an unsigned int number receiving the
+//                             blue value of the fill color.
+//          A              -   Pointer to an unsigned int number receiving the
+//                             alpha value of the fill color.
+// Return value:
+//          Whether the call succeeded. If false, |R|, |G|, |B| and |A| are
+//          unchanged.
+//
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
+                      int index,
+                      unsigned int* R,
+                      unsigned int* G,
+                      unsigned int* B,
+                      unsigned int* A);
+
+// Experimental API.
+// Function: FPDFText_GetStrokeColor
+//          Get the stroke color of a particular character.
+// Parameters:
+//          text_page      -   Handle to a text page information structure.
+//                             Returned by FPDFText_LoadPage function.
+//          index          -   Zero-based index of the character.
+//          R              -   Pointer to an unsigned int number receiving the
+//                             red value of the stroke color.
+//          G              -   Pointer to an unsigned int number receiving the
+//                             green value of the stroke color.
+//          B              -   Pointer to an unsigned int number receiving the
+//                             blue value of the stroke color.
+//          A              -   Pointer to an unsigned int number receiving the
+//                             alpha value of the stroke color.
+// Return value:
+//          Whether the call succeeded. If false, |R|, |G|, |B| and |A| are
+//          unchanged.
+//
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
+                        int index,
+                        unsigned int* R,
+                        unsigned int* G,
+                        unsigned int* B,
+                        unsigned int* A);
+
+// Experimental API.
 // Function: FPDFText_GetCharAngle
 //          Get character rotation angle.
 // Parameters:
