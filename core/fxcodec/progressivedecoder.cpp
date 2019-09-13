@@ -73,7 +73,7 @@ void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len, int src_len) {
       if (pixel_weights.m_SrcStart == pixel_weights.m_SrcEnd) {
         pixel_weights.m_Weights[0] = 65536;
       } else {
-        pixel_weights.m_Weights[1] = FXSYS_round(
+        pixel_weights.m_Weights[1] = FXSYS_roundf(
             (float)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) * 65536);
         pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
       }
@@ -121,7 +121,7 @@ void ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len, int src_len) {
         break;
       }
       pixel_weights.m_Weights[j - start_i] =
-          FXSYS_round((float)(weight * 65536));
+          FXSYS_roundf((float)(weight * 65536));
     }
   }
 }
@@ -139,7 +139,7 @@ void ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len, int src_len) {
     int pre_dest_col = 0;
     for (int src_col = 0; src_col < src_len; src_col++) {
       double dest_col_f = src_col * scale;
-      int dest_col = FXSYS_round((float)dest_col_f);
+      int dest_col = FXSYS_roundf((float)dest_col_f);
       PixelWeight* pWeight = GetPixelWeight(dest_col);
       pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
       pWeight->m_Weights[0] = 65536;
@@ -161,8 +161,8 @@ void ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len, int src_len) {
         pWeight->m_SrcStart = src_col - 1;
         pWeight->m_SrcEnd = src_col;
         pWeight->m_Weights[0] =
-            FXSYS_round((float)(((float)dest_col - (float)dest_col_index) /
-                                (float)dest_col_len * 65536));
+            FXSYS_roundf((float)(((float)dest_col - (float)dest_col_index) /
+                                 (float)dest_col_len * 65536));
         pWeight->m_Weights[1] = 65536 - pWeight->m_Weights[0];
       }
       pre_dest_col = dest_col;
@@ -171,7 +171,7 @@ void ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len, int src_len) {
   }
   for (int dest_col = 0; dest_col < dest_len; dest_col++) {
     double src_col_f = dest_col / scale;
-    int src_col = FXSYS_round((float)src_col_f);
+    int src_col = FXSYS_roundf((float)src_col_f);
     PixelWeight* pWeight = GetPixelWeight(dest_col);
     pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
     pWeight->m_Weights[0] = 65536;
@@ -229,7 +229,7 @@ void ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len, int src_len) {
       pWeight->m_SrcStart = start_step;
       pWeight->m_SrcEnd = end_step;
       pWeight->m_Weights[0] =
-          FXSYS_round((float)(end_step - dest_row) / (float)length * 65536);
+          FXSYS_roundf((float)(end_step - dest_row) / (float)length * 65536);
       pWeight->m_Weights[1] = 65536 - pWeight->m_Weights[0];
     }
   }

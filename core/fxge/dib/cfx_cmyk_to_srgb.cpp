@@ -1725,11 +1725,11 @@ std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
                                                   float m,
                                                   float y,
                                                   float k) {
-  // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_round because
+  // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_roundf because
   // it is incredibly expensive with VC++ (tested on VC++ 2015) because round()
   // is very expensive.
   // The 'magic' value of 0.49999997f, the float that precedes 0.5f, was chosen
-  // because it gives identical results to FXSYS_round(). Using the constant
+  // because it gives identical results to FXSYS_roundf(). Using the constant
   // 0.5f gives different results (1 instead of 0) for one value, 0.0019607842.
   // That value is close to the cusp but zero is the correct answer, and
   // getting the same answer as before is desirable.
@@ -1740,10 +1740,10 @@ std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
   uint8_t y1 = static_cast<int>(y * 255.f + rounding_offset);
   uint8_t k1 = static_cast<int>(k * 255.f + rounding_offset);
 
-  ASSERT(c1 == FXSYS_round(c * 255));
-  ASSERT(m1 == FXSYS_round(m * 255));
-  ASSERT(y1 == FXSYS_round(y * 255));
-  ASSERT(k1 == FXSYS_round(k * 255));
+  ASSERT(c1 == FXSYS_roundf(c * 255));
+  ASSERT(m1 == FXSYS_roundf(m * 255));
+  ASSERT(y1 == FXSYS_roundf(y * 255));
+  ASSERT(k1 == FXSYS_roundf(k * 255));
 
   uint8_t r;
   uint8_t g;

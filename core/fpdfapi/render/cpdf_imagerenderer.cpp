@@ -77,7 +77,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
     return false;
 
   CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
-  m_BitmapAlpha = FXSYS_round(255 * state.GetFillAlpha());
+  m_BitmapAlpha = FXSYS_roundf(255 * state.GetFillAlpha());
   m_pDIBBase = m_Loader.GetBitmap();
   if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kAlpha) &&
       !m_Loader.GetMask()) {

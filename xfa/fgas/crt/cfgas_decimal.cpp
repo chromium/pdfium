@@ -280,7 +280,7 @@ CFGAS_Decimal::CFGAS_Decimal(float val, uint8_t scale) {
     newval = fmodf(newval, 1.0f);
   }
 
-  plo += FXSYS_round(newval);
+  plo += FXSYS_roundf(newval);
   decimal_helper_normalize(phi, pmid, plo);
   m_uHi = static_cast<uint32_t>(phi);
   m_uMid = static_cast<uint32_t>(pmid);

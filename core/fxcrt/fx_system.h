@@ -187,7 +187,7 @@ uint32_t FXSYS_atoui(const char* str);
 int32_t FXSYS_wtoi(const wchar_t* str);
 int64_t FXSYS_atoi64(const char* str);
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
-int FXSYS_round(float f);
+int FXSYS_roundf(float f);
 #define FXSYS_sqrt2(a, b) (float)sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus
 }  // extern C

@@ -51,11 +51,11 @@ bool CPDF_Type3Char::LoadBitmapFromSoleImageOfForm() {
 void CPDF_Type3Char::InitializeFromStreamData(bool bColored,
                                               const float* pData) {
   m_bColored = bColored;
-  m_Width = FXSYS_round(TextUnitToGlyphUnit(pData[0]));
-  m_BBox.left = FXSYS_round(TextUnitToGlyphUnit(pData[2]));
-  m_BBox.bottom = FXSYS_round(TextUnitToGlyphUnit(pData[3]));
-  m_BBox.right = FXSYS_round(TextUnitToGlyphUnit(pData[4]));
-  m_BBox.top = FXSYS_round(TextUnitToGlyphUnit(pData[5]));
+  m_Width = FXSYS_roundf(TextUnitToGlyphUnit(pData[0]));
+  m_BBox.left = FXSYS_roundf(TextUnitToGlyphUnit(pData[2]));
+  m_BBox.bottom = FXSYS_roundf(TextUnitToGlyphUnit(pData[3]));
+  m_BBox.right = FXSYS_roundf(TextUnitToGlyphUnit(pData[4]));
+  m_BBox.top = FXSYS_roundf(TextUnitToGlyphUnit(pData[5]));
 }
 
 void CPDF_Type3Char::WillBeDestroyed() {

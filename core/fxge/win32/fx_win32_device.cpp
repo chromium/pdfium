@@ -132,7 +132,7 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   if (!pGraphState->m_DashArray.empty()) {
     dashes.resize(pGraphState->m_DashArray.size());
     for (size_t i = 0; i < pGraphState->m_DashArray.size(); i++) {
-      dashes[i] = FXSYS_round(
+      dashes[i] = FXSYS_roundf(
           pMatrix ? pMatrix->TransformDistance(pGraphState->m_DashArray[i])
                   : pGraphState->m_DashArray[i]);
       dashes[i] = std::max(dashes[i], 1U);
@@ -158,7 +158,7 @@ void SetPathToDC(HDC hDC,
     if (pMatrix)
       pos = pMatrix->Transform(pos);
 
-    CFX_Point screen(FXSYS_round(pos.x), FXSYS_round(pos.y));
+    CFX_Point screen(FXSYS_roundf(pos.x), FXSYS_roundf(pos.y));
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       MoveToEx(hDC, screen.x, screen.y, nullptr);
@@ -176,15 +176,15 @@ void SetPathToDC(HDC hDC,
       if (pMatrix)
         pos = pMatrix->Transform(pos);
 
-      lppt[1].x = FXSYS_round(pos.x);
-      lppt[1].y = FXSYS_round(pos.y);
+      lppt[1].x = FXSYS_roundf(pos.x);
+      lppt[1].y = FXSYS_roundf(pos.y);
 
       pos = pPoints[i + 2].m_Point;
       if (pMatrix)
         pos = pMatrix->Transform(pos);
 
-      lppt[2].x = FXSYS_round(pos.x);
-      lppt[2].y = FXSYS_round(pos.y);
+      lppt[2].x = FXSYS_roundf(pos.x);
+      lppt[2].y = FXSYS_roundf(pos.y);
       PolyBezierTo(hDC, lppt, 3);
       i += 2;
     }
@@ -946,8 +946,8 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
     }
   }
 
-  MoveToEx(m_hDC, FXSYS_round(x1), FXSYS_round(y1), nullptr);
-  LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
+  MoveToEx(m_hDC, FXSYS_roundf(x1), FXSYS_roundf(y1), nullptr);
+  LineTo(m_hDC, FXSYS_roundf(x2), FXSYS_roundf(y2));
 }
 
 bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
@@ -1125,8 +1125,8 @@ bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
 
   HPEN hPen = CreatePen(PS_SOLID, 1, colorref);
   hPen = (HPEN)SelectObject(m_hDC, hPen);
-  MoveToEx(m_hDC, FXSYS_round(ptMoveTo.x), FXSYS_round(ptMoveTo.y), nullptr);
-  LineTo(m_hDC, FXSYS_round(ptLineTo.x), FXSYS_round(ptLineTo.y));
+  MoveToEx(m_hDC, FXSYS_roundf(ptMoveTo.x), FXSYS_roundf(ptMoveTo.y), nullptr);
+  LineTo(m_hDC, FXSYS_roundf(ptLineTo.x), FXSYS_roundf(ptLineTo.y));
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   DeleteObject(hPen);
   return true;

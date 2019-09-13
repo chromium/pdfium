@@ -792,9 +792,9 @@ void CPDF_CalRGB::TranslateImageLine(uint8_t* pDestBuf,
       Cal[1] = static_cast<float>(pSrcBuf[1]) / 255;
       Cal[2] = static_cast<float>(pSrcBuf[0]) / 255;
       GetRGB(Cal, &R, &G, &B);
-      pDestBuf[0] = FXSYS_round(B * 255);
-      pDestBuf[1] = FXSYS_round(G * 255);
-      pDestBuf[2] = FXSYS_round(R * 255);
+      pDestBuf[0] = FXSYS_roundf(B * 255);
+      pDestBuf[1] = FXSYS_roundf(G * 255);
+      pDestBuf[2] = FXSYS_roundf(R * 255);
       pSrcBuf += 3;
       pDestBuf += 3;
     }

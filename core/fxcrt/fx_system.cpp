@@ -88,7 +88,7 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
 
 }  // namespace
 
-int FXSYS_round(float f) {
+int FXSYS_roundf(float f) {
   if (std::isnan(f))
     return 0;
   if (f < static_cast<float>(std::numeric_limits<int>::min()))

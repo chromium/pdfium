@@ -233,8 +233,8 @@ void CJX_Object::SetAttribute(XFA_Attribute eAttr,
       break;
     case XFA_AttributeType::Integer:
       SetInteger(eAttr,
-                 FXSYS_round(FXSYS_wcstof(wsValue.unterminated_c_str(),
-                                          wsValue.GetLength(), nullptr)),
+                 FXSYS_roundf(FXSYS_wcstof(wsValue.unterminated_c_str(),
+                                           wsValue.GetLength(), nullptr)),
                  bNotify);
       break;
     case XFA_AttributeType::Measure:

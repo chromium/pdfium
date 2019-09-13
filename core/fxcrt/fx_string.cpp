@@ -101,13 +101,13 @@ size_t FloatToString(float f, char* buf) {
     f = -f;
   }
   int scale = 1;
-  int scaled = FXSYS_round(f);
+  int scaled = FXSYS_roundf(f);
   while (scaled < 100000) {
     if (scale == 1000000) {
       break;
     }
     scale *= 10;
-    scaled = FXSYS_round(f * scale);
+    scaled = FXSYS_roundf(f * scale);
   }
   if (scaled == 0) {
     return 1;

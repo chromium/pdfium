@@ -264,8 +264,8 @@ FX_RECT CFX_FloatRect::ToFxRect() const {
 }
 
 FX_RECT CFX_FloatRect::ToRoundedFxRect() const {
-  return FX_RECT(FXSYS_round(left), FXSYS_round(top), FXSYS_round(right),
-                 FXSYS_round(bottom));
+  return FX_RECT(FXSYS_roundf(left), FXSYS_roundf(top), FXSYS_roundf(right),
+                 FXSYS_roundf(bottom));
 }
 
 FX_RECT CFX_RectF::GetOuterRect() const {

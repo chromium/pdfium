@@ -75,9 +75,9 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
           pixel_weights.m_Weights[0] = 65536;
         } else {
           pixel_weights.m_Weights[1] =
-              FXSYS_round(static_cast<float>(
-                              src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
-                          65536);
+              FXSYS_roundf(static_cast<float>(
+                               src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
+                           65536);
           pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
         }
       } else if (options.bInterpolateBicubic) {
@@ -94,7 +94,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
           pixel_weights.m_SrcStart = src_min;
         }
         pixel_weights.m_SrcEnd = std::min(pixel_weights.m_SrcEnd, src_max - 1);
-        int weight = FXSYS_round(
+        int weight = FXSYS_roundf(
             static_cast<float>(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
             256);
         if (start == end) {
@@ -201,7 +201,7 @@ bool CStretchEngine::CWeightTable::Calc(int dest_len,
       if (idx >= GetPixelWeightSize())
         return false;
 
-      pixel_weights.m_Weights[idx] = FXSYS_round(weight * 65536);
+      pixel_weights.m_Weights[idx] = FXSYS_roundf(weight * 65536);
     }
   }
   return true;

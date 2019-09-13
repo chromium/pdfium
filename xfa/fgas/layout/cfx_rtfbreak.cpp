@@ -31,7 +31,7 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
 CFX_RTFBreak::~CFX_RTFBreak() {}
 
 void CFX_RTFBreak::SetLineStartPos(float fLinePos) {
-  int32_t iLinePos = FXSYS_round(fLinePos * kConversionFactor);
+  int32_t iLinePos = FXSYS_roundf(fLinePos * kConversionFactor);
   iLinePos = std::min(iLinePos, m_iLineWidth);
   iLinePos = std::max(iLinePos, m_iLineStart);
   m_pCurLine->m_iStart = iLinePos;
@@ -39,7 +39,7 @@ void CFX_RTFBreak::SetLineStartPos(float fLinePos) {
 
 void CFX_RTFBreak::AddPositionedTab(float fTabPos) {
   int32_t iTabPos = std::min(
-      FXSYS_round(fTabPos * kConversionFactor) + m_iLineStart, m_iLineWidth);
+      FXSYS_roundf(fTabPos * kConversionFactor) + m_iLineStart, m_iLineWidth);
   auto it = std::lower_bound(m_PositionedTabs.begin(), m_PositionedTabs.end(),
                              iTabPos);
   if (it != m_PositionedTabs.end() && *it == iTabPos)
@@ -730,7 +730,7 @@ size_t CFX_RTFBreak::GetDisplayPos(const CFX_TextPiece* pPiece,
   CFX_RectF rtText(pPiece->rtPiece);
   bool bRTLPiece = FX_IsOdd(pPiece->iBidiLevel);
   float fFontSize = pPiece->fFontSize;
-  int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
+  int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
   if (iFontSize == 0)
     return 0;
 

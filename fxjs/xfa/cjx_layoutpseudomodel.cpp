@@ -133,7 +133,7 @@ CJS_Result CJX_LayoutPseudoModel::HWXY(
 
   float fValue = measure.ToUnit(eUnit);
   return CJS_Result::Success(
-      runtime->NewNumber(FXSYS_round(fValue * 1000) / 1000.0f));
+      runtime->NewNumber(FXSYS_roundf(fValue * 1000) / 1000.0f));
 }
 
 CJS_Result CJX_LayoutPseudoModel::h(

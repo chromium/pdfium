@@ -906,9 +906,10 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       std::tie(v1, v2) = indices.value();
       Gdiplus::GpPen* pPen = nullptr;
       CallFunc(GdipCreatePen1)(fill_argb, 1.0f, Gdiplus::UnitPixel, &pPen);
-      CallFunc(GdipDrawLineI)(
-          pGraphics, pPen, FXSYS_round(points[v1].X), FXSYS_round(points[v1].Y),
-          FXSYS_round(points[v2].X), FXSYS_round(points[v2].Y));
+      CallFunc(GdipDrawLineI)(pGraphics, pPen, FXSYS_roundf(points[v1].X),
+                              FXSYS_roundf(points[v1].Y),
+                              FXSYS_roundf(points[v2].X),
+                              FXSYS_roundf(points[v2].Y));
       CallFunc(GdipDeletePen)(pPen);
       return true;
     }

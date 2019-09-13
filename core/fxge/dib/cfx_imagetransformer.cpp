@@ -155,12 +155,12 @@ void WriteColorResult(std::function<uint8_t(int offset)> func,
 class CPDF_FixedMatrix {
  public:
   explicit CPDF_FixedMatrix(const CFX_Matrix& src)
-      : a(FXSYS_round(src.a * kBase)),
-        b(FXSYS_round(src.b * kBase)),
-        c(FXSYS_round(src.c * kBase)),
-        d(FXSYS_round(src.d * kBase)),
-        e(FXSYS_round(src.e * kBase)),
-        f(FXSYS_round(src.f * kBase)) {}
+      : a(FXSYS_roundf(src.a * kBase)),
+        b(FXSYS_roundf(src.b * kBase)),
+        c(FXSYS_roundf(src.c * kBase)),
+        d(FXSYS_roundf(src.d * kBase)),
+        e(FXSYS_roundf(src.e * kBase)),
+        f(FXSYS_roundf(src.f * kBase)) {}
 
   void Transform(int x, int y, int* x1, int* y1) const {
     std::pair<float, float> val = TransformInternal(x, y);

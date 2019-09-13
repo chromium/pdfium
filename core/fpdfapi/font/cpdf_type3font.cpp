@@ -83,7 +83,7 @@ bool CPDF_Type3Font::Load() {
       count = std::min(count, kCharLimit - StartChar);
       for (size_t i = 0; i < count; i++) {
         m_CharWidthL[StartChar + i] =
-            FXSYS_round(CPDF_Type3Char::TextUnitToGlyphUnit(
+            FXSYS_roundf(CPDF_Type3Char::TextUnitToGlyphUnit(
                 pWidthArray->GetNumberAt(i) * xscale));
       }
     }

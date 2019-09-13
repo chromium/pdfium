@@ -365,7 +365,7 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
                                   int32_t* pPieceWidths) {
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   bool bNeedReload = false;
-  int32_t iLineWidth = FXSYS_round(rect.Width() * 20000.0f);
+  int32_t iLineWidth = FXSYS_roundf(rect.Width() * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
     const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);

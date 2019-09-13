@@ -790,8 +790,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
   if (!pos)
     return false;
 
-  *device_x = FXSYS_round(pos->x);
-  *device_y = FXSYS_round(pos->y);
+  *device_x = FXSYS_roundf(pos->x);
+  *device_y = FXSYS_roundf(pos->y);
   return true;
 }
 

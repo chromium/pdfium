@@ -305,7 +305,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
     // error for calculating the next spacing value.
     float fOriginX = charpos.m_Origin.x * kScaleFactor;
     float fPixelSpacing = fOriginX - fPreviousOriginX;
-    spacing[i] = FXSYS_round(fPixelSpacing);
+    spacing[i] = FXSYS_roundf(fPixelSpacing);
     fPreviousOriginX = fOriginX - (fPixelSpacing - spacing[i]);
 
     wsText += charpos.m_GlyphIndex;
@@ -641,7 +641,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
   // preserved in the text location. clrf characters seem to be ignored by
   // label printers that use this driver.
   float fOffsetY = mtObject2Device.f * kScaleFactor;
-  if (m_SetOrigin && FXSYS_round(m_OriginY) != FXSYS_round(fOffsetY)) {
+  if (m_SetOrigin && FXSYS_roundf(m_OriginY) != FXSYS_roundf(fOffsetY)) {
     wsText += L"\r\n";
     totalLength += 2;
   }

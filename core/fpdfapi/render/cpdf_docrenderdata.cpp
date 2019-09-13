@@ -98,7 +98,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
           continue;
         }
         pFuncs[i]->Call(&input, 1, output, &noutput);
-        size_t o = FXSYS_round(output[0] * 255);
+        size_t o = FXSYS_roundf(output[0] * 255);
         if (o != v)
           bIdentity = false;
         samples[i][v] = o;
@@ -107,7 +107,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     }
     if (pFuncs[0]->CountOutputs() <= kMaxOutputs)
       pFuncs[0]->Call(&input, 1, output, &noutput);
-    size_t o = FXSYS_round(output[0] * 255);
+    size_t o = FXSYS_roundf(output[0] * 255);
     if (o != v)
       bIdentity = false;
     for (auto& channel : samples)

@@ -122,8 +122,8 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
         return false;
 
       rgb[i] = eNumType == CFX_CSSNumberType::Percent
-                   ? FXSYS_round(fValue * 2.55f)
-                   : FXSYS_round(fValue);
+                   ? FXSYS_roundf(fValue * 2.55f)
+                   : FXSYS_roundf(fValue);
     }
     *dwColor = ArgbEncode(255, rgb[0], rgb[1], rgb[2]);
     return true;

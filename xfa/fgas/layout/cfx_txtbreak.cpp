@@ -34,7 +34,7 @@ CFX_TxtBreak::CFX_TxtBreak()
 CFX_TxtBreak::~CFX_TxtBreak() {}
 
 void CFX_TxtBreak::SetLineWidth(float fLineWidth) {
-  m_iLineWidth = FXSYS_round(fLineWidth * kConversionFactor);
+  m_iLineWidth = FXSYS_roundf(fLineWidth * kConversionFactor);
   ASSERT(m_iLineWidth >= 20000);
 }
 
@@ -45,7 +45,7 @@ void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
 }
 
 void CFX_TxtBreak::SetCombWidth(float fCombWidth) {
-  m_iCombWidth = FXSYS_round(fCombWidth * kConversionFactor);
+  m_iCombWidth = FXSYS_roundf(fCombWidth * kConversionFactor);
 }
 
 void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
@@ -672,7 +672,7 @@ size_t CFX_TxtBreak::GetDisplayPos(const Run* pTxtRun,
   CFX_RectF rtText(*pTxtRun->pRect);
   bool bRTLPiece = (pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
   float fFontSize = pTxtRun->fFontSize;
-  int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
+  int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
   int32_t iAscent = pFont->GetAscent();
   int32_t iDescent = pFont->GetDescent();
   int32_t iMaxHeight = iAscent - iDescent;

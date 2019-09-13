@@ -125,8 +125,8 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
     float B = 0.0f;
     pCS->GetRGB(result_array.data(), &R, &G, &B);
     shading_steps[i] =
-        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
-                                FXSYS_round(G * 255), FXSYS_round(B * 255)));
+        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_roundf(R * 255),
+                                FXSYS_roundf(G * 255), FXSYS_roundf(B * 255)));
   }
   return shading_steps;
 }
@@ -1887,7 +1887,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
         refTypeCache.insert(std::move(pCache));
 
-        CFX_Point origin(FXSYS_round(matrix.e), FXSYS_round(matrix.f));
+        CFX_Point origin(FXSYS_roundf(matrix.e), FXSYS_roundf(matrix.f));
         if (glyphs.empty()) {
           FX_SAFE_INT32 left = origin.x;
           left += pBitmap->left();
@@ -2114,8 +2114,8 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
 
   CFX_Matrix matrix = pattern->pattern_to_form() * mtObj2Device;
   int alpha =
-      FXSYS_round(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
-                                 : pPageObj->m_GeneralState.GetFillAlpha()));
+      FXSYS_roundf(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
+                                  : pPageObj->m_GeneralState.GetFillAlpha()));
   DrawShading(pattern, matrix, rect, alpha,
               m_Options.ColorModeIs(CPDF_RenderOptions::kAlpha));
 }
@@ -2130,7 +2130,7 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
 
   CFX_Matrix matrix = pShadingObj->matrix() * mtObj2Device;
   DrawShading(pShadingObj->pattern(), matrix, rect,
-              FXSYS_round(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
+              FXSYS_roundf(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
               m_Options.ColorModeIs(CPDF_RenderOptions::kAlpha));
 }
 
@@ -2224,8 +2224,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       pPattern->bbox().top == pPattern->y_step() &&
       (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated());
   if (bAligned) {
-    int orig_x = FXSYS_round(mtPattern2Device.e);
-    int orig_y = FXSYS_round(mtPattern2Device.f);
+    int orig_x = FXSYS_roundf(mtPattern2Device.e);
+    int orig_y = FXSYS_roundf(mtPattern2Device.f);
     min_col = (clip_box.left - orig_x) / width;
     if (clip_box.left < orig_x)
       min_col--;
@@ -2277,16 +2277,18 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       int start_x;
       int start_y;
       if (bAligned) {
-        start_x = FXSYS_round(mtPattern2Device.e) + col * width - clip_box.left;
-        start_y = FXSYS_round(mtPattern2Device.f) + row * height - clip_box.top;
+        start_x =
+            FXSYS_roundf(mtPattern2Device.e) + col * width - clip_box.left;
+        start_y =
+            FXSYS_roundf(mtPattern2Device.f) + row * height - clip_box.top;
       } else {
         CFX_PointF original = mtPattern2Device.Transform(
             CFX_PointF(col * pPattern->x_step(), row * pPattern->y_step()));
 
         pdfium::base::CheckedNumeric<int> safeStartX =
-            FXSYS_round(original.x + left_offset);
+            FXSYS_roundf(original.x + left_offset);
         pdfium::base::CheckedNumeric<int> safeStartY =
-            FXSYS_round(original.y + top_offset);
+            FXSYS_roundf(original.y + top_offset);
 
         safeStartX -= clip_box.left;
         safeStartY -= clip_box.top;
@@ -2575,7 +2577,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       float input = (float)i / 255.0f;
       int nresult;
       pFunc->Call(&input, 1, results.data(), &nresult);
-      transfers[i] = FXSYS_round(results[0] * 255);
+      transfers[i] = FXSYS_roundf(results[0] * 255);
     }
   } else {
     for (int i = 0; i < 256; i++) {

@@ -679,8 +679,8 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMask() {
     float G;
     float B;
     m_pColorSpace->GetRGB(colors.data(), &R, &G, &B);
-    m_MatteColor = ArgbEncode(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
-                              FXSYS_round(B * 255));
+    m_MatteColor = ArgbEncode(0, FXSYS_roundf(R * 255), FXSYS_roundf(G * 255),
+                              FXSYS_roundf(B * 255));
   }
   return StartLoadMaskDIB();
 }
@@ -760,14 +760,14 @@ void CPDF_DIBBase::LoadPalette() {
     float B = 0.0f;
     m_pColorSpace->GetRGB(color_values, &R, &G, &B);
 
-    FX_ARGB argb0 = ArgbEncode(255, FXSYS_round(R * 255), FXSYS_round(G * 255),
-                               FXSYS_round(B * 255));
+    FX_ARGB argb0 = ArgbEncode(255, FXSYS_roundf(R * 255),
+                               FXSYS_roundf(G * 255), FXSYS_roundf(B * 255));
     color_values[0] += m_CompData[0].m_DecodeStep;
     color_values[1] += m_CompData[0].m_DecodeStep;
     color_values[2] += m_CompData[0].m_DecodeStep;
     m_pColorSpace->GetRGB(color_values, &R, &G, &B);
-    FX_ARGB argb1 = ArgbEncode(255, FXSYS_round(R * 255), FXSYS_round(G * 255),
-                               FXSYS_round(B * 255));
+    FX_ARGB argb1 = ArgbEncode(255, FXSYS_roundf(R * 255),
+                               FXSYS_roundf(G * 255), FXSYS_roundf(B * 255));
     if (argb0 != 0xFF000000 || argb1 != 0xFFFFFFFF) {
       SetPaletteArgb(0, argb0);
       SetPaletteArgb(1, argb1);
@@ -803,8 +803,8 @@ void CPDF_DIBBase::LoadPalette() {
     } else {
       m_pColorSpace->GetRGB(color_values.data(), &R, &G, &B);
     }
-    SetPaletteArgb(i, ArgbEncode(255, FXSYS_round(R * 255),
-                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
+    SetPaletteArgb(i, ArgbEncode(255, FXSYS_roundf(R * 255),
+                                 FXSYS_roundf(G * 255), FXSYS_roundf(B * 255)));
   }
 }
 

@@ -29,7 +29,7 @@ int AdjustBlueHelper(float pos, std::vector<int>* blues) {
   }
   if (closest_pos >= 0)
     return blues->at(closest_pos);
-  int new_pos = FXSYS_round(pos);
+  int new_pos = FXSYS_roundf(pos);
   if (blues->size() < kType3MaxBlues)
     blues->push_back(new_pos);
   return new_pos;

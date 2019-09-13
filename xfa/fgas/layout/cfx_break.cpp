@@ -62,7 +62,7 @@ void CFX_Break::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
 }
 
 void CFX_Break::SetFontSize(float fFontSize) {
-  int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
+  int32_t iFontSize = FXSYS_roundf(fFontSize * 20.0f);
   if (m_iFontSize == iFontSize)
     return;
 
@@ -105,7 +105,7 @@ void CFX_Break::SetTabWidth(float fTabWidth) {
   // in for the RTFBreak code for consistency. If we see issues with tab widths
   // we may need to fix this.
   m_iTabWidth =
-      std::max(FXSYS_round(fTabWidth * kConversionFactor), kMinimumTabWidth);
+      std::max(FXSYS_roundf(fTabWidth * kConversionFactor), kMinimumTabWidth);
 }
 
 void CFX_Break::SetDefaultChar(wchar_t wch) {
@@ -128,19 +128,19 @@ void CFX_Break::SetParagraphBreakChar(wchar_t wch) {
 }
 
 void CFX_Break::SetLineBreakTolerance(float fTolerance) {
-  m_iTolerance = FXSYS_round(fTolerance * kConversionFactor);
+  m_iTolerance = FXSYS_roundf(fTolerance * kConversionFactor);
 }
 
 void CFX_Break::SetCharSpace(float fCharSpace) {
-  m_iCharSpace = FXSYS_round(fCharSpace * kConversionFactor);
+  m_iCharSpace = FXSYS_roundf(fCharSpace * kConversionFactor);
 }
 
 void CFX_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
   if (fLineStart > fLineEnd)
     return;
 
-  m_iLineStart = FXSYS_round(fLineStart * kConversionFactor);
-  m_iLineWidth = FXSYS_round(fLineEnd * kConversionFactor);
+  m_iLineStart = FXSYS_roundf(fLineStart * kConversionFactor);
+  m_iLineWidth = FXSYS_roundf(fLineEnd * kConversionFactor);
   m_pCurLine->m_iStart = std::min(m_pCurLine->m_iStart, m_iLineWidth);
   m_pCurLine->m_iStart = std::max(m_pCurLine->m_iStart, m_iLineStart);
 }

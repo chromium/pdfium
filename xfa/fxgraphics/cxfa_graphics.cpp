@@ -196,8 +196,8 @@ CFX_RectF CXFA_Graphics::GetClipRect() const {
 
 void CXFA_Graphics::SetClipRect(const CFX_RectF& rect) {
   m_renderDevice->SetClip_Rect(
-      FX_RECT(FXSYS_round(rect.left), FXSYS_round(rect.top),
-              FXSYS_round(rect.right()), FXSYS_round(rect.bottom())));
+      FX_RECT(FXSYS_roundf(rect.left), FXSYS_roundf(rect.top),
+              FXSYS_roundf(rect.right()), FXSYS_roundf(rect.bottom())));
 }
 
 CFX_RenderDevice* CXFA_Graphics::GetRenderDevice() {
