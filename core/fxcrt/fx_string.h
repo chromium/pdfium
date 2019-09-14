@@ -25,6 +25,10 @@ float StringToFloat(ByteStringView str);
 float StringToFloat(WideStringView wsStr);
 size_t FloatToString(float f, char* buf);
 
+double StringToDouble(ByteStringView str);
+double StringToDouble(WideStringView wsStr);
+size_t DoubleToString(double d, char* buf);
+
 namespace fxcrt {
 
 template <typename StrType>

@@ -35,20 +35,21 @@ WideString FX_UTF8Decode(ByteStringView bsStr) {
 
 namespace {
 
-const float fraction_scales[] = {0.1f,          0.01f,         0.001f,
-                                 0.0001f,       0.00001f,      0.000001f,
-                                 0.0000001f,    0.00000001f,   0.000000001f,
-                                 0.0000000001f, 0.00000000001f};
+constexpr float kFractionScalesFloat[] = {
+    0.1f,         0.01f,         0.001f,        0.0001f,
+    0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
+    0.000000001f, 0.0000000001f, 0.00000000001f};
 
-float FractionalScale(size_t scale_factor, int value) {
-  return fraction_scales[scale_factor] * value;
-}
+const double kFractionScalesDouble[] = {
+    0.1,       0.01,       0.001,       0.0001,       0.00001,      0.000001,
+    0.0000001, 0.00000001, 0.000000001, 0.0000000001, 0.00000000001};
 
-}  // namespace
-
-float StringToFloat(ByteStringView strc) {
+template <class T>
+T StringTo(ByteStringView strc,
+           const T fractional_scales[],
+           size_t fractional_scales_size) {
   if (strc.IsEmpty())
-    return 0.0;
+    return 0;
 
   int cc = 0;
   bool bNegative = false;
@@ -64,20 +65,21 @@ float StringToFloat(ByteStringView strc) {
       break;
     cc++;
   }
-  float value = 0;
+  T value = 0;
   while (cc < len) {
     if (strc[cc] == '.')
       break;
     value = value * 10 + FXSYS_DecimalCharToInt(strc.CharAt(cc));
     cc++;
   }
-  int scale = 0;
+  size_t scale = 0;
   if (cc < len && strc[cc] == '.') {
     cc++;
     while (cc < len) {
-      value += FractionalScale(scale, FXSYS_DecimalCharToInt(strc.CharAt(cc)));
+      value +=
+          fractional_scales[scale] * FXSYS_DecimalCharToInt(strc.CharAt(cc));
       scale++;
-      if (scale == FX_ArraySize(fraction_scales))
+      if (scale == fractional_scales_size)
         break;
       cc++;
     }
@@ -85,29 +87,26 @@ float StringToFloat(ByteStringView strc) {
   return bNegative ? -value : value;
 }
 
-float StringToFloat(WideStringView wsStr) {
-  return StringToFloat(FX_UTF8Encode(wsStr).c_str());
-}
-
-size_t FloatToString(float f, char* buf) {
+template <class T>
+size_t ToString(T value, int (*round_func)(T), char* buf) {
   buf[0] = '0';
   buf[1] = '\0';
-  if (f == 0.0f) {
+  if (value == 0) {
     return 1;
   }
   bool bNegative = false;
-  if (f < 0) {
+  if (value < 0) {
     bNegative = true;
-    f = -f;
+    value = -value;
   }
   int scale = 1;
-  int scaled = FXSYS_roundf(f);
+  int scaled = round_func(value);
   while (scaled < 100000) {
     if (scale == 1000000) {
       break;
     }
     scale *= 10;
-    scaled = FXSYS_roundf(f * scale);
+    scaled = round_func(value * scale);
   }
   if (scaled == 0) {
     return 1;
@@ -134,4 +133,32 @@ size_t FloatToString(float f, char* buf) {
     scale /= 10;
   }
   return buf_size;
+}
+
+}  // namespace
+
+float StringToFloat(ByteStringView strc) {
+  return StringTo<float>(strc, kFractionScalesFloat,
+                         FX_ArraySize(kFractionScalesFloat));
+}
+
+float StringToFloat(WideStringView wsStr) {
+  return StringToFloat(FX_UTF8Encode(wsStr).c_str());
+}
+
+size_t FloatToString(float f, char* buf) {
+  return ToString<float>(f, FXSYS_roundf, buf);
+}
+
+double StringToDouble(ByteStringView strc) {
+  return StringTo<double>(strc, kFractionScalesDouble,
+                          FX_ArraySize(kFractionScalesDouble));
+}
+
+double StringToDouble(WideStringView wsStr) {
+  return StringToDouble(FX_UTF8Encode(wsStr).c_str());
+}
+
+size_t DoubleToString(double d, char* buf) {
+  return ToString<double>(d, FXSYS_round, buf);
 }
