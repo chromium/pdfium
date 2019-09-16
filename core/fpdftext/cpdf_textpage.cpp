@@ -337,7 +337,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
   int curPos = start;
   bool bFlagNewRect = true;
   while (nCount--) {
-    PAGECHAR_INFO info_curchar = m_CharList[curPos++];
+    const PAGECHAR_INFO& info_curchar = m_CharList[curPos++];
     if (info_curchar.m_Flag == FPDFTEXT_CHAR_GENERATED)
       continue;
     if (info_curchar.m_CharBox.Width() < kSizeEpsilon ||
@@ -357,11 +357,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       rect.Normalize();
       continue;
     }
-    info_curchar.m_CharBox.Normalize();
-    rect.left = std::min(rect.left, info_curchar.m_CharBox.left);
-    rect.right = std::max(rect.right, info_curchar.m_CharBox.right);
-    rect.top = std::max(rect.top, info_curchar.m_CharBox.top);
-    rect.bottom = std::min(rect.bottom, info_curchar.m_CharBox.bottom);
+    rect.Union(info_curchar.m_CharBox);
   }
   rects.push_back(rect);
   return rects;
@@ -378,21 +374,20 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
   double ydif = 5000;
   const int nCount = CountChars();
   for (pos = 0; pos < nCount; ++pos) {
-    PAGECHAR_INFO charinfo = m_CharList[pos];
-    CFX_FloatRect charrect = charinfo.m_CharBox;
-    if (charrect.Contains(point))
+    const CFX_FloatRect& orig_charrect = m_CharList[pos].m_CharBox;
+    if (orig_charrect.Contains(point))
       break;
 
     if (tolerance.width <= 0 && tolerance.height <= 0)
       continue;
 
-    CFX_FloatRect charRectExt;
+    CFX_FloatRect charrect = orig_charrect;
     charrect.Normalize();
-    charRectExt.left = charrect.left - tolerance.width / 2;
-    charRectExt.right = charrect.right + tolerance.width / 2;
-    charRectExt.top = charrect.top + tolerance.height / 2;
-    charRectExt.bottom = charrect.bottom - tolerance.height / 2;
-    if (!charRectExt.Contains(point))
+    CFX_FloatRect char_rect_ext(charrect.left - tolerance.width / 2,
+                                charrect.bottom - tolerance.height / 2,
+                                charrect.right + tolerance.width / 2,
+                                charrect.top + tolerance.height / 2);
+    if (!char_rect_ext.Contains(point))
       continue;
 
     double curXdif =
@@ -1354,8 +1349,7 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
     float dbXdif = fabs(rcPreObj.left - rcCurObj.left);
     size_t nCount = m_CharList.size();
     if (nCount >= 2) {
-      PAGECHAR_INFO perCharTemp = m_CharList[nCount - 2];
-      float dbSpace = perCharTemp.m_CharBox.Width();
+      float dbSpace = m_CharList[nCount - 2].m_CharBox.Width();
       if (dbXdif > dbSpace)
         return false;
     }
