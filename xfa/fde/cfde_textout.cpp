@@ -114,6 +114,9 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
     bRet = device->DrawNormalText(iCurCount, pCurCP, font, -fFontSize, matrix,
                                   color, FXTEXT_CLEARTYPE);
   }
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+  device->Flush(false);
+#endif
 
   return bRet;
 }
