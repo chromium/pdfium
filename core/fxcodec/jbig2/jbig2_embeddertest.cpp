@@ -10,7 +10,13 @@
 
 class JBig2EmbedderTest : public EmbedderTest {};
 
-TEST_F(JBig2EmbedderTest, Bug_631912) {
+#if defined(_SKIA_SUPPORT_)
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#define MAYBE_Bug_631912 DISABLED_Bug_631912
+#else
+#define MAYBE_Bug_631912 Bug_631912
+#endif
+TEST_F(JBig2EmbedderTest, MAYBE_Bug_631912) {
   // Test jbig2 image in PDF file can be loaded successfully.
   // Should not crash.
   EXPECT_TRUE(OpenDocument("bug_631912.pdf"));

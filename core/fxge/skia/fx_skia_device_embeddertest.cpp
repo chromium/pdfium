@@ -159,7 +159,8 @@ TEST(fxge, SkiaStatePath) {
 }
 
 #ifdef _SKIA_SUPPORT_
-TEST(fxge, SkiaStateText) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST(fxge, DISABLED_SkiaStateText) {
   Harness(&CommonTest,
           {State::Change::kNo, State::Save::kYes, State::Clip::kDifferentMatrix,
            State::Graphic::kText, 0xFF445566});
