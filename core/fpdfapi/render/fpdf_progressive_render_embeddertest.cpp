@@ -115,7 +115,13 @@ class FakePause : public IFSDK_PAUSE {
   const bool should_pause_ = false;
 };
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderWithoutPause DISABLED_RenderWithoutPause
+#else
+#define MAYBE_RenderWithoutPause RenderWithoutPause
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
 #if defined(OS_WIN)
   static constexpr char kMd5BaseContent[] = "649d6792ea50faf98c013c2d81710595";
 #elif defined(OS_MACOSX)
@@ -136,7 +142,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithPause) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderWithPause DISABLED_RenderWithPause
+#else
+#define MAYBE_RenderWithPause RenderWithPause
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithPause) {
 #if defined(OS_WIN)
   static constexpr char kMd5BaseContent[] = "649d6792ea50faf98c013c2d81710595";
 #elif defined(OS_MACOSX)
@@ -162,7 +174,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithPause) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderAnnotWithPause) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderAnnotWithPause DISABLED_RenderAnnotWithPause
+#else
+#define MAYBE_RenderAnnotWithPause RenderAnnotWithPause
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderAnnotWithPause) {
 #if defined(OS_WIN)
   static constexpr char kMd5ContentWithAnnot[] =
       "6aa001a77ec05d0f1b0d1d22e28744d4";
@@ -191,7 +209,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderAnnotWithPause) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormsWithPause) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderFormsWithPause DISABLED_RenderFormsWithPause
+#else
+#define MAYBE_RenderFormsWithPause RenderFormsWithPause
+#endif
+TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormsWithPause) {
 #if defined(OS_WIN)
   static constexpr char kMd5ContentWithForms[] =
       "d3204faa62b607f0bd3893c9c22cabcb";

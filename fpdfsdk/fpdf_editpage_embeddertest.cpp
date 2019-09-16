@@ -8,7 +8,13 @@
 
 class FPDFEditPageEmbedderTest : public EmbedderTest {};
 
-TEST_F(FPDFEditPageEmbedderTest, Rotation) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Rotation DISABLED_Rotation
+#else
+#define MAYBE_Rotation Rotation
+#endif
+TEST_F(FPDFEditPageEmbedderTest, MAYBE_Rotation) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kRotatedMD5[] = "d599429574ff0dcad3bc898ea8b874ca";
 

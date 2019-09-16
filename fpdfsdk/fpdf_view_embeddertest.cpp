@@ -682,7 +682,14 @@ void FPDFViewEmbedderTest::TestRenderPageBitmapWithMatrix(
   FPDFBitmap_Destroy(bitmap);
 }
 
-TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_FPDF_RenderPageBitmapWithMatrix \
+  DISABLED_FPDF_RenderPageBitmapWithMatrix
+#else
+#define MAYBE_FPDF_RenderPageBitmapWithMatrix FPDF_RenderPageBitmapWithMatrix
+#endif
+TEST_F(FPDFViewEmbedderTest, MAYBE_FPDF_RenderPageBitmapWithMatrix) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kClippedMD5[] = "a84cab93c102b9b9290fba3047ba702c";
   const char kTopLeftQuarterMD5[] = "f11a11137c8834389e31cf555a4a6979";

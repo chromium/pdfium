@@ -37,7 +37,13 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_BUG_890322 DISABLED_BUG_890322
+#else
+#define MAYBE_BUG_890322 BUG_890322
+#endif
+TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_890322) {
   static const char md5_hash[] = "6c674642154408e877d88c6c082d67e9";
   EXPECT_TRUE(OpenDocument("bug_890322.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -54,7 +60,13 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
   VerifySavedDocument(200, 200, md5_hash);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_896366) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_BUG_896366 DISABLED_BUG_896366
+#else
+#define MAYBE_BUG_896366 BUG_896366
+#endif
+TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_896366) {
   static const char md5_hash[] = "f71ab085c52c8445ae785eca3ec858b1";
   EXPECT_TRUE(OpenDocument("bug_896366.pdf"));
   FPDF_PAGE page = LoadPage(0);

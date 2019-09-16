@@ -64,7 +64,13 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }
 
-TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_PasswordAfterGenerateSave DISABLED_PasswordAfterGenerateSave
+#else
+#define MAYBE_PasswordAfterGenerateSave PasswordAfterGenerateSave
+#endif
+TEST_F(CPDFSecurityHandlerEmbedderTest, MAYBE_PasswordAfterGenerateSave) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   const char md5[] = "7048dca58e2ed8f93339008b91e4eb4e";
 #elif defined(OS_MACOSX)

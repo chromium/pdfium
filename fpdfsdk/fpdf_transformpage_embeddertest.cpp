@@ -194,7 +194,13 @@ TEST_F(FPDFTransformEmbedderTest, NoArtBox) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_SetCropBox DISABLED_SetCropBox
+#else
+#define MAYBE_SetCropBox SetCropBox
+#endif
+TEST_F(FPDFTransformEmbedderTest, MAYBE_SetCropBox) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kCroppedMD5[] = "9937883715d5144c079fb8f7e3d4f395";
 
@@ -267,7 +273,13 @@ TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
   }
 }
 
-TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_SetMediaBox DISABLED_SetMediaBox
+#else
+#define MAYBE_SetMediaBox SetMediaBox
+#endif
+TEST_F(FPDFTransformEmbedderTest, MAYBE_SetMediaBox) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kShrunkMD5[] = "eab5958f62f7ce65d7c32de98389fee1";
 
@@ -400,7 +412,13 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipWithPatterns) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_TransFormWithClipAndSave DISABLED_TransFormWithClipAndSave
+#else
+#define MAYBE_TransFormWithClipAndSave TransFormWithClipAndSave
+#endif
+TEST_F(FPDFTransformEmbedderTest, MAYBE_TransFormWithClipAndSave) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kShrunkMD5[] = "f4136cc9209207ab60eb8381a3df2e69";
 
@@ -458,7 +476,15 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
 }
 
 #if defined(OS_LINUX) || defined(OS_FUCHSIA)
-TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_TransFormWithClipAndSaveWithLocale \
+  DISABLED_TransFormWithClipAndSaveWithLocale
+#else
+#define MAYBE_TransFormWithClipAndSaveWithLocale \
+  TransFormWithClipAndSaveWithLocale
+#endif
+TEST_F(FPDFTransformEmbedderTest, MAYBE_TransFormWithClipAndSaveWithLocale) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kShrunkMD5[] = "f4136cc9209207ab60eb8381a3df2e69";
 

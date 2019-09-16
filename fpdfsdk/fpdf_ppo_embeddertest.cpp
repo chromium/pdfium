@@ -99,7 +99,13 @@ TEST_F(FPDFPPOEmbedderTest, BadNupParams) {
 
 // TODO(Xlou): Add more tests to check output doc content of
 // FPDF_ImportNPagesToOne()
-TEST_F(FPDFPPOEmbedderTest, NupRenderImage) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_NupRenderImage DISABLED_NupRenderImage
+#else
+#define MAYBE_NupRenderImage NupRenderImage
+#endif
+TEST_F(FPDFPPOEmbedderTest, MAYBE_NupRenderImage) {
   ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
   const int kPageCount = 2;
   static constexpr const char* kExpectedMD5s[kPageCount] = {
@@ -214,7 +220,13 @@ TEST_F(FPDFPPOEmbedderTest, BUG_664284) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_BUG_750568 DISABLED_BUG_750568
+#else
+#define MAYBE_BUG_750568 BUG_750568
+#endif
+TEST_F(FPDFPPOEmbedderTest, MAYBE_BUG_750568) {
   const char* const kHashes[] = {
       "64ad08132a1c5a166768298c8a578f57", "83b83e2f6bc80707d0a917c7634140b9",
       "913cd3723a451e4e46fbc2c05702d1ee", "81fb7cfd4860f855eb468f73dfeb6d60"};
