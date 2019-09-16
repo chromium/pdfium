@@ -68,14 +68,26 @@ class BarcodeTest : public testing::Test {
   RetainPtr<CFX_DIBitmap> bitmap_;
 };
 
-TEST_F(BarcodeTest, Code39) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Code39 DISABLED_Code39
+#else
+#define MAYBE_Code39 Code39
+#endif
+TEST_F(BarcodeTest, MAYBE_Code39) {
   Create(BC_CODE39);
   EXPECT_TRUE(barcode()->Encode(L"CLAMS"));
   RenderDevice();
   EXPECT_EQ("cd4cd3f36da38ff58d9f621827018903", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, CodaBar) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_CodaBar DISABLED_CodaBar
+#else
+#define MAYBE_CodaBar CodaBar
+#endif
+TEST_F(BarcodeTest, MAYBE_CodaBar) {
   Create(BC_CODABAR);
   EXPECT_TRUE(barcode()->Encode(L"$123-456"));
   RenderDevice();
@@ -87,21 +99,39 @@ TEST_F(BarcodeTest, DISABLED_CodaBarLetters) {
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
-TEST_F(BarcodeTest, Code128) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Code128 DISABLED_Code128
+#else
+#define MAYBE_Code128 Code128
+#endif
+TEST_F(BarcodeTest, MAYBE_Code128) {
   Create(BC_CODE128);
   EXPECT_TRUE(barcode()->Encode(L"Clams"));
   RenderDevice();
   EXPECT_EQ("6351f0f6e997050e4658bbb4777aef74", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, Code128B) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Code128B DISABLED_Code128B
+#else
+#define MAYBE_Code128B Code128B
+#endif
+TEST_F(BarcodeTest, MAYBE_Code128B) {
   Create(BC_CODE128_B);
   EXPECT_TRUE(barcode()->Encode(L"Clams"));
   RenderDevice();
   EXPECT_EQ("6351f0f6e997050e4658bbb4777aef74", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, Code128C) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Code128C DISABLED_Code128C
+#else
+#define MAYBE_Code128C Code128C
+#endif
+TEST_F(BarcodeTest, MAYBE_Code128C) {
   Create(BC_CODE128_C);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
@@ -113,7 +143,13 @@ TEST_F(BarcodeTest, DISABLED_Code128CLetters) {
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
-TEST_F(BarcodeTest, Ean8) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Ean8 DISABLED_Ean8
+#else
+#define MAYBE_Ean8 Ean8
+#endif
+TEST_F(BarcodeTest, MAYBE_Ean8) {
   Create(BC_EAN8);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
@@ -125,7 +161,13 @@ TEST_F(BarcodeTest, DISABLED_Ean8Letters) {
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
-TEST_F(BarcodeTest, UPCA) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_UPCA DISABLED_UPCA
+#else
+#define MAYBE_UPCA UPCA
+#endif
+TEST_F(BarcodeTest, MAYBE_UPCA) {
   Create(BC_UPCA);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
@@ -137,7 +179,13 @@ TEST_F(BarcodeTest, DISABLED_UPCALetters) {
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
-TEST_F(BarcodeTest, Ean13) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Ean13 DISABLED_Ean13
+#else
+#define MAYBE_Ean13 Ean13
+#endif
+TEST_F(BarcodeTest, MAYBE_Ean13) {
   Create(BC_EAN13);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
@@ -149,21 +197,39 @@ TEST_F(BarcodeTest, DISABLED_Ean13Letters) {
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
-TEST_F(BarcodeTest, Pdf417) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Pdf417 DISABLED_Pdf417
+#else
+#define MAYBE_Pdf417 Pdf417
+#endif
+TEST_F(BarcodeTest, MAYBE_Pdf417) {
   Create(BC_PDF417);
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
   EXPECT_EQ("191e35d11613901b7d5d51033689aa89", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, DataMatrix) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_DataMatrix DISABLED_DataMatrix
+#else
+#define MAYBE_DataMatrix DataMatrix
+#endif
+TEST_F(BarcodeTest, MAYBE_DataMatrix) {
   Create(BC_DATAMATRIX);
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
   EXPECT_EQ("5e5cd9a680b86fcd4ffd53ed36e3c980", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, QrCode) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_QrCode DISABLED_QrCode
+#else
+#define MAYBE_QrCode QrCode
+#endif
+TEST_F(BarcodeTest, MAYBE_QrCode) {
   Create(BC_QR_CODE);
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
