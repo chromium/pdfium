@@ -6,12 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 
-constexpr int32_t CPDF_PageObject::kNoContentStream;
-
 CPDF_PageObject::CPDF_PageObject(int32_t content_stream)
     : m_ContentStream(content_stream) {}
-
-CPDF_PageObject::CPDF_PageObject() : CPDF_PageObject(kNoContentStream) {}
 
 CPDF_PageObject::~CPDF_PageObject() = default;
 

@@ -41,10 +41,6 @@ void CPDF_Path::Transform(const CFX_Matrix& matrix) {
   m_Ref.GetPrivateCopy()->Transform(matrix);
 }
 
-void CPDF_Path::Append(const CPDF_Path& other, const CFX_Matrix* pMatrix) {
-  m_Ref.GetPrivateCopy()->Append(other.GetObject(), pMatrix);
-}
-
 void CPDF_Path::Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix) {
   m_Ref.GetPrivateCopy()->Append(pData, pMatrix);
 }

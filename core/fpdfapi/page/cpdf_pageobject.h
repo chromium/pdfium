@@ -31,7 +31,6 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   static constexpr int32_t kNoContentStream = -1;
 
   explicit CPDF_PageObject(int32_t content_stream);
-  CPDF_PageObject();
   ~CPDF_PageObject() override;
 
   virtual Type GetType() const = 0;

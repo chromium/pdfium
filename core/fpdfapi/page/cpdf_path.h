@@ -32,7 +32,6 @@ class CPDF_Path {
   bool IsRect() const;
   void Transform(const CFX_Matrix& matrix);
 
-  void Append(const CPDF_Path& other, const CFX_Matrix* pMatrix);
   void Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix);
   // TODO(thestig): Switch to CFX_FloatRect.
   void AppendRect(float left, float bottom, float right, float top);
