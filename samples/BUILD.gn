@@ -22,6 +22,8 @@ config("pdfium_samples_config") {
   include_dirs = [ ".." ]
   if (pdf_use_skia) {
     defines += [ "PDF_ENABLE_SKIA" ]
+  } else if (pdf_use_skia_paths) {
+    defines += [ "PDF_ENABLE_SKIA_PATHS" ]
   }
   if (is_asan) {
     defines += [ "PDF_ENABLE_ASAN" ]

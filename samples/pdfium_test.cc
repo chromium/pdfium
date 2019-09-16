@@ -18,6 +18,10 @@
 #define _SKIA_SUPPORT_
 #endif
 
+#if defined PDF_ENABLE_SKIA_PATHS && !defined _SKIA_SUPPORT_PATHS_
+#define _SKIA_SUPPORT_PATHS_
+#endif
+
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
@@ -910,6 +914,15 @@ void ShowConfig() {
   config.append("ASAN");
   maybe_comma = ",";
 #endif  // PDF_ENABLE_ASAN
+#if defined(PDF_ENABLE_SKIA)
+  config.append(maybe_comma);
+  config.append("SKIA");
+  maybe_comma = ",";
+#elif defined(PDF_ENABLE_SKIA_PATHS)
+  config.append(maybe_comma);
+  config.append("SKIAPATHS");
+  maybe_comma = ",";
+#endif
   printf("%s\n", config.c_str());
 }
 
