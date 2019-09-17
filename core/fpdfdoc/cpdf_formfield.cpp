@@ -172,8 +172,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
     case kRichText:
     case kFile:
     default: {
-      const CPDF_Object* pDV =
-          FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kDV);
+      const CPDF_Object* pDV = GetDefaultValueObject();
       WideString csDValue;
       if (pDV)
         csDValue = pDV->GetUnicodeText();
@@ -181,8 +180,7 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
       WideString csValue;
       {
         // Limit the scope of |pV| because it may get invalidated below.
-        const CPDF_Object* pV =
-            FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
+        const CPDF_Object* pV = GetValueObject();
         if (pV)
           csValue = pV->GetUnicodeText();
       }
@@ -294,11 +292,10 @@ WideString CPDF_FormField::GetValue(bool bDefault) const {
     return GetCheckValue(bDefault);
 
   const CPDF_Object* pValue =
-      FPDF_GetFieldAttr(m_pDict.Get(), bDefault ? pdfium::form_fields::kDV
-                                                : pdfium::form_fields::kV);
+      bDefault ? GetDefaultValueObject() : GetValueObject();
   if (!pValue) {
     if (!bDefault && m_Type != kText)
-      pValue = FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kDV);
+      pValue = GetDefaultValueObject();
     if (!pValue)
       return WideString();
   }
@@ -410,13 +407,9 @@ int CPDF_FormField::GetMaxLen() const {
 }
 
 int CPDF_FormField::CountSelectedItems() const {
-  const CPDF_Object* pValue =
-      FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
-  if (!pValue) {
-    pValue = FPDF_GetFieldAttr(m_pDict.Get(), "I");
-    if (!pValue)
-      return 0;
-  }
+  const CPDF_Object* pValue = GetValueOrSelectedIndicesObject();
+  if (!pValue)
+    return 0;
 
   if (pValue->IsString() || pValue->IsNumber())
     return pValue->GetString().IsEmpty() ? 0 : 1;
@@ -425,13 +418,10 @@ int CPDF_FormField::CountSelectedItems() const {
 }
 
 int CPDF_FormField::GetSelectedIndex(int index) const {
-  const CPDF_Object* pValue =
-      FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
-  if (!pValue) {
-    pValue = FPDF_GetFieldAttr(m_pDict.Get(), "I");
-    if (!pValue)
-      return -1;
-  }
+  const CPDF_Object* pValue = GetValueOrSelectedIndicesObject();
+  if (!pValue)
+    return -1;
+
   if (pValue->IsNumber())
     return pValue->GetInteger();
 
@@ -485,13 +475,9 @@ bool CPDF_FormField::IsItemSelected(int index) const {
     return true;
 
   WideString opt_value = GetOptionValue(index);
-  const CPDF_Object* pValue =
-      FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
-  if (!pValue) {
-    pValue = FPDF_GetFieldAttr(m_pDict.Get(), "I");
-    if (!pValue)
-      return false;
-  }
+  const CPDF_Object* pValue = GetValueOrSelectedIndicesObject();
+  if (!pValue)
+    return false;
 
   if (pValue->IsString())
     return pValue->GetUnicodeText() == opt_value;
@@ -562,8 +548,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
 
 void CPDF_FormField::SetItemSelectionUnselected(int index,
                                                 const WideString& opt_value) {
-  const CPDF_Object* pValue =
-      FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
+  const CPDF_Object* pValue = GetValueObject();
   if (!pValue)
     return;
 
@@ -604,8 +589,7 @@ bool CPDF_FormField::IsItemDefaultSelected(int index) const {
 
 int CPDF_FormField::GetDefaultSelectedItem() const {
   ASSERT(GetType() == kComboBox || GetType() == kListBox);
-  const CPDF_Object* pValue =
-      FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kDV);
+  const CPDF_Object* pValue = GetDefaultValueObject();
   if (!pValue)
     return -1;
   WideString csDV = pValue->GetUnicodeText();
@@ -693,8 +677,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
       m_pDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV, csBExport);
     } else {
       ByteString csV;
-      const CPDF_Object* pV =
-          FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
+      const CPDF_Object* pV = GetValueObject();
       if (pV)
         csV = pV->GetString();
       if (csV == csBExport)
@@ -752,12 +735,12 @@ int CPDF_FormField::GetTopVisibleIndex() const {
 }
 
 int CPDF_FormField::CountSelectedOptions() const {
-  const CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict.Get(), "I"));
+  const CPDF_Array* pArray = ToArray(GetSelectedIndicesObject());
   return pArray ? pArray->size() : 0;
 }
 
 int CPDF_FormField::GetSelectedOptionIndex(int index) const {
-  const CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict.Get(), "I"));
+  const CPDF_Array* pArray = ToArray(GetSelectedIndicesObject());
   if (!pArray)
     return -1;
 
@@ -768,7 +751,7 @@ int CPDF_FormField::GetSelectedOptionIndex(int index) const {
 }
 
 bool CPDF_FormField::IsOptionSelected(int iOptIndex) const {
-  const CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict.Get(), "I"));
+  const CPDF_Array* pArray = ToArray(GetSelectedIndicesObject());
   if (!pArray)
     return false;
 
@@ -914,6 +897,25 @@ void CPDF_FormField::NotifyListOrComboBoxAfterChange() {
     default:
       break;
   }
+}
+
+const CPDF_Object* CPDF_FormField::GetDefaultValueObject() const {
+  return FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kDV);
+}
+
+const CPDF_Object* CPDF_FormField::GetValueObject() const {
+  return FPDF_GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kV);
+}
+
+const CPDF_Object* CPDF_FormField::GetSelectedIndicesObject() const {
+  ASSERT(GetType() == kComboBox || GetType() == kListBox);
+  return FPDF_GetFieldAttr(m_pDict.Get(), "I");
+}
+
+const CPDF_Object* CPDF_FormField::GetValueOrSelectedIndicesObject() const {
+  ASSERT(GetType() == kComboBox || GetType() == kListBox);
+  const CPDF_Object* pValue = GetValueObject();
+  return pValue ? pValue : GetSelectedIndicesObject();
 }
 
 const std::vector<UnownedPtr<CPDF_FormControl>>& CPDF_FormField::GetControls()

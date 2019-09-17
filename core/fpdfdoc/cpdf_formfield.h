@@ -189,6 +189,16 @@ class CPDF_FormField {
   bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
+  const CPDF_Object* GetDefaultValueObject() const;
+  const CPDF_Object* GetValueObject() const;
+
+  // For choice fields.
+  const CPDF_Object* GetSelectedIndicesObject() const;
+
+  // For choice fields.
+  // Value object takes precedence over selected indices object.
+  const CPDF_Object* GetValueOrSelectedIndicesObject() const;
+
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControls() const;
 
   CPDF_FormField::Type m_Type = kUnknown;
