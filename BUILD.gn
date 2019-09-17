@@ -192,6 +192,7 @@ jumbo_component("pdfium") {
   }
 
   if (pdf_is_complete_lib) {
+    target_type = "static_library"
     complete_static_lib = true
     configs -= [ "//build/config/compiler:thin_archive" ]
   }
