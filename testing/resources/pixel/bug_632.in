@@ -6,27 +6,44 @@
 endobj
 {{object 2 0}} <<
   /Type /Pages
-  /Count 1
-  /Kids [3 0 R]
+  /Count 2
+  /Kids [3 0 R 4 0 R]
 >>
 endobj
 {{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
-  /Contents 4 0 R
+  /Contents [5 0 R 7 0 R]
   /MediaBox [0 0 300 200]
-  /Resources <<
-    /Font << /F1 6 0 R >>
-    /Pattern << /P1 7 0 R >>
-    /ProcSet [/PDF /Text /ImageC /ImageI /ImageB]
-  >>
+  /Resources 8 0 R
 >>
 endobj
 {{object 4 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [6 0 R 7 0 R]
+  /MediaBox [0 0 300 200]
+  /Resources 8 0 R
+>>
+endobj
+{{object 5 0}} <<
   {{streamlen}}
 >>
 stream
 200 0 500 200 re
+endstream
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+140 0 300 200 re
+endstream
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
 W
 n
 /Pattern cs
@@ -38,27 +55,33 @@ BT
 ET
 endstream
 endobj
-{{object 6 0}} <<
+{{object 8 0}} <<
+  /Font << /F1 9 0 R >>
+  /Pattern << /P1 10 0 R >>
+  /ProcSet [/PDF /Text /ImageC /ImageI /ImageB]
+>>
+endobj
+{{object 9 0}} <<
   /Type /Font
   /Subtype /Type1
   /BaseFont /Helvetica
 >>
 endobj
-{{object 7 0}} <<
+{{object 10 0}} <<
   /Type /Pattern
   /PatternType 2
-  /Shading 8 0 R
+  /Shading 11 0 R
 >>
 endobj
-{{object 8 0}} <<
+{{object 11 0}} <<
   /ShadingType 2
   /ColorSpace /DeviceCMYK
   /Coords [0.0 0.0 1.0 0.0]
-  /Function 9 0 R
+  /Function 12 0 R
   /Extend [true true]
 >>
 endobj
-{{object 9 0}} <<
+{{object 12 0}} <<
   /FunctionType 0
   /Domain [0.0 1.0]
   /Range [0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0]
