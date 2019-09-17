@@ -270,6 +270,8 @@ def _CheckTestDuplicates(input_api, output_api):
   tests_added = []
   results = []
   for f in input_api.AffectedFiles():
+    if f.Action() == 'D':
+      continue
     if not f.LocalPath().startswith(('testing/resources/pixel/',
         'testing/resources/javascript/')):
       continue
