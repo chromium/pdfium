@@ -441,9 +441,6 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
     return false;
 
   m_Image = pTempImage;
-#if !defined(USE_SYSTEM_LIBOPENJPEG2)
-  m_Image->pdfium_use_colorspace = (m_ColorSpaceOption != kNoColorSpace);
-#endif
   return true;
 }
 

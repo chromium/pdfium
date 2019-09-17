@@ -9,7 +9,6 @@ JPEG 2000 library.
 
 Local Modifications:
 
-0000-use-colorspace.patch: Makes it possible to not call opj_jp2_apply_pclr().
 0003-dwt-decode.patch: Check array bounds for opj_dwt_decode_1() and friends.
 0005-jp2_apply_pclr.patch: Fix out of bounds access.
 0006-tcd_init_tile.patch: Fix a divide by zero bug in opj_tcd_init_tile().
