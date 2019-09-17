@@ -102,6 +102,14 @@ void CPDF_ClipPath::AppendTexts(
   pTexts->clear();
 }
 
+void CPDF_ClipPath::CopyClipPath(const CPDF_ClipPath& that) {
+  if (*this == that || !that.HasRef())
+    return;
+
+  for (size_t i = 0; i < that.GetPathCount(); ++i)
+    AppendPath(that.GetPath(i), that.GetClipType(i), /*bAutoMerge=*/false);
+}
+
 void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
   PathData* pData = m_Ref.GetPrivateCopy();
   for (auto& obj : pData->m_PathAndTypeList)

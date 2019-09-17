@@ -41,6 +41,7 @@ class CPDF_ClipPath {
   CFX_FloatRect GetClipBox() const;
   void AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge);
   void AppendTexts(std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts);
+  void CopyClipPath(const CPDF_ClipPath& that);
   void Transform(const CFX_Matrix& matrix);
 
  private:
