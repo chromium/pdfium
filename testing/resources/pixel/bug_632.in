@@ -26,15 +26,14 @@ endobj
   {{streamlen}}
 >>
 stream
-1 0 0 1 200 0 cm
-0 0 300 200 re
+200 0 500 200 re
 W
 n
 /Pattern cs
 /P1 scn
 BT
 /F1 16 Tf
-1 0 0 1 -100 100 Tm
+100 100 Td
 (Hello, world!) Tj
 ET
 endstream
