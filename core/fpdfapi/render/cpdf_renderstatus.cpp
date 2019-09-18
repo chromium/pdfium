@@ -158,13 +158,10 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
-  bool bStartExtend = false;
-  bool bEndExtend = false;
   pArray = pDict->GetArrayFor("Extend");
-  if (pArray) {
-    bStartExtend = !!pArray->GetIntegerAt(0);
-    bEndExtend = !!pArray->GetIntegerAt(1);
-  }
+  const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
+  const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
+
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   float x_span = end_x - start_x;
@@ -231,13 +228,9 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
-  bool bStartExtend = false;
-  bool bEndExtend = false;
   pArray = pDict->GetArrayFor("Extend");
-  if (pArray) {
-    bStartExtend = !!pArray->GetIntegerAt(0);
-    bEndExtend = !!pArray->GetIntegerAt(1);
-  }
+  const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
+  const bool bEndExtend = pArray && pArray->GetBooleanAt(1, false);
 
   std::array<FX_ARGB, kShadingSteps> shading_steps =
       GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results);

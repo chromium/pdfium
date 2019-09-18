@@ -7,10 +7,31 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
+
+TEST(cpdf_array, GetBooleanAt) {
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  arr->AddNew<CPDF_Boolean>(true);
+  arr->AddNew<CPDF_Boolean>(false);
+  arr->AddNew<CPDF_Number>(100);
+  arr->AddNew<CPDF_Number>(0);
+
+  ASSERT_EQ(4u, arr->size());
+  EXPECT_TRUE(arr->GetBooleanAt(0, true));
+  EXPECT_TRUE(arr->GetBooleanAt(0, false));
+  EXPECT_FALSE(arr->GetBooleanAt(1, true));
+  EXPECT_FALSE(arr->GetBooleanAt(1, false));
+  EXPECT_TRUE(arr->GetBooleanAt(2, true));
+  EXPECT_FALSE(arr->GetBooleanAt(2, false));
+  EXPECT_TRUE(arr->GetBooleanAt(3, true));
+  EXPECT_FALSE(arr->GetBooleanAt(3, false));
+  EXPECT_TRUE(arr->GetBooleanAt(99, true));
+  EXPECT_FALSE(arr->GetBooleanAt(99, false));
+}
 
 TEST(cpdf_array, RemoveAt) {
   {

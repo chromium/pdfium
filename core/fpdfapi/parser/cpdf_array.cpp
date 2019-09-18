@@ -9,6 +9,7 @@
 #include <set>
 #include <utility>
 
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -121,6 +122,13 @@ WideString CPDF_Array::GetUnicodeTextAt(size_t index) const {
   if (index >= m_Objects.size())
     return WideString();
   return m_Objects[index]->GetUnicodeText();
+}
+
+bool CPDF_Array::GetBooleanAt(size_t index, bool bDefault) const {
+  if (index >= m_Objects.size())
+    return bDefault;
+  const CPDF_Object* p = m_Objects[index].Get();
+  return ToBoolean(p) ? p->GetInteger() != 0 : bDefault;
 }
 
 int CPDF_Array::GetIntegerAt(size_t index) const {

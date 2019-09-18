@@ -43,6 +43,7 @@ class CPDF_Array final : public CPDF_Object {
   const CPDF_Object* GetDirectObjectAt(size_t index) const;
   ByteString GetStringAt(size_t index) const;
   WideString GetUnicodeTextAt(size_t index) const;
+  bool GetBooleanAt(size_t index, bool bDefault) const;
   int GetIntegerAt(size_t index) const;
   float GetNumberAt(size_t index) const;
   CPDF_Dictionary* GetDictAt(size_t index);
