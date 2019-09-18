@@ -1312,7 +1312,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
           WideString trimmed = pFormField->GetValue();
           trimmed.TrimRight();
           trimmed.TrimLeft();
-          dTemp = StringToFloat(trimmed.AsStringView());
+          dTemp = StringToDouble(trimmed.AsStringView());
           break;
         }
         case FormFieldType::kPushButton:

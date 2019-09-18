@@ -480,17 +480,13 @@ endobj
       expectEventValue('', "AFSimple_Calculate('MIN', ['Text2', 'Text3'])", 123);
       expectEventValue('', "AFSimple_Calculate('MAX', ['Text2', 'Text3'])", 456);
       expectEventValue('', "AFSimple_Calculate('AVG', 'Text2, Text3')", (123 + 456) / 2);
-      // The next 6 currently have rounding issues. https://crbug.com/611744.
       expectEventValue('', "AFSimple_Calculate('AVG', ['Text4'])", 407.96);
       expectEventValue('', "AFSimple_Calculate('SUM', ['Text4'])", 407.96);
       expectEventValue('', "AFSimple_Calculate('MIN', ['Text4'])", 407.96);
       expectEventValue('', "AFSimple_Calculate('MAX', ['Text4'])", 407.96);
       expectEventValue('', "AFSimple_Calculate('AVG', ['Text2', 'Text4'])", (123 + 407.96) / 2);
       expectEventValue('', "AFSimple_Calculate('SUM', ['Text2', 'Text4'])", 123 + 407.96);
-      // Note: 123 * 407.96 = 50179.08, but Acrobat has rounding artifacts in
-      // its implementation as well. It returns 50179.0799999999994, which is
-      // effectively 50179.08.
-      expectEventValue('', "AFSimple_Calculate('PRD', ['Text2', 'Text4'])", 50179.0799999999994);
+      expectEventValue('', "AFSimple_Calculate('PRD', ['Text2', 'Text4'])", 50179.08);
 
       app.alert("**********************");
 
