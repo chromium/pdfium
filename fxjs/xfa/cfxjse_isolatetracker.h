@@ -12,12 +12,13 @@
 class CFXJSE_ScopeUtil_IsolateHandle {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandle(v8::Isolate* pIsolate);
+  CFXJSE_ScopeUtil_IsolateHandle(const CFXJSE_ScopeUtil_IsolateHandle&) =
+      delete;
+  CFXJSE_ScopeUtil_IsolateHandle& operator=(
+      const CFXJSE_ScopeUtil_IsolateHandle&) = delete;
   ~CFXJSE_ScopeUtil_IsolateHandle();
 
  private:
-  CFXJSE_ScopeUtil_IsolateHandle(const CFXJSE_ScopeUtil_IsolateHandle&) =
-      delete;
-  void operator=(const CFXJSE_ScopeUtil_IsolateHandle&) = delete;
   void* operator new(size_t size) = delete;
   void operator delete(void*, size_t) = delete;
 
@@ -29,12 +30,13 @@ class CFXJSE_ScopeUtil_IsolateHandleRootContext final
     : public CFXJSE_ScopeUtil_IsolateHandle {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandleRootContext(v8::Isolate* pIsolate);
+  CFXJSE_ScopeUtil_IsolateHandleRootContext(
+      const CFXJSE_ScopeUtil_IsolateHandleRootContext&) = delete;
+  CFXJSE_ScopeUtil_IsolateHandleRootContext& operator=(
+      const CFXJSE_ScopeUtil_IsolateHandleRootContext&) = delete;
   ~CFXJSE_ScopeUtil_IsolateHandleRootContext();
 
  private:
-  CFXJSE_ScopeUtil_IsolateHandleRootContext(
-      const CFXJSE_ScopeUtil_IsolateHandleRootContext&) = delete;
-  void operator=(const CFXJSE_ScopeUtil_IsolateHandleRootContext&) = delete;
   void* operator new(size_t size) = delete;
   void operator delete(void*, size_t) = delete;
 

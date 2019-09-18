@@ -12,11 +12,11 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_TextObject;
-class CPDF_PathObject;
-class CPDF_ImageObject;
-class CPDF_ShadingObject;
 class CPDF_FormObject;
+class CPDF_ImageObject;
+class CPDF_PathObject;
+class CPDF_ShadingObject;
+class CPDF_TextObject;
 
 class CPDF_PageObject : public CPDF_GraphicStates {
  public:
@@ -31,6 +31,8 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   static constexpr int32_t kNoContentStream = -1;
 
   explicit CPDF_PageObject(int32_t content_stream);
+  CPDF_PageObject(const CPDF_PageObject& src) = delete;
+  CPDF_PageObject& operator=(const CPDF_PageObject& src) = delete;
   ~CPDF_PageObject() override;
 
   virtual Type GetType() const = 0;
@@ -81,9 +83,6 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CFX_FloatRect m_Rect;
 
  private:
-  CPDF_PageObject(const CPDF_PageObject& src) = delete;
-  void operator=(const CPDF_PageObject& src) = delete;
-
   bool m_bDirty = false;
   int32_t m_ContentStream;
 };

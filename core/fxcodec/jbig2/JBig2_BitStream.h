@@ -13,6 +13,8 @@
 class CJBig2_BitStream {
  public:
   CJBig2_BitStream(pdfium::span<const uint8_t> pSrcStream, uint32_t dwObjNum);
+  CJBig2_BitStream(const CJBig2_BitStream&) = delete;
+  CJBig2_BitStream& operator=(const CJBig2_BitStream&) = delete;
   ~CJBig2_BitStream();
 
   // TODO(thestig): readFoo() should return bool.
@@ -48,9 +50,6 @@ class CJBig2_BitStream {
   uint32_t m_dwByteIdx = 0;
   uint32_t m_dwBitIdx = 0;
   const uint32_t m_dwObjNum;
-
-  CJBig2_BitStream(const CJBig2_BitStream&) = delete;
-  void operator=(const CJBig2_BitStream&) = delete;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_

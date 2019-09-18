@@ -32,6 +32,9 @@ class ScopedState {
     m_hFont = SelectObject(m_hDC, hFont);
   }
 
+  ScopedState(const ScopedState&) = delete;
+  ScopedState& operator=(const ScopedState&) = delete;
+
   ~ScopedState() {
     HGDIOBJ hFont = SelectObject(m_hDC, m_hFont);
     DeleteObject(hFont);
@@ -42,9 +45,6 @@ class ScopedState {
   HDC m_hDC;
   HGDIOBJ m_hFont;
   int m_iState;
-
-  ScopedState(const ScopedState&) = delete;
-  void operator=(const ScopedState&) = delete;
 };
 
 }  // namespace

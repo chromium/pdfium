@@ -115,11 +115,12 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
       : m_parent(pContext->GetIsolate()), m_cscope(pContext->GetContext()) {}
-
- private:
   CFXJSE_ScopeUtil_IsolateHandleContext(
       const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
-  void operator=(const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
+  CFXJSE_ScopeUtil_IsolateHandleContext& operator=(
+      const CFXJSE_ScopeUtil_IsolateHandleContext&) = delete;
+
+ private:
   void* operator new(size_t size) = delete;
   void operator delete(void*, size_t) = delete;
 
