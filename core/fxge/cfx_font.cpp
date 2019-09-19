@@ -377,7 +377,10 @@ uint32_t CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
   return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face->GetRec()), horiAdvance);
 }
 
-bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span) {
+bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
+                            bool bForceAsVertical) {
+  if (bForceAsVertical)
+    m_bVertical = true;
   m_pFontDataAllocation =
       std::vector<uint8_t>(src_span.begin(), src_span.end());
   m_Face = CFX_GEModule::Get()->GetFontMgr()->NewFixedFace(
