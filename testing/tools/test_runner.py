@@ -257,8 +257,8 @@ class TestRunner:
       return 1
 
     self.working_dir = finder.WorkingDir(os.path.join('testing', self.test_dir))
-    if not os.path.exists(self.working_dir):
-      os.makedirs(self.working_dir)
+    shutil.rmtree(self.working_dir, ignore_errors=True)
+    os.makedirs(self.working_dir)
 
     self.feature_string = subprocess.check_output([self.pdfium_test_path,
                                                    '--show-config'])
