@@ -23,7 +23,10 @@ bool CPDFSDK_CustomAccess::ReadBlockAtOffset(void* buffer,
   if (!buffer || offset < 0 || !size)
     return false;
 
-  FX_SAFE_FILESIZE new_pos = pdfium::base::checked_cast<FX_FILESIZE>(size);
+  if (!pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(size))
+    return false;
+
+  FX_SAFE_FILESIZE new_pos = size;
   new_pos += offset;
   return new_pos.IsValid() && new_pos.ValueOrDie() <= GetSize() &&
          m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
