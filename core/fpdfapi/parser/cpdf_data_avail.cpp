@@ -748,21 +748,22 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData() {
   }
 
   if (!m_bMainXRefLoadTried) {
-    const FX_SAFE_FILESIZE main_xref_offset =
+    const FX_SAFE_FILESIZE prev =
         m_pDocument->GetParser()->GetTrailer()->GetIntegerFor("Prev");
-    if (!main_xref_offset.IsValid())
+    const FX_FILESIZE main_xref_offset = prev.ValueOrDefault(-1);
+    if (main_xref_offset < 0)
       return DataError;
 
-    if (main_xref_offset.ValueOrDie() == 0)
+    if (main_xref_offset == 0)
       return DataAvailable;
 
     FX_SAFE_SIZE_T data_size = m_dwFileLen;
-    data_size -= main_xref_offset.ValueOrDie();
+    data_size -= main_xref_offset;
     if (!data_size.IsValid())
       return DataError;
 
     if (!GetValidator()->CheckDataRangeAndRequestIfUnavailable(
-            main_xref_offset.ValueOrDie(), data_size.ValueOrDie()))
+            main_xref_offset, data_size.ValueOrDie()))
       return DataNotAvailable;
 
     CPDF_Parser::Error eRet =

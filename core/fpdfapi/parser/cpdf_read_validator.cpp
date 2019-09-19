@@ -21,9 +21,7 @@ FX_FILESIZE AlignDown(FX_FILESIZE offset) {
 FX_FILESIZE AlignUp(FX_FILESIZE offset) {
   FX_SAFE_FILESIZE safe_result = AlignDown(offset);
   safe_result += kAlignBlockValue;
-  if (safe_result.IsValid())
-    return safe_result.ValueOrDie();
-  return offset;
+  return safe_result.ValueOrDefault(offset);
 }
 
 }  // namespace

@@ -1051,19 +1051,20 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
 }
 
 CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
-  const FX_SAFE_FILESIZE main_xref_offset = GetTrailer()->GetIntegerFor("Prev");
-  if (!main_xref_offset.IsValid())
+  const FX_SAFE_FILESIZE prev = GetTrailer()->GetIntegerFor("Prev");
+  const FX_FILESIZE main_xref_offset = prev.ValueOrDefault(-1);
+  if (main_xref_offset < 0)
     return FORMAT_ERROR;
 
-  if (main_xref_offset.ValueOrDie() == 0)
+  if (main_xref_offset == 0)
     return SUCCESS;
 
   const AutoRestorer<uint32_t> save_metadata_objnum(&m_MetadataObjnum);
   m_MetadataObjnum = 0;
   m_ObjectStreamMap.clear();
 
-  if (!LoadLinearizedAllCrossRefV4(main_xref_offset.ValueOrDie()) &&
-      !LoadLinearizedAllCrossRefV5(main_xref_offset.ValueOrDie())) {
+  if (!LoadLinearizedAllCrossRefV4(main_xref_offset) &&
+      !LoadLinearizedAllCrossRefV5(main_xref_offset)) {
     m_LastXRefOffset = 0;
     return FORMAT_ERROR;
   }
