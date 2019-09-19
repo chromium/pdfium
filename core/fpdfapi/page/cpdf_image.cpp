@@ -141,8 +141,8 @@ void CPDF_Image::SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile) {
   RetainPtr<CPDF_Dictionary> pDict = InitJPEG(data);
   if (!pDict && size > dwEstimateSize) {
     data.resize(size);
-    pFile->ReadBlockAtOffset(data.data(), 0, size);
-    pDict = InitJPEG(data);
+    if (pFile->ReadBlockAtOffset(data.data(), 0, size))
+      pDict = InitJPEG(data);
   }
   if (!pDict)
     return;

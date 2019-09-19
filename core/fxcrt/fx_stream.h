@@ -10,6 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/compiler_specific.h"
 
 struct FX_FolderHandle;
 
@@ -75,7 +76,7 @@ class IFX_SeekableReadStream : virtual public Retainable,
 
   virtual bool ReadBlockAtOffset(void* buffer,
                                  FX_FILESIZE offset,
-                                 size_t size) = 0;
+                                 size_t size) WARN_UNUSED_RESULT = 0;
 };
 
 class IFX_SeekableStream : public IFX_SeekableReadStream,
