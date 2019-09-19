@@ -8,16 +8,15 @@
 
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
 
-#define FPDF_CLIPPATH_MAX_TEXTS 1024
+CPDF_ClipPath::CPDF_ClipPath() = default;
 
-CPDF_ClipPath::CPDF_ClipPath() {}
+CPDF_ClipPath::CPDF_ClipPath(const CPDF_ClipPath& that) = default;
 
-CPDF_ClipPath::CPDF_ClipPath(const CPDF_ClipPath& that) : m_Ref(that.m_Ref) {}
+CPDF_ClipPath& CPDF_ClipPath::operator=(const CPDF_ClipPath& that) = default;
 
-CPDF_ClipPath::~CPDF_ClipPath() {}
+CPDF_ClipPath::~CPDF_ClipPath() = default;
 
 size_t CPDF_ClipPath::GetPathCount() const {
   return m_Ref.GetObject()->m_PathAndTypeList.size();
@@ -93,8 +92,9 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge) {
 
 void CPDF_ClipPath::AppendTexts(
     std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts) {
+  constexpr size_t kMaxTextObjects = 1024;
   PathData* pData = m_Ref.GetPrivateCopy();
-  if (pData->m_TextList.size() + pTexts->size() <= FPDF_CLIPPATH_MAX_TEXTS) {
+  if (pData->m_TextList.size() + pTexts->size() <= kMaxTextObjects) {
     for (size_t i = 0; i < pTexts->size(); i++)
       pData->m_TextList.push_back(std::move((*pTexts)[i]));
     pData->m_TextList.push_back(nullptr);
