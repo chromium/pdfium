@@ -45,6 +45,10 @@ void CPDF_Path::Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix) {
   m_Ref.GetPrivateCopy()->Append(pData, pMatrix);
 }
 
+void CPDF_Path::AppendFloatRect(const CFX_FloatRect& rect) {
+  m_Ref.GetPrivateCopy()->AppendFloatRect(rect);
+}
+
 void CPDF_Path::AppendRect(float left, float bottom, float right, float top) {
   m_Ref.GetPrivateCopy()->AppendRect(left, bottom, right, top);
 }

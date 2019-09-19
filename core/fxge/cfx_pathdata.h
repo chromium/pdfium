@@ -62,7 +62,7 @@ class CFX_PathData {
   bool IsRect(const CFX_Matrix* pMatrix, CFX_FloatRect* rect) const;
 
   void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
-  void AppendRect(const CFX_FloatRect& rect);
+  void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
   void AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
   void AppendPoint(const CFX_PointF& point, FXPT_TYPE type, bool closeFigure);

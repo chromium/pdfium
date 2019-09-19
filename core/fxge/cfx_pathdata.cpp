@@ -231,7 +231,7 @@ void CFX_PathData::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
   AppendPoint(pt2, FXPT_TYPE::LineTo, false);
 }
 
-void CFX_PathData::AppendRect(const CFX_FloatRect& rect) {
+void CFX_PathData::AppendFloatRect(const CFX_FloatRect& rect) {
   return AppendRect(rect.left, rect.bottom, rect.right, rect.top);
 }
 

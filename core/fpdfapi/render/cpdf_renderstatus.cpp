@@ -1955,8 +1955,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
     path.m_GeneralState = textobj->m_GeneralState;
-    path.path().AppendRect(textobj->GetRect().left, textobj->GetRect().bottom,
-                           textobj->GetRect().right, textobj->GetRect().top);
+    path.path().AppendFloatRect(textobj->GetRect());
     path.SetRect(textobj->GetRect());
 
     AutoRestorer<UnownedPtr<const CPDF_PageObject>> restorer2(&m_pCurObj);

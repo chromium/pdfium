@@ -1087,7 +1087,7 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
                                     const CFX_FloatRect& rect,
                                     const FX_COLORREF& color) {
   CFX_PathData path;
-  path.AppendRect(rect);
+  path.AppendFloatRect(rect);
   DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_WINDING);
 }
 
@@ -1111,7 +1111,7 @@ void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix& mtUser2Device,
   gsd.m_LineWidth = fWidth;
 
   CFX_PathData path;
-  path.AppendRect(rect);
+  path.AppendFloatRect(rect);
   DrawPath(&path, &mtUser2Device, &gsd, 0, color, FXFILL_ALTERNATE);
 }
 

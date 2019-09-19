@@ -662,7 +662,7 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
     gsd.m_LineWidth = 0.0f;
 
     CFX_PathData pathData;
-    pathData.AppendRect(GetRect());
+    pathData.AppendFloatRect(GetRect());
     pDevice->DrawPath(&pathData, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
                       FXFILL_ALTERNATE);
   } else {

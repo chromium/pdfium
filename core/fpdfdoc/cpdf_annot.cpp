@@ -510,7 +510,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   CFX_FloatRect rect = GetRect();
   rect.Deflate(width / 2, width / 2);
   CFX_PathData path;
-  path.AppendRect(rect);
+  path.AppendFloatRect(rect);
 
   int fill_type = 0;
   if (pOptions && pOptions->GetOptions().bNoPathSmooth)
