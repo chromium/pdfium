@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/ptr_util.h"
 

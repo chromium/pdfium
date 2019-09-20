@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_system.h"
 
 class CPDF_Dictionary;
 class CPDF_Object;

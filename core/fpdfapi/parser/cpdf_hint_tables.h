@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
-#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFX_BitStream;
