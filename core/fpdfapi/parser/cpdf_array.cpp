@@ -20,7 +20,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_Array::CPDF_Array() {}
+CPDF_Array::CPDF_Array() = default;
 
 CPDF_Array::CPDF_Array(const WeakPtr<ByteStringPool>& pPool) : m_pPool(pPool) {}
 
@@ -70,7 +70,7 @@ RetainPtr<CPDF_Object> CPDF_Array::CloneNonCyclic(
 
 CFX_FloatRect CPDF_Array::GetRect() const {
   CFX_FloatRect rect;
-  if (!IsArray() || m_Objects.size() != 4)
+  if (m_Objects.size() != 4)
     return rect;
 
   rect.left = GetNumberAt(0);
@@ -81,7 +81,7 @@ CFX_FloatRect CPDF_Array::GetRect() const {
 }
 
 CFX_Matrix CPDF_Array::GetMatrix() const {
-  if (!IsArray() || m_Objects.size() != 6)
+  if (m_Objects.size() != 6)
     return CFX_Matrix();
 
   return CFX_Matrix(GetNumberAt(0), GetNumberAt(1), GetNumberAt(2),
@@ -207,7 +207,6 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t index,
 
 CPDF_Object* CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  ASSERT(IsArray());
   ASSERT(!pObj || pObj->IsInline());
   if (index >= m_Objects.size()) {
     NOTREACHED();
@@ -220,7 +219,6 @@ CPDF_Object* CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
 
 CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
   CPDF_Object* pRet = pObj.Get();
   if (index >= m_Objects.size()) {
@@ -236,7 +234,6 @@ CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
 
 CPDF_Object* CPDF_Array::Add(RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
   CPDF_Object* pRet = pObj.Get();
   m_Objects.push_back(std::move(pObj));
