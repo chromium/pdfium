@@ -30,6 +30,8 @@ jumbo_source_set("render") {
     "cpdf_rendercontext.h",
     "cpdf_renderoptions.cpp",
     "cpdf_renderoptions.h",
+    "cpdf_rendershading.cpp",
+    "cpdf_rendershading.h",
     "cpdf_renderstatus.cpp",
     "cpdf_renderstatus.h",
     "cpdf_scaledrenderbuffer.cpp",
