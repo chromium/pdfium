@@ -10,6 +10,7 @@
 #include <cmath>
 #include <limits>
 #include <memory>
+#include <numeric>
 #include <set>
 #include <utility>
 #include <vector>
@@ -1654,9 +1655,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       transfers[i] = FXSYS_roundf(results[0] * 255);
     }
   } else {
-    for (int i = 0; i < 256; i++) {
-      transfers[i] = i;
-    }
+    // Fill |transfers| with 0, 1, ... N.
+    std::iota(transfers.begin(), transfers.end(), 0);
   }
   if (bLuminosity) {
     int Bpp = bitmap->GetBPP() / 8;

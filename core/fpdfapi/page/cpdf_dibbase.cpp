@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <numeric>
 #include <utility>
 #include <vector>
 
@@ -634,13 +635,11 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
     return nullptr;
 
   pCachedBitmap->Clear(0xFFFFFFFF);
+  // Fill |output_offsets| with 0, 1, ... N.
   std::vector<uint8_t> output_offsets(components);
-  for (uint32_t i = 0; i < components; ++i)
-    output_offsets[i] = i;
-  if (bSwapRGB) {
-    output_offsets[0] = 2;
-    output_offsets[2] = 0;
-  }
+  std::iota(output_offsets.begin(), output_offsets.end(), 0);
+  if (bSwapRGB)
+    std::swap(output_offsets[0], output_offsets[2]);
   if (!decoder->Decode(pCachedBitmap->GetBuffer(), pCachedBitmap->GetPitch(),
                        output_offsets)) {
     return nullptr;
