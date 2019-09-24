@@ -1,0 +1,8 @@
+/CIDInit /ProcSet findresource begin 12 dict begin begincmap /CIDSystemInfo <<
+/Registry (AAAAAB+Test) /Ordering (UCS) /Supplement 0 >> def
+/CMapName /AAAAAB+Test def
+1 begincodespacerange <20> <20> endcodespacerange
+10 beginbfrange
+<20> <20> <b0a9>
+endbfrange
+endcmap CMapName currentdict /CMap defineresource pop end end
