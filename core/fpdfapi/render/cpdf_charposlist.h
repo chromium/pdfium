@@ -22,9 +22,7 @@ class CPDF_CharPosList {
                    float font_size);
   ~CPDF_CharPosList();
 
-  uint32_t empty() const { return m_CharPos.empty(); }
-  uint32_t GetCount() const;
-  const TextCharPos& GetAt(size_t index) const;
+  const std::vector<TextCharPos>& Get() const { return m_CharPos; }
 
  private:
   std::vector<TextCharPos> m_CharPos;

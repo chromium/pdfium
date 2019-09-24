@@ -1137,10 +1137,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     RenderSingleObject(&path, mtObj2Device);
     return;
   }
-  CPDF_CharPosList CharPosList(textobj->GetCharCodes(),
-                               textobj->GetCharPositions(), pFont, font_size);
-  for (uint32_t i = 0; i < CharPosList.GetCount(); ++i) {
-    const TextCharPos& charpos = CharPosList.GetAt(i);
+  const CPDF_CharPosList CharPosList(
+      textobj->GetCharCodes(), textobj->GetCharPositions(), pFont, font_size);
+  for (const TextCharPos& charpos : CharPosList.Get()) {
     auto* font = charpos.m_FallbackFontPosition == -1
                      ? pFont->GetFont()
                      : pFont->GetFontFallback(charpos.m_FallbackFontPosition);

@@ -138,11 +138,3 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
 }
 
 CPDF_CharPosList::~CPDF_CharPosList() = default;
-
-uint32_t CPDF_CharPosList::GetCount() const {
-  return pdfium::CollectionSize<uint32_t>(m_CharPos);
-}
-
-const TextCharPos& CPDF_CharPosList::GetAt(size_t index) const {
-  return m_CharPos[index];
-}
