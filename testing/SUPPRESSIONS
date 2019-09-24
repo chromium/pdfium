@@ -331,6 +331,9 @@ bug_304.pdf * * *
 # TODO(pdfium:1331): Remove after associated bug is fixed
 bug_1331.in * * *
 
+# TODO(chromium:451366): Remove after associated bug is fixed
+bug_451366.in * * *
+
 # xfa_specific
 
 # TODO(pdfium:1107): Remove after associated bug is fixed

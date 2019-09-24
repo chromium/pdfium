@@ -1,0 +1,49 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 200]
+  /Resources  <<
+    /ProcSet [/PDF /Text /ImageC]
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+1 0 0 1 50 100 cm
+1 1 1 rg
+0 0 0 RG
+0 J
+0 j
+260 w
+10 M
+[] 0 d
+0 0 m
+0 0 l
+s
+Q
+q
+1 0 0 rg
+100 80 60 20 re B*
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
