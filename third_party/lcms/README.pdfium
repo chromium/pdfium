@@ -25,3 +25,4 @@ Local Modifications:
 0030-const-data.patch: Mark many data structures as const.
 0031-wrong-tag-element-count.patch: Handle tag element count mismatch as an error.
 0032-cgats-allocation.patch: Add check on CGATS memory allocation.
+0033-opt-integer-overflow.patch: Protect against integer overflow.

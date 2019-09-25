@@ -1,0 +1,46 @@
+diff --git a/third_party/lcms/src/cmsopt.c b/third_party/lcms/src/cmsopt.c
+index 5ea1b4c85..ea93cd413 100644
+--- a/third_party/lcms/src/cmsopt.c
++++ b/third_party/lcms/src/cmsopt.c
+@@ -104,6 +104,18 @@ typedef struct {
+ // Simple optimizations ----------------------------------------------------------------------------------------------------------
+ 
+ 
++// Perform one row of matrix multiply with translation for MatShaperEval16().
++cmsINLINE cmsInt64Number _MatShaperEvaluateRow(cmsS1Fixed14Number* mat,
++                                               cmsS1Fixed14Number off,
++                                               cmsS1Fixed14Number r,
++                                               cmsS1Fixed14Number g,
++                                               cmsS1Fixed14Number b) {
++  return ((cmsInt64Number)mat[0] * r +
++          (cmsInt64Number)mat[1] * g +
++          (cmsInt64Number)mat[2] * b +
++          off + 0x2000) >> 14;
++}
++
+ // Remove an element in linked chain
+ static
+ void _RemoveElement(cmsStage** head)
+@@ -1527,7 +1539,8 @@ void MatShaperEval16(register const cmsUInt16Number In[],
+                      register const void* D)
+ {
+     MatShaper8Data* p = (MatShaper8Data*) D;
+-    cmsS1Fixed14Number l1, l2, l3, r, g, b;
++    cmsS1Fixed14Number r, g, b;
++    cmsInt64Number l1, l2, l3;
+     cmsUInt32Number ri, gi, bi;
+ 
+     // In this case (and only in this case!) we can use this simplification since
+@@ -1542,9 +1555,9 @@ void MatShaperEval16(register const cmsUInt16Number In[],
+     b = p->Shaper1B[bi];
+ 
+     // Evaluate the matrix in 1.14 fixed point
+-    l1 =  (p->Mat[0][0] * r + p->Mat[0][1] * g + p->Mat[0][2] * b + p->Off[0] + 0x2000) >> 14;
+-    l2 =  (p->Mat[1][0] * r + p->Mat[1][1] * g + p->Mat[1][2] * b + p->Off[1] + 0x2000) >> 14;
+-    l3 =  (p->Mat[2][0] * r + p->Mat[2][1] * g + p->Mat[2][2] * b + p->Off[2] + 0x2000) >> 14;
++    l1 = _MatShaperEvaluateRow(p->Mat[0], p->Off[0], r, g, b);
++    l2 = _MatShaperEvaluateRow(p->Mat[1], p->Off[1], r, g, b);
++    l3 = _MatShaperEvaluateRow(p->Mat[2], p->Off[2], r, g, b);
+ 
+     // Now we have to clip to 0..1.0 range
+     ri = (l1 < 0) ? 0 : ((l1 > 16384) ? 16384U : (cmsUInt32Number) l1);
