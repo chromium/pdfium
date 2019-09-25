@@ -281,7 +281,7 @@ FPDFPageObj_GetClipPath(FPDF_PAGEOBJECT page_object) {
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path) {
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
-  if (!pClipPath)
+  if (!pClipPath || !pClipPath->HasRef())
     return -1;
 
   return pClipPath->GetPathCount();
@@ -290,7 +290,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFClipPath_CountPathSegments(FPDF_CLIPPATH clip_path, int path_index) {
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
-  if (!pClipPath)
+  if (!pClipPath || !pClipPath->HasRef())
     return -1;
 
   if (path_index < 0 ||
@@ -307,7 +307,7 @@ FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
                             int path_index,
                             int segment_index) {
   CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clip_path);
-  if (!pClipPath)
+  if (!pClipPath || !pClipPath->HasRef())
     return nullptr;
 
   if (path_index < 0 ||

@@ -533,6 +533,45 @@ TEST_F(FPDFEditEmbedderTest, ClipPath) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbedderTest, BUG_1399) {
+  // Load document with a clipped rectangle.
+  EXPECT_TRUE(OpenDocument("bug_1399.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(7, FPDFPage_CountObjects(page));
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(obj);
+
+  ASSERT_EQ(2, FPDFPath_CountSegments(obj));
+
+  FPDF_PATHSEGMENT segment = FPDFPath_GetPathSegment(obj, 0);
+  float x;
+  float y;
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_FLOAT_EQ(107.718f, x);
+  EXPECT_FLOAT_EQ(719.922f, y);
+  EXPECT_EQ(FPDF_SEGMENT_MOVETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  segment = FPDFPath_GetPathSegment(obj, 1);
+  EXPECT_TRUE(FPDFPathSegment_GetPoint(segment, &x, &y));
+  EXPECT_FLOAT_EQ(394.718f, x);
+  EXPECT_FLOAT_EQ(719.922f, y);
+  EXPECT_EQ(FPDF_SEGMENT_LINETO, FPDFPathSegment_GetType(segment));
+  EXPECT_FALSE(FPDFPathSegment_GetClose(segment));
+
+  FPDF_CLIPPATH clip_path = FPDFPageObj_GetClipPath(obj);
+  ASSERT_TRUE(clip_path);
+
+  EXPECT_EQ(-1, FPDFClipPath_CountPaths(clip_path));
+  EXPECT_EQ(-1, FPDFClipPath_CountPathSegments(clip_path, 0));
+  EXPECT_FALSE(FPDFClipPath_GetPathSegment(clip_path, 0, 0));
+
+  UnloadPage(page);
+}
+
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #define MAYBE_SetText DISABLED_SetText
