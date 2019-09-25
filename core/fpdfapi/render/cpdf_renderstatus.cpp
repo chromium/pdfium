@@ -96,7 +96,7 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   CFX_FloatRect cell_bbox =
       pPattern->pattern_to_form().TransformRect(pPattern->bbox());
   cell_bbox = mtObject2Device.TransformRect(cell_bbox);
-  CFX_FloatRect bitmap_rect(0.0f, 0.0f, (float)width, (float)height);
+  CFX_FloatRect bitmap_rect(0.0f, 0.0f, width, height);
   CFX_Matrix mtAdjust;
   mtAdjust.MatchRect(bitmap_rect, cell_bbox);
 
@@ -138,14 +138,12 @@ bool MissingStrokeColor(const CPDF_ColorState* pColorState) {
 
 bool Type3CharMissingFillColor(const CPDF_Type3Char* pChar,
                                const CPDF_ColorState* pColorState) {
-  return pChar && (!pChar->colored() ||
-                   (pChar->colored() && MissingFillColor(pColorState)));
+  return pChar && (!pChar->colored() || MissingFillColor(pColorState));
 }
 
 bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
                                  const CPDF_ColorState* pColorState) {
-  return pChar && (!pChar->colored() ||
-                   (pChar->colored() && MissingStrokeColor(pColorState)));
+  return pChar && (!pChar->colored() || MissingStrokeColor(pColorState));
 }
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
@@ -872,7 +870,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
         break;
       case TextRenderingMode::MODE_INVISIBLE:
         // Already handled above, but the compiler is not smart enough to
-        // realize it. Fall through.
+        // realize it.
         NOTREACHED();
         return true;
       case TextRenderingMode::MODE_CLIP:
@@ -1648,8 +1646,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   std::vector<uint8_t> transfers(256);
   if (pFunc) {
     std::vector<float> results(pFunc->CountOutputs());
-    for (int i = 0; i < 256; i++) {
-      float input = (float)i / 255.0f;
+    for (size_t i = 0; i < transfers.size(); ++i) {
+      float input = i / 255.0f;
       int nresult;
       pFunc->Call(&input, 1, results.data(), &nresult);
       transfers[i] = FXSYS_roundf(results[0] * 255);
