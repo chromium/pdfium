@@ -237,6 +237,38 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
                                                         double* bottom,
                                                         double* top);
 
+// Experimental API.
+// Function: FPDFText_GetLooseCharBox
+//          Get a "loose" bounding box of a particular character, i.e., covering
+//          the entire glyph bounds, without taking the actual glyph shape into
+//          account.
+// Parameters:
+//          text_page   -   Handle to a text page information structure.
+//                          Returned by FPDFText_LoadPage function.
+//          index       -   Zero-based index of the character.
+//          left        -   Pointer to a double number receiving left position
+//                          of the character box.
+//          right       -   Pointer to a double number receiving right position
+//                          of the character box.
+//          bottom      -   Pointer to a double number receiving bottom position
+//                          of the character box.
+//          top         -   Pointer to a double number receiving top position of
+//                          the character box.
+// Return Value:
+//          On success, return TRUE and fill in |left|, |right|, |bottom|, and
+//          |top|. If |text_page| is invalid, or if |index| is out of bounds,
+//          then return FALSE, and the out parameters remain unmodified.
+// Comments:
+//          All positions are measured in PDF "user space".
+//
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
+                         int index,
+                         double* left,
+                         double* right,
+                         double* bottom,
+                         double* top);
+
 // Function: FPDFText_GetCharOrigin
 //          Get origin of a particular character.
 // Parameters:

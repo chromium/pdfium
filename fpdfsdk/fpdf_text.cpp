@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
@@ -228,6 +229,63 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 
   FPDF_CHAR_INFO charinfo;
   textpage->GetCharInfo(index, &charinfo);
+  *left = charinfo.m_CharBox.left;
+  *right = charinfo.m_CharBox.right;
+  *bottom = charinfo.m_CharBox.bottom;
+  *top = charinfo.m_CharBox.top;
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
+                         int index,
+                         double* left,
+                         double* right,
+                         double* bottom,
+                         double* top) {
+  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
+  if (!textpage)
+    return false;
+
+  FPDF_CHAR_INFO charinfo;
+  textpage->GetCharInfo(index, &charinfo);
+
+  if (charinfo.m_pTextObj && !IsFloatZero(charinfo.m_FontSize)) {
+    bool is_vert_writing = charinfo.m_pTextObj->GetFont()->IsVertWriting();
+    if (is_vert_writing && charinfo.m_pTextObj->GetFont()->IsCIDFont()) {
+      CPDF_CIDFont* pCIDFont = charinfo.m_pTextObj->GetFont()->AsCIDFont();
+      uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.m_Charcode);
+
+      short vx;
+      short vy;
+      pCIDFont->GetVertOrigin(cid, vx, vy);
+      double offsetx = (vx - 500) * charinfo.m_FontSize / 1000.0;
+      double offsety = vy * charinfo.m_FontSize / 1000.0;
+      short vert_width = pCIDFont->GetVertWidth(cid);
+      double height = vert_width * charinfo.m_FontSize / 1000.0;
+
+      *left = charinfo.m_Origin.x + offsetx;
+      *right = *left + charinfo.m_FontSize;
+      *bottom = charinfo.m_Origin.y + offsety;
+      *top = *bottom + height;
+      return true;
+    }
+
+    int ascent = charinfo.m_pTextObj->GetFont()->GetTypeAscent();
+    int descent = charinfo.m_pTextObj->GetFont()->GetTypeDescent();
+    if (ascent != descent) {
+      float width = charinfo.m_pTextObj->GetCharWidth(charinfo.m_Charcode);
+      float font_scale = charinfo.m_FontSize / (ascent - descent);
+
+      *left = charinfo.m_Origin.x;
+      *right = charinfo.m_Origin.x + (is_vert_writing ? -width : width);
+      *bottom = charinfo.m_Origin.y + descent * font_scale;
+      *top = charinfo.m_Origin.y + ascent * font_scale;
+      return true;
+    }
+  }
+
+  // Fallback to the tight bounds in empty text scenarios, or bad font metrics
   *left = charinfo.m_CharBox.left;
   *right = charinfo.m_CharBox.right;
   *bottom = charinfo.m_CharBox.bottom;
