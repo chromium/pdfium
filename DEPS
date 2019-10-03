@@ -22,7 +22,7 @@ vars = {
   'depot_tools_revision': 'e90e5fe206c98bf7ade94f6831ed6ace48c1f5fa',
   'freetype_revision': '839a023619b593b742f62ffab8e7e4f9da8c1593',
   'gtest_revision': '3a45039862471cc2785e92bd19bd146c70344986',
-  'icu_revision': '53f6b233a41ec982d8445996247093f7aaf41639',
+  'icu_revision': '2ecd66c696c46e255cd634d3175b1072f4499949',
   'instrumented_lib_revision': 'b1c3ca20848c117eb935b02c25d441f03e6fbc5e',
   'jinja2_revision': 'b41863e42637544c2941b574c7877d3e1f663e25',
   'jpeg_turbo_revision': '38c693569427129fd8c22f4bba67685d7e176094',
