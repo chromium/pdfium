@@ -1005,11 +1005,10 @@ int main(int argc, const char* argv[]) {
 #ifdef PDF_ENABLE_V8
   std::unique_ptr<v8::Platform> platform;
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  v8::StartupData natives;
   v8::StartupData snapshot;
   if (!options.disable_javascript) {
     platform = InitializeV8ForPDFiumWithStartupData(
-        options.exe_path, options.bin_directory, &natives, &snapshot);
+        options.exe_path, options.bin_directory, &snapshot);
   }
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
   if (!options.disable_javascript)
@@ -1092,7 +1091,6 @@ int main(int argc, const char* argv[]) {
   if (!options.disable_javascript) {
     v8::V8::ShutdownPlatform();
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-    free(const_cast<char*>(natives.data));
     free(const_cast<char*>(snapshot.data));
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
   }

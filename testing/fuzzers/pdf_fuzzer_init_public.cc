@@ -16,7 +16,7 @@
 #endif
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
 #else  // Linux
@@ -32,7 +32,7 @@ std::string ProgramPath() {
 
 #ifdef _WIN32
   char path[MAX_PATH];
-  DWORD len = GetModuleFileNameA(NULL, path, MAX_PATH);
+  DWORD len = GetModuleFileNameA(nullptr, path, MAX_PATH);
   if (len != 0)
     result = std::string(path, len);
 #elif defined(__APPLE__)
@@ -62,7 +62,7 @@ struct TestCase {
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     platform = InitializeV8ForPDFiumWithStartupData(
-        ProgramPath(), "", &natives_blob, &snapshot_blob);
+        ProgramPath(), std::string(), &snapshot_blob);
 #else
     platform = InitializeV8ForPDFium(ProgramPath());
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
@@ -83,7 +83,6 @@ struct TestCase {
 
 #ifdef PDF_ENABLE_V8
   std::unique_ptr<v8::Platform> platform;
-  v8::StartupData natives_blob;
   v8::StartupData snapshot_blob;
 #endif
 

@@ -21,7 +21,6 @@ const char* g_exe_path = nullptr;
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-v8::StartupData* g_v8_natives = nullptr;
 v8::StartupData* g_v8_snapshot = nullptr;
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
@@ -34,14 +33,13 @@ class Environment final : public testing::Environment {
   void SetUp() override {
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-    if (g_v8_natives && g_v8_snapshot) {
-      platform_ = InitializeV8ForPDFiumWithStartupData(
-          g_exe_path, std::string(), nullptr, nullptr);
+    if (g_v8_snapshot) {
+      platform_ = InitializeV8ForPDFiumWithStartupData(g_exe_path,
+                                                       std::string(), nullptr);
     } else {
-      g_v8_natives = new v8::StartupData;
       g_v8_snapshot = new v8::StartupData;
       platform_ = InitializeV8ForPDFiumWithStartupData(
-          g_exe_path, std::string(), g_v8_natives, g_v8_snapshot);
+          g_exe_path, std::string(), g_v8_snapshot);
     }
 #else
     platform_ = InitializeV8ForPDFium(g_exe_path);
@@ -83,8 +81,6 @@ int main(int argc, char** argv) {
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  if (g_v8_natives)
-    free(const_cast<char*>(g_v8_natives->data));
   if (g_v8_snapshot)
     free(const_cast<char*>(g_v8_snapshot->data));
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA

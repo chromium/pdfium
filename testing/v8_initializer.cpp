@@ -78,13 +78,9 @@ std::unique_ptr<v8::Platform> InitializeV8Common(const std::string& exe_path) {
 std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
     const std::string& exe_path,
     const std::string& bin_dir,
-    v8::StartupData* natives_blob,
     v8::StartupData* snapshot_blob) {
-  // TODO(v8:7624): Remove natives and all remaining infrastructure.
   std::unique_ptr<v8::Platform> platform = InitializeV8Common(exe_path);
-  if (natives_blob && snapshot_blob) {
-    if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
-      return nullptr;
+  if (snapshot_blob) {
     if (!GetExternalData(exe_path, bin_dir, "snapshot_blob.bin", snapshot_blob))
       return nullptr;
     v8::V8::SetSnapshotDataBlob(snapshot_blob);
