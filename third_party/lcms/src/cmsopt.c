@@ -104,6 +104,27 @@ typedef struct {
 // Simple optimizations ----------------------------------------------------------------------------------------------------------
 
 
+// Clamp a fixed point integer to signed 28 bits to avoid overflow in
+// calculations.  Clamp is intended for use with colorants, requiring one bit
+// for a colorant and another two bits to avoid overflow when combining the
+// colors.
+cmsINLINE cmsS1Fixed14Number _FixedClamp(cmsS1Fixed14Number n) {
+  const cmsS1Fixed14Number max_positive = 268435455;  // 0x0FFFFFFF;
+  const cmsS1Fixed14Number max_negative = -268435456; // 0xF0000000;
+  // Normally expect the provided number to be in the range [0..1] (but in
+  // fixed 1.14 format), so can perform a quick check for this typical case
+  // to reduce number of compares.
+  const cmsS1Fixed14Number typical_range_mask = 0xFFFF8000;
+
+  if (!(n & typical_range_mask))
+    return n;
+  if (n < max_negative)
+     return max_negative;
+  if (n > max_positive)
+    return max_positive;
+  return n;
+}
+
 // Perform one row of matrix multiply with translation for MatShaperEval16().
 cmsINLINE cmsInt64Number _MatShaperEvaluateRow(cmsS1Fixed14Number* mat,
                                                cmsS1Fixed14Number off,
@@ -1550,9 +1571,9 @@ void MatShaperEval16(register const cmsUInt16Number In[],
     bi = In[2] & 0xFFU;
 
     // Across first shaper, which also converts to 1.14 fixed point
-    r = p->Shaper1R[ri];
-    g = p->Shaper1G[gi];
-    b = p->Shaper1B[bi];
+    r = _FixedClamp(p->Shaper1R[ri]);
+    g = _FixedClamp(p->Shaper1G[gi]);
+    b = _FixedClamp(p->Shaper1B[bi]);
 
     // Evaluate the matrix in 1.14 fixed point
     l1 = _MatShaperEvaluateRow(p->Mat[0], p->Off[0], r, g, b);

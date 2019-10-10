@@ -1,11 +1,32 @@
 diff --git a/third_party/lcms/src/cmsopt.c b/third_party/lcms/src/cmsopt.c
-index 5ea1b4c85..ea93cd413 100644
+index 5ea1b4c85..8a1171820 100644
 --- a/third_party/lcms/src/cmsopt.c
 +++ b/third_party/lcms/src/cmsopt.c
-@@ -104,6 +104,18 @@ typedef struct {
+@@ -104,6 +104,39 @@ typedef struct {
  // Simple optimizations ----------------------------------------------------------------------------------------------------------
  
  
++// Clamp a fixed point integer to signed 28 bits to avoid overflow in
++// calculations.  Clamp is intended for use with colorants, requiring one bit
++// for a colorant and another two bits to avoid overflow when combining the
++// colors.
++cmsINLINE cmsS1Fixed14Number _FixedClamp(cmsS1Fixed14Number n) {
++  const cmsS1Fixed14Number max_positive = 268435455;  // 0x0FFFFFFF;
++  const cmsS1Fixed14Number max_negative = -268435456; // 0xF0000000;
++  // Normally expect the provided number to be in the range [0..1] (but in
++  // fixed 1.14 format), so can perform a quick check for this typical case
++  // to reduce number of compares.
++  const cmsS1Fixed14Number typical_range_mask = 0xFFFF8000;
++
++  if (!(n & typical_range_mask))
++    return n;
++  if (n < max_negative)
++     return max_negative;
++  if (n > max_positive)
++    return max_positive;
++  return n;
++}
++
 +// Perform one row of matrix multiply with translation for MatShaperEval16().
 +cmsINLINE cmsInt64Number _MatShaperEvaluateRow(cmsS1Fixed14Number* mat,
 +                                               cmsS1Fixed14Number off,
@@ -21,7 +42,7 @@ index 5ea1b4c85..ea93cd413 100644
  // Remove an element in linked chain
  static
  void _RemoveElement(cmsStage** head)
-@@ -1527,7 +1539,8 @@ void MatShaperEval16(register const cmsUInt16Number In[],
+@@ -1527,7 +1560,8 @@ void MatShaperEval16(register const cmsUInt16Number In[],
                       register const void* D)
  {
      MatShaper8Data* p = (MatShaper8Data*) D;
@@ -31,8 +52,16 @@ index 5ea1b4c85..ea93cd413 100644
      cmsUInt32Number ri, gi, bi;
  
      // In this case (and only in this case!) we can use this simplification since
-@@ -1542,9 +1555,9 @@ void MatShaperEval16(register const cmsUInt16Number In[],
-     b = p->Shaper1B[bi];
+@@ -1537,14 +1571,14 @@ void MatShaperEval16(register const cmsUInt16Number In[],
+     bi = In[2] & 0xFFU;
+ 
+     // Across first shaper, which also converts to 1.14 fixed point
+-    r = p->Shaper1R[ri];
+-    g = p->Shaper1G[gi];
+-    b = p->Shaper1B[bi];
++    r = _FixedClamp(p->Shaper1R[ri]);
++    g = _FixedClamp(p->Shaper1G[gi]);
++    b = _FixedClamp(p->Shaper1B[bi]);
  
      // Evaluate the matrix in 1.14 fixed point
 -    l1 =  (p->Mat[0][0] * r + p->Mat[0][1] * g + p->Mat[0][2] * b + p->Off[0] + 0x2000) >> 14;
