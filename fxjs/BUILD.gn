@@ -226,6 +226,7 @@ if (pdf_enable_v8) {
       "cfxjs_engine_unittest.cpp",
       "cjs_publicmethods_unittest.cpp",
       "cjs_util_unittest.cpp",
+      "fx_date_helpers_unittest.cpp",
     ]
     configs = [ "//v8:external_startup_data" ]
     deps = [
