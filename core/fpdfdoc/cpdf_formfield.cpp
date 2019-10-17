@@ -22,6 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
@@ -837,7 +838,7 @@ void CPDF_FormField::LoadDA() {
     return;
 
   CPDF_Dictionary* pFont = pDR->GetDictFor("Font");
-  if (!pFont)
+  if (!ValidateFontResourceDict(pFont))
     return;
 
   CPDF_DefaultAppearance appearance(DA);
