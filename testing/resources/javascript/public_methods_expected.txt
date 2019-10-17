@@ -11,6 +11,8 @@ Alert: PASS: AFDate_FormatEx(1, 2) threw AFDate_FormatEx: Incorrect number of pa
 Alert: PASS: AFDate_FormatEx(2) = 2
 Alert: PASS: AFDate_FormatEx('blooey') = blooey
 Alert: PASS: AFDate_FormatEx('m/d') = 5/9
+Alert: PASS: AFDate_FormatEx('mm/dd/yyyy') = 12/02/2015
+Alert: PASS: AFDate_FormatEx('mm/dd/yyyy') = 05/09/2014
 Alert: **********************
 Alert: PASS: AFDate_Keystroke() threw AFDate_Keystroke: Incorrect number of parameters passed to function.
 Alert: PASS: AFDate_Keystroke(1, 2) threw AFDate_Keystroke: Incorrect number of parameters passed to function.

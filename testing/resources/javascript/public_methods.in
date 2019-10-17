@@ -123,6 +123,10 @@ endobj
       expectEventValue("x", "AFDate_FormatEx(2)", "2");
       expectEventValue("x", "AFDate_FormatEx('blooey')", "blooey");
       expectEventValue("x", "AFDate_FormatEx('m/d')", "5/9");
+      // TODO(crbug.com/572901): This is wrong. AFDate_FormatEx() should throw
+      // an error like Adobe Acrobat.
+      expectEventValue("12302015", "AFDate_FormatEx('mm/dd/yyyy')", "12/02/2015");
+      expectEventValue("20122015", "AFDate_FormatEx('mm/dd/yyyy')", "05/09/2014");
 
       app.alert("**********************");
 
