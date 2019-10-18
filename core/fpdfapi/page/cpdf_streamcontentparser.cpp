@@ -266,16 +266,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_pObjectHolder(pObjHolder),
       m_ParsedSet(pParsedSet),
       m_BBox(rcBBox),
-      m_ParamStartPos(0),
-      m_ParamCount(0),
-      m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
-      m_PathStartX(0.0f),
-      m_PathStartY(0.0f),
-      m_PathCurrentX(0.0f),
-      m_PathCurrentY(0.0f),
-      m_PathClipType(0),
-      m_bColored(false),
-      m_bResourceMissing(false) {
+      m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()) {
   if (pmtContentToUser)
     m_mtContentToUser = *pmtContentToUser;
   if (pStates) {
@@ -285,9 +276,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     m_pCurStates->m_GraphState.Emplace();
     m_pCurStates->m_TextState.Emplace();
     m_pCurStates->m_ColorState.Emplace();
-  }
-  for (size_t i = 0; i < FX_ArraySize(m_Type3Data); ++i) {
-    m_Type3Data[i] = 0.0;
   }
 
   // Add the sentinel.

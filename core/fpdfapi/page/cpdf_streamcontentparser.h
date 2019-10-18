@@ -210,25 +210,25 @@ class CPDF_StreamContentParser {
   UnownedPtr<std::set<const uint8_t*>> const m_ParsedSet;
   CFX_Matrix m_mtContentToUser;
   const CFX_FloatRect m_BBox;
-  uint32_t m_ParamStartPos;
-  uint32_t m_ParamCount;
+  uint32_t m_ParamStartPos = 0;
+  uint32_t m_ParamCount = 0;
   UnownedPtr<CPDF_StreamParser> m_pSyntax;
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
   std::stack<std::unique_ptr<CPDF_ContentMarks>> m_ContentMarksStack;
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
   UnownedPtr<CPDF_TextObject> m_pLastTextObject;
   std::vector<FX_PATHPOINT> m_PathPoints;
-  float m_PathStartX;
-  float m_PathStartY;
-  float m_PathCurrentX;
-  float m_PathCurrentY;
-  uint8_t m_PathClipType;
+  float m_PathStartX = 0.0f;
+  float m_PathStartY = 0.0f;
+  float m_PathCurrentX = 0.0f;
+  float m_PathCurrentY = 0.0f;
+  uint8_t m_PathClipType = 0;
   ByteString m_LastImageName;
   RetainPtr<CPDF_Image> m_pLastImage;
-  bool m_bColored;
-  bool m_bResourceMissing;
+  bool m_bColored = false;
+  bool m_bResourceMissing = false;
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
-  float m_Type3Data[6];
+  float m_Type3Data[6] = {0.0f};
   ContentParam m_ParamBuf[kParamBufSize];
 
   // The merged stream offsets at which a content stream ends and another
