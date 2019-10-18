@@ -346,7 +346,7 @@ class CPWL_EditImpl {
   bool CanRedo() const;
   CPVT_WordRange GetVisibleWordRange() const;
 
-  bool Empty();
+  bool Clear();
 
   CPVT_WordPlace DoInsertText(const CPVT_WordPlace& place,
                               const WideString& sText,

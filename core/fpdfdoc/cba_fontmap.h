@@ -66,7 +66,7 @@ class CBA_FontMap final : public IPVT_FontMap {
 
   bool KnowWord(int32_t nFontIndex, uint16_t word);
 
-  void Empty();
+  void Clear();
   int32_t GetFontIndex(const ByteString& sFontName,
                        int32_t nCharset,
                        bool bFind);

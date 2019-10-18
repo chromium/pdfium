@@ -810,7 +810,7 @@ CPVT_WordRange CPWL_EditImpl::GetSelectWordRange() const {
 }
 
 void CPWL_EditImpl::SetText(const WideString& sText) {
-  Empty();
+  Clear();
   DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_CHARSET_Default);
   Paint();
 }
@@ -1650,7 +1650,7 @@ bool CPWL_EditImpl::Delete(bool bAddUndo, bool bPaint) {
   return true;
 }
 
-bool CPWL_EditImpl::Empty() {
+bool CPWL_EditImpl::Clear() {
   if (m_pVT->IsValid()) {
     m_pVT->DeleteWords(GetWholeWordRange());
     SetCaret(m_pVT->GetBeginWordPlace());

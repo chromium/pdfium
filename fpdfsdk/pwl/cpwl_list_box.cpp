@@ -317,7 +317,7 @@ void CPWL_ListBox::ScrollToListItem(int32_t nItemIndex) {
 }
 
 void CPWL_ListBox::ResetContent() {
-  m_pList->Empty();
+  m_pList->Clear();
 }
 
 void CPWL_ListBox::Reset() {

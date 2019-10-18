@@ -73,7 +73,7 @@ class CPWL_ListCtrl {
   void Select(int32_t nItemIndex);
   void Deselect(int32_t nItemIndex);
   void SetCaret(int32_t nItemIndex);
-  void Empty();
+  void Clear();
   void Cancel();
   WideString GetText() const;
 

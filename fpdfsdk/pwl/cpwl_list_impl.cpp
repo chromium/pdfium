@@ -108,7 +108,7 @@ CPWL_ListCtrl::CPWL_ListCtrl()
       m_bMultiple(false) {}
 
 CPWL_ListCtrl::~CPWL_ListCtrl() {
-  Empty();
+  Clear();
 }
 
 CFX_PointF CPWL_ListCtrl::InToOut(const CFX_PointF& point) const {
@@ -525,7 +525,7 @@ int32_t CPWL_ListCtrl::GetTopItem() const {
   return nItemIndex;
 }
 
-void CPWL_ListCtrl::Empty() {
+void CPWL_ListCtrl::Clear() {
   m_ListItems.clear();
   InvalidateItem(-1);
 }

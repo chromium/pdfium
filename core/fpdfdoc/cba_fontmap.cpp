@@ -78,7 +78,7 @@ CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument, CPDF_Dictionary* pAnnotDict)
 }
 
 CBA_FontMap::~CBA_FontMap() {
-  Empty();
+  Clear();
 }
 
 RetainPtr<CPDF_Font> CBA_FontMap::GetPDFFont(int32_t nFontIndex) {
@@ -156,7 +156,7 @@ int32_t CBA_FontMap::GetNativeCharset() {
 }
 
 void CBA_FontMap::Reset() {
-  Empty();
+  Clear();
   m_pDefaultFont = nullptr;
   m_sDefaultFontName.clear();
 }
@@ -370,7 +370,7 @@ bool CBA_FontMap::KnowWord(int32_t nFontIndex, uint16_t word) {
          CharCodeFromUnicode(nFontIndex, word) >= 0;
 }
 
-void CBA_FontMap::Empty() {
+void CBA_FontMap::Clear() {
   m_Data.clear();
   m_NativeFont.clear();
 }
