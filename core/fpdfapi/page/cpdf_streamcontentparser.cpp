@@ -269,7 +269,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_ParamStartPos(0),
       m_ParamCount(0),
       m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
-      m_DefFontSize(0),
       m_PathStartX(0.0f),
       m_PathStartY(0.0f),
       m_PathCurrentX(0.0f),
@@ -1125,8 +1124,10 @@ void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
 
 void CPDF_StreamContentParser::Handle_SetFont() {
   float fs = GetNumber(0);
-  if (fs == 0)
-    fs = m_DefFontSize;
+  if (fs == 0) {
+    constexpr float kDefaultFontSize = 0.0f;
+    fs = kDefaultFontSize;
+  }
 
   m_pCurStates->m_TextState.SetFontSize(fs);
   RetainPtr<CPDF_Font> pFont = FindFont(GetString(1));
