@@ -958,46 +958,64 @@ TEST(WideString, OneCharReverseIterator) {
 TEST(WideString, MultiCharReverseIterator) {
   WideString multi_str(L"abcd");
   auto iter = multi_str.rbegin();
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(4, multi_str.rend() - iter);
+  EXPECT_EQ(0, iter - multi_str.rbegin());
 
   char ch = *iter++;
   EXPECT_EQ('d', ch);
   EXPECT_EQ('c', *iter);
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(3, multi_str.rend() - iter);
+  EXPECT_EQ(1, iter - multi_str.rbegin());
 
   ch = *(++iter);
   EXPECT_EQ('b', ch);
   EXPECT_EQ('b', *iter);
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(2, multi_str.rend() - iter);
+  EXPECT_EQ(2, iter - multi_str.rbegin());
 
   ch = *iter++;
   EXPECT_EQ('b', ch);
   EXPECT_EQ('a', *iter);
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(1, multi_str.rend() - iter);
+  EXPECT_EQ(3, iter - multi_str.rbegin());
 
   ch = *iter++;
   EXPECT_EQ('a', ch);
-  EXPECT_TRUE(iter == multi_str.rend());
+  EXPECT_EQ(iter, multi_str.rend());
+  EXPECT_EQ(0, multi_str.rend() - iter);
+  EXPECT_EQ(4, iter - multi_str.rbegin());
 
   ch = *(--iter);
   EXPECT_EQ('a', ch);
   EXPECT_EQ('a', *iter);
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(1, multi_str.rend() - iter);
+  EXPECT_EQ(3, iter - multi_str.rbegin());
 
   ch = *iter--;
   EXPECT_EQ('a', ch);
   EXPECT_EQ('b', *iter);
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(2, multi_str.rend() - iter);
+  EXPECT_EQ(2, iter - multi_str.rbegin());
 
   ch = *iter--;
   EXPECT_EQ('b', ch);
   EXPECT_EQ('c', *iter);
-  EXPECT_FALSE(iter == multi_str.rend());
+  EXPECT_NE(iter, multi_str.rend());
+  EXPECT_EQ(3, multi_str.rend() - iter);
+  EXPECT_EQ(1, iter - multi_str.rbegin());
 
   ch = *(--iter);
   EXPECT_EQ('d', ch);
   EXPECT_EQ('d', *iter);
-  EXPECT_TRUE(iter == multi_str.rbegin());
+  EXPECT_EQ(iter, multi_str.rbegin());
+  EXPECT_EQ(4, multi_str.rend() - iter);
+  EXPECT_EQ(0, iter - multi_str.rbegin());
 }
 
 TEST(WideString, ToUTF16LE) {
