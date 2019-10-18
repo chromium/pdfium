@@ -73,7 +73,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   if (FXFT_Is_Face_Italic(pFont->GetFaceRec()))
     flags |= FXFONT_ITALIC;
   if (FXFT_Is_Face_Bold(pFont->GetFaceRec()))
-    flags |= FXFONT_BOLD;
+    flags |= FXFONT_FORCE_BOLD;
 
   // TODO(npm): How do I know if a  font is symbolic, script, allcap, smallcap
   flags |= FXFONT_NONSYMBOLIC;

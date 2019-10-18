@@ -54,7 +54,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     ASSERT_TRUE(font_desc->KeyExist("Flags"));
 
     int font_flags = font_desc->GetIntegerFor("Flags");
-    EXPECT_EQ(bold, FontStyleIsBold(font_flags));
+    EXPECT_EQ(bold, FontStyleIsForceBold(font_flags));
     EXPECT_EQ(italic, FontStyleIsItalic(font_flags));
     EXPECT_TRUE(FontStyleIsNonSymbolic(font_flags));
     ASSERT_TRUE(font_desc->KeyExist("FontBBox"));

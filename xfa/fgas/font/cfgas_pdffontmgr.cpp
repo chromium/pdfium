@@ -83,7 +83,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(WideStringView wsFontFamily,
     return it->second;
 
   ByteString bsPsName = WideString(wsFontFamily).ToDefANSI();
-  bool bBold = FontStyleIsBold(dwFontStyles);
+  bool bBold = FontStyleIsForceBold(dwFontStyles);
   bool bItalic = FontStyleIsItalic(dwFontStyles);
   ByteString strFontName = PsNameToFontName(bsPsName, bBold, bItalic);
   RetainPtr<CFGAS_GEFont> pFont =

@@ -100,7 +100,7 @@ int CalculateFlags(bool bold,
                    bool symbolic) {
   int flags = 0;
   if (bold)
-    flags |= FXFONT_BOLD;
+    flags |= FXFONT_FORCE_BOLD;
   if (italic)
     flags |= FXFONT_ITALIC;
   if (fixedPitch)

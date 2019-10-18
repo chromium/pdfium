@@ -37,7 +37,7 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
 
   uint32_t dwStyle = 0;
   if (weight >= 700)
-    dwStyle |= FXFONT_BOLD;
+    dwStyle |= FXFONT_FORCE_BOLD;
   if (bItalic)
     dwStyle |= FXFONT_ITALIC;
   if (FontFamilyIsFixedPitch(pitch_family))

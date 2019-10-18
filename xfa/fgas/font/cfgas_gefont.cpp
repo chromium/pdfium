@@ -82,11 +82,11 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
     csFontFamily = WideString(pszFontFamily).ToDefANSI();
 
   int32_t iWeight =
-      FontStyleIsBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+      FontStyleIsForceBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
   m_pFont = pdfium::MakeUnique<CFX_Font>();
-  if (FontStyleIsItalic(dwFontStyles) && FontStyleIsBold(dwFontStyles))
+  if (FontStyleIsItalic(dwFontStyles) && FontStyleIsForceBold(dwFontStyles))
     csFontFamily += ",BoldItalic";
-  else if (FontStyleIsBold(dwFontStyles))
+  else if (FontStyleIsForceBold(dwFontStyles))
     csFontFamily += ",Bold";
   else if (FontStyleIsItalic(dwFontStyles))
     csFontFamily += ",Italic";
@@ -147,10 +147,10 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   auto* pSubstFont = m_pFont->GetSubstFont();
   if (pSubstFont) {
     if (pSubstFont->m_Weight == FXFONT_FW_BOLD)
-      dwStyles |= FXFONT_BOLD;
+      dwStyles |= FXFONT_FORCE_BOLD;
   } else {
     if (m_pFont->IsBold())
-      dwStyles |= FXFONT_BOLD;
+      dwStyles |= FXFONT_FORCE_BOLD;
     if (m_pFont->IsItalic())
       dwStyles |= FXFONT_ITALIC;
   }

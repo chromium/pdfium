@@ -3867,7 +3867,7 @@ RetainPtr<CFGAS_GEFont> CXFA_Node::GetFDEFont(CXFA_FFDoc* doc) {
   CXFA_Font* font = GetFontIfExists();
   if (font) {
     if (font->IsBold())
-      dwFontStyle |= FXFONT_BOLD;
+      dwFontStyle |= FXFONT_FORCE_BOLD;
     if (font->IsItalic())
       dwFontStyle |= FXFONT_ITALIC;
 

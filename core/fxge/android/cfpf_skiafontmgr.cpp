@@ -152,7 +152,7 @@ uint32_t FPF_SKIAGetFamilyHash(ByteStringView bsFamily,
                                uint32_t dwStyle,
                                uint8_t uCharset) {
   ByteString bsFont(bsFamily);
-  if (FontStyleIsBold(dwStyle))
+  if (FontStyleIsForceBold(dwStyle))
     bsFont += "Bold";
   if (FontStyleIsItalic(dwStyle))
     bsFont += "Italic";
@@ -289,7 +289,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
     if (dwFaceName == dwSysFontName)
       nFind += FPF_SKIAMATCHWEIGHT_NAME1;
     bool bMatchedName = (nFind == FPF_SKIAMATCHWEIGHT_NAME1);
-    if (FontStyleIsBold(dwStyle) == FontStyleIsBold(pFont->style()))
+    if (FontStyleIsForceBold(dwStyle) == FontStyleIsForceBold(pFont->style()))
       nFind += FPF_SKIAMATCHWEIGHT_1;
     if (FontStyleIsItalic(dwStyle) == FontStyleIsItalic(pFont->style()))
       nFind += FPF_SKIAMATCHWEIGHT_1;
@@ -398,7 +398,7 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     const ByteString& file) {
   uint32_t dwStyle = 0;
   if (FXFT_Is_Face_Bold(face->GetRec()))
-    dwStyle |= FXFONT_BOLD;
+    dwStyle |= FXFONT_FORCE_BOLD;
   if (FXFT_Is_Face_Italic(face->GetRec()))
     dwStyle |= FXFONT_ITALIC;
   if (FT_IS_FIXED_WIDTH(face->GetRec()))

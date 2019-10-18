@@ -77,7 +77,7 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
   const FX_FONTDESCRIPTOR* pBestFont = nullptr;
   int32_t iBestSimilar = 0;
   for (const auto& font : fonts) {
-    if (FontStyleIsBold(font.dwFontStyles) &&
+    if (FontStyleIsForceBold(font.dwFontStyles) &&
         FontStyleIsItalic(font.dwFontStyles)) {
       continue;
     }
@@ -424,7 +424,7 @@ void GetUSBCSB(FXFT_FaceRec* pFace, uint32_t* USB, uint32_t* CSB) {
 uint32_t GetFlags(FXFT_FaceRec* pFace) {
   uint32_t flags = 0;
   if (FXFT_Is_Face_Bold(pFace))
-    flags |= FXFONT_BOLD;
+    flags |= FXFONT_FORCE_BOLD;
   if (FXFT_Is_Face_Italic(pFace))
     flags |= FXFONT_ITALIC;
   if (FT_IS_FIXED_WIDTH(pFace))
@@ -579,7 +579,7 @@ int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
     }
   }
   uint32_t dwStyleMask = pInstalled->m_dwFontStyles ^ dwFontStyles;
-  if (FontStyleIsBold(dwStyleMask))
+  if (FontStyleIsForceBold(dwStyleMask))
     nPenalty += 4500;
   if (FontStyleIsFixedPitch(dwStyleMask))
     nPenalty += 10000;

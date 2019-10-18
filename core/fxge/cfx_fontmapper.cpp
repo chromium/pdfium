@@ -174,7 +174,7 @@ ByteString TT_NormalizeName(const char* family) {
 
 void GetFontFamily(uint32_t nStyle, ByteString* fontName) {
   if (fontName->Contains("Script")) {
-    if (FontStyleIsBold(nStyle))
+    if (FontStyleIsForceBold(nStyle))
       *fontName = "ScriptMTBold";
     else if (fontName->Contains("Palace"))
       *fontName = "PalaceScriptMT";
@@ -210,9 +210,9 @@ const struct FX_FontStyle {
   size_t len;
   uint32_t style;
 } g_FontStyles[] = {
-    {"Bold", 4, FXFONT_BOLD},
+    {"Bold", 4, FXFONT_FORCE_BOLD},
     {"Italic", 6, FXFONT_ITALIC},
-    {"BoldItalic", 10, FXFONT_BOLD | FXFONT_ITALIC},
+    {"BoldItalic", 10, FXFONT_FORCE_BOLD | FXFONT_ITALIC},
     {"Reg", 3, FXFONT_NORMAL},
     {"Regular", 7, FXFONT_NORMAL},
 };
@@ -435,7 +435,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   bool bStyleAvail = false;
   if (iBaseFont < 12) {
     if ((iBaseFont % 4) == 1 || (iBaseFont % 4) == 2)
-      nStyle |= FXFONT_BOLD;
+      nStyle |= FXFONT_FORCE_BOLD;
     if ((iBaseFont % 4) / 2)
       nStyle |= FXFONT_ITALIC;
     if (iBaseFont < 4)
@@ -467,7 +467,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
 
   const int old_weight = weight;
-  if (FontStyleIsBold(nStyle))
+  if (FontStyleIsForceBold(nStyle))
     weight = FXFONT_FW_BOLD;
 
   if (!style.IsEmpty()) {
@@ -491,18 +491,18 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       if (hasStyleType)
         bStyleAvail = true;
 
-      if (FontStyleIsBold(styleType)) {
+      if (FontStyleIsForceBold(styleType)) {
         // If we're already bold, then we're double bold, use special weight.
-        if (FontStyleIsBold(nStyle)) {
+        if (FontStyleIsForceBold(nStyle)) {
           weight = FXFONT_FW_BOLD_BOLD;
         } else {
           weight = FXFONT_FW_BOLD;
-          nStyle |= FXFONT_BOLD;
+          nStyle |= FXFONT_FORCE_BOLD;
         }
 
         bFirstItem = false;
       }
-      if (FontStyleIsItalic(styleType) && FontStyleIsBold(styleType)) {
+      if (FontStyleIsItalic(styleType) && FontStyleIsForceBold(styleType)) {
         nStyle |= FXFONT_ITALIC;
       } else if (FontStyleIsItalic(styleType)) {
         if (bFirstItem) {
@@ -566,9 +566,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       family = match;
     if (iBaseFont < kNumStandardFonts) {
       if (nStyle && !(iBaseFont % 4)) {
-        if (FontStyleIsBold(nStyle) && FontStyleIsItalic(nStyle))
+        if (FontStyleIsForceBold(nStyle) && FontStyleIsItalic(nStyle))
           iBaseFont += 2;
-        else if (FontStyleIsBold(nStyle))
+        else if (FontStyleIsForceBold(nStyle))
           iBaseFont += 1;
         else if (FontStyleIsItalic(nStyle))
           iBaseFont += 3;

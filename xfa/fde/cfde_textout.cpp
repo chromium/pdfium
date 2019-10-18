@@ -60,7 +60,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
   auto SubstFxFont = pdfium::MakeUnique<CFX_SubstFont>();
-  SubstFxFont->m_Weight = FontStyleIsBold(dwFontStyle) ? 700 : 400;
+  SubstFxFont->m_Weight = FontStyleIsForceBold(dwFontStyle) ? 700 : 400;
   SubstFxFont->m_ItalicAngle = FontStyleIsItalic(dwFontStyle) ? -12 : 0;
   SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
   SubstFxFont->m_bItalicCJK = FontStyleIsItalic(dwFontStyle);

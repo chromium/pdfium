@@ -35,7 +35,7 @@
 #define FXFONT_ITALIC (1 << 6)
 #define FXFONT_ALLCAP (1 << 16)
 #define FXFONT_SMALLCAP (1 << 17)
-#define FXFONT_BOLD (1 << 18)
+#define FXFONT_FORCE_BOLD (1 << 18)
 
 /* Other font flags */
 #define FXFONT_USEEXTERNATTR 0x80000
@@ -58,8 +58,8 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias);
 ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table, uint32_t name);
 int GetTTCIndex(pdfium::span<const uint8_t> pFontData, uint32_t font_offset);
 
-inline bool FontStyleIsBold(uint32_t style) {
-  return !!(style & FXFONT_BOLD);
+inline bool FontStyleIsForceBold(uint32_t style) {
+  return !!(style & FXFONT_FORCE_BOLD);
 }
 inline bool FontStyleIsItalic(uint32_t style) {
   return !!(style & FXFONT_ITALIC);
