@@ -81,7 +81,7 @@ Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
         ++pStr;
     }
     if (nWidth < 0 || nWidth > 128 * 1024)
-      return Optional<size_t>();
+      return pdfium::nullopt;
     int nPrecision = 0;
     if (*pStr == '.') {
       pStr++;
@@ -95,7 +95,7 @@ Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       }
     }
     if (nPrecision < 0 || nPrecision > 128 * 1024)
-      return Optional<size_t>();
+      return pdfium::nullopt;
     int nModifier = 0;
     if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
       pStr += 3;
@@ -244,7 +244,7 @@ Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
     nMaxLen += nItemLen;
   }
   nMaxLen += 32;  // Fudge factor.
-  return Optional<size_t>(nMaxLen);
+  return nMaxLen;
 }
 
 // Returns string unless we ran out of space.
@@ -754,29 +754,29 @@ size_t WideString::Insert(size_t index, wchar_t ch) {
 
 Optional<size_t> WideString::Find(wchar_t ch, size_t start) const {
   if (!m_pData)
-    return Optional<size_t>();
+    return pdfium::nullopt;
 
   if (!IsValidIndex(start))
-    return Optional<size_t>();
+    return pdfium::nullopt;
 
   const wchar_t* pStr =
       wmemchr(m_pData->m_String + start, ch, m_pData->m_nDataLength - start);
   return pStr ? Optional<size_t>(static_cast<size_t>(pStr - m_pData->m_String))
-              : Optional<size_t>();
+              : pdfium::nullopt;
 }
 
 Optional<size_t> WideString::Find(WideStringView subStr, size_t start) const {
   if (!m_pData)
-    return Optional<size_t>();
+    return pdfium::nullopt;
 
   if (!IsValidIndex(start))
-    return Optional<size_t>();
+    return pdfium::nullopt;
 
   const wchar_t* pStr =
       FX_wcsstr(m_pData->m_String + start, m_pData->m_nDataLength - start,
                 subStr.unterminated_c_str(), subStr.GetLength());
   return pStr ? Optional<size_t>(static_cast<size_t>(pStr - m_pData->m_String))
-              : Optional<size_t>();
+              : pdfium::nullopt;
 }
 
 Optional<size_t> WideString::ReverseFind(wchar_t ch) const {
