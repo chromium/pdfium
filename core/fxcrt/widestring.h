@@ -182,6 +182,7 @@ class WideString {
 
   Optional<size_t> Find(WideStringView subStr, size_t start = 0) const;
   Optional<size_t> Find(wchar_t ch, size_t start = 0) const;
+  Optional<size_t> ReverseFind(wchar_t ch) const;
 
   bool Contains(WideStringView lpszSub, size_t start = 0) const {
     return Find(lpszSub, start).has_value();

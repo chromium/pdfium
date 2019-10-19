@@ -689,6 +689,40 @@ TEST(WideString, Find) {
   EXPECT_EQ(2u, result.value());
 }
 
+TEST(WideString, ReverseFind) {
+  WideString null_string;
+  EXPECT_FALSE(null_string.ReverseFind(L'a').has_value());
+  EXPECT_FALSE(null_string.ReverseFind(L'\0').has_value());
+
+  WideString empty_string(L"");
+  EXPECT_FALSE(empty_string.ReverseFind(L'a').has_value());
+  EXPECT_FALSE(empty_string.ReverseFind(L'\0').has_value());
+
+  Optional<size_t> result;
+  WideString single_string(L"a");
+  result = single_string.ReverseFind(L'a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0u, result.value());
+  EXPECT_FALSE(single_string.ReverseFind(L'b').has_value());
+  EXPECT_FALSE(single_string.ReverseFind(L'\0').has_value());
+
+  WideString longer_string(L"abccc");
+  result = longer_string.ReverseFind(L'a');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(0u, result.value());
+  result = longer_string.ReverseFind(L'c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(4u, result.value());
+  EXPECT_FALSE(longer_string.ReverseFind(L'\0').has_value());
+
+  WideString hibyte_string(
+      L"ab\xff8c"
+      L"def");
+  result = hibyte_string.ReverseFind(L'\xff8c');
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2u, result.value());
+}
+
 TEST(WideString, UpperLower) {
   WideString fred(L"F-Re.42D");
   fred.MakeLower();

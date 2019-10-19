@@ -779,6 +779,18 @@ Optional<size_t> WideString::Find(WideStringView subStr, size_t start) const {
               : Optional<size_t>();
 }
 
+Optional<size_t> WideString::ReverseFind(wchar_t ch) const {
+  if (!m_pData)
+    return pdfium::nullopt;
+
+  size_t nLength = m_pData->m_nDataLength;
+  while (nLength--) {
+    if (m_pData->m_String[nLength] == ch)
+      return nLength;
+  }
+  return pdfium::nullopt;
+}
+
 void WideString::MakeLower() {
   if (!m_pData)
     return;
