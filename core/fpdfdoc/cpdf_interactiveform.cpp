@@ -130,7 +130,7 @@ RetainPtr<CPDF_Font> GetFont(CPDF_Dictionary* pFormDict,
     return nullptr;
 
   CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!pFonts)
+  if (!ValidateFontResourceDict(pFonts))
     return nullptr;
 
   CPDF_Dictionary* pElement = pFonts->GetDictFor(csAlias);
@@ -152,7 +152,7 @@ RetainPtr<CPDF_Font> GetNativeFont(CPDF_Dictionary* pFormDict,
     return nullptr;
 
   CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!pFonts)
+  if (!ValidateFontResourceDict(pFonts))
     return nullptr;
 
   CPDF_DictionaryLocker locker(pFonts);
@@ -193,7 +193,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
     return false;
 
   CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!pFonts)
+  if (!ValidateFontResourceDict(pFonts))
     return false;
 
   CPDF_DictionaryLocker locker(pFonts);
@@ -227,7 +227,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
     return false;
 
   CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!pFonts)
+  if (!ValidateFontResourceDict(pFonts))
     return false;
 
   if (csFontName.GetLength() > 0)

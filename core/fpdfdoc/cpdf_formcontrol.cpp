@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 
 namespace {
@@ -220,7 +221,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pWidgetDict.Get(), "DR");
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
     CPDF_Dictionary* pFonts = pDict->GetDictFor("Font");
-    if (pFonts) {
+    if (ValidateFontResourceDict(pFonts)) {
       CPDF_Dictionary* pElement = pFonts->GetDictFor(*csFontNameTag);
       if (pElement) {
         auto* pData = CPDF_DocPageData::FromDocument(m_pForm->GetDocument());
@@ -241,7 +242,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
     return nullptr;
 
   CPDF_Dictionary* pFonts = pDict->GetDictFor("Font");
-  if (!pFonts)
+  if (!ValidateFontResourceDict(pFonts))
     return nullptr;
 
   CPDF_Dictionary* pElement = pFonts->GetDictFor(*csFontNameTag);
