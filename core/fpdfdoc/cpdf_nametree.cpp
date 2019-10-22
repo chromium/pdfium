@@ -352,7 +352,9 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
     SearchNameNodeByIndex(m_pRoot.Get(), 0, 0, &nCurIndex, &csName, &pFind,
                           nullptr);
   }
-  ASSERT(pFind);
+  // Give up if that fails too.
+  if (!pFind)
+    return false;
 
   // Insert the name and the object into the leaf array found. Note that the
   // insertion position is right after the key-value pair returned by |index|.

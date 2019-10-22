@@ -66,6 +66,10 @@ if (pdf_enable_v8) {
     }
   }
 }
+if (is_clang) {
+  # Fuzzers that use FuzzedDataProvider can only be built with Clang.
+  fuzzer_list += [ "pdf_nametree_fuzzer" ]
+}
 
 group("fuzzers") {
   testonly = true
@@ -411,6 +415,20 @@ if (pdf_enable_v8) {
       ]
       public_fuzzer = true
     }
+  }
+}
+
+if (is_clang) {
+  pdfium_fuzzer("pdf_nametree_fuzzer") {
+    sources = [
+      "pdf_nametree_fuzzer.cc",
+    ]
+    deps = [
+      "../../core/fpdfapi/page",
+      "../../core/fpdfapi/parser",
+      "../../core/fpdfdoc",
+      "../../third_party:pdfium_base",
+    ]
   }
 }
 
