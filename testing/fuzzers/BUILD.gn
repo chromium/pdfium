@@ -27,6 +27,7 @@ fuzzer_list = [
   "pdf_hint_table_fuzzer",
   "pdf_jpx_fuzzer",
   "pdf_psengine_fuzzer",
+  "pdf_scanlinecompositor_fuzzer",
   "pdf_streamparser_fuzzer",
   "pdf_xml_fuzzer",
   "pdfium_fuzzer",
@@ -535,6 +536,17 @@ pdfium_fuzzer("pdf_psengine_fuzzer") {
   ]
   deps = [
     "../../core/fpdfapi/page",
+    "../../third_party:pdfium_base",
+  ]
+}
+
+pdfium_fuzzer("pdf_scanlinecompositor_fuzzer") {
+  sources = [
+    "pdf_scanlinecompositor_fuzzer.cc",
+  ]
+  deps = [
+    ":fuzzer_utils",
+    "../../core/fxge",
     "../../third_party:pdfium_base",
   ]
 }

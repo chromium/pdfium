@@ -78,6 +78,7 @@ enum class BlendMode {
   kSaturation,
   kColor,
   kLuminosity,
+  kLast = kLuminosity,
 };
 
 constexpr uint32_t FXSYS_BGR(uint8_t b, uint8_t g, uint8_t r) {
