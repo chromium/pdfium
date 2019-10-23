@@ -104,10 +104,13 @@ bool CFX_BmpDecompressor::ReadBmpHeader() {
     NOTREACHED();
   }
 
+  size_t pos = input_buffer_->GetPosition();
   if (!ReadData(reinterpret_cast<uint8_t*>(&img_ifh_size_),
                 sizeof(img_ifh_size_))) {
     return false;
   }
+  if (!input_buffer_->Seek(pos))
+    return false;
 
   img_ifh_size_ =
       FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_ifh_size_));

@@ -747,9 +747,8 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     return false;
   }
 
-  uint32_t availableData = m_pCodecMemory->GetSize() > m_offSet
-                               ? m_pCodecMemory->GetSize() - m_offSet
-                               : 0;
+  uint32_t availableData = m_pFile->GetSize() - m_offSet +
+                           pBmpModule->GetAvailInput(pBmpContext.get());
   if (neededData > availableData) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
