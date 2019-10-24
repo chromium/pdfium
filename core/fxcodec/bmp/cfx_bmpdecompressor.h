@@ -64,9 +64,9 @@ class CFX_BmpDecompressor {
   BmpModule::Status DecodeRLE4();
   bool ReadData(uint8_t* destination, uint32_t size);
   void SaveDecodingStatus(DecodeStatus status);
-  bool ValidateColorIndex(uint8_t val);
+  bool ValidateColorIndex(uint8_t val) const;
   bool ValidateFlag() const;
-  void SetHeight(int32_t signed_height);
+  bool SetHeight(int32_t signed_height);
 
   jmp_buf jmpbuf_;
   UnownedPtr<CFX_BmpContext> const context_;

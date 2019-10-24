@@ -54,11 +54,7 @@ BmpModule::Status BmpModule::ReadHeader(Context* pContext,
 }
 
 BmpModule::Status BmpModule::LoadImage(Context* pContext) {
-  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
-  if (setjmp(*ctx->m_Bmp.jmpbuf()))
-    return Status::kFail;
-
-  return ctx->m_Bmp.DecodeImage();
+  return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.DecodeImage();
 }
 
 FX_FILESIZE BmpModule::GetAvailInput(Context* pContext) const {

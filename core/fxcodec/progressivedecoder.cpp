@@ -797,29 +797,25 @@ FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return m_status;
   }
-  while (true) {
-    BmpModule::Status read_res = pBmpModule->LoadImage(m_pBmpContext.get());
-    while (read_res == BmpModule::Status::kContinue) {
-      FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-      if (!BmpReadMoreData(pBmpModule, m_pBmpContext.get(), error_status)) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = error_status;
-        return m_status;
-      }
-      read_res = pBmpModule->LoadImage(m_pBmpContext.get());
-    }
-    if (read_res == BmpModule::Status::kSuccess) {
+
+  BmpModule::Status read_res = pBmpModule->LoadImage(m_pBmpContext.get());
+  while (read_res == BmpModule::Status::kContinue) {
+    FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
+    if (!BmpReadMoreData(pBmpModule, m_pBmpContext.get(), error_status)) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
-      m_status = FXCODEC_STATUS_DECODE_FINISH;
+      m_status = error_status;
       return m_status;
     }
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS_ERROR;
-    return m_status;
+    read_res = pBmpModule->LoadImage(m_pBmpContext.get());
   }
+
+  m_pDeviceBitmap = nullptr;
+  m_pFile = nullptr;
+  m_status = read_res == BmpModule::Status::kSuccess
+                 ? FXCODEC_STATUS_DECODE_FINISH
+                 : FXCODEC_STATUS_ERROR;
+  return m_status;
 }
 #endif  // PDF_ENABLE_XFA_BMP
 
