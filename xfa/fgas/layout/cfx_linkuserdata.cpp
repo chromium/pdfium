@@ -6,7 +6,7 @@
 
 #include "xfa/fgas/layout/cfx_linkuserdata.h"
 
-CFX_LinkUserData::CFX_LinkUserData(const wchar_t* pszText)
-    : m_wsURLContent(pszText) {}
+CFX_LinkUserData::CFX_LinkUserData(const WideString& wsText)
+    : m_wsURLContent(wsText) {}
 
 CFX_LinkUserData::~CFX_LinkUserData() {}

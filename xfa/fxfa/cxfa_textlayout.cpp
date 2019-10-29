@@ -753,12 +753,9 @@ bool CXFA_TextLayout::LoadRichText(
         }
 
         if (wsName.EqualsASCII("a")) {
-          ASSERT(pElement);
           WideString wsLinkContent = pElement->GetAttribute(L"href");
-          if (!wsLinkContent.IsEmpty()) {
-            pLinkData =
-                pdfium::MakeRetain<CFX_LinkUserData>(wsLinkContent.c_str());
-          }
+          if (!wsLinkContent.IsEmpty())
+            pLinkData = pdfium::MakeRetain<CFX_LinkUserData>(wsLinkContent);
         }
 
         int32_t iTabCount = m_textParser.CountTabs(
