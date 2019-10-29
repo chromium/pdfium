@@ -452,24 +452,23 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 }
 
 void CFDE_TextOut::ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect) {
-  const wchar_t* pwsStr = m_wsText.c_str();
-  int32_t iPieceWidths = 0;
-
+  pdfium::span<const wchar_t> text_span = m_wsText.span();
   FDE_TTOPIECE* pPiece = pLine->GetPtrAt(0);
   int32_t iStartChar = pPiece->iStartChar;
   int32_t iPieceCount = pLine->GetSize();
+  int32_t iPieceWidths = 0;
   int32_t iPieceIndex = 0;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   m_fLinePos = pPiece->rtPiece.top;
   while (iPieceIndex < iPieceCount) {
-    int32_t iStar = iStartChar;
-    int32_t iEnd = pPiece->iChars + iStar;
-    while (iStar < iEnd) {
-      dwBreakStatus = m_pTxtBreak->AppendChar(*(pwsStr + iStar));
+    int32_t iStart = iStartChar;
+    int32_t iEnd = pPiece->iChars + iStart;
+    while (iStart < iEnd) {
+      dwBreakStatus = m_pTxtBreak->AppendChar(text_span[iStart]);
       if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
         RetrievePieces(dwBreakStatus, true, rect, &iStartChar, &iPieceWidths);
 
-      ++iStar;
+      ++iStart;
     }
     ++iPieceIndex;
     pPiece = pLine->GetPtrAt(iPieceIndex);
