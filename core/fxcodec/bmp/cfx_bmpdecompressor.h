@@ -7,8 +7,6 @@
 #ifndef CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_
 #define CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_
 
-#include <setjmp.h>
-
 #include <vector>
 
 #include "core/fxcodec/bmp/bmpmodule.h"
@@ -27,13 +25,11 @@ class CFX_BmpDecompressor {
   explicit CFX_BmpDecompressor(CFX_BmpContext* context);
   ~CFX_BmpDecompressor();
 
-  void Error();
   BmpModule::Status DecodeImage();
-  bool ReadHeader();
+  BmpModule::Status ReadHeader();
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   FX_FILESIZE GetAvailInput() const;
 
-  jmp_buf* jmpbuf() { return &jmpbuf_; }
   const std::vector<uint32_t>* palette() const { return &palette_; }
   uint32_t width() const { return width_; }
   uint32_t height() const { return height_; }
@@ -52,11 +48,11 @@ class CFX_BmpDecompressor {
     kTail,
   };
 
-  bool ReadBmpHeader();
-  bool ReadBmpHeaderIfh();
-  bool ReadBmpHeaderDimensions();
-  bool ReadBmpBitfields();
-  bool ReadBmpPalette();
+  BmpModule::Status ReadBmpHeader();
+  BmpModule::Status ReadBmpHeaderIfh();
+  BmpModule::Status ReadBmpHeaderDimensions();
+  BmpModule::Status ReadBmpBitfields();
+  BmpModule::Status ReadBmpPalette();
   bool GetDataPosition(uint32_t cur_pos);
   void ReadNextScanline();
   BmpModule::Status DecodeRGB();
@@ -68,7 +64,6 @@ class CFX_BmpDecompressor {
   bool ValidateFlag() const;
   bool SetHeight(int32_t signed_height);
 
-  jmp_buf jmpbuf_;
   UnownedPtr<CFX_BmpContext> const context_;
   std::vector<uint8_t> out_row_buffer_;
   std::vector<uint32_t> palette_;

@@ -35,11 +35,9 @@ BmpModule::Status BmpModule::ReadHeader(Context* pContext,
   ASSERT(pAttribute);
 
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
-  if (setjmp(*ctx->m_Bmp.jmpbuf()))
-    return Status::kFail;
-
-  if (!ctx->m_Bmp.ReadHeader())
-    return Status::kContinue;
+  Status status = ctx->m_Bmp.ReadHeader();
+  if (status != Status::kSuccess)
+    return status;
 
   *width = ctx->m_Bmp.width();
   *height = ctx->m_Bmp.height();
