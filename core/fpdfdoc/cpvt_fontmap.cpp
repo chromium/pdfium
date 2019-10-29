@@ -10,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/logging.h"
@@ -40,7 +41,8 @@ RetainPtr<CPDF_Font> CPVT_FontMap::GetAnnotSysPDFFont(
     return nullptr;
 
   CPDF_Dictionary* pFontList = pResDict->GetDictFor("Font");
-  if (pFontList && !pFontList->KeyExist(*sSysFontAlias)) {
+  if (ValidateFontResourceDict(pFontList) &&
+      !pFontList->KeyExist(*sSysFontAlias)) {
     pFontList->SetNewFor<CPDF_Reference>(*sSysFontAlias, pDoc,
                                          pPDFFont->GetFontDict()->GetObjNum());
   }
