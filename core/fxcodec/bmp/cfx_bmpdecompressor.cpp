@@ -107,7 +107,7 @@ BmpModule::Status CFX_BmpDecompressor::ReadBmpHeader() {
     return BmpModule::Status::kContinue;
   }
   if (!input_buffer_->Seek(pos))
-    return BmpModule::Status::kContinue;
+    return BmpModule::Status::kFail;
 
   img_ifh_size_ =
       FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_ifh_size_));
