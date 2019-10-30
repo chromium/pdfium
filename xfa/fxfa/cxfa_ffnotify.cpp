@@ -67,8 +67,7 @@ void CXFA_FFNotify::OnPageEvent(CXFA_ViewLayoutItem* pSender,
 }
 
 void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
-                                          const wchar_t* pLabel,
-                                          const wchar_t* pValue,
+                                          const WideString& wsLabel,
                                           int32_t iIndex) {
   if (pSender->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList)
     return;
@@ -76,7 +75,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded())
-      ToDropDown(pWidget)->InsertItem(pLabel, iIndex);
+      ToDropDown(pWidget)->InsertItem(wsLabel.AsStringView(), iIndex);
   }
 }
 

@@ -4405,11 +4405,8 @@ void CXFA_Node::InsertItem(const WideString& wsLabel,
     InsertListTextItem(pNode, wsLabel, nIndex);
     InsertListTextItem(pSaveItems, wsNewValue, nIndex);
   }
-  if (!bNotify)
-    return;
-
-  GetDocument()->GetNotify()->OnWidgetListItemAdded(this, wsLabel.c_str(),
-                                                    wsValue.c_str(), nIndex);
+  if (bNotify)
+    GetDocument()->GetNotify()->OnWidgetListItemAdded(this, wsLabel, nIndex);
 }
 
 WideString CXFA_Node::GetItemLabel(WideStringView wsValue) const {

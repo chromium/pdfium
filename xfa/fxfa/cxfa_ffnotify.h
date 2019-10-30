@@ -28,8 +28,7 @@ class CXFA_FFNotify {
   void OnPageEvent(CXFA_ViewLayoutItem* pSender, uint32_t dwEvent);
 
   void OnWidgetListItemAdded(CXFA_Node* pSender,
-                             const wchar_t* pLabel,
-                             const wchar_t* pValue,
+                             const WideString& wsLabel,
                              int32_t iIndex);
   void OnWidgetListItemRemoved(CXFA_Node* pSender, int32_t iIndex);
 
