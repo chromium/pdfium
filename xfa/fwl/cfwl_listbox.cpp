@@ -901,9 +901,8 @@ int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, CFWL_ListItem* pItem) {
   return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 
-CFWL_ListItem* CFWL_ListBox::AddString(WideStringView wsAdd) {
-  m_ItemArray.emplace_back(
-      pdfium::MakeUnique<CFWL_ListItem>(WideString(wsAdd)));
+CFWL_ListItem* CFWL_ListBox::AddString(const WideString& wsAdd) {
+  m_ItemArray.emplace_back(pdfium::MakeUnique<CFWL_ListItem>(wsAdd));
   return m_ItemArray.back().get();
 }
 

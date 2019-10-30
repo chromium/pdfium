@@ -25,7 +25,7 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
   FormFieldType GetFormFieldType() override;
 
   // CXFA_FFDropDown
-  void InsertItem(WideStringView wsLabel, int32_t nIndex) override;
+  void InsertItem(const WideString& wsLabel, int32_t nIndex) override;
   void DeleteItem(int32_t nIndex) override;
 
   void OnSelectChanged(CFWL_Widget* pWidget);

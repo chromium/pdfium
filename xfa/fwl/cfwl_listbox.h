@@ -53,7 +53,7 @@ class CFWL_ListBox : public CFWL_Widget {
   CFWL_ListItem* GetItem(const CFWL_Widget* pWidget, int32_t nIndex) const;
   int32_t GetItemIndex(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
 
-  CFWL_ListItem* AddString(WideStringView wsAdd);
+  CFWL_ListItem* AddString(const WideString& wsAdd);
   void RemoveAt(int32_t iIndex);
   void DeleteString(CFWL_ListItem* pItem);
   void DeleteAll();

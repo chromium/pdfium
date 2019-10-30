@@ -59,7 +59,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
   int32_t GetCurSel() const { return m_iCurSel; }
   void SetCurSel(int32_t iSel);
 
-  void AddString(WideStringView wsText);
+  void AddString(const WideString& wsText);
   void RemoveAt(int32_t iIndex);
   void RemoveAll();
 

@@ -48,7 +48,7 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
                     const CFX_Matrix& matrix) override;
 
   // CXFA_FFDropDown
-  void InsertItem(WideStringView wsLabel, int32_t nIndex) override;
+  void InsertItem(const WideString& wsLabel, int32_t nIndex) override;
   void DeleteItem(int32_t nIndex) override;
 
   void OpenDropDownList();

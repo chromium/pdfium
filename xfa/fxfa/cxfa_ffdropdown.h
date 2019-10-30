@@ -7,13 +7,14 @@
 #ifndef XFA_FXFA_CXFA_FFDROPDOWN_H_
 #define XFA_FXFA_CXFA_FFDROPDOWN_H_
 
+#include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 class CXFA_FFDropDown : public CXFA_FFField {
  public:
   ~CXFA_FFDropDown() override;
 
-  virtual void InsertItem(WideStringView wsLabel, int32_t nIndex) = 0;
+  virtual void InsertItem(const WideString& wsLabel, int32_t nIndex) = 0;
   virtual void DeleteItem(int32_t nIndex) = 0;
 
  protected:

@@ -75,7 +75,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded())
-      ToDropDown(pWidget)->InsertItem(wsLabel.AsStringView(), iIndex);
+      ToDropDown(pWidget)->InsertItem(wsLabel, iIndex);
   }
 }
 

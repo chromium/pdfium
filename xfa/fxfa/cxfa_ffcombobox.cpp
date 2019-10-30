@@ -56,7 +56,7 @@ bool CXFA_FFComboBox::LoadWidget() {
   m_pNormalWidget->LockUpdate();
 
   for (const auto& label : m_pNode->GetChoiceListItems(false))
-    pComboBox->AddString(label.AsStringView());
+    pComboBox->AddString(label);
 
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   if (iSelArray.empty())
@@ -280,7 +280,7 @@ void CXFA_FFComboBox::SetItemState(int32_t nIndex, bool bSelected) {
   InvalidateRect();
 }
 
-void CXFA_FFComboBox::InsertItem(WideStringView wsLabel, int32_t nIndex) {
+void CXFA_FFComboBox::InsertItem(const WideString& wsLabel, int32_t nIndex) {
   ToComboBox(m_pNormalWidget.get())->AddString(wsLabel);
   m_pNormalWidget->Update();
   InvalidateRect();

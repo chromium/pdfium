@@ -56,7 +56,7 @@ bool CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget->LockUpdate();
 
   for (const auto& label : m_pNode->GetChoiceListItems(false))
-    pListBox->AddString(label.AsStringView());
+    pListBox->AddString(label);
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
   if (m_pNode->IsChoiceListMultiSelect())
@@ -164,9 +164,8 @@ void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {
   InvalidateRect();
 }
 
-void CXFA_FFListBox::InsertItem(WideStringView wsLabel, int32_t nIndex) {
-  WideString wsTemp(wsLabel);
-  ToListBox(m_pNormalWidget.get())->AddString(wsTemp.AsStringView());
+void CXFA_FFListBox::InsertItem(const WideString& wsLabel, int32_t nIndex) {
+  ToListBox(m_pNormalWidget.get())->AddString(wsLabel);
   m_pNormalWidget->Update();
   InvalidateRect();
 }

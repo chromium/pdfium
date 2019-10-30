@@ -43,7 +43,7 @@ FWL_Type CFWL_ComboBox::GetClassID() const {
   return FWL_Type::ComboBox;
 }
 
-void CFWL_ComboBox::AddString(WideStringView wsText) {
+void CFWL_ComboBox::AddString(const WideString& wsText) {
   m_pListBox->AddString(wsText);
 }
 
