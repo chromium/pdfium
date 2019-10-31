@@ -131,11 +131,13 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
     return pSDKAnnot;
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pFormFillEnv->GetAnnotHandlerMgr();
-  pSDKAnnot = pAnnotHandler->NewXFAAnnot(pPDFAnnot, this);
-  if (!pSDKAnnot)
-    return nullptr;
-
-  m_SDKAnnotArray.push_back(pSDKAnnot);
+  std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
+      pAnnotHandler->NewXFAAnnot(pPDFAnnot, this);
+  ASSERT(pNewAnnot);
+  pSDKAnnot = pNewAnnot.get();
+  // TODO(thestig): See if |m_SDKAnnotArray|, which takes ownership of
+  // |pNewAnnot|, can hold std::unique_ptrs instead of raw pointers.
+  m_SDKAnnotArray.push_back(pNewAnnot.release());
   return pSDKAnnot;
 }
 
@@ -492,10 +494,11 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     }
 
     while (CXFA_FFWidget* pXFAAnnot = pWidgetHandler->MoveToNext()) {
-      CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewXFAAnnot(pXFAAnnot, this);
-      if (!pAnnot)
-        continue;
-      m_SDKAnnotArray.push_back(pAnnot);
+      std::unique_ptr<CPDFSDK_Annot> pNewAnnot =
+          pAnnotHandlerMgr->NewXFAAnnot(pXFAAnnot, this);
+      ASSERT(pNewAnnot);
+      CPDFSDK_Annot* pAnnot = pNewAnnot.get();
+      m_SDKAnnotArray.push_back(pNewAnnot.release());
       pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
     }
 

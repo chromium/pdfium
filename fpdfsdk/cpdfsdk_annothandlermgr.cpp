@@ -58,7 +58,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewXFAAnnot(
+std::unique_ptr<CPDFSDK_Annot> CPDFSDK_AnnotHandlerMgr::NewXFAAnnot(
     CXFA_FFWidget* pAnnot,
     CPDFSDK_PageView* pPageView) {
   ASSERT(pAnnot);
