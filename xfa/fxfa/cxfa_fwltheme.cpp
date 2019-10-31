@@ -236,7 +236,7 @@ void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
     m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
     m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
-    m_pTextOut->CalcLogicSize(pParams.m_wsText, pRect);
+    m_pTextOut->CalcLogicSize(pParams.m_wsText.AsStringView(), pRect);
     return;
   }
 
@@ -246,7 +246,7 @@ void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
   m_pTextOut->SetTextColor(pNode->GetTextColor());
   m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
   m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
-  m_pTextOut->CalcLogicSize(pParams.m_wsText, pRect);
+  m_pTextOut->CalcLogicSize(pParams.m_wsText.AsStringView(), pRect);
 }
 
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) const {

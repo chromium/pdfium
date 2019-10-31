@@ -183,13 +183,13 @@ void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
   m_pTxtBreak->SetLineBreakTolerance(m_fTolerance);
 }
 
-void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_SizeF* pSize) {
+void CFDE_TextOut::CalcLogicSize(WideStringView str, CFX_SizeF* pSize) {
   CFX_RectF rtText(0.0f, 0.0f, pSize->width, pSize->height);
   CalcLogicSize(str, &rtText);
   *pSize = rtText.Size();
 }
 
-void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_RectF* pRect) {
+void CFDE_TextOut::CalcLogicSize(WideStringView str, CFX_RectF* pRect) {
   if (str.IsEmpty()) {
     pRect->width = 0.0f;
     pRect->height = 0.0f;

@@ -247,18 +247,16 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
   size_t chars_exceeding_size = 0;
   // TODO(dsinclair): Can this get changed to a binary search?
   for (size_t i = 0; i < num_to_check; i++) {
-    // This does a lot of string copying ....
-    // TODO(dsinclair): make CalcLogicSize take a WideStringC instead.
-    text_out->CalcLogicSize(WideString(temp), &text_rect);
-
+    text_out->CalcLogicSize(temp, &text_rect);
     if (limit_horizontal_area_ && text_rect.width <= available_width_)
       break;
     if (limit_vertical_area_ && text_rect.height <= vertical_height)
       break;
 
-    --length;
-    temp = temp.Mid(0, length);
     ++chars_exceeding_size;
+
+    --length;
+    temp = temp.Left(length);
   }
 
   return chars_exceeding_size;
