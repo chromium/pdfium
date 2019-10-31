@@ -83,6 +83,16 @@ bool AreColorIndicesOutOfBounds(const uint8_t* indices,
   return false;
 }
 
+int CalculateBitsPerPixel(uint32_t bpc, uint32_t comps) {
+  // TODO(thestig): Can |bpp| be 0 here? Add an ASSERT() or handle it?
+  uint32_t bpp = bpc * comps;
+  if (bpp == 1)
+    return 1;
+  if (bpp <= 8)
+    return 8;
+  return 24;
+}
+
 CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
     CPDF_ColorSpace* pCS) {
   if (!pCS)
@@ -135,18 +145,11 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (CreateDecoder() == LoadState::kFail)
     return false;
 
-  if (m_bImageMask) {
-    m_bpp = 1;
-    m_bpc = 1;
-    m_nComponents = 1;
-    m_AlphaFlag = 1;
-  } else if (m_bpc * m_nComponents == 1) {
-    m_bpp = 1;
-  } else if (m_bpc * m_nComponents <= 8) {
-    m_bpp = 8;
-  } else {
-    m_bpp = 24;
-  }
+  if (m_bImageMask)
+    SetMaskProperties();
+  else
+    m_bpp = CalculateBitsPerPixel(m_bpc, m_nComponents);
+
   FX_SAFE_UINT32 pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
   if (!pitch.IsValid())
     return false;
@@ -168,20 +171,14 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
 
 bool CPDF_DIBBase::ContinueToLoadMask() {
   if (m_bImageMask) {
-    m_bpp = 1;
-    m_bpc = 1;
-    m_nComponents = 1;
-    m_AlphaFlag = 1;
-  } else if (m_bpc * m_nComponents == 1) {
-    m_bpp = 1;
-  } else if (m_bpc * m_nComponents <= 8) {
-    m_bpp = 8;
+    SetMaskProperties();
   } else {
-    m_bpp = 24;
+    if (!m_bpc || !m_nComponents)
+      return false;
+
+    m_bpp = CalculateBitsPerPixel(m_bpc, m_nComponents);
   }
-  if (!m_bpc || !m_nComponents) {
-    return false;
-  }
+
   FX_SAFE_UINT32 pitch = fxcodec::CalculatePitch32(m_bpp, m_Width);
   if (!pitch.IsValid())
     return false;
@@ -1365,4 +1362,11 @@ void CPDF_DIBBase::DownSampleScanline32Bit(int orig_Bpp,
 bool CPDF_DIBBase::TransMask() const {
   return m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
          m_Family == PDFCS_DEVICECMYK;
+}
+
+void CPDF_DIBBase::SetMaskProperties() {
+  m_bpp = 1;
+  m_bpc = 1;
+  m_nComponents = 1;
+  m_AlphaFlag = 1;
 }

@@ -124,6 +124,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
                                int clip_left,
                                int clip_width) const;
   bool TransMask() const;
+  void SetMaskProperties();
 
   UnownedPtr<CPDF_Document> m_pDocument;
   RetainPtr<const CPDF_Stream> m_pStream;
