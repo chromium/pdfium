@@ -2,10 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//build/config/jumbo.gni")
 import("../pdfium.gni")
 
-jumbo_source_set("test_support") {
+source_set("test_support") {
   testonly = true
   sources = [
     "fx_string_testhelpers.cpp",
@@ -54,7 +53,7 @@ jumbo_source_set("test_support") {
   }
 }
 
-jumbo_source_set("unit_test_support") {
+source_set("unit_test_support") {
   testonly = true
   sources = []
   deps = []
@@ -76,7 +75,7 @@ jumbo_source_set("unit_test_support") {
   }
 }
 
-jumbo_source_set("embedder_test_support") {
+source_set("embedder_test_support") {
   testonly = true
   sources = [
     "embedder_test.cpp",

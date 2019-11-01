@@ -3,7 +3,6 @@
 # found in the LICENSE file.
 
 import("//build/config/arm.gni")
-import("//build/config/jumbo.gni")
 import("//build/config/linux/pkg_config.gni")
 import("//build_overrides/build.gni")
 import("../pdfium.gni")
@@ -81,7 +80,7 @@ if (pdf_bundle_freetype) {
 
   # Tests may link against this even if the production library doesn't,
   # so it needs to be separate from it.
-  jumbo_source_set("fx_freetype") {
+  source_set("fx_freetype") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
@@ -227,7 +226,7 @@ if (!pdf_use_skia && !pdf_use_skia_paths) {
     }
   }
 
-  jumbo_source_set("fx_agg") {
+  source_set("fx_agg") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
@@ -463,7 +462,7 @@ group("png") {
   }
 }
 
-jumbo_source_set("fx_lpng") {
+source_set("fx_lpng") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -584,7 +583,7 @@ if (pdf_enable_xfa_tiff) {
   }
 }
 
-jumbo_source_set("pdfium_base") {
+source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -644,7 +643,7 @@ jumbo_source_set("pdfium_base") {
   }
 }
 
-jumbo_source_set("pdfium_base_test_support") {
+source_set("pdfium_base_test_support") {
   testonly = true
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
@@ -663,7 +662,7 @@ jumbo_source_set("pdfium_base_test_support") {
   }
 }
 
-jumbo_source_set("skia_shared") {
+source_set("skia_shared") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",

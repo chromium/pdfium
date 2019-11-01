@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//build/config/jumbo.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
@@ -106,7 +105,7 @@ config("pdfium_core_config") {
   configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 }
 
-jumbo_source_set("pdfium_public_headers_impl") {
+source_set("pdfium_public_headers_impl") {
   sources = [
     "public/cpp/fpdf_deleters.h",
     "public/cpp/fpdf_scopers.h",
@@ -143,7 +142,7 @@ group("pdfium_public_headers") {
   ]
 }
 
-jumbo_component("pdfium") {
+component("pdfium") {
   libs = []
   configs += [ ":pdfium_core_config" ]
   public_configs = [ ":pdfium_public_config" ]
@@ -359,7 +358,7 @@ executable("pdfium_diff") {
 }
 
 if (pdf_is_standalone) {
-  jumbo_source_set("samples") {
+  source_set("samples") {
     testonly = true
     deps = [
       "//samples",
