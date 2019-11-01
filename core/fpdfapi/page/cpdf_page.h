@@ -14,8 +14,8 @@
 #include "core/fpdfapi/page/ipdf_page.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
 class CPDF_Dictionary;
@@ -25,7 +25,8 @@ class CPDF_Object;
 
 class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
  public:
-  class View {};  // Caller implements as desired, empty here due to layering.
+  // Caller implements as desired, empty here due to layering.
+  class View : public Observable {};
 
   // Data for the render layer to attach to this page.
   class RenderContextIface {
@@ -79,7 +80,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
 
   CPDF_Document* GetPDFDocument() const { return m_pPDFDocument.Get(); }
   View* GetView() const { return m_pView.Get(); }
-  void SetView(View* pView) { m_pView = pView; }
+  void SetView(View* pView) { m_pView.Reset(pView); }
   void UpdateDimensions();
 
  private:
@@ -94,7 +95,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   UnownedPtr<CPDF_Document> m_pPDFDocument;
   std::unique_ptr<RenderCacheIface> m_pRenderCache;
   std::unique_ptr<RenderContextIface> m_pRenderContext;
-  UnownedPtr<View> m_pView;
+  ObservedPtr<View> m_pView;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGE_H_

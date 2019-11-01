@@ -370,27 +370,31 @@ bool CPDFSDK_PageView::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 bool CPDFSDK_PageView::OnMouseMove(const CFX_PointF& point, int nFlag) {
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
+
   ObservedPtr<CPDFSDK_Annot> pFXAnnot(GetFXAnnotAtPoint(point));
+  ObservedPtr<CPDFSDK_PageView> pThis(this);
 
   if (m_bOnWidget && m_pCaptureWidget != pFXAnnot)
     ExitWidget(pAnnotHandlerMgr, true, nFlag);
 
-  if (pFXAnnot) {
-    if (!m_bOnWidget) {
-      EnterWidget(pAnnotHandlerMgr, &pFXAnnot, nFlag);
+  // ExitWidget() may have invalidated objects.
+  if (!pThis || !pFXAnnot)
+    return false;
 
-      // Annot_OnMouseEnter may have invalidated pFXAnnot.
-      if (!pFXAnnot) {
-        ExitWidget(pAnnotHandlerMgr, false, nFlag);
-        return true;
-      }
+  if (!m_bOnWidget) {
+    EnterWidget(pAnnotHandlerMgr, &pFXAnnot, nFlag);
+
+    // EnterWidget() may have invalidated objects.
+    if (!pThis)
+      return false;
+
+    if (!pFXAnnot) {
+      ExitWidget(pAnnotHandlerMgr, false, nFlag);
+      return true;
     }
-
-    pAnnotHandlerMgr->Annot_OnMouseMove(this, &pFXAnnot, nFlag, point);
-    return true;
   }
-
-  return false;
+  pAnnotHandlerMgr->Annot_OnMouseMove(this, &pFXAnnot, nFlag, point);
+  return true;
 }
 
 void CPDFSDK_PageView::EnterWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
