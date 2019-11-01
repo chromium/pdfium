@@ -703,6 +703,26 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActions) {
   EXPECT_STREQ(L"Did Print", alerts[3].message.c_str());
 }
 
+TEST_F(FPDFFormFillEmbedderTest, DocumentAActionsDisableJavaScript) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocumentWithoutJavaScript("document_aactions.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  const auto& alerts = delegate.GetAlerts();
+  EXPECT_EQ(0U, alerts.size());
+
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WS);
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DS);
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WP);
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DP);
+  UnloadPage(page);
+
+  ASSERT_EQ(0U, alerts.size());
+}
+
 TEST_F(FPDFFormFillEmbedderTest, BUG_551248) {
   // Test that timers fire once and intervals fire repeatedly.
   EmbedderTestTimerHandlingDelegate delegate;
