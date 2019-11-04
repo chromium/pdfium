@@ -4397,7 +4397,8 @@ void CFXJSE_FormCalcContext::WordNum(CFXJSE_Value* pThis,
     bsLocale = ValueToUTF8String(localeValue.get());
   }
 
-  if (fNumber < 0.0f || fNumber > 922337203685477550.0f) {
+  if (std::isnan(fNumber) || fNumber < 0.0f ||
+      fNumber > 922337203685477550.0f) {
     args.GetReturnValue()->SetString("*");
     return;
   }
