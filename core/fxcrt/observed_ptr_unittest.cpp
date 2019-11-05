@@ -148,6 +148,10 @@ TEST(ObservePtr, Equals) {
   ObservedPtr<PseudoObservable> null_ptr1;
   ObservedPtr<PseudoObservable> obj1_ptr1(&obj1);
   ObservedPtr<PseudoObservable> obj2_ptr1(&obj2);
+  EXPECT_TRUE(&obj1 == obj1_ptr1);
+  EXPECT_TRUE(obj1_ptr1 == &obj1);
+  EXPECT_TRUE(&obj2 == obj2_ptr1);
+  EXPECT_TRUE(obj2_ptr1 == &obj2);
   {
     ObservedPtr<PseudoObservable> null_ptr2;
     EXPECT_TRUE(null_ptr1 == null_ptr2);
@@ -169,6 +173,10 @@ TEST(ObservePtr, NotEquals) {
   ObservedPtr<PseudoObservable> null_ptr1;
   ObservedPtr<PseudoObservable> obj1_ptr1(&obj1);
   ObservedPtr<PseudoObservable> obj2_ptr1(&obj2);
+  EXPECT_FALSE(&obj1 != obj1_ptr1);
+  EXPECT_FALSE(obj1_ptr1 != &obj1);
+  EXPECT_FALSE(&obj2 != obj2_ptr1);
+  EXPECT_FALSE(obj2_ptr1 != &obj2);
   {
     ObservedPtr<PseudoObservable> null_ptr2;
     ObservedPtr<PseudoObservable> obj1_ptr2(&obj1);

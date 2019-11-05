@@ -80,6 +80,17 @@ class ObservedPtr final : public Observable::ObserverIface {
     return m_pObservable == that.m_pObservable;
   }
   bool operator!=(const ObservedPtr& that) const { return !(*this == that); }
+
+  template <typename U>
+  bool operator==(const U* that) const {
+    return Get() == that;
+  }
+
+  template <typename U>
+  bool operator!=(const U* that) const {
+    return !(*this == that);
+  }
+
   explicit operator bool() const { return HasObservable(); }
   T* Get() const { return m_pObservable; }
   T& operator*() const { return *m_pObservable; }
@@ -88,6 +99,16 @@ class ObservedPtr final : public Observable::ObserverIface {
  private:
   T* m_pObservable = nullptr;
 };
+
+template <typename T, typename U>
+inline bool operator==(const U* lhs, const ObservedPtr<T>& rhs) {
+  return rhs == lhs;
+}
+
+template <typename T, typename U>
+inline bool operator!=(const U* lhs, const ObservedPtr<T>& rhs) {
+  return rhs != lhs;
+}
 
 }  // namespace fxcrt
 
