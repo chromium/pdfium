@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Originally from chromium's /src/base/md5_unittest.cc.
-
 #include "core/fdrm/fx_crypt.h"
 
 #include <memory>
@@ -31,6 +29,7 @@ void CheckArcFourContext(const CRYPT_rc4_context& context,
 
 }  // namespace
 
+// Originally from chromium's /src/base/md5_unittest.cc.
 TEST(FXCRYPT, CryptToBase16) {
   uint8_t data[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
                     0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e};
@@ -196,38 +195,95 @@ TEST(FXCRYPT, ContextWithStringData) {
   EXPECT_EQ(expected, actual);
 }
 
+TEST(FXCRYPT, Sha1Empty) {
+  static const char kInput[] = "";
+  static const uint8_t kExpected[] = {0xda, 0x39, 0xa3, 0xee, 0x5e, 0x6b, 0x4b,
+                                      0x0d, 0x32, 0x55, 0xbf, 0xef, 0x95, 0x60,
+                                      0x18, 0x90, 0xaf, 0xd8, 0x07, 0x09};
+  uint8_t actual[20];
+  CRYPT_SHA1Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
+                     actual);
+
+  for (size_t i = 0; i < FX_ArraySize(kExpected); i++)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
+}
+
+// Originally from chromium's /src/base/sha1_unittest.cc
+TEST(FXCRYPT, Sha1TestA1) {
+  // Example A.1 from FIPS 180-2: one-block message.
+  static const char kInput[] = "abc";
+  static const uint8_t kExpected[] = {0xa9, 0x99, 0x3e, 0x36, 0x47, 0x06, 0x81,
+                                      0x6a, 0xba, 0x3e, 0x25, 0x71, 0x78, 0x50,
+                                      0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d};
+  uint8_t actual[20];
+  CRYPT_SHA1Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
+                     actual);
+
+  for (size_t i = 0; i < FX_ArraySize(kExpected); i++)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
+}
+
+TEST(FXCRYPT, Sha1TestA2) {
+  // Example A.2 from FIPS 180-2: multi-block message.
+  static const char kInput[] =
+      "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+  static const uint8_t kExpected[] = {0x84, 0x98, 0x3e, 0x44, 0x1c, 0x3b, 0xd2,
+                                      0x6e, 0xba, 0xae, 0x4a, 0xa1, 0xf9, 0x51,
+                                      0x29, 0xe5, 0xe5, 0x46, 0x70, 0xf1};
+
+  uint8_t actual[20];
+  CRYPT_SHA1Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
+                     actual);
+
+  for (size_t i = 0; i < FX_ArraySize(kExpected); i++)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
+}
+
+TEST(FXCRYPT, Sha256Empty) {
+  static const char kInput[] = "";
+  static const uint8_t kExpected[32] = {
+      0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14, 0x9a, 0xfb, 0xf4,
+      0xc8, 0x99, 0x6f, 0xb9, 0x24, 0x27, 0xae, 0x41, 0xe4, 0x64, 0x9b,
+      0x93, 0x4c, 0xa4, 0x95, 0x99, 0x1b, 0x78, 0x52, 0xb8, 0x55};
+  uint8_t actual[32];
+  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
+                       actual);
+  for (size_t i = 0; i < FX_ArraySize(kExpected); ++i)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
+}
+
 TEST(FXCRYPT, Sha256TestB1) {
   // Example B.1 from FIPS 180-2: one-block message.
-  const char* input = "abc";
-  const uint8_t expected[32] = {0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea,
-                                0x41, 0x41, 0x40, 0xde, 0x5d, 0xae, 0x22, 0x23,
-                                0xb0, 0x03, 0x61, 0xa3, 0x96, 0x17, 0x7a, 0x9c,
-                                0xb4, 0x10, 0xff, 0x61, 0xf2, 0x00, 0x15, 0xad};
+  static const char kInput[] = "abc";
+  static const uint8_t kExpected[32] = {
+      0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea, 0x41, 0x41, 0x40,
+      0xde, 0x5d, 0xae, 0x22, 0x23, 0xb0, 0x03, 0x61, 0xa3, 0x96, 0x17,
+      0x7a, 0x9c, 0xb4, 0x10, 0xff, 0x61, 0xf2, 0x00, 0x15, 0xad};
   uint8_t actual[32];
-  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(input), strlen(input),
+  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
                        actual);
-  for (size_t i = 0; i < 32; ++i)
-    EXPECT_EQ(expected[i], actual[i]) << " at byte " << i;
+  for (size_t i = 0; i < FX_ArraySize(kExpected); ++i)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
 }
 
 TEST(FXCRYPT, Sha256TestB2) {
   // Example B.2 from FIPS 180-2: multi-block message.
-  const char* input =
+  static const char kInput[] =
       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
-  const uint8_t expected[32] = {0x24, 0x8d, 0x6a, 0x61, 0xd2, 0x06, 0x38, 0xb8,
-                                0xe5, 0xc0, 0x26, 0x93, 0x0c, 0x3e, 0x60, 0x39,
-                                0xa3, 0x3c, 0xe4, 0x59, 0x64, 0xff, 0x21, 0x67,
-                                0xf6, 0xec, 0xed, 0xd4, 0x19, 0xdb, 0x06, 0xc1};
+  static const uint8_t kExpected[32] = {
+      0x24, 0x8d, 0x6a, 0x61, 0xd2, 0x06, 0x38, 0xb8, 0xe5, 0xc0, 0x26,
+      0x93, 0x0c, 0x3e, 0x60, 0x39, 0xa3, 0x3c, 0xe4, 0x59, 0x64, 0xff,
+      0x21, 0x67, 0xf6, 0xec, 0xed, 0xd4, 0x19, 0xdb, 0x06, 0xc1};
   uint8_t actual[32];
-  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(input), strlen(input),
+  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
                        actual);
-  for (size_t i = 0; i < 32; ++i)
-    EXPECT_EQ(expected[i], actual[i]) << " at byte " << i;
+  for (size_t i = 0; i < FX_ArraySize(kExpected); ++i)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
 }
 
 TEST(FXCRYPT, CRYPT_ArcFourSetup) {
   {
-    const uint8_t kNullPermutation[kRC4ContextPermutationLength] = {
+    static const uint8_t kNullPermutation[kRC4ContextPermutationLength] = {
         0,   35,  3,   43,  9,   11,  65,  229, 32,  36,  134, 98,  59,  34,
         173, 153, 214, 200, 64,  161, 191, 62,  6,   25,  56,  234, 49,  246,
         69,  133, 203, 194, 10,  42,  228, 198, 195, 245, 236, 91,  206, 23,
@@ -252,7 +308,7 @@ TEST(FXCRYPT, CRYPT_ArcFourSetup) {
     CheckArcFourContext(context, 0, 0, kNullPermutation);
   }
   {
-    const uint8_t kFoobarPermutation[kRC4ContextPermutationLength] = {
+    static const uint8_t kFoobarPermutation[kRC4ContextPermutationLength] = {
         102, 214, 39,  49,  17,  132, 244, 106, 114, 76,  183, 212, 116, 73,
         42,  103, 128, 246, 139, 199, 31,  234, 25,  109, 48,  19,  121, 4,
         20,  54,  134, 77,  163, 38,  61,  101, 145, 78,  215, 96,  92,  80,
@@ -273,15 +329,16 @@ TEST(FXCRYPT, CRYPT_ArcFourSetup) {
         71,  233, 235, 198, 95,  51,  110, 255, 253, 72,  115, 0,   47,  94,
         29,  45,  14,  111};
     CRYPT_rc4_context context;
-    const uint8_t kFooBar[] = "foobar";
+    static const uint8_t kFooBar[] = "foobar";
     CRYPT_ArcFourSetup(&context, kFooBar, FX_ArraySize(kFooBar) - 1);
     CheckArcFourContext(context, 0, 0, kFoobarPermutation);
   }
 }
 
 TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
-  const uint8_t kDataShort[] = "The Quick Fox Jumped Over The Lazy Brown Dog.";
-  const uint8_t kDataLong[] =
+  static const uint8_t kDataShort[] =
+      "The Quick Fox Jumped Over The Lazy Brown Dog.";
+  static const uint8_t kDataLong[] =
       "The Quick Fox Jumped Over The Lazy Brown Dog.\n"
       "1234567890123456789012345678901234567890123456789012345678901234567890\n"
       "1234567890123456789012345678901234567890123456789012345678901234567890\n"
@@ -293,7 +350,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
 
     uint8_t data_short[FX_ArraySize(kDataShort)];
     memcpy(data_short, kDataShort, FX_ArraySize(kDataShort));
-    const uint8_t kExpectedEncryptedDataShort[] = {
+    static const uint8_t kExpectedEncryptedDataShort[] = {
         138, 112, 236, 97,  242, 66,  52,  89,  225, 38,  88,  8,
         47,  78,  216, 24,  170, 106, 26,  199, 208, 131, 157, 242,
         55,  11,  25,  90,  66,  182, 19,  255, 210, 181, 85,  69,
@@ -305,7 +362,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     for (size_t i = 0; i < FX_ArraySize(data_short); ++i)
       EXPECT_EQ(kExpectedEncryptedDataShort[i], data_short[i]) << i;
 
-    const uint8_t kPermutation[kRC4ContextPermutationLength] = {
+    static const uint8_t kPermutation[kRC4ContextPermutationLength] = {
         0,   198, 10,  37,  253, 192, 171, 183, 99,  8,   144, 103, 208, 191,
         149, 9,   228, 243, 94,  150, 169, 151, 210, 206, 221, 235, 32,  186,
         212, 122, 72,  200, 236, 138, 244, 217, 158, 213, 139, 242, 17,  143,
@@ -333,7 +390,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
 
     uint8_t data_long[FX_ArraySize(kDataLong)];
     memcpy(data_long, kDataLong, FX_ArraySize(kDataLong));
-    const uint8_t kExpectedEncryptedDataLong[] = {
+    static const uint8_t kExpectedEncryptedDataLong[] = {
         138, 112, 236, 97,  242, 66,  52,  89,  225, 38,  88,  8,   47,  78,
         216, 24,  170, 106, 26,  199, 208, 131, 157, 242, 55,  11,  25,  90,
         66,  182, 19,  255, 210, 181, 85,  69,  31,  240, 206, 171, 97,  62,
@@ -362,7 +419,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     for (size_t i = 0; i < FX_ArraySize(data_long); ++i)
       EXPECT_EQ(kExpectedEncryptedDataLong[i], data_long[i]) << i;
 
-    const uint8_t kPermutation[kRC4ContextPermutationLength] = {
+    static const uint8_t kPermutation[kRC4ContextPermutationLength] = {
         172, 59,  196, 72,  101, 21,  215, 210, 212, 52,  243, 73,  47,  213,
         211, 50,  228, 144, 66,  93,  169, 31,  237, 206, 221, 235, 222, 250,
         97,  87,  174, 164, 190, 111, 27,  217, 173, 189, 65,  11,  115, 171,
@@ -386,12 +443,12 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
   }
   {
     CRYPT_rc4_context context;
-    const uint8_t kFooBar[] = "foobar";
+    static const uint8_t kFooBar[] = "foobar";
     CRYPT_ArcFourSetup(&context, kFooBar, FX_ArraySize(kFooBar) - 1);
 
     uint8_t data_short[FX_ArraySize(kDataShort)];
     memcpy(data_short, kDataShort, FX_ArraySize(kDataShort));
-    const uint8_t kExpectedEncryptedDataShort[] = {
+    static const uint8_t kExpectedEncryptedDataShort[] = {
         59,  193, 117, 206, 167, 54,  218, 7,   229, 214, 188, 55,
         90,  205, 196, 25,  36,  114, 199, 218, 161, 107, 122, 119,
         106, 167, 44,  175, 240, 123, 192, 102, 174, 167, 105, 187,
@@ -403,7 +460,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     for (size_t i = 0; i < FX_ArraySize(data_short); ++i)
       EXPECT_EQ(kExpectedEncryptedDataShort[i], data_short[i]) << i;
 
-    const uint8_t kPermutation[kRC4ContextPermutationLength] = {
+    static const uint8_t kPermutation[kRC4ContextPermutationLength] = {
         102, 41,  45,  82,  124, 141, 237, 38,  6,   64,  90,  140, 254, 96,
         220, 109, 99,  49,  27,  227, 205, 75,  191, 37,  17,  54,  83,  196,
         108, 79,  31,  190, 180, 0,   125, 194, 243, 156, 224, 246, 253, 193,
@@ -427,12 +484,12 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
   }
   {
     CRYPT_rc4_context context;
-    const uint8_t kFooBar[] = "foobar";
+    static const uint8_t kFooBar[] = "foobar";
     CRYPT_ArcFourSetup(&context, kFooBar, FX_ArraySize(kFooBar) - 1);
 
     uint8_t data_long[FX_ArraySize(kDataLong)];
     memcpy(data_long, kDataLong, FX_ArraySize(kDataLong));
-    const uint8_t kExpectedEncryptedDataLong[] = {
+    static const uint8_t kExpectedEncryptedDataLong[] = {
         59,  193, 117, 206, 167, 54,  218, 7,   229, 214, 188, 55,  90,  205,
         196, 25,  36,  114, 199, 218, 161, 107, 122, 119, 106, 167, 44,  175,
         240, 123, 192, 102, 174, 167, 105, 187, 202, 70,  121, 81,  17,  30,
@@ -461,7 +518,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     for (size_t i = 0; i < FX_ArraySize(data_long); ++i)
       EXPECT_EQ(kExpectedEncryptedDataLong[i], data_long[i]) << i;
 
-    const uint8_t kPermutation[kRC4ContextPermutationLength] = {
+    static const uint8_t kPermutation[kRC4ContextPermutationLength] = {
         188, 12,  81,  130, 228, 58,  124, 218, 72,  210, 50,  70,  166, 38,
         110, 111, 73,  49,  27,  227, 249, 21,  1,   226, 17,  54,  53,  16,
         108, 51,  31,  123, 221, 23,  125, 148, 5,   200, 208, 246, 253, 193,
@@ -485,10 +542,27 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
   }
 }
 
-TEST(FXCRYPT, Sha512Test) {
-  const char* const input =
+// Verified against echo -n "..." | openssl sha384
+TEST(FXCRYPT, Sha384Test) {
+  static const char kInput[] =
       "This is a simple test. To see whether it is getting correct value.";
-  const uint8_t expected[64] = {
+  static const uint8_t kExpected[48] = {
+      0x95, 0x54, 0xff, 0xd3, 0x89, 0xf0, 0xd6, 0x42, 0xe9, 0x33, 0xfe, 0x4c,
+      0x07, 0x81, 0x19, 0xca, 0xcb, 0xb3, 0x14, 0x46, 0xd8, 0xbd, 0xa4, 0xf4,
+      0x12, 0xd5, 0x54, 0x03, 0x79, 0x28, 0xe5, 0xdc, 0x12, 0xa5, 0x1b, 0xe9,
+      0xfe, 0x59, 0x25, 0x3c, 0x92, 0x30, 0x5e, 0xe5, 0x0e, 0x03, 0x58, 0x07};
+  uint8_t actual[48];
+  CRYPT_SHA384Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
+                       actual);
+  for (size_t i = 0; i < FX_ArraySize(kExpected); ++i)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
+}
+
+// Verified against echo -n "..." | openssl sha512
+TEST(FXCRYPT, Sha512Test) {
+  static const char kInput[] =
+      "This is a simple test. To see whether it is getting correct value.";
+  static const uint8_t kExpected[64] = {
       0x86, 0xB5, 0x05, 0x63, 0xA2, 0x6F, 0xD6, 0xFA, 0xEB, 0x9B, 0xC3,
       0xBB, 0x9E, 0xB7, 0x03, 0x82, 0xB6, 0x50, 0x55, 0x6B, 0x90, 0x69,
       0xD0, 0xA7, 0x53, 0x0A, 0x34, 0xDD, 0xEA, 0x11, 0xCC, 0x91, 0x5C,
@@ -496,8 +570,8 @@ TEST(FXCRYPT, Sha512Test) {
       0x4A, 0xC6, 0x42, 0x56, 0x0C, 0xA3, 0x00, 0x69, 0x44, 0x77, 0xCC,
       0x3E, 0xD4, 0xD6, 0x10, 0x31, 0xC6, 0xC0, 0x58, 0xCF};
   uint8_t actual[64];
-  CRYPT_SHA512Generate(reinterpret_cast<const uint8_t*>(input), strlen(input),
+  CRYPT_SHA512Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
                        actual);
-  for (size_t i = 0; i < 64; ++i)
-    EXPECT_EQ(expected[i], actual[i]) << " at byte " << i;
+  for (size_t i = 0; i < FX_ArraySize(kExpected); ++i)
+    EXPECT_EQ(kExpected[i], actual[i]) << " at byte " << i;
 }
