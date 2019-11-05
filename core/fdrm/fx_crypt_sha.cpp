@@ -363,15 +363,14 @@ void sha384_process(CRYPT_sha2_context* ctx, const uint8_t data[128]) {
 
 void CRYPT_SHA1Start(CRYPT_sha1_context* context) {
   SHA_Core_Init(context->h);
+  context->total_bytes = 0;
   context->blkused = 0;
-  context->lenhi = context->lenlo = 0;
 }
 
 void CRYPT_SHA1Update(CRYPT_sha1_context* context,
                       const uint8_t* data,
                       uint32_t size) {
-  context->lenlo += size;
-  context->lenhi += (context->lenlo < size);  // Unsigned, so well-defined.
+  context->total_bytes += size;
   if (context->blkused && size < 64 - context->blkused) {
     memcpy(context->block + context->blkused, data, size);
     context->blkused += size;
@@ -396,8 +395,7 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* context,
 }
 
 void CRYPT_SHA1Finish(CRYPT_sha1_context* context, uint8_t digest[20]) {
-  uint32_t lenhi = (context->lenhi << 3) | (context->lenlo >> (32 - 3));
-  uint32_t lenlo = (context->lenlo << 3);
+  uint64_t total_bits = 8 * context->total_bytes;  // Prior to padding.
   uint8_t c[64];
   uint8_t pad;
   if (context->blkused >= 56) {
@@ -408,14 +406,14 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context, uint8_t digest[20]) {
   memset(c, 0, pad);
   c[0] = 0x80;
   CRYPT_SHA1Update(context, c, pad);
-  c[0] = (lenhi >> 24) & 0xFF;
-  c[1] = (lenhi >> 16) & 0xFF;
-  c[2] = (lenhi >> 8) & 0xFF;
-  c[3] = (lenhi >> 0) & 0xFF;
-  c[4] = (lenlo >> 24) & 0xFF;
-  c[5] = (lenlo >> 16) & 0xFF;
-  c[6] = (lenlo >> 8) & 0xFF;
-  c[7] = (lenlo >> 0) & 0xFF;
+  c[0] = (total_bits >> 56) & 0xFF;
+  c[1] = (total_bits >> 48) & 0xFF;
+  c[2] = (total_bits >> 40) & 0xFF;
+  c[3] = (total_bits >> 32) & 0xFF;
+  c[4] = (total_bits >> 24) & 0xFF;
+  c[5] = (total_bits >> 16) & 0xFF;
+  c[6] = (total_bits >> 8) & 0xFF;
+  c[7] = (total_bits >> 0) & 0xFF;
   CRYPT_SHA1Update(context, c, 8);
   for (int i = 0; i < 5; i++) {
     digest[i * 4] = (context->h[i] >> 24) & 0xFF;

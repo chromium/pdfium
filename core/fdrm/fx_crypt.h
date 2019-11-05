@@ -35,11 +35,10 @@ struct CRYPT_md5_context {
 };
 
 struct CRYPT_sha1_context {
+  uint64_t total_bytes;
+  uint32_t blkused;  // Constrained to [0, 64).
   uint32_t h[5];
   uint8_t block[64];
-  uint32_t blkused;  // Constrained to [0, 64).
-  uint32_t lenhi;
-  uint32_t lenlo;
 };
 
 struct CRYPT_sha2_context {
