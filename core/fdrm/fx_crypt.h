@@ -35,11 +35,11 @@ struct CRYPT_md5_context {
 };
 
 struct CRYPT_sha1_context {
-  unsigned int h[5];
-  unsigned char block[64];
-  int blkused;
-  unsigned int lenhi;
-  unsigned int lenlo;
+  uint32_t h[5];
+  uint8_t block[64];
+  uint32_t blkused;  // Constrained to [0, 64).
+  uint32_t lenhi;
+  uint32_t lenlo;
 };
 
 struct CRYPT_sha2_context {
