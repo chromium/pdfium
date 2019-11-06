@@ -651,9 +651,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 #define FPDF_NO_NATIVETEXT 0x04
 // Grayscale output.
 #define FPDF_GRAYSCALE 0x08
-// Set if you want to get some debug info.
+// Obsolete, has no effect, retained for compatibility.
 #define FPDF_DEBUG_INFO 0x80
-// Set if you don't want to catch exceptions.
+// Obsolete, has no effect, retained for compatibility.
 #define FPDF_NO_CATCH 0x100
 // Limit image cache size.
 #define FPDF_RENDER_LIMITEDIMAGECACHE 0x200
