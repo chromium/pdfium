@@ -223,6 +223,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
                                                         double* right,
                                                         double* bottom,
                                                         double* top) {
+  if (!left || !right || !bottom || !top)
+    return false;
+
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
   if (!textpage)
     return false;
@@ -243,6 +246,9 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
                          double* right,
                          double* bottom,
                          double* top) {
+  if (!left || !right || !bottom || !top)
+    return false;
+
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
   if (!textpage)
     return false;
