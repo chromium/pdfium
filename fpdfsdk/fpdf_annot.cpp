@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
@@ -769,12 +770,37 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   // If value is null, we're in remove mode. Otherwise, we're in add/update
   // mode.
   if (value) {
+    // Annotation object's non-empty bounding rect will be used as the /BBox
+    // for the associated /XObject object
+    CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
+    constexpr float kMinSize = 0.000001f;
+    if (rect.Width() < kMinSize || rect.Height() < kMinSize)
+      return false;
+
+    CPDF_AnnotContext* pAnnotContext =
+        CPDFAnnotContextFromFPDFAnnotation(annot);
+
+    CPDF_Document* pDoc = pAnnotContext->GetPage()->GetDocument();
+    if (!pDoc)
+      return false;
+
+    CPDF_Stream* pNewIndirectStream = pDoc->NewIndirect<CPDF_Stream>();
+
+    ByteString newAPStream =
+        PDF_EncodeText(WideStringFromFPDFWideString(value));
+    pNewIndirectStream->SetData(newAPStream.raw_span());
+
+    CPDF_Dictionary* pStreamDict = pNewIndirectStream->GetDict();
+    pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
+    pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
+    pStreamDict->SetRectFor("BBox", rect);
+
+    // Storing reference to indirect object in annotation's AP
     if (!pApDict)
       pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
 
-    ByteString newValue = PDF_EncodeText(WideStringFromFPDFWideString(value));
-    auto* pNewApStream = pApDict->SetNewFor<CPDF_Stream>(modeKey);
-    pNewApStream->SetData(newValue.raw_span());
+    pApDict->SetNewFor<CPDF_Reference>(modeKey, pDoc,
+                                       pNewIndirectStream->GetObjNum());
   } else {
     if (pApDict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)

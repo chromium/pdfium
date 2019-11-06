@@ -106,6 +106,7 @@ source_set("fpdfsdk") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "fpdf_annot_unittest.cpp",
     "fpdf_catalog_unittest.cpp",
     "fpdf_doc_unittest.cpp",
     "fpdf_edit_unittest.cpp",
@@ -114,6 +115,7 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":fpdfsdk",
     "../:pdfium_public_headers",
+    "../constants",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",
     "../core/fpdfapi/render",
