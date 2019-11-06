@@ -42,7 +42,7 @@ struct CRYPT_sha1_context {
 };
 
 struct CRYPT_sha2_context {
-  uint64_t total[2];
+  uint64_t total_bytes;
   uint64_t state[8];
   uint8_t buffer[128];
 };
