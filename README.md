@@ -110,8 +110,8 @@ clang_use_chrome_plugins = false  # Currently must be false.
 For sample applications like `pdfium_test` to build, one must set
 `pdf_is_standalone = true`.
 
-To use the Skia backend, one must set `use_cxx11 = false` which will build the
-entire project with C++14.
+To enable V8, XFA, or the Skia backend, one must set `use_cxx11 = false` which
+will build the entire project with C++14.
 
 When complete the arguments will be stored in `<directory>/args.gn`, and
 GN will automatically use the new arguments to generate build files.
