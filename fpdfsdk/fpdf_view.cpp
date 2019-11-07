@@ -524,6 +524,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
 
   auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  CPDF_Page::RenderContextClearer clearer(pPage);
   pPage->SetRenderContext(std::move(pOwnedContext));
 
   RetainPtr<CFX_DIBitmap> pBitmap;
@@ -572,9 +573,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       pContext->m_pRenderer->Continue(nullptr);
     }
 
-    // Reset rendering context
-    pPage->SetRenderContext(nullptr);
-
     // Begin rendering to the printer. Add flag to indicate the renderer should
     // pause after each image mask.
     pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
@@ -612,8 +610,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     if (!bitsStretched)
       WinDC.SetDIBits(pBitmap, 0, 0);
   }
-
-  pPage->SetRenderContext(nullptr);
 }
 #endif  // defined(OS_WIN)
 
@@ -632,11 +628,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
+  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  CPDF_Page::RenderContextClearer clearer(pPage);
+  pPage->SetRenderContext(std::move(pOwnedContext));
 
-  CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
-  pContext->m_pDevice.reset(pDevice);
+  auto pOwnedDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+  CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
+  pContext->m_pDevice = std::move(pOwnedDevice);
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
@@ -647,7 +646,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   pDevice->Flush(true);
   pBitmap->UnPreMultiply();
 #endif
-  pPage->SetRenderContext(nullptr);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
@@ -665,6 +663,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 
   auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  CPDF_Page::RenderContextClearer clearer(pPage);
   pPage->SetRenderContext(std::move(pOwnedContext));
 
   auto pOwnedDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
@@ -685,8 +684,6 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
     transform_matrix *= CFXMatrixFromFSMatrix(*matrix);
   RenderPageImpl(pContext, pPage, transform_matrix, clip_rect, flags, true,
                  nullptr);
-
-  pPage->SetRenderContext(nullptr);
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -697,14 +694,17 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   if (!pPage)
     return nullptr;
 
-  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
-  CFX_DefaultRenderDevice* skDevice = new CFX_DefaultRenderDevice;
+  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  CPDF_Page::RenderContextClearer clearer(pPage);
+  pPage->SetRenderContext(std::move(pOwnedContext));
+
+  auto skDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
-  pContext->m_pDevice.reset(skDevice);
+  pContext->m_pDevice = std::move(skDevice);
+
   RenderPageWithContext(pContext, page, 0, 0, size_x, size_y, 0, 0, true,
                         nullptr);
-  pPage->SetRenderContext(nullptr);
   return recorder;
 }
 #endif  // _SKIA_SUPPORT_

@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
 class CPDF_Dictionary;
@@ -39,6 +40,15 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
    public:
     virtual ~RenderCacheIface() {}
     virtual void ResetBitmapForImage(const RetainPtr<CPDF_Image>& pImage) = 0;
+  };
+
+  class RenderContextClearer {
+   public:
+    explicit RenderContextClearer(CPDF_Page* pPage);
+    ~RenderContextClearer();
+
+   private:
+    UnownedPtr<CPDF_Page> const m_pPage;
   };
 
   template <typename T, typename... Args>
