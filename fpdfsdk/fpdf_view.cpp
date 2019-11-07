@@ -556,7 +556,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pContext->m_pDevice = pdfium::MakeUnique<CPDF_WindowsRenderDevice>(dc);
   }
 
-  RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
                         rotate, flags, true, nullptr);
 
   if (bHasMask) {
@@ -582,7 +582,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
     pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 
-    RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+    RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
                           rotate, flags, true, nullptr);
 
     // Render masks
@@ -639,7 +639,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
-  RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
                         rotate, flags, true, nullptr);
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -703,7 +703,7 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice = std::move(skDevice);
 
-  RenderPageWithContext(pContext, page, 0, 0, size_x, size_y, 0, 0, true,
+  RenderPageWithContext(pPage, pContext, 0, 0, size_x, size_y, 0, 0, true,
                         nullptr);
   return recorder;
 }
@@ -895,8 +895,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
   destroyer.Unleak(CFXDIBitmapFromFPDFBitmap(bitmap));
 }
 
-void RenderPageWithContext(CPDF_PageRenderContext* pContext,
-                           FPDF_PAGE page,
+void RenderPageWithContext(CPDF_Page* pPage,
+                           CPDF_PageRenderContext* pContext,
                            int start_x,
                            int start_y,
                            int size_x,
@@ -905,10 +905,6 @@ void RenderPageWithContext(CPDF_PageRenderContext* pContext,
                            int flags,
                            bool bNeedToRestore,
                            CPDFSDK_PauseAdapter* pause) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
-    return;
-
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
   RenderPageImpl(pContext, pPage, pPage->GetDisplayMatrix(rect, rotate), rect,
                  flags, bNeedToRestore, pause);

@@ -261,8 +261,8 @@ void SetPDFSandboxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL IsPDFSandboxPolicyEnabled(FPDF_DWORD policy);
 
 // TODO(dsinclair): Where should this live?
-void RenderPageWithContext(CPDF_PageRenderContext* pContext,
-                           FPDF_PAGE page,
+void RenderPageWithContext(CPDF_Page* pPage,
+                           CPDF_PageRenderContext* pContext,
                            int start_x,
                            int start_y,
                            int size_x,

@@ -56,18 +56,19 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   CPDFSDK_PauseAdapter pause_adapter(pause);
-  RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
                         rotate, flags, false, &pause_adapter);
 
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush(false);
   pBitmap->UnPreMultiply();
 #endif
-  if (pContext->m_pRenderer) {
-    return CPDF_ProgressiveRenderer::ToFPDFStatus(
-        pContext->m_pRenderer->GetStatus());
-  }
-  return FPDF_RENDER_FAILED;
+
+  if (!pContext->m_pRenderer)
+    return FPDF_RENDER_FAILED;
+
+  return CPDF_ProgressiveRenderer::ToFPDFStatus(
+      pContext->m_pRenderer->GetStatus());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
