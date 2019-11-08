@@ -30,7 +30,6 @@ class CBC_QRCoder final {
   int32_t GetMaskPattern() const;
   int32_t GetNumTotalBytes() const;
   int32_t GetNumDataBytes() const;
-  int32_t GetNumECBytes() const;
   int32_t GetNumRSBlocks() const;
   const CBC_CommonByteMatrix* GetMatrix() const;
 

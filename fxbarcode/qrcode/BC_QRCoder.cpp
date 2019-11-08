@@ -55,10 +55,6 @@ int32_t CBC_QRCoder::GetNumDataBytes() const {
   return m_numDataBytes;
 }
 
-int32_t CBC_QRCoder::GetNumECBytes() const {
-  return m_numECBytes;
-}
-
 int32_t CBC_QRCoder::GetNumRSBlocks() const {
   return m_numRSBlocks;
 }
