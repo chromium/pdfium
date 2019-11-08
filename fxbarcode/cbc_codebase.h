@@ -40,8 +40,6 @@ class CBC_CodeBase {
   bool SetModuleWidth(int32_t moduleWidth);
   bool SetHeight(int32_t height);
   bool SetWidth(int32_t width);
-  void SetBackgroundColor(FX_ARGB backgroundColor);
-  void SetBarcodeColor(FX_ARGB foregroundColor);
 
  protected:
   std::unique_ptr<CBC_Writer> m_pBCWriter;

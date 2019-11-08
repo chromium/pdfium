@@ -41,14 +41,6 @@ bool CBC_Writer::SetWidth(int32_t width) {
   return true;
 }
 
-void CBC_Writer::SetBackgroundColor(FX_ARGB backgroundColor) {
-  m_backgroundColor = backgroundColor;
-}
-
-void CBC_Writer::SetBarcodeColor(FX_ARGB foregroundColor) {
-  m_barColor = foregroundColor;
-}
-
 bool CBC_Writer::SetTextLocation(BC_TEXT_LOC location) {
   return false;
 }

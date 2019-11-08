@@ -10,8 +10,6 @@
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 
-class CFX_DIBitmap;
-
 class CBC_Writer {
  public:
   CBC_Writer();
@@ -21,8 +19,6 @@ class CBC_Writer {
   virtual bool SetModuleWidth(int32_t moduleWidth);
   virtual bool SetHeight(int32_t height);
   virtual bool SetWidth(int32_t width);
-  virtual void SetBackgroundColor(FX_ARGB backgroundColor);
-  virtual void SetBarcodeColor(FX_ARGB foregroundColor);
   virtual bool SetTextLocation(BC_TEXT_LOC location);
   virtual bool SetWideNarrowRatio(int8_t ratio);
   virtual bool SetStartChar(char start);
@@ -30,14 +26,15 @@ class CBC_Writer {
   virtual bool SetErrorCorrectionLevel(int32_t level);
 
  protected:
+  static const FX_ARGB kBarColor = 0xff000000;
+  static const FX_ARGB kBackgroundColor = 0xffffffff;
+
   int32_t m_CharEncoding = 0;
   int32_t m_ModuleHeight = 1;
   int32_t m_ModuleWidth = 1;
   int32_t m_Height = 320;
   int32_t m_Width = 640;
   FXDIB_Format m_colorSpace = FXDIB_Argb;
-  FX_ARGB m_barColor = 0xff000000;
-  FX_ARGB m_backgroundColor = 0xffffffff;
 };
 
 #endif  // FXBARCODE_BC_WRITER_H_

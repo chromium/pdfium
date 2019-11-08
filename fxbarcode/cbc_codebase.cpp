@@ -69,11 +69,3 @@ bool CBC_CodeBase::SetHeight(int32_t height) {
 bool CBC_CodeBase::SetWidth(int32_t width) {
   return m_pBCWriter->SetWidth(width);
 }
-
-void CBC_CodeBase::SetBackgroundColor(FX_ARGB backgroundColor) {
-  m_pBCWriter->SetBackgroundColor(backgroundColor);
-}
-
-void CBC_CodeBase::SetBarcodeColor(FX_ARGB foregroundColor) {
-  m_pBCWriter->SetBarcodeColor(foregroundColor);
-}

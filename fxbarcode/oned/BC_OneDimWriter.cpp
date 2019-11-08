@@ -166,7 +166,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
     rect.right -= 1;
   }
   FX_RECT re = matrix->TransformRect(rect).GetOuterRect();
-  device->FillRect(re, m_backgroundColor);
+  device->FillRect(re, kBackgroundColor);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));
   if (matrix) {
@@ -243,15 +243,14 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   CFX_PathData path;
   path.AppendRect(0, 0, static_cast<float>(m_Width),
                   static_cast<float>(m_Height));
-  device->DrawPath(&path, matrix, &stateData, m_backgroundColor,
-                   m_backgroundColor, FXFILL_ALTERNATE);
+  device->DrawPath(&path, matrix, &stateData, kBackgroundColor,
+                   kBackgroundColor, FXFILL_ALTERNATE);
   CFX_Matrix scaledMatrix(m_outputHScale, 0.0, 0.0,
                           static_cast<float>(m_Height), 0.0, 0.0);
   scaledMatrix.Concat(*matrix);
   for (const auto& rect : m_output) {
     CFX_GraphStateData data;
-    device->DrawPath(&rect, &scaledMatrix, &data, m_barColor, 0,
-                     FXFILL_WINDING);
+    device->DrawPath(&rect, &scaledMatrix, &data, kBarColor, 0, FXFILL_WINDING);
   }
 
   return m_locTextLoc == BC_TEXT_LOC_NONE || !contents.Contains(' ') ||
