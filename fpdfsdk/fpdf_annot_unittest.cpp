@@ -44,7 +44,7 @@ TEST_F(PDFAnnotTest, SetAP) {
   EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                                ap_stream.get()));
 
-  FS_RECTF bounding_rect{206.f, 753.f, 339.f, 709.f};
+  const FS_RECTF bounding_rect{206.0f, 753.0f, 339.0f, 709.0f};
   EXPECT_TRUE(FPDFAnnot_SetRect(annot.get(), &bounding_rect));
 
   EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
@@ -59,9 +59,9 @@ TEST_F(PDFAnnotTest, SetAP) {
   ASSERT_TRUE(ap_dict);
   CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
-  ByteString type = stream_dict->GetStringFor("Type");
+  ByteString type = stream_dict->GetStringFor(pdfium::annotation::kType);
   EXPECT_EQ("XObject", type);
-  ByteString sub_type = stream_dict->GetStringFor("Subtype");
+  ByteString sub_type = stream_dict->GetStringFor(pdfium::annotation::kSubtype);
   EXPECT_EQ("Form", sub_type);
 
   // Check that the appearance stream is same as we just set.

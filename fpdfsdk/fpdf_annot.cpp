@@ -791,8 +791,8 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     pNewIndirectStream->SetData(newAPStream.raw_span());
 
     CPDF_Dictionary* pStreamDict = pNewIndirectStream->GetDict();
-    pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
-    pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
+    pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "XObject");
+    pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Form");
     pStreamDict->SetRectFor("BBox", rect);
 
     // Storing reference to indirect object in annotation's AP
