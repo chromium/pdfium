@@ -1,0 +1,7 @@
+Alert: doc is [object global]
+Alert: icon is [object Object]
+Alert: icon list is now [object Object],[object Object]
+Alert: they are named icon1 and icon2
+Alert: they are also named icon1 and icon2
+Alert: but they are made anew each time since false is returned from comparison
+Alert: As expected, trying to change the name gave: Icon.name: Cannot assign to readonly property.

@@ -34,5 +34,5 @@ CJS_Result CJS_Icon::get_name(CJS_Runtime* pRuntime) {
 }
 
 CJS_Result CJS_Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
-  return CJS_Result::Failure(JSMessage::kNotSupportedError);
+  return CJS_Result::Failure(JSMessage::kReadOnlyError);
 }

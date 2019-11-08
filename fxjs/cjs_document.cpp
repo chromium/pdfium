@@ -1116,6 +1116,8 @@ CJS_Result CJS_Document::addIcon(
 }
 
 CJS_Result CJS_Document::get_icons(CJS_Runtime* pRuntime) {
+  // TODO(tsepez): Maybe make consistent with Acrobat Reader behavior which
+  // is to throw an exception under the default security settings.
   if (m_IconNames.empty())
     return CJS_Result::Success(pRuntime->NewUndefined());
 
