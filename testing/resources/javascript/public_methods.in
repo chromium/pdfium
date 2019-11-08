@@ -41,7 +41,10 @@ endobj
   /Rect [ 100 160 200 190 ]
   /Subtype /Widget
   /AA <<
-    /F 9 0 R
+    /C 16 0 R
+    /F 17 0 R
+    /K 18 0 R
+    /V 19 0 R
   >>
 >>
 endobj
@@ -65,7 +68,45 @@ endobj
 stream
 endstream
 endobj
-{{object 9 0}} <<
+{{object 10 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Text2)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 0 200 30]
+  /V (123)
+>>
+endobj
+{{object 11 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Text3)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 40 200 70]
+  /V (456)
+>>
+endobj
+{{object 12 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Text4)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 80 200 110]
+  /V (407.96)
+>>
+endobj
+{{object 16 0}} <<
+  /S /JavaScript
+  /JS (
+    app.alert('Unexpected script 16');
+  )
+>>
+endobj
+{{object 17 0}} <<
+  /S /JavaScript
   /JS (
     function expect(initial, expression, expected) {
       try {
@@ -107,7 +148,7 @@ endobj
     }
 
     try {
-      app.alert("*** starting test ***");
+      app.alert("*** starting test 1 ***");
 
       expectError('', "AFDate_Format()");
       expectError('', "AFDate_Format(1, 2)");
@@ -545,42 +586,62 @@ endobj
       expectError('', "AFTime_KeystrokeEx(1, 2)");
       expectEventValue("12:04", "AFTime_KeystrokeEx('blooey')", "12:04");
 
-      app.alert("*** ending test ***");
+      app.alert("*** ending test 1 ***");
     } catch (e) {
       app.alert("Truly unexpected error occured: " + e);
     }
   )
+>>
+endobj
+{{object 18 0}} <<
   /S /JavaScript
+  /JS (
+    // Re-run tests that depend on the "will commit" status of the event
+    // that triggered their execution.
+    try {
+      app.alert("*** starting test 2 ***");
+
+      expectError('', "AFDate_Keystroke()");
+      expectError('', "AFDate_Keystroke(1, 2)");
+      expectEventValue("04/19", "AFDate_Keystroke(2)", "04/19");
+      expectEventValue("04/19/15", "AFDate_Keystroke('blooey')", "04/19/15");
+
+      app.alert("**********************");
+
+      expectError('', "AFNumber_Keystroke()");
+      expectError('', "AFNumber_Keystroke(1)");
+      expectError("abc", "AFNumber_Keystroke(1, 2)");
+      expectEventValue("123", "AFNumber_Keystroke(1, 2)", "123");
+      expectEventValue("123", "AFNumber_Keystroke(1, 2, 3)", "123");
+
+      app.alert("**********************");
+
+      expectError('', "AFSpecial_KeystrokeEx()", '');
+      expectEventValue("12345", "AFSpecial_KeystrokeEx('')", "12345");      // No notification.
+      expectEventValue("123", "AFSpecial_KeystrokeEx('9999')", "123");      // Notifies invalid.
+      expectEventValue("12345", "AFSpecial_KeystrokeEx('9999')", "12345");  // Notifies too long.
+      expectEventValue("abcd", "AFSpecial_KeystrokeEx('9999')", "abcd");    // Notifies invalid.
+      expectEventValue("1234", "AFSpecial_KeystrokeEx('9999')", "1234");
+      expectEventValue("abcd", "AFSpecial_KeystrokeEx('XXXX')", "abcd");
+
+      app.alert("**********************");
+
+      expectError('', "AFMergeChange()");
+      expectError('', "AFMergeChange(1, 2)");
+      expect("one", "AFMergeChange(undefined)", "Aone");
+
+      app.alert("*** ending test 2 ***");
+    } catch (e) {
+      app.alert("Truly unexpected error occured: " + e);
+    }
+  )
 >>
 endobj
-{{object 10 0}} <<
-  /Type /Annot
-  /FT /Tx
-  /T (Text2)
-  /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [100 0 200 30]
-  /Subtype /Widget
-  /V (123)
->>
-endobj
-{{object 11 0}} <<
-  /Type /Annot
-  /FT /Tx
-  /T (Text3)
-  /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [100 40 200 70]
-  /Subtype /Widget
-  /V (456)
->>
-endobj
-{{object 12 0}} <<
-  /Type /Annot
-  /FT /Tx
-  /T (Text4)
-  /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [100 80 200 110]
-  /Subtype /Widget
-  /V (407.96)
+{{object 19 0}} <<
+  /S /JavaScript
+  /JS (
+    app.alert('Unexpected script 19');
+  )
 >>
 endobj
 {{xref}}
