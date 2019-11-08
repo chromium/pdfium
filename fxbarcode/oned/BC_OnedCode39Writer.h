@@ -27,10 +27,10 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
                     int32_t codeLength) override;
   bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
-  WideString RenderTextContents(WideStringView contents) override;
   bool SetTextLocation(BC_TEXT_LOC location) override;
   bool SetWideNarrowRatio(int8_t ratio) override;
 
+  WideString RenderTextContents(WideStringView contents);
   bool encodedContents(WideStringView contents, WideString* result);
 
  private:

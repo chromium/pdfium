@@ -30,7 +30,6 @@ class CBC_OneDimWriter : public CBC_Writer {
                             int32_t codeLength);
   virtual bool CheckContentValidity(WideStringView contents) = 0;
   virtual WideString FilterContents(WideStringView contents) = 0;
-  virtual WideString RenderTextContents(WideStringView contents);
   virtual void SetPrintChecksum(bool checksum);
   virtual void SetDataLength(int32_t length);
   virtual void SetCalcChecksum(bool state);

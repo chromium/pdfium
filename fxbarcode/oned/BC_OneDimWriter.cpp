@@ -303,7 +303,3 @@ void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX, int32_t width) {
     m_output.back().AppendRect(x, 0.0f, x + 1, 1.0f);
   }
 }
-
-WideString CBC_OneDimWriter::RenderTextContents(WideStringView contents) {
-  return WideString();
-}
