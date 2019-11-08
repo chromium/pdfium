@@ -219,15 +219,14 @@ void CJS_EventRecorder::OnField_Calculate(CPDF_FormField* pSource,
 }
 
 void CJS_EventRecorder::OnField_Format(CPDF_FormField* pTarget,
-                                       WideString* pValue,
-                                       bool bWillCommit) {
+                                       WideString* pValue) {
   ASSERT(pValue);
   Initialize(JET_FIELD_FORMAT);
 
   m_nCommitKey = 0;
   m_strTargetName = pTarget->GetFullName();
   m_pValue = pValue;
-  m_bWillCommit = bWillCommit;
+  m_bWillCommit = true;
 }
 
 void CJS_EventRecorder::OnScreen_Focus(bool bModifier,

@@ -66,9 +66,7 @@ class IJS_EventContext {
                                  CPDF_FormField* pTarget,
                                  WideString* Value,
                                  bool* bRc) = 0;
-  virtual void OnField_Format(CPDF_FormField* pTarget,
-                              WideString* Value,
-                              bool bWillCommit) = 0;
+  virtual void OnField_Format(CPDF_FormField* pTarget, WideString* Value) = 0;
   virtual void OnField_Keystroke(WideString* strChange,
                                  const WideString& strChangeEx,
                                  bool KeyDown,

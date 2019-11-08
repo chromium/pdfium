@@ -81,9 +81,7 @@ class CJS_EventRecorder {
                          CPDF_FormField* pTarget,
                          WideString* Value,
                          bool* pbRc);
-  void OnField_Format(CPDF_FormField* pTarget,
-                      WideString* Value,
-                      bool bWillCommit);
+  void OnField_Format(CPDF_FormField* pTarget, WideString* Value);
   void OnField_Keystroke(WideString* strChange,
                          const WideString& strChangeEx,
                          bool KeyDown,

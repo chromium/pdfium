@@ -206,9 +206,8 @@ void CJS_EventContext::OnField_Calculate(CPDF_FormField* pSource,
 }
 
 void CJS_EventContext::OnField_Format(CPDF_FormField* pTarget,
-                                      WideString* Value,
-                                      bool bWillCommit) {
-  m_pEventRecorder->OnField_Format(pTarget, Value, bWillCommit);
+                                      WideString* Value) {
+  m_pEventRecorder->OnField_Format(pTarget, Value);
 }
 
 void CJS_EventContext::OnField_Keystroke(WideString* strChange,

@@ -306,7 +306,7 @@ Optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
       WideString script = action.GetJavaScript();
       if (!script.IsEmpty()) {
         IJS_Runtime::ScopedEventContext pContext(pRuntime);
-        pContext->OnField_Format(pFormField, &sValue, true);
+        pContext->OnField_Format(pFormField, &sValue);
         Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
         if (!err)
           return sValue;
