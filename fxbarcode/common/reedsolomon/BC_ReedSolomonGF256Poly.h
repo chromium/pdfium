@@ -28,7 +28,6 @@ class CBC_ReedSolomonGF256Poly final {
       const CBC_ReedSolomonGF256Poly* other);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> Multiply(
       const CBC_ReedSolomonGF256Poly* other);
-  std::unique_ptr<CBC_ReedSolomonGF256Poly> Multiply(int32_t scalar);
   std::unique_ptr<CBC_ReedSolomonGF256Poly> MultiplyByMonomial(
       int32_t degree,
       int32_t coefficient) const;
