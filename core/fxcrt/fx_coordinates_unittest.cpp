@@ -113,23 +113,21 @@ TEST(CFX_FloatRect, GetOuterRect) {
   EXPECT_EQ(-1, outer_rect.top);
 
   // Check at limits of integer range. When saturated would expect to get values
-  // that are clamped to the limits of integers, but instead it is returning all
-  // negative values that represent a rectangle as a dot in a far reach of the
-  // negative coordinate space.  crbug.com/1019026
+  // that are clamped to the limits of integers.
   rect = CFX_FloatRect(kMinIntAsFloat, kMinIntAsFloat, kMaxIntAsFloat,
                        kMaxIntAsFloat);
   outer_rect = rect.GetOuterRect();
   EXPECT_EQ(kMinInt, outer_rect.left);
-  EXPECT_EQ(kMinInt, outer_rect.bottom);  // should be |kMaxInt|
-  EXPECT_EQ(kMinInt, outer_rect.right);   // should be |kMaxInt|
+  EXPECT_EQ(kMaxInt, outer_rect.bottom);
+  EXPECT_EQ(kMaxInt, outer_rect.right);
   EXPECT_EQ(kMinInt, outer_rect.top);
 
   rect = CFX_FloatRect(kMinIntAsFloat - 1.0f, kMinIntAsFloat - 1.0f,
                        kMaxIntAsFloat + 1.0f, kMaxIntAsFloat + 1.0f);
   outer_rect = rect.GetOuterRect();
   EXPECT_EQ(kMinInt, outer_rect.left);
-  EXPECT_EQ(kMinInt, outer_rect.bottom);  // should be |kMaxInt|
-  EXPECT_EQ(kMinInt, outer_rect.right);   // should be |kMaxInt|
+  EXPECT_EQ(kMaxInt, outer_rect.bottom);
+  EXPECT_EQ(kMaxInt, outer_rect.right);
   EXPECT_EQ(kMinInt, outer_rect.top);
 }
 
