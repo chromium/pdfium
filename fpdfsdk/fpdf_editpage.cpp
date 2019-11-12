@@ -703,10 +703,13 @@ FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
   if (!pPageObj || !R || !G || !B || !A)
     return false;
 
-  FX_COLORREF fillColor = pPageObj->m_ColorState.GetFillColorRef();
-  *R = FXSYS_GetRValue(fillColor);
-  *G = FXSYS_GetGValue(fillColor);
-  *B = FXSYS_GetBValue(fillColor);
+  if (!pPageObj->m_ColorState.HasRef())
+    return false;
+
+  FX_COLORREF fill_color = pPageObj->m_ColorState.GetFillColorRef();
+  *R = FXSYS_GetRValue(fill_color);
+  *G = FXSYS_GetGValue(fill_color);
+  *B = FXSYS_GetBValue(fill_color);
   *A = FXSYS_GetUnsignedAlpha(pPageObj->m_GeneralState.GetFillAlpha());
   return true;
 }
@@ -757,10 +760,13 @@ FPDFPageObj_GetStrokeColor(FPDF_PAGEOBJECT page_object,
   if (!pPageObj || !R || !G || !B || !A)
     return false;
 
-  FX_COLORREF strokeColor = pPageObj->m_ColorState.GetStrokeColorRef();
-  *R = FXSYS_GetRValue(strokeColor);
-  *G = FXSYS_GetGValue(strokeColor);
-  *B = FXSYS_GetBValue(strokeColor);
+  if (!pPageObj->m_ColorState.HasRef())
+    return false;
+
+  FX_COLORREF stroke_color = pPageObj->m_ColorState.GetStrokeColorRef();
+  *R = FXSYS_GetRValue(stroke_color);
+  *G = FXSYS_GetGValue(stroke_color);
+  *B = FXSYS_GetBValue(stroke_color);
   *A = FXSYS_GetUnsignedAlpha(pPageObj->m_GeneralState.GetStrokeAlpha());
   return true;
 }

@@ -130,3 +130,28 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyText) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditPageEmbedderTest, GetFillAndStrokeForImage) {
+  constexpr int kExpectedObjectCount = 39;
+  constexpr int kImageObjectsStartIndex = 33;
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));
+
+  for (int i = kImageObjectsStartIndex; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT image = FPDFPage_GetObject(page, i);
+    ASSERT_TRUE(image);
+    EXPECT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image));
+
+    unsigned int r;
+    unsigned int g;
+    unsigned int b;
+    unsigned int a;
+    EXPECT_FALSE(FPDFPageObj_GetFillColor(image, &r, &g, &b, &a));
+    EXPECT_FALSE(FPDFPageObj_GetStrokeColor(image, &r, &g, &b, &a));
+  }
+
+  UnloadPage(page);
+}
