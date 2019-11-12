@@ -1,0 +1,85 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+    /Font <<
+      /F7 5 0 R
+    >>
+  >>
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+0 0 0 rg
+BT
+10 0 0 10 100 100 Tm
+/F7 2 Tf
+(\000\000) Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type0
+  /BaseFont /ArialMT
+  /Encoding /Identity-H
+  /ToUnicode /Identity-H
+  /DescendantFonts [6 0 R]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /CIDFontType2
+  /DW 735
+  /CIDSystemInfo <<
+    /Supplement 0
+    /Registry (Adobe)
+    /Ordering (Identity)
+  >>
+  /BaseFont /ArialMT
+  /FontDescriptor 7 0 R
+  /CIDToGIDMap 8 0 R
+>>
+endobj
+{{object 7 0}} <<
+  /Type /FontDescriptor
+  /Descent -211
+  /CapHeight 715
+  /StemV 86
+  /Flags 4
+  /MaxWidth 1101
+  /FontName /ArialMT
+  /ItalicAngle 0
+  /Ascent 905
+  /FontBBox [-664 -324 2000 1005]
+>>
+endobj
+{{object 8 0}} <<
+  {{streamlen}}
+  /Filter /ASCIIHexDecode
+>>
+stream
+0191
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
