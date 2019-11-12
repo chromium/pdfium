@@ -16,7 +16,7 @@ vars = {
   'binutils_revision': '01aa7745b0bab64ae22600f09fd6483c60f22ebf',
   'build_revision': '381237e19ae39902f871b75666a43f5535c27dc0',
   'buildtools_revision': 'fce87d1a3208b830194ee24b16aca7afa7916577',
-  'catapult_revision': '830565958d2bf854cb4418f1bb53c041e257bbd6',
+  'catapult_revision': '3992f656421fc13c9565c22d963fbcabb3f4ab93',
   'clang_revision': '22ecf175f4c9b28bbf33d454016e5d91b77ab998',
   'code_coverage_revision': '4a898be731b92c1a111949762d842768a3d9415d',
   'depot_tools_revision': 'e90e5fe206c98bf7ade94f6831ed6ace48c1f5fa',
