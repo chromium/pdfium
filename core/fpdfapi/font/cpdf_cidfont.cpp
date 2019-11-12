@@ -594,7 +594,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (pVertGlyph)
     *pVertGlyph = false;
 
-  if (!m_pFontFile && !m_pStreamAcc) {
+  if (!m_pFontFile && (!m_pStreamAcc || m_pCID2UnicodeMap)) {
     uint16_t cid = CIDFromCharCode(charcode);
     wchar_t unicode = 0;
     if (m_bCIDIsGID) {
