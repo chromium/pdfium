@@ -17,20 +17,34 @@ endobj
   /Parent 2 0 R
   /Resources <<
     /Font <<
-      /F1 4 0 R
+      /F1 5 0 R
+      /F2 7 0 R
     >>
   >>
-  /Contents 6 0 R
+  /Contents 4 0 R
 >>
 endobj
 4 0 obj <<
+  /Length 48
+>>
+stream
+BT
+0 30 Td
+/F1 12 Tf
+(1) Tj
+/F2 12 Tf
+(X) Tj
+ET
+endstream
+endobj
+5 0 obj <<
   /Type /Font
   /Subtype /Type1
   /BaseFont /Helvetica
-  /FontDescriptor 5 0 R
+  /FontDescriptor 6 0 R
 >>
 endobj
-5 0 obj <<
+6 0 obj <<
   /Type /FontDescriptor
   /FontName /Helvetica
   /StemV 80
@@ -42,30 +56,48 @@ endobj
   /Descent -223
 >>
 endobj
-6 0 obj <<
-  /Length 31
+7 0 obj <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /TimesNewRomanPSMT
+  /Encoding /WinAnsiEncoding
+  /FirstChar 31
+  /FontDescriptor 8 0 R
+  /LastChar 252
 >>
-stream
-BT
-0 30 Td
-/F1 12 Tf
-(1) Tj
-ET
-endstream
+endobj
+8 0 obj <<
+  /Type /FontDescriptor
+  /Ascent 891
+  /CapHeight 656
+  /Descent -216
+  /Flags 34
+  /FontBBox [-568 -307 2000 1007]
+  /FontFamily (Times New Roman)
+  /FontName /TimesNewRomanPSMT
+  /FontStretch /Normal
+  /FontWeight 400
+  /ItalicAngle 0
+  /MissingWidth 778
+  /StemV 82
+  /XHeight -546
+>>
 endobj
 xref
-0 7
+0 9
 0000000000 65535 f 
 0000000015 00000 n 
 0000000068 00000 n 
 0000000161 00000 n 
-0000000287 00000 n 
-0000000387 00000 n 
-0000000576 00000 n 
+0000000303 00000 n 
+0000000402 00000 n 
+0000000502 00000 n 
+0000000691 00000 n 
+0000000863 00000 n 
 trailer <<
   /Root 1 0 R
-  /Size 7
+  /Size 9
 >>
 startxref
-658
+1170
 %%EOF
