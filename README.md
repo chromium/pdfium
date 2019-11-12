@@ -110,8 +110,12 @@ clang_use_chrome_plugins = false  # Currently must be false.
 For sample applications like `pdfium_test` to build, one must set
 `pdf_is_standalone = true`.
 
-To enable V8, XFA, or the Skia backend, one must set `use_cxx11 = false` which
-will build the entire project with C++14.
+By default, the entire project builds with C++14, because features like V8
+support, XFA support, and the Skia backend all have dependencies on libraries
+that require C++14. If one does not need any of those features, and need to fall
+back to building in C++11 mode, then set `use_cxx11 = true`. This fallback is
+temporary and will go away in the future when PDFium fully transitions to C++14.
+See [this bug](https://crbug.com/pdfium/1407) for details.
 
 When complete the arguments will be stored in `<directory>/args.gn`, and
 GN will automatically use the new arguments to generate build files.
@@ -254,8 +258,10 @@ as much as possible. The main exceptions are:
 1. Code has to conform to the existing style and not Chromium/Google style.
 2. PDFium uses a different Gerrit instance for code reviews, and credentials for
 this Gerrit instance need to be generated before uploading changes.
-3. PDFium is currently holding at C++11 compatibility, rejecting features that
-are only present in C++14 (onto which Chromium is now slowly moving).
+3. PDFium is transitioning to C++14, but still supports C++11 compatibility
+for the duration of the transition period. Prefer to use only C++11 features,
+though technically C++14 is allowed in code that is only built when V8, XFA, or
+Skia is turned on.
 
 Before submitting a fix for a bug, it can help if you create an issue in the
 bug tracker. This allows easier discussion about the problem and also helps
