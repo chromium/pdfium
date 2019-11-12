@@ -105,6 +105,15 @@ struct Options {
   bool send_events = false;
   bool use_load_mem_document = false;
   bool render_oneshot = false;
+  bool lcd_text = false;
+  bool no_nativetext = false;
+  bool grayscale = false;
+  bool limit_cache = false;
+  bool force_halftone = false;
+  bool printing = false;
+  bool no_smoothtext = false;
+  bool no_smoothimage = false;
+  bool no_smoothpath = false;
   bool save_attachments = false;
   bool save_images = false;
   bool save_thumbnails = false;
@@ -133,6 +142,29 @@ struct Options {
   int last_page = 0;   // Last 0-based page number to renderer.
   time_t time = -1;
 };
+
+int PageRenderFlagsFromOptions(const Options& options) {
+  int flags = FPDF_ANNOT;
+  if (options.lcd_text)
+    flags |= FPDF_LCD_TEXT;
+  if (options.no_nativetext)
+    flags |= FPDF_NO_NATIVETEXT;
+  if (options.grayscale)
+    flags |= FPDF_GRAYSCALE;
+  if (options.limit_cache)
+    flags |= FPDF_RENDER_LIMITEDIMAGECACHE;
+  if (options.force_halftone)
+    flags |= FPDF_RENDER_FORCEHALFTONE;
+  if (options.printing)
+    flags |= FPDF_PRINTING;
+  if (options.no_smoothtext)
+    flags |= FPDF_RENDER_NO_SMOOTHTEXT;
+  if (options.no_smoothimage)
+    flags |= FPDF_RENDER_NO_SMOOTHIMAGE;
+  if (options.no_smoothpath)
+    flags |= FPDF_RENDER_NO_SMOOTHPATH;
+  return flags;
+}
 
 Optional<std::string> ExpandDirectoryPath(const std::string& path) {
 #if defined(WORDEXP_AVAILABLE)
@@ -352,6 +384,24 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->use_load_mem_document = true;
     } else if (cur_arg == "--render-oneshot") {
       options->render_oneshot = true;
+    } else if (cur_arg == "--lcd-text") {
+      options->lcd_text = true;
+    } else if (cur_arg == "--no-nativetext") {
+      options->no_nativetext = true;
+    } else if (cur_arg == "--grayscale") {
+      options->grayscale = true;
+    } else if (cur_arg == "--limit-cache") {
+      options->limit_cache = true;
+    } else if (cur_arg == "--force-halftone") {
+      options->force_halftone = true;
+    } else if (cur_arg == "--printing") {
+      options->printing = true;
+    } else if (cur_arg == "--no-smoothtext") {
+      options->no_smoothtext = true;
+    } else if (cur_arg == "--no-smoothimage") {
+      options->no_smoothimage = true;
+    } else if (cur_arg == "--no-smoothpath") {
+      options->no_smoothpath = true;
     } else if (cur_arg == "--save-attachments") {
       options->save_attachments = true;
     } else if (cur_arg == "--save-images") {
@@ -648,24 +698,24 @@ bool RenderPage(const std::string& name,
     FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
     FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color);
 
+    int flags = PageRenderFlagsFromOptions(options);
     if (options.render_oneshot) {
       // Note, client programs probably want to use this method instead of the
       // progressive calls. The progressive calls are if you need to pause the
       // rendering to update the UI, the PDF renderer will break when possible.
-      FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, width, height, 0,
-                            FPDF_ANNOT);
+      FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, width, height, 0, flags);
     } else {
       IFSDK_PAUSE pause;
       pause.version = 1;
       pause.NeedToPauseNow = &NeedToPauseNow;
 
       int rv = FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, width,
-                                           height, 0, FPDF_ANNOT, &pause);
+                                           height, 0, flags, &pause);
       while (rv == FPDF_RENDER_TOBECONTINUED)
         rv = FPDF_RenderPage_Continue(page, &pause);
     }
 
-    FPDF_FFLDraw(form, bitmap.get(), page, 0, 0, width, height, 0, FPDF_ANNOT);
+    FPDF_FFLDraw(form, bitmap.get(), page, 0, 0, width, height, 0, flags);
 
     if (!options.render_oneshot)
       FPDF_RenderPage_Close(page);
@@ -935,6 +985,15 @@ constexpr char kUsageString[] =
     "  --send-events        - send input described by .evt file\n"
     "  --mem-document       - load document with FPDF_LoadMemDocument()\n"
     "  --render-oneshot     - render image without using progressive renderer\n"
+    "  --lcd-text           - render text optimized for LCD displays\n"
+    "  --no-nativetext      - render without using the native text output\n"
+    "  --grayscale          - render grayscale output\n"
+    "  --limit-cache        - render limiting image cache size\n"
+    "  --force-halftone     - render forcing halftone\n"
+    "  --printing           - render as if for printing\n"
+    "  --no-smoothtext      - render disabling text anti-aliasing\n"
+    "  --no-smoothimage     - render disabling image anti-alisasing\n"
+    "  --no-smoothpath      - render disabling path anti-aliasing\n"
     "  --save-attachments   - write embedded attachments "
     "<pdf-name>.attachment.<attachment-name>\n"
     "  --save-images        - write embedded images "
