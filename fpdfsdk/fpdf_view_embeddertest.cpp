@@ -92,11 +92,14 @@ TEST(fpdf, CApiTest) {
 class FPDFViewEmbedderTest : public EmbedderTest {
  protected:
   void TestRenderPageBitmapWithMatrix(FPDF_PAGE page,
-                                      const int bitmap_width,
-                                      const int bitmap_height,
+                                      int bitmap_width,
+                                      int bitmap_height,
                                       const FS_MATRIX& matrix,
                                       const FS_RECTF& rect,
                                       const char* expected_md5);
+  void TestRenderPageBitmapWithFlags(FPDF_PAGE page,
+                                     int flags,
+                                     const char* expected_md5);
 };
 
 // Test for conversion of a point in device coordinates to page coordinates
@@ -670,16 +673,30 @@ TEST_F(FPDFViewEmbedderTest, Hang_1055) {
 
 void FPDFViewEmbedderTest::TestRenderPageBitmapWithMatrix(
     FPDF_PAGE page,
-    const int bitmap_width,
-    const int bitmap_height,
+    int bitmap_width,
+    int bitmap_height,
     const FS_MATRIX& matrix,
     const FS_RECTF& rect,
     const char* expected_md5) {
-  FPDF_BITMAP bitmap = FPDFBitmap_Create(bitmap_width, bitmap_height, 0);
-  FPDFBitmap_FillRect(bitmap, 0, 0, bitmap_width, bitmap_height, 0xFFFFFFFF);
-  FPDF_RenderPageBitmapWithMatrix(bitmap, page, &matrix, &rect, 0);
-  CompareBitmap(bitmap, bitmap_width, bitmap_height, expected_md5);
-  FPDFBitmap_Destroy(bitmap);
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
+  FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
+                      0xFFFFFFFF);
+  FPDF_RenderPageBitmapWithMatrix(bitmap.get(), page, &matrix, &rect, 0);
+  CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_md5);
+}
+
+void FPDFViewEmbedderTest::TestRenderPageBitmapWithFlags(
+    FPDF_PAGE page,
+    int flags,
+    const char* expected_md5) {
+  int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
+  int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
+  FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
+                      0xFFFFFFFF);
+  FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
+                        0, flags);
+  CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_md5);
 }
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
@@ -962,6 +979,60 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
     EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(doc.get()));
   }
 }
+
+TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
+  static const char kNormalMD5[] = "b0170c575b65ecb93ebafada0ff0f038";
+  static const char kGrayscaleMD5[] = "7b553f1052069a9c61237a05db0955d6";
+  static const char kNoSmoothpathMD5[] = "ff6e5c509d1f6984bcdfd18b26a4203a";
+
+  ASSERT_TRUE(OpenDocument("many_rectangles.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TestRenderPageBitmapWithFlags(page, 0, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_ANNOT, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_LCD_TEXT, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_NO_NATIVETEXT, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_GRAYSCALE, kGrayscaleMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_LIMITEDIMAGECACHE,
+                                kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_FORCEHALFTONE, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_PRINTING, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHIMAGE, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHPATH,
+                                kNoSmoothpathMD5);
+
+  UnloadPage(page);
+}
+
+#if defined(OS_LINUX)
+TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
+  static const char kNormalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+  static const char kLcdTextMD5[] = "825e881f39e48254e64e2808987a6b8c";
+  static const char kNoSmoothtextMD5[] = "3d01e234120b783a3fffb27273ea1ea8";
+
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TestRenderPageBitmapWithFlags(page, 0, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_ANNOT, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_LCD_TEXT, kLcdTextMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_NO_NATIVETEXT, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_GRAYSCALE, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_LIMITEDIMAGECACHE,
+                                kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_FORCEHALFTONE, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_PRINTING, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT,
+                                kNoSmoothtextMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHIMAGE, kNormalMD5);
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHPATH, kNormalMD5);
+
+  UnloadPage(page);
+}
+#endif  // defined(OS_LINUX)
 
 #if defined(OS_WIN)
 TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
