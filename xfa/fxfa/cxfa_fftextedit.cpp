@@ -44,21 +44,20 @@ CXFA_FFTextEdit::~CXFA_FFTextEdit() {
 bool CXFA_FFTextEdit::LoadWidget() {
   auto pNewWidget = pdfium::MakeUnique<CFWL_Edit>(
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
+  ASSERT(!IsLoaded());
   CFWL_Edit* pFWLEdit = pNewWidget.get();
   m_pNormalWidget = std::move(pNewWidget);
-  m_pNormalWidget->SetFFWidget(this);
+  pFWLEdit->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
-  m_pNormalWidget->LockUpdate();
+  CFWL_NoteDriver* pNoteDriver = pFWLEdit->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pFWLEdit, pFWLEdit);
+  m_pOldDelegate = pFWLEdit->GetDelegate();
+  pFWLEdit->SetDelegate(this);
+  pFWLEdit->LockUpdate();
   UpdateWidgetProperty();
 
   pFWLEdit->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
-  m_pNormalWidget->UnlockUpdate();
+  pFWLEdit->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

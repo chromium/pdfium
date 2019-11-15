@@ -17,6 +17,7 @@ CXFA_FFSignature::CXFA_FFSignature(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 CXFA_FFSignature::~CXFA_FFSignature() = default;
 
 bool CXFA_FFSignature::LoadWidget() {
+  ASSERT(!IsLoaded());
   return CXFA_FFField::LoadWidget();
 }
 

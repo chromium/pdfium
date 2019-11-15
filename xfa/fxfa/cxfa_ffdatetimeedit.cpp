@@ -41,18 +41,17 @@ bool CXFA_FFDateTimeEdit::PtInActiveRect(const CFX_PointF& point) {
 }
 
 bool CXFA_FFDateTimeEdit::LoadWidget() {
+  ASSERT(!IsLoaded());
   auto pNewPicker = pdfium::MakeUnique<CFWL_DateTimePicker>(GetFWLApp());
   CFWL_DateTimePicker* pWidget = pNewPicker.get();
   m_pNormalWidget = std::move(pNewPicker);
-  m_pNormalWidget->SetFFWidget(this);
+  pWidget->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
-  m_pNormalWidget->LockUpdate();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+  m_pOldDelegate = pWidget->GetDelegate();
+  pWidget->SetDelegate(this);
+  pWidget->LockUpdate();
 
   WideString wsText = m_pNode->GetValue(XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
@@ -73,7 +72,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
     }
   }
   UpdateWidgetProperty();
-  m_pNormalWidget->UnlockUpdate();
+  pWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

@@ -23,23 +23,22 @@ CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_Node* pNode)
 CXFA_FFNumericEdit::~CXFA_FFNumericEdit() = default;
 
 bool CXFA_FFNumericEdit::LoadWidget() {
+  ASSERT(!IsLoaded());
   auto pNewEdit = pdfium::MakeUnique<CFWL_Edit>(
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   CFWL_Edit* pWidget = pNewEdit.get();
   m_pNormalWidget = std::move(pNewEdit);
-  m_pNormalWidget->SetFFWidget(this);
+  pWidget->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
-  m_pNormalWidget->LockUpdate();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+  m_pOldDelegate = pWidget->GetDelegate();
+  pWidget->SetDelegate(this);
+  pWidget->LockUpdate();
 
   pWidget->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
-  m_pNormalWidget->UnlockUpdate();
+  pWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

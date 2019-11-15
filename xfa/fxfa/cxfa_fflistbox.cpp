@@ -38,21 +38,20 @@ CXFA_FFListBox::~CXFA_FFListBox() {
 }
 
 bool CXFA_FFListBox::LoadWidget() {
+  ASSERT(!IsLoaded());
   auto pNew = pdfium::MakeUnique<CFWL_ListBox>(
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   CFWL_ListBox* pListBox = pNew.get();
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);
   m_pNormalWidget = std::move(pNew);
-  m_pNormalWidget->SetFFWidget(this);
+  pListBox->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
-  m_pNormalWidget->LockUpdate();
+  CFWL_NoteDriver* pNoteDriver = pListBox->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pListBox, pListBox);
+  m_pOldDelegate = pListBox->GetDelegate();
+  pListBox->SetDelegate(this);
+  pListBox->LockUpdate();
 
   for (const auto& label : m_pNode->GetChoiceListItems(false))
     pListBox->AddString(label);
@@ -62,11 +61,11 @@ bool CXFA_FFListBox::LoadWidget() {
     dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
 
   dwExtendedStyle |= GetAlignment();
-  m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  pListBox->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
   for (int32_t selected : m_pNode->GetSelectedItems())
     pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
 
-  m_pNormalWidget->UnlockUpdate();
+  pListBox->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

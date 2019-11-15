@@ -139,22 +139,21 @@ CXFA_FFBarcode::CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode)
 CXFA_FFBarcode::~CXFA_FFBarcode() = default;
 
 bool CXFA_FFBarcode::LoadWidget() {
+  ASSERT(!IsLoaded());
   auto pNew = pdfium::MakeUnique<CFWL_Barcode>(GetFWLApp());
   CFWL_Barcode* pFWLBarcode = pNew.get();
   m_pNormalWidget = std::move(pNew);
-  m_pNormalWidget->SetFFWidget(this);
+  pFWLBarcode->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
-  m_pNormalWidget->LockUpdate();
+  CFWL_NoteDriver* pNoteDriver = pFWLBarcode->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pFWLBarcode, pFWLBarcode);
+  m_pOldDelegate = pFWLBarcode->GetDelegate();
+  pFWLBarcode->SetDelegate(this);
+  pFWLBarcode->LockUpdate();
 
   pFWLBarcode->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
-  m_pNormalWidget->UnlockUpdate();
+  pFWLBarcode->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

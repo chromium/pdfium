@@ -31,24 +31,23 @@ CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_Node* pNode,
 CXFA_FFCheckButton::~CXFA_FFCheckButton() = default;
 
 bool CXFA_FFCheckButton::LoadWidget() {
+  ASSERT(!IsLoaded());
   auto pNew = pdfium::MakeUnique<CFWL_CheckBox>(GetFWLApp());
   CFWL_CheckBox* pCheckBox = pNew.get();
   m_pNormalWidget = std::move(pNew);
-  m_pNormalWidget->SetFFWidget(this);
+  pCheckBox->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
+  CFWL_NoteDriver* pNoteDriver = pCheckBox->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pCheckBox, pCheckBox);
+  m_pOldDelegate = pCheckBox->GetDelegate();
+  pCheckBox->SetDelegate(this);
   if (m_pNode->IsRadioButton())
     pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
 
-  m_pNormalWidget->LockUpdate();
+  pCheckBox->LockUpdate();
   UpdateWidgetProperty();
   SetFWLCheckState(m_pNode->GetCheckState());
-  m_pNormalWidget->UnlockUpdate();
+  pCheckBox->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

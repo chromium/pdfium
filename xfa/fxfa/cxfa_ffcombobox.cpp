@@ -45,18 +45,17 @@ bool CXFA_FFComboBox::PtInActiveRect(const CFX_PointF& point) {
 }
 
 bool CXFA_FFComboBox::LoadWidget() {
+  ASSERT(!IsLoaded());
   auto pNew = pdfium::MakeUnique<CFWL_ComboBox>(GetFWLApp());
   CFWL_ComboBox* pComboBox = pNew.get();
   m_pNormalWidget = std::move(pNew);
-  m_pNormalWidget->SetFFWidget(this);
+  pComboBox->SetFFWidget(this);
 
-  CFWL_NoteDriver* pNoteDriver =
-      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
-                                   m_pNormalWidget.get());
-  m_pOldDelegate = m_pNormalWidget->GetDelegate();
-  m_pNormalWidget->SetDelegate(this);
-  m_pNormalWidget->LockUpdate();
+  CFWL_NoteDriver* pNoteDriver = pComboBox->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(pComboBox, pComboBox);
+  m_pOldDelegate = pComboBox->GetDelegate();
+  pComboBox->SetDelegate(this);
+  pComboBox->LockUpdate();
 
   for (const auto& label : m_pNode->GetChoiceListItems(false))
     pComboBox->AddString(label);
@@ -68,7 +67,7 @@ bool CXFA_FFComboBox::LoadWidget() {
     pComboBox->SetCurSel(iSelArray.front());
 
   UpdateWidgetProperty();
-  m_pNormalWidget->UnlockUpdate();
+  pComboBox->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 
