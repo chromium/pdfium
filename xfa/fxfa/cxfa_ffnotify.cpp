@@ -253,6 +253,9 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
   if (hWidget->GetNode()->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList)
     return;
 
+  if (!hWidget->IsLoaded())
+    return;
+
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   pDocView->LockUpdate();
   ToComboBox(hWidget)->OpenDropDownList();
