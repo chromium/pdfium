@@ -1085,8 +1085,8 @@ bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
     CFX_FloatRect rectf;
     if (pPathData->IsRect(pMatrix, &rectf)) {
       FX_RECT rect = rectf.GetOuterRect();
-      IntersectClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
-      return true;
+      return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right,
+                               rect.bottom) != ERROR;
     }
   }
   SetPathToDC(m_hDC, pPathData, pMatrix);
