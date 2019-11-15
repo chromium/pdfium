@@ -136,6 +136,10 @@ const CFWL_Widget* CXFA_FFField::GetNormalWidget() const {
   return m_pNormalWidget.get();
 }
 
+void CXFA_FFField::SetNormalWidget(std::unique_ptr<CFWL_Widget> widget) {
+  m_pNormalWidget = std::move(widget);
+}
+
 bool CXFA_FFField::IsLoaded() {
   return GetNormalWidget() && CXFA_FFWidget::IsLoaded();
 }

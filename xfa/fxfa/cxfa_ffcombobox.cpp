@@ -48,7 +48,7 @@ bool CXFA_FFComboBox::LoadWidget() {
   ASSERT(!IsLoaded());
   auto pNew = pdfium::MakeUnique<CFWL_ComboBox>(GetFWLApp());
   CFWL_ComboBox* pComboBox = pNew.get();
-  m_pNormalWidget = std::move(pNew);
+  SetNormalWidget(std::move(pNew));
   pComboBox->SetFFWidget(this);
 
   CFWL_NoteDriver* pNoteDriver = pComboBox->GetOwnerApp()->GetNoteDriver();

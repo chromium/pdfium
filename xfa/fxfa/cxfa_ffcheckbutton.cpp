@@ -34,7 +34,7 @@ bool CXFA_FFCheckButton::LoadWidget() {
   ASSERT(!IsLoaded());
   auto pNew = pdfium::MakeUnique<CFWL_CheckBox>(GetFWLApp());
   CFWL_CheckBox* pCheckBox = pNew.get();
-  m_pNormalWidget = std::move(pNew);
+  SetNormalWidget(std::move(pNew));
   pCheckBox->SetFFWidget(this);
 
   CFWL_NoteDriver* pNoteDriver = pCheckBox->GetOwnerApp()->GetNoteDriver();

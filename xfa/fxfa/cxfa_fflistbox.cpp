@@ -44,7 +44,7 @@ bool CXFA_FFListBox::LoadWidget() {
   CFWL_ListBox* pListBox = pNew.get();
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);
-  m_pNormalWidget = std::move(pNew);
+  SetNormalWidget(std::move(pNew));
   pListBox->SetFFWidget(this);
 
   CFWL_NoteDriver* pNoteDriver = pListBox->GetOwnerApp()->GetNoteDriver();

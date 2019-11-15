@@ -73,6 +73,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void SetFWLThemeProvider();
   CFWL_Widget* GetNormalWidget();
   const CFWL_Widget* GetNormalWidget() const;
+  void SetNormalWidget(std::unique_ptr<CFWL_Widget> widget);
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
   void RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
@@ -97,9 +98,11 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                              XFA_AttributeValue iCapPlacement);
   void SetEditScrollOffset();
 
-  std::unique_ptr<CFWL_Widget> m_pNormalWidget;
   CFX_RectF m_rtUI;
   CFX_RectF m_rtCaption;
+
+ private:
+  std::unique_ptr<CFWL_Widget> m_pNormalWidget;
 };
 
 #endif  // XFA_FXFA_CXFA_FFFIELD_H_
