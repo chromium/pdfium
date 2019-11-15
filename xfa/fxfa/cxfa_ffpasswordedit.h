@@ -22,7 +22,7 @@ class CXFA_FFPasswordEdit final : public CXFA_FFTextEdit {
   void UpdateWidgetProperty() override;
 
  private:
-  UnownedPtr<CXFA_PasswordEdit> password_node_;
+  UnownedPtr<CXFA_PasswordEdit> const password_node_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFPASSWORDEDIT_H_

@@ -46,7 +46,7 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
 
   UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
   CFX_RectF m_rtCheckBox;
-  UnownedPtr<CXFA_CheckButton> button_;
+  UnownedPtr<CXFA_CheckButton> const button_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFCHECKBUTTON_H_

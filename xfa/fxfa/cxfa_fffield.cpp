@@ -79,10 +79,10 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, highlight, kSquareShape);
 
-  CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
+  CFX_RectF rtWidget = GetNormalWidget()->GetWidgetRect();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
+  GetApp()->GetFWLWidgetMgr()->OnDrawWidget(GetNormalWidget(), pGS, mt);
 }
 
 void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
@@ -124,12 +124,20 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
 }
 
 void CXFA_FFField::SetFWLThemeProvider() {
-  if (m_pNormalWidget)
-    m_pNormalWidget->SetThemeProvider(GetApp()->GetFWLTheme(GetDoc()));
+  if (GetNormalWidget())
+    GetNormalWidget()->SetThemeProvider(GetApp()->GetFWLTheme(GetDoc()));
+}
+
+CFWL_Widget* CXFA_FFField::GetNormalWidget() {
+  return m_pNormalWidget.get();
+}
+
+const CFWL_Widget* CXFA_FFField::GetNormalWidget() const {
+  return m_pNormalWidget.get();
 }
 
 bool CXFA_FFField::IsLoaded() {
-  return m_pNormalWidget && CXFA_FFWidget::IsLoaded();
+  return GetNormalWidget() && CXFA_FFWidget::IsLoaded();
 }
 
 bool CXFA_FFField::LoadWidget() {
@@ -156,8 +164,7 @@ void CXFA_FFField::SetEditScrollOffset() {
     fScrollOffset += pPrev->m_rtUI.height;
     pPrev = ToField(pPrev->GetLayoutItem()->GetPrev());
   }
-  static_cast<CFWL_Edit*>(m_pNormalWidget.get())
-      ->SetScrollOffset(fScrollOffset);
+  static_cast<CFWL_Edit*>(GetNormalWidget())->SetScrollOffset(fScrollOffset);
 }
 
 bool CXFA_FFField::PerformLayout() {
@@ -166,8 +173,8 @@ bool CXFA_FFField::PerformLayout() {
   LayoutCaption();
   SetFWLRect();
   SetEditScrollOffset();
-  if (m_pNormalWidget)
-    m_pNormalWidget->Update();
+  if (GetNormalWidget())
+    GetNormalWidget()->Update();
   return true;
 }
 
@@ -339,8 +346,8 @@ void CXFA_FFField::CapLeftRightPlacement(const CXFA_Margin* margin,
 }
 
 void CXFA_FFField::UpdateFWL() {
-  if (m_pNormalWidget)
-    m_pNormalWidget->Update();
+  if (GetNormalWidget())
+    GetNormalWidget()->Update();
 }
 
 uint32_t CXFA_FFField::UpdateUIProperty() {
@@ -351,7 +358,7 @@ uint32_t CXFA_FFField::UpdateUIProperty() {
 }
 
 void CXFA_FFField::SetFWLRect() {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return;
 
   CFX_RectF rtUi = m_rtUI;
@@ -360,36 +367,37 @@ void CXFA_FFField::SetFWLRect() {
     float fFontSize = m_pNode->GetFontSize();
     rtUi.height = std::max(rtUi.height, fFontSize);
   }
-  m_pNormalWidget->SetWidgetRect(rtUi);
+  GetNormalWidget()->SetWidgetRect(rtUi);
 }
 
 bool CXFA_FFField::OnMouseEnter() {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::Enter));
+      GetNormalWidget(), FWL_MouseCommand::Enter));
   return true;
 }
 
 bool CXFA_FFField::OnMouseExit() {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::Leave));
+      GetNormalWidget(), FWL_MouseCommand::Leave));
   return true;
 }
 
 CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
-  return m_pNormalWidget ? point - m_pNormalWidget->GetWidgetRect().TopLeft()
-                         : point;
+  return GetNormalWidget()
+             ? point - GetNormalWidget()->GetWidgetRect().TopLeft()
+             : point;
 }
 
 bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
                                             const CFX_PointF& point,
                                             FWL_MouseCommand command) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
@@ -402,81 +410,79 @@ bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
 void CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::LeftButtonDown, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
 }
 
 bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
   if (!IsButtonDown())
     return false;
 
   SetButtonDown(false);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::LeftButtonUp, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::LeftButtonUp, dwFlags,
       FWLToClient(point)));
   return true;
 }
 
 bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::LeftButtonDblClk, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::LeftButtonDblClk, dwFlags,
       FWLToClient(point)));
   return true;
 }
 
 bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::Move, dwFlags,
-      FWLToClient(point)));
+      GetNormalWidget(), FWL_MouseCommand::Move, dwFlags, FWLToClient(point)));
   return true;
 }
 
 bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
                                 int16_t zDelta,
                                 const CFX_PointF& point) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouseWheel>(
-      m_pNormalWidget.get(), dwFlags, FWLToClient(point),
-      CFX_PointF(zDelta, 0)));
+      GetNormalWidget(), dwFlags, FWLToClient(point), CFX_PointF(zDelta, 0)));
   return true;
 }
 
 void CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::RightButtonDown, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::RightButtonDown, dwFlags,
       FWLToClient(point)));
 }
 
 bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
   if (!IsButtonDown())
     return false;
 
   SetButtonDown(false);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::RightButtonUp, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::RightButtonUp, dwFlags,
       FWLToClient(point)));
   return true;
 }
 
 bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::RightButtonDblClk, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::RightButtonDblClk, dwFlags,
       FWLToClient(point)));
   return true;
 }
@@ -485,20 +491,20 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
     return false;
 
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   SendMessageToFWLWidget(
-      pdfium::MakeUnique<CFWL_MessageSetFocus>(nullptr, m_pNormalWidget.get()));
+      pdfium::MakeUnique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
   InvalidateRect();
   return true;
 }
 
 bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  if (m_pNormalWidget) {
-    SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKillFocus>(
-        nullptr, m_pNormalWidget.get()));
+  if (GetNormalWidget()) {
+    SendMessageToFWLWidget(
+        pdfium::MakeUnique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
     GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
     InvalidateRect();
   }
@@ -506,20 +512,20 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
-  if (!m_pNormalWidget || !GetDoc()->GetXFADoc()->IsInteractive())
+  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
-      m_pNormalWidget.get(), FWL_KeyCommand::KeyDown, dwFlags, dwKeyCode));
+      GetNormalWidget(), FWL_KeyCommand::KeyDown, dwFlags, dwKeyCode));
   return true;
 }
 
 bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
-  if (!m_pNormalWidget || !GetDoc()->GetXFADoc()->IsInteractive())
+  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
-      m_pNormalWidget.get(), FWL_KeyCommand::KeyUp, dwFlags, dwKeyCode));
+      GetNormalWidget(), FWL_KeyCommand::KeyUp, dwFlags, dwKeyCode));
   return true;
 }
 
@@ -528,19 +534,19 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
     return false;
   if (dwChar == XFA_FWL_VKEY_Tab)
     return true;
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
   if (!m_pNode->IsOpenAccess())
     return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
-      m_pNormalWidget.get(), FWL_KeyCommand::Char, dwFlags, dwChar));
+      GetNormalWidget(), FWL_KeyCommand::Char, dwFlags, dwChar));
   return true;
 }
 
 FWL_WidgetHit CXFA_FFField::OnHitTest(const CFX_PointF& point) {
-  if (m_pNormalWidget &&
-      m_pNormalWidget->HitTest(FWLToClient(point)) != FWL_WidgetHit::Unknown) {
+  if (GetNormalWidget() && GetNormalWidget()->HitTest(FWLToClient(point)) !=
+                               FWL_WidgetHit::Unknown) {
     return FWL_WidgetHit::Client;
   }
 
@@ -556,7 +562,8 @@ bool CXFA_FFField::OnSetCursor(const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::PtInActiveRect(const CFX_PointF& point) {
-  return m_pNormalWidget && m_pNormalWidget->GetWidgetRect().Contains(point);
+  return GetNormalWidget() &&
+         GetNormalWidget()->GetWidgetRect().Contains(point);
 }
 
 void CXFA_FFField::LayoutCaption() {

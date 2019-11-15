@@ -19,7 +19,7 @@ CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_Node* pNode,
                                          CXFA_PasswordEdit* password_node)
     : CXFA_FFTextEdit(pNode), password_node_(password_node) {}
 
-CXFA_FFPasswordEdit::~CXFA_FFPasswordEdit() {}
+CXFA_FFPasswordEdit::~CXFA_FFPasswordEdit() = default;
 
 bool CXFA_FFPasswordEdit::LoadWidget() {
   auto pNewEdit = pdfium::MakeUnique<CFWL_Edit>(
@@ -43,7 +43,7 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
 }
 
 void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
-  CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
+  CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(GetNormalWidget());
   if (!pWidget)
     return;
 
@@ -61,5 +61,5 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
 
   dwExtendedStyle |= GetAlignment();
-  m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }

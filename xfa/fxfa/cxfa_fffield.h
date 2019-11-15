@@ -71,7 +71,8 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
 
   virtual void SetFWLRect();
   void SetFWLThemeProvider();
-  CFWL_Widget* GetNormalWidget() { return m_pNormalWidget.get(); }
+  CFWL_Widget* GetNormalWidget();
+  const CFWL_Widget* GetNormalWidget() const;
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
   void RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);

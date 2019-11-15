@@ -20,7 +20,7 @@
 CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_Node* pNode)
     : CXFA_FFTextEdit(pNode) {}
 
-CXFA_FFNumericEdit::~CXFA_FFNumericEdit() {}
+CXFA_FFNumericEdit::~CXFA_FFNumericEdit() = default;
 
 bool CXFA_FFNumericEdit::LoadWidget() {
   auto pNewEdit = pdfium::MakeUnique<CFWL_Edit>(
@@ -44,7 +44,7 @@ bool CXFA_FFNumericEdit::LoadWidget() {
 }
 
 void CXFA_FFNumericEdit::UpdateWidgetProperty() {
-  CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
+  CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(GetNormalWidget());
   if (!pWidget)
     return;
 
@@ -64,13 +64,13 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
 
-  m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
 
 void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetType() == CFWL_Event::Type::Validate) {
     CFWL_EventValidate* event = static_cast<CFWL_EventValidate*>(pEvent);
-    event->bValidate = OnValidate(m_pNormalWidget.get(), event->wsInsert);
+    event->bValidate = OnValidate(GetNormalWidget(), event->wsInsert);
     return;
   }
   CXFA_FFTextEdit::OnProcessEvent(pEvent);

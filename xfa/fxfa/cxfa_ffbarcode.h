@@ -104,7 +104,7 @@ class CXFA_FFBarcode final : public CXFA_FFTextEdit {
                                 FWL_MouseCommand command) override;
 
  private:
-  UnownedPtr<CXFA_Barcode> barcode_;
+  UnownedPtr<CXFA_Barcode> const barcode_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFBARCODE_H_

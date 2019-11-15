@@ -24,8 +24,7 @@
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_Node* pNode)
-    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
+CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 
 CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   m_pNode->SetImageEditImage(nullptr);
@@ -67,7 +66,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   if (!pDIBitmap)
     return;
 
-  CFX_RectF rtImage = m_pNormalWidget->GetWidgetRect();
+  CFX_RectF rtImage = GetNormalWidget()->GetWidgetRect();
   XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left;
   XFA_AttributeValue iVertAlign = XFA_AttributeValue::Top;
   CXFA_Para* para = m_pNode->GetParaIfExists();
@@ -106,19 +105,19 @@ void CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                      const CFX_PointF& point) {
   SetButtonDown(true);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
-      m_pNormalWidget.get(), FWL_MouseCommand::LeftButtonDown, dwFlags,
+      GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
 }
 
 void CXFA_FFImageEdit::SetFWLRect() {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return;
 
   CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
   CFX_RectF rtImage(m_rtUI);
   rtImage.Deflate(rtUIMargin.left, rtUIMargin.top, rtUIMargin.width,
                   rtUIMargin.height);
-  m_pNormalWidget->SetWidgetRect(rtImage);
+  GetNormalWidget()->SetWidgetRect(rtImage);
 }
 
 bool CXFA_FFImageEdit::CommitData() {

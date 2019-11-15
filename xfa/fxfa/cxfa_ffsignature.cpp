@@ -14,7 +14,7 @@
 
 CXFA_FFSignature::CXFA_FFSignature(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 
-CXFA_FFSignature::~CXFA_FFSignature() {}
+CXFA_FFSignature::~CXFA_FFSignature() = default;
 
 bool CXFA_FFSignature::LoadWidget() {
   return CXFA_FFField::LoadWidget();
@@ -97,8 +97,8 @@ bool CXFA_FFSignature::OnChar(uint32_t dwChar, uint32_t dwFlags) {
 }
 
 FWL_WidgetHit CXFA_FFSignature::OnHitTest(const CFX_PointF& point) {
-  if (m_pNormalWidget &&
-      m_pNormalWidget->HitTest(FWLToClient(point)) != FWL_WidgetHit::Unknown) {
+  if (GetNormalWidget() && GetNormalWidget()->HitTest(FWLToClient(point)) !=
+                               FWL_WidgetHit::Unknown) {
     return FWL_WidgetHit::Client;
   }
 

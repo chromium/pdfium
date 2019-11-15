@@ -23,10 +23,10 @@
 CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_Node* pNode)
     : CXFA_FFTextEdit(pNode) {}
 
-CXFA_FFDateTimeEdit::~CXFA_FFDateTimeEdit() {}
+CXFA_FFDateTimeEdit::~CXFA_FFDateTimeEdit() = default;
 
 CFWL_DateTimePicker* CXFA_FFDateTimeEdit::GetPickerWidget() {
-  return static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
+  return static_cast<CFWL_DateTimePicker*>(GetNormalWidget());
 }
 
 CFX_RectF CXFA_FFDateTimeEdit::GetBBox(FocusOption focus) {
@@ -85,7 +85,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   uint32_t dwExtendedStyle = FWL_STYLEEXT_DTP_ShortDateFormat;
   dwExtendedStyle |= UpdateUIProperty();
   dwExtendedStyle |= GetAlignment();
-  m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+  GetNormalWidget()->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 
   uint32_t dwEditStyles = 0;
   Optional<int32_t> numCells = m_pNode->GetNumberOfCells();
@@ -149,7 +149,7 @@ bool CXFA_FFDateTimeEdit::CommitData() {
 }
 
 bool CXFA_FFDateTimeEdit::UpdateFWLData() {
-  if (!m_pNormalWidget)
+  if (!GetNormalWidget())
     return false;
 
   XFA_VALUEPICTURE eType = XFA_VALUEPICTURE_Display;
@@ -167,7 +167,7 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
         pPicker->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
     }
   }
-  m_pNormalWidget->Update();
+  GetNormalWidget()->Update();
   return true;
 }
 
@@ -207,7 +207,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetType() == CFWL_Event::Type::SelectChanged) {
     auto* event = static_cast<CFWL_EventSelectChanged*>(pEvent);
-    OnSelectChanged(m_pNormalWidget.get(), event->iYear, event->iMonth,
+    OnSelectChanged(GetNormalWidget(), event->iYear, event->iMonth,
                     event->iDay);
     return;
   }
