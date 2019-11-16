@@ -370,47 +370,41 @@ void CRYPT_SHA1Start(CRYPT_sha1_context* context) {
 void CRYPT_SHA1Update(CRYPT_sha1_context* context,
                       const uint8_t* data,
                       uint32_t size) {
-  unsigned char* q = (unsigned char*)data;
-  unsigned int wordblock[16];
-  int len = size;
-  unsigned int lenw = len;
-  int i;
-  context->lenlo += lenw;
-  context->lenhi += (context->lenlo < lenw);
-  if (context->blkused && context->blkused + len < 64) {
-    memcpy(context->block + context->blkused, q, len);
-    context->blkused += len;
-  } else {
-    while (context->blkused + len >= 64) {
-      memcpy(context->block + context->blkused, q, 64 - context->blkused);
-      q += 64 - context->blkused;
-      len -= 64 - context->blkused;
-      for (i = 0; i < 16; i++) {
-        wordblock[i] = (((unsigned int)context->block[i * 4 + 0]) << 24) |
-                       (((unsigned int)context->block[i * 4 + 1]) << 16) |
-                       (((unsigned int)context->block[i * 4 + 2]) << 8) |
-                       (((unsigned int)context->block[i * 4 + 3]) << 0);
-      }
-      SHATransform(context->h, wordblock);
-      context->blkused = 0;
-    }
-    memcpy(context->block, q, len);
-    context->blkused = len;
+  context->lenlo += size;
+  context->lenhi += (context->lenlo < size);  // Unsigned, so well-defined.
+  if (context->blkused && size < 64 - context->blkused) {
+    memcpy(context->block + context->blkused, data, size);
+    context->blkused += size;
+    return;
   }
+  uint32_t wordblock[16];
+  while (size >= 64 - context->blkused) {
+    memcpy(context->block + context->blkused, data, 64 - context->blkused);
+    data += 64 - context->blkused;
+    size -= 64 - context->blkused;
+    for (int i = 0; i < 16; i++) {
+      wordblock[i] = (((uint32_t)context->block[i * 4 + 0]) << 24) |
+                     (((uint32_t)context->block[i * 4 + 1]) << 16) |
+                     (((uint32_t)context->block[i * 4 + 2]) << 8) |
+                     (((uint32_t)context->block[i * 4 + 3]) << 0);
+    }
+    SHATransform(context->h, wordblock);
+    context->blkused = 0;
+  }
+  memcpy(context->block, data, size);
+  context->blkused = size;
 }
 
 void CRYPT_SHA1Finish(CRYPT_sha1_context* context, uint8_t digest[20]) {
-  int i;
-  int pad;
-  unsigned char c[64];
-  unsigned int lenhi, lenlo;
+  uint32_t lenhi = (context->lenhi << 3) | (context->lenlo >> (32 - 3));
+  uint32_t lenlo = (context->lenlo << 3);
+  uint8_t c[64];
+  uint8_t pad;
   if (context->blkused >= 56) {
     pad = 56 + 64 - context->blkused;
   } else {
     pad = 56 - context->blkused;
   }
-  lenhi = (context->lenhi << 3) | (context->lenlo >> (32 - 3));
-  lenlo = (context->lenlo << 3);
   memset(c, 0, pad);
   c[0] = 0x80;
   CRYPT_SHA1Update(context, c, pad);
@@ -423,7 +417,7 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context, uint8_t digest[20]) {
   c[6] = (lenlo >> 8) & 0xFF;
   c[7] = (lenlo >> 0) & 0xFF;
   CRYPT_SHA1Update(context, c, 8);
-  for (i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; i++) {
     digest[i * 4] = (context->h[i] >> 24) & 0xFF;
     digest[i * 4 + 1] = (context->h[i] >> 16) & 0xFF;
     digest[i * 4 + 2] = (context->h[i] >> 8) & 0xFF;
