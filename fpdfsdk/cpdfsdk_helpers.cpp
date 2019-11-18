@@ -251,11 +251,8 @@ CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
   return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
 }
 
-void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect) {
-  out_rect->left = rect.left;
-  out_rect->top = rect.top;
-  out_rect->right = rect.right;
-  out_rect->bottom = rect.bottom;
+FS_RECTF FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect) {
+  return {rect.left, rect.top, rect.right, rect.bottom};
 }
 
 CFX_Matrix CFXMatrixFromFSMatrix(const FS_MATRIX& matrix) {

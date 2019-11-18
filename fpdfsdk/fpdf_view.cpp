@@ -371,7 +371,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
   if (!pPage)
     return false;
 
-  FSRECTFFromCFXFloatRect(pPage->GetBBox(), rect);
+  *rect = FSRECTFFromCFXFloatRect(pPage->GetBBox());
   return true;
 }
 

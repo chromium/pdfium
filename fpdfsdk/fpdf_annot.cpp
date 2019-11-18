@@ -682,8 +682,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict || !rect)
     return false;
 
-  FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor(pdfium::annotation::kRect),
-                          rect);
+  *rect = FSRECTFFromCFXFloatRect(
+      pAnnotDict->GetRectFor(pdfium::annotation::kRect));
   return true;
 }
 
