@@ -51,21 +51,22 @@ bool CXFA_FFListBox::LoadWidget() {
   pNoteDriver->RegisterEventTarget(pListBox, pListBox);
   m_pOldDelegate = pListBox->GetDelegate();
   pListBox->SetDelegate(this);
-  pListBox->LockUpdate();
 
-  for (const auto& label : m_pNode->GetChoiceListItems(false))
-    pListBox->AddString(label);
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pListBox);
+    for (const auto& label : m_pNode->GetChoiceListItems(false))
+      pListBox->AddString(label);
 
-  uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
-  if (m_pNode->IsChoiceListMultiSelect())
-    dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
+    uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
+    if (m_pNode->IsChoiceListMultiSelect())
+      dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
 
-  dwExtendedStyle |= GetAlignment();
-  pListBox->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
-  for (int32_t selected : m_pNode->GetSelectedItems())
-    pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
+    dwExtendedStyle |= GetAlignment();
+    pListBox->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
+    for (int32_t selected : m_pNode->GetSelectedItems())
+      pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
+  }
 
-  pListBox->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
 

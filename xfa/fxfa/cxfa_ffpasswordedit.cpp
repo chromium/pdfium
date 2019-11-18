@@ -33,11 +33,13 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = pWidget->GetDelegate();
   pWidget->SetDelegate(this);
-  pWidget->LockUpdate();
 
-  pWidget->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
-  UpdateWidgetProperty();
-  pWidget->UnlockUpdate();
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pWidget);
+    pWidget->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
+    UpdateWidgetProperty();
+  }
+
   return CXFA_FFField::LoadWidget();
 }
 

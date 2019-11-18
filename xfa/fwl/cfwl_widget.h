@@ -59,6 +59,15 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
     virtual void GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) = 0;
   };
 
+  class ScopedUpdateLock {
+   public:
+    explicit ScopedUpdateLock(CFWL_Widget* widget);
+    ~ScopedUpdateLock();
+
+   private:
+    UnownedPtr<CFWL_Widget> const widget_;
+  };
+
   ~CFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
@@ -99,12 +108,6 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
   uint32_t GetStylesEx() const;
   uint32_t GetStates() const;
-
-  void LockUpdate() { m_iLock++; }
-  void UnlockUpdate() {
-    if (IsLocked())
-      m_iLock--;
-  }
 
   CFX_PointF TransformTo(CFWL_Widget* pWidget, const CFX_PointF& point);
   CFX_Matrix GetMatrix() const;
@@ -166,6 +169,12 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   int32_t m_iLock = 0;
 
  private:
+  void LockUpdate() { m_iLock++; }
+  void UnlockUpdate() {
+    if (IsLocked())
+      m_iLock--;
+  }
+
   CFWL_Widget* GetParent() const { return m_pWidgetMgr->GetParentWidget(this); }
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
   void DrawBackground(CXFA_Graphics* pGraphics,

@@ -123,8 +123,8 @@ class CFWL_ComboBox final : public CFWL_Widget {
   CFX_RectF m_rtBtn;
   std::unique_ptr<CFWL_ComboEdit> m_pEdit;
   std::unique_ptr<CFWL_ComboList> m_pListBox;
-  int32_t m_iCurSel;
-  int32_t m_iBtnState;
+  int32_t m_iCurSel = -1;
+  int32_t m_iBtnState = CFWL_PartState_Normal;
 };
 
 #endif  // XFA_FWL_CFWL_COMBOBOX_H_

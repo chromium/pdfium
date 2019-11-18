@@ -53,11 +53,13 @@ bool CXFA_FFTextEdit::LoadWidget() {
   pNoteDriver->RegisterEventTarget(pFWLEdit, pFWLEdit);
   m_pOldDelegate = pFWLEdit->GetDelegate();
   pFWLEdit->SetDelegate(this);
-  pFWLEdit->LockUpdate();
-  UpdateWidgetProperty();
 
-  pFWLEdit->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
-  pFWLEdit->UnlockUpdate();
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pFWLEdit);
+    UpdateWidgetProperty();
+    pFWLEdit->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
+  }
+
   return CXFA_FFField::LoadWidget();
 }
 

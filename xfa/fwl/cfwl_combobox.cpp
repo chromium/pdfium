@@ -30,14 +30,12 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_iCurSel(-1),
-      m_iBtnState(CFWL_PartState_Normal) {
+    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
   InitComboList();
   InitComboEdit();
 }
 
-CFWL_ComboBox::~CFWL_ComboBox() {}
+CFWL_ComboBox::~CFWL_ComboBox() = default;
 
 FWL_Type CFWL_ComboBox::GetClassID() const {
   return FWL_Type::ComboBox;
@@ -309,9 +307,8 @@ void CFWL_ComboBox::Layout() {
 
   if (m_iCurSel >= 0) {
     CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-    m_pEdit->LockUpdate();
+    ScopedUpdateLock update_lock(m_pEdit.get());
     m_pEdit->SetText(hItem ? hItem->GetText() : WideString());
-    m_pEdit->UnlockUpdate();
   }
   m_pEdit->Update();
 }

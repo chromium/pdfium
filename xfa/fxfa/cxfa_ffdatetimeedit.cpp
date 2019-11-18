@@ -51,28 +51,31 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = pWidget->GetDelegate();
   pWidget->SetDelegate(this);
-  pWidget->LockUpdate();
 
-  WideString wsText = m_pNode->GetValue(XFA_VALUEPICTURE_Display);
-  pWidget->SetEditText(wsText);
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pWidget);
+    WideString wsText = m_pNode->GetValue(XFA_VALUEPICTURE_Display);
+    pWidget->SetEditText(wsText);
 
-  CXFA_Value* value = m_pNode->GetFormValueIfExists();
-  if (value) {
-    switch (value->GetChildValueClassID()) {
-      case XFA_Element::Date: {
-        if (!wsText.IsEmpty()) {
-          CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pNode.Get());
-          CFX_DateTime date = lcValue.GetDate();
-          if (date.IsSet())
-            pWidget->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
-        }
-      } break;
-      default:
-        break;
+    CXFA_Value* value = m_pNode->GetFormValueIfExists();
+    if (value) {
+      switch (value->GetChildValueClassID()) {
+        case XFA_Element::Date: {
+          if (!wsText.IsEmpty()) {
+            CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pNode.Get());
+            CFX_DateTime date = lcValue.GetDate();
+            if (date.IsSet())
+              pWidget->SetCurSel(date.GetYear(), date.GetMonth(),
+                                 date.GetDay());
+          }
+        } break;
+        default:
+          break;
+      }
     }
+    UpdateWidgetProperty();
   }
-  UpdateWidgetProperty();
-  pWidget->UnlockUpdate();
+
   return CXFA_FFField::LoadWidget();
 }
 

@@ -55,19 +55,21 @@ bool CXFA_FFComboBox::LoadWidget() {
   pNoteDriver->RegisterEventTarget(pComboBox, pComboBox);
   m_pOldDelegate = pComboBox->GetDelegate();
   pComboBox->SetDelegate(this);
-  pComboBox->LockUpdate();
 
-  for (const auto& label : m_pNode->GetChoiceListItems(false))
-    pComboBox->AddString(label);
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pComboBox);
+    for (const auto& label : m_pNode->GetChoiceListItems(false))
+      pComboBox->AddString(label);
 
-  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
-  if (iSelArray.empty())
-    pComboBox->SetEditText(m_pNode->GetValue(XFA_VALUEPICTURE_Raw));
-  else
-    pComboBox->SetCurSel(iSelArray.front());
+    std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
+    if (iSelArray.empty())
+      pComboBox->SetEditText(m_pNode->GetValue(XFA_VALUEPICTURE_Raw));
+    else
+      pComboBox->SetCurSel(iSelArray.front());
 
-  UpdateWidgetProperty();
-  pComboBox->UnlockUpdate();
+    UpdateWidgetProperty();
+  }
+
   return CXFA_FFField::LoadWidget();
 }
 

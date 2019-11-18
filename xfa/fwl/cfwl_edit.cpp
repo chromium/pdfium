@@ -665,24 +665,26 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
   if (bShowHorz) {
     CFX_RectF rtScroll = m_pHorzScrollBar->GetWidgetRect();
     if (rtScroll.width < contents_bounds.width) {
-      m_pHorzScrollBar->LockUpdate();
-      float fRange = contents_bounds.width - rtScroll.width;
-      m_pHorzScrollBar->SetRange(0.0f, fRange);
+      {
+        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        float fRange = contents_bounds.width - rtScroll.width;
+        m_pHorzScrollBar->SetRange(0.0f, fRange);
 
-      float fPos = pdfium::clamp(m_fScrollOffsetX, 0.0f, fRange);
-      m_pHorzScrollBar->SetPos(fPos);
-      m_pHorzScrollBar->SetTrackPos(fPos);
-      m_pHorzScrollBar->SetPageSize(rtScroll.width);
-      m_pHorzScrollBar->SetStepSize(rtScroll.width / 10);
-      m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
-      m_pHorzScrollBar->UnlockUpdate();
+        float fPos = pdfium::clamp(m_fScrollOffsetX, 0.0f, fRange);
+        m_pHorzScrollBar->SetPos(fPos);
+        m_pHorzScrollBar->SetTrackPos(fPos);
+        m_pHorzScrollBar->SetPageSize(rtScroll.width);
+        m_pHorzScrollBar->SetStepSize(rtScroll.width / 10);
+        m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
+      }
       m_pHorzScrollBar->Update();
       pRepaint = m_pHorzScrollBar.get();
     } else if ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
-      m_pHorzScrollBar->LockUpdate();
-      m_pHorzScrollBar->SetRange(0, -1);
-      m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled);
-      m_pHorzScrollBar->UnlockUpdate();
+      {
+        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        m_pHorzScrollBar->SetRange(0, -1);
+        m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled);
+      }
       m_pHorzScrollBar->Update();
       pRepaint = m_pHorzScrollBar.get();
     }
@@ -691,26 +693,28 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
   if (bShowVert) {
     CFX_RectF rtScroll = m_pVertScrollBar->GetWidgetRect();
     if (rtScroll.height < contents_bounds.height) {
-      m_pVertScrollBar->LockUpdate();
-      float fStep = m_EdtEngine.GetLineSpace();
-      float fRange =
-          std::max(contents_bounds.height - m_rtEngine.height, fStep);
+      {
+        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        float fStep = m_EdtEngine.GetLineSpace();
+        float fRange =
+            std::max(contents_bounds.height - m_rtEngine.height, fStep);
 
-      m_pVertScrollBar->SetRange(0.0f, fRange);
-      float fPos = pdfium::clamp(m_fScrollOffsetY, 0.0f, fRange);
-      m_pVertScrollBar->SetPos(fPos);
-      m_pVertScrollBar->SetTrackPos(fPos);
-      m_pVertScrollBar->SetPageSize(rtScroll.height);
-      m_pVertScrollBar->SetStepSize(fStep);
-      m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
-      m_pVertScrollBar->UnlockUpdate();
+        m_pVertScrollBar->SetRange(0.0f, fRange);
+        float fPos = pdfium::clamp(m_fScrollOffsetY, 0.0f, fRange);
+        m_pVertScrollBar->SetPos(fPos);
+        m_pVertScrollBar->SetTrackPos(fPos);
+        m_pVertScrollBar->SetPageSize(rtScroll.height);
+        m_pVertScrollBar->SetStepSize(fStep);
+        m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
+      }
       m_pVertScrollBar->Update();
       pRepaint = m_pVertScrollBar.get();
     } else if ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
-      m_pVertScrollBar->LockUpdate();
-      m_pVertScrollBar->SetRange(0, -1);
-      m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled);
-      m_pVertScrollBar->UnlockUpdate();
+      {
+        ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
+        m_pVertScrollBar->SetRange(0, -1);
+        m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled);
+      }
       m_pVertScrollBar->Update();
       pRepaint = m_pVertScrollBar.get();
     }

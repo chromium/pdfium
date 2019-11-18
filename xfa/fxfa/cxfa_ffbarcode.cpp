@@ -149,11 +149,13 @@ bool CXFA_FFBarcode::LoadWidget() {
   pNoteDriver->RegisterEventTarget(pFWLBarcode, pFWLBarcode);
   m_pOldDelegate = pFWLBarcode->GetDelegate();
   pFWLBarcode->SetDelegate(this);
-  pFWLBarcode->LockUpdate();
 
-  pFWLBarcode->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
-  UpdateWidgetProperty();
-  pFWLBarcode->UnlockUpdate();
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pFWLBarcode);
+    pFWLBarcode->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
+    UpdateWidgetProperty();
+  }
+
   return CXFA_FFField::LoadWidget();
 }
 

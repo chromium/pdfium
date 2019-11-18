@@ -44,10 +44,12 @@ bool CXFA_FFCheckButton::LoadWidget() {
   if (m_pNode->IsRadioButton())
     pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
 
-  pCheckBox->LockUpdate();
-  UpdateWidgetProperty();
-  SetFWLCheckState(m_pNode->GetCheckState());
-  pCheckBox->UnlockUpdate();
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pCheckBox);
+    UpdateWidgetProperty();
+    SetFWLCheckState(m_pNode->GetCheckState());
+  }
+
   return CXFA_FFField::LoadWidget();
 }
 

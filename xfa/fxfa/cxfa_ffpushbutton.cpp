@@ -60,10 +60,13 @@ bool CXFA_FFPushButton::LoadWidget() {
 
   CFWL_NoteDriver* pNoteDriver = pPushButton->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pPushButton, pPushButton);
-  pPushButton->LockUpdate();
-  UpdateWidgetProperty();
-  LoadHighlightCaption();
-  pPushButton->UnlockUpdate();
+
+  {
+    CFWL_Widget::ScopedUpdateLock update_lock(pPushButton);
+    UpdateWidgetProperty();
+    LoadHighlightCaption();
+  }
+
   return CXFA_FFField::LoadWidget();
 }
 

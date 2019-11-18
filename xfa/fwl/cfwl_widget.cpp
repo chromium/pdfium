@@ -390,3 +390,12 @@ void CFWL_Widget::OnProcessEvent(CFWL_Event* pEvent) {}
 
 void CFWL_Widget::OnDrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix& matrix) {}
+
+CFWL_Widget::ScopedUpdateLock::ScopedUpdateLock(CFWL_Widget* widget)
+    : widget_(widget) {
+  widget_->LockUpdate();
+}
+
+CFWL_Widget::ScopedUpdateLock::~ScopedUpdateLock() {
+  widget_->UnlockUpdate();
+}
