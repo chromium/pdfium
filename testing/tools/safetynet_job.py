@@ -2,7 +2,6 @@
 # Copyright 2017 The PDFium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Looks for performance regressions on all pushes since the last run.
 
 Run this nightly to have a periodical check for performance regressions.
@@ -62,9 +61,7 @@ class JobRun(object):
       there was an improvement and no regression.
     """
     pdfium_src_dir = os.path.join(
-        os.path.dirname(__file__),
-        os.path.pardir,
-        os.path.pardir)
+        os.path.dirname(__file__), os.path.pardir, os.path.pardir)
     os.chdir(pdfium_src_dir)
 
     branch_to_restore = self.git.GetCurrentBranchName()
@@ -114,8 +111,8 @@ class JobRun(object):
     """
     current = self.git.GetCurrentBranchHash()
 
-    PrintWithTime('Incremental run, current is %s, last is %s'
-                  % (current, last_revision_covered))
+    PrintWithTime('Incremental run, current is %s, last is %s' %
+                  (current, last_revision_covered))
 
     if not os.path.exists(self.context.run_output_dir):
       os.makedirs(self.context.run_output_dir)
@@ -123,18 +120,19 @@ class JobRun(object):
     if current == last_revision_covered:
       PrintWithTime('No changes seen, finishing job')
       output_info = {
-          'metadata': self._BuildRunMetadata(last_revision_covered,
-                                             current,
-                                             False)}
+          'metadata':
+              self._BuildRunMetadata(last_revision_covered, current, False)
+      }
       self._WriteRawJson(output_info)
       return 0
 
     # Run compare
-    cmd = ['testing/tools/safetynet_compare.py',
-           '--this-repo',
-           '--machine-readable',
-           '--branch-before=%s' % last_revision_covered,
-           '--output-dir=%s' % self.context.run_output_dir]
+    cmd = [
+        'testing/tools/safetynet_compare.py', '--this-repo',
+        '--machine-readable',
+        '--branch-before=%s' % last_revision_covered,
+        '--output-dir=%s' % self.context.run_output_dir
+    ]
     cmd.extend(self.args.input_paths)
 
     json_output = RunCommandPropagateErr(cmd)
@@ -144,16 +142,14 @@ class JobRun(object):
 
     output_info = json.loads(json_output)
 
-    run_metadata = self._BuildRunMetadata(last_revision_covered,
-                                          current,
-                                          True)
+    run_metadata = self._BuildRunMetadata(last_revision_covered, current, True)
     output_info.setdefault('metadata', {}).update(run_metadata)
     self._WriteRawJson(output_info)
 
-    PrintConclusionsDictHumanReadable(output_info,
-                                      colored=(not self.args.output_to_log
-                                               and not self.args.no_color),
-                                      key='after')
+    PrintConclusionsDictHumanReadable(
+        output_info,
+        colored=(not self.args.output_to_log and not self.args.no_color),
+        key='after')
 
     status = 0
 
@@ -194,22 +190,31 @@ class JobRun(object):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('results_dir',
-                      help='where to write the job results')
-  parser.add_argument('input_paths', nargs='+',
-                      help='pdf files or directories to search for pdf files '
-                           'to run as test cases')
-  parser.add_argument('--no-checkout', action='store_true',
-                      help='whether to skip checking out origin/master. Use '
-                           'for script debugging.')
-  parser.add_argument('--no-checkpoint', action='store_true',
-                      help='whether to skip writing the new checkpoint. Use '
-                           'for script debugging.')
-  parser.add_argument('--no-color', action='store_true',
-                      help='whether to write output without color escape '
-                           'codes.')
-  parser.add_argument('--output-to-log', action='store_true',
-                      help='whether to write output to a log file')
+  parser.add_argument('results_dir', help='where to write the job results')
+  parser.add_argument(
+      'input_paths',
+      nargs='+',
+      help='pdf files or directories to search for pdf files '
+      'to run as test cases')
+  parser.add_argument(
+      '--no-checkout',
+      action='store_true',
+      help='whether to skip checking out origin/master. Use '
+      'for script debugging.')
+  parser.add_argument(
+      '--no-checkpoint',
+      action='store_true',
+      help='whether to skip writing the new checkpoint. Use '
+      'for script debugging.')
+  parser.add_argument(
+      '--no-color',
+      action='store_true',
+      help='whether to write output without color escape '
+      'codes.')
+  parser.add_argument(
+      '--output-to-log',
+      action='store_true',
+      help='whether to write output to a log file')
   args = parser.parse_args()
 
   job_context = JobContext(args)
@@ -230,4 +235,3 @@ def main():
 
 if __name__ == '__main__':
   sys.exit(main())
-

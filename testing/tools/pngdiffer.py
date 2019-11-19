@@ -11,14 +11,15 @@ import sys
 
 import common
 
+
 class PNGDiffer():
+
   def __init__(self, finder):
     self.pdfium_diff_path = finder.ExecutablePath('pdfium_diff')
     self.os_name = finder.os_name
 
   def CheckMissingTools(self, regenerate_expected):
-    if (regenerate_expected and
-        self.os_name == 'linux' and
+    if (regenerate_expected and self.os_name == 'linux' and
         not distutils.spawn.find_executable('optipng')):
       return 'Please install "optipng" to regenerate expected images.'
     return None
@@ -55,8 +56,8 @@ class PNGDiffer():
         if page == 0:
           print "WARNING: no expected results files for " + input_filename
         if os.path.exists(actual_path):
-          print ('FAILURE: Missing expected result for 0-based page %d of %s'
-                 % (page, input_filename))
+          print('FAILURE: Missing expected result for 0-based page %d of %s' %
+                (page, input_filename))
           return True
         break
       print "Checking " + actual_path
@@ -65,7 +66,7 @@ class PNGDiffer():
         error = common.RunCommand(
             [self.pdfium_diff_path, expected_path, actual_path])
       else:
-        error = 1;
+        error = 1
       if error:
         # When failed, we check against platform based results.
         if os.path.exists(platform_expected_path):
@@ -115,8 +116,8 @@ class PathTemplates(object):
     input_root, _ = os.path.splitext(input_filename)
     self.actual_path_template = os.path.join(working_dir,
                                              input_root + ACTUAL_TEMPLATE)
-    self.expected_path = os.path.join(
-        source_dir, input_root + EXPECTED_TEMPLATE)
+    self.expected_path = os.path.join(source_dir,
+                                      input_root + EXPECTED_TEMPLATE)
     self.platform_expected_path = os.path.join(
         source_dir, input_root + PLATFORM_EXPECTED_TEMPLATE)
 

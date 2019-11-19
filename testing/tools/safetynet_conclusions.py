@@ -1,11 +1,9 @@
 # Copyright 2017 The PDFium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Classes that draw conclusions out of a comparison and represent them."""
 
 from collections import Counter
-
 
 FORMAT_RED = '\033[01;31m{0}\033[00m'
 FORMAT_GREEN = '\033[01;32m{0}\033[00m'
@@ -20,10 +18,7 @@ RATING_NO_CHANGE = 'no_change'
 RATING_SMALL_CHANGE = 'small_change'
 
 RATINGS = [
-    RATING_FAILURE,
-    RATING_REGRESSION,
-    RATING_IMPROVEMENT,
-    RATING_NO_CHANGE,
+    RATING_FAILURE, RATING_REGRESSION, RATING_IMPROVEMENT, RATING_NO_CHANGE,
     RATING_SMALL_CHANGE
 ]
 
@@ -233,10 +228,12 @@ class CaseResult(object):
 
   def GetOutputDict(self):
     """Returns a dict with the test case's conclusions."""
-    return {'before': self.before,
-            'after': self.after,
-            'ratio': self.ratio,
-            'rating': self.rating}
+    return {
+        'before': self.before,
+        'after': self.after,
+        'ratio': self.ratio,
+        'rating': self.rating
+    }
 
 
 def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
@@ -249,18 +246,16 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
   """
   # Print header
   print '=' * 80
-  print '{0:>11s} {1:>15s}  {2}' .format(
-      '% Change',
-      'Time after',
-      'Test case')
+  print '{0:>11s} {1:>15s}  {2}'.format('% Change', 'Time after', 'Test case')
   print '-' * 80
 
   color = FORMAT_NORMAL
 
   # Print cases
   if key is not None:
-    case_pairs = sorted(conclusions_dict['comparison_by_case'].iteritems(),
-                        key=lambda kv: kv[1][key])
+    case_pairs = sorted(
+        conclusions_dict['comparison_by_case'].iteritems(),
+        key=lambda kv: kv[1][key])
   else:
     case_pairs = sorted(conclusions_dict['comparison_by_case'].iteritems())
 
@@ -270,14 +265,12 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
 
     if case_dict['rating'] == RATING_FAILURE:
       print u'{} to measure time for {}'.format(
-          color.format('Failed'),
-          case_name).encode('utf-8')
+          color.format('Failed'), case_name).encode('utf-8')
       continue
 
-    print u'{0} {1:15,d}  {2}' .format(
+    print u'{0} {1:15,d}  {2}'.format(
         color.format('{:+11.4%}'.format(case_dict['ratio'])),
-        case_dict['after'],
-        case_name).encode('utf-8')
+        case_dict['after'], case_name).encode('utf-8')
 
   # Print totals
   totals = conclusions_dict['summary']
@@ -286,15 +279,12 @@ def PrintConclusionsDictHumanReadable(conclusions_dict, colored, key=None):
 
   if colored:
     color = FORMAT_MAGENTA if totals[RATING_FAILURE] else FORMAT_GREEN
-  print ('Failed to measure: %s'
-         % color.format(totals[RATING_FAILURE]))
+  print('Failed to measure: %s' % color.format(totals[RATING_FAILURE]))
 
   if colored:
     color = FORMAT_RED if totals[RATING_REGRESSION] else FORMAT_GREEN
-  print ('Regressions: %s'
-         % color.format(totals[RATING_REGRESSION]))
+  print('Regressions: %s' % color.format(totals[RATING_REGRESSION]))
 
   if colored:
     color = FORMAT_CYAN if totals[RATING_IMPROVEMENT] else FORMAT_GREEN
-  print ('Improvements: %s'
-         % color.format(totals[RATING_IMPROVEMENT]))
+  print('Improvements: %s' % color.format(totals[RATING_IMPROVEMENT]))

@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-
 import json
 import os
 import shlex
@@ -18,7 +17,7 @@ def _ParseKeyValuePairs(kv_str):
   kv_pairs = shlex.split(kv_str)
   if len(kv_pairs) % 2:
     raise ValueError('Uneven number of key/value pairs. Got %s' % kv_str)
-  return { kv_pairs[i]:kv_pairs[i + 1] for i in xrange(0, len(kv_pairs), 2) }
+  return {kv_pairs[i]: kv_pairs[i + 1] for i in xrange(0, len(kv_pairs), 2)}
 
 
 # This module downloads a json provided by Skia Gold with the expected baselines
@@ -81,15 +80,15 @@ class GoldBaseline(object):
         c_type = response.headers.get('Content-type', '')
         EXPECTED_CONTENT_TYPE = 'application/json'
         if c_type != EXPECTED_CONTENT_TYPE:
-          raise ValueError('Invalid content type. Got %s instead of %s' % (
-              c_type, EXPECTED_CONTENT_TYPE))
+          raise ValueError('Invalid content type. Got %s instead of %s' %
+                           (c_type, EXPECTED_CONTENT_TYPE))
         json_data = response.read()
         break  # If this line is reached, then no exception occurred.
       except (ssl.SSLError, urllib2.HTTPError, urllib2.URLError) as e:
         timeout *= 2
         if timeout < MAX_TIMEOUT:
           continue
-        print ('Error: Unable to read skia gold json from %s: %s' % (url, e))
+        print('Error: Unable to read skia gold json from %s: %s' % (url, e))
         return None
 
     try:
@@ -130,8 +129,8 @@ class GoldBaseline(object):
       if md5_hash in self._baselines[test_name]:
         return GoldBaseline.MATCH
 
-    return (GoldBaseline.MISMATCH if found_test_case
-            else GoldBaseline.NO_BASELINE)
+    return (GoldBaseline.MISMATCH
+            if found_test_case else GoldBaseline.NO_BASELINE)
 
 
 # This module collects and writes output in a format expected by the
@@ -177,6 +176,7 @@ class GoldBaseline(object):
 # }
 #
 class GoldResults(object):
+
   def __init__(self, source_type, output_dir, properties_str, key_str,
                ignore_hashes_file):
     """
@@ -194,7 +194,7 @@ class GoldResults(object):
     self._source_type = source_type
     self._properties = _ParseKeyValuePairs(properties_str)
     self._properties['key'] = _ParseKeyValuePairs(key_str)
-    self._results =  []
+    self._results = []
     self._passfail = []
     self._output_dir = output_dir
 
@@ -206,7 +206,7 @@ class GoldResults(object):
     self._ignore_hashes = set()
     if ignore_hashes_file:
       with open(ignore_hashes_file, 'r') as ig_file:
-        hashes=[x.strip() for x in ig_file.readlines() if x.strip()]
+        hashes = [x.strip() for x in ig_file.readlines() if x.strip()]
         self._ignore_hashes = set(hashes)
 
   def AddTestResult(self, testName, md5Hash, outputImagePath, matchResult):
@@ -222,23 +222,21 @@ class GoldResults(object):
 
     # Add an entry to the list of test results
     self._results.append({
-      'key': {
-        'name': testName,
-        'source_type': self._source_type,
-      },
-      'md5': md5Hash,
-      'options': {
-        'ext': imgExt,
-        'gamma_correct': 'no'
-      }
+        'key': {
+            'name': testName,
+            'source_type': self._source_type,
+        },
+        'md5': md5Hash,
+        'options': {
+            'ext': imgExt,
+            'gamma_correct': 'no'
+        }
     })
 
     self._passfail.append((testName, matchResult))
 
   def WriteResults(self):
-    self._properties.update({
-      'results': self._results
-    })
+    self._properties.update({'results': self._results})
 
     output_file_name = os.path.join(self._output_dir, 'dm.json')
     with open(output_file_name, 'wb') as outfile:
@@ -249,6 +247,7 @@ class GoldResults(object):
     with open(output_file_name, 'wb') as outfile:
       json.dump(self._passfail, outfile, indent=1)
       outfile.write('\n')
+
 
 # Produce example output for manual testing.
 if __name__ == '__main__':

@@ -1,7 +1,6 @@
 # Copyright 2017 The PDFium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Classes for dealing with git."""
 
 import subprocess
@@ -42,13 +41,12 @@ class GitHelper(object):
 
   def GetCurrentBranchName(self):
     """Returns a string with the current branch name."""
-    return RunCommandPropagateErr(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
-        exit_status_on_error=1).strip()
+    return RunCommandPropagateErr(['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+                                  exit_status_on_error=1).strip()
 
   def GetCurrentBranchHash(self):
-    return RunCommandPropagateErr(
-        ['git', 'rev-parse', 'HEAD'], exit_status_on_error=1).strip()
+    return RunCommandPropagateErr(['git', 'rev-parse', 'HEAD'],
+                                  exit_status_on_error=1).strip()
 
   def IsCurrentBranchClean(self):
     output = RunCommandPropagateErr(['git', 'status', '--porcelain'],
@@ -57,8 +55,8 @@ class GitHelper(object):
 
   def BranchExists(self, branch_name):
     """Return whether a branch with the given name exists."""
-    output = RunCommandPropagateErr(['git', 'rev-parse', '--verify',
-                                     branch_name])
+    output = RunCommandPropagateErr(
+        ['git', 'rev-parse', '--verify', branch_name])
     return output is not None
 
   def CloneLocal(self, source_repo, new_repo):

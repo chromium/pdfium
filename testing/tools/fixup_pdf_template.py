@@ -2,7 +2,6 @@
 # Copyright 2014 The PDFium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Expands a hand-written PDF testcase (template) into a valid PDF file.
 
 There are several places in a PDF file where byte-offsets are required. This
@@ -140,7 +139,7 @@ def insert_includes(input_path, output_file, visited_set):
   try:
     with open(input_path, 'rb') as infile:
       for line in infile:
-        match = re.match(r'\s*\{\{include\s+(.+)\}\}', line);
+        match = re.match(r'\s*\{\{include\s+(.+)\}\}', line)
         if match:
           insert_includes(
               os.path.join(os.path.dirname(input_path), match.group(1)),

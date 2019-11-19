@@ -7,9 +7,11 @@ import sys
 
 import test_runner
 
+
 def main():
   runner = test_runner.TestRunner('javascript')
   return runner.Run()
+
 
 if __name__ == '__main__':
   sys.exit(main())

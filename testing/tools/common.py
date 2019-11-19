@@ -10,6 +10,7 @@ import re
 import subprocess
 import sys
 
+
 def os_name():
   if sys.platform.startswith('linux'):
     return 'linux'
@@ -28,7 +29,8 @@ def RunCommand(cmd):
     return e
 
 
-def RunCommandPropagateErr(cmd, stdout_has_errors=False,
+def RunCommandPropagateErr(cmd,
+                           stdout_has_errors=False,
                            exit_status_on_error=None):
   """Run a command as a subprocess.
 
@@ -72,7 +74,7 @@ def RunCommandExtractHashedFiles(cmd):
     for line in output.split('\n'):
       line = line.strip()
       if line.startswith("MD5:"):
-          ret.append([x.strip() for x in line.lstrip("MD5:").rsplit(":", 1)])
+        ret.append([x.strip() for x in line.lstrip("MD5:").rsplit(":", 1)])
     return None, ret
   except subprocess.CalledProcessError as e:
     return e, None
@@ -141,14 +143,14 @@ def GetBooleanGnArg(arg_name, build_dir, verbose=False):
   os.chdir(cwd)
   arg_match_output = re.search('%s = (.*)' % arg_name, gn_args_output).group(1)
   if verbose:
-    print >> sys.stderr, "Found '%s' for value of %s" % (arg_match_output, arg_name)
+    print >> sys.stderr, "Found '%s' for value of %s" % (arg_match_output,
+                                                         arg_name)
   return arg_match_output == 'true'
 
 
 def PrintWithTime(s):
   """Prints s prepended by a timestamp."""
-  print '[%s] %s' % (datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"),
-                     s)
+  print '[%s] %s' % (datetime.datetime.now().strftime("%Y%m%d %H:%M:%S"), s)
 
 
 def PrintErr(s):

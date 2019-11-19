@@ -2,7 +2,6 @@
 # Copyright 2017 The PDFium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Verifies exported functions in public/*.h are in fpdf_view_c_api_test.c.
 
 This script gathers a list of functions from public/*.h that contain
@@ -16,6 +15,7 @@ fpdf_view_c_api_test.c is alphabetical within each section.
 import os
 import re
 import sys
+
 
 def _IsValidFunctionName(function, filename):
   if function.startswith('FPDF'):
@@ -70,13 +70,15 @@ def _GetFunctionsFromPublicHeaders(src_path):
       functions.extend(_GetExportsFromHeader(public_path, filename))
   return functions
 
+
 def _CheckSorted(functions, api_test_path):
   unsorted_functions = set()
   for i in range(len(functions) - 1):
-    if functions[i] > functions[i+1]:
+    if functions[i] > functions[i + 1]:
       unsorted_functions.add(functions[i])
-      unsorted_functions.add(functions[i+1])
+      unsorted_functions.add(functions[i + 1])
   return unsorted_functions
+
 
 def _GetFunctionsFromTest(api_test_path):
   chk_regex = re.compile('^    CHK\((.*)\);\n$')
@@ -122,21 +124,24 @@ def main():
   unsorted_functions = set()
   for functions in test_functions_per_section:
     unsorted_functions |= _CheckSorted(functions, api_test_path)
-  check = _CheckAndPrintFailures(unsorted_functions,
+  check = _CheckAndPrintFailures(
+      unsorted_functions,
       'Found CHKs that are not in alphabetical order within each section in %s'
       % api_test_path)
   result = result and check
 
   duplicate_public_functions = _FindDuplicates(public_functions)
   check = _CheckAndPrintFailures(duplicate_public_functions,
-                                'Found duplicate functions in public headers')
+                                 'Found duplicate functions in public headers')
   result = result and check
 
-  test_functions = [function for functions in test_functions_per_section
-      for function in functions]
+  test_functions = [
+      function for functions in test_functions_per_section
+      for function in functions
+  ]
   duplicate_test_functions = _FindDuplicates(test_functions)
   check = _CheckAndPrintFailures(duplicate_test_functions,
-                                'Found duplicate functions in API test')
+                                 'Found duplicate functions in API test')
   result = result and check
 
   public_functions_set = set(public_functions)
@@ -149,9 +154,8 @@ def main():
   result = result and check
 
   if not result:
-    print ('Some checks failed. Make sure %s is in sync with the public API '
-           'headers.'
-           % api_test_relative_path)
+    print('Some checks failed. Make sure %s is in sync with the public API '
+          'headers.' % api_test_relative_path)
     return 1
 
   return 0

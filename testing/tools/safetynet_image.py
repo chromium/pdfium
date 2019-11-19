@@ -1,7 +1,6 @@
 # Copyright 2017 The PDFium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Compares pairs of page images and generates an HTML to look at differences.
 """
 
@@ -32,8 +31,8 @@ class ImageComparison(object):
   images, so /tmp/images is self-contained and can be moved around or shared.
   """
 
-  def __init__(self, build_dir, output_path, two_labels,
-               num_workers, threshold_fraction):
+  def __init__(self, build_dir, output_path, two_labels, num_workers,
+               threshold_fraction):
     """Constructor.
 
     Args:
@@ -72,8 +71,8 @@ class ImageComparison(object):
     if not os.path.exists(self.diff_path):
       os.makedirs(self.diff_path)
 
-    self.image_locations = ImageLocations(
-        self.output_path, self.diff_path, self.two_labels)
+    self.image_locations = ImageLocations(self.output_path, self.diff_path,
+                                          self.two_labels)
 
     difference = self._GenerateDiffs()
 
@@ -116,9 +115,10 @@ class ImageComparison(object):
       # The timeout is a workaround for http://bugs.python.org/issue8296
       # which prevents KeyboardInterrupt from working.
       one_year_in_seconds = 3600 * 24 * 365
-      worker_results = (pool.map_async(worker_func,
-                                       self.image_locations.Images())
-                        .get(one_year_in_seconds))
+      worker_results = (
+          pool.map_async(
+              worker_func,
+              self.image_locations.Images()).get(one_year_in_seconds))
       for worker_result in worker_results:
         image, result = worker_result
         difference[image] = result
@@ -146,22 +146,23 @@ class ImageComparison(object):
       percentage of pixels changed.
     """
     try:
-      subprocess.check_output(
-          [self.img_diff_bin,
-           self.image_locations.Left(image),
-           self.image_locations.Right(image)])
+      subprocess.check_output([
+          self.img_diff_bin,
+          self.image_locations.Left(image),
+          self.image_locations.Right(image)
+      ])
     except subprocess.CalledProcessError as e:
       percentage_change = float(re.findall(r'\d+\.\d+', e.output)[0])
     else:
       return image, 0
 
     try:
-      subprocess.check_output(
-          [self.img_diff_bin,
-           '--diff',
-           self.image_locations.Left(image),
-           self.image_locations.Right(image),
-           self.image_locations.Diff(image)])
+      subprocess.check_output([
+          self.img_diff_bin, '--diff',
+          self.image_locations.Left(image),
+          self.image_locations.Right(image),
+          self.image_locations.Diff(image)
+      ])
     except subprocess.CalledProcessError as e:
       return image, percentage_change
     else:
@@ -185,12 +186,10 @@ class ImageComparison(object):
 
     f.write('<tr>')
     self._WritePageCompareTd(
-        f,
-        self._GetRelativePath(self.image_locations.Left(image)),
+        f, self._GetRelativePath(self.image_locations.Left(image)),
         self._GetRelativePath(self.image_locations.Right(image)))
-    self._WritePageTd(
-        f,
-        self._GetRelativePath(self.image_locations.Diff(image)))
+    self._WritePageTd(f, self._GetRelativePath(
+        self.image_locations.Diff(image)))
     f.write('</tr>')
 
   def _WritePageTd(self, f, image_path):
@@ -215,9 +214,8 @@ class ImageComparison(object):
     f.write('<td>')
     f.write('<img src="%s" '
             'onmouseover="this.src=\'%s\';" '
-            'onmouseout="this.src=\'%s\';">' % (normal_image_path,
-                                                hover_image_path,
-                                                normal_image_path))
+            'onmouseout="this.src=\'%s\';">' %
+            (normal_image_path, hover_image_path, normal_image_path))
     f.write('</td>')
 
   def _WriteSmallChanges(self, f, small_changes):
@@ -265,8 +263,9 @@ class ImageLocations(object):
       return (pieces[0], int(pieces[1]))
 
     self.images.sort(key=KeyFn)
-    self.diff = {image: os.path.join(self.diff_path, image)
-                 for image in self.images}
+    self.diff = {
+        image: os.path.join(self.diff_path, image) for image in self.images
+    }
 
   def _FindImages(self, label):
     """Traverses a dir and builds a dict of all page images to compare in it.
@@ -280,8 +279,9 @@ class ImageLocations(object):
     image_path_matcher = os.path.join(self.output_path, label, '*.*.png')
     image_paths = glob.glob(image_path_matcher)
 
-    image_dict = {os.path.split(image_path)[1]: image_path
-                  for image_path in image_paths}
+    image_dict = {
+        os.path.split(image_path)[1]: image_path for image_path in image_paths
+    }
 
     return image_dict
 
