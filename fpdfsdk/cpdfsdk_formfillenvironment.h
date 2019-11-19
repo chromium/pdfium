@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_occontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -75,15 +74,6 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   bool SetFocusAnnot(ObservedPtr<CPDFSDK_Annot>* pAnnot);
   bool KillFocusAnnot(uint32_t nFlag);
   void ClearAllFocusedAnnots();
-
-  bool ExtractPages(const std::vector<uint16_t>& arrExtraPages,
-                    CPDF_Document* pDstDoc);
-  bool InsertPages(int nInsertAt,
-                   const CPDF_Document* pSrcDoc,
-                   const std::vector<uint16_t>& arrSrcPages);
-  bool ReplacePages(int nPage,
-                    const CPDF_Document* pSrcDoc,
-                    const std::vector<uint16_t>& arrSrcPages);
 
   int GetPageCount() const;
   bool GetPermissions(int nFlag) const;
