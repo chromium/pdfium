@@ -19,8 +19,6 @@ struct CRYPT_rc4_context {
 #define MAX_NR 14
 #define MAX_NB 8
 struct CRYPT_aes_context {
-  void (*encrypt)(CRYPT_aes_context* ctx, unsigned int* block);
-  void (*decrypt)(CRYPT_aes_context* ctx, unsigned int* block);
   int Nb;
   int Nr;
   unsigned int keysched[(MAX_NR + 1) * MAX_NB];
