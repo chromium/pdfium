@@ -38,57 +38,6 @@ pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator();
 void FXMEM_InitializePartitionAlloc();
 NOINLINE void FX_OutOfMemoryTerminate();
 
-inline void* FX_SafeAlloc(size_t num_members, size_t member_size) {
-  FX_SAFE_SIZE_T total = member_size;
-  total *= num_members;
-  if (!total.IsValid())
-    return nullptr;
-
-  constexpr int kFlags = pdfium::base::PartitionAllocReturnNull |
-                         pdfium::base::PartitionAllocZeroFill;
-  return pdfium::base::PartitionAllocGenericFlags(
-      GetGeneralPartitionAllocator().root(), kFlags, total.ValueOrDie(),
-      "GeneralPartition");
-}
-
-inline void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {
-  FX_SAFE_SIZE_T size = num_members;
-  size *= member_size;
-  if (!size.IsValid())
-    return nullptr;
-
-  return pdfium::base::PartitionReallocGenericFlags(
-      GetGeneralPartitionAllocator().root(),
-      pdfium::base::PartitionAllocReturnNull, ptr, size.ValueOrDie(),
-      "GeneralPartition");
-}
-
-inline void* FX_AllocOrDie(size_t num_members, size_t member_size) {
-  // TODO(tsepez): See if we can avoid the implicit memset(0).
-  void* result = FX_SafeAlloc(num_members, member_size);
-  if (!result)
-    FX_OutOfMemoryTerminate();  // Never returns.
-
-  return result;
-}
-
-inline void* FX_AllocOrDie2D(size_t w, size_t h, size_t member_size) {
-  if (w >= std::numeric_limits<size_t>::max() / h)
-    FX_OutOfMemoryTerminate();  // Never returns.
-
-  return FX_AllocOrDie(w * h, member_size);
-}
-
-inline void* FX_ReallocOrDie(void* ptr,
-                             size_t num_members,
-                             size_t member_size) {
-  void* result = FX_SafeRealloc(ptr, num_members, member_size);
-  if (!result)
-    FX_OutOfMemoryTerminate();  // Never returns.
-
-  return result;
-}
-
 // These never return nullptr, and must return cleared memory.
 #define FX_Alloc(type, size) \
   static_cast<type*>(FX_AllocOrDie(size, sizeof(type)))
@@ -103,18 +52,12 @@ inline void* FX_ReallocOrDie(void* ptr,
 #define FX_TryRealloc(type, ptr, size) \
   static_cast<type*>(FX_SafeRealloc(ptr, size, sizeof(type)))
 
-inline void FX_Free(void* ptr) {
-  // TODO(palmer): Removing this check exposes crashes when PDFium callers
-  // attempt to free |nullptr|. Although libc's |free| allows freeing |NULL|, no
-  // other Partition Alloc callers need this tolerant behavior. Additionally,
-  // checking for |nullptr| adds a branch to |PartitionFree|, and it's nice to
-  // not have to have that.
-  //
-  // So this check is hiding (what I consider to be) bugs, and we should try to
-  // fix them. https://bugs.chromium.org/p/pdfium/issues/detail?id=690
-  if (ptr)
-    pdfium::base::PartitionFree(ptr);
-}
+void* FX_SafeAlloc(size_t num_members, size_t member_size);
+void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size);
+void* FX_AllocOrDie(size_t num_members, size_t member_size);
+void* FX_AllocOrDie2D(size_t w, size_t h, size_t member_size);
+void* FX_ReallocOrDie(void* ptr, size_t num_members, size_t member_size);
+void FX_Free(void* ptr);
 
 // The FX_ArraySize(arr) macro returns the # of elements in an array arr.
 // The expression is a compile-time constant, and therefore can be
