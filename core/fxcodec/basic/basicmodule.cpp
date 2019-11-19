@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 
 namespace fxcodec {

@@ -8,6 +8,8 @@
 
 #include <stdlib.h>  // For abort().
 
+#include <limits>
+
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/debug/alias.h"

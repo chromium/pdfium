@@ -7,8 +7,7 @@
 #ifndef CORE_FXCRT_FX_MEMORY_H_
 #define CORE_FXCRT_FX_MEMORY_H_
 
-#include "core/fxcrt/fx_system.h"
-#include "third_party/base/compiler_specific.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,12 +22,6 @@ void FXMEM_DefaultFree(void* pointer);
 #ifdef __cplusplus
 }  // extern "C"
 
-#include <stdlib.h>
-#include <limits>
-#include <memory>
-#include <new>
-
-#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
 pdfium::base::PartitionAllocatorGeneric& GetArrayBufferPartitionAllocator();
