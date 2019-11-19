@@ -22,6 +22,9 @@ import suppressor
 # timestamp of the first commit to repo, 2014/5/9 17:48:50.
 TEST_SEED_TIME = "1399672130"
 
+# List of test types that should run text tests instead of pixel tests.
+TEXT_TESTS = ['javascript']
+
 
 class KeyboardInterruptError(Exception):
   pass
@@ -69,11 +72,7 @@ class TestRunner:
   # tests and outputfiles is a list tuples:
   #          (path_to_image, md5_hash_of_pixelbuffer)
   def GenerateAndTest(self, input_filename, source_dir):
-    use_ahem = 'use_ahem' in source_dir
-
     input_root, _ = os.path.splitext(input_filename)
-    expected_txt_path = os.path.join(source_dir, input_root + '_expected.txt')
-
     pdf_path = os.path.join(self.working_dir, input_root + '.pdf')
 
     # Remove any existing generated images from previous runs.
@@ -91,9 +90,11 @@ class TestRunner:
       return False, []
 
     results = []
-    if os.path.exists(expected_txt_path):
+    if self.test_type in TEXT_TESTS:
+      expected_txt_path = os.path.join(source_dir, input_root + '_expected.txt')
       raised_exception = self.TestText(input_root, expected_txt_path, pdf_path)
     else:
+      use_ahem = 'use_ahem' in source_dir
       raised_exception, results = self.TestPixel(input_root, pdf_path, use_ahem)
 
     if raised_exception is not None:
@@ -157,8 +158,24 @@ class TestRunner:
       ]
       subprocess.check_call(cmd_to_run, stdout=outfile)
 
+    if not os.path.exists(expected_txt_path):
+      return self._VerifyEmptyText(txt_path)
+
     cmd = [sys.executable, self.text_diff_path, expected_txt_path, txt_path]
     return common.RunCommand(cmd)
+
+  def _VerifyEmptyText(self, txt_path):
+    try:
+      with open(txt_path, "r") as txt_file:
+        txt_data = txt_file.readlines()
+      if not len(txt_data):
+        return None
+      sys.stdout.write('Unexpected output:\n')
+      for line in txt_data:
+        sys.stdout.write(line)
+      raise Exception('%s should be empty.' % txt_path)
+    except Exception as e:
+      return e
 
   def TestPixel(self, input_root, pdf_path, use_ahem):
     cmd_to_run = [
