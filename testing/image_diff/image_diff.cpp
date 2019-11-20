@@ -63,8 +63,7 @@ class Image {
 
     fclose(f);
 
-    data_ = image_diff_png::DecodePNG(compressed.data(), compressed.size(), &w_,
-                                      &h_);
+    data_ = image_diff_png::DecodePNG(compressed, &w_, &h_);
     if (data_.empty()) {
       Clear();
       return false;

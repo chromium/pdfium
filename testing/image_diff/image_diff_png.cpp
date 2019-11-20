@@ -659,11 +659,10 @@ std::vector<unsigned char> Encode(const unsigned char* input,
 
 }  // namespace
 
-std::vector<unsigned char> DecodePNG(const unsigned char* input,
-                                     size_t input_size,
+std::vector<unsigned char> DecodePNG(pdfium::span<const unsigned char> input,
                                      int* width,
                                      int* height) {
-  return Decode(input, input_size, FORMAT_RGBA, width, height);
+  return Decode(input.data(), input.size(), FORMAT_RGBA, width, height);
 }
 
 std::vector<unsigned char> EncodeBGRPNG(const unsigned char* input,

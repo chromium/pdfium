@@ -9,11 +9,12 @@
 
 #include <vector>
 
+#include "third_party/base/span.h"
+
 namespace image_diff_png {
 
 // Decode a PNG into an RGBA pixel array.
-std::vector<unsigned char> DecodePNG(const unsigned char* input,
-                                     size_t input_size,
+std::vector<unsigned char> DecodePNG(pdfium::span<const unsigned char> input,
                                      int* width,
                                      int* height);
 
