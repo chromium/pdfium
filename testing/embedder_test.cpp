@@ -420,7 +420,7 @@ std::vector<uint8_t> EmbedderTest::RenderPageWithFlagsToEmf(FPDF_PAGE page,
 
 // static
 std::string EmbedderTest::GetPostScriptFromEmf(
-    const std::vector<uint8_t>& emf_data) {
+    pdfium::span<const uint8_t> emf_data) {
   // This comes from Emf::InitFromData() in Chromium.
   HENHMETAFILE emf = SetEnhMetaFileBits(emf_data.size(), emf_data.data());
   if (!emf)
