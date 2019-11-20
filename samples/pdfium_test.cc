@@ -114,6 +114,7 @@ struct Options {
   bool no_smoothtext = false;
   bool no_smoothimage = false;
   bool no_smoothpath = false;
+  bool reverse_byte_order = false;
   bool save_attachments = false;
   bool save_images = false;
   bool save_thumbnails = false;
@@ -163,6 +164,8 @@ int PageRenderFlagsFromOptions(const Options& options) {
     flags |= FPDF_RENDER_NO_SMOOTHIMAGE;
   if (options.no_smoothpath)
     flags |= FPDF_RENDER_NO_SMOOTHPATH;
+  if (options.reverse_byte_order)
+    flags |= FPDF_REVERSE_BYTE_ORDER;
   return flags;
 }
 
@@ -402,6 +405,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->no_smoothimage = true;
     } else if (cur_arg == "--no-smoothpath") {
       options->no_smoothpath = true;
+    } else if (cur_arg == "--reverse-byte-order") {
+      options->reverse_byte_order = true;
     } else if (cur_arg == "--save-attachments") {
       options->save_attachments = true;
     } else if (cur_arg == "--save-images") {
@@ -994,6 +999,8 @@ constexpr char kUsageString[] =
     "  --no-smoothtext      - render disabling text anti-aliasing\n"
     "  --no-smoothimage     - render disabling image anti-alisasing\n"
     "  --no-smoothpath      - render disabling path anti-aliasing\n"
+    "  --reverse-byte-order - render to BGRA, if supported by the output "
+    "format\n"
     "  --save-attachments   - write embedded attachments "
     "<pdf-name>.attachment.<attachment-name>\n"
     "  --save-images        - write embedded images "
