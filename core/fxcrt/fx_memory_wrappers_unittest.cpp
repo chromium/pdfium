@@ -10,6 +10,15 @@
 #include "build/build_config.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+TEST(fxcrt, FxFreeDeleter) {
+  std::unique_ptr<int, FxFreeDeleter> empty(nullptr);
+  std::unique_ptr<int, FxFreeDeleter> thing(FX_Alloc(int, 1));
+  std::unique_ptr<int, FxFreeDeleter> several(FX_Alloc(int, 100));
+  EXPECT_FALSE(empty);
+  EXPECT_TRUE(thing);
+  EXPECT_TRUE(several);
+}
+
 TEST(fxcrt, FxAllocAllocator) {
   std::vector<int, FxAllocAllocator<int>> vec;
   vec.push_back(42);

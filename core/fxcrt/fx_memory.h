@@ -74,11 +74,6 @@ inline T FxAlignToBoundary(T size) {
   return (size + (N - 1)) & ~(N - 1);
 }
 
-// Used with std::unique_ptr to FX_Free raw memory.
-struct FxFreeDeleter {
-  inline void operator()(void* ptr) const { FX_Free(ptr); }
-};
-
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_FX_MEMORY_H_

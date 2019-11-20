@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
 CBC_EANCode::CBC_EANCode(std::unique_ptr<CBC_OneDimEANWriter> pWriter)

@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "build/build_config.h"
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 

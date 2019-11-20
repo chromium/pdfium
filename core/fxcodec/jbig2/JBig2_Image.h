@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcodec/jbig2/JBig2_Define.h"
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/maybe_owned.h"
 
 struct FX_RECT;

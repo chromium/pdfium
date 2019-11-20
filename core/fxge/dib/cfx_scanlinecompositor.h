@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/fx_dib.h"
 
 class CFX_ScanlineCompositor {

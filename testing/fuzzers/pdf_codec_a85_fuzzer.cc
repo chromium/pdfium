@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "core/fxcodec/basic/basicmodule.h"
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;

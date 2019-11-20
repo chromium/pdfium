@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 
 template <class DataType, size_t FixedSize>
 class CFX_FixedBufGrow {

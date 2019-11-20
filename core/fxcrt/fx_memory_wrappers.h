@@ -11,6 +11,11 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+// Used with std::unique_ptr to FX_Free raw memory.
+struct FxFreeDeleter {
+  inline void operator()(void* ptr) const { FX_Free(ptr); }
+};
+
 // Used with std::vector<> to put purely numeric vectors into
 // the same "general" parition used by FX_Alloc(). Otherwise,
 // replacing FX_Alloc/FX_Free pairs with std::vector<> may undo

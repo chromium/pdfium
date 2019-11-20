@@ -12,6 +12,7 @@
 #include <sstream>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 
 class CPDF_Stream final : public CPDF_Object {

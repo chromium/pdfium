@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "core/fxcodec/basic/basicmodule.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, A85TestBadInputs) {
