@@ -189,6 +189,9 @@ class TestRunner:
     if use_ahem:
       cmd_to_run.append('--font-dir=%s' % self.font_dir)
 
+    if self.options.reverse_byte_order:
+      cmd_to_run.append('--reverse-byte-order')
+
     cmd_to_run.append(pdf_path)
     return common.RunCommandExtractHashedFiles(cmd_to_run)
 
@@ -274,6 +277,12 @@ class TestRunner:
         'expected pngs.')
 
     parser.add_option(
+        '--reverse-byte-order',
+        action='store_true',
+        dest="reverse_byte_order",
+        help='Run image-based tests using --reverse-byte-order.')
+
+    parser.add_option(
         '--ignore_errors',
         action="store_true",
         dest="ignore_errors",
@@ -311,7 +320,8 @@ class TestRunner:
     self.feature_string = subprocess.check_output(
         [self.pdfium_test_path, '--show-config'])
     self.test_suppressor = suppressor.Suppressor(finder, self.feature_string)
-    self.image_differ = pngdiffer.PNGDiffer(finder)
+    self.image_differ = pngdiffer.PNGDiffer(finder,
+                                            self.options.reverse_byte_order)
     error_message = self.image_differ.CheckMissingTools(
         self.options.regenerate_expected)
     if error_message:

@@ -14,9 +14,10 @@ import common
 
 class PNGDiffer():
 
-  def __init__(self, finder):
+  def __init__(self, finder, reverse_byte_order):
     self.pdfium_diff_path = finder.ExecutablePath('pdfium_diff')
     self.os_name = finder.os_name
+    self.reverse_byte_order = reverse_byte_order
 
   def CheckMissingTools(self, regenerate_expected):
     if (regenerate_expected and self.os_name == 'linux' and
@@ -63,15 +64,21 @@ class PNGDiffer():
       print "Checking " + actual_path
       sys.stdout.flush()
       if os.path.exists(expected_path):
-        error = common.RunCommand(
-            [self.pdfium_diff_path, expected_path, actual_path])
+        cmd = [self.pdfium_diff_path]
+        if self.reverse_byte_order:
+          cmd.append('--reverse-byte-order')
+        cmd.extend([expected_path, actual_path])
+        error = common.RunCommand(cmd)
       else:
         error = 1
       if error:
         # When failed, we check against platform based results.
         if os.path.exists(platform_expected_path):
-          error = common.RunCommand(
-              [self.pdfium_diff_path, platform_expected_path, actual_path])
+          cmd = [self.pdfium_diff_path]
+          if self.reverse_byte_order:
+            cmd.append('--reverse-byte-order')
+          cmd.extend([platform_expected_path, actual_path])
+          error = common.RunCommand(cmd)
         if error:
           print "FAILURE: " + input_filename + "; " + str(error)
           return True
