@@ -107,6 +107,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
       pdfium::MakeRetain<CPDF_OCContext>(pPage->GetDocument(), usage));
 
   pContext->m_pDevice->SaveState();
+  pContext->m_pDevice->SetBaseClip(clipping_rect);
   pContext->m_pDevice->SetClip_Rect(clipping_rect);
   pContext->m_pContext = pdfium::MakeUnique<CPDF_RenderContext>(pPage);
   pContext->m_pContext->AppendLayer(pPage, &matrix);

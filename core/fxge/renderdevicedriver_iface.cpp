@@ -25,6 +25,8 @@ bool RenderDeviceDriverIface::SetClip_PathStroke(
   return false;
 }
 
+void RenderDeviceDriverIface::SetBaseClip(const FX_RECT& rect) {}
+
 bool RenderDeviceDriverIface::SetPixel(int x, int y, uint32_t color) {
   return false;
 }

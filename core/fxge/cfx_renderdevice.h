@@ -67,13 +67,14 @@ class CFX_RenderDevice {
                               int width,
                               int height) const;
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
-  bool SetClip_Rect(const FX_RECT& pRect);
+  void SetBaseClip(const FX_RECT& rect);
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
                         int fill_mode);
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
+  bool SetClip_Rect(const FX_RECT& pRect);
   bool DrawPath(const CFX_PathData* pPathData,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,

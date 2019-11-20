@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -23,7 +24,7 @@ class CFX_WindowsRenderDeviceTest : public testing::Test {
     m_hDC = CreateCompatibleDC(nullptr);
     ASSERT_TRUE(m_hDC);
     CFX_GEModule::Create(nullptr);
-    m_driver = std::make_unique<CFX_WindowsRenderDevice>(m_hDC, nullptr);
+    m_driver = pdfium::MakeUnique<CFX_WindowsRenderDevice>(m_hDC, nullptr);
     m_driver->SaveState();
   }
 
@@ -73,5 +74,19 @@ TEST_F(CFX_WindowsRenderDeviceTest, GargantuanClipRect) {
   // however they do not because the GDI API IntersectClipRect() errors out and
   // affect subsequent imaging.  crbug.com/1019026
   EXPECT_FALSE(
+      m_driver->SetClip_PathFill(&path_data, &kIdentityMatrix, FXFILL_WINDING));
+}
+
+TEST_F(CFX_WindowsRenderDeviceTest, GargantuanClipRectWithBaseClip) {
+  CFX_PathData path_data;
+  const FX_RECT kBaseClip(0, 0, 5100, 6600);
+
+  m_driver->SetBaseClip(kBaseClip);
+  path_data.AppendRect(-257698020.0f, -257697252.0f, 257698044.0f,
+                       257698812.0f);
+  path_data.ClosePath();
+  // Use of a reasonable base clip ensures that we avoid getting an error back
+  // from GDI API IntersectClipRect().
+  EXPECT_TRUE(
       m_driver->SetClip_PathFill(&path_data, &kIdentityMatrix, FXFILL_WINDING));
 }

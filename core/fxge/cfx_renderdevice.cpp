@@ -458,6 +458,10 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
       m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : kPlatformFormat);
 }
 
+void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
+  m_pDeviceDriver->SetBaseClip(rect);
+}
+
 bool CFX_RenderDevice::SetClip_PathFill(const CFX_PathData* pPathData,
                                         const CFX_Matrix* pObject2Device,
                                         int fill_mode) {

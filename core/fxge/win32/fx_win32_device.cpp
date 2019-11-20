@@ -1078,6 +1078,10 @@ bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   return true;
 }
 
+void CGdiDeviceDriver::SetBaseClip(const FX_RECT& rect) {
+  m_BaseClipBox = rect;
+}
+
 bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                         const CFX_Matrix* pMatrix,
                                         int fill_mode) {
@@ -1085,6 +1089,10 @@ bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
     CFX_FloatRect rectf;
     if (pPathData->IsRect(pMatrix, &rectf)) {
       FX_RECT rect = rectf.GetOuterRect();
+      // Can easily apply base clip to protect against wildly large rectangular
+      // clips. crbug.com/1019026
+      if (m_BaseClipBox.has_value())
+        rect.Intersect(m_BaseClipBox.value());
       return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right,
                                rect.bottom) != ERROR;
     }
