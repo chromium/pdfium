@@ -251,7 +251,7 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
   return submode;
 }
 
-void CBC_PDF417HighLevelEncoder::EncodeBinary(const std::vector<uint8_t>& bytes,
+void CBC_PDF417HighLevelEncoder::EncodeBinary(pdfium::span<const uint8_t> bytes,
                                               size_t startpos,
                                               size_t count,
                                               EncodingMode startmode,

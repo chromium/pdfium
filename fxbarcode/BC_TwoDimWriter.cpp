@@ -21,7 +21,7 @@ CBC_TwoDimWriter::CBC_TwoDimWriter(bool bFixedSize)
 
 CBC_TwoDimWriter::~CBC_TwoDimWriter() = default;
 
-bool CBC_TwoDimWriter::RenderResult(const std::vector<uint8_t>& code,
+bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
                                     int32_t codeWidth,
                                     int32_t codeHeight) {
   if (code.empty())

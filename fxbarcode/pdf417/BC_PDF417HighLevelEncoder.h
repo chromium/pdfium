@@ -11,8 +11,8 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxbarcode/pdf417/BC_PDF417.h"
-
 #include "third_party/base/optional.h"
+#include "third_party/base/span.h"
 
 class CBC_PDF417HighLevelEncoder {
  public:
@@ -31,7 +31,7 @@ class CBC_PDF417HighLevelEncoder {
                             size_t count,
                             SubMode initialSubmode,
                             WideString* sb);
-  static void EncodeBinary(const std::vector<uint8_t>& bytes,
+  static void EncodeBinary(pdfium::span<const uint8_t> bytes,
                            size_t startpos,
                            size_t count,
                            EncodingMode startmode,

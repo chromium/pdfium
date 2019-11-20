@@ -224,7 +224,7 @@ bool InitQRCode(int32_t numInputBytes,
   return false;
 }
 
-std::vector<uint8_t> GenerateECBytes(const std::vector<uint8_t>& dataBytes,
+std::vector<uint8_t> GenerateECBytes(pdfium::span<const uint8_t> dataBytes,
                                      size_t numEcBytesInBlock) {
   // If |numEcBytesInBlock| is 0, the encoder will fail anyway.
   ASSERT(numEcBytesInBlock > 0);

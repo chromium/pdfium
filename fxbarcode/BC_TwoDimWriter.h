@@ -8,10 +8,10 @@
 #define FXBARCODE_BC_TWODIMWRITER_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "fxbarcode/BC_Writer.h"
+#include "third_party/base/span.h"
 
 class CBC_CommonBitMatrix;
 class CFX_RenderDevice;
@@ -21,7 +21,7 @@ class CBC_TwoDimWriter : public CBC_Writer {
   explicit CBC_TwoDimWriter(bool bFixedSize);
   ~CBC_TwoDimWriter() override;
 
-  bool RenderResult(const std::vector<uint8_t>& code,
+  bool RenderResult(pdfium::span<const uint8_t> code,
                     int32_t codeWidth,
                     int32_t codeHeight);
   void RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix* matrix);
