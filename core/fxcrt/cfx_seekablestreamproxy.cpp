@@ -19,6 +19,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -217,7 +218,7 @@ size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
     size_t iBytes = std::min(size, static_cast<size_t>(GetSize() - pos));
 
     if (iBytes > 0) {
-      std::vector<uint8_t> buf(iBytes);
+      std::vector<uint8_t, FxAllocAllocator<uint8_t>> buf(iBytes);
 
       size_t iLen = ReadData(buf.data(), iBytes);
       if (m_wCodePage != FX_CODEPAGE_UTF8)

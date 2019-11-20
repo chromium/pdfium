@@ -96,7 +96,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
       xml_plane_size_ <= 0)
     return false;
 
-  std::vector<wchar_t> buffer;
+  std::vector<wchar_t, FxAllocAllocator<wchar_t>> buffer;
   buffer.resize(pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
 
   std::stack<wchar_t> character_to_skip_too_stack;

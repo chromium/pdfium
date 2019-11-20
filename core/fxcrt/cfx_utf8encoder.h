@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 
 class CFX_UTF8Encoder {
@@ -25,7 +26,7 @@ class CFX_UTF8Encoder {
   }
 
  private:
-  std::vector<uint8_t> m_Buffer;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_Buffer;
 };
 
 #endif  // CORE_FXCRT_CFX_UTF8ENCODER_H_
