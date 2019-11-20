@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/codec_module_iface.h"
+#include "third_party/base/span.h"
 
 namespace fxcodec {
 
@@ -22,7 +23,7 @@ class BmpModule final : public ModuleIface {
    public:
     virtual bool BmpInputImagePositionBuf(uint32_t rcd_pos) = 0;
     virtual void BmpReadScanline(uint32_t row_num,
-                                 const std::vector<uint8_t>& row_buf) = 0;
+                                 pdfium::span<const uint8_t> row_buf) = 0;
   };
 
   enum class Status : uint8_t { kFail, kSuccess, kContinue };

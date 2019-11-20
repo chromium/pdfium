@@ -566,11 +566,13 @@ bool ProgressiveDecoder::BmpInputImagePositionBuf(uint32_t rcd_pos) {
 }
 
 void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
-                                         const std::vector<uint8_t>& row_buf) {
+                                         pdfium::span<const uint8_t> row_buf) {
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   ASSERT(pDIBitmap);
-  std::copy(row_buf.begin(), row_buf.begin() + m_ScanlineSize,
-            m_pDecodeBuf.get());
+
+  pdfium::span<const uint8_t> src_span = row_buf.first(m_ScanlineSize);
+  std::copy(std::begin(src_span), std::end(src_span), m_pDecodeBuf.get());
+
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;

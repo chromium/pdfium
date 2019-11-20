@@ -175,7 +175,7 @@ class ProgressiveDecoder :
   // BmpModule::Delegate
   bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
   void BmpReadScanline(uint32_t row_num,
-                       const std::vector<uint8_t>& row_buf) override;
+                       pdfium::span<const uint8_t> row_buf) override;
 #endif  // PDF_ENABLE_XFA_BMP
 
  private:
