@@ -660,9 +660,11 @@ std::vector<unsigned char> Encode(const unsigned char* input,
 }  // namespace
 
 std::vector<unsigned char> DecodePNG(pdfium::span<const unsigned char> input,
+                                     bool reverse_byte_order,
                                      int* width,
                                      int* height) {
-  return Decode(input.data(), input.size(), FORMAT_RGBA, width, height);
+  ColorFormat format = reverse_byte_order ? FORMAT_BGRA : FORMAT_RGBA;
+  return Decode(input.data(), input.size(), format, width, height);
 }
 
 std::vector<unsigned char> EncodeBGRPNG(const unsigned char* input,

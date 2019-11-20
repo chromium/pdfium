@@ -49,26 +49,12 @@ class Image {
   // Creates the image from the given filename on disk, and returns true on
   // success.
   bool CreateFromFilename(const std::string& path) {
-    FILE* f = fopen(path.c_str(), "rb");
-    if (!f)
-      return false;
+    return CreateFromFilenameImpl(path, /*reverse_byte_order=*/false);
+  }
 
-    std::vector<unsigned char> compressed;
-    const size_t kBufSize = 1024;
-    unsigned char buf[kBufSize];
-    size_t num_read = 0;
-    while ((num_read = fread(buf, 1, kBufSize, f)) > 0) {
-      compressed.insert(compressed.end(), buf, buf + num_read);
-    }
-
-    fclose(f);
-
-    data_ = image_diff_png::DecodePNG(compressed, &w_, &h_);
-    if (data_.empty()) {
-      Clear();
-      return false;
-    }
-    return true;
+  // Same as CreateFromFilename(), but with BGRA instead of RGBA ordering.
+  bool CreateFromFilenameWithReverseByteOrder(const std::string& path) {
+    return CreateFromFilenameImpl(path, /*reverse_byte_order=*/true);
   }
 
   void Clear() {
@@ -92,6 +78,30 @@ class Image {
   }
 
  private:
+  bool CreateFromFilenameImpl(const std::string& path,
+                              bool reverse_byte_order) {
+    FILE* f = fopen(path.c_str(), "rb");
+    if (!f)
+      return false;
+
+    std::vector<unsigned char> compressed;
+    const size_t kBufSize = 1024;
+    unsigned char buf[kBufSize];
+    size_t num_read = 0;
+    while ((num_read = fread(buf, 1, kBufSize, f)) > 0) {
+      compressed.insert(compressed.end(), buf, buf + num_read);
+    }
+
+    fclose(f);
+
+    data_ = image_diff_png::DecodePNG(compressed, reverse_byte_order, &w_, &h_);
+    if (data_.empty()) {
+      Clear();
+      return false;
+    }
+    return true;
+  }
+
   bool pixel_in_bounds(int x, int y) const {
     return x >= 0 && x < w_ && y >= 0 && y < h_;
   }
@@ -187,10 +197,12 @@ void PrintHelp() {
   fprintf(
       stderr,
       "Usage:\n"
-      "  image_diff [--histogram] <compare file> <reference file>\n"
+      "  image_diff OPTIONS <compare file> <reference file>\n"
       "    Compares two files on disk, returning 0 when they are the same;\n"
-      "    passing \"--histogram\" additionally calculates a diff of the\n"
-      "    RGBA value histograms (which is resistant to shifts in layout)\n"
+      "    Passing \"--histogram\" additionally calculates a diff of the\n"
+      "    RGBA value histograms. (which is resistant to shifts in layout)\n"
+      "    Passing \"--reverse-byte-order\" additionally assumes the compare\n"
+      "    file has BGRA byte ordering.\n"
       "  image_diff --diff <compare file> <reference file> <output file>\n"
       "    Compares two files on disk, outputs an image that visualizes the\n"
       "    difference to <output file>\n");
@@ -198,11 +210,16 @@ void PrintHelp() {
 
 int CompareImages(const std::string& file1,
                   const std::string& file2,
-                  bool compare_histograms) {
+                  bool compare_histograms,
+                  bool reverse_byte_order) {
   Image actual_image;
   Image baseline_image;
 
-  if (!actual_image.CreateFromFilename(file1)) {
+  bool actual_load_result =
+      reverse_byte_order
+          ? actual_image.CreateFromFilenameWithReverseByteOrder(file1)
+          : actual_image.CreateFromFilename(file1);
+  if (!actual_load_result) {
     fprintf(stderr, "image_diff: Unable to open file \"%s\"\n", file1.c_str());
     return kStatusError;
   }
@@ -300,6 +317,7 @@ int main(int argc, const char* argv[]) {
 
   bool histograms = false;
   bool produce_diff_image = false;
+  bool reverse_byte_order = false;
   std::string filename1;
   std::string filename2;
   std::string diff_filename;
@@ -313,6 +331,8 @@ int main(int argc, const char* argv[]) {
       histograms = true;
     } else if (strcmp(arg, "--diff") == 0) {
       produce_diff_image = true;
+    } else if (strcmp(arg, "--reverse-byte-order") == 0) {
+      reverse_byte_order = true;
     }
   }
   if (i < argc)
@@ -327,7 +347,7 @@ int main(int argc, const char* argv[]) {
       return DiffImages(filename1, filename2, diff_filename);
     }
   } else if (!filename2.empty()) {
-    return CompareImages(filename1, filename2, histograms);
+    return CompareImages(filename1, filename2, histograms, reverse_byte_order);
   }
 
   PrintHelp();

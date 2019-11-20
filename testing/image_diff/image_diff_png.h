@@ -13,8 +13,10 @@
 
 namespace image_diff_png {
 
-// Decode a PNG into an RGBA pixel array.
+// Decode a PNG into an RGBA pixel array, or BGRA pixel array if
+// |reverse_byte_order| is set to true.
 std::vector<unsigned char> DecodePNG(pdfium::span<const unsigned char> input,
+                                     bool reverse_byte_order,
                                      int* width,
                                      int* height);
 
