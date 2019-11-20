@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include <utility>
+#include <vector>
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -498,7 +499,7 @@ void CJPX_Decoder::GetInfo(uint32_t* width,
 
 bool CJPX_Decoder::Decode(uint8_t* dest_buf,
                           uint32_t pitch,
-                          const std::vector<uint8_t>& offsets) {
+                          pdfium::span<const uint8_t> offsets) {
   if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
     return false;
 

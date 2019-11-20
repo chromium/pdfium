@@ -87,7 +87,7 @@ int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
   return max_pos;
 }
 
-void FaxG4FindB1B2(const std::vector<uint8_t>& ref_buf,
+void FaxG4FindB1B2(pdfium::span<const uint8_t> ref_buf,
                    int columns,
                    int a0,
                    bool a0color,
@@ -284,7 +284,7 @@ void FaxG4GetRow(const uint8_t* src_buf,
                  int bitsize,
                  int* bitpos,
                  uint8_t* dest_buf,
-                 const std::vector<uint8_t>& ref_buf,
+                 pdfium::span<const uint8_t> ref_buf,
                  int columns) {
   int a0 = -1;
   bool a0color = true;

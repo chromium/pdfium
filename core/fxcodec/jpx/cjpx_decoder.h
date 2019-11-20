@@ -8,7 +8,6 @@
 #define CORE_FXCODEC_JPX_CJPX_DECODER_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
@@ -41,7 +40,7 @@ class CJPX_Decoder {
   bool StartDecode();
   bool Decode(uint8_t* dest_buf,
               uint32_t pitch,
-              const std::vector<uint8_t>& offsets);
+              pdfium::span<const uint8_t> offsets);
 
  private:
   const ColorSpaceOption m_ColorSpaceOption;
