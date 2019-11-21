@@ -1,0 +1,101 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /Ft11 5 0 R
+    >>
+  >>
+  /MediaBox [0 0 100 100]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+0 0 0 rg
+BT
+/Ft11 20 Tf
+1 0 0 1 40 40 Tm
+<0004>Tj
+ET
+endstream
+endobj
+{{object 5 0}}  <<
+  /Type /Font
+  /Subtype /Type0
+  /BaseFont /Arial-BoldMT
+  /Encoding /Identity-H
+  /ToUnicode 8 0 R
+  /DescendantFonts [6 0 R]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /CIDFontType2
+  /BaseFont /Arial-BoldMT
+  /CIDToGIDMap /Identity
+  /CIDSystemInfo <<
+    /Registry (Adobe)
+    /Ordering (Identity)
+    /Supplement 0
+  >>
+  /FontDescriptor 7 0 R
+>>
+endobj
+{{object 7 0}} <<
+  /Type /FontDescriptor
+  /FontName /Arial-BoldMT
+  /Descent -211.914063
+  /Ascent 905.273438
+  /CapHeight 905.273438
+  /StemV 1
+  /Flags 32
+  /ItalicAngle 0
+  /FontBBox [-627.929688 -376.464844 2000.000000 1055.664063]
+>>
+endobj
+{{object 8 0}} <<
+  {{streamlen}}
+>>
+stream
+/CIDInit /ProcSet findresource begin
+10000 dict begin
+begincmap
+/CIDSystemInfo <<
+/Registry (Adobe)
+/Ordering (UCS)
+/Supplement 0
+>> def
+/CMapName /Adobe-Identity-UCS def
+/CMapType 2 def
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+99 beginbfrange
+<0004> <0004> [ <0041> ]
+endbfrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
