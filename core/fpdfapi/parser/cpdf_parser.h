@@ -139,14 +139,14 @@ class CPDF_Parser {
 
   Error StartParseInternal();
   FX_FILESIZE ParseStartXRef();
-  bool LoadAllCrossRefV4(FX_FILESIZE pos);
-  bool LoadAllCrossRefV5(FX_FILESIZE pos);
+  bool LoadAllCrossRefV4(FX_FILESIZE xref_offset);
+  bool LoadAllCrossRefV5(FX_FILESIZE xref_offset);
   bool LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef);
   RetainPtr<CPDF_Dictionary> LoadTrailerV4();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
-  bool LoadLinearizedAllCrossRefV4(FX_FILESIZE pos);
-  bool LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
+  bool LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset);
+  bool LoadLinearizedAllCrossRefV5(FX_FILESIZE main_xref_offset);
   Error LoadLinearizedMainXRefTable();
   const CPDF_ObjectStream* GetObjectStream(uint32_t object_number);
   std::unique_ptr<CPDF_LinearizedHeader> ParseLinearizedHeader();
