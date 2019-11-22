@@ -352,23 +352,29 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
   if (!LoadCrossRefV4(main_xref_offset, false))
     return false;
 
-  RetainPtr<CPDF_Dictionary> trailer = LoadTrailerV4();
-  if (!trailer)
+  RetainPtr<CPDF_Dictionary> main_trailer = LoadTrailerV4();
+  if (!main_trailer)
     return false;
 
-  m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
-      pdfium::MakeUnique<CPDF_CrossRefTable>(std::move(trailer)),
-      std::move(m_CrossRefTable));
-
-  int32_t xrefsize = GetDirectInteger(GetTrailer(), "Size");
-  if (xrefsize == 0)
+  // GetTrailer() currently returns the first-page trailer.
+  if (GetDirectInteger(GetTrailer(), "Size") == 0)
     return false;
 
+  // Read /XRefStm from the first-page trailer. No need to read /Prev for the
+  // first-page trailer, as the caller already did that and passed it in as
+  // |main_xref_offset|.
   std::vector<FX_FILESIZE> xref_stream_list{
       GetDirectInteger(GetTrailer(), "XRefStm")};
   std::vector<FX_FILESIZE> xref_list{main_xref_offset};
   std::set<FX_FILESIZE> seen_xref_offset{main_xref_offset};
 
+  // Merge the trailers.
+  m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
+      pdfium::MakeUnique<CPDF_CrossRefTable>(std::move(main_trailer)),
+      std::move(m_CrossRefTable));
+
+  // Now GetTrailer() returns the merged trailer, where /Prev is from the
+  // main-trailer.
   FX_FILESIZE xref_offset = GetDirectInteger(GetTrailer(), "Prev");
   while (xref_offset) {
     // Check for circular references.
