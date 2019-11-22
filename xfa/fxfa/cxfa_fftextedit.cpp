@@ -274,7 +274,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   } else if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kBarcode) {
     int32_t nDataLen = 0;
     if (eType == XFA_VALUEPICTURE_Edit) {
-      nDataLen = static_cast<CXFA_Barcode*>(m_pNode.Get())
+      nDataLen = static_cast<CXFA_Barcode*>(m_pNode->GetUIChildNode())
                      ->GetDataLength()
                      .value_or(0);
     }

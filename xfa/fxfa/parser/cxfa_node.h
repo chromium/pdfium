@@ -266,6 +266,9 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
       CXFA_EventParam* pEventParam);
 
   CXFA_Node* GetUIChildNode();
+
+  // NOTE: value returned is often determined by child UI node, and
+  // can't be used to infer anything about this particual node itself.
   XFA_FFWidgetType GetFFWidgetType();
 
   CFX_RectF GetUIMargin();

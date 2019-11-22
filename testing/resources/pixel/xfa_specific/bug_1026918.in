@@ -1,0 +1,50 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm <<
+    /XFA 4 0 R
+  >>
+  /NeedsRendering true
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 3 3]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp xmlns="http://ns.adobe.com/xdp/">
+  <config>
+    <acrobat>
+      <acrobat7>
+        <dynamicRender>required</dynamicRender>
+      </acrobat7>
+    </acrobat>
+  </config>
+  <template>
+    <subform>
+      <bookend leader="$"></bookend>
+      <field>
+        <keep next="pageArea"></keep>
+        <ui>
+          <barcode type="code3Of9"></barcode>
+        </ui>
+      </field>
+    </subform>
+  </template>
+</xdp>
+endstream
+endobj
+{{trailer}}
+%%EOF
