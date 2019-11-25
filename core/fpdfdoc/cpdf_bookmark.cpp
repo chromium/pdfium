@@ -24,10 +24,6 @@ CPDF_Bookmark::CPDF_Bookmark(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Bookmark::~CPDF_Bookmark() = default;
 
-uint32_t CPDF_Bookmark::GetFontStyle() const {
-  return m_pDict ? m_pDict->GetIntegerFor("F") : 0;
-}
-
 WideString CPDF_Bookmark::GetTitle() const {
   if (!m_pDict)
     return WideString();
