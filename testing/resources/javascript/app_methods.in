@@ -53,6 +53,7 @@ try {
 
   expectError("app.browseForDoc()");
   expect("app.execDialog()", undefined);
+  expectError("app.execMenuItem()");
   expect("app.findComponent()", undefined);
   expect("app.goBack()", undefined);
   expect("app.goForward()", undefined);
@@ -62,6 +63,7 @@ try {
   expectError("app.openDoc()");
   expect("app.openFDF()", undefined);
   expectError("app.popUpMenuEx()");
+  expectError("app.popUpMenu()");
 
   expect("app.mailMsg(true)", undefined);
   expect("app.mailMsg(false, 'user@example.com')", undefined);

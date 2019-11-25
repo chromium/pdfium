@@ -27,6 +27,7 @@ BEEP!!! 1
 Alert: PASS: app.beep(1) = undefined
 Alert: FAIL: app.browseForDoc() = undefined, expected to throw
 Alert: PASS: app.execDialog() = undefined
+Alert: PASS: app.execMenuItem() threw app.execMenuItem: Operation not supported.
 Alert: PASS: app.findComponent() = undefined
 Alert: PASS: app.goBack() = undefined
 Alert: PASS: app.goForward() = undefined
@@ -36,6 +37,7 @@ Alert: PASS: app.newFDF() = undefined
 Alert: PASS: app.openDoc() threw app.openDoc: Operation not supported.
 Alert: PASS: app.openFDF() = undefined
 Alert: PASS: app.popUpMenuEx() threw app.popUpMenuEx: Operation not supported.
+Alert: PASS: app.popUpMenu() threw app.popUpMenu: Operation not supported.
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
 Alert: PASS: app.mailMsg(true) = undefined
 Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
