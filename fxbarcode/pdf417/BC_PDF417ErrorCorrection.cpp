@@ -24,6 +24,8 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
+
 namespace {
 
 const uint16_t EC_LEVEL_0_COEFFICIENTS[2] = {27, 917};
@@ -138,7 +140,7 @@ Optional<WideString> CBC_PDF417ErrorCorrection::GenerateErrorCorrection(
   if (k < 0)
     return {};
 
-  std::vector<wchar_t> ech(k);
+  std::vector<wchar_t, FxAllocAllocator<wchar_t>> ech(k);
   size_t sld = dataCodewords.GetLength();
   for (size_t i = 0; i < sld; i++) {
     int32_t t1 = (dataCodewords[i] + ech[k - 1]) % 929;
