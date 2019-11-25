@@ -223,7 +223,7 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
   }
 
   uint8_t img_data_size;
-  std::vector<uint8_t> img_data;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> img_data;
   size_t read_marker = input_buffer_->GetPosition();
 
   if (decode_status_ == GIF_D_STATUS_IMG_DATA) {
