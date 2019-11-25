@@ -914,6 +914,8 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
     // Click on the textfield
     EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
               FPDFPage_HasFormFieldAtPoint(form_handle(), page, 120.0, 120.0));
+    EXPECT_EQ(
+        0, FPDFPage_FormFieldZOrderAtPoint(form_handle(), page, 120.0, 120.0));
     FORM_OnMouseMove(form_handle(), page, 0, 120.0, 120.0);
     FORM_OnLButtonDown(form_handle(), page, 0, 120.0, 120.0);
     FORM_OnLButtonUp(form_handle(), page, 0, 120.0, 120.0);
