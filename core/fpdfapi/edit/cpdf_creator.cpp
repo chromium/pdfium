@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -47,7 +48,7 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
 
   FX_FILESIZE offset_;
   size_t current_length_;
-  std::vector<uint8_t> buffer_;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer_;
   RetainPtr<IFX_RetainableWriteStream> backing_file_;
 };
 
@@ -259,7 +260,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
   if (m_iStage == Stage::kWriteIncremental15) {
     if (m_IsOriginal && m_SavedOffset > 0) {
       static constexpr FX_FILESIZE kBufferSize = 4096;
-      std::vector<uint8_t> buffer(kBufferSize);
+      std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(kBufferSize);
       FX_FILESIZE src_size = m_SavedOffset;
       m_pParser->GetSyntax()->SetPos(0);
       while (src_size) {
