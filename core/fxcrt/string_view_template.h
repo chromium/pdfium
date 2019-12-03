@@ -73,7 +73,9 @@ class StringViewTemplate {
       : m_Span(reinterpret_cast<const UnsignedType*>(&ch), 1) {}
 
   // Any changes to |vec| invalidate the string.
-  explicit StringViewTemplate(const std::vector<UnsignedType>& vec) noexcept
+  template <typename AllocType>
+  explicit StringViewTemplate(
+      const std::vector<UnsignedType, AllocType>& vec) noexcept
       : m_Span(!vec.empty() ? vec.data() : nullptr, vec.size()) {}
 
   StringViewTemplate& operator=(const CharType* src) {
