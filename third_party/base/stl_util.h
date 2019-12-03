@@ -89,11 +89,11 @@ constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
 }
 
 // Safely allocate a 1-dim vector big enough for |w| by |h| or die.
-template <typename T>
-std::vector<T> Vector2D(size_t w, size_t h) {
+template <typename T, typename A = std::allocator<T>>
+std::vector<T, A> Vector2D(size_t w, size_t h) {
   pdfium::base::CheckedNumeric<size_t> safe_size = w;
   safe_size *= h;
-  return std::vector<T>(safe_size.ValueOrDie());
+  return std::vector<T, A>(safe_size.ValueOrDie());
 }
 
 }  // namespace pdfium
