@@ -13,6 +13,7 @@
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/logging.h"
@@ -297,7 +298,7 @@ BmpModule::Status CFX_BmpDecompressor::ReadBmpPalette() {
     if (color_used_ != 0)
       pal_num_ = color_used_;
     uint32_t src_pal_size = pal_num_ * (pal_type_ ? 3 : 4);
-    std::vector<uint8_t> src_pal(src_pal_size);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> src_pal(src_pal_size);
     uint8_t* src_pal_data = src_pal.data();
     if (!ReadData(src_pal_data, src_pal_size))
       return BmpModule::Status::kContinue;
@@ -368,7 +369,7 @@ bool CFX_BmpDecompressor::ValidateColorIndex(uint8_t val) const {
 }
 
 BmpModule::Status CFX_BmpDecompressor::DecodeRGB() {
-  std::vector<uint8_t> dest_buf(src_row_bytes_);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> dest_buf(src_row_bytes_);
   while (row_num_ < height_) {
     size_t idx = 0;
     if (!ReadData(dest_buf.data(), src_row_bytes_))
@@ -494,7 +495,8 @@ BmpModule::Status CFX_BmpDecompressor::DecodeRLE8() {
 
             size_t second_part_size =
                 first_part & 1 ? first_part + 1 : first_part;
-            std::vector<uint8_t> second_part(second_part_size);
+            std::vector<uint8_t, FxAllocAllocator<uint8_t>> second_part(
+                second_part_size);
             uint8_t* second_part_data = second_part.data();
             if (!ReadData(second_part_data, second_part_size))
               return BmpModule::Status::kContinue;
@@ -589,7 +591,8 @@ BmpModule::Status CFX_BmpDecompressor::DecodeRLE4() {
               first_part = avail_size - 1;
             }
             size_t second_part_size = size & 1 ? size + 1 : size;
-            std::vector<uint8_t> second_part(second_part_size);
+            std::vector<uint8_t, FxAllocAllocator<uint8_t>> second_part(
+                second_part_size);
             uint8_t* second_part_data = second_part.data();
             if (!ReadData(second_part_data, second_part_size))
               return BmpModule::Status::kContinue;
