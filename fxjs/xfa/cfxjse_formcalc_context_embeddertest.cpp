@@ -1107,17 +1107,23 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
     const char* program;
     const char* result;
   } tests[] = {
-      {"Encode(\"X/~&^*<=>?|\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
-      {"Encode(\"X/~&^*<=>?|\", \"mbogo\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
-      {"Encode(\"X/~&^*<=>?|\", \"url\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
-      {"Encode(\"X/~&^*<=>?|\", \"xml\")", "X/~&amp;^*&lt;=&gt;?|"},
-      {"Encode(\"X/~&^*<=>?|\", \"html\")", "X/~&amp;^*&lt;=&gt;?|"},
+    {"Encode(\"X/~&^*<=>?|\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
+    {"Encode(\"X/~&^*<=>?|\", \"mbogo\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
+    {"Encode(\"X/~&^*<=>?|\", \"url\")", "X%2f%7e%26%5e*%3c%3d%3e%3f%7c"},
+    {"Encode(\"X/~&^*<=>?|\", \"xml\")", "X/~&amp;^*&lt;=&gt;?|"},
+    {"Encode(\"X/~&^*<=>?|\", \"html\")", "X/~&amp;^*&lt;=&gt;?|"},
 
-      {"Encode(\"\\u0022\\u00f5\\ufed0\")", "%22%f5%fe%d0"},
-      {"Encode(\"\\u0022\\u00f5\\ufed0\", \"mbogo\")", "%22%f5%fe%d0"},
-      {"Encode(\"\\u0022\\u00f5\\ufed0\", \"url\")", "%22%f5%fe%d0"},
-      {"Encode(\"\\u0022\\u00f4\\ufed0\", \"xml\")", "&quot;&#xf4;&#xfed0;"},
-      {"Encode(\"\\u0022\\u00f5\\ufed0\", \"html\")", "&quot;&otilde;&#xfed0;"},
+    {"Encode(\"\\u0022\\u00f5\\ufed0\", \"url\")", "%22%f5%fe%d0"},
+    {"Encode(\"\\u0022\\u00f4\\ufed0\", \"xml\")", "&quot;&#xf4;&#xfed0;"},
+    {"Encode(\"\\u0022\\u00f5\\ufed0\", \"html\")", "&quot;&otilde;&#xfed0;"},
+
+#if !defined(OS_WIN)
+    // Windows wchar_t isn't wide enough to handle these anyways.
+    // TODO(tsepez): fix surrogate encodings.
+    {"Encode(\"\\uD83D\\uDCA9\", \"url\")", "%01%f4%a9"},
+    {"Encode(\"\\uD83D\\uDCA9\", \"xml\")", ""},
+    {"Encode(\"\\uD83D\\uDCA9\", \"html\")", ""},
+#endif  // !defined(OS_WIN)
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {

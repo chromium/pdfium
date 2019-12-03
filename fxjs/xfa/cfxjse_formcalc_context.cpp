@@ -1076,23 +1076,15 @@ WideString EncodeHTML(const ByteString& bsHTML) {
   szEncode[0] = '&';
   szEncode[1] = '#';
   szEncode[2] = 'x';
-  szEncode[5] = ';';
-  szEncode[6] = 0;
-  szEncode[7] = ';';
-  szEncode[8] = 0;
   CFX_WideTextBuf wsResultBuf;
-  int32_t iLen = wsHTML.GetLength();
-  int32_t i = 0;
-  const wchar_t* pData = wsHTML.c_str();
-  while (i < iLen) {
-    uint32_t ch = pData[i];
+  for (uint32_t ch : wsHTML) {
     WideString htmlReserve;
     if (HTMLCode2STR(ch, &htmlReserve)) {
       wsResultBuf.AppendChar(L'&');
       wsResultBuf << htmlReserve;
       wsResultBuf.AppendChar(L';');
     } else if (ch >= 32 && ch <= 126) {
-      wsResultBuf.AppendChar((wchar_t)ch);
+      wsResultBuf.AppendChar(static_cast<wchar_t>(ch));
     } else if (ch < 256) {
       int32_t iIndex = ch / 16;
       szEncode[3] = kStrCode[iIndex];
@@ -1100,16 +1092,19 @@ WideString EncodeHTML(const ByteString& bsHTML) {
       szEncode[5] = ';';
       szEncode[6] = 0;
       wsResultBuf << szEncode;
-    } else {
+    } else if (ch < 65536) {
       int32_t iBigByte = ch / 256;
       int32_t iLittleByte = ch % 256;
       szEncode[3] = kStrCode[iBigByte / 16];
       szEncode[4] = kStrCode[iBigByte % 16];
       szEncode[5] = kStrCode[iLittleByte / 16];
       szEncode[6] = kStrCode[iLittleByte % 16];
+      szEncode[7] = ';';
+      szEncode[8] = 0;
       wsResultBuf << szEncode;
+    } else {
+      // TODO(tsepez): Handle codepoint not in BMP.
     }
-    ++i;
   }
   wsResultBuf.AppendChar(0);
   return wsResultBuf.MakeString();
@@ -1122,11 +1117,7 @@ WideString EncodeXML(const ByteString& bsXML) {
   szEncode[0] = '&';
   szEncode[1] = '#';
   szEncode[2] = 'x';
-  szEncode[5] = ';';
-  szEncode[6] = 0;
-  szEncode[7] = ';';
-  szEncode[8] = 0;
-  for (wchar_t ch : wsXML) {
+  for (uint32_t ch : wsXML) {
     switch (ch) {
       case '"':
         wsResultBuf.AppendChar('&');
@@ -1155,7 +1146,7 @@ WideString EncodeXML(const ByteString& bsXML) {
         break;
       default: {
         if (ch >= 32 && ch <= 126) {
-          wsResultBuf.AppendChar(ch);
+          wsResultBuf.AppendChar(static_cast<wchar_t>(ch));
         } else if (ch < 256) {
           int32_t iIndex = ch / 16;
           szEncode[3] = kStrCode[iIndex];
@@ -1163,14 +1154,18 @@ WideString EncodeXML(const ByteString& bsXML) {
           szEncode[5] = ';';
           szEncode[6] = 0;
           wsResultBuf << szEncode;
-        } else {
+        } else if (ch < 65536) {
           int32_t iBigByte = ch / 256;
           int32_t iLittleByte = ch % 256;
           szEncode[3] = kStrCode[iBigByte / 16];
           szEncode[4] = kStrCode[iBigByte % 16];
           szEncode[5] = kStrCode[iLittleByte / 16];
           szEncode[6] = kStrCode[iLittleByte % 16];
+          szEncode[7] = ';';
+          szEncode[8] = 0;
           wsResultBuf << szEncode;
+        } else {
+          // TODO(tsepez): Handle codepoint not in BMP.
         }
         break;
       }
