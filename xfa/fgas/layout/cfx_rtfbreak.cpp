@@ -395,7 +395,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
       tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData.As<CFX_TextUserData>();
+      tp.m_pUserData = pTC->m_pUserData;
       j = i;
       bNew = false;
     }
@@ -468,7 +468,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       tp.m_iVerticalScale = pTC->vertical_scale();
       dwIdentity = pTC->m_dwIdentity;
       tp.m_dwIdentity = dwIdentity;
-      tp.m_pUserData = pTC->m_pUserData.As<CFX_TextUserData>();
+      tp.m_pUserData = pTC->m_pUserData;
       tp.m_dwStatus = CFX_BreakType::Piece;
       ++i;
     } else if (iBidiLevel != pTC->m_iBidiLevel ||
