@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/file_util.h"
 
 class PDFEditImgTest : public testing::Test {
   void SetUp() override { CPDF_PageModule::Create(); }
@@ -68,6 +69,44 @@ TEST_F(PDFEditImgTest, NewImageObjGenerateContent) {
   FPDFBitmap_Destroy(bitmap);
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);
+}
+
+TEST_F(PDFEditImgTest, NewImageObjLoadJpeg) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 200, 200));
+  ASSERT_TRUE(page);
+
+  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
+  ASSERT_TRUE(image);
+
+  FileAccessForTesting file_access("mona_lisa.jpg");
+  FPDF_PAGE temp_page = page.get();
+  EXPECT_TRUE(
+      FPDFImageObj_LoadJpegFile(&temp_page, 1, image.get(), &file_access));
+
+  ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(image.get()));
+  EXPECT_TRUE(bitmap);
+  EXPECT_EQ(120, FPDFBitmap_GetWidth(bitmap.get()));
+  EXPECT_EQ(120, FPDFBitmap_GetHeight(bitmap.get()));
+}
+
+TEST_F(PDFEditImgTest, NewImageObjLoadJpegInline) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 200, 200));
+  ASSERT_TRUE(page);
+
+  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
+  ASSERT_TRUE(image);
+
+  FileAccessForTesting file_access("mona_lisa.jpg");
+  FPDF_PAGE temp_page = page.get();
+  EXPECT_TRUE(FPDFImageObj_LoadJpegFileInline(&temp_page, 1, image.get(),
+                                              &file_access));
+
+  ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(image.get()));
+  EXPECT_TRUE(bitmap);
+  EXPECT_EQ(120, FPDFBitmap_GetWidth(bitmap.get()));
+  EXPECT_EQ(120, FPDFBitmap_GetHeight(bitmap.get()));
 }
 
 TEST_F(PDFEditImgTest, SetBitmap) {
