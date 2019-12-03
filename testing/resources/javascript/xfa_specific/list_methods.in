@@ -1,0 +1,95 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template>
+  <subform layout="tb" name="subform1">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+        <medium long="297mm" short="210mm" stock="a4"/>
+      </pageArea>
+    </pageSet>
+    <subform layout="tb" name="subform2">
+      <occur initial="1" max="10" min="0" name="occur1">
+      </occur>
+      <field h="10mm" name="field1" w="40mm" x="10mm" y="10mm">
+        <event activity="ready" ref="$form">
+          <script contentType="application/x-javascript">
+            {{include ../expect.js}}
+            try {
+              var field = xfa.resolveNode("field2");
+              expect("field", "[object XFAObject]");
+
+              var list = xfa.record.nodes;
+              expect("list", "[object XFAObject]");
+              expect("list.length", 1);
+
+              var item = list.item(0);
+              expect("item", "[object XFAObject]");
+              expectError("list.item(1)");
+
+              // Incorrect argument types.
+              expectError("list.append(100)");
+              expectError("list.append({foo: 3})");
+
+              expect("list.append(field)", undefined);
+              expect("list.length", 2);
+
+              // Can only appear once.
+              expect("list.append(field)", undefined);
+              expect("list.length", 2);
+
+              // Incorrect argument types.
+              expectError("list.remove(100)");
+              expectError("list.remove({foo: 3})");
+
+              expect("list.remove(item)", undefined);
+              expect("list.length", 1);
+
+              // Removing a second time doesn't change things.
+              expect("list.remove(item)", undefined);
+              expect("list.length", 1);
+
+              expect("list.remove(field)", undefined);
+              expect("list.length", 0);
+
+              // Can't insert without a |before| element.
+              expect("list.append(field)", undefined);
+              expect("list.insert(item, field)", undefined);
+              expect("list.length", 2);
+
+              // Can only appear once.
+              expect("list.insert(item, field)", undefined);
+              expect("list.length", 2);
+
+              // TODO(tsepez): insertion before self hits a hard CHECK();
+              // expectError("list.insert(item, item)");
+
+            } catch (e) {
+              app.alert("truly unexpected error: " + e);
+            }
+          </script>
+        </event>
+      </field>
+      <field h="10mm" name="field2" w="40mm" x="10mm" y="10mm">
+      </field>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

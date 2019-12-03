@@ -1,0 +1,24 @@
+Alert: PASS: field = [object XFAObject]
+Alert: PASS: list = [object XFAObject]
+Alert: PASS: list.length = 1
+Alert: PASS: item = [object XFAObject]
+Alert: PASS: list.item(1) threw XFAObject.item: The input value is invalid.
+Alert: PASS: list.append(100) threw XFAObject.append: Incorrect parameter value.
+Alert: PASS: list.append({foo: 3}) threw XFAObject.append: Incorrect parameter value.
+Alert: PASS: list.append(field) = undefined
+Alert: PASS: list.length = 2
+Alert: PASS: list.append(field) = undefined
+Alert: PASS: list.length = 2
+Alert: PASS: list.remove(100) threw XFAObject.remove: Incorrect parameter value.
+Alert: PASS: list.remove({foo: 3}) threw XFAObject.remove: Incorrect parameter value.
+Alert: PASS: list.remove(item) = undefined
+Alert: PASS: list.length = 1
+Alert: PASS: list.remove(item) = undefined
+Alert: PASS: list.length = 1
+Alert: PASS: list.remove(field) = undefined
+Alert: PASS: list.length = 0
+Alert: PASS: list.append(field) = undefined
+Alert: PASS: list.insert(item, field) = undefined
+Alert: PASS: list.length = 2
+Alert: PASS: list.insert(item, field) = undefined
+Alert: PASS: list.length = 2
