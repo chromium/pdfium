@@ -121,14 +121,6 @@ void CFXJSE_Value::SetArray(
   m_hValue.Reset(GetIsolate(), hArrayObject);
 }
 
-void CFXJSE_Value::SetDate(double dDouble) {
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hDate =
-      v8::Date::New(GetIsolate()->GetCurrentContext(), dDouble)
-          .ToLocalChecked();
-  m_hValue.Reset(GetIsolate(), hDate);
-}
-
 void CFXJSE_Value::SetFloat(float fFloat) {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
   v8::Local<v8::Value> pValue = v8::Number::New(GetIsolate(), ftod(fFloat));
@@ -391,16 +383,6 @@ bool CFXJSE_Value::IsFunction() const {
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
   return hValue->IsFunction();
-}
-
-bool CFXJSE_Value::IsDate() const {
-  if (IsEmpty())
-    return false;
-
-  CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return hValue->IsDate();
 }
 
 bool CFXJSE_Value::ToBoolean() const {

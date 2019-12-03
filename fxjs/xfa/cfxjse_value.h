@@ -33,7 +33,6 @@ class CFXJSE_Value {
   bool IsObject() const;
   bool IsArray() const;
   bool IsFunction() const;
-  bool IsDate() const;
   bool ToBoolean() const;
   float ToFloat() const;
   double ToDouble() const;
@@ -56,7 +55,6 @@ class CFXJSE_Value {
   void ClearHostObject();
 
   void SetArray(const std::vector<std::unique_ptr<CFXJSE_Value>>& values);
-  void SetDate(double dDouble);
 
   bool GetObjectProperty(ByteStringView szPropName, CFXJSE_Value* lpPropValue);
   bool SetObjectProperty(ByteStringView szPropName, CFXJSE_Value* lpPropValue);

@@ -28,7 +28,6 @@ TEST_F(CFXJSE_ValueEmbedderTest, Empty) {
   EXPECT_FALSE(pValue->IsObject());
   EXPECT_FALSE(pValue->IsArray());
   EXPECT_FALSE(pValue->IsFunction());
-  EXPECT_FALSE(pValue->IsDate());
 }
 
 TEST_F(CFXJSE_ValueEmbedderTest, EmptyArrayInsert) {
