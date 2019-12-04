@@ -298,16 +298,14 @@ TEST_F(FPDFViewEmbedderTest, LoadNonexistentDocument) {
   EXPECT_EQ(static_cast<int>(FPDF_GetLastError()), FPDF_ERR_FILE);
 }
 
-// See bug 465.
+// See https://crbug.com/pdfium/465
 TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
   EXPECT_TRUE(CreateEmptyDocument());
-
   {
     int version = 42;
     EXPECT_FALSE(FPDF_GetFileVersion(document(), &version));
     EXPECT_EQ(0, version);
   }
-
   {
 #ifdef PDF_ENABLE_XFA
     const unsigned long kExpected = static_cast<uint32_t>(-1);
@@ -316,11 +314,8 @@ TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
 #endif  // PDF_ENABLE_XFA
     EXPECT_EQ(kExpected, FPDF_GetDocPermissions(document()));
   }
-
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
-
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
-
   EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
   EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
@@ -328,8 +323,40 @@ TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
   char buf[100];
   EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", nullptr, 0));
   EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", buf, sizeof(buf)));
-
   EXPECT_EQ(0u, FPDF_CountNamedDests(document()));
+}
+
+TEST_F(FPDFViewEmbedderTest, SandboxDocument) {
+  uint16_t buf[200];
+  unsigned long len;
+
+  ASSERT_TRUE(CreateEmptyDocument());
+  len = FPDF_GetMetaText(document(), "CreationDate", buf, sizeof(buf));
+  EXPECT_GT(len, 2u);  // Not just "double NUL" end-of-string indicator.
+  EXPECT_NE(0u, buf[0]);
+  CloseDocument();
+
+  FPDF_SetSandBoxPolicy(FPDF_POLICY_MACHINETIME_ACCESS, false);
+  ASSERT_TRUE(CreateEmptyDocument());
+  len = FPDF_GetMetaText(document(), "CreationDate", buf, sizeof(buf));
+  EXPECT_EQ(2u, len);  // Only a "double NUL" end-of-string indicator.
+  EXPECT_EQ(0u, buf[0]);
+  CloseDocument();
+
+  constexpr unsigned long kNoSuchPolicy = 102;
+  FPDF_SetSandBoxPolicy(kNoSuchPolicy, true);
+  ASSERT_TRUE(CreateEmptyDocument());
+  len = FPDF_GetMetaText(document(), "CreationDate", buf, sizeof(buf));
+  EXPECT_EQ(2u, len);  // Only a "double NUL" end-of-string indicator.
+  EXPECT_EQ(0u, buf[0]);
+  CloseDocument();
+
+  FPDF_SetSandBoxPolicy(FPDF_POLICY_MACHINETIME_ACCESS, true);
+  ASSERT_TRUE(CreateEmptyDocument());
+  len = FPDF_GetMetaText(document(), "CreationDate", buf, sizeof(buf));
+  EXPECT_GT(len, 2u);  // Not just "double NUL" end-of-string indicator.
+  EXPECT_NE(0u, buf[0]);
+  CloseDocument();
 }
 
 TEST_F(FPDFViewEmbedderTest, LinearizedDocument) {
