@@ -266,6 +266,19 @@ TEST_F(FPDFViewEmbedderTest, PageCoordinatesToDeviceCoordinates) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
+  FPDF_InitLibrary();  // Redundant given call in SetUp(), but safe.
+  FPDF_InitLibrary();  // Doubly-redundant even, but safe.
+
+  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  CloseDocument();
+  CloseDocument();  // Redundant given above, but safe.
+  CloseDocument();  // Doubly-redundant even, but safe.
+
+  FPDF_DestroyLibrary();  // Doubly-redundant even, but safe.
+  FPDF_DestroyLibrary();  // Redundant given call in TearDown(), but safe.
+}
+
 TEST_F(FPDFViewEmbedderTest, Document) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, GetPageCount());
@@ -364,7 +377,7 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
 TEST_F(FPDFViewEmbedderTest, Page) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  EXPECT_TRUE(page);
 
   EXPECT_EQ(612.0, FPDF_GetPageWidth(page));
   EXPECT_EQ(792.0, FPDF_GetPageHeight(page));
@@ -376,8 +389,14 @@ TEST_F(FPDFViewEmbedderTest, Page) {
   EXPECT_EQ(612.0, rect.right);
   EXPECT_EQ(792.0, rect.top);
 
+  // Null arguments return errors rather than crashing,
+  EXPECT_EQ(0.0, FPDF_GetPageWidth(nullptr));
+  EXPECT_EQ(0.0, FPDF_GetPageHeight(nullptr));
+  EXPECT_FALSE(FPDF_GetPageBoundingBox(nullptr, &rect));
+  EXPECT_FALSE(FPDF_GetPageBoundingBox(page, nullptr));
+
   UnloadPage(page);
-  EXPECT_EQ(nullptr, LoadPage(1));
+  EXPECT_FALSE(LoadPage(1));
 }
 
 TEST_F(FPDFViewEmbedderTest, ViewerRefDummy) {

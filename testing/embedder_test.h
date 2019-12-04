@@ -106,6 +106,11 @@ class EmbedderTest : public ::testing::Test,
                                 const char* password);
   bool OpenDocumentWithoutJavaScript(const std::string& filename);
 
+  // Close the document from a previous OpenDocument() call. This happens
+  // automatically at tear-down, and is usually not explicitly required,
+  // unless testing multiple documents or duplicate destruction.
+  void CloseDocument();
+
   // Perform JavaScript actions that are to run at document open time.
   void DoOpenActions();
 

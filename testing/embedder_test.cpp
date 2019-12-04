@@ -100,8 +100,7 @@ void EmbedderTest::TearDown() {
 
   if (document_) {
     FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
-    FPDFDOC_ExitFormFillEnvironment(form_handle_);
-    FPDF_CloseDocument(document_);
+    CloseDocument();
   }
 
   FPDFAvail_Destroy(avail_);
@@ -242,6 +241,14 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
 
   (void)FPDF_GetDocPermissions(*document);
   return true;
+}
+
+void EmbedderTest::CloseDocument() {
+  FPDFDOC_ExitFormFillEnvironment(form_handle_);
+  form_handle_ = nullptr;
+
+  FPDF_CloseDocument(document_);
+  document_ = nullptr;
 }
 
 FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
