@@ -927,12 +927,19 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
     ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
     CompareBitmap(bitmap2.get(), 300, 300, md5_2);
 
+    // Focus remains despite right clicking out of the textfield
+    FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
+    FORM_OnRButtonDown(form_handle(), page, 0, 15.0, 15.0);
+    FORM_OnRButtonUp(form_handle(), page, 0, 15.0, 15.0);
+    ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
+    CompareBitmap(bitmap3.get(), 300, 300, md5_2);
+
     // Take out focus by clicking out of the textfield
     FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonDown(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonUp(form_handle(), page, 0, 15.0, 15.0);
-    ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
-    CompareBitmap(bitmap3.get(), 300, 300, md5_3);
+    ScopedFPDFBitmap bitmap4 = RenderLoadedPage(page);
+    CompareBitmap(bitmap4.get(), 300, 300, md5_3);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 

@@ -67,16 +67,11 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag);
   bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag);
-
-#ifdef PDF_ENABLE_XFA
   bool OnRButtonDown(const CFX_PointF& point, uint32_t nFlag);
   bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag);
-#endif  // PDF_ENABLE_XFA
-
   bool OnChar(int nChar, uint32_t nFlag);
   bool OnKeyDown(int nKeyCode, int nFlag);
   bool OnKeyUp(int nKeyCode, int nFlag);
-
   bool OnMouseMove(const CFX_PointF& point, int nFlag);
   bool OnMouseWheel(double deltaX,
                     double deltaY,

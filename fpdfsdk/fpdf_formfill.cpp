@@ -417,7 +417,6 @@ FORM_OnLButtonDoubleClick(FPDF_FORMHANDLE hHandle,
   return pPageView->OnLButtonDblClk(CFX_PointF(page_x, page_y), modifier);
 }
 
-#ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
                                                        FPDF_PAGE page,
                                                        int modifier,
@@ -447,7 +446,6 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
 #endif  // PDF_ENABLE_CLICK_LOGGING
   return pPageView->OnRButtonUp(CFX_PointF(page_x, page_y), modifier);
 }
-#endif  // PDF_ENABLE_XFA
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
                                                    FPDF_PAGE page,

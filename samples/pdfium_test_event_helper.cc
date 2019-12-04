@@ -65,10 +65,8 @@ void SendMouseDownEvent(FPDF_FORMHANDLE form,
 
   if (tokens[1] == "left")
     FORM_OnLButtonDown(form, page, modifiers, x, y);
-#ifdef PDF_ENABLE_XFA
   else if (tokens[1] == "right")
     FORM_OnRButtonDown(form, page, modifiers, x, y);
-#endif
   else
     fprintf(stderr, "mousedown: bad button name\n");
 }
@@ -86,10 +84,8 @@ void SendMouseUpEvent(FPDF_FORMHANDLE form,
   int modifiers = tokens.size() >= 5 ? GetModifiers(tokens[4]) : 0;
   if (tokens[1] == "left")
     FORM_OnLButtonUp(form, page, modifiers, x, y);
-#ifdef PDF_ENABLE_XFA
   else if (tokens[1] == "right")
     FORM_OnRButtonUp(form, page, modifiers, x, y);
-#endif
   else
     fprintf(stderr, "mouseup: bad button name\n");
 }
