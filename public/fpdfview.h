@@ -107,13 +107,12 @@ typedef const char* FPDF_BYTESTRING;
 typedef const unsigned short* FPDF_WIDESTRING;
 
 #ifdef PDF_ENABLE_XFA
-// Structure for a byte string.
-// Note, a byte string commonly means a UTF-16LE formated string.
+// Structure for persisting a string beyond the duration of a callback.
+// Note: although represented as a char*, string may be interpreted as
+// a UTF-16LE formated string.
 typedef struct _FPDF_BSTR {
-  // String buffer.
-  char* str;
-  // Length of the string, in bytes.
-  int len;
+  char* str;  // String buffer, manipulate only with FPDF_BStr_* methods.
+  int len;    // Length of the string, in bytes.
 } FPDF_BSTR;
 #endif  // PDF_ENABLE_XFA
 
@@ -1193,18 +1192,18 @@ FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags();
 
 #ifdef PDF_ENABLE_XFA
 // Function: FPDF_BStr_Init
-//          Helper function to initialize a byte string.
-FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* str);
+//          Helper function to initialize a FPDF_BSTR.
+FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* bstr);
 
 // Function: FPDF_BStr_Set
-//          Helper function to set string data.
-FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* str,
-                                                    FPDF_LPCSTR bstr,
+//          Helper function to copy string data into the FPDF_BSTR.
+FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* bstr,
+                                                    FPDF_LPCSTR cstr,
                                                     int length);
 
 // Function: FPDF_BStr_Clear
-//          Helper function to clear a byte string.
-FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Clear(FPDF_BSTR* str);
+//          Helper function to clear a FPDF_BSTR.
+FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Clear(FPDF_BSTR* bstr);
 #endif  // PDF_ENABLE_XFA
 
 #ifdef __cplusplus

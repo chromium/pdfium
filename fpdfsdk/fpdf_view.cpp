@@ -1074,49 +1074,49 @@ FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags() {
 #endif  // PDF_ENABLE_V8
 
 #ifdef PDF_ENABLE_XFA
-FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* str) {
-  if (!str)
+FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* bstr) {
+  if (!bstr)
     return -1;
 
-  memset(str, 0, sizeof(FPDF_BSTR));
+  bstr->str = nullptr;
+  bstr->len = 0;
   return 0;
 }
 
-FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* str,
-                                                    FPDF_LPCSTR bstr,
+FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* bstr,
+                                                    FPDF_LPCSTR cstr,
                                                     int length) {
-  if (!str || !bstr || !length)
+  if (!bstr || !cstr)
     return -1;
 
   if (length == -1)
-    length = strlen(bstr);
+    length = strlen(cstr);
 
   if (length == 0) {
-    FPDF_BStr_Clear(str);
+    FPDF_BStr_Clear(bstr);
     return 0;
   }
 
-  if (str->str && str->len < length)
-    str->str = FX_Realloc(char, str->str, length + 1);
-  else if (!str->str)
-    str->str = FX_Alloc(char, length + 1);
+  if (bstr->str && bstr->len < length)
+    bstr->str = FX_Realloc(char, bstr->str, length + 1);
+  else if (!bstr->str)
+    bstr->str = FX_Alloc(char, length + 1);
 
-  str->str[length] = 0;
-  memcpy(str->str, bstr, length);
-  str->len = length;
-
+  bstr->str[length] = 0;
+  memcpy(bstr->str, cstr, length);
+  bstr->len = length;
   return 0;
 }
 
-FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Clear(FPDF_BSTR* str) {
-  if (!str)
+FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Clear(FPDF_BSTR* bstr) {
+  if (!bstr)
     return -1;
 
-  if (str->str) {
-    FX_Free(str->str);
-    str->str = nullptr;
+  if (bstr->str) {
+    FX_Free(bstr->str);
+    bstr->str = nullptr;
   }
-  str->len = 0;
+  bstr->len = 0;
   return 0;
 }
 #endif  // PDF_ENABLE_XFA

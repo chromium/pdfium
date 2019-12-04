@@ -111,6 +111,7 @@ pdfium_unittest_source_set("unittests") {
     "fpdf_doc_unittest.cpp",
     "fpdf_edit_unittest.cpp",
     "fpdf_editimg_unittest.cpp",
+    "fpdf_view_unittest.cpp",
   ]
   deps = [
     ":fpdfsdk",
