@@ -87,17 +87,19 @@ std::unique_ptr<CFX_XMLDocument> CFX_XMLParser::Parse() {
 }
 
 bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
-  FX_FILESIZE current_buffer_idx = 0;
-  FX_FILESIZE buffer_size = 0;
+  if (xml_plane_size_ <= 0)
+    return false;
 
   FX_SAFE_SIZE_T alloc_size_safe = xml_plane_size_;
   alloc_size_safe += 1;  // For NUL.
-  if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0 ||
-      xml_plane_size_ <= 0)
+  if (!alloc_size_safe.IsValid())
     return false;
 
+  FX_FILESIZE current_buffer_idx = 0;
+  FX_FILESIZE buffer_size = 0;
+
   std::vector<wchar_t, FxAllocAllocator<wchar_t>> buffer;
-  buffer.resize(pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
+  buffer.resize(alloc_size_safe.ValueOrDie());
 
   std::stack<wchar_t> character_to_skip_too_stack;
   std::stack<CFX_XMLNode::Type> node_type_stack;
@@ -461,8 +463,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
     }
   }
 
-  current_node_->AppendLastChild(doc->CreateNode<CFX_XMLText>(GetTextData()));
-  return true;
+  NOTREACHED();
+  return false;
 }
 
 void CFX_XMLParser::ProcessTextChar(wchar_t character) {
