@@ -489,12 +489,8 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
     copy_len = sizeof(digest);
 
   memcpy(enckey, digest, copy_len);
-  int okeylen = okey.GetLength();
-  if (okeylen > 32) {
-    okeylen = 32;
-  }
-  uint8_t okeybuf[64];
-  memset(okeybuf, 0, sizeof(okeybuf));
+  size_t okeylen = std::min<size_t>(okey.GetLength(), 32);
+  uint8_t okeybuf[64] = {};
   memcpy(okeybuf, okey.c_str(), okeylen);
   if (m_Revision == 2) {
     CRYPT_ArcFourCryptBlock(okeybuf, okeylen, enckey, m_KeyLen);
