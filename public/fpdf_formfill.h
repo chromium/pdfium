@@ -353,38 +353,23 @@ typedef struct _FPDF_SYSTEMTIME {
 } FPDF_SYSTEMTIME;
 
 #ifdef PDF_ENABLE_XFA
-// XFA
-/**
- * @name Pageview  event flags
- */
-/*@{*/
-/** @brief After a new pageview is added. */
-#define FXFA_PAGEVIEWEVENT_POSTADDED 1
-/** @brief After a pageview is removed. */
-#define FXFA_PAGEVIEWEVENT_POSTREMOVED 3
-/*@}*/
 
-// menu
-/**
- * @name Macro Definitions for Right Context Menu Features Of XFA Fields
- */
-/*@{*/
+// Pageview event flags
+#define FXFA_PAGEVIEWEVENT_POSTADDED 1    // After a new pageview is added.
+#define FXFA_PAGEVIEWEVENT_POSTREMOVED 3  // After a pageview is removed.
+
+// Definitions for Right Context Menu Features Of XFA Fields
 #define FXFA_MENU_COPY 1
 #define FXFA_MENU_CUT 2
 #define FXFA_MENU_SELECTALL 4
 #define FXFA_MENU_UNDO 8
 #define FXFA_MENU_REDO 16
 #define FXFA_MENU_PASTE 32
-/*@}*/
 
-// file type
-/**
- * @name Macro Definitions for File Type.
- */
-/*@{*/
+// Definitions for File Type.
 #define FXFA_SAVEAS_XML 1
 #define FXFA_SAVEAS_XDP 2
-/*@}*/
+
 #endif  // PDF_ENABLE_XFA
 
 typedef struct _FPDF_FORMFILLINFO {
