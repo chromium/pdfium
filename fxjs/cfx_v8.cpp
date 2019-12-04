@@ -43,15 +43,15 @@ std::vector<WideString> CFX_V8::GetObjectPropertyNames(
   return result;
 }
 
-void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
+bool CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
   ASSERT(!pPut.IsEmpty());
   if (pObj.IsEmpty())
-    return;
-  pObj->Set(m_pIsolate->GetCurrentContext(), NewString(bsUTF8PropertyName),
-            pPut)
-      .FromJust();
+    return false;
+
+  v8::Local<v8::String> name = NewString(bsUTF8PropertyName);
+  return pObj->Set(m_pIsolate->GetCurrentContext(), name, pPut).IsJust();
 }
 
 void CFX_V8::DisposeIsolate() {
@@ -67,15 +67,13 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
   return v8::Object::New(GetIsolate());
 }
 
-unsigned CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
-                                 unsigned index,
-                                 v8::Local<v8::Value> pValue) {
+bool CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
+                             unsigned index,
+                             v8::Local<v8::Value> pValue) {
   ASSERT(!pValue.IsEmpty());
   if (pArray.IsEmpty())
-    return 0;
-  if (pArray->Set(m_pIsolate->GetCurrentContext(), index, pValue).IsNothing())
-    return 0;
-  return 1;
+    return false;
+  return pArray->Set(m_pIsolate->GetCurrentContext(), index, pValue).IsJust();
 }
 
 v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> pArray,

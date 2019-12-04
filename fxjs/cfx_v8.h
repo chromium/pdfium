@@ -44,15 +44,15 @@ class CFX_V8 {
   unsigned GetArrayLength(v8::Local<v8::Array> pArray);
   v8::Local<v8::Value> GetArrayElement(v8::Local<v8::Array> pArray,
                                        unsigned index);
-  unsigned PutArrayElement(v8::Local<v8::Array> pArray,
-                           unsigned index,
-                           v8::Local<v8::Value> pValue);
+  bool PutArrayElement(v8::Local<v8::Array> pArray,
+                       unsigned index,
+                       v8::Local<v8::Value> pValue);
 
   // Objects.
   std::vector<WideString> GetObjectPropertyNames(v8::Local<v8::Object> pObj);
   v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
                                          ByteStringView bsUTF8PropertyName);
-  void PutObjectProperty(v8::Local<v8::Object> pObj,
+  bool PutObjectProperty(v8::Local<v8::Object> pObj,
                          ByteStringView bsUTF8PropertyName,
                          v8::Local<v8::Value> pValue);
 

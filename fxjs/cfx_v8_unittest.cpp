@@ -10,6 +10,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
+namespace {
+bool getter_sentinel = false;
+bool setter_sentinel = false;
+}  // namespace
+
 void FXV8UnitTest::V8IsolateDeleter::operator()(v8::Isolate* ptr) const {
   ptr->Dispose();
 }
@@ -41,6 +46,19 @@ TEST_F(FXV8UnitTest, EmptyLocal) {
   EXPECT_EQ(L"", cfx_v8()->ToWideString(empty));
   EXPECT_TRUE(cfx_v8()->ToObject(empty).IsEmpty());
   EXPECT_TRUE(cfx_v8()->ToArray(empty).IsEmpty());
+
+  // Can't set properties on empty objects, but does not fault.
+  v8::Local<v8::Value> marker = cfx_v8()->NewNumber(2);
+  v8::Local<v8::Object> empty_object;
+  EXPECT_FALSE(cfx_v8()->PutObjectProperty(empty_object, "clams", marker));
+  EXPECT_TRUE(cfx_v8()->GetObjectProperty(empty_object, "clams").IsEmpty());
+  EXPECT_EQ(0u, cfx_v8()->GetObjectPropertyNames(empty_object).size());
+
+  // Can't set elements in empty arrays, but does not fault.
+  v8::Local<v8::Array> empty_array;
+  EXPECT_FALSE(cfx_v8()->PutArrayElement(empty_array, 0, marker));
+  EXPECT_TRUE(cfx_v8()->GetArrayElement(empty_array, 0).IsEmpty());
+  EXPECT_EQ(0u, cfx_v8()->GetArrayLength(empty_array));
 }
 
 TEST_F(FXV8UnitTest, NewNull) {
@@ -162,7 +180,7 @@ TEST_F(FXV8UnitTest, NewArray) {
   EXPECT_TRUE(cfx_v8()->GetArrayElement(array, 2)->IsUndefined());
   EXPECT_EQ(0u, cfx_v8()->GetArrayLength(array));
 
-  cfx_v8()->PutArrayElement(array, 3, cfx_v8()->NewNumber(12));
+  EXPECT_TRUE(cfx_v8()->PutArrayElement(array, 3, cfx_v8()->NewNumber(12)));
   EXPECT_FALSE(cfx_v8()->GetArrayElement(array, 2).IsEmpty());
   EXPECT_TRUE(cfx_v8()->GetArrayElement(array, 2)->IsUndefined());
   EXPECT_FALSE(cfx_v8()->GetArrayElement(array, 3).IsEmpty());
@@ -190,7 +208,8 @@ TEST_F(FXV8UnitTest, NewObject) {
   EXPECT_TRUE(cfx_v8()->GetObjectProperty(object, "clams")->IsUndefined());
   EXPECT_EQ(0u, cfx_v8()->GetObjectPropertyNames(object).size());
 
-  cfx_v8()->PutObjectProperty(object, "clams", cfx_v8()->NewNumber(12));
+  EXPECT_TRUE(
+      cfx_v8()->PutObjectProperty(object, "clams", cfx_v8()->NewNumber(12)));
   EXPECT_FALSE(cfx_v8()->GetObjectProperty(object, "clams").IsEmpty());
   EXPECT_TRUE(cfx_v8()->GetObjectProperty(object, "clams")->IsNumber());
   EXPECT_EQ(1u, cfx_v8()->GetObjectPropertyNames(object).size());
@@ -203,4 +222,48 @@ TEST_F(FXV8UnitTest, NewObject) {
   EXPECT_EQ(L"[object Object]", cfx_v8()->ToWideString(object));
   EXPECT_TRUE(cfx_v8()->ToObject(object)->IsObject());
   EXPECT_TRUE(cfx_v8()->ToArray(object).IsEmpty());
+}
+
+TEST_F(FXV8UnitTest, ThrowFromGetter) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Local<v8::Context> context = v8::Context::New(isolate());
+  v8::Context::Scope context_scope(context);
+
+  v8::Local<v8::Object> object = cfx_v8()->NewObject();
+  v8::Local<v8::String> name = cfx_v8()->NewString("clams");
+  EXPECT_TRUE(
+      object
+          ->SetAccessor(context, name,
+                        [](v8::Local<v8::Name> property,
+                           const v8::PropertyCallbackInfo<v8::Value>& info) {
+                          getter_sentinel = true;
+                          info.GetIsolate()->ThrowException(property);
+                        })
+          .FromJust());
+  getter_sentinel = false;
+  EXPECT_TRUE(cfx_v8()->GetObjectProperty(object, "clams").IsEmpty());
+  EXPECT_TRUE(getter_sentinel);
+}
+
+TEST_F(FXV8UnitTest, ThrowFromSetter) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Local<v8::Context> context = v8::Context::New(isolate());
+  v8::Context::Scope context_scope(context);
+
+  v8::Local<v8::Object> object = cfx_v8()->NewObject();
+  v8::Local<v8::String> name = cfx_v8()->NewString("clams");
+  EXPECT_TRUE(object
+                  ->SetAccessor(context, name, nullptr,
+                                [](v8::Local<v8::Name> property,
+                                   v8::Local<v8::Value> value,
+                                   const v8::PropertyCallbackInfo<void>& info) {
+                                  setter_sentinel = true;
+                                  info.GetIsolate()->ThrowException(property);
+                                })
+                  .FromJust());
+  setter_sentinel = false;
+  EXPECT_FALSE(cfx_v8()->PutObjectProperty(object, "clams", name));
+  EXPECT_TRUE(setter_sentinel);
 }
