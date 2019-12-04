@@ -266,14 +266,6 @@ struct point_type  {
     point_type() {}
     point_type(float x_, float y_, unsigned flag_ = 0) : x(x_), y(y_), flag(flag_) {}
 };
-struct point_type_flag : public point_type {
-    unsigned flag;
-    point_type_flag()
-    {
-        flag = 0;
-    }
-    point_type_flag(float x_, float y_, unsigned flag_ = 0) : point_type(x_, y_), flag(flag_) {}
-};
 struct vertex_type  {
     float   x, y;
     unsigned cmd;

@@ -22,3 +22,5 @@ error in sweep_scanline.
 agg_array.h.
 0006-ubsan-sweep-scanline-error.patch: Fix UBSan integer overflow error in
 sweep_scanline.
+0007-unused-struct.patch: Remove unused struct point_type_flag, which has a
+shadow variable.
