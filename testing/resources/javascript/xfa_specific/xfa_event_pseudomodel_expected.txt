@@ -32,3 +32,5 @@ Alert: PASS: soapFaultString =
 Alert: PASS: soapFaultString = 
 Alert: PASS: target = undefined
 Alert: PASS: target = undefined
+Alert: Triggered by emit()
+Alert: Triggered by emit() again

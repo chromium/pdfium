@@ -23,23 +23,40 @@ stream
     <event activity="docReady" ref="$host">
       <script contentType="application/x-javascript">
         {{include ../property_test_helpers.js}}
-        testRWProperty(xfa.event, "cancelAction", false, true);
-        testRWProperty(xfa.event, "change", "", "new foo");
-        testRIProperty(xfa.event, "commitKey", 0);
-        testRIProperty(xfa.event, "fullText", "");
-        testRIProperty(xfa.event, "keyDown", false);
-        testRIProperty(xfa.event, "modifier", false);
-        testRIProperty(xfa.event, "newContentType", "");
-        testRIProperty(xfa.event, "newText", "new foo");  // From above.
-        testRIProperty(xfa.event, "prevContentType", "");
-        testRIProperty(xfa.event, "prevText", "");
-        testRIProperty(xfa.event, "reenter", "");
-        testRIProperty(xfa.event, "selEnd", 0);
-        testRIProperty(xfa.event, "selStart", 0);
-        testRIProperty(xfa.event, "shift", false);
-        testRIProperty(xfa.event, "soapFaultCode", "");
-        testRIProperty(xfa.event, "soapFaultString", "");
-        testRIProperty(xfa.event, "target", undefined);
+        try {
+          if (typeof test_counter == "undefined") {
+            test_counter = 1;
+            testRWProperty(xfa.event, "cancelAction", false, true);
+            testRWProperty(xfa.event, "change", "", "new foo");
+            testRIProperty(xfa.event, "commitKey", 0);
+            testRIProperty(xfa.event, "fullText", "");
+            testRIProperty(xfa.event, "keyDown", false);
+            testRIProperty(xfa.event, "modifier", false);
+            testRIProperty(xfa.event, "newContentType", "");
+            testRIProperty(xfa.event, "newText", "new foo");  // From above.
+            testRIProperty(xfa.event, "prevContentType", "");
+            testRIProperty(xfa.event, "prevText", "");
+            testRIProperty(xfa.event, "reenter", "");
+            testRIProperty(xfa.event, "selEnd", 0);
+            testRIProperty(xfa.event, "selStart", 0);
+            testRIProperty(xfa.event, "shift", false);
+            testRIProperty(xfa.event, "soapFaultCode", "");
+            testRIProperty(xfa.event, "soapFaultString", "");
+            testRIProperty(xfa.event, "target", undefined);
+            xfa.event.emit();  // Signal into ourselves.
+          } else if (test_counter == 1) {
+            test_counter = 2;
+            app.alert("Triggered by emit()");
+            xfa.event.emit();  // Signal into ourselves again.
+          } else if (test_counter == 2) {
+            app.alert("Triggered by emit() again");
+          } else {
+            app.alert("Something weird happened");
+          }
+          xfa.event.reset();
+        } catch (e) {
+           app.alert("truly unexpected " + e);
+        }
       </script>
     </event>
   </subform>
