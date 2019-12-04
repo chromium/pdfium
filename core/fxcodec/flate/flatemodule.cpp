@@ -15,6 +15,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
@@ -671,9 +672,9 @@ class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
   int m_Columns = 0;
   uint32_t m_PredictPitch = 0;
   size_t m_LeftOver = 0;
-  std::vector<uint8_t> m_LastLine;
-  std::vector<uint8_t> m_PredictBuffer;
-  std::vector<uint8_t> m_PredictRaw;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_LastLine;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_PredictBuffer;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_PredictRaw;
 };
 
 FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(
