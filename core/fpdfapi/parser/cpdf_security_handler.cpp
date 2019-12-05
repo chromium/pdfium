@@ -365,8 +365,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   CRYPT_aes_context aes;
   memset(&aes, 0, sizeof(aes));
   CRYPT_AESSetKey(&aes, digest, 32, false);
-  uint8_t iv[16];
-  memset(iv, 0, 16);
+  uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESDecrypt(&aes, m_EncryptKey, ekey.raw_str(), 32);
   CRYPT_AESSetKey(&aes, m_EncryptKey, 32, false);
@@ -375,8 +374,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   if (perms.IsEmpty())
     return false;
 
-  uint8_t perms_buf[16];
-  memset(perms_buf, 0, sizeof(perms_buf));
+  uint8_t perms_buf[16] = {};
   size_t copy_len =
       std::min(sizeof(perms_buf), static_cast<size_t>(perms.GetLength()));
   memcpy(perms_buf, perms.raw_str(), copy_len);
@@ -442,14 +440,10 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
     return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
   }
 
-  uint8_t test[32];
-  uint8_t tmpkey[32];
-  uint32_t copy_len = sizeof(test);
-  if (copy_len > (uint32_t)ukey.GetLength())
-    copy_len = ukey.GetLength();
+  uint8_t test[32] = {};
+  uint8_t tmpkey[32] = {};
+  uint32_t copy_len = std::min(sizeof(test), ukey.GetLength());
 
-  memset(test, 0, sizeof(test));
-  memset(tmpkey, 0, sizeof(tmpkey));
   memcpy(test, ukey.c_str(), copy_len);
   for (int32_t i = 19; i >= 0; i--) {
     for (int j = 0; j < m_KeyLen; j++)
@@ -482,8 +476,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
       CRYPT_MD5Generate(digest, 16, digest);
     }
   }
-  uint8_t enckey[32];
-  memset(enckey, 0, sizeof(enckey));
+  uint8_t enckey[32] = {};
   uint32_t copy_len = m_KeyLen;
   if (copy_len > sizeof(digest))
     copy_len = sizeof(digest);
@@ -496,17 +489,16 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
     CRYPT_ArcFourCryptBlock(okeybuf, okeylen, enckey, m_KeyLen);
   } else {
     for (int32_t i = 19; i >= 0; i--) {
-      uint8_t tempkey[32];
-      memset(tempkey, 0, sizeof(tempkey));
+      uint8_t tempkey[32] = {};
       for (int j = 0; j < m_KeyLen; j++)
         tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i);
       CRYPT_ArcFourCryptBlock(okeybuf, okeylen, tempkey, m_KeyLen);
     }
   }
-  int len = 32;
-  while (len && defpasscode[len - 1] == okeybuf[len - 1]) {
+  size_t len = 32;
+  while (len && defpasscode[len - 1] == okeybuf[len - 1])
     len--;
-  }
+
   return ByteString(okeybuf, len);
 }
 
@@ -586,9 +578,8 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
   }
 
   ByteString fileId;
-  if (pIdArray) {
+  if (pIdArray)
     fileId = pIdArray->GetStringAt(0);
-  }
 
   CalcEncryptKey(m_pEncryptDict.Get(), user_password, m_EncryptKey, key_len,
                  false, fileId);
@@ -601,17 +592,16 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_md5_context md5;
     CRYPT_MD5Start(&md5);
     CRYPT_MD5Update(&md5, defpasscode, 32);
-    if (!fileId.IsEmpty()) {
+    if (!fileId.IsEmpty())
       CRYPT_MD5Update(&md5, (uint8_t*)fileId.c_str(), fileId.GetLength());
-    }
+
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
     CRYPT_ArcFourCryptBlock(digest, 16, m_EncryptKey, key_len);
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {
-      for (int j = 0; j < key_len; j++) {
+      for (int j = 0; j < key_len; j++)
         tempkey[j] = m_EncryptKey[j] ^ i;
-      }
       CRYPT_ArcFourCryptBlock(digest, 16, tempkey, key_len);
     }
     CRYPT_MD5Generate(digest, 16, digest + 16);
@@ -679,8 +669,7 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
   CRYPT_aes_context aes;
   memset(&aes, 0, sizeof(aes));
   CRYPT_AESSetKey(&aes, digest1, 32, true);
-  uint8_t iv[16];
-  memset(iv, 0, 16);
+  uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESEncrypt(&aes, digest1, key, 32);
   pEncryptDict->SetNewFor<CPDF_String>(bOwner ? "OE" : "UE",
@@ -709,8 +698,7 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
   memset(&aes, 0, sizeof(aes));
   CRYPT_AESSetKey(&aes, key, 32, true);
 
-  uint8_t iv[16];
-  memset(iv, 0, 16);
+  uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
 
   uint8_t buf1[16];

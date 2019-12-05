@@ -53,7 +53,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
     return;
   }
   uint8_t realkey[16];
-  int realkeylen = 16;
+  size_t realkeylen = sizeof(realkey);
   if (m_Cipher != FXCIPHER_AES || m_KeyLen != 32) {
     uint8_t key1[32];
     PopulateKey(objnum, gennum, key1);
@@ -63,10 +63,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
     }
     CRYPT_MD5Generate(
         key1, m_Cipher == FXCIPHER_AES ? m_KeyLen + 9 : m_KeyLen + 5, realkey);
-    realkeylen = m_KeyLen + 5;
-    if (realkeylen > 16) {
-      realkeylen = 16;
-    }
+    realkeylen = std::min<size_t>(m_KeyLen + 5, sizeof(realkey));
   }
   if (m_Cipher == FXCIPHER_AES) {
     CRYPT_AESSetKey(m_pAESContext.get(),
@@ -98,9 +95,8 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
     }
   } else {
     ASSERT(dest_size == source.size());
-    if (dest_buf != source.data()) {
+    if (dest_buf != source.data())
       memcpy(dest_buf, source.data(), source.size());
-    }
     CRYPT_ArcFourCryptBlock(dest_buf, dest_size, realkey, realkeylen);
   }
 }
