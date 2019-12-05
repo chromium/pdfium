@@ -615,6 +615,8 @@ source_set("pdfium_base") {
     "base/allocator/partition_allocator/partition_page.h",
     "base/allocator/partition_allocator/partition_root_base.cc",
     "base/allocator/partition_allocator/partition_root_base.h",
+    "base/allocator/partition_allocator/random.cc",
+    "base/allocator/partition_allocator/random.h",
     "base/allocator/partition_allocator/spin_lock.cc",
     "base/allocator/partition_allocator/spin_lock.h",
     "base/base_export.h",

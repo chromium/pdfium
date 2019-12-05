@@ -117,18 +117,6 @@ void* AllocPages(void* address,
   uintptr_t align_base_mask = ~align_offset_mask;
   DCHECK(!(reinterpret_cast<uintptr_t>(address) & align_offset_mask));
 
-#if defined(OS_LINUX) && defined(ARCH_CPU_64_BITS)
-  // On 64 bit Linux, we may need to adjust the address space limit for
-  // guarded allocations.
-  if (length >= kMinimumGuardedMemorySize) {
-    CHECK_EQ(PageInaccessible, accessibility);
-    CHECK(!commit);
-    if (!AdjustAddressSpaceLimit(base::checked_cast<int64_t>(length))) {
-      // Fall through. Try the allocation, since we may have a reserve.
-    }
-  }
-#endif
-
   // If the client passed null as the address, choose a good one.
   if (address == nullptr) {
     address = GetRandomPageBase();

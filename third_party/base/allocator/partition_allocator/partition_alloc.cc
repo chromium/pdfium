@@ -198,13 +198,9 @@ void PartitionRoot::Init(size_t num_buckets, size_t max_allocation) {
 
   this->num_buckets = num_buckets;
   this->max_allocation = max_allocation;
-  size_t i;
-  for (i = 0; i < this->num_buckets; ++i) {
+  for (size_t i = 0; i < this->num_buckets; ++i) {
     internal::PartitionBucket* bucket = &this->buckets()[i];
-    if (!i)
-      bucket->Init(kAllocationGranularity);
-    else
-      bucket->Init(i << kBucketShift);
+    bucket->Init(i == 0 ? kAllocationGranularity : (i << kBucketShift));
   }
 }
 
@@ -360,10 +356,7 @@ void* PartitionReallocGenericFlags(PartitionRootGeneric* root,
                                    size_t new_size,
                                    const char* type_name) {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
-  // Make MEMORY_TOOL_REPLACES_ALLOCATOR behave the same for max size
-  // as other alloc code.
-  if (new_size > kGenericMaxDirectMapped)
-    return nullptr;
+  CHECK_MAX_SIZE_OR_RETURN_NULLPTR(new_size, flags);
   void* result = realloc(ptr, new_size);
   CHECK(result || flags & PartitionAllocReturnNull);
   return result;
@@ -501,14 +494,14 @@ static size_t PartitionPurgePage(internal::PartitionPage* page, bool discard) {
     size_t slot_index = (reinterpret_cast<char*>(entry) - ptr) / slot_size;
     DCHECK(slot_index < num_slots);
     slot_usage[slot_index] = 0;
-    entry = internal::PartitionFreelistEntry::Transform(entry->next);
+    entry = internal::EncodedPartitionFreelistEntry::Decode(entry->next);
 #if !defined(OS_WIN)
     // If we have a slot where the masked freelist entry is 0, we can actually
     // discard that freelist entry because touching a discarded page is
     // guaranteed to return original content or 0. (Note that this optimization
     // won't fire on big-endian machines because the masking function is
     // negation.)
-    if (!internal::PartitionFreelistEntry::Transform(entry))
+    if (!internal::PartitionFreelistEntry::Encode(entry))
       last_slot = slot_index;
 #endif
   }
@@ -542,25 +535,33 @@ static size_t PartitionPurgePage(internal::PartitionPage* page, bool discard) {
       DCHECK(truncated_slots > 0);
       size_t num_new_entries = 0;
       page->num_unprovisioned_slots += static_cast<uint16_t>(truncated_slots);
+
       // Rewrite the freelist.
-      internal::PartitionFreelistEntry** entry_ptr = &page->freelist_head;
+      internal::PartitionFreelistEntry* head = nullptr;
+      internal::PartitionFreelistEntry* back = head;
       for (size_t slot_index = 0; slot_index < num_slots; ++slot_index) {
         if (slot_usage[slot_index])
           continue;
+
         auto* entry = reinterpret_cast<internal::PartitionFreelistEntry*>(
             ptr + (slot_size * slot_index));
-        *entry_ptr = internal::PartitionFreelistEntry::Transform(entry);
-        entry_ptr = reinterpret_cast<internal::PartitionFreelistEntry**>(entry);
+        if (!head) {
+          head = entry;
+          back = entry;
+        } else {
+          back->next = internal::PartitionFreelistEntry::Encode(entry);
+          back = entry;
+        }
         num_new_entries++;
 #if !defined(OS_WIN)
         last_slot = slot_index;
 #endif
       }
-      // Terminate the freelist chain.
-      *entry_ptr = nullptr;
-      // The freelist head is stored unmasked.
-      page->freelist_head =
-          internal::PartitionFreelistEntry::Transform(page->freelist_head);
+
+      page->freelist_head = head;
+      if (back)
+        back->next = internal::PartitionFreelistEntry::Encode(nullptr);
+
       DCHECK(num_new_entries == num_slots - page->num_allocated_slots);
       // Discard the memory.
       DiscardSystemPages(begin_ptr, unprovisioned_bytes);
