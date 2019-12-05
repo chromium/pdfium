@@ -23,7 +23,7 @@ vars = {
   'freetype_revision': '551bd3a90e352fa3a66ee7644c07440939c03d81',
   'gtest_revision': 'f2fb48c3b3d79a75a88a99fba6576b25d42ec528',
   'icu_revision': '88ea42af73f4cd3b8b0d0837403d75a989d80504',
-  'instrumented_lib_revision': 'b1c3ca20848c117eb935b02c25d441f03e6fbc5e',
+  'instrumented_lib_revision': '4dca59c6a614b08b394ed6154a8fcded9298b07e',
   'jinja2_revision': 'b41863e42637544c2941b574c7877d3e1f663e25',
   'jpeg_turbo_revision': 'bc13578529255ec75005ffc98aae151666122892',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
