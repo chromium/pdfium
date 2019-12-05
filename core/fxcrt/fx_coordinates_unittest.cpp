@@ -84,10 +84,10 @@ TEST(CFX_FloatRect, GetOuterRect) {
   constexpr float kMaxIntAsFloat = static_cast<float>(kMaxInt);
 
   outer_rect = rect.GetOuterRect();
-  EXPECT_EQ(0, rect.left);
-  EXPECT_EQ(0, rect.bottom);
-  EXPECT_EQ(0, rect.right);
-  EXPECT_EQ(0, rect.top);
+  EXPECT_EQ(0, outer_rect.left);
+  EXPECT_EQ(0, outer_rect.bottom);
+  EXPECT_EQ(0, outer_rect.right);
+  EXPECT_EQ(0, outer_rect.top);
 
   // Function converts from float to int using floor() for left and top, and
   // ceil() for right and bottom.
