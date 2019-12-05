@@ -157,6 +157,15 @@ typedef struct _FS_RECTF_ {
 // Const Pointer to FS_RECTF structure.
 typedef const FS_RECTF* FS_LPCRECTF;
 
+// Rectangle size. Coordinate system agnostic.
+typedef struct FS_SIZEF_ {
+  float width;
+  float height;
+} * FS_LPSIZEF, FS_SIZEF;
+
+// Const Pointer to FS_SIZEF structure.
+typedef const FS_SIZEF* FS_LPCSIZEF;
+
 // Annotation enums.
 typedef int FPDF_ANNOTATION_SUBTYPE;
 typedef int FPDF_ANNOT_APPEARANCEMODE;
@@ -593,6 +602,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document);
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
                                                   int page_index);
 
+// Experimental API
+// Function: FPDF_GetPageWidthF
+//          Get page width.
+// Parameters:
+//          page        -   Handle to the page. Returned by FPDF_LoadPage().
+// Return value:
+//          Page width (excluding non-displayable area) measured in points.
+//          One point is 1/72 inch (around 0.3528 mm).
+FPDF_EXPORT float FPDF_CALLCONV FPDF_GetPageWidthF(FPDF_PAGE page);
+
 // Function: FPDF_GetPageWidth
 //          Get page width.
 // Parameters:
@@ -600,7 +619,20 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
 // Return value:
 //          Page width (excluding non-displayable area) measured in points.
 //          One point is 1/72 inch (around 0.3528 mm).
+// Note:
+//          Prefer FPDF_GetPageWidthF() above. This will be deprecated in the
+//          future.
 FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageWidth(FPDF_PAGE page);
+
+// Experimental API
+// Function: FPDF_GetPageHeightF
+//          Get page height.
+// Parameters:
+//          page        -   Handle to the page. Returned by FPDF_LoadPage().
+// Return value:
+//          Page height (excluding non-displayable area) measured in points.
+//          One point is 1/72 inch (around 0.3528 mm)
+FPDF_EXPORT float FPDF_CALLCONV FPDF_GetPageHeightF(FPDF_PAGE page);
 
 // Function: FPDF_GetPageHeight
 //          Get page height.
@@ -609,6 +641,9 @@ FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageWidth(FPDF_PAGE page);
 // Return value:
 //          Page height (excluding non-displayable area) measured in points.
 //          One point is 1/72 inch (around 0.3528 mm)
+// Note:
+//          Prefer FPDF_GetPageHeightF() above. This will be deprecated in the
+//          future.
 FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageHeight(FPDF_PAGE page);
 
 // Experimental API.
@@ -624,6 +659,21 @@ FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageHeight(FPDF_PAGE page);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
                                                             FS_RECTF* rect);
 
+// Experimental API.
+// Function: FPDF_GetPageSizeByIndexF
+//          Get the size of the page at the given index.
+// Parameters:
+//          document    -   Handle to document. Returned by FPDF_LoadDocument().
+//          page_index  -   Page index, zero for the first page.
+//          size        -   Pointer to a FS_SIZEF to receive the page size.
+//                          (in points).
+// Return value:
+//          Non-zero for success. 0 for error (document or page not found).
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
+                         int page_index,
+                         FS_SIZEF* size);
+
 // Function: FPDF_GetPageSizeByIndex
 //          Get the size of the page at the given index.
 // Parameters:
@@ -635,6 +685,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
 //                          (in points).
 // Return value:
 //          Non-zero for success. 0 for error (document or page not found).
+// Note:
+//          Prefer FPDF_GetPageSizeByIndexF() above. This will be deprecated in
+//          the future.
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                                       int page_index,
                                                       double* width,

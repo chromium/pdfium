@@ -694,8 +694,8 @@ bool RenderPage(const std::string& name,
   if (!options.scale_factor_as_string.empty())
     std::stringstream(options.scale_factor_as_string) >> scale;
 
-  auto width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
-  auto height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
+  auto width = static_cast<int>(FPDF_GetPageWidthF(page) * scale);
+  auto height = static_cast<int>(FPDF_GetPageHeightF(page) * scale);
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(width, height, alpha));
 

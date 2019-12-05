@@ -355,14 +355,22 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   return FPDFPageFromIPDFPage(pPage.Leak());
 }
 
-FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageWidth(FPDF_PAGE page) {
+FPDF_EXPORT float FPDF_CALLCONV FPDF_GetPageWidthF(FPDF_PAGE page) {
   IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
-  return pPage ? pPage->GetPageWidth() : 0.0;
+  return pPage ? pPage->GetPageWidth() : 0.0f;
+}
+
+FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageWidth(FPDF_PAGE page) {
+  return FPDF_GetPageWidthF(page);
+}
+
+FPDF_EXPORT float FPDF_CALLCONV FPDF_GetPageHeightF(FPDF_PAGE page) {
+  IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
+  return pPage ? pPage->GetPageHeight() : 0.0f;
 }
 
 FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageHeight(FPDF_PAGE page) {
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
-  return pPage ? pPage->GetPageHeight() : 0.0;
+  return FPDF_GetPageHeightF(page);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
@@ -914,11 +922,11 @@ void RenderPageWithContext(CPDF_Page* pPage,
                  flags, bNeedToRestore, pause);
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
-                                                      int page_index,
-                                                      double* width,
-                                                      double* height) {
-  if (!width || !height)
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
+                         int page_index,
+                         FS_SIZEF* size) {
+  if (!size)
     return false;
 
   auto* pDoc = CPDFDocumentFromFPDFDocument(document);
@@ -935,8 +943,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
     if (!pPage)
       return false;
 
-    *width = pPage->GetPageWidth();
-    *height = pPage->GetPageHeight();
+    size->width = pPage->GetPageWidth();
+    size->height = pPage->GetPageHeight();
     return true;
   }
 #endif  // PDF_ENABLE_XFA
@@ -947,8 +955,24 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
   page->SetRenderCache(pdfium::MakeUnique<CPDF_PageRenderCache>(page.Get()));
-  *width = page->GetPageWidth();
-  *height = page->GetPageHeight();
+  size->width = page->GetPageWidth();
+  size->height = page->GetPageHeight();
+  return true;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
+                                                      int page_index,
+                                                      double* width,
+                                                      double* height) {
+  if (!width || !height)
+    return false;
+
+  FS_SIZEF size;
+  if (!FPDF_GetPageSizeByIndexF(document, page_index, &size))
+    return false;
+
+  *width = size.width;
+  *height = size.height;
   return true;
 }
 

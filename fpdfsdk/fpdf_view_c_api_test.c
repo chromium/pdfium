@@ -401,8 +401,11 @@ int CheckPDFiumCApi() {
     CHK(FPDF_GetPageBoundingBox);
     CHK(FPDF_GetPageCount);
     CHK(FPDF_GetPageHeight);
+    CHK(FPDF_GetPageHeightF);
     CHK(FPDF_GetPageSizeByIndex);
+    CHK(FPDF_GetPageSizeByIndexF);
     CHK(FPDF_GetPageWidth);
+    CHK(FPDF_GetPageWidthF);
 #ifdef PDF_ENABLE_V8
     CHK(FPDF_GetRecommendedV8Flags);
 #endif

@@ -466,8 +466,8 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 
   HDC dc = CreateEnhMetaFileA(nullptr, filename, nullptr, nullptr);
 
-  int width = static_cast<int>(FPDF_GetPageWidth(page));
-  int height = static_cast<int>(FPDF_GetPageHeight(page));
+  int width = static_cast<int>(FPDF_GetPageWidthF(page));
+  int height = static_cast<int>(FPDF_GetPageHeightF(page));
   HRGN rgn = CreateRectRgn(0, 0, width, height);
   SelectClipRgn(dc, rgn);
   DeleteObject(rgn);
@@ -491,8 +491,8 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
 
   HDC dc = CreateEnhMetaFileA(nullptr, nullptr, nullptr, nullptr);
 
-  int width = static_cast<int>(FPDF_GetPageWidth(page));
-  int height = static_cast<int>(FPDF_GetPageHeight(page));
+  int width = static_cast<int>(FPDF_GetPageWidthF(page));
+  int height = static_cast<int>(FPDF_GetPageHeightF(page));
   FPDF_RenderPage(dc, page, 0, 0, width, height, 0, FPDF_ANNOT | FPDF_PRINTING);
 
   HENHMETAFILE emf = CloseEnhMetaFile(dc);
