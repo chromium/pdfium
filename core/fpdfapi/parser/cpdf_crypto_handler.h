@@ -22,7 +22,7 @@ class CPDF_SecurityHandler;
 
 class CPDF_CryptoHandler {
  public:
-  CPDF_CryptoHandler(int cipher, const uint8_t* key, int keylen);
+  CPDF_CryptoHandler(int cipher, const uint8_t* key, size_t keylen);
   ~CPDF_CryptoHandler();
 
   static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
@@ -60,8 +60,8 @@ class CPDF_CryptoHandler {
                    bool bEncrypt);
   bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
 
-  int m_KeyLen;
-  int m_Cipher;
+  const size_t m_KeyLen;
+  const int m_Cipher;
   std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> m_pAESContext;
   uint8_t m_EncryptKey[32];
 };
