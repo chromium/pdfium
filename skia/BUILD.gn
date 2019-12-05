@@ -7,6 +7,7 @@ import("//build/config/ui.gni")
 import("//testing/test.gni")
 import("//third_party/skia/gn/shared_sources.gni")
 import("//third_party/skia/third_party/skcms/skcms.gni")
+import("features.gni")
 
 if (current_cpu == "arm") {
   import("//build/config/arm.gni")
@@ -16,7 +17,7 @@ if (current_cpu == "mipsel" || current_cpu == "mips64el") {
 }
 
 skia_support_gpu = !is_ios
-skia_support_pdf = false  #!is_ios && (enable_basic_printing || enable_print_preview)
+skia_support_pdf = false
 
 # External-facing config for dependent code.
 config("skia_config") {
@@ -39,6 +40,10 @@ config("skia_config") {
     defines += [ "SK_SUPPORT_GPU=1" ]
   } else {
     defines += [ "SK_SUPPORT_GPU=0" ]
+  }
+
+  if (skia_use_gl) {
+    defines += [ "SK_GL" ]
   }
 
   if (is_android) {
@@ -216,6 +221,9 @@ component("skia") {
   if (skia_support_gpu) {
     sources += skia_gpu_sources
     sources += skia_null_gpu_sources
+    if (skia_use_gl) {
+      sources += skia_gl_gpu_sources
+    }
   }
 
   # Remove unused util files include in utils.gni
