@@ -97,7 +97,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
     ASSERT(dest_size == source.size());
     if (dest_buf != source.data())
       memcpy(dest_buf, source.data(), source.size());
-    CRYPT_ArcFourCryptBlock(dest_buf, dest_size, realkey, realkeylen);
+    CRYPT_ArcFourCryptBlock({dest_buf, dest_size}, {realkey, realkeylen});
   }
 }
 

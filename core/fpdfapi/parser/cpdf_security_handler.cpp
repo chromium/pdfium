@@ -432,7 +432,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   uint8_t ukeybuf[32];
   if (m_Revision == 2) {
     memcpy(ukeybuf, defpasscode, 32);
-    CRYPT_ArcFourCryptBlock(ukeybuf, 32, m_EncryptKey, m_KeyLen);
+    CRYPT_ArcFourCryptBlock(ukeybuf, {m_EncryptKey, m_KeyLen});
     return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
   }
 
@@ -444,7 +444,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   for (int32_t i = 19; i >= 0; i--) {
     for (size_t j = 0; j < m_KeyLen; j++)
       tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i);
-    CRYPT_ArcFourCryptBlock(test, 32, tmpkey, m_KeyLen);
+    CRYPT_ArcFourCryptBlock(test, {tmpkey, m_KeyLen});
   }
   CRYPT_md5_context md5;
   CRYPT_MD5Start(&md5);
@@ -479,18 +479,19 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   size_t okeylen = std::min<size_t>(okey.GetLength(), 32);
   uint8_t okeybuf[64] = {};
   memcpy(okeybuf, okey.c_str(), okeylen);
+  pdfium::span<uint8_t> okey_span(okeybuf, okeylen);
   if (m_Revision == 2) {
-    CRYPT_ArcFourCryptBlock(okeybuf, okeylen, enckey, m_KeyLen);
+    CRYPT_ArcFourCryptBlock(okey_span, {enckey, m_KeyLen});
   } else {
     for (int32_t i = 19; i >= 0; i--) {
       uint8_t tempkey[32] = {};
       for (size_t j = 0; j < m_KeyLen; j++)
         tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i);
-      CRYPT_ArcFourCryptBlock(okeybuf, okeylen, tempkey, m_KeyLen);
+      CRYPT_ArcFourCryptBlock(okey_span, {tempkey, m_KeyLen});
     }
   }
   size_t len = 32;
-  while (len && defpasscode[len - 1] == okeybuf[len - 1])
+  while (len && defpasscode[len - 1] == okey_span[len - 1])
     len--;
 
   return ByteString(okeybuf, len);
@@ -559,13 +560,13 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
                         ? user_password[i]
                         : defpasscode[i - user_password.GetLength()];
     }
-    CRYPT_ArcFourCryptBlock(passcode, 32, enckey, key_len);
+    CRYPT_ArcFourCryptBlock(passcode, {enckey, key_len});
     uint8_t tempkey[32];
     if (m_Revision >= 3) {
       for (uint8_t i = 1; i <= 19; i++) {
         for (size_t j = 0; j < key_len; j++)
           tempkey[j] = enckey[j] ^ i;
-        CRYPT_ArcFourCryptBlock(passcode, 32, tempkey, key_len);
+        CRYPT_ArcFourCryptBlock(passcode, {tempkey, key_len});
       }
     }
     pEncryptDict->SetNewFor<CPDF_String>("O", ByteString(passcode, 32), false);
@@ -580,7 +581,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
     memcpy(tempbuf, defpasscode, 32);
-    CRYPT_ArcFourCryptBlock(tempbuf, 32, m_EncryptKey, key_len);
+    CRYPT_ArcFourCryptBlock(tempbuf, {m_EncryptKey, key_len});
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(tempbuf, 32), false);
   } else {
     CRYPT_md5_context md5;
@@ -591,12 +592,13 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
 
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
-    CRYPT_ArcFourCryptBlock(digest, 16, m_EncryptKey, key_len);
+    pdfium::span<uint8_t> partial_digest_span(digest, 16);
+    CRYPT_ArcFourCryptBlock(partial_digest_span, {m_EncryptKey, key_len});
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {
       for (size_t j = 0; j < key_len; j++)
         tempkey[j] = m_EncryptKey[j] ^ i;
-      CRYPT_ArcFourCryptBlock(digest, 16, tempkey, key_len);
+      CRYPT_ArcFourCryptBlock(partial_digest_span, {tempkey, key_len});
     }
     CRYPT_MD5Generate(digest, 16, digest + 16);
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(digest, 32), false);

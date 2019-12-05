@@ -12,12 +12,15 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
   virtual ~CFX_BinaryBuf();
 
+  pdfium::span<uint8_t> GetSpan();
+  pdfium::span<const uint8_t> GetSpan() const;
   uint8_t* GetBuffer() const { return m_pBuffer.get(); }
   size_t GetSize() const { return m_DataSize; }
   virtual size_t GetLength() const;
@@ -26,6 +29,7 @@ class CFX_BinaryBuf {
   void Clear();
   void SetAllocStep(size_t step) { m_AllocStep = step; }
   void EstimateSize(size_t size);
+  void AppendSpan(pdfium::span<const uint8_t> span);
   void AppendBlock(const void* pBuf, size_t size);
   void AppendString(const ByteString& str) {
     AppendBlock(str.c_str(), str.GetLength());

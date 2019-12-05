@@ -8,6 +8,7 @@
 #define CORE_FDRM_FX_CRYPT_H_
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 constexpr int32_t kRC4ContextPermutationLength = 256;
 struct CRYPT_rc4_context {
@@ -45,10 +46,8 @@ struct CRYPT_sha2_context {
   uint8_t buffer[128];
 };
 
-void CRYPT_ArcFourCryptBlock(uint8_t* data,
-                             uint32_t size,
-                             const uint8_t* key,
-                             uint32_t keylen);
+void CRYPT_ArcFourCryptBlock(pdfium::span<uint8_t> data,
+                             pdfium::span<const uint8_t> key);
 void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
                         const uint8_t* key,
                         uint32_t size);

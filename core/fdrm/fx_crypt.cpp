@@ -165,13 +165,11 @@ void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
   }
 }
 
-void CRYPT_ArcFourCryptBlock(uint8_t* pData,
-                             uint32_t size,
-                             const uint8_t* key,
-                             uint32_t keylen) {
+void CRYPT_ArcFourCryptBlock(pdfium::span<uint8_t> data,
+                             pdfium::span<const uint8_t> key) {
   CRYPT_rc4_context s;
-  CRYPT_ArcFourSetup(&s, key, keylen);
-  CRYPT_ArcFourCrypt(&s, pData, size);
+  CRYPT_ArcFourSetup(&s, key.data(), key.size());
+  CRYPT_ArcFourCrypt(&s, data.data(), data.size());
 }
 
 void CRYPT_MD5Start(CRYPT_md5_context* context) {
