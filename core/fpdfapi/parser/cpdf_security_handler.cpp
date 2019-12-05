@@ -31,7 +31,7 @@ const uint8_t defpasscode[32] = {
 void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     const ByteString& password,
                     uint8_t* key,
-                    int keylen,
+                    size_t keylen,
                     bool bIgnoreMeta,
                     const ByteString& fileId) {
   int revision = pEncrypt->GetIntegerFor("R");
@@ -57,9 +57,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
-  uint32_t copy_len = keylen;
-  if (copy_len > sizeof(digest))
-    copy_len = sizeof(digest);
+  size_t copy_len = std::min(keylen, sizeof(digest));
   if (revision >= 3) {
     for (int i = 0; i < 50; i++)
       CRYPT_MD5Generate(digest, copy_len, digest);
@@ -68,7 +66,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   memcpy(key, digest, copy_len);
 }
 
-bool IsValidKeyLengthForCipher(int cipher, int keylen) {
+bool IsValidKeyLengthForCipher(int cipher, size_t keylen) {
   switch (cipher) {
     case FXCIPHER_AES:
       return keylen == 16 || keylen == 24 || keylen == 32;
@@ -86,15 +84,9 @@ bool IsValidKeyLengthForCipher(int cipher, int keylen) {
 
 }  // namespace
 
-CPDF_SecurityHandler::CPDF_SecurityHandler()
-    : m_Version(0),
-      m_Revision(0),
-      m_Permissions(0),
-      m_Cipher(FXCIPHER_NONE),
-      m_KeyLen(0),
-      m_bOwnerUnlocked(false) {}
+CPDF_SecurityHandler::CPDF_SecurityHandler() = default;
 
-CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
+CPDF_SecurityHandler::~CPDF_SecurityHandler() = default;
 
 bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
                                   const CPDF_Array* pIdArray,
@@ -134,18 +126,19 @@ uint32_t CPDF_SecurityHandler::GetPermissions() const {
 
 static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
                           const ByteString& name,
-                          int& cipher,
-                          int& keylen) {
+                          int* cipher,
+                          size_t* keylen_out) {
   int Version = pEncryptDict->GetIntegerFor("V");
-  cipher = FXCIPHER_RC4;
-  keylen = 0;
+  *cipher = FXCIPHER_RC4;
+  *keylen_out = 0;
+  int keylen = 0;
   if (Version >= 4) {
     const CPDF_Dictionary* pCryptFilters = pEncryptDict->GetDictFor("CF");
     if (!pCryptFilters)
       return false;
 
     if (name == "Identity") {
-      cipher = FXCIPHER_NONE;
+      *cipher = FXCIPHER_NONE;
     } else {
       const CPDF_Dictionary* pDefFilter = pCryptFilters->GetDictFor(name);
       if (!pDefFilter)
@@ -168,17 +161,20 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
       }
       keylen = nKeyBits / 8;
       ByteString cipher_name = pDefFilter->GetStringFor("CFM");
-      if (cipher_name == "AESV2" || cipher_name == "AESV3") {
-        cipher = FXCIPHER_AES;
-      }
+      if (cipher_name == "AESV2" || cipher_name == "AESV3")
+        *cipher = FXCIPHER_AES;
     }
   } else {
     keylen = Version > 1 ? pEncryptDict->GetIntegerFor("Length", 40) / 8 : 5;
   }
-  if (keylen > 32 || keylen < 0) {
+
+  if (keylen < 0 || keylen > 32)
     return false;
-  }
-  return IsValidKeyLengthForCipher(cipher, keylen);
+  if (!IsValidKeyLengthForCipher(*cipher, keylen))
+    return false;
+
+  *keylen_out = keylen;
+  return true;
 }
 
 bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
@@ -187,19 +183,19 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict) {
   m_Revision = pEncryptDict->GetIntegerFor("R");
   m_Permissions = pEncryptDict->GetIntegerFor("P", -1);
   if (m_Version < 4)
-    return LoadCryptInfo(pEncryptDict, ByteString(), m_Cipher, m_KeyLen);
+    return LoadCryptInfo(pEncryptDict, ByteString(), &m_Cipher, &m_KeyLen);
 
   ByteString stmf_name = pEncryptDict->GetStringFor("StmF");
   ByteString strf_name = pEncryptDict->GetStringFor("StrF");
   if (stmf_name != strf_name)
     return false;
 
-  return LoadCryptInfo(pEncryptDict, strf_name, m_Cipher, m_KeyLen);
+  return LoadCryptInfo(pEncryptDict, strf_name, &m_Cipher, &m_KeyLen);
 }
 
 bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
-                                    int& cipher,
-                                    int& key_len) {
+                                    int* cipher,
+                                    size_t* key_len) {
   m_pEncryptDict.Reset(pEncryptDict);
   m_Version = pEncryptDict->GetIntegerFor("V");
   m_Revision = pEncryptDict->GetIntegerFor("R");
@@ -216,8 +212,8 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
   if (!LoadCryptInfo(pEncryptDict, strf_name, cipher, key_len))
     return false;
 
-  m_Cipher = cipher;
-  m_KeyLen = key_len;
+  m_Cipher = *cipher;
+  m_KeyLen = *key_len;
   return true;
 }
 
@@ -446,7 +442,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
   memcpy(test, ukey.c_str(), copy_len);
   for (int32_t i = 19; i >= 0; i--) {
-    for (int j = 0; j < m_KeyLen; j++)
+    for (size_t j = 0; j < m_KeyLen; j++)
       tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i);
     CRYPT_ArcFourCryptBlock(test, 32, tmpkey, m_KeyLen);
   }
@@ -477,9 +473,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
     }
   }
   uint8_t enckey[32] = {};
-  uint32_t copy_len = m_KeyLen;
-  if (copy_len > sizeof(digest))
-    copy_len = sizeof(digest);
+  size_t copy_len = std::min(m_KeyLen, sizeof(digest));
 
   memcpy(enckey, digest, copy_len);
   size_t okeylen = std::min<size_t>(okey.GetLength(), 32);
@@ -490,7 +484,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   } else {
     for (int32_t i = 19; i >= 0; i--) {
       uint8_t tempkey[32] = {};
-      for (int j = 0; j < m_KeyLen; j++)
+      for (size_t j = 0; j < m_KeyLen; j++)
         tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i);
       CRYPT_ArcFourCryptBlock(okeybuf, okeylen, tempkey, m_KeyLen);
     }
@@ -519,9 +513,9 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
                                             bool bDefault) {
   ASSERT(pEncryptDict);
 
-  int cipher = 0;
-  int key_len = 0;
-  if (!LoadDict(pEncryptDict, cipher, key_len)) {
+  int cipher = FXCIPHER_NONE;
+  size_t key_len = 0;
+  if (!LoadDict(pEncryptDict, &cipher, &key_len)) {
     return;
   }
   ByteString owner_password_copy = owner_password;
@@ -569,7 +563,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     uint8_t tempkey[32];
     if (m_Revision >= 3) {
       for (uint8_t i = 1; i <= 19; i++) {
-        for (int j = 0; j < key_len; j++)
+        for (size_t j = 0; j < key_len; j++)
           tempkey[j] = enckey[j] ^ i;
         CRYPT_ArcFourCryptBlock(passcode, 32, tempkey, key_len);
       }
@@ -600,7 +594,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_ArcFourCryptBlock(digest, 16, m_EncryptKey, key_len);
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {
-      for (int j = 0; j < key_len; j++)
+      for (size_t j = 0; j < key_len; j++)
         tempkey[j] = m_EncryptKey[j] ^ i;
       CRYPT_ArcFourCryptBlock(digest, 16, tempkey, key_len);
     }

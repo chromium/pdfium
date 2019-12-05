@@ -52,8 +52,8 @@ class CPDF_SecurityHandler : public Retainable {
 
   bool LoadDict(const CPDF_Dictionary* pEncryptDict);
   bool LoadDict(const CPDF_Dictionary* pEncryptDict,
-                int& cipher,
-                int& key_len);
+                int* cipher,
+                size_t* key_len);
 
   ByteString GetUserPassword(const ByteString& owner_password) const;
   bool CheckPassword(const ByteString& user_password, bool bOwner);
@@ -78,13 +78,13 @@ class CPDF_SecurityHandler : public Retainable {
 
   void InitCryptoHandler();
 
-  int m_Version;
-  int m_Revision;
+  bool m_bOwnerUnlocked = false;
+  int m_Version = 0;
+  int m_Revision = 0;
+  uint32_t m_Permissions = 0;
+  int m_Cipher = FXCIPHER_NONE;
+  size_t m_KeyLen = 0;
   ByteString m_FileId;
-  uint32_t m_Permissions;
-  int m_Cipher;
-  int m_KeyLen;
-  bool m_bOwnerUnlocked;
   RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_EncryptKey[32];
