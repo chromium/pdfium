@@ -71,7 +71,7 @@ def _GetFunctionsFromPublicHeaders(src_path):
   return functions
 
 
-def _CheckSorted(functions, api_test_path):
+def _CheckSorted(functions):
   unsorted_functions = set()
   for i in range(len(functions) - 1):
     if functions[i] > functions[i + 1]:
@@ -123,7 +123,7 @@ def main():
   result = True
   unsorted_functions = set()
   for functions in test_functions_per_section:
-    unsorted_functions |= _CheckSorted(functions, api_test_path)
+    unsorted_functions |= _CheckSorted(functions)
   check = _CheckAndPrintFailures(
       unsorted_functions,
       'Found CHKs that are not in alphabetical order within each section in %s'

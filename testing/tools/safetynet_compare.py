@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 
+# pylint: disable=relative-import
 from common import GetBooleanGnArg
 from common import PrintErr
 from common import RunCommandPropagateErr
@@ -122,8 +123,8 @@ class CompareRun(object):
     self.__FreezeFile(os.path.join('testing', 'tools', 'safetynet_measure.py'))
     self.__FreezeFile(os.path.join('testing', 'tools', 'common.py'))
 
-  def __FreezeFile(self, file):
-    RunCommandPropagateErr(['cp', file, self.safe_script_dir],
+  def __FreezeFile(self, filename):
+    RunCommandPropagateErr(['cp', filename, self.safe_script_dir],
                            exit_status_on_error=1)
 
   def _ProfileTwoOtherBranchesInThisRepo(self, before_branch, after_branch):

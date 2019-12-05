@@ -5,6 +5,7 @@
 
 import subprocess
 
+# pylint: disable=relative-import
 from common import RunCommandPropagateErr
 
 

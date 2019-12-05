@@ -250,7 +250,7 @@ class GoldResults(object):
 
 
 # Produce example output for manual testing.
-if __name__ == '__main__':
+def _Example():
   # Create a test directory with three empty 'image' files.
   test_dir = './testdirectory'
   if not os.path.exists(test_dir):
@@ -278,3 +278,7 @@ if __name__ == '__main__':
   gr.AddTestResult('test-3', 'hash-3', os.path.join(test_dir, 'image3.png'),
                    GoldBaseline.MISMATCH)
   gr.WriteResults()
+
+
+if __name__ == '__main__':
+  _Example()

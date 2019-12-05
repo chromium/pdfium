@@ -9,6 +9,7 @@ import os
 import shutil
 import sys
 
+# pylint: disable=relative-import
 import common
 
 

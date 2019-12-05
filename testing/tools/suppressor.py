@@ -5,6 +5,7 @@
 
 import os
 
+# pylint: disable=relative-import
 import common
 
 
@@ -32,16 +33,18 @@ class Suppressor:
                                for x in f.readlines()] if y
     ]
 
-  def _FilterSuppressions(self, os, js, xfa, unfiltered_list):
+  def _FilterSuppressions(self, os_name, js, xfa, unfiltered_list):
     return [
-        x[0] for x in unfiltered_list if self._MatchSuppression(x, os, js, xfa)
+        x[0]
+        for x in unfiltered_list
+        if self._MatchSuppression(x, os_name, js, xfa)
     ]
 
-  def _MatchSuppression(self, item, os, js, xfa):
+  def _MatchSuppression(self, item, os_name, js, xfa):
     os_column = item[1].split(",")
     js_column = item[2].split(",")
     xfa_column = item[3].split(",")
-    return (('*' in os_column or os in os_column) and
+    return (('*' in os_column or os_name in os_column) and
             ('*' in js_column or js in js_column) and
             ('*' in xfa_column or xfa in xfa_column))
 

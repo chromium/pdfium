@@ -76,8 +76,8 @@ class CoverageExecutor(object):
     if not GetBooleanGnArg('use_clang_coverage', self.build_directory,
                            self.verbose):
       parser.error(
-          'use_clang_coverage does not appear to be set to true for build, but is '
-          'needed')
+          'use_clang_coverage does not appear to be set to true for build, but '
+          'is needed')
 
     self.use_goma = GetBooleanGnArg('use_goma', self.build_directory,
                                     self.verbose)

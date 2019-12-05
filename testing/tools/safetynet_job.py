@@ -15,6 +15,7 @@ import json
 import os
 import sys
 
+# pylint: disable=relative-import
 from common import PrintWithTime
 from common import RunCommandPropagateErr
 from githelper import GitHelper
