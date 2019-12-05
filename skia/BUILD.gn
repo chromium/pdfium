@@ -124,7 +124,14 @@ config("skia_library_config") {
       "/wd4554",  # 'operator' : check operator precedence for possible error
       "/wd4748",  # compiler will disable optimizations if a function has inline
                   # assembly code contains flow control(jmp or jcc) statements.
+
+      "/wd4800",  # forcing value to bool 'true/false'(assigning int to bool).
+      "/wd5041",  # out-of-line definition for constexpr static data member is not needed and is deprecated in C++17
     ]
+    cflags_cc = [ "/std:c++17" ]
+  } else {
+    cflags_cc = [ "-std=c++17" ]
+    cflags_objcc = [ "-std=c++17" ]
   }
 }
 
@@ -360,6 +367,15 @@ template("skia_source_set") {
       "//build/config/compiler:no_chromium_code",
     ]
     public_configs = [ ":skia_config" ]
+
+    if (is_win) {
+      cflags_cc = [
+        "/std:c++17",
+        "/wd5041",  # out-of-line definition for constexpr static data member is not needed and is deprecated in C++17
+      ]
+    } else {
+      cflags_cc = [ "-std=c++17" ]
+    }
   }
 }
 
