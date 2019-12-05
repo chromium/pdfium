@@ -218,7 +218,6 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
         nRet = FPDFAvail_IsPageAvail(*avail, i,
                                      network_simulator->GetDownloadHints());
       }
-
       if (nRet == PDF_DATA_ERROR)
         return false;
     }
@@ -233,11 +232,9 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
   }
   *form_handle = SetupFormFillEnvironment(*document, javascript_option);
 
-#ifdef PDF_ENABLE_XFA
   int doc_type = FPDF_GetFormType(*document);
   if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND)
     FPDF_LoadXFA(*document);
-#endif  // PDF_ENABLE_XFA
 
   (void)FPDF_GetDocPermissions(*document);
   return true;

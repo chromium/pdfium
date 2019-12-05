@@ -251,16 +251,18 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
   return bNeedsRendering ? FORMTYPE_XFA_FULL : FORMTYPE_XFA_FOREGROUND;
 }
 
-#ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
+#ifdef PDF_ENABLE_XFA
   auto* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return false;
 
   auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
-  return pContext && pContext->LoadXFADoc();
-}
+  if (pContext)
+    return pContext->LoadXFADoc();
 #endif  // PDF_ENABLE_XFA
+  return false;
+}
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {

@@ -1822,19 +1822,17 @@ FORM_SetIndexSelected(FPDF_FORMHANDLE hHandle,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FORM_IsIndexSelected(FPDF_FORMHANDLE hHandle, FPDF_PAGE page, int index);
 
-#ifdef PDF_ENABLE_XFA
 /**
  * Function: FPDF_LoadXFA
- *          If the document consists of XFA fields, there should call this
- *method to load XFA fields.
+ *          If the document consists of XFA fields, call this method to
+ *          attempt to load XFA fields.
  * Parameters:
- *          document        -   Handle to document. Returned by
- *FPDF_LoadDocument function.
+ *          document     -   Handle to document from FPDF_LoadDocument().
  * Return Value:
- *          TRUE indicates success,otherwise FALSE.
+ *          TRUE upon success, otherwise FALSE. If XFA support is not built
+ *          into PDFium, performs no action and always returns FALSE.
  **/
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document);
-#endif  // PDF_ENABLE_XFA
 
 #ifdef __cplusplus
 }

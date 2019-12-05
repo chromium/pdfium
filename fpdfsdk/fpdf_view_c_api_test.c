@@ -263,9 +263,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_FFLRecord);
 #endif
     CHK(FPDF_GetFormType);
-#ifdef PDF_ENABLE_XFA
     CHK(FPDF_LoadXFA);
-#endif
     CHK(FPDF_RemoveFormFieldHighlight);
     CHK(FPDF_SetFormFieldHighlightAlpha);
     CHK(FPDF_SetFormFieldHighlightColor);
