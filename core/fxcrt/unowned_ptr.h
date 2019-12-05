@@ -49,6 +49,7 @@ class UnownedPtr {
  public:
   constexpr UnownedPtr() noexcept = default;
   constexpr UnownedPtr(const UnownedPtr& that) noexcept = default;
+  constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
 
   template <typename U>
   explicit constexpr UnownedPtr(U* pObj) noexcept : m_pObj(pObj) {}
@@ -72,6 +73,12 @@ class UnownedPtr {
   UnownedPtr& operator=(const UnownedPtr& that) noexcept {
     if (*this != that)
       Reset(that.Get());
+    return *this;
+  }
+
+  UnownedPtr& operator=(UnownedPtr&& that) noexcept {
+    if (*this != that)
+      Reset(that.Release());
     return *this;
   }
 
