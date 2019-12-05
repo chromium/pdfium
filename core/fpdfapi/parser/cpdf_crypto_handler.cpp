@@ -331,10 +331,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
 
         void* context = DecryptStart(obj_num, gen_num);
         bool decrypt_result =
-            DecryptStream(context,
-                          pdfium::make_span(stream_access->GetData(),
-                                            stream_access->GetSize()),
-                          decrypted_buf);
+            DecryptStream(context, stream_access->GetSpan(), decrypted_buf);
         decrypt_result &= DecryptFinish(context, decrypted_buf);
         if (decrypt_result) {
           const uint32_t decrypted_size = decrypted_buf.GetSize();

@@ -690,14 +690,14 @@ ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
         const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
         auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
         pAcc->LoadAllDataFiltered();
-        bsSrcContentStream += ByteString(pAcc->GetData(), pAcc->GetSize());
+        bsSrcContentStream += ByteString(pAcc->GetSpan());
         bsSrcContentStream += "\n";
       }
     } else {
       const CPDF_Stream* pStream = pSrcContentObj->AsStream();
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
       pAcc->LoadAllDataFiltered();
-      bsSrcContentStream = ByteString(pAcc->GetData(), pAcc->GetSize());
+      bsSrcContentStream = ByteString(pAcc->GetSpan());
     }
     pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_span());
   }

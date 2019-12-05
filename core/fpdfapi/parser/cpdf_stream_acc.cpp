@@ -71,6 +71,14 @@ uint32_t CPDF_StreamAcc::GetSize() const {
                                                    : 0;
 }
 
+pdfium::span<uint8_t> CPDF_StreamAcc::GetSpan() {
+  return {GetData(), GetSize()};
+}
+
+pdfium::span<const uint8_t> CPDF_StreamAcc::GetSpan() const {
+  return {GetData(), GetSize()};
+}
+
 ByteString CPDF_StreamAcc::ComputeDigest() const {
   uint8_t digest[20];
   CRYPT_SHA1Generate(GetData(), GetSize(), digest);

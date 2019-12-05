@@ -469,7 +469,7 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return false;
   }
 
-  CFX_BitStream bs(pdfium::make_span(pAcc->GetData(), size));
+  CFX_BitStream bs(pAcc->GetSpan().subspan(0, size));
   return ReadPageHintTable(&bs) &&
          ReadSharedObjHintTable(&bs, shared_hint_table_offset);
 }
