@@ -4,6 +4,12 @@ Alert: PASS: delay = true
 Alert: Testing properties under non-delay
 Alert: PASS: delay = true
 Alert: PASS: delay = false
+Alert: PASS: name = MyField
+Alert: PASS: name threw Field.name: Operation not supported.
+Alert: PASS: rect = 200,221,220,201
+Alert: PASS: rect = 100,121,120,101
+Alert: PASS: rect = 100,121,120,101
+Alert: PASS: rect = 200,221,220,201
 Alert: PASS: alignment = left
 Alert: PASS: alignment = left
 Alert: PASS: borderStyle = solid
@@ -16,8 +22,8 @@ Alert: PASS: comb = false
 Alert: PASS: comb = false
 Alert: PASS: defaultStyle threw Field.defaultStyle: Operation not supported.
 Alert: PASS: defaultStyle threw Field.defaultStyle: Operation not supported.
-Alert: PASS: defaultValue = 
-Alert: PASS: defaultValue = 
+Alert: PASS: defaultValue = grue
+Alert: PASS: defaultValue = grue
 Alert: PASS: doNotScroll = false
 Alert: PASS: doNotScroll = false
 Alert: PASS: doNotSpellCheck = false
@@ -36,7 +42,7 @@ Alert: PASS: lineWidth = 1
 Alert: PASS: lineWidth = 4
 Alert: PASS: multiline = false
 Alert: PASS: multiline = false
-Alert: PASS: name = MyField
+Alert: PASS: name = MyField.MyText
 Alert: PASS: name threw Field.name: Operation not supported.
 Alert: PASS: page = 0
 Alert: PASS: page threw Field.page: Cannot assign to readonly property.
@@ -46,6 +52,8 @@ Alert: PASS: print = true
 Alert: PASS: print = false
 Alert: PASS: readonly = false
 Alert: PASS: readonly = false
+Alert: PASS: rect = 200,221,220,201
+Alert: PASS: rect threw Field.rect: Incorrect parameter value.
 Alert: PASS: richText = false
 Alert: PASS: richText = false
 Alert: PASS: richValue = undefined
@@ -66,9 +74,9 @@ Alert: PASS: type = text
 Alert: PASS: type threw Field.type: Operation not supported.
 Alert: PASS: userName = 
 Alert: PASS: userName = 
-Alert: PASS: value = 
-Alert: PASS: value = 
-Alert: PASS: valueAsString = 
+Alert: PASS: value = bleen
+Alert: PASS: value = clams
+Alert: PASS: valueAsString = clams
 Alert: PASS: valueAsString threw Field.valueAsString: Operation not supported.
 Alert: PASS: buttonAlignX = 0
 Alert: PASS: buttonAlignX = 0

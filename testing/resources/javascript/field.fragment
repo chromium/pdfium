@@ -8,9 +8,7 @@ endobj
 {{object 2 0}} <<
   /Type /Pages
   /Count 1
-  /Kids [
-    3 0 R
-  ]
+  /Kids [3 0 R]
 >>
 endobj
 % Page number 0.
@@ -39,7 +37,7 @@ endobj
   /T (MyField)
   /Type /Annot
   /Subtype /Widget
-  /Rect [100 100 400 400]
+  /Rect [100 101 400 401]
   /Kids [
     6 0 R
     7 0 R
@@ -56,7 +54,9 @@ endobj
   /T (MyText)
   /Type /Annot
   /Subtype /Widget
-  /Rect [200 200 220 220]
+  /Rect [200 201 220 221]
+  /V (bleen)
+  /DV (grue)
 >>
 endobj
 {{object 7 0}} <<
@@ -66,7 +66,7 @@ endobj
   /T (MyPushButton)
   /Type /Annot
   /Subtype /Widget
-  /Rect [220 220 240 240]
+  /Rect [220 221 240 241]
 >>
 endobj
 {{object 8 0}} <<
@@ -76,7 +76,7 @@ endobj
   /T (MyRadio)
   /Type /Annot
   /Subtype /Widget
-  /Rect [240 240 260 260]
+  /Rect [240 241 260 261]
 >>
 endobj
 {{object 9 0}} <<
@@ -86,7 +86,7 @@ endobj
   /T (MyCheckBox)
   /Type /Annot
   /Subtype /Widget
-  /Rect [260 260 280 280]
+  /Rect [260 261 280 281]
 >>
 endobj
 {{object 10 0}} <<
@@ -96,7 +96,7 @@ endobj
   /T (MyMultiSelect)
   /Type /Annot
   /Subtype /Widget
-  /Rect [ 280 280 300 300 ]
+  /Rect [ 280 281 300 301 ]
   /Opt [ (foo) (bar) (qux) ]
   /V (qux)
 >>
@@ -108,7 +108,7 @@ endobj
   /T (MySingleSelect)
   /Type /Annot
   /Subtype /Widget
-  /Rect [ 300 300 320 320 ]
+  /Rect [ 300 301 320 321 ]
   /Opt [
     [ (foo) (Foo) ]
     [ (bar) (Bar) ]
@@ -116,7 +116,6 @@ endobj
   ]
 >>
 endobj
-
 % OpenAction action
 {{object 15 0}} <<
   /Type /Action

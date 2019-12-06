@@ -1707,7 +1707,7 @@ CJS_Result CJS_Field::set_rect(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   if (!m_bCanSet)
     return CJS_Result::Failure(JSMessage::kReadOnlyError);
   if (vp.IsEmpty() || !vp->IsArray())
-    return CJS_Result::Failure(JSMessage::kBadObjectError);
+    return CJS_Result::Failure(JSMessage::kValueError);
 
   v8::Local<v8::Array> rcArray = pRuntime->ToArray(vp);
   if (pRuntime->GetArrayLength(rcArray) < 4)

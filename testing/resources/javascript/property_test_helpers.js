@@ -2,10 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Treat two distinct objects with the same members as equal, e.g. in JS
+// ([0, 1] == [0, 1]) evaluates to false. Without this function, we can't
+// supply an expected result of object/array type for our tests.
+function kindaSortaEqual(arg1, arg2) {
+  if (arg1 == arg2) {
+    return true;
+  }
+  if (typeof arg1 != "object") {
+    return false;
+  }
+  if (typeof arg2 != "object") {
+    return false;
+  }
+  return arg1.toString() == arg2.toString();
+}
+
 function testReadProperty(that, prop, expected) {
   try {
     var actual = that[prop];
-    if (actual == expected) {
+    if (kindaSortaEqual(actual, expected)) {
       app.alert('PASS: ' + prop + ' = ' + actual);
     } else {
       app.alert('FAIL: ' + prop + ' = ' + actual + ', expected = ' + expected);
@@ -28,7 +44,7 @@ function testWriteProperty(that, prop, newValue) {
   try {
     that[prop] = newValue;
     var actual = that[prop];
-    if (actual == newValue) {
+    if (kindaSortaEqual(actual, newValue)) {
       app.alert('PASS: ' + prop + ' = ' + actual);
     } else {
       app.alert('FAIL: ' + prop + ' = ' + actual + ', expected = ' + newValue);
@@ -42,7 +58,7 @@ function testWriteIgnoredProperty(that, prop, expected, newValue) {
   try {
     that[prop] = newValue;
     var actual = that[prop];
-    if (actual == expected) {
+    if (kindaSortaEqual(actual, expected)) {
       app.alert('PASS: ' + prop + ' = ' + actual);
     } else {
       app.alert('FAIL: ' + prop + ' = ' + actual + ', expected = ' + expected);
