@@ -49,11 +49,8 @@ struct CRYPT_sha2_context {
 void CRYPT_ArcFourCryptBlock(pdfium::span<uint8_t> data,
                              pdfium::span<const uint8_t> key);
 void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
-                        const uint8_t* key,
-                        uint32_t size);
-void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
-                        uint8_t* data,
-                        uint32_t size);
+                        pdfium::span<const uint8_t> key);
+void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context, pdfium::span<uint8_t> data);
 
 void CRYPT_AESSetKey(CRYPT_aes_context* context,
                      const uint8_t* key,

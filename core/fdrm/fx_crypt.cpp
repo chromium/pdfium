@@ -139,8 +139,7 @@ void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
 }  // namespace
 
 void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
-                        const uint8_t* key,
-                        uint32_t size) {
+                        pdfium::span<const uint8_t> key) {
   context->x = 0;
   context->y = 0;
   for (int i = 0; i < kRC4ContextPermutationLength; ++i)
@@ -148,19 +147,18 @@ void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
 
   int j = 0;
   for (int i = 0; i < kRC4ContextPermutationLength; ++i) {
-    j = (j + context->m[i] + (size ? key[i % size] : 0)) & 0xFF;
+    j = (j + context->m[i] + (key.size() ? key[i % key.size()] : 0)) & 0xFF;
     std::swap(context->m[i], context->m[j]);
   }
 }
 
 void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
-                        uint8_t* data,
-                        uint32_t size) {
-  for (uint32_t i = 0; i < size; ++i) {
+                        pdfium::span<uint8_t> data) {
+  for (auto& datum : data) {
     context->x = (context->x + 1) & 0xFF;
     context->y = (context->y + context->m[context->x]) & 0xFF;
     std::swap(context->m[context->x], context->m[context->y]);
-    data[i] ^=
+    datum ^=
         context->m[(context->m[context->x] + context->m[context->y]) & 0xFF];
   }
 }
@@ -168,8 +166,8 @@ void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
 void CRYPT_ArcFourCryptBlock(pdfium::span<uint8_t> data,
                              pdfium::span<const uint8_t> key) {
   CRYPT_rc4_context s;
-  CRYPT_ArcFourSetup(&s, key.data(), key.size());
-  CRYPT_ArcFourCrypt(&s, data.data(), data.size());
+  CRYPT_ArcFourSetup(&s, key);
+  CRYPT_ArcFourCrypt(&s, data);
 }
 
 void CRYPT_MD5Start(CRYPT_md5_context* context) {
