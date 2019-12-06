@@ -844,7 +844,7 @@ bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
   const XFA_FMHtmlReserveCode* result = std::lower_bound(
       std::begin(kReservesForDecode), std::end(kReservesForDecode),
       temp.AsStringView(), cmpFunc);
-  if (result != std::end(kReservesForEncode) &&
+  if (result != std::end(kReservesForDecode) &&
       !strcmp(temp.c_str(), result->m_htmlReserve)) {
     *iCode = result->m_uCode;
     return true;

@@ -1072,6 +1072,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
       {R"(Decode("abc&NoneSuchButVeryLongIndeed;", "html"))", "abc"},
       {R"(Decode("&#x0041;&AElig;&Aacute;", "html"))", "A\xC3\x86\xC3\x81"},
       {R"(Decode("xyz&#", "html"))", "xyz"},
+      {R"(Decode("|&zzzzzz;|", "html"))", "||"},
 
       // XML
       {R"(Decode("", "xml"))", ""},
@@ -1079,6 +1080,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
       {R"(Decode("abc&nonesuchbutverylongindeed;", "xml"))", "abc"},
       {R"(Decode("&quot;&#x45;&lt;&gt;[].&apos;", "xml"))", "\"E<>[].'"},
       {R"(Decode("xyz&#", "xml"))", "xyz"},
+      {R"(Decode("|&zzzzzz;|", "xml"))", "||"},
 
       // URL
       {R"(Decode("", "url"))", ""},
