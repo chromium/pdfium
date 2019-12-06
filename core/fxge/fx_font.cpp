@@ -13,6 +13,12 @@
 
 namespace {
 
+// These numbers come from the OpenType name table specification.
+constexpr uint16_t kNamePlatformMac = 1;
+constexpr uint16_t kNameMacEncodingRoman = 0;
+constexpr uint16_t kNamePlatformWindows = 3;
+constexpr uint16_t kNameWindowsEncodingUnicode = 1;
+
 ByteString GetStringFromTable(pdfium::span<const uint8_t> string_span,
                               uint16_t offset,
                               uint16_t length) {
@@ -88,11 +94,31 @@ ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
 
   for (uint32_t i = 0; i < name_count;
        i++, name_table = name_table.subspan(12)) {
-    if (GET_TT_SHORT(&name_table[6]) == name_id &&
-        GET_TT_SHORT(&name_table[0]) == 1 &&
-        GET_TT_SHORT(&name_table[2]) == 0) {
-      return GetStringFromTable(string_span, GET_TT_SHORT(&name_table[10]),
-                                GET_TT_SHORT(&name_table[8]));
+    if (GET_TT_SHORT(&name_table[6]) == name_id) {
+      const uint16_t platform_identifier = GET_TT_SHORT(name_table);
+      const uint16_t platform_encoding = GET_TT_SHORT(&name_table[2]);
+
+      if (platform_identifier == kNamePlatformMac &&
+          platform_encoding == kNameMacEncodingRoman) {
+        return GetStringFromTable(string_span, GET_TT_SHORT(&name_table[10]),
+                                  GET_TT_SHORT(&name_table[8]));
+      }
+      if (platform_identifier == kNamePlatformWindows &&
+          platform_encoding == kNameWindowsEncodingUnicode) {
+        // This name is always UTF16-BE and we have to convert it to UTF8.
+        ByteString utf16_be =
+            GetStringFromTable(string_span, GET_TT_SHORT(&name_table[10]),
+                               GET_TT_SHORT(&name_table[8]));
+        if (utf16_be.IsEmpty() || utf16_be.GetLength() % 2 != 0) {
+          return ByteString();
+        }
+
+        pdfium::span<const uint8_t> raw_span = utf16_be.raw_span();
+        return WideString::FromUTF16BE(
+                   reinterpret_cast<const uint16_t*>(raw_span.data()),
+                   raw_span.size() / 2)
+            .ToUTF8();
+      }
     }
   }
   return ByteString();

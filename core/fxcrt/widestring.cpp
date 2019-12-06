@@ -947,6 +947,24 @@ WideString WideString::FromUTF16LE(const unsigned short* wstr, size_t wlen) {
   return result;
 }
 
+WideString WideString::FromUTF16BE(const unsigned short* wstr, size_t wlen) {
+  if (!wstr || wlen == 0)
+    return WideString();
+
+  WideString result;
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<wchar_t> buf = result.GetBuffer(wlen);
+    for (size_t i = 0; i < wlen; i++) {
+      auto wch = wstr[i];
+      wch = (wch >> 8) | (wch << 8);
+      buf[i] = wch;
+    }
+  }
+  result.ReleaseBuffer(wlen);
+  return result;
+}
+
 void WideString::SetAt(size_t index, wchar_t c) {
   ASSERT(IsValidIndex(index));
   ReallocBeforeWrite(m_pData->m_nDataLength);

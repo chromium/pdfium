@@ -67,6 +67,8 @@ class WideString {
   static WideString FromUTF8(ByteStringView str) WARN_UNUSED_RESULT;
   static WideString FromUTF16LE(const unsigned short* str,
                                 size_t len) WARN_UNUSED_RESULT;
+  static WideString FromUTF16BE(const unsigned short* wstr,
+                                size_t wlen) WARN_UNUSED_RESULT;
 
   static size_t WStringLength(const unsigned short* str) WARN_UNUSED_RESULT;
 
