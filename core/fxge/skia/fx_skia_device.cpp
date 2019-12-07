@@ -300,14 +300,14 @@ bool IsAlternateFillMode(int fill_mode) {
   return GetAlternateOrWindingFillMode(fill_mode) == FXFILL_ALTERNATE;
 }
 
-SkPath::FillType GetAlternateOrWindingFillType(int fill_mode) {
-  return IsAlternateFillMode(fill_mode) ? SkPath::kEvenOdd_FillType
-                                        : SkPath::kWinding_FillType;
+SkPathFillType GetAlternateOrWindingFillType(int fill_mode) {
+  return IsAlternateFillMode(fill_mode) ? SkPathFillType::kEvenOdd
+                                        : SkPathFillType::kWinding;
 }
 
-bool IsEvenOddFillType(SkPath::FillType fill) {
-  return fill == SkPath::kEvenOdd_FillType ||
-         fill == SkPath::kInverseEvenOdd_FillType;
+bool IsEvenOddFillType(SkPathFillType fill) {
+  return fill == SkPathFillType::kEvenOdd ||
+         fill == SkPathFillType::kInverseEvenOdd;
 }
 
 SkPath BuildPath(const CFX_PathData* pPathData) {
@@ -2225,7 +2225,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       if (clipEnd)
         skClip.addCircle(pts[1].fX, pts[1].fY, end_r, SkPathDirection::kCCW);
       else
-        skClip.setFillType(SkPath::kInverseWinding_FillType);
+        skClip.setFillType(SkPathFillType::kInverseWinding);
       skClip.transform(skMatrix);
     }
     SkMatrix inverse;
