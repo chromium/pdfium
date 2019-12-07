@@ -21,7 +21,7 @@ vars = {
   'code_coverage_revision': 'c7a868bacaccf4f52848e04564fb7de0671e0727',
   'depot_tools_revision': 'fe18a43d590a5eac0d58e7e555b024746ba290ad',
   'freetype_revision': '551bd3a90e352fa3a66ee7644c07440939c03d81',
-  'gtest_revision': 'f2fb48c3b3d79a75a88a99fba6576b25d42ec528',
+  'gtest_revision': '5395345ca4f0c596110188688ed990e0de5a181c',
   'icu_revision': '88ea42af73f4cd3b8b0d0837403d75a989d80504',
   'instrumented_lib_revision': '4dca59c6a614b08b394ed6154a8fcded9298b07e',
   'jinja2_revision': 'b41863e42637544c2941b574c7877d3e1f663e25',
