@@ -91,12 +91,6 @@ CPDF_Parser::ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
   return info ? info->type : ObjectType::kFree;
 }
 
-uint16_t CPDF_Parser::GetObjectGenNum(uint32_t objnum) const {
-  ASSERT(IsValidObjectNumber(objnum));
-  const auto* info = m_CrossRefTable->GetObjectInfo(objnum);
-  return (info && info->type == ObjectType::kNormal) ? info->gennum : 0;
-}
-
 bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
   switch (GetObjectType(objnum)) {
     case ObjectType::kFree:
