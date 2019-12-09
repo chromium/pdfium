@@ -249,7 +249,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   std::ostringstream buf;
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_LineCap != pGraphState->m_LineCap) {
-    buf << pGraphState->m_LineCap << " J\n";
+    buf << static_cast<int>(pGraphState->m_LineCap) << " J\n";
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_DashArray != pGraphState->m_DashArray) {
@@ -260,7 +260,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_LineJoin != pGraphState->m_LineJoin) {
-    buf << pGraphState->m_LineJoin << " j\n";
+    buf << static_cast<int>(pGraphState->m_LineJoin) << " j\n";
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_LineWidth != pGraphState->m_LineWidth) {
