@@ -1,5 +1,0 @@
-specific_include_rules = {
-  "cpdf_contentstream_write_utils.cpp": [
-    '+third_party/skia_shared',
-  ]
-}

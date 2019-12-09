@@ -12,7 +12,6 @@
 #include <tuple>
 #include <utility>
 
-#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentmanager.h"
 #include "core/fpdfapi/edit/cpdf_stringarchivestream.h"
 #include "core/fpdfapi/font/cpdf_truetypefont.h"
@@ -34,6 +33,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxge/cfx_contentstream_write_utils.h"
 #include "core/fxge/render_defines.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

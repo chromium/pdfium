@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CORE_FPDFAPI_EDIT_CPDF_CONTENTSTREAM_WRITE_UTILS_H_
-#define CORE_FPDFAPI_EDIT_CPDF_CONTENTSTREAM_WRITE_UTILS_H_
+#ifndef CORE_FXGE_CFX_CONTENTSTREAM_WRITE_UTILS_H_
+#define CORE_FXGE_CFX_CONTENTSTREAM_WRITE_UTILS_H_
 
 #include <ostream>
 
@@ -13,4 +13,4 @@ std::ostream& WriteFloat(std::ostream& stream, float value);
 std::ostream& operator<<(std::ostream& ar, const CFX_Matrix& matrix);
 std::ostream& operator<<(std::ostream& ar, const CFX_PointF& point);
 
-#endif  // CORE_FPDFAPI_EDIT_CPDF_CONTENTSTREAM_WRITE_UTILS_H_
+#endif  // CORE_FXGE_CFX_CONTENTSTREAM_WRITE_UTILS_H_

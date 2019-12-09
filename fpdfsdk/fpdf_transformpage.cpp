@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "constants/page_object.h"
-#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -22,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxge/cfx_contentstream_write_utils.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/render_defines.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"

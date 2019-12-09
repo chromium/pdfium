@@ -14,7 +14,6 @@
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
 #include "constants/page_object.h"
-#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -26,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fxge/cfx_contentstream_write_utils.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
 enum FPDF_TYPE { MAX, MIN };

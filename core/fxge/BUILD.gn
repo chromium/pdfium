@@ -22,6 +22,8 @@ source_set("fxge") {
     "cfx_cliprgn.h",
     "cfx_color.cpp",
     "cfx_color.h",
+    "cfx_contentstream_write_utils.cpp",
+    "cfx_contentstream_write_utils.h",
     "cfx_defaultrenderdevice.h",
     "cfx_face.cpp",
     "cfx_face.h",
@@ -119,6 +121,7 @@ source_set("fxge") {
   ]
 
   deps = [
+    "../../third_party:skia_shared",
     "../fxcrt",
   ]
 

@@ -7,8 +7,6 @@ import("../../../testing/test.gni")
 
 source_set("edit") {
   sources = [
-    "cpdf_contentstream_write_utils.cpp",
-    "cpdf_contentstream_write_utils.h",
     "cpdf_creator.cpp",
     "cpdf_creator.h",
     "cpdf_pagecontentgenerator.cpp",
@@ -21,7 +19,6 @@ source_set("edit") {
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
     "../../../constants",
-    "../../../third_party:skia_shared",
     "../../fxcrt",
     "../../fxge",
     "../font",
