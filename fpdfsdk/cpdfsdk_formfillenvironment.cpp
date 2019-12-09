@@ -226,7 +226,8 @@ WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return WideString();
 
-  pBuff.resize(nActualLen);
+  // Don't include trailing NUL.
+  pBuff.resize(nActualLen - 1);
   return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 
@@ -299,7 +300,8 @@ WideString CPDFSDK_FormFillEnvironment::GetFilePath() const {
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return WideString();
 
-  pBuff.resize(nActualLen);
+  // Don't include trailing NUL.
+  pBuff.resize(nActualLen - 1);
   return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 

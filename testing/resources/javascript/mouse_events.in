@@ -26,7 +26,11 @@ endobj
 >>
 % Forms
 {{object 4 0}} <<
-  /Fields [5 0 R]
+  /Fields [
+    5 0 R
+    6 0 R
+    7 0 R
+  ]
 >>
 % Field with actions:
 % Cursor enter: E
@@ -36,10 +40,10 @@ endobj
 % Focus: Fo
 % Blur: Bl
 {{object 5 0}} <<
- /FT /Tx
- /T (MyField)
  /Type /Annot
  /Subtype /Widget
+ /FT /Tx
+ /T (MyField)
  /Rect [100 200 150 250]
  /AA <<
    /E 10 0 R
@@ -50,6 +54,24 @@ endobj
    /Bl 15 0 R
  >>
 >>
+{{object 6 0}} <<
+ /Type /Annot
+ /Subtype /Widget
+ /FT /Tx
+ /T (name)
+ /Rect [400 400 500 429]
+ /V (Tralfaz)
+>>
+endobj
+{{object 7 0}} <<
+ /Type /Annot
+ /Subtype /Widget
+ /FT /Tx
+ /T (age)
+ /Rect [400 440 500 469]
+ /V (12)
+>>
+endobj
 {{object 10 0}} <<
   /Type /Action
   /S /JavaScript
@@ -61,7 +83,6 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
-
     try {
        this.print\(\);
        app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
@@ -82,7 +103,6 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
-
     try {
        this.print\(\);
        app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
@@ -98,11 +118,10 @@ endobj
   /JS (
     app.alert\("down"\);
     try {
-       this.submitForm\("myform", true, true, ["name", "age"]\);
+       this.submitForm\("https://example.com", true, true, ["name", "age"]\);
     } catch \(e\) {
        app.alert\("ERROR: " + e\);
     }
-
     try {
        this.print\(\);
        this.print\(false, 1, 10, true, true, true, true, true\);
@@ -122,11 +141,11 @@ endobj
   /JS (
     app.alert\("up"\);
     try {
-       this.submitForm\("myform", true, true, ["name", "age"]\);
+       // Use different bUrl value this time around.
+       this.submitForm\("https://example.com", false, true, ["name", "age"]\);
     } catch \(e\) {
        app.alert\("ERROR: " + e\);
     }
-
     try {
        this.print\(\);
     } catch \(e\) {
@@ -146,7 +165,6 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
-
     try {
        this.print\(\);
        app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);
@@ -167,7 +185,6 @@ endobj
     } catch \(e\) {
        app.alert\("PASS: this.submitForm blocked with " + e\);
     }
-
     try {
        this.print\(\);
        app.alert\("ERROR: this.print\(\) must not be allowed to execute"\);

@@ -8,7 +8,8 @@ Alert: enter
 Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: PASS: this.print blocked with Document.print: User gesture required.
 Alert: down
-Doc Submit Form: url=myform
+Doc Submit Form: url=https://example.com + 174 data bytes:
+ 25 46 44 46 2d 31 2e 32 0d 0a 31 20 30 20 6f 62 6a 0d 0a 3c 3c 2f 46 44 46 3c 3c 2f 46 3c 3c 2f 46 28 6d 79 66 69 6c 65 2e 70 64 66 29 2f 54 79 70 65 2f 46 69 6c 65 73 70 65 63 2f 55 46 28 6d 79 66 69 6c 65 2e 70 64 66 29 3e 3e 2f 46 69 65 6c 64 73 5b 3c 3c 2f 54 28 6e 61 6d 65 29 2f 56 28 54 72 61 6c 66 61 7a 29 3e 3e 3c 3c 2f 54 28 61 67 65 29 2f 56 28 31 32 29 3e 3e 5d 3e 3e 3e 3e 0d 0a 65 6e 64 6f 62 6a 0d 0a 0d 0a 74 72 61 69 6c 65 72 0d 0a 3c 3c 2f 52 6f 6f 74 20 31 20 30 20 52 3e 3e 0d 0a 25 25 45 4f 46 0d 0a
 Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
 Doc Print: 0, 1, 10, 1, 1, 1, 1, 1
 Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
@@ -17,7 +18,8 @@ Alert: focus
 Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: PASS: this.print blocked with Document.print: User gesture required.
 Alert: up
-Doc Submit Form: url=myform
+Doc Submit Form: url=https://example.com + 19 data bytes:
+ 6e 61 6d 65 3d 54 72 61 6c 66 61 7a 26 61 67 65 3d 31 32
 Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
 Alert: exit
 Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
