@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "core/fxcrt/maybe_owned.h"
-#include "core/fxge/cfx_contentstream_write_utils.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphcache.h"
@@ -122,7 +121,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
-    buf << pos;
+    buf << pos.x << " " << pos.y;
     switch (type) {
       case FXPT_TYPE::MoveTo:
         buf << " m ";
@@ -139,7 +138,8 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
           pos1 = pObject2Device->Transform(pos1);
           pos2 = pObject2Device->Transform(pos2);
         }
-        buf << " " << pos1 << " " << pos2 << " c";
+        buf << " " << pos1.x << " " << pos1.y << " " << pos2.x << " " << pos2.y
+            << " c";
         if (closing)
           buf << " h";
         buf << "\n";
@@ -178,7 +178,9 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
   SetGraphState(pGraphState);
 
   std::ostringstream buf;
-  buf << "mx Cm [" << *pObject2Device << "]cm ";
+  buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
+      << pObject2Device->c << " " << pObject2Device->d << " "
+      << pObject2Device->e << " " << pObject2Device->f << "]cm ";
   WriteToStream(&buf);
 
   OutputPath(pPathData, nullptr);
@@ -209,7 +211,9 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
     SetGraphState(pGraphState);
     if (pObject2Device) {
       std::ostringstream buf;
-      buf << "mx Cm [" << *pObject2Device << "]cm ";
+      buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
+          << pObject2Device->c << " " << pObject2Device->d << " "
+          << pObject2Device->e << " " << pObject2Device->f << "]cm ";
       WriteToStream(&buf);
     }
   }
@@ -250,10 +254,9 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_DashArray != pGraphState->m_DashArray) {
     buf << "[";
-    for (float dash : pGraphState->m_DashArray)
-      WriteFloat(buf, dash);
-    buf << "]";
-    WriteFloat(buf, pGraphState->m_DashPhase) << " d\n";
+    for (const auto& dash : pGraphState->m_DashArray)
+      buf << dash << " ";
+    buf << "]" << pGraphState->m_DashPhase << " d\n";
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_LineJoin != pGraphState->m_LineJoin) {
@@ -261,11 +264,11 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_LineWidth != pGraphState->m_LineWidth) {
-    WriteFloat(buf, pGraphState->m_LineWidth) << " w\n";
+    buf << pGraphState->m_LineWidth << " w\n";
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_MiterLimit != pGraphState->m_MiterLimit) {
-    WriteFloat(buf, pGraphState->m_MiterLimit) << " M\n";
+    buf << pGraphState->m_MiterLimit << " M\n";
   }
   m_CurGraphState = *pGraphState;
   m_bGraphStateSet = true;
@@ -313,7 +316,8 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   m_pStream->WriteString("q\n");
 
   std::ostringstream buf;
-  buf << "[" << matrix << "]cm ";
+  buf << "[" << matrix.a << " " << matrix.b << " " << matrix.c << " "
+      << matrix.d << " " << matrix.e << " " << matrix.f << "]cm ";
 
   int width = pSource->GetWidth();
   int height = pSource->GetHeight();
@@ -444,14 +448,13 @@ void CFX_PSRenderer::SetColor(uint32_t color) {
   if (bCMYK != m_bCmykOutput || !m_bColorSet || m_LastColor != color) {
     std::ostringstream buf;
     if (bCMYK) {
-      WriteFloat(buf, FXSYS_GetCValue(color) / 255.0f) << " ";
-      WriteFloat(buf, FXSYS_GetMValue(color) / 255.0f) << " ";
-      WriteFloat(buf, FXSYS_GetYValue(color) / 255.0f) << " ";
-      WriteFloat(buf, FXSYS_GetKValue(color) / 255.0f) << " k\n";
+      buf << FXSYS_GetCValue(color) / 255.0 << " "
+          << FXSYS_GetMValue(color) / 255.0 << " "
+          << FXSYS_GetYValue(color) / 255.0 << " "
+          << FXSYS_GetKValue(color) / 255.0 << " k\n";
     } else {
-      WriteFloat(buf, FXARGB_R(color) / 255.0f) << " ";
-      WriteFloat(buf, FXARGB_G(color) / 255.0f) << " ";
-      WriteFloat(buf, FXARGB_B(color) / 255.0f) << " rg\n";
+      buf << FXARGB_R(color) / 255.0 << " " << FXARGB_G(color) / 255.0 << " "
+          << FXARGB_B(color) / 255.0 << " rg\n";
     }
     if (bCMYK == m_bCmykOutput) {
       m_bColorSet = true;
@@ -545,17 +548,18 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
     CFX_PointF point = TransformedPath.GetPoint(p);
     switch (TransformedPath.GetType(p)) {
       case FXPT_TYPE::MoveTo: {
-        buf << point << " m\n";
+        buf << point.x << " " << point.y << " m\n";
         break;
       }
       case FXPT_TYPE::LineTo: {
-        buf << point << " l\n";
+        buf << point.x << " " << point.y << " l\n";
         break;
       }
       case FXPT_TYPE::BezierTo: {
         CFX_PointF point1 = TransformedPath.GetPoint(p + 1);
         CFX_PointF point2 = TransformedPath.GetPoint(p + 2);
-        buf << point << " " << point1 << " " << point2 << " c\n";
+        buf << point.x << " " << point.y << " " << point1.x << " " << point1.y
+            << " " << point2.x << " " << point2.y << " c\n";
         p += 2;
         break;
       }
@@ -593,7 +597,9 @@ bool CFX_PSRenderer::DrawText(int nChars,
 
   SetColor(color);
   std::ostringstream buf;
-  buf << "q[" << mtObject2Device << "]cm\n";
+  buf << "q[" << mtObject2Device.a << " " << mtObject2Device.b << " "
+      << mtObject2Device.c << " " << mtObject2Device.d << " "
+      << mtObject2Device.e << " " << mtObject2Device.f << "]cm\n";
 
   CFX_FontCache* pCache = CFX_GEModule::Get()->GetFontCache();
   RetainPtr<CFX_GlyphCache> pGlyphCache = pCache->GetGlyphCache(pFont);
@@ -606,7 +612,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
       buf << "/X" << ps_fontnum << " Ff " << font_size << " Fs Sf ";
       last_fontnum = ps_fontnum;
     }
-    buf << pCharPos[i].m_Origin << " m";
+    buf << pCharPos[i].m_Origin.x << " " << pCharPos[i].m_Origin.y << " m";
     ByteString hex = ByteString::Format("<%02X>", ps_glyphindex);
     buf << hex.AsStringView() << "Tj\n";
   }
