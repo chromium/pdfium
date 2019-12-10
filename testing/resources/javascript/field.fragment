@@ -45,75 +45,87 @@ endobj
     9 0 R
     10 0 R
     11 0 R
+    12 0 R
   ]
 >>
 endobj
 {{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Widget
   /FT /Tx
   /Parent 5 0 R
   /T (MyText)
-  /Type /Annot
-  /Subtype /Widget
   /Rect [200 201 220 221]
   /V (bleen)
   /DV (grue)
 >>
 endobj
 {{object 7 0}} <<
+  /Type /Annot
+  /Subtype /Widget
   /FT /Btn
   /Ff 65536
   /Parent 5 0 R
   /T (MyPushButton)
-  /Type /Annot
-  /Subtype /Widget
   /Rect [220 221 240 241]
 >>
 endobj
 {{object 8 0}} <<
+  /Type /Annot
+  /Subtype /Widget
   /FT /Btn
   /Ff 32768
   /Parent 5 0 R
   /T (MyRadio)
-  /Type /Annot
-  /Subtype /Widget
   /Rect [240 241 260 261]
 >>
 endobj
 {{object 9 0}} <<
+  /Type /Annot
+  /Subtype /Widget
   /FT /Btn
   /Ff 0
   /Parent 5 0 R
   /T (MyCheckBox)
-  /Type /Annot
-  /Subtype /Widget
   /Rect [260 261 280 281]
 >>
 endobj
 {{object 10 0}} <<
+  /Type /Annot
+  /Subtype /Widget
   /FT /Ch
   /Ff 2097152
   /Parent 5 0 R
   /T (MyMultiSelect)
-  /Type /Annot
-  /Subtype /Widget
   /Rect [ 280 281 300 301 ]
   /Opt [ (foo) (bar) (qux) ]
   /V (qux)
 >>
 endobj
 {{object 11 0}} <<
+  /Type /Annot
+  /Subtype /Widget
   /FT /Ch
   /Ff 0
   /Parent 5 0 R
   /T (MySingleSelect)
-  /Type /Annot
-  /Subtype /Widget
   /Rect [ 300 301 320 321 ]
   /Opt [
     [ (foo) (Foo) ]
     [ (bar) (Bar) ]
     [ (qux) (Qux) ]
   ]
+>>
+endobj
+{{object 12 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /Ff 1048576
+  /Parent 5 0 R
+  /T (MyFile)
+  /Rect [200 201 220 221]
+  /V ("/path/to/file.pdf")
 >>
 endobj
 % OpenAction action

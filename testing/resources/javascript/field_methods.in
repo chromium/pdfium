@@ -40,6 +40,8 @@ expect("this.getField('MyField.MyPushButton').buttonGetCaption()", "");
 expect("this.getField('MyField.MyPushButton').buttonGetIcon()", "[object Object]");
 expect("this.getField('MyField.MyPushButton').buttonImportIcon()", undefined);
 
+expect("this.getField('MyField.MyFile').browseForFileToSubmit()", undefined);
+
 expectError("this.getField('MyField').checkThisBox()");
 expectError("this.getField('MyField').checkThisBox({})");
 
@@ -56,7 +58,7 @@ expect("this.getField('MyField').isDefaultChecked(0)", false);
 
 expect("this.getField('MyField').setFocus()", undefined);
 
-// TODO(tsepez): these need a different kind of object to pass
+app.alert("These mismatched cases always throw");
 expectError("this.getField('MyField.MyText').browseForFileToSubmit()");
 expectError("this.getField('MyField').checkThisBox(0, true)");
 expectError("this.getField('MyField').getItemAt(0)");

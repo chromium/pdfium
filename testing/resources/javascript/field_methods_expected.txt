@@ -1,8 +1,9 @@
 Alert: field is MyField
 Alert: button is MyField.MyPushButton
 Alert: nonesuch is undefined
-Alert: found 6 sub-fields:
+Alert: found 7 sub-fields:
 Alert: MyField.MyCheckBox
+Alert: MyField.MyFile
 Alert: MyField.MyMultiSelect
 Alert: MyField.MyPushButton
 Alert: MyField.MyRadio
@@ -11,6 +12,7 @@ Alert: MyField.MyText
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption() = 
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon() = [object Object]
 Alert: PASS: this.getField('MyField.MyPushButton').buttonImportIcon() = undefined
+Alert: PASS: this.getField('MyField.MyFile').browseForFileToSubmit() = undefined
 Alert: PASS: this.getField('MyField').checkThisBox() threw Field.checkThisBox: Incorrect number of parameters passed to function.
 Alert: PASS: this.getField('MyField').checkThisBox({}) threw Field.checkThisBox: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').defaultIsChecked() threw Field.defaultIsChecked: Incorrect number of parameters passed to function.
@@ -22,6 +24,7 @@ Alert: PASS: this.getField('MyField').isDefaultChecked() threw Field.isDefaultCh
 Alert: PASS: this.getField('MyField').isDefaultChecked(20) threw Field.isDefaultChecked: Incorrect parameter value.
 Alert: PASS: this.getField('MyField').isDefaultChecked(0) = false
 Alert: PASS: this.getField('MyField').setFocus() = undefined
+Alert: These mismatched cases always throw
 Alert: PASS: this.getField('MyField.MyText').browseForFileToSubmit() threw Field.browseForFileToSubmit: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').checkThisBox(0, true) threw Field.checkThisBox: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').getItemAt(0) threw Field.getItemAt: Object is of the wrong type.
