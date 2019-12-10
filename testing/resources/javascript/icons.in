@@ -26,6 +26,23 @@ try {
             " and " + icon2_again.name);
   app.alert("but they are made anew each time since " +
              (icon1 == icon1_again) + " is returned from comparison");
+  app.alert("Prototype comparison is " + (icon1.__proto__ == icon1_again.__proto__));
+
+  // Icons are "dynamic" objects, so theoretically we can make them from
+  // the JS side as well, although they will not be bound on the fxjs side.
+  var dubious = new icon1.constructor();
+  app.alert("Made anew from JS side since comparison is " + (dubious == icon1));
+  app.alert("Prototype comparison is " + (dubious.__proto__ == icon1.__proto__));
+
+  // Can't retrieve the name because no fxjs binding present.
+  app.alert("Dubious name is " + dubious.name);
+
+  // No error setting the name because for an unbound object, control doesn't
+  // get far enough to reach the readonly check in the property handler.
+  dubious.name = "pebble";
+
+  // The previous was a silent no-op under the covers.
+  app.alert("name is unchanged from " + dubious.name);
 } catch (e) {
   app.alert("error: " + e);
 }

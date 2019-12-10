@@ -4,4 +4,9 @@ Alert: icon list is now [object Object],[object Object]
 Alert: they are named icon1 and icon2
 Alert: they are also named icon1 and icon2
 Alert: but they are made anew each time since false is returned from comparison
+Alert: Prototype comparison is true
+Alert: Made anew from JS side since comparison is false
+Alert: Prototype comparison is true
+Alert: Dubious name is undefined
+Alert: name is unchanged from undefined
 Alert: As expected, trying to change the name gave: Icon.name: Cannot assign to readonly property.
