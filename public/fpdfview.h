@@ -75,16 +75,9 @@ typedef struct fpdf_widget_t__* FPDF_WIDGET;
 
 // Basic data types
 typedef int FPDF_BOOL;
-typedef int FPDF_ERROR;
+typedef int FPDF_RESULT;
 typedef unsigned long FPDF_DWORD;
 typedef float FS_FLOAT;
-
-#ifdef PDF_ENABLE_XFA
-typedef void* FPDF_LPVOID;
-typedef void const* FPDF_LPCVOID;
-typedef char const* FPDF_LPCSTR;
-typedef int FPDF_RESULT;
-#endif
 
 // Duplex types
 typedef enum _FPDF_DUPLEXTYPE_ {
@@ -96,7 +89,6 @@ typedef enum _FPDF_DUPLEXTYPE_ {
 
 // String types
 typedef unsigned short FPDF_WCHAR;
-typedef unsigned char const* FPDF_LPCBYTE;
 
 // FPDFSDK may use three types of strings: byte string, wide string (UTF-16LE
 // encoded), and platform dependent string
@@ -110,7 +102,7 @@ typedef const unsigned short* FPDF_WIDESTRING;
 // Structure for persisting a string beyond the duration of a callback.
 // Note: although represented as a char*, string may be interpreted as
 // a UTF-16LE formated string.
-typedef struct _FPDF_BSTR {
+typedef struct FPDF_BSTR_ {
   char* str;  // String buffer, manipulate only with FPDF_BStr_* methods.
   int len;    // Length of the string, in bytes.
 } FPDF_BSTR;
@@ -403,12 +395,12 @@ typedef struct {
  *
  * @note This is a handler and should be implemented by callers.
  */
-typedef struct _FPDF_FILEHANDLER {
+typedef struct FPDF_FILEHANDLER_ {
   /**
    * @brief User-defined data.
    * @note Callers can use this field to track controls.
    */
-  FPDF_LPVOID clientData;
+  void* clientData;
   /**
    * @brief Callback function to release the current file stream object.
    *
@@ -416,7 +408,7 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return None.
    */
-  void (*Release)(FPDF_LPVOID clientData);
+  void (*Release)(void* clientData);
   /**
    * @brief Callback function to retrieve the current file stream size.
    *
@@ -424,7 +416,7 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return Size of file stream.
    */
-  FPDF_DWORD (*GetSize)(FPDF_LPVOID clientData);
+  FPDF_DWORD (*GetSize)(void* clientData);
   /**
    * @brief Callback function to read data from the current file stream.
    *
@@ -439,9 +431,9 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return 0 for success, other value for failure.
    */
-  FPDF_RESULT (*ReadBlock)(FPDF_LPVOID clientData,
+  FPDF_RESULT (*ReadBlock)(void* clientData,
                            FPDF_DWORD offset,
-                           FPDF_LPVOID buffer,
+                           void* buffer,
                            FPDF_DWORD size);
   /**
    * @brief   Callback function to write data into the current file stream.
@@ -456,9 +448,9 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return 0 for success, other value for failure.
    */
-  FPDF_RESULT (*WriteBlock)(FPDF_LPVOID clientData,
+  FPDF_RESULT (*WriteBlock)(void* clientData,
                             FPDF_DWORD offset,
-                            FPDF_LPCVOID buffer,
+                            const void* buffer,
                             FPDF_DWORD size);
   /**
    * @brief   Callback function to flush all internal accessing buffers.
@@ -467,7 +459,7 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return 0 for success, other value for failure.
    */
-  FPDF_RESULT (*Flush)(FPDF_LPVOID clientData);
+  FPDF_RESULT (*Flush)(void* clientData);
   /**
    * @brief   Callback function to change file size.
    *
@@ -479,8 +471,8 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return 0 for success, other value for failure.
    */
-  FPDF_RESULT (*Truncate)(FPDF_LPVOID clientData, FPDF_DWORD size);
-} FPDF_FILEHANDLER, *FPDF_LPFILEHANDLER;
+  FPDF_RESULT (*Truncate)(void* clientData, FPDF_DWORD size);
+} FPDF_FILEHANDLER;
 
 #endif  // PDF_ENABLE_XFA
 
@@ -1251,7 +1243,7 @@ FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* bstr);
 // Function: FPDF_BStr_Set
 //          Helper function to copy string data into the FPDF_BSTR.
 FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* bstr,
-                                                    FPDF_LPCSTR cstr,
+                                                    const char* cstr,
                                                     int length);
 
 // Function: FPDF_BStr_Clear

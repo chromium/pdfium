@@ -497,7 +497,7 @@ RetainPtr<IFX_SeekableReadStream> CPDFSDK_FormFillEnvironment::DownloadFromURL(
     return nullptr;
 
   ByteString bstrURL = url.ToUTF16LE();
-  FPDF_LPFILEHANDLER fileHandler =
+  FPDF_FILEHANDLER* fileHandler =
       m_pInfo->FFI_DownloadFromURL(m_pInfo, AsFPDFWideString(&bstrURL));
 
   return MakeSeekableStream(fileHandler);

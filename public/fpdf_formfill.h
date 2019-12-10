@@ -1021,8 +1021,8 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       The handle to FPDF_FILEHANDLER.
   **/
-  FPDF_LPFILEHANDLER (*FFI_DownloadFromURL)(struct _FPDF_FORMFILLINFO* pThis,
-                                             FPDF_WIDESTRING URL);
+  FPDF_FILEHANDLER* (*FFI_DownloadFromURL)(struct _FPDF_FORMFILLINFO* pThis,
+                                           FPDF_WIDESTRING URL);
   /**
   * Method: FFI_PostRequestURL
   *           This method will post the request to the server URL.
@@ -1045,12 +1045,12 @@ typedef struct _FPDF_FORMFILLINFO {
   *       TRUE indicates success, otherwise FALSE.
   **/
   FPDF_BOOL (*FFI_PostRequestURL)(struct _FPDF_FORMFILLINFO* pThis,
-                                    FPDF_WIDESTRING wsURL,
-                                    FPDF_WIDESTRING wsData,
-                                    FPDF_WIDESTRING wsContentType,
-                                    FPDF_WIDESTRING wsEncode,
-                                    FPDF_WIDESTRING wsHeader,
-                                    FPDF_BSTR* respone);
+                                  FPDF_WIDESTRING wsURL,
+                                  FPDF_WIDESTRING wsData,
+                                  FPDF_WIDESTRING wsContentType,
+                                  FPDF_WIDESTRING wsEncode,
+                                  FPDF_WIDESTRING wsHeader,
+                                  FPDF_BSTR* response);
 
   /**
   * Method: FFI_PutRequestURL

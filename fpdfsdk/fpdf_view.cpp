@@ -1110,7 +1110,7 @@ FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* bstr) {
 }
 
 FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* bstr,
-                                                    FPDF_LPCSTR cstr,
+                                                    const char* cstr,
                                                     int length) {
   if (!bstr || !cstr)
     return -1;
