@@ -14,9 +14,6 @@
 FX_Number::FX_Number()
     : m_bInteger(true), m_bSigned(false), m_UnsignedValue(0) {}
 
-FX_Number::FX_Number(uint32_t value)
-    : m_bInteger(true), m_bSigned(false), m_UnsignedValue(value) {}
-
 FX_Number::FX_Number(int32_t value)
     : m_bInteger(true), m_bSigned(true), m_SignedValue(value) {}
 
@@ -85,10 +82,6 @@ FX_Number::FX_Number(ByteStringView strc)
   } else {
     m_SignedValue = value;
   }
-}
-
-uint32_t FX_Number::GetUnsigned() const {
-  return m_bInteger ? m_UnsignedValue : static_cast<uint32_t>(m_FloatValue);
 }
 
 int32_t FX_Number::GetSigned() const {

@@ -14,7 +14,7 @@
 class FX_Number {
  public:
   FX_Number();
-  explicit FX_Number(uint32_t value);
+  explicit FX_Number(uint32_t value) = delete;
   explicit FX_Number(int32_t value);
   explicit FX_Number(float value);
   explicit FX_Number(ByteStringView str);
@@ -22,7 +22,6 @@ class FX_Number {
   bool IsInteger() const { return m_bInteger; }
   bool IsSigned() const { return m_bSigned; }
 
-  uint32_t GetUnsigned() const;  // Underflow possible.
   int32_t GetSigned() const;     // Underflow/Overflow possible.
   float GetFloat() const;
 
