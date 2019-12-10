@@ -13,6 +13,16 @@ Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption() =
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon() = [object Object]
 Alert: PASS: this.getField('MyField.MyPushButton').buttonImportIcon() = undefined
 Alert: PASS: this.getField('MyField.MyFile').browseForFileToSubmit() = undefined
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(0) = foo
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(1, false) = bar
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(1, true) = bar
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(2, false) = Qux
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(2, true) = qux
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(3) = 
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt() = qux
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(172) = qux
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(-400) = 
+Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt('zzzz') = foo
 Alert: PASS: this.getField('MyField').checkThisBox() threw Field.checkThisBox: Incorrect number of parameters passed to function.
 Alert: PASS: this.getField('MyField').checkThisBox({}) threw Field.checkThisBox: Object is of the wrong type.
 Alert: PASS: this.getField('MyField').defaultIsChecked() threw Field.defaultIsChecked: Incorrect number of parameters passed to function.

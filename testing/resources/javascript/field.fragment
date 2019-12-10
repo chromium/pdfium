@@ -97,8 +97,12 @@ endobj
   /Ff 2097152
   /Parent 5 0 R
   /T (MyMultiSelect)
-  /Rect [ 280 281 300 301 ]
-  /Opt [ (foo) (bar) (qux) ]
+  /Rect [280 281 300 301]
+  /Opt [
+    (foo)
+    (bar)
+    [(qux) (Qux)]
+  ]
   /V (qux)
 >>
 endobj
@@ -109,11 +113,11 @@ endobj
   /Ff 0
   /Parent 5 0 R
   /T (MySingleSelect)
-  /Rect [ 300 301 320 321 ]
+  /Rect [300 301 320 321]
   /Opt [
-    [ (foo) (Foo) ]
-    [ (bar) (Bar) ]
-    [ (qux) (Qux) ]
+    [(foo) (Foo)]
+    [(bar) (Bar)]
+    [(qux) (Qux)]
   ]
 >>
 endobj
