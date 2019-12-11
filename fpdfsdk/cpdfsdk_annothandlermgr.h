@@ -116,6 +116,8 @@ class CPDFSDK_AnnotHandlerMgr {
                        const CFX_PointF& point);
 
  private:
+  friend class CPDFSDK_BAAnnotHandlerTest;
+
   IPDFSDK_AnnotHandler* GetAnnotHandler(CPDFSDK_Annot* pAnnot) const;
   IPDFSDK_AnnotHandler* GetAnnotHandlerOfType(
       CPDF_Annot::Subtype nAnnotSubtype) const;

@@ -128,6 +128,7 @@ pdfium_unittest_source_set("unittests") {
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [
     "cpdfsdk_annotiterator_embeddertest.cpp",
+    "cpdfsdk_baannothandler_embeddertest.cpp",
     "fpdf_annot_embeddertest.cpp",
     "fpdf_attachment_embeddertest.cpp",
     "fpdf_dataavail_embeddertest.cpp",
