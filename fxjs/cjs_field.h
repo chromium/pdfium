@@ -7,7 +7,6 @@
 #ifndef FXJS_CJS_FIELD_H_
 #define FXJS_CJS_FIELD_H_
 
-#include <string>
 #include <vector>
 
 #include "fxjs/cjs_document.h"
@@ -351,8 +350,8 @@ class CJS_Field final : public CJS_Object {
                                const std::vector<v8::Local<v8::Value>>& params);
 
   void SetDelay(bool bDelay);
-  void ParseFieldName(const std::wstring& strFieldNameParsed,
-                      std::wstring& strFieldName,
+  void ParseFieldName(const WideString& strFieldNameParsed,
+                      WideString& strFieldName,
                       int& iControlNo);
   std::vector<CPDF_FormField*> GetFormFields() const;
   CPDF_FormField* GetFirstFormField() const;
