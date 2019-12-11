@@ -132,6 +132,36 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     pFormFillEnv->SetChangeMark();
 }
 
+// note: iControlNo = -1, means not a widget.
+void ParseFieldName(const WideString& strFieldNameParsed,
+                    WideString& strFieldName,
+                    int& iControlNo) {
+  auto reverse_it = strFieldNameParsed.rbegin();
+  while (reverse_it != strFieldNameParsed.rend()) {
+    if (*reverse_it == L'.')
+      break;
+    ++reverse_it;
+  }
+  if (reverse_it == strFieldNameParsed.rend()) {
+    strFieldName = strFieldNameParsed;
+    iControlNo = -1;
+    return;
+  }
+  WideString suffixal =
+      strFieldNameParsed.Right(reverse_it - strFieldNameParsed.rbegin());
+  iControlNo = FXSYS_wtoi(suffixal.c_str());
+  if (iControlNo == 0) {
+    suffixal.TrimRight(L' ');
+    if (suffixal != L"0") {
+      strFieldName = strFieldNameParsed;
+      iControlNo = -1;
+      return;
+    }
+  }
+  strFieldName =
+      strFieldNameParsed.Left(strFieldNameParsed.rend() - reverse_it - 1);
+}
+
 std::vector<CPDF_FormField*> GetFormFieldsForName(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const WideString& csFieldName) {
@@ -575,36 +605,6 @@ CJS_Field::CJS_Field(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : CJS_Object(pObject, pRuntime) {}
 
 CJS_Field::~CJS_Field() = default;
-
-// note: iControlNo = -1, means not a widget.
-void CJS_Field::ParseFieldName(const WideString& strFieldNameParsed,
-                               WideString& strFieldName,
-                               int& iControlNo) {
-  auto reverse_it = strFieldNameParsed.rbegin();
-  while (reverse_it != strFieldNameParsed.rend()) {
-    if (*reverse_it == L'.')
-      break;
-    ++reverse_it;
-  }
-  if (reverse_it == strFieldNameParsed.rend()) {
-    strFieldName = strFieldNameParsed;
-    iControlNo = -1;
-    return;
-  }
-  WideString suffixal =
-      strFieldNameParsed.Right(reverse_it - strFieldNameParsed.rbegin());
-  iControlNo = FXSYS_wtoi(suffixal.c_str());
-  if (iControlNo == 0) {
-    suffixal.TrimRight(L' ');
-    if (suffixal != L"0") {
-      strFieldName = strFieldNameParsed;
-      iControlNo = -1;
-      return;
-    }
-  }
-  strFieldName =
-      strFieldNameParsed.Left(strFieldNameParsed.rend() - reverse_it - 1);
-}
 
 bool CJS_Field::AttachField(CJS_Document* pDocument,
                             const WideString& csFieldName) {

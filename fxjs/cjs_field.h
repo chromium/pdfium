@@ -350,9 +350,6 @@ class CJS_Field final : public CJS_Object {
                                const std::vector<v8::Local<v8::Value>>& params);
 
   void SetDelay(bool bDelay);
-  void ParseFieldName(const WideString& strFieldNameParsed,
-                      WideString& strFieldName,
-                      int& iControlNo);
   std::vector<CPDF_FormField*> GetFormFields() const;
   CPDF_FormField* GetFirstFormField() const;
   CPDF_FormControl* GetSmartFieldControl(CPDF_FormField* pFormField);
