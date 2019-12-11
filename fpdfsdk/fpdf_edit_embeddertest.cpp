@@ -263,43 +263,23 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddPaths) {
   EXPECT_EQ(FPDF_FILLMODE_ALTERNATE, fillmode);
   EXPECT_FALSE(stroke);
 
-  double matrix_a = 1;
-  double matrix_b = 2;
-  double matrix_c = 3;
-  double matrix_d = 4;
-  double matrix_e = 5;
-  double matrix_f = 6;
-  EXPECT_FALSE(FPDFPath_SetMatrix(nullptr, matrix_a, matrix_b, matrix_c,
-                                  matrix_d, matrix_e, matrix_f));
-  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, matrix_a, matrix_b, matrix_c,
-                                 matrix_d, matrix_e, matrix_f));
-  // Set to 0 before FPDFPath_GetMatrix() to ensure they are actually set by
-  // the function.
-  matrix_a = 0;
-  matrix_b = 0;
-  matrix_c = 0;
-  matrix_d = 0;
-  matrix_e = 0;
-  matrix_f = 0;
-  EXPECT_FALSE(FPDFPath_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
-                                  &matrix_d, &matrix_e, &matrix_f));
-  EXPECT_TRUE(FPDFPath_GetMatrix(red_rect, &matrix_a, &matrix_b, &matrix_c,
-                                 &matrix_d, &matrix_e, &matrix_f));
-  EXPECT_EQ(1, static_cast<int>(matrix_a));
-  EXPECT_EQ(2, static_cast<int>(matrix_b));
-  EXPECT_EQ(3, static_cast<int>(matrix_c));
-  EXPECT_EQ(4, static_cast<int>(matrix_d));
-  EXPECT_EQ(5, static_cast<int>(matrix_e));
-  EXPECT_EQ(6, static_cast<int>(matrix_f));
-  // Set back the default
-  matrix_a = 1;
-  matrix_b = 0;
-  matrix_c = 0;
-  matrix_d = 1;
-  matrix_e = 0;
-  matrix_f = 0;
-  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, matrix_a, matrix_b, matrix_c,
-                                 matrix_d, matrix_e, matrix_f));
+  static const FS_MATRIX kMatrix = {1, 2, 3, 4, 5, 6};
+  EXPECT_FALSE(FPDFPath_SetMatrix(nullptr, &kMatrix));
+  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, &kMatrix));
+
+  FS_MATRIX matrix;
+  EXPECT_FALSE(FPDFPath_GetMatrix(nullptr, &matrix));
+  EXPECT_TRUE(FPDFPath_GetMatrix(red_rect, &matrix));
+  EXPECT_FLOAT_EQ(1.0f, matrix.a);
+  EXPECT_FLOAT_EQ(2.0f, matrix.b);
+  EXPECT_FLOAT_EQ(3.0f, matrix.c);
+  EXPECT_FLOAT_EQ(4.0f, matrix.d);
+  EXPECT_FLOAT_EQ(5.0f, matrix.e);
+  EXPECT_FLOAT_EQ(6.0f, matrix.f);
+
+  // Set back the identity matrix.
+  matrix = {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, &matrix));
 
   FPDFPage_InsertObject(page, red_rect);
   {
@@ -2072,23 +2052,15 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
     VerifySavedDocument(612, 792, md5);
   }
 
-  double matrix_a = 0;
-  double matrix_b = 0;
-  double matrix_c = 0;
-  double matrix_d = 0;
-  double matrix_e = 0;
-  double matrix_f = 0;
-  EXPECT_FALSE(FPDFTextObj_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
-                                     &matrix_d, &matrix_e, &matrix_f));
-  EXPECT_TRUE(FPDFTextObj_GetMatrix(text_object3, &matrix_a, &matrix_b,
-                                    &matrix_c, &matrix_d, &matrix_e,
-                                    &matrix_f));
-  EXPECT_EQ(1., matrix_a);
-  EXPECT_EQ(1.5, matrix_b);
-  EXPECT_EQ(2., matrix_c);
-  EXPECT_EQ(0.5, matrix_d);
-  EXPECT_EQ(200., matrix_e);
-  EXPECT_EQ(200., matrix_f);
+  FS_MATRIX matrix;
+  EXPECT_FALSE(FPDFTextObj_GetMatrix(nullptr, &matrix));
+  EXPECT_TRUE(FPDFTextObj_GetMatrix(text_object3, &matrix));
+  EXPECT_FLOAT_EQ(1.0f, matrix.a);
+  EXPECT_FLOAT_EQ(1.5f, matrix.b);
+  EXPECT_FLOAT_EQ(2.0f, matrix.c);
+  EXPECT_FLOAT_EQ(0.5f, matrix.d);
+  EXPECT_FLOAT_EQ(200.0f, matrix.e);
+  EXPECT_FLOAT_EQ(200.0f, matrix.f);
 
   EXPECT_EQ(0, FPDFTextObj_GetFontSize(nullptr));
   EXPECT_EQ(20, FPDFTextObj_GetFontSize(text_object3));
@@ -2180,32 +2152,22 @@ TEST_F(FPDFEditEmbedderTest, TestFormGetObjects) {
   pFormObj->Transform(pFormObj->form_matrix().GetInverse());
 
   // FPDFFormObj_GetMatrix() positive testing.
-  static constexpr float kFloats[6] = {1.0, 1.5, 2.0, 2.5, 100.0, 200.0};
-  CFX_Matrix matrix(kFloats);
-  pFormObj->Transform(matrix);
+  static constexpr FS_MATRIX kMatrix = {1.0f, 1.5f, 2.0f, 2.5f, 100.0f, 200.0f};
+  pFormObj->Transform(CFXMatrixFromFSMatrix(kMatrix));
 
-  double matrix_a = 0;
-  double matrix_b = 0;
-  double matrix_c = 0;
-  double matrix_d = 0;
-  double matrix_e = 0;
-  double matrix_f = 0;
-  EXPECT_TRUE(FPDFFormObj_GetMatrix(form, &matrix_a, &matrix_b, &matrix_c,
-                                    &matrix_d, &matrix_e, &matrix_f));
-  EXPECT_DOUBLE_EQ(kFloats[0], matrix_a);
-  EXPECT_DOUBLE_EQ(kFloats[1], matrix_b);
-  EXPECT_DOUBLE_EQ(kFloats[2], matrix_c);
-  EXPECT_DOUBLE_EQ(kFloats[3], matrix_d);
-  EXPECT_DOUBLE_EQ(kFloats[4], matrix_e);
-  EXPECT_DOUBLE_EQ(kFloats[5], matrix_f);
+  FS_MATRIX matrix;
+  EXPECT_TRUE(FPDFFormObj_GetMatrix(form, &matrix));
+  EXPECT_FLOAT_EQ(kMatrix.a, matrix.a);
+  EXPECT_FLOAT_EQ(kMatrix.b, matrix.b);
+  EXPECT_FLOAT_EQ(kMatrix.c, matrix.c);
+  EXPECT_FLOAT_EQ(kMatrix.d, matrix.d);
+  EXPECT_FLOAT_EQ(kMatrix.e, matrix.e);
+  EXPECT_FLOAT_EQ(kMatrix.f, matrix.f);
 
   // FPDFFormObj_GetMatrix() negative testing.
-  EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
-                                     &matrix_d, &matrix_e, &matrix_f));
-  EXPECT_FALSE(FPDFFormObj_GetMatrix(form, nullptr, nullptr, nullptr, nullptr,
-                                     nullptr, nullptr));
-  EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, nullptr, nullptr, nullptr,
-                                     nullptr, nullptr, nullptr));
+  EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, &matrix));
+  EXPECT_FALSE(FPDFFormObj_GetMatrix(form, nullptr));
+  EXPECT_FALSE(FPDFFormObj_GetMatrix(nullptr, nullptr));
 
   UnloadPage(page);
 }

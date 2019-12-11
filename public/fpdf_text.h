@@ -206,8 +206,8 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
 //          On success, return the angle value in radian. Value will always be
 //          greater or equal to 0. If |text_page| is invalid, or if |index| is
 //          out of bounds, then return -1.
-FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
-                                                       int index);
+FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
+                                                      int index);
 
 // Function: FPDFText_GetCharBox
 //          Get bounding box of a particular character.
@@ -246,28 +246,16 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 //          text_page   -   Handle to a text page information structure.
 //                          Returned by FPDFText_LoadPage function.
 //          index       -   Zero-based index of the character.
-//          left        -   Pointer to a double number receiving left position
-//                          of the character box.
-//          right       -   Pointer to a double number receiving right position
-//                          of the character box.
-//          bottom      -   Pointer to a double number receiving bottom position
-//                          of the character box.
-//          top         -   Pointer to a double number receiving top position of
-//                          the character box.
+//          rect        -   Pointer to a FS_RECTF receiving the character box.
 // Return Value:
-//          On success, return TRUE and fill in |left|, |right|, |bottom|, and
-//          |top|. If |text_page| is invalid, or if |index| is out of bounds,
-//          then return FALSE, and the out parameters remain unmodified.
+//          On success, return TRUE and fill in |rect|. If |text_page| is
+//          invalid, or if |index| is out of bounds, then return FALSE, and the
+//          |rect| out parameter remains unmodified.
 // Comments:
 //          All positions are measured in PDF "user space".
 //
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
-                         int index,
-                         double* left,
-                         double* right,
-                         double* bottom,
-                         double* top);
+FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect);
 
 // Function: FPDFText_GetCharOrigin
 //          Get origin of a particular character.

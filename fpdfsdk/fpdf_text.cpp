@@ -196,11 +196,11 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
   return true;
 }
 
-FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
-                                                       int index) {
+FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
+                                                      int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
   if (!textpage)
-    return -1;
+    return -1.0f;
 
   FPDF_CHAR_INFO charinfo;
   textpage->GetCharInfo(index, &charinfo);
@@ -210,7 +210,7 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
   // | c  d  0 |    | sin(t)   cos(t)  0 |
   // | e  f  1 |    |   0        0     1 |
   // Calculate the angle of the vector
-  double angle = atan2(charinfo.m_Matrix.c, charinfo.m_Matrix.a);
+  float angle = atan2f(charinfo.m_Matrix.c, charinfo.m_Matrix.a);
   if (angle < 0)
     angle = 2 * FX_PI + angle;
 
@@ -240,13 +240,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
-                         int index,
-                         double* left,
-                         double* right,
-                         double* bottom,
-                         double* top) {
-  if (!left || !right || !bottom || !top)
+FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
+  if (!rect)
     return false;
 
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
@@ -270,10 +265,10 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
       short vert_width = pCIDFont->GetVertWidth(cid);
       double height = vert_width * charinfo.m_FontSize / 1000.0;
 
-      *left = charinfo.m_Origin.x + offsetx;
-      *right = *left + charinfo.m_FontSize;
-      *bottom = charinfo.m_Origin.y + offsety;
-      *top = *bottom + height;
+      rect->left = charinfo.m_Origin.x + offsetx;
+      rect->right = rect->left + charinfo.m_FontSize;
+      rect->bottom = charinfo.m_Origin.y + offsety;
+      rect->top = rect->bottom + height;
       return true;
     }
 
@@ -283,19 +278,19 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page,
       float width = charinfo.m_pTextObj->GetCharWidth(charinfo.m_Charcode);
       float font_scale = charinfo.m_FontSize / (ascent - descent);
 
-      *left = charinfo.m_Origin.x;
-      *right = charinfo.m_Origin.x + (is_vert_writing ? -width : width);
-      *bottom = charinfo.m_Origin.y + descent * font_scale;
-      *top = charinfo.m_Origin.y + ascent * font_scale;
+      rect->left = charinfo.m_Origin.x;
+      rect->right = charinfo.m_Origin.x + (is_vert_writing ? -width : width);
+      rect->bottom = charinfo.m_Origin.y + descent * font_scale;
+      rect->top = charinfo.m_Origin.y + ascent * font_scale;
       return true;
     }
   }
 
   // Fallback to the tight bounds in empty text scenarios, or bad font metrics
-  *left = charinfo.m_CharBox.left;
-  *right = charinfo.m_CharBox.right;
-  *bottom = charinfo.m_CharBox.bottom;
-  *top = charinfo.m_CharBox.top;
+  rect->left = charinfo.m_CharBox.left;
+  rect->right = charinfo.m_CharBox.right;
+  rect->bottom = charinfo.m_CharBox.bottom;
+  rect->top = charinfo.m_CharBox.top;
   return true;
 }
 

@@ -183,35 +183,28 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
-                                                       double* a,
-                                                       double* b,
-                                                       double* c,
-                                                       double* d,
-                                                       double* e,
-                                                       double* f) {
-  if (!path || !a || !b || !c || !d || !e || !f)
+                                                       FS_MATRIX* matrix) {
+  if (!path || !matrix)
     return false;
 
   CPDF_PathObject* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   if (!pPathObj)
     return false;
 
-  std::tie(*a, *b, *c, *d, *e, *f) = pPathObj->matrix().AsTuple();
+  FSMatrixFromCFXMatrix(pPathObj->matrix(), matrix);
   return true;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetMatrix(FPDF_PAGEOBJECT path,
-                                                       double a,
-                                                       double b,
-                                                       double c,
-                                                       double d,
-                                                       double e,
-                                                       double f) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPath_SetMatrix(FPDF_PAGEOBJECT path, const FS_MATRIX* matrix) {
+  if (!matrix)
+    return false;
+
   CPDF_PathObject* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
   if (!pPathObj)
     return false;
 
-  pPathObj->set_matrix(CFX_Matrix(a, b, c, d, e, f));
+  pPathObj->set_matrix(CFXMatrixFromFSMatrix(*matrix));
   pPathObj->SetDirty(true);
   return true;
 }

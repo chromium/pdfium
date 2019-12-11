@@ -220,7 +220,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   text_buf << "q ";
 
   if (clipRect) {
-    CFX_FloatRect rect = CFXFloatRectFromFSRECTF(*clipRect);
+    CFX_FloatRect rect = CFXFloatRectFromFSRectF(*clipRect);
     rect.Normalize();
 
     WriteFloat(text_buf, rect.left) << " ";

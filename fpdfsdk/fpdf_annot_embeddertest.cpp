@@ -1547,19 +1547,23 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotNull) {
   ASSERT_TRUE(page);
 
   // Attempt to get an annotation where no annotation exists on page.
-  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 0, 0));
+  static const FS_POINTF kOriginPoint = {0.0f, 0.0f};
+  EXPECT_FALSE(
+      FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kOriginPoint));
 
+  static const FS_POINTF kValidPoint = {120.0f, 120.0f};
   {
     // Verify there is an annotation.
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 120, 120));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kValidPoint));
     EXPECT_TRUE(annot);
   }
 
   // Try other bad inputs at a valid location.
-  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, nullptr, 120, 120));
-  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, page, 120, 120));
-  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(form_handle(), nullptr, 120, 120));
+  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, nullptr, &kValidPoint));
+  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, page, &kValidPoint));
+  EXPECT_FALSE(
+      FPDFAnnot_GetFormFieldAtPoint(form_handle(), nullptr, &kValidPoint));
 
   UnloadPage(page);
 }
@@ -1572,8 +1576,9 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
 
   {
     // Retrieve user-editable text field annotation.
+    static const FS_POINTF kPoint = {105.0f, 118.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 118));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -1583,8 +1588,9 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
 
   {
     // Retrieve read-only text field annotation.
+    static const FS_POINTF kPoint = {105.0f, 202.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 202));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -1603,8 +1609,9 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
 
   {
     // Retrieve user-editable combobox annotation.
+    static const FS_POINTF kPoint = {102.0f, 363.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 363));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -1616,8 +1623,9 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
 
   {
     // Retrieve regular combobox annotation.
+    static const FS_POINTF kPoint = {102.0f, 413.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 413));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -1629,8 +1637,9 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
 
   {
     // Retrieve read-only combobox annotation.
+    static const FS_POINTF kPoint = {102.0f, 513.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 513));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.

@@ -528,16 +528,14 @@ FPDFAnnot_GetFormFieldFlags(FPDF_FORMHANDLE handle,
 //    hHandle     -   handle to the form fill module, returned by
 //                    FPDFDOC_InitFormFillEnvironment().
 //    page        -   handle to the page, returned by FPDF_LoadPage function.
-//    page_x      -   X position in PDF "user space".
-//    page_y      -   Y position in PDF "user space".
+//    point       -   position in PDF "user space".
 //
 // Returns the interactive form annotation whose rectangle contains the given
 // coordinates on the page. If there is no such annotation, return NULL.
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
 FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                               FPDF_PAGE page,
-                              double page_x,
-                              double page_y);
+                              const FS_POINTF* point);
 
 // Experimental API.
 // Get the number of options in the |annot|'s "Opt" dictionary. Intended for

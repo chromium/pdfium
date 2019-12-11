@@ -382,7 +382,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
   if (!pPage)
     return false;
 
-  *rect = FSRECTFFromCFXFloatRect(pPage->GetBBox());
+  *rect = FSRectFFromCFXFloatRect(pPage->GetBBox());
   return true;
 }
 
@@ -687,7 +687,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 
   CFX_FloatRect clipping_rect;
   if (clipping)
-    clipping_rect = CFXFloatRectFromFSRECTF(*clipping);
+    clipping_rect = CFXFloatRectFromFSRectF(*clipping);
   FX_RECT clip_rect = clipping_rect.ToFxRect();
 
   const FX_RECT rect(0, 0, pPage->GetPageWidth(), pPage->GetPageHeight());

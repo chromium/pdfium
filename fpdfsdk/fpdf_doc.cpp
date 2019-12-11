@@ -367,7 +367,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
     return false;
 
   CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFLink(link_annot);
-  *rect = FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"));
+  *rect = FSRectFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"));
   return true;
 }
 

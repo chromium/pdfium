@@ -1006,13 +1006,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
 // Experimental API.
 // Get the transform matrix of a path.
 //
-//   path - handle to a path.
-//   a    - matrix value.
-//   b    - matrix value.
-//   c    - matrix value.
-//   d    - matrix value.
-//   e    - matrix value.
-//   f    - matrix value.
+//   path   - handle to a path.
+//   matrix - pointer to struct to receive the matrix value.
 //
 // The matrix is composed as:
 //   |a c e|
@@ -1021,23 +1016,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
-                                                       double* a,
-                                                       double* b,
-                                                       double* c,
-                                                       double* d,
-                                                       double* e,
-                                                       double* f);
+                                                       FS_MATRIX* matrix);
 
 // Experimental API.
 // Set the transform matrix of a path.
 //
-//   path - handle to a path.
-//   a    - matrix value.
-//   b    - matrix value.
-//   c    - matrix value.
-//   d    - matrix value.
-//   e    - matrix value.
-//   f    - matrix value.
+//   path   - handle to a path.
+//   matrix - pointer to struct with the matrix value.
 //
 // The matrix is composed as:
 //   |a c e|
@@ -1046,12 +1031,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetMatrix(FPDF_PAGEOBJECT path,
-                                                       double a,
-                                                       double b,
-                                                       double c,
-                                                       double d,
-                                                       double e,
-                                                       double f);
+                                                       const FS_MATRIX* matrix);
 
 // Create a new text object using one of the standard PDF fonts.
 //
@@ -1110,13 +1090,8 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
 // Experimental API.
 // Get the transform matrix of a text object.
 //
-//   text - handle to a text.
-//   a    - matrix value.
-//   b    - matrix value.
-//   c    - matrix value.
-//   d    - matrix value.
-//   e    - matrix value.
-//   f    - matrix value.
+//   text   - handle to a text.
+//   matrix - pointer to struct with the matrix value.
 //
 // The matrix is composed as:
 //   |a c e|
@@ -1125,12 +1100,7 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
-                                                          double* a,
-                                                          double* b,
-                                                          double* c,
-                                                          double* d,
-                                                          double* e,
-                                                          double* f);
+                                                          FS_MATRIX* matrix);
 
 // Experimental API.
 // Get the font size of a text object.
@@ -1139,7 +1109,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
 //
 // Returns the font size of the text object, measured in points (about 1/72
 // inch) on success; 0 on failure.
-FPDF_EXPORT double FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text);
+FPDF_EXPORT float FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text);
 
 // Close a loaded PDF font.
 //
@@ -1228,12 +1198,7 @@ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index);
 // Get the transform matrix of a form object.
 //
 //   form_object - handle to a form.
-//   a           - pointer to out variable to receive matrix value.
-//   b           - pointer to out variable to receive matrix value.
-//   c           - pointer to out variable to receive matrix value.
-//   d           - pointer to out variable to receive matrix value.
-//   e           - pointer to out variable to receive matrix value.
-//   f           - pointer to out variable to receive matrix value.
+//   matrix      - pointer to struct to receive the matrix value.
 //
 // The matrix is composed as:
 //   |a c e|
@@ -1242,13 +1207,7 @@ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index);
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFFormObj_GetMatrix(FPDF_PAGEOBJECT form_object,
-                      double* a,
-                      double* b,
-                      double* c,
-                      double* d,
-                      double* e,
-                      double* f);
+FPDFFormObj_GetMatrix(FPDF_PAGEOBJECT form_object, FS_MATRIX* matrix);
 
 #ifdef __cplusplus
 }  // extern "C"

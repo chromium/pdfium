@@ -656,7 +656,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict || !rect)
     return false;
 
-  CFX_FloatRect newRect = CFXFloatRectFromFSRECTF(*rect);
+  CFX_FloatRect newRect = CFXFloatRectFromFSRectF(*rect);
 
   // Update the "Rect" entry in the annotation dictionary.
   pAnnotDict->SetRectFor(pdfium::annotation::kRect, newRect);
@@ -682,7 +682,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetRect(FPDF_ANNOTATION annot,
   if (!pAnnotDict || !rect)
     return false;
 
-  *rect = FSRECTFFromCFXFloatRect(
+  *rect = FSRectFFromCFXFloatRect(
       pAnnotDict->GetRectFor(pdfium::annotation::kRect));
   return true;
 }
@@ -884,8 +884,10 @@ FPDFAnnot_GetFormFieldFlags(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
 FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                               FPDF_PAGE page,
-                              double page_x,
-                              double page_y) {
+                              const FS_POINTF* point) {
+  if (!point)
+    return nullptr;
+
   CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
   if (!pForm)
     return nullptr;
@@ -897,8 +899,7 @@ FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
   int annot_index = -1;
   CPDF_FormControl* pFormCtrl = pPDFForm->GetControlAtPoint(
-      pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
-      &annot_index);
+      pPage, CFXPointFFromFSPointF(*point), &annot_index);
   if (!pFormCtrl || annot_index == -1)
     return nullptr;
   return FPDFPage_GetAnnot(page, annot_index);

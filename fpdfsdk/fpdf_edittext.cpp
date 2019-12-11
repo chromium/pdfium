@@ -511,26 +511,21 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
-                                                          double* a,
-                                                          double* b,
-                                                          double* c,
-                                                          double* d,
-                                                          double* e,
-                                                          double* f) {
-  if (!a || !b || !c || !d || !e || !f)
+                                                          FS_MATRIX* matrix) {
+  if (!matrix)
     return false;
 
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
   if (!pTextObj)
     return false;
 
-  std::tie(*a, *b, *c, *d, *e, *f) = pTextObj->GetTextMatrix().AsTuple();
+  FSMatrixFromCFXMatrix(pTextObj->GetTextMatrix(), matrix);
   return true;
 }
 
-FPDF_EXPORT double FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text) {
+FPDF_EXPORT float FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  return pTextObj ? pTextObj->GetFontSize() : 0;
+  return pTextObj ? pTextObj->GetFontSize() : 0.0f;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
