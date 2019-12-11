@@ -1,6 +1,13 @@
+Alert: empty is 
 Alert: field is MyField
 Alert: button is MyField.MyPushButton
 Alert: nonesuch is undefined
+Alert: dotdot is 
+Alert: tripledot is MyField..nonesuch
+Alert: quaddot is MyField..nonesuch
+Alert: dotdot1 is 
+Alert: dotdot2 is MyField.MyPushButton
+Alert: dotdot3 is MyField
 Alert: found 7 sub-fields:
 Alert: MyField.MyCheckBox
 Alert: MyField.MyFile

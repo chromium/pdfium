@@ -10,12 +10,26 @@ stream
 
 function testGetField() {
   try {
+    var empty =  this.getField("");
+    app.alert("empty is " + empty.name);
     var field = this.getField("MyField");
     app.alert("field is " + field.name);
     var button = this.getField("MyField.MyPushButton");
     app.alert("button is " + button.name);
     var nonesuch = this.getField("MyField.nonesuch");
     app.alert("nonesuch is " + nonesuch);
+    var dotdot = this.getField("MyField..nonesuch");
+    app.alert("dotdot is " + dotdot.name);
+    var tripledot = this.getField("MyField...nonesuch");
+    app.alert("tripledot is " + tripledot.name);
+    var quaddot = this.getField("MyField....nonesuch");
+    app.alert("quaddot is " + quaddot.name);
+    var dotdot1 = this.getField("MyField..nonesuch      ");
+    app.alert("dotdot1 is " + dotdot1.name);
+    var dotdot2 = this.getField("MyField..MyPushButton");
+    app.alert("dotdot2 is " + dotdot2.name);
+    var dotdot3 = this.getField("MyField..3");
+    app.alert("dotdot3 is " + dotdot3.name);
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }
