@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cwctype>
-#include <string>
 #include <vector>
 
 #include "build/build_config.h"
@@ -98,64 +97,64 @@ CJS_Util::~CJS_Util() = default;
 
 CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
-  const size_t iSize = params.size();
-  if (iSize < 1)
+  const size_t num_params = params.size();
+  if (num_params < 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  std::wstring unsafe_fmt_string(pRuntime->ToWideString(params[0]).c_str());
-  std::vector<std::wstring> unsafe_conversion_specifiers;
-  int iOffset = 0;
-  int iOffend = 0;
-  unsafe_fmt_string.insert(unsafe_fmt_string.begin(), L'S');
-  while (iOffset != -1) {
-    iOffend = unsafe_fmt_string.find(L"%", iOffset + 1);
-    std::wstring strSub;
-    if (iOffend == -1)
-      strSub = unsafe_fmt_string.substr(iOffset);
-    else
-      strSub = unsafe_fmt_string.substr(iOffset, iOffend - iOffset);
-    unsafe_conversion_specifiers.push_back(strSub);
-    iOffset = iOffend;
+  // Use 'S' as a sentinel to ensure we always have some text before the first
+  // format specifier.
+  WideString unsafe_fmt_string = L'S' + pRuntime->ToWideString(params[0]);
+  std::vector<WideString> unsafe_conversion_specifiers;
+
+  {
+    size_t offset = 0;
+    while (true) {
+      Optional<size_t> offset_end = unsafe_fmt_string.Find(L"%", offset + 1);
+      if (!offset_end.has_value()) {
+        unsafe_conversion_specifiers.push_back(
+            unsafe_fmt_string.Right(unsafe_fmt_string.GetLength() - offset));
+        break;
+      }
+
+      unsafe_conversion_specifiers.push_back(
+          unsafe_fmt_string.Mid(offset, offset_end.value() - offset));
+      offset = offset_end.value();
+    }
   }
 
-  std::wstring c_strResult;
-  for (size_t iIndex = 0; iIndex < unsafe_conversion_specifiers.size();
-       ++iIndex) {
-    std::wstring c_strFormat = unsafe_conversion_specifiers[iIndex];
-    if (iIndex == 0) {
-      c_strResult = c_strFormat;
+  WideString result = unsafe_conversion_specifiers[0];
+  for (size_t i = 1; i < unsafe_conversion_specifiers.size(); ++i) {
+    WideString fmt = unsafe_conversion_specifiers[i];
+    if (i >= num_params) {
+      result += fmt;
       continue;
     }
 
-    if (iIndex >= iSize) {
-      c_strResult += c_strFormat;
-      continue;
-    }
-
-    WideString strSegment;
-    switch (ParseDataType(&c_strFormat)) {
+    WideString segment;
+    switch (ParseDataType(&fmt)) {
       case UTIL_INT:
-        strSegment = WideString::Format(c_strFormat.c_str(),
-                                        pRuntime->ToInt32(params[iIndex]));
+        segment = WideString::Format(fmt.c_str(), pRuntime->ToInt32(params[i]));
         break;
       case UTIL_DOUBLE:
-        strSegment = WideString::Format(c_strFormat.c_str(),
-                                        pRuntime->ToDouble(params[iIndex]));
+        segment =
+            WideString::Format(fmt.c_str(), pRuntime->ToDouble(params[i]));
         break;
       case UTIL_STRING:
-        strSegment =
-            WideString::Format(c_strFormat.c_str(),
-                               pRuntime->ToWideString(params[iIndex]).c_str());
+        segment = WideString::Format(fmt.c_str(),
+                                     pRuntime->ToWideString(params[i]).c_str());
         break;
       default:
-        strSegment = WideString::Format(L"%ls", c_strFormat.c_str());
+        segment = WideString::Format(L"%ls", fmt.c_str());
         break;
     }
-    c_strResult += strSegment.c_str();
+    result += segment;
   }
 
-  c_strResult.erase(c_strResult.begin());
-  return CJS_Result::Success(pRuntime->NewString(c_strResult.c_str()));
+  // Remove the 'S' sentinel introduced earlier.
+  DCHECK_EQ(L'S', result[0]);
+  auto result_view = result.AsStringView();
+  return CJS_Result::Success(
+      pRuntime->NewString(result_view.Right(result_view.GetLength() - 1)));
 }
 
 CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
@@ -275,6 +274,7 @@ CJS_Result CJS_Util::printx(CJS_Runtime* pRuntime,
                               .AsStringView()));
 }
 
+// static
 WideString CJS_Util::StringPrintx(const WideString& wsFormat,
                                   const WideString& wsSource) {
   WideString wsResult;
@@ -394,18 +394,15 @@ CJS_Result CJS_Util::byteToChar(
   return CJS_Result::Success(pRuntime->NewString(wStr.AsStringView()));
 }
 
-// Ensure that sFormat contains at most one well-understood printf formatting
-// directive which is safe to use with a single argument, and return the type
-// of argument expected, or -1 otherwise. If -1 is returned, it is NOT safe
-// to use sFormat with printf() and it must be copied byte-by-byte.
-int CJS_Util::ParseDataType(std::wstring* sFormat) {
+// static
+int CJS_Util::ParseDataType(WideString* sFormat) {
   enum State { BEFORE, FLAGS, WIDTH, PRECISION, SPECIFIER, AFTER };
 
   int result = -1;
   State state = BEFORE;
   size_t precision_digits = 0;
   size_t i = 0;
-  while (i < sFormat->length()) {
+  while (i < sFormat->GetLength()) {
     wchar_t c = (*sFormat)[i];
     switch (state) {
       case BEFORE:
@@ -454,7 +451,7 @@ int CJS_Util::ParseDataType(std::wstring* sFormat) {
           // Map s to S since we always deal internally with wchar_t strings.
           // TODO(tsepez): Probably 100% borked. %S is not a standard
           // conversion.
-          (*sFormat)[i] = L'S';
+          sFormat->SetAt(i, L'S');
           result = UTIL_STRING;
         } else {
           return -1;

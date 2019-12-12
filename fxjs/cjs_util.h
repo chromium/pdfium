@@ -7,9 +7,9 @@
 #ifndef FXJS_CJS_UTIL_H_
 #define FXJS_CJS_UTIL_H_
 
-#include <string>
 #include <vector>
 
+#include "core/fxcrt/widestring.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
@@ -26,8 +26,16 @@ class CJS_Util final : public CJS_Object {
   CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Util() override;
 
+  // Ensure that |sFormat| contains at most one well-understood printf
+  // formatting directive which is safe to use with a single argument, and
+  // return the type of argument expected, or -1 otherwise. If -1 is returned,
+  // it is NOT safe to use |sFormat| with printf() and it must be copied
+  // byte-by-byte.
+  //
   // Exposed for testing.
-  static int ParseDataType(std::wstring* sFormat);
+  static int ParseDataType(WideString* sFormat);
+
+  // Exposed for testing.
   static WideString StringPrintx(const WideString& cFormat,
                                  const WideString& cSource);
 
