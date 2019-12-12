@@ -16,7 +16,6 @@
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -49,11 +48,13 @@ constexpr int kEditingModifier = FWL_KEYFLAG_Ctrl;
 CFWL_Edit::CFWL_Edit(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      CFWL_Widget* pOuter)
-    : CFWL_Widget(app, std::move(properties), pOuter) {
-  m_EdtEngine.SetDelegate(this);
+    : CFWL_Widget(app, std::move(properties), pOuter),
+      m_pEditEngine(pdfium::MakeUnique<CFDE_TextEditEngine>()) {
+  m_pEditEngine->SetDelegate(this);
 }
 
 CFWL_Edit::~CFWL_Edit() {
+  m_pEditEngine->SetDelegate(nullptr);
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     HideCaret(nullptr);
 }
@@ -82,9 +83,9 @@ CFX_RectF CFWL_Edit::GetWidgetRect() {
 CFX_RectF CFWL_Edit::GetAutosizedWidgetRect() {
   CFX_RectF rect;
 
-  if (m_EdtEngine.GetLength() > 0) {
+  if (m_pEditEngine->GetLength() > 0) {
     CFX_SizeF size = CalcTextSize(
-        m_EdtEngine.GetText(), m_pProperties->m_pThemeProvider.Get(),
+        m_pEditEngine->GetText(), m_pProperties->m_pThemeProvider.Get(),
         !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine));
     rect = CFX_RectF(0, 0, size);
   }
@@ -162,43 +163,43 @@ void CFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
 }
 
 void CFWL_Edit::SetText(const WideString& wsText) {
-  m_EdtEngine.Clear();
-  m_EdtEngine.Insert(0, wsText,
-                     CFDE_TextEditEngine::RecordOperation::kInsertRecord);
+  m_pEditEngine->Clear();
+  m_pEditEngine->Insert(0, wsText,
+                        CFDE_TextEditEngine::RecordOperation::kInsertRecord);
 }
 
 void CFWL_Edit::SetTextSkipNotify(const WideString& wsText) {
-  m_EdtEngine.Clear();
-  m_EdtEngine.Insert(0, wsText,
-                     CFDE_TextEditEngine::RecordOperation::kSkipNotify);
+  m_pEditEngine->Clear();
+  m_pEditEngine->Insert(0, wsText,
+                        CFDE_TextEditEngine::RecordOperation::kSkipNotify);
 }
 
 int32_t CFWL_Edit::GetTextLength() const {
-  return m_EdtEngine.GetLength();
+  return m_pEditEngine->GetLength();
 }
 
 WideString CFWL_Edit::GetText() const {
-  return m_EdtEngine.GetText();
+  return m_pEditEngine->GetText();
 }
 
 void CFWL_Edit::ClearText() {
-  m_EdtEngine.Clear();
+  m_pEditEngine->Clear();
 }
 
 void CFWL_Edit::SelectAll() {
-  m_EdtEngine.SelectAll();
+  m_pEditEngine->SelectAll();
 }
 
 bool CFWL_Edit::HasSelection() const {
-  return m_EdtEngine.HasSelection();
+  return m_pEditEngine->HasSelection();
 }
 
 std::pair<size_t, size_t> CFWL_Edit::GetSelection() const {
-  return m_EdtEngine.GetSelection();
+  return m_pEditEngine->GetSelection();
 }
 
 void CFWL_Edit::ClearSelection() {
-  return m_EdtEngine.ClearSelection();
+  return m_pEditEngine->ClearSelection();
 }
 
 int32_t CFWL_Edit::GetLimit() const {
@@ -209,56 +210,56 @@ void CFWL_Edit::SetLimit(int32_t nLimit) {
   m_nLimit = nLimit;
 
   if (m_nLimit > 0) {
-    m_EdtEngine.SetHasCharacterLimit(true);
-    m_EdtEngine.SetCharacterLimit(nLimit);
+    m_pEditEngine->SetHasCharacterLimit(true);
+    m_pEditEngine->SetCharacterLimit(nLimit);
   } else {
-    m_EdtEngine.SetHasCharacterLimit(false);
+    m_pEditEngine->SetHasCharacterLimit(false);
   }
 }
 
 void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
-  m_EdtEngine.SetAliasChar(wAlias);
+  m_pEditEngine->SetAliasChar(wAlias);
 }
 
 Optional<WideString> CFWL_Edit::Copy() {
-  if (!m_EdtEngine.HasSelection())
+  if (!m_pEditEngine->HasSelection())
     return {};
 
-  return {m_EdtEngine.GetSelectedText()};
+  return {m_pEditEngine->GetSelectedText()};
 }
 
 Optional<WideString> CFWL_Edit::Cut() {
-  if (!m_EdtEngine.HasSelection())
+  if (!m_pEditEngine->HasSelection())
     return {};
 
-  WideString cut_text = m_EdtEngine.DeleteSelectedText();
+  WideString cut_text = m_pEditEngine->DeleteSelectedText();
   UpdateCaret();
   return {cut_text};
 }
 
 bool CFWL_Edit::Paste(const WideString& wsPaste) {
-  if (m_EdtEngine.HasSelection())
-    m_EdtEngine.ReplaceSelectedText(wsPaste);
+  if (m_pEditEngine->HasSelection())
+    m_pEditEngine->ReplaceSelectedText(wsPaste);
   else
-    m_EdtEngine.Insert(m_CursorPosition, wsPaste);
+    m_pEditEngine->Insert(m_CursorPosition, wsPaste);
 
   return true;
 }
 
 bool CFWL_Edit::Undo() {
-  return CanUndo() ? m_EdtEngine.Undo() : false;
+  return CanUndo() ? m_pEditEngine->Undo() : false;
 }
 
 bool CFWL_Edit::Redo() {
-  return CanRedo() ? m_EdtEngine.Redo() : false;
+  return CanRedo() ? m_pEditEngine->Redo() : false;
 }
 
 bool CFWL_Edit::CanUndo() {
-  return m_EdtEngine.CanUndo();
+  return m_pEditEngine->CanUndo();
 }
 
 bool CFWL_Edit::CanRedo() {
-  return m_EdtEngine.CanRedo();
+  return m_pEditEngine->CanRedo();
 }
 
 void CFWL_Edit::SetOuter(CFWL_Widget* pOuter) {
@@ -385,12 +386,12 @@ void CFWL_Edit::DrawContent(CXFA_Graphics* pGraphics,
   }
 
   bool bShowSel = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
-  if (bShowSel && m_EdtEngine.HasSelection()) {
+  if (bShowSel && m_pEditEngine->HasSelection()) {
     size_t sel_start;
     size_t count;
-    std::tie(sel_start, count) = m_EdtEngine.GetSelection();
+    std::tie(sel_start, count) = m_pEditEngine->GetSelection();
     std::vector<CFX_RectF> rects =
-        m_EdtEngine.GetCharacterRectsInRange(sel_start, count);
+        m_pEditEngine->GetCharacterRectsInRange(sel_start, count);
 
     CXFA_GEPath path;
     for (auto& rect : rects) {
@@ -441,7 +442,7 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
                            const CFX_Matrix& mt) {
   ASSERT(pRenderDev);
 
-  RetainPtr<CFGAS_GEFont> font = m_EdtEngine.GetFont();
+  RetainPtr<CFGAS_GEFont> font = m_pEditEngine->GetFont();
   if (!font)
     return;
 
@@ -456,17 +457,17 @@ void CFWL_Edit::RenderText(CFX_RenderDevice* pRenderDev,
   }
   rtDocClip = mt.GetInverse().TransformRect(rtDocClip);
 
-  for (const FDE_TEXTEDITPIECE& info : m_EdtEngine.GetTextPieces()) {
+  for (const FDE_TEXTEDITPIECE& info : m_pEditEngine->GetTextPieces()) {
     // If this character is outside the clip, skip it.
     if (!rtDocClip.IntersectWith(info.rtPiece))
       continue;
 
-    std::vector<TextCharPos> char_pos = m_EdtEngine.GetDisplayPos(info);
+    std::vector<TextCharPos> char_pos = m_pEditEngine->GetDisplayPos(info);
     if (char_pos.empty())
       continue;
 
-    CFDE_TextOut::DrawString(pRenderDev, m_EdtEngine.GetFontColor(), font,
-                             char_pos, m_EdtEngine.GetFontSize(), mt);
+    CFDE_TextOut::DrawString(pRenderDev, m_pEditEngine->GetFontColor(), font,
+                             char_pos, m_pEditEngine->GetFontSize(), mt);
   }
 }
 
@@ -476,13 +477,13 @@ void CFWL_Edit::UpdateEditEngine() {
 }
 
 void CFWL_Edit::UpdateEditParams() {
-  m_EdtEngine.SetAvailableWidth(m_rtEngine.width);
-  m_EdtEngine.SetCombText(
+  m_pEditEngine->SetAvailableWidth(m_rtEngine.width);
+  m_pEditEngine->SetCombText(
       !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText));
 
-  m_EdtEngine.EnableValidation(
+  m_pEditEngine->EnableValidation(
       !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_Validate));
-  m_EdtEngine.EnablePasswordMode(
+  m_pEditEngine->EnablePasswordMode(
       !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_Password));
 
   uint32_t alignment = 0;
@@ -510,22 +511,22 @@ void CFWL_Edit::UpdateEditParams() {
     default:
       break;
   }
-  m_EdtEngine.SetAlignment(alignment);
+  m_pEditEngine->SetAlignment(alignment);
 
   bool auto_hscroll =
       !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_AutoHScroll);
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) {
-    m_EdtEngine.EnableMultiLine(true);
-    m_EdtEngine.EnableLineWrap(!auto_hscroll);
-    m_EdtEngine.LimitVerticalScroll(
+    m_pEditEngine->EnableMultiLine(true);
+    m_pEditEngine->EnableLineWrap(!auto_hscroll);
+    m_pEditEngine->LimitVerticalScroll(
         (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll) == 0 &&
         (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_AutoVScroll) == 0);
   } else {
-    m_EdtEngine.EnableMultiLine(false);
-    m_EdtEngine.EnableLineWrap(false);
-    m_EdtEngine.LimitVerticalScroll(false);
+    m_pEditEngine->EnableMultiLine(false);
+    m_pEditEngine->EnableLineWrap(false);
+    m_pEditEngine->LimitVerticalScroll(false);
   }
-  m_EdtEngine.LimitHorizontalScroll(!auto_hscroll);
+  m_pEditEngine->LimitHorizontalScroll(!auto_hscroll);
 
   IFWL_ThemeProvider* theme = GetAvailableTheme();
   CFWL_ThemePart part;
@@ -541,17 +542,17 @@ void CFWL_Edit::UpdateEditParams() {
   if (!pFont)
     return;
 
-  m_EdtEngine.SetFont(pFont);
-  m_EdtEngine.SetFontColor(theme->GetTextColor(part));
-  m_EdtEngine.SetFontSize(m_fFontSize);
-  m_EdtEngine.SetLineSpace(theme->GetLineHeight(part));
-  m_EdtEngine.SetTabWidth(m_fFontSize);
-  m_EdtEngine.SetVisibleLineCount(m_rtEngine.height /
-                                  theme->GetLineHeight(part));
+  m_pEditEngine->SetFont(pFont);
+  m_pEditEngine->SetFontColor(theme->GetTextColor(part));
+  m_pEditEngine->SetFontSize(m_fFontSize);
+  m_pEditEngine->SetLineSpace(theme->GetLineHeight(part));
+  m_pEditEngine->SetTabWidth(m_fFontSize);
+  m_pEditEngine->SetVisibleLineCount(m_rtEngine.height /
+                                     theme->GetLineHeight(part));
 }
 
 void CFWL_Edit::UpdateEditLayout() {
-  m_EdtEngine.Layout();
+  m_pEditEngine->Layout();
 }
 
 bool CFWL_Edit::UpdateOffset() {
@@ -563,7 +564,7 @@ bool CFWL_Edit::UpdateOffset() {
 
   const CFX_RectF& edit_bounds = m_rtEngine;
   if (edit_bounds.Contains(rtCaret)) {
-    CFX_RectF contents_bounds = m_EdtEngine.GetContentsBoundingBox();
+    CFX_RectF contents_bounds = m_pEditEngine->GetContentsBoundingBox();
     contents_bounds.Offset(fOffSetX, fOffSetY);
     if (contents_bounds.right() < edit_bounds.right() && m_fScrollOffsetX > 0) {
       m_fScrollOffsetX += contents_bounds.right() - edit_bounds.right();
@@ -618,7 +619,7 @@ void CFWL_Edit::UpdateVAlignment() {
   }
 
   float fOffsetY = 0.0f;
-  CFX_RectF contents_bounds = m_EdtEngine.GetContentsBoundingBox();
+  CFX_RectF contents_bounds = m_pEditEngine->GetContentsBoundingBox();
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VCenter) {
     fOffsetY = (m_rtEngine.height - contents_bounds.height) / 2.0f;
     if (fOffsetY < (fSpaceAbove + fSpaceBelow) / 2.0f &&
@@ -660,7 +661,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
   if (!bShowHorz && !bShowVert)
     return nullptr;
 
-  CFX_RectF contents_bounds = m_EdtEngine.GetContentsBoundingBox();
+  CFX_RectF contents_bounds = m_pEditEngine->GetContentsBoundingBox();
   CFWL_ScrollBar* pRepaint = nullptr;
   if (bShowHorz) {
     CFX_RectF rtScroll = m_pHorzScrollBar->GetWidgetRect();
@@ -695,7 +696,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
     if (rtScroll.height < contents_bounds.height) {
       {
         ScopedUpdateLock update_lock(m_pHorzScrollBar.get());
-        float fStep = m_EdtEngine.GetLineSpace();
+        float fStep = m_pEditEngine->GetLineSpace();
         float fRange =
             std::max(contents_bounds.height - m_rtEngine.height, fStep);
 
@@ -736,7 +737,8 @@ bool CFWL_Edit::IsShowScrollBar(bool bVert) {
 }
 
 bool CFWL_Edit::IsContentHeightOverflow() {
-  return m_EdtEngine.GetContentsBoundingBox().height > m_rtEngine.height + 1.0f;
+  return m_pEditEngine->GetContentsBoundingBox().height >
+         m_rtEngine.height + 1.0f;
 }
 
 void CFWL_Edit::Layout() {
@@ -942,7 +944,7 @@ bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
   if (!m_bSetRange)
     return true;
 
-  WideString wsText = m_EdtEngine.GetText();
+  WideString wsText = m_pEditEngine->GetText();
   if (wsText.IsEmpty())
     return cNum != L'0';
 
@@ -971,9 +973,9 @@ void CFWL_Edit::InitCaret() {
 
 void CFWL_Edit::UpdateCursorRect() {
   int32_t bidi_level;
-  if (m_EdtEngine.GetLength() > 0) {
+  if (m_pEditEngine->GetLength() > 0) {
     std::tie(bidi_level, m_rtCaret) =
-        m_EdtEngine.GetCharacterInfo(m_CursorPosition);
+        m_pEditEngine->GetCharacterInfo(m_CursorPosition);
   } else {
     bidi_level = 0;
     m_rtCaret = CFX_RectF();
@@ -993,7 +995,7 @@ void CFWL_Edit::SetCursorPosition(size_t position) {
   if (m_CursorPosition == position)
     return;
 
-  m_CursorPosition = std::min(position, m_EdtEngine.GetLength());
+  m_CursorPosition = std::min(position, m_pEditEngine->GetLength());
   UpdateCursorRect();
   OnCaretChanged();
 }
@@ -1067,7 +1069,8 @@ void CFWL_Edit::OnDrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Edit::DoRButtonDown(CFWL_MessageMouse* pMsg) {
-  SetCursorPosition(m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
+  SetCursorPosition(
+      m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
 }
 
 void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
@@ -1106,20 +1109,20 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   SetGrab(true);
 
   bool bRepaint = false;
-  if (m_EdtEngine.HasSelection()) {
-    m_EdtEngine.ClearSelection();
+  if (m_pEditEngine->HasSelection()) {
+    m_pEditEngine->ClearSelection();
     bRepaint = true;
   }
 
   size_t index_at_click =
-      m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
+      m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
 
   if (index_at_click != m_CursorPosition &&
       !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift)) {
     size_t start = std::min(m_CursorPosition, index_at_click);
     size_t end = std::max(m_CursorPosition, index_at_click);
 
-    m_EdtEngine.SetSelection(start, end - start);
+    m_pEditEngine->SetSelection(start, end - start);
     bRepaint = true;
   } else {
     SetCursorPosition(index_at_click);
@@ -1135,12 +1138,13 @@ void CFWL_Edit::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnButtonDoubleClick(CFWL_MessageMouse* pMsg) {
-  size_t click_idx = m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
+  size_t click_idx =
+      m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
   size_t start_idx;
   size_t count;
-  std::tie(start_idx, count) = m_EdtEngine.BoundsForWordAt(click_idx);
+  std::tie(start_idx, count) = m_pEditEngine->BoundsForWordAt(click_idx);
 
-  m_EdtEngine.SetSelection(start_idx, count);
+  m_pEditEngine->SetSelection(start_idx, count);
   m_CursorPosition = start_idx + count;
   RepaintRect(m_rtEngine);
 }
@@ -1151,24 +1155,25 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
     return;
 
   size_t old_cursor_pos = m_CursorPosition;
-  SetCursorPosition(m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
+  SetCursorPosition(
+      m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
   if (old_cursor_pos == m_CursorPosition)
     return;
 
-  size_t length = m_EdtEngine.GetLength();
+  size_t length = m_pEditEngine->GetLength();
   if (m_CursorPosition > length)
     SetCursorPosition(length);
 
   size_t sel_start = 0;
   size_t count = 0;
-  if (m_EdtEngine.HasSelection())
-    std::tie(sel_start, count) = m_EdtEngine.GetSelection();
+  if (m_pEditEngine->HasSelection())
+    std::tie(sel_start, count) = m_pEditEngine->GetSelection();
   else
     sel_start = old_cursor_pos;
 
   size_t start_pos = std::min(sel_start, m_CursorPosition);
   size_t end_pos = std::max(sel_start, m_CursorPosition);
-  m_EdtEngine.SetSelection(start_pos, end_pos - start_pos);
+  m_pEditEngine->SetSelection(start_pos, end_pos - start_pos);
 }
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
@@ -1176,34 +1181,34 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
   bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
 
   size_t sel_start = m_CursorPosition;
-  if (m_EdtEngine.HasSelection()) {
+  if (m_pEditEngine->HasSelection()) {
     size_t start_idx;
     size_t count;
-    std::tie(start_idx, count) = m_EdtEngine.GetSelection();
+    std::tie(start_idx, count) = m_pEditEngine->GetSelection();
     sel_start = start_idx;
   }
 
   switch (pMsg->m_dwKeyCode) {
     case XFA_FWL_VKEY_Left:
-      SetCursorPosition(m_EdtEngine.GetIndexLeft(m_CursorPosition));
+      SetCursorPosition(m_pEditEngine->GetIndexLeft(m_CursorPosition));
       break;
     case XFA_FWL_VKEY_Right:
-      SetCursorPosition(m_EdtEngine.GetIndexRight(m_CursorPosition));
+      SetCursorPosition(m_pEditEngine->GetIndexRight(m_CursorPosition));
       break;
     case XFA_FWL_VKEY_Up:
-      SetCursorPosition(m_EdtEngine.GetIndexUp(m_CursorPosition));
+      SetCursorPosition(m_pEditEngine->GetIndexUp(m_CursorPosition));
       break;
     case XFA_FWL_VKEY_Down:
-      SetCursorPosition(m_EdtEngine.GetIndexDown(m_CursorPosition));
+      SetCursorPosition(m_pEditEngine->GetIndexDown(m_CursorPosition));
       break;
     case XFA_FWL_VKEY_Home:
       SetCursorPosition(
-          bCtrl ? 0 : m_EdtEngine.GetIndexAtStartOfLine(m_CursorPosition));
+          bCtrl ? 0 : m_pEditEngine->GetIndexAtStartOfLine(m_CursorPosition));
       break;
     case XFA_FWL_VKEY_End:
       SetCursorPosition(
-          bCtrl ? m_EdtEngine.GetLength()
-                : m_EdtEngine.GetIndexAtEndOfLine(m_CursorPosition));
+          bCtrl ? m_pEditEngine->GetLength()
+                : m_pEditEngine->GetIndexAtEndOfLine(m_CursorPosition));
       break;
     case XFA_FWL_VKEY_Delete: {
       if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
@@ -1211,7 +1216,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
         break;
       }
 
-      m_EdtEngine.Delete(m_CursorPosition, 1);
+      m_pEditEngine->Delete(m_CursorPosition, 1);
       UpdateCaret();
       break;
     }
@@ -1224,8 +1229,8 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
 
   // Update the selection.
   if (bShift && sel_start != m_CursorPosition) {
-    m_EdtEngine.SetSelection(std::min(sel_start, m_CursorPosition),
-                             std::max(sel_start, m_CursorPosition));
+    m_pEditEngine->SetSelection(std::min(sel_start, m_CursorPosition),
+                                std::max(sel_start, m_CursorPosition));
     RepaintRect(m_rtEngine);
   }
 }
@@ -1241,7 +1246,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
     case L'\b':
       if (m_CursorPosition > 0) {
         SetCursorPosition(m_CursorPosition - 1);
-        m_EdtEngine.Delete(m_CursorPosition, 1);
+        m_pEditEngine->Delete(m_CursorPosition, 1);
         UpdateCaret();
       }
       break;
@@ -1250,12 +1255,12 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
     case 127:  // Delete
       break;
     case L'\t':
-      m_EdtEngine.Insert(m_CursorPosition, L"\t");
+      m_pEditEngine->Insert(m_CursorPosition, L"\t");
       SetCursorPosition(m_CursorPosition + 1);
       break;
     case L'\r':
       if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_WantReturn) {
-        m_EdtEngine.Insert(m_CursorPosition, L"\n");
+        m_pEditEngine->Insert(m_CursorPosition, L"\n");
         SetCursorPosition(m_CursorPosition + 1);
       }
       break;
@@ -1263,7 +1268,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       if (pMsg->m_dwFlags & kEditingModifier)
         break;
 
-      m_EdtEngine.Insert(m_CursorPosition, WideString(c));
+      m_pEditEngine->Insert(m_CursorPosition, WideString(c));
       SetCursorPosition(m_CursorPosition + 1);
       break;
     }

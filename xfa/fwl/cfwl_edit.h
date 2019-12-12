@@ -103,7 +103,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void ShowCaret(CFX_RectF* pRect);
   void HideCaret(CFX_RectF* pRect);
   const CFX_RectF& GetRTClient() const { return m_rtClient; }
-  CFDE_TextEditEngine* GetTxtEdtEngine() { return &m_EdtEngine; }
+  CFDE_TextEditEngine* GetTxtEdtEngine() { return m_pEditEngine.get(); }
 
  private:
   void RenderText(CFX_RenderDevice* pRenderDev,
@@ -162,7 +162,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   float m_fScrollOffsetY = 0.0f;
   float m_fFontSize = 0.0f;
   size_t m_CursorPosition = 0;
-  CFDE_TextEditEngine m_EdtEngine;
+  std::unique_ptr<CFDE_TextEditEngine> const m_pEditEngine;
   std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
   std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<CFWL_Caret> m_pCaret;
