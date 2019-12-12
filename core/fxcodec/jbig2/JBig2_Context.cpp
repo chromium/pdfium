@@ -331,7 +331,7 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
       pPageInfo->m_bIsStriped = !!(wTemp & 0x8000);
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
       bool bMaxHeight = (pPageInfo->m_dwHeight == 0xffffffff);
-      if (bMaxHeight && pPageInfo->m_bIsStriped != true)
+      if (bMaxHeight && !pPageInfo->m_bIsStriped)
         pPageInfo->m_bIsStriped = true;
 
       if (!m_bBufSpecified) {

@@ -728,7 +728,7 @@ bool CXFA_TextLayout::LoadRichText(
         bIsOl = true;
         bCurOl = true;
       }
-      if (m_bBlockContinue || bContentNode == false) {
+      if (m_bBlockContinue || !bContentNode) {
         eDisplay = pContext->GetDisplay();
         if (eDisplay != CFX_CSSDisplay::Block &&
             eDisplay != CFX_CSSDisplay::Inline &&

@@ -1035,7 +1035,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
       }
     }
 
-    if (iCurRepeatIndex == 0 && bAccessedDataDOM == false) {
+    if (iCurRepeatIndex == 0 && !bAccessedDataDOM) {
       int32_t iLimit = iMax;
       if (pInstMgrNode && pTemplateNode->GetNameHash() == 0) {
         iLimit = pdfium::CollectionSize<int32_t>(subformArray);

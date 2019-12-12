@@ -2361,7 +2361,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
     eRetValue = pProcessor->m_ePreProcessRs;
     pProcessor->m_ePreProcessRs = Result::kDone;
   }
-  if (pProcessor->HasLayoutItem() == false)
+  if (!pProcessor->HasLayoutItem())
     return eRetValue;
 
   CFX_SizeF childSize = pProcessor->GetCurrentComponentSize();

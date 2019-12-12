@@ -675,7 +675,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   int32_t nCountFmt = wsFormat.GetLength();
   while (n < nCount && (!bLimit || nf < nCountFmt) &&
          FXSYS_IsDecimalDigit(c = spNum[n])) {
-    if (bLimit == true) {
+    if (bLimit) {
       if ((cf = spFmt[nf]) == L'*')
         bLimit = false;
       else if (cf == L'z')
