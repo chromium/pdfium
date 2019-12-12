@@ -14,10 +14,10 @@ vars = {
 
   'android_ndk_revision': '89e8db0cdf323af8bc24de875d7d2a43a66bf10e',
   'binutils_revision': '01aa7745b0bab64ae22600f09fd6483c60f22ebf',
-  'build_revision': 'bd45ac1a3f5b11602dde8df28dd279532fe52700',
+  'build_revision': '4f02786eeacbf857df1397059572c11fa42bfed7',
   'buildtools_revision': '6b3e658d6fe8cd9c2588796d296f07312b776054',
   'catapult_revision': '32775164bd679fbe356576dd17469fb896abbadb',
-  'clang_revision': 'fdd60482099e4197bb82d06bfe82315ae2c4b665',
+  'clang_revision': '57e481c48de709b355cdb183420d930c60e07811',
   'code_coverage_revision': 'c7a868bacaccf4f52848e04564fb7de0671e0727',
   'depot_tools_revision': 'fe18a43d590a5eac0d58e7e555b024746ba290ad',
   'freetype_revision': '11d4ce23ac55a7d881bba5214c47922c05127242',
