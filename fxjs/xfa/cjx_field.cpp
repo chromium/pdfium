@@ -290,7 +290,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
     pValue->SetInteger(FXSYS_wtoi(content.c_str()));
   } else if (pNode && pNode->GetElementType() == XFA_Element::Boolean) {
-    pValue->SetBoolean(FXSYS_wtoi(content.c_str()) == 0 ? false : true);
+    pValue->SetBoolean(FXSYS_wtoi(content.c_str()) != 0);
   } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
     CFGAS_Decimal decimal(content.AsStringView());
     pValue->SetFloat(decimal.ToFloat());

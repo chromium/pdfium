@@ -22,7 +22,7 @@ bool CPDF_ViewerPreferences::IsDirectionR2L() const {
 
 bool CPDF_ViewerPreferences::PrintScaling() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetStringFor("PrintScaling") != "None" : true;
+  return !pDict || pDict->GetStringFor("PrintScaling") != "None";
 }
 
 int32_t CPDF_ViewerPreferences::NumCopies() const {
