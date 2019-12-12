@@ -230,5 +230,5 @@ FPDFPathSegment_GetType(FPDF_PATHSEGMENT segment) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPathSegment_GetClose(FPDF_PATHSEGMENT segment) {
   auto* pPathPoint = FXPathPointFromFPDFPathSegment(segment);
-  return pPathPoint ? pPathPoint->m_CloseFigure : false;
+  return pPathPoint && pPathPoint->m_CloseFigure;
 }

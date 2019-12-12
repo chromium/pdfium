@@ -247,11 +247,11 @@ bool CFWL_Edit::Paste(const WideString& wsPaste) {
 }
 
 bool CFWL_Edit::Undo() {
-  return CanUndo() ? m_pEditEngine->Undo() : false;
+  return CanUndo() && m_pEditEngine->Undo();
 }
 
 bool CFWL_Edit::Redo() {
-  return CanRedo() ? m_pEditEngine->Redo() : false;
+  return CanRedo() && m_pEditEngine->Redo();
 }
 
 bool CFWL_Edit::CanUndo() {

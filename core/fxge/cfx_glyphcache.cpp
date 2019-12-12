@@ -232,7 +232,7 @@ const CFX_PathData* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* pFont,
   const auto* pSubstFont = pFont->GetSubstFont();
   int weight = pSubstFont ? pSubstFont->m_Weight : 0;
   int angle = pSubstFont ? pSubstFont->m_ItalicAngle : 0;
-  bool vertical = pSubstFont ? pFont->IsVertical() : false;
+  bool vertical = pSubstFont && pFont->IsVertical();
   const PathMapKey key =
       std::make_tuple(glyph_index, dest_width, weight, angle, vertical);
   auto it = m_PathMap.find(key);

@@ -17,7 +17,7 @@ CPDF_ViewerPreferences::~CPDF_ViewerPreferences() = default;
 
 bool CPDF_ViewerPreferences::IsDirectionR2L() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetStringFor("Direction") == "R2L" : false;
+  return pDict && pDict->GetStringFor("Direction") == "R2L";
 }
 
 bool CPDF_ViewerPreferences::PrintScaling() const {

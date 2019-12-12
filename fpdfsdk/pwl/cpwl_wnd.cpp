@@ -622,17 +622,17 @@ bool CPWL_Wnd::IsCaptureMouse() const {
 
 bool CPWL_Wnd::IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
   CPWL_MsgControl* pCtrl = GetMsgControl();
-  return pCtrl ? pCtrl->IsWndCaptureMouse(pWnd) : false;
+  return pCtrl && pCtrl->IsWndCaptureMouse(pWnd);
 }
 
 bool CPWL_Wnd::IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
   CPWL_MsgControl* pCtrl = GetMsgControl();
-  return pCtrl ? pCtrl->IsWndCaptureKeyboard(pWnd) : false;
+  return pCtrl && pCtrl->IsWndCaptureKeyboard(pWnd);
 }
 
 bool CPWL_Wnd::IsFocused() const {
   CPWL_MsgControl* pCtrl = GetMsgControl();
-  return pCtrl ? pCtrl->IsMainCaptureKeyboard(this) : false;
+  return pCtrl && pCtrl->IsMainCaptureKeyboard(this);
 }
 
 CFX_FloatRect CPWL_Wnd::GetFocusRect() const {

@@ -2735,7 +2735,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
   pContext->SetNodesOfRunScript(nullptr);
   pContext->SetEventParam(nullptr);
 
-  return {iRet, pTmpRetValue->IsBoolean() ? pTmpRetValue->ToBoolean() : false};
+  return {iRet, pTmpRetValue->IsBoolean() && pTmpRetValue->ToBoolean()};
 }
 
 std::pair<XFA_FFWidgetType, CXFA_Ui*>

@@ -2352,7 +2352,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   Result eRetValue = Result::kDone;
   if (!bNewRow || pProcessor->m_ePreProcessRs == Result::kDone) {
     eRetValue = pProcessor->DoLayoutInternal(
-        bTakeSpace ? bUseBreakControl : false,
+        bTakeSpace && bUseBreakControl,
         bUseRealHeight ? fRealHeight - *fContentCurRowY : FLT_MAX,
         bIsTransHeight ? fRealHeight - *fContentCurRowY : FLT_MAX,
         pLayoutContext);

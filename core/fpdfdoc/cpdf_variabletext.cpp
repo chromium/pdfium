@@ -893,7 +893,7 @@ int32_t CPDF_VariableText::GetDefaultFontIndex() {
 }
 
 bool CPDF_VariableText::IsLatinWord(uint16_t word) {
-  return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : false;
+  return m_pVTProvider && m_pVTProvider->IsLatinWord(word);
 }
 
 CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
