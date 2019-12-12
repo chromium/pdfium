@@ -147,7 +147,8 @@ void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
 
   int j = 0;
   for (int i = 0; i < kRC4ContextPermutationLength; ++i) {
-    j = (j + context->m[i] + (key.size() ? key[i % key.size()] : 0)) & 0xFF;
+    size_t size = key.size();
+    j = (j + context->m[i] + (size ? key[i % size] : 0)) & 0xFF;
     std::swap(context->m[i], context->m[j]);
   }
 }
