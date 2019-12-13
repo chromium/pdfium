@@ -45,6 +45,7 @@ CFWL_Widget::CFWL_Widget(const CFWL_App* app,
 }
 
 CFWL_Widget::~CFWL_Widget() {
+  CHECK(!IsLocked());  // Prefer hard stop to UaF.
   NotifyDriver();
   m_pWidgetMgr->RemoveWidget(this);
 }
