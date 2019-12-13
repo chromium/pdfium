@@ -319,7 +319,9 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
     pDestMask->Clear(0xff000000);
   } else if (pDestMask) {
     CalcData cdata = {
-        pDestMask.Get(), result2stretch, pSrcMaskBuf,
+        pDestMask.Get(),
+        result2stretch,
+        pSrcMaskBuf,
         m_Storer.GetBitmap()->m_pAlphaMask->GetPitch(),
     };
     CalcMask(cdata);

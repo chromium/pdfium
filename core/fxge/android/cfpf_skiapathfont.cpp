@@ -6,7 +6,6 @@
 
 #include "core/fxge/android/cfpf_skiapathfont.h"
 
-
 CFPF_SkiaPathFont::CFPF_SkiaPathFont(const ByteString& path,
                                      const char* pFamily,
                                      uint32_t dwStyle,

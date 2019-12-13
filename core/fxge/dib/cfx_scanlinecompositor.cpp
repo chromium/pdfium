@@ -78,13 +78,11 @@ int Blend(BlendMode blend_mode, int back_color, int src_color) {
       return Blend(BlendMode::kScreen, back_color, 2 * src_color - 255);
     case BlendMode::kSoftLight: {
       if (src_color < 128) {
-        return back_color -
-               (255 - 2 * src_color) * back_color * (255 - back_color) / 255 /
-                   255;
+        return back_color - (255 - 2 * src_color) * back_color *
+                                (255 - back_color) / 255 / 255;
       }
-      return back_color +
-             (2 * src_color - 255) * (color_sqrt[back_color] - back_color) /
-                 255;
+      return back_color + (2 * src_color - 255) *
+                              (color_sqrt[back_color] - back_color) / 255;
     }
     case BlendMode::kDifference:
       return back_color < src_color ? src_color - back_color

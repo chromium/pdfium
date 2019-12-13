@@ -21,7 +21,8 @@ constexpr uint32_t MakeTag(char c1, char c2, char c3, char c4) {
 
 bool IsVerticalFeatureTag(uint32_t tag) {
   static constexpr uint32_t kTags[] = {
-      MakeTag('v', 'r', 't', '2'), MakeTag('v', 'e', 'r', 't'),
+      MakeTag('v', 'r', 't', '2'),
+      MakeTag('v', 'e', 'r', 't'),
   };
   return tag == kTags[0] || tag == kTags[1];
 }

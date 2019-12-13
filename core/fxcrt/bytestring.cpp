@@ -126,7 +126,7 @@ ByteString::ByteString(const uint8_t* pStr, size_t nLen) {
         StringData::Create(reinterpret_cast<const char*>(pStr), nLen));
 }
 
-ByteString::ByteString() {}
+ByteString::ByteString() = default;
 
 ByteString::ByteString(const ByteString& other) : m_pData(other.m_pData) {}
 
@@ -143,9 +143,10 @@ ByteString::ByteString(const char* ptr)
     : ByteString(ptr, ptr ? strlen(ptr) : 0) {}
 
 ByteString::ByteString(ByteStringView bstrc) {
-  if (!bstrc.IsEmpty())
-    m_pData.Reset(StringData::Create(bstrc.unterminated_c_str(),
-                                     bstrc.GetLength()));
+  if (!bstrc.IsEmpty()) {
+    m_pData.Reset(
+        StringData::Create(bstrc.unterminated_c_str(), bstrc.GetLength()));
+  }
 }
 
 ByteString::ByteString(ByteStringView str1, ByteStringView str2) {

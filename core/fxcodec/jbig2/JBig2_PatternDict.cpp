@@ -6,7 +6,6 @@
 
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
 
-
 CJBig2_PatternDict::CJBig2_PatternDict(uint32_t dict_size)
     : NUMPATS(dict_size), HDPATS(dict_size) {}
 

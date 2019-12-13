@@ -144,7 +144,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
   return wcsftime(strDest, maxsize, format, timeptr);
 }
 
-#else  // defined(OS_WIN)
+#else   // defined(OS_WIN)
 
 int FXSYS_GetACP() {
   return 0;

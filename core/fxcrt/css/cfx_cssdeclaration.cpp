@@ -182,8 +182,10 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
   switch (dwType & 0x0F) {
     case CFX_CSSVALUETYPE_Primitive: {
       static constexpr CFX_CSSVALUETYPE kValueGuessOrder[] = {
-          CFX_CSSVALUETYPE_MaybeNumber, CFX_CSSVALUETYPE_MaybeEnum,
-          CFX_CSSVALUETYPE_MaybeColor, CFX_CSSVALUETYPE_MaybeString,
+          CFX_CSSVALUETYPE_MaybeNumber,
+          CFX_CSSVALUETYPE_MaybeEnum,
+          CFX_CSSVALUETYPE_MaybeColor,
+          CFX_CSSVALUETYPE_MaybeString,
       };
       for (uint32_t guess : kValueGuessOrder) {
         const uint32_t dwMatch = dwType & guess;
