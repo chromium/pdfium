@@ -47,8 +47,7 @@ CBC_QRCoderVersion::CBC_QRCoderVersion(int32_t versionNumber,
   m_totalCodeWords = m_ecBlocksArray[0]->GetTotalDataCodeWords();
 }
 
-CBC_QRCoderVersion::~CBC_QRCoderVersion() {
-}
+CBC_QRCoderVersion::~CBC_QRCoderVersion() = default;
 
 // static
 void CBC_QRCoderVersion::Initialize() {

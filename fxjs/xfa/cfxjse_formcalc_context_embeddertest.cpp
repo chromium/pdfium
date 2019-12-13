@@ -1517,7 +1517,10 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, InvalidFunctions) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const char* const tests[] = {
-      "F()", "()", "()()()", "Round(2.0)()",
+      "F()",
+      "()",
+      "()()()",
+      "Round(2.0)()",
   };
 
   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {

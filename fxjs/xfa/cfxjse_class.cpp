@@ -17,8 +17,8 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 
-using pdfium::fxjse::kFuncTag;
 using pdfium::fxjse::kClassTag;
+using pdfium::fxjse::kFuncTag;
 
 namespace {
 

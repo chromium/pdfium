@@ -293,51 +293,51 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
   ASSERT(type != CPDF_AAction::kCalculate);
   ASSERT(type != CPDF_AAction::kFormat);
 
-  RunScript(
-      pFormFillEnv, script,
-      [type, data, pFormField](IJS_EventContext* context) {
-        switch (type) {
-          case CPDF_AAction::kCursorEnter:
-            context->OnField_MouseEnter(data->bModifier, data->bShift,
-                                        pFormField);
-            break;
-          case CPDF_AAction::kCursorExit:
-            context->OnField_MouseExit(data->bModifier, data->bShift,
-                                       pFormField);
-            break;
-          case CPDF_AAction::kButtonDown:
-            context->OnField_MouseDown(data->bModifier, data->bShift,
-                                       pFormField);
-            break;
-          case CPDF_AAction::kButtonUp:
-            context->OnField_MouseUp(data->bModifier, data->bShift, pFormField);
-            break;
-          case CPDF_AAction::kGetFocus:
-            context->OnField_Focus(data->bModifier, data->bShift, pFormField,
-                                   &data->sValue);
-            break;
-          case CPDF_AAction::kLoseFocus:
-            context->OnField_Blur(data->bModifier, data->bShift, pFormField,
-                                  &data->sValue);
-            break;
-          case CPDF_AAction::kKeyStroke:
-            context->OnField_Keystroke(
-                &data->sChange, data->sChangeEx, data->bKeyDown,
-                data->bModifier, &data->nSelEnd, &data->nSelStart, data->bShift,
-                pFormField, &data->sValue, data->bWillCommit, data->bFieldFull,
-                &data->bRC);
-            break;
-          case CPDF_AAction::kValidate:
-            context->OnField_Validate(&data->sChange, data->sChangeEx,
-                                      data->bKeyDown, data->bModifier,
-                                      data->bShift, pFormField, &data->sValue,
-                                      &data->bRC);
-            break;
-          default:
-            NOTREACHED();
-            break;
-        }
-      });
+  RunScript(pFormFillEnv, script,
+            [type, data, pFormField](IJS_EventContext* context) {
+              switch (type) {
+                case CPDF_AAction::kCursorEnter:
+                  context->OnField_MouseEnter(data->bModifier, data->bShift,
+                                              pFormField);
+                  break;
+                case CPDF_AAction::kCursorExit:
+                  context->OnField_MouseExit(data->bModifier, data->bShift,
+                                             pFormField);
+                  break;
+                case CPDF_AAction::kButtonDown:
+                  context->OnField_MouseDown(data->bModifier, data->bShift,
+                                             pFormField);
+                  break;
+                case CPDF_AAction::kButtonUp:
+                  context->OnField_MouseUp(data->bModifier, data->bShift,
+                                           pFormField);
+                  break;
+                case CPDF_AAction::kGetFocus:
+                  context->OnField_Focus(data->bModifier, data->bShift,
+                                         pFormField, &data->sValue);
+                  break;
+                case CPDF_AAction::kLoseFocus:
+                  context->OnField_Blur(data->bModifier, data->bShift,
+                                        pFormField, &data->sValue);
+                  break;
+                case CPDF_AAction::kKeyStroke:
+                  context->OnField_Keystroke(
+                      &data->sChange, data->sChangeEx, data->bKeyDown,
+                      data->bModifier, &data->nSelEnd, &data->nSelStart,
+                      data->bShift, pFormField, &data->sValue,
+                      data->bWillCommit, data->bFieldFull, &data->bRC);
+                  break;
+                case CPDF_AAction::kValidate:
+                  context->OnField_Validate(&data->sChange, data->sChangeEx,
+                                            data->bKeyDown, data->bModifier,
+                                            data->bShift, pFormField,
+                                            &data->sValue, &data->bRC);
+                  break;
+                default:
+                  NOTREACHED();
+                  break;
+              }
+            });
 }
 
 void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(

@@ -50,7 +50,6 @@ class CJS_Util final : public CJS_Object {
   static const char kName[];
   static const JSMethodSpec MethodSpecs[];
 
-
   CJS_Result printd(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
   CJS_Result printf(CJS_Runtime* pRuntime,

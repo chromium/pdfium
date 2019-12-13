@@ -1550,4 +1550,3 @@ void CJX_Object::ScriptSomInstanceIndex(CFXJSE_Value* pValue,
 void CJX_Object::ScriptSubmitFormatMode(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {}
-

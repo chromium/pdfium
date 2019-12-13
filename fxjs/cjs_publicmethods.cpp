@@ -343,7 +343,6 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
   return StrArray;
 }
 
-
 double CJS_PublicMethods::ParseDate(const WideString& value,
                                     bool* bWrongFormat) {
   double dt = FX_GetDateTime();

@@ -40,28 +40,30 @@ TEST_F(FXJSEngineUnitTest, GC) {
   v8::HandleScope handle_scope(isolate());
 
   // Object: 0
-  engine()->DefineObj("perm", FXJSOBJTYPE_DYNAMIC,
-                      [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-                        pEngine->SetObjectPrivate(
-                            obj, pdfium::MakeUnique<CJS_Object>(obj, nullptr));
-                        perm_created = true;
-                      },
-                      [](v8::Local<v8::Object> obj) {
-                        perm_destroyed = true;
-                        CFXJS_Engine::SetObjectPrivate(obj, nullptr);
-                      });
+  engine()->DefineObj(
+      "perm", FXJSOBJTYPE_DYNAMIC,
+      [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+        pEngine->SetObjectPrivate(obj,
+                                  pdfium::MakeUnique<CJS_Object>(obj, nullptr));
+        perm_created = true;
+      },
+      [](v8::Local<v8::Object> obj) {
+        perm_destroyed = true;
+        CFXJS_Engine::SetObjectPrivate(obj, nullptr);
+      });
 
   // Object: 1
-  engine()->DefineObj("temp", FXJSOBJTYPE_DYNAMIC,
-                      [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-                        pEngine->SetObjectPrivate(
-                            obj, pdfium::MakeUnique<CJS_Object>(obj, nullptr));
-                        temp_created = true;
-                      },
-                      [](v8::Local<v8::Object> obj) {
-                        temp_destroyed = true;
-                        CFXJS_Engine::SetObjectPrivate(obj, nullptr);
-                      });
+  engine()->DefineObj(
+      "temp", FXJSOBJTYPE_DYNAMIC,
+      [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+        pEngine->SetObjectPrivate(obj,
+                                  pdfium::MakeUnique<CJS_Object>(obj, nullptr));
+        temp_created = true;
+      },
+      [](v8::Local<v8::Object> obj) {
+        temp_destroyed = true;
+        CFXJS_Engine::SetObjectPrivate(obj, nullptr);
+      });
 
   engine()->InitializeEngine();
 

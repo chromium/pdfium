@@ -27,7 +27,6 @@ CPWL_EditCtrl::CPWL_EditCtrl(
 
 CPWL_EditCtrl::~CPWL_EditCtrl() = default;
 
-
 void CPWL_EditCtrl::OnCreated() {
   SetFontSize(GetCreationParams()->fFontSize);
   m_pEdit->SetFontMap(GetFontMap());

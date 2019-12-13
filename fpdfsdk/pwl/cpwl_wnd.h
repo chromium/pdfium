@@ -112,24 +112,24 @@ class CPWL_Wnd : public Observable {
     CreateParams(const CreateParams& other);
     ~CreateParams();
 
-    CFX_FloatRect rcRectWnd;                          // required
-    UnownedPtr<TimerHandlerIface> pTimerHandler;      // required
-    UnownedPtr<IPWL_SystemHandler> pSystemHandler;    // required
-    UnownedPtr<IPVT_FontMap> pFontMap;                // required
-    ObservedPtr<ProviderIface> pProvider;             // required
-    UnownedPtr<FocusHandlerIface> pFocusHandler;      // optional
-    uint32_t dwFlags = 0;                             // optional
-    CFX_Color sBackgroundColor;                       // optional
-    BorderStyle nBorderStyle = BorderStyle::SOLID;    // optional
-    int32_t dwBorderWidth = 1;                        // optional
-    CFX_Color sBorderColor;                           // optional
-    CFX_Color sTextColor;                             // optional
-    int32_t nTransparency = 255;                      // optional
-    float fFontSize;                                  // optional
-    CPWL_Dash sDash;                                  // optional
-    CPWL_MsgControl* pMsgControl = nullptr;           // ignore
-    int32_t eCursorType = FXCT_ARROW;                 // ignore
-    CFX_Matrix mtChild;                               // ignore
+    CFX_FloatRect rcRectWnd;                        // required
+    UnownedPtr<TimerHandlerIface> pTimerHandler;    // required
+    UnownedPtr<IPWL_SystemHandler> pSystemHandler;  // required
+    UnownedPtr<IPVT_FontMap> pFontMap;              // required
+    ObservedPtr<ProviderIface> pProvider;           // required
+    UnownedPtr<FocusHandlerIface> pFocusHandler;    // optional
+    uint32_t dwFlags = 0;                           // optional
+    CFX_Color sBackgroundColor;                     // optional
+    BorderStyle nBorderStyle = BorderStyle::SOLID;  // optional
+    int32_t dwBorderWidth = 1;                      // optional
+    CFX_Color sBorderColor;                         // optional
+    CFX_Color sTextColor;                           // optional
+    int32_t nTransparency = 255;                    // optional
+    float fFontSize;                                // optional
+    CPWL_Dash sDash;                                // optional
+    CPWL_MsgControl* pMsgControl = nullptr;         // ignore
+    int32_t eCursorType = FXCT_ARROW;               // ignore
+    CFX_Matrix mtChild;                             // ignore
   };
 
   static bool IsSHIFTKeyDown(uint32_t nFlag);

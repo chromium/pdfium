@@ -20,10 +20,11 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
+
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
-#include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 
 namespace {
 

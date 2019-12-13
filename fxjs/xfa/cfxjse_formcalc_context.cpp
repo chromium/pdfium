@@ -33,8 +33,8 @@
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-using pdfium::fxjse::kFuncTag;
 using pdfium::fxjse::kClassTag;
+using pdfium::fxjse::kFuncTag;
 
 namespace {
 
