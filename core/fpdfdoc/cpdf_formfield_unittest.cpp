@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fpdfdoc/cpdf_formfield.h"
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
-#include "core/fpdfdoc/cpdf_formfield.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(cpdf_formfield, FPDF_GetFullName) {

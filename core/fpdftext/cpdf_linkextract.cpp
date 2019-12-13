@@ -203,8 +203,8 @@ bool CPDF_LinkExtract::CheckWebLink(WideString* strBeCheck,
   auto start = str.Find(kHttpScheme);
   if (start.has_value()) {
     size_t off = start.value() + kHttpSchemeLen;  // move after "http".
-    if (len > off + 4) {                      // At least "://<char>" follows.
-      if (str[off] == L's')                   // "https" scheme is accepted.
+    if (len > off + 4) {     // At least "://<char>" follows.
+      if (str[off] == L's')  // "https" scheme is accepted.
         off++;
       if (str[off] == L':' && str[off + 1] == L'/' && str[off + 2] == L'/') {
         off += 3;

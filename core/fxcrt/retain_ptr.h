@@ -141,8 +141,8 @@ inline bool operator!=(const U* lhs, const RetainPtr<T>& rhs) {
 }  // namespace fxcrt
 
 using fxcrt::ReleaseDeleter;
-using fxcrt::RetainPtr;
 using fxcrt::Retainable;
+using fxcrt::RetainPtr;
 
 namespace pdfium {
 

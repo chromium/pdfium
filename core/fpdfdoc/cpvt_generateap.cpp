@@ -499,8 +499,10 @@ RetainPtr<CPDF_Dictionary> GenerateResourceDict(
     RetainPtr<CPDF_Dictionary> pExtGStateDict,
     RetainPtr<CPDF_Dictionary> pResourceFontDict) {
   auto pResourceDict = pDoc->New<CPDF_Dictionary>();
-  if (pExtGStateDict) pResourceDict->SetFor("ExtGState", pExtGStateDict);
-  if (pResourceFontDict) pResourceDict->SetFor("Font", pResourceFontDict);
+  if (pExtGStateDict)
+    pResourceDict->SetFor("ExtGState", pExtGStateDict);
+  if (pResourceFontDict)
+    pResourceDict->SetFor("Font", pResourceFontDict);
   return pResourceDict;
 }
 

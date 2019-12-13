@@ -225,9 +225,7 @@ void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]) {
   PUT_UINT32(context->state[3], digest, 12);
 }
 
-void CRYPT_MD5Generate(const uint8_t* data,
-                       uint32_t size,
-                       uint8_t digest[16]) {
+void CRYPT_MD5Generate(const uint8_t* data, uint32_t size, uint8_t digest[16]) {
   CRYPT_md5_context ctx;
   CRYPT_MD5Start(&ctx);
   CRYPT_MD5Update(&ctx, data, size);

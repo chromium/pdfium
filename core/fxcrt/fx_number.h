@@ -22,7 +22,7 @@ class FX_Number {
   bool IsInteger() const { return m_bInteger; }
   bool IsSigned() const { return m_bSigned; }
 
-  int32_t GetSigned() const;     // Underflow/Overflow possible.
+  int32_t GetSigned() const;  // Underflow/Overflow possible.
   float GetFloat() const;
 
  private:

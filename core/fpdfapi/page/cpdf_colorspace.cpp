@@ -255,7 +255,6 @@ class CPDF_IndexedCS final : public CPDF_ColorSpace {
                   const CPDF_Array* pArray,
                   std::set<const CPDF_Object*>* pVisited) override;
 
-
  private:
   explicit CPDF_IndexedCS(CPDF_Document* pDoc);
 

@@ -29,8 +29,9 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
       m_MaskColor(mask_color),
       m_bRgbByteOrder(bRgbByteOrder) {
   FX_RECT image_rect = m_Matrix.GetUnitRect().GetOuterRect();
-  m_ClipBox = pClipRgn ? pClipRgn->GetBox() : FX_RECT(0, 0, pDevice->GetWidth(),
-                                                      pDevice->GetHeight());
+  m_ClipBox = pClipRgn
+                  ? pClipRgn->GetBox()
+                  : FX_RECT(0, 0, pDevice->GetWidth(), pDevice->GetHeight());
   m_ClipBox.Intersect(image_rect);
   if (m_ClipBox.IsEmpty())
     return;

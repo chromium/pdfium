@@ -34,11 +34,15 @@ const char* const g_LinuxJpFontList[][JpFontFamily::kCount] = {
 };
 
 const char* const g_LinuxGbFontList[] = {
-    "AR PL UMing CN Light", "WenQuanYi Micro Hei", "AR PL UKai CN",
+    "AR PL UMing CN Light",
+    "WenQuanYi Micro Hei",
+    "AR PL UKai CN",
 };
 
 const char* const g_LinuxB5FontList[] = {
-    "AR PL UMing TW Light", "WenQuanYi Micro Hei", "AR PL UKai TW",
+    "AR PL UMing TW Light",
+    "WenQuanYi Micro Hei",
+    "AR PL UKai TW",
 };
 
 const char* const g_LinuxHGFontList[] = {

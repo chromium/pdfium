@@ -230,7 +230,7 @@ void CJBig2_Image::SubImageSlow(int32_t x,
     const uint8_t* pSrc = pLineSrc + m;
     const uint8_t* pSrcEnd = pLineSrc + m_nStride;
     uint8_t* pDstEnd = pLineDst + bytes_to_copy;
-    for (uint8_t *pDst = pLineDst; pDst < pDstEnd; pSrc += 4, pDst += 4) {
+    for (uint8_t* pDst = pLineDst; pDst < pDstEnd; pSrc += 4, pDst += 4) {
       uint32_t wTmp = JBIG2_GETDWORD(pSrc) << n;
       if (pSrc + 4 < pSrcEnd)
         wTmp |= (JBIG2_GETDWORD(pSrc + 4) >> (32 - n));

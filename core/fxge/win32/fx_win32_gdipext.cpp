@@ -22,8 +22,8 @@
 
 // Has to come before gdiplus.h
 namespace Gdiplus {
-using std::min;
 using std::max;
+using std::min;
 }  // namespace Gdiplus
 
 #include <gdiplus.h>  // NOLINT
