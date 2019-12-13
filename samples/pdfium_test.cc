@@ -135,6 +135,7 @@ struct Options {
   bool linux_no_system_fonts = false;
 #endif
   OutputFormat output_format = OUTPUT_NONE;
+  std::string password;
   std::string scale_factor_as_string;
   std::string exe_path;
   std::string bin_directory;
@@ -536,6 +537,13 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
+    } else if (cur_arg.size() > 11 &&
+               cur_arg.compare(0, 11, "--password=") == 0) {
+      if (!options->password.empty()) {
+        fprintf(stderr, "Duplicate --password argument\n");
+        return false;
+      }
+      options->password = cur_arg.substr(11);
     } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--scale=") == 0) {
       if (!options->scale_factor_as_string.empty()) {
         fprintf(stderr, "Duplicate --scale argument\n");
@@ -821,13 +829,15 @@ void RenderPdf(const std::string& name,
   // |doc| must outlive |form_callbacks.loaded_pages|.
   ScopedFPDFDocument doc;
 
+  const char* password =
+      options.password.empty() ? nullptr : options.password.c_str();
   bool is_linearized = false;
   if (options.use_load_mem_document) {
-    doc.reset(FPDF_LoadMemDocument(buf, len, nullptr));
+    doc.reset(FPDF_LoadMemDocument(buf, len, password));
   } else {
     if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
       int avail_status = PDF_DATA_NOTAVAIL;
-      doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
+      doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), password));
       if (doc) {
         while (avail_status == PDF_DATA_NOTAVAIL)
           avail_status = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
@@ -847,7 +857,7 @@ void RenderPdf(const std::string& name,
         is_linearized = true;
       }
     } else {
-      doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
+      doc.reset(FPDF_LoadCustomDocument(&file_access, password));
     }
   }
 
