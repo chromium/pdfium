@@ -56,27 +56,6 @@ constexpr size_t kFormFieldTypeCount = 16;
 constexpr size_t kFormFieldTypeCount = 8;
 #endif  // PDF_ENABLE_XFA
 
-constexpr FormFieldType kFormFieldTypes[kFormFieldTypeCount] = {
-    FormFieldType::kUnknown,
-    FormFieldType::kPushButton,
-    FormFieldType::kCheckBox,
-    FormFieldType::kRadioButton,
-    FormFieldType::kComboBox,
-    FormFieldType::kListBox,
-    FormFieldType::kTextField,
-    FormFieldType::kSignature,
-#ifdef PDF_ENABLE_XFA
-    FormFieldType::kXFA,
-    FormFieldType::kXFA_CheckBox,
-    FormFieldType::kXFA_ComboBox,
-    FormFieldType::kXFA_ImageField,
-    FormFieldType::kXFA_ListBox,
-    FormFieldType::kXFA_PushButton,
-    FormFieldType::kXFA_Signature,
-    FormFieldType::kXFA_TextField
-#endif  // PDF_ENABLE_XFA
-};
-
 const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                      const char* name);
 CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict, const char* name);

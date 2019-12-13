@@ -612,9 +612,9 @@ void CPDFSDK_InteractiveForm::SetHighlightColor(FX_COLORREF clr,
 }
 
 void CPDFSDK_InteractiveForm::SetAllHighlightColors(FX_COLORREF clr) {
-  for (auto type : kFormFieldTypes) {
-    m_HighlightColor[static_cast<size_t>(type)] = clr;
-    m_NeedsHighlight[static_cast<size_t>(type)] = true;
+  for (size_t i = 0; i < kFormFieldTypeCount; ++i) {
+    m_HighlightColor[i] = clr;
+    m_NeedsHighlight[i] = true;
   }
 }
 
