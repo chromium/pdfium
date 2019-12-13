@@ -21,16 +21,17 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/win32_int.h"
+#include "third_party/base/span.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 namespace {
 
 class ScopedState {
  public:
-  ScopedState(HDC hDC, HFONT hFont) : m_hDC(hDC) {
-    m_iState = SaveDC(m_hDC);
-    m_hFont = SelectObject(m_hDC, hFont);
-  }
+  ScopedState(HDC hDC, HFONT hFont)
+      : m_hDC(hDC),
+        m_iState(SaveDC(m_hDC)),
+        m_hFont(SelectObject(m_hDC, hFont)) {}
 
   ScopedState(const ScopedState&) = delete;
   ScopedState& operator=(const ScopedState&) = delete;
@@ -42,9 +43,9 @@ class ScopedState {
   }
 
  private:
-  HDC m_hDC;
-  HGDIOBJ m_hFont;
-  int m_iState;
+  const HDC m_hDC;
+  const int m_iState;
+  const HGDIOBJ m_hFont;
 };
 
 }  // namespace
@@ -360,13 +361,12 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   m_PSRenderer.Init(pdfium::MakeRetain<CPSOutput>(m_hDC, output_mode), pslevel,
                     m_Width, m_Height, bCmykOutput);
   HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
-  int ret = ::GetClipRgn(hDC, hRgn);
-  if (ret == 1) {
-    ret = ::GetRegionData(hRgn, 0, nullptr);
-    if (ret) {
-      RGNDATA* pData = reinterpret_cast<RGNDATA*>(FX_Alloc(uint8_t, ret));
-      ret = ::GetRegionData(hRgn, ret, pData);
-      if (ret) {
+  if (::GetClipRgn(m_hDC, hRgn) == 1) {
+    DWORD dwCount = ::GetRegionData(hRgn, 0, nullptr);
+    if (dwCount) {
+      std::vector<uint8_t> buffer(dwCount);
+      RGNDATA* pData = reinterpret_cast<RGNDATA*>(buffer.data());
+      if (::GetRegionData(hRgn, dwCount, pData)) {
         CFX_PathData path;
         for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
           RECT* pRect =
@@ -378,7 +378,6 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
         }
         m_PSRenderer.SetClip_PathFill(&path, nullptr, FXFILL_WINDING);
       }
-      FX_Free(pData);
     }
   }
   ::DeleteObject(hRgn);
@@ -450,9 +449,8 @@ bool CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                 FX_ARGB stroke_color,
                                 int fill_mode,
                                 BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal) {
+  if (blend_type != BlendMode::kNormal)
     return false;
-  }
   return m_PSRenderer.DrawPath(pPathData, pObject2Device, pGraphState,
                                fill_color, stroke_color, fill_mode & 3);
 }
@@ -633,18 +631,18 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
   // errors below. Value chosen based on the title of https://crbug.com/18383
   const double kScaleFactor = 10;
 
-  WideString wsText;
-  int totalLength = nChars;
-
   // Detect new lines and add clrf characters (since this is Windows only).
   // These characters are removed by SkPDF, but the new line information is
   // preserved in the text location. clrf characters seem to be ignored by
   // label printers that use this driver.
+  WideString wsText;
+  size_t len = nChars;
   float fOffsetY = mtObject2Device.f * kScaleFactor;
   if (m_SetOrigin && FXSYS_roundf(m_OriginY) != FXSYS_roundf(fOffsetY)) {
     wsText += L"\r\n";
-    totalLength += 2;
+    len += 2;
   }
+  wsText.Reserve(len);
   m_OriginY = fOffsetY;
   m_SetOrigin = true;
 
@@ -661,16 +659,15 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
 
     wsText += charpos.m_Unicode;
   }
-  size_t len = totalLength;
   ByteString text = wsText.ToDefANSI();
-  while (len > 0) {
-    char buffer[1026];
-    size_t send_len = std::min(len, static_cast<size_t>(1024));
-    *(reinterpret_cast<uint16_t*>(buffer)) = send_len;
-    memcpy(buffer + 2, text.c_str(), send_len);
-    ::GdiComment(m_hDC, send_len + 2, reinterpret_cast<const BYTE*>(buffer));
-    len -= send_len;
-    text.Right(len);
+  auto text_span = text.span();
+  while (!text_span.empty()) {
+    uint8_t buffer[1026];
+    size_t send_len = std::min<size_t>(text_span.size(), 1024);
+    *(reinterpret_cast<uint16_t*>(buffer)) = static_cast<uint16_t>(send_len);
+    memcpy(buffer + 2, text_span.data(), send_len);
+    ::GdiComment(m_hDC, send_len + 2, buffer);
+    text_span = text_span.subspan(send_len);
   }
   return true;
 }

@@ -24,7 +24,7 @@ class CPSOutput final : public IFX_RetainableWriteStream {
   bool WriteString(ByteStringView str) override;
 
  private:
-  HDC m_hDC;
+  const HDC m_hDC;
   const OutputMode m_mode;
 };
 
