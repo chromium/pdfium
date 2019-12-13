@@ -18,7 +18,7 @@
 
 namespace {
 
-const int kMaxDestValue = 16711680;
+constexpr int kMaxDestValue = 16711680;
 
 int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
   return (bits_per_pixel + 31) / 32 * 4;
@@ -26,12 +26,9 @@ int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
 
 }  // namespace
 
-CStretchEngine::CWeightTable::CWeightTable()
-    : m_DestMin(0),
-      m_ItemSize(0),
-      m_dwWeightTablesSize(0) {}
+CStretchEngine::CWeightTable::CWeightTable() = default;
 
-CStretchEngine::CWeightTable::~CWeightTable() {}
+CStretchEngine::CWeightTable::~CWeightTable() = default;
 
 size_t CStretchEngine::CWeightTable::GetPixelWeightSize() const {
   return m_ItemSize / sizeof(int) - 2;

@@ -58,10 +58,10 @@ class CStretchEngine {
     size_t GetPixelWeightSize() const;
 
    private:
-    int m_DestMin;
-    int m_ItemSize;
+    int m_DestMin = 0;
+    int m_ItemSize = 0;
+    size_t m_dwWeightTablesSize = 0;
     std::vector<uint8_t> m_WeightTables;
-    size_t m_dwWeightTablesSize;
   };
 
   enum class State : uint8_t { kInitial, kHorizontal, kVertical };

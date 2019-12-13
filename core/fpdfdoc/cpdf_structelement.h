@@ -20,17 +20,18 @@ class CPDF_StructTree;
 
 class CPDF_StructKid {
  public:
+  enum Type { kInvalid, kElement, kPageContent, kStreamContent, kObject };
+
   CPDF_StructKid();
   CPDF_StructKid(const CPDF_StructKid& that);
   ~CPDF_StructKid();
 
-  enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
-
+  Type m_Type = kInvalid;
+  uint32_t m_PageObjNum = 0;  // For {PageContent, StreamContent, Object} types.
+  uint32_t m_RefObjNum = 0;   // For {StreamContent, Object} types.
+  uint32_t m_ContentId = 0;   // For {PageContent, StreamContent} types.
   RetainPtr<CPDF_StructElement> m_pElement;  // For Element.
   RetainPtr<const CPDF_Dictionary> m_pDict;  // For Element.
-  uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
-  uint32_t m_RefObjNum;   // For StreamContent, Object.
-  uint32_t m_ContentId;   // For PageContent, StreamContent.
 };
 
 class CPDF_StructElement final : public Retainable {
