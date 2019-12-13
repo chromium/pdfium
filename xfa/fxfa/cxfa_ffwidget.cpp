@@ -242,6 +242,10 @@ const CFWL_App* CXFA_FFWidget::GetFWLApp() {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
 }
 
+CXFA_FFWidget* CXFA_FFWidget::GetNextFFWidget() const {
+  return GetFFWidget(GetLayoutItem()->GetNext());
+}
+
 const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
   if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_RectCached))
     RecacheWidgetRect();

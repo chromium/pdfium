@@ -73,7 +73,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
-  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded())
       ToDropDown(pWidget)->InsertItem(wsLabel, iIndex);
   }
@@ -85,7 +85,7 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
-  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded())
       ToDropDown(pWidget)->DeleteItem(iIndex);
   }
@@ -341,7 +341,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
-  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded())
       pWidget->InvalidateRect();
   }
@@ -400,7 +400,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
   }
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pWidgetNode);
-  for (; pWidget; pWidget = pWidgetNode->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (!pWidget->IsLoaded())
       continue;
 

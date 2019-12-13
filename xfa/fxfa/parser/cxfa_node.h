@@ -284,8 +284,6 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
                                               bool bIsFormReady);
 
   void ResetData();
-
-  CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
   void StartWidgetLayout(CXFA_FFDoc* doc,
                          float* pCalcWidth,
                          float* pCalcHeight);

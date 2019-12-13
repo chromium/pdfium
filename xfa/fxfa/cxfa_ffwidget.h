@@ -137,6 +137,7 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   CXFA_FFDocView* GetDocView() const { return m_pDocView.Get(); }
   void SetDocView(CXFA_FFDocView* pDocView) { m_pDocView = pDocView; }
 
+  CXFA_FFWidget* GetNextFFWidget() const;
   const CFX_RectF& GetWidgetRect() const;
   const CFX_RectF& RecacheWidgetRect() const;
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);

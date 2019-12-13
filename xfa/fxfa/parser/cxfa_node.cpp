@@ -3070,14 +3070,10 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
   pElement->SetAttribute(L"href", wsHref);
 }
 
-CXFA_FFWidget* CXFA_Node::GetNextWidget(CXFA_FFWidget* pWidget) {
-  return GetFFWidget(pWidget->GetLayoutItem()->GetNext());
-}
-
 void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* pDocView,
                                 CXFA_FFWidget* pExcept) {
   CXFA_FFWidget* pWidget = pDocView->GetWidgetForNode(this);
-  for (; pWidget; pWidget = GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
         (GetFFWidgetType() != XFA_FFWidgetType::kCheckButton &&
          pWidget->IsFocused())) {
