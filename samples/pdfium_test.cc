@@ -373,6 +373,17 @@ void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
   printf("Unsupported feature: %s.\n", feature.c_str());
 }
 
+// |arg| is expected to be "--key=value", and |key| is "--key=".
+bool ParseSwitchKeyValue(const std::string& arg,
+                         const std::string& key,
+                         std::string* value) {
+  if (arg.size() <= key.size() || arg.compare(0, key.size(), key) != 0)
+    return false;
+
+  *value = arg.substr(key.size());
+  return true;
+}
+
 bool ParseCommandLine(const std::vector<std::string>& args,
                       Options* options,
                       std::vector<std::string>* files) {
@@ -381,6 +392,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 
   options->exe_path = args[0];
   size_t cur_idx = 1;
+  std::string value;
   for (; cur_idx < args.size(); ++cur_idx) {
     const std::string& cur_arg = args[cur_idx];
     if (cur_arg == "--show-config") {
@@ -471,13 +483,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       }
       options->output_format = OUTPUT_SKP;
 #endif  // PDF_ENABLE_SKIA
-    } else if (cur_arg.size() > 11 &&
-               cur_arg.compare(0, 11, "--font-dir=") == 0) {
+    } else if (ParseSwitchKeyValue(cur_arg, "--font-dir=", &value)) {
       if (!options->font_directory.empty()) {
         fprintf(stderr, "Duplicate --font-dir argument\n");
         return false;
       }
-      std::string path = cur_arg.substr(11);
+      std::string path = value;
       auto expanded_path = ExpandDirectoryPath(path);
       if (!expanded_path) {
         fprintf(stderr, "Failed to expand --font-dir, %s\n", path.c_str());
@@ -521,13 +532,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-    } else if (cur_arg.size() > 10 &&
-               cur_arg.compare(0, 10, "--bin-dir=") == 0) {
+    } else if (ParseSwitchKeyValue(cur_arg, "--bin-dir=", &value)) {
       if (!options->bin_directory.empty()) {
         fprintf(stderr, "Duplicate --bin-dir argument\n");
         return false;
       }
-      std::string path = cur_arg.substr(10);
+      std::string path = value;
       auto expanded_path = ExpandDirectoryPath(path);
       if (!expanded_path) {
         fprintf(stderr, "Failed to expand --bin-dir, %s\n", path.c_str());
@@ -537,19 +547,18 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
-    } else if (cur_arg.size() > 11 &&
-               cur_arg.compare(0, 11, "--password=") == 0) {
+    } else if (ParseSwitchKeyValue(cur_arg, "--password=", &value)) {
       if (!options->password.empty()) {
         fprintf(stderr, "Duplicate --password argument\n");
         return false;
       }
-      options->password = cur_arg.substr(11);
-    } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--scale=") == 0) {
+      options->password = value;
+    } else if (ParseSwitchKeyValue(cur_arg, "--scale=", &value)) {
       if (!options->scale_factor_as_string.empty()) {
         fprintf(stderr, "Duplicate --scale argument\n");
         return false;
       }
-      options->scale_factor_as_string = cur_arg.substr(8);
+      options->scale_factor_as_string = value;
     } else if (cur_arg == "--show-pageinfo") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --show-pageinfo argument\n");
@@ -562,13 +571,13 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_STRUCTURE;
-    } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--pages=") == 0) {
+    } else if (ParseSwitchKeyValue(cur_arg, "--pages=", &value)) {
       if (options->pages) {
         fprintf(stderr, "Duplicate --pages argument\n");
         return false;
       }
       options->pages = true;
-      const std::string pages_string = cur_arg.substr(8);
+      const std::string pages_string = value;
       size_t first_dash = pages_string.find("-");
       if (first_dash == std::string::npos) {
         std::stringstream(pages_string) >> options->first_page;
@@ -581,12 +590,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       }
     } else if (cur_arg == "--md5") {
       options->md5 = true;
-    } else if (cur_arg.size() > 7 && cur_arg.compare(0, 7, "--time=") == 0) {
+    } else if (ParseSwitchKeyValue(cur_arg, "--time=", &value)) {
       if (options->time > -1) {
         fprintf(stderr, "Duplicate --time argument\n");
         return false;
       }
-      const std::string time_string = cur_arg.substr(7);
+      const std::string time_string = value;
       std::stringstream(time_string) >> options->time;
       if (options->time < 0) {
         fprintf(stderr, "Invalid --time argument, must be non-negative\n");
