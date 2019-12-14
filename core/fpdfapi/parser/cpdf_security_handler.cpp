@@ -391,8 +391,11 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
 
 bool CPDF_SecurityHandler::CheckPassword(const ByteString& password,
                                          bool bOwner) {
-  if (CheckPasswordImpl(password, bOwner))
+  DCHECK_EQ(kUnknown, m_PasswordEncodingConversion);
+  if (CheckPasswordImpl(password, bOwner)) {
+    m_PasswordEncodingConversion = kNone;
     return true;
+  }
 
   ByteStringView password_view = password.AsStringView();
   if (password_view.IsASCII())
@@ -400,11 +403,19 @@ bool CPDF_SecurityHandler::CheckPassword(const ByteString& password,
 
   if (m_Revision >= 5) {
     ByteString utf8_password = WideString::FromLatin1(password_view).ToUTF8();
-    return CheckPasswordImpl(utf8_password, bOwner);
+    if (!CheckPasswordImpl(utf8_password, bOwner))
+      return false;
+
+    m_PasswordEncodingConversion = kLatin1ToUtf8;
+    return true;
   }
 
   ByteString latin1_password = WideString::FromUTF8(password_view).ToLatin1();
-  return CheckPasswordImpl(latin1_password, bOwner);
+  if (!CheckPasswordImpl(latin1_password, bOwner))
+    return false;
+
+  m_PasswordEncodingConversion = kUtf8toLatin1;
+  return true;
 }
 
 bool CPDF_SecurityHandler::CheckPasswordImpl(const ByteString& password,
@@ -505,6 +516,22 @@ bool CPDF_SecurityHandler::CheckOwnerPassword(const ByteString& password) {
 
 bool CPDF_SecurityHandler::IsMetadataEncrypted() const {
   return m_pEncryptDict->GetBooleanFor("EncryptMetadata", true);
+}
+
+ByteString CPDF_SecurityHandler::GetEncodedPassword(
+    ByteStringView password) const {
+  switch (m_PasswordEncodingConversion) {
+    case CPDF_SecurityHandler::kNone:
+      // Do nothing.
+      return ByteString(password);
+    case CPDF_SecurityHandler::kLatin1ToUtf8:
+      return WideString::FromLatin1(password).ToUTF8();
+    case CPDF_SecurityHandler::kUtf8toLatin1:
+      return WideString::FromUTF8(password).ToLatin1();
+    default:
+      NOTREACHED();
+      return ByteString(password);
+  };
 }
 
 void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,

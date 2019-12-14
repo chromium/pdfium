@@ -46,7 +46,18 @@ class CPDF_SecurityHandler : public Retainable {
     return m_pCryptoHandler.get();
   }
 
+  // Take |password| and encode it, if necessary, based on the password encoding
+  // conversion.
+  ByteString GetEncodedPassword(ByteStringView password) const;
+
  private:
+  enum PasswordEncodingConversion {
+    kUnknown,
+    kNone,
+    kLatin1ToUtf8,
+    kUtf8toLatin1,
+  };
+
   CPDF_SecurityHandler();
   ~CPDF_SecurityHandler() override;
 
@@ -84,6 +95,7 @@ class CPDF_SecurityHandler : public Retainable {
   uint32_t m_Permissions = 0;
   int m_Cipher = FXCIPHER_NONE;
   size_t m_KeyLen = 0;
+  PasswordEncodingConversion m_PasswordEncodingConversion = kUnknown;
   ByteString m_FileId;
   RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;

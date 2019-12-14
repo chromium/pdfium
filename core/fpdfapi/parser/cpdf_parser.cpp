@@ -820,6 +820,10 @@ const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
   return nullptr;
 }
 
+ByteString CPDF_Parser::GetEncodedPassword() const {
+  return GetSecurityHandler()->GetEncodedPassword(GetPassword().AsStringView());
+}
+
 const CPDF_Dictionary* CPDF_Parser::GetTrailer() const {
   return m_CrossRefTable->trailer();
 }

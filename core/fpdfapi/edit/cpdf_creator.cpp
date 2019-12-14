@@ -623,7 +623,7 @@ void CPDF_Creator::InitID() {
       m_pEncryptDict = m_pNewEncryptDict;
       m_pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
       m_pSecurityHandler->OnCreate(m_pNewEncryptDict.Get(), m_pIDArray.Get(),
-                                   m_pParser->GetPassword());
+                                   m_pParser->GetEncodedPassword());
       m_bSecurityChanged = true;
     }
   }

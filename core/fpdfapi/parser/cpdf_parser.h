@@ -67,6 +67,10 @@ class CPDF_Parser {
   void SetPassword(const char* password) { m_Password = password; }
   ByteString GetPassword() const { return m_Password; }
 
+  // Take the GetPassword() value and encode it, if necessary, based on the
+  // password encoding conversion.
+  ByteString GetEncodedPassword() const;
+
   const CPDF_Dictionary* GetTrailer() const;
   CPDF_Dictionary* GetMutableTrailerForTesting();
 

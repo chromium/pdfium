@@ -197,15 +197,11 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
 
-#if 0
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
-  // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
-#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2Latin1) {
@@ -233,15 +229,11 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
 
-#if 0
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
-  // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
-#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3Latin1) {
@@ -292,7 +284,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -334,7 +326,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -354,15 +346,11 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
 
-#if 0
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
-  // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
-#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
@@ -390,15 +378,11 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
 
-#if 0
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
-  // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
-#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
@@ -449,7 +433,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -491,7 +475,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
