@@ -6,6 +6,9 @@
 #include <string>
 
 #include "build/build_config.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_edit.h"
@@ -50,6 +53,19 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
     VerifyHelloWorldPage(page);
     CloseSavedPage(page);
     CloseSavedDocument();
+  }
+
+  void RemoveTrailerIdFromDocument() {
+    // This is cheating slightly to avoid a layering violation, since this file
+    // cannot include fpdfsdk/cpdfsdk_helpers.h to get access to
+    // CPDFDocumentFromFPDFDocument().
+    CPDF_Document* doc = reinterpret_cast<CPDF_Document*>((document()));
+    ASSERT_TRUE(doc);
+    CPDF_Parser* parser = doc->GetParser();
+    ASSERT_TRUE(parser);
+    CPDF_Dictionary* trailer = parser->GetMutableTrailerForTesting();
+    ASSERT_TRUE(trailer);
+    ASSERT_TRUE(trailer->RemoveFor("ID"));
   }
 
  private:
@@ -180,6 +196,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2Latin1) {
@@ -187,6 +213,12 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2Latin1) {
   OpenAndVerifyHelloWorldDocumentWithPassword("encrypted_hello_world_r2.pdf",
                                               kAgeLatin1);
   EXPECT_EQ(2, FPDF_GetSecurityHandlerRevision(document()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+  ClearString();
+  RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
@@ -200,6 +232,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3Latin1) {
@@ -207,6 +249,12 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3Latin1) {
   OpenAndVerifyHelloWorldDocumentWithPassword("encrypted_hello_world_r3.pdf",
                                               kAgeLatin1);
   EXPECT_EQ(3, FPDF_GetSecurityHandlerRevision(document()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+  ClearString();
+  RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
@@ -220,6 +268,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
@@ -230,6 +288,18 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
@@ -240,6 +310,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
@@ -250,6 +330,18 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
@@ -261,6 +353,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
@@ -268,6 +370,12 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
   OpenAndVerifyHelloWorldDocumentWithPassword("encrypted_hello_world_r2.pdf",
                                               kHotelLatin1);
   EXPECT_EQ(2, FPDF_GetSecurityHandlerRevision(document()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+  ClearString();
+  RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
@@ -281,6 +389,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
@@ -288,6 +406,12 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
   OpenAndVerifyHelloWorldDocumentWithPassword("encrypted_hello_world_r3.pdf",
                                               kHotelLatin1);
   EXPECT_EQ(3, FPDF_GetSecurityHandlerRevision(document()));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+  ClearString();
+  RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
@@ -301,6 +425,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
@@ -311,6 +445,18 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
@@ -321,6 +467,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
@@ -331,4 +487,16 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+
+#if 0
+  // TODO(crbug.com/1032090): This triggers an MSAN error.
+  // Fix and enable this code.
+  // TODO(crbug.com/pdfium/1440): Password is in the wrong encoding.
+  // Fix and enable this code.
+  ClearString();
+  RemoveTrailerIdFromDocument();
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+#endif
 }

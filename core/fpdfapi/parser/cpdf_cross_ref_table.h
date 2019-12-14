@@ -50,8 +50,9 @@ class CPDF_CrossRefTable {
   void AddNormal(uint32_t obj_num, uint16_t gen_num, FX_FILESIZE pos);
   void SetFree(uint32_t obj_num);
 
-  const CPDF_Dictionary* trailer() const { return trailer_.Get(); }
   void SetTrailer(RetainPtr<CPDF_Dictionary> trailer);
+  const CPDF_Dictionary* trailer() const { return trailer_.Get(); }
+  CPDF_Dictionary* GetMutableTrailerForTesting() { return trailer_.Get(); }
 
   const ObjectInfo* GetObjectInfo(uint32_t obj_num) const;
 

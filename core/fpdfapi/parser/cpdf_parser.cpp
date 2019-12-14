@@ -246,7 +246,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
     return HANDLER_ERROR;
 
   auto pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
-  if (!pSecurityHandler->OnInit(pEncryptDict, GetIDArray(), m_Password))
+  if (!pSecurityHandler->OnInit(pEncryptDict, GetIDArray(), GetPassword()))
     return PASSWORD_ERROR;
 
   m_pSecurityHandler = std::move(pSecurityHandler);
@@ -822,6 +822,10 @@ const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
 
 const CPDF_Dictionary* CPDF_Parser::GetTrailer() const {
   return m_CrossRefTable->trailer();
+}
+
+CPDF_Dictionary* CPDF_Parser::GetMutableTrailerForTesting() {
+  return m_CrossRefTable->GetMutableTrailerForTesting();
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Parser::GetCombinedTrailer() const {
