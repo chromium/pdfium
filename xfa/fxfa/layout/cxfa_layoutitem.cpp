@@ -40,6 +40,11 @@ CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, ItemType type)
 
 CXFA_LayoutItem::~CXFA_LayoutItem() {
   CHECK(!GetParent());
+  if (m_pFormNode) {
+    auto* pJSObj = m_pFormNode->JSObject();
+    if (pJSObj && pJSObj->GetLayoutItem() == this)
+      pJSObj->SetLayoutItem(nullptr);
+  }
 }
 
 CXFA_ViewLayoutItem* CXFA_LayoutItem::AsViewLayoutItem() {

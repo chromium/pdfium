@@ -108,8 +108,8 @@ class CJX_Object {
   void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
   size_t GetCalcRecursionCount() const { return calc_recursion_count_; }
 
-  void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
-  CXFA_LayoutItem* GetLayoutItem() const { return layout_item_; }
+  void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_.Reset(item); }
+  CXFA_LayoutItem* GetLayoutItem() const { return layout_item_.Get(); }
 
   bool HasMethod(const WideString& func) const;
   CJS_Result RunMethod(const WideString& func,
@@ -258,13 +258,7 @@ class CJX_Object {
   void MoveBufferMapData(CXFA_Object* pDstModule);
 
   UnownedPtr<CXFA_Object> object_;
-  // This is an UnownedPtr but, due to lifetime issues, can't be marked as such
-  // at this point. The CJX_Node is freed by its parent CXFA_Node. The CXFA_Node
-  // will be freed during CXFA_NodeHolder destruction (CXFA_Document
-  // destruction as the only implementation). This will happen after the
-  // CXFA_LayoutProcessor is destroyed in the CXFA_Document, leaving this as a
-  // bad unowned ptr.
-  CXFA_LayoutItem* layout_item_ = nullptr;
+  UnownedPtr<CXFA_LayoutItem> layout_item_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_CalcData> calc_data_;
   std::map<ByteString, CJX_MethodCall> method_specs_;
