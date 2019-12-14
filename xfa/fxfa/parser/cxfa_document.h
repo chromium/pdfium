@@ -54,6 +54,7 @@ class CXFA_Document final : public CXFA_NodeOwner {
     LayoutProcessorIface();
     virtual ~LayoutProcessorIface();
     virtual void SetForceRelayout(bool enable) = 0;
+    virtual void AddChangedContainer(CXFA_Node* pContainer) = 0;
 
     void SetDocument(CXFA_Document* pDocument) { m_pDocument = pDocument; }
     CXFA_Document* GetDocument() const { return m_pDocument.Get(); }

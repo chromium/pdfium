@@ -14,7 +14,6 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_instancemanager.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
@@ -103,8 +102,7 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
       pNotify->RunNodeInitialize(pNewInstance);
     }
   }
-  auto* pLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
-  pLayout->AddChangedContainer(
+  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   return 0;
 }
@@ -126,8 +124,7 @@ int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
 
   GetXFANode()->RemoveItem(pMoveInstance, false);
   GetXFANode()->InsertItem(pMoveInstance, iTo, iCount - 1, true);
-  auto* pLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
-  pLayout->AddChangedContainer(
+  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   return 0;
 }
@@ -199,8 +196,7 @@ CJS_Result CJX_InstanceManager::removeInstance(
       }
     }
   }
-  auto* pLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
-  pLayout->AddChangedContainer(
+  GetDocument()->GetLayoutProcessor()->AddChangedContainer(
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   return CJS_Result::Success();
 }
@@ -248,9 +244,8 @@ CJS_Result CJX_InstanceManager::addInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->RunNodeInitialize(pNewInstance);
-    CXFA_LayoutProcessor::FromDocument(GetDocument())
-        ->AddChangedContainer(
-            ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+    GetDocument()->GetLayoutProcessor()->AddChangedContainer(
+        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
 
   CFXJSE_Value* value =
@@ -294,9 +289,8 @@ CJS_Result CJX_InstanceManager::insertInstance(
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->RunNodeInitialize(pNewInstance);
-    CXFA_LayoutProcessor::FromDocument(GetDocument())
-        ->AddChangedContainer(
-            ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
+    GetDocument()->GetLayoutProcessor()->AddChangedContainer(
+        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
 
   CFXJSE_Value* value =

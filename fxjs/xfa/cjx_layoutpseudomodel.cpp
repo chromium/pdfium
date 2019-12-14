@@ -402,7 +402,7 @@ CJS_Result CJX_LayoutPseudoModel::relayout(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
-  auto* pLayoutProcessor = CXFA_LayoutProcessor::FromDocument(GetDocument());
+  auto* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
   CXFA_Form* pFormRoot =
       pRootNode->GetFirstChildByClass<CXFA_Form>(XFA_Element::Form);
   if (pFormRoot) {

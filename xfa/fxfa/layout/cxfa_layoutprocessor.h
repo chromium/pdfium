@@ -29,6 +29,7 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
 
   // CXFA_Document::LayoutProcessorIface:
   void SetForceRelayout(bool bForceRestart) override;
+  void AddChangedContainer(CXFA_Node* pContainer) override;
 
   int32_t StartLayout(bool bForceRestart);
   int32_t DoLayout();
@@ -36,7 +37,6 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
   int32_t CountPages() const;
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
-  void AddChangedContainer(CXFA_Node* pContainer);
   CXFA_ViewLayoutItem* GetRootLayoutItem() const;
   CXFA_ContentLayoutProcessor* GetRootContentLayoutProcessor() const {
     return m_pContentLayoutProcessor.get();
