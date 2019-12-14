@@ -40,7 +40,6 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_accessiblecontent.h"
@@ -2398,7 +2397,7 @@ XFA_EventError CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
 
   if (GetRawValue() != EventParam.m_wsResult) {
     SetValue(XFA_VALUEPICTURE_Raw, EventParam.m_wsResult);
-    UpdateUIDisplay(pDocView, nullptr);
+    pDocView->UpdateUIDisplay(this, nullptr);
   }
   return XFA_EventError::kSuccess;
 }
@@ -3068,20 +3067,6 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
   }
   CFX_XMLElement* pElement = ToXMLElement(pBind->GetXMLMappingNode());
   pElement->SetAttribute(L"href", wsHref);
-}
-
-void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* pDocView,
-                                CXFA_FFWidget* pExcept) {
-  CXFA_FFWidget* pWidget = pDocView->GetWidgetForNode(this);
-  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
-    if (pWidget == pExcept || !pWidget->IsLoaded() ||
-        (GetFFWidgetType() != XFA_FFWidgetType::kCheckButton &&
-         pWidget->IsFocused())) {
-      continue;
-    }
-    pWidget->UpdateFWLData();
-    pWidget->InvalidateRect();
-  }
 }
 
 void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {

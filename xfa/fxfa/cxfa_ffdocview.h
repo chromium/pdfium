@@ -54,7 +54,10 @@ class CXFA_FFDocView {
   int32_t DoLayout();
   void StopLayout();
   int32_t GetLayoutStatus() const { return m_iStatus; }
+
   void UpdateDocView();
+  void UpdateUIDisplay(CXFA_Node* pNode, CXFA_FFWidget* pExcept);
+
   int32_t CountPageViews() const;
   CXFA_FFPageView* GetPageView(int32_t nIndex) const;
 
@@ -75,7 +78,6 @@ class CXFA_FFDocView {
   void RunDocClose();
 
   void ProcessValueChanged(CXFA_Node* node);
-
   void SetChangeMark();
 
   void AddValidateNode(CXFA_Node* node);

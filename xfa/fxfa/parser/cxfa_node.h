@@ -32,7 +32,6 @@ class CXFA_Event;
 class CXFA_EventParam;
 class CXFA_FFDoc;
 class CXFA_FFDocView;
-class CXFA_FFWidget;
 class CXFA_Font;
 class CXFA_Keep;
 class CXFA_Margin;
@@ -304,7 +303,6 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
   RetainPtr<CFX_DIBitmap> GetImageEditImage();
   void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
-  void UpdateUIDisplay(CXFA_FFDocView* pDocView, CXFA_FFWidget* pExcept);
 
   RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
 

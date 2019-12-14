@@ -194,6 +194,19 @@ void CXFA_FFDocView::UpdateDocView() {
   UnlockUpdate();
 }
 
+void CXFA_FFDocView::UpdateUIDisplay(CXFA_Node* pNode, CXFA_FFWidget* pExcept) {
+  CXFA_FFWidget* pWidget = GetWidgetForNode(pNode);
+  for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
+    if (pWidget == pExcept || !pWidget->IsLoaded() ||
+        (pNode->GetFFWidgetType() != XFA_FFWidgetType::kCheckButton &&
+         pWidget->IsFocused())) {
+      continue;
+    }
+    pWidget->UpdateFWLData();
+    pWidget->InvalidateRect();
+  }
+}
+
 int32_t CXFA_FFDocView::CountPageViews() const {
   return m_pXFADocLayout ? m_pXFADocLayout->CountPages() : 0;
 }
@@ -215,7 +228,7 @@ bool CXFA_FFDocView::ResetSingleNodeData(CXFA_Node* pNode) {
     return false;
 
   pNode->ResetData();
-  pNode->UpdateUIDisplay(this, nullptr);
+  UpdateUIDisplay(pNode, nullptr);
   CXFA_Validate* validate = pNode->GetValidateIfExists();
   if (!validate)
     return true;
