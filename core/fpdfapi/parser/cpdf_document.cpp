@@ -24,7 +24,6 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 

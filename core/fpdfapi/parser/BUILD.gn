@@ -80,7 +80,6 @@ source_set("parser") {
     "../../fdrm",
     "../../fxcodec",
     "../../fxcrt",
-    "../../fxge",
   ]
   allow_circular_includes_from = []
   visibility = [ "../../../*" ]
@@ -92,6 +91,7 @@ source_set("parser") {
     ]
   }
   if (pdf_use_skia || pdf_use_skia_paths) {
+    deps += [ "../../fxge" ]
     allow_circular_includes_from += [ "../../fxge" ]
   }
 }

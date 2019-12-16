@@ -20,7 +20,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_Font;
 class CFX_Matrix;
 class CPDF_LinearizedHeader;
 class CPDF_Object;
