@@ -18,7 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_random.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -521,17 +521,17 @@ bool CPDF_SecurityHandler::IsMetadataEncrypted() const {
 ByteString CPDF_SecurityHandler::GetEncodedPassword(
     ByteStringView password) const {
   switch (m_PasswordEncodingConversion) {
-    case CPDF_SecurityHandler::kNone:
+    case kNone:
       // Do nothing.
       return ByteString(password);
-    case CPDF_SecurityHandler::kLatin1ToUtf8:
+    case kLatin1ToUtf8:
       return WideString::FromLatin1(password).ToUTF8();
-    case CPDF_SecurityHandler::kUtf8toLatin1:
+    case kUtf8toLatin1:
       return WideString::FromUTF8(password).ToLatin1();
     default:
       NOTREACHED();
       return ByteString(password);
-  };
+  }
 }
 
 void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
@@ -551,12 +551,12 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     owner_password_copy = user_password;
 
   if (m_Revision >= 5) {
-    int t = static_cast<int>(FXSYS_time(nullptr));
+    uint32_t random[4];
+    FX_Random_GenerateMT(random, FX_ArraySize(random));
     CRYPT_sha2_context sha;
     CRYPT_SHA256Start(&sha);
-    CRYPT_SHA256Update(&sha, (uint8_t*)&t, sizeof t);
-    CRYPT_SHA256Update(&sha, m_EncryptKey, 32);
-    CRYPT_SHA256Update(&sha, (uint8_t*)"there", 5);
+    CRYPT_SHA256Update(&sha, reinterpret_cast<uint8_t*>(random),
+                       sizeof(random));
     CRYPT_SHA256Finish(&sha, m_EncryptKey);
     AES256_SetPassword(pEncryptDict, user_password, false, m_EncryptKey);
     if (bDefault)
@@ -715,6 +715,11 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
   buf[9] = 'a';
   buf[10] = 'd';
   buf[11] = 'b';
+
+  // In ISO 32000 Supplement for ExtensionLevel 3, Algorithm 3.10 says bytes 12
+  // to 15 should be random data.
+  uint32_t* buf_random = reinterpret_cast<uint32_t*>(&buf[12]);
+  FX_Random_GenerateMT(buf_random, 1);
 
   CRYPT_aes_context aes;
   memset(&aes, 0, sizeof(aes));
