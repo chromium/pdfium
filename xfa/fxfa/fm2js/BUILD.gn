@@ -22,7 +22,6 @@ source_set("fm2js") {
   ]
   deps = [
     "../../../core/fxcrt",
-    "//third_party/icu:icuuc",
   ]
   configs += [
     "../../../:pdfium_core_config",

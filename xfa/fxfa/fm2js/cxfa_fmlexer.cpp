@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/icu/source/common/unicode/uchar.h"
 
 namespace {
 
@@ -19,14 +18,14 @@ bool IsFormCalcCharacter(wchar_t c) {
 }
 
 bool IsIdentifierCharacter(wchar_t c) {
-  return u_isalnum(c) || c == 0x005F ||  // '_'
-         c == 0x0024;                    // '$'
+  return FXSYS_iswalnum(c) || c == 0x005F ||  // '_'
+         c == 0x0024;                         // '$'
 }
 
 bool IsInitialIdentifierCharacter(wchar_t c) {
-  return u_isalpha(c) || c == 0x005F ||  // '_'
-         c == 0x0024 ||                  // '$'
-         c == 0x0021;                    // '!'
+  return FXSYS_iswalpha(c) || c == 0x005F ||  // '_'
+         c == 0x0024 ||                       // '$'
+         c == 0x0021;                         // '!'
 }
 
 bool IsWhitespaceCharacter(wchar_t c) {
