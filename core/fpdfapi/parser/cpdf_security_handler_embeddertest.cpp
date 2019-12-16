@@ -202,6 +202,14 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  // With revision 2 and 3, the owner password is not tied to the document ID in
+  // the trailer, so the owner password entry remains in the copy and is still
+  // valid, even though the document ID has changed.
+  // The user password is tied to the document ID, so without an existing ID,
+  // the user password entry has to be regenerated with the owner password.
+  // Since the user password was not used to decrypt the document, it cannot be
+  // recovered. Thus only verify the owner password, which is now also the user
+  // password.
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
 }
@@ -367,8 +375,14 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  // Unlike the OwnerPasswordVersion2UTF8 test case, the user password was used
+  // to decrypt the document, so it is available to regenerated the user
+  // password entry. Thus it is possible to verify with both the unmodified
+  // owner password, and the updated user password.
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
@@ -387,6 +401,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
@@ -405,6 +421,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
@@ -423,6 +441,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
