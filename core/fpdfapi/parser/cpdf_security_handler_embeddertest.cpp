@@ -196,6 +196,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -212,6 +214,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -228,6 +232,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -244,6 +250,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion3Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -260,6 +268,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -280,6 +290,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -302,6 +314,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -322,6 +336,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -345,6 +361,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -361,6 +379,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -377,6 +397,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -393,6 +415,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion3Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -409,6 +433,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -429,6 +455,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -451,6 +479,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
@@ -471,6 +501,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
 #if 0
   // TODO(crbug.com/1032090): This triggers an MSAN error.
