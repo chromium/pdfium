@@ -695,10 +695,12 @@ int EmbedderTest::GetPageNumberForSavedPage(FPDF_PAGE page) const {
   return GetPageNumberForPage(saved_page_map_, page);
 }
 
-void EmbedderTest::OpenPDFFileForWrite(const char* filename) {
+#ifndef NDEBUG
+void EmbedderTest::OpenPDFFileForWrite(const std::string& filename) {
   filestream_.open(filename, std::ios_base::binary);
 }
 
 void EmbedderTest::ClosePDFFileForWrite() {
   filestream_.close();
 }
+#endif

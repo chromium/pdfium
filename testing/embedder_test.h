@@ -196,7 +196,7 @@ class EmbedderTest : public ::testing::Test,
 
 #ifndef NDEBUG
   // For debugging purposes.
-  // Write |bitmap| to a png file.
+  // Write |bitmap| as a PNG to |filename|.
   static void WriteBitmapToPng(FPDF_BITMAP bitmap, const std::string& filename);
 #endif
 
@@ -229,8 +229,14 @@ class EmbedderTest : public ::testing::Test,
 
   void SetWholeFileAvailable();
 
-  void OpenPDFFileForWrite(const char* filename);
+#ifndef NDEBUG
+  // For debugging purposes.
+  // While open, write any data that gets passed to WriteBlockCallback() to
+  // |filename|. This is typically used to capture data from FPDF_SaveAsCopy()
+  // calls.
+  void OpenPDFFileForWrite(const std::string& filename);
   void ClosePDFFileForWrite();
+#endif
 
   std::unique_ptr<Delegate> default_delegate_;
   Delegate* delegate_;
