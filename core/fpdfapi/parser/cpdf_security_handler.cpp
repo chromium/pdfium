@@ -559,12 +559,11 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_SHA256Update(&sha, (uint8_t*)"there", 5);
     CRYPT_SHA256Finish(&sha, m_EncryptKey);
     AES256_SetPassword(pEncryptDict, user_password, false, m_EncryptKey);
-    if (bDefault) {
+    if (bDefault)
       AES256_SetPassword(pEncryptDict, owner_password_copy, true, m_EncryptKey);
-      AES256_SetPerms(pEncryptDict, m_Permissions,
-                      pEncryptDict->GetBooleanFor("EncryptMetadata", true),
-                      m_EncryptKey);
-    }
+    AES256_SetPerms(pEncryptDict, m_Permissions,
+                    pEncryptDict->GetBooleanFor("EncryptMetadata", true),
+                    m_EncryptKey);
     return;
   }
   if (bDefault) {

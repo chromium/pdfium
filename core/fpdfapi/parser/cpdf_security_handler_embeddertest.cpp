@@ -279,12 +279,17 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  // With revision 5 and 6, the existing implementation regenerates the user
+  // password with the provided password, and the original owner password entry
+  // is no longer valid. Thus only check the owner password, which is now the
+  // user password.
+  // TODO(thestig): Check and see if this regeneration is necessary.
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
 #endif
@@ -301,10 +306,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
-  // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -325,7 +328,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
   ClearString();
@@ -347,10 +350,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
-  // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
@@ -456,14 +457,18 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
-  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  // With revision 5 and 6, the existing implementation regenerates the user
+  // password with the provided password, and the original owner password entry
+  // is no longer valid. Thus only check the user password.
+  // TODO(thestig): Check and see if this regeneration is necessary.
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 #endif
 }
 
@@ -478,16 +483,14 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
-  // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
-  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 #endif
 }
 
@@ -502,14 +505,14 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
-  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 #endif
 }
 
@@ -524,15 +527,13 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 
-#if 0
+#if !defined(MEMORY_SANITIZER)
   // TODO(crbug.com/1032090): This triggers an MSAN error.
-  // Fix and enable this code.
-  // TODO(crbug.com/pdfium/1441): Output encryption dictionary may be bad.
   // Fix and enable this code.
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
-  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 #endif
 }
