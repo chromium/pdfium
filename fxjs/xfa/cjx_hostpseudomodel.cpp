@@ -14,8 +14,6 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
@@ -298,26 +296,9 @@ CJS_Result CJX_HostPseudoModel::openList(
     pNode = resolveNodeRS.objects.front()->AsNode();
   }
 
-  if (!pNode)
-    return CJS_Result::Success();
+  if (pNode)
+    pNotify->OpenDropDownList(pNode);
 
-  auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
-  if (!pLayoutItem)
-    return CJS_Result::Success();
-
-  CXFA_FFWidget* hWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem);
-  if (!hWidget)
-    return CJS_Result::Success();
-
-  // SetFocusWidget() may destroy |hWidget| object by JS callback.
-  ObservedPtr<CXFA_FFWidget> pObservedWidget(hWidget);
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  hDoc->GetDocEnvironment()->SetFocusWidget(hDoc, hWidget);
-  if (!pObservedWidget)
-    return CJS_Result::Success();
-
-  pNotify->OpenDropDownList(hWidget);
   return CJS_Result::Success();
 }
 

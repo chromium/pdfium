@@ -65,7 +65,7 @@ class CXFA_FFNotify {
   CXFA_FFDoc* GetHDOC() const { return m_pDoc.Get(); }
   IXFA_AppProvider* GetAppProvider();
   CXFA_FFWidgetHandler* GetWidgetHandler();
-  void OpenDropDownList(CXFA_FFWidget* hWidget);
+  void OpenDropDownList(CXFA_Node* pNode);
   void ResetData(CXFA_Node* pNode);
   int32_t GetLayoutStatus();
   void RunNodeInitialize(CXFA_Node* pNode);
