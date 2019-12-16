@@ -11,6 +11,7 @@
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/render_defines.h"
 
 class CPDF_PathObject final : public CPDF_PageObject {
  public:
@@ -29,6 +30,14 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   bool stroke() const { return m_bStroke; }
   void set_stroke(bool stroke) { m_bStroke = stroke; }
+
+  // Layering, avoid caller knowledge of FXFILL_ values.
+  bool has_no_filltype() const { return m_FillType == 0; }
+  bool has_winding_filltype() const { return m_FillType == FXFILL_WINDING; }
+  bool has_alternate_filltype() const { return m_FillType == FXFILL_ALTERNATE; }
+  void set_no_filltype() { m_FillType = 0; }
+  void set_winding_filltype() { m_FillType = FXFILL_WINDING; }
+  void set_alternate_filltype() { m_FillType = FXFILL_ALTERNATE; }
 
   int filltype() const { return m_FillType; }
   void set_filltype(int filltype) { m_FillType = filltype; }

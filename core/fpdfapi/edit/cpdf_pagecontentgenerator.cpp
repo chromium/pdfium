@@ -34,7 +34,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxge/render_defines.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -383,11 +382,11 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
         *buf << " h";
     }
   }
-  if (pPathObj->filltype() == 0)
+  if (pPathObj->has_no_filltype())
     *buf << (pPathObj->stroke() ? " S" : " n");
-  else if (pPathObj->filltype() == FXFILL_WINDING)
+  else if (pPathObj->has_winding_filltype())
     *buf << (pPathObj->stroke() ? " B" : " f");
-  else if (pPathObj->filltype() == FXFILL_ALTERNATE)
+  else if (pPathObj->has_alternate_filltype())
     *buf << (pPathObj->stroke() ? " B*" : " f*");
   *buf << " Q\n";
 }

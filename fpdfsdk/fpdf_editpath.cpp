@@ -10,7 +10,6 @@
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/render_defines.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -155,11 +154,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
 
   pPathObj->set_stroke(!!stroke);
   if (fillmode == FPDF_FILLMODE_ALTERNATE)
-    pPathObj->set_filltype(FXFILL_ALTERNATE);
+    pPathObj->set_alternate_filltype();
   else if (fillmode == FPDF_FILLMODE_WINDING)
-    pPathObj->set_filltype(FXFILL_WINDING);
+    pPathObj->set_winding_filltype();
   else
-    pPathObj->set_filltype(0);
+    pPathObj->set_no_filltype();
   pPathObj->SetDirty(true);
   return true;
 }
@@ -171,9 +170,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
   if (!pPathObj || !fillmode || !stroke)
     return false;
 
-  if (pPathObj->filltype() == FXFILL_ALTERNATE)
+  if (pPathObj->has_alternate_filltype())
     *fillmode = FPDF_FILLMODE_ALTERNATE;
-  else if (pPathObj->filltype() == FXFILL_WINDING)
+  else if (pPathObj->has_winding_filltype())
     *fillmode = FPDF_FILLMODE_WINDING;
   else
     *fillmode = FPDF_FILLMODE_NONE;

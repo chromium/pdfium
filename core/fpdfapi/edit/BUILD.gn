@@ -23,7 +23,6 @@ source_set("edit") {
     "../../../constants",
     "../../../third_party:skia_shared",
     "../../fxcrt",
-    "../../fxge",
     "../font",
     "../page",
     "../parser",
