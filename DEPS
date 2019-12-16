@@ -25,7 +25,7 @@ vars = {
   'icu_revision': '88ea42af73f4cd3b8b0d0837403d75a989d80504',
   'instrumented_lib_revision': '4dca59c6a614b08b394ed6154a8fcded9298b07e',
   'jinja2_revision': 'b41863e42637544c2941b574c7877d3e1f663e25',
-  'jpeg_turbo_revision': 'bc13578529255ec75005ffc98aae151666122892',
+  'jpeg_turbo_revision': 'ce0e57e8e636f5132fe6f0590a4dba91f92fd935',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
   'pdfium_tests_revision': '02dd653ec62649b6f1aa4e4526071cc32d903f54',
   'skia_revision': 'd50cc95872a8a832faea0154f7ea1fd56cebc775',
