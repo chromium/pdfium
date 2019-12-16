@@ -21,7 +21,6 @@ class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_XMLDocument;
 class CPDF_Document;
-class CPDF_Object;
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
@@ -45,7 +44,8 @@ class CXFA_FFDoc {
   static std::unique_ptr<CXFA_FFDoc> CreateAndOpen(
       CXFA_FFApp* pApp,
       IXFA_DocEnvironment* pDocEnvironment,
-      CPDF_Document* pPDFDoc);
+      CPDF_Document* pPDFDoc,
+      const RetainPtr<IFX_SeekableStream>& stream);
 
   ~CXFA_FFDoc();
 
@@ -74,8 +74,8 @@ class CXFA_FFDoc {
   CXFA_FFDoc(CXFA_FFApp* pApp,
              IXFA_DocEnvironment* pDocEnvironment,
              CPDF_Document* pPDFDoc);
-  bool OpenDoc(const CPDF_Object* pElementXFA);
-  bool ParseDoc(const CPDF_Object* pElementXFA);
+  bool OpenDoc(const RetainPtr<IFX_SeekableStream>& stream);
+  bool ParseDoc(const RetainPtr<IFX_SeekableStream>& stream);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
   UnownedPtr<CXFA_FFApp> const m_pApp;

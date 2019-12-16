@@ -10,10 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
@@ -56,27 +54,16 @@ FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
 std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
     CXFA_FFApp* pApp,
     IXFA_DocEnvironment* pDocEnvironment,
-    CPDF_Document* pPDFDoc) {
+    CPDF_Document* pPDFDoc,
+    const RetainPtr<IFX_SeekableStream>& stream) {
   ASSERT(pApp);
   ASSERT(pDocEnvironment);
   ASSERT(pPDFDoc);
 
-  const CPDF_Dictionary* pRoot = pPDFDoc->GetRoot();
-  if (!pRoot)
-    return nullptr;
-
-  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
-  if (!pAcroForm)
-    return nullptr;
-
-  const CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
-  if (!pElementXFA)
-    return nullptr;
-
   // Use WrapUnique() to keep constructor private.
   auto result =
       pdfium::WrapUnique(new CXFA_FFDoc(pApp, pDocEnvironment, pPDFDoc));
-  if (!result->OpenDoc(pElementXFA))
+  if (!result->OpenDoc(stream))
     return nullptr;
 
   return result;
@@ -109,22 +96,7 @@ CXFA_FFDoc::~CXFA_FFDoc() {
   m_pApp->ClearEventTargets();
 }
 
-bool CXFA_FFDoc::ParseDoc(const CPDF_Object* pElementXFA) {
-  std::vector<const CPDF_Stream*> xfaStreams;
-  if (pElementXFA->IsArray()) {
-    const CPDF_Array* pXFAArray = pElementXFA->AsArray();
-    for (size_t i = 0; i < pXFAArray->size() / 2; i++) {
-      if (const CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
-        xfaStreams.push_back(pStream);
-    }
-  } else if (pElementXFA->IsStream()) {
-    xfaStreams.push_back(pElementXFA->AsStream());
-  }
-  if (xfaStreams.empty())
-    return false;
-
-  auto stream = pdfium::MakeRetain<CPDF_SeekableMultiStream>(xfaStreams);
-
+bool CXFA_FFDoc::ParseDoc(const RetainPtr<IFX_SeekableStream>& stream) {
   CXFA_DocumentParser parser(m_pDocument.get());
   bool parsed = parser.Parse(stream, XFA_PacketType::Xdp);
 
@@ -156,8 +128,8 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return m_DocView.get();
 }
 
-bool CXFA_FFDoc::OpenDoc(const CPDF_Object* pElementXFA) {
-  if (!ParseDoc(pElementXFA))
+bool CXFA_FFDoc::OpenDoc(const RetainPtr<IFX_SeekableStream>& stream) {
+  if (!ParseDoc(stream))
     return false;
 
   CFGAS_FontMgr* mgr = GetApp()->GetFDEFontMgr();
