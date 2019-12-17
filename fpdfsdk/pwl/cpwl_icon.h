@@ -19,12 +19,8 @@ class CPDF_Stream;
 
 class CPWL_Icon final : public CPWL_Wnd {
  public:
-  CPWL_Icon(const CreateParams& cp,
-            std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData);
+  CPWL_Icon(const CreateParams& cp, CPDF_Stream* pStream, CPDF_IconFit* pFit);
   ~CPWL_Icon() override;
-
-  void SetIconFit(CPDF_IconFit* pIconFit) { m_pIconFit = pIconFit; }
-  void SetPDFStream(CPDF_Stream* pStream) { m_pPDFStream.Reset(pStream); }
 
   // horizontal scale, vertical scale
   std::pair<float, float> GetScale();
@@ -42,8 +38,8 @@ class CPWL_Icon final : public CPWL_Wnd {
   // width, height
   std::pair<float, float> GetImageSize();
 
-  RetainPtr<CPDF_Stream> m_pPDFStream;
-  UnownedPtr<CPDF_IconFit> m_pIconFit;
+  RetainPtr<CPDF_Stream> const m_pPDFStream;
+  UnownedPtr<CPDF_IconFit> const m_pIconFit;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_ICON_H_

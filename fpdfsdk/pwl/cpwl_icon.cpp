@@ -16,10 +16,10 @@
 #include "core/fpdfdoc/cpdf_iconfit.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-CPWL_Icon::CPWL_Icon(
-    const CreateParams& cp,
-    std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
-    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
+CPWL_Icon::CPWL_Icon(const CreateParams& cp,
+                     CPDF_Stream* pStream,
+                     CPDF_IconFit* pFit)
+    : CPWL_Wnd(cp, nullptr), m_pPDFStream(pStream), m_pIconFit(pFit) {}
 
 CPWL_Icon::~CPWL_Icon() = default;
 
