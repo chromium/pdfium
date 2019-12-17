@@ -74,12 +74,8 @@ class CPDF_SecurityHandler : public Retainable {
   bool AES256_CheckPassword(const ByteString& password, bool bOwner);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                           const ByteString& password,
-                          bool bOwner,
-                          const uint8_t* key);
-  void AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
-                       uint32_t permission,
-                       bool bEncryptMetadata,
-                       const uint8_t* key);
+                          bool bOwner);
+  void AES256_SetPerms(CPDF_Dictionary* pEncryptDict);
   void OnCreateInternal(CPDF_Dictionary* pEncryptDict,
                         const CPDF_Array* pIdArray,
                         const ByteString& user_password,

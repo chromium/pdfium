@@ -51,7 +51,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   if (!fileId.IsEmpty())
     CRYPT_MD5Update(&md5, (uint8_t*)fileId.c_str(), fileId.GetLength());
   if (!bIgnoreMeta && revision >= 3 &&
-      !pEncrypt->GetIntegerFor("EncryptMetadata", 1)) {
+      !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     uint32_t tag = 0xFFFFFFFF;
     CRYPT_MD5Update(&md5, (uint8_t*)&tag, 4);
   }
@@ -258,8 +258,7 @@ void Revision6_Hash(const ByteString& password,
   std::vector<uint8_t> interDigest;
   int i = 0;
   int iBlockSize = 32;
-  CRYPT_aes_context aes;
-  memset(&aes, 0, sizeof(aes));
+  CRYPT_aes_context aes = {};
   while (i < 64 || i < E[iBufLen - 1] + 32) {
     int iRoundSize = password.GetLength() + iBlockSize;
     if (vector) {
@@ -358,13 +357,12 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   if (ekey.GetLength() < 32)
     return false;
 
-  CRYPT_aes_context aes;
-  memset(&aes, 0, sizeof(aes));
-  CRYPT_AESSetKey(&aes, digest, 32, false);
+  CRYPT_aes_context aes = {};
+  CRYPT_AESSetKey(&aes, digest, sizeof(digest), false);
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESDecrypt(&aes, m_EncryptKey, ekey.raw_str(), 32);
-  CRYPT_AESSetKey(&aes, m_EncryptKey, 32, false);
+  CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey), false);
   CRYPT_AESSetIV(&aes, iv);
   ByteString perms = m_pEncryptDict->GetStringFor("Perms");
   if (perms.IsEmpty())
@@ -558,12 +556,10 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_SHA256Update(&sha, reinterpret_cast<uint8_t*>(random),
                        sizeof(random));
     CRYPT_SHA256Finish(&sha, m_EncryptKey);
-    AES256_SetPassword(pEncryptDict, user_password, false, m_EncryptKey);
+    AES256_SetPassword(pEncryptDict, user_password, false);
     if (bDefault)
-      AES256_SetPassword(pEncryptDict, owner_password_copy, true, m_EncryptKey);
-    AES256_SetPerms(pEncryptDict, m_Permissions,
-                    pEncryptDict->GetBooleanFor("EncryptMetadata", true),
-                    m_EncryptKey);
+      AES256_SetPassword(pEncryptDict, owner_password_copy, true);
+    AES256_SetPerms(pEncryptDict);
     return;
   }
   if (bDefault) {
@@ -648,11 +644,10 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
 
 void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                                               const ByteString& password,
-                                              bool bOwner,
-                                              const uint8_t* key) {
+                                              bool bOwner) {
   CRYPT_sha1_context sha;
   CRYPT_SHA1Start(&sha);
-  CRYPT_SHA1Update(&sha, key, 32);
+  CRYPT_SHA1Update(&sha, m_EncryptKey, sizeof(m_EncryptKey));
   CRYPT_SHA1Update(&sha, (uint8_t*)"hello", 5);
 
   uint8_t digest[20];
@@ -688,30 +683,26 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     }
     CRYPT_SHA256Finish(&sha2, digest1);
   }
-  CRYPT_aes_context aes;
-  memset(&aes, 0, sizeof(aes));
+  CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, digest1, 32, true);
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
-  CRYPT_AESEncrypt(&aes, digest1, key, 32);
+  CRYPT_AESEncrypt(&aes, digest1, m_EncryptKey, sizeof(m_EncryptKey));
   pEncryptDict->SetNewFor<CPDF_String>(bOwner ? "OE" : "UE",
                                        ByteString(digest1, 32), false);
 }
 
-void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
-                                           uint32_t permissions,
-                                           bool bEncryptMetadata,
-                                           const uint8_t* key) {
+void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
   uint8_t buf[16];
-  buf[0] = (uint8_t)permissions;
-  buf[1] = (uint8_t)(permissions >> 8);
-  buf[2] = (uint8_t)(permissions >> 16);
-  buf[3] = (uint8_t)(permissions >> 24);
+  buf[0] = static_cast<uint8_t>(m_Permissions);
+  buf[1] = static_cast<uint8_t>(m_Permissions >> 8);
+  buf[2] = static_cast<uint8_t>(m_Permissions >> 16);
+  buf[3] = static_cast<uint8_t>(m_Permissions >> 24);
   buf[4] = 0xff;
   buf[5] = 0xff;
   buf[6] = 0xff;
   buf[7] = 0xff;
-  buf[8] = bEncryptMetadata ? 'T' : 'F';
+  buf[8] = pEncryptDict->GetBooleanFor("EncryptMetadata", true) ? 'T' : 'F';
   buf[9] = 'a';
   buf[10] = 'd';
   buf[11] = 'b';
@@ -721,9 +712,8 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
   uint32_t* buf_random = reinterpret_cast<uint32_t*>(&buf[12]);
   FX_Random_GenerateMT(buf_random, 1);
 
-  CRYPT_aes_context aes;
-  memset(&aes, 0, sizeof(aes));
-  CRYPT_AESSetKey(&aes, key, 32, true);
+  CRYPT_aes_context aes = {};
+  CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey), true);
 
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
