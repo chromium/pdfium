@@ -41,7 +41,7 @@ class CPDF_String final : public CPDF_Object {
   ~CPDF_String() override;
 
   ByteString m_String;
-  bool m_bHex;
+  bool m_bHex = false;
 };
 
 inline CPDF_String* ToString(CPDF_Object* obj) {
