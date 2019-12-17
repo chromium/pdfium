@@ -32,7 +32,6 @@ source_set("formfiller") {
     "../../:pdfium_public_headers",
     "../../constants",
     "../../core/fpdfapi/page",
-    "../../core/fpdfapi/parser",
     "../../core/fpdfdoc",
     "../../core/fxcrt",
     "../../core/fxge",

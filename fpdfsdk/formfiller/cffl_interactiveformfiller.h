@@ -97,7 +97,6 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
 
   static bool IsVisible(CPDFSDK_Widget* pWidget);
   static bool IsReadOnly(CPDFSDK_Widget* pWidget);
-  static bool IsFillingAllowed(CPDFSDK_Widget* pWidget);
   static bool IsValidAnnot(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
 
   bool OnKeyStrokeCommit(ObservedPtr<CPDFSDK_Annot>* pAnnot,
@@ -161,6 +160,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
                   uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA
 
+  bool IsFillingAllowed(CPDFSDK_Widget* pWidget) const;
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot);
   CFFL_FormFiller* GetOrCreateFormFiller(CPDFSDK_Annot* pAnnot);
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
