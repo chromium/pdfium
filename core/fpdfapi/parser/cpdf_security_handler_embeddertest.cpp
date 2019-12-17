@@ -282,13 +282,10 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5UTF8) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  // With revision 5 and 6, the existing implementation regenerates the user
-  // password with the provided password, and the original owner password entry
-  // is no longer valid. Thus only check the owner password, which is now the
-  // user password.
-  // TODO(thestig): Check and see if this regeneration is necessary.
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
@@ -307,6 +304,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion5Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
@@ -325,6 +324,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6UTF8) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
@@ -343,6 +344,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion6Latin1) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion2UTF8) {
@@ -444,10 +447,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5UTF8) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  // With revision 5 and 6, the existing implementation regenerates the user
-  // password with the provided password, and the original owner password entry
-  // is no longer valid. Thus only check the user password.
-  // TODO(thestig): Check and see if this regeneration is necessary.
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
@@ -466,6 +467,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5Latin1) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
@@ -484,6 +487,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6UTF8) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
@@ -502,6 +507,8 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion6Latin1) {
   ClearString();
   RemoveTrailerIdFromDocument();
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedHelloWorldDocumentWithPassword(kAgeLatin1);
+  VerifySavedHelloWorldDocumentWithPassword(kAgeUTF8);
   VerifySavedHelloWorldDocumentWithPassword(kHotelLatin1);
   VerifySavedHelloWorldDocumentWithPassword(kHotelUTF8);
 }
