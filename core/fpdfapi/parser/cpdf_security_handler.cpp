@@ -28,19 +28,23 @@ const uint8_t kDefaultPasscode[32] = {
     0x56, 0xff, 0xfa, 0x01, 0x08, 0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68,
     0x3e, 0x80, 0x2f, 0x0c, 0xa9, 0xfe, 0x64, 0x53, 0x69, 0x7a};
 
+void GetPassCode(const ByteString& password, pdfium::span<uint8_t> output) {
+  DCHECK_EQ(sizeof(kDefaultPasscode), output.size());
+  size_t len = std::min(password.GetLength(), output.size());
+  size_t remaining = output.size() - len;
+  memcpy(output.data(), password.raw_str(), len);
+  if (remaining)
+    memcpy(&output[len], kDefaultPasscode, remaining);
+}
+
 void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     const ByteString& password,
                     uint8_t* key,
                     size_t keylen,
-                    bool bIgnoreMeta,
-                    const ByteString& fileId) {
-  int revision = pEncrypt->GetIntegerFor("R");
+                    bool ignore_metadata,
+                    const ByteString& file_id) {
   uint8_t passcode[32];
-  for (uint32_t i = 0; i < 32; i++) {
-    passcode[i] = i < password.GetLength()
-                      ? password[i]
-                      : kDefaultPasscode[i - password.GetLength()];
-  }
+  GetPassCode(password, passcode);
   CRYPT_md5_context md5;
   CRYPT_MD5Start(&md5);
   CRYPT_MD5Update(&md5, passcode, sizeof(passcode));
@@ -48,17 +52,18 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   CRYPT_MD5Update(&md5, okey.raw_str(), okey.GetLength());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
   CRYPT_MD5Update(&md5, reinterpret_cast<uint8_t*>(&perm), sizeof(perm));
-  if (!fileId.IsEmpty())
-    CRYPT_MD5Update(&md5, fileId.raw_str(), fileId.GetLength());
-  if (!bIgnoreMeta && revision >= 3 &&
+  if (!file_id.IsEmpty())
+    CRYPT_MD5Update(&md5, file_id.raw_str(), file_id.GetLength());
+  const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
+  if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
-    uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, reinterpret_cast<uint8_t*>(&tag), sizeof(tag));
+    constexpr uint32_t tag = 0xFFFFFFFF;
+    CRYPT_MD5Update(&md5, reinterpret_cast<const uint8_t*>(&tag), sizeof(tag));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
   size_t copy_len = std::min(keylen, sizeof(digest));
-  if (revision >= 3) {
+  if (is_revision_3_or_greater) {
     for (int i = 0; i < 50; i++)
       CRYPT_MD5Generate(digest, copy_len, digest);
   }
@@ -80,6 +85,101 @@ bool IsValidKeyLengthForCipher(int cipher, size_t keylen) {
       NOTREACHED();
   }
   return false;
+}
+
+#define FX_GET_32WORD(n, b, i)                                        \
+  {                                                                   \
+    (n) = (uint32_t)(                                                 \
+        ((uint64_t)(b)[(i)] << 24) | ((uint64_t)(b)[(i) + 1] << 16) | \
+        ((uint64_t)(b)[(i) + 2] << 8) | ((uint64_t)(b)[(i) + 3]));    \
+  }
+int BigOrder64BitsMod3(uint8_t* data) {
+  uint64_t ret = 0;
+  for (int i = 0; i < 4; ++i) {
+    uint32_t value;
+    FX_GET_32WORD(value, data, 4 * i);
+    ret <<= 32;
+    ret |= value;
+    ret %= 3;
+  }
+  return (int)ret;
+}
+
+void Revision6_Hash(const ByteString& password,
+                    const uint8_t* salt,
+                    const uint8_t* vector,
+                    uint8_t* hash) {
+  CRYPT_sha2_context sha;
+  CRYPT_SHA256Start(&sha);
+  CRYPT_SHA256Update(&sha, password.raw_str(), password.GetLength());
+  CRYPT_SHA256Update(&sha, salt, 8);
+  if (vector)
+    CRYPT_SHA256Update(&sha, vector, 48);
+
+  uint8_t digest[32];
+  CRYPT_SHA256Finish(&sha, digest);
+
+  std::vector<uint8_t> buf;
+  uint8_t* input = digest;
+  uint8_t* key = input;
+  uint8_t* iv = input + 16;
+  uint8_t* E = nullptr;
+  int iBufLen = 0;
+  std::vector<uint8_t> interDigest;
+  int i = 0;
+  int iBlockSize = 32;
+  CRYPT_aes_context aes = {};
+  while (i < 64 || i < E[iBufLen - 1] + 32) {
+    int iRoundSize = password.GetLength() + iBlockSize;
+    if (vector) {
+      iRoundSize += 48;
+    }
+    iBufLen = iRoundSize * 64;
+    buf.resize(iBufLen);
+    E = buf.data();
+    std::vector<uint8_t> content;
+    for (int j = 0; j < 64; ++j) {
+      content.insert(std::end(content), password.raw_str(),
+                     password.raw_str() + password.GetLength());
+      content.insert(std::end(content), input, input + iBlockSize);
+      if (vector) {
+        content.insert(std::end(content), vector, vector + 48);
+      }
+    }
+    CRYPT_AESSetKey(&aes, key, 16, true);
+    CRYPT_AESSetIV(&aes, iv);
+    CRYPT_AESEncrypt(&aes, E, content.data(), iBufLen);
+    int iHash = 0;
+    switch (BigOrder64BitsMod3(E)) {
+      case 0:
+        iHash = 0;
+        iBlockSize = 32;
+        break;
+      case 1:
+        iHash = 1;
+        iBlockSize = 48;
+        break;
+      default:
+        iHash = 2;
+        iBlockSize = 64;
+        break;
+    }
+    interDigest.resize(iBlockSize);
+    input = interDigest.data();
+    if (iHash == 0) {
+      CRYPT_SHA256Generate(E, iBufLen, input);
+    } else if (iHash == 1) {
+      CRYPT_SHA384Generate(E, iBufLen, input);
+    } else if (iHash == 2) {
+      CRYPT_SHA512Generate(E, iBufLen, input);
+    }
+    key = input;
+    iv = input + 16;
+    ++i;
+  }
+  if (hash) {
+    memcpy(hash, input, 32);
+  }
 }
 
 }  // namespace
@@ -215,101 +315,6 @@ bool CPDF_SecurityHandler::LoadDict(const CPDF_Dictionary* pEncryptDict,
   m_Cipher = *cipher;
   m_KeyLen = *key_len;
   return true;
-}
-
-#define FX_GET_32WORD(n, b, i)                                        \
-  {                                                                   \
-    (n) = (uint32_t)(                                                 \
-        ((uint64_t)(b)[(i)] << 24) | ((uint64_t)(b)[(i) + 1] << 16) | \
-        ((uint64_t)(b)[(i) + 2] << 8) | ((uint64_t)(b)[(i) + 3]));    \
-  }
-int BigOrder64BitsMod3(uint8_t* data) {
-  uint64_t ret = 0;
-  for (int i = 0; i < 4; ++i) {
-    uint32_t value;
-    FX_GET_32WORD(value, data, 4 * i);
-    ret <<= 32;
-    ret |= value;
-    ret %= 3;
-  }
-  return (int)ret;
-}
-
-void Revision6_Hash(const ByteString& password,
-                    const uint8_t* salt,
-                    const uint8_t* vector,
-                    uint8_t* hash) {
-  CRYPT_sha2_context sha;
-  CRYPT_SHA256Start(&sha);
-  CRYPT_SHA256Update(&sha, password.raw_str(), password.GetLength());
-  CRYPT_SHA256Update(&sha, salt, 8);
-  if (vector)
-    CRYPT_SHA256Update(&sha, vector, 48);
-
-  uint8_t digest[32];
-  CRYPT_SHA256Finish(&sha, digest);
-
-  std::vector<uint8_t> buf;
-  uint8_t* input = digest;
-  uint8_t* key = input;
-  uint8_t* iv = input + 16;
-  uint8_t* E = nullptr;
-  int iBufLen = 0;
-  std::vector<uint8_t> interDigest;
-  int i = 0;
-  int iBlockSize = 32;
-  CRYPT_aes_context aes = {};
-  while (i < 64 || i < E[iBufLen - 1] + 32) {
-    int iRoundSize = password.GetLength() + iBlockSize;
-    if (vector) {
-      iRoundSize += 48;
-    }
-    iBufLen = iRoundSize * 64;
-    buf.resize(iBufLen);
-    E = buf.data();
-    std::vector<uint8_t> content;
-    for (int j = 0; j < 64; ++j) {
-      content.insert(std::end(content), password.raw_str(),
-                     password.raw_str() + password.GetLength());
-      content.insert(std::end(content), input, input + iBlockSize);
-      if (vector) {
-        content.insert(std::end(content), vector, vector + 48);
-      }
-    }
-    CRYPT_AESSetKey(&aes, key, 16, true);
-    CRYPT_AESSetIV(&aes, iv);
-    CRYPT_AESEncrypt(&aes, E, content.data(), iBufLen);
-    int iHash = 0;
-    switch (BigOrder64BitsMod3(E)) {
-      case 0:
-        iHash = 0;
-        iBlockSize = 32;
-        break;
-      case 1:
-        iHash = 1;
-        iBlockSize = 48;
-        break;
-      default:
-        iHash = 2;
-        iBlockSize = 64;
-        break;
-    }
-    interDigest.resize(iBlockSize);
-    input = interDigest.data();
-    if (iHash == 0) {
-      CRYPT_SHA256Generate(E, iBufLen, input);
-    } else if (iHash == 1) {
-      CRYPT_SHA384Generate(E, iBufLen, input);
-    } else if (iHash == 2) {
-      CRYPT_SHA512Generate(E, iBufLen, input);
-    }
-    key = input;
-    iv = input + 16;
-    ++i;
-  }
-  if (hash) {
-    memcpy(hash, input, 32);
-  }
 }
 
 bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
@@ -469,11 +474,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
     const ByteString& owner_password) const {
   ByteString okey = m_pEncryptDict->GetStringFor("O");
   uint8_t passcode[32];
-  for (uint32_t i = 0; i < 32; i++) {
-    passcode[i] = i < owner_password.GetLength()
-                      ? owner_password[i]
-                      : kDefaultPasscode[i - owner_password.GetLength()];
-  }
+  GetPassCode(owner_password, passcode);
   uint8_t digest[16];
   CRYPT_MD5Generate(passcode, 32, digest);
   if (m_Revision >= 3) {
@@ -564,11 +565,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
   }
   if (bDefault) {
     uint8_t passcode[32];
-    for (uint32_t i = 0; i < 32; i++) {
-      passcode[i] = i < owner_password_copy.GetLength()
-                        ? owner_password_copy[i]
-                        : kDefaultPasscode[i - owner_password_copy.GetLength()];
-    }
+    GetPassCode(owner_password_copy, passcode);
     uint8_t digest[16];
     CRYPT_MD5Generate(passcode, 32, digest);
     if (m_Revision >= 3) {
@@ -577,11 +574,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     }
     uint8_t enckey[32];
     memcpy(enckey, digest, key_len);
-    for (uint32_t i = 0; i < 32; i++) {
-      passcode[i] = i < user_password.GetLength()
-                        ? user_password[i]
-                        : kDefaultPasscode[i - user_password.GetLength()];
-    }
+    GetPassCode(user_password, passcode);
     CRYPT_ArcFourCryptBlock(passcode, {enckey, key_len});
     uint8_t tempkey[32];
     if (m_Revision >= 3) {
@@ -594,12 +587,12 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     pEncryptDict->SetNewFor<CPDF_String>("O", ByteString(passcode, 32), false);
   }
 
-  ByteString fileId;
+  ByteString file_id;
   if (pIdArray)
-    fileId = pIdArray->GetStringAt(0);
+    file_id = pIdArray->GetStringAt(0);
 
   CalcEncryptKey(m_pEncryptDict.Get(), user_password, m_EncryptKey, key_len,
-                 false, fileId);
+                 false, file_id);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
     memcpy(tempbuf, kDefaultPasscode, sizeof(kDefaultPasscode));
@@ -609,8 +602,8 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_md5_context md5;
     CRYPT_MD5Start(&md5);
     CRYPT_MD5Update(&md5, kDefaultPasscode, sizeof(kDefaultPasscode));
-    if (!fileId.IsEmpty())
-      CRYPT_MD5Update(&md5, fileId.raw_str(), fileId.GetLength());
+    if (!file_id.IsEmpty())
+      CRYPT_MD5Update(&md5, file_id.raw_str(), file_id.GetLength());
 
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
