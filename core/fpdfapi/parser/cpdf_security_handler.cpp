@@ -23,7 +23,7 @@
 
 namespace {
 
-const uint8_t defpasscode[32] = {
+const uint8_t kDefaultPasscode[32] = {
     0x28, 0xbf, 0x4e, 0x5e, 0x4e, 0x75, 0x8a, 0x41, 0x64, 0x00, 0x4e,
     0x56, 0xff, 0xfa, 0x01, 0x08, 0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68,
     0x3e, 0x80, 0x2f, 0x0c, 0xa9, 0xfe, 0x64, 0x53, 0x69, 0x7a};
@@ -39,21 +39,21 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   for (uint32_t i = 0; i < 32; i++) {
     passcode[i] = i < password.GetLength()
                       ? password[i]
-                      : defpasscode[i - password.GetLength()];
+                      : kDefaultPasscode[i - password.GetLength()];
   }
   CRYPT_md5_context md5;
   CRYPT_MD5Start(&md5);
-  CRYPT_MD5Update(&md5, passcode, 32);
+  CRYPT_MD5Update(&md5, passcode, sizeof(passcode));
   ByteString okey = pEncrypt->GetStringFor("O");
-  CRYPT_MD5Update(&md5, (uint8_t*)okey.c_str(), okey.GetLength());
+  CRYPT_MD5Update(&md5, okey.raw_str(), okey.GetLength());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
-  CRYPT_MD5Update(&md5, (uint8_t*)&perm, 4);
+  CRYPT_MD5Update(&md5, reinterpret_cast<uint8_t*>(&perm), sizeof(perm));
   if (!fileId.IsEmpty())
-    CRYPT_MD5Update(&md5, (uint8_t*)fileId.c_str(), fileId.GetLength());
+    CRYPT_MD5Update(&md5, fileId.raw_str(), fileId.GetLength());
   if (!bIgnoreMeta && revision >= 3 &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, (uint8_t*)&tag, 4);
+    CRYPT_MD5Update(&md5, reinterpret_cast<uint8_t*>(&tag), sizeof(tag));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
@@ -440,7 +440,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
   uint8_t ukeybuf[32];
   if (m_Revision == 2) {
-    memcpy(ukeybuf, defpasscode, 32);
+    memcpy(ukeybuf, kDefaultPasscode, sizeof(kDefaultPasscode));
     CRYPT_ArcFourCryptBlock(ukeybuf, {m_EncryptKey, m_KeyLen});
     return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
   }
@@ -457,9 +457,9 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   }
   CRYPT_md5_context md5;
   CRYPT_MD5Start(&md5);
-  CRYPT_MD5Update(&md5, defpasscode, 32);
+  CRYPT_MD5Update(&md5, kDefaultPasscode, sizeof(kDefaultPasscode));
   if (!m_FileId.IsEmpty()) {
-    CRYPT_MD5Update(&md5, (uint8_t*)m_FileId.c_str(), m_FileId.GetLength());
+    CRYPT_MD5Update(&md5, m_FileId.raw_str(), m_FileId.GetLength());
   }
   CRYPT_MD5Finish(&md5, ukeybuf);
   return memcmp(test, ukeybuf, 16) == 0;
@@ -472,7 +472,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   for (uint32_t i = 0; i < 32; i++) {
     passcode[i] = i < owner_password.GetLength()
                       ? owner_password[i]
-                      : defpasscode[i - owner_password.GetLength()];
+                      : kDefaultPasscode[i - owner_password.GetLength()];
   }
   uint8_t digest[16];
   CRYPT_MD5Generate(passcode, 32, digest);
@@ -500,7 +500,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
     }
   }
   size_t len = 32;
-  while (len && defpasscode[len - 1] == okey_span[len - 1])
+  while (len && kDefaultPasscode[len - 1] == okey_span[len - 1])
     len--;
 
   return ByteString(okeybuf, len);
@@ -567,7 +567,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     for (uint32_t i = 0; i < 32; i++) {
       passcode[i] = i < owner_password_copy.GetLength()
                         ? owner_password_copy[i]
-                        : defpasscode[i - owner_password_copy.GetLength()];
+                        : kDefaultPasscode[i - owner_password_copy.GetLength()];
     }
     uint8_t digest[16];
     CRYPT_MD5Generate(passcode, 32, digest);
@@ -580,7 +580,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     for (uint32_t i = 0; i < 32; i++) {
       passcode[i] = i < user_password.GetLength()
                         ? user_password[i]
-                        : defpasscode[i - user_password.GetLength()];
+                        : kDefaultPasscode[i - user_password.GetLength()];
     }
     CRYPT_ArcFourCryptBlock(passcode, {enckey, key_len});
     uint8_t tempkey[32];
@@ -602,15 +602,15 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
                  false, fileId);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
-    memcpy(tempbuf, defpasscode, 32);
+    memcpy(tempbuf, kDefaultPasscode, sizeof(kDefaultPasscode));
     CRYPT_ArcFourCryptBlock(tempbuf, {m_EncryptKey, key_len});
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(tempbuf, 32), false);
   } else {
     CRYPT_md5_context md5;
     CRYPT_MD5Start(&md5);
-    CRYPT_MD5Update(&md5, defpasscode, 32);
+    CRYPT_MD5Update(&md5, kDefaultPasscode, sizeof(kDefaultPasscode));
     if (!fileId.IsEmpty())
-      CRYPT_MD5Update(&md5, (uint8_t*)fileId.c_str(), fileId.GetLength());
+      CRYPT_MD5Update(&md5, fileId.raw_str(), fileId.GetLength());
 
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
