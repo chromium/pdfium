@@ -875,6 +875,9 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
         return true;
       case TextRenderingMode::MODE_CLIP:
         return true;
+      case TextRenderingMode::MODE_UNKNOWN:
+        NOTREACHED();
+        return false;
     }
   }
   FX_ARGB stroke_argb = 0;

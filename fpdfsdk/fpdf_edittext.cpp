@@ -31,6 +31,9 @@
 #include "third_party/base/ptr_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
+static_assert(static_cast<int>(TextRenderingMode::MODE_UNKNOWN) ==
+                  FPDF_TEXTRENDERMODE_UNKNOWN,
+              "TextRenderingMode::MODE_UNKNOWN value mismatch");
 static_assert(static_cast<int>(TextRenderingMode::MODE_FILL) ==
                   FPDF_TEXTRENDERMODE_FILL,
               "TextRenderingMode::MODE_FILL value mismatch");
@@ -55,6 +58,10 @@ static_assert(static_cast<int>(TextRenderingMode::MODE_FILL_STROKE_CLIP) ==
 static_assert(static_cast<int>(TextRenderingMode::MODE_CLIP) ==
                   FPDF_TEXTRENDERMODE_CLIP,
               "TextRenderingMode::MODE_CLIP value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_LAST) ==
+                  FPDF_TEXTRENDERMODE_LAST,
+              "TextRenderingMode::MODE_LAST value mismatch");
+
 namespace {
 
 CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
@@ -589,6 +596,6 @@ FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
   if (!pTextObj)
-    return -1;
+    return FPDF_TEXTRENDERMODE_UNKNOWN;
   return static_cast<FPDF_TEXT_RENDERMODE>(pTextObj->m_TextState.GetTextMode());
 }

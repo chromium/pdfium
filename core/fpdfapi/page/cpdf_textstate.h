@@ -16,6 +16,7 @@ class CPDF_Font;
 
 // See PDF Reference 1.7, page 402, table 5.3.
 enum class TextRenderingMode {
+  MODE_UNKNOWN = -1,
   MODE_FILL = 0,
   MODE_STROKE = 1,
   MODE_FILL_STROKE = 2,
@@ -24,6 +25,7 @@ enum class TextRenderingMode {
   MODE_STROKE_CLIP = 5,
   MODE_FILL_STROKE_CLIP = 6,
   MODE_CLIP = 7,
+  MODE_LAST = MODE_CLIP,
 };
 
 class CPDF_TextState {

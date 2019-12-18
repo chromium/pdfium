@@ -134,12 +134,12 @@ FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
   if (!textpage)
-    return -1;
+    return FPDF_TEXTRENDERMODE_UNKNOWN;
 
   FPDF_CHAR_INFO charinfo;
   textpage->GetCharInfo(index, &charinfo);
   if (!charinfo.m_pTextObj)
-    return -1;
+    return FPDF_TEXTRENDERMODE_UNKNOWN;
 
   return static_cast<FPDF_TEXT_RENDERMODE>(
       charinfo.m_pTextObj->GetTextRenderMode());

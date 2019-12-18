@@ -2070,13 +2070,14 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   FPDF_ClosePage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, TestGetTextRenderMode) {
+TEST_F(FPDFEditEmbedderTest, GetTextRenderMode) {
   EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 
-  ASSERT_EQ(-1, FPDFTextObj_GetTextRenderMode(nullptr));
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
+            FPDFTextObj_GetTextRenderMode(nullptr));
 
   FPDF_PAGEOBJECT fill = FPDFPage_GetObject(page, 0);
   ASSERT_EQ(FPDF_TEXTRENDERMODE_FILL, FPDFTextObj_GetTextRenderMode(fill));

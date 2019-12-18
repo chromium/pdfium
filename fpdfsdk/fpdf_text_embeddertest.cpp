@@ -1359,9 +1359,12 @@ TEST_F(FPDFTextEmbedderTest, GetTextRenderMode) {
 
   ASSERT_EQ(12, FPDFText_CountChars(text_page));
 
-  ASSERT_EQ(-1, FPDFText_GetTextRenderMode(nullptr, 0));
-  ASSERT_EQ(-1, FPDFText_GetTextRenderMode(text_page, -1));
-  ASSERT_EQ(-1, FPDFText_GetTextRenderMode(text_page, 314));
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
+            FPDFText_GetTextRenderMode(nullptr, 0));
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
+            FPDFText_GetTextRenderMode(text_page, -1));
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
+            FPDFText_GetTextRenderMode(text_page, 314));
 
   ASSERT_EQ(FPDF_TEXTRENDERMODE_FILL, FPDFText_GetTextRenderMode(text_page, 0));
 

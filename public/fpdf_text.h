@@ -137,7 +137,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
 // Return Value:
 //          On success, return the render mode value. A valid value is of type
 //          FPDF_TEXT_RENDERMODE. If |text_page| is invalid, if |index| is out
-//          of bounds, or if the text object is undefined, then return -1.
+//          of bounds, or if the text object is undefined, then return
+//          FPDF_TEXTRENDERMODE_UNKNOWN.
 FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index);
 
