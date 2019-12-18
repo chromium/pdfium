@@ -20,6 +20,6 @@ std::string CryptToBase16(const uint8_t* digest) {
 
 std::string GenerateMD5Base16(const uint8_t* data, uint32_t size) {
   uint8_t digest[16];
-  CRYPT_MD5Generate(data, size, digest);
+  CRYPT_MD5Generate({data, size}, digest);
   return CryptToBase16(digest);
 }

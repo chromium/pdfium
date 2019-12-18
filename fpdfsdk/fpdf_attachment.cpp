@@ -39,7 +39,7 @@ ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
 
 ByteString GenerateMD5Base16(const void* contents, const unsigned long len) {
   uint8_t digest[16];
-  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(contents), len, digest);
+  CRYPT_MD5Generate({static_cast<const uint8_t*>(contents), len}, digest);
   char buf[32];
   for (int i = 0; i < 16; ++i)
     FXSYS_IntToTwoHexChars(digest[i], &buf[i * 2]);

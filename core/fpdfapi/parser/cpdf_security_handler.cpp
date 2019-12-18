@@ -45,27 +45,26 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     const ByteString& file_id) {
   uint8_t passcode[32];
   GetPassCode(password, passcode);
-  CRYPT_md5_context md5;
-  CRYPT_MD5Start(&md5);
-  CRYPT_MD5Update(&md5, passcode, sizeof(passcode));
+  CRYPT_md5_context md5 = CRYPT_MD5Start();
+  CRYPT_MD5Update(&md5, passcode);
   ByteString okey = pEncrypt->GetStringFor("O");
-  CRYPT_MD5Update(&md5, okey.raw_str(), okey.GetLength());
+  CRYPT_MD5Update(&md5, okey.raw_span());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
-  CRYPT_MD5Update(&md5, reinterpret_cast<uint8_t*>(&perm), sizeof(perm));
+  CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&perm, 1)));
   if (!file_id.IsEmpty())
-    CRYPT_MD5Update(&md5, file_id.raw_str(), file_id.GetLength());
+    CRYPT_MD5Update(&md5, file_id.raw_span());
   const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
   if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     constexpr uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, reinterpret_cast<const uint8_t*>(&tag), sizeof(tag));
+    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&tag, 1)));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
   size_t copy_len = std::min(keylen, sizeof(digest));
   if (is_revision_3_or_greater) {
     for (int i = 0; i < 50; i++)
-      CRYPT_MD5Generate(digest, copy_len, digest);
+      CRYPT_MD5Generate({digest, copy_len}, digest);
   }
   memset(key, 0, keylen);
   memcpy(key, digest, copy_len);
@@ -460,12 +459,10 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
       tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i);
     CRYPT_ArcFourCryptBlock(test, {tmpkey, m_KeyLen});
   }
-  CRYPT_md5_context md5;
-  CRYPT_MD5Start(&md5);
-  CRYPT_MD5Update(&md5, kDefaultPasscode, sizeof(kDefaultPasscode));
-  if (!m_FileId.IsEmpty()) {
-    CRYPT_MD5Update(&md5, m_FileId.raw_str(), m_FileId.GetLength());
-  }
+  CRYPT_md5_context md5 = CRYPT_MD5Start();
+  CRYPT_MD5Update(&md5, kDefaultPasscode);
+  if (!m_FileId.IsEmpty())
+    CRYPT_MD5Update(&md5, m_FileId.raw_span());
   CRYPT_MD5Finish(&md5, ukeybuf);
   return memcmp(test, ukeybuf, 16) == 0;
 }
@@ -476,11 +473,10 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   uint8_t passcode[32];
   GetPassCode(owner_password, passcode);
   uint8_t digest[16];
-  CRYPT_MD5Generate(passcode, 32, digest);
+  CRYPT_MD5Generate(passcode, digest);
   if (m_Revision >= 3) {
-    for (uint32_t i = 0; i < 50; i++) {
-      CRYPT_MD5Generate(digest, 16, digest);
-    }
+    for (uint32_t i = 0; i < 50; i++)
+      CRYPT_MD5Generate(digest, digest);
   }
   uint8_t enckey[32] = {};
   size_t copy_len = std::min(m_KeyLen, sizeof(digest));
@@ -567,10 +563,10 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     uint8_t passcode[32];
     GetPassCode(owner_password_copy, passcode);
     uint8_t digest[16];
-    CRYPT_MD5Generate(passcode, 32, digest);
+    CRYPT_MD5Generate(passcode, digest);
     if (m_Revision >= 3) {
       for (uint32_t i = 0; i < 50; i++)
-        CRYPT_MD5Generate(digest, 16, digest);
+        CRYPT_MD5Generate(digest, digest);
     }
     uint8_t enckey[32];
     memcpy(enckey, digest, key_len);
@@ -599,11 +595,10 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     CRYPT_ArcFourCryptBlock(tempbuf, {m_EncryptKey, key_len});
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(tempbuf, 32), false);
   } else {
-    CRYPT_md5_context md5;
-    CRYPT_MD5Start(&md5);
-    CRYPT_MD5Update(&md5, kDefaultPasscode, sizeof(kDefaultPasscode));
+    CRYPT_md5_context md5 = CRYPT_MD5Start();
+    CRYPT_MD5Update(&md5, kDefaultPasscode);
     if (!file_id.IsEmpty())
-      CRYPT_MD5Update(&md5, file_id.raw_str(), file_id.GetLength());
+      CRYPT_MD5Update(&md5, file_id.raw_span());
 
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
@@ -615,7 +610,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
         tempkey[j] = m_EncryptKey[j] ^ i;
       CRYPT_ArcFourCryptBlock(partial_digest_span, {tempkey, key_len});
     }
-    CRYPT_MD5Generate(digest, 16, digest + 16);
+    CRYPT_MD5Generate({digest, 16}, digest + 16);
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(digest, 32), false);
   }
 }

@@ -31,10 +31,11 @@ void CheckArcFourContext(const CRYPT_rc4_context& context,
 
 // Originally from chromium's /src/base/md5_unittest.cc.
 TEST(FXCRYPT, CryptToBase16) {
-  uint8_t data[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
-                    0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e};
+  static constexpr uint8_t kData[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00,
+                                      0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98,
+                                      0xec, 0xf8, 0x42, 0x7e};
 
-  std::string actual = CryptToBase16(data);
+  std::string actual = CryptToBase16(kData);
   std::string expected = "d41d8cd98f00b204e9800998ecf8427e";
 
   EXPECT_EQ(expected, actual);
@@ -42,81 +43,75 @@ TEST(FXCRYPT, CryptToBase16) {
 
 TEST(FXCRYPT, MD5GenerateEmtpyData) {
   uint8_t digest[16];
-  const char data[] = "";
-  uint32_t length = static_cast<uint32_t>(strlen(data));
+  CRYPT_MD5Generate({}, digest);
 
-  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(data), length, digest);
-
-  uint8_t expected[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
-                        0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e};
+  static constexpr uint8_t kExpected[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00,
+                                          0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98,
+                                          0xec, 0xf8, 0x42, 0x7e};
 
   for (int i = 0; i < 16; ++i)
-    EXPECT_EQ(expected[i], digest[i]);
+    EXPECT_EQ(kExpected[i], digest[i]);
 }
 
 TEST(FXCRYPT, MD5GenerateOneByteData) {
   uint8_t digest[16];
-  const char data[] = "a";
-  uint32_t length = static_cast<uint32_t>(strlen(data));
+  CRYPT_MD5Generate(pdfium::as_bytes(pdfium::make_span("a", 1)), digest);
 
-  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(data), length, digest);
-
-  uint8_t expected[] = {0x0c, 0xc1, 0x75, 0xb9, 0xc0, 0xf1, 0xb6, 0xa8,
-                        0x31, 0xc3, 0x99, 0xe2, 0x69, 0x77, 0x26, 0x61};
+  static constexpr uint8_t kExpected[] = {0x0c, 0xc1, 0x75, 0xb9, 0xc0, 0xf1,
+                                          0xb6, 0xa8, 0x31, 0xc3, 0x99, 0xe2,
+                                          0x69, 0x77, 0x26, 0x61};
 
   for (int i = 0; i < 16; ++i)
-    EXPECT_EQ(expected[i], digest[i]);
+    EXPECT_EQ(kExpected[i], digest[i]);
 }
 
 TEST(FXCRYPT, MD5GenerateLongData) {
   const uint32_t length = 10 * 1024 * 1024 + 1;
-  std::unique_ptr<char[]> data(new char[length]);
+  std::vector<uint8_t> data(length);
 
   for (uint32_t i = 0; i < length; ++i)
     data[i] = i & 0xFF;
 
   uint8_t digest[16];
-  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(data.get()), length,
-                    digest);
+  CRYPT_MD5Generate(data, digest);
 
-  uint8_t expected[] = {0x90, 0xbd, 0x6a, 0xd9, 0x0a, 0xce, 0xf5, 0xad,
-                        0xaa, 0x92, 0x20, 0x3e, 0x21, 0xc7, 0xa1, 0x3e};
+  static constexpr uint8_t kExpected[] = {0x90, 0xbd, 0x6a, 0xd9, 0x0a, 0xce,
+                                          0xf5, 0xad, 0xaa, 0x92, 0x20, 0x3e,
+                                          0x21, 0xc7, 0xa1, 0x3e};
 
   for (int i = 0; i < 16; ++i)
-    EXPECT_EQ(expected[i], digest[i]);
+    EXPECT_EQ(kExpected[i], digest[i]);
 }
 
 TEST(FXCRYPT, ContextWithEmptyData) {
-  CRYPT_md5_context ctx;
-  CRYPT_MD5Start(&ctx);
+  CRYPT_md5_context ctx = CRYPT_MD5Start();
 
   uint8_t digest[16];
   CRYPT_MD5Finish(&ctx, digest);
 
-  uint8_t expected[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
-                        0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e};
+  static constexpr uint8_t kExpected[] = {0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00,
+                                          0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98,
+                                          0xec, 0xf8, 0x42, 0x7e};
 
   for (int i = 0; i < 16; ++i)
-    EXPECT_EQ(expected[i], digest[i]);
+    EXPECT_EQ(kExpected[i], digest[i]);
 }
 
 TEST(FXCRYPT, ContextWithLongData) {
-  CRYPT_md5_context ctx;
-  CRYPT_MD5Start(&ctx);
+  CRYPT_md5_context ctx = CRYPT_MD5Start();
 
   const uint32_t length = 10 * 1024 * 1024 + 1;
-  std::unique_ptr<uint8_t[]> data(new uint8_t[length]);
+  std::vector<uint8_t> data(length);
 
   for (uint32_t i = 0; i < length; ++i)
     data[i] = i & 0xFF;
 
+  pdfium::span<const uint8_t> data_span = pdfium::make_span(data);
   uint32_t total = 0;
   while (total < length) {
-    uint32_t len = 4097;  // intentionally not 2^k.
-    if (len > length - total)
-      len = length - total;
-
-    CRYPT_MD5Update(&ctx, data.get() + total, len);
+    constexpr uint32_t kChunkLen = 4097;  // intentionally not 2^k.
+    uint32_t len = std::min(kChunkLen, length - total);
+    CRYPT_MD5Update(&ctx, data_span.subspan(total, len));
     total += len;
   }
 
@@ -125,11 +120,12 @@ TEST(FXCRYPT, ContextWithLongData) {
   uint8_t digest[16];
   CRYPT_MD5Finish(&ctx, digest);
 
-  uint8_t expected[] = {0x90, 0xbd, 0x6a, 0xd9, 0x0a, 0xce, 0xf5, 0xad,
-                        0xaa, 0x92, 0x20, 0x3e, 0x21, 0xc7, 0xa1, 0x3e};
+  static constexpr uint8_t kExpected[] = {0x90, 0xbd, 0x6a, 0xd9, 0x0a, 0xce,
+                                          0xf5, 0xad, 0xaa, 0x92, 0x20, 0x3e,
+                                          0x21, 0xc7, 0xa1, 0x3e};
 
   for (int i = 0; i < 16; ++i)
-    EXPECT_EQ(expected[i], digest[i]);
+    EXPECT_EQ(kExpected[i], digest[i]);
 }
 
 // Example data from http://www.ietf.org/rfc/rfc1321.txt A.5 Test Suite
@@ -183,9 +179,8 @@ TEST(FXCRYPT, MD5StringTestSuite7) {
 }
 
 TEST(FXCRYPT, ContextWithStringData) {
-  CRYPT_md5_context ctx;
-  CRYPT_MD5Start(&ctx);
-  CRYPT_MD5Update(&ctx, reinterpret_cast<const uint8_t*>("abc"), 3);
+  CRYPT_md5_context ctx = CRYPT_MD5Start();
+  CRYPT_MD5Update(&ctx, pdfium::as_bytes(pdfium::make_span("abc", 3)));
 
   uint8_t digest[16];
   CRYPT_MD5Finish(&ctx, digest);

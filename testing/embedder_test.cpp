@@ -73,7 +73,7 @@ EmbedderTest::EmbedderTest()
   FPDF_FILEWRITE::WriteBlock = WriteBlockCallback;
 }
 
-EmbedderTest::~EmbedderTest() {}
+EmbedderTest::~EmbedderTest() = default;
 
 void EmbedderTest::SetUp() {
   FPDF_LIBRARY_CONFIG config;
@@ -604,10 +604,9 @@ void EmbedderTest::DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
 // static
 std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
   uint8_t digest[16];
-  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-                    FPDFBitmap_GetWidth(bitmap) *
-                        GetBitmapBytesPerPixel(bitmap) *
-                        FPDFBitmap_GetHeight(bitmap),
+  size_t size = FPDFBitmap_GetWidth(bitmap) * GetBitmapBytesPerPixel(bitmap) *
+                FPDFBitmap_GetHeight(bitmap);
+  CRYPT_MD5Generate({static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)), size},
                     digest);
   return CryptToBase16(digest);
 }

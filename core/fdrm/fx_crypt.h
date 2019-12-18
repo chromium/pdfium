@@ -66,12 +66,11 @@ void CRYPT_AESEncrypt(CRYPT_aes_context* context,
                       const uint8_t* src,
                       uint32_t size);
 
-void CRYPT_MD5Start(CRYPT_md5_context* context);
+CRYPT_md5_context CRYPT_MD5Start();
 void CRYPT_MD5Update(CRYPT_md5_context* context,
-                     const uint8_t* data,
-                     uint32_t size);
+                     pdfium::span<const uint8_t> data);
 void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]);
-void CRYPT_MD5Generate(const uint8_t* data, uint32_t size, uint8_t digest[16]);
+void CRYPT_MD5Generate(pdfium::span<const uint8_t> data, uint8_t digest[16]);
 
 void CRYPT_SHA1Start(CRYPT_sha1_context* context);
 void CRYPT_SHA1Update(CRYPT_sha1_context* context,
