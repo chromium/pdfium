@@ -218,10 +218,9 @@ FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
   return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(form_fill_info);
 }
 
-void OutputMD5Hash(const char* file_name, const char* buffer, int len) {
+void OutputMD5Hash(const char* file_name, const uint8_t* buffer, int len) {
   // Get the MD5 hash and write it to stdout.
-  std::string hash =
-      GenerateMD5Base16(reinterpret_cast<const uint8_t*>(buffer), len);
+  std::string hash = GenerateMD5Base16(buffer, len);
   printf("MD5:%s:%s\n", file_name, hash.c_str());
 }
 
@@ -748,8 +747,7 @@ bool RenderPage(const std::string& name,
       FPDF_RenderPage_Close(page);
 
     int stride = FPDFBitmap_GetStride(bitmap.get());
-    const char* buffer =
-        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap.get()));
+    void* buffer = FPDFBitmap_GetBuffer(bitmap.get());
 
     std::string image_file_name;
     switch (options.output_format) {
@@ -801,8 +799,10 @@ bool RenderPage(const std::string& name,
 
     // Write the filename and the MD5 of the buffer to stdout if we wrote a
     // file.
-    if (options.md5 && !image_file_name.empty())
-      OutputMD5Hash(image_file_name.c_str(), buffer, stride * height);
+    if (options.md5 && !image_file_name.empty()) {
+      OutputMD5Hash(image_file_name.c_str(),
+                    static_cast<const uint8_t*>(buffer), stride * height);
+    }
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
