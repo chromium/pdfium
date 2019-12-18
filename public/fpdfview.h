@@ -72,10 +72,7 @@ typedef struct fpdf_schhandle_t__* FPDF_SCHHANDLE;
 typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
 typedef struct fpdf_structtree_t__* FPDF_STRUCTTREE;
 typedef struct fpdf_textpage_t__* FPDF_TEXTPAGE;
-
-#ifdef PDF_ENABLE_XFA
 typedef struct fpdf_widget_t__* FPDF_WIDGET;
-#endif  // PDF_ENABLE_XFA
 
 // Basic data types
 typedef int FPDF_BOOL;
@@ -102,15 +99,13 @@ typedef const char* FPDF_BYTESTRING;
 // bytes (except surrogation), with the low byte first.
 typedef const unsigned short* FPDF_WIDESTRING;
 
-#ifdef PDF_ENABLE_XFA
 // Structure for persisting a string beyond the duration of a callback.
 // Note: although represented as a char*, string may be interpreted as
-// a UTF-16LE formated string.
+// a UTF-16LE formated string. Used only by XFA callbacks.
 typedef struct FPDF_BSTR_ {
   char* str;  // String buffer, manipulate only with FPDF_BStr_* methods.
   int len;    // Length of the string, in bytes.
 } FPDF_BSTR;
-#endif  // PDF_ENABLE_XFA
 
 // For Windows programmers: In most cases it's OK to treat FPDF_WIDESTRING as a
 // Windows unicode string, however, special care needs to be taken if you
@@ -399,11 +394,11 @@ typedef struct {
   void* m_Param;
 } FPDF_FILEACCESS;
 
-#ifdef PDF_ENABLE_XFA
 /**
- * @brief Structure for file reading or writing (I/O).
+ * Structure for file reading or writing (I/O).
  *
- * @note This is a handler and should be implemented by callers.
+ * Note: This is a handler and should be implemented by callers,
+ * and is only used from XFA.
  */
 typedef struct FPDF_FILEHANDLER_ {
   /**
@@ -483,8 +478,6 @@ typedef struct FPDF_FILEHANDLER_ {
    */
   FPDF_RESULT (*Truncate)(void* clientData, FPDF_DWORD size);
 } FPDF_FILEHANDLER;
-
-#endif  // PDF_ENABLE_XFA
 
 // Function: FPDF_LoadCustomDocument
 //          Load PDF document from a custom access descriptor.

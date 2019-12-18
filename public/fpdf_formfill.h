@@ -723,15 +723,14 @@ typedef struct _FPDF_FORMFILLINFO {
    **/
   IPDF_JSPLATFORM* m_pJsPlatform;
 
-#ifdef PDF_ENABLE_XFA
-  /* Version 2. */
+  /* Version 2 - Experimental. */
   /**
    * Method: FFI_DisplayCaret
    *     This method will show the caret at specified position.
    * Interface Version:
    *     2
    * Implementation Required:
-   *     yes
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
    * Parameters:
    *     pThis           -   Pointer to the interface structure itself.
    *     page            -   Handle to page. Returned by FPDF_LoadPage().
@@ -755,48 +754,47 @@ typedef struct _FPDF_FORMFILLINFO {
                            double bottom);
 
   /**
-  * Method: FFI_GetCurrentPageIndex
-  *           This method will get the current page index.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       document        -   Handle to document. Returned by FPDF_LoadDocument
-  *function.
-  * Return value:
-  *       The index of current page.
-  **/
+   * Method: FFI_GetCurrentPageIndex
+   *     This method will get the current page index.
+   * Interface Version:
+   *     2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       document        -   Handle to document from FPDF_LoadDocument().
+   * Return value:
+   *       The index of current page.
+   **/
   int (*FFI_GetCurrentPageIndex)(struct _FPDF_FORMFILLINFO* pThis,
                                  FPDF_DOCUMENT document);
 
   /**
-  * Method: FFI_SetCurrentPage
-  *           This method will set the current page.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       document        -   Handle to document. Returned by FPDF_LoadDocument
-  *function.
-  *       iCurPage        -   The index of the PDF page.
-  * Return value:
-  *       None.
-  **/
+   * Method: FFI_SetCurrentPage
+   *           This method will set the current page.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       document        -   Handle to document. Returned by FPDF_LoadDocument
+   *function.
+   *       iCurPage        -   The index of the PDF page.
+   * Return value:
+   *       None.
+   **/
   void (*FFI_SetCurrentPage)(struct _FPDF_FORMFILLINFO* pThis,
                              FPDF_DOCUMENT document,
                              int iCurPage);
 
   /**
   * Method: FFI_GotoURL
-  *           This method will link to the specified URL.
+  *           This method will navigate to the specified URL.
   * Interface Version:
   *           2
   * Implementation Required:
-  *           no
+  *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
   * Parameters:
   *       pThis           -   Pointer to the interface structure itself.
   *       document        -   Handle to document. Returned by FPDF_LoadDocument
@@ -815,7 +813,7 @@ typedef struct _FPDF_FORMFILLINFO {
    * Interface Version:
    *     2
    * Implementation Required:
-   *     yes
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
    * Parameters:
    *     pThis           -   Pointer to the interface structure itself.
    *     page            -   Handle to page. Returned by FPDF_LoadPage().
@@ -838,28 +836,28 @@ typedef struct _FPDF_FORMFILLINFO {
                               double* bottom);
 
   /**
-  * Method: FFI_PageEvent
-  *     This method fires when pages have been added to or deleted from the XFA
-  *     document.
-  * Interface Version:
-  *     2
-  * Implementation Required:
-  *     yes
-  * Parameters:
-  *     pThis       -   Pointer to the interface structure itself.
-  *     page_count  -   The number of pages to be added to or deleted from the
-  *                     document.
-  *     event_type  -   See FXFA_PAGEVIEWEVENT_* above.
-  * Return value:
-  *       None.
-  * Comments:
-  *           The pages to be added or deleted always start from the last page
-  *           of document. This means that if parameter page_count is 2 and
-  *           event type is FXFA_PAGEVIEWEVENT_POSTADDED, 2 new pages have been
-  *           appended to the tail of document; If page_count is 2 and
-  *           event type is FXFA_PAGEVIEWEVENT_POSTREMOVED, the last 2 pages
-  *           have been deleted.
-  **/
+   * Method: FFI_PageEvent
+   *     This method fires when pages have been added to or deleted from the XFA
+   *     document.
+   * Interface Version:
+   *     2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *     pThis       -   Pointer to the interface structure itself.
+   *     page_count  -   The number of pages to be added to or deleted from the
+   *                     document.
+   *     event_type  -   See FXFA_PAGEVIEWEVENT_* above.
+   * Return value:
+   *       None.
+   * Comments:
+   *           The pages to be added or deleted always start from the last page
+   *           of document. This means that if parameter page_count is 2 and
+   *           event type is FXFA_PAGEVIEWEVENT_POSTADDED, 2 new pages have been
+   *           appended to the tail of document; If page_count is 2 and
+   *           event type is FXFA_PAGEVIEWEVENT_POSTREMOVED, the last 2 pages
+   *           have been deleted.
+   **/
   void (*FFI_PageEvent)(struct _FPDF_FORMFILLINFO* pThis,
                         int page_count,
                         FPDF_DWORD event_type);
@@ -870,7 +868,7 @@ typedef struct _FPDF_FORMFILLINFO {
    * Interface Version:
    *     2
    * Implementation Required:
-   *     yes
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
    * Parameters:
    *     pThis           -   Pointer to the interface structure itself.
    *     page            -   Handle to page. Returned by FPDF_LoadPage().
@@ -893,50 +891,50 @@ typedef struct _FPDF_FORMFILLINFO {
                              float y);
 
   /**
-  * Method: FFI_OpenFile
-  *           This method will open the specified file with the specified mode.
-  * Interface Version
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       fileFlag        -   The file flag.Please refer to macro definition of
-  *FXFA_SAVEAS_XXX and this can be one of these macros.
-  *       wsURL           -   The string value of the file URL, in UTF-16LE
-  *format.
-  *       mode            -   The mode for open file.
-  * Return value:
-  *       The handle to FPDF_FILEHANDLER.
-  **/
+   * Method: FFI_OpenFile
+   *           This method will open the specified file with the specified mode.
+   * Interface Version
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       fileFlag        -   The file flag.Please refer to macro definition of
+   *FXFA_SAVEAS_XXX and this can be one of these macros.
+   *       wsURL           -   The string value of the file URL, in UTF-16LE
+   *format.
+   *       mode            -   The mode for open file.
+   * Return value:
+   *       The handle to FPDF_FILEHANDLER.
+   **/
   FPDF_FILEHANDLER* (*FFI_OpenFile)(struct _FPDF_FORMFILLINFO* pThis,
                                     int fileFlag,
                                     FPDF_WIDESTRING wsURL,
                                     const char* mode);
 
   /**
-  * Method: FFI_EmailTo
-  *           This method will email the specified file stream to the specified
-  *contacter.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       pFileHandler    -   Handle to the FPDF_FILEHANDLER.
-  *       pTo             -   A semicolon-delimited list of recipients for the
-  *message,in UTF-16LE format.
-  *       pSubject        -   The subject of the message,in UTF-16LE format.
-  *       pCC             -   A semicolon-delimited list of CC recipients for
-  *the message,in UTF-16LE format.
-  *       pBcc            -   A semicolon-delimited list of BCC recipients for
-  *the message,in UTF-16LE format.
-  *       pMsg            -   Pointer to the data buffer to be sent.Can be
-  *NULL,in UTF-16LE format.
-  * Return value:
-  *       None.
-  **/
+   * Method: FFI_EmailTo
+   *           This method will email the specified file stream to the specified
+   *contacter.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       pFileHandler    -   Handle to the FPDF_FILEHANDLER.
+   *       pTo             -   A semicolon-delimited list of recipients for the
+   *message,in UTF-16LE format.
+   *       pSubject        -   The subject of the message,in UTF-16LE format.
+   *       pCC             -   A semicolon-delimited list of CC recipients for
+   *the message,in UTF-16LE format.
+   *       pBcc            -   A semicolon-delimited list of BCC recipients for
+   *the message,in UTF-16LE format.
+   *       pMsg            -   Pointer to the data buffer to be sent.Can be
+   *NULL,in UTF-16LE format.
+   * Return value:
+   *       None.
+   **/
   void (*FFI_EmailTo)(struct _FPDF_FORMFILLINFO* pThis,
                       FPDF_FILEHANDLER* fileHandler,
                       FPDF_WIDESTRING pTo,
@@ -946,63 +944,63 @@ typedef struct _FPDF_FORMFILLINFO {
                       FPDF_WIDESTRING pMsg);
 
   /**
-  * Method: FFI_UploadTo
-  *           This method will get upload the specified file stream to the
-  *specified URL.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       pFileHandler    -   Handle to the FPDF_FILEHANDLER.
-  *       fileFlag        -   The file flag.Please refer to macro definition of
-  *FXFA_SAVEAS_XXX and this can be one of these macros.
-  *       uploadTo        -   Pointer to the URL path, in UTF-16LE format.
-  * Return value:
-  *       None.
-  **/
+   * Method: FFI_UploadTo
+   *           This method will get upload the specified file stream to the
+   *specified URL.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       pFileHandler    -   Handle to the FPDF_FILEHANDLER.
+   *       fileFlag        -   The file flag.Please refer to macro definition of
+   *FXFA_SAVEAS_XXX and this can be one of these macros.
+   *       uploadTo        -   Pointer to the URL path, in UTF-16LE format.
+   * Return value:
+   *       None.
+   **/
   void (*FFI_UploadTo)(struct _FPDF_FORMFILLINFO* pThis,
                        FPDF_FILEHANDLER* fileHandler,
                        int fileFlag,
                        FPDF_WIDESTRING uploadTo);
 
   /**
-  * Method: FFI_GetPlatform
-  *           This method will get the current platform.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       platform        -   Pointer to the data buffer to receive the
-  *platform.Can be NULL,in UTF-16LE format.
-  *       length          -   The length of the buffer, number of bytes. Can be
-  *0.
-  * Return value:
-  *       The length of the buffer, number of bytes.
-  **/
+   * Method: FFI_GetPlatform
+   *           This method will get the current platform.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       platform        -   Pointer to the data buffer to receive the
+   *platform.Can be NULL,in UTF-16LE format.
+   *       length          -   The length of the buffer, number of bytes. Can be
+   *0.
+   * Return value:
+   *       The length of the buffer, number of bytes.
+   **/
   int (*FFI_GetPlatform)(struct _FPDF_FORMFILLINFO* pThis,
                          void* platform,
                          int length);
 
   /**
-  * Method: FFI_GetLanguage
-  *           This method will get the current language.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       language        -   Pointer to the data buffer to receive the current
-  *language.Can be NULL.
-  *       length          -   The length of the buffer, number of bytes. Can be
-  *0.
-  * Return value:
-  *       The length of the buffer, number of bytes.
-  **/
+   * Method: FFI_GetLanguage
+   *           This method will get the current language.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       language        -   Pointer to the data buffer to receive the current
+   *language.Can be NULL.
+   *       length          -   The length of the buffer, number of bytes. Can be
+   *0.
+   * Return value:
+   *       The length of the buffer, number of bytes.
+   **/
   int (*FFI_GetLanguage)(struct _FPDF_FORMFILLINFO* pThis,
                          void* language,
                          int length);
@@ -1013,7 +1011,7 @@ typedef struct _FPDF_FORMFILLINFO {
   * Interface Version:
   *           2
   * Implementation Required:
-  *           yes
+  *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
   * Parameters:
   *       pThis           -   Pointer to the interface structure itself.
   *       URL             -   The string value of the file URL, in UTF-16LE
@@ -1024,26 +1022,26 @@ typedef struct _FPDF_FORMFILLINFO {
   FPDF_FILEHANDLER* (*FFI_DownloadFromURL)(struct _FPDF_FORMFILLINFO* pThis,
                                            FPDF_WIDESTRING URL);
   /**
-  * Method: FFI_PostRequestURL
-  *           This method will post the request to the server URL.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       wsURL           -   The string value of the server URL, in UTF-16LE
-  *format.
-  *       wsData          -   The post data,in UTF-16LE format.
-  *       wsContentType   -   The content type of the request data,in UTF-16LE
-  *format.
-  *       wsEncode        -   The encode type,in UTF-16LE format.
-  *       wsHeader        -   The request header,in UTF-16LE format.
-  *       response        -   Pointer to the FPDF_BSTR to receive the response
-  *data from server,,in UTF-16LE format.
-  * Return value:
-  *       TRUE indicates success, otherwise FALSE.
-  **/
+   * Method: FFI_PostRequestURL
+   *           This method will post the request to the server URL.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       wsURL           -   The string value of the server URL, in UTF-16LE
+   *format.
+   *       wsData          -   The post data,in UTF-16LE format.
+   *       wsContentType   -   The content type of the request data,in UTF-16LE
+   *format.
+   *       wsEncode        -   The encode type,in UTF-16LE format.
+   *       wsHeader        -   The request header,in UTF-16LE format.
+   *       response        -   Pointer to the FPDF_BSTR to receive the response
+   *data from server,,in UTF-16LE format.
+   * Return value:
+   *       TRUE indicates success, otherwise FALSE.
+   **/
   FPDF_BOOL (*FFI_PostRequestURL)(struct _FPDF_FORMFILLINFO* pThis,
                                   FPDF_WIDESTRING wsURL,
                                   FPDF_WIDESTRING wsData,
@@ -1053,26 +1051,25 @@ typedef struct _FPDF_FORMFILLINFO {
                                   FPDF_BSTR* response);
 
   /**
-  * Method: FFI_PutRequestURL
-  *           This method will put the request to the server URL.
-  * Interface Version:
-  *           2
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *       pThis           -   Pointer to the interface structure itself.
-  *       wsURL           -   The string value of the server URL, in UTF-16LE
-  *format.
-  *       wsData          -   The put data, in UTF-16LE format.
-  *       wsEncode        -   The encode type, in UTR-16LE format.
-  * Return value:
-  *       TRUE indicates success, otherwise FALSE.
-  **/
+   * Method: FFI_PutRequestURL
+   *           This method will put the request to the server URL.
+   * Interface Version:
+   *           2
+   * Implementation Required:
+   *     Required for XFA, otherwise set to NULL. Ignored if |version| < 2.
+   * Parameters:
+   *       pThis           -   Pointer to the interface structure itself.
+   *       wsURL           -   The string value of the server URL, in UTF-16LE
+   *format.
+   *       wsData          -   The put data, in UTF-16LE format.
+   *       wsEncode        -   The encode type, in UTR-16LE format.
+   * Return value:
+   *       TRUE indicates success, otherwise FALSE.
+   **/
   FPDF_BOOL (*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis,
                                    FPDF_WIDESTRING wsURL,
                                    FPDF_WIDESTRING wsData,
                                    FPDF_WIDESTRING wsEncode);
-#endif  // PDF_ENABLE_XFA
 } FPDF_FORMFILLINFO;
 
 /**
