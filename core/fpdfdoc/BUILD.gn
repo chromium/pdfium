@@ -41,6 +41,8 @@ source_set("fpdfdoc") {
     "cpdf_formcontrol.h",
     "cpdf_formfield.cpp",
     "cpdf_formfield.h",
+    "cpdf_icon.cpp",
+    "cpdf_icon.h",
     "cpdf_iconfit.cpp",
     "cpdf_iconfit.h",
     "cpdf_interactiveform.cpp",

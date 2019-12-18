@@ -23,9 +23,9 @@ class CPDF_IconFit {
 
   ScaleMethod GetScaleMethod() const;
   bool IsProportionalScale() const;
-  CFX_PointF GetIconBottomLeftPosition() const;
   bool GetFittingBounds() const;
-  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  CFX_PointF GetIconBottomLeftPosition() const;
+  CFX_PointF GetIconPosition() const;
 
  private:
   RetainPtr<const CPDF_Dictionary> const m_pDict;

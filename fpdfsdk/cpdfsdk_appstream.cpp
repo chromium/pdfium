@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cba_fontmap.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -689,7 +690,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   CPWL_Wnd::CreateParams cp;
   cp.dwFlags = PWS_VISIBLE;
 
-  CPWL_Icon icon(cp, pIconStream, &fit);
+  CPWL_Icon icon(cp, pdfium::MakeUnique<CPDF_Icon>(pIconStream), &fit);
   icon.Realize();
   if (!icon.Move(rcIcon, false, false))
     return ByteString();

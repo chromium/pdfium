@@ -14,12 +14,14 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
+class CPDF_Icon;
 class CPDF_IconFit;
-class CPDF_Stream;
 
 class CPWL_Icon final : public CPWL_Wnd {
  public:
-  CPWL_Icon(const CreateParams& cp, CPDF_Stream* pStream, CPDF_IconFit* pFit);
+  CPWL_Icon(const CreateParams& cp,
+            std::unique_ptr<CPDF_Icon> pIcon,
+            CPDF_IconFit* pFit);
   ~CPWL_Icon() override;
 
   // horizontal scale, vertical scale
@@ -32,13 +34,10 @@ class CPWL_Icon final : public CPWL_Wnd {
   ByteString GetImageAlias();
 
  private:
-  // left, bottom
-  std::pair<float, float> GetIconPosition();
+  CFX_PointF GetIconPosition();  // left, bottom coordinates.
+  CFX_SizeF GetImageSize();
 
-  // width, height
-  std::pair<float, float> GetImageSize();
-
-  RetainPtr<CPDF_Stream> const m_pPDFStream;
+  std::unique_ptr<CPDF_Icon> const m_pIcon;
   UnownedPtr<CPDF_IconFit> const m_pIconFit;
 };
 

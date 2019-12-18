@@ -38,7 +38,6 @@ source_set("pwl") {
     "../../:pdfium_public_headers",
     "../../constants",
     "../../core/fpdfapi/font",
-    "../../core/fpdfapi/parser",
     "../../core/fpdfapi/render",
     "../../core/fpdfdoc",
     "../../core/fxcrt",
