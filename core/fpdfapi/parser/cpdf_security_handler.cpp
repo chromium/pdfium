@@ -469,7 +469,13 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
 ByteString CPDF_SecurityHandler::GetUserPassword(
     const ByteString& owner_password) const {
+  constexpr size_t kRequiredOkeyLength = 32;
   ByteString okey = m_pEncryptDict->GetStringFor("O");
+  size_t okeylen = std::min<size_t>(okey.GetLength(), kRequiredOkeyLength);
+  if (okeylen < kRequiredOkeyLength)
+    return ByteString();
+
+  DCHECK_EQ(kRequiredOkeyLength, okeylen);
   uint8_t passcode[32];
   GetPassCode(owner_password, passcode);
   uint8_t digest[16];
@@ -482,8 +488,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   size_t copy_len = std::min(m_KeyLen, sizeof(digest));
 
   memcpy(enckey, digest, copy_len);
-  size_t okeylen = std::min<size_t>(okey.GetLength(), 32);
-  uint8_t okeybuf[64] = {};
+  uint8_t okeybuf[32] = {};
   memcpy(okeybuf, okey.c_str(), okeylen);
   pdfium::span<uint8_t> okey_span(okeybuf, okeylen);
   if (m_Revision == 2) {
@@ -496,7 +501,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
       CRYPT_ArcFourCryptBlock(okey_span, {tempkey, m_KeyLen});
     }
   }
-  size_t len = 32;
+  size_t len = kRequiredOkeyLength;
   while (len && kDefaultPasscode[len - 1] == okey_span[len - 1])
     len--;
 

@@ -222,6 +222,18 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, UserPasswordVersion5) {
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }
 
+// Should not crash. https://crbug.com/pdfium/1436
+TEST_F(CPDFSecurityHandlerEmbedderTest, BadOkeyVersion2) {
+  EXPECT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r2_bad_okey.pdf", "a"));
+}
+
+// Should not crash. https://crbug.com/pdfium/1436
+TEST_F(CPDFSecurityHandlerEmbedderTest, BadOkeyVersion3) {
+  EXPECT_FALSE(
+      OpenDocumentWithPassword("encrypted_hello_world_r3_bad_okey.pdf", "a"));
+}
+
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPasswordVersion2UTF8) {
   // The password is "age", where the 'a' has a circumflex. Encoding the
   // password as UTF-8 works.
