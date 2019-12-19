@@ -31,7 +31,7 @@ class FakeFileAccess {
   void SetWholeFileAvailable();
 
  private:
-  fxcrt::UnownedPtr<FPDF_FILEACCESS> file_access_;
+  UnownedPtr<FPDF_FILEACCESS> file_access_;
   std::unique_ptr<FPDF_FILEACCESS> file_access_wrapper_;
   std::unique_ptr<FX_FILEAVAIL> file_avail_;
   std::unique_ptr<FX_DOWNLOADHINTS> download_hints_;

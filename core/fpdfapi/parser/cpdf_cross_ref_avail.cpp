@@ -207,6 +207,6 @@ void CPDF_CrossRefAvail::AddCrossRefForCheck(FX_FILESIZE crossref_offset) {
   registered_crossrefs_.insert(crossref_offset);
 }
 
-fxcrt::RetainPtr<CPDF_ReadValidator> CPDF_CrossRefAvail::GetValidator() {
+RetainPtr<CPDF_ReadValidator> CPDF_CrossRefAvail::GetValidator() {
   return parser_->GetValidator();
 }

@@ -40,9 +40,9 @@ class CPDF_CrossRefAvail {
 
   void AddCrossRefForCheck(FX_FILESIZE crossref_offset);
 
-  fxcrt::RetainPtr<CPDF_ReadValidator> GetValidator();
+  RetainPtr<CPDF_ReadValidator> GetValidator();
 
-  fxcrt::UnownedPtr<CPDF_SyntaxParser> parser_;
+  UnownedPtr<CPDF_SyntaxParser> parser_;
   const FX_FILESIZE last_crossref_offset_ = 0;
   CPDF_DataAvail::DocAvailStatus current_status_ =
       CPDF_DataAvail::DataNotAvailable;

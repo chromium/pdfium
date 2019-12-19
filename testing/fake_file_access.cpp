@@ -32,7 +32,7 @@ class FileAccessWrapper final : public FPDF_FILEACCESS {
   }
 
  private:
-  fxcrt::UnownedPtr<FakeFileAccess> simulator_;
+  UnownedPtr<FakeFileAccess> simulator_;
 };
 
 class FileAvailImpl final : public FX_FILEAVAIL {
@@ -50,7 +50,7 @@ class FileAvailImpl final : public FX_FILEAVAIL {
   }
 
  private:
-  fxcrt::UnownedPtr<FakeFileAccess> simulator_;
+  UnownedPtr<FakeFileAccess> simulator_;
 };
 
 class DownloadHintsImpl final : public FX_DOWNLOADHINTS {
@@ -69,7 +69,7 @@ class DownloadHintsImpl final : public FX_DOWNLOADHINTS {
   }
 
  private:
-  fxcrt::UnownedPtr<FakeFileAccess> simulator_;
+  UnownedPtr<FakeFileAccess> simulator_;
 };
 
 }  // namespace
