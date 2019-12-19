@@ -8,6 +8,7 @@ import("../../testing/test.gni")
 source_set("fxcrt") {
   sources = [
     "autorestorer.h",
+    "byteorder.h",
     "bytestring.cpp",
     "bytestring.h",
     "cfx_binarybuf.cpp",
@@ -133,6 +134,7 @@ source_set("fxcrt") {
 pdfium_unittest_source_set("unittests") {
   sources = [
     "autorestorer_unittest.cpp",
+    "byteorder_unittest.cpp",
     "bytestring_unittest.cpp",
     "cfx_bitstream_unittest.cpp",
     "cfx_seekablestreamproxy_unittest.cpp",
