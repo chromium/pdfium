@@ -8,21 +8,16 @@
 
 #include <utility>
 
-#include "core/fxge/fx_freetype.h"
+#include "core/fxge/cfx_fontmapper.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
 
-constexpr uint32_t MakeTag(char c1, char c2, char c3, char c4) {
-  return static_cast<uint8_t>(c1) << 24 | static_cast<uint8_t>(c2) << 16 |
-         static_cast<uint8_t>(c3) << 8 | static_cast<uint8_t>(c4);
-}
-
 bool IsVerticalFeatureTag(uint32_t tag) {
   static constexpr uint32_t kTags[] = {
-      MakeTag('v', 'r', 't', '2'),
-      MakeTag('v', 'e', 'r', 't'),
+      CFX_FontMapper::MakeTag('v', 'r', 't', '2'),
+      CFX_FontMapper::MakeTag('v', 'e', 'r', 't'),
   };
   return tag == kTags[0] || tag == kTags[1];
 }

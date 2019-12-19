@@ -44,6 +44,10 @@ class CFX_FontMapper {
   static Optional<StandardFont> GetStandardFontName(ByteString* name);
   static bool IsSymbolicFont(StandardFont font);
   static bool IsFixedFont(StandardFont font);
+  static constexpr uint32_t MakeTag(char c1, char c2, char c3, char c4) {
+    return static_cast<uint8_t>(c1) << 24 | static_cast<uint8_t>(c2) << 16 |
+           static_cast<uint8_t>(c3) << 8 | static_cast<uint8_t>(c4);
+  }
 
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   SystemFontInfoIface* GetSystemFontInfo() { return m_pFontInfo.get(); }
