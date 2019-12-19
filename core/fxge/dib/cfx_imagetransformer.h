@@ -20,18 +20,6 @@ class PauseIndicatorIface;
 
 class CFX_ImageTransformer {
  public:
-  CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
-                       const CFX_Matrix& matrix,
-                       const FXDIB_ResampleOptions& options,
-                       const FX_RECT* pClip);
-  ~CFX_ImageTransformer();
-
-  bool Continue(PauseIndicatorIface* pPause);
-
-  const FX_RECT& result() const { return m_result; }
-  RetainPtr<CFX_DIBitmap> DetachBitmap();
-
- private:
   struct BilinearData {
     int res_x;
     int res_y;
@@ -67,6 +55,18 @@ class CFX_ImageTransformer {
     uint32_t pitch;
   };
 
+  CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
+                       const CFX_Matrix& matrix,
+                       const FXDIB_ResampleOptions& options,
+                       const FX_RECT* pClip);
+  ~CFX_ImageTransformer();
+
+  bool Continue(PauseIndicatorIface* pPause);
+
+  const FX_RECT& result() const { return m_result; }
+  RetainPtr<CFX_DIBitmap> DetachBitmap();
+
+ private:
   void CalcMask(const CalcData& cdata);
   void CalcAlpha(const CalcData& cdata);
   void CalcMono(const CalcData& cdata, FXDIB_Format format);
@@ -74,27 +74,6 @@ class CFX_ImageTransformer {
 
   bool IsBilinear() const;
   bool IsBiCubic() const;
-
-  int stretch_width() const { return m_StretchClip.Width(); }
-  int stretch_height() const { return m_StretchClip.Height(); }
-
-  bool InStretchBounds(int col, int row) const {
-    return col >= 0 && col <= stretch_width() && row >= 0 &&
-           row <= stretch_height();
-  }
-
-  void AdjustCoords(int* col, int* row) const;
-
-  void DoBilinearLoop(const CalcData& cdata,
-                      int increment,
-                      std::function<void(const BilinearData&, uint8_t*)> func);
-  void DoBicubicLoop(const CalcData& cdata,
-                     int increment,
-                     std::function<void(const BicubicData&, uint8_t*)> func);
-  void DoDownSampleLoop(
-      const CalcData& cdata,
-      int increment,
-      std::function<void(const DownSampleData&, uint8_t*)> func);
 
   RetainPtr<CFX_DIBBase> const m_pSrc;
   const CFX_Matrix m_matrix;
