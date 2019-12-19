@@ -15,35 +15,35 @@ namespace image_diff_png {
 
 // Decode a PNG into an RGBA pixel array, or BGRA pixel array if
 // |reverse_byte_order| is set to true.
-std::vector<unsigned char> DecodePNG(pdfium::span<const unsigned char> input,
-                                     bool reverse_byte_order,
-                                     int* width,
-                                     int* height);
+std::vector<uint8_t> DecodePNG(pdfium::span<const uint8_t> input,
+                               bool reverse_byte_order,
+                               int* width,
+                               int* height);
 
 // Encode a BGR pixel array into a PNG.
-std::vector<unsigned char> EncodeBGRPNG(const unsigned char* input,
-                                        int width,
-                                        int height,
-                                        int row_byte_width);
+std::vector<uint8_t> EncodeBGRPNG(const uint8_t* input,
+                                  int width,
+                                  int height,
+                                  int row_byte_width);
 
 // Encode an RGBA pixel array into a PNG.
-std::vector<unsigned char> EncodeRGBAPNG(const unsigned char* input,
-                                         int width,
-                                         int height,
-                                         int row_byte_width);
+std::vector<uint8_t> EncodeRGBAPNG(const uint8_t* input,
+                                   int width,
+                                   int height,
+                                   int row_byte_width);
 
 // Encode an BGRA pixel array into a PNG.
-std::vector<unsigned char> EncodeBGRAPNG(const unsigned char* input,
-                                         int width,
-                                         int height,
-                                         int row_byte_width,
-                                         bool discard_transparency);
+std::vector<uint8_t> EncodeBGRAPNG(const uint8_t* input,
+                                   int width,
+                                   int height,
+                                   int row_byte_width,
+                                   bool discard_transparency);
 
 // Encode a grayscale pixel array into a PNG.
-std::vector<unsigned char> EncodeGrayPNG(const unsigned char* input,
-                                         int width,
-                                         int height,
-                                         int row_byte_width);
+std::vector<uint8_t> EncodeGrayPNG(const uint8_t* input,
+                                   int width,
+                                   int height,
+                                   int row_byte_width);
 
 }  // namespace image_diff_png
 

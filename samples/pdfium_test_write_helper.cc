@@ -133,12 +133,12 @@ const char* PageObjectTypeToCString(int type) {
   return "";
 }
 
-std::vector<unsigned char> EncodePng(const unsigned char* buffer,
-                                     int width,
-                                     int height,
-                                     int stride,
-                                     int format) {
-  std::vector<unsigned char> png;
+std::vector<uint8_t> EncodePng(const uint8_t* buffer,
+                               int width,
+                               int height,
+                               int stride,
+                               int format) {
+  std::vector<uint8_t> png;
   switch (format) {
     case FPDFBitmap_Unknown:
       break;
@@ -383,9 +383,9 @@ std::string WritePng(const char* pdf_name,
   if (!CheckDimensions(stride, width, height))
     return "";
 
-  std::vector<unsigned char> png_encoding =
-      EncodePng(static_cast<const unsigned char*>(buffer), width, height,
-                stride, FPDFBitmap_BGRA);
+  std::vector<uint8_t> png_encoding =
+      EncodePng(static_cast<const uint8_t*>(buffer), width, height, stride,
+                FPDFBitmap_BGRA);
   if (png_encoding.empty()) {
     fprintf(stderr, "Failed to convert bitmap to PNG\n");
     return "";
@@ -583,14 +583,14 @@ void WriteBufferToFile(const void* buf,
   fclose(fp);
 }
 
-std::vector<unsigned char> EncodeBitmapToPng(ScopedFPDFBitmap bitmap) {
-  std::vector<unsigned char> png_encoding;
+std::vector<uint8_t> EncodeBitmapToPng(ScopedFPDFBitmap bitmap) {
+  std::vector<uint8_t> png_encoding;
   int format = FPDFBitmap_GetFormat(bitmap.get());
   if (format == FPDFBitmap_Unknown)
     return png_encoding;
 
-  const unsigned char* buffer =
-      static_cast<const unsigned char*>(FPDFBitmap_GetBuffer(bitmap.get()));
+  const uint8_t* buffer =
+      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap.get()));
 
   int width = FPDFBitmap_GetWidth(bitmap.get());
   int height = FPDFBitmap_GetHeight(bitmap.get());
@@ -671,8 +671,7 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
       continue;
     }
 
-    std::vector<unsigned char> png_encoding =
-        EncodeBitmapToPng(std::move(bitmap));
+    std::vector<uint8_t> png_encoding = EncodeBitmapToPng(std::move(bitmap));
     if (png_encoding.empty()) {
       fprintf(stderr,
               "Failed to convert image object #%d, on page #%d to png.\n",
@@ -757,7 +756,7 @@ void WriteThumbnail(FPDF_PAGE page, const char* pdf_name, int page_num) {
     return;
   }
 
-  std::vector<unsigned char> png_encoding =
+  std::vector<uint8_t> png_encoding =
       EncodeBitmapToPng(std::move(thumb_bitmap));
   if (png_encoding.empty()) {
     fprintf(stderr, "Failed to convert thumbnail of page #%d to png.\n",

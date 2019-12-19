@@ -17,9 +17,9 @@ void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
   const int width = FPDFBitmap_GetWidth(bitmap);
   const int height = FPDFBitmap_GetHeight(bitmap);
   const auto* buffer =
-      static_cast<const unsigned char*>(FPDFBitmap_GetBuffer(bitmap));
+      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
 
-  std::vector<unsigned char> png;
+  std::vector<uint8_t> png;
   if (FPDFBitmap_GetFormat(bitmap) == FPDFBitmap_Gray) {
     png = image_diff_png::EncodeGrayPNG(buffer, width, height, stride);
   } else {

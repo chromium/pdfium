@@ -44,7 +44,7 @@ class Image {
   bool has_image() const { return w_ > 0 && h_ > 0; }
   int w() const { return w_; }
   int h() const { return h_; }
-  const unsigned char* data() const { return &data_.front(); }
+  const uint8_t* data() const { return &data_.front(); }
 
   // Creates the image from the given filename on disk, and returns true on
   // success.
@@ -84,9 +84,9 @@ class Image {
     if (!f)
       return false;
 
-    std::vector<unsigned char> compressed;
+    std::vector<uint8_t> compressed;
     const size_t kBufSize = 1024;
-    unsigned char buf[kBufSize];
+    uint8_t buf[kBufSize];
     size_t num_read = 0;
     while ((num_read = fread(buf, 1, kBufSize, f)) > 0) {
       compressed.insert(compressed.end(), buf, buf + num_read);
@@ -112,7 +112,7 @@ class Image {
   int w_;
   int h_;
 
-  std::vector<unsigned char> data_;
+  std::vector<uint8_t> data_;
 };
 
 float CalculateDifferencePercentage(const Image& actual, int pixels_different) {
@@ -295,7 +295,7 @@ int DiffImages(const std::string& file1,
   if (same)
     return kStatusSame;
 
-  std::vector<unsigned char> png_encoding = image_diff_png::EncodeRGBAPNG(
+  std::vector<uint8_t> png_encoding = image_diff_png::EncodeRGBAPNG(
       diff_image.data(), diff_image.w(), diff_image.h(), diff_image.w() * 4);
   if (png_encoding.empty())
     return kStatusError;
