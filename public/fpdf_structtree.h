@@ -7,6 +7,7 @@
 #ifndef PUBLIC_FPDF_STRUCTTREE_H_
 #define PUBLIC_FPDF_STRUCTTREE_H_
 
+// clang-format off
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
@@ -17,28 +18,27 @@ extern "C" {
 // Function: FPDF_StructTree_GetForPage
 //          Get the structure tree for a page.
 // Parameters:
-//          page        -   Handle to the page. Returned by FPDF_LoadPage
-//          function.
+//          page        -   Handle to the page, as returned by FPDF_LoadPage().
 // Return value:
 //          A handle to the structure tree or NULL on error.
 FPDF_EXPORT FPDF_STRUCTTREE FPDF_CALLCONV
 FPDF_StructTree_GetForPage(FPDF_PAGE page);
 
 // Function: FPDF_StructTree_Close
-//          Release the resource allocate by FPDF_StructTree_GetForPage.
+//          Release a resource allocated by FPDF_StructTree_GetForPage().
 // Parameters:
-//          struct_tree -   Handle to the struct tree. Returned by
-//          FPDF_StructTree_LoadPage function.
+//          struct_tree -   Handle to the structure tree, as returned by
+//                          FPDF_StructTree_LoadPage().
 // Return value:
-//          NULL
+//          None.
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_StructTree_Close(FPDF_STRUCTTREE struct_tree);
 
 // Function: FPDF_StructTree_CountChildren
 //          Count the number of children for the structure tree.
 // Parameters:
-//          struct_tree -   Handle to the struct tree. Returned by
-//          FPDF_StructTree_LoadPage function.
+//          struct_tree -   Handle to the structure tree, as returned by
+//                          FPDF_StructTree_LoadPage().
 // Return value:
 //          The number of children, or -1 on error.
 FPDF_EXPORT int FPDF_CALLCONV
@@ -47,8 +47,8 @@ FPDF_StructTree_CountChildren(FPDF_STRUCTTREE struct_tree);
 // Function: FPDF_StructTree_GetChildAtIndex
 //          Get a child in the structure tree.
 // Parameters:
-//          struct_tree -   Handle to the struct tree. Returned by
-//          FPDF_StructTree_LoadPage function.
+//          struct_tree -   Handle to the structure tree, as returned by
+//                          FPDF_StructTree_LoadPage().
 //          index       -   The index for the child, 0-based.
 // Return value:
 //          The child at the n-th index or NULL on error.

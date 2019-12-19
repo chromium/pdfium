@@ -10,6 +10,8 @@
 #ifndef PUBLIC_FPDFVIEW_H_
 #define PUBLIC_FPDFVIEW_H_
 
+// clang-format off
+
 #include <stddef.h>
 
 #if defined(_WIN32) && !defined(__WINDOWS__)
@@ -394,87 +396,98 @@ typedef struct {
   void* m_Param;
 } FPDF_FILEACCESS;
 
-/**
+/*
  * Structure for file reading or writing (I/O).
  *
  * Note: This is a handler and should be implemented by callers,
  * and is only used from XFA.
  */
 typedef struct FPDF_FILEHANDLER_ {
-  /**
-   * @brief User-defined data.
-   * @note Callers can use this field to track controls.
+  /*
+   * User-defined data.
+   * Note: Callers can use this field to track controls.
    */
   void* clientData;
-  /**
-   * @brief Callback function to release the current file stream object.
+
+  /*
+   * Callback function to release the current file stream object.
    *
-   * @param[in] clientData    Pointer to user-defined data.
-   *
-   * @return None.
+   * Parameters:
+   *       clientData   -  Pointer to user-defined data.
+   * Returns:
+   *       None.
    */
   void (*Release)(void* clientData);
-  /**
-   * @brief Callback function to retrieve the current file stream size.
+
+  /*
+   * Callback function to retrieve the current file stream size.
    *
-   * @param[in] clientData    Pointer to user-defined data.
-   *
-   * @return Size of file stream.
+   * Parameters:
+   *       clientData   -  Pointer to user-defined data.
+   * Returns:
+   *       Size of file stream.
    */
   FPDF_DWORD (*GetSize)(void* clientData);
-  /**
-   * @brief Callback function to read data from the current file stream.
+
+  /*
+   * Callback function to read data from the current file stream.
    *
-   * @param[in]   clientData  Pointer to user-defined data.
-   * @param[in]   offset      Offset position starts from the beginning of file
-   * stream. This parameter indicates reading position.
-   * @param[in]   buffer      Memory buffer to store data which are read from
-   * file stream. This parameter should not be <b>NULL</b>.
-   * @param[in]   size        Size of data which should be read from file
-   * stream, in bytes. The buffer indicated by the parameter <i>buffer</i>
-   * should be enough to store specified data.
-   *
-   * @return 0 for success, other value for failure.
+   * Parameters:
+   *       clientData   -  Pointer to user-defined data.
+   *       offset       -  Offset position starts from the beginning of file
+   *                       stream. This parameter indicates reading position.
+   *       buffer       -  Memory buffer to store data which are read from
+   *                       file stream. This parameter should not be NULL.
+   *       size         -  Size of data which should be read from file stream,
+   *                       in bytes. The buffer indicated by |buffer| must be
+   *                       large enough to store specified data.
+   * Returns:
+   *       0 for success, other value for failure.
    */
   FPDF_RESULT (*ReadBlock)(void* clientData,
                            FPDF_DWORD offset,
                            void* buffer,
                            FPDF_DWORD size);
-  /**
-   * @brief   Callback function to write data into the current file stream.
+
+  /*
+   * Callback function to write data into the current file stream.
    *
-   * @param[in]   clientData  Pointer to user-defined data.
-   * @param[in]   offset      Offset position starts from the beginning of file
-   * stream. This parameter indicates writing position.
-   * @param[in]   buffer      Memory buffer contains data which is written into
-   * file stream. This parameter should not be <b>NULL</b>.
-   * @param[in]   size        Size of data which should be written into file
-   * stream, in bytes.
-   *
-   * @return 0 for success, other value for failure.
+   * Parameters:
+   *       clientData   -  Pointer to user-defined data.
+   *       offset       -  Offset position starts from the beginning of file
+   *                       stream. This parameter indicates writing position.
+   *       buffer       -  Memory buffer contains data which is written into
+   *                       file stream. This parameter should not be NULL.
+   *       size         -  Size of data which should be written into file
+   *                       stream, in bytes.
+   * Returns:
+   *       0 for success, other value for failure.
    */
   FPDF_RESULT (*WriteBlock)(void* clientData,
                             FPDF_DWORD offset,
                             const void* buffer,
                             FPDF_DWORD size);
-  /**
-   * @brief   Callback function to flush all internal accessing buffers.
+  /*
+   * Callback function to flush all internal accessing buffers.
    *
-   * @param[in]   clientData  Pointer to user-defined data.
-   *
-   * @return 0 for success, other value for failure.
+   * Parameters:
+   *       clientData   -  Pointer to user-defined data.
+   * Returns:
+   *       0 for success, other value for failure.
    */
   FPDF_RESULT (*Flush)(void* clientData);
-  /**
-   * @brief   Callback function to change file size.
+
+  /*
+   * Callback function to change file size.
    *
-   * @details This function is called under writing mode usually. Implementer
-   * can determine whether to realize it based on application requests.
-   *
-   * @param[in]   clientData  Pointer to user-defined data.
-   * @param[in]   size        New size of file stream, in bytes.
-   *
-   * @return 0 for success, other value for failure.
+   * Description:
+   *       This function is called under writing mode usually. Implementer
+   *       can determine whether to realize it based on application requests.
+   * Parameters:
+   *       clientData   -  Pointer to user-defined data.
+   *       size         -  New size of file stream, in bytes.
+   * Returns:
+   *       0 for success, other value for failure.
    */
   FPDF_RESULT (*Truncate)(void* clientData, FPDF_DWORD size);
 } FPDF_FILEHANDLER;

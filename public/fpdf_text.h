@@ -7,6 +7,7 @@
 #ifndef PUBLIC_FPDF_TEXT_H_
 #define PUBLIC_FPDF_TEXT_H_
 
+// clang-format off
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
@@ -19,7 +20,7 @@ extern "C" {
 //          Prepare information about all characters in a page.
 // Parameters:
 //          page    -   Handle to the page. Returned by FPDF_LoadPage function
-//          (in FPDFVIEW module).
+//                      (in FPDFVIEW module).
 // Return value:
 //          A handle to the text page information structure.
 //          NULL if something goes wrong.
@@ -34,7 +35,7 @@ FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page);
 //          structure.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 // Return Value:
 //          None.
 //
@@ -44,7 +45,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_ClosePage(FPDF_TEXTPAGE text_page);
 //          Get number of characters in a page.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 // Return value:
 //          Number of characters in the page. Return -1 for error.
 //          Generated characters, like additional space characters, new line
@@ -62,7 +63,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountChars(FPDF_TEXTPAGE text_page);
 //          Get Unicode of a character in a page.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          index       -   Zero-based index of the character.
 // Return value:
 //          The Unicode of the particular character.
@@ -77,12 +78,12 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index);
 //          Get the font size of a particular character.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          index       -   Zero-based index of the character.
 // Return value:
 //          The font size of the particular character, measured in points (about
-//          1/72 inch).
-//          This is the typographic size of the font (so called "em size").
+//          1/72 inch). This is the typographic size of the font (so called
+//          "em size").
 //
 FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
                                                       int index);
@@ -92,19 +93,20 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
 //          Get the font name and flags of a particular character.
 // Parameters:
 //          text_page - Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                      Returned by FPDFText_LoadPage function.
 //          index     - Zero-based index of the character.
 //          buffer    - A buffer receiving the font name.
 //          buflen    - The length of |buffer| in bytes.
 //          flags     - Optional pointer to an int receiving the font flags.
-//          These flags should be interpreted per PDF spec 1.7 Section 5.7.1
-//          Font Descriptor Flags.
+//                      These flags should be interpreted per PDF spec 1.7
+//                      Section 5.7.1 Font Descriptor Flags.
 // Return value:
 //          On success, return the length of the font name, including the
 //          trailing NUL character, in bytes. If this length is less than or
 //          equal to |length|, |buffer| is set to the font name, |flags| is
 //          set to the font flags. |buffer| is in UTF-8 encoding. Return 0 on
 //          failure.
+//
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
                      int index,
@@ -139,6 +141,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
 //          FPDF_TEXT_RENDERMODE. If |text_page| is invalid, if |index| is out
 //          of bounds, or if the text object is undefined, then return
 //          FPDF_TEXTRENDERMODE_UNKNOWN.
+//
 FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
 FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index);
 
@@ -207,6 +210,7 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
 //          On success, return the angle value in radian. Value will always be
 //          greater or equal to 0. If |text_page| is invalid, or if |index| is
 //          out of bounds, then return -1.
+//
 FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
                                                       int index);
 
@@ -214,16 +218,16 @@ FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
 //          Get bounding box of a particular character.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          index       -   Zero-based index of the character.
 //          left        -   Pointer to a double number receiving left position
-//          of the character box.
+//                          of the character box.
 //          right       -   Pointer to a double number receiving right position
-//          of the character box.
+//                          of the character box.
 //          bottom      -   Pointer to a double number receiving bottom position
-//          of the character box.
+//                          of the character box.
 //          top         -   Pointer to a double number receiving top position of
-//          the character box.
+//                          the character box.
 // Return Value:
 //          On success, return TRUE and fill in |left|, |right|, |bottom|, and
 //          |top|. If |text_page| is invalid, or if |index| is out of bounds,
@@ -262,12 +266,12 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect);
 //          Get origin of a particular character.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          index       -   Zero-based index of the character.
 //          x           -   Pointer to a double number receiving x coordinate of
-//          the character origin.
+//                          the character origin.
 //          y           -   Pointer to a double number receiving y coordinate of
-//          the character origin.
+//                          the character origin.
 // Return Value:
 //          Whether the call succeeded. If false, x and y are unchanged.
 // Comments:
@@ -284,18 +288,17 @@ FPDFText_GetCharOrigin(FPDF_TEXTPAGE text_page,
 //          page.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          x           -   X position in PDF "user space".
 //          y           -   Y position in PDF "user space".
 //          xTolerance  -   An x-axis tolerance value for character hit
-//          detection, in point unit.
+//                          detection, in point units.
 //          yTolerance  -   A y-axis tolerance value for character hit
-//          detection, in point unit.
+//                          detection, in point units.
 // Return Value:
 //          The zero-based index of the character at, or nearby the point (x,y).
 //          If there is no character at or nearby the point, return value will
-//          be -1.
-//          If an error occurs, -3 will be returned.
+//          be -1. If an error occurs, -3 will be returned.
 //
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
@@ -308,13 +311,13 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
 //          Extract unicode text string from the page.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          start_index -   Index for the start characters.
 //          count       -   Number of characters to be extracted.
 //          result      -   A buffer (allocated by application) receiving the
-//          extracted unicodes.
-//                          The size of the buffer must be able to hold the
-//                          number of characters plus a terminator.
+//                          extracted unicodes. The size of the buffer must be
+//                          able to hold the number of characters plus a
+//                          terminator.
 // Return Value:
 //          Number of characters written into the result buffer, including the
 //          trailing terminator.
@@ -330,18 +333,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE text_page,
 //          Count number of rectangular areas occupied by a segment of texts.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          start_index -   Index for the start characters.
 //          count       -   Number of characters.
 // Return value:
 //          Number of rectangles. Zero for error.
 // Comments:
 //          This function, along with FPDFText_GetRect can be used by
-//          applications to detect the position
-//          on the page for a text segment, so proper areas can be highlighted
-//          or something.
-//          FPDFTEXT will automatically merge small character boxes into bigger
-//          one if those characters
+//          applications to detect the position on the page for a text segment,
+//          so proper areas can be highlighted. FPDFTEXT will automatically
+//          merge small character boxes into bigger one if those characters
 //          are on the same line and use same font settings.
 //
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
@@ -353,16 +354,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
 //          FPDFText_CountRects.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          rect_index  -   Zero-based index for the rectangle.
 //          left        -   Pointer to a double value receiving the rectangle
-//          left boundary.
+//                          left boundary.
 //          top         -   Pointer to a double value receiving the rectangle
-//          top boundary.
+//                          top boundary.
 //          right       -   Pointer to a double value receiving the rectangle
-//          right boundary.
+//                          right boundary.
 //          bottom      -   Pointer to a double value receiving the rectangle
-//          bottom boundary.
+//                          bottom boundary.
 // Return Value:
 //          On success, return TRUE and fill in |left|, |top|, |right|, and
 //          |bottom|. If |text_page| is invalid then return FALSE, and the out
@@ -381,23 +382,21 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
 //          Extract unicode text within a rectangular boundary on the page.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          left        -   Left boundary.
 //          top         -   Top boundary.
 //          right       -   Right boundary.
 //          bottom      -   Bottom boundary.
 //          buffer      -   A unicode buffer.
 //          buflen      -   Number of characters (not bytes) for the buffer,
-//          excluding an additional terminator.
+//                          excluding an additional terminator.
 // Return Value:
 //          If buffer is NULL or buflen is zero, return number of characters
-//          (not bytes) of text present within
-//          the rectangle, excluding a terminating NUL.  Generally you should
-//          pass a buffer at least one larger
-//          than this if you want a terminating NUL, which will be provided if
-//          space is available.
-//          Otherwise, return number of characters copied into the buffer,
-//          including the terminating NUL
+//          (not bytes) of text present within the rectangle, excluding a
+//          terminating NUL. Generally you should pass a buffer at least one
+//          larger than this if you want a terminating NUL, which will be
+//          provided if space is available. Otherwise, return number of
+//          characters copied into the buffer, including the terminating NUL
 //          when space for it is available.
 // Comment:
 //          If the buffer is too small, as much text as will fit is copied into
@@ -424,7 +423,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
 //          Start a search.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 //          findwhat    -   A unicode match pattern.
 //          flags       -   Option flags.
 //          start_index -   Start from this character. -1 for end of the page.
@@ -442,7 +441,7 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
 //          Search in the direction from page start to end.
 // Parameters:
 //          handle      -   A search context handle returned by
-//          FPDFText_FindStart.
+//                          FPDFText_FindStart.
 // Return Value:
 //          Whether a match is found.
 //
@@ -452,7 +451,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindNext(FPDF_SCHHANDLE handle);
 //          Search in the direction from page end to start.
 // Parameters:
 //          handle      -   A search context handle returned by
-//          FPDFText_FindStart.
+//                          FPDFText_FindStart.
 // Return Value:
 //          Whether a match is found.
 //
@@ -462,7 +461,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindPrev(FPDF_SCHHANDLE handle);
 //          Get the starting character index of the search result.
 // Parameters:
 //          handle      -   A search context handle returned by
-//          FPDFText_FindStart.
+//                          FPDFText_FindStart.
 // Return Value:
 //          Index for the starting character.
 //
@@ -472,7 +471,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetSchResultIndex(FPDF_SCHHANDLE handle);
 //          Get the number of matched characters in the search result.
 // Parameters:
 //          handle      -   A search context handle returned by
-//          FPDFText_FindStart.
+//                          FPDFText_FindStart.
 // Return Value:
 //          Number of matched characters.
 //
@@ -482,7 +481,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetSchCount(FPDF_SCHHANDLE handle);
 //          Release a search context.
 // Parameters:
 //          handle      -   A search context handle returned by
-//          FPDFText_FindStart.
+//                          FPDFText_FindStart.
 // Return Value:
 //          None.
 //
@@ -492,22 +491,18 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_FindClose(FPDF_SCHHANDLE handle);
 //          Prepare information about weblinks in a page.
 // Parameters:
 //          text_page   -   Handle to a text page information structure.
-//          Returned by FPDFText_LoadPage function.
+//                          Returned by FPDFText_LoadPage function.
 // Return Value:
-//          A handle to the page's links information structure.
+//          A handle to the page's links information structure, or
 //          NULL if something goes wrong.
 // Comments:
 //          Weblinks are those links implicitly embedded in PDF pages. PDF also
-//          has a type of
-//          annotation called "link", FPDFTEXT doesn't deal with that kind of
-//          link.
-//          FPDFTEXT weblink feature is useful for automatically detecting links
-//          in the page
-//          contents. For example, things like "http://www.foxitsoftware.com"
-//          will be detected,
-//          so applications can allow user to click on those characters to
-//          activate the link,
-//          even the PDF doesn't come with link annotations.
+//          has a type of annotation called "link" (FPDFTEXT doesn't deal with
+//          that kind of link). FPDFTEXT weblink feature is useful for
+//          automatically detecting links in the page contents. For example,
+//          things like "https://www.example.com" will be detected, so
+//          applications can allow user to click on those characters to activate
+//          the link, even the PDF doesn't come with link annotations.
 //
 //          FPDFLink_CloseWebLinks must be called to release resources.
 //
