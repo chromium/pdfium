@@ -47,9 +47,6 @@ class CFFL_TextField final : public CFFL_TextObject,
   void SetActionData(CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
                      const CPDFSDK_FieldAction& fa) override;
-  bool IsActionDataChanged(CPDF_AAction::AActionType type,
-                           const CPDFSDK_FieldAction& faOld,
-                           const CPDFSDK_FieldAction& faNew) override;
   void SaveState(CPDFSDK_PageView* pPageView) override;
   void RestoreState(CPDFSDK_PageView* pPageView) override;
 #ifdef PDF_ENABLE_XFA

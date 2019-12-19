@@ -98,10 +98,6 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   virtual void SetActionData(CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
                              const CPDFSDK_FieldAction& fa);
-  virtual bool IsActionDataChanged(CPDF_AAction::AActionType type,
-                                   const CPDFSDK_FieldAction& faOld,
-                                   const CPDFSDK_FieldAction& faNew);
-
   virtual CPWL_Wnd::CreateParams GetCreateParam();
   virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
@@ -110,9 +106,9 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                                    bool bRestoreValue);
   virtual void SaveState(CPDFSDK_PageView* pPageView);
   virtual void RestoreState(CPDFSDK_PageView* pPageView);
-  virtual CFX_FloatRect GetFocusBox(CPDFSDK_PageView* pPageView);
 
   CFX_Matrix GetCurMatrix();
+  CFX_FloatRect GetFocusBox(CPDFSDK_PageView* pPageView);
   CFX_FloatRect FFLtoPWL(const CFX_FloatRect& rect);
   CFX_FloatRect PWLtoFFL(const CFX_FloatRect& rect);
   CFX_PointF FFLtoPWL(const CFX_PointF& point);

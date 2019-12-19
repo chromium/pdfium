@@ -530,12 +530,6 @@ void CFFL_FormFiller::SetActionData(CPDFSDK_PageView* pPageView,
                                     CPDF_AAction::AActionType type,
                                     const CPDFSDK_FieldAction& fa) {}
 
-bool CFFL_FormFiller::IsActionDataChanged(CPDF_AAction::AActionType type,
-                                          const CPDFSDK_FieldAction& faOld,
-                                          const CPDFSDK_FieldAction& faNew) {
-  return false;
-}
-
 void CFFL_FormFiller::SaveState(CPDFSDK_PageView* pPageView) {}
 
 void CFFL_FormFiller::RestoreState(CPDFSDK_PageView* pPageView) {}

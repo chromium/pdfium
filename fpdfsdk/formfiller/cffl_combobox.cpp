@@ -179,21 +179,6 @@ void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
   }
 }
 
-bool CFFL_ComboBox::IsActionDataChanged(CPDF_AAction::AActionType type,
-                                        const CPDFSDK_FieldAction& faOld,
-                                        const CPDFSDK_FieldAction& faNew) {
-  switch (type) {
-    case CPDF_AAction::kKeyStroke:
-      return (!faOld.bFieldFull && faOld.nSelEnd != faNew.nSelEnd) ||
-             faOld.nSelStart != faNew.nSelStart ||
-             faOld.sChange != faNew.sChange;
-    default:
-      break;
-  }
-
-  return false;
-}
-
 void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
   CPWL_ComboBox* pComboBox = GetComboBox(pPageView, false);
   if (!pComboBox)
