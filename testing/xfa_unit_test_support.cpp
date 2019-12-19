@@ -5,6 +5,7 @@
 #include "testing/xfa_unit_test_support.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -21,14 +22,9 @@ class XFATestEnvironment final : public testing::Environment {
  public:
   // testing::Environment:
   void SetUp() override {
-    // TODO(dsinclair): This font loading is slow. We should make a test font
-    // loader which loads up a single font we use in all tests.
-    CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
-        SystemFontInfoIface::CreateDefault(nullptr));
-
-    font_mgr_ = pdfium::MakeUnique<CFGAS_FontMgr>();
-    if (!font_mgr_->EnumFonts())
-      font_mgr_ = nullptr;
+    auto font_mgr = pdfium::MakeUnique<CFGAS_FontMgr>();
+    if (font_mgr->EnumFonts())
+      font_mgr_ = std::move(font_mgr);
   }
   void TearDown() override { font_mgr_.reset(); }
 
@@ -46,6 +42,11 @@ void InitializeXFATestEnvironment() {
   // |g_env| will be deleted by gtest.
   g_env = new XFATestEnvironment();
   AddGlobalTestEnvironment(g_env);
+
+  // TODO(dsinclair): This font loading is slow. We should make a test font
+  // loader which loads up a single font we use in all tests.
+  CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
+      SystemFontInfoIface::CreateDefault(nullptr));
 }
 
 CFGAS_FontMgr* GetGlobalFontManager() {
