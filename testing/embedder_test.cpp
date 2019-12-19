@@ -604,8 +604,7 @@ void EmbedderTest::DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
 // static
 std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
   uint8_t digest[16];
-  size_t size = FPDFBitmap_GetWidth(bitmap) * GetBitmapBytesPerPixel(bitmap) *
-                FPDFBitmap_GetHeight(bitmap);
+  size_t size = FPDFBitmap_GetStride(bitmap) * FPDFBitmap_GetHeight(bitmap);
   CRYPT_MD5Generate({static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)), size},
                     digest);
   return CryptToBase16(digest);

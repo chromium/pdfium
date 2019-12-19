@@ -184,7 +184,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
     EXPECT_EQ(50, FPDFBitmap_GetHeight(thumb_bitmap.get()));
     EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
     CompareBitmap(thumb_bitmap.get(), 50, 50,
-                  "312a156389470c3c69435f836e370a45");
+                  "73c43ed7cffd23de2408857a96bbdde8");
 
     UnloadPage(page);
   }
@@ -199,7 +199,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailAsBitmapFromPage) {
     EXPECT_EQ(50, FPDFBitmap_GetHeight(thumb_bitmap.get()));
     EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
     CompareBitmap(thumb_bitmap.get(), 50, 50,
-                  "d831dc43c6d5af82cb7a936dd317f82f");
+                  "d7d906ebee289d0ac07ef11842d9f779");
 
     UnloadPage(page);
   }
@@ -243,7 +243,7 @@ TEST_F(FPDFThumbnailEmbedderTest,
   EXPECT_EQ(10, FPDFBitmap_GetWidth(thumb_bitmap.get()));
   EXPECT_EQ(10, FPDFBitmap_GetHeight(thumb_bitmap.get()));
   EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
-  CompareBitmap(thumb_bitmap.get(), 10, 10, "20428776d40c398d44a5c09fcd57986d");
+  CompareBitmap(thumb_bitmap.get(), 10, 10, "91ca98dbff38b9a50f8c1dfc621ff79f");
 
   UnloadPage(page);
 }
@@ -273,7 +273,7 @@ TEST_F(FPDFThumbnailEmbedderTest, GetThumbnailDoesNotAlterPage) {
   EXPECT_EQ(50, FPDFBitmap_GetWidth(thumb_bitmap.get()));
   EXPECT_EQ(50, FPDFBitmap_GetHeight(thumb_bitmap.get()));
   EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(thumb_bitmap.get()));
-  CompareBitmap(thumb_bitmap.get(), 50, 50, "312a156389470c3c69435f836e370a45");
+  CompareBitmap(thumb_bitmap.get(), 50, 50, "73c43ed7cffd23de2408857a96bbdde8");
 
   // Get the raw data again
   unsigned long new_raw_size = FPDFPage_GetRawThumbnailData(page, nullptr, 0);
