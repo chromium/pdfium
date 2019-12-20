@@ -214,12 +214,14 @@ extern "C" {
 //          None.
 // Comments:
 //          Convenience function to call FPDF_InitLibraryWithConfig() for
-//          backwards comatibility purposes.
+//          backwards compatibility purposes. This will be deprecated in the
+//          future.
 FPDF_EXPORT void FPDF_CALLCONV FPDF_InitLibrary();
 
 // Process-wide options for initializing the library.
 typedef struct FPDF_LIBRARY_CONFIG_ {
   // Version number of the interface. Currently must be 2.
+  // Support for version 1 will be deprecated in the future.
   int version;
 
   // Array of paths to scan in place of the defaults when using built-in
@@ -234,9 +236,9 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
   void* m_pIsolate;
 
   // The embedder data slot to use in the v8::Isolate to store PDFium's
-  // per-isolate data. The value needs to be between 0 and
-  // v8::Internals::kNumIsolateDataLots (exclusive). Note that 0 is fine
-  // for most embedders.
+  // per-isolate data. The value needs to be in the range
+  // [0, |v8::Internals::kNumIsolateDataLots|). Note that 0 is fine for most
+  // embedders.
   unsigned int m_v8EmbedderSlot;
 } FPDF_LIBRARY_CONFIG;
 
