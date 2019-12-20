@@ -24,6 +24,7 @@
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
+#include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_imagerenderer.h"
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
@@ -329,6 +330,22 @@ bool CXFA_FFWidget::UpdateFWLData() {
 }
 
 void CXFA_FFWidget::UpdateWidgetProperty() {}
+
+bool CXFA_FFWidget::HasEventUnderHandler(XFA_EVENTTYPE eEventType,
+                                         CXFA_FFWidgetHandler* pHandler) {
+  CXFA_Node* pNode = GetNode();
+  return pNode->IsWidgetReady() && pHandler->HasEvent(pNode, eEventType);
+}
+
+bool CXFA_FFWidget::ProcessEventUnderHandler(CXFA_EventParam* params,
+                                             CXFA_FFWidgetHandler* pHandler) {
+  CXFA_Node* pNode = GetNode();
+  if (!pNode->IsWidgetReady())
+    return false;
+
+  params->m_pTarget = pNode;
+  return pHandler->ProcessEvent(pNode, params) == XFA_EventError::kSuccess;
+}
 
 void CXFA_FFWidget::DrawBorder(CXFA_Graphics* pGS,
                                CXFA_Box* box,

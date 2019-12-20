@@ -16,15 +16,17 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widget.h"
+#include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 
 class CFX_DIBitmap;
 class CXFA_Box;
-class CXFA_FFPageView;
-class CXFA_FFDocView;
-class CXFA_FFDoc;
 class CXFA_FFApp;
+class CXFA_FFDoc;
+class CXFA_FFDocView;
+class CXFA_FFPageView;
+class CXFA_FFWidgetHandler;
 class CXFA_Graphics;
 class CXFA_Image;
 class CXFA_Margin;
@@ -154,6 +156,11 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   CXFA_LayoutItem* GetParent();
   bool IsAncestorOf(CXFA_FFWidget* pWidget);
   const CFWL_App* GetFWLApp();
+
+  bool HasEventUnderHandler(XFA_EVENTTYPE eEventType,
+                            CXFA_FFWidgetHandler* pHandler);
+  bool ProcessEventUnderHandler(CXFA_EventParam* params,
+                                CXFA_FFWidgetHandler* pHandler);
 
  protected:
   virtual bool PtInActiveRect(const CFX_PointF& point);

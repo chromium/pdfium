@@ -188,26 +188,18 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
     return false;
 
   XFA_EVENTTYPE eEventType = GetXFAEventType(eXFAAAT);
-
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
       GetFieldType() == FormFieldType::kRadioButton) {
-    if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
-      CXFA_Node* node = hGroupWidget->GetNode();
-      if (node->IsWidgetReady()) {
-        if (pXFAWidgetHandler->HasEvent(node, eEventType))
-          return true;
-      }
+    CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget();
+    if (hGroupWidget &&
+        hGroupWidget->HasEventUnderHandler(eEventType, pXFAWidgetHandler)) {
+      return true;
     }
   }
 
   // Check |pWidget| again because JS may have destroyed it in the block above.
-  if (!pWidget)
-    return false;
-
-  CXFA_Node* node = pWidget->GetNode();
-  if (!node->IsWidgetReady())
-    return false;
-  return pXFAWidgetHandler->HasEvent(node, eEventType);
+  return pWidget &&
+         pWidget->HasEventUnderHandler(eEventType, pXFAWidgetHandler);
 }
 
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
@@ -241,16 +233,10 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   param.m_wsPrevText = data->sValue;
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
       GetFieldType() == FormFieldType::kRadioButton) {
-    if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
-      CXFA_Node* node = hGroupWidget->GetNode();
-      if (!node->IsWidgetReady())
-        return false;
-
-      param.m_pTarget = node;
-      if (pXFAWidgetHandler->ProcessEvent(node, &param) !=
-          XFA_EventError::kSuccess) {
-        return false;
-      }
+    CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget();
+    if (hGroupWidget &&
+        !hGroupWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler)) {
+      return false;
     }
   }
 
@@ -258,16 +244,11 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   if (!pWidget)
     return false;
 
-  XFA_EventError nRet = XFA_EventError::kNotExist;
-  CXFA_Node* node = pWidget->GetNode();
-  if (node->IsWidgetReady()) {
-    param.m_pTarget = node;
-    nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
-  }
+  bool ret = pWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
   if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
     pDocView->UpdateDocView();
 
-  return nRet == XFA_EventError::kSuccess;
+  return ret;
 }
 
 void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
@@ -826,18 +807,10 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
         param.m_bKeyDown = data->bKeyDown;
         param.m_bModifier = data->bModifier;
         param.m_wsPrevText = data->sValue;
-
-        XFA_EventError nRet = XFA_EventError::kNotExist;
-        CXFA_Node* node = hWidget->GetNode();
-        if (node->IsWidgetReady()) {
-          param.m_pTarget = node;
-          nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
-        }
-
+        bool ret = hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
         if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
           pDocView->UpdateDocView();
-
-        if (nRet == XFA_EventError::kSuccess)
+        if (ret)
           return true;
       }
     }
