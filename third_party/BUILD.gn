@@ -625,6 +625,7 @@ source_set("pdfium_base") {
     "base/debug/alias.cc",
     "base/debug/alias.h",
     "base/logging.h",
+    "base/no_destructor.h",
     "base/numerics/safe_conversions.h",
     "base/numerics/safe_conversions_arm_impl.h",
     "base/numerics/safe_conversions_impl.h",

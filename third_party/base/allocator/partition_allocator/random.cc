@@ -6,6 +6,7 @@
 
 #include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
+#include "third_party/base/no_destructor.h"
 
 #if defined(OS_WIN)
 #include <windows.h>
@@ -44,16 +45,8 @@ uint32_t RandomValueInternal(RandomContext* x) {
 #undef rot
 
 RandomContext* GetRandomContext() {
-  static RandomContext* s_RandomContext = nullptr;
-  if (!s_RandomContext)
-    s_RandomContext = new RandomContext();
-  return s_RandomContext;
-}
-
-}  // namespace
-
-uint32_t RandomValue() {
-  RandomContext* x = GetRandomContext();
+  static NoDestructor<RandomContext> g_random_context;
+  RandomContext* x = g_random_context.get();
   subtle::SpinLock::Guard guard(x->lock);
   if (UNLIKELY(!x->initialized)) {
     x->initialized = true;
@@ -80,7 +73,14 @@ uint32_t RandomValue() {
       RandomValueInternal(x);
     }
   }
+  return x;
+}
 
+}  // namespace
+
+uint32_t RandomValue() {
+  RandomContext* x = GetRandomContext();
+  subtle::SpinLock::Guard guard(x->lock);
   return RandomValueInternal(x);
 }
 
