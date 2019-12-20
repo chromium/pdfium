@@ -25,7 +25,7 @@ namespace {
 bool CheckDimensions(int stride, int width, int height) {
   if (stride < 0 || width < 0 || height < 0)
     return false;
-  if (height > 0 && width > INT_MAX / height)
+  if (height > 0 && stride > INT_MAX / height)
     return false;
   return true;
 }
@@ -133,7 +133,7 @@ const char* PageObjectTypeToCString(int type) {
   return "";
 }
 
-std::vector<uint8_t> EncodePng(const uint8_t* buffer,
+std::vector<uint8_t> EncodePng(pdfium::span<const uint8_t> input,
                                int width,
                                int height,
                                int stride,
@@ -143,17 +143,17 @@ std::vector<uint8_t> EncodePng(const uint8_t* buffer,
     case FPDFBitmap_Unknown:
       break;
     case FPDFBitmap_Gray:
-      png = image_diff_png::EncodeGrayPNG(buffer, width, height, stride);
+      png = image_diff_png::EncodeGrayPNG(input, width, height, stride);
       break;
     case FPDFBitmap_BGR:
-      png = image_diff_png::EncodeBGRPNG(buffer, width, height, stride);
+      png = image_diff_png::EncodeBGRPNG(input, width, height, stride);
       break;
     case FPDFBitmap_BGRx:
-      png = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
+      png = image_diff_png::EncodeBGRAPNG(input, width, height, stride,
                                           /*discard_transparency=*/true);
       break;
     case FPDFBitmap_BGRA:
-      png = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
+      png = image_diff_png::EncodeBGRAPNG(input, width, height, stride,
                                           /*discard_transparency=*/false);
       break;
     default:
@@ -383,9 +383,10 @@ std::string WritePng(const char* pdf_name,
   if (!CheckDimensions(stride, width, height))
     return "";
 
+  auto input =
+      pdfium::make_span(static_cast<uint8_t*>(buffer), stride * height);
   std::vector<uint8_t> png_encoding =
-      EncodePng(static_cast<const uint8_t*>(buffer), width, height, stride,
-                FPDFBitmap_BGRA);
+      EncodePng(input, width, height, stride, FPDFBitmap_BGRA);
   if (png_encoding.empty()) {
     fprintf(stderr, "Failed to convert bitmap to PNG\n");
     return "";
@@ -589,14 +590,17 @@ std::vector<uint8_t> EncodeBitmapToPng(ScopedFPDFBitmap bitmap) {
   if (format == FPDFBitmap_Unknown)
     return png_encoding;
 
-  const uint8_t* buffer =
-      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap.get()));
-
   int width = FPDFBitmap_GetWidth(bitmap.get());
   int height = FPDFBitmap_GetHeight(bitmap.get());
   int stride = FPDFBitmap_GetStride(bitmap.get());
+  if (!CheckDimensions(stride, width, height))
+    return png_encoding;
 
-  png_encoding = EncodePng(buffer, width, height, stride, format);
+  auto input = pdfium::make_span(
+      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap.get())),
+      stride * height);
+
+  png_encoding = EncodePng(input, width, height, stride, format);
   return png_encoding;
 }
 

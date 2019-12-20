@@ -7,6 +7,7 @@
 #include <fstream>
 #include <vector>
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "testing/image_diff/image_diff_png.h"
 #include "third_party/base/logging.h"
 
@@ -16,14 +17,20 @@ void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
   const int stride = FPDFBitmap_GetStride(bitmap);
   const int width = FPDFBitmap_GetWidth(bitmap);
   const int height = FPDFBitmap_GetHeight(bitmap);
-  const auto* buffer =
-      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
+  CHECK(stride >= 0);
+  CHECK(width >= 0);
+  CHECK(height >= 0);
+  FX_SAFE_FILESIZE size = stride;
+  size *= height;
+  auto input = pdfium::make_span(
+      static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+      pdfium::base::ValueOrDieForType<size_t>(size));
 
   std::vector<uint8_t> png;
   if (FPDFBitmap_GetFormat(bitmap) == FPDFBitmap_Gray) {
-    png = image_diff_png::EncodeGrayPNG(buffer, width, height, stride);
+    png = image_diff_png::EncodeGrayPNG(input, width, height, stride);
   } else {
-    png = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
+    png = image_diff_png::EncodeBGRAPNG(input, width, height, stride,
                                         /*discard_transparency=*/false);
   }
 

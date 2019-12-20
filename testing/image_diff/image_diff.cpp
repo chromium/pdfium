@@ -44,7 +44,7 @@ class Image {
   bool has_image() const { return w_ > 0 && h_ > 0; }
   int w() const { return w_; }
   int h() const { return h_; }
-  const uint8_t* data() const { return &data_.front(); }
+  pdfium::span<const uint8_t> span() const { return data_; }
 
   // Creates the image from the given filename on disk, and returns true on
   // success.
@@ -296,7 +296,7 @@ int DiffImages(const std::string& file1,
     return kStatusSame;
 
   std::vector<uint8_t> png_encoding = image_diff_png::EncodeRGBAPNG(
-      diff_image.data(), diff_image.w(), diff_image.h(), diff_image.w() * 4);
+      diff_image.span(), diff_image.w(), diff_image.h(), diff_image.w() * 4);
   if (png_encoding.empty())
     return kStatusError;
 

@@ -326,15 +326,14 @@ class PngReadStructDestroyer {
   png_info** pi_;
 };
 
-bool BuildPNGStruct(const uint8_t* input,
-                    size_t input_size,
+bool BuildPNGStruct(pdfium::span<const uint8_t> input,
                     png_struct** png_ptr,
                     png_info** info_ptr) {
-  if (input_size < 8)
+  if (input.size() < 8)
     return false;  // Input data too small to be a png
 
   // Have libpng check the signature, it likes the first 8 bytes.
-  if (png_sig_cmp(const_cast<uint8_t*>(input), 0, 8) != 0)
+  if (png_sig_cmp(const_cast<uint8_t*>(input.data()), 0, 8) != 0)
     return false;
 
   *png_ptr =
@@ -351,15 +350,14 @@ bool BuildPNGStruct(const uint8_t* input,
   return true;
 }
 
-std::vector<uint8_t> Decode(const uint8_t* input,
-                            size_t input_size,
+std::vector<uint8_t> Decode(pdfium::span<const uint8_t> input,
                             ColorFormat format,
                             int* w,
                             int* h) {
   std::vector<uint8_t> output;
   png_struct* png_ptr = nullptr;
   png_info* info_ptr = nullptr;
-  if (!BuildPNGStruct(input, input_size, &png_ptr, &info_ptr))
+  if (!BuildPNGStruct(input, &png_ptr, &info_ptr))
     return output;
 
   PngReadStructDestroyer destroyer(&png_ptr, &info_ptr);
@@ -374,7 +372,8 @@ std::vector<uint8_t> Decode(const uint8_t* input,
 
   png_set_progressive_read_fn(png_ptr, &state, &DecodeInfoCallback,
                               &DecodeRowCallback, &DecodeEndCallback);
-  png_process_data(png_ptr, info_ptr, const_cast<uint8_t*>(input), input_size);
+  png_process_data(png_ptr, info_ptr, const_cast<uint8_t*>(input.data()),
+                   input.size());
 
   if (!state.done) {
     // Fed it all the data but the library didn't think we got all the data, so
@@ -495,7 +494,7 @@ bool DoLibpngWrite(png_struct* png_ptr,
                    int width,
                    int height,
                    int row_byte_width,
-                   const uint8_t* input,
+                   pdfium::span<const uint8_t> input,
                    int compression_level,
                    int png_output_color_type,
                    int output_color_components,
@@ -552,7 +551,7 @@ bool DoLibpngWrite(png_struct* png_ptr,
 }
 
 std::vector<uint8_t> EncodeWithCompressionLevel(
-    const uint8_t* input,
+    pdfium::span<const uint8_t> input,
     ColorFormat format,
     const int width,
     const int height,
@@ -643,7 +642,7 @@ std::vector<uint8_t> EncodeWithCompressionLevel(
   return output;
 }
 
-std::vector<uint8_t> Encode(const uint8_t* input,
+std::vector<uint8_t> Encode(pdfium::span<const uint8_t> input,
                             ColorFormat format,
                             const int width,
                             const int height,
@@ -662,10 +661,10 @@ std::vector<uint8_t> DecodePNG(pdfium::span<const uint8_t> input,
                                int* width,
                                int* height) {
   ColorFormat format = reverse_byte_order ? FORMAT_BGRA : FORMAT_RGBA;
-  return Decode(input.data(), input.size(), format, width, height);
+  return Decode(input, format, width, height);
 }
 
-std::vector<uint8_t> EncodeBGRPNG(const uint8_t* input,
+std::vector<uint8_t> EncodeBGRPNG(pdfium::span<const uint8_t> input,
                                   int width,
                                   int height,
                                   int row_byte_width) {
@@ -673,7 +672,7 @@ std::vector<uint8_t> EncodeBGRPNG(const uint8_t* input,
                 std::vector<Comment>());
 }
 
-std::vector<uint8_t> EncodeRGBAPNG(const uint8_t* input,
+std::vector<uint8_t> EncodeRGBAPNG(pdfium::span<const uint8_t> input,
                                    int width,
                                    int height,
                                    int row_byte_width) {
@@ -681,7 +680,7 @@ std::vector<uint8_t> EncodeRGBAPNG(const uint8_t* input,
                 std::vector<Comment>());
 }
 
-std::vector<uint8_t> EncodeBGRAPNG(const uint8_t* input,
+std::vector<uint8_t> EncodeBGRAPNG(pdfium::span<const uint8_t> input,
                                    int width,
                                    int height,
                                    int row_byte_width,
@@ -690,7 +689,7 @@ std::vector<uint8_t> EncodeBGRAPNG(const uint8_t* input,
                 discard_transparency, std::vector<Comment>());
 }
 
-std::vector<uint8_t> EncodeGrayPNG(const uint8_t* input,
+std::vector<uint8_t> EncodeGrayPNG(pdfium::span<const uint8_t> input,
                                    int width,
                                    int height,
                                    int row_byte_width) {
