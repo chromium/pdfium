@@ -88,6 +88,8 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
                      const WideString& wsEncode) override;
   TimerHandlerIface* GetTimerHandler() const override;
 
+  bool SaveDatasetsPackage(const RetainPtr<IFX_SeekableStream>& pStream);
+  bool SaveFormPackage(const RetainPtr<IFX_SeekableStream>& pStream);
   void SendPostSaveToXFADoc();
   void SendPreSaveToXFADoc(
       std::vector<RetainPtr<IFX_SeekableStream>>* fileList);
@@ -107,6 +109,8 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   }
 
   CJS_Runtime* GetCJSRuntime() const;
+  bool SavePackage(const RetainPtr<IFX_SeekableStream>& pStream,
+                   XFA_HashCode code);
   void CloseXFADoc();
 
   FormType m_FormType = FormType::kNone;
