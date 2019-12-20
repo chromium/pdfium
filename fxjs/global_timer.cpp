@@ -10,14 +10,14 @@
 
 #include "core/fxcrt/timerhandler_iface.h"
 #include "fxjs/cjs_app.h"
+#include "third_party/base/no_destructor.h"
 
 namespace {
 
 using TimerMap = std::map<int32_t, GlobalTimer*>;
-TimerMap* GetGlobalTimerMap() {
-  // Leak the timer array at shutdown.
-  static auto* s_TimerMap = new TimerMap;
-  return s_TimerMap;
+TimerMap& GetGlobalTimerMap() {
+  static pdfium::base::NoDestructor<TimerMap> timer_map;
+  return *timer_map;
 }
 
 }  // namespace
@@ -35,7 +35,7 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
       m_pRuntime(pRuntime),
       m_pEmbedApp(pObj) {
   if (HasValidID())
-    (*GetGlobalTimerMap())[m_nTimerID] = this;
+    GetGlobalTimerMap()[m_nTimerID] = this;
 }
 
 GlobalTimer::~GlobalTimer() {
@@ -45,13 +45,13 @@ GlobalTimer::~GlobalTimer() {
   if (m_pRuntime && m_pRuntime->GetTimerHandler())
     m_pRuntime->GetTimerHandler()->KillTimer(m_nTimerID);
 
-  GetGlobalTimerMap()->erase(m_nTimerID);
+  GetGlobalTimerMap().erase(m_nTimerID);
 }
 
 // static
 void GlobalTimer::Trigger(int32_t nTimerID) {
-  auto it = GetGlobalTimerMap()->find(nTimerID);
-  if (it == GetGlobalTimerMap()->end())
+  auto it = GetGlobalTimerMap().find(nTimerID);
+  if (it == GetGlobalTimerMap().end())
     return;
 
   GlobalTimer* pTimer = it->second;
@@ -63,8 +63,8 @@ void GlobalTimer::Trigger(int32_t nTimerID) {
     pTimer->m_pEmbedApp->TimerProc(pTimer);
 
   // Timer proc may have destroyed timer, find it again.
-  it = GetGlobalTimerMap()->find(nTimerID);
-  if (it == GetGlobalTimerMap()->end())
+  it = GetGlobalTimerMap().find(nTimerID);
+  if (it == GetGlobalTimerMap().end())
     return;
 
   pTimer = it->second;
@@ -75,8 +75,8 @@ void GlobalTimer::Trigger(int32_t nTimerID) {
 
 // static
 void GlobalTimer::Cancel(int32_t nTimerID) {
-  auto it = GetGlobalTimerMap()->find(nTimerID);
-  if (it == GetGlobalTimerMap()->end())
+  auto it = GetGlobalTimerMap().find(nTimerID);
+  if (it == GetGlobalTimerMap().end())
     return;
 
   GlobalTimer* pTimer = it->second;

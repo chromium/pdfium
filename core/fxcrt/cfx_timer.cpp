@@ -8,12 +8,14 @@
 
 #include <map>
 
+#include "third_party/base/no_destructor.h"
+
 namespace {
 
-std::map<int32_t, CFX_Timer*>& GetPWLTimeMap() {
-  // Leak the object at shutdown.
-  static auto* timeMap = new std::map<int32_t, CFX_Timer*>;
-  return *timeMap;
+using TimerMap = std::map<int32_t, CFX_Timer*>;
+TimerMap& GetPWLTimerMap() {
+  static pdfium::base::NoDestructor<TimerMap> timer_map;
+  return *timer_map;
 }
 
 }  // namespace
@@ -26,19 +28,19 @@ CFX_Timer::CFX_Timer(TimerHandlerIface* pTimerHandler,
       m_pCallbackIface(pCallbackIface) {
   ASSERT(m_pCallbackIface);
   if (HasValidID())
-    GetPWLTimeMap()[m_nTimerID] = this;
+    GetPWLTimerMap()[m_nTimerID] = this;
 }
 
 CFX_Timer::~CFX_Timer() {
   if (HasValidID()) {
     m_pTimerHandler->KillTimer(m_nTimerID);
-    GetPWLTimeMap().erase(m_nTimerID);
+    GetPWLTimerMap().erase(m_nTimerID);
   }
 }
 
 // static
 void CFX_Timer::TimerProc(int32_t idEvent) {
-  auto it = GetPWLTimeMap().find(idEvent);
-  if (it != GetPWLTimeMap().end())
+  auto it = GetPWLTimerMap().find(idEvent);
+  if (it != GetPWLTimerMap().end())
     it->second->m_pCallbackIface->OnTimerFired();
 }
