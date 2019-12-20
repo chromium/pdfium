@@ -603,10 +603,18 @@ void EmbedderTest::DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
 
 // static
 std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
+  int stride = FPDFBitmap_GetStride(bitmap);
+  int usable_bytes_per_row =
+      GetBitmapBytesPerPixel(bitmap) * FPDFBitmap_GetWidth(bitmap);
+  int height = FPDFBitmap_GetHeight(bitmap);
+  auto span = pdfium::make_span(
+      static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)), stride * height);
+
+  CRYPT_md5_context context = CRYPT_MD5Start();
+  for (int i = 0; i < height; ++i)
+    CRYPT_MD5Update(&context, span.subspan(i * stride, usable_bytes_per_row));
   uint8_t digest[16];
-  size_t size = FPDFBitmap_GetStride(bitmap) * FPDFBitmap_GetHeight(bitmap);
-  CRYPT_MD5Generate({static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)), size},
-                    digest);
+  CRYPT_MD5Finish(&context, digest);
   return CryptToBase16(digest);
 }
 
