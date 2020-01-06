@@ -53,7 +53,6 @@ class CFX_RTFBreak final : public CFX_Break {
   CFX_BreakType AppendChar_Control(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
-  int32_t GetLastPositionedTab() const;
   bool GetPositionedTab(int32_t* iTabPos) const;
 
   int32_t GetBreakPos(std::vector<CFX_Char>& tca,

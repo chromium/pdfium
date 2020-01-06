@@ -55,10 +55,6 @@ void CFX_RTFBreak::SetUserData(const RetainPtr<CFX_TextUserData>& pUserData) {
   m_pUserData = pUserData;
 }
 
-int32_t CFX_RTFBreak::GetLastPositionedTab() const {
-  return m_PositionedTabs.empty() ? m_iLineStart : m_PositionedTabs.back();
-}
-
 bool CFX_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
   auto it = std::upper_bound(m_PositionedTabs.begin(), m_PositionedTabs.end(),
                              *iTabPos);
