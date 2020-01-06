@@ -37,7 +37,6 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
   int32_t CountPages() const;
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
-  CXFA_ViewLayoutItem* GetRootLayoutItem() const;
   CXFA_ContentLayoutProcessor* GetRootContentLayoutProcessor() const {
     return m_pContentLayoutProcessor.get();
   }

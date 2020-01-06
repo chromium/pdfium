@@ -128,11 +128,6 @@ void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
     m_rgChangedContainers.push_back(pContainer);
 }
 
-CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
-  return m_pViewLayoutProcessor ? m_pViewLayoutProcessor->GetRootLayoutItem()
-                                : nullptr;
-}
-
 bool CXFA_LayoutProcessor::NeedLayout() const {
   return m_bNeedLayout || !m_rgChangedContainers.empty();
 }
