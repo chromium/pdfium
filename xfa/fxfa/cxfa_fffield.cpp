@@ -506,13 +506,14 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 }
 
 bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
+  ObservedPtr<CXFA_FFWidget> pNewWatched(pNewWidget);
   if (GetNormalWidget()) {
     SendMessageToFWLWidget(
         pdfium::MakeUnique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
     GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
     InvalidateRect();
   }
-  return CXFA_FFWidget::OnKillFocus(pNewWidget);
+  return pNewWatched && CXFA_FFWidget::OnKillFocus(pNewWatched.Get());
 }
 
 bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {

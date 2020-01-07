@@ -71,10 +71,11 @@ bool CXFA_FFListBox::LoadWidget() {
 }
 
 bool CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
+  ObservedPtr<CXFA_FFWidget> pWatched(pNewFocus);
   if (!ProcessCommittedData())
     UpdateFWLData();
 
-  return CXFA_FFField::OnKillFocus(pNewFocus);
+  return pWatched && CXFA_FFField::OnKillFocus(pWatched.Get());
 }
 
 bool CXFA_FFListBox::CommitData() {

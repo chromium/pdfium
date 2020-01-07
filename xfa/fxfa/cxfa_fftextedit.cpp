@@ -152,13 +152,14 @@ bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
+  ObservedPtr<CXFA_FFWidget> pWatched(pOldWidget);
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_TextEditValueChanged);
   if (!IsFocused()) {
     GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
     UpdateFWLData();
     InvalidateRect();
   }
-  if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
+  if (!CXFA_FFWidget::OnSetFocus(pWatched.Get()))
     return false;
 
   SendMessageToFWLWidget(
@@ -168,6 +169,7 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 }
 
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
+  ObservedPtr<CXFA_FFWidget> pWatched(pNewWidget);
   SendMessageToFWLWidget(
       pdfium::MakeUnique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
 
@@ -177,7 +179,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   UpdateFWLData();
   InvalidateRect();
 
-  if (!CXFA_FFWidget::OnKillFocus(pNewWidget))
+  if (!CXFA_FFWidget::OnKillFocus(pWatched.Get()))
     return false;
 
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_TextEditValueChanged);
