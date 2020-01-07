@@ -28,15 +28,27 @@ from testing.tools.common import GetBooleanGnArg
 # 'binary' is the file that is to be run for the test.
 # 'use_test_runner' indicates if 'binary' depends on test_runner.py and thus
 # requires special handling.
-TestSpec = namedtuple('TestSpec', 'binary, use_test_runner')
+# 'opt_args' are optional arguments to pass to the test 'binary'.
+TestSpec = namedtuple('TestSpec', 'binary, use_test_runner, opt_args')
 
 # All of the coverage tests that the script knows how to run.
 COVERAGE_TESTS = {
-    'pdfium_unittests': TestSpec('pdfium_unittests', False),
-    'pdfium_embeddertests': TestSpec('pdfium_embeddertests', False),
-    'corpus_tests': TestSpec('run_corpus_tests.py', True),
-    'javascript_tests': TestSpec('run_javascript_tests.py', True),
-    'pixel_tests': TestSpec('run_pixel_tests.py', True),
+    'pdfium_unittests':
+        TestSpec('pdfium_unittests', False, []),
+    'pdfium_embeddertests':
+        TestSpec('pdfium_embeddertests', False, []),
+    'corpus_tests':
+        TestSpec('run_corpus_tests.py', True, []),
+    'corpus_tests_javascript_disabled':
+        TestSpec('run_corpus_tests.py', True, ['--disable-javascript']),
+    'javascript_tests':
+        TestSpec('run_javascript_tests.py', True, []),
+    'javascript_tests_javascript_disabled':
+        TestSpec('run_javascript_tests.py', True, ['--disable-javascript']),
+    'pixel_tests':
+        TestSpec('run_pixel_tests.py', True, []),
+    'pixel_tests_javascript_disabled':
+        TestSpec('run_pixel_tests.py', True, ['--disable-javascript']),
 }
 
 
@@ -147,7 +159,8 @@ class CoverageExecutor(object):
       else:
         binary_path = os.path.join(self.build_directory, test_spec.binary)
         build_targets.add(name)
-      coverage_tests[name] = TestSpec(binary_path, test_spec.use_test_runner)
+      coverage_tests[name] = TestSpec(binary_path, test_spec.use_test_runner,
+                                      test_spec.opt_args)
 
     build_targets = list(build_targets)
 
@@ -170,8 +183,7 @@ class CoverageExecutor(object):
         name: Name associated with the test to be run. This is used as a label
               in the coverage data, so should be unique across all of the tests
               being run.
-        spec: Tuple containing the path to the binary to run, and if this test
-              uses test_runner.py.
+        spec: Tuple containing the TestSpec.
     """
     if self.verbose:
       print "Generating coverage for test '%s', using data '%s'" % (name, spec)
@@ -181,6 +193,8 @@ class CoverageExecutor(object):
       return False
 
     binary_args = [spec.binary]
+    if spec.opt_args:
+      binary_args.extend(spec.opt_args)
     profile_pattern_string = '%8m'
     expected_profraw_file = '%s.%s.profraw' % (name, profile_pattern_string)
     expected_profraw_path = os.path.join(self.output_directory,
