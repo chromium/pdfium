@@ -15,13 +15,9 @@ class CXFALayoutItemEmbedderTest : public EmbedderTest {};
 // Leaks. See https://crbug.com/pdfium/1301
 #define MAYBE_Bug_1301 DISABLED_Bug_1301
 
-// Leaks. See https:://crbug.com/306123
-#define MAYBE_Bug_306123 DISABLED_Bug_306123
-
 #else
 #define MAYBE_Bug_1265 Bug_1265
 #define MAYBE_Bug_1301 Bug_1301
-#define MAYBE_Bug_306123 Bug_306123
 #endif
 
 TEST_F(CXFALayoutItemEmbedderTest, MAYBE_Bug_1265) {
@@ -45,7 +41,7 @@ TEST_F(CXFALayoutItemEmbedderTest, MAYBE_Bug_1301) {
   UnloadPage(page1);
 }
 
-TEST_F(CXFALayoutItemEmbedderTest, MAYBE_Bug_306123) {
+TEST_F(CXFALayoutItemEmbedderTest, Bug_306123) {
   EXPECT_TRUE(OpenDocument("bug_306123.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
