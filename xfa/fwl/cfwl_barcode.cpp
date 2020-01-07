@@ -8,11 +8,11 @@
 
 #include <utility>
 
+#include "fxbarcode/cfx_barcode.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themepart.h"
-#include "xfa/fwl/cfx_barcode.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 

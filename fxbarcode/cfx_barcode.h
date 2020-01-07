@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CFX_BARCODE_H_
-#define XFA_FWL_CFX_BARCODE_H_
+#ifndef FXBARCODE_CFX_BARCODE_H_
+#define FXBARCODE_CFX_BARCODE_H_
 
 #include <memory>
 
@@ -59,4 +59,4 @@ class CFX_Barcode {
   std::unique_ptr<CBC_CodeBase> m_pBCEngine;
 };
 
-#endif  // XFA_FWL_CFX_BARCODE_H_
+#endif  // FXBARCODE_CFX_BARCODE_H_

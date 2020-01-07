@@ -79,8 +79,6 @@ source_set("fwl") {
     "cfwl_widgetmgr.h",
     "cfwl_widgetproperties.cpp",
     "cfwl_widgetproperties.h",
-    "cfx_barcode.cpp",
-    "cfx_barcode.h",
     "fwl_widgetdef.h",
     "fwl_widgethit.h",
     "ifwl_themeprovider.h",
@@ -124,17 +122,6 @@ source_set("fwl") {
     "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]
-}
-
-pdfium_unittest_source_set("unittests") {
-  sources = [
-    "cfx_barcode_unittest.cpp",
-  ]
-  deps = [
-    ":fwl",
-    "../../core/fxge",
-  ]
-  pdfium_root_dir = "../../"
 }
 
 pdfium_embeddertest_source_set("embeddertests") {

@@ -259,7 +259,7 @@ if (pdf_enable_v8) {
       ]
       deps = [
         "../../core/fxcrt",
-        "../../xfa/fwl",
+        "../../fxbarcode",
         "//third_party/icu:icuuc",
       ]
     }

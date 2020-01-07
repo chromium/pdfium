@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fwl/cfx_barcode.h"
+#include "fxbarcode/cfx_barcode.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size < 2 * sizeof(uint16_t))
