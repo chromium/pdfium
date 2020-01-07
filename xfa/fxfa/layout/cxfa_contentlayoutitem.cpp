@@ -23,9 +23,6 @@ CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(
 
 CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
   RemoveSelf();
-  CJX_Object* pJsObject = GetFormNode()->JSObject();
-  if (pJsObject->GetLayoutItem() == this)
-    pJsObject->SetLayoutItem(nullptr);
 }
 
 CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetFirst() {
