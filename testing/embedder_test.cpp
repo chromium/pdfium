@@ -37,19 +37,7 @@
 namespace {
 
 int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {
-  const int format = FPDFBitmap_GetFormat(bitmap);
-  switch (format) {
-    case FPDFBitmap_Gray:
-      return 1;
-    case FPDFBitmap_BGR:
-      return 3;
-    case FPDFBitmap_BGRx:
-    case FPDFBitmap_BGRA:
-      return 4;
-    default:
-      ASSERT(false);
-      return 0;
-  }
+  return EmbedderTest::BytesPerPixelForFormat(FPDFBitmap_GetFormat(bitmap));
 }
 
 #if defined(OS_WIN)
@@ -459,6 +447,22 @@ std::string EmbedderTest::GetPostScriptFromEmf(
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocument() {
   return OpenSavedDocumentWithPassword(nullptr);
+}
+
+// static
+int EmbedderTest::BytesPerPixelForFormat(int format) {
+  switch (format) {
+    case FPDFBitmap_Gray:
+      return 1;
+    case FPDFBitmap_BGR:
+      return 3;
+    case FPDFBitmap_BGRx:
+    case FPDFBitmap_BGRA:
+      return 4;
+    default:
+      NOTREACHED();
+      return 0;
+  }
 }
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(

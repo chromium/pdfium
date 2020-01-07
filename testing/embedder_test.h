@@ -177,6 +177,9 @@ class EmbedderTest : public ::testing::Test,
   static std::string GetPostScriptFromEmf(pdfium::span<const uint8_t> emf_data);
 #endif  // defined(OS_WIN)
 
+  // Return bytes for each of the FPDFBitmap_* format types.
+  static int BytesPerPixelForFormat(int format);
+
  protected:
   using PageNumberToHandleMap = std::map<int, FPDF_PAGE>;
 
