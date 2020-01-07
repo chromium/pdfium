@@ -137,6 +137,9 @@ class EmbedderTest : public ::testing::Test,
   // Same as UnloadPage(), but does not fire form events.
   void UnloadPageNoEvents(FPDF_PAGE page);
 
+  // Apply standard highlighting color/alpha to forms.
+  void SetInitialFormFieldHighlight(FPDF_FORMHANDLE form);
+
   // RenderLoadedPageWithFlags() with no flags.
   ScopedFPDFBitmap RenderLoadedPage(FPDF_PAGE page);
 

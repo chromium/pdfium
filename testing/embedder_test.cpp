@@ -262,9 +262,7 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
 
   FPDF_FORMHANDLE form_handle =
       FPDFDOC_InitFormFillEnvironment(doc, formfillinfo);
-  FPDF_SetFormFieldHighlightColor(form_handle, FPDF_FORMFIELD_UNKNOWN,
-                                  0xFFE4DD);
-  FPDF_SetFormFieldHighlightAlpha(form_handle, 100);
+  SetInitialFormFieldHighlight(form_handle);
   return form_handle;
 }
 
@@ -335,6 +333,11 @@ void EmbedderTest::UnloadPageCommon(FPDF_PAGE page, bool do_events) {
   }
   FPDF_ClosePage(page);
   page_map_.erase(page_number);
+}
+
+void EmbedderTest::SetInitialFormFieldHighlight(FPDF_FORMHANDLE form) {
+  FPDF_SetFormFieldHighlightColor(form, FPDF_FORMFIELD_UNKNOWN, 0xFFE4DD);
+  FPDF_SetFormFieldHighlightAlpha(form, 100);
 }
 
 ScopedFPDFBitmap EmbedderTest::RenderLoadedPage(FPDF_PAGE page) {
