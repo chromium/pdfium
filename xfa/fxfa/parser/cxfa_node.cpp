@@ -1064,6 +1064,56 @@ uint8_t CXFA_Node::PropertyOccuranceCount(XFA_Element property) const {
   return data ? data->occurance_count : 0;
 }
 
+std::pair<CXFA_Node*, int32_t> CXFA_Node::GetProperty(
+    int32_t index,
+    XFA_Element eProperty) const {
+  if (index < 0 || index >= PropertyOccuranceCount(eProperty))
+    return {nullptr, 0};
+
+  int32_t iCount = 0;
+  for (CXFA_Node* pNode = GetFirstChild(); pNode;
+       pNode = pNode->GetNextSibling()) {
+    if (pNode->GetElementType() == eProperty) {
+      iCount++;
+      if (iCount > index)
+        return {pNode, iCount};
+    }
+  }
+  return {nullptr, iCount};
+}
+
+CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
+                                          XFA_Element eProperty) {
+  if (index < 0 || index >= PropertyOccuranceCount(eProperty))
+    return nullptr;
+
+  int32_t iCount = 0;
+  CXFA_Node* node;
+  std::tie(node, iCount) = GetProperty(index, eProperty);
+  if (node)
+    return node;
+
+  if (HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
+    for (CXFA_Node* pNode = GetFirstChild(); pNode;
+         pNode = pNode->GetNextSibling()) {
+      if (HasPropertyFlags(pNode->GetElementType(), XFA_PROPERTYFLAG_OneOf)) {
+        return nullptr;
+      }
+    }
+  }
+
+  CXFA_Node* pNewNode = nullptr;
+  for (; iCount <= index; ++iCount) {
+    pNewNode = GetDocument()->CreateNode(GetPacketType(), eProperty);
+    if (!pNewNode)
+      return nullptr;
+
+    InsertChildAndNotify(pNewNode, nullptr);
+    pNewNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
+  }
+  return pNewNode;
+}
+
 Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(uint8_t flag) const {
   for (const auto& prop : m_Properties) {
     if (prop.flags & flag)

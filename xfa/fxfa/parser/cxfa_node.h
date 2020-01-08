@@ -97,6 +97,10 @@ class CXFA_Node : public CXFA_Object, public TreeNode<CXFA_Node> {
   bool HasPropertyFlags(XFA_Element property, uint8_t flags) const;
   uint8_t PropertyOccuranceCount(XFA_Element property) const;
 
+  std::pair<CXFA_Node*, int32_t> GetProperty(int32_t index,
+                                             XFA_Element eProperty) const;
+  CXFA_Node* GetOrCreateProperty(int32_t index, XFA_Element eProperty);
+
   void SendAttributeChangeMessage(XFA_Attribute eAttribute, bool bScriptModify);
 
   bool HasAttribute(XFA_Attribute attr) const;

@@ -35,6 +35,7 @@ typedef CJS_Result (*CJX_MethodCall)(
     CJX_Object* obj,
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params);
+
 struct CJX_MethodSpec {
   const char* pName;
   CJX_MethodCall pMethodCall;

@@ -801,54 +801,12 @@ Optional<WideString> CJX_Object::TryNamespace() {
 std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
     int32_t index,
     XFA_Element eProperty) const {
-  const CXFA_Node* xfaNode = ToNode(GetXFAObject());
-  if (index < 0 || index >= xfaNode->PropertyOccuranceCount(eProperty))
-    return {nullptr, 0};
-
-  int32_t iCount = 0;
-  for (CXFA_Node* pNode = xfaNode->GetFirstChild(); pNode;
-       pNode = pNode->GetNextSibling()) {
-    if (pNode->GetElementType() == eProperty) {
-      iCount++;
-      if (iCount > index)
-        return {pNode, iCount};
-    }
-  }
-  return {nullptr, iCount};
+  return ToNode(GetXFAObject())->GetProperty(index, eProperty);
 }
 
 CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
                                                    XFA_Element eProperty) {
-  CXFA_Node* xfaNode = ToNode(GetXFAObject());
-  if (index < 0 || index >= xfaNode->PropertyOccuranceCount(eProperty))
-    return nullptr;
-
-  int32_t iCount = 0;
-  CXFA_Node* node;
-  std::tie(node, iCount) = GetPropertyInternal(index, eProperty);
-  if (node)
-    return node;
-
-  if (xfaNode->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
-    for (CXFA_Node* pNode = xfaNode->GetFirstChild(); pNode;
-         pNode = pNode->GetNextSibling()) {
-      if (xfaNode->HasPropertyFlags(pNode->GetElementType(),
-                                    XFA_PROPERTYFLAG_OneOf)) {
-        return nullptr;
-      }
-    }
-  }
-
-  CXFA_Node* pNewNode = nullptr;
-  for (; iCount <= index; ++iCount) {
-    pNewNode = GetDocument()->CreateNode(xfaNode->GetPacketType(), eProperty);
-    if (!pNewNode)
-      return nullptr;
-
-    xfaNode->InsertChildAndNotify(pNewNode, nullptr);
-    pNewNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
-  }
-  return pNewNode;
+  return ToNode(GetXFAObject())->GetOrCreateProperty(index, eProperty);
 }
 
 void CJX_Object::SetUserData(
