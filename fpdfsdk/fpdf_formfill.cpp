@@ -330,10 +330,13 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
 
 FPDF_EXPORT void FPDF_CALLCONV
 FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
-  if (!pFormFillEnv)
+  if (!hHandle)
     return;
+
+  // Take back ownership of the form fill environment. This is the inverse of
+  // FPDFDOC_InitFormFillEnvironment() above.
+  std::unique_ptr<CPDFSDK_FormFillEnvironment> pFormFillEnv(
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle));
 
 #ifdef PDF_ENABLE_XFA
   // Reset the focused annotations and remove the SDK document from the
@@ -346,7 +349,6 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (pContext)
     pContext->SetFormFillEnv(nullptr);
 #endif  // PDF_ENABLE_XFA
-  delete pFormFillEnv;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
