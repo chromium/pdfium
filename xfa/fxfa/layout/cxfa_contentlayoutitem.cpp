@@ -42,6 +42,7 @@ CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetLast() {
 }
 
 void CXFA_ContentLayoutItem::InsertAfter(CXFA_ContentLayoutItem* pItem) {
+  CHECK_NE(this, pItem);
   pItem->RemoveSelf();
   pItem->m_pNext = m_pNext;
   pItem->m_pPrev = this;

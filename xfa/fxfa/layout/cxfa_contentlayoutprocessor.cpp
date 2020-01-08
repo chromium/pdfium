@@ -1571,9 +1571,11 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
         if (!pLayoutNext->GetNextSibling() && m_pCurChildPreprocessor &&
             m_pCurChildPreprocessor->GetFormNode() ==
                 pLayoutNext->GetFormNode()) {
-          if (m_pCurChildPreprocessor->m_pLayoutItem)
+          if (m_pCurChildPreprocessor->m_pLayoutItem &&
+              m_pCurChildPreprocessor->m_pLayoutItem != pLayoutNext) {
             pLayoutNext->InsertAfter(
                 m_pCurChildPreprocessor->m_pLayoutItem.Get());
+          }
           m_pCurChildPreprocessor->m_pLayoutItem.Reset(pLayoutNext);
           break;
         }

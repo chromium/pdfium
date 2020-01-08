@@ -117,7 +117,9 @@
 #endif
 
 #define CHECK_EQ(x, y) CHECK((x) == (y))
+#define CHECK_NE(x, y) CHECK((x) != (y))
 #define DCHECK_EQ(x, y) DCHECK((x) == (y))
+#define DCHECK_NE(x, y) DCHECK((x) != (y))
 #define NOTREACHED() DCHECK(false)
 
 #endif  // THIRD_PARTY_BASE_LOGGING_H_
