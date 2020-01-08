@@ -310,9 +310,13 @@ void CXFA_FFComboBox::OnTextChanged(CFWL_Widget* pWidget,
 }
 
 void CXFA_FFComboBox::OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp) {
+  ObservedPtr<CXFA_FFComboBox> watched(this);
   CXFA_EventParam eParam;
   eParam.m_wsPrevText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
   FWLEventSelChange(&eParam);
+  if (!watched)
+    return;
+
   if (m_pNode->IsChoiceListCommitOnSelect() && bLButtonUp)
     m_pDocView->SetFocusNode(nullptr);
 }
@@ -336,6 +340,7 @@ void CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
+  ObservedPtr<CXFA_FFComboBox> watched(this);
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::SelectChanged: {
@@ -359,7 +364,8 @@ void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  m_pOldDelegate->OnProcessEvent(pEvent);
+  if (watched)
+    m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
 void CXFA_FFComboBox::OnDrawWidget(CXFA_Graphics* pGraphics,
