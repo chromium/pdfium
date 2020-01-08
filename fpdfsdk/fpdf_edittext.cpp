@@ -599,3 +599,20 @@ FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text) {
     return FPDF_TEXTRENDERMODE_UNKNOWN;
   return static_cast<FPDF_TEXT_RENDERMODE>(pTextObj->m_TextState.GetTextMode());
 }
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFTextObj_SetTextRenderMode(FPDF_PAGEOBJECT text,
+                              FPDF_TEXT_RENDERMODE render_mode) {
+  if (render_mode <= FPDF_TEXTRENDERMODE_UNKNOWN ||
+      render_mode > FPDF_TEXTRENDERMODE_LAST) {
+    return false;
+  }
+
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
+  if (!pTextObj)
+    return false;
+
+  pTextObj->m_TextState.SetTextMode(
+      static_cast<TextRenderingMode>(render_mode));
+  return true;
+}
