@@ -120,6 +120,7 @@ TEST(UnownedPtr, MoveCtorOk) {
     auto owned = pdfium::MakeUnique<Clink>();
     outer = owned.get();
     UnownedPtr<Clink> inner(std::move(outer));
+    EXPECT_EQ(nullptr, outer.Get());
   }
 }
 
@@ -130,6 +131,7 @@ TEST(UnownedPtr, MoveAssignOk) {
     outer = owned.get();
     UnownedPtr<Clink> inner;
     inner = std::move(outer);
+    EXPECT_EQ(nullptr, outer.Get());
   }
 }
 

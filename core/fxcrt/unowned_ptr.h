@@ -49,6 +49,8 @@ class UnownedPtr {
  public:
   constexpr UnownedPtr() noexcept = default;
   constexpr UnownedPtr(const UnownedPtr& that) noexcept = default;
+
+  // Move-construct an UnownedPtr. After construction, |that| will be NULL.
   constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
 
   template <typename U>
@@ -76,6 +78,7 @@ class UnownedPtr {
     return *this;
   }
 
+  // Move-assign an UnownedPtr. After assignment, |that| will be NULL.
   UnownedPtr& operator=(UnownedPtr&& that) noexcept {
     if (*this != that)
       Reset(that.Release());

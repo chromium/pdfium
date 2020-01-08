@@ -57,6 +57,27 @@ TEST(WideString, ElementAccess) {
 #endif
 }
 
+TEST(WideString, Construct) {
+  {
+    // Copy-construct.
+    WideString string1(L"abc");
+    WideString string2(string1);
+    EXPECT_EQ(L"abc", string1);
+    EXPECT_EQ(L"abc", string2);
+    EXPECT_EQ(2, string1.ReferenceCountForTesting());
+    EXPECT_EQ(2, string2.ReferenceCountForTesting());
+  }
+  {
+    // Move-construct.
+    WideString string1(L"abc");
+    WideString string2(std::move(string1));
+    EXPECT_TRUE(string1.IsEmpty());
+    EXPECT_EQ(L"abc", string2);
+    EXPECT_EQ(0, string1.ReferenceCountForTesting());
+    EXPECT_EQ(1, string2.ReferenceCountForTesting());
+  }
+}
+
 TEST(WideString, Assign) {
   {
     // Copy-assign.
@@ -81,6 +102,8 @@ TEST(WideString, Assign) {
       EXPECT_EQ(1, string2.ReferenceCountForTesting());
 
       string1 = std::move(string2);
+      EXPECT_EQ(L"abc", string1);
+      EXPECT_TRUE(string2.IsEmpty());
       EXPECT_EQ(1, string1.ReferenceCountForTesting());
       EXPECT_EQ(0, string2.ReferenceCountForTesting());
     }

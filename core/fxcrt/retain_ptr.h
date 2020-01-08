@@ -31,6 +31,8 @@ class RetainPtr {
 
   RetainPtr() = default;
   RetainPtr(const RetainPtr& that) : RetainPtr(that.Get()) {}
+
+  // Move-construct a RetainPtr. After construction, |that| will be NULL.
   RetainPtr(RetainPtr&& that) noexcept { Swap(that); }
 
   // Deliberately implicit to allow returning nullptrs.
@@ -65,6 +67,7 @@ class RetainPtr {
     return *this;
   }
 
+  // Move-assign a RetainPtr. After assignment, |that| will be NULL.
   RetainPtr& operator=(RetainPtr&& that) {
     m_pObj.reset(that.Leak());
     return *this;

@@ -23,10 +23,6 @@
 
 namespace fxcrt {
 
-class ByteString_Assign_Test;
-class ByteString_Concat_Test;
-class StringPool_ByteString_Test;
-
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
 class ByteString {
@@ -43,6 +39,8 @@ class ByteString {
 
   ByteString();
   ByteString(const ByteString& other);
+
+  // Move-construct a ByteString. After construction, |other| is empty.
   ByteString(ByteString&& other) noexcept;
 
   // Deliberately implicit to avoid calling on every string literal.
@@ -134,6 +132,8 @@ class ByteString {
   ByteString& operator=(const char* str);
   ByteString& operator=(ByteStringView str);
   ByteString& operator=(const ByteString& that);
+
+  // Move-assign a ByteString. After assignment, |that| is empty.
   ByteString& operator=(ByteString&& that);
 
   ByteString& operator+=(char ch);
@@ -211,8 +211,9 @@ class ByteString {
 
   RetainPtr<StringData> m_pData;
 
-  friend ByteString_Assign_Test;
-  friend ByteString_Concat_Test;
+  friend class ByteString_Assign_Test;
+  friend class ByteString_Concat_Test;
+  friend class ByteString_Construct_Test;
   friend class StringPool_ByteString_Test;
 };
 

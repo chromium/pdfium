@@ -23,9 +23,6 @@
 namespace fxcrt {
 
 class ByteString;
-class StringPool_WideString_Test;
-class WideString_Assign_Test;
-class WideString_ConcatInPlace_Test;
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
@@ -41,6 +38,8 @@ class WideString {
 
   WideString();
   WideString(const WideString& other);
+
+  // Move-construct a WideString. After construction, |other| is empty.
   WideString(WideString&& other) noexcept;
 
   // Deliberately implicit to avoid calling on every string literal.
@@ -116,6 +115,8 @@ class WideString {
   WideString& operator=(const wchar_t* str);
   WideString& operator=(WideStringView str);
   WideString& operator=(const WideString& that);
+
+  // Move-assign a WideString. After assignment, |that| is empty.
   WideString& operator=(WideString&& that);
 
   WideString& operator+=(const wchar_t* str);
@@ -227,9 +228,10 @@ class WideString {
 
   RetainPtr<StringData> m_pData;
 
-  friend WideString_ConcatInPlace_Test;
-  friend WideString_Assign_Test;
-  friend StringPool_WideString_Test;
+  friend class WideString_Assign_Test;
+  friend class WideString_ConcatInPlace_Test;
+  friend class WideString_Construct_Test;
+  friend class StringPool_WideString_Test;
 };
 
 inline WideString operator+(WideStringView str1, WideStringView str2) {
