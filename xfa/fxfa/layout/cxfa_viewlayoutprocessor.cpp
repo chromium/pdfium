@@ -1686,8 +1686,13 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
       switch (pNode->GetElementType()) {
         case XFA_Element::PageSet: {
           CXFA_Node* pParentNode = pViewItem->GetParent()->GetFormNode();
-          pViewItem->SetFormNode(XFA_NodeMerge_CloneOrMergeContainer(
-              pDocument, pParentNode, pViewItem->GetFormNode(), true, nullptr));
+          CXFA_Node* pOldNode = pViewItem->GetFormNode();
+          CXFA_Node* pNewNode = XFA_NodeMerge_CloneOrMergeContainer(
+              pDocument, pParentNode, pOldNode, true, nullptr);
+          if (pOldNode != pNewNode) {
+            pOldNode->JSObject()->SetLayoutItem(nullptr);
+            pViewItem->SetFormNode(pNewNode);
+          }
           break;
         }
         case XFA_Element::PageArea: {
@@ -1733,10 +1738,15 @@ void CXFA_ViewLayoutProcessor::MergePageSetContents() {
             }
             pViewItem->m_pOldSubform = pNewSubform;
           }
-          pViewItem->SetFormNode(pDocument->DataMerge_CopyContainer(
-              pViewItem->GetFormNode(), pParentNode,
+          CXFA_Node* pOldNode = pViewItem->GetFormNode();
+          CXFA_Node* pNewNode = pDocument->DataMerge_CopyContainer(
+              pOldNode, pParentNode,
               ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record)), true, true,
-              true));
+              true);
+          if (pOldNode != pNewNode) {
+            pOldNode->JSObject()->SetLayoutItem(nullptr);
+            pViewItem->SetFormNode(pNewNode);
+          }
           break;
         }
         case XFA_Element::ContentArea: {
