@@ -354,30 +354,28 @@ bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
   if (!pTemplateNode)
     return false;
 
-  m_pTemplatePageSetRoot =
-      pTemplateNode->JSObject()->GetOrCreateProperty<CXFA_PageSet>(
-          0, XFA_Element::PageSet);
-  ASSERT(m_pTemplatePageSetRoot);
+  m_pPageSetNode = pTemplateNode->JSObject()->GetOrCreateProperty<CXFA_PageSet>(
+      0, XFA_Element::PageSet);
+  ASSERT(m_pPageSetNode);
 
-  if (m_pPageSetLayoutItemRoot) {
-    m_pPageSetLayoutItemRoot->RemoveSelfIfParented();
+  if (m_pPageSetRootLayoutItem) {
+    m_pPageSetRootLayoutItem->RemoveSelfIfParented();
   } else {
-    m_pPageSetLayoutItemRoot = pdfium::MakeRetain<CXFA_ViewLayoutItem>(
-        m_pTemplatePageSetRoot, nullptr);
+    m_pPageSetRootLayoutItem =
+        pdfium::MakeRetain<CXFA_ViewLayoutItem>(m_pPageSetNode, nullptr);
   }
-  m_pPageSetCurRoot = m_pPageSetLayoutItemRoot;
-  m_pTemplatePageSetRoot->JSObject()->SetLayoutItem(
-      m_pPageSetLayoutItemRoot.Get());
+  m_pPageSetCurLayoutItem = m_pPageSetRootLayoutItem;
+  m_pPageSetNode->JSObject()->SetLayoutItem(m_pPageSetRootLayoutItem.Get());
 
   XFA_AttributeValue eRelation =
-      m_pTemplatePageSetRoot->JSObject()->GetEnum(XFA_Attribute::Relation);
+      m_pPageSetNode->JSObject()->GetEnum(XFA_Attribute::Relation);
   if (eRelation != XFA_AttributeValue::Unknown)
     m_ePageSetMode = eRelation;
 
   InitPageSetMap();
   CXFA_Node* pPageArea = nullptr;
   int32_t iCount = 0;
-  for (pPageArea = m_pTemplatePageSetRoot->GetFirstChild(); pPageArea;
+  for (pPageArea = m_pPageSetNode->GetFirstChild(); pPageArea;
        pPageArea = pPageArea->GetNextSibling()) {
     if (pPageArea->GetElementType() != XFA_Element::PageArea)
       continue;
@@ -392,15 +390,15 @@ bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {
     return false;
 
   CXFA_Document* pDocument = pTemplateNode->GetDocument();
-  pPageArea = m_pTemplatePageSetRoot->GetChild<CXFA_Node>(
-      0, XFA_Element::PageArea, false);
+  pPageArea =
+      m_pPageSetNode->GetChild<CXFA_Node>(0, XFA_Element::PageArea, false);
   if (!pPageArea) {
-    pPageArea = pDocument->CreateNode(m_pTemplatePageSetRoot->GetPacketType(),
+    pPageArea = pDocument->CreateNode(m_pPageSetNode->GetPacketType(),
                                       XFA_Element::PageArea);
     if (!pPageArea)
       return false;
 
-    m_pTemplatePageSetRoot->InsertChildAndNotify(pPageArea, nullptr);
+    m_pPageSetNode->InsertChildAndNotify(pPageArea, nullptr);
     pPageArea->SetFlagAndNotify(XFA_NodeFlag_Initialized);
   }
   CXFA_ContentArea* pContentArea =
@@ -582,13 +580,13 @@ CXFA_ViewLayoutProcessor::CreateViewRecord(CXFA_Node* pPageNode,
   auto pNewRecord = pdfium::MakeUnique<CXFA_ViewRecord>();
   if (!HasCurrentViewRecord()) {
     CXFA_Node* pPageSet = pPageNode->GetParent();
-    if (pPageSet == m_pTemplatePageSetRoot) {
-      pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
+    if (pPageSet == m_pPageSetNode) {
+      pNewRecord->pCurPageSet = m_pPageSetRootLayoutItem;
     } else {
       auto pPageSetLayoutItem =
           pdfium::MakeRetain<CXFA_ViewLayoutItem>(pPageSet, nullptr);
       pPageSet->JSObject()->SetLayoutItem(pPageSetLayoutItem.Get());
-      m_pPageSetLayoutItemRoot->AppendLastChild(pPageSetLayoutItem);
+      m_pPageSetRootLayoutItem->AppendLastChild(pPageSetLayoutItem);
       pNewRecord->pCurPageSet = std::move(pPageSetLayoutItem);
     }
     return AppendNewRecord(std::move(pNewRecord));
@@ -601,13 +599,13 @@ CXFA_ViewLayoutProcessor::CreateViewRecord(CXFA_Node* pPageNode,
 
   CXFA_Node* pPageSet = pPageNode->GetParent();
   if (!bCreateNew) {
-    if (pPageSet == m_pTemplatePageSetRoot) {
-      pNewRecord->pCurPageSet = m_pPageSetCurRoot;
+    if (pPageSet == m_pPageSetNode) {
+      pNewRecord->pCurPageSet = m_pPageSetCurLayoutItem;
     } else {
       RetainPtr<CXFA_ViewLayoutItem> pParentLayoutItem(
           ToViewLayoutItem(pPageSet->JSObject()->GetLayoutItem()));
       if (!pParentLayoutItem)
-        pParentLayoutItem = m_pPageSetCurRoot;
+        pParentLayoutItem = m_pPageSetCurLayoutItem;
 
       pNewRecord->pCurPageSet = pParentLayoutItem;
     }
@@ -626,7 +624,7 @@ CXFA_ViewLayoutProcessor::CreateViewRecord(CXFA_Node* pPageNode,
       pdfium::MakeRetain<CXFA_ViewLayoutItem>(pPageSet, nullptr);
   pPageSet->JSObject()->SetLayoutItem(pPageSetLayoutItem.Get());
   if (!pParentPageSetLayout) {
-    RetainPtr<CXFA_ViewLayoutItem> pPrePageSet(m_pPageSetLayoutItemRoot);
+    RetainPtr<CXFA_ViewLayoutItem> pPrePageSet(m_pPageSetRootLayoutItem);
     while (pPrePageSet->GetNextSibling()) {
       pPrePageSet.Reset(pPrePageSet->GetNextSibling()->AsViewLayoutItem());
     }
@@ -634,7 +632,7 @@ CXFA_ViewLayoutProcessor::CreateViewRecord(CXFA_Node* pPageNode,
       pPrePageSet->GetParent()->InsertAfter(pPageSetLayoutItem,
                                             pPrePageSet.Get());
     }
-    m_pPageSetCurRoot = pPageSetLayoutItem;
+    m_pPageSetCurLayoutItem = pPageSetLayoutItem;
   } else {
     pParentPageSetLayout->AppendLastChild(pPageSetLayoutItem);
   }
@@ -648,7 +646,7 @@ CXFA_ViewLayoutProcessor::CreateViewRecordSimple() {
   if (HasCurrentViewRecord())
     *pNewRecord = *GetCurrentViewRecord();
   else
-    pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
+    pNewRecord->pCurPageSet = m_pPageSetRootLayoutItem;
   return AppendNewRecord(std::move(pNewRecord));
 }
 
@@ -690,7 +688,7 @@ void CXFA_ViewLayoutProcessor::AddContentAreaLayoutItem(
 
 void CXFA_ViewLayoutProcessor::FinishPaginatedPageSets() {
   for (CXFA_ViewLayoutItem* pRootPageSetLayoutItem =
-           m_pPageSetLayoutItemRoot.Get();
+           m_pPageSetRootLayoutItem.Get();
        pRootPageSetLayoutItem; pRootPageSetLayoutItem = ToViewLayoutItem(
                                    pRootPageSetLayoutItem->GetNextSibling())) {
     PageSetIterator sIterator(pRootPageSetLayoutItem);
@@ -799,8 +797,7 @@ CXFA_ViewLayoutProcessor::ExecuteBreakBeforeOrAfter(const CXFA_Node* pCurNode,
 
       WideString wsTarget =
           pCurNode->JSObject()->GetCData(XFA_Attribute::Target);
-      CXFA_Node* pTarget =
-          ResolveBreakTarget(m_pTemplatePageSetRoot, true, &wsTarget);
+      CXFA_Node* pTarget = ResolveBreakTarget(m_pPageSetNode, true, &wsTarget);
       wsBreakTrailer = pCurNode->JSObject()->GetCData(XFA_Attribute::Trailer);
       wsBreakLeader = pCurNode->JSObject()->GetCData(XFA_Attribute::Leader);
       ret.pLeader = ResolveBreakTarget(pContainer, true, &wsBreakLeader);
@@ -833,8 +830,7 @@ CXFA_ViewLayoutProcessor::ExecuteBreakBeforeOrAfter(const CXFA_Node* pCurNode,
           pCurNode->JSObject()->GetInteger(XFA_Attribute::StartNew) != 0;
       WideString wsTarget = pCurNode->JSObject()->GetCData(
           bBefore ? XFA_Attribute::BeforeTarget : XFA_Attribute::AfterTarget);
-      CXFA_Node* pTarget =
-          ResolveBreakTarget(m_pTemplatePageSetRoot, true, &wsTarget);
+      CXFA_Node* pTarget = ResolveBreakTarget(m_pPageSetNode, true, &wsTarget);
       if (RunBreak(bBefore ? XFA_Element::BreakBefore : XFA_Element::BreakAfter,
                    pCurNode->JSObject()->GetEnum(
                        bBefore ? XFA_Attribute::Before : XFA_Attribute::After),
@@ -952,7 +948,7 @@ bool CXFA_ViewLayoutProcessor::BreakOverflow(const CXFA_Node* pOverflowNode,
 
     if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
       CXFA_Node* pTarget =
-          ResolveBreakTarget(m_pTemplatePageSetRoot, true, &wsOverflowTarget);
+          ResolveBreakTarget(m_pPageSetNode, true, &wsOverflowTarget);
       if (pTarget) {
         m_bCreateOverFlowPage = true;
         switch (pTarget->GetElementType()) {
@@ -985,7 +981,7 @@ bool CXFA_ViewLayoutProcessor::BreakOverflow(const CXFA_Node* pOverflowNode,
       pOverflowNode->JSObject()->GetCData(XFA_Attribute::Target);
   if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
     CXFA_Node* pTarget =
-        ResolveBreakTarget(m_pTemplatePageSetRoot, true, &wsOverflowTarget);
+        ResolveBreakTarget(m_pPageSetNode, true, &wsOverflowTarget);
     if (pTarget) {
       m_bCreateOverFlowPage = true;
       switch (pTarget->GetElementType()) {
@@ -1309,7 +1305,7 @@ CXFA_Node* CXFA_ViewLayoutProcessor::GetNextAvailPageArea(
     bool bNewPage,
     bool bQuery) {
   if (!m_pCurPageArea) {
-    FindPageAreaFromPageSet(m_pTemplatePageSetRoot, nullptr, pTargetPageArea,
+    FindPageAreaFromPageSet(m_pPageSetNode, nullptr, pTargetPageArea,
                             pTargetContentArea, bNewPage, bQuery);
     return m_pCurPageArea;
   }
@@ -1365,7 +1361,7 @@ CXFA_Node* CXFA_ViewLayoutProcessor::GetNextAvailPageArea(
                                 pTargetContentArea, bNewPage, bQuery)) {
       return m_pCurPageArea;
     }
-    if (pPageSet == m_pTemplatePageSetRoot)
+    if (pPageSet == m_pPageSetNode)
       break;
 
     pPageSet = pPageSet->GetParent();
@@ -1408,7 +1404,7 @@ void CXFA_ViewLayoutProcessor::InitPageSetMap() {
   if (!IsPageSetRootOrderedOccurrence())
     return;
 
-  CXFA_NodeIterator sIterator(m_pTemplatePageSetRoot);
+  CXFA_NodeIterator sIterator(m_pPageSetNode);
   for (CXFA_Node* pPageSetNode = sIterator.GetCurrent(); pPageSetNode;
        pPageSetNode = sIterator.MoveToNext()) {
     if (pPageSetNode->GetElementType() == XFA_Element::PageSet) {
@@ -1513,7 +1509,7 @@ void CXFA_ViewLayoutProcessor::ProcessLastPageSet() {
   CXFA_Node* pPageSet = m_pCurPageArea->GetParent();
   while (true) {
     CreateMinPageSetRecord(pPageSet, false);
-    if (pPageSet == m_pTemplatePageSetRoot)
+    if (pPageSet == m_pPageSetNode)
       break;
 
     CreateNextMinRecord(pPageSet);
@@ -1588,7 +1584,7 @@ bool CXFA_ViewLayoutProcessor::GetNextAvailContentHeight(float fChildHeight) {
 }
 
 void CXFA_ViewLayoutProcessor::ClearData() {
-  if (!m_pTemplatePageSetRoot)
+  if (!m_pPageSetNode)
     return;
 
   m_ProposedViewRecords.clear();
@@ -1601,7 +1597,7 @@ void CXFA_ViewLayoutProcessor::ClearData() {
 
 void CXFA_ViewLayoutProcessor::SaveLayoutItemChildren(
     CXFA_LayoutItem* pParentLayoutItem) {
-  CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
+  CXFA_Document* pDocument = m_pPageSetNode->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(pDocument);
   RetainPtr<CXFA_LayoutItem> pCurLayoutItem(pParentLayoutItem->GetFirstChild());
@@ -1646,7 +1642,7 @@ CXFA_Node* CXFA_ViewLayoutProcessor::QueryOverflow(CXFA_Node* pFormNode) {
 }
 
 void CXFA_ViewLayoutProcessor::MergePageSetContents() {
-  CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
+  CXFA_Document* pDocument = m_pPageSetNode->GetDocument();
   pDocument->SetPendingNodesUnusedAndUnbound();
 
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
@@ -1840,7 +1836,7 @@ void CXFA_ViewLayoutProcessor::LayoutPageSetContents() {
 void CXFA_ViewLayoutProcessor::SyncLayoutData() {
   MergePageSetContents();
   LayoutPageSetContents();
-  CXFA_FFNotify* pNotify = m_pTemplatePageSetRoot->GetDocument()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pPageSetNode->GetDocument()->GetNotify();
   int32_t nPageIdx = -1;
   for (CXFA_ViewLayoutItem* pRootLayoutItem = GetRootLayoutItem();
        pRootLayoutItem;
@@ -1890,21 +1886,21 @@ void CXFA_ViewLayoutProcessor::SyncLayoutData() {
 }
 
 void CXFA_ViewLayoutProcessor::PrepareLayout() {
-  m_pPageSetCurRoot = nullptr;
+  m_pPageSetCurLayoutItem = nullptr;
   m_ePageSetMode = XFA_AttributeValue::OrderedOccurrence;
   m_nAvailPages = 0;
   ClearData();
-  if (!m_pPageSetLayoutItemRoot)
+  if (!m_pPageSetRootLayoutItem)
     return;
 
-  RetainPtr<CXFA_ViewLayoutItem> pRootLayoutItem = m_pPageSetLayoutItemRoot;
+  RetainPtr<CXFA_ViewLayoutItem> pRootLayoutItem = m_pPageSetRootLayoutItem;
   if (pRootLayoutItem &&
       pRootLayoutItem->GetFormNode()->GetPacketType() == XFA_PacketType::Form) {
     CXFA_Node* pPageSetFormNode = pRootLayoutItem->GetFormNode();
     pRootLayoutItem->GetFormNode()->GetDocument()->m_pPendingPageSet.clear();
     if (pPageSetFormNode->HasRemovedChildren()) {
       XFA_ReleaseLayoutItem(pRootLayoutItem);
-      m_pPageSetLayoutItemRoot = nullptr;
+      m_pPageSetRootLayoutItem = nullptr;
       pRootLayoutItem = nullptr;
       pPageSetFormNode = nullptr;
       m_PageArray.clear();
@@ -1921,14 +1917,14 @@ void CXFA_ViewLayoutProcessor::PrepareLayout() {
       pPageSetFormNode = pNextPageSet;
     }
   }
-  pRootLayoutItem = m_pPageSetLayoutItemRoot;
+  pRootLayoutItem = m_pPageSetRootLayoutItem;
   CXFA_ViewLayoutItem* pNextLayout = nullptr;
   for (; pRootLayoutItem; pRootLayoutItem.Reset(pNextLayout)) {
     pNextLayout = ToViewLayoutItem(pRootLayoutItem->GetNextSibling());
     SaveLayoutItemChildren(pRootLayoutItem.Get());
     pRootLayoutItem->RemoveSelfIfParented();
   }
-  m_pPageSetLayoutItemRoot = nullptr;
+  m_pPageSetRootLayoutItem = nullptr;
 }
 
 void CXFA_ViewLayoutProcessor::ProcessSimplexOrDuplexPageSets(

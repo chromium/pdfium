@@ -49,7 +49,7 @@ class CXFA_ViewLayoutProcessor {
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   int32_t GetPageIndex(const CXFA_ViewLayoutItem* pPage) const;
   CXFA_ViewLayoutItem* GetRootLayoutItem() const {
-    return m_pPageSetLayoutItemRoot.Get();
+    return m_pPageSetRootLayoutItem.Get();
   }
   Optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
   Optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
@@ -161,9 +161,9 @@ class CXFA_ViewLayoutProcessor {
                                       bool bIsSimplex);
 
   CXFA_LayoutProcessor* m_pLayoutProcessor = nullptr;
-  CXFA_Node* m_pTemplatePageSetRoot = nullptr;
-  RetainPtr<CXFA_ViewLayoutItem> m_pPageSetLayoutItemRoot;
-  RetainPtr<CXFA_ViewLayoutItem> m_pPageSetCurRoot;
+  CXFA_Node* m_pPageSetNode = nullptr;
+  RetainPtr<CXFA_ViewLayoutItem> m_pPageSetRootLayoutItem;
+  RetainPtr<CXFA_ViewLayoutItem> m_pPageSetCurLayoutItem;
   RecordList m_ProposedViewRecords;
   RecordList::iterator m_CurrentViewRecordIter;
   CXFA_Node* m_pCurPageArea = nullptr;
