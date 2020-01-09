@@ -123,9 +123,6 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
 
 #ifdef PDF_ENABLE_XFA
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
-  if (!pPDFAnnot)
-    return nullptr;
-
   CPDFSDK_Annot* pSDKAnnot = GetAnnotByXFAWidget(pPDFAnnot);
   if (pSDKAnnot)
     return pSDKAnnot;
@@ -142,9 +139,6 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
 }
 
 bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
-  if (!pAnnot)
-    return false;
-
   IPDF_Page* pPage = pAnnot->GetXFAPage();
   if (!pPage)
     return false;
