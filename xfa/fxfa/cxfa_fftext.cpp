@@ -137,7 +137,7 @@ bool CXFA_FFText::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return true;
 }
 
-FWL_WidgetHit CXFA_FFText::OnHitTest(const CFX_PointF& point) {
+FWL_WidgetHit CXFA_FFText::HitTest(const CFX_PointF& point) {
   if (!GetRectWithoutRotate().Contains(point))
     return FWL_WidgetHit::Unknown;
   if (!GetLinkURLAtPoint(point))

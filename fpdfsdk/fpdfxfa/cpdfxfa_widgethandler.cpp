@@ -355,12 +355,9 @@ bool CPDFXFA_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
-  if (!pWidgetHandler)
-    return false;
-
-  FWL_WidgetHit dwHitTest =
-      pWidgetHandler->OnHitTest(pXFAWidget->GetXFAFFWidget(), point);
-  return dwHitTest != FWL_WidgetHit::Unknown;
+  return pWidgetHandler &&
+         pWidgetHandler->HitTest(pXFAWidget->GetXFAFFWidget(), point) !=
+             FWL_WidgetHit::Unknown;
 }
 
 void CPDFXFA_WidgetHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,

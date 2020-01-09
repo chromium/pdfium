@@ -86,12 +86,12 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   virtual bool PerformLayout();
   virtual bool UpdateFWLData();
   virtual void UpdateWidgetProperty();
-  virtual bool OnMouseEnter();
-  virtual bool OnMouseExit();
   // |command| must be LeftButtonDown or RightButtonDown.
   virtual bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
                                         const CFX_PointF& point,
                                         FWL_MouseCommand command);
+  virtual bool OnMouseEnter();
+  virtual bool OnMouseExit();
   virtual void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
@@ -110,8 +110,8 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   virtual bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual FWL_WidgetHit OnHitTest(const CFX_PointF& point);
   virtual bool OnSetCursor(const CFX_PointF& point);
+  virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();
   virtual bool CanRedo();
   virtual bool Undo();

@@ -19,11 +19,11 @@ class CXFA_FFSignature final : public CXFA_FFField {
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool LoadWidget() override;
-  bool OnMouseEnter() override;
-  bool OnMouseExit() override;
   bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
                                 const CFX_PointF& point,
                                 FWL_MouseCommand command) override;
+  bool OnMouseEnter() override;
+  bool OnMouseExit() override;
   void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) override;
@@ -38,8 +38,8 @@ class CXFA_FFSignature final : public CXFA_FFField {
   bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
   bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
   bool OnChar(uint32_t dwChar, uint32_t dwFlags) override;
-  FWL_WidgetHit OnHitTest(const CFX_PointF& point) override;
   bool OnSetCursor(const CFX_PointF& point) override;
+  FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   FormFieldType GetFormFieldType() override;
 };
 

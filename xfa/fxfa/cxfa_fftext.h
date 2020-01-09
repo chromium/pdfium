@@ -21,7 +21,7 @@ class CXFA_FFText final : public CXFA_FFWidget {
   void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) override;
-  FWL_WidgetHit OnHitTest(const CFX_PointF& point) override;
+  FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
