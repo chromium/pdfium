@@ -37,16 +37,6 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
     m_pCheckPath->Clear();
 }
 
-void CFWL_CheckBoxTP::Initialize() {
-  CFWL_WidgetTP::Initialize();
-  InitTTO();
-}
-
-void CFWL_CheckBoxTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
-}
-
 void CFWL_CheckBoxTP::DrawText(const CFWL_ThemeText& pParams) {
   if (!m_pTextOut)
     return;

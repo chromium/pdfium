@@ -32,16 +32,6 @@ CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() = default;
 
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() = default;
 
-void CFWL_MonthCalendarTP::Initialize() {
-  CFWL_WidgetTP::Initialize();
-  InitTTO();
-}
-
-void CFWL_MonthCalendarTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
-}
-
 void CFWL_MonthCalendarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {

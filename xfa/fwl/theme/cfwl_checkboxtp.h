@@ -19,8 +19,6 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
   ~CFWL_CheckBoxTP() override;
 
   // CFWL_WidgetTP
-  void Initialize() override;
-  void Finalize() override;
   void DrawBackground(const CFWL_ThemeBackground& pParams) override;
   void DrawText(const CFWL_ThemeText& pParams) override;
 

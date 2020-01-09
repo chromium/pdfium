@@ -26,9 +26,6 @@ class CFWL_WidgetTP {
  public:
   virtual ~CFWL_WidgetTP();
 
-  virtual void Initialize();
-  virtual void Finalize();
-
   virtual void DrawBackground(const CFWL_ThemeBackground& pParams);
   virtual void DrawText(const CFWL_ThemeText& pParams);
 
