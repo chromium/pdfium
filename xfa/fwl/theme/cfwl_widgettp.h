@@ -42,8 +42,7 @@ class CFWL_WidgetTP {
   CFWL_WidgetTP();
 
   void InitializeArrowColorData();
-  void InitTTO();
-  void FinalizeTTO();
+  void EnsureTTOInitialized();
 
   void DrawBorder(CXFA_Graphics* pGraphics,
                   const CFX_RectF& rect,
