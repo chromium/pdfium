@@ -6,6 +6,8 @@
 
 #include "public/fpdf_sysfontinfo.h"
 
+#include <stddef.h>
+
 #include <memory>
 
 #include "core/fxcrt/fx_codepage.h"
@@ -29,8 +31,21 @@ static_assert(FXFONT_GB2312_CHARSET == FX_CHARSET_ChineseSimplified,
               "Charset must match");
 static_assert(FXFONT_CHINESEBIG5_CHARSET == FX_CHARSET_ChineseTraditional,
               "Charset must match");
+static_assert(FXFONT_ARABIC_CHARSET == FX_CHARSET_MSWin_Arabic,
+              "Charset must match");
+static_assert(FXFONT_CYRILLIC_CHARSET == FX_CHARSET_MSWin_Cyrillic,
+              "Charset must match");
+static_assert(FXFONT_EASTERNEUROPEAN_CHARSET ==
+                  FX_CHARSET_MSWin_EasternEuropean,
+              "Charset must match");
+static_assert(offsetof(CFX_Font::CharsetFontMap, charset) ==
+                  offsetof(FPDF_CharsetFontMap, charset),
+              "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
+static_assert(offsetof(CFX_Font::CharsetFontMap, fontname) ==
+                  offsetof(FPDF_CharsetFontMap, fontname),
+              "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
 static_assert(sizeof(CFX_Font::CharsetFontMap) == sizeof(FPDF_CharsetFontMap),
-              "CFX_Font::CharsetFontMap should be same as FPDF_CharsetFontMap");
+              "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
 
 class CFX_ExternalFontInfo final : public SystemFontInfoIface {
  public:

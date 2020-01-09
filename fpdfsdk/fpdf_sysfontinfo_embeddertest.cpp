@@ -6,6 +6,7 @@
 
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -121,4 +122,34 @@ TEST_F(FPDFSysFontInfoEmbedderTest, DefaultSystemFontInfo) {
   }
 
   UnloadPage(page);
+}
+
+TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMap) {
+  static const int kAllowedCharsets[] = {
+      FXFONT_ANSI_CHARSET,        FXFONT_DEFAULT_CHARSET,
+      FXFONT_SYMBOL_CHARSET,      FXFONT_SHIFTJIS_CHARSET,
+      FXFONT_HANGEUL_CHARSET,     FXFONT_GB2312_CHARSET,
+      FXFONT_CHINESEBIG5_CHARSET, FXFONT_ARABIC_CHARSET,
+      FXFONT_CYRILLIC_CHARSET,    FXFONT_EASTERNEUROPEAN_CHARSET,
+  };
+  std::set<int> seen_charsets;
+
+  const FPDF_CharsetFontMap* cfmap = FPDF_GetDefaultTTFMap();
+  ASSERT_TRUE(cfmap);
+
+  // Stop at either end mark.
+  while (cfmap->charset != -1 && cfmap->fontname) {
+    // Only returns values described as legitimate in public header.
+    EXPECT_TRUE(pdfium::ContainsValue(kAllowedCharsets, cfmap->charset))
+        << " for " << cfmap->charset;
+
+    // Duplicates are not allowed.
+    EXPECT_TRUE(seen_charsets.insert(cfmap->charset).second)
+        << " for " << cfmap->charset;
+    ++cfmap;
+  }
+
+  // Confirm end marks only occur as a pair.
+  EXPECT_EQ(cfmap->charset, -1);
+  EXPECT_EQ(cfmap->fontname, nullptr);
 }
