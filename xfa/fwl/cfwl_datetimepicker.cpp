@@ -217,17 +217,10 @@ void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
 WideString CFWL_DateTimePicker::FormatDateString(int32_t iYear,
                                                  int32_t iMonth,
                                                  int32_t iDay) {
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat) ==
-      FWL_STYLEEXT_DTP_ShortDateFormat) {
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat)
     return WideString::Format(L"%d-%d-%d", iYear, iMonth, iDay);
-  }
 
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_LongDateFormat) ==
-      FWL_STYLEEXT_DTP_LongDateFormat) {
-    return WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
-  }
-
-  return WideString();
+  return WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
 }
 
 void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
