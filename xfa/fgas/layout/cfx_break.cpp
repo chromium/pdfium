@@ -58,7 +58,6 @@ void CFX_Break::SetFont(const RetainPtr<CFGAS_GEFont>& pFont) {
 
   SetBreakStatus();
   m_pFont = pFont;
-  FontChanged();
 }
 
 void CFX_Break::SetFontSize(float fFontSize) {
@@ -68,7 +67,6 @@ void CFX_Break::SetFontSize(float fFontSize) {
 
   SetBreakStatus();
   m_iFontSize = iFontSize;
-  FontChanged();
 }
 
 void CFX_Break::SetBreakStatus() {
@@ -91,34 +89,12 @@ FX_CHARTYPE CFX_Break::GetUnifiedCharType(FX_CHARTYPE chartype) const {
   return chartype >= FX_CHARTYPE::kArabicAlef ? FX_CHARTYPE::kArabic : chartype;
 }
 
-void CFX_Break::FontChanged() {
-  m_iDefChar = 0;
-  if (!m_pFont || m_wDefChar == 0xFEFF)
-    return;
-
-  m_pFont->GetCharWidth(m_wDefChar, &m_iDefChar);
-  m_iDefChar *= m_iFontSize;
-}
-
 void CFX_Break::SetTabWidth(float fTabWidth) {
   // Note, the use of max here was only done in the TxtBreak code. Leaving this
   // in for the RTFBreak code for consistency. If we see issues with tab widths
   // we may need to fix this.
   m_iTabWidth =
       std::max(FXSYS_roundf(fTabWidth * kConversionFactor), kMinimumTabWidth);
-}
-
-void CFX_Break::SetDefaultChar(wchar_t wch) {
-  m_wDefChar = wch;
-  m_iDefChar = 0;
-  if (m_wDefChar == 0xFEFF || !m_pFont)
-    return;
-
-  m_pFont->GetCharWidth(m_wDefChar, &m_iDefChar);
-  if (m_iDefChar < 0)
-    m_iDefChar = 0;
-  else
-    m_iDefChar *= m_iFontSize;
 }
 
 void CFX_Break::SetParagraphBreakChar(wchar_t wch) {

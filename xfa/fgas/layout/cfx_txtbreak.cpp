@@ -150,7 +150,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
         iCharWidth = iCharWidthOut;
       }
       if (wForm == 0xFEFF)
-        iCharWidth = m_iDefChar;
+        iCharWidth = 0;
 
       iCharWidth *= m_iFontSize;
       iCharWidth *= m_iHorizontalScale;
@@ -175,7 +175,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
       iCharWidth = iCharWidthOut;
     }
     if (wForm == 0xFEFF)
-      iCharWidth = m_iDefChar;
+      iCharWidth = 0;
 
     iCharWidth *= m_iFontSize;
     iCharWidth *= m_iHorizontalScale;
@@ -207,7 +207,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
     if (m_pFont && m_pFont->GetCharWidth(wForm, &iCharWidthOut))
       iCharWidth = iCharWidthOut;
     else
-      iCharWidth = m_iDefChar;
+      iCharWidth = 0;
 
     iCharWidth *= m_iFontSize;
     iCharWidth *= m_iHorizontalScale;

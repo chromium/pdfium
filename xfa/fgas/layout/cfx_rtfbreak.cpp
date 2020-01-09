@@ -216,7 +216,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
            m_pFont->GetCharWidth(pLastChar->char_code(), &iCharWidthOut))) {
         iCharWidth = iCharWidthOut;
       } else {
-        iCharWidth = m_iDefChar;
+        iCharWidth = 0;
       }
 
       iCharWidth *= m_iFontSize;
@@ -246,7 +246,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
        m_pFont->GetCharWidth(pCurChar->char_code(), &iCharWidthOut))) {
     iCharWidth = iCharWidthOut;
   } else {
-    iCharWidth = m_iDefChar;
+    iCharWidth = 0;
   }
 
   iCharWidth *= m_iFontSize;
@@ -276,7 +276,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
   if (m_pFont && m_pFont->GetCharWidth(wForm, &iCharWidthOut))
     iCharWidth = iCharWidthOut;
   else
-    iCharWidth = m_iDefChar;
+    iCharWidth = 0;
 
   iCharWidth *= m_iFontSize;
   iCharWidth *= m_iHorizontalScale;
