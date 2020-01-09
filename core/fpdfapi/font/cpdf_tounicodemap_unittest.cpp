@@ -7,11 +7,20 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(cpdf_tounicodemap, StringToCode) {
-  EXPECT_EQ(0u, CPDF_ToUnicodeMap::StringToCode(""));
-  EXPECT_EQ(0u, CPDF_ToUnicodeMap::StringToCode("12"));
-  EXPECT_EQ(194u, CPDF_ToUnicodeMap::StringToCode("<c2"));
-  EXPECT_EQ(162u, CPDF_ToUnicodeMap::StringToCode("<A2"));
-  EXPECT_EQ(2802u, CPDF_ToUnicodeMap::StringToCode("<Af2"));
+  Optional<uint32_t> result = CPDF_ToUnicodeMap::StringToCode("<c2");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(194u, result.value());
+
+  result = CPDF_ToUnicodeMap::StringToCode("<A2");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(162u, result.value());
+
+  result = CPDF_ToUnicodeMap::StringToCode("<Af2");
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(2802u, result.value());
+
+  EXPECT_FALSE(CPDF_ToUnicodeMap::StringToCode("").has_value());
+  EXPECT_FALSE(CPDF_ToUnicodeMap::StringToCode("12").has_value());
 }
 
 TEST(cpdf_tounicodemap, StringToWideString) {

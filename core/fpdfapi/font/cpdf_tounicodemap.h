@@ -28,7 +28,7 @@ class CPDF_ToUnicodeMap {
   friend class cpdf_tounicodemap_StringToCode_Test;
   friend class cpdf_tounicodemap_StringToWideString_Test;
 
-  static uint32_t StringToCode(ByteStringView str);
+  static pdfium::Optional<uint32_t> StringToCode(ByteStringView str);
   static WideString StringToWideString(ByteStringView str);
 
   void Load(const CPDF_Stream* pStream);
