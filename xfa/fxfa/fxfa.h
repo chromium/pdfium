@@ -68,9 +68,6 @@ enum class FormType {
 #define XFA_PAGEVIEWEVENT_PostRemoved 3
 #define XFA_PAGEVIEWEVENT_StopLayout 4
 
-#define XFA_TRAVERSEWAY_Tranvalse 0x0001
-#define XFA_TRAVERSEWAY_Form 0x0002
-
 enum class XFA_EventError {
   kError = -1,
   kNotExist = 0,

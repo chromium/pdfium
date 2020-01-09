@@ -491,13 +491,9 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   auto* pContext = m_pFormFillEnv->GetDocExtension();
   if (pContext->ContainsExtensionFullForm()) {
     CXFA_FFPageView* pageView = protector->GetXFAPageView();
-    std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler(
-        pageView->CreateWidgetIterator(
-            XFA_TRAVERSEWAY_Form,
-            XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable));
-    if (!pWidgetHandler) {
-      return;
-    }
+    std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler =
+        pageView->CreateFormWidgetIterator(XFA_WidgetStatus_Visible |
+                                           XFA_WidgetStatus_Viewable);
 
     while (CXFA_FFWidget* pXFAAnnot = pWidgetHandler->MoveToNext()) {
       std::unique_ptr<CPDFSDK_Annot> pNewAnnot =

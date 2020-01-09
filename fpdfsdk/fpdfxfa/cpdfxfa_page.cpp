@@ -182,14 +182,13 @@ CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot,
 
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
   CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
-  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
-      GetXFAPageView()->CreateWidgetIterator(XFA_TRAVERSEWAY_Tranvalse,
-                                             XFA_WidgetStatus_Visible |
-                                                 XFA_WidgetStatus_Viewable |
-                                                 XFA_WidgetStatus_Focused));
+  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator =
+      GetXFAPageView()->CreateTraverseWidgetIterator(XFA_WidgetStatus_Visible |
+                                                     XFA_WidgetStatus_Viewable |
+                                                     XFA_WidgetStatus_Focused);
 
   // Check |pSDKAnnot| again because JS may have destroyed it
-  if (!pObservedAnnot || !pWidgetIterator)
+  if (!pObservedAnnot)
     return nullptr;
 
   if (pWidgetIterator->GetCurrentWidget() != pXFAWidget->GetXFAFFWidget())
@@ -216,11 +215,8 @@ int CPDFXFA_Page::HasFormFieldAtPoint(const CFX_PointF& point) const {
   if (!pWidgetHandler)
     return -1;
 
-  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
-      pPageView->CreateWidgetIterator(XFA_TRAVERSEWAY_Form,
-                                      XFA_WidgetStatus_Viewable));
-  if (!pWidgetIterator)
-    return -1;
+  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator =
+      pPageView->CreateFormWidgetIterator(XFA_WidgetStatus_Viewable);
 
   CXFA_FFWidget* pXFAAnnot;
   while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {

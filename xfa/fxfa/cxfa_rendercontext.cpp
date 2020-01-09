@@ -12,8 +12,7 @@
 CXFA_RenderContext::CXFA_RenderContext(CXFA_FFPageView* pPageView,
                                        const CFX_RectF& clipRect,
                                        const CFX_Matrix& matrix)
-    : m_pWidgetIterator(pPageView->CreateWidgetIterator(
-          XFA_TRAVERSEWAY_Form,
+    : m_pWidgetIterator(pPageView->CreateFormWidgetIterator(
           XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)),
       m_pWidget(m_pWidgetIterator->MoveToNext()),
       m_matrix(matrix),

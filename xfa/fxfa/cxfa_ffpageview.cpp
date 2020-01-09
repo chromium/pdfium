@@ -129,18 +129,15 @@ CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
                        iRotate, 0);
 }
 
-std::unique_ptr<IXFA_WidgetIterator> CXFA_FFPageView::CreateWidgetIterator(
-    uint32_t dwTraverseWay,
+std::unique_ptr<IXFA_WidgetIterator> CXFA_FFPageView::CreateFormWidgetIterator(
     uint32_t dwWidgetFilter) {
-  switch (dwTraverseWay) {
-    case XFA_TRAVERSEWAY_Tranvalse:
-      return pdfium::MakeUnique<CXFA_FFTabOrderPageWidgetIterator>(
-          this, dwWidgetFilter);
-    case XFA_TRAVERSEWAY_Form:
-      return pdfium::MakeUnique<CXFA_FFPageWidgetIterator>(this,
-                                                           dwWidgetFilter);
-  }
-  return nullptr;
+  return pdfium::MakeUnique<CXFA_FFPageWidgetIterator>(this, dwWidgetFilter);
+}
+
+std::unique_ptr<IXFA_WidgetIterator>
+CXFA_FFPageView::CreateTraverseWidgetIterator(uint32_t dwWidgetFilter) {
+  return pdfium::MakeUnique<CXFA_FFTabOrderPageWidgetIterator>(this,
+                                                               dwWidgetFilter);
 }
 
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,

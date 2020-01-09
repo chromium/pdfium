@@ -29,8 +29,11 @@ class CXFA_FFPageView : public Observable {
   CXFA_FFDocView* GetDocView() const;
   CFX_RectF GetPageViewRect() const;
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rtDisp, int32_t iRotate) const;
-  std::unique_ptr<IXFA_WidgetIterator> CreateWidgetIterator(
-      uint32_t dwTraverseWay,
+
+  // These always return a non-null iterator.
+  std::unique_ptr<IXFA_WidgetIterator> CreateFormWidgetIterator(
+      uint32_t dwWidgetFilter);
+  std::unique_ptr<IXFA_WidgetIterator> CreateTraverseWidgetIterator(
       uint32_t dwWidgetFilter);
 
  private:
