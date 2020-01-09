@@ -384,7 +384,9 @@ bool CXFA_FFWidget::AcceptsFocusOnButtonDown(uint32_t dwFlags,
   return false;
 }
 
-void CXFA_FFWidget::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {}
+bool CXFA_FFWidget::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  return false;
+}
 
 bool CXFA_FFWidget::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
@@ -404,7 +406,9 @@ bool CXFA_FFWidget::OnMouseWheel(uint32_t dwFlags,
   return false;
 }
 
-void CXFA_FFWidget::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {}
+bool CXFA_FFWidget::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  return false;
+}
 
 bool CXFA_FFWidget::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return false;

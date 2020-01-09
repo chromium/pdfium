@@ -54,7 +54,7 @@ bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
       m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
           m_pDocView->GetDoc(), hWidget);
     }
-    hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
+    bRet = hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   }
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
@@ -106,7 +106,7 @@ bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
       m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
           m_pDocView->GetDoc(), hWidget);
     }
-    hWidget->OnRButtonDown(dwFlags, hWidget->Rotate2Normal(point));
+    bRet = hWidget->OnRButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   }
   return bRet;
 }

@@ -30,8 +30,8 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
                                 const CFX_PointF& point,
                                 FWL_MouseCommand command) override;
-  void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
-  void OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnSetFocus(CXFA_FFWidget* pOldWidget) override WARN_UNUSED_RESULT;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override WARN_UNUSED_RESULT;

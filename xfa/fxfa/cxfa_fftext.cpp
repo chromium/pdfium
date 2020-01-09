@@ -115,8 +115,9 @@ bool CXFA_FFText::AcceptsFocusOnButtonDown(uint32_t dwFlags,
   return true;
 }
 
-void CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
+  return true;
 }
 
 bool CXFA_FFText::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {

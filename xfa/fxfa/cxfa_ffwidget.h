@@ -90,27 +90,35 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   virtual bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
                                         const CFX_PointF& point,
                                         FWL_MouseCommand command);
-  virtual bool OnMouseEnter();
-  virtual bool OnMouseExit();
-  virtual void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point);
-  virtual bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point);
-  virtual bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
-  virtual bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point);
+
+  // Caution: Returning false from an On* method may mean |this| is destroyed.
+  virtual bool OnMouseEnter() WARN_UNUSED_RESULT;
+  virtual bool OnMouseExit() WARN_UNUSED_RESULT;
+  virtual bool OnLButtonDown(uint32_t dwFlags,
+                             const CFX_PointF& point) WARN_UNUSED_RESULT;
+  virtual bool OnLButtonUp(uint32_t dwFlags,
+                           const CFX_PointF& point) WARN_UNUSED_RESULT;
+  virtual bool OnLButtonDblClk(uint32_t dwFlags,
+                               const CFX_PointF& point) WARN_UNUSED_RESULT;
+  virtual bool OnMouseMove(uint32_t dwFlags,
+                           const CFX_PointF& point) WARN_UNUSED_RESULT;
   virtual bool OnMouseWheel(uint32_t dwFlags,
                             int16_t zDelta,
-                            const CFX_PointF& point);
-  virtual void OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point);
-  virtual bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point);
-  virtual bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
-
-  // Returning false may imply |this| is gone, continue with caution.
+                            const CFX_PointF& point) WARN_UNUSED_RESULT;
+  virtual bool OnRButtonDown(uint32_t dwFlags,
+                             const CFX_PointF& point) WARN_UNUSED_RESULT;
+  virtual bool OnRButtonUp(uint32_t dwFlags,
+                           const CFX_PointF& point) WARN_UNUSED_RESULT;
+  virtual bool OnRButtonDblClk(uint32_t dwFlags,
+                               const CFX_PointF& point) WARN_UNUSED_RESULT;
   virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget) WARN_UNUSED_RESULT;
   virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget) WARN_UNUSED_RESULT;
+  virtual bool OnKeyDown(uint32_t dwKeyCode,
+                         uint32_t dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags) WARN_UNUSED_RESULT;
+  virtual bool OnSetCursor(const CFX_PointF& point) WARN_UNUSED_RESULT;
 
-  virtual bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
-  virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
-  virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual bool OnSetCursor(const CFX_PointF& point);
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();
   virtual bool CanRedo();

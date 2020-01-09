@@ -411,11 +411,12 @@ bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
   return true;
 }
 
-void CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
+  return true;
 }
 
 bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
@@ -461,11 +462,12 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
   return true;
 }
 
-void CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::RightButtonDown, dwFlags,
       FWLToClient(point)));
+  return true;
 }
 
 bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
