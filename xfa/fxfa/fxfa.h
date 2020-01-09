@@ -89,30 +89,6 @@ enum XFA_WidgetStatus {
   XFA_WidgetStatus_Visible = 1 << 8
 };
 
-enum XFA_WIDGETTYPE {
-  XFA_WIDGETTYPE_Barcode,
-  XFA_WIDGETTYPE_PushButton,
-  XFA_WIDGETTYPE_CheckButton,
-  XFA_WIDGETTYPE_RadioButton,
-  XFA_WIDGETTYPE_DatetimeEdit,
-  XFA_WIDGETTYPE_DecimalField,
-  XFA_WIDGETTYPE_NumericField,
-  XFA_WIDGETTYPE_Signature,
-  XFA_WIDGETTYPE_TextEdit,
-  XFA_WIDGETTYPE_DropdownList,
-  XFA_WIDGETTYPE_ListBox,
-  XFA_WIDGETTYPE_ImageField,
-  XFA_WIDGETTYPE_PasswordEdit,
-  XFA_WIDGETTYPE_Arc,
-  XFA_WIDGETTYPE_Rectangle,
-  XFA_WIDGETTYPE_Image,
-  XFA_WIDGETTYPE_Line,
-  XFA_WIDGETTYPE_Text,
-  XFA_WIDGETTYPE_ExcludeGroup,
-  XFA_WIDGETTYPE_Subform,
-  XFA_WIDGETTYPE_Unknown,
-};
-
 // Probably should be called IXFA_AppDelegate.
 class IXFA_AppProvider {
  public:
