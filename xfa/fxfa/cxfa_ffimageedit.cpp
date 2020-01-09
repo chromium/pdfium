@@ -102,11 +102,13 @@ bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
 
 bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                      const CFX_PointF& point) {
+  ObservedPtr<CXFA_FFImageEdit> pWatched(this);
   SetButtonDown(true);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
-  return true;
+
+  return !!pWatched;
 }
 
 void CXFA_FFImageEdit::SetFWLRect() {

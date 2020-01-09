@@ -435,10 +435,8 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   eParam.m_eType = XFA_EVENT_Enter;
   eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
-  if (!pWatched)
-    return false;
 
-  return true;
+  return !!pWatched;
 }
 
 bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {

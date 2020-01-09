@@ -250,12 +250,13 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   if (!GetNormalWidget() || !IsButtonDown())
     return false;
 
+  ObservedPtr<CXFA_FFCheckButton> pWatched(this);
   SetButtonDown(false);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonUp, dwFlags,
       FWLToClient(point)));
 
-  return true;
+  return !!pWatched;
 }
 
 XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
