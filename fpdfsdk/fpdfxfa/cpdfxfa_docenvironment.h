@@ -64,6 +64,7 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
  private:
+#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
   bool MailToInfo(WideString& csURL,
                   WideString& csToAddress,
                   WideString& csCCAddress,
@@ -75,8 +76,6 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
                         FPDF_DWORD encodeType,
                         FPDF_DWORD flag);
   void ToXFAContentFlags(WideString csSrcContent, FPDF_DWORD& flag);
-
-#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
   bool OnBeforeNotifySubmit();
   void OnAfterNotifySubmit();
   bool NotifySubmit(bool bPrevOrPost);

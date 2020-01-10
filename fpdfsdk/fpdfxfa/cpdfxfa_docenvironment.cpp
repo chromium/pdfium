@@ -628,7 +628,6 @@ bool CPDFXFA_DocEnvironment::Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) {
   NotifySubmit(false);
   return ret;
 }
-#endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
 bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
                                         WideString& csToAddress,
@@ -808,7 +807,6 @@ void CPDFXFA_DocEnvironment::ToXFAContentFlags(WideString csSrcContent,
   }
 }
 
-#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
 bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   if (!m_pContext->ContainsXFAForm())
     return true;
