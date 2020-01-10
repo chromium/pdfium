@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 
-#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -21,17 +20,14 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 
-CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)
-    : m_pDocument(pPage->GetDocument()),
-      m_pPageResources(pPage->m_pPageResources.Get()),
-      m_pPageCache(
-          static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache())) {}
-
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
+                                       CPDF_Dictionary* pPageResources,
                                        CPDF_PageRenderCache* pPageCache)
-    : m_pDocument(pDoc), m_pPageResources(nullptr), m_pPageCache(pPageCache) {}
+    : m_pDocument(pDoc),
+      m_pPageResources(pPageResources),
+      m_pPageCache(pPageCache) {}
 
-CPDF_RenderContext::~CPDF_RenderContext() {}
+CPDF_RenderContext::~CPDF_RenderContext() = default;
 
 void CPDF_RenderContext::GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
                                        const CPDF_PageObject* pObj,

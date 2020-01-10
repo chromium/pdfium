@@ -108,7 +108,7 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   options.GetOptions() = draw_options;
   options.GetOptions().bForceHalftone = true;
 
-  CPDF_RenderContext context(pDoc, pCache);
+  CPDF_RenderContext context(pDoc, nullptr, pCache);
   context.AppendLayer(pPatternForm, &mtPattern2Bitmap);
   context.Render(&bitmap_device, &options, nullptr);
 #if defined _SKIA_SUPPORT_PATHS_

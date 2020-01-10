@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
@@ -399,7 +400,9 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   if (!pForm)
     return false;
 
-  CPDF_RenderContext context(pPage);
+  CPDF_RenderContext context(
+      pPage->GetDocument(), pPage->m_pPageResources.Get(),
+      static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
   context.AppendLayer(pForm, &matrix);
   context.Render(pDevice, pOptions, nullptr);
   return true;
