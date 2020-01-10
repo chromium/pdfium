@@ -999,7 +999,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       CPDF_RenderOptions options = m_Options;
       options.GetOptions().bForceHalftone = true;
       options.GetOptions().bRectAA = true;
-      options.GetOptions().bForceDownsample = false;
 
       const auto* pForm = static_cast<const CPDF_Form*>(pType3Char->form());
       const CPDF_Dictionary* pFormResource =

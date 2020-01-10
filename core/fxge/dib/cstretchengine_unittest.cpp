@@ -26,7 +26,6 @@ TEST(CStretchEngine, OverflowInCtor) {
   dib_source->Load(nullptr, stream.Get());
   CStretchEngine engine(nullptr, FXDIB_8bppRgb, 500, 500, clip_rect, dib_source,
                         FXDIB_ResampleOptions());
-  EXPECT_FALSE(engine.m_ResampleOptions.bInterpolateDownsample);
   EXPECT_TRUE(engine.m_ResampleOptions.bInterpolateBilinear);
   EXPECT_FALSE(engine.m_ResampleOptions.bInterpolateBicubic);
   EXPECT_FALSE(engine.m_ResampleOptions.bHalftone);

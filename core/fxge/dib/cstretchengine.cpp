@@ -255,7 +255,6 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   m_ExtraMaskPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * 8);
   if (options.bNoSmoothing) {
     m_ResampleOptions.bNoSmoothing = true;
-    m_ResampleOptions.bInterpolateDownsample = options.bInterpolateDownsample;
   } else {
     bool bInterpol =
         options.bInterpolateBilinear || options.bInterpolateBicubic;

@@ -584,7 +584,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& cdata,
 }
 
 bool CFX_ImageTransformer::IsBilinear() const {
-  return !m_ResampleOptions.bInterpolateDownsample && !IsBiCubic();
+  return !IsBiCubic();
 }
 
 bool CFX_ImageTransformer::IsBiCubic() const {

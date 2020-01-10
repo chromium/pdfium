@@ -22,7 +22,6 @@ class CPDF_RenderOptions {
 
     bool bClearType = false;
     bool bPrintGraphicText = false;
-    bool bForceDownsample = false;
     bool bPrintPreview = false;
     bool bBGRStripe = false;
     bool bNoNativeText = false;

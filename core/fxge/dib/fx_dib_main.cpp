@@ -58,8 +58,8 @@ const int16_t SDP_Table[513] = {
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;
 
 bool FXDIB_ResampleOptions::HasAnyOptions() const {
-  return bInterpolateDownsample || bInterpolateBilinear ||
-         bInterpolateBicubic || bHalftone || bNoSmoothing || bLossy;
+  return bInterpolateBilinear || bInterpolateBicubic || bHalftone ||
+         bNoSmoothing || bLossy;
 }
 
 FX_RECT FXDIB_SwapClipBox(const FX_RECT& clip,
