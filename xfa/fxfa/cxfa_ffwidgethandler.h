@@ -71,9 +71,6 @@ class CXFA_FFWidgetHandler {
   XFA_EventError ProcessEvent(CXFA_Node* pNode, CXFA_EventParam* pParam);
 
  private:
-  CXFA_Document* GetObjFactory() const;
-  CXFA_Document* GetXFADoc() const;
-
   UnownedPtr<CXFA_FFDocView> m_pDocView;
 };
 

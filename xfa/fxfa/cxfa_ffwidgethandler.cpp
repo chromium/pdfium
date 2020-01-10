@@ -257,11 +257,3 @@ XFA_EventError CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
   return pNode->ProcessEvent(m_pDocView.Get(),
                              gs_EventActivity[pParam->m_eType], pParam);
 }
-
-CXFA_Document* CXFA_FFWidgetHandler::GetObjFactory() const {
-  return GetXFADoc();
-}
-
-CXFA_Document* CXFA_FFWidgetHandler::GetXFADoc() const {
-  return m_pDocView->GetDoc()->GetXFADoc();
-}
