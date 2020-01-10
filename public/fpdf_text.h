@@ -524,16 +524,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountWebLinks(FPDF_PAGELINK link_page);
 //          link_page   -   Handle returned by FPDFLink_LoadWebLinks.
 //          link_index  -   Zero-based index for the link.
 //          buffer      -   A unicode buffer for the result.
-//          buflen      -   Number of characters (not bytes) for the buffer,
-//                          including an additional terminator.
+//          buflen      -   Number of 16-bit code units (not bytes) for the
+//                          buffer, including an additional terminator.
 // Return Value:
-//          If |buffer| is NULL or |buflen| is zero, return the number of
-//          characters (not bytes) needed to buffer the result (an additional
+//          If |buffer| is NULL or |buflen| is zero, return the number of 16-bit
+//          code units (not bytes) needed to buffer the result (an additional
 //          terminator is included in this count).
 //          Otherwise, copy the result into |buffer|, truncating at |buflen| if
-//          the result is too large to fit, and return the number of characters
-//          actually copied into the buffer (the additional terminator is also
-//          included in this count).
+//          the result is too large to fit, and return the number of 16-bit code
+//          units actually copied into the buffer (the additional terminator is
+//          also included in this count).
 //          If |link_index| does not correspond to a valid link, then the result
 //          is an empty string.
 //
