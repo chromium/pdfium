@@ -36,8 +36,6 @@ class CBA_FontMap final : public IPVT_FontMap {
 
   void Reset();
   void SetAPType(const ByteString& sAPType);
-  void SetDefaultFont(const RetainPtr<CPDF_Font>& pFont,
-                      const ByteString& sFontName);
 
  private:
   struct Data {

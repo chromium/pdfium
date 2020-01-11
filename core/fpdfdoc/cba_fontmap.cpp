@@ -161,21 +161,6 @@ void CBA_FontMap::Reset() {
   m_sDefaultFontName.clear();
 }
 
-void CBA_FontMap::SetDefaultFont(const RetainPtr<CPDF_Font>& pFont,
-                                 const ByteString& sFontName) {
-  ASSERT(pFont);
-
-  if (m_pDefaultFont)
-    return;
-
-  m_pDefaultFont = pFont;
-  m_sDefaultFontName = sFontName;
-
-  const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont();
-  int32_t nCharset = pSubstFont ? pSubstFont->m_Charset : FX_CHARSET_Default;
-  AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
-}
-
 void CBA_FontMap::SetAPType(const ByteString& sAPType) {
   m_sAPType = sAPType;
 
