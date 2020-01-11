@@ -79,14 +79,10 @@ class CBA_FontMap final : public IPVT_FontMap {
   ByteString GetNativeFontName(int32_t nCharset);
   ByteString GetCachedNativeFontName(int32_t nCharset);
   bool IsStandardFont(const ByteString& sFontName);
-  RetainPtr<CPDF_Font> AddFontToDocument(CPDF_Document* pDoc,
-                                         ByteString& sFontName,
+  RetainPtr<CPDF_Font> AddFontToDocument(ByteString sFontName,
                                          uint8_t nCharset);
-  RetainPtr<CPDF_Font> AddStandardFont(CPDF_Document* pDoc,
-                                       ByteString& sFontName);
-  RetainPtr<CPDF_Font> AddSystemFont(CPDF_Document* pDoc,
-                                     ByteString& sFontName,
-                                     uint8_t nCharset);
+  RetainPtr<CPDF_Font> AddStandardFont(ByteString sFontName);
+  RetainPtr<CPDF_Font> AddSystemFont(ByteString sFontName, uint8_t nCharset);
 
   std::vector<std::unique_ptr<Data>> m_Data;
   std::vector<std::unique_ptr<Native>> m_NativeFont;
