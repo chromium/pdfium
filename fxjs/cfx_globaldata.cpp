@@ -122,16 +122,6 @@ CFX_GlobalData::iterator CFX_GlobalData::FindGlobalVariable(
   return m_arrayGlobalData.end();
 }
 
-CFX_GlobalData::const_iterator CFX_GlobalData::FindGlobalVariable(
-    const ByteString& propname) const {
-  for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
-       ++it) {
-    if ((*it)->data.sKey == propname)
-      return it;
-  }
-  return m_arrayGlobalData.end();
-}
-
 CFX_GlobalData::Element* CFX_GlobalData::GetGlobalVariable(
     const ByteString& propname) {
   auto iter = FindGlobalVariable(propname);

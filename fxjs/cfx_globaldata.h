@@ -57,7 +57,6 @@ class CFX_GlobalData {
 
  private:
   using iterator = std::vector<std::unique_ptr<Element>>::iterator;
-  using const_iterator = std::vector<std::unique_ptr<Element>>::const_iterator;
 
   explicit CFX_GlobalData(Delegate* pDelegate);
   ~CFX_GlobalData();
@@ -67,7 +66,6 @@ class CFX_GlobalData {
   bool SaveGlobalPersisitentVariables();
 
   iterator FindGlobalVariable(const ByteString& sPropname);
-  const_iterator FindGlobalVariable(const ByteString& sPropname) const;
 
   void LoadFileBuffer(const wchar_t* sFilePath,
                       uint8_t*& pBuffer,
