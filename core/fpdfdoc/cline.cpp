@@ -6,11 +6,9 @@
 
 #include "core/fpdfdoc/cline.h"
 
-CLine::CLine() {}
-
 CLine::CLine(const CPVT_LineInfo& lineinfo) : m_LineInfo(lineinfo) {}
 
-CLine::~CLine() {}
+CLine::~CLine() = default;
 
 CPVT_WordPlace CLine::GetBeginWordPlace() const {
   return CPVT_WordPlace(LinePlace.nSecIndex, LinePlace.nLineIndex, -1);

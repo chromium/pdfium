@@ -12,7 +12,6 @@
 
 class CLine {
  public:
-  CLine();
   explicit CLine(const CPVT_LineInfo& lineinfo);
   ~CLine();
 
