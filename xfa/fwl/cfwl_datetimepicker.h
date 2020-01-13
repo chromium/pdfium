@@ -93,16 +93,16 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
 
   bool NeedsToShowButton() const;
 
+  bool m_bLBtnDown = false;
+  int32_t m_iBtnState = 1;
+  int32_t m_iYear = -1;
+  int32_t m_iMonth = -1;
+  int32_t m_iDay = -1;
+  float m_fBtn = 0.0f;
   CFX_RectF m_rtBtn;
   CFX_RectF m_rtClient;
-  int32_t m_iBtnState;
-  int32_t m_iYear;
-  int32_t m_iMonth;
-  int32_t m_iDay;
-  bool m_bLBtnDown;
   std::unique_ptr<CFWL_DateTimeEdit> m_pEdit;
   std::unique_ptr<CFWL_MonthCalendar> m_pMonthCal;
-  float m_fBtn;
 };
 
 #endif  // XFA_FWL_CFWL_DATETIMEPICKER_H_

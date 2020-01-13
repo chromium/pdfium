@@ -25,12 +25,7 @@ const int kDateTimePickerHeight = 20;
 
 }  // namespace
 CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_iBtnState(1),
-      m_iYear(-1),
-      m_iMonth(-1),
-      m_iDay(-1),
-      m_bLBtnDown(false) {
+    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
 
   auto monthProp = pdfium::MakeUnique<CFWL_WidgetProperties>();
