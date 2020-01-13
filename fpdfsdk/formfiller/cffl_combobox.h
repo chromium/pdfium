@@ -12,13 +12,12 @@
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/formfiller/cffl_textobject.h"
 
-class CBA_FontMap;
 class CPWL_ComboBox;
 
 struct FFL_ComboBoxState {
-  int nIndex;
-  int nStart;
-  int nEnd;
+  int nIndex = 0;
+  int nStart = 0;
+  int nEnd = 0;
   WideString sValue;
 };
 

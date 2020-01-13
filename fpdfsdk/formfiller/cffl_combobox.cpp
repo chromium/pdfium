@@ -19,9 +19,6 @@
 CFFL_ComboBox::CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp,
                              CPDFSDK_Widget* pWidget)
     : CFFL_TextObject(pApp, pWidget) {
-  m_State.nIndex = 0;
-  m_State.nStart = 0;
-  m_State.nEnd = 0;
 }
 
 CFFL_ComboBox::~CFFL_ComboBox() {

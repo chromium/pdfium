@@ -13,7 +13,6 @@
 
 #include "fpdfsdk/formfiller/cffl_textobject.h"
 
-class CBA_FontMap;
 class CPWL_ListBox;
 
 class CFFL_ListBox final : public CFFL_TextObject {

@@ -15,6 +15,17 @@
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/ptr_util.h"
 
+namespace {
+
+// PDF 1.7 spec, Table 8.25
+enum Alignment {
+  kLeft = 0,
+  kCenter = 1,
+  kRight = 2,
+};
+
+}  // namespace
+
 CFFL_TextField::CFFL_TextField(CPDFSDK_FormFillEnvironment* pApp,
                                CPDFSDK_Widget* pWidget)
     : CFFL_TextObject(pApp, pWidget) {}
@@ -55,13 +66,13 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
 
   switch (m_pWidget->GetAlignment()) {
     default:
-    case BF_ALIGN_LEFT:
+    case kLeft:
       cp.dwFlags |= PES_LEFT;
       break;
-    case BF_ALIGN_MIDDLE:
+    case kCenter:
       cp.dwFlags |= PES_MIDDLE;
       break;
-    case BF_ALIGN_RIGHT:
+    case kRight:
       cp.dwFlags |= PES_RIGHT;
       break;
   }
