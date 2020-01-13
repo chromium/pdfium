@@ -46,6 +46,10 @@ Alert: PASS: xfa.host.openList() threw XFAObject.openList: Incorrect number of p
 Alert: PASS: xfa.host.openList(1, 2) threw XFAObject.openList: Incorrect number of parameters passed to function.
 Alert: PASS: xfa.host.openList('my_doc.subform_combox_0.combox') = undefined
 Alert: PASS: xfa.host.openList(eval('my_doc.subform_combox_0')) = undefined
+Alert: PASS: xfa.host.pageUp() = undefined
+Alert: PASS: xfa.host.pageUp('ignored arg') = undefined
+Alert: PASS: xfa.host.pageDown() = undefined
+Alert: PASS: xfa.host.pageDown('ignored arg') = undefined
 Alert: PASS: xfa.host.print(1, 2, 3, 4, 5, 6, 7) threw XFAObject.print: Incorrect number of parameters passed to function.
 Alert: PASS: xfa.host.print(1, 2, 3, 4, 5, 6, 7, 8, 9) threw XFAObject.print: Incorrect number of parameters passed to function.
 Doc Print: 1, 1, 1, 2, 4, 8, 16, 32
@@ -60,4 +64,7 @@ Alert: PASS: xfa.host.setFocus('my_doc.subform_combox_0') = undefined
 Alert: PASS: xfa.host.getFocus() = [object XFAObject]
 Alert: PASS: xfa.host.setFocus(eval('my_doc.subform_combox_0')) = undefined
 Alert: PASS: xfa.host.getFocus() = [object XFAObject]
+Alert: PASS: xfa.host.resetData(1, 2) threw XFAObject.resetData: Incorrect number of parameters passed to function.
+Alert: PASS: xfa.host.resetData() = undefined
+Alert: PASS: xfa.host.resetData('xfa.host') = undefined
 Alert: finished testing methods

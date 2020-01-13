@@ -68,6 +68,11 @@ stream
         expect("xfa.host.openList('my_doc.subform_combox_0.combox')");
         expect("xfa.host.openList(eval('my_doc.subform_combox_0'))");
 
+        expect("xfa.host.pageUp()");
+        expect("xfa.host.pageUp('ignored arg')");
+        expect("xfa.host.pageDown()");
+        expect("xfa.host.pageDown('ignored arg')");
+
         expectError("xfa.host.print(1, 2, 3, 4, 5, 6, 7)");
         expectError("xfa.host.print(1, 2, 3, 4, 5, 6, 7, 8, 9)");
         expect("xfa.host.print(true, 1, 1, true, true, true, true, true)");
@@ -82,6 +87,10 @@ stream
         expect("xfa.host.getFocus()", "[object XFAObject]");
         expect("xfa.host.setFocus(eval('my_doc.subform_combox_0'))");
         expect("xfa.host.getFocus()", "[object XFAObject]");
+
+        expectError("xfa.host.resetData(1, 2)");
+        expect("xfa.host.resetData()");
+        expect("xfa.host.resetData('xfa.host')");
 
         app.alert("finished testing methods");
       </script>
