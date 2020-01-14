@@ -1,0 +1,122 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F15 5 0 R
+    >>
+  >>
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+1 0 0 1 20 100 cm
+BT
+/F15 20 Tf
+[(ABCD)]TJ
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type3
+  /Name /F15
+  /FirstChar 65
+  /LastChar 68
+  /CharProcs <<
+    /a65 6 0 R
+    /a66 7 0 R
+    /a67 8 0 R
+    /a68 9 0 R
+  >>
+  /Resources <<
+    /ProcSet [/PDF /ImageB]
+  >>
+  /Encoding <<
+    /Differences [65 /a65 /a66 /a67 /a68 ]
+  >>
+  /FontBBox [-4 -21 114 70]
+  /FontMatrix [0.0156 0 0 0.0156 0 0]
+  /Widths [62.27 58.82 59.97 63.43]
+>>
+endobj
+{{object 6 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789c6dd0cd6a02311007f009011706e95e3d083b4fd0642df1e324580bdd
+83a0a71e4a41687b2cb4456fc2e6d1f6517c843d7a584c2729b85136107e
+cc844cfe643cba1f4d48d3036f33a3b1a68f1c7fd018aeb52ffdc1fb172e
+0a542f640caa67eea22a56b4fbdd7fa25aac1f2947b5a4d79cf41b164b02
+80298475cda18b7307c275204b1b919495a7378fb99b1f3dfd2c6698d59e
+411a334d4f1e9dc47c278d672b632a1932552242d8904958889000ce06ca
+961ec3d112e75c4bca70b43e40d632e07e7d8be63ba75bb63cbdb970bcc0
+d1c43fb20ebf9636fe49eb389673e76bf0a9c00dfe0123b76dbb
+endstream
+endobj
+{{object 7 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789c9590b10e823010868f3090dce223704f60416d6433414c6430d1c9c1
+38a9a3834667fa683c0a8fc0c840a885ab061217dab45faeedddfdfd6534
+8d6614d0dc2cb920b9a46b880f9401b5d384edc5e58e718ae2483240b135
+a728d21dbd9eef1b8a78bfa6104542a7908233a60969330a801635430338
+5a41969b10c02f3a4cca0e5ed5c1adfb709a01f458709edbf46bda46b6ad
+15b16249461cb0dc1f0032d57fe9719ecb559c814ed043a80e99453e16aa
+5f85f1f7631e8bf02b76b764aff3afe5ed6ed4e226c5037e0056029f50
+endstream
+endobj
+{{object 8 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789cadd1b14ac4401006e03f040c4c615a0be1e6053489dcaa5b2d9c2798
+42d0ca42acd45250d1d6cc9bf82abe897904cb2bc47576b267219642e023
+93cdcceebfceeffa036ed9f1ce1e3bc7cef34d470f34f75a6c79bf9bbe5c
+dfd1a2a7e682e79e9a132d53d39ff2d3e3f32d358bb323d6f7255f76dc5e
+51bf64a088520850c7b15486b852b4f65209ca4fd4b5a0fe40f92a988d28
+de05415745c1005d2cf852821413ba1e9849b552ea35fa3750add1263f94
+12326fc690287e23464cd8e07f67c8fc353d644623ef7a0276a24c053b6d
+660396c4262c976d584a5bb0cc0e6109de23e5097d52ba3a25652d761bc1
+76135307bd95d43d55013aeee99cbe019a657396
+endstream
+endobj
+{{object 9 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789c3333d633315630500061530b055373851443ae422e531320df00c405
+4924e772397972e9872b989a70e97b0045b9f43d7d154a8a4a53b9f49d02
+9c150cb9f45d14a20d150c62b93c5d14fe03c101060610f50342fd636060
+fcdf0044402e0383fd0330c5ff014c31ff00538c7fc014c33f08558f42d9
+3740a803604a1e4a3d0053fc50ea03168afd071eea0f0d283cf6a13910c5
+f150af403d06f36d037210fc430e256898414310189ea0a0052110400979
+603c70b97a72057201003d309464
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
