@@ -179,3 +179,32 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
 #endif
   }
 }
+
+void CPDF_DIBTransferFunc::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
+  m_pSrc = pSrc;
+  m_Width = pSrc->GetWidth();
+  m_Height = pSrc->GetHeight();
+  FXDIB_Format format = GetDestFormat();
+  m_bpp = GetBppFromFormat(format);
+  m_AlphaFlag = GetAlphaFlagFromFormat(format);
+  m_Pitch = (m_Width * m_bpp + 31) / 32 * 4;
+  m_pPalette.reset(GetDestPalette());
+  m_Scanline.resize(m_Pitch);
+}
+
+const uint8_t* CPDF_DIBTransferFunc::GetScanline(int line) const {
+  TranslateScanline(m_pSrc->GetScanline(line), &m_Scanline);
+  return m_Scanline.data();
+}
+
+void CPDF_DIBTransferFunc::DownSampleScanline(int line,
+                                              uint8_t* dest_scan,
+                                              int dest_bpp,
+                                              int dest_width,
+                                              bool bFlipX,
+                                              int clip_left,
+                                              int clip_width) const {
+  m_pSrc->DownSampleScanline(line, dest_scan, dest_bpp, dest_width, bFlipX,
+                             clip_left, clip_width);
+  TranslateDownSamples(dest_scan, dest_scan, clip_width, dest_bpp);
+}

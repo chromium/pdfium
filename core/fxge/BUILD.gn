@@ -63,8 +63,6 @@ source_set("fxge") {
     "dib/cfx_dibbase.h",
     "dib/cfx_dibitmap.cpp",
     "dib/cfx_dibitmap.h",
-    "dib/cfx_filtereddib.cpp",
-    "dib/cfx_filtereddib.h",
     "dib/cfx_imagerenderer.cpp",
     "dib/cfx_imagerenderer.h",
     "dib/cfx_imagestretcher.cpp",
