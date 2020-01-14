@@ -115,6 +115,10 @@ inline int GetCompsFromFormat(FXDIB_Format format) {
   return (format & 0xff) / 8;
 }
 
+inline uint32_t GetAlphaFlagFromFormat(FXDIB_Format format) {
+  return (format >> 8) & 0xff;
+}
+
 inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
   return format & 0x200;
 }

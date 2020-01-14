@@ -39,8 +39,8 @@ bool CFX_DIBitmap::Create(int width,
                           uint8_t* pBuffer,
                           uint32_t pitch) {
   m_pBuffer = nullptr;
-  m_bpp = static_cast<uint8_t>(format);
-  m_AlphaFlag = static_cast<uint8_t>(format >> 8);
+  m_bpp = GetBppFromFormat(format);
+  m_AlphaFlag = GetAlphaFlagFromFormat(format);
   m_Width = 0;
   m_Height = 0;
   m_Pitch = 0;
@@ -1260,8 +1260,8 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   m_pAlphaMask = pAlphaMask;
   m_pPalette = std::move(pal_8bpp);
   m_pBuffer = std::move(dest_buf);
-  m_bpp = static_cast<uint8_t>(dest_format);
-  m_AlphaFlag = static_cast<uint8_t>(dest_format >> 8);
+  m_bpp = GetBppFromFormat(dest_format);
+  m_AlphaFlag = GetAlphaFlagFromFormat(dest_format);
   m_Pitch = dest_pitch;
   return true;
 }
