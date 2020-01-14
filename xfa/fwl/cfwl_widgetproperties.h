@@ -20,10 +20,10 @@ class CFWL_WidgetProperties {
   CFWL_WidgetProperties();
   ~CFWL_WidgetProperties();
 
-  CFX_RectF m_rtWidget;
   uint32_t m_dwStyles = FWL_WGTSTYLE_Child;
   uint32_t m_dwStyleExes = 0;
   uint32_t m_dwStates = 0;
+  CFX_RectF m_rtWidget;
   UnownedPtr<IFWL_ThemeProvider> m_pThemeProvider;
   CFWL_Widget* m_pParent = nullptr;  // Raw, this class owned by node in tree.
 };

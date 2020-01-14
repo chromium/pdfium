@@ -21,9 +21,9 @@ class CFWL_MessageKey final : public CFWL_Message {
                   uint32_t keycode);
   ~CFWL_MessageKey() override;
 
-  FWL_KeyCommand m_dwCmd;
-  uint32_t m_dwFlags;
-  uint32_t m_dwKeyCode;
+  const FWL_KeyCommand m_dwCmd;
+  const uint32_t m_dwFlags;
+  const uint32_t m_dwKeyCode;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGEKEY_H_

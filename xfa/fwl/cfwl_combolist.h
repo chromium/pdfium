@@ -35,7 +35,7 @@ class CFWL_ComboList final : public CFWL_ListBox {
   bool OnDropListKey(CFWL_MessageKey* pKey);
   void OnDropListKeyDown(CFWL_MessageKey* pKey);
 
-  bool m_bNotifyOwner;
+  bool m_bNotifyOwner = true;
 };
 
 #endif  // XFA_FWL_CFWL_COMBOLIST_H_

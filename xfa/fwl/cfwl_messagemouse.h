@@ -34,7 +34,7 @@ class CFWL_MessageMouse final : public CFWL_Message {
                     CFX_PointF pos);
   ~CFWL_MessageMouse() override;
 
-  FWL_MouseCommand m_dwCmd;
+  const FWL_MouseCommand m_dwCmd;
   uint32_t m_dwFlags = 0;
   CFX_PointF m_pos;
 };

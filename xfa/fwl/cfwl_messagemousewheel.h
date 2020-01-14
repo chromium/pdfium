@@ -20,7 +20,7 @@ class CFWL_MessageMouseWheel final : public CFWL_Message {
                          CFX_PointF delta);
   ~CFWL_MessageMouseWheel() override;
 
-  uint32_t m_dwFlags;
+  const uint32_t m_dwFlags;
   CFX_PointF m_pos;
   CFX_PointF m_delta;
 };

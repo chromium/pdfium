@@ -22,8 +22,7 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_PushButton::CFWL_PushButton(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_bBtnDown(false) {}
+    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
 

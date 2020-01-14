@@ -69,21 +69,21 @@ class CFWL_Barcode final : public CFWL_Edit {
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 
-  std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
-  Status m_eStatus = Status::kNormal;
   BC_TYPE m_type = BC_UNKNOWN;
-  BC_CHAR_ENCODING m_eCharEncoding;
-  int32_t m_nModuleHeight;
-  int32_t m_nModuleWidth;
-  int32_t m_nDataLength;
-  bool m_bCalChecksum;
-  bool m_bPrintChecksum;
-  BC_TEXT_LOC m_eTextLocation;
-  int8_t m_nWideNarrowRatio;
-  char m_cStartChar;
-  char m_cEndChar;
-  int32_t m_nECLevel;
+  BC_CHAR_ENCODING m_eCharEncoding = CHAR_ENCODING_UTF8;
+  BC_TEXT_LOC m_eTextLocation = BC_TEXT_LOC_NONE;
+  Status m_eStatus = Status::kNormal;
+  bool m_bCalChecksum = false;
+  bool m_bPrintChecksum = false;
+  char m_cStartChar = 0;
+  char m_cEndChar = 0;
+  int8_t m_nWideNarrowRatio = 1;
+  int32_t m_nModuleHeight = -1;
+  int32_t m_nModuleWidth = -1;
+  int32_t m_nDataLength = 0;
+  int32_t m_nECLevel = 0;
   uint32_t m_dwAttributeMask = 0;
+  std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
 };
 
 #endif  // XFA_FWL_CFWL_BARCODE_H_

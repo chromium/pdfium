@@ -27,8 +27,8 @@ class CFWL_EventScroll final : public CFWL_Event {
   explicit CFWL_EventScroll(CFWL_Widget* pSrcTarget);
   ~CFWL_EventScroll() override;
 
-  Code m_iScrollCode;
-  float m_fPos;
+  Code m_iScrollCode = Code::None;
+  float m_fPos = 0.0f;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTSCROLL_H_

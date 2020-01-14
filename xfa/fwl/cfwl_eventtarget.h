@@ -26,9 +26,9 @@ class CFWL_EventTarget {
   void FlagInvalid() { m_bValid = false; }
 
  private:
+  bool m_bValid = true;
+  CFWL_Widget* const m_pListener;
   std::set<CFWL_Widget*> m_widgets;
-  CFWL_Widget* m_pListener;
-  bool m_bValid;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTTARGET_H_

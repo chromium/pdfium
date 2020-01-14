@@ -13,12 +13,12 @@
 
 class CFWL_ThemeText final : public CFWL_ThemePart {
  public:
-  CFWL_ThemeText() : m_pGraphics(nullptr) {}
+  CFWL_ThemeText() = default;
 
+  FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kTopLeft;
+  CXFA_Graphics* m_pGraphics = nullptr;
   WideString m_wsText;
   FDE_TextStyle m_dwTTOStyles;
-  FDE_TextAlignment m_iTTOAlign;
-  CXFA_Graphics* m_pGraphics;
 };
 
 #endif  // XFA_FWL_CFWL_THEMETEXT_H_

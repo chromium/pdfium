@@ -15,12 +15,12 @@ class CFWL_EventSelectChanged final : public CFWL_Event {
   ~CFWL_EventSelectChanged() override;
 
   // Used by ComboBox.
-  bool bLButtonUp;
+  bool bLButtonUp = false;
 
   // Used by DateTimePIcker
-  int32_t iYear;
-  int32_t iMonth;
-  int32_t iDay;
+  int32_t iYear = -1;
+  int32_t iMonth = -1;
+  int32_t iDay = -1;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTSELECTCHANGED_H_
