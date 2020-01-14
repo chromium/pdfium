@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_PAGE_CPDF_DIBBASE_H_
-#define CORE_FPDFAPI_PAGE_CPDF_DIBBASE_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_DIB_H_
+#define CORE_FPDFAPI_PAGE_CPDF_DIB_H_
 
 #include <memory>
 #include <vector>
@@ -39,7 +39,7 @@ class ScanlineDecoder;
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 
-class CPDF_DIBBase final : public CFX_DIBBase {
+class CPDF_DIB final : public CFX_DIBBase {
  public:
   enum class LoadState : uint8_t { kFail, kSuccess, kContinue };
 
@@ -72,13 +72,13 @@ class CPDF_DIBBase final : public CFX_DIBBase {
                              uint32_t GroupFamily,
                              bool bLoadMask);
   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
-  RetainPtr<CPDF_DIBBase> DetachMask();
+  RetainPtr<CPDF_DIB> DetachMask();
 
   bool IsJBigImage() const;
 
  private:
-  CPDF_DIBBase();
-  ~CPDF_DIBBase() override;
+  CPDF_DIB();
+  ~CPDF_DIB() override;
 
   LoadState StartLoadMask();
   LoadState StartLoadMaskDIB();
@@ -149,7 +149,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pLineBuf;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskedLine;
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
-  RetainPtr<CPDF_DIBBase> m_pMask;
+  RetainPtr<CPDF_DIB> m_pMask;
   RetainPtr<CPDF_StreamAcc> m_pGlobalAcc;
   std::unique_ptr<fxcodec::ScanlineDecoder> m_pDecoder;
 
@@ -160,4 +160,4 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   LoadState m_Status = LoadState::kFail;
 };
 
-#endif  // CORE_FPDFAPI_PAGE_CPDF_DIBBASE_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_DIB_H_

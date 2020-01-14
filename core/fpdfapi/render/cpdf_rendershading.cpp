@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fpdfapi/page/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/page/cpdf_meshstream.h"
 #include "core/fpdfapi/parser/cpdf_array.h"

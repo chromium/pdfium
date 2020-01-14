@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "constants/stream_dict_common.h"
-#include "core/fpdfapi/page/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -341,17 +341,17 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage) {
 }
 
 RetainPtr<CFX_DIBBase> CPDF_Image::LoadDIBBase() const {
-  auto source = pdfium::MakeRetain<CPDF_DIBBase>();
+  auto source = pdfium::MakeRetain<CPDF_DIB>();
   if (!source->Load(m_pDocument.Get(), m_pStream.Get()))
     return nullptr;
 
   if (!source->IsJBigImage())
     return source;
 
-  CPDF_DIBBase::LoadState ret = CPDF_DIBBase::LoadState::kContinue;
-  while (ret == CPDF_DIBBase::LoadState::kContinue)
+  CPDF_DIB::LoadState ret = CPDF_DIB::LoadState::kContinue;
+  while (ret == CPDF_DIB::LoadState::kContinue)
     ret = source->ContinueLoadDIBBase(nullptr);
-  return ret == CPDF_DIBBase::LoadState::kSuccess ? source : nullptr;
+  return ret == CPDF_DIB::LoadState::kSuccess ? source : nullptr;
 }
 
 RetainPtr<CFX_DIBBase> CPDF_Image::DetachBitmap() {
@@ -367,16 +367,16 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
                                   bool bStdCS,
                                   uint32_t GroupFamily,
                                   bool bLoadMask) {
-  auto source = pdfium::MakeRetain<CPDF_DIBBase>();
-  CPDF_DIBBase::LoadState ret = source->StartLoadDIBBase(
+  auto source = pdfium::MakeRetain<CPDF_DIB>();
+  CPDF_DIB::LoadState ret = source->StartLoadDIBBase(
       m_pDocument.Get(), m_pStream.Get(), true, pFormResource, pPageResource,
       bStdCS, GroupFamily, bLoadMask);
-  if (ret == CPDF_DIBBase::LoadState::kFail) {
+  if (ret == CPDF_DIB::LoadState::kFail) {
     m_pDIBBase.Reset();
     return false;
   }
   m_pDIBBase = source;
-  if (ret == CPDF_DIBBase::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 
   m_pMask = source->DetachMask();
@@ -385,12 +385,12 @@ bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
 }
 
 bool CPDF_Image::Continue(PauseIndicatorIface* pPause) {
-  RetainPtr<CPDF_DIBBase> pSource = m_pDIBBase.As<CPDF_DIBBase>();
-  CPDF_DIBBase::LoadState ret = pSource->ContinueLoadDIBBase(pPause);
-  if (ret == CPDF_DIBBase::LoadState::kContinue)
+  RetainPtr<CPDF_DIB> pSource = m_pDIBBase.As<CPDF_DIB>();
+  CPDF_DIB::LoadState ret = pSource->ContinueLoadDIBBase(pPause);
+  if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 
-  if (ret == CPDF_DIBBase::LoadState::kSuccess) {
+  if (ret == CPDF_DIB::LoadState::kSuccess) {
     m_pMask = pSource->DetachMask();
     m_MatteColor = pSource->GetMatteColor();
   } else {

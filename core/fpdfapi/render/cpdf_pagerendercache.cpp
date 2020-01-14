@@ -87,17 +87,17 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
     m_pCurImageCacheEntry = pdfium::MakeUnique<CPDF_ImageCacheEntry>(
         m_pPage->GetDocument(), pImage);
   }
-  CPDF_DIBBase::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
+  CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       pRenderStatus->GetFormResource(), m_pPage->m_pPageResources.Get(), bStdCS,
       GroupFamily, bLoadMask, pRenderStatus);
-  if (ret == CPDF_DIBBase::LoadState::kContinue)
+  if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 
   m_nTimeCount++;
   if (!m_bCurFindCache)
     m_ImageCache[pStream] = m_pCurImageCacheEntry.Release();
 
-  if (ret == CPDF_DIBBase::LoadState::kFail)
+  if (ret == CPDF_DIB::LoadState::kFail)
     m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();
 
   return false;

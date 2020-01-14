@@ -7,7 +7,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -22,7 +22,7 @@ TEST(CStretchEngine, OverflowInCtor) {
   dict_obj->SetNewFor<CPDF_Number>("Height", 12500);
   RetainPtr<CPDF_Stream> stream =
       pdfium::MakeRetain<CPDF_Stream>(nullptr, 0, std::move(dict_obj));
-  auto dib_source = pdfium::MakeRetain<CPDF_DIBBase>();
+  auto dib_source = pdfium::MakeRetain<CPDF_DIB>();
   dib_source->Load(nullptr, stream.Get());
   CStretchEngine engine(nullptr, FXDIB_8bppRgb, 500, 500, clip_rect, dib_source,
                         FXDIB_ResampleOptions());

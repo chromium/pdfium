@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -332,11 +332,11 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   if (!pPage || !pPage->GetDocument() || !pImg->GetStream())
     return true;
 
-  auto pSource = pdfium::MakeRetain<CPDF_DIBBase>();
-  CPDF_DIBBase::LoadState ret = pSource->StartLoadDIBBase(
+  auto pSource = pdfium::MakeRetain<CPDF_DIB>();
+  CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
       pPage->GetDocument(), pImg->GetStream(), false, nullptr,
       pPage->m_pPageResources.Get(), false, 0, false);
-  if (ret == CPDF_DIBBase::LoadState::kFail)
+  if (ret == CPDF_DIB::LoadState::kFail)
     return true;
 
   metadata->bits_per_pixel = pSource->GetBPP();

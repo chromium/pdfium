@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/cpdf_dibbase.h"
+#include "core/fpdfapi/page/cpdf_dib.h"
 
 #include <algorithm>
 #include <memory>
@@ -104,11 +104,11 @@ CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
 
 }  // namespace
 
-CPDF_DIBBase::CPDF_DIBBase() = default;
+CPDF_DIB::CPDF_DIB() = default;
 
-CPDF_DIBBase::~CPDF_DIBBase() = default;
+CPDF_DIB::~CPDF_DIB() = default;
 
-bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
+bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!pStream)
     return false;
 
@@ -169,7 +169,7 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   return true;
 }
 
-bool CPDF_DIBBase::ContinueToLoadMask() {
+bool CPDF_DIB::ContinueToLoadMask() {
   if (m_bImageMask) {
     SetMaskProperties();
   } else {
@@ -200,7 +200,7 @@ bool CPDF_DIBBase::ContinueToLoadMask() {
   return true;
 }
 
-CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadDIBBase(
+CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     CPDF_Document* pDoc,
     const CPDF_Stream* pStream,
     bool bHasMask,
@@ -262,8 +262,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadDIBBase(
   return LoadState::kSuccess;
 }
 
-CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
-    PauseIndicatorIface* pPause) {
+CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
   if (m_Status == LoadState::kContinue)
     return ContinueLoadMaskDIB(pPause);
 
@@ -336,8 +335,8 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
   return iContinueStatus;
 }
 
-bool CPDF_DIBBase::LoadColorInfo(const CPDF_Dictionary* pFormResources,
-                                 const CPDF_Dictionary* pPageResources) {
+bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
+                             const CPDF_Dictionary* pPageResources) {
   m_bpc_orig = m_pDict->GetIntegerFor("BitsPerComponent");
   if (!IsMaybeValidBitsPerComponent(m_bpc_orig))
     return false;
@@ -398,8 +397,7 @@ bool CPDF_DIBBase::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   return GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey);
 }
 
-bool CPDF_DIBBase::GetDecodeAndMaskArray(bool* bDefaultDecode,
-                                         bool* bColorKey) {
+bool CPDF_DIB::GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey) {
   if (!m_pColorSpace)
     return false;
 
@@ -452,7 +450,7 @@ bool CPDF_DIBBase::GetDecodeAndMaskArray(bool* bDefaultDecode,
   return true;
 }
 
-CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
+CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
   ByteString decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder.IsEmpty())
     return LoadState::kSuccess;
@@ -506,8 +504,8 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
   return LoadState::kSuccess;
 }
 
-bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
-                                    const CPDF_Dictionary* pParams) {
+bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
+                                const CPDF_Dictionary* pParams) {
   JpegModule* pJpegModule = fxcodec::ModuleMgr::GetInstance()->GetJpegModule();
   m_pDecoder = pJpegModule->CreateDecoder(
       src_span, m_Width, m_Height, m_nComponents,
@@ -580,7 +578,7 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
-RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
+RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   std::unique_ptr<CJPX_Decoder> decoder = JpxModule::CreateDecoder(
       m_pStreamAcc->GetSpan(),
       ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()));
@@ -657,7 +655,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
   return pCachedBitmap;
 }
 
-CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMask() {
+CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
   m_pMaskStream.Reset(m_pDict->GetStreamFor("SMask"));
   if (!m_pMaskStream) {
@@ -682,8 +680,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMask() {
   return StartLoadMaskDIB();
 }
 
-CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadMaskDIB(
-    PauseIndicatorIface* pPause) {
+CPDF_DIB::LoadState CPDF_DIB::ContinueLoadMaskDIB(PauseIndicatorIface* pPause) {
   if (!m_pMask)
     return LoadState::kSuccess;
 
@@ -701,16 +698,16 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadMaskDIB(
   return LoadState::kSuccess;
 }
 
-RetainPtr<CPDF_DIBBase> CPDF_DIBBase::DetachMask() {
+RetainPtr<CPDF_DIB> CPDF_DIB::DetachMask() {
   return std::move(m_pMask);
 }
 
-bool CPDF_DIBBase::IsJBigImage() const {
+bool CPDF_DIB::IsJBigImage() const {
   return m_pStreamAcc->GetImageDecoder() == "JBIG2Decode";
 }
 
-CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMaskDIB() {
-  m_pMask = pdfium::MakeRetain<CPDF_DIBBase>();
+CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB() {
+  m_pMask = pdfium::MakeRetain<CPDF_DIB>();
   LoadState ret =
       m_pMask->StartLoadDIBBase(m_pDocument.Get(), m_pMaskStream.Get(), false,
                                 nullptr, nullptr, true, 0, false);
@@ -724,7 +721,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadMaskDIB() {
   return LoadState::kSuccess;
 }
 
-void CPDF_DIBBase::LoadPalette() {
+void CPDF_DIB::LoadPalette() {
   if (!m_pColorSpace || m_Family == PDFCS_PATTERN)
     return;
 
@@ -805,7 +802,7 @@ void CPDF_DIBBase::LoadPalette() {
   }
 }
 
-void CPDF_DIBBase::ValidateDictParam() {
+void CPDF_DIB::ValidateDictParam() {
   m_bpc = m_bpc_orig;
   const CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
@@ -838,8 +835,8 @@ void CPDF_DIBBase::ValidateDictParam() {
     m_bpc = 0;
 }
 
-void CPDF_DIBBase::TranslateScanline24bpp(uint8_t* dest_scan,
-                                          const uint8_t* src_scan) const {
+void CPDF_DIB::TranslateScanline24bpp(uint8_t* dest_scan,
+                                      const uint8_t* src_scan) const {
   if (m_bpc == 0)
     return;
 
@@ -887,7 +884,7 @@ void CPDF_DIBBase::TranslateScanline24bpp(uint8_t* dest_scan,
   }
 }
 
-bool CPDF_DIBBase::TranslateScanline24bppDefaultDecode(
+bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
     uint8_t* dest_scan,
     const uint8_t* src_scan) const {
   if (!m_bDefaultDecode)
@@ -949,11 +946,11 @@ bool CPDF_DIBBase::TranslateScanline24bppDefaultDecode(
   return true;
 }
 
-uint8_t* CPDF_DIBBase::GetBuffer() const {
+uint8_t* CPDF_DIB::GetBuffer() const {
   return m_pCachedBitmap ? m_pCachedBitmap->GetBuffer() : nullptr;
 }
 
-const uint8_t* CPDF_DIBBase::GetScanline(int line) const {
+const uint8_t* CPDF_DIB::GetScanline(int line) const {
   if (m_bpc == 0)
     return nullptr;
 
@@ -1073,17 +1070,17 @@ const uint8_t* CPDF_DIBBase::GetScanline(int line) const {
   return m_pMaskedLine.get();
 }
 
-bool CPDF_DIBBase::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
+bool CPDF_DIB::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
   return m_pDecoder && m_pDecoder->SkipToScanline(line, pPause);
 }
 
-void CPDF_DIBBase::DownSampleScanline(int line,
-                                      uint8_t* dest_scan,
-                                      int dest_bpp,
-                                      int dest_width,
-                                      bool bFlipX,
-                                      int clip_left,
-                                      int clip_width) const {
+void CPDF_DIB::DownSampleScanline(int line,
+                                  uint8_t* dest_scan,
+                                  int dest_bpp,
+                                  int dest_width,
+                                  bool bFlipX,
+                                  int clip_left,
+                                  int clip_width) const {
   if (line < 0 || !dest_scan || dest_bpp <= 0 || dest_width <= 0 ||
       clip_left < 0 || clip_width <= 0) {
     return;
@@ -1137,15 +1134,15 @@ void CPDF_DIBBase::DownSampleScanline(int line,
   }
 }
 
-void CPDF_DIBBase::DownSampleScanline1Bit(int orig_Bpp,
-                                          int dest_Bpp,
-                                          uint32_t src_width,
-                                          const uint8_t* pSrcLine,
-                                          uint8_t* dest_scan,
-                                          int dest_width,
-                                          bool bFlipX,
-                                          int clip_left,
-                                          int clip_width) const {
+void CPDF_DIB::DownSampleScanline1Bit(int orig_Bpp,
+                                      int dest_Bpp,
+                                      uint32_t src_width,
+                                      const uint8_t* pSrcLine,
+                                      uint8_t* dest_scan,
+                                      int dest_width,
+                                      bool bFlipX,
+                                      int clip_left,
+                                      int clip_width) const {
   if (m_bColorKey && !m_bImageMask) {
     uint32_t reset_argb = m_pPalette ? m_pPalette.get()[0] : 0xFF000000;
     uint32_t set_argb = m_pPalette ? m_pPalette.get()[1] : 0xFFFFFFFF;
@@ -1196,15 +1193,15 @@ void CPDF_DIBBase::DownSampleScanline1Bit(int orig_Bpp,
   }
 }
 
-void CPDF_DIBBase::DownSampleScanline8Bit(int orig_Bpp,
-                                          int dest_Bpp,
-                                          uint32_t src_width,
-                                          const uint8_t* pSrcLine,
-                                          uint8_t* dest_scan,
-                                          int dest_width,
-                                          bool bFlipX,
-                                          int clip_left,
-                                          int clip_width) const {
+void CPDF_DIB::DownSampleScanline8Bit(int orig_Bpp,
+                                      int dest_Bpp,
+                                      uint32_t src_width,
+                                      const uint8_t* pSrcLine,
+                                      uint8_t* dest_scan,
+                                      int dest_width,
+                                      bool bFlipX,
+                                      int clip_left,
+                                      int clip_width) const {
   if (m_bpc < 8) {
     uint64_t src_bit_pos = 0;
     for (uint32_t col = 0; col < src_width; col++) {
@@ -1261,15 +1258,15 @@ void CPDF_DIBBase::DownSampleScanline8Bit(int orig_Bpp,
   }
 }
 
-void CPDF_DIBBase::DownSampleScanline32Bit(int orig_Bpp,
-                                           int dest_Bpp,
-                                           uint32_t src_width,
-                                           const uint8_t* pSrcLine,
-                                           uint8_t* dest_scan,
-                                           int dest_width,
-                                           bool bFlipX,
-                                           int clip_left,
-                                           int clip_width) const {
+void CPDF_DIB::DownSampleScanline32Bit(int orig_Bpp,
+                                       int dest_Bpp,
+                                       uint32_t src_width,
+                                       const uint8_t* pSrcLine,
+                                       uint8_t* dest_scan,
+                                       int dest_width,
+                                       bool bFlipX,
+                                       int clip_left,
+                                       int clip_width) const {
   // last_src_x used to store the last seen src_x position which should be
   // in [0, src_width). Set the initial value to be an invalid src_x value.
   uint32_t last_src_x = src_width;
@@ -1359,12 +1356,12 @@ void CPDF_DIBBase::DownSampleScanline32Bit(int orig_Bpp,
   }
 }
 
-bool CPDF_DIBBase::TransMask() const {
+bool CPDF_DIB::TransMask() const {
   return m_bLoadMask && m_GroupFamily == PDFCS_DEVICECMYK &&
          m_Family == PDFCS_DEVICECMYK;
 }
 
-void CPDF_DIBBase::SetMaskProperties() {
+void CPDF_DIB::SetMaskProperties() {
   m_bpp = 1;
   m_bpc = 1;
   m_nComponents = 1;
