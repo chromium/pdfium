@@ -29,7 +29,7 @@ class CFX_ClipRgn;
 class CFX_DIBitmap;
 class PauseIndicatorIface;
 
-// Base class for all Device-Indepenent Bitmaps.
+// Base class for all Device-Independent Bitmaps.
 class CFX_DIBBase : public Retainable {
  public:
   ~CFX_DIBBase() override;
@@ -58,13 +58,10 @@ class CFX_DIBBase : public Retainable {
   uint32_t* GetPalette() const { return m_pPalette.get(); }
   int GetBPP() const { return m_bpp; }
 
-  // TODO(thestig): Investigate this. Given the possible values of FXDIB_Format,
-  // it feels as though this should be implemented as !!(m_AlphaFlag & 1) and
-  // IsOpaqueImage() below should never be able to return true.
-  bool IsAlphaMask() const { return m_AlphaFlag == 1; }
+  bool IsAlphaMask() const { return !!(m_AlphaFlag & 1); }
   bool HasAlpha() const { return !!(m_AlphaFlag & 2); }
-  bool IsOpaqueImage() const { return !(m_AlphaFlag & 3); }
   bool IsCmykImage() const { return !!(m_AlphaFlag & 4); }
+  bool IsOpaqueImage() const { return !IsAlphaMask() && !HasAlpha(); }
 
   int GetPaletteSize() const {
     return IsAlphaMask() ? 0 : (m_bpp == 1 ? 2 : (m_bpp == 8 ? 256 : 0));
