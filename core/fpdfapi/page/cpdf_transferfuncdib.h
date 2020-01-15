@@ -20,8 +20,6 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  FXDIB_Format GetDestFormat();
-  FX_ARGB* GetDestPalette();
   void TranslateScanline(const uint8_t* src_buf,
                          std::vector<uint8_t>* dest_buf) const;
   void TranslateDownSamples(uint8_t* dest_buf,
@@ -44,6 +42,8 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
                           bool bFlipX,
                           int clip_left,
                           int clip_width) const override;
+
+  FXDIB_Format GetDestFormat() const;
 
   RetainPtr<CFX_DIBBase> m_pSrc;
   mutable std::vector<uint8_t> m_Scanline;

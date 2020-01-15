@@ -22,19 +22,15 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
 
 CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;
 
-FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() {
+FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
   if (m_pSrc->IsAlphaMask())
     return FXDIB_8bppMask;
 
 #if defined(OS_MACOSX)
-  return (m_pSrc->HasAlpha()) ? FXDIB_Argb : FXDIB_Rgb32;
+  return m_pSrc->HasAlpha() ? FXDIB_Argb : FXDIB_Rgb32;
 #else
-  return (m_pSrc->HasAlpha()) ? FXDIB_Argb : FXDIB_Rgb;
+  return m_pSrc->HasAlpha() ? FXDIB_Argb : FXDIB_Rgb;
 #endif
-}
-
-FX_ARGB* CPDF_TransferFuncDIB::GetDestPalette() {
-  return nullptr;
 }
 
 void CPDF_TransferFuncDIB::TranslateScanline(
@@ -188,7 +184,7 @@ void CPDF_TransferFuncDIB::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
   m_bpp = GetBppFromFormat(format);
   m_AlphaFlag = GetAlphaFlagFromFormat(format);
   m_Pitch = (m_Width * m_bpp + 31) / 32 * 4;
-  m_pPalette.reset(GetDestPalette());
+  m_pPalette.reset();
   m_Scanline.resize(m_Pitch);
 }
 
