@@ -9,15 +9,6 @@
 
 #include "core/fxcrt/fx_string.h"
 
-#ifdef PDF_ENABLE_XFA
-typedef enum {
-  PDFSDK_XFA_Click = 0,
-  PDFSDK_XFA_Full,
-  PDFSDK_XFA_PreOpen,
-  PDFSDK_XFA_PostOpen
-} PDFSDK_XFAAActionType;
-#endif  // PDF_ENABLE_XFA
-
 struct CPDFSDK_FieldAction {
   CPDFSDK_FieldAction();
   CPDFSDK_FieldAction(const CPDFSDK_FieldAction& other) = delete;

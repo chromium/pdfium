@@ -16,7 +16,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
-#include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "third_party/base/optional.h"
 
 class CFX_RenderDevice;
@@ -28,10 +27,18 @@ class CPDF_RenderOptions;
 class CPDF_Stream;
 class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
+struct CPDFSDK_FieldAction;
 
 #ifdef PDF_ENABLE_XFA
 class CXFA_FFWidget;
 class CXFA_FFWidgetHandler;
+
+enum PDFSDK_XFAAActionType {
+  PDFSDK_XFA_Click = 0,
+  PDFSDK_XFA_Full,
+  PDFSDK_XFA_PreOpen,
+  PDFSDK_XFA_PostOpen
+};
 #endif  // PDF_ENABLE_XFA
 
 class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {

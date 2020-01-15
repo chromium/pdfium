@@ -27,6 +27,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_appstream.h"
+#include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
