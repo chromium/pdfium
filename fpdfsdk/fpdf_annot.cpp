@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -215,6 +216,44 @@ void UpdateBBox(CPDF_Dictionary* annot_dict) {
 CPDF_Dictionary* GetAnnotDictFromFPDFAnnotation(FPDF_ANNOTATION annot) {
   CPDF_AnnotContext* context = CPDFAnnotContextFromFPDFAnnotation(annot);
   return context ? context->GetAnnotDict() : nullptr;
+}
+
+RetainPtr<CPDF_Dictionary> SetExtGStateInResourceDict(
+    CPDF_Document* pDoc,
+    const CPDF_Dictionary* pAnnotDict,
+    const ByteString& sBlendMode) {
+  auto pGSDict =
+      pdfium::MakeRetain<CPDF_Dictionary>(pAnnotDict->GetByteStringPool());
+
+  // ExtGState represents a graphics state parameter dictionary.
+  pGSDict->SetNewFor<CPDF_Name>("Type", "ExtGState");
+
+  // CA respresents current stroking alpha specifying constant opacity
+  // value that should be used in transparent imaging model.
+  float fOpacity = pAnnotDict->GetNumberFor("CA");
+
+  pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
+
+  // ca represents fill color alpha specifying constant opacity
+  // value that should be used in transparent imaging model.
+  pGSDict->SetNewFor<CPDF_Number>("ca", fOpacity);
+
+  // AIS represents alpha source flag specifying whether current alpha
+  // constant shall be interpreted as shape value (true) or opacity value
+  // (false).
+  pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
+
+  // BM represents Blend Mode
+  pGSDict->SetNewFor<CPDF_Name>("BM", sBlendMode);
+
+  auto pExtGStateDict =
+      pdfium::MakeRetain<CPDF_Dictionary>(pAnnotDict->GetByteStringPool());
+
+  pExtGStateDict->SetFor("GS", pGSDict);
+
+  auto pResourceDict = pDoc->New<CPDF_Dictionary>();
+  pResourceDict->SetFor("ExtGState", pExtGStateDict);
+  return pResourceDict;
 }
 
 }  // namespace
@@ -794,6 +833,15 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "XObject");
     pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Form");
     pStreamDict->SetRectFor("BBox", rect);
+    // Transparency values are specified in range [0.0f, 1.0f]. We are strictly
+    // checking for value < 1 and not <= 1 so that the output PDF size does not
+    // unnecessarily bloat up by creating a new dictionary in case of solid
+    // color.
+    if (pAnnotDict->KeyExist("CA") && pAnnotDict->GetNumberFor("CA") < 1.0f) {
+      RetainPtr<CPDF_Dictionary> pResourceDict =
+          SetExtGStateInResourceDict(pDoc, pAnnotDict, "Normal");
+      pStreamDict->SetFor("Resources", pResourceDict);
+    }
 
     // Storing reference to indirect object in annotation's AP
     if (!pApDict)
