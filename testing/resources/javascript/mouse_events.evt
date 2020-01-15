@@ -1,8 +1,11 @@
 # Mouse in, mouse out.
 mousemove,125,225
 mousemove,125,100
-# Mouse in, click in field.
+# Mouse in, click in right field - no effect.
 mousemove,125,225
+mousedown,right,125,225
+mouseup,right,125,225
+# click left in field - has effect.
 mousedown,left,125,225
 mouseup,left,125,225
 # Mouse out, click elsewhere.

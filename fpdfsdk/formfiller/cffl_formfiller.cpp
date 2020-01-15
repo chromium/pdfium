@@ -150,22 +150,14 @@ bool CFFL_FormFiller::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                     uint32_t nFlags,
                                     const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView, true);
-  if (!pWnd)
-    return false;
-
-  pWnd->OnRButtonDown(WndtoPWL(point), nFlags);
-  return true;
+  return pWnd && pWnd->OnRButtonDown(WndtoPWL(point), nFlags);
 }
 
 bool CFFL_FormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                   uint32_t nFlags,
                                   const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView, false);
-  if (!pWnd)
-    return false;
-
-  pWnd->OnRButtonUp(WndtoPWL(point), nFlags);
-  return true;
+  return pWnd && pWnd->OnRButtonUp(WndtoPWL(point), nFlags);
 }
 
 bool CFFL_FormFiller::OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) {
