@@ -334,7 +334,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
-    m_Status = 1;
+    m_type = kRotate;
     return;
   }
   if (fabs(m_matrix.b) < kFix16 && fabs(m_matrix.c) < kFix16) {
@@ -347,7 +347,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
-    m_Status = 2;
+    m_type = kNormal;
     return;
   }
 
@@ -377,37 +377,49 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
       m_ResampleOptions);
   m_Stretcher->Start();
-  m_Status = 3;
+  m_type = kOther;
 }
 
-CFX_ImageTransformer::~CFX_ImageTransformer() {}
+CFX_ImageTransformer::~CFX_ImageTransformer() = default;
 
 bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
-  if (m_Status == 1) {
-    if (m_Stretcher->Continue(pPause))
-      return true;
-
-    if (m_Storer.GetBitmap()) {
-      m_Storer.Replace(
-          m_Storer.GetBitmap()->SwapXY(m_matrix.c > 0, m_matrix.b < 0));
-    }
+  if (m_type == kNone)
     return false;
-  }
 
-  if (m_Status == 2)
-    return m_Stretcher->Continue(pPause);
-  if (m_Status != 3)
-    return false;
   if (m_Stretcher->Continue(pPause))
     return true;
 
+  switch (m_type) {
+    case kNormal:
+      break;
+    case kRotate:
+      ContinueRotate(pPause);
+      break;
+    case kOther:
+      ContinueOther(pPause);
+      break;
+    default:
+      NOTREACHED();
+      break;
+  }
+  return false;
+}
+
+void CFX_ImageTransformer::ContinueRotate(PauseIndicatorIface* pPause) {
+  if (m_Storer.GetBitmap()) {
+    m_Storer.Replace(
+        m_Storer.GetBitmap()->SwapXY(m_matrix.c > 0, m_matrix.b < 0));
+  }
+}
+
+void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   if (!m_Storer.GetBitmap())
-    return false;
+    return;
 
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
   FXDIB_Format format = GetTransformedFormat(m_Stretcher->source());
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), format))
-    return false;
+    return;
 
   const auto& pSrcMask = m_Storer.GetBitmap()->m_pAlphaMask;
   const uint8_t* pSrcMaskBuf = pSrcMask ? pSrcMask->GetBuffer() : nullptr;
@@ -446,7 +458,6 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
       CalcColor(cdata, format, Bpp);
   }
   m_Storer.Replace(std::move(pTransformed));
-  return false;
 }
 
 RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
