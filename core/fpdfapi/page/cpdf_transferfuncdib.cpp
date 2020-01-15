@@ -14,11 +14,22 @@
 #include "third_party/base/compiler_specific.h"
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
+    const RetainPtr<CFX_DIBBase>& pSrc,
     const RetainPtr<CPDF_TransferFunc>& pTransferFunc)
-    : m_pTransferFunc(pTransferFunc),
+    : m_pSrc(pSrc),
+      m_pTransferFunc(pTransferFunc),
       m_RampR(pTransferFunc->GetSamplesR()),
       m_RampG(pTransferFunc->GetSamplesG()),
-      m_RampB(pTransferFunc->GetSamplesB()) {}
+      m_RampB(pTransferFunc->GetSamplesB()) {
+  m_Width = pSrc->GetWidth();
+  m_Height = pSrc->GetHeight();
+  FXDIB_Format format = GetDestFormat();
+  m_bpp = GetBppFromFormat(format);
+  m_AlphaFlag = GetAlphaFlagFromFormat(format);
+  m_Pitch = (m_Width * m_bpp + 31) / 32 * 4;
+  m_pPalette.reset();
+  m_Scanline.resize(m_Pitch);
+}
 
 CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;
 
@@ -174,18 +185,6 @@ void CPDF_TransferFuncDIB::TranslateDownSamples(uint8_t* dest_buf,
     }
 #endif
   }
-}
-
-void CPDF_TransferFuncDIB::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
-  m_pSrc = pSrc;
-  m_Width = pSrc->GetWidth();
-  m_Height = pSrc->GetHeight();
-  FXDIB_Format format = GetDestFormat();
-  m_bpp = GetBppFromFormat(format);
-  m_AlphaFlag = GetAlphaFlagFromFormat(format);
-  m_Pitch = (m_Width * m_bpp + 31) / 32 * 4;
-  m_pPalette.reset();
-  m_Scanline.resize(m_Pitch);
 }
 
 const uint8_t* CPDF_TransferFuncDIB::GetScanline(int line) const {

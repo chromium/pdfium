@@ -26,11 +26,10 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
                             const uint8_t* src_buf,
                             int pixels,
                             int Bpp) const;
-  void LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc);
 
  private:
-  explicit CPDF_TransferFuncDIB(
-      const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
+  CPDF_TransferFuncDIB(const RetainPtr<CFX_DIBBase>& pSrc,
+                       const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
   ~CPDF_TransferFuncDIB() override;
 
   // CFX_DIBBase:
@@ -45,9 +44,9 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
 
   FXDIB_Format GetDestFormat() const;
 
-  RetainPtr<CFX_DIBBase> m_pSrc;
+  RetainPtr<CFX_DIBBase> const m_pSrc;
   mutable std::vector<uint8_t> m_Scanline;
-  RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
+  RetainPtr<CPDF_TransferFunc> const m_pTransferFunc;
   const pdfium::span<const uint8_t> m_RampR;
   const pdfium::span<const uint8_t> m_RampG;
   const pdfium::span<const uint8_t> m_RampB;
