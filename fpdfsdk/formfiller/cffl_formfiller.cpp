@@ -533,10 +533,6 @@ CPWL_Wnd* CFFL_FormFiller::ResetPWLWindow(CPDFSDK_PageView* pPageView,
 
 void CFFL_FormFiller::OnTimerFired() {}
 
-IPWL_SystemHandler* CFFL_FormFiller::GetSystemHandler() const {
-  return m_pFormFillEnv->GetSysHandler();
-}
-
 void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
                                    bool bDestroyPWLWindow) {
   m_bValid = false;

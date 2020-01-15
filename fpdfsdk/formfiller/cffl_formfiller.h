@@ -131,7 +131,6 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   bool IsValid() const;
   CFX_FloatRect GetPDFAnnotRect() const;
 
-  IPWL_SystemHandler* GetSystemHandler() const;
   CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
