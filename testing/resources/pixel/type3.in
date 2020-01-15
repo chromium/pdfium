@@ -1,0 +1,81 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 1 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 150]
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F1 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+/F1 1 Tf
+2 50 10 0.4 20 55 Tm
+(A)Tj
+8 0 0 8 40 55 Tm
+(A)Tj
+4 4 4 0 60 55 Tm
+(A)Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type3
+  /FontBBox [0 0 32 52]
+  /FontMatrix [0.02 0 0 0.02 0 0]
+  /CharProcs <<
+    /C1 6 0 R
+  >>
+  /Encoding <<
+    /Type /Encoding
+    /Differences [65 /C1]
+  >>
+  /FirstChar 65
+  /LastChar 65
+  /Widths [18]
+  /Resources <<
+    /ProcSet [/PDF /ImageB]
+  >>
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+6 0 0 48 6 0 cm
+BI
+/W 6
+/H 48
+/BPC 1
+/IM true
+ID
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+EI
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
