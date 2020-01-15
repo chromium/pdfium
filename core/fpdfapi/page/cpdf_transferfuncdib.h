@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_PAGE_CPDF_DIBTRANSFERFUNC_H_
-#define CORE_FPDFAPI_PAGE_CPDF_DIBTRANSFERFUNC_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_
+#define CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_
 
 #include <vector>
 
@@ -15,7 +15,7 @@
 
 class CPDF_TransferFunc;
 
-class CPDF_DIBTransferFunc final : public CFX_DIBBase {
+class CPDF_TransferFuncDIB final : public CFX_DIBBase {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -31,9 +31,9 @@ class CPDF_DIBTransferFunc final : public CFX_DIBBase {
   void LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc);
 
  private:
-  explicit CPDF_DIBTransferFunc(
+  explicit CPDF_TransferFuncDIB(
       const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
-  ~CPDF_DIBTransferFunc() override;
+  ~CPDF_TransferFuncDIB() override;
 
   // CFX_DIBBase:
   const uint8_t* GetScanline(int line) const override;
@@ -53,4 +53,4 @@ class CPDF_DIBTransferFunc final : public CFX_DIBBase {
   const pdfium::span<const uint8_t> m_RampB;
 };
 
-#endif  // CORE_FPDFAPI_PAGE_CPDF_DIBTRANSFERFUNC_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_

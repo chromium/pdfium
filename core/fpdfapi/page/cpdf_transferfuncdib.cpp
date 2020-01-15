@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/cpdf_dibtransferfunc.h"
+#include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 
 #include <vector>
 
@@ -13,16 +13,16 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "third_party/base/compiler_specific.h"
 
-CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
+CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
     const RetainPtr<CPDF_TransferFunc>& pTransferFunc)
     : m_pTransferFunc(pTransferFunc),
       m_RampR(pTransferFunc->GetSamplesR()),
       m_RampG(pTransferFunc->GetSamplesG()),
       m_RampB(pTransferFunc->GetSamplesB()) {}
 
-CPDF_DIBTransferFunc::~CPDF_DIBTransferFunc() = default;
+CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;
 
-FXDIB_Format CPDF_DIBTransferFunc::GetDestFormat() {
+FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() {
   if (m_pSrc->IsAlphaMask())
     return FXDIB_8bppMask;
 
@@ -33,11 +33,11 @@ FXDIB_Format CPDF_DIBTransferFunc::GetDestFormat() {
 #endif
 }
 
-FX_ARGB* CPDF_DIBTransferFunc::GetDestPalette() {
+FX_ARGB* CPDF_TransferFuncDIB::GetDestPalette() {
   return nullptr;
 }
 
-void CPDF_DIBTransferFunc::TranslateScanline(
+void CPDF_TransferFuncDIB::TranslateScanline(
     const uint8_t* src_buf,
     std::vector<uint8_t>* dest_buf) const {
   bool bSkip = false;
@@ -143,7 +143,7 @@ void CPDF_DIBTransferFunc::TranslateScanline(
   }
 }
 
-void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
+void CPDF_TransferFuncDIB::TranslateDownSamples(uint8_t* dest_buf,
                                                 const uint8_t* src_buf,
                                                 int pixels,
                                                 int Bpp) const {
@@ -180,7 +180,7 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
   }
 }
 
-void CPDF_DIBTransferFunc::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
+void CPDF_TransferFuncDIB::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
   m_pSrc = pSrc;
   m_Width = pSrc->GetWidth();
   m_Height = pSrc->GetHeight();
@@ -192,12 +192,12 @@ void CPDF_DIBTransferFunc::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
   m_Scanline.resize(m_Pitch);
 }
 
-const uint8_t* CPDF_DIBTransferFunc::GetScanline(int line) const {
+const uint8_t* CPDF_TransferFuncDIB::GetScanline(int line) const {
   TranslateScanline(m_pSrc->GetScanline(line), &m_Scanline);
   return m_Scanline.data();
 }
 
-void CPDF_DIBTransferFunc::DownSampleScanline(int line,
+void CPDF_TransferFuncDIB::DownSampleScanline(int line,
                                               uint8_t* dest_scan,
                                               int dest_bpp,
                                               int dest_width,

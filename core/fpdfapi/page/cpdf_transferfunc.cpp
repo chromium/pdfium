@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/fpdfapi/page/cpdf_dibtransferfunc.h"
+#include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 
@@ -38,7 +38,7 @@ FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF colorref) const {
 RetainPtr<CFX_DIBBase> CPDF_TransferFunc::TranslateImage(
     const RetainPtr<CFX_DIBBase>& pSrc) {
   RetainPtr<CPDF_TransferFunc> pHolder(this);
-  auto pDest = pdfium::MakeRetain<CPDF_DIBTransferFunc>(pHolder);
+  auto pDest = pdfium::MakeRetain<CPDF_TransferFuncDIB>(pHolder);
   pDest->LoadSrc(pSrc);
   return pDest;
 }
