@@ -434,9 +434,10 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
 
-  ASSERT(pSrcBitmap->IsAlphaMask());
-  if (!pSrcBitmap->IsAlphaMask())
+  if (!pSrcBitmap->IsAlphaMask()) {
+    NOTREACHED();
     return false;
+  }
 
   if (!IsAlphaMask() && !HasAlpha())
     return LoadChannelFromAlpha(FXDIB_Alpha, pSrcBitmap);
@@ -875,11 +876,11 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   if (!m_pBuffer)
     return false;
 
-  ASSERT(!pSrcBitmap->IsAlphaMask());
-  ASSERT(m_bpp >= 8);
   if (pSrcBitmap->IsAlphaMask() || m_bpp < 8) {
+    NOTREACHED();
     return false;
   }
+
   if (!GetOverlapRect(dest_left, dest_top, width, height,
                       pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(), src_left,
                       src_top, pClipRgn)) {
@@ -948,10 +949,10 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   if (!m_pBuffer)
     return false;
 
-  ASSERT(pMask->IsAlphaMask());
-  ASSERT(m_bpp >= 8);
-  if (!pMask->IsAlphaMask() || m_bpp < 8)
+  if (!pMask->IsAlphaMask() || m_bpp < 8) {
+    NOTREACHED();
     return false;
+  }
 
   if (!GetOverlapRect(dest_left, dest_top, width, height, pMask->GetWidth(),
                       pMask->GetHeight(), src_left, src_top, pClipRgn)) {
@@ -1096,9 +1097,15 @@ bool CFX_DIBitmap::CompositeRect(int left,
     }
     return true;
   }
-  ASSERT(m_bpp >= 24);
-  if (m_bpp < 24 || (!(alpha_flag >> 8) && IsCmykImage()))
+
+  if (m_bpp < 24) {
+    NOTREACHED();
     return false;
+  }
+
+  if (!(alpha_flag >> 8) && IsCmykImage())
+    return false;
+
   if (alpha_flag >> 8 && !IsCmykImage()) {
     std::tie(color_p[2], color_p[1], color_p[0]) =
         AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
