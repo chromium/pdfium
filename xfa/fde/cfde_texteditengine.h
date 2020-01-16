@@ -113,7 +113,6 @@ class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
   float GetFontSize() const { return font_size_; }
   void SetFontColor(FX_ARGB color) { font_color_ = color; }
   FX_ARGB GetFontColor() const { return font_color_; }
-  float GetFontAscent() const;
 
   void SetAlignment(uint32_t alignment);
   float GetLineSpace() const { return line_spacing_; }

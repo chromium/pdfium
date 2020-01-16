@@ -179,6 +179,21 @@ TEST_F(CFDE_TextEditEngineTest, InsertSkipNotify) {
   EXPECT_STREQ(L"*HelloWorld", engine()->GetText().c_str());
 }
 
+TEST_F(CFDE_TextEditEngineTest, InsertGrowGap) {
+  engine()->Insert(0, L"||");
+  for (size_t i = 1; i < 1023; ++i) {
+    engine()->Insert(i, L"a");
+  }
+  WideString result = engine()->GetText();
+  ASSERT_EQ(result.GetLength(), 1024u);
+  EXPECT_EQ(result[0], L'|');
+  EXPECT_EQ(result[1], L'a');
+  EXPECT_EQ(result[2], L'a');
+  // ...
+  EXPECT_EQ(result[1022], L'a');
+  EXPECT_EQ(result[1023], L'|');
+}
+
 TEST_F(CFDE_TextEditEngineTest, Delete) {
   EXPECT_STREQ(L"", engine()->Delete(0, 50).c_str());
   EXPECT_STREQ(L"", engine()->GetText().c_str());

@@ -694,10 +694,6 @@ void CFDE_TextEditEngine::SetTabWidth(float width) {
   is_dirty_ = true;
 }
 
-float CFDE_TextEditEngine::GetFontAscent() const {
-  return (static_cast<float>(font_->GetAscent()) * font_size_) / 1000;
-}
-
 void CFDE_TextEditEngine::SetAlignment(uint32_t alignment) {
   if (alignment == character_alignment_)
     return;
