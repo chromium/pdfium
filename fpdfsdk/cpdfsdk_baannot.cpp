@@ -78,25 +78,6 @@ bool CPDFSDK_BAAnnot::IsAppearanceValid() {
   return !!GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
 }
 
-bool CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
-  if (!pAP)
-    return false;
-
-  // Choose the right sub-ap
-  const char* ap_entry = "N";
-  if (mode == CPDF_Annot::Down)
-    ap_entry = "D";
-  else if (mode == CPDF_Annot::Rollover)
-    ap_entry = "R";
-  if (!pAP->KeyExist(ap_entry))
-    ap_entry = "N";
-
-  // Get the AP stream or subdirectory
-  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
-  return !!psub;
-}
-
 void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
   CPDF_Dictionary* pDict = GetAnnotDict();
   if (sName.IsEmpty())
