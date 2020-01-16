@@ -211,7 +211,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
   auto* pContext = pPageView->GetFormFillEnv()->GetDocExtension();
-  if (pContext->ContainsExtensionForegroundForm()) {
+  if (pContext && pContext->ContainsExtensionForegroundForm()) {
     if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
       pWidget->ResetXFAAppearance(false);
   }

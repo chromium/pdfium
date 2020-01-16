@@ -70,11 +70,9 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 #ifdef PDF_ENABLE_XFA
   IPDF_Page* pPage = GetXFAPage();
-  if (!pPage)
-    return;
-
-  CPDF_Document::Extension* pContext = pPage->GetDocument()->GetExtension();
-  if (pContext->ContainsExtensionFullForm()) {
+  CPDF_Document::Extension* pContext =
+      pPage ? pPage->GetDocument()->GetExtension() : nullptr;
+  if (pContext && pContext->ContainsExtensionFullForm()) {
     static_cast<CPDFXFA_Page*>(pPage)->DrawFocusAnnot(pDevice, GetFocusAnnot(),
                                                       mtUser2Device, pClip);
     return;
@@ -144,7 +142,7 @@ bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
     return false;
 
   CPDF_Document::Extension* pContext = pPage->GetDocument()->GetExtension();
-  if (!pContext->ContainsExtensionForm())
+  if (pContext && !pContext->ContainsExtensionForm())
     return false;
 
   ObservedPtr<CPDFSDK_Annot> pObserved(pAnnot);
@@ -482,8 +480,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
 #ifdef PDF_ENABLE_XFA
   RetainPtr<CPDFXFA_Page> protector(ToXFAPage(m_page));
-  auto* pContext = m_pFormFillEnv->GetDocExtension();
-  if (pContext->ContainsExtensionFullForm()) {
+  CPDF_Document::Extension* pContext = m_pFormFillEnv->GetDocExtension();
+  if (pContext && pContext->ContainsExtensionFullForm()) {
     CXFA_FFPageView* pageView = protector->GetXFAPageView();
     std::unique_ptr<IXFA_WidgetIterator> pWidgetHandler =
         pageView->CreateFormWidgetIterator(XFA_WidgetStatus_Visible |
@@ -535,7 +533,7 @@ void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {
 int CPDFSDK_PageView::GetPageIndex() const {
 #ifdef PDF_ENABLE_XFA
   CPDF_Document::Extension* pContext = m_page->GetDocument()->GetExtension();
-  if (pContext->ContainsExtensionFullForm()) {
+  if (pContext && pContext->ContainsExtensionFullForm()) {
     CXFA_FFPageView* pPageView = m_page->AsXFAPage()->GetXFAPageView();
     return pPageView ? pPageView->GetLayoutItem()->GetPageIndex() : -1;
   }

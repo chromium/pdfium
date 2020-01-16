@@ -75,7 +75,7 @@ uint16_t GetExtendedUnicodeProperties(wchar_t wch) {
   return 0;
 }
 
-#endif  // PDF_ENBABLE_XFA
+#endif  // PDF_ENABLE_XFA
 
 constexpr uint16_t kFXTextLayoutBidiMirror[] = {
     0x0029, 0x0028, 0x003E, 0x003C, 0x005D, 0x005B, 0x007D, 0x007B, 0x00BB,

@@ -52,8 +52,9 @@ CPDFSDK_Widget::~CPDFSDK_Widget() = default;
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
-  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
-  if (!pContext->ContainsExtensionForegroundForm())
+  CPDF_Document::Extension* pContext =
+      m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (!pContext || !pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
   CXFA_FFDocView* pDocView =
@@ -77,8 +78,9 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
 }
 
 CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
-  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
-  if (!pContext->ContainsExtensionForegroundForm())
+  CPDF_Document::Extension* pContext =
+      m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (!pContext || !pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
   CXFA_FFDocView* pDocView =
@@ -91,8 +93,9 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
 }
 
 CXFA_FFWidgetHandler* CPDFSDK_Widget::GetXFAWidgetHandler() const {
-  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
-  if (!pContext->ContainsExtensionForegroundForm())
+  CPDF_Document::Extension* pContext =
+      m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (!pContext || !pContext->ContainsExtensionForegroundForm())
     return nullptr;
 
   if (!m_pWidgetHandler) {
@@ -208,6 +211,8 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
                                   CPDFSDK_PageView* pPageView) {
   auto* pContext = static_cast<CPDFXFA_Context*>(
       m_pPageView->GetFormFillEnv()->GetDocExtension());
+  if (!pContext)
+    return false;
 
   ObservedPtr<CXFA_FFWidget> pWidget(GetMixXFAWidget());
   if (!pWidget)
@@ -345,8 +350,9 @@ FormFieldType CPDFSDK_Widget::GetFieldType() const {
 
 bool CPDFSDK_Widget::IsAppearanceValid() {
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = m_pPageView->GetFormFillEnv()->GetDocExtension();
-  if (pContext->ContainsExtensionFullForm())
+  CPDF_Document::Extension* pContext =
+      m_pPageView->GetFormFillEnv()->GetDocExtension();
+  if (pContext && pContext->ContainsExtensionFullForm())
     return true;
 #endif  // PDF_ENABLE_XFA
   return CPDFSDK_BAAnnot::IsAppearanceValid();
@@ -792,27 +798,30 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 #ifdef PDF_ENABLE_XFA
   auto* pContext =
       static_cast<CPDFXFA_Context*>(pFormFillEnv->GetDocExtension());
-  if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-    XFA_EVENTTYPE eEventType = GetXFAEventType(type, data->bWillCommit);
-
-    if (eEventType != XFA_EVENT_Unknown) {
-      if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-        CXFA_EventParam param;
-        param.m_eType = eEventType;
-        param.m_wsChange = data->sChange;
-        param.m_iCommitKey = 0;
-        param.m_bShift = data->bShift;
-        param.m_iSelStart = data->nSelStart;
-        param.m_iSelEnd = data->nSelEnd;
-        param.m_wsFullText = data->sValue;
-        param.m_bKeyDown = data->bKeyDown;
-        param.m_bModifier = data->bModifier;
-        param.m_wsPrevText = data->sValue;
-        bool ret = hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
-        if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
-          pDocView->UpdateDocView();
-        if (ret)
-          return true;
+  if (pContext) {
+    CXFA_FFWidget* hWidget = GetMixXFAWidget();
+    if (hWidget) {
+      XFA_EVENTTYPE eEventType = GetXFAEventType(type, data->bWillCommit);
+      if (eEventType != XFA_EVENT_Unknown) {
+        if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
+          CXFA_EventParam param;
+          param.m_eType = eEventType;
+          param.m_wsChange = data->sChange;
+          param.m_iCommitKey = 0;
+          param.m_bShift = data->bShift;
+          param.m_iSelStart = data->nSelStart;
+          param.m_iSelEnd = data->nSelEnd;
+          param.m_wsFullText = data->sValue;
+          param.m_bKeyDown = data->bKeyDown;
+          param.m_bModifier = data->bModifier;
+          param.m_wsPrevText = data->sValue;
+          bool ret =
+              hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
+          if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
+            pDocView->UpdateDocView();
+          if (ret)
+            return true;
+        }
       }
     }
   }
