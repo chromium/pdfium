@@ -308,12 +308,17 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   // engine. Otherwise, if you enter 123456789 for an SSN into a field
   // with a 9 character limit and we reformat to 123-45-6789 we'll truncate
   // the 89 when inserting into the text edit. See https://crbug.com/pdfium/1089
-  if (has_character_limit_ && add_operation != RecordOperation::kSkipNotify &&
-      text_length_ + length > character_limit_) {
-    exceeded_limit = true;
-    length = character_limit_ - text_length_;
+  if (has_character_limit_ && text_length_ + length > character_limit_) {
+    if (add_operation == RecordOperation::kSkipNotify) {
+      // Raise the limit to allow subsequent changes to expanded text.
+      character_limit_ = text_length_ + length;
+    } else {
+      // Trucate the text to comply with the limit.
+      CHECK(text_length_ <= character_limit_);
+      length = character_limit_ - text_length_;
+      exceeded_limit = true;
+    }
   }
-
   AdjustGap(idx, length);
 
   if (validation_enabled_ || limit_horizontal_area_ || limit_vertical_area_) {

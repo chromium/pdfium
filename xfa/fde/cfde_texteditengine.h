@@ -214,8 +214,11 @@ class CFDE_TextEditEngine : public CFX_TxtBreak::Engine {
   float line_spacing_;
   std::vector<WideString::CharType> content_;
   size_t text_length_;
+
+  // See e.g. https://en.wikipedia.org/wiki/Gap_buffer
   size_t gap_position_;
   size_t gap_size_;
+
   size_t available_width_;
   size_t character_limit_;
   size_t visible_line_count_;

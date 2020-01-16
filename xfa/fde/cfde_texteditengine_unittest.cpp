@@ -161,6 +161,24 @@ TEST_F(CFDE_TextEditEngineTest, Insert) {
   engine()->SetDelegate(nullptr);
 }
 
+TEST_F(CFDE_TextEditEngineTest, InsertSkipNotify) {
+  engine()->SetHasCharacterLimit(true);
+  engine()->SetCharacterLimit(8);
+  engine()->Insert(0, L"Hello");
+  engine()->Insert(5, L" World",
+                   CFDE_TextEditEngine::RecordOperation::kSkipNotify);
+  EXPECT_STREQ(L"Hello World", engine()->GetText().c_str());
+
+  engine()->Insert(0, L"Not inserted");
+  EXPECT_STREQ(L"Hello World", engine()->GetText().c_str());
+
+  engine()->Delete(5, 1);
+  EXPECT_STREQ(L"HelloWorld", engine()->GetText().c_str());
+
+  engine()->Insert(0, L"****");
+  EXPECT_STREQ(L"*HelloWorld", engine()->GetText().c_str());
+}
+
 TEST_F(CFDE_TextEditEngineTest, Delete) {
   EXPECT_STREQ(L"", engine()->Delete(0, 50).c_str());
   EXPECT_STREQ(L"", engine()->GetText().c_str());
