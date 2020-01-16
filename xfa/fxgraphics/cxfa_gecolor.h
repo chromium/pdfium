@@ -17,7 +17,6 @@ class CXFA_GEColor {
  public:
   enum Type { Invalid, Solid, Pattern, Shading };
 
-  CXFA_GEColor();
   explicit CXFA_GEColor(const FX_ARGB argb);
   explicit CXFA_GEColor(CXFA_GEShading* shading);
   CXFA_GEColor(CXFA_GEPattern* pattern, const FX_ARGB argb);

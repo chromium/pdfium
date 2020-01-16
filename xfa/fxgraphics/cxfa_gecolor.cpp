@@ -6,8 +6,6 @@
 
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 
-CXFA_GEColor::CXFA_GEColor() = default;
-
 CXFA_GEColor::CXFA_GEColor(const FX_ARGB argb) : m_type(Solid), m_argb(argb) {}
 
 CXFA_GEColor::CXFA_GEColor(CXFA_GEPattern* pattern, const FX_ARGB argb)
