@@ -97,8 +97,7 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
   CPDF_RenderContext* pContext = pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
-  if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() <
-      FPDF_HUGE_IMAGE_SIZE) {
+  if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < kHugeImageSize) {
     m_pCachedBitmap = m_pCurBitmap->Clone(nullptr);
     m_pCurBitmap.Reset();
   } else {

@@ -383,7 +383,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     if (!image_size.IsValid())
       return false;
 
-    if (image_size.ValueOrDie() > FPDF_HUGE_IMAGE_SIZE &&
+    if (image_size.ValueOrDie() > kHugeImageSize &&
         !m_ResampleOptions.bHalftone) {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
