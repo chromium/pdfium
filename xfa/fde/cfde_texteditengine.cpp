@@ -644,6 +644,7 @@ void CFDE_TextEditEngine::SetHasCharacterLimit(bool limit) {
     return;
 
   has_character_limit_ = limit;
+  character_limit_ = std::max(character_limit_, text_length_);
   if (is_comb_text_)
     SetCombTextWidth();
 
@@ -656,7 +657,7 @@ void CFDE_TextEditEngine::SetCharacterLimit(size_t limit) {
 
   ClearOperationRecords();
 
-  character_limit_ = limit;
+  character_limit_ = std::max(limit, text_length_);
   if (is_comb_text_)
     SetCombTextWidth();
 

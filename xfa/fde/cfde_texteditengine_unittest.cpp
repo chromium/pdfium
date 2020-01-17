@@ -161,6 +161,20 @@ TEST_F(CFDE_TextEditEngineTest, Insert) {
   engine()->SetDelegate(nullptr);
 }
 
+TEST_F(CFDE_TextEditEngineTest, InsertToggleLimit) {
+  engine()->SetHasCharacterLimit(true);
+  engine()->Insert(0, L"Hello World");
+  engine()->SetCharacterLimit(5);
+  engine()->Insert(0, L"Not Inserted before ");
+  EXPECT_STREQ(L"Hello World", engine()->GetText().c_str());
+
+  engine()->SetHasCharacterLimit(false);
+  engine()->Insert(0, L"Inserted before ");
+  engine()->SetHasCharacterLimit(true);
+  engine()->Insert(0, L"Not Inserted before ");
+  EXPECT_STREQ(L"Inserted before Hello World", engine()->GetText().c_str());
+}
+
 TEST_F(CFDE_TextEditEngineTest, InsertSkipNotify) {
   engine()->SetHasCharacterLimit(true);
   engine()->SetCharacterLimit(8);
