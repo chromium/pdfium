@@ -21,12 +21,7 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
     CPDF_RenderContext* pContext,
     CFX_RenderDevice* pDevice,
     const CPDF_RenderOptions* pOptions)
-    : m_Status(Ready),
-      m_pContext(pContext),
-      m_pDevice(pDevice),
-      m_pOptions(pOptions),
-      m_LayerIndex(0),
-      m_pCurrentLayer(nullptr) {}
+    : m_pContext(pContext), m_pDevice(pDevice), m_pOptions(pOptions) {}
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   if (m_pRenderStatus) {
@@ -36,19 +31,19 @@ CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
 }
 
 void CPDF_ProgressiveRenderer::Start(PauseIndicatorIface* pPause) {
-  if (!m_pContext || !m_pDevice || m_Status != Ready) {
-    m_Status = Failed;
+  if (!m_pContext || !m_pDevice || m_Status != kReady) {
+    m_Status = kFailed;
     return;
   }
-  m_Status = ToBeContinued;
+  m_Status = kToBeContinued;
   Continue(pPause);
 }
 
 void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
-  while (m_Status == ToBeContinued) {
+  while (m_Status == kToBeContinued) {
     if (!m_pCurrentLayer) {
       if (m_LayerIndex >= m_pContext->CountLayers()) {
-        m_Status = Done;
+        m_Status = kDone;
         return;
       }
       m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);

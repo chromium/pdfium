@@ -19,15 +19,15 @@
 #include "third_party/base/ptr_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
-static_assert(CPDF_ProgressiveRenderer::Ready == FPDF_RENDER_READY,
-              "CPDF_ProgressiveRenderer::Ready value mismatch");
-static_assert(CPDF_ProgressiveRenderer::ToBeContinued ==
+static_assert(CPDF_ProgressiveRenderer::kReady == FPDF_RENDER_READY,
+              "CPDF_ProgressiveRenderer::kReady value mismatch");
+static_assert(CPDF_ProgressiveRenderer::kToBeContinued ==
                   FPDF_RENDER_TOBECONTINUED,
-              "CPDF_ProgressiveRenderer::ToBeContinued value mismatch");
-static_assert(CPDF_ProgressiveRenderer::Done == FPDF_RENDER_DONE,
-              "CPDF_ProgressiveRenderer::Done value mismatch");
-static_assert(CPDF_ProgressiveRenderer::Failed == FPDF_RENDER_FAILED,
-              "CPDF_ProgressiveRenderer::Failed value mismatch");
+              "CPDF_ProgressiveRenderer::kToBeContinued value mismatch");
+static_assert(CPDF_ProgressiveRenderer::kDone == FPDF_RENDER_DONE,
+              "CPDF_ProgressiveRenderer::kDone value mismatch");
+static_assert(CPDF_ProgressiveRenderer::kFailed == FPDF_RENDER_FAILED,
+              "CPDF_ProgressiveRenderer::kFailed value mismatch");
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                                                           FPDF_PAGE page,
