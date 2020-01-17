@@ -128,6 +128,7 @@ void CPDF_LinkExtract::ParseLink() {
   int nTotalChar = m_pTextPage->CountChars();
   bool bAfterHyphen = false;
   bool bLineBreak = false;
+  const WideString page_text = m_pTextPage->GetAllPageText();
   while (pos < nTotalChar) {
     FPDF_CHAR_INFO pageChar;
     m_pTextPage->GetCharInfo(pos, &pageChar);
@@ -143,8 +144,7 @@ void CPDF_LinkExtract::ParseLink() {
         pos++;
         continue;
       }
-      WideString strBeCheck;
-      strBeCheck = m_pTextPage->GetPageText(start, nCount);
+      WideString strBeCheck = page_text.Mid(start, nCount);
       if (bLineBreak) {
         strBeCheck.Remove(TEXT_LINEFEED_CHAR);
         strBeCheck.Remove(TEXT_RETURN_CHAR);
