@@ -66,16 +66,13 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       status.SetOptions(*pOptions);
     status.SetStopObject(pStopObj);
     status.SetTransparency(layer.m_pObjectHolder->GetTransparency());
+    CFX_Matrix final_matrix = layer.m_Matrix;
     if (pLastMatrix) {
-      const CFX_Matrix& last_matrix = *pLastMatrix;
-      CFX_Matrix final_matrix = layer.m_Matrix * last_matrix;
-      status.SetDeviceMatrix(last_matrix);
-      status.Initialize(nullptr, nullptr);
-      status.RenderObjectList(layer.m_pObjectHolder.Get(), final_matrix);
-    } else {
-      status.Initialize(nullptr, nullptr);
-      status.RenderObjectList(layer.m_pObjectHolder.Get(), layer.m_Matrix);
+      final_matrix *= *pLastMatrix;
+      status.SetDeviceMatrix(*pLastMatrix);
     }
+    status.Initialize(nullptr, nullptr);
+    status.RenderObjectList(layer.m_pObjectHolder.Get(), final_matrix);
     if (status.GetRenderOptions().GetOptions().bLimitedImageCache) {
       m_pPageCache->CacheOptimization(
           status.GetRenderOptions().GetCacheSizeLimit());
@@ -85,8 +82,8 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
   }
 }
 
-CPDF_RenderContext::Layer::Layer() {}
+CPDF_RenderContext::Layer::Layer() = default;
 
 CPDF_RenderContext::Layer::Layer(const Layer& that) = default;
 
-CPDF_RenderContext::Layer::~Layer() {}
+CPDF_RenderContext::Layer::~Layer() = default;
