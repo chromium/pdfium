@@ -1139,6 +1139,7 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout),
       m_pBackdropBitmap(pBackdropBitmap) {
+  ASSERT(m_pBitmap);
   InitPlatform();
 }
 
@@ -1475,7 +1476,7 @@ bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
 bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                     int left,
                                     int top) {
-  if (!m_pBitmap || !m_pBitmap->GetBuffer())
+  if (!m_pBitmap->GetBuffer())
     return true;
 
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),

@@ -111,7 +111,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   virtual uint8_t* GetBuffer() const;
 
  private:
-  RetainPtr<CFX_DIBitmap> m_pBitmap;
+  RetainPtr<CFX_DIBitmap> const m_pBitmap;
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
 #if defined(OS_MACOSX)
