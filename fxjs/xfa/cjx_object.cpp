@@ -1138,8 +1138,6 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
     ToNode(GetXFAObject())->InsertChildAndNotify(pHeadChild, nullptr);
     pHeadChild = pSibling;
   }
-  GetDocument()->FreeOwnedNode(pProtoForm);
-  pProtoForm = nullptr;
 }
 
 void CJX_Object::ScriptAttributeBool(CFXJSE_Value* pValue,
