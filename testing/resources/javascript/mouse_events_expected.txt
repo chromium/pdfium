@@ -21,6 +21,9 @@ Alert: up
 Doc Submit Form: url=https://example.com + 19 data bytes:
  6e 61 6d 65 3d 54 72 61 6c 66 61 7a 26 61 67 65 3d 31 32
 Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
+Alert: focus
+Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
+Alert: PASS: this.print blocked with Document.print: User gesture required.
 Alert: exit
 Alert: PASS: this.submitForm blocked with Document.submitForm: User gesture required.
 Alert: PASS: this.print blocked with Document.print: User gesture required.
