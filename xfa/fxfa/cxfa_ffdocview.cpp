@@ -61,7 +61,7 @@ const XFA_AttributeValue gs_EventActivity[] = {
 
 CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
-CXFA_FFDocView::~CXFA_FFDocView() {}
+CXFA_FFDocView::~CXFA_FFDocView() = default;
 
 void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {
   RunBindItems();
@@ -94,8 +94,7 @@ int32_t CXFA_FFDocView::StartLayout() {
 }
 
 int32_t CXFA_FFDocView::DoLayout() {
-  int32_t iStatus = 100;
-  iStatus = m_pXFADocLayout->DoLayout();
+  int32_t iStatus = m_pXFADocLayout->DoLayout();
   if (iStatus != 100)
     return iStatus;
 
@@ -322,7 +321,7 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
     m_pFocusNode = node->IsWidgetReady() ? node : nullptr;
     m_pFocusWidget.Reset(pNewWatched.Get());
   } else {
-    m_pFocusNode = nullptr;
+    m_pFocusNode.Reset();
     m_pFocusWidget.Reset();
   }
 
@@ -346,7 +345,7 @@ void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
   if (m_pFocusNode != pWidget->GetNode())
     return;
 
-  m_pFocusNode = nullptr;
+  m_pFocusNode.Reset();
   m_pFocusWidget.Reset();
 }
 
@@ -377,11 +376,9 @@ static XFA_EventError XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       return pNode->ExecuteScript(pDocView, calc->GetScriptIfExists(), pParam);
     }
     default:
-      break;
+      return pNode->ProcessEvent(pDocView, gs_EventActivity[pParam->m_eType],
+                                 pParam);
   }
-
-  return pNode->ProcessEvent(pDocView, gs_EventActivity[pParam->m_eType],
-                             pParam);
 }
 
 XFA_EventError CXFA_FFDocView::ExecEventActivityByDeepFirst(
@@ -443,10 +440,11 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
   WideString wsExpression = (!pRefNode ? L"$form." : L"") + wsName;
 
   XFA_RESOLVENODE_RS resolveNodeRS;
-  uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-                     XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
+  constexpr uint32_t kStyle = XFA_RESOLVENODE_Children |
+                              XFA_RESOLVENODE_Properties |
+                              XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   if (!pScriptContext->ResolveObjects(pRefNode, wsExpression.AsStringView(),
-                                      &resolveNodeRS, dwStyle, nullptr)) {
+                                      &resolveNodeRS, kStyle, nullptr)) {
     return nullptr;
   }
 
@@ -639,12 +637,12 @@ void CXFA_FFDocView::RunBindItems() {
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
     WideString wsRef = item->GetRef();
-    uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-                       XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
-                       XFA_RESOLVENODE_ALL;
+    constexpr uint32_t kStyle =
+        XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_ALL;
     XFA_RESOLVENODE_RS rs;
     pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), &rs,
-                                   dwStyle, nullptr);
+                                   kStyle, nullptr);
     pWidgetNode->DeleteItem(-1, false, false);
     if (rs.dwFlags != XFA_ResolveNode_RSType_Nodes || rs.objects.empty())
       continue;

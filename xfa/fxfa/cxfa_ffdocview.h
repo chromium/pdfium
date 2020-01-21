@@ -113,7 +113,7 @@ class CXFA_FFDocView {
   bool ResetSingleNodeData(CXFA_Node* pNode);
   CXFA_Subform* GetRootSubform();
 
-  bool IsUpdateLocked() { return m_iLock > 0; }
+  bool IsUpdateLocked() const { return m_iLock > 0; }
   bool InitValidate(CXFA_Node* pNode);
   bool RunValidate();
   XFA_EventError RunCalculateWidgets();
