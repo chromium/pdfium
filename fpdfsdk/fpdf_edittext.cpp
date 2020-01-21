@@ -526,7 +526,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFTextObj_GetMatrix(FPDF_PAGEOBJECT text,
   if (!pTextObj)
     return false;
 
-  FSMatrixFromCFXMatrix(pTextObj->GetTextMatrix(), matrix);
+  *matrix = FSMatrixFromCFXMatrix(pTextObj->GetTextMatrix());
   return true;
 }
 

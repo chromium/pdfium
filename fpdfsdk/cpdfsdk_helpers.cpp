@@ -263,13 +263,8 @@ CFX_Matrix CFXMatrixFromFSMatrix(const FS_MATRIX& matrix) {
   return CFX_Matrix(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
 }
 
-void FSMatrixFromCFXMatrix(const CFX_Matrix& matrix, FS_MATRIX* out_matrix) {
-  out_matrix->a = matrix.a;
-  out_matrix->b = matrix.b;
-  out_matrix->c = matrix.c;
-  out_matrix->d = matrix.d;
-  out_matrix->e = matrix.e;
-  out_matrix->f = matrix.f;
+FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix) {
+  return {matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f};
 }
 
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,

@@ -190,7 +190,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
   if (!pPathObj)
     return false;
 
-  FSMatrixFromCFXMatrix(pPathObj->matrix(), matrix);
+  *matrix = FSMatrixFromCFXMatrix(pPathObj->matrix());
   return true;
 }
 

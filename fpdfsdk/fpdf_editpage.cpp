@@ -864,6 +864,6 @@ FPDFFormObj_GetMatrix(FPDF_PAGEOBJECT form_object, FS_MATRIX* matrix) {
   if (!pFormObj || !matrix)
     return false;
 
-  FSMatrixFromCFXMatrix(pFormObj->form_matrix(), matrix);
+  *matrix = FSMatrixFromCFXMatrix(pFormObj->form_matrix());
   return true;
 }

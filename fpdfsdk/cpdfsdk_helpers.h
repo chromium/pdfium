@@ -238,7 +238,7 @@ CFX_FloatRect CFXFloatRectFromFSRectF(const FS_RECTF& rect);
 FS_RECTF FSRectFFromCFXFloatRect(const CFX_FloatRect& rect);
 
 CFX_Matrix CFXMatrixFromFSMatrix(const FS_MATRIX& matrix);
-void FSMatrixFromCFXMatrix(const CFX_Matrix& matrix, FS_MATRIX* out_matrix);
+FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix);
 
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
