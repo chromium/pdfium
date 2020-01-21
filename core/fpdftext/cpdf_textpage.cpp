@@ -60,7 +60,7 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObjectItem item;
     pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == static_cast<uint32_t>(-1)) {
+    if (item.m_CharCode == 0xffffffff) {
       float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
       float kerning = -fontsize_h * item.m_Origin.x / 1000;
       baseSpace = std::min(baseSpace, kerning + spacing);
@@ -129,7 +129,7 @@ bool IsRightToLeft(const CPDF_TextObject& text_obj, const CPDF_Font& font) {
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObjectItem item;
     text_obj.GetItemInfo(i, &item);
-    if (item.m_CharCode == static_cast<uint32_t>(-1))
+    if (item.m_CharCode == 0xffffffff)
       continue;
     WideString wstrItem = font.UnicodeFromCharCode(item.m_CharCode);
     wchar_t wChar = !wstrItem.IsEmpty() ? wstrItem[0] : 0;
@@ -284,9 +284,8 @@ void CPDF_TextPage::ParseTextPage() {
       }
     }
   }
-  int indexSize = pdfium::CollectionSize<int>(m_CharIndex);
-  if (indexSize % 2)
-    m_CharIndex.erase(m_CharIndex.begin() + indexSize - 1);
+  if (m_CharIndex.size() % 2)
+    m_CharIndex.pop_back();
 }
 
 int CPDF_TextPage::CountChars() const {
@@ -509,8 +508,7 @@ WideString CPDF_TextPage::GetPageText(int start, int count) const {
 
   int text_count = text_last - text_start + 1;
 
-  return WideString(m_TextBuf.AsStringView().Mid(
-      static_cast<size_t>(text_start), static_cast<size_t>(text_count)));
+  return WideString(m_TextBuf.AsStringView().Mid(text_start, text_count));
 }
 
 int CPDF_TextPage::CountRects(int start, int nCount) {
@@ -1026,7 +1024,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     CPDF_TextObjectItem item;
     PAGECHAR_INFO charinfo;
     pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == static_cast<uint32_t>(-1)) {
+    if (item.m_CharCode == 0xffffffff) {
       WideString str = m_TempTextBuf.MakeString();
       if (str.IsEmpty())
         str = m_TextBuf.AsStringView();
@@ -1054,8 +1052,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       else
         threshold /= 2;
       if (threshold == 0) {
-        threshold =
-            static_cast<float>(GetCharWidth(item.m_CharCode, pFont.Get()));
+        threshold = GetCharWidth(item.m_CharCode, pFont.Get());
         threshold = NormalizeThreshold(threshold, 300, 500, 700);
         threshold = fontsize_h * threshold / 1000;
       }
@@ -1320,7 +1317,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
     return GenerateCharacter::None;
 
   CFX_Matrix matrix = pObj->GetTextMatrix() * formMatrix;
-  float threshold2 = static_cast<float>(std::max(nLastWidth, nThisWidth));
+  float threshold2 = std::max(nLastWidth, nThisWidth);
   threshold2 = NormalizeThreshold(threshold2, 400, 700, 800);
   if (nLastWidth >= nThisWidth) {
     threshold2 *= fabs(m_pPreTextObj->GetFontSize());
