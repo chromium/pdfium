@@ -27,7 +27,6 @@ class CPDF_LinkExtract {
   bool GetTextRange(size_t index, int* start_char_index, int* char_count) const;
 
  protected:
-  void ParseLink();
   bool CheckWebLink(WideString* str, int32_t* nStart, int32_t* nCount);
   bool CheckMailLink(WideString* str);
 
@@ -39,7 +38,6 @@ class CPDF_LinkExtract {
   };
 
   UnownedPtr<const CPDF_TextPage> const m_pTextPage;
-  WideString m_strPageText;
   std::vector<Link> m_LinkArray;
 };
 

@@ -108,21 +108,13 @@ size_t TrimExternalBracketsFromWebLink(const WideString& str,
 CPDF_LinkExtract::CPDF_LinkExtract(const CPDF_TextPage* pTextPage)
     : m_pTextPage(pTextPage) {}
 
-CPDF_LinkExtract::~CPDF_LinkExtract() {}
+CPDF_LinkExtract::~CPDF_LinkExtract() = default;
 
 void CPDF_LinkExtract::ExtractLinks() {
   m_LinkArray.clear();
   if (!m_pTextPage->IsParsed())
     return;
 
-  m_strPageText = m_pTextPage->GetAllPageText();
-  if (m_strPageText.IsEmpty())
-    return;
-
-  ParseLink();
-}
-
-void CPDF_LinkExtract::ParseLink() {
   int start = 0;
   int pos = 0;
   int nTotalChar = m_pTextPage->CountChars();
