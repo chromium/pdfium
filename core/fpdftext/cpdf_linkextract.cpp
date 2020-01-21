@@ -117,64 +117,66 @@ void CPDF_LinkExtract::ExtractLinks() {
 
   int start = 0;
   int pos = 0;
-  int nTotalChar = m_pTextPage->CountChars();
   bool bAfterHyphen = false;
   bool bLineBreak = false;
+  const int nTotalChar = m_pTextPage->CountChars();
   const WideString page_text = m_pTextPage->GetAllPageText();
   while (pos < nTotalChar) {
     FPDF_CHAR_INFO pageChar;
     m_pTextPage->GetCharInfo(pos, &pageChar);
-    if (pageChar.m_Flag == FPDFTEXT_CHAR_GENERATED ||
-        pageChar.m_Unicode == TEXT_SPACE_CHAR || pos == nTotalChar - 1) {
-      int nCount = pos - start;
-      if (pos == nTotalChar - 1) {
-        nCount++;
-      } else if (bAfterHyphen && (pageChar.m_Unicode == TEXT_LINEFEED_CHAR ||
-                                  pageChar.m_Unicode == TEXT_RETURN_CHAR)) {
-        // Handle text breaks with a hyphen to the next line.
-        bLineBreak = true;
-        pos++;
-        continue;
-      }
-      WideString strBeCheck = page_text.Mid(start, nCount);
-      if (bLineBreak) {
-        strBeCheck.Remove(TEXT_LINEFEED_CHAR);
-        strBeCheck.Remove(TEXT_RETURN_CHAR);
-        bLineBreak = false;
-      }
-      // Replace the generated code with the hyphen char.
-      strBeCheck.Replace(L"\xfffe", TEXT_HYPHEN);
-
-      if (strBeCheck.GetLength() > 5) {
-        while (strBeCheck.GetLength() > 0) {
-          wchar_t ch = strBeCheck[strBeCheck.GetLength() - 1];
-          if (ch == L')' || ch == L',' || ch == L'>' || ch == L'.') {
-            strBeCheck = strBeCheck.Left(strBeCheck.GetLength() - 1);
-            nCount--;
-          } else {
-            break;
-          }
-        }
-        // Check for potential web URLs and email addresses.
-        // Ftp address, file system links, data, blob etc. are not checked.
-        if (nCount > 5) {
-          int32_t nStartOffset;
-          int32_t nCountOverload;
-          if (CheckWebLink(&strBeCheck, &nStartOffset, &nCountOverload)) {
-            m_LinkArray.push_back(
-                {start + nStartOffset, nCountOverload, strBeCheck});
-          } else if (CheckMailLink(&strBeCheck)) {
-            m_LinkArray.push_back({start, nCount, strBeCheck});
-          }
-        }
-      }
-      start = ++pos;
-    } else {
+    if (pageChar.m_Flag != FPDFTEXT_CHAR_GENERATED &&
+        pageChar.m_Unicode != TEXT_SPACE_CHAR && pos != nTotalChar - 1) {
       bAfterHyphen = (pageChar.m_Flag == FPDFTEXT_CHAR_HYPHEN ||
                       (pageChar.m_Flag == FPDFTEXT_CHAR_NORMAL &&
                        pageChar.m_Unicode == TEXT_HYPHEN_CHAR));
-      pos++;
+      ++pos;
+      continue;
     }
+
+    int nCount = pos - start;
+    if (pos == nTotalChar - 1) {
+      ++nCount;
+    } else if (bAfterHyphen && (pageChar.m_Unicode == TEXT_LINEFEED_CHAR ||
+                                pageChar.m_Unicode == TEXT_RETURN_CHAR)) {
+      // Handle text breaks with a hyphen to the next line.
+      bLineBreak = true;
+      ++pos;
+      continue;
+    }
+
+    WideString strBeCheck = page_text.Mid(start, nCount);
+    if (bLineBreak) {
+      strBeCheck.Remove(TEXT_LINEFEED_CHAR);
+      strBeCheck.Remove(TEXT_RETURN_CHAR);
+      bLineBreak = false;
+    }
+    // Replace the generated code with the hyphen char.
+    strBeCheck.Replace(L"\xfffe", TEXT_HYPHEN);
+
+    if (strBeCheck.GetLength() > 5) {
+      while (strBeCheck.GetLength() > 0) {
+        wchar_t ch = strBeCheck[strBeCheck.GetLength() - 1];
+        if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.')
+          break;
+
+        strBeCheck = strBeCheck.Left(strBeCheck.GetLength() - 1);
+        nCount--;
+      }
+
+      // Check for potential web URLs and email addresses.
+      // Ftp address, file system links, data, blob etc. are not checked.
+      if (nCount > 5) {
+        int32_t nStartOffset;
+        int32_t nCountOverload;
+        if (CheckWebLink(&strBeCheck, &nStartOffset, &nCountOverload)) {
+          m_LinkArray.push_back(
+              {start + nStartOffset, nCountOverload, strBeCheck});
+        } else if (CheckMailLink(&strBeCheck)) {
+          m_LinkArray.push_back({start, nCount, strBeCheck});
+        }
+      }
+    }
+    start = ++pos;
   }
 }
 
