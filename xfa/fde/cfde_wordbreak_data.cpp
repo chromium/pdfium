@@ -11,111 +11,76 @@
 
 namespace {
 
-enum WordBreakValue : uint16_t {
-  kWordBreakValueNone = 1 << 0,
-  kWordBreakValueCR = 1 << 1,
-  kWordBreakValueLF = 1 << 2,
-  kWordBreakValueNewLine = 1 << 3,
-  kWordBreakValueExtend = 1 << 4,
-  kWordBreakValueFormat = 1 << 5,
-  kWordBreakValueKataKana = 1 << 6,
-  kWordBreakValueALetter = 1 << 7,
-  kWordBreakValueMidLetter = 1 << 8,
-  kWordBreakValueMidNum = 1 << 9,
-  kWordBreakValueMidNumLet = 1 << 10,
-  kWordBreakValueNumeric = 1 << 11,
-  kWordBreakValueExtendNumLet = 1 << 12,
+enum WordBreakMask : uint16_t {
+  kWordBreakMaskNone = 1 << static_cast<int>(WordBreakProperty::kNone),
+  kWordBreakMaskCR = 1 << static_cast<int>(WordBreakProperty::kCR),
+  kWordBreakMaskLF = 1 << static_cast<int>(WordBreakProperty::kLF),
+  kWordBreakMaskNewLine = 1 << static_cast<int>(WordBreakProperty::kNewLine),
+  kWordBreakMaskExtend = 1 << static_cast<int>(WordBreakProperty::kExtend),
+  kWordBreakMaskFormat = 1 << static_cast<int>(WordBreakProperty::kFormat),
+  kWordBreakMaskKataKana = 1 << static_cast<int>(WordBreakProperty::kKataKana),
+  kWordBreakMaskALetter = 1 << static_cast<int>(WordBreakProperty::kALetter),
+  kWordBreakMaskMidLetter = 1
+                            << static_cast<int>(WordBreakProperty::kMidLetter),
+  kWordBreakMaskMidNum = 1 << static_cast<int>(WordBreakProperty::kMidNum),
+  kWordBreakMaskMidNumLet = 1
+                            << static_cast<int>(WordBreakProperty::kMidNumLet),
+  kWordBreakMaskNumeric = 1 << static_cast<int>(WordBreakProperty::kNumeric),
+  kWordBreakMaskExtendNumLet =
+      1 << static_cast<int>(WordBreakProperty::kExtendNumLet),
 };
-
-static_assert(kWordBreakValueNone ==
-                  (1 << static_cast<int>(WordBreakProperty::kNone)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueCR ==
-                  (1 << static_cast<int>(WordBreakProperty::kCR)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueLF ==
-                  (1 << static_cast<int>(WordBreakProperty::kLF)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueNewLine ==
-                  (1 << static_cast<int>(WordBreakProperty::kNewLine)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueExtend ==
-                  (1 << static_cast<int>(WordBreakProperty::kExtend)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueFormat ==
-                  (1 << static_cast<int>(WordBreakProperty::kFormat)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueKataKana ==
-                  (1 << static_cast<int>(WordBreakProperty::kKataKana)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueALetter ==
-                  (1 << static_cast<int>(WordBreakProperty::kALetter)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueMidLetter ==
-                  (1 << static_cast<int>(WordBreakProperty::kMidLetter)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueMidNum ==
-                  (1 << static_cast<int>(WordBreakProperty::kMidNum)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueMidNumLet ==
-                  (1 << static_cast<int>(WordBreakProperty::kMidNumLet)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueNumeric ==
-                  (1 << static_cast<int>(WordBreakProperty::kNumeric)),
-              "WordBreakValue must match");
-static_assert(kWordBreakValueExtendNumLet ==
-                  (1 << static_cast<int>(WordBreakProperty::kExtendNumLet)),
-              "WordBreakValue must match");
 
 const uint16_t kWordBreakTable[] = {
     // WordBreakProperty::kNone
     0xFFFF,
 
     // WordBreakProperty::kCR
-    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueCR)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF | kWordBreakMaskCR)),
 
     // WordBreakProperty::kLF
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakProperty::kNewLine
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakProperty::kExtend
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakPropery:: kFormat
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakProperty::kKataKana
-    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueKataKana |
-                            kWordBreakValueExtendNumLet)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF | kWordBreakMaskKataKana |
+                            kWordBreakMaskExtendNumLet)),
 
     // WordBreakProperty::kALetter
-    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueALetter |
-                            kWordBreakValueNumeric |
-                            kWordBreakValueExtendNumLet)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF | kWordBreakMaskALetter |
+                            kWordBreakMaskNumeric |
+                            kWordBreakMaskExtendNumLet)),
 
     // WordBreakProperty::kMidLetter
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakProperty::kMidNum
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakProperty::kMidNumLet
-    static_cast<uint16_t>(~(kWordBreakValueLF)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF)),
 
     // WordBreakProperty::kNumeric
-    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueALetter |
-                            kWordBreakValueNumeric |
-                            kWordBreakValueExtendNumLet)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF | kWordBreakMaskALetter |
+                            kWordBreakMaskNumeric |
+                            kWordBreakMaskExtendNumLet)),
 
     // WordBreakProperty::kExtendNumLet
-    static_cast<uint16_t>(~(kWordBreakValueLF | kWordBreakValueKataKana |
-                            kWordBreakValueALetter | kWordBreakValueNumeric |
-                            kWordBreakValueExtendNumLet)),
+    static_cast<uint16_t>(~(kWordBreakMaskLF | kWordBreakMaskKataKana |
+                            kWordBreakMaskALetter | kWordBreakMaskNumeric |
+                            kWordBreakMaskExtendNumLet)),
 };
 
-const uint8_t kCodePointProperties[(0xFFFF - 1) / 2 + 1] = {
+// Table of |WordBreakProperty| for each of the possible uint16_t values,
+// packed as nibbles, with the low nibble first.
+const uint8_t kCodePointProperties[32768] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x90, 0xA0,
     0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0x89, 0x00, 0x00, 0x07, 0x77, 0x77, 0x77,

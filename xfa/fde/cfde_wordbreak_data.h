@@ -10,6 +10,8 @@
 #include <stdint.h>
 
 enum class WordBreakProperty : uint8_t {
+  // Internal tables depend on constants computed from these values, so do
+  // not re-order.
   kNone = 0,
   kCR,
   kLF,
