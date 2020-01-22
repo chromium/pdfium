@@ -805,11 +805,12 @@ void CPDF_TextPage::ProcessTextObject(
   m_LineObj.insert(m_LineObj.begin(), Obj);
 }
 
-FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
+CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
+    PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj.Get();
   size_t nContentMarks = pTextObj->m_ContentMarks.CountItems();
   if (nContentMarks == 0)
-    return FPDFText_MarkedContent::Pass;
+    return MarkedContentState::kPass;
 
   WideString actText;
   bool bExist = false;
@@ -826,18 +827,18 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     }
   }
   if (!bExist)
-    return FPDFText_MarkedContent::Pass;
+    return MarkedContentState::kPass;
 
   if (m_pPreTextObj) {
     const CPDF_ContentMarks& marks = m_pPreTextObj->m_ContentMarks;
     if (marks.CountItems() == nContentMarks &&
         marks.GetItem(nContentMarks - 1)->GetParam() == pDict) {
-      return FPDFText_MarkedContent::Done;
+      return MarkedContentState::kDone;
     }
   }
 
   if (actText.IsEmpty())
-    return FPDFText_MarkedContent::Pass;
+    return MarkedContentState::kPass;
 
   RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   bExist = false;
@@ -848,7 +849,7 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     }
   }
   if (!bExist)
-    return FPDFText_MarkedContent::Pass;
+    return MarkedContentState::kPass;
 
   bExist = false;
   for (size_t i = 0; i < actText.GetLength(); ++i) {
@@ -859,9 +860,9 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     }
   }
   if (!bExist)
-    return FPDFText_MarkedContent::Done;
+    return MarkedContentState::kDone;
 
-  return FPDFText_MarkedContent::Delay;
+  return MarkedContentState::kDelay;
 }
 
 void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
@@ -937,8 +938,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CFX_Matrix formMatrix = Obj.m_formMatrix;
   RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   CFX_Matrix matrix = pTextObj->GetTextMatrix() * formMatrix;
-  FPDFText_MarkedContent ePreMKC = PreMarkedContent(Obj);
-  if (ePreMKC == FPDFText_MarkedContent::Done) {
+  MarkedContentState ePreMKC = PreMarkedContent(Obj);
+  if (ePreMKC == MarkedContentState::kDone) {
     m_pPreTextObj = pTextObj;
     m_perMatrix = formMatrix;
     return;
@@ -1001,7 +1002,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     m_CurlineRect = Obj.m_pTextObj->GetRect();
   }
 
-  if (ePreMKC == FPDFText_MarkedContent::Delay) {
+  if (ePreMKC == MarkedContentState::kDelay) {
     ProcessMarkedContent(Obj);
     m_pPreTextObj = pTextObj;
     m_perMatrix = formMatrix;

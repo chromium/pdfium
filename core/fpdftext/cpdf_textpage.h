@@ -36,8 +36,6 @@ class CPDF_TextObject;
 #define TEXT_HYPHEN L"-"
 #define TEXT_CHARRATIO_GAPDELTA 0.070
 
-enum class FPDFText_MarkedContent { Pass = 0, Done, Delay };
-
 enum class FPDFText_Direction { Left = -1, Right = 1 };
 
 class PAGECHAR_INFO {
@@ -120,6 +118,8 @@ class CPDF_TextPage {
     Hyphen,
   };
 
+  enum class MarkedContentState { kPass = 0, kDone, kDelay };
+
   bool IsHyphen(wchar_t curChar) const;
   bool IsControlChar(const PAGECHAR_INFO& charInfo);
   void ProcessObject();
@@ -139,7 +139,7 @@ class CPDF_TextPage {
                              CPDF_PageObjectHolder::const_iterator iter);
   bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
   void CloseTempLine();
-  FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
+  MarkedContentState PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void FindPreviousTextObject();
   void AddCharInfoByLRDirection(wchar_t wChar, const PAGECHAR_INFO& info);
