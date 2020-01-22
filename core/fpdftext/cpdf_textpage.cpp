@@ -222,8 +222,8 @@ PAGECHAR_INFO::PAGECHAR_INFO(const PAGECHAR_INFO&) = default;
 
 PAGECHAR_INFO::~PAGECHAR_INFO() {}
 
-CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
-    : m_pPage(pPage), m_parserflag(flags) {
+CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, bool rtl)
+    : m_pPage(pPage), m_rtl(rtl) {
   m_TextBuf.SetAllocStep(10240);
   const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
                      static_cast<int>(pPage->GetPageHeight()));
@@ -718,7 +718,7 @@ void CPDF_TextPage::CloseTempLine() {
     bPrevSpace = true;
   }
   CFX_BidiString bidi(str);
-  if (m_parserflag == FPDFText_Direction::Right)
+  if (m_rtl)
     bidi.SetOverallDirectionRight();
   CFX_BidiChar::Direction eCurrentDirection = bidi.OverallDirection();
   for (const auto& segment : bidi) {

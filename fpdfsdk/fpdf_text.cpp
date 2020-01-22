@@ -48,15 +48,18 @@ FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page) {
     return nullptr;
 
   CPDF_ViewerPreferences viewRef(pPDFPage->GetDocument());
-  CPDF_TextPage* textpage = new CPDF_TextPage(
-      pPDFPage, viewRef.IsDirectionR2L() ? FPDFText_Direction::Right
-                                         : FPDFText_Direction::Left);
+  auto textpage =
+      pdfium::MakeUnique<CPDF_TextPage>(pPDFPage, viewRef.IsDirectionR2L());
   textpage->ParseTextPage();
-  return FPDFTextPageFromCPDFTextPage(textpage);
+
+  // Caller takes ownership.
+  return FPDFTextPageFromCPDFTextPage(textpage.release());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFText_ClosePage(FPDF_TEXTPAGE text_page) {
-  delete CPDFTextPageFromFPDFTextPage(text_page);
+  // PDFium takes ownership.
+  std::unique_ptr<CPDF_TextPage> textpage_deleter(
+      CPDFTextPageFromFPDFTextPage(text_page));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountChars(FPDF_TEXTPAGE text_page) {

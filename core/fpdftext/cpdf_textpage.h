@@ -36,8 +36,6 @@ class CPDF_TextObject;
 #define TEXT_HYPHEN L"-"
 #define TEXT_CHARRATIO_GAPDELTA 0.070
 
-enum class FPDFText_Direction { Left = -1, Right = 1 };
-
 class PAGECHAR_INFO {
  public:
   PAGECHAR_INFO();
@@ -80,7 +78,7 @@ class CPDF_TextPage {
     CFX_Matrix m_Matrix;
   };
 
-  CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags);
+  CPDF_TextPage(const CPDF_Page* pPage, bool rtl);
   ~CPDF_TextPage();
 
   void ParseTextPage();
@@ -158,9 +156,9 @@ class CPDF_TextPage {
   std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
   CFX_WideTextBuf m_TempTextBuf;
-  const FPDFText_Direction m_parserflag;
   UnownedPtr<CPDF_TextObject> m_pPreTextObj;
   CFX_Matrix m_perMatrix;
+  const bool m_rtl;
   bool m_bIsParsed = false;
   CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
