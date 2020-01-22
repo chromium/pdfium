@@ -112,6 +112,22 @@ float MaskPercentFilled(const std::vector<bool>& mask,
   return count / (end - start);
 }
 
+bool IsControlChar(const PAGECHAR_INFO& charInfo) {
+  switch (charInfo.m_Unicode) {
+    case 0x2:
+    case 0x3:
+    case 0x93:
+    case 0x94:
+    case 0x96:
+    case 0x97:
+    case 0x98:
+    case 0xfffe:
+      return charInfo.m_Flag != FPDFTEXT_CHAR_HYPHEN;
+    default:
+      return false;
+  }
+}
+
 bool IsHyphenCode(wchar_t c) {
   return c == 0x2D || c == 0xAD;
 }
@@ -204,6 +220,12 @@ bool EndVerticalLine(const CFX_FloatRect& this_rect,
   return right <= left;
 }
 
+CFX_Matrix GetPageMatrix(const CPDF_Page* pPage) {
+  const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
+                     static_cast<int>(pPage->GetPageHeight()));
+  return pPage->GetDisplayMatrix(rect, 0);
+}
+
 }  // namespace
 
 PDFTEXT_Obj::PDFTEXT_Obj() {}
@@ -223,40 +245,17 @@ PAGECHAR_INFO::PAGECHAR_INFO(const PAGECHAR_INFO&) = default;
 PAGECHAR_INFO::~PAGECHAR_INFO() {}
 
 CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, bool rtl)
-    : m_pPage(pPage), m_rtl(rtl) {
+    : m_pPage(pPage), m_rtl(rtl), m_DisplayMatrix(GetPageMatrix(pPage)) {
+  Init();
+}
+
+CPDF_TextPage::~CPDF_TextPage() = default;
+
+void CPDF_TextPage::Init() {
   m_TextBuf.SetAllocStep(10240);
-  const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
-                     static_cast<int>(pPage->GetPageHeight()));
-  m_DisplayMatrix = pPage->GetDisplayMatrix(rect, 0);
-}
-
-CPDF_TextPage::~CPDF_TextPage() {}
-
-bool CPDF_TextPage::IsControlChar(const PAGECHAR_INFO& charInfo) {
-  switch (charInfo.m_Unicode) {
-    case 0x2:
-    case 0x3:
-    case 0x93:
-    case 0x94:
-    case 0x96:
-    case 0x97:
-    case 0x98:
-    case 0xfffe:
-      return charInfo.m_Flag != FPDFTEXT_CHAR_HYPHEN;
-    default:
-      return false;
-  }
-}
-
-void CPDF_TextPage::ParseTextPage() {
-  m_bIsParsed = false;
-  m_TextBuf.Clear();
-  m_CharList.clear();
-  m_pPreTextObj = nullptr;
   ProcessObject();
 
   m_bIsParsed = true;
-  m_CharIndex.clear();
   const int nCount = CountChars();
   if (nCount)
     m_CharIndex.push_back(0);
@@ -529,8 +528,7 @@ bool CPDF_TextPage::GetRect(int rectIndex, CFX_FloatRect* pRect) const {
 
 CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
     const {
-  if (m_pPage->GetPageObjectCount() == 0)
-    return TextOrientation::kUnknown;
+  DCHECK_NE(m_pPage->GetPageObjectCount(), 0);
 
   const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
   const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
@@ -1338,7 +1336,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
 }
 
 bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
-                                     CPDF_TextObject* pTextObj2) {
+                                     CPDF_TextObject* pTextObj2) const {
   if (!pTextObj1 || !pTextObj2)
     return false;
 
@@ -1394,7 +1392,7 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
 bool CPDF_TextPage::IsSameAsPreTextObject(
     CPDF_TextObject* pTextObj,
     const CPDF_PageObjectHolder* pObjList,
-    CPDF_PageObjectHolder::const_iterator iter) {
+    CPDF_PageObjectHolder::const_iterator iter) const {
   int i = 0;
   while (i < 5 && iter != pObjList->begin()) {
     --iter;

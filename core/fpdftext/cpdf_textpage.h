@@ -81,7 +81,6 @@ class CPDF_TextPage {
   CPDF_TextPage(const CPDF_Page* pPage, bool rtl);
   ~CPDF_TextPage();
 
-  void ParseTextPage();
   bool IsParsed() const { return m_bIsParsed; }
   int CharIndexFromTextIndex(int TextIndex) const;
   int TextIndexFromCharIndex(int CharIndex) const;
@@ -118,8 +117,8 @@ class CPDF_TextPage {
 
   enum class MarkedContentState { kPass = 0, kDone, kDelay };
 
+  void Init();
   bool IsHyphen(wchar_t curChar) const;
-  bool IsControlChar(const PAGECHAR_INFO& charInfo);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
                          const CFX_Matrix& formMatrix);
@@ -134,8 +133,9 @@ class CPDF_TextPage {
   Optional<PAGECHAR_INFO> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectHolder* pObjList,
-                             CPDF_PageObjectHolder::const_iterator iter);
-  bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
+                             CPDF_PageObjectHolder::const_iterator iter) const;
+  bool IsSameTextObject(CPDF_TextObject* pTextObj1,
+                        CPDF_TextObject* pTextObj2) const;
   void CloseTempLine();
   MarkedContentState PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
@@ -160,7 +160,7 @@ class CPDF_TextPage {
   CFX_Matrix m_perMatrix;
   const bool m_rtl;
   bool m_bIsParsed = false;
-  CFX_Matrix m_DisplayMatrix;
+  const CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
   std::vector<PDFTEXT_Obj> m_LineObj;
   TextOrientation m_TextlineDir = TextOrientation::kUnknown;

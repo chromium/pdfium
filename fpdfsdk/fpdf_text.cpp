@@ -50,7 +50,6 @@ FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page) {
   CPDF_ViewerPreferences viewRef(pPDFPage->GetDocument());
   auto textpage =
       pdfium::MakeUnique<CPDF_TextPage>(pPDFPage, viewRef.IsDirectionR2L());
-  textpage->ParseTextPage();
 
   // Caller takes ownership.
   return FPDFTextPageFromCPDFTextPage(textpage.release());
