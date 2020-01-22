@@ -129,7 +129,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   }
 
   CPDF_Object* pFieldTypeObj =
-      FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFT);
+      CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kFT);
   if (!pFieldTypeObj)
     return;
 
@@ -141,7 +141,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   }
 
   CPDF_Object* pFieldFlagsObj =
-      FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
+      CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
   if (field_type == pdfium::form_fields::kCh) {
     auto type = (flags & pdfium::form_flags::kChoiceCombo)

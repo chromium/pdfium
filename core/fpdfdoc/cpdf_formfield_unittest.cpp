@@ -10,40 +10,40 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(cpdf_formfield, FPDF_GetFullName) {
-  WideString name = FPDF_GetFullName(nullptr);
+TEST(cpdf_formfield, GetFullNameForDict) {
+  WideString name = CPDF_FormField::GetFullNameForDict(nullptr);
   EXPECT_TRUE(name.IsEmpty());
 
   CPDF_IndirectObjectHolder obj_holder;
   CPDF_Dictionary* root = obj_holder.NewIndirect<CPDF_Dictionary>();
   root->SetNewFor<CPDF_Name>("T", "foo");
-  name = FPDF_GetFullName(root);
+  name = CPDF_FormField::GetFullNameForDict(root);
   EXPECT_STREQ("foo", name.ToUTF8().c_str());
 
   CPDF_Dictionary* dict1 = obj_holder.NewIndirect<CPDF_Dictionary>();
   root->SetNewFor<CPDF_Reference>("Parent", &obj_holder, dict1->GetObjNum());
   dict1->SetNewFor<CPDF_Name>("T", "bar");
-  name = FPDF_GetFullName(root);
+  name = CPDF_FormField::GetFullNameForDict(root);
   EXPECT_STREQ("bar.foo", name.ToUTF8().c_str());
 
   CPDF_Dictionary* dict2 = dict1->SetNewFor<CPDF_Dictionary>("Parent");
-  name = FPDF_GetFullName(root);
+  name = CPDF_FormField::GetFullNameForDict(root);
   EXPECT_STREQ("bar.foo", name.ToUTF8().c_str());
 
   CPDF_Dictionary* dict3 = obj_holder.NewIndirect<CPDF_Dictionary>();
   dict2->SetNewFor<CPDF_Reference>("Parent", &obj_holder, dict3->GetObjNum());
 
   dict3->SetNewFor<CPDF_Name>("T", "qux");
-  name = FPDF_GetFullName(root);
+  name = CPDF_FormField::GetFullNameForDict(root);
   EXPECT_STREQ("qux.bar.foo", name.ToUTF8().c_str());
 
   dict3->SetNewFor<CPDF_Reference>("Parent", &obj_holder, root->GetObjNum());
-  name = FPDF_GetFullName(root);
+  name = CPDF_FormField::GetFullNameForDict(root);
   EXPECT_STREQ("qux.bar.foo", name.ToUTF8().c_str());
-  name = FPDF_GetFullName(dict1);
+  name = CPDF_FormField::GetFullNameForDict(dict1);
   EXPECT_STREQ("foo.qux.bar", name.ToUTF8().c_str());
-  name = FPDF_GetFullName(dict2);
+  name = CPDF_FormField::GetFullNameForDict(dict2);
   EXPECT_STREQ("bar.foo.qux", name.ToUTF8().c_str());
-  name = FPDF_GetFullName(dict3);
+  name = CPDF_FormField::GetFullNameForDict(dict3);
   EXPECT_STREQ("bar.foo.qux", name.ToUTF8().c_str());
 }

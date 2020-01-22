@@ -713,7 +713,7 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldByDict(
   if (!pFieldDict)
     return nullptr;
 
-  WideString csWName = FPDF_GetFullName(pFieldDict);
+  WideString csWName = CPDF_FormField::GetFullNameForDict(pFieldDict);
   return m_pFieldTree->GetField(csWName);
 }
 
@@ -900,7 +900,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   }
 
   CPDF_Dictionary* pDict = pFieldDict;
-  WideString csWName = FPDF_GetFullName(pFieldDict);
+  WideString csWName = CPDF_FormField::GetFullNameForDict(pFieldDict);
   if (csWName.IsEmpty())
     return;
 
@@ -1063,14 +1063,16 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       continue;
     }
 
-    WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
+    WideString fullname =
+        CPDF_FormField::GetFullNameForDict(pField->GetFieldDict());
     auto pFieldDict = pDoc->New<CPDF_Dictionary>();
     pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kT, fullname);
     if (pField->GetType() == CPDF_FormField::kCheckBox ||
         pField->GetType() == CPDF_FormField::kRadioButton) {
       WideString csExport = pField->GetCheckValue(false);
       ByteString csBExport = PDF_EncodeText(csExport);
-      CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->GetDict(), "Opt");
+      CPDF_Object* pOpt =
+          CPDF_FormField::GetFieldAttr(pField->GetDict(), "Opt");
       if (pOpt) {
         pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport,
                                            false);
@@ -1078,8 +1080,8 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
         pFieldDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV, csBExport);
       }
     } else {
-      CPDF_Object* pV =
-          FPDF_GetFieldAttr(pField->GetDict(), pdfium::form_fields::kV);
+      CPDF_Object* pV = CPDF_FormField::GetFieldAttr(pField->GetDict(),
+                                                     pdfium::form_fields::kV);
       if (pV)
         pFieldDict->SetFor(pdfium::form_fields::kV, pV->CloneDirectObject());
     }

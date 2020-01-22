@@ -926,7 +926,7 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     return;
 
   ByteString DA;
-  if (CPDF_Object* pDAObj = FPDF_GetFieldAttr(pAnnotDict, "DA"))
+  if (CPDF_Object* pDAObj = CPDF_FormField::GetFieldAttr(pAnnotDict, "DA"))
     DA = pDAObj->GetString();
   if (DA.IsEmpty())
     DA = pFormDict->GetStringFor("DA");
@@ -1093,14 +1093,15 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   switch (type) {
     case CPVT_GenerateAP::kTextField: {
       const CPDF_Object* pV =
-          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
+          CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
-      const CPDF_Object* pQ = FPDF_GetFieldAttr(pAnnotDict, "Q");
+      const CPDF_Object* pQ = CPDF_FormField::GetFieldAttr(pAnnotDict, "Q");
       int32_t nAlign = pQ ? pQ->GetInteger() : 0;
       const CPDF_Object* pFf =
-          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
+          CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
       uint32_t dwFlags = pFf ? pFf->GetInteger() : 0;
-      const CPDF_Object* pMaxLen = FPDF_GetFieldAttr(pAnnotDict, "MaxLen");
+      const CPDF_Object* pMaxLen =
+          CPDF_FormField::GetFieldAttr(pAnnotDict, "MaxLen");
       uint32_t dwMaxLen = pMaxLen ? pMaxLen->GetInteger() : 0;
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
@@ -1160,7 +1161,7 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     }
     case CPVT_GenerateAP::kComboBox: {
       const CPDF_Object* pV =
-          FPDF_GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
+          CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
@@ -1234,9 +1235,11 @@ void CPVT_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
           pDefFont, font_name);
       CPDF_VariableText::Provider prd(&map);
-      CPDF_Array* pOpts = ToArray(FPDF_GetFieldAttr(pAnnotDict, "Opt"));
-      CPDF_Array* pSels = ToArray(FPDF_GetFieldAttr(pAnnotDict, "I"));
-      CPDF_Object* pTi = FPDF_GetFieldAttr(pAnnotDict, "TI");
+      CPDF_Array* pOpts =
+          ToArray(CPDF_FormField::GetFieldAttr(pAnnotDict, "Opt"));
+      CPDF_Array* pSels =
+          ToArray(CPDF_FormField::GetFieldAttr(pAnnotDict, "I"));
+      CPDF_Object* pTi = CPDF_FormField::GetFieldAttr(pAnnotDict, "TI");
       int32_t nTop = pTi ? pTi->GetInteger() : 0;
       std::ostringstream sBody;
       if (pOpts) {
