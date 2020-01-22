@@ -212,9 +212,9 @@ PDFTEXT_Obj::PDFTEXT_Obj(const PDFTEXT_Obj& that) = default;
 
 PDFTEXT_Obj::~PDFTEXT_Obj() {}
 
-FPDF_CHAR_INFO::FPDF_CHAR_INFO() {}
+CPDF_TextPage::CharInfo::CharInfo() = default;
 
-FPDF_CHAR_INFO::~FPDF_CHAR_INFO() {}
+CPDF_TextPage::CharInfo::~CharInfo() = default;
 
 PAGECHAR_INFO::PAGECHAR_INFO() {}
 
@@ -451,7 +451,7 @@ WideString CPDF_TextPage::GetTextByObject(
   });
 }
 
-void CPDF_TextPage::GetCharInfo(size_t index, FPDF_CHAR_INFO* info) const {
+void CPDF_TextPage::GetCharInfo(size_t index, CharInfo* info) const {
   if (!m_bIsParsed || index >= size())
     return;
 

@@ -122,13 +122,13 @@ void CPDF_LinkExtract::ExtractLinks() {
   const int nTotalChar = m_pTextPage->CountChars();
   const WideString page_text = m_pTextPage->GetAllPageText();
   while (pos < nTotalChar) {
-    FPDF_CHAR_INFO pageChar;
-    m_pTextPage->GetCharInfo(pos, &pageChar);
-    if (pageChar.m_Flag != FPDFTEXT_CHAR_GENERATED &&
-        pageChar.m_Unicode != TEXT_SPACE_CHAR && pos != nTotalChar - 1) {
-      bAfterHyphen = (pageChar.m_Flag == FPDFTEXT_CHAR_HYPHEN ||
-                      (pageChar.m_Flag == FPDFTEXT_CHAR_NORMAL &&
-                       pageChar.m_Unicode == TEXT_HYPHEN_CHAR));
+    CPDF_TextPage::CharInfo char_info;
+    m_pTextPage->GetCharInfo(pos, &char_info);
+    if (char_info.m_Flag != FPDFTEXT_CHAR_GENERATED &&
+        char_info.m_Unicode != TEXT_SPACE_CHAR && pos != nTotalChar - 1) {
+      bAfterHyphen = (char_info.m_Flag == FPDFTEXT_CHAR_HYPHEN ||
+                      (char_info.m_Flag == FPDFTEXT_CHAR_NORMAL &&
+                       char_info.m_Unicode == TEXT_HYPHEN_CHAR));
       ++pos;
       continue;
     }
@@ -136,8 +136,8 @@ void CPDF_LinkExtract::ExtractLinks() {
     int nCount = pos - start;
     if (pos == nTotalChar - 1) {
       ++nCount;
-    } else if (bAfterHyphen && (pageChar.m_Unicode == TEXT_LINEFEED_CHAR ||
-                                pageChar.m_Unicode == TEXT_RETURN_CHAR)) {
+    } else if (bAfterHyphen && (char_info.m_Unicode == TEXT_LINEFEED_CHAR ||
+                                char_info.m_Unicode == TEXT_RETURN_CHAR)) {
       // Handle text breaks with a hyphen to the next line.
       bLineBreak = true;
       ++pos;

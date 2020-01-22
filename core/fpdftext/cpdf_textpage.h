@@ -40,21 +40,6 @@ enum class FPDFText_MarkedContent { Pass = 0, Done, Delay };
 
 enum class FPDFText_Direction { Left = -1, Right = 1 };
 
-class FPDF_CHAR_INFO {
- public:
-  FPDF_CHAR_INFO();
-  ~FPDF_CHAR_INFO();
-
-  wchar_t m_Unicode = 0;
-  wchar_t m_Charcode = 0;
-  int32_t m_Flag = 0;
-  float m_FontSize = 0;
-  CFX_PointF m_Origin;
-  CFX_FloatRect m_CharBox;
-  UnownedPtr<CPDF_TextObject> m_pTextObj;
-  CFX_Matrix m_Matrix;
-};
-
 class PAGECHAR_INFO {
  public:
   PAGECHAR_INFO();
@@ -82,6 +67,21 @@ struct PDFTEXT_Obj {
 
 class CPDF_TextPage {
  public:
+  class CharInfo {
+   public:
+    CharInfo();
+    ~CharInfo();
+
+    wchar_t m_Unicode = 0;
+    wchar_t m_Charcode = 0;
+    int32_t m_Flag = 0;
+    float m_FontSize = 0;
+    CFX_PointF m_Origin;
+    CFX_FloatRect m_CharBox;
+    UnownedPtr<CPDF_TextObject> m_pTextObj;
+    CFX_Matrix m_Matrix;
+  };
+
   CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags);
   ~CPDF_TextPage();
 
@@ -91,7 +91,7 @@ class CPDF_TextPage {
   int TextIndexFromCharIndex(int CharIndex) const;
   size_t size() const { return m_CharList.size(); }
   int CountChars() const;
-  void GetCharInfo(size_t index, FPDF_CHAR_INFO* info) const;
+  void GetCharInfo(size_t index, CharInfo* info) const;
   std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
   int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;
   WideString GetTextByRect(const CFX_FloatRect& rect) const;

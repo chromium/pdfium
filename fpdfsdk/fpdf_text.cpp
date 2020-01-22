@@ -73,7 +73,7 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index) {
   if (!textpage)
     return 0;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   return charinfo.m_Unicode;
 }
@@ -84,7 +84,7 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return 0;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   return charinfo.m_FontSize;
 }
@@ -99,7 +99,7 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return 0;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   if (!charinfo.m_pTextObj)
     return 0;
@@ -122,7 +122,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return -1;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   if (!charinfo.m_pTextObj)
     return -1;
@@ -136,7 +136,7 @@ FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index) {
   if (!textpage)
     return FPDF_TEXTRENDERMODE_UNKNOWN;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   if (!charinfo.m_pTextObj)
     return FPDF_TEXTRENDERMODE_UNKNOWN;
@@ -156,7 +156,7 @@ FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
   if (!textpage || !R || !G || !B || !A)
     return false;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   if (!charinfo.m_pTextObj)
     return false;
@@ -181,7 +181,7 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
   if (!textpage || !R || !G || !B || !A)
     return false;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   if (!charinfo.m_pTextObj)
     return false;
@@ -202,7 +202,7 @@ FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return -1.0f;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   // On the left is our current Matrix and on the right a generic rotation
   // matrix for our coordinate space.
@@ -230,7 +230,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return false;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   *left = charinfo.m_CharBox.left;
   *right = charinfo.m_CharBox.right;
@@ -248,7 +248,7 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
   if (!textpage)
     return false;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
 
   if (charinfo.m_pTextObj && !IsFloatZero(charinfo.m_FontSize)) {
@@ -303,7 +303,7 @@ FPDFText_GetCharOrigin(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return false;
 
-  FPDF_CHAR_INFO charinfo;
+  CPDF_TextPage::CharInfo charinfo;
   textpage->GetCharInfo(index, &charinfo);
   *x = charinfo.m_Origin.x;
   *y = charinfo.m_Origin.y;
