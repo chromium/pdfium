@@ -98,20 +98,6 @@ class ReplaceOperation final : public CFDE_TextEditEngine::Operation {
   DeleteOperation delete_op_;
 };
 
-bool CheckStateChangeForWordBreak(WordBreakProperty from,
-                                  WordBreakProperty to) {
-  ASSERT(static_cast<int>(from) < 13);
-
-  return !!(gs_FX_WordBreak_Table[static_cast<int>(from)] &
-            static_cast<uint16_t>(1 << static_cast<int>(to)));
-}
-
-WordBreakProperty GetWordBreakProperty(wchar_t wcCodePoint) {
-  uint8_t dwProperty = gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
-  return static_cast<WordBreakProperty>((wcCodePoint & 1) ? (dwProperty & 0x0F)
-                                                          : (dwProperty >> 4));
-}
-
 int GetBreakFlagsFor(WordBreakProperty current, WordBreakProperty next) {
   if (current == WordBreakProperty::kMidLetter) {
     if (next == WordBreakProperty::kALetter)
@@ -1275,17 +1261,17 @@ size_t CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
   WordBreakProperty ePreType = WordBreakProperty::kNone;
   if (!IsEOF(!bPrev)) {
     Next(!bPrev);
-    ePreType = GetWordBreakProperty(GetChar());
+    ePreType = FX_GetWordBreakProperty(GetChar());
     Next(bPrev);
   }
 
-  WordBreakProperty eCurType = GetWordBreakProperty(GetChar());
+  WordBreakProperty eCurType = FX_GetWordBreakProperty(GetChar());
   bool bFirst = true;
   while (!IsEOF(bPrev)) {
     Next(bPrev);
 
-    WordBreakProperty eNextType = GetWordBreakProperty(GetChar());
-    bool wBreak = CheckStateChangeForWordBreak(eCurType, eNextType);
+    WordBreakProperty eNextType = FX_GetWordBreakProperty(GetChar());
+    bool wBreak = FX_CheckStateChangeForWordBreak(eCurType, eNextType);
     if (wBreak) {
       if (IsEOF(bPrev)) {
         Next(!bPrev);
@@ -1310,7 +1296,7 @@ size_t CFDE_TextEditEngine::Iterator::FindNextBreakPos(bool bPrev) {
         }
 
         Next(bPrev);
-        eNextType = GetWordBreakProperty(GetChar());
+        eNextType = FX_GetWordBreakProperty(GetChar());
         if (BreakFlagsChanged(nFlags, eNextType)) {
           Next(!bPrev);
           Next(!bPrev);

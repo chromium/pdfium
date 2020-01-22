@@ -6,6 +6,9 @@
 
 #include "xfa/fde/cfde_wordbreak_data.h"
 
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
+
 namespace {
 
 enum WordBreakValue : uint16_t {
@@ -64,9 +67,7 @@ static_assert(kWordBreakValueExtendNumLet ==
                   (1 << static_cast<int>(WordBreakProperty::kExtendNumLet)),
               "WordBreakValue must match");
 
-}  // namespace
-
-const uint16_t gs_FX_WordBreak_Table[] = {
+const uint16_t kWordBreakTable[] = {
     // WordBreakProperty::kNone
     0xFFFF,
 
@@ -114,7 +115,7 @@ const uint16_t gs_FX_WordBreak_Table[] = {
                             kWordBreakValueExtendNumLet)),
 };
 
-const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1] = {
+const uint8_t kCodePointProperties[(0xFFFF - 1) / 2 + 1] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x90, 0xA0,
     0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0x89, 0x00, 0x00, 0x07, 0x77, 0x77, 0x77,
@@ -2847,3 +2848,22 @@ const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1] = {
     0x00, 0x77, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x05, 0x55, 0x00, 0x00,
 };
+
+}  // namespace
+
+bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
+                                     WordBreakProperty to) {
+  ASSERT(static_cast<int>(from) < 13);
+  return !!(kWordBreakTable[static_cast<int>(from)] &
+            static_cast<uint16_t>(1 << static_cast<int>(to)));
+}
+
+WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint) {
+  size_t index = static_cast<size_t>(wcCodePoint) / 2;
+  if (index >= FX_ArraySize(kCodePointProperties))
+    return WordBreakProperty::kNone;
+
+  uint8_t dwProperty = kCodePointProperties[index];
+  return static_cast<WordBreakProperty>((wcCodePoint & 1) ? (dwProperty & 0x0F)
+                                                          : (dwProperty >> 4));
+}

@@ -25,7 +25,8 @@ enum class WordBreakProperty : uint8_t {
   kExtendNumLet,
 };
 
-extern const uint16_t gs_FX_WordBreak_Table[];
-extern const uint8_t gs_FX_WordBreak_CodePointProperties[];
+bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
+                                     WordBreakProperty to);
+WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint);
 
 #endif  // XFA_FDE_CFDE_WORDBREAK_DATA_H_
