@@ -104,16 +104,16 @@ class CPDF_TextPage {
 
  private:
   enum class TextOrientation {
-    Unknown,
-    Horizontal,
-    Vertical,
+    kUnknown,
+    kHorizontal,
+    kVertical,
   };
 
   enum class GenerateCharacter {
-    None,
-    Space,
-    LineBreak,
-    Hyphen,
+    kNone,
+    kSpace,
+    kLineBreak,
+    kHyphen,
   };
 
   enum class MarkedContentState { kPass = 0, kDone, kDelay };
@@ -163,7 +163,7 @@ class CPDF_TextPage {
   CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
   std::vector<PDFTEXT_Obj> m_LineObj;
-  TextOrientation m_TextlineDir = TextOrientation::Unknown;
+  TextOrientation m_TextlineDir = TextOrientation::kUnknown;
   CFX_FloatRect m_CurlineRect;
 };
 
