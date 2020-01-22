@@ -253,6 +253,9 @@ class CoverageExecutor(object):
     # Blacklist test files
     coverage_args += ['-i', '.*test.*']
 
+    # Component view is only useful for Chromium
+    coverage_args += ['--no-component-view']
+
     return self.call([coverage_bin] + coverage_args) == 0
 
   def run(self):
