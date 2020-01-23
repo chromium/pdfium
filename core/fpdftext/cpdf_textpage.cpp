@@ -258,32 +258,32 @@ void CPDF_TextPage::Init() {
   m_bIsParsed = true;
   const int nCount = CountChars();
   if (nCount)
-    m_CharIndex.push_back(0);
+    m_CharIndices.push_back(0);
 
   for (int i = 0; i < nCount; ++i) {
     const PAGECHAR_INFO& charinfo = m_CharList[i];
     if (charinfo.m_Flag == FPDFTEXT_CHAR_GENERATED ||
         (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
         (charinfo.m_Unicode == 0 && charinfo.m_CharCode != 0)) {
-      if (m_CharIndex.size() % 2) {
-        m_CharIndex.push_back(1);
+      if (m_CharIndices.size() % 2) {
+        m_CharIndices.push_back(1);
       } else {
-        if (m_CharIndex.empty())
+        if (m_CharIndices.empty())
           continue;
-        m_CharIndex.back() += 1;
+        m_CharIndices.back() += 1;
       }
     } else {
-      if (m_CharIndex.size() % 2) {
-        if (m_CharIndex.empty())
+      if (m_CharIndices.size() % 2) {
+        if (m_CharIndices.empty())
           continue;
-        m_CharIndex.back() = i + 1;
+        m_CharIndices.back() = i + 1;
       } else {
-        m_CharIndex.push_back(i + 1);
+        m_CharIndices.push_back(i + 1);
       }
     }
   }
-  if (m_CharIndex.size() % 2)
-    m_CharIndex.pop_back();
+  if (m_CharIndices.size() % 2)
+    m_CharIndices.pop_back();
 }
 
 int CPDF_TextPage::CountChars() const {
@@ -292,22 +292,22 @@ int CPDF_TextPage::CountChars() const {
 
 int CPDF_TextPage::CharIndexFromTextIndex(int text_index) const {
   int count = 0;
-  for (size_t i = 0; i < m_CharIndex.size(); i += 2) {
-    count += m_CharIndex[i + 1];
+  for (size_t i = 0; i < m_CharIndices.size(); i += 2) {
+    count += m_CharIndices[i + 1];
     if (count > text_index)
-      return text_index - count + m_CharIndex[i + 1] + m_CharIndex[i];
+      return text_index - count + m_CharIndices[i + 1] + m_CharIndices[i];
   }
   return -1;
 }
 
 int CPDF_TextPage::TextIndexFromCharIndex(int char_index) const {
   int count = 0;
-  for (size_t i = 0; i < m_CharIndex.size(); i += 2) {
-    int text_index = char_index - m_CharIndex[i];
-    if (text_index < m_CharIndex[i + 1])
+  for (size_t i = 0; i < m_CharIndices.size(); i += 2) {
+    int text_index = char_index - m_CharIndices[i];
+    if (text_index < m_CharIndices[i + 1])
       return text_index >= 0 ? text_index + count : -1;
 
-    count += m_CharIndex[i + 1];
+    count += m_CharIndices[i + 1];
   }
   return -1;
 }

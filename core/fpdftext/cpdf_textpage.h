@@ -93,8 +93,8 @@ class CPDF_TextPage {
   WideString GetTextByObject(const CPDF_TextObject* pTextObj) const;
 
   // Returns string with the text from |m_TextBuf| that are covered by the input
-  // range. |start| and |count| are in terms of the |m_CharIndex|, so the range
-  // will be converted into appropriate indices.
+  // range. |start| and |count| are in terms of the |m_CharIndices|, so the
+  // range will be converted into appropriate indices.
   WideString GetPageText(int start, int count) const;
   WideString GetAllPageText() const { return GetPageText(0, CountChars()); }
 
@@ -151,7 +151,7 @@ class CPDF_TextPage {
       const std::function<bool(const PAGECHAR_INFO&)>& predicate) const;
 
   UnownedPtr<const CPDF_Page> const m_pPage;
-  std::vector<uint16_t> m_CharIndex;
+  std::vector<uint16_t> m_CharIndices;
   std::deque<PAGECHAR_INFO> m_CharList;
   std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
