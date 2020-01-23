@@ -288,6 +288,10 @@ void CXFA_FFWidget::ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved) {
   GetLayoutItem()->SetStatusBits(dwAdded);
 }
 
+CXFA_FFField* CXFA_FFWidget::AsField() {
+  return nullptr;
+}
+
 CFX_RectF CXFA_FFWidget::GetBBox(FocusOption focus) {
   if (focus == kDrawFocus || !m_pPageView)
     return CFX_RectF();

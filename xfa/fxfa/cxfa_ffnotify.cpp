@@ -43,14 +43,6 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
-namespace {
-
-CXFA_FFDropDown* ToDropDown(CXFA_FFWidget* widget) {
-  return static_cast<CXFA_FFDropDown*>(widget);
-}
-
-}  // namespace
-
 CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
 CXFA_FFNotify::~CXFA_FFNotify() {}
@@ -71,7 +63,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded())
-      ToDropDown(pWidget)->InsertItem(wsLabel, iIndex);
+      ToDropDown(ToField(pWidget))->InsertItem(wsLabel, iIndex);
   }
 }
 
@@ -83,7 +75,7 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pWidget->GetNextFFWidget()) {
     if (pWidget->IsLoaded())
-      ToDropDown(pWidget)->DeleteItem(iIndex);
+      ToDropDown(ToField(pWidget))->DeleteItem(iIndex);
   }
 }
 
@@ -268,7 +260,7 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_Node* pNode) {
   if (!hWidget->IsLoaded())
     return;
 
-  CXFA_FFDropDown* pDropDown = ToDropDown(hWidget);  // Safe if kChoiceList.
+  CXFA_FFDropDown* pDropDown = ToDropDown(ToField(hWidget));
   CXFA_FFComboBox* pComboBox = ToComboBox(pDropDown);
   if (!pComboBox)
     return;

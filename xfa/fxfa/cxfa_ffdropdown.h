@@ -16,6 +16,9 @@ class CXFA_FFDropDown : public CXFA_FFField {
  public:
   ~CXFA_FFDropDown() override;
 
+  // CXFA_FFField:
+  CXFA_FFDropDown* AsDropDown() override;
+
   virtual void InsertItem(const WideString& wsLabel, int32_t nIndex) = 0;
   virtual void DeleteItem(int32_t nIndex) = 0;
   virtual CXFA_FFComboBox* AsComboBox();

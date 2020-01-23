@@ -14,6 +14,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
+class CXFA_FFDropDown;
 class CXFA_Node;
 
 #define XFA_MINUI_HEIGHT 4.32f
@@ -26,7 +27,10 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   explicit CXFA_FFField(CXFA_Node* pNode);
   ~CXFA_FFField() override;
 
-  // CXFA_FFWidget
+  virtual CXFA_FFDropDown* AsDropDown();
+
+  // CXFA_FFWidget:
+  CXFA_FFField* AsField() override;
   CFX_RectF GetBBox(FocusOption focus) override;
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
@@ -57,7 +61,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool OnSetCursor(const CFX_PointF& point) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
 
-  // IFWL_WidgetDelegate
+  // IFWL_WidgetDelegate:
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
@@ -104,5 +108,9 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  private:
   std::unique_ptr<CFWL_Widget> m_pNormalWidget;
 };
+
+inline CXFA_FFDropDown* ToDropDown(CXFA_FFField* field) {
+  return field ? field->AsDropDown() : nullptr;
+}
 
 #endif  // XFA_FXFA_CXFA_FFFIELD_H_

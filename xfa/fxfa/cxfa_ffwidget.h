@@ -25,6 +25,7 @@ class CXFA_Box;
 class CXFA_FFApp;
 class CXFA_FFDoc;
 class CXFA_FFDocView;
+class CXFA_FFField;
 class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
 class CXFA_Graphics;
@@ -76,6 +77,8 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   CFX_Matrix GetRotateMatrix() override;
   void DisplayCaret(bool bVisible, const CFX_RectF* pRtAnchor) override;
   void GetBorderColorAndThickness(FX_ARGB* cr, float* fWidth) override;
+
+  virtual CXFA_FFField* AsField();
 
   virtual CFX_RectF GetBBox(FocusOption focus);
   virtual void RenderWidget(CXFA_Graphics* pGS,
@@ -195,5 +198,9 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   UnownedPtr<CXFA_Node> const m_pNode;
   mutable CFX_RectF m_rtWidget;
 };
+
+inline CXFA_FFField* ToField(CXFA_FFWidget* widget) {
+  return widget ? widget->AsField() : nullptr;
+}
 
 #endif  // XFA_FXFA_CXFA_FFWIDGET_H_
