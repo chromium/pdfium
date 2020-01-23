@@ -262,6 +262,24 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect);
 
+// Experimental API.
+// Function: FPDFText_GetMatrix
+//          Get the effective transformation matrix for a particular character.
+// Parameters:
+//          text_page   -   Handle to a text page information structure.
+//                          Returned by FPDFText_LoadPage().
+//          index       -   Zero-based index of the character.
+//          matrix      -   Pointer to a FS_MATRIX receiving the transformation
+//                          matrix.
+// Return Value:
+//          On success, return TRUE and fill in |matrix|. If |text_page| is
+//          invalid, or if |index| is out of bounds, or if |matrix| is NULL,
+//          then return FALSE, and |matrix| remains unmodified.
+//
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_TEXTPAGE text_page,
+                                                       int index,
+                                                       FS_MATRIX* matrix);
+
 // Function: FPDFText_GetCharOrigin
 //          Get origin of a particular character.
 // Parameters:

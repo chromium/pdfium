@@ -1464,3 +1464,87 @@ TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(FPDFTextEmbedderTest, GetMatrix) {
+  constexpr char kExpectedText[] = "A1\r\nA2\r\nA3";
+  constexpr size_t kExpectedTextSize = FX_ArraySize(kExpectedText);
+  constexpr FS_MATRIX kExpectedMatrices[] = {
+      {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
+      {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
+      {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+      {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+      {12.0f, 0.0f, 0.0f, 10.0f, 38.0f, 60.0f},
+      {12.0f, 0.0f, 0.0f, 10.0f, 38.0f, 60.0f},
+      {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+      {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+      {1.0f, 0.0f, 0.0f, 0.833333, 60.0f, 130.0f},
+      {1.0f, 0.0f, 0.0f, 0.833333, 60.0f, 130.0f},
+  };
+  constexpr size_t kExpectedCount = FX_ArraySize(kExpectedMatrices);
+  static_assert(kExpectedCount + 1 == kExpectedTextSize,
+                "Bad expected matrix size");
+
+  // For a size 12 letter 'A'.
+  constexpr double kExpectedCharWidth = 8.436;
+  constexpr double kExpectedCharHeight = 6.77;
+
+  ASSERT_TRUE(OpenDocument("font_matrix.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
+    ASSERT_EQ(static_cast<int>(kExpectedCount),
+              FPDFText_CountChars(text_page.get()));
+
+    {
+      // Check the characters.
+      unsigned short buffer[kExpectedTextSize];
+      ASSERT_EQ(static_cast<int>(kExpectedTextSize),
+                FPDFText_GetText(text_page.get(), 0, kExpectedCount, buffer));
+      EXPECT_TRUE(
+          check_unsigned_shorts(kExpectedText, buffer, kExpectedTextSize));
+    }
+
+    {
+      // Check the character box size.
+      double left;
+      double right;
+      double bottom;
+      double top;
+      ASSERT_TRUE(FPDFText_GetCharBox(text_page.get(), 0, &left, &right,
+                                      &bottom, &top));
+      EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
+      EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
+      ASSERT_TRUE(FPDFText_GetCharBox(text_page.get(), 4, &left, &right,
+                                      &bottom, &top));
+      EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
+      EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
+      ASSERT_TRUE(FPDFText_GetCharBox(text_page.get(), 8, &left, &right,
+                                      &bottom, &top));
+      EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
+      EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
+    }
+
+    // Check the character matrix.
+    FS_MATRIX matrix;
+    for (size_t i = 0; i < kExpectedCount; ++i) {
+      ASSERT_TRUE(FPDFText_GetMatrix(text_page.get(), i, &matrix)) << i;
+      EXPECT_FLOAT_EQ(kExpectedMatrices[i].a, matrix.a) << i;
+      EXPECT_FLOAT_EQ(kExpectedMatrices[i].b, matrix.b) << i;
+      EXPECT_FLOAT_EQ(kExpectedMatrices[i].c, matrix.c) << i;
+      EXPECT_FLOAT_EQ(kExpectedMatrices[i].d, matrix.d) << i;
+      EXPECT_FLOAT_EQ(kExpectedMatrices[i].e, matrix.e) << i;
+      EXPECT_FLOAT_EQ(kExpectedMatrices[i].f, matrix.f) << i;
+    }
+
+    // Check bad parameters.
+    EXPECT_FALSE(FPDFText_GetMatrix(nullptr, 0, &matrix));
+    EXPECT_FALSE(FPDFText_GetMatrix(text_page.get(), 10, &matrix));
+    EXPECT_FALSE(FPDFText_GetMatrix(text_page.get(), -1, &matrix));
+    EXPECT_FALSE(FPDFText_GetMatrix(text_page.get(), 0, nullptr));
+  }
+
+  UnloadPage(page);
+}
