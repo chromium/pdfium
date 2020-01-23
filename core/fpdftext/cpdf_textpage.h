@@ -82,8 +82,8 @@ class CPDF_TextPage {
   ~CPDF_TextPage();
 
   bool IsParsed() const { return m_bIsParsed; }
-  int CharIndexFromTextIndex(int TextIndex) const;
-  int TextIndexFromCharIndex(int CharIndex) const;
+  int CharIndexFromTextIndex(int text_index) const;
+  int TextIndexFromCharIndex(int char_index) const;
   size_t size() const { return m_CharList.size(); }
   int CountChars() const;
   void GetCharInfo(size_t index, CharInfo* info) const;
