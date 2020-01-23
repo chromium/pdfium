@@ -9,3 +9,7 @@
 CXFA_FFDropDown::CXFA_FFDropDown(CXFA_Node* node) : CXFA_FFField(node) {}
 
 CXFA_FFDropDown::~CXFA_FFDropDown() = default;
+
+CXFA_FFComboBox* CXFA_FFDropDown::AsComboBox() {
+  return nullptr;
+}

@@ -10,15 +10,22 @@
 #include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
+class CXFA_FFComboBox;
+
 class CXFA_FFDropDown : public CXFA_FFField {
  public:
   ~CXFA_FFDropDown() override;
 
   virtual void InsertItem(const WideString& wsLabel, int32_t nIndex) = 0;
   virtual void DeleteItem(int32_t nIndex) = 0;
+  virtual CXFA_FFComboBox* AsComboBox();
 
  protected:
   explicit CXFA_FFDropDown(CXFA_Node* pNode);
 };
+
+inline CXFA_FFComboBox* ToComboBox(CXFA_FFDropDown* pDropDown) {
+  return pDropDown ? pDropDown->AsComboBox() : nullptr;
+}
 
 #endif  // XFA_FXFA_CXFA_FFDROPDOWN_H_

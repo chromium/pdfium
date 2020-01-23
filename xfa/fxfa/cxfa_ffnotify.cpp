@@ -49,10 +49,6 @@ CXFA_FFDropDown* ToDropDown(CXFA_FFWidget* widget) {
   return static_cast<CXFA_FFDropDown*>(widget);
 }
 
-CXFA_FFComboBox* ToComboBox(CXFA_FFWidget* widget) {
-  return static_cast<CXFA_FFComboBox*>(widget);
-}
-
 }  // namespace
 
 CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
@@ -272,9 +268,14 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_Node* pNode) {
   if (!hWidget->IsLoaded())
     return;
 
+  CXFA_FFDropDown* pDropDown = ToDropDown(hWidget);  // Safe if kChoiceList.
+  CXFA_FFComboBox* pComboBox = ToComboBox(pDropDown);
+  if (!pComboBox)
+    return;
+
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   pDocView->LockUpdate();
-  ToComboBox(hWidget)->OpenDropDownList();
+  pComboBox->OpenDropDownList();
   pDocView->UnlockUpdate();
   pDocView->UpdateDocView();
 }

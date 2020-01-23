@@ -17,6 +17,9 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   explicit CXFA_FFComboBox(CXFA_Node* pNode);
   ~CXFA_FFComboBox() override;
 
+  // CXFA_FFDropDown:
+  CXFA_FFComboBox* AsComboBox() override;
+
   // CXFA_FFField
   CFX_RectF GetBBox(FocusOption focus) override;
   bool LoadWidget() override;

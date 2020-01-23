@@ -33,6 +33,10 @@ CXFA_FFComboBox::CXFA_FFComboBox(CXFA_Node* pNode) : CXFA_FFDropDown(pNode) {}
 
 CXFA_FFComboBox::~CXFA_FFComboBox() = default;
 
+CXFA_FFComboBox* CXFA_FFComboBox::AsComboBox() {
+  return this;
+}
+
 CFX_RectF CXFA_FFComboBox::GetBBox(FocusOption focus) {
   if (focus == kDrawFocus)
     return CFX_RectF();
