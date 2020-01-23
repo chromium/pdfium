@@ -9,6 +9,16 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace {
+
+constexpr float kMinFloat = std::numeric_limits<float>::min();
+constexpr int kMaxInt = std::numeric_limits<int>::max();
+constexpr int kMinInt = std::numeric_limits<int>::min();
+constexpr float kMinIntAsFloat = static_cast<float>(kMinInt);
+constexpr float kMaxIntAsFloat = static_cast<float>(kMaxInt);
+
+}  // namespace
+
 TEST(CFX_FloatRect, FromFXRect) {
   FX_RECT downwards(10, 20, 30, 40);
   CFX_FloatRect rect(downwards);
@@ -74,14 +84,63 @@ TEST(CFX_FloatRect, GetBBox) {
   EXPECT_FLOAT_EQ(6.3f, rect.top);
 }
 
+TEST(CFX_FloatRect, GetInnerRect) {
+  FX_RECT inner_rect;
+  CFX_FloatRect rect;
+
+  inner_rect = rect.GetInnerRect();
+  EXPECT_EQ(0, inner_rect.left);
+  EXPECT_EQ(0, inner_rect.bottom);
+  EXPECT_EQ(0, inner_rect.right);
+  EXPECT_EQ(0, inner_rect.top);
+
+  // Function converts from float to int using floor() for top and right, and
+  // ceil() for left and bottom.
+  rect = CFX_FloatRect(-1.1f, 3.6f, 4.4f, -5.7f);
+  inner_rect = rect.GetInnerRect();
+  EXPECT_EQ(-1, inner_rect.left);
+  EXPECT_EQ(4, inner_rect.bottom);
+  EXPECT_EQ(4, inner_rect.right);
+  EXPECT_EQ(-6, inner_rect.top);
+
+  rect = CFX_FloatRect(kMinFloat, kMinFloat, kMinFloat, kMinFloat);
+  inner_rect = rect.GetInnerRect();
+  EXPECT_EQ(0, inner_rect.left);
+  EXPECT_EQ(1, inner_rect.bottom);
+  EXPECT_EQ(1, inner_rect.right);
+  EXPECT_EQ(0, inner_rect.top);
+
+  rect = CFX_FloatRect(-kMinFloat, -kMinFloat, -kMinFloat, -kMinFloat);
+  inner_rect = rect.GetInnerRect();
+  EXPECT_EQ(-1, inner_rect.left);
+  EXPECT_EQ(0, inner_rect.bottom);
+  EXPECT_EQ(0, inner_rect.right);
+  EXPECT_EQ(-1, inner_rect.top);
+
+  // Check at limits of integer range. When saturated would expect to get values
+  // that are clamped to the limits of integers, but instead it is returning all
+  // negative values that represent a rectangle as a dot in a far reach of the
+  // negative coordinate space.  Related to crbug.com/1019026
+  rect = CFX_FloatRect(kMinIntAsFloat, kMinIntAsFloat, kMaxIntAsFloat,
+                       kMaxIntAsFloat);
+  inner_rect = rect.GetInnerRect();
+  EXPECT_EQ(kMinInt, inner_rect.left);
+  EXPECT_EQ(kMinInt, inner_rect.bottom);  // should be |kMaxInt|
+  EXPECT_EQ(kMinInt, inner_rect.right);   // should be |kMaxInt|
+  EXPECT_EQ(kMinInt, inner_rect.top);
+
+  rect = CFX_FloatRect(kMinIntAsFloat - 1.0f, kMinIntAsFloat - 1.0f,
+                       kMaxIntAsFloat + 1.0f, kMaxIntAsFloat + 1.0f);
+  inner_rect = rect.GetInnerRect();
+  EXPECT_EQ(kMinInt, inner_rect.left);
+  EXPECT_EQ(kMinInt, inner_rect.bottom);  // should be |kMaxInt|
+  EXPECT_EQ(kMinInt, inner_rect.right);   // should be |kMaxInt|
+  EXPECT_EQ(kMinInt, inner_rect.top);
+}
+
 TEST(CFX_FloatRect, GetOuterRect) {
   FX_RECT outer_rect;
   CFX_FloatRect rect;
-  constexpr float kMinFloat = std::numeric_limits<float>::min();
-  constexpr int kMaxInt = std::numeric_limits<int>::max();
-  constexpr int kMinInt = std::numeric_limits<int>::min();
-  constexpr float kMinIntAsFloat = static_cast<float>(kMinInt);
-  constexpr float kMaxIntAsFloat = static_cast<float>(kMaxInt);
 
   outer_rect = rect.GetOuterRect();
   EXPECT_EQ(0, outer_rect.left);
@@ -89,8 +148,8 @@ TEST(CFX_FloatRect, GetOuterRect) {
   EXPECT_EQ(0, outer_rect.right);
   EXPECT_EQ(0, outer_rect.top);
 
-  // Function converts from float to int using floor() for left and top, and
-  // ceil() for right and bottom.
+  // Function converts from float to int using floor() for left and bottom, and
+  // ceil() for right and top.
   rect = CFX_FloatRect(-1.1f, 3.6f, 4.4f, -5.7f);
   outer_rect = rect.GetOuterRect();
   EXPECT_EQ(-2, outer_rect.left);
