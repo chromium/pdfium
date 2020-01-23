@@ -299,6 +299,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
   if (charset == FX_CHARSET_ANSI && FontFamilyIsFixedPitch(pitch_family))
     return GetFont("Courier New");
 
+  ByteStringView bsFamily(family);
   uint32_t charset_flag = GetCharset(charset);
   int32_t iBestSimilar = 0;
   for (const auto& it : m_FontList) {
@@ -307,7 +308,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
     if (!(pFont->m_Charsets & charset_flag) && charset != FX_CHARSET_Default)
       continue;
 
-    if (bMatchName && !bsName.Contains(family))
+    if (bMatchName && !bsName.Contains(bsFamily))
       continue;
 
     int32_t iSimilarValue =
