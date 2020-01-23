@@ -125,16 +125,16 @@ TEST(CFX_FloatRect, GetInnerRect) {
                        kMaxIntAsFloat);
   inner_rect = rect.GetInnerRect();
   EXPECT_EQ(kMinInt, inner_rect.left);
-  EXPECT_EQ(kMinInt, inner_rect.bottom);  // should be |kMaxInt|
-  EXPECT_EQ(kMinInt, inner_rect.right);   // should be |kMaxInt|
+  EXPECT_EQ(kMaxInt, inner_rect.bottom);
+  EXPECT_EQ(kMaxInt, inner_rect.right);
   EXPECT_EQ(kMinInt, inner_rect.top);
 
   rect = CFX_FloatRect(kMinIntAsFloat - 1.0f, kMinIntAsFloat - 1.0f,
                        kMaxIntAsFloat + 1.0f, kMaxIntAsFloat + 1.0f);
   inner_rect = rect.GetInnerRect();
   EXPECT_EQ(kMinInt, inner_rect.left);
-  EXPECT_EQ(kMinInt, inner_rect.bottom);  // should be |kMaxInt|
-  EXPECT_EQ(kMinInt, inner_rect.right);   // should be |kMaxInt|
+  EXPECT_EQ(kMaxInt, inner_rect.bottom);
+  EXPECT_EQ(kMaxInt, inner_rect.right);
   EXPECT_EQ(kMinInt, inner_rect.top);
 }
 

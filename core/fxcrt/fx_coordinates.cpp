@@ -138,10 +138,10 @@ FX_RECT CFX_FloatRect::GetOuterRect() const {
 
 FX_RECT CFX_FloatRect::GetInnerRect() const {
   FX_RECT rect;
-  rect.left = static_cast<int>(ceil(left));
-  rect.bottom = static_cast<int>(floor(top));
-  rect.right = static_cast<int>(floor(right));
-  rect.top = static_cast<int>(ceil(bottom));
+  rect.left = pdfium::base::saturated_cast<int>(ceil(left));
+  rect.bottom = pdfium::base::saturated_cast<int>(floor(top));
+  rect.right = pdfium::base::saturated_cast<int>(floor(right));
+  rect.top = pdfium::base::saturated_cast<int>(ceil(bottom));
   rect.Normalize();
   return rect;
 }
