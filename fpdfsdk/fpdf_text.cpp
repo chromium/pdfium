@@ -75,8 +75,7 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index) {
   if (!textpage)
     return 0;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   return charinfo.m_Unicode;
 }
 
@@ -86,9 +85,7 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return 0;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
-  return charinfo.m_FontSize;
+  return textpage->GetCharFontSize(index);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -101,8 +98,7 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return 0;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.m_pTextObj)
     return 0;
 
@@ -124,8 +120,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return -1;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.m_pTextObj)
     return -1;
 
@@ -138,8 +133,7 @@ FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index) {
   if (!textpage)
     return FPDF_TEXTRENDERMODE_UNKNOWN;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.m_pTextObj)
     return FPDF_TEXTRENDERMODE_UNKNOWN;
 
@@ -158,8 +152,7 @@ FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
   if (!textpage || !R || !G || !B || !A)
     return false;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.m_pTextObj)
     return false;
 
@@ -183,8 +176,7 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
   if (!textpage || !R || !G || !B || !A)
     return false;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.m_pTextObj)
     return false;
 
@@ -204,8 +196,7 @@ FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return -1.0f;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   // On the left is our current Matrix and on the right a generic rotation
   // matrix for our coordinate space.
   // | a  b  0 |    | cos(t)  -sin(t)  0 |
@@ -232,8 +223,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return false;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   *left = charinfo.m_CharBox.left;
   *right = charinfo.m_CharBox.right;
   *bottom = charinfo.m_CharBox.bottom;
@@ -250,25 +240,25 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
   if (!textpage)
     return false;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
+  float font_size = textpage->GetCharFontSize(index);
 
-  if (charinfo.m_pTextObj && !IsFloatZero(charinfo.m_FontSize)) {
+  if (charinfo.m_pTextObj && !IsFloatZero(font_size)) {
     bool is_vert_writing = charinfo.m_pTextObj->GetFont()->IsVertWriting();
     if (is_vert_writing && charinfo.m_pTextObj->GetFont()->IsCIDFont()) {
       CPDF_CIDFont* pCIDFont = charinfo.m_pTextObj->GetFont()->AsCIDFont();
-      uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.m_Charcode);
+      uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.m_CharCode);
 
       short vx;
       short vy;
       pCIDFont->GetVertOrigin(cid, vx, vy);
-      double offsetx = (vx - 500) * charinfo.m_FontSize / 1000.0;
-      double offsety = vy * charinfo.m_FontSize / 1000.0;
+      double offsetx = (vx - 500) * font_size / 1000.0;
+      double offsety = vy * font_size / 1000.0;
       short vert_width = pCIDFont->GetVertWidth(cid);
-      double height = vert_width * charinfo.m_FontSize / 1000.0;
+      double height = vert_width * font_size / 1000.0;
 
       rect->left = charinfo.m_Origin.x + offsetx;
-      rect->right = rect->left + charinfo.m_FontSize;
+      rect->right = rect->left + font_size;
       rect->bottom = charinfo.m_Origin.y + offsety;
       rect->top = rect->bottom + height;
       return true;
@@ -277,8 +267,8 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
     int ascent = charinfo.m_pTextObj->GetFont()->GetTypeAscent();
     int descent = charinfo.m_pTextObj->GetFont()->GetTypeDescent();
     if (ascent != descent) {
-      float width = charinfo.m_pTextObj->GetCharWidth(charinfo.m_Charcode);
-      float font_scale = charinfo.m_FontSize / (ascent - descent);
+      float width = charinfo.m_pTextObj->GetCharWidth(charinfo.m_CharCode);
+      float font_scale = font_size / (ascent - descent);
 
       rect->left = charinfo.m_Origin.x;
       rect->right = charinfo.m_Origin.x + (is_vert_writing ? -width : width);
@@ -289,10 +279,7 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
   }
 
   // Fallback to the tight bounds in empty text scenarios, or bad font metrics
-  rect->left = charinfo.m_CharBox.left;
-  rect->right = charinfo.m_CharBox.right;
-  rect->bottom = charinfo.m_CharBox.bottom;
-  rect->top = charinfo.m_CharBox.top;
+  *rect = FSRectFFromCFXFloatRect(charinfo.m_CharBox);
   return true;
 }
 
@@ -305,8 +292,7 @@ FPDFText_GetCharOrigin(FPDF_TEXTPAGE text_page,
   if (!textpage)
     return false;
 
-  CPDF_TextPage::CharInfo charinfo;
-  textpage->GetCharInfo(index, &charinfo);
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   *x = charinfo.m_Origin.x;
   *y = charinfo.m_Origin.y;
   return true;

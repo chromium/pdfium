@@ -36,22 +36,6 @@ class CPDF_TextObject;
 #define TEXT_HYPHEN L"-"
 #define TEXT_CHARRATIO_GAPDELTA 0.070
 
-class PAGECHAR_INFO {
- public:
-  PAGECHAR_INFO();
-  PAGECHAR_INFO(const PAGECHAR_INFO&);
-  ~PAGECHAR_INFO();
-
-  int m_Index = 0;
-  int m_CharCode = 0;
-  wchar_t m_Unicode = 0;
-  int32_t m_Flag = 0;
-  CFX_PointF m_Origin;
-  CFX_FloatRect m_CharBox;
-  UnownedPtr<CPDF_TextObject> m_pTextObj;
-  CFX_Matrix m_Matrix;
-};
-
 struct PDFTEXT_Obj {
   PDFTEXT_Obj();
   PDFTEXT_Obj(const PDFTEXT_Obj& that);
@@ -66,12 +50,13 @@ class CPDF_TextPage {
   class CharInfo {
    public:
     CharInfo();
+    CharInfo(const CharInfo&);
     ~CharInfo();
 
+    int m_Index = 0;
+    uint32_t m_CharCode = 0;
     wchar_t m_Unicode = 0;
-    wchar_t m_Charcode = 0;
     int32_t m_Flag = 0;
-    float m_FontSize = 0;
     CFX_PointF m_Origin;
     CFX_FloatRect m_CharBox;
     UnownedPtr<CPDF_TextObject> m_pTextObj;
@@ -85,7 +70,11 @@ class CPDF_TextPage {
   int TextIndexFromCharIndex(int char_index) const;
   size_t size() const { return m_CharList.size(); }
   int CountChars() const;
-  void GetCharInfo(size_t index, CharInfo* info) const;
+
+  // These methods CHECK() to make sure |index| is within bounds.
+  const CharInfo& GetCharInfo(size_t index) const;
+  float GetCharFontSize(size_t index) const;
+
   std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
   int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;
   WideString GetTextByRect(const CFX_FloatRect& rect) const;
@@ -128,8 +117,8 @@ class CPDF_TextPage {
                          CPDF_PageObjectHolder::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
-  const PAGECHAR_INFO* GetPrevCharInfo() const;
-  Optional<PAGECHAR_INFO> GenerateCharInfo(wchar_t unicode);
+  const CharInfo* GetPrevCharInfo() const;
+  Optional<CharInfo> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectHolder* pObjList,
                              CPDF_PageObjectHolder::const_iterator iter) const;
@@ -139,20 +128,20 @@ class CPDF_TextPage {
   MarkedContentState PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void FindPreviousTextObject();
-  void AddCharInfoByLRDirection(wchar_t wChar, const PAGECHAR_INFO& info);
-  void AddCharInfoByRLDirection(wchar_t wChar, const PAGECHAR_INFO& info);
+  void AddCharInfoByLRDirection(wchar_t wChar, const CharInfo& info);
+  void AddCharInfoByRLDirection(wchar_t wChar, const CharInfo& info);
   TextOrientation GetTextObjectWritingMode(
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;
   void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& formMatrix);
   void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
   WideString GetTextByPredicate(
-      const std::function<bool(const PAGECHAR_INFO&)>& predicate) const;
+      const std::function<bool(const CharInfo&)>& predicate) const;
 
   UnownedPtr<const CPDF_Page> const m_pPage;
   std::vector<uint16_t> m_CharIndices;
-  std::deque<PAGECHAR_INFO> m_CharList;
-  std::deque<PAGECHAR_INFO> m_TempCharList;
+  std::deque<CharInfo> m_CharList;
+  std::deque<CharInfo> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
   CFX_WideTextBuf m_TempTextBuf;
   UnownedPtr<CPDF_TextObject> m_pPreTextObj;

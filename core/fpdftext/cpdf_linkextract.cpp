@@ -119,8 +119,7 @@ void CPDF_LinkExtract::ExtractLinks() {
   const int nTotalChar = m_pTextPage->CountChars();
   const WideString page_text = m_pTextPage->GetAllPageText();
   while (pos < nTotalChar) {
-    CPDF_TextPage::CharInfo char_info;
-    m_pTextPage->GetCharInfo(pos, &char_info);
+    const CPDF_TextPage::CharInfo& char_info = m_pTextPage->GetCharInfo(pos);
     if (char_info.m_Flag != FPDFTEXT_CHAR_GENERATED &&
         char_info.m_Unicode != TEXT_SPACE_CHAR && pos != nTotalChar - 1) {
       bAfterHyphen = (char_info.m_Flag == FPDFTEXT_CHAR_HYPHEN ||
