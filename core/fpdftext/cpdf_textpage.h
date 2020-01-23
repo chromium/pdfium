@@ -81,7 +81,6 @@ class CPDF_TextPage {
   CPDF_TextPage(const CPDF_Page* pPage, bool rtl);
   ~CPDF_TextPage();
 
-  bool IsParsed() const { return m_bIsParsed; }
   int CharIndexFromTextIndex(int text_index) const;
   int TextIndexFromCharIndex(int char_index) const;
   size_t size() const { return m_CharList.size(); }
@@ -159,7 +158,6 @@ class CPDF_TextPage {
   UnownedPtr<CPDF_TextObject> m_pPreTextObj;
   CFX_Matrix m_perMatrix;
   const bool m_rtl;
-  bool m_bIsParsed = false;
   const CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
   std::vector<PDFTEXT_Obj> m_LineObj;

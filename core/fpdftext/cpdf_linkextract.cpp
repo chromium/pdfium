@@ -112,9 +112,6 @@ CPDF_LinkExtract::~CPDF_LinkExtract() = default;
 
 void CPDF_LinkExtract::ExtractLinks() {
   m_LinkArray.clear();
-  if (!m_pTextPage->IsParsed())
-    return;
-
   int start = 0;
   int pos = 0;
   bool bAfterHyphen = false;
