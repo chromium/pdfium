@@ -122,7 +122,7 @@ bool IsControlChar(const CPDF_TextPage::CharInfo& char_info) {
     case 0x97:
     case 0x98:
     case 0xfffe:
-      return char_info.m_Flag != FPDFTEXT_CHAR_HYPHEN;
+      return char_info.m_CharType != CPDF_TextPage::CharType::kHyphen;
     default:
       return false;
   }
@@ -257,7 +257,7 @@ void CPDF_TextPage::Init() {
 
   for (int i = 0; i < nCount; ++i) {
     const CharInfo& charinfo = m_CharList[i];
-    if (charinfo.m_Flag == FPDFTEXT_CHAR_GENERATED ||
+    if (charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated ||
         (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
         (charinfo.m_Unicode == 0 && charinfo.m_CharCode != 0)) {
       if (m_CharIndices.size() % 2) {
@@ -327,7 +327,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
   bool bFlagNewRect = true;
   while (nCount--) {
     const CharInfo& info_curchar = m_CharList[curPos++];
-    if (info_curchar.m_Flag == FPDFTEXT_CHAR_GENERATED)
+    if (info_curchar.m_CharType == CPDF_TextPage::CharType::kGenerated)
       continue;
     if (info_curchar.m_CharBox.Width() < kSizeEpsilon ||
         info_curchar.m_CharBox.Height() < kSizeEpsilon) {
@@ -640,7 +640,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
   Unicode_GetNormalization(wChar, pDst.get());
   for (size_t nIndex = 0; nIndex < nCount; ++nIndex) {
     info2.m_Unicode = pDst.get()[nIndex];
-    info2.m_Flag = FPDFTEXT_CHAR_PIECE;
+    info2.m_CharType = CPDF_TextPage::CharType::kPiece;
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
   }
@@ -669,7 +669,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   Unicode_GetNormalization(wChar, pDst.get());
   for (size_t nIndex = 0; nIndex < nCount; ++nIndex) {
     info2.m_Unicode = pDst.get()[nIndex];
-    info2.m_Flag = FPDFTEXT_CHAR_PIECE;
+    info2.m_CharType = CPDF_TextPage::CharType::kPiece;
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
   }
@@ -874,7 +874,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
     charinfo.m_Index = m_TextBuf.GetLength();
     charinfo.m_Unicode = wChar;
     charinfo.m_CharCode = pFont->CharCodeFromUnicode(wChar);
-    charinfo.m_Flag = FPDFTEXT_CHAR_PIECE;
+    charinfo.m_CharType = CPDF_TextPage::CharType::kPiece;
     charinfo.m_pTextObj = pTextObj;
     charinfo.m_CharBox = pTextObj->GetRect();
     charinfo.m_Matrix = matrix;
@@ -970,7 +970,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         CharInfo* charinfo = &m_TempCharList.back();
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         charinfo->m_Unicode = 0x2;
-        charinfo->m_Flag = FPDFTEXT_CHAR_HYPHEN;
+        charinfo->m_CharType = CPDF_TextPage::CharType::kHyphen;
         m_TempTextBuf.AppendChar(0xfffe);
         break;
     }
@@ -1035,7 +1035,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       }
       if (threshold && (spacing && spacing >= threshold)) {
         charinfo.m_Unicode = TEXT_SPACE_CHAR;
-        charinfo.m_Flag = FPDFTEXT_CHAR_GENERATED;
+        charinfo.m_CharType = CPDF_TextPage::CharType::kGenerated;
         charinfo.m_pTextObj = pTextObj;
         charinfo.m_Index = m_TextBuf.GetLength();
         m_TempTextBuf.AppendChar(TEXT_SPACE_CHAR);
@@ -1059,8 +1059,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     }
     charinfo.m_Index = -1;
     charinfo.m_CharCode = item.m_CharCode;
-    charinfo.m_Flag =
-        bNoUnicode ? FPDFTEXT_CHAR_UNUNICODE : FPDFTEXT_CHAR_NORMAL;
+    charinfo.m_CharType = bNoUnicode ? CPDF_TextPage::CharType::kNotUnicode
+                                     : CPDF_TextPage::CharType::kNormal;
     charinfo.m_pTextObj = pTextObj;
     charinfo.m_Origin = matrix.Transform(item.m_Origin);
 
@@ -1180,7 +1180,8 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
   }
 
   const CharInfo* pPrevCharInfo = GetPrevCharInfo();
-  return pPrevCharInfo && pPrevCharInfo->m_Flag == FPDFTEXT_CHAR_PIECE &&
+  return pPrevCharInfo &&
+         pPrevCharInfo->m_CharType == CPDF_TextPage::CharType::kPiece &&
          IsHyphenCode(pPrevCharInfo->m_Unicode);
 }
 
@@ -1394,7 +1395,7 @@ Optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
   info.m_Index = m_TextBuf.GetLength();
   info.m_CharCode = CPDF_Font::kInvalidCharCode;
   info.m_Unicode = unicode;
-  info.m_Flag = FPDFTEXT_CHAR_GENERATED;
+  info.m_CharType = CPDF_TextPage::CharType::kGenerated;
 
   int preWidth = 0;
   if (pPrevCharInfo->m_pTextObj &&

@@ -120,11 +120,12 @@ void CPDF_LinkExtract::ExtractLinks() {
   const WideString page_text = m_pTextPage->GetAllPageText();
   while (pos < nTotalChar) {
     const CPDF_TextPage::CharInfo& char_info = m_pTextPage->GetCharInfo(pos);
-    if (char_info.m_Flag != FPDFTEXT_CHAR_GENERATED &&
+    if (char_info.m_CharType != CPDF_TextPage::CharType::kGenerated &&
         char_info.m_Unicode != TEXT_SPACE_CHAR && pos != nTotalChar - 1) {
-      bAfterHyphen = (char_info.m_Flag == FPDFTEXT_CHAR_HYPHEN ||
-                      (char_info.m_Flag == FPDFTEXT_CHAR_NORMAL &&
-                       char_info.m_Unicode == TEXT_HYPHEN_CHAR));
+      bAfterHyphen =
+          (char_info.m_CharType == CPDF_TextPage::CharType::kHyphen ||
+           (char_info.m_CharType == CPDF_TextPage::CharType::kNormal &&
+            char_info.m_Unicode == TEXT_HYPHEN_CHAR));
       ++pos;
       continue;
     }

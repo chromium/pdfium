@@ -23,12 +23,6 @@ class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;
 
-#define FPDFTEXT_CHAR_NORMAL 0
-#define FPDFTEXT_CHAR_GENERATED 1
-#define FPDFTEXT_CHAR_UNUNICODE 2
-#define FPDFTEXT_CHAR_HYPHEN 3
-#define FPDFTEXT_CHAR_PIECE 4
-
 #define TEXT_SPACE_CHAR L' '
 #define TEXT_LINEFEED_CHAR L'\n'
 #define TEXT_RETURN_CHAR L'\r'
@@ -47,6 +41,14 @@ struct PDFTEXT_Obj {
 
 class CPDF_TextPage {
  public:
+  enum class CharType : uint8_t {
+    kNormal,
+    kGenerated,
+    kNotUnicode,
+    kHyphen,
+    kPiece,
+  };
+
   class CharInfo {
    public:
     CharInfo();
@@ -56,7 +58,7 @@ class CPDF_TextPage {
     int m_Index = 0;
     uint32_t m_CharCode = 0;
     wchar_t m_Unicode = 0;
-    int32_t m_Flag = 0;
+    CharType m_CharType = CharType::kNormal;
     CFX_PointF m_Origin;
     CFX_FloatRect m_CharBox;
     UnownedPtr<CPDF_TextObject> m_pTextObj;
