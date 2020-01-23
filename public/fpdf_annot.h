@@ -75,6 +75,7 @@ extern "C" {
 // Refer to PDF Reference version 1.7 table 8.77 for field flags specific to
 // interactive form text fields.
 #define FPDF_FORMFLAG_TEXT_MULTILINE (1 << 12)
+#define FPDF_FORMFLAG_TEXT_PASSWORD (1 << 13)
 
 // Refer to PDF Reference version 1.7 table 8.79 for field flags specific to
 // interactive form choice fields.

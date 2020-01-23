@@ -1194,7 +1194,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_GetSetStringValue) {
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetNumberValue) {
-  // Open a file with three text annotations and load its first page.
+  // Open a file with four text annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1480,6 +1480,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
     // Check that the flag values are as expected.
     int flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
     EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
   }
 
   {
@@ -1490,6 +1491,18 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
     // Check that the flag values are as expected.
     int flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
     EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
+  }
+
+  {
+    // Retrieve the fourth annotation: user-editable password text field.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ASSERT_TRUE(annot);
+
+    // Check that the flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(form_handle(), annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
   }
 
   UnloadPage(page);
@@ -2022,7 +2035,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeTextField) {
   ASSERT_TRUE(page);
 
   {
-    // All 3 widgets have Tf font size 12.
+    // All 4 widgets have Tf font size 12.
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
@@ -2044,6 +2057,10 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeTextField) {
     ASSERT_TRUE(
         FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_three));
     EXPECT_EQ(12.0, value_three);
+
+    float value_four;
+    ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_four));
+    EXPECT_EQ(12.0, value_four);
   }
 
   UnloadPage(page);

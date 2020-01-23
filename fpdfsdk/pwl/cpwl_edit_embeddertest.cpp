@@ -48,8 +48,14 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     ASSERT_TRUE(m_pAnnotCharLimit);
     ASSERT_EQ(CPDF_Annot::Subtype::WIDGET,
               m_pAnnotCharLimit->GetAnnotSubtype());
+
+    // Password text field.
+    CPDFSDK_Annot* password_annot = iter.GetNextAnnot(m_pAnnotCharLimit);
+    ASSERT_TRUE(password_annot);
+    ASSERT_EQ(CPDF_Annot::Subtype::WIDGET, password_annot->GetAnnotSubtype());
+
     CPDFSDK_Annot* pLastAnnot = iter.GetLastAnnot();
-    ASSERT_EQ(m_pAnnotCharLimit, pLastAnnot);
+    ASSERT_EQ(password_annot, pLastAnnot);
   }
 
   void FormFillerAndWindowSetup(CPDFSDK_Annot* pAnnotTextField) {

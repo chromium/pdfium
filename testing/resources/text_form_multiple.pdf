@@ -4,7 +4,7 @@
 <<
   /Type /Catalog
   /Pages 2 0 R
-  /AcroForm << /Fields [ 4 0 R 9 0 R 10 0 R ] /DR 5 0 R >>
+  /AcroForm << /Fields [ 4 0 R 9 0 R 10 0 R 11 0 R ] /DR 5 0 R >>
 >>
 endobj
 2 0 obj
@@ -17,7 +17,7 @@ endobj
   /Resources 5 0 R
   /MediaBox [ 0 0 300 300 ]
   /Contents 8 0 R
-  /Annots [ 4 0 R 9 0 R 10 0 R ]
+  /Annots [ 4 0 R 9 0 R 10 0 R 11 0 R ]
 >>
 endobj
 4 0 obj
@@ -75,21 +75,35 @@ endobj
   /Rect [ 100 50 200 75 ]
   /Subtype /Widget
 >>
+11 0 obj
+<<
+  /Type /Annot
+  /FT /Tx
+  /Ff 8192
+  /T (Password)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 10 200 35 ]
+  /Subtype /Widget
+>>
 endobj
 xref
-0 11
+0 12
 0000000000 65535 f 
 0000000015 00000 n 
-0000000127 00000 n 
-0000000186 00000 n 
-0000000335 00000 n 
-0000000471 00000 n 
-0000000504 00000 n 
-0000000535 00000 n 
-0000000611 00000 n 
-0000000711 00000 n 
-0000000855 00000 n 
-trailer<< /Root 1 0 R /Size 11 >>
+0000000134 00000 n 
+0000000193 00000 n 
+0000000349 00000 n 
+0000000485 00000 n 
+0000000518 00000 n 
+0000000549 00000 n 
+0000000625 00000 n 
+0000000725 00000 n 
+0000000869 00000 n 
+0000001027 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 12
+>>
 startxref
-1020
+1173
 %%EOF
