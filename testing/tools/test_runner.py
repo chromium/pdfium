@@ -161,6 +161,9 @@ class TestRunner:
       if self.options.disable_javascript:
         cmd_to_run.append('--disable-javascript')
 
+      if self.options.disable_xfa:
+        cmd_to_run.append('--disable-xfa')
+
       cmd_to_run.append(pdf_path)
       subprocess.check_call(cmd_to_run, stdout=outfile)
 
@@ -205,6 +208,9 @@ class TestRunner:
 
     if self.options.disable_javascript:
       cmd_to_run.append('--disable-javascript')
+
+    if self.options.disable_xfa:
+      cmd_to_run.append('--disable-xfa')
 
     if self.options.reverse_byte_order:
       cmd_to_run.append('--reverse-byte-order')
@@ -265,6 +271,12 @@ class TestRunner:
         action="store_true",
         dest="disable_javascript",
         help='Prevents JavaScript from executing in PDF files.')
+
+    parser.add_option(
+        '--disable-xfa',
+        action="store_true",
+        dest="disable_xfa",
+        help='Prevents processing XFA forms.')
 
     parser.add_option(
         '--gold_properties',
@@ -346,7 +358,8 @@ class TestRunner:
     self.feature_string = subprocess.check_output(
         [self.pdfium_test_path, '--show-config'])
     self.test_suppressor = suppressor.Suppressor(
-        finder, self.feature_string, self.options.disable_javascript)
+        finder, self.feature_string, self.options.disable_javascript,
+        self.options.disable_xfa)
     self.image_differ = pngdiffer.PNGDiffer(finder,
                                             self.options.reverse_byte_order)
     error_message = self.image_differ.CheckMissingTools(
