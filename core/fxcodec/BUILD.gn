@@ -155,8 +155,6 @@ pdfium_unittest_source_set("unittests") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [
-    "jbig2/jbig2_embeddertest.cpp",
-  ]
+  sources = [ "jbig2/jbig2_embeddertest.cpp" ]
   pdfium_root_dir = "../../"
 }

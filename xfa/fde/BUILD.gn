@@ -31,9 +31,7 @@ source_set("fde") {
 }
 
 pdfium_unittest_source_set("unittests") {
-  sources = [
-    "cfde_texteditengine_unittest.cpp",
-  ]
+  sources = [ "cfde_texteditengine_unittest.cpp" ]
   deps = [
     ":fde",
     "../../core/fxge",

@@ -101,9 +101,7 @@ source_set("fxcrt") {
     "../../third_party:pdfium_base",
     "../../xfa/*",
   ]
-  deps = [
-    "../../third_party:pdfium_base",
-  ]
+  deps = [ "../../third_party:pdfium_base" ]
   public_deps = [
     "../../:freetype_common",
     "../../third_party:pdfium_base",

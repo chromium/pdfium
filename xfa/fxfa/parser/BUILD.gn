@@ -716,8 +716,6 @@ pdfium_unittest_source_set("unittests") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [
-    "cxfa_document_parser_embeddertest.cpp",
-  ]
+  sources = [ "cxfa_document_parser_embeddertest.cpp" ]
   pdfium_root_dir = "../../../"
 }

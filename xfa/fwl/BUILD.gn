@@ -125,8 +125,6 @@ source_set("fwl") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [
-    "cfwl_edit_embeddertest.cpp",
-  ]
+  sources = [ "cfwl_edit_embeddertest.cpp" ]
   pdfium_root_dir = "../../"
 }

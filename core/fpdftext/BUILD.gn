@@ -27,11 +27,7 @@ source_set("fpdftext") {
 }
 
 pdfium_unittest_source_set("unittests") {
-  sources = [
-    "cpdf_linkextract_unittest.cpp",
-  ]
-  deps = [
-    ":fpdftext",
-  ]
+  sources = [ "cpdf_linkextract_unittest.cpp" ]
+  deps = [ ":fpdftext" ]
   pdfium_root_dir = "../../"
 }

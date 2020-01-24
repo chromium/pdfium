@@ -71,8 +71,6 @@ source_set("cmaps") {
     "fpdf_cmaps.cpp",
   ]
   configs += [ "../../../:pdfium_core_config" ]
-  deps = [
-    "../../fxcrt",
-  ]
+  deps = [ "../../fxcrt" ]
   visibility = [ "../../../*" ]
 }

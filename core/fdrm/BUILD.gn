@@ -13,18 +13,12 @@ source_set("fdrm") {
     "fx_crypt_sha.cpp",
   ]
   configs += [ "../../:pdfium_core_config" ]
-  deps = [
-    "../fxcrt",
-  ]
+  deps = [ "../fxcrt" ]
   visibility = [ "../../*" ]
 }
 
 pdfium_unittest_source_set("unittests") {
-  sources = [
-    "fx_crypt_unittest.cpp",
-  ]
-  deps = [
-    ":fdrm",
-  ]
+  sources = [ "fx_crypt_unittest.cpp" ]
+  deps = [ ":fdrm" ]
   pdfium_root_dir = "../../"
 }

@@ -27,9 +27,7 @@ source_set("test_support") {
     "utils/path_service.cpp",
     "utils/path_service.h",
   ]
-  data = [
-    "resources/",
-  ]
+  data = [ "resources/" ]
   deps = [
     "../:pdfium_public_headers",
     "../core/fdrm",

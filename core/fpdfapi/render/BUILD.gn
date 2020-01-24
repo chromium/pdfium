@@ -62,9 +62,7 @@ source_set("render") {
 }
 
 pdfium_unittest_source_set("unittests") {
-  sources = [
-    "cpdf_docrenderdata_unittest.cpp",
-  ]
+  sources = [ "cpdf_docrenderdata_unittest.cpp" ]
   deps = [
     ":render",
     "../page",

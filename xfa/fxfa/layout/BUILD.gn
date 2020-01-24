@@ -37,8 +37,6 @@ source_set("layout") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [
-    "cxfa_layoutitem_embeddertest.cpp",
-  ]
+  sources = [ "cxfa_layoutitem_embeddertest.cpp" ]
   pdfium_root_dir = "../../../"
 }

@@ -156,9 +156,7 @@ source_set("skcms") {
     cflags += [ "-mfp16-format=ieee" ]
   }
 
-  public = [
-    "//third_party/skia/include/third_party/skcms/skcms.h",
-  ]
+  public = [ "//third_party/skia/include/third_party/skcms/skcms.h" ]
   include_dirs = [ "//third_party/skia/include/third_party/skcms" ]
   sources =
       rebase_path(skcms_sources, ".", "//third_party/skia/third_party/skcms")
@@ -310,9 +308,7 @@ component("skia") {
     "../third_party:zlib",
     "//:freetype_common",
   ]
-  public_deps = [
-    ":skia_core_and_effects",
-  ]
+  public_deps = [ ":skia_core_and_effects" ]
 
   if (is_linux) {
     deps += [ "//third_party/icu:icuuc" ]

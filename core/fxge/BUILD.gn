@@ -116,9 +116,7 @@ source_set("fxge") {
     "../../:pdfium_core_config",
   ]
 
-  deps = [
-    "../fxcrt",
-  ]
+  deps = [ "../fxcrt" ]
 
   if (is_component_build || use_system_freetype) {
     # ft_adobe_glyph_list is not exported from the Freetype shared library so we
@@ -213,9 +211,7 @@ pdfium_unittest_source_set("unittests") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [
-    "fx_ge_text_embeddertest.cpp",
-  ]
+  sources = [ "fx_ge_text_embeddertest.cpp" ]
   deps = []
   pdfium_root_dir = "../../"
 

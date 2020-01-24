@@ -16,9 +16,7 @@ config("cpu_features_warnings") {
 }
 
 source_set("cpu_features") {
-  sources = [
-    "$android_ndk_root/sources/android/cpufeatures/cpu-features.c",
-  ]
+  sources = [ "$android_ndk_root/sources/android/cpufeatures/cpu-features.c" ]
   public_configs = [ ":cpu_features_include" ]
 
   configs -= [ "//build/config/compiler:chromium_code" ]

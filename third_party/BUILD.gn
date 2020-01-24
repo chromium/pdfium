@@ -252,9 +252,7 @@ if (!pdf_use_skia && !pdf_use_skia_paths) {
       "agg23/agg_vcgen_dash.cpp",
       "agg23/agg_vcgen_stroke.cpp",
     ]
-    deps = [
-      "../core/fxcrt",
-    ]
+    deps = [ "../core/fxcrt" ]
   }
 }
 
@@ -312,9 +310,7 @@ source_set("fx_lcms2") {
     "lcms/src/cmswtpnt.c",
     "lcms/src/cmsxform.c",
   ]
-  deps = [
-    "../core/fxcrt",
-  ]
+  deps = [ "../core/fxcrt" ]
 }
 
 if (!build_with_chromium) {
@@ -343,14 +339,10 @@ if (!build_with_chromium) {
     if (use_system_libjpeg) {
       public_configs = [ ":system_libjpeg_config" ]
     } else if (use_libjpeg_turbo) {
-      public_deps = [
-        "//third_party/libjpeg_turbo:libjpeg",
-      ]
+      public_deps = [ "//third_party/libjpeg_turbo:libjpeg" ]
       public_configs = [ ":libjpeg_turbo_config" ]
     } else {
-      public_deps = [
-        "//third_party/libjpeg:libjpeg",
-      ]
+      public_deps = [ "//third_party/libjpeg:libjpeg" ]
     }
   }
 }
@@ -364,9 +356,7 @@ group("zlib") {
   if (use_system_zlib) {
     public_configs = [ ":system_zlib_config" ]
   } else {
-    public_deps = [
-      "//third_party/zlib",
-    ]
+    public_deps = [ "//third_party/zlib" ]
   }
 }
 
@@ -380,9 +370,7 @@ group("lcms2") {
   if (use_system_lcms2) {
     public_configs = [ ":lcms2_from_pkgconfig" ]
   } else {
-    public_deps = [
-      ":fx_lcms2",
-    ]
+    public_deps = [ ":fx_lcms2" ]
   }
 }
 
@@ -396,9 +384,7 @@ group("libopenjpeg2") {
   if (use_system_libopenjpeg2) {
     public_configs = [ ":libopenjpeg2_from_pkgconfig" ]
   } else {
-    public_deps = [
-      ":fx_libopenjpeg",
-    ]
+    public_deps = [ ":fx_libopenjpeg" ]
   }
 }
 
@@ -456,9 +442,7 @@ group("png") {
   if (use_system_libpng) {
     public_configs = [ ":system_libpng_config" ]
   } else {
-    public_deps = [
-      ":fx_lpng",
-    ]
+    public_deps = [ ":fx_lpng" ]
   }
 }
 
@@ -496,9 +480,7 @@ source_set("fx_lpng") {
 
   defines = []
   cflags = []
-  deps = [
-    ":zlib",
-  ]
+  deps = [ ":zlib" ]
 
   if (current_cpu == "x86" || current_cpu == "x64") {
     sources += [

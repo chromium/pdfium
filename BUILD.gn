@@ -131,9 +131,7 @@ source_set("pdfium_public_headers_impl") {
 }
 
 group("pdfium_public_headers") {
-  public_deps = [
-    ":pdfium_public_headers_impl",
-  ]
+  public_deps = [ ":pdfium_public_headers_impl" ]
   public_configs = [
     ":pdfium_public_config",
     ":pdfium_implementation_config",
@@ -225,9 +223,7 @@ group("pdfium_unittest_deps") {
 
 test("pdfium_unittests") {
   testonly = true
-  sources = [
-    "testing/unit_test_main.cpp",
-  ]
+  sources = [ "testing/unit_test_main.cpp" ]
   deps = [
     "core/fdrm:unittests",
     "core/fpdfapi/edit:unittests",
@@ -295,9 +291,7 @@ group("pdfium_embeddertest_deps") {
 
 test("pdfium_embeddertests") {
   testonly = true
-  sources = [
-    "testing/embedder_test_main.cpp",
-  ]
+  sources = [ "testing/embedder_test_main.cpp" ]
   deps = [
     "core/fpdfapi/edit:embeddertests",
     "core/fpdfapi/parser:embeddertests",
@@ -340,9 +334,7 @@ test("pdfium_embeddertests") {
 
 executable("pdfium_diff") {
   testonly = true
-  sources = [
-    "testing/image_diff/image_diff.cpp",
-  ]
+  sources = [ "testing/image_diff/image_diff.cpp" ]
   deps = [
     ":pdfium",
     "core/fxcrt",
@@ -357,16 +349,12 @@ executable("pdfium_diff") {
 if (pdf_is_standalone) {
   source_set("samples") {
     testonly = true
-    deps = [
-      "//samples",
-    ]
+    deps = [ "//samples" ]
   }
 
   group("fuzzers") {
     testonly = true
-    deps = [
-      "//testing/fuzzers",
-    ]
+    deps = [ "//testing/fuzzers" ]
   }
 }
 

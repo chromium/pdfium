@@ -16,9 +16,7 @@ source_set("fxjs") {
     "ijs_runtime.h",
   ]
   configs += [ "../:pdfium_core_config" ]
-  deps = [
-    "../core/fxcrt",
-  ]
+  deps = [ "../core/fxcrt" ]
   visibility = [ "../*" ]
 
   if (pdf_enable_v8) {
@@ -112,9 +110,7 @@ source_set("fxjs") {
       "//v8:v8_libplatform",
     ]
     configs += [ "//v8:external_startup_data" ]
-    public_deps = [
-      "//v8",
-    ]
+    public_deps = [ "//v8" ]
 
     if (pdf_enable_xfa) {
       sources += [
@@ -228,9 +224,7 @@ if (pdf_enable_v8) {
       "fx_date_helpers_unittest.cpp",
     ]
     configs = [ "//v8:external_startup_data" ]
-    deps = [
-      ":fxjs",
-    ]
+    deps = [ ":fxjs" ]
     pdfium_root_dir = "../"
   }
 

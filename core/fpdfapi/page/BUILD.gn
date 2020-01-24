@@ -123,8 +123,6 @@ pdfium_unittest_source_set("unittests") {
     "cpdf_streamcontentparser_unittest.cpp",
     "cpdf_streamparser_unittest.cpp",
   ]
-  deps = [
-    ":page",
-  ]
+  deps = [ ":page" ]
   pdfium_root_dir = "../../../"
 }
