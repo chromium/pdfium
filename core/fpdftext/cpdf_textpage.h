@@ -146,8 +146,8 @@ class CPDF_TextPage {
   std::deque<CharInfo> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
   CFX_WideTextBuf m_TempTextBuf;
-  UnownedPtr<CPDF_TextObject> m_pPreTextObj;
-  CFX_Matrix m_perMatrix;
+  UnownedPtr<CPDF_TextObject> m_pPrevTextObj;
+  CFX_Matrix m_PrevMatrix;
   const bool m_rtl;
   const CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
