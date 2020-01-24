@@ -14,6 +14,7 @@
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"
+#include "public/fpdf_formfill.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
@@ -2234,5 +2235,153 @@ TEST_F(FPDFAnnotEmbedderTest, IsCheckedInvalidWidgetType) {
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
   }
 
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldTypeTextField) {
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(form_handle(), nullptr));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(nullptr, annot.get()));
+
+    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
+              FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
+  }
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldTypeComboBox) {
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_FORMFIELD_COMBOBOX,
+              FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
+  }
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueTextField) {
+  ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    EXPECT_EQ(0u,
+              FPDFAnnot_GetFormFieldValue(form_handle(), nullptr, nullptr, 0));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(0u,
+              FPDFAnnot_GetFormFieldValue(nullptr, annot.get(), nullptr, 0));
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(2u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(2u, FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(),
+                                              buf.data(), length_bytes));
+    EXPECT_EQ(L"", GetPlatformWString(buf.data()));
+  }
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(18u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(18u, FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(),
+                                               buf.data(), length_bytes));
+    EXPECT_EQ(L"Elephant", GetPlatformWString(buf.data()));
+  }
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueComboBox) {
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(2u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(2u, FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(),
+                                              buf.data(), length_bytes));
+    EXPECT_EQ(L"", GetPlatformWString(buf.data()));
+  }
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(14u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(14u, FPDFAnnot_GetFormFieldValue(form_handle(), annot.get(),
+                                               buf.data(), length_bytes));
+    EXPECT_EQ(L"Banana", GetPlatformWString(buf.data()));
+  }
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldNameTextField) {
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    EXPECT_EQ(0u,
+              FPDFAnnot_GetFormFieldName(form_handle(), nullptr, nullptr, 0));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(0u, FPDFAnnot_GetFormFieldName(nullptr, annot.get(), nullptr, 0));
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldName(form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(18u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(18u, FPDFAnnot_GetFormFieldName(form_handle(), annot.get(),
+                                              buf.data(), length_bytes));
+    EXPECT_EQ(L"Text Box", GetPlatformWString(buf.data()));
+  }
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldNameComboBox) {
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldName(form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(30u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(30u, FPDFAnnot_GetFormFieldName(form_handle(), annot.get(),
+                                              buf.data(), length_bytes));
+    EXPECT_EQ(L"Combo_Editable", GetPlatformWString(buf.data()));
+  }
   UnloadPage(page);
 }

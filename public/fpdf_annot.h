@@ -539,6 +539,57 @@ FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
                               const FS_POINTF* point);
 
 // Experimental API.
+// Gets the name of |annot|, which is an interactive form annotation.
+// |buffer| is only modified if |buflen| is longer than the length of contents.
+// In case of error, nothing will be added to |buffer| and the return value will
+// be 0. Note that return value of empty string is 2 for "\0\0".
+//
+//    hHandle     -   handle to the form fill module, returned by
+//                    FPDFDOC_InitFormFillEnvironment().
+//    annot       -   handle to an interactive form annotation.
+//    buffer      -   buffer for holding the name string, encoded in UTF-16LE.
+//    buflen      -   length of the buffer in bytes.
+//
+// Returns the length of the string value in bytes.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetFormFieldName(FPDF_FORMHANDLE hHandle,
+                           FPDF_ANNOTATION annot,
+                           FPDF_WCHAR* buffer,
+                           unsigned long buflen);
+
+// Experimental API.
+// Gets the form field type of |annot|, which is an interactive form annotation.
+//
+//    hHandle     -   handle to the form fill module, returned by
+//                    FPDFDOC_InitFormFillEnvironment().
+//    annot       -   handle to an interactive form annotation.
+//
+// Returns the type of the form field (one of the FPDF_FORMFIELD_* values) on
+// success. Returns -1 on error.
+// See field types in fpdf_formfill.h.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFAnnot_GetFormFieldType(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot);
+
+// Experimental API.
+// Gets the value of |annot|, which is an interactive form annotation.
+// |buffer| is only modified if |buflen| is longer than the length of contents.
+// In case of error, nothing will be added to |buffer| and the return value will
+// be 0. Note that return value of empty string is 2 for "\0\0".
+//
+//    hHandle     -   handle to the form fill module, returned by
+//                    FPDFDOC_InitFormFillEnvironment().
+//    annot       -   handle to an interactive form annotation.
+//    buffer      -   buffer for holding the value string, encoded in UTF-16LE.
+//    buflen      -   length of the buffer in bytes.
+//
+// Returns the length of the string value in bytes.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetFormFieldValue(FPDF_FORMHANDLE hHandle,
+                            FPDF_ANNOTATION annot,
+                            FPDF_WCHAR* buffer,
+                            unsigned long buflen);
+
+// Experimental API.
 // Get the number of options in the |annot|'s "Opt" dictionary. Intended for
 // use with listbox and combobox widget annotations.
 //
