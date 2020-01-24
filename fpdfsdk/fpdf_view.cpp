@@ -24,10 +24,8 @@
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
-#include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
@@ -41,7 +39,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/cpdfsdk_pauseadapter.h"
+#include "fpdfsdk/cpdfsdk_renderpage.h"
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
@@ -54,6 +52,7 @@
 #endif  // PDF_ENABLE_XFA
 
 #if defined(OS_WIN)
+#include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_windowsrenderdevice.h"
 #include "public/fpdf_edit.h"
 
@@ -77,61 +76,6 @@ static_assert(WindowsPrintMode::kModePostScript3PassThrough ==
 namespace {
 
 bool g_bLibraryInitialized = false;
-
-void RenderPageImpl(CPDF_PageRenderContext* pContext,
-                    CPDF_Page* pPage,
-                    const CFX_Matrix& matrix,
-                    const FX_RECT& clipping_rect,
-                    int flags,
-                    bool bNeedToRestore,
-                    CPDFSDK_PauseAdapter* pause) {
-  if (!pContext->m_pOptions)
-    pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
-
-  auto& options = pContext->m_pOptions->GetOptions();
-  options.bClearType = !!(flags & FPDF_LCD_TEXT);
-  options.bNoNativeText = !!(flags & FPDF_NO_NATIVETEXT);
-  options.bLimitedImageCache = !!(flags & FPDF_RENDER_LIMITEDIMAGECACHE);
-  options.bForceHalftone = !!(flags & FPDF_RENDER_FORCEHALFTONE);
-  options.bNoTextSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHTEXT);
-  options.bNoImageSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHIMAGE);
-  options.bNoPathSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHPATH);
-
-  // Grayscale output
-  if (flags & FPDF_GRAYSCALE)
-    pContext->m_pOptions->SetColorMode(CPDF_RenderOptions::kGray);
-
-  const CPDF_OCContext::UsageType usage =
-      (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
-  pContext->m_pOptions->SetOCContext(
-      pdfium::MakeRetain<CPDF_OCContext>(pPage->GetDocument(), usage));
-
-  pContext->m_pDevice->SaveState();
-  pContext->m_pDevice->SetBaseClip(clipping_rect);
-  pContext->m_pDevice->SetClip_Rect(clipping_rect);
-  pContext->m_pContext = pdfium::MakeUnique<CPDF_RenderContext>(
-      pPage->GetDocument(), pPage->m_pPageResources.Get(),
-      static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
-
-  pContext->m_pContext->AppendLayer(pPage, &matrix);
-
-  if (flags & FPDF_ANNOT) {
-    auto pOwnedList = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
-    CPDF_AnnotList* pList = pOwnedList.get();
-    pContext->m_pAnnots = std::move(pOwnedList);
-    bool bPrinting =
-        pContext->m_pDevice->GetDeviceType() != DeviceType::kDisplay;
-    pList->DisplayAnnots(pPage, pContext->m_pContext.get(), bPrinting, &matrix,
-                         false, nullptr);
-  }
-
-  pContext->m_pRenderer = pdfium::MakeUnique<CPDF_ProgressiveRenderer>(
-      pContext->m_pContext.get(), pContext->m_pDevice.get(),
-      pContext->m_pOptions.get());
-  pContext->m_pRenderer->Start(pause);
-  if (bNeedToRestore)
-    pContext->m_pDevice->RestoreState(false);
-}
 
 FPDF_DOCUMENT LoadDocumentImpl(
     const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
@@ -545,7 +489,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   // of masks. Full page bitmaps result in large spool sizes, so they should
   // only be used when necessary. For large numbers of masks, rendering each
   // individually is inefficient and unlikely to significantly improve spool
-  // size. TODO (rbpotter): Find out why this still breaks printing for some
+  // size. TODO(rbpotter): Find out why this still breaks printing for some
   // PDFs (see crbug.com/777837).
   const bool bEnableImageMasks = false;
   const bool bNewBitmap = pPage->BackgroundAlphaNeeded() ||
@@ -554,8 +498,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   if (!bNewBitmap && !bHasMask) {
     pContext->m_pDevice = pdfium::MakeUnique<CPDF_WindowsRenderDevice>(dc);
-    RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
-                          rotate, flags, true, nullptr);
+    CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+                                  size_y, rotate, flags,
+                                  /*need_to_restore=*/true, /*pause=*/nullptr);
     return;
   }
 
@@ -572,8 +517,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pContext->m_pOptions->GetOptions().bBreakForMasks = true;
   }
 
-  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
-                        rotate, flags, true, nullptr);
+  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+                                size_y, rotate, flags, /*need_to_restore=*/true,
+                                /*pause=*/nullptr);
 
   if (!bHasMask) {
     CPDF_WindowsRenderDevice WinDC(dc);
@@ -613,8 +559,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
   pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 
-  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
-                        rotate, flags, true, nullptr);
+  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+                                size_y, rotate, flags, /*need_to_restore=*/true,
+                                /*pause=*/nullptr);
 
   // Render masks
   for (size_t i = 0; i < mask_boxes.size(); i++) {
@@ -654,8 +601,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
-  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
-                        rotate, flags, true, nullptr);
+  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+                                size_y, rotate, flags, /*need_to_restore=*/true,
+                                /*pause=*/nullptr);
 
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush(true);
@@ -697,8 +645,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(rect, 0);
   if (matrix)
     transform_matrix *= CFXMatrixFromFSMatrix(*matrix);
-  RenderPageImpl(pContext, pPage, transform_matrix, clip_rect, flags, true,
-                 nullptr);
+  CPDFSDK_RenderPage(pContext, pPage, transform_matrix, clip_rect, flags);
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -718,8 +665,8 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice = std::move(skDevice);
 
-  RenderPageWithContext(pPage, pContext, 0, 0, size_x, size_y, 0, 0, true,
-                        nullptr);
+  CPDFSDK_RenderPageWithContext(pContext, pPage, 0, 0, size_x, size_y, 0, 0,
+                                /*need_to_restore=*/true, /*pause=*/nullptr);
   return recorder;
 }
 #endif  // _SKIA_SUPPORT_
@@ -908,21 +855,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetStride(FPDF_BITMAP bitmap) {
 FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
   RetainPtr<CFX_DIBitmap> destroyer;
   destroyer.Unleak(CFXDIBitmapFromFPDFBitmap(bitmap));
-}
-
-void RenderPageWithContext(CPDF_Page* pPage,
-                           CPDF_PageRenderContext* pContext,
-                           int start_x,
-                           int start_y,
-                           int size_x,
-                           int size_y,
-                           int rotate,
-                           int flags,
-                           bool bNeedToRestore,
-                           CPDFSDK_PauseAdapter* pause) {
-  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  RenderPageImpl(pContext, pPage, pPage->GetDisplayMatrix(rect, rotate), rect,
-                 flags, bNeedToRestore, pause);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

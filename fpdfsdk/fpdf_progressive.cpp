@@ -12,11 +12,15 @@
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pauseadapter.h"
+#include "fpdfsdk/cpdfsdk_renderpage.h"
 #include "public/fpdfview.h"
 #include "third_party/base/ptr_util.h"
+
+#ifdef _SKIA_SUPPORT_PATHS_
+#include "core/fxge/cfx_renderdevice.h"
+#endif
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_ProgressiveRenderer::kReady == FPDF_RENDER_READY,
@@ -56,8 +60,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   CPDFSDK_PauseAdapter pause_adapter(pause);
-  RenderPageWithContext(pPage, pContext, start_x, start_y, size_x, size_y,
-                        rotate, flags, false, &pause_adapter);
+  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+                                size_y, rotate, flags,
+                                /*need_to_restore=*/false, &pause_adapter);
 
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush(false);

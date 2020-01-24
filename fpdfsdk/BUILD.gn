@@ -39,6 +39,8 @@ source_set("fpdfsdk") {
     "cpdfsdk_pageview.h",
     "cpdfsdk_pauseadapter.cpp",
     "cpdfsdk_pauseadapter.h",
+    "cpdfsdk_renderpage.cpp",
+    "cpdfsdk_renderpage.h",
     "cpdfsdk_widget.cpp",
     "cpdfsdk_widget.h",
     "cpdfsdk_widgethandler.cpp",

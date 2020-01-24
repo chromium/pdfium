@@ -32,7 +32,6 @@ class CPDF_Object;
 class CPDF_Font;
 class CPDF_LinkExtract;
 class CPDF_PageObject;
-class CPDF_PageRenderContext;
 class CPDF_Stream;
 class CPDF_StructElement;
 class CPDF_StructTree;
@@ -40,7 +39,6 @@ class CPDF_TextPage;
 class CPDF_TextPageFind;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
-class CPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
 struct CPDF_JavaScript;
 
@@ -262,18 +260,6 @@ unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
 
 void SetPDFSandboxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL IsPDFSandboxPolicyEnabled(FPDF_DWORD policy);
-
-// TODO(dsinclair): Where should this live?
-void RenderPageWithContext(CPDF_Page* pPage,
-                           CPDF_PageRenderContext* pContext,
-                           int start_x,
-                           int start_y,
-                           int size_x,
-                           int size_y,
-                           int rotate,
-                           int flags,
-                           bool bNeedToRestore,
-                           CPDFSDK_PauseAdapter* pause);
 
 void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info);
 UNSUPPORT_INFO* GetPDFUnssuportInto();
