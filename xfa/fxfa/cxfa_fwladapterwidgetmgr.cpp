@@ -17,7 +17,7 @@ void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
   if (!pWidget)
     return;
 
-  auto* pFFWidget = static_cast<CXFA_FFWidget*>(pWidget->GetFFWidget());
+  auto* pFFWidget = static_cast<CXFA_FFWidget*>(pWidget->GetAdapterIface());
   if (!pFFWidget)
     return;
 
@@ -29,7 +29,7 @@ bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(CFWL_Widget* pWidget,
                                            float fMaxHeight,
                                            const CFX_RectF& rtAnchor,
                                            CFX_RectF* pPopupRect) {
-  auto* pFFWidget = static_cast<CXFA_FFWidget*>(pWidget->GetFFWidget());
+  auto* pFFWidget = static_cast<CXFA_FFWidget*>(pWidget->GetAdapterIface());
   CFX_RectF rtRotateAnchor =
       pFFWidget->GetRotateMatrix().TransformRect(rtAnchor);
   pFFWidget->GetDoc()->GetDocEnvironment()->GetPopupPos(

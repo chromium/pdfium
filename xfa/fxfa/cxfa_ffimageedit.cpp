@@ -35,7 +35,7 @@ bool CXFA_FFImageEdit::LoadWidget() {
   auto pNew = pdfium::MakeUnique<CFWL_PictureBox>(GetFWLApp());
   CFWL_PictureBox* pPictureBox = pNew.get();
   SetNormalWidget(std::move(pNew));
-  pPictureBox->SetFFWidget(this);
+  pPictureBox->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pPictureBox->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pPictureBox, pPictureBox);

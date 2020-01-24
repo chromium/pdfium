@@ -39,7 +39,8 @@ const float kLineHeight = 12.0f;
 
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
   CFWL_Widget* pOuter = pWidget ? pWidget->GetOutmost() : nullptr;
-  return pOuter ? static_cast<CXFA_FFWidget*>(pOuter->GetFFWidget()) : nullptr;
+  return pOuter ? static_cast<CXFA_FFWidget*>(pOuter->GetAdapterIface())
+                : nullptr;
 }
 
 }  // namespace

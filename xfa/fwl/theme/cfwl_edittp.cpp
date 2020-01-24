@@ -20,7 +20,7 @@ CFWL_EditTP::~CFWL_EditTP() = default;
 void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   if (CFWL_Part::CombTextLine == pParams.m_iPart) {
     CFWL_Widget::AdapterIface* pWidget =
-        pParams.m_pWidget->GetOutmost()->GetFFWidget();
+        pParams.m_pWidget->GetOutmost()->GetAdapterIface();
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
     pWidget->GetBorderColorAndThickness(&cr, &fWidth);

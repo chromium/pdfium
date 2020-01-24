@@ -48,7 +48,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
   ASSERT(!IsLoaded());
   CFWL_Edit* pFWLEdit = pNewWidget.get();
   SetNormalWidget(std::move(pNewWidget));
-  pFWLEdit->SetFFWidget(this);
+  pFWLEdit->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pFWLEdit->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pFWLEdit, pFWLEdit);

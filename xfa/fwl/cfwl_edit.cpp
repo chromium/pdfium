@@ -914,7 +914,7 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
     pRect->Offset(rtOuter.left, rtOuter.top);
   }
 
-  CFWL_Widget::AdapterIface* pXFAWidget = pOuter->GetFFWidget();
+  CFWL_Widget::AdapterIface* pXFAWidget = pOuter->GetAdapterIface();
   if (!pXFAWidget)
     return;
 
@@ -933,7 +933,7 @@ void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
   while (pOuter->GetOuter())
     pOuter = pOuter->GetOuter();
 
-  CFWL_Widget::AdapterIface* pXFAWidget = pOuter->GetFFWidget();
+  CFWL_Widget::AdapterIface* pXFAWidget = pOuter->GetAdapterIface();
   if (!pXFAWidget)
     return;
 

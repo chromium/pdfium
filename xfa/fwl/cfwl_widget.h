@@ -127,9 +127,8 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   uint32_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint32_t key) { m_nEventKey = key; }
 
-  AdapterIface* GetFFWidget() const { return m_pFFWidget; }
-  void SetFFWidget(AdapterIface* pItem) { m_pFFWidget = pItem; }
-
+  AdapterIface* GetAdapterIface() const { return m_pAdapterIface; }
+  void SetAdapterIface(AdapterIface* pItem) { m_pAdapterIface = pItem; }
   void RepaintRect(const CFX_RectF& pRect);
 
  protected:
@@ -185,7 +184,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   bool IsParent(CFWL_Widget* pParent);
 
   uint32_t m_nEventKey = 0;
-  AdapterIface* m_pFFWidget = nullptr;
+  AdapterIface* m_pAdapterIface = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };
 

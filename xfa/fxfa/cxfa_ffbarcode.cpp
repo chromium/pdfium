@@ -143,7 +143,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   auto pNew = pdfium::MakeUnique<CFWL_Barcode>(GetFWLApp());
   CFWL_Barcode* pFWLBarcode = pNew.get();
   SetNormalWidget(std::move(pNew));
-  pFWLBarcode->SetFFWidget(this);
+  pFWLBarcode->SetAdapterIface(this);
 
   CFWL_NoteDriver* pNoteDriver = pFWLBarcode->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pFWLBarcode, pFWLBarcode);
