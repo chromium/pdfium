@@ -469,11 +469,12 @@ RetainPtr<IFX_SeekableReadStream> CreateFontStream(
     const ByteString& bsFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
+  pFontMapper->LoadInstalledFonts();
+
   SystemFontInfoIface* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
   if (!pSystemFontInfo)
     return nullptr;
 
-  pSystemFontInfo->EnumFontList(pFontMapper);
   for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
     if (pFontMapper->GetFaceName(i) == bsFaceName)
       return CreateFontStream(pFontMapper, pSystemFontInfo, i);
@@ -636,7 +637,6 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
   if (!pSystemFontInfo)
     return false;
 
-  pSystemFontInfo->EnumFontList(pFontMapper);
   for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
     RetainPtr<IFX_SeekableReadStream> pFontStream =
         CreateFontStream(pFontMapper, pSystemFontInfo, i);
