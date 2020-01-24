@@ -121,11 +121,11 @@ void CPDF_LinkExtract::ExtractLinks() {
   while (pos < nTotalChar) {
     const CPDF_TextPage::CharInfo& char_info = m_pTextPage->GetCharInfo(pos);
     if (char_info.m_CharType != CPDF_TextPage::CharType::kGenerated &&
-        char_info.m_Unicode != TEXT_SPACE_CHAR && pos != nTotalChar - 1) {
+        char_info.m_Unicode != L' ' && pos != nTotalChar - 1) {
       bAfterHyphen =
           (char_info.m_CharType == CPDF_TextPage::CharType::kHyphen ||
            (char_info.m_CharType == CPDF_TextPage::CharType::kNormal &&
-            char_info.m_Unicode == TEXT_HYPHEN_CHAR));
+            char_info.m_Unicode == L'-'));
       ++pos;
       continue;
     }
@@ -133,8 +133,8 @@ void CPDF_LinkExtract::ExtractLinks() {
     int nCount = pos - start;
     if (pos == nTotalChar - 1) {
       ++nCount;
-    } else if (bAfterHyphen && (char_info.m_Unicode == TEXT_LINEFEED_CHAR ||
-                                char_info.m_Unicode == TEXT_RETURN_CHAR)) {
+    } else if (bAfterHyphen &&
+               (char_info.m_Unicode == L'\n' || char_info.m_Unicode == L'\r')) {
       // Handle text breaks with a hyphen to the next line.
       bLineBreak = true;
       ++pos;
@@ -143,12 +143,12 @@ void CPDF_LinkExtract::ExtractLinks() {
 
     WideString strBeCheck = page_text.Mid(start, nCount);
     if (bLineBreak) {
-      strBeCheck.Remove(TEXT_LINEFEED_CHAR);
-      strBeCheck.Remove(TEXT_RETURN_CHAR);
+      strBeCheck.Remove(L'\n');
+      strBeCheck.Remove(L'\r');
       bLineBreak = false;
     }
     // Replace the generated code with the hyphen char.
-    strBeCheck.Replace(L"\xfffe", TEXT_HYPHEN);
+    strBeCheck.Replace(L"\xfffe", L"-");
 
     if (strBeCheck.GetLength() > 5) {
       while (strBeCheck.GetLength() > 0) {

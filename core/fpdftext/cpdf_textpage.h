@@ -23,13 +23,6 @@ class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;
 
-#define TEXT_SPACE_CHAR L' '
-#define TEXT_LINEFEED_CHAR L'\n'
-#define TEXT_RETURN_CHAR L'\r'
-#define TEXT_HYPHEN_CHAR L'-'
-#define TEXT_HYPHEN L"-"
-#define TEXT_CHARRATIO_GAPDELTA 0.070
-
 struct PDFTEXT_Obj {
   PDFTEXT_Obj();
   PDFTEXT_Obj(const PDFTEXT_Obj& that);

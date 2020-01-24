@@ -933,11 +933,11 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       case GenerateCharacter::kNone:
         break;
       case GenerateCharacter::kSpace: {
-        Optional<CharInfo> pGenerateChar = GenerateCharInfo(TEXT_SPACE_CHAR);
+        Optional<CharInfo> pGenerateChar = GenerateCharInfo(L' ');
         if (pGenerateChar) {
           if (!formMatrix.IsIdentity())
             pGenerateChar->m_Matrix = formMatrix;
-          m_TempTextBuf.AppendChar(TEXT_SPACE_CHAR);
+          m_TempTextBuf.AppendChar(L' ');
           m_TempCharList.push_back(*pGenerateChar);
         }
         break;
@@ -945,8 +945,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       case GenerateCharacter::kLineBreak:
         CloseTempLine();
         if (m_TextBuf.GetSize()) {
-          AppendGeneratedCharacter(TEXT_RETURN_CHAR, formMatrix);
-          AppendGeneratedCharacter(TEXT_LINEFEED_CHAR, formMatrix);
+          AppendGeneratedCharacter(L'\r', formMatrix);
+          AppendGeneratedCharacter(L'\n', formMatrix);
         }
         break;
       case GenerateCharacter::kHyphen:
@@ -1005,7 +1005,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       WideString str = m_TempTextBuf.MakeString();
       if (str.IsEmpty())
         str = m_TextBuf.AsStringView();
-      if (str.IsEmpty() || str[str.GetLength() - 1] == TEXT_SPACE_CHAR)
+      if (str.IsEmpty() || str[str.GetLength() - 1] == L' ')
         continue;
 
       float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
@@ -1034,11 +1034,11 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         threshold = fontsize_h * threshold / 1000;
       }
       if (threshold && (spacing && spacing >= threshold)) {
-        charinfo.m_Unicode = TEXT_SPACE_CHAR;
+        charinfo.m_Unicode = L' ';
         charinfo.m_CharType = CPDF_TextPage::CharType::kGenerated;
         charinfo.m_pTextObj = pTextObj;
         charinfo.m_Index = m_TextBuf.GetLength();
-        m_TempTextBuf.AppendChar(TEXT_SPACE_CHAR);
+        m_TempTextBuf.AppendChar(L' ');
         charinfo.m_CharCode = CPDF_Font::kInvalidCharCode;
         charinfo.m_Matrix = formMatrix;
         charinfo.m_Origin = matrix.Transform(item.m_Origin);
@@ -1092,8 +1092,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     int nTotal = wstrItem.GetLength();
     bool bDel = false;
     const int count = std::min(pdfium::CollectionSize<int>(m_TempCharList), 7);
+    constexpr float kTextCharRatioGapDelta = 0.07f;
     float threshold = charinfo.m_Matrix.TransformXDistance(
-        static_cast<float>(TEXT_CHARRATIO_GAPDELTA) * pTextObj->GetFontSize());
+        kTextCharRatioGapDelta * pTextObj->GetFontSize());
     for (int n = pdfium::CollectionSize<int>(m_TempCharList);
          n > pdfium::CollectionSize<int>(m_TempCharList) - count; --n) {
       const CharInfo& charinfo1 = m_TempCharList[n - 1];
@@ -1118,7 +1119,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       }
     } else if (i == 0) {
       WideString str = m_TempTextBuf.MakeString();
-      if (!str.IsEmpty() && str[str.GetLength() - 1] == TEXT_SPACE_CHAR) {
+      if (!str.IsEmpty() && str[str.GetLength() - 1] == L' ') {
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         m_TempCharList.pop_back();
       }

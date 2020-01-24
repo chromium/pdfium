@@ -19,6 +19,8 @@
 
 namespace {
 
+constexpr wchar_t kNonBreakingSpace = 160;
+
 bool IsIgnoreSpaceCharacter(wchar_t curChar) {
   if (curChar < 255 || (curChar >= 0x0600 && curChar <= 0x06FF) ||
       (curChar >= 0xFE70 && curChar <= 0xFEFF) ||
@@ -92,16 +94,16 @@ Optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
   ASSERT(lpszFullString);
 
   while (iSubString--) {
-    lpszFullString = std::wcschr(lpszFullString, TEXT_SPACE_CHAR);
+    lpszFullString = std::wcschr(lpszFullString, L' ');
     if (!lpszFullString)
       return {};
 
     lpszFullString++;
-    while (*lpszFullString == TEXT_SPACE_CHAR)
+    while (*lpszFullString == L' ')
       lpszFullString++;
   }
 
-  const wchar_t* lpchEnd = std::wcschr(lpszFullString, TEXT_SPACE_CHAR);
+  const wchar_t* lpchEnd = std::wcschr(lpszFullString, L' ');
   int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
                      : static_cast<int>(wcslen(lpszFullString));
   if (nLen < 0)
@@ -223,8 +225,8 @@ bool CPDF_TextPageFind::FindNext() {
     if (csWord.IsEmpty()) {
       if (iWord == nCount - 1) {
         wchar_t strInsert = m_strText[nStartPos];
-        if (strInsert == TEXT_LINEFEED_CHAR || strInsert == TEXT_SPACE_CHAR ||
-            strInsert == TEXT_RETURN_CHAR || strInsert == 160) {
+        if (strInsert == L'\n' || strInsert == L' ' || strInsert == L'\r' ||
+            strInsert == kNonBreakingSpace) {
           nResultPos = nStartPos + 1;
           break;
         }
@@ -254,8 +256,8 @@ bool CPDF_TextPageFind::FindNext() {
       }
       for (size_t d = PreResEndPos; d < nResultPos.value(); d++) {
         wchar_t strInsert = m_strText[d];
-        if (strInsert != TEXT_LINEFEED_CHAR && strInsert != TEXT_SPACE_CHAR &&
-            strInsert != TEXT_RETURN_CHAR && strInsert != 160) {
+        if (strInsert != L'\n' && strInsert != L' ' && strInsert != L'\r' &&
+            strInsert != kNonBreakingSpace) {
           bMatch = false;
           break;
         }
@@ -263,8 +265,8 @@ bool CPDF_TextPageFind::FindNext() {
     } else if (bSpaceStart) {
       if (nResultPos.value() > 0) {
         wchar_t strInsert = m_strText[nResultPos.value() - 1];
-        if (strInsert != TEXT_LINEFEED_CHAR && strInsert != TEXT_SPACE_CHAR &&
-            strInsert != TEXT_RETURN_CHAR && strInsert != 160) {
+        if (strInsert != L'\n' && strInsert != L' ' && strInsert != L'\r' &&
+            strInsert != kNonBreakingSpace) {
           bMatch = false;
           m_resStart = nResultPos.value();
         } else {
