@@ -798,8 +798,7 @@ bool CXFA_TextLayout::LoadRichText(
           } else if (CFX_CSSDisplay::Inline == eDisplay &&
                      m_pLoader->bFilterSpace) {
             m_pLoader->bFilterSpace = false;
-          } else if (wsText.GetLength() > 0 &&
-                     (0x20 == wsText[wsText.GetLength() - 1])) {
+          } else if (wsText.GetLength() > 0 && wsText.Last() == 0x20) {
             m_pLoader->bFilterSpace = true;
           } else if (wsText.GetLength() != 0) {
             m_pLoader->bFilterSpace = false;
@@ -816,14 +815,13 @@ bool CXFA_TextLayout::LoadRichText(
           if (AppendChar(wsText, pLinePos, 0, bSavePieces)) {
             if (m_pLoader)
               m_pLoader->bFilterSpace = false;
-            if (IsEnd(bSavePieces)) {
-              if (m_pLoader && m_pLoader->iTotalLines > -1) {
-                m_pLoader->pXMLNode = pXMLNode;
-                m_pLoader->pParentStyle = pParentStyle;
-              }
-              return false;
+            if (!IsEnd(bSavePieces))
+              return true;
+            if (m_pLoader && m_pLoader->iTotalLines > -1) {
+              m_pLoader->pXMLNode = pXMLNode;
+              m_pLoader->pParentStyle = pParentStyle;
             }
-            return true;
+            return false;
           }
         }
       }

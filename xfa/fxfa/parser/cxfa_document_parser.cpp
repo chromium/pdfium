@@ -195,8 +195,7 @@ WideString GetPlainTextFromRichText(CFX_XMLNode* pXMLNode) {
           wsPlainText += L"\n";
         }
       } else if (uTag == 0xa48ac63) {
-        if (!wsPlainText.IsEmpty() &&
-            wsPlainText[wsPlainText.GetLength() - 1] != '\n') {
+        if (!wsPlainText.IsEmpty() && wsPlainText.Last() != '\n') {
           wsPlainText += L"\n";
         }
       }

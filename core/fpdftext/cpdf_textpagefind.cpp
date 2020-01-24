@@ -248,7 +248,7 @@ bool CPDF_TextPageFind::FindNext() {
       size_t PreResEndPos = nStartPos;
       int curChar = csWord[0];
       WideString lastWord = m_csFindWhatArray[iWord - 1];
-      int lastChar = lastWord[lastWord.GetLength() - 1];
+      int lastChar = lastWord.Last();
       if (nStartPos == nResultPos.value() &&
           !(IsIgnoreSpaceCharacter(lastChar) ||
             IsIgnoreSpaceCharacter(curChar))) {
