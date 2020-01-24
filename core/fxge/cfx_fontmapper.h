@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/cfx_face.h"
 #include "third_party/base/optional.h"
@@ -50,7 +51,6 @@ class CFX_FontMapper {
   }
 
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
-  SystemFontInfoIface* GetSystemFontInfo() { return m_pFontInfo.get(); }
   void AddInstalledFont(const ByteString& name, int charset);
   void LoadInstalledFonts();
 
@@ -65,6 +65,12 @@ class CFX_FontMapper {
   bool IsBuiltinFace(const RetainPtr<CFX_Face>& face) const;
   int GetFaceSize() const;
   ByteString GetFaceName(int index) const { return m_FaceArray[index].name; }
+
+#ifdef PDF_ENABLE_XFA
+  std::unique_ptr<uint8_t, FxFreeDeleter> RawBytesForIndex(
+      uint32_t index,
+      size_t* returned_length);
+#endif  // PDF_ENABLE_XFA
 
   std::vector<ByteString> m_InstalledTTFonts;
   std::vector<std::pair<ByteString, ByteString>> m_LocalizedTTFonts;

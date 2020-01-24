@@ -667,6 +667,30 @@ int CFX_FontMapper::GetFaceSize() const {
   return pdfium::CollectionSize<int>(m_FaceArray);
 }
 
+#ifdef PDF_ENABLE_XFA
+std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
+    uint32_t index,
+    size_t* returned_length) {
+  if (!m_pFontInfo)
+    return nullptr;
+
+  void* hFont = m_pFontInfo->MapFont(0, 0, FX_CHARSET_Default, 0,
+                                     GetFaceName(index).c_str());
+  if (!hFont)
+    return nullptr;
+
+  uint32_t required_size = m_pFontInfo->GetFontData(hFont, 0, {});
+  if (required_size == 0)
+    return nullptr;
+
+  std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer(
+      FX_Alloc(uint8_t, required_size + 1));
+  *returned_length =
+      m_pFontInfo->GetFontData(hFont, 0, {pBuffer.get(), required_size});
+  return pBuffer;
+}
+#endif  // PDF_ENABLE_XFA
+
 bool CFX_FontMapper::IsBuiltinFace(const RetainPtr<CFX_Face>& face) const {
   for (size_t i = 0; i < MM_FACE_COUNT; ++i) {
     if (m_MMFaces[i] == face)

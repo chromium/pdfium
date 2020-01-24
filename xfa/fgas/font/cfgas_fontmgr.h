@@ -17,8 +17,8 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/cfx_face.h"
 #include "core/fxge/fx_freetype.h"
-#include "core/fxge/systemfontinfo_iface.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
 class CFGAS_GEFont;
