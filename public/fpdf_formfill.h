@@ -720,6 +720,13 @@ typedef struct _FPDF_FORMFILLINFO {
 
   /* Version 2 - Experimental. */
   /*
+   * Whether the XFA module is disabled when built with the XFA module.
+   * Interface Version:
+   *       Ignored if |version| < 2.
+   */
+  FPDF_BOOL xfa_disabled;
+
+  /*
    * Method: FFI_DisplayCaret
    *       This method will show the caret at specified position.
    * Interface Version:

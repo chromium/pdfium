@@ -297,20 +297,24 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   if (!pDocument)
     return nullptr;
 
-#ifdef PDF_ENABLE_XFA
-  // If the CPDFXFA_Context has a FormFillEnvironment already then we've done
-  // this and can just return the old Env. Otherwise, we'll end up setting a new
-  // environment into the XFADocument and, that could get weird.
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDocument->GetExtension());
-  if (pContext && pContext->GetFormFillEnv()) {
-    return FPDFFormHandleFromCPDFSDKFormFillEnvironment(
-        pContext->GetFormFillEnv());
-  }
-#endif
-
   std::unique_ptr<IPDFSDK_AnnotHandler> pXFAHandler;
 #ifdef PDF_ENABLE_XFA
-  pXFAHandler = pdfium::MakeUnique<CPDFXFA_WidgetHandler>();
+  CPDFXFA_Context* pContext = nullptr;
+  if (!formInfo->xfa_disabled) {
+    if (!pDocument->GetExtension()) {
+      pDocument->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(pDocument));
+    }
+
+    // If the CPDFXFA_Context has a FormFillEnvironment already then we've done
+    // this and can just return the old Env. Otherwise, we'll end up setting a
+    // new environment into the XFADocument and, that could get weird.
+    pContext = static_cast<CPDFXFA_Context*>(pDocument->GetExtension());
+    if (pContext->GetFormFillEnv()) {
+      return FPDFFormHandleFromCPDFSDKFormFillEnvironment(
+          pContext->GetFormFillEnv());
+    }
+    pXFAHandler = pdfium::MakeUnique<CPDFXFA_WidgetHandler>();
+  }
 #endif  // PDF_ENABLE_XFA
 
   auto pFormFillEnv = pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(
@@ -323,6 +327,8 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
   if (pContext)
     pContext->SetFormFillEnv(pFormFillEnv.get());
 #endif  // PDF_ENABLE_XFA
+
+  ReportUnsupportedXFA(pDocument);
 
   return FPDFFormHandleFromCPDFSDKFormFillEnvironment(
       pFormFillEnv.release());  // Caller takes ownership.

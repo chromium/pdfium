@@ -362,7 +362,9 @@ void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
         RaiseUnsupportedError(static_cast<int>(err));
     }
   }
+}
 
+void ReportUnsupportedXFA(CPDF_Document* pDoc) {
   // XFA Forms
   if (!pDoc->GetExtension() && CPDF_InteractiveForm(pDoc).HasXFAForm())
     RaiseUnsupportedError(FPDF_UNSP_DOC_XFAFORM);

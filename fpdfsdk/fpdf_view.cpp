@@ -95,10 +95,6 @@ FPDF_DOCUMENT LoadDocumentImpl(
     return nullptr;
   }
 
-#ifdef PDF_ENABLE_XFA
-  pDocument->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(pDocument.get()));
-#endif  // PDF_ENABLE_XFA
-
   ReportUnsupportedFeatures(pDocument.get());
   return FPDFDocumentFromCPDFDocument(pDocument.release());
 }

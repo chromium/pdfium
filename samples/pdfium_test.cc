@@ -903,6 +903,8 @@ void RenderPdf(const std::string& name,
   FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
 #ifdef PDF_ENABLE_XFA
   form_callbacks.version = 2;
+  form_callbacks.xfa_disabled =
+      options.disable_xfa || options.disable_javascript;
 #else   // PDF_ENABLE_XFA
   form_callbacks.version = 1;
 #endif  // PDF_ENABLE_XFA
