@@ -1350,7 +1350,7 @@ CXFA_Node* CXFA_ViewLayoutProcessor::GetNextAvailPageArea(
   }
 
   CXFA_Node* pPageSet = m_pCurPageArea->GetParent();
-  while (true) {
+  while (pPageSet) {
     if (FindPageAreaFromPageSet(pPageSet, nullptr, pTargetPageArea,
                                 pTargetContentArea, bNewPage, bQuery)) {
       return m_pCurPageArea;
@@ -1454,9 +1454,6 @@ int32_t CXFA_ViewLayoutProcessor::CreateMinPageRecord(CXFA_Node* pPageArea,
 
 void CXFA_ViewLayoutProcessor::CreateMinPageSetRecord(CXFA_Node* pPageSet,
                                                       bool bCreateAll) {
-  if (!pPageSet)
-    return;
-
   auto it = m_pPageSetMap.find(pPageSet);
   if (it == m_pPageSetMap.end())
     return;
@@ -1507,7 +1504,7 @@ void CXFA_ViewLayoutProcessor::ProcessLastPageSet() {
   CreateMinPageRecord(m_pCurPageArea, false, true);
   CreateNextMinRecord(m_pCurPageArea);
   CXFA_Node* pPageSet = m_pCurPageArea->GetParent();
-  while (true) {
+  while (pPageSet) {
     CreateMinPageSetRecord(pPageSet, false);
     if (pPageSet == m_pPageSetNode)
       break;
