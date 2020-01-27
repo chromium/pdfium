@@ -1,0 +1,14 @@
+Alert: PASS: currentRecordNumber = undefined
+Alert: PASS: currentRecordNumber = undefined
+Alert: PASS: isDefined = undefined
+Alert: PASS: isDefined = undefined
+Alert: PASS: recordsAfter = undefined
+Alert: PASS: recordsAfter = undefined
+Alert: PASS: recordsBefore = undefined
+Alert: PASS: recordsBefore = undefined
+Alert: finished testing properties
+Alert: PASS: xfa.dataWindow.gotoRecord() = undefined
+Alert: PASS: xfa.dataWindow.isRecordGroup() = undefined
+Alert: PASS: xfa.dataWindow.moveCurrentRecord() = undefined
+Alert: PASS: xfa.dataWindow.record() = undefined
+Alert: finished testing methods
