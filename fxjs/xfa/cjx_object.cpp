@@ -1100,7 +1100,7 @@ void CJX_Object::ScriptAttributeString(CFXJSE_Value* pValue,
   WideString wsSOM;
   if (!wsValue.IsEmpty()) {
     if (wsValue[0] == '#')
-      wsID = wsValue.Mid(1, wsValue.GetLength() - 1);
+      wsID = wsValue.Substr(1, wsValue.GetLength() - 1);
     else
       wsSOM = std::move(wsValue);
   }

@@ -60,7 +60,7 @@ WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) const {
   size_t index = value >> 16;
   if (!buf.IsValidIndex(index))
     return WideString();
-  return WideString(buf.Mid(index + 1, buf[index]));
+  return WideString(buf.Substr(index + 1, buf[index]));
 }
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(wchar_t unicode) const {
@@ -78,7 +78,7 @@ pdfium::Optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView str) {
     return pdfium::nullopt;
 
   FX_SAFE_UINT32 code = 0;
-  for (char c : str.Mid(1, len - 2)) {
+  for (char c : str.Substr(1, len - 2)) {
     if (!FXSYS_IsHexDigit(c))
       return pdfium::nullopt;
 
@@ -98,7 +98,7 @@ WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
   WideString result;
   int byte_pos = 0;
   wchar_t ch = 0;
-  for (char c : str.Mid(1, len - 2)) {
+  for (char c : str.Substr(1, len - 2)) {
     if (!FXSYS_IsHexDigit(c))
       break;
 

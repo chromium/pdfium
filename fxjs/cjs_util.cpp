@@ -117,7 +117,7 @@ CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
       }
 
       unsafe_conversion_specifiers.push_back(
-          unsafe_fmt_string.Mid(offset, offset_end.value() - offset));
+          unsafe_fmt_string.Substr(offset, offset_end.value() - offset));
       offset = offset_end.value();
     }
   }

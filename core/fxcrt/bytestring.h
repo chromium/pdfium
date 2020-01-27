@@ -163,7 +163,7 @@ class ByteString {
   pdfium::span<char> GetBuffer(size_t nMinBufLength);
   void ReleaseBuffer(size_t nNewLength);
 
-  ByteString Mid(size_t first, size_t count) const;
+  ByteString Substr(size_t first, size_t count) const;
   ByteString Left(size_t count) const;
   ByteString Right(size_t count) const;
 

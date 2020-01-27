@@ -338,13 +338,13 @@ std::pair<bool, uint32_t> PatternStringType(ByteStringView bsPattern) {
     return {true, XFA_VT_TEXT};
   if (L"num" == wsPattern.Left(3)) {
     uint32_t type;
-    if (L"integer" == wsPattern.Mid(4, 7)) {
+    if (L"integer" == wsPattern.Substr(4, 7)) {
       type = XFA_VT_INTEGER;
-    } else if (L"decimal" == wsPattern.Mid(4, 7)) {
+    } else if (L"decimal" == wsPattern.Substr(4, 7)) {
       type = XFA_VT_DECIMAL;
-    } else if (L"currency" == wsPattern.Mid(4, 8)) {
+    } else if (L"currency" == wsPattern.Substr(4, 8)) {
       type = XFA_VT_FLOAT;
-    } else if (L"percent" == wsPattern.Mid(4, 7)) {
+    } else if (L"percent" == wsPattern.Substr(4, 7)) {
       type = XFA_VT_FLOAT;
     } else {
       type = XFA_VT_FLOAT;
@@ -4295,7 +4295,8 @@ void CFXJSE_FormCalcContext::Substr(CFXJSE_Value* pThis,
   // Negative values are treated as 0. Can't clamp() due to sign mismatches.
   size_t iCount = std::max(ValueToInteger(pThis, end_value.get()), 0);
   iCount = std::min(iCount, iLength - iStart);
-  args.GetReturnValue()->SetString(bsSource.Mid(iStart, iCount).AsStringView());
+  args.GetReturnValue()->SetString(
+      bsSource.Substr(iStart, iCount).AsStringView());
 }
 
 // static

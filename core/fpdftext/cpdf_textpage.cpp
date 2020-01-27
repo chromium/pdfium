@@ -486,7 +486,7 @@ WideString CPDF_TextPage::GetPageText(int start, int count) const {
 
   int text_count = text_last - text_start + 1;
 
-  return WideString(m_TextBuf.AsStringView().Mid(text_start, text_count));
+  return WideString(m_TextBuf.AsStringView().Substr(text_start, text_count));
 }
 
 int CPDF_TextPage::CountRects(int start, int nCount) {

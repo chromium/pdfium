@@ -141,7 +141,7 @@ void CPDF_LinkExtract::ExtractLinks() {
       continue;
     }
 
-    WideString strBeCheck = page_text.Mid(start, nCount);
+    WideString strBeCheck = page_text.Substr(start, nCount);
     if (bLineBreak) {
       strBeCheck.Remove(L'\n');
       strBeCheck.Remove(L'\r');
@@ -205,7 +205,7 @@ bool CPDF_LinkExtract::CheckWebLink(WideString* strBeCheck,
         if (end > off) {  // Non-empty host name.
           *nStart = start.value();
           *nCount = end - start.value() + 1;
-          *strBeCheck = strBeCheck->Mid(*nStart, *nCount);
+          *strBeCheck = strBeCheck->Substr(*nStart, *nCount);
           return true;
         }
       }
@@ -221,7 +221,7 @@ bool CPDF_LinkExtract::CheckWebLink(WideString* strBeCheck,
     if (end > start.value() + kWWWAddrStartLen) {
       *nStart = start.value();
       *nCount = end - start.value() + 1;
-      *strBeCheck = L"http://" + strBeCheck->Mid(*nStart, *nCount);
+      *strBeCheck = L"http://" + strBeCheck->Substr(*nStart, *nCount);
       return true;
     }
   }

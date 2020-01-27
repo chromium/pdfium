@@ -432,7 +432,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               bool bFind = false;
               nSkip = FindSubWordLength(value, j);
               if (nSkip == KMonthAbbreviationLength) {
-                WideString sMonth = value.Mid(j, KMonthAbbreviationLength);
+                WideString sMonth = value.Substr(j, KMonthAbbreviationLength);
                 for (size_t m = 0; m < FX_ArraySize(kMonths); ++m) {
                   if (sMonth.CompareNoCase(kMonths[m]) == 0) {
                     nMonth = m + 1;
@@ -468,7 +468,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               bool bFind = false;
               nSkip = FindSubWordLength(value, j);
               if (nSkip <= kLongestFullMonthLength) {
-                WideString sMonth = value.Mid(j, nSkip);
+                WideString sMonth = value.Substr(j, nSkip);
                 sMonth.MakeLower();
                 for (size_t m = 0; m < FX_ArraySize(kFullMonths); ++m) {
                   WideString sFullMonths = WideString(kFullMonths[m]);

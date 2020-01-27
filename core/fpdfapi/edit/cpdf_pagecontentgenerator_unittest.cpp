@@ -215,8 +215,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
             pathString.Right(43));
   ASSERT_GT(pathString.GetLength(), 91U);
-  CPDF_Dictionary* externalGS = TestGetResource(
-      &generator, "ExtGState", pathString.Mid(48, pathString.GetLength() - 91));
+  CPDF_Dictionary* externalGS =
+      TestGetResource(&generator, "ExtGState",
+                      pathString.Substr(48, pathString.GetLength() - 91));
   ASSERT_TRUE(externalGS);
   EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
   EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
@@ -233,8 +234,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
 
   // Compare with the previous (should use same dictionary for gs)
   EXPECT_EQ(pathString.GetLength() + 7, pathString2.GetLength());
-  EXPECT_EQ(pathString.Mid(48, pathString.GetLength() - 76),
-            pathString2.Mid(55, pathString2.GetLength() - 83));
+  EXPECT_EQ(pathString.Substr(48, pathString.GetLength() - 76),
+            pathString2.Substr(55, pathString2.GetLength() - 83));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
@@ -274,8 +275,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   secondResourceAt = secondResourceAt.value() + 1;
   ByteString firstString = textString.Left(firstResourceAt.value());
   ByteString midString =
-      textString.Mid(firstResourceAt.value(),
-                     secondResourceAt.value() - firstResourceAt.value());
+      textString.Substr(firstResourceAt.value(),
+                        secondResourceAt.value() - firstResourceAt.value());
   ByteString lastString =
       textString.Right(textString.GetLength() - secondResourceAt.value());
   // q and Q must be outside the BT .. ET operations
@@ -357,9 +358,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   EXPECT_EQ(compareString2, textString.Right(compareString2.GetLength()));
   CPDF_Dictionary* fontDict = TestGetResource(
       &generator, "Font",
-      textString.Mid(compareString1.GetLength(),
-                     textString.GetLength() - compareString1.GetLength() -
-                         compareString2.GetLength()));
+      textString.Substr(compareString1.GetLength(),
+                        textString.GetLength() - compareString1.GetLength() -
+                            compareString2.GetLength()));
   ASSERT_TRUE(fontDict);
   EXPECT_TRUE(fontDict->GetObjNum());
   EXPECT_EQ("Font", fontDict->GetStringFor("Type"));

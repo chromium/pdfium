@@ -295,7 +295,7 @@ void CBC_PDF417HighLevelEncoder::EncodeNumeric(const WideString& msg,
   while (idx < count) {
     WideString tmp;
     size_t len = 44 < count - idx ? 44 : count - idx;
-    ByteString part = (L'1' + msg.Mid(startpos + idx, len)).ToUTF8();
+    ByteString part = (L'1' + msg.Substr(startpos + idx, len)).ToUTF8();
     BigInteger bigint = stringToBigInteger(part.c_str());
     do {
       int32_t c = (bigint % num900).toInt();

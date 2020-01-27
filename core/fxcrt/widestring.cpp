@@ -694,7 +694,7 @@ ByteString WideString::ToUTF16LE() const {
   return result;
 }
 
-WideString WideString::Mid(size_t first, size_t count) const {
+WideString WideString::Substr(size_t first, size_t count) const {
   if (!m_pData)
     return WideString();
 
@@ -718,13 +718,13 @@ WideString WideString::Mid(size_t first, size_t count) const {
 WideString WideString::Left(size_t count) const {
   if (count == 0 || !IsValidLength(count))
     return WideString();
-  return Mid(0, count);
+  return Substr(0, count);
 }
 
 WideString WideString::Right(size_t count) const {
   if (count == 0 || !IsValidLength(count))
     return WideString();
-  return Mid(GetLength() - count, count);
+  return Substr(GetLength() - count, count);
 }
 
 void WideString::AllocCopy(WideString& dest,

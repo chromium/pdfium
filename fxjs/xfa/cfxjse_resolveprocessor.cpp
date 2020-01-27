@@ -40,7 +40,7 @@ void DoPredicateFilter(WideString wsCondition,
   else
     return;
 
-  wsExpression = wsCondition.Mid(2, wsCondition.GetLength() - 3);
+  wsExpression = wsCondition.Substr(2, wsCondition.GetLength() - 3);
   for (size_t i = iFoundCount; i > 0; --i) {
     auto pRetValue =
         pdfium::MakeUnique<CFXJSE_Value>(pRnd->m_pSC->GetIsolate());
@@ -633,7 +633,7 @@ void CFXJSE_ResolveProcessor::ConditionArray(size_t iCurIndex,
   if (iFoundCount == 1 && !iLen)
     return;
 
-  int32_t iIndex = wsCondition.Mid(i, iLen - 1 - i).GetInteger();
+  int32_t iIndex = wsCondition.Substr(i, iLen - 1 - i).GetInteger();
   if (bRelative)
     iIndex += iCurIndex;
 

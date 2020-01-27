@@ -222,7 +222,8 @@ bool ParsePageRangeString(const ByteString& bsPageRange,
   size_t nStringTo = 0;
   while (nStringTo < nLength) {
     nStringTo = bsStrippedPageRange.Find(',', nStringFrom).value_or(nLength);
-    cbMidRange = bsStrippedPageRange.Mid(nStringFrom, nStringTo - nStringFrom);
+    cbMidRange =
+        bsStrippedPageRange.Substr(nStringFrom, nStringTo - nStringFrom);
     Optional<size_t> nDashPosition = cbMidRange.Find('-');
     if (nDashPosition) {
       size_t nMid = nDashPosition.value();
@@ -237,7 +238,7 @@ bool ParsePageRangeString(const ByteString& bsPageRange,
         return false;
 
       uint32_t nEndPageNum = pdfium::base::checked_cast<uint32_t>(
-          atoi(cbMidRange.Mid(nMid, nEnd).c_str()));
+          atoi(cbMidRange.Substr(nMid, nEnd).c_str()));
       if (nStartPageNum < 0 || nStartPageNum > nEndPageNum ||
           nEndPageNum > nCount) {
         return false;

@@ -720,8 +720,8 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 
   WideString wstrSelected;
   if (pEvent->SelStart() != -1) {
-    wstrSelected = wstrValue.Mid(pEvent->SelStart(),
-                                 pEvent->SelEnd() - pEvent->SelStart());
+    wstrSelected = wstrValue.Substr(pEvent->SelStart(),
+                                    pEvent->SelEnd() - pEvent->SelStart());
   }
 
   bool bHasSign = wstrValue.Contains(L'-') && !wstrSelected.Contains(L'-');

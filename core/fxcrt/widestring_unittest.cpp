@@ -611,27 +611,27 @@ TEST(WideString, Delete) {
   EXPECT_EQ(L"", empty);
 }
 
-TEST(WideString, Mid) {
+TEST(WideString, Substr) {
   WideString fred(L"FRED");
-  EXPECT_EQ(L"", fred.Mid(0, 0));
-  EXPECT_EQ(L"", fred.Mid(3, 0));
-  EXPECT_EQ(L"FRED", fred.Mid(0, 4));
-  EXPECT_EQ(L"RED", fred.Mid(1, 3));
-  EXPECT_EQ(L"ED", fred.Mid(2, 2));
-  EXPECT_EQ(L"D", fred.Mid(3, 1));
-  EXPECT_EQ(L"F", fred.Mid(0, 1));
-  EXPECT_EQ(L"R", fred.Mid(1, 1));
-  EXPECT_EQ(L"E", fred.Mid(2, 1));
-  EXPECT_EQ(L"D", fred.Mid(3, 1));
-  EXPECT_EQ(L"FR", fred.Mid(0, 2));
-  EXPECT_EQ(L"FRED", fred.Mid(0, 4));
-  EXPECT_EQ(L"", fred.Mid(0, 10));
+  EXPECT_EQ(L"", fred.Substr(0, 0));
+  EXPECT_EQ(L"", fred.Substr(3, 0));
+  EXPECT_EQ(L"FRED", fred.Substr(0, 4));
+  EXPECT_EQ(L"RED", fred.Substr(1, 3));
+  EXPECT_EQ(L"ED", fred.Substr(2, 2));
+  EXPECT_EQ(L"D", fred.Substr(3, 1));
+  EXPECT_EQ(L"F", fred.Substr(0, 1));
+  EXPECT_EQ(L"R", fred.Substr(1, 1));
+  EXPECT_EQ(L"E", fred.Substr(2, 1));
+  EXPECT_EQ(L"D", fred.Substr(3, 1));
+  EXPECT_EQ(L"FR", fred.Substr(0, 2));
+  EXPECT_EQ(L"FRED", fred.Substr(0, 4));
+  EXPECT_EQ(L"", fred.Substr(0, 10));
 
-  EXPECT_EQ(L"", fred.Mid(1, 4));
-  EXPECT_EQ(L"", fred.Mid(4, 1));
+  EXPECT_EQ(L"", fred.Substr(1, 4));
+  EXPECT_EQ(L"", fred.Substr(4, 1));
 
   WideString empty;
-  EXPECT_EQ(L"", empty.Mid(0, 0));
+  EXPECT_EQ(L"", empty.Substr(0, 0));
 }
 
 TEST(WideString, Left) {

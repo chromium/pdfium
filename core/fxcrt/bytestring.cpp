@@ -469,7 +469,7 @@ intptr_t ByteString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
 
-ByteString ByteString::Mid(size_t first, size_t count) const {
+ByteString ByteString::Substr(size_t first, size_t count) const {
   if (!m_pData)
     return ByteString();
 
@@ -493,13 +493,13 @@ ByteString ByteString::Mid(size_t first, size_t count) const {
 ByteString ByteString::Left(size_t count) const {
   if (count == 0 || !IsValidLength(count))
     return ByteString();
-  return Mid(0, count);
+  return Substr(0, count);
 }
 
 ByteString ByteString::Right(size_t count) const {
   if (count == 0 || !IsValidLength(count))
     return ByteString();
-  return Mid(GetLength() - count, count);
+  return Substr(GetLength() - count, count);
 }
 
 void ByteString::AllocCopy(ByteString& dest,

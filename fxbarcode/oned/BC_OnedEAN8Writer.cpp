@@ -172,7 +172,7 @@ bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
-  tempStr = str.Mid(4, 4);
+  tempStr = str.Substr(4, 4);
   iLen = tempStr.GetLength();
   CalcTextInfo(tempStr, &charpos[4], m_pFont.Get(), (float)strWidth, iFontSize,
                blank);

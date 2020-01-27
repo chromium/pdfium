@@ -187,8 +187,8 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       iSplitNextIndex = pTargetAll->Find(' ', iSplitIndex);
       if (!iSplitNextIndex.has_value())
         return nullptr;
-      wsExpr =
-          pTargetAll->Mid(iSplitIndex, iSplitNextIndex.value() - iSplitIndex);
+      wsExpr = pTargetAll->Substr(iSplitIndex,
+                                  iSplitNextIndex.value() - iSplitIndex);
     } else {
       wsExpr = *pTargetAll;
     }
@@ -205,7 +205,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     } else if (bNewExprStyle) {
       WideString wsProcessedTarget = wsExpr;
       if (wsExpr.Left(4).EqualsASCII("som(") && wsExpr.Last() == L')')
-        wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
+        wsProcessedTarget = wsExpr.Substr(4, wsExpr.GetLength() - 5);
 
       XFA_RESOLVENODE_RS rs;
       bool bRet = pDocument->GetScriptContext()->ResolveObjects(

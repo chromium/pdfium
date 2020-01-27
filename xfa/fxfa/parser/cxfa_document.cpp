@@ -1439,11 +1439,12 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     return XFA_VERSION_UNKNOWN;
 
   int8_t iMajor = FXSYS_wtoi(
-      wsTemplateNS.Mid(prefixLength, nDotPos.value() - prefixLength).c_str());
+      wsTemplateNS.Substr(prefixLength, nDotPos.value() - prefixLength)
+          .c_str());
   int8_t iMinor =
       FXSYS_wtoi(wsTemplateNS
-                     .Mid(nDotPos.value() + 1,
-                          wsTemplateNS.GetLength() - nDotPos.value() - 2)
+                     .Substr(nDotPos.value() + 1,
+                             wsTemplateNS.GetLength() - nDotPos.value() - 2)
                      .c_str());
   XFA_VERSION eVersion = (XFA_VERSION)((int32_t)iMajor * 100 + iMinor);
   if (eVersion < XFA_VERSION_MIN || eVersion > XFA_VERSION_MAX)

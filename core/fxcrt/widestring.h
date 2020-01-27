@@ -150,7 +150,7 @@ class WideString {
   int Compare(const WideString& str) const;
   int CompareNoCase(const wchar_t* str) const;
 
-  WideString Mid(size_t first, size_t count) const;
+  WideString Substr(size_t first, size_t count) const;
   WideString Left(size_t count) const;
   WideString Right(size_t count) const;
 

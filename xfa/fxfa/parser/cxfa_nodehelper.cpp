@@ -48,7 +48,7 @@ bool CXFA_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
     m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeAll;
   } else {
     m_iCreateFlag = XFA_ResolveNode_RSType_CreateNodeOne;
-    wsIndex = wsCondition.Mid(i, szLen - 1 - i);
+    wsIndex = wsCondition.Substr(i, szLen - 1 - i);
   }
   int32_t iCount = wsIndex.GetInteger();
   if (iCount < 0)
