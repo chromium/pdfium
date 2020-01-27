@@ -31,8 +31,6 @@ class CPDF_ProgressiveRenderer {
     kFailed          // FPDF_RENDER_FAILED
   };
 
-  static int ToFPDFStatus(Status status) { return static_cast<int>(status); }
-
   CPDF_ProgressiveRenderer(CPDF_RenderContext* pContext,
                            CFX_RenderDevice* pDevice,
                            const CPDF_RenderOptions* pOptions);

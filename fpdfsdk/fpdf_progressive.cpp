@@ -33,6 +33,14 @@ static_assert(CPDF_ProgressiveRenderer::kDone == FPDF_RENDER_DONE,
 static_assert(CPDF_ProgressiveRenderer::kFailed == FPDF_RENDER_FAILED,
               "CPDF_ProgressiveRenderer::kFailed value mismatch");
 
+namespace {
+
+int ToFPDFStatus(CPDF_ProgressiveRenderer::Status status) {
+  return static_cast<int>(status);
+}
+
+}  // namespace
+
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                                                           FPDF_PAGE page,
                                                           int start_x,
@@ -72,8 +80,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   if (!pContext->m_pRenderer)
     return FPDF_RENDER_FAILED;
 
-  return CPDF_ProgressiveRenderer::ToFPDFStatus(
-      pContext->m_pRenderer->GetStatus());
+  return ToFPDFStatus(pContext->m_pRenderer->GetStatus());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
@@ -87,18 +94,17 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
 
   auto* pContext =
       static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
-  if (pContext && pContext->m_pRenderer) {
-    CPDFSDK_PauseAdapter pause_adapter(pause);
-    pContext->m_pRenderer->Continue(&pause_adapter);
+  if (!pContext || !pContext->m_pRenderer)
+    return FPDF_RENDER_FAILED;
+
+  CPDFSDK_PauseAdapter pause_adapter(pause);
+  pContext->m_pRenderer->Continue(&pause_adapter);
 #ifdef _SKIA_SUPPORT_PATHS_
-    CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
-    pDevice->Flush(false);
-    pDevice->GetBitmap()->UnPreMultiply();
+  CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
+  pDevice->Flush(false);
+  pDevice->GetBitmap()->UnPreMultiply();
 #endif
-    return CPDF_ProgressiveRenderer::ToFPDFStatus(
-        pContext->m_pRenderer->GetStatus());
-  }
-  return FPDF_RENDER_FAILED;
+  return ToFPDFStatus(pContext->m_pRenderer->GetStatus());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
