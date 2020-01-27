@@ -448,7 +448,7 @@ float CPDF_TextPage::GetCharFontSize(size_t index) const {
 
 WideString CPDF_TextPage::GetPageText(int start, int count) const {
   if (start < 0 || start >= CountChars() || count <= 0 || m_CharList.empty() ||
-      m_TextBuf.GetLength() == 0) {
+      m_TextBuf.IsEmpty()) {
     return WideString();
   }
 

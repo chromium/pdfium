@@ -252,7 +252,7 @@ void CFDE_TextEditEngine::Insert(size_t idx,
                                  const WideString& request_text,
                                  RecordOperation add_operation) {
   WideString text = request_text;
-  if (text.GetLength() == 0)
+  if (text.IsEmpty())
     return;
 
   idx = std::min(idx, text_length_);

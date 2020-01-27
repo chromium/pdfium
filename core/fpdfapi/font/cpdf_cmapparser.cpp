@@ -109,7 +109,7 @@ void CPDF_CMapParser::HandleCid(ByteStringView word) {
 
 void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
   if (word != "endcodespacerange") {
-    if (word.GetLength() == 0 || word[0] != '<')
+    if (word.IsEmpty() || word[0] != '<')
       return;
 
     if (m_CodeSeq % 2) {
@@ -165,7 +165,7 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
 Optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
     ByteStringView first,
     ByteStringView second) {
-  if (first.GetLength() == 0 || first[0] != '<')
+  if (first.IsEmpty() || first[0] != '<')
     return pdfium::nullopt;
 
   size_t i;

@@ -216,7 +216,7 @@ v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
   bool bAllowNaN = false;
   if (value->IsString()) {
     ByteString bstr = ToWideString(value).ToDefANSI();
-    if (bstr.GetLength() == 0)
+    if (bstr.IsEmpty())
       return value;
     if (bstr == "NaN")
       bAllowNaN = true;

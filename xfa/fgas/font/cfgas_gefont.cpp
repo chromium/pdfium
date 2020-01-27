@@ -130,12 +130,11 @@ bool CFGAS_GEFont::InitFont() {
 }
 
 WideString CFGAS_GEFont::GetFamilyName() const {
-  if (!m_pFont->GetSubstFont() ||
-      m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
-    return WideString::FromDefANSI(m_pFont->GetFamilyName().AsStringView());
-  }
-  return WideString::FromDefANSI(
-      m_pFont->GetSubstFont()->m_Family.AsStringView());
+  CFX_SubstFont* subst_font = m_pFont->GetSubstFont();
+  ByteString family_name = subst_font && !subst_font->m_Family.IsEmpty()
+                               ? subst_font->m_Family
+                               : m_pFont->GetFamilyName();
+  return WideString::FromDefANSI(family_name.AsStringView());
 }
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {

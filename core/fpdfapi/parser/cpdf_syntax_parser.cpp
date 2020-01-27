@@ -430,7 +430,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   FX_FILESIZE SavedObjPos = m_Pos;
   bool bIsNumber;
   ByteString word = GetNextWord(&bIsNumber);
-  if (word.GetLength() == 0)
+  if (word.IsEmpty())
     return nullptr;
 
   if (bIsNumber) {

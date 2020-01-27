@@ -220,7 +220,7 @@ bool CFXJSE_ResolveProcessor::ResolveNumberSign(CFXJSE_ResolveNodeData& rnd) {
   if (rndFind.m_Objects.empty())
     return false;
 
-  if (wsCondition.GetLength() == 0 &&
+  if (wsCondition.IsEmpty() &&
       pdfium::ContainsValue(rndFind.m_Objects, curNode)) {
     rnd.m_Objects.emplace_back(curNode);
   } else {
@@ -423,7 +423,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
         } else {
           if (child->GetNameHash() == uNameHash) {
             rnd.m_Objects.emplace_back(curNode);
-            if (rnd.m_nLevel == 0 && wsCondition.GetLength() == 0) {
+            if (rnd.m_nLevel == 0 && wsCondition.IsEmpty()) {
               rnd.m_Objects.clear();
               rnd.m_Objects.emplace_back(curNode);
               return true;

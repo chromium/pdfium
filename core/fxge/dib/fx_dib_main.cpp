@@ -106,7 +106,7 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
 
 FX_ARGB StringToFXARGB(WideStringView view) {
   static constexpr FX_ARGB kDefaultValue = 0xff000000;
-  if (view.GetLength() == 0)
+  if (view.IsEmpty())
     return kDefaultValue;
 
   int cc = 0;
