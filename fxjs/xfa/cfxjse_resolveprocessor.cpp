@@ -33,9 +33,9 @@ void DoPredicateFilter(WideString wsCondition,
   ASSERT(iFoundCount == pRnd->m_Objects.size());
   WideString wsExpression;
   CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
-  if (wsCondition.Left(2).EqualsASCII(".[") && wsCondition.Back() == L']')
+  if (wsCondition.First(2).EqualsASCII(".[") && wsCondition.Back() == L']')
     eLangType = CXFA_Script::Type::Formcalc;
-  else if (wsCondition.Left(2).EqualsASCII(".(") && wsCondition.Back() == L')')
+  else if (wsCondition.First(2).EqualsASCII(".(") && wsCondition.Back() == L')')
     eLangType = CXFA_Script::Type::Javascript;
   else
     return;
@@ -128,7 +128,7 @@ bool CFXJSE_ResolveProcessor::ResolveAnyChild(CFXJSE_ResolveNodeData& rnd) {
   const bool bClassName = !wsName.IsEmpty() && wsName[0] == '#';
   CXFA_Node* const pChild =
       bClassName
-          ? pParent->GetOneChildOfClass(wsName.Right(wsName.GetLength() - 1))
+          ? pParent->GetOneChildOfClass(wsName.Last(wsName.GetLength() - 1))
           : pParent->GetOneChildNamed(wsName);
   if (!pChild)
     return false;
@@ -162,7 +162,7 @@ bool CFXJSE_ResolveProcessor::ResolveDollar(CFXJSE_ResolveNodeData& rnd) {
     return false;
 
   XFA_HashCode dwNameHash = static_cast<XFA_HashCode>(
-      FX_HashCode_GetW(wsName.AsStringView().Right(iNameLen - 1), false));
+      FX_HashCode_GetW(wsName.AsStringView().Last(iNameLen - 1), false));
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     rnd.m_Objects.emplace_back(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
@@ -186,7 +186,7 @@ bool CFXJSE_ResolveProcessor::ResolveExcalmatory(CFXJSE_ResolveNodeData& rnd) {
 
   CFXJSE_ResolveNodeData rndFind(rnd.m_pSC.Get());
   rndFind.m_CurObject = datasets;
-  rndFind.m_wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
+  rndFind.m_wsName = rnd.m_wsName.Last(rnd.m_wsName.GetLength() - 1);
   rndFind.m_uHashName = static_cast<XFA_HashCode>(
       FX_HashCode_GetW(rndFind.m_wsName.AsStringView(), false));
   rndFind.m_nLevel = rnd.m_nLevel + 1;
@@ -200,7 +200,7 @@ bool CFXJSE_ResolveProcessor::ResolveExcalmatory(CFXJSE_ResolveNodeData& rnd) {
 }
 
 bool CFXJSE_ResolveProcessor::ResolveNumberSign(CFXJSE_ResolveNodeData& rnd) {
-  WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
+  WideString wsName = rnd.m_wsName.Last(rnd.m_wsName.GetLength() - 1);
   WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* curNode = ToNode(rnd.m_CurObject.Get());
   if (ResolveForAttributeRs(curNode, rnd, wsName.AsStringView()))

@@ -156,7 +156,7 @@ void CPDF_LinkExtract::ExtractLinks() {
         if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.')
           break;
 
-        strBeCheck = strBeCheck.Left(strBeCheck.GetLength() - 1);
+        strBeCheck = strBeCheck.First(strBeCheck.GetLength() - 1);
         nCount--;
       }
 
@@ -249,7 +249,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
       // End extracting for other invalid chars, '.' at the beginning, or
       // consecutive '.'.
       size_t removed_len = i == pPos ? i + 1 : i;
-      *str = str->Right(str->GetLength() - removed_len);
+      *str = str->Last(str->GetLength() - removed_len);
       break;
     }
     // Found a valid '.'.
@@ -282,7 +282,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
       size_t host_end = i == pPos + 1 ? i - 2 : i - 1;
       if (pPos > 0 && host_end - aPos.value() >= 3) {
         // Trim the ending invalid chars if there is at least one '.' and name.
-        *str = str->Left(host_end + 1);
+        *str = str->First(host_end + 1);
         break;
       }
       return false;

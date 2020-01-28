@@ -124,11 +124,11 @@ ByteString CalculateString(double dValue,
 WideString CalcMergedString(const CJS_EventRecorder* event,
                             const WideString& value,
                             const WideString& change) {
-  WideString prefix = value.Left(event->SelStart());
+  WideString prefix = value.First(event->SelStart());
   WideString postfix;
   int end = event->SelEnd();
   if (end >= 0 && static_cast<size_t>(end) < value.GetLength())
-    postfix = value.Right(value.GetLength() - static_cast<size_t>(end));
+    postfix = value.Last(value.GetLength() - static_cast<size_t>(end));
   return prefix + change + postfix;
 }
 

@@ -442,12 +442,12 @@ ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
 
   for (size_t i = 0; i < m_pMapper->m_InstalledTTFonts.size(); ++i) {
     ByteString thisname = m_pMapper->m_InstalledTTFonts[i];
-    if (thisname.Left(name.GetLength()) == name)
+    if (thisname.First(name.GetLength()) == name)
       return m_pMapper->m_InstalledTTFonts[i];
   }
   for (size_t i = 0; i < m_pMapper->m_LocalizedTTFonts.size(); ++i) {
     ByteString thisname = m_pMapper->m_LocalizedTTFonts[i].first;
-    if (thisname.Left(name.GetLength()) == name)
+    if (thisname.First(name.GetLength()) == name)
       return m_pMapper->m_LocalizedTTFonts[i].second;
   }
   return ByteString();

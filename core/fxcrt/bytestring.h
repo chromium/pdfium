@@ -164,8 +164,8 @@ class ByteString {
   void ReleaseBuffer(size_t nNewLength);
 
   ByteString Substr(size_t first, size_t count) const;
-  ByteString Left(size_t count) const;
-  ByteString Right(size_t count) const;
+  ByteString First(size_t count) const;
+  ByteString Last(size_t count) const;
 
   Optional<size_t> Find(ByteStringView subStr, size_t start = 0) const;
   Optional<size_t> Find(char ch, size_t start = 0) const;

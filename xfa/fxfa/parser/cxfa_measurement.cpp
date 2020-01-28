@@ -39,7 +39,7 @@ void CXFA_Measurement::SetString(WideStringView wsMeasure) {
   }
 
   if (wsMeasure[0] == L'=')
-    wsMeasure = wsMeasure.Right(wsMeasure.GetLength() - 1);
+    wsMeasure = wsMeasure.Last(wsMeasure.GetLength() - 1);
 
   int32_t iUsedLen = 0;
   float fValue = FXSYS_wcstof(wsMeasure.unterminated_c_str(),
@@ -47,7 +47,7 @@ void CXFA_Measurement::SetString(WideStringView wsMeasure) {
   if (!std::isfinite(fValue))
     fValue = 0.0f;
 
-  wsMeasure = wsMeasure.Right(wsMeasure.GetLength() - iUsedLen);
+  wsMeasure = wsMeasure.Last(wsMeasure.GetLength() - iUsedLen);
   Set(fValue, GetUnitFromString(wsMeasure));
 }
 

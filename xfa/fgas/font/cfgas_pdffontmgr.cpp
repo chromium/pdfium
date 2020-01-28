@@ -149,7 +149,7 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(ByteStringView bsPsName,
       return false;
 
     if (iDifferLength > 1) {
-      ByteString bsDRTailer = bsDRName.Right(iDifferLength);
+      ByteString bsDRTailer = bsDRName.Last(iDifferLength);
       if (bsDRTailer == "MT" || bsDRTailer == "PSMT" ||
           bsDRTailer == "Regular" || bsDRTailer == "Reg") {
         return true;
@@ -160,17 +160,17 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(ByteStringView bsPsName,
       bool bMatch = false;
       switch (bsPsName[iPsLen - 1]) {
         case 'L':
-          if (bsDRName.Right(5) == "Light")
+          if (bsDRName.Last(5) == "Light")
             bMatch = true;
 
           break;
         case 'R':
-          if (bsDRName.Right(7) == "Regular" || bsDRName.Right(3) == "Reg")
+          if (bsDRName.Last(7) == "Regular" || bsDRName.Last(3) == "Reg")
             bMatch = true;
 
           break;
         case 'M':
-          if (bsDRName.Right(5) == "Medium")
+          if (bsDRName.Last(5) == "Medium")
             bMatch = true;
           break;
         default:

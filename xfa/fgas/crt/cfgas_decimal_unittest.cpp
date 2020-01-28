@@ -42,17 +42,17 @@ TEST(CFGAS_Decimal, FromFloat) {
 
   // Precision may not be the same on all platforms.
   EXPECT_EQ(big_expected.GetLength(), big.GetLength());
-  EXPECT_STREQ(big_expected.Left(8).c_str(), big.Left(8).c_str());
+  EXPECT_STREQ(big_expected.First(8).c_str(), big.First(8).c_str());
 
   WideString tiny = CFGAS_Decimal(1e20f, 0).ToWideString();
   WideString tiny_expected = L"100000000000000000000";
   EXPECT_EQ(tiny_expected.GetLength(), tiny.GetLength());
-  EXPECT_STREQ(tiny_expected.Left(8).c_str(), tiny.Left(8).c_str());
+  EXPECT_STREQ(tiny_expected.First(8).c_str(), tiny.First(8).c_str());
 
   WideString teeny = CFGAS_Decimal(1e14f, 4).ToWideString();
   WideString teeny_expected = L"100000000000000.0000";
   EXPECT_EQ(teeny_expected.GetLength(), teeny.GetLength());
-  EXPECT_STREQ(teeny_expected.Left(8).c_str(), teeny.Left(8).c_str());
+  EXPECT_STREQ(teeny_expected.First(8).c_str(), teeny.First(8).c_str());
 }
 
 TEST(CFGAS_Decimal, FromFloatFractional) {
@@ -61,7 +61,7 @@ TEST(CFGAS_Decimal, FromFloatFractional) {
 
   // Precision may not be the same on all platforms.
   EXPECT_EQ(case1_expected.GetLength(), case1.GetLength());
-  EXPECT_STREQ(case1_expected.Left(8).c_str(), case1.Left(8).c_str());
+  EXPECT_STREQ(case1_expected.First(8).c_str(), case1.First(8).c_str());
 }
 
 TEST(CFGAS_Decimal, FromString) {

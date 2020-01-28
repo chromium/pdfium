@@ -180,7 +180,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
-  tempStr = str.Left(1);
+  tempStr = str.First(1);
   length = tempStr.GetLength();
   strWidth = (float)multiple * 7;
   strWidth = strWidth * m_outputHScale;

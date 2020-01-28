@@ -228,7 +228,7 @@ bool ParsePageRangeString(const ByteString& bsPageRange,
     if (nDashPosition) {
       size_t nMid = nDashPosition.value();
       uint32_t nStartPageNum = pdfium::base::checked_cast<uint32_t>(
-          atoi(cbMidRange.Left(nMid).c_str()));
+          atoi(cbMidRange.First(nMid).c_str()));
       if (nStartPageNum == 0)
         return false;
 

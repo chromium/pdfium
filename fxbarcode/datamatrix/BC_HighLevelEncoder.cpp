@@ -132,7 +132,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
     return WideString();
 
   if (msg.Back() == kMacroTrailer) {
-    WideString left = msg.Left(6);
+    WideString left = msg.First(6);
     if (left == kMacro05Header) {
       context.writeCodeword(kMacro05);
       context.setSkipAtEnd(2);

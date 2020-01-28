@@ -151,8 +151,8 @@ class WideString {
   int CompareNoCase(const wchar_t* str) const;
 
   WideString Substr(size_t first, size_t count) const;
-  WideString Left(size_t count) const;
-  WideString Right(size_t count) const;
+  WideString First(size_t count) const;
+  WideString Last(size_t count) const;
 
   size_t Insert(size_t index, wchar_t ch);
   size_t InsertAtFront(wchar_t ch) { return Insert(0, ch); }

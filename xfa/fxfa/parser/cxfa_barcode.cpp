@@ -162,12 +162,12 @@ Optional<int8_t> CXFA_Barcode::GetWideNarrowRatio() {
     return {static_cast<int8_t>(FXSYS_wtoi(wsWideNarrowRatio->c_str()))};
 
   int32_t fB = FXSYS_wtoi(
-      wsWideNarrowRatio->Right(wsWideNarrowRatio->GetLength() - (*ptPos + 1))
+      wsWideNarrowRatio->Last(wsWideNarrowRatio->GetLength() - (*ptPos + 1))
           .c_str());
   if (!fB)
     return {0};
 
-  int32_t fA = FXSYS_wtoi(wsWideNarrowRatio->Left(*ptPos).c_str());
+  int32_t fA = FXSYS_wtoi(wsWideNarrowRatio->First(*ptPos).c_str());
   float result = static_cast<float>(fA) / static_cast<float>(fB);
   return {static_cast<int8_t>(result)};
 }

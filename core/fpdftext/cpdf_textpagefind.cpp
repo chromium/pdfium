@@ -147,13 +147,13 @@ std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
           continue;
         }
         if (pos > 0)
-          findwhat_array.push_back(word->Left(pos));
+          findwhat_array.push_back(word->First(pos));
         findwhat_array.push_back(curStr);
         if (pos == word->GetLength() - 1) {
           word->clear();
           break;
         }
-        word.emplace(word->Right(word->GetLength() - pos - 1));
+        word.emplace(word->Last(word->GetLength() - pos - 1));
         pos = 0;
         continue;
       }

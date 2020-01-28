@@ -370,7 +370,7 @@ void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
       if (filename == "." || filename == "..")
         continue;
     } else {
-      ByteString ext = filename.Right(4);
+      ByteString ext = filename.Last(4);
       ext.MakeLower();
       if (ext != ".ttf" && ext != ".ttc" && ext != ".otf")
         continue;

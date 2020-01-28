@@ -199,12 +199,12 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     if (wsExpr[0] == '#') {
       CXFA_Node* pNode = pDocument->GetNodeByID(
           ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
-          wsExpr.Right(wsExpr.GetLength() - 1).AsStringView());
+          wsExpr.Last(wsExpr.GetLength() - 1).AsStringView());
       if (pNode)
         return pNode;
     } else if (bNewExprStyle) {
       WideString wsProcessedTarget = wsExpr;
-      if (wsExpr.Left(4).EqualsASCII("som(") && wsExpr.Back() == L')')
+      if (wsExpr.First(4).EqualsASCII("som(") && wsExpr.Back() == L')')
         wsProcessedTarget = wsExpr.Substr(4, wsExpr.GetLength() - 5);
 
       XFA_RESOLVENODE_RS rs;

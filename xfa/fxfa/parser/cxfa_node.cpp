@@ -491,8 +491,8 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
     }
   } else {
     WideString wsURL = wsHref;
-    if (!(wsURL.Left(7).EqualsASCII("http://") ||
-          wsURL.Left(6).EqualsASCII("ftp://"))) {
+    if (!(wsURL.First(7).EqualsASCII("http://") ||
+          wsURL.First(6).EqualsASCII("ftp://"))) {
       RetainPtr<CFX_DIBitmap> pBitmap =
           pDoc->GetPDFNamedImage(wsURL.AsStringView(), iImageXDpi, iImageYDpi);
       if (pBitmap) {
@@ -525,14 +525,14 @@ bool SplitDateTime(const WideString& wsDateTime,
   if (!nSplitIndex.has_value())
     return false;
 
-  wsDate = wsDateTime.Left(nSplitIndex.value());
+  wsDate = wsDateTime.First(nSplitIndex.value());
   if (!wsDate.IsEmpty()) {
     if (!std::any_of(wsDate.begin(), wsDate.end(),
                      [](wchar_t c) { return FXSYS_IsDecimalDigit(c); })) {
       return false;
     }
   }
-  wsTime = wsDateTime.Right(wsDateTime.GetLength() - nSplitIndex.value() - 1);
+  wsTime = wsDateTime.Last(wsDateTime.GetLength() - nSplitIndex.value() - 1);
   if (!wsTime.IsEmpty()) {
     if (!std::any_of(wsTime.begin(), wsTime.end(),
                      [](wchar_t c) { return FXSYS_IsDecimalDigit(c); })) {
@@ -674,7 +674,7 @@ WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
   }
   if (dot_index.value() < wsSrcNum.GetLength()) {
     wsOutput += pLocale->GetDecimalSymbol();
-    wsOutput += wsSrcNum.Right(wsSrcNum.GetLength() - dot_index.value() - 1);
+    wsOutput += wsSrcNum.Last(wsSrcNum.GetLength() - dot_index.value() - 1);
   }
   if (bNeg)
     return pLocale->GetMinusSymbol() + wsOutput;
@@ -1727,7 +1727,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
         WideString wsInstName =
             pNode->JSObject()->GetCData(XFA_Attribute::Name);
         if (wsInstName.GetLength() > 0 && wsInstName[0] == '_' &&
-            wsInstName.Right(wsInstName.GetLength() - 1) == wsName) {
+            wsInstName.Last(wsInstName.GetLength() - 1) == wsName) {
           pInstanceMgr = pNode;
         }
         break;
@@ -1817,7 +1817,7 @@ CXFA_Node* CXFA_Node::GetItemIfExists(int32_t iIndex) {
       WideString wsName = pNode->JSObject()->GetCData(XFA_Attribute::Name);
       WideString wsInstName = JSObject()->GetCData(XFA_Attribute::Name);
       if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
-          wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
+          wsInstName.Last(wsInstName.GetLength() - 1) != wsName) {
         return nullptr;
       }
       dwNameHash = pNode->GetNameHash();
@@ -1848,7 +1848,7 @@ int32_t CXFA_Node::GetCount() {
       WideString wsName = pNode->JSObject()->GetCData(XFA_Attribute::Name);
       WideString wsInstName = JSObject()->GetCData(XFA_Attribute::Name);
       if (wsInstName.GetLength() < 1 || wsInstName[0] != '_' ||
-          wsInstName.Right(wsInstName.GetLength() - 1) != wsName) {
+          wsInstName.Last(wsInstName.GetLength() - 1) != wsName) {
         return iCount;
       }
       dwNameHash = pNode->GetNameHash();

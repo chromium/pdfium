@@ -57,7 +57,7 @@ WideString CBC_EANCode::Preprocess(WideStringView contents) {
     str += '0' + checksum;
     encoded_contents = WideString::FromUTF8(str.AsStringView());
   } else {
-    encoded_contents = encoded_contents.Left(max_length + 1);
+    encoded_contents = encoded_contents.First(max_length + 1);
   }
 
   return encoded_contents;

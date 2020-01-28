@@ -184,7 +184,7 @@ constexpr PredefinedCMap kPredefinedCMaps[] = {
 const PredefinedCMap* GetPredefinedCMap(const ByteString& bsPredefinedName) {
   ByteString cmapid = bsPredefinedName;
   if (cmapid.GetLength() > 2)
-    cmapid = cmapid.Left(cmapid.GetLength() - 2);
+    cmapid = cmapid.First(cmapid.GetLength() - 2);
   for (const auto& map : kPredefinedCMaps) {
     if (cmapid == ByteStringView(map.m_pName))
       return &map;

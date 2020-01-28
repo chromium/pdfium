@@ -21,7 +21,7 @@ namespace {
 ByteStringView CMap_GetString(ByteStringView word) {
   if (word.GetLength() <= 2)
     return ByteStringView();
-  return word.Right(word.GetLength() - 2);
+  return word.Last(word.GetLength() - 2);
 }
 
 }  // namespace

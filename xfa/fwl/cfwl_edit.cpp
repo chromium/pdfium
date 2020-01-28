@@ -954,9 +954,9 @@ bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
     return false;
 
   int32_t nLen = wsText.GetLength();
-  WideString l = wsText.Left(m_CursorPosition);
-  WideString r = wsText.Right(nLen - m_CursorPosition);
-  WideString wsNew = l + cNum + r;
+  WideString first = wsText.First(m_CursorPosition);
+  WideString last = wsText.Last(nLen - m_CursorPosition);
+  WideString wsNew = first + cNum + last;
   return wsNew.GetInteger() <= m_iMax;
 }
 

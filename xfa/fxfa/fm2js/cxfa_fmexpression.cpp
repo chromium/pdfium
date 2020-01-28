@@ -24,7 +24,7 @@ WideString IdentifierToName(WideStringView ident) {
     return WideString();
   if (ident[0] != L'!')
     return WideString(ident);
-  return L"pfm__excl__" + ident.Right(ident.GetLength() - 1);
+  return L"pfm__excl__" + ident.Last(ident.GetLength() - 1);
 }
 
 }  // namespace

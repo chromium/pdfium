@@ -171,8 +171,7 @@ bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf* js,
   else if (m_wsIdentifier.EqualsASCII("$template"))
     *js << "xfa.template";
   else if (m_wsIdentifier[0] == L'!')
-    *js << "pfm__excl__"
-        << m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
+    *js << "pfm__excl__" << m_wsIdentifier.Last(m_wsIdentifier.GetLength() - 1);
   else
     *js << m_wsIdentifier;
 

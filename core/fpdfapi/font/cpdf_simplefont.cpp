@@ -213,7 +213,7 @@ bool CPDF_SimpleFont::LoadCommon() {
   }
   if (m_pFontFile) {
     if (m_BaseFontName.GetLength() > 8 && m_BaseFontName[7] == '+')
-      m_BaseFontName = m_BaseFontName.Right(m_BaseFontName.GetLength() - 8);
+      m_BaseFontName = m_BaseFontName.Last(m_BaseFontName.GetLength() - 8);
   } else {
     LoadSubstFont();
   }

@@ -168,7 +168,7 @@ ByteString TT_NormalizeName(const char* family) {
   norm.Remove(',');
   auto pos = norm.Find('+');
   if (pos.has_value() && pos.value() != 0)
-    norm = norm.Left(pos.value());
+    norm = norm.First(pos.value());
   norm.MakeLower();
   return norm;
 }
@@ -230,10 +230,10 @@ std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
       continue;
 
     if (bReverse) {
-      if (bsStyle.Right(pStyle->len).Compare(pStyle->name) == 0)
+      if (bsStyle.Last(pStyle->len).Compare(pStyle->name) == 0)
         return std::make_tuple(true, pStyle->style, pStyle->len);
     } else {
-      if (bsStyle.Left(pStyle->len).Compare(pStyle->name) == 0)
+      if (bsStyle.First(pStyle->len).Compare(pStyle->name) == 0)
         return std::make_tuple(true, pStyle->style, pStyle->len);
     }
   }
@@ -399,7 +399,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   ByteString SubstName = name;
   SubstName.Remove(' ');
   if (bTrueType && name.GetLength() > 0 && name[0] == '@')
-    SubstName = name.Right(name.GetLength() - 1);
+    SubstName = name.Last(name.GetLength() - 1);
   GetStandardFontName(&SubstName);
   if (SubstName == "Symbol" && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
@@ -419,9 +419,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   {
     Optional<size_t> pos = SubstName.Find(",", 0);
     if (pos.has_value()) {
-      family = SubstName.Left(pos.value());
+      family = SubstName.First(pos.value());
       GetStandardFontName(&family);
-      style = SubstName.Right(SubstName.GetLength() - (pos.value() + 1));
+      style = SubstName.Last(SubstName.GetLength() - (pos.value() + 1));
       bHasComma = true;
     } else {
       family = SubstName;
@@ -448,8 +448,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     if (!bHasComma) {
       Optional<size_t> pos = family.ReverseFind('-');
       if (pos.has_value()) {
-        style = family.Right(family.GetLength() - (pos.value() + 1));
-        family = family.Left(pos.value());
+        style = family.Last(family.GetLength() - (pos.value() + 1));
+        family = family.First(pos.value());
         bHasHyphen = true;
       }
     }
@@ -460,7 +460,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
       size_t len;
       std::tie(hasStyleType, styleType, len) = GetStyleType(family, true);
       if (hasStyleType) {
-        family = family.Left(nLen - len);
+        family = family.First(nLen - len);
         nStyle |= styleType;
       }
     }

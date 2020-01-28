@@ -1562,8 +1562,8 @@ FX_DATETIMETYPE CFGAS_StringFormatter::GetDateTimeFormat(
       while (ccf < m_spPattern.size() && m_spPattern[ccf] != '{' &&
              m_spPattern[ccf] != '.' && m_spPattern[ccf] != '(') {
         if (m_spPattern[ccf] == 'T') {
-          *wsDatePattern = m_wsPattern.Left(ccf);
-          *wsTimePattern = m_wsPattern.Right(m_wsPattern.GetLength() - ccf);
+          *wsDatePattern = m_wsPattern.First(ccf);
+          *wsTimePattern = m_wsPattern.Last(m_wsPattern.GetLength() - ccf);
           wsTimePattern->SetAt(0, ' ');
           if (!*pLocale)
             *pLocale = m_pLocaleMgr->GetDefLocale();
@@ -2047,7 +2047,7 @@ bool CFGAS_StringFormatter::FormatNum(const WideString& wsInputNum,
     }
     if (dot_index.value() < spSrcNum.size()) {
       *wsOutput += pLocale->GetDecimalSymbol();
-      *wsOutput += wsSrcNum.Right(spSrcNum.size() - dot_index.value() - 1);
+      *wsOutput += wsSrcNum.Last(spSrcNum.size() - dot_index.value() - 1);
     }
     if (bNeg)
       *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;

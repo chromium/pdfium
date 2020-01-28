@@ -21,7 +21,7 @@ namespace fxcrt {
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself. These are not necessarily nul-terminated, so that substring
-// extraction (via the Substr(), Left(), and Right() methods) is copy-free.
+// extraction (via the Substr(), First(), and Last() methods) is copy-free.
 //
 // String view arguments should be passed by value, since they are small,
 // rather than const-ref, even if they are not modified.
@@ -213,13 +213,13 @@ class StringViewTemplate {
     return StringViewTemplate(m_Span.data() + first, count);
   }
 
-  StringViewTemplate Left(size_t count) const {
+  StringViewTemplate First(size_t count) const {
     if (count == 0 || !IsValidLength(count))
       return StringViewTemplate();
     return Substr(0, count);
   }
 
-  StringViewTemplate Right(size_t count) const {
+  StringViewTemplate Last(size_t count) const {
     if (count == 0 || !IsValidLength(count))
       return StringViewTemplate();
     return Substr(GetLength() - count, count);

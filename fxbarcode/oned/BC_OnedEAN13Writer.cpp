@@ -196,7 +196,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
-  tempStr = str.Left(1);
+  tempStr = str.First(1);
   length = tempStr.GetLength();
   strWidth = multiple * 7;
   strWidth = (int32_t)(strWidth * m_outputHScale);

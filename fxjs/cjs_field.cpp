@@ -148,7 +148,7 @@ void ParseFieldName(const WideString& strFieldNameParsed,
     return;
   }
   WideString suffixal =
-      strFieldNameParsed.Right(reverse_it - strFieldNameParsed.rbegin());
+      strFieldNameParsed.Last(reverse_it - strFieldNameParsed.rbegin());
   iControlNo = FXSYS_wtoi(suffixal.c_str());
   if (iControlNo == 0) {
     suffixal.TrimRight(L' ');
@@ -159,7 +159,7 @@ void ParseFieldName(const WideString& strFieldNameParsed,
     }
   }
   strFieldName =
-      strFieldNameParsed.Left(strFieldNameParsed.rend() - reverse_it - 1);
+      strFieldNameParsed.First(strFieldNameParsed.rend() - reverse_it - 1);
 }
 
 std::vector<CPDF_FormField*> GetFormFieldsForName(

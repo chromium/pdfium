@@ -211,9 +211,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
 
   // Color RGB values used are integers divided by 255.
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
-            pathString.Left(48));
+            pathString.First(48));
   EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
-            pathString.Right(43));
+            pathString.Last(43));
   ASSERT_GT(pathString.GetLength(), 91U);
   CPDF_Dictionary* externalGS =
       TestGetResource(&generator, "ExtGState",
@@ -228,9 +228,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   TestProcessPath(&generator, &buf, pPathObj.get());
   ByteString pathString2(buf);
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
-            pathString2.Left(55));
+            pathString2.First(55));
   EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
-            pathString2.Right(43));
+            pathString2.Last(43));
 
   // Compare with the previous (should use same dictionary for gs)
   EXPECT_EQ(pathString.GetLength() + 7, pathString2.GetLength());
@@ -273,12 +273,12 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   auto secondResourceAt = textString.ReverseFind('/');
   ASSERT_TRUE(secondResourceAt.has_value());
   secondResourceAt = secondResourceAt.value() + 1;
-  ByteString firstString = textString.Left(firstResourceAt.value());
+  ByteString firstString = textString.First(firstResourceAt.value());
   ByteString midString =
       textString.Substr(firstResourceAt.value(),
                         secondResourceAt.value() - firstResourceAt.value());
   ByteString lastString =
-      textString.Right(textString.GetLength() - secondResourceAt.value());
+      textString.Last(textString.GetLength() - secondResourceAt.value());
   // q and Q must be outside the BT .. ET operations
   ByteString compareString1 =
       "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
@@ -288,18 +288,18 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength() +
                 compareString3.GetLength(),
             textString.GetLength());
-  EXPECT_EQ(compareString1, firstString.Left(compareString1.GetLength()));
-  EXPECT_EQ(compareString2, midString.Right(compareString2.GetLength()));
-  EXPECT_EQ(compareString3, lastString.Right(compareString3.GetLength()));
+  EXPECT_EQ(compareString1, firstString.First(compareString1.GetLength()));
+  EXPECT_EQ(compareString2, midString.Last(compareString2.GetLength()));
+  EXPECT_EQ(compareString3, lastString.Last(compareString3.GetLength()));
   CPDF_Dictionary* externalGS = TestGetResource(
       &generator, "ExtGState",
-      midString.Left(midString.GetLength() - compareString2.GetLength()));
+      midString.First(midString.GetLength() - compareString2.GetLength()));
   ASSERT_TRUE(externalGS);
   EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
   EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
   CPDF_Dictionary* fontDict = TestGetResource(
       &generator, "Font",
-      lastString.Left(lastString.GetLength() - compareString3.GetLength()));
+      lastString.First(lastString.GetLength() - compareString3.GetLength()));
   ASSERT_TRUE(fontDict);
   EXPECT_EQ("Font", fontDict->GetStringFor("Type"));
   EXPECT_EQ("Type1", fontDict->GetStringFor("Subtype"));
@@ -346,16 +346,16 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   auto firstResourceAt = textString.Find('/');
   ASSERT_TRUE(firstResourceAt.has_value());
   firstResourceAt = firstResourceAt.value() + 1;
-  ByteString firstString = textString.Left(firstResourceAt.value());
+  ByteString firstString = textString.First(firstResourceAt.value());
   ByteString lastString =
-      textString.Right(textString.GetLength() - firstResourceAt.value());
+      textString.Last(textString.GetLength() - firstResourceAt.value());
   // q and Q must be outside the BT .. ET operations
   ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
   ByteString compareString2 = " 15.5 Tf <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),
             textString.GetLength());
-  EXPECT_EQ(compareString1, textString.Left(compareString1.GetLength()));
-  EXPECT_EQ(compareString2, textString.Right(compareString2.GetLength()));
+  EXPECT_EQ(compareString1, textString.First(compareString1.GetLength()));
+  EXPECT_EQ(compareString2, textString.Last(compareString2.GetLength()));
   CPDF_Dictionary* fontDict = TestGetResource(
       &generator, "Font",
       textString.Substr(compareString1.GetLength(),

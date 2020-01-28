@@ -20,6 +20,6 @@ CXFA_EventParam& CXFA_EventParam::operator=(const CXFA_EventParam& other) =
 CXFA_EventParam& CXFA_EventParam::operator=(CXFA_EventParam&& other) = default;
 
 WideString CXFA_EventParam::GetNewText() const {
-  return m_wsPrevText.Left(m_iSelStart) + m_wsChange +
-         m_wsPrevText.Right(m_wsPrevText.GetLength() - m_iSelEnd);
+  return m_wsPrevText.First(m_iSelStart) + m_wsChange +
+         m_wsPrevText.Last(m_wsPrevText.GetLength() - m_iSelEnd);
 }

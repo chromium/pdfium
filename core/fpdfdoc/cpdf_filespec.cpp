@@ -70,7 +70,7 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
     return WideString();
 
 #if defined(OS_MACOSX)
-  if (filepath.Left(sizeof("/Mac") - 1) == WideStringView(L"/Mac"))
+  if (filepath.First(sizeof("/Mac") - 1) == WideStringView(L"/Mac"))
     return ChangeSlashToPlatform(filepath.c_str() + 1);
   return ChangeSlashToPlatform(filepath.c_str());
 #elif defined(OS_WIN)
@@ -191,7 +191,7 @@ WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
     return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
 #elif defined(OS_MACOSX)
-  if (filepath.Left(sizeof("Mac") - 1).EqualsASCII("Mac"))
+  if (filepath.First(sizeof("Mac") - 1).EqualsASCII("Mac"))
     return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
 #else

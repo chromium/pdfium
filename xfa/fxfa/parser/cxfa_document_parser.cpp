@@ -59,7 +59,7 @@ bool MatchNodeName(CFX_XMLNode* pNode,
   if (eMatchFlags & XFA_XDPPACKET_FLAGS_NOMATCH)
     return true;
   if (eMatchFlags & XFA_XDPPACKET_FLAGS_PREFIXMATCH) {
-    return wsNodeStr.Left(wsNamespaceURIPrefix.GetLength()) ==
+    return wsNodeStr.First(wsNamespaceURIPrefix.GetLength()) ==
            wsNamespaceURIPrefix;
   }
 
@@ -74,7 +74,7 @@ bool GetAttributeLocalName(WideStringView wsAttributeName,
     wsLocalAttrName = std::move(wsAttrName);
     return false;
   }
-  wsLocalAttrName = wsAttrName.Right(wsAttrName.GetLength() - pos.value() - 1);
+  wsLocalAttrName = wsAttrName.Last(wsAttrName.GetLength() - pos.value() - 1);
   return true;
 }
 
@@ -84,8 +84,8 @@ bool ResolveAttribute(CFX_XMLElement* pElement,
                       WideString& wsNamespaceURI) {
   WideString wsNSPrefix;
   if (GetAttributeLocalName(wsAttrName.AsStringView(), wsLocalAttrName)) {
-    wsNSPrefix = wsAttrName.Left(wsAttrName.GetLength() -
-                                 wsLocalAttrName.GetLength() - 1);
+    wsNSPrefix = wsAttrName.First(wsAttrName.GetLength() -
+                                  wsLocalAttrName.GetLength() - 1);
   }
   if (wsLocalAttrName.EqualsASCII("xmlns") || wsNSPrefix.EqualsASCII("xmlns") ||
       wsNSPrefix.EqualsASCII("xml")) {
@@ -111,10 +111,10 @@ Optional<WideString> FindAttributeWithNS(CFX_XMLElement* pElement,
         continue;
     } else {
       if (wsLocalAttributeName !=
-          it.first.Right(it.first.GetLength() - pos.value() - 1)) {
+          it.first.Last(it.first.GetLength() - pos.value() - 1)) {
         continue;
       }
-      wsNSPrefix = it.first.Left(pos.value());
+      wsNSPrefix = it.first.First(pos.value());
     }
     if (!XFA_FDEExtension_ResolveNamespaceQualifier(pElement, wsNSPrefix,
                                                     &wsAttrNS) ||

@@ -626,34 +626,34 @@ TEST(ByteString, Substr) {
   EXPECT_EQ("", empty.Substr(0, 0));
 }
 
-TEST(ByteString, Left) {
+TEST(ByteString, First) {
   ByteString fred("FRED");
-  EXPECT_EQ("", fred.Left(0));
-  EXPECT_EQ("F", fred.Left(1));
-  EXPECT_EQ("FR", fred.Left(2));
-  EXPECT_EQ("FRE", fred.Left(3));
-  EXPECT_EQ("FRED", fred.Left(4));
+  EXPECT_EQ("", fred.First(0));
+  EXPECT_EQ("F", fred.First(1));
+  EXPECT_EQ("FR", fred.First(2));
+  EXPECT_EQ("FRE", fred.First(3));
+  EXPECT_EQ("FRED", fred.First(4));
 
-  EXPECT_EQ("", fred.Left(5));
+  EXPECT_EQ("", fred.First(5));
 
   ByteString empty;
-  EXPECT_EQ("", empty.Left(0));
-  EXPECT_EQ("", empty.Left(1));
+  EXPECT_EQ("", empty.First(0));
+  EXPECT_EQ("", empty.First(1));
 }
 
-TEST(ByteString, Right) {
+TEST(ByteString, Last) {
   ByteString fred("FRED");
-  EXPECT_EQ("", fred.Right(0));
-  EXPECT_EQ("D", fred.Right(1));
-  EXPECT_EQ("ED", fred.Right(2));
-  EXPECT_EQ("RED", fred.Right(3));
-  EXPECT_EQ("FRED", fred.Right(4));
+  EXPECT_EQ("", fred.Last(0));
+  EXPECT_EQ("D", fred.Last(1));
+  EXPECT_EQ("ED", fred.Last(2));
+  EXPECT_EQ("RED", fred.Last(3));
+  EXPECT_EQ("FRED", fred.Last(4));
 
-  EXPECT_EQ("", fred.Right(5));
+  EXPECT_EQ("", fred.Last(5));
 
   ByteString empty;
-  EXPECT_EQ("", empty.Right(0));
-  EXPECT_EQ("", empty.Right(1));
+  EXPECT_EQ("", empty.Last(0));
+  EXPECT_EQ("", empty.Last(1));
 }
 
 TEST(ByteString, Find) {

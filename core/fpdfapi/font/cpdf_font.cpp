@@ -315,7 +315,7 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   ByteString type = pFontDict->GetStringFor("Subtype");
   RetainPtr<CPDF_Font> pFont;
   if (type == "TrueType") {
-    ByteString tag = pFontDict->GetStringFor("BaseFont").Left(4);
+    ByteString tag = pFontDict->GetStringFor("BaseFont").First(4);
     for (size_t i = 0; i < FX_ArraySize(kChineseFontNames); ++i) {
       if (tag == ByteString(kChineseFontNames[i], kChineseFontNameSize)) {
         const CPDF_Dictionary* pFontDesc =

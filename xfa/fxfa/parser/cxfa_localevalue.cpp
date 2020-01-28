@@ -58,8 +58,8 @@ bool ValueSplitDateTime(const WideString& wsDateTime,
   if (!nSplitIndex.has_value())
     return false;
 
-  wsDate = wsDateTime.Left(nSplitIndex.value());
-  wsTime = wsDateTime.Right(wsDateTime.GetLength() - nSplitIndex.value() - 1);
+  wsDate = wsDateTime.First(nSplitIndex.value());
+  wsTime = wsDateTime.Last(wsDateTime.GetLength() - nSplitIndex.value() - 1);
   return true;
 }
 

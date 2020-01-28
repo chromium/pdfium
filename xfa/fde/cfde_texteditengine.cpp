@@ -242,7 +242,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
     ++chars_exceeding_size;
 
     --length;
-    temp = temp.Left(length);
+    temp = temp.First(length);
   }
 
   return chars_exceeding_size;
