@@ -20,6 +20,20 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
+namespace {
+
+uint32_t GetEstimatedImageSize(const RetainPtr<CFX_DIBBase>& pDIB) {
+  if (!pDIB || !pDIB->GetBuffer())
+    return 0;
+
+  int height = pDIB->GetHeight();
+  ASSERT(pdfium::base::IsValueInRangeForNumericType<uint32_t>(height));
+  return static_cast<uint32_t>(height) * pDIB->GetPitch() +
+         pDIB->GetPaletteSize() * 4;
+}
+
+}  // namespace
+
 CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
                                            const RetainPtr<CPDF_Image>& pImage)
     : m_pDocument(pDoc), m_pImage(pImage) {}
@@ -29,17 +43,6 @@ CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() = default;
 void CPDF_ImageCacheEntry::Reset() {
   m_pCachedBitmap.Reset();
   CalcSize();
-}
-
-static uint32_t FPDF_ImageCache_EstimateImageSize(
-    const RetainPtr<CFX_DIBBase>& pDIB) {
-  if (!pDIB || !pDIB->GetBuffer())
-    return 0;
-
-  int height = pDIB->GetHeight();
-  ASSERT(pdfium::base::IsValueInRangeForNumericType<uint32_t>(height));
-  return static_cast<uint32_t>(height) * pDIB->GetPitch() +
-         pDIB->GetPaletteSize() * 4;
 }
 
 RetainPtr<CFX_DIBBase> CPDF_ImageCacheEntry::DetachBitmap() {
@@ -116,6 +119,6 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
 }
 
 void CPDF_ImageCacheEntry::CalcSize() {
-  m_dwCacheSize = FPDF_ImageCache_EstimateImageSize(m_pCachedBitmap) +
-                  FPDF_ImageCache_EstimateImageSize(m_pCachedMask);
+  m_dwCacheSize = GetEstimatedImageSize(m_pCachedBitmap) +
+                  GetEstimatedImageSize(m_pCachedMask);
 }
