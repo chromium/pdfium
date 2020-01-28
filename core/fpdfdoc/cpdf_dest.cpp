@@ -130,7 +130,3 @@ unsigned long CPDF_Dest::GetNumParams() const {
 float CPDF_Dest::GetParam(int index) const {
   return m_pArray ? m_pArray->GetNumberAt(2 + index) : 0;
 }
-
-ByteString CPDF_Dest::GetRemoteName() const {
-  return m_pArray ? m_pArray->GetString() : ByteString();
-}
