@@ -1835,9 +1835,9 @@ void ProgressiveDecoder::ReSampleScanline(
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
-          dest_r += pixel_weight * (uint8_t)(argb >> 16);
-          dest_g += pixel_weight * (uint8_t)(argb >> 8);
-          dest_b += pixel_weight * (uint8_t)argb;
+          dest_r += pixel_weight * FXARGB_R(argb);
+          dest_g += pixel_weight * FXARGB_G(argb);
+          dest_b += pixel_weight * FXARGB_B(argb);
         }
         *dest_scan++ =
             (uint8_t)FXRGB2GRAY((dest_r >> 16), (dest_g >> 16), (dest_b >> 16));
@@ -1902,9 +1902,9 @@ void ProgressiveDecoder::ReSampleScanline(
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
-          dest_r += pixel_weight * (uint8_t)(argb >> 16);
-          dest_g += pixel_weight * (uint8_t)(argb >> 8);
-          dest_b += pixel_weight * (uint8_t)argb;
+          dest_r += pixel_weight * FXARGB_R(argb);
+          dest_g += pixel_weight * FXARGB_G(argb);
+          dest_b += pixel_weight * FXARGB_B(argb);
         }
         *dest_scan++ = (uint8_t)((dest_b) >> 16);
         *dest_scan++ = (uint8_t)((dest_g) >> 16);
@@ -1922,9 +1922,9 @@ void ProgressiveDecoder::ReSampleScanline(
             int pixel_weight =
                 pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
             unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
-            dest_r += pixel_weight * (uint8_t)(argb >> 16);
-            dest_g += pixel_weight * (uint8_t)(argb >> 8);
-            dest_b += pixel_weight * (uint8_t)argb;
+            dest_r += pixel_weight * FXARGB_R(argb);
+            dest_g += pixel_weight * FXARGB_G(argb);
+            dest_b += pixel_weight * FXARGB_B(argb);
           }
           *dest_scan++ = (uint8_t)((dest_b) >> 16);
           *dest_scan++ = (uint8_t)((dest_g) >> 16);
@@ -1942,10 +1942,10 @@ void ProgressiveDecoder::ReSampleScanline(
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
-          dest_a += pixel_weight * (uint8_t)(argb >> 24);
-          dest_r += pixel_weight * (uint8_t)(argb >> 16);
-          dest_g += pixel_weight * (uint8_t)(argb >> 8);
-          dest_b += pixel_weight * (uint8_t)argb;
+          dest_a += pixel_weight * FXARGB_A(argb);
+          dest_r += pixel_weight * FXARGB_R(argb);
+          dest_g += pixel_weight * FXARGB_G(argb);
+          dest_b += pixel_weight * FXARGB_B(argb);
         }
         *dest_scan++ = (uint8_t)((dest_b) >> 16);
         *dest_scan++ = (uint8_t)((dest_g) >> 16);

@@ -239,9 +239,9 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       uint8_t* ptr = pColorTable.get();
       for (size_t i = 0; i < palette_size; i++) {
         uint32_t argb = pBitmap->GetPaletteArgb(i);
-        ptr[0] = (uint8_t)(argb >> 16);
-        ptr[1] = (uint8_t)(argb >> 8);
-        ptr[2] = (uint8_t)argb;
+        ptr[0] = FXARGB_R(argb);
+        ptr[1] = FXARGB_G(argb);
+        ptr[2] = FXARGB_B(argb);
         ptr += 3;
       }
       auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
