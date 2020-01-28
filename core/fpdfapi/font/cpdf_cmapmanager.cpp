@@ -14,7 +14,7 @@
 
 namespace {
 
-RetainPtr<const CPDF_CMap> LoadPredefinedCMap(ByteString name) {
+RetainPtr<const CPDF_CMap> LoadPredefinedCMap(ByteStringView name) {
   if (!name.IsEmpty() && name[0] == '/')
     name = name.Last(name.GetLength() - 1);
   return pdfium::MakeRetain<CPDF_CMap>(name);
@@ -32,7 +32,7 @@ RetainPtr<const CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
   if (it != m_CMaps.end())
     return it->second;
 
-  RetainPtr<const CPDF_CMap> pCMap = LoadPredefinedCMap(name);
+  RetainPtr<const CPDF_CMap> pCMap = LoadPredefinedCMap(name.AsStringView());
   if (!name.IsEmpty())
     m_CMaps[name] = pCMap;
 

@@ -8,8 +8,6 @@
 
 #include <algorithm>
 
-#include "third_party/base/span.h"
-
 namespace {
 
 struct SingleCmap {
@@ -30,7 +28,7 @@ const FXCMAP_CMap* FindNextCMap(const FXCMAP_CMap* pMap) {
 }  // namespace
 
 const FXCMAP_CMap* FindEmbeddedCMap(pdfium::span<const FXCMAP_CMap> pCMaps,
-                                    const ByteString& bsName) {
+                                    ByteStringView bsName) {
   for (size_t i = 0; i < pCMaps.size(); i++) {
     if (bsName == pCMaps[i].m_Name)
       return &pCMaps[i];

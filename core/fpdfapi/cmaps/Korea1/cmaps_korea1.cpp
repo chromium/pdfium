@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 
+#include "core/fxcrt/fx_memory.h"
+
 const FXCMAP_CMap g_FXCMAP_Korea1_cmaps[] = {
     {"KSC-EUC-H", g_FXCMAP_KSC_EUC_H_0, nullptr, 467, 0, FXCMAP_CMap::Range, 0},
     {"KSC-EUC-V", g_FXCMAP_KSC_EUC_V_0, nullptr, 16, 0, FXCMAP_CMap::Range, -1},

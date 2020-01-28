@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/cmaps/GB1/cmaps_gb1.h"
 
+#include "core/fxcrt/fx_memory.h"
+
 const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     {"GB-EUC-H", g_FXCMAP_GB_EUC_H_0, nullptr, 90, 0, FXCMAP_CMap::Range, 0},
     {"GB-EUC-V", g_FXCMAP_GB_EUC_V_0, nullptr, 20, 0, FXCMAP_CMap::Range, -1},

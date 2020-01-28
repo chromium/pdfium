@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/cmaps/CNS1/cmaps_cns1.h"
 
+#include "core/fxcrt/fx_memory.h"
+
 const FXCMAP_CMap g_FXCMAP_CNS1_cmaps[] = {
     {"B5pc-H", g_FXCMAP_B5pc_H_0, nullptr, 247, 0, FXCMAP_CMap::Range, 0},
     {"B5pc-V", g_FXCMAP_B5pc_V_0, nullptr, 12, 0, FXCMAP_CMap::Range, -1},

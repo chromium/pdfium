@@ -360,7 +360,8 @@ bool CPDF_CIDFont::Load() {
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pAcc->LoadAllDataFiltered();
-    m_pCMap = pdfium::MakeRetain<CPDF_CMap>(pAcc->GetSpan());
+    pdfium::span<const uint8_t> span = pAcc->GetSpan();
+    m_pCMap = pdfium::MakeRetain<CPDF_CMap>(span);
   } else {
     return false;
   }

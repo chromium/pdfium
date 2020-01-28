@@ -78,7 +78,7 @@ class CPDF_CMap final : public Retainable {
   }
 
  private:
-  explicit CPDF_CMap(const ByteString& bsPredefinedName);
+  explicit CPDF_CMap(ByteStringView bsPredefinedName);
   explicit CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData);
   ~CPDF_CMap() override;
 
