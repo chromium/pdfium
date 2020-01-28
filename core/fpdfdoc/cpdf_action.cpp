@@ -124,6 +124,30 @@ uint32_t CPDF_Action::GetFlags() const {
   return m_pDict->GetIntegerFor("Flags");
 }
 
+std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
+  std::vector<const CPDF_Object*> result;
+  if (!m_pDict)
+    return result;
+
+  ByteString csType = m_pDict->GetStringFor("S");
+  const CPDF_Object* pFields = csType == "Hide"
+                                   ? m_pDict->GetDirectObjectFor("T")
+                                   : m_pDict->GetArrayFor("Fields");
+  if (!pFields)
+    return result;
+
+  if (pFields->IsDictionary() || pFields->IsString()) {
+    result.push_back(pFields);
+  } else if (const CPDF_Array* pArray = pFields->AsArray()) {
+    for (size_t i = 0; i < pArray->size(); ++i) {
+      const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
+      if (pObj)
+        result.push_back(pObj);
+    }
+  }
+  return result;
+}
+
 Optional<WideString> CPDF_Action::MaybeGetJavaScript() const {
   const CPDF_Object* pObject = GetJavaScriptObject();
   if (!pObject)

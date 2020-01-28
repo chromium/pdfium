@@ -15,8 +15,6 @@ source_set("fpdfdoc") {
     "cpdf_aaction.h",
     "cpdf_action.cpp",
     "cpdf_action.h",
-    "cpdf_actionfields.cpp",
-    "cpdf_actionfields.h",
     "cpdf_annot.cpp",
     "cpdf_annot.h",
     "cpdf_annotlist.cpp",
