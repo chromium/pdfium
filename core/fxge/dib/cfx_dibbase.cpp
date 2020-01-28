@@ -292,9 +292,9 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
   uint32_t* src_plt = pSrcBitmap->GetPalette();
-  int plt_size = pSrcBitmap->GetPaletteSize();
+  size_t plt_size = pSrcBitmap->GetPaletteSize();
   if (pSrcBitmap->IsCmykImage()) {
-    for (int i = 0; i < plt_size; ++i) {
+    for (size_t i = 0; i < plt_size; ++i) {
       uint8_t r;
       uint8_t g;
       uint8_t b;
@@ -805,6 +805,20 @@ bool CFX_DIBBase::BuildAlphaMask() {
   memset(m_pAlphaMask->GetBuffer(), 0xff,
          m_pAlphaMask->GetHeight() * m_pAlphaMask->GetPitch());
   return true;
+}
+
+size_t CFX_DIBBase::GetPaletteSize() const {
+  if (IsAlphaMask())
+    return 0;
+
+  switch (m_bpp) {
+    case 1:
+      return 2;
+    case 8:
+      return 256;
+    default:
+      return 0;
+  }
 }
 
 uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {

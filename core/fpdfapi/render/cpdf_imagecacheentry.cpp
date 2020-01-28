@@ -35,7 +35,7 @@ static uint32_t FPDF_ImageCache_EstimateImageSize(
     const RetainPtr<CFX_DIBBase>& pDIB) {
   return pDIB && pDIB->GetBuffer()
              ? (uint32_t)pDIB->GetHeight() * pDIB->GetPitch() +
-                   (uint32_t)pDIB->GetPaletteSize() * 4
+                   pDIB->GetPaletteSize() * 4
              : 0;
 }
 

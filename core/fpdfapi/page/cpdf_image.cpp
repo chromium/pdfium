@@ -227,16 +227,17 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
   } else if (bpp == 8) {
-    int32_t iPalette = pBitmap->GetPaletteSize();
-    if (iPalette > 0) {
+    size_t palette_size = pBitmap->GetPaletteSize();
+    if (palette_size > 0) {
+      ASSERT(palette_size <= 256);
       CPDF_Array* pCS = m_pDocument->NewIndirect<CPDF_Array>();
       pCS->AddNew<CPDF_Name>("Indexed");
       pCS->AddNew<CPDF_Name>("DeviceRGB");
-      pCS->AddNew<CPDF_Number>(iPalette - 1);
+      pCS->AddNew<CPDF_Number>(static_cast<int>(palette_size - 1));
       std::unique_ptr<uint8_t, FxFreeDeleter> pColorTable(
-          FX_Alloc2D(uint8_t, iPalette, 3));
+          FX_Alloc2D(uint8_t, palette_size, 3));
       uint8_t* ptr = pColorTable.get();
-      for (int32_t i = 0; i < iPalette; i++) {
+      for (size_t i = 0; i < palette_size; i++) {
         uint32_t argb = pBitmap->GetPaletteArgb(i);
         ptr[0] = (uint8_t)(argb >> 16);
         ptr[1] = (uint8_t)(argb >> 8);
@@ -245,7 +246,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       }
       auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
-          std::move(pColorTable), iPalette * 3, std::move(pNewDict));
+          std::move(pColorTable), palette_size * 3, std::move(pNewDict));
       pCS->AddNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
       pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument.Get(),
                                        pCS->GetObjNum());

@@ -63,9 +63,7 @@ class CFX_DIBBase : public Retainable {
   bool IsCmykImage() const { return !!(m_AlphaFlag & 4); }
   bool IsOpaqueImage() const { return !IsAlphaMask() && !HasAlpha(); }
 
-  int GetPaletteSize() const {
-    return IsAlphaMask() ? 0 : (m_bpp == 1 ? 2 : (m_bpp == 8 ? 256 : 0));
-  }
+  size_t GetPaletteSize() const;
 
   uint32_t GetPaletteArgb(int index) const;
   void SetPaletteArgb(int index, uint32_t color);
