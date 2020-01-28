@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/cmaps/cmap_int.h"
+#include "core/fpdfapi/cmaps/fpdf_cmaps.h"
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"

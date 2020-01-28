@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_CMAPS_KOREA1_CMAPS_KOREA1_H_
 #define CORE_FPDFAPI_CMAPS_KOREA1_CMAPS_KOREA1_H_
 
-#include "core/fpdfapi/cmaps/cmap_int.h"
+#include "core/fpdfapi/cmaps/fpdf_cmaps.h"
 
 extern const uint16_t g_FXCMAP_KSC_EUC_H_0[];
 extern const uint16_t g_FXCMAP_KSC_EUC_V_0[];

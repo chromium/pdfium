@@ -67,8 +67,8 @@ source_set("cmaps") {
     "Korea1/UniKS-UCS2-V_1.cpp",
     "Korea1/UniKS-UTF16-H_0.cpp",
     "Korea1/cmaps_korea1.cpp",
-    "cmap_int.h",
     "fpdf_cmaps.cpp",
+    "fpdf_cmaps.h",
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [ "../../fxcrt" ]
