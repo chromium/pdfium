@@ -33,10 +33,13 @@ void CPDF_ImageCacheEntry::Reset() {
 
 static uint32_t FPDF_ImageCache_EstimateImageSize(
     const RetainPtr<CFX_DIBBase>& pDIB) {
-  return pDIB && pDIB->GetBuffer()
-             ? (uint32_t)pDIB->GetHeight() * pDIB->GetPitch() +
-                   pDIB->GetPaletteSize() * 4
-             : 0;
+  if (!pDIB || !pDIB->GetBuffer())
+    return 0;
+
+  int height = pDIB->GetHeight();
+  ASSERT(pdfium::base::IsValueInRangeForNumericType<uint32_t>(height));
+  return static_cast<uint32_t>(height) * pDIB->GetPitch() +
+         pDIB->GetPaletteSize() * 4;
 }
 
 RetainPtr<CFX_DIBBase> CPDF_ImageCacheEntry::DetachBitmap() {
