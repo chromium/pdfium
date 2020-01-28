@@ -141,8 +141,8 @@ class WideString {
     return m_pData->m_String[index];
   }
 
-  CharType First() const { return GetLength() ? (*this)[0] : 0; }
-  CharType Last() const { return GetLength() ? (*this)[GetLength() - 1] : 0; }
+  CharType Front() const { return GetLength() ? (*this)[0] : 0; }
+  CharType Back() const { return GetLength() ? (*this)[GetLength() - 1] : 0; }
 
   void SetAt(size_t index, wchar_t c);
 

@@ -259,7 +259,7 @@ size_t GetFourByteCharSizeImpl(
 }  // namespace
 
 CPDF_CMap::CPDF_CMap(const ByteString& bsPredefinedName)
-    : m_bVertical(bsPredefinedName.Last() == 'V') {
+    : m_bVertical(bsPredefinedName.Back() == 'V') {
   if (bsPredefinedName == "Identity-H" || bsPredefinedName == "Identity-V") {
     m_Coding = CIDCODING_CID;
     m_bLoaded = true;

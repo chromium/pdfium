@@ -152,7 +152,7 @@ void CPDF_LinkExtract::ExtractLinks() {
 
     if (strBeCheck.GetLength() > 5) {
       while (strBeCheck.GetLength() > 0) {
-        wchar_t ch = strBeCheck.Last();
+        wchar_t ch = strBeCheck.Back();
         if (ch != L')' && ch != L',' && ch != L'>' && ch != L'.')
           break;
 

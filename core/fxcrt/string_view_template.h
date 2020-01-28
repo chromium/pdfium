@@ -179,8 +179,8 @@ class StringViewTemplate {
     return m_Span[index];
   }
 
-  UnsignedType First() const { return !m_Span.empty() ? m_Span[0] : 0; }
-  UnsignedType Last() const {
+  UnsignedType Front() const { return !m_Span.empty() ? m_Span[0] : 0; }
+  UnsignedType Back() const {
     return !m_Span.empty() ? m_Span[m_Span.size() - 1] : 0;
   }
 

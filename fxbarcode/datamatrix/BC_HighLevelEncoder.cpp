@@ -131,7 +131,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   if (context.HasCharactersOutsideISO88591Encoding())
     return WideString();
 
-  if (msg.Last() == kMacroTrailer) {
+  if (msg.Back() == kMacroTrailer) {
     WideString left = msg.Left(6);
     if (left == kMacro05Header) {
       context.writeCodeword(kMacro05);

@@ -33,9 +33,9 @@ void DoPredicateFilter(WideString wsCondition,
   ASSERT(iFoundCount == pRnd->m_Objects.size());
   WideString wsExpression;
   CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
-  if (wsCondition.Left(2).EqualsASCII(".[") && wsCondition.Last() == L']')
+  if (wsCondition.Left(2).EqualsASCII(".[") && wsCondition.Back() == L']')
     eLangType = CXFA_Script::Type::Formcalc;
-  else if (wsCondition.Left(2).EqualsASCII(".(") && wsCondition.Last() == L')')
+  else if (wsCondition.Left(2).EqualsASCII(".(") && wsCondition.Back() == L')')
     eLangType = CXFA_Script::Type::Javascript;
   else
     return;

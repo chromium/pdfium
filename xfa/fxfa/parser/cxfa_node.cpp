@@ -3256,7 +3256,7 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
     return;
   }
 
-  if (wsText.Last() == L'\n')
+  if (wsText.Back() == L'\n')
     wsText += L'\n';
 
   CXFA_FieldLayoutData* layoutData = m_pLayoutData->AsFieldLayoutData();

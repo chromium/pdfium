@@ -798,7 +798,7 @@ bool CXFA_TextLayout::LoadRichText(
           } else if (CFX_CSSDisplay::Inline == eDisplay &&
                      m_pLoader->bFilterSpace) {
             m_pLoader->bFilterSpace = false;
-          } else if (wsText.GetLength() > 0 && wsText.Last() == 0x20) {
+          } else if (wsText.GetLength() > 0 && wsText.Back() == 0x20) {
             m_pLoader->bFilterSpace = true;
           } else if (wsText.GetLength() != 0) {
             m_pLoader->bFilterSpace = false;

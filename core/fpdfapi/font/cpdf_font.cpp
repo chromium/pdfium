@@ -345,7 +345,7 @@ uint32_t CPDF_Font::GetNextChar(ByteStringView pString, size_t* pOffset) const {
     return 0;
 
   size_t& offset = *pOffset;
-  return offset < pString.GetLength() ? pString[offset++] : pString.Last();
+  return offset < pString.GetLength() ? pString[offset++] : pString.Back();
 }
 
 bool CPDF_Font::IsStandardFont() const {

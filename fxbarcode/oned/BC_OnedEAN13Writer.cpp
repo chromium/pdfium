@@ -100,7 +100,7 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const ByteString& contents,
     return nullptr;
 
   m_iDataLenth = 13;
-  int32_t firstDigit = FXSYS_DecimalCharToInt(contents.First());
+  int32_t firstDigit = FXSYS_DecimalCharToInt(contents.Front());
   int32_t parities = kFirstDigitEncodings[firstDigit];
   outLength = m_codeWidth;
   std::unique_ptr<uint8_t, FxFreeDeleter> result(

@@ -962,7 +962,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
             return;
         }
         while (m_TempTextBuf.GetSize() > 0 &&
-               m_TempTextBuf.AsStringView().Last() == 0x20) {
+               m_TempTextBuf.AsStringView().Back() == 0x20) {
           m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
           m_TempCharList.pop_back();
         }
@@ -1004,7 +1004,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       WideString str = m_TempTextBuf.MakeString();
       if (str.IsEmpty())
         str = m_TextBuf.AsStringView();
-      if (str.IsEmpty() || str.Last() == L' ')
+      if (str.IsEmpty() || str.Back() == L' ')
         continue;
 
       float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
@@ -1118,7 +1118,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       }
     } else if (i == 0) {
       WideString str = m_TempTextBuf.MakeString();
-      if (!str.IsEmpty() && str.Last() == L' ') {
+      if (!str.IsEmpty() && str.Back() == L' ') {
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         m_TempCharList.pop_back();
       }
@@ -1290,7 +1290,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
 
   WideString PrevStr =
       m_pPrevTextObj->GetFont()->UnicodeFromCharCode(PrevItem.m_CharCode);
-  wchar_t preChar = PrevStr.Last();
+  wchar_t preChar = PrevStr.Back();
   if (preChar == L' ')
     return GenerateCharacter::kNone;
 
