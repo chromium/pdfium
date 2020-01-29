@@ -252,6 +252,7 @@ typedef enum {
 typedef struct {
 	TIFF* tif;
         int decoder_ok;
+        int error_in_raw_data_decoding;
 	#ifndef LIBJPEG_ENCAP_EXTERNAL
 	JMP_BUF exit_jmpbuf;
 	#endif
@@ -687,7 +688,7 @@ OJPEGPreDecode(TIFF* tif, uint16 s)
 		if (OJPEGReadSecondarySos(tif,s)==0)
 			return(0);
 	}
-	if isTiled(tif)
+	if (isTiled(tif))
 		m=tif->tif_curtile;
 	else
 		m=tif->tif_curstrip;
@@ -751,6 +752,7 @@ OJPEGPreDecodeSkipRaw(TIFF* tif)
 		}
 		m-=sp->subsampling_convert_clines-sp->subsampling_convert_state;
 		sp->subsampling_convert_state=0;
+                sp->error_in_raw_data_decoding=0;
 	}
 	while (m>=sp->subsampling_convert_clines)
 	{
@@ -801,6 +803,10 @@ OJPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
             TIFFErrorExt(tif->tif_clientdata,module,"Cannot decode: decoder not correctly initialized");
             return 0;
         }
+        if( sp->error_in_raw_data_decoding )
+        {
+            return 0;
+        }
 	if (sp->libjpeg_jpeg_query_style==0)
 	{
 		if (OJPEGDecodeRaw(tif,buf,cc)==0)
@@ -847,7 +853,10 @@ OJPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc)
 			int expected_bytes;
 			int i;
 			if (cinfo->MCUs_per_row == 0)
+			{
+				sp->error_in_raw_data_decoding = 1;
 				return 0;
+			}
 			for (i = 0; i < cinfo->comps_in_scan; ++i)
 			{
 				const jpeg_component_info* info = cinfo->cur_comp_info[i];
@@ -864,10 +873,14 @@ OJPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc)
 			if (jpeg_bytes != expected_bytes)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Inconsistent number of MCU in codestream");
+				sp->error_in_raw_data_decoding = 1;
 				return(0);
 			}
 			if (jpeg_read_raw_data_encap(sp,&(sp->libjpeg_jpeg_decompress_struct),sp->subsampling_convert_ycbcrimage,sp->subsampling_ver*8)==0)
+			{
+				sp->error_in_raw_data_decoding = 1;
 				return(0);
+			}
 		}
 		oy=sp->subsampling_convert_ybuf+sp->subsampling_convert_state*sp->subsampling_ver*sp->subsampling_convert_ylinelen;
 		ocb=sp->subsampling_convert_cbbuf+sp->subsampling_convert_state*sp->subsampling_convert_clinelen;
@@ -1025,7 +1038,6 @@ OJPEGSubsamplingCorrect(TIFF* tif)
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	uint8 mh;
 	uint8 mv;
-        _TIFFFillStriles( tif );
         
 	assert(sp->subsamplingcorrect_done==0);
 	if ((tif->tif_dir.td_samplesperpixel!=3) || ((tif->tif_dir.td_photometric!=PHOTOMETRIC_YCBCR) &&
@@ -1081,7 +1093,7 @@ OJPEGReadHeaderInfo(TIFF* tif)
 	assert(sp->readheader_done==0);
 	sp->image_width=tif->tif_dir.td_imagewidth;
 	sp->image_length=tif->tif_dir.td_imagelength;
-	if isTiled(tif)
+	if (isTiled(tif))
 	{
 		sp->strile_width=tif->tif_dir.td_tilewidth;
 		sp->strile_length=tif->tif_dir.td_tilelength;
@@ -1117,6 +1129,12 @@ OJPEGReadHeaderInfo(TIFF* tif)
 	}
 	if (sp->strile_length<sp->image_length)
 	{
+		if (((sp->subsampling_hor!=1) && (sp->subsampling_hor!=2) && (sp->subsampling_hor!=4)) ||
+		    ((sp->subsampling_ver!=1) && (sp->subsampling_ver!=2) && (sp->subsampling_ver!=4)))
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"Invalid subsampling values");
+			return(0);
+		}
 		if (sp->strile_length%(sp->subsampling_ver*8)!=0)
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,"Incompatible vertical subsampling and image strip/tile length");
@@ -1232,7 +1250,13 @@ OJPEGWriteHeaderInfo(TIFF* tif)
 			sp->subsampling_convert_ybuflen=sp->subsampling_convert_ylinelen*sp->subsampling_convert_ylines;
 			sp->subsampling_convert_cbuflen=sp->subsampling_convert_clinelen*sp->subsampling_convert_clines;
 			sp->subsampling_convert_ycbcrbuflen=sp->subsampling_convert_ybuflen+2*sp->subsampling_convert_cbuflen;
-			sp->subsampling_convert_ycbcrbuf=_TIFFmalloc(sp->subsampling_convert_ycbcrbuflen);
+                        /* The calloc is not normally necessary, except in some edge/broken cases */
+                        /* for example for a tiled image of height 1 with a tile height of 1 and subsampling_hor=subsampling_ver=2 */
+                        /* In that case, libjpeg will only fill the 8 first lines of the 16 lines */
+                        /* See https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16844 */
+                        /* Even if this case is allowed (?), its handling is broken because OJPEGPreDecode() should also likely */
+                        /* reset subsampling_convert_state to 0 when changing tile. */
+			sp->subsampling_convert_ycbcrbuf=_TIFFcalloc(1, sp->subsampling_convert_ycbcrbuflen);
 			if (sp->subsampling_convert_ycbcrbuf==0)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
@@ -1258,10 +1282,11 @@ OJPEGWriteHeaderInfo(TIFF* tif)
 				*m++=sp->subsampling_convert_cbbuf+n*sp->subsampling_convert_clinelen;
 			for (n=0; n<sp->subsampling_convert_clines; n++)
 				*m++=sp->subsampling_convert_crbuf+n*sp->subsampling_convert_clinelen;
-			sp->subsampling_convert_clinelenout=((sp->strile_width+sp->subsampling_hor-1)/sp->subsampling_hor);
+			sp->subsampling_convert_clinelenout=sp->strile_width/sp->subsampling_hor + ((sp->strile_width % sp->subsampling_hor) != 0 ? 1 : 0);
 			sp->subsampling_convert_state=0;
+			sp->error_in_raw_data_decoding=0;
 			sp->bytes_per_line=sp->subsampling_convert_clinelenout*(sp->subsampling_ver*sp->subsampling_hor+2);
-			sp->lines_per_strile=((sp->strile_length+sp->subsampling_ver-1)/sp->subsampling_ver);
+			sp->lines_per_strile=sp->strile_length/sp->subsampling_ver + ((sp->strile_length % sp->subsampling_ver) != 0 ? 1 : 0);
 			sp->subsampling_convert_log=1;
 		}
 	}
@@ -1307,7 +1332,9 @@ OJPEGReadHeaderInfoSec(TIFF* tif)
 		}
 		else
 		{
-			if ((sp->jpeg_interchange_format_length==0) || (sp->jpeg_interchange_format+sp->jpeg_interchange_format_length>sp->file_size))
+			if ((sp->jpeg_interchange_format_length==0) ||
+                            (sp->jpeg_interchange_format > TIFF_UINT64_MAX - sp->jpeg_interchange_format_length) ||
+                            (sp->jpeg_interchange_format+sp->jpeg_interchange_format_length>sp->file_size))
 				sp->jpeg_interchange_format_length=sp->file_size-sp->jpeg_interchange_format;
 		}
 	}
@@ -2024,32 +2051,30 @@ OJPEGReadBufferFill(OJPEGState* sp)
 				sp->in_buffer_source=osibsStrile;
                                 break;
 			case osibsStrile:
-				if (!_TIFFFillStriles( sp->tif ) 
-				    || sp->tif->tif_dir.td_stripoffset == NULL
-				    || sp->tif->tif_dir.td_stripbytecount == NULL)
-					return 0;
-
 				if (sp->in_buffer_next_strile==sp->in_buffer_strile_count)
 					sp->in_buffer_source=osibsEof;
 				else
 				{
-					sp->in_buffer_file_pos=sp->tif->tif_dir.td_stripoffset[sp->in_buffer_next_strile];
+					int err = 0;
+					sp->in_buffer_file_pos=TIFFGetStrileOffsetWithErr(sp->tif, sp->in_buffer_next_strile, &err);
+					if( err )
+						return 0;
 					if (sp->in_buffer_file_pos!=0)
 					{
+						uint64 bytecount = TIFFGetStrileByteCountWithErr(sp->tif, sp->in_buffer_next_strile, &err);
+						if( err )
+							return 0;
 						if (sp->in_buffer_file_pos>=sp->file_size)
 							sp->in_buffer_file_pos=0;
-						else if (sp->tif->tif_dir.td_stripbytecount==NULL)
+						else if (bytecount==0)
 							sp->in_buffer_file_togo=sp->file_size-sp->in_buffer_file_pos;
 						else
 						{
-							if (sp->tif->tif_dir.td_stripbytecount == 0) {
-								TIFFErrorExt(sp->tif->tif_clientdata,sp->tif->tif_name,"Strip byte counts are missing");
-								return(0);
-							}
-							sp->in_buffer_file_togo=sp->tif->tif_dir.td_stripbytecount[sp->in_buffer_next_strile];
+							sp->in_buffer_file_togo=bytecount;
 							if (sp->in_buffer_file_togo==0)
 								sp->in_buffer_file_pos=0;
-							else if (sp->in_buffer_file_pos+sp->in_buffer_file_togo>sp->file_size)
+							else if (sp->in_buffer_file_pos > TIFF_UINT64_MAX - sp->in_buffer_file_togo || 
+                                                                sp->in_buffer_file_pos+sp->in_buffer_file_togo>sp->file_size)
 								sp->in_buffer_file_togo=sp->file_size-sp->in_buffer_file_pos;
 						}
 					}

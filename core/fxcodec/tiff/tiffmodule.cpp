@@ -103,10 +103,6 @@ int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size) {
   return memcmp(ptr1, ptr2, static_cast<size_t>(size));
 }
 
-int _TIFFIfMultiplicationOverflow(tmsize_t op1, tmsize_t op2) {
-  return op1 > std::numeric_limits<tmsize_t>::max() / op2;
-}
-
 TIFFErrorHandler _TIFFwarningHandler = nullptr;
 TIFFErrorHandler _TIFFerrorHandler = nullptr;
 
