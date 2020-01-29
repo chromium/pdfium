@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/logging.h"
 
@@ -143,7 +144,7 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
   if (word.IsEmpty())
     return 0;
 
-  pdfium::base::CheckedNumeric<uint32_t> num = 0;
+  FX_SAFE_UINT32 num = 0;
   if (word[0] == '<') {
     for (size_t i = 1; i < word.GetLength() && std::isxdigit(word[i]); ++i) {
       num = num * 16 + FXSYS_HexCharToInt(word[i]);

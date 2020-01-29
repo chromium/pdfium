@@ -9,6 +9,7 @@
 #include <limits>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 
 FX_Number::FX_Number()
@@ -37,7 +38,7 @@ FX_Number::FX_Number(ByteStringView strc)
   // actually an unsigned value. We use a uint32_t so we can deal with the
   // unsigned and then check for overflow if the user actually signed the value.
   // The Permissions flag is listed in Table 3.20 PDF 1.7 spec.
-  pdfium::base::CheckedNumeric<uint32_t> unsigned_val = 0;
+  FX_SAFE_UINT32 unsigned_val = 0;
   bool bNegative = false;
   size_t cc = 0;
   if (strc[0] == '+') {

@@ -23,6 +23,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_random.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -93,7 +94,7 @@ bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
     buffer += buf_size;
   }
 
-  pdfium::base::CheckedNumeric<FX_FILESIZE> safe_offset = offset_;
+  FX_SAFE_FILESIZE safe_offset = offset_;
   safe_offset += size;
   if (!safe_offset.IsValid())
     return false;

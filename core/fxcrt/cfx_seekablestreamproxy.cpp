@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -163,7 +164,7 @@ void CFX_SeekableStreamProxy::Seek(From eSeek, FX_FILESIZE iOffset) {
       m_iPosition = iOffset;
       break;
     case From::Current: {
-      pdfium::base::CheckedNumeric<FX_FILESIZE> new_pos = m_iPosition;
+      FX_SAFE_FILESIZE new_pos = m_iPosition;
       new_pos += iOffset;
       m_iPosition =
           new_pos.ValueOrDefault(std::numeric_limits<FX_FILESIZE>::max());
@@ -191,7 +192,7 @@ size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   if (!m_pStream->ReadBlockAtOffset(pBuffer, m_iPosition, iBufferSize))
     return 0;
 
-  pdfium::base::CheckedNumeric<FX_FILESIZE> new_pos = m_iPosition;
+  FX_SAFE_FILESIZE new_pos = m_iPosition;
   new_pos += iBufferSize;
   m_iPosition = new_pos.ValueOrDefault(m_iPosition);
   return new_pos.IsValid() ? iBufferSize : 0;

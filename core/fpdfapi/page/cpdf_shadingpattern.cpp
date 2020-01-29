@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 namespace {
 
@@ -151,7 +152,7 @@ bool CPDF_ShadingPattern::ValidateFunctions(
   if (m_pFunctions.size() != nExpectedNumFunctions)
     return false;
 
-  pdfium::base::CheckedNumeric<uint32_t> nTotalOutputs = 0;
+  FX_SAFE_UINT32 nTotalOutputs = 0;
   for (const auto& function : m_pFunctions) {
     if (!function)
       return false;
