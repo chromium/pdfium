@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -34,8 +35,8 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
   float moduleHSize = std::min(m_ModuleWidth, m_ModuleHeight);
   moduleHSize = std::min(moduleHSize, 8.0f);
   moduleHSize = std::max(moduleHSize, 1.0f);
-  pdfium::base::CheckedNumeric<int32_t> scaledWidth = tempWidth;
-  pdfium::base::CheckedNumeric<int32_t> scaledHeight = tempHeight;
+  FX_SAFE_INT32 scaledWidth = tempWidth;
+  FX_SAFE_INT32 scaledHeight = tempHeight;
   scaledWidth *= moduleHSize;
   scaledHeight *= moduleHSize;
   m_outputWidth = scaledWidth.ValueOrDie();

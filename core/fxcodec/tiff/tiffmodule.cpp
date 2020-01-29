@@ -276,8 +276,8 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
   Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MAKE, pAttribute);
   Tiff_Exif_GetStringInfo(m_tif_ctx.get(), TIFFTAG_MODEL, pAttribute);
 
-  pdfium::base::CheckedNumeric<int32_t> checked_width = tif_width;
-  pdfium::base::CheckedNumeric<int32_t> checked_height = tif_height;
+  FX_SAFE_INT32 checked_width = tif_width;
+  FX_SAFE_INT32 checked_height = tif_height;
   if (!checked_width.IsValid() || !checked_height.IsValid())
     return false;
 
