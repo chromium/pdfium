@@ -31,8 +31,6 @@ source_set("fpdfdoc") {
     "cpdf_defaultappearance.h",
     "cpdf_dest.cpp",
     "cpdf_dest.h",
-    "cpdf_docjsactions.cpp",
-    "cpdf_docjsactions.h",
     "cpdf_filespec.cpp",
     "cpdf_filespec.h",
     "cpdf_formcontrol.cpp",

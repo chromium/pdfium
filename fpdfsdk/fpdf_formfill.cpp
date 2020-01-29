@@ -651,7 +651,7 @@ FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
   if (pFormFillEnv && pFormFillEnv->IsJSPlatformPresent())
-    pFormFillEnv->ProcJavascriptFun();
+    pFormFillEnv->ProcJavascriptAction();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV

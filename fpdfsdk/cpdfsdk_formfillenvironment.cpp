@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfdoc/cpdf_docjsactions.h"
+#include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
@@ -591,13 +591,13 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
   return it != m_PageMap.end() ? it->second.get() : nullptr;
 }
 
-void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
-  CPDF_DocJSActions docJS(m_pCPDFDoc.Get());
-  int iCount = docJS.CountJSActions();
+void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
+  CPDF_NameTree docJS(m_pCPDFDoc.Get(), "JavaScript");
+  int iCount = docJS.GetCount();
   for (int i = 0; i < iCount; i++) {
-    WideString csJSName;
-    CPDF_Action jsAction = docJS.GetJSActionAndName(i, &csJSName);
-    GetActionHandler()->DoAction_JavaScript(jsAction, csJSName, this);
+    WideString name;
+    CPDF_Action action(ToDictionary(docJS.LookupValueAndName(i, &name)));
+    GetActionHandler()->DoAction_JavaScript(action, name, this);
   }
 }
 

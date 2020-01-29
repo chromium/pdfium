@@ -82,7 +82,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   void SetChangeMark() { m_bChangeMask = true; }
   void ClearChangeMark() { m_bChangeMask = false; }
 
-  void ProcJavascriptFun();
+  void ProcJavascriptAction();
   bool ProcOpenAction();
   void Invalidate(IPDF_Page* page, const FX_RECT& rect);
 
