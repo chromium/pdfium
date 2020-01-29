@@ -182,8 +182,9 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CFX_GlobalData::SetGlobalVariableObject(ByteString sPropName,
-                                             CFX_GlobalArray array) {
+void CFX_GlobalData::SetGlobalVariableObject(
+    ByteString sPropName,
+    std::vector<std::unique_ptr<CFX_KeyValue>> array) {
   if (!TrimPropName(&sPropName))
     return;
 

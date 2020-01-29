@@ -44,7 +44,9 @@ class CFX_GlobalData {
   void SetGlobalVariableNumber(ByteString propname, double dData);
   void SetGlobalVariableBoolean(ByteString propname, bool bData);
   void SetGlobalVariableString(ByteString propname, const ByteString& sData);
-  void SetGlobalVariableObject(ByteString propname, CFX_GlobalArray array);
+  void SetGlobalVariableObject(
+      ByteString propname,
+      std::vector<std::unique_ptr<CFX_KeyValue>> array);
   void SetGlobalVariableNull(ByteString propname);
   bool SetGlobalVariablePersistent(ByteString propname, bool bPersistent);
   bool DeleteGlobalVariable(ByteString propname);

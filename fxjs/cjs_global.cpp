@@ -393,7 +393,7 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::OBJECT: {
-        CFX_GlobalArray array;
+        std::vector<std::unique_ptr<CFX_KeyValue>> array;
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
         ObjectToArray(pRuntime, obj, &array);
@@ -408,9 +408,10 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
   }
 }
 
-void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
-                               v8::Local<v8::Object> pObj,
-                               CFX_GlobalArray* pArray) {
+void CJS_Global::ObjectToArray(
+    CJS_Runtime* pRuntime,
+    v8::Local<v8::Object> pObj,
+    std::vector<std::unique_ptr<CFX_KeyValue>>* pArray) {
   std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     ByteString sKey = ws.ToUTF8();
@@ -421,7 +422,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = CFX_Value::DataType::NUMBER;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToDouble(v);
-      pArray->Add(std::move(pObjElement));
+      pArray->push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsBoolean()) {
@@ -429,7 +430,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = CFX_Value::DataType::BOOLEAN;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToBoolean(v);
-      pArray->Add(std::move(pObjElement));
+      pArray->push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsString()) {
@@ -438,7 +439,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = CFX_Value::DataType::STRING;
       pObjElement->sKey = sKey;
       pObjElement->sData = sValue;
-      pArray->Add(std::move(pObjElement));
+      pArray->push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsObject()) {
@@ -446,14 +447,14 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = CFX_Value::DataType::OBJECT;
       pObjElement->sKey = sKey;
       ObjectToArray(pRuntime, pRuntime->ToObject(v), &pObjElement->objData);
-      pArray->Add(std::move(pObjElement));
+      pArray->push_back(std::move(pObjElement));
       continue;
     }
     if (v->IsNull()) {
       auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::NULLOBJ;
       pObjElement->sKey = sKey;
-      pArray->Add(std::move(pObjElement));
+      pArray->push_back(std::move(pObjElement));
     }
   }
 }
@@ -464,8 +465,8 @@ void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
   if (pRuntime)
     return;
 
-  for (int i = 0, sz = pData->objData.Count(); i < sz; i++) {
-    CFX_KeyValue* pObjData = pData->objData.GetAt(i);
+  for (size_t i = 0; i < pData->objData.size(); ++i) {
+    CFX_KeyValue* pObjData = pData->objData.at(i).get();
     switch (pObjData->nType) {
       case CFX_Value::DataType::NUMBER:
         pRuntime->PutObjectProperty(pObj, pObjData->sKey.AsStringView(),
