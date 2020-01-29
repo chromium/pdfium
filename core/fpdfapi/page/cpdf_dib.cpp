@@ -102,6 +102,41 @@ CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
   return CJPX_Decoder::kNormalColorSpace;
 }
 
+enum class JpxDecodeAction {
+  kFail,
+  kDoNothing,
+  kUseRgb,
+  kUseCmyk,
+};
+
+JpxDecodeAction GetJpxDecodeAction(uint32_t jpx_components,
+                                   const CPDF_ColorSpace* pdf_colorspace) {
+  if (pdf_colorspace) {
+    // Make sure the JPX image and the PDF colorspace agree on the number of
+    // components.
+    if (jpx_components != pdf_colorspace->CountComponents())
+      return JpxDecodeAction::kFail;
+
+    if (pdf_colorspace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB))
+      return JpxDecodeAction::kUseRgb;
+
+    return JpxDecodeAction::kDoNothing;
+  }
+
+  // Cases where the PDF did not provide a colorspace.
+  // Choose how to decode based on the number of components in the JPX image.
+  switch (jpx_components) {
+    case 3:
+      return JpxDecodeAction::kUseRgb;
+
+    case 4:
+      return JpxDecodeAction::kUseCmyk;
+
+    default:
+      return JpxDecodeAction::kDoNothing;
+  }
+}
+
 }  // namespace
 
 CPDF_DIB::CPDF_DIB() = default;
@@ -382,8 +417,12 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   if (!m_pColorSpace)
     return false;
 
-  m_Family = m_pColorSpace->GetFamily();
+  // If the checks above failed to find a colorspace, and the next line to set
+  // |m_nComponents| does not get reached, then a decoder can try to set
+  // |m_nComponents| based on the number of components in the image being
+  // decoded.
   m_nComponents = m_pColorSpace->CountComponents();
+  m_Family = m_pColorSpace->GetFamily();
   if (m_Family == PDFCS_ICCBASED && pCSObj->IsName()) {
     ByteString cs = pCSObj->GetString();
     if (cs == "DeviceGray")
@@ -595,21 +634,31 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   if (static_cast<int>(width) < m_Width || static_cast<int>(height) < m_Height)
     return nullptr;
 
-  bool bSwapRGB = false;
-  if (m_pColorSpace) {
-    if (components != m_pColorSpace->CountComponents())
+  RetainPtr<CPDF_ColorSpace> original_colorspace = m_pColorSpace;
+  bool swap_rgb = false;
+  switch (GetJpxDecodeAction(components, m_pColorSpace.Get())) {
+    case JpxDecodeAction::kFail:
       return nullptr;
 
-    if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
-      bSwapRGB = true;
+    case JpxDecodeAction::kDoNothing:
+      break;
+
+    case JpxDecodeAction::kUseRgb:
+      swap_rgb = true;
       m_pColorSpace = nullptr;
-    }
-  } else {
-    if (components == 3) {
-      bSwapRGB = true;
-    } else if (components == 4) {
+      break;
+
+    case JpxDecodeAction::kUseCmyk:
       m_pColorSpace = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-    }
+      break;
+  }
+
+  // If |original_colorspace| exists, then LoadColorInfo() already set
+  // |m_nComponents|.
+  if (original_colorspace) {
+    DCHECK_NE(0, m_nComponents);
+  } else {
+    DCHECK_EQ(0, m_nComponents);
     m_nComponents = components;
   }
 
@@ -633,7 +682,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   // Fill |output_offsets| with 0, 1, ... N.
   std::vector<uint8_t> output_offsets(components);
   std::iota(output_offsets.begin(), output_offsets.end(), 0);
-  if (bSwapRGB)
+  if (swap_rgb)
     std::swap(output_offsets[0], output_offsets[2]);
   if (!decoder->Decode(pCachedBitmap->GetBuffer(), pCachedBitmap->GetPitch(),
                        output_offsets)) {
