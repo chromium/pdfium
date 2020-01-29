@@ -30,13 +30,19 @@ class CJPX_Decoder {
     kIndexedColorSpace
   };
 
+  struct JpxImageInfo {
+    uint32_t width;
+    uint32_t height;
+    uint32_t components;
+  };
+
   static void Sycc420ToRgbForTesting(opj_image_t* img);
 
   explicit CJPX_Decoder(ColorSpaceOption option);
   ~CJPX_Decoder();
 
   bool Init(pdfium::span<const uint8_t> src_data);
-  void GetInfo(uint32_t* width, uint32_t* height, uint32_t* components);
+  JpxImageInfo GetInfo() const;
   bool StartDecode();
   bool Decode(uint8_t* dest_buf,
               uint32_t pitch,

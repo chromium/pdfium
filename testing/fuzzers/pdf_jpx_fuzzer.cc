@@ -17,11 +17,11 @@ namespace {
 
 const uint32_t kMaxJPXFuzzSize = 100 * 1024 * 1024;  // 100 MB
 
-bool CheckImageSize(uint32_t width, uint32_t height, uint32_t components) {
+bool CheckImageSize(const CJPX_Decoder::JpxImageInfo& image_info) {
   static constexpr uint32_t kMemLimitBytes = 1024 * 1024 * 1024;  // 1 GB.
-  FX_SAFE_UINT32 mem = width;
-  mem *= height;
-  mem *= components;
+  FX_SAFE_UINT32 mem = image_info.width;
+  mem *= image_info.height;
+  mem *= image_info.components;
   return mem.IsValid() && mem.ValueOrDie() <= kMemLimitBytes;
 }
 
@@ -39,34 +39,31 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   // A call to StartDecode could be too expensive if image size is very big, so
   // check size before calling StartDecode().
-  uint32_t width;
-  uint32_t height;
-  uint32_t components;
-  decoder->GetInfo(&width, &height, &components);
-  if (!CheckImageSize(width, height, components))
+  CJPX_Decoder::JpxImageInfo image_info = decoder->GetInfo();
+  if (!CheckImageSize(image_info))
     return 0;
 
   if (!decoder->StartDecode())
     return 0;
 
   // StartDecode() could change image size, so check again.
-  decoder->GetInfo(&width, &height, &components);
-  if (!CheckImageSize(width, height, components))
+  image_info = decoder->GetInfo();
+  if (!CheckImageSize(image_info))
     return 0;
 
   FXDIB_Format format;
-  if (components == 1) {
+  if (image_info.components == 1) {
     format = FXDIB_8bppRgb;
-  } else if (components <= 3) {
+  } else if (image_info.components <= 3) {
     format = FXDIB_Rgb;
-  } else if (components == 4) {
+  } else if (image_info.components == 4) {
     format = FXDIB_Rgb32;
   } else {
-    width = (width * components + 2) / 3;
+    image_info.width = (image_info.width * image_info.components + 2) / 3;
     format = FXDIB_Rgb;
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!bitmap->Create(width, height, format))
+  if (!bitmap->Create(image_info.width, image_info.height, format))
     return 0;
 
   if (bitmap->GetHeight() <= 0 ||
@@ -74,8 +71,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
           static_cast<uint32_t>(bitmap->GetHeight()))
     return 0;
 
-  std::vector<uint8_t> output_offsets(components);
-  for (uint32_t i = 0; i < components; ++i)
+  std::vector<uint8_t> output_offsets(image_info.components);
+  for (uint32_t i = 0; i < image_info.components; ++i)
     output_offsets[i] = i;
 
   decoder->Decode(bitmap->GetBuffer(), bitmap->GetPitch(), output_offsets);

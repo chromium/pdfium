@@ -627,16 +627,15 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   if (!decoder->StartDecode())
     return nullptr;
 
-  uint32_t width = 0;
-  uint32_t height = 0;
-  uint32_t components = 0;
-  decoder->GetInfo(&width, &height, &components);
-  if (static_cast<int>(width) < m_Width || static_cast<int>(height) < m_Height)
+  CJPX_Decoder::JpxImageInfo image_info = decoder->GetInfo();
+  if (static_cast<int>(image_info.width) < m_Width ||
+      static_cast<int>(image_info.height) < m_Height) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_ColorSpace> original_colorspace = m_pColorSpace;
   bool swap_rgb = false;
-  switch (GetJpxDecodeAction(components, m_pColorSpace.Get())) {
+  switch (GetJpxDecodeAction(image_info.components, m_pColorSpace.Get())) {
     case JpxDecodeAction::kFail:
       return nullptr;
 
@@ -659,28 +658,28 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
     DCHECK_NE(0, m_nComponents);
   } else {
     DCHECK_EQ(0, m_nComponents);
-    m_nComponents = components;
+    m_nComponents = image_info.components;
   }
 
   FXDIB_Format format;
-  if (components == 1) {
+  if (image_info.components == 1) {
     format = FXDIB_8bppRgb;
-  } else if (components <= 3) {
+  } else if (image_info.components <= 3) {
     format = FXDIB_Rgb;
-  } else if (components == 4) {
+  } else if (image_info.components == 4) {
     format = FXDIB_Rgb32;
   } else {
-    width = (width * components + 2) / 3;
+    image_info.width = (image_info.width * image_info.components + 2) / 3;
     format = FXDIB_Rgb;
   }
 
   auto pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pCachedBitmap->Create(width, height, format))
+  if (!pCachedBitmap->Create(image_info.width, image_info.height, format))
     return nullptr;
 
   pCachedBitmap->Clear(0xFFFFFFFF);
   // Fill |output_offsets| with 0, 1, ... N.
-  std::vector<uint8_t> output_offsets(components);
+  std::vector<uint8_t> output_offsets(image_info.components);
   std::iota(output_offsets.begin(), output_offsets.end(), 0);
   if (swap_rgb)
     std::swap(output_offsets[0], output_offsets[2]);
@@ -692,9 +691,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
   if (m_pColorSpace && m_pColorSpace->GetFamily() == PDFCS_INDEXED &&
       m_bpc < 8) {
     int scale = 8 - m_bpc;
-    for (uint32_t row = 0; row < height; ++row) {
+    for (uint32_t row = 0; row < image_info.height; ++row) {
       uint8_t* scanline = pCachedBitmap->GetWritableScanline(row);
-      for (uint32_t col = 0; col < width; ++col) {
+      for (uint32_t col = 0; col < image_info.width; ++col) {
         *scanline = (*scanline) >> scale;
         ++scanline;
       }

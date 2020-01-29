@@ -489,12 +489,8 @@ bool CJPX_Decoder::StartDecode() {
   return true;
 }
 
-void CJPX_Decoder::GetInfo(uint32_t* width,
-                           uint32_t* height,
-                           uint32_t* components) {
-  *width = m_Image->x1;
-  *height = m_Image->y1;
-  *components = m_Image->numcomps;
+CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
+  return {m_Image->x1, m_Image->y1, m_Image->numcomps};
 }
 
 bool CJPX_Decoder::Decode(uint8_t* dest_buf,
