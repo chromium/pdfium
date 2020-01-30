@@ -80,7 +80,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   ~CPDF_DIB() override;
 
   LoadState StartLoadMask();
-  LoadState StartLoadMaskDIB();
+  LoadState StartLoadMaskDIB(RetainPtr<const CPDF_Stream> mask);
   bool ContinueToLoadMask();
   LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
@@ -156,8 +156,6 @@ class CPDF_DIB final : public CFX_DIBBase {
 
   // Must come after |m_pCachedBitmap|.
   std::unique_ptr<fxcodec::Jbig2Context> m_pJbig2Context;
-
-  RetainPtr<const CPDF_Stream> m_pMaskStream;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DIB_H_

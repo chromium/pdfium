@@ -703,13 +703,13 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
-  m_pMaskStream.Reset(m_pDict->GetStreamFor("SMask"));
-  if (!m_pMaskStream) {
-    m_pMaskStream.Reset(ToStream(m_pDict->GetDirectObjectFor("Mask")));
-    return m_pMaskStream ? StartLoadMaskDIB() : LoadState::kSuccess;
+  RetainPtr<const CPDF_Stream> mask(m_pDict->GetStreamFor("SMask"));
+  if (!mask) {
+    mask.Reset(ToStream(m_pDict->GetDirectObjectFor("Mask")));
+    return mask ? StartLoadMaskDIB(std::move(mask)) : LoadState::kSuccess;
   }
 
-  const CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
+  const CPDF_Array* pMatte = mask->GetDict()->GetArrayFor("Matte");
   if (pMatte && m_pColorSpace && m_Family != PDFCS_PATTERN &&
       pMatte->size() == m_nComponents &&
       m_pColorSpace->CountComponents() <= m_nComponents) {
@@ -723,7 +723,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
     m_MatteColor = ArgbEncode(0, FXSYS_roundf(R * 255), FXSYS_roundf(G * 255),
                               FXSYS_roundf(B * 255));
   }
-  return StartLoadMaskDIB();
+  return StartLoadMaskDIB(std::move(mask));
 }
 
 CPDF_DIB::LoadState CPDF_DIB::ContinueLoadMaskDIB(PauseIndicatorIface* pPause) {
@@ -752,11 +752,11 @@ bool CPDF_DIB::IsJBigImage() const {
   return m_pStreamAcc->GetImageDecoder() == "JBIG2Decode";
 }
 
-CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB() {
+CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
+    RetainPtr<const CPDF_Stream> mask) {
   m_pMask = pdfium::MakeRetain<CPDF_DIB>();
-  LoadState ret =
-      m_pMask->StartLoadDIBBase(m_pDocument.Get(), m_pMaskStream.Get(), false,
-                                nullptr, nullptr, true, 0, false);
+  LoadState ret = m_pMask->StartLoadDIBBase(
+      m_pDocument.Get(), mask.Get(), false, nullptr, nullptr, true, 0, false);
   if (ret == LoadState::kContinue) {
     if (m_Status == LoadState::kFail)
       m_Status = LoadState::kContinue;
