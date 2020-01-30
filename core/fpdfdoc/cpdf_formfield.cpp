@@ -33,7 +33,7 @@
 namespace {
 
 const CPDF_Object* GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
-                                         const char* name,
+                                         const ByteString& name,
                                          int nLevel) {
   static constexpr int kGetFieldMaxRecursion = 32;
   if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
@@ -61,13 +61,13 @@ Optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
 // static
 const CPDF_Object* CPDF_FormField::GetFieldAttr(
     const CPDF_Dictionary* pFieldDict,
-    const char* name) {
+    const ByteString& name) {
   return GetFieldAttrRecursive(pFieldDict, name, 0);
 }
 
 // static
 CPDF_Object* CPDF_FormField::GetFieldAttr(CPDF_Dictionary* pFieldDict,
-                                          const char* name) {
+                                          const ByteString& name) {
   return const_cast<CPDF_Object*>(GetFieldAttrRecursive(
       static_cast<const CPDF_Dictionary*>(pFieldDict), name, 0));
 }
