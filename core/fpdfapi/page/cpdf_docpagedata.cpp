@@ -444,12 +444,12 @@ std::unique_ptr<CPDF_Font::FormIface> CPDF_DocPageData::CreateForm(
 }
 
 RetainPtr<CPDF_Font> CPDF_DocPageData::AddStandardFont(
-    const char* font,
+    const ByteString& fontName,
     const CPDF_FontEncoding* pEncoding) {
-  ByteString name(font);
-  if (!CFX_FontMapper::GetStandardFontName(&name))
+  ByteString mutable_name(fontName);
+  if (!CFX_FontMapper::GetStandardFontName(&mutable_name))
     return nullptr;
-  return GetStandardFont(name, pEncoding);
+  return GetStandardFont(mutable_name, pEncoding);
 }
 
 RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,

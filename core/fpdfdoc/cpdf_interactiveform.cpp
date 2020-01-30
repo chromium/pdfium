@@ -622,10 +622,10 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddStandardFont(
 
   auto* pPageData = CPDF_DocPageData::FromDocument(pDocument);
   if (csFontName == "ZapfDingbats")
-    return pPageData->AddStandardFont(csFontName.c_str(), nullptr);
+    return pPageData->AddStandardFont(csFontName, nullptr);
 
   static const CPDF_FontEncoding encoding(PDFFONT_ENCODING_WINANSI);
-  return pPageData->AddStandardFont(csFontName.c_str(), &encoding);
+  return pPageData->AddStandardFont(csFontName, &encoding);
 }
 
 ByteString CPDF_InteractiveForm::GetNativeFontName(uint8_t charSet,

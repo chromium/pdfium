@@ -475,10 +475,10 @@ bool CBA_FontMap::IsStandardFont(const ByteString& sFontName) {
 RetainPtr<CPDF_Font> CBA_FontMap::AddStandardFont(ByteString sFontName) {
   auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
   if (sFontName == "ZapfDingbats")
-    return pPageData->AddStandardFont(sFontName.c_str(), nullptr);
+    return pPageData->AddStandardFont(sFontName, nullptr);
 
   static const CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
-  return pPageData->AddStandardFont(sFontName.c_str(), &fe);
+  return pPageData->AddStandardFont(sFontName, &fe);
 }
 
 RetainPtr<CPDF_Font> CBA_FontMap::AddSystemFont(ByteString sFontName,

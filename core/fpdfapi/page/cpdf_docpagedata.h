@@ -54,7 +54,7 @@ class CPDF_DocPageData : public CPDF_Document::PageDataIface,
 
   RetainPtr<CPDF_Font> AddFont(std::unique_ptr<CFX_Font> pFont, int charset);
   RetainPtr<CPDF_Font> GetFont(CPDF_Dictionary* pFontDict);
-  RetainPtr<CPDF_Font> AddStandardFont(const char* font,
+  RetainPtr<CPDF_Font> AddStandardFont(const ByteString& fontName,
                                        const CPDF_FontEncoding* pEncoding);
   RetainPtr<CPDF_Font> GetStandardFont(const ByteString& fontName,
                                        const CPDF_FontEncoding* pEncoding);
