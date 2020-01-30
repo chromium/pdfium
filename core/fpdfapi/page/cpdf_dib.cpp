@@ -37,7 +37,10 @@
 
 namespace {
 
-constexpr int kMaxImageDimension = 0x01FFFF;
+bool IsValidDimension(int value) {
+  constexpr int kMaxImageDimension = 0x01FFFF;
+  return value > 0 && value <= kMaxImageDimension;
+}
 
 unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
   ASSERT(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
@@ -160,10 +163,9 @@ bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   m_pStream.Reset(pStream);
   m_Width = m_pDict->GetIntegerFor("Width");
   m_Height = m_pDict->GetIntegerFor("Height");
-  if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
-      m_Height > kMaxImageDimension) {
+  if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
     return false;
-  }
+
   m_GroupFamily = 0;
   m_bLoadMask = false;
   if (!LoadColorInfo(nullptr, nullptr))
@@ -259,10 +261,9 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   m_bHasMask = bHasMask;
   m_Width = m_pDict->GetIntegerFor("Width");
   m_Height = m_pDict->GetIntegerFor("Height");
-  if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
-      m_Height > kMaxImageDimension) {
+  if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))
     return LoadState::kFail;
-  }
+
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
   if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
