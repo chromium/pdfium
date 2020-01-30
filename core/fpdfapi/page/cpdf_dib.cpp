@@ -549,26 +549,28 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   if (m_pDecoder)
     return true;
 
-  bool bTransform = false;
-  int comps;
-  int bpc;
-  if (!pJpegModule->LoadInfo(src_span, &m_Width, &m_Height, &comps, &bpc,
-                             &bTransform)) {
+  Optional<JpegModule::JpegImageInfo> info_opt =
+      pJpegModule->LoadInfo(src_span);
+  if (!info_opt.has_value())
     return false;
-  }
-  if (!CPDF_Image::IsValidJpegComponent(comps) ||
-      !CPDF_Image::IsValidJpegBitsPerComponent(bpc)) {
+
+  const JpegModule::JpegImageInfo& info = info_opt.value();
+  m_Width = info.width;
+  m_Height = info.height;
+
+  if (!CPDF_Image::IsValidJpegComponent(info.num_components) ||
+      !CPDF_Image::IsValidJpegBitsPerComponent(info.bits_per_components)) {
     return false;
   }
 
-  if (m_nComponents == static_cast<uint32_t>(comps)) {
-    m_bpc = bpc;
-    m_pDecoder = pJpegModule->CreateDecoder(src_span, m_Width, m_Height,
-                                            m_nComponents, bTransform);
+  if (m_nComponents == static_cast<uint32_t>(info.num_components)) {
+    m_bpc = info.bits_per_components;
+    m_pDecoder = pJpegModule->CreateDecoder(
+        src_span, m_Width, m_Height, m_nComponents, info.color_transform);
     return true;
   }
 
-  m_nComponents = static_cast<uint32_t>(comps);
+  m_nComponents = static_cast<uint32_t>(info.num_components);
   m_CompData.clear();
   if (m_pColorSpace) {
     uint32_t colorspace_comps = m_pColorSpace->CountComponents();
@@ -607,9 +609,9 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   if (!GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey))
     return false;
 
-  m_bpc = bpc;
+  m_bpc = info.bits_per_components;
   m_pDecoder = pJpegModule->CreateDecoder(src_span, m_Width, m_Height,
-                                          m_nComponents, bTransform);
+                                          m_nComponents, info.color_transform);
   return true;
 }
 

@@ -42,13 +42,13 @@ class CJpegContext final : public ModuleIface::Context {
   CJpegContext();
   ~CJpegContext() override;
 
-  jmp_buf* GetJumpMark() { return &m_JumpMark; }
+  jmp_buf& GetJumpMark() { return m_JumpMark; }
 
   jmp_buf m_JumpMark;
-  jpeg_decompress_struct m_Info;
-  jpeg_error_mgr m_ErrMgr;
-  jpeg_source_mgr m_SrcMgr;
-  unsigned int m_SkipSize;
+  jpeg_decompress_struct m_Info = {};
+  jpeg_error_mgr m_ErrMgr = {};
+  jpeg_source_mgr m_SrcMgr = {};
+  unsigned int m_SkipSize = 0;
   void* (*m_AllocFunc)(unsigned int);
   void (*m_FreeFunc)(void*);
 };
@@ -188,19 +188,16 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
 }
 
 CJpegContext::CJpegContext()
-    : m_SkipSize(0), m_AllocFunc(jpeg_alloc_func), m_FreeFunc(jpeg_free_func) {
-  memset(&m_Info, 0, sizeof(m_Info));
+    : m_AllocFunc(jpeg_alloc_func), m_FreeFunc(jpeg_free_func) {
   m_Info.client_data = this;
   m_Info.err = &m_ErrMgr;
 
-  memset(&m_ErrMgr, 0, sizeof(m_ErrMgr));
   m_ErrMgr.error_exit = error_fatal1;
   m_ErrMgr.emit_message = error_do_nothing1;
   m_ErrMgr.output_message = error_do_nothing;
   m_ErrMgr.format_message = error_do_nothing2;
   m_ErrMgr.reset_error_mgr = error_do_nothing;
 
-  memset(&m_SrcMgr, 0, sizeof(m_SrcMgr));
   m_SrcMgr.init_source = src_do_nothing;
   m_SrcMgr.term_source = src_do_nothing;
   m_SrcMgr.skip_input_data = src_skip_data1;
@@ -495,14 +492,14 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
   return std::move(pDecoder);
 }
 
-bool JpegModule::LoadInfo(pdfium::span<const uint8_t> src_span,
-                          int* width,
-                          int* height,
-                          int* num_components,
-                          int* bits_per_components,
-                          bool* color_transform) {
-  return JpegLoadInfo(src_span, width, height, num_components,
-                      bits_per_components, color_transform);
+Optional<JpegModule::JpegImageInfo> JpegModule::LoadInfo(
+    pdfium::span<const uint8_t> src_span) {
+  JpegImageInfo info;
+  if (!JpegLoadInfo(src_span, &info.width, &info.height, &info.num_components,
+                    &info.bits_per_components, &info.color_transform)) {
+    return pdfium::nullopt;
+  }
+  return info;
 }
 
 std::unique_ptr<ModuleIface::Context> JpegModule::Start() {
@@ -578,7 +575,7 @@ FX_FILESIZE JpegModule::GetAvailInput(Context* pContext) const {
   return static_cast<FX_FILESIZE>(ctx->m_SrcMgr.bytes_in_buffer);
 }
 
-jmp_buf* JpegModule::GetJumpMark(Context* pContext) {
+jmp_buf& JpegModule::GetJumpMark(Context* pContext) {
   return static_cast<CJpegContext*>(pContext)->GetJumpMark();
 }
 

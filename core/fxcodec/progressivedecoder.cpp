@@ -1025,7 +1025,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
 
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(*pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
+  if (setjmp(pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
@@ -1061,7 +1061,7 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
   GetDownScale(down_scale);
   // Setting jump marker before calling StartScanLine, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(*pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
+  if (setjmp(pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
@@ -1105,7 +1105,7 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
   JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   // Setting jump marker before calling ReadScanLine, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(*pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
+  if (setjmp(pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;

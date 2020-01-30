@@ -83,29 +83,28 @@ CPDF_Dictionary* CPDF_Image::GetDict() const {
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
-  int32_t width;
-  int32_t height;
-  int32_t num_comps;
-  int32_t bits;
-  bool color_trans;
-  if (!fxcodec::ModuleMgr::GetInstance()->GetJpegModule()->LoadInfo(
-          src_span, &width, &height, &num_comps, &bits, &color_trans)) {
+  Optional<JpegModule::JpegImageInfo> info_opt =
+      fxcodec::ModuleMgr::GetInstance()->GetJpegModule()->LoadInfo(src_span);
+  if (!info_opt.has_value())
+    return nullptr;
+
+  const JpegModule::JpegImageInfo& info = info_opt.value();
+  if (!IsValidJpegComponent(info.num_components) ||
+      !IsValidJpegBitsPerComponent(info.bits_per_components)) {
     return nullptr;
   }
-  if (!IsValidJpegComponent(num_comps) || !IsValidJpegBitsPerComponent(bits))
-    return nullptr;
 
   auto pDict = m_pDocument->New<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-  pDict->SetNewFor<CPDF_Number>("Width", width);
-  pDict->SetNewFor<CPDF_Number>("Height", height);
+  pDict->SetNewFor<CPDF_Number>("Width", info.width);
+  pDict->SetNewFor<CPDF_Number>("Height", info.height);
   const char* csname = nullptr;
-  if (num_comps == 1) {
+  if (info.num_components == 1) {
     csname = "DeviceGray";
-  } else if (num_comps == 3) {
+  } else if (info.num_components == 3) {
     csname = "DeviceRGB";
-  } else if (num_comps == 4) {
+  } else if (info.num_components == 4) {
     csname = "DeviceCMYK";
     CPDF_Array* pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
     for (int n = 0; n < 4; n++) {
@@ -114,16 +113,16 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     }
   }
   pDict->SetNewFor<CPDF_Name>("ColorSpace", csname);
-  pDict->SetNewFor<CPDF_Number>("BitsPerComponent", bits);
+  pDict->SetNewFor<CPDF_Number>("BitsPerComponent", info.bits_per_components);
   pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
-  if (!color_trans) {
+  if (!info.color_transform) {
     CPDF_Dictionary* pParms =
         pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
     pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
   }
   m_bIsMask = false;
-  m_Width = width;
-  m_Height = height;
+  m_Width = info.width;
+  m_Height = info.height;
   if (!m_pStream)
     m_pStream = pdfium::MakeRetain<CPDF_Stream>();
   return pDict;

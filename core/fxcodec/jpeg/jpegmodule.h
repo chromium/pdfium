@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcodec/codec_module_iface.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
 class CFX_DIBBase;
@@ -23,6 +24,14 @@ class ScanlineDecoder;
 
 class JpegModule final : public ModuleIface {
  public:
+  struct JpegImageInfo {
+    int width;
+    int height;
+    int num_components;
+    int bits_per_components;
+    bool color_transform;
+  };
+
   std::unique_ptr<ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_span,
       int width,
@@ -36,13 +45,8 @@ class JpegModule final : public ModuleIface {
              RetainPtr<CFX_CodecMemory> codec_memory,
              CFX_DIBAttribute* pAttribute) override;
 
-  jmp_buf* GetJumpMark(Context* pContext);
-  bool LoadInfo(pdfium::span<const uint8_t> src_span,
-                int* width,
-                int* height,
-                int* num_components,
-                int* bits_per_components,
-                bool* color_transform);
+  jmp_buf& GetJumpMark(Context* pContext);
+  Optional<JpegImageInfo> LoadInfo(pdfium::span<const uint8_t> src_span);
 
   std::unique_ptr<Context> Start();
 
