@@ -316,18 +316,6 @@ size_t CPDF_NameTree::GetCount() const {
   return m_pRoot ? CountNamesInternal(m_pRoot.Get(), 0) : 0;
 }
 
-int CPDF_NameTree::GetIndex(const WideString& csName) const {
-  if (!m_pRoot)
-    return -1;
-
-  size_t nIndex = 0;
-  if (!SearchNameNodeByName(m_pRoot.Get(), csName, 0, &nIndex, nullptr,
-                            nullptr)) {
-    return -1;
-  }
-  return nIndex;
-}
-
 bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
                                     const WideString& name) {
   if (!m_pRoot)

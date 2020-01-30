@@ -30,9 +30,8 @@ class CPDF_NameTree {
   CPDF_Object* LookupValue(const WideString& csName) const;
   CPDF_Array* LookupNamedDest(CPDF_Document* pDoc, const WideString& sName);
 
-  int GetIndex(const WideString& csName) const;
   size_t GetCount() const;
-  CPDF_Dictionary* GetRoot() const { return m_pRoot.Get(); }
+  CPDF_Dictionary* GetRootForTest() const { return m_pRoot.Get(); }
 
  private:
   RetainPtr<CPDF_Dictionary> m_pRoot;

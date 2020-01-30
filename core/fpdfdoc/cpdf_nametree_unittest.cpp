@@ -109,7 +109,7 @@ TEST(cpdf_nametree, AddIntoNames) {
   AddNameKeyValue(pNames, "7.txt", 777);
 
   CPDF_NameTree nameTree(pRootDict.Get());
-  pNames = nameTree.GetRoot()->GetArrayFor("Names");
+  pNames = nameTree.GetRootForTest()->GetArrayFor("Names");
 
   // Insert a name that already exists in the names array.
   EXPECT_FALSE(
@@ -171,7 +171,7 @@ TEST(cpdf_nametree, AddIntoKids) {
 
   // Check that the node on the first level has the expected limits.
   CPDF_Dictionary* pKid1 =
-      nameTree.GetRoot()->GetArrayFor("Kids")->GetDictAt(0);
+      nameTree.GetRootForTest()->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid1);
   CheckLimitsArray(pKid1, "0.txt", "99.txt");
 
@@ -217,7 +217,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
 
   // Retrieve the kid dictionaries.
   CPDF_Dictionary* pKid1 =
-      nameTree.GetRoot()->GetArrayFor("Kids")->GetDictAt(0);
+      nameTree.GetRootForTest()->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid1);
   CPDF_Dictionary* pKid2 = pKid1->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid2);
@@ -287,9 +287,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(555, nameTree.LookupValue(L"5.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"5.txt", csName.c_str());
-  EXPECT_EQ(1u, nameTree.GetRoot()->GetArrayFor("Kids")->size());
+  EXPECT_EQ(1u, nameTree.GetRootForTest()->GetArrayFor("Kids")->size());
   EXPECT_TRUE(nameTree.DeleteValueAndName(0));
-  EXPECT_EQ(0u, nameTree.GetRoot()->GetArrayFor("Kids")->size());
+  EXPECT_EQ(0u, nameTree.GetRootForTest()->GetArrayFor("Kids")->size());
 
   // Check that the tree is now empty.
   EXPECT_EQ(0u, nameTree.GetCount());
