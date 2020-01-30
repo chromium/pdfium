@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <limits>
 #include <utility>
-#include <vector>
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -493,21 +492,21 @@ CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
   return {m_Image->x1, m_Image->y1, m_Image->numcomps};
 }
 
-bool CJPX_Decoder::Decode(uint8_t* dest_buf,
-                          uint32_t pitch,
-                          pdfium::span<const uint8_t> offsets) {
+bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
   if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
     return false;
 
-  if (pitch<(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>> 5 << 2) {
+  if (pitch<(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>> 5 << 2)
     return false;
-  }
+
+  if (swap_rgb && m_Image->numcomps < 3)
+    return false;
 
   memset(dest_buf, 0xff, m_Image->y1 * pitch);
   std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
   std::vector<int> adjust_comps(m_Image->numcomps);
   for (uint32_t i = 0; i < m_Image->numcomps; i++) {
-    channel_bufs[i] = dest_buf + offsets[i];
+    channel_bufs[i] = dest_buf + i;
     adjust_comps[i] = m_Image->comps[i].prec - 8;
     if (i > 0) {
       if (m_Image->comps[i].dx != m_Image->comps[i - 1].dx ||
@@ -517,6 +516,9 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
       }
     }
   }
+  if (swap_rgb)
+    std::swap(channel_bufs[0], channel_bufs[2]);
+
   uint32_t width = m_Image->comps[0].w;
   uint32_t height = m_Image->comps[0].h;
   for (uint32_t channel = 0; channel < m_Image->numcomps; ++channel) {

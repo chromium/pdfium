@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <numeric>
 #include <utility>
 #include <vector>
 
@@ -641,6 +640,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
       break;
 
     case JpxDecodeAction::kUseRgb:
+      DCHECK(image_info.components >= 3);
       swap_rgb = true;
       m_pColorSpace = nullptr;
       break;
@@ -671,18 +671,13 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
     format = FXDIB_Rgb;
   }
 
-  auto pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pCachedBitmap->Create(image_info.width, image_info.height, format))
+  auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!result_bitmap->Create(image_info.width, image_info.height, format))
     return nullptr;
 
-  pCachedBitmap->Clear(0xFFFFFFFF);
-  // Fill |output_offsets| with 0, 1, ... N.
-  std::vector<uint8_t> output_offsets(image_info.components);
-  std::iota(output_offsets.begin(), output_offsets.end(), 0);
-  if (swap_rgb)
-    std::swap(output_offsets[0], output_offsets[2]);
-  if (!decoder->Decode(pCachedBitmap->GetBuffer(), pCachedBitmap->GetPitch(),
-                       output_offsets)) {
+  result_bitmap->Clear(0xFFFFFFFF);
+  if (!decoder->Decode(result_bitmap->GetBuffer(), result_bitmap->GetPitch(),
+                       swap_rgb)) {
     return nullptr;
   }
 
@@ -690,7 +685,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
       m_bpc < 8) {
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < image_info.height; ++row) {
-      uint8_t* scanline = pCachedBitmap->GetWritableScanline(row);
+      uint8_t* scanline = result_bitmap->GetWritableScanline(row);
       for (uint32_t col = 0; col < image_info.width; ++col) {
         *scanline = (*scanline) >> scale;
         ++scanline;
@@ -698,7 +693,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
     }
   }
   m_bpc = 8;
-  return pCachedBitmap;
+  return result_bitmap;
 }
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {

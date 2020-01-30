@@ -71,10 +71,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
           static_cast<uint32_t>(bitmap->GetHeight()))
     return 0;
 
-  std::vector<uint8_t> output_offsets(image_info.components);
-  for (uint32_t i = 0; i < image_info.components; ++i)
-    output_offsets[i] = i;
+  decoder->Decode(bitmap->GetBuffer(), bitmap->GetPitch(),
+                  /*swap_rgb=*/false);
 
-  decoder->Decode(bitmap->GetBuffer(), bitmap->GetPitch(), output_offsets);
   return 0;
 }
