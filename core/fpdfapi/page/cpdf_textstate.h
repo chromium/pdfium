@@ -50,10 +50,7 @@ class CPDF_TextState {
   float GetWordSpace() const;
   void SetWordSpace(float sp);
 
-  float GetFontSizeV() const;
   float GetFontSizeH() const;
-  float GetBaselineAngle() const;
-  float GetShearAngle() const;
 
   TextRenderingMode GetTextMode() const;
   void SetTextMode(TextRenderingMode mode);
@@ -72,8 +69,6 @@ class CPDF_TextState {
     void SetFont(const RetainPtr<CPDF_Font>& pFont);
     float GetFontSizeV() const;
     float GetFontSizeH() const;
-    float GetBaselineAngle() const;
-    float GetShearAngle() const;
 
     RetainPtr<CPDF_Font> m_pFont;
     UnownedPtr<CPDF_Document> m_pDocument;
