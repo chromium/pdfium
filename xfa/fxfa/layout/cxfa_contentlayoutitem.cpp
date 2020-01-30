@@ -22,6 +22,9 @@ CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(
 }
 
 CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
+  if (m_pFFWidget)
+    m_pFFWidget->SetLayoutItem(nullptr);
+
   RemoveSelf();
 }
 

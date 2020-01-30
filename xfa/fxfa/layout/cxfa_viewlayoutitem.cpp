@@ -24,7 +24,10 @@ CXFA_ViewLayoutItem::CXFA_ViewLayoutItem(
     m_pFFPageView->SetLayoutItem(this);
 }
 
-CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() = default;
+CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() {
+  if (m_pFFPageView)
+    m_pFFPageView->SetLayoutItem(nullptr);
+}
 
 CXFA_LayoutProcessor* CXFA_ViewLayoutItem::GetLayout() const {
   return CXFA_LayoutProcessor::FromDocument(GetFormNode()->GetDocument());
