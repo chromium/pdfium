@@ -35,6 +35,7 @@ class CJPX_Decoder {
     uint32_t width;
     uint32_t height;
     uint32_t components;
+    COLOR_SPACE colorspace;
   };
 
   static void Sycc420ToRgbForTesting(opj_image_t* img);
