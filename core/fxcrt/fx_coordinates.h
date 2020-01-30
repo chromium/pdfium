@@ -567,7 +567,6 @@ class CFX_Matrix {
 
   void Scale(float sx, float sy);
   void Rotate(float fRadian);
-  void Shear(float fAlphaRadian, float fBetaRadian);
 
   void MatchRect(const CFX_FloatRect& dest, const CFX_FloatRect& src);
 

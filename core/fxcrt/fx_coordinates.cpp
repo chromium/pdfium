@@ -339,10 +339,6 @@ void CFX_Matrix::Rotate(float fRadian) {
   Concat(CFX_Matrix(cosValue, sinValue, -sinValue, cosValue, 0, 0));
 }
 
-void CFX_Matrix::Shear(float fAlphaRadian, float fBetaRadian) {
-  Concat(CFX_Matrix(1, tan(fAlphaRadian), tan(fBetaRadian), 1, 0, 0));
-}
-
 void CFX_Matrix::MatchRect(const CFX_FloatRect& dest,
                            const CFX_FloatRect& src) {
   float fDiff = src.left - src.right;
