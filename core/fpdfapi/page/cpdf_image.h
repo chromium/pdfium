@@ -79,6 +79,8 @@ class CPDF_Image final : public Retainable {
   void FinishInitialization(CPDF_Dictionary* pStreamDict);
   RetainPtr<CPDF_Dictionary> InitJPEG(pdfium::span<uint8_t> src_span);
 
+  RetainPtr<CPDF_Dictionary> CreateXObjectImageDict(int width, int height);
+
   int32_t m_Height = 0;
   int32_t m_Width = 0;
   bool m_bIsInline = false;

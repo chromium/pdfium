@@ -94,11 +94,8 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     return nullptr;
   }
 
-  auto pDict = m_pDocument->New<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>("Type", "XObject");
-  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-  pDict->SetNewFor<CPDF_Number>("Width", info.width);
-  pDict->SetNewFor<CPDF_Number>("Height", info.height);
+  RetainPtr<CPDF_Dictionary> pDict =
+      CreateXObjectImageDict(info.width, info.height);
   const char* csname = nullptr;
   if (info.num_components == 1) {
     csname = "DeviceGray";
@@ -173,12 +170,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   if (BitmapWidth < 1 || BitmapHeight < 1)
     return;
 
-  auto pDict = m_pDocument->New<CPDF_Dictionary>();
-  pDict->SetNewFor<CPDF_Name>("Type", "XObject");
-  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-  pDict->SetNewFor<CPDF_Number>("Width", BitmapWidth);
-  pDict->SetNewFor<CPDF_Number>("Height", BitmapHeight);
-
+  RetainPtr<CPDF_Dictionary> pDict =
+      CreateXObjectImageDict(BitmapWidth, BitmapHeight);
   const int32_t bpp = pBitmap->GetBPP();
   size_t dest_pitch = 0;
   bool bCopyWithoutAlpha = true;
@@ -270,11 +263,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     int32_t maskHeight = pMaskBitmap->GetHeight();
     std::unique_ptr<uint8_t, FxFreeDeleter> mask_buf;
     int32_t mask_size = 0;
-    auto pMaskDict = m_pDocument->New<CPDF_Dictionary>();
-    pMaskDict->SetNewFor<CPDF_Name>("Type", "XObject");
-    pMaskDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-    pMaskDict->SetNewFor<CPDF_Number>("Width", maskWidth);
-    pMaskDict->SetNewFor<CPDF_Number>("Height", maskHeight);
+    RetainPtr<CPDF_Dictionary> pMaskDict =
+        CreateXObjectImageDict(maskWidth, maskHeight);
     pMaskDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     pMaskDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     if (pMaskBitmap->GetFormat() != FXDIB_1bppMask) {
@@ -397,4 +387,14 @@ bool CPDF_Image::Continue(PauseIndicatorIface* pPause) {
     m_pDIBBase.Reset();
   }
   return false;
+}
+
+RetainPtr<CPDF_Dictionary> CPDF_Image::CreateXObjectImageDict(int width,
+                                                              int height) {
+  auto dict = m_pDocument->New<CPDF_Dictionary>();
+  dict->SetNewFor<CPDF_Name>("Type", "XObject");
+  dict->SetNewFor<CPDF_Name>("Subtype", "Image");
+  dict->SetNewFor<CPDF_Number>("Width", width);
+  dict->SetNewFor<CPDF_Number>("Height", height);
+  return dict;
 }
