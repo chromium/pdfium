@@ -76,7 +76,10 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   void ClearAllFocusedAnnots();
 
   int GetPageCount() const;
-  bool GetPermissions(int nFlag) const;
+
+  // See PDF Reference 1.7, table 3.20 for the permission bits. Returns true if
+  // any bit in |flags| is set.
+  bool GetPermissions(uint32_t flags) const;
 
   bool GetChangeMark() const { return m_bChangeMask; }
   void SetChangeMark() { m_bChangeMask = true; }
