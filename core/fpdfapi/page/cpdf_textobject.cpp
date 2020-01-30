@@ -343,14 +343,6 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   return ret;
 }
 
-void CPDF_TextObject::SetPosition(float x, float y) {
-  float dx = x - m_Pos.x;
-  float dy = y - m_Pos.y;
-  m_Pos.x = x;
-  m_Pos.y = y;
-  m_Rect.Translate(dx, dy);
-}
-
 void CPDF_TextObject::RecalcPositionData() {
   CalcPositionData(1);
 }
