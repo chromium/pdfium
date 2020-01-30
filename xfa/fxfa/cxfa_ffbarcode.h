@@ -78,8 +78,8 @@ enum class BarcodeType {
 };
 
 struct BarCodeInfo {
-  uint32_t uHash;  // |pName| hashed as if wide string.
-  const char* pName;
+  uint32_t uHash;     // |pName| hashed as if wide string.
+  const char* pName;  // Raw, POD struct.
   BarcodeType eName;
   BC_TYPE eBCType;
 };
