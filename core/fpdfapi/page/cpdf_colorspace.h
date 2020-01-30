@@ -72,6 +72,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       const CPDF_Object* pObj,
       std::set<const CPDF_Object*>* pVisited);
   static uint32_t ComponentsForFamily(int family);
+  static bool IsValidIccComponents(int components);
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }

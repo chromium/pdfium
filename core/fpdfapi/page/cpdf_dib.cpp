@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
@@ -63,10 +64,6 @@ bool IsMaybeValidBitsPerComponent(int bpc) {
 
 bool IsAllowedBitsPerComponent(int bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
-}
-
-bool IsAllowedICCComponents(int nComp) {
-  return nComp == 1 || nComp == 3 || nComp == 4;
 }
 
 bool IsColorIndexOutOfBounds(uint8_t index, const DIB_COMP_DATA& comp_datum) {
@@ -574,32 +571,31 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   m_nComponents = static_cast<uint32_t>(comps);
   m_CompData.clear();
   if (m_pColorSpace) {
+    uint32_t colorspace_comps = m_pColorSpace->CountComponents();
     switch (m_Family) {
       case PDFCS_DEVICEGRAY:
       case PDFCS_DEVICERGB:
       case PDFCS_DEVICECMYK: {
         uint32_t dwMinComps = CPDF_ColorSpace::ComponentsForFamily(m_Family);
-        if (m_pColorSpace->CountComponents() < dwMinComps ||
-            m_nComponents < dwMinComps) {
+        if (colorspace_comps < dwMinComps || m_nComponents < dwMinComps)
           return false;
-        }
         break;
       }
       case PDFCS_LAB: {
-        if (m_nComponents != 3 || m_pColorSpace->CountComponents() < 3)
+        if (m_nComponents != 3 || colorspace_comps < 3)
           return false;
         break;
       }
       case PDFCS_ICCBASED: {
-        if (!IsAllowedICCComponents(m_nComponents) ||
-            !IsAllowedICCComponents(m_pColorSpace->CountComponents()) ||
-            m_pColorSpace->CountComponents() < m_nComponents) {
+        if (!CPDF_ColorSpace::IsValidIccComponents(colorspace_comps) ||
+            !CPDF_ColorSpace::IsValidIccComponents(m_nComponents) ||
+            colorspace_comps < m_nComponents) {
           return false;
         }
         break;
       }
       default: {
-        if (m_pColorSpace->CountComponents() != m_nComponents)
+        if (colorspace_comps != m_nComponents)
           return false;
         break;
       }
