@@ -33,7 +33,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
 
   UpdateDimensions();
   m_Transparency.SetIsolated();
-  LoadTransInfo();
+  LoadTransparencyInfo();
 }
 
 CPDF_Page::~CPDF_Page() {}

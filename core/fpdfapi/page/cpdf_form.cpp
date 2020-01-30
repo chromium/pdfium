@@ -44,7 +44,7 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                               pParentResources,
                               pPageResources)),
       m_pFormStream(pFormStream) {
-  LoadTransInfo();
+  LoadTransparencyInfo();
 }
 
 CPDF_Form::~CPDF_Form() = default;

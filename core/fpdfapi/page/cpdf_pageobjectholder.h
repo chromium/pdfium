@@ -93,7 +93,6 @@ class CPDF_PageObjectHolder {
     return m_MaskBoundingBoxes;
   }
   void AddImageMaskBoundingBox(const CFX_FloatRect& box);
-  void Transform(const CFX_Matrix& matrix);
   bool HasDirtyStreams() const { return !m_DirtyStreams.empty(); }
   std::set<int32_t> TakeDirtyStreams();
 
@@ -103,7 +102,7 @@ class CPDF_PageObjectHolder {
   std::map<FontData, ByteString> m_FontsMap;
 
  protected:
-  void LoadTransInfo();
+  void LoadTransparencyInfo();
 
   CFX_FloatRect m_BBox;
   CPDF_Transparency m_Transparency;

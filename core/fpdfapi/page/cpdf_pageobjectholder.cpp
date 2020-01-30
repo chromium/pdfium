@@ -76,18 +76,13 @@ void CPDF_PageObjectHolder::AddImageMaskBoundingBox(const CFX_FloatRect& box) {
   m_MaskBoundingBoxes.push_back(box);
 }
 
-void CPDF_PageObjectHolder::Transform(const CFX_Matrix& matrix) {
-  for (auto& pObj : m_PageObjectList)
-    pObj->Transform(matrix);
-}
-
 std::set<int32_t> CPDF_PageObjectHolder::TakeDirtyStreams() {
   auto dirty_streams = std::move(m_DirtyStreams);
   m_DirtyStreams.clear();
   return dirty_streams;
 }
 
-void CPDF_PageObjectHolder::LoadTransInfo() {
+void CPDF_PageObjectHolder::LoadTransparencyInfo() {
   CPDF_Dictionary* pGroup = m_pDict->GetDictFor("Group");
   if (!pGroup)
     return;
