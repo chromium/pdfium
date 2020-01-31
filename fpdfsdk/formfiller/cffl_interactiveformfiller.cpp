@@ -473,12 +473,10 @@ bool CFFL_InteractiveFormFiller::IsFillingAllowed(
   if (pWidget->GetFieldType() == FormFieldType::kPushButton)
     return false;
 
-  using pdfium::access_permissions::kFillForm;
-  using pdfium::access_permissions::kModifyAnnotation;
-  using pdfium::access_permissions::kModifyContent;
-  return m_pFormFillEnv->HasPermissions(kFillForm) ||
-         m_pFormFillEnv->HasPermissions(kModifyAnnotation) ||
-         m_pFormFillEnv->HasPermissions(kModifyContent);
+  return m_pFormFillEnv->HasPermissions(
+      pdfium::access_permissions::kFillForm |
+      pdfium::access_permissions::kModifyAnnotation |
+      pdfium::access_permissions::kModifyContent);
 }
 
 CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(

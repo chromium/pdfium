@@ -609,15 +609,12 @@ CJS_Field::~CJS_Field() = default;
 
 bool CJS_Field::AttachField(CJS_Document* pDocument,
                             const WideString& csFieldName) {
-  using pdfium::access_permissions::kFillForm;
-  using pdfium::access_permissions::kModifyAnnotation;
-  using pdfium::access_permissions::kModifyContent;
-
   m_pJSDoc.Reset(pDocument);
   m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
-  m_bCanSet = m_pFormFillEnv->HasPermissions(kFillForm) ||
-              m_pFormFillEnv->HasPermissions(kModifyAnnotation) ||
-              m_pFormFillEnv->HasPermissions(kModifyContent);
+  m_bCanSet = m_pFormFillEnv->HasPermissions(
+      pdfium::access_permissions::kFillForm |
+      pdfium::access_permissions::kModifyAnnotation |
+      pdfium::access_permissions::kModifyContent);
 
   CPDFSDK_InteractiveForm* pRDForm = m_pFormFillEnv->GetInteractiveForm();
   CPDF_InteractiveForm* pForm = pRDForm->GetInteractiveForm();

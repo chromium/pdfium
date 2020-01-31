@@ -463,10 +463,9 @@ CJS_Result CJS_Document::removeField(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  using pdfium::access_permissions::kModifyAnnotation;
-  using pdfium::access_permissions::kModifyContent;
-  if (!(m_pFormFillEnv->HasPermissions(kModifyContent) ||
-        m_pFormFillEnv->HasPermissions(kModifyAnnotation))) {
+  if (!m_pFormFillEnv->HasPermissions(
+          pdfium::access_permissions::kModifyContent |
+          pdfium::access_permissions::kModifyAnnotation)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
@@ -512,12 +511,10 @@ CJS_Result CJS_Document::resetForm(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  using pdfium::access_permissions::kFillForm;
-  using pdfium::access_permissions::kModifyAnnotation;
-  using pdfium::access_permissions::kModifyContent;
-  if (!(m_pFormFillEnv->HasPermissions(kModifyContent) ||
-        m_pFormFillEnv->HasPermissions(kModifyAnnotation) ||
-        m_pFormFillEnv->HasPermissions(kFillForm))) {
+  if (!m_pFormFillEnv->HasPermissions(
+          pdfium::access_permissions::kModifyContent |
+          pdfium::access_permissions::kModifyAnnotation |
+          pdfium::access_permissions::kFillForm)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
@@ -1210,12 +1207,10 @@ CJS_Result CJS_Document::calculateNow(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  using pdfium::access_permissions::kFillForm;
-  using pdfium::access_permissions::kModifyAnnotation;
-  using pdfium::access_permissions::kModifyContent;
-  if (!(m_pFormFillEnv->HasPermissions(kModifyContent) ||
-        m_pFormFillEnv->HasPermissions(kModifyAnnotation) ||
-        m_pFormFillEnv->HasPermissions(kFillForm))) {
+  if (!m_pFormFillEnv->HasPermissions(
+          pdfium::access_permissions::kModifyContent |
+          pdfium::access_permissions::kModifyAnnotation |
+          pdfium::access_permissions::kFillForm)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
