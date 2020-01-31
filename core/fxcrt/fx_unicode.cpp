@@ -25,7 +25,7 @@ constexpr uint16_t kMirrorMax = (1 << kMirrorBitCount) - 1;
   ((mirror << kMirrorBitPos) |           \
    (static_cast<uint16_t>(FX_BIDICLASS::bd) << kBidiClassBitPos)),
 constexpr uint16_t kTextLayoutCodeProperties[] = {
-#include "core/fxcrt/fx_ucddata.inc"
+#include "core/fxcrt/fx_ucddata.inc"  // NOLINT(build/include)
 };
 #undef CHARPROP____
 
@@ -58,7 +58,7 @@ constexpr uint16_t kCharTypeBitMask =
   ((static_cast<uint16_t>(FX_CHARTYPE::ct) << kCharTypeBitPos) | \
    (static_cast<uint16_t>(FX_BREAKPROPERTY::bt) << kBreakTypeBitPos)),
 constexpr uint16_t kExtendedTextLayoutCodeProperties[] = {
-#include "core/fxcrt/fx_ucddata.inc"
+#include "core/fxcrt/fx_ucddata.inc"  // NOLINT(build/include)
 };
 #undef CHARPROP____
 
@@ -129,7 +129,7 @@ constexpr size_t kFXTextLayoutBidiMirrorSize =
 #define CHARPROP____(mirror, ct, bd, bt)                                      \
   static_assert(mirror == kMirrorMax || mirror < kFXTextLayoutBidiMirrorSize, \
                 "Bad mirror index");
-#include "core/fxcrt/fx_ucddata.inc"
+#include "core/fxcrt/fx_ucddata.inc"  // NOLINT(build/include)
 #undef CHARPROP____
 
 }  // namespace

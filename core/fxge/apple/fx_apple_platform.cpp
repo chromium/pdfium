@@ -8,8 +8,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-
-#include "core/fxge/apple/apple_int.h"
+#include "core/fxge/apple/fx_mac_impl.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_gemodule.h"

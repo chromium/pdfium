@@ -16,7 +16,7 @@
 #include "core/fxge/fx_freetype.h"
 
 #if defined(OS_MACOSX)
-#include "core/fxge/apple/apple_int.h"
+#include "core/fxge/apple/fx_mac_impl.h"
 #endif
 
 namespace {

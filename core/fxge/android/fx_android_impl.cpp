@@ -4,14 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/cfx_gemodule.h"
-
 #include <memory>
 #include <utility>
 
 #include "core/fxge/android/cfpf_skiadevicemodule.h"
 #include "core/fxge/android/cfx_androidfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
+#include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/ptr_util.h"
 
 class CAndroidPlatform : public CFX_GEModule::PlatformIface {

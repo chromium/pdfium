@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxge/apple/fx_mac_impl.h"
+
 #include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxge/apple/apple_int.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/ptr_util.h"

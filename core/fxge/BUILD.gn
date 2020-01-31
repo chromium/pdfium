@@ -154,7 +154,7 @@ source_set("fxge") {
       "android/cfpf_skiapathfont.h",
       "android/cfx_androidfontinfo.cpp",
       "android/cfx_androidfontinfo.h",
-      "android/fx_android_imp.cpp",
+      "android/fx_android_impl.cpp",
     ]
   }
 
@@ -164,10 +164,11 @@ source_set("fxge") {
 
   if (is_mac) {
     sources += [
-      "apple/apple_int.h",
       "apple/fx_apple_platform.cpp",
-      "apple/fx_mac_imp.cpp",
+      "apple/fx_mac_impl.cpp",
+      "apple/fx_mac_impl.h",
       "apple/fx_quartz_device.cpp",
+      "apple/fx_quartz_device.h",
     ]
     libs = [ "CoreGraphics.framework" ]
   }

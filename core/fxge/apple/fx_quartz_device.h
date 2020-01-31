@@ -4,18 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_APPLE_APPLE_INT_H_
-#define CORE_FXGE_APPLE_APPLE_INT_H_
-
-#include "core/fxcrt/fx_system.h"
+#ifndef CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_
+#define CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_
 
 #include <Carbon/Carbon.h>
 
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/fx_dib.h"
-#include "core/fxge/renderdevicedriver_iface.h"
+
+class CFX_DIBitmap;
+class CFX_Matrix;
 
 class CQuartz2D {
  public:
@@ -34,15 +33,4 @@ class CQuartz2D {
                           FX_ARGB argb);
 };
 
-class CApplePlatform : public CFX_GEModule::PlatformIface {
- public:
-  CApplePlatform();
-  ~CApplePlatform() override;
-
-  // CFX_GEModule::PlatformIface:
-  void Init() override;
-
-  CQuartz2D m_quartz2d;
-};
-
-#endif  // CORE_FXGE_APPLE_APPLE_INT_H_
+#endif  // CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_
