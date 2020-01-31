@@ -54,14 +54,9 @@ RetainPtr<CFX_DIBBase> CPDF_ImageCacheEntry::DetachMask() {
 }
 
 CPDF_DIB::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
-    const CPDF_Dictionary* pFormResources,
     CPDF_Dictionary* pPageResources,
-    bool bStdCS,
-    uint32_t GroupFamily,
-    bool bLoadMask,
-    CPDF_RenderStatus* pRenderStatus) {
-  ASSERT(pRenderStatus);
-
+    const CPDF_RenderStatus* pRenderStatus,
+    bool bStdCS) {
   if (m_pCachedBitmap) {
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
@@ -70,8 +65,9 @@ CPDF_DIB::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
 
   m_pCurBitmap = pdfium::MakeRetain<CPDF_DIB>();
   CPDF_DIB::LoadState ret = m_pCurBitmap.As<CPDF_DIB>()->StartLoadDIBBase(
-      m_pDocument.Get(), m_pImage->GetStream(), true, pFormResources,
-      pPageResources, bStdCS, GroupFamily, bLoadMask);
+      m_pDocument.Get(), m_pImage->GetStream(), true,
+      pRenderStatus->GetFormResource(), pPageResources, bStdCS,
+      pRenderStatus->GetGroupFamily(), pRenderStatus->GetLoadMask());
   if (ret == CPDF_DIB::LoadState::kContinue)
     return CPDF_DIB::LoadState::kContinue;
 
@@ -97,7 +93,7 @@ bool CPDF_ImageCacheEntry::Continue(PauseIndicatorIface* pPause,
 }
 
 void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
-    CPDF_RenderStatus* pRenderStatus) {
+    const CPDF_RenderStatus* pRenderStatus) {
   m_MatteColor = m_pCurBitmap.As<CPDF_DIB>()->GetMatteColor();
   m_pCurMask = m_pCurBitmap.As<CPDF_DIB>()->DetachMask();
   CPDF_RenderContext* pContext = pRenderStatus->GetContext();

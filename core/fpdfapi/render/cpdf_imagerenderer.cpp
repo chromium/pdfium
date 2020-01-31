@@ -62,14 +62,11 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
   if (!GetUnitRect().has_value())
     return false;
 
-  if (m_Loader.Start(m_pImageObject.Get(),
-                     m_pRenderStatus->GetContext()->GetPageCache(), m_bStdCS,
-                     m_pRenderStatus->GetGroupFamily(),
-                     m_pRenderStatus->GetLoadMask(), m_pRenderStatus.Get())) {
-    m_Mode = Mode::kDefault;
-    return true;
-  }
-  return false;
+  if (!m_Loader.Start(m_pImageObject.Get(), m_pRenderStatus.Get(), m_bStdCS))
+    return false;
+
+  m_Mode = Mode::kDefault;
+  return true;
 }
 
 bool CPDF_ImageRenderer::StartRenderDIBBase() {

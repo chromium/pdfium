@@ -30,12 +30,9 @@ class CPDF_ImageCacheEntry {
   CPDF_Image* GetImage() const { return m_pImage.Get(); }
 
   CPDF_DIB::LoadState StartGetCachedBitmap(
-      const CPDF_Dictionary* pFormResources,
       CPDF_Dictionary* pPageResources,
-      bool bStdCS,
-      uint32_t GroupFamily,
-      bool bLoadMask,
-      CPDF_RenderStatus* pRenderStatus);
+      const CPDF_RenderStatus* pRenderStatus,
+      bool bStdCS);
 
   // Returns whether to Continue() or not.
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
@@ -47,7 +44,7 @@ class CPDF_ImageCacheEntry {
   uint32_t m_MatteColor = 0;
 
  private:
-  void ContinueGetCachedBitmap(CPDF_RenderStatus* pRenderStatus);
+  void ContinueGetCachedBitmap(const CPDF_RenderStatus* pRenderStatus);
   void CalcSize();
 
   UnownedPtr<CPDF_Document> const m_pDocument;

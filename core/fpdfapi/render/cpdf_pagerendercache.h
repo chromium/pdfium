@@ -39,10 +39,8 @@ class CPDF_PageRenderCache : public CPDF_Page::RenderCacheIface {
   }
 
   bool StartGetCachedBitmap(const RetainPtr<CPDF_Image>& pImage,
-                            bool bStdCS,
-                            uint32_t GroupFamily,
-                            bool bLoadMask,
-                            CPDF_RenderStatus* pRenderStatus);
+                            const CPDF_RenderStatus* pRenderStatus,
+                            bool bStdCS);
 
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
