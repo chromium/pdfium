@@ -744,6 +744,6 @@ int CPDFSDK_FormFillEnvironment::GetPageCount() const {
   return pExtension ? pExtension->GetPageCount() : m_pCPDFDoc->GetPageCount();
 }
 
-bool CPDFSDK_FormFillEnvironment::GetPermissions(uint32_t flags) const {
+bool CPDFSDK_FormFillEnvironment::HasPermissions(uint32_t flags) const {
   return !!(m_pCPDFDoc->GetUserPermissions() & flags);
 }

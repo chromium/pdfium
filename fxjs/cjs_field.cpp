@@ -610,9 +610,9 @@ bool CJS_Field::AttachField(CJS_Document* pDocument,
                             const WideString& csFieldName) {
   m_pJSDoc.Reset(pDocument);
   m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
-  m_bCanSet = m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM) ||
-              m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-              m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY);
+  m_bCanSet = m_pFormFillEnv->HasPermissions(FPDFPERM_FILL_FORM) ||
+              m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM) ||
+              m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY);
 
   CPDFSDK_InteractiveForm* pRDForm = m_pFormFillEnv->GetInteractiveForm();
   CPDF_InteractiveForm* pForm = pRDForm->GetInteractiveForm();

@@ -354,7 +354,7 @@ CJS_Result CJS_Document::mailForm(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+  if (!m_pFormFillEnv->HasPermissions(FPDFPERM_EXTRACT_ACCESS))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
@@ -460,8 +460,8 @@ CJS_Result CJS_Document::removeField(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM))) {
+  if (!(m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY) ||
+        m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM))) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
@@ -506,9 +506,9 @@ CJS_Result CJS_Document::resetForm(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM))) {
+  if (!(m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY) ||
+        m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM) ||
+        m_pFormFillEnv->HasPermissions(FPDFPERM_FILL_FORM))) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
@@ -733,7 +733,7 @@ CJS_Result CJS_Document::setPropertyInternal(CJS_Runtime* pRuntime,
   if (!pDictionary)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY))
+  if (!m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
   pDictionary->SetNewFor<CPDF_String>(propName, pRuntime->ToWideString(vp));
@@ -769,7 +769,7 @@ CJS_Result CJS_Document::set_delay(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY))
+  if (!m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
   m_bDelay = pRuntime->ToBoolean(vp);
@@ -1198,9 +1198,9 @@ CJS_Result CJS_Document::calculateNow(
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  if (!(m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-        m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM))) {
+  if (!(m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY) ||
+        m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM) ||
+        m_pFormFillEnv->HasPermissions(FPDFPERM_FILL_FORM))) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
@@ -1222,7 +1222,7 @@ CJS_Result CJS_Document::getPageNthWord(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+  if (!m_pFormFillEnv->HasPermissions(FPDFPERM_EXTRACT_ACCESS))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
   // TODO(tsepez): check maximum allowable params.
@@ -1267,7 +1267,7 @@ CJS_Result CJS_Document::getPageNthWordQuads(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+  if (!m_pFormFillEnv->HasPermissions(FPDFPERM_EXTRACT_ACCESS))
     return CJS_Result::Failure(JSMessage::kBadObjectError);
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
@@ -1277,7 +1277,7 @@ CJS_Result CJS_Document::getPageNumWords(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
+  if (!m_pFormFillEnv->HasPermissions(FPDFPERM_EXTRACT_ACCESS))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
   int nPageNo = params.size() > 0 ? pRuntime->ToInt32(params[0]) : 0;

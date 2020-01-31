@@ -472,9 +472,9 @@ bool CFFL_InteractiveFormFiller::IsFillingAllowed(
   if (pWidget->GetFieldType() == FormFieldType::kPushButton)
     return false;
 
-  return m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM) ||
-         m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
-         m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY);
+  return m_pFormFillEnv->HasPermissions(FPDFPERM_FILL_FORM) ||
+         m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM) ||
+         m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY);
 }
 
 CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
