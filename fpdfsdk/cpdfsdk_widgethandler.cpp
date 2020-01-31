@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "constants/access_permissions.h"
 #include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -47,8 +48,8 @@ bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 
   CPDF_Page* pPage = pWidget->GetPDFPage();
   uint32_t dwPermissions = pPage->GetDocument()->GetUserPermissions();
-  return (dwPermissions & FPDFPERM_FILL_FORM) ||
-         (dwPermissions & FPDFPERM_ANNOT_FORM);
+  return (dwPermissions & pdfium::access_permissions::kFillForm) ||
+         (dwPermissions & pdfium::access_permissions::kModifyAnnotation);
 }
 
 CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,

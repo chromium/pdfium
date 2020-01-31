@@ -28,11 +28,6 @@ class CPDF_StreamAcc;
 class IFX_SeekableReadStream;
 class JBig2_DocumentContext;
 
-#define FPDFPERM_MODIFY 0x0008
-#define FPDFPERM_ANNOT_FORM 0x0020
-#define FPDFPERM_FILL_FORM 0x0100
-#define FPDFPERM_EXTRACT_ACCESS 0x0200
-
 class CPDF_Document : public Observable,
                       public CPDF_Parser::ParsedObjectsHolder {
  public:

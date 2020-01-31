@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 
+#include "constants/access_permissions.h"
 #include "constants/form_flags.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/autorestorer.h"
@@ -472,9 +473,12 @@ bool CFFL_InteractiveFormFiller::IsFillingAllowed(
   if (pWidget->GetFieldType() == FormFieldType::kPushButton)
     return false;
 
-  return m_pFormFillEnv->HasPermissions(FPDFPERM_FILL_FORM) ||
-         m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM) ||
-         m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY);
+  using pdfium::access_permissions::kFillForm;
+  using pdfium::access_permissions::kModifyAnnotation;
+  using pdfium::access_permissions::kModifyContent;
+  return m_pFormFillEnv->HasPermissions(kFillForm) ||
+         m_pFormFillEnv->HasPermissions(kModifyAnnotation) ||
+         m_pFormFillEnv->HasPermissions(kModifyContent);
 }
 
 CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(

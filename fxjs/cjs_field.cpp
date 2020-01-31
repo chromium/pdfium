@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "constants/access_permissions.h"
 #include "constants/annotation_flags.h"
 #include "constants/form_flags.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
@@ -608,11 +609,15 @@ CJS_Field::~CJS_Field() = default;
 
 bool CJS_Field::AttachField(CJS_Document* pDocument,
                             const WideString& csFieldName) {
+  using pdfium::access_permissions::kFillForm;
+  using pdfium::access_permissions::kModifyAnnotation;
+  using pdfium::access_permissions::kModifyContent;
+
   m_pJSDoc.Reset(pDocument);
   m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
-  m_bCanSet = m_pFormFillEnv->HasPermissions(FPDFPERM_FILL_FORM) ||
-              m_pFormFillEnv->HasPermissions(FPDFPERM_ANNOT_FORM) ||
-              m_pFormFillEnv->HasPermissions(FPDFPERM_MODIFY);
+  m_bCanSet = m_pFormFillEnv->HasPermissions(kFillForm) ||
+              m_pFormFillEnv->HasPermissions(kModifyAnnotation) ||
+              m_pFormFillEnv->HasPermissions(kModifyContent);
 
   CPDFSDK_InteractiveForm* pRDForm = m_pFormFillEnv->GetInteractiveForm();
   CPDF_InteractiveForm* pForm = pRDForm->GetInteractiveForm();
