@@ -29,14 +29,11 @@ namespace {
 
 CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
                          const FX_RECT& devicePageRect,
-                         int32_t iRotate,
-                         uint32_t dwCoordinatesType) {
+                         int32_t iRotate) {
   ASSERT(iRotate >= 0);
   ASSERT(iRotate <= 3);
 
-  bool bFlipX = (dwCoordinatesType & 0x01) != 0;
-  bool bFlipY = (dwCoordinatesType & 0x02) != 0;
-  CFX_Matrix m((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
+  CFX_Matrix m;
   if (iRotate == 0 || iRotate == 2) {
     m.a *= (float)devicePageRect.Width() / docPageRect.width;
     m.d *= (float)devicePageRect.Height() / docPageRect.height;
@@ -47,20 +44,20 @@ CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
   m.Rotate(iRotate * 1.57079632675f);
   switch (iRotate) {
     case 0:
-      m.e = bFlipX ? devicePageRect.right : devicePageRect.left;
-      m.f = bFlipY ? devicePageRect.bottom : devicePageRect.top;
+      m.e = devicePageRect.left;
+      m.f = devicePageRect.top;
       break;
     case 1:
-      m.e = bFlipY ? devicePageRect.left : devicePageRect.right;
-      m.f = bFlipX ? devicePageRect.bottom : devicePageRect.top;
+      m.e = devicePageRect.right;
+      m.f = devicePageRect.top;
       break;
     case 2:
-      m.e = bFlipX ? devicePageRect.left : devicePageRect.right;
-      m.f = bFlipY ? devicePageRect.top : devicePageRect.bottom;
+      m.e = devicePageRect.right;
+      m.f = devicePageRect.bottom;
       break;
     case 3:
-      m.e = bFlipY ? devicePageRect.right : devicePageRect.left;
-      m.f = bFlipX ? devicePageRect.top : devicePageRect.bottom;
+      m.e = devicePageRect.left;
+      m.f = devicePageRect.bottom;
       break;
     default:
       break;
@@ -133,8 +130,7 @@ CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
   if (!pItem)
     return CFX_Matrix();
 
-  return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, iRotate,
-                       0);
+  return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, iRotate);
 }
 
 std::unique_ptr<IXFA_WidgetIterator> CXFA_FFPageView::CreateFormWidgetIterator(
