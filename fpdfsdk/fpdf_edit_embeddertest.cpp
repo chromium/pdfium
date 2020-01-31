@@ -2089,52 +2089,79 @@ TEST_F(FPDFEditEmbedderTest, GetTextRenderMode) {
 }
 
 TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
-  EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-  ASSERT_EQ(2, FPDFPage_CountObjects(page));
-
-  // Check the bitmap
-  {
+// Platform specific original bitmaps
 #if defined(OS_MACOSX)
-    const char md5[] = "139846b4ffbd34b1fd67e3b82cf33b7e";
+  const char md5[] = "139846b4ffbd34b1fd67e3b82cf33b7e";
 #elif defined(OS_WIN)
-    const char md5[] = "de6e86bad3e9fda753a8471a45cfbb58";
+  const char md5[] = "de6e86bad3e9fda753a8471a45cfbb58";
 #else
-    const char md5[] = "5a012d2920ac075c39ffa9437ea42faa";
+  const char md5[] = "5a012d2920ac075c39ffa9437ea42faa";
 #endif
-    ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 446, md5);
-  }
+  const char md5_stroke[] = "412e52e621b46bd77baf2162e1fb1a1d";
 
-  // Cannot set on a null object.
-  EXPECT_FALSE(
-      FPDFTextObj_SetTextRenderMode(nullptr, FPDF_TEXTRENDERMODE_UNKNOWN));
-  EXPECT_FALSE(
-      FPDFTextObj_SetTextRenderMode(nullptr, FPDF_TEXTRENDERMODE_INVISIBLE));
-
-  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
-  ASSERT_TRUE(page_object);
-  EXPECT_EQ(FPDF_TEXTRENDERMODE_FILL,
-            FPDFTextObj_GetTextRenderMode(page_object));
-
-  // Cannot set UNKNOWN as a render mode.
-  EXPECT_FALSE(
-      FPDFTextObj_SetTextRenderMode(page_object, FPDF_TEXTRENDERMODE_UNKNOWN));
-
-  EXPECT_TRUE(
-      FPDFTextObj_SetTextRenderMode(page_object, FPDF_TEXTRENDERMODE_STROKE));
-  EXPECT_EQ(FPDF_TEXTRENDERMODE_STROKE,
-            FPDFTextObj_GetTextRenderMode(page_object));
-
-  // Check that bitmap displays changed content
   {
-    const char md5[] = "412e52e621b46bd77baf2162e1fb1a1d";
-    ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 446, md5);
+    EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
+    FPDF_PAGE page = LoadPage(0);
+    ASSERT_TRUE(page);
+    ASSERT_EQ(2, FPDFPage_CountObjects(page));
+
+    // Check the bitmap
+    {
+      ScopedFPDFBitmap page_bitmap = RenderPage(page);
+      CompareBitmap(page_bitmap.get(), 612, 446, md5);
+    }
+
+    // Cannot set on a null object.
+    EXPECT_FALSE(
+        FPDFTextObj_SetTextRenderMode(nullptr, FPDF_TEXTRENDERMODE_UNKNOWN));
+    EXPECT_FALSE(
+        FPDFTextObj_SetTextRenderMode(nullptr, FPDF_TEXTRENDERMODE_INVISIBLE));
+
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+    ASSERT_TRUE(page_object);
+    EXPECT_EQ(FPDF_TEXTRENDERMODE_FILL,
+              FPDFTextObj_GetTextRenderMode(page_object));
+
+    // Cannot set UNKNOWN as a render mode.
+    EXPECT_FALSE(FPDFTextObj_SetTextRenderMode(page_object,
+                                               FPDF_TEXTRENDERMODE_UNKNOWN));
+
+    EXPECT_TRUE(
+        FPDFTextObj_SetTextRenderMode(page_object, FPDF_TEXTRENDERMODE_STROKE));
+    EXPECT_EQ(FPDF_TEXTRENDERMODE_STROKE,
+              FPDFTextObj_GetTextRenderMode(page_object));
+
+    // Check that bitmap displays changed content
+    {
+      ScopedFPDFBitmap page_bitmap = RenderPage(page);
+      CompareBitmap(page_bitmap.get(), 612, 446, md5_stroke);
+    }
+
+    UnloadPage(page);
   }
 
-  UnloadPage(page);
+  {
+    // Save a copy, open the copy, and render it.
+    // Note that the text render mode should be set to
+    // |FPDF_TEXTRENDERMODE_STROKE|, but isn't.
+    // TODO(crbug.com/pdfium/1470): Fix FPDFTextObj_SetTextRenderMode() to work
+    // on saved documents.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(saved_page, 0);
+    EXPECT_TRUE(page_object);
+    EXPECT_EQ(FPDF_TEXTRENDERMODE_FILL,
+              FPDFTextObj_GetTextRenderMode(page_object));
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), 612, 446, md5);
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
 }
 
 TEST_F(FPDFEditEmbedderTest, TestGetTextFontName) {
