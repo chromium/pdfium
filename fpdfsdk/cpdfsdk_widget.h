@@ -85,7 +85,6 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   bool IsChecked() const;
   int GetAlignment() const;
   int GetMaxLen() const;
-  WideString GetAlternateName() const;
 
   void SetCheck(bool bChecked, NotificationOption notify);
   void SetValue(const WideString& sValue, NotificationOption notify);
