@@ -320,10 +320,6 @@ void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info) {
   g_unsupport_info = unsp_info;
 }
 
-UNSUPPORT_INFO* GetPDFUnssuportInto() {
-  return g_unsupport_info;
-}
-
 void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
   const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
   if (pRootDict) {
