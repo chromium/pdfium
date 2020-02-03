@@ -43,27 +43,17 @@ enum PDFSDK_XFAAActionType {
 
 class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
  public:
-#ifdef PDF_ENABLE_XFA
-  CXFA_FFWidget* GetMixXFAWidget() const;
-  CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
-
-  bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const;
-  bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
-                    CPDFSDK_FieldAction* data,
-                    CPDFSDK_PageView* pPageView);
-
-  void Synchronize(bool bSynchronizeElse);
-#endif  // PDF_ENABLE_XFA
-
   CPDFSDK_Widget(CPDF_Annot* pAnnot,
                  CPDFSDK_PageView* pPageView,
                  CPDFSDK_InteractiveForm* pInteractiveForm);
   ~CPDFSDK_Widget() override;
 
+  // CPDFSDK_BAAnnot:
   bool IsSignatureWidget() const override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
   bool IsAppearanceValid() override;
 
+  // CPDFSDK_Annot:
   int GetLayoutOrder() const override;
 
   FormFieldType GetFieldType() const;
@@ -93,9 +83,16 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   void SetTopVisibleIndex(int index);
 
 #ifdef PDF_ENABLE_XFA
+  CXFA_FFWidget* GetMixXFAWidget() const;
+  bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const;
+  bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
+                    CPDFSDK_FieldAction* data,
+                    CPDFSDK_PageView* pPageView);
+  void Synchronize(bool bSynchronizeElse);
   // TODO(thestig): Figure out if the parameter should be used or removed.
   void ResetXFAAppearance(bool bValueChanged);
 #endif  // PDF_ENABLE_XFA
+
   void ResetAppearance(Optional<WideString> sValue, bool bValueChanged);
   void ResetFieldAppearance();
   void UpdateField();
@@ -135,6 +132,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
  private:
 #ifdef PDF_ENABLE_XFA
+  CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
   CXFA_FFWidget* GetGroupMixXFAWidget() const;
   WideString GetName() const;
 #endif  // PDF_ENABLE_XFA
