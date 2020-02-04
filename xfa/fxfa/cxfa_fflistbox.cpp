@@ -54,7 +54,12 @@ bool CXFA_FFListBox::LoadWidget() {
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pListBox);
-    for (const auto& label : m_pNode->GetChoiceListItems(false))
+    std::vector<WideString> displayables = m_pNode->GetChoiceListItems(false);
+    std::vector<WideString> settables = m_pNode->GetChoiceListItems(true);
+    if (displayables.size() > settables.size())
+      displayables.resize(settables.size());
+
+    for (const auto& label : displayables)
       pListBox->AddString(label);
 
     uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;

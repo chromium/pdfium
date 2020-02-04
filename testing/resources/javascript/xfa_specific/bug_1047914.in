@@ -1,0 +1,47 @@
+{{header}}
+{{object 1 0}} <<
+  /AcroForm <<
+    /XFA 2 0 R
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp xmlns="http://ns.adobe.com/xdp/">
+  <config>
+    <acrobat>
+      <acrobat7>
+        <dynamicRender>required</dynamicRender>
+      </acrobat7>
+    </acrobat>
+    <present>
+      <pdf>
+        <interactive>1</interactive>
+      </pdf>
+    </present>
+  </config>
+  <template>
+    <subform>
+      <bookend leader="$"></bookend>
+      <keep previous="pageArea"></keep>
+      <field anchorType="middleCenter">
+        <ui>
+          <choiceList open="multiSelect">
+            <border><edge stroke="raised"></edge></border>
+            <margin></margin>
+          </choiceList>
+        </ui>
+        <items save="1"><float>41.0</float></items>
+        <items><float>43.0</float><integer>44</integer></items>
+      </field>
+    </subform>
+  </template>
+</xdp>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
