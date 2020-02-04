@@ -21,9 +21,13 @@ stream
       </pageArea>
     </pageSet>
     <event activity="docReady" ref="$host">
-      <script contentType="application/x-javascript">
+      <script contentType="application/x-javascript"><![CDATA[
         {{include ../expect.js}}
         {{include ../property_test_helpers.js}}
+        {{include dump_tree.js}}
+
+        dumpTree(xfa);
+
         testROProperty(my_doc, "isContainer", true);
         testROProperty(my_doc, "isNull", false);
         testROProperty(my_doc, "model", "[object XFAObject]");
@@ -74,7 +78,7 @@ stream
         // Test free-form attributes outside of the XFA schema.
         expect("my_doc.setAttribute('fake_value', 'fake_attr')", undefined);
         expect("my_doc.getAttribute('fake_attr')", 'fake_value');
-      </script>
+      ]]></script>
     </event>
   </subform>
 </template>
