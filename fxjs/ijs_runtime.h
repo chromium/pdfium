@@ -14,7 +14,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
-class CFXJSE_Value;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 class IJS_EventContext;
