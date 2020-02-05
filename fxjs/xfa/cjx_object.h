@@ -209,9 +209,6 @@ class CJX_Object {
   CXFA_CalcData* GetCalcData() const { return calc_data_.get(); }
   std::unique_ptr<CXFA_CalcData> ReleaseCalcData();
 
-  int32_t InstanceManager_SetInstances(int32_t iDesired);
-  int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
-
   void ThrowInvalidPropertyException() const;
   void ThrowArgumentMismatchException() const;
   void ThrowIndexOutOfBoundsException() const;
