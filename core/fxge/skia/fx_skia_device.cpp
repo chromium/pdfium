@@ -535,13 +535,13 @@ void ClipAngledGradient(const SkPoint pts[2],
     if (sDist * eDist <= 0)  // if the signs are different,
       continue;              // the point is inside the gradient
     if (sDist < 0) {
-      SkScalar smaller = SkTMin(sDist, eDist);
+      SkScalar smaller = std::min(sDist, eDist);
       if (minPerpDist > smaller) {
         minPerpDist = smaller;
         minPerpPtIndex = i;
       }
     } else {
-      SkScalar larger = SkTMax(sDist, eDist);
+      SkScalar larger = std::max(sDist, eDist);
       if (maxPerpDist < larger) {
         maxPerpDist = larger;
         maxPerpPtIndex = i;
@@ -743,7 +743,7 @@ class SkiaState {
     if (m_debugDisable)
       return false;
     Dump(__func__);
-    int drawIndex = SkTMin(m_drawIndex, m_commands.count());
+    int drawIndex = std::min(m_drawIndex, m_commands.count());
     if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kPath == m_type &&
          DrawChanged(pMatrix, pDrawState, fill_color, stroke_color, fill_mode,
@@ -875,7 +875,7 @@ class SkiaState {
       Flush();
       return false;
     }
-    int drawIndex = SkTMin(m_drawIndex, m_commands.count());
+    int drawIndex = std::min(m_drawIndex, m_commands.count());
     if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kText == m_type &&
          (FontChanged(pFont, matrix, font_size, scaleX, color) ||
@@ -1230,7 +1230,7 @@ class SkiaState {
       return;
     Dump(__func__);
     if (Accumulator::kPath == m_type || Accumulator::kText == m_type) {
-      AdjustClip(SkTMin(m_drawIndex, m_commands.count()));
+      AdjustClip(std::min(m_drawIndex, m_commands.count()));
       Accumulator::kPath == m_type ? FlushPath() : FlushText();
     }
   }
@@ -1562,8 +1562,8 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
   inverse.mapPoints(deviceUnits, SK_ARRAY_COUNT(deviceUnits));
   float width =
-      SkTMax(pGraphState->m_LineWidth,
-             SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
+      std::max(pGraphState->m_LineWidth,
+               std::min(deviceUnits[0].length(), deviceUnits[1].length()));
   if (!pGraphState->m_DashArray.empty()) {
     size_t count = (pGraphState->m_DashArray.size() + 1) / 2;
     std::unique_ptr<SkScalar, FxFreeDeleter> intervals(
@@ -2105,8 +2105,8 @@ bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
   spaint.setBlendMode(GetSkiaBlendMode(blend_type));
-  SkRect srect = SkRect::MakeLTRB(rect.left, SkTMin(rect.top, rect.bottom),
-                                  rect.right, SkTMax(rect.bottom, rect.top));
+  SkRect srect = SkRect::MakeLTRB(rect.left, std::min(rect.top, rect.bottom),
+                                  rect.right, std::max(rect.bottom, rect.top));
   DebugShowSkiaDrawRect(this, m_pCanvas, spaint, srect);
   m_pCanvas->drawRect(srect, spaint);
   return true;
@@ -2192,18 +2192,18 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
           std::swap(clipStart, clipEnd);
         }
         if (clipStart)
-          skRect.fTop = SkTMax(skRect.fTop, pts[0].fY);
+          skRect.fTop = std::max(skRect.fTop, pts[0].fY);
         if (clipEnd)
-          skRect.fBottom = SkTMin(skRect.fBottom, pts[1].fY);
+          skRect.fBottom = std::min(skRect.fBottom, pts[1].fY);
       } else if (pts[0].fY == pts[1].fY) {  // horizontal
         if (pts[0].fX > pts[1].fX) {
           std::swap(pts[0].fX, pts[1].fX);
           std::swap(clipStart, clipEnd);
         }
         if (clipStart)
-          skRect.fLeft = SkTMax(skRect.fLeft, pts[0].fX);
+          skRect.fLeft = std::max(skRect.fLeft, pts[0].fX);
         if (clipEnd)
-          skRect.fRight = SkTMin(skRect.fRight, pts[1].fX);
+          skRect.fRight = std::min(skRect.fRight, pts[1].fX);
       } else {  // if the gradient is angled and contained by the rect, clip
         SkPoint rectPts[4] = {{skRect.fLeft, skRect.fTop},
                               {skRect.fRight, skRect.fTop},
@@ -2502,8 +2502,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
           SkPoint src = {x + 0.5f, y + 0.5f};
           inv.mapPoints(&src, 1);
           // TODO(caryclark) Why does the matrix map require clamping?
-          src.fX = SkTMax(0.5f, SkTMin(src.fX, width - 0.5f));
-          src.fY = SkTMax(0.5f, SkTMin(src.fY, height - 0.5f));
+          src.fX = std::max(0.5f, std::min(src.fX, width - 0.5f));
+          src.fY = std::max(0.5f, std::min(src.fY, height - 0.5f));
           m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
         }
       }
