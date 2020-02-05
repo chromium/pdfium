@@ -103,7 +103,6 @@ source_set("fxge") {
     "renderdevicedriver_iface.h",
     "scoped_font_transform.cpp",
     "scoped_font_transform.h",
-    "scoped_font_transform.h",
     "systemfontinfo_iface.h",
     "text_char_pos.cpp",
     "text_char_pos.h",
