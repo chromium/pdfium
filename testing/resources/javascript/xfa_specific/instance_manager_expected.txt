@@ -1,0 +1,36 @@
+Alert: instanceManager
+Alert: | occur
+Alert: PASS: count = 1
+Alert: PASS: count = 12
+Alert: PASS: min = 1
+Alert: PASS: min threw Error: Invalid property set operation.
+Alert: PASS: max = -1
+Alert: PASS: max threw Error: Invalid property set operation.
+Alert: PASS: mgr.setInstances() threw XFAObject.setInstances: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.setInstances(-10) threw Error: The element [min] has violated its allowable number of occurrences.
+Alert: PASS: mgr.setInstances('clams') threw Error: The element [min] has violated its allowable number of occurrences.
+Alert: PASS: mgr.setInstances([1, 2, 3]) threw Error: The element [min] has violated its allowable number of occurrences.
+Alert: PASS: mgr.setInstances(4) = undefined
+Alert: PASS: mgr.count = 4
+Alert: PASS: mgr.setInstances(2) = undefined
+Alert: PASS: mgr.count = 2
+Alert: PASS: mgr.moveInstance() threw XFAObject.moveInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.moveInstance(0) threw XFAObject.moveInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.moveInstance('clams') threw XFAObject.moveInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.moveInstance([1, 2, 3]) threw XFAObject.moveInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.moveInstance(0, 1) = undefined
+Alert: PASS: mgr.count = 2
+Alert: PASS: mgr.addInstance(1, 2, 3) threw XFAObject.addInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.addInstance().className = subform
+Alert: PASS: mgr.addInstance(true).className = subform
+Alert: PASS: mgr.count = 4
+Alert: PASS: mgr.insertInstance() threw XFAObject.insertInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.insertInstance(1, 2, 3) threw XFAObject.insertInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.insertInstance(1, true).className = subform
+Alert: PASS: mgr.count = 5
+Alert: PASS: mgr.removeInstance() threw XFAObject.removeInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.removeInstance(1, 2) threw XFAObject.removeInstance: Incorrect number of parameters passed to function.
+Alert: PASS: mgr.removeInstance(0) = undefined
+Alert: PASS: mgr.count = 4
+Alert: PASS: mgr.removeInstance(0) = undefined
+Alert: PASS: mgr.count = 3
