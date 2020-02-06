@@ -17,6 +17,16 @@
 
 class CFX_GlobalData;
 
+// The CJS_Global object is not the V8 global object (i.e. it is not |this|
+// in JavaScript outside of a bound function call). It is a facility for
+// sharing data amongst documents and persisting data within a document
+// between sessions. It is only partially implemented due to security and
+// privacy concerns. It provides access via properties in the usual manner,
+// execpt that these are stored on the C++ side rather than in V8 itself.
+// It is a static object that is available as "global" property of the V8
+// global object and can be manipulated from JavaScript as |global['foo']|
+// for example.
+
 class CJS_Global final : public CJS_Object {
  public:
   static int GetObjDefnID();

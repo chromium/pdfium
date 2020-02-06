@@ -29,11 +29,10 @@ WideString PropFromV8Prop(v8::Isolate* pIsolate,
   return WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
 }
 
-template <class Alt>
 void JSSpecialPropQuery(const char*,
                         v8::Local<v8::String> property,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  auto pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.Holder());
   if (!pObj)
     return;
 
@@ -47,11 +46,10 @@ void JSSpecialPropQuery(const char*,
   info.GetReturnValue().Set(!result.HasError() ? 4 : 0);
 }
 
-template <class Alt>
 void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.Holder());
   if (!pObj)
     return;
 
@@ -71,12 +69,11 @@ void JSSpecialPropGet(const char* class_name,
     info.GetReturnValue().Set(result.Return());
 }
 
-template <class Alt>
 void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::String> property,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.Holder());
   if (!pObj)
     return;
 
@@ -93,11 +90,10 @@ void JSSpecialPropPut(const char* class_name,
   }
 }
 
-template <class Alt>
 void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  auto pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<CJS_Global>(info.Holder());
   if (!pObj)
     return;
 
@@ -114,7 +110,7 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
-template <class T>
+template <typename T>
 v8::Local<v8::String> GetV8StringFromProperty(v8::Local<v8::Name> property,
                                               const T& info) {
   return property->ToString(info.GetIsolate()->GetCurrentContext())
@@ -144,7 +140,7 @@ void CJS_Global::queryprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
   ASSERT(property->IsString());
-  JSSpecialPropQuery<CJS_Global>(
+  JSSpecialPropQuery(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
                                  GetV8StringFromProperty(property, info)),
@@ -156,7 +152,7 @@ void CJS_Global::getprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
   ASSERT(property->IsString());
-  JSSpecialPropGet<CJS_Global>(
+  JSSpecialPropGet(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
                                  GetV8StringFromProperty(property, info)),
@@ -169,7 +165,7 @@ void CJS_Global::putprop_static(
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
   ASSERT(property->IsString());
-  JSSpecialPropPut<CJS_Global>(
+  JSSpecialPropPut(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
                                  GetV8StringFromProperty(property, info)),
@@ -181,7 +177,7 @@ void CJS_Global::delprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   ASSERT(property->IsString());
-  JSSpecialPropDel<CJS_Global>(
+  JSSpecialPropDel(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
                                  GetV8StringFromProperty(property, info)),
