@@ -1,0 +1,4 @@
+Alert: We search non-xfa global space on missing prop: true
+Alert: Global toString says [object Root]
+Alert: toString.apply to bad object is [object Root]
+Alert: toString.apply to bad non-xfa object is [object Root]
