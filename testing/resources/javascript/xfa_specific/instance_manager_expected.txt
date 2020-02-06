@@ -31,6 +31,9 @@ Alert: PASS: mgr.count = 5
 Alert: PASS: mgr.removeInstance() threw XFAObject.removeInstance: Incorrect number of parameters passed to function.
 Alert: PASS: mgr.removeInstance(1, 2) threw XFAObject.removeInstance: Incorrect number of parameters passed to function.
 Alert: PASS: mgr.removeInstance(0) = undefined
-Alert: PASS: mgr.count = 4
 Alert: PASS: mgr.removeInstance(0) = undefined
-Alert: PASS: mgr.count = 3
+Alert: PASS: mgr.removeInstance(0) = undefined
+Alert: PASS: mgr.removeInstance(0) = undefined
+Alert: PASS: mgr.count = 1
+Alert: PASS: mgr.removeInstance(0) threw XFAObject.removeInstance: Too many occurances.
+Alert: PASS: mgr.count = 1

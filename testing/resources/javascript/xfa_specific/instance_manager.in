@@ -77,9 +77,13 @@ stream
         expectError("mgr.removeInstance()");
         expectError("mgr.removeInstance(1, 2)");
         expect("mgr.removeInstance(0)", undefined);
-        expect("mgr.count", 4);
         expect("mgr.removeInstance(0)", undefined);
-        expect("mgr.count", 3);
+        expect("mgr.removeInstance(0)", undefined);
+        expect("mgr.removeInstance(0)", undefined);
+        expect("mgr.count", 1);
+
+        expectError("mgr.removeInstance(0)");
+        expect("mgr.count", 1);
       ]]></script>
     </event>
   </subform>
