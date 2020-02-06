@@ -1,5 +1,7 @@
 Alert: PASS: this.constructor(): illegal constructor
 Alert: PASS: new this.constructor: not a dynamic object
+Alert: PASS: globalThis.constructor(): illegal constructor
+Alert: PASS: new globalThis.constructor: not a dynamic object
 Alert: PASS: app.constructor(): illegal constructor
 Alert: PASS: new app.constructor: not a dynamic object
 Alert: PASS: event.constructor(): illegal constructor
