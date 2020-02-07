@@ -23,15 +23,6 @@ class CPDF_FormObject;
 class CPDF_Page;
 class CPDF_TextObject;
 
-struct PDFTEXT_Obj {
-  PDFTEXT_Obj();
-  PDFTEXT_Obj(const PDFTEXT_Obj& that);
-  ~PDFTEXT_Obj();
-
-  UnownedPtr<CPDF_TextObject> m_pTextObj;
-  CFX_Matrix m_formMatrix;
-};
-
 class CPDF_TextPage {
  public:
   enum class CharType : uint8_t {
@@ -100,12 +91,21 @@ class CPDF_TextPage {
 
   enum class MarkedContentState { kPass = 0, kDone, kDelay };
 
+  struct TransformedTextObject {
+    TransformedTextObject();
+    TransformedTextObject(const TransformedTextObject& that);
+    ~TransformedTextObject();
+
+    UnownedPtr<CPDF_TextObject> m_pTextObj;
+    CFX_Matrix m_formMatrix;
+  };
+
   void Init();
   bool IsHyphen(wchar_t curChar) const;
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
                          const CFX_Matrix& formMatrix);
-  void ProcessTextObject(PDFTEXT_Obj pObj);
+  void ProcessTextObject(const TransformedTextObject& obj);
   void ProcessTextObject(CPDF_TextObject* pTextObj,
                          const CFX_Matrix& formMatrix,
                          const CPDF_PageObjectHolder* pObjList,
@@ -120,8 +120,8 @@ class CPDF_TextPage {
   bool IsSameTextObject(CPDF_TextObject* pTextObj1,
                         CPDF_TextObject* pTextObj2) const;
   void CloseTempLine();
-  MarkedContentState PreMarkedContent(PDFTEXT_Obj pObj);
-  void ProcessMarkedContent(PDFTEXT_Obj pObj);
+  MarkedContentState PreMarkedContent(const CPDF_TextObject* pTextObj);
+  void ProcessMarkedContent(const TransformedTextObject& obj);
   void FindPreviousTextObject();
   void AddCharInfoByLRDirection(wchar_t wChar, const CharInfo& info);
   void AddCharInfoByRLDirection(wchar_t wChar, const CharInfo& info);
@@ -144,7 +144,7 @@ class CPDF_TextPage {
   const bool m_rtl;
   const CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
-  std::vector<PDFTEXT_Obj> m_LineObj;
+  std::vector<TransformedTextObject> mTextObjects;
   TextOrientation m_TextlineDir = TextOrientation::kUnknown;
   CFX_FloatRect m_CurlineRect;
 };
