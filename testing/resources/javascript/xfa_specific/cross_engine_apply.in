@@ -46,6 +46,7 @@ endstream
 endobj
 {{include ../../xfa_locale_6_0.fragment}}
 {{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
 {{xref}}
 {{trailer}}
 {{startxref}}
