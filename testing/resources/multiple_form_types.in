@@ -1,0 +1,131 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm <<
+    /Fields [8 0 R 9 0 R 10 0 R 11 0 R 12 0 R]
+    /DR 4 0 R
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources 4 0 R
+  /MediaBox [0 0 300 600]
+  /Contents 6 0 R
+  /Annots [7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 13 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Font <<
+    /F1 5 0 R
+  >>
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+0 0 0 rg
+/F1 12 Tf
+100 450 Td
+(Test Form) Tj
+ET
+endstream
+endobj
+{{object 7 0}} <<
+  /Type /Annot
+  /Subtype /Link
+  /BS <<
+    /W 0
+  >>
+  /Rect [100 450 160 460]
+  /A <<
+    /Type /Action
+    /URI (https://www.cs.chromium.org/)
+    /S /URI
+  >>
+  /F 4
+>>
+endobj
+{{object 8 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Ch
+  /Ff 393216
+  /T (Combo_Editable)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 400 200 430]
+  /Opt [[(foo) (Foo)] [(bar) (Bar)] [(qux) (Qux)]]
+>>
+endobj
+{{object 9 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Ch
+  /Ff 2097152
+  /T (Listbox_MultiSelectMultipleSelected)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 350 200 380]
+  /Opt [(Alpha) (Beta) (Gamma) (Delta) (Epsilon)]
+  /V [(Epsilon) (Gamma)]
+>>
+endobj
+{{object 10 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Text Box)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 300 200 330]
+>>
+endobj
+{{object 11 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /F 4
+  /P 3 0 R
+  /Rect [135 250 155 270]
+  /T (Checkbox)
+>>
+endobj
+{{object 12 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /Ff 32768
+  /T (radioButton)
+  /TU (radioButton1)
+  /Kids [13 0 R]
+  /V /value3
+>>
+endobj
+{{object 13 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /F 4
+  /P 3 0 R
+  /Parent 12 0 R
+  /Rect [85 50 105 70]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

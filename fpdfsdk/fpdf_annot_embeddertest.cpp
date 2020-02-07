@@ -10,6 +10,7 @@
 
 #include "build/build_config.h"
 #include "constants/annotation_common.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
@@ -2238,34 +2239,30 @@ TEST_F(FPDFAnnotEmbedderTest, IsCheckedInvalidWidgetType) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbedderTest, GetFormFieldTypeTextField) {
-  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldType) {
+  ASSERT_TRUE(OpenDocument("multiple_form_types.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
+  EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(form_handle(), nullptr));
+
   {
-    EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(form_handle(), nullptr));
-
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
     ASSERT_TRUE(annot);
-
     EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(nullptr, annot.get()));
-
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
   }
-  UnloadPage(page);
-}
 
-TEST_F(FPDFAnnotEmbedderTest, GetFormFieldTypeComboBox) {
-  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
+  constexpr int kExpectedAnnotTypes[] = {-1,
+                                         FPDF_FORMFIELD_COMBOBOX,
+                                         FPDF_FORMFIELD_LISTBOX,
+                                         FPDF_FORMFIELD_TEXTFIELD,
+                                         FPDF_FORMFIELD_CHECKBOX,
+                                         FPDF_FORMFIELD_RADIOBUTTON};
 
-  {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+  for (size_t i = 0; i < FX_ArraySize(kExpectedAnnotTypes); ++i) {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
     ASSERT_TRUE(annot);
-    EXPECT_EQ(FPDF_FORMFIELD_COMBOBOX,
+    EXPECT_EQ(kExpectedAnnotTypes[i],
               FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
   }
   UnloadPage(page);
