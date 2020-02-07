@@ -24,6 +24,7 @@ endobj
   /Contents [21 0 R]
   /MediaBox [0 0 612 792]
 >>
+endobj
 % Forms
 {{object 4 0}} <<
   /Fields [
@@ -32,6 +33,7 @@ endobj
     7 0 R
   ]
 >>
+endobj
 % Field with actions:
 % Cursor enter: E
 % Cursor exit: X
@@ -54,6 +56,7 @@ endobj
    /Bl 15 0 R
  >>
 >>
+endobj
 {{object 6 0}} <<
  /Type /Annot
  /Subtype /Widget

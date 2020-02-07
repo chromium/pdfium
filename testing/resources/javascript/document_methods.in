@@ -26,6 +26,7 @@ endobj
   /MediaBox [0 0 612 792]
   /Contents 8 0 R
 >>
+endobj
 % Page number 1.
 {{object 4 0}} <<
   /Type /Page
@@ -35,6 +36,7 @@ endobj
   >>
   /MediaBox [0 0 612 792]
 >>
+endobj
 % Page number 2.
 {{object 5 0}} <<
   /Type /Page
@@ -44,6 +46,7 @@ endobj
   >>
   /MediaBox [0 0 612 792]
 >>
+endobj
 % Page number 3.
 {{object 6 0}} <<
   /Type /Page
@@ -53,6 +56,7 @@ endobj
   >>
   /MediaBox [0 0 612 792]
 >>
+endobj
 % Contents of the page.
 {{object 8 0}} <<
   {{streamlen}}
