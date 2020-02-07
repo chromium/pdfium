@@ -34,6 +34,7 @@
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
@@ -2502,8 +2503,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
           SkPoint src = {x + 0.5f, y + 0.5f};
           inv.mapPoints(&src, 1);
           // TODO(caryclark) Why does the matrix map require clamping?
-          src.fX = std::max(0.5f, std::min(src.fX, width - 0.5f));
-          src.fY = std::max(0.5f, std::min(src.fY, height - 0.5f));
+          src.fX = pdfium::clamp(src.fX, 0.5f, width - 0.5f);
+          src.fY = pdfium::clamp(src.fY, 0.5f, height - 0.5f);
           m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
         }
       }
