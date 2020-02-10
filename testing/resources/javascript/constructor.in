@@ -33,8 +33,12 @@ endobj
 >>
 stream
 {{include constructor.js}}
+
+// Global objects
 testIllegalConstructor("this");
 testIllegalConstructor("globalThis");
+
+// Static objects
 testIllegalConstructor("app");
 testIllegalConstructor("event");
 testIllegalConstructor("font");
@@ -50,6 +54,11 @@ testIllegalConstructor("highlight");
 testIllegalConstructor("zoomtype");
 testIllegalConstructor("scaleHow");
 testIllegalConstructor("scaleWhen");
+
+// Dynamic objects
+timer1 = app.setTimeOut("var marked = true", 1000);
+testLegalConstructor("timer1");
+
 endstream
 endobj
 {{xref}}
