@@ -1,0 +1,196 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform name="form1">
+    <pageSet>
+      <pageArea id="Page1" name="Page1">
+        <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+        <medium long="11in" short="8.5in" stock="letter"/>
+      </pageArea>
+    </pageSet>
+    <field h="9.0001mm" name="field1" w="47.625mm" x="6.35mm" y="92.075mm">
+      <ui>
+        <choiceList/>
+      </ui>
+      <items nonesuch="3">
+        <arc name="arc1"></arc>
+        <boolean name="bool0">0</boolean>
+        <boolean name="bool1">1</boolean>
+        <boolean name="boolbad">bad</boolean>
+        <boolean name="booltruenottrue">true</boolean>
+        <date name="date0"></date>
+        <date name="date1">2020-02-02</date>
+        <date name="date2">2039-12-01</date>
+        <date name="datebad">bad</date>
+        <dateTime name="datetime0"></dateTime>
+        <dateTime name="datetime1">2020-02-02T12:34:56</dateTime>
+        <dateTime name="datetime2">2039-12-01T12:34:56</dateTime>
+        <dateTime name="datetimebad">bad</dateTime>
+        <decimal name="decimal0"></decimal>
+        <decimal name="decimal1">42.0000000000000000001</decimal>
+        <decimal name="decimalbad">bad</decimal>
+        <exData name="ex0"></exData>
+        <exData name="ex1"><![CDATA[YZYZYZYZYZYZYZYZYZYZYZYZYZYZ]]></exData>
+        <float name="float0">-12.34</float>
+        <float name="float1">-12.34</float>
+        <float name="floatbad">bad</float>
+        <image name="image0">ABABABABABABABABA</image>
+        <image name="image1"><![CDATA[ABABABABABABABABA]]></image>
+        <integer name="int0"></integer>
+        <integer name="int1">1234</integer>
+        <integer name="intbad">bad</integer>
+        <line name="line0"></line>
+        <rectangle name="rect0"></rectangle>
+        <text name="text0"></text>
+        <text name="text1">Ahoy !!!</text>
+        <time name="time0"></time>
+        <time name="time1">12:34:56</time>
+        <goop name="goop0">Nonsense nodes not allowed here</goop>
+      </items>
+    </field>
+    <event activity="docReady">
+      <script contentType="application/x-javascript"><![CDATA[
+        {{include ../expect.js}}
+        {{include dump_tree.js}}
+
+        itemlist = xfa.resolveNode("form1.field1.#items");
+        dumpTree(itemlist);
+
+        arc1 = itemlist.resolveNode("arc1");
+
+        bool0 = itemlist.resolveNode("bool0");
+        expect("bool0.value", false);
+        bool0.value = 1;
+        expect("bool0.value", true);
+
+        bool1 = itemlist.resolveNode("bool1");
+        expect("bool1.value", true);
+        bool1.value = 0;
+        expect("bool1.value", false);
+
+        boolbad = itemlist.resolveNode("boolbad");
+        expect("boolbad.value", false);
+
+        booltruenottrue = itemlist.resolveNode("booltruenottrue");
+        expect("booltruenottrue.value", false);
+
+        // TODO(tsepez): confirm if this is correct.
+        booltruenottrue.value = true;
+        expect("booltruenottrue.value", false);
+
+        booltruenottrue.value = "zerp";
+        expect("booltruenottrue.value", false);
+        booltruenottrue.value = "1";
+        expect("booltruenottrue.value", true);
+        booltruenottrue.value = "10";
+        expect("booltruenottrue.value", true);
+        booltruenottrue.value = "1zerp";
+        expect("booltruenottrue.value", true);
+
+        // Date is just a node, and allows any text within.
+        date0 = itemlist.resolveNode("date0");
+        expect("date0.value", null);
+
+        date1 = itemlist.resolveNode("date1");
+        expect("date1.value", "2020-02-02");
+
+        date2 = itemlist.resolveNode("date2");
+        expect("date2.value", "2039-12-01");
+
+        datebad = itemlist.resolveNode("datebad");
+        expect("datebad.value", "bad");
+
+        // These are pretty much just nodes, and allow any text within.
+        // Just check that they parsed and that we can retrieve them.
+        datetime0 = itemlist.resolveNode("datetime0");
+        expect("datetime0", "[object XFAObject]");
+
+        datetime1 = itemlist.resolveNode("datetime1");
+        expect("datetime1", "[object XFAObject]");
+
+        datetime2 = itemlist.resolveNode("datetime2");
+        expect("datetime2", "[object XFAObject]");
+
+        datetimebad = itemlist.resolveNode("datetimebad");
+        expect("datetimebad", "[object XFAObject]");
+
+        decimal0 = itemlist.resolveNode("decimal0");
+        expect("decimal0", "[object XFAObject]");
+
+        decimal1 = itemlist.resolveNode("decimal1");
+        expect("decimal1", "[object XFAObject]");
+
+        decimalbad = itemlist.resolveNode("decimalbad");
+        expect("decimalbad", "[object XFAObject]");
+
+        ex0 = itemlist.resolveNode("ex0");
+        expect("ex0", "[object XFAObject]");
+
+        ex1 = itemlist.resolveNode("ex1");
+        expect("ex1", "[object XFAObject]");
+
+        float0 = itemlist.resolveNode("float0");
+        expect("float0", "[object XFAObject]");
+
+        float1 = itemlist.resolveNode("float1");
+        expect("float1", "[object XFAObject]");
+
+        floatbad = itemlist.resolveNode("floatbad");
+        expect("floatbad", "[object XFAObject]");
+
+        image0 = itemlist.resolveNode("image0");
+        expect("image0", "[object XFAObject]");
+
+        image1 = itemlist.resolveNode("image1");
+        expect("image1", "[object XFAObject]");
+
+        int0 = itemlist.resolveNode("int0");
+        expect("int0", "[object XFAObject]");
+
+        int1 = itemlist.resolveNode("int1");
+        expect("int1", "[object XFAObject]");
+
+        intbad = itemlist.resolveNode("intbad");
+        expect("intbad", "[object XFAObject]");
+
+        line0 = itemlist.resolveNode("line0");
+        expect("line0", "[object XFAObject]");
+
+        rect0 = itemlist.resolveNode("rect0");
+        expect("rect0", "[object XFAObject]");
+
+        text0 = itemlist.resolveNode("text0");
+        expect("text0", "[object XFAObject]");
+
+        text1 = itemlist.resolveNode("text1");
+        expect("text1", "[object XFAObject]");
+
+        time0 = itemlist.resolveNode("time0");
+        expect("time0", "[object XFAObject]");
+
+        time1 = itemlist.resolveNode("time1");
+        expect("time1", "[object XFAObject]");
+
+        // The parser is picky and won't let fake nodes in here.
+        goop0 = itemlist.resolveNode("goop0");
+        expect("goop0", null);
+      ]]></script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

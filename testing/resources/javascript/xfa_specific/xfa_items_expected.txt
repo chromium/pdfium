@@ -1,0 +1,80 @@
+Alert: items
+Alert: | arc
+Alert: | boolean
+Alert: | boolean
+Alert: | boolean
+Alert: | boolean
+Alert: | date
+Alert: | date
+Alert: | | #text
+Alert: | date
+Alert: | | #text
+Alert: | date
+Alert: | | #text
+Alert: | dateTime
+Alert: | dateTime
+Alert: | | #text
+Alert: | dateTime
+Alert: | | #text
+Alert: | dateTime
+Alert: | | #text
+Alert: | decimal
+Alert: | decimal
+Alert: | decimal
+Alert: | exData
+Alert: | exData
+Alert: | float
+Alert: | float
+Alert: | float
+Alert: | image
+Alert: | | #text
+Alert: | image
+Alert: | | #text
+Alert: | integer
+Alert: | integer
+Alert: | integer
+Alert: | line
+Alert: | rectangle
+Alert: | text
+Alert: | text
+Alert: | time
+Alert: | time
+Alert: PASS: bool0.value = false
+Alert: PASS: bool0.value = true
+Alert: PASS: bool1.value = true
+Alert: PASS: bool1.value = false
+Alert: PASS: boolbad.value = false
+Alert: PASS: booltruenottrue.value = false
+Alert: PASS: booltruenottrue.value = false
+Alert: PASS: booltruenottrue.value = false
+Alert: PASS: booltruenottrue.value = true
+Alert: PASS: booltruenottrue.value = true
+Alert: PASS: booltruenottrue.value = true
+Alert: PASS: date0.value = null
+Alert: PASS: date1.value = 2020-02-02
+Alert: PASS: date2.value = 2039-12-01
+Alert: PASS: datebad.value = bad
+Alert: PASS: datetime0 = [object XFAObject]
+Alert: PASS: datetime1 = [object XFAObject]
+Alert: PASS: datetime2 = [object XFAObject]
+Alert: PASS: datetimebad = [object XFAObject]
+Alert: PASS: decimal0 = [object XFAObject]
+Alert: PASS: decimal1 = [object XFAObject]
+Alert: PASS: decimalbad = [object XFAObject]
+Alert: PASS: ex0 = [object XFAObject]
+Alert: PASS: ex1 = [object XFAObject]
+Alert: PASS: float0 = [object XFAObject]
+Alert: PASS: float1 = [object XFAObject]
+Alert: PASS: floatbad = [object XFAObject]
+Alert: PASS: image0 = [object XFAObject]
+Alert: PASS: image1 = [object XFAObject]
+Alert: PASS: int0 = [object XFAObject]
+Alert: PASS: int1 = [object XFAObject]
+Alert: PASS: intbad = [object XFAObject]
+Alert: PASS: line0 = [object XFAObject]
+Alert: PASS: rect0 = [object XFAObject]
+Alert: PASS: text0 = [object XFAObject]
+Alert: PASS: text1 = [object XFAObject]
+Alert: PASS: time0 = [object XFAObject]
+Alert: PASS: time1 = [object XFAObject]
+Alert: PASS: goop0 = null
