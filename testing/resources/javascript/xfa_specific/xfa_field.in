@@ -21,8 +21,12 @@ stream
       <occur initial="1" max="10" min="0" name="occur1">
       </occur>
       <field name="field1" h="10mm"  w="40mm" x="10mm" y="12mm" border="solid">
+        <items>
+          <text>and a one</text>
+          <text>and a two</text>
+        </items>
         <event activity="ready" ref="$form">
-          <script contentType="application/x-javascript">
+          <script contentType="application/x-javascript"><![CDATA[
             {{include ../expect.js}}
             {{include ../property_test_helpers.js}}
             var field = xfa.resolveNode("field1");
@@ -38,7 +42,40 @@ stream
             testRWProperty(field, "mandatory", "disabled", "solid");
             testRWProperty(field, "mandatoryMessage", "", "keep out");
             testROProperty(field, "dataNode", "[object XFAObject]");
-          </script>
+            testROProperty(field, "length", 2);
+
+            expectError("field.execInitialize('phooey')");
+            expect("field.execInitialize()", undefined);
+
+            expectError("field.execEvent()");
+            expectError("field.execEvent(1, 2)");
+            expect("field.execEvent('validate')", true);
+
+            expectError("field.deleteItem()");
+            expectError("field.deleteItem(1, 2)");
+            expect("field.deleteItem(1)", true);
+            expect("field.deleteItem(137)", true);  // silently ignored?
+
+            expectError("field.getSaveItem()");
+            expectError("field.getSaveItem(1, 2)");
+            expect("field.getSaveItem(0)", "and a one");
+            expect("field.getSaveItem(137)", null);
+
+            expectError("field.getItemState()");
+            expectError("field.getItemState(1, 2)");
+            expect("field.getItemState(0)", false);
+            expect("field.getItemState(1)", false);
+            expect("field.getItemState(137)", false);
+            expect("field.getItemState(-137)", false);
+
+            expectError("field.setItemState()");
+            expectError("field.setItemState(1, 2, 3)");
+            expect("field.setItemState(0, 1)", undefined);
+            expect("field.getItemState(0)", true);
+            expect("field.setItemState(0, 0)", undefined);
+            expect("field.getItemState(0)", false);
+
+          ]]></script>
         </event>
       </field>
     </subform>

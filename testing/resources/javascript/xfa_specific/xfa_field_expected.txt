@@ -18,3 +18,30 @@ Alert: PASS: mandatoryMessage =
 Alert: PASS: mandatoryMessage = keep out
 Alert: PASS: dataNode = [object XFAObject]
 Alert: PASS: dataNode threw Error: Invalid property set operation.
+Alert: PASS: length = 2
+Alert: PASS: length threw Error: Invalid property set operation.
+Alert: PASS: field.execInitialize('phooey') threw XFAObject.execInitialize: Incorrect number of parameters passed to function.
+Alert: PASS: field.execInitialize() = undefined
+Alert: PASS: field.execEvent() threw XFAObject.execEvent: Incorrect number of parameters passed to function.
+Alert: PASS: field.execEvent(1, 2) threw XFAObject.execEvent: Incorrect number of parameters passed to function.
+Alert: PASS: field.execEvent('validate') = true
+Alert: PASS: field.deleteItem() threw XFAObject.deleteItem: Incorrect number of parameters passed to function.
+Alert: PASS: field.deleteItem(1, 2) threw XFAObject.deleteItem: Incorrect number of parameters passed to function.
+Alert: PASS: field.deleteItem(1) = true
+Alert: PASS: field.deleteItem(137) = true
+Alert: PASS: field.getSaveItem() threw XFAObject.getSaveItem: Incorrect number of parameters passed to function.
+Alert: PASS: field.getSaveItem(1, 2) threw XFAObject.getSaveItem: Incorrect number of parameters passed to function.
+Alert: PASS: field.getSaveItem(0) = and a one
+Alert: PASS: field.getSaveItem(137) = null
+Alert: PASS: field.getItemState() threw XFAObject.getItemState: Incorrect number of parameters passed to function.
+Alert: PASS: field.getItemState(1, 2) threw XFAObject.getItemState: Incorrect number of parameters passed to function.
+Alert: PASS: field.getItemState(0) = false
+Alert: PASS: field.getItemState(1) = false
+Alert: PASS: field.getItemState(137) = false
+Alert: PASS: field.getItemState(-137) = false
+Alert: PASS: field.setItemState() threw XFAObject.setItemState: Incorrect number of parameters passed to function.
+Alert: PASS: field.setItemState(1, 2, 3) threw XFAObject.setItemState: Incorrect number of parameters passed to function.
+Alert: PASS: field.setItemState(0, 1) = undefined
+Alert: PASS: field.getItemState(0) = true
+Alert: PASS: field.setItemState(0, 0) = undefined
+Alert: PASS: field.getItemState(0) = false
