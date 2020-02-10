@@ -11,8 +11,10 @@ function dumpTree(node, level) {
   try {
     app.alert(indentation + node.className);
     var children = node.nodes;
-    for (var i = 0; i < children.length; ++i) {
-      dumpTree(children.item(i), level + 1);
+    if (children) {
+      for (var i = 0; i < children.length; ++i) {
+        dumpTree(children.item(i), level + 1);
+      }
     }
   } catch (e) {
     app.alert(indentation + "Error: " + e);
