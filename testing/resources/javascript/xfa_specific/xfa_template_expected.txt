@@ -1,0 +1,15 @@
+Alert: PASS: template0.className = template
+Alert: PASS: template0.execCalculate(1) threw XFAObject.execCalculate: Incorrect number of parameters passed to function.
+Alert: PASS: template0.execCalculate() = false
+Alert: PASS: template0.execInitialize(1) threw XFAObject.execInitialize: Incorrect number of parameters passed to function.
+Alert: PASS: template0.execInitialize() = false
+Alert: PASS: template0.execValidate(1) threw XFAObject.execValidate: Incorrect number of parameters passed to function.
+Alert: PASS: template0.execValidate() = false
+Alert: PASS: template0.formNodes() threw XFAObject.formNodes: Incorrect number of parameters passed to function.
+Alert: PASS: template0.formNodes(1, 2) threw XFAObject.formNodes: Incorrect number of parameters passed to function.
+Alert: PASS: template0.formNodes(true) = true
+Alert: PASS: template0.recalculate() threw XFAObject.recalculate: Incorrect number of parameters passed to function.
+Alert: PASS: template0.recalculate(1, 2) threw XFAObject.recalculate: Incorrect number of parameters passed to function.
+Alert: PASS: template0.recalculate(true) = true
+Alert: PASS: template0.remerge(1) threw XFAObject.remerge: Incorrect number of parameters passed to function.
+Alert: PASS: template0.remerge() = undefined
