@@ -1,0 +1,20 @@
+Alert: PASS: x = 10mm
+Alert: PASS: x = 11mm
+Alert: PASS: y = 12mm
+Alert: PASS: y = 13mm
+Alert: PASS: h = 10mm
+Alert: PASS: h = 2in
+Alert: PASS: w = 40mm
+Alert: PASS: w = 3in
+Alert: PASS: fontColor = 0,0,0
+Alert: PASS: fontColor = 42,62,4
+Alert: PASS: fillColor = 255,255,255
+Alert: PASS: fillColor = 41,61,11
+Alert: PASS: borderColor = 0,0,0
+Alert: PASS: borderColor = 241,161,11
+Alert: PASS: mandatory = disabled
+Alert: PASS: mandatory = solid
+Alert: PASS: mandatoryMessage = 
+Alert: PASS: mandatoryMessage = keep out
+Alert: PASS: dataNode = [object XFAObject]
+Alert: PASS: dataNode threw Error: Invalid property set operation.

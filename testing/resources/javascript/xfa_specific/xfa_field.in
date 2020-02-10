@@ -1,0 +1,55 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template>
+  <subform layout="tb" name="subform1">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+        <medium long="297mm" short="210mm" stock="a4"/>
+      </pageArea>
+    </pageSet>
+    <subform layout="tb" name="subform2">
+      <occur initial="1" max="10" min="0" name="occur1">
+      </occur>
+      <field name="field1" h="10mm"  w="40mm" x="10mm" y="12mm" border="solid">
+        <event activity="ready" ref="$form">
+          <script contentType="application/x-javascript">
+            {{include ../expect.js}}
+            {{include ../property_test_helpers.js}}
+            var field = xfa.resolveNode("field1");
+            testRWProperty(field, "x", "10mm", "11mm");
+            testRWProperty(field, "y", "12mm", "13mm");
+            testRWProperty(field, "h", "10mm", "2in");
+            testRWProperty(field, "w", "40mm", "3in");
+            testRWProperty(field, "fontColor", "0,0,0", "42,62,4");
+            testRWProperty(field, "fillColor", "255,255,255", "41,61,11");
+            testRWProperty(field, "borderColor", "0,0,0", "241,161,11");
+            // TODO(tsepez): find a way to make this be defined.
+            // testRWProperty(field, "borderWidth", "1", "4");
+            testRWProperty(field, "mandatory", "disabled", "solid");
+            testRWProperty(field, "mandatoryMessage", "", "keep out");
+            testROProperty(field, "dataNode", "[object XFAObject]");
+          </script>
+        </event>
+      </field>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
