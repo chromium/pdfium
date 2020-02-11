@@ -105,6 +105,9 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 
   RetainPtr<CPDF_StructElement> pParentElement =
       AddPageNode(pParent, map, nLevel + 1);
+  if (!pParentElement)
+    return pElement;
+
   bool bSave = false;
   for (CPDF_StructKid& kid : *pParentElement->GetKids()) {
     if (kid.m_Type == CPDF_StructKid::kElement && kid.m_pDict == pDict) {

@@ -1,0 +1,346 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /StructTreeRoot 5 0 R
+  /Lang (en-US)
+  /MarkInfo <<
+    /Marked true
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 612 792]
+  /StructParents 0
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+/Para<</MCID 0>>
+BMC
+0 0 Td
+/F1 18 Tf
+(Sample Text) Tj
+EMC
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /StructTreeRoot
+  /ParentTree 6 0 R
+  /K [8 0 R]
+  /RoleMap <<
+    /Document /Document
+    /Para /Para
+  >>
+>>
+endobj
+{{object 6 0}} <<
+  /Nums [0 [7 0 R]]
+>>
+endobj
+{{object 7 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [0]
+  /P 42 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 8 0}} <<
+  /Type /StructElem
+  /S /Document
+  /K [9 0 R]
+  /P 5 0 R
+  /T (TitleText)
+  /Pg 3 0 R
+>>
+endobj
+{{object 9 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [10 0 R]
+  /P 8 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 10 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [11 0 R]
+  /P 9 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 11 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [12 0 R]
+  /P 10 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 12 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [13 0 R]
+  /P 11 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 13 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [14 0 R]
+  /P 12 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 14 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [15 0 R]
+  /P 13 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 15 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [16 0 R]
+  /P 14 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 16 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [17 0 R]
+  /P 15 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 17 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [18 0 R]
+  /P 16 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 18 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [19 0 R]
+  /P 17 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 19 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [20 0 R]
+  /P 18 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 20 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [21 0 R]
+  /P 19 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 21 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [22 0 R]
+  /P 20 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 22 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [23 0 R]
+  /P 21 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 23 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [24 0 R]
+  /P 22 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 24 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [25 0 R]
+  /P 23 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 25 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [26 0 R]
+  /P 24 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 26 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [27 0 R]
+  /P 25 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 27 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [28 0 R]
+  /P 26 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 28 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [29 0 R]
+  /P 27 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 29 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [30 0 R]
+  /P 28 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 30 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [31 0 R]
+  /P 29 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 31 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [32 0 R]
+  /P 30 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 32 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [33 0 R]
+  /P 31 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 33 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [34 0 R]
+  /P 32 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 34 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [35 0 R]
+  /P 33 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 35 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [36 0 R]
+  /P 34 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 36 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [37 0 R]
+  /P 35 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 37 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [38 0 R]
+  /P 36 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 38 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [39 0 R]
+  /P 37 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 39 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [40 0 R]
+  /P 38 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 40 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [41 0 R]
+  /P 39 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 41 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [42 0 R]
+  /P 40 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{object 42 0}} <<
+  /Type /StructElem
+  /S /Para
+  /K [7 0 R]
+  /P 41 0 R
+  /Pg 3 0 R
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
