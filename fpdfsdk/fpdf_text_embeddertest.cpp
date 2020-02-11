@@ -1484,10 +1484,6 @@ TEST_F(FPDFTextEmbedderTest, GetMatrix) {
   static_assert(kExpectedCount + 1 == kExpectedTextSize,
                 "Bad expected matrix size");
 
-  // For a size 12 letter 'A'.
-  constexpr double kExpectedCharWidth = 8.436;
-  constexpr double kExpectedCharHeight = 6.77;
-
   ASSERT_TRUE(OpenDocument("font_matrix.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1507,26 +1503,6 @@ TEST_F(FPDFTextEmbedderTest, GetMatrix) {
           check_unsigned_shorts(kExpectedText, buffer, kExpectedTextSize));
     }
 
-    {
-      // Check the character box size.
-      double left;
-      double right;
-      double bottom;
-      double top;
-      ASSERT_TRUE(FPDFText_GetCharBox(text_page.get(), 0, &left, &right,
-                                      &bottom, &top));
-      EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
-      EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
-      ASSERT_TRUE(FPDFText_GetCharBox(text_page.get(), 4, &left, &right,
-                                      &bottom, &top));
-      EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
-      EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
-      ASSERT_TRUE(FPDFText_GetCharBox(text_page.get(), 8, &left, &right,
-                                      &bottom, &top));
-      EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
-      EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
-    }
-
     // Check the character matrix.
     FS_MATRIX matrix;
     for (size_t i = 0; i < kExpectedCount; ++i) {
@@ -1544,6 +1520,56 @@ TEST_F(FPDFTextEmbedderTest, GetMatrix) {
     EXPECT_FALSE(FPDFText_GetMatrix(text_page.get(), 10, &matrix));
     EXPECT_FALSE(FPDFText_GetMatrix(text_page.get(), -1, &matrix));
     EXPECT_FALSE(FPDFText_GetMatrix(text_page.get(), 0, nullptr));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbedderTest, CharBox) {
+  // For a size 12 letter 'A'.
+  constexpr double kExpectedCharWidth = 8.436;
+  constexpr double kExpectedCharHeight = 6.77;
+  constexpr float kExpectedLooseCharWidth = 8.664f;
+  constexpr float kExpectedLooseCharHeight = 12.0f;
+
+  ASSERT_TRUE(OpenDocument("font_matrix.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
+
+    // Check the character box size.
+    double left;
+    double right;
+    double bottom;
+    double top;
+    ASSERT_TRUE(
+        FPDFText_GetCharBox(text_page.get(), 0, &left, &right, &bottom, &top));
+    EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
+    EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
+    ASSERT_TRUE(
+        FPDFText_GetCharBox(text_page.get(), 4, &left, &right, &bottom, &top));
+    EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
+    EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
+    ASSERT_TRUE(
+        FPDFText_GetCharBox(text_page.get(), 8, &left, &right, &bottom, &top));
+    EXPECT_NEAR(kExpectedCharWidth, right - left, 0.001);
+    EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
+
+    // Check the loose character box size.
+    // TODO(crbug.com/pdfium/1465): There should be no division here.
+    FS_RECTF rect;
+    ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 0, &rect));
+    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth / 12, rect.right - rect.left);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight / 12, rect.top - rect.bottom);
+    ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 4, &rect));
+    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth / 12, rect.right - rect.left);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight / 12, rect.top - rect.bottom);
+    ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 8, &rect));
+    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth, rect.right - rect.left);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight, rect.top - rect.bottom);
   }
 
   UnloadPage(page);
