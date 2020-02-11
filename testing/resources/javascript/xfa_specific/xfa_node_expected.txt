@@ -30,6 +30,7 @@ Alert: | | | | dynamicRender
 Alert: | | | | | #text
 Alert: | | | validate
 Alert: | | | | #text
+Alert: | packet
 Alert: | template
 Alert: | | subform
 Alert: | | | event
@@ -245,3 +246,18 @@ Alert: PASS: my_doc.setAttribute('something', 'ns') = undefined
 Alert: PASS: my_doc.getAttribute('ns') = something
 Alert: PASS: my_doc.setAttribute('fake_value', 'fake_attr') = undefined
 Alert: PASS: my_doc.getAttribute('fake_attr') = fake_value
+Alert: PASS: goop = undefined
+Alert: PASS: goop.className = packet
+Alert: PASS: goop.viscosity = undefined
+Alert: PASS: goop.getAttribute() threw XFAObject.getAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: goop.getAttribute(1, 2) threw XFAObject.getAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: goop.getAttribute('nonesuch') = 
+Alert: PASS: goop.getAttribute('viscosity') = sludge
+Alert: PASS: goop.setAttribute() threw XFAObject.setAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: goop.setAttribute(1) threw XFAObject.setAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: goop.setAttribute(1, 2, 3) threw XFAObject.setAttribute: Incorrect number of parameters passed to function.
+Alert: PASS: goop.setAttribute(7, 'ph') = null
+Alert: PASS: goop.getAttribute('ph') = 7
+Alert: PASS: goop.content = Spurious Nonsense
+Alert: PASS: goop.content = ' for All' =  for All
+Alert: PASS: goop.content = Spurious Nonsense for All

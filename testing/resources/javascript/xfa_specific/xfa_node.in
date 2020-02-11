@@ -7,6 +7,7 @@
   {{streamlen}}
 >>
 stream
+<goop viscosity="sludge">Spurious Nonsense</goop>
 <template>
   <subform layout="tb" name="my_doc">
     <pageSet id="page" relation="orderedOccurrence">
@@ -78,6 +79,31 @@ stream
         // Test free-form attributes outside of the XFA schema.
         expect("my_doc.setAttribute('fake_value', 'fake_attr')", undefined);
         expect("my_doc.getAttribute('fake_attr')", 'fake_value');
+
+        // Test "packet" nodes which are unrecognized tags at XDP level.
+        expect("goop", undefined);
+        var goop = this.resolveNode('#packet');
+        expect("goop.className", "packet");
+        expect("goop.viscosity", undefined);
+        expectError("goop.getAttribute()");
+        expectError("goop.getAttribute(1, 2)");
+        expect("goop.getAttribute('nonesuch')", "");
+        expect("goop.getAttribute('viscosity')", "sludge");
+        expectError("goop.setAttribute()");
+        expectError("goop.setAttribute(1)");
+        expectError("goop.setAttribute(1, 2, 3)");
+
+        // Remember, args to setAttribute() are backwards from what one might
+        // typically expect ...
+        expect("goop.setAttribute(7, 'ph')", undefined);
+        expect("goop.getAttribute('ph')", 7);
+
+        expect("goop.content", "Spurious Nonsense");
+        expect("goop.content = ' for All'", " for All");
+
+        // TODO(tsepez): assigning new content seems to append although it
+        // wasn't included in the return value of the assignment above.
+        expect("goop.content", "Spurious Nonsense for All");
       ]]></script>
     </event>
   </subform>
