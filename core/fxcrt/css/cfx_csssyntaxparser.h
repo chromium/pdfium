@@ -54,8 +54,8 @@ class CFX_CSSSyntaxParser {
   int32_t SwitchToComment();
 
   bool RestoreMode();
-  bool AppendChar(wchar_t wch);
-  int32_t SaveTextData();
+  void AppendCharIfNotLeadingBlank(wchar_t wch);
+  void SaveTextData();
 
   CFX_CSSTextBuf m_TextData;
   CFX_CSSExtTextBuf m_TextPlane;

@@ -115,7 +115,8 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
               }
               FALLTHROUGH;
             default:
-              AppendChar(wch);
+              AppendCharIfNotLeadingBlank(wch);
+              m_TextPlane.MoveNext();
               break;
           }
           break;
@@ -140,7 +141,8 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
               }
               FALLTHROUGH;
             default:
-              AppendChar(wch);
+              AppendCharIfNotLeadingBlank(wch);
+              m_TextPlane.MoveNext();
               break;
           }
           break;
@@ -160,7 +162,8 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
               }
               FALLTHROUGH;
             default:
-              AppendChar(wch);
+              AppendCharIfNotLeadingBlank(wch);
+              m_TextPlane.MoveNext();
               break;
           }
           break;
@@ -187,19 +190,14 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
   return m_eStatus;
 }
 
-bool CFX_CSSSyntaxParser::AppendChar(wchar_t wch) {
-  m_TextPlane.MoveNext();
-  if (m_TextData.GetLength() > 0 || wch > ' ') {
+void CFX_CSSSyntaxParser::AppendCharIfNotLeadingBlank(wchar_t wch) {
+  if (m_TextData.GetLength() > 0 || wch > ' ')
     m_TextData.AppendChar(wch);
-    return true;
-  }
-  return false;
 }
 
-int32_t CFX_CSSSyntaxParser::SaveTextData() {
+void CFX_CSSSyntaxParser::SaveTextData() {
   m_iTextDataLen = m_TextData.TrimEnd();
   m_TextData.Clear();
-  return m_iTextDataLen;
 }
 
 void CFX_CSSSyntaxParser::SwitchMode(CFX_CSSSyntaxMode eMode) {
