@@ -1115,6 +1115,28 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
   pImageDict->SetNewFor<CPDF_String>("Name", name, false);
 }
 
+CheckStyle CheckStyleFromCaption(const WideString& wsCaption) {
+  if (wsCaption.IsEmpty())
+    return CheckStyle::kCheck;
+
+  // Character values are ZapfDingbats encodings of named glyphs.
+  switch (wsCaption[0]) {
+    case L'l':
+      return CheckStyle::kCircle;
+    case L'8':
+      return CheckStyle::kCross;
+    case L'u':
+      return CheckStyle::kDiamond;
+    case L'n':
+      return CheckStyle::kSquare;
+    case L'H':
+      return CheckStyle::kStar;
+    case L'4':
+    default:
+      return CheckStyle::kCheck;
+  }
+}
+
 }  // namespace
 
 CPDFSDK_AppStream::CPDFSDK_AppStream(CPDFSDK_Widget* widget,
@@ -1357,31 +1379,7 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
-  CheckStyle nStyle = CheckStyle::kCheck;
-  WideString csWCaption = pControl->GetNormalCaption();
-  if (csWCaption.GetLength() > 0) {
-    switch (csWCaption[0]) {
-      case L'l':
-        nStyle = CheckStyle::kCircle;
-        break;
-      case L'8':
-        nStyle = CheckStyle::kCross;
-        break;
-      case L'u':
-        nStyle = CheckStyle::kDiamond;
-        break;
-      case L'n':
-        nStyle = CheckStyle::kSquare;
-        break;
-      case L'H':
-        nStyle = CheckStyle::kStar;
-        break;
-      case L'4':
-      default:
-        nStyle = CheckStyle::kCheck;
-    }
-  }
-
+  CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption());
   ByteString csAP_N_ON =
       GetRectFillAppStream(rcWindow, crBackground) +
       GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1474,30 +1472,7 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
-  CheckStyle nStyle = CheckStyle::kCircle;
-  WideString csWCaption = pControl->GetNormalCaption();
-  if (csWCaption.GetLength() > 0) {
-    switch (csWCaption[0]) {
-      case L'8':
-        nStyle = CheckStyle::kCross;
-        break;
-      case L'u':
-        nStyle = CheckStyle::kDiamond;
-        break;
-      case L'n':
-        nStyle = CheckStyle::kSquare;
-        break;
-      case L'H':
-        nStyle = CheckStyle::kStar;
-        break;
-      case L'4':
-        nStyle = CheckStyle::kCheck;
-        break;
-      case L'l':
-      default:
-        nStyle = CheckStyle::kCircle;
-    }
-  }
+  CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption());
 
   ByteString csAP_N_ON;
   CFX_FloatRect rcCenter = rcWindow.GetCenterSquare().GetDeflated(1.0f, 1.0f);
