@@ -226,6 +226,20 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #endif
 }
 
+// Returns true if formfill version is correctly set. See |version| in
+// FPDF_FORMFILLINFO for details regarding correct version.
+bool CheckFormfillVersion(FPDF_FORMFILLINFO* formInfo) {
+  if (!formInfo || formInfo->version < 1 || formInfo->version > 2)
+    return false;
+
+#ifdef PDF_ENABLE_XFA
+  if (formInfo->version != 2)
+    return false;
+#endif  // PDF_ENABLE_XFA
+
+  return true;
+}
+
 }  // namespace
 
 FPDF_EXPORT int FPDF_CALLCONV
@@ -285,12 +299,7 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
 FPDF_EXPORT FPDF_FORMHANDLE FPDF_CALLCONV
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
-#ifdef PDF_ENABLE_XFA
-  constexpr int kRequiredVersion = 2;
-#else   // PDF_ENABLE_XFA
-  constexpr int kRequiredVersion = 1;
-#endif  // PDF_ENABLE_XFA
-  if (!formInfo || formInfo->version != kRequiredVersion)
+  if (!CheckFormfillVersion(formInfo))
     return nullptr;
 
   auto* pDocument = CPDFDocumentFromFPDFDocument(document);

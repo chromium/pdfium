@@ -374,8 +374,17 @@ typedef struct _FPDF_SYSTEMTIME {
 
 typedef struct _FPDF_FORMFILLINFO {
   /*
-   * Version number of the interface. Currently must be 1 (when PDFium is built
-   *  without the XFA module) or must be 2 (when built with the XFA module).
+   * Version number of the interface.
+   * Version 1 contains stable interfaces. Version 2 has additional
+   * experimental interfaces.
+   * When PDFium is built without the XFA module, version can be 1 or 2.
+   * With version 1, only stable interfaces are called. With version 2,
+   * additional experimental interfaces are also called.
+   * When PDFium is built with the XFA module, version must be 2.
+   * All the XFA related interfaces are experimental. If PDFium is built with
+   * the XFA module and version 1 then none of the XFA related interfaces
+   * would be called. When PDFium is built with XFA module then the version
+   * must be 2.
    */
   int version;
 
@@ -1069,6 +1078,30 @@ typedef struct _FPDF_FORMFILLINFO {
                                    FPDF_WIDESTRING wsURL,
                                    FPDF_WIDESTRING wsData,
                                    FPDF_WIDESTRING wsEncode);
+
+  /*
+   * Method: FFI_OnFocusChange
+   *     Called when the focused annotation is updated.
+   * Interface Version:
+   *     Ignored if |version| < 2.
+   * Implementation Required:
+   *     No
+   * Parameters:
+   *     param           -   Pointer to the interface structure itself.
+   *     annot           -   The focused annotation.
+   *     page_index      -   Index number of the page which contains the
+   *                         focused annotation. 0 for the first page.
+   * Return value:
+   *     None.
+   * Comments:
+   *     This callback function is useful for implementing any view based
+   *     action such as scrolling the annotation rect into view. The
+   *     embedder should not copy and store the annot as its scope is
+   *     limited to this call only.
+   */
+  void (*FFI_OnFocusChange)(struct _FPDF_FORMFILLINFO* param,
+                            FPDF_ANNOTATION annot,
+                            int page_index);
 } FPDF_FORMFILLINFO;
 
 /*

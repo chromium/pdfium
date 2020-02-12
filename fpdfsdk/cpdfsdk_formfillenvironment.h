@@ -209,6 +209,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
 
  private:
   IPDF_Page* GetPage(int nIndex);
+  void SendOnFocusChange(ObservedPtr<CPDFSDK_Annot>* pAnnot);
 
   FPDF_FORMFILLINFO* const m_pInfo;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;

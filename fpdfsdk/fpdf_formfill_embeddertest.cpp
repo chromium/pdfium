@@ -523,12 +523,21 @@ class FPDFFormFillListBoxFormEmbedderTest
   static constexpr float kSingleFormLastSelectedYSecondVisibleOption = 108.0;
 };
 
+class FPDFFormFillTextFormEmbedderTestVersion2
+    : public FPDFFormFillTextFormEmbedderTest {
+  void SetUp() override {
+    SetFormFillInfoVersion(2);
+    FPDFFormFillInteractiveEmbedderTest::SetUp();
+  }
+};
+
 TEST_F(FPDFFormFillEmbedderTest, FirstTest) {
   EmbedderTestMockDelegate mock;
   EXPECT_CALL(mock, Alert(_, _, _, _)).Times(0);
   EXPECT_CALL(mock, UnsupportedHandler(_)).Times(0);
   EXPECT_CALL(mock, SetTimer(_, _)).Times(0);
   EXPECT_CALL(mock, KillTimer(_)).Times(0);
+  EXPECT_CALL(mock, OnFocusChange(_, _, _)).Times(0);
   SetDelegate(&mock);
 
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
@@ -2054,6 +2063,30 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, DoubleClickInTextField) {
   CheckSelection(L"");
   DoubleClickOnFormFieldAtPoint(RegularFormBegin());
   CheckSelection(L"Hello World");
+}
+
+TEST_F(FPDFFormFillTextFormEmbedderTest, FocusAnnotationUpdateToEmbedder) {
+  testing::NiceMock<EmbedderTestMockDelegate> mock;
+  SetDelegate(&mock);
+  CheckFocusedFieldText(L"");
+
+#ifdef PDF_ENABLE_XFA
+  EXPECT_CALL(mock, OnFocusChange(_, _, 0)).Times(1);
+#else   // PDF_ENABLE_XFA
+  EXPECT_CALL(mock, OnFocusChange(_, _, 0)).Times(0);
+#endif  // PDF_ENABLE_XFA
+
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+}
+
+TEST_F(FPDFFormFillTextFormEmbedderTestVersion2,
+       FocusAnnotationUpdateToEmbedder) {
+  testing::NiceMock<EmbedderTestMockDelegate> mock;
+  SetDelegate(&mock);
+  CheckFocusedFieldText(L"");
+
+  EXPECT_CALL(mock, OnFocusChange(_, _, 0)).Times(1);
+  ClickOnFormFieldAtPoint(RegularFormBegin());
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, FocusChanges) {

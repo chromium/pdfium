@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_annotcontext.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
@@ -706,6 +707,10 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return false;
 
   m_pFocusAnnot.Reset(pAnnot->Get());
+
+  // If we are not able to inform the client about the focus change, it
+  // shouldn't be considered as failure.
+  SendOnFocusChange(pAnnot);
   return true;
 }
 
@@ -746,4 +751,32 @@ int CPDFSDK_FormFillEnvironment::GetPageCount() const {
 
 bool CPDFSDK_FormFillEnvironment::HasPermissions(uint32_t flags) const {
   return !!(m_pCPDFDoc->GetUserPermissions() & flags);
+}
+
+void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
+    ObservedPtr<CPDFSDK_Annot>* pAnnot) {
+  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_OnFocusChange)
+    return;
+
+  if ((*pAnnot)->AsXFAWidget()) {
+    // TODO(crbug.com/pdfium/1482): Handle XFA case.
+    return;
+  }
+
+  CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
+  if (!pPageView || !pPageView->IsValid())
+    return;
+
+  CPDF_Page* cpdf_page = (*pAnnot)->GetPDFPage();
+  if (!cpdf_page)
+    return;
+
+  CPDF_Dictionary* annot_dict = (*pAnnot)->GetPDFAnnot()->GetAnnotDict();
+
+  auto focused_annot =
+      pdfium::MakeUnique<CPDF_AnnotContext>(annot_dict, cpdf_page);
+  FPDF_ANNOTATION fpdf_annot =
+      FPDFAnnotationFromCPDFAnnotContext(focused_annot.get());
+
+  m_pInfo->FFI_OnFocusChange(m_pInfo, fpdf_annot, pPageView->GetPageIndex());
 }

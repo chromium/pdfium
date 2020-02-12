@@ -247,15 +247,12 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
   memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
-#ifdef PDF_ENABLE_XFA
-  formfillinfo->version = 2;
-#else   // PDF_ENABLE_XFA
-  formfillinfo->version = 1;
-#endif  // PDF_ENABLE_XFA
+  formfillinfo->version = form_fill_info_version_;
   formfillinfo->FFI_SetTimer = SetTimerTrampoline;
   formfillinfo->FFI_KillTimer = KillTimerTrampoline;
   formfillinfo->FFI_GetPage = GetPageTrampoline;
   formfillinfo->FFI_DoURIAction = DoURIActionTrampoline;
+  formfillinfo->FFI_OnFocusChange = OnFocusChangeTrampoline;
 
   if (javascript_option == JavaScriptOption::kEnableJavaScript)
     formfillinfo->m_pJsPlatform = platform;
@@ -606,6 +603,14 @@ void EmbedderTest::DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
                                          FPDF_BYTESTRING uri) {
   EmbedderTest* test = static_cast<EmbedderTest*>(info);
   return test->delegate_->DoURIAction(uri);
+}
+
+// static
+void EmbedderTest::OnFocusChangeTrampoline(FPDF_FORMFILLINFO* info,
+                                           FPDF_ANNOTATION annot,
+                                           int page_index) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  return test->delegate_->OnFocusChange(info, annot, page_index);
 }
 
 // static
