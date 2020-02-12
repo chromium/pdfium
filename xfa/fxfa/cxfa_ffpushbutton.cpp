@@ -195,6 +195,9 @@ void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CXFA_FFPushButton::OnProcessEvent(CFWL_Event* pEvent) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   m_pOldDelegate->OnProcessEvent(pEvent);
   CXFA_FFField::OnProcessEvent(pEvent);
 }

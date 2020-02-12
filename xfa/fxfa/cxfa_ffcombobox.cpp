@@ -346,7 +346,9 @@ void CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
-  ObservedPtr<CXFA_FFComboBox> watched(this);
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::SelectChanged: {
@@ -370,8 +372,7 @@ void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  if (watched)
-    m_pOldDelegate->OnProcessEvent(pEvent);
+  m_pOldDelegate->OnProcessEvent(pEvent);
 }
 
 void CXFA_FFComboBox::OnDrawWidget(CXFA_Graphics* pGraphics,
