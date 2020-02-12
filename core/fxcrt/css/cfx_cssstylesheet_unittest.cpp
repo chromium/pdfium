@@ -27,7 +27,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
   void TearDown() override { decl_ = nullptr; }
 
-  void LoadAndVerifyRuleCount(const wchar_t* buf, int rule_count) {
+  void LoadAndVerifyRuleCount(const wchar_t* buf, size_t rule_count) {
     ASSERT(sheet_);
     EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
     EXPECT_EQ(sheet_->CountRules(), rule_count);
@@ -100,10 +100,10 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
       L"a { border: 10px; }\nb { text-decoration: underline; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-  EXPECT_EQ(2, sheet_->CountRules());
+  EXPECT_EQ(2u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
-  EXPECT_EQ(1UL, style->CountSelectorLists());
+  EXPECT_EQ(1u, style->CountSelectorLists());
 
   bool found_selector = false;
   uint32_t hash = FX_HashCode_GetW(L"a", true);
@@ -116,7 +116,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   EXPECT_TRUE(found_selector);
 
   decl_ = style->GetDeclaration();
-  EXPECT_EQ(4UL, decl_->PropertyCountForTesting());
+  EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0,
               CFX_CSSNumberType::Pixels);
@@ -127,7 +127,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
               CFX_CSSNumberType::Pixels);
 
   style = sheet_->GetRule(1);
-  EXPECT_EQ(1UL, style->CountSelectorLists());
+  EXPECT_EQ(1u, style->CountSelectorLists());
 
   found_selector = false;
   hash = FX_HashCode_GetW(L"b", true);
@@ -140,7 +140,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   EXPECT_TRUE(found_selector);
 
   decl_ = style->GetDeclaration();
-  EXPECT_EQ(1UL, decl_->PropertyCountForTesting());
+  EXPECT_EQ(1u, decl_->PropertyCountForTesting());
   VerifyList(CFX_CSSProperty::TextDecoration,
              {CFX_CSSPropertyValue::Underline});
 }
@@ -148,28 +148,28 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
 TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   const wchar_t* buf = L"a b c { border: 10px; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-  EXPECT_EQ(1, sheet_->CountRules());
+  EXPECT_EQ(1u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
-  EXPECT_EQ(1UL, style->CountSelectorLists());
+  EXPECT_EQ(1u, style->CountSelectorLists());
 
   auto* sel = style->GetSelectorList(0);
-  EXPECT_TRUE(sel != nullptr);
+  ASSERT_TRUE(sel);
   EXPECT_EQ(FX_HashCode_GetW(L"c", true), sel->GetNameHash());
 
   sel = sel->GetNextSelector();
-  EXPECT_TRUE(sel != nullptr);
+  ASSERT_TRUE(sel);
   EXPECT_EQ(FX_HashCode_GetW(L"b", true), sel->GetNameHash());
 
   sel = sel->GetNextSelector();
-  EXPECT_TRUE(sel != nullptr);
+  ASSERT_TRUE(sel);
   EXPECT_EQ(FX_HashCode_GetW(L"a", true), sel->GetNameHash());
 
   sel = sel->GetNextSelector();
-  EXPECT_TRUE(sel == nullptr);
+  EXPECT_FALSE(sel);
 
   decl_ = style->GetDeclaration();
-  EXPECT_EQ(4UL, decl_->PropertyCountForTesting());
+  EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0,
               CFX_CSSNumberType::Pixels);
@@ -183,19 +183,19 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
 TEST_F(CFX_CSSStyleSheetTest, ParseUnhandledSelectors) {
   const wchar_t* buf = L"a > b { padding: 0; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-  EXPECT_EQ(0, sheet_->CountRules());
+  EXPECT_EQ(0u, sheet_->CountRules());
 
   buf = L"a[first] { padding: 0; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-  EXPECT_EQ(0, sheet_->CountRules());
+  EXPECT_EQ(0u, sheet_->CountRules());
 
   buf = L"a+b { padding: 0; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-  EXPECT_EQ(0, sheet_->CountRules());
+  EXPECT_EQ(0u, sheet_->CountRules());
 
   buf = L"a ^ b { padding: 0; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-  EXPECT_EQ(0, sheet_->CountRules());
+  EXPECT_EQ(0u, sheet_->CountRules());
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectorsCombined) {

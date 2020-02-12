@@ -34,9 +34,8 @@ CFX_CSSRuleCollection::GetTagRuleData(const WideString& tagname) const {
 }
 
 void CFX_CSSRuleCollection::AddRulesFrom(const CFX_CSSStyleSheet* sheet) {
-  int32_t iRules = sheet->CountRules();
-  for (int32_t j = 0; j < iRules; j++)
-    AddRulesFrom(sheet, sheet->GetRule(j));
+  for (size_t i = 0; i < sheet->CountRules(); ++i)
+    AddRulesFrom(sheet, sheet->GetRule(i));
 }
 
 void CFX_CSSRuleCollection::AddRulesFrom(const CFX_CSSStyleSheet* pStyleSheet,

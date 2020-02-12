@@ -13,7 +13,6 @@
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 CFX_CSSStyleSheet::CFX_CSSStyleSheet() {}
 
@@ -26,11 +25,11 @@ void CFX_CSSStyleSheet::Reset() {
   m_StringCache.clear();
 }
 
-int32_t CFX_CSSStyleSheet::CountRules() const {
-  return pdfium::CollectionSize<int32_t>(m_RuleArray);
+size_t CFX_CSSStyleSheet::CountRules() const {
+  return m_RuleArray.size();
 }
 
-CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(int32_t index) const {
+CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(size_t index) const {
   return m_RuleArray[index].get();
 }
 
