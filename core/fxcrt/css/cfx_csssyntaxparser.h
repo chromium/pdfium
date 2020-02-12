@@ -49,24 +49,17 @@ class CFX_CSSSyntaxParser {
   CFX_CSSSyntaxStatus DoSyntaxParse();
   WideStringView GetCurrentString() const;
 
- protected:
+ private:
   void SwitchMode(CFX_CSSSyntaxMode eMode);
   int32_t SwitchToComment();
 
   bool RestoreMode();
   bool AppendChar(wchar_t wch);
   int32_t SaveTextData();
-  bool IsCharsetEnabled() const {
-    return (m_dwCheck & CFX_CSSSYNTAXCHECK_AllowCharset) != 0;
-  }
-  void DisableCharset() { m_dwCheck = CFX_CSSSYNTAXCHECK_AllowImport; }
-  bool IsImportEnabled() const;
-  void DisableImport() { m_dwCheck = 0; }
 
   CFX_CSSTextBuf m_TextData;
   CFX_CSSExtTextBuf m_TextPlane;
   int32_t m_iTextDataLen;
-  uint32_t m_dwCheck;
   CFX_CSSSyntaxMode m_eMode;
   CFX_CSSSyntaxStatus m_eStatus;
   std::stack<CFX_CSSSyntaxMode> m_ModeStack;

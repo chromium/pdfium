@@ -33,7 +33,6 @@ CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(const wchar_t* pBuffer,
                                          int32_t iTextDatSize,
                                          bool bOnlyDeclaration)
     : m_iTextDataLen(0),
-      m_dwCheck(0xFFFFFFFF),
       m_eStatus(CFX_CSSSyntaxStatus::None) {
   ASSERT(pBuffer);
   ASSERT(iBufferSize > 0);
@@ -45,7 +44,7 @@ CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(const wchar_t* pBuffer,
   m_TextPlane.AttachBuffer(pBuffer, iBufferSize);
 }
 
-CFX_CSSSyntaxParser::~CFX_CSSSyntaxParser() {}
+CFX_CSSSyntaxParser::~CFX_CSSSyntaxParser() = default;
 
 CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
   while (m_eStatus >= CFX_CSSSyntaxStatus::None) {
@@ -187,14 +186,6 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
     }
   }
   return m_eStatus;
-}
-
-bool CFX_CSSSyntaxParser::IsImportEnabled() const {
-  if ((m_dwCheck & CFX_CSSSYNTAXCHECK_AllowImport) == 0)
-    return false;
-  if (m_ModeStack.size() > 1)
-    return false;
-  return true;
 }
 
 bool CFX_CSSSyntaxParser::AppendChar(wchar_t wch) {
