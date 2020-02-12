@@ -27,14 +27,16 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
   void TearDown() override { decl_ = nullptr; }
 
+  void LoadAndVerifyRuleCount(const wchar_t* buf, int rule_count) {
+    ASSERT(sheet_);
+    EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+    EXPECT_EQ(sheet_->CountRules(), rule_count);
+  }
+
   void LoadAndVerifyDecl(const wchar_t* buf,
                          const std::vector<WideString>& selectors,
                          size_t decl_count) {
-    ASSERT(sheet_);
-
-    EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
-    EXPECT_EQ(sheet_->CountRules(), 1);
-
+    LoadAndVerifyRuleCount(buf, 1);
     CFX_CSSStyleRule* style = sheet_->GetRule(0);
     EXPECT_EQ(selectors.size(), style->CountSelectorLists());
 
@@ -85,6 +87,14 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   std::unique_ptr<CFX_CSSStyleSheet> sheet_;
   CFX_CSSDeclaration* decl_;
 };
+
+TEST_F(CFX_CSSStyleSheetTest, ParseEmpty) {
+  LoadAndVerifyRuleCount(L"", 0);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseBlankEmpty) {
+  LoadAndVerifyRuleCount(L"  \n\r\t", 0);
+}
 
 TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
@@ -236,4 +246,35 @@ TEST_F(CFX_CSSStyleSheetTest, ParseBorderBottom) {
   LoadAndVerifyDecl(L"a { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
               CFX_CSSNumberType::Picas);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInSelector) {
+  LoadAndVerifyDecl(L"/**{*/a/**}*/ { border-bottom: 2.5pc; }", {L"a"}, 1);
+  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
+              CFX_CSSNumberType::Picas);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInProperty) {
+  LoadAndVerifyDecl(L"a { /*}*/border-bottom: 2.5pc; }", {L"a"}, 1);
+  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
+              CFX_CSSNumberType::Picas);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInValue) {
+  LoadAndVerifyDecl(L"a { border-bottom: /*;*/2.5pc;/* color:red;*/ }", {L"a"},
+                    1);
+  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
+              CFX_CSSNumberType::Picas);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInSelector) {
+  LoadAndVerifyRuleCount(L"a/* { border-bottom: 2.5pc; }", 0);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInProperty) {
+  LoadAndVerifyRuleCount(L"a { /*border-bottom: 2.5pc; }", 1);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInValue) {
+  LoadAndVerifyRuleCount(L"a { border-bottom: /*2.5pc; }", 1);
 }

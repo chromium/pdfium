@@ -36,7 +36,6 @@ CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(int32_t index) const {
 
 bool CFX_CSSStyleSheet::LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize) {
   ASSERT(pBuffer);
-  ASSERT(iBufSize > 0);
 
   auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(pBuffer, iBufSize);
   Reset();
