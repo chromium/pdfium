@@ -129,7 +129,7 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
   CPDFSDK_Widget* pWidget = nullptr;
   const auto it = m_Map.find(pControl);
   if (it != m_Map.end())
-    pWidget = it->second;
+    pWidget = it->second.Get();
   if (pWidget)
     return pWidget;
 

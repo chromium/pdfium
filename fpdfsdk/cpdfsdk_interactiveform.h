@@ -106,7 +106,7 @@ class CPDFSDK_InteractiveForm final
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   std::unique_ptr<CPDF_InteractiveForm> const m_pInteractiveForm;
-  std::map<CPDF_FormControl*, CPDFSDK_Widget*> m_Map;
+  std::map<CPDF_FormControl*, UnownedPtr<CPDFSDK_Widget>> m_Map;
 #ifdef PDF_ENABLE_XFA
   bool m_bXfaCalculate = true;
   bool m_bXfaValidationsEnabled = true;
