@@ -49,7 +49,6 @@ bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
     return false;
 
   m_bMouseDown = false;
-  m_pWidget->GetPDFPage();
   InvalidateRect(GetViewBBox(pPageView));
   return true;
 }

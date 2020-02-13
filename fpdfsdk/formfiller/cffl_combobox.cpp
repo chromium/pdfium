@@ -117,7 +117,6 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
     return;
 
   SetChangeMark();
-  m_pWidget->GetPDFPage();
 }
 
 void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
