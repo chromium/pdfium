@@ -1115,12 +1115,15 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
   pImageDict->SetNewFor<CPDF_String>("Name", name, false);
 }
 
-CheckStyle CheckStyleFromCaption(const WideString& wsCaption) {
-  if (wsCaption.IsEmpty())
-    return CheckStyle::kCheck;
+CheckStyle CheckStyleFromCaption(const WideString& caption,
+                                 CheckStyle default_style) {
+  if (caption.IsEmpty())
+    return default_style;
 
   // Character values are ZapfDingbats encodings of named glyphs.
-  switch (wsCaption[0]) {
+  switch (caption[0]) {
+    case L'4':
+      return CheckStyle::kCheck;
     case L'l':
       return CheckStyle::kCircle;
     case L'8':
@@ -1131,9 +1134,8 @@ CheckStyle CheckStyleFromCaption(const WideString& wsCaption) {
       return CheckStyle::kSquare;
     case L'H':
       return CheckStyle::kStar;
-    case L'4':
     default:
-      return CheckStyle::kCheck;
+      return default_style;
   }
 }
 
@@ -1379,7 +1381,9 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
-  CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption());
+  CheckStyle nStyle =
+      CheckStyleFromCaption(pControl->GetNormalCaption(),
+                            /*default_style=*/CheckStyle::kCheck);
   ByteString csAP_N_ON =
       GetRectFillAppStream(rcWindow, crBackground) +
       GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
@@ -1472,7 +1476,9 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
-  CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption());
+  CheckStyle nStyle =
+      CheckStyleFromCaption(pControl->GetNormalCaption(),
+                            /*default_style=*/CheckStyle::kCircle);
 
   ByteString csAP_N_ON;
   CFX_FloatRect rcCenter = rcWindow.GetCenterSquare().GetDeflated(1.0f, 1.0f);
