@@ -20,7 +20,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_CSSSyntaxStatus status;
   do {
     status = parser.DoSyntaxParse();
-  } while (status != CFX_CSSSyntaxStatus::Error &&
-           status != CFX_CSSSyntaxStatus::EOS);
+  } while (status != CFX_CSSSyntaxStatus::kError &&
+           status != CFX_CSSSyntaxStatus::kEOS);
   return 0;
 }

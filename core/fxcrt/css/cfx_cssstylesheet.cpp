@@ -41,16 +41,16 @@ bool CFX_CSSStyleSheet::LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize) {
   CFX_CSSSyntaxStatus eStatus;
   do {
     switch (eStatus = pSyntax->DoSyntaxParse()) {
-      case CFX_CSSSyntaxStatus::StyleRule:
+      case CFX_CSSSyntaxStatus::kStyleRule:
         eStatus = LoadStyleRule(pSyntax.get(), &m_RuleArray);
         break;
       default:
         break;
     }
-  } while (eStatus >= CFX_CSSSyntaxStatus::None);
+  } while (eStatus >= CFX_CSSSyntaxStatus::kNone);
 
   m_StringCache.clear();
-  return eStatus != CFX_CSSSyntaxStatus::Error;
+  return eStatus != CFX_CSSSyntaxStatus::kError;
 }
 
 CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
@@ -64,21 +64,21 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
   WideString wsName;
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
-      case CFX_CSSSyntaxStatus::Selector: {
+      case CFX_CSSSyntaxStatus::kSelector: {
         WideStringView strValue = pSyntax->GetCurrentString();
         auto pSelector = CFX_CSSSelector::FromString(strValue);
         if (pSelector)
           selectors.push_back(std::move(pSelector));
         break;
       }
-      case CFX_CSSSyntaxStatus::PropertyName: {
+      case CFX_CSSSyntaxStatus::kPropertyName: {
         WideStringView strValue = pSyntax->GetCurrentString();
         property = CFX_CSSData::GetPropertyByName(strValue);
         if (!property)
           wsName = WideString(strValue);
         break;
       }
-      case CFX_CSSSyntaxStatus::PropertyValue: {
+      case CFX_CSSSyntaxStatus::kPropertyValue: {
         if (property || iValueLen > 0) {
           WideStringView strValue = pSyntax->GetCurrentString();
           auto* decl = pStyleRule->GetDeclaration();
@@ -92,7 +92,7 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
         }
         break;
       }
-      case CFX_CSSSyntaxStatus::DeclOpen: {
+      case CFX_CSSSyntaxStatus::kDeclOpen: {
         if (!pStyleRule && !selectors.empty()) {
           auto rule = pdfium::MakeUnique<CFX_CSSStyleRule>();
           pStyleRule = rule.get();
@@ -100,22 +100,22 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
           ruleArray->push_back(std::move(rule));
         } else {
           SkipRuleSet(pSyntax);
-          return CFX_CSSSyntaxStatus::None;
+          return CFX_CSSSyntaxStatus::kNone;
         }
         break;
       }
-      case CFX_CSSSyntaxStatus::DeclClose: {
+      case CFX_CSSSyntaxStatus::kDeclClose: {
         if (pStyleRule && pStyleRule->GetDeclaration()->empty()) {
           ruleArray->pop_back();
           pStyleRule = nullptr;
         }
-        return CFX_CSSSyntaxStatus::None;
+        return CFX_CSSSyntaxStatus::kNone;
       }
-      case CFX_CSSSyntaxStatus::EOS:
-        return CFX_CSSSyntaxStatus::EOS;
-      case CFX_CSSSyntaxStatus::Error:
+      case CFX_CSSSyntaxStatus::kEOS:
+        return CFX_CSSSyntaxStatus::kEOS;
+      case CFX_CSSSyntaxStatus::kError:
       default:
-        return CFX_CSSSyntaxStatus::Error;
+        return CFX_CSSSyntaxStatus::kError;
     }
   }
 }
@@ -123,14 +123,14 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
 void CFX_CSSStyleSheet::SkipRuleSet(CFX_CSSSyntaxParser* pSyntax) {
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
-      case CFX_CSSSyntaxStatus::Selector:
-      case CFX_CSSSyntaxStatus::DeclOpen:
-      case CFX_CSSSyntaxStatus::PropertyName:
-      case CFX_CSSSyntaxStatus::PropertyValue:
+      case CFX_CSSSyntaxStatus::kSelector:
+      case CFX_CSSSyntaxStatus::kDeclOpen:
+      case CFX_CSSSyntaxStatus::kPropertyName:
+      case CFX_CSSSyntaxStatus::kPropertyValue:
         break;
-      case CFX_CSSSyntaxStatus::DeclClose:
-      case CFX_CSSSyntaxStatus::EOS:
-      case CFX_CSSSyntaxStatus::Error:
+      case CFX_CSSSyntaxStatus::kDeclClose:
+      case CFX_CSSSyntaxStatus::kEOS:
+      case CFX_CSSSyntaxStatus::kError:
       default:
         return;
     }

@@ -142,19 +142,21 @@ void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
   ASSERT(pDecl);
   ASSERT(!style.IsEmpty());
 
-  auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(
-      style.c_str(), style.GetLength(), 32, true);
+  auto pSyntax =
+      pdfium::MakeUnique<CFX_CSSSyntaxParser>(style.c_str(), style.GetLength());
+  pSyntax->SetParseOnlyDeclarations();
+
   int32_t iLen2 = 0;
   const CFX_CSSData::Property* property = nullptr;
   WideString wsName;
   while (1) {
     CFX_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
-    if (eStatus == CFX_CSSSyntaxStatus::PropertyName) {
+    if (eStatus == CFX_CSSSyntaxStatus::kPropertyName) {
       WideStringView strValue = pSyntax->GetCurrentString();
       property = CFX_CSSData::GetPropertyByName(strValue);
       if (!property)
         wsName = WideString(strValue);
-    } else if (eStatus == CFX_CSSSyntaxStatus::PropertyValue) {
+    } else if (eStatus == CFX_CSSSyntaxStatus::kPropertyValue) {
       if (property || iLen2 > 0) {
         WideStringView strValue = pSyntax->GetCurrentString();
         if (!strValue.IsEmpty()) {
