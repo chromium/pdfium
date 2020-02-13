@@ -512,11 +512,12 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
     CheckForUnsupportedAnnot(pPDFAnnot);
-    CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
+    std::unique_ptr<CPDFSDK_Annot> pAnnot =
+        pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
     if (!pAnnot)
       continue;
-    m_SDKAnnotArray.push_back(pAnnot);
-    pAnnotHandlerMgr->Annot_OnLoad(pAnnot);
+    m_SDKAnnotArray.push_back(pAnnot.release());
+    pAnnotHandlerMgr->Annot_OnLoad(m_SDKAnnotArray.back());
   }
 }
 

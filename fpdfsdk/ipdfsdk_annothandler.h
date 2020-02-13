@@ -25,8 +25,9 @@ class IPDFSDK_AnnotHandler {
   virtual void SetFormFillEnvironment(
       CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual bool CanAnswer(CPDFSDK_Annot* pAnnot) = 0;
-  virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
-                                  CPDFSDK_PageView* pPage) = 0;
+  virtual std::unique_ptr<CPDFSDK_Annot> NewAnnot(
+      CPDF_Annot* pAnnot,
+      CPDFSDK_PageView* pPageView) = 0;
   virtual void ReleaseAnnot(std::unique_ptr<CPDFSDK_Annot> pAnnot) = 0;
   virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot) = 0;

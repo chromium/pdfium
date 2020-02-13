@@ -52,16 +52,17 @@ bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
          (dwPermissions & pdfium::access_permissions::kModifyAnnotation);
 }
 
-CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
-                                               CPDFSDK_PageView* pPage) {
+std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
+    CPDF_Annot* pAnnot,
+    CPDFSDK_PageView* pPageView) {
   CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
   CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
   CPDF_FormControl* pCtrl = pPDFForm->GetControlByDict(pAnnot->GetAnnotDict());
   if (!pCtrl)
     return nullptr;
 
-  CPDFSDK_Widget* pWidget = new CPDFSDK_Widget(pAnnot, pPage, pForm);
-  pForm->AddMap(pCtrl, pWidget);
+  auto pWidget = pdfium::MakeUnique<CPDFSDK_Widget>(pAnnot, pPageView, pForm);
+  pForm->AddMap(pCtrl, pWidget.get());
   if (pPDFForm->NeedConstructAP())
     pWidget->ResetAppearance(pdfium::nullopt, false);
   return pWidget;

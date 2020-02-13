@@ -50,8 +50,9 @@ void CPDFSDK_AnnotHandlerMgr::SetFormFillEnv(
     m_pXFAWidgetHandler->SetFormFillEnvironment(pFormFillEnv);
 }
 
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
-                                                 CPDFSDK_PageView* pPageView) {
+std::unique_ptr<CPDFSDK_Annot> CPDFSDK_AnnotHandlerMgr::NewAnnot(
+    CPDF_Annot* pAnnot,
+    CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
   return GetAnnotHandlerOfType(pAnnot->GetSubtype())
       ->NewAnnot(pAnnot, pPageView);

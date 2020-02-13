@@ -47,9 +47,10 @@ bool CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return false;
 }
 
-CPDFSDK_Annot* CPDFSDK_BAAnnotHandler::NewAnnot(CPDF_Annot* pAnnot,
-                                                CPDFSDK_PageView* pPage) {
-  return new CPDFSDK_BAAnnot(pAnnot, pPage);
+std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnot(
+    CPDF_Annot* pAnnot,
+    CPDFSDK_PageView* pPageView) {
+  return pdfium::MakeUnique<CPDFSDK_BAAnnot>(pAnnot, pPageView);
 }
 
 void CPDFSDK_BAAnnotHandler::ReleaseAnnot(

@@ -214,16 +214,17 @@ bool CPDFXFA_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
   return pWidget && pWidget->GetXFAFFWidget();
 }
 
-CPDFSDK_Annot* CPDFXFA_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
-                                               CPDFSDK_PageView* pPage) {
+std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnot(
+    CPDF_Annot* pAnnot,
+    CPDFSDK_PageView* pPageView) {
   return nullptr;
 }
 
 std::unique_ptr<CPDFSDK_Annot> CPDFXFA_WidgetHandler::NewAnnotForXFA(
     CXFA_FFWidget* pAnnot,
-    CPDFSDK_PageView* pPage) {
+    CPDFSDK_PageView* pPageView) {
   CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
-  return pdfium::MakeUnique<CPDFXFA_Widget>(pAnnot, pPage, pForm);
+  return pdfium::MakeUnique<CPDFXFA_Widget>(pAnnot, pPageView, pForm);
 }
 
 void CPDFXFA_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
