@@ -1,0 +1,47 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /MediaBox [ 0 0 100 100 ]
+  /Count 1
+  /Kids [ 3 0 R ]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Font <<
+      /F0 4 0 R
+    >>
+  >>
+  /Contents 5 0 R
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /Symbol
+  /FirstChar 31
+  /LastChar 255
+  /Name /F0
+>>
+endobj
+{{object 5 0}} <<
+ {{streamlen}}
+>>
+stream
+BT
+25 25 Td /F0 12 Tf
+-0.036  Tc (\265) Tj
+ET
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

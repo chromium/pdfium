@@ -109,8 +109,13 @@ uint32_t GetCharset(int charset) {
 int32_t GetSimilarValue(int weight,
                         bool bItalic,
                         int pitch_family,
-                        uint32_t style) {
+                        uint32_t style,
+                        bool bMatchName,
+                        size_t familyNameLength,
+                        size_t bsNameLength) {
   int32_t iSimilarValue = 0;
+  if (bMatchName && (familyNameLength == bsNameLength))
+    iSimilarValue += 4;
   if (FontStyleIsForceBold(style) == (weight > 400))
     iSimilarValue += 16;
   if (FontStyleIsItalic(style) == bItalic)
@@ -311,8 +316,11 @@ void* CFX_FolderFontInfo::FindFont(int weight,
     if (bMatchName && !bsName.Contains(bsFamily))
       continue;
 
+    size_t familyNameLength = strlen(family);
+    size_t bsNameLength = bsName.GetLength();
     int32_t iSimilarValue =
-        GetSimilarValue(weight, bItalic, pitch_family, pFont->m_Styles);
+        GetSimilarValue(weight, bItalic, pitch_family, pFont->m_Styles,
+                        bMatchName, familyNameLength, bsNameLength);
     if (iSimilarValue > iBestSimilar) {
       iBestSimilar = iSimilarValue;
       pFind = pFont;

@@ -340,6 +340,9 @@ bug_1457.in * * *
 # TODO(chromium:451366): Remove after associated bug is fixed
 bug_451366.in * * *
 
+# TODO(pdfium:1466): Remove after associated bug is fixed
+bug_1449.in linux * *
+
 # xfa_specific
 
 # TODO(pdfium:1107): Remove after associated bug is fixed
