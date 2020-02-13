@@ -21,9 +21,19 @@
 
 namespace {
 
-const char* const g_sHighlightingMode[] = {
-    // Must match order of HighlightingMode enum.
-    "N", "I", "O", "P", "T"};
+constexpr char kHighlightModes[] = {'N', 'I', 'O', 'P', 'T'};
+
+// Order of |kHighlightModes| must match order of HighlightingMode enum.
+static_assert(kHighlightModes[CPDF_FormControl::None] == 'N',
+              "HighlightingMode mismatch");
+static_assert(kHighlightModes[CPDF_FormControl::Invert] == 'I',
+              "HighlightingMode mismatch");
+static_assert(kHighlightModes[CPDF_FormControl::Outline] == 'O',
+              "HighlightingMode mismatch");
+static_assert(kHighlightModes[CPDF_FormControl::Push] == 'P',
+              "HighlightingMode mismatch");
+static_assert(kHighlightModes[CPDF_FormControl::Toggle] == 'T',
+              "HighlightingMode mismatch");
 
 }  // namespace
 
@@ -42,14 +52,13 @@ CFX_FloatRect CPDF_FormControl::GetRect() const {
 ByteString CPDF_FormControl::GetOnStateName() const {
   ASSERT(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
-  ByteString csOn;
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
   if (!pAP)
-    return csOn;
+    return ByteString();
 
   CPDF_Dictionary* pN = pAP->GetDictFor("N");
   if (!pN)
-    return csOn;
+    return ByteString();
 
   CPDF_DictionaryLocker locker(pN);
   for (const auto& it : locker) {
@@ -121,8 +130,8 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
     return Invert;
 
   ByteString csH = m_pWidgetDict->GetStringFor("H", "I");
-  for (size_t i = 0; i < FX_ArraySize(g_sHighlightingMode); ++i) {
-    if (csH == g_sHighlightingMode[i])
+  for (size_t i = 0; i < FX_ArraySize(kHighlightModes); ++i) {
+    if (csH == kHighlightModes[i])
       return static_cast<HighlightingMode>(i);
   }
   return Invert;
