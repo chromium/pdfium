@@ -159,11 +159,9 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
           }
           break;
         case SyntaxMode::kComment:
-          if (wch == '/' && m_Output.GetLength() > 0 &&
-              m_Output.GetBuffer()[m_Output.GetLength() - 1] == '*') {
+          if (wch == '*' && m_Input.GetNextChar() == '/') {
             RestoreMode();
-          } else {
-            m_Output.AppendChar(wch);
+            m_Input.MoveNext();
           }
           m_Input.MoveNext();
           break;
