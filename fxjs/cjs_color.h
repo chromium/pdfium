@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxge/cfx_color.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
