@@ -11,9 +11,11 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
-    : m_pPageView(pPageView) {}
+    : m_pPageView(pPageView) {
+  ASSERT(m_pPageView);
+}
 
-CPDFSDK_Annot::~CPDFSDK_Annot() {}
+CPDFSDK_Annot::~CPDFSDK_Annot() = default;
 
 CPDFSDK_BAAnnot* CPDFSDK_Annot::AsBAAnnot() {
   return nullptr;
@@ -25,10 +27,10 @@ CPDFXFA_Widget* CPDFSDK_Annot::AsXFAWidget() {
 
 IPDF_Page* CPDFSDK_Annot::GetXFAPage() {
 #ifdef PDF_ENABLE_XFA
-  if (m_pPageView)
-    return m_pPageView->GetXFAPage();
-#endif
+  return m_pPageView->GetXFAPage();
+#else
   return nullptr;
+#endif
 }
 
 int CPDFSDK_Annot::GetLayoutOrder() const {
@@ -63,5 +65,5 @@ IPDF_Page* CPDFSDK_Annot::GetPage() {
 }
 
 CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
-  return m_pPageView ? m_pPageView->GetPDFPage() : nullptr;
+  return m_pPageView->GetPDFPage();
 }

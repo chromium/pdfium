@@ -238,13 +238,13 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
   }
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pAnnot);
-  CPDFSDK_PageView* pPage = pAnnot->GetPageView();
-  CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
+  CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
+  CPDFSDK_Annot* pFocusAnnot = pPageView->GetFocusAnnot();
   if (pFocusAnnot && (nKeyCode == FWL_VKEY_Tab)) {
     ObservedPtr<CPDFSDK_Annot> pNext(
         GetNextAnnot(pFocusAnnot, !CPWL_Wnd::IsSHIFTKeyDown(nFlag)));
     if (pNext && pNext.Get() != pFocusAnnot) {
-      pPage->GetFormFillEnv()->SetFocusAnnot(&pNext);
+      pPageView->GetFormFillEnv()->SetFocusAnnot(&pNext);
       return true;
     }
   }

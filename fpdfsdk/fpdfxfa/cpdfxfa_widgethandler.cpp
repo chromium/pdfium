@@ -629,11 +629,8 @@ CXFA_FFWidgetHandler* CPDFXFA_WidgetHandler::GetXFAFFWidgetHandler(
   if (!pAnnot)
     return nullptr;
 
-  CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
-  if (!pPageView)
-    return nullptr;
-
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      pAnnot->GetPageView()->GetFormFillEnv();
   if (!pFormFillEnv)
     return nullptr;
 

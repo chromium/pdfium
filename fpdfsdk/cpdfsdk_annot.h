@@ -38,6 +38,7 @@ class CPDFSDK_Annot : public Observable {
   CPDF_Page* GetPDFPage();  // Returns PDF page or nullptr.
   IPDF_Page* GetXFAPage();  // Returns XFA page or nullptr.
 
+  // Never returns nullptr.
   CPDFSDK_PageView* GetPageView() const { return m_pPageView.Get(); }
 
  protected:
