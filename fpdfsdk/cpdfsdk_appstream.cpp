@@ -1543,8 +1543,9 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
 
   ByteString csAP_D_OFF = csAP_D_ON;
 
-  csAP_N_ON += GetRadioButtonAppStream(rcClient, nStyle, crText);
-  csAP_D_ON += GetRadioButtonAppStream(rcClient, nStyle, crText);
+  ByteString app_stream = GetRadioButtonAppStream(rcClient, nStyle, crText);
+  csAP_N_ON += app_stream;
+  csAP_D_ON += app_stream;
 
   Write("N", csAP_N_ON, pControl->GetCheckedAPState());
   Write("N", csAP_N_OFF, "Off");
