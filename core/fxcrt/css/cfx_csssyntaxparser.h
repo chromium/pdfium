@@ -54,8 +54,8 @@ class CFX_CSSSyntaxParser {
   void AppendCharIfNotLeadingBlank(wchar_t wch);
   void SaveTextData();
 
+  bool m_bError = false;
   SyntaxMode m_eMode = SyntaxMode::kRuleSet;
-  CFX_CSSSyntaxStatus m_eStatus = CFX_CSSSyntaxStatus::kNone;
   int32_t m_iTextDataLen = 0;
   CFX_CSSTextBuf m_Output;
   CFX_CSSExtTextBuf m_Input;

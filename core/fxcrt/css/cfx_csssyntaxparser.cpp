@@ -38,145 +38,139 @@ void CFX_CSSSyntaxParser::SetParseOnlyDeclarations() {
 }
 
 CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
-  while (m_eStatus >= CFX_CSSSyntaxStatus::kNone) {
-    if (m_Input.IsEOF()) {
-      if (m_eMode == SyntaxMode::kPropertyValue && m_Output.GetLength() > 0) {
-        SaveTextData();
-        m_eStatus = CFX_CSSSyntaxStatus::kPropertyValue;
-        return m_eStatus;
-      }
-      m_eStatus = CFX_CSSSyntaxStatus::kEOS;
-      return m_eStatus;
-    }
-    wchar_t wch;
-    while (!m_Input.IsEOF()) {
-      wch = m_Input.GetChar();
-      switch (m_eMode) {
-        case SyntaxMode::kRuleSet:
-          switch (wch) {
-            case '}':
-              m_Input.MoveNext();
-              if (RestoreMode())
-                return CFX_CSSSyntaxStatus::kDeclClose;
+  if (m_bError)
+    return CFX_CSSSyntaxStatus::kError;
 
-              m_eStatus = CFX_CSSSyntaxStatus::kError;
-              return m_eStatus;
-            case '/':
-              if (m_Input.GetNextChar() == '*') {
-                m_ModeStack.push(m_eMode);
-                SwitchMode(SyntaxMode::kComment);
-                break;
-              }
-              FALLTHROUGH;
-            default:
-              if (wch <= ' ') {
-                m_Input.MoveNext();
-              } else if (IsSelectorStart(wch)) {
-                SwitchMode(SyntaxMode::kSelector);
-                return CFX_CSSSyntaxStatus::kStyleRule;
-              } else {
-                m_eStatus = CFX_CSSSyntaxStatus::kError;
-                return m_eStatus;
-              }
-              break;
-          }
-          break;
-        case SyntaxMode::kSelector:
-          switch (wch) {
-            case ',':
-              m_Input.MoveNext();
-              SwitchMode(SyntaxMode::kSelector);
-              if (m_iTextDataLen > 0)
-                return CFX_CSSSyntaxStatus::kSelector;
-              break;
-            case '{':
-              if (m_Output.GetLength() > 0) {
-                SaveTextData();
-                return CFX_CSSSyntaxStatus::kSelector;
-              }
-              m_Input.MoveNext();
-              m_ModeStack.push(SyntaxMode::kRuleSet);
-              SwitchMode(SyntaxMode::kPropertyName);
-              return CFX_CSSSyntaxStatus::kDeclOpen;
-            case '/':
-              if (m_Input.GetNextChar() == '*') {
-                if (SwitchToComment() > 0)
-                  return CFX_CSSSyntaxStatus::kSelector;
-                break;
-              }
-              FALLTHROUGH;
-            default:
-              AppendCharIfNotLeadingBlank(wch);
-              m_Input.MoveNext();
-              break;
-          }
-          break;
-        case SyntaxMode::kPropertyName:
-          switch (wch) {
-            case ':':
-              m_Input.MoveNext();
-              SwitchMode(SyntaxMode::kPropertyValue);
-              return CFX_CSSSyntaxStatus::kPropertyName;
-            case '}':
-              m_Input.MoveNext();
-              if (RestoreMode())
-                return CFX_CSSSyntaxStatus::kDeclClose;
-
-              m_eStatus = CFX_CSSSyntaxStatus::kError;
-              return m_eStatus;
-            case '/':
-              if (m_Input.GetNextChar() == '*') {
-                if (SwitchToComment() > 0)
-                  return CFX_CSSSyntaxStatus::kPropertyName;
-                break;
-              }
-              FALLTHROUGH;
-            default:
-              AppendCharIfNotLeadingBlank(wch);
-              m_Input.MoveNext();
-              break;
-          }
-          break;
-        case SyntaxMode::kPropertyValue:
-          switch (wch) {
-            case ';':
-              m_Input.MoveNext();
-              FALLTHROUGH;
-            case '}':
-              SwitchMode(SyntaxMode::kPropertyName);
-              return CFX_CSSSyntaxStatus::kPropertyValue;
-            case '/':
-              if (m_Input.GetNextChar() == '*') {
-                if (SwitchToComment() > 0)
-                  return CFX_CSSSyntaxStatus::kPropertyValue;
-                break;
-              }
-              FALLTHROUGH;
-            default:
-              AppendCharIfNotLeadingBlank(wch);
-              m_Input.MoveNext();
-              break;
-          }
-          break;
-        case SyntaxMode::kComment:
-          if (wch == '*' && m_Input.GetNextChar() == '/') {
-            RestoreMode();
+  while (!m_Input.IsEOF()) {
+    wchar_t wch = m_Input.GetChar();
+    switch (m_eMode) {
+      case SyntaxMode::kRuleSet:
+        switch (wch) {
+          case '}':
             m_Input.MoveNext();
-          }
+            if (RestoreMode())
+              return CFX_CSSSyntaxStatus::kDeclClose;
+            m_bError = true;
+            return CFX_CSSSyntaxStatus::kError;
+          case '/':
+            if (m_Input.GetNextChar() == '*') {
+              m_ModeStack.push(m_eMode);
+              SwitchMode(SyntaxMode::kComment);
+              break;
+            }
+            FALLTHROUGH;
+          default:
+            if (wch <= ' ') {
+              m_Input.MoveNext();
+            } else if (IsSelectorStart(wch)) {
+              SwitchMode(SyntaxMode::kSelector);
+              return CFX_CSSSyntaxStatus::kStyleRule;
+            } else {
+              m_bError = true;
+              return CFX_CSSSyntaxStatus::kError;
+            }
+            break;
+        }
+        break;
+      case SyntaxMode::kSelector:
+        switch (wch) {
+          case ',':
+            m_Input.MoveNext();
+            SwitchMode(SyntaxMode::kSelector);
+            if (m_iTextDataLen > 0)
+              return CFX_CSSSyntaxStatus::kSelector;
+            break;
+          case '{':
+            if (m_Output.GetLength() > 0) {
+              SaveTextData();
+              return CFX_CSSSyntaxStatus::kSelector;
+            }
+            m_Input.MoveNext();
+            m_ModeStack.push(SyntaxMode::kRuleSet);
+            SwitchMode(SyntaxMode::kPropertyName);
+            return CFX_CSSSyntaxStatus::kDeclOpen;
+          case '/':
+            if (m_Input.GetNextChar() == '*') {
+              if (SwitchToComment() > 0)
+                return CFX_CSSSyntaxStatus::kSelector;
+              break;
+            }
+            FALLTHROUGH;
+          default:
+            AppendCharIfNotLeadingBlank(wch);
+            m_Input.MoveNext();
+            break;
+        }
+        break;
+      case SyntaxMode::kPropertyName:
+        switch (wch) {
+          case ':':
+            m_Input.MoveNext();
+            SwitchMode(SyntaxMode::kPropertyValue);
+            return CFX_CSSSyntaxStatus::kPropertyName;
+          case '}':
+            m_Input.MoveNext();
+            if (RestoreMode())
+              return CFX_CSSSyntaxStatus::kDeclClose;
+
+            m_bError = true;
+            return CFX_CSSSyntaxStatus::kError;
+          case '/':
+            if (m_Input.GetNextChar() == '*') {
+              if (SwitchToComment() > 0)
+                return CFX_CSSSyntaxStatus::kPropertyName;
+              break;
+            }
+            FALLTHROUGH;
+          default:
+            AppendCharIfNotLeadingBlank(wch);
+            m_Input.MoveNext();
+            break;
+        }
+        break;
+      case SyntaxMode::kPropertyValue:
+        switch (wch) {
+          case ';':
+            m_Input.MoveNext();
+            FALLTHROUGH;
+          case '}':
+            SwitchMode(SyntaxMode::kPropertyName);
+            return CFX_CSSSyntaxStatus::kPropertyValue;
+          case '/':
+            if (m_Input.GetNextChar() == '*') {
+              if (SwitchToComment() > 0)
+                return CFX_CSSSyntaxStatus::kPropertyValue;
+              break;
+            }
+            FALLTHROUGH;
+          default:
+            AppendCharIfNotLeadingBlank(wch);
+            m_Input.MoveNext();
+            break;
+        }
+        break;
+      case SyntaxMode::kComment:
+        if (wch == '*' && m_Input.GetNextChar() == '/') {
+          RestoreMode();
           m_Input.MoveNext();
-          break;
-        case SyntaxMode::kUnknownRule:
-          if (wch == ';')
-            SwitchMode(SyntaxMode::kRuleSet);
-          m_Input.MoveNext();
-          break;
-        default:
-          NOTREACHED();
-          break;
-      }
+        }
+        m_Input.MoveNext();
+        break;
+      case SyntaxMode::kUnknownRule:
+        if (wch == ';')
+          SwitchMode(SyntaxMode::kRuleSet);
+        m_Input.MoveNext();
+        break;
+      default:
+        NOTREACHED();
+        break;
     }
   }
-  return m_eStatus;
+  if (m_eMode == SyntaxMode::kPropertyValue && m_Output.GetLength() > 0) {
+    SaveTextData();
+    return CFX_CSSSyntaxStatus::kPropertyValue;
+  }
+  return CFX_CSSSyntaxStatus::kEOS;
 }
 
 void CFX_CSSSyntaxParser::AppendCharIfNotLeadingBlank(wchar_t wch) {
