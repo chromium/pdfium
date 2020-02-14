@@ -16,14 +16,7 @@
 
 CFX_CSSStyleSheet::CFX_CSSStyleSheet() {}
 
-CFX_CSSStyleSheet::~CFX_CSSStyleSheet() {
-  Reset();
-}
-
-void CFX_CSSStyleSheet::Reset() {
-  m_RuleArray.clear();
-  m_StringCache.clear();
-}
+CFX_CSSStyleSheet::~CFX_CSSStyleSheet() = default;
 
 size_t CFX_CSSStyleSheet::CountRules() const {
   return m_RuleArray.size();
@@ -36,26 +29,24 @@ CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(size_t index) const {
 bool CFX_CSSStyleSheet::LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize) {
   ASSERT(pBuffer);
 
+  m_RuleArray.clear();
   auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(pBuffer, iBufSize);
-  Reset();
   CFX_CSSSyntaxStatus eStatus;
   do {
     switch (eStatus = pSyntax->DoSyntaxParse()) {
       case CFX_CSSSyntaxStatus::kStyleRule:
-        eStatus = LoadStyleRule(pSyntax.get(), &m_RuleArray);
+        eStatus = LoadStyleRule(pSyntax.get());
         break;
       default:
         break;
     }
   } while (eStatus >= CFX_CSSSyntaxStatus::kNone);
 
-  m_StringCache.clear();
   return eStatus != CFX_CSSSyntaxStatus::kError;
 }
 
 CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
-    CFX_CSSSyntaxParser* pSyntax,
-    std::vector<std::unique_ptr<CFX_CSSStyleRule>>* ruleArray) {
+    CFX_CSSSyntaxParser* pSyntax) {
   std::vector<std::unique_ptr<CFX_CSSSelector>> selectors;
 
   CFX_CSSStyleRule* pStyleRule = nullptr;
@@ -97,7 +88,7 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
           auto rule = pdfium::MakeUnique<CFX_CSSStyleRule>();
           pStyleRule = rule.get();
           pStyleRule->SetSelector(&selectors);
-          ruleArray->push_back(std::move(rule));
+          m_RuleArray.push_back(std::move(rule));
         } else {
           SkipRuleSet(pSyntax);
           return CFX_CSSSyntaxStatus::kNone;
@@ -106,7 +97,7 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
       }
       case CFX_CSSSyntaxStatus::kDeclClose: {
         if (pStyleRule && pStyleRule->GetDeclaration()->empty()) {
-          ruleArray->pop_back();
+          m_RuleArray.pop_back();
           pStyleRule = nullptr;
         }
         return CFX_CSSSyntaxStatus::kNone;
