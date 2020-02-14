@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import("../../../pdfium.gni")
+import("../../../testing/test.gni")
 
 assert(pdf_enable_xfa)
 
@@ -56,4 +57,15 @@ source_set("css") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   visibility = [ "../../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cfx_cssdeclaration_unittest.cpp",
+    "cfx_cssstylesheet_unittest.cpp",
+    "cfx_csssyntaxparser_unittest.cpp",
+    "cfx_cssvaluelistparser_unittest.cpp",
+  ]
+  pdfium_root_dir = "../../../"
+  deps = [ ":css" ]
 }

@@ -259,6 +259,7 @@ test("pdfium_unittests") {
 
   if (pdf_enable_xfa) {
     deps += [
+      "core/fxcrt/css:unittests",
       "fxbarcode:unittests",
       "xfa/fde:unittests",
       "xfa/fgas:unittests",

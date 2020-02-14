@@ -170,16 +170,7 @@ pdfium_unittest_source_set("unittests") {
   pdfium_root_dir = "../../"
 
   if (pdf_enable_xfa) {
-    sources += [
-      "cfx_memorystream_unittest.cpp",
-      "css/cfx_cssdeclaration_unittest.cpp",
-      "css/cfx_cssstylesheet_unittest.cpp",
-      "css/cfx_csssyntaxparser_unittest.cpp",
-      "css/cfx_cssvaluelistparser_unittest.cpp",
-    ]
-    deps += [
-      "../fpdfapi/parser",
-      "css",
-    ]
+    sources += [ "cfx_memorystream_unittest.cpp" ]
+    deps += [ "../fpdfapi/parser" ]
   }
 }
