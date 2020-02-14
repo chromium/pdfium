@@ -27,6 +27,11 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
   void TearDown() override { decl_ = nullptr; }
 
+  void VerifyLoadFails(const wchar_t* buf) {
+    ASSERT(sheet_);
+    EXPECT_FALSE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  }
+
   void LoadAndVerifyRuleCount(const wchar_t* buf, size_t rule_count) {
     ASSERT(sheet_);
     EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
@@ -94,6 +99,26 @@ TEST_F(CFX_CSSStyleSheetTest, ParseEmpty) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseBlankEmpty) {
   LoadAndVerifyRuleCount(L"  \n\r\t", 0);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseStrayClose1) {
+  VerifyLoadFails(L"}");
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseStrayClose2) {
+  LoadAndVerifyRuleCount(L"foo }", 0);
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseStrayClose3) {
+  VerifyLoadFails(L"foo {a: b}}");
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseEmptySelector) {
+  VerifyLoadFails(L"{a: b}");
+}
+
+TEST_F(CFX_CSSStyleSheetTest, ParseEmptyBody) {
+  LoadAndVerifyRuleCount(L"foo {}", 0);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
