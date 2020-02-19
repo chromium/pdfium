@@ -567,6 +567,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
 }
 
 bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
+  RetainPtr<CXFA_ContentLayoutItem> pWatched(m_pLayoutItem.Get());
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
   if (dwChar == XFA_FWL_VKEY_Tab)
@@ -576,11 +577,10 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (!m_pNode->IsOpenAccess())
     return false;
 
-  ObservedPtr<CXFA_FFField> pWatched(this);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::Char, dwFlags, dwChar));
 
-  return !!pWatched;
+  return true;
 }
 
 FWL_WidgetHit CXFA_FFField::HitTest(const CFX_PointF& point) {
