@@ -19,7 +19,6 @@ class CFGAS_DefaultFontManager {
                                          WideStringView wsFontFamily,
                                          uint32_t dwFontStyles);
   static RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
-                                                WideStringView wsFontFamily,
                                                 uint32_t dwFontStyles);
 
   CFGAS_DefaultFontManager() = delete;

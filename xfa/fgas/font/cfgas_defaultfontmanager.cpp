@@ -57,13 +57,11 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
 // static
 RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
     CFGAS_FontMgr* pFontMgr,
-    WideStringView wsFontFamily,
     uint32_t dwFontStyles) {
   RetainPtr<CFGAS_GEFont> pFont =
       pFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, 0xFFFF);
-  if (!pFont) {
-    pFont = pFontMgr->LoadFont(static_cast<const wchar_t*>(nullptr),
-                               dwFontStyles, 0xFFFF);
-  }
-  return pFont;
+  if (pFont)
+    return pFont;
+
+  return pFontMgr->LoadFont(nullptr, dwFontStyles, 0xFFFF);
 }

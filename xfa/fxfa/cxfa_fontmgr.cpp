@@ -52,7 +52,7 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   }
   if (!pFont) {
     pFont = CFGAS_DefaultFontManager::GetDefaultFont(
-        hDoc->GetApp()->GetFDEFontMgr(), wsFontFamily, dwFontStyles);
+        hDoc->GetApp()->GetFDEFontMgr(), dwFontStyles);
   }
   if (!pFont) {
     pFont = CFGAS_GEFont::LoadStockFont(
