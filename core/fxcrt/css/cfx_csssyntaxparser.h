@@ -55,7 +55,6 @@ class CFX_CSSSyntaxParser {
 
   bool m_bError = false;
   SyntaxMode m_eMode = SyntaxMode::kRuleSet;
-  int32_t m_iTextDataLen = 0;
   CFX_CSSTextBuf m_Output;
   CFX_CSSExtTextBuf m_Input;
   std::stack<SyntaxMode> m_ModeStack;
