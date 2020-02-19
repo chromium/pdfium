@@ -162,7 +162,11 @@ void CFWL_DateTimePicker::SetEditText(const WideString& wsText) {
   if (!m_pEdit)
     return;
 
-  m_pEdit->SetText(wsText);
+  ObservedPtr<CFWL_DateTimePicker> watched(this);
+  m_pEdit->SetText(wsText);  // JS may destroy |this|.
+  if (!watched)
+    return;
+
   RepaintRect(m_rtClient);
 
   CFWL_Event ev(CFWL_Event::Type::EditChanged);
@@ -307,8 +311,12 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   m_iMonth = iMonth;
   m_iDay = iDay;
 
+  ObservedPtr<CFWL_DateTimePicker> watched(this);
   WideString wsText = FormatDateString(m_iYear, m_iMonth, m_iDay);
-  m_pEdit->SetText(wsText);
+  m_pEdit->SetText(wsText);  // JS may destroy |this|.
+  if (!watched)
+    return;
+
   m_pEdit->Update();
   RepaintRect(m_rtClient);
 

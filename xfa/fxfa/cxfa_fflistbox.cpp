@@ -139,10 +139,13 @@ uint32_t CXFA_FFListBox::GetAlignment() {
 }
 
 bool CXFA_FFListBox::UpdateFWLData() {
-  if (!GetNormalWidget())
+  auto* pListBox = ToListBox(GetNormalWidget());
+  if (!pListBox)
     return false;
 
-  auto* pListBox = ToListBox(GetNormalWidget());
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   std::vector<CFWL_ListItem*> selItemArray(iSelArray.size());
   std::transform(iSelArray.begin(), iSelArray.end(), selItemArray.begin(),

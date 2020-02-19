@@ -279,10 +279,12 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
 }
 
 bool CXFA_FFTextEdit::UpdateFWLData() {
-  if (!GetNormalWidget())
+  CFWL_Edit* pEdit = ToEdit(GetNormalWidget());
+  if (!pEdit)
     return false;
 
-  CFWL_Edit* pEdit = ToEdit(GetNormalWidget());
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
   XFA_VALUEPICTURE eType = XFA_VALUEPICTURE_Display;
   if (IsFocused())
     eType = XFA_VALUEPICTURE_Edit;
@@ -310,7 +312,6 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     pEdit->SetLimit(nDataLen);
     bUpdate = true;
   }
-
   WideString wsText = m_pNode->GetValue(eType);
   WideString wsOldText = pEdit->GetText();
   if (wsText != wsOldText || (eType == XFA_VALUEPICTURE_Edit && bUpdate)) {

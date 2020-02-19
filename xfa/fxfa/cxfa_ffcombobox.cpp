@@ -201,6 +201,8 @@ bool CXFA_FFComboBox::UpdateFWLData() {
   if (!pComboBox)
     return false;
 
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   if (!iSelArray.empty()) {
     pComboBox->SetCurSel(iSelArray.front());

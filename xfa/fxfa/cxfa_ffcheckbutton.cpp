@@ -292,8 +292,9 @@ bool CXFA_FFCheckButton::UpdateFWLData() {
   if (!GetNormalWidget())
     return false;
 
-  XFA_CHECKSTATE eState = m_pNode->GetCheckState();
-  SetFWLCheckState(eState);
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+  SetFWLCheckState(m_pNode->GetCheckState());
   GetNormalWidget()->Update();
   return true;
 }
