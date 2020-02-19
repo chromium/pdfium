@@ -41,7 +41,6 @@ class CFX_CSSSyntaxParser {
   enum class SyntaxMode : uint8_t {
     kRuleSet,
     kComment,
-    kUnknownRule,
     kSelector,
     kPropertyName,
     kPropertyValue,

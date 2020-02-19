@@ -47,9 +47,6 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
       case SyntaxMode::kRuleSet:
         switch (wch) {
           case '}':
-            m_Input.MoveNext();
-            if (RestoreMode())
-              return CFX_CSSSyntaxStatus::kDeclClose;
             m_bError = true;
             return CFX_CSSSyntaxStatus::kError;
           case '/':
@@ -154,11 +151,6 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
           RestoreMode();
           m_Input.MoveNext();
         }
-        m_Input.MoveNext();
-        break;
-      case SyntaxMode::kUnknownRule:
-        if (wch == ';')
-          SwitchMode(SyntaxMode::kRuleSet);
         m_Input.MoveNext();
         break;
       default:
