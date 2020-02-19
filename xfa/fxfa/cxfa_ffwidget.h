@@ -121,7 +121,6 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
                          uint32_t dwFlags) WARN_UNUSED_RESULT;
   virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) WARN_UNUSED_RESULT;
   virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags) WARN_UNUSED_RESULT;
-  virtual bool OnSetCursor(const CFX_PointF& point) WARN_UNUSED_RESULT;
 
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();

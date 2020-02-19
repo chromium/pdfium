@@ -189,11 +189,6 @@ FWL_WidgetHit CXFA_FFWidgetHandler::HitTest(CXFA_FFWidget* pWidget,
   return pWidget->HitTest(pWidget->Rotate2Normal(point));
 }
 
-bool CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,
-                                       const CFX_PointF& point) {
-  return hWidget->OnSetCursor(hWidget->Rotate2Normal(point));
-}
-
 void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                                         CXFA_Graphics* pGS,
                                         const CFX_Matrix& matrix,

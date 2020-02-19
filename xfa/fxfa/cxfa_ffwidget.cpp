@@ -482,10 +482,6 @@ FWL_WidgetHit CXFA_FFWidget::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-bool CXFA_FFWidget::OnSetCursor(const CFX_PointF& point) {
-  return false;
-}
-
 bool CXFA_FFWidget::CanUndo() {
   return false;
 }

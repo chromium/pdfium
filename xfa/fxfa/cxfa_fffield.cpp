@@ -594,10 +594,6 @@ FWL_WidgetHit CXFA_FFField::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Border;
 }
 
-bool CXFA_FFField::OnSetCursor(const CFX_PointF& point) {
-  return true;
-}
-
 bool CXFA_FFField::PtInActiveRect(const CFX_PointF& point) {
   return GetNormalWidget() &&
          GetNormalWidget()->GetWidgetRect().Contains(point);

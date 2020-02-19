@@ -112,10 +112,6 @@ FWL_WidgetHit CXFA_FFSignature::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Client;
 }
 
-bool CXFA_FFSignature::OnSetCursor(const CFX_PointF& point) {
-  return false;
-}
-
 FormFieldType CXFA_FFSignature::GetFormFieldType() {
   return FormFieldType::kXFA_Signature;
 }

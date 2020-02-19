@@ -58,7 +58,6 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
   bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
   bool OnChar(uint32_t dwChar, uint32_t dwFlags) override;
-  bool OnSetCursor(const CFX_PointF& point) override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
 
   // IFWL_WidgetDelegate:
