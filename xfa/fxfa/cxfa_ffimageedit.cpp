@@ -32,6 +32,10 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() {
 
 bool CXFA_FFImageEdit::LoadWidget() {
   ASSERT(!IsLoaded());
+
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   auto pNew = pdfium::MakeUnique<CFWL_PictureBox>(GetFWLApp());
   CFWL_PictureBox* pPictureBox = pNew.get();
   SetNormalWidget(std::move(pNew));

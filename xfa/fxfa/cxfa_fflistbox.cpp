@@ -39,6 +39,10 @@ CXFA_FFListBox::~CXFA_FFListBox() {
 
 bool CXFA_FFListBox::LoadWidget() {
   ASSERT(!IsLoaded());
+
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   auto pNew = pdfium::MakeUnique<CFWL_ListBox>(
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   CFWL_ListBox* pListBox = pNew.get();

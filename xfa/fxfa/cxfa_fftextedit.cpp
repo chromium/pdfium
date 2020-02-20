@@ -43,9 +43,13 @@ CXFA_FFTextEdit::~CXFA_FFTextEdit() {
 }
 
 bool CXFA_FFTextEdit::LoadWidget() {
+  ASSERT(!IsLoaded());
+
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   auto pNewWidget = pdfium::MakeUnique<CFWL_Edit>(
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
-  ASSERT(!IsLoaded());
   CFWL_Edit* pFWLEdit = pNewWidget.get();
   SetNormalWidget(std::move(pNewWidget));
   pFWLEdit->SetAdapterIface(this);

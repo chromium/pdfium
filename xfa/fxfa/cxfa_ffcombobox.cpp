@@ -50,6 +50,10 @@ bool CXFA_FFComboBox::PtInActiveRect(const CFX_PointF& point) {
 
 bool CXFA_FFComboBox::LoadWidget() {
   ASSERT(!IsLoaded());
+
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   auto pNew = pdfium::MakeUnique<CFWL_ComboBox>(GetFWLApp());
   CFWL_ComboBox* pComboBox = pNew.get();
   SetNormalWidget(std::move(pNew));

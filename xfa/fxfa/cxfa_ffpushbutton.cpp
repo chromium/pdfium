@@ -51,6 +51,10 @@ void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
 
 bool CXFA_FFPushButton::LoadWidget() {
   ASSERT(!IsLoaded());
+
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   auto pNew = pdfium::MakeUnique<CFWL_PushButton>(GetFWLApp());
   CFWL_PushButton* pPushButton = pNew.get();
   m_pOldDelegate = pPushButton->GetDelegate();

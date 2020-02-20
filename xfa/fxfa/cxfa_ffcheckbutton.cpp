@@ -32,6 +32,10 @@ CXFA_FFCheckButton::~CXFA_FFCheckButton() = default;
 
 bool CXFA_FFCheckButton::LoadWidget() {
   ASSERT(!IsLoaded());
+
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   auto pNew = pdfium::MakeUnique<CFWL_CheckBox>(GetFWLApp());
   CFWL_CheckBox* pCheckBox = pNew.get();
   SetNormalWidget(std::move(pNew));

@@ -145,6 +145,9 @@ bool CXFA_FFField::IsLoaded() {
 }
 
 bool CXFA_FFField::LoadWidget() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   SetFWLThemeProvider();
   m_pNode->LoadCaption(GetDoc());
   PerformLayout();

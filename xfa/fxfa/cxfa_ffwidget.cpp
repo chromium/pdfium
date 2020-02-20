@@ -319,6 +319,9 @@ bool CXFA_FFWidget::IsLoaded() {
 }
 
 bool CXFA_FFWidget::LoadWidget() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   PerformLayout();
   return true;
 }
