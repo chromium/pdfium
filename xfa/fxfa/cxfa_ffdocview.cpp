@@ -291,7 +291,10 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
   if (pNewFocus == m_pFocusWidget)
     return false;
 
-  ObservedPtr<CXFA_FFWidget> pNewWatched(pNewFocus);
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |pNewFocus|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(
+      pNewFocus ? pNewFocus->GetLayoutItem() : nullptr);
+
   if (m_pFocusWidget) {
     CXFA_ContentLayoutItem* pItem = m_pFocusWidget->GetLayoutItem();
     if (pItem->TestStatusBits(XFA_WidgetStatus_Visible) &&
@@ -303,23 +306,22 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* pNewFocus) {
     }
   }
   if (m_pFocusWidget) {
-    if (!m_pFocusWidget->OnKillFocus(pNewWatched.Get()))
+    if (!m_pFocusWidget->OnKillFocus(pNewFocus))
       return false;
   }
 
-  if (pNewWatched) {
-    if (pNewWatched->GetLayoutItem()->TestStatusBits(
-            XFA_WidgetStatus_Visible)) {
-      if (!pNewWatched->IsLoaded())
-        pNewWatched->LoadWidget();
-      if (!pNewWatched->OnSetFocus(m_pFocusWidget.Get()))
-        pNewWatched.Reset();
+  if (pNewFocus) {
+    if (pNewFocus->GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_Visible)) {
+      if (!pNewFocus->IsLoaded())
+        pNewFocus->LoadWidget();
+      if (!pNewFocus->OnSetFocus(m_pFocusWidget.Get()))
+        pNewFocus = nullptr;
     }
   }
-  if (pNewWatched) {
-    CXFA_Node* node = pNewWatched->GetNode();
+  if (pNewFocus) {
+    CXFA_Node* node = pNewFocus->GetNode();
     m_pFocusNode = node->IsWidgetReady() ? node : nullptr;
-    m_pFocusWidget.Reset(pNewWatched.Get());
+    m_pFocusWidget.Reset(pNewFocus);
   } else {
     m_pFocusNode.Reset();
     m_pFocusWidget.Reset();
