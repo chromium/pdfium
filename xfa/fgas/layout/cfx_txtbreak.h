@@ -81,7 +81,7 @@ class CFX_TxtBreak final : public CFX_Break {
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
 
   void ResetContextCharStyles();
-  bool EndBreak_SplitLine(CFX_BreakLine* pNextLine, bool bAllChars);
+  void EndBreak_SplitLine(CFX_BreakLine* pNextLine, bool bAllChars);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
   void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                           bool bAllChars,
