@@ -250,13 +250,15 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   if (!GetNormalWidget() || !IsButtonDown())
     return false;
 
-  ObservedPtr<CXFA_FFCheckButton> pWatched(this);
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   SetButtonDown(false);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonUp, dwFlags,
       FWLToClient(point)));
 
-  return !!pWatched;
+  return true;
 }
 
 XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
@@ -300,6 +302,9 @@ bool CXFA_FFCheckButton::UpdateFWLData() {
 }
 
 void CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
@@ -346,6 +351,9 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
 
 void CXFA_FFCheckButton::OnDrawWidget(CXFA_Graphics* pGraphics,
                                       const CFX_Matrix& matrix) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }
 

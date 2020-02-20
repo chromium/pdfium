@@ -76,13 +76,14 @@ bool CXFA_FFListBox::LoadWidget() {
 }
 
 bool CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
-  ObservedPtr<CXFA_FFListBox> pWatched(this);
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   ObservedPtr<CXFA_FFWidget> pNewWatched(pNewFocus);
   if (!ProcessCommittedData())
     UpdateFWLData();
 
-  return pWatched && pNewWatched &&
-         CXFA_FFField::OnKillFocus(pNewWatched.Get());
+  return pNewWatched && CXFA_FFField::OnKillFocus(pNewWatched.Get());
 }
 
 bool CXFA_FFListBox::CommitData() {
@@ -160,6 +161,9 @@ bool CXFA_FFListBox::UpdateFWLData() {
 }
 
 void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pNode.Get();
@@ -192,6 +196,9 @@ void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
 }
 
 void CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
@@ -212,6 +219,9 @@ void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
 
 void CXFA_FFListBox::OnDrawWidget(CXFA_Graphics* pGraphics,
                                   const CFX_Matrix& matrix) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }
 

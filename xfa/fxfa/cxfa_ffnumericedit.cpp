@@ -81,6 +81,9 @@ void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
 }
 
 bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget, WideString& wsText) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   WideString wsPattern = m_pNode->GetPictureContent(XFA_VALUEPICTURE_Edit);
   if (!wsPattern.IsEmpty())
     return true;

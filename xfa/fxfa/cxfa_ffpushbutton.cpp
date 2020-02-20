@@ -191,6 +191,9 @@ void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
 }
 
 void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
@@ -204,6 +207,9 @@ void CXFA_FFPushButton::OnProcessEvent(CFWL_Event* pEvent) {
 
 void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
                                      const CFX_Matrix& matrix) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   auto* pWidget = GetNormalWidget();
   if (pWidget->GetStylesEx() & XFA_FWL_PSBSTYLEEXT_HiliteInverted) {
     if ((pWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
