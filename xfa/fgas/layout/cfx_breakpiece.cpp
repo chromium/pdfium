@@ -8,20 +8,7 @@
 
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 
-CFX_BreakPiece::CFX_BreakPiece()
-    : m_dwStatus(CFX_BreakType::Piece),
-      m_iStartPos(0),
-      m_iWidth(-1),
-      m_iStartChar(0),
-      m_iChars(0),
-      m_iBidiLevel(0),
-      m_iBidiPos(0),
-      m_iFontSize(0),
-      m_iHorizontalScale(100),
-      m_iVerticalScale(100),
-      m_dwIdentity(0),
-      m_dwCharStyles(0),
-      m_pChars(nullptr) {}
+CFX_BreakPiece::CFX_BreakPiece() = default;
 
 CFX_BreakPiece::CFX_BreakPiece(const CFX_BreakPiece& other) = default;
 
