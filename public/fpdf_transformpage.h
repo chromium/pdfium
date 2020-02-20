@@ -226,9 +226,9 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
 //   page object - Handle to a page object. Returned by e.g.
 //                 FPDFPage_GetObject().
 //
-// Caller does not take ownership of the returned FPDF_CLIPPATH. Instead, it
-// remains valid until FPDF_ClosePage() is called for the page containing
-// page_object.
+// Returns the handle to the clip path, or NULL on failure. The caller does not
+// take ownership of the returned FPDF_CLIPPATH. Instead, it remains valid until
+// FPDF_ClosePage() is called for the page containing |page_object|.
 FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV
 FPDFPageObj_GetClipPath(FPDF_PAGEOBJECT page_object);
 
@@ -257,9 +257,9 @@ FPDFClipPath_CountPathSegments(FPDF_CLIPPATH clip_path, int path_index);
 //   path_index    - the index of a path.
 //   segment_index - the index of a segment.
 //
-// Returns the handle to the segment, or NULL on failure.  The caller does not
-// take ownership of the returned FPDF_CLIPPATH. Instead, it remains valid until
-// FPDF_ClosePage() is called for the page containing page_object.
+// Returns the handle to the segment, or NULL on failure. The caller does not
+// take ownership of the returned FPDF_PATHSEGMENT. Instead, it remains valid
+// until FPDF_ClosePage() is called for the page containing |clip_path|.
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
 FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
                             int path_index,
