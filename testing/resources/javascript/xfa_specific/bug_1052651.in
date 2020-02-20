@@ -1,0 +1,168 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /AcroForm 3 0 R
+  /Pages 5 0 R
+  /NeedsRendering true
+>>
+endobj
+{{object 3 0}} <<
+  /DA (/Helv 0 Tf 0 g )
+  /DR <<
+    /Font <<
+      /Helv 9 0 R
+    >>
+  >>
+  /XFA [
+    (preamble) 10 0 R
+    (config) 11 0 R
+    (template) 12 0 R
+    (form) 13 0 R
+    (postamble) 14 0 R
+  ]
+>>
+endobj
+{{object 5 0}}  <<
+  /Type /Pages
+  /Count 1
+  /Kids [6 0 R]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Page
+  /CropBox [0.0 0.0 612.0 792.0]
+  /MediaBox [0.0 0.0 612.0 792.0]
+  /Parent 5 0 R
+  /Resources <<
+    /ProcSet [/PDF /Text]
+  >>
+  /Rotate 0
+  /StructParents 0
+>>
+endobj
+{{object 8 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+{{object 9 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+{{object 10 0}} <<
+  {{streamlen}}
+>>
+stream
+<?xml version="1.0" encoding="UTF-8"?>
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+endstream
+endobj
+{{object 11 0}} <<
+  {{streamlen}}
+>>
+stream
+<config xmlns="http://www.xfa.org/schema/xci/2.6/">
+  <agent name="designer">
+    <destination>pdf</destination>
+    <pdf>
+      <fontInfo/>
+    </pdf>
+  </agent>
+  <present>
+    <pdf>
+      <version>1.7</version>
+      <renderPolicy>client</renderPolicy>
+      <scriptModel>XFA</scriptModel>
+      <interactive>1</interactive>
+    </pdf>
+    <xdp>
+      <packets>*</packets>
+    </xdp>
+    <destination>pdf</destination>
+  </present>
+  <acrobat>
+    <acrobat7>
+      <dynamicRender>required</dynamicRender>
+    </acrobat7>
+  </acrobat>
+</config>
+endstream
+endobj
+{{object 12 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform layout="tb" locale="en_US" name="form1" restoreState="auto">
+    <pageSet>
+      <pageArea id="Page1" name="Page1">
+        <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+        <medium long="11in" short="8.5in" stock="letter"/>
+      </pageArea>
+    </pageSet>
+    <subform h="10.5in" w="8in" name="subform2">
+      <field h="9.0001mm" name="field1" w="47.625mm" x="6.35mm" y="92.075mm">
+        <ui>
+          <choiceList/>
+        </ui>
+        <items save="1">
+          <text>Single</text>
+          <text>Married</text>
+          <text>Other</text>
+        </items>
+      </field>
+      <field name="field2" h="200mm" w="200mm" x="1mm" y="1mm">
+        <ui>
+          <textEdit/>
+        </ui>
+        <value>
+          <text>pdfium</text>
+        </value>
+        <event activity="change">
+          <script contentType="application/x-javascript">
+            f2_change = f2_change + 1;
+            if (f2_change == 2) {
+                xfa.event.cancelAction = true;
+                f1 = xfa.resolveNode("xfa.form..field1");
+                xfa.host.setFocus(f1);
+                xfa.template.remerge();
+                xfa.host.openList(f1);
+            }
+          </script>
+        </event>
+      </field>
+    </subform>
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+        f2_change = 0;
+        f2 = xfa.resolveNode("xfa.form..field2");
+        xfa.host.setFocus(f2);
+     </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{object 13 0}} <<
+  {{streamlen}}
+>>
+stream
+<form xmlns="http://www.xfa.org/schema/xfa-form/2.6/"></form>
+endstream
+endobj
+{{object 14 0}} <<
+ {{streamlen}}
+>>
+stream
+</xdp:xdp>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

@@ -1,0 +1,188 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /AcroForm 3 0 R
+  /Pages 5 0 R
+  /NeedsRendering true
+>>
+endobj
+{{object 3 0}} <<
+  /XFA [
+    (preamble) 7 0 R
+    (config) 8 0 R
+    (template) 9 0 R
+    (form) 10 0 R
+    (postamble) 11 0 R
+  ]
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [ 12 0 R ]
+>>
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+<?xml version="1.0" encoding="UTF-8"?>
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/" timeStamp="2007-08-07T18:35:24Z" uuid="3b6c6ea3-3edf-40f5-90ff-51ee202e15b4">
+endstream
+endobj
+{{object 8 0}} <<
+  {{streamlen}}
+>>
+stream
+<config xmlns="http://www.xfa.org/schema/xci/2.6/">
+  <agent name="designer">
+    <destination>pdf</destination>
+    <pdf>
+      <!--  [0..n]  -->
+      <fontInfo/>
+    </pdf>
+  </agent>
+  <present>
+    <!--  [0..n]  -->
+    <pdf>
+      <!--  [0..n]  -->
+      <version>1.7</version>
+      <renderPolicy>client</renderPolicy>
+      <creator>Adobe LiveCycle Designer ES 8.1</creator>
+      <producer>Adobe LiveCycle Designer ES 8.1</producer>
+      <scriptModel>XFA</scriptModel>
+      <interactive>1</interactive>
+      <tagged>1</tagged>
+      <fontInfo>
+        <embed>1</embed>
+      </fontInfo>
+      <compression>
+        <level>6</level>
+        <compressLogicalStructure>1</compressLogicalStructure>
+      </compression>
+      <linearized>1</linearized>
+      <viewerPreferences>
+        <addViewerPreferences>0</addViewerPreferences>
+        <duplexOption>simplex</duplexOption>
+        <numberOfCopies>0</numberOfCopies>
+      </viewerPreferences>
+    </pdf>
+    <cache>
+      <macroCache/>
+      <renderCache/>
+    </cache>
+    <incrementalMerge/>
+    <script>
+      <runScripts/>
+      <exclude/>
+      <currentPage/>
+    </script>
+    <copies/>
+    <layout/>
+    <xdp>
+      <packets>*</packets>
+    </xdp>
+    <destination>pdf</destination>
+  </present>
+  <psMap/>
+  <acrobat>
+    <acrobat7>
+      <dynamicRender>required</dynamicRender>
+    </acrobat7>
+  </acrobat>
+</config>
+endstream
+endobj
+{{object 9 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform name="form1">
+    <pageSet>
+      <pageArea id="Page1" name="Page1">
+        <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+        <medium long="11in" short="8.5in" stock="letter"/>
+      </pageArea>
+    </pageSet>
+    <subform h="10.5in" w="8in">
+      <field h="9.0001mm" name="ChoiceList" w="47.625mm" x="6.35mm" y="92.075mm">
+        <ui>
+          <choiceList/>
+        </ui>
+        <items>
+          <text>Foo</text>
+        </items>
+      </field>
+      <field h="100mm" name="ChoiceList1" w="100mm" x="0mm" y="0mm">
+      <ui>
+        <choiceList open="onEntry"/>
+      </ui>
+      <items>
+        <text>1111111111111</text>
+        <text>222222222222222</text>
+      </items>
+      <event activity="change">
+        <script contentType="application/x-javascript">
+        a += 1;
+        if (a == 2) {
+            list1 = xfa.resolveNode("ChoiceList");
+            xfa.host.setFocus(list1);
+            xfa.template.remerge();
+            xfa.host.openList(list1);
+        }
+        </script>
+      </event>
+    </field>
+  </subform>
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+        a = 0;
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{object 10 0}} <<
+  {{streamlen}}
+>>
+stream
+<form xmlns="http://www.xfa.org/schema/xfa-form/2.6/">
+</form>
+endstream
+endobj
+{{object 11 0}} <<
+  {{streamlen}}
+>>
+stream
+</xdp:xdp>
+endstream
+endobj
+{{object 12 0}} <<
+  /Type /Page
+  /Contents 13 0 R
+  /CropBox [ 0.0 0.0 612.0 792.0 ]
+  /MediaBox [ 0.0 0.0 612.0 792.0 ]
+  /Parent 5 0 R
+  /Resources <<
+    /Font <<
+      /T1_0 14 0 R
+    >>
+    /ProcSet [ /PDF /Text ]
+  >>
+  /Rotate 0
+  /StructParents 0
+>>
+endobj
+{{object 14 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

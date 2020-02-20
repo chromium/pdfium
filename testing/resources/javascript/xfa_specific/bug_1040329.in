@@ -1,0 +1,99 @@
+{{header}}
+{{object 1 0}} <<
+  /Pages 2 0 R
+  /NeedsRendering true
+  /AcroForm <</XFA 5 0 R>>
+  /OpenAction 3 0 R
+  /Type /Catalog
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [ 4 0 R ]
+>>
+endobj
+{{object 3 0}} <<
+  /S /JavaScript
+  /JS (
+  )
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [ 0 0 795 842 ]
+>>
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+<template >
+  <subform allowMacro="0" layout="lr" mergeMode="consumeData" name="subform_0" >
+    <pageSet >
+      <occur initial="1" max="10" min="0" ></occur>
+      <pageArea >
+        <contentArea h="0.75in" w="0.25in" x="0.25in" y="0.25in" ></contentArea>
+        <subform allowMacro="0" layout="row" mergeMode="consumeData" name="subform_1" >
+          <event activity="initialize" >
+            <script contentType="application/x-javascript">
+            </script>
+          </event>
+          <field name="field_1" >
+            <bind match="dataRef" ref="a" ></bind>
+            <calculate >
+              <script contentType="application/x-javascript">
+                var f=xfa.resolveNode("xfa.form.subform_0");
+                xfa.host.setFocus(f);
+                f.mark ="square";
+              </script>
+            </calculate>
+            <event activity="docReady" >
+              <script contentType="application/x-javascript">
+                xfa.host.resetData(this);
+              </script>
+            </event>
+          </field>
+        </subform>
+      </pageArea>
+    </pageSet>
+    <field name="field_2" >
+      <bind match="dataRef" ref="a" ></bind>
+      <calculate >
+        <script contentType="application/x-javascript">
+          xfa.host.setFocus(this);
+        </script>
+      </calculate>
+      <items presence="hidden" save="0" >
+        <text >a</text>
+        <text >b</text>
+        <text >c</text>
+      </items>
+      <ui >
+        <choiceList commitOn="exit" open="onEntry" textEntry="1" ></choiceList>
+      </ui>
+      <value override="0" >
+        <text >a</text>
+      </value>
+      <event activity="initialize" >
+        <script contentType="application/x-javascript">
+        </script>
+      </event>
+      <event activity="change" >
+        <script contentType="application/x-javascript">
+          xfa.form.remerge();
+          xfa.host.openList(this);
+        </script>
+      </event>
+    </field>
+  </subform>
+</template>
+</xdp:xdp>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

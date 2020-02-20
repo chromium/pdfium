@@ -1,0 +1,147 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /AcroForm 2 0 R
+  /Pages 3 0 R
+  /Extensions <<
+    /ADBE <<
+      /BaseVersion /1.7
+      /ExtensionLevel 8
+    >>
+  >>
+  /NeedsRendering true
+>>
+endobj
+{{object 2 0}} <<
+  /XFA [
+    (preamble) 5 0 R
+    (config) 6 0 R
+    (template) 7 0 R
+    (postamble) 9 0 R
+  ]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+ /Type /Page
+ /Parent 2 0 R
+ /MediaBox [0 0 612 792]
+>>
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
+endstream
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+<config xmlns="http://www.xfa.org/schema/xci/3.0/">
+<agent name="designer">
+  <destination>pdf</destination>
+  <pdf>
+    <fontInfo/>
+  </pdf>
+</agent>
+<present>
+  <pdf>
+    <version>1.7</version>
+    <adobeExtensionLevel>8</adobeExtensionLevel>
+    <renderPolicy>client</renderPolicy>
+    <scriptModel>XFA</scriptModel>
+    <interactive>1</interactive>
+  </pdf>
+  <xdp>
+    <packets>*</packets>
+  </xdp>
+  <destination>pdf</destination>
+  <script>
+    <runScripts>server</runScripts>
+  </script>
+</present>
+<acrobat>
+  <acrobat7>
+    <dynamicRender>required</dynamicRender>
+  </acrobat7>
+  <validate>preSubmit</validate>
+</acrobat>
+</config>
+endstream
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform layout="tb" locale="en_US" name="form1" restoreState="auto">
+    <pageSet>
+      <pageArea id="Page1" name="Page1">
+        <contentArea h="10.5in" w="8in" x="0.25in" y="0.25in"/>
+        <medium long="11in" short="8.5in" stock="letter"/>
+      </pageArea>
+    </pageSet>
+    <subform h="10.5in" w="8in" name="subform2">
+      <field h="10mm" name="f1" w="40mm" x="5mm" y="90mm">
+        <ui>
+          <choiceList/>
+        </ui>
+        <items save="1">
+          <text>Single</text>
+        </items>
+      </field>
+      <subform name="f4" x="5mm" y="5mm">
+          <occur max="-1"/>
+          <field name="f2" h="300mm" w="300mm" x="1mm" y="1mm">
+            <ui>
+              <textEdit/>
+            </ui>
+            <value>
+              <text>pdfiummmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm</text>
+            </value>
+            <event activity="change">
+              <script contentType="application/x-javascript">
+                a = a + 1;
+                if (a == 2)  {
+                    xfa.event.cancelAction = true;
+                    b = xfa.resolveNode("xfa.form..f1");
+                    xfa.host.setFocus(b);
+                    d = xfa.resolveNode("xfa.form..f4");
+                    d.instanceManager.addInstance(1);
+                    d.instanceManager.removeInstance(0);
+                    xfa.host.openList(b);
+                }
+              </script>
+            </event>
+          </field>
+      </subform>
+    </subform>
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+        a = 0;
+        c = xfa.resolveNode("xfa.form..f2");
+        xfa.host.setFocus(c);
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{object 9 0}} <<
+  {{streamlen}}
+>>
+stream
+</xdp:xdp>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
