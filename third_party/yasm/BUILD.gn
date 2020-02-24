@@ -335,14 +335,8 @@ if (current_toolchain == host_toolchain) {
       ":yasm_warnings",
     ]
 
-    # Disable WPO for yasm: crbug.com/604808
-    if (is_official_build && full_wpo_on_official) {
-      configs -= [ "//build/config/compiler:default_optimization" ]
-      configs += [ "//build/config/compiler:optimize_no_wpo" ]
-    } else {
-      configs -= configs_to_delete
-      configs += configs_to_add
-    }
+    configs -= configs_to_delete
+    configs += configs_to_add
 
     # Yasm generates a bunch of .c files which its source file #include. These
     # are placed in |yasm_gen_include_dir|.
