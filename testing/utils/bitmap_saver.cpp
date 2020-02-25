@@ -27,8 +27,11 @@ void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
       pdfium::base::ValueOrDieForType<size_t>(size));
 
   std::vector<uint8_t> png;
-  if (FPDFBitmap_GetFormat(bitmap) == FPDFBitmap_Gray) {
+  int format = FPDFBitmap_GetFormat(bitmap);
+  if (format == FPDFBitmap_Gray) {
     png = image_diff_png::EncodeGrayPNG(input, width, height, stride);
+  } else if (format == FPDFBitmap_BGR) {
+    png = image_diff_png::EncodeBGRPNG(input, width, height, stride);
   } else {
     png = image_diff_png::EncodeBGRAPNG(input, width, height, stride,
                                         /*discard_transparency=*/false);
