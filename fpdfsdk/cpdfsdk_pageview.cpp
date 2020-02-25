@@ -183,12 +183,13 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* hWidget) {
-  if (!hWidget)
+CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* pWidget) {
+  if (!pWidget)
     return nullptr;
 
   for (CPDFSDK_Annot* pAnnot : m_SDKAnnotArray) {
-    if (ToXFAWidget(pAnnot)->GetXFAFFWidget() == hWidget)
+    CPDFXFA_Widget* pCurrentWidget = ToXFAWidget(pAnnot);
+    if (pCurrentWidget && pCurrentWidget->GetXFAFFWidget() == pWidget)
       return pAnnot;
   }
   return nullptr;
