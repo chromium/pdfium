@@ -125,7 +125,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
 #if defined(OS_WIN)
   static constexpr char kMd5BaseContent[] = "649d6792ea50faf98c013c2d81710595";
 #elif defined(OS_MACOSX)
-  static constexpr char kMd5BaseContent[] = "5f933aac2a74434be1b4d0bdb5334f0b";
+  static constexpr char kMd5BaseContent[] = "83e9f5222c4c959b0b63a5cd24f773a1";
 #else
   static constexpr char kMd5BaseContent[] = "a24edc7740f1d6f76899652dcf825dea";
 #endif
@@ -152,7 +152,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithPause) {
 #if defined(OS_WIN)
   static constexpr char kMd5BaseContent[] = "649d6792ea50faf98c013c2d81710595";
 #elif defined(OS_MACOSX)
-  static constexpr char kMd5BaseContent[] = "5f933aac2a74434be1b4d0bdb5334f0b";
+  static constexpr char kMd5BaseContent[] = "83e9f5222c4c959b0b63a5cd24f773a1";
 #else
   static constexpr char kMd5BaseContent[] = "a24edc7740f1d6f76899652dcf825dea";
 #endif
@@ -186,7 +186,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderAnnotWithPause) {
       "6aa001a77ec05d0f1b0d1d22e28744d4";
 #elif defined(OS_MACOSX)
   static constexpr char kMd5ContentWithAnnot[] =
-      "c35408717759562d1f8bf33d317483d2";
+      "80d7b6cc7b13a78d77a6151bc846e80b";
 #else
   static constexpr char kMd5ContentWithAnnot[] =
       "b42cef463483e668eaf4055a65e4f1f5";
@@ -221,7 +221,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormsWithPause) {
       "d3204faa62b607f0bd3893c9c22cabcb";
 #elif defined(OS_MACOSX)
   static constexpr char kMd5ContentWithForms[] =
-      "5f11dbe575fe197a37c3fb422559f8ff";
+      "d485541d958fef08d24e8eca3e537023";
 #else
   static constexpr char kMd5ContentWithForms[] =
       "b890950d4b9bc163b1a96797f3004b53";

@@ -48,7 +48,7 @@ TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_861842) {
 #if defined(OS_WIN)
   static const char kCheckboxHash[] = "95fba3cb7bce7e0d3c94279f60984e17";
 #elif defined(OS_MACOSX)
-  static const char kCheckboxHash[] = "0a1d1d63d4452bc26a1c5c547d309655";
+  static const char kCheckboxHash[] = "6aafcb2d98da222964bcdbf5aa1f4f1f";
 #else
   static const char kCheckboxHash[] = "594265790b81df2d93120d33b72a6ada";
 #endif

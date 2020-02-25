@@ -95,7 +95,7 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
 #if defined(OS_WIN)
     const char kExpectedHash[] = "795b7ce1626931aa06af0fa23b7d80bb";
 #elif defined(OS_MACOSX)
-    const char kExpectedHash[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+    const char kExpectedHash[] = "c38b75e16a13852aee3b97d77a0f0ee7";
 #else
     const char kExpectedHash[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
 #endif
@@ -110,7 +110,7 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
 #if defined(OS_WIN)
     const char kExpectedHash[] = "93db13099042bafefb3c22a165bad684";
 #elif defined(OS_MACOSX)
-    const char kExpectedHash[] = "f8fbd14a048b9e2ea8e5f059f22a910e";
+    const char kExpectedHash[] = "572b1022bb3e8f43dc671162fc62cf7f";
 #else
     const char kExpectedHash[] = "93dcc09055f87a2792c8e3065af99a1b";
 #endif
@@ -158,7 +158,7 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, MAYBE_PasswordAfterGenerateSave) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   const char md5[] = "7048dca58e2ed8f93339008b91e4eb4e";
 #elif defined(OS_MACOSX)
-  const char md5[] = "6951b6c9891dfe0332a5b1983e484400";
+  const char md5[] = "1ace03eb7c466c132aacf319cb9d69d3";
 #else
   const char md5[] = "041c2fb541c8907cc22ce101b686c79e";
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_

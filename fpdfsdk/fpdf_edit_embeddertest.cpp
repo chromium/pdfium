@@ -575,7 +575,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SetText) {
   // now displayed.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 #if defined(OS_MACOSX)
-  const char kChangedMD5[] = "94c1e7a5af7dd9d77dc2223b1091acb7";
+  const char kChangedMD5[] = "904132275a1144ea06b0694537c80b4c";
 #elif defined(OS_WIN)
   const char kChangedMD5[] = "3137fdb27962671f5c3963a5e965eff5";
 #else
@@ -620,7 +620,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemovePageObject) {
   // Show what the original file looks like.
   {
 #if defined(OS_MACOSX)
-    const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+    const char kOriginalMD5[] = "c38b75e16a13852aee3b97d77a0f0ee7";
 #elif defined(OS_WIN)
     const char kOriginalMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
 #else
@@ -639,7 +639,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemovePageObject) {
   // Verify the "Hello, world!" text is gone.
   {
 #if defined(OS_MACOSX)
-    const char kRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
+    const char kRemovedMD5[] = "17ca3778fd8bb395b46532f1fa17f702";
 #elif defined(OS_WIN)
     const char kRemovedMD5[] = "aae6c5334721f90ec30d3d59f4ef7deb";
 #else
@@ -782,7 +782,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveMarkedObjectsPrime) {
   // Show what the original file looks like.
   {
 #if defined(OS_MACOSX)
-    const char kOriginalMD5[] = "5a5eb63cb21cc15084fea1f14284b8df";
+    const char kOriginalMD5[] = "adf815e53c788a5272b4df07c610a1da";
 #elif defined(OS_WIN)
     const char kOriginalMD5[] = "00542ee435b37749c4453be63bf7bdb6";
 #else
@@ -827,8 +827,8 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveMarkedObjectsPrime) {
   EXPECT_EQ(11, FPDFPage_CountObjects(page));
 
 #if defined(OS_MACOSX)
-  const char kNonPrimesMD5[] = "57e76dc7375d896704f0fd6d6d1b9e65";
-  const char kNonPrimesAfterSaveMD5[] = "6304512d0150bbd5578e8e22d3121103";
+  const char kNonPrimesMD5[] = "d29e2ddff56e0d12f340794d26796400";
+  const char kNonPrimesAfterSaveMD5[] = "10eff2cd0037b661496981779601fa6f";
 #elif defined(OS_WIN)
   const char kNonPrimesMD5[] = "86e371fdae30c2471f476631f3f93413";
   const char kNonPrimesAfterSaveMD5[] = "86e371fdae30c2471f476631f3f93413";
@@ -1113,7 +1113,7 @@ TEST_F(FPDFEditEmbedderTest,
   // Verify the "Hello, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 #if defined(OS_MACOSX)
-  const char kHelloRemovedMD5[] = "e07a62d412728fc4d6e3ff42f2dd0e11";
+  const char kHelloRemovedMD5[] = "3b3b27602a86dfe5996a33c42c59885b";
 #elif defined(OS_WIN)
   const char kHelloRemovedMD5[] = "a97d4c72c969ba373c2dce675d277e65";
 #else
@@ -1168,7 +1168,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveExistingPageObjectSplitStreamsLonely) {
   // Verify the "Greetings, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
 #if defined(OS_MACOSX)
-  const char kGreetingsRemovedMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+  const char kGreetingsRemovedMD5[] = "c38b75e16a13852aee3b97d77a0f0ee7";
 #elif defined(OS_WIN)
   const char kGreetingsRemovedMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
 #else
@@ -1290,7 +1290,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveAllFromStream) {
   }
 
 #if defined(OS_MACOSX)
-  const char kStream1RemovedMD5[] = "d2e21fbd5a6de563f619feeeb6163331";
+  const char kStream1RemovedMD5[] = "0e8856ca9abc7049412e64f9230c7c43";
 #elif defined(OS_WIN)
   const char kStream1RemovedMD5[] = "b4140f203523e38793283a5943d8075b";
 #else
@@ -1428,7 +1428,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveFirstFromSingleStream) {
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
 
 #if defined(OS_MACOSX)
-  const char kFirstRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
+  const char kFirstRemovedMD5[] = "17ca3778fd8bb395b46532f1fa17f702";
 #elif defined(OS_WIN)
   const char kFirstRemovedMD5[] = "aae6c5334721f90ec30d3d59f4ef7deb";
 #else
@@ -1502,7 +1502,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveLastFromSingleStream) {
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
 
 #if defined(OS_MACOSX)
-  const char kLastRemovedMD5[] = "f8fbd14a048b9e2ea8e5f059f22a910e";
+  const char kLastRemovedMD5[] = "572b1022bb3e8f43dc671162fc62cf7f";
 #elif defined(OS_WIN)
   const char kLastRemovedMD5[] = "93db13099042bafefb3c22a165bad684";
 #else
@@ -1828,7 +1828,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_PathOnTopOfText) {
   // Render and check the result. Text is slightly different on Mac.
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
 #if defined(OS_MACOSX)
-  const char md5[] = "f9e6fa74230f234286bfcada9f7606d8";
+  const char md5[] = "e55bcd1facb7243dc6e16dd5f912265b";
 #elif defined(OS_WIN)
   const char md5[] = "74dd9c393b8b2578d2b7feb032b7daad";
 #else
@@ -1991,7 +1991,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if defined(OS_MACOSX)
-    const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
+    const char md5[] = "324e1db8164a040cf6104538baa95ba6";
 #elif defined(OS_WIN)
     const char md5[] = "08d1ff3e5a42801bee6077fd366bef00";
 #else
@@ -2016,7 +2016,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if defined(OS_MACOSX)
-    const char md5[] = "a5c4ace4c6f27644094813fe1441a21c";
+    const char md5[] = "26a516d923b0a18fbea0a24e3aca5562";
 #elif defined(OS_WIN)
     const char md5[] = "3755dd35abd4c605755369401ee85b2d";
 #else
@@ -2040,7 +2040,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if defined(OS_MACOSX)
-    const char md5[] = "40b3ef04f915ff4c4208948001763544";
+    const char md5[] = "532024c9ded47843313bb64a060118f3";
 #elif defined(OS_WIN)
     const char md5[] = "5ded49fe157f89627903553771431e3d";
 #else
@@ -2091,7 +2091,7 @@ TEST_F(FPDFEditEmbedderTest, GetTextRenderMode) {
 TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
 // Platform specific original bitmaps
 #if defined(OS_MACOSX)
-  const char md5[] = "139846b4ffbd34b1fd67e3b82cf33b7e";
+  const char md5[] = "2453a9a524ee3f5f525dd21345ec4d81";
 #elif defined(OS_WIN)
   const char md5[] = "de6e86bad3e9fda753a8471a45cfbb58";
 #else
@@ -2275,7 +2275,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText2) {
   FPDFPage_InsertObject(page.get(), text_object);
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
 #if defined(OS_MACOSX)
-  const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
+  const char md5[] = "324e1db8164a040cf6104538baa95ba6";
 #elif defined(OS_WIN)
   const char md5[] = "08d1ff3e5a42801bee6077fd366bef00";
 #else
@@ -2629,7 +2629,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
     FPDFPage_InsertObject(page, text_object);
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
 #if defined(OS_MACOSX)
-    const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
+    const char md5[] = "fc921c0bbdde73986ac13c15a85db4c3";
 #elif defined(OS_WIN)
     const char md5[] = "d60ba39f9698e32360d99e727dd93165";
 #else
@@ -2647,7 +2647,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
   }
   ScopedFPDFBitmap page_bitmap2 = RenderPage(page);
 #if defined(OS_MACOSX)
-  const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
+  const char md5_2[] = "9a1a7dfebe659513691aadd0d95b8d50";
 #elif defined(OS_WIN)
   const char md5_2[] = "2199b579c49ab5f80c246a586a80ee90";
 #else
@@ -2820,7 +2820,7 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
 #endif
 TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
 #if defined(OS_MACOSX)
-  const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+  const char kOriginalMD5[] = "c38b75e16a13852aee3b97d77a0f0ee7";
 #elif defined(OS_WIN)
   const char kOriginalMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
 #else
@@ -3021,7 +3021,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkedText) {
 
 // Render and check the bitmap is the expected one.
 #if defined(OS_MACOSX)
-  const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
+  const char md5[] = "fc921c0bbdde73986ac13c15a85db4c3";
 #elif defined(OS_WIN)
   const char md5[] = "d60ba39f9698e32360d99e727dd93165";
 #else

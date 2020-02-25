@@ -901,9 +901,9 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 #endif
 TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
 #if defined(OS_MACOSX)
-  const char md5_1[] = "5f11dbe575fe197a37c3fb422559f8ff";
-  const char md5_2[] = "35b1a4b679eafc749a0b6fda750c0e8d";
-  const char md5_3[] = "65c64a7c355388f719a752aa1e23f6fe";
+  const char md5_1[] = "d485541d958fef08d24e8eca3e537023";
+  const char md5_2[] = "c6e4a2fb10661116771ee74f54d9c5e0";
+  const char md5_3[] = "e0c8d5099301d7c10ed831a43e974d9d";
 #elif defined(OS_WIN)
   const char md5_1[] = "d3204faa62b607f0bd3893c9c22cabcb";
   const char md5_2[] = "29d1c3fd226ca6a69597f75937690320";
@@ -993,8 +993,8 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_BUG_1281) {
 #endif
 TEST_F(FPDFFormFillEmbedderTest, MAYBE_RemoveFormFieldHighlight) {
 #if defined(OS_MACOSX)
-  const char kMd5Normal[] = "5f11dbe575fe197a37c3fb422559f8ff";
-  const char kMd5NoHighlight[] = "575ec237c790950f40bfcaefb2e3923c";
+  const char kMd5Normal[] = "d485541d958fef08d24e8eca3e537023";
+  const char kMd5NoHighlight[] = "5e4b87c5b304c6fa9bd5f6311260494e";
 #elif defined(OS_WIN)
   const char kMd5Normal[] = "d3204faa62b607f0bd3893c9c22cabcb";
   const char kMd5NoHighlight[] = "3ec0938828e0a37ef23f687ee95a80e1";
