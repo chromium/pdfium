@@ -456,7 +456,7 @@ CXFA_FMCallExpression::CXFA_FMCallExpression(
       m_bIsSomMethod(bIsSomMethod),
       m_Arguments(std::move(pArguments)) {}
 
-CXFA_FMCallExpression::~CXFA_FMCallExpression() {}
+CXFA_FMCallExpression::~CXFA_FMCallExpression() = default;
 
 bool CXFA_FMCallExpression::IsBuiltInFunc(CFX_WideTextBuf* funcName) {
   if (funcName->GetLength() > g_BuiltInFuncsMaxLen)
