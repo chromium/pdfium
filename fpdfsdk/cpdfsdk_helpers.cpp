@@ -330,43 +330,43 @@ void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info) {
   g_unsupport_info = unsp_info;
 }
 
-void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
+void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
   const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
-  if (pRootDict) {
-    // Portfolios and Packages
-    if (pRootDict->KeyExist("Collection")) {
-      RaiseUnsupportedError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
+  if (!pRootDict)
+    return;
+
+  // Portfolios and Packages
+  if (pRootDict->KeyExist("Collection")) {
+    RaiseUnsupportedError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
+    return;
+  }
+  const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
+  if (pNameDict) {
+    if (pNameDict->KeyExist("EmbeddedFiles")) {
+      RaiseUnsupportedError(FPDF_UNSP_DOC_ATTACHMENT);
       return;
     }
-    if (pRootDict->KeyExist("Names")) {
-      const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
-      if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
-        RaiseUnsupportedError(FPDF_UNSP_DOC_ATTACHMENT);
-        return;
-      }
-      if (pNameDict && pNameDict->KeyExist("JavaScript")) {
-        const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
-        const CPDF_Array* pArray =
-            pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
-        if (pArray) {
-          for (size_t i = 0; i < pArray->size(); i++) {
-            ByteString cbStr = pArray->GetStringAt(i);
-            if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
-              RaiseUnsupportedError(FPDF_UNSP_DOC_SHAREDREVIEW);
-              return;
-            }
+    const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
+    if (pJSDict) {
+      const CPDF_Array* pArray = pJSDict->GetArrayFor("Names");
+      if (pArray) {
+        for (size_t i = 0; i < pArray->size(); i++) {
+          ByteString cbStr = pArray->GetStringAt(i);
+          if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
+            RaiseUnsupportedError(FPDF_UNSP_DOC_SHAREDREVIEW);
+            return;
           }
         }
       }
     }
+  }
 
-    // SharedForm
-    const CPDF_Stream* pStream = pRootDict->GetStreamFor("Metadata");
-    if (pStream) {
-      CPDF_Metadata metaData(pStream);
-      for (const auto& err : metaData.CheckForSharedForm())
-        RaiseUnsupportedError(static_cast<int>(err));
-    }
+  // SharedForm
+  const CPDF_Stream* pStream = pRootDict->GetStreamFor("Metadata");
+  if (pStream) {
+    CPDF_Metadata metadata(pStream);
+    for (const UnsupportedFeature& feature : metadata.CheckForSharedForm())
+      RaiseUnsupportedError(static_cast<int>(feature));
   }
 }
 
