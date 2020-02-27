@@ -54,6 +54,10 @@ class CXFA_FMChainableExpression : public CXFA_FMSimpleExpression {
   CXFA_FMSimpleExpression* GetSecondExpression();
 
  private:
+  // Iteratively delete a chainable expression tree in linear time and constant
+  // space.
+  static void DeleteChain(std::unique_ptr<CXFA_FMSimpleExpression> pRoot);
+
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp1;
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
 };

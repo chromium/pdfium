@@ -89,7 +89,10 @@ CXFA_FMChainableExpression::CXFA_FMChainableExpression(
       m_pExp1(std::move(pExp1)),
       m_pExp2(std::move(pExp2)) {}
 
-CXFA_FMChainableExpression::~CXFA_FMChainableExpression() = default;
+CXFA_FMChainableExpression::~CXFA_FMChainableExpression() {
+  DeleteChain(std::move(m_pExp1));
+  DeleteChain(std::move(m_pExp2));
+}
 
 CXFA_FMSimpleExpression* CXFA_FMChainableExpression::GetFirstExpression() {
   return m_pExp1.get();
@@ -97,6 +100,40 @@ CXFA_FMSimpleExpression* CXFA_FMChainableExpression::GetFirstExpression() {
 
 CXFA_FMSimpleExpression* CXFA_FMChainableExpression::GetSecondExpression() {
   return m_pExp2.get();
+}
+
+// static
+void CXFA_FMChainableExpression::DeleteChain(
+    std::unique_ptr<CXFA_FMSimpleExpression> pRoot) {
+  while (pRoot && pRoot->chainable()) {
+    auto* pRootChain = static_cast<CXFA_FMChainableExpression*>(pRoot.get());
+
+    // If either child is not a chainable expression (i.e. a leaf node), simply
+    // delete it.
+    if (pRootChain->m_pExp1 && !pRootChain->m_pExp1->chainable())
+      pRootChain->m_pExp1.reset();
+    if (pRootChain->m_pExp2 && !pRootChain->m_pExp2->chainable())
+      pRootChain->m_pExp2.reset();
+
+    // If the root is missing either child, delete the root and promote the only
+    // child to the root.
+    if (!pRootChain->m_pExp1) {
+      pRoot = std::move(pRootChain->m_pExp2);
+      continue;
+    }
+    if (!pRootChain->m_pExp2) {
+      pRoot = std::move(pRootChain->m_pExp1);
+      continue;
+    }
+
+    // Otherwise, perform a right tree rotation.
+    std::unique_ptr<CXFA_FMSimpleExpression> pPivot(
+        std::move(pRootChain->m_pExp1));
+    auto* pPivotChain = static_cast<CXFA_FMChainableExpression*>(pPivot.get());
+    pRootChain->m_pExp1 = std::move(pPivotChain->m_pExp2);
+    pPivotChain->m_pExp2 = std::move(pRoot);
+    pRoot = std::move(pPivot);
+  }
 }
 
 CXFA_FMNullExpression::CXFA_FMNullExpression()
