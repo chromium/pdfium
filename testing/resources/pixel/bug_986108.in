@@ -1,0 +1,122 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 200 200]
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /ExtGState <<
+      /GS0 5 0 R
+    >>
+    /XObject <<
+      /Fm0 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/GS0 gs
+/Fm0 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /ExtGState
+  /OP false
+  /op false
+  /AIS false
+  /BM /Normal
+  /OPM 0
+  /CA 1.0
+  /SA true
+  /ca 1.0
+  /SMask 7 0 R
+>>
+endobj
+{{object 6 0}} <<
+  /Subtype /Form
+  {{streamlen}}
+>>
+stream
+q
+0 0 50 60 re f
+Q
+endstream
+endobj
+{{object 7 0}} <<
+  /Type /Mask
+  /BC [0.0]
+  /S /Luminosity
+  /G 8 0 R
+>>
+endobj
+{{object 8 0}} <<
+  /Subtype /Form
+  /BBox [0 411 621 -10]
+  /Resources <<
+    /XObject <<
+      /Fm0 9 0 R
+    >>
+  >>
+{{streamlen}}
+>>
+stream
+q
+0 410 500 -440 re f
+/Fm0 Do
+Q
+endstream
+endobj
+{{object 9 0}} <<
+  /Subtype /Form
+  /Resources <<
+    /Shading <<
+      /Sh0 10 0 R
+    >>
+  >>
+  {{streamlen}}
+>>
+stream
+q
+/Sh0 sh
+Q
+endstream
+endobj
+{{object 10 0}} <<
+  /ShadingType 2
+  /ColorSpace /DeviceRGB
+  /Coords [0.0 0.0 1.0 0.0]
+  /BBox [-0.1 -0.9 1.1 0.87]
+  /Extend [true true]
+  /Function 11 0 R
+  /Domain [0.0 1.0]
+>>
+endobj
+{{object 11 0}} <<
+  /FunctionType 2
+  /Domain [0.0 1.0]
+  /C0 [0.8 0.1 0.2]
+  /C1 [0.2 0.025 0.05]
+  /N 1
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

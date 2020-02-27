@@ -1146,8 +1146,12 @@ class SkiaState {
     if (m_debugDisable)
       return false;
     Dump(__func__);
-    while (Clip::kSave != m_commands[--m_commandIndex]) {
-      ASSERT(m_commandIndex > 0);
+
+    for (int i = m_commandIndex - 1; i > 0; --i) {
+      if (m_commands[i] == Clip::kSave) {
+        m_commandIndex = i;
+        break;
+      }
     }
     return true;
   }
