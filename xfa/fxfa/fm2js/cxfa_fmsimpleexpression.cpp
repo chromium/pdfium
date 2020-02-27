@@ -70,10 +70,33 @@ const XFA_FMSOMMethod gs_FMSomMethods[] = {
 
 }  // namespace
 
-CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(XFA_FM_TOKEN op) : m_op(op) {}
+CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(XFA_FM_TOKEN op)
+    : m_op(op), m_bChainable(false) {}
+
+CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(XFA_FM_TOKEN op,
+                                                 bool chainable)
+    : m_op(op), m_bChainable(chainable) {}
 
 XFA_FM_TOKEN CXFA_FMSimpleExpression::GetOperatorToken() const {
   return m_op;
+}
+
+CXFA_FMChainableExpression::CXFA_FMChainableExpression(
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMSimpleExpression(op, /*chainable=*/true),
+      m_pExp1(std::move(pExp1)),
+      m_pExp2(std::move(pExp2)) {}
+
+CXFA_FMChainableExpression::~CXFA_FMChainableExpression() = default;
+
+CXFA_FMSimpleExpression* CXFA_FMChainableExpression::GetFirstExpression() {
+  return m_pExp1.get();
+}
+
+CXFA_FMSimpleExpression* CXFA_FMChainableExpression::GetSecondExpression() {
+  return m_pExp2.get();
 }
 
 CXFA_FMNullExpression::CXFA_FMNullExpression()
@@ -182,9 +205,7 @@ CXFA_FMAssignExpression::CXFA_FMAssignExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMSimpleExpression(op),
-      m_pExp1(std::move(pExp1)),
-      m_pExp2(std::move(pExp2)) {}
+    : CXFA_FMChainableExpression(op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMAssignExpression::~CXFA_FMAssignExpression() = default;
 
@@ -195,7 +216,8 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf* js,
     return false;
 
   CFX_WideTextBuf tempExp1;
-  if (!m_pExp1->ToJavaScript(&tempExp1, ReturnType::kInfered))
+  CXFA_FMSimpleExpression* exp1 = GetFirstExpression();
+  if (!exp1->ToJavaScript(&tempExp1, ReturnType::kInfered))
     return false;
 
   *js << "if (pfm_rt.is_obj(" << tempExp1 << "))\n{\n";
@@ -203,12 +225,13 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf* js,
     *js << "pfm_ret = ";
 
   CFX_WideTextBuf tempExp2;
-  if (!m_pExp2->ToJavaScript(&tempExp2, ReturnType::kInfered))
+  CXFA_FMSimpleExpression* exp2 = GetSecondExpression();
+  if (!exp2->ToJavaScript(&tempExp2, ReturnType::kInfered))
     return false;
 
   *js << "pfm_rt.asgn_val_op(" << tempExp1 << ", " << tempExp2 << ");\n}\n";
 
-  if (m_pExp1->GetOperatorToken() == TOKidentifier &&
+  if (exp1->GetOperatorToken() == TOKidentifier &&
       !tempExp1.AsStringView().EqualsASCII("this")) {
     *js << "else\n{\n";
     if (type == ReturnType::kImplied)
@@ -226,10 +249,8 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMSimpleExpression(op),
-      m_OpName(opName),
-      m_pExp1(std::move(pExp1)),
-      m_pExp2(std::move(pExp2)) {}
+    : CXFA_FMChainableExpression(op, std::move(pExp1), std::move(pExp2)),
+      m_OpName(opName) {}
 
 CXFA_FMBinExpression::~CXFA_FMBinExpression() = default;
 
@@ -239,10 +260,10 @@ bool CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
     return false;
 
   *js << "pfm_rt." << m_OpName << "(";
-  if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
+  if (!GetFirstExpression()->ToJavaScript(js, ReturnType::kInfered))
     return false;
   *js << ", ";
-  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
+  if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInfered))
     return false;
   *js << ")";
   return !CXFA_IsTooBig(js);
@@ -530,10 +551,10 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
     XFA_FM_TOKEN op,
     WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
-    : CXFA_FMSimpleExpression(op),
-      m_wsIdentifier(wsIdentifier),
-      m_pExp1(std::move(pAccessor)),
-      m_pExp2(std::move(pIndexExp)) {}
+    : CXFA_FMChainableExpression(op,
+                                 std::move(pAccessor),
+                                 std::move(pIndexExp)),
+      m_wsIdentifier(wsIdentifier) {}
 
 CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() = default;
 
@@ -546,8 +567,9 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf* js,
   *js << "pfm_rt.dot_acc(";
 
   CFX_WideTextBuf tempExp1;
-  if (m_pExp1) {
-    if (!m_pExp1->ToJavaScript(&tempExp1, ReturnType::kInfered))
+  CXFA_FMSimpleExpression* exp1 = GetFirstExpression();
+  if (exp1) {
+    if (!exp1->ToJavaScript(&tempExp1, ReturnType::kInfered))
       return false;
 
     *js << tempExp1;
@@ -556,7 +578,7 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf* js,
   }
   *js << ", \"";
 
-  if (m_pExp1 && m_pExp1->GetOperatorToken() == TOKidentifier)
+  if (exp1 && exp1->GetOperatorToken() == TOKidentifier)
     *js << tempExp1;
 
   *js << "\", ";
@@ -569,7 +591,8 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf* js,
   else
     *js << "\"" << m_wsIdentifier << "\", ";
 
-  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
+  CXFA_FMSimpleExpression* exp2 = GetSecondExpression();
+  if (!exp2->ToJavaScript(js, ReturnType::kInfered))
     return false;
 
   *js << ")";
@@ -627,10 +650,10 @@ CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
     XFA_FM_TOKEN op,
     WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
-    : CXFA_FMSimpleExpression(op),
-      m_wsIdentifier(wsIdentifier),
-      m_pExp1(std::move(pAccessor)),
-      m_pExp2(std::move(pIndexExp)) {}
+    : CXFA_FMChainableExpression(op,
+                                 std::move(pAccessor),
+                                 std::move(pIndexExp)),
+      m_wsIdentifier(wsIdentifier) {}
 
 CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() = default;
 
@@ -640,18 +663,20 @@ bool CXFA_FMDotDotAccessorExpression::ToJavaScript(CFX_WideTextBuf* js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
+  CXFA_FMSimpleExpression* exp1 = GetFirstExpression();
   *js << "pfm_rt.dotdot_acc(";
-  if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
+  if (!exp1->ToJavaScript(js, ReturnType::kInfered))
     return false;
   *js << ", "
       << "\"";
-  if (m_pExp1->GetOperatorToken() == TOKidentifier) {
-    if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
+  if (exp1->GetOperatorToken() == TOKidentifier) {
+    if (!exp1->ToJavaScript(js, ReturnType::kInfered))
       return false;
   }
 
+  CXFA_FMSimpleExpression* exp2 = GetSecondExpression();
   *js << "\", \"" << m_wsIdentifier << "\", ";
-  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
+  if (!exp2->ToJavaScript(js, ReturnType::kInfered))
     return false;
   *js << ")";
   return !CXFA_IsTooBig(js);
@@ -660,9 +685,9 @@ bool CXFA_FMDotDotAccessorExpression::ToJavaScript(CFX_WideTextBuf* js,
 CXFA_FMMethodCallExpression::CXFA_FMMethodCallExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessorExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pCallExp)
-    : CXFA_FMSimpleExpression(TOKdot),
-      m_pExp1(std::move(pAccessorExp1)),
-      m_pExp2(std::move(pCallExp)) {}
+    : CXFA_FMChainableExpression(TOKdot,
+                                 std::move(pAccessorExp1),
+                                 std::move(pCallExp)) {}
 
 CXFA_FMMethodCallExpression::~CXFA_FMMethodCallExpression() = default;
 
@@ -673,13 +698,13 @@ bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf* js,
     return false;
 
   CFX_WideTextBuf buf;
-  if (!m_pExp1->ToJavaScript(&buf, ReturnType::kInfered))
+  if (!GetFirstExpression()->ToJavaScript(&buf, ReturnType::kInfered))
     return false;
 
   *js << "(function() {\n";
   *js << "  return pfm_method_runner(" << buf << ", function(obj) {\n";
   *js << "    return obj.";
-  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
+  if (!GetSecondExpression()->ToJavaScript(js, ReturnType::kInfered))
     return false;
   *js << ";\n";
   *js << "  });\n";
