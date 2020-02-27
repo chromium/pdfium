@@ -99,7 +99,6 @@ class CPDF_InteractiveForm {
                  NotificationOption notify);
 
   void SetNotifierIface(NotifierIface* pNotify);
-  bool HasXFAForm() const;
   void FixPageFields(CPDF_Page* pPage);
 
   NotifierIface* GetFormNotify() const { return m_pFormNotify.Get(); }

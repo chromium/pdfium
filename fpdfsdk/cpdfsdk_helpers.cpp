@@ -37,6 +37,16 @@ bool RaiseUnsupportedError(int nError) {
   return true;
 }
 
+// Use the existence of the XFA array as a signal for XFA forms.
+bool DocHasXFA(const CPDF_Document* doc) {
+  const CPDF_Dictionary* root = doc->GetRoot();
+  if (!root)
+    return false;
+
+  const CPDF_Dictionary* form = root->GetDictFor("AcroForm");
+  return form && form->GetArrayFor("XFA");
+}
+
 unsigned long GetStreamMaybeCopyAndReturnLengthImpl(const CPDF_Stream* stream,
                                                     void* buffer,
                                                     unsigned long buflen,
@@ -360,9 +370,8 @@ void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
   }
 }
 
-void ReportUnsupportedXFA(CPDF_Document* pDoc) {
-  // XFA Forms
-  if (!pDoc->GetExtension() && CPDF_InteractiveForm(pDoc).HasXFAForm())
+void ReportUnsupportedXFA(const CPDF_Document* pDoc) {
+  if (!pDoc->GetExtension() && DocHasXFA(pDoc))
     RaiseUnsupportedError(FPDF_UNSP_DOC_XFAFORM);
 }
 

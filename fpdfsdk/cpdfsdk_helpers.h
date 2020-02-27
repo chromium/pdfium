@@ -263,7 +263,7 @@ FPDF_BOOL IsPDFSandboxPolicyEnabled(FPDF_DWORD policy);
 
 void SetPDFUnsupportInfo(UNSUPPORT_INFO* unsp_info);
 void ReportUnsupportedFeatures(CPDF_Document* pDoc);
-void ReportUnsupportedXFA(CPDF_Document* pDoc);
+void ReportUnsupportedXFA(const CPDF_Document* pDoc);
 void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
 
