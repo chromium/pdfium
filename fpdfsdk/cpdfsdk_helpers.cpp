@@ -336,16 +336,14 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
     return;
 
   // Portfolios and Packages
-  if (pRootDict->KeyExist("Collection")) {
+  if (pRootDict->KeyExist("Collection"))
     RaiseUnsupportedError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
-    return;
-  }
+
   const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
   if (pNameDict) {
-    if (pNameDict->KeyExist("EmbeddedFiles")) {
+    if (pNameDict->KeyExist("EmbeddedFiles"))
       RaiseUnsupportedError(FPDF_UNSP_DOC_ATTACHMENT);
-      return;
-    }
+
     const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
     if (pJSDict) {
       const CPDF_Array* pArray = pJSDict->GetArrayFor("Names");
@@ -354,7 +352,7 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
           ByteString cbStr = pArray->GetStringAt(i);
           if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
             RaiseUnsupportedError(FPDF_UNSP_DOC_SHAREDREVIEW);
-            return;
+            break;
           }
         }
       }
