@@ -37,6 +37,10 @@ vars = {
   # and whatever else without interference from each other.
   'clang_revision': 'eeaa53b76fa7c2e84f655a63a8e66c6db9d72fff',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling clang_dsymutil
+  # and whatever else without interference from each other.
+  'clang_dsymutil_revision': 'M56jPzDv1620Rnm__jTMYS62Zi8rxHVq7yw0qeBFEgkC',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
   'code_coverage_revision': 'a8f20a1dacc200010cd99f4eabdb0da7d94be112',
@@ -176,6 +180,17 @@ deps = {
 
   "tools/clang":
     Var('chromium_git') + "/chromium/src/tools/clang@" +  Var('clang_revision'),
+
+  'tools/clang/dsymutil': {
+    'packages': [
+      {
+        'package': 'chromium/llvm-build-tools/dsymutil',
+        'version': Var('clang_dsymutil_revision'),
+      }
+    ],
+    'condition': 'checkout_mac or checkout_ios',
+    'dep_type': 'cipd',
+  },
 
   "tools/code_coverage":
     Var('chromium_git') + "/chromium/src/tools/code_coverage.git@" +
