@@ -1095,27 +1095,28 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1488): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderManyRectanglesWithExternalMemory \
-  DISABLED_RenderManyRectanglesWithExternalMemory
-#else
-#define MAYBE_RenderManyRectanglesWithExternalMemory \
-  RenderManyRectanglesWithExternalMemory
-#endif
-TEST_F(FPDFViewEmbedderTest, MAYBE_RenderManyRectanglesWithExternalMemory) {
-  static const char kNormalMD5[] = "b0170c575b65ecb93ebafada0ff0f038";
-  static const char kGrayMD5[] = "b561c11edc44dc3972125a9b8744fa2f";
-  static const char kBgrMD5[] = "ab6312e04c0d3f4e46fb302a45173d05";
-
+TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithExternalMemory) {
   ASSERT_TRUE(OpenDocument("many_rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_Gray, kGrayMD5);
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static const char kGrayMD5[] = "3dfe1fc3889123d68e1748fefac65e72";
+  static const char kNormalMD5[] = "4e7e280c1597222afcb0ee3bb90ec119";
+
+  // TODO(crbug.com/pdfium/1489): Add a test for FPDFBitmap_BGR in
+  // Skia/SkiaPaths modes once Skia provides support for BGR24 format.
+#else
+  static const char kGrayMD5[] = "b561c11edc44dc3972125a9b8744fa2f";
+  static const char kBgrMD5[] = "ab6312e04c0d3f4e46fb302a45173d05";
+  static const char kNormalMD5[] = "b0170c575b65ecb93ebafada0ff0f038";
+
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGR, kBgrMD5);
+#endif
+  TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_Gray, kGrayMD5);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGRx, kNormalMD5);
   TestRenderPageBitmapWithExternalMemory(page, FPDFBitmap_BGRA, kNormalMD5);
+
   UnloadPage(page);
 }
 
