@@ -15,6 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
@@ -256,6 +257,24 @@ void UpdatePitchFamily(uint32_t flags, int* PitchFamily) {
     *PitchFamily |= FXFONT_FF_FIXEDPITCH;
 }
 
+bool IsStrUpper(const ByteString& str) {
+  for (size_t i = 0; i < str.GetLength(); ++i) {
+    if (!FXSYS_iswupper(str[i]))
+      return false;
+  }
+  return true;
+}
+
+void RemoveSubsettedFontPrefix(ByteString* subst_name) {
+  constexpr size_t kPrefixLength = 6;
+  if (subst_name->GetLength() > kPrefixLength &&
+      (*subst_name)[kPrefixLength] == '+' &&
+      IsStrUpper(subst_name->First(kPrefixLength))) {
+    *subst_name =
+        subst_name->Last(subst_name->GetLength() - (kPrefixLength + 1));
+  }
+}
+
 }  // namespace
 
 CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr) : m_pFontMgr(mgr) {}
@@ -400,6 +419,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   SubstName.Remove(' ');
   if (bTrueType && name.GetLength() > 0 && name[0] == '@')
     SubstName = name.Last(name.GetLength() - 1);
+  RemoveSubsettedFontPrefix(&SubstName);
   GetStandardFontName(&SubstName);
   if (SubstName == "Symbol" && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
@@ -417,7 +437,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   bool bHasComma = false;
   bool bHasHyphen = false;
   {
-    Optional<size_t> pos = SubstName.Find(",", 0);
+    Optional<size_t> pos = SubstName.Find(",");
     if (pos.has_value()) {
       family = SubstName.First(pos.value());
       GetStandardFontName(&family);
