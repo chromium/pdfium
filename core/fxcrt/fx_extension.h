@@ -48,6 +48,10 @@ inline int32_t FXSYS_towupper(wchar_t c) {
   return u_toupper(c);
 }
 
+inline bool FXSYS_IsUpperASCII(int32_t c) {
+  return c >= 'A' && c <= 'Z';
+}
+
 inline char FXSYS_ToUpperASCII(char c) {
   return (c >= 'a' && c <= 'z') ? (c + ('A' - 'a')) : c;
 }

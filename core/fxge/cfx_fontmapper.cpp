@@ -259,7 +259,7 @@ void UpdatePitchFamily(uint32_t flags, int* PitchFamily) {
 
 bool IsStrUpper(const ByteString& str) {
   for (size_t i = 0; i < str.GetLength(); ++i) {
-    if (!FXSYS_iswupper(str[i]))
+    if (!FXSYS_IsUpperASCII(str[i]))
       return false;
   }
   return true;

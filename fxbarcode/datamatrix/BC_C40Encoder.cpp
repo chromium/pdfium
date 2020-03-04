@@ -149,7 +149,7 @@ int32_t CBC_C40Encoder::EncodeChar(wchar_t c, WideString* sb) {
     *sb += (wchar_t)(c - 48 + 4);
     return 1;
   }
-  if ((c >= 'A') && (c <= 'Z')) {
+  if (FXSYS_IsUpperASCII(c)) {
     *sb += (wchar_t)(c - 65 + 14);
     return 1;
   }

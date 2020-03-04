@@ -94,7 +94,7 @@ int32_t CBC_X12Encoder::EncodeChar(wchar_t c, WideString* sb) {
     *sb += (wchar_t)'\3';
   else if (FXSYS_IsDecimalDigit(c))
     *sb += (wchar_t)(c - 48 + 4);
-  else if (c >= 'A' && c <= 'Z')
+  else if (FXSYS_IsUpperASCII(c))
     *sb += (wchar_t)(c - 65 + 14);
   else
     return 0;

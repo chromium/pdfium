@@ -91,7 +91,7 @@ int32_t GetMinimumCount(const std::array<uint8_t, kEncoderCount>& mins) {
 }
 
 bool IsNativeC40(wchar_t ch) {
-  return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z');
+  return (ch == ' ') || (ch >= '0' && ch <= '9') || FXSYS_IsUpperASCII(ch);
 }
 
 bool IsNativeText(wchar_t ch) {
@@ -104,7 +104,7 @@ bool IsX12TermSep(wchar_t ch) {
 
 bool IsNativeX12(wchar_t ch) {
   return IsX12TermSep(ch) || (ch == ' ') || (ch >= '0' && ch <= '9') ||
-         (ch >= 'A' && ch <= 'Z');
+         FXSYS_IsUpperASCII(ch);
 }
 
 bool IsNativeEDIFACT(wchar_t ch) {
