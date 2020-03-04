@@ -2553,3 +2553,20 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   CheckCanUndo(true);
   CheckCanRedo(false);
 }
+
+class FPDFXFAFormEmbedderTest : public FPDFFormFillInteractiveEmbedderTest {
+ protected:
+  FPDFXFAFormEmbedderTest() = default;
+  ~FPDFXFAFormEmbedderTest() override = default;
+
+  const char* GetDocumentName() const override { return "bug_1055869.pdf"; }
+
+  int GetFormType() const override { return FORMTYPE_XFA_FULL; }
+};
+
+TEST_F(FPDFXFAFormEmbedderTest, Paste) {
+  CFX_PointF where(100, 100);
+  ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"XYZ");
+  DoubleClickOnFormFieldAtPoint(where);
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
+}

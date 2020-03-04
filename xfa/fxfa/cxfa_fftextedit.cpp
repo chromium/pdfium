@@ -399,14 +399,6 @@ bool CXFA_FFTextEdit::CanRedo() {
   return ToEdit(GetNormalWidget())->CanRedo();
 }
 
-bool CXFA_FFTextEdit::Undo() {
-  return ToEdit(GetNormalWidget())->Undo();
-}
-
-bool CXFA_FFTextEdit::Redo() {
-  return ToEdit(GetNormalWidget())->Redo();
-}
-
 bool CXFA_FFTextEdit::CanCopy() {
   return ToEdit(GetNormalWidget())->HasSelection();
 }
@@ -426,27 +418,59 @@ bool CXFA_FFTextEdit::CanSelectAll() {
   return ToEdit(GetNormalWidget())->GetTextLength() > 0;
 }
 
+bool CXFA_FFTextEdit::Undo() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
+  return ToEdit(GetNormalWidget())->Undo();
+}
+
+bool CXFA_FFTextEdit::Redo() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
+  return ToEdit(GetNormalWidget())->Redo();
+}
+
 Optional<WideString> CXFA_FFTextEdit::Copy() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   return ToEdit(GetNormalWidget())->Copy();
 }
 
 Optional<WideString> CXFA_FFTextEdit::Cut() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   return ToEdit(GetNormalWidget())->Cut();
 }
 
 bool CXFA_FFTextEdit::Paste(const WideString& wsPaste) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   return ToEdit(GetNormalWidget())->Paste(wsPaste);
 }
 
 void CXFA_FFTextEdit::SelectAll() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   ToEdit(GetNormalWidget())->SelectAll();
 }
 
 void CXFA_FFTextEdit::Delete() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   ToEdit(GetNormalWidget())->ClearText();
 }
 
 void CXFA_FFTextEdit::DeSelect() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   ToEdit(GetNormalWidget())->ClearSelection();
 }
 

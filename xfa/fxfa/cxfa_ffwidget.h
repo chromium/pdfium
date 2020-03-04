@@ -125,14 +125,14 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   virtual FWL_WidgetHit HitTest(const CFX_PointF& point);
   virtual bool CanUndo();
   virtual bool CanRedo();
-  virtual bool Undo();
-  virtual bool Redo();
   virtual bool CanCopy();
   virtual bool CanCut();
   virtual bool CanPaste();
   virtual bool CanSelectAll();
   virtual bool CanDelete();
   virtual bool CanDeSelect();
+  virtual bool Undo();
+  virtual bool Redo();
   virtual Optional<WideString> Copy();
   virtual Optional<WideString> Cut();
   virtual bool Paste(const WideString& wsPaste);

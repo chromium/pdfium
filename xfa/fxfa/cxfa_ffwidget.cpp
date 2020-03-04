@@ -488,14 +488,6 @@ bool CXFA_FFWidget::CanRedo() {
   return false;
 }
 
-bool CXFA_FFWidget::Undo() {
-  return false;
-}
-
-bool CXFA_FFWidget::Redo() {
-  return false;
-}
-
 bool CXFA_FFWidget::CanCopy() {
   return false;
 }
@@ -518,6 +510,14 @@ bool CXFA_FFWidget::CanDelete() {
 
 bool CXFA_FFWidget::CanDeSelect() {
   return CanCopy();
+}
+
+bool CXFA_FFWidget::Undo() {
+  return false;
+}
+
+bool CXFA_FFWidget::Redo() {
+  return false;
 }
 
 Optional<WideString> CXFA_FFWidget::Copy() {
