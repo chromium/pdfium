@@ -2554,19 +2554,34 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   CheckCanRedo(false);
 }
 
-class FPDFXFAFormEmbedderTest : public FPDFFormFillInteractiveEmbedderTest {
+class FPDFXFAFormBug1055869EmbedderTest
+    : public FPDFFormFillInteractiveEmbedderTest {
  protected:
-  FPDFXFAFormEmbedderTest() = default;
-  ~FPDFXFAFormEmbedderTest() override = default;
+  FPDFXFAFormBug1055869EmbedderTest() = default;
+  ~FPDFXFAFormBug1055869EmbedderTest() override = default;
 
   const char* GetDocumentName() const override { return "bug_1055869.pdf"; }
-
   int GetFormType() const override { return FORMTYPE_XFA_FULL; }
 };
 
-TEST_F(FPDFXFAFormEmbedderTest, Paste) {
-  CFX_PointF where(100, 100);
+TEST_F(FPDFXFAFormBug1055869EmbedderTest, Paste) {
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"XYZ");
-  DoubleClickOnFormFieldAtPoint(where);
+  DoubleClickOnFormFieldAtPoint(CFX_PointF(100, 100));
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
+}
+
+class FPDFXFAFormBug1058653EmbedderTest
+    : public FPDFFormFillInteractiveEmbedderTest {
+ protected:
+  FPDFXFAFormBug1058653EmbedderTest() = default;
+  ~FPDFXFAFormBug1058653EmbedderTest() override = default;
+
+  const char* GetDocumentName() const override { return "bug_1058653.pdf"; }
+  int GetFormType() const override { return FORMTYPE_XFA_FULL; }
+};
+
+TEST_F(FPDFXFAFormBug1058653EmbedderTest, Paste) {
+  ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"");
+  DoubleClickOnFormFieldAtPoint(CFX_PointF(22, 22));
   FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
 }

@@ -236,14 +236,6 @@ bool CXFA_FFDateTimeEdit::CanRedo() {
   return GetPickerWidget()->CanRedo();
 }
 
-bool CXFA_FFDateTimeEdit::Undo() {
-  return GetPickerWidget()->Undo();
-}
-
-bool CXFA_FFDateTimeEdit::Redo() {
-  return GetPickerWidget()->Redo();
-}
-
 bool CXFA_FFDateTimeEdit::CanCopy() {
   return GetPickerWidget()->HasSelection();
 }
@@ -266,23 +258,52 @@ Optional<WideString> CXFA_FFDateTimeEdit::Copy() {
   return GetPickerWidget()->Copy();
 }
 
+bool CXFA_FFDateTimeEdit::Undo() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
+  return GetPickerWidget()->Undo();
+}
+
+bool CXFA_FFDateTimeEdit::Redo() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
+  return GetPickerWidget()->Redo();
+}
+
 Optional<WideString> CXFA_FFDateTimeEdit::Cut() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   return GetPickerWidget()->Cut();
 }
 
 bool CXFA_FFDateTimeEdit::Paste(const WideString& wsPaste) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   return GetPickerWidget()->Paste(wsPaste);
 }
 
 void CXFA_FFDateTimeEdit::SelectAll() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   GetPickerWidget()->SelectAll();
 }
 
 void CXFA_FFDateTimeEdit::Delete() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   GetPickerWidget()->ClearText();
 }
 
 void CXFA_FFDateTimeEdit::DeSelect() {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
+
   GetPickerWidget()->ClearSelection();
 }
 

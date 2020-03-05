@@ -39,12 +39,12 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
   // CXFA_FFWidget
   bool CanUndo() override;
   bool CanRedo() override;
-  bool Undo() override;
-  bool Redo() override;
   bool CanCopy() override;
   bool CanCut() override;
   bool CanPaste() override;
   bool CanSelectAll() override;
+  bool Undo() override;
+  bool Redo() override;
   Optional<WideString> Copy() override;
   Optional<WideString> Cut() override;
   bool Paste(const WideString& wsPaste) override;
