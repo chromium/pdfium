@@ -56,7 +56,7 @@ bool IsAlphaUpperOrSpace(wchar_t ch) {
 }
 
 bool IsAlphaLowerOrSpace(wchar_t ch) {
-  return ch == ' ' || (ch >= 'a' && ch <= 'z');
+  return ch == ' ' || FXSYS_IsLowerASCII(ch);
 }
 
 bool IsMixed(wchar_t ch) {

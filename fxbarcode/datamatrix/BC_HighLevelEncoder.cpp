@@ -95,7 +95,7 @@ bool IsNativeC40(wchar_t ch) {
 }
 
 bool IsNativeText(wchar_t ch) {
-  return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z');
+  return (ch == ' ') || (ch >= '0' && ch <= '9') || FXSYS_IsLowerASCII(ch);
 }
 
 bool IsX12TermSep(wchar_t ch) {
