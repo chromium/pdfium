@@ -50,6 +50,7 @@ pdfium_embeddertest_source_set("embeddertests") {
   sources = [
     "cpwl_combo_box_embeddertest.cpp",
     "cpwl_edit_embeddertest.cpp",
+    "cpwl_special_button_embeddertest.cpp",
   ]
   deps = [
     ":pwl",
