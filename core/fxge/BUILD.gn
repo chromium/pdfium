@@ -23,6 +23,8 @@ source_set("fxge") {
     "cfx_color.cpp",
     "cfx_color.h",
     "cfx_defaultrenderdevice.h",
+    "cfx_drawutils.cpp",
+    "cfx_drawutils.h",
     "cfx_face.cpp",
     "cfx_face.h",
     "cfx_folderfontinfo.cpp",
