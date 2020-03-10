@@ -3103,9 +3103,7 @@ void CFXJSE_FormCalcContext::Oneof(CFXJSE_Value* pThis,
 
   bool bFlags = false;
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
-  std::vector<std::unique_ptr<CFXJSE_Value>> parameterValues =
-      unfoldArgs(pThis, args);
-  for (const auto& value : parameterValues) {
+  for (const auto& value : unfoldArgs(pThis, args)) {
     if (simpleValueCompare(pThis, argOne.get(), value.get())) {
       bFlags = true;
       break;
@@ -5309,59 +5307,36 @@ std::vector<std::unique_ptr<CFXJSE_Value>> CFXJSE_FormCalcContext::unfoldArgs(
     CFXJSE_Value* pThis,
     CFXJSE_Arguments& args) {
   std::vector<std::unique_ptr<CFXJSE_Value>> results;
-
-  int32_t iCount = 0;
   v8::Isolate* pIsolate = ToFormCalcContext(pThis)->GetScriptRuntime();
-  int32_t argc = args.GetLength();
-  std::vector<std::unique_ptr<CFXJSE_Value>> argsValue;
-  static constexpr int kStart = 1;
-  for (int32_t i = 0; i < argc - kStart; i++) {
-    argsValue.push_back(args.GetValue(i + kStart));
-    if (argsValue[i]->IsArray()) {
+  for (int32_t i = 1; i < args.GetLength(); ++i) {
+    std::unique_ptr<CFXJSE_Value> arg = args.GetValue(i);
+    if (arg->IsArray()) {
       auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-      argsValue[i]->GetObjectProperty("length", lengthValue.get());
-      int32_t iLength = lengthValue->ToInteger();
-      iCount += ((iLength > 2) ? (iLength - 2) : 0);
-    } else {
-      ++iCount;
-    }
-  }
-
-  for (int32_t i = 0; i < iCount; i++)
-    results.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-
-  int32_t index = 0;
-  for (int32_t i = 0; i < argc - kStart; i++) {
-    if (argsValue[i]->IsArray()) {
-      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-      argsValue[i]->GetObjectProperty("length", lengthValue.get());
+      arg->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength < 3)
         continue;
 
       auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
-      argsValue[i]->GetObjectPropertyByIdx(1, propertyValue.get());
-      if (propertyValue->IsNull()) {
-        for (int32_t j = 2; j < iLength; j++) {
-          argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          GetObjectDefaultValue(jsObjectValue.get(), results[index].get());
-          index++;
-        }
-      } else {
-        for (int32_t j = 2; j < iLength; j++) {
-          argsValue[i]->GetObjectPropertyByIdx(j, jsObjectValue.get());
+      arg->GetObjectPropertyByIdx(1, propertyValue.get());
+
+      for (int32_t j = 2; j < iLength; j++) {
+        auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+        arg->GetObjectPropertyByIdx(j, jsObjectValue.get());
+        results.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+        if (propertyValue->IsNull()) {
+          GetObjectDefaultValue(jsObjectValue.get(), results.back().get());
+        } else {
           jsObjectValue->GetObjectProperty(
-              propertyValue->ToString().AsStringView(), results[index].get());
-          index++;
+              propertyValue->ToString().AsStringView(), results.back().get());
         }
       }
-    } else if (argsValue[i]->IsObject()) {
-      GetObjectDefaultValue(argsValue[i].get(), results[index].get());
-      index++;
+    } else if (arg->IsObject()) {
+      results.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+      GetObjectDefaultValue(arg.get(), results.back().get());
     } else {
-      results[index]->Assign(argsValue[i].get());
-      index++;
+      results.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+      results.back()->Assign(arg.get());
     }
   }
   return results;

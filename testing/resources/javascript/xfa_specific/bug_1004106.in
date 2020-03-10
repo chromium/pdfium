@@ -1,0 +1,65 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template>
+  <subform layout="tb" name="subform1">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+        <medium long="297mm" short="210mm" stock="a4"/>
+      </pageArea>
+    </pageSet>
+    <subform layout="tb" name="subform2">
+      <variables name="vara">
+      </variables>
+      <occur initial="1" max="10" min="0" name="occur1">
+      </occur>
+      <field h="10mm" name="field1" w="40mm" x="10mm" y="10mm">
+        <event activity="ready" ref="$form">
+          <script contentType="application/x-javascript">
+            var ref = [];
+
+            app.test = function () {
+              var arr = []
+              var v1 = 1;
+              st = {};
+              var v2 = [0, st, 2, 3];
+              var v3 = [0, "poc", {}];
+              st.toString = function(){
+                for (var i = 0; i != 8; i++) v3.push({});
+                return "poc";
+              }
+
+              // Trigger
+              pfm_rt.Oneof(1, v1, v2, v3);
+            }
+          </script>
+        </event>
+      </field>
+      <field h="10mm" name="field2" w="40mm" x="10mm" y="10mm">
+        <event activity="ready" ref="$form">
+          <script contentType="application/x-formcalc">
+            app.test();
+          </script>
+        </event>
+      </field>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
