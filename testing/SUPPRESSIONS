@@ -343,9 +343,6 @@ bug_451366.in * * *
 # TODO(pdfium:1466): Remove after associated bug is fixed
 bug_1449.in linux * *
 
-# TODO(pdfium:1469): Remove after associated bug is fixed
-bug_1469.in * * *
-
 # xfa_specific
 
 # TODO(pdfium:1107): Remove after associated bug is fixed

@@ -18,6 +18,8 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -150,6 +152,10 @@ JpxDecodeAction GetJpxDecodeAction(const CJPX_Decoder::JpxImageInfo& jpx_info,
 CPDF_DIB::CPDF_DIB() = default;
 
 CPDF_DIB::~CPDF_DIB() = default;
+
+CPDF_DIB::JpxSMaskInlineData::JpxSMaskInlineData() = default;
+
+CPDF_DIB::JpxSMaskInlineData::~JpxSMaskInlineData() = default;
 
 bool CPDF_DIB::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!pStream)
@@ -703,15 +709,42 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
     if (!rgb_bitmap->Create(image_info.width, image_info.height, FXDIB_Rgb))
       return nullptr;
 
-    // TODO(thestig): Is there existing code that does this already?
-    // TODO(crbug.com/pdfium/1469): Handle alpha channel.
-    for (uint32_t row = 0; row < image_info.height; ++row) {
-      const uint8_t* src = result_bitmap->GetScanline(row);
-      uint8_t* dest = rgb_bitmap->GetWritableScanline(row);
-      for (uint32_t col = 0; col < image_info.width; ++col) {
-        memcpy(dest, src, 3);
-        src += 4;
-        dest += 3;
+    if (m_pDict->GetIntegerFor("SMaskInData") == 1) {
+      // TODO(thestig): Acrobat does not support "/SMaskInData 1" combined with
+      // filters. Check for that and fail early.
+      DCHECK(m_JpxInlineData.data.empty());
+      m_JpxInlineData.width = image_info.width;
+      m_JpxInlineData.height = image_info.height;
+      m_JpxInlineData.data.reserve(image_info.width * image_info.height);
+      for (uint32_t row = 0; row < image_info.height; ++row) {
+        const uint8_t* src = result_bitmap->GetScanline(row);
+        uint8_t* dest = rgb_bitmap->GetWritableScanline(row);
+        for (uint32_t col = 0; col < image_info.width; ++col) {
+          uint8_t a = src[3];
+          m_JpxInlineData.data.push_back(a);
+          uint8_t na = 255 - a;
+          uint8_t b = (src[0] * a + 255 * na) / 255;
+          uint8_t g = (src[1] * a + 255 * na) / 255;
+          uint8_t r = (src[2] * a + 255 * na) / 255;
+          dest[0] = b;
+          dest[1] = g;
+          dest[2] = r;
+          src += 4;
+          dest += 3;
+        }
+      }
+    } else {
+      // TODO(thestig): Is there existing code that does this already?
+      for (uint32_t row = 0; row < image_info.height; ++row) {
+        const uint8_t* src = result_bitmap->GetScanline(row);
+        uint8_t* dest = rgb_bitmap->GetWritableScanline(row);
+        for (uint32_t col = 0; col < image_info.width; ++col) {
+          dest[0] = src[0];
+          dest[1] = src[1];
+          dest[2] = src[2];
+          src += 4;
+          dest += 3;
+        }
       }
     }
     result_bitmap = std::move(rgb_bitmap);
@@ -732,6 +765,21 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
+
+  if (!m_JpxInlineData.data.empty()) {
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    dict->SetNewFor<CPDF_Name>("Type", "XObject");
+    dict->SetNewFor<CPDF_Name>("Subtype", "Image");
+    dict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
+    dict->SetNewFor<CPDF_Number>("Width", m_JpxInlineData.width);
+    dict->SetNewFor<CPDF_Number>("Height", m_JpxInlineData.height);
+    dict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
+
+    auto mask_in_data = pdfium::MakeRetain<CPDF_Stream>();
+    mask_in_data->InitStream(m_JpxInlineData.data, dict);
+    return StartLoadMaskDIB(std::move(mask_in_data));
+  }
+
   RetainPtr<const CPDF_Stream> mask(m_pDict->GetStreamFor("SMask"));
   if (!mask) {
     mask.Reset(ToStream(m_pDict->GetDirectObjectFor("Mask")));
