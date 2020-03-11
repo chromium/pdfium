@@ -322,25 +322,23 @@ RetainPtr<CPDF_Font> AddNativeFont(CPDF_Dictionary*& pFormDict,
 class CFieldNameExtractor {
  public:
   explicit CFieldNameExtractor(const WideString& full_name)
-      : m_FullName(full_name) {
-    m_pCur = m_FullName.c_str();
-    m_pEnd = m_pCur + m_FullName.GetLength();
-  }
+      : m_FullName(full_name) {}
 
-  void GetNext(const wchar_t*& pSubName, size_t& size) {
-    pSubName = m_pCur;
-    while (m_pCur < m_pEnd && m_pCur[0] != L'.')
-      m_pCur++;
+  WideStringView GetNext() {
+    size_t start_pos = m_iCur;
+    while (m_iCur < m_FullName.GetLength() && m_FullName[m_iCur] != L'.')
+      ++m_iCur;
 
-    size = static_cast<size_t>(m_pCur - pSubName);
-    if (m_pCur < m_pEnd && m_pCur[0] == L'.')
-      m_pCur++;
+    size_t length = m_iCur - start_pos;
+    if (m_iCur < m_FullName.GetLength() && m_FullName[m_iCur] == L'.')
+      ++m_iCur;
+
+    return m_FullName.AsStringView().Substr(start_pos, length);
   }
 
  protected:
-  WideString m_FullName;
-  const wchar_t* m_pCur;
-  const wchar_t* m_pEnd;
+  const WideString m_FullName;
+  size_t m_iCur = 0;
 };
 
 #if defined(OS_WIN)
@@ -467,8 +465,7 @@ class CFieldTree {
 
   Node* FindNode(const WideString& full_name);
   Node* AddChild(Node* pParent, const WideString& short_name);
-
-  Node* Lookup(Node* pParent, const WideString& short_name);
+  Node* Lookup(Node* pParent, WideStringView short_name);
 
   Node m_Root;
 };
@@ -492,8 +489,7 @@ CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
   return pChild;
 }
 
-CFieldTree::Node* CFieldTree::Lookup(Node* pParent,
-                                     const WideString& short_name) {
+CFieldTree::Node* CFieldTree::Lookup(Node* pParent, WideStringView short_name) {
   if (!pParent)
     return nullptr;
 
@@ -510,22 +506,20 @@ bool CFieldTree::SetField(const WideString& full_name,
   if (full_name.IsEmpty())
     return false;
 
-  CFieldNameExtractor name_extractor(full_name);
-  const wchar_t* pName;
-  size_t nLength;
-  name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
   Node* pLast = nullptr;
-  while (nLength > 0) {
+  CFieldNameExtractor name_extractor(full_name);
+  while (1) {
+    WideStringView name_view = name_extractor.GetNext();
+    if (name_view.IsEmpty())
+      break;
     pLast = pNode;
-    WideString name = WideString(pName, nLength);
-    pNode = Lookup(pLast, name);
-    if (!pNode)
-      pNode = AddChild(pLast, name);
+    pNode = Lookup(pLast, name_view);
+    if (pNode)
+      continue;
+    pNode = AddChild(pLast, WideString(name_view));
     if (!pNode)
       return false;
-
-    name_extractor.GetNext(pName, nLength);
   }
   if (pNode == &m_Root)
     return false;
@@ -538,17 +532,15 @@ CPDF_FormField* CFieldTree::GetField(const WideString& full_name) {
   if (full_name.IsEmpty())
     return nullptr;
 
-  CFieldNameExtractor name_extractor(full_name);
-  const wchar_t* pName;
-  size_t nLength;
-  name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
   Node* pLast = nullptr;
-  while (nLength > 0 && pNode) {
+  CFieldNameExtractor name_extractor(full_name);
+  while (pNode) {
+    WideStringView name_view = name_extractor.GetNext();
+    if (name_view.IsEmpty())
+      break;
     pLast = pNode;
-    WideString name = WideString(pName, nLength);
-    pNode = Lookup(pLast, name);
-    name_extractor.GetNext(pName, nLength);
+    pNode = Lookup(pLast, name_view);
   }
   return pNode ? pNode->GetField() : nullptr;
 }
@@ -557,17 +549,15 @@ CFieldTree::Node* CFieldTree::FindNode(const WideString& full_name) {
   if (full_name.IsEmpty())
     return nullptr;
 
-  CFieldNameExtractor name_extractor(full_name);
-  const wchar_t* pName;
-  size_t nLength;
-  name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
   Node* pLast = nullptr;
-  while (nLength > 0 && pNode) {
+  CFieldNameExtractor name_extractor(full_name);
+  while (pNode) {
+    WideStringView name_view = name_extractor.GetNext();
+    if (name_view.IsEmpty())
+      break;
     pLast = pNode;
-    WideString name = WideString(pName, nLength);
-    pNode = Lookup(pLast, name);
-    name_extractor.GetNext(pName, nLength);
+    pNode = Lookup(pLast, name_view);
   }
   return pNode;
 }
