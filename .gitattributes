@@ -3,6 +3,7 @@
 *.c text eol=lf
 *.cc text eol=lf
 *.cpp text eol=lf
+*.evt text eol=lf
 *.gn text eol=lf
 *.gni text eol=lf
 *.h text eol=lf
