@@ -97,7 +97,7 @@ class CXFA_Document final : public CXFA_NodeOwner {
   void set_is_scripting() { m_bScripting = true; }
 
   bool IsInteractive();
-  XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
+  XFA_VERSION GetCurVersionMode() const { return m_eCurVersionMode; }
   XFA_VERSION RecognizeXFAVersionNumber(const WideString& wsTemplateNS);
   FormType GetFormType() const;
 

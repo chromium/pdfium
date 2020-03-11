@@ -105,6 +105,14 @@ bool IsLayoutElement(XFA_Element eElement, bool bLayoutContainer) {
   }
 }
 
+CXFA_Document* GetDocForPageView(const CXFA_FFPageView* view) {
+  return view->GetDocView()->GetDoc()->GetXFADoc();
+}
+
+bool IsDocVersionBelow205(const CXFA_Document* doc) {
+  return doc->GetCurVersionMode() < XFA_VERSION_205;
+}
+
 }  // namespace
 
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
@@ -148,11 +156,8 @@ CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
                                                      uint32_t dwFilter)
     : m_pPageView(pPageView),
       m_dwFilter(dwFilter),
-      m_sIterator(pPageView->GetLayoutItem()) {
-  m_bIgnoreRelevant =
-      m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
-      XFA_VERSION_205;
-}
+      m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))),
+      m_sIterator(pPageView->GetLayoutItem()) {}
 
 CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() {}
 
@@ -235,10 +240,9 @@ void CXFA_TabParam::ClearChildren() {
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
     uint32_t dwFilter)
-    : m_pPageView(pPageView), m_dwFilter(dwFilter), m_iCurWidget(-1) {
-  m_bIgnoreRelevant =
-      m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
-      XFA_VERSION_205;
+    : m_pPageView(pPageView),
+      m_dwFilter(dwFilter),
+      m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {
   Reset();
 }
 
