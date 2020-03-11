@@ -5719,11 +5719,11 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(CFXJSE_Value* pThis,
       return;
     }
 
-    int32_t iCounter = 0;
     auto hJSObjValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
         iLength - 2);
     bool bAttribute = false;
+    bool bAllEmpty = true;
     for (int32_t i = 2; i < iLength; i++) {
       argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
       XFA_RESOLVENODE_RS resolveNodeRS;
@@ -5731,10 +5731,10 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(CFXJSE_Value* pThis,
                          &resolveNodeRS, bDotAccessor, bHasNoResolveName)) {
         ParseResolveResult(pThis, resolveNodeRS, hJSObjValue.get(),
                            &resolveValues[i - 2], &bAttribute);
-        iCounter += resolveValues[i - 2].size();
+        bAllEmpty = bAllEmpty && resolveValues[i - 2].empty();
       }
     }
-    if (iCounter < 1) {
+    if (bAllEmpty) {
       pContext->ThrowPropertyNotInObjectException(
           WideString::FromUTF8(bsName.AsStringView()),
           WideString::FromUTF8(bsSomExp.AsStringView()));
@@ -5742,20 +5742,18 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(CFXJSE_Value* pThis,
     }
 
     std::vector<std::unique_ptr<CFXJSE_Value>> values;
-    for (int32_t i = 0; i < iCounter + 2; i++)
-      values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-
-    values[0]->SetInteger(1);
+    values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+    values.back()->SetInteger(1);
+    values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
     if (bAttribute)
-      values[1]->SetString(bsName.AsStringView());
+      values.back()->SetString(bsName.AsStringView());
     else
-      values[1]->SetNull();
+      values.back()->SetNull();
 
-    int32_t iIndex = 2;
     for (int32_t i = 0; i < iLength - 2; i++) {
       for (size_t j = 0; j < resolveValues[i].size(); j++) {
-        values[iIndex]->Assign(resolveValues[i][j].get());
-        iIndex++;
+        values.push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+        values.back()->Assign(resolveValues[i][j].get());
       }
     }
     args.GetReturnValue()->SetArray(values);
