@@ -124,7 +124,8 @@ void DynPropGetterAdapter_MethodCallback(
     info.GetReturnValue().Set(result.Return());
 }
 
-void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
+void DynPropGetterAdapter(v8::Isolate* pIsolate,
+                          const FXJSE_CLASS_DESCRIPTOR* lpClass,
                           CFXJSE_Value* pObject,
                           ByteStringView szPropName,
                           CFXJSE_Value* pValue) {
@@ -139,14 +140,12 @@ void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
       lpClass->dynPropGetter(pObject, szPropName, pValue);
   } else if (nPropType == FXJSE_ClassPropType_Method) {
     if (lpClass->dynMethodCall && pValue) {
-      v8::Isolate* pIsolate = pValue->GetIsolate();
       v8::HandleScope hscope(pIsolate);
       v8::Local<v8::ObjectTemplate> hCallBackInfoTemplate =
           v8::ObjectTemplate::New(pIsolate);
       hCallBackInfoTemplate->SetInternalFieldCount(2);
       v8::Local<v8::Object> hCallBackInfo =
-          hCallBackInfoTemplate
-              ->NewInstance(pValue->GetIsolate()->GetCurrentContext())
+          hCallBackInfoTemplate->NewInstance(pIsolate->GetCurrentContext())
               .ToLocalChecked();
       hCallBackInfo->SetAlignedPointerInInternalField(
           0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClass));
@@ -156,7 +155,7 @@ void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
                  v8::NewStringType::kNormal, szPropName.GetLength())
                  .ToLocalChecked());
       pValue->ForceSetValue(
-          v8::Function::New(pValue->GetIsolate()->GetCurrentContext(),
+          v8::Function::New(pIsolate->GetCurrentContext(),
                             DynPropGetterAdapter_MethodCallback, hCallBackInfo,
                             0, v8::ConstructorBehavior::kThrow)
               .ToLocalChecked());
@@ -226,8 +225,8 @@ void NamedPropertyGetterCallback(
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   auto lpNewValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
-  DynPropGetterAdapter(lpClass, lpThisValue.get(), szFxPropName,
-                       lpNewValue.get());
+  DynPropGetterAdapter(info.GetIsolate(), lpClass, lpThisValue.get(),
+                       szFxPropName, lpNewValue.get());
   info.GetReturnValue().Set(lpNewValue->DirectGetValue());
 }
 

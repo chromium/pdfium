@@ -347,10 +347,6 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static std::vector<std::unique_ptr<CFXJSE_Value>> unfoldArgs(
       CFXJSE_Value* pThis,
       CFXJSE_Arguments& args);
-  static void GetObjectDefaultValue(CFXJSE_Value* pObjectValue,
-                                    CFXJSE_Value* pDefaultValue);
-  static bool SetObjectDefaultValue(CFXJSE_Value* pObjectValue,
-                                    CFXJSE_Value* pNewValue);
   static ByteString GenerateSomExpression(ByteStringView bsName,
                                           int32_t iIndexFlags,
                                           int32_t iIndexValue,

@@ -1326,6 +1326,26 @@ ByteString WordUS(const ByteString& bsData, int32_t iStyle) {
   return ByteString(strBuf);
 }
 
+void GetObjectDefaultValue(CFXJSE_Value* pValue, CFXJSE_Value* pDefaultValue) {
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue));
+  if (!pNode) {
+    pDefaultValue->SetNull();
+    return;
+  }
+  pNode->JSObject()->ScriptSomDefaultValue(pDefaultValue, false,
+                                           XFA_Attribute::Unknown);
+}
+
+bool SetObjectDefaultValue(CFXJSE_Value* pValue, CFXJSE_Value* hNewValue) {
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue));
+  if (!pNode)
+    return false;
+
+  pNode->JSObject()->ScriptSomDefaultValue(hNewValue, true,
+                                           XFA_Attribute::Unknown);
+  return true;
+}
+
 }  // namespace
 
 const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
@@ -5325,29 +5345,6 @@ std::vector<std::unique_ptr<CFXJSE_Value>> CFXJSE_FormCalcContext::unfoldArgs(
 }
 
 // static
-void CFXJSE_FormCalcContext::GetObjectDefaultValue(
-    CFXJSE_Value* pValue,
-    CFXJSE_Value* pDefaultValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue));
-  if (!pNode) {
-    pDefaultValue->SetNull();
-    return;
-  }
-  pNode->JSObject()->ScriptSomDefaultValue(pDefaultValue, false,
-                                           XFA_Attribute::Unknown);
-}
-
-// static
-bool CFXJSE_FormCalcContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
-                                                   CFXJSE_Value* hNewValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue));
-  if (!pNode)
-    return false;
-
-  pNode->JSObject()->ScriptSomDefaultValue(hNewValue, true,
-                                           XFA_Attribute::Unknown);
-  return true;
-}
 
 // static
 ByteString CFXJSE_FormCalcContext::GenerateSomExpression(ByteStringView bsName,
