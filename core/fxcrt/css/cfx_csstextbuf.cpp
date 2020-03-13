@@ -6,44 +6,23 @@
 
 #include "core/fxcrt/css/cfx_csstextbuf.h"
 
-#include "core/fxcrt/fx_memory.h"
-
-CFX_CSSTextBuf::CFX_CSSTextBuf()
-    : m_pBuffer(nullptr), m_iBufLen(0), m_iDatLen(0) {}
-
-CFX_CSSTextBuf::~CFX_CSSTextBuf() {
-  FX_Free(m_pBuffer);
-  m_pBuffer = nullptr;
-  m_iDatLen = m_iBufLen;
+CFX_CSSTextBuf::CFX_CSSTextBuf() {
+  m_Buffer.reserve(32);
 }
 
-void CFX_CSSTextBuf::InitWithSize(int32_t iAllocSize) {
-  ExpandBuf(iAllocSize);
-}
+CFX_CSSTextBuf::~CFX_CSSTextBuf() = default;
 
-void CFX_CSSTextBuf::AppendChar(wchar_t wch) {
-  if (m_iDatLen >= m_iBufLen)
-    ExpandBuf(m_iBufLen * 2);
-
-  m_pBuffer[m_iDatLen++] = wch;
-}
-
-int32_t CFX_CSSTextBuf::TrimEnd() {
-  while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ')
-    --m_iDatLen;
-  AppendChar(0);
-  return --m_iDatLen;
-}
-
-void CFX_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
-  ASSERT(iDesiredSize > 0);
-  if (m_pBuffer && m_iBufLen == iDesiredSize)
+void CFX_CSSTextBuf::AppendCharIfNotLeadingBlank(wchar_t wch) {
+  if (m_Buffer.empty() && wch <= ' ')
     return;
 
-  if (m_pBuffer)
-    m_pBuffer = FX_Realloc(wchar_t, m_pBuffer, iDesiredSize);
-  else
-    m_pBuffer = FX_Alloc(wchar_t, iDesiredSize);
+  m_Buffer.push_back(wch);
+}
 
-  m_iBufLen = iDesiredSize;
+WideStringView CFX_CSSTextBuf::GetTrailingBlankTrimmedString() const {
+  WideStringView result(m_Buffer);
+  while (!result.IsEmpty() && result.Back() <= ' ')
+    result = result.First(result.GetLength() - 1);
+
+  return result;
 }
