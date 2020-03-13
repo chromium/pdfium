@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include "fxjs/cfx_v8.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
@@ -388,46 +389,33 @@ bool CFXJSE_Value::IsFunction() const {
 bool CFXJSE_Value::ToBoolean() const {
   ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return hValue->BooleanValue(GetIsolate());
+  return CFX_V8::ReentrantToBooleanHelper(
+      GetIsolate(), v8::Local<v8::Value>::New(GetIsolate(), m_hValue));
 }
 
 float CFXJSE_Value::ToFloat() const {
-  ASSERT(!IsEmpty());
-  CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return static_cast<float>(
-      hValue->NumberValue(GetIsolate()->GetCurrentContext()).FromMaybe(0.0));
+  return static_cast<float>(ToDouble());
 }
 
 double CFXJSE_Value::ToDouble() const {
   ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return hValue->NumberValue(GetIsolate()->GetCurrentContext()).FromMaybe(0.0);
+  return CFX_V8::ReentrantToDoubleHelper(
+      GetIsolate(), v8::Local<v8::Value>::New(GetIsolate(), m_hValue));
 }
 
 int32_t CFXJSE_Value::ToInteger() const {
   ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return static_cast<int32_t>(
-      hValue->NumberValue(GetIsolate()->GetCurrentContext()).FromMaybe(0.0));
+  return CFX_V8::ReentrantToInt32Helper(
+      GetIsolate(), v8::Local<v8::Value>::New(GetIsolate(), m_hValue));
 }
 
 ByteString CFXJSE_Value::ToString() const {
   ASSERT(!IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> hValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  v8::Local<v8::String> hString =
-      hValue->ToString(GetIsolate()->GetCurrentContext()).ToLocalChecked();
-  v8::String::Utf8Value hStringVal(GetIsolate(), hString);
-  return ByteString(*hStringVal);
+  return CFX_V8::ReentrantToByteStringHelper(
+      GetIsolate(), v8::Local<v8::Value>::New(GetIsolate(), m_hValue));
 }
 
 void CFXJSE_Value::SetUndefined() {

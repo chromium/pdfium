@@ -137,51 +137,23 @@ v8::Local<v8::Date> CFX_V8::NewDate(double d) {
 }
 
 int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return 0;
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  v8::MaybeLocal<v8::Int32> maybe_int32 = pValue->ToInt32(context);
-  if (maybe_int32.IsEmpty())
-    return 0;
-  return maybe_int32.ToLocalChecked()->Value();
+  return ReentrantToInt32Helper(m_pIsolate.Get(), pValue);
 }
 
 bool CFX_V8::ToBoolean(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return false;
-  return pValue->BooleanValue(m_pIsolate.Get());
+  return ReentrantToBooleanHelper(m_pIsolate.Get(), pValue);
 }
 
 double CFX_V8::ToDouble(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return 0.0;
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  v8::MaybeLocal<v8::Number> maybe_number = pValue->ToNumber(context);
-  if (maybe_number.IsEmpty())
-    return 0.0;
-  return maybe_number.ToLocalChecked()->Value();
+  return ReentrantToDoubleHelper(m_pIsolate.Get(), pValue);
 }
 
 WideString CFX_V8::ToWideString(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return WideString();
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  v8::MaybeLocal<v8::String> maybe_string = pValue->ToString(context);
-  if (maybe_string.IsEmpty())
-    return WideString();
-  v8::String::Utf8Value s(GetIsolate(), maybe_string.ToLocalChecked());
-  return WideString::FromUTF8(ByteStringView(*s, s.length()));
+  return ReentrantToWideStringHelper(m_pIsolate.Get(), pValue);
 }
 
 ByteString CFX_V8::ToByteString(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return ByteString();
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  v8::MaybeLocal<v8::String> maybe_string = pValue->ToString(context);
-  if (maybe_string.IsEmpty())
-    return ByteString();
-  v8::String::Utf8Value s(GetIsolate(), maybe_string.ToLocalChecked());
-  return ByteString(*s);
+  return ReentrantToByteStringHelper(m_pIsolate.Get(), pValue);
 }
 
 v8::Local<v8::Object> CFX_V8::ToObject(v8::Local<v8::Value> pValue) {
@@ -196,6 +168,56 @@ v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
     return v8::Local<v8::Array>();
   v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
+}
+
+// static
+int CFX_V8::ReentrantToInt32Helper(v8::Isolate* pIsolate,
+                                   v8::Local<v8::Value> pValue) {
+  if (pValue.IsEmpty())
+    return 0;
+  return pValue->Int32Value(pIsolate->GetCurrentContext()).FromMaybe(0);
+}
+
+// static
+bool CFX_V8::ReentrantToBooleanHelper(v8::Isolate* pIsolate,
+                                      v8::Local<v8::Value> pValue) {
+  if (pValue.IsEmpty())
+    return false;
+  return pValue->BooleanValue(pIsolate);
+}
+
+// static
+double CFX_V8::ReentrantToDoubleHelper(v8::Isolate* pIsolate,
+                                       v8::Local<v8::Value> pValue) {
+  if (pValue.IsEmpty())
+    return 0.0;
+  return pValue->NumberValue(pIsolate->GetCurrentContext()).FromMaybe(0.0);
+}
+
+// static
+WideString CFX_V8::ReentrantToWideStringHelper(v8::Isolate* pIsolate,
+                                               v8::Local<v8::Value> pValue) {
+  if (pValue.IsEmpty())
+    return WideString();
+  v8::MaybeLocal<v8::String> maybe_string =
+      pValue->ToString(pIsolate->GetCurrentContext());
+  if (maybe_string.IsEmpty())
+    return WideString();
+  v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
+  return WideString::FromUTF8(ByteStringView(*s, s.length()));
+}
+
+// static
+ByteString CFX_V8::ReentrantToByteStringHelper(v8::Isolate* pIsolate,
+                                               v8::Local<v8::Value> pValue) {
+  if (pValue.IsEmpty())
+    return ByteString();
+  v8::MaybeLocal<v8::String> maybe_string =
+      pValue->ToString(pIsolate->GetCurrentContext());
+  if (maybe_string.IsEmpty())
+    return ByteString();
+  v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
+  return ByteString(*s);
 }
 
 void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
