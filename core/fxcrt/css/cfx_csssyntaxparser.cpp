@@ -51,8 +51,8 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
             return CFX_CSSSyntaxStatus::kError;
           case '/':
             if (m_Input.GetNextChar() == '*') {
-              m_ModeStack.push(m_eMode);
-              SwitchMode(SyntaxMode::kComment);
+              SaveMode(SyntaxMode::kRuleSet);
+              m_eMode = SyntaxMode::kComment;
               break;
             }
             FALLTHROUGH;
@@ -60,7 +60,7 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
             if (wch <= ' ') {
               m_Input.MoveNext();
             } else if (IsSelectorStart(wch)) {
-              SwitchMode(SyntaxMode::kSelector);
+              m_eMode = SyntaxMode::kSelector;
               return CFX_CSSSyntaxStatus::kStyleRule;
             } else {
               m_bError = true;
@@ -73,7 +73,6 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
         switch (wch) {
           case ',':
             m_Input.MoveNext();
-            SwitchMode(SyntaxMode::kSelector);
             if (!m_Output.IsEmpty())
               return CFX_CSSSyntaxStatus::kSelector;
             break;
@@ -81,12 +80,14 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
             if (!m_Output.IsEmpty())
               return CFX_CSSSyntaxStatus::kSelector;
             m_Input.MoveNext();
-            m_ModeStack.push(SyntaxMode::kRuleSet);
-            SwitchMode(SyntaxMode::kPropertyName);
+            SaveMode(SyntaxMode::kRuleSet);  // Back to validate ruleset again.
+            m_eMode = SyntaxMode::kPropertyName;
             return CFX_CSSSyntaxStatus::kDeclOpen;
           case '/':
             if (m_Input.GetNextChar() == '*') {
-              if (SwitchToComment())
+              SaveMode(SyntaxMode::kSelector);
+              m_eMode = SyntaxMode::kComment;
+              if (!m_Output.IsEmpty())
                 return CFX_CSSSyntaxStatus::kSelector;
               break;
             }
@@ -101,18 +102,19 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
         switch (wch) {
           case ':':
             m_Input.MoveNext();
-            SwitchMode(SyntaxMode::kPropertyValue);
+            m_eMode = SyntaxMode::kPropertyValue;
             return CFX_CSSSyntaxStatus::kPropertyName;
           case '}':
             m_Input.MoveNext();
-            if (RestoreMode())
-              return CFX_CSSSyntaxStatus::kDeclClose;
+            if (!RestoreMode())
+              return CFX_CSSSyntaxStatus::kError;
 
-            m_bError = true;
-            return CFX_CSSSyntaxStatus::kError;
+            return CFX_CSSSyntaxStatus::kDeclClose;
           case '/':
             if (m_Input.GetNextChar() == '*') {
-              if (SwitchToComment())
+              SaveMode(SyntaxMode::kPropertyName);
+              m_eMode = SyntaxMode::kComment;
+              if (!m_Output.IsEmpty())
                 return CFX_CSSSyntaxStatus::kPropertyName;
               break;
             }
@@ -129,11 +131,13 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
             m_Input.MoveNext();
             FALLTHROUGH;
           case '}':
-            SwitchMode(SyntaxMode::kPropertyName);
+            m_eMode = SyntaxMode::kPropertyName;
             return CFX_CSSSyntaxStatus::kPropertyValue;
           case '/':
             if (m_Input.GetNextChar() == '*') {
-              if (SwitchToComment())
+              SaveMode(SyntaxMode::kPropertyValue);
+              m_eMode = SyntaxMode::kComment;
+              if (!m_Output.IsEmpty())
                 return CFX_CSSSyntaxStatus::kPropertyValue;
               break;
             }
@@ -146,7 +150,8 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
         break;
       case SyntaxMode::kComment:
         if (wch == '*' && m_Input.GetNextChar() == '/') {
-          RestoreMode();
+          if (!RestoreMode())
+            return CFX_CSSSyntaxStatus::kError;
           m_Input.MoveNext();
         }
         m_Input.MoveNext();
@@ -162,22 +167,16 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
   return CFX_CSSSyntaxStatus::kEOS;
 }
 
-void CFX_CSSSyntaxParser::SwitchMode(SyntaxMode eMode) {
-  m_eMode = eMode;
-}
-
-bool CFX_CSSSyntaxParser::SwitchToComment() {
-  const bool bEmpty = m_Output.IsEmpty();
-  m_ModeStack.push(m_eMode);
-  SwitchMode(SyntaxMode::kComment);
-  return !bEmpty;
+void CFX_CSSSyntaxParser::SaveMode(SyntaxMode mode) {
+  m_ModeStack.push(mode);
 }
 
 bool CFX_CSSSyntaxParser::RestoreMode() {
-  if (m_ModeStack.empty())
+  if (m_ModeStack.empty()) {
+    m_bError = true;
     return false;
-
-  SwitchMode(m_ModeStack.top());
+  }
+  m_eMode = m_ModeStack.top();
   m_ModeStack.pop();
   return true;
 }

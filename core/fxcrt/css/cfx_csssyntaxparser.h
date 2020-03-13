@@ -46,8 +46,7 @@ class CFX_CSSSyntaxParser {
     kPropertyValue,
   };
 
-  void SwitchMode(SyntaxMode eMode);
-  bool SwitchToComment();
+  void SaveMode(SyntaxMode eMode);
   bool RestoreMode();
 
   bool m_bError = false;
