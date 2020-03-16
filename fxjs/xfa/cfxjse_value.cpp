@@ -70,6 +70,11 @@ void FXJSE_ThrowMessage(ByteStringView utf8Message) {
 
 CFXJSE_Value::CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 
+CFXJSE_Value::CFXJSE_Value(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
+    : m_pIsolate(pIsolate) {
+  ForceSetValue(value);
+}
+
 CFXJSE_Value::~CFXJSE_Value() {}
 
 CFXJSE_HostObject* CFXJSE_Value::ToHostObject() const {

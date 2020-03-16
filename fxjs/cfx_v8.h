@@ -15,6 +15,17 @@
 
 class CFX_V8 {
  public:
+  static int ReentrantToInt32Helper(v8::Isolate* pIsolate,
+                                    v8::Local<v8::Value> pValue);
+  static bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
+                                       v8::Local<v8::Value> pValue);
+  static double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
+                                        v8::Local<v8::Value> pValue);
+  static WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
+                                                v8::Local<v8::Value> pValue);
+  static ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
+                                                v8::Local<v8::Value> pValue);
+
   explicit CFX_V8(v8::Isolate* pIsolate);
   virtual ~CFX_V8();
 
@@ -61,20 +72,6 @@ class CFX_V8 {
   void DisposeIsolate();
 
  private:
-  friend class CFXJSE_Arguments;
-  friend class CFXJSE_Value;
-
-  static int ReentrantToInt32Helper(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Value> pValue);
-  static bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
-                                       v8::Local<v8::Value> pValue);
-  static double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
-                                        v8::Local<v8::Value> pValue);
-  static WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
-                                                v8::Local<v8::Value> pValue);
-  static ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
-                                                v8::Local<v8::Value> pValue);
-
   UnownedPtr<v8::Isolate> m_pIsolate;
 };
 

@@ -20,7 +20,6 @@ extern const char kClassTag[];
 }  // namespace fxjse
 }  // namespace pdfium
 
-class CFXJSE_Arguments;
 class CFXJSE_FormCalcContext;
 class CFXJSE_Value;
 class CJS_Result;
@@ -42,9 +41,11 @@ class CFXJSE_HostObject {
 typedef CJS_Result (*FXJSE_MethodCallback)(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     const WideString& functionName);
-typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,
-                                   ByteStringView szFuncName,
-                                   CFXJSE_Arguments& args);
+typedef void (*FXJSE_FuncCallback)(
+    CFXJSE_Value* pThis,
+    ByteStringView szFuncName,
+    const v8::FunctionCallbackInfo<v8::Value>& info,
+    CFXJSE_Value* pRetValue);
 typedef void (*FXJSE_PropAccessor)(CFXJSE_Value* pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);

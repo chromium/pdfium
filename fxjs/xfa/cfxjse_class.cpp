@@ -11,7 +11,6 @@
 
 #include "fxjs/cjs_result.h"
 #include "fxjs/js_resources.h"
-#include "fxjs/xfa/cfxjse_arguments.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
@@ -43,8 +42,8 @@ void V8FunctionCallback_Wrapper(
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
   auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
-  CFXJSE_Arguments impl(&info, lpRetValue.get());
-  lpFunctionInfo->callbackProc(lpThisValue.get(), szFunctionName, impl);
+  lpFunctionInfo->callbackProc(lpThisValue.get(), szFunctionName, info,
+                               lpRetValue.get());
   if (!lpRetValue->DirectGetValue().IsEmpty())
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
 }
