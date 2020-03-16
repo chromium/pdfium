@@ -67,11 +67,8 @@ NOINLINE void FX_OutOfMemoryTerminate() {
   static int make_this_function_aliased = 0xbd;
   pdfium::base::debug::Alias(&make_this_function_aliased);
 
-  // Termimate cleanly if we can, else crash at a specific address (0xbd).
+  // Termimate cleanly.
   abort();
-#if !defined(OS_WIN)
-  reinterpret_cast<void (*)()>(0xbd)();
-#endif
 }
 
 void* FX_SafeAlloc(size_t num_members, size_t member_size) {
