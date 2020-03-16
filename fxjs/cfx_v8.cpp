@@ -110,9 +110,7 @@ v8::Local<v8::Boolean> CFX_V8::NewBoolean(bool b) {
 
 v8::Local<v8::String> CFX_V8::NewString(ByteStringView str) {
   v8::Isolate* pIsolate = m_pIsolate ? GetIsolate() : v8::Isolate::GetCurrent();
-  return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
-                                 v8::NewStringType::kNormal, str.GetLength())
-      .ToLocalChecked();
+  return NewStringHelper(pIsolate, str);
 }
 
 v8::Local<v8::String> CFX_V8::NewString(WideStringView str) {
@@ -168,6 +166,14 @@ v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
     return v8::Local<v8::Array>();
   v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
+}
+
+// static
+v8::Local<v8::String> CFX_V8::NewStringHelper(v8::Isolate* pIsolate,
+                                              ByteStringView str) {
+  return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
+                                 v8::NewStringType::kNormal, str.GetLength())
+      .ToLocalChecked();
 }
 
 // static

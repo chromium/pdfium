@@ -43,8 +43,7 @@ typedef CJS_Result (*FXJSE_MethodCallback)(
     const WideString& functionName);
 typedef void (*FXJSE_FuncCallback)(
     CFXJSE_Value* pThis,
-    const v8::FunctionCallbackInfo<v8::Value>& info,
-    CFXJSE_Value* pRetValue);
+    const v8::FunctionCallbackInfo<v8::Value>& info);
 typedef void (*FXJSE_PropAccessor)(CFXJSE_Value* pObject,
                                    ByteStringView szPropName,
                                    CFXJSE_Value* pValue);
