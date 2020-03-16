@@ -27,18 +27,18 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
   void TearDown() override { decl_ = nullptr; }
 
-  void VerifyLoadFails(const wchar_t* buf) {
+  void VerifyLoadFails(WideStringView buf) {
     ASSERT(sheet_);
-    EXPECT_FALSE(sheet_->LoadBuffer(buf, wcslen(buf)));
+    EXPECT_FALSE(sheet_->LoadBuffer(buf));
   }
 
-  void LoadAndVerifyRuleCount(const wchar_t* buf, size_t rule_count) {
+  void LoadAndVerifyRuleCount(WideStringView buf, size_t rule_count) {
     ASSERT(sheet_);
-    EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+    EXPECT_TRUE(sheet_->LoadBuffer(buf));
     EXPECT_EQ(sheet_->CountRules(), rule_count);
   }
 
-  void LoadAndVerifyDecl(const wchar_t* buf,
+  void LoadAndVerifyDecl(WideStringView buf,
                          const std::vector<WideString>& selectors,
                          size_t decl_count) {
     LoadAndVerifyRuleCount(buf, 1);
@@ -124,7 +124,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseEmptyBody) {
 TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
       L"a { border: 10px; }\nb { text-decoration: underline; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(2u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
@@ -172,7 +172,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   const wchar_t* buf = L"a b c { border: 10px; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(1u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
@@ -207,19 +207,19 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseUnhandledSelectors) {
   const wchar_t* buf = L"a > b { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(0u, sheet_->CountRules());
 
   buf = L"a[first] { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(0u, sheet_->CountRules());
 
   buf = L"a+b { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(0u, sheet_->CountRules());
 
   buf = L"a ^ b { padding: 0; }";
-  EXPECT_TRUE(sheet_->LoadBuffer(buf, wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(0u, sheet_->CountRules());
 }
 

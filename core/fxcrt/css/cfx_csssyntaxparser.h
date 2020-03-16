@@ -30,7 +30,7 @@ enum class CFX_CSSSyntaxStatus : uint8_t {
 
 class CFX_CSSSyntaxParser {
  public:
-  CFX_CSSSyntaxParser(const wchar_t* pBuffer, int32_t iBufferSize);
+  explicit CFX_CSSSyntaxParser(WideStringView str);
   ~CFX_CSSSyntaxParser();
 
   void SetParseOnlyDeclarations();

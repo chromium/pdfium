@@ -26,23 +26,18 @@ CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(size_t index) const {
   return m_RuleArray[index].get();
 }
 
-bool CFX_CSSStyleSheet::LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize) {
-  ASSERT(pBuffer);
-
+bool CFX_CSSStyleSheet::LoadBuffer(WideStringView buffer) {
   m_RuleArray.clear();
-  auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(pBuffer, iBufSize);
-  CFX_CSSSyntaxStatus eStatus;
-  do {
-    switch (eStatus = pSyntax->DoSyntaxParse()) {
-      case CFX_CSSSyntaxStatus::kStyleRule:
-        eStatus = LoadStyleRule(pSyntax.get());
-        break;
-      default:
-        break;
-    }
-  } while (eStatus >= CFX_CSSSyntaxStatus::kNone);
-
-  return eStatus != CFX_CSSSyntaxStatus::kError;
+  auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(buffer);
+  while (1) {
+    CFX_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
+    if (eStatus == CFX_CSSSyntaxStatus::kStyleRule)
+      eStatus = LoadStyleRule(pSyntax.get());
+    if (eStatus == CFX_CSSSyntaxStatus::kEOS)
+      return true;
+    if (eStatus == CFX_CSSSyntaxStatus::kError)
+      return false;
+  }
 }
 
 CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(

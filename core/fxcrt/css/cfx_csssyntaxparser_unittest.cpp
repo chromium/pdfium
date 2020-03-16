@@ -12,7 +12,7 @@
 
 TEST(CSSSyntaxParserTest, ParseEmpty) {
   const wchar_t* input = L"";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kEOS, parser.DoSyntaxParse());
   EXPECT_EQ(CFX_CSSSyntaxStatus::kEOS, parser.DoSyntaxParse());
@@ -20,7 +20,7 @@ TEST(CSSSyntaxParserTest, ParseEmpty) {
 
 TEST(CSSSyntaxParserTest, ParseBlank) {
   const wchar_t* input = L"  \n\r\t";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kEOS, parser.DoSyntaxParse());
   EXPECT_EQ(CFX_CSSSyntaxStatus::kEOS, parser.DoSyntaxParse());
@@ -28,7 +28,7 @@ TEST(CSSSyntaxParserTest, ParseBlank) {
 
 TEST(CSSSyntaxParserTest, ParseMissingColon) {
   const wchar_t* input = L"foo ";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kEOS, parser.DoSyntaxParse());
   EXPECT_EQ(CFX_CSSSyntaxStatus::kEOS, parser.DoSyntaxParse());
@@ -36,7 +36,7 @@ TEST(CSSSyntaxParserTest, ParseMissingColon) {
 
 TEST(CSSSyntaxParserTest, ParseMissingValue) {
   const wchar_t* input = L"foo: ";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -45,7 +45,7 @@ TEST(CSSSyntaxParserTest, ParseMissingValue) {
 
 TEST(CSSSyntaxParserTest, ParseSingleProp1) {
   const wchar_t* input = L"foo:bar";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -56,7 +56,7 @@ TEST(CSSSyntaxParserTest, ParseSingleProp1) {
 
 TEST(CSSSyntaxParserTest, ParseSingleProp2) {
   const wchar_t* input = L"foo:bar;";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -67,7 +67,7 @@ TEST(CSSSyntaxParserTest, ParseSingleProp2) {
 
 TEST(CSSSyntaxParserTest, ParseMissingColonMultiple) {
   const wchar_t* input = L"foo:bar; baz";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -78,7 +78,7 @@ TEST(CSSSyntaxParserTest, ParseMissingColonMultiple) {
 
 TEST(CSSSyntaxParserTest, ParseMissingPropertyMultiple) {
   const wchar_t* input = L"foo:bar; baz: ";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -91,7 +91,7 @@ TEST(CSSSyntaxParserTest, ParseMissingPropertyMultiple) {
 
 TEST(CSSSyntaxParserTest, ParseMultipleProp1) {
   const wchar_t* input = L"foo : bar; baz : bam";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -106,7 +106,7 @@ TEST(CSSSyntaxParserTest, ParseMultipleProp1) {
 
 TEST(CSSSyntaxParserTest, ParseMultipleProp2) {
   const wchar_t* input = L"foo:bar;baz:bam;";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -121,7 +121,7 @@ TEST(CSSSyntaxParserTest, ParseMultipleProp2) {
 
 TEST(CSSSyntaxParserTest, ParseOpenBrace1) {
   const wchar_t* input = L"{a:3}";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
 
   // TODO(tsepez): these should fail on stray punctuation.
@@ -134,7 +134,7 @@ TEST(CSSSyntaxParserTest, ParseOpenBrace1) {
 
 TEST(CSSSyntaxParserTest, ParseOpenBrace2) {
   const wchar_t* input = L"foo {a:3}";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
 
   // TODO(tsepez): these should fail on stray punctuation.
@@ -147,7 +147,7 @@ TEST(CSSSyntaxParserTest, ParseOpenBrace2) {
 
 TEST(CSSSyntaxParserTest, ParseOpenBrace3) {
   const wchar_t* input = L"foo: bar {a:3}";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
 
   // TODO(tsepez): these should fail on stray punctuation.
@@ -160,7 +160,7 @@ TEST(CSSSyntaxParserTest, ParseOpenBrace3) {
 
 TEST(CSSSyntaxParserTest, ParseOpenBrace4) {
   const wchar_t* input = L"foo: bar; {a:3}";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -177,21 +177,21 @@ TEST(CSSSyntaxParserTest, ParseOpenBrace4) {
 
 TEST(CSSSyntaxParserTest, ParseCloseBrace1) {
   const wchar_t* input = L"} foo:bar";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kError, parser.DoSyntaxParse());
 }
 
 TEST(CSSSyntaxParserTest, ParseCloseBrace2) {
   const wchar_t* input = L"foo}:bar";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kError, parser.DoSyntaxParse());
 }
 
 TEST(CSSSyntaxParserTest, ParseCloseBrace3) {
   const wchar_t* input = L"foo:bar}";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());
@@ -202,7 +202,7 @@ TEST(CSSSyntaxParserTest, ParseCloseBrace3) {
 
 TEST(CSSSyntaxParserTest, ParseCloseBrace4) {
   const wchar_t* input = L"foo:bar;}";
-  CFX_CSSSyntaxParser parser(input, wcslen(input));
+  CFX_CSSSyntaxParser parser(input);
   parser.SetParseOnlyDeclarations();
   EXPECT_EQ(CFX_CSSSyntaxStatus::kPropertyName, parser.DoSyntaxParse());
   EXPECT_EQ(L"foo", parser.GetCurrentString());

@@ -100,7 +100,7 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
       "sub{vertical-align:-15em;font-size:.66em}";
   WideString ws = WideString::FromASCII(kStyle);
   auto sheet = pdfium::MakeUnique<CFX_CSSStyleSheet>();
-  if (!sheet->LoadBuffer(ws.c_str(), ws.GetLength()))
+  if (!sheet->LoadBuffer(ws.AsStringView()))
     return nullptr;
 
   return sheet;

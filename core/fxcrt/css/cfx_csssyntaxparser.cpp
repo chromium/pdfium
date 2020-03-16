@@ -24,11 +24,7 @@ bool IsSelectorStart(wchar_t wch) {
 
 }  // namespace
 
-CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(const wchar_t* pBuffer,
-                                         int32_t iBufferSize) {
-  ASSERT(pBuffer);
-  m_Input.AttachBuffer(pBuffer, iBufferSize);
-}
+CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(WideStringView str) : m_Input(str) {}
 
 CFX_CSSSyntaxParser::~CFX_CSSSyntaxParser() = default;
 
