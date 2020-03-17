@@ -1139,7 +1139,7 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle);
  *       functions. Should be invoked after user successfully loaded a
  *       PDF page, and FPDFDOC_InitFormFillEnvironment() has been invoked.
  * Parameters:
- *       hHandle     -   Handle to the form fill module, as eturned by
+ *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
  * Return Value:
  *       None.
@@ -1467,7 +1467,7 @@ FORM_GetFocusedText(FPDF_FORMHANDLE hHandle,
  *       Call this function to obtain selected text within a form text
  *       field or form combobox text field.
  * Parameters:
- *       hHandle     -   Handle to the form fill module, asr eturned by
+ *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
  *       page        -   Handle to the page, as returned by FPDF_LoadPage().
  *       buffer      -   Buffer for holding the selected text, encoded in
@@ -1551,7 +1551,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_Undo(FPDF_FORMHANDLE hHandle,
  * Parameters:
  *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
- *       page        -   Handle to the page, as eturned by FPDF_LoadPage().
+ *       page        -   Handle to the page, as returned by FPDF_LoadPage().
  * Return Value:
  *       True if the redo operation succeeded.
  */
