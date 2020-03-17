@@ -40,7 +40,7 @@ void V8FunctionCallback_Wrapper(
 
   auto lpThisValue =
       pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate(), info.Holder());
-  lpFunctionInfo->callbackProc(lpThisValue.get(), info);
+  lpFunctionInfo->callbackProc(lpThisValue->ToHostObject(), info);
 }
 
 void V8ConstructorCallback_Wrapper(

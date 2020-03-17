@@ -28,275 +28,275 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   // CFXJSE_HostObject:
   CFXJSE_FormCalcContext* AsFormCalcContext() override;
 
-  static void Abs(CFXJSE_Value* pThis,
+  static void Abs(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Avg(CFXJSE_Value* pThis,
+  static void Avg(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Ceil(CFXJSE_Value* pThis,
+  static void Ceil(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Count(CFXJSE_Value* pThis,
+  static void Count(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Floor(CFXJSE_Value* pThis,
+  static void Floor(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Max(CFXJSE_Value* pThis,
+  static void Max(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Min(CFXJSE_Value* pThis,
+  static void Min(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Mod(CFXJSE_Value* pThis,
+  static void Mod(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Round(CFXJSE_Value* pThis,
+  static void Round(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Sum(CFXJSE_Value* pThis,
+  static void Sum(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Date(CFXJSE_Value* pThis,
+  static void Date(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Date2Num(CFXJSE_Value* pThis,
+  static void Date2Num(CFXJSE_HostObject* pThis,
                        const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void DateFmt(CFXJSE_Value* pThis,
+  static void DateFmt(CFXJSE_HostObject* pThis,
                       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void IsoDate2Num(CFXJSE_Value* pThis,
+  static void IsoDate2Num(CFXJSE_HostObject* pThis,
                           const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void IsoTime2Num(CFXJSE_Value* pThis,
+  static void IsoTime2Num(CFXJSE_HostObject* pThis,
                           const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void LocalDateFmt(CFXJSE_Value* pThis,
+  static void LocalDateFmt(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void LocalTimeFmt(CFXJSE_Value* pThis,
+  static void LocalTimeFmt(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Num2Date(CFXJSE_Value* pThis,
+  static void Num2Date(CFXJSE_HostObject* pThis,
                        const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Num2GMTime(CFXJSE_Value* pThis,
+  static void Num2GMTime(CFXJSE_HostObject* pThis,
                          const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Num2Time(CFXJSE_Value* pThis,
+  static void Num2Time(CFXJSE_HostObject* pThis,
                        const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Time(CFXJSE_Value* pThis,
+  static void Time(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Time2Num(CFXJSE_Value* pThis,
+  static void Time2Num(CFXJSE_HostObject* pThis,
                        const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void TimeFmt(CFXJSE_Value* pThis,
+  static void TimeFmt(CFXJSE_HostObject* pThis,
                       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static ByteString Local2IsoDate(CFXJSE_Value* pThis,
+  static ByteString Local2IsoDate(CFXJSE_HostObject* pThis,
                                   ByteStringView bsDate,
                                   ByteStringView bsFormat,
                                   ByteStringView bsLocale);
-  static ByteString IsoDate2Local(CFXJSE_Value* pThis,
+  static ByteString IsoDate2Local(CFXJSE_HostObject* pThis,
                                   ByteStringView bsDate,
                                   ByteStringView bsFormat,
                                   ByteStringView bsLocale);
-  static ByteString IsoTime2Local(CFXJSE_Value* pThis,
+  static ByteString IsoTime2Local(CFXJSE_HostObject* pThis,
                                   ByteStringView bsTime,
                                   ByteStringView bsFormat,
                                   ByteStringView bsLocale);
-  static ByteString GetLocalDateFormat(CFXJSE_Value* pThis,
+  static ByteString GetLocalDateFormat(CFXJSE_HostObject* pThis,
                                        int32_t iStyle,
                                        ByteStringView bsLocale,
                                        bool bStandard);
-  static ByteString GetLocalTimeFormat(CFXJSE_Value* pThis,
+  static ByteString GetLocalTimeFormat(CFXJSE_HostObject* pThis,
                                        int32_t iStyle,
                                        ByteStringView bsLocale,
                                        bool bStandard);
-  static ByteString GetStandardDateFormat(CFXJSE_Value* pThis,
+  static ByteString GetStandardDateFormat(CFXJSE_HostObject* pThis,
                                           int32_t iStyle,
                                           ByteStringView bsLocale);
-  static ByteString GetStandardTimeFormat(CFXJSE_Value* pThis,
+  static ByteString GetStandardTimeFormat(CFXJSE_HostObject* pThis,
                                           int32_t iStyle,
                                           ByteStringView bsLocale);
-  static ByteString Num2AllTime(CFXJSE_Value* pThis,
+  static ByteString Num2AllTime(CFXJSE_HostObject* pThis,
                                 int32_t iTime,
                                 ByteStringView bsFormat,
                                 ByteStringView bsLocale,
                                 bool bGM);
 
-  static void Apr(CFXJSE_Value* pThis,
+  static void Apr(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void CTerm(CFXJSE_Value* pThis,
+  static void CTerm(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void FV(CFXJSE_Value* pThis,
+  static void FV(CFXJSE_HostObject* pThis,
                  const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void IPmt(CFXJSE_Value* pThis,
+  static void IPmt(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void NPV(CFXJSE_Value* pThis,
+  static void NPV(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Pmt(CFXJSE_Value* pThis,
+  static void Pmt(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void PPmt(CFXJSE_Value* pThis,
+  static void PPmt(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void PV(CFXJSE_Value* pThis,
+  static void PV(CFXJSE_HostObject* pThis,
                  const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Rate(CFXJSE_Value* pThis,
+  static void Rate(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Term(CFXJSE_Value* pThis,
+  static void Term(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Choose(CFXJSE_Value* pThis,
+  static void Choose(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Exists(CFXJSE_Value* pThis,
+  static void Exists(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void HasValue(CFXJSE_Value* pThis,
+  static void HasValue(CFXJSE_HostObject* pThis,
                        const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Oneof(CFXJSE_Value* pThis,
+  static void Oneof(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Within(CFXJSE_Value* pThis,
+  static void Within(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void If(CFXJSE_Value* pThis,
+  static void If(CFXJSE_HostObject* pThis,
                  const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Eval(CFXJSE_Value* pThis,
+  static void Eval(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Ref(CFXJSE_Value* pThis,
+  static void Ref(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void UnitType(CFXJSE_Value* pThis,
+  static void UnitType(CFXJSE_HostObject* pThis,
                        const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void UnitValue(CFXJSE_Value* pThis,
+  static void UnitValue(CFXJSE_HostObject* pThis,
                         const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static void At(CFXJSE_Value* pThis,
+  static void At(CFXJSE_HostObject* pThis,
                  const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Concat(CFXJSE_Value* pThis,
+  static void Concat(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Decode(CFXJSE_Value* pThis,
+  static void Decode(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Encode(CFXJSE_Value* pThis,
+  static void Encode(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Format(CFXJSE_Value* pThis,
+  static void Format(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Left(CFXJSE_Value* pThis,
+  static void Left(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Len(CFXJSE_Value* pThis,
+  static void Len(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Lower(CFXJSE_Value* pThis,
+  static void Lower(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Ltrim(CFXJSE_Value* pThis,
+  static void Ltrim(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Parse(CFXJSE_Value* pThis,
+  static void Parse(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Replace(CFXJSE_Value* pThis,
+  static void Replace(CFXJSE_HostObject* pThis,
                       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Right(CFXJSE_Value* pThis,
+  static void Right(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Rtrim(CFXJSE_Value* pThis,
+  static void Rtrim(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Space(CFXJSE_Value* pThis,
+  static void Space(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Str(CFXJSE_Value* pThis,
+  static void Str(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Stuff(CFXJSE_Value* pThis,
+  static void Stuff(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Substr(CFXJSE_Value* pThis,
+  static void Substr(CFXJSE_HostObject* pThis,
                      const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Uuid(CFXJSE_Value* pThis,
+  static void Uuid(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Upper(CFXJSE_Value* pThis,
+  static void Upper(CFXJSE_HostObject* pThis,
                     const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void WordNum(CFXJSE_Value* pThis,
+  static void WordNum(CFXJSE_HostObject* pThis,
                       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static void Get(CFXJSE_Value* pThis,
+  static void Get(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Post(CFXJSE_Value* pThis,
+  static void Post(CFXJSE_HostObject* pThis,
                    const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void Put(CFXJSE_Value* pThis,
+  static void Put(CFXJSE_HostObject* pThis,
                   const v8::FunctionCallbackInfo<v8::Value>& info);
   static void assign_value_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static void logical_or_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static void logical_and_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static void equality_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static void notequality_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static bool fm_ref_equal(CFXJSE_Value* pThis,
+  static bool fm_ref_equal(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void less_operator(CFXJSE_Value* pThis,
+  static void less_operator(CFXJSE_HostObject* pThis,
                             const v8::FunctionCallbackInfo<v8::Value>& info);
   static void lessequal_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void greater_operator(CFXJSE_Value* pThis,
+  static void greater_operator(CFXJSE_HostObject* pThis,
                                const v8::FunctionCallbackInfo<v8::Value>& info);
   static void greaterequal_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void plus_operator(CFXJSE_Value* pThis,
+  static void plus_operator(CFXJSE_HostObject* pThis,
                             const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void minus_operator(CFXJSE_Value* pThis,
+  static void minus_operator(CFXJSE_HostObject* pThis,
                              const v8::FunctionCallbackInfo<v8::Value>& info);
   static void multiple_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void divide_operator(CFXJSE_Value* pThis,
+  static void divide_operator(CFXJSE_HostObject* pThis,
                               const v8::FunctionCallbackInfo<v8::Value>& info);
   static void positive_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static void negative_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static void logical_not_operator(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void dot_accessor(CFXJSE_Value* pThis,
+  static void dot_accessor(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void dotdot_accessor(CFXJSE_Value* pThis,
+  static void dotdot_accessor(CFXJSE_HostObject* pThis,
                               const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void eval_translation(CFXJSE_Value* pThis,
+  static void eval_translation(CFXJSE_HostObject* pThis,
                                const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void is_fm_object(CFXJSE_Value* pThis,
+  static void is_fm_object(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void is_fm_array(CFXJSE_Value* pThis,
+  static void is_fm_array(CFXJSE_HostObject* pThis,
                           const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void get_fm_value(CFXJSE_Value* pThis,
+  static void get_fm_value(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void get_fm_jsobj(CFXJSE_Value* pThis,
+  static void get_fm_jsobj(CFXJSE_HostObject* pThis,
                            const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void fm_var_filter(CFXJSE_Value* pThis,
+  static void fm_var_filter(CFXJSE_HostObject* pThis,
                             const v8::FunctionCallbackInfo<v8::Value>& info);
-  static void concat_fm_object(CFXJSE_Value* pThis,
+  static void concat_fm_object(CFXJSE_HostObject* pThis,
                                const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static int32_t hvalue_get_array_length(CFXJSE_Value* pThis,
+  static int32_t hvalue_get_array_length(CFXJSE_HostObject* pThis,
                                          CFXJSE_Value* arg);
-  static bool simpleValueCompare(CFXJSE_Value* pThis,
+  static bool simpleValueCompare(CFXJSE_HostObject* pThis,
                                  CFXJSE_Value* firstValue,
                                  CFXJSE_Value* secondValue);
   static std::vector<std::unique_ptr<CFXJSE_Value>> unfoldArgs(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info);
   static ByteString GenerateSomExpression(ByteStringView bsName,
                                           int32_t iIndexFlags,
                                           int32_t iIndexValue,
                                           bool bIsStar);
-  static bool GetObjectForName(CFXJSE_Value* pThis,
+  static bool GetObjectForName(CFXJSE_HostObject* pThis,
                                CFXJSE_Value* accessorValue,
                                ByteStringView bsAccessorName);
-  static bool ResolveObjects(CFXJSE_Value* pThis,
+  static bool ResolveObjects(CFXJSE_HostObject* pThis,
                              CFXJSE_Value* pParentValue,
                              ByteStringView bsSomExp,
                              XFA_RESOLVENODE_RS* resolveNodeRS,
                              bool bdotAccessor,
                              bool bHasNoResolveName);
   static void ParseResolveResult(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const XFA_RESOLVENODE_RS& resolveNodeRS,
       CFXJSE_Value* pParentValue,
       std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
       bool* bAttribute);
 
   static std::unique_ptr<CFXJSE_Value> GetSimpleValue(
-      CFXJSE_Value* pThis,
+      CFXJSE_HostObject* pThis,
       const v8::FunctionCallbackInfo<v8::Value>& info,
       uint32_t index);
-  static bool ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
-  static int32_t ValueToInteger(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
-  static float ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
-  static double ValueToDouble(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
+  static bool ValueIsNull(CFXJSE_HostObject* pThis, CFXJSE_Value* pValue);
+  static int32_t ValueToInteger(CFXJSE_HostObject* pThis, CFXJSE_Value* pValue);
+  static float ValueToFloat(CFXJSE_HostObject* pThis, CFXJSE_Value* pValue);
+  static double ValueToDouble(CFXJSE_HostObject* pThis, CFXJSE_Value* pValue);
   static ByteString ValueToUTF8String(CFXJSE_Value* pValue);
-  static double ExtractDouble(CFXJSE_Value* pThis,
+  static double ExtractDouble(CFXJSE_HostObject* pThis,
                               CFXJSE_Value* src,
                               bool* ret);
 
@@ -306,7 +306,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 
  private:
-  static void DotAccessorCommon(CFXJSE_Value* pThis,
+  static void DotAccessorCommon(CFXJSE_HostObject* pThis,
                                 const v8::FunctionCallbackInfo<v8::Value>& info,
                                 bool bDotAccessor);
 
