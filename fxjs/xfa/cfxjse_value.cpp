@@ -79,13 +79,8 @@ CFXJSE_Value::~CFXJSE_Value() {}
 
 CFXJSE_HostObject* CFXJSE_Value::ToHostObject() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
-  v8::Local<v8::Value> pValue =
-      v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  ASSERT(!pValue.IsEmpty());
-  if (!pValue->IsObject())
-    return nullptr;
-
-  return FXJSE_RetrieveObjectBinding(pValue.As<v8::Object>());
+  return CFXJSE_HostObject::FromV8(
+      v8::Local<v8::Value>::New(GetIsolate(), m_hValue));
 }
 
 void CFXJSE_Value::SetHostObject(CFXJSE_HostObject* lpObject,

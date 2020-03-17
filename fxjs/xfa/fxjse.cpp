@@ -6,6 +6,8 @@
 
 #include "fxjs/xfa/fxjse.h"
 
+#include "fxjs/xfa/cfxjse_context.h"
+
 namespace pdfium {
 namespace fxjse {
 
@@ -14,6 +16,14 @@ const char kClassTag[] = "class descriptor tag";
 
 }  // namespace fxjse
 }  // namespace pdfium
+
+// static
+CFXJSE_HostObject* CFXJSE_HostObject::FromV8(v8::Local<v8::Value> arg) {
+  if (arg.IsEmpty() || !arg->IsObject())
+    return nullptr;
+
+  return FXJSE_RetrieveObjectBinding(arg.As<v8::Object>());
+}
 
 CFXJSE_HostObject::CFXJSE_HostObject() = default;
 

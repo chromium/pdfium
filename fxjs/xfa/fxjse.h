@@ -28,6 +28,7 @@ class CXFA_Object;
 // C++ object which is retrieved from v8 object's slot.
 class CFXJSE_HostObject {
  public:
+  static CFXJSE_HostObject* FromV8(v8::Local<v8::Value> arg);
   virtual ~CFXJSE_HostObject();
 
   // Two subclasses.
