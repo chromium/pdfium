@@ -638,6 +638,93 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_901654_2) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbedderTest, GetFocusedAnnotation) {
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
+  std::vector<FPDF_PAGE> pages;
+  for (size_t i = 0; i < 3; ++i) {
+    pages.push_back(LoadPage(i));
+    ASSERT_TRUE(pages.back());
+  }
+
+  // Ensure that there is no focused annotation.
+  FPDF_ANNOTATION annot = nullptr;
+  int page_index = -2;
+  ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+  EXPECT_FALSE(annot);
+  EXPECT_EQ(-1, page_index);
+
+  // Validate that nullptr values are handled properly.
+  EXPECT_FALSE(FORM_GetFocusedAnnot(nullptr, &page_index, &annot));
+  EXPECT_FALSE(FORM_GetFocusedAnnot(form_handle(), &page_index, nullptr));
+  EXPECT_FALSE(FORM_GetFocusedAnnot(form_handle(), nullptr, &annot));
+
+  const CFX_PointF right_bottom_annot_point(410.0f, 210.0f);
+  constexpr int kExpectedAnnotIndex = 3;
+
+  for (size_t i = 0; i < pages.size(); ++i) {
+    // Invoke click on the form field to bring it to focus.
+    FORM_OnMouseMove(form_handle(), pages[i], 0, right_bottom_annot_point.x,
+                     right_bottom_annot_point.y);
+    FORM_OnLButtonDown(form_handle(), pages[i], 0, right_bottom_annot_point.x,
+                       right_bottom_annot_point.y);
+    FORM_OnLButtonUp(form_handle(), pages[i], 0, right_bottom_annot_point.x,
+                     right_bottom_annot_point.y);
+
+    ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+    ASSERT_TRUE(annot);
+
+    EXPECT_EQ(kExpectedAnnotIndex, FPDFPage_GetAnnotIndex(pages[i], annot));
+    EXPECT_EQ(static_cast<int>(i), page_index);
+
+    FPDFPage_CloseAnnot(annot);
+  }
+
+  for (FPDF_PAGE page : pages)
+    UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbedderTest, SetFocusedAnnotation) {
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
+  std::vector<FPDF_PAGE> pages;
+  for (size_t i = 0; i < 3; ++i) {
+    pages.push_back(LoadPage(i));
+    ASSERT_TRUE(pages.back());
+  }
+
+  // Ensure that there is no focused annotation.
+  FPDF_ANNOTATION annot = nullptr;
+  int page_index = -2;
+  ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+  EXPECT_FALSE(annot);
+  EXPECT_EQ(-1, page_index);
+
+  // Validate that nullptr values are handled properly.
+  EXPECT_FALSE(FORM_SetFocusedAnnot(nullptr, pages[0], annot));
+  EXPECT_FALSE(FORM_SetFocusedAnnot(form_handle(), nullptr, annot));
+  EXPECT_FALSE(FORM_SetFocusedAnnot(form_handle(), pages[0], nullptr));
+
+  constexpr int kExpectedAnnotIndex = 2;
+
+  for (size_t i = 0; i < pages.size(); ++i) {
+    // Setting focus on an annotation on page i.
+    ScopedFPDFAnnotation focused_annot(
+        FPDFPage_GetAnnot(pages[i], kExpectedAnnotIndex));
+    ASSERT_TRUE(focused_annot);
+
+    ASSERT_TRUE(
+        FORM_SetFocusedAnnot(form_handle(), pages[i], focused_annot.get()));
+
+    ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+    EXPECT_EQ(kExpectedAnnotIndex, FPDFPage_GetAnnotIndex(pages[i], annot));
+    EXPECT_EQ(static_cast<int>(i), page_index);
+
+    FPDFPage_CloseAnnot(annot);
+  }
+
+  for (FPDF_PAGE page : pages)
+    UnloadPage(page);
+}
+
 class DoURIActionBlockedDelegate final : public EmbedderTest::Delegate {
  public:
   void DoURIAction(FPDF_BYTESTRING uri) override {
