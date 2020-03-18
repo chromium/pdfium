@@ -68,23 +68,18 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::Value> hException = trycatch->Exception();
   if (hException->IsObject()) {
-    v8::Local<v8::String> hNameStr =
-        v8::String::NewFromUtf8(pIsolate, "name", v8::NewStringType::kNormal)
-            .ToLocalChecked();
+    v8::Local<v8::String> hNameStr = CFX_V8::NewStringHelper(pIsolate, "name");
     v8::Local<v8::Value> hValue =
         hException.As<v8::Object>()->Get(context, hNameStr).ToLocalChecked();
     if (hValue->IsString() || hValue->IsStringObject()) {
       hReturnValue->Set(context, 0, hValue).FromJust();
     } else {
       v8::Local<v8::String> hErrorStr =
-          v8::String::NewFromUtf8(pIsolate, "Error", v8::NewStringType::kNormal)
-              .ToLocalChecked();
+          CFX_V8::NewStringHelper(pIsolate, "Error");
       hReturnValue->Set(context, 0, hErrorStr).FromJust();
     }
-
     v8::Local<v8::String> hMessageStr =
-        v8::String::NewFromUtf8(pIsolate, "message", v8::NewStringType::kNormal)
-            .ToLocalChecked();
+        CFX_V8::NewStringHelper(pIsolate, "message");
     hValue =
         hException.As<v8::Object>()->Get(context, hMessageStr).ToLocalChecked();
     if (hValue->IsString() || hValue->IsStringObject())
@@ -93,8 +88,7 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
       hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
   } else {
     v8::Local<v8::String> hErrorStr =
-        v8::String::NewFromUtf8(pIsolate, "Error", v8::NewStringType::kNormal)
-            .ToLocalChecked();
+        CFX_V8::NewStringHelper(pIsolate, "Error");
     hReturnValue->Set(context, 0, hErrorStr).FromJust();
     hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
   }
@@ -183,7 +177,6 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     CFXJSE_HostObject* pGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   auto pContext = pdfium::MakeUnique<CFXJSE_Context>(pIsolate);
-
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (pGlobalClass) {
     CFXJSE_Class* pGlobalClassObj =
@@ -197,14 +190,11 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
     hObjectTemplate->SetInternalFieldCount(2);
   }
-  hObjectTemplate->Set(
-      v8::Symbol::GetToStringTag(pIsolate),
-      v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)
-          .ToLocalChecked());
+  hObjectTemplate->Set(v8::Symbol::GetToStringTag(pIsolate),
+                       CFX_V8::NewStringHelper(pIsolate, "global"));
 
   v8::Local<v8::Context> hNewContext =
       v8::Context::New(pIsolate, nullptr, hObjectTemplate);
-
   v8::Local<v8::Object> pThisProxy = hNewContext->Global();
   FXJSE_UpdateProxyBinding(pThisProxy);
 
@@ -262,9 +252,7 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
   v8::TryCatch trycatch(GetIsolate());
   v8::Local<v8::String> hScriptString =
-      v8::String::NewFromUtf8(GetIsolate(), szScript,
-                              v8::NewStringType::kNormal)
-          .ToLocalChecked();
+      CFX_V8::NewStringHelper(GetIsolate(), szScript);
   if (!lpNewThisObject) {
     v8::Local<v8::Script> hScript;
     if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
@@ -285,11 +273,8 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Value> hNewThis = v8::Local<v8::Value>::New(
       GetIsolate(), lpNewThisObject->DirectGetValue());
   ASSERT(!hNewThis.IsEmpty());
-  v8::Local<v8::String> hEval =
-      v8::String::NewFromUtf8(GetIsolate(),
-                              "(function () { return eval(arguments[0]); })",
-                              v8::NewStringType::kNormal)
-          .ToLocalChecked();
+  v8::Local<v8::String> hEval = CFX_V8::NewStringHelper(
+      GetIsolate(), "(function () { return eval(arguments[0]); })");
   v8::Local<v8::Script> hWrapper =
       v8::Script::Compile(hContext, hEval).ToLocalChecked();
   v8::Local<v8::Value> hWrapperValue;

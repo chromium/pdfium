@@ -83,17 +83,24 @@ CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue) {
 // static
 CXFA_Object* CFXJSE_Engine::ToObject(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  if (!info.Holder()->IsObject())
+  return ToObject(info.Holder());
+}
+
+// static
+CXFA_Object* CFXJSE_Engine::ToObject(v8::Local<v8::Value> value) {
+  if (!value->IsObject())
     return nullptr;
 
-  CFXJSE_HostObject* pHostObj =
-      FXJSE_RetrieveObjectBinding(info.Holder().As<v8::Object>());
-  return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
+  return ToObject(FXJSE_RetrieveObjectBinding(value.As<v8::Object>()));
 }
 
 // static.
 CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue) {
-  CFXJSE_HostObject* pHostObj = pValue->ToHostObject();
+  return ToObject(pValue->ToHostObject());
+}
+
+// static
+CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_HostObject* pHostObj) {
   return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 

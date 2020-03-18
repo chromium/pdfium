@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "fxjs/cfx_v8.h"
 #include "fxjs/cjs_result.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_context.h"
@@ -66,10 +67,7 @@ void Context_GlobalObjToString(
   if (info.This() == info.Holder() && lpClass->name) {
     ByteString szStringVal = ByteString::Format("[object %s]", lpClass->name);
     info.GetReturnValue().Set(
-        v8::String::NewFromUtf8(info.GetIsolate(), szStringVal.c_str(),
-                                v8::NewStringType::kNormal,
-                                szStringVal.GetLength())
-            .ToLocalChecked());
+        CFX_V8::NewStringHelper(info.GetIsolate(), szStringVal.AsStringView()));
     return;
   }
   v8::Local<v8::String> local_str =
@@ -106,9 +104,9 @@ void DynPropGetterAdapter_MethodCallback(
   if (result.HasError()) {
     WideString err = JSFormatErrorString(pClassDescriptor->name, *szPropName,
                                          result.Error());
-    v8::MaybeLocal<v8::String> str = v8::String::NewFromUtf8(
-        info.GetIsolate(), err.ToDefANSI().c_str(), v8::NewStringType::kNormal);
-    info.GetIsolate()->ThrowException(str.ToLocalChecked());
+    v8::Local<v8::String> str =
+        CFX_V8::NewStringHelper(info.GetIsolate(), err.AsStringView());
+    info.GetIsolate()->ThrowException(str);
     return;
   }
 
@@ -142,10 +140,7 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
       hCallBackInfo->SetAlignedPointerInInternalField(
           0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClass));
       hCallBackInfo->SetInternalField(
-          1, v8::String::NewFromUtf8(
-                 pIsolate, reinterpret_cast<const char*>(szPropName.raw_str()),
-                 v8::NewStringType::kNormal, szPropName.GetLength())
-                 .ToLocalChecked());
+          1, CFX_V8::NewStringHelper(pIsolate, szPropName));
       pValue->ForceSetValue(
           v8::Function::New(pIsolate->GetCurrentContext(),
                             DynPropGetterAdapter_MethodCallback, hCallBackInfo,
@@ -288,9 +283,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
       v8::External::New(
           pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
   hFunctionTemplate->SetClassName(
-      v8::String::NewFromUtf8(pIsolate, lpClassDefinition->name,
-                              v8::NewStringType::kNormal)
-          .ToLocalChecked());
+      CFX_V8::NewStringHelper(pIsolate, lpClassDefinition->name));
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
@@ -304,24 +297,19 @@ CFXJSE_Class* CFXJSE_Class::Create(
                                           lpClassDefinition->methods + i)));
       fun->RemovePrototype();
       hObjectTemplate->Set(
-          v8::String::NewFromUtf8(pIsolate, lpClassDefinition->methods[i].name,
-                                  v8::NewStringType::kNormal)
-              .ToLocalChecked(),
+          CFX_V8::NewStringHelper(pIsolate, lpClassDefinition->methods[i].name),
           fun,
           static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     }
   }
 
   if (bIsJSGlobal) {
-    v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
+    v8::Local<v8::FunctionTemplate> fn = v8::FunctionTemplate::New(
         pIsolate, Context_GlobalObjToString,
         v8::External::New(
             pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
-    fun->RemovePrototype();
-    hObjectTemplate->Set(v8::String::NewFromUtf8(pIsolate, "toString",
-                                                 v8::NewStringType::kNormal)
-                             .ToLocalChecked(),
-                         fun);
+    fn->RemovePrototype();
+    hObjectTemplate->Set(CFX_V8::NewStringHelper(pIsolate, "toString"), fn);
   }
   pClass->m_hTemplate.Reset(lpContext->GetIsolate(), hFunctionTemplate);
   CFXJSE_Class* pResult = pClass.get();

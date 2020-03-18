@@ -177,6 +177,12 @@ v8::Local<v8::String> CFX_V8::NewStringHelper(v8::Isolate* pIsolate,
 }
 
 // static
+v8::Local<v8::String> CFX_V8::NewStringHelper(v8::Isolate* pIsolate,
+                                              WideStringView str) {
+  return NewStringHelper(pIsolate, FX_UTF8Encode(str).AsStringView());
+}
+
+// static
 int CFX_V8::ReentrantToInt32Helper(v8::Isolate* pIsolate,
                                    v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())

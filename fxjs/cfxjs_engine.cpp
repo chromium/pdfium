@@ -142,33 +142,27 @@ class CFXJS_ObjDefinition {
         m_pIsolate(isolate) {
     v8::Isolate::Scope isolate_scope(isolate);
     v8::HandleScope handle_scope(isolate);
-    v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(isolate);
-    fun->InstanceTemplate()->SetInternalFieldCount(2);
-    fun->SetCallHandler(CallHandler, v8::Number::New(isolate, eObjType));
+    v8::Local<v8::FunctionTemplate> fn = v8::FunctionTemplate::New(isolate);
+    fn->InstanceTemplate()->SetInternalFieldCount(2);
+    fn->SetCallHandler(CallHandler, v8::Number::New(isolate, eObjType));
     if (eObjType == FXJSOBJTYPE_GLOBAL) {
-      fun->InstanceTemplate()->Set(
-          v8::Symbol::GetToStringTag(isolate),
-          v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal)
-              .ToLocalChecked());
+      fn->InstanceTemplate()->Set(v8::Symbol::GetToStringTag(isolate),
+                                  CFX_V8::NewStringHelper(isolate, "global"));
     }
-    m_FunctionTemplate.Reset(isolate, fun);
-    m_Signature.Reset(isolate, v8::Signature::New(isolate, fun));
+    m_FunctionTemplate.Reset(isolate, fn);
+    m_Signature.Reset(isolate, v8::Signature::New(isolate, fn));
   }
 
   static void CallHandler(const v8::FunctionCallbackInfo<v8::Value>& info) {
     v8::Isolate* isolate = info.GetIsolate();
     if (!info.IsConstructCall()) {
       isolate->ThrowException(
-          v8::String::NewFromUtf8(isolate, "illegal constructor",
-                                  v8::NewStringType::kNormal)
-              .ToLocalChecked());
+          CFX_V8::NewStringHelper(isolate, "illegal constructor"));
       return;
     }
     if (info.Data().As<v8::Int32>()->Value() != FXJSOBJTYPE_DYNAMIC) {
       isolate->ThrowException(
-          v8::String::NewFromUtf8(isolate, "not a dynamic object",
-                                  v8::NewStringType::kNormal)
-              .ToLocalChecked());
+          CFX_V8::NewStringHelper(isolate, "not a dynamic object"));
       return;
     }
     v8::Local<v8::Object> holder = info.Holder();
@@ -239,10 +233,8 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
   if (!g_DefaultGlobalObjectTemplate) {
     v8::Local<v8::ObjectTemplate> hGlobalTemplate =
         v8::ObjectTemplate::New(pIsolate);
-    hGlobalTemplate->Set(
-        v8::Symbol::GetToStringTag(pIsolate),
-        v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)
-            .ToLocalChecked());
+    hGlobalTemplate->Set(v8::Symbol::GetToStringTag(pIsolate),
+                         CFX_V8::NewStringHelper(pIsolate, "global"));
     g_DefaultGlobalObjectTemplate =
         new v8::Global<v8::ObjectTemplate>(pIsolate, hGlobalTemplate);
   }

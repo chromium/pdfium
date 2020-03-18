@@ -30,24 +30,17 @@ double JS_DateParse(const WideString& str) {
   // Use the built-in object method.
   v8::Local<v8::Value> v =
       context->Global()
-          ->Get(context, v8::String::NewFromUtf8(pIsolate, "Date",
-                                                 v8::NewStringType::kNormal)
-                             .ToLocalChecked())
+          ->Get(context, CFX_V8::NewStringHelper(pIsolate, "Date"))
           .ToLocalChecked();
   if (v->IsObject()) {
     v8::Local<v8::Object> o = v->ToObject(context).ToLocalChecked();
-    v = o->Get(context, v8::String::NewFromUtf8(pIsolate, "parse",
-                                                v8::NewStringType::kNormal)
-                            .ToLocalChecked())
+    v = o->Get(context, CFX_V8::NewStringHelper(pIsolate, "parse"))
             .ToLocalChecked();
     if (v->IsFunction()) {
       v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
       const int argc = 1;
-      v8::Local<v8::Value> timeStr =
-          v8::String::NewFromUtf8(pIsolate,
-                                  FX_UTF8Encode(str.AsStringView()).c_str(),
-                                  v8::NewStringType::kNormal)
-              .ToLocalChecked();
+      v8::Local<v8::String> timeStr =
+          CFX_V8::NewStringHelper(pIsolate, str.AsStringView());
       v8::Local<v8::Value> argv[argc] = {timeStr};
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {

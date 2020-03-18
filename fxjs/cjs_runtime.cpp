@@ -181,10 +181,7 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(ByteStringView utf8Name,
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::String> str =
-      v8::String::NewFromUtf8(GetIsolate(), utf8Name.unterminated_c_str(),
-                              v8::NewStringType::kNormal, utf8Name.GetLength())
-          .ToLocalChecked();
+  v8::Local<v8::String> str = CFX_V8::NewStringHelper(GetIsolate(), utf8Name);
   v8::MaybeLocal<v8::Value> maybe_propvalue =
       context->Global()->Get(context, str);
   if (maybe_propvalue.IsEmpty())
@@ -203,10 +200,7 @@ bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::String> str =
-      v8::String::NewFromUtf8(pIsolate, utf8Name.unterminated_c_str(),
-                              v8::NewStringType::kNormal, utf8Name.GetLength())
-          .ToLocalChecked();
+  v8::Local<v8::String> str = CFX_V8::NewStringHelper(pIsolate, utf8Name);
   v8::Maybe<bool> result = context->Global()->Set(context, str, pValue);
   return result.IsJust() && result.FromJust();
 }
