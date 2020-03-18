@@ -36,6 +36,7 @@
 #include "fxjs/cjs_timerobj.h"
 #include "fxjs/cjs_util.h"
 #include "fxjs/cjs_zoomtype.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"
 #include "third_party/base/ptr_util.h"
 
@@ -181,7 +182,7 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(ByteStringView utf8Name,
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::String> str = CFX_V8::NewStringHelper(GetIsolate(), utf8Name);
+  v8::Local<v8::String> str = fxv8::NewStringHelper(GetIsolate(), utf8Name);
   v8::MaybeLocal<v8::Value> maybe_propvalue =
       context->Global()->Get(context, str);
   if (maybe_propvalue.IsEmpty())
@@ -200,7 +201,7 @@ bool CJS_Runtime::SetValueByNameInGlobalObject(ByteStringView utf8Name,
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::String> str = CFX_V8::NewStringHelper(pIsolate, utf8Name);
+  v8::Local<v8::String> str = fxv8::NewStringHelper(pIsolate, utf8Name);
   v8::Maybe<bool> result = context->Global()->Set(context, str, pValue);
   return result.IsJust() && result.FromJust();
 }

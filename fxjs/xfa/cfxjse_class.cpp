@@ -11,6 +11,7 @@
 
 #include "fxjs/cfx_v8.h"
 #include "fxjs/cjs_result.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
@@ -67,7 +68,7 @@ void Context_GlobalObjToString(
   if (info.This() == info.Holder() && lpClass->name) {
     ByteString szStringVal = ByteString::Format("[object %s]", lpClass->name);
     info.GetReturnValue().Set(
-        CFX_V8::NewStringHelper(info.GetIsolate(), szStringVal.AsStringView()));
+        fxv8::NewStringHelper(info.GetIsolate(), szStringVal.AsStringView()));
     return;
   }
   v8::Local<v8::String> local_str =
@@ -105,7 +106,7 @@ void DynPropGetterAdapter_MethodCallback(
     WideString err = JSFormatErrorString(pClassDescriptor->name, *szPropName,
                                          result.Error());
     v8::Local<v8::String> str =
-        CFX_V8::NewStringHelper(info.GetIsolate(), err.AsStringView());
+        fxv8::NewStringHelper(info.GetIsolate(), err.AsStringView());
     info.GetIsolate()->ThrowException(str);
     return;
   }
@@ -140,7 +141,7 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
       hCallBackInfo->SetAlignedPointerInInternalField(
           0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClass));
       hCallBackInfo->SetInternalField(
-          1, CFX_V8::NewStringHelper(pIsolate, szPropName));
+          1, fxv8::NewStringHelper(pIsolate, szPropName));
       pValue->ForceSetValue(
           v8::Function::New(pIsolate->GetCurrentContext(),
                             DynPropGetterAdapter_MethodCallback, hCallBackInfo,
@@ -283,7 +284,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
       v8::External::New(
           pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
   hFunctionTemplate->SetClassName(
-      CFX_V8::NewStringHelper(pIsolate, lpClassDefinition->name));
+      fxv8::NewStringHelper(pIsolate, lpClassDefinition->name));
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
@@ -297,7 +298,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
                                           lpClassDefinition->methods + i)));
       fun->RemovePrototype();
       hObjectTemplate->Set(
-          CFX_V8::NewStringHelper(pIsolate, lpClassDefinition->methods[i].name),
+          fxv8::NewStringHelper(pIsolate, lpClassDefinition->methods[i].name),
           fun,
           static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     }
@@ -309,7 +310,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
         v8::External::New(
             pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
     fn->RemovePrototype();
-    hObjectTemplate->Set(CFX_V8::NewStringHelper(pIsolate, "toString"), fn);
+    hObjectTemplate->Set(fxv8::NewStringHelper(pIsolate, "toString"), fn);
   }
   pClass->m_hTemplate.Reset(lpContext->GetIsolate(), hFunctionTemplate);
   CFXJSE_Class* pResult = pClass.get();

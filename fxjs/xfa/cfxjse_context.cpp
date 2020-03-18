@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "fxjs/cfxjs_engine.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
@@ -68,18 +69,18 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::Local<v8::Value> hException = trycatch->Exception();
   if (hException->IsObject()) {
-    v8::Local<v8::String> hNameStr = CFX_V8::NewStringHelper(pIsolate, "name");
+    v8::Local<v8::String> hNameStr = fxv8::NewStringHelper(pIsolate, "name");
     v8::Local<v8::Value> hValue =
         hException.As<v8::Object>()->Get(context, hNameStr).ToLocalChecked();
     if (hValue->IsString() || hValue->IsStringObject()) {
       hReturnValue->Set(context, 0, hValue).FromJust();
     } else {
       v8::Local<v8::String> hErrorStr =
-          CFX_V8::NewStringHelper(pIsolate, "Error");
+          fxv8::NewStringHelper(pIsolate, "Error");
       hReturnValue->Set(context, 0, hErrorStr).FromJust();
     }
     v8::Local<v8::String> hMessageStr =
-        CFX_V8::NewStringHelper(pIsolate, "message");
+        fxv8::NewStringHelper(pIsolate, "message");
     hValue =
         hException.As<v8::Object>()->Get(context, hMessageStr).ToLocalChecked();
     if (hValue->IsString() || hValue->IsStringObject())
@@ -87,8 +88,7 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
     else
       hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
   } else {
-    v8::Local<v8::String> hErrorStr =
-        CFX_V8::NewStringHelper(pIsolate, "Error");
+    v8::Local<v8::String> hErrorStr = fxv8::NewStringHelper(pIsolate, "Error");
     hReturnValue->Set(context, 0, hErrorStr).FromJust();
     hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
   }
@@ -191,7 +191,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     hObjectTemplate->SetInternalFieldCount(2);
   }
   hObjectTemplate->Set(v8::Symbol::GetToStringTag(pIsolate),
-                       CFX_V8::NewStringHelper(pIsolate, "global"));
+                       fxv8::NewStringHelper(pIsolate, "global"));
 
   v8::Local<v8::Context> hNewContext =
       v8::Context::New(pIsolate, nullptr, hObjectTemplate);
@@ -252,7 +252,7 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
   v8::TryCatch trycatch(GetIsolate());
   v8::Local<v8::String> hScriptString =
-      CFX_V8::NewStringHelper(GetIsolate(), szScript);
+      fxv8::NewStringHelper(GetIsolate(), szScript);
   if (!lpNewThisObject) {
     v8::Local<v8::Script> hScript;
     if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
@@ -273,7 +273,7 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Value> hNewThis = v8::Local<v8::Value>::New(
       GetIsolate(), lpNewThisObject->DirectGetValue());
   ASSERT(!hNewThis.IsEmpty());
-  v8::Local<v8::String> hEval = CFX_V8::NewStringHelper(
+  v8::Local<v8::String> hEval = fxv8::NewStringHelper(
       GetIsolate(), "(function () { return eval(arguments[0]); })");
   v8::Local<v8::Script> hWrapper =
       v8::Script::Compile(hContext, hEval).ToLocalChecked();

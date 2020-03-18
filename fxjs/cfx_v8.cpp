@@ -7,6 +7,7 @@
 #include "fxjs/cfx_v8.h"
 
 #include "core/fxcrt/fx_memory.h"
+#include "fxjs/fxv8.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
 CFX_V8::CFX_V8(v8::Isolate* isolate) : m_pIsolate(isolate) {}
@@ -110,7 +111,7 @@ v8::Local<v8::Boolean> CFX_V8::NewBoolean(bool b) {
 
 v8::Local<v8::String> CFX_V8::NewString(ByteStringView str) {
   v8::Isolate* pIsolate = m_pIsolate ? GetIsolate() : v8::Isolate::GetCurrent();
-  return NewStringHelper(pIsolate, str);
+  return fxv8::NewStringHelper(pIsolate, str);
 }
 
 v8::Local<v8::String> CFX_V8::NewString(WideStringView str) {
@@ -135,23 +136,23 @@ v8::Local<v8::Date> CFX_V8::NewDate(double d) {
 }
 
 int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
-  return ReentrantToInt32Helper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToInt32Helper(m_pIsolate.Get(), pValue);
 }
 
 bool CFX_V8::ToBoolean(v8::Local<v8::Value> pValue) {
-  return ReentrantToBooleanHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToBooleanHelper(m_pIsolate.Get(), pValue);
 }
 
 double CFX_V8::ToDouble(v8::Local<v8::Value> pValue) {
-  return ReentrantToDoubleHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToDoubleHelper(m_pIsolate.Get(), pValue);
 }
 
 WideString CFX_V8::ToWideString(v8::Local<v8::Value> pValue) {
-  return ReentrantToWideStringHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToWideStringHelper(m_pIsolate.Get(), pValue);
 }
 
 ByteString CFX_V8::ToByteString(v8::Local<v8::Value> pValue) {
-  return ReentrantToByteStringHelper(m_pIsolate.Get(), pValue);
+  return fxv8::ReentrantToByteStringHelper(m_pIsolate.Get(), pValue);
 }
 
 v8::Local<v8::Object> CFX_V8::ToObject(v8::Local<v8::Value> pValue) {
@@ -166,70 +167,6 @@ v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
     return v8::Local<v8::Array>();
   v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
-}
-
-// static
-v8::Local<v8::String> CFX_V8::NewStringHelper(v8::Isolate* pIsolate,
-                                              ByteStringView str) {
-  return v8::String::NewFromUtf8(pIsolate, str.unterminated_c_str(),
-                                 v8::NewStringType::kNormal, str.GetLength())
-      .ToLocalChecked();
-}
-
-// static
-v8::Local<v8::String> CFX_V8::NewStringHelper(v8::Isolate* pIsolate,
-                                              WideStringView str) {
-  return NewStringHelper(pIsolate, FX_UTF8Encode(str).AsStringView());
-}
-
-// static
-int CFX_V8::ReentrantToInt32Helper(v8::Isolate* pIsolate,
-                                   v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return 0;
-  return pValue->Int32Value(pIsolate->GetCurrentContext()).FromMaybe(0);
-}
-
-// static
-bool CFX_V8::ReentrantToBooleanHelper(v8::Isolate* pIsolate,
-                                      v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return false;
-  return pValue->BooleanValue(pIsolate);
-}
-
-// static
-double CFX_V8::ReentrantToDoubleHelper(v8::Isolate* pIsolate,
-                                       v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return 0.0;
-  return pValue->NumberValue(pIsolate->GetCurrentContext()).FromMaybe(0.0);
-}
-
-// static
-WideString CFX_V8::ReentrantToWideStringHelper(v8::Isolate* pIsolate,
-                                               v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return WideString();
-  v8::MaybeLocal<v8::String> maybe_string =
-      pValue->ToString(pIsolate->GetCurrentContext());
-  if (maybe_string.IsEmpty())
-    return WideString();
-  v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
-  return WideString::FromUTF8(ByteStringView(*s, s.length()));
-}
-
-// static
-ByteString CFX_V8::ReentrantToByteStringHelper(v8::Isolate* pIsolate,
-                                               v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty())
-    return ByteString();
-  v8::MaybeLocal<v8::String> maybe_string =
-      pValue->ToString(pIsolate->GetCurrentContext());
-  if (maybe_string.IsEmpty())
-    return ByteString();
-  v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
-  return ByteString(*s);
 }
 
 void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {

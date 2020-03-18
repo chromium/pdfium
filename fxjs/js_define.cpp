@@ -15,6 +15,7 @@
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/fx_date_helpers.h"
+#include "fxjs/fxv8.h"
 
 void JSDestructor(v8::Local<v8::Object> obj) {
   CFXJS_Engine::SetObjectPrivate(obj, nullptr);
@@ -30,17 +31,17 @@ double JS_DateParse(const WideString& str) {
   // Use the built-in object method.
   v8::Local<v8::Value> v =
       context->Global()
-          ->Get(context, CFX_V8::NewStringHelper(pIsolate, "Date"))
+          ->Get(context, fxv8::NewStringHelper(pIsolate, "Date"))
           .ToLocalChecked();
   if (v->IsObject()) {
     v8::Local<v8::Object> o = v->ToObject(context).ToLocalChecked();
-    v = o->Get(context, CFX_V8::NewStringHelper(pIsolate, "parse"))
+    v = o->Get(context, fxv8::NewStringHelper(pIsolate, "parse"))
             .ToLocalChecked();
     if (v->IsFunction()) {
       v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
       const int argc = 1;
       v8::Local<v8::String> timeStr =
-          CFX_V8::NewStringHelper(pIsolate, str.AsStringView());
+          fxv8::NewStringHelper(pIsolate, str.AsStringView());
       v8::Local<v8::Value> argv[argc] = {timeStr};
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {

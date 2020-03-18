@@ -6,12 +6,13 @@
 
 #include "fxjs/cjs_globalconsts.h"
 
+#include "fxjs/fxv8.h"
+
 #define GLOBAL_STRING(rt, name, value)                              \
   (rt)->DefineGlobalConst(                                          \
       (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) { \
-        const char* pStr = (value);                                 \
         info.GetReturnValue().Set(                                  \
-            CFX_V8::NewStringHelper(info.GetIsolate(), pStr));      \
+            fxv8::NewStringHelper(info.GetIsolate(), (value)));     \
       })
 
 // static

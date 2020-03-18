@@ -15,22 +15,6 @@
 
 class CFX_V8 {
  public:
-  static v8::Local<v8::String> NewStringHelper(v8::Isolate* pIsolate,
-                                               ByteStringView str);
-  static v8::Local<v8::String> NewStringHelper(v8::Isolate* pIsolate,
-                                               WideStringView str);
-
-  static int ReentrantToInt32Helper(v8::Isolate* pIsolate,
-                                    v8::Local<v8::Value> pValue);
-  static bool ReentrantToBooleanHelper(v8::Isolate* pIsolate,
-                                       v8::Local<v8::Value> pValue);
-  static double ReentrantToDoubleHelper(v8::Isolate* pIsolate,
-                                        v8::Local<v8::Value> pValue);
-  static WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
-                                                v8::Local<v8::Value> pValue);
-  static ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
-                                                v8::Local<v8::Value> pValue);
-
   explicit CFX_V8(v8::Isolate* pIsolate);
   virtual ~CFX_V8();
 

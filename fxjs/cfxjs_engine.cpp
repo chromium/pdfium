@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjs_object.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -147,7 +148,7 @@ class CFXJS_ObjDefinition {
     fn->SetCallHandler(CallHandler, v8::Number::New(isolate, eObjType));
     if (eObjType == FXJSOBJTYPE_GLOBAL) {
       fn->InstanceTemplate()->Set(v8::Symbol::GetToStringTag(isolate),
-                                  CFX_V8::NewStringHelper(isolate, "global"));
+                                  fxv8::NewStringHelper(isolate, "global"));
     }
     m_FunctionTemplate.Reset(isolate, fn);
     m_Signature.Reset(isolate, v8::Signature::New(isolate, fn));
@@ -157,12 +158,12 @@ class CFXJS_ObjDefinition {
     v8::Isolate* isolate = info.GetIsolate();
     if (!info.IsConstructCall()) {
       isolate->ThrowException(
-          CFX_V8::NewStringHelper(isolate, "illegal constructor"));
+          fxv8::NewStringHelper(isolate, "illegal constructor"));
       return;
     }
     if (info.Data().As<v8::Int32>()->Value() != FXJSOBJTYPE_DYNAMIC) {
       isolate->ThrowException(
-          CFX_V8::NewStringHelper(isolate, "not a dynamic object"));
+          fxv8::NewStringHelper(isolate, "not a dynamic object"));
       return;
     }
     v8::Local<v8::Object> holder = info.Holder();
@@ -234,7 +235,7 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
     v8::Local<v8::ObjectTemplate> hGlobalTemplate =
         v8::ObjectTemplate::New(pIsolate);
     hGlobalTemplate->Set(v8::Symbol::GetToStringTag(pIsolate),
-                         CFX_V8::NewStringHelper(pIsolate, "global"));
+                         fxv8::NewStringHelper(pIsolate, "global"));
     g_DefaultGlobalObjectTemplate =
         new v8::Global<v8::ObjectTemplate>(pIsolate, hGlobalTemplate);
   }

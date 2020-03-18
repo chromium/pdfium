@@ -14,6 +14,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
+#include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_engine.h"
@@ -1941,7 +1942,7 @@ void CFXJSE_FormCalcContext::DateFmt(
   ByteString bsFormat =
       GetStandardDateFormat(pThis, iStyle, bsLocale.AsStringView());
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
 }
 
 // static
@@ -2050,7 +2051,7 @@ void CFXJSE_FormCalcContext::LocalDateFmt(
   ByteString bsFormat =
       GetLocalDateFormat(pThis, iStyle, bsLocale.AsStringView(), false);
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
 }
 
 // static
@@ -2088,7 +2089,7 @@ void CFXJSE_FormCalcContext::LocalTimeFmt(
   ByteString bsFormat =
       GetLocalTimeFormat(pThis, iStyle, bsLocale.AsStringView(), false);
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
 }
 
 // static
@@ -2229,7 +2230,7 @@ void CFXJSE_FormCalcContext::Num2Date(
       ByteString::Format("%d%02d%02d", iYear + i, iMonth, iDay).AsStringView(),
       bsFormat.AsStringView(), bsLocale.AsStringView());
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsLocalDate.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsLocalDate.AsStringView()));
 }
 
 // static
@@ -2276,7 +2277,7 @@ void CFXJSE_FormCalcContext::Num2GMTime(
   ByteString bsGMTTime = Num2AllTime(pThis, iTime, bsFormat.AsStringView(),
                                      bsLocale.AsStringView(), true);
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsGMTTime.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsGMTTime.AsStringView()));
 }
 
 // static
@@ -2324,7 +2325,7 @@ void CFXJSE_FormCalcContext::Num2Time(
       Num2AllTime(pThis, static_cast<int32_t>(fTime), bsFormat.AsStringView(),
                   bsLocale.AsStringView(), false);
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsLocalTime.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsLocalTime.AsStringView()));
 }
 
 // static
@@ -2462,7 +2463,7 @@ void CFXJSE_FormCalcContext::TimeFmt(
   ByteString bsFormat =
       GetStandardTimeFormat(pThis, iStyle, bsLocale.AsStringView());
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsFormat.AsStringView()));
 }
 
 // static
@@ -3071,16 +3072,16 @@ void CFXJSE_FormCalcContext::Choose(
               propertyValue->ToString().AsStringView(), newPropertyValue.get());
         }
         ByteString bsChosen = ValueToUTF8String(newPropertyValue.get());
-        info.GetReturnValue().Set(CFX_V8::NewStringHelper(
-            info.GetIsolate(), bsChosen.AsStringView()));
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), bsChosen.AsStringView()));
         bFound = true;
       }
     } else {
       iValueIndex++;
       if (iValueIndex == iIndex) {
         ByteString bsChosen = ValueToUTF8String(argIndexValue.get());
-        info.GetReturnValue().Set(CFX_V8::NewStringHelper(
-            info.GetIsolate(), bsChosen.AsStringView()));
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), bsChosen.AsStringView()));
         bFound = true;
       }
     }
@@ -3381,24 +3382,19 @@ void CFXJSE_FormCalcContext::UnitType(
   }
   switch (eParserStatus) {
     case VALUETYPE_ISCM:
-      info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), "cm"));
+      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "cm"));
       break;
     case VALUETYPE_ISMM:
-      info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), "mm"));
+      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "mm"));
       break;
     case VALUETYPE_ISPT:
-      info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), "pt"));
+      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "pt"));
       break;
     case VALUETYPE_ISMP:
-      info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), "mp"));
+      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "mp"));
       break;
     default:
-      info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), "in"));
+      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "in"));
       break;
   }
 }
@@ -3596,7 +3592,7 @@ void CFXJSE_FormCalcContext::Concat(
     return;
   }
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsResult.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsResult.AsStringView()));
 }
 
 // static
@@ -3620,7 +3616,7 @@ void CFXJSE_FormCalcContext::Decode(
         WideString::FromUTF8(ValueToUTF8String(argOne.get()).AsStringView()));
     auto result = FX_UTF8Encode(decoded.AsStringView());
     info.GetReturnValue().Set(
-        CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+        fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
     return;
   }
 
@@ -3646,7 +3642,7 @@ void CFXJSE_FormCalcContext::Decode(
 
   auto result = FX_UTF8Encode(decoded.AsStringView());
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
 }
 
 // static
@@ -3668,7 +3664,7 @@ void CFXJSE_FormCalcContext::Encode(
     WideString encoded = EncodeURL(ValueToUTF8String(argOne.get()));
     auto result = FX_UTF8Encode(encoded.AsStringView());
     info.GetReturnValue().Set(
-        CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+        fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
     return;
   }
 
@@ -3691,7 +3687,7 @@ void CFXJSE_FormCalcContext::Encode(
 
   auto result = FX_UTF8Encode(encoded.AsStringView());
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
 }
 
 // static
@@ -3770,8 +3766,8 @@ void CFXJSE_FormCalcContext::Format(
     info.GetReturnValue().SetEmptyString();
     return;
   }
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
-      info.GetIsolate(), wsRet.ToUTF8().AsStringView()));
+  info.GetReturnValue().Set(
+      fxv8::NewStringHelper(info.GetIsolate(), wsRet.ToUTF8().AsStringView()));
 }
 
 // static
@@ -3793,7 +3789,7 @@ void CFXJSE_FormCalcContext::Left(
 
   ByteString bsSource = ValueToUTF8String(argOne.get());
   int32_t count = std::max(0, ValueToInteger(pThis, argTwo.get()));
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.First(count).AsStringView()));
 }
 
@@ -3846,7 +3842,7 @@ void CFXJSE_FormCalcContext::Lower(
 
   auto result = FX_UTF8Encode(szLowBuf.AsStringView());
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
 }
 
 // static
@@ -3867,7 +3863,7 @@ void CFXJSE_FormCalcContext::Ltrim(
   ByteString bsSource = ValueToUTF8String(argOne.get());
   bsSource.TrimLeft();
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
 }
 
 // static
@@ -3908,7 +3904,7 @@ void CFXJSE_FormCalcContext::Parse(
     }
     auto result = localeValue.GetValue().ToUTF8();
     info.GetReturnValue().Set(
-        CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+        fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
     return;
   }
 
@@ -3933,7 +3929,7 @@ void CFXJSE_FormCalcContext::Parse(
       }
       auto result = localeValue.GetValue().ToUTF8();
       info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+          fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
       return;
     }
     case XFA_VT_DATE: {
@@ -3946,7 +3942,7 @@ void CFXJSE_FormCalcContext::Parse(
       }
       auto result = localeValue.GetValue().ToUTF8();
       info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+          fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
       return;
     }
     case XFA_VT_TIME: {
@@ -3959,7 +3955,7 @@ void CFXJSE_FormCalcContext::Parse(
       }
       auto result = localeValue.GetValue().ToUTF8();
       info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+          fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
       return;
     }
     case XFA_VT_TEXT: {
@@ -3972,7 +3968,7 @@ void CFXJSE_FormCalcContext::Parse(
       }
       auto result = localeValue.GetValue().ToUTF8();
       info.GetReturnValue().Set(
-          CFX_V8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
+          fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
       return;
     }
     case XFA_VT_FLOAT: {
@@ -4003,8 +3999,8 @@ void CFXJSE_FormCalcContext::Parse(
                                      pLocale, pMgr);
         if (localeValue.IsValid()) {
           auto result = localeValue.GetValue().ToUTF8();
-          info.GetReturnValue().Set(CFX_V8::NewStringHelper(
-              info.GetIsolate(), result.AsStringView()));
+          info.GetReturnValue().Set(
+              fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
           return;
         }
       }
@@ -4070,7 +4066,7 @@ void CFXJSE_FormCalcContext::Replace(
     }
   }
   szResult << '\0';
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), ByteStringView(szResult.str().c_str())));
 }
 
@@ -4093,7 +4089,7 @@ void CFXJSE_FormCalcContext::Right(
 
   ByteString bsSource = ValueToUTF8String(argOne.get());
   int32_t count = std::max(0, ValueToInteger(pThis, argTwo.get()));
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.Last(count).AsStringView()));
 }
 
@@ -4115,7 +4111,7 @@ void CFXJSE_FormCalcContext::Rtrim(
   ByteString bsSource = ValueToUTF8String(argOne.get());
   bsSource.TrimRight();
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
+      fxv8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
 }
 
 // static
@@ -4141,7 +4137,7 @@ void CFXJSE_FormCalcContext::Space(
     index++;
   }
   spaceString << '\0';
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), ByteStringView(spaceString.str().c_str())));
 }
 
@@ -4202,7 +4198,7 @@ void CFXJSE_FormCalcContext::Str(
       ++i;
     }
     resultBuf << '\0';
-    info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+    info.GetReturnValue().Set(fxv8::NewStringHelper(
         info.GetIsolate(), ByteStringView(resultBuf.str().c_str())));
     return;
   }
@@ -4222,7 +4218,7 @@ void CFXJSE_FormCalcContext::Str(
       }
       resultBuf << pData;
     }
-    info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+    info.GetReturnValue().Set(fxv8::NewStringHelper(
         info.GetIsolate(), ByteStringView(resultBuf.str().c_str())));
     return;
   }
@@ -4259,7 +4255,7 @@ void CFXJSE_FormCalcContext::Str(
     ++i;
   }
   resultBuf << '\0';
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), ByteStringView(resultBuf.str().c_str())));
 }
 
@@ -4311,7 +4307,7 @@ void CFXJSE_FormCalcContext::Stuff(
     ++i;
   }
   szResult << '\0';
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), ByteStringView(szResult.str().c_str())));
   ;
 }
@@ -4353,7 +4349,7 @@ void CFXJSE_FormCalcContext::Substr(
   // Negative values are treated as 0. Can't clamp() due to sign mismatches.
   size_t iCount = std::max(ValueToInteger(pThis, end_value.get()), 0);
   iCount = std::min(iCount, iLength - iStart);
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), bsSource.Substr(iStart, iCount).AsStringView()));
 }
 
@@ -4372,7 +4368,7 @@ void CFXJSE_FormCalcContext::Uuid(
     std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, info, 0);
     iNum = static_cast<int32_t>(ValueToFloat(pThis, argOne.get()));
   }
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), GUIDString(!!iNum).AsStringView()));
 }
 
@@ -4409,7 +4405,7 @@ void CFXJSE_FormCalcContext::Upper(
   }
   upperStringBuf.AppendChar(0);
 
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(),
       FX_UTF8Encode(upperStringBuf.AsStringView()).AsStringView()));
 }
@@ -4455,11 +4451,11 @@ void CFXJSE_FormCalcContext::WordNum(
 
   if (std::isnan(fNumber) || fNumber < 0.0f ||
       fNumber > 922337203685477550.0f) {
-    info.GetReturnValue().Set(CFX_V8::NewStringHelper(info.GetIsolate(), "*"));
+    info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "*"));
     return;
   }
 
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(),
       WordUS(ByteString::Format("%.2f", fNumber), iIdentifier).AsStringView()));
 }
@@ -4493,7 +4489,7 @@ void CFXJSE_FormCalcContext::Get(
   std::vector<uint8_t> dataBuf(size);
   pFile->ReadBlock(dataBuf.data(), size);
   info.GetReturnValue().Set(
-      CFX_V8::NewStringHelper(info.GetIsolate(), ByteStringView(dataBuf)));
+      fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(dataBuf)));
 }
 
 // static
@@ -4549,7 +4545,7 @@ void CFXJSE_FormCalcContext::Post(
     pContext->ThrowServerDeniedException();
     return;
   }
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), decodedResponse.ToUTF8().AsStringView()));
 }
 
@@ -5068,7 +5064,7 @@ void CFXJSE_FormCalcContext::eval_translation(
     pContext->ThrowCompilerErrorException();
     return;
   }
-  info.GetReturnValue().Set(CFX_V8::NewStringHelper(
+  info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(),
       FX_UTF8Encode(wsJavaScriptBuf.AsStringView()).AsStringView()));
 }
@@ -5762,11 +5758,11 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   }
 
   const ByteString bsName =
-      CFX_V8::ReentrantToByteStringHelper(info.GetIsolate(), info[2]);
+      fxv8::ReentrantToByteStringHelper(info.GetIsolate(), info[2]);
   const bool bHasNoResolveName = bDotAccessor && bsName.IsEmpty();
   ByteString bsSomExp = GenerateSomExpression(
       bsName.AsStringView(),
-      CFX_V8::ReentrantToInt32Helper(info.GetIsolate(), info[3]), iIndexValue,
+      fxv8::ReentrantToInt32Helper(info.GetIsolate(), info[3]), iIndexValue,
       bIsStar);
 
   auto argAccessor =
@@ -5826,7 +5822,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   XFA_RESOLVENODE_RS resolveNodeRS;
   bool bRet = false;
   ByteString bsAccessorName =
-      CFX_V8::ReentrantToByteStringHelper(info.GetIsolate(), info[1]);
+      fxv8::ReentrantToByteStringHelper(info.GetIsolate(), info[1]);
   if (argAccessor->IsObject() ||
       (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
     bRet = ResolveObjects(pThis, argAccessor.get(), bsSomExp.AsStringView(),

@@ -89,6 +89,8 @@ source_set("fxjs") {
       "cjs_zoomtype.h",
       "fx_date_helpers.cpp",
       "fx_date_helpers.h",
+      "fxv8.cpp",
+      "fxv8.h",
       "global_timer.cpp",
       "global_timer.h",
       "js_define.cpp",
