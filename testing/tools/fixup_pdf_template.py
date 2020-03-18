@@ -11,6 +11,7 @@ script replaces {{name}}-style variables in the input with calculated results
   {{header}} - expands to the header comment required for PDF files.
   {{xref}} - expands to a generated xref table, noting the offset.
   {{trailer}} - expands to a standard trailer with "1 0 R" as the /Root.
+  {{trailersize}} - expands to |/Size n|, to be used in non-standard trailers.
   {{startxref} - expands to a startxref directive followed by correct offset.
   {{object x y}} - expands to |x y obj| declaration, noting the offset.
   {{streamlen}} - expands to |/Length n|.
@@ -43,6 +44,9 @@ class TemplateProcessor:
 
   TRAILER_TOKEN = '{{trailer}}'
   TRAILER_REPLACEMENT = 'trailer <<\n  /Root 1 0 R\n  /Size %d\n>>'
+
+  TRAILERSIZE_TOKEN = '{{trailersize}}'
+  TRAILERSIZE_REPLACEMENT = '/Size %d'
 
   STARTXREF_TOKEN = '{{startxref}}'
   STARTXREF_REPLACEMENT = 'startxref\n%d'
@@ -104,6 +108,9 @@ class TemplateProcessor:
     if self.TRAILER_TOKEN in line:
       replacement = self.TRAILER_REPLACEMENT % (self.max_object_number + 1)
       line = line.replace(self.TRAILER_TOKEN, replacement)
+    if self.TRAILERSIZE_TOKEN in line:
+      replacement = self.TRAILERSIZE_REPLACEMENT % (self.max_object_number + 1)
+      line = line.replace(self.TRAILERSIZE_TOKEN, replacement)
     if self.STARTXREF_TOKEN in line:
       replacement = self.STARTXREF_REPLACEMENT % self.xref_offset
       line = line.replace(self.STARTXREF_TOKEN, replacement)

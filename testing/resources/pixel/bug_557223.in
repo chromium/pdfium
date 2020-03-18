@@ -75,7 +75,7 @@ endobj
 trailer <<
     /Info 6 0 R
     /Root 1 0 R
-    /Size 7
+    {{trailersize}}
 >>
 {{startxref}}
 %%EOF
