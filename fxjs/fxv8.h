@@ -7,6 +7,8 @@
 #ifndef FXJS_FXV8_H_
 #define FXJS_FXV8_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_string.h"
 #include "v8/include/v8.h"
 
@@ -26,6 +28,18 @@ WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
                                        v8::Local<v8::Value> pValue);
 ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
                                        v8::Local<v8::Value> pValue);
+
+v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj,
+    ByteStringView bsUTF8PropertyName);
+std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj);
+bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
+                                      v8::Local<v8::Object> pObj,
+                                      ByteStringView bsUTF8PropertyName,
+                                      v8::Local<v8::Value> pPut);
 
 }  // namespace fxv8
 

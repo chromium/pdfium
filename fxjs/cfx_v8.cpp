@@ -17,42 +17,20 @@ CFX_V8::~CFX_V8() = default;
 v8::Local<v8::Value> CFX_V8::GetObjectProperty(
     v8::Local<v8::Object> pObj,
     ByteStringView bsUTF8PropertyName) {
-  if (pObj.IsEmpty())
-    return v8::Local<v8::Value>();
-  v8::Local<v8::Value> val;
-  if (!pObj->Get(m_pIsolate->GetCurrentContext(), NewString(bsUTF8PropertyName))
-           .ToLocal(&val))
-    return v8::Local<v8::Value>();
-  return val;
+  return fxv8::ReentrantGetObjectPropertyHelper(m_pIsolate.Get(), pObj,
+                                                bsUTF8PropertyName);
 }
 
 std::vector<WideString> CFX_V8::GetObjectPropertyNames(
     v8::Local<v8::Object> pObj) {
-  if (pObj.IsEmpty())
-    return std::vector<WideString>();
-
-  v8::Local<v8::Array> val;
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  if (!pObj->GetPropertyNames(context).ToLocal(&val))
-    return std::vector<WideString>();
-
-  std::vector<WideString> result;
-  for (uint32_t i = 0; i < val->Length(); ++i) {
-    result.push_back(ToWideString(val->Get(context, i).ToLocalChecked()));
-  }
-
-  return result;
+  return fxv8::ReentrantGetObjectPropertyNamesHelper(m_pIsolate.Get(), pObj);
 }
 
 bool CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
-  ASSERT(!pPut.IsEmpty());
-  if (pObj.IsEmpty())
-    return false;
-
-  v8::Local<v8::String> name = NewString(bsUTF8PropertyName);
-  return pObj->Set(m_pIsolate->GetCurrentContext(), name, pPut).IsJust();
+  return fxv8::ReentrantPutObjectPropertyHelper(m_pIsolate.Get(), pObj,
+                                                bsUTF8PropertyName, pPut);
 }
 
 void CFX_V8::DisposeIsolate() {

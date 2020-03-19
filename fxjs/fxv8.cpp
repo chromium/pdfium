@@ -44,10 +44,12 @@ WideString ReentrantToWideStringHelper(v8::Isolate* pIsolate,
                                        v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return WideString();
+
   v8::MaybeLocal<v8::String> maybe_string =
       pValue->ToString(pIsolate->GetCurrentContext());
   if (maybe_string.IsEmpty())
     return WideString();
+
   v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
   return WideString::FromUTF8(ByteStringView(*s, s.length()));
 }
@@ -56,12 +58,61 @@ ByteString ReentrantToByteStringHelper(v8::Isolate* pIsolate,
                                        v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return ByteString();
+
   v8::MaybeLocal<v8::String> maybe_string =
       pValue->ToString(pIsolate->GetCurrentContext());
   if (maybe_string.IsEmpty())
     return ByteString();
+
   v8::String::Utf8Value s(pIsolate, maybe_string.ToLocalChecked());
   return ByteString(*s);
+}
+
+v8::Local<v8::Value> ReentrantGetObjectPropertyHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj,
+    ByteStringView bsUTF8PropertyName) {
+  if (pObj.IsEmpty())
+    return v8::Local<v8::Value>();
+
+  v8::Local<v8::Value> val;
+  if (!pObj->Get(pIsolate->GetCurrentContext(),
+                 NewStringHelper(pIsolate, bsUTF8PropertyName))
+           .ToLocal(&val)) {
+    return v8::Local<v8::Value>();
+  }
+  return val;
+}
+
+std::vector<WideString> ReentrantGetObjectPropertyNamesHelper(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj) {
+  if (pObj.IsEmpty())
+    return std::vector<WideString>();
+
+  v8::Local<v8::Array> val;
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+  if (!pObj->GetPropertyNames(context).ToLocal(&val))
+    return std::vector<WideString>();
+
+  std::vector<WideString> result;
+  for (uint32_t i = 0; i < val->Length(); ++i) {
+    result.push_back(ReentrantToWideStringHelper(
+        pIsolate, val->Get(context, i).ToLocalChecked()));
+  }
+  return result;
+}
+
+bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
+                                      v8::Local<v8::Object> pObj,
+                                      ByteStringView bsUTF8PropertyName,
+                                      v8::Local<v8::Value> pPut) {
+  ASSERT(!pPut.IsEmpty());
+  if (pObj.IsEmpty())
+    return false;
+
+  v8::Local<v8::String> name = NewStringHelper(pIsolate, bsUTF8PropertyName);
+  return pObj->Set(pIsolate->GetCurrentContext(), name, pPut).IsJust();
 }
 
 }  // namespace fxv8
