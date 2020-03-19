@@ -41,6 +41,9 @@ bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
                                       ByteStringView bsUTF8PropertyName,
                                       v8::Local<v8::Value> pPut);
 
+void ThrowExceptionHelper(v8::Isolate* pIsolate, ByteStringView str);
+void ThrowExceptionHelper(v8::Isolate* pIsolate, WideStringView str);
+
 }  // namespace fxv8
 
 #endif  // FXJS_FXV8_H_

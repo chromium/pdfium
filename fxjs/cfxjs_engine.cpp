@@ -157,13 +157,11 @@ class CFXJS_ObjDefinition {
   static void CallHandler(const v8::FunctionCallbackInfo<v8::Value>& info) {
     v8::Isolate* isolate = info.GetIsolate();
     if (!info.IsConstructCall()) {
-      isolate->ThrowException(
-          fxv8::NewStringHelper(isolate, "illegal constructor"));
+      fxv8::ThrowExceptionHelper(isolate, "illegal constructor");
       return;
     }
     if (info.Data().As<v8::Int32>()->Value() != FXJSOBJTYPE_DYNAMIC) {
-      isolate->ThrowException(
-          fxv8::NewStringHelper(isolate, "not a dynamic object"));
+      fxv8::ThrowExceptionHelper(isolate, "not a dynamic object");
       return;
     }
     v8::Local<v8::Object> holder = info.Holder();
@@ -612,7 +610,7 @@ v8::Local<v8::Object> CFXJS_Engine::GetThisObj() {
 }
 
 void CFXJS_Engine::Error(const WideString& message) {
-  GetIsolate()->ThrowException(NewString(message.AsStringView()));
+  fxv8::ThrowExceptionHelper(GetIsolate(), message.AsStringView());
 }
 
 v8::Local<v8::Context> CFXJS_Engine::GetV8Context() {

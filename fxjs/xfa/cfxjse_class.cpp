@@ -105,9 +105,7 @@ void DynPropGetterAdapter_MethodCallback(
   if (result.HasError()) {
     WideString err = JSFormatErrorString(pClassDescriptor->name, *szPropName,
                                          result.Error());
-    v8::Local<v8::String> str =
-        fxv8::NewStringHelper(info.GetIsolate(), err.AsStringView());
-    info.GetIsolate()->ThrowException(str);
+    fxv8::ThrowExceptionHelper(info.GetIsolate(), err.AsStringView());
     return;
   }
 
