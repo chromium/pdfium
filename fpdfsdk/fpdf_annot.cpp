@@ -28,6 +28,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxge/cfx_color.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "third_party/base/ptr_util.h"
@@ -1064,4 +1065,65 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_IsChecked(FPDF_FORMHANDLE hHandle,
 
   CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
   return pWidget && pWidget->IsChecked();
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
+                               const FPDF_ANNOTATION_SUBTYPE* subtypes,
+                               size_t count) {
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
+  if (!pFormFillEnv)
+    return false;
+
+  if (count > 0 && !subtypes)
+    return false;
+
+  std::vector<CPDF_Annot::Subtype> focusable_annot_types;
+  focusable_annot_types.reserve(count);
+  for (size_t i = 0; i < count; ++i) {
+    focusable_annot_types.push_back(
+        static_cast<CPDF_Annot::Subtype>(subtypes[i]));
+  }
+
+  pFormFillEnv->SetFocusableAnnotSubtypes(focusable_annot_types);
+  return true;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFAnnot_GetFocusableSubtypesCount(FPDF_FORMHANDLE hHandle) {
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
+  if (!pFormFillEnv)
+    return -1;
+
+  return pdfium::CollectionSize<int>(pFormFillEnv->GetFocusableAnnotSubtypes());
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
+                               FPDF_ANNOTATION_SUBTYPE* subtypes,
+                               size_t count) {
+  CPDFSDK_FormFillEnvironment* pFormFillEnv =
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
+  if (!pFormFillEnv)
+    return false;
+
+  if (!subtypes)
+    return false;
+
+  const std::vector<CPDF_Annot::Subtype>& focusable_annot_types =
+      pFormFillEnv->GetFocusableAnnotSubtypes();
+
+  // Host should allocate enough memory to get the list of currently supported
+  // focusable subtypes.
+  if (count < focusable_annot_types.size())
+    return false;
+
+  for (size_t i = 0; i < focusable_annot_types.size(); ++i) {
+    subtypes[i] =
+        static_cast<FPDF_ANNOTATION_SUBTYPE>(focusable_annot_types[i]);
+  }
+
+  return true;
 }

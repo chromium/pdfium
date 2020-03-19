@@ -70,19 +70,3 @@ TEST_F(CPDFSDK_BAAnnotHandlerTest, TabToLinkOrHighlightAnnot) {
 
   EXPECT_FALSE(GetBAAnnotHandler()->OnKillFocus(&pNonWidgetAnnot, 0));
 }
-
-TEST_F(CPDFSDK_BAAnnotHandlerTest, TabToInvalidAnnot) {
-  // TODO(crbug.com/994500): Create annot iterator with list of supported
-  // focusable subtypes as provided by host.
-  CPDFSDK_AnnotIterator ai(GetPageView(), CPDF_Annot::Subtype::WIDGET);
-  CPDFSDK_Annot* pAnnot = ai.GetFirstAnnot();
-  ASSERT_TRUE(pAnnot);
-  EXPECT_EQ(pAnnot->GetAnnotSubtype(), CPDF_Annot::Subtype::WIDGET);
-
-  ObservedPtr<CPDFSDK_Annot> pWidgetAnnot(pAnnot);
-
-  // Passing wrong subtype to BAAnnotHandler, API should return false.
-  EXPECT_FALSE(GetBAAnnotHandler()->OnSetFocus(&pWidgetAnnot, 0));
-
-  EXPECT_FALSE(GetBAAnnotHandler()->OnKillFocus(&pWidgetAnnot, 0));
-}

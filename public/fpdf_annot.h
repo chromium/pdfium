@@ -656,6 +656,51 @@ FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_IsChecked(FPDF_FORMHANDLE hHandle,
                                                         FPDF_ANNOTATION annot);
 
+// Experimental API.
+// Set the list of focusable annotation subtypes. Annotations of subtype
+// FPDF_ANNOT_WIDGET are by default focusable. New subtypes set using this API
+// will override the existing subtypes.
+//
+//   hHandle  - handle to the form fill module, returned by
+//              FPDFDOC_InitFormFillEnvironment.
+//   subtypes - list of annotation subtype which can be tabbed over.
+//   count    - total number of annotation subtype in list.
+// Returns true if list of annotation subtype is set successfully, false
+// otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
+                               const FPDF_ANNOTATION_SUBTYPE* subtypes,
+                               size_t count);
+
+// Experimental API.
+// Get the count of focusable annotation subtypes as set by host
+// for a |hHandle|.
+//
+//   hHandle  - handle to the form fill module, returned by
+//              FPDFDOC_InitFormFillEnvironment.
+// Returns the count of focusable annotation subtypes or -1 on error.
+// Note : Annotations of type FPDF_ANNOT_WIDGET are by default focusable.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFAnnot_GetFocusableSubtypesCount(FPDF_FORMHANDLE hHandle);
+
+// Experimental API.
+// Get the list of focusable annotation subtype as set by host.
+//
+//   hHandle  - handle to the form fill module, returned by
+//              FPDFDOC_InitFormFillEnvironment.
+//   subtypes - receives the list of annotation subtype which can be tabbed
+//              over. Caller must have allocated |subtypes| more than or
+//              equal to the count obtained from
+//              FPDFAnnot_GetFocusableSubtypesCount() API.
+//   count    - size of |subtypes|.
+// Returns true on success and set list of annotation subtype to |subtypes|,
+// false otherwise.
+// Note : Annotations of type FPDF_ANNOT_WIDGET are by default focusable.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
+                               FPDF_ANNOTATION_SUBTYPE* subtypes,
+                               size_t count);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

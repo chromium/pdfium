@@ -201,6 +201,14 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
 
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Always present.
 
+  void SetFocusableAnnotSubtypes(
+      const std::vector<CPDF_Annot::Subtype>& focusableAnnotTypes) {
+    m_FocusableAnnotTypes = focusableAnnotTypes;
+  }
+  const std::vector<CPDF_Annot::Subtype>& GetFocusableAnnotSubtypes() const {
+    return m_FocusableAnnotTypes;
+  }
+
   // Creates if not present.
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
   IJS_Runtime* GetIJSRuntime();                   // Creates if not present.
@@ -222,6 +230,11 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   bool m_bChangeMask = false;
   bool m_bBeingDestroyed = false;
+
+  // Holds the list of focusable annot types.
+  // Annotations of type WIDGET are by default focusable.
+  std::vector<CPDF_Annot::Subtype> m_FocusableAnnotTypes = {
+      CPDF_Annot::Subtype::WIDGET};
 };
 
 #endif  // FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_

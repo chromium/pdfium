@@ -7,13 +7,14 @@
 #include "fpdfsdk/cpdfsdk_baannothandler.h"
 
 #include <memory>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
+#include "core/fxge/cfx_drawutils.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
@@ -40,7 +41,7 @@ CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() {}
 
 void CPDFSDK_BAAnnotHandler::SetFormFillEnvironment(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  // CPDFSDK_BAAnnotHandler does not need it.
+  form_fill_environment_ = pFormFillEnv;
 }
 
 bool CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
@@ -66,9 +67,26 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
   if (pAnnot->AsXFAWidget())
     return;
 
-  if (bDrawAnnots && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP) {
+  if (!pAnnot->AsBAAnnot()->IsVisible())
+    return;
+
+  const CPDF_Annot::Subtype annot_type = pAnnot->GetAnnotSubtype();
+  if (bDrawAnnots && annot_type == CPDF_Annot::Subtype::POPUP) {
     pAnnot->AsBAAnnot()->DrawAppearance(pDevice, mtUser2Device,
                                         CPDF_Annot::Normal, nullptr);
+    return;
+  }
+
+  if (is_annotation_focused_ && IsFocusableAnnot(annot_type) &&
+      pAnnot == form_fill_environment_->GetFocusAnnot()) {
+    CFX_FloatRect view_bounding_box =
+        GetViewBBox(pPageView, pAnnot->AsBAAnnot());
+    if (view_bounding_box.IsEmpty())
+      return;
+
+    view_bounding_box.Normalize();
+
+    CFX_DrawUtils::DrawFocusRect(pDevice, mtUser2Device, view_bounding_box);
   }
 }
 
@@ -165,14 +183,44 @@ bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
 
 void CPDFSDK_BAAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 
+bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
+    const CPDF_Annot::Subtype& annot_type) const {
+  ASSERT(annot_type != CPDF_Annot::Subtype::WIDGET);
+
+  return pdfium::ContainsValue(
+      form_fill_environment_->GetFocusableAnnotSubtypes(), annot_type);
+}
+
+void CPDFSDK_BAAnnotHandler::InvalidateRect(CPDFSDK_Annot* annot) {
+  CPDFSDK_BAAnnot* ba_annot = annot->AsBAAnnot();
+  CPDFSDK_PageView* page_view = ba_annot->GetPageView();
+  CFX_FloatRect view_bounding_box = GetViewBBox(page_view, ba_annot);
+  if (!view_bounding_box.IsEmpty()) {
+    view_bounding_box.Inflate(1, 1);
+    view_bounding_box.Normalize();
+    FX_RECT rect = view_bounding_box.GetOuterRect();
+    form_fill_environment_->Invalidate(ba_annot->GetPage(), rect);
+  }
+}
+
 bool CPDFSDK_BAAnnotHandler::OnSetFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                         uint32_t nFlag) {
-  return false;
+  if (!IsFocusableAnnot(pAnnot->Get()->GetAnnotSubtype()))
+    return false;
+
+  is_annotation_focused_ = true;
+  InvalidateRect(pAnnot->Get());
+  return true;
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKillFocus(ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                          uint32_t nFlag) {
-  return false;
+  if (!IsFocusableAnnot(pAnnot->Get()->GetAnnotSubtype()))
+    return false;
+
+  is_annotation_focused_ = false;
+  InvalidateRect(pAnnot->Get());
+  return true;
 }
 
 bool CPDFSDK_BAAnnotHandler::SetIndexSelected(
