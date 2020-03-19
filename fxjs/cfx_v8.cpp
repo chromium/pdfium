@@ -39,52 +39,43 @@ void CFX_V8::DisposeIsolate() {
 }
 
 v8::Local<v8::Array> CFX_V8::NewArray() {
-  return v8::Array::New(GetIsolate());
+  return fxv8::NewArrayHelper(GetIsolate());
 }
 
 v8::Local<v8::Object> CFX_V8::NewObject() {
-  return v8::Object::New(GetIsolate());
+  return fxv8::NewObjectHelper(GetIsolate());
 }
 
 bool CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
                              unsigned index,
                              v8::Local<v8::Value> pValue) {
-  ASSERT(!pValue.IsEmpty());
-  if (pArray.IsEmpty())
-    return false;
-  return pArray->Set(m_pIsolate->GetCurrentContext(), index, pValue).IsJust();
+  return fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index,
+                                              pValue);
 }
 
 v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> pArray,
                                              unsigned index) {
-  if (pArray.IsEmpty())
-    return v8::Local<v8::Value>();
-  v8::Local<v8::Value> val;
-  if (!pArray->Get(m_pIsolate->GetCurrentContext(), index).ToLocal(&val))
-    return v8::Local<v8::Value>();
-  return val;
+  return fxv8::ReentrantGetArrayElementHelper(GetIsolate(), pArray, index);
 }
 
 unsigned CFX_V8::GetArrayLength(v8::Local<v8::Array> pArray) {
-  if (pArray.IsEmpty())
-    return 0;
-  return pArray->Length();
+  return fxv8::GetArrayLengthHelper(pArray);
 }
 
 v8::Local<v8::Number> CFX_V8::NewNumber(int number) {
-  return v8::Int32::New(GetIsolate(), number);
+  return fxv8::NewNumberHelper(GetIsolate(), number);
 }
 
 v8::Local<v8::Number> CFX_V8::NewNumber(double number) {
-  return v8::Number::New(GetIsolate(), number);
+  return fxv8::NewNumberHelper(GetIsolate(), number);
 }
 
 v8::Local<v8::Number> CFX_V8::NewNumber(float number) {
-  return v8::Number::New(GetIsolate(), number);
+  return fxv8::NewNumberHelper(GetIsolate(), number);
 }
 
 v8::Local<v8::Boolean> CFX_V8::NewBoolean(bool b) {
-  return v8::Boolean::New(GetIsolate(), b);
+  return fxv8::NewBooleanHelper(GetIsolate(), b);
 }
 
 v8::Local<v8::String> CFX_V8::NewString(ByteStringView str) {
@@ -100,17 +91,15 @@ v8::Local<v8::String> CFX_V8::NewString(WideStringView str) {
 }
 
 v8::Local<v8::Value> CFX_V8::NewNull() {
-  return v8::Null(GetIsolate());
+  return fxv8::NewNullHelper(GetIsolate());
 }
 
 v8::Local<v8::Value> CFX_V8::NewUndefined() {
-  return v8::Undefined(GetIsolate());
+  return fxv8::NewUndefinedHelper(GetIsolate());
 }
 
 v8::Local<v8::Date> CFX_V8::NewDate(double d) {
-  return v8::Date::New(m_pIsolate->GetCurrentContext(), d)
-      .ToLocalChecked()
-      .As<v8::Date>();
+  return fxv8::NewDateHelper(GetIsolate(), d);
 }
 
 int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
@@ -134,17 +123,11 @@ ByteString CFX_V8::ToByteString(v8::Local<v8::Value> pValue) {
 }
 
 v8::Local<v8::Object> CFX_V8::ToObject(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty() || !pValue->IsObject())
-    return v8::Local<v8::Object>();
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  return pValue->ToObject(context).ToLocalChecked();
+  return fxv8::ReentrantToObjectHelper(GetIsolate(), pValue);
 }
 
 v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
-  if (pValue.IsEmpty() || !pValue->IsArray())
-    return v8::Local<v8::Array>();
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
+  return fxv8::ReentrantToArrayHelper(GetIsolate(), pValue);
 }
 
 void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
