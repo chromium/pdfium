@@ -6,11 +6,6 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 
-#include <set>
-#include <utility>
-#include <vector>
-
-#include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
@@ -19,9 +14,6 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
-#include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/ptr_util.h"
@@ -67,9 +59,7 @@ int FindPageIndex(const CPDF_Dictionary* pNode,
     if (objnum == pNode->GetObjNum())
       return *index;
 
-    if (*skip_count)
-      (*skip_count)--;
-
+    (*skip_count)--;
     (*index)++;
     return -1;
   }
@@ -294,10 +284,9 @@ void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
 }
 
 int CPDF_Document::GetPageIndex(uint32_t objnum) {
-  uint32_t nPages = m_PageList.size();
   uint32_t skip_count = 0;
   bool bSkipped = false;
-  for (uint32_t i = 0; i < nPages; i++) {
+  for (uint32_t i = 0; i < m_PageList.size(); ++i) {
     if (m_PageList[i] == objnum)
       return i;
 
@@ -471,6 +460,14 @@ void CPDF_Document::DeletePage(int iPage) {
     return;
 
   m_PageList.erase(m_PageList.begin() + iPage);
+}
+
+void CPDF_Document::SetRootForTesting(CPDF_Dictionary* root) {
+  m_pRootDict.Reset(root);
+}
+
+void CPDF_Document::ResizePageListForTesting(size_t size) {
+  m_PageList.resize(size);
 }
 
 CPDF_Document::StockFontClearer::StockFontClearer(

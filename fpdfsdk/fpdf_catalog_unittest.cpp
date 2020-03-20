@@ -25,7 +25,7 @@ class CPDF_TestDocument final : public CPDF_Document {
       : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
                       pdfium::MakeUnique<CPDF_DocPageData>()) {}
 
-  void SetRoot(CPDF_Dictionary* root) { m_pRootDict.Reset(root); }
+  void SetRoot(CPDF_Dictionary* root) { SetRootForTesting(root); }
 };
 
 class PDFCatalogTest : public testing::Test {
