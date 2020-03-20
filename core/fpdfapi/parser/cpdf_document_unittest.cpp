@@ -31,7 +31,7 @@ CPDF_Dictionary* CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
                                     int count) {
   CPDF_Array* pUnowned = pDoc->AddIndirectObject(std::move(kids))->AsArray();
   CPDF_Dictionary* pageNode = pDoc->NewIndirect<CPDF_Dictionary>();
-  pageNode->SetNewFor<CPDF_String>("Type", "Pages", false);
+  pageNode->SetNewFor<CPDF_Name>("Type", "Pages");
   pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, pUnowned->GetObjNum());
   pageNode->SetNewFor<CPDF_Number>("Count", count);
   for (size_t i = 0; i < pUnowned->size(); i++) {
@@ -43,7 +43,7 @@ CPDF_Dictionary* CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
 
 RetainPtr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
   auto page = pdfium::MakeRetain<CPDF_Dictionary>();
-  page->SetNewFor<CPDF_String>("Type", "Page", false);
+  page->SetNewFor<CPDF_Name>("Type", "Page");
   page->SetNewFor<CPDF_Number>("PageNumbering", static_cast<int>(number));
   return page;
 }
