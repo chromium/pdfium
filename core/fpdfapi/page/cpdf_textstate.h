@@ -72,12 +72,12 @@ class CPDF_TextState {
 
     RetainPtr<CPDF_Font> m_pFont;
     UnownedPtr<CPDF_Document> m_pDocument;
-    float m_FontSize;
-    float m_CharSpace;
-    float m_WordSpace;
-    TextRenderingMode m_TextMode;
-    float m_Matrix[4];
-    float m_CTM[4];
+    float m_FontSize = 1.0f;
+    float m_CharSpace = 0.0f;
+    float m_WordSpace = 0.0f;
+    TextRenderingMode m_TextMode = TextRenderingMode::MODE_FILL;
+    float m_Matrix[4] = {1.0f, 0.0f, 0.0f, 1.0f};
+    float m_CTM[4] = {1.0f, 0.0f, 0.0f, 1.0f};
 
    private:
     TextData();

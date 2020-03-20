@@ -78,18 +78,7 @@ float* CPDF_TextState::GetMutableCTM() {
   return m_Ref.GetPrivateCopy()->m_CTM;
 }
 
-CPDF_TextState::TextData::TextData()
-    : m_pFont(nullptr),
-      m_pDocument(nullptr),
-      m_FontSize(1.0f),
-      m_CharSpace(0),
-      m_WordSpace(0),
-      m_TextMode(TextRenderingMode::MODE_FILL) {
-  m_Matrix[0] = m_Matrix[3] = 1.0f;
-  m_Matrix[1] = m_Matrix[2] = 0;
-  m_CTM[0] = m_CTM[3] = 1.0f;
-  m_CTM[1] = m_CTM[2] = 0;
-}
+CPDF_TextState::TextData::TextData() = default;
 
 CPDF_TextState::TextData::TextData(const TextData& that)
     : m_pFont(that.m_pFont),
