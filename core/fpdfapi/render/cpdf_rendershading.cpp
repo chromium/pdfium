@@ -28,6 +28,7 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -522,12 +523,6 @@ struct Coon_BezierCoeff {
     p[2] = b / 3 - p[0] + 2 * p[1];
     p[3] = a + p[0] - 3 * p[1] + 3 * p[2];
   }
-  void GetPointsReverse(float p[4]) {
-    p[3] = d;
-    p[2] = c / 3 + p[3];
-    p[1] = b / 3 - p[3] + 2 * p[2];
-    p[0] = a + p[3] - 3 * p[2] + 3 * p[1];
-  }
   void BezierInterpol(Coon_BezierCoeff& C1,
                       Coon_BezierCoeff& C2,
                       Coon_BezierCoeff& D1,
@@ -580,28 +575,27 @@ struct Coon_Bezier {
     y.BezierInterpol(C1.y, C2.y, D1.y, D2.y);
   }
 
-  void GetPoints(std::vector<FX_PATHPOINT>& pPoints, size_t start_idx) {
-    float p[4];
-    int i;
-    x.GetPoints(p);
-    for (i = 0; i < 4; i++)
-      pPoints[start_idx + i].m_Point.x = p[i];
-
-    y.GetPoints(p);
-    for (i = 0; i < 4; i++)
-      pPoints[start_idx + i].m_Point.y = p[i];
+  void GetPoints(pdfium::span<FX_PATHPOINT> path_points) {
+    constexpr size_t kPointsCount = 4;
+    float points_x[kPointsCount];
+    float points_y[kPointsCount];
+    x.GetPoints(points_x);
+    y.GetPoints(points_y);
+    for (size_t i = 0; i < kPointsCount; ++i)
+      path_points[i].m_Point = {points_x[i], points_y[i]};
   }
 
-  void GetPointsReverse(std::vector<FX_PATHPOINT>& pPoints, size_t start_idx) {
-    float p[4];
-    int i;
-    x.GetPointsReverse(p);
-    for (i = 0; i < 4; i++)
-      pPoints[i + start_idx].m_Point.x = p[i];
-
-    y.GetPointsReverse(p);
-    for (i = 0; i < 4; i++)
-      pPoints[i + start_idx].m_Point.y = p[i];
+  void GetPointsReverse(pdfium::span<FX_PATHPOINT> path_points) {
+    constexpr size_t kPointsCount = 4;
+    float points_x[kPointsCount];
+    float points_y[kPointsCount];
+    x.GetPoints(points_x);
+    y.GetPoints(points_y);
+    for (size_t i = 0; i < kPointsCount; ++i) {
+      size_t reverse_index = kPointsCount - i - 1;
+      path_points[i].m_Point = {points_x[reverse_index],
+                                points_y[reverse_index]};
+    }
   }
 
   float Distance() { return x.Distance() + y.Distance(); }
@@ -701,11 +695,11 @@ struct CPDF_PatchDrawer {
     if (bSmall ||
         (d_bottom < COONCOLOR_THRESHOLD && d_left < COONCOLOR_THRESHOLD &&
          d_top < COONCOLOR_THRESHOLD && d_right < COONCOLOR_THRESHOLD)) {
-      std::vector<FX_PATHPOINT>& pPoints = path.GetPoints();
-      C1.GetPoints(pPoints, 0);
-      D2.GetPoints(pPoints, 3);
-      C2.GetPointsReverse(pPoints, 6);
-      D1.GetPointsReverse(pPoints, 9);
+      pdfium::span<FX_PATHPOINT> points = path.GetPoints();
+      C1.GetPoints(points.subspan(0, 4));
+      D2.GetPoints(points.subspan(3, 4));
+      C2.GetPointsReverse(points.subspan(6, 4));
+      D1.GetPointsReverse(points.subspan(9, 4));
       int fillFlags = FXFILL_WINDING | FXFILL_FULLCOVER;
       if (bNoPathSmooth)
         fillFlags |= FXFILL_NOPATHSMOOTH;
