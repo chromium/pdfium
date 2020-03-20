@@ -583,7 +583,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
   return pPageView;
 }
 
-CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
+CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageViewAtIndex(int nIndex) {
   IPDF_Page* pTempPage = GetPage(nIndex);
   if (!pTempPage)
     return nullptr;

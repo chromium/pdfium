@@ -33,7 +33,7 @@ class CPWLEditEmbedderTest : public EmbedderTest {
 
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageView(0),
+    CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageViewAtIndex(0),
                                CPDF_Annot::Subtype::WIDGET);
     // Normal text field.
     m_pAnnot = iter.GetFirstAnnot();
@@ -70,8 +70,8 @@ class CPWLEditEmbedderTest : public EmbedderTest {
         pInteractiveFormFiller->GetFormFillerForTesting(pAnnotTextField);
     ASSERT_TRUE(m_pFormFiller);
 
-    CPWL_Wnd* pWindow =
-        m_pFormFiller->GetPWLWindow(m_pFormFillEnv->GetPageView(0), false);
+    CPWL_Wnd* pWindow = m_pFormFiller->GetPWLWindow(
+        m_pFormFillEnv->GetPageViewAtIndex(0), false);
     ASSERT_TRUE(pWindow);
     m_pEdit = static_cast<CPWL_Edit*>(pWindow);
   }

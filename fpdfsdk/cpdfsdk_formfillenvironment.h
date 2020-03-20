@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_occontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -65,7 +66,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   void SetCursor(int32_t nCursorType) override;
 
   CPDFSDK_PageView* GetPageView(IPDF_Page* pUnderlyingPage, bool renew);
-  CPDFSDK_PageView* GetPageView(int nIndex);
+  CPDFSDK_PageView* GetPageViewAtIndex(int nIndex);
 
   void RemovePageView(IPDF_Page* pUnderlyingPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);

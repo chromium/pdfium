@@ -30,7 +30,7 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
     ASSERT_TRUE(page_);
 
     formfill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    CPDFSDK_AnnotIterator it(formfill_env_->GetPageView(0),
+    CPDFSDK_AnnotIterator it(formfill_env_->GetPageViewAtIndex(0),
                              CPDF_Annot::Subtype::WIDGET);
 
     // Read only check box.
@@ -74,7 +74,8 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
     form_filler_ = interactive_formfiller->GetFormFillerForTesting(annot);
     ASSERT_TRUE(form_filler_);
 
-    window_ = form_filler_->GetPWLWindow(formfill_env_->GetPageView(0), true);
+    window_ =
+        form_filler_->GetPWLWindow(formfill_env_->GetPageViewAtIndex(0), true);
     ASSERT_TRUE(window_);
   }
 

@@ -550,7 +550,8 @@ void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,
 
   int pageViewCount = m_pContext->GetFormFillEnv()->GetPageViewCount();
   for (int i = 0; i < pageViewCount; i++) {
-    CPDFSDK_PageView* pPageView = m_pContext->GetFormFillEnv()->GetPageView(i);
+    CPDFSDK_PageView* pPageView =
+        m_pContext->GetFormFillEnv()->GetPageViewAtIndex(i);
     if (!pPageView)
       continue;
 

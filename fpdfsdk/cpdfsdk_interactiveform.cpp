@@ -140,13 +140,13 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
   if (CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
-      pPage = m_pFormFillEnv->GetPageView(nPageIndex);
+      pPage = m_pFormFillEnv->GetPageViewAtIndex(nPageIndex);
   }
 
   if (!pPage) {
     int nPageIndex = GetPageIndexByAnnotDict(pDocument, pControlDict);
     if (nPageIndex >= 0)
-      pPage = m_pFormFillEnv->GetPageView(nPageIndex);
+      pPage = m_pFormFillEnv->GetPageViewAtIndex(nPageIndex);
   }
 
   return pPage ? ToCPDFSDKWidget(pPage->GetAnnotByDict(pControlDict)) : nullptr;

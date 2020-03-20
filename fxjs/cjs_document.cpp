@@ -1014,7 +1014,7 @@ CJS_Result CJS_Document::getAnnot(
 
   int nPageNo = pRuntime->ToInt32(params[0]);
   WideString swAnnotName = pRuntime->ToWideString(params[1]);
-  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(nPageNo);
+  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageViewAtIndex(nPageNo);
   if (!pPageView)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1056,7 +1056,7 @@ CJS_Result CJS_Document::getAnnots(
   int nPageNo = m_pFormFillEnv->GetPageCount();
   v8::Local<v8::Array> annots = pRuntime->NewArray();
   for (int i = 0; i < nPageNo; ++i) {
-    CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(i);
+    CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageViewAtIndex(i);
     if (!pPageView)
       return CJS_Result::Failure(JSMessage::kBadObjectError);
 

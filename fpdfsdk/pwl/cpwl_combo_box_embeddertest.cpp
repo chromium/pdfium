@@ -33,7 +33,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
 
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageView(0),
+    CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageViewAtIndex(0),
                                CPDF_Annot::Subtype::WIDGET);
 
     // User editable combobox.
@@ -64,8 +64,8 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
         pInteractiveFormFiller->GetFormFillerForTesting(pAnnotCombobox);
     ASSERT_TRUE(m_pFormFiller);
 
-    CPWL_Wnd* pWindow =
-        m_pFormFiller->GetPWLWindow(m_pFormFillEnv->GetPageView(0), false);
+    CPWL_Wnd* pWindow = m_pFormFiller->GetPWLWindow(
+        m_pFormFillEnv->GetPageViewAtIndex(0), false);
     ASSERT_TRUE(pWindow);
     m_pComboBox = static_cast<CPWL_ComboBox*>(pWindow);
   }
