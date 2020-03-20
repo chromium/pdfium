@@ -121,8 +121,8 @@ void CFXJSE_Value::SetArray(
 
 void CFXJSE_Value::SetFloat(float fFloat) {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> pValue = v8::Number::New(GetIsolate(), ftod(fFloat));
-  m_hValue.Reset(GetIsolate(), pValue);
+  m_hValue.Reset(GetIsolate(),
+                 fxv8::NewNumberHelper(GetIsolate(), ftod(fFloat)));
 }
 
 bool CFXJSE_Value::SetObjectProperty(ByteStringView szPropName,
@@ -396,36 +396,30 @@ ByteString CFXJSE_Value::ToString() const {
 
 void CFXJSE_Value::SetUndefined() {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue = v8::Undefined(GetIsolate());
-  m_hValue.Reset(GetIsolate(), hValue);
+  m_hValue.Reset(GetIsolate(), fxv8::NewUndefinedHelper(GetIsolate()));
 }
 
 void CFXJSE_Value::SetNull() {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue = v8::Null(GetIsolate());
-  m_hValue.Reset(GetIsolate(), hValue);
+  m_hValue.Reset(GetIsolate(), fxv8::NewNullHelper(GetIsolate()));
 }
 
 void CFXJSE_Value::SetBoolean(bool bBoolean) {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue = v8::Boolean::New(GetIsolate(), !!bBoolean);
-  m_hValue.Reset(GetIsolate(), hValue);
+  m_hValue.Reset(GetIsolate(), fxv8::NewBooleanHelper(GetIsolate(), bBoolean));
 }
 
 void CFXJSE_Value::SetInteger(int32_t nInteger) {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue = v8::Integer::New(GetIsolate(), nInteger);
-  m_hValue.Reset(GetIsolate(), hValue);
+  m_hValue.Reset(GetIsolate(), fxv8::NewNumberHelper(GetIsolate(), nInteger));
 }
 
 void CFXJSE_Value::SetDouble(double dDouble) {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue = v8::Number::New(GetIsolate(), dDouble);
-  m_hValue.Reset(GetIsolate(), hValue);
+  m_hValue.Reset(GetIsolate(), fxv8::NewNumberHelper(GetIsolate(), dDouble));
 }
 
 void CFXJSE_Value::SetString(ByteStringView szString) {
   CFXJSE_ScopeUtil_IsolateHandle scope(GetIsolate());
-  v8::Local<v8::Value> hValue = fxv8::NewStringHelper(GetIsolate(), szString);
-  m_hValue.Reset(GetIsolate(), hValue);
+  m_hValue.Reset(GetIsolate(), fxv8::NewStringHelper(GetIsolate(), szString));
 }
