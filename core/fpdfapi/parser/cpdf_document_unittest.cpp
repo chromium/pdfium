@@ -234,7 +234,7 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   dict->SetNewFor<CPDF_Number>("N", page_count);
   auto linearized = pdfium::MakeUnique<TestLinearized>(dict.Get());
   auto parser = pdfium::MakeUnique<CPDF_Parser>();
-  parser->SetLinearizedHeader(std::move(linearized));
+  parser->SetLinearizedHeaderForTesting(std::move(linearized));
   CPDF_TestDocumentAllowSetParser document;
   document.SetParser(std::move(parser));
   document.LoadPages();

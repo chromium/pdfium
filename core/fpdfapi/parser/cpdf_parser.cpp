@@ -938,7 +938,7 @@ uint32_t CPDF_Parser::GetFirstPageNo() const {
   return m_pLinearized ? m_pLinearized->GetFirstPageNo() : 0;
 }
 
-void CPDF_Parser::SetLinearizedHeader(
+void CPDF_Parser::SetLinearizedHeaderForTesting(
     std::unique_ptr<CPDF_LinearizedHeader> pLinearized) {
   m_pLinearized = std::move(pLinearized);
 }

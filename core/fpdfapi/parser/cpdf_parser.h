@@ -118,7 +118,8 @@ class CPDF_Parser {
 
   CPDF_SyntaxParser* GetSyntax() const { return m_pSyntax.get(); }
 
-  void SetLinearizedHeader(std::unique_ptr<CPDF_LinearizedHeader> pLinearized);
+  void SetLinearizedHeaderForTesting(
+      std::unique_ptr<CPDF_LinearizedHeader> pLinearized);
 
  protected:
   using ObjectType = CPDF_CrossRefTable::ObjectType;
