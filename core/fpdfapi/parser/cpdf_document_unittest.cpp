@@ -235,8 +235,14 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   CPDF_TestDocumentAllowSetParser document;
 
   {
+    CPDF_Object* first_page = document.AddIndirectObject(CreateNumberedPage(0));
+    ASSERT(first_page);
+    int first_page_obj_num = first_page->GetObjNum();
+    ASSERT_NE(kTestPageNum, first_page_obj_num);
+
     linearization_dict->SetNewFor<CPDF_Boolean>("Linearized", true);
     linearization_dict->SetNewFor<CPDF_Number>("N", kPageCount);
+    linearization_dict->SetNewFor<CPDF_Number>("O", first_page_obj_num);
 
     auto parser = pdfium::MakeUnique<CPDF_Parser>();
     parser->SetLinearizedHeaderForTesting(
