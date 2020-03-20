@@ -66,6 +66,7 @@ class CFXJSE_Value {
                             CFXJSE_Value* lpPropValue);
   bool SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis);
 
+  v8::Local<v8::Value> GetValue() const;
   const v8::Global<v8::Value>& DirectGetValue() const { return m_hValue; }
   void ForceSetValue(v8::Local<v8::Value> hValue) {
     m_hValue.Reset(GetIsolate(), hValue);

@@ -166,7 +166,8 @@ bool ReentrantPutObjectPropertyHelper(v8::Isolate* pIsolate,
     return false;
 
   v8::Local<v8::String> name = NewStringHelper(pIsolate, bsUTF8PropertyName);
-  return pObj->Set(pIsolate->GetCurrentContext(), name, pPut).IsJust();
+  v8::Maybe<bool> result = pObj->Set(pIsolate->GetCurrentContext(), name, pPut);
+  return result.IsJust() && result.FromJust();
 }
 
 bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
@@ -175,7 +176,10 @@ bool ReentrantPutArrayElementHelper(v8::Isolate* pIsolate,
                                     v8::Local<v8::Value> pValue) {
   if (pArray.IsEmpty())
     return false;
-  return pArray->Set(pIsolate->GetCurrentContext(), index, pValue).IsJust();
+
+  v8::Maybe<bool> result =
+      pArray->Set(pIsolate->GetCurrentContext(), index, pValue);
+  return result.IsJust() && result.FromJust();
 }
 
 v8::Local<v8::Value> ReentrantGetArrayElementHelper(v8::Isolate* pIsolate,
