@@ -197,7 +197,7 @@ bool CFFL_ListBox::SetIndexSelected(int index, bool selected) {
   if (index < 0 || index >= m_pWidget->CountOptions())
     return false;
 
-  CPWL_ListBox* pListBox = GetListBox(GetCurPageView(true));
+  CPWL_ListBox* pListBox = GetListBox(GetCurPageView());
   if (!pListBox)
     return false;
 
@@ -219,7 +219,7 @@ bool CFFL_ListBox::IsIndexSelected(int index) {
   if (index < 0 || index >= m_pWidget->CountOptions())
     return false;
 
-  CPWL_ListBox* pListBox = GetListBox(GetCurPageView(true));
+  CPWL_ListBox* pListBox = GetListBox(GetCurPageView());
   return pListBox && pListBox->IsItemSelected(index);
 }
 

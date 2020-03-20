@@ -111,7 +111,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kTextMultiline)
         break;
 
-      CPDFSDK_PageView* pPageView = GetCurPageView(true);
+      CPDFSDK_PageView* pPageView = GetCurPageView();
       ASSERT(pPageView);
       m_bValid = !m_bValid;
       m_pFormFillEnv->Invalidate(pAnnot->GetPage(),
@@ -130,7 +130,7 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
       return true;
     }
     case FWL_VKEY_Escape: {
-      CPDFSDK_PageView* pPageView = GetCurPageView(true);
+      CPDFSDK_PageView* pPageView = GetCurPageView();
       ASSERT(pPageView);
       EscapeFiller(pPageView, true);
       return true;

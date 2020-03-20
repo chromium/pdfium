@@ -129,7 +129,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   bool IsValid() const;
   CFX_FloatRect GetPDFAnnotRect() const;
 
-  CPDFSDK_PageView* GetCurPageView(bool renew);
+  CPDFSDK_PageView* GetCurPageView();
   void SetChangeMark();
 
   CPDFSDK_Annot* GetSDKAnnot() const { return m_pWidget.Get(); }
