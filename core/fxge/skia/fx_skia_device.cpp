@@ -312,26 +312,25 @@ bool IsEvenOddFillType(SkPathFillType fill) {
 }
 
 SkPath BuildPath(const CFX_PathData* pPathData) {
-  SkPath skPath;
-  const CFX_PathData* pFPath = pPathData;
-  const std::vector<FX_PATHPOINT>& pPoints = pFPath->GetPoints();
-  for (size_t i = 0; i < pPoints.size(); i++) {
-    CFX_PointF point = pPoints[i].m_Point;
-    FXPT_TYPE point_type = pPoints[i].m_Type;
+  SkPath sk_path;
+  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  for (size_t i = 0; i < points.size(); ++i) {
+    const CFX_PointF& point = points[i].m_Point;
+    FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      skPath.moveTo(point.x, point.y);
+      sk_path.moveTo(point.x, point.y);
     } else if (point_type == FXPT_TYPE::LineTo) {
-      skPath.lineTo(point.x, point.y);
+      sk_path.lineTo(point.x, point.y);
     } else if (point_type == FXPT_TYPE::BezierTo) {
-      CFX_PointF point2 = pPoints[i + 1].m_Point;
-      CFX_PointF point3 = pPoints[i + 2].m_Point;
-      skPath.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);
+      const CFX_PointF& point2 = points[i + 1].m_Point;
+      const CFX_PointF& point3 = points[i + 2].m_Point;
+      sk_path.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);
       i += 2;
     }
-    if (pPoints[i].m_CloseFigure)
-      skPath.close();
+    if (points[i].m_CloseFigure)
+      sk_path.close();
   }
-  return skPath;
+  return sk_path;
 }
 
 SkMatrix ToSkMatrix(const CFX_Matrix& m) {

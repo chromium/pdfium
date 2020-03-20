@@ -348,37 +348,37 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
 
   *buf << pPathObj->matrix() << " cm ";
 
-  const auto& pPoints = pPathObj->path().GetPoints();
+  const auto& points = pPathObj->path().GetPoints();
   if (pPathObj->path().IsRect()) {
-    CFX_PointF diff = pPoints[2].m_Point - pPoints[0].m_Point;
-    *buf << pPoints[0].m_Point << " " << diff << " re";
+    CFX_PointF diff = points[2].m_Point - points[0].m_Point;
+    *buf << points[0].m_Point << " " << diff << " re";
   } else {
-    for (size_t i = 0; i < pPoints.size(); i++) {
+    for (size_t i = 0; i < points.size(); ++i) {
       if (i > 0)
         *buf << " ";
 
-      *buf << pPoints[i].m_Point;
+      *buf << points[i].m_Point;
 
-      FXPT_TYPE pointType = pPoints[i].m_Type;
-      if (pointType == FXPT_TYPE::MoveTo) {
+      FXPT_TYPE point_type = points[i].m_Type;
+      if (point_type == FXPT_TYPE::MoveTo) {
         *buf << " m";
-      } else if (pointType == FXPT_TYPE::LineTo) {
+      } else if (point_type == FXPT_TYPE::LineTo) {
         *buf << " l";
-      } else if (pointType == FXPT_TYPE::BezierTo) {
-        if (i + 2 >= pPoints.size() ||
-            !pPoints[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
-            !pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
-            pPoints[i + 2].m_Type != FXPT_TYPE::BezierTo) {
+      } else if (point_type == FXPT_TYPE::BezierTo) {
+        if (i + 2 >= points.size() ||
+            !points[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
+            !points[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
+            points[i + 2].m_Type != FXPT_TYPE::BezierTo) {
           // If format is not supported, close the path and paint
           *buf << " h";
           break;
         }
         *buf << " ";
-        *buf << pPoints[i + 1].m_Point << " ";
-        *buf << pPoints[i + 2].m_Point << " c";
+        *buf << points[i + 1].m_Point << " ";
+        *buf << points[i + 2].m_Point << " c";
         i += 2;
       }
-      if (pPoints[i].m_CloseFigure)
+      if (points[i].m_CloseFigure)
         *buf << " h";
     }
   }

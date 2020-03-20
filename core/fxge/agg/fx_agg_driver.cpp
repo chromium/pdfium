@@ -1088,29 +1088,29 @@ class renderer_scanline_aa_offset {
 
 void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
-  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
-  for (size_t i = 0; i < pPoints.size(); i++) {
-    CFX_PointF pos = pPoints[i].m_Point;
+  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  for (size_t i = 0; i < points.size(); ++i) {
+    CFX_PointF pos = points[i].m_Point;
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
     pos = HardClip(pos);
-    FXPT_TYPE point_type = pPoints[i].m_Type;
+    FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       m_PathData.move_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::LineTo) {
-      if (i > 0 && pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-          (i == pPoints.size() - 1 ||
-           pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
-          pPoints[i].m_Point == pPoints[i - 1].m_Point) {
+      if (i > 0 && points[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+          (i == points.size() - 1 ||
+           points[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
+          points[i].m_Point == points[i - 1].m_Point) {
         pos.x += 1;
       }
       m_PathData.line_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::BezierTo) {
-      if (i > 0 && i + 2 < pPoints.size()) {
-        CFX_PointF pos0 = pPoints[i - 1].m_Point;
-        CFX_PointF pos2 = pPoints[i + 1].m_Point;
-        CFX_PointF pos3 = pPoints[i + 2].m_Point;
+      if (i > 0 && i + 2 < points.size()) {
+        CFX_PointF pos0 = points[i - 1].m_Point;
+        CFX_PointF pos2 = points[i + 1].m_Point;
+        CFX_PointF pos3 = points[i + 2].m_Point;
         if (pObject2Device) {
           pos0 = pObject2Device->Transform(pos0);
           pos2 = pObject2Device->Transform(pos2);
@@ -1125,7 +1125,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
         m_PathData.add_path_curve(curve);
       }
     }
-    if (pPoints[i].m_CloseFigure)
+    if (points[i].m_CloseFigure)
       m_PathData.end_poly();
   }
 }

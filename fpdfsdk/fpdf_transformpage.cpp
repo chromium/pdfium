@@ -68,32 +68,31 @@ void OutputPath(std::ostringstream& buf, CPDF_Path path) {
   if (!pPathData)
     return;
 
-  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
+  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
   if (path.IsRect()) {
-    CFX_PointF diff = pPoints[2].m_Point - pPoints[0].m_Point;
-    buf << pPoints[0].m_Point.x << " " << pPoints[0].m_Point.y << " " << diff.x
+    CFX_PointF diff = points[2].m_Point - points[0].m_Point;
+    buf << points[0].m_Point.x << " " << points[0].m_Point.y << " " << diff.x
         << " " << diff.y << " re\n";
     return;
   }
 
-  ByteString temp;
-  for (size_t i = 0; i < pPoints.size(); i++) {
-    buf << pPoints[i].m_Point.x << " " << pPoints[i].m_Point.y;
-    FXPT_TYPE point_type = pPoints[i].m_Type;
+  for (size_t i = 0; i < points.size(); ++i) {
+    buf << points[i].m_Point.x << " " << points[i].m_Point.y;
+    FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       buf << " m\n";
     } else if (point_type == FXPT_TYPE::BezierTo) {
-      buf << " " << pPoints[i + 1].m_Point.x << " " << pPoints[i + 1].m_Point.y
-          << " " << pPoints[i + 2].m_Point.x << " " << pPoints[i + 2].m_Point.y;
+      buf << " " << points[i + 1].m_Point.x << " " << points[i + 1].m_Point.y
+          << " " << points[i + 2].m_Point.x << " " << points[i + 2].m_Point.y;
       buf << " c";
-      if (pPoints[i + 2].m_CloseFigure)
+      if (points[i + 2].m_CloseFigure)
         buf << " h";
       buf << "\n";
 
       i += 2;
     } else if (point_type == FXPT_TYPE::LineTo) {
       buf << " l";
-      if (pPoints[i].m_CloseFigure)
+      if (points[i].m_CloseFigure)
         buf << " h";
       buf << "\n";
     }

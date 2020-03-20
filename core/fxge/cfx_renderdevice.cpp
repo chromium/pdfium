@@ -513,10 +513,10 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
                                          BlendMode blend_type) {
   uint8_t stroke_alpha = pGraphState ? FXARGB_A(stroke_color) : 0;
   uint8_t fill_alpha = (fill_mode & 3) ? FXARGB_A(fill_color) : 0;
-  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
-  if (stroke_alpha == 0 && pPoints.size() == 2) {
-    CFX_PointF pos1 = pPoints[0].m_Point;
-    CFX_PointF pos2 = pPoints[1].m_Point;
+  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  if (stroke_alpha == 0 && points.size() == 2) {
+    CFX_PointF pos1 = points[0].m_Point;
+    CFX_PointF pos2 = points[1].m_Point;
     if (pObject2Device) {
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
@@ -525,7 +525,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
     return true;
   }
 
-  if ((pPoints.size() == 5 || pPoints.size() == 4) && stroke_alpha == 0) {
+  if ((points.size() == 5 || points.size() == 4) && stroke_alpha == 0) {
     CFX_FloatRect rect_f;
     if (!(fill_mode & FXFILL_RECT_AA) &&
         pPathData->IsRect(pObject2Device, &rect_f)) {

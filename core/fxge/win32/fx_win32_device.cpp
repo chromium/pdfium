@@ -152,18 +152,18 @@ void SetPathToDC(HDC hDC,
                  const CFX_Matrix* pMatrix) {
   BeginPath(hDC);
 
-  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
-  for (size_t i = 0; i < pPoints.size(); i++) {
-    CFX_PointF pos = pPoints[i].m_Point;
+  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  for (size_t i = 0; i < points.size(); ++i) {
+    CFX_PointF pos = points[i].m_Point;
     if (pMatrix)
       pos = pMatrix->Transform(pos);
 
     CFX_Point screen(FXSYS_roundf(pos.x), FXSYS_roundf(pos.y));
-    FXPT_TYPE point_type = pPoints[i].m_Type;
+    FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       MoveToEx(hDC, screen.x, screen.y, nullptr);
     } else if (point_type == FXPT_TYPE::LineTo) {
-      if (pPoints[i].m_Point == pPoints[i - 1].m_Point)
+      if (points[i].m_Point == points[i - 1].m_Point)
         screen.x++;
 
       LineTo(hDC, screen.x, screen.y);
@@ -172,14 +172,14 @@ void SetPathToDC(HDC hDC,
       lppt[0].x = screen.x;
       lppt[0].y = screen.y;
 
-      pos = pPoints[i + 1].m_Point;
+      pos = points[i + 1].m_Point;
       if (pMatrix)
         pos = pMatrix->Transform(pos);
 
       lppt[1].x = FXSYS_roundf(pos.x);
       lppt[1].y = FXSYS_roundf(pos.y);
 
-      pos = pPoints[i + 2].m_Point;
+      pos = points[i + 2].m_Point;
       if (pMatrix)
         pos = pMatrix->Transform(pos);
 
@@ -188,7 +188,7 @@ void SetPathToDC(HDC hDC,
       PolyBezierTo(hDC, lppt, 3);
       i += 2;
     }
-    if (pPoints[i].m_CloseFigure)
+    if (points[i].m_CloseFigure)
       CloseFigure(hDC);
   }
   EndPath(hDC);
