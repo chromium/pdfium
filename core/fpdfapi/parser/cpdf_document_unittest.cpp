@@ -225,30 +225,37 @@ TEST_F(cpdf_document_test, GetPagesInDisorder) {
 }
 
 TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
-  // ObjNum can be added in CPDF_DataAvail::IsPageAvail, and PagesDict
-  // can be not exists in this case.
-  // (case, when hint table is used to page check in CPDF_DataAvail).
-  auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  dict->SetNewFor<CPDF_Boolean>("Linearized", true);
-  const int page_count = 100;
-  dict->SetNewFor<CPDF_Number>("N", page_count);
-  auto linearized = pdfium::MakeUnique<TestLinearized>(dict.Get());
-  auto parser = pdfium::MakeUnique<CPDF_Parser>();
-  parser->SetLinearizedHeaderForTesting(std::move(linearized));
+  // ObjNum can be added in CPDF_DataAvail::IsPageAvail(), and PagesDict may not
+  // exist in this case, e.g. when hint table is used to page check in
+  // CPDF_DataAvail.
+  constexpr int kPageCount = 100;
+  constexpr int kTestPageNum = 33;
+
+  auto linearization_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   CPDF_TestDocumentAllowSetParser document;
-  document.SetParser(std::move(parser));
+
+  {
+    linearization_dict->SetNewFor<CPDF_Boolean>("Linearized", true);
+    linearization_dict->SetNewFor<CPDF_Number>("N", kPageCount);
+
+    auto parser = pdfium::MakeUnique<CPDF_Parser>();
+    parser->SetLinearizedHeaderForTesting(
+        pdfium::MakeUnique<TestLinearized>(linearization_dict.Get()));
+    document.SetParser(std::move(parser));
+  }
+
   document.LoadPages();
-  ASSERT_EQ(page_count, document.GetPageCount());
+
+  ASSERT_EQ(kPageCount, document.GetPageCount());
   CPDF_Object* page_stub = document.NewIndirect<CPDF_Dictionary>();
   const uint32_t obj_num = page_stub->GetObjNum();
-  const int test_page_num = 33;
 
-  EXPECT_FALSE(document.IsPageLoaded(test_page_num));
-  EXPECT_EQ(nullptr, document.GetPageDictionary(test_page_num));
+  EXPECT_FALSE(document.IsPageLoaded(kTestPageNum));
+  EXPECT_EQ(nullptr, document.GetPageDictionary(kTestPageNum));
 
-  document.SetPageObjNum(test_page_num, obj_num);
-  EXPECT_TRUE(document.IsPageLoaded(test_page_num));
-  EXPECT_EQ(page_stub, document.GetPageDictionary(test_page_num));
+  document.SetPageObjNum(kTestPageNum, obj_num);
+  EXPECT_TRUE(document.IsPageLoaded(kTestPageNum));
+  EXPECT_EQ(page_stub, document.GetPageDictionary(kTestPageNum));
 }
 
 TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
