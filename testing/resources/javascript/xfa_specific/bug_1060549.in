@@ -1,0 +1,59 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template xmlns="http://www.xfa.org/schema/xfa-template/2.6/">
+  <subform layout="tb" locale="en_US" name="form1" restoreState="auto">
+    <subform h="10.5in" w="8in" name="subform2">
+      <field h="10mm" name="field1" w="10mm" x="0mm" y="20mm">
+        <ui>
+          <choiceList/>
+        </ui>
+        <items>
+          <text>aaaaaaaaaaaaaaaaaaaaa</text>
+        </items>
+      </field>
+      <field name="field2" h="20mm" w="50mm" x="0mm" y="30mm">
+        <ui>
+            <textEdit>
+            </textEdit>
+        </ui>
+      </field>
+      <subform name="subform3" x="0mm" y="5mm">
+        <occur max="-1"/>
+          <traversal>
+              <traverse operation="next" ref="$xfa.(eval('if (aa == 1) {aa=2;xfa.host.setFocus(cc);bb();xfa.host.openList(cc);}') == 0)"/>
+          </traversal>
+      </subform>
+    </subform>
+    <event activity="initialize">
+      <script contentType="application/x-javascript">
+        aa = 1;
+      </script>
+    </event>
+    <event activity="docReady">
+      <script contentType="application/x-javascript">
+        bb = function() {
+            dd = xfa.resolveNode("xfa.form..subform3");
+            dd.instanceManager.addInstance(1);
+            dd.instanceManager.removeInstance(0);
+        }
+        cc = xfa.resolveNode("xfa.form..field1");
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
