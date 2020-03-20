@@ -58,6 +58,56 @@ int CountPages(CPDF_Dictionary* pPages,
   return count;
 }
 
+int FindPageIndex(const CPDF_Dictionary* pNode,
+                  uint32_t* skip_count,
+                  uint32_t objnum,
+                  int* index,
+                  int level) {
+  if (!pNode->KeyExist("Kids")) {
+    if (objnum == pNode->GetObjNum())
+      return *index;
+
+    if (*skip_count)
+      (*skip_count)--;
+
+    (*index)++;
+    return -1;
+  }
+
+  const CPDF_Array* pKidList = pNode->GetArrayFor("Kids");
+  if (!pKidList)
+    return -1;
+
+  if (level >= kMaxPageLevel)
+    return -1;
+
+  size_t count = pNode->GetIntegerFor("Count");
+  if (count <= *skip_count) {
+    (*skip_count) -= count;
+    (*index) += count;
+    return -1;
+  }
+
+  if (count && count == pKidList->size()) {
+    for (size_t i = 0; i < count; i++) {
+      const CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
+      if (pKid && pKid->GetRefObjNum() == objnum)
+        return static_cast<int>(*index + i);
+    }
+  }
+
+  for (size_t i = 0; i < pKidList->size(); i++) {
+    const CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    if (!pKid || pKid == pNode)
+      continue;
+
+    int found_index = FindPageIndex(pKid, skip_count, objnum, index, level + 1);
+    if (found_index >= 0)
+      return found_index;
+  }
+  return -1;
+}
+
 }  // namespace
 
 CPDF_Document::CPDF_Document(std::unique_ptr<RenderDataIface> pRenderData,
@@ -241,56 +291,6 @@ CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
 
 void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
   m_PageList[iPage] = objNum;
-}
-
-int CPDF_Document::FindPageIndex(const CPDF_Dictionary* pNode,
-                                 uint32_t* skip_count,
-                                 uint32_t objnum,
-                                 int* index,
-                                 int level) const {
-  if (!pNode->KeyExist("Kids")) {
-    if (objnum == pNode->GetObjNum())
-      return *index;
-
-    if (*skip_count)
-      (*skip_count)--;
-
-    (*index)++;
-    return -1;
-  }
-
-  const CPDF_Array* pKidList = pNode->GetArrayFor("Kids");
-  if (!pKidList)
-    return -1;
-
-  if (level >= kMaxPageLevel)
-    return -1;
-
-  size_t count = pNode->GetIntegerFor("Count");
-  if (count <= *skip_count) {
-    (*skip_count) -= count;
-    (*index) += count;
-    return -1;
-  }
-
-  if (count && count == pKidList->size()) {
-    for (size_t i = 0; i < count; i++) {
-      const CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
-      if (pKid && pKid->GetRefObjNum() == objnum)
-        return static_cast<int>(*index + i);
-    }
-  }
-
-  for (size_t i = 0; i < pKidList->size(); i++) {
-    const CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
-    if (!pKid || pKid == pNode)
-      continue;
-
-    int found_index = FindPageIndex(pKid, skip_count, objnum, index, level + 1);
-    if (found_index >= 0)
-      return found_index;
-  }
-  return -1;
 }
 
 int CPDF_Document::GetPageIndex(uint32_t objnum) {

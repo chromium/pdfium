@@ -150,11 +150,6 @@ class CPDF_Document : public Observable,
   int RetrievePageCount();
   // When this method is called, m_pTreeTraversal[level] exists.
   CPDF_Dictionary* TraversePDFPages(int iPage, int* nPagesToGo, size_t level);
-  int FindPageIndex(const CPDF_Dictionary* pNode,
-                    uint32_t* skip_count,
-                    uint32_t objnum,
-                    int* index,
-                    int level) const;
   RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   const CPDF_Dictionary* GetPagesDict() const;
   CPDF_Dictionary* GetPagesDict();
