@@ -152,7 +152,7 @@ void SetPathToDC(HDC hDC,
                  const CFX_Matrix* pMatrix) {
   BeginPath(hDC);
 
-  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].m_Point;
     if (pMatrix)

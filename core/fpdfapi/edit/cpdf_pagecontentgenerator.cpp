@@ -35,6 +35,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -348,7 +349,7 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
 
   *buf << pPathObj->matrix() << " cm ";
 
-  const auto& points = pPathObj->path().GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPathObj->path().GetPoints();
   if (pPathObj->path().IsRect()) {
     CFX_PointF diff = points[2].m_Point - points[0].m_Point;
     *buf << points[0].m_Point << " " << diff << " re";

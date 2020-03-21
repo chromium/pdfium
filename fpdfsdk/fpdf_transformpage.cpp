@@ -26,6 +26,7 @@
 #include "core/fxge/render_defines.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -68,7 +69,7 @@ void OutputPath(std::ostringstream& buf, CPDF_Path path) {
   if (!pPathData)
     return;
 
-  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
   if (path.IsRect()) {
     CFX_PointF diff = points[2].m_Point - points[0].m_Point;
     buf << points[0].m_Point.x << " " << points[0].m_Point.y << " " << diff.x
@@ -351,7 +352,7 @@ FPDFClipPath_GetPathSegment(FPDF_CLIPPATH clip_path,
     return nullptr;
   }
 
-  const std::vector<FX_PATHPOINT>& points =
+  pdfium::span<const FX_PATHPOINT> points =
       pClipPath->GetPath(path_index).GetPoints();
   if (!pdfium::IndexInBounds(points, segment_index))
     return nullptr;

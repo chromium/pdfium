@@ -18,6 +18,7 @@
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
 // Ignore fallthrough warnings in agg23 headers.
@@ -1088,7 +1089,7 @@ class renderer_scanline_aa_offset {
 
 void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
-  const std::vector<FX_PATHPOINT>& points = pPathData->GetPoints();
+  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
   for (size_t i = 0; i < points.size(); ++i) {
     CFX_PointF pos = points[i].m_Point;
     if (pObject2Device)

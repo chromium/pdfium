@@ -24,6 +24,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
@@ -81,21 +82,25 @@ RetainPtr<CFX_Face> LoadFileImp(FXFT_LibraryRec* library,
 #endif  // PDF_ENABLE_XFA
 
 void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
-  std::vector<FX_PATHPOINT>& points = param->m_pPath->GetPoints();
-  size_t size = points.size();
+  size_t size;
+  {
+    pdfium::span<const FX_PATHPOINT> points = param->m_pPath->GetPoints();
+    size = points.size();
 
-  if (size >= 2 && points[size - 2].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-      points[size - 2].m_Point == points[size - 1].m_Point) {
-    size -= 2;
+    if (size >= 2 && points[size - 2].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+        points[size - 2].m_Point == points[size - 1].m_Point) {
+      size -= 2;
+    }
+    if (size >= 4 && points[size - 4].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+        points[size - 3].IsTypeAndOpen(FXPT_TYPE::BezierTo) &&
+        points[size - 3].m_Point == points[size - 4].m_Point &&
+        points[size - 2].m_Point == points[size - 4].m_Point &&
+        points[size - 1].m_Point == points[size - 4].m_Point) {
+      size -= 4;
+    }
   }
-  if (size >= 4 && points[size - 4].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-      points[size - 3].IsTypeAndOpen(FXPT_TYPE::BezierTo) &&
-      points[size - 3].m_Point == points[size - 4].m_Point &&
-      points[size - 2].m_Point == points[size - 4].m_Point &&
-      points[size - 1].m_Point == points[size - 4].m_Point) {
-    size -= 4;
-  }
-  points.resize(size);
+  // Only safe after |points| has been destroyed.
+  param->m_pPath->GetPoints().resize(size);
 }
 
 int Outline_MoveTo(const FT_Vector* to, void* user) {
