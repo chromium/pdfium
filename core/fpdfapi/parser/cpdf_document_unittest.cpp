@@ -224,6 +224,28 @@ TEST_F(cpdf_document_test, GetPagesInDisorder) {
   EXPECT_EQ(6, page->GetIntegerFor("PageNumbering"));
 }
 
+TEST_F(cpdf_document_test, IsValidPageObject) {
+  CPDF_TestDocumentForPages document;
+
+  auto dict_type_name_page = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict_type_name_page->SetNewFor<CPDF_Name>("Type", "Page");
+  EXPECT_TRUE(CPDF_Document::IsValidPageObject(
+      document.AddIndirectObject(dict_type_name_page)));
+
+  auto dict_type_string_page = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict_type_string_page->SetNewFor<CPDF_String>("Type", "Page", false);
+  EXPECT_FALSE(CPDF_Document::IsValidPageObject(
+      document.AddIndirectObject(dict_type_string_page)));
+
+  auto dict_type_name_font = pdfium::MakeRetain<CPDF_Dictionary>();
+  dict_type_name_font->SetNewFor<CPDF_Name>("Type", "Font");
+  EXPECT_FALSE(CPDF_Document::IsValidPageObject(
+      document.AddIndirectObject(dict_type_name_font)));
+
+  CPDF_Object* obj_no_type = document.NewIndirect<CPDF_Dictionary>();
+  EXPECT_FALSE(CPDF_Document::IsValidPageObject(obj_no_type));
+}
+
 TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   // ObjNum can be added in CPDF_DataAvail::IsPageAvail(), and PagesDict may not
   // exist in this case, e.g. when hint table is used to page check in
