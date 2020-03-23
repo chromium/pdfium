@@ -814,8 +814,8 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                            uint32_t fill_argb,
                            uint32_t stroke_argb,
                            int fill_mode) {
-  auto& pPoints = pPathData->GetPoints();
-  if (pPoints.empty())
+  pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
+  if (points.empty())
     return true;
 
   Gdiplus::GpGraphics* pGraphics = nullptr;
@@ -830,18 +830,18 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                                 pObject2Device->e, pObject2Device->f, &pMatrix);
     CallFunc(GdipSetWorldTransform)(pGraphics, pMatrix);
   }
-  std::vector<Gdiplus::PointF> gp_points(pPoints.size());
-  std::vector<BYTE> gp_types(pPoints.size());
+  std::vector<Gdiplus::PointF> gp_points(points.size());
+  std::vector<BYTE> gp_types(points.size());
   int nSubPathes = 0;
   bool bSubClose = false;
   int pos_subclose = 0;
   bool bSmooth = false;
   int startpoint = 0;
-  for (size_t i = 0; i < pPoints.size(); i++) {
-    gp_points[i].X = pPoints[i].m_Point.x;
-    gp_points[i].Y = pPoints[i].m_Point.y;
+  for (size_t i = 0; i < points.size(); ++i) {
+    gp_points[i].X = points[i].m_Point.x;
+    gp_points[i].Y = points[i].m_Point.y;
 
-    CFX_PointF pos = pPoints[i].m_Point;
+    CFX_PointF pos = points[i].m_Point;
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
@@ -854,7 +854,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     if (pos.y < -50000.0f)
       gp_points[i].Y = -50000.0f;
 
-    FXPT_TYPE point_type = pPoints[i].m_Type;
+    FXPT_TYPE point_type = points[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       gp_types[i] = Gdiplus::PathPointTypeStart;
       nSubPathes++;
@@ -862,9 +862,9 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       startpoint = i;
     } else if (point_type == FXPT_TYPE::LineTo) {
       gp_types[i] = Gdiplus::PathPointTypeLine;
-      if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-          (i == pPoints.size() - 1 ||
-           pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
+      if (points[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+          (i == points.size() - 1 ||
+           points[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
           gp_points[i].Y == gp_points[i - 1].Y &&
           gp_points[i].X == gp_points[i - 1].X) {
         gp_points[i].X += 0.01f;
@@ -878,7 +878,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       gp_types[i] = Gdiplus::PathPointTypeBezier;
       bSmooth = true;
     }
-    if (pPoints[i].m_CloseFigure) {
+    if (points[i].m_CloseFigure) {
       if (bSubClose)
         gp_types[pos_subclose] &= ~Gdiplus::PathPointTypeCloseSubpath;
       else
@@ -904,7 +904,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     }
   }
   int new_fill_mode = fill_mode & 3;
-  if (pPoints.size() == 4 && !pGraphState) {
+  if (points.size() == 4 && !pGraphState) {
     auto indices = IsSmallTriangle(gp_points, pObject2Device);
     if (indices.has_value()) {
       size_t v1;
@@ -921,7 +921,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     }
   }
   Gdiplus::GpPath* pGpPath = nullptr;
-  CallFunc(GdipCreatePath2)(gp_points.data(), gp_types.data(), pPoints.size(),
+  CallFunc(GdipCreatePath2)(gp_points.data(), gp_types.data(), points.size(),
                             GdiFillType2Gdip(new_fill_mode), &pGpPath);
   if (!pGpPath) {
     if (pMatrix)
@@ -944,8 +944,8 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       CallFunc(GdipDrawPath)(pGraphics, pPen, pGpPath);
     } else {
       int iStart = 0;
-      for (size_t i = 0; i < pPoints.size(); i++) {
-        if (i == pPoints.size() - 1 ||
+      for (size_t i = 0; i < points.size(); ++i) {
+        if (i == points.size() - 1 ||
             gp_types[i + 1] == Gdiplus::PathPointTypeStart) {
           Gdiplus::GpPath* pSubPath;
           CallFunc(GdipCreatePath2)(&gp_points[iStart], &gp_types[iStart],
