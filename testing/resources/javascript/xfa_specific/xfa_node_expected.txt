@@ -246,6 +246,7 @@ Alert: PASS: my_doc.setAttribute('something', 'ns') = undefined
 Alert: PASS: my_doc.getAttribute('ns') = something
 Alert: PASS: my_doc.setAttribute('fake_value', 'fake_attr') = undefined
 Alert: PASS: my_doc.getAttribute('fake_attr') = fake_value
+Alert: PASS: my_doc.xfa == xfa = true
 Alert: PASS: goop = undefined
 Alert: PASS: goop.className = packet
 Alert: PASS: goop.viscosity = undefined

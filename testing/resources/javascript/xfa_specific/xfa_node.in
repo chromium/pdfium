@@ -80,6 +80,9 @@ stream
         expect("my_doc.setAttribute('fake_value', 'fake_attr')", undefined);
         expect("my_doc.getAttribute('fake_attr')", 'fake_value');
 
+        // Test magic "xfa" property bound to all nodes.
+        expect("my_doc.xfa == xfa", true);
+
         // Test "packet" nodes which are unrecognized tags at XDP level.
         expect("goop", undefined);
         var goop = this.resolveNode('#packet');
