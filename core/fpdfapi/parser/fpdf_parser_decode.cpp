@@ -366,15 +366,15 @@ uint32_t FlateOrLZWDecode(bool bLZW,
 }
 
 Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
-  const CPDF_Object* pDecoder = pDict->GetDirectObjectFor("Filter");
-  if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
+  const CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
+  if (!pFilter || (!pFilter->IsArray() && !pFilter->IsName()))
     return pdfium::nullopt;
 
   const CPDF_Object* pParams =
       pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms);
 
   DecoderArray decoder_array;
-  if (const CPDF_Array* pDecoders = pDecoder->AsArray()) {
+  if (const CPDF_Array* pDecoders = pFilter->AsArray()) {
     if (!ValidateDecoderPipeline(pDecoders))
       return pdfium::nullopt;
 
@@ -385,8 +385,9 @@ Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
            pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});
     }
   } else {
+    ASSERT(pFilter->IsName());
     decoder_array.push_back(
-        {pDecoder->GetString(), pParams ? pParams->GetDict() : nullptr});
+        {pFilter->GetString(), pParams ? pParams->GetDict() : nullptr});
   }
 
   return decoder_array;
