@@ -5,6 +5,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -109,6 +110,72 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
     decoders->AddNew<CPDF_Name>("FlateDecode");
     decoders->AddNew<CPDF_String>("RL", false);
     EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
+  }
+}
+
+// TODO(thestig): Test decoder params.
+TEST(fpdf_parser_decode, GetDecoderArray) {
+  {
+    // No filter returns pdfium::nullopt.
+    // TODO(thestig): Should return empty DecoderArray instead.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    EXPECT_FALSE(decoder_array.has_value());
+  }
+  {
+    // Wrong filter type.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    dict->SetNewFor<CPDF_String>("Filter", "RL", false);
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    EXPECT_FALSE(decoder_array.has_value());
+  }
+  {
+    // Filter name.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    dict->SetNewFor<CPDF_Name>("Filter", "RL");
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    ASSERT_TRUE(decoder_array.has_value());
+    ASSERT_EQ(1u, decoder_array.value().size());
+    EXPECT_EQ("RL", decoder_array.value()[0].first);
+  }
+  {
+    // Empty filter array.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    dict->SetNewFor<CPDF_Array>("Filter");
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    ASSERT_TRUE(decoder_array.has_value());
+    EXPECT_TRUE(decoder_array.value().empty());
+  }
+  {
+    // Valid 1 element filter array.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    auto* filter_array = dict->SetNewFor<CPDF_Array>("Filter");
+    filter_array->AddNew<CPDF_Name>("FooBar");
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    ASSERT_TRUE(decoder_array.has_value());
+    ASSERT_EQ(1u, decoder_array.value().size());
+    EXPECT_EQ("FooBar", decoder_array.value()[0].first);
+  }
+  {
+    // Valid 2 element filter array.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    auto* filter_array = dict->SetNewFor<CPDF_Array>("Filter");
+    filter_array->AddNew<CPDF_Name>("AHx");
+    filter_array->AddNew<CPDF_Name>("LZWDecode");
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    ASSERT_TRUE(decoder_array.has_value());
+    ASSERT_EQ(2u, decoder_array.value().size());
+    EXPECT_EQ("AHx", decoder_array.value()[0].first);
+    EXPECT_EQ("LZWDecode", decoder_array.value()[1].first);
+  }
+  {
+    // Invalid 2 element filter array.
+    auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
+    auto* invalid_filter_array = dict->SetNewFor<CPDF_Array>("Filter");
+    invalid_filter_array->AddNew<CPDF_Name>("DCTDecode");
+    invalid_filter_array->AddNew<CPDF_Name>("CCITTFaxDecode");
+    Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    EXPECT_FALSE(decoder_array.has_value());
   }
 }
 
