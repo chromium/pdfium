@@ -75,17 +75,16 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                           std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                           uint32_t* dest_size);
 
-Optional<std::vector<std::pair<ByteString, const CPDF_Object*>>>
-GetDecoderArray(const CPDF_Dictionary* pDict);
+using DecoderArray = std::vector<std::pair<ByteString, const CPDF_Object*>>;
+Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict);
 
-bool PDF_DataDecode(
-    pdfium::span<const uint8_t> src_span,
-    uint32_t estimated_size,
-    bool bImageAcc,
-    const std::vector<std::pair<ByteString, const CPDF_Object*>>& decoder_array,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size,
-    ByteString* ImageEncoding,
-    RetainPtr<const CPDF_Dictionary>* pImageParams);
+bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
+                    uint32_t estimated_size,
+                    bool bImageAcc,
+                    const DecoderArray& decoder_array,
+                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                    uint32_t* dest_size,
+                    ByteString* ImageEncoding,
+                    RetainPtr<const CPDF_Dictionary>* pImageParams);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
