@@ -96,7 +96,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
                  bool bSupportHintTable);
   ~CPDF_DataAvail() override;
 
-  // CPDF_Document::Observer:
+  // Observable::ObserverIface:
   void OnObservableDestroyed() override;
 
   DocAvailStatus IsDocAvail(DownloadHints* pHints);

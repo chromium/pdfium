@@ -8,7 +8,6 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_TextState::CPDF_TextState() = default;
 

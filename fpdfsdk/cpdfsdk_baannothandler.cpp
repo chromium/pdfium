@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxge/cfx_drawutils.h"
 #include "fpdfsdk/cpdfsdk_annot.h"

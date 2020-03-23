@@ -7,7 +7,6 @@
 #include "core/fpdfapi/page/cpdf_shadingobject.h"
 
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_ShadingObject::CPDF_ShadingObject(int32_t content_stream,
                                        CPDF_ShadingPattern* pattern,

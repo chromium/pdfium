@@ -6,11 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_color.h"
 
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
-#include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_Color::CPDF_Color() = default;
 
