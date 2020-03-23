@@ -325,9 +325,6 @@ resolve_nodes_1.pdf * * *
 #
 bug_492.in * nov8 *
 
-# TODO(pdfium:304): Remove after associated bug is fixed
-bug_304.pdf * * *
-
 # TODO(pdfium:1331): Remove after associated bug is fixed
 bug_1331.in * * *
 

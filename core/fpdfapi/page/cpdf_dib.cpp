@@ -929,6 +929,11 @@ void CPDF_DIB::ValidateDictParam(const ByteString& filter) {
   // Per spec, |m_bpc| should always be 8 for RunLengthDecode, but too many
   // documents do not conform to it. So skip this check.
 
+  if (filter == "JPXDecode") {
+    m_bDoBpcCheck = false;
+    return;
+  }
+
   if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
     m_bpc = 1;
     m_nComponents = 1;
