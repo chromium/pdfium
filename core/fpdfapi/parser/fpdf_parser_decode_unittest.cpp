@@ -116,11 +116,11 @@ TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
 // TODO(thestig): Test decoder params.
 TEST(fpdf_parser_decode, GetDecoderArray) {
   {
-    // No filter returns pdfium::nullopt.
-    // TODO(thestig): Should return empty DecoderArray instead.
+    // Treat no filter as an empty filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
     Optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
-    EXPECT_FALSE(decoder_array.has_value());
+    ASSERT_TRUE(decoder_array.has_value());
+    EXPECT_TRUE(decoder_array.value().empty());
   }
   {
     // Wrong filter type.

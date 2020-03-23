@@ -367,7 +367,10 @@ uint32_t FlateOrLZWDecode(bool bLZW,
 
 Optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
   const CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
-  if (!pFilter || (!pFilter->IsArray() && !pFilter->IsName()))
+  if (!pFilter)
+    return DecoderArray();
+
+  if (!pFilter->IsArray() && !pFilter->IsName())
     return pdfium::nullopt;
 
   const CPDF_Object* pParams =

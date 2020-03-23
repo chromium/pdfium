@@ -137,7 +137,7 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
 
   Optional<std::vector<std::pair<ByteString, const CPDF_Object*>>>
       decoder_array = GetDecoderArray(m_pStream->GetDict());
-  if (!decoder_array.has_value() ||
+  if (!decoder_array.has_value() || decoder_array.value().empty() ||
       !PDF_DataDecode({pSrcData.Get(), dwSrcSize}, estimated_size, bImageAcc,
                       decoder_array.value(), &pDecodedData, &dwDecodedSize,
                       &m_ImageDecoder, &m_pImageParam)) {
