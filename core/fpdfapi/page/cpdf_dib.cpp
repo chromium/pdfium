@@ -934,10 +934,6 @@ void CPDF_DIB::ValidateDictParam() {
       if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;
         m_nComponents = 1;
-      } else if (filter == "RunLengthDecode") {
-        if (m_bpc != 1) {
-          m_bpc = 8;
-        }
       } else if (filter == "DCTDecode") {
         m_bpc = 8;
       }
