@@ -384,6 +384,10 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
 
 bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources) {
+  Optional<DecoderArray> decoder_array = GetDecoderArray(m_pDict.Get());
+  if (!decoder_array.has_value())
+    return false;
+
   m_bpc_orig = m_pDict->GetIntegerFor("BitsPerComponent");
   if (!IsMaybeValidBitsPerComponent(m_bpc_orig))
     return false;
@@ -392,22 +396,11 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     m_bImageMask = true;
 
   if (m_bImageMask || !m_pDict->KeyExist("ColorSpace")) {
-    if (!m_bImageMask) {
-      const CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
-      if (pFilter) {
-        ByteString filter;
-        if (pFilter->IsName()) {
-          filter = pFilter->GetString();
-        } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
-          if (!ValidateDecoderPipeline(pArray))
-            return false;
-          filter = pArray->GetStringAt(pArray->size() - 1);
-        }
-
-        if (filter == "JPXDecode") {
-          m_bDoBpcCheck = false;
-          return true;
-        }
+    if (!m_bImageMask && !decoder_array.value().empty()) {
+      const ByteString& filter = decoder_array.value().back().first;
+      if (filter == "JPXDecode") {
+        m_bDoBpcCheck = false;
+        return true;
       }
     }
     m_bImageMask = true;
@@ -444,7 +437,12 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     else if (cs == "DeviceCMYK")
       m_nComponents = 4;
   }
-  ValidateDictParam();
+
+  ByteString filter;
+  if (!decoder_array.value().empty())
+    filter = decoder_array.value().back().first;
+
+  ValidateDictParam(filter);
   return GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey);
 }
 
@@ -925,29 +923,17 @@ void CPDF_DIB::LoadPalette() {
   }
 }
 
-void CPDF_DIB::ValidateDictParam() {
+void CPDF_DIB::ValidateDictParam(const ByteString& filter) {
   m_bpc = m_bpc_orig;
-  const CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
-  if (pFilter) {
-    if (pFilter->IsName()) {
-      ByteString filter = pFilter->GetString();
-      if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
-        m_bpc = 1;
-        m_nComponents = 1;
-      } else if (filter == "DCTDecode") {
-        m_bpc = 8;
-      }
-    } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
-      ByteString filter = pArray->GetStringAt(pArray->size() - 1);
-      if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
-        m_bpc = 1;
-        m_nComponents = 1;
-      } else if (filter == "DCTDecode") {
-        // Previously, filter == "RunLengthDecode" was checked in the "if"
-        // statement as well, but too many documents don't conform to it.
-        m_bpc = 8;
-      }
-    }
+
+  // Per spec, |m_bpc| should always be 8 for RunLengthDecode, but too many
+  // documents do not conform to it. So skip this check.
+
+  if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
+    m_bpc = 1;
+    m_nComponents = 1;
+  } else if (filter == "DCTDecode") {
+    m_bpc = 8;
   }
 
   if (!IsAllowedBitsPerComponent(m_bpc))

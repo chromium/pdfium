@@ -102,7 +102,7 @@ class CPDF_DIB final : public CFX_DIBBase {
                               const uint8_t* src_scan) const;
   bool TranslateScanline24bppDefaultDecode(uint8_t* dest_scan,
                                            const uint8_t* src_scan) const;
-  void ValidateDictParam();
+  void ValidateDictParam(const ByteString& filter);
   void DownSampleScanline1Bit(int orig_Bpp,
                               int dest_Bpp,
                               uint32_t src_width,
