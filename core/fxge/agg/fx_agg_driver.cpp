@@ -1260,8 +1260,9 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
   }
   size_t size = pPathData->GetPoints().size();
   if (size == 5 || size == 4) {
-    CFX_FloatRect rectf;
-    if (pPathData->IsRect(pObject2Device, &rectf)) {
+    Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pObject2Device);
+    if (maybe_rectf.has_value()) {
+      CFX_FloatRect& rectf = maybe_rectf.value();
       rectf.Intersect(CFX_FloatRect(
           0, 0, static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
           static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT))));

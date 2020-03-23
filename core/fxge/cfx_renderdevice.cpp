@@ -526,10 +526,11 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
     return true;
   }
 
-  if ((points.size() == 5 || points.size() == 4) && stroke_alpha == 0) {
-    CFX_FloatRect rect_f;
-    if (!(fill_mode & FXFILL_RECT_AA) &&
-        pPathData->IsRect(pObject2Device, &rect_f)) {
+  if ((points.size() == 5 || points.size() == 4) && stroke_alpha == 0 &&
+      !(fill_mode & FXFILL_RECT_AA)) {
+    Optional<CFX_FloatRect> maybe_rect_f = pPathData->GetRect(pObject2Device);
+    if (maybe_rect_f.has_value()) {
+      const CFX_FloatRect& rect_f = maybe_rect_f.value();
       FX_RECT rect_i = rect_f.GetOuterRect();
 
       // Depending on the top/bottom, left/right values of the rect it's

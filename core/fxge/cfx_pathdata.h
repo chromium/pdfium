@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/optional.h"
 
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
@@ -59,7 +60,7 @@ class CFX_PathData {
                        CFX_PathData* NewPath,
                        bool* bThin,
                        bool* setIdentity) const;
-  bool IsRect(const CFX_Matrix* pMatrix, CFX_FloatRect* rect) const;
+  Optional<CFX_FloatRect> GetRect(const CFX_Matrix* pMatrix) const;
 
   void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
   void AppendFloatRect(const CFX_FloatRect& rect);

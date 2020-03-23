@@ -1087,9 +1087,9 @@ bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                         const CFX_Matrix* pMatrix,
                                         int fill_mode) {
   if (pPathData->GetPoints().size() == 5) {
-    CFX_FloatRect rectf;
-    if (pPathData->IsRect(pMatrix, &rectf)) {
-      FX_RECT rect = rectf.GetOuterRect();
+    Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pMatrix);
+    if (maybe_rectf.has_value()) {
+      FX_RECT rect = maybe_rectf.value().GetOuterRect();
       // Can easily apply base clip to protect against wildly large rectangular
       // clips. crbug.com/1019026
       if (m_BaseClipBox.has_value())
