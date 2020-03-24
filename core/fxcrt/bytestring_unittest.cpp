@@ -506,7 +506,16 @@ TEST(ByteString, RemoveCopies) {
 }
 
 TEST(ByteString, Replace) {
+  ByteString empty;
+  empty.Replace("", "CLAMS");
+  empty.Replace("xx", "CLAMS");
+  EXPECT_EQ("", empty);
+
   ByteString fred("FRED");
+  fred.Replace("", "");
+  EXPECT_EQ("FRED", fred);
+  fred.Replace("", "CLAMS");
+  EXPECT_EQ("FRED", fred);
   fred.Replace("FR", "BL");
   EXPECT_EQ("BLED", fred);
   fred.Replace("D", "DDY");
@@ -517,10 +526,20 @@ TEST(ByteString, Replace) {
   EXPECT_EQ("BY", fred);
   fred.Replace("BY", "HI");
   EXPECT_EQ("HI", fred);
-  fred.Replace("", "CLAMS");
-  EXPECT_EQ("HI", fred);
-  fred.Replace("HI", "");
+  fred.Replace("I", "IHIHI");
+  EXPECT_EQ("HIHIHI", fred);
+  fred.Replace("HI", "HO");
+  EXPECT_EQ("HOHOHO", fred);
+  fred.Replace("HO", "");
   EXPECT_EQ("", fred);
+
+  ByteString five_xs("xxxxx");
+  five_xs.Replace("xx", "xxx");
+  EXPECT_EQ("xxxxxxx", five_xs);
+
+  ByteString five_ys("yyyyy");
+  five_ys.Replace("yy", "y");
+  EXPECT_EQ("yyy", five_ys);
 }
 
 TEST(ByteString, Insert) {

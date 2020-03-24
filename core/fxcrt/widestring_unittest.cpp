@@ -514,7 +514,16 @@ TEST(WideString, RemoveCopies) {
 }
 
 TEST(WideString, Replace) {
+  WideString empty;
+  empty.Replace(L"", L"CLAMS");
+  empty.Replace(L"xx", L"CLAMS");
+  EXPECT_EQ(L"", empty);
+
   WideString fred(L"FRED");
+  fred.Replace(L"", L"");
+  EXPECT_EQ(L"FRED", fred);
+  fred.Replace(L"", L"CLAMS");
+  EXPECT_EQ(L"FRED", fred);
   fred.Replace(L"FR", L"BL");
   EXPECT_EQ(L"BLED", fred);
   fred.Replace(L"D", L"DDY");
@@ -525,10 +534,20 @@ TEST(WideString, Replace) {
   EXPECT_EQ(L"BY", fred);
   fred.Replace(L"BY", L"HI");
   EXPECT_EQ(L"HI", fred);
-  fred.Replace(L"", L"CLAMS");
-  EXPECT_EQ(L"HI", fred);
-  fred.Replace(L"HI", L"");
+  fred.Replace(L"I", L"IHIHI");
+  EXPECT_EQ(L"HIHIHI", fred);
+  fred.Replace(L"HI", L"HO");
+  EXPECT_EQ(L"HOHOHO", fred);
+  fred.Replace(L"HO", L"");
   EXPECT_EQ(L"", fred);
+
+  WideString five_xs(L"xxxxx");
+  five_xs.Replace(L"xx", L"xxx");
+  EXPECT_EQ(L"xxxxxxx", five_xs);
+
+  WideString five_ys(L"yyyyy");
+  five_ys.Replace(L"yy", L"y");
+  EXPECT_EQ(L"yyy", five_ys);
 }
 
 TEST(WideString, Insert) {
