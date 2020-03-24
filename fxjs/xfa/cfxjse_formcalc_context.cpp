@@ -4035,39 +4035,9 @@ void CFXJSE_FormCalcContext::Replace(
     bsThree = ValueToUTF8String(argThree.get());
   }
 
-  size_t iFindLen = bsTwo.GetLength();
-  std::ostringstream szResult;
-  size_t iFindIndex = 0;
-  for (size_t u = 0; u < bsOne.GetLength(); ++u) {
-    char ch = static_cast<char>(bsOne[u]);
-    if (ch != static_cast<char>(bsTwo[iFindIndex])) {
-      szResult << ch;
-      continue;
-    }
-
-    size_t iTemp = u + 1;
-    ++iFindIndex;
-    while (iFindIndex < iFindLen) {
-      uint8_t chTemp = bsOne[iTemp];
-      if (chTemp != bsTwo[iFindIndex]) {
-        iFindIndex = 0;
-        break;
-      }
-
-      ++iTemp;
-      ++iFindIndex;
-    }
-    if (iFindIndex == iFindLen) {
-      szResult << bsThree;
-      u += iFindLen - 1;
-      iFindIndex = 0;
-    } else {
-      szResult << ch;
-    }
-  }
-  szResult << '\0';
-  info.GetReturnValue().Set(fxv8::NewStringHelper(
-      info.GetIsolate(), ByteStringView(szResult.str().c_str())));
+  bsOne.Replace(bsTwo.AsStringView(), bsThree.AsStringView());
+  info.GetReturnValue().Set(
+      fxv8::NewStringHelper(info.GetIsolate(), bsOne.AsStringView()));
 }
 
 // static
