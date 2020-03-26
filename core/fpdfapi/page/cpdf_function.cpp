@@ -20,6 +20,22 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
+namespace {
+
+CPDF_Function::Type IntegerToFunctionType(int iType) {
+  switch (iType) {
+    case 0:
+    case 2:
+    case 3:
+    case 4:
+      return static_cast<CPDF_Function::Type>(iType);
+    default:
+      return CPDF_Function::Type::kTypeInvalid;
+  }
+}
+
+}  // namespace
+
 // static
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     const CPDF_Object* pFuncObj) {
@@ -59,19 +75,6 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     return nullptr;
 
   return pFunc;
-}
-
-// static
-CPDF_Function::Type CPDF_Function::IntegerToFunctionType(int iType) {
-  switch (iType) {
-    case 0:
-    case 2:
-    case 3:
-    case 4:
-      return static_cast<Type>(iType);
-    default:
-      return Type::kTypeInvalid;
-  }
 }
 
 CPDF_Function::CPDF_Function(Type type) : m_Type(type) {}

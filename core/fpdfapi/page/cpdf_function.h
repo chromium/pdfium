@@ -27,7 +27,6 @@ class CPDF_Function {
   };
 
   static std::unique_ptr<CPDF_Function> Load(const CPDF_Object* pFuncObj);
-  static Type IntegerToFunctionType(int iType);
 
   virtual ~CPDF_Function();
 
