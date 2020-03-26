@@ -64,7 +64,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
   Type type = IntegerToFunctionType(iType);
   if (type == Type::kType0Sampled)
     pFunc = pdfium::MakeUnique<CPDF_SampledFunc>();
-  else if (type == Type::kType2ExpotentialInterpolation)
+  else if (type == Type::kType2ExponentialInterpolation)
     pFunc = pdfium::MakeUnique<CPDF_ExpIntFunc>();
   else if (type == Type::kType3Stitching)
     pFunc = pdfium::MakeUnique<CPDF_StitchFunc>();
@@ -168,7 +168,7 @@ const CPDF_SampledFunc* CPDF_Function::ToSampledFunc() const {
 }
 
 const CPDF_ExpIntFunc* CPDF_Function::ToExpIntFunc() const {
-  return m_Type == Type::kType2ExpotentialInterpolation
+  return m_Type == Type::kType2ExponentialInterpolation
              ? static_cast<const CPDF_ExpIntFunc*>(this)
              : nullptr;
 }

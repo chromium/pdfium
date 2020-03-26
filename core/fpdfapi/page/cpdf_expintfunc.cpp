@@ -13,7 +13,7 @@
 #include "third_party/base/stl_util.h"
 
 CPDF_ExpIntFunc::CPDF_ExpIntFunc()
-    : CPDF_Function(Type::kType2ExpotentialInterpolation) {}
+    : CPDF_Function(Type::kType2ExponentialInterpolation) {}
 
 CPDF_ExpIntFunc::~CPDF_ExpIntFunc() = default;
 
