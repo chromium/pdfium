@@ -10,28 +10,32 @@ size_t CFX_WideTextBuf::GetLength() const {
   return m_DataSize / sizeof(wchar_t);
 }
 
-wchar_t* CFX_WideTextBuf::GetBuffer() const {
-  return reinterpret_cast<wchar_t*>(m_pBuffer.get());
+pdfium::span<wchar_t> CFX_WideTextBuf::GetWideSpan() {
+  return pdfium::make_span(reinterpret_cast<wchar_t*>(m_pBuffer.get()),
+                           GetLength());
+}
+
+pdfium::span<const wchar_t> CFX_WideTextBuf::GetWideSpan() const {
+  return pdfium::make_span(reinterpret_cast<wchar_t*>(m_pBuffer.get()),
+                           GetLength());
 }
 
 WideStringView CFX_WideTextBuf::AsStringView() const {
-  return WideStringView(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
-                        m_DataSize / sizeof(wchar_t));
+  return WideStringView(GetWideSpan());
 }
 
 WideString CFX_WideTextBuf::MakeString() const {
-  return WideString(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
-                    m_DataSize / sizeof(wchar_t));
-}
-
-void CFX_WideTextBuf::Delete(int start_index, int count) {
-  CFX_BinaryBuf::Delete(start_index * sizeof(wchar_t), count * sizeof(wchar_t));
+  return WideString(AsStringView());
 }
 
 void CFX_WideTextBuf::AppendChar(wchar_t ch) {
   ExpandBuf(sizeof(wchar_t));
   *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
   m_DataSize += sizeof(wchar_t);
+}
+
+void CFX_WideTextBuf::Delete(int start_index, int count) {
+  CFX_BinaryBuf::Delete(start_index * sizeof(wchar_t), count * sizeof(wchar_t));
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(ByteStringView ascii) {

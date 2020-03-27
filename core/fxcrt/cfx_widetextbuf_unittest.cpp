@@ -10,7 +10,7 @@ namespace fxcrt {
 
 TEST(WideTextBuf, EmptyBuf) {
   CFX_WideTextBuf wtb;
-  EXPECT_EQ(nullptr, wtb.GetBuffer());
+  EXPECT_TRUE(wtb.GetWideSpan().empty());
   EXPECT_TRUE(wtb.AsStringView().IsEmpty());
   EXPECT_TRUE(wtb.MakeString().IsEmpty());
 }

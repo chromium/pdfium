@@ -892,19 +892,22 @@ void CPDF_TextPage::FindPreviousTextObject() {
     m_pPrevTextObj = pPrevCharInfo->m_pTextObj;
 }
 
-void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
-                                    int32_t iBufStartAppend) {
-  int32_t i = iCharListStartAppend;
-  int32_t j = pdfium::CollectionSize<int32_t>(m_TempCharList) - 1;
+void CPDF_TextPage::SwapTempTextBuf(int iCharListStartAppend,
+                                    int iBufStartAppend) {
+  ASSERT(!m_TempCharList.empty());
+  int i = iCharListStartAppend;
+  int j = pdfium::CollectionSize<int>(m_TempCharList) - 1;
   for (; i < j; ++i, --j) {
     std::swap(m_TempCharList[i], m_TempCharList[j]);
     std::swap(m_TempCharList[i].m_Index, m_TempCharList[j].m_Index);
   }
-  wchar_t* pTempBuffer = m_TempTextBuf.GetBuffer();
+
+  pdfium::span<wchar_t> temp_span = m_TempTextBuf.GetWideSpan();
+  ASSERT(!temp_span.empty());
   i = iBufStartAppend;
-  j = m_TempTextBuf.GetLength() - 1;
+  j = pdfium::CollectionSize<int>(temp_span) - 1;
   for (; i < j; ++i, --j)
-    std::swap(pTempBuffer[i], pTempBuffer[j]);
+    std::swap(temp_span[i], temp_span[j]);
 }
 
 void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {

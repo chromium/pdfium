@@ -10,13 +10,15 @@
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 class CFX_WideTextBuf final : public CFX_BinaryBuf {
  public:
   // CFX_BinaryBuf:
   size_t GetLength() const override;
 
-  wchar_t* GetBuffer() const;
+  pdfium::span<wchar_t> GetWideSpan();
+  pdfium::span<const wchar_t> GetWideSpan() const;
   WideStringView AsStringView() const;
   WideString MakeString() const;
 
