@@ -99,6 +99,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   ScopedFPDFWideString file_name = GetFPDFWideString(L"0.txt");
   FPDF_ATTACHMENT attachment =
       FPDFDoc_AddAttachment(document(), file_name.get());
+  ASSERT_TRUE(attachment);
 
   // Check that writing to a file with nullptr but non-zero bytes would fail.
   EXPECT_FALSE(FPDFAttachment_SetFile(attachment, document(), nullptr, 10));
@@ -127,6 +128,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   // Add an attachment to the end of the embedded file list and set its file.
   file_name = GetFPDFWideString(L"z.txt");
   attachment = FPDFDoc_AddAttachment(document(), file_name.get());
+  ASSERT_TRUE(attachment);
   constexpr char kContents2[] = "World!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents2,
                                      strlen(kContents2)));
@@ -159,6 +161,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsWithParams) {
   ScopedFPDFWideString file_name = GetFPDFWideString(L"5.txt");
   FPDF_ATTACHMENT attachment =
       FPDFDoc_AddAttachment(document(), file_name.get());
+  ASSERT_TRUE(attachment);
   constexpr char kContents[] = "Hello World!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents,
                                      strlen(kContents)));
@@ -230,6 +233,7 @@ TEST_F(FPDFAttachmentEmbedderTest, DeleteAttachment) {
 
   // Verify the name of the first attachment.
   FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
   unsigned long length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
   ASSERT_EQ(12u, length_bytes);
   std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
@@ -242,6 +246,7 @@ TEST_F(FPDFAttachmentEmbedderTest, DeleteAttachment) {
 
   // Verify the name of the new first attachment.
   attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
   length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
   ASSERT_EQ(26u, length_bytes);
   buf = GetFPDFWideStringBuffer(length_bytes);
