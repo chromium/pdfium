@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/cfx_widetextbuf.h"
 
+#include "core/fxcrt/fx_safe_types.h"
+
 size_t CFX_WideTextBuf::GetLength() const {
   return m_DataSize / sizeof(wchar_t);
 }
@@ -29,7 +31,7 @@ WideString CFX_WideTextBuf::MakeString() const {
 }
 
 void CFX_WideTextBuf::AppendChar(wchar_t ch) {
-  ExpandBuf(sizeof(wchar_t));
+  ExpandWideBuf(1);
   *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
   m_DataSize += sizeof(wchar_t);
 }
@@ -39,7 +41,7 @@ void CFX_WideTextBuf::Delete(int start_index, int count) {
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(ByteStringView ascii) {
-  ExpandBuf(ascii.GetLength() * sizeof(wchar_t));
+  ExpandWideBuf(ascii.GetLength());
   for (uint8_t ch : ascii) {
     *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
     m_DataSize += sizeof(wchar_t);
@@ -61,7 +63,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
   size_t len = strlen(buf);
-  ExpandBuf(len * sizeof(wchar_t));
+  ExpandWideBuf(len);
   wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
   for (size_t j = 0; j < len; j++) {
     *str++ = buf[j];
@@ -73,7 +75,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
   size_t len = FloatToString((float)f, buf);
-  ExpandBuf(len * sizeof(wchar_t));
+  ExpandWideBuf(len);
   wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
   for (size_t i = 0; i < len; i++) {
     *str++ = buf[i];
@@ -90,4 +92,10 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const wchar_t* lpsz) {
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideTextBuf& buf) {
   AppendBlock(buf.m_pBuffer.get(), buf.m_DataSize);
   return *this;
+}
+
+void CFX_WideTextBuf::ExpandWideBuf(size_t char_count) {
+  FX_SAFE_SIZE_T safe_count = char_count;
+  safe_count *= sizeof(wchar_t);
+  ExpandBuf(safe_count.ValueOrDie());
 }
