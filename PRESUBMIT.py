@@ -294,9 +294,9 @@ def _CheckTestDuplicates(input_api, output_api):
 def _CheckPNGFormat(input_api, output_api):
   """Checks that .png files have a format that will be considered valid by our
   test runners. If a file ends with .png, then it must be of the form
-  NAME_expected(_(win|mac|linux))?.pdf.#.png"""
+  NAME_expected(_skia)?(_(win|mac|linux))?.pdf.#.png"""
   expected_pattern = input_api.re.compile(
-      r'.+_expected(_(win|mac|linux))?\.pdf\.\d+.png')
+      r'.+_expected(_skia)?(_(win|mac|linux))?\.pdf\.\d+.png')
   results = []
   for f in input_api.AffectedFiles(include_deletes=False):
     if not f.LocalPath().endswith('.png'):
