@@ -13,25 +13,15 @@
 
 class CFX_WideTextBuf final : public CFX_BinaryBuf {
  public:
-  void AppendChar(wchar_t wch);
+  // CFX_BinaryBuf:
   size_t GetLength() const override;
-  wchar_t* GetBuffer() const {
-    return reinterpret_cast<wchar_t*>(m_pBuffer.get());
-  }
 
-  WideStringView AsStringView() const {
-    return WideStringView(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
-                          m_DataSize / sizeof(wchar_t));
-  }
-  WideString MakeString() const {
-    return WideString(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
-                      m_DataSize / sizeof(wchar_t));
-  }
+  wchar_t* GetBuffer() const;
+  WideStringView AsStringView() const;
+  WideString MakeString() const;
 
-  void Delete(int start_index, int count) {
-    CFX_BinaryBuf::Delete(start_index * sizeof(wchar_t),
-                          count * sizeof(wchar_t));
-  }
+  void AppendChar(wchar_t wch);
+  void Delete(int start_index, int count);
 
   CFX_WideTextBuf& operator<<(int i);
   CFX_WideTextBuf& operator<<(double f);
