@@ -262,6 +262,37 @@ TEST_F(FPDFTextEmbedderTest, TextVertical) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {
+  ASSERT_TRUE(OpenDocument("hebrew_mirrored.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    constexpr int kCharCount = 10;
+    ASSERT_EQ(kCharCount, FPDFText_CountChars(textpage.get()));
+
+    unsigned short buffer[kCharCount + 1];
+    memset(buffer, 0x42, sizeof(buffer));
+    EXPECT_EQ(kCharCount + 1,
+              FPDFText_GetText(textpage.get(), 0, kCharCount, buffer));
+    EXPECT_EQ(0x05d1, buffer[0]);
+    EXPECT_EQ(0x05e0, buffer[1]);
+    EXPECT_EQ(0x05d9, buffer[2]);
+    EXPECT_EQ(0x05de, buffer[3]);
+    EXPECT_EQ(0x05d9, buffer[4]);
+    EXPECT_EQ(0x05df, buffer[5]);
+    EXPECT_EQ(0x000d, buffer[6]);
+    EXPECT_EQ(0x000a, buffer[7]);
+    EXPECT_EQ(0x05df, buffer[8]);
+    EXPECT_EQ(0x05d1, buffer[9]);
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFTextEmbedderTest, TextSearch) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
