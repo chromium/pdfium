@@ -1,2 +1,8 @@
 Alert: We search variables context 123456
 Alert: We search variables context 579
+Alert: We resolve off of script1 123456
+Alert: We resolve off of script2 7890
+Alert: We resolve off of script3 7890
+Alert: We resolve off of script1 undefined
+Alert: We resolve off of script2 undefined
+Alert: We resolve off of script3 undefined
