@@ -154,12 +154,12 @@ CXFA_FFPageView::CreateTraverseWidgetIterator(uint32_t dwWidgetFilter) {
 
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
                                                      uint32_t dwFilter)
-    : m_pPageView(pPageView),
+    : m_sIterator(pPageView->GetLayoutItem()),
+      m_pPageView(pPageView),
       m_dwFilter(dwFilter),
-      m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))),
-      m_sIterator(pPageView->GetLayoutItem()) {}
+      m_bIgnoreRelevant(IsDocVersionBelow205(GetDocForPageView(pPageView))) {}
 
-CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() {}
+CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() = default;
 
 void CXFA_FFPageWidgetIterator::Reset() {
   m_sIterator.Reset();

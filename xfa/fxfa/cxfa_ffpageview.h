@@ -59,11 +59,11 @@ class CXFA_FFPageWidgetIterator final : public IXFA_WidgetIterator {
  private:
   CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
 
+  CXFA_LayoutItemIterator m_sIterator;  // Must outlive |m_pPageView|.
   UnownedPtr<CXFA_FFPageView> const m_pPageView;
   UnownedPtr<CXFA_FFWidget> m_hCurWidget;
   const uint32_t m_dwFilter;
   const bool m_bIgnoreRelevant;
-  CXFA_LayoutItemIterator m_sIterator;
 };
 
 class CXFA_TabParam {
