@@ -36,6 +36,7 @@ endobj
 >>
 endobj
 {{object 6 0}} <<
+  % Note this object deliberately does not use {{streamlen}}.
 >>
 stream
 BT
