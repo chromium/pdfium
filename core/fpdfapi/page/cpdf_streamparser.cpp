@@ -351,7 +351,7 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
       RetainPtr<CPDF_Object> pObj =
           ReadNextObject(bAllowNestedArray, true, dwRecursionLevel + 1);
       if (pObj) {
-        pArray->Add(std::move(pObj));
+        pArray->Append(std::move(pObj));
         continue;
       }
       if (!m_WordSize || m_WordBuffer[0] == ']')

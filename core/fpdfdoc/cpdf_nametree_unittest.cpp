@@ -13,8 +13,8 @@
 namespace {
 
 void AddNameKeyValue(CPDF_Array* pNames, const char* key, const int value) {
-  pNames->AddNew<CPDF_String>(key, false);
-  pNames->AddNew<CPDF_Number>(value);
+  pNames->AppendNew<CPDF_String>(key, false);
+  pNames->AppendNew<CPDF_Number>(value);
 }
 
 void CheckNameKeyValue(CPDF_Array* pNames,
@@ -29,8 +29,8 @@ void AddLimitsArray(CPDF_Dictionary* pNode,
                     const char* least,
                     const char* greatest) {
   CPDF_Array* pLimits = pNode->SetNewFor<CPDF_Array>("Limits");
-  pLimits->AddNew<CPDF_String>(least, false);
-  pLimits->AddNew<CPDF_String>(greatest, false);
+  pLimits->AppendNew<CPDF_String>(least, false);
+  pLimits->AppendNew<CPDF_String>(greatest, false);
 }
 
 void CheckLimitsArray(CPDF_Dictionary* pNode,
@@ -44,18 +44,18 @@ void CheckLimitsArray(CPDF_Dictionary* pNode,
 
 void FillNameTreeDict(CPDF_Dictionary* pRootDict) {
   CPDF_Array* pKids = pRootDict->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid1 = pKids->AddNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pKid1 = pKids->AppendNew<CPDF_Dictionary>();
 
   // Make the lower and upper limit out of order on purpose.
   AddLimitsArray(pKid1, "9.txt", "1.txt");
   pKids = pKid1->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid2 = pKids->AddNew<CPDF_Dictionary>();
-  CPDF_Dictionary* pKid3 = pKids->AddNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pKid2 = pKids->AppendNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pKid3 = pKids->AppendNew<CPDF_Dictionary>();
 
   AddLimitsArray(pKid2, "1.txt", "5.txt");
   pKids = pKid2->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid4 = pKids->AddNew<CPDF_Dictionary>();
-  CPDF_Dictionary* pKid5 = pKids->AddNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pKid4 = pKids->AppendNew<CPDF_Dictionary>();
+  CPDF_Dictionary* pKid5 = pKids->AppendNew<CPDF_Dictionary>();
 
   AddLimitsArray(pKid3, "9.txt", "9.txt");
   CPDF_Array* pNames = pKid3->SetNewFor<CPDF_Array>("Names");
@@ -85,8 +85,8 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   constexpr char kData[] = "\xFE\xFF\x00\x31";
   for (size_t i = 0; i < sizeof(kData); ++i)
     buf.put(kData[i]);
-  pNames->AddNew<CPDF_String>(ByteString(buf), true);
-  pNames->AddNew<CPDF_Number>(100);
+  pNames->AppendNew<CPDF_String>(ByteString(buf), true);
+  pNames->AppendNew<CPDF_Number>(100);
 
   // Check that the key is as expected.
   CPDF_NameTree nameTree(pRootDict.Get());

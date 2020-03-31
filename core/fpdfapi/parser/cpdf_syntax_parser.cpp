@@ -469,7 +469,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     auto pArray = pdfium::MakeRetain<CPDF_Array>();
     while (RetainPtr<CPDF_Object> pObj =
                GetObjectBodyInternal(pObjList, ParseType::kLoose)) {
-      pArray->Add(std::move(pObj));
+      pArray->Append(std::move(pObj));
     }
     return (parse_type == ParseType::kLoose || m_WordBuffer[0] == ']')
                ? std::move(pArray)

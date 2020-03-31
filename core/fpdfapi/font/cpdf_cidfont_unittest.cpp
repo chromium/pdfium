@@ -32,7 +32,7 @@ TEST_F(CPDF_CIDFontTest, BUG_920636) {
     {
       auto descendant_font = pdfium::MakeRetain<CPDF_Dictionary>();
       descendant_font->SetNewFor<CPDF_Name>("BaseFont", "CourierStd");
-      descendant_fonts->Add(std::move(descendant_font));
+      descendant_fonts->Append(std::move(descendant_font));
     }
     font_dict->SetFor("DescendantFonts", std::move(descendant_fonts));
   }

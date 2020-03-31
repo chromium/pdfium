@@ -105,8 +105,8 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     csname = "DeviceCMYK";
     CPDF_Array* pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
     for (int n = 0; n < 4; n++) {
-      pDecode->AddNew<CPDF_Number>(1);
-      pDecode->AddNew<CPDF_Number>(0);
+      pDecode->AppendNew<CPDF_Number>(1);
+      pDecode->AppendNew<CPDF_Number>(0);
     }
   }
   pDict->SetNewFor<CPDF_Name>("ColorSpace", csname);
@@ -194,14 +194,14 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);
       if (reset_a == 0) {
         CPDF_Array* pArray = pDict->SetNewFor<CPDF_Array>("Decode");
-        pArray->AddNew<CPDF_Number>(1);
-        pArray->AddNew<CPDF_Number>(0);
+        pArray->AppendNew<CPDF_Number>(1);
+        pArray->AppendNew<CPDF_Number>(0);
       }
     } else {
       CPDF_Array* pCS = pDict->SetNewFor<CPDF_Array>("ColorSpace");
-      pCS->AddNew<CPDF_Name>("Indexed");
-      pCS->AddNew<CPDF_Name>("DeviceRGB");
-      pCS->AddNew<CPDF_Number>(1);
+      pCS->AppendNew<CPDF_Name>("Indexed");
+      pCS->AppendNew<CPDF_Name>("DeviceRGB");
+      pCS->AppendNew<CPDF_Number>(1);
       ByteString ct;
       {
         // Span's lifetime must end before ReleaseBuffer() below.
@@ -214,7 +214,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         pBuf[5] = static_cast<char>(set_b);
       }
       ct.ReleaseBuffer(6);
-      pCS->AddNew<CPDF_String>(ct, true);
+      pCS->AppendNew<CPDF_String>(ct, true);
     }
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
@@ -223,9 +223,9 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     if (palette_size > 0) {
       ASSERT(palette_size <= 256);
       CPDF_Array* pCS = m_pDocument->NewIndirect<CPDF_Array>();
-      pCS->AddNew<CPDF_Name>("Indexed");
-      pCS->AddNew<CPDF_Name>("DeviceRGB");
-      pCS->AddNew<CPDF_Number>(static_cast<int>(palette_size - 1));
+      pCS->AppendNew<CPDF_Name>("Indexed");
+      pCS->AppendNew<CPDF_Name>("DeviceRGB");
+      pCS->AppendNew<CPDF_Number>(static_cast<int>(palette_size - 1));
       std::unique_ptr<uint8_t, FxFreeDeleter> pColorTable(
           FX_Alloc2D(uint8_t, palette_size, 3));
       uint8_t* ptr = pColorTable.get();
@@ -239,7 +239,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
           std::move(pColorTable), palette_size * 3, std::move(pNewDict));
-      pCS->AddNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
+      pCS->AppendNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
       pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument.Get(),
                                        pCS->GetObjNum());
     } else {

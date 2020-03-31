@@ -69,9 +69,9 @@ TEST(CPDF_ObjectWalkerTest, CombinedObject) {
   dict->SetFor("1", pdfium::MakeRetain<CPDF_String>());
   dict->SetFor("2", pdfium::MakeRetain<CPDF_Boolean>());
   auto array = pdfium::MakeRetain<CPDF_Array>();
-  array->Add(pdfium::MakeRetain<CPDF_Reference>(nullptr, 0));
-  array->Add(pdfium::MakeRetain<CPDF_Null>());
-  array->Add(pdfium::MakeRetain<CPDF_Stream>(
+  array->Append(pdfium::MakeRetain<CPDF_Reference>(nullptr, 0));
+  array->Append(pdfium::MakeRetain<CPDF_Null>());
+  array->Append(pdfium::MakeRetain<CPDF_Stream>(
       nullptr, 0, pdfium::MakeRetain<CPDF_Dictionary>()));
   dict->SetFor("3", std::move(array));
   // The last number for stream length.
@@ -85,7 +85,7 @@ TEST(CPDF_ObjectWalkerTest, GetParent) {
   auto level_2 =
       pdfium::MakeRetain<CPDF_Stream>(nullptr, 0, std::move(level_3));
   auto level_1 = pdfium::MakeRetain<CPDF_Array>();
-  level_1->Add(std::move(level_2));
+  level_1->Append(std::move(level_2));
   auto level_0 = pdfium::MakeRetain<CPDF_Dictionary>();
   level_0->SetFor("Array", std::move(level_1));
 
@@ -103,11 +103,11 @@ TEST(CPDF_ObjectWalkerTest, GetParent) {
 TEST(CPDF_ObjectWalkerTest, SkipWalkIntoCurrentObject) {
   auto root_array = pdfium::MakeRetain<CPDF_Array>();
   // Add 2 null objects into |root_array|. [ null1, null2 ]
-  root_array->AddNew<CPDF_Null>();
-  root_array->AddNew<CPDF_Null>();
+  root_array->AppendNew<CPDF_Null>();
+  root_array->AppendNew<CPDF_Null>();
   // |root_array| will contain 4 null objects after this.
   // [ null1, null2, [ null3, null4 ] ]
-  root_array->Add(root_array->Clone());
+  root_array->Append(root_array->Clone());
 
   int non_array_objects = 0;
   CPDF_ObjectWalker walker(root_array.Get());

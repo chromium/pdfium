@@ -258,21 +258,21 @@ void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
 void CPDF_Dictionary::SetRectFor(const ByteString& key,
                                  const CFX_FloatRect& rect) {
   CPDF_Array* pArray = SetNewFor<CPDF_Array>(key);
-  pArray->AddNew<CPDF_Number>(rect.left);
-  pArray->AddNew<CPDF_Number>(rect.bottom);
-  pArray->AddNew<CPDF_Number>(rect.right);
-  pArray->AddNew<CPDF_Number>(rect.top);
+  pArray->AppendNew<CPDF_Number>(rect.left);
+  pArray->AppendNew<CPDF_Number>(rect.bottom);
+  pArray->AppendNew<CPDF_Number>(rect.right);
+  pArray->AppendNew<CPDF_Number>(rect.top);
 }
 
 void CPDF_Dictionary::SetMatrixFor(const ByteString& key,
                                    const CFX_Matrix& matrix) {
   CPDF_Array* pArray = SetNewFor<CPDF_Array>(key);
-  pArray->AddNew<CPDF_Number>(matrix.a);
-  pArray->AddNew<CPDF_Number>(matrix.b);
-  pArray->AddNew<CPDF_Number>(matrix.c);
-  pArray->AddNew<CPDF_Number>(matrix.d);
-  pArray->AddNew<CPDF_Number>(matrix.e);
-  pArray->AddNew<CPDF_Number>(matrix.f);
+  pArray->AppendNew<CPDF_Number>(matrix.a);
+  pArray->AppendNew<CPDF_Number>(matrix.b);
+  pArray->AppendNew<CPDF_Number>(matrix.c);
+  pArray->AppendNew<CPDF_Number>(matrix.d);
+  pArray->AppendNew<CPDF_Number>(matrix.e);
+  pArray->AppendNew<CPDF_Number>(matrix.f);
 }
 
 ByteString CPDF_Dictionary::MaybeIntern(const ByteString& str) {

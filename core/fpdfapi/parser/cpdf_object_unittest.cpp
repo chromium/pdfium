@@ -418,7 +418,7 @@ TEST(PDFArrayTest, GetMatrix) {
     CFX_Matrix matrix(elems[i][0], elems[i][1], elems[i][2], elems[i][3],
                       elems[i][4], elems[i][5]);
     for (size_t j = 0; j < 6; ++j)
-      arr->AddNew<CPDF_Number>(elems[i][j]);
+      arr->AppendNew<CPDF_Number>(elems[i][j]);
     CFX_Matrix arr_matrix = arr->GetMatrix();
     EXPECT_EQ(matrix.a, arr_matrix.a);
     EXPECT_EQ(matrix.b, arr_matrix.b);
@@ -438,7 +438,7 @@ TEST(PDFArrayTest, GetRect) {
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     CFX_FloatRect rect(elems[i]);
     for (size_t j = 0; j < 4; ++j)
-      arr->AddNew<CPDF_Number>(elems[i][j]);
+      arr->AppendNew<CPDF_Number>(elems[i][j]);
     CFX_FloatRect arr_rect = arr->GetRect();
     EXPECT_EQ(rect.left, arr_rect.left);
     EXPECT_EQ(rect.right, arr_rect.right);
@@ -553,7 +553,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     CPDF_Array* vals[3];
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = arr->AddNew<CPDF_Array>();
+      vals[i] = arr->AppendNew<CPDF_Array>();
       for (size_t j = 0; j < 3; ++j) {
         int value = j + 100;
         vals[i]->InsertNewAt<CPDF_Number>(i, value);
@@ -575,7 +575,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     CPDF_Dictionary* vals[3];
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = arr->AddNew<CPDF_Dictionary>();
+      vals[i] = arr->AppendNew<CPDF_Dictionary>();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
@@ -615,7 +615,7 @@ TEST(PDFArrayTest, GetTypeAt) {
           FX_Alloc(uint8_t, data_size));
       memcpy(data.get(), content, data_size);
       stream_vals[i] =
-          arr->AddNew<CPDF_Stream>(std::move(data), data_size, vals[i]);
+          arr->AppendNew<CPDF_Stream>(std::move(data), data_size, vals[i]);
     }
     for (size_t i = 0; i < 3; ++i) {
       TestArrayAccessors(arr.Get(), i,     // Array and index.
@@ -644,8 +644,8 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr->InsertNewAt<CPDF_Null>(10);
 
     CPDF_Array* arr_val = arr->InsertNewAt<CPDF_Array>(11);
-    arr_val->AddNew<CPDF_Number>(1);
-    arr_val->AddNew<CPDF_Number>(2);
+    arr_val->AppendNew<CPDF_Number>(1);
+    arr_val->AppendNew<CPDF_Number>(2);
 
     CPDF_Dictionary* dict_val = arr->InsertNewAt<CPDF_Dictionary>(12);
     dict_val->SetNewFor<CPDF_String>("key1", "Linda", false);
@@ -696,7 +696,7 @@ TEST(PDFArrayTest, AddNumber) {
                   12345.54321f, 0.5f,  1000, 0.000045f};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < FX_ArraySize(vals); ++i)
-    arr->AddNew<CPDF_Number>(vals[i]);
+    arr->AppendNew<CPDF_Number>(vals[i]);
   for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
     EXPECT_EQ(CPDF_Object::kNumber, arr->GetObjectAt(i)->GetType());
     EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
@@ -707,7 +707,7 @@ TEST(PDFArrayTest, AddInteger) {
   int vals[] = {0, 1, 934435456, 876, 10000, -1, -24354656, -100};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < FX_ArraySize(vals); ++i)
-    arr->AddNew<CPDF_Number>(vals[i]);
+    arr->AppendNew<CPDF_Number>(vals[i]);
   for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
     EXPECT_EQ(CPDF_Object::kNumber, arr->GetObjectAt(i)->GetType());
     EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
@@ -721,8 +721,8 @@ TEST(PDFArrayTest, AddStringAndName) {
   auto string_array = pdfium::MakeRetain<CPDF_Array>();
   auto name_array = pdfium::MakeRetain<CPDF_Array>();
   for (const char* val : kVals) {
-    string_array->AddNew<CPDF_String>(val, false);
-    name_array->AddNew<CPDF_Name>(val);
+    string_array->AppendNew<CPDF_String>(val, false);
+    name_array->AppendNew<CPDF_Name>(val);
   }
   for (size_t i = 0; i < FX_ArraySize(kVals); ++i) {
     EXPECT_EQ(CPDF_Object::kString, string_array->GetObjectAt(i)->GetType());
@@ -750,8 +750,9 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   for (size_t i = 0; i < FX_ArraySize(indirect_objs); ++i) {
     holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
                                                     indirect_objs[i]);
-    arr->AddNew<CPDF_Reference>(holder.get(), obj_nums[i]);
-    arr1->AddNew<CPDF_Reference>(holder.get(), indirect_objs[i]->GetObjNum());
+    arr->AppendNew<CPDF_Reference>(holder.get(), obj_nums[i]);
+    arr1->AppendNew<CPDF_Reference>(holder.get(),
+                                    indirect_objs[i]->GetObjNum());
   }
   // Check indirect objects.
   for (size_t i = 0; i < FX_ArraySize(obj_nums); ++i)
@@ -771,7 +772,7 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
 TEST(PDFArrayTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
   auto array = pdfium::MakeRetain<CPDF_Array>();
-  array->AddNew<CPDF_Reference>(&objects_holder, 1234);
+  array->AppendNew<CPDF_Reference>(&objects_holder, 1234);
   ASSERT_EQ(1U, array->size());
   CPDF_Object* obj = array->GetObjectAt(0);
   ASSERT_TRUE(obj);
@@ -790,7 +791,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
 TEST(PDFArrayTest, ConvertIndirect) {
   CPDF_IndirectObjectHolder objects_holder;
   auto array = pdfium::MakeRetain<CPDF_Array>();
-  CPDF_Object* pObj = array->AddNew<CPDF_Number>(42);
+  CPDF_Object* pObj = array->AppendNew<CPDF_Number>(42);
   array->ConvertToIndirectObjectAt(0, &objects_holder);
   CPDF_Object* pRef = array->GetObjectAt(0);
   CPDF_Object* pNum = array->GetDirectObjectAt(0);

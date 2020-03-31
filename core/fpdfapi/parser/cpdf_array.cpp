@@ -232,7 +232,7 @@ CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   return pRet;
 }
 
-CPDF_Object* CPDF_Array::Add(RetainPtr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::Append(RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   CHECK(!pObj || pObj->IsInline());
   CPDF_Object* pRet = pObj.Get();

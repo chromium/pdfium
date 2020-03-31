@@ -1715,8 +1715,8 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
     if (pStandard[i] == m_Unicodes[i])
       continue;
 
-    pDiff->AddNew<CPDF_Number>(static_cast<int>(i));
-    pDiff->AddNew<CPDF_Name>(PDF_AdobeNameFromUnicode(m_Unicodes[i]));
+    pDiff->AppendNew<CPDF_Number>(static_cast<int>(i));
+    pDiff->AppendNew<CPDF_Name>(PDF_AdobeNameFromUnicode(m_Unicodes[i]));
   }
 
   auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(pPool);

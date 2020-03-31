@@ -655,10 +655,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
     else
       pRectArray = pAnnotDict->SetNewFor<CPDF_Array>("Rect");
 
-    pRectArray->AddNew<CPDF_Number>(rect.left);
-    pRectArray->AddNew<CPDF_Number>(rect.bottom);
-    pRectArray->AddNew<CPDF_Number>(rect.right);
-    pRectArray->AddNew<CPDF_Number>(rect.top);
+    pRectArray->AppendNew<CPDF_Number>(rect.left);
+    pRectArray->AppendNew<CPDF_Number>(rect.bottom);
+    pRectArray->AppendNew<CPDF_Number>(rect.right);
+    pRectArray->AppendNew<CPDF_Number>(rect.top);
 
     // TODO(unknown): Transform AP's rectangle
   }

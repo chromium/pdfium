@@ -76,9 +76,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   auto hint_info = pdfium::MakeRetain<CPDF_Array>();
   // Add primary hint stream offset
-  hint_info->AddNew<CPDF_Number>(GetData(&data32, &data, &size));
+  hint_info->AppendNew<CPDF_Number>(GetData(&data32, &data, &size));
   // Add primary hint stream size
-  hint_info->AddNew<CPDF_Number>(GetData(&data32, &data, &size));
+  hint_info->AppendNew<CPDF_Number>(GetData(&data32, &data, &size));
   // Set hint stream info.
   linearized_dict->SetFor("H", std::move(hint_info));
 

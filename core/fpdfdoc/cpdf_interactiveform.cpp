@@ -1071,7 +1071,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       if (pV)
         pFieldDict->SetFor(pdfium::form_fields::kV, pV->CloneDirectObject());
     }
-    pFields->Add(pFieldDict);
+    pFields->Append(pFieldDict);
   }
   return pDoc;
 }

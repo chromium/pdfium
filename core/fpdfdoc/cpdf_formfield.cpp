@@ -534,7 +534,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
   if (GetType() != kListBox) {
     m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, opt_value);
     CPDF_Array* pI = m_pDict->SetNewFor<CPDF_Array>("I");
-    pI->AddNew<CPDF_Number>(index);
+    pI->AppendNew<CPDF_Number>(index);
     return;
   }
 
@@ -547,7 +547,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
   CPDF_Array* pArray = m_pDict->SetNewFor<CPDF_Array>(pdfium::form_fields::kV);
   for (int i = 0; i < CountOptions(); i++) {
     if (i == index || IsItemSelected(i))
-      pArray->AddNew<CPDF_String>(GetOptionValue(i));
+      pArray->AppendNew<CPDF_String>(GetOptionValue(i));
   }
 }
 
@@ -577,7 +577,7 @@ void CPDF_FormField::SetItemSelectionUnselected(int index,
   auto pArray = pdfium::MakeRetain<CPDF_Array>();
   for (int i = 0; i < CountOptions(); i++) {
     if (i != index && IsItemSelected(i))
-      pArray->AddNew<CPDF_String>(GetOptionValue(i));
+      pArray->AppendNew<CPDF_String>(GetOptionValue(i));
   }
   if (pArray->size() > 0) {
     m_pDict->SetFor(pdfium::form_fields::kV, pArray);
@@ -812,7 +812,7 @@ bool CPDF_FormField::SelectOption(int iOptIndex,
   }
   if (!bReturn) {
     if (bSelected)
-      pArray->AddNew<CPDF_Number>(iOptIndex);
+      pArray->AppendNew<CPDF_Number>(iOptIndex);
     if (pArray->IsEmpty())
       m_pDict->RemoveFor("I");
   }
