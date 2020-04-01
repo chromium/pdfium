@@ -209,7 +209,7 @@ void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
   if (!buf)
     return;
   size_t size = strlen(buf);
-  uint8_t* ptr = FX_Alloc(uint8_t, size + 1);
+  uint8_t* ptr = FX_AllocUninit(uint8_t, size + 1);
   memcpy(ptr, buf, size);
   ptr[size] = 0;
   pAttr->m_Exif[tag] = ptr;

@@ -45,7 +45,18 @@ NOINLINE void FX_OutOfMemoryTerminate();
 #define FX_TryRealloc(type, ptr, size) \
   static_cast<type*>(internal::Realloc(ptr, size, sizeof(type)))
 
+// These never return nullptr, but return uninitialized memory.
+// TOOD(thestig): Add FX_TryAllocUninit() if there is a use case.
+#define FX_AllocUninit(type, size) \
+  static_cast<type*>(internal::AllocOrDie(size, sizeof(type)))
+#define FX_AllocUninit2D(type, w, h) \
+  static_cast<type*>(internal::AllocOrDie2D(w, h, sizeof(type)))
+
 namespace internal {
+
+void* Alloc(size_t num_members, size_t member_size);
+void* AllocOrDie(size_t num_members, size_t member_size);
+void* AllocOrDie2D(size_t w, size_t h, size_t member_size);
 
 void* Calloc(size_t num_members, size_t member_size);
 void* Realloc(void* ptr, size_t num_members, size_t member_size);

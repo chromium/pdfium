@@ -130,7 +130,7 @@ void CPDF_Stream::SetDataFromStringstreamAndRemoveFilter(
 void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data_copy;
   if (!pData.empty()) {
-    data_copy.reset(FX_Alloc(uint8_t, pData.size()));
+    data_copy.reset(FX_AllocUninit(uint8_t, pData.size()));
     memcpy(data_copy.get(), pData.data(), pData.size());
   }
   TakeData(std::move(data_copy), pData.size());

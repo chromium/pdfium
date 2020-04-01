@@ -71,7 +71,8 @@ class PDFObjectsTest : public testing::Test {
     // Stream object.
     const char content[] = "abcdefghijklmnopqrstuvwxyz";
     size_t buf_len = FX_ArraySize(content);
-    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf(
+        FX_AllocUninit(uint8_t, buf_len));
     memcpy(buf.get(), content, buf_len);
     auto pNewDict = pdfium::MakeRetain<CPDF_Dictionary>();
     m_StreamDictObj = pNewDict;
@@ -612,7 +613,7 @@ TEST(PDFArrayTest, GetTypeAt) {
       uint8_t content[] = "content: this is a stream";
       size_t data_size = FX_ArraySize(content);
       std::unique_ptr<uint8_t, FxFreeDeleter> data(
-          FX_Alloc(uint8_t, data_size));
+          FX_AllocUninit(uint8_t, data_size));
       memcpy(data.get(), content, data_size);
       stream_vals[i] =
           arr->AppendNew<CPDF_Stream>(std::move(data), data_size, vals[i]);
@@ -658,7 +659,8 @@ TEST(PDFArrayTest, GetTypeAt) {
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
     size_t buf_size = sizeof(data);
-    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_size));
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf(
+        FX_AllocUninit(uint8_t, buf_size));
     memcpy(buf.get(), data, buf_size);
     CPDF_Stream* stream_val = arr->InsertNewAt<CPDF_Stream>(
         13, std::move(buf), buf_size, stream_dict);

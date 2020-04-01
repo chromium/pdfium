@@ -251,7 +251,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
       true);
 
   // Create the file stream and have the filespec dictionary link to it.
-  std::unique_ptr<uint8_t, FxFreeDeleter> stream(FX_Alloc(uint8_t, len));
+  std::unique_ptr<uint8_t, FxFreeDeleter> stream(FX_AllocUninit(uint8_t, len));
   memcpy(stream.get(), contents, len);
   CPDF_Stream* pFileStream = pDoc->NewIndirect<CPDF_Stream>(
       std::move(stream), len, std::move(pFileStreamDict));

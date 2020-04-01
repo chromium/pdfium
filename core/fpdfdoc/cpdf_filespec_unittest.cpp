@@ -210,7 +210,8 @@ TEST(cpdf_filespec, GetFileStream) {
       // Set the file stream.
       auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
       size_t buf_len = strlen(streams[i]) + 1;
-      std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
+      std::unique_ptr<uint8_t, FxFreeDeleter> buf(
+          FX_AllocUninit(uint8_t, buf_len));
       memcpy(buf.get(), streams[i], buf_len);
       file_dict->SetNewFor<CPDF_Stream>(keys[i], std::move(buf), buf_len,
                                         std::move(pDict));
@@ -247,7 +248,7 @@ TEST(cpdf_filespec, GetParamsDict) {
     CPDF_Dictionary* file_dict =
         file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
     auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, 6));
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, 6));
     memcpy(buf.get(), "hello", 6);
     file_dict->SetNewFor<CPDF_Stream>("UF", std::move(buf), 6,
                                       std::move(pDict));

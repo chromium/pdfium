@@ -170,7 +170,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   uint32_t dwStreamSize;
   if (decoder.IsEmpty()) {
     dwOrigSize = std::min<uint32_t>(dwOrigSize, m_pBuf.size() - m_Pos);
-    pData.reset(FX_Alloc(uint8_t, dwOrigSize));
+    pData.reset(FX_AllocUninit(uint8_t, dwOrigSize));
     auto copy_span = m_pBuf.subspan(m_Pos, dwOrigSize);
     memcpy(pData.get(), copy_span.data(), copy_span.size());
     dwStreamSize = dwOrigSize;
@@ -200,7 +200,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
       dwStreamSize += m_Pos - dwPrevPos;
     }
     m_Pos = dwSavePos;
-    pData.reset(FX_Alloc(uint8_t, dwStreamSize));
+    pData.reset(FX_AllocUninit(uint8_t, dwStreamSize));
     auto copy_span = m_pBuf.subspan(m_Pos, dwStreamSize);
     memcpy(pData.get(), copy_span.data(), copy_span.size());
     m_Pos += dwStreamSize;

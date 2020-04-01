@@ -760,7 +760,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
   m_pBmpContext = std::move(pBmpContext);
   if (m_SrcPaletteNumber) {
-    m_pSrcPalette.reset(FX_Alloc(FX_ARGB, m_SrcPaletteNumber));
+    m_pSrcPalette.reset(FX_AllocUninit(FX_ARGB, m_SrcPaletteNumber));
     memcpy(m_pSrcPalette.get(), palette->data(),
            m_SrcPaletteNumber * sizeof(FX_ARGB));
   } else {

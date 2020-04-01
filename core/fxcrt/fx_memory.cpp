@@ -73,6 +73,33 @@ NOINLINE void FX_OutOfMemoryTerminate() {
 
 namespace internal {
 
+void* Alloc(size_t num_members, size_t member_size) {
+  FX_SAFE_SIZE_T total = member_size;
+  total *= num_members;
+  if (!total.IsValid())
+    return nullptr;
+
+  constexpr int kFlags = pdfium::base::PartitionAllocReturnNull;
+  return pdfium::base::PartitionAllocGenericFlags(
+      GetGeneralPartitionAllocator().root(), kFlags, total.ValueOrDie(),
+      "GeneralPartition");
+}
+
+void* AllocOrDie(size_t num_members, size_t member_size) {
+  void* result = Alloc(num_members, member_size);
+  if (!result)
+    FX_OutOfMemoryTerminate();  // Never returns.
+
+  return result;
+}
+
+void* AllocOrDie2D(size_t w, size_t h, size_t member_size) {
+  if (w >= std::numeric_limits<size_t>::max() / h)
+    FX_OutOfMemoryTerminate();  // Never returns.
+
+  return AllocOrDie(w * h, member_size);
+}
+
 void* Calloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
@@ -99,7 +126,6 @@ void* Realloc(void* ptr, size_t num_members, size_t member_size) {
 }
 
 void* CallocOrDie(size_t num_members, size_t member_size) {
-  // TODO(tsepez): See if we can avoid the implicit memset(0).
   void* result = Calloc(num_members, member_size);
   if (!result)
     FX_OutOfMemoryTerminate();  // Never returns.
