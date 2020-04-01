@@ -164,7 +164,6 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   void GotoURL(const WideString& wsURL);
   FS_RECTF GetPageViewRect(IPDF_Page* page);
   bool PopupMenu(IPDF_Page* page,
-                 FPDF_WIDGET hWidget,
                  int menuFlag,
                  const CFX_PointF& pt);
   void EmailTo(FPDF_FILEHANDLER* fileHandler,

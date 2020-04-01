@@ -328,6 +328,18 @@ int ExampleFieldBrowse(IPDF_JSPLATFORM*, void* file_path, int length) {
 }
 #endif  // PDF_ENABLE_V8
 
+#ifdef PDF_ENABLE_XFA
+FPDF_BOOL ExamplePopupMenu(FPDF_FORMFILLINFO* pInfo,
+                           FPDF_PAGE page,
+                           FPDF_WIDGET always_null,
+                           int flags,
+                           float x,
+                           float y) {
+  printf("Popup: x=%2.1f, y=%2.1f, flags=0x%x\n", x, y, flags);
+  return true;
+}
+#endif  // PDF_ENABLE_XFA
+
 void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
   std::string feature = "Unknown";
   switch (type) {
@@ -905,6 +917,7 @@ void RenderPdf(const std::string& name,
   form_callbacks.version = 2;
   form_callbacks.xfa_disabled =
       options.disable_xfa || options.disable_javascript;
+  form_callbacks.FFI_PopupMenu = ExamplePopupMenu;
 #else   // PDF_ENABLE_XFA
   form_callbacks.version = 1;
 #endif  // PDF_ENABLE_XFA

@@ -459,11 +459,10 @@ FS_RECTF CPDFSDK_FormFillEnvironment::GetPageViewRect(IPDF_Page* page) {
 }
 
 bool CPDFSDK_FormFillEnvironment::PopupMenu(IPDF_Page* page,
-                                            FPDF_WIDGET hWidget,
                                             int menuFlag,
                                             const CFX_PointF& pt) {
   return m_pInfo && m_pInfo->version >= 2 && m_pInfo->FFI_PopupMenu &&
-         m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromIPDFPage(page), hWidget,
+         m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromIPDFPage(page), nullptr,
                                 menuFlag, pt.x, pt.y);
 }
 
