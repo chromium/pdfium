@@ -86,7 +86,7 @@ void CFX_XMLElement::Save(
   pXMLStream->WriteString("<");
   pXMLStream->WriteString(bsNameEncoded.AsStringView());
 
-  for (auto it : attrs_) {
+  for (const auto& it : attrs_) {
     // Note, the space between attributes is added by AttributeToString which
     // writes a blank as the first character.
     pXMLStream->WriteString(

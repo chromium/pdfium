@@ -139,7 +139,7 @@ void SendPageEvents(FPDF_FORMHANDLE form,
                     FPDF_PAGE page,
                     const std::string& events) {
   auto lines = StringSplit(events, '\n');
-  for (auto line : lines) {
+  for (const auto& line : lines) {
     auto command = StringSplit(line, '#');
     if (command[0].empty())
       continue;
