@@ -355,10 +355,10 @@ class TestRunner:
     shutil.rmtree(self.working_dir, ignore_errors=True)
     os.makedirs(self.working_dir)
 
-    self.feature_string = subprocess.check_output(
-        [self.pdfium_test_path, '--show-config'])
+    self.features = subprocess.check_output(
+        [self.pdfium_test_path, '--show-config']).strip().split(',')
     self.test_suppressor = suppressor.Suppressor(
-        finder, self.feature_string, self.options.disable_javascript,
+        finder, self.features, self.options.disable_javascript,
         self.options.disable_xfa)
     self.image_differ = pngdiffer.PNGDiffer(finder,
                                             self.options.reverse_byte_order)
