@@ -49,7 +49,7 @@ struct FxAllocAllocator {
   pointer address(reference x) const noexcept { return &x; }
   const_pointer address(const_reference x) const noexcept { return &x; }
   pointer allocate(size_type n, const void* hint = 0) {
-    return static_cast<pointer>(FX_AllocOrDie(n, sizeof(value_type)));
+    return FX_Alloc(value_type, n);
   }
   void deallocate(pointer p, size_type n) { FX_Free(p); }
   size_type max_size() const noexcept {

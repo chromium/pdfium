@@ -33,23 +33,28 @@ NOINLINE void FX_OutOfMemoryTerminate();
 
 // These never return nullptr, and must return cleared memory.
 #define FX_Alloc(type, size) \
-  static_cast<type*>(FX_AllocOrDie(size, sizeof(type)))
+  static_cast<type*>(internal::CallocOrDie(size, sizeof(type)))
 #define FX_Alloc2D(type, w, h) \
-  static_cast<type*>(FX_AllocOrDie2D(w, h, sizeof(type)))
+  static_cast<type*>(internal::CallocOrDie2D(w, h, sizeof(type)))
 #define FX_Realloc(type, ptr, size) \
-  static_cast<type*>(FX_ReallocOrDie(ptr, size, sizeof(type)))
+  static_cast<type*>(internal::ReallocOrDie(ptr, size, sizeof(type)))
 
 // May return nullptr, but returns cleared memory otherwise.
 #define FX_TryAlloc(type, size) \
-  static_cast<type*>(FX_SafeAlloc(size, sizeof(type)))
+  static_cast<type*>(internal::Calloc(size, sizeof(type)))
 #define FX_TryRealloc(type, ptr, size) \
-  static_cast<type*>(FX_SafeRealloc(ptr, size, sizeof(type)))
+  static_cast<type*>(internal::Realloc(ptr, size, sizeof(type)))
 
-void* FX_SafeAlloc(size_t num_members, size_t member_size);
-void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size);
-void* FX_AllocOrDie(size_t num_members, size_t member_size);
-void* FX_AllocOrDie2D(size_t w, size_t h, size_t member_size);
-void* FX_ReallocOrDie(void* ptr, size_t num_members, size_t member_size);
+namespace internal {
+
+void* Calloc(size_t num_members, size_t member_size);
+void* Realloc(void* ptr, size_t num_members, size_t member_size);
+void* CallocOrDie(size_t num_members, size_t member_size);
+void* CallocOrDie2D(size_t w, size_t h, size_t member_size);
+void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size);
+
+}  // namespace internal
+
 void FX_Free(void* ptr);
 
 // The FX_ArraySize(arr) macro returns the # of elements in an array arr.

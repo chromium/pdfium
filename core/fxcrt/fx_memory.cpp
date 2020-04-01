@@ -47,7 +47,7 @@ void* FXMEM_DefaultAlloc(size_t byte_size) {
 }
 
 void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
-  return FX_SafeAlloc(num_elems, byte_size);
+  return internal::Calloc(num_elems, byte_size);
 }
 
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size) {
@@ -71,7 +71,9 @@ NOINLINE void FX_OutOfMemoryTerminate() {
   abort();
 }
 
-void* FX_SafeAlloc(size_t num_members, size_t member_size) {
+namespace internal {
+
+void* Calloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
   if (!total.IsValid())
@@ -84,7 +86,7 @@ void* FX_SafeAlloc(size_t num_members, size_t member_size) {
       "GeneralPartition");
 }
 
-void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {
+void* Realloc(void* ptr, size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T size = num_members;
   size *= member_size;
   if (!size.IsValid())
@@ -96,29 +98,31 @@ void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {
       "GeneralPartition");
 }
 
-void* FX_AllocOrDie(size_t num_members, size_t member_size) {
+void* CallocOrDie(size_t num_members, size_t member_size) {
   // TODO(tsepez): See if we can avoid the implicit memset(0).
-  void* result = FX_SafeAlloc(num_members, member_size);
+  void* result = Calloc(num_members, member_size);
   if (!result)
     FX_OutOfMemoryTerminate();  // Never returns.
 
   return result;
 }
 
-void* FX_AllocOrDie2D(size_t w, size_t h, size_t member_size) {
+void* CallocOrDie2D(size_t w, size_t h, size_t member_size) {
   if (w >= std::numeric_limits<size_t>::max() / h)
     FX_OutOfMemoryTerminate();  // Never returns.
 
-  return FX_AllocOrDie(w * h, member_size);
+  return CallocOrDie(w * h, member_size);
 }
 
-void* FX_ReallocOrDie(void* ptr, size_t num_members, size_t member_size) {
-  void* result = FX_SafeRealloc(ptr, num_members, member_size);
+void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size) {
+  void* result = Realloc(ptr, num_members, member_size);
   if (!result)
     FX_OutOfMemoryTerminate();  // Never returns.
 
   return result;
 }
+
+}  // namespace internal
 
 void FX_Free(void* ptr) {
   // TODO(palmer): Removing this check exposes crashes when PDFium callers
