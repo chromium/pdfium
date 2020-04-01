@@ -310,7 +310,7 @@ CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category) {
   m_pRoot.Reset(pNames->GetDictFor(category));
 }
 
-CPDF_NameTree::~CPDF_NameTree() {}
+CPDF_NameTree::~CPDF_NameTree() = default;
 
 size_t CPDF_NameTree::GetCount() const {
   return m_pRoot ? CountNamesInternal(m_pRoot.Get(), 0) : 0;
@@ -324,10 +324,18 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   size_t nIndex = 0;
   CPDF_Array* pFind = nullptr;
   int nFindIndex = -1;
-  // Fail if the tree already contains this name or if the tree is too deep.
-  if (SearchNameNodeByName(m_pRoot.Get(), name, 0, &nIndex, &pFind,
-                           &nFindIndex)) {
-    return false;
+  // Handle the corner case where the root node is empty. i.e. No kids and no
+  // names. In which case, just insert into it and skip all the searches.
+  CPDF_Array* pNames = m_pRoot->GetArrayFor("Names");
+  if (pNames && pNames->IsEmpty() && !m_pRoot->GetArrayFor("Kids"))
+    pFind = pNames;
+
+  if (!pFind) {
+    // Fail if the tree already contains this name or if the tree is too deep.
+    if (SearchNameNodeByName(m_pRoot.Get(), name, 0, &nIndex, &pFind,
+                             &nFindIndex)) {
+      return false;
+    }
   }
 
   // If the returned |pFind| is a nullptr, then |name| is smaller than all

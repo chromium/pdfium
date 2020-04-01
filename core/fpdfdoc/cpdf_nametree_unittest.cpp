@@ -109,7 +109,6 @@ TEST(cpdf_nametree, AddIntoNames) {
   AddNameKeyValue(pNames, "7.txt", 777);
 
   CPDF_NameTree nameTree(pRootDict.Get());
-  pNames = nameTree.GetRootForTest()->GetArrayFor("Names");
 
   // Insert a name that already exists in the names array.
   EXPECT_FALSE(
@@ -133,6 +132,40 @@ TEST(cpdf_nametree, AddIntoNames) {
   CheckNameKeyValue(pNames, 2, "5.txt", 555);
   CheckNameKeyValue(pNames, 3, "7.txt", 777);
   CheckNameKeyValue(pNames, 4, "9.txt", 999);
+}
+
+TEST(cpdf_nametree, AddIntoEmptyNames) {
+  // Set up a name tree with an empty Names array.
+  auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
+  CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
+
+  CPDF_NameTree name_tree(pRootDict.Get());
+
+  // Insert a name should work.
+  EXPECT_TRUE(name_tree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(111),
+                                        L"2.txt"));
+
+  // Insert a name that already exists in the names array.
+  EXPECT_FALSE(name_tree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(111),
+                                         L"2.txt"));
+
+  // Insert in the beginning of the names array.
+  EXPECT_TRUE(name_tree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(111),
+                                        L"1.txt"));
+
+  // Insert in the middle of the names array.
+  EXPECT_TRUE(name_tree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(555),
+                                        L"5.txt"));
+
+  // Insert at the end of the names array.
+  EXPECT_TRUE(name_tree.AddValueAndName(pdfium::MakeRetain<CPDF_Number>(999),
+                                        L"9.txt"));
+
+  // Check that the names array has the expected key-value pairs.
+  CheckNameKeyValue(pNames, 0, "1.txt", 111);
+  CheckNameKeyValue(pNames, 1, "2.txt", 111);
+  CheckNameKeyValue(pNames, 2, "5.txt", 555);
+  CheckNameKeyValue(pNames, 3, "9.txt", 999);
 }
 
 TEST(cpdf_nametree, AddIntoKids) {

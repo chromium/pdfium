@@ -122,6 +122,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   constexpr char kContents1[] = "Hello!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents1,
                                      strlen(kContents1)));
+  EXPECT_EQ(3, FPDFDoc_GetAttachmentCount(document()));
 
   // Verify the name of the new attachment (i.e. the first attachment).
   attachment = FPDFDoc_GetAttachment(document(), 0);
@@ -249,9 +250,55 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsToFileWithNoAttachments) {
   ScopedFPDFWideString file_name = GetFPDFWideString(L"0.txt");
   FPDF_ATTACHMENT attachment =
       FPDFDoc_AddAttachment(document(), file_name.get());
-  // TODO(crbug.com/pdfium/1502): This should return true. Fix the bug and do
-  // additional verifications here.
-  EXPECT_FALSE(attachment);
+  ASSERT_TRUE(attachment);
+
+  // Set the new attachment's file.
+  constexpr char kContents1[] = "Hello!";
+  EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents1,
+                                     strlen(kContents1)));
+  EXPECT_EQ(1, FPDFDoc_GetAttachmentCount(document()));
+
+  // Verify the name of the new attachment (i.e. the first attachment).
+  attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
+  unsigned long length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
+  ASSERT_EQ(12u, length_bytes);
+  std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+  EXPECT_EQ(12u, FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
+  EXPECT_EQ(L"0.txt", GetPlatformWString(buf.data()));
+
+  // Verify the content of the new attachment (i.e. the first attachment).
+  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  std::vector<char> content_buf(length_bytes);
+  ASSERT_EQ(
+      6u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  EXPECT_EQ(std::string(kContents1), std::string(content_buf.data(), 6));
+
+  // Add an attachment to the end of the embedded file list and set its file.
+  file_name = GetFPDFWideString(L"z.txt");
+  attachment = FPDFDoc_AddAttachment(document(), file_name.get());
+  ASSERT_TRUE(attachment);
+  constexpr char kContents2[] = "World!";
+  EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents2,
+                                     strlen(kContents2)));
+  EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
+
+  // Verify the name of the new attachment (i.e. the second attachment).
+  attachment = FPDFDoc_GetAttachment(document(), 1);
+  ASSERT_TRUE(attachment);
+  length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
+  ASSERT_EQ(12u, length_bytes);
+  buf = GetFPDFWideStringBuffer(length_bytes);
+  EXPECT_EQ(12u, FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
+  EXPECT_EQ(L"z.txt", GetPlatformWString(buf.data()));
+
+  // Verify the content of the new attachment (i.e. the second attachment).
+  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  content_buf.clear();
+  content_buf.resize(length_bytes);
+  ASSERT_EQ(
+      6u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  EXPECT_EQ(std::string(kContents2), std::string(content_buf.data(), 6));
 }
 
 TEST_F(FPDFAttachmentEmbedderTest, DeleteAttachment) {
