@@ -19,6 +19,19 @@ namespace {
 
 constexpr int kNameTreeMaxRecursion = 32;
 
+CPDF_Dictionary* GetNameTreeRoot(CPDF_Document* pDoc,
+                                 const ByteString& category) {
+  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  if (!pRoot)
+    return nullptr;
+
+  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
+  if (!pNames)
+    return nullptr;
+
+  return pNames->GetDictFor(category);
+}
+
 std::pair<WideString, WideString> GetNodeLimitsMaybeSwap(CPDF_Array* pLimits) {
   ASSERT(pLimits);
   WideString csLeft = pLimits->GetUnicodeTextAt(0);
@@ -298,17 +311,8 @@ size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
 
 CPDF_NameTree::CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
 
-CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category) {
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  if (!pRoot)
-    return;
-
-  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
-  if (!pNames)
-    return;
-
-  m_pRoot.Reset(pNames->GetDictFor(category));
-}
+CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category)
+    : CPDF_NameTree(GetNameTreeRoot(pDoc, category)) {}
 
 CPDF_NameTree::~CPDF_NameTree() = default;
 

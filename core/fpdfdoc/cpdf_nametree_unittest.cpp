@@ -208,7 +208,7 @@ TEST(cpdf_nametree, AddIntoKids) {
 
   // Check that the node on the first level has the expected limits.
   CPDF_Dictionary* pKid1 =
-      name_tree->GetRootForTest()->GetArrayFor("Kids")->GetDictAt(0);
+      name_tree->GetRootForTesting()->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid1);
   CheckLimitsArray(pKid1, "0.txt", "99.txt");
 
@@ -255,7 +255,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
 
   // Retrieve the kid dictionaries.
   CPDF_Dictionary* pKid1 =
-      name_tree->GetRootForTest()->GetArrayFor("Kids")->GetDictAt(0);
+      name_tree->GetRootForTesting()->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid1);
   CPDF_Dictionary* pKid2 = pKid1->GetArrayFor("Kids")->GetDictAt(0);
   ASSERT_TRUE(pKid2);
@@ -325,9 +325,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(555, name_tree->LookupValue(L"5.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"5.txt", csName.c_str());
-  EXPECT_EQ(1u, name_tree->GetRootForTest()->GetArrayFor("Kids")->size());
+  EXPECT_EQ(1u, name_tree->GetRootForTesting()->GetArrayFor("Kids")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(0));
-  EXPECT_EQ(0u, name_tree->GetRootForTest()->GetArrayFor("Kids")->size());
+  EXPECT_EQ(0u, name_tree->GetRootForTesting()->GetArrayFor("Kids")->size());
 
   // Check that the tree is now empty.
   EXPECT_EQ(0u, name_tree->GetCount());
