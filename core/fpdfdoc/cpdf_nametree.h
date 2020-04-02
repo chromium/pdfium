@@ -19,9 +19,13 @@ class CPDF_Object;
 
 class CPDF_NameTree {
  public:
-  explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
   CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category);
+  CPDF_NameTree(const CPDF_NameTree&) = delete;
+  CPDF_NameTree& operator=(const CPDF_NameTree&) = delete;
   ~CPDF_NameTree();
+
+  static std::unique_ptr<CPDF_NameTree> CreateForTesting(
+      CPDF_Dictionary* pRoot);
 
   bool AddValueAndName(RetainPtr<CPDF_Object> pObj, const WideString& name);
   bool DeleteValueAndName(int nIndex);
@@ -34,6 +38,8 @@ class CPDF_NameTree {
   CPDF_Dictionary* GetRootForTest() const { return m_pRoot.Get(); }
 
  private:
+  explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
+
   RetainPtr<CPDF_Dictionary> m_pRoot;
 };
 

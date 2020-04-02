@@ -54,22 +54,23 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   CPDF_StreamParser parser(remaining);
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  CPDF_NameTree name_tree(dict.Get());
+  std::unique_ptr<CPDF_NameTree> name_tree =
+      CPDF_NameTree::CreateForTesting(dict.Get());
   for (const auto& name : params.names) {
     RetainPtr<CPDF_Object> obj = parser.ReadNextObject(
         /*bAllowNestedArray*/ true, /*bInArray=*/false, /*dwRecursionLevel=*/0);
     if (!obj)
       break;
 
-    name_tree.AddValueAndName(std::move(obj), name);
+    name_tree->AddValueAndName(std::move(obj), name);
   }
 
   if (params.delete_backwards) {
     for (size_t i = params.count; i > 0; --i)
-      name_tree.DeleteValueAndName(i);
+      name_tree->DeleteValueAndName(i);
   } else {
     for (size_t i = 0; i < params.count; ++i)
-      name_tree.DeleteValueAndName(0);
+      name_tree->DeleteValueAndName(0);
   }
   return 0;
 }

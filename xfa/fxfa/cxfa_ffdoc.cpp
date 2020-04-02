@@ -179,22 +179,14 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
     return it->second.pDibSource.As<CFX_DIBitmap>();
   }
 
-  CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
-  if (!pRoot)
+  CPDF_NameTree nametree(m_pPDFDoc.Get(), "XFAImages");
+  size_t count = nametree.GetCount();
+  if (count == 0)
     return nullptr;
 
-  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
-  if (!pNames)
-    return nullptr;
-
-  CPDF_Dictionary* pXFAImages = pNames->GetDictFor("XFAImages");
-  if (!pXFAImages)
-    return nullptr;
-
-  CPDF_NameTree nametree(pXFAImages);
   CPDF_Object* pObject = nametree.LookupValue(WideString(wsName));
   if (!pObject) {
-    for (size_t i = 0; i < nametree.GetCount(); i++) {
+    for (size_t i = 0; i < count; ++i) {
       WideString wsTemp;
       CPDF_Object* pTempObject = nametree.LookupValueAndName(i, &wsTemp);
       if (wsTemp == wsName) {

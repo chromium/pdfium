@@ -312,6 +312,12 @@ CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category) {
 
 CPDF_NameTree::~CPDF_NameTree() = default;
 
+// static
+std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateForTesting(
+    CPDF_Dictionary* pRoot) {
+  return pdfium::WrapUnique(new CPDF_NameTree(pRoot));  // Private ctor.
+}
+
 size_t CPDF_NameTree::GetCount() const {
   return m_pRoot ? CountNamesInternal(m_pRoot.Get(), 0) : 0;
 }
