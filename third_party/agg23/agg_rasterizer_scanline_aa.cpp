@@ -124,7 +124,7 @@ void outline_aa::allocate_block()
             m_cells = new_cells;
             m_max_blocks += cell_block_pool;
         }
-        m_cells[m_num_blocks++] = FX_Alloc(cell_aa, cell_block_size);
+        m_cells[m_num_blocks++] = FX_AllocUninit(cell_aa, cell_block_size);
     }
     m_cur_cell_ptr = m_cells[m_cur_block++];
 }
