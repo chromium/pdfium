@@ -55,7 +55,8 @@ FPDFDoc_GetAttachmentCount(FPDF_DOCUMENT document) {
   if (!pDoc)
     return 0;
 
-  return CPDF_NameTree(pDoc, "EmbeddedFiles").GetCount();
+  auto name_tree = CPDF_NameTree::Create(pDoc, "EmbeddedFiles");
+  return name_tree ? name_tree->GetCount() : 0;
 }
 
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
@@ -92,13 +93,13 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
   if (!pDoc || index < 0)
     return nullptr;
 
-  CPDF_NameTree name_tree(pDoc, "EmbeddedFiles");
-  if (static_cast<size_t>(index) >= name_tree.GetCount())
+  auto name_tree = CPDF_NameTree::Create(pDoc, "EmbeddedFiles");
+  if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount())
     return nullptr;
 
   WideString csName;
   return FPDFAttachmentFromCPDFObject(
-      name_tree.LookupValueAndName(index, &csName));
+      name_tree->LookupValueAndName(index, &csName));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -107,11 +108,11 @@ FPDFDoc_DeleteAttachment(FPDF_DOCUMENT document, int index) {
   if (!pDoc || index < 0)
     return false;
 
-  CPDF_NameTree name_tree(pDoc, "EmbeddedFiles");
-  if (static_cast<size_t>(index) >= name_tree.GetCount())
+  auto name_tree = CPDF_NameTree::Create(pDoc, "EmbeddedFiles");
+  if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount())
     return false;
 
-  return name_tree.DeleteValueAndName(index);
+  return name_tree->DeleteValueAndName(index);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

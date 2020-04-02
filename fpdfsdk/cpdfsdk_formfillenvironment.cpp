@@ -592,11 +592,14 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageViewAtIndex(int nIndex) {
 }
 
 void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
-  CPDF_NameTree docJS(m_pCPDFDoc.Get(), "JavaScript");
-  int iCount = docJS.GetCount();
-  for (int i = 0; i < iCount; i++) {
+  auto name_tree = CPDF_NameTree::Create(m_pCPDFDoc.Get(), "JavaScript");
+  if (!name_tree)
+    return;
+
+  size_t count = name_tree->GetCount();
+  for (size_t i = 0; i < count; ++i) {
     WideString name;
-    CPDF_Action action(ToDictionary(docJS.LookupValueAndName(i, &name)));
+    CPDF_Action action(ToDictionary(name_tree->LookupValueAndName(i, &name)));
     GetActionHandler()->DoAction_JavaScript(action, name, this);
   }
 }

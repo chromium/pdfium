@@ -19,10 +19,12 @@ class CPDF_Object;
 
 class CPDF_NameTree {
  public:
-  CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category);
   CPDF_NameTree(const CPDF_NameTree&) = delete;
   CPDF_NameTree& operator=(const CPDF_NameTree&) = delete;
   ~CPDF_NameTree();
+
+  static std::unique_ptr<CPDF_NameTree> Create(CPDF_Document* pDoc,
+                                               const ByteString& category);
 
   // If necessary, create missing Names dictionary in |pDoc|, and/or missing
   // Names array in the dictionary that corresponds to |category|, if necessary.

@@ -21,7 +21,11 @@ struct CPDF_JavaScript {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFDoc_GetJavaScriptActionCount(FPDF_DOCUMENT document) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
-  return doc ? CPDF_NameTree(doc, "JavaScript").GetCount() : -1;
+  if (!doc)
+    return -1;
+
+  auto name_tree = CPDF_NameTree::Create(doc, "JavaScript");
+  return name_tree ? name_tree->GetCount() : 0;
 }
 
 FPDF_EXPORT FPDF_JAVASCRIPT_ACTION FPDF_CALLCONV
@@ -30,13 +34,13 @@ FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
   if (!doc || index < 0)
     return nullptr;
 
-  CPDF_NameTree name_tree(doc, "JavaScript");
-  if (static_cast<size_t>(index) >= name_tree.GetCount())
+  auto name_tree = CPDF_NameTree::Create(doc, "JavaScript");
+  if (!name_tree || static_cast<size_t>(index) >= name_tree->GetCount())
     return nullptr;
 
   WideString name;
   CPDF_Dictionary* obj =
-      ToDictionary(name_tree.LookupValueAndName(index, &name));
+      ToDictionary(name_tree->LookupValueAndName(index, &name));
   if (!obj)
     return nullptr;
 
