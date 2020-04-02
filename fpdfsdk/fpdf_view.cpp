@@ -995,8 +995,8 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
   if (!pRoot)
     return 0;
 
-  CPDF_NameTree nameTree(pDoc, "Dests");
-  pdfium::base::CheckedNumeric<FPDF_DWORD> count = nameTree.GetCount();
+  CPDF_NameTree name_tree(pDoc, "Dests");
+  pdfium::base::CheckedNumeric<FPDF_DWORD> count = name_tree.GetCount();
   const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
   if (pDest)
     count += pDest->size();
@@ -1098,8 +1098,8 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
   CPDF_Object* pDestObj = nullptr;
   WideString wsName;
-  CPDF_NameTree nameTree(pDoc, "Dests");
-  int count = nameTree.GetCount();
+  CPDF_NameTree name_tree(pDoc, "Dests");
+  int count = name_tree.GetCount();
   if (index >= count) {
     const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
     if (!pDest)
@@ -1125,7 +1125,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     }
     wsName = PDF_DecodeText(bsName.raw_span());
   } else {
-    pDestObj = nameTree.LookupValueAndName(index, &wsName);
+    pDestObj = name_tree.LookupValueAndName(index, &wsName);
   }
   if (!pDestObj)
     return nullptr;

@@ -1387,9 +1387,9 @@ CJS_Result CJS_Document::gotoNamedDest(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
-  CPDF_NameTree nameTree(pDocument, "Dests");
+  CPDF_NameTree name_tree(pDocument, "Dests");
   CPDF_Array* destArray =
-      nameTree.LookupNamedDest(pDocument, pRuntime->ToWideString(params[0]));
+      name_tree.LookupNamedDest(pDocument, pRuntime->ToWideString(params[0]));
   if (!destArray)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
