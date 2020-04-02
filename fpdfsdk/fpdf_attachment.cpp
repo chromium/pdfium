@@ -64,28 +64,14 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   if (!pDoc)
     return nullptr;
 
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  if (!pRoot)
-    return nullptr;
-
   WideString wsName = WideStringFromFPDFWideString(name);
   if (wsName.IsEmpty())
     return nullptr;
 
-  // Retrieve the document's Names dictionary; create it if missing.
-  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
-  if (!pNames) {
-    pNames = pDoc->NewIndirect<CPDF_Dictionary>();
-    pRoot->SetNewFor<CPDF_Reference>("Names", pDoc, pNames->GetObjNum());
-  }
-
-  // Create the EmbeddedFiles dictionary if missing.
-  if (!pNames->GetDictFor("EmbeddedFiles")) {
-    CPDF_Dictionary* pFiles = pDoc->NewIndirect<CPDF_Dictionary>();
-    pFiles->SetNewFor<CPDF_Array>("Names");
-    pNames->SetNewFor<CPDF_Reference>("EmbeddedFiles", pDoc,
-                                      pFiles->GetObjNum());
-  }
+  auto name_tree =
+      CPDF_NameTree::CreateWithRootNameArray(pDoc, "EmbeddedFiles");
+  if (!name_tree)
+    return nullptr;
 
   // Set up the basic entries in the filespec dictionary.
   CPDF_Dictionary* pFile = pDoc->NewIndirect<CPDF_Dictionary>();
@@ -94,10 +80,8 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   pFile->SetNewFor<CPDF_String>(pdfium::stream::kF, wsName);
 
   // Add the new attachment name and filespec into the document's EmbeddedFiles.
-  CPDF_NameTree name_tree(pDoc, "EmbeddedFiles");
-  if (!name_tree.AddValueAndName(pFile->MakeReference(pDoc), wsName)) {
+  if (!name_tree->AddValueAndName(pFile->MakeReference(pDoc), wsName))
     return nullptr;
-  }
 
   return FPDFAttachmentFromCPDFObject(pFile);
 }

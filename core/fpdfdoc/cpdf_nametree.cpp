@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
@@ -315,6 +316,31 @@ CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category)
     : CPDF_NameTree(GetNameTreeRoot(pDoc, category)) {}
 
 CPDF_NameTree::~CPDF_NameTree() = default;
+
+// static
+std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
+    CPDF_Document* pDoc,
+    const ByteString& category) {
+  CPDF_Dictionary* pRoot = pDoc->GetRoot();
+  if (!pRoot)
+    return nullptr;
+
+  // Retrieve the document's Names dictionary; create it if missing.
+  CPDF_Dictionary* pNames = pRoot->GetDictFor("Names");
+  if (!pNames) {
+    pNames = pDoc->NewIndirect<CPDF_Dictionary>();
+    pRoot->SetNewFor<CPDF_Reference>("Names", pDoc, pNames->GetObjNum());
+  }
+
+  // Create the |category| dictionary if missing.
+  if (!pNames->GetDictFor(category)) {
+    CPDF_Dictionary* pFiles = pDoc->NewIndirect<CPDF_Dictionary>();
+    pFiles->SetNewFor<CPDF_Array>("Names");
+    pNames->SetNewFor<CPDF_Reference>(category, pDoc, pFiles->GetObjNum());
+  }
+
+  return pdfium::MakeUnique<CPDF_NameTree>(pDoc, category);
+}
 
 // static
 std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateForTesting(
