@@ -12,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
-#include "core/fpdfdoc/cpdf_nametree.h"
 
 namespace {
 
@@ -57,18 +56,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   ActionType type = GetType();
   if (type != GoTo && type != GoToR)
     return CPDF_Dest();
-
-  const CPDF_Object* pDest = m_pDict->GetDirectObjectFor("D");
-  if (!pDest)
-    return CPDF_Dest();
-  if (pDest->IsString() || pDest->IsName()) {
-    CPDF_NameTree name_tree(pDoc, "Dests");
-    return CPDF_Dest(name_tree.LookupNamedDest(pDoc, pDest->GetUnicodeText()));
-  }
-  if (const CPDF_Array* pArray = pDest->AsArray())
-    return CPDF_Dest(pArray);
-
-  return CPDF_Dest();
+  return CPDF_Dest::Create(pDoc, m_pDict->GetDirectObjectFor("D"));
 }
 
 WideString CPDF_Action::GetFilePath() const {

@@ -6,9 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_link.h"
 
-#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfdoc/cpdf_nametree.h"
 
 CPDF_Link::CPDF_Link() = default;
 
@@ -23,17 +21,7 @@ CFX_FloatRect CPDF_Link::GetRect() {
 }
 
 CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
-  CPDF_Object* pDest = m_pDict->GetDirectObjectFor("Dest");
-  if (!pDest)
-    return CPDF_Dest();
-
-  if (pDest->IsString() || pDest->IsName()) {
-    CPDF_NameTree name_tree(pDoc, "Dests");
-    return CPDF_Dest(name_tree.LookupNamedDest(pDoc, pDest->GetUnicodeText()));
-  }
-  if (CPDF_Array* pArray = pDest->AsArray())
-    return CPDF_Dest(pArray);
-  return CPDF_Dest();
+  return CPDF_Dest::Create(pDoc, m_pDict->GetDirectObjectFor("Dest"));
 }
 
 CPDF_Action CPDF_Link::GetAction() {

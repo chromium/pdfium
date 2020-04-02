@@ -7,12 +7,12 @@
 #ifndef CORE_FPDFDOC_CPDF_DEST_H_
 #define CORE_FPDFDOC_CPDF_DEST_H_
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CPDF_Document;
 class CPDF_Array;
+class CPDF_Document;
+class CPDF_Object;
 
 class CPDF_Dest {
  public:
@@ -20,6 +20,9 @@ class CPDF_Dest {
   explicit CPDF_Dest(const CPDF_Array* pArray);
   CPDF_Dest(const CPDF_Dest& that);
   ~CPDF_Dest();
+
+  // Use when |pDest| is an object of an unknown type. Can pass in nullptr.
+  static CPDF_Dest Create(CPDF_Document* pDoc, const CPDF_Object* pDest);
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   int GetDestPageIndex(CPDF_Document* pDoc) const;

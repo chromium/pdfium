@@ -9,10 +9,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/fx_dib.h"
 
@@ -48,18 +46,7 @@ WideString CPDF_Bookmark::GetTitle() const {
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
   if (!m_pDict)
     return CPDF_Dest();
-
-  const CPDF_Object* pDest = m_pDict->GetDirectObjectFor("Dest");
-  if (!pDest)
-    return CPDF_Dest();
-  if (pDest->IsString() || pDest->IsName()) {
-    CPDF_NameTree name_tree(pDocument, "Dests");
-    return CPDF_Dest(
-        name_tree.LookupNamedDest(pDocument, pDest->GetUnicodeText()));
-  }
-  if (const CPDF_Array* pArray = pDest->AsArray())
-    return CPDF_Dest(pArray);
-  return CPDF_Dest();
+  return CPDF_Dest::Create(pDocument, m_pDict->GetDirectObjectFor("Dest"));
 }
 
 CPDF_Action CPDF_Bookmark::GetAction() const {
