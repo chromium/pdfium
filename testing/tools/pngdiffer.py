@@ -13,6 +13,11 @@ import sys
 import common
 
 
+class NotFoundError(Exception):
+  """Raised when file doesn't exist"""
+  pass
+
+
 class PNGDiffer():
 
   def __init__(self, finder, reverse_byte_order):
@@ -43,6 +48,16 @@ class PNGDiffer():
 
     return actual_paths
 
+  def _RunImageDiffCommand(self, expected_path, actual_path):
+    if not os.path.exists(expected_path):
+      return NotFoundError('%s does not exist.' % expected_path)
+
+    cmd = [self.pdfium_diff_path]
+    if self.reverse_byte_order:
+      cmd.append('--reverse-byte-order')
+    cmd.extend([expected_path, actual_path])
+    return common.RunCommand(cmd)
+
   def HasDifferences(self, input_filename, source_dir, working_dir):
     path_templates = PathTemplates(input_filename, source_dir, working_dir)
 
@@ -64,23 +79,15 @@ class PNGDiffer():
         break
       print "Checking " + actual_path
       sys.stdout.flush()
-      if os.path.exists(expected_path):
-        cmd = [self.pdfium_diff_path]
-        if self.reverse_byte_order:
-          cmd.append('--reverse-byte-order')
-        cmd.extend([expected_path, actual_path])
-        error = common.RunCommand(cmd)
-      else:
-        error = 1
+
+      error = self._RunImageDiffCommand(expected_path, actual_path)
       if error:
         # When failed, we check against platform based results.
-        if os.path.exists(platform_expected_path):
-          cmd = [self.pdfium_diff_path]
-          if self.reverse_byte_order:
-            cmd.append('--reverse-byte-order')
-          cmd.extend([platform_expected_path, actual_path])
-          error = common.RunCommand(cmd)
-        if error:
+        platform_error = self._RunImageDiffCommand(platform_expected_path,
+                                                   actual_path)
+        if platform_error:
+          if not isinstance(platform_error, NotFoundError):
+            error = platform_error
           print "FAILURE: " + input_filename + "; " + str(error)
           return True
 
