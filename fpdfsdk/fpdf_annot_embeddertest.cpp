@@ -2456,6 +2456,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFocusableAnnotSubtypes) {
   std::vector<FPDF_ANNOTATION_SUBTYPE> subtypes(count, FPDF_ANNOT_UNKNOWN);
   EXPECT_FALSE(FPDFAnnot_GetFocusableSubtypes(form_handle(), subtypes.data(),
                                               count - 1));
+  EXPECT_FALSE(FPDFAnnot_GetFocusableSubtypes(nullptr, subtypes.data(), count));
 
   EXPECT_TRUE(
       FPDFAnnot_GetFocusableSubtypes(form_handle(), subtypes.data(), count));
