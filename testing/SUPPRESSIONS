@@ -343,6 +343,9 @@ bug_451366.in * * *
 # TODO(pdfium:1466): Remove after associated bug is fixed
 bug_1449.in linux * *
 
+# TODO(chromium:1028991): Remove after associated bug is fixed
+reset_button.in * * *
+
 # xfa_specific
 
 # TODO(pdfium:1107): Remove after associated bug is fixed

@@ -1,0 +1,10 @@
+# Check the checkbox
+mousemove,145,220
+mousedown,left,145,220
+mouseup,left,145,220
+
+# Tab to reset button from checkbox
+keycode,9
+
+# Press Enter to reset the form
+charcode,13

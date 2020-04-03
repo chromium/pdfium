@@ -1,0 +1,97 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm <<
+    /Fields [5 0 R 6 0 R]
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 300 300]
+  /Contents 4 0 R
+  /Annots [5 0 R 6 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+2 w
+.1 .1 .1 RG
+.8 .843 1 rg
+n 136 211 18 18 re B*
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /F 4
+  /Ff 2
+  /P 3 0 R
+  /Rect [135 210 155 230]
+  /T (checkbox)
+  /AP <<
+    /N <<
+      /Yes 7 0 R
+    >>
+  >>
+  /AS /Off
+  /V /Off
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /F 4
+  /P 3 0 R
+  /Rect [135 110 185 150]
+  /T (Reset button)
+  /Ff 65536
+  /A <<
+   /S /ResetForm
+   /Fields [5 0 R]
+   /Flags 1
+  >>
+  /MK <<
+    /BC [0.0 0.0 0.4]
+    /BG [0.9 0.9 0.9]
+  >>
+>>
+endobj
+{{object 7 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /FormType 1
+  /BBox [0 0 20 20]
+  {{streamlen}}
+>>
+stream
+q
+17.2 15.95145 m
+17.2 4.027746 l
+15.97225 2.8 l
+4.027746 2.8 l
+4.027746 17.2 l
+15.97225 17.2 l
+h
+f
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
