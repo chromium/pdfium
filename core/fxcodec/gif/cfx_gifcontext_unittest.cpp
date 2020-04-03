@@ -47,7 +47,7 @@ TEST(CFX_GifContext, SetInputBuffer) {
 }
 
 TEST(CFX_GifContext, ReadAllOrNone) {
-  std::vector<uint8_t> dest_buffer;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> dest_buffer;
   uint8_t src_buffer[] = {0x00, 0x01, 0x02, 0x03, 0x04,
                           0x05, 0x06, 0x07, 0x08, 0x09};
   CFX_GifContextForTest context(nullptr, nullptr);

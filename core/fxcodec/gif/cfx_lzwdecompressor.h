@@ -34,7 +34,9 @@ class CFX_LZWDecompressor {
     return ExtractData(dest_buf, dest_size);
   }
 
-  std::vector<uint8_t>* DecompressedForTest() { return &decompressed_; }
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>>* DecompressedForTest() {
+    return &decompressed_;
+  }
   size_t* DecompressedNextForTest() { return &decompressed_next_; }
 
  private:
@@ -51,7 +53,7 @@ class CFX_LZWDecompressor {
   uint16_t code_end_;
   uint16_t code_next_;
   uint8_t code_first_;
-  std::vector<uint8_t> decompressed_;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> decompressed_;
   size_t decompressed_next_;
   uint16_t code_old_;
   const uint8_t* next_in_;

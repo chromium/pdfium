@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -126,7 +127,8 @@ void IccModule::Translate(CLcmsCmm* pTransform,
       inputs[i] = pSrcValues[i];
     cmsDoTransform(pTransform->transform(), inputs.data(), output, 1);
   } else {
-    std::vector<uint8_t> inputs(std::max(nSrcComponents, 16u));
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> inputs(
+        std::max(nSrcComponents, 16u));
     for (uint32_t i = 0; i < nSrcComponents; ++i) {
       inputs[i] =
           pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);

@@ -21,7 +21,8 @@ TEST(CFX_LZWDecompressor, ExtractData) {
 
   // Check that 0 length extract does nothing
   {
-    std::vector<uint8_t>* decompressed = decompressor->DecompressedForTest();
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* decompressed =
+        decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
     uint8_t dest_buf[20];
@@ -38,7 +39,8 @@ TEST(CFX_LZWDecompressor, ExtractData) {
 
   // Check that less than decompressed size only gets the expected number
   {
-    std::vector<uint8_t>* decompressed = decompressor->DecompressedForTest();
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* decompressed =
+        decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
     uint8_t dest_buf[20];
@@ -58,7 +60,8 @@ TEST(CFX_LZWDecompressor, ExtractData) {
 
   // Check that greater than decompressed size depletes the decompressor
   {
-    std::vector<uint8_t>* decompressed = decompressor->DecompressedForTest();
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* decompressed =
+        decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
     uint8_t dest_buf[20];

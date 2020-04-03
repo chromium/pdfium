@@ -112,7 +112,7 @@ class ProgressiveDecoder :
 
     int m_DestMin;
     int m_ItemSize;
-    std::vector<uint8_t> m_pWeightTables;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pWeightTables;
   };
 
   class CFXCODEC_HorzTable {
@@ -127,7 +127,7 @@ class ProgressiveDecoder :
     }
 
     int m_ItemSize;
-    std::vector<uint8_t> m_pWeightTables;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pWeightTables;
   };
 
   class CFXCODEC_VertTable {
@@ -141,7 +141,7 @@ class ProgressiveDecoder :
                                             pixel * m_ItemSize);
     }
     int m_ItemSize;
-    std::vector<uint8_t> m_pWeightTables;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pWeightTables;
   };
 
 #ifdef PDF_ENABLE_XFA_PNG
