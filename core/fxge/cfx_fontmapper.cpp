@@ -306,7 +306,7 @@ ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
   if (!size)
     return ByteString();
 
-  std::vector<uint8_t> buffer(size);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(size);
   uint32_t bytes_read = m_pFontInfo->GetFontData(hFont, kTableNAME, buffer);
   return bytes_read == size ? GetNameFromTT(buffer, 6) : ByteString();
 }

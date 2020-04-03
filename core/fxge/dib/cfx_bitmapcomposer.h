@@ -72,10 +72,10 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   bool m_bFlipY;
   bool m_bRgbByteOrder = false;
   BlendMode m_BlendType = BlendMode::kNormal;
-  std::vector<uint8_t> m_pScanlineV;
-  std::vector<uint8_t> m_pClipScanV;
-  std::vector<uint8_t> m_pAddClipScan;
-  std::vector<uint8_t> m_pScanlineAlphaV;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pScanlineV;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pClipScanV;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pAddClipScan;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pScanlineAlphaV;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_

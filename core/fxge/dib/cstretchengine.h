@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
@@ -61,7 +62,7 @@ class CStretchEngine {
     int m_DestMin = 0;
     int m_ItemSize = 0;
     size_t m_dwWeightTablesSize = 0;
-    std::vector<uint8_t> m_WeightTables;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_WeightTables;
   };
 
   enum class State : uint8_t { kInitial, kHorizontal, kVertical };
@@ -89,10 +90,10 @@ class CStretchEngine {
   const int m_DestWidth;
   const int m_DestHeight;
   const FX_RECT m_DestClip;
-  std::vector<uint8_t> m_DestScanline;
-  std::vector<uint8_t> m_DestMaskScanline;
-  std::vector<uint8_t> m_InterBuf;
-  std::vector<uint8_t> m_ExtraAlphaBuf;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_DestScanline;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_DestMaskScanline;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_InterBuf;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_ExtraAlphaBuf;
   FX_RECT m_SrcClip;
   int m_InterPitch;
   int m_ExtraMaskPitch;
