@@ -31,9 +31,8 @@ WideString CFX_WideTextBuf::MakeString() const {
 }
 
 void CFX_WideTextBuf::AppendChar(wchar_t ch) {
-  ExpandWideBuf(1);
-  *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
-  m_DataSize += sizeof(wchar_t);
+  pdfium::span<wchar_t> new_span = ExpandWideBuf(1);
+  new_span[0] = ch;
 }
 
 void CFX_WideTextBuf::Delete(int start_index, int count) {
@@ -41,11 +40,9 @@ void CFX_WideTextBuf::Delete(int start_index, int count) {
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(ByteStringView ascii) {
-  ExpandWideBuf(ascii.GetLength());
-  for (uint8_t ch : ascii) {
-    *reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize) = ch;
-    m_DataSize += sizeof(wchar_t);
-  }
+  pdfium::span<wchar_t> new_span = ExpandWideBuf(ascii.GetLength());
+  for (size_t i = 0; i < ascii.GetLength(); ++i)
+    new_span[i] = ascii[i];
   return *this;
 }
 
@@ -63,24 +60,18 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
   size_t len = strlen(buf);
-  ExpandWideBuf(len);
-  wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
-  for (size_t j = 0; j < len; j++) {
-    *str++ = buf[j];
-  }
-  m_DataSize += len * sizeof(wchar_t);
+  pdfium::span<wchar_t> new_span = ExpandWideBuf(len);
+  for (size_t j = 0; j < len; j++)
+    new_span[j] = buf[j];
   return *this;
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
   size_t len = FloatToString((float)f, buf);
-  ExpandWideBuf(len);
-  wchar_t* str = reinterpret_cast<wchar_t*>(m_pBuffer.get() + m_DataSize);
-  for (size_t i = 0; i < len; i++) {
-    *str++ = buf[i];
-  }
-  m_DataSize += len * sizeof(wchar_t);
+  pdfium::span<wchar_t> new_span = ExpandWideBuf(len);
+  for (size_t i = 0; i < len; i++)
+    new_span[i] = buf[i];
   return *this;
 }
 
@@ -94,8 +85,12 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideTextBuf& buf) {
   return *this;
 }
 
-void CFX_WideTextBuf::ExpandWideBuf(size_t char_count) {
-  FX_SAFE_SIZE_T safe_count = char_count;
-  safe_count *= sizeof(wchar_t);
-  ExpandBuf(safe_count.ValueOrDie());
+pdfium::span<wchar_t> CFX_WideTextBuf::ExpandWideBuf(size_t char_count) {
+  size_t original_count = GetLength();
+  FX_SAFE_SIZE_T safe_bytes = char_count;
+  safe_bytes *= sizeof(wchar_t);
+  size_t bytes = safe_bytes.ValueOrDie();
+  ExpandBuf(bytes);
+  m_DataSize += bytes;
+  return GetWideSpan().subspan(original_count);
 }
