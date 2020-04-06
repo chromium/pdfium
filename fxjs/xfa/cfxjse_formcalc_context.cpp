@@ -4456,7 +4456,7 @@ void CFXJSE_FormCalcContext::Get(
     return;
 
   int32_t size = pFile->GetSize();
-  std::vector<uint8_t> dataBuf(size);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> dataBuf(size);
   pFile->ReadBlock(dataBuf.data(), size);
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(dataBuf)));

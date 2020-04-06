@@ -542,7 +542,7 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
     swLabel = pRuntime->ToWideString(newParams[4]);
 
   const int MAX_INPUT_BYTES = 2048;
-  std::vector<uint8_t> pBuff(MAX_INPUT_BYTES + 2);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> pBuff(MAX_INPUT_BYTES + 2);
   int nLengthBytes = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion, swTitle, swDefault, swLabel, bPassword, pBuff.data(),
       MAX_INPUT_BYTES);

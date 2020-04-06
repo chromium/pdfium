@@ -17,17 +17,19 @@ class TestDelegate : public CFX_GlobalData::Delegate {
   ~TestDelegate() override {}
 
   bool StoreBuffer(pdfium::span<const uint8_t> buffer) override {
-    last_buffer_ = std::vector<uint8_t>(buffer.begin(), buffer.end());
+    last_buffer_ = std::vector<uint8_t, FxAllocAllocator<uint8_t>>(
+        buffer.begin(), buffer.end());
     return true;
   }
   Optional<pdfium::span<uint8_t>> LoadBuffer() override {
     return pdfium::span<uint8_t>(last_buffer_);
   }
   void BufferDone() override {
-    last_buffer_ = std::vector<uint8_t>();  // Catch misuse after done.
+    // Catch misuse after done.
+    last_buffer_ = std::vector<uint8_t, FxAllocAllocator<uint8_t>>();
   }
 
-  std::vector<uint8_t> last_buffer_;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> last_buffer_;
 };
 
 }  // namespace
