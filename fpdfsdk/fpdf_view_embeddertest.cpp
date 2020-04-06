@@ -669,7 +669,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 
 TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
   EXPECT_TRUE(OpenDocument("named_dests_old_style.pdf"));
-  EXPECT_EQ(0u, FPDF_CountNamedDests(document()));
+  EXPECT_EQ(2u, FPDF_CountNamedDests(document()));
 }
 
 // The following tests pass if the document opens without crashing.

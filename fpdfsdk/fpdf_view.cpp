@@ -996,18 +996,12 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
     return 0;
 
   auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
-  if (!name_tree)
-    return 0;
-
-  pdfium::base::CheckedNumeric<FPDF_DWORD> count = name_tree->GetCount();
+  pdfium::base::CheckedNumeric<FPDF_DWORD> count =
+      name_tree ? name_tree->GetCount() : 0;
   const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
   if (pDest)
     count += pDest->size();
-
-  if (!count.IsValid())
-    return 0;
-
-  return count.ValueOrDie();
+  return count.ValueOrDefault(0);
 }
 
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV
