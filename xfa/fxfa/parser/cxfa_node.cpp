@@ -385,9 +385,9 @@ inline uint8_t GetInvBase64(uint8_t x) {
   return (x & 128) == 0 ? g_inv_base64[x] : 255;
 }
 
-std::vector<uint8_t> XFA_RemoveBase64Whitespace(
+std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_RemoveBase64Whitespace(
     pdfium::span<const uint8_t> spStr) {
-  std::vector<uint8_t> result;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
   result.reserve(spStr.size());
   for (uint8_t ch : spStr) {
     if (GetInvBase64(ch) != 255 || ch == '=')
@@ -396,12 +396,14 @@ std::vector<uint8_t> XFA_RemoveBase64Whitespace(
   return result;
 }
 
-std::vector<uint8_t> XFA_Base64Decode(const ByteString& bsStr) {
-  std::vector<uint8_t> result;
+std::vector<uint8_t, FxAllocAllocator<uint8_t>> XFA_Base64Decode(
+    const ByteString& bsStr) {
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
   if (bsStr.IsEmpty())
     return result;
 
-  std::vector<uint8_t> buffer = XFA_RemoveBase64Whitespace(bsStr.raw_span());
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer =
+      XFA_RemoveBase64Whitespace(bsStr.raw_span());
   result.reserve(3 * (buffer.size() / 4));
 
   uint32_t dwLimb = 0;
@@ -475,7 +477,10 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
 
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
   ByteString bsData;  // Must outlive |pImageFileRead|.
-  std::vector<uint8_t> buffer;  // Must outlive |pImageFileRead|.
+
+  // Must outlive |pImageFileRead|.
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer;
+
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
     XFA_AttributeValue iEncoding = pImage->GetTransferEncoding();
