@@ -69,7 +69,7 @@ WideString CPDF_String::GetUnicodeText() const {
 
 bool CPDF_String::WriteTo(IFX_ArchiveStream* archive,
                           const CPDF_Encryptor* encryptor) const {
-  std::vector<uint8_t> encrypted_data;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> encrypted_data;
   pdfium::span<const uint8_t> data = m_String.raw_span();
   if (encryptor) {
     encrypted_data = encryptor->Encrypt(data);

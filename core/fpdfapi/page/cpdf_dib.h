@@ -83,7 +83,7 @@ class CPDF_DIB final : public CFX_DIBBase {
 
     int width;
     int height;
-    std::vector<uint8_t> data;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data;
   };
 
   LoadState StartLoadMask();

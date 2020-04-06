@@ -13,12 +13,12 @@ CPDF_Encryptor::CPDF_Encryptor(CPDF_CryptoHandler* pHandler, int objnum)
   ASSERT(m_pHandler);
 }
 
-std::vector<uint8_t> CPDF_Encryptor::Encrypt(
+std::vector<uint8_t, FxAllocAllocator<uint8_t>> CPDF_Encryptor::Encrypt(
     pdfium::span<const uint8_t> src_data) const {
   if (src_data.empty())
-    return std::vector<uint8_t>();
+    return std::vector<uint8_t, FxAllocAllocator<uint8_t>>();
 
-  std::vector<uint8_t> result;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> result;
   uint32_t buf_size = m_pHandler->EncryptGetSize(src_data);
   result.resize(buf_size);
   m_pHandler->EncryptContent(m_ObjNum, 0, src_data, result.data(),

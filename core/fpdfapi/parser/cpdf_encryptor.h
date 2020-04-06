@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
@@ -21,7 +22,8 @@ class CPDF_Encryptor {
   CPDF_Encryptor(CPDF_CryptoHandler* pHandler, int objnum);
   ~CPDF_Encryptor();
 
-  std::vector<uint8_t> Encrypt(pdfium::span<const uint8_t> src_data) const;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> Encrypt(
+      pdfium::span<const uint8_t> src_data) const;
 
  private:
   UnownedPtr<CPDF_CryptoHandler> const m_pHandler;

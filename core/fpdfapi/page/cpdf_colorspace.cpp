@@ -236,7 +236,7 @@ class CPDF_ICCBasedCS final : public CPDF_ColorSpace {
 
   RetainPtr<CPDF_ColorSpace> m_pAlterCS;
   RetainPtr<CPDF_IccProfile> m_pProfile;
-  mutable std::vector<uint8_t> m_pCache;
+  mutable std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_pCache;
   std::vector<float> m_pRanges;
 };
 
@@ -1023,8 +1023,10 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
   }
 
   if (m_pCache.empty()) {
-    m_pCache = pdfium::Vector2D<uint8_t>(nMaxColors, 3);
-    auto temp_src = pdfium::Vector2D<uint8_t>(nMaxColors, nComponents);
+    m_pCache =
+        pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(nMaxColors, 3);
+    auto temp_src = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(
+        nMaxColors, nComponents);
     size_t src_index = 0;
     for (int i = 0; i < nMaxColors; i++) {
       uint32_t color = i;

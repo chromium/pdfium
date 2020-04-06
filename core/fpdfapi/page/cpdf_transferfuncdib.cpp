@@ -46,7 +46,7 @@ FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
 
 void CPDF_TransferFuncDIB::TranslateScanline(
     const uint8_t* src_buf,
-    std::vector<uint8_t>* dest_buf) const {
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* dest_buf) const {
   bool bSkip = false;
   switch (m_pSrc->GetFormat()) {
     case FXDIB_1bppRgb: {

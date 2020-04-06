@@ -84,9 +84,12 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
   memset(output, 0, sizeof(output));
 
   bool bIdentity = true;
-  std::vector<uint8_t> samples_r(CPDF_TransferFunc::kChannelSampleSize);
-  std::vector<uint8_t> samples_g(CPDF_TransferFunc::kChannelSampleSize);
-  std::vector<uint8_t> samples_b(CPDF_TransferFunc::kChannelSampleSize);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r(
+      CPDF_TransferFunc::kChannelSampleSize);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g(
+      CPDF_TransferFunc::kChannelSampleSize);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_b(
+      CPDF_TransferFunc::kChannelSampleSize);
   std::array<pdfium::span<uint8_t>, 3> samples = {samples_r, samples_g,
                                                   samples_b};
   for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {

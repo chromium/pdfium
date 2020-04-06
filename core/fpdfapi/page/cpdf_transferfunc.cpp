@@ -12,11 +12,12 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 
-CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc,
-                                     bool bIdentify,
-                                     std::vector<uint8_t> samples_r,
-                                     std::vector<uint8_t> samples_g,
-                                     std::vector<uint8_t> samples_b)
+CPDF_TransferFunc::CPDF_TransferFunc(
+    CPDF_Document* pDoc,
+    bool bIdentify,
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r,
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g,
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_b)
     : m_pPDFDoc(pDoc),
       m_bIdentity(bIdentify),
       m_SamplesR(std::move(samples_r)),

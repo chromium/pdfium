@@ -118,13 +118,13 @@ void Revision6_Hash(const ByteString& password,
   uint8_t digest[32];
   CRYPT_SHA256Finish(&sha, digest);
 
-  std::vector<uint8_t> buf;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buf;
   uint8_t* input = digest;
   uint8_t* key = input;
   uint8_t* iv = input + 16;
   uint8_t* E = nullptr;
   int iBufLen = 0;
-  std::vector<uint8_t> interDigest;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> interDigest;
   int i = 0;
   int iBlockSize = 32;
   CRYPT_aes_context aes = {};
@@ -136,7 +136,7 @@ void Revision6_Hash(const ByteString& password,
     iBufLen = iRoundSize * 64;
     buf.resize(iBufLen);
     E = buf.data();
-    std::vector<uint8_t> content;
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> content;
     for (int j = 0; j < 64; ++j) {
       content.insert(std::end(content), password.raw_str(),
                      password.raw_str() + password.GetLength());

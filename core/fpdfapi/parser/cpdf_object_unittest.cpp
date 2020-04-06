@@ -805,7 +805,7 @@ TEST(PDFArrayTest, ConvertIndirect) {
 }
 
 TEST(PDFStreamTest, SetData) {
-  std::vector<uint8_t> data(100);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data(100);
   auto stream = pdfium::MakeRetain<CPDF_Stream>();
   stream->InitStream(data, pdfium::MakeRetain<CPDF_Dictionary>());
   EXPECT_EQ(static_cast<int>(data.size()),
@@ -816,7 +816,7 @@ TEST(PDFStreamTest, SetData) {
   stream->GetDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
                                             L"SomeParams");
 
-  std::vector<uint8_t> new_data(data.size() * 2);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> new_data(data.size() * 2);
   stream->SetData(new_data);
 
   // The "Length" field should be updated for new data size.
@@ -831,7 +831,7 @@ TEST(PDFStreamTest, SetData) {
 }
 
 TEST(PDFStreamTest, SetDataAndRemoveFilter) {
-  std::vector<uint8_t> data(100);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data(100);
   auto stream = pdfium::MakeRetain<CPDF_Stream>();
   stream->InitStream(data, pdfium::MakeRetain<CPDF_Dictionary>());
   EXPECT_EQ(static_cast<int>(data.size()),
@@ -842,7 +842,7 @@ TEST(PDFStreamTest, SetDataAndRemoveFilter) {
   stream->GetDict()->SetNewFor<CPDF_String>(pdfium::stream::kDecodeParms,
                                             L"SomeParams");
 
-  std::vector<uint8_t> new_data(data.size() * 2);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> new_data(data.size() * 2);
   stream->SetDataAndRemoveFilter(new_data);
   // The "Length" field should be updated for new data size.
   EXPECT_EQ(static_cast<int>(new_data.size()),

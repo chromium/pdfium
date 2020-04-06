@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -40,16 +41,16 @@ class CPDF_TransferFunc final : public Retainable, public Observable {
  private:
   CPDF_TransferFunc(CPDF_Document* pDoc,
                     bool bIdentify,
-                    std::vector<uint8_t> samples_r,
-                    std::vector<uint8_t> samples_g,
-                    std::vector<uint8_t> samples_b);
+                    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_r,
+                    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_g,
+                    std::vector<uint8_t, FxAllocAllocator<uint8_t>> samples_b);
   ~CPDF_TransferFunc() override;
 
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   const bool m_bIdentity;
-  const std::vector<uint8_t> m_SamplesR;
-  const std::vector<uint8_t> m_SamplesG;
-  const std::vector<uint8_t> m_SamplesB;
+  const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesR;
+  const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesG;
+  const std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_SamplesB;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_
