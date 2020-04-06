@@ -1,0 +1,55 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /Dests 6 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 2
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Font <<
+      /F1 5 0 R
+    >>
+  >>
+  /Contents [4 0 R]
+  /MediaBox [0 0 612 792]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+/F1 20 Tf
+100 600 TD (Page1)Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Arial
+>>
+endobj
+% Old-style top-level Dests dictionary. Note that FirstAlternate
+% intentionally references non-existent page 11 and LastAlternate
+% intentionally references non-existent object 999.
+{{object 6 0}} <<
+  /FirstAlternate [11 /XYZ 200 400 800]
+  /LastAlternate  <<
+    /D [999 0 R /XYZ 0 0 -200]
+  >>
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

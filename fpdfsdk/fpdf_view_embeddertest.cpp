@@ -529,6 +529,8 @@ TEST_F(FPDFViewEmbedderTest, ViewerRef) {
 
 TEST_F(FPDFViewEmbedderTest, NamedDests) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
+  EXPECT_EQ(6u, FPDF_CountNamedDests(document()));
+
   long buffer_size;
   char fixed_buffer[512];
   FPDF_DEST dest;
@@ -663,6 +665,11 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
   // No such destination in either Dest NameTree or dictionary.
   dest = FPDF_GetNamedDestByName(document(), "Bogus");
   EXPECT_EQ(nullptr, dest);
+}
+
+TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
+  EXPECT_TRUE(OpenDocument("named_dests_old_style.pdf"));
+  EXPECT_EQ(0u, FPDF_CountNamedDests(document()));
 }
 
 // The following tests pass if the document opens without crashing.

@@ -1,0 +1,68 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /Dests 6 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 2
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Font <<
+      /F1 5 0 R
+    >>
+  >>
+  /Contents [4 0 R]
+  /MediaBox [0 0 612 792]
+>>
+endobj
+4 0 obj <<
+  /Length 37
+>>
+stream
+BT
+/F1 20 Tf
+100 600 TD (Page1)Tj
+ET
+endstream
+endobj
+5 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Arial
+>>
+endobj
+% Old-style top-level Dests dictionary. Note that FirstAlternate
+% intentionally references non-existent page 11 and LastAlternate
+% intentionally references non-existent object 999.
+6 0 obj <<
+  /FirstAlternate [11 /XYZ 200 400 800]
+  /LastAlternate  <<
+    /D [999 0 R /XYZ 0 0 -200]
+  >>
+>>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000083 00000 n 
+0000000146 00000 n 
+0000000300 00000 n 
+0000000388 00000 n 
+0000000643 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 7
+>>
+startxref
+761
+%%EOF
