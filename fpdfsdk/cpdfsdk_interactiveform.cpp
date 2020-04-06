@@ -70,7 +70,8 @@ bool IsFormFieldTypeXFA(FormFieldType fieldType) {
 }
 #endif  // PDF_ENABLE_XFA
 
-bool FDFToURLEncodedData(std::vector<uint8_t>* pBuffer) {
+bool FDFToURLEncodedData(
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* pBuffer) {
   std::unique_ptr<CFDF_Document> pFDF = CFDF_Document::ParseMemory(*pBuffer);
   if (!pFDF)
     return true;
@@ -445,7 +446,8 @@ bool CPDFSDK_InteractiveForm::SubmitFields(
   if (textBuf.IsEmpty())
     return false;
 
-  std::vector<uint8_t> buffer(textBuf.begin(), textBuf.end());
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(textBuf.begin(),
+                                                         textBuf.end());
   if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
 
@@ -476,7 +478,8 @@ bool CPDFSDK_InteractiveForm::SubmitForm(const WideString& sDestination,
   if (fdfBuffer.IsEmpty())
     return false;
 
-  std::vector<uint8_t> buffer(fdfBuffer.begin(), fdfBuffer.end());
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(fdfBuffer.begin(),
+                                                         fdfBuffer.end());
   if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
 
