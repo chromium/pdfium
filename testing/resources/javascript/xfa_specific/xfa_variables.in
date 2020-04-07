@@ -27,13 +27,17 @@ stream
       </pageArea>
     </pageSet>
     <event activity="docReady" ref="$host">
-      <script name="my_script" contentType="application/x-javascript">
+      <script name="my_script" contentType="application/x-javascript"><![CDATA[
+        {{include ../expect.js}}
         try {
-          app.alert('We search variables context ' + (xx01.value + xx02.value));
-          app.alert('We search variables context ' + (xx03.value + xx04.value));
           var script1 = xfa.resolveNode('template..my_script');
           var script2 = xfa.resolveNode('template..their_script');
           var script3 = xfa.resolveNode('template..other_script');
+          app.alert('First, poke at a script node itsef');
+          expect('script1.stateless', '0');
+          expectError('script1.stateless = 42');
+          app.alert('We search variables context ' + (xx01.value + xx02.value));
+          app.alert('We search variables context ' + (xx03.value + xx04.value));
           app.alert('We resolve off of script1 ' + (script1.xx01.value + script1.xx02.value));
           app.alert('We resolve off of script2 ' + (script2.xx01.value + script2.xx02.value));
           app.alert('We resolve off of script3 ' + (script3.xx01.value + script3.xx02.value));
@@ -43,7 +47,7 @@ stream
         } catch (e) {
           app.alert('Error: ' + e);
         }
-      </script>
+      ]]></script>
     </event>
   </subform>
   <subform layout="tb" name="their_doc">

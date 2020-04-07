@@ -1,3 +1,6 @@
+Alert: First, poke at a script node itsef
+Alert: PASS: script1.stateless = 0
+Alert: PASS: script1.stateless = 42 threw Error: Invalid property set operation.
 Alert: We search variables context 123456
 Alert: We search variables context 579
 Alert: We resolve off of script1 123456

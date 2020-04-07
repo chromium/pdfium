@@ -24,5 +24,5 @@ void CJX_Script::stateless(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetString(FX_UTF8Encode(WideStringView(L"0", 1)).AsStringView());
+  pValue->SetString("0");
 }
