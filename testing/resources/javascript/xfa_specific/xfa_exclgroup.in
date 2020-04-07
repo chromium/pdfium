@@ -38,7 +38,22 @@ stream
         expectError("RadioButtonList.execEvent()");
         expectError("RadioButtonList.execEvent(1, 2)");
         expect("RadioButtonList.execEvent('nonesuch')", null);
+        expect("RadioButtonList.execEvent('calculate')", null);
+        expect("RadioButtonList.execEvent('change')", null);
+        expect("RadioButtonList.execEvent('click')", null);
+        expect("RadioButtonList.execEvent('enter')", null);
+        expect("RadioButtonList.execEvent('exit')", null);
+        expect("RadioButtonList.execEvent('full')", null);
+        expect("RadioButtonList.execEvent('indexChange')", null);
         expect("RadioButtonList.execEvent('initialize')", null);
+        expect("RadioButtonList.execEvent('mouseDown')", null);
+        expect("RadioButtonList.execEvent('mouseEnter')", null);
+        expect("RadioButtonList.execEvent('mouseExit')", null);
+        expect("RadioButtonList.execEvent('mouseUp')", null);
+        expect("RadioButtonList.execEvent('postOpen')", null);
+        expect("RadioButtonList.execEvent('preOpen')", null);
+        expect("RadioButtonList.execEvent('preSign')", null);
+        expect("RadioButtonList.execEvent('validate')", null);
 
         expectError("RadioButtonList.execInitialize('badarg')");
         expect("RadioButtonList.execInitialize()", null);

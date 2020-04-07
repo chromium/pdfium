@@ -2,7 +2,22 @@ Alert: PASS: RadioButtonList.className = exclGroup
 Alert: PASS: RadioButtonList.execEvent() threw XFAObject.execEvent: Incorrect number of parameters passed to function.
 Alert: PASS: RadioButtonList.execEvent(1, 2) threw XFAObject.execEvent: Incorrect number of parameters passed to function.
 Alert: PASS: RadioButtonList.execEvent('nonesuch') = undefined
+Alert: PASS: RadioButtonList.execEvent('calculate') = undefined
+Alert: PASS: RadioButtonList.execEvent('change') = undefined
+Alert: PASS: RadioButtonList.execEvent('click') = undefined
+Alert: PASS: RadioButtonList.execEvent('enter') = undefined
+Alert: PASS: RadioButtonList.execEvent('exit') = undefined
+Alert: PASS: RadioButtonList.execEvent('full') = undefined
+Alert: PASS: RadioButtonList.execEvent('indexChange') = undefined
 Alert: PASS: RadioButtonList.execEvent('initialize') = undefined
+Alert: PASS: RadioButtonList.execEvent('mouseDown') = undefined
+Alert: PASS: RadioButtonList.execEvent('mouseEnter') = undefined
+Alert: PASS: RadioButtonList.execEvent('mouseExit') = undefined
+Alert: PASS: RadioButtonList.execEvent('mouseUp') = undefined
+Alert: PASS: RadioButtonList.execEvent('postOpen') = undefined
+Alert: PASS: RadioButtonList.execEvent('preOpen') = undefined
+Alert: PASS: RadioButtonList.execEvent('preSign') = undefined
+Alert: PASS: RadioButtonList.execEvent('validate') = undefined
 Alert: PASS: RadioButtonList.execInitialize('badarg') threw XFAObject.execInitialize: Incorrect number of parameters passed to function.
 Alert: PASS: RadioButtonList.execInitialize() = undefined
 Alert: PASS: RadioButtonList.execCalculate('badarg') threw XFAObject.execCalculate: Incorrect number of parameters passed to function.
