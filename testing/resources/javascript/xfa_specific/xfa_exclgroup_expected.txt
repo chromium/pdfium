@@ -1,0 +1,17 @@
+Alert: PASS: RadioButtonList.className = exclGroup
+Alert: PASS: RadioButtonList.execEvent() threw XFAObject.execEvent: Incorrect number of parameters passed to function.
+Alert: PASS: RadioButtonList.execEvent(1, 2) threw XFAObject.execEvent: Incorrect number of parameters passed to function.
+Alert: PASS: RadioButtonList.execEvent('nonesuch') = undefined
+Alert: PASS: RadioButtonList.execEvent('initialize') = undefined
+Alert: PASS: RadioButtonList.execInitialize('badarg') threw XFAObject.execInitialize: Incorrect number of parameters passed to function.
+Alert: PASS: RadioButtonList.execInitialize() = undefined
+Alert: PASS: RadioButtonList.execCalculate('badarg') threw XFAObject.execCalculate: Incorrect number of parameters passed to function.
+Alert: PASS: RadioButtonList.execCalculate() = undefined
+Alert: PASS: RadioButtonList.execValidate('badarg') threw XFAObject.execValidate: Incorrect number of parameters passed to function.
+Alert: PASS: RadioButtonList.execValidate() = true
+Alert: PASS: RadioButtonList.selectedMember('badarg') threw XFAObject.selectedMember: Incorrect number of parameters passed to function.
+Alert: PASS: RadioButtonList.selectedMember() = null
+Alert: PASS: RadioButtonList.defaultValue = undefined
+Alert: PASS: RadioButtonList.rawValue = null
+Alert: PASS: RadioButtonList.transient = undefined
+Alert: PASS: RadioButtonList.errorText = undefined
