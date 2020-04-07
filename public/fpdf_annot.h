@@ -194,6 +194,23 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj);
 
 // Experimental API.
+// Add a new InkStroke, represented by an array of points, to the InkList of
+// |annot|. The API creates an InkList if one doesn't already exist in |annot|.
+// This API works only for ink annotations. Please refer section 12.5.6.13 in
+// PDF 32000-1:2008 Specification.
+//
+//   annot       - handle to an annotation.
+//   points      - pointer to a FS_POINTF array representing input points.
+//   point_count - number of elements in |points| array. This should not exceed
+//                 the maximum value that can be represented by an int32_t).
+//
+// Returns the 0-based index at which the new InkStroke is added in the InkList
+// of the |annot|. Returns -1 on failure.
+FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
+                                                     const FS_POINTF* points,
+                                                     size_t point_count);
+
+// Experimental API.
 // Add |obj| to |annot|. |obj| must have been created by
 // FPDFPageObj_CreateNew{Path|Rect}() or FPDFPageObj_New{Text|Image}Obj(), and
 // will be owned by |annot|. Note that an |obj| cannot belong to more than one
