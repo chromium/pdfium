@@ -59,7 +59,9 @@ int FindPageIndex(const CPDF_Dictionary* pNode,
     if (objnum == pNode->GetObjNum())
       return *index;
 
-    (*skip_count)--;
+    if (*skip_count != 0)
+      (*skip_count)--;
+
     (*index)++;
     return -1;
   }
