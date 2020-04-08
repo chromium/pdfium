@@ -1379,6 +1379,24 @@ TEST_F(FPDFFormFillEmbedderTest, BadApiInputsListBox) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbedderTest, HasFormFieldAtPointForXFADoc) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_EQ(-1, FPDFPage_HasFormFieldAtPoint(form_handle(), page, 612, 792));
+
+#ifdef PDF_ENABLE_XFA
+  constexpr int kExpectedFieldType = FPDF_FORMFIELD_XFA_TEXTFIELD;
+#else
+  constexpr int kExpectedFieldType = -1;
+#endif
+  EXPECT_EQ(kExpectedFieldType,
+            FPDFPage_HasFormFieldAtPoint(form_handle(), page, 50, 30));
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextEmptyAndBasicKeyboard) {
   // Test empty selection.
   CheckFocusedFieldText(L"");
