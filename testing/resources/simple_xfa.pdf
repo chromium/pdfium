@@ -72,7 +72,7 @@ stream
 endstream
 endobj
 5 0 obj <<
-  /Length 482
+  /Length 541
 >>
 stream
 <template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
@@ -80,6 +80,7 @@ stream
     <pageSet>
       <pageArea name="Page1" id="Page1">
         <contentArea x="0.25in" y="0.25in" w="8in" h="10.5in" />
+        <medium long="11in" short="8.5in" stock="letter"/>
       </pageArea>
     </pageSet>
     <field name="TextField1" y="31.75mm" x="44.45mm" w="114.291mm" h="12.7mm">
@@ -227,14 +228,14 @@ xref
 0000000358 00000 n 
 0000000534 00000 n 
 0000001228 00000 n 
-0000001762 00000 n 
-0000005270 00000 n 
-0000005332 00000 n 
-0000005395 00000 n 
+0000001821 00000 n 
+0000005329 00000 n 
+0000005391 00000 n 
+0000005454 00000 n 
 trailer <<
   /Root 1 0 R
   /Size 10
 >>
 startxref
-5472
+5531
 %%EOF

@@ -12,6 +12,7 @@ stream
     <pageSet>
       <pageArea name="Page1" id="Page1">
         <contentArea x="0.25in" y="0.25in" w="8in" h="10.5in" />
+        <medium long="11in" short="8.5in" stock="letter"/>
       </pageArea>
     </pageSet>
     <field name="TextField1" y="31.75mm" x="44.45mm" w="114.291mm" h="12.7mm">
