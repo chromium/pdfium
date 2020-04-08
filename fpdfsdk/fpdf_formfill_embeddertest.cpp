@@ -836,6 +836,36 @@ TEST_F(FPDFFormFillEmbedderTest, TabWithModifiers) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // There should be no focused annotation to start with.
+  int page_index = -2;
+  FPDF_ANNOTATION annot = nullptr;
+  EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+  EXPECT_EQ(-1, page_index);
+  EXPECT_FALSE(annot);
+
+  static constexpr int kKeysToPress[] = {
+      FWL_VKEY_NewLine, FWL_VKEY_Return, FWL_VKEY_Space,
+      FWL_VKEY_Delete,  FWL_VKEY_0,      FWL_VKEY_9,
+      FWL_VKEY_A,       FWL_VKEY_Z,      FWL_VKEY_F1,
+  };
+  for (int key : kKeysToPress) {
+    // Pressing random keys when there is no focus should not trigger focus.
+    EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page, key, 0));
+    page_index = -2;
+    annot = nullptr;
+    EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+    EXPECT_EQ(-1, page_index);
+    EXPECT_FALSE(annot);
+  }
+
+  UnloadPage(page);
+}
+
 #ifdef PDF_ENABLE_XFA
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillFirstTab) {
   EXPECT_TRUE(OpenDocument("xfa/email_recommended.pdf"));
