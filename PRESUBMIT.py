@@ -294,9 +294,9 @@ def _CheckTestDuplicates(input_api, output_api):
 def _CheckPNGFormat(input_api, output_api):
   """Checks that .png files have a format that will be considered valid by our
   test runners. If a file ends with .png, then it must be of the form
-  NAME_expected(_skia)?(_(win|mac|linux))?.pdf.#.png"""
+  NAME_expected(_(skia|skiapaths))?(_(win|mac|linux))?.pdf.#.png"""
   expected_pattern = input_api.re.compile(
-      r'.+_expected(_skia)?(_(win|mac|linux))?\.pdf\.\d+.png')
+      r'.+_expected(_(skia|skiapaths))?(_(win|mac|linux))?\.pdf\.\d+.png')
   results = []
   for f in input_api.AffectedFiles(include_deletes=False):
     if not f.LocalPath().endswith('.png'):
@@ -319,5 +319,21 @@ def CheckChangeOnUpload(input_api, output_api):
   results += _CheckIncludeOrder(input_api, output_api)
   results += _CheckTestDuplicates(input_api, output_api)
   results += _CheckPNGFormat(input_api, output_api)
+
+  for f in input_api.AffectedFiles():
+    path, name = input_api.os_path.split(f.LocalPath())
+    if name == 'PRESUBMIT.py':
+      full_path = input_api.os_path.join(input_api.PresubmitLocalPath(), path)
+      test_file = input_api.os_path.join(path, 'PRESUBMIT_test.py')
+      if f.Action() != 'D' and input_api.os_path.exists(test_file):
+        # The PRESUBMIT.py file (and the directory containing it) might
+        # have been affected by being moved or removed, so only try to
+        # run the tests if they still exist.
+        results.extend(
+            input_api.canned_checks.RunUnitTestsInDirectory(
+                input_api,
+                output_api,
+                full_path,
+                whitelist=[r'^PRESUBMIT_test\.py$']))
 
   return results
