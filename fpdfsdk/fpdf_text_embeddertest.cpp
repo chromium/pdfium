@@ -772,13 +772,13 @@ TEST_F(FPDFTextEmbedderTest, WebLinksCharRanges) {
 }
 
 TEST_F(FPDFTextEmbedderTest, AnnotLinks) {
-  ASSERT_TRUE(OpenDocument("link_annots.pdf"));
+  ASSERT_TRUE(OpenDocument("annots.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   // Get link count via checking annotation subtype
   int annot_count = FPDFPage_GetAnnotCount(page);
-  ASSERT_EQ(8, annot_count);
+  ASSERT_EQ(9, annot_count);
   int annot_subtype_link_count = 0;
   for (int i = 0; i < annot_count; ++i) {
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
