@@ -154,6 +154,44 @@ TEST_F(FPDFDocEmbedderTest, DestGetLocationInPage) {
   EXPECT_EQ(1, zoom);
 }
 
+TEST_F(FPDFDocEmbedderTest, BUG_1506_1) {
+  ASSERT_TRUE(OpenDocument("bug_1506.pdf"));
+
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
+  ASSERT_TRUE(dest);
+  EXPECT_EQ(3, FPDFDest_GetDestPageIndex(document(), dest));
+}
+
+TEST_F(FPDFDocEmbedderTest, BUG_1506_2) {
+  ASSERT_TRUE(OpenDocument("bug_1506.pdf"));
+
+  std::vector<FPDF_PAGE> pages;
+  for (int i : {0, 2})
+    pages.push_back(LoadPage(i));
+
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
+  ASSERT_TRUE(dest);
+  EXPECT_EQ(3, FPDFDest_GetDestPageIndex(document(), dest));
+
+  for (FPDF_PAGE page : pages)
+    UnloadPage(page);
+}
+
+TEST_F(FPDFDocEmbedderTest, BUG_1506_3) {
+  ASSERT_TRUE(OpenDocument("bug_1506.pdf"));
+
+  std::vector<FPDF_PAGE> pages;
+  for (int i : {0, 1, 3})
+    pages.push_back(LoadPage(i));
+
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
+  ASSERT_TRUE(dest);
+  EXPECT_EQ(3, FPDFDest_GetDestPageIndex(document(), dest));
+
+  for (FPDF_PAGE page : pages)
+    UnloadPage(page);
+}
+
 TEST_F(FPDFDocEmbedderTest, BUG_680376) {
   EXPECT_TRUE(OpenDocument("bug_680376.pdf"));
 
