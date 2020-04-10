@@ -23,6 +23,18 @@ import os
 import re
 import sys
 
+# Line Endings.
+WINDOWS_LINE_ENDING = b'\r\n'
+UNIX_LINE_ENDING = b'\n'
+
+# List of extensions whose line endings should be modified after parsing.
+EXTENSION_OVERRIDE_LINE_ENDINGS = [
+    '.js',
+    '.fragment',
+    '.in',
+    '.xml',
+]
+
 
 class StreamLenState:
   START = 1
@@ -152,6 +164,10 @@ def insert_includes(input_path, output_file, visited_set):
               os.path.join(os.path.dirname(input_path), match.group(1)),
               output_file, visited_set)
         else:
+          # Replace CRLF with LF line endings for .in files.
+          _, file_extension = os.path.splitext(input_path)
+          if file_extension in EXTENSION_OVERRIDE_LINE_ENDINGS:
+            line = line.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
           output_file.write(line)
   except IOError:
     print >> sys.stderr, 'failed to include %s' % input_path
