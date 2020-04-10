@@ -7,9 +7,9 @@
 endobj
 2 0 obj <<
   /Type /Pages
-  /MediaBox [ 0 0 200 300 ]
+  /MediaBox [0 0 200 300]
   /Count 1
-  /Kids [ 3 0 R ]
+  /Kids [3 0 R]
 >>
 endobj
 3 0 obj <<
@@ -43,12 +43,12 @@ xref
 0000000000 65535 f 
 0000000015 00000 n 
 0000000068 00000 n 
-0000000161 00000 n 
-0000000230 00000 n 
+0000000157 00000 n 
+0000000226 00000 n 
 trailer <<
   /Root 1 0 R
   /Size 5
 >>
 startxref
-470
+466
 %%EOF
