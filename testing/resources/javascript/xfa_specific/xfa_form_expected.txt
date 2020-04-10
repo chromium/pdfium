@@ -1,0 +1,20 @@
+Alert: PASS: checksum = 
+Alert: PASS: checksum = 11
+Alert: PASS: typeof my_form.execInitialize = function
+Alert: PASS: typeof my_form.execCalculate = function
+Alert: PASS: typeof my_form.execValidate = function
+Alert: PASS: my_form.execInitialize('nonesuch') threw XFAObject.execInitialize: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.execInitialize() = undefined
+Alert: PASS: my_form.execCalculate('nonesuch') threw XFAObject.execCalculate: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.execCalculate() = undefined
+Alert: PASS: my_form.execValidate('nonesuch') threw XFAObject.execValidate: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.execValidate() = true
+Alert: PASS: my_form.formNodes() threw XFAObject.formNodes: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.formNodes(1, 2) threw XFAObject.formNodes: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.formNodes('nonesuch') threw XFAObject.formNodes: Incorrect parameter value.
+Alert: PASS: my_form.formNodes(my_subform) = [object XFAObject]
+Alert: PASS: my_form.remerge(1) threw XFAObject.remerge: Incorrect number of parameters passed to function.
+Alert: FAIL: my_form.remerge() = undefined, expected true 
+Alert: PASS: my_form.recalculate() threw XFAObject.recalculate: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.recalculate(1, 2) threw XFAObject.recalculate: Incorrect number of parameters passed to function.
+Alert: PASS: my_form.recalculate(0) = undefined

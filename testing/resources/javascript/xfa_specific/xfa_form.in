@@ -1,0 +1,61 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<form>
+</form>
+<template>
+  <subform layout="tb" name="my_subform">
+    <pageSet id="page" relation="orderedOccurrence">
+      <occur initial="1" max="1" min="1"/>
+      <pageArea id="Page1" name="Page1">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+      <pageArea id="Page2" name="Page2">
+        <occur max="1" min="1"/>
+        <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+      </pageArea>
+    </pageSet>
+    <event activity="docReady" ref="$host">
+      <script contentType="application/x-javascript">
+        {{include ../expect.js}}
+        {{include ../property_test_helpers.js}}
+        var my_form = xfa.resolveNode("#form");
+        testRWProperty(my_form, "checksum", "", "11");
+        expect("typeof my_form.execInitialize", "function");
+        expect("typeof my_form.execCalculate", "function");
+        expect("typeof my_form.execValidate", "function");
+        expectError("my_form.execInitialize('nonesuch')");
+        expect("my_form.execInitialize()", undefined);
+        expectError("my_form.execCalculate('nonesuch')");
+        expect("my_form.execCalculate()", undefined);
+        expectError("my_form.execValidate('nonesuch')");
+        expect("my_form.execValidate()", true);
+        expectError("my_form.formNodes()");
+        expectError("my_form.formNodes(1, 2)");
+        expectError("my_form.formNodes('nonesuch')");
+        expect("my_form.formNodes(my_subform)", "[object XFAObject]");
+        expectError("my_form.remerge(1)");
+        expect("my_form.remerge()", true);
+        expectError("my_form.recalculate()");
+        expectError("my_form.recalculate(1, 2)");
+        expect("my_form.recalculate(0)", undefined);
+      </script>
+    </event>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
