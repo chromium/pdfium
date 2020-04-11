@@ -701,9 +701,8 @@ TEST_F(FPDFFormFillEmbedderTest, SetFocusedAnnotation) {
   EXPECT_EQ(-1, page_index);
 
   // Validate that nullptr values are handled properly.
-  EXPECT_FALSE(FORM_SetFocusedAnnot(nullptr, pages[0], annot));
-  EXPECT_FALSE(FORM_SetFocusedAnnot(form_handle(), nullptr, annot));
-  EXPECT_FALSE(FORM_SetFocusedAnnot(form_handle(), pages[0], nullptr));
+  EXPECT_FALSE(FORM_SetFocusedAnnot(nullptr, annot));
+  EXPECT_FALSE(FORM_SetFocusedAnnot(form_handle(), nullptr));
 
   constexpr int kExpectedAnnotIndex = 2;
 
@@ -713,8 +712,7 @@ TEST_F(FPDFFormFillEmbedderTest, SetFocusedAnnotation) {
         FPDFPage_GetAnnot(pages[i], kExpectedAnnotIndex));
     ASSERT_TRUE(focused_annot);
 
-    ASSERT_TRUE(
-        FORM_SetFocusedAnnot(form_handle(), pages[i], focused_annot.get()));
+    ASSERT_TRUE(FORM_SetFocusedAnnot(form_handle(), focused_annot.get()));
 
     ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     EXPECT_EQ(kExpectedAnnotIndex, FPDFPage_GetAnnotIndex(pages[i], annot));

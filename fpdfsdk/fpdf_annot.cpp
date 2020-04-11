@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "constants/annotation_common.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
@@ -295,7 +296,8 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   pDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype,
                               CPDF_Annot::AnnotSubtypeToString(
                                   static_cast<CPDF_Annot::Subtype>(subtype)));
-  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict.Get(), pPage);
+  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(
+      pDict.Get(), IPDFPageFromFPDFPage(page));
 
   CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
@@ -329,7 +331,8 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
   if (!pDict)
     return nullptr;
 
-  auto pNewAnnot = pdfium::MakeUnique<CPDF_AnnotContext>(pDict, pPage);
+  auto pNewAnnot =
+      pdfium::MakeUnique<CPDF_AnnotContext>(pDict, IPDFPageFromFPDFPage(page));
 
   // Caller takes ownership.
   return FPDFAnnotationFromCPDFAnnotContext(pNewAnnot.release());

@@ -759,23 +759,21 @@ void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
   if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_OnFocusChange)
     return;
 
-  if ((*pAnnot)->AsXFAWidget()) {
-    // TODO(crbug.com/pdfium/1482): Handle XFA case.
+  // TODO(crbug.com/pdfium/1482): Handle XFA case.
+  if ((*pAnnot)->AsXFAWidget())
     return;
-  }
 
   CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
   if (!pPageView->IsValid())
     return;
 
-  CPDF_Page* cpdf_page = (*pAnnot)->GetPDFPage();
-  if (!cpdf_page)
+  IPDF_Page* page = (*pAnnot)->GetPage();
+  if (!page)
     return;
 
   CPDF_Dictionary* annot_dict = (*pAnnot)->GetPDFAnnot()->GetAnnotDict();
 
-  auto focused_annot =
-      pdfium::MakeUnique<CPDF_AnnotContext>(annot_dict, cpdf_page);
+  auto focused_annot = pdfium::MakeUnique<CPDF_AnnotContext>(annot_dict, page);
   FPDF_ANNOTATION fpdf_annot =
       FPDFAnnotationFromCPDFAnnotContext(focused_annot.get());
 

@@ -1606,7 +1606,6 @@ FORM_GetFocusedAnnot(FPDF_FORMHANDLE handle,
  * Parameters:
  *       handle      -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
- *       page        -   Handle to a page.
  *       annot       -   Handle to an annotation.
  * Return Value:
  *       True indicates success; otherwise false.
@@ -1615,9 +1614,7 @@ FORM_GetFocusedAnnot(FPDF_FORMHANDLE handle,
  *       instead.
  */
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle,
-                     FPDF_PAGE page,
-                     FPDF_ANNOTATION annot);
+FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle, FPDF_ANNOTATION annot);
 
 // Form Field Types
 // The names of the defines are stable, but the specific values associated with

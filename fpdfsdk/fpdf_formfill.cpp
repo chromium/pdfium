@@ -594,11 +594,15 @@ FORM_GetFocusedAnnot(FPDF_FORMHANDLE handle,
   if (!cpdfsdk_annot)
     return true;
 
+  // TODO(crbug.com/pdfium/1482): Handle XFA case.
+  if (cpdfsdk_annot->AsXFAWidget())
+    return true;
+
   CPDFSDK_PageView* page_view = cpdfsdk_annot->GetPageView();
   if (!page_view->IsValid())
     return true;
 
-  CPDF_Page* page = cpdfsdk_annot->GetPDFPage();
+  IPDF_Page* page = cpdfsdk_annot->GetPage();
   if (!page)
     return true;
 
@@ -612,9 +616,7 @@ FORM_GetFocusedAnnot(FPDF_FORMHANDLE handle,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle,
-                     FPDF_PAGE page,
-                     FPDF_ANNOTATION annot) {
+FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle, FPDF_ANNOTATION annot) {
   CPDFSDK_FormFillEnvironment* form_fill_env =
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(handle);
   if (!form_fill_env)
@@ -624,11 +626,8 @@ FORM_SetFocusedAnnot(FPDF_FORMHANDLE handle,
   if (!annot_context)
     return false;
 
-  IPDF_Page* pdf_page = IPDFPageFromFPDFPage(page);
-  if (!pdf_page)
-    return false;
-
-  CPDFSDK_PageView* page_view = form_fill_env->GetPageView(pdf_page, true);
+  CPDFSDK_PageView* page_view =
+      form_fill_env->GetPageView(annot_context->GetPage(), true);
   if (!page_view->IsValid())
     return false;
 
