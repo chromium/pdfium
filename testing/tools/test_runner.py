@@ -119,6 +119,8 @@ class TestRunner:
       DeleteFiles(actual_images)
     return True, results
 
+  # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
+  # generate Skia/SkiaPaths specific expected results.
   def RegenerateIfNeeded_(self, input_filename, source_dir):
     if (not self.options.regenerate_expected or
         self.test_suppressor.IsResultSuppressed(input_filename) or
@@ -360,7 +362,7 @@ class TestRunner:
     self.test_suppressor = suppressor.Suppressor(
         finder, self.features, self.options.disable_javascript,
         self.options.disable_xfa)
-    self.image_differ = pngdiffer.PNGDiffer(finder,
+    self.image_differ = pngdiffer.PNGDiffer(finder, self.features,
                                             self.options.reverse_byte_order)
     error_message = self.image_differ.CheckMissingTools(
         self.options.regenerate_expected)
