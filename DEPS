@@ -71,7 +71,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling jpeg_turbo
   # and whatever else without interference from each other.
-  'jpeg_turbo_revision': 'ce0e57e8e636f5132fe6f0590a4dba91f92fd935',
+  'jpeg_turbo_revision': '7e3ad79800a7945fb37173149842b494ab8982b2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
