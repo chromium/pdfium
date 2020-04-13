@@ -14,6 +14,19 @@
 #include "testing/fx_string_testhelpers.h"
 
 namespace {
+
+uint32_t GetModifiers(std::string modifiers_string) {
+  uint32_t modifiers = 0;
+  if (modifiers_string.find("shift") != std::string::npos)
+    modifiers |= FWL_EVENTFLAG_ShiftKey;
+  if (modifiers_string.find("control") != std::string::npos)
+    modifiers |= FWL_EVENTFLAG_ControlKey;
+  if (modifiers_string.find("alt") != std::string::npos)
+    modifiers |= FWL_EVENTFLAG_AltKey;
+
+  return modifiers;
+}
+
 void SendCharCodeEvent(FPDF_FORMHANDLE form,
                        FPDF_PAGE page,
                        const std::vector<std::string>& tokens) {
@@ -29,26 +42,15 @@ void SendCharCodeEvent(FPDF_FORMHANDLE form,
 void SendKeyCodeEvent(FPDF_FORMHANDLE form,
                       FPDF_PAGE page,
                       const std::vector<std::string>& tokens) {
-  if (tokens.size() != 2) {
+  if (tokens.size() < 2 || tokens.size() > 3) {
     fprintf(stderr, "keycode: bad args\n");
     return;
   }
 
   int keycode = atoi(tokens[1].c_str());
-  FORM_OnKeyDown(form, page, keycode, 0);
-  FORM_OnKeyUp(form, page, keycode, 0);
-}
-
-uint32_t GetModifiers(std::string modifiers_string) {
-  int modifiers = 0;
-  if (modifiers_string.find("shift") != std::string::npos)
-    modifiers |= FWL_EVENTFLAG_ShiftKey;
-  if (modifiers_string.find("control") != std::string::npos)
-    modifiers |= FWL_EVENTFLAG_ControlKey;
-  if (modifiers_string.find("alt") != std::string::npos)
-    modifiers |= FWL_EVENTFLAG_AltKey;
-
-  return modifiers;
+  uint32_t modifiers = tokens.size() >= 3 ? GetModifiers(tokens[2]) : 0;
+  FORM_OnKeyDown(form, page, keycode, modifiers);
+  FORM_OnKeyUp(form, page, keycode, modifiers);
 }
 
 void SendMouseDownEvent(FPDF_FORMHANDLE form,
