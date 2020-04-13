@@ -101,10 +101,6 @@ vars = {
   # and whatever else without interference from each other.
   'v8_revision': '5deecef68e6234554658e1b61cafc793fbd97791',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling yasm_source
-  # and whatever else without interference from each other.
-  'yasm_source_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
-  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling zlib
   # and whatever else without interference from each other.
   'zlib_revision': '156be8c52f80cde343088b4a69a80579101b6e67',
@@ -182,10 +178,6 @@ deps = {
   'third_party/zlib':
     Var('chromium_git') + '/chromium/src/third_party/zlib.git@' +
         Var('zlib_revision'),
-
-  'third_party/yasm/source/patched-yasm':
-    Var('chromium_git') + '/chromium/deps/yasm/patched-yasm.git@' +
-        Var('yasm_source_revision'),
 
   'tools/clang':
     Var('chromium_git') + '/chromium/src/tools/clang@' +  Var('clang_revision'),
