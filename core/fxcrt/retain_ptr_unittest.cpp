@@ -166,11 +166,17 @@ TEST(RetainPtr, Assign) {
       EXPECT_EQ(2, obj.retain_count());
       EXPECT_EQ(0, obj.release_count());
     }
-    EXPECT_EQ(2, obj.retain_count());
-    EXPECT_EQ(1, obj.release_count());
+    {
+      RetainPtr<PseudoRetainable> ptr2;
+      ptr2 = ptr.Get();  // Test assignment from underlying type.
+      EXPECT_EQ(3, obj.retain_count());
+      EXPECT_EQ(1, obj.release_count());
+    }
+    EXPECT_EQ(3, obj.retain_count());
+    EXPECT_EQ(2, obj.release_count());
   }
-  EXPECT_EQ(2, obj.retain_count());
-  EXPECT_EQ(2, obj.release_count());
+  EXPECT_EQ(3, obj.retain_count());
+  EXPECT_EQ(3, obj.release_count());
 }
 
 TEST(RetainPtr, MoveAssign) {

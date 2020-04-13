@@ -53,6 +53,7 @@ class RetainPtr {
     m_pObj.reset(obj);
   }
 
+  explicit operator T*() const { return Get(); }
   T* Get() const { return m_pObj.get(); }
   UnownedPtr<T> BackPointer() const { return UnownedPtr<T>(Get()); }
   void Swap(RetainPtr& that) { m_pObj.swap(that.m_pObj); }
@@ -73,8 +74,11 @@ class RetainPtr {
     return *this;
   }
 
-  // Assigment from raw pointers is intentially not provided to make
-  // reference count churn more visible where possible.
+  // Use sparingly, may produce reference count churn.
+  RetainPtr& operator=(T* that) {
+    Reset(that);
+    return *this;
+  }
 
   bool operator==(const RetainPtr& that) const { return Get() == that.Get(); }
   bool operator!=(const RetainPtr& that) const { return !(*this == that); }
