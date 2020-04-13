@@ -376,6 +376,33 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password);
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password);
 
+// Function: FPDF_LoadMemDocument64
+//          Open and load a PDF document from memory.
+//          Experimental API.
+// Parameters:
+//          data_buf    -   Pointer to a buffer containing the PDF document.
+//          size        -   Number of bytes in the PDF document.
+//          password    -   A string used as the password for the PDF file.
+//                          If no password is needed, empty or NULL can be used.
+// Return value:
+//          A handle to the loaded document, or NULL on failure.
+// Comments:
+//          The memory buffer must remain valid when the document is open.
+//          The loaded document can be closed by FPDF_CloseDocument.
+//          If this function fails, you can use FPDF_GetLastError() to retrieve
+//          the reason why it failed.
+//
+//          See the comments for FPDF_LoadDocument() regarding the encoding for
+//          |password|.
+// Notes:
+//          If PDFium is built with the XFA module, the application should call
+//          FPDF_LoadXFA() function after the PDF document loaded to support XFA
+//          fields defined in the fpdfformfill.h file.
+FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
+FPDF_LoadMemDocument64(const void* data_buf,
+                       size_t size,
+                       FPDF_BYTESTRING password);
+
 // Structure for custom file access.
 typedef struct {
   // File length, in bytes.

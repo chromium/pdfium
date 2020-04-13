@@ -216,6 +216,16 @@ FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
+FPDF_LoadMemDocument64(const void* data_buf,
+                       size_t size,
+                       FPDF_BYTESTRING password) {
+  return LoadDocumentImpl(
+      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+          pdfium::make_span(static_cast<const uint8_t*>(data_buf), size)),
+      password);
+}
+
+FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
                         FPDF_BYTESTRING password) {
   if (!pFileAccess)

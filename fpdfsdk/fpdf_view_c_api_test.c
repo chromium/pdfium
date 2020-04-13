@@ -426,6 +426,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_LoadCustomDocument);
     CHK(FPDF_LoadDocument);
     CHK(FPDF_LoadMemDocument);
+    CHK(FPDF_LoadMemDocument64);
     CHK(FPDF_LoadPage);
     CHK(FPDF_PageToDevice);
 #ifdef _WIN32

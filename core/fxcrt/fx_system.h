@@ -61,12 +61,10 @@ extern "C" {
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
-// PDFium file sizes match the platform, but PDFium itself does not support
-// files larger than 2GB even if the platform does. The value must be signed
-// to support -1 error returns.
-// TODO(tsepez): support larger files.
+// PDFium file sizes match the platform. The value must be signed to support -1
+// error returns.
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-#define FX_FILESIZE int32_t
+#define FX_FILESIZE int64_t
 #else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define FX_FILESIZE off_t
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
