@@ -2,7 +2,7 @@ use_relative_paths = True
 
 vars = {
   # By default, we should check out everything needed to run on the main
-  # chromium waterfalls. This var can be also be set to "small", in order
+  # chromium waterfalls. This var can be also be set to 'small', in order
   # to skip things are not strictly needed to build chromium for development
   # purposes.
   'checkout_configuration': 'default',
@@ -107,79 +107,80 @@ vars = {
 }
 
 deps = {
-  "base/trace_event/common":
-    Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" +
+  'base/trace_event/common':
+    Var('chromium_git') + '/chromium/src/base/trace_event/common.git@' +
         Var('trace_event_revision'),
 
-  "build":
-    Var('chromium_git') + "/chromium/src/build.git@" + Var('build_revision'),
+  'build':
+    Var('chromium_git') + '/chromium/src/build.git@' + Var('build_revision'),
 
-  "buildtools":
-    Var('chromium_git') + "/chromium/src/buildtools.git@" +
+  'buildtools':
+    Var('chromium_git') + '/chromium/src/buildtools.git@' +
         Var('buildtools_revision'),
 
-  "testing/corpus":
-    Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
+  'testing/corpus':
+    Var('pdfium_git') + '/pdfium_tests@' + Var('pdfium_tests_revision'),
 
-  "third_party/android_ndk": {
-    'url': Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
+  'third_party/android_ndk': {
+    'url': Var('chromium_git') + '/android_ndk.git@' +
+        Var('android_ndk_revision'),
     'condition': 'checkout_android',
   },
 
-  "third_party/binutils":
-    Var('chromium_git') + "/chromium/src/third_party/binutils.git@" +
+  'third_party/binutils':
+    Var('chromium_git') + '/chromium/src/third_party/binutils.git@' +
         Var('binutils_revision'),
 
-  "third_party/catapult": {
-    'url': Var('chromium_git') + '/catapult.git' + '@' + Var('catapult_revision'),
+  'third_party/catapult': {
+    'url': Var('chromium_git') + '/catapult.git@' + Var('catapult_revision'),
     'condition': 'checkout_android',
   },
 
   'third_party/depot_tools':
-    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' +
+    Var('chromium_git') + '/chromium/tools/depot_tools.git@' +
         Var('depot_tools_revision'),
 
-  "third_party/freetype/src":
+  'third_party/freetype/src':
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
         Var('freetype_revision'),
 
-  "third_party/googletest/src":
-    Var('chromium_git') + '/external/github.com/google/googletest.git' + '@' +
+  'third_party/googletest/src':
+    Var('chromium_git') + '/external/github.com/google/googletest.git@' +
         Var('gtest_revision'),
 
-  "third_party/icu":
-    Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
+  'third_party/icu':
+    Var('chromium_git') + '/chromium/deps/icu.git@' + Var('icu_revision'),
 
-  "third_party/instrumented_libraries":
+  'third_party/instrumented_libraries':
     Var('chromium_git') +
-        "/chromium/src/third_party/instrumented_libraries.git@" +
+        '/chromium/src/third_party/instrumented_libraries.git@' +
         Var('instrumented_lib_revision'),
 
-  "third_party/jinja2":
-    Var('chromium_git') + "/chromium/src/third_party/jinja2.git@" +
+  'third_party/jinja2':
+    Var('chromium_git') + '/chromium/src/third_party/jinja2.git@' +
         Var('jinja2_revision'),
 
-  "third_party/markupsafe":
-    Var('chromium_git') + "/chromium/src/third_party/markupsafe.git@" +
-        Var('markupsafe_revision'),
-
-  "third_party/libjpeg_turbo":
-    Var('chromium_git') + "/chromium/deps/libjpeg_turbo.git@" +
+  'third_party/libjpeg_turbo':
+    Var('chromium_git') + '/chromium/deps/libjpeg_turbo.git@' +
         Var('jpeg_turbo_revision'),
 
-  "third_party/skia":
+  'third_party/markupsafe':
+    Var('chromium_git') + '/chromium/src/third_party/markupsafe.git@' +
+        Var('markupsafe_revision'),
+
+  'third_party/skia':
     Var('chromium_git') + '/skia.git@' +  Var('skia_revision'),
 
-  "third_party/zlib":
-    Var('chromium_git') + "/chromium/src/third_party/zlib.git@" +
+  'third_party/zlib':
+    Var('chromium_git') + '/chromium/src/third_party/zlib.git@' +
         Var('zlib_revision'),
 
   'third_party/yasm/source/patched-yasm':
     Var('chromium_git') + '/chromium/deps/yasm/patched-yasm.git@' +
         Var('yasm_source_revision'),
 
-  "tools/clang":
-    Var('chromium_git') + "/chromium/src/tools/clang@" +  Var('clang_revision'),
+  'tools/clang':
+    Var('chromium_git') + '/chromium/src/tools/clang@' +  Var('clang_revision'),
 
   'tools/clang/dsymutil': {
     'packages': [
@@ -192,16 +193,16 @@ deps = {
     'dep_type': 'cipd',
   },
 
-  "tools/code_coverage":
-    Var('chromium_git') + "/chromium/src/tools/code_coverage.git@" +
+  'tools/code_coverage':
+    Var('chromium_git') + '/chromium/src/tools/code_coverage.git@' +
         Var('code_coverage_revision'),
 
-  "tools/memory":
-    Var('chromium_git') + "/chromium/src/tools/memory@" +
+  'tools/memory':
+    Var('chromium_git') + '/chromium/src/tools/memory@' +
         Var('tools_memory_revision'),
 
-  "v8":
-    Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
+  'v8':
+    Var('chromium_git') + '/v8/v8.git@' + Var('v8_revision'),
 }
 
 recursedeps = [
@@ -220,8 +221,8 @@ include_rules = [
 
 specific_include_rules = {
   # Allow embedder tests to use public APIs.
-  "(.*embeddertest\.cpp)": [
-      "+public",
+  '(.*embeddertest\.cpp)': [
+    '+public',
   ]
 }
 
@@ -344,10 +345,10 @@ hooks = [
     'condition': 'checkout_instrumented_libraries',
     'action': [ 'python',
                 'pdfium/third_party/depot_tools/download_from_google_storage.py',
-                "--no_resume",
-                "--no_auth",
-                "--bucket", "chromium-instrumented-libraries",
-                "-s", "pdfium/third_party/instrumented_libraries/binaries/msan-chained-origins-trusty.tgz.sha1",
+                '--no_resume',
+                '--no_auth',
+                '--bucket', 'chromium-instrumented-libraries',
+                '-s', 'pdfium/third_party/instrumented_libraries/binaries/msan-chained-origins-trusty.tgz.sha1',
               ],
   },
   {
@@ -356,10 +357,10 @@ hooks = [
     'condition': 'checkout_instrumented_libraries',
     'action': [ 'python',
                 'pdfium/third_party/depot_tools/download_from_google_storage.py',
-                "--no_resume",
-                "--no_auth",
-                "--bucket", "chromium-instrumented-libraries",
-                "-s", "pdfium/third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1",
+                '--no_resume',
+                '--no_auth',
+                '--bucket', 'chromium-instrumented-libraries',
+                '-s', 'pdfium/third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1',
               ],
   },
   {
