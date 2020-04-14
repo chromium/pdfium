@@ -389,7 +389,7 @@ FORM_OnMouseWheel(FPDF_FORMHANDLE hHandle,
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
   if (!pPageView || !page_coord)
     return false;
-  return pPageView->OnMouseWheel(delta_x, delta_y,
+  return pPageView->OnMouseWheel(CFX_Vector(delta_x, delta_y),
                                  CFXPointFFromFSPointF(*page_coord), modifier);
 }
 

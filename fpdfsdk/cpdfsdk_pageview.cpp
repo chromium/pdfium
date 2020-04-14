@@ -419,8 +419,7 @@ void CPDFSDK_PageView::ExitWidget(CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr,
   m_pCaptureWidget.Reset();
 }
 
-bool CPDFSDK_PageView::OnMouseWheel(double deltaX,
-                                    double deltaY,
+bool CPDFSDK_PageView::OnMouseWheel(const CFX_Vector& delta,
                                     const CFX_PointF& point,
                                     int nFlag) {
   ObservedPtr<CPDFSDK_Annot> pAnnot(GetFXWidgetAtPoint(point));
@@ -429,8 +428,8 @@ bool CPDFSDK_PageView::OnMouseWheel(double deltaX,
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
-  return pAnnotHandlerMgr->Annot_OnMouseWheel(this, &pAnnot, nFlag,
-                                              static_cast<int>(deltaY), point);
+  return pAnnotHandlerMgr->Annot_OnMouseWheel(this, &pAnnot, nFlag, point,
+                                              delta);
 }
 
 bool CPDFSDK_PageView::SetIndexSelected(int index, bool selected) {

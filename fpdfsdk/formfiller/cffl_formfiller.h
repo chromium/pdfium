@@ -57,8 +57,8 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                            const CFX_PointF& point);
   virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                             uint32_t nFlags,
-                            short zDelta,
-                            const CFX_PointF& point);
+                            const CFX_PointF& point,
+                            const CFX_Vector& delta);
   virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                              uint32_t nFlags,
                              const CFX_PointF& point);

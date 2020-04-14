@@ -538,14 +538,14 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   return CPWL_EditCtrl::OnChar(nChar, nFlag);
 }
 
-bool CPWL_Edit::OnMouseWheel(short zDelta,
+bool CPWL_Edit::OnMouseWheel(const CFX_Vector& delta,
                              const CFX_PointF& point,
                              uint32_t nFlag) {
   if (!HasFlag(PES_MULTILINE))
     return false;
 
   CFX_PointF ptScroll = GetScrollPos();
-  if (zDelta > 0)
+  if (delta.y > 0)
     ptScroll.y += GetFontSize();
   else
     ptScroll.y -= GetFontSize();

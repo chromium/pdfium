@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_baannothandler.h"
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
@@ -136,8 +137,8 @@ bool CPDFSDK_BAAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_BAAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                           uint32_t nFlags,
-                                          short zDelta,
-                                          const CFX_PointF& point) {
+                                          const CFX_PointF& point,
+                                          const CFX_Vector& delta) {
   return false;
 }
 

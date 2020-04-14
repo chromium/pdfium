@@ -37,8 +37,8 @@ class CXFA_FFWidgetHandler {
                    const CFX_PointF& point);
   bool OnMouseWheel(CXFA_FFWidget* hWidget,
                     uint32_t dwFlags,
-                    int16_t zDelta,
-                    const CFX_PointF& point);
+                    const CFX_PointF& point,
+                    const CFX_Vector& delta);
   bool OnRButtonDown(CXFA_FFWidget* hWidget,
                      uint32_t dwFlags,
                      const CFX_PointF& point);

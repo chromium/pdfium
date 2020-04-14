@@ -182,11 +182,11 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlags,
-    short zDelta,
-    const CFX_PointF& point) {
+    const CFX_PointF& point,
+    const CFX_Vector& delta) {
   ASSERT(pAnnot->HasObservable());
-  return GetAnnotHandler(pAnnot->Get())
-      ->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta, point);
+  auto* handler = GetAnnotHandler(pAnnot->Get());
+  return handler->OnMouseWheel(pPageView, pAnnot, nFlags, point, delta);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(

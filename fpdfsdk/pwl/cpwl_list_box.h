@@ -53,7 +53,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnMouseWheel(short zDelta,
+  bool OnMouseWheel(const CFX_Vector& delta,
                     const CFX_PointF& point,
                     uint32_t nFlag) override;
   WideString GetText() override;

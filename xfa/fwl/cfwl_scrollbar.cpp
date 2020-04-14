@@ -324,9 +324,8 @@ void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
         break;
     }
   } else if (type == CFWL_Message::Type::MouseWheel) {
-    CFWL_MessageMouseWheel* pMsg =
-        static_cast<CFWL_MessageMouseWheel*>(pMessage);
-    OnMouseWheel(pMsg->m_delta);
+    auto* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
+    OnMouseWheel(pMsg->delta());
   }
 }
 
@@ -389,8 +388,8 @@ void CFWL_ScrollBar::OnMouseLeave() {
   DoMouseLeave(4, m_rtMaxTrack, m_iMaxTrackState);
 }
 
-void CFWL_ScrollBar::OnMouseWheel(const CFX_PointF& delta) {
-  m_iMouseWheel = static_cast<int32_t>(delta.x);
+void CFWL_ScrollBar::OnMouseWheel(const CFX_Vector& delta) {
+  m_iMouseWheel = delta.y;
   SendEvent();
   m_iMouseWheel = 0;
 }

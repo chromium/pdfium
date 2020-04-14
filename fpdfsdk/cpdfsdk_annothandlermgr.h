@@ -86,8 +86,8 @@ class CPDFSDK_AnnotHandlerMgr {
   bool Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
                           ObservedPtr<CPDFSDK_Annot>* pAnnot,
                           uint32_t nFlags,
-                          short zDelta,
-                          const CFX_PointF& point);
+                          const CFX_PointF& point,
+                          const CFX_Vector& delta);
   bool Annot_OnRButtonDown(CPDFSDK_PageView* pPageView,
                            ObservedPtr<CPDFSDK_Annot>* pAnnot,
                            uint32_t nFlags,

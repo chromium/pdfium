@@ -137,13 +137,13 @@ bool CFFL_FormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
 
 bool CFFL_FormFiller::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                    uint32_t nFlags,
-                                   short zDelta,
-                                   const CFX_PointF& point) {
+                                   const CFX_PointF& point,
+                                   const CFX_Vector& delta) {
   if (!IsValid())
     return false;
 
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView, true);
-  return pWnd && pWnd->OnMouseWheel(zDelta, FFLtoPWL(point), nFlags);
+  return pWnd && pWnd->OnMouseWheel(delta, FFLtoPWL(point), nFlags);
 }
 
 bool CFFL_FormFiller::OnRButtonDown(CPDFSDK_PageView* pPageView,

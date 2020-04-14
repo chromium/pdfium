@@ -86,9 +86,9 @@ bool CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
 
 bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
                                         uint32_t dwFlags,
-                                        int16_t zDelta,
-                                        const CFX_PointF& point) {
-  return hWidget->OnMouseWheel(dwFlags, zDelta, hWidget->Rotate2Normal(point));
+                                        const CFX_PointF& point,
+                                        const CFX_Vector& delta) {
+  return hWidget->OnMouseWheel(dwFlags, hWidget->Rotate2Normal(point), delta);
 }
 
 bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,

@@ -107,8 +107,8 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   virtual bool OnMouseMove(uint32_t dwFlags,
                            const CFX_PointF& point) WARN_UNUSED_RESULT;
   virtual bool OnMouseWheel(uint32_t dwFlags,
-                            int16_t zDelta,
-                            const CFX_PointF& point) WARN_UNUSED_RESULT;
+                            const CFX_PointF& point,
+                            const CFX_Vector& delta) WARN_UNUSED_RESULT;
   virtual bool OnRButtonDown(uint32_t dwFlags,
                              const CFX_PointF& point) WARN_UNUSED_RESULT;
   virtual bool OnRButtonUp(uint32_t dwFlags,

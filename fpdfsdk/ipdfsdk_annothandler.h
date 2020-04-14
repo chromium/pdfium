@@ -73,8 +73,8 @@ class IPDFSDK_AnnotHandler {
   virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                             ObservedPtr<CPDFSDK_Annot>* pAnnot,
                             uint32_t nFlags,
-                            short zDelta,
-                            const CFX_PointF& point) = 0;
+                            const CFX_PointF& point,
+                            const CFX_Vector& delta) = 0;
   virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                              ObservedPtr<CPDFSDK_Annot>* pAnnot,
                              uint32_t nFlags,

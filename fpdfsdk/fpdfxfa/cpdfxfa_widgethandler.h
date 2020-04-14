@@ -77,8 +77,8 @@ class CPDFXFA_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                     ObservedPtr<CPDFSDK_Annot>* pAnnot,
                     uint32_t nFlags,
-                    short zDelta,
-                    const CFX_PointF& point) override;
+                    const CFX_PointF& point,
+                    const CFX_Vector& delta) override;
   bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                      ObservedPtr<CPDFSDK_Annot>* pAnnot,
                      uint32_t nFlags,

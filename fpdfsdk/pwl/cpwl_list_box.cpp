@@ -366,10 +366,10 @@ CFX_FloatRect CPWL_ListBox::GetListRect() const {
   return GetWindowRect().GetDeflated(width, width);
 }
 
-bool CPWL_ListBox::OnMouseWheel(short zDelta,
+bool CPWL_ListBox::OnMouseWheel(const CFX_Vector& delta,
                                 const CFX_PointF& point,
                                 uint32_t nFlag) {
-  if (zDelta < 0)
+  if (delta.y < 0)
     m_pList->OnVK_DOWN(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
   else
     m_pList->OnVK_UP(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));

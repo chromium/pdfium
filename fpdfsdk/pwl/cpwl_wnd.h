@@ -151,7 +151,7 @@ class CPWL_Wnd : public Observable {
   virtual bool OnRButtonDown(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMouseWheel(short zDelta,
+  virtual bool OnMouseWheel(const CFX_Vector& delta,
                             const CFX_PointF& point,
                             uint32_t nFlag);
   virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);

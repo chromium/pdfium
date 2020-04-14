@@ -141,10 +141,10 @@ bool CPDFSDK_WidgetHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_WidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                          uint32_t nFlags,
-                                         short zDelta,
-                                         const CFX_PointF& point) {
+                                         const CFX_PointF& point,
+                                         const CFX_Vector& delta) {
   return !(*pAnnot)->IsSignatureWidget() &&
-         m_pFormFiller->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta, point);
+         m_pFormFiller->OnMouseWheel(pPageView, pAnnot, nFlags, point, delta);
 }
 
 bool CPDFSDK_WidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,

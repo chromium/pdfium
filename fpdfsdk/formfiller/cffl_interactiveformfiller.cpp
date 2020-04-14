@@ -312,12 +312,12 @@ bool CFFL_InteractiveFormFiller::OnMouseWheel(
     CPDFSDK_PageView* pPageView,
     ObservedPtr<CPDFSDK_Annot>* pAnnot,
     uint32_t nFlags,
-    short zDelta,
-    const CFX_PointF& point) {
+    const CFX_PointF& point,
+    const CFX_Vector& delta) {
   ASSERT((*pAnnot)->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
   CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot->Get());
   return pFormFiller &&
-         pFormFiller->OnMouseWheel(pPageView, nFlags, zDelta, point);
+         pFormFiller->OnMouseWheel(pPageView, nFlags, point, delta);
 }
 
 bool CFFL_InteractiveFormFiller::OnRButtonDown(

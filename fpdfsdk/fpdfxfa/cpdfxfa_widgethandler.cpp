@@ -456,8 +456,8 @@ bool CPDFXFA_WidgetHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
 bool CPDFXFA_WidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                          ObservedPtr<CPDFSDK_Annot>* pAnnot,
                                          uint32_t nFlags,
-                                         short zDelta,
-                                         const CFX_PointF& point) {
+                                         const CFX_PointF& point,
+                                         const CFX_Vector& delta) {
   if (!pPageView)
     return false;
 
@@ -467,7 +467,7 @@ bool CPDFXFA_WidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
   return pWidgetHandler->OnMouseWheel(pXFAWidget->GetXFAFFWidget(),
-                                      GetFWLFlags(nFlags), zDelta, point);
+                                      GetFWLFlags(nFlags), point, delta);
 }
 
 bool CPDFXFA_WidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,

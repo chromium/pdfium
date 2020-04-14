@@ -352,7 +352,7 @@ bool CPWL_Wnd::Redo() {
   return false;
 }
 
-bool CPWL_Wnd::OnMouseWheel(short zDelta,
+bool CPWL_Wnd::OnMouseWheel(const CFX_Vector& delta,
                             const CFX_PointF& point,
                             uint32_t nFlag) {
   if (!IsValid() || !IsVisible() || !IsEnabled())
@@ -364,7 +364,7 @@ bool CPWL_Wnd::OnMouseWheel(short zDelta,
 
   for (const auto& pChild : m_Children) {
     if (IsWndCaptureKeyboard(pChild.get()))
-      return pChild->OnMouseWheel(zDelta, pChild->ParentToChild(point), nFlag);
+      return pChild->OnMouseWheel(delta, pChild->ParentToChild(point), nFlag);
   }
   return false;
 }

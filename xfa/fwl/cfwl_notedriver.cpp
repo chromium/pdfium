@@ -224,11 +224,11 @@ bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
                               CFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
   CFWL_MessageMouseWheel* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
-  CFWL_Widget* pDst = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_pos);
+  CFWL_Widget* pDst = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->pos());
   if (!pDst)
     return false;
 
-  pMsg->m_pos = pMessageForm->TransformTo(pDst, pMsg->m_pos);
+  pMsg->set_pos(pMessageForm->TransformTo(pDst, pMsg->pos()));
   pMsg->SetDstTarget(pDst);
   return true;
 }

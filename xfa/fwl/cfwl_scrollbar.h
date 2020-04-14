@@ -88,7 +88,7 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   void OnLButtonUp(const CFX_PointF& point);
   void OnMouseMove(const CFX_PointF& point);
   void OnMouseLeave();
-  void OnMouseWheel(const CFX_PointF& delta);
+  void OnMouseWheel(const CFX_Vector& delta);
   bool DoScroll(CFWL_EventScroll::Code dwCode, float fPos);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,

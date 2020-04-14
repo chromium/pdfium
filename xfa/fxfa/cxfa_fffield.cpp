@@ -481,8 +481,8 @@ bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
-                                int16_t zDelta,
-                                const CFX_PointF& point) {
+                                const CFX_PointF& point,
+                                const CFX_Vector& delta) {
   if (!GetNormalWidget())
     return false;
 
@@ -490,7 +490,7 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouseWheel>(
-      GetNormalWidget(), dwFlags, FWLToClient(point), CFX_PointF(zDelta, 0)));
+      GetNormalWidget(), FWLToClient(point), delta));
 
   return true;
 }

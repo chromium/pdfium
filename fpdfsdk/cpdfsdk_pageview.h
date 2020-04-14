@@ -73,8 +73,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool OnKeyDown(int nKeyCode, int nFlag);
   bool OnKeyUp(int nKeyCode, int nFlag);
   bool OnMouseMove(const CFX_PointF& point, int nFlag);
-  bool OnMouseWheel(double deltaX,
-                    double deltaY,
+  bool OnMouseWheel(const CFX_Vector& delta,
                     const CFX_PointF& point,
                     int nFlag);
 

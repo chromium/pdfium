@@ -62,7 +62,7 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnMouseWheel(short zDelta,
+  bool OnMouseWheel(const CFX_Vector& delta,
                     const CFX_PointF& point,
                     uint32_t nFlag) override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;

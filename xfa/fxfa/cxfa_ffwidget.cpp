@@ -407,8 +407,8 @@ bool CXFA_FFWidget::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFWidget::OnMouseWheel(uint32_t dwFlags,
-                                 int16_t zDelta,
-                                 const CFX_PointF& point) {
+                                 const CFX_PointF& point,
+                                 const CFX_Vector& delta) {
   return false;
 }
 
