@@ -1,0 +1,34 @@
+# Must move the mouse and click to give widget focus.
+mousemove,150,415
+mousedown,left,150,415
+# Scroll all the way down and then scroll back up a bit.
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,-1
+mousewheel,150,415,0,1
+mousewheel,150,415,0,1
+mousewheel,150,415,0,1
+mousewheel,150,415,0,1
+mousewheel,150,415,0,1

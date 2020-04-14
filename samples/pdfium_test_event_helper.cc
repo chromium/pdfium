@@ -56,7 +56,7 @@ void SendKeyCodeEvent(FPDF_FORMHANDLE form,
 void SendMouseDownEvent(FPDF_FORMHANDLE form,
                         FPDF_PAGE page,
                         const std::vector<std::string>& tokens) {
-  if (tokens.size() != 4 && tokens.size() != 5) {
+  if (tokens.size() < 4 && tokens.size() > 5) {
     fprintf(stderr, "mousedown: bad args\n");
     return;
   }
@@ -76,7 +76,7 @@ void SendMouseDownEvent(FPDF_FORMHANDLE form,
 void SendMouseUpEvent(FPDF_FORMHANDLE form,
                       FPDF_PAGE page,
                       const std::vector<std::string>& tokens) {
-  if (tokens.size() != 4 && tokens.size() != 5) {
+  if (tokens.size() < 4 && tokens.size() > 5) {
     fprintf(stderr, "mouseup: bad args\n");
     return;
   }
@@ -95,7 +95,7 @@ void SendMouseUpEvent(FPDF_FORMHANDLE form,
 void SendMouseDoubleClickEvent(FPDF_FORMHANDLE form,
                                FPDF_PAGE page,
                                const std::vector<std::string>& tokens) {
-  if (tokens.size() != 4 && tokens.size() != 5) {
+  if (tokens.size() < 4 && tokens.size() > 5) {
     fprintf(stderr, "mousedoubleclick: bad args\n");
     return;
   }
@@ -123,6 +123,21 @@ void SendMouseMoveEvent(FPDF_FORMHANDLE form,
   FORM_OnMouseMove(form, page, 0, x, y);
 }
 
+void SendMouseWheelEvent(FPDF_FORMHANDLE form,
+                         FPDF_PAGE page,
+                         const std::vector<std::string>& tokens) {
+  if (tokens.size() < 5 && tokens.size() > 6) {
+    fprintf(stderr, "mousewheel: bad args\n");
+    return;
+  }
+
+  const FS_POINTF point = {atoi(tokens[1].c_str()), atoi(tokens[2].c_str())};
+  int delta_x = atoi(tokens[3].c_str());
+  int delta_y = atoi(tokens[4].c_str());
+  int modifiers = tokens.size() >= 6 ? GetModifiers(tokens[5]) : 0;
+  FORM_OnMouseWheel(form, page, modifiers, &point, delta_x, delta_y);
+}
+
 void SendFocusEvent(FPDF_FORMHANDLE form,
                     FPDF_PAGE page,
                     const std::vector<std::string>& tokens) {
@@ -135,6 +150,7 @@ void SendFocusEvent(FPDF_FORMHANDLE form,
   int y = atoi(tokens[2].c_str());
   FORM_OnFocus(form, page, 0, x, y);
 }
+
 }  // namespace
 
 void SendPageEvents(FPDF_FORMHANDLE form,
@@ -158,6 +174,8 @@ void SendPageEvents(FPDF_FORMHANDLE form,
       SendMouseDoubleClickEvent(form, page, tokens);
     } else if (tokens[0] == "mousemove") {
       SendMouseMoveEvent(form, page, tokens);
+    } else if (tokens[0] == "mousewheel") {
+      SendMouseWheelEvent(form, page, tokens);
     } else if (tokens[0] == "focus") {
       SendFocusEvent(form, page, tokens);
     } else {

@@ -1272,6 +1272,39 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
                                                      double page_y);
 
 /*
+ * Experimental API
+ * Function: FORM_OnMouseWheel
+ *       Call this member function when the user scrolls the mouse wheel.
+ * Parameters:
+ *       hHandle     -   Handle to the form fill module, as returned by
+ *                       FPDFDOC_InitFormFillEnvironment().
+ *       page        -   Handle to the page, as returned by FPDF_LoadPage().
+ *       modifier    -   Indicates whether various virtual keys are down.
+ *       page_coord  -   Specifies the coordinates of the cursor in PDF user
+ *                       space.
+ *       delta_x     -   Specifies the amount of wheel movement on the x-axis,
+ *                       in units of platform-agnostic wheel deltas. Negative
+ *                       values mean left.
+ *       delta_y     -   Specifies the amount of wheel movement on the y-axis,
+ *                       in units of platform-agnostic wheel deltas. Negative
+ *                       values mean down.
+ * Return Value:
+ *       True indicates success; otherwise false.
+ * Comments:
+ *       For |delta_x| and |delta_y|, the caller must normalize
+ *       platform-specific wheel deltas. e.g. On Windows, a delta value of 240
+ *       for a WM_MOUSEWHEEL event normalizes to 2, since Windows defines
+ *       WHEEL_DELTA as 120.
+ */
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseWheel(
+    FPDF_FORMHANDLE hHandle,
+    FPDF_PAGE page,
+    int modifier,
+    const FS_POINTF* page_coord,
+    int delta_x,
+    int delta_y);
+
+/*
  * Function: FORM_OnFocus
  *       This function focuses the form annotation at a given point. If the
  *       annotation at the point already has focus, nothing happens. If there
@@ -1299,7 +1332,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnFocus(FPDF_FORMHANDLE hHandle,
  *       Call this member function when the user presses the left
  *       mouse button.
  * Parameters:
- *       hHandle     -   Handle to the form fill module. as returned by
+ *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
  *       page        -   Handle to the page, as returned by FPDF_LoadPage().
  *       modifier    -   Indicates whether various virtual keys are down.
@@ -1335,7 +1368,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
  * Parameters:
  *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
- *       page        -   Handle to the page. as returned by FPDF_LoadPage().
+ *       page        -   Handle to the page, as returned by FPDF_LoadPage().
  *       modifier    -   Indicates whether various virtual keys are down.
  *       page_x      -   Specifies the x-coordinate of the cursor in device.
  *       page_y      -   Specifies the y-coordinate of the cursor in device.
@@ -1536,7 +1569,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_CanRedo(FPDF_FORMHANDLE hHandle,
  * Function: FORM_Undo
  *       Make the current focussed widget perform an undo operation.
  * Parameters:
- *       hHandle     -   Handle to the form fill module. as returned by
+ *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().
  *       page        -   Handle to the page, as returned by FPDF_LoadPage().
  * Return Value:
