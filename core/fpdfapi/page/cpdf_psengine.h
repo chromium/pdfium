@@ -98,7 +98,7 @@ class CPDF_PSProc {
   }
 
  private:
-  static const int kMaxDepth = 128;
+  static constexpr int kMaxDepth = 128;
 
   void AddOperator(ByteStringView word);
 

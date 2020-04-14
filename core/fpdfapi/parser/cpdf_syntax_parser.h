@@ -79,7 +79,7 @@ class CPDF_SyntaxParser {
   friend class CPDF_DataAvail;
   friend class cpdf_syntax_parser_ReadHexString_Test;
 
-  static const int kParserMaxRecursionDepth = 64;
+  static constexpr int kParserMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
   bool ReadBlockAt(FX_FILESIZE read_pos);

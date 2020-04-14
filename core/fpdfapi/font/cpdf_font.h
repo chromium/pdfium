@@ -57,7 +57,7 @@ class CPDF_Font : public Retainable, public Observable {
         CPDF_Stream* pFormStream) = 0;
   };
 
-  static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
+  static constexpr uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
 
   // |pFactory| only required for Type3 fonts.
   static RetainPtr<CPDF_Font> Create(CPDF_Document* pDoc,

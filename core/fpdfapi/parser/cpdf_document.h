@@ -74,7 +74,7 @@ class CPDF_Document : public Observable,
     UnownedPtr<CPDF_Document> m_pDoc;
   };
 
-  static const int kPageMaxNum = 0xFFFFF;
+  static constexpr int kPageMaxNum = 0xFFFFF;
 
   static bool IsValidPageObject(const CPDF_Object* obj);
 

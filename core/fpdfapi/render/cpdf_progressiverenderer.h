@@ -42,7 +42,7 @@ class CPDF_ProgressiveRenderer {
 
  private:
   // Maximum page objects to render before checking for pause.
-  static const int kStepLimit = 100;
+  static constexpr int kStepLimit = 100;
 
   Status m_Status = kReady;
   UnownedPtr<CPDF_RenderContext> const m_pContext;

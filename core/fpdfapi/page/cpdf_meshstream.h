@@ -64,7 +64,7 @@ class CPDF_MeshStream {
   uint32_t Components() const { return m_nComponents; }
 
  private:
-  static const uint32_t kMaxComponents = 8;
+  static constexpr uint32_t kMaxComponents = 8;
 
   const ShadingType m_type;
   const std::vector<std::unique_ptr<CPDF_Function>>& m_funcs;

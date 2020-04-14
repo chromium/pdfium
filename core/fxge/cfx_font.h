@@ -107,9 +107,9 @@ class CFX_Font {
   void SetPlatformFont(void* font) { m_pPlatformFont = font; }
 #endif
 
-  static const size_t kAngleSkewArraySize = 30;
+  static constexpr size_t kAngleSkewArraySize = 30;
   static const char s_AngleSkew[kAngleSkewArraySize];
-  static const size_t kWeightPowArraySize = 100;
+  static constexpr size_t kWeightPowArraySize = 100;
   static const uint8_t s_WeightPow[kWeightPowArraySize];
   static const uint8_t s_WeightPow_11[kWeightPowArraySize];
   static const uint8_t s_WeightPow_SHIFTJIS[kWeightPowArraySize];

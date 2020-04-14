@@ -76,7 +76,7 @@ class CPDF_StreamContentParser {
     RetainPtr<CPDF_Object> m_pObject;
   };
 
-  static const int kParamBufSize = 16;
+  static constexpr int kParamBufSize = 16;
 
   using OpCodes = std::map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();

@@ -76,8 +76,8 @@ class CFX_FontMapper {
   std::vector<std::pair<ByteString, ByteString>> m_LocalizedTTFonts;
 
  private:
-  static const size_t MM_FACE_COUNT = 2;
-  static const size_t FOXIT_FACE_COUNT = 14;
+  static constexpr size_t MM_FACE_COUNT = 2;
+  static constexpr size_t FOXIT_FACE_COUNT = 14;
 
   uint32_t GetChecksumFromTT(void* hFont);
   ByteString GetPSNameFromTT(void* hFont);

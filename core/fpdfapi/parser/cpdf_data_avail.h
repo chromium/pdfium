@@ -125,7 +125,7 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
     std::vector<std::unique_ptr<PageNode>> m_ChildNodes;
   };
 
-  static const int kMaxPageRecursionDepth = 1024;
+  static constexpr int kMaxPageRecursionDepth = 1024;
 
   bool CheckDocStatus();
   bool CheckHeader();

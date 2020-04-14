@@ -29,7 +29,7 @@ class IFX_ArchiveStream;
 
 class CPDF_Object : public Retainable {
  public:
-  static const uint32_t kInvalidObjNum = static_cast<uint32_t>(-1);
+  static constexpr uint32_t kInvalidObjNum = static_cast<uint32_t>(-1);
   enum Type {
     kBoolean = 1,
     kNumber,
@@ -125,10 +125,10 @@ class CPDF_Object : public Retainable {
 
 template <typename T>
 struct CanInternStrings {
-  static const bool value = std::is_same<T, CPDF_Array>::value ||
-                            std::is_same<T, CPDF_Dictionary>::value ||
-                            std::is_same<T, CPDF_Name>::value ||
-                            std::is_same<T, CPDF_String>::value;
+  static constexpr bool value = std::is_same<T, CPDF_Array>::value ||
+                                std::is_same<T, CPDF_Dictionary>::value ||
+                                std::is_same<T, CPDF_Name>::value ||
+                                std::is_same<T, CPDF_String>::value;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_

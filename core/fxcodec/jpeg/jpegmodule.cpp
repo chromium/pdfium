@@ -264,7 +264,7 @@ class JpegDecoder final : public ScanlineDecoder {
   // For a given invalid height byte offset in
   // |kKnownBadHeaderWithInvalidHeightByteOffsetStarts|, the SOFn marker should
   // be this many bytes before that.
-  static const size_t kSofMarkerByteOffset = 5;
+  static constexpr size_t kSofMarkerByteOffset = 5;
 
   uint32_t m_nDefaultScaleDenom = 1;
 };

@@ -53,7 +53,7 @@ class CPDF_Parser {
   // are non-consecutive.
   static constexpr uint32_t kMaxObjectNumber = 4 * 1024 * 1024;
 
-  static const size_t kInvalidPos = std::numeric_limits<size_t>::max();
+  static constexpr size_t kInvalidPos = std::numeric_limits<size_t>::max();
 
   explicit CPDF_Parser(ParsedObjectsHolder* holder);
   CPDF_Parser();
