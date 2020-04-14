@@ -292,10 +292,7 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
   else
     bsFilter = pFilter->AsArray()->GetStringAt(index);
 
-  unsigned long len = bsFilter.GetLength() + 1;
-  if (buffer && len <= buflen)
-    memcpy(buffer, bsFilter.c_str(), len);
-  return len;
+  return NulTerminateMaybeCopyAndReturnLength(bsFilter, buffer, buflen);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

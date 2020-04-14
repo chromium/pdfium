@@ -277,6 +277,15 @@ FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix) {
   return {matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f};
 }
 
+unsigned long NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
+                                                   void* buffer,
+                                                   unsigned long buflen) {
+  unsigned long len = text.GetLength() + 1;
+  if (buffer && len <= buflen)
+    memcpy(buffer, text.c_str(), len);
+  return len;
+}
+
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen) {

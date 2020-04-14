@@ -108,6 +108,7 @@ source_set("fpdfsdk") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "cpdfsdk_helpers_unittest.cpp",
     "fpdf_annot_unittest.cpp",
     "fpdf_catalog_unittest.cpp",
     "fpdf_doc_unittest.cpp",

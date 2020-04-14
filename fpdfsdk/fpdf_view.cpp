@@ -989,10 +989,7 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
   if (!bsVal)
     return 0;
 
-  unsigned long dwStringLen = bsVal->GetLength() + 1;
-  if (buffer && length >= dwStringLen)
-    memcpy(buffer, bsVal->c_str(), dwStringLen);
-  return dwStringLen;
+  return NulTerminateMaybeCopyAndReturnLength(*bsVal, buffer, length);
 }
 
 FPDF_EXPORT FPDF_DWORD FPDF_CALLCONV
