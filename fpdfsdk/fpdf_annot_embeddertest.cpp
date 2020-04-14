@@ -2467,3 +2467,71 @@ TEST_F(FPDFAnnotEmbedderTest, GetFocusableAnnotSubtypes) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
+  ASSERT_TRUE(OpenDocument("annots.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+#if defined(OS_WIN)
+    static const char kMd5sum[] = "3877bec7cb3e3144eaa6d10f38bf7a30";
+#elif defined(OS_MACOSX)
+    static const char kMd5sum[] = "04b16db5026b5490a50fb6ff0954c867";
+#else
+    static const char kMd5sum[] = "40a7354d1f653127bcdac10e15f81654";
+#endif
+    // Check the initial rendering.
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, kMd5sum);
+  }
+
+  // Make links and highlights focusable.
+  static constexpr FPDF_ANNOTATION_SUBTYPE kSubTypes[] = {FPDF_ANNOT_LINK,
+                                                          FPDF_ANNOT_HIGHLIGHT};
+  constexpr int kSubTypesCount = FX_ArraySize(kSubTypes);
+  ASSERT_TRUE(
+      FPDFAnnot_SetFocusableSubtypes(form_handle(), kSubTypes, kSubTypesCount));
+  ASSERT_EQ(kSubTypesCount, FPDFAnnot_GetFocusableSubtypesCount(form_handle()));
+  std::vector<FPDF_ANNOTATION_SUBTYPE> subtypes(kSubTypesCount);
+  ASSERT_TRUE(FPDFAnnot_GetFocusableSubtypes(form_handle(), subtypes.data(),
+                                             subtypes.size()));
+  ASSERT_EQ(FPDF_ANNOT_LINK, subtypes[0]);
+  ASSERT_EQ(FPDF_ANNOT_HIGHLIGHT, subtypes[1]);
+
+  {
+#if defined(OS_WIN)
+    static const char kMd5sum[] = "a30f1bd1cac022d08ceb100df4940b5f";
+#elif defined(OS_MACOSX)
+    static const char kMd5sum[] = "3f984a164f2f6d6e3d69f27fd430e346";
+#else
+    static const char kMd5sum[] = "e4c4de73addabf10672c308870e8a4ee";
+#endif
+    // Focus the first link and check the rendering.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
+    EXPECT_TRUE(FORM_SetFocusedAnnot(form_handle(), annot.get()));
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, kMd5sum);
+  }
+
+  {
+#if defined(OS_WIN)
+    static const char kMd5sum[] = "467f5a4db98fcadd5121807ff4e2eb10";
+#elif defined(OS_MACOSX)
+    static const char kMd5sum[] = "c6d6f9dc7090e8eaf3867ba714023b1e";
+#else
+    static const char kMd5sum[] = "65e831885e16b7ecc977cce2e4a27110";
+#endif
+    // Focus the first highlight and check the rendering.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 4));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
+    EXPECT_TRUE(FORM_SetFocusedAnnot(form_handle(), annot.get()));
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, kMd5sum);
+  }
+
+  UnloadPage(page);
+}
