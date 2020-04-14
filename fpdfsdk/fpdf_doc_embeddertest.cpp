@@ -482,6 +482,57 @@ TEST_F(FPDFDocEmbedderTest, DeletePage) {
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
 }
 
+TEST_F(FPDFDocEmbedderTest, GetFileIdentifier) {
+  ASSERT_TRUE(OpenDocument("split_streams.pdf"));
+  constexpr size_t kMd5Length = 17;
+  char buf[kMd5Length];
+  EXPECT_EQ(0u,
+            FPDF_GetFileIdentifier(document(), static_cast<FPDF_FILEIDTYPE>(-1),
+                                   buf, sizeof(buf)));
+  EXPECT_EQ(0u,
+            FPDF_GetFileIdentifier(document(), static_cast<FPDF_FILEIDTYPE>(2),
+                                   buf, sizeof(buf)));
+  EXPECT_EQ(0u, FPDF_GetFileIdentifier(nullptr, FILEIDTYPE_PERMANENT, buf,
+                                       sizeof(buf)));
+  EXPECT_EQ(kMd5Length, FPDF_GetFileIdentifier(document(), FILEIDTYPE_PERMANENT,
+                                               nullptr, 0));
+
+  constexpr char kExpectedPermanent[] =
+      "\xF3\x41\xAE\x65\x4A\x77\xAC\xD5\x06\x5A\x76\x45\xE5\x96\xE6\xE6";
+  ASSERT_EQ(kMd5Length, FPDF_GetFileIdentifier(document(), FILEIDTYPE_PERMANENT,
+                                               buf, sizeof(buf)));
+  EXPECT_EQ(kExpectedPermanent, ByteString(buf));
+
+  constexpr char kExpectedChanging[] =
+      "\xBC\x37\x29\x8A\x3F\x87\xF4\x79\x22\x9B\xCE\x99\x7C\xA7\x91\xF7";
+  ASSERT_EQ(kMd5Length, FPDF_GetFileIdentifier(document(), FILEIDTYPE_CHANGING,
+                                               buf, sizeof(buf)));
+  EXPECT_EQ(kExpectedChanging, ByteString(buf));
+}
+
+TEST_F(FPDFDocEmbedderTest, GetNonHexFileIdentifier) {
+  ASSERT_TRUE(OpenDocument("non_hex_file_id.pdf"));
+  char buf[18];
+
+  constexpr char kPermanentNonHex[] = "permanent non-hex";
+  ASSERT_EQ(18u, FPDF_GetFileIdentifier(document(), FILEIDTYPE_PERMANENT, buf,
+                                        sizeof(buf)));
+  EXPECT_EQ(kPermanentNonHex, ByteString(buf));
+
+  constexpr char kChangingNonHex[] = "changing non-hex";
+  ASSERT_EQ(17u, FPDF_GetFileIdentifier(document(), FILEIDTYPE_CHANGING, buf,
+                                        sizeof(buf)));
+  EXPECT_EQ(kChangingNonHex, ByteString(buf));
+}
+
+TEST_F(FPDFDocEmbedderTest, GetNonexistentFileIdentifier) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_EQ(
+      0u, FPDF_GetFileIdentifier(document(), FILEIDTYPE_PERMANENT, nullptr, 0));
+  EXPECT_EQ(
+      0u, FPDF_GetFileIdentifier(document(), FILEIDTYPE_CHANGING, nullptr, 0));
+}
+
 TEST_F(FPDFDocEmbedderTest, GetMetaText) {
   ASSERT_TRUE(OpenDocument("bug_601362.pdf"));
 

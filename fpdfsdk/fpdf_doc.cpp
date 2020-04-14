@@ -15,6 +15,8 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_bookmarktree.h"
 #include "core/fpdfdoc/cpdf_dest.h"
@@ -389,6 +391,32 @@ FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
 
   return GetQuadPointsAtIndex(pArray, static_cast<size_t>(quad_index),
                               quad_points);
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
+                       FPDF_FILEIDTYPE id_type,
+                       void* buffer,
+                       unsigned long buflen) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return 0;
+
+  // Check if |id_type| is valid.
+  if (id_type != FILEIDTYPE_PERMANENT && id_type != FILEIDTYPE_CHANGING)
+    return 0;
+
+  const CPDF_Array* pFileId = pDoc->GetFileIdentifier();
+  if (!pFileId)
+    return 0;
+
+  size_t nIndex = id_type == FILEIDTYPE_PERMANENT ? 0 : 1;
+  const CPDF_String* pValue = ToString(pFileId->GetDirectObjectAt(nIndex));
+  if (!pValue)
+    return 0;
+
+  return NulTerminateMaybeCopyAndReturnLength(pValue->GetString(), buffer,
+                                              buflen);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,

@@ -36,6 +36,13 @@ extern "C" {
 #define PDFDEST_VIEW_FITBH 7
 #define PDFDEST_VIEW_FITBV 8
 
+// The file identifier entry type. See section 14.4 "File Identifiers" of the
+// ISO 32000-1 standard.
+typedef enum {
+  FILEIDTYPE_PERMANENT = 0,
+  FILEIDTYPE_CHANGING = 1
+} FPDF_FILEIDTYPE;
+
 typedef struct _FS_QUADPOINTSF {
   FS_FLOAT x1;
   FS_FLOAT y1;
@@ -311,6 +318,26 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
                        int quad_index,
                        FS_QUADPOINTSF* quad_points);
+
+// Get the file identifer defined in the trailer of |document|.
+// Experimental API. Subject to change.
+//
+//   document - handle to the document.
+//   id_type  - the file identifier type to retrieve.
+//   buffer   - a buffer for the file identifier. May be NULL.
+//   buflen   - the length of the buffer, in bytes. May be 0.
+//
+// Returns the number of bytes in the file identifier, including the NUL
+// terminator.
+//
+// The |buffer| is always a byte string. The |buffer| is followed by a NUL
+// terminator.  If |buflen| is less than the returned length, or |buffer| is
+// NULL, |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
+                       FPDF_FILEIDTYPE id_type,
+                       void* buffer,
+                       unsigned long buflen);
 
 // Get meta-data |tag| content from |document|.
 //

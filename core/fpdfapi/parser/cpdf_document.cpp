@@ -465,6 +465,10 @@ CPDF_Dictionary* CPDF_Document::GetInfo() {
   return m_pInfoDict.Get();
 }
 
+const CPDF_Array* CPDF_Document::GetFileIdentifier() const {
+  return m_pParser ? m_pParser->GetIDArray() : nullptr;
+}
+
 void CPDF_Document::DeletePage(int iPage) {
   CPDF_Dictionary* pPages = GetPagesDict();
   if (!pPages)
