@@ -760,14 +760,21 @@ TEST_F(FPDFViewEmbedderTest, Hang_1055) {
   EXPECT_EQ(16, version);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_FPDF_RenderPageBitmapWithMatrix \
-  DISABLED_FPDF_RenderPageBitmapWithMatrix
+  const char kOriginalMD5[] = "b4e411a6b5ffa59a50efede2efece597";
+  const char kClippedMD5[] = "d2929fae285593cd1c1d446750d47d60";
+  const char kTopLeftQuarterMD5[] = "31d24d8c6a2bac380b2f5c393e77ecc9";
+  const char kHoriStretchedMD5[] = "af6eaa0d3388261693df5390138e4da1";
+  const char kRotated90ClockwiseMD5[] = "b4baa001d201baed576cd6d5d0d5a160";
+  const char kRotated180ClockwiseMD5[] = "51819227d0863222aed366d5d7c5d9c8";
+  const char kRotated270ClockwiseMD5[] = "f2b046e46c2751cebc777a9725ae2f3e";
+  const char kMirrorHoriMD5[] = "c7fbec322b4fc6bcf46ec1eb89661c41";
+  const char kMirrorVertMD5[] = "a8b00bc40677a73c15a08b9769d1b576";
+  const char kLargerTopLeftQuarterMD5[] = "35deb5ed4b73675ce33f68328a33c687";
+  const char kLargerRotatedDiagonalMD5[] = "1dbf599403c235926d3ddcbc0ea10ee8";
+  const char kTileMD5[] = "387be3a84774f39aaa955314d2fe7106";
 #else
-#define MAYBE_FPDF_RenderPageBitmapWithMatrix FPDF_RenderPageBitmapWithMatrix
-#endif
-TEST_F(FPDFViewEmbedderTest, MAYBE_FPDF_RenderPageBitmapWithMatrix) {
   const char kOriginalMD5[] = "0a90de37f52127619c3dfb642b5fa2fe";
   const char kClippedMD5[] = "a84cab93c102b9b9290fba3047ba702c";
   const char kTopLeftQuarterMD5[] = "f11a11137c8834389e31cf555a4a6979";
@@ -778,12 +785,13 @@ TEST_F(FPDFViewEmbedderTest, MAYBE_FPDF_RenderPageBitmapWithMatrix) {
   const char kMirrorHoriMD5[] = "6e8d7a6fde39d8e720fb9e620102918c";
   const char kMirrorVertMD5[] = "8f3a555ef9c0d5031831ae3715273707";
   const char kLargerTopLeftQuarterMD5[] = "172a2f4adafbadbe98017b1c025b9e27";
+  const char kLargerRotatedDiagonalMD5[] = "3d62417468bdaff0eb14391a0c30a3b1";
+  const char kTileMD5[] = "0a190003c97220bf8877684c8d7e89cf";
+#endif
   const char kLargerMD5[] = "c806145641c3e6fc4e022c7065343749";
   const char kLargerClippedMD5[] = "091d3b1c7933c8f6945eb2cb41e588e9";
   const char kLargerRotatedMD5[] = "115f13353ebfc82ddb392d1f0059eb12";
   const char kLargerRotatedLandscapeMD5[] = "c901239d17d84ac84cb6f2124da71b0d";
-  const char kLargerRotatedDiagonalMD5[] = "3d62417468bdaff0eb14391a0c30a3b1";
-  const char kTileMD5[] = "0a190003c97220bf8877684c8d7e89cf";
 
   EXPECT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
