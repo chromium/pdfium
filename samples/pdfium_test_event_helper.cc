@@ -131,7 +131,8 @@ void SendMouseWheelEvent(FPDF_FORMHANDLE form,
     return;
   }
 
-  const FS_POINTF point = {atoi(tokens[1].c_str()), atoi(tokens[2].c_str())};
+  const FS_POINTF point = {static_cast<float>(atoi(tokens[1].c_str())),
+                           static_cast<float>(atoi(tokens[2].c_str()))};
   int delta_x = atoi(tokens[3].c_str());
   int delta_y = atoi(tokens[4].c_str());
   int modifiers = tokens.size() >= 6 ? GetModifiers(tokens[5]) : 0;
