@@ -15,6 +15,9 @@ class CFX_SubstFont {
   CFX_SubstFont();
   ~CFX_SubstFont();
 
+  int GetOriginalWeight() const;
+  void UseChromeSerif();
+
   ByteString m_Family;
   int m_Charset = FX_CHARSET_ANSI;
   int m_Weight = 0;

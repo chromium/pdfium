@@ -885,6 +885,7 @@ class SkiaState {
     }
     if (Accumulator::kText != m_type) {
       m_italicAngle = pFont->GetSubstFontItalicAngle();
+      m_isSubstFontBold = pFont->IsSubstFontBold();
       m_charDetails.SetCount(0);
       m_rsxform.setCount(0);
       if (pFont->GetFaceRec())
@@ -963,6 +964,7 @@ class SkiaState {
     if (m_pTypeFace) {  // exclude placeholder test fonts
       font.setTypeface(m_pTypeFace);
     }
+    font.setEmbolden(m_isSubstFontBold);
     font.setHinting(SkFontHinting::kNone);
     font.setScaleX(m_scaleX);
     font.setSkewX(tanf(m_italicAngle * FX_PI / 180.0));
@@ -1018,6 +1020,7 @@ class SkiaState {
     m_drawMatrix = CFX_Matrix();
     m_pFont = nullptr;
     m_italicAngle = 0;
+    m_isSubstFontBold = false;
   }
 
   bool IsEmpty() const { return !m_commands.count(); }
@@ -1181,7 +1184,8 @@ class SkiaState {
     return typeface != m_pTypeFace.get() || MatrixChanged(&matrix) ||
            font_size != m_fontSize || scaleX != m_scaleX ||
            color != m_fillColor ||
-           pFont->GetSubstFontItalicAngle() != m_italicAngle;
+           pFont->GetSubstFontItalicAngle() != m_italicAngle ||
+           pFont->IsSubstFontBold() != m_isSubstFontBold;
   }
 
   bool MatrixChanged(const CFX_Matrix* pMatrix) const {
@@ -1520,6 +1524,7 @@ class SkiaState {
   bool m_fillFullCover = false;
   bool m_fillPath = false;
   bool m_groupKnockout = false;
+  bool m_isSubstFontBold = false;
   bool m_debugDisable = false;  // turn off cache for debugging
 #if SHOW_SKIA_PATH
  public:
@@ -1684,6 +1689,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
 
   SkFont font;
   font.setTypeface(typeface);
+  font.setEmbolden(pFont->IsSubstFontBold());
   font.setHinting(SkFontHinting::kNone);
   font.setSize(SkTAbs(font_size));
   font.setSubpixel(true);

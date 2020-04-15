@@ -88,6 +88,7 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
+  bool IsSubstFontBold() const;
   bool IsVertical() const { return m_bVertical; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;

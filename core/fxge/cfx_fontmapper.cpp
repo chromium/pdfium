@@ -385,8 +385,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
   if (weight)
     pSubstFont->m_Weight = weight;
   if (FontFamilyIsRoman(pitch_family)) {
-    pSubstFont->m_Weight = pSubstFont->m_Weight * 4 / 5;
-    pSubstFont->m_Family = "Chrome Serif";
+    pSubstFont->UseChromeSerif();
     if (!m_MMFaces[1]) {
       m_MMFaces[1] = m_pFontMgr->NewFixedFace(
           nullptr, m_pFontMgr->GetBuiltinFont(14).value(), 0);
