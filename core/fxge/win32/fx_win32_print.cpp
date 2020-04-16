@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
@@ -259,7 +260,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
       return false;
   }
 
-  std::vector<BYTE> buf(nTextMetricSize);
+  std::vector<BYTE, FxAllocAllocator<BYTE>> buf(nTextMetricSize);
   OUTLINETEXTMETRIC* pTextMetric =
       reinterpret_cast<OUTLINETEXTMETRIC*>(buf.data());
   if (GetOutlineTextMetrics(m_hDC, nTextMetricSize, pTextMetric) == 0)
@@ -290,7 +291,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
 
   // Text
   WideString wsText;
-  std::vector<INT> spacing(nChars);
+  std::vector<INT, FxAllocAllocator<INT>> spacing(nChars);
   float fPreviousOriginX = 0;
   for (int i = 0; i < nChars; ++i) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
@@ -364,7 +365,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   if (::GetClipRgn(m_hDC, hRgn) == 1) {
     DWORD dwCount = ::GetRegionData(hRgn, 0, nullptr);
     if (dwCount) {
-      std::vector<uint8_t> buffer(dwCount);
+      std::vector<uint8_t, FxAllocAllocator<uint8_t>> buffer(dwCount);
       RGNDATA* pData = reinterpret_cast<RGNDATA*>(buffer.data());
       if (::GetRegionData(hRgn, dwCount, pData)) {
         CFX_PathData path;

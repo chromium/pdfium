@@ -6,6 +6,7 @@
 
 #include <windows.h>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
@@ -76,7 +77,7 @@ RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
 
   memcpy(pBitmap->GetBuffer(), pData, pitch * height);
   if (bBottomUp) {
-    std::vector<uint8_t> temp_buf(pitch);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> temp_buf(pitch);
     int top = 0;
     int bottom = height - 1;
     while (top < bottom) {
