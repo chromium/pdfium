@@ -680,6 +680,10 @@ typedef struct _FPDF_FORMFILLINFO {
    * Return value:
    *       None.
    * Comments:
+   *       If the embedder is version 2 or higher and have implementation for
+   *       FFI_DoURIActionWithKeyboardModifier, then
+   *       FFI_DoURIActionWithKeyboardModifier takes precedence over
+   *       FFI_DoURIAction.
    *       See the URI actions description of <<PDF Reference, version 1.7>>
    *       for more details.
    */
@@ -1102,6 +1106,32 @@ typedef struct _FPDF_FORMFILLINFO {
   void (*FFI_OnFocusChange)(struct _FPDF_FORMFILLINFO* param,
                             FPDF_ANNOTATION annot,
                             int page_index);
+
+  /**
+   * Method: FFI_DoURIActionWithKeyboardModifier
+   *       Ask the implementation to navigate to a uniform resource identifier
+   *       with the specified modifiers.
+   * Interface Version:
+   *       Ignored if |version| < 2.
+   * Implementation Required:
+   *       No
+   * Parameters:
+   *       param           -   Pointer to the interface structure itself.
+   *       uri             -   A byte string which indicates the uniform
+   *                           resource identifier, terminated by 0.
+   *       modifiers       -   Keyboard modifier that indicates which of
+   *                           the virtual keys are down, if any.
+   * Return value:
+   *       None.
+   * Comments:
+   *       If the embedder who is version 2 and does not implement this API,
+   *       then a call will be redirected to FFI_DoURIAction.
+   *       See the URI actions description of <<PDF Reference, version 1.7>>
+   *       for more details.
+   */
+  void(*FFI_DoURIActionWithKeyboardModifier)(struct _FPDF_FORMFILLINFO* param,
+      FPDF_BYTESTRING uri,
+      int modifiers);
 } FPDF_FORMFILLINFO;
 
 /*

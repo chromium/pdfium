@@ -21,7 +21,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 using testing::_;
+using testing::InSequence;
 using testing::NiceMock;
+using testing::StrEq;
 
 using FPDFFormFillEmbedderTest = EmbedderTest;
 
@@ -590,6 +592,7 @@ TEST_F(FPDFFormFillEmbedderTest, FirstTest) {
   EXPECT_CALL(mock, KillTimer(_)).Times(0);
   EXPECT_CALL(mock, OnFocusChange(_, _, _)).Times(0);
   EXPECT_CALL(mock, DoURIAction(_)).Times(0);
+  EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(_, _, _)).Times(0);
   SetDelegate(&mock);
 
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
@@ -2976,6 +2979,13 @@ class FPDFFormFillActionUriTest : public EmbedderTest {
     ASSERT_TRUE(OpenDocument("annots_action_handling.pdf"));
     page_ = LoadPage(0);
     ASSERT_TRUE(page_);
+
+    // Set Widget and Link as supported tabbable annots.
+    constexpr FPDF_ANNOTATION_SUBTYPE kFocusableSubtypes[] = {FPDF_ANNOT_WIDGET,
+                                                              FPDF_ANNOT_LINK};
+    constexpr size_t kSubtypeCount = FX_ArraySize(kFocusableSubtypes);
+    ASSERT_TRUE(FPDFAnnot_SetFocusableSubtypes(
+        form_handle(), kFocusableSubtypes, kSubtypeCount));
   }
 
   void TearDown() override {
@@ -2983,10 +2993,14 @@ class FPDFFormFillActionUriTest : public EmbedderTest {
     EmbedderTest::TearDown();
   }
 
-  void SetFocusOnFirstForm() {
+  void SetFocusOnNthAnnot(size_t n) {
+    DCHECK_NE(n, 0);
+    // Setting focus on first annot.
     FORM_OnMouseMove(form_handle(), page(), /*modifier=*/0, 100, 680);
     FORM_OnLButtonDown(form_handle(), page(), /*modifier=*/0, 100, 680);
     FORM_OnLButtonUp(form_handle(), page(), /*modifier=*/0, 100, 680);
+    for (size_t i = 1; i < n; i++)
+      ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Tab, 0));
   }
 
   FPDF_PAGE page() { return page_; }
@@ -3001,7 +3015,7 @@ TEST_F(FPDFFormFillActionUriTest, ButtonActionInvokeTest) {
   EXPECT_CALL(mock, DoURIAction(_)).Times(0);
   SetDelegate(&mock);
 
-  SetFocusOnFirstForm();
+  SetFocusOnNthAnnot(1);
 
   // Tab once from first form to go to button widget.
   ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Tab, 0));
@@ -3009,4 +3023,63 @@ TEST_F(FPDFFormFillActionUriTest, ButtonActionInvokeTest) {
   // TODO(crbug.com/1028991): Following should be changed to ASSERT_TRUE after
   // handling key press implementation on buttons.
   ASSERT_FALSE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Return, 0));
+}
+
+TEST_F(FPDFFormFillActionUriTest, LinkActionInvokeTest) {
+  NiceMock<EmbedderTestMockDelegate> mock;
+  {
+    InSequence sequence;
+    // TODO(crbug.com/994500) : DoURIAction number of expected calls to be
+    // updated to 4.
+    const char kExpectedUri[] = "https://www.cs.chromium.org/";
+    EXPECT_CALL(mock, DoURIAction(StrEq(kExpectedUri))).Times(0);
+    EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(_, _, _)).Times(0);
+  }
+  SetDelegate(&mock);
+  SetFocusOnNthAnnot(3);
+  int modifier = 0;
+  // TODO(crbug.com/994500): Following asserts to be changed to ASSERT_TRUE.
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ControlKey;
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ShiftKey;
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier |= FWL_EVENTFLAG_ControlKey;
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+}
+
+class FPDFFormFillActionUriTestVersion2 : public FPDFFormFillActionUriTest {
+  void SetUp() override {
+    SetFormFillInfoVersion(2);
+    FPDFFormFillActionUriTest::SetUp();
+  }
+};
+
+TEST_F(FPDFFormFillActionUriTestVersion2, LinkActionInvokeTest) {
+  NiceMock<EmbedderTestMockDelegate> mock;
+  {
+    InSequence sequence;
+    EXPECT_CALL(mock, DoURIAction(_)).Times(0);
+    // TODO(crbug.com/994500): Following comments has to be removed.
+    // const char kExpectedUri[] = "https://www.cs.chromium.org/";
+    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
+    //                      _, StrEq(kExpectedUri), 0));
+    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
+    //                       _, StrEq(kExpectedUri), FWL_EVENTFLAG_ControlKey));
+    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
+    //                      _, StrEq(kExpectedUri), FWL_EVENTFLAG_ShiftKey));
+    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
+    //                      _, StrEq(kExpectedUri), 3));
+  }
+  SetDelegate(&mock);
+  SetFocusOnNthAnnot(3);
+  int modifier = 0;
+  // TODO(crbug.com/994500): Following asserts to be changed to ASSERT_TRUE.
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ControlKey;
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ShiftKey;
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier |= FWL_EVENTFLAG_ControlKey;
+  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
 }

@@ -15,20 +15,32 @@ endobj
 3 0 obj <<
   /Type /Page
   /Parent 2 0 R
-  /Annots [4 0 R 5 0 R]
+  /Annots [5 0 R 6 0 R 7 0 R]
+  /Contents 4 0 R
   /Tabs /R
 >>
 endobj
 4 0 obj <<
+  /Length 42
+>>
+stream
+BT
+70 340 Td
+14 Tf
+(External Link ) Tj
+ET
+endstream
+endobj
+5 0 obj <<
   /Type /Annot
   /Subtype /Widget
   /FT /Tx
   /Parent 3 0 R
-  /T (Sub_LeftBottom)
+  /T (TextField)
   /Rect [69 670 220 690]
 >>
 endobj
-5 0 obj <<
+6 0 obj <<
   /Type /Annot
   /Subtype /Widget
   /FT /Btn
@@ -42,18 +54,32 @@ endobj
   /Ff 65536
 >>
 endobj
+7 0 obj <<
+  /Type /Annot
+  /Subtype /Link
+  /Rect [69 338 180 358]
+  /A <<
+    /Type /Action
+    /S /URI
+    /URI (https://www.cs.chromium.org/)
+  >>
+  /F 4
+>>
+endobj
 xref
-0 6
+0 8
 0000000000 65535 f 
 0000000015 00000 n 
 0000000094 00000 n 
 0000000157 00000 n 
-0000000243 00000 n 
-0000000371 00000 n 
+0000000267 00000 n 
+0000000360 00000 n 
+0000000483 00000 n 
+0000000666 00000 n 
 trailer <<
   /Root 1 0 R
-  /Size 6
+  /Size 8
 >>
 startxref
-554
+834
 %%EOF

@@ -253,6 +253,8 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
   formfillinfo->FFI_GetPage = GetPageTrampoline;
   formfillinfo->FFI_DoURIAction = DoURIActionTrampoline;
   formfillinfo->FFI_OnFocusChange = OnFocusChangeTrampoline;
+  formfillinfo->FFI_DoURIActionWithKeyboardModifier =
+      DoURIActionWithKeyboardModifierTrampoline;
 
   if (javascript_option == JavaScriptOption::kEnableJavaScript)
     formfillinfo->m_pJsPlatform = platform;
@@ -611,6 +613,15 @@ void EmbedderTest::OnFocusChangeTrampoline(FPDF_FORMFILLINFO* info,
                                            int page_index) {
   EmbedderTest* test = static_cast<EmbedderTest*>(info);
   return test->delegate_->OnFocusChange(info, annot, page_index);
+}
+
+// static
+void EmbedderTest::DoURIActionWithKeyboardModifierTrampoline(
+    FPDF_FORMFILLINFO* info,
+    FPDF_BYTESTRING uri,
+    int modifiers) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  return test->delegate_->DoURIActionWithKeyboardModifier(info, uri, modifiers);
 }
 
 // static

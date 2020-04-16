@@ -21,6 +21,10 @@ class EmbedderTestMockDelegate : public EmbedderTest::Delegate {
                void(FPDF_FORMFILLINFO* info,
                     FPDF_ANNOTATION annot,
                     int page_index));
+  MOCK_METHOD3(DoURIActionWithKeyboardModifier,
+               void(FPDF_FORMFILLINFO* info,
+                    FPDF_BYTESTRING uri,
+                    int modifiers));
 };
 
 #endif  // TESTING_EMBEDDER_TEST_MOCK_DELEGATE_H_

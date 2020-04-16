@@ -69,6 +69,11 @@ class EmbedderTest : public ::testing::Test,
     virtual void OnFocusChange(FPDF_FORMFILLINFO* info,
                                FPDF_ANNOTATION annot,
                                int page_index) {}
+
+    // Equivalent to FPDF_FORMFILLINFO::FFI_DoURIActionWithKeyboardModifier().
+    virtual void DoURIActionWithKeyboardModifier(FPDF_FORMFILLINFO* info,
+                                                 FPDF_BYTESTRING uri,
+                                                 int modifiers) {}
   };
 
   EmbedderTest();
@@ -302,6 +307,9 @@ class EmbedderTest : public ::testing::Test,
   static void OnFocusChangeTrampoline(FPDF_FORMFILLINFO* info,
                                       FPDF_ANNOTATION annot,
                                       int page_index);
+  static void DoURIActionWithKeyboardModifierTrampoline(FPDF_FORMFILLINFO* info,
+                                                        FPDF_BYTESTRING uri,
+                                                        int modifiers);
   static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                 const void* data,
                                 unsigned long size);

@@ -14,20 +14,32 @@ endobj
 {{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
-  /Annots [4 0 R 5 0 R]
+  /Annots [5 0 R 6 0 R 7 0 R]
+  /Contents 4 0 R
   /Tabs /R
 >>
 endobj
 {{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+70 340 Td
+14 Tf
+(External Link ) Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
   /Type /Annot
   /Subtype /Widget
   /FT /Tx
   /Parent 3 0 R
-  /T (Sub_LeftBottom)
+  /T (TextField)
   /Rect [69 670 220 690]
 >>
 endobj
-{{object 5 0}} <<
+{{object 6 0}} <<
   /Type /Annot
   /Subtype /Widget
   /FT /Btn
@@ -39,6 +51,18 @@ endobj
   /F 4
   /T (button)
   /Ff 65536
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Annot
+  /Subtype /Link
+  /Rect [69 338 180 358]
+  /A <<
+    /Type /Action
+    /S /URI
+    /URI (https://www.cs.chromium.org/)
+  >>
+  /F 4
 >>
 endobj
 {{xref}}
