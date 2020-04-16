@@ -4,7 +4,7 @@
   /Type /Catalog
   /Pages 2 0 R
   /AcroForm <<
-    /Fields [ 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ]
+    /Fields [8 0 R 9 0 R 10 0 R 11 0 R 12 0 R]
     /DR 4 0 R
   >>
 >>
@@ -12,16 +12,16 @@ endobj
 2 0 obj <<
   /Type /Pages
   /Count 1
-  /Kids [ 3 0 R ]
+  /Kids [3 0 R]
 >>
 endobj
 3 0 obj <<
   /Type /Page
   /Parent 2 0 R
   /Resources 4 0 R
-  /MediaBox [ 0 0 300 600 ]
+  /MediaBox [0 0 300 600]
   /Contents 7 0 R
-  /Annots [ 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ]
+  /Annots [8 0 R 9 0 R 10 0 R 11 0 R 12 0 R]
 >>
 endobj
 4 0 obj <<
@@ -57,7 +57,7 @@ endobj
   /Ff 0
   /T (Listbox_SingleSelect)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 350 200 380 ]
+  /Rect [100 350 200 380]
   /Opt [[(foo) (Foo)] [(bar) (Bar)] [(qux) (Qux)]]
 >>
 endobj
@@ -68,7 +68,7 @@ endobj
   /Ff 2097152
   /T (Listbox_MultiSelect)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 400 200 430 ]
+  /Rect [100 400 200 430]
   /Opt [(Apple) (Banana) (Cherry) (Date) (Elderberry) (Fig) (Guava) (Honeydew)
         (Indian Fig) (Jackfruit) (Kiwi) (Lemon) (Mango) (Nectarine) (Orange)
         (Persimmon) (Quince) (Raspberry) (Strawberry) (Tamarind) (Ugli Fruit)
@@ -83,7 +83,7 @@ endobj
   /Ff 1
   /T (Listbox_ReadOnly)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 500 200 530 ]
+  /Rect [100 500 200 530]
   /Opt [(Dog) (Elephant) (Frog)]
 >>
 endobj
@@ -92,9 +92,9 @@ endobj
   /Subtype /Widget
   /FT /Ch
   /Ff 2097152
-  /T (Listbox_MultiSelectMultipleSelected)
+  /T (Listbox_MultiSelectMultipleValues)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 200 200 230 ]
+  /Rect [100 200 200 230]
   /Opt [(Alpha) (Beta) (Gamma) (Delta) (Epsilon)]
   /V [(Epsilon) (Gamma)]
 >>
@@ -106,10 +106,10 @@ endobj
   /Ff 0
   /T (Listbox_SingleSelectLastSelected)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 100 200 130 ]
+  /Rect [100 100 200 130]
   /Opt [(Alberta) (British Columbia) (Manitoba) (New Brunswick)
         (Newfoundland and Labrador) (Nova Scotia) (Ontario)
-        (Prince Edward Island) (Quebec) (Saskatchewan) ]
+        (Prince Edward Island) (Quebec) (Saskatchewan)]
   /V (Saskatchewan)
   /TI 9
 >>
@@ -118,21 +118,21 @@ xref
 0 13
 0000000000 65535 f 
 0000000015 00000 n 
-0000000151 00000 n 
-0000000216 00000 n 
-0000000379 00000 n 
-0000000414 00000 n 
-0000000447 00000 n 
-0000000523 00000 n 
-0000000625 00000 n 
-0000000832 00000 n 
-0000001302 00000 n 
-0000001488 00000 n 
-0000001741 00000 n 
+0000000149 00000 n 
+0000000212 00000 n 
+0000000371 00000 n 
+0000000406 00000 n 
+0000000439 00000 n 
+0000000515 00000 n 
+0000000617 00000 n 
+0000000822 00000 n 
+0000001290 00000 n 
+0000001474 00000 n 
+0000001723 00000 n 
 trailer <<
   /Root 1 0 R
   /Size 13
 >>
 startxref
-2119
+2098
 %%EOF
