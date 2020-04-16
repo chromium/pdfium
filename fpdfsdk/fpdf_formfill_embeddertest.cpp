@@ -369,10 +369,12 @@ class FPDFFormFillListBoxFormEmbedderTest
     // - "Listbox_SingleSelect" - Ff: 0, 3 options with pair values.
     // - "Listbox_MultiSelect" - Ff: 2097152, 26 options with single values.
     // - "Listbox_ReadOnly" - Ff: 1, 3 options with single values.
-    // - "Listbox_MultiSelectMultipleValues" - Ff: 2097152, 5 options with
-    // single values.
+    // - "Listbox_MultiSelectMultipleIndices" - Ff: 2097152, 5 options with
+    //    single values.
+    // - "Listbox_MultiSelectMultipleValues" - same configs as above.
+    // - "Listbox_MultiSelectMultipleMismatch" - same configs as above.
     // - "Listbox_SingleSelectLastSelected" - Ff: 0, 10 options with single
-    // values.
+    //    values.
     return "listbox_form.pdf";
   }
 
@@ -389,10 +391,22 @@ class FPDFFormFillListBoxFormEmbedderTest
               GetFormTypeAtPoint(MultiSelectSecondVisibleOption()));
     EXPECT_EQ(
         GetFormType(),
+        GetFormTypeAtPoint(MultiSelectMultipleIndicesFirstVisibleOption()));
+    EXPECT_EQ(
+        GetFormType(),
+        GetFormTypeAtPoint(MultiSelectMultipleIndicesSecondVisibleOption()));
+    EXPECT_EQ(
+        GetFormType(),
         GetFormTypeAtPoint(MultiSelectMultipleValuesFirstVisibleOption()));
     EXPECT_EQ(
         GetFormType(),
         GetFormTypeAtPoint(MultiSelectMultipleValuesSecondVisibleOption()));
+    EXPECT_EQ(
+        GetFormType(),
+        GetFormTypeAtPoint(MultiSelectMultipleMismatchFirstVisibleOption()));
+    EXPECT_EQ(
+        GetFormType(),
+        GetFormTypeAtPoint(MultiSelectMultipleMismatchSecondVisibleOption()));
     EXPECT_EQ(GetFormType(),
               GetFormTypeAtPoint(SingleSelectLastSelectedFirstVisibleOption()));
     EXPECT_EQ(
@@ -456,8 +470,16 @@ class FPDFFormFillListBoxFormEmbedderTest
     FocusOnPoint(MultiSelectFirstVisibleOption());
   }
 
+  void FocusOnMultiSelectMultipleIndicesForm() {
+    FocusOnPoint(MultiSelectMultipleIndicesFirstVisibleOption());
+  }
+
   void FocusOnMultiSelectMultipleValuesForm() {
     FocusOnPoint(MultiSelectMultipleValuesFirstVisibleOption());
+  }
+
+  void FocusOnMultiSelectMultipleMismatchForm() {
+    FocusOnPoint(MultiSelectMultipleMismatchFirstVisibleOption());
   }
 
   void FocusOnSingleSelectLastSelectedForm() {
@@ -488,6 +510,18 @@ class FPDFFormFillListBoxFormEmbedderTest
     return point;
   }
 
+  const CFX_PointF& MultiSelectMultipleIndicesFirstVisibleOption() const {
+    static const CFX_PointF point(kFormBeginX,
+                                  kMultiFormMultipleIndicesYFirstVisibleOption);
+    return point;
+  }
+
+  const CFX_PointF& MultiSelectMultipleIndicesSecondVisibleOption() const {
+    static const CFX_PointF point(
+        kFormBeginX, kMultiFormMultipleIndicesYSecondVisibleOption);
+    return point;
+  }
+
   const CFX_PointF& MultiSelectMultipleValuesFirstVisibleOption() const {
     static const CFX_PointF point(kFormBeginX,
                                   kMultiFormMultipleValuesYFirstVisibleOption);
@@ -497,6 +531,18 @@ class FPDFFormFillListBoxFormEmbedderTest
   const CFX_PointF& MultiSelectMultipleValuesSecondVisibleOption() const {
     static const CFX_PointF point(kFormBeginX,
                                   kMultiFormMultipleValuesYSecondVisibleOption);
+    return point;
+  }
+
+  const CFX_PointF& MultiSelectMultipleMismatchFirstVisibleOption() const {
+    static const CFX_PointF point(
+        kFormBeginX, kMultiFormMultipleMismatchYFirstVisibleOption);
+    return point;
+  }
+
+  const CFX_PointF& MultiSelectMultipleMismatchSecondVisibleOption() const {
+    static const CFX_PointF point(
+        kFormBeginX, kMultiFormMultipleMismatchYSecondVisibleOption);
     return point;
   }
 
@@ -518,8 +564,12 @@ class FPDFFormFillListBoxFormEmbedderTest
   static constexpr float kSingleFormYSecondVisibleOption = 358.0;
   static constexpr float kMultiFormYFirstVisibleOption = 423.0;
   static constexpr float kMultiFormYSecondVisibleOption = 408.0;
+  static constexpr float kMultiFormMultipleIndicesYFirstVisibleOption = 273.0;
+  static constexpr float kMultiFormMultipleIndicesYSecondVisibleOption = 258.0;
   static constexpr float kMultiFormMultipleValuesYFirstVisibleOption = 223.0;
   static constexpr float kMultiFormMultipleValuesYSecondVisibleOption = 208.0;
+  static constexpr float kMultiFormMultipleMismatchYFirstVisibleOption = 173.0;
+  static constexpr float kMultiFormMultipleMismatchYSecondVisibleOption = 158.0;
   static constexpr float kSingleFormLastSelectedYFirstVisibleOption = 123.0;
   static constexpr float kSingleFormLastSelectedYSecondVisibleOption = 108.0;
 };
@@ -2771,6 +2821,16 @@ TEST_F(FPDFFormFillListBoxFormEmbedderTest,
   CheckFocusedFieldText(L"Banana");
 }
 
+TEST_F(FPDFFormFillListBoxFormEmbedderTest, CheckIfMultipleSelectedIndices) {
+  // Multiselect field set to 'Belgium' (index 1) and 'Denmark' (index 3) upon
+  // opening.
+  FocusOnMultiSelectMultipleIndicesForm();
+  for (int i = 0; i < 5; i++) {
+    bool expected = (i == 1 || i == 3);
+    CheckIsIndexSelected(i, expected);
+  }
+}
+
 TEST_F(FPDFFormFillListBoxFormEmbedderTest, CheckIfMultipleSelectedValues) {
   // Multiselect field set to 'Gamma' (index 2) and 'Epsilon' (index 4) upon
   // opening.
@@ -2778,6 +2838,17 @@ TEST_F(FPDFFormFillListBoxFormEmbedderTest, CheckIfMultipleSelectedValues) {
   for (int i = 0; i < 5; i++) {
     // TODO(bug_1505): Should be selected at index 2 and index 4.
     bool expected = false;
+    CheckIsIndexSelected(i, expected);
+  }
+}
+
+TEST_F(FPDFFormFillListBoxFormEmbedderTest, CheckIfMultipleSelectedMismatch) {
+  // Multiselect field set to 'Alligator' (index 0) and 'Cougar' (index 2) upon
+  // opening.
+  FocusOnMultiSelectMultipleMismatchForm();
+  for (int i = 0; i < 5; i++) {
+    // TODO(bug_1505): Should be selected at index 0 and index 2.
+    bool expected = (i == 1 || i == 3 || i == 4);
     CheckIsIndexSelected(i, expected);
   }
 }
