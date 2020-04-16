@@ -33,10 +33,12 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
 
 CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {}
 
-std::vector<uint8_t> CBC_BarcodeMatrix::toBitArray() {
-  std::vector<uint8_t> bitArray(m_width * m_height);
+std::vector<uint8_t, FxAllocAllocator<uint8_t>>
+CBC_BarcodeMatrix::toBitArray() {
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> bitArray(m_width * m_height);
   for (size_t i = 0; i < m_height; ++i) {
-    std::vector<uint8_t>& bytearray = m_matrix[i]->getRow();
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>& bytearray =
+        m_matrix[i]->getRow();
     for (size_t j = 0; j < m_width; ++j)
       bitArray[i * m_width + j] = bytearray[j];
   }

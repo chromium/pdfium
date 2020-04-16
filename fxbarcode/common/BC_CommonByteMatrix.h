@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
@@ -31,7 +32,7 @@ class CBC_CommonByteMatrix final {
  private:
   int32_t m_width;
   int32_t m_height;
-  std::vector<uint8_t> m_bytes;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_bytes;
 };
 
 #endif  // FXBARCODE_COMMON_BC_COMMONBYTEMATRIX_H_

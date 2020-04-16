@@ -89,7 +89,8 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
 
     result += ch;
   }
-  std::vector<uint8_t> byteArr(bytes.begin(), bytes.end());
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> byteArr(bytes.begin(),
+                                                          bytes.end());
   len = result.GetLength();
   WideString sb;
   sb.Reserve(len);
@@ -354,7 +355,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
 
 Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
     WideString msg,
-    std::vector<uint8_t>* bytes,
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* bytes,
     size_t startpos) {
   size_t len = msg.GetLength();
   size_t idx = startpos;

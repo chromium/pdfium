@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 
 class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {
@@ -16,9 +17,8 @@ class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {
   CBC_DataMatrixWriter();
   ~CBC_DataMatrixWriter() override;
 
-  std::vector<uint8_t> Encode(const WideString& contents,
-                              int32_t* pOutWidth,
-                              int32_t* pOutHeight);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>>
+  Encode(const WideString& contents, int32_t* pOutWidth, int32_t* pOutHeight);
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;

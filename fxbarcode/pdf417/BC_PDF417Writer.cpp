@@ -43,10 +43,11 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-std::vector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
-                                              int32_t* pOutWidth,
-                                              int32_t* pOutHeight) {
-  std::vector<uint8_t> results;
+std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_PDF417Writer::Encode(
+    WideStringView contents,
+    int32_t* pOutWidth,
+    int32_t* pOutHeight) {
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> results;
   CBC_PDF417 encoder;
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
@@ -60,7 +61,8 @@ std::vector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
     return results;
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
-  std::vector<uint8_t> matrixData = barcodeMatrix->toBitArray();
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> matrixData =
+      barcodeMatrix->toBitArray();
   int32_t matrixWidth = barcodeMatrix->getWidth();
   int32_t matrixHeight = barcodeMatrix->getHeight();
 
@@ -70,15 +72,17 @@ std::vector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
   }
   *pOutWidth = matrixWidth;
   *pOutHeight = matrixHeight;
-  results = pdfium::Vector2D<uint8_t>(*pOutWidth, *pOutHeight);
+  results = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
+                                                                 *pOutHeight);
   memcpy(results.data(), matrixData.data(), *pOutWidth * *pOutHeight);
   return results;
 }
 
-void CBC_PDF417Writer::RotateArray(std::vector<uint8_t>* bitarray,
-                                   int32_t height,
-                                   int32_t width) {
-  std::vector<uint8_t> temp = *bitarray;
+void CBC_PDF417Writer::RotateArray(
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* bitarray,
+    int32_t height,
+    int32_t width) {
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> temp = *bitarray;
   for (int32_t ii = 0; ii < height; ii++) {
     int32_t inverseii = height - ii - 1;
     for (int32_t jj = 0; jj < width; jj++) {

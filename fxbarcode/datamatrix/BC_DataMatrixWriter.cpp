@@ -107,10 +107,11 @@ bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-std::vector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
-                                                  int32_t* pOutWidth,
-                                                  int32_t* pOutHeight) {
-  std::vector<uint8_t> results;
+std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_DataMatrixWriter::Encode(
+    const WideString& contents,
+    int32_t* pOutWidth,
+    int32_t* pOutHeight) {
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> results;
   WideString encoded = CBC_HighLevelEncoder::EncodeHighLevel(contents);
   if (encoded.IsEmpty())
     return results;
@@ -139,7 +140,8 @@ std::vector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
 
   *pOutWidth = bytematrix->GetWidth();
   *pOutHeight = bytematrix->GetHeight();
-  results = pdfium::Vector2D<uint8_t>(*pOutWidth, *pOutHeight);
+  results = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
+                                                                 *pOutHeight);
   memcpy(results.data(), bytematrix->GetArray().data(),
          *pOutWidth * *pOutHeight);
   return results;

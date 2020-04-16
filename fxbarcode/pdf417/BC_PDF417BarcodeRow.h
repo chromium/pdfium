@@ -11,16 +11,18 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
+
 class CBC_BarcodeRow final {
  public:
   explicit CBC_BarcodeRow(size_t width);
   ~CBC_BarcodeRow();
 
   void addBar(bool black, int32_t width);
-  std::vector<uint8_t>& getRow();
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>>& getRow();
 
  private:
-  std::vector<uint8_t> m_row;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_row;
   int32_t m_currentLocation;
 };
 

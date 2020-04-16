@@ -43,11 +43,12 @@ bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   return true;
 }
 
-std::vector<uint8_t> CBC_QRCodeWriter::Encode(WideStringView contents,
-                                              int32_t ecLevel,
-                                              int32_t* pOutWidth,
-                                              int32_t* pOutHeight) {
-  std::vector<uint8_t> results;
+std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_QRCodeWriter::Encode(
+    WideStringView contents,
+    int32_t ecLevel,
+    int32_t* pOutWidth,
+    int32_t* pOutHeight) {
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> results;
   CBC_QRCoderErrorCorrectionLevel* ec = nullptr;
   switch (ecLevel) {
     case 0:
@@ -71,7 +72,8 @@ std::vector<uint8_t> CBC_QRCodeWriter::Encode(WideStringView contents,
 
   *pOutWidth = qr.GetMatrixWidth();
   *pOutHeight = qr.GetMatrixWidth();
-  results = pdfium::Vector2D<uint8_t>(*pOutWidth, *pOutHeight);
+  results = pdfium::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
+                                                                 *pOutHeight);
   memcpy(results.data(), qr.GetMatrix()->GetArray().data(),
          *pOutWidth * *pOutHeight);
   return results;

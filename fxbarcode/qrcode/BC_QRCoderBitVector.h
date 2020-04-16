@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
+
 class CBC_QRCoderBitVector {
  public:
   CBC_QRCoderBitVector();
@@ -31,7 +33,7 @@ class CBC_QRCoderBitVector {
   void AppendByte(int8_t value);
 
   size_t m_sizeInBits = 0;
-  std::vector<uint8_t> m_array;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_array;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_

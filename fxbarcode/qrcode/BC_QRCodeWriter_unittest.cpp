@@ -51,7 +51,8 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"", 0, &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"", 0, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -85,7 +86,8 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"", 1, &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"", 1, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -119,7 +121,8 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"", 2, &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"", 2, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -153,7 +156,8 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"", 3, &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"", 3, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -187,7 +191,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0
     };
     // clang-format on
-    std::vector<uint8_t> data =
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"hello world", 0, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
@@ -222,7 +226,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0
     };
     // clang-format on
-    std::vector<uint8_t> data =
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"hello world", 1, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
@@ -260,7 +264,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1,
         1};
-    std::vector<uint8_t> data =
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"hello world", 2, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
@@ -298,7 +302,7 @@ TEST_F(CBC_QRCodeWriterTest, Encode) {
         0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1,
         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1,
         1};
-    std::vector<uint8_t> data =
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"hello world", 3, &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);

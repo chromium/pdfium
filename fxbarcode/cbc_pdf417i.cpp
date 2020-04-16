@@ -23,6 +23,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
 #include "third_party/base/ptr_util.h"
 
@@ -46,7 +47,8 @@ bool CBC_PDF417I::Encode(WideStringView contents) {
   int32_t width;
   int32_t height;
   auto* pWriter = GetPDF417Writer();
-  std::vector<uint8_t> data = pWriter->Encode(contents, &width, &height);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+      pWriter->Encode(contents, &width, &height);
   return pWriter->RenderResult(data, width, height);
 }
 

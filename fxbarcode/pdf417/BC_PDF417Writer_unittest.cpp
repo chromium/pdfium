@@ -413,7 +413,8 @@ TEST_F(CBC_PDF417WriterTest, Encode) {
         1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1,
         0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1};
-    std::vector<uint8_t> data = writer.Encode(L"", &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"", &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedWidth, width);
     ASSERT_EQ(kExpectedHeight, height);
@@ -810,7 +811,8 @@ TEST_F(CBC_PDF417WriterTest, Encode) {
         1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0,
         0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1};
-    std::vector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"hello world", &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedWidth, width);
     ASSERT_EQ(kExpectedHeight, height);

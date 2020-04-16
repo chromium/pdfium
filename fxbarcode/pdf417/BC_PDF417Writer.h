@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
@@ -18,15 +19,14 @@ class CBC_PDF417Writer final : public CBC_TwoDimWriter {
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;
 
-  std::vector<uint8_t> Encode(WideStringView contents,
-                              int32_t* pOutWidth,
-                              int32_t* pOutHeight);
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>>
+  Encode(WideStringView contents, int32_t* pOutWidth, int32_t* pOutHeight);
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
 
  private:
-  void RotateArray(std::vector<uint8_t>* bitarray,
+  void RotateArray(std::vector<uint8_t, FxAllocAllocator<uint8_t>>* bitarray,
                    int32_t width,
                    int32_t height);
 };

@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 
 class CBC_DefaultPlacement final {
@@ -18,7 +19,7 @@ class CBC_DefaultPlacement final {
 
   int32_t getNumrows();
   int32_t getNumcols();
-  std::vector<uint8_t>& getBits();
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>>& getBits();
   bool getBit(int32_t col, int32_t row);
   void setBit(int32_t col, int32_t row, bool bit);
   bool hasBit(int32_t col, int32_t row);
@@ -28,7 +29,7 @@ class CBC_DefaultPlacement final {
   WideString m_codewords;
   int32_t m_numrows;
   int32_t m_numcols;
-  std::vector<uint8_t> m_bits;
+  std::vector<uint8_t, FxAllocAllocator<uint8_t>> m_bits;
   void module(int32_t row, int32_t col, int32_t pos, int32_t bit);
   void utah(int32_t row, int32_t col, int32_t pos);
   void corner1(int32_t pos);

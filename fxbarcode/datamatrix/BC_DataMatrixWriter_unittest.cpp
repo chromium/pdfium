@@ -40,7 +40,8 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"", &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"", &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -67,7 +68,8 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"helloworld", &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"helloworld", &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -90,7 +92,8 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
-    std::vector<uint8_t> data = writer.Encode(L"12345", &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"12345", &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
@@ -121,7 +124,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
     // clang-format on
-    std::vector<uint8_t> data =
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
         writer.Encode(L"abcdefghijklmnopqrst", &width, &height);
     ASSERT_EQ(FX_ArraySize(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
@@ -130,7 +133,8 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
       EXPECT_EQ(kExpectedData[i], data[i]) << i;
   }
   {
-    std::vector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(L"hello world", &width, &height);
     ASSERT_TRUE(data.empty());
   }
 }
@@ -147,7 +151,8 @@ TEST_F(CBC_DataMatrixWriterTest, EncodeLimitAlphaNumeric) {
 
   {
     static constexpr int kExpectedDimension = 144;
-    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(input.c_str(), &width, &height);
     EXPECT_EQ(20736u, data.size());
     EXPECT_EQ(kExpectedDimension, width);
     EXPECT_EQ(kExpectedDimension, height);
@@ -158,7 +163,8 @@ TEST_F(CBC_DataMatrixWriterTest, EncodeLimitAlphaNumeric) {
   {
     width = -1;
     height = -1;
-    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(input.c_str(), &width, &height);
     EXPECT_EQ(0u, data.size());
     EXPECT_EQ(-1, width);
     EXPECT_EQ(-1, height);
@@ -177,7 +183,8 @@ TEST_F(CBC_DataMatrixWriterTest, EncodeLimitNumbers) {
 
   {
     static constexpr int kExpectedDimension = 144;
-    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(input.c_str(), &width, &height);
     EXPECT_EQ(20736u, data.size());
     EXPECT_EQ(kExpectedDimension, width);
     EXPECT_EQ(kExpectedDimension, height);
@@ -188,7 +195,8 @@ TEST_F(CBC_DataMatrixWriterTest, EncodeLimitNumbers) {
   {
     width = -1;
     height = -1;
-    std::vector<uint8_t> data = writer.Encode(input.c_str(), &width, &height);
+    std::vector<uint8_t, FxAllocAllocator<uint8_t>> data =
+        writer.Encode(input.c_str(), &width, &height);
     EXPECT_EQ(0u, data.size());
     EXPECT_EQ(-1, width);
     EXPECT_EQ(-1, height);
