@@ -70,6 +70,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_IsChecked);
     CHK(FPDFAnnot_IsObjectSupportedSubtype);
     CHK(FPDFAnnot_IsSupportedSubtype);
+    CHK(FPDFAnnot_RemoveInkList);
     CHK(FPDFAnnot_RemoveObject);
     CHK(FPDFAnnot_SetAP);
     CHK(FPDFAnnot_SetAttachmentPoints);

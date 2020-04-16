@@ -211,6 +211,17 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
                                                      size_t point_count);
 
 // Experimental API.
+// Removes an InkList in |annot|.
+// This API works only for ink annotations.
+//
+//   annot  - handle to an annotation.
+//
+// Return true on successful removal of /InkList entry from context of the
+// non-null ink |annot|. Returns false on failure.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_RemoveInkList(FPDF_ANNOTATION annot);
+
+// Experimental API.
 // Add |obj| to |annot|. |obj| must have been created by
 // FPDFPageObj_CreateNew{Path|Rect}() or FPDFPageObj_New{Text|Image}Obj(), and
 // will be owned by |annot|. Note that an |obj| cannot belong to more than one

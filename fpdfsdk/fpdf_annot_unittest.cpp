@@ -219,3 +219,49 @@ TEST_F(PDFAnnotTest, InkListAPIValidations) {
   EXPECT_EQ(3u, inklist->size());
   EXPECT_EQ((kThirdStrokePointCount - 1) * 2, inklist->GetArrayAt(2)->size());
 }
+
+TEST_F(PDFAnnotTest, RemoveInkList) {
+  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
+  ASSERT_TRUE(doc);
+  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
+  ASSERT_TRUE(page);
+
+  // Negative test: |annot| is passed as nullptr.
+  EXPECT_FALSE(FPDFAnnot_RemoveInkList(nullptr));
+
+  // Negative test: |annot| is not ink annotation.
+  // Create a new highlight annotation.
+  ScopedFPDFAnnotation highlight_annot(
+      FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_HIGHLIGHT));
+  ASSERT_TRUE(highlight_annot);
+  EXPECT_FALSE(FPDFAnnot_RemoveInkList(highlight_annot.get()));
+
+  // Create a new ink annotation.
+  ScopedFPDFAnnotation ink_annot(
+      FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_INK));
+  ASSERT_TRUE(ink_annot);
+  CPDF_AnnotContext* context =
+      CPDFAnnotContextFromFPDFAnnotation(ink_annot.get());
+  ASSERT_TRUE(context);
+  CPDF_Dictionary* annot_dict = context->GetAnnotDict();
+  ASSERT_TRUE(annot_dict);
+
+  static constexpr FS_POINTF kInkStroke[] = {{80.0f, 90.0f}, {81.0f, 91.0f},
+                                             {82.0f, 92.0f}, {83.0f, 93.0f},
+                                             {84.0f, 94.0f}, {85.0f, 95.0f}};
+  static constexpr size_t kPointCount = FX_ArraySize(kInkStroke);
+
+  // InkStroke should get added to ink annotation. Also inklist should get
+  // created.
+  EXPECT_EQ(0,
+            FPDFAnnot_AddInkStroke(ink_annot.get(), kInkStroke, kPointCount));
+
+  CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
+  ASSERT_TRUE(inklist);
+  ASSERT_EQ(1u, inklist->size());
+  EXPECT_EQ(kPointCount * 2, inklist->GetArrayAt(0)->size());
+
+  // Remove inklist.
+  EXPECT_TRUE(FPDFAnnot_RemoveInkList(ink_annot.get()));
+  EXPECT_FALSE(annot_dict->KeyExist("InkList"));
+}
