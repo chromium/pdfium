@@ -1303,15 +1303,14 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
 
 // Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_FFLDraw(). The two rendered
 // bitmaps should be different.
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_BUG_1281 DISABLED_BUG_1281
+  const char kMd5Normal[] = "793689536cf64fe792c2f241888c0cf3";
+  const char kMd5ReverseByteOrder[] = "8077970bbd10333f18186a9bb459bbe6";
 #else
-#define MAYBE_BUG_1281 BUG_1281
-#endif
-TEST_F(FPDFFormFillEmbedderTest, MAYBE_BUG_1281) {
   const char kMd5Normal[] = "6c674642154408e877d88c6c082d67e9";
   const char kMd5ReverseByteOrder[] = "24fff03d1e663b7ece5f6e69ad837124";
+#endif
 
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
   FPDF_PAGE page = LoadPage(0);

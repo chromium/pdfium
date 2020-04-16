@@ -292,6 +292,10 @@ static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
 constexpr int kAlternateOrWindingFillModeMask =
     FXFILL_ALTERNATE | FXFILL_WINDING;
 
+SkColorType Get32BitSkColorType(bool is_rgb_byte_order) {
+  return is_rgb_byte_order ? kRGBA_8888_SkColorType : kBGRA_8888_SkColorType;
+}
+
 int GetAlternateOrWindingFillMode(int fill_mode) {
   return fill_mode & kAlternateOrWindingFillModeMask;
 }
@@ -626,7 +630,8 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
               SkBitmap* skBitmap,
               int* widthPtr,
               int* heightPtr,
-              bool forceAlpha) {
+              bool forceAlpha,
+              bool bRgbByteOrder) {
   void* buffer = pSource->GetBuffer();
   if (!buffer)
     return false;
@@ -674,7 +679,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
         }
         buffer = dst32Storage.get();
         rowBytes = width * sizeof(uint32_t);
-        colorType = SkColorType::kN32_SkColorType;
+        colorType = Get32BitSkColorType(bRgbByteOrder);
       }
       break;
     case 24: {
@@ -691,12 +696,12 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       }
       buffer = dst32Storage.get();
       rowBytes = width * sizeof(uint32_t);
-      colorType = SkColorType::kN32_SkColorType;
+      colorType = Get32BitSkColorType(bRgbByteOrder);
       alphaType = kOpaque_SkAlphaType;
       break;
     }
     case 32:
-      colorType = SkColorType::kN32_SkColorType;
+      colorType = Get32BitSkColorType(bRgbByteOrder);
       alphaType = kPremul_SkAlphaType;
       pSource->DebugVerifyBitmapIsPreMultiplied(buffer);
       break;
@@ -1615,8 +1620,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 #ifdef _SKIA_SUPPORT_PATHS_
       m_pClipRgn(nullptr),
       m_FillFlags(0),
-      m_bRgbByteOrder(bRgbByteOrder),
 #endif  // _SKIA_SUPPORT_PATHS_
+      m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
   SkBitmap skBitmap;
   SkColorType color_type;
@@ -1627,7 +1632,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
                      : kGray_8_SkColorType;
   } else {
     ASSERT(bpp == 32);
-    color_type = kN32_SkColorType;
+    color_type = Get32BitSkColorType(bRgbByteOrder);
   }
 
   SkImageInfo imageInfo =
@@ -2363,7 +2368,8 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int dstHeight = pBitmap->GetHeight();
   int dstRowBytes = dstWidth * sizeof(uint32_t);
   SkImageInfo dstImageInfo = SkImageInfo::Make(
-      dstWidth, dstHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
+      dstWidth, dstHeight, Get32BitSkColorType(m_bRgbByteOrder),
+      kPremul_SkAlphaType);
   SkBitmap skDstBitmap;
   skDstBitmap.installPixels(dstImageInfo, dstBuffer, dstRowBytes);
   SkCanvas canvas(skDstBitmap);
@@ -2504,7 +2510,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   SkBitmap skBitmap;
   int width, height;
   if (!Upsample(pSource, dst8Storage, dst32Storage, &skBitmap, &width, &height,
-                false)) {
+                false, m_bRgbByteOrder)) {
     return false;
   }
   {
@@ -2634,11 +2640,11 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   SkBitmap skBitmap, skMask;
   int srcWidth, srcHeight, maskWidth, maskHeight;
   if (!Upsample(pSource, src8Storage, src32Storage, &skBitmap, &srcWidth,
-                &srcHeight, false)) {
+                &srcHeight, false, m_bRgbByteOrder)) {
     return false;
   }
   if (!Upsample(pMask, mask8Storage, mask32Storage, &skMask, &maskWidth,
-                &maskHeight, true)) {
+                &maskHeight, true, m_bRgbByteOrder)) {
     return false;
   }
   {

@@ -179,8 +179,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
   int m_FillFlags;
-  bool m_bRgbByteOrder;
 #endif
+  bool m_bRgbByteOrder;
   bool m_bGroupKnockout;
 };
 #endif  // defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
