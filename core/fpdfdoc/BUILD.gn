@@ -106,7 +106,10 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":fpdfdoc",
+    "../../constants",
+    "../fpdfapi/page",
     "../fpdfapi/parser",
+    "../fpdfapi/render",
   ]
   pdfium_root_dir = "../../"
 }
