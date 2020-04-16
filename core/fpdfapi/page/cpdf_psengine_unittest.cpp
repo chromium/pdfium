@@ -184,8 +184,27 @@ TEST(CPDF_PSEngine, Truncate) {
 
   // Truncate does not behave according to the PostScript Language Reference for
   // values beyond the range of integers. This seems to match Acrobat's
-  // behavior. See https://crbug.com/1314.
+  // behavior. See https://crbug.com/pdfium/1314.
   float max_int = std::numeric_limits<int>::max();
   EXPECT_FLOAT_EQ(-max_int,
                   DoOperator1(&engine, max_int * -1.5f, PSOP_TRUNCATE));
+}
+
+TEST(CPDF_PSEngine, Comparisons) {
+  CPDF_PSEngine engine;
+
+  EXPECT_FLOAT_EQ(1.0f, DoOperator2(&engine, 0.0f, 0.0f, PSOP_EQ));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 0.0f, 1.0f, PSOP_EQ));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 255.0f, 1.0f, PSOP_EQ));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, -1.0f, 0.0f, PSOP_EQ));
+
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 0.0f, 0.0f, PSOP_GT));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 0.0f, 1.0f, PSOP_GT));
+  EXPECT_FLOAT_EQ(1.0f, DoOperator2(&engine, 255.0f, 1.0f, PSOP_GT));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, -1.0f, 0.0f, PSOP_GT));
+
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 0.0f, 0.0f, PSOP_LT));
+  EXPECT_FLOAT_EQ(1.0f, DoOperator2(&engine, 0.0f, 1.0f, PSOP_LT));
+  EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 255.0f, 1.0f, PSOP_LT));
+  EXPECT_FLOAT_EQ(1.0f, DoOperator2(&engine, -1.0f, 0.0f, PSOP_LT));
 }
