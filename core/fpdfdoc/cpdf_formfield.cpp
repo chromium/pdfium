@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_formfield.h"
 
+#include <map>
 #include <memory>
 #include <set>
 #include <utility>
@@ -133,6 +134,7 @@ void CPDF_FormField::InitFieldFlags() {
       m_Type = kListBox;
       m_bIsMultiSelectListBox = flags & pdfium::form_flags::kChoiceMultiSelect;
     }
+    m_bUseSelectedIndices = UseSelectedIndicesObject();
     LoadDA();
   } else if (type_name == pdfium::form_fields::kSig) {
     m_Type = kSign;
@@ -476,34 +478,10 @@ bool CPDF_FormField::IsItemSelected(int index) const {
   ASSERT(GetType() == kComboBox || GetType() == kListBox);
   if (index < 0 || index >= CountOptions())
     return false;
-  if (IsOptionSelected(index))
-    return true;
 
-  WideString opt_value = GetOptionValue(index);
-  const CPDF_Object* pValue = GetValueOrSelectedIndicesObject();
-  if (!pValue)
-    return false;
-
-  if (pValue->IsString())
-    return pValue->GetUnicodeText() == opt_value;
-
-  if (pValue->IsNumber()) {
-    if (pValue->GetString().IsEmpty())
-      return false;
-    return (pValue->GetInteger() == index);
-  }
-
-  const CPDF_Array* pArray = pValue->AsArray();
-  if (!pArray)
-    return false;
-
-  for (int i = 0; i < CountSelectedOptions(); ++i) {
-    if (GetSelectedOptionIndex(i) == index) {
-      const CPDF_Object* pDirectObj = pArray->GetDirectObjectAt(i);
-      return pDirectObj && pDirectObj->GetUnicodeText() == opt_value;
-    }
-  }
-  return false;
+  // First consider the /I entry if it is valid, then fall back to the /V entry.
+  return m_bUseSelectedIndices ? IsSelectedIndex(index)
+                               : IsSelectedOption(GetOptionValue(index));
 }
 
 bool CPDF_FormField::SetItemSelection(int index,
@@ -523,6 +501,11 @@ bool CPDF_FormField::SetItemSelection(int index,
     SetItemSelectionSelected(index, opt_value);
   else
     SetItemSelectionUnselected(index, opt_value);
+
+  // UseSelectedIndicesObject() has a non-trivial linearithmic run-time, so run
+  // only if necessary.
+  if (!m_bUseSelectedIndices)
+    m_bUseSelectedIndices = UseSelectedIndicesObject();
 
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();
@@ -755,17 +738,40 @@ int CPDF_FormField::GetSelectedOptionIndex(int index) const {
   return pArray->GetIntegerAt(index);
 }
 
-bool CPDF_FormField::IsOptionSelected(int iOptIndex) const {
-  const CPDF_Array* pArray = ToArray(GetSelectedIndicesObject());
-  if (!pArray)
+bool CPDF_FormField::IsSelectedOption(const WideString& wsOptValue) const {
+  const CPDF_Object* pValueObject = GetValueObject();
+  if (!pValueObject)
     return false;
 
-  CPDF_ArrayLocker locker(pArray);
-  for (const auto& pObj : locker) {
-    if (pObj->GetInteger() == iOptIndex)
-      return true;
+  const CPDF_Array* pValueArray = pValueObject->AsArray();
+  if (pValueArray) {
+    CPDF_ArrayLocker locker(pValueArray);
+    for (const auto& pObj : locker) {
+      if (pObj->IsString() && pObj->GetUnicodeText() == wsOptValue)
+        return true;
+    }
   }
-  return false;
+
+  return pValueObject->IsString() &&
+         pValueObject->GetUnicodeText() == wsOptValue;
+}
+
+bool CPDF_FormField::IsSelectedIndex(int iOptIndex) const {
+  const CPDF_Object* pSelectedIndicesObject = GetSelectedIndicesObject();
+  if (!pSelectedIndicesObject)
+    return false;
+
+  const CPDF_Array* pSelectedIndicesArray = pSelectedIndicesObject->AsArray();
+  if (pSelectedIndicesArray) {
+    CPDF_ArrayLocker locker(pSelectedIndicesArray);
+    for (const auto& pObj : locker) {
+      if (pObj->IsNumber() && pObj->GetInteger() == iOptIndex)
+        return true;
+    }
+  }
+
+  return pSelectedIndicesObject->IsNumber() &&
+         pSelectedIndicesObject->GetInteger() == iOptIndex;
 }
 
 bool CPDF_FormField::SelectOption(int iOptIndex,
@@ -820,6 +826,83 @@ bool CPDF_FormField::SelectOption(int iOptIndex,
     NotifyListOrComboBoxAfterChange();
 
   return true;
+}
+
+bool CPDF_FormField::UseSelectedIndicesObject() const {
+  ASSERT(GetType() == kComboBox || GetType() == kListBox);
+
+  const CPDF_Object* pSelectedIndicesObject = GetSelectedIndicesObject();
+  if (!pSelectedIndicesObject)
+    return false;
+
+  // If there's not value object, then just use the indices object.
+  const CPDF_Object* pValueObject = GetValueObject();
+  if (!pValueObject)
+    return true;
+
+  // Verify that the selected indices object is either an array or a number and
+  // count the number of indices.
+  size_t selected_indices_size;
+  const CPDF_Array* pSelectedIndicesArray = pSelectedIndicesObject->AsArray();
+  if (pSelectedIndicesArray)
+    selected_indices_size = pSelectedIndicesArray->size();
+  else if (pSelectedIndicesObject->IsNumber())
+    selected_indices_size = 1;
+  else
+    return false;
+
+  // Verify that the number of values is equal to |selected_indices_size|. Then,
+  // count the number of occurances of each of the distinct values in the values
+  // object.
+  std::map<WideString, size_t> values;
+  const CPDF_Array* pValueArray = pValueObject->AsArray();
+  if (pValueArray) {
+    if (pValueArray->size() != selected_indices_size)
+      return false;
+    CPDF_ArrayLocker locker(pValueArray);
+    for (const auto& pObj : locker) {
+      if (pObj->IsString())
+        values[pObj->GetUnicodeText()]++;
+    }
+  } else if (pValueObject->IsString()) {
+    if (selected_indices_size != 1)
+      return false;
+    values[pValueObject->GetUnicodeText()]++;
+  }
+
+  // Validate each index in the selected indices object. Then, verify that items
+  // identified by selected indices entry do not differ from those in the values
+  // entry of the field dictionary.
+  const int num_options = CountOptions();
+  if (pSelectedIndicesArray) {
+    CPDF_ArrayLocker locker(pSelectedIndicesArray);
+    for (const auto& pObj : locker) {
+      if (!pObj->IsNumber())
+        return false;
+
+      int index = pObj->GetInteger();
+      if (index < 0 || index >= num_options)
+        return false;
+
+      WideString wsOptValue = GetOptionValue(index);
+      auto it = values.find(wsOptValue);
+      if (it == values.end())
+        return false;
+
+      it->second--;
+      if (it->second == 0)
+        values.erase(it);
+    }
+
+    return values.empty();
+  }
+
+  ASSERT(pSelectedIndicesObject->IsNumber());
+  int index = pSelectedIndicesObject->GetInteger();
+  if (index < 0 || index >= num_options)
+    return false;
+
+  return pdfium::ContainsKey(values, GetOptionValue(index));
 }
 
 void CPDF_FormField::LoadDA() {

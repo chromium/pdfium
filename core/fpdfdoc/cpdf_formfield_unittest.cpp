@@ -43,6 +43,7 @@ class CPDF_TestEmptyDocument final : public CPDF_Document {
 void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,
                               RetainPtr<CPDF_Object> values,
                               RetainPtr<CPDF_Object> selected_indices,
+                              bool expected_use_indices,
                               const std::vector<int>& expected_indices,
                               const std::vector<int>& excluded_indices) {
   auto form_dict = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -59,6 +60,7 @@ void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,
   CPDF_TestEmptyDocument doc;
   CPDF_InteractiveForm form(&doc);
   CPDF_FormField form_field(&form, form_dict.Get());
+  EXPECT_EQ(expected_use_indices, form_field.UseSelectedIndicesObject());
   for (int i = 0; i < form_field.CountOptions(); i++) {
     const bool expected_selected = pdfium::ContainsValue(expected_indices, i);
     EXPECT_EQ(expected_selected, form_field.IsItemSelected(i));
@@ -123,7 +125,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices;
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, /*values=*/nullptr,
-                             /*selected_indices=*/nullptr, expected_indices,
+                             /*selected_indices=*/nullptr,
+                             /*expected_use_indices=*/false, expected_indices,
                              excluded_indices);
   }
   {
@@ -132,7 +135,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{2};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, /*selected_indices=*/nullptr,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) object is just an invalid string.
@@ -140,17 +144,18 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices;
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, /*selected_indices=*/nullptr,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) object is an array with one object.
     auto values = pdfium::MakeRetain<CPDF_Array>();
     values->AppendNew<CPDF_String>(L"Beta");
-    // TODO(bug_1505): Should be selected at index 1.
-    std::vector<int> expected_indices;
+    std::vector<int> expected_indices{1};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, /*selected_indices=*/nullptr,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) object is an array with one invalid object.
@@ -159,18 +164,19 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices;
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, /*selected_indices=*/nullptr,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) object is an array with multiple objects.
     auto values = pdfium::MakeRetain<CPDF_Array>();
     values->AppendNew<CPDF_String>(L"Beta");
     values->AppendNew<CPDF_String>(L"Epsilon");
-    // TODO(bug_1505): Should be selected at index 1 and index 4.
-    std::vector<int> expected_indices;
+    std::vector<int> expected_indices{1, 4};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, /*selected_indices=*/nullptr,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) object is an array with multiple objects with one invalid.
@@ -178,11 +184,11 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     values->AppendNew<CPDF_String>(L"Beta");
     values->AppendNew<CPDF_String>(L"Epsilon");
     values->AppendNew<CPDF_String>(L"Omega");
-    // TODO(bug_1505): Should be selected at index 1 and index 4.
-    std::vector<int> expected_indices;
+    std::vector<int> expected_indices{1, 4};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, /*selected_indices=*/nullptr,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Selected indices (/I) object is just a number.
@@ -190,7 +196,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{3};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, /*values=*/nullptr, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/true, expected_indices,
+                             excluded_indices);
   }
   {
     // Selected indices (/I) object is just an invalid number.
@@ -198,7 +205,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices;
     std::vector<int> excluded_indices{-1, 5, 26};
     TestMultiselectFieldDict(opt_array, /*values=*/nullptr, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/true, expected_indices,
+                             excluded_indices);
   }
   {
     // Selected indices (/I) object is an array with one object.
@@ -207,7 +215,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{0};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, /*values=*/nullptr, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/true, expected_indices,
+                             excluded_indices);
   }
   {
     // Selected indices (/I) object is an array with multiple objects.
@@ -218,7 +227,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{0, 2, 3};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, /*values=*/nullptr, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/true, expected_indices,
+                             excluded_indices);
   }
   {
     // Selected indices (/I) object is an array with multiple objects and some
@@ -233,7 +243,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{0, 2, 3};
     std::vector<int> excluded_indices{-5, -1, 5, 12, 42};
     TestMultiselectFieldDict(opt_array, /*values=*/nullptr, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/true, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) or Selected Indices (/I) objects conflict with different
@@ -245,11 +256,11 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     selected_indices->AppendNew<CPDF_Number>(0);
     selected_indices->AppendNew<CPDF_Number>(2);
     selected_indices->AppendNew<CPDF_Number>(3);
-    // TODO(bug_1505): Should be selected at index 1 and index 4.
-    std::vector<int> expected_indices{0, 2, 3};
+    std::vector<int> expected_indices{1, 4};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) or Selected Indices (/I) objects conflict with same lengths.
@@ -259,11 +270,11 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     auto selected_indices = pdfium::MakeRetain<CPDF_Array>();
     selected_indices->AppendNew<CPDF_Number>(2);
     selected_indices->AppendNew<CPDF_Number>(3);
-    // TODO(bug_1505): Should be selected at index 0 and index 4.
-    std::vector<int> expected_indices{2, 3};
+    std::vector<int> expected_indices{0, 4};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) or Selected Indices (/I) objects conflict with values being
@@ -278,7 +289,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{1, 4};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) or Selected Indices (/I) objects conflict with selected
@@ -293,7 +305,8 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{1, 4};
     std::vector<int> excluded_indices{-1, 5, 26};
     TestMultiselectFieldDict(opt_array, values, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) or Selected Indices (/I) objects conflict with both being
@@ -307,11 +320,11 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     selected_indices->AppendNew<CPDF_Number>(2);
     selected_indices->AppendNew<CPDF_Number>(3);
     selected_indices->AppendNew<CPDF_Number>(26);
-    // TODO(bug_1505): Should be selected at index 1 and index 4.
-    std::vector<int> expected_indices{0, 2, 3};
+    std::vector<int> expected_indices{1, 4};
     std::vector<int> excluded_indices{-1, 5, 26};
     TestMultiselectFieldDict(opt_array, values, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
   {
     // Values (/V) or Selected Indices (/I) objects conflict with each not being
@@ -321,6 +334,7 @@ TEST(CPDF_FormFieldTest, IsItemSelected) {
     std::vector<int> expected_indices{2};
     std::vector<int> excluded_indices{-1, 5};
     TestMultiselectFieldDict(opt_array, values, selected_indices,
-                             expected_indices, excluded_indices);
+                             /*expected_use_indices=*/false, expected_indices,
+                             excluded_indices);
   }
 }
