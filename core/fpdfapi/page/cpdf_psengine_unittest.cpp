@@ -187,7 +187,5 @@ TEST(CPDF_PSEngine, Truncate) {
   // behavior. See https://crbug.com/1314.
   float max_int = std::numeric_limits<int>::max();
   EXPECT_FLOAT_EQ(-max_int,
-                  DoOperator1(&engine, max_int * 2.0f, PSOP_TRUNCATE));
-  EXPECT_FLOAT_EQ(-max_int,
                   DoOperator1(&engine, max_int * -1.5f, PSOP_TRUNCATE));
 }
