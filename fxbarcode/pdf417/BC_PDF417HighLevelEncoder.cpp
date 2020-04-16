@@ -78,19 +78,17 @@ bool IsText(wchar_t ch) {
 // static
 Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
     WideStringView msg) {
-  ByteString bytes = FX_UTF8Encode(msg);
+  const ByteString bytes = FX_UTF8Encode(msg);
   size_t len = bytes.GetLength();
   WideString result;
   result.Reserve(len);
   for (size_t i = 0; i < len; i++) {
     wchar_t ch = bytes[i] & 0xff;
     if (ch == '?' && bytes[i] != '?')
-      return {};
+      return pdfium::nullopt;
 
     result += ch;
   }
-  std::vector<uint8_t, FxAllocAllocator<uint8_t>> byteArr(bytes.begin(),
-                                                          bytes.end());
   len = result.GetLength();
   WideString sb;
   sb.Reserve(len);
@@ -117,17 +115,17 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
         p += t;
       } else {
         Optional<size_t> b =
-            DetermineConsecutiveBinaryCount(result, &byteArr, p);
-        if (!b)
-          return {};
+            DetermineConsecutiveBinaryCount(result, bytes.raw_span(), p);
+        if (!b.has_value())
+          return pdfium::nullopt;
 
         size_t b_value = b.value();
         if (b_value == 0)
           b_value = 1;
         if (b_value == 1 && encodingMode == EncodingMode::kText) {
-          EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
+          EncodeBinary(bytes.raw_span(), p, 1, EncodingMode::kText, &sb);
         } else {
-          EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
+          EncodeBinary(bytes.raw_span(), p, b_value, encodingMode, &sb);
           encodingMode = EncodingMode::kByte;
           textSubMode = SubMode::kAlpha;
         }
@@ -355,7 +353,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
 
 Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
     WideString msg,
-    std::vector<uint8_t, FxAllocAllocator<uint8_t>>* bytes,
+    pdfium::span<const uint8_t> bytes,
     size_t startpos) {
   size_t len = msg.GetLength();
   size_t idx = startpos;
@@ -383,7 +381,7 @@ Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
     if (textCount >= 5)
       return idx - startpos;
     ch = msg[idx];
-    if ((*bytes)[idx] == 63 && ch != '?')
+    if (bytes[idx] == 63 && ch != '?')
       return {};
     idx++;
   }

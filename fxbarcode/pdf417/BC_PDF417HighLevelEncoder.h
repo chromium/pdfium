@@ -7,9 +7,6 @@
 #ifndef FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 #define FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 
-#include <vector>
-
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "fxbarcode/pdf417/BC_PDF417.h"
 #include "third_party/base/optional.h"
@@ -45,7 +42,7 @@ class CBC_PDF417HighLevelEncoder {
   static size_t DetermineConsecutiveTextCount(WideString msg, size_t startpos);
   static Optional<size_t> DetermineConsecutiveBinaryCount(
       WideString msg,
-      std::vector<uint8_t, FxAllocAllocator<uint8_t>>* bytes,
+      pdfium::span<const uint8_t> bytes,
       size_t startpos);
 
   friend class PDF417HighLevelEncoderTest_ConsecutiveBinaryCount_Test;
