@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/apple/fx_mac_impl.h"
 #include "core/fxge/cfx_cliprgn.h"
@@ -58,7 +59,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (!pFont->GetPlatformFont())
       return false;
   }
-  std::vector<uint16_t> glyph_indices(nChars);
+  std::vector<uint16_t, FxAllocAllocator<uint16_t>> glyph_indices(nChars);
   std::vector<CGPoint> glyph_positions(nChars);
   for (int i = 0; i < nChars; i++) {
     glyph_indices[i] =

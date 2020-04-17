@@ -200,7 +200,8 @@ void CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw, TLangSysRecord* rec) {
   FT_Bytes sp = raw;
   rec->LookupOrder = GetUInt16(sp);
   rec->ReqFeatureIndex = GetUInt16(sp);
-  rec->FeatureIndices = std::vector<uint16_t>(GetUInt16(sp));
+  rec->FeatureIndices =
+      std::vector<uint16_t, FxAllocAllocator<uint16_t>>(GetUInt16(sp));
   for (auto& element : rec->FeatureIndices)
     element = GetUInt16(sp);
 }
@@ -217,7 +218,8 @@ void CFX_CTTGSUBTable::ParseFeatureList(FT_Bytes raw) {
 void CFX_CTTGSUBTable::ParseFeature(FT_Bytes raw, TFeatureRecord* rec) {
   FT_Bytes sp = raw;
   rec->FeatureParams = GetUInt16(sp);
-  rec->LookupListIndices = std::vector<uint16_t>(GetUInt16(sp));
+  rec->LookupListIndices =
+      std::vector<uint16_t, FxAllocAllocator<uint16_t>>(GetUInt16(sp));
   for (auto& listIndex : rec->LookupListIndices)
     listIndex = GetUInt16(sp);
 }
@@ -262,7 +264,8 @@ void CFX_CTTGSUBTable::ParseCoverageFormat1(FT_Bytes raw,
                                             TCoverageFormat1* rec) {
   FT_Bytes sp = raw;
   (void)GetUInt16(sp);
-  rec->GlyphArray = std::vector<uint16_t>(GetUInt16(sp));
+  rec->GlyphArray =
+      std::vector<uint16_t, FxAllocAllocator<uint16_t>>(GetUInt16(sp));
   for (auto& glyph : rec->GlyphArray)
     glyph = GetUInt16(sp);
 }
@@ -308,7 +311,8 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw, TSubTable2* rec) {
   (void)GetUInt16(sp);
   uint16_t offset = GetUInt16(sp);
   rec->Coverage = ParseCoverage(&raw[offset]);
-  rec->Substitutes = std::vector<uint16_t>(GetUInt16(sp));
+  rec->Substitutes =
+      std::vector<uint16_t, FxAllocAllocator<uint16_t>>(GetUInt16(sp));
   for (auto& substitute : rec->Substitutes)
     substitute = GetUInt16(sp);
 }

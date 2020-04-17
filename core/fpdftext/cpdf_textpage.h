@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
@@ -134,7 +135,7 @@ class CPDF_TextPage {
       const std::function<bool(const CharInfo&)>& predicate) const;
 
   UnownedPtr<const CPDF_Page> const m_pPage;
-  std::vector<uint16_t> m_CharIndices;
+  std::vector<uint16_t, FxAllocAllocator<uint16_t>> m_CharIndices;
   std::deque<CharInfo> m_CharList;
   std::deque<CharInfo> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;

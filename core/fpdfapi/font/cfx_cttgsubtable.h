@@ -13,6 +13,7 @@
 #include <set>
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/fx_freetype.h"
 
 class CFX_CTTGSUBTable {
@@ -30,7 +31,7 @@ class CFX_CTTGSUBTable {
     uint32_t LangSysTag;
     uint16_t LookupOrder;
     uint16_t ReqFeatureIndex;
-    std::vector<uint16_t> FeatureIndices;
+    std::vector<uint16_t, FxAllocAllocator<uint16_t>> FeatureIndices;
   };
 
   struct TScriptRecord {
@@ -48,7 +49,7 @@ class CFX_CTTGSUBTable {
 
     uint32_t FeatureTag;
     uint16_t FeatureParams;
-    std::vector<uint16_t> LookupListIndices;
+    std::vector<uint16_t, FxAllocAllocator<uint16_t>> LookupListIndices;
   };
 
   struct TRangeRecord {
@@ -68,7 +69,7 @@ class CFX_CTTGSUBTable {
     TCoverageFormat1();
     ~TCoverageFormat1() override;
 
-    std::vector<uint16_t> GlyphArray;
+    std::vector<uint16_t, FxAllocAllocator<uint16_t>> GlyphArray;
   };
 
   struct TCoverageFormat2 final : public TCoverageFormatBase {
@@ -105,7 +106,7 @@ class CFX_CTTGSUBTable {
     TSubTable2();
     ~TSubTable2() override;
 
-    std::vector<uint16_t> Substitutes;
+    std::vector<uint16_t, FxAllocAllocator<uint16_t>> Substitutes;
   };
 
   struct TLookup {
