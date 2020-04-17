@@ -328,6 +328,23 @@ TEST_F(FPDFViewEmbedderTest, Document) {
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
 }
 
+TEST_F(FPDFViewEmbedderTest, LoadDocument64) {
+  std::string file_path;
+  ASSERT_TRUE(PathService::GetTestFilePath("about_blank.pdf", &file_path));
+
+  size_t file_length = 0;
+  std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
+      GetFileContents(file_path.c_str(), &file_length);
+  ASSERT(file_contents);
+  ScopedFPDFDocument doc(
+      FPDF_LoadMemDocument64(file_contents.get(), file_length, nullptr));
+  ASSERT_TRUE(doc);
+
+  int version;
+  EXPECT_TRUE(FPDF_GetFileVersion(doc.get(), &version));
+  EXPECT_EQ(14, version);
+}
+
 TEST_F(FPDFViewEmbedderTest, LoadNonexistentDocument) {
   FPDF_DOCUMENT doc = FPDF_LoadDocument("nonexistent_document.pdf", "");
   ASSERT_FALSE(doc);
