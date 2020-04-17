@@ -40,7 +40,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fpdfapi/render/cpdf_charposlist.h"
+#include "core/fpdfapi/render/charposlist.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_imagerenderer.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
@@ -1138,9 +1138,10 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     RenderSingleObject(&path, mtObj2Device);
     return;
   }
-  const CPDF_CharPosList CharPosList(
+
+  std::vector<TextCharPos> char_pos_list = GetCharPosList(
       textobj->GetCharCodes(), textobj->GetCharPositions(), pFont, font_size);
-  for (const TextCharPos& charpos : CharPosList.Get()) {
+  for (const TextCharPos& charpos : char_pos_list) {
     auto* font = charpos.m_FallbackFontPosition == -1
                      ? pFont->GetFont()
                      : pFont->GetFontFallback(charpos.m_FallbackFontPosition);

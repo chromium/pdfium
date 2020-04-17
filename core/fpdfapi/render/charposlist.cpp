@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_charposlist.h"
+#include "core/fpdfapi/render/charposlist.h"
 
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_cidfont.h"
@@ -12,11 +12,13 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/text_char_pos.h"
 
-CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
-                                   const std::vector<float>& charPos,
-                                   CPDF_Font* pFont,
-                                   float font_size) {
-  m_CharPos.reserve(charCodes.size());
+std::vector<TextCharPos> GetCharPosList(const std::vector<uint32_t>& charCodes,
+                                        const std::vector<float>& charPos,
+                                        CPDF_Font* pFont,
+                                        float font_size) {
+  std::vector<TextCharPos> results;
+  results.reserve(charCodes.size());
+
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
   bool bToUnicode = !!pFont->GetFontDict()->GetStreamFor("ToUnicode");
@@ -26,8 +28,8 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
       continue;
 
     bool bVert = false;
-    m_CharPos.emplace_back();
-    TextCharPos& charpos = m_CharPos.back();
+    results.emplace_back();
+    TextCharPos& charpos = results.back();
     if (pCIDFont)
       charpos.m_bFontStyle = true;
     WideString unicode = pFont->UnicodeFromCharCode(CharCode);
@@ -135,6 +137,6 @@ CPDF_CharPosList::CPDF_CharPosList(const std::vector<uint32_t>& charCodes,
       charpos.m_bGlyphAdjust = true;
     }
   }
-}
 
-CPDF_CharPosList::~CPDF_CharPosList() = default;
+  return results;
+}

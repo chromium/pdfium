@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fpdfapi/render/cpdf_charposlist.h"
+#include "core/fpdfapi/render/charposlist.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -38,8 +38,8 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                      FX_ARGB stroke_argb,
                                      CFX_PathData* pClippingPath,
                                      int nFlag) {
-  const CPDF_CharPosList CharPosList(charCodes, charPos, pFont, font_size);
-  const std::vector<TextCharPos>& pos = CharPosList.Get();
+  std::vector<TextCharPos> pos =
+      GetCharPosList(charCodes, charPos, pFont, font_size);
   if (pos.empty())
     return true;
 
@@ -115,8 +115,8 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& mtText2Device,
                                        FX_ARGB fill_argb,
                                        const CPDF_RenderOptions& options) {
-  const CPDF_CharPosList CharPosList(charCodes, charPos, pFont, font_size);
-  const std::vector<TextCharPos>& pos = CharPosList.Get();
+  std::vector<TextCharPos> pos =
+      GetCharPosList(charCodes, charPos, pFont, font_size);
   if (pos.empty())
     return true;
 
