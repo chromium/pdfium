@@ -88,7 +88,9 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   bool IsSubstFontBold() const;
+#endif
   bool IsVertical() const { return m_bVertical; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
