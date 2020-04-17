@@ -12,46 +12,47 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/text_char_pos.h"
 
-std::vector<TextCharPos> GetCharPosList(const std::vector<uint32_t>& charCodes,
-                                        const std::vector<float>& charPos,
-                                        CPDF_Font* pFont,
+std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
+                                        pdfium::span<const float> char_pos,
+                                        CPDF_Font* font,
                                         float font_size) {
   std::vector<TextCharPos> results;
-  results.reserve(charCodes.size());
+  results.reserve(char_codes.size());
 
-  CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
-  bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
-  bool bToUnicode = !!pFont->GetFontDict()->GetStreamFor("ToUnicode");
-  for (size_t i = 0; i < charCodes.size(); ++i) {
-    uint32_t CharCode = charCodes[i];
-    if (CharCode == static_cast<uint32_t>(-1))
+  CPDF_CIDFont* cid_font = font->AsCIDFont();
+  bool is_vertical_writing = cid_font && cid_font->IsVertWriting();
+  bool has_to_unicode = !!font->GetFontDict()->GetStreamFor("ToUnicode");
+  for (size_t i = 0; i < char_codes.size(); ++i) {
+    uint32_t char_code = char_codes[i];
+    if (char_code == static_cast<uint32_t>(-1))
       continue;
 
-    bool bVert = false;
+    bool is_vertical_glyph = false;
     results.emplace_back();
-    TextCharPos& charpos = results.back();
-    if (pCIDFont)
-      charpos.m_bFontStyle = true;
-    WideString unicode = pFont->UnicodeFromCharCode(CharCode);
-    charpos.m_Unicode = !unicode.IsEmpty() ? unicode[0] : CharCode;
-    charpos.m_GlyphIndex = pFont->GlyphFromCharCode(CharCode, &bVert);
-    uint32_t GlyphID = charpos.m_GlyphIndex;
+    TextCharPos& text_char_pos = results.back();
+    if (cid_font)
+      text_char_pos.m_bFontStyle = true;
+    WideString unicode = font->UnicodeFromCharCode(char_code);
+    text_char_pos.m_Unicode = !unicode.IsEmpty() ? unicode[0] : char_code;
+    text_char_pos.m_GlyphIndex =
+        font->GlyphFromCharCode(char_code, &is_vertical_glyph);
+    uint32_t glyph_id = text_char_pos.m_GlyphIndex;
 #if defined(OS_MACOSX)
-    charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
-    GlyphID = charpos.m_ExtGID != static_cast<uint32_t>(-1)
-                  ? charpos.m_ExtGID
-                  : charpos.m_GlyphIndex;
+    text_char_pos.m_ExtGID = font->GlyphFromCharCodeExt(char_code);
+    glyph_id = text_char_pos.m_ExtGID != static_cast<uint32_t>(-1)
+                   ? text_char_pos.m_ExtGID
+                   : text_char_pos.m_GlyphIndex;
 #endif
-    bool bIsInvalidGlyph = GlyphID == static_cast<uint32_t>(-1);
-    bool bIsTrueTypeZeroGlyph = GlyphID == 0 && pFont->IsTrueTypeFont();
-    bool bUseFallbackFont = false;
-    if (bIsInvalidGlyph || bIsTrueTypeZeroGlyph) {
-      charpos.m_FallbackFontPosition =
-          pFont->FallbackFontFromCharcode(CharCode);
-      charpos.m_GlyphIndex = pFont->FallbackGlyphFromCharcode(
-          charpos.m_FallbackFontPosition, CharCode);
-      if (bIsTrueTypeZeroGlyph &&
-          charpos.m_GlyphIndex == static_cast<uint32_t>(-1)) {
+    bool is_invalid_glyph = glyph_id == static_cast<uint32_t>(-1);
+    bool is_true_type_zero_glyph = glyph_id == 0 && font->IsTrueTypeFont();
+    bool use_fallback_font = false;
+    if (is_invalid_glyph || is_true_type_zero_glyph) {
+      text_char_pos.m_FallbackFontPosition =
+          font->FallbackFontFromCharcode(char_code);
+      text_char_pos.m_GlyphIndex = font->FallbackGlyphFromCharcode(
+          text_char_pos.m_FallbackFontPosition, char_code);
+      if (is_true_type_zero_glyph &&
+          text_char_pos.m_GlyphIndex == static_cast<uint32_t>(-1)) {
         // For a TrueType font character, when finding the glyph from the
         // fallback font fails, switch back to using the original font.
 
@@ -62,79 +63,83 @@ std::vector<TextCharPos> GetCharPosList(const std::vector<uint32_t>& charCodes,
         // https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/5411.ToUnicode.pdf
         // and
         // https://www.freetype.org/freetype2/docs/tutorial/step1.html#section-6)
-        if (bToUnicode)
-          charpos.m_GlyphIndex = 0;
+        if (has_to_unicode)
+          text_char_pos.m_GlyphIndex = 0;
       } else {
-        bUseFallbackFont = true;
+        use_fallback_font = true;
       }
     }
-    CFX_Font* pCurrentFont;
-    if (bUseFallbackFont) {
-      pCurrentFont = pFont->GetFontFallback(charpos.m_FallbackFontPosition);
+    CFX_Font* current_font;
+    if (use_fallback_font) {
+      current_font =
+          font->GetFontFallback(text_char_pos.m_FallbackFontPosition);
 #if defined(OS_MACOSX)
-      charpos.m_ExtGID = charpos.m_GlyphIndex;
+      text_char_pos.m_ExtGID = text_char_pos.m_GlyphIndex;
 #endif
     } else {
-      pCurrentFont = pFont->GetFont();
-      charpos.m_FallbackFontPosition = -1;
+      current_font = font->GetFont();
+      text_char_pos.m_FallbackFontPosition = -1;
     }
 
-    if (!pFont->IsEmbedded() && !pFont->IsCIDFont())
-      charpos.m_FontCharWidth = pFont->GetCharWidthF(CharCode);
+    if (!font->IsEmbedded() && !font->IsCIDFont())
+      text_char_pos.m_FontCharWidth = font->GetCharWidthF(char_code);
     else
-      charpos.m_FontCharWidth = 0;
+      text_char_pos.m_FontCharWidth = 0;
 
-    charpos.m_Origin = CFX_PointF(i > 0 ? charPos[i - 1] : 0, 0);
-    charpos.m_bGlyphAdjust = false;
+    text_char_pos.m_Origin = CFX_PointF(i > 0 ? char_pos[i - 1] : 0, 0);
+    text_char_pos.m_bGlyphAdjust = false;
 
-    float scalingFactor = 1.0f;
-    if (!pFont->IsEmbedded() && pFont->HasFontWidths() && !bVertWriting &&
-        !pCurrentFont->GetSubstFont()->m_bFlagMM) {
-      uint32_t pdfGlyphWidth = pFont->GetCharWidthF(CharCode);
-      uint32_t ftGlyphWidth =
-          pCurrentFont ? pCurrentFont->GetGlyphWidth(charpos.m_GlyphIndex) : 0;
-      if (ftGlyphWidth && pdfGlyphWidth > ftGlyphWidth + 1) {
+    float scaling_factor = 1.0f;
+    if (!font->IsEmbedded() && font->HasFontWidths() && !is_vertical_writing &&
+        !current_font->GetSubstFont()->m_bFlagMM) {
+      uint32_t pdf_glyph_width = font->GetCharWidthF(char_code);
+      uint32_t font_glyph_width =
+          current_font ? current_font->GetGlyphWidth(text_char_pos.m_GlyphIndex)
+                       : 0;
+      if (font_glyph_width && pdf_glyph_width > font_glyph_width + 1) {
         // Move the initial x position by half of the excess (transformed to
         // text space coordinates).
-        charpos.m_Origin.x +=
-            (pdfGlyphWidth - ftGlyphWidth) * font_size / 2000.0f;
-      } else if (pdfGlyphWidth && ftGlyphWidth &&
-                 pdfGlyphWidth < ftGlyphWidth) {
-        scalingFactor = static_cast<float>(pdfGlyphWidth) / ftGlyphWidth;
-        charpos.m_AdjustMatrix[0] = scalingFactor;
-        charpos.m_AdjustMatrix[1] = 0.0f;
-        charpos.m_AdjustMatrix[2] = 0.0f;
-        charpos.m_AdjustMatrix[3] = 1.0f;
-        charpos.m_bGlyphAdjust = true;
+        text_char_pos.m_Origin.x +=
+            (pdf_glyph_width - font_glyph_width) * font_size / 2000.0f;
+      } else if (pdf_glyph_width && font_glyph_width &&
+                 pdf_glyph_width < font_glyph_width) {
+        scaling_factor = static_cast<float>(pdf_glyph_width) / font_glyph_width;
+        text_char_pos.m_AdjustMatrix[0] = scaling_factor;
+        text_char_pos.m_AdjustMatrix[1] = 0.0f;
+        text_char_pos.m_AdjustMatrix[2] = 0.0f;
+        text_char_pos.m_AdjustMatrix[3] = 1.0f;
+        text_char_pos.m_bGlyphAdjust = true;
       }
     }
-    if (!pCIDFont)
+    if (!cid_font)
       continue;
 
-    uint16_t CID = pCIDFont->CIDFromCharCode(CharCode);
-    if (bVertWriting) {
-      charpos.m_Origin = CFX_PointF(0, charpos.m_Origin.x);
+    uint16_t cid = cid_font->CIDFromCharCode(char_code);
+    if (is_vertical_writing) {
+      text_char_pos.m_Origin = CFX_PointF(0, text_char_pos.m_Origin.x);
 
       short vx;
       short vy;
-      pCIDFont->GetVertOrigin(CID, vx, vy);
-      charpos.m_Origin.x -= font_size * vx / 1000;
-      charpos.m_Origin.y -= font_size * vy / 1000;
+      cid_font->GetVertOrigin(cid, vx, vy);
+      text_char_pos.m_Origin.x -= font_size * vx / 1000;
+      text_char_pos.m_Origin.y -= font_size * vy / 1000;
     }
 
-    const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
-    if (pTransform && !bVert) {
-      charpos.m_AdjustMatrix[0] =
-          pCIDFont->CIDTransformToFloat(pTransform[0]) * scalingFactor;
-      charpos.m_AdjustMatrix[1] =
-          pCIDFont->CIDTransformToFloat(pTransform[1]) * scalingFactor;
-      charpos.m_AdjustMatrix[2] = pCIDFont->CIDTransformToFloat(pTransform[2]);
-      charpos.m_AdjustMatrix[3] = pCIDFont->CIDTransformToFloat(pTransform[3]);
-      charpos.m_Origin.x +=
-          pCIDFont->CIDTransformToFloat(pTransform[4]) * font_size;
-      charpos.m_Origin.y +=
-          pCIDFont->CIDTransformToFloat(pTransform[5]) * font_size;
-      charpos.m_bGlyphAdjust = true;
+    const uint8_t* cid_transform = cid_font->GetCIDTransform(cid);
+    if (cid_transform && !is_vertical_glyph) {
+      text_char_pos.m_AdjustMatrix[0] =
+          cid_font->CIDTransformToFloat(cid_transform[0]) * scaling_factor;
+      text_char_pos.m_AdjustMatrix[1] =
+          cid_font->CIDTransformToFloat(cid_transform[1]) * scaling_factor;
+      text_char_pos.m_AdjustMatrix[2] =
+          cid_font->CIDTransformToFloat(cid_transform[2]);
+      text_char_pos.m_AdjustMatrix[3] =
+          cid_font->CIDTransformToFloat(cid_transform[3]);
+      text_char_pos.m_Origin.x +=
+          cid_font->CIDTransformToFloat(cid_transform[4]) * font_size;
+      text_char_pos.m_Origin.y +=
+          cid_font->CIDTransformToFloat(cid_transform[5]) * font_size;
+      text_char_pos.m_bGlyphAdjust = true;
     }
   }
 
