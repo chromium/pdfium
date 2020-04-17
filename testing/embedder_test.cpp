@@ -86,10 +86,8 @@ void EmbedderTest::TearDown() {
   EXPECT_EQ(0U, page_map_.size());
   EXPECT_EQ(0U, saved_page_map_.size());
 
-  if (document_) {
-    FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
+  if (document_)
     CloseDocument();
-  }
 
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
@@ -229,6 +227,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
 }
 
 void EmbedderTest::CloseDocument() {
+  FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
   FPDFDOC_ExitFormFillEnvironment(form_handle_);
   form_handle_ = nullptr;
 
