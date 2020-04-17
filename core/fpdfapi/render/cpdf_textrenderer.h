@@ -7,12 +7,11 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_TEXTRENDERER_H_
 #define CORE_FPDFAPI_RENDER_CPDF_TEXTRENDERER_H_
 
-#include <vector>
-
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/span.h"
 
 class CFX_RenderDevice;
 class CFX_GraphStateData;
@@ -33,8 +32,8 @@ class CPDF_TextRenderer {
                              const CPDF_RenderOptions& options);
 
   static bool DrawTextPath(CFX_RenderDevice* pDevice,
-                           const std::vector<uint32_t>& charCodes,
-                           const std::vector<float>& charPos,
+                           pdfium::span<const uint32_t> char_codes,
+                           pdfium::span<const float> char_pos,
                            CPDF_Font* pFont,
                            float font_size,
                            const CFX_Matrix& mtText2User,
@@ -46,8 +45,8 @@ class CPDF_TextRenderer {
                            int nFlag);
 
   static bool DrawNormalText(CFX_RenderDevice* pDevice,
-                             const std::vector<uint32_t>& charCodes,
-                             const std::vector<float>& charPos,
+                             pdfium::span<const uint32_t> char_codes,
+                             pdfium::span<const float> char_pos,
                              CPDF_Font* pFont,
                              float font_size,
                              const CFX_Matrix& mtText2Device,

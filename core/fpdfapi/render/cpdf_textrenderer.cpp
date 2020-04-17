@@ -7,6 +7,7 @@
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/render/charposlist.h"
@@ -27,8 +28,8 @@ CFX_Font* GetFont(CPDF_Font* pFont, int32_t position) {
 
 // static
 bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
-                                     const std::vector<uint32_t>& charCodes,
-                                     const std::vector<float>& charPos,
+                                     pdfium::span<const uint32_t> char_codes,
+                                     pdfium::span<const float> char_pos,
                                      CPDF_Font* pFont,
                                      float font_size,
                                      const CFX_Matrix& mtText2User,
@@ -39,7 +40,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                      CFX_PathData* pClippingPath,
                                      int nFlag) {
   std::vector<TextCharPos> pos =
-      GetCharPosList(charCodes, charPos, pFont, font_size);
+      GetCharPosList(char_codes, char_pos, pFont, font_size);
   if (pos.empty())
     return true;
 
@@ -108,15 +109,15 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
 
 // static
 bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
-                                       const std::vector<uint32_t>& charCodes,
-                                       const std::vector<float>& charPos,
+                                       pdfium::span<const uint32_t> char_codes,
+                                       pdfium::span<const float> char_pos,
                                        CPDF_Font* pFont,
                                        float font_size,
                                        const CFX_Matrix& mtText2Device,
                                        FX_ARGB fill_argb,
                                        const CPDF_RenderOptions& options) {
   std::vector<TextCharPos> pos =
-      GetCharPosList(charCodes, charPos, pFont, font_size);
+      GetCharPosList(char_codes, char_pos, pFont, font_size);
   if (pos.empty())
     return true;
 
