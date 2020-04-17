@@ -54,9 +54,9 @@ class CPWL_SBButton final : public CPWL_Wnd {
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point) override;
 
  private:
   PWL_SCROLLBAR_TYPE m_eScrollBarType;
@@ -127,8 +127,8 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   bool RePosChildWnd() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;

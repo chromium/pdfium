@@ -244,8 +244,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                           m_pFormFiller.Get());
 }
 
-bool CPWL_Edit::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonDown(point, nFlag);
+bool CPWL_Edit::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
     if (m_bMouseDown && !InvalidateRect(nullptr))
@@ -260,8 +260,8 @@ bool CPWL_Edit::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_Edit::OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonDblClk(point, nFlag);
+bool CPWL_Edit::OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonDblClk(nFlag, point);
 
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
     m_pEdit->SelectAll();
@@ -270,11 +270,11 @@ bool CPWL_Edit::OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_Edit::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_Edit::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   if (m_bMouseDown)
     return false;
 
-  CPWL_Wnd::OnRButtonUp(point, nFlag);
+  CPWL_Wnd::OnRButtonUp(nFlag, point);
 
   if (!HasFlag(PES_TEXTOVERFLOW) && !ClientHitTest(point))
     return true;
@@ -538,9 +538,9 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   return CPWL_EditCtrl::OnChar(nChar, nFlag);
 }
 
-bool CPWL_Edit::OnMouseWheel(const CFX_Vector& delta,
+bool CPWL_Edit::OnMouseWheel(uint32_t nFlag,
                              const CFX_PointF& point,
-                             uint32_t nFlag) {
+                             const CFX_Vector& delta) {
   if (!HasFlag(PES_MULTILINE))
     return false;
 

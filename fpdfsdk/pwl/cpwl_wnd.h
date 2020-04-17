@@ -145,15 +145,15 @@ class CPWL_Wnd : public Observable {
 
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);
-  virtual bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnRButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMouseWheel(const CFX_Vector& delta,
+  virtual bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point);
+  virtual bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point);
+  virtual bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point);
+  virtual bool OnRButtonDown(uint32_t nFlag, const CFX_PointF& point);
+  virtual bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point);
+  virtual bool OnMouseMove(uint32_t nFlag, const CFX_PointF& point);
+  virtual bool OnMouseWheel(uint32_t nFlag,
                             const CFX_PointF& point,
-                            uint32_t nFlag);
+                            const CFX_Vector& delta);
   virtual void SetScrollInfo(const PWL_SCROLL_INFO& info);
   virtual void SetScrollPosition(float pos);
   virtual void ScrollWindowVertically(float pos);

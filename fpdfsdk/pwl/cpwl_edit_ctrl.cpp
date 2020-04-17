@@ -246,8 +246,8 @@ bool CPWL_EditCtrl::OnChar(uint16_t nChar, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_EditCtrl::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonDown(point, nFlag);
+bool CPWL_EditCtrl::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   if (ClientHitTest(point)) {
     if (m_bMouseDown && !InvalidateRect(nullptr))
@@ -262,8 +262,8 @@ bool CPWL_EditCtrl::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_EditCtrl::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonUp(point, nFlag);
+bool CPWL_EditCtrl::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   if (m_bMouseDown) {
     // can receive keybord message
@@ -277,8 +277,8 @@ bool CPWL_EditCtrl::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_EditCtrl::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnMouseMove(point, nFlag);
+bool CPWL_EditCtrl::OnMouseMove(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnMouseMove(nFlag, point);
 
   if (m_bMouseDown)
     m_pEdit->OnMouseMove(point, false, false);

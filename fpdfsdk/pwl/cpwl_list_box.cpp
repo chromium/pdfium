@@ -186,8 +186,8 @@ bool CPWL_ListBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_ListBox::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonDown(point, nFlag);
+bool CPWL_ListBox::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   if (ClientHitTest(point)) {
     m_bMouseDown = true;
@@ -200,8 +200,8 @@ bool CPWL_ListBox::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_ListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonUp(point, nFlag);
+bool CPWL_ListBox::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   if (m_bMouseDown) {
     ReleaseCapture();
@@ -215,8 +215,8 @@ void CPWL_ListBox::SetHoverSel(bool bHoverSel) {
   m_bHoverSel = bHoverSel;
 }
 
-bool CPWL_ListBox::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnMouseMove(point, nFlag);
+bool CPWL_ListBox::OnMouseMove(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnMouseMove(nFlag, point);
 
   if (m_bHoverSel && !IsCaptureMouse() && ClientHitTest(point))
     m_pList->Select(m_pList->GetItemIndex(point));
@@ -366,9 +366,9 @@ CFX_FloatRect CPWL_ListBox::GetListRect() const {
   return GetWindowRect().GetDeflated(width, width);
 }
 
-bool CPWL_ListBox::OnMouseWheel(const CFX_Vector& delta,
+bool CPWL_ListBox::OnMouseWheel(uint32_t nFlag,
                                 const CFX_PointF& point,
-                                uint32_t nFlag) {
+                                const CFX_Vector& delta) {
   if (delta.y < 0)
     m_pList->OnVK_DOWN(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));
   else

@@ -22,7 +22,7 @@ class CPWL_CBListBox final : public CPWL_ListBox {
   ~CPWL_CBListBox() override;
 
   // CPWL_ListBox
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
 
   bool IsMovementKey(uint16_t nChar) const;
   bool OnMovementKeyDown(uint16_t nChar, uint32_t nFlag);
@@ -40,8 +40,8 @@ class CPWL_CBButton final : public CPWL_Wnd {
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
 };
 
 class CPWL_ComboBox final : public CPWL_Wnd {

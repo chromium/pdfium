@@ -59,12 +59,12 @@ class CPWL_Edit final : public CPWL_EditCtrl {
   CFX_FloatRect GetClientRect() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnMouseWheel(const CFX_Vector& delta,
+  bool OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnLButtonDblClk(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
+  bool OnMouseWheel(uint32_t nFlag,
                     const CFX_PointF& point,
-                    uint32_t nFlag) override;
+                    const CFX_Vector& delta) override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   CFX_FloatRect GetFocusRect() const override;

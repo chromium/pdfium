@@ -35,8 +35,8 @@ CPWL_CBListBox::CPWL_CBListBox(
 
 CPWL_CBListBox::~CPWL_CBListBox() = default;
 
-bool CPWL_CBListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonUp(point, nFlag);
+bool CPWL_CBListBox::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   if (!m_bMouseDown)
     return true;
@@ -144,8 +144,8 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_CBButton::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonDown(point, nFlag);
+bool CPWL_CBButton::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonDown(nFlag, point);
 
   SetCapture();
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -154,8 +154,8 @@ bool CPWL_CBButton::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonUp(point, nFlag);
+bool CPWL_CBButton::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonUp(nFlag, point);
 
   ReleaseCapture();
   return true;

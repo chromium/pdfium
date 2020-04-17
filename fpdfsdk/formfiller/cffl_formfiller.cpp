@@ -97,7 +97,7 @@ bool CFFL_FormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
   InvalidateRect(rect);
   if (!rect.Contains(static_cast<int>(point.x), static_cast<int>(point.y)))
     return false;
-  return pWnd->OnLButtonDown(FFLtoPWL(point), nFlags);
+  return pWnd->OnLButtonDown(nFlags, FFLtoPWL(point));
 }
 
 bool CFFL_FormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
@@ -109,7 +109,7 @@ bool CFFL_FormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
     return false;
 
   InvalidateRect(GetViewBBox(pPageView));
-  pWnd->OnLButtonUp(FFLtoPWL(point), nFlags);
+  pWnd->OnLButtonUp(nFlags, FFLtoPWL(point));
   return true;
 }
 
@@ -120,7 +120,7 @@ bool CFFL_FormFiller::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
   if (!pWnd)
     return false;
 
-  pWnd->OnLButtonDblClk(FFLtoPWL(point), nFlags);
+  pWnd->OnLButtonDblClk(nFlags, FFLtoPWL(point));
   return true;
 }
 
@@ -131,7 +131,7 @@ bool CFFL_FormFiller::OnMouseMove(CPDFSDK_PageView* pPageView,
   if (!pWnd)
     return false;
 
-  pWnd->OnMouseMove(FFLtoPWL(point), nFlags);
+  pWnd->OnMouseMove(nFlags, FFLtoPWL(point));
   return true;
 }
 
@@ -143,21 +143,21 @@ bool CFFL_FormFiller::OnMouseWheel(CPDFSDK_PageView* pPageView,
     return false;
 
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView, true);
-  return pWnd && pWnd->OnMouseWheel(delta, FFLtoPWL(point), nFlags);
+  return pWnd && pWnd->OnMouseWheel(nFlags, FFLtoPWL(point), delta);
 }
 
 bool CFFL_FormFiller::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                     uint32_t nFlags,
                                     const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView, true);
-  return pWnd && pWnd->OnRButtonDown(FFLtoPWL(point), nFlags);
+  return pWnd && pWnd->OnRButtonDown(nFlags, FFLtoPWL(point));
 }
 
 bool CFFL_FormFiller::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                   uint32_t nFlags,
                                   const CFX_PointF& point) {
   CPWL_Wnd* pWnd = GetPWLWindow(pPageView, false);
-  return pWnd && pWnd->OnRButtonUp(FFLtoPWL(point), nFlags);
+  return pWnd && pWnd->OnRButtonUp(nFlags, FFLtoPWL(point));
 }
 
 bool CFFL_FormFiller::OnKeyDown(uint32_t nKeyCode, uint32_t nFlags) {

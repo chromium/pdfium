@@ -288,14 +288,14 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
 #undef PWL_IMPLEMENT_KEY_METHOD
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                          \
-  bool CPWL_Wnd::mouse_method_name(const CFX_PointF& point, uint32_t nFlag) {  \
+  bool CPWL_Wnd::mouse_method_name(uint32_t nFlag, const CFX_PointF& point) {  \
     if (!IsValid() || !IsVisible() || !IsEnabled())                            \
       return false;                                                            \
     if (IsWndCaptureMouse(this)) {                                             \
       for (const auto& pChild : m_Children) {                                  \
         if (IsWndCaptureMouse(pChild.get())) {                                 \
-          return pChild->mouse_method_name(pChild->ParentToChild(point),       \
-                                           nFlag);                             \
+          return pChild->mouse_method_name(nFlag,                              \
+                                           pChild->ParentToChild(point));      \
         }                                                                      \
       }                                                                        \
       SetCursor();                                                             \
@@ -303,7 +303,7 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
     }                                                                          \
     for (const auto& pChild : m_Children) {                                    \
       if (pChild->WndHitTest(pChild->ParentToChild(point))) {                  \
-        return pChild->mouse_method_name(pChild->ParentToChild(point), nFlag); \
+        return pChild->mouse_method_name(nFlag, pChild->ParentToChild(point)); \
       }                                                                        \
     }                                                                          \
     if (WndHitTest(point))                                                     \
@@ -318,11 +318,11 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 #undef PWL_IMPLEMENT_MOUSE_METHOD
 
 // Unlike their FWL counterparts, PWL windows don't handle right clicks.
-bool CPWL_Wnd::OnRButtonDown(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_Wnd::OnRButtonDown(uint32_t nFlag, const CFX_PointF& point) {
   return false;
 }
 
-bool CPWL_Wnd::OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_Wnd::OnRButtonUp(uint32_t nFlag, const CFX_PointF& point) {
   return false;
 }
 
@@ -352,9 +352,9 @@ bool CPWL_Wnd::Redo() {
   return false;
 }
 
-bool CPWL_Wnd::OnMouseWheel(const CFX_Vector& delta,
+bool CPWL_Wnd::OnMouseWheel(uint32_t nFlag,
                             const CFX_PointF& point,
-                            uint32_t nFlag) {
+                            const CFX_Vector& delta) {
   if (!IsValid() || !IsVisible() || !IsEnabled())
     return false;
 
@@ -364,7 +364,7 @@ bool CPWL_Wnd::OnMouseWheel(const CFX_Vector& delta,
 
   for (const auto& pChild : m_Children) {
     if (IsWndCaptureKeyboard(pChild.get()))
-      return pChild->OnMouseWheel(delta, pChild->ParentToChild(point), nFlag);
+      return pChild->OnMouseWheel(nFlag, pChild->ParentToChild(point), delta);
   }
   return false;
 }

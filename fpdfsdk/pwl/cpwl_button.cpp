@@ -17,15 +17,15 @@ CPWL_Button::CPWL_Button(
 
 CPWL_Button::~CPWL_Button() = default;
 
-bool CPWL_Button::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonDown(point, nFlag);
+bool CPWL_Button::OnLButtonDown(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonDown(nFlag, point);
   m_bMouseDown = true;
   SetCapture();
   return true;
 }
 
-bool CPWL_Button::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
-  CPWL_Wnd::OnLButtonUp(point, nFlag);
+bool CPWL_Button::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
+  CPWL_Wnd::OnLButtonUp(nFlag, point);
   ReleaseCapture();
   m_bMouseDown = false;
   return true;

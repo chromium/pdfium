@@ -30,7 +30,7 @@ class CPWL_CheckBox final : public CPWL_Button {
   ~CPWL_CheckBox() override;
 
   // CPWL_Button:
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
 
   bool IsChecked() const { return m_bChecked; }
@@ -48,7 +48,7 @@ class CPWL_RadioButton final : public CPWL_Button {
   ~CPWL_RadioButton() override;
 
   // CPWL_Button
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
 
   bool IsChecked() const { return m_bChecked; }
