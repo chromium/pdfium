@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 
 class CFX_CSSTextBuf {
@@ -22,7 +23,7 @@ class CFX_CSSTextBuf {
   WideStringView GetTrailingBlankTrimmedString() const;
 
  protected:
-  std::vector<wchar_t> m_Buffer;
+  std::vector<wchar_t, FxAllocAllocator<wchar_t>> m_Buffer;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSTEXTBUF_H_

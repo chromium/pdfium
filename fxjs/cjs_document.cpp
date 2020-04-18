@@ -18,6 +18,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -392,7 +393,8 @@ CJS_Result CJS_Document::mailForm(
   if (IsExpandedParamKnown(newParams[5]))
     cMsg = pRuntime->ToWideString(newParams[5]);
 
-  std::vector<char> mutable_buf(sTextBuf.begin(), sTextBuf.end());
+  std::vector<char, FxAllocAllocator<char>> mutable_buf(sTextBuf.begin(),
+                                                        sTextBuf.end());
   pRuntime->BeginBlock();
   m_pFormFillEnv->JS_docmailForm(mutable_buf.data(), mutable_buf.size(), bUI,
                                  cTo, cSubject, cCc, cBcc, cMsg);
