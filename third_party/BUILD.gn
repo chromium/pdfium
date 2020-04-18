@@ -606,6 +606,7 @@ source_set("pdfium_base") {
     "base/compiler_specific.h",
     "base/debug/alias.cc",
     "base/debug/alias.h",
+    "base/immediate_crash.h",
     "base/logging.h",
     "base/no_destructor.h",
     "base/numerics/safe_conversions.h",
