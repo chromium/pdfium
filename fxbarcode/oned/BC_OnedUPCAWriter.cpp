@@ -22,6 +22,7 @@
 
 #include "fxbarcode/oned/BC_OnedUPCAWriter.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
@@ -37,14 +38,12 @@ CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
   m_bRightPadding = true;
 }
 
-CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
+CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() = default;
 
 bool CBC_OnedUPCAWriter::CheckContentValidity(WideStringView contents) {
-  for (size_t i = 0; i < contents.GetLength(); ++i) {
-    if (contents[i] < '0' || contents[i] > '9')
-      return false;
-  }
-  return true;
+  return HasValidContentSize(contents) &&
+         std::all_of(contents.begin(), contents.end(),
+                     [](wchar_t c) { return FXSYS_IsDecimalDigit(c); });
 }
 
 WideString CBC_OnedUPCAWriter::FilterContents(WideStringView contents) {

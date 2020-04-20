@@ -94,7 +94,7 @@ TEST_F(BarcodeTest, MAYBE_CodaBar) {
   EXPECT_EQ("5fad4fc19f099001a0fe83c89430c977", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, DISABLED_CodaBarLetters) {
+TEST_F(BarcodeTest, CodaBarLetters) {
   Create(BC_CODABAR);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
@@ -164,7 +164,7 @@ TEST_F(BarcodeTest, MAYBE_Ean8) {
   EXPECT_EQ("aff88491ac46ca6217d780d185300cde", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, DISABLED_Ean8Letters) {
+TEST_F(BarcodeTest, Ean8Letters) {
   Create(BC_EAN8);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
@@ -182,7 +182,7 @@ TEST_F(BarcodeTest, MAYBE_UPCA) {
   EXPECT_EQ("fe26a5714cff7ffe3f9b02183efc435b", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, DISABLED_UPCALetters) {
+TEST_F(BarcodeTest, UPCALetters) {
   Create(BC_UPCA);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
@@ -200,7 +200,7 @@ TEST_F(BarcodeTest, MAYBE_Ean13) {
   EXPECT_EQ("72d2190b98d635c32834bf67552e561e", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, DISABLED_Ean13Letters) {
+TEST_F(BarcodeTest, Ean13Letters) {
   Create(BC_EAN13);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }

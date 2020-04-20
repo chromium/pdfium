@@ -21,7 +21,8 @@ CBC_OneDimEANWriter* CBC_EANCode::GetOneDimEANWriter() {
 }
 
 bool CBC_EANCode::Encode(WideStringView contents) {
-  if (contents.IsEmpty() || contents.GetLength() > kMaxInputLengthBytes)
+  auto* pWriter = GetOneDimEANWriter();
+  if (!pWriter->CheckContentValidity(contents))
     return false;
 
   BCFORMAT format = GetFormat();
@@ -29,7 +30,6 @@ bool CBC_EANCode::Encode(WideStringView contents) {
   int32_t out_height = 0;
   m_renderContents = Preprocess(contents);
   ByteString str = m_renderContents.ToUTF8();
-  auto* pWriter = GetOneDimEANWriter();
   pWriter->InitEANWriter();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(str, format, out_width, out_height));

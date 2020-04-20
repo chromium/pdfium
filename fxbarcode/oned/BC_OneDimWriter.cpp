@@ -36,6 +36,16 @@
 #include "core/fxge/text_char_pos.h"
 #include "fxbarcode/BC_Writer.h"
 
+// static
+bool CBC_OneDimWriter::HasValidContentSize(WideStringView contents) {
+  // Limit the size of 1D barcodes. Typical 1D barcodes are short so this should
+  // be sufficient for most use cases.
+  static constexpr size_t kMaxInputLengthBytes = 8192;
+
+  size_t size = contents.GetLength();
+  return size > 0 && size <= kMaxInputLengthBytes;
+}
+
 CBC_OneDimWriter::CBC_OneDimWriter() = default;
 
 CBC_OneDimWriter::~CBC_OneDimWriter() = default;

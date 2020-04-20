@@ -22,6 +22,8 @@ class TextCharPos;
 
 class CBC_OneDimWriter : public CBC_Writer {
  public:
+  static bool HasValidContentSize(WideStringView contents);
+
   CBC_OneDimWriter();
   ~CBC_OneDimWriter() override;
 

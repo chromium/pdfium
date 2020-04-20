@@ -56,10 +56,11 @@ CBC_OnedEAN13Writer::CBC_OnedEAN13Writer() {
   m_bLeftPadding = true;
   m_codeWidth = 3 + (7 * 6) + 5 + (7 * 6) + 3;
 }
-CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer() {}
+CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer() = default;
 
 bool CBC_OnedEAN13Writer::CheckContentValidity(WideStringView contents) {
-  return std::all_of(contents.begin(), contents.end(),
+  return HasValidContentSize(contents) &&
+         std::all_of(contents.begin(), contents.end(),
                      [](wchar_t c) { return FXSYS_IsDecimalDigit(c); });
 }
 

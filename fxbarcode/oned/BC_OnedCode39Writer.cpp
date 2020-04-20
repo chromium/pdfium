@@ -66,7 +66,8 @@ CBC_OnedCode39Writer::CBC_OnedCode39Writer() = default;
 CBC_OnedCode39Writer::~CBC_OnedCode39Writer() = default;
 
 bool CBC_OnedCode39Writer::CheckContentValidity(WideStringView contents) {
-  return std::all_of(contents.begin(), contents.end(), IsInOnedCode39Alphabet);
+  return HasValidContentSize(contents) &&
+         std::all_of(contents.begin(), contents.end(), IsInOnedCode39Alphabet);
 }
 
 WideString CBC_OnedCode39Writer::FilterContents(WideStringView contents) {
