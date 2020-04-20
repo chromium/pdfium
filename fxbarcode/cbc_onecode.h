@@ -25,9 +25,6 @@ class CBC_OneCode : public CBC_CodeBase {
   explicit CBC_OneCode(std::unique_ptr<CBC_Writer> pWriter);
   ~CBC_OneCode() override;
 
-  virtual bool CheckContentValidity(WideStringView contents);
-  virtual WideString FilterContents(WideStringView contents);
-
   void SetPrintChecksum(bool checksum);
   void SetDataLength(int32_t length);
   void SetCalChecksum(bool calc);

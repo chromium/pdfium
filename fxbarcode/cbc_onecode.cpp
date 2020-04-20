@@ -28,15 +28,7 @@
 CBC_OneCode::CBC_OneCode(std::unique_ptr<CBC_Writer> pWriter)
     : CBC_CodeBase(std::move(pWriter)) {}
 
-CBC_OneCode::~CBC_OneCode() {}
-
-bool CBC_OneCode::CheckContentValidity(WideStringView contents) {
-  return GetOneDimWriter()->CheckContentValidity(contents);
-}
-
-WideString CBC_OneCode::FilterContents(WideStringView contents) {
-  return GetOneDimWriter()->FilterContents(contents);
-}
+CBC_OneCode::~CBC_OneCode() = default;
 
 void CBC_OneCode::SetPrintChecksum(bool checksum) {
   GetOneDimWriter()->SetPrintChecksum(checksum);
