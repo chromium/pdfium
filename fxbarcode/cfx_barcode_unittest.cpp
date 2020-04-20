@@ -138,9 +138,17 @@ TEST_F(BarcodeTest, MAYBE_Code128C) {
   EXPECT_EQ("fba730a807ba6363f9bd2bc7f8c56d1f", BitmapChecksum());
 }
 
-TEST_F(BarcodeTest, DISABLED_Code128CLetters) {
+// https://crbug.com/pdfium/738
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_Code128CLetters DISABLED_Code128CLetters
+#else
+#define MAYBE_Code128CLetters Code128CLetters
+#endif
+TEST_F(BarcodeTest, MAYBE_Code128CLetters) {
   Create(BC_CODE128_C);
-  EXPECT_FALSE(barcode()->Encode(L"clams"));
+  EXPECT_TRUE(barcode()->Encode(L"clams"));
+  RenderDevice();
+  EXPECT_EQ("6284ec8503d5a948c9518108da33cdd3", BitmapChecksum());
 }
 
 // https://crbug.com/pdfium/738
