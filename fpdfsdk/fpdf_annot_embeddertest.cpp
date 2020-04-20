@@ -2448,9 +2448,8 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
       FPDF_ANNOT_POPUP, FPDF_ANNOT_HIGHLIGHT, FPDF_ANNOT_WIDGET,
   };
 
-  // TODO(crbug.com/pdfium/1507): Popups should not be focusable.
   const FPDF_ANNOTATION_SUBTYPE kExpectedDefaultFocusableSubtypes[] = {
-      FPDF_ANNOT_WIDGET, FPDF_ANNOT_POPUP};
+      FPDF_ANNOT_WIDGET};
   VerifyAnnotationSubtypesAndFocusability(form_handle(), page,
                                           kExpectedAnnotSubtypes,
                                           kExpectedDefaultFocusableSubtypes);
@@ -2466,9 +2465,9 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
       FPDFAnnot_SetFocusableSubtypes(form_handle(), kDefaultSubtypes, 0));
   ASSERT_EQ(0, FPDFAnnot_GetFocusableSubtypesCount(form_handle()));
 
-  // TODO(crbug.com/pdfium/1507): Widgets and popups should not be focusable.
+  // TODO(crbug.com/pdfium/1507): Widgets should not be focusable.
   const FPDF_ANNOTATION_SUBTYPE kExpectedNoFocusableSubtypes[] = {
-      FPDF_ANNOT_WIDGET, FPDF_ANNOT_POPUP};
+      FPDF_ANNOT_WIDGET};
   VerifyAnnotationSubtypesAndFocusability(form_handle(), page,
                                           kExpectedAnnotSubtypes,
                                           kExpectedNoFocusableSubtypes);
@@ -2477,9 +2476,9 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
   const FPDF_ANNOTATION_SUBTYPE kLinkSubtypes[] = {FPDF_ANNOT_LINK};
   SetAndVerifyFocusableAnnotSubtypes(form_handle(), kLinkSubtypes);
 
-  // TODO(crbug.com/pdfium/1507): Widgets and popups should not be focusable.
+  // TODO(crbug.com/pdfium/1507): Widgets should not be focusable.
   const FPDF_ANNOTATION_SUBTYPE kExpectedLinkocusableSubtypes[] = {
-      FPDF_ANNOT_WIDGET, FPDF_ANNOT_LINK, FPDF_ANNOT_POPUP};
+      FPDF_ANNOT_WIDGET, FPDF_ANNOT_LINK};
   VerifyAnnotationSubtypesAndFocusability(form_handle(), page,
                                           kExpectedAnnotSubtypes,
                                           kExpectedLinkocusableSubtypes);
