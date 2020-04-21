@@ -19,7 +19,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling binutils
   # and whatever else without interference from each other.
-  'binutils_revision': 'ffd1fdb902d5ce2d28b6a18bebed2c42c863e22e',
+  'binutils_revision': 'f9ce777698a819dff4d6a033b31122d91a49b62e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
