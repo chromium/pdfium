@@ -1,0 +1,160 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /StructTreeRoot 7 0 R
+  /MarkInfo <<
+    /Type /MarkInfo
+    /Marked true
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /StructParents 0
+  /Annots [4 0 R]
+  /Contents 5 0 R
+  /MediaBox [0 0 612 792]
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F4 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Link
+  /Border [0 0 0]
+  /Dest /top
+  /F 4
+  /Rect [20 46 68 61]
+>>
+endobj
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+BT
+/P <</MCID 0 >>BDC
+/F4 16 Tf
+20 650 Td
+(Hello, world!) Tj
+EMC
+ET
+BT
+/P <</MCID 1 >>BDC
+/F4 16 Tf
+20 50 Td
+(Link to top) Tj
+EMC
+ET
+Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Roman
+>>
+endobj
+{{object 7 0}} <<
+  /Type /StructTreeRoot
+  /K 8 0 R
+  /ParentTree 9 0 R
+  /ParentTreeNextKey 1
+>>
+endobj
+{{object 8 0}} <<
+  /Type /StructElem
+  /S /Document
+  /P 7 0 R
+  /K [10 0 R 11 0 R]
+  /ID /2
+  /Lang (en-US)
+>>
+endobj
+{{object 9 0}} <<
+  /Type /ParentTree
+  /Nums [0 [13 0 R 15 0 R]]
+>>
+endobj
+{{object 10 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 8 0 R
+  /K [12 0 R]
+  /ID /6
+>>
+endobj
+{{object 11 0}} <<
+  /Type /StructElem
+  /S /P
+  /P 8 0 R
+  /K [14 0 R]
+  /ID /4
+>>
+endobj
+{{object 12 0}} <<
+  /Type /StructElem
+  /S /P
+  /P 10 0 R
+  /K [13 0 R]
+  /ID /3
+>>
+endobj
+{{object 13 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 12 0 R
+  /K [
+    <<
+      /Type /MCR
+      /MCID 0
+      /Pg 3 0 R
+    >>
+  ]
+  /ID /7
+>>
+endobj
+{{object 14 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 11 0 R
+  /K [
+    15 0 R
+    <<
+      /Type /OBJR
+      /Obj 4 0 R
+    >>
+  ]
+  /ID /9
+>>
+endobj
+{{object 15 0}} <<
+  /Type /StructElem
+  /S /NonStruct
+  /P 14 0 R
+  /K [
+    <<
+      /Type /MCR
+      /Pg 3 0 R
+      /MCID 1
+    >>
+  ]
+  /ID /10
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
