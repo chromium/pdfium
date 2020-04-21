@@ -101,6 +101,8 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
   bool IsIndexSelected(ObservedPtr<CPDFSDK_Annot>* pAnnot, int index) override;
 
  private:
+  bool IsFocusableAnnot(const CPDF_Annot::Subtype& annot_type) const;
+
   UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   UnownedPtr<CFFL_InteractiveFormFiller> m_pFormFiller;
 };
