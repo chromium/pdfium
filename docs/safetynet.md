@@ -106,9 +106,6 @@ Make sure valgrind is installed:
 $ valgrind
 ```
 
-Add `ro_segment_workaround_for_valgrind=true` to `args.gn` for symbols to appear
-correctly.
-
 This is a slow and accurate profiler. Expect variations of around 100
 instructions. However, this takes about 50 times longer to run than perf stat.
 
