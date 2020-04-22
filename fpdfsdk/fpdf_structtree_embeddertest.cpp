@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"

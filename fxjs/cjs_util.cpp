@@ -15,6 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_object.h"

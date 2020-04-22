@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/render_defines.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_edit.h"

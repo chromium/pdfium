@@ -62,6 +62,7 @@ source_set("fxcrt") {
     "retain_ptr.h",
     "retained_tree_node.h",
     "shared_copy_on_write.h",
+    "string_data_template.cpp",
     "string_data_template.h",
     "string_pool_template.h",
     "string_view_template.h",

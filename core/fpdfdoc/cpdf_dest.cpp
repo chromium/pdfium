@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
+#include "core/fxcrt/fx_memory.h"
 
 namespace {
 

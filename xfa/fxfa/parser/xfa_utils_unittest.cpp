@@ -4,6 +4,7 @@
 
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(XfaUtilsImpTest, XFA_MapRotation) {

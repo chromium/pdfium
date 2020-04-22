@@ -6,6 +6,7 @@
 
 #include <limits>
 
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, FXSYS_IsLowerASCII) {

@@ -4,6 +4,7 @@
 
 #include "fxbarcode/oned/BC_OnedCode128Writer.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

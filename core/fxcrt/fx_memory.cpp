@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 #include "third_party/base/debug/alias.h"
 
 pdfium::base::PartitionAllocatorGeneric& GetArrayBufferPartitionAllocator() {

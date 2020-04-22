@@ -4,6 +4,7 @@
 
 #include "core/fpdftext/cpdf_linkextract.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 // Class to help test functions in CPDF_LinkExtract class.

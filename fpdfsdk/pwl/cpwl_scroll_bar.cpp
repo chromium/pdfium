@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"

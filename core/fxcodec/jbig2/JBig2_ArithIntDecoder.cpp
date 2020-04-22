@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/numerics/safe_math.h"
 
 namespace {
 

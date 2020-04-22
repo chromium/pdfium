@@ -4,6 +4,7 @@
 
 #include "fxjs/cjs_publicmethods.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CJS_PublicMethods, IsNumber) {

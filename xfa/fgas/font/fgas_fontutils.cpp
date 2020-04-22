@@ -9,6 +9,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 namespace {

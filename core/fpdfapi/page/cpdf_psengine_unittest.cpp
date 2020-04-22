@@ -5,6 +5,7 @@
 #include <limits>
 
 #include "core/fpdfapi/page/cpdf_psengine.h"
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

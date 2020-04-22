@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 
 namespace {
 

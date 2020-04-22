@@ -6,6 +6,8 @@
 
 #include "fxjs/cjs_globalarrays.h"
 
+#include "core/fxcrt/fx_memory.h"
+
 #define GLOBAL_ARRAY(rt, name, ...)                                          \
   {                                                                          \
     static const wchar_t* const values[] = {__VA_ARGS__};                    \

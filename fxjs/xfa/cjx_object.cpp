@@ -10,6 +10,7 @@
 #include <tuple>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cjs_result.h"

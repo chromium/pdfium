@@ -4,6 +4,7 @@
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/span.h"

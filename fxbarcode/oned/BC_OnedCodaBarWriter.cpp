@@ -23,6 +23,7 @@
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"

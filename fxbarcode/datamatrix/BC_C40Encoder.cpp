@@ -23,6 +23,7 @@
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"

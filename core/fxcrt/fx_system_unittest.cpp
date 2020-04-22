@@ -5,6 +5,7 @@
 #include <limits>
 
 #include "build/build_config.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "testing/gtest/include/gtest/gtest.h"

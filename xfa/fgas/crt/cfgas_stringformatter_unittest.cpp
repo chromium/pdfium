@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
+#include "core/fxcrt/fx_memory.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
