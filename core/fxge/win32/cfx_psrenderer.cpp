@@ -7,6 +7,7 @@
 #include "core/fxge/win32/cfx_psrenderer.h"
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <sstream>
 #include <utility>

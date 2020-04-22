@@ -10,7 +10,6 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/numerics/safe_math.h"
 
 #ifndef NDEBUG
 #include <ostream>
@@ -188,13 +187,7 @@ struct FX_RECT {
   int Height() const { return bottom - top; }
   bool IsEmpty() const { return right <= left || bottom <= top; }
 
-  bool Valid() const {
-    pdfium::base::CheckedNumeric<int> w = right;
-    pdfium::base::CheckedNumeric<int> h = bottom;
-    w -= left;
-    h -= top;
-    return w.IsValid() && h.IsValid();
-  }
+  bool Valid() const;
 
   void Normalize();
   void Intersect(const FX_RECT& src);

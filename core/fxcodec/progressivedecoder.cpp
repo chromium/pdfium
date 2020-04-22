@@ -20,7 +20,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
@@ -608,7 +607,7 @@ void ProgressiveDecoder::ResampleVertBT(
   uint32_t dest_ScanOffet = m_startX * dest_Bpp;
   int dest_top = m_startY;
   int dest_bottom = m_startY + m_sizeY;
-  pdfium::base::CheckedNumeric<int> check_dest_row_1 = dest_row;
+  FX_SAFE_INT32 check_dest_row_1 = dest_row;
   check_dest_row_1 += pdfium::base::checked_cast<int>(scale_y);
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   if (dest_row_1 >= dest_bottom - 1) {
@@ -929,7 +928,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
   int dest_top = m_startY;
   pdfium::base::CheckedNumeric<double> scale_y2 = scale_y;
   scale_y2 *= 2;
-  pdfium::base::CheckedNumeric<int> check_dest_row_1 = dest_row;
+  FX_SAFE_INT32 check_dest_row_1 = dest_row;
   check_dest_row_1 -= scale_y2.ValueOrDie();
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   dest_row_1 = std::max(dest_row_1, dest_top);
@@ -2028,7 +2027,7 @@ void ProgressiveDecoder::ResampleVert(
   int dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
   uint32_t dest_ScanOffet = m_startX * dest_Bpp;
   int dest_top = m_startY;
-  pdfium::base::CheckedNumeric<int> check_dest_row_1 = dest_row;
+  FX_SAFE_INT32 check_dest_row_1 = dest_row;
   check_dest_row_1 -= pdfium::base::checked_cast<int>(scale_y);
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   if (dest_row_1 < dest_top) {

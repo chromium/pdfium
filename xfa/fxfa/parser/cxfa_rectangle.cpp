@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
 
+#include <cmath>
 #include <utility>
 
 #include "core/fxge/render_defines.h"

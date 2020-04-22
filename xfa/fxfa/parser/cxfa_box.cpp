@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_box.h"
 
 #include <algorithm>
+#include <cmath>
 #include <utility>
 
 #include "fxjs/xfa/cjx_object.h"

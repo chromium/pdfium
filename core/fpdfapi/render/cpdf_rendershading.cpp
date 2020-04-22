@@ -603,7 +603,7 @@ struct Coon_Bezier {
 };
 
 int Interpolate(int p1, int p2, int delta1, int delta2, bool* overflow) {
-  pdfium::base::CheckedNumeric<int> p = p2;
+  FX_SAFE_INT32 p = p2;
   p -= p1;
   p *= delta1;
   p /= delta2;

@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -55,6 +54,14 @@ static_assert(sizeof(FX_RECT::bottom) == sizeof(RECT::bottom),
 #endif
 
 }  // namespace
+
+bool FX_RECT::Valid() const {
+  FX_SAFE_INT32 w = right;
+  FX_SAFE_INT32 h = bottom;
+  w -= left;
+  h -= top;
+  return w.IsValid() && h.IsValid();
+}
 
 void FX_RECT::Normalize() {
   if (left > right)

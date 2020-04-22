@@ -7,8 +7,8 @@
 #include "core/fxcrt/string_data_template.h"
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
-#include "third_party/base/numerics/safe_math.h"
 
 namespace fxcrt {
 
@@ -21,7 +21,7 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
   // Calculate space needed for the fixed portion of the struct plus the
   // NUL char that is not included in |m_nAllocLength|.
   int overhead = offsetof(StringDataTemplate, m_String) + sizeof(CharType);
-  pdfium::base::CheckedNumeric<size_t> nSize = nLen;
+  FX_SAFE_SIZE_T nSize = nLen;
   nSize *= sizeof(CharType);
   nSize += overhead;
 

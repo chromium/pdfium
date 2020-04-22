@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
@@ -902,13 +903,13 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
   dest_left = dest_rect.left;
   dest_top = dest_rect.top;
 
-  pdfium::base::CheckedNumeric<int> safe_src_left = dest_left;
+  FX_SAFE_INT32 safe_src_left = dest_left;
   safe_src_left -= x_offset;
   if (!safe_src_left.IsValid())
     return false;
   src_left = safe_src_left.ValueOrDie();
 
-  pdfium::base::CheckedNumeric<int> safe_src_top = dest_top;
+  FX_SAFE_INT32 safe_src_top = dest_top;
   safe_src_top -= y_offset;
   if (!safe_src_top.IsValid())
     return false;

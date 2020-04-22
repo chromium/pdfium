@@ -12,7 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcrt/fx_memory.h"
-#include "third_party/base/numerics/safe_math.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 namespace {
 
@@ -180,7 +180,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     return false;
 
   ExtendBuffers(false);
-  pdfium::base::CheckedNumeric<int> cur_low = low;
+  FX_SAFE_INT32 cur_low = low;
   do {
     if ((pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1) ||
         (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1) ||

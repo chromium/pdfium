@@ -63,7 +63,6 @@
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -1361,10 +1360,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         CFX_PointF original = mtPattern2Device.Transform(
             CFX_PointF(col * pPattern->x_step(), row * pPattern->y_step()));
 
-        pdfium::base::CheckedNumeric<int> safeStartX =
-            FXSYS_roundf(original.x + left_offset);
-        pdfium::base::CheckedNumeric<int> safeStartY =
-            FXSYS_roundf(original.y + top_offset);
+        FX_SAFE_INT32 safeStartX = FXSYS_roundf(original.x + left_offset);
+        FX_SAFE_INT32 safeStartY = FXSYS_roundf(original.y + top_offset);
 
         safeStartX -= clip_box.left;
         safeStartY -= clip_box.top;

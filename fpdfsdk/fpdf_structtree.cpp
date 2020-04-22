@@ -10,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_structelement.h"
 #include "core/fpdfdoc/cpdf_structtree.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
 namespace {
@@ -53,7 +54,7 @@ FPDF_StructTree_CountChildren(FPDF_STRUCTTREE struct_tree) {
   if (!tree)
     return -1;
 
-  pdfium::base::CheckedNumeric<int> tmp_size = tree->CountTopElements();
+  FX_SAFE_INT32 tmp_size = tree->CountTopElements();
   return tmp_size.ValueOrDefault(-1);
 }
 
@@ -113,7 +114,7 @@ FPDF_StructElement_CountChildren(FPDF_STRUCTELEMENT struct_element) {
   if (!elem)
     return -1;
 
-  pdfium::base::CheckedNumeric<int> tmp_size = elem->CountKids();
+  FX_SAFE_INT32 tmp_size = elem->CountKids();
   return tmp_size.ValueOrDefault(-1);
 }
 

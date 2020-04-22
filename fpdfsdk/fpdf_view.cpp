@@ -29,6 +29,7 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -1003,8 +1004,7 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
     return 0;
 
   auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
-  pdfium::base::CheckedNumeric<FPDF_DWORD> count =
-      name_tree ? name_tree->GetCount() : 0;
+  FX_SAFE_UINT32 count = name_tree ? name_tree->GetCount() : 0;
   const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
   if (pDest)
     count += pDest->size();
@@ -1115,7 +1115,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     if (!pDest)
       return nullptr;
 
-    pdfium::base::CheckedNumeric<int> checked_count = count;
+    FX_SAFE_INT32 checked_count = count;
     checked_count += pDest->size();
     if (!checked_count.IsValid() || index >= checked_count.ValueOrDie())
       return nullptr;
