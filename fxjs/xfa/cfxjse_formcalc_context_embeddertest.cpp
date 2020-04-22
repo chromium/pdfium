@@ -907,7 +907,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Within) {
   }
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Eval) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Eval) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {

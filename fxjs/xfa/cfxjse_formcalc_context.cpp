@@ -890,7 +890,6 @@ WideString DecodeURL(const WideString& wsURL) {
     }
     wsResultBuf.AppendChar(chTemp);
   }
-  wsResultBuf.AppendChar(0);
   return wsResultBuf.MakeString();
 }
 
@@ -958,8 +957,6 @@ WideString DecodeMLInternal(const WideString& wsHTML, bool bIsHTML) {
         wsResultBuf.AppendChar('>');
     }
   }
-
-  wsResultBuf.AppendChar(0);
   return wsResultBuf.MakeString();
 }
 
@@ -1065,7 +1062,6 @@ WideString EncodeURL(const ByteString& bsURL) {
       }
     }
   }
-  wsResultBuf.AppendChar(0);
   return wsResultBuf.MakeString();
 }
 
@@ -1105,7 +1101,6 @@ WideString EncodeHTML(const ByteString& bsHTML) {
       // TODO(tsepez): Handle codepoint not in BMP.
     }
   }
-  wsResultBuf.AppendChar(0);
   return wsResultBuf.MakeString();
 }
 
@@ -1170,7 +1165,6 @@ WideString EncodeXML(const ByteString& bsXML) {
       }
     }
   }
-  wsResultBuf.AppendChar(0);
   return wsResultBuf.MakeString();
 }
 
@@ -3838,8 +3832,6 @@ void CFXJSE_FormCalcContext::Lower(
       ch += 1;
     szLowBuf.AppendChar(ch);
   }
-  szLowBuf.AppendChar(0);
-
   auto result = FX_UTF8Encode(szLowBuf.AsStringView());
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), result.AsStringView()));
@@ -4373,8 +4365,6 @@ void CFXJSE_FormCalcContext::Upper(
     upperStringBuf.AppendChar(ch);
     ++i;
   }
-  upperStringBuf.AppendChar(0);
-
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(),
       FX_UTF8Encode(upperStringBuf.AsStringView()).AsStringView()));
@@ -5681,7 +5671,6 @@ bool CFXJSE_FormCalcContext::Translate(WideStringView wsFormcalc,
   if (!ast->ToJavaScript(wsJavascript))
     return false;
 
-  wsJavascript->AppendChar(0);
   return !CXFA_IsTooBig(wsJavascript);
 }
 
