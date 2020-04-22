@@ -8,7 +8,6 @@
 #include <set>
 
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/stl_util.h"
 
 namespace fxcrt {
 
@@ -23,21 +22,12 @@ class Observable {
 
   Observable();
   Observable(const Observable& that) = delete;
-  ~Observable();
-  void AddObserver(ObserverIface* pObserver) {
-    ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
-    m_Observers.insert(pObserver);
-  }
-  void RemoveObserver(ObserverIface* pObserver) {
-    ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
-    m_Observers.erase(pObserver);
-  }
-  void NotifyObservers() {
-    for (auto* pObserver : m_Observers)
-      pObserver->OnObservableDestroyed();
-    m_Observers.clear();
-  }
   Observable& operator=(const Observable& that) = delete;
+  ~Observable();
+
+  void AddObserver(ObserverIface* pObserver);
+  void RemoveObserver(ObserverIface* pObserver);
+  void NotifyObservers();
 
  protected:
   size_t ActiveObserversForTesting() const { return m_Observers.size(); }

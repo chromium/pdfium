@@ -17,6 +17,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 

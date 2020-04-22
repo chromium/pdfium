@@ -4,6 +4,7 @@
 
 #include "fxjs/cfx_v8_unittest.h"
 
+#include <cmath>
 #include <memory>
 
 #include "fxjs/cfx_v8.h"
