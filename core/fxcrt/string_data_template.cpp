@@ -25,12 +25,12 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
   nSize *= sizeof(CharType);
   nSize += overhead;
 
-  // Now round to an 8-byte boundary. We'd expect that this is the minimum
-  // granularity of any of the underlying allocators, so there may be cases
-  // where we can save a re-alloc when adding a few characters to a string
-  // by using this otherwise wasted space.
-  nSize += 7;
-  nSize &= ~7;
+  // Now round to an 16-byte boundary, assuming the underlying allocator is most
+  // likely PartitionAlloc, which has 16 byte chunks. This will help with cases
+  // where we can save a re-alloc when adding a few characters to a string by
+  // using this otherwise wasted space.
+  nSize += 15;
+  nSize &= ~15;
   size_t totalSize = nSize.ValueOrDie();
   size_t usableLen = (totalSize - overhead) / sizeof(CharType);
   ASSERT(usableLen >= nLen);
