@@ -1238,13 +1238,12 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 }
 #endif  // PDF_ENABLE_V8
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFFormFillEmbedderTest, FormText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_FormText DISABLED_FormText
+  const char md5_1[] = "17efe329169f5b7681fbe939894a35de";
+  const char md5_2[] = "42af2135e20deb09cbdbfb6418d86382";
+  const char md5_3[] = "4a961599a512a08468b26b89d389c30a";
 #else
-#define MAYBE_FormText FormText
-#endif
-TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
 #if defined(OS_MACOSX)
   const char md5_1[] = "d485541d958fef08d24e8eca3e537023";
   const char md5_2[] = "c6e4a2fb10661116771ee74f54d9c5e0";
@@ -1258,6 +1257,7 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_FormText) {
   const char md5_2[] = "11487d5597599a26e8912b9c1d9422cb";
   const char md5_3[] = "bffe0ecea9a533f217047ee41d6be466";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     EXPECT_TRUE(OpenDocument("text_form.pdf"));
     FPDF_PAGE page = LoadPage(0);
