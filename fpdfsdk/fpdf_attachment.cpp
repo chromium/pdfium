@@ -4,6 +4,8 @@
 
 #include "public/fpdf_attachment.h"
 
+#include <limits.h>
+
 #include <memory>
 #include <utility>
 

@@ -4,6 +4,8 @@
 
 #include "public/fpdf_annot.h"
 
+#include <limits.h>
+
 #include <vector>
 
 #include "constants/annotation_common.h"

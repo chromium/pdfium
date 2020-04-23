@@ -6,6 +6,8 @@
 
 #include "public/fpdf_flatten.h"
 
+#include <limits.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
