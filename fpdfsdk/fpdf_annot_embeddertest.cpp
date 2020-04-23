@@ -2497,7 +2497,13 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_FocusableAnnotRendering DISABLED_FocusableAnnotRendering
+#else
+#define MAYBE_FocusableAnnotRendering FocusableAnnotRendering
+#endif
+TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);

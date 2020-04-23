@@ -2088,7 +2088,13 @@ TEST_F(FPDFEditEmbedderTest, GetTextRenderMode) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_SetTextRenderMode DISABLED_SetTextRenderMode
+#else
+#define MAYBE_SetTextRenderMode SetTextRenderMode
+#endif
+TEST_F(FPDFEditEmbedderTest, MAYBE_SetTextRenderMode) {
 // Platform specific original bitmaps
 #if defined(OS_MACOSX)
   const char md5[] = "2453a9a524ee3f5f525dd21345ec4d81";

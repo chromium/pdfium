@@ -1101,7 +1101,14 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
   }
 }
 
-TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderManyRectanglesWithFlags \
+  DISABLED_RenderManyRectanglesWithFlags
+#else
+#define MAYBE_RenderManyRectanglesWithFlags RenderManyRectanglesWithFlags
+#endif
+TEST_F(FPDFViewEmbedderTest, MAYBE_RenderManyRectanglesWithFlags) {
   static const char kNormalMD5[] = "b0170c575b65ecb93ebafada0ff0f038";
   static const char kGrayscaleMD5[] = "7b553f1052069a9c61237a05db0955d6";
   static const char kNoSmoothpathMD5[] = "ff6e5c509d1f6984bcdfd18b26a4203a";
@@ -1153,7 +1160,13 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithExternalMemory) {
 }
 
 #if defined(OS_LINUX)
-TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
+// TODO(crbug.com/pdfium/11): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#define MAYBE_RenderHelloWorldWithFlags DISABLED_RenderHelloWorldWithFlags
+#else
+#define MAYBE_RenderHelloWorldWithFlags RenderHelloWorldWithFlags
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+TEST_F(FPDFViewEmbedderTest, MAYBE_RenderHelloWorldWithFlags) {
   static const char kNormalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
   static const char kLcdTextMD5[] = "825e881f39e48254e64e2808987a6b8c";
   static const char kNoSmoothtextMD5[] = "3d01e234120b783a3fffb27273ea1ea8";
