@@ -19,7 +19,7 @@
 
 namespace {
 
-ByteString GetStructElementType(CPDF_StructTree* pTree,
+ByteString GetStructElementType(const CPDF_StructTree* pTree,
                                 const CPDF_Dictionary* pDict) {
   ByteString type = pDict->GetStringFor("S");
   if (pTree->GetRoleMap()) {
@@ -78,10 +78,10 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
   if (!pKids)
     return;
 
-  m_Kids.clear();
+  ASSERT(m_Kids.empty());
   if (const CPDF_Array* pArray = pKids->AsArray()) {
     m_Kids.resize(pArray->size());
-    for (uint32_t i = 0; i < pArray->size(); i++) {
+    for (size_t i = 0; i < pArray->size(); ++i) {
       const CPDF_Object* pKid = pArray->GetDirectObjectAt(i);
       LoadKid(PageObjNum, pKid, &m_Kids[i]);
     }
@@ -95,7 +95,6 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
 void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
                                  const CPDF_Object* pKidObj,
                                  CPDF_StructKid* pKid) {
-  pKid->m_Type = CPDF_StructKid::kInvalid;
   if (!pKidObj)
     return;
 
@@ -140,5 +139,4 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
 
   pKid->m_Type = CPDF_StructKid::kElement;
   pKid->m_pDict.Reset(pKidDict);
-  pKid->m_pElement = nullptr;
 }

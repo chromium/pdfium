@@ -126,6 +126,5 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
   if (!elem || index < 0 || static_cast<size_t>(index) >= elem->CountKids())
     return nullptr;
 
-  return FPDFStructElementFromCPDFStructElement(
-      elem->GetKidIfElement(static_cast<size_t>(index)));
+  return FPDFStructElementFromCPDFStructElement(elem->GetKidIfElement(index));
 }
