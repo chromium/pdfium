@@ -48,7 +48,7 @@ class CPDF_AAction {
   CPDF_Action GetAction(AActionType eType) const;
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
-  static bool IsUserClick(AActionType eType);
+  static bool IsUserInput(AActionType type);
 
  private:
   RetainPtr<const CPDF_Dictionary> const m_pDict;

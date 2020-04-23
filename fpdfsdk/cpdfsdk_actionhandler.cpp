@@ -59,6 +59,22 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
   return false;
 }
 
+bool CPDFSDK_ActionHandler::DoAction_Link(
+    const CPDF_Action& action,
+    CPDF_AAction::AActionType type,
+    CPDFSDK_FormFillEnvironment* form_fill_env,
+    int modifiers) {
+  ASSERT(form_fill_env);
+  if (action.GetType() != CPDF_Action::URI)
+    return false;
+
+  if (!CPDF_AAction::IsUserInput(type))
+    return false;
+
+  DoAction_URI(form_fill_env, action, modifiers);
+  return true;
+}
+
 bool CPDFSDK_ActionHandler::DoAction_Page(
     const CPDF_Action& action,
     enum CPDF_AAction::AActionType eType,
@@ -105,7 +121,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
     }
   } else {
     DoAction_NoJs(action, CPDF_AAction::AActionType::kDocumentOpen,
-                  pFormFillEnv);
+                  pFormFillEnv, /*modifiers=*/0);
   }
 
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
@@ -136,7 +152,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
         RunDocumentPageJavaScript(pFormFillEnv, type, swJS);
     }
   } else {
-    DoAction_NoJs(action, type, pFormFillEnv);
+    DoAction_NoJs(action, type, pFormFillEnv, /*modifiers=*/0);
   }
 
   ASSERT(pFormFillEnv);
@@ -184,7 +200,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
       }
     }
   } else {
-    DoAction_NoJs(action, type, pFormFillEnv);
+    DoAction_NoJs(action, type, pFormFillEnv, /*modifiers=*/0);
   }
 
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
@@ -200,7 +216,8 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
 void CPDFSDK_ActionHandler::DoAction_NoJs(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+    CPDFSDK_FormFillEnvironment* pFormFillEnv,
+    int modifiers) {
   ASSERT(pFormFillEnv);
 
   switch (action.GetType()) {
@@ -208,8 +225,8 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
       DoAction_GoTo(pFormFillEnv, action);
       break;
     case CPDF_Action::URI:
-      if (CPDF_AAction::IsUserClick(type))
-        DoAction_URI(pFormFillEnv, action);
+      if (CPDF_AAction::IsUserInput(type))
+        DoAction_URI(pFormFillEnv, action, modifiers);
       break;
     case CPDF_Action::Hide:
       DoAction_Hide(action, pFormFillEnv);
@@ -218,7 +235,7 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
       DoAction_Named(pFormFillEnv, action);
       break;
     case CPDF_Action::SubmitForm:
-      if (CPDF_AAction::IsUserClick(type))
+      if (CPDF_AAction::IsUserInput(type))
         DoAction_SubmitForm(action, pFormFillEnv);
       break;
     case CPDF_Action::ResetForm:
@@ -268,11 +285,12 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(
 
 void CPDFSDK_ActionHandler::DoAction_URI(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const CPDF_Action& action) {
+    const CPDF_Action& action,
+    int modifiers) {
   ASSERT(action.GetDict());
 
   ByteString sURI = action.GetURI(pFormFillEnv->GetPDFDocument());
-  pFormFillEnv->DoURIAction(sURI.c_str());
+  pFormFillEnv->DoURIAction(sURI.c_str(), modifiers);
 }
 
 void CPDFSDK_ActionHandler::DoAction_Named(

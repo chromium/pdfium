@@ -3028,23 +3028,36 @@ TEST_F(FPDFFormFillActionUriTest, LinkActionInvokeTest) {
   NiceMock<EmbedderTestMockDelegate> mock;
   {
     InSequence sequence;
-    // TODO(crbug.com/994500) : DoURIAction number of expected calls to be
-    // updated to 4.
-    const char kExpectedUri[] = "https://www.cs.chromium.org/";
-    EXPECT_CALL(mock, DoURIAction(StrEq(kExpectedUri))).Times(0);
+    const char kExpectedUri[] = "https://cs.chromium.org/";
+#ifdef PDF_ENABLE_XFA
+    EXPECT_CALL(mock,
+                DoURIActionWithKeyboardModifier(_, StrEq(kExpectedUri), _))
+        .Times(4);
+#else   // PDF_ENABLE_XFA
+    EXPECT_CALL(mock, DoURIAction(StrEq(kExpectedUri))).Times(4);
     EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(_, _, _)).Times(0);
+#endif  // PDF_ENABLE_XFA
   }
   SetDelegate(&mock);
   SetFocusOnNthAnnot(3);
   int modifier = 0;
-  // TODO(crbug.com/994500): Following asserts to be changed to ASSERT_TRUE.
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier = FWL_EVENTFLAG_ControlKey;
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier = FWL_EVENTFLAG_ShiftKey;
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier |= FWL_EVENTFLAG_ControlKey;
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+
+  ASSERT_FALSE(FORM_OnKeyDown(nullptr, page(), FWL_VKEY_Return, modifier));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), nullptr, FWL_VKEY_Return, modifier));
+  // Following checks should be changed to ASSERT_TRUE if FORM_OnKeyDown starts
+  // handling for Shift/Space/Control.
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Shift, modifier));
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Space, modifier));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Control, modifier));
 }
 
 class FPDFFormFillActionUriTestVersion2 : public FPDFFormFillActionUriTest {
@@ -3059,26 +3072,34 @@ TEST_F(FPDFFormFillActionUriTestVersion2, LinkActionInvokeTest) {
   {
     InSequence sequence;
     EXPECT_CALL(mock, DoURIAction(_)).Times(0);
-    // TODO(crbug.com/994500): Following comments has to be removed.
-    // const char kExpectedUri[] = "https://www.cs.chromium.org/";
-    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
-    //                      _, StrEq(kExpectedUri), 0));
-    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
-    //                       _, StrEq(kExpectedUri), FWL_EVENTFLAG_ControlKey));
-    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
-    //                      _, StrEq(kExpectedUri), FWL_EVENTFLAG_ShiftKey));
-    // EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
-    //                      _, StrEq(kExpectedUri), 3));
+    const char kExpectedUri[] = "https://cs.chromium.org/";
+    EXPECT_CALL(mock,
+                DoURIActionWithKeyboardModifier(_, StrEq(kExpectedUri), 0));
+    EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(
+                          _, StrEq(kExpectedUri), FWL_EVENTFLAG_ControlKey));
+    EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(_, StrEq(kExpectedUri),
+                                                      FWL_EVENTFLAG_ShiftKey));
+    EXPECT_CALL(mock,
+                DoURIActionWithKeyboardModifier(_, StrEq(kExpectedUri), 3));
   }
   SetDelegate(&mock);
   SetFocusOnNthAnnot(3);
   int modifier = 0;
-  // TODO(crbug.com/994500): Following asserts to be changed to ASSERT_TRUE.
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier = FWL_EVENTFLAG_ControlKey;
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier = FWL_EVENTFLAG_ShiftKey;
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier |= FWL_EVENTFLAG_ControlKey;
-  ASSERT_FALSE(FORM_OnKeyUp(form_handle(), page(), FWL_VKEY_Return, modifier));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+
+  ASSERT_FALSE(FORM_OnKeyDown(nullptr, page(), FWL_VKEY_Return, modifier));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), nullptr, FWL_VKEY_Return, modifier));
+  // Following checks should be changed to ASSERT_TRUE if FORM_OnKeyDown starts
+  // handling for Shift/Space/Control.
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Shift, modifier));
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Space, modifier));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Control, modifier));
 }

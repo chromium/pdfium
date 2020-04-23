@@ -95,7 +95,7 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
                             FPDF_DWORD nTextLen,
                             bool bFocus);
-  void DoURIAction(const char* bsURI);
+  void DoURIAction(const char* bsURI, uint32_t modifiers);
   void DoGoToAction(int nPageIndex,
                     int zoomMode,
                     float* fPosArray,

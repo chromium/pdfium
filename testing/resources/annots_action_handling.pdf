@@ -61,7 +61,7 @@ endobj
   /A <<
     /Type /Action
     /S /URI
-    /URI (https://www.cs.chromium.org/)
+    /URI (https://cs.chromium.org/)
   >>
   /F 4
 >>
@@ -81,5 +81,5 @@ trailer <<
   /Size 8
 >>
 startxref
-834
+830
 %%EOF
