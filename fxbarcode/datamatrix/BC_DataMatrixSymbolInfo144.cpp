@@ -27,7 +27,7 @@
 
 namespace {
 
-constexpr CBC_SymbolInfo::Data kSymbolDatum = {1558, 620, 22, 22, 36, -1, 62};
+constexpr CBC_SymbolInfo::Data kSymbolDatum = {1558, 620, -1, 62, 22, 22, 36};
 
 }  // namespace
 

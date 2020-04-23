@@ -38,21 +38,21 @@ CBC_SymbolInfo* g_symbols[kSymbolsCount] = {
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 constexpr CBC_SymbolInfo::Data kSymbolData[] = {
-    {3, 5, 8, 8, 1, 3, 5},           {5, 7, 10, 10, 1, 5, 7},
-    {5, 7, 16, 6, 1, 5, 7},          {8, 10, 12, 12, 1, 8, 10},
-    {10, 11, 14, 6, 2, 10, 11},      {12, 12, 14, 14, 1, 12, 12},
-    {16, 14, 24, 10, 1, 16, 14},     {18, 14, 16, 16, 1, 18, 14},
-    {22, 18, 18, 18, 1, 22, 18},     {22, 18, 16, 10, 2, 22, 18},
-    {30, 20, 20, 20, 1, 30, 20},     {32, 24, 16, 14, 2, 32, 24},
-    {36, 24, 22, 22, 1, 36, 24},     {44, 28, 24, 24, 1, 44, 28},
-    {49, 28, 22, 14, 2, 49, 28},     {62, 36, 14, 14, 4, 62, 36},
-    {86, 42, 16, 16, 4, 86, 42},     {114, 48, 18, 18, 4, 114, 48},
-    {144, 56, 20, 20, 4, 144, 56},   {174, 68, 22, 22, 4, 174, 68},
-    {204, 84, 24, 24, 4, 102, 42},   {280, 112, 14, 14, 16, 140, 56},
-    {368, 144, 16, 16, 16, 92, 36},  {456, 192, 18, 18, 16, 114, 48},
-    {576, 224, 20, 20, 16, 144, 56}, {696, 272, 22, 22, 16, 174, 68},
-    {816, 336, 24, 24, 16, 136, 56}, {1050, 408, 18, 18, 36, 175, 68},
-    {1304, 496, 20, 20, 36, 163, 62}};
+    {3, 5, 3, 5, 8, 8, 1},           {5, 7, 5, 7, 10, 10, 1},
+    {5, 7, 5, 7, 16, 6, 1},          {8, 10, 8, 10, 12, 12, 1},
+    {10, 11, 10, 11, 14, 6, 2},      {12, 12, 12, 12, 14, 14, 1},
+    {16, 14, 16, 14, 24, 10, 1},     {18, 14, 18, 14, 16, 16, 1},
+    {22, 18, 22, 18, 18, 18, 1},     {22, 18, 22, 18, 16, 10, 2},
+    {30, 20, 30, 20, 20, 20, 1},     {32, 24, 32, 24, 16, 14, 2},
+    {36, 24, 36, 24, 22, 22, 1},     {44, 28, 44, 28, 24, 24, 1},
+    {49, 28, 49, 28, 22, 14, 2},     {62, 36, 62, 36, 14, 14, 4},
+    {86, 42, 86, 42, 16, 16, 4},     {114, 48, 114, 48, 18, 18, 4},
+    {144, 56, 144, 56, 20, 20, 4},   {174, 68, 174, 68, 22, 22, 4},
+    {204, 84, 102, 42, 24, 24, 4},   {280, 112, 140, 56, 14, 14, 16},
+    {368, 144, 92, 36, 16, 16, 16},  {456, 192, 114, 48, 18, 18, 16},
+    {576, 224, 144, 56, 20, 20, 16}, {696, 272, 174, 68, 22, 22, 16},
+    {816, 336, 136, 56, 24, 24, 16}, {1050, 408, 175, 68, 18, 18, 36},
+    {1304, 496, 163, 62, 20, 20, 36}};
 
 constexpr size_t kSymbolDataSize = FX_ArraySize(kSymbolData);
 static_assert(kSymbolDataSize + 1 == kSymbolsCount, "Wrong kSymbolDataSize");
@@ -68,25 +68,24 @@ void CBC_SymbolInfo::Initialize() {
 
 // static
 void CBC_SymbolInfo::Finalize() {
-  for (size_t i = 0; i < kSymbolsCount; i++) {
+  for (size_t i = 0; i < kSymbolsCount; ++i) {
     delete g_symbols[i];
     g_symbols[i] = nullptr;
   }
 }
 
-CBC_SymbolInfo::CBC_SymbolInfo(const Data* data)
-    : data_(data), rectangular_(data_->matrix_width != data_->matrix_height) {}
+CBC_SymbolInfo::CBC_SymbolInfo(const Data* data) : data_(data) {}
 
 CBC_SymbolInfo::~CBC_SymbolInfo() = default;
 
-const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(size_t iDataCodewords,
-                                             bool bAllowRectangular) {
-  for (size_t i = 0; i < kSymbolsCount; i++) {
+const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(size_t data_codewords,
+                                             bool allow_rectangular) {
+  for (size_t i = 0; i < kSymbolsCount; ++i) {
     CBC_SymbolInfo* symbol = g_symbols[i];
-    if (symbol->rectangular_ && !bAllowRectangular)
+    if (symbol->is_rectangular() && !allow_rectangular)
       continue;
 
-    if (iDataCodewords <= symbol->dataCapacity())
+    if (data_codewords <= symbol->dataCapacity())
       return symbol;
   }
   return nullptr;

@@ -15,20 +15,19 @@ class CBC_SymbolInfo {
   struct Data {
     int16_t data_capacity;
     int16_t error_codewords;
+    int16_t rs_block_data;
+    int8_t rs_block_error;
     int8_t matrix_width;
     int8_t matrix_height;
     int8_t data_regions;
-    int16_t rs_block_data;
-    int8_t rs_block_error;
   };
 
   virtual ~CBC_SymbolInfo();
 
   static void Initialize();
   static void Finalize();
-  static void overrideSymbolSet(CBC_SymbolInfo* override);
-  static const CBC_SymbolInfo* Lookup(size_t iDataCodewords,
-                                      bool bAllowRectangular);
+  static const CBC_SymbolInfo* Lookup(size_t data_codewords,
+                                      bool allow_rectangular);
 
   int32_t getSymbolDataWidth() const;
   int32_t getSymbolDataHeight() const;
@@ -50,9 +49,11 @@ class CBC_SymbolInfo {
  private:
   int32_t getHorizontalDataRegions() const;
   int32_t getVerticalDataRegions() const;
+  bool is_rectangular() const {
+    return data_->matrix_width != data_->matrix_height;
+  }
 
   const Data* const data_;
-  const bool rectangular_;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
