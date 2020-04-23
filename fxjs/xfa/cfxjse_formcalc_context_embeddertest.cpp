@@ -692,7 +692,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, IPmt) {
   }
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_NPV) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, NPV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {

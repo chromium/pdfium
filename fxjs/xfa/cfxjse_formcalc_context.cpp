@@ -2786,39 +2786,39 @@ void CFXJSE_FormCalcContext::NPV(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pThis);
   int32_t argc = info.Length();
-  if (argc < 3) {
+  if (argc < 2) {
     pContext->ThrowParamCountMismatchException(L"NPV");
     return;
   }
 
-  std::vector<std::unique_ptr<CFXJSE_Value>> argValues;
-  for (int32_t i = 0; i < argc; i++) {
-    argValues.push_back(GetSimpleValue(pThis, info, i));
-    if (ValueIsNull(pThis, argValues[i].get())) {
-      info.GetReturnValue().SetNull();
-      return;
-    }
+  std::unique_ptr<CFXJSE_Value> argValue = GetSimpleValue(pThis, info, 0);
+  if (ValueIsNull(pThis, argValue.get())) {
+    info.GetReturnValue().SetNull();
+    return;
   }
 
-  double nRate = ValueToDouble(pThis, argValues[0].get());
+  double nRate = ValueToDouble(pThis, argValue.get());
   if (nRate <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
 
-  std::vector<double> data(argc - 1);
-  for (int32_t i = 1; i < argc; i++)
-    data.push_back(ValueToDouble(pThis, argValues[i].get()));
+  std::vector<double> data;
+  for (int32_t i = 1; i < argc; i++) {
+    argValue = GetSimpleValue(pThis, info, i);
+    if (ValueIsNull(pThis, argValue.get())) {
+      info.GetReturnValue().SetNull();
+      return;
+    }
+    data.push_back(ValueToDouble(pThis, argValue.get()));
+  }
 
   double nSum = 0;
-  int32_t iIndex = 0;
-  for (int32_t i = 0; i < argc - 1; i++) {
-    double nTemp = 1;
-    for (int32_t j = 0; j <= i; j++)
-      nTemp *= 1 + nRate;
-
-    double nNum = data[iIndex++];
-    nSum += nNum / nTemp;
+  double nDivisor = 1.0 + nRate;
+  while (!data.empty()) {
+    nSum += data.back();
+    nSum /= nDivisor;
+    data.pop_back();
   }
   info.GetReturnValue().Set(nSum);
 }
