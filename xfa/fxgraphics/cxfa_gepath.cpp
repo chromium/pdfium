@@ -21,19 +21,19 @@ void CXFA_GEPath::Close() {
 }
 
 void CXFA_GEPath::MoveTo(const CFX_PointF& point) {
-  data_.AppendPoint(point, FXPT_TYPE::MoveTo, false);
+  data_.AppendPoint(point, FXPT_TYPE::MoveTo);
 }
 
 void CXFA_GEPath::LineTo(const CFX_PointF& point) {
-  data_.AppendPoint(point, FXPT_TYPE::LineTo, false);
+  data_.AppendPoint(point, FXPT_TYPE::LineTo);
 }
 
 void CXFA_GEPath::BezierTo(const CFX_PointF& c1,
                            const CFX_PointF& c2,
                            const CFX_PointF& to) {
-  data_.AppendPoint(c1, FXPT_TYPE::BezierTo, false);
-  data_.AppendPoint(c2, FXPT_TYPE::BezierTo, false);
-  data_.AppendPoint(to, FXPT_TYPE::BezierTo, false);
+  data_.AppendPoint(c1, FXPT_TYPE::BezierTo);
+  data_.AppendPoint(c2, FXPT_TYPE::BezierTo);
+  data_.AppendPoint(to, FXPT_TYPE::BezierTo);
 }
 
 void CXFA_GEPath::ArcTo(const CFX_PointF& pos,
@@ -61,20 +61,20 @@ void CXFA_GEPath::ArcToInternal(const CFX_PointF& pos,
   CFX_PointF bezier;
   bezier.x = pos.x + (size.width * ((points[0].x * cs) - (points[0].y * sn)));
   bezier.y = pos.y + (size.height * ((points[0].x * sn) + (points[0].y * cs)));
-  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo, false);
+  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 
   bezier.x = pos.x + (size.width * ((points[1].x * cs) - (points[1].y * sn)));
   bezier.y = pos.y + (size.height * ((points[1].x * sn) + (points[1].y * cs)));
-  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo, false);
+  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 
   bezier.x = pos.x + (size.width * cos(start_angle + sweep_angle));
   bezier.y = pos.y + (size.height * sin(start_angle + sweep_angle));
-  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo, false);
+  data_.AppendPoint(bezier, FXPT_TYPE::BezierTo);
 }
 
 void CXFA_GEPath::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
-  data_.AppendPoint(p1, FXPT_TYPE::MoveTo, false);
-  data_.AppendPoint(p2, FXPT_TYPE::LineTo, false);
+  data_.AppendPoint(p1, FXPT_TYPE::MoveTo);
+  data_.AppendPoint(p2, FXPT_TYPE::LineTo);
 }
 
 void CXFA_GEPath::AddRectangle(float left,
@@ -109,7 +109,7 @@ void CXFA_GEPath::AddArc(const CFX_PointF& original_pos,
   CFX_PointF pos(original_pos.x + size.width, original_pos.y + size.height);
   data_.AppendPoint(pos + CFX_PointF(size.width * cos(start_angle),
                                      size.height * sin(start_angle)),
-                    FXPT_TYPE::MoveTo, false);
+                    FXPT_TYPE::MoveTo);
 
   float total_sweep = 0;
   float local_sweep = 0;

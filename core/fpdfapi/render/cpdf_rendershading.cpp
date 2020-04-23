@@ -786,8 +786,8 @@ void DrawCoonPatchMeshes(
   patch.bNoPathSmooth = bNoPathSmooth;
 
   for (int i = 0; i < 13; i++) {
-    patch.path.AppendPoint(
-        CFX_PointF(), i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::BezierTo, false);
+    patch.path.AppendPoint(CFX_PointF(),
+                           i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::BezierTo);
   }
 
   CFX_PointF coords[16];

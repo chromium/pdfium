@@ -183,13 +183,13 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                   rcClient.left +
                       ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
                   rcClient.bottom),
-              FXPT_TYPE::MoveTo, false);
+              FXPT_TYPE::MoveTo);
           path.AppendPoint(
               CFX_PointF(
                   rcClient.left +
                       ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
                   rcClient.top),
-              FXPT_TYPE::LineTo, false);
+              FXPT_TYPE::LineTo);
         }
         if (!path.GetPoints().empty()) {
           pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,
@@ -211,13 +211,13 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                   rcClient.left +
                       ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
                   rcClient.bottom),
-              FXPT_TYPE::MoveTo, false);
+              FXPT_TYPE::MoveTo);
           path.AppendPoint(
               CFX_PointF(
                   rcClient.left +
                       ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
                   rcClient.top),
-              FXPT_TYPE::LineTo, false);
+              FXPT_TYPE::LineTo);
         }
         if (!path.GetPoints().empty()) {
           pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,

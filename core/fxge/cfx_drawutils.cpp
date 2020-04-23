@@ -17,16 +17,16 @@ void CFX_DrawUtils::DrawFocusRect(CFX_RenderDevice* render_device,
   ASSERT(render_device);
   CFX_PathData path;
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.top),
-                   FXPT_TYPE::MoveTo, /*closeFigure=*/false);
+                   FXPT_TYPE::MoveTo);
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.bottom),
-                   FXPT_TYPE::LineTo, /*closeFigure=*/false);
+                   FXPT_TYPE::LineTo);
   path.AppendPoint(
       CFX_PointF(view_bounding_box.right, view_bounding_box.bottom),
-      FXPT_TYPE::LineTo, /*closeFigure=*/false);
+      FXPT_TYPE::LineTo);
   path.AppendPoint(CFX_PointF(view_bounding_box.right, view_bounding_box.top),
-                   FXPT_TYPE::LineTo, /*closeFigure=*/false);
+                   FXPT_TYPE::LineTo);
   path.AppendPoint(CFX_PointF(view_bounding_box.left, view_bounding_box.top),
-                   FXPT_TYPE::LineTo, /*closeFigure=*/false);
+                   FXPT_TYPE::LineTo);
 
   CFX_GraphStateData graph_state_data;
   graph_state_data.m_DashArray = {1.0f};

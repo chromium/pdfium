@@ -159,10 +159,10 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
     if (rectWnd.right - rectWnd.left > kScrollBarTriangleHalfLength * 2 &&
         rectWnd.top - rectWnd.bottom > kScrollBarTriangleHalfLength) {
       CFX_PathData path;
-      path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
-      path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
-      path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
-      path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(pt1, FXPT_TYPE::MoveTo);
+      path.AppendPoint(pt2, FXPT_TYPE::LineTo);
+      path.AppendPoint(pt3, FXPT_TYPE::LineTo);
+      path.AppendPoint(pt1, FXPT_TYPE::LineTo);
 
       pDevice->DrawPath(&path, &mtUser2Device, nullptr,
                         PWL_DEFAULT_BLACKCOLOR.ToFXColor(nTransparency), 0,

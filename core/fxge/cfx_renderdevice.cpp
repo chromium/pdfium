@@ -707,8 +707,8 @@ bool CFX_RenderDevice::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
   }
   CFX_GraphStateData graph_state;
   CFX_PathData path;
-  path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo, false);
-  path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo, false);
+  path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo);
+  path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo);
   return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
                                    fill_mode, blend_type);
 }
@@ -1102,9 +1102,9 @@ void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
                                     const FX_COLORREF& color) {
   ASSERT(!points.empty());
   CFX_PathData path;
-  path.AppendPoint(points[0], FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(points[0], FXPT_TYPE::MoveTo);
   for (size_t i = 1; i < points.size(); ++i)
-    path.AppendPoint(points[i], FXPT_TYPE::LineTo, false);
+    path.AppendPoint(points[i], FXPT_TYPE::LineTo);
 
   DrawPath(&path, &mtUser2Device, nullptr, color, 0, FXFILL_ALTERNATE);
 }
@@ -1127,8 +1127,8 @@ void CFX_RenderDevice::DrawStrokeLine(const CFX_Matrix* pUser2Device,
                                       const FX_COLORREF& color,
                                       float fWidth) {
   CFX_PathData path;
-  path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo, false);
-  path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo, false);
+  path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo);
+  path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo);
 
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = fWidth;
@@ -1221,15 +1221,15 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
 
       CFX_PathData path;
       path.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
-                       FXPT_TYPE::MoveTo, false);
+                       FXPT_TYPE::MoveTo);
       path.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fTop - fHalfWidth),
-                       FXPT_TYPE::LineTo, false);
+                       FXPT_TYPE::LineTo);
       path.AppendPoint(CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
-                       FXPT_TYPE::LineTo, false);
+                       FXPT_TYPE::LineTo);
       path.AppendPoint(CFX_PointF(fRight - fHalfWidth, fBottom + fHalfWidth),
-                       FXPT_TYPE::LineTo, false);
+                       FXPT_TYPE::LineTo);
       path.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
-                       FXPT_TYPE::LineTo, false);
+                       FXPT_TYPE::LineTo);
       DrawPath(&path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
                FXFILL_WINDING);
       break;
@@ -1242,46 +1242,43 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       CFX_PathData path_left_top;
       path_left_top.AppendPoint(
           CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
-          FXPT_TYPE::MoveTo, false);
+          FXPT_TYPE::MoveTo);
       path_left_top.AppendPoint(
-          CFX_PointF(fLeft + fHalfWidth, fTop - fHalfWidth), FXPT_TYPE::LineTo,
-          false);
+          CFX_PointF(fLeft + fHalfWidth, fTop - fHalfWidth), FXPT_TYPE::LineTo);
       path_left_top.AppendPoint(
-          CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth), FXPT_TYPE::LineTo,
-          false);
+          CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
+          FXPT_TYPE::LineTo);
       path_left_top.AppendPoint(CFX_PointF(fRight - fWidth, fTop - fWidth),
-                                FXPT_TYPE::LineTo, false);
+                                FXPT_TYPE::LineTo);
       path_left_top.AppendPoint(CFX_PointF(fLeft + fWidth, fTop - fWidth),
-                                FXPT_TYPE::LineTo, false);
+                                FXPT_TYPE::LineTo);
       path_left_top.AppendPoint(CFX_PointF(fLeft + fWidth, fBottom + fWidth),
-                                FXPT_TYPE::LineTo, false);
+                                FXPT_TYPE::LineTo);
       path_left_top.AppendPoint(
           CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
-          FXPT_TYPE::LineTo, false);
+          FXPT_TYPE::LineTo);
       DrawPath(&path_left_top, pUser2Device, &gsd,
                crLeftTop.ToFXColor(nTransparency), 0, FXFILL_ALTERNATE);
 
       CFX_PathData path_right_bottom;
       path_right_bottom.AppendPoint(
-          CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth), FXPT_TYPE::MoveTo,
-          false);
+          CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
+          FXPT_TYPE::MoveTo);
       path_right_bottom.AppendPoint(
           CFX_PointF(fRight - fHalfWidth, fBottom + fHalfWidth),
-          FXPT_TYPE::LineTo, false);
+          FXPT_TYPE::LineTo);
       path_right_bottom.AppendPoint(
           CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
-          FXPT_TYPE::LineTo, false);
+          FXPT_TYPE::LineTo);
       path_right_bottom.AppendPoint(
-          CFX_PointF(fLeft + fWidth, fBottom + fWidth), FXPT_TYPE::LineTo,
-          false);
+          CFX_PointF(fLeft + fWidth, fBottom + fWidth), FXPT_TYPE::LineTo);
       path_right_bottom.AppendPoint(
-          CFX_PointF(fRight - fWidth, fBottom + fWidth), FXPT_TYPE::LineTo,
-          false);
+          CFX_PointF(fRight - fWidth, fBottom + fWidth), FXPT_TYPE::LineTo);
       path_right_bottom.AppendPoint(CFX_PointF(fRight - fWidth, fTop - fWidth),
-                                    FXPT_TYPE::LineTo, false);
+                                    FXPT_TYPE::LineTo);
       path_right_bottom.AppendPoint(
-          CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth), FXPT_TYPE::LineTo,
-          false);
+          CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
+          FXPT_TYPE::LineTo);
       DrawPath(&path_right_bottom, pUser2Device, &gsd,
                crRightBottom.ToFXColor(nTransparency), 0, FXFILL_ALTERNATE);
 
@@ -1299,9 +1296,9 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
 
       CFX_PathData path;
       path.AppendPoint(CFX_PointF(fLeft, fBottom + fHalfWidth),
-                       FXPT_TYPE::MoveTo, false);
+                       FXPT_TYPE::MoveTo);
       path.AppendPoint(CFX_PointF(fRight, fBottom + fHalfWidth),
-                       FXPT_TYPE::LineTo, false);
+                       FXPT_TYPE::LineTo);
       DrawPath(&path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
                FXFILL_ALTERNATE);
       break;

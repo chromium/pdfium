@@ -57,6 +57,9 @@ void CPDF_Path::AppendPoint(const CFX_PointF& point,
                             FXPT_TYPE type,
                             bool close) {
   CFX_PathData data;
-  data.AppendPoint(point, type, close);
+  if (close)
+    data.AppendPointAndClose(point, type);
+  else
+    data.AppendPoint(point, type);
   Append(&data, nullptr);
 }

@@ -66,7 +66,8 @@ class CFX_PathData {
   void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
   void AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
-  void AppendPoint(const CFX_PointF& point, FXPT_TYPE type, bool closeFigure);
+  void AppendPoint(const CFX_PointF& point, FXPT_TYPE type);
+  void AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type);
   void ClosePath();
 
  private:
