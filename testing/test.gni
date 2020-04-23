@@ -68,9 +68,7 @@ template("test") {
         testonly = true
         dist_dir = "$root_out_dir/$target_name"
         binary = _exec_output
-        deps = [
-          ":$_exec_target",
-        ]
+        deps = [ ":$_exec_target" ]
         if (defined(invoker.extra_dist_files)) {
           extra_files = invoker.extra_dist_files
         }
@@ -120,9 +118,7 @@ template("test") {
         # the apk is conceptually a runtime_dep of the script. However, it is
         # currently necessary because the bots build this _apk target directly
         # rather than the group() below.
-        data_deps = [
-          ":$_test_runner_target",
-        ]
+        data_deps = [ ":$_test_runner_target" ]
       }
 
       # Incremental test targets work only for .apks.
@@ -144,12 +140,8 @@ template("test") {
       }
       group("${target_name}_incremental") {
         testonly = true
-        datadeps = [
-          ":$_incremental_test_runner_target",
-        ]
-        deps = [
-          ":${_apk_target}_incremental",
-        ]
+        datadeps = [ ":$_incremental_test_runner_target" ]
+        deps = [ ":${_apk_target}_incremental" ]
       }
     }
 
@@ -175,9 +167,7 @@ template("test") {
 
     group(target_name) {
       testonly = true
-      deps = [
-        ":$_test_runner_target",
-      ]
+      deps = [ ":$_test_runner_target" ]
       if (_use_raw_android_executable) {
         deps += [ ":$_dist_target" ]
       } else {
@@ -192,12 +182,8 @@ template("test") {
 
     bundle_data(_resources_bundle_data) {
       visibility = [ ":$_test_target" ]
-      sources = [
-        "//testing/gtest_ios/Default.png",
-      ]
-      outputs = [
-        "{{bundle_resources_dir}}/{{source_file_part}}",
-      ]
+      sources = [ "//testing/gtest_ios/Default.png" ]
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
     }
 
     ios_app_bundle(_test_target) {
@@ -244,9 +230,7 @@ template("test") {
     if (defined(invoker.output_name) && target_name != invoker.output_name) {
       group("${invoker.output_name}_run") {
         testonly = true
-        deps = [
-          ":${invoker.target_name}",
-        ]
+        deps = [ ":${invoker.target_name}" ]
       }
     }
   }
@@ -271,9 +255,7 @@ template("pdfium_unittest_source_set") {
     if (defined(invoker.configs)) {
       configs += invoker.configs
     }
-    deps = [
-      _pdfium_root_dir + ":pdfium_unittest_deps",
-    ]
+    deps = [ _pdfium_root_dir + ":pdfium_unittest_deps" ]
     if (defined(invoker.deps)) {
       deps += invoker.deps
     }
@@ -292,9 +274,7 @@ template("pdfium_embeddertest_source_set") {
     if (defined(invoker.configs)) {
       configs += invoker.configs
     }
-    deps = [
-      _pdfium_root_dir + ":pdfium_embeddertest_deps",
-    ]
+    deps = [ _pdfium_root_dir + ":pdfium_embeddertest_deps" ]
     if (defined(invoker.deps)) {
       deps += invoker.deps
     }
