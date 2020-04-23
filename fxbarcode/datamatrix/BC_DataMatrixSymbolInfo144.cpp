@@ -21,13 +21,20 @@
  */
 
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
+
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
-CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144()
-    : CBC_SymbolInfo(1558, 620, 22, 22, 36, -1, 62) {}
+namespace {
 
-CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144() {}
+constexpr CBC_SymbolInfo::Data kSymbolDatum = {1558, 620, 22, 22, 36, -1, 62};
+
+}  // namespace
+
+CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144()
+    : CBC_SymbolInfo(&kSymbolDatum) {}
+
+CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144() = default;
 
 size_t CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount() const {
   return 10;

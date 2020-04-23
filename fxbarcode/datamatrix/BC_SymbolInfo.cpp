@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
@@ -36,41 +37,36 @@ CBC_SymbolInfo* g_symbols[kSymbolsCount] = {
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
+constexpr CBC_SymbolInfo::Data kSymbolData[] = {
+    {3, 5, 8, 8, 1, 3, 5},           {5, 7, 10, 10, 1, 5, 7},
+    {5, 7, 16, 6, 1, 5, 7},          {8, 10, 12, 12, 1, 8, 10},
+    {10, 11, 14, 6, 2, 10, 11},      {12, 12, 14, 14, 1, 12, 12},
+    {16, 14, 24, 10, 1, 16, 14},     {18, 14, 16, 16, 1, 18, 14},
+    {22, 18, 18, 18, 1, 22, 18},     {22, 18, 16, 10, 2, 22, 18},
+    {30, 20, 20, 20, 1, 30, 20},     {32, 24, 16, 14, 2, 32, 24},
+    {36, 24, 22, 22, 1, 36, 24},     {44, 28, 24, 24, 1, 44, 28},
+    {49, 28, 22, 14, 2, 49, 28},     {62, 36, 14, 14, 4, 62, 36},
+    {86, 42, 16, 16, 4, 86, 42},     {114, 48, 18, 18, 4, 114, 48},
+    {144, 56, 20, 20, 4, 144, 56},   {174, 68, 22, 22, 4, 174, 68},
+    {204, 84, 24, 24, 4, 102, 42},   {280, 112, 14, 14, 16, 140, 56},
+    {368, 144, 16, 16, 16, 92, 36},  {456, 192, 18, 18, 16, 114, 48},
+    {576, 224, 20, 20, 16, 144, 56}, {696, 272, 22, 22, 16, 174, 68},
+    {816, 336, 24, 24, 16, 136, 56}, {1050, 408, 18, 18, 36, 175, 68},
+    {1304, 496, 20, 20, 36, 163, 62}};
+
+constexpr size_t kSymbolDataSize = FX_ArraySize(kSymbolData);
+static_assert(kSymbolDataSize + 1 == kSymbolsCount, "Wrong kSymbolDataSize");
+
 }  // namespace
 
+// static
 void CBC_SymbolInfo::Initialize() {
-  g_symbols[0] = new CBC_SymbolInfo(3, 5, 8, 8, 1);
-  g_symbols[1] = new CBC_SymbolInfo(5, 7, 10, 10, 1);
-  g_symbols[2] = new CBC_SymbolInfo(5, 7, 16, 6, 1);
-  g_symbols[3] = new CBC_SymbolInfo(8, 10, 12, 12, 1);
-  g_symbols[4] = new CBC_SymbolInfo(10, 11, 14, 6, 2);
-  g_symbols[5] = new CBC_SymbolInfo(12, 12, 14, 14, 1);
-  g_symbols[6] = new CBC_SymbolInfo(16, 14, 24, 10, 1);
-  g_symbols[7] = new CBC_SymbolInfo(18, 14, 16, 16, 1);
-  g_symbols[8] = new CBC_SymbolInfo(22, 18, 18, 18, 1);
-  g_symbols[9] = new CBC_SymbolInfo(22, 18, 16, 10, 2);
-  g_symbols[10] = new CBC_SymbolInfo(30, 20, 20, 20, 1);
-  g_symbols[11] = new CBC_SymbolInfo(32, 24, 16, 14, 2);
-  g_symbols[12] = new CBC_SymbolInfo(36, 24, 22, 22, 1);
-  g_symbols[13] = new CBC_SymbolInfo(44, 28, 24, 24, 1);
-  g_symbols[14] = new CBC_SymbolInfo(49, 28, 22, 14, 2);
-  g_symbols[15] = new CBC_SymbolInfo(62, 36, 14, 14, 4);
-  g_symbols[16] = new CBC_SymbolInfo(86, 42, 16, 16, 4);
-  g_symbols[17] = new CBC_SymbolInfo(114, 48, 18, 18, 4);
-  g_symbols[18] = new CBC_SymbolInfo(144, 56, 20, 20, 4);
-  g_symbols[19] = new CBC_SymbolInfo(174, 68, 22, 22, 4);
-  g_symbols[20] = new CBC_SymbolInfo(204, 84, 24, 24, 4, 102, 42);
-  g_symbols[21] = new CBC_SymbolInfo(280, 112, 14, 14, 16, 140, 56);
-  g_symbols[22] = new CBC_SymbolInfo(368, 144, 16, 16, 16, 92, 36);
-  g_symbols[23] = new CBC_SymbolInfo(456, 192, 18, 18, 16, 114, 48);
-  g_symbols[24] = new CBC_SymbolInfo(576, 224, 20, 20, 16, 144, 56);
-  g_symbols[25] = new CBC_SymbolInfo(696, 272, 22, 22, 16, 174, 68);
-  g_symbols[26] = new CBC_SymbolInfo(816, 336, 24, 24, 16, 136, 56);
-  g_symbols[27] = new CBC_SymbolInfo(1050, 408, 18, 18, 36, 175, 68);
-  g_symbols[28] = new CBC_SymbolInfo(1304, 496, 20, 20, 36, 163, 62);
-  g_symbols[29] = new CBC_DataMatrixSymbolInfo144();
+  for (size_t i = 0; i < kSymbolDataSize; ++i)
+    g_symbols[i] = new CBC_SymbolInfo(&kSymbolData[i]);
+  g_symbols[kSymbolDataSize] = new CBC_DataMatrixSymbolInfo144();
 }
 
+// static
 void CBC_SymbolInfo::Finalize() {
   for (size_t i = 0; i < kSymbolsCount; i++) {
     delete g_symbols[i];
@@ -78,34 +74,8 @@ void CBC_SymbolInfo::Finalize() {
   }
 }
 
-CBC_SymbolInfo::CBC_SymbolInfo(size_t dataCapacity,
-                               size_t errorCodewords,
-                               int32_t matrixWidth,
-                               int32_t matrixHeight,
-                               int32_t dataRegions)
-    : CBC_SymbolInfo(dataCapacity,
-                     errorCodewords,
-                     matrixWidth,
-                     matrixHeight,
-                     dataRegions,
-                     dataCapacity,
-                     errorCodewords) {}
-
-CBC_SymbolInfo::CBC_SymbolInfo(size_t dataCapacity,
-                               size_t errorCodewords,
-                               int32_t matrixWidth,
-                               int32_t matrixHeight,
-                               int32_t dataRegions,
-                               size_t rsBlockData,
-                               size_t rsBlockError)
-    : m_rectangular(matrixWidth != matrixHeight),
-      m_dataCapacity(dataCapacity),
-      m_errorCodewords(errorCodewords),
-      m_matrixWidth(matrixWidth),
-      m_matrixHeight(matrixHeight),
-      m_dataRegions(dataRegions),
-      m_rsBlockData(rsBlockData),
-      m_rsBlockError(rsBlockError) {}
+CBC_SymbolInfo::CBC_SymbolInfo(const Data* data)
+    : data_(data), rectangular_(data_->matrix_width != data_->matrix_height) {}
 
 CBC_SymbolInfo::~CBC_SymbolInfo() = default;
 
@@ -113,7 +83,7 @@ const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(size_t iDataCodewords,
                                              bool bAllowRectangular) {
   for (size_t i = 0; i < kSymbolsCount; i++) {
     CBC_SymbolInfo* symbol = g_symbols[i];
-    if (symbol->m_rectangular && !bAllowRectangular)
+    if (symbol->rectangular_ && !bAllowRectangular)
       continue;
 
     if (iDataCodewords <= symbol->dataCapacity())
@@ -123,7 +93,7 @@ const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(size_t iDataCodewords,
 }
 
 int32_t CBC_SymbolInfo::getHorizontalDataRegions() const {
-  switch (m_dataRegions) {
+  switch (data_->data_regions) {
     case 1:
       return 1;
     case 2:
@@ -141,7 +111,7 @@ int32_t CBC_SymbolInfo::getHorizontalDataRegions() const {
 }
 
 int32_t CBC_SymbolInfo::getVerticalDataRegions() const {
-  switch (m_dataRegions) {
+  switch (data_->data_regions) {
     case 1:
       return 1;
     case 2:
@@ -159,11 +129,11 @@ int32_t CBC_SymbolInfo::getVerticalDataRegions() const {
 }
 
 int32_t CBC_SymbolInfo::getSymbolDataWidth() const {
-  return getHorizontalDataRegions() * m_matrixWidth;
+  return getHorizontalDataRegions() * data_->matrix_width;
 }
 
 int32_t CBC_SymbolInfo::getSymbolDataHeight() const {
-  return getVerticalDataRegions() * m_matrixHeight;
+  return getVerticalDataRegions() * data_->matrix_height;
 }
 
 int32_t CBC_SymbolInfo::getSymbolWidth() const {
@@ -175,17 +145,17 @@ int32_t CBC_SymbolInfo::getSymbolHeight() const {
 }
 
 size_t CBC_SymbolInfo::getCodewordCount() const {
-  return m_dataCapacity + m_errorCodewords;
+  return data_->data_capacity + data_->error_codewords;
 }
 
 size_t CBC_SymbolInfo::getInterleavedBlockCount() const {
-  return m_dataCapacity / m_rsBlockData;
+  return data_->data_capacity / data_->rs_block_data;
 }
 
 size_t CBC_SymbolInfo::getDataLengthForInterleavedBlock() const {
-  return m_rsBlockData;
+  return data_->rs_block_data;
 }
 
 size_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock() const {
-  return m_rsBlockError;
+  return data_->rs_block_error;
 }

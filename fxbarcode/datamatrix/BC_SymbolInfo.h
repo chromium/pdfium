@@ -12,11 +12,16 @@
 
 class CBC_SymbolInfo {
  public:
-  CBC_SymbolInfo(size_t dataCapacity,
-                 size_t errorCodewords,
-                 int32_t matrixWidth,
-                 int32_t matrixHeight,
-                 int32_t dataRegions);
+  struct Data {
+    int16_t data_capacity;
+    int16_t error_codewords;
+    int8_t matrix_width;
+    int8_t matrix_height;
+    int8_t data_regions;
+    int16_t rs_block_data;
+    int8_t rs_block_error;
+  };
+
   virtual ~CBC_SymbolInfo();
 
   static void Initialize();
@@ -34,32 +39,20 @@ class CBC_SymbolInfo {
   size_t getDataLengthForInterleavedBlock() const;
   size_t getErrorLengthForInterleavedBlock() const;
 
-  size_t dataCapacity() const { return m_dataCapacity; }
-  size_t errorCodewords() const { return m_errorCodewords; }
-  int32_t matrixWidth() const { return m_matrixWidth; }
-  int32_t matrixHeight() const { return m_matrixHeight; }
+  size_t dataCapacity() const { return data_->data_capacity; }
+  size_t errorCodewords() const { return data_->error_codewords; }
+  int32_t matrixWidth() const { return data_->matrix_width; }
+  int32_t matrixHeight() const { return data_->matrix_height; }
 
  protected:
-  CBC_SymbolInfo(size_t dataCapacity,
-                 size_t errorCodewords,
-                 int32_t matrixWidth,
-                 int32_t matrixHeight,
-                 int32_t dataRegions,
-                 size_t rsBlockData,
-                 size_t rsBlockError);
+  explicit CBC_SymbolInfo(const Data* data);
 
  private:
   int32_t getHorizontalDataRegions() const;
   int32_t getVerticalDataRegions() const;
 
-  const bool m_rectangular;
-  const size_t m_dataCapacity;
-  const size_t m_errorCodewords;
-  const int32_t m_matrixWidth;
-  const int32_t m_matrixHeight;
-  const int32_t m_dataRegions;
-  const size_t m_rsBlockData;
-  const size_t m_rsBlockError;
+  const Data* const data_;
+  const bool rectangular_;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
