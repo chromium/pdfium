@@ -46,6 +46,51 @@ typedef struct _IFSDK_PAUSE {
   void* user;
 } IFSDK_PAUSE;
 
+// Experimental API.
+// Function: FPDF_RenderPageBitmapWithColorScheme_Start
+//          Start to render page contents to a device independent bitmap
+//          progressively with a specified color scheme for the content.
+// Parameters:
+//          bitmap       -   Handle to the device independent bitmap (as the
+//                           output buffer). Bitmap handle can be created by
+//                           FPDFBitmap_Create function.
+//          page         -   Handle to the page as returned by FPDF_LoadPage
+//                           function.
+//          start_x      -   Left pixel position of the display area in the
+//                           bitmap coordinate.
+//          start_y      -   Top pixel position of the display area in the
+//                           bitmap coordinate.
+//          size_x       -   Horizontal size (in pixels) for displaying the
+//                           page.
+//          size_y       -   Vertical size (in pixels) for displaying the page.
+//          rotate       -   Page orientation: 0 (normal), 1 (rotated 90
+//                           degrees clockwise), 2 (rotated 180 degrees),
+//                           3 (rotated 90 degrees counter-clockwise).
+//          flags        -   0 for normal display, or combination of flags
+//                           defined in fpdfview.h. With FPDF_ANNOT flag, it
+//                           renders all annotations that does not require
+//                           user-interaction, which are all annotations except
+//                           widget and popup annotations.
+//          color_scheme -   Color scheme to be used in rendering the |page|.
+//                           If null, this function will work similar to
+//                           FPDF_RenderPageBitmap_Start().
+//          pause        -   The IFSDK_PAUSE interface. A callback mechanism
+//                           allowing the page rendering process.
+// Return value:
+//          Rendering Status. See flags for progressive process status for the
+//          details.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
+                                           FPDF_PAGE page,
+                                           int start_x,
+                                           int start_y,
+                                           int size_x,
+                                           int size_y,
+                                           int rotate,
+                                           int flags,
+                                           const FPDF_COLORSCHEME* color_scheme,
+                                           IFSDK_PAUSE* pause);
+
 // Function: FPDF_RenderPageBitmap_Start
 //          Start to render page contents to a device independent bitmap
 //          progressively.
@@ -73,7 +118,6 @@ typedef struct _IFSDK_PAUSE {
 // Return value:
 //          Rendering Status. See flags for progressive process status for the
 //          details.
-//
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                                                           FPDF_PAGE page,
                                                           int start_x,

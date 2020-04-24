@@ -42,6 +42,25 @@ FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
   return ArgbEncode(a, gray, gray, gray);
 }
 
+FX_ARGB CPDF_RenderOptions::TranslateObjectColor(
+    FX_ARGB argb,
+    CPDF_PageObject::Type object_type,
+    RenderType render_type) const {
+  if (!ColorModeIs(kForcedColor))
+    return TranslateColor(argb);
+
+  switch (object_type) {
+    case CPDF_PageObject::Type::PATH:
+      return render_type == RenderType::kFill ? m_ColorScheme.path_fill_color
+                                              : m_ColorScheme.path_stroke_color;
+    case CPDF_PageObject::Type::TEXT:
+      return render_type == RenderType::kFill ? m_ColorScheme.text_fill_color
+                                              : m_ColorScheme.text_stroke_color;
+    default:
+      return argb;
+  }
+}
+
 uint32_t CPDF_RenderOptions::GetCacheSizeLimit() const {
   return kCacheSizeLimitBytes;
 }

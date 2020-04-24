@@ -294,6 +294,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_ImportPages);
 
     // fpdf_progressive.h
+    CHK(FPDF_RenderPageBitmapWithColorScheme_Start);
     CHK(FPDF_RenderPageBitmap_Start);
     CHK(FPDF_RenderPage_Close);
     CHK(FPDF_RenderPage_Continue);

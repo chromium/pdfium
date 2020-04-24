@@ -411,6 +411,14 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (FillType == 0 && !bStroke)
     return true;
 
+  // If the option to convert fill paths to stroke is enabled for forced color,
+  // set |FillType| to 0 and |bStroke| to true.
+  if (m_Options.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) &&
+      m_Options.GetOptions().bConvertFillToStroke && (FillType != 0)) {
+    bStroke = true;
+    FillType = 0;
+  }
+
   uint32_t fill_argb = FillType ? GetFillArgb(pPathObj) : 0;
   uint32_t stroke_argb = bStroke ? GetStrokeArgb(pPathObj) : 0;
   CFX_Matrix path_matrix = pPathObj->matrix() * mtObj2Device;
@@ -473,7 +481,9 @@ FX_ARGB CPDF_RenderStatus::GetFillArgbInternal(CPDF_PageObject* pObj,
           pObj->m_GeneralState.GetTransferFunc()->TranslateColor(colorref);
     }
   }
-  return m_Options.TranslateColor(AlphaAndColorRefToArgb(alpha, colorref));
+  return m_Options.TranslateObjectColor(AlphaAndColorRefToArgb(alpha, colorref),
+                                        pObj->GetType(),
+                                        CPDF_RenderOptions::RenderType::kFill);
 }
 
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
@@ -500,7 +510,9 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
           pObj->m_GeneralState.GetTransferFunc()->TranslateColor(colorref);
     }
   }
-  return m_Options.TranslateColor(AlphaAndColorRefToArgb(alpha, colorref));
+  return m_Options.TranslateObjectColor(
+      AlphaAndColorRefToArgb(alpha, colorref), pObj->GetType(),
+      CPDF_RenderOptions::RenderType::kStroke);
 }
 
 void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,

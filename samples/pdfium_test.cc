@@ -108,6 +108,8 @@ struct Options {
   bool lcd_text = false;
   bool no_nativetext = false;
   bool grayscale = false;
+  bool forced_color = false;
+  bool fill_to_stroke = false;
   bool limit_cache = false;
   bool force_halftone = false;
   bool printing = false;
@@ -153,6 +155,8 @@ int PageRenderFlagsFromOptions(const Options& options) {
     flags |= FPDF_NO_NATIVETEXT;
   if (options.grayscale)
     flags |= FPDF_GRAYSCALE;
+  if (options.fill_to_stroke)
+    flags |= FPDF_CONVERT_FILL_TO_STROKE;
   if (options.limit_cache)
     flags |= FPDF_RENDER_LIMITEDIMAGECACHE;
   if (options.force_halftone)
@@ -422,6 +426,10 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->no_nativetext = true;
     } else if (cur_arg == "--grayscale") {
       options->grayscale = true;
+    } else if (cur_arg == "--forced-color") {
+      options->forced_color = true;
+    } else if (cur_arg == "--fill-to-stroke") {
+      options->fill_to_stroke = true;
     } else if (cur_arg == "--limit-cache") {
       options->limit_cache = true;
     } else if (cur_arg == "--force-halftone") {
@@ -747,8 +755,16 @@ bool RenderPage(const std::string& name,
       pause.version = 1;
       pause.NeedToPauseNow = &NeedToPauseNow;
 
-      int rv = FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, width,
-                                           height, 0, flags, &pause);
+      // Client programs will be setting these values when rendering.
+      // This is a sample color scheme with distinct colors.
+      // Used only when |options.forced_color| is true.
+      const FPDF_COLORSCHEME color_scheme{
+          /*path_fill_color=*/0xFFFF0000, /*path_stroke_color=*/0xFF00FF00,
+          /*text_fill_color=*/0xFF0000FF, /*text_stroke_color=*/0xFF00FFFF};
+
+      int rv = FPDF_RenderPageBitmapWithColorScheme_Start(
+          bitmap.get(), page, 0, 0, width, height, 0, flags,
+          options.forced_color ? &color_scheme : nullptr, &pause);
       while (rv == FPDF_RENDER_TOBECONTINUED)
         rv = FPDF_RenderPage_Continue(page, &pause);
     }
@@ -1032,6 +1048,8 @@ constexpr char kUsageString[] =
     "  --lcd-text           - render text optimized for LCD displays\n"
     "  --no-nativetext      - render without using the native text output\n"
     "  --grayscale          - render grayscale output\n"
+    "  --forced-color       - render in forced color mode\n"
+    "  --fill-to-stroke     - render fill as stroke in forced color mode\n"
     "  --limit-cache        - render limiting image cache size\n"
     "  --force-halftone     - render forcing halftone\n"
     "  --printing           - render as if for printing\n"

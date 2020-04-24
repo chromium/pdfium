@@ -32,6 +32,7 @@ class CPDF_Object;
 class CPDF_Font;
 class CPDF_LinkExtract;
 class CPDF_PageObject;
+class CPDF_RenderOptions;
 class CPDF_Stream;
 class CPDF_StructElement;
 class CPDF_StructTree;
@@ -270,5 +271,7 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc);
 void ReportUnsupportedXFA(const CPDF_Document* pDoc);
 void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
+void SetColorFromScheme(const FPDF_COLORSCHEME* pColorScheme,
+                        CPDF_RenderOptions* pRenderOptions);
 
 #endif  // FPDFSDK_CPDFSDK_HELPERS_H_

@@ -41,15 +41,17 @@ int ToFPDFStatus(CPDF_ProgressiveRenderer::Status status) {
 
 }  // namespace
 
-FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
-                                                          FPDF_PAGE page,
-                                                          int start_x,
-                                                          int start_y,
-                                                          int size_x,
-                                                          int size_y,
-                                                          int rotate,
-                                                          int flags,
-                                                          IFSDK_PAUSE* pause) {
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
+                                           FPDF_PAGE page,
+                                           int start_x,
+                                           int start_y,
+                                           int size_x,
+                                           int size_y,
+                                           int rotate,
+                                           int flags,
+                                           const FPDF_COLORSCHEME* color_scheme,
+                                           IFSDK_PAUSE* pause) {
   if (!bitmap || !pause || pause->version != 1)
     return FPDF_RENDER_FAILED;
 
@@ -69,7 +71,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
 
   CPDFSDK_PauseAdapter pause_adapter(pause);
   CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
-                                size_y, rotate, flags,
+                                size_y, rotate, flags, color_scheme,
                                 /*need_to_restore=*/false, &pause_adapter);
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -81,6 +83,20 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
     return FPDF_RENDER_FAILED;
 
   return ToFPDFStatus(pContext->m_pRenderer->GetStatus());
+}
+
+FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
+                                                          FPDF_PAGE page,
+                                                          int start_x,
+                                                          int start_y,
+                                                          int size_x,
+                                                          int size_y,
+                                                          int rotate,
+                                                          int flags,
+                                                          IFSDK_PAUSE* pause) {
+  return FPDF_RenderPageBitmapWithColorScheme_Start(
+      bitmap, page, start_x, start_y, size_x, size_y, rotate, flags,
+      /*color_scheme=*/nullptr, pause);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,

@@ -76,5 +76,6 @@ pdfium_embeddertest_source_set("embeddertests") {
     "fpdf_progressive_render_embeddertest.cpp",
     "fpdf_render_pattern_embeddertest.cpp",
   ]
+  deps = [ "../../fxge" ]
   pdfium_root_dir = "../../../"
 }
