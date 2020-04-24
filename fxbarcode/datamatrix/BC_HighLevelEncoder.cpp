@@ -165,7 +165,7 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   if (!context.UpdateSymbolInfo())
     return WideString();
 
-  size_t capacity = context.m_symbolInfo->dataCapacity();
+  size_t capacity = context.m_symbolInfo->data_capacity();
   if (len < capacity) {
     if (encodingMode != Encoding::ASCII && encodingMode != Encoding::BASE256)
       context.writeCodeword(0x00fe);

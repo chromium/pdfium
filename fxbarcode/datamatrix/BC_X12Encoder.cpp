@@ -67,7 +67,7 @@ bool CBC_X12Encoder::HandleEOD(CBC_EncoderContext* context,
     return false;
 
   int32_t available =
-      context->m_symbolInfo->dataCapacity() - context->getCodewordCount();
+      context->m_symbolInfo->data_capacity() - context->getCodewordCount();
   size_t count = buffer->GetLength();
   if (count == 2) {
     context->writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);

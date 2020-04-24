@@ -49,20 +49,20 @@ namespace {
 std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
     CBC_DefaultPlacement* placement,
     const CBC_SymbolInfo* symbolInfo) {
-  int32_t symbolWidth = symbolInfo->getSymbolDataWidth();
+  int32_t symbolWidth = symbolInfo->GetSymbolDataWidth();
   ASSERT(symbolWidth);
-  int32_t symbolHeight = symbolInfo->getSymbolDataHeight();
+  int32_t symbolHeight = symbolInfo->GetSymbolDataHeight();
   ASSERT(symbolHeight);
-  int32_t width = symbolInfo->getSymbolWidth();
+  int32_t width = symbolInfo->GetSymbolWidth();
   ASSERT(width);
-  int32_t height = symbolInfo->getSymbolHeight();
+  int32_t height = symbolInfo->GetSymbolHeight();
   ASSERT(height);
 
   auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(width, height);
   int32_t matrixY = 0;
   for (int32_t y = 0; y < symbolHeight; y++) {
     int32_t matrixX;
-    if ((y % symbolInfo->matrixHeight()) == 0) {
+    if ((y % symbolInfo->matrix_height()) == 0) {
       matrixX = 0;
       for (int32_t x = 0; x < width; x++) {
         matrix->Set(matrixX, matrixY, x % 2 == 0);
@@ -72,19 +72,19 @@ std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
     }
     matrixX = 0;
     for (int32_t x = 0; x < symbolWidth; x++) {
-      if (x % symbolInfo->matrixWidth() == 0) {
+      if (x % symbolInfo->matrix_width() == 0) {
         matrix->Set(matrixX, matrixY, true);
         matrixX++;
       }
       matrix->Set(matrixX, matrixY, placement->getBit(x, y));
       matrixX++;
-      if (x % symbolInfo->matrixWidth() == symbolInfo->matrixWidth() - 1) {
+      if (x % symbolInfo->matrix_width() == symbolInfo->matrix_width() - 1) {
         matrix->Set(matrixX, matrixY, y % 2 == 0);
         matrixX++;
       }
     }
     matrixY++;
-    if (y % symbolInfo->matrixHeight() == symbolInfo->matrixHeight() - 1) {
+    if (y % symbolInfo->matrix_height() == symbolInfo->matrix_height() - 1) {
       matrixX = 0;
       for (int32_t x = 0; x < width; x++) {
         matrix->Set(matrixX, matrixY, true);
@@ -126,9 +126,9 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_DataMatrixWriter::Encode(
   if (codewords.IsEmpty())
     return results;
 
-  int32_t width = pSymbolInfo->getSymbolDataWidth();
+  int32_t width = pSymbolInfo->GetSymbolDataWidth();
   ASSERT(width);
-  int32_t height = pSymbolInfo->getSymbolDataHeight();
+  int32_t height = pSymbolInfo->GetSymbolDataHeight();
   ASSERT(height);
 
   auto placement =

@@ -85,13 +85,13 @@ const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(size_t data_codewords,
     if (symbol->is_rectangular() && !allow_rectangular)
       continue;
 
-    if (data_codewords <= symbol->dataCapacity())
+    if (data_codewords <= symbol->data_capacity())
       return symbol;
   }
   return nullptr;
 }
 
-int32_t CBC_SymbolInfo::getHorizontalDataRegions() const {
+int32_t CBC_SymbolInfo::GetHorizontalDataRegions() const {
   switch (data_->data_regions) {
     case 1:
       return 1;
@@ -109,7 +109,7 @@ int32_t CBC_SymbolInfo::getHorizontalDataRegions() const {
   }
 }
 
-int32_t CBC_SymbolInfo::getVerticalDataRegions() const {
+int32_t CBC_SymbolInfo::GetVerticalDataRegions() const {
   switch (data_->data_regions) {
     case 1:
       return 1;
@@ -127,34 +127,30 @@ int32_t CBC_SymbolInfo::getVerticalDataRegions() const {
   }
 }
 
-int32_t CBC_SymbolInfo::getSymbolDataWidth() const {
-  return getHorizontalDataRegions() * data_->matrix_width;
+int32_t CBC_SymbolInfo::GetSymbolDataWidth() const {
+  return GetHorizontalDataRegions() * data_->matrix_width;
 }
 
-int32_t CBC_SymbolInfo::getSymbolDataHeight() const {
-  return getVerticalDataRegions() * data_->matrix_height;
+int32_t CBC_SymbolInfo::GetSymbolDataHeight() const {
+  return GetVerticalDataRegions() * data_->matrix_height;
 }
 
-int32_t CBC_SymbolInfo::getSymbolWidth() const {
-  return getSymbolDataWidth() + (getHorizontalDataRegions() * 2);
+int32_t CBC_SymbolInfo::GetSymbolWidth() const {
+  return GetSymbolDataWidth() + (GetHorizontalDataRegions() * 2);
 }
 
-int32_t CBC_SymbolInfo::getSymbolHeight() const {
-  return getSymbolDataHeight() + (getVerticalDataRegions() * 2);
+int32_t CBC_SymbolInfo::GetSymbolHeight() const {
+  return GetSymbolDataHeight() + (GetVerticalDataRegions() * 2);
 }
 
-size_t CBC_SymbolInfo::getCodewordCount() const {
-  return data_->data_capacity + data_->error_codewords;
-}
-
-size_t CBC_SymbolInfo::getInterleavedBlockCount() const {
+size_t CBC_SymbolInfo::GetInterleavedBlockCount() const {
   return data_->data_capacity / data_->rs_block_data;
 }
 
-size_t CBC_SymbolInfo::getDataLengthForInterleavedBlock() const {
+size_t CBC_SymbolInfo::GetDataLengthForInterleavedBlock() const {
   return data_->rs_block_data;
 }
 
-size_t CBC_SymbolInfo::getErrorLengthForInterleavedBlock() const {
+size_t CBC_SymbolInfo::GetErrorLengthForInterleavedBlock() const {
   return data_->rs_block_error;
 }

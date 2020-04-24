@@ -15,7 +15,7 @@ class CBC_DataMatrixSymbolInfo144 final : public CBC_SymbolInfo {
   ~CBC_DataMatrixSymbolInfo144() override;
 
   // CBC_SymbolInfo:
-  size_t getInterleavedBlockCount() const override;
+  size_t GetInterleavedBlockCount() const override;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_DATAMATRIXSYMBOLINFO144_H_

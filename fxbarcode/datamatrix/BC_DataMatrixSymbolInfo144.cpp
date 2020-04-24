@@ -36,6 +36,6 @@ CBC_DataMatrixSymbolInfo144::CBC_DataMatrixSymbolInfo144()
 
 CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144() = default;
 
-size_t CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount() const {
+size_t CBC_DataMatrixSymbolInfo144::GetInterleavedBlockCount() const {
   return 10;
 }

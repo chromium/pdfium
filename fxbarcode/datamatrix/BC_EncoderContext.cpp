@@ -24,6 +24,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_string.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
@@ -90,7 +91,7 @@ bool CBC_EncoderContext::UpdateSymbolInfo() {
 }
 
 bool CBC_EncoderContext::UpdateSymbolInfo(size_t len) {
-  if (!m_symbolInfo || len > m_symbolInfo->dataCapacity()) {
+  if (!m_symbolInfo || len > m_symbolInfo->data_capacity()) {
     m_symbolInfo = CBC_SymbolInfo::Lookup(len, m_bAllowRectangular);
     if (!m_symbolInfo)
       return false;

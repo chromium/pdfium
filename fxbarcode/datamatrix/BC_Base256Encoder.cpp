@@ -73,7 +73,7 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
   if (!context->UpdateSymbolInfo(currentSize))
     return false;
 
-  bool mustPad = (context->m_symbolInfo->dataCapacity() - currentSize) > 0;
+  bool mustPad = (context->m_symbolInfo->data_capacity() - currentSize) > 0;
   if (context->hasMoreCharacters() || mustPad) {
     if (dataCount <= 249) {
       buffer.SetAt(0, static_cast<wchar_t>(dataCount));

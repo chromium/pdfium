@@ -184,13 +184,13 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
 
 WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
                                              const CBC_SymbolInfo* symbolInfo) {
-  if (codewords.GetLength() != symbolInfo->dataCapacity())
+  if (codewords.GetLength() != symbolInfo->data_capacity())
     return WideString();
 
   WideString sb = codewords;
-  size_t blockCount = symbolInfo->getInterleavedBlockCount();
+  size_t blockCount = symbolInfo->GetInterleavedBlockCount();
   if (blockCount == 1) {
-    WideString ecc = CreateECCBlock(codewords, symbolInfo->errorCodewords());
+    WideString ecc = CreateECCBlock(codewords, symbolInfo->error_codewords());
     if (ecc.IsEmpty())
       return WideString();
     sb += ecc;
@@ -199,8 +199,8 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
     std::vector<size_t> errorSizes(blockCount);
     std::vector<size_t> startPos(blockCount);
     for (size_t i = 0; i < blockCount; ++i) {
-      dataSizes[i] = symbolInfo->getDataLengthForInterleavedBlock();
-      errorSizes[i] = symbolInfo->getErrorLengthForInterleavedBlock();
+      dataSizes[i] = symbolInfo->GetDataLengthForInterleavedBlock();
+      errorSizes[i] = symbolInfo->GetErrorLengthForInterleavedBlock();
       startPos[i] = i > 0 ? startPos[i - 1] + dataSizes[i] : 0;
     }
 
@@ -212,9 +212,9 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
 
     for (size_t block = 0; block < blockCount; ++block) {
       WideString temp;
-      if (symbolInfo->dataCapacity() > block)
-        temp.Reserve((symbolInfo->dataCapacity() - block / blockCount) + 1);
-      for (size_t d = block; d < symbolInfo->dataCapacity(); d += blockCount)
+      if (symbolInfo->data_capacity() > block)
+        temp.Reserve((symbolInfo->data_capacity() - block / blockCount) + 1);
+      for (size_t d = block; d < symbolInfo->data_capacity(); d += blockCount)
         temp.InsertAtBack(static_cast<wchar_t>(codewords[d]));
 
       WideString ecc = CreateECCBlock(temp, errorSizes[block]);
@@ -223,7 +223,7 @@ WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
 
       for (size_t pos = 0, i = block; i < errorSizes[block] * blockCount;
            ++pos, i += blockCount) {
-        sb.SetAt(symbolInfo->dataCapacity() + i, ecc[pos]);
+        sb.SetAt(symbolInfo->data_capacity() + i, ecc[pos]);
       }
     }
   }
