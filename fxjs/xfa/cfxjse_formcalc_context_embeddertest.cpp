@@ -612,7 +612,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, TimeFmt) {
   }
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Apr) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Apr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -626,7 +626,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Apr) {
 
     CFXJSE_Value* value = GetValue();
     EXPECT_TRUE(value->IsNumber());
-    EXPECT_FLOAT_EQ(tests[i].result, value->ToFloat())
+    EXPECT_NEAR(tests[i].result, value->ToFloat(), 0.000001)
         << "Program: " << tests[i].program;
   }
 }
@@ -774,7 +774,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
   }
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Rate) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rate) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   struct {
@@ -788,7 +788,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Rate) {
 
     CFXJSE_Value* value = GetValue();
     EXPECT_TRUE(value->IsNumber());
-    EXPECT_FLOAT_EQ(tests[i].result, value->ToFloat())
+    EXPECT_NEAR(tests[i].result, value->ToFloat(), 0.000001)
         << "Program: " << tests[i].program;
   }
 }
