@@ -271,12 +271,15 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   if (pPageDict->KeyExist(pdfium::page_object::kCropBox))
     rcOriginalMB = pPageDict->GetRectFor(pdfium::page_object::kCropBox);
 
+  rcOriginalMB.Normalize();
   if (rcOriginalMB.IsEmpty())
     rcOriginalMB = CFX_FloatRect(0.0f, 0.0f, 612.0f, 792.0f);
 
   CFX_FloatRect rcOriginalCB;
-  if (pPageDict->KeyExist(pdfium::page_object::kCropBox))
+  if (pPageDict->KeyExist(pdfium::page_object::kCropBox)) {
     rcOriginalCB = pPageDict->GetRectFor(pdfium::page_object::kCropBox);
+    rcOriginalCB.Normalize();
+  }
   if (rcOriginalCB.IsEmpty())
     rcOriginalCB = rcOriginalMB;
 

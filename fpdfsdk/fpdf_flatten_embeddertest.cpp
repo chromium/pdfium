@@ -73,13 +73,13 @@ TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_861842) {
 TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 #if defined(OS_WIN)
   constexpr char kPageHash[] = "8c6e1dab0a15072f2c9c0ca240fdc739";
-  constexpr char kFlattenedPageHash[] = "b8e2a9e0ac526895a01937ae6a57fefb";
+  constexpr char kFlattenedPageHash[] = "9fb932ce7f370c0e68eec0a5d4d76271";
 #elif defined(OS_MACOSX)
   constexpr char kPageHash[] = "d43f54c60b325726392a558f861402a9";
-  constexpr char kFlattenedPageHash[] = "84d551f3a260db7922de01893962112a";
+  constexpr char kFlattenedPageHash[] = "627f143efb920a5e7ddd311e963b9c66";
 #else
   constexpr char kPageHash[] = "51f35e80dbc8a69a024b5a02aa64d463";
-  constexpr char kFlattenedPageHash[] = "d2d48eadc17d9ec3090d99bdad161274";
+  constexpr char kFlattenedPageHash[] = "ef01f57507662ec9aef7cc7cff92f96c";
 #endif
 
   EXPECT_TRUE(OpenDocument("bug_889099.pdf"));
@@ -95,9 +95,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/889099): The size of the flattened page should not be
-  // different that that of the original one.
-  VerifySavedDocument(612, 792, kFlattenedPageHash);
+  VerifySavedDocument(300, 400, kFlattenedPageHash);
 }
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
