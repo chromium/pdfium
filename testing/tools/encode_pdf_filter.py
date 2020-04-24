@@ -38,18 +38,24 @@ class _PdfStream:
 
     return filter_class
 
-  @staticmethod
-  def RegisterFilter(filter_class):
-    assert filter_class not in _PdfStream._unique_filter_classes
-    _PdfStream._unique_filter_classes.append(filter_class)
+  @classmethod
+  def Register(cls):
+    assert cls not in _PdfStream._unique_filter_classes
+    _PdfStream._unique_filter_classes.append(cls)
+    cls.RegisterByName()
+    cls.RegisterByAliases()
 
-    assert filter_class.name[0] == '/'
-    lower_name = filter_class.name.lower()
-    _PdfStream._filter_classes[lower_name] = filter_class
-    _PdfStream._filter_classes[lower_name[1:]] = filter_class
+  @classmethod
+  def RegisterByName(cls):
+    assert cls.name[0] == '/'
+    lower_name = cls.name.lower()
+    _PdfStream._filter_classes[lower_name] = cls
+    _PdfStream._filter_classes[lower_name[1:]] = cls
 
-    for alias in filter_class.aliases:
-      _PdfStream._filter_classes[alias.lower()] = filter_class
+  @classmethod
+  def RegisterByAliases(cls):
+    for alias in cls.aliases:
+      _PdfStream._filter_classes[alias.lower()] = cls
 
   @staticmethod
   def GetHelp():
@@ -58,6 +64,21 @@ class _PdfStream:
       text += '  {} (aliases: {})\n'.format(filter_class.name,
                                             ', '.join(filter_class.aliases))
     return text
+
+  @classmethod
+  def AddEntries(cls, entries):
+    _PdfStream.AddListEntry(entries, 'Filter', cls.name)
+
+  @staticmethod
+  def AddListEntry(entries, key, value):
+    old_value = entries.get(key)
+    if old_value is None:
+      entries[key] = value
+    else:
+      if not isinstance(old_value, collections.abc.MutableSequence):
+        old_value = [old_value]
+        entries[key] = old_value
+      old_value.append(value)
 
   def __init__(self, out_buffer, **kwargs):
     del kwargs
@@ -166,9 +187,94 @@ class _FlateDecodePdfStream(_PdfStream):
     self.buffer.close()
 
 
-_PdfStream.RegisterFilter(_Ascii85DecodePdfStream)
-_PdfStream.RegisterFilter(_AsciiHexDecodePdfStream)
-_PdfStream.RegisterFilter(_FlateDecodePdfStream)
+class _VirtualPdfStream(_PdfStream):
+
+  @classmethod
+  def RegisterByName(cls):
+    pass
+
+  @classmethod
+  def AddEntries(cls, entries):
+    pass
+
+
+class _PassthroughPdfStream(_VirtualPdfStream):
+  name = '(virtual) passthrough'
+  aliases = ('noop', 'passthrough')
+
+
+class _PngIdatPdfStream(_VirtualPdfStream):
+  name = '(virtual) PNG IDAT'
+  aliases = ('png',)
+
+  _EXPECT_HEADER = -1
+  _EXPECT_LENGTH = -2
+  _EXPECT_CHUNK_TYPE = -3
+  _EXPECT_CRC = -4
+
+  _PNG_HEADER = 0x89504E470D0A1A0A
+  _PNG_CHUNK_IDAT = 0x49444154
+
+  @classmethod
+  def AddEntries(cls, entries):
+    # Technically only true for compression method 0 (zlib), but no other
+    # methods have been standardized.
+    _PdfStream.AddListEntry(entries, 'Filter', '/FlateDecode')
+
+  def __init__(self, out_buffer, **kwargs):
+    super().__init__(out_buffer, **kwargs)
+    self.chunk = _PngIdatPdfStream._EXPECT_HEADER
+    self.remaining = 8
+    self.accumulator = 0
+    self.length = 0
+
+  def write(self, data):
+    position = 0
+    while position < len(data):
+      if self.chunk >= 0:
+        # Only pass through IDAT chunk data.
+        read_size = min(self.remaining, len(data) - position)
+        if self.chunk == _PngIdatPdfStream._PNG_CHUNK_IDAT:
+          self.buffer.write(data[position:position + read_size])
+        self.remaining -= read_size
+        if self.remaining == 0:
+          self.ResetAccumulator(_PngIdatPdfStream._EXPECT_CRC, 4)
+        position += read_size
+      else:
+        # As far as we're concerned, PNG files are just a header followed by a
+        # series of (length, chunk type, data[length], CRC) chunks.
+        if self.AccumulateByte(data[position]):
+          if self.chunk == _PngIdatPdfStream._EXPECT_HEADER:
+            if self.accumulator != _PngIdatPdfStream._PNG_HEADER:
+              raise ValueError('Invalid PNG header', self.accumulator)
+            self.ResetAccumulator(_PngIdatPdfStream._EXPECT_LENGTH, 4)
+          elif self.chunk == _PngIdatPdfStream._EXPECT_LENGTH:
+            self.length = self.accumulator
+            self.ResetAccumulator(_PngIdatPdfStream._EXPECT_CHUNK_TYPE, 4)
+          elif self.chunk == _PngIdatPdfStream._EXPECT_CHUNK_TYPE:
+            self.ResetAccumulator(self.accumulator, self.length)
+          elif self.chunk == _PngIdatPdfStream._EXPECT_CRC:
+            # Don't care if the CRC is correct.
+            self.ResetAccumulator(_PngIdatPdfStream._EXPECT_LENGTH, 4)
+        position += 1
+
+  def ResetAccumulator(self, chunk, remaining):
+    self.chunk = chunk
+    self.remaining = remaining
+    self.accumulator = 0
+
+  def AccumulateByte(self, byte):
+    assert self.remaining > 0
+    self.accumulator = self.accumulator << 8 | byte
+    self.remaining -= 1
+    return self.remaining == 0
+
+
+_Ascii85DecodePdfStream.Register()
+_AsciiHexDecodePdfStream.Register()
+_FlateDecodePdfStream.Register()
+_PassthroughPdfStream.Register()
+_PngIdatPdfStream.Register()
 
 _DEFAULT_FILTERS = (_Ascii85DecodePdfStream, _FlateDecodePdfStream)
 
@@ -261,7 +367,7 @@ def _WritePdfStreamObject(out_buffer,
 
 
 def _EncodePdfValue(value):
-  if isinstance(value, collections.abc.Sequence):
+  if isinstance(value, collections.abc.MutableSequence):
     value = '[' + ' '.join(value) + ']'
   return value
 
@@ -276,7 +382,8 @@ def main(argv):
     out_buffer.close()
 
   entries = collections.OrderedDict()
-  entries['Filter'] = [f.name for f in args.filter]
+  for f in args.filter:
+    f.AddEntries(entries)
   _WritePdfStreamObject(
       args.outfile.buffer,
       data=encoded_sink.getbuffer(),
