@@ -253,13 +253,14 @@ hooks = [
     'pattern': '.',
     'action': ['python', 'pdfium/build/mac_toolchain.py'],
   },
+  # Pull clang-format binaries using checked-in hashes.
   {
-    # Pull clang-format binaries using checked-in hashes.
     'name': 'clang_format_win',
     'pattern': '.',
-    'action': [ 'download_from_google_storage',
+    'condition': 'host_os == "win"',
+    'action': [ 'python',
+                'pdfium/third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
-                '--platform=win32',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
                 '-s', 'pdfium/buildtools/win/clang-format.exe.sha1',
@@ -268,9 +269,10 @@ hooks = [
   {
     'name': 'clang_format_mac',
     'pattern': '.',
-    'action': [ 'download_from_google_storage',
+    'condition': 'host_os == "mac"',
+    'action': [ 'python',
+                'pdfium/third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
-                '--platform=darwin',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
                 '-s', 'pdfium/buildtools/mac/clang-format.sha1',
@@ -279,9 +281,10 @@ hooks = [
   {
     'name': 'clang_format_linux',
     'pattern': '.',
-    'action': [ 'download_from_google_storage',
+    'condition': 'host_os == "linux"',
+    'action': [ 'python',
+                'pdfium/third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
-                '--platform=linux*',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
                 '-s', 'pdfium/buildtools/linux64/clang-format.sha1',
