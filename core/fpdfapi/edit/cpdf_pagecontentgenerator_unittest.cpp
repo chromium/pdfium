@@ -66,11 +66,10 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   EXPECT_EQ("q 1 0 0 1 0 0 cm 10 5 3 25 re B* Q\n", ByteString(buf));
 
   pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
-  pPathObj->path().AppendPoint(CFX_PointF(0, 0), FXPT_TYPE::MoveTo, false);
-  pPathObj->path().AppendPoint(CFX_PointF(5.2f, 0), FXPT_TYPE::LineTo, false);
-  pPathObj->path().AppendPoint(CFX_PointF(5.2f, 3.78f), FXPT_TYPE::LineTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(0, 3.78f), FXPT_TYPE::LineTo, true);
+  pPathObj->path().AppendPoint(CFX_PointF(0, 0), FXPT_TYPE::MoveTo);
+  pPathObj->path().AppendPoint(CFX_PointF(5.2f, 0), FXPT_TYPE::LineTo);
+  pPathObj->path().AppendPoint(CFX_PointF(5.2f, 3.78f), FXPT_TYPE::LineTo);
+  pPathObj->path().AppendPointAndClose(CFX_PointF(0, 3.78f), FXPT_TYPE::LineTo);
   buf.str("");
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.1999998 3.78 re n Q\n", ByteString(buf));
@@ -116,17 +115,16 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
 
     pPathObj->set_filltype(FXFILL_WINDING);
     pPathObj->path().AppendPoint(CFX_PointF(0.000000000000000000001f, 4.67f),
-                                 FXPT_TYPE::MoveTo, false);
+                                 FXPT_TYPE::MoveTo);
     pPathObj->path().AppendPoint(
         CFX_PointF(0.000000000000000000001, 100000000000000.000002),
-        FXPT_TYPE::LineTo, false);
+        FXPT_TYPE::LineTo);
     pPathObj->path().AppendPoint(CFX_PointF(0.0000000000001f, 3.15f),
-                                 FXPT_TYPE::BezierTo, false);
-    pPathObj->path().AppendPoint(CFX_PointF(3.57f, 2.98f), FXPT_TYPE::BezierTo,
-                                 false);
-    pPathObj->path().AppendPoint(
+                                 FXPT_TYPE::BezierTo);
+    pPathObj->path().AppendPoint(CFX_PointF(3.57f, 2.98f), FXPT_TYPE::BezierTo);
+    pPathObj->path().AppendPointAndClose(
         CFX_PointF(53.4f, 5000000000000000000.00000000000000004),
-        FXPT_TYPE::BezierTo, true);
+        FXPT_TYPE::BezierTo);
     auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
     auto pTestPage =
         pdfium::MakeRetain<CPDF_Page>(nullptr, dummy_page_dict.Get());
@@ -146,25 +144,17 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->set_filltype(FXFILL_WINDING);
-  pPathObj->path().AppendPoint(CFX_PointF(3.102f, 4.67f), FXPT_TYPE::MoveTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(5.45f, 0.29f), FXPT_TYPE::LineTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(4.24f, 3.15f), FXPT_TYPE::BezierTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(4.65f, 2.98f), FXPT_TYPE::BezierTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(3.456f, 0.24f), FXPT_TYPE::BezierTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(10.6f, 11.15f), FXPT_TYPE::LineTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(11, 12.5f), FXPT_TYPE::LineTo, false);
-  pPathObj->path().AppendPoint(CFX_PointF(11.46f, 12.67f), FXPT_TYPE::BezierTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(11.84f, 12.96f), FXPT_TYPE::BezierTo,
-                               false);
-  pPathObj->path().AppendPoint(CFX_PointF(12, 13.64f), FXPT_TYPE::BezierTo,
-                               true);
+  pPathObj->path().AppendPoint(CFX_PointF(3.102f, 4.67f), FXPT_TYPE::MoveTo);
+  pPathObj->path().AppendPoint(CFX_PointF(5.45f, 0.29f), FXPT_TYPE::LineTo);
+  pPathObj->path().AppendPoint(CFX_PointF(4.24f, 3.15f), FXPT_TYPE::BezierTo);
+  pPathObj->path().AppendPoint(CFX_PointF(4.65f, 2.98f), FXPT_TYPE::BezierTo);
+  pPathObj->path().AppendPoint(CFX_PointF(3.456f, 0.24f), FXPT_TYPE::BezierTo);
+  pPathObj->path().AppendPoint(CFX_PointF(10.6f, 11.15f), FXPT_TYPE::LineTo);
+  pPathObj->path().AppendPoint(CFX_PointF(11, 12.5f), FXPT_TYPE::LineTo);
+  pPathObj->path().AppendPoint(CFX_PointF(11.46f, 12.67f), FXPT_TYPE::BezierTo);
+  pPathObj->path().AppendPoint(CFX_PointF(11.84f, 12.96f), FXPT_TYPE::BezierTo);
+  pPathObj->path().AppendPointAndClose(CFX_PointF(12, 13.64f),
+                                       FXPT_TYPE::BezierTo);
 
   auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   auto pTestPage =
@@ -184,9 +174,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->set_stroke(true);
   pPathObj->set_filltype(FXFILL_WINDING);
-  pPathObj->path().AppendPoint(CFX_PointF(1, 2), FXPT_TYPE::MoveTo, false);
-  pPathObj->path().AppendPoint(CFX_PointF(3, 4), FXPT_TYPE::LineTo, false);
-  pPathObj->path().AppendPoint(CFX_PointF(5, 6), FXPT_TYPE::LineTo, true);
+  pPathObj->path().AppendPoint(CFX_PointF(1, 2), FXPT_TYPE::MoveTo);
+  pPathObj->path().AppendPoint(CFX_PointF(3, 4), FXPT_TYPE::LineTo);
+  pPathObj->path().AppendPointAndClose(CFX_PointF(5, 6), FXPT_TYPE::LineTo);
 
   static const std::vector<float> rgb = {0.5f, 0.7f, 0.35f};
   RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);

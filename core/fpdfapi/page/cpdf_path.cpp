@@ -53,13 +53,14 @@ void CPDF_Path::AppendRect(float left, float bottom, float right, float top) {
   m_Ref.GetPrivateCopy()->AppendRect(left, bottom, right, top);
 }
 
-void CPDF_Path::AppendPoint(const CFX_PointF& point,
-                            FXPT_TYPE type,
-                            bool close) {
+void CPDF_Path::AppendPoint(const CFX_PointF& point, FXPT_TYPE type) {
   CFX_PathData data;
-  if (close)
-    data.AppendPointAndClose(point, type);
-  else
-    data.AppendPoint(point, type);
+  data.AppendPoint(point, type);
+  Append(&data, nullptr);
+}
+
+void CPDF_Path::AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type) {
+  CFX_PathData data;
+  data.AppendPointAndClose(point, type);
   Append(&data, nullptr);
 }

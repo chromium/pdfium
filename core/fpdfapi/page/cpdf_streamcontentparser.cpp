@@ -1445,16 +1445,16 @@ void CPDF_StreamContentParser::AddPathPoint(float x,
 }
 
 void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
-  std::vector<FX_PATHPOINT> PathPoints;
-  PathPoints.swap(m_PathPoints);
-  uint8_t PathClipType = m_PathClipType;
+  std::vector<FX_PATHPOINT> path_points;
+  path_points.swap(m_PathPoints);
+  uint8_t path_clip_type = m_PathClipType;
   m_PathClipType = 0;
 
-  if (PathPoints.empty())
+  if (path_points.empty())
     return;
 
-  if (PathPoints.size() == 1) {
-    if (PathClipType) {
+  if (path_points.size() == 1) {
+    if (path_clip_type) {
       CPDF_Path path;
       path.AppendRect(0, 0, 0, 0);
       m_pCurStates->m_ClipPath.AppendPath(path, FXFILL_WINDING, true);
@@ -1462,12 +1462,16 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     return;
   }
 
-  if (PathPoints.back().IsTypeAndOpen(FXPT_TYPE::MoveTo))
-    PathPoints.pop_back();
+  if (path_points.back().IsTypeAndOpen(FXPT_TYPE::MoveTo))
+    path_points.pop_back();
 
-  CPDF_Path Path;
-  for (const auto& point : PathPoints)
-    Path.AppendPoint(point.m_Point, point.m_Type, point.m_CloseFigure);
+  CPDF_Path path;
+  for (const auto& point : path_points) {
+    if (point.m_CloseFigure)
+      path.AppendPointAndClose(point.m_Point, point.m_Type);
+    else
+      path.AppendPoint(point.m_Point, point.m_Type);
+  }
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
   if (bStroke || FillType) {
@@ -1475,16 +1479,16 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
         pdfium::MakeUnique<CPDF_PathObject>(GetCurrentStreamIndex());
     pPathObj->set_stroke(bStroke);
     pPathObj->set_filltype(FillType);
-    pPathObj->path() = Path;
+    pPathObj->path() = path;
     pPathObj->set_matrix(matrix);
     SetGraphicStates(pPathObj.get(), true, false, true);
     pPathObj->CalcBoundingBox();
     m_pObjectHolder->AppendPageObject(std::move(pPathObj));
   }
-  if (PathClipType) {
+  if (path_clip_type) {
     if (!matrix.IsIdentity())
-      Path.Transform(matrix);
-    m_pCurStates->m_ClipPath.AppendPath(Path, PathClipType, true);
+      path.Transform(matrix);
+    m_pCurStates->m_ClipPath.AppendPath(path, path_clip_type, true);
   }
 }
 

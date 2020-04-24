@@ -35,7 +35,8 @@ class CPDF_Path {
   void Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix);
   void AppendFloatRect(const CFX_FloatRect& rect);
   void AppendRect(float left, float bottom, float right, float top);
-  void AppendPoint(const CFX_PointF& point, FXPT_TYPE type, bool close);
+  void AppendPoint(const CFX_PointF& point, FXPT_TYPE type);
+  void AppendPointAndClose(const CFX_PointF& point, FXPT_TYPE type);
 
   // TODO(tsepez): Remove when all access thru this class.
   const CFX_PathData* GetObject() const { return m_Ref.GetObject(); }
