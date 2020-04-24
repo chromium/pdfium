@@ -9,6 +9,7 @@
 
 #include <deque>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_variabletext.h"
@@ -330,7 +331,7 @@ class CPWL_EditImpl {
   WideString GetRangeText(const CPVT_WordRange& range) const;
   float GetCharSpace() const;
   void SetSelection(int32_t nStartChar, int32_t nEndChar);
-  void GetSelection(int32_t& nStartChar, int32_t& nEndChar) const;
+  std::pair<int32_t, int32_t> GetSelection() const;
   void SelectAll();
   void SelectNone();
   bool IsSelected() const;

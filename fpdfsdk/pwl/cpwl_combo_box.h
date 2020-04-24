@@ -8,6 +8,7 @@
 #define FPDFSDK_PWL_CPWL_COMBO_BOX_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
@@ -80,7 +81,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void SetSelect(int32_t nItemIndex);
 
   void SetEditSelection(int32_t nStartChar, int32_t nEndChar);
-  void GetEditSelection(int32_t& nStartChar, int32_t& nEndChar) const;
+  std::pair<int32_t, int32_t> GetEditSelection() const;
   void ClearSelection();
   void SelectAll();
   bool IsPopup() const;

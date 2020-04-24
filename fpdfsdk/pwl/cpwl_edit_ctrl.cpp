@@ -340,8 +340,8 @@ void CPWL_EditCtrl::SetSelection(int32_t nStartChar, int32_t nEndChar) {
   m_pEdit->SetSelection(nStartChar, nEndChar);
 }
 
-void CPWL_EditCtrl::GetSelection(int32_t& nStartChar, int32_t& nEndChar) const {
-  m_pEdit->GetSelection(nStartChar, nEndChar);
+std::pair<int32_t, int32_t> CPWL_EditCtrl::GetSelection() const {
+  return m_pEdit->GetSelection();
 }
 
 void CPWL_EditCtrl::ClearSelection() {
