@@ -217,3 +217,15 @@ TEST(CPDF_PSEngine, Comparisons) {
   EXPECT_FLOAT_EQ(0.0f, DoOperator2(&engine, 255.0f, 1.0f, PSOP_LT));
   EXPECT_FLOAT_EQ(1.0f, DoOperator2(&engine, -1.0f, 0.0f, PSOP_LT));
 }
+
+TEST(CPDF_PSEngine, MathFunctions) {
+  CPDF_PSEngine engine;
+
+  EXPECT_FLOAT_EQ(1.4142135f, DoOperator1(&engine, 2.0f, PSOP_SQRT));
+  EXPECT_FLOAT_EQ(0.8660254f, DoOperator1(&engine, 60.0f, PSOP_SIN));
+  EXPECT_FLOAT_EQ(0.5f, DoOperator1(&engine, 60.0f, PSOP_COS));
+  EXPECT_FLOAT_EQ(45.0f, DoOperator2(&engine, 1.0f, 1.0f, PSOP_ATAN));
+  EXPECT_FLOAT_EQ(1000.0f, DoOperator2(&engine, 10.0f, 3.0f, PSOP_EXP));
+  EXPECT_FLOAT_EQ(3.0f, DoOperator1(&engine, 1000.0f, PSOP_LOG));
+  EXPECT_FLOAT_EQ(2.302585f, DoOperator1(&engine, 10.0f, PSOP_LN));
+}
