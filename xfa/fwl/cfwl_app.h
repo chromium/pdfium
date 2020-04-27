@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/timerhandler_iface.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 

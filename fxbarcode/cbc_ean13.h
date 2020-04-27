@@ -7,11 +7,8 @@
 #ifndef FXBARCODE_CBC_EAN13_H_
 #define FXBARCODE_CBC_EAN13_H_
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/cbc_eancode.h"
-
-class CBC_OnedEAN13Writer;
 
 class CBC_EAN13 final : public CBC_EANCode {
  public:

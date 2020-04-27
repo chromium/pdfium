@@ -8,7 +8,6 @@
 #define FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"

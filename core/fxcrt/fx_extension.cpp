@@ -10,6 +10,7 @@
 #include <cwctype>
 #include <limits>
 
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/compiler_specific.h"
 
 namespace {

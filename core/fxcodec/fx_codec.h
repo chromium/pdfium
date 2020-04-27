@@ -14,7 +14,6 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/fx_string.h"
 
 #ifdef PDF_ENABLE_XFA
 #ifdef PDF_ENABLE_XFA_BMP

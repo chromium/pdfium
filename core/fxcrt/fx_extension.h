@@ -14,8 +14,6 @@
 #include <cwctype>
 #include <memory>
 
-#include "core/fxcrt/fx_string.h"
-
 #if defined(USE_SYSTEM_ICUUC)
 #include <unicode/uchar.h>
 #else

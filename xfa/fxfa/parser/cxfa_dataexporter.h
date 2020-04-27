@@ -7,10 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
 #define XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
 
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CXFA_Document;
 class CXFA_Node;
 class IFX_SeekableStream;
 

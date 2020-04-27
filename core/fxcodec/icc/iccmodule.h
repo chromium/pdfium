@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
