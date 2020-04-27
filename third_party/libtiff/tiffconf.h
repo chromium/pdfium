@@ -205,7 +205,7 @@
 
 /* Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation
    fails with unpatched IJG JPEG library) */
-#define  OJPEG_SUPPORT  1
+/* #define OJPEG_SUPPORT 1 */
 
 /* Support Macintosh PackBits algorithm */
 #define PACKBITS_SUPPORT 1
