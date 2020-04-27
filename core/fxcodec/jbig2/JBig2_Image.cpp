@@ -29,13 +29,18 @@
    (buf)[2] = static_cast<uint8_t>((val) >> 8),  \
    (buf)[3] = static_cast<uint8_t>((val) >> 0))
 
-#define BIT_INDEX_TO_BYTE(x) ((x) >> 3)
-#define BIT_INDEX_TO_ALIGNED_BYTE(x) (((x) >> 5) << 2)
-
 namespace {
 
 const int kMaxImagePixels = INT_MAX - 31;
 const int kMaxImageBytes = kMaxImagePixels / 8;
+
+int BitIndexToByte(int index) {
+  return index / 8;
+}
+
+int BitIndexToAlignedByte(int index) {
+  return index / 32 * 4;
+}
 
 }  // namespace
 
@@ -86,7 +91,7 @@ CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
   }
 }
 
-CJBig2_Image::~CJBig2_Image() {}
+CJBig2_Image::~CJBig2_Image() = default;
 
 // static
 bool CJBig2_Image::IsValidImageSize(int32_t w, int32_t h) {
@@ -105,7 +110,7 @@ int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
   if (!pLine)
     return 0;
 
-  int32_t m = BIT_INDEX_TO_BYTE(x);
+  int32_t m = BitIndexToByte(x);
   int32_t n = x & 7;
   return ((pLine[m] >> (7 - n)) & 1);
 }
@@ -121,7 +126,7 @@ void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
   if (!pLine)
     return;
 
-  int32_t m = BIT_INDEX_TO_BYTE(x);
+  int32_t m = BitIndexToByte(x);
   int32_t n = 1 << (7 - (x & 7));
   if (v)
     pLine[m] |= n;
@@ -208,7 +213,7 @@ void CJBig2_Image::SubImageFast(int32_t x,
                                 int32_t w,
                                 int32_t h,
                                 CJBig2_Image* pImage) {
-  int32_t m = BIT_INDEX_TO_BYTE(x);
+  int32_t m = BitIndexToByte(x);
   int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
   int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
   for (int32_t j = 0; j < lines_to_copy; j++)
@@ -220,7 +225,7 @@ void CJBig2_Image::SubImageSlow(int32_t x,
                                 int32_t w,
                                 int32_t h,
                                 CJBig2_Image* pImage) {
-  int32_t m = BIT_INDEX_TO_ALIGNED_BYTE(x);
+  int32_t m = BitIndexToAlignedByte(x);
   int32_t n = x & 31;
   int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
   int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
@@ -304,11 +309,11 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
   uint32_t maskL = 0xffffffff >> d1;
   uint32_t maskR = 0xffffffff << ((32 - (xd1 & 31)) % 32);
   uint32_t maskM = maskL & maskR;
-  const uint8_t* lineSrc = GetLineUnsafe(rtSrc.top + ys0) +
-                           BIT_INDEX_TO_ALIGNED_BYTE(xs0 + rtSrc.left);
+  const uint8_t* lineSrc =
+      GetLineUnsafe(rtSrc.top + ys0) + BitIndexToAlignedByte(xs0 + rtSrc.left);
   const uint8_t* lineSrcEnd = data() + m_nHeight * m_nStride;
-  int32_t lineLeft = m_nStride - BIT_INDEX_TO_ALIGNED_BYTE(xs0);
-  uint8_t* lineDst = pDst->GetLineUnsafe(yd0) + BIT_INDEX_TO_ALIGNED_BYTE(xd0);
+  int32_t lineLeft = m_nStride - BitIndexToAlignedByte(xs0);
+  uint8_t* lineDst = pDst->GetLineUnsafe(yd0) + BitIndexToAlignedByte(xd0);
   if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
     if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
       if (s1 > d1) {
