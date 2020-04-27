@@ -205,7 +205,7 @@
 
 /* Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation
    fails with unpatched IJG JPEG library) */
-/* #define OJPEG_SUPPORT 1 */
+/* #undef OJPEG_SUPPORT */
 
 /* Support Macintosh PackBits algorithm */
 #define PACKBITS_SUPPORT 1
@@ -217,7 +217,7 @@
 #define THUNDER_SUPPORT 1
 
 /* Support Deflate compression */
-#define ZIP_SUPPORT 1
+/* #undef ZIP_SUPPORT */
 
 /* Support strip chopping (whether or not to convert single-strip uncompressed
    images to mutiple strips of ~8Kb to reduce memory usage) */
