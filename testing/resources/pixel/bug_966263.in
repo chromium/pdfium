@@ -1,0 +1,132 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 1 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 400]
+  /Resources <<
+    /ProcSet [/PDF /Text]
+    /Font <<
+      /F1 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+BT
+/F1 1 Tf
+1 0 0 1 20 55 Tm
+(ABCD)Tj
+ET
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type3
+  /FontBBox [0 0 600 600]
+  /FontMatrix [1 0 0 -100 0 0]
+  /CharProcs <<
+    /CA 6 0 R
+    /CB 7 0 R
+    /CC 8 0 R
+    /CD 9 0 R
+  >>
+  /Encoding <<
+    /Type /Encoding
+    /Differences [65 /CA 66 /CB 67 /CC 68 /CD]
+  >>
+  /FirstChar 65
+  /LastChar 68
+  /Widths [18 1000 18 18]
+  /Resources <<
+    /ProcSet [/PDF /ImageB]
+  >>
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+d0 0 0
+1 0 0 1 6 0 cm
+BI
+/W 1
+/H 1
+/BPC 1
+/IM true
+ID
+x
+EI
+Q
+endstream
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+6 0 0 48 6 0 cm
+BI
+/W 6
+/H 48
+/BPC 1
+/IM true
+ID
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+EI
+Q
+endstream
+endobj
+{{object 8 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+6 0 0 1 2147483570 0 cm
+BI
+/W 6
+/H 1
+/BPC 1
+/IM true
+ID
+x
+EI
+Q
+endstream
+endobj
+{{object 9 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+1 0 0 6 0 21474834 cm
+BI
+/W 1
+/H 1
+/BPC 1
+/IM true
+ID
+x
+EI
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
