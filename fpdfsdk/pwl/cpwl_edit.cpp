@@ -162,71 +162,40 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                    const CFX_Matrix& mtUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
 
-  CFX_FloatRect rcClient = GetClientRect();
+  const CFX_FloatRect rcClient = GetClientRect();
+  const BorderStyle border_style = GetBorderStyle();
+  const int32_t nCharArray = m_pEdit->GetCharArray();
+  bool draw_border = nCharArray > 0 && (border_style == BorderStyle::SOLID ||
+                                        border_style == BorderStyle::DASH);
+  if (draw_border) {
+    FX_SAFE_INT32 nCharArraySafe = nCharArray;
+    nCharArraySafe -= 1;
+    nCharArraySafe *= 2;
+    draw_border = nCharArraySafe.IsValid();
+  }
 
-  int32_t nCharArray = m_pEdit->GetCharArray();
-  FX_SAFE_INT32 nCharArraySafe = nCharArray;
-  nCharArraySafe -= 1;
-  nCharArraySafe *= 2;
+  if (draw_border) {
+    CFX_GraphStateData gsd;
+    gsd.m_LineWidth = GetBorderWidth();
+    if (border_style == BorderStyle::DASH) {
+      gsd.m_DashArray = {static_cast<float>(GetBorderDash().nDash),
+                         static_cast<float>(GetBorderDash().nGap)};
+      gsd.m_DashPhase = GetBorderDash().nPhase;
+    }
 
-  if (nCharArray > 0 && nCharArraySafe.IsValid()) {
-    switch (GetBorderStyle()) {
-      case BorderStyle::SOLID: {
-        CFX_GraphStateData gsd;
-        gsd.m_LineWidth = GetBorderWidth();
-
-        CFX_PathData path;
-
-        for (int32_t i = 0; i < nCharArray - 1; i++) {
-          path.AppendPoint(
-              CFX_PointF(
-                  rcClient.left +
-                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-                  rcClient.bottom),
-              FXPT_TYPE::MoveTo);
-          path.AppendPoint(
-              CFX_PointF(
-                  rcClient.left +
-                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-                  rcClient.top),
-              FXPT_TYPE::LineTo);
-        }
-        if (!path.GetPoints().empty()) {
-          pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,
-                            GetBorderColor().ToFXColor(255), FXFILL_ALTERNATE);
-        }
-        break;
-      }
-      case BorderStyle::DASH: {
-        CFX_GraphStateData gsd;
-        gsd.m_LineWidth = static_cast<float>(GetBorderWidth());
-        gsd.m_DashArray = {static_cast<float>(GetBorderDash().nDash),
-                           static_cast<float>(GetBorderDash().nGap)};
-        gsd.m_DashPhase = static_cast<float>(GetBorderDash().nPhase);
-
-        CFX_PathData path;
-        for (int32_t i = 0; i < nCharArray - 1; i++) {
-          path.AppendPoint(
-              CFX_PointF(
-                  rcClient.left +
-                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-                  rcClient.bottom),
-              FXPT_TYPE::MoveTo);
-          path.AppendPoint(
-              CFX_PointF(
-                  rcClient.left +
-                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-                  rcClient.top),
-              FXPT_TYPE::LineTo);
-        }
-        if (!path.GetPoints().empty()) {
-          pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,
-                            GetBorderColor().ToFXColor(255), FXFILL_ALTERNATE);
-        }
-        break;
-      }
-      default:
-        break;
+    const float width = (rcClient.right - rcClient.left) / nCharArray;
+    CFX_PathData path;
+    CFX_PointF bottom(0, rcClient.bottom);
+    CFX_PointF top(0, rcClient.top);
+    for (int32_t i = 0; i < nCharArray - 1; ++i) {
+      bottom.x = rcClient.left + width * (i + 1);
+      top.x = bottom.x;
+      path.AppendPoint(bottom, FXPT_TYPE::MoveTo);
+      path.AppendPoint(top, FXPT_TYPE::LineTo);
+    }
+    if (!path.GetPoints().empty()) {
+      pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,
+                        GetBorderColor().ToFXColor(255), FXFILL_ALTERNATE);
     }
   }
 
