@@ -25,10 +25,27 @@
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
+
+using pdfium::kHelloWorldChecksum;
+
+namespace {
+
+const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
+
+#if defined(OS_WIN)
+const char kFirstRemovedChecksum[] = "aae6c5334721f90ec30d3d59f4ef7deb";
+#elif defined(OS_MACOSX)
+const char kFirstRemovedChecksum[] = "17ca3778fd8bb395b46532f1fa17f702";
+#else
+const char kFirstRemovedChecksum[] = "b76df015fe88009c3c342395df96abf1";
+#endif
+
+}  // namespace
 
 class FPDFEditEmbedderTest : public EmbedderTest {
  protected:
@@ -284,8 +301,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddPaths) {
   FPDFPage_InsertObject(page, red_rect);
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792,
-                  "66d02eaa6181e2c069ce2ea99beda497");
+    CompareBitmap(page_bitmap.get(), 612, 792, kRedRectangleChecksum);
   }
 
   // Now add to that a green rectangle with some medium alpha
@@ -619,15 +635,8 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemovePageObject) {
 
   // Show what the original file looks like.
   {
-#if defined(OS_MACOSX)
-    const char kOriginalMD5[] = "c38b75e16a13852aee3b97d77a0f0ee7";
-#elif defined(OS_WIN)
-    const char kOriginalMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
-#else
-    const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
-#endif
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldChecksum);
   }
 
   // Get the "Hello, world!" text object and remove it.
@@ -638,15 +647,8 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemovePageObject) {
 
   // Verify the "Hello, world!" text is gone.
   {
-#if defined(OS_MACOSX)
-    const char kRemovedMD5[] = "17ca3778fd8bb395b46532f1fa17f702";
-#elif defined(OS_WIN)
-    const char kRemovedMD5[] = "aae6c5334721f90ec30d3d59f4ef7deb";
-#else
-    const char kRemovedMD5[] = "b76df015fe88009c3c342395df96abf1";
-#endif
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kFirstRemovedChecksum);
   }
   ASSERT_EQ(1, FPDFPage_CountObjects(page));
 
@@ -1167,16 +1169,9 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveExistingPageObjectSplitStreamsLonely) {
 
   // Verify the "Greetings, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-#if defined(OS_MACOSX)
-  const char kGreetingsRemovedMD5[] = "c38b75e16a13852aee3b97d77a0f0ee7";
-#elif defined(OS_WIN)
-  const char kGreetingsRemovedMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
-#else
-  const char kGreetingsRemovedMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
-#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kGreetingsRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldChecksum);
   }
 
   // Save the file
@@ -1192,7 +1187,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveExistingPageObjectSplitStreamsLonely) {
   EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kGreetingsRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1427,16 +1422,9 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveFirstFromSingleStream) {
   cpdf_page_object = CPDFPageObjectFromFPDFPageObject(page_object);
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
 
-#if defined(OS_MACOSX)
-  const char kFirstRemovedMD5[] = "17ca3778fd8bb395b46532f1fa17f702";
-#elif defined(OS_WIN)
-  const char kFirstRemovedMD5[] = "aae6c5334721f90ec30d3d59f4ef7deb";
-#else
-  const char kFirstRemovedMD5[] = "b76df015fe88009c3c342395df96abf1";
-#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kFirstRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kFirstRemovedChecksum);
   }
 
   // Save the file
@@ -1454,7 +1442,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveFirstFromSingleStream) {
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kFirstRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kFirstRemovedChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1501,16 +1489,10 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveLastFromSingleStream) {
   cpdf_page_object = CPDFPageObjectFromFPDFPageObject(page_object);
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
 
-#if defined(OS_MACOSX)
-  const char kLastRemovedMD5[] = "572b1022bb3e8f43dc671162fc62cf7f";
-#elif defined(OS_WIN)
-  const char kLastRemovedMD5[] = "93db13099042bafefb3c22a165bad684";
-#else
-  const char kLastRemovedMD5[] = "93dcc09055f87a2792c8e3065af99a1b";
-#endif
+  using pdfium::kHelloWorldRemovedChecksum;
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kLastRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldRemovedChecksum);
   }
 
   // Save the file
@@ -1528,7 +1510,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveLastFromSingleStream) {
   ASSERT_EQ(0, cpdf_page_object->GetContentStream());
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kLastRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldRemovedChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1662,10 +1644,11 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_InsertAndRemoveLargeFile) {
   EXPECT_TRUE(OpenDocument("many_rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  const char kOriginalMD5[] = "b0170c575b65ecb93ebafada0ff0f038";
+
+  using pdfium::kManyRectanglesChecksum;
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 300, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 300, kManyRectanglesChecksum);
   }
 
   // Add a black rectangle.
@@ -1704,7 +1687,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_InsertAndRemoveLargeFile) {
   FPDFPageObj_Destroy(added_object);
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 300, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 300, kManyRectanglesChecksum);
   }
   EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(saved_page));
 
@@ -1722,7 +1705,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_InsertAndRemoveLargeFile) {
   EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 300, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 300, kManyRectanglesChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1735,10 +1718,10 @@ TEST_F(FPDFEditEmbedderTest, AddAndRemovePaths) {
   ASSERT_TRUE(page);
 
   // Render the blank page and verify it's a blank bitmap.
-  const char kBlankMD5[] = "1940568c9ba33bac5d0b1ee9558c76b3";
+  using pdfium::kBlankPage612By792Checksum;
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, kBlankMD5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kBlankPage612By792Checksum);
   }
   ASSERT_EQ(0, FPDFPage_CountObjects(page));
 
@@ -1748,10 +1731,9 @@ TEST_F(FPDFEditEmbedderTest, AddAndRemovePaths) {
   EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
-  const char kRedRectangleMD5[] = "66d02eaa6181e2c069ce2ea99beda497";
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, kRedRectangleMD5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kRedRectangleChecksum);
   }
   EXPECT_EQ(1, FPDFPage_CountObjects(page));
 
@@ -1760,7 +1742,7 @@ TEST_F(FPDFEditEmbedderTest, AddAndRemovePaths) {
   EXPECT_TRUE(FPDFPage_RemoveObject(page, red_rect));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, kBlankMD5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kBlankPage612By792Checksum);
   }
   EXPECT_EQ(0, FPDFPage_CountObjects(page));
 
@@ -2825,13 +2807,6 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
 #define MAYBE_AddMarkCompressedStream AddMarkCompressedStream
 #endif
 TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
-#if defined(OS_MACOSX)
-  const char kOriginalMD5[] = "c38b75e16a13852aee3b97d77a0f0ee7";
-#elif defined(OS_WIN)
-  const char kOriginalMD5[] = "795b7ce1626931aa06af0fa23b7d80bb";
-#else
-  const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
-#endif
 
   // Load document with some text in a compressed stream.
   EXPECT_TRUE(OpenDocument("hello_world_compressed_stream.pdf"));
@@ -2841,7 +2816,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
   // Render and check there are no marks.
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldChecksum);
   }
   CheckMarkCounts(page, 0, 2, 0, 0, 0, 0);
 
@@ -2855,7 +2830,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
   // Render and check there is 1 mark.
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldChecksum);
   }
   CheckMarkCounts(page, 0, 2, 0, 0, 0, 1);
 
@@ -2870,7 +2845,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
 
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloWorldChecksum);
   }
   CheckMarkCounts(saved_page, 0, 2, 0, 0, 0, 1);
 

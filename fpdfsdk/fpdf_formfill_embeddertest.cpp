@@ -16,6 +16,7 @@
 #include "public/fpdf_fwlevent.h"
 #include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/embedder_test_mock_delegate.h"
 #include "testing/embedder_test_timer_handling_delegate.h"
 #include "testing/gmock/include/gmock/gmock.h"
@@ -27,6 +28,22 @@ using testing::NiceMock;
 using testing::StrEq;
 
 using FPDFFormFillEmbedderTest = EmbedderTest;
+
+namespace {
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+const char kTextFormChecksum[] = "17efe329169f5b7681fbe939894a35de";
+#else
+#if defined(OS_WIN)
+const char kTextFormChecksum[] = "d3204faa62b607f0bd3893c9c22cabcb";
+#elif defined(OS_MACOSX)
+const char kTextFormChecksum[] = "d485541d958fef08d24e8eca3e537023";
+#else
+const char kTextFormChecksum[] = "b890950d4b9bc163b1a96797f3004b53";
+#endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+
+}  // namespace
 
 // A base class for many related tests that involve clicking and typing into
 // form fields.
@@ -1241,22 +1258,26 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 
 TEST_F(FPDFFormFillEmbedderTest, FormText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char md5_1[] = "17efe329169f5b7681fbe939894a35de";
-  const char md5_2[] = "42af2135e20deb09cbdbfb6418d86382";
-  const char md5_3[] = "4a961599a512a08468b26b89d389c30a";
+  const char kFocusedTextFormWithAbcChecksum[] =
+      "42af2135e20deb09cbdbfb6418d86382";
+  const char kUnfocusedTextFormWithAbcChecksum[] =
+      "4a961599a512a08468b26b89d389c30a";
 #else
 #if defined(OS_MACOSX)
-  const char md5_1[] = "d485541d958fef08d24e8eca3e537023";
-  const char md5_2[] = "c6e4a2fb10661116771ee74f54d9c5e0";
-  const char md5_3[] = "e0c8d5099301d7c10ed831a43e974d9d";
+  const char kFocusedTextFormWithAbcChecksum[] =
+      "c6e4a2fb10661116771ee74f54d9c5e0";
+  const char kUnfocusedTextFormWithAbcChecksum[] =
+      "e0c8d5099301d7c10ed831a43e974d9d";
 #elif defined(OS_WIN)
-  const char md5_1[] = "d3204faa62b607f0bd3893c9c22cabcb";
-  const char md5_2[] = "29d1c3fd226ca6a69597f75937690320";
-  const char md5_3[] = "5e678a55912cb568fd677bf34abb8727";
+  const char kFocusedTextFormWithAbcChecksum[] =
+      "29d1c3fd226ca6a69597f75937690320";
+  const char kUnfocusedTextFormWithAbcChecksum[] =
+      "5e678a55912cb568fd677bf34abb8727";
 #else
-  const char md5_1[] = "b890950d4b9bc163b1a96797f3004b53";
-  const char md5_2[] = "11487d5597599a26e8912b9c1d9422cb";
-  const char md5_3[] = "bffe0ecea9a533f217047ee41d6be466";
+  const char kFocusedTextFormWithAbcChecksum[] =
+      "11487d5597599a26e8912b9c1d9422cb";
+  const char kUnfocusedTextFormWithAbcChecksum[] =
+      "bffe0ecea9a533f217047ee41d6be466";
 #endif
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
@@ -1264,7 +1285,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page);
-    CompareBitmap(bitmap1.get(), 300, 300, md5_1);
+    CompareBitmap(bitmap1.get(), 300, 300, kTextFormChecksum);
 
     // Click on the textfield
     EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
@@ -1280,21 +1301,21 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     FORM_OnChar(form_handle(), page, 66, 0);
     FORM_OnChar(form_handle(), page, 67, 0);
     ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
-    CompareBitmap(bitmap2.get(), 300, 300, md5_2);
+    CompareBitmap(bitmap2.get(), 300, 300, kFocusedTextFormWithAbcChecksum);
 
     // Focus remains despite right clicking out of the textfield
     FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnRButtonDown(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnRButtonUp(form_handle(), page, 0, 15.0, 15.0);
     ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
-    CompareBitmap(bitmap3.get(), 300, 300, md5_2);
+    CompareBitmap(bitmap3.get(), 300, 300, kFocusedTextFormWithAbcChecksum);
 
     // Take out focus by clicking out of the textfield
     FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonDown(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonUp(form_handle(), page, 0, 15.0, 15.0);
     ScopedFPDFBitmap bitmap4 = RenderLoadedPage(page);
-    CompareBitmap(bitmap4.get(), 300, 300, md5_3);
+    CompareBitmap(bitmap4.get(), 300, 300, kUnfocusedTextFormWithAbcChecksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
@@ -1302,17 +1323,15 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
     UnloadPage(page);
   }
   // Check saved document
-  VerifySavedDocument(300, 300, md5_3);
+  VerifySavedDocument(300, 300, kUnfocusedTextFormWithAbcChecksum);
 }
 
 // Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_FFLDraw(). The two rendered
 // bitmaps should be different.
 TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kMd5Normal[] = "793689536cf64fe792c2f241888c0cf3";
   const char kMd5ReverseByteOrder[] = "8077970bbd10333f18186a9bb459bbe6";
 #else
-  const char kMd5Normal[] = "6c674642154408e877d88c6c082d67e9";
   const char kMd5ReverseByteOrder[] = "24fff03d1e663b7ece5f6e69ad837124";
 #endif
 
@@ -1321,7 +1340,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap_normal = RenderLoadedPage(page);
-  CompareBitmap(bitmap_normal.get(), 200, 200, kMd5Normal);
+  CompareBitmap(bitmap_normal.get(), 200, 200, pdfium::kBug890322Checksum);
 
   ScopedFPDFBitmap bitmap_reverse_byte_order =
       RenderLoadedPageWithFlags(page, FPDF_REVERSE_BYTE_ORDER);
@@ -1338,13 +1357,10 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
 #endif
 TEST_F(FPDFFormFillEmbedderTest, MAYBE_RemoveFormFieldHighlight) {
 #if defined(OS_MACOSX)
-  const char kMd5Normal[] = "d485541d958fef08d24e8eca3e537023";
   const char kMd5NoHighlight[] = "5e4b87c5b304c6fa9bd5f6311260494e";
 #elif defined(OS_WIN)
-  const char kMd5Normal[] = "d3204faa62b607f0bd3893c9c22cabcb";
   const char kMd5NoHighlight[] = "3ec0938828e0a37ef23f687ee95a80e1";
 #else
-  const char kMd5Normal[] = "b890950d4b9bc163b1a96797f3004b53";
   const char kMd5NoHighlight[] = "006010c318457810a518aa5e0b33c498";
 #endif
 
@@ -1352,7 +1368,7 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_RemoveFormFieldHighlight) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page);
-  CompareBitmap(bitmap1.get(), 300, 300, kMd5Normal);
+  CompareBitmap(bitmap1.get(), 300, 300, kTextFormChecksum);
 
   // Removing the highlight changes the rendering.
   FPDF_RemoveFormFieldHighlight(form_handle());
@@ -1362,7 +1378,7 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_RemoveFormFieldHighlight) {
   // Restoring it gives the original rendering.
   SetInitialFormFieldHighlight(form_handle());
   ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
-  CompareBitmap(bitmap3.get(), 300, 300, kMd5Normal);
+  CompareBitmap(bitmap3.get(), 300, 300, kTextFormChecksum);
 
   UnloadPage(page);
 }

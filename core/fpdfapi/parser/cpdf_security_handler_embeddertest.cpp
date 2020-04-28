@@ -15,6 +15,7 @@
 #include "public/fpdf_save.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -92,31 +93,16 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   void VerifyHelloWorldPage(FPDF_PAGE page) {
     ASSERT_TRUE(page);
 
-#if defined(OS_WIN)
-    const char kExpectedHash[] = "795b7ce1626931aa06af0fa23b7d80bb";
-#elif defined(OS_MACOSX)
-    const char kExpectedHash[] = "c38b75e16a13852aee3b97d77a0f0ee7";
-#else
-    const char kExpectedHash[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
-#endif
-
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kExpectedHash);
+    CompareBitmap(page_bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
   }
 
   void VerifyModifiedHelloWorldPage(FPDF_PAGE page) {
     ASSERT_TRUE(page);
 
-#if defined(OS_WIN)
-    const char kExpectedHash[] = "93db13099042bafefb3c22a165bad684";
-#elif defined(OS_MACOSX)
-    const char kExpectedHash[] = "572b1022bb3e8f43dc671162fc62cf7f";
-#else
-    const char kExpectedHash[] = "93dcc09055f87a2792c8e3065af99a1b";
-#endif
-
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kExpectedHash);
+    CompareBitmap(page_bitmap.get(), 200, 200,
+                  pdfium::kHelloWorldRemovedChecksum);
   }
 };
 

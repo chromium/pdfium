@@ -18,6 +18,7 @@
 #include "public/fpdf_formfill.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -26,6 +27,17 @@
 #include "third_party/base/stl_util.h"
 
 namespace {
+
+#if defined(OS_WIN)
+const char kAnnotationStampWithApChecksum[] =
+    "6aa001a77ec05d0f1b0d1d22e28744d4";
+#elif defined(OS_MACOSX)
+const char kAnnotationStampWithApChecksum[] =
+    "80d7b6cc7b13a78d77a6151bc846e80b";
+#else
+const char kAnnotationStampWithApChecksum[] =
+    "b42cef463483e668eaf4055a65e4f1f5";
+#endif
 
 void VerifyFocusableAnnotSubtypes(
     FPDF_FORMHANDLE form_handle,
@@ -769,17 +781,14 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyPath) {
 #if defined(OS_MACOSX)
-  static const char kMd5Original[] = "80d7b6cc7b13a78d77a6151bc846e80b";
   static const char kMd5ModifiedPath[] = "8cfae6d547fc5d6702f5f1ac631beb5e";
   static const char kMd5TwoPaths[] = "9677e4892bb02950d3e4dbe74470578f";
   static const char kMd5NewAnnot[] = "e8ebddac4db8c0a4b556ddf79aa1a26d";
 #elif defined(OS_WIN)
-  static const char kMd5Original[] = "6aa001a77ec05d0f1b0d1d22e28744d4";
   static const char kMd5ModifiedPath[] = "a7a8d675a6ddbcbdfecee65a33ba19e1";
   static const char kMd5TwoPaths[] = "7c0bdd4552329704c47a7cce47edbbd6";
   static const char kMd5NewAnnot[] = "3c48d492b4f62941fed0fb62f729f31e";
 #else
-  static const char kMd5Original[] = "b42cef463483e668eaf4055a65e4f1f5";
   static const char kMd5ModifiedPath[] = "6ff77d6d1fec4ea571fabe0c7a19b517";
   static const char kMd5TwoPaths[] = "ca37ad549e74ac5b359a055708f3e7b6";
   static const char kMd5NewAnnot[] = "0d7a0e33fbf41ff7fa5d732ab2c5edff";
@@ -794,7 +803,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyPath) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
+    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
   }
 
   {
@@ -947,7 +956,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
     // Check that the page renders correctly without rendering the annotation.
     {
       ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-      CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+      CompareBitmap(bitmap.get(), 612, 792, pdfium::kBlankPage612By792Checksum);
     }
 
     // Unset the HIDDEN flag.
@@ -977,15 +986,12 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 #if defined(OS_MACOSX)
-  static const char kMd5Original[] = "80d7b6cc7b13a78d77a6151bc846e80b";
   static const char kMd5NewImage[] = "dd18709d90c245a12ce0b8c4d092bea9";
   static const char kMd5ModifiedImage[] = "8d6f478ff8c7e67d49b253f1af587a99";
 #elif defined(OS_WIN)
-  static const char kMd5Original[] = "6aa001a77ec05d0f1b0d1d22e28744d4";
   static const char kMd5NewImage[] = "3d77d06a971bcb9fb54db082f1082c8b";
   static const char kMd5ModifiedImage[] = "dc4f4afc26c345418330d31c065020e1";
 #else
-  static const char kMd5Original[] = "b42cef463483e668eaf4055a65e4f1f5";
   static const char kMd5NewImage[] = "528e6243dc29d54f36b61e0d3287d935";
   static const char kMd5ModifiedImage[] = "6d9e59f3e57a1ff82fb258356b7eb731";
 #endif
@@ -999,7 +1005,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
+    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
   }
 
   constexpr int kBitmapSize = 200;
@@ -1068,15 +1074,12 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyText) {
 #if defined(OS_MACOSX)
-  static const char kMd5Original[] = "80d7b6cc7b13a78d77a6151bc846e80b";
   static const char kMd5NewText[] = "e657266260b88c964938efe6c9b292da";
   static const char kMd5ModifiedText[] = "7accdf2bac64463101783221f53d3188";
 #elif defined(OS_WIN)
-  static const char kMd5Original[] = "6aa001a77ec05d0f1b0d1d22e28744d4";
   static const char kMd5NewText[] = "204cc01749a70b8afc246a4ca33c7eb6";
   static const char kMd5ModifiedText[] = "641261a45e8dfd68c89b80bfd237660d";
 #else
-  static const char kMd5Original[] = "b42cef463483e668eaf4055a65e4f1f5";
   static const char kMd5NewText[] = "00197ad6206f763febad5719e5935306";
   static const char kMd5ModifiedText[] = "85853bc0aaa5a4e3af04e58b9cbfff23";
 #endif
@@ -1090,7 +1093,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyText) {
   // Check that the page renders correctly.
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
+    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
   }
 
   {
@@ -1146,7 +1149,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyText) {
   EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 595, 842, kMd5Original);
+    CompareBitmap(bitmap.get(), 595, 842, kAnnotationStampWithApChecksum);
   }
 
   UnloadPage(page);

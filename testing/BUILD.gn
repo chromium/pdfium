@@ -78,6 +78,8 @@ source_set("embedder_test_support") {
   sources = [
     "embedder_test.cpp",
     "embedder_test.h",
+    "embedder_test_constants.cpp",
+    "embedder_test_constants.h",
     "embedder_test_mock_delegate.h",
     "embedder_test_timer_handling_delegate.h",
     "fake_file_access.cpp",

@@ -6,6 +6,7 @@
 
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class FPDFRenderPatternEmbedderTest : public EmbedderTest {};
@@ -16,6 +17,6 @@ TEST_F(FPDFRenderPatternEmbedderTest, LoadError_547706) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+  CompareBitmap(bitmap.get(), 612, 792, pdfium::kBlankPage612By792Checksum);
   UnloadPage(page);
 }

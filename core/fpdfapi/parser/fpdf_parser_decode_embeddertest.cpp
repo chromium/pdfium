@@ -11,10 +11,12 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
 using FPDFParserDecodeEmbedderTest = EmbedderTest;
+using pdfium::kBlankPage612By792Checksum;
 
 TEST_F(FPDFParserDecodeEmbedderTest, Bug_552046) {
   // Tests specifying multiple image filters for a stream. Should not cause a
@@ -23,7 +25,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug_552046) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+  CompareBitmap(bitmap.get(), 612, 792, kBlankPage612By792Checksum);
   UnloadPage(page);
 }
 
@@ -34,7 +36,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug_555784) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+  CompareBitmap(bitmap.get(), 612, 792, kBlankPage612By792Checksum);
   UnloadPage(page);
 }
 
@@ -51,13 +53,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, MAYBE_Bug_455199) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-#if defined(OS_MACOSX)
-  const char kExpectedMd5sum[] = "c38b75e16a13852aee3b97d77a0f0ee7";
-#elif defined(OS_WIN)
-  const char kExpectedMd5sum[] = "795b7ce1626931aa06af0fa23b7d80bb";
-#else
-  const char kExpectedMd5sum[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
-#endif
-  CompareBitmap(bitmap.get(), 200, 200, kExpectedMd5sum);
+
+  CompareBitmap(bitmap.get(), 200, 200, pdfium::kHelloWorldChecksum);
   UnloadPage(page);
 }
