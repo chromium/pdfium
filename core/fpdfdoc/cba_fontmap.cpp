@@ -35,9 +35,6 @@ namespace {
 
 bool FindNativeTrueTypeFont(ByteString sFontFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  if (!pFontMgr)
-    return false;
-
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
   pFontMapper->LoadInstalledFonts();
 
