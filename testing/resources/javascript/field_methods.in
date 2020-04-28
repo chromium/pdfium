@@ -51,7 +51,18 @@ testGetField();
 testGetArray();
 
 expect("this.getField('MyField.MyPushButton').buttonGetCaption()", "");
+expect("this.getField('MyField.MyPushButton').buttonGetCaption(0)", "");
+expect("this.getField('MyField.MyPushButton').buttonGetCaption(1)", "");
+expect("this.getField('MyField.MyPushButton').buttonGetCaption(2)", "");
+expectError("this.getField('MyField.MyPushButton').buttonGetCaption(3)")
+expectError("this.getField('MyField.MyMultiSelect').buttonGetCaption()")
+
 expect("this.getField('MyField.MyPushButton').buttonGetIcon()", "[object Object]");
+expect("this.getField('MyField.MyPushButton').buttonGetIcon(0)", "[object Object]");
+expect("this.getField('MyField.MyPushButton').buttonGetIcon(1)", "[object Object]");
+expectError("this.getField('MyField.MyPushButton').buttonGetIcon(3)");
+expectError("this.getField('MyField.MyMultiSelect').buttonGetIcon()");
+
 expect("this.getField('MyField.MyPushButton').buttonImportIcon()", undefined);
 
 expect("this.getField('MyField.MyFile').browseForFileToSubmit()", undefined);

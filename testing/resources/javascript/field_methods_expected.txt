@@ -17,7 +17,16 @@ Alert: MyField.MyRadio
 Alert: MyField.MySingleSelect
 Alert: MyField.MyText
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption() = 
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption(0) = 
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption(1) = 
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption(2) = 
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetCaption(3) threw Field.buttonGetCaption: Incorrect parameter value.
+Alert: PASS: this.getField('MyField.MyMultiSelect').buttonGetCaption() threw Field.buttonGetCaption: Object is of the wrong type.
 Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon() = [object Object]
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon(0) = [object Object]
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon(1) = [object Object]
+Alert: PASS: this.getField('MyField.MyPushButton').buttonGetIcon(3) threw Field.buttonGetIcon: Incorrect parameter value.
+Alert: PASS: this.getField('MyField.MyMultiSelect').buttonGetIcon() threw Field.buttonGetIcon: Object is of the wrong type.
 Alert: PASS: this.getField('MyField.MyPushButton').buttonImportIcon() = undefined
 Alert: PASS: this.getField('MyField.MyFile').browseForFileToSubmit() = undefined
 Alert: PASS: this.getField('MyField.MyMultiSelect').getItemAt(0) = foo
