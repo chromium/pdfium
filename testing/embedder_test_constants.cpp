@@ -16,16 +16,33 @@ const char kBug890322Checksum[] = "793689536cf64fe792c2f241888c0cf3";
 const char kBug890322Checksum[] = "6c674642154408e877d88c6c082d67e9";
 #endif
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+const char kHelloWorldChecksum[] = "7fca5790ce81c715d74d955ea9939fd8";
+#else
+const char kHelloWorldChecksum[] = "66ecb880a880dd263ff495b28aeda0d1";
+#endif  // defined(OS_WIN)
+#else
 #if defined(OS_WIN)
 const char kHelloWorldChecksum[] = "795b7ce1626931aa06af0fa23b7d80bb";
-const char kHelloWorldRemovedChecksum[] = "93db13099042bafefb3c22a165bad684";
 #elif defined(OS_MACOSX)
 const char kHelloWorldChecksum[] = "c38b75e16a13852aee3b97d77a0f0ee7";
-const char kHelloWorldRemovedChecksum[] = "572b1022bb3e8f43dc671162fc62cf7f";
 #else
 const char kHelloWorldChecksum[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+#endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+const char kHelloWorldRemovedChecksum[] = "f87c63cbbc83fbb0f5b7b1d9e67448d0";
+#else
+#if defined(OS_WIN)
+const char kHelloWorldRemovedChecksum[] = "93db13099042bafefb3c22a165bad684";
+#elif defined(OS_MACOSX)
+const char kHelloWorldRemovedChecksum[] = "572b1022bb3e8f43dc671162fc62cf7f";
+#else
 const char kHelloWorldRemovedChecksum[] = "93dcc09055f87a2792c8e3065af99a1b";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 const char kManyRectanglesChecksum[] = "4e7e280c1597222afcb0ee3bb90ec119";

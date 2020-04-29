@@ -37,6 +37,13 @@ namespace {
 
 const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+const char kFirstRemovedChecksum[] = "d468228cc55071a9e838f66afc0f58ff";
+#else
+const char kFirstRemovedChecksum[] = "0c79dc1065b1d06991e3ac4aaa35d25c";
+#endif  // defined(OS_WIN)
+#else
 #if defined(OS_WIN)
 const char kFirstRemovedChecksum[] = "aae6c5334721f90ec30d3d59f4ef7deb";
 #elif defined(OS_MACOSX)
@@ -44,6 +51,7 @@ const char kFirstRemovedChecksum[] = "17ca3778fd8bb395b46532f1fa17f702";
 #else
 const char kFirstRemovedChecksum[] = "b76df015fe88009c3c342395df96abf1";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 }  // namespace
 
@@ -621,13 +629,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SetText) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemovePageObject DISABLED_RemovePageObject
-#else
-#define MAYBE_RemovePageObject RemovePageObject
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_RemovePageObject) {
+TEST_F(FPDFEditEmbedderTest, RemovePageObject) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1146,15 +1148,7 @@ TEST_F(FPDFEditEmbedderTest,
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemoveExistingPageObjectSplitStreamsLonely \
-  DISABLED_RemoveExistingPageObjectSplitStreamsLonely
-#else
-#define MAYBE_RemoveExistingPageObjectSplitStreamsLonely \
-  RemoveExistingPageObjectSplitStreamsLonely
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveExistingPageObjectSplitStreamsLonely) {
+TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsLonely) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world_split_streams.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1382,13 +1376,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromSingleStream) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemoveFirstFromSingleStream DISABLED_RemoveFirstFromSingleStream
-#else
-#define MAYBE_RemoveFirstFromSingleStream RemoveFirstFromSingleStream
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveFirstFromSingleStream) {
+TEST_F(FPDFEditEmbedderTest, RemoveFirstFromSingleStream) {
   // Load document with a single stream.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1449,13 +1437,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveFirstFromSingleStream) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemoveLastFromSingleStream DISABLED_RemoveLastFromSingleStream
-#else
-#define MAYBE_RemoveLastFromSingleStream RemoveLastFromSingleStream
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_RemoveLastFromSingleStream) {
+TEST_F(FPDFEditEmbedderTest, RemoveLastFromSingleStream) {
   // Load document with a single stream.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
