@@ -53,12 +53,9 @@ template("test") {
         # the default shared_library configs rather than executable configs.
         configs -= [
           "//build/config:shared_library_config",
-          "//build/config/android:hide_all_but_jni_onload",
-        ]
-        configs += [
-          "//build/config:executable_config",
           "//build/config/android:hide_all_but_jni",
         ]
+        configs += [ "//build/config:executable_config" ]
 
         # Don't output to the root or else conflict with the group() below.
         output_name = rebase_path(_exec_output, root_out_dir)
@@ -74,18 +71,35 @@ template("test") {
         }
       }
     } else {
-      _library_target = "_${target_name}__library"
-      _apk_target = "${target_name}_apk"
+      _library_target = "${target_name}__library"
+      _apk_target = "${target_name}__apk"
       _apk_specific_vars = [
         "android_manifest",
         "android_manifest_dep",
         "enable_multidex",
+        "product_config_java_packages",
+        "min_sdk_version",
         "proguard_configs",
         "proguard_enabled",
+        "shared_resources",
+        "srcjar_deps",
+        "target_sdk_version",
         "use_default_launcher",
-        "write_asset_list",
         "use_native_activity",
       ]
+
+      # Adds the unwind tables from unstripped binary as an asset file in the
+      # apk, if |add_unwind_tables_in_apk| is specified by the test.
+      if (defined(invoker.add_unwind_tables_in_apk) &&
+          invoker.add_unwind_tables_in_apk) {
+        _unwind_table_asset_name = "${target_name}_unwind_assets"
+        unwind_table_asset(_unwind_table_asset_name) {
+          testonly = true
+          library_target = _library_target
+          deps = [ ":$_library_target" ]
+        }
+      }
+
       shared_library(_library_target) {
         # Configs will always be defined since we set_defaults in BUILDCONFIG.gn.
         configs = []  # Prevent list overwriting warning.
@@ -104,7 +118,7 @@ template("test") {
         }
       }
       unittest_apk(_apk_target) {
-        forward_variables_from(invoker, _apk_specific_vars + [ "deps" ])
+        forward_variables_from(invoker, _apk_specific_vars)
         shared_library = ":$_library_target"
         apk_name = invoker.target_name
         if (defined(invoker.output_name)) {
@@ -112,66 +126,59 @@ template("test") {
           install_script_name = "install_${invoker.output_name}"
         }
 
-        # TODO(agrieve): Remove this data_dep once bots don't build the _apk
-        #     target (post-GYP).
-        # It's a bit backwards for the apk to depend on the runner script, since
-        # the apk is conceptually a runtime_dep of the script. However, it is
-        # currently necessary because the bots build this _apk target directly
-        # rather than the group() below.
-        data_deps = [ ":$_test_runner_target" ]
-      }
+        if (defined(invoker.deps)) {
+          deps = invoker.deps
+        } else {
+          deps = []
+        }
 
-      # Incremental test targets work only for .apks.
-      _incremental_test_runner_target =
-          "${_output_name}_incremental__test_runner_script"
-      test_runner_script(_incremental_test_runner_target) {
-        forward_variables_from(invoker,
-                               _wrapper_script_vars + [
-                                     "data",
-                                     "data_deps",
-                                     "deps",
-                                     "public_deps",
-                                   ])
-        apk_target = ":$_apk_target"
-        test_name = "${_output_name}_incremental"
-        test_type = "gtest"
-        test_suite = _output_name
-        incremental_install = true
-      }
-      group("${target_name}_incremental") {
-        testonly = true
-        datadeps = [ ":$_incremental_test_runner_target" ]
-        deps = [ ":${_apk_target}_incremental" ]
+        # Add the Java classes so that each target does not have to do it.
+        deps += [ "//base/test:test_support_java" ]
+
+        if (defined(_unwind_table_asset_name)) {
+          deps += [ ":${_unwind_table_asset_name}" ]
+        }
       }
     }
 
-    _test_runner_target = "${_output_name}__test_runner_script"
     test_runner_script(_test_runner_target) {
-      forward_variables_from(invoker,
-                             _wrapper_script_vars + [
-                                   "data",
-                                   "data_deps",
-                                   "deps",
-                                   "public_deps",
-                                 ])
+      forward_variables_from(invoker, _wrapper_script_vars)
 
       if (_use_raw_android_executable) {
         executable_dist_dir = "$root_out_dir/$_dist_target"
+        data_deps = [ ":$_exec_target" ]
       } else {
         apk_target = ":$_apk_target"
+        incremental_apk = incremental_install
+
+        # Dep needed for the test runner .runtime_deps file to pick up data
+        # deps from the forward_variables_from(invoker, "*") on the library.
+        data_deps = [ ":$_library_target" ]
       }
       test_name = _output_name
-      test_type = "gtest"
       test_suite = _output_name
+      test_type = "gtest"
     }
 
-    group(target_name) {
+    # Create a wrapper script rather than using a group() in order to ensure
+    # "ninja $target_name" always works. If this was a group(), then GN would
+    # not create a top-level alias for it if a target exists in another
+    # directory with the same $target_name.
+    # Also - bots run this script directly for "components_perftests".
+    generate_wrapper(target_name) {
       testonly = true
+      executable = "$root_build_dir/bin/run_$_output_name"
+      wrapper_script = "$root_build_dir/$_output_name"
       deps = [ ":$_test_runner_target" ]
       if (_use_raw_android_executable) {
         deps += [ ":$_dist_target" ]
       } else {
-        deps += [ ":$_apk_target" ]
+        # Dep needed for the swarming .isolate file to pick up data
+        # deps from the forward_variables_from(invoker, "*") on the library.
+        deps += [
+          ":$_apk_target",
+          ":$_library_target",
+        ]
       }
     }
   } else if (is_ios) {
@@ -240,6 +247,8 @@ template("test") {
 set_defaults("test") {
   if (is_android) {
     configs = default_shared_library_configs
+    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+    configs += [ "//build/config/android:hide_all_but_jni" ]
   } else {
     configs = default_executable_configs
   }
