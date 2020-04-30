@@ -65,13 +65,41 @@ bool CPDFSDK_ActionHandler::DoAction_Link(
     CPDFSDK_FormFillEnvironment* form_fill_env,
     int modifiers) {
   ASSERT(form_fill_env);
-  if (action.GetType() != CPDF_Action::URI)
-    return false;
 
   if (!CPDF_AAction::IsUserInput(type))
     return false;
 
-  DoAction_URI(form_fill_env, action, modifiers);
+  switch (action.GetType()) {
+    case CPDF_Action::GoTo:
+      DoAction_GoTo(form_fill_env, action);
+      return true;
+    case CPDF_Action::URI:
+      DoAction_URI(form_fill_env, action, modifiers);
+      return true;
+    default:
+      return false;
+  }
+}
+
+bool CPDFSDK_ActionHandler::DoAction_Destination(
+    const CPDF_Dest& dest,
+    CPDFSDK_FormFillEnvironment* form_fill_env) {
+  ASSERT(form_fill_env);
+  CPDF_Document* document = form_fill_env->GetPDFDocument();
+  ASSERT(document);
+
+  const CPDF_Array* dest_array = dest.GetArray();
+  std::vector<float> dest_positions;
+  // |dest_array| index 0 contains destination page details and index 1 contains
+  // parameter that explains about the rest of |dest_array|.
+  if (dest_array) {
+    for (size_t i = 2; i < dest_array->size(); i++)
+      dest_positions.push_back(dest_array->GetNumberAt(i));
+  }
+
+  form_fill_env->DoGoToAction(dest.GetDestPageIndex(document),
+                              dest.GetZoomMode(), dest_positions.data(),
+                              dest_positions.size());
   return true;
 }
 
@@ -271,16 +299,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(
   ASSERT(pPDFDocument);
 
   CPDF_Dest MyDest = action.GetDest(pPDFDocument);
-  int nPageIndex = MyDest.GetDestPageIndex(pPDFDocument);
-  int nFitType = MyDest.GetZoomMode();
-  const CPDF_Array* pMyArray = MyDest.GetArray();
-  std::vector<float> posArray;
-  if (pMyArray) {
-    for (size_t i = 2; i < pMyArray->size(); i++)
-      posArray.push_back(pMyArray->GetNumberAt(i));
-  }
-  pFormFillEnv->DoGoToAction(nPageIndex, nFitType, posArray.data(),
-                             posArray.size());
+  DoAction_Destination(MyDest, pFormFillEnv);
 }
 
 void CPDFSDK_ActionHandler::DoAction_URI(

@@ -65,6 +65,13 @@ class EmbedderTest : public ::testing::Test,
     // Equivalent to FPDF_FORMFILLINFO::FFI_DoURIAction().
     virtual void DoURIAction(FPDF_BYTESTRING uri) {}
 
+    // Equivalent to FPDF_FORMFILLINFO::FFI_DoGoToAction().
+    virtual void DoGoToAction(FPDF_FORMFILLINFO* info,
+                              int page_index,
+                              int zoom_mode,
+                              float* pos_arry,
+                              int array_size) {}
+
     // Equivalent to FPDF_FORMFILLINFO::FFI_OnFocusChange().
     virtual void OnFocusChange(FPDF_FORMFILLINFO* info,
                                FPDF_ANNOTATION annot,
@@ -304,6 +311,11 @@ class EmbedderTest : public ::testing::Test,
                                      int page_index);
   static void DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
                                     FPDF_BYTESTRING uri);
+  static void DoGoToActionTrampoline(FPDF_FORMFILLINFO* info,
+                                     int page_index,
+                                     int zoom_mode,
+                                     float* pos_array,
+                                     int array_size);
   static void OnFocusChangeTrampoline(FPDF_FORMFILLINFO* info,
                                       FPDF_ANNOTATION annot,
                                       int page_index);

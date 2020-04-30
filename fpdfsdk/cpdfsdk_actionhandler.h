@@ -48,6 +48,8 @@ class CPDFSDK_ActionHandler {
                      CPDF_AAction::AActionType type,
                      CPDFSDK_FormFillEnvironment* form_fill_env,
                      int modifiers);
+  bool DoAction_Destination(const CPDF_Dest& dest,
+                            CPDFSDK_FormFillEnvironment* form_fill_env);
 
  private:
   using RunScriptCallback = std::function<void(IJS_EventContext* context)>;

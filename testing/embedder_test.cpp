@@ -251,6 +251,7 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
   formfillinfo->FFI_KillTimer = KillTimerTrampoline;
   formfillinfo->FFI_GetPage = GetPageTrampoline;
   formfillinfo->FFI_DoURIAction = DoURIActionTrampoline;
+  formfillinfo->FFI_DoGoToAction = DoGoToActionTrampoline;
   formfillinfo->FFI_OnFocusChange = OnFocusChangeTrampoline;
   formfillinfo->FFI_DoURIActionWithKeyboardModifier =
       DoURIActionWithKeyboardModifierTrampoline;
@@ -604,6 +605,17 @@ void EmbedderTest::DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
                                          FPDF_BYTESTRING uri) {
   EmbedderTest* test = static_cast<EmbedderTest*>(info);
   return test->delegate_->DoURIAction(uri);
+}
+
+// static
+void EmbedderTest::DoGoToActionTrampoline(FPDF_FORMFILLINFO* info,
+                                          int page_index,
+                                          int zoom_mode,
+                                          float* pos_array,
+                                          int array_size) {
+  EmbedderTest* test = static_cast<EmbedderTest*>(info);
+  return test->delegate_->DoGoToAction(info, page_index, zoom_mode, pos_array,
+                                       array_size);
 }
 
 // static

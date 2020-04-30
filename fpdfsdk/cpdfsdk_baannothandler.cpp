@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxge/cfx_drawutils.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
@@ -187,12 +188,14 @@ bool CPDFSDK_BAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
 
   CPDFSDK_BAAnnot* ba_annot = pAnnot->AsBAAnnot();
   CPDF_Action action = ba_annot->GetAAction(CPDF_AAction::kKeyStroke);
-  if (!action.GetDict() || action.GetType() != CPDF_Action::URI) {
-    return false;
+
+  if (action.GetDict()) {
+    return form_fill_environment_->GetActionHandler()->DoAction_Link(
+        action, CPDF_AAction::kKeyStroke, form_fill_environment_.Get(), nFlag);
   }
 
-  return form_fill_environment_->GetActionHandler()->DoAction_Link(
-      action, CPDF_AAction::kKeyStroke, form_fill_environment_.Get(), nFlag);
+  return form_fill_environment_->GetActionHandler()->DoAction_Destination(
+      ba_annot->GetDestination(), form_fill_environment_.Get());
 }
 
 bool CPDFSDK_BAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,

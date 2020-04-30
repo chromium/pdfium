@@ -611,6 +611,7 @@ TEST_F(FPDFFormFillEmbedderTest, FirstTest) {
   EXPECT_CALL(mock, OnFocusChange(_, _, _)).Times(0);
   EXPECT_CALL(mock, DoURIAction(_)).Times(0);
   EXPECT_CALL(mock, DoURIActionWithKeyboardModifier(_, _, _)).Times(0);
+  EXPECT_CALL(mock, DoGoToAction(_, _, _, _, _)).Times(0);
   SetDelegate(&mock);
 
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
@@ -3057,6 +3058,52 @@ TEST_F(FPDFFormFillActionUriTest, LinkActionInvokeTest) {
   SetDelegate(&mock);
   SetFocusOnNthAnnot(3);
   int modifier = 0;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ControlKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ShiftKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier |= FWL_EVENTFLAG_ControlKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+
+  ASSERT_FALSE(FORM_OnKeyDown(nullptr, page(), FWL_VKEY_Return, modifier));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), nullptr, FWL_VKEY_Return, modifier));
+  // Following checks should be changed to ASSERT_TRUE if FORM_OnKeyDown starts
+  // handling for Shift/Space/Control.
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Shift, modifier));
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Space, modifier));
+  ASSERT_FALSE(
+      FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Control, modifier));
+}
+
+TEST_F(FPDFFormFillActionUriTest, InternalLinkActionInvokeTest) {
+  NiceMock<EmbedderTestMockDelegate> mock;
+  EXPECT_CALL(mock, DoGoToAction(_, _, 1, _, _)).Times(12);
+  SetDelegate(&mock);
+
+  SetFocusOnNthAnnot(4);
+  int modifier = 0;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ControlKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ShiftKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier |= FWL_EVENTFLAG_ControlKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+
+  SetFocusOnNthAnnot(5);
+  modifier = 0;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ControlKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier = FWL_EVENTFLAG_ShiftKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+  modifier |= FWL_EVENTFLAG_ControlKey;
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
+
+  SetFocusOnNthAnnot(6);
+  modifier = 0;
   ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));
   modifier = FWL_EVENTFLAG_ControlKey;
   ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Return, modifier));

@@ -66,6 +66,8 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   void SetOpenState(bool bOpenState);
 
+  CPDF_Dest GetDestination() const;
+
  protected:
   CPDF_Dictionary* GetAPDict() const;
 
