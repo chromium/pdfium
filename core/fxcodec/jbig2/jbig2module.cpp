@@ -39,8 +39,7 @@ FXCODEC_STATUS Jbig2Module::StartDecode(
     uint8_t* dest_buf,
     uint32_t dest_pitch,
     PauseIndicatorIface* pPause) {
-  if (!pJbig2Context)
-    return FXCODEC_STATUS_ERR_PARAMS;
+  ASSERT(pJbig2Context);
 
   JBig2_DocumentContext* pJBig2DocumentContext =
       GetJBig2DocumentContext(pContextHolder);
