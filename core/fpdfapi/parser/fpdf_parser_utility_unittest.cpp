@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 
 TEST(fpdf_parser_utility, PDF_NameDecode) {
   EXPECT_EQ("", PDF_NameDecode(""));

@@ -17,7 +17,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
-#include "third_party/base/ptr_util.h"
 
 class CPDF_IndirectObjectHolder {
  public:
