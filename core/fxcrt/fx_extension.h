@@ -118,6 +118,7 @@ void FXSYS_IntToFourHexChars(uint16_t n, char* buf);
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
 
 // Strict order over floating types where NaNs may be present.
+// All NaNs are treated as equal to each other and greater than infinity.
 template <typename T>
 bool FXSYS_SafeEQ(const T& lhs, const T& rhs) {
   return (std::isnan(lhs) && std::isnan(rhs)) ||
