@@ -281,8 +281,12 @@ CFXJSE_Class* CFXJSE_Class::Create(
       pIsolate, bIsJSGlobal ? 0 : V8ConstructorCallback_Wrapper,
       v8::External::New(
           pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
-  hFunctionTemplate->SetClassName(
-      fxv8::NewStringHelper(pIsolate, lpClassDefinition->name));
+  v8::Local<v8::String> classname =
+      fxv8::NewStringHelper(pIsolate, lpClassDefinition->name);
+  hFunctionTemplate->SetClassName(classname);
+  hFunctionTemplate->PrototypeTemplate()->Set(
+      v8::Symbol::GetToStringTag(pIsolate), classname,
+      static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontEnum));
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
