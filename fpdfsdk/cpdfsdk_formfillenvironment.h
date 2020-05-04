@@ -107,6 +107,9 @@ class CPDFSDK_FormFillEnvironment final : public Observable,
   }
 
   bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+  IPDF_JSPLATFORM* GetJSPlatform() const {
+    return m_pInfo ? m_pInfo->m_pJsPlatform : nullptr;
+  }
 
 #ifdef PDF_ENABLE_V8
   CPDFSDK_PageView* GetCurrentView();
