@@ -45,12 +45,13 @@ void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
   for (size_t i = glyphs.size() - 1; i > 1; --i) {
     const TextGlyphPos& next = glyphs[i];
     int next_origin = bVertical ? next.m_Origin.y : next.m_Origin.x;
-    float next_origin_f = bVertical ? next.m_fOrigin.y : next.m_fOrigin.x;
+    float next_origin_f =
+        bVertical ? next.m_fDeviceOrigin.y : next.m_fDeviceOrigin.x;
 
     TextGlyphPos& current = glyphs[i - 1];
     int& current_origin = bVertical ? current.m_Origin.y : current.m_Origin.x;
     float current_origin_f =
-        bVertical ? current.m_fOrigin.y : current.m_fOrigin.x;
+        bVertical ? current.m_fDeviceOrigin.y : current.m_fDeviceOrigin.x;
 
     FX_SAFE_INT32 safe_space = next_origin;
     safe_space -= current_origin;
@@ -922,12 +923,12 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     TextGlyphPos& glyph = glyphs[i];
     const TextCharPos& charpos = pCharPos[i];
 
-    glyph.m_fOrigin = text2Device.Transform(charpos.m_Origin);
+    glyph.m_fDeviceOrigin = text2Device.Transform(charpos.m_Origin);
     if (anti_alias < FT_RENDER_MODE_LCD)
-      glyph.m_Origin.x = FXSYS_roundf(glyph.m_fOrigin.x);
+      glyph.m_Origin.x = FXSYS_roundf(glyph.m_fDeviceOrigin.x);
     else
-      glyph.m_Origin.x = static_cast<int>(floor(glyph.m_fOrigin.x));
-    glyph.m_Origin.y = FXSYS_roundf(glyph.m_fOrigin.y);
+      glyph.m_Origin.x = static_cast<int>(floor(glyph.m_fDeviceOrigin.x));
+    glyph.m_Origin.y = FXSYS_roundf(glyph.m_fDeviceOrigin.y);
 
     if (charpos.m_bGlyphAdjust) {
       CFX_Matrix new_matrix(
@@ -1021,7 +1022,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     }
     bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
-    int x_subpixel = static_cast<int>(glyph.m_fOrigin.x * 3) % 3;
+    int x_subpixel = static_cast<int>(glyph.m_fDeviceOrigin.x * 3) % 3;
     int start_col = std::max(point->x, 0);
     FX_SAFE_INT32 end_col_safe = point->x;
     end_col_safe += ncols;

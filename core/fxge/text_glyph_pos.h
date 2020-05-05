@@ -24,7 +24,7 @@ class TextGlyphPos {
 
   UnownedPtr<const CFX_GlyphBitmap> m_pGlyph;
   CFX_Point m_Origin;
-  CFX_PointF m_fOrigin;
+  CFX_PointF m_fDeviceOrigin;
 };
 
 #endif  // CORE_FXGE_TEXT_GLYPH_POS_H_
