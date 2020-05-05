@@ -163,8 +163,8 @@ class CPDF_CalRGB final : public CPDF_ColorSpace {
   float m_BlackPoint[kBlackWhitePointCount];
   float m_Gamma[kGammaCount];
   float m_Matrix[kMatrixCount];
-  bool m_bGamma = false;
-  bool m_bMatrix = false;
+  bool m_bHasGamma = false;
+  bool m_bHasMatrix = false;
 };
 
 class CPDF_LabCS final : public CPDF_ColorSpace {
@@ -735,14 +735,14 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
 
   const CPDF_Array* pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
-    m_bGamma = true;
+    m_bHasGamma = true;
     for (size_t i = 0; i < FX_ArraySize(m_Gamma); ++i)
       m_Gamma[i] = pParam->GetNumberAt(i);
   }
 
   pParam = pDict->GetArrayFor("Matrix");
   if (pParam) {
-    m_bMatrix = true;
+    m_bHasMatrix = true;
     for (size_t i = 0; i < FX_ArraySize(m_Matrix); ++i)
       m_Matrix[i] = pParam->GetNumberAt(i);
   }
@@ -756,7 +756,7 @@ bool CPDF_CalRGB::GetRGB(const float* pBuf,
   float A_ = pBuf[0];
   float B_ = pBuf[1];
   float C_ = pBuf[2];
-  if (m_bGamma) {
+  if (m_bHasGamma) {
     A_ = FXSYS_pow(A_, m_Gamma[0]);
     B_ = FXSYS_pow(B_, m_Gamma[1]);
     C_ = FXSYS_pow(C_, m_Gamma[2]);
@@ -765,7 +765,7 @@ bool CPDF_CalRGB::GetRGB(const float* pBuf,
   float X;
   float Y;
   float Z;
-  if (m_bMatrix) {
+  if (m_bHasMatrix) {
     X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
     Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
     Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
