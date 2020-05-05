@@ -4,7 +4,6 @@
 /out
 /testing/corpus
 /third_party/android_ndk
-/third_party/binutils
 /third_party/catapult
 /third_party/depot_tools
 /third_party/freetype/src

@@ -17,10 +17,6 @@ vars = {
   # and whatever else without interference from each other.
   'android_ndk_revision': '27c0a8d090c666a50e40fceb4ee5b40b1a2d3f87',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling binutils
-  # and whatever else without interference from each other.
-  'binutils_revision': 'f9ce777698a819dff4d6a033b31122d91a49b62e',
-  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
   'build_revision': 'c732332a2b6894dff4cec682f06031b23f219280',
@@ -126,10 +122,6 @@ deps = {
         Var('android_ndk_revision'),
     'condition': 'checkout_android',
   },
-
-  'third_party/binutils':
-    Var('chromium_git') + '/chromium/src/third_party/binutils.git@' +
-        Var('binutils_revision'),
 
   'third_party/catapult': {
     'url': Var('chromium_git') + '/catapult.git@' + Var('catapult_revision'),
@@ -296,15 +288,6 @@ hooks = [
     'pattern': '.',
     'action': ['python',
                'pdfium/tools/clang/scripts/update.py'
-    ],
-  },
-  {
-    'name': 'binutils',
-    'pattern': 'src/third_party/binutils',
-    'condition': 'host_os == "linux"',
-    'action': [
-        'python',
-        'pdfium/third_party/binutils/download.py',
     ],
   },
   {
