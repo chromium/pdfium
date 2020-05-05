@@ -397,11 +397,11 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
 
     if (i == iLast || pTC->m_dwStatus != CFX_BreakType::None ||
         pTC->m_dwIdentity != dwIdentity) {
-      tp.m_iChars = i - j;
+      tp.m_iCharCount = i - j;
       if (pTC->m_dwIdentity == dwIdentity) {
         tp.m_dwStatus = pTC->m_dwStatus;
         tp.m_iWidth += pTC->m_iCharWidth;
-        tp.m_iChars += 1;
+        tp.m_iCharCount += 1;
         ++i;
       }
       m_pCurLine->m_LinePieces.push_back(tp);
@@ -468,7 +468,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       ++i;
     } else if (iBidiLevel != pTC->m_iBidiLevel ||
                pTC->m_dwIdentity != dwIdentity) {
-      tp.m_iChars = i - tp.m_iStartChar;
+      tp.m_iCharCount = i - tp.m_iStartChar;
       m_pCurLine->m_LinePieces.push_back(tp);
 
       tp.m_iStartPos += tp.m_iWidth;
@@ -487,7 +487,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
 
   if (i > tp.m_iStartChar) {
     tp.m_dwStatus = dwStatus;
-    tp.m_iChars = i - tp.m_iStartChar;
+    tp.m_iCharCount = i - tp.m_iStartChar;
     m_pCurLine->m_LinePieces.push_back(tp);
 
     tpo.index = j;
@@ -516,8 +516,8 @@ void CFX_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
       iNetWidth = ttp.GetEndPos();
 
     bool bArabic = FX_IsOdd(ttp.m_iBidiLevel);
-    int32_t j = bArabic ? 0 : ttp.m_iChars - 1;
-    while (j > -1 && j < ttp.m_iChars) {
+    int32_t j = bArabic ? 0 : ttp.m_iCharCount - 1;
+    while (j > -1 && j < ttp.m_iCharCount) {
       const CFX_Char* tc = ttp.GetChar(j);
       if (tc->m_eLineBreakType == FX_LINEBREAKTYPE::kDIRECT_BRK)
         ++iGapChars;
@@ -555,7 +555,7 @@ void CFX_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
       else
         ttp.m_iStartPos = iStart;
 
-      for (int32_t j = 0; j < ttp.m_iChars; ++j) {
+      for (int32_t j = 0; j < ttp.m_iCharCount; ++j) {
         CFX_Char* tc = ttp.GetChar(j);
         if (tc->m_eLineBreakType != FX_LINEBREAKTYPE::kDIRECT_BRK ||
             tc->m_iCharWidth < 0) {

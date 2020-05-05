@@ -23,7 +23,7 @@ class CFX_BreakPiece {
   ~CFX_BreakPiece();
 
   int32_t GetEndPos() const;
-  int32_t GetLength() const { return m_iChars; }
+  int32_t GetLength() const { return m_iCharCount; }
 
   CFX_Char* GetChar(int32_t index) const;
   WideString GetString() const;
@@ -33,7 +33,7 @@ class CFX_BreakPiece {
   int32_t m_iStartPos = 0;
   int32_t m_iWidth = -1;
   int32_t m_iStartChar = 0;
-  int32_t m_iChars = 0;
+  int32_t m_iCharCount = 0;
   int32_t m_iBidiLevel = 0;
   int32_t m_iBidiPos = 0;
   int32_t m_iFontSize = 0;
