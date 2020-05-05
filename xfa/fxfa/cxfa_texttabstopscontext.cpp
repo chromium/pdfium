@@ -8,10 +8,9 @@
 
 #include <algorithm>
 
-CXFA_TextTabstopsContext::CXFA_TextTabstopsContext()
-    : m_iTabIndex(-1), m_bTabstops(false), m_fTabWidth(0), m_fLeft(0) {}
+CXFA_TextTabstopsContext::CXFA_TextTabstopsContext() = default;
 
-CXFA_TextTabstopsContext::~CXFA_TextTabstopsContext() {}
+CXFA_TextTabstopsContext::~CXFA_TextTabstopsContext() = default;
 
 void CXFA_TextTabstopsContext::Append(uint32_t dwAlign, float fTabstops) {
   XFA_TABSTOPS tabstop;
@@ -28,7 +27,7 @@ void CXFA_TextTabstopsContext::RemoveAll() {
 
 void CXFA_TextTabstopsContext::Reset() {
   m_iTabIndex = -1;
-  m_bTabstops = false;
+  m_bHasTabstops = false;
   m_fTabWidth = 0;
   m_fLeft = 0;
 }

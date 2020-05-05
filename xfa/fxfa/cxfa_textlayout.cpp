@@ -941,7 +941,7 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
 
   if (iCount > 0) {
     iTabstopsIndex++;
-    m_pTabstopContext->m_bTabstops = true;
+    m_pTabstopContext->m_bHasTabstops = true;
     float fRight = 0;
     if (iPieces > 1) {
       CXFA_TextPiece* p = pPieceLine->m_textPieces[iPieces - 2].get();
@@ -951,7 +951,7 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
         pPiece->rtPiece.width + pPiece->rtPiece.left - fRight;
   } else if (iTabstopsIndex > -1) {
     float fLeft = 0;
-    if (m_pTabstopContext->m_bTabstops) {
+    if (m_pTabstopContext->m_bHasTabstops) {
       uint32_t dwAlign = m_pTabstopContext->m_tabstops[iTabstopsIndex].dwAlign;
       if (dwAlign == FX_HashCode_GetW(L"center", false)) {
         fLeft = pPiece->rtPiece.width / 2.0f;
@@ -969,7 +969,7 @@ void CXFA_TextLayout::DoTabstops(CFX_CSSComputedStyle* pStyle,
       }
       m_pTabstopContext->m_fLeft =
           std::min(fLeft, m_pTabstopContext->m_fTabWidth);
-      m_pTabstopContext->m_bTabstops = false;
+      m_pTabstopContext->m_bHasTabstops = false;
       m_pTabstopContext->m_fTabWidth = 0;
     }
     pPiece->rtPiece.left -= m_pTabstopContext->m_fLeft;
