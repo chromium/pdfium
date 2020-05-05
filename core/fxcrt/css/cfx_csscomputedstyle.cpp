@@ -119,7 +119,7 @@ CFX_CSSTextAlign CFX_CSSComputedStyle::GetTextAlign() const {
 }
 
 CFX_CSSVerticalAlign CFX_CSSComputedStyle::GetVerticalAlign() const {
-  return m_NonInheritedData.m_eVerticalAlign;
+  return m_NonInheritedData.m_eVerticalAlignType;
 }
 
 float CFX_CSSComputedStyle::GetNumberVerticalAlign() const {
@@ -147,7 +147,7 @@ void CFX_CSSComputedStyle::SetTextAlign(CFX_CSSTextAlign eTextAlign) {
 }
 
 void CFX_CSSComputedStyle::SetNumberVerticalAlign(float fAlign) {
-  m_NonInheritedData.m_eVerticalAlign = CFX_CSSVerticalAlign::Number,
+  m_NonInheritedData.m_eVerticalAlignType = CFX_CSSVerticalAlign::Number,
   m_NonInheritedData.m_fVerticalAlign = fAlign;
 }
 
@@ -187,7 +187,7 @@ CFX_CSSComputedStyle::NonInheritedData::NonInheritedData()
       m_PaddingWidth(CFX_CSSLengthUnit::Point, 0),
       m_fVerticalAlign(0.0f),
       m_eDisplay(CFX_CSSDisplay::Inline),
-      m_eVerticalAlign(CFX_CSSVerticalAlign::Baseline),
+      m_eVerticalAlignType(CFX_CSSVerticalAlign::Baseline),
       m_dwTextDecoration(0),
       m_bHasMargin(false),
       m_bHasBorder(false),

@@ -49,7 +49,7 @@ class CFX_CSSComputedStyle final : public Retainable {
     CFX_CSSLength m_Right;
     float m_fVerticalAlign;
     CFX_CSSDisplay m_eDisplay;
-    CFX_CSSVerticalAlign m_eVerticalAlign;
+    CFX_CSSVerticalAlign m_eVerticalAlignType;
     uint8_t m_dwTextDecoration;
     bool m_bHasMargin;
     bool m_bHasBorder;

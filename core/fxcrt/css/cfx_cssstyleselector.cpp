@@ -325,10 +325,10 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
         break;
       case CFX_CSSProperty::VerticalAlign:
         if (eType == CFX_CSSPrimitiveType::Enum) {
-          pComputedStyle->m_NonInheritedData.m_eVerticalAlign =
+          pComputedStyle->m_NonInheritedData.m_eVerticalAlignType =
               ToVerticalAlign(pValue.As<CFX_CSSEnumValue>()->Value());
         } else if (eType == CFX_CSSPrimitiveType::Number) {
-          pComputedStyle->m_NonInheritedData.m_eVerticalAlign =
+          pComputedStyle->m_NonInheritedData.m_eVerticalAlignType =
               CFX_CSSVerticalAlign::Number;
           pComputedStyle->m_NonInheritedData.m_fVerticalAlign =
               pValue.As<CFX_CSSNumberValue>()->Apply(
