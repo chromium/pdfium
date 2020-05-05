@@ -1351,12 +1351,10 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemoveFormFieldHighlight DISABLED_RemoveFormFieldHighlight
+  const char kMd5NoHighlight[] = "6fe3921e4fe3f4190c248acf34e9bd3b";
 #else
-#define MAYBE_RemoveFormFieldHighlight RemoveFormFieldHighlight
-#endif
-TEST_F(FPDFFormFillEmbedderTest, MAYBE_RemoveFormFieldHighlight) {
 #if defined(OS_MACOSX)
   const char kMd5NoHighlight[] = "5e4b87c5b304c6fa9bd5f6311260494e";
 #elif defined(OS_WIN)
@@ -1364,6 +1362,7 @@ TEST_F(FPDFFormFillEmbedderTest, MAYBE_RemoveFormFieldHighlight) {
 #else
   const char kMd5NoHighlight[] = "006010c318457810a518aa5e0b33c498";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   EXPECT_TRUE(OpenDocument("text_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
