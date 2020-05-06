@@ -99,8 +99,8 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   int32_t m_iMonth = -1;
   int32_t m_iDay = -1;
   float m_fBtn = 0.0f;
-  CFX_RectF m_rtBtn;
-  CFX_RectF m_rtClient;
+  CFX_RectF m_BtnRect;
+  CFX_RectF m_ClientRect;
   std::unique_ptr<CFWL_DateTimeEdit> m_pEdit;
   std::unique_ptr<CFWL_MonthCalendar> m_pMonthCal;
 };

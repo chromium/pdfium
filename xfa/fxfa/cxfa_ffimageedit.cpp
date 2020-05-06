@@ -63,7 +63,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
-  DrawBorder(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
   RenderCaption(pGS, &mtRotate);
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pNode->GetImageEditImage();
   if (!pDIBitmap)
@@ -122,7 +122,7 @@ void CXFA_FFImageEdit::SetFWLRect() {
     return;
 
   CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
-  CFX_RectF rtImage(m_rtUI);
+  CFX_RectF rtImage(m_UIRect);
   rtImage.Deflate(rtUIMargin.left, rtUIMargin.top, rtUIMargin.width,
                   rtUIMargin.height);
   GetNormalWidget()->SetWidgetRect(rtImage);

@@ -102,7 +102,7 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
  protected:
   void ShowCaret(CFX_RectF* pRect);
   void HideCaret(CFX_RectF* pRect);
-  const CFX_RectF& GetRTClient() const { return m_rtClient; }
+  const CFX_RectF& GetRTClient() const { return m_ClientRect; }
   CFDE_TextEditEngine* GetTxtEdtEngine() { return m_pEditEngine.get(); }
 
  private:
@@ -149,10 +149,10 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
                 CFWL_EventScroll::Code dwCode,
                 float fPos);
 
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtEngine;
-  CFX_RectF m_rtStatic;
-  CFX_RectF m_rtCaret;
+  CFX_RectF m_ClientRect;
+  CFX_RectF m_EngineRect;
+  CFX_RectF m_StaticRect;
+  CFX_RectF m_CaretRect;
   bool m_bLButtonDown = false;
   bool m_bSetRange = false;
   int32_t m_nLimit = -1;

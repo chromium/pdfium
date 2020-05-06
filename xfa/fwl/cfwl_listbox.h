@@ -75,7 +75,7 @@ class CFWL_ListBox : public CFWL_Widget {
   void InitHorizontalScrollBar();
   bool IsShowScrollBar(bool bVert);
   CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar.get(); }
-  const CFX_RectF& GetRTClient() const { return m_rtClient; }
+  const CFX_RectF& GetRTClient() const { return m_ClientRect; }
 
  private:
   void SetSelectionDirect(CFWL_ListItem* hItem, bool bSelect);
@@ -117,9 +117,9 @@ class CFWL_ListBox : public CFWL_Widget {
                 CFWL_EventScroll::Code dwCode,
                 float fPos);
 
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtStatic;
-  CFX_RectF m_rtConent;
+  CFX_RectF m_ClientRect;
+  CFX_RectF m_StaticRect;
+  CFX_RectF m_ContentRect;
   std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
   FDE_TextStyle m_TTOStyles;

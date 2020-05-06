@@ -118,9 +118,9 @@ class CFWL_ComboBox final : public CFWL_Widget {
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnKey(CFWL_MessageKey* pMsg);
 
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtContent;
-  CFX_RectF m_rtBtn;
+  CFX_RectF m_ClientRect;
+  CFX_RectF m_ContentRect;
+  CFX_RectF m_BtnRect;
   std::unique_ptr<CFWL_ComboEdit> m_pEdit;
   std::unique_ptr<CFWL_ComboList> m_pListBox;
   int32_t m_iCurSel = -1;

@@ -196,7 +196,7 @@ class CXFA_FFWidget : public Observable, public CFWL_Widget::AdapterIface {
   UnownedPtr<CXFA_FFDocView> m_pDocView;
   ObservedPtr<CXFA_FFPageView> m_pPageView;
   UnownedPtr<CXFA_Node> const m_pNode;
-  mutable CFX_RectF m_rtWidget;
+  mutable CFX_RectF m_WidgetRect;
 };
 
 inline CXFA_FFField* ToField(CXFA_FFWidget* widget) {

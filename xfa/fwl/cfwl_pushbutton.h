@@ -45,8 +45,8 @@ class CFWL_PushButton final : public CFWL_Widget {
   void OnKeyDown(CFWL_MessageKey* pMsg);
 
   bool m_bBtnDown = false;
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtCaption;
+  CFX_RectF m_ClientRect;
+  CFX_RectF m_CaptionRect;
 };
 
 #endif  // XFA_FWL_CFWL_PUSHBUTTON_H_

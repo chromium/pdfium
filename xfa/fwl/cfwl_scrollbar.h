@@ -122,12 +122,12 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   float m_fButtonLen = 0.0f;
   bool m_bMouseDown = false;
   bool m_bMinSize = false;
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtThumb;
-  CFX_RectF m_rtMinBtn;
-  CFX_RectF m_rtMaxBtn;
-  CFX_RectF m_rtMinTrack;
-  CFX_RectF m_rtMaxTrack;
+  CFX_RectF m_ClientRect;
+  CFX_RectF m_ThumbRect;
+  CFX_RectF m_MinBtnRect;
+  CFX_RectF m_MaxBtnRect;
+  CFX_RectF m_MinTrackRect;
+  CFX_RectF m_MaxTrackRect;
   std::unique_ptr<CFX_Timer> m_pTimer;
 };
 

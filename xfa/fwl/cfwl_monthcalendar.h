@@ -149,15 +149,15 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
 
   bool m_bInitialized = false;
-  CFX_RectF m_rtHead;
-  CFX_RectF m_rtWeek;
-  CFX_RectF m_rtLBtn;
-  CFX_RectF m_rtRBtn;
-  CFX_RectF m_rtDates;
-  CFX_RectF m_rtHSep;
-  CFX_RectF m_rtHeadText;
-  CFX_RectF m_rtToday;
-  CFX_RectF m_rtTodayFlag;
+  CFX_RectF m_HeadRect;
+  CFX_RectF m_WeekRect;
+  CFX_RectF m_LBtnRect;
+  CFX_RectF m_RBtnRect;
+  CFX_RectF m_DatesRect;
+  CFX_RectF m_HSepRect;
+  CFX_RectF m_HeadTextRect;
+  CFX_RectF m_TodayRect;
+  CFX_RectF m_TodayFlagRect;
   WideString m_wsHead;
   WideString m_wsToday;
   std::vector<std::unique_ptr<DATEINFO>> m_arrDates;
@@ -175,7 +175,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   CFX_SizeF m_szCell;
   CFX_SizeF m_szToday;
   std::vector<int32_t> m_arrSelDays;
-  CFX_RectF m_rtClient;
+  CFX_RectF m_ClientRect;
 };
 
 #endif  // XFA_FWL_CFWL_MONTHCALENDAR_H_

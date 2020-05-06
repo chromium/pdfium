@@ -68,9 +68,9 @@ void CFWL_ScrollBar::DrawWidget(CXFA_Graphics* pGraphics,
 
 void CFWL_ScrollBar::SetTrackPos(float fTrackPos) {
   m_fTrackPos = fTrackPos;
-  m_rtThumb = CalcThumbButtonRect(m_rtThumb);
-  m_rtMinTrack = CalcMinTrackRect(m_rtMinTrack);
-  m_rtMaxTrack = CalcMaxTrackRect(m_rtMaxTrack);
+  m_ThumbRect = CalcThumbButtonRect(m_ThumbRect);
+  m_MinTrackRect = CalcMinTrackRect(m_MinTrackRect);
+  m_MaxTrackRect = CalcMaxTrackRect(m_MaxTrackRect);
 }
 
 bool CFWL_ScrollBar::DoScroll(CFWL_EventScroll::Code dwCode, float fPos) {
@@ -91,7 +91,7 @@ void CFWL_ScrollBar::DrawTrack(CXFA_Graphics* pGraphics,
                          : (bLower ? m_iMinTrackState : m_iMaxTrackState);
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
-  param.m_PartRect = bLower ? m_rtMinTrack : m_rtMaxTrack;
+  param.m_PartRect = bLower ? m_MinTrackRect : m_MaxTrackRect;
   pTheme->DrawBackground(param);
 }
 
@@ -107,7 +107,7 @@ void CFWL_ScrollBar::DrawArrowBtn(CXFA_Graphics* pGraphics,
                          : (bMinBtn ? m_iMinButtonState : m_iMaxButtonState);
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
-  param.m_PartRect = bMinBtn ? m_rtMinBtn : m_rtMaxBtn;
+  param.m_PartRect = bMinBtn ? m_MinBtnRect : m_MaxBtnRect;
   if (param.m_PartRect.height > 0 && param.m_PartRect.width > 0)
     pTheme->DrawBackground(param);
 }
@@ -123,24 +123,24 @@ void CFWL_ScrollBar::DrawThumb(CXFA_Graphics* pGraphics,
                          : m_iThumbButtonState;
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
-  param.m_PartRect = m_rtThumb;
+  param.m_PartRect = m_ThumbRect;
   pTheme->DrawBackground(param);
 }
 
 void CFWL_ScrollBar::Layout() {
-  m_rtClient = GetClientRect();
+  m_ClientRect = GetClientRect();
 
   CalcButtonLen();
-  m_rtMinBtn = CalcMinButtonRect();
-  m_rtMaxBtn = CalcMaxButtonRect();
-  m_rtThumb = CalcThumbButtonRect(m_rtThumb);
-  m_rtMinTrack = CalcMinTrackRect(m_rtMinTrack);
-  m_rtMaxTrack = CalcMaxTrackRect(m_rtMaxTrack);
+  m_MinBtnRect = CalcMinButtonRect();
+  m_MaxBtnRect = CalcMaxButtonRect();
+  m_ThumbRect = CalcThumbButtonRect(m_ThumbRect);
+  m_MinTrackRect = CalcMinTrackRect(m_MinTrackRect);
+  m_MaxTrackRect = CalcMaxTrackRect(m_MaxTrackRect);
 }
 
 void CFWL_ScrollBar::CalcButtonLen() {
-  m_fButtonLen = IsVertical() ? m_rtClient.width : m_rtClient.height;
-  float fLength = IsVertical() ? m_rtClient.height : m_rtClient.width;
+  m_fButtonLen = IsVertical() ? m_ClientRect.width : m_ClientRect.height;
+  float fLength = IsVertical() ? m_ClientRect.height : m_ClientRect.width;
   if (fLength < m_fButtonLen * 2) {
     m_fButtonLen = fLength / 2;
     m_bMinSize = true;
@@ -151,17 +151,17 @@ void CFWL_ScrollBar::CalcButtonLen() {
 
 CFX_RectF CFWL_ScrollBar::CalcMinButtonRect() {
   if (IsVertical())
-    return CFX_RectF(m_rtClient.TopLeft(), m_rtClient.width, m_fButtonLen);
-  return CFX_RectF(m_rtClient.TopLeft(), m_fButtonLen, m_rtClient.height);
+    return CFX_RectF(m_ClientRect.TopLeft(), m_ClientRect.width, m_fButtonLen);
+  return CFX_RectF(m_ClientRect.TopLeft(), m_fButtonLen, m_ClientRect.height);
 }
 
 CFX_RectF CFWL_ScrollBar::CalcMaxButtonRect() {
   if (IsVertical()) {
-    return CFX_RectF(m_rtClient.left, m_rtClient.bottom() - m_fButtonLen,
-                     m_rtClient.width, m_fButtonLen);
+    return CFX_RectF(m_ClientRect.left, m_ClientRect.bottom() - m_fButtonLen,
+                     m_ClientRect.width, m_fButtonLen);
   }
-  return CFX_RectF(m_rtClient.right() - m_fButtonLen, m_rtClient.top,
-                   m_fButtonLen, m_rtClient.height);
+  return CFX_RectF(m_ClientRect.right() - m_fButtonLen, m_ClientRect.top,
+                   m_fButtonLen, m_ClientRect.height);
 }
 
 CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
@@ -178,13 +178,14 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
   float fRange = m_fRangeMax - m_fRangeMin;
   if (fRange < 0) {
     if (IsVertical()) {
-      return CFX_RectF(m_rtClient.left, m_rtMaxBtn.bottom(), m_rtClient.width,
-                       0);
+      return CFX_RectF(m_ClientRect.left, m_MaxBtnRect.bottom(),
+                       m_ClientRect.width, 0);
     }
-    return CFX_RectF(m_rtMaxBtn.right(), m_rtClient.top, 0, m_rtClient.height);
+    return CFX_RectF(m_MaxBtnRect.right(), m_ClientRect.top, 0,
+                     m_ClientRect.height);
   }
 
-  CFX_RectF rtClient = m_rtClient;
+  CFX_RectF rtClient = m_ClientRect;
   float fLength = IsVertical() ? rtClient.height : rtClient.width;
   float fSize = m_fButtonLen;
   fLength -= fSize * 2.0f;
@@ -222,14 +223,14 @@ CFX_RectF CFWL_ScrollBar::CalcMinTrackRect(const CFX_RectF& rtMinRect) {
     return rect;
   }
 
-  rect.left = m_rtClient.left;
-  rect.top = m_rtClient.top;
+  rect.left = m_ClientRect.left;
+  rect.top = m_ClientRect.top;
   if (IsVertical()) {
-    rect.width = m_rtClient.width;
-    rect.height = (m_rtThumb.top + m_rtThumb.bottom()) / 2;
+    rect.width = m_ClientRect.width;
+    rect.height = (m_ThumbRect.top + m_ThumbRect.bottom()) / 2;
   } else {
-    rect.width = (m_rtThumb.left + m_rtThumb.right()) / 2;
-    rect.height = m_rtClient.height;
+    rect.width = (m_ThumbRect.left + m_ThumbRect.right()) / 2;
+    rect.height = m_ClientRect.height;
   }
   return rect;
 }
@@ -239,14 +240,14 @@ CFX_RectF CFWL_ScrollBar::CalcMaxTrackRect(const CFX_RectF& rtMaxRect) {
     return CFX_RectF(rtMaxRect.TopLeft(), 0, 0);
 
   if (IsVertical()) {
-    float iy = (m_rtThumb.top + m_rtThumb.bottom()) / 2;
-    return CFX_RectF(m_rtClient.left, iy, m_rtClient.width,
-                     m_rtClient.bottom() - iy);
+    float iy = (m_ThumbRect.top + m_ThumbRect.bottom()) / 2;
+    return CFX_RectF(m_ClientRect.left, iy, m_ClientRect.width,
+                     m_ClientRect.bottom() - iy);
   }
 
-  float ix = (m_rtThumb.left + m_rtThumb.right()) / 2;
-  return CFX_RectF(ix, m_rtClient.top, m_rtClient.height - ix,
-                   m_rtClient.height);
+  float ix = (m_ThumbRect.left + m_ThumbRect.right()) / 2;
+  return CFX_RectF(ix, m_ClientRect.top, m_ClientRect.height - ix,
+                   m_ClientRect.height);
 }
 
 float CFWL_ScrollBar::GetTrackPointPos(const CFX_PointF& point) {
@@ -256,10 +257,10 @@ float CFWL_ScrollBar::GetTrackPointPos(const CFX_PointF& point) {
 
   if (IsVertical()) {
     fPos = fRange * diff.y /
-           (m_rtMaxBtn.top - m_rtMinBtn.bottom() - m_rtThumb.height);
+           (m_MaxBtnRect.top - m_MinBtnRect.bottom() - m_ThumbRect.height);
   } else {
     fPos = fRange * diff.x /
-           (m_rtMaxBtn.left - m_rtMinBtn.right() - m_rtThumb.width);
+           (m_MaxBtnRect.left - m_MinBtnRect.right() - m_ThumbRect.width);
   }
 
   fPos += m_fLastTrackPos;
@@ -277,11 +278,11 @@ bool CFWL_ScrollBar::SendEvent() {
   }
   if (m_iMinTrackState == CFWL_PartState_Pressed) {
     DoScroll(CFWL_EventScroll::Code::PageBackward, m_fTrackPos);
-    return m_rtThumb.Contains(m_cpTrackPoint);
+    return m_ThumbRect.Contains(m_cpTrackPoint);
   }
   if (m_iMaxTrackState == CFWL_PartState_Pressed) {
     DoScroll(CFWL_EventScroll::Code::PageForward, m_fTrackPos);
-    return m_rtThumb.Contains(m_cpTrackPoint);
+    return m_ThumbRect.Contains(m_cpTrackPoint);
   }
   if (m_iMouseWheel) {
     CFWL_EventScroll::Code dwCode = m_iMouseWheel < 0
@@ -343,16 +344,16 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
 
   m_cpTrackPoint = point;
   m_fLastTrackPos = m_fTrackPos;
-  if (m_rtMinBtn.Contains(point))
-    DoMouseDown(0, m_rtMinBtn, m_iMinButtonState, point);
-  else if (m_rtThumb.Contains(point))
-    DoMouseDown(1, m_rtThumb, m_iThumbButtonState, point);
-  else if (m_rtMaxBtn.Contains(point))
-    DoMouseDown(2, m_rtMaxBtn, m_iMaxButtonState, point);
-  else if (m_rtMinTrack.Contains(point))
-    DoMouseDown(3, m_rtMinTrack, m_iMinTrackState, point);
+  if (m_MinBtnRect.Contains(point))
+    DoMouseDown(0, m_MinBtnRect, m_iMinButtonState, point);
+  else if (m_ThumbRect.Contains(point))
+    DoMouseDown(1, m_ThumbRect, m_iThumbButtonState, point);
+  else if (m_MaxBtnRect.Contains(point))
+    DoMouseDown(2, m_MaxBtnRect, m_iMaxButtonState, point);
+  else if (m_MinTrackRect.Contains(point))
+    DoMouseDown(3, m_MinTrackRect, m_iMinTrackState, point);
   else
-    DoMouseDown(4, m_rtMaxTrack, m_iMaxTrackState, point);
+    DoMouseDown(4, m_MaxTrackRect, m_iMaxTrackState, point);
 
   if (!SendEvent()) {
     m_pTimer = pdfium::MakeUnique<CFX_Timer>(
@@ -364,28 +365,28 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
 void CFWL_ScrollBar::OnLButtonUp(const CFX_PointF& point) {
   m_pTimer.reset();
   m_bMouseDown = false;
-  DoMouseUp(0, m_rtMinBtn, m_iMinButtonState, point);
-  DoMouseUp(1, m_rtThumb, m_iThumbButtonState, point);
-  DoMouseUp(2, m_rtMaxBtn, m_iMaxButtonState, point);
-  DoMouseUp(3, m_rtMinTrack, m_iMinTrackState, point);
-  DoMouseUp(4, m_rtMaxTrack, m_iMaxTrackState, point);
+  DoMouseUp(0, m_MinBtnRect, m_iMinButtonState, point);
+  DoMouseUp(1, m_ThumbRect, m_iThumbButtonState, point);
+  DoMouseUp(2, m_MaxBtnRect, m_iMaxButtonState, point);
+  DoMouseUp(3, m_MinTrackRect, m_iMinTrackState, point);
+  DoMouseUp(4, m_MaxTrackRect, m_iMaxTrackState, point);
   SetGrab(false);
 }
 
 void CFWL_ScrollBar::OnMouseMove(const CFX_PointF& point) {
-  DoMouseMove(0, m_rtMinBtn, m_iMinButtonState, point);
-  DoMouseMove(1, m_rtThumb, m_iThumbButtonState, point);
-  DoMouseMove(2, m_rtMaxBtn, m_iMaxButtonState, point);
-  DoMouseMove(3, m_rtMinTrack, m_iMinTrackState, point);
-  DoMouseMove(4, m_rtMaxTrack, m_iMaxTrackState, point);
+  DoMouseMove(0, m_MinBtnRect, m_iMinButtonState, point);
+  DoMouseMove(1, m_ThumbRect, m_iThumbButtonState, point);
+  DoMouseMove(2, m_MaxBtnRect, m_iMaxButtonState, point);
+  DoMouseMove(3, m_MinTrackRect, m_iMinTrackState, point);
+  DoMouseMove(4, m_MaxTrackRect, m_iMaxTrackState, point);
 }
 
 void CFWL_ScrollBar::OnMouseLeave() {
-  DoMouseLeave(0, m_rtMinBtn, m_iMinButtonState);
-  DoMouseLeave(1, m_rtThumb, m_iThumbButtonState);
-  DoMouseLeave(2, m_rtMaxBtn, m_iMaxButtonState);
-  DoMouseLeave(3, m_rtMinTrack, m_iMinTrackState);
-  DoMouseLeave(4, m_rtMaxTrack, m_iMaxTrackState);
+  DoMouseLeave(0, m_MinBtnRect, m_iMinButtonState);
+  DoMouseLeave(1, m_ThumbRect, m_iThumbButtonState);
+  DoMouseLeave(2, m_MaxBtnRect, m_iMaxButtonState);
+  DoMouseLeave(3, m_MinTrackRect, m_iMinTrackState);
+  DoMouseLeave(4, m_MaxTrackRect, m_iMaxTrackState);
 }
 
 void CFWL_ScrollBar::OnMouseWheel(const CFX_Vector& delta) {

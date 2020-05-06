@@ -101,8 +101,8 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                              XFA_AttributeValue iCapPlacement);
   void SetEditScrollOffset();
 
-  CFX_RectF m_rtUI;
-  CFX_RectF m_rtCaption;
+  CFX_RectF m_UIRect;
+  CFX_RectF m_CaptionRect;
 
  private:
   std::unique_ptr<CFWL_Widget> m_pNormalWidget;

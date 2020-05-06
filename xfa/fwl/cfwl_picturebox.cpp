@@ -26,7 +26,7 @@ void CFWL_PictureBox::Update() {
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
 
-  m_rtClient = GetClientRect();
+  m_ClientRect = GetClientRect();
 }
 
 void CFWL_PictureBox::DrawWidget(CXFA_Graphics* pGraphics,

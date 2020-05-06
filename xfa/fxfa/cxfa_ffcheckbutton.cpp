@@ -106,7 +106,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   float fCapReserve = 0;
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (caption && caption->IsVisible()) {
-    m_rtCaption = rtWidget;
+    m_CaptionRect = rtWidget;
     iCapPlacement = caption->GetPlacementType();
     fCapReserve = caption->GetReserve();
     if (fCapReserve <= 0) {
@@ -127,35 +127,35 @@ bool CXFA_FFCheckButton::PerformLayout() {
     iVertAlign = para->GetVerticalAlign();
   }
 
-  m_rtUI = rtWidget;
+  m_UIRect = rtWidget;
   CXFA_Margin* captionMargin = caption ? caption->GetMarginIfExists() : nullptr;
   switch (iCapPlacement) {
     case XFA_AttributeValue::Left: {
-      m_rtCaption.width = fCapReserve;
+      m_CaptionRect.width = fCapReserve;
       CapLeftRightPlacement(captionMargin);
-      m_rtUI.width -= fCapReserve;
-      m_rtUI.left += fCapReserve;
+      m_UIRect.width -= fCapReserve;
+      m_UIRect.left += fCapReserve;
       break;
     }
     case XFA_AttributeValue::Top: {
-      m_rtCaption.height = fCapReserve;
-      XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
-      m_rtUI.height -= fCapReserve;
-      m_rtUI.top += fCapReserve;
+      m_CaptionRect.height = fCapReserve;
+      XFA_RectWithoutMargin(&m_CaptionRect, captionMargin);
+      m_UIRect.height -= fCapReserve;
+      m_UIRect.top += fCapReserve;
       break;
     }
     case XFA_AttributeValue::Right: {
-      m_rtCaption.left = m_rtCaption.right() - fCapReserve;
-      m_rtCaption.width = fCapReserve;
+      m_CaptionRect.left = m_CaptionRect.right() - fCapReserve;
+      m_CaptionRect.width = fCapReserve;
       CapLeftRightPlacement(captionMargin);
-      m_rtUI.width -= fCapReserve;
+      m_UIRect.width -= fCapReserve;
       break;
     }
     case XFA_AttributeValue::Bottom: {
-      m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
-      m_rtCaption.height = fCapReserve;
-      XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
-      m_rtUI.height -= fCapReserve;
+      m_CaptionRect.top = m_CaptionRect.bottom() - fCapReserve;
+      m_CaptionRect.height = fCapReserve;
+      XFA_RectWithoutMargin(&m_CaptionRect, captionMargin);
+      m_UIRect.height -= fCapReserve;
       break;
     }
     case XFA_AttributeValue::Inline:
@@ -166,26 +166,26 @@ bool CXFA_FFCheckButton::PerformLayout() {
   }
 
   if (iHorzAlign == XFA_AttributeValue::Center)
-    m_rtUI.left += (m_rtUI.width - fCheckSize) / 2;
+    m_UIRect.left += (m_UIRect.width - fCheckSize) / 2;
   else if (iHorzAlign == XFA_AttributeValue::Right)
-    m_rtUI.left = m_rtUI.right() - fCheckSize;
+    m_UIRect.left = m_UIRect.right() - fCheckSize;
 
   if (iVertAlign == XFA_AttributeValue::Middle)
-    m_rtUI.top += (m_rtUI.height - fCheckSize) / 2;
+    m_UIRect.top += (m_UIRect.height - fCheckSize) / 2;
   else if (iVertAlign == XFA_AttributeValue::Bottom)
-    m_rtUI.top = m_rtUI.bottom() - fCheckSize;
+    m_UIRect.top = m_UIRect.bottom() - fCheckSize;
 
-  m_rtUI.width = fCheckSize;
-  m_rtUI.height = fCheckSize;
+  m_UIRect.width = fCheckSize;
+  m_UIRect.height = fCheckSize;
   AddUIMargin(iCapPlacement);
-  m_rtCheckBox = m_rtUI;
+  m_CheckBoxRect = m_UIRect;
   CXFA_Border* borderUI = m_pNode->GetUIBorder();
   if (borderUI) {
     CXFA_Margin* borderMargin = borderUI->GetMarginIfExists();
-    XFA_RectWithoutMargin(&m_rtUI, borderMargin);
+    XFA_RectWithoutMargin(&m_UIRect, borderMargin);
   }
 
-  m_rtUI.Normalize();
+  m_UIRect.Normalize();
   LayoutCaption();
   SetFWLRect();
   if (GetNormalWidget())
@@ -196,36 +196,36 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
 void CXFA_FFCheckButton::CapLeftRightPlacement(
     const CXFA_Margin* captionMargin) {
-  XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
-  if (m_rtCaption.height < 0)
-    m_rtCaption.top += m_rtCaption.height;
-  if (m_rtCaption.width < 0) {
-    m_rtCaption.left += m_rtCaption.width;
-    m_rtCaption.width = -m_rtCaption.width;
+  XFA_RectWithoutMargin(&m_CaptionRect, captionMargin);
+  if (m_CaptionRect.height < 0)
+    m_CaptionRect.top += m_CaptionRect.height;
+  if (m_CaptionRect.width < 0) {
+    m_CaptionRect.left += m_CaptionRect.width;
+    m_CaptionRect.width = -m_CaptionRect.width;
   }
 }
 
 void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeValue iCapPlacement) {
   CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
-  m_rtUI.top -= rtUIMargin.top / 2 - rtUIMargin.height / 2;
+  m_UIRect.top -= rtUIMargin.top / 2 - rtUIMargin.height / 2;
 
   float fLeftAddRight = rtUIMargin.left + rtUIMargin.width;
   float fTopAddBottom = rtUIMargin.top + rtUIMargin.height;
-  if (m_rtUI.width < fLeftAddRight) {
+  if (m_UIRect.width < fLeftAddRight) {
     if (iCapPlacement == XFA_AttributeValue::Right ||
         iCapPlacement == XFA_AttributeValue::Left) {
-      m_rtUI.left -= fLeftAddRight - m_rtUI.width;
+      m_UIRect.left -= fLeftAddRight - m_UIRect.width;
     } else {
-      m_rtUI.left -= 2 * (fLeftAddRight - m_rtUI.width);
+      m_UIRect.left -= 2 * (fLeftAddRight - m_UIRect.width);
     }
-    m_rtUI.width += 2 * (fLeftAddRight - m_rtUI.width);
+    m_UIRect.width += 2 * (fLeftAddRight - m_UIRect.width);
   }
-  if (m_rtUI.height < fTopAddBottom) {
+  if (m_UIRect.height < fTopAddBottom) {
     if (iCapPlacement == XFA_AttributeValue::Right)
-      m_rtUI.left -= fTopAddBottom - m_rtUI.height;
+      m_UIRect.left -= fTopAddBottom - m_UIRect.height;
 
-    m_rtUI.top -= fTopAddBottom - m_rtUI.height;
-    m_rtUI.height += 2 * (fTopAddBottom - m_rtUI.height);
+    m_UIRect.top -= fTopAddBottom - m_UIRect.height;
+    m_UIRect.height += 2 * (fTopAddBottom - m_UIRect.height);
   }
 }
 
@@ -239,12 +239,12 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
-  DrawBorderWithFlag(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate,
+  DrawBorderWithFlag(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate,
                      button_->IsRound());
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, highlight,
                 button_->IsRound() ? kRoundShape : kSquareShape);
-  CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
+  CFX_Matrix mt(1, 0, 0, 1, m_CheckBoxRect.left, m_CheckBoxRect.top);
   mt.Concat(mtRotate);
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(GetNormalWidget(), pGS, mt);
 }

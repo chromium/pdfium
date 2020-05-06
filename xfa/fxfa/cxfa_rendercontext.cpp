@@ -16,7 +16,7 @@ CXFA_RenderContext::CXFA_RenderContext(CXFA_FFPageView* pPageView,
           XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)),
       m_pWidget(m_pWidgetIterator->MoveToNext()),
       m_matrix(matrix),
-      m_rtClipRect(clipRect) {}
+      m_ClipRect(clipRect) {}
 
 CXFA_RenderContext::~CXFA_RenderContext() = default;
 
@@ -25,7 +25,7 @@ void CXFA_RenderContext::DoRender(CXFA_Graphics* gs) {
     CFX_RectF rtWidgetBox = m_pWidget->GetBBox(CXFA_FFWidget::kDoNotDrawFocus);
     ++rtWidgetBox.width;
     ++rtWidgetBox.height;
-    if (rtWidgetBox.IntersectWith(m_rtClipRect))
+    if (rtWidgetBox.IntersectWith(m_ClipRect))
       m_pWidget->RenderWidget(gs, m_matrix, CXFA_FFWidget::kHighlight);
 
     m_pWidget = m_pWidgetIterator->MoveToNext();

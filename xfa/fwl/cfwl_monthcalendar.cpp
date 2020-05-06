@@ -163,7 +163,7 @@ void CFWL_MonthCalendar::DrawBackground(CXFA_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::Background;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = CFWL_PartState_Normal;
-  params.m_PartRect = m_rtClient;
+  params.m_PartRect = m_ClientRect;
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
   pTheme->DrawBackground(params);
@@ -177,7 +177,7 @@ void CFWL_MonthCalendar::DrawHeadBK(CXFA_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::Header;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = CFWL_PartState_Normal;
-  params.m_PartRect = m_rtHead;
+  params.m_PartRect = m_HeadRect;
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
   pTheme->DrawBackground(params);
@@ -191,7 +191,7 @@ void CFWL_MonthCalendar::DrawLButton(CXFA_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::LBtn;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_iLBtnPartStates;
-  params.m_PartRect = m_rtLBtn;
+  params.m_PartRect = m_LBtnRect;
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
   pTheme->DrawBackground(params);
@@ -205,7 +205,7 @@ void CFWL_MonthCalendar::DrawRButton(CXFA_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::RBtn;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_iRBtnPartStates;
-  params.m_PartRect = m_rtRBtn;
+  params.m_PartRect = m_RBtnRect;
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
   pTheme->DrawBackground(params);
@@ -223,7 +223,7 @@ void CFWL_MonthCalendar::DrawCaption(CXFA_Graphics* pGraphics,
   m_szHead = CalcTextSize(textParam.m_wsText,
                           m_pProperties->m_pThemeProvider.Get(), false);
   CalcHeadSize();
-  textParam.m_PartRect = m_rtHeadText;
+  textParam.m_PartRect = m_HeadTextRect;
   textParam.m_dwTTOStyles.single_line_ = true;
   textParam.m_iTTOAlign = FDE_TextAlignment::kCenter;
   if (pMatrix)
@@ -239,7 +239,7 @@ void CFWL_MonthCalendar::DrawSeparator(CXFA_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::HSeparator;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = CFWL_PartState_Normal;
-  params.m_PartRect = m_rtHSep;
+  params.m_PartRect = m_HSepRect;
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
   pTheme->DrawBackground(params);
@@ -292,8 +292,8 @@ void CFWL_MonthCalendar::DrawWeek(CXFA_Graphics* pGraphics,
 
   for (int32_t i = 0; i < 7; ++i) {
     rtDayOfWeek =
-        CFX_RectF(m_rtWeek.left + i * (m_szCell.width + MONTHCAL_HMARGIN * 2),
-                  m_rtWeek.top, m_szCell);
+        CFX_RectF(m_WeekRect.left + i * (m_szCell.width + MONTHCAL_HMARGIN * 2),
+                  m_WeekRect.top, m_szCell);
 
     params.m_PartRect = rtDayOfWeek;
     params.m_wsText = GetAbbreviatedDayOfWeek(i);
@@ -315,7 +315,7 @@ void CFWL_MonthCalendar::DrawToday(CXFA_Graphics* pGraphics,
   m_szToday = CalcTextSize(params.m_wsText,
                            m_pProperties->m_pThemeProvider.Get(), false);
   CalcTodaySize();
-  params.m_PartRect = m_rtToday;
+  params.m_PartRect = m_TodayRect;
   params.m_dwTTOStyles.single_line_ = true;
 
   if (pMatrix)
@@ -443,54 +443,54 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
 }
 
 void CFWL_MonthCalendar::CalcHeadSize() {
-  float fHeadHMargin = (m_rtClient.width - m_szHead.width) / 2;
+  float fHeadHMargin = (m_ClientRect.width - m_szHead.width) / 2;
   float fHeadVMargin = (m_szCell.width - m_szHead.height) / 2;
-  m_rtHeadText = CFX_RectF(m_rtClient.left + fHeadHMargin,
-                           m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN +
-                               MONTHCAL_VMARGIN + fHeadVMargin,
-                           m_szHead);
+  m_HeadTextRect = CFX_RectF(m_ClientRect.left + fHeadHMargin,
+                             m_ClientRect.top + MONTHCAL_HEADER_BTN_VMARGIN +
+                                 MONTHCAL_VMARGIN + fHeadVMargin,
+                             m_szHead);
 }
 
 void CFWL_MonthCalendar::CalcTodaySize() {
-  m_rtTodayFlag = CFX_RectF(
-      m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN,
-      m_rtDates.bottom() + MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN,
+  m_TodayFlagRect = CFX_RectF(
+      m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN,
+      m_DatesRect.bottom() + MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN,
       m_szCell.width, m_szToday.height);
-  m_rtToday = CFX_RectF(
-      m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + m_szCell.width +
+  m_TodayRect = CFX_RectF(
+      m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN + m_szCell.width +
           MONTHCAL_HMARGIN * 2,
-      m_rtDates.bottom() + MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN,
+      m_DatesRect.bottom() + MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN,
       m_szToday);
 }
 
 void CFWL_MonthCalendar::Layout() {
-  m_rtClient = GetClientRect();
+  m_ClientRect = GetClientRect();
 
-  m_rtHead = CFX_RectF(
-      m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN, m_rtClient.top,
-      m_rtClient.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
+  m_HeadRect = CFX_RectF(
+      m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN, m_ClientRect.top,
+      m_ClientRect.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
       m_szCell.width + (MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN) * 2);
-  m_rtWeek = CFX_RectF(m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN,
-                       m_rtHead.bottom(),
-                       m_rtClient.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
-                       m_szCell.height + MONTHCAL_VMARGIN * 2);
-  m_rtLBtn = CFX_RectF(m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN,
-                       m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN,
-                       m_szCell.width, m_szCell.width);
-  m_rtRBtn = CFX_RectF(m_rtClient.left + m_rtClient.width -
-                           MONTHCAL_HEADER_BTN_HMARGIN - m_szCell.width,
-                       m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN,
-                       m_szCell.width, m_szCell.width);
-  m_rtHSep = CFX_RectF(
-      m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN,
-      m_rtWeek.bottom() - MONTHCAL_VMARGIN,
-      m_rtClient.width - (MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN) * 2,
+  m_WeekRect = CFX_RectF(m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN,
+                         m_HeadRect.bottom(),
+                         m_ClientRect.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
+                         m_szCell.height + MONTHCAL_VMARGIN * 2);
+  m_LBtnRect = CFX_RectF(m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN,
+                         m_ClientRect.top + MONTHCAL_HEADER_BTN_VMARGIN,
+                         m_szCell.width, m_szCell.width);
+  m_RBtnRect = CFX_RectF(m_ClientRect.left + m_ClientRect.width -
+                             MONTHCAL_HEADER_BTN_HMARGIN - m_szCell.width,
+                         m_ClientRect.top + MONTHCAL_HEADER_BTN_VMARGIN,
+                         m_szCell.width, m_szCell.width);
+  m_HSepRect = CFX_RectF(
+      m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN,
+      m_WeekRect.bottom() - MONTHCAL_VMARGIN,
+      m_ClientRect.width - (MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN) * 2,
       MONTHCAL_HSEP_HEIGHT);
-  m_rtDates = CFX_RectF(m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN,
-                        m_rtWeek.bottom(),
-                        m_rtClient.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
-                        m_szCell.height * (MONTHCAL_ROWS - 3) +
-                            MONTHCAL_VMARGIN * (MONTHCAL_ROWS - 3) * 2);
+  m_DatesRect = CFX_RectF(m_ClientRect.left + MONTHCAL_HEADER_BTN_HMARGIN,
+                          m_WeekRect.bottom(),
+                          m_ClientRect.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
+                          m_szCell.height * (MONTHCAL_ROWS - 3) +
+                              MONTHCAL_VMARGIN * (MONTHCAL_ROWS - 3) * 2);
 
   CalDateItem();
 }
@@ -498,8 +498,8 @@ void CFWL_MonthCalendar::Layout() {
 void CFWL_MonthCalendar::CalDateItem() {
   bool bNewWeek = false;
   int32_t iWeekOfMonth = 0;
-  float fLeft = m_rtDates.left;
-  float fTop = m_rtDates.top;
+  float fLeft = m_DatesRect.left;
+  float fTop = m_DatesRect.top;
   for (const auto& pDateInfo : m_arrDates) {
     if (bNewWeek) {
       iWeekOfMonth++;
@@ -721,32 +721,32 @@ void CFWL_MonthCalendar::OnDrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
-  if (m_rtLBtn.Contains(pMsg->m_pos)) {
+  if (m_LBtnRect.Contains(pMsg->m_pos)) {
     m_iLBtnPartStates = CFWL_PartState_Pressed;
     PrevMonth();
-    RepaintRect(m_rtClient);
-  } else if (m_rtRBtn.Contains(pMsg->m_pos)) {
+    RepaintRect(m_ClientRect);
+  } else if (m_RBtnRect.Contains(pMsg->m_pos)) {
     m_iRBtnPartStates |= CFWL_PartState_Pressed;
     NextMonth();
-    RepaintRect(m_rtClient);
-  } else if (m_rtToday.Contains(pMsg->m_pos)) {
+    RepaintRect(m_ClientRect);
+  } else if (m_TodayRect.Contains(pMsg->m_pos)) {
     JumpToToday();
-    RepaintRect(m_rtClient);
+    RepaintRect(m_ClientRect);
   }
 }
 
 void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
-  if (m_rtLBtn.Contains(pMsg->m_pos)) {
+  if (m_LBtnRect.Contains(pMsg->m_pos)) {
     m_iLBtnPartStates = 0;
-    RepaintRect(m_rtLBtn);
+    RepaintRect(m_LBtnRect);
     return;
   }
-  if (m_rtRBtn.Contains(pMsg->m_pos)) {
+  if (m_RBtnRect.Contains(pMsg->m_pos)) {
     m_iRBtnPartStates = 0;
-    RepaintRect(m_rtRBtn);
+    RepaintRect(m_RBtnRect);
     return;
   }
-  if (m_rtToday.Contains(pMsg->m_pos))
+  if (m_TodayRect.Contains(pMsg->m_pos))
     return;
 
   int32_t iOldSel = 0;
@@ -772,7 +772,7 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 void CFWL_MonthCalendar::OnMouseMove(CFWL_MessageMouse* pMsg) {
   bool bRepaint = false;
   CFX_RectF rtInvalidate;
-  if (m_rtDates.Contains(pMsg->m_pos)) {
+  if (m_DatesRect.Contains(pMsg->m_pos)) {
     int32_t iHover = GetDayAtPoint(pMsg->m_pos);
     bRepaint = m_iHovered != iHover;
     if (bRepaint) {

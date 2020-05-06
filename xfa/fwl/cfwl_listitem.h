@@ -15,8 +15,8 @@ class CFWL_ListItem {
   explicit CFWL_ListItem(const WideString& text);
   ~CFWL_ListItem();
 
-  CFX_RectF GetRect() const { return m_rtItem; }
-  void SetRect(const CFX_RectF& rect) { m_rtItem = rect; }
+  CFX_RectF GetRect() const { return m_ItemRect; }
+  void SetRect(const CFX_RectF& rect) { m_ItemRect = rect; }
 
   uint32_t GetStates() const { return m_dwStates; }
   void SetStates(uint32_t dwStates) { m_dwStates = dwStates; }
@@ -25,7 +25,7 @@ class CFWL_ListItem {
 
  private:
   uint32_t m_dwStates = 0;
-  CFX_RectF m_rtItem;
+  CFX_RectF m_ItemRect;
   WideString m_wsText;
 };
 

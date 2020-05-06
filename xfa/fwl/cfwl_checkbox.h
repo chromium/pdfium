@@ -60,10 +60,10 @@ class CFWL_CheckBox final : public CFWL_Widget {
   void OnMouseLeave();
   void OnKeyDown(CFWL_MessageKey* pMsg);
 
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtBox;
-  CFX_RectF m_rtCaption;
-  CFX_RectF m_rtFocus;
+  CFX_RectF m_ClientRect;
+  CFX_RectF m_BoxRect;
+  CFX_RectF m_CaptionRect;
+  CFX_RectF m_FocusRect;
   FDE_TextStyle m_TTOStyles;
   FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kCenter;
   bool m_bBtnDown = false;

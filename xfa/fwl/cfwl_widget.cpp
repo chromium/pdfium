@@ -59,7 +59,7 @@ CFX_RectF CFWL_Widget::GetAutosizedWidgetRect() {
 }
 
 CFX_RectF CFWL_Widget::GetWidgetRect() {
-  return m_pProperties->m_rtWidget;
+  return m_pProperties->m_WidgetRect;
 }
 
 void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
@@ -71,7 +71,7 @@ void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
 }
 
 void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
-  m_pProperties->m_rtWidget = rect;
+  m_pProperties->m_WidgetRect = rect;
 }
 
 CFX_RectF CFWL_Widget::GetClientRect() {
@@ -209,8 +209,8 @@ CFWL_Widget* CFWL_Widget::GetOutmost() const {
 }
 
 CFX_RectF CFWL_Widget::GetEdgeRect() const {
-  CFX_RectF rtEdge(0, 0, m_pProperties->m_rtWidget.width,
-                   m_pProperties->m_rtWidget.height);
+  CFX_RectF rtEdge(0, 0, m_pProperties->m_WidgetRect.width,
+                   m_pProperties->m_WidgetRect.height);
   if (HasBorder())
     rtEdge.Deflate(GetCXBorderSize(), GetCYBorderSize());
   return rtEdge;
@@ -227,8 +227,8 @@ float CFWL_Widget::GetCYBorderSize() const {
 }
 
 CFX_RectF CFWL_Widget::GetRelativeRect() const {
-  return CFX_RectF(0, 0, m_pProperties->m_rtWidget.width,
-                   m_pProperties->m_rtWidget.height);
+  return CFX_RectF(0, 0, m_pProperties->m_WidgetRect.width,
+                   m_pProperties->m_WidgetRect.height);
 }
 
 IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() const {
@@ -347,8 +347,8 @@ CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
     return CFX_SizeF();
 
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
-  CFX_SizeF szRet(m_pProperties->m_rtWidget.left,
-                  m_pProperties->m_rtWidget.top);
+  CFX_SizeF szRet(m_pProperties->m_WidgetRect.left,
+                  m_pProperties->m_WidgetRect.top);
 
   CFWL_Widget* pDstWidget = GetParent();
   while (pDstWidget && pDstWidget != pParent) {

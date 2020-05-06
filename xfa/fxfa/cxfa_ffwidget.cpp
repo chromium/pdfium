@@ -249,13 +249,13 @@ CXFA_FFWidget* CXFA_FFWidget::GetNextFFWidget() const {
 const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
   if (!GetLayoutItem()->TestStatusBits(XFA_WidgetStatus_RectCached))
     RecacheWidgetRect();
-  return m_rtWidget;
+  return m_WidgetRect;
 }
 
 const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_RectCached);
-  m_rtWidget = GetLayoutItem()->GetRect(false);
-  return m_rtWidget;
+  m_WidgetRect = GetLayoutItem()->GetRect(false);
+  return m_WidgetRect;
 }
 
 CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {

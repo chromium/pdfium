@@ -45,7 +45,7 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   XFA_CHECKSTATE FWLState2XFAState();
 
   UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
-  CFX_RectF m_rtCheckBox;
+  CFX_RectF m_CheckBoxRect;
   UnownedPtr<CXFA_CheckButton> const button_;
 };
 
