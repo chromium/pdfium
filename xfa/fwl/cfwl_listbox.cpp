@@ -356,7 +356,7 @@ void CFWL_ListBox::DrawBkground(CXFA_Graphics* pGraphics,
   param.m_dwStates = 0;
   param.m_pGraphics = pGraphics;
   param.m_matrix.Concat(*pMatrix);
-  param.m_rtPart = m_rtClient;
+  param.m_PartRect = m_rtClient;
   if (IsShowScrollBar(false) && IsShowScrollBar(true))
     param.m_pRtData = &m_rtStatic;
   if (!IsEnabled())
@@ -422,14 +422,14 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
   bg_param.m_dwStates = dwPartStates;
   bg_param.m_pGraphics = pGraphics;
   bg_param.m_matrix.Concat(*pMatrix);
-  bg_param.m_rtPart = rtItem;
+  bg_param.m_PartRect = rtItem;
   bg_param.m_bMaximize = true;
   CFX_RectF rtFocus(rtItem);
   bg_param.m_pRtData = &rtFocus;
   if (m_pVertScrollBar && !m_pHorzScrollBar &&
       (dwPartStates & CFWL_PartState_Focused)) {
-    bg_param.m_rtPart.left += 1;
-    bg_param.m_rtPart.width -= (m_fScorllBarWidth + 1);
+    bg_param.m_PartRect.left += 1;
+    bg_param.m_PartRect.width -= (m_fScorllBarWidth + 1);
     rtFocus.Deflate(0.5, 0.5, 1 + m_fScorllBarWidth, 1);
   }
   pTheme->DrawBackground(bg_param);
@@ -450,7 +450,7 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
   textParam.m_dwStates = dwPartStates;
   textParam.m_pGraphics = pGraphics;
   textParam.m_matrix.Concat(*pMatrix);
-  textParam.m_rtPart = rtText;
+  textParam.m_PartRect = rtText;
   textParam.m_wsText = std::move(wsText);
   textParam.m_dwTTOStyles = m_TTOStyles;
   textParam.m_iTTOAlign = m_iTTOAligns;

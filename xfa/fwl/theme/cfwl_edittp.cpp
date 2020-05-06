@@ -32,7 +32,8 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 
   switch (pParams.m_iPart) {
     case CFWL_Part::Border: {
-      DrawBorder(pParams.m_pGraphics.Get(), pParams.m_rtPart, pParams.m_matrix);
+      DrawBorder(pParams.m_pGraphics.Get(), pParams.m_PartRect,
+                 pParams.m_matrix);
       break;
     }
     case CFWL_Part::Background: {
@@ -45,8 +46,8 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         pGraphics->RestoreGraphState();
       } else {
         CXFA_GEPath path;
-        path.AddRectangle(pParams.m_rtPart.left, pParams.m_rtPart.top,
-                          pParams.m_rtPart.width, pParams.m_rtPart.height);
+        path.AddRectangle(pParams.m_PartRect.left, pParams.m_PartRect.top,
+                          pParams.m_PartRect.width, pParams.m_PartRect.height);
         CXFA_GEColor cr(FWLTHEME_COLOR_Background);
         if (!pParams.m_bStaticBackground) {
           if (pParams.m_dwStates & CFWL_PartState_Disabled)

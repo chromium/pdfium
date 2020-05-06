@@ -72,7 +72,7 @@ void CFWL_Caret::DrawCaretBK(CXFA_Graphics* pGraphics,
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_pGraphics = pGraphics;
-  param.m_rtPart = CFX_RectF(0, 0, GetWidgetRect().Size());
+  param.m_PartRect = CFX_RectF(0, 0, GetWidgetRect().Size());
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = CFWL_PartState_HightLight;
   if (pMatrix)

@@ -40,29 +40,29 @@ void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   bool bVert = !!pWidget->GetStylesEx();
   switch (pParams.m_iPart) {
     case CFWL_Part::ForeArrow: {
-      DrawMaxMinBtn(pGraphics, pParams.m_rtPart,
+      DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
                     bVert ? FWLTHEME_DIRECTION_Up : FWLTHEME_DIRECTION_Left,
                     eState, pParams.m_matrix);
       break;
     }
     case CFWL_Part::BackArrow: {
-      DrawMaxMinBtn(pGraphics, pParams.m_rtPart,
+      DrawMaxMinBtn(pGraphics, pParams.m_PartRect,
                     bVert ? FWLTHEME_DIRECTION_Down : FWLTHEME_DIRECTION_Right,
                     eState, pParams.m_matrix);
       break;
     }
     case CFWL_Part::Thumb: {
-      DrawThumbBtn(pGraphics, pParams.m_rtPart, bVert, eState, true,
+      DrawThumbBtn(pGraphics, pParams.m_PartRect, bVert, eState, true,
                    pParams.m_matrix);
       break;
     }
     case CFWL_Part::LowerTrack: {
-      DrawTrack(pGraphics, pParams.m_rtPart, bVert, eState, true,
+      DrawTrack(pGraphics, pParams.m_PartRect, bVert, eState, true,
                 pParams.m_matrix);
       break;
     }
     case CFWL_Part::UpperTrack: {
-      DrawTrack(pGraphics, pParams.m_rtPart, bVert, eState, false,
+      DrawTrack(pGraphics, pParams.m_PartRect, bVert, eState, false,
                 pParams.m_matrix);
       break;
     }

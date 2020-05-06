@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
-enum class CFWL_Part {
+enum class CFWL_Part : uint8_t {
   None = 0,
 
   BackArrow,
@@ -81,13 +81,13 @@ class CFWL_ThemePart {
   CFWL_ThemePart();
 
   CFX_Matrix m_matrix;
-  CFX_RectF m_rtPart;
-  CFWL_Widget* m_pWidget;
-  CFWL_Part m_iPart;
-  uint32_t m_dwStates;
-  bool m_bMaximize;
-  bool m_bStaticBackground;
-  CFX_RectF* m_pRtData;
+  CFX_RectF m_PartRect;
+  CFWL_Widget* m_pWidget = nullptr;
+  CFX_RectF* m_pRtData = nullptr;
+  uint32_t m_dwStates = CFWL_PartState_Normal;
+  CFWL_Part m_iPart = CFWL_Part::None;
+  bool m_bMaximize = false;
+  bool m_bStaticBackground = false;
 };
 
 #endif  // XFA_FWL_CFWL_THEMEPART_H_

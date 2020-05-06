@@ -24,7 +24,7 @@ void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         return;
 
       DrawCaretBK(pParams.m_pGraphics.Get(), pParams.m_dwStates,
-                  pParams.m_rtPart, pParams.m_matrix);
+                  pParams.m_PartRect, pParams.m_matrix);
       break;
     }
     default:

@@ -207,7 +207,7 @@ void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
   param.m_iPart = CFWL_Part::DropDownButton;
   param.m_dwStates = m_iBtnState;
   param.m_pGraphics = pGraphics;
-  param.m_rtPart = m_rtBtn;
+  param.m_PartRect = m_rtBtn;
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
   pTheme->DrawBackground(param);

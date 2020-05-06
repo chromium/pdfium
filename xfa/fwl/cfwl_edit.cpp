@@ -350,7 +350,7 @@ void CFWL_Edit::DrawTextBk(CXFA_Graphics* pGraphics,
     param.m_dwStates = CFWL_PartState_Disabled;
   param.m_pGraphics = pGraphics;
   param.m_matrix = *pMatrix;
-  param.m_rtPart = m_rtClient;
+  param.m_PartRect = m_rtClient;
   pTheme->DrawBackground(param);
 
   if (!IsShowScrollBar(true) || !IsShowScrollBar(false))
@@ -363,7 +363,7 @@ void CFWL_Edit::DrawTextBk(CXFA_Graphics* pGraphics,
                      rtScroll.height);
   param.m_bStaticBackground = true;
   param.m_bMaximize = true;
-  param.m_rtPart = rtStatic;
+  param.m_PartRect = rtStatic;
   pTheme->DrawBackground(param);
 }
 

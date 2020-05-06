@@ -320,7 +320,7 @@ void CFWL_Widget::DrawBackground(CXFA_Graphics* pGraphics,
   param.m_pGraphics = pGraphics;
   if (pMatrix)
     param.m_matrix = *pMatrix;
-  param.m_rtPart = GetRelativeRect();
+  param.m_PartRect = GetRelativeRect();
   pTheme->DrawBackground(param);
 }
 
@@ -333,7 +333,7 @@ void CFWL_Widget::DrawBorder(CXFA_Graphics* pGraphics,
   param.m_iPart = iPartBorder;
   param.m_pGraphics = pGraphics;
   param.m_matrix = matrix;
-  param.m_rtPart = GetRelativeRect();
+  param.m_PartRect = GetRelativeRect();
   pTheme->DrawBackground(param);
 }
 

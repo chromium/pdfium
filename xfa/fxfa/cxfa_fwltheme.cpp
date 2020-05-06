@@ -121,7 +121,7 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
 
     m_pTextOut->SetMatrix(mtPart);
     m_pTextOut->DrawLogicText(pRenderDevice, pParams.m_wsText.AsStringView(),
-                              pParams.m_rtPart);
+                              pParams.m_PartRect);
     return;
   }
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams.m_pWidget);
@@ -143,7 +143,7 @@ void CXFA_FWLTheme::DrawText(const CFWL_ThemeText& pParams) {
 
   m_pTextOut->SetMatrix(mtPart);
   m_pTextOut->DrawLogicText(pRenderDevice, pParams.m_wsText.AsStringView(),
-                            pParams.m_rtPart);
+                            pParams.m_PartRect);
 }
 
 CFX_RectF CXFA_FWLTheme::GetUIMargin(const CFWL_ThemePart& pThemePart) const {
