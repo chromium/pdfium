@@ -143,7 +143,7 @@ void CXFA_FFDocView::StopLayout() {
 }
 
 void CXFA_FFDocView::ShowNullTestMsg() {
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_arrNullTestMsg);
+  int32_t iCount = pdfium::CollectionSize<int32_t>(m_NullTestMsgArray);
   CXFA_FFApp* pApp = m_pDoc->GetApp();
   IXFA_AppProvider* pAppProvider = pApp->GetAppProvider();
   if (pAppProvider && iCount) {
@@ -151,7 +151,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
     iCount -= iRemain;
     WideString wsMsg;
     for (int32_t i = 0; i < iCount; i++)
-      wsMsg += m_arrNullTestMsg[i] + L"\n";
+      wsMsg += m_NullTestMsgArray[i] + L"\n";
 
     if (iRemain > 0) {
       wsMsg += L"\n" + WideString::Format(
@@ -163,7 +163,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
                          static_cast<uint32_t>(AlertIcon::kStatus),
                          static_cast<uint32_t>(AlertButton::kOK));
   }
-  m_arrNullTestMsg.clear();
+  m_NullTestMsgArray.clear();
 }
 
 void CXFA_FFDocView::UpdateDocView() {

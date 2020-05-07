@@ -160,7 +160,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   CFX_RectF m_TodayFlagRect;
   WideString m_wsHead;
   WideString m_wsToday;
-  std::vector<std::unique_ptr<DATEINFO>> m_arrDates;
+  std::vector<std::unique_ptr<DATEINFO>> m_DateArray;
   int32_t m_iCurYear = 2011;
   int32_t m_iCurMonth = 1;
   int32_t m_iYear = 2011;
@@ -174,7 +174,7 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   CFX_SizeF m_HeadSize;
   CFX_SizeF m_CellSize;
   CFX_SizeF m_TodaySize;
-  std::vector<int32_t> m_arrSelDays;
+  std::vector<int32_t> m_SelDayArray;
   CFX_RectF m_ClientRect;
 };
 

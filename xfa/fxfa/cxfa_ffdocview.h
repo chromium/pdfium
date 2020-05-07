@@ -99,7 +99,7 @@ class CXFA_FFDocView {
 
   bool m_bLayoutEvent = false;
   bool m_bInLayoutStatus = false;
-  std::vector<WideString> m_arrNullTestMsg;
+  std::vector<WideString> m_NullTestMsgArray;
 
   void ResetLayoutProcessor() { m_pXFADocLayout.Release(); }
 

@@ -2577,7 +2577,7 @@ XFA_EventError CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* pDocView,
       return iRet;
 
     if (eNullTest != XFA_AttributeValue::Disabled) {
-      pDocView->m_arrNullTestMsg.push_back(wsNullMsg);
+      pDocView->m_NullTestMsgArray.push_back(wsNullMsg);
       return XFA_EventError::kError;
     }
     return XFA_EventError::kSuccess;

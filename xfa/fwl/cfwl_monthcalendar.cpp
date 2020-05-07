@@ -255,9 +255,9 @@ void CFWL_MonthCalendar::DrawDatesInBK(CXFA_Graphics* pGraphics,
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
 
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_arrDates);
+  int32_t iCount = pdfium::CollectionSize<int32_t>(m_DateArray);
   for (int32_t j = 0; j < iCount; j++) {
-    DATEINFO* pDataInfo = m_arrDates[j].get();
+    DATEINFO* pDataInfo = m_DateArray[j].get();
     if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Selected) {
       params.m_dwStates |= CFWL_PartState_Selected;
       if (pDataInfo->dwStates & FWL_ITEMSTATE_MCD_Flag) {
@@ -335,9 +335,9 @@ void CFWL_MonthCalendar::DrawDatesIn(CXFA_Graphics* pGraphics,
   if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
 
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_arrDates);
+  int32_t iCount = pdfium::CollectionSize<int32_t>(m_DateArray);
   for (int32_t j = 0; j < iCount; j++) {
-    DATEINFO* pDataInfo = m_arrDates[j].get();
+    DATEINFO* pDataInfo = m_DateArray[j].get();
     params.m_wsText = pDataInfo->wsDay;
     params.m_PartRect = pDataInfo->rect;
     params.m_dwStates = pDataInfo->dwStates;
@@ -369,10 +369,10 @@ void CFWL_MonthCalendar::DrawDatesInCircle(CXFA_Graphics* pGraphics,
   if (m_iMonth != m_iCurMonth || m_iYear != m_iCurYear)
     return;
 
-  if (m_iDay < 1 || m_iDay > pdfium::CollectionSize<int32_t>(m_arrDates))
+  if (m_iDay < 1 || m_iDay > pdfium::CollectionSize<int32_t>(m_DateArray))
     return;
 
-  DATEINFO* pDate = m_arrDates[m_iDay - 1].get();
+  DATEINFO* pDate = m_DateArray[m_iDay - 1].get();
   if (!pDate)
     return;
 
@@ -501,7 +501,7 @@ void CFWL_MonthCalendar::CalDateItem() {
   int32_t iWeekOfMonth = 0;
   float fLeft = m_DatesRect.left;
   float fTop = m_DatesRect.top;
-  for (const auto& pDateInfo : m_arrDates) {
+  for (const auto& pDateInfo : m_DateArray) {
     if (bNewWeek) {
       iWeekOfMonth++;
       bNewWeek = false;
@@ -538,7 +538,7 @@ void CFWL_MonthCalendar::InitDate() {
 }
 
 void CFWL_MonthCalendar::ClearDateItem() {
-  m_arrDates.clear();
+  m_DateArray.clear();
 }
 
 void CFWL_MonthCalendar::ResetDateItem() {
@@ -552,11 +552,11 @@ void CFWL_MonthCalendar::ResetDateItem() {
     uint32_t dwStates = 0;
     if (m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == (i + 1))
       dwStates |= FWL_ITEMSTATE_MCD_Flag;
-    if (pdfium::ContainsValue(m_arrSelDays, i + 1))
+    if (pdfium::ContainsValue(m_SelDayArray, i + 1))
       dwStates |= FWL_ITEMSTATE_MCD_Selected;
 
     CFX_RectF rtDate;
-    m_arrDates.push_back(pdfium::MakeUnique<DATEINFO>(
+    m_DateArray.push_back(pdfium::MakeUnique<DATEINFO>(
         i + 1, iDayOfWeek, dwStates, rtDate, WideString::Format(L"%d", i + 1)));
     iDayOfWeek++;
   }
@@ -609,24 +609,24 @@ void CFWL_MonthCalendar::ChangeToMonth(int32_t iYear, int32_t iMonth) {
 }
 
 void CFWL_MonthCalendar::RemoveSelDay() {
-  int32_t iDatesCount = pdfium::CollectionSize<int32_t>(m_arrDates);
-  for (int32_t iSelDay : m_arrSelDays) {
+  int32_t iDatesCount = pdfium::CollectionSize<int32_t>(m_DateArray);
+  for (int32_t iSelDay : m_SelDayArray) {
     if (iSelDay <= iDatesCount)
-      m_arrDates[iSelDay - 1]->dwStates &= ~FWL_ITEMSTATE_MCD_Selected;
+      m_DateArray[iSelDay - 1]->dwStates &= ~FWL_ITEMSTATE_MCD_Selected;
   }
-  m_arrSelDays.clear();
+  m_SelDayArray.clear();
 }
 
 void CFWL_MonthCalendar::AddSelDay(int32_t iDay) {
   ASSERT(iDay > 0);
-  if (!pdfium::ContainsValue(m_arrSelDays, iDay))
+  if (!pdfium::ContainsValue(m_SelDayArray, iDay))
     return;
 
   RemoveSelDay();
-  if (iDay <= pdfium::CollectionSize<int32_t>(m_arrDates))
-    m_arrDates[iDay - 1]->dwStates |= FWL_ITEMSTATE_MCD_Selected;
+  if (iDay <= pdfium::CollectionSize<int32_t>(m_DateArray))
+    m_DateArray[iDay - 1]->dwStates |= FWL_ITEMSTATE_MCD_Selected;
 
-  m_arrSelDays.push_back(iDay);
+  m_SelDayArray.push_back(iDay);
 }
 
 void CFWL_MonthCalendar::JumpToToday() {
@@ -638,7 +638,7 @@ void CFWL_MonthCalendar::JumpToToday() {
     return;
   }
 
-  if (!pdfium::ContainsValue(m_arrSelDays, m_iDay))
+  if (!pdfium::ContainsValue(m_SelDayArray, m_iDay))
     AddSelDay(m_iDay);
 }
 
@@ -661,7 +661,7 @@ WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
 
 int32_t CFWL_MonthCalendar::GetDayAtPoint(const CFX_PointF& point) const {
   int i = 1;  // one-based day values.
-  for (const auto& pDateInfo : m_arrDates) {
+  for (const auto& pDateInfo : m_DateArray) {
     if (pDateInfo->rect.Contains(point))
       return i;
     ++i;
@@ -670,10 +670,10 @@ int32_t CFWL_MonthCalendar::GetDayAtPoint(const CFX_PointF& point) const {
 }
 
 CFX_RectF CFWL_MonthCalendar::GetDayRect(int32_t iDay) {
-  if (iDay <= 0 || iDay > pdfium::CollectionSize<int32_t>(m_arrDates))
+  if (iDay <= 0 || iDay > pdfium::CollectionSize<int32_t>(m_DateArray))
     return CFX_RectF();
 
-  DATEINFO* pDateInfo = m_arrDates[iDay - 1].get();
+  DATEINFO* pDateInfo = m_DateArray[iDay - 1].get();
   return pDateInfo ? pDateInfo->rect : CFX_RectF();
 }
 
@@ -751,15 +751,16 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     return;
 
   int32_t iOldSel = 0;
-  if (!m_arrSelDays.empty())
-    iOldSel = m_arrSelDays[0];
+  if (!m_SelDayArray.empty())
+    iOldSel = m_SelDayArray[0];
 
   int32_t iCurSel = GetDayAtPoint(pMsg->m_pos);
   if (iCurSel > 0) {
-    DATEINFO* lpDatesInfo = m_arrDates[iCurSel - 1].get();
+    DATEINFO* lpDatesInfo = m_DateArray[iCurSel - 1].get();
     CFX_RectF rtInvalidate(lpDatesInfo->rect);
-    if (iOldSel > 0 && iOldSel <= pdfium::CollectionSize<int32_t>(m_arrDates)) {
-      lpDatesInfo = m_arrDates[iOldSel - 1].get();
+    if (iOldSel > 0 &&
+        iOldSel <= pdfium::CollectionSize<int32_t>(m_DateArray)) {
+      lpDatesInfo = m_DateArray[iOldSel - 1].get();
       rtInvalidate.Union(lpDatesInfo->rect);
     }
     AddSelDay(iCurSel);
