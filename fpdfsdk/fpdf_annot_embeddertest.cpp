@@ -2573,3 +2573,45 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, GetLinkFromAnnotation) {
+  ASSERT_TRUE(OpenDocument("annots.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
+    FPDF_LINK link_annot = FPDFAnnot_GetLink(annot.get());
+    ASSERT_TRUE(link_annot);
+
+    FPDF_ACTION action = FPDFLink_GetAction(link_annot);
+    ASSERT_TRUE(action);
+    EXPECT_EQ(static_cast<unsigned long>(PDFACTION_URI),
+              FPDFAction_GetType(action));
+
+    constexpr char kExpectedResult[] =
+        "https://cs.chromium.org/chromium/src/third_party/pdfium/public/"
+        "fpdf_text.h";
+    constexpr unsigned long kExpectedLength = FX_ArraySize(kExpectedResult);
+    unsigned long bufsize =
+        FPDFAction_GetURIPath(document(), action, nullptr, 0);
+    ASSERT_EQ(kExpectedLength, bufsize);
+
+    char buffer[1024];
+    EXPECT_EQ(bufsize,
+              FPDFAction_GetURIPath(document(), action, buffer, bufsize));
+    EXPECT_STREQ(kExpectedResult, buffer);
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 4));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
+    EXPECT_FALSE(FPDFAnnot_GetLink(annot.get()));
+  }
+
+  EXPECT_FALSE(FPDFAnnot_GetLink(nullptr));
+
+  UnloadPage(page);
+}

@@ -1172,3 +1172,11 @@ FPDFAnnot_GetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
 
   return true;
 }
+
+FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFAnnot_GetLink(FPDF_ANNOTATION annot) {
+  if (FPDFAnnot_GetSubtype(annot) != FPDF_ANNOT_LINK)
+    return nullptr;
+
+  return FPDFLinkFromCPDFDictionary(
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict());
+}
