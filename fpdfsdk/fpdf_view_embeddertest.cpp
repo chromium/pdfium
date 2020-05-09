@@ -16,6 +16,7 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/path_service.h"
@@ -688,6 +689,9 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 }
 
 TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
+  static constexpr char kFirstAlternate[] = "FirstAlternate";
+  static constexpr char kLastAlternate[] = "LastAlternate";
+
   EXPECT_TRUE(OpenDocument("named_dests_old_style.pdf"));
   EXPECT_EQ(2u, FPDF_CountNamedDests(document()));
 
@@ -697,8 +701,8 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
   EXPECT_FALSE(FPDF_GetNamedDestByName(document(), "NoSuchName"));
 
   // These should return a valid destination.
-  EXPECT_TRUE(FPDF_GetNamedDestByName(document(), "FirstAlternate"));
-  EXPECT_TRUE(FPDF_GetNamedDestByName(document(), "LastAlternate"));
+  EXPECT_TRUE(FPDF_GetNamedDestByName(document(), kFirstAlternate));
+  EXPECT_TRUE(FPDF_GetNamedDestByName(document(), kLastAlternate));
 
   char buffer[512];
   constexpr long kBufferSize = sizeof(buffer);
@@ -711,13 +715,17 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
   EXPECT_FALSE(FPDF_GetNamedDest(document(), 2, buffer, &size));
   EXPECT_EQ(kBufferSize, size);
 
-  // TODO(crbug.com/1080663): These should return a valid destination.
+  // These should return a valid destination.
   size = kBufferSize;
-  EXPECT_FALSE(FPDF_GetNamedDest(document(), 0, buffer, &size));
-  EXPECT_EQ(kBufferSize, size);
+  ASSERT_TRUE(FPDF_GetNamedDest(document(), 0, buffer, &size));
+  ASSERT_EQ(static_cast<int>(sizeof(kFirstAlternate) * 2), size);
+  EXPECT_EQ(kFirstAlternate,
+            GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(buffer)));
   size = kBufferSize;
-  EXPECT_FALSE(FPDF_GetNamedDest(document(), 1, buffer, &size));
-  EXPECT_EQ(kBufferSize, size);
+  ASSERT_TRUE(FPDF_GetNamedDest(document(), 1, buffer, &size));
+  ASSERT_EQ(static_cast<int>(sizeof(kLastAlternate) * 2), size);
+  EXPECT_EQ(kLastAlternate,
+            GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(buffer)));
 }
 
 // The following tests pass if the document opens without crashing.

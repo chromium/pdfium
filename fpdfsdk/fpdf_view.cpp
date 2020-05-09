@@ -1105,24 +1105,23 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pRoot)
     return nullptr;
 
+  auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
+  size_t name_tree_count = name_tree ? name_tree->GetCount() : 0;
   CPDF_Object* pDestObj = nullptr;
   WideString wsName;
-  auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
-  if (!name_tree)
-    return nullptr;
-
-  size_t count = name_tree->GetCount();
-  if (static_cast<size_t>(index) >= count) {
+  if (static_cast<size_t>(index) >= name_tree_count) {
+    // If |index| is out of bounds, then try to retrieve the Nth old style named
+    // destination. Where N is 0-indexed, with N = index - name_tree_count.
     const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
     if (!pDest)
       return nullptr;
 
-    FX_SAFE_INT32 checked_count = count;
+    FX_SAFE_INT32 checked_count = name_tree_count;
     checked_count += pDest->size();
     if (!checked_count.IsValid() || index >= checked_count.ValueOrDie())
       return nullptr;
 
-    index -= count;
+    index -= name_tree_count;
     int i = 0;
     ByteStringView bsName;
     CPDF_DictionaryLocker locker(pDest);
