@@ -45,17 +45,10 @@ CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc, const CPDF_Object* pDest) {
   if (!pDest)
     return CPDF_Dest();
 
-  if (pDest->IsString() || pDest->IsName()) {
-    auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
-    if (!name_tree)
-      return CPDF_Dest();
-    return CPDF_Dest(name_tree->LookupNamedDest(pDoc, pDest->GetString()));
-  }
+  if (pDest->IsString() || pDest->IsName())
+    return CPDF_Dest(CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()));
 
-  const CPDF_Array* pArray = pDest->AsArray();
-  if (!pArray)
-    return CPDF_Dest();
-  return CPDF_Dest(pArray);
+  return CPDF_Dest(pDest->AsArray());
 }
 
 int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
