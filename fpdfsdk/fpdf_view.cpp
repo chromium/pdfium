@@ -1012,9 +1012,9 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
 
   auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
   FX_SAFE_UINT32 count = name_tree ? name_tree->GetCount() : 0;
-  const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
-  if (pDest)
-    count += pDest->size();
+  const CPDF_Dictionary* pOldStyleDests = pRoot->GetDictFor("Dests");
+  if (pOldStyleDests)
+    count += pOldStyleDests->size();
   return count.ValueOrDefault(0);
 }
 
