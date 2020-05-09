@@ -699,6 +699,25 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
   // These should return a valid destination.
   EXPECT_TRUE(FPDF_GetNamedDestByName(document(), "FirstAlternate"));
   EXPECT_TRUE(FPDF_GetNamedDestByName(document(), "LastAlternate"));
+
+  char buffer[512];
+  constexpr long kBufferSize = sizeof(buffer);
+  long size = kBufferSize;
+
+  // Test bad indices.
+  EXPECT_FALSE(FPDF_GetNamedDest(document(), -1, buffer, &size));
+  EXPECT_EQ(kBufferSize, size);
+  size = kBufferSize;
+  EXPECT_FALSE(FPDF_GetNamedDest(document(), 2, buffer, &size));
+  EXPECT_EQ(kBufferSize, size);
+
+  // TODO(crbug.com/1080663): These should return a valid destination.
+  size = kBufferSize;
+  EXPECT_FALSE(FPDF_GetNamedDest(document(), 0, buffer, &size));
+  EXPECT_EQ(kBufferSize, size);
+  size = kBufferSize;
+  EXPECT_FALSE(FPDF_GetNamedDest(document(), 1, buffer, &size));
+  EXPECT_EQ(kBufferSize, size);
 }
 
 // The following tests pass if the document opens without crashing.
