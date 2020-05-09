@@ -296,6 +296,18 @@ size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
   return nCount;
 }
 
+CPDF_Array* GetNamedDestFromObject(CPDF_Object* obj) {
+  if (!obj)
+    return nullptr;
+  CPDF_Array* array = obj->AsArray();
+  if (array)
+    return array;
+  CPDF_Dictionary* dict = obj->AsDictionary();
+  if (dict)
+    return dict->GetArrayFor("D");
+  return nullptr;
+}
+
 }  // namespace
 
 CPDF_NameTree::CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {
@@ -459,11 +471,5 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
       return nullptr;
     pValue = pDests->GetDirectObjectFor(name);
   }
-  if (!pValue)
-    return nullptr;
-  if (CPDF_Array* pArray = pValue->AsArray())
-    return pArray;
-  if (CPDF_Dictionary* pDict = pValue->AsDictionary())
-    return pDict->GetArrayFor("D");
-  return nullptr;
+  return GetNamedDestFromObject(pValue);
 }
