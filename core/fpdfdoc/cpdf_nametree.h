@@ -51,7 +51,7 @@ class CPDF_NameTree {
  private:
   explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
 
-  CPDF_Array* LookupNamedDestImpl(CPDF_Document* pDoc, const ByteString& name);
+  CPDF_Array* LookupNewStyleNamedDest(const ByteString& name);
 
   const RetainPtr<CPDF_Dictionary> m_pRoot;
 };

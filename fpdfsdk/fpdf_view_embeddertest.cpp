@@ -696,9 +696,9 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
   EXPECT_FALSE(FPDF_GetNamedDestByName(document(), ""));
   EXPECT_FALSE(FPDF_GetNamedDestByName(document(), "NoSuchName"));
 
-  // TODO(crbug.com/1080663): These should return a valid destination.
-  EXPECT_FALSE(FPDF_GetNamedDestByName(document(), "FirstAlternate"));
-  EXPECT_FALSE(FPDF_GetNamedDestByName(document(), "LastAlternate"));
+  // These should return a valid destination.
+  EXPECT_TRUE(FPDF_GetNamedDestByName(document(), "FirstAlternate"));
+  EXPECT_TRUE(FPDF_GetNamedDestByName(document(), "LastAlternate"));
 }
 
 // The following tests pass if the document opens without crashing.
