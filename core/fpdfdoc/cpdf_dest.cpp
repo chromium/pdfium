@@ -49,7 +49,7 @@ CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc, const CPDF_Object* pDest) {
     auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
     if (!name_tree)
       return CPDF_Dest();
-    return CPDF_Dest(name_tree->LookupNamedDest(pDoc, pDest->GetUnicodeText()));
+    return CPDF_Dest(name_tree->LookupNamedDest(pDoc, pDest->GetString()));
   }
 
   const CPDF_Array* pArray = pDest->AsArray();

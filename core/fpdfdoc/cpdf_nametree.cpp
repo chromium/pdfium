@@ -451,13 +451,13 @@ CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
 }
 
 CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
-                                           const WideString& sName) {
-  CPDF_Object* pValue = LookupValue(sName);
+                                           const ByteString& name) {
+  CPDF_Object* pValue = LookupValue(PDF_DecodeText(name.raw_span()));
   if (!pValue) {
     CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictFor("Dests");
     if (!pDests)
       return nullptr;
-    pValue = pDests->GetDirectObjectFor(PDF_EncodeText(sName));
+    pValue = pDests->GetDirectObjectFor(name);
   }
   if (!pValue)
     return nullptr;

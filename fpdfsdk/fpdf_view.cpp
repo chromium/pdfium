@@ -1031,9 +1031,8 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
   if (!name_tree)
     return nullptr;
 
-  ByteStringView name_view(name);
-  return FPDFDestFromCPDFArray(
-      name_tree->LookupNamedDest(pDoc, PDF_DecodeText(name_view.raw_span())));
+  ByteString dest_name(name);
+  return FPDFDestFromCPDFArray(name_tree->LookupNamedDest(pDoc, dest_name));
 }
 
 #ifdef PDF_ENABLE_V8
