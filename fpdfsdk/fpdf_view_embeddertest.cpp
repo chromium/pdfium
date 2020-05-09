@@ -25,6 +25,9 @@ using pdfium::kManyRectanglesChecksum;
 
 namespace {
 
+constexpr char kFirstAlternate[] = "FirstAlternate";
+constexpr char kLastAlternate[] = "LastAlternate";
+
 #if defined(OS_WIN)
 const char kExpectedRectanglePostScript[] = R"(
 save
@@ -574,8 +577,8 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   dest = FPDF_GetNamedDest(document(), 0, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(12, buffer_size);
-  EXPECT_EQ(std::string("F\0i\0r\0s\0t\0\0\0", 12),
-            std::string(fixed_buffer, buffer_size));
+  EXPECT_EQ("First",
+            GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
 
   // Try to retrieve the second item with ample buffer. Item is taken
   // from Dests NameTree but has a sub-dictionary in named_dests.pdf.
@@ -583,8 +586,8 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   dest = FPDF_GetNamedDest(document(), 1, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(10, buffer_size);
-  EXPECT_EQ(std::string("N\0e\0x\0t\0\0\0", 10),
-            std::string(fixed_buffer, buffer_size));
+  EXPECT_EQ("Next",
+            GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
 
   // Try to retrieve third item with ample buffer. Item is taken
   // from Dests NameTree but has a bad sub-dictionary in named_dests.pdf.
@@ -609,8 +612,8 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   dest = FPDF_GetNamedDest(document(), 4, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(30, buffer_size);
-  EXPECT_EQ(std::string("F\0i\0r\0s\0t\0A\0l\0t\0e\0r\0n\0a\0t\0e\0\0\0", 30),
-            std::string(fixed_buffer, buffer_size));
+  EXPECT_EQ(kFirstAlternate,
+            GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
 
   // Try to retrieve sixth item with ample buffer. Item istaken from the
   // old-style Dests dictionary object but has a sub-dictionary in
@@ -619,8 +622,8 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
   dest = FPDF_GetNamedDest(document(), 5, fixed_buffer, &buffer_size);
   EXPECT_NE(nullptr, dest);
   EXPECT_EQ(28, buffer_size);
-  EXPECT_EQ(std::string("L\0a\0s\0t\0A\0l\0t\0e\0r\0n\0a\0t\0e\0\0\0", 28),
-            std::string(fixed_buffer, buffer_size));
+  EXPECT_EQ(kLastAlternate,
+            GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(fixed_buffer)));
 
   // Try to retrieve non-existent item with ample buffer.
   buffer_size = sizeof(fixed_buffer);
@@ -672,7 +675,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
   EXPECT_EQ(dest_by_index, dest);
 
   // Item from Dests dictionary.
-  dest = FPDF_GetNamedDestByName(document(), "FirstAlternate");
+  dest = FPDF_GetNamedDestByName(document(), kFirstAlternate);
   EXPECT_NE(nullptr, dest);
 
   ignore_len = 0;
@@ -689,9 +692,6 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 }
 
 TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
-  static constexpr char kFirstAlternate[] = "FirstAlternate";
-  static constexpr char kLastAlternate[] = "LastAlternate";
-
   EXPECT_TRUE(OpenDocument("named_dests_old_style.pdf"));
   EXPECT_EQ(2u, FPDF_CountNamedDests(document()));
 
