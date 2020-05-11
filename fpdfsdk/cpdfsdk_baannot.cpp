@@ -232,7 +232,7 @@ int CPDFSDK_BAAnnot::GetLayoutOrder() const {
 
 CPDF_Dest CPDFSDK_BAAnnot::GetDestination() const {
   if (m_pAnnot->GetSubtype() != CPDF_Annot::Subtype::LINK)
-    return CPDF_Dest();
+    return CPDF_Dest(nullptr);
 
   // Link annotations can have "Dest" entry defined as an explicit array.
   // https://www.adobe.com/content/dam/acom/en/devnet/pdf/pdfs/PDF32000_2008.pdf#page=373

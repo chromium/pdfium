@@ -32,8 +32,6 @@ static_assert(FX_ArraySize(g_sZoomModes) ==
 
 }  // namespace
 
-CPDF_Dest::CPDF_Dest() {}
-
 CPDF_Dest::CPDF_Dest(const CPDF_Array* pArray) : m_pArray(pArray) {}
 
 CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
@@ -43,7 +41,7 @@ CPDF_Dest::~CPDF_Dest() = default;
 // static
 CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc, const CPDF_Object* pDest) {
   if (!pDest)
-    return CPDF_Dest();
+    return CPDF_Dest(nullptr);
 
   if (pDest->IsString() || pDest->IsName())
     return CPDF_Dest(CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()));

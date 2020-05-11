@@ -25,7 +25,7 @@ TEST(cpdf_dest, GetXYZ) {
   array->AppendNew<CPDF_Name>("XYZ");
   array->AppendNew<CPDF_Number>(4);  // X
   {
-    auto dest = pdfium::MakeUnique<CPDF_Dest>();
+    auto dest = pdfium::MakeUnique<CPDF_Dest>(nullptr);
     EXPECT_FALSE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
   }
   {

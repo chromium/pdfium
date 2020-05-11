@@ -45,7 +45,7 @@ WideString CPDF_Bookmark::GetTitle() const {
 
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
   if (!m_pDict)
-    return CPDF_Dest();
+    return CPDF_Dest(nullptr);
   return CPDF_Dest::Create(pDocument, m_pDict->GetDirectObjectFor("Dest"));
 }
 
