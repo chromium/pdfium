@@ -15,7 +15,7 @@ class CPDF_Stream;
 
 class CPDF_Icon final {
  public:
-  CPDF_Icon(CPDF_Stream* pStream);
+  explicit CPDF_Icon(CPDF_Stream* pStream);
   ~CPDF_Icon();
 
   CFX_SizeF GetImageSize() const;

@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#include <vector>
+
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"

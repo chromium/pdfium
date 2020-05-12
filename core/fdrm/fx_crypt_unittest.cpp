@@ -4,8 +4,10 @@
 
 #include "core/fdrm/fx_crypt.h"
 
+#include <algorithm>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"

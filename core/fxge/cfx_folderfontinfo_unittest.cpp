@@ -4,17 +4,21 @@
 
 #include "core/fxge/cfx_folderfontinfo.h"
 
+#include <utility>
+
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
+
 constexpr char kArial[] = "Arial";
 constexpr char kTimesNewRoman[] = "TimesNewRoman";
 constexpr char kSymbol[] = "Symbol";
 constexpr char kBookshelfSymbol7[] = "Bookshelf Symbol 7";
 constexpr char kCalibri[] = "Calibri";
 constexpr char kBookshelf[] = "Bookshelf";
+
 }  // namespace
 
 class CFX_FolderFontInfoTest : public ::testing::Test {

@@ -4271,7 +4271,6 @@ void CFXJSE_FormCalcContext::Stuff(
   szResult << '\0';
   info.GetReturnValue().Set(fxv8::NewStringHelper(
       info.GetIsolate(), ByteStringView(szResult.str().c_str())));
-  ;
 }
 
 // static

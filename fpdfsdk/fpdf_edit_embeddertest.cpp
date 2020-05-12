@@ -2789,7 +2789,6 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
 #define MAYBE_AddMarkCompressedStream AddMarkCompressedStream
 #endif
 TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
-
   // Load document with some text in a compressed stream.
   EXPECT_TRUE(OpenDocument("hello_world_compressed_stream.pdf"));
   FPDF_PAGE page = LoadPage(0);

@@ -4,6 +4,8 @@
 
 #include "public/fpdf_sysfontinfo.h"
 
+#include <set>
+
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
