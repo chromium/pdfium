@@ -325,7 +325,9 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
   if (!pdfium::IndexInBounds(m_PageList, found_index))
     return -1;
 
-  m_PageList[found_index] = objnum;
+  // Only update |m_PageList| when |objnum| points to a /Page object.
+  if (IsValidPageObject(GetOrParseIndirectObject(objnum)))
+    m_PageList[found_index] = objnum;
   return found_index;
 }
 
