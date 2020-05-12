@@ -6,6 +6,7 @@
 
 #include "public/fpdfview.h"
 
+#include <cmath>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -343,81 +344,24 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
 #if defined(OS_WIN)
 namespace {
 
-const double kEpsilonSize = 0.01f;
+constexpr float kEpsilonSize = 0.01f;
 
-void GetScaling(CPDF_Page* pPage,
-                int size_x,
-                int size_y,
-                int rotate,
-                double* scale_x,
-                double* scale_y) {
-  ASSERT(pPage);
-  ASSERT(scale_x);
-  ASSERT(scale_y);
-  double page_width = pPage->GetPageWidth();
-  double page_height = pPage->GetPageHeight();
-  if (page_width < kEpsilonSize || page_height < kEpsilonSize)
-    return;
-
-  if (rotate % 2 == 0) {
-    *scale_x = size_x / page_width;
-    *scale_y = size_y / page_height;
-  } else {
-    *scale_x = size_y / page_width;
-    *scale_y = size_x / page_height;
-  }
+bool IsPageTooSmall(const CPDF_Page* page) {
+  const CFX_SizeF& page_size = page->GetPageSize();
+  return page_size.width < kEpsilonSize || page_size.height < kEpsilonSize;
 }
 
-FX_RECT GetMaskDimensionsAndOffsets(CPDF_Page* pPage,
-                                    int start_x,
-                                    int start_y,
-                                    int size_x,
-                                    int size_y,
-                                    int rotate,
-                                    const CFX_FloatRect& mask_box) {
-  double scale_x = 0.0f;
-  double scale_y = 0.0f;
-  GetScaling(pPage, size_x, size_y, rotate, &scale_x, &scale_y);
-  if (scale_x < kEpsilonSize || scale_y < kEpsilonSize)
-    return FX_RECT();
-
-  // Compute sizes in page points. Round down to catch the entire bitmap.
-  int start_x_bm = static_cast<int>(mask_box.left * scale_x);
-  int start_y_bm = static_cast<int>(mask_box.bottom * scale_y);
-  int size_x_bm = static_cast<int>(mask_box.right * scale_x + 1.0f) -
-                  static_cast<int>(mask_box.left * scale_x);
-  int size_y_bm = static_cast<int>(mask_box.top * scale_y + 1.0f) -
-                  static_cast<int>(mask_box.bottom * scale_y);
-
-  // Get page rotation
-  int page_rotation = pPage->GetPageRotation();
-
-  // Compute offsets
-  int offset_x = 0;
-  int offset_y = 0;
-  if (size_x > size_y)
-    std::swap(size_x_bm, size_y_bm);
-
-  switch ((rotate + page_rotation) % 4) {
-    case 0:
-      offset_x = start_x_bm + start_x;
-      offset_y = start_y + size_y - size_y_bm - start_y_bm;
-      break;
-    case 1:
-      offset_x = start_y_bm + start_x;
-      offset_y = start_x_bm + start_y;
-      break;
-    case 2:
-      offset_x = start_x + size_x - size_x_bm - start_x_bm;
-      offset_y = start_y_bm + start_y;
-      break;
-    case 3:
-      offset_x = start_x + size_x - size_x_bm - start_y_bm;
-      offset_y = start_y + size_y - size_y_bm - start_x_bm;
-      break;
+bool IsScalingTooSmall(const CFX_Matrix& matrix) {
+  float horizontal;
+  float vertical;
+  if (matrix.a == 0.0f && matrix.d == 0.0f) {
+    horizontal = matrix.b;
+    vertical = matrix.c;
+  } else {
+    horizontal = matrix.a;
+    vertical = matrix.d;
   }
-  return FX_RECT(offset_x, offset_y, offset_x + size_x_bm,
-                 offset_y + size_y_bm);
+  return fabsf(horizontal) < kEpsilonSize || fabsf(vertical) < kEpsilonSize;
 }
 
 // Get a bitmap of just the mask section defined by |mask_box| from a full page
@@ -431,9 +375,15 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
                                       const RetainPtr<CFX_DIBitmap>& pSrc,
                                       const CFX_FloatRect& mask_box,
                                       FX_RECT* bitmap_area) {
-  ASSERT(bitmap_area);
-  *bitmap_area = GetMaskDimensionsAndOffsets(pPage, start_x, start_y, size_x,
-                                             size_y, rotate, mask_box);
+  if (IsPageTooSmall(pPage))
+    return nullptr;
+
+  FX_RECT page_rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  CFX_Matrix matrix = pPage->GetDisplayMatrix(page_rect, rotate);
+  if (IsScalingTooSmall(matrix))
+    return nullptr;
+
+  *bitmap_area = matrix.TransformRect(mask_box).GetOuterRect();
   if (bitmap_area->IsEmpty())
     return nullptr;
 
