@@ -1057,6 +1057,25 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_IsOptionSelected(FPDF_FORMHANDLE handle,
+                           FPDF_ANNOTATION annot,
+                           int index) {
+  if (index < 0)
+    return false;
+
+  CPDF_FormField* form_field = GetFormField(handle, annot);
+  if (!form_field || index >= form_field->CountOptions())
+    return false;
+
+  if (form_field->GetFieldType() != FormFieldType::kComboBox &&
+      form_field->GetFieldType() != FormFieldType::kListBox) {
+    return false;
+  }
+
+  return form_field->IsItemSelected(index);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
                       FPDF_ANNOTATION annot,
                       float* value) {

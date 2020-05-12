@@ -81,6 +81,7 @@ extern "C" {
 // interactive form choice fields.
 #define FPDF_FORMFLAG_CHOICE_COMBO (1 << 17)
 #define FPDF_FORMFLAG_CHOICE_EDIT (1 << 18)
+#define FPDF_FORMFLAG_CHOICE_MULTI_SELECT (1 << 21)
 
 typedef enum FPDFANNOT_COLORTYPE {
   FPDFANNOT_COLORTYPE_Color = 0,
@@ -654,6 +655,22 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
                          int index,
                          FPDF_WCHAR* buffer,
                          unsigned long buflen);
+
+// Experimental API.
+// Determine whether or not the option at |index| in |annot|'s "Opt" dictionary
+// is selected. Intended for use with listbox and combobox widget annotations.
+//
+//   handle  - handle to the form fill module, returned by
+//             FPDFDOC_InitFormFillEnvironment.
+//   annot   - handle to an annotation.
+//   index   - numeric index of the option in the "Opt" array.
+//
+// Returns true if the option at |index| in |annot|'s "Opt" dictionary is
+// selected, false otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_IsOptionSelected(FPDF_FORMHANDLE handle,
+                           FPDF_ANNOTATION annot,
+                           int index);
 
 // Experimental API.
 // Get the float value of the font size for an |annot| with variable text.
