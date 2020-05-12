@@ -579,8 +579,8 @@ typedef struct _FPDF_FORMFILLINFO {
    *       action, the implementation needs to load the page.
    */
   FPDF_PAGE (*FFI_GetPage)(struct _FPDF_FORMFILLINFO* pThis,
-                             FPDF_DOCUMENT document,
-                             int nPageIndex);
+                           FPDF_DOCUMENT document,
+                           int nPageIndex);
 
   /*
    * Method: FFI_GetCurrentPage
@@ -588,18 +588,19 @@ typedef struct _FPDF_FORMFILLINFO {
    * Interface Version:
    *       1
    * Implementation Required:
-   *       yes
+   *       Yes when V8 support is present, otherwise unused.
    * Parameters:
    *       pThis       -   Pointer to the interface structure itself.
    *       document    -   Handle to document. Returned by FPDF_LoadDocument().
    * Return value:
    *       Handle to the page. Returned by FPDF_LoadPage().
    * Comments:
-   *       The implementation is expected to keep track of the current page,
-   *       e.g. the current page can be the one that is most visible on screen.
+   *       PDFium doesn't keep keep track of the "current page" (e.g. the one
+   *       that is most visible on screen), so it must ask the embedder for
+   *       this information.
    */
   FPDF_PAGE (*FFI_GetCurrentPage)(struct _FPDF_FORMFILLINFO* pThis,
-                                    FPDF_DOCUMENT document);
+                                  FPDF_DOCUMENT document);
 
   /*
    * Method: FFI_GetRotation
@@ -1079,9 +1080,9 @@ typedef struct _FPDF_FORMFILLINFO {
    *       TRUE indicates success, otherwise FALSE.
    */
   FPDF_BOOL (*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis,
-                                   FPDF_WIDESTRING wsURL,
-                                   FPDF_WIDESTRING wsData,
-                                   FPDF_WIDESTRING wsEncode);
+                                 FPDF_WIDESTRING wsURL,
+                                 FPDF_WIDESTRING wsData,
+                                 FPDF_WIDESTRING wsEncode);
 
   /*
    * Method: FFI_OnFocusChange
