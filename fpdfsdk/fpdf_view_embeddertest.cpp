@@ -1463,4 +1463,22 @@ restore
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFViewEmbedderTest, ImageMask) {
+  ASSERT_TRUE(OpenDocument("bug_674771.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Render the page with more efficient processing of image masks.
+  FPDF_SetPrintMode(FPDF_PRINTMODE_EMF_IMAGE_MASKS);
+  std::vector<uint8_t> emf_image_masks = RenderPageWithFlagsToEmf(page, 0);
+
+  // Render the page normally.
+  FPDF_SetPrintMode(FPDF_PRINTMODE_EMF);
+  std::vector<uint8_t> emf_normal = RenderPageWithFlagsToEmf(page, 0);
+
+  EXPECT_LT(emf_image_masks.size(), emf_normal.size());
+
+  UnloadPage(page);
+}
 #endif  // defined(OS_WIN)

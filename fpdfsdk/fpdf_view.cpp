@@ -73,6 +73,9 @@ static_assert(WindowsPrintMode::kModePostScript2PassThrough ==
 static_assert(WindowsPrintMode::kModePostScript3PassThrough ==
                   FPDF_PRINTMODE_POSTSCRIPT3_PASSTHROUGH,
               "WindowsPrintMode::kModePostScript3PassThrough value mismatch");
+static_assert(WindowsPrintMode::kModeEmfImageMasks ==
+                  FPDF_PRINTMODE_EMF_IMAGE_MASKS,
+              "WindowsPrintMode::kModeEmfImageMasks value mismatch");
 #endif  // defined(OS_WIN)
 
 namespace {
@@ -158,10 +161,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode) {
-  if (mode < FPDF_PRINTMODE_EMF ||
-      mode > FPDF_PRINTMODE_POSTSCRIPT3_PASSTHROUGH) {
+  if (mode < FPDF_PRINTMODE_EMF || mode > FPDF_PRINTMODE_EMF_IMAGE_MASKS)
     return FALSE;
-  }
+
   g_pdfium_print_mode = static_cast<WindowsPrintMode>(mode);
   return TRUE;
 }
@@ -446,9 +448,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   // of masks. Full page bitmaps result in large spool sizes, so they should
   // only be used when necessary. For large numbers of masks, rendering each
   // individually is inefficient and unlikely to significantly improve spool
-  // size. TODO(rbpotter): Find out why this still breaks printing for some
-  // PDFs (see crbug.com/777837).
-  const bool bEnableImageMasks = false;
+  // size.
+  const bool bEnableImageMasks =
+      g_pdfium_print_mode == WindowsPrintMode::kModeEmfImageMasks;
   const bool bNewBitmap = pPage->BackgroundAlphaNeeded() ||
                           (pPage->HasImageMask() && !bEnableImageMasks) ||
                           pPage->GetMaskBoundingBoxes().size() > 100;

@@ -1375,8 +1375,10 @@ RenderDeviceDriverIface* CFX_WindowsRenderDevice::CreateDriver(
   if (!use_printer)
     return new CGdiDisplayDriver(hDC);
 
-  if (g_pdfium_print_mode == WindowsPrintMode::kModeEmf)
+  if (g_pdfium_print_mode == WindowsPrintMode::kModeEmf ||
+      g_pdfium_print_mode == WindowsPrintMode::kModeEmfImageMasks) {
     return new CGdiPrinterDriver(hDC);
+  }
 
   if (g_pdfium_print_mode == WindowsPrintMode::kModeTextOnly)
     return new CTextOnlyPrinterDriver(hDC);

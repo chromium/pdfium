@@ -18,6 +18,7 @@ enum WindowsPrintMode {
   kModePostScript3 = 3,
   kModePostScript2PassThrough = 4,
   kModePostScript3PassThrough = 5,
+  kModeEmfImageMasks = 6,
 };
 
 class RenderDeviceDriverIface;
