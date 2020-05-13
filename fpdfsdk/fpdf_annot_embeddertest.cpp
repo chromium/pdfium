@@ -28,6 +28,15 @@
 
 namespace {
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_LINUX)
+const char kAnnotationStampWithApChecksum[] =
+    "db83eaadc92967e3ac9bebfc6178ca75";
+#else
+const char kAnnotationStampWithApChecksum[] =
+    "3c87b4a8e51245964357fb5f5fbc612b";
+#endif  // defined(OS_LINUX)
+#else
 #if defined(OS_WIN)
 const char kAnnotationStampWithApChecksum[] =
     "6aa001a77ec05d0f1b0d1d22e28744d4";
@@ -38,6 +47,7 @@ const char kAnnotationStampWithApChecksum[] =
 const char kAnnotationStampWithApChecksum[] =
     "b42cef463483e668eaf4055a65e4f1f5";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 void VerifyFocusableAnnotSubtypes(
     FPDF_FORMHANDLE form_handle,
@@ -773,26 +783,32 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
   FPDF_CloseDocument(new_doc);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddAndModifyPath DISABLED_AddAndModifyPath
+#if defined(OS_LINUX)
+  static const char kMd5ModifiedPath[] = "d76382fd57fafad0233f7549f871dafa";
+  static const char kMd5TwoPaths[] = "323151317b8cb62130546c7b8d70f622";
+  static const char kMd5NewAnnot[] = "9a3b02d876620d19787549ee1100b63c";
 #else
-#define MAYBE_AddAndModifyPath AddAndModifyPath
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyPath) {
-#if defined(OS_MACOSX)
-  static const char kMd5ModifiedPath[] = "8cfae6d547fc5d6702f5f1ac631beb5e";
-  static const char kMd5TwoPaths[] = "9677e4892bb02950d3e4dbe74470578f";
-  static const char kMd5NewAnnot[] = "e8ebddac4db8c0a4b556ddf79aa1a26d";
-#elif defined(OS_WIN)
+  static const char kMd5ModifiedPath[] = "c9ba60887a312370d9a32198aa53aca4";
+  static const char kMd5TwoPaths[] = "0768d56373094fcdf4ddf3f3364c006f";
+  static const char kMd5NewAnnot[] = "6f7e1c189bcfac90ffccf2a527857006";
+#endif  // defined(OS_LINUX)
+#else
+#if defined(OS_WIN)
   static const char kMd5ModifiedPath[] = "a7a8d675a6ddbcbdfecee65a33ba19e1";
   static const char kMd5TwoPaths[] = "7c0bdd4552329704c47a7cce47edbbd6";
   static const char kMd5NewAnnot[] = "3c48d492b4f62941fed0fb62f729f31e";
+#elif defined(OS_MACOSX)
+  static const char kMd5ModifiedPath[] = "8cfae6d547fc5d6702f5f1ac631beb5e";
+  static const char kMd5TwoPaths[] = "9677e4892bb02950d3e4dbe74470578f";
+  static const char kMd5NewAnnot[] = "e8ebddac4db8c0a4b556ddf79aa1a26d";
 #else
   static const char kMd5ModifiedPath[] = "6ff77d6d1fec4ea571fabe0c7a19b517";
   static const char kMd5TwoPaths[] = "ca37ad549e74ac5b359a055708f3e7b6";
   static const char kMd5NewAnnot[] = "0d7a0e33fbf41ff7fa5d732ab2c5edff";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
