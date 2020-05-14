@@ -390,7 +390,7 @@ group("libopenjpeg2") {
 
 config("fx_libopenjpeg_warnings") {
   visibility = [ ":*" ]
-  if (is_win) {
+  if (is_win && !is_clang && target_cpu == "x86") {
     cflags = [
       # Signed/unsigned comparisons.
       "/wd4018",
