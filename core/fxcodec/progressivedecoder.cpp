@@ -693,11 +693,6 @@ void ProgressiveDecoder::ResampleVertBT(
 bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
   BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-  if (!pBmpModule) {
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return false;
-  }
-
   std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
       pBmpModule->Start(this);
   pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
@@ -778,13 +773,6 @@ bool ProgressiveDecoder::BmpReadMoreData(
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-  if (!pBmpModule) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
@@ -796,11 +784,6 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
 
 FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
   BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-  if (!pBmpModule) {
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
-
   BmpModule::Status read_res = pBmpModule->LoadImage(m_pBmpContext.get());
   while (read_res == BmpModule::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
@@ -835,10 +818,6 @@ bool ProgressiveDecoder::GifReadMoreData(GifModule* pGifModule,
 
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
   GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-  if (!pGifModule) {
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return false;
-  }
   m_pGifContext = pGifModule->Start(this);
   pGifModule->Input(m_pGifContext.get(), m_pCodecMemory, nullptr);
   m_SrcComponents = 1;
@@ -868,13 +847,6 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
 
 FXCODEC_STATUS ProgressiveDecoder::GifStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-  if (!pGifModule) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
   m_SrcFormat = FXCodec_8bppRgb;
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
@@ -888,13 +860,6 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode(
 
 FXCODEC_STATUS ProgressiveDecoder::GifContinueDecode() {
   GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-  if (!pGifModule) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
-
   CFX_GifDecodeStatus readRes =
       pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur);
   while (readRes == CFX_GifDecodeStatus::Unfinished) {
@@ -1221,10 +1186,6 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
 bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
   PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-  if (!pPngModule) {
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return false;
-  }
   m_pPngContext = pPngModule->Start(this);
   if (!m_pPngContext) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
@@ -1259,12 +1220,6 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
 FXCODEC_STATUS ProgressiveDecoder::PngStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-  if (!pPngModule) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
   m_pPngContext = pPngModule->Start(this);
   if (!m_pPngContext) {
     m_pDeviceBitmap = nullptr;
@@ -1306,10 +1261,6 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode(
 
 FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
   PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-  if (!pPngModule) {
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
   while (true) {
     uint32_t remain_size = (uint32_t)m_pFile->GetSize() - m_offSet;
     uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
@@ -1347,10 +1298,6 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
 bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
     CFX_DIBAttribute* pAttribute) {
   TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
-  if (!pTiffModule) {
-    m_status = FXCODEC_STATUS_ERR_FORMAT;
-    return false;
-  }
   m_pTiffContext = pTiffModule->CreateDecoder(m_pFile);
   if (!m_pTiffContext) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
@@ -1372,10 +1319,6 @@ bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
 
 FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
   TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
-  if (!pTiffModule) {
-    m_status = FXCODEC_STATUS_ERR_MEMORY;
-    return m_status;
-  }
   bool ret = false;
   if (m_pDeviceBitmap->GetBPP() == 32 &&
       m_pDeviceBitmap->GetWidth() == m_SrcWidth && m_SrcWidth == m_sizeX &&
@@ -2169,10 +2112,6 @@ std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
 #ifdef PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_GIF: {
       GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-      if (!pGifModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return {m_status, 0};
-      }
       while (true) {
         CFX_GifDecodeStatus readResult;
         std::tie(readResult, m_FrameNumber) =
