@@ -182,14 +182,14 @@ class ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_BMP
   bool BmpReadMoreData(BmpModule* pBmpModule,
                        ProgressiveDecoderIface::Context* pBmpContext,
-                       FXCODEC_STATUS& err_status);
+                       FXCODEC_STATUS* err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS BmpContinueDecode();
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  bool GifReadMoreData(GifModule* pGifModule, FXCODEC_STATUS& err_status);
+  bool GifReadMoreData(GifModule* pGifModule, FXCODEC_STATUS* err_status);
   bool GifDetectImageTypeInBuffer();
   FXCODEC_STATUS GifStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS GifContinueDecode();
@@ -213,7 +213,7 @@ class ProgressiveDecoder :
   FXCODEC_STATUS TiffContinueDecode();
 #endif  // PDF_ENABLE_XFA_TIFF
 
-  bool JpegReadMoreData(JpegModule* pJpegModule, FXCODEC_STATUS& err_status);
+  bool JpegReadMoreData(JpegModule* pJpegModule, FXCODEC_STATUS* err_status);
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS JpegContinueDecode();
@@ -223,9 +223,9 @@ class ProgressiveDecoder :
   bool ReadMoreData(ProgressiveDecoderIface* pModule,
                     ProgressiveDecoderIface::Context* pContext,
                     bool invalidate_buffer,
-                    FXCODEC_STATUS& err_status);
+                    FXCODEC_STATUS* err_status);
 
-  void GetDownScale(int& down_scale);
+  int GetDownScale();
   void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);
 
   void ReSampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
