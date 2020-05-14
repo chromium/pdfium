@@ -3481,3 +3481,24 @@ TEST_F(FPDFEditEmbedderTest, GetImageMetadata) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditEmbedderTest, GetImageMetadataJpxLzw) {
+  ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 0);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+
+  FPDF_IMAGEOBJ_METADATA metadata;
+  ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page, &metadata));
+  EXPECT_EQ(-1, metadata.marked_content_id);
+  EXPECT_EQ(612u, metadata.width);
+  EXPECT_EQ(792u, metadata.height);
+  EXPECT_FLOAT_EQ(72.0f, metadata.horizontal_dpi);
+  EXPECT_FLOAT_EQ(72.0f, metadata.vertical_dpi);
+  EXPECT_EQ(24u, metadata.bits_per_pixel);
+  EXPECT_EQ(FPDF_COLORSPACE_UNKNOWN, metadata.colorspace);
+
+  UnloadPage(page);
+}
