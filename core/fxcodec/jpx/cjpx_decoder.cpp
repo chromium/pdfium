@@ -385,6 +385,17 @@ void color_sycc_to_rgb(opj_image_t* img) {
 }  // namespace
 
 // static
+std::unique_ptr<CJPX_Decoder> CJPX_Decoder::Create(
+    pdfium::span<const uint8_t> src_span,
+    CJPX_Decoder::ColorSpaceOption option) {
+  // Private ctor.
+  auto decoder = pdfium::WrapUnique(new CJPX_Decoder(option));
+  if (!decoder->Init(src_span))
+    return nullptr;
+  return decoder;
+}
+
+// static
 void CJPX_Decoder::Sycc420ToRgbForTesting(opj_image_t* img) {
   sycc420_to_rgb(img);
 }

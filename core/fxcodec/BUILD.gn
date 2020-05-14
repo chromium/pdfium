@@ -65,8 +65,6 @@ source_set("fxcodec") {
     "jpx/cjpx_decoder.h",
     "jpx/jpx_decode_utils.cpp",
     "jpx/jpx_decode_utils.h",
-    "jpx/jpxmodule.cpp",
-    "jpx/jpxmodule.h",
     "scanlinedecoder.cpp",
     "scanlinedecoder.h",
   ]
