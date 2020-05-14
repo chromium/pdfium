@@ -383,11 +383,11 @@ void CXFA_FFField::SetFWLRect() {
 }
 
 bool CXFA_FFField::OnMouseEnter() {
-  if (!GetNormalWidget())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::Enter));
@@ -396,11 +396,11 @@ bool CXFA_FFField::OnMouseEnter() {
 }
 
 bool CXFA_FFField::OnMouseExit() {
-  if (!GetNormalWidget())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::Leave));
@@ -440,13 +440,13 @@ bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   if (!GetNormalWidget())
     return false;
   if (!IsButtonDown())
     return false;
-
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SetButtonDown(false);
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
@@ -457,11 +457,11 @@ bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!GetNormalWidget())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDblClk, dwFlags,
@@ -471,11 +471,11 @@ bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!GetNormalWidget())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::Move, dwFlags, FWLToClient(point)));
@@ -486,11 +486,11 @@ bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
 bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
                                 const CFX_PointF& point,
                                 const CFX_Vector& delta) {
-  if (!GetNormalWidget())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouseWheel>(
       GetNormalWidget(), FWLToClient(point), delta));
@@ -528,11 +528,11 @@ bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!GetNormalWidget())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::RightButtonDblClk, dwFlags,
@@ -542,14 +542,14 @@ bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   if (!CXFA_FFWidget::OnSetFocus(pOldWidget))
     return false;
 
   if (!GetNormalWidget())
     return false;
-
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SendMessageToFWLWidget(
       pdfium::MakeUnique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
@@ -574,11 +574,11 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
-  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::KeyDown, dwFlags, dwKeyCode));
@@ -587,11 +587,11 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
 }
 
 bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
-  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
-    return false;
-
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
+  if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
+    return false;
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::KeyUp, dwFlags, dwKeyCode));
@@ -600,6 +600,9 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
 }
 
 bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
+  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
+  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
+
   if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
   if (dwChar == XFA_FWL_VKEY_Tab)
@@ -608,9 +611,6 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
     return false;
   if (!m_pNode->IsOpenAccess())
     return false;
-
-  // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
-  RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::Char, dwFlags, dwChar));

@@ -1,0 +1,150 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streanlen}}
+>>
+stream
+<template>
+ <subform layout="tb" name="my_doc">
+  <pageSet id="page" relation="orderedOccurrence">
+   <occur initial="1" max="4" min="1"/>
+   <pageArea id="Page1" name="Page1">
+    <occur max="1" min="1"/>
+    <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+    <medium long="297mm" short="210mm" stock="a4"/>
+   </pageArea>
+   <pageArea id="Page2" name="Page2">
+    <occur max="1" min="1"/>
+    <contentArea h="100mm" w="200mm" x="0.25in" y="0.25in"/>
+    <medium long="297mm" short="210mm" stock="a4"/>
+   </pageArea>
+  </pageSet>
+  <event activity="docReady" ref="$host">
+   <script contentType="application/x-javascript">
+    xfa.event.emit();
+    var f=xfa.resolveNode("xfa.form.my_doc.page1_form.combox");
+    xfa.record.nodes.append(this);
+    xfa.form.remerge();
+    xfa.host.setFocus(f);
+    app.alert('Done');
+   </script>
+  </event>
+  <subform layout="tb" name="subform_push_button_1">
+   <occur initial="1" max="10" min="0" name="occur_subform_push_button_1"/>
+   <field h="10mm" name="push_button" w="40mm" x="30mm" y="500mm">
+    <ui>
+     <button highlight="push"/>
+    </ui>
+    <caption>
+     <value>
+      <text>Button</text>
+     </value>
+    </caption>
+    <items>
+     <text name="down">Down Text</text>
+     <text name="rollover">Rollover Text</text>
+    </items>
+   </field>
+  </subform>
+  <subform layout="tb" name="subform_checkbutton_group_0">
+   <occur initial="1" max="10" min="0" name="occur_subform_checkbutton_group_0"/>
+   <exclGroup layout="tb" name="checkbutton_group">
+    <field h="10mm" name="checkbutton_check1" w="40mm" x="30mm" y="600mm">
+     <ui>
+      <checkButton shape="round">
+       <border>
+        <edge/>
+       </border>
+      </checkButton>
+     </ui>
+     <items>
+      <integer>1</integer>
+     </items>
+     <value>
+      <text>Select 1</text>
+     </value>
+     <caption placement="left">
+      <value>
+       <text>Option 1</text>
+      </value>
+     </caption>
+     <event activity="ready" ref="$layout">
+      <script contentType="application/x-javascript">
+      </script>
+     </event>
+    </field>
+    <field h="10mm" name="checkbutton_check2" w="40mm" x="30mm" y="600mm">
+     <ui>
+      <checkButton shape="round">
+       <border>
+        <edge/>
+       </border>
+      </checkButton>
+     </ui>
+     <items>
+      <integer>2</integer>
+     </items>
+     <value>
+      <text>Select 2</text>
+     </value>
+     <caption placement="left">
+      <value>
+       <text>Option 2</text>
+      </value>
+     </caption>
+    </field>
+   </exclGroup>
+  </subform>
+  <subform layout="tb" name="page2_form">
+   <occur initial="1" max="3" min="0"/>
+   <field h="10mm" name="textedit" w="40mm" x="20mm" y="20mm">
+    <ui>
+     <textEdit/>
+    </ui>
+    <value>
+     <text>CLGT.</text>
+    </value>
+   </field>
+  </subform>
+  <subform layout="tb" name="page1_form">
+   <occur initial="1" max="3" min="0"/>
+   <field h="10mm" name="combox" w="40mm" x="10mm" y="10mm">
+    <ui>
+     <choiceList open="onEntry">
+      <border>
+       <edge/>
+      </border>
+     </choiceList>
+    </ui>
+    <items save="1">
+     <text>apples</text>
+     <text>bananas</text>
+     <text>pears</text>
+    </items>
+    <value>
+     <text>
+      apples
+     </text>
+    </value>
+    <event activity="enter" name="event__enter">
+     <script contentType="application/x-javascript">
+      xfa.host.setFocus(0);
+      xfa.host.openList(this);
+     </script>
+    </event>
+   </field>
+  </subform>
+ </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
