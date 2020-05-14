@@ -698,7 +698,8 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     return false;
   }
 
-  std::unique_ptr<ModuleIface::Context> pBmpContext = pBmpModule->Start(this);
+  std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
+      pBmpModule->Start(this);
   pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
   const std::vector<uint32_t>* palette;
@@ -768,9 +769,10 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   return true;
 }
 
-bool ProgressiveDecoder::BmpReadMoreData(BmpModule* pBmpModule,
-                                         ModuleIface::Context* pContext,
-                                         FXCODEC_STATUS& err_status) {
+bool ProgressiveDecoder::BmpReadMoreData(
+    BmpModule* pBmpModule,
+    ProgressiveDecoderIface::Context* pContext,
+    FXCODEC_STATUS& err_status) {
   return ReadMoreData(pBmpModule, pContext, false, err_status);
 }
 
@@ -1551,10 +1553,11 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   return false;
 }
 
-bool ProgressiveDecoder::ReadMoreData(ModuleIface* pModule,
-                                      ModuleIface::Context* pContext,
-                                      bool invalidate_buffer,
-                                      FXCODEC_STATUS& err_status) {
+bool ProgressiveDecoder::ReadMoreData(
+    ProgressiveDecoderIface* pModule,
+    ProgressiveDecoderIface::Context* pContext,
+    bool invalidate_buffer,
+    FXCODEC_STATUS& err_status) {
   // Check for EOF.
   if (m_offSet >= static_cast<uint32_t>(m_pFile->GetSize()))
     return false;

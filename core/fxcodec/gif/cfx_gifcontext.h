@@ -19,7 +19,7 @@ class CFX_CodecMemory;
 
 namespace fxcodec {
 
-class CFX_GifContext : public ModuleIface::Context {
+class CFX_GifContext : public ProgressiveDecoderIface::Context {
  public:
   CFX_GifContext(GifModule* gif_module, GifModule::Delegate* delegate);
   ~CFX_GifContext() override;

@@ -9,11 +9,11 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec_module_iface.h"
+#include "core/fxcodec/progressive_decoder_iface.h"
 
 namespace fxcodec {
 
-class PngModule final : public ModuleIface {
+class PngModule final : public ProgressiveDecoderIface {
  public:
   class Delegate {
    public:
@@ -34,7 +34,7 @@ class PngModule final : public ModuleIface {
   PngModule();
   ~PngModule() override;
 
-  // ModuleIface:
+  // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

@@ -37,7 +37,7 @@ extern "C" {
 #endif
 }  // extern "C"
 
-class CJpegContext final : public ModuleIface::Context {
+class CJpegContext final : public ProgressiveDecoderIface::Context {
  public:
   CJpegContext();
   ~CJpegContext() override;
@@ -502,7 +502,7 @@ Optional<JpegModule::JpegImageInfo> JpegModule::LoadInfo(
   return info;
 }
 
-std::unique_ptr<ModuleIface::Context> JpegModule::Start() {
+std::unique_ptr<ProgressiveDecoderIface::Context> JpegModule::Start() {
   // Use ordinary pointer until past the possibility of a longjump.
   auto* pContext = new CJpegContext();
   if (setjmp(pContext->m_JumpMark) == -1) {

@@ -10,14 +10,14 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcodec/codec_module_iface.h"
+#include "core/fxcodec/progressive_decoder_iface.h"
 #include "third_party/base/span.h"
 
 namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class BmpModule final : public ModuleIface {
+class BmpModule final : public ProgressiveDecoderIface {
  public:
   class Delegate {
    public:
@@ -31,7 +31,7 @@ class BmpModule final : public ModuleIface {
   BmpModule();
   ~BmpModule() override;
 
-  // ModuleIface:
+  // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

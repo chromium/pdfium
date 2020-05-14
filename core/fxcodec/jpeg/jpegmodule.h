@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "build/build_config.h"
-#include "core/fxcodec/codec_module_iface.h"
+#include "core/fxcodec/progressive_decoder_iface.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 
@@ -22,7 +22,7 @@ namespace fxcodec {
 class CFX_DIBAttribute;
 class ScanlineDecoder;
 
-class JpegModule final : public ModuleIface {
+class JpegModule final : public ProgressiveDecoderIface {
  public:
   struct JpegImageInfo {
     int width;
@@ -39,7 +39,7 @@ class JpegModule final : public ModuleIface {
       int nComps,
       bool ColorTransform);
 
-  // ModuleIface:
+  // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

@@ -181,7 +181,7 @@ class ProgressiveDecoder :
  private:
 #ifdef PDF_ENABLE_XFA_BMP
   bool BmpReadMoreData(BmpModule* pBmpModule,
-                       ModuleIface::Context* pBmpContext,
+                       ProgressiveDecoderIface::Context* pBmpContext,
                        FXCODEC_STATUS& err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
@@ -220,8 +220,8 @@ class ProgressiveDecoder :
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
-  bool ReadMoreData(ModuleIface* pModule,
-                    ModuleIface::Context* pContext,
+  bool ReadMoreData(ProgressiveDecoderIface* pModule,
+                    ProgressiveDecoderIface::Context* pContext,
                     bool invalidate_buffer,
                     FXCODEC_STATUS& err_status);
 
@@ -251,18 +251,18 @@ class ProgressiveDecoder :
   RetainPtr<CFX_CodecMemory> m_pCodecMemory;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDecodeBuf;
   std::unique_ptr<FX_ARGB, FxFreeDeleter> m_pSrcPalette;
-  std::unique_ptr<ModuleIface::Context> m_pJpegContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<ModuleIface::Context> m_pBmpContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> m_pBmpContext;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<ModuleIface::Context> m_pGifContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> m_pGifContext;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
-  std::unique_ptr<ModuleIface::Context> m_pPngContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> m_pPngContext;
 #endif  // PDF_ENABLE_XFA_PNG
 #ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<ModuleIface::Context> m_pTiffContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> m_pTiffContext;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t m_offSet = 0;
   int m_ScanlineSize = 0;

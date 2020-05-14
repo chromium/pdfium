@@ -10,15 +10,15 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec_module_iface.h"
 #include "core/fxcodec/gif/cfx_gif.h"
+#include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_coordinates.h"
 
 namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class GifModule final : public ModuleIface {
+class GifModule final : public ProgressiveDecoderIface {
  public:
   class Delegate {
    public:
@@ -38,7 +38,7 @@ class GifModule final : public ModuleIface {
   GifModule();
   ~GifModule() override;
 
-  // ModuleIface:
+  // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* context) const override;
   bool Input(Context* context,
              RetainPtr<CFX_CodecMemory> codec_memory,

@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec_module_iface.h"
+#include "core/fxcodec/progressive_decoder_iface.h"
 
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
@@ -18,12 +18,12 @@ namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class TiffModule final : public ModuleIface {
+class TiffModule final : public ProgressiveDecoderIface {
  public:
   std::unique_ptr<Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
-  // ModuleIface:
+  // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
              RetainPtr<CFX_CodecMemory> codec_memory,

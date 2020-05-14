@@ -11,7 +11,6 @@ source_set("fxcodec") {
     "basic/basicmodule.h",
     "cfx_codec_memory.cpp",
     "cfx_codec_memory.h",
-    "codec_module_iface.h",
     "fax/faxmodule.cpp",
     "fax/faxmodule.h",
     "flate/flatemodule.cpp",
@@ -65,6 +64,7 @@ source_set("fxcodec") {
     "jpx/cjpx_decoder.h",
     "jpx/jpx_decode_utils.cpp",
     "jpx/jpx_decode_utils.h",
+    "progressive_decoder_iface.h",
     "scanlinedecoder.cpp",
     "scanlinedecoder.h",
   ]
