@@ -1082,23 +1082,27 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
   VerifySavedDocument(595, 842, kMd5ModifiedImage);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddAndModifyText DISABLED_AddAndModifyText
+#if defined(OS_LINUX)
+  static const char kMd5NewText[] = "c9d853a5fb6bca31e9696ccc4462c74a";
+  static const char kMd5ModifiedText[] = "bc681fa9174223983c5e4357e919d36c";
 #else
-#define MAYBE_AddAndModifyText AddAndModifyText
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyText) {
-#if defined(OS_MACOSX)
-  static const char kMd5NewText[] = "e657266260b88c964938efe6c9b292da";
-  static const char kMd5ModifiedText[] = "7accdf2bac64463101783221f53d3188";
-#elif defined(OS_WIN)
+  static const char kMd5NewText[] = "4aaa34e9df2e41d621dbd81b1d535c48";
+  static const char kMd5ModifiedText[] = "d6ea20beb7834ef4b6d370581ce425fc";
+#endif  // defined(OS_LINUX)
+#else
+#if defined(OS_WIN)
   static const char kMd5NewText[] = "204cc01749a70b8afc246a4ca33c7eb6";
   static const char kMd5ModifiedText[] = "641261a45e8dfd68c89b80bfd237660d";
+#elif defined(OS_MACOSX)
+  static const char kMd5NewText[] = "e657266260b88c964938efe6c9b292da";
+  static const char kMd5ModifiedText[] = "7accdf2bac64463101783221f53d3188";
 #else
   static const char kMd5NewText[] = "00197ad6206f763febad5719e5935306";
   static const char kMd5ModifiedText[] = "85853bc0aaa5a4e3af04e58b9cbfff23";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
