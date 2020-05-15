@@ -14,7 +14,6 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/ptr_util.h"
 
 #if defined(OS_WIN)
 #include <direct.h>
@@ -123,7 +122,7 @@ bool IFX_SeekableStream::WriteString(ByteStringView str) {
 }
 
 FX_FolderHandle* FX_OpenFolder(const char* path) {
-  auto handle = pdfium::MakeUnique<FX_FolderHandle>();
+  auto handle = std::make_unique<FX_FolderHandle>();
 #if defined(OS_WIN)
   handle->m_Handle =
       FindFirstFileExA((ByteString(path) + "/*.*").c_str(), FindExInfoStandard,
