@@ -184,11 +184,8 @@ CPngContext::~CPngContext() {
 
 namespace fxcodec {
 
-PngModule::PngModule() = default;
-
-PngModule::~PngModule() = default;
-
-std::unique_ptr<ProgressiveDecoderIface::Context> PngModule::Start(
+// static
+std::unique_ptr<ProgressiveDecoderIface::Context> PngModule::StartDecode(
     Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
   p->m_pPng =
@@ -210,14 +207,10 @@ std::unique_ptr<ProgressiveDecoderIface::Context> PngModule::Start(
   return p;
 }
 
-FX_FILESIZE PngModule::GetAvailInput(Context* pContext) const {
-  NOTREACHED();
-  return 0;
-}
-
-bool PngModule::Input(Context* pContext,
-                      RetainPtr<CFX_CodecMemory> codec_memory,
-                      CFX_DIBAttribute* pAttribute) {
+// static
+bool PngModule::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
+                               RetainPtr<CFX_CodecMemory> codec_memory,
+                               CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   if (setjmp(png_jmpbuf(ctx->m_pPng))) {
     if (pAttribute &&

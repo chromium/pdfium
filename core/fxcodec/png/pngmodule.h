@@ -11,9 +11,13 @@
 
 #include "core/fxcodec/progressive_decoder_iface.h"
 
+#ifndef PDF_ENABLE_XFA_PNG
+#error "PNG must be enabled"
+#endif
+
 namespace fxcodec {
 
-class PngModule final : public ProgressiveDecoderIface {
+class PngModule {
  public:
   class Delegate {
    public:
@@ -31,16 +35,16 @@ class PngModule final : public ProgressiveDecoderIface {
     virtual void PngFillScanlineBufCompleted(int pass, int line) = 0;
   };
 
-  PngModule();
-  ~PngModule() override;
+  static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
+      Delegate* pDelegate);
 
-  // ProgressiveDecoderIface:
-  FX_FILESIZE GetAvailInput(Context* pContext) const override;
-  bool Input(Context* pContext,
-             RetainPtr<CFX_CodecMemory> codec_memory,
-             CFX_DIBAttribute* pAttribute) override;
+  static bool ContinueDecode(ProgressiveDecoderIface::Context* pContext,
+                             RetainPtr<CFX_CodecMemory> codec_memory,
+                             CFX_DIBAttribute* pAttribute);
 
-  std::unique_ptr<Context> Start(Delegate* pDelegate);
+  PngModule() = delete;
+  PngModule(const PngModule&) = delete;
+  PngModule& operator=(const PngModule&) = delete;
 };
 
 }  // namespace fxcodec
