@@ -90,6 +90,8 @@ source_set("fxcodec") {
     ]
     if (pdf_enable_xfa_bmp) {
       sources += [
+        "bmp/bmp_progressive_decoder.cpp",
+        "bmp/bmp_progressive_decoder.h",
         "bmp/bmpmodule.cpp",
         "bmp/bmpmodule.h",
         "bmp/cfx_bmpcontext.cpp",

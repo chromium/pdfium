@@ -11,28 +11,28 @@
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
 
-BmpModule::BmpModule() = default;
-
-BmpModule::~BmpModule() = default;
-
-std::unique_ptr<ProgressiveDecoderIface::Context> BmpModule::Start(
+// static
+std::unique_ptr<ProgressiveDecoderIface::Context> BmpModule::StartDecode(
     Delegate* pDelegate) {
-  return pdfium::MakeUnique<CFX_BmpContext>(this, pDelegate);
+  return pdfium::MakeUnique<CFX_BmpContext>(pDelegate);
 }
 
-BmpModule::Status BmpModule::ReadHeader(Context* pContext,
-                                        int32_t* width,
-                                        int32_t* height,
-                                        bool* tb_flag,
-                                        int32_t* components,
-                                        int32_t* pal_num,
-                                        const std::vector<uint32_t>** palette,
-                                        CFX_DIBAttribute* pAttribute) {
+// static
+BmpModule::Status BmpModule::ReadHeader(
+    ProgressiveDecoderIface::Context* pContext,
+    int32_t* width,
+    int32_t* height,
+    bool* tb_flag,
+    int32_t* components,
+    int32_t* pal_num,
+    const std::vector<uint32_t>** palette,
+    CFX_DIBAttribute* pAttribute) {
   ASSERT(pAttribute);
 
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
@@ -52,15 +52,20 @@ BmpModule::Status BmpModule::ReadHeader(Context* pContext,
   return Status::kSuccess;
 }
 
-BmpModule::Status BmpModule::LoadImage(Context* pContext) {
+// static
+BmpModule::Status BmpModule::LoadImage(
+    ProgressiveDecoderIface::Context* pContext) {
   return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.DecodeImage();
 }
 
-FX_FILESIZE BmpModule::GetAvailInput(Context* pContext) const {
+// static
+FX_FILESIZE BmpModule::GetAvailInput(
+    ProgressiveDecoderIface::Context* pContext) {
   return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.GetAvailInput();
 }
 
-bool BmpModule::Input(Context* pContext,
+// static
+bool BmpModule::Input(ProgressiveDecoderIface::Context* pContext,
                       RetainPtr<CFX_CodecMemory> codec_memory,
                       CFX_DIBAttribute*) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);

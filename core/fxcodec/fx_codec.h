@@ -8,18 +8,8 @@
 #define CORE_FXCODEC_FX_CODEC_H_
 
 #include <map>
-#include <memory>
-#include <utility>
 
-#include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
-
-#ifdef PDF_ENABLE_XFA
-#ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/bmp/bmpmodule.h"
-#endif  // PDF_ENABLE_XFA_BMP
-#endif
 
 namespace fxcodec {
 
@@ -35,37 +25,6 @@ class CFX_DIBAttribute {
   std::map<uint32_t, void*> m_Exif;
 };
 #endif  // PDF_ENABLE_XFA
-
-class ProgressiveDecoder;
-
-class ModuleMgr {
- public:
-  // Per-process singleton managed by callers.
-  static void Create();
-  static void Destroy();
-  static ModuleMgr* GetInstance();
-
-#ifdef PDF_ENABLE_XFA
-  std::unique_ptr<ProgressiveDecoder> CreateProgressiveDecoder();
-
-#ifdef PDF_ENABLE_XFA_BMP
-  BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
-  void SetBmpModule(std::unique_ptr<BmpModule> module) {
-    m_pBmpModule = std::move(module);
-  }
-#endif  // PDF_ENABLE_XFA_BMP
-#endif  // PDF_ENABLE_XFA
-
- private:
-  ModuleMgr();
-  ~ModuleMgr();
-
-#ifdef PDF_ENABLE_XFA
-#ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<BmpModule> m_pBmpModule;
-#endif  // PDF_ENABLE_XFA_BMP
-#endif  // PDF_ENABLE_XFA
-};
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 

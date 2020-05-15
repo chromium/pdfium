@@ -370,10 +370,8 @@ TEST(ProgressiveDecoder, BUG_895009) {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  ModuleMgr::Create();
   {
-    std::unique_ptr<ProgressiveDecoder> decoder =
-        ModuleMgr::GetInstance()->CreateProgressiveDecoder();
+    auto decoder = pdfium::MakeUnique<ProgressiveDecoder>();
 
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
     CFX_DIBAttribute attr;
@@ -398,7 +396,6 @@ TEST(ProgressiveDecoder, BUG_895009) {
       status = decoder->ContinueDecode();
     EXPECT_EQ(FXCODEC_STATUS_DECODE_FINISH, status);
   }
-  ModuleMgr::Destroy();
 }
 #endif  // PDF_ENABLE_XFA_GIF
 

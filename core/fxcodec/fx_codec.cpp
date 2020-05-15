@@ -6,51 +6,9 @@
 
 #include "core/fxcodec/fx_codec.h"
 
-#include <algorithm>
-#include <cmath>
-#include <memory>
-#include <utility>
-
-#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/logging.h"
-#include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
-
-namespace {
-
-ModuleMgr* g_ModuleMgr = nullptr;
-
-}  // namespace
-
-// static
-void ModuleMgr::Create() {
-  ASSERT(!g_ModuleMgr);
-  g_ModuleMgr = new ModuleMgr();
-}
-
-// static
-void ModuleMgr::Destroy() {
-  ASSERT(g_ModuleMgr);
-  delete g_ModuleMgr;
-  g_ModuleMgr = nullptr;
-}
-
-// static
-ModuleMgr* ModuleMgr::GetInstance() {
-  ASSERT(g_ModuleMgr);
-  return g_ModuleMgr;
-}
-
-ModuleMgr::ModuleMgr() {
-#ifdef PDF_ENABLE_XFA_BMP
-  SetBmpModule(pdfium::MakeUnique<BmpModule>());
-#endif
-}
-
-ModuleMgr::~ModuleMgr() = default;
 
 #ifdef PDF_ENABLE_XFA
 CFX_DIBAttribute::CFX_DIBAttribute() = default;

@@ -13,11 +13,15 @@
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "third_party/base/span.h"
 
+#ifndef PDF_ENABLE_XFA_BMP
+#error "BMP must be enabled"
+#endif
+
 namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class BmpModule final : public ProgressiveDecoderIface {
+class BmpModule {
  public:
   class Delegate {
    public:
@@ -28,25 +32,25 @@ class BmpModule final : public ProgressiveDecoderIface {
 
   enum class Status : uint8_t { kFail, kSuccess, kContinue };
 
-  BmpModule();
-  ~BmpModule() override;
-
-  // ProgressiveDecoderIface:
-  FX_FILESIZE GetAvailInput(Context* pContext) const override;
-  bool Input(Context* pContext,
-             RetainPtr<CFX_CodecMemory> codec_memory,
-             CFX_DIBAttribute* pAttribute) override;
-
-  std::unique_ptr<Context> Start(Delegate* pDelegate);
-  Status ReadHeader(Context* pContext,
-                    int32_t* width,
-                    int32_t* height,
-                    bool* tb_flag,
-                    int32_t* components,
-                    int32_t* pal_num,
-                    const std::vector<uint32_t>** palette,
+  static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
+      Delegate* pDelegate);
+  static Status ReadHeader(ProgressiveDecoderIface::Context* pContext,
+                           int32_t* width,
+                           int32_t* height,
+                           bool* tb_flag,
+                           int32_t* components,
+                           int32_t* pal_num,
+                           const std::vector<uint32_t>** palette,
+                           CFX_DIBAttribute* pAttribute);
+  static Status LoadImage(ProgressiveDecoderIface::Context* pContext);
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* pContext);
+  static bool Input(ProgressiveDecoderIface::Context* pContext,
+                    RetainPtr<CFX_CodecMemory> codec_memory,
                     CFX_DIBAttribute* pAttribute);
-  Status LoadImage(Context* pContext);
+
+  BmpModule() = delete;
+  BmpModule(const BmpModule&) = delete;
+  BmpModule& operator=(const BmpModule&) = delete;
 };
 
 }  // namespace fxcodec

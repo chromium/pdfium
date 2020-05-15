@@ -13,7 +13,6 @@
 
 #include "build/build_config.h"
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
@@ -22,6 +21,10 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+
+#ifdef PDF_ENABLE_XFA_BMP
+#include "core/fxcodec/bmp/bmp_progressive_decoder.h"
+#endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
 #include "core/fxcodec/gif/gif_progressive_decoder.h"
@@ -243,8 +246,7 @@ void ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len, int src_len) {
   }
 }
 
-ProgressiveDecoder::ProgressiveDecoder(ModuleMgr* pCodecMgr)
-    : m_pCodecMgr(pCodecMgr) {}
+ProgressiveDecoder::ProgressiveDecoder() = default;
 
 ProgressiveDecoder::~ProgressiveDecoder() = default;
 
@@ -568,8 +570,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
 bool ProgressiveDecoder::BmpInputImagePositionBuf(uint32_t rcd_pos) {
   m_offSet = rcd_pos;
   FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
-  return BmpReadMoreData(m_pCodecMgr->GetBmpModule(), m_pBmpContext.get(),
-                         &error_status);
+  return BmpReadMoreData(m_pBmpContext.get(), &error_status);
 }
 
 void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
@@ -700,22 +701,21 @@ void ProgressiveDecoder::ResampleVertBT(
 
 bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
   std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
-      pBmpModule->Start(this);
-  pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
+      BmpModule::StartDecode(this);
+  BmpModule::Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
   const std::vector<uint32_t>* palette;
-  BmpModule::Status read_result = pBmpModule->ReadHeader(
+  BmpModule::Status read_result = BmpModule::ReadHeader(
       pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
       &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
   while (read_result == BmpModule::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
-    if (!BmpReadMoreData(pBmpModule, pBmpContext.get(), &error_status)) {
+    if (!BmpReadMoreData(pBmpContext.get(), &error_status)) {
       m_status = error_status;
       return false;
     }
-    read_result = pBmpModule->ReadHeader(
+    read_result = BmpModule::ReadHeader(
         pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
         &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
   }
@@ -753,7 +753,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   }
 
   uint32_t availableData = m_pFile->GetSize() - m_offSet +
-                           pBmpModule->GetAvailInput(pBmpContext.get());
+                           BmpModule::GetAvailInput(pBmpContext.get());
   if (neededData > availableData) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
@@ -773,10 +773,10 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 }
 
 bool ProgressiveDecoder::BmpReadMoreData(
-    BmpModule* pBmpModule,
     ProgressiveDecoderIface::Context* pContext,
     FXCODEC_STATUS* err_status) {
-  return ReadMoreData(pBmpModule, pContext, false, err_status);
+  return ReadMoreData(BmpProgressiveDecoder::GetInstance(), pContext, false,
+                      err_status);
 }
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
@@ -791,17 +791,16 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
-  BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-  BmpModule::Status read_res = pBmpModule->LoadImage(m_pBmpContext.get());
+  BmpModule::Status read_res = BmpModule::LoadImage(m_pBmpContext.get());
   while (read_res == BmpModule::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-    if (!BmpReadMoreData(pBmpModule, m_pBmpContext.get(), &error_status)) {
+    if (!BmpReadMoreData(m_pBmpContext.get(), &error_status)) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
       m_status = error_status;
       return m_status;
     }
-    read_res = pBmpModule->LoadImage(m_pBmpContext.get());
+    read_res = BmpModule::LoadImage(m_pBmpContext.get());
   }
 
   m_pDeviceBitmap = nullptr;
@@ -2244,10 +2243,6 @@ FXCODEC_STATUS ProgressiveDecoder::ContinueDecode() {
     default:
       return FXCODEC_STATUS_ERROR;
   }
-}
-
-std::unique_ptr<ProgressiveDecoder> ModuleMgr::CreateProgressiveDecoder() {
-  return pdfium::MakeUnique<ProgressiveDecoder>(this);
 }
 
 }  // namespace fxcodec

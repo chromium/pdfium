@@ -11,6 +11,7 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"

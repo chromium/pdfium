@@ -37,7 +37,6 @@ class IFX_SeekableReadStream;
 namespace fxcodec {
 
 class CFX_DIBAttribute;
-class ModuleMgr;
 
 class Dummy {};  // Placeholder to work around C++ syntax issues
 
@@ -65,7 +64,7 @@ class ProgressiveDecoder :
     FXCodec_Cmyk = 0x120
   };
 
-  explicit ProgressiveDecoder(ModuleMgr* pCodecMgr);
+  ProgressiveDecoder();
   virtual ~ProgressiveDecoder();
 
   FXCODEC_STATUS LoadImageInfo(const RetainPtr<IFX_SeekableReadStream>& pFile,
@@ -176,8 +175,7 @@ class ProgressiveDecoder :
 
  private:
 #ifdef PDF_ENABLE_XFA_BMP
-  bool BmpReadMoreData(BmpModule* pBmpModule,
-                       ProgressiveDecoderIface::Context* pBmpContext,
+  bool BmpReadMoreData(ProgressiveDecoderIface::Context* pBmpContext,
                        FXCODEC_STATUS* err_status);
   bool BmpDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
@@ -243,7 +241,6 @@ class ProgressiveDecoder :
   FXCODEC_IMAGE_TYPE m_imageType = FXCODEC_IMAGE_UNKNOWN;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
-  UnownedPtr<ModuleMgr> m_pCodecMgr;
   RetainPtr<CFX_CodecMemory> m_pCodecMemory;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDecodeBuf;
   std::unique_ptr<FX_ARGB, FxFreeDeleter> m_pSrcPalette;
