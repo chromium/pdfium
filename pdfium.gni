@@ -33,7 +33,7 @@ declare_args() {
   # If XFA, also support png codec. Ignored if not XFA.
   pdf_enable_xfa_png = true
 
-  # If XFA, also support png codec. Ignored if not XFA.
+  # If XFA, also support tiff codec. Ignored if not XFA.
   pdf_enable_xfa_tiff = true
 
   # Build PDFium against Skia (experimental) rather than AGG. Use Skia to draw
