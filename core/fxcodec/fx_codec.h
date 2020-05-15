@@ -27,10 +27,6 @@
 #ifdef PDF_ENABLE_XFA_PNG
 #include "core/fxcodec/png/pngmodule.h"
 #endif  // PDF_ENABLE_XFA_PNG
-
-#ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/tiff/tiffmodule.h"
-#endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
 namespace fxcodec {
@@ -80,13 +76,6 @@ class ModuleMgr {
     m_pPngModule = std::move(module);
   }
 #endif  // PDF_ENABLE_XFA_PNG
-
-#ifdef PDF_ENABLE_XFA_TIFF
-  TiffModule* GetTiffModule() const { return m_pTiffModule.get(); }
-  void SetTiffModule(std::unique_ptr<TiffModule> module) {
-    m_pTiffModule = std::move(module);
-  }
-#endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 
  private:
@@ -105,10 +94,6 @@ class ModuleMgr {
 #ifdef PDF_ENABLE_XFA_PNG
   std::unique_ptr<PngModule> m_pPngModule;
 #endif  // PDF_ENABLE_XFA_PNG
-
-#ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<TiffModule> m_pTiffModule;
-#endif  // PDF_ENABLE_XFA_TIFF
 #endif  // PDF_ENABLE_XFA
 };
 

@@ -11,6 +11,10 @@
 
 #include "core/fxcodec/progressive_decoder_iface.h"
 
+#ifndef PDF_ENABLE_XFA_TIFF
+#error "TIFF must be enabled"
+#endif
+
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
@@ -18,25 +22,24 @@ namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class TiffModule final : public ProgressiveDecoderIface {
+class TiffModule {
  public:
-  std::unique_ptr<Context> CreateDecoder(
+  static std::unique_ptr<ProgressiveDecoderIface::Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
-  // ProgressiveDecoderIface:
-  FX_FILESIZE GetAvailInput(Context* pContext) const override;
-  bool Input(Context* pContext,
-             RetainPtr<CFX_CodecMemory> codec_memory,
-             CFX_DIBAttribute* pAttribute) override;
+  static bool LoadFrameInfo(ProgressiveDecoderIface::Context* ctx,
+                            int32_t frame,
+                            int32_t* width,
+                            int32_t* height,
+                            int32_t* comps,
+                            int32_t* bpc,
+                            CFX_DIBAttribute* pAttribute);
+  static bool Decode(ProgressiveDecoderIface::Context* ctx,
+                     const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
-  bool LoadFrameInfo(Context* ctx,
-                     int32_t frame,
-                     int32_t* width,
-                     int32_t* height,
-                     int32_t* comps,
-                     int32_t* bpc,
-                     CFX_DIBAttribute* pAttribute);
-  bool Decode(Context* ctx, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  TiffModule() = delete;
+  TiffModule(const TiffModule&) = delete;
+  TiffModule& operator=(const TiffModule&) = delete;
 };
 
 }  // namespace fxcodec

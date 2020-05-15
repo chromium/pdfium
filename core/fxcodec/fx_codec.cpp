@@ -55,10 +55,6 @@ ModuleMgr::ModuleMgr() {
 #ifdef PDF_ENABLE_XFA_PNG
   SetPngModule(pdfium::MakeUnique<PngModule>());
 #endif
-
-#ifdef PDF_ENABLE_XFA_TIFF
-  SetTiffModule(pdfium::MakeUnique<TiffModule>());
-#endif
 }
 
 ModuleMgr::~ModuleMgr() = default;

@@ -483,6 +483,7 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
 
 namespace fxcodec {
 
+// static
 std::unique_ptr<ProgressiveDecoderIface::Context> TiffModule::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = pdfium::MakeUnique<CTiffContext>();
@@ -492,19 +493,8 @@ std::unique_ptr<ProgressiveDecoderIface::Context> TiffModule::CreateDecoder(
   return pDecoder;
 }
 
-FX_FILESIZE TiffModule::GetAvailInput(Context* pContext) const {
-  NOTREACHED();
-  return 0;
-}
-
-bool TiffModule::Input(Context* pContext,
-                       RetainPtr<CFX_CodecMemory> codec_memory,
-                       CFX_DIBAttribute*) {
-  NOTREACHED();
-  return false;
-}
-
-bool TiffModule::LoadFrameInfo(Context* pContext,
+// static
+bool TiffModule::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
                                int32_t frame,
                                int32_t* width,
                                int32_t* height,
@@ -517,7 +507,8 @@ bool TiffModule::LoadFrameInfo(Context* pContext,
   return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
 }
 
-bool TiffModule::Decode(Context* pContext,
+// static
+bool TiffModule::Decode(ProgressiveDecoderIface::Context* pContext,
                         const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->Decode(pDIBitmap);

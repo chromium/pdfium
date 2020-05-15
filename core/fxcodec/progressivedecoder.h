@@ -31,10 +31,6 @@
 #include "core/fxcodec/png/pngmodule.h"
 #endif  // PDF_ENABLE_XFA_PNG
 
-#ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/tiff/tiffmodule.h"
-#endif  // PDF_ENABLE_XFA_TIFF
-
 class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
