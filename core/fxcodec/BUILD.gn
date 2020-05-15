@@ -58,6 +58,8 @@ source_set("fxcodec") {
     "jbig2/JBig2_TrdProc.h",
     "jbig2/jbig2module.cpp",
     "jbig2/jbig2module.h",
+    "jpeg/jpeg_common.cpp",
+    "jpeg/jpeg_common.h",
     "jpeg/jpegmodule.cpp",
     "jpeg/jpegmodule.h",
     "jpx/cjpx_decoder.cpp",
@@ -80,6 +82,8 @@ source_set("fxcodec") {
 
   if (pdf_enable_xfa) {
     sources += [
+      "jpeg/jpeg_progressive_decoder.cpp",
+      "jpeg/jpeg_progressive_decoder.h",
       "progressive_decoder_iface.h",
       "progressivedecoder.cpp",
       "progressivedecoder.h",

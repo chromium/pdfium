@@ -14,6 +14,7 @@
 #include "build/build_config.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
@@ -975,30 +976,29 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
 #endif  // PDF_ENABLE_XFA_GIF
 
 bool ProgressiveDecoder::JpegReadMoreData(FXCODEC_STATUS* err_status) {
-  return ReadMoreData(JpegModule::ProgressiveDecoder::GetInstance(),
+  return ReadMoreData(JpegProgressiveDecoder::GetInstance(),
                       m_pJpegContext.get(), false, err_status);
 }
 
 bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  m_pJpegContext = JpegModule::ProgressiveDecoder::Start();
+  m_pJpegContext = JpegProgressiveDecoder::Start();
   if (!m_pJpegContext) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  JpegModule::ProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
-                                                       m_pCodecMemory, nullptr);
+  JpegProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
+                                               m_pCodecMemory, nullptr);
 
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(JpegModule::ProgressiveDecoder::GetJumpMark(
-          m_pJpegContext.get())) == -1) {
+  if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
 
-  int32_t readResult = JpegModule::ProgressiveDecoder::ReadHeader(
+  int32_t readResult = JpegProgressiveDecoder::ReadHeader(
       m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
       pAttribute);
   while (readResult == 2) {
@@ -1007,7 +1007,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
       m_status = error_status;
       return false;
     }
-    readResult = JpegModule::ProgressiveDecoder::ReadHeader(
+    readResult = JpegProgressiveDecoder::ReadHeader(
         m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
         pAttribute);
   }
@@ -1026,15 +1026,14 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
   int down_scale = GetDownScale();
   // Setting jump marker before calling StartScanLine, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(JpegModule::ProgressiveDecoder::GetJumpMark(
-          m_pJpegContext.get())) == -1) {
+  if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
 
-  bool startStatus = JpegModule::ProgressiveDecoder::StartScanline(
-      m_pJpegContext.get(), down_scale);
+  bool startStatus =
+      JpegProgressiveDecoder::StartScanline(m_pJpegContext.get(), down_scale);
   while (!startStatus) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
     if (!JpegReadMoreData(&error_status)) {
@@ -1044,8 +1043,8 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
       return m_status;
     }
 
-    startStatus = JpegModule::ProgressiveDecoder::StartScanline(
-        m_pJpegContext.get(), down_scale);
+    startStatus =
+        JpegProgressiveDecoder::StartScanline(m_pJpegContext.get(), down_scale);
   }
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
@@ -1072,16 +1071,15 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
   // JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   // Setting jump marker before calling ReadScanLine, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(JpegModule::ProgressiveDecoder::GetJumpMark(
-          m_pJpegContext.get())) == -1) {
+  if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
 
   while (true) {
-    bool readRes = JpegModule::ProgressiveDecoder::ReadScanline(
-        m_pJpegContext.get(), m_pDecodeBuf.get());
+    bool readRes = JpegProgressiveDecoder::ReadScanline(m_pJpegContext.get(),
+                                                        m_pDecodeBuf.get());
     while (!readRes) {
       FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
       if (!JpegReadMoreData(&error_status)) {
@@ -1090,8 +1088,8 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
         m_status = error_status;
         return m_status;
       }
-      readRes = JpegModule::ProgressiveDecoder::ReadScanline(
-          m_pJpegContext.get(), m_pDecodeBuf.get());
+      readRes = JpegProgressiveDecoder::ReadScanline(m_pJpegContext.get(),
+                                                     m_pDecodeBuf.get());
     }
     if (m_SrcFormat == FXCodec_Rgb) {
       int src_Bpp = (m_SrcFormat & 0xff) >> 3;
