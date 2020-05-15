@@ -13,9 +13,8 @@ namespace fxcodec {
 
 class CFX_GifContextForTest final : public CFX_GifContext {
  public:
-  CFX_GifContextForTest(GifModule* gif_module, GifModule::Delegate* delegate)
-      : CFX_GifContext(gif_module, delegate) {}
-  ~CFX_GifContextForTest() override {}
+  CFX_GifContextForTest() : CFX_GifContext(nullptr) {}
+  ~CFX_GifContextForTest() override = default;
 
   using CFX_GifContext::ReadAllOrNone;
   using CFX_GifContext::ReadGifSignature;
@@ -31,7 +30,7 @@ class CFX_GifContextForTest final : public CFX_GifContext {
 
 TEST(CFX_GifContext, SetInputBuffer) {
   uint8_t buffer[] = {0x00, 0x01, 0x02};
-  CFX_GifContextForTest context(nullptr, nullptr);
+  CFX_GifContextForTest context;
 
   context.SetTestInputBuffer({nullptr, 0});
   EXPECT_EQ(0u, context.InputBuffer()->GetSize());
@@ -50,7 +49,7 @@ TEST(CFX_GifContext, ReadAllOrNone) {
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> dest_buffer;
   uint8_t src_buffer[] = {0x00, 0x01, 0x02, 0x03, 0x04,
                           0x05, 0x06, 0x07, 0x08, 0x09};
-  CFX_GifContextForTest context(nullptr, nullptr);
+  CFX_GifContextForTest context;
 
   context.SetTestInputBuffer({nullptr, 0});
   EXPECT_FALSE(context.ReadAllOrNone(nullptr, 0));
@@ -85,7 +84,7 @@ TEST(CFX_GifContext, ReadAllOrNone) {
 }
 
 TEST(CFX_GifContext, ReadGifSignature) {
-  CFX_GifContextForTest context(nullptr, nullptr);
+  CFX_GifContextForTest context;
   {
     uint8_t data[1];
     context.SetTestInputBuffer({data, 0});
@@ -143,7 +142,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
 }
 
 TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
-  CFX_GifContextForTest context(nullptr, nullptr);
+  CFX_GifContextForTest context;
   {
     uint8_t data[1];
     context.SetTestInputBuffer({data, 0});
@@ -222,7 +221,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
 }
 
 TEST(CFX_GifContext, ReadHeader) {
-  CFX_GifContextForTest context(nullptr, nullptr);
+  CFX_GifContextForTest context;
   // Bad signature
   {
     struct {

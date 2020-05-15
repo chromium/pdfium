@@ -21,7 +21,7 @@ namespace fxcodec {
 
 class CFX_GifContext : public ProgressiveDecoderIface::Context {
  public:
-  CFX_GifContext(GifModule* gif_module, GifModule::Delegate* delegate);
+  explicit CFX_GifContext(GifModule::Delegate* delegate);
   ~CFX_GifContext() override;
 
   void RecordCurrentPosition(uint32_t* cur_pos);
@@ -45,7 +45,6 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   uint32_t GetAvailInput() const;
   size_t GetFrameNum() const { return images_.size(); }
 
-  UnownedPtr<GifModule> const gif_module_;
   UnownedPtr<GifModule::Delegate> const delegate_;
   std::vector<CFX_GifPalette> global_palette_;
   uint8_t global_pal_exp_ = 0;

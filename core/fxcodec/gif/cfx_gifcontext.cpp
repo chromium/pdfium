@@ -10,8 +10,6 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/gif/cfx_gif.h"
-#include "core/fxcodec/gif/gifmodule.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -23,9 +21,8 @@ constexpr int32_t kGifInterlaceStep[4] = {8, 8, 4, 2};
 
 }  // namespace
 
-CFX_GifContext::CFX_GifContext(GifModule* gif_module,
-                               GifModule::Delegate* delegate)
-    : gif_module_(gif_module), delegate_(delegate) {}
+CFX_GifContext::CFX_GifContext(GifModule::Delegate* delegate)
+    : delegate_(delegate) {}
 
 CFX_GifContext::~CFX_GifContext() = default;
 

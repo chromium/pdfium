@@ -21,7 +21,7 @@ GifModule::~GifModule() = default;
 
 std::unique_ptr<ProgressiveDecoderIface::Context> GifModule::Start(
     Delegate* pDelegate) {
-  return pdfium::MakeUnique<CFX_GifContext>(this, pDelegate);
+  return pdfium::MakeUnique<CFX_GifContext>(pDelegate);
 }
 
 CFX_GifDecodeStatus GifModule::ReadHeader(Context* pContext,
