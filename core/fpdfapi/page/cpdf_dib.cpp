@@ -26,7 +26,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcodec/jbig2/jbig2module.h"
+#include "core/fxcodec/jbig2/jbig2_decoder.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcodec/scanlinedecoder.h"
@@ -347,12 +347,12 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
       if (m_pGlobalAcc->GetStream())
         nGlobalObjNum = m_pGlobalAcc->GetStream()->GetObjNum();
     }
-    iDecodeStatus = Jbig2Module::StartDecode(
+    iDecodeStatus = Jbig2Decoder::StartDecode(
         m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
         pSrcSpan, nSrcObjNum, pGlobalSpan, nGlobalObjNum,
         m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
   } else {
-    iDecodeStatus = Jbig2Module::ContinueDecode(m_pJbig2Context.get(), pPause);
+    iDecodeStatus = Jbig2Decoder::ContinueDecode(m_pJbig2Context.get(), pPause);
   }
 
   if (iDecodeStatus < 0) {

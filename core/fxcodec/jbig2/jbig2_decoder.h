@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_JBIG2_JBIG2MODULE_H_
-#define CORE_FXCODEC_JBIG2_JBIG2MODULE_H_
+#ifndef CORE_FXCODEC_JBIG2_JBIG2_DECODER_H_
+#define CORE_FXCODEC_JBIG2_JBIG2_DECODER_H_
 
 #include <memory>
 
@@ -35,7 +35,7 @@ class Jbig2Context {
   std::unique_ptr<CJBig2_Context> m_pContext;
 };
 
-class Jbig2Module {
+class Jbig2Decoder {
  public:
   static FXCODEC_STATUS StartDecode(
       Jbig2Context* pJbig2Context,
@@ -53,14 +53,14 @@ class Jbig2Module {
   static FXCODEC_STATUS ContinueDecode(Jbig2Context* pJbig2Context,
                                        PauseIndicatorIface* pPause);
 
-  Jbig2Module() = delete;
-  Jbig2Module(const Jbig2Module&) = delete;
-  Jbig2Module& operator=(const Jbig2Module&) = delete;
+  Jbig2Decoder() = delete;
+  Jbig2Decoder(const Jbig2Decoder&) = delete;
+  Jbig2Decoder& operator=(const Jbig2Decoder&) = delete;
 };
 
 }  // namespace fxcodec
 
 using Jbig2Context = fxcodec::Jbig2Context;
-using Jbig2Module = fxcodec::Jbig2Module;
+using Jbig2Decoder = fxcodec::Jbig2Decoder;
 
-#endif  // CORE_FXCODEC_JBIG2_JBIG2MODULE_H_
+#endif  // CORE_FXCODEC_JBIG2_JBIG2_DECODER_H_

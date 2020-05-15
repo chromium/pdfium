@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/jbig2/jbig2module.h"
+#include "core/fxcodec/jbig2/jbig2_decoder.h"
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
@@ -44,7 +44,7 @@ Jbig2Context::Jbig2Context() = default;
 Jbig2Context::~Jbig2Context() = default;
 
 // static
-FXCODEC_STATUS Jbig2Module::StartDecode(
+FXCODEC_STATUS Jbig2Decoder::StartDecode(
     Jbig2Context* pJbig2Context,
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
     uint32_t width,
@@ -78,8 +78,8 @@ FXCODEC_STATUS Jbig2Module::StartDecode(
 }
 
 // static
-FXCODEC_STATUS Jbig2Module::ContinueDecode(Jbig2Context* pJbig2Context,
-                                           PauseIndicatorIface* pPause) {
+FXCODEC_STATUS Jbig2Decoder::ContinueDecode(Jbig2Context* pJbig2Context,
+                                            PauseIndicatorIface* pPause) {
   bool succeeded = pJbig2Context->m_pContext->Continue(pPause);
   return Decode(pJbig2Context, succeeded);
 }
