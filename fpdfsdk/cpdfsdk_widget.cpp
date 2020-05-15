@@ -464,6 +464,11 @@ WideString CPDFSDK_Widget::GetDefaultValue() const {
   return pFormField->GetDefaultValue();
 }
 
+WideString CPDFSDK_Widget::GetExportValue() const {
+  CPDF_FormControl* pFormCtrl = GetFormControl();
+  return pFormCtrl->GetExportValue();
+}
+
 WideString CPDFSDK_Widget::GetOptionLabel(int nIndex) const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetOptionLabel(nIndex);

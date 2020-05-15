@@ -50,7 +50,10 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetFocusableSubtypes);
     CHK(FPDFAnnot_GetFocusableSubtypesCount);
     CHK(FPDFAnnot_GetFontSize);
+    CHK(FPDFAnnot_GetFormControlCount);
+    CHK(FPDFAnnot_GetFormControlIndex);
     CHK(FPDFAnnot_GetFormFieldAtPoint);
+    CHK(FPDFAnnot_GetFormFieldExportValue);
     CHK(FPDFAnnot_GetFormFieldFlags);
     CHK(FPDFAnnot_GetFormFieldName);
     CHK(FPDFAnnot_GetFormFieldType);

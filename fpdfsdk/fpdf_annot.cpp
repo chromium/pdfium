@@ -272,6 +272,27 @@ CPDF_FormField* GetFormField(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
   return pPDFForm->GetFieldByDict(pAnnotDict);
 }
 
+CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
+                                               FPDF_ANNOTATION annot) {
+  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!pAnnotDict)
+    return nullptr;
+
+  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  if (!pForm)
+    return nullptr;
+
+  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+  CPDF_FormField* pFormField = pPDFForm->GetFieldByDict(pAnnotDict);
+  if (!pFormField || (pFormField->GetType() != CPDF_FormField::kCheckBox &&
+                      pFormField->GetType() != CPDF_FormField::kRadioButton)) {
+    return nullptr;
+  }
+
+  CPDF_FormControl* pFormControl = pPDFForm->GetControlByDict(pAnnotDict);
+  return pFormControl ? pForm->GetWidget(pFormControl) : nullptr;
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -1105,29 +1126,7 @@ FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_IsChecked(FPDF_FORMHANDLE hHandle,
                                                         FPDF_ANNOTATION annot) {
-  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
-  if (!pForm)
-    return false;
-
-  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
-  if (!pAnnotDict)
-    return false;
-
-  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
-  CPDF_FormField* pFormField = pPDFForm->GetFieldByDict(pAnnotDict);
-  if (!pFormField)
-    return false;
-
-  if (pFormField->GetType() != CPDF_FormField::kCheckBox &&
-      pFormField->GetType() != CPDF_FormField::kRadioButton) {
-    return false;
-  }
-
-  CPDF_FormControl* pFormControl = pPDFForm->GetControlByDict(pAnnotDict);
-  if (!pFormControl)
-    return false;
-
-  CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
+  CPDFSDK_Widget* pWidget = GetRadioButtonOrCheckBoxWidget(hHandle, annot);
   return pWidget && pWidget->IsChecked();
 }
 
@@ -1198,4 +1197,39 @@ FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFAnnot_GetLink(FPDF_ANNOTATION annot) {
 
   return FPDFLinkFromCPDFDictionary(
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict());
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFAnnot_GetFormControlCount(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
+  CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  return pFormField ? pFormField->CountControls() : -1;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFAnnot_GetFormControlIndex(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
+  CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!pAnnotDict)
+    return -1;
+
+  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  if (!pForm)
+    return -1;
+
+  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+  CPDF_FormField* pFormField = pPDFForm->GetFieldByDict(pAnnotDict);
+  CPDF_FormControl* pFormControl = pPDFForm->GetControlByDict(pAnnotDict);
+  return pFormField ? pFormField->GetControlIndex(pFormControl) : -1;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
+                                  FPDF_ANNOTATION annot,
+                                  FPDF_WCHAR* buffer,
+                                  unsigned long buflen) {
+  CPDFSDK_Widget* pWidget = GetRadioButtonOrCheckBoxWidget(hHandle, annot);
+  if (!pWidget)
+    return 0;
+
+  return Utf16EncodeMaybeCopyAndReturnLength(pWidget->GetExportValue(), buffer,
+                                             buflen);
 }

@@ -2776,3 +2776,184 @@ TEST_F(FPDFAnnotEmbedderTest, GetLinkFromAnnotation) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountRadioButton) {
+  // Open a file with radio button widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Checks for bad annot.
+    EXPECT_EQ(-1,
+              FPDFAnnot_GetFormControlCount(form_handle(), /*annot=*/nullptr));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ASSERT_TRUE(annot);
+
+    // Checks for bad form handle.
+    EXPECT_EQ(-1,
+              FPDFAnnot_GetFormControlCount(/*hHandle=*/nullptr, annot.get()));
+
+    EXPECT_EQ(3, FPDFAnnot_GetFormControlCount(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountCheckBox) {
+  // Open a file with checkbox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(1, FPDFAnnot_GetFormControlCount(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountInvalidAnnotation) {
+  // Open a file with ink annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(-1, FPDFAnnot_GetFormControlCount(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexRadioButton) {
+  // Open a file with radio button widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Checks for bad annot.
+    EXPECT_EQ(-1,
+              FPDFAnnot_GetFormControlIndex(form_handle(), /*annot=*/nullptr));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ASSERT_TRUE(annot);
+
+    // Checks for bad form handle.
+    EXPECT_EQ(-1,
+              FPDFAnnot_GetFormControlIndex(/*hHandle=*/nullptr, annot.get()));
+
+    EXPECT_EQ(1, FPDFAnnot_GetFormControlIndex(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexCheckBox) {
+  // Open a file with checkbox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(0, FPDFAnnot_GetFormControlIndex(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexInvalidAnnotation) {
+  // Open a file with ink annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(-1, FPDFAnnot_GetFormControlIndex(form_handle(), annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueRadioButton) {
+  // Open a file with radio button widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Checks for bad annot.
+    EXPECT_EQ(0u, FPDFAnnot_GetFormFieldExportValue(
+                      form_handle(), /*annot=*/nullptr,
+                      /*buffer=*/nullptr, /*buflen=*/0));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 6));
+    ASSERT_TRUE(annot);
+
+    // Checks for bad form handle.
+    EXPECT_EQ(0u, FPDFAnnot_GetFormFieldExportValue(
+                      /*hHandle=*/nullptr, annot.get(),
+                      /*buffer=*/nullptr, /*buflen=*/0));
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldExportValue(form_handle(), annot.get(),
+                                          /*buffer=*/nullptr, /*buflen=*/0);
+    ASSERT_EQ(14u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(14u, FPDFAnnot_GetFormFieldExportValue(form_handle(), annot.get(),
+                                                     buf.data(), length_bytes));
+    EXPECT_EQ(L"value2", GetPlatformWString(buf.data()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueCheckBox) {
+  // Open a file with checkbox widget annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    unsigned long length_bytes =
+        FPDFAnnot_GetFormFieldExportValue(form_handle(), annot.get(),
+                                          /*buffer=*/nullptr, /*buflen=*/0);
+    ASSERT_EQ(8u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(8u, FPDFAnnot_GetFormFieldExportValue(form_handle(), annot.get(),
+                                                    buf.data(), length_bytes));
+    EXPECT_EQ(L"Yes", GetPlatformWString(buf.data()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueInvalidAnnotation) {
+  // Open a file with ink annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(0u, FPDFAnnot_GetFormFieldExportValue(form_handle(), annot.get(),
+                                                    /*buffer=*/nullptr,
+                                                    /*buflen=*/0));
+  }
+
+  UnloadPage(page);
+}
