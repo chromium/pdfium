@@ -9,7 +9,6 @@
 
 #include "fxjs/cfx_v8.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 bool getter_sentinel = false;
@@ -25,13 +24,13 @@ FXV8UnitTest::FXV8UnitTest() = default;
 FXV8UnitTest::~FXV8UnitTest() = default;
 
 void FXV8UnitTest::SetUp() {
-  array_buffer_allocator_ = pdfium::MakeUnique<CFX_V8ArrayBufferAllocator>();
+  array_buffer_allocator_ = std::make_unique<CFX_V8ArrayBufferAllocator>();
 
   v8::Isolate::CreateParams params;
   params.array_buffer_allocator = array_buffer_allocator_.get();
   isolate_.reset(v8::Isolate::New(params));
 
-  cfx_v8_ = pdfium::MakeUnique<CFX_V8>(isolate_.get());
+  cfx_v8_ = std::make_unique<CFX_V8>(isolate_.get());
 }
 
 TEST_F(FXV8UnitTest, EmptyLocal) {

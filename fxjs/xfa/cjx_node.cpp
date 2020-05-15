@@ -17,7 +17,6 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -269,7 +268,7 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   if (params.size() >= 3)
     bOverwrite = runtime->ToBoolean(params[2]);
 
-  auto pParser = pdfium::MakeUnique<CXFA_DocumentParser>(GetDocument());
+  auto pParser = std::make_unique<CXFA_DocumentParser>(GetDocument());
   CFX_XMLNode* pXMLNode = pParser->ParseXMLData(expression);
   if (!pXMLNode)
     return CJS_Result::Success();

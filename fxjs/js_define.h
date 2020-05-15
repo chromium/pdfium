@@ -7,6 +7,7 @@
 #ifndef FXJS_JS_DEFINE_H_
 #define FXJS_JS_DEFINE_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -44,7 +45,7 @@ bool IsExpandedParamKnown(v8::Local<v8::Value> value);
 template <class T>
 static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
   pEngine->SetObjectPrivate(
-      obj, pdfium::MakeUnique<T>(obj, static_cast<CJS_Runtime*>(pEngine)));
+      obj, std::make_unique<T>(obj, static_cast<CJS_Runtime*>(pEngine)));
 }
 
 // CJS_Object has virtual dtor, template not required.

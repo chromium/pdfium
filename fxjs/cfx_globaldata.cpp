@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "core/fdrm/fx_crypt.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -139,7 +138,7 @@ void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
     pData->data.dData = dData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
+  auto pNewData = std::make_unique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::NUMBER;
   pNewData->data.dData = dData;
@@ -157,7 +156,7 @@ void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
     pData->data.bData = bData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
+  auto pNewData = std::make_unique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::BOOLEAN;
   pNewData->data.bData = bData;
@@ -175,7 +174,7 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
     pData->data.sData = sData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
+  auto pNewData = std::make_unique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::STRING;
   pNewData->data.sData = sData;
@@ -194,7 +193,7 @@ void CFX_GlobalData::SetGlobalVariableObject(
     pData->data.objData = std::move(array);
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
+  auto pNewData = std::make_unique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::OBJECT;
   pNewData->data.objData = std::move(array);
@@ -210,7 +209,7 @@ void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
     pData->data.nType = CFX_Value::DataType::NULLOBJ;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
+  auto pNewData = std::make_unique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));

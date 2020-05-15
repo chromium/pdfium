@@ -14,7 +14,6 @@
 #include "fxjs/global_timer.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #define JS_STR_VIEWERTYPE L"pdfium"
@@ -302,7 +301,7 @@ CJS_Result CJS_App::setInterval(
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
 
   uint32_t dwInterval = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
-  auto timerRef = pdfium::MakeUnique<GlobalTimer>(
+  auto timerRef = std::make_unique<GlobalTimer>(
       this, pRuntime, GlobalTimer::Type::kRepeating, script, dwInterval, 0);
   GlobalTimer* pTimerRef = timerRef.get();
   m_Timers.insert(std::move(timerRef));
@@ -330,9 +329,9 @@ CJS_Result CJS_App::setTimeOut(
     return CJS_Result::Failure(JSMessage::kInvalidInputError);
 
   uint32_t dwTimeOut = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
-  auto timerRef = pdfium::MakeUnique<GlobalTimer>(this, pRuntime,
-                                                  GlobalTimer::Type::kOneShot,
-                                                  script, dwTimeOut, dwTimeOut);
+  auto timerRef =
+      std::make_unique<GlobalTimer>(this, pRuntime, GlobalTimer::Type::kOneShot,
+                                    script, dwTimeOut, dwTimeOut);
   GlobalTimer* pTimerRef = timerRef.get();
   m_Timers.insert(std::move(timerRef));
 

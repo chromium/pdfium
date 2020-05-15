@@ -7,7 +7,6 @@
 #include "fxjs/cjs_runtimestub.h"
 
 #include "fxjs/cjs_event_context_stub.h"
-#include "third_party/base/ptr_util.h"
 
 CJS_RuntimeStub::CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv) {}
@@ -16,7 +15,7 @@ CJS_RuntimeStub::~CJS_RuntimeStub() = default;
 
 IJS_EventContext* CJS_RuntimeStub::NewEventContext() {
   if (!m_pContext)
-    m_pContext = pdfium::MakeUnique<CJS_EventContextStub>();
+    m_pContext = std::make_unique<CJS_EventContextStub>();
   return m_pContext.get();
 }
 

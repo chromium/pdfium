@@ -21,7 +21,6 @@
 #include "fxjs/xfa/cjx_field.h"
 #include "fxjs/xfa/cjx_instancemanager.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -820,7 +819,7 @@ void CJX_Object::SetUserData(
 
 XFA_MAPMODULEDATA* CJX_Object::CreateMapModuleData() {
   if (!map_module_data_)
-    map_module_data_ = pdfium::MakeUnique<XFA_MAPMODULEDATA>();
+    map_module_data_ = std::make_unique<XFA_MAPMODULEDATA>();
   return map_module_data_.get();
 }
 

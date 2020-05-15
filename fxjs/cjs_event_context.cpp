@@ -12,11 +12,10 @@
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/ptr_util.h"
 
 CJS_EventContext::CJS_EventContext(CJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime),
-      m_pEventRecorder(pdfium::MakeUnique<CJS_EventRecorder>()) {
+      m_pEventRecorder(std::make_unique<CJS_EventRecorder>()) {
   ASSERT(pRuntime);
 }
 

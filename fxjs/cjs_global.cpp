@@ -19,7 +19,6 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -407,7 +406,7 @@ void CJS_Global::ObjectToArray(
     v8::Local<v8::Value> v =
         pRuntime->GetObjectProperty(pObj, sKey.AsStringView());
     if (v->IsNumber()) {
-      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
+      auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::NUMBER;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToDouble(v);
@@ -415,7 +414,7 @@ void CJS_Global::ObjectToArray(
       continue;
     }
     if (v->IsBoolean()) {
-      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
+      auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::BOOLEAN;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToBoolean(v);
@@ -424,7 +423,7 @@ void CJS_Global::ObjectToArray(
     }
     if (v->IsString()) {
       ByteString sValue = pRuntime->ToWideString(v).ToDefANSI();
-      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
+      auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::STRING;
       pObjElement->sKey = sKey;
       pObjElement->sData = sValue;
@@ -432,7 +431,7 @@ void CJS_Global::ObjectToArray(
       continue;
     }
     if (v->IsObject()) {
-      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
+      auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::OBJECT;
       pObjElement->sKey = sKey;
       ObjectToArray(pRuntime, pRuntime->ToObject(v), &pObjElement->objData);
@@ -440,7 +439,7 @@ void CJS_Global::ObjectToArray(
       continue;
     }
     if (v->IsNull()) {
-      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
+      auto pObjElement = std::make_unique<CFX_KeyValue>();
       pObjElement->nType = CFX_Value::DataType::NULLOBJ;
       pObjElement->sKey = sKey;
       pArray->push_back(std::move(pObjElement));
@@ -533,7 +532,7 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
     return CJS_Result::Success();
   }
 
-  auto pNewData = pdfium::MakeUnique<JSGlobalData>();
+  auto pNewData = std::make_unique<JSGlobalData>();
   switch (nType) {
     case CFX_Value::DataType::NUMBER:
       pNewData->nType = CFX_Value::DataType::NUMBER;

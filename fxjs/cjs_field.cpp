@@ -25,7 +25,6 @@
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_icon.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -2376,7 +2375,7 @@ CJS_Result CJS_Field::getArray(
 
   std::vector<std::unique_ptr<WideString>> swSort;
   for (CPDF_FormField* pFormField : FieldArray) {
-    swSort.push_back(pdfium::MakeUnique<WideString>(pFormField->GetFullName()));
+    swSort.push_back(std::make_unique<WideString>(pFormField->GetFullName()));
   }
 
   std::sort(swSort.begin(), swSort.end(),
@@ -2581,28 +2580,28 @@ CJS_Result CJS_Field::signatureValidate(
 
 void CJS_Field::AddDelay_Int(FIELD_PROP prop, int32_t n) {
   auto pNewData =
-      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
+      std::make_unique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->num = n;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void CJS_Field::AddDelay_Bool(FIELD_PROP prop, bool b) {
   auto pNewData =
-      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
+      std::make_unique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->b = b;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void CJS_Field::AddDelay_String(FIELD_PROP prop, const ByteString& str) {
   auto pNewData =
-      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
+      std::make_unique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->bytestring = str;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void CJS_Field::AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect) {
   auto pNewData =
-      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
+      std::make_unique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->rect = rect;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
@@ -2610,7 +2609,7 @@ void CJS_Field::AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect) {
 void CJS_Field::AddDelay_WordArray(FIELD_PROP prop,
                                    const std::vector<uint32_t>& array) {
   auto pNewData =
-      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
+      std::make_unique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->wordarray = array;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
@@ -2618,7 +2617,7 @@ void CJS_Field::AddDelay_WordArray(FIELD_PROP prop,
 void CJS_Field::AddDelay_WideStringArray(FIELD_PROP prop,
                                          const std::vector<WideString>& array) {
   auto pNewData =
-      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
+      std::make_unique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->widestringarray = array;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }

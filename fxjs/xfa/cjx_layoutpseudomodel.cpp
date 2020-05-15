@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_layoutpseudomodel.h"
 
+#include <memory>
 #include <set>
 #include <utility>
 
@@ -14,7 +15,6 @@
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
@@ -370,7 +370,7 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
     return CJS_Result::Success();
 
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
-  auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(GetDocument());
+  auto pArrayNodeList = std::make_unique<CXFA_ArrayNodeList>(GetDocument());
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
 

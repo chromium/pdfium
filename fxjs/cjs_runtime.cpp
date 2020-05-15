@@ -38,7 +38,6 @@
 #include "fxjs/cjs_zoomtype.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"
-#include "third_party/base/ptr_util.h"
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv) {
@@ -121,7 +120,7 @@ void CJS_Runtime::DefineJSObjects() {
 }
 
 IJS_EventContext* CJS_Runtime::NewEventContext() {
-  m_EventContextArray.push_back(pdfium::MakeUnique<CJS_EventContext>(this));
+  m_EventContextArray.push_back(std::make_unique<CJS_EventContext>(this));
   return m_EventContextArray.back().get();
 }
 

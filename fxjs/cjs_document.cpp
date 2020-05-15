@@ -1254,7 +1254,7 @@ CJS_Result CJS_Document::getPageNthWord(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, pPageDict);
-  page->SetRenderCache(pdfium::MakeUnique<CPDF_PageRenderCache>(page.Get()));
+  page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
   page->ParseContent();
 
   int nWords = 0;
@@ -1309,7 +1309,7 @@ CJS_Result CJS_Document::getPageNumWords(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, pPageDict);
-  page->SetRenderCache(pdfium::MakeUnique<CPDF_PageRenderCache>(page.Get()));
+  page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
   page->ParseContent();
 
   int nWords = 0;

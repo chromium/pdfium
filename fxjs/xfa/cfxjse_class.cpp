@@ -16,7 +16,6 @@
 #include "fxjs/xfa/cfxjse_context.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/ptr_util.h"
 
 using pdfium::fxjse::kClassTag;
 using pdfium::fxjse::kFuncTag;
@@ -187,7 +186,7 @@ void NamedPropertyQueryCallback(
   v8::HandleScope scope(info.GetIsolate());
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpThisValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   if (DynPropQueryAdapter(lpClass, lpThisValue.get(), szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
@@ -208,9 +207,9 @@ void NamedPropertyGetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpThisValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
-  auto lpNewValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
   DynPropGetterAdapter(info.GetIsolate(), lpClass, lpThisValue.get(),
                        szFxPropName, lpNewValue.get());
   info.GetReturnValue().Set(lpNewValue->DirectGetValue());
@@ -228,9 +227,9 @@ void NamedPropertySetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpThisValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
-  auto lpNewValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate());
   lpNewValue->ForceSetValue(value);
   DynPropSetterAdapter(lpClass, lpThisValue.get(), szFxPropName,
                        lpNewValue.get());
@@ -273,7 +272,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
     return pExistingClass;
 
   v8::Isolate* pIsolate = lpContext->GetIsolate();
-  auto pClass = pdfium::MakeUnique<CFXJSE_Class>(lpContext);
+  auto pClass = std::make_unique<CFXJSE_Class>(lpContext);
   pClass->m_szClassName = lpClassDefinition->name;
   pClass->m_lpClassDefinition = lpClassDefinition;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);

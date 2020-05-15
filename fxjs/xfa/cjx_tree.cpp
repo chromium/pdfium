@@ -6,12 +6,12 @@
 
 #include "fxjs/xfa/cjx_tree.h"
 
+#include <memory>
 #include <vector>
 
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -69,7 +69,7 @@ CJS_Result CJX_Tree::resolveNode(
     return CJS_Result::Success(runtime->NewNull());
   }
 
-  auto pValue = pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
+  auto pValue = std::make_unique<CFXJSE_Value>(pScriptContext->GetIsolate());
   CJX_Object* jsObject = resolveNodeRS.objects.front()->JSObject();
   (*resolveNodeRS.script_attribute.callback)(
       jsObject, pValue.get(), false, resolveNodeRS.script_attribute.attribute);
@@ -88,7 +88,7 @@ CJS_Result CJX_Tree::resolveNodes(
     refNode = GetDocument()->GetScriptContext()->GetThisObject();
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
-  auto pValue = pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
+  auto pValue = std::make_unique<CFXJSE_Value>(pScriptContext->GetIsolate());
   ResolveNodeList(pValue.get(), runtime->ToWideString(params[0]),
                   XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                       XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
@@ -218,7 +218,7 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
         resolveNodeRS.script_attribute.eValueType == XFA_ScriptType::Object) {
       for (auto& pObject : resolveNodeRS.objects) {
         auto innerValue =
-            pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
+            std::make_unique<CFXJSE_Value>(pScriptContext->GetIsolate());
         CJX_Object* jsObject = pObject->JSObject();
         (*resolveNodeRS.script_attribute.callback)(
             jsObject, innerValue.get(), false,
