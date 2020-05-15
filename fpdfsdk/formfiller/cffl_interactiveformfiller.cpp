@@ -23,7 +23,6 @@
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
@@ -477,27 +476,27 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetOrCreateFormFiller(
   switch (pWidget->GetFieldType()) {
     case FormFieldType::kPushButton:
       pFormFiller =
-          pdfium::MakeUnique<CFFL_PushButton>(m_pFormFillEnv.Get(), pWidget);
+          std::make_unique<CFFL_PushButton>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kCheckBox:
       pFormFiller =
-          pdfium::MakeUnique<CFFL_CheckBox>(m_pFormFillEnv.Get(), pWidget);
+          std::make_unique<CFFL_CheckBox>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kRadioButton:
       pFormFiller =
-          pdfium::MakeUnique<CFFL_RadioButton>(m_pFormFillEnv.Get(), pWidget);
+          std::make_unique<CFFL_RadioButton>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kTextField:
       pFormFiller =
-          pdfium::MakeUnique<CFFL_TextField>(m_pFormFillEnv.Get(), pWidget);
+          std::make_unique<CFFL_TextField>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kListBox:
       pFormFiller =
-          pdfium::MakeUnique<CFFL_ListBox>(m_pFormFillEnv.Get(), pWidget);
+          std::make_unique<CFFL_ListBox>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kComboBox:
       pFormFiller =
-          pdfium::MakeUnique<CFFL_ComboBox>(m_pFormFillEnv.Get(), pWidget);
+          std::make_unique<CFFL_ComboBox>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kUnknown:
     default:
@@ -976,5 +975,5 @@ CFFL_PrivateData::~CFFL_PrivateData() = default;
 
 std::unique_ptr<IPWL_SystemHandler::PerWindowData> CFFL_PrivateData::Clone()
     const {
-  return pdfium::MakeUnique<CFFL_PrivateData>(*this);
+  return std::make_unique<CFFL_PrivateData>(*this);
 }

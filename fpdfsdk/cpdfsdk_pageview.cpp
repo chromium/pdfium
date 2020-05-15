@@ -510,7 +510,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   bool bUpdateAP = CPDF_InteractiveForm::IsUpdateAPEnabled();
   // Disable the default AP construction.
   CPDF_InteractiveForm::SetUpdateAP(false);
-  m_pAnnotList = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
+  m_pAnnotList = std::make_unique<CPDF_AnnotList>(pPage);
   CPDF_InteractiveForm::SetUpdateAP(bUpdateAP);
 
   const size_t nCount = m_pAnnotList->Count();

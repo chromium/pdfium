@@ -6,6 +6,7 @@
 
 #include "public/fpdf_edit.h"
 
+#include <memory>
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_dib.h"
@@ -19,7 +20,6 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -95,7 +95,7 @@ FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
   if (!pDoc)
     return nullptr;
 
-  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  auto pImageObj = std::make_unique<CPDF_ImageObject>();
   pImageObj->SetImage(pdfium::MakeRetain<CPDF_Image>(pDoc));
 
   // Caller takes ownership.

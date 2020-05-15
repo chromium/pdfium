@@ -24,7 +24,6 @@
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fxjs/ijs_runtime.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
@@ -325,14 +324,14 @@ CPDFSDK_AnnotHandlerMgr* CPDFSDK_FormFillEnvironment::GetAnnotHandlerMgr() {
 
 CPDFSDK_ActionHandler* CPDFSDK_FormFillEnvironment::GetActionHandler() {
   if (!m_pActionHandler)
-    m_pActionHandler = pdfium::MakeUnique<CPDFSDK_ActionHandler>();
+    m_pActionHandler = std::make_unique<CPDFSDK_ActionHandler>();
   return m_pActionHandler.get();
 }
 
 CFFL_InteractiveFormFiller*
 CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
   if (!m_pFormFiller)
-    m_pFormFiller = pdfium::MakeUnique<CFFL_InteractiveFormFiller>(this);
+    m_pFormFiller = std::make_unique<CFFL_InteractiveFormFiller>(this);
   return m_pFormFiller.get();
 }
 
@@ -577,7 +576,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
   if (!renew)
     return nullptr;
 
-  auto pNew = pdfium::MakeUnique<CPDFSDK_PageView>(this, pUnderlyingPage);
+  auto pNew = std::make_unique<CPDFSDK_PageView>(this, pUnderlyingPage);
   CPDFSDK_PageView* pPageView = pNew.get();
   m_PageMap[pUnderlyingPage] = std::move(pNew);
 
@@ -666,7 +665,7 @@ IPDF_Page* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
 
 CPDFSDK_InteractiveForm* CPDFSDK_FormFillEnvironment::GetInteractiveForm() {
   if (!m_pInteractiveForm)
-    m_pInteractiveForm = pdfium::MakeUnique<CPDFSDK_InteractiveForm>(this);
+    m_pInteractiveForm = std::make_unique<CPDFSDK_InteractiveForm>(this);
   return m_pInteractiveForm.get();
 }
 
@@ -777,7 +776,7 @@ void CPDFSDK_FormFillEnvironment::SendOnFocusChange(
 
   CPDF_Dictionary* annot_dict = (*pAnnot)->GetPDFAnnot()->GetAnnotDict();
 
-  auto focused_annot = pdfium::MakeUnique<CPDF_AnnotContext>(annot_dict, page);
+  auto focused_annot = std::make_unique<CPDF_AnnotContext>(annot_dict, page);
   FPDF_ANNOTATION fpdf_annot =
       FPDFAnnotationFromCPDFAnnotContext(focused_annot.get());
 

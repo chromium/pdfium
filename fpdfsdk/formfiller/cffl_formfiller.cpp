@@ -14,7 +14,6 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "third_party/base/ptr_util.h"
 
 CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDFSDK_Widget* pWidget)
@@ -343,7 +342,7 @@ CPWL_Wnd* CFFL_FormFiller::GetPWLWindow(CPDFSDK_PageView* pPageView,
       return nullptr;
 
     CPWL_Wnd::CreateParams cp = GetCreateParam();
-    auto pPrivateData = pdfium::MakeUnique<CFFL_PrivateData>();
+    auto pPrivateData = std::make_unique<CFFL_PrivateData>();
     pPrivateData->pWidget.Reset(m_pWidget.Get());
     pPrivateData->pPageView = pPageView;
     pPrivateData->nWidgetAppearanceAge = m_pWidget->GetAppearanceAge();

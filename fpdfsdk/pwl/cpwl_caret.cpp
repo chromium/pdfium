@@ -12,7 +12,6 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/ptr_util.h"
 
 CPWL_Caret::CPWL_Caret(
     const CreateParams& cp,
@@ -85,8 +84,8 @@ void CPWL_Caret::SetCaret(bool bVisible,
 
     m_ptHead = ptHead;
     m_ptFoot = ptFoot;
-    m_pTimer = pdfium::MakeUnique<CFX_Timer>(GetTimerHandler(), this,
-                                             kCaretFlashIntervalMs);
+    m_pTimer = std::make_unique<CFX_Timer>(GetTimerHandler(), this,
+                                           kCaretFlashIntervalMs);
 
     if (!CPWL_Wnd::SetVisible(true))
       return;

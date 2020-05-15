@@ -21,7 +21,6 @@
 #include "core/fpdftext/cpdf_textpagefind.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #if defined(OS_WIN)
@@ -49,7 +48,7 @@ FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page) {
 
   CPDF_ViewerPreferences viewRef(pPDFPage->GetDocument());
   auto textpage =
-      pdfium::MakeUnique<CPDF_TextPage>(pPDFPage, viewRef.IsDirectionR2L());
+      std::make_unique<CPDF_TextPage>(pPDFPage, viewRef.IsDirectionR2L());
 
   // Caller takes ownership.
   return FPDFTextPageFromCPDFTextPage(textpage.release());
@@ -490,7 +489,7 @@ FPDFLink_LoadWebLinks(FPDF_TEXTPAGE text_page) {
     return nullptr;
 
   CPDF_TextPage* pPage = CPDFTextPageFromFPDFTextPage(text_page);
-  auto pageLink = pdfium::MakeUnique<CPDF_LinkExtract>(pPage);
+  auto pageLink = std::make_unique<CPDF_LinkExtract>(pPage);
   pageLink->ExtractLinks();
 
   // Caller takes ownership.

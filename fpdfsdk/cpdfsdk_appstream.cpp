@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/cpdfsdk_appstream.h"
 
+#include <memory>
 #include <utility>
 
 #include "constants/form_flags.h"
@@ -30,7 +31,6 @@
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_icon.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -690,7 +690,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   CPWL_Wnd::CreateParams cp;
   cp.dwFlags = PWS_VISIBLE;
 
-  CPWL_Icon icon(cp, pdfium::MakeUnique<CPDF_Icon>(pIconStream), &fit);
+  CPWL_Icon icon(cp, std::make_unique<CPDF_Icon>(pIconStream), &fit);
   icon.Realize();
   if (!icon.Move(rcIcon, false, false))
     return ByteString();
@@ -742,7 +742,7 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                   ButtonStyle nLayOut) {
   const float fAutoFontScale = 1.0f / 3.0f;
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->SetFontMap(pFontMap);
   pEdit->SetAlignmentH(1, true);
   pEdit->SetAlignmentV(1, true);
@@ -1572,7 +1572,7 @@ void CPDFSDK_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
                        widget_->GetPDFAnnot()->GetAnnotDict());
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
 
@@ -1638,7 +1638,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
   CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
                        widget_->GetPDFAnnot()->GetAnnotDict());
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
   pEdit->SetPlateRect(CFX_FloatRect(rcClient.left, 0.0f, rcClient.right, 0.0f));
@@ -1722,7 +1722,7 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
   CBA_FontMap font_map(widget_->GetPDFPage()->GetDocument(),
                        widget_->GetPDFAnnot()->GetAnnotDict());
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  auto pEdit = std::make_unique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
 

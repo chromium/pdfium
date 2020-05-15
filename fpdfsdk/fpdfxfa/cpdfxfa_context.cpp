@@ -20,7 +20,6 @@
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -82,7 +81,7 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
 
 CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
-      m_pXFAApp(pdfium::MakeUnique<CXFA_FFApp>(this)),
+      m_pXFAApp(std::make_unique<CXFA_FFApp>(this)),
       m_DocEnv(this) {
   ASSERT(m_pPDFDoc);
 }

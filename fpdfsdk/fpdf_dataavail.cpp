@@ -18,7 +18,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
-#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
@@ -116,11 +115,11 @@ class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
 class FPDF_AvailContext {
  public:
   FPDF_AvailContext(FX_FILEAVAIL* file_avail, FPDF_FILEACCESS* file)
-      : file_avail_(pdfium::MakeUnique<FPDF_FileAvailContext>(file_avail)),
+      : file_avail_(std::make_unique<FPDF_FileAvailContext>(file_avail)),
         file_read_(pdfium::MakeRetain<FPDF_FileAccessContext>(file)),
-        data_avail_(pdfium::MakeUnique<CPDF_DataAvail>(file_avail_.get(),
-                                                       file_read_,
-                                                       true)) {}
+        data_avail_(std::make_unique<CPDF_DataAvail>(file_avail_.get(),
+                                                     file_read_,
+                                                     true)) {}
   ~FPDF_AvailContext() = default;
 
   CPDF_DataAvail* data_avail() { return data_avail_.get(); }
@@ -139,7 +138,7 @@ FPDF_AvailContext* FPDFAvailContextFromFPDFAvail(FPDF_AVAIL avail) {
 
 FPDF_EXPORT FPDF_AVAIL FPDF_CALLCONV FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                                       FPDF_FILEACCESS* file) {
-  auto pAvail = pdfium::MakeUnique<FPDF_AvailContext>(file_avail, file);
+  auto pAvail = std::make_unique<FPDF_AvailContext>(file_avail, file);
   return pAvail.release();  // Caller takes ownership.
 }
 
@@ -165,15 +164,15 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   CPDF_Parser::Error error;
   std::unique_ptr<CPDF_Document> document;
   std::tie(error, document) = avail_context->data_avail()->ParseDocument(
-      pdfium::MakeUnique<CPDF_DocRenderData>(),
-      pdfium::MakeUnique<CPDF_DocPageData>(), password);
+      std::make_unique<CPDF_DocRenderData>(),
+      std::make_unique<CPDF_DocPageData>(), password);
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;
   }
 
 #ifdef PDF_ENABLE_XFA
-  document->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(document.get()));
+  document->SetExtension(std::make_unique<CPDFXFA_Context>(document.get()));
 #endif  // PDF_ENABLE_XFA
 
   ReportUnsupportedFeatures(document.get());

@@ -17,7 +17,6 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/ptr_util.h"
 
 static_assert(FXFONT_ANSI_CHARSET == FX_CHARSET_ANSI, "Charset must match");
 static_assert(FXFONT_DEFAULT_CHARSET == FX_CHARSET_Default,
@@ -134,7 +133,7 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
     return;
 
   CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
-      pdfium::MakeUnique<CFX_ExternalFontInfo>(pFontInfoExt));
+      std::make_unique<CFX_ExternalFontInfo>(pFontInfoExt));
 }
 
 FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap() {

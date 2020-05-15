@@ -26,7 +26,6 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_systemhandler.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -565,7 +564,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
 }
 
 CPWL_EditImpl::CPWL_EditImpl()
-    : m_pVT(pdfium::MakeUnique<CPDF_VariableText>()),
+    : m_pVT(std::make_unique<CPDF_VariableText>()),
       m_bEnableScroll(false),
       m_nAlignment(0),
       m_bNotifyFlag(false),
@@ -582,7 +581,7 @@ void CPWL_EditImpl::Initialize() {
 }
 
 void CPWL_EditImpl::SetFontMap(IPVT_FontMap* pFontMap) {
-  m_pVTProvider = pdfium::MakeUnique<CPWL_EditImpl_Provider>(pFontMap);
+  m_pVTProvider = std::make_unique<CPWL_EditImpl_Provider>(pFontMap);
   m_pVT->SetProvider(m_pVTProvider.get());
 }
 
@@ -597,7 +596,7 @@ void CPWL_EditImpl::SetOperationNotify(CPWL_Edit* pOperationNotify) {
 CPWL_EditImpl_Iterator* CPWL_EditImpl::GetIterator() {
   if (!m_pIterator) {
     m_pIterator =
-        pdfium::MakeUnique<CPWL_EditImpl_Iterator>(this, m_pVT->GetIterator());
+        std::make_unique<CPWL_EditImpl_Iterator>(this, m_pVT->GetIterator());
   }
   return m_pIterator.get();
 }
@@ -1538,7 +1537,7 @@ bool CPWL_EditImpl::InsertWord(uint16_t word,
     return false;
 
   if (bAddUndo && m_bEnableUndo) {
-    AddEditUndoItem(pdfium::MakeUnique<CFXEU_InsertWord>(
+    AddEditUndoItem(std::make_unique<CFXEU_InsertWord>(
         this, m_wpOldCaret, m_wpCaret, word, charset));
   }
   if (bPaint)
@@ -1562,7 +1561,7 @@ bool CPWL_EditImpl::InsertReturn(bool bAddUndo, bool bPaint) {
 
   if (bAddUndo && m_bEnableUndo) {
     AddEditUndoItem(
-        pdfium::MakeUnique<CFXEU_InsertReturn>(this, m_wpOldCaret, m_wpCaret));
+        std::make_unique<CFXEU_InsertReturn>(this, m_wpOldCaret, m_wpCaret));
   }
   if (bPaint) {
     RearrangePart(CPVT_WordRange(m_wpOldCaret, m_wpCaret));
@@ -1594,7 +1593,7 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo, bool bPaint) {
     return false;
 
   if (bAddUndo && m_bEnableUndo) {
-    AddEditUndoItem(pdfium::MakeUnique<CFXEU_Backspace>(
+    AddEditUndoItem(std::make_unique<CFXEU_Backspace>(
         this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset));
   }
   if (bPaint) {
@@ -1626,10 +1625,10 @@ bool CPWL_EditImpl::Delete(bool bAddUndo, bool bPaint) {
   m_SelState.Set(m_wpCaret, m_wpCaret);
   if (bAddUndo && m_bEnableUndo) {
     if (bSecEnd) {
-      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Delete>(
+      AddEditUndoItem(std::make_unique<CFXEU_Delete>(
           this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset, bSecEnd));
     } else {
-      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Delete>(
+      AddEditUndoItem(std::make_unique<CFXEU_Delete>(
           this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset, bSecEnd));
     }
   }
@@ -1664,7 +1663,7 @@ bool CPWL_EditImpl::Clear(bool bAddUndo, bool bPaint) {
   CPVT_WordRange range = m_SelState.ConvertToWordRange();
   if (bAddUndo && m_bEnableUndo) {
     AddEditUndoItem(
-        pdfium::MakeUnique<CFXEU_Clear>(this, range, GetSelectedText()));
+        std::make_unique<CFXEU_Clear>(this, range, GetSelectedText()));
   }
 
   SelectNone();
@@ -1697,7 +1696,7 @@ bool CPWL_EditImpl::InsertText(const WideString& sText,
     return false;
 
   if (bAddUndo && m_bEnableUndo) {
-    AddEditUndoItem(pdfium::MakeUnique<CFXEU_InsertText>(
+    AddEditUndoItem(std::make_unique<CFXEU_InsertText>(
         this, m_wpOldCaret, m_wpCaret, sText, charset));
   }
   if (bPaint)
@@ -1721,10 +1720,10 @@ void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
 }
 
 void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
-  AddEditUndoItem(pdfium::MakeUnique<CFXEU_ReplaceSelection>(this, false));
+  AddEditUndoItem(std::make_unique<CFXEU_ReplaceSelection>(this, false));
   ClearSelection();
   InsertText(text, FX_CHARSET_Default);
-  AddEditUndoItem(pdfium::MakeUnique<CFXEU_ReplaceSelection>(this, true));
+  AddEditUndoItem(std::make_unique<CFXEU_ReplaceSelection>(this, true));
 }
 
 bool CPWL_EditImpl::Redo() {

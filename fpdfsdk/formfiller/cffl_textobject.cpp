@@ -8,7 +8,6 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cba_fontmap.h"
-#include "third_party/base/ptr_util.h"
 
 CPWL_Wnd* CFFL_TextObject::ResetPWLWindow(CPDFSDK_PageView* pPageView,
                                           bool bRestoreValue) {
@@ -36,9 +35,9 @@ CFFL_TextObject::~CFFL_TextObject() {
 
 CBA_FontMap* CFFL_TextObject::MaybeCreateFontMap() {
   if (!m_pFontMap) {
-    m_pFontMap = pdfium::MakeUnique<CBA_FontMap>(
-        m_pWidget->GetPDFPage()->GetDocument(),
-        m_pWidget->GetPDFAnnot()->GetAnnotDict());
+    m_pFontMap =
+        std::make_unique<CBA_FontMap>(m_pWidget->GetPDFPage()->GetDocument(),
+                                      m_pWidget->GetPDFAnnot()->GetAnnotDict());
   }
   return m_pFontMap.get();
 }

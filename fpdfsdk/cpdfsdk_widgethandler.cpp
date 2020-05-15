@@ -20,7 +20,6 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler() = default;
@@ -63,7 +62,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_WidgetHandler::NewAnnot(
   if (!pCtrl)
     return nullptr;
 
-  auto pWidget = pdfium::MakeUnique<CPDFSDK_Widget>(pAnnot, pPageView, pForm);
+  auto pWidget = std::make_unique<CPDFSDK_Widget>(pAnnot, pPageView, pForm);
   pForm->AddMap(pCtrl, pWidget.get());
   if (pPDFForm->NeedConstructAP())
     pWidget->ResetAppearance(pdfium::nullopt, false);

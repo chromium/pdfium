@@ -90,9 +90,9 @@ FPDF_DOCUMENT LoadDocumentImpl(
     return nullptr;
   }
 
-  auto pDocument = pdfium::MakeUnique<CPDF_Document>(
-      pdfium::MakeUnique<CPDF_DocRenderData>(),
-      pdfium::MakeUnique<CPDF_DocPageData>());
+  auto pDocument =
+      std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
+                                      std::make_unique<CPDF_DocPageData>());
 
   CPDF_Parser::Error error = pDocument->LoadDoc(pFileAccess, password);
   if (error != CPDF_Parser::SUCCESS) {
@@ -307,7 +307,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
     return nullptr;
 
   auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
-  pPage->SetRenderCache(pdfium::MakeUnique<CPDF_PageRenderCache>(pPage.Get()));
+  pPage->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(pPage.Get()));
   pPage->ParseContent();
   return FPDFPageFromIPDFPage(pPage.Leak());
 }
@@ -439,7 +439,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   if (!pPage)
     return;
 
-  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
   pPage->SetRenderContext(std::move(pOwnedContext));
@@ -456,7 +456,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                           pPage->GetMaskBoundingBoxes().size() > 100;
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   if (!bNewBitmap && !bHasMask) {
-    pContext->m_pDevice = pdfium::MakeUnique<CPDF_WindowsRenderDevice>(dc);
+    pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(dc);
     CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
                                   size_y, rotate, flags,
                                   /*color_scheme=*/nullptr,
@@ -473,7 +473,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   pContext->m_pDevice = pdfium::WrapUnique(pDevice);
   pDevice->Attach(pBitmap, false, nullptr, false);
   if (bHasMask) {
-    pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
+    pContext->m_pOptions = std::make_unique<CPDF_RenderOptions>();
     pContext->m_pOptions->GetOptions().bBreakForMasks = true;
   }
 
@@ -513,11 +513,11 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
 
   // Begin rendering to the printer. Add flag to indicate the renderer should
   // pause after each image mask.
-  pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
   pContext = pOwnedContext.get();
   pPage->SetRenderContext(std::move(pOwnedContext));
-  pContext->m_pDevice = pdfium::MakeUnique<CPDF_WindowsRenderDevice>(dc);
-  pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
+  pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(dc);
+  pContext->m_pOptions = std::make_unique<CPDF_RenderOptions>();
   pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 
   CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
@@ -552,12 +552,12 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
   pPage->SetRenderContext(std::move(pOwnedContext));
 
-  auto pOwnedDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+  auto pOwnedDevice = std::make_unique<CFX_DefaultRenderDevice>();
   CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
   pContext->m_pDevice = std::move(pOwnedDevice);
 
@@ -587,12 +587,12 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
   pPage->SetRenderContext(std::move(pOwnedContext));
 
-  auto pOwnedDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+  auto pOwnedDevice = std::make_unique<CFX_DefaultRenderDevice>();
   CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
   pContext->m_pDevice = std::move(pOwnedDevice);
 
@@ -620,12 +620,12 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   if (!pPage)
     return nullptr;
 
-  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* pContext = pOwnedContext.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
   pPage->SetRenderContext(std::move(pOwnedContext));
 
-  auto skDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+  auto skDevice = std::make_unique<CFX_DefaultRenderDevice>();
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice = std::move(skDevice);
 
@@ -855,7 +855,7 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
     return false;
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict);
-  page->SetRenderCache(pdfium::MakeUnique<CPDF_PageRenderCache>(page.Get()));
+  page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
   size->width = page->GetPageWidth();
   size->height = page->GetPageHeight();
   return true;

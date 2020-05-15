@@ -11,7 +11,6 @@
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/ptr_util.h"
 
 struct CPDF_JavaScript {
   WideString name;
@@ -53,7 +52,7 @@ FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
   if (!script.has_value())
     return nullptr;
 
-  auto js = pdfium::MakeUnique<CPDF_JavaScript>();
+  auto js = std::make_unique<CPDF_JavaScript>();
   js->name = name;
   js->script = script.value();
   return FPDFJavaScriptActionFromCPDFJavaScriptAction(js.release());

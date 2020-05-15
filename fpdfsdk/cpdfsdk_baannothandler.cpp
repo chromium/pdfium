@@ -20,7 +20,6 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -56,7 +55,7 @@ bool CPDFSDK_BAAnnotHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 std::unique_ptr<CPDFSDK_Annot> CPDFSDK_BAAnnotHandler::NewAnnot(
     CPDF_Annot* pAnnot,
     CPDFSDK_PageView* pPageView) {
-  return pdfium::MakeUnique<CPDFSDK_BAAnnot>(pAnnot, pPageView);
+  return std::make_unique<CPDFSDK_BAAnnot>(pAnnot, pPageView);
 }
 
 void CPDFSDK_BAAnnotHandler::ReleaseAnnot(

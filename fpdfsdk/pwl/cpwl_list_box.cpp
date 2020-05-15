@@ -17,7 +17,6 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 
 CPWL_List_Notify::CPWL_List_Notify(CPWL_ListBox* pList) : m_pList(pList) {
   ASSERT(m_pList);
@@ -69,13 +68,13 @@ CPWL_ListBox::CPWL_ListBox(
     const CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
-      m_pList(pdfium::MakeUnique<CPWL_ListCtrl>()) {}
+      m_pList(std::make_unique<CPWL_ListCtrl>()) {}
 
 CPWL_ListBox::~CPWL_ListBox() = default;
 
 void CPWL_ListBox::OnCreated() {
   m_pList->SetFontMap(GetFontMap());
-  m_pListNotify = pdfium::MakeUnique<CPWL_List_Notify>(this);
+  m_pListNotify = std::make_unique<CPWL_List_Notify>(this);
   m_pList->SetNotify(m_pListNotify.get());
 
   SetHoverSel(HasFlag(PLBS_HOVERSEL));

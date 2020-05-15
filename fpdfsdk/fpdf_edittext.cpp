@@ -28,7 +28,6 @@
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_edit.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
@@ -456,7 +455,7 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   if (!pFont)
     return nullptr;
 
-  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
+  auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->m_TextState.SetFont(pFont);
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
@@ -493,7 +492,7 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
   }
 
   auto span = pdfium::make_span(data, size);
-  auto pFont = pdfium::MakeUnique<CFX_Font>();
+  auto pFont = std::make_unique<CFX_Font>();
 
   // TODO(npm): Maybe use FT_Get_X11_Font_Format to check format? Otherwise, we
   // are allowing giving any font that can be loaded on freetype and setting it
@@ -585,7 +584,7 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
   if (!pDoc || !pFont)
     return nullptr;
 
-  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
+  auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->m_TextState.SetFont(
       CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFont->GetFontDict()));
   pTextObj->m_TextState.SetFontSize(font_size);

@@ -23,7 +23,6 @@
 #include "core/fpdfdoc/cpdf_linklist.h"
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -61,7 +60,7 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   if (pList)
     return pList;
 
-  auto pNewList = pdfium::MakeUnique<CPDF_LinkList>();
+  auto pNewList = std::make_unique<CPDF_LinkList>();
   pList = pNewList.get();
   pDoc->SetLinksContext(std::move(pNewList));
   return pList;
@@ -258,7 +257,7 @@ FPDFDest_GetLocationInPage(FPDF_DEST dest,
   if (!dest)
     return false;
 
-  auto destination = pdfium::MakeUnique<CPDF_Dest>(CPDFArrayFromFPDFDest(dest));
+  auto destination = std::make_unique<CPDF_Dest>(CPDFArrayFromFPDFDest(dest));
 
   // FPDF_BOOL is an int, GetXYZ expects bools.
   bool bHasX;

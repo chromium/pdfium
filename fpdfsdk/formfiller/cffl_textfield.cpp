@@ -13,7 +13,6 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -84,7 +83,7 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
 std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<IPWL_SystemHandler::PerWindowData> pAttachedData) {
-  auto pWnd = pdfium::MakeUnique<CPWL_Edit>(cp, std::move(pAttachedData));
+  auto pWnd = std::make_unique<CPWL_Edit>(cp, std::move(pAttachedData));
   pWnd->AttachFFLData(this);
   pWnd->Realize();
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());

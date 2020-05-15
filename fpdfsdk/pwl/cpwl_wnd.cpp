@@ -14,7 +14,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -490,7 +489,7 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
   auto pBar =
-      pdfium::MakeUnique<CPWL_ScrollBar>(scp, CloneAttachedData(), SBT_VSCROLL);
+      std::make_unique<CPWL_ScrollBar>(scp, CloneAttachedData(), SBT_VSCROLL);
   m_pVScrollBar = pBar.get();
   AddChild(std::move(pBar));
   m_pVScrollBar->Realize();

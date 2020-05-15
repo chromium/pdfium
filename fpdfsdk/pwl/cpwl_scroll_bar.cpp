@@ -15,7 +15,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -539,24 +538,24 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 
   if (!m_pMinButton) {
-    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(scp, CloneAttachedData(),
-                                                     m_sbType, PSBT_MIN);
+    auto pButton = std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(),
+                                                   m_sbType, PSBT_MIN);
     m_pMinButton = pButton.get();
     AddChild(std::move(pButton));
     m_pMinButton->Realize();
   }
 
   if (!m_pMaxButton) {
-    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(scp, CloneAttachedData(),
-                                                     m_sbType, PSBT_MAX);
+    auto pButton = std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(),
+                                                   m_sbType, PSBT_MAX);
     m_pMaxButton = pButton.get();
     AddChild(std::move(pButton));
     m_pMaxButton->Realize();
   }
 
   if (!m_pPosButton) {
-    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(scp, CloneAttachedData(),
-                                                     m_sbType, PSBT_POS);
+    auto pButton = std::make_unique<CPWL_SBButton>(scp, CloneAttachedData(),
+                                                   m_sbType, PSBT_POS);
     m_pPosButton = pButton.get();
     ObservedPtr<CPWL_ScrollBar> thisObserved(this);
     if (m_pPosButton->SetVisible(false) && thisObserved) {
@@ -677,7 +676,7 @@ void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_PointF& point) {
 
   NotifyScrollWindow();
   m_bMinOrMax = true;
-  m_pTimer = pdfium::MakeUnique<CFX_Timer>(GetTimerHandler(), this, 100);
+  m_pTimer = std::make_unique<CFX_Timer>(GetTimerHandler(), this, 100);
 }
 
 void CPWL_ScrollBar::OnMinButtonLBUp(const CFX_PointF& point) {}
@@ -691,7 +690,7 @@ void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_PointF& point) {
 
   NotifyScrollWindow();
   m_bMinOrMax = false;
-  m_pTimer = pdfium::MakeUnique<CFX_Timer>(GetTimerHandler(), this, 100);
+  m_pTimer = std::make_unique<CFX_Timer>(GetTimerHandler(), this, 100);
 }
 
 void CPWL_ScrollBar::OnMaxButtonLBUp(const CFX_PointF& point) {}

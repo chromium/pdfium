@@ -18,7 +18,6 @@
 #include "fpdfsdk/pwl/cpwl_list_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -288,7 +287,7 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
 
-  auto pEdit = pdfium::MakeUnique<CPWL_Edit>(ecp, CloneAttachedData());
+  auto pEdit = std::make_unique<CPWL_Edit>(ecp, CloneAttachedData());
   m_pEdit = pEdit.get();
   m_pEdit->AttachFFLData(m_pFormFiller.Get());
   AddChild(std::move(pEdit));
@@ -308,7 +307,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   bcp.nBorderStyle = BorderStyle::BEVELED;
   bcp.eCursorType = FXCT_ARROW;
 
-  auto pButton = pdfium::MakeUnique<CPWL_CBButton>(bcp, CloneAttachedData());
+  auto pButton = std::make_unique<CPWL_CBButton>(bcp, CloneAttachedData());
   m_pButton = pButton.get();
   AddChild(std::move(pButton));
   m_pButton->Realize();
@@ -335,7 +334,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   if (cp.sBackgroundColor.nColorType == CFX_Color::kTransparent)
     lcp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
 
-  auto pList = pdfium::MakeUnique<CPWL_CBListBox>(lcp, CloneAttachedData());
+  auto pList = std::make_unique<CPWL_CBListBox>(lcp, CloneAttachedData());
   m_pList = pList.get();
   m_pList->AttachFFLData(m_pFormFiller.Get());
   AddChild(std::move(pList));
