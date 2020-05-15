@@ -24,7 +24,7 @@
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/gif/gifmodule.h"
+#include "core/fxcodec/gif/gif_decoder.h"
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
@@ -46,7 +46,7 @@ class ProgressiveDecoder :
     public BmpModule::Delegate,
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-    public GifModule::Delegate,
+    public GifDecoder::Delegate,
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
     public PngDecoder::Delegate,
@@ -153,7 +153,7 @@ class ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_PNG
 
 #ifdef PDF_ENABLE_XFA_GIF
-  // GifModule::Delegate
+  // GifDecoder::Delegate
   void GifRecordCurrentPosition(uint32_t& cur_pos) override;
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                  const FX_RECT& img_rc,

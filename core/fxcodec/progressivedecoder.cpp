@@ -409,7 +409,7 @@ void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
 
 #ifdef PDF_ENABLE_XFA_GIF
 void ProgressiveDecoder::GifRecordCurrentPosition(uint32_t& cur_pos) {
-  uint32_t remain_size = GifModule::GetAvailInput(m_pGifContext.get());
+  uint32_t remain_size = GifDecoder::GetAvailInput(m_pGifContext.get());
   cur_pos = m_offSet - remain_size;
 }
 
@@ -824,12 +824,12 @@ bool ProgressiveDecoder::GifReadMoreData(FXCODEC_STATUS* err_status) {
 }
 
 bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
-  m_pGifContext = GifModule::StartDecode(this);
-  GifModule::Input(m_pGifContext.get(), m_pCodecMemory, nullptr);
+  m_pGifContext = GifDecoder::StartDecode(this);
+  GifDecoder::Input(m_pGifContext.get(), m_pCodecMemory, nullptr);
   m_SrcComponents = 1;
   CFX_GifDecodeStatus readResult =
-      GifModule::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
-                            &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
+      GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
+                             &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
   while (readResult == CFX_GifDecodeStatus::Unfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
     if (!GifReadMoreData(&error_status)) {
@@ -838,8 +838,8 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
       return false;
     }
     readResult =
-        GifModule::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
-                              &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
+        GifDecoder::ReadHeader(m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight,
+                               &m_GifPltNumber, &m_pGifPalette, &m_GifBgIndex);
   }
   if (readResult == CFX_GifDecodeStatus::Success) {
     m_SrcBPC = 8;
@@ -866,7 +866,7 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode(
 
 FXCODEC_STATUS ProgressiveDecoder::GifContinueDecode() {
   CFX_GifDecodeStatus readRes =
-      GifModule::LoadFrame(m_pGifContext.get(), m_FrameCur);
+      GifDecoder::LoadFrame(m_pGifContext.get(), m_FrameCur);
   while (readRes == CFX_GifDecodeStatus::Unfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
     if (!GifReadMoreData(&error_status)) {
@@ -875,7 +875,7 @@ FXCODEC_STATUS ProgressiveDecoder::GifContinueDecode() {
       m_status = error_status;
       return m_status;
     }
-    readRes = GifModule::LoadFrame(m_pGifContext.get(), m_FrameCur);
+    readRes = GifDecoder::LoadFrame(m_pGifContext.get(), m_FrameCur);
   }
 
   if (readRes == CFX_GifDecodeStatus::Success) {
@@ -2116,14 +2116,14 @@ std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
       while (true) {
         CFX_GifDecodeStatus readResult;
         std::tie(readResult, m_FrameNumber) =
-            GifModule::LoadFrameInfo(m_pGifContext.get());
+            GifDecoder::LoadFrameInfo(m_pGifContext.get());
         while (readResult == CFX_GifDecodeStatus::Unfinished) {
           FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_READ;
           if (!GifReadMoreData(&error_status))
             return {error_status, 0};
 
           std::tie(readResult, m_FrameNumber) =
-              GifModule::LoadFrameInfo(m_pGifContext.get());
+              GifDecoder::LoadFrameInfo(m_pGifContext.get());
         }
         if (readResult == CFX_GifDecodeStatus::Success) {
           m_status = FXCODEC_STATUS_DECODE_READY;

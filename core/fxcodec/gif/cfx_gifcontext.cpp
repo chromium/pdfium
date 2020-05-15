@@ -21,7 +21,7 @@ constexpr int32_t kGifInterlaceStep[4] = {8, 8, 4, 2};
 
 }  // namespace
 
-CFX_GifContext::CFX_GifContext(GifModule::Delegate* delegate)
+CFX_GifContext::CFX_GifContext(GifDecoder::Delegate* delegate)
     : delegate_(delegate) {}
 
 CFX_GifContext::~CFX_GifContext() = default;

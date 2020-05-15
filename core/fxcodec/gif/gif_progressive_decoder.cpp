@@ -7,7 +7,7 @@
 #include "core/fxcodec/gif/gif_progressive_decoder.h"
 
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "core/fxcodec/gif/gifmodule.h"
+#include "core/fxcodec/gif/gif_decoder.h"
 
 namespace fxcodec {
 
@@ -22,13 +22,13 @@ GifProgressiveDecoder::GifProgressiveDecoder() = default;
 GifProgressiveDecoder::~GifProgressiveDecoder() = default;
 
 FX_FILESIZE GifProgressiveDecoder::GetAvailInput(Context* context) const {
-  return GifModule::GetAvailInput(context);
+  return GifDecoder::GetAvailInput(context);
 }
 
 bool GifProgressiveDecoder::Input(Context* context,
                                   RetainPtr<CFX_CodecMemory> codec_memory,
                                   CFX_DIBAttribute* pAttribute) {
-  return GifModule::Input(context, codec_memory, pAttribute);
+  return GifDecoder::Input(context, codec_memory, pAttribute);
 }
 
 }  // namespace fxcodec

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_GIF_GIFMODULE_H_
-#define CORE_FXCODEC_GIF_GIFMODULE_H_
+#ifndef CORE_FXCODEC_GIF_GIF_DECODER_H_
+#define CORE_FXCODEC_GIF_GIF_DECODER_H_
 
 #include <memory>
 #include <utility>
@@ -22,7 +22,7 @@ namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class GifModule {
+class GifDecoder {
  public:
   class Delegate {
    public:
@@ -58,13 +58,13 @@ class GifModule {
                     RetainPtr<CFX_CodecMemory> codec_memory,
                     CFX_DIBAttribute* pAttribute);
 
-  GifModule() = delete;
-  GifModule(const GifModule&) = delete;
-  GifModule& operator=(const GifModule&) = delete;
+  GifDecoder() = delete;
+  GifDecoder(const GifDecoder&) = delete;
+  GifDecoder& operator=(const GifDecoder&) = delete;
 };
 
 }  // namespace fxcodec
 
-using GifModule = fxcodec::GifModule;
+using GifDecoder = fxcodec::GifDecoder;
 
-#endif  // CORE_FXCODEC_GIF_GIFMODULE_H_
+#endif  // CORE_FXCODEC_GIF_GIF_DECODER_H_

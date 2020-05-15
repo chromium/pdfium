@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/gif/gifmodule.h"
+#include "core/fxcodec/gif/gif_decoder.h"
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
@@ -15,13 +15,13 @@
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context> GifModule::StartDecode(
+std::unique_ptr<ProgressiveDecoderIface::Context> GifDecoder::StartDecode(
     Delegate* pDelegate) {
   return pdfium::MakeUnique<CFX_GifContext>(pDelegate);
 }
 
 // static
-CFX_GifDecodeStatus GifModule::ReadHeader(
+CFX_GifDecodeStatus GifDecoder::ReadHeader(
     ProgressiveDecoderIface::Context* pContext,
     int* width,
     int* height,
@@ -43,7 +43,7 @@ CFX_GifDecodeStatus GifModule::ReadHeader(
 }
 
 // static
-std::pair<CFX_GifDecodeStatus, size_t> GifModule::LoadFrameInfo(
+std::pair<CFX_GifDecodeStatus, size_t> GifDecoder::LoadFrameInfo(
     ProgressiveDecoderIface::Context* pContext) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->GetFrame();
@@ -53,22 +53,22 @@ std::pair<CFX_GifDecodeStatus, size_t> GifModule::LoadFrameInfo(
 }
 
 // static
-CFX_GifDecodeStatus GifModule::LoadFrame(
+CFX_GifDecodeStatus GifDecoder::LoadFrame(
     ProgressiveDecoderIface::Context* pContext,
     size_t frame_num) {
   return static_cast<CFX_GifContext*>(pContext)->LoadFrame(frame_num);
 }
 
 // static
-FX_FILESIZE GifModule::GetAvailInput(
+FX_FILESIZE GifDecoder::GetAvailInput(
     ProgressiveDecoderIface::Context* pContext) {
   return static_cast<CFX_GifContext*>(pContext)->GetAvailInput();
 }
 
 // static
-bool GifModule::Input(ProgressiveDecoderIface::Context* pContext,
-                      RetainPtr<CFX_CodecMemory> codec_memory,
-                      CFX_DIBAttribute*) {
+bool GifDecoder::Input(ProgressiveDecoderIface::Context* pContext,
+                       RetainPtr<CFX_CodecMemory> codec_memory,
+                       CFX_DIBAttribute*) {
   auto* ctx = static_cast<CFX_GifContext*>(pContext);
   ctx->SetInputBuffer(std::move(codec_memory));
   return true;
