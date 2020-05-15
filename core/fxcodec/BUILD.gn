@@ -120,8 +120,8 @@ source_set("fxcodec") {
     }
     if (pdf_enable_xfa_tiff) {
       sources += [
-        "tiff/tiffmodule.cpp",
-        "tiff/tiffmodule.h",
+        "tiff/tiff_decoder.cpp",
+        "tiff/tiff_decoder.h",
       ]
       deps += [ "../../third_party:fx_tiff" ]
     }

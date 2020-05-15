@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_TIFF_TIFFMODULE_H_
-#define CORE_FXCODEC_TIFF_TIFFMODULE_H_
+#ifndef CORE_FXCODEC_TIFF_TIFF_DECODER_H_
+#define CORE_FXCODEC_TIFF_TIFF_DECODER_H_
 
 #include <memory>
 
@@ -22,7 +22,7 @@ namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class TiffModule {
+class TiffDecoder {
  public:
   static std::unique_ptr<ProgressiveDecoderIface::Context> CreateDecoder(
       const RetainPtr<IFX_SeekableReadStream>& file_ptr);
@@ -37,13 +37,13 @@ class TiffModule {
   static bool Decode(ProgressiveDecoderIface::Context* ctx,
                      const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
-  TiffModule() = delete;
-  TiffModule(const TiffModule&) = delete;
-  TiffModule& operator=(const TiffModule&) = delete;
+  TiffDecoder() = delete;
+  TiffDecoder(const TiffDecoder&) = delete;
+  TiffDecoder& operator=(const TiffDecoder&) = delete;
 };
 
 }  // namespace fxcodec
 
-using TiffModule = fxcodec::TiffModule;
+using TiffDecoder = fxcodec::TiffDecoder;
 
-#endif  // CORE_FXCODEC_TIFF_TIFFMODULE_H_
+#endif  // CORE_FXCODEC_TIFF_TIFF_DECODER_H_

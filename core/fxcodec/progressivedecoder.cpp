@@ -24,7 +24,7 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA_TIFF
-#include "core/fxcodec/tiff/tiffmodule.h"
+#include "core/fxcodec/tiff/tiff_decoder.h"
 #endif  // PDF_ENABLE_XFA_TIFF
 
 namespace fxcodec {
@@ -1302,15 +1302,15 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
 #ifdef PDF_ENABLE_XFA_TIFF
 bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
     CFX_DIBAttribute* pAttribute) {
-  m_pTiffContext = TiffModule::CreateDecoder(m_pFile);
+  m_pTiffContext = TiffDecoder::CreateDecoder(m_pFile);
   if (!m_pTiffContext) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
   int32_t dummy_bpc;
-  bool ret = TiffModule::LoadFrameInfo(m_pTiffContext.get(), 0, &m_SrcWidth,
-                                       &m_SrcHeight, &m_SrcComponents,
-                                       &dummy_bpc, pAttribute);
+  bool ret = TiffDecoder::LoadFrameInfo(m_pTiffContext.get(), 0, &m_SrcWidth,
+                                        &m_SrcHeight, &m_SrcComponents,
+                                        &dummy_bpc, pAttribute);
   m_SrcComponents = 4;
   m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
   if (!ret) {
@@ -1329,7 +1329,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       m_startX == 0 && m_startY == 0 && m_clipBox.left == 0 &&
       m_clipBox.top == 0 && m_clipBox.right == m_SrcWidth &&
       m_clipBox.bottom == m_SrcHeight) {
-    ret = TiffModule::Decode(m_pTiffContext.get(), m_pDeviceBitmap);
+    ret = TiffDecoder::Decode(m_pTiffContext.get(), m_pDeviceBitmap);
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
     if (!ret) {
@@ -1348,7 +1348,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return m_status;
   }
-  ret = TiffModule::Decode(m_pTiffContext.get(), pDIBitmap);
+  ret = TiffDecoder::Decode(m_pTiffContext.get(), pDIBitmap);
   if (!ret) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;

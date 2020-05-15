@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/tiff/tiffmodule.h"
+#include "core/fxcodec/tiff/tiff_decoder.h"
 
 #include <limits>
 #include <memory>
@@ -484,7 +484,7 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context> TiffModule::CreateDecoder(
+std::unique_ptr<ProgressiveDecoderIface::Context> TiffDecoder::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = pdfium::MakeUnique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))
@@ -494,13 +494,13 @@ std::unique_ptr<ProgressiveDecoderIface::Context> TiffModule::CreateDecoder(
 }
 
 // static
-bool TiffModule::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
-                               int32_t frame,
-                               int32_t* width,
-                               int32_t* height,
-                               int32_t* comps,
-                               int32_t* bpc,
-                               CFX_DIBAttribute* pAttribute) {
+bool TiffDecoder::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
+                                int32_t frame,
+                                int32_t* width,
+                                int32_t* height,
+                                int32_t* comps,
+                                int32_t* bpc,
+                                CFX_DIBAttribute* pAttribute) {
   ASSERT(pAttribute);
 
   auto* ctx = static_cast<CTiffContext*>(pContext);
@@ -508,8 +508,8 @@ bool TiffModule::LoadFrameInfo(ProgressiveDecoderIface::Context* pContext,
 }
 
 // static
-bool TiffModule::Decode(ProgressiveDecoderIface::Context* pContext,
-                        const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+bool TiffDecoder::Decode(ProgressiveDecoderIface::Context* pContext,
+                         const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   auto* ctx = static_cast<CTiffContext*>(pContext);
   return ctx->Decode(pDIBitmap);
 }
