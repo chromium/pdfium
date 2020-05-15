@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcodec/progressivedecoder.h"
+#include "core/fxcodec/progressive_decoder.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"

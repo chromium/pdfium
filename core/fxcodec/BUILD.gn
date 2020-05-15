@@ -84,9 +84,9 @@ source_set("fxcodec") {
     sources += [
       "jpeg/jpeg_progressive_decoder.cpp",
       "jpeg/jpeg_progressive_decoder.h",
+      "progressive_decoder.cpp",
+      "progressive_decoder.h",
       "progressive_decoder_iface.h",
-      "progressivedecoder.cpp",
-      "progressivedecoder.h",
     ]
     if (pdf_enable_xfa_bmp) {
       sources += [
@@ -149,7 +149,7 @@ pdfium_unittest_source_set("unittests") {
   pdfium_root_dir = "../../"
 
   if (pdf_enable_xfa) {
-    sources += [ "progressivedecoder_unittest.cpp" ]
+    sources += [ "progressive_decoder_unittest.cpp" ]
     deps += [ "../fxge" ]
     if (pdf_enable_xfa_gif) {
       sources += [

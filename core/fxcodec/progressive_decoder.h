@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_PROGRESSIVEDECODER_H_
-#define CORE_FXCODEC_PROGRESSIVEDECODER_H_
+#ifndef CORE_FXCODEC_PROGRESSIVE_DECODER_H_
+#define CORE_FXCODEC_PROGRESSIVE_DECODER_H_
 
 #include <memory>
 #include <utility>
@@ -296,4 +296,4 @@ class ProgressiveDecoder :
 
 using ProgressiveDecoder = fxcodec::ProgressiveDecoder;
 
-#endif  // CORE_FXCODEC_PROGRESSIVEDECODER_H_
+#endif  // CORE_FXCODEC_PROGRESSIVE_DECODER_H_
