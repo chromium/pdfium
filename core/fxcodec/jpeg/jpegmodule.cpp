@@ -37,6 +37,11 @@ extern "C" {
 #endif
 }  // extern "C"
 
+#ifdef PDF_ENABLE_XFA
+#include "third_party/base/no_destructor.h"
+#endif
+
+#ifdef PDF_ENABLE_XFA
 class CJpegContext final : public ProgressiveDecoderIface::Context {
  public:
   CJpegContext();
@@ -52,6 +57,7 @@ class CJpegContext final : public ProgressiveDecoderIface::Context {
   void* (*m_AllocFunc)(unsigned int);
   void (*m_FreeFunc)(void*);
 };
+#endif
 
 static pdfium::span<const uint8_t> JpegScanSOI(
     pdfium::span<const uint8_t> src_span) {
@@ -102,6 +108,7 @@ static boolean dest_empty(j_compress_ptr cinfo) {
 }
 #endif  // defined(OS_WIN)
 
+#ifdef PDF_ENABLE_XFA
 static void error_fatal1(j_common_ptr cinfo) {
   auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
   longjmp(pContext->m_JumpMark, -1);
@@ -125,6 +132,7 @@ static void* jpeg_alloc_func(unsigned int size) {
 static void jpeg_free_func(void* p) {
   FX_Free(p);
 }
+#endif
 
 }  // extern "C"
 
@@ -187,6 +195,7 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
+#ifdef PDF_ENABLE_XFA
 CJpegContext::CJpegContext()
     : m_AllocFunc(jpeg_alloc_func), m_FreeFunc(jpeg_free_func) {
   m_Info.client_data = this;
@@ -208,6 +217,7 @@ CJpegContext::CJpegContext()
 CJpegContext::~CJpegContext() {
   jpeg_destroy_decompress(&m_Info);
 }
+#endif
 
 namespace fxcodec {
 
@@ -477,6 +487,7 @@ uint8_t* JpegDecoder::GetWritableSrcData() {
 
 }  // namespace
 
+// static
 std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
@@ -492,6 +503,7 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
   return std::move(pDecoder);
 }
 
+// static
 Optional<JpegModule::JpegImageInfo> JpegModule::LoadInfo(
     pdfium::span<const uint8_t> src_span) {
   JpegImageInfo info;
@@ -502,7 +514,16 @@ Optional<JpegModule::JpegImageInfo> JpegModule::LoadInfo(
   return info;
 }
 
-std::unique_ptr<ProgressiveDecoderIface::Context> JpegModule::Start() {
+#ifdef PDF_ENABLE_XFA
+// static
+JpegModule::ProgressiveDecoder* JpegModule::ProgressiveDecoder::GetInstance() {
+  static pdfium::base::NoDestructor<JpegModule::ProgressiveDecoder> s;
+  return s.get();
+}
+
+// static
+std::unique_ptr<ProgressiveDecoderIface::Context>
+JpegModule::ProgressiveDecoder::Start() {
   // Use ordinary pointer until past the possibility of a longjump.
   auto* pContext = new CJpegContext();
   if (setjmp(pContext->m_JumpMark) == -1) {
@@ -516,31 +537,17 @@ std::unique_ptr<ProgressiveDecoderIface::Context> JpegModule::Start() {
   return pdfium::WrapUnique(pContext);
 }
 
-bool JpegModule::Input(Context* pContext,
-                       RetainPtr<CFX_CodecMemory> codec_memory,
-                       CFX_DIBAttribute*) {
-  pdfium::span<uint8_t> src_buf = codec_memory->GetSpan();
-  auto* ctx = static_cast<CJpegContext*>(pContext);
-  if (ctx->m_SkipSize) {
-    if (ctx->m_SkipSize > src_buf.size()) {
-      ctx->m_SrcMgr.bytes_in_buffer = 0;
-      ctx->m_SkipSize -= src_buf.size();
-      return true;
-    }
-    src_buf = src_buf.subspan(ctx->m_SkipSize);
-    ctx->m_SkipSize = 0;
-  }
-  ctx->m_SrcMgr.next_input_byte = src_buf.data();
-  ctx->m_SrcMgr.bytes_in_buffer = src_buf.size();
-  return true;
+// static
+jmp_buf& JpegModule::ProgressiveDecoder::GetJumpMark(Context* pContext) {
+  return static_cast<CJpegContext*>(pContext)->GetJumpMark();
 }
 
-#ifdef PDF_ENABLE_XFA
-int JpegModule::ReadHeader(Context* pContext,
-                           int* width,
-                           int* height,
-                           int* nComps,
-                           CFX_DIBAttribute* pAttribute) {
+// static
+int JpegModule::ProgressiveDecoder::ReadHeader(Context* pContext,
+                                               int* width,
+                                               int* height,
+                                               int* nComps,
+                                               CFX_DIBAttribute* pAttribute) {
   ASSERT(pAttribute);
 
   auto* ctx = static_cast<CJpegContext*>(pContext);
@@ -556,28 +563,51 @@ int JpegModule::ReadHeader(Context* pContext,
   JpegLoadAttribute(ctx->m_Info, pAttribute);
   return 0;
 }
-#endif  // PDF_ENABLE_XFA
 
-bool JpegModule::StartScanline(Context* pContext, int down_scale) {
+// static
+bool JpegModule::ProgressiveDecoder::StartScanline(Context* pContext,
+                                                   int down_scale) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   ctx->m_Info.scale_denom = static_cast<unsigned int>(down_scale);
   return !!jpeg_start_decompress(&ctx->m_Info);
 }
 
-bool JpegModule::ReadScanline(Context* pContext, unsigned char* dest_buf) {
+// static
+bool JpegModule::ProgressiveDecoder::ReadScanline(Context* pContext,
+                                                  unsigned char* dest_buf) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   unsigned int nlines = jpeg_read_scanlines(&ctx->m_Info, &dest_buf, 1);
   return nlines == 1;
 }
 
-FX_FILESIZE JpegModule::GetAvailInput(Context* pContext) const {
+JpegModule::ProgressiveDecoder::ProgressiveDecoder() = default;
+
+FX_FILESIZE JpegModule::ProgressiveDecoder::GetAvailInput(
+    Context* pContext) const {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   return static_cast<FX_FILESIZE>(ctx->m_SrcMgr.bytes_in_buffer);
 }
 
-jmp_buf& JpegModule::GetJumpMark(Context* pContext) {
-  return static_cast<CJpegContext*>(pContext)->GetJumpMark();
+bool JpegModule::ProgressiveDecoder::Input(
+    Context* pContext,
+    RetainPtr<CFX_CodecMemory> codec_memory,
+    CFX_DIBAttribute*) {
+  pdfium::span<uint8_t> src_buf = codec_memory->GetSpan();
+  auto* ctx = static_cast<CJpegContext*>(pContext);
+  if (ctx->m_SkipSize) {
+    if (ctx->m_SkipSize > src_buf.size()) {
+      ctx->m_SrcMgr.bytes_in_buffer = 0;
+      ctx->m_SkipSize -= src_buf.size();
+      return true;
+    }
+    src_buf = src_buf.subspan(ctx->m_SkipSize);
+    ctx->m_SkipSize = 0;
+  }
+  ctx->m_SrcMgr.next_input_byte = src_buf.data();
+  ctx->m_SrcMgr.bytes_in_buffer = src_buf.size();
+  return true;
 }
+#endif  // PDF_ENABLE_XFA
 
 #if defined(OS_WIN)
 bool JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,

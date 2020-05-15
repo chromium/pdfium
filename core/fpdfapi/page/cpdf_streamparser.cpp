@@ -91,10 +91,9 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             &ignored_size);
   }
   if (decoder == "DCTDecode") {
-    std::unique_ptr<ScanlineDecoder> pDecoder =
-        fxcodec::ModuleMgr::GetInstance()->GetJpegModule()->CreateDecoder(
-            src_span, width, height, 0,
-            !pParam || pParam->GetIntegerFor("ColorTransform", 1));
+    std::unique_ptr<ScanlineDecoder> pDecoder = JpegModule::CreateDecoder(
+        src_span, width, height, 0,
+        !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder));
   }
   if (decoder == "CCITTFaxDecode") {

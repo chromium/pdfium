@@ -23,7 +23,6 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
@@ -83,8 +82,7 @@ CPDF_Dictionary* CPDF_Image::GetDict() const {
 
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
-  Optional<JpegModule::JpegImageInfo> info_opt =
-      fxcodec::ModuleMgr::GetInstance()->GetJpegModule()->LoadInfo(src_span);
+  Optional<JpegModule::JpegImageInfo> info_opt = JpegModule::LoadInfo(src_span);
   if (!info_opt.has_value())
     return nullptr;
 

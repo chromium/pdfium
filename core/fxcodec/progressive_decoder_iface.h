@@ -10,6 +10,10 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
+#ifndef PDF_ENABLE_XFA
+#error "XFA Only"
+#endif
+
 class CFX_CodecMemory;
 
 namespace fxcodec {

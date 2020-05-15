@@ -49,7 +49,6 @@ class CFX_DIBAttribute {
 #endif  // PDF_ENABLE_XFA
 
 class Jbig2Module;
-class JpegModule;
 class ProgressiveDecoder;
 
 class ModuleMgr {
@@ -59,7 +58,6 @@ class ModuleMgr {
   static void Destroy();
   static ModuleMgr* GetInstance();
 
-  JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
   Jbig2Module* GetJbig2Module() const { return m_pJbig2Module.get(); }
 
 #ifdef PDF_ENABLE_XFA
@@ -98,7 +96,6 @@ class ModuleMgr {
   ModuleMgr();
   ~ModuleMgr();
 
-  std::unique_ptr<JpegModule> m_pJpegModule;
   std::unique_ptr<Jbig2Module> m_pJbig2Module;
 
 #ifdef PDF_ENABLE_XFA

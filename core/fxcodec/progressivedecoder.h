@@ -213,7 +213,7 @@ class ProgressiveDecoder :
   FXCODEC_STATUS TiffContinueDecode();
 #endif  // PDF_ENABLE_XFA_TIFF
 
-  bool JpegReadMoreData(JpegModule* pJpegModule, FXCODEC_STATUS* err_status);
+  bool JpegReadMoreData(FXCODEC_STATUS* err_status);
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS JpegContinueDecode();

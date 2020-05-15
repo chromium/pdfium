@@ -974,41 +974,42 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
 }
 #endif  // PDF_ENABLE_XFA_GIF
 
-bool ProgressiveDecoder::JpegReadMoreData(JpegModule* pJpegModule,
-                                          FXCODEC_STATUS* err_status) {
-  return ReadMoreData(pJpegModule, m_pJpegContext.get(), false, err_status);
+bool ProgressiveDecoder::JpegReadMoreData(FXCODEC_STATUS* err_status) {
+  return ReadMoreData(JpegModule::ProgressiveDecoder::GetInstance(),
+                      m_pJpegContext.get(), false, err_status);
 }
 
 bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-  m_pJpegContext = pJpegModule->Start();
+  m_pJpegContext = JpegModule::ProgressiveDecoder::Start();
   if (!m_pJpegContext) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  pJpegModule->Input(m_pJpegContext.get(), m_pCodecMemory, nullptr);
+  JpegModule::ProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
+                                                       m_pCodecMemory, nullptr);
 
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
+  if (setjmp(JpegModule::ProgressiveDecoder::GetJumpMark(
+          m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
 
-  int32_t readResult =
-      pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight,
-                              &m_SrcComponents, pAttribute);
+  int32_t readResult = JpegModule::ProgressiveDecoder::ReadHeader(
+      m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
+      pAttribute);
   while (readResult == 2) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
-    if (!JpegReadMoreData(pJpegModule, &error_status)) {
+    if (!JpegReadMoreData(&error_status)) {
       m_status = error_status;
       return false;
     }
-    readResult =
-        pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight,
-                                &m_SrcComponents, pAttribute);
+    readResult = JpegModule::ProgressiveDecoder::ReadHeader(
+        m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
+        pAttribute);
   }
   if (!readResult) {
     m_SrcBPC = 8;
@@ -1022,28 +1023,29 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
 
 FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   int down_scale = GetDownScale();
   // Setting jump marker before calling StartScanLine, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
+  if (setjmp(JpegModule::ProgressiveDecoder::GetJumpMark(
+          m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
 
-  bool startStatus =
-      pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
+  bool startStatus = JpegModule::ProgressiveDecoder::StartScanline(
+      m_pJpegContext.get(), down_scale);
   while (!startStatus) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
-    if (!JpegReadMoreData(pJpegModule, &error_status)) {
+    if (!JpegReadMoreData(&error_status)) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
       m_status = error_status;
       return m_status;
     }
 
-    startStatus = pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
+    startStatus = JpegModule::ProgressiveDecoder::StartScanline(
+        m_pJpegContext.get(), down_scale);
   }
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
@@ -1067,28 +1069,29 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
-  JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  // JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
   // Setting jump marker before calling ReadScanLine, since a longjmp to
   // the marker indicates a fatal error.
-  if (setjmp(pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
+  if (setjmp(JpegModule::ProgressiveDecoder::GetJumpMark(
+          m_pJpegContext.get())) == -1) {
     m_pJpegContext.reset();
     m_status = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
 
   while (true) {
-    bool readRes =
-        pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf.get());
+    bool readRes = JpegModule::ProgressiveDecoder::ReadScanline(
+        m_pJpegContext.get(), m_pDecodeBuf.get());
     while (!readRes) {
       FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-      if (!JpegReadMoreData(pJpegModule, &error_status)) {
+      if (!JpegReadMoreData(&error_status)) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
         m_status = error_status;
         return m_status;
       }
-      readRes =
-          pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf.get());
+      readRes = JpegModule::ProgressiveDecoder::ReadScanline(
+          m_pJpegContext.get(), m_pDecodeBuf.get());
     }
     if (m_SrcFormat == FXCodec_Rgb) {
       int src_Bpp = (m_SrcFormat & 0xff) >> 3;
