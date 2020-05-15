@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_type3font.h"
 
 #include <algorithm>
+#include <type_traits>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
@@ -74,7 +75,7 @@ bool CPDF_Type3Font::Load() {
     m_FontBBox = box.ToFxRect();
   }
 
-  static constexpr size_t kCharLimit = FX_ArraySize(m_CharWidthL);
+  static constexpr size_t kCharLimit = std::extent<decltype(m_CharWidthL)>();
   int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
   if (StartChar >= 0 && static_cast<size_t>(StartChar) < kCharLimit) {
     const CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");

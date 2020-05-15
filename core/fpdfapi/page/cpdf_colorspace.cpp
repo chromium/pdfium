@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -842,8 +843,9 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   const CPDF_Array* pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
-  static_assert(FX_ArraySize(kDefaultRanges) == FX_ArraySize(m_Ranges),
-                "Range size mismatch");
+  static_assert(
+      FX_ArraySize(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
+      "Range size mismatch");
   for (size_t i = 0; i < FX_ArraySize(kDefaultRanges); ++i)
     m_Ranges[i] = pParam ? pParam->GetNumberAt(i) : kDefaultRanges[i];
   return 3;
