@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/png/pngmodule.h"
+#include "core/fxcodec/png/png_decoder.h"
 
 #include <algorithm>
 
@@ -25,12 +25,12 @@
 
 class CPngContext final : public ProgressiveDecoderIface::Context {
  public:
-  explicit CPngContext(PngModule::Delegate* pDelegate);
+  explicit CPngContext(PngDecoder::Delegate* pDelegate);
   ~CPngContext() override;
 
   png_structp m_pPng = nullptr;
   png_infop m_pInfo = nullptr;
-  UnownedPtr<PngModule::Delegate> const m_pDelegate;
+  UnownedPtr<PngDecoder::Delegate> const m_pDelegate;
   char m_szLastError[PNG_ERROR_SIZE];
 };
 
@@ -172,7 +172,7 @@ void _png_get_row_func(png_structp png_ptr,
 
 }  // extern "C"
 
-CPngContext::CPngContext(PngModule::Delegate* pDelegate)
+CPngContext::CPngContext(PngDecoder::Delegate* pDelegate)
     : m_pDelegate(pDelegate) {
   memset(m_szLastError, 0, sizeof(m_szLastError));
 }
@@ -185,7 +185,7 @@ CPngContext::~CPngContext() {
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context> PngModule::StartDecode(
+std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
     Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
   p->m_pPng =
@@ -208,9 +208,9 @@ std::unique_ptr<ProgressiveDecoderIface::Context> PngModule::StartDecode(
 }
 
 // static
-bool PngModule::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
-                               RetainPtr<CFX_CodecMemory> codec_memory,
-                               CFX_DIBAttribute* pAttribute) {
+bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
+                                RetainPtr<CFX_CodecMemory> codec_memory,
+                                CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   if (setjmp(png_jmpbuf(ctx->m_pPng))) {
     if (pAttribute &&

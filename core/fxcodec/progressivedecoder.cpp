@@ -1190,13 +1190,13 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
 
 bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
-  m_pPngContext = PngModule::StartDecode(this);
+  m_pPngContext = PngDecoder::StartDecode(this);
   if (!m_pPngContext) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  while (PngModule::ContinueDecode(m_pPngContext.get(), m_pCodecMemory,
-                                   pAttribute)) {
+  while (PngDecoder::ContinueDecode(m_pPngContext.get(), m_pCodecMemory,
+                                    pAttribute)) {
     uint32_t remain_size = static_cast<uint32_t>(m_pFile->GetSize()) - m_offSet;
     uint32_t input_size = std::min<uint32_t>(remain_size, kBlockSize);
     if (input_size == 0) {
@@ -1224,7 +1224,7 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
 
 FXCODEC_STATUS ProgressiveDecoder::PngStartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  m_pPngContext = PngModule::StartDecode(this);
+  m_pPngContext = PngDecoder::StartDecode(this);
   if (!m_pPngContext) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
@@ -1286,8 +1286,8 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
       return m_status;
     }
     m_offSet += input_size;
-    bResult =
-        PngModule::ContinueDecode(m_pPngContext.get(), m_pCodecMemory, nullptr);
+    bResult = PngDecoder::ContinueDecode(m_pPngContext.get(), m_pCodecMemory,
+                                         nullptr);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;

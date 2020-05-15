@@ -113,8 +113,8 @@ source_set("fxcodec") {
     }
     if (pdf_enable_xfa_png) {
       sources += [
-        "png/pngmodule.cpp",
-        "png/pngmodule.h",
+        "png/png_decoder.cpp",
+        "png/png_decoder.h",
       ]
       deps += [ "../../third_party:png" ]
     }

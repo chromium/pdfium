@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_PNG_PNGMODULE_H_
-#define CORE_FXCODEC_PNG_PNGMODULE_H_
+#ifndef CORE_FXCODEC_PNG_PNG_DECODER_H_
+#define CORE_FXCODEC_PNG_PNG_DECODER_H_
 
 #include <memory>
 
@@ -17,7 +17,7 @@
 
 namespace fxcodec {
 
-class PngModule {
+class PngDecoder {
  public:
   class Delegate {
    public:
@@ -42,13 +42,13 @@ class PngModule {
                              RetainPtr<CFX_CodecMemory> codec_memory,
                              CFX_DIBAttribute* pAttribute);
 
-  PngModule() = delete;
-  PngModule(const PngModule&) = delete;
-  PngModule& operator=(const PngModule&) = delete;
+  PngDecoder() = delete;
+  PngDecoder(const PngDecoder&) = delete;
+  PngDecoder& operator=(const PngDecoder&) = delete;
 };
 
 }  // namespace fxcodec
 
-using PngModule = fxcodec::PngModule;
+using PngDecoder = fxcodec::PngDecoder;
 
-#endif  // CORE_FXCODEC_PNG_PNGMODULE_H_
+#endif  // CORE_FXCODEC_PNG_PNG_DECODER_H_
