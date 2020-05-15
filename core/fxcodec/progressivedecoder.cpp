@@ -702,25 +702,25 @@ void ProgressiveDecoder::ResampleVertBT(
 bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
   std::unique_ptr<ProgressiveDecoderIface::Context> pBmpContext =
-      BmpModule::StartDecode(this);
-  BmpModule::Input(pBmpContext.get(), m_pCodecMemory, nullptr);
+      BmpDecoder::StartDecode(this);
+  BmpDecoder::Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
   const std::vector<uint32_t>* palette;
-  BmpModule::Status read_result = BmpModule::ReadHeader(
+  BmpDecoder::Status read_result = BmpDecoder::ReadHeader(
       pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
       &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
-  while (read_result == BmpModule::Status::kContinue) {
+  while (read_result == BmpDecoder::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
     if (!BmpReadMoreData(pBmpContext.get(), &error_status)) {
       m_status = error_status;
       return false;
     }
-    read_result = BmpModule::ReadHeader(
+    read_result = BmpDecoder::ReadHeader(
         pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
         &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
   }
 
-  if (read_result != BmpModule::Status::kSuccess) {
+  if (read_result != BmpDecoder::Status::kSuccess) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
@@ -753,7 +753,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   }
 
   uint32_t availableData = m_pFile->GetSize() - m_offSet +
-                           BmpModule::GetAvailInput(pBmpContext.get());
+                           BmpDecoder::GetAvailInput(pBmpContext.get());
   if (neededData > availableData) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
@@ -791,8 +791,8 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
-  BmpModule::Status read_res = BmpModule::LoadImage(m_pBmpContext.get());
-  while (read_res == BmpModule::Status::kContinue) {
+  BmpDecoder::Status read_res = BmpDecoder::LoadImage(m_pBmpContext.get());
+  while (read_res == BmpDecoder::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
     if (!BmpReadMoreData(m_pBmpContext.get(), &error_status)) {
       m_pDeviceBitmap = nullptr;
@@ -800,12 +800,12 @@ FXCODEC_STATUS ProgressiveDecoder::BmpContinueDecode() {
       m_status = error_status;
       return m_status;
     }
-    read_res = BmpModule::LoadImage(m_pBmpContext.get());
+    read_res = BmpDecoder::LoadImage(m_pBmpContext.get());
   }
 
   m_pDeviceBitmap = nullptr;
   m_pFile = nullptr;
-  m_status = read_res == BmpModule::Status::kSuccess
+  m_status = read_res == BmpDecoder::Status::kSuccess
                  ? FXCODEC_STATUS_DECODE_FINISH
                  : FXCODEC_STATUS_ERROR;
   return m_status;

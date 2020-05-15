@@ -20,7 +20,7 @@
 #include "core/fxge/fx_dib.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
-#include "core/fxcodec/bmp/bmpmodule.h"
+#include "core/fxcodec/bmp/bmp_decoder.h"
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
@@ -42,7 +42,7 @@ class Dummy {};  // Placeholder to work around C++ syntax issues
 
 class ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_BMP
-    public BmpModule::Delegate,
+    public BmpDecoder::Delegate,
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
     public GifDecoder::Delegate,
@@ -167,7 +167,7 @@ class ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_BMP
-  // BmpModule::Delegate
+  // BmpDecoder::Delegate
   bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
   void BmpReadScanline(uint32_t row_num,
                        pdfium::span<const uint8_t> row_buf) override;

@@ -8,7 +8,7 @@
 
 namespace fxcodec {
 
-CFX_BmpContext::CFX_BmpContext(BmpModule::Delegate* pDelegate)
+CFX_BmpContext::CFX_BmpContext(BmpDecoder::Delegate* pDelegate)
     : m_Bmp(this), m_pDelegate(pDelegate) {}
 
 CFX_BmpContext::~CFX_BmpContext() = default;

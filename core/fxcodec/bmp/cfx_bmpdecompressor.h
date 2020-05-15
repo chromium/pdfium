@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/fxcodec/bmp/bmpmodule.h"
+#include "core/fxcodec/bmp/bmp_decoder.h"
 #include "core/fxcodec/bmp/fx_bmp.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -26,8 +26,8 @@ class CFX_BmpDecompressor {
   explicit CFX_BmpDecompressor(CFX_BmpContext* context);
   ~CFX_BmpDecompressor();
 
-  BmpModule::Status DecodeImage();
-  BmpModule::Status ReadHeader();
+  BmpDecoder::Status DecodeImage();
+  BmpDecoder::Status ReadHeader();
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   FX_FILESIZE GetAvailInput() const;
 
@@ -49,16 +49,16 @@ class CFX_BmpDecompressor {
     kTail,
   };
 
-  BmpModule::Status ReadBmpHeader();
-  BmpModule::Status ReadBmpHeaderIfh();
-  BmpModule::Status ReadBmpHeaderDimensions();
-  BmpModule::Status ReadBmpBitfields();
-  BmpModule::Status ReadBmpPalette();
+  BmpDecoder::Status ReadBmpHeader();
+  BmpDecoder::Status ReadBmpHeaderIfh();
+  BmpDecoder::Status ReadBmpHeaderDimensions();
+  BmpDecoder::Status ReadBmpBitfields();
+  BmpDecoder::Status ReadBmpPalette();
   bool GetDataPosition(uint32_t cur_pos);
   void ReadNextScanline();
-  BmpModule::Status DecodeRGB();
-  BmpModule::Status DecodeRLE8();
-  BmpModule::Status DecodeRLE4();
+  BmpDecoder::Status DecodeRGB();
+  BmpDecoder::Status DecodeRLE8();
+  BmpDecoder::Status DecodeRLE4();
   bool ReadData(uint8_t* destination, uint32_t size);
   void SaveDecodingStatus(DecodeStatus status);
   bool ValidateColorIndex(uint8_t val) const;

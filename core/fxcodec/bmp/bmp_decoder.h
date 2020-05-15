@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_BMP_BMPMODULE_H_
-#define CORE_FXCODEC_BMP_BMPMODULE_H_
+#ifndef CORE_FXCODEC_BMP_BMP_DECODER_H_
+#define CORE_FXCODEC_BMP_BMP_DECODER_H_
 
 #include <memory>
 #include <vector>
@@ -21,7 +21,7 @@ namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class BmpModule {
+class BmpDecoder {
  public:
   class Delegate {
    public:
@@ -48,13 +48,13 @@ class BmpModule {
                     RetainPtr<CFX_CodecMemory> codec_memory,
                     CFX_DIBAttribute* pAttribute);
 
-  BmpModule() = delete;
-  BmpModule(const BmpModule&) = delete;
-  BmpModule& operator=(const BmpModule&) = delete;
+  BmpDecoder() = delete;
+  BmpDecoder(const BmpDecoder&) = delete;
+  BmpDecoder& operator=(const BmpDecoder&) = delete;
 };
 
 }  // namespace fxcodec
 
-using BmpModule = fxcodec::BmpModule;
+using BmpDecoder = fxcodec::BmpDecoder;
 
-#endif  // CORE_FXCODEC_BMP_BMPMODULE_H_
+#endif  // CORE_FXCODEC_BMP_BMP_DECODER_H_

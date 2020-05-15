@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/bmp/bmpmodule.h"
+#include "core/fxcodec/bmp/bmp_decoder.h"
 
 #include <utility>
 
@@ -18,13 +18,13 @@
 namespace fxcodec {
 
 // static
-std::unique_ptr<ProgressiveDecoderIface::Context> BmpModule::StartDecode(
+std::unique_ptr<ProgressiveDecoderIface::Context> BmpDecoder::StartDecode(
     Delegate* pDelegate) {
   return pdfium::MakeUnique<CFX_BmpContext>(pDelegate);
 }
 
 // static
-BmpModule::Status BmpModule::ReadHeader(
+BmpDecoder::Status BmpDecoder::ReadHeader(
     ProgressiveDecoderIface::Context* pContext,
     int32_t* width,
     int32_t* height,
@@ -53,21 +53,21 @@ BmpModule::Status BmpModule::ReadHeader(
 }
 
 // static
-BmpModule::Status BmpModule::LoadImage(
+BmpDecoder::Status BmpDecoder::LoadImage(
     ProgressiveDecoderIface::Context* pContext) {
   return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.DecodeImage();
 }
 
 // static
-FX_FILESIZE BmpModule::GetAvailInput(
+FX_FILESIZE BmpDecoder::GetAvailInput(
     ProgressiveDecoderIface::Context* pContext) {
   return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.GetAvailInput();
 }
 
 // static
-bool BmpModule::Input(ProgressiveDecoderIface::Context* pContext,
-                      RetainPtr<CFX_CodecMemory> codec_memory,
-                      CFX_DIBAttribute*) {
+bool BmpDecoder::Input(ProgressiveDecoderIface::Context* pContext,
+                       RetainPtr<CFX_CodecMemory> codec_memory,
+                       CFX_DIBAttribute*) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   ctx->m_Bmp.SetInputBuffer(std::move(codec_memory));
   return true;

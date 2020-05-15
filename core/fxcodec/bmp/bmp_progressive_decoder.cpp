@@ -6,7 +6,7 @@
 
 #include "core/fxcodec/bmp/bmp_progressive_decoder.h"
 
-#include "core/fxcodec/bmp/bmpmodule.h"
+#include "core/fxcodec/bmp/bmp_decoder.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 
 namespace fxcodec {
@@ -22,13 +22,13 @@ BmpProgressiveDecoder::BmpProgressiveDecoder() = default;
 BmpProgressiveDecoder::~BmpProgressiveDecoder() = default;
 
 FX_FILESIZE BmpProgressiveDecoder::GetAvailInput(Context* context) const {
-  return BmpModule::GetAvailInput(context);
+  return BmpDecoder::GetAvailInput(context);
 }
 
 bool BmpProgressiveDecoder::Input(Context* context,
                                   RetainPtr<CFX_CodecMemory> codec_memory,
                                   CFX_DIBAttribute* pAttribute) {
-  return BmpModule::Input(context, codec_memory, pAttribute);
+  return BmpDecoder::Input(context, codec_memory, pAttribute);
 }
 
 }  // namespace fxcodec
