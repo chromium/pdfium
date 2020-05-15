@@ -12,6 +12,26 @@
 
 namespace fxcodec {
 
+namespace {
+
+FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
+  FXCODEC_STATUS status = pJbig2Context->m_pContext->GetProcessingStatus();
+  if (status != FXCODEC_STATUS_DECODE_FINISH)
+    return status;
+
+  pJbig2Context->m_pContext.reset();
+  if (!decode_success)
+    return FXCODEC_STATUS_ERROR;
+
+  int dword_size = pJbig2Context->m_height * pJbig2Context->m_dest_pitch / 4;
+  uint32_t* dword_buf = reinterpret_cast<uint32_t*>(pJbig2Context->m_dest_buf);
+  for (int i = 0; i < dword_size; i++)
+    dword_buf[i] = ~dword_buf[i];
+  return FXCODEC_STATUS_DECODE_FINISH;
+}
+
+}  // namespace
+
 JBig2_DocumentContext* GetJBig2DocumentContext(
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder) {
   if (!*pContextHolder)
@@ -23,10 +43,7 @@ Jbig2Context::Jbig2Context() = default;
 
 Jbig2Context::~Jbig2Context() = default;
 
-Jbig2Module::Jbig2Module() = default;
-
-Jbig2Module::~Jbig2Module() = default;
-
+// static
 FXCODEC_STATUS Jbig2Module::StartDecode(
     Jbig2Context* pJbig2Context,
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
@@ -60,27 +77,11 @@ FXCODEC_STATUS Jbig2Module::StartDecode(
   return Decode(pJbig2Context, succeeded);
 }
 
+// static
 FXCODEC_STATUS Jbig2Module::ContinueDecode(Jbig2Context* pJbig2Context,
                                            PauseIndicatorIface* pPause) {
   bool succeeded = pJbig2Context->m_pContext->Continue(pPause);
   return Decode(pJbig2Context, succeeded);
-}
-
-FXCODEC_STATUS Jbig2Module::Decode(Jbig2Context* pJbig2Context,
-                                   bool decode_success) {
-  FXCODEC_STATUS status = pJbig2Context->m_pContext->GetProcessingStatus();
-  if (status != FXCODEC_STATUS_DECODE_FINISH)
-    return status;
-
-  pJbig2Context->m_pContext.reset();
-  if (!decode_success)
-    return FXCODEC_STATUS_ERROR;
-
-  int dword_size = pJbig2Context->m_height * pJbig2Context->m_dest_pitch / 4;
-  uint32_t* dword_buf = reinterpret_cast<uint32_t*>(pJbig2Context->m_dest_buf);
-  for (int i = 0; i < dword_size; i++)
-    dword_buf[i] = ~dword_buf[i];
-  return FXCODEC_STATUS_DECODE_FINISH;
 }
 
 }  // namespace fxcodec

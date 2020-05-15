@@ -11,7 +11,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/jbig2/jbig2module.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/logging.h"
@@ -44,7 +43,7 @@ ModuleMgr* ModuleMgr::GetInstance() {
   return g_ModuleMgr;
 }
 
-ModuleMgr::ModuleMgr() : m_pJbig2Module(pdfium::MakeUnique<Jbig2Module>()) {
+ModuleMgr::ModuleMgr() {
 #ifdef PDF_ENABLE_XFA_BMP
   SetBmpModule(pdfium::MakeUnique<BmpModule>());
 #endif

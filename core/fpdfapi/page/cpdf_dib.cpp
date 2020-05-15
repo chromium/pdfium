@@ -323,8 +323,6 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
     return LoadState::kFail;
 
   FXCODEC_STATUS iDecodeStatus;
-  Jbig2Module* pJbig2Module =
-      fxcodec::ModuleMgr::GetInstance()->GetJbig2Module();
   if (!m_pJbig2Context) {
     m_pJbig2Context = pdfium::MakeUnique<Jbig2Context>();
     if (m_pStreamAcc->GetImageParam()) {
@@ -349,12 +347,12 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
       if (m_pGlobalAcc->GetStream())
         nGlobalObjNum = m_pGlobalAcc->GetStream()->GetObjNum();
     }
-    iDecodeStatus = pJbig2Module->StartDecode(
+    iDecodeStatus = Jbig2Module::StartDecode(
         m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
         pSrcSpan, nSrcObjNum, pGlobalSpan, nGlobalObjNum,
         m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
   } else {
-    iDecodeStatus = pJbig2Module->ContinueDecode(m_pJbig2Context.get(), pPause);
+    iDecodeStatus = Jbig2Module::ContinueDecode(m_pJbig2Context.get(), pPause);
   }
 
   if (iDecodeStatus < 0) {

@@ -37,10 +37,7 @@ class Jbig2Context {
 
 class Jbig2Module {
  public:
-  Jbig2Module();
-  ~Jbig2Module();
-
-  FXCODEC_STATUS StartDecode(
+  static FXCODEC_STATUS StartDecode(
       Jbig2Context* pJbig2Context,
       std::unique_ptr<JBig2_DocumentContext>* pContextHolder,
       uint32_t width,
@@ -53,11 +50,12 @@ class Jbig2Module {
       uint32_t dest_pitch,
       PauseIndicatorIface* pPause);
 
-  FXCODEC_STATUS ContinueDecode(Jbig2Context* pJbig2Context,
-                                PauseIndicatorIface* pPause);
+  static FXCODEC_STATUS ContinueDecode(Jbig2Context* pJbig2Context,
+                                       PauseIndicatorIface* pPause);
 
- private:
-  FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success);
+  Jbig2Module() = delete;
+  Jbig2Module(const Jbig2Module&) = delete;
+  Jbig2Module& operator=(const Jbig2Module&) = delete;
 };
 
 }  // namespace fxcodec
