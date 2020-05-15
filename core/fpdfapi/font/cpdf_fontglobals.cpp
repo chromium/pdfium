@@ -67,7 +67,7 @@ RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
 void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
                            CFX_FontMapper::StandardFont index,
                            const RetainPtr<CPDF_Font>& pFont) {
-  if (!pdfium::ContainsKey(m_StockMap, pDoc))
+  if (!pdfium::Contains(m_StockMap, pDoc))
     m_StockMap[pDoc] = pdfium::MakeUnique<CFX_StockFontArray>();
   m_StockMap[pDoc]->SetFont(index, pFont);
 }

@@ -36,7 +36,7 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
       m_pRuntime(pRuntime),
       m_pEmbedApp(pObj) {
   if (HasValidID()) {
-    ASSERT(!pdfium::ContainsKey(GetGlobalTimerMap(), m_nTimerID));
+    ASSERT(!pdfium::Contains(GetGlobalTimerMap(), m_nTimerID));
     GetGlobalTimerMap()[m_nTimerID] = this;
   }
 }
@@ -48,7 +48,7 @@ GlobalTimer::~GlobalTimer() {
   if (m_pRuntime && m_pRuntime->GetTimerHandler())
     m_pRuntime->GetTimerHandler()->KillTimer(m_nTimerID);
 
-  ASSERT(pdfium::ContainsKey(GetGlobalTimerMap(), m_nTimerID));
+  ASSERT(pdfium::Contains(GetGlobalTimerMap(), m_nTimerID));
   GetGlobalTimerMap().erase(m_nTimerID);
 }
 

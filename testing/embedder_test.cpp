@@ -297,7 +297,7 @@ FPDF_PAGE EmbedderTest::LoadPageNoEvents(int page_number) {
 FPDF_PAGE EmbedderTest::LoadPageCommon(int page_number, bool do_events) {
   ASSERT(form_handle_);
   ASSERT(page_number >= 0);
-  ASSERT(!pdfium::ContainsKey(page_map_, page_number));
+  ASSERT(!pdfium::Contains(page_map_, page_number));
 
   FPDF_PAGE page = FPDF_LoadPage(document_, page_number);
   if (!page)
@@ -501,7 +501,7 @@ void EmbedderTest::CloseSavedDocument() {
 FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
   ASSERT(saved_form_handle_);
   ASSERT(page_number >= 0);
-  ASSERT(!pdfium::ContainsKey(saved_page_map_, page_number));
+  ASSERT(!pdfium::Contains(saved_page_map_, page_number));
 
   FPDF_PAGE page = FPDF_LoadPage(saved_document_, page_number);
   if (!page)

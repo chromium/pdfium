@@ -342,7 +342,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
     if (!m_IsIncremental || !m_pParser->IsXRefStream()) {
       if (!m_IsIncremental || m_pParser->GetLastXRefOffset() == 0) {
         ByteString str;
-        str = pdfium::ContainsKey(m_ObjectOffsets, 1)
+        str = pdfium::Contains(m_ObjectOffsets, 1)
                   ? "xref\r\n"
                   : "xref\r\n0 1\r\n0000000000 65535 f\r\n";
         if (!m_Archive->WriteString(str.AsStringView()))
@@ -366,14 +366,14 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage3() {
     uint32_t i = m_CurObjNum;
     uint32_t j;
     while (i <= dwLastObjNum) {
-      while (i <= dwLastObjNum && !pdfium::ContainsKey(m_ObjectOffsets, i))
+      while (i <= dwLastObjNum && !pdfium::Contains(m_ObjectOffsets, i))
         i++;
 
       if (i > dwLastObjNum)
         break;
 
       j = i;
-      while (j <= dwLastObjNum && pdfium::ContainsKey(m_ObjectOffsets, j))
+      while (j <= dwLastObjNum && pdfium::Contains(m_ObjectOffsets, j))
         j++;
 
       if (i == 1)
@@ -522,7 +522,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
     if (m_IsIncremental && m_pParser && m_pParser->GetLastXRefOffset() == 0) {
       uint32_t i = 0;
       for (i = 0; i < m_dwLastObjNum; i++) {
-        if (!pdfium::ContainsKey(m_ObjectOffsets, i))
+        if (!pdfium::Contains(m_ObjectOffsets, i))
           continue;
         if (!m_Archive->WriteDWord(i) || !m_Archive->WriteString(" 1 "))
           return Stage::kInvalid;

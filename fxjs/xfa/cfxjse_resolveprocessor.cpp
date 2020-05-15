@@ -220,8 +220,7 @@ bool CFXJSE_ResolveProcessor::ResolveNumberSign(CFXJSE_ResolveNodeData& rnd) {
   if (rndFind.m_Objects.empty())
     return false;
 
-  if (wsCondition.IsEmpty() &&
-      pdfium::ContainsValue(rndFind.m_Objects, curNode)) {
+  if (wsCondition.IsEmpty() && pdfium::Contains(rndFind.m_Objects, curNode)) {
     rnd.m_Objects.emplace_back(curNode);
   } else {
     rnd.m_Objects.insert(rnd.m_Objects.end(), rndFind.m_Objects.begin(),

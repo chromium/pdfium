@@ -487,7 +487,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
   if (!pObj)
     return nullptr;
 
-  if (pdfium::ContainsKey(*pVisited, pObj))
+  if (pdfium::Contains(*pVisited, pObj))
     return nullptr;
 
   pdfium::ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pObj);

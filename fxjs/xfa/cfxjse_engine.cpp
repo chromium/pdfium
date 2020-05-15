@@ -805,7 +805,7 @@ void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {
 }
 
 void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
-  if (m_pScriptNodeArray && !pdfium::ContainsValue(*m_pScriptNodeArray, pNode))
+  if (m_pScriptNodeArray && !pdfium::Contains(*m_pScriptNodeArray, pNode))
     m_pScriptNodeArray->push_back(pNode);
 }
 

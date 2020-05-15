@@ -165,7 +165,7 @@ int32_t CJX_Object::Subform_and_SubformSet_InstanceIndex() {
 }
 
 bool CJX_Object::HasMethod(const WideString& func) const {
-  return pdfium::ContainsKey(method_specs_, func.ToUTF8());
+  return pdfium::Contains(method_specs_, func.ToUTF8());
 }
 
 CJS_Result CJX_Object::RunMethod(
@@ -921,8 +921,8 @@ bool CJX_Object::GetMapModuleBuffer(void* pKey,
 
 bool CJX_Object::HasMapModuleKey(void* pKey) {
   XFA_MAPMODULEDATA* pModule = GetMapModuleData();
-  return pModule && (pdfium::ContainsKey(pModule->m_ValueMap, pKey) ||
-                     pdfium::ContainsKey(pModule->m_BufferMap, pKey));
+  return pModule && (pdfium::Contains(pModule->m_ValueMap, pKey) ||
+                     pdfium::Contains(pModule->m_BufferMap, pKey));
 }
 
 void CJX_Object::ClearMapModuleBuffer() {

@@ -1602,9 +1602,9 @@ TEST(WideStringView, AnyAllNoneOf) {
   EXPECT_TRUE(std::any_of(str.begin(), str.end(),
                           [](const wchar_t& c) { return c == L'a'; }));
 
-  EXPECT_TRUE(pdfium::ContainsValue(str, L'a'));
-  EXPECT_TRUE(pdfium::ContainsValue(str, L'b'));
-  EXPECT_FALSE(pdfium::ContainsValue(str, L'z'));
+  EXPECT_TRUE(pdfium::Contains(str, L'a'));
+  EXPECT_TRUE(pdfium::Contains(str, L'b'));
+  EXPECT_FALSE(pdfium::Contains(str, L'z'));
 }
 
 TEST(WideStringView, TrimmedRight) {
@@ -1742,9 +1742,9 @@ TEST(WideString, AnyAllNoneOf) {
   EXPECT_TRUE(std::any_of(str.begin(), str.end(),
                           [](const wchar_t& c) { return c == L'a'; }));
 
-  EXPECT_TRUE(pdfium::ContainsValue(str, L'a'));
-  EXPECT_TRUE(pdfium::ContainsValue(str, L'b'));
-  EXPECT_FALSE(pdfium::ContainsValue(str, L'z'));
+  EXPECT_TRUE(pdfium::Contains(str, L'a'));
+  EXPECT_TRUE(pdfium::Contains(str, L'b'));
+  EXPECT_FALSE(pdfium::Contains(str, L'z'));
 }
 
 TEST(WideString, OStreamOverload) {

@@ -261,7 +261,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
                 eType != XFA_Element::Subform && eType != XFA_Element::Area) {
               continue;
             }
-            if (pdfium::ContainsValue(formItems, pItemChild->GetFormNode()))
+            if (pdfium::Contains(formItems, pItemChild->GetFormNode()))
               continue;
 
             formItems.insert(pItemChild->GetFormNode());
@@ -282,7 +282,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
                 eType != XFA_Element::Subform && eType != XFA_Element::Area) {
               continue;
             }
-            if (pdfium::ContainsValue(formItems, pItemChild->GetFormNode()))
+            if (pdfium::Contains(formItems, pItemChild->GetFormNode()))
               continue;
 
             formItems.insert(pItemChild->GetFormNode());
@@ -317,7 +317,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
               continue;
             if (pItemChild->GetFormNode()->GetElementType() != eType)
               continue;
-            if (pdfium::ContainsValue(formItems, pItemChild->GetFormNode()))
+            if (pdfium::Contains(formItems, pItemChild->GetFormNode()))
               continue;
 
             formItems.insert(pItemChild->GetFormNode());
@@ -334,7 +334,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
               continue;
             if (pItemChild->GetFormNode()->GetElementType() != eType)
               continue;
-            if (pdfium::ContainsValue(formItems, pItemChild->GetFormNode()))
+            if (pdfium::Contains(formItems, pItemChild->GetFormNode()))
               continue;
 
             formItems.insert(pItemChild->GetFormNode());

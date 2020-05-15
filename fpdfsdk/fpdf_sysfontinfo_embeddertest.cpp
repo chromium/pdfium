@@ -142,7 +142,7 @@ TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMap) {
   // Stop at either end mark.
   while (cfmap->charset != -1 && cfmap->fontname) {
     // Only returns values described as legitimate in public header.
-    EXPECT_TRUE(pdfium::ContainsValue(kAllowedCharsets, cfmap->charset))
+    EXPECT_TRUE(pdfium::Contains(kAllowedCharsets, cfmap->charset))
         << " for " << cfmap->charset;
 
     // Duplicates are not allowed.

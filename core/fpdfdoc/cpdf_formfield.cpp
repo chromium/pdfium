@@ -87,7 +87,7 @@ WideString CPDF_FormField::GetFullNameForDict(CPDF_Dictionary* pFieldDict) {
         full_name = short_name + L'.' + full_name;
     }
     pLevel = pLevel->GetDictFor(pdfium::form_fields::kParent);
-    if (pdfium::ContainsKey(visited, pLevel))
+    if (pdfium::Contains(visited, pLevel))
       break;
   }
   return full_name;
@@ -902,7 +902,7 @@ bool CPDF_FormField::UseSelectedIndicesObject() const {
   if (index < 0 || index >= num_options)
     return false;
 
-  return pdfium::ContainsKey(values, GetOptionValue(index));
+  return pdfium::Contains(values, GetOptionValue(index));
 }
 
 void CPDF_FormField::LoadDA() {

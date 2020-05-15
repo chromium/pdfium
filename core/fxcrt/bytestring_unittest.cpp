@@ -1622,9 +1622,9 @@ TEST(ByteStringView, AnyAllNoneOf) {
   EXPECT_TRUE(std::any_of(str.begin(), str.end(),
                           [](const char& c) { return c == 'a'; }));
 
-  EXPECT_TRUE(pdfium::ContainsValue(str, 'a'));
-  EXPECT_TRUE(pdfium::ContainsValue(str, 'b'));
-  EXPECT_FALSE(pdfium::ContainsValue(str, 'z'));
+  EXPECT_TRUE(pdfium::Contains(str, 'a'));
+  EXPECT_TRUE(pdfium::Contains(str, 'b'));
+  EXPECT_FALSE(pdfium::Contains(str, 'z'));
 }
 
 TEST(ByteString, FormatWidth) {
@@ -1739,9 +1739,9 @@ TEST(ByteString, AnyAllNoneOf) {
   EXPECT_TRUE(std::any_of(str.begin(), str.end(),
                           [](const char& c) { return c == 'a'; }));
 
-  EXPECT_TRUE(pdfium::ContainsValue(str, 'a'));
-  EXPECT_TRUE(pdfium::ContainsValue(str, 'b'));
-  EXPECT_FALSE(pdfium::ContainsValue(str, 'z'));
+  EXPECT_TRUE(pdfium::Contains(str, 'a'));
+  EXPECT_TRUE(pdfium::Contains(str, 'b'));
+  EXPECT_FALSE(pdfium::Contains(str, 'z'));
 }
 
 TEST(CFX_BytrString, EqualNoCase) {

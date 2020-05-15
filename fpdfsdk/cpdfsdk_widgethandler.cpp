@@ -306,6 +306,6 @@ bool CPDFSDK_WidgetHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   ASSERT(annot_type == CPDF_Annot::Subtype::WIDGET);
 
-  return pdfium::ContainsValue(m_pFormFillEnv->GetFocusableAnnotSubtypes(),
-                               annot_type);
+  return pdfium::Contains(m_pFormFillEnv->GetFocusableAnnotSubtypes(),
+                          annot_type);
 }

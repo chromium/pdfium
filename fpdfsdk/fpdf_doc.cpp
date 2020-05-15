@@ -33,7 +33,7 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            const WideString& title,
                            std::set<const CPDF_Dictionary*>* visited) {
   // Return if already checked to avoid circular calling.
-  if (pdfium::ContainsKey(*visited, bookmark.GetDict()))
+  if (pdfium::Contains(*visited, bookmark.GetDict()))
     return CPDF_Bookmark();
   visited->insert(bookmark.GetDict());
 
@@ -45,7 +45,7 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
 
   // Go into children items.
   CPDF_Bookmark child = tree.GetFirstChild(&bookmark);
-  while (child.GetDict() && !pdfium::ContainsKey(*visited, child.GetDict())) {
+  while (child.GetDict() && !pdfium::Contains(*visited, child.GetDict())) {
     // Check this item and its children.
     CPDF_Bookmark found = FindBookmark(tree, child, title, visited);
     if (found.GetDict())

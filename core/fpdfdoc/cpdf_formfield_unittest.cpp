@@ -63,7 +63,7 @@ void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,
   CPDF_FormField form_field(&form, form_dict.Get());
   EXPECT_EQ(expected_use_indices, form_field.UseSelectedIndicesObject());
   for (int i = 0; i < form_field.CountOptions(); i++) {
-    const bool expected_selected = pdfium::ContainsValue(expected_indices, i);
+    const bool expected_selected = pdfium::Contains(expected_indices, i);
     EXPECT_EQ(expected_selected, form_field.IsItemSelected(i));
   }
   for (int i : excluded_indices) {

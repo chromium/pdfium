@@ -135,7 +135,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
-  if (pdfium::ContainsKey(*visited, pDict))
+  if (pdfium::Contains(*visited, pDict))
     return false;
 
   visited->insert(pDict);
@@ -167,7 +167,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
-  if (pdfium::ContainsKey(*visited, pDict))
+  if (pdfium::Contains(*visited, pDict))
     return false;
 
   visited->insert(pDict);
@@ -212,7 +212,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
     CPDFSDK_FieldAction* data,
     std::set<const CPDF_Dictionary*>* visited) {
   const CPDF_Dictionary* pDict = action.GetDict();
-  if (pdfium::ContainsKey(*visited, pDict))
+  if (pdfium::Contains(*visited, pDict))
     return false;
 
   visited->insert(pDict);

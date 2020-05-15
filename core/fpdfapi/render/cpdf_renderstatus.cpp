@@ -955,7 +955,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
 bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                                          const CFX_Matrix& mtObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
-  if (pdfium::ContainsValue(m_Type3FontCache, pType3Font))
+  if (pdfium::Contains(m_Type3FontCache, pType3Font))
     return true;
 
   DeviceType device_type = m_pDevice->GetDeviceType();

@@ -40,7 +40,7 @@ class CPWL_MsgControl final : public Observable {
   }
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
-    return pWnd && pdfium::ContainsValue(m_aMousePath, pWnd);
+    return pWnd && pdfium::Contains(m_aMousePath, pWnd);
   }
 
   bool IsMainCaptureKeyboard(const CPWL_Wnd* pWnd) const {
@@ -48,7 +48,7 @@ class CPWL_MsgControl final : public Observable {
   }
 
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
-    return pWnd && pdfium::ContainsValue(m_aKeyboardPath, pWnd);
+    return pWnd && pdfium::Contains(m_aKeyboardPath, pWnd);
   }
 
   void SetFocus(CPWL_Wnd* pWnd) {

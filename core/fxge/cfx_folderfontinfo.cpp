@@ -241,7 +241,7 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (style != "Regular")
     facename += " " + style;
 
-  if (pdfium::ContainsKey(m_FontList, facename))
+  if (pdfium::Contains(m_FontList, facename))
     return;
 
   auto pInfo = pdfium::MakeUnique<FontFaceInfo>(path, facename, tables, offset,

@@ -1507,7 +1507,7 @@ uint32_t CPDF_StreamContentParser::Parse(
   m_StartParseOffset = start_offset;
 
   if (m_ParsedSet->size() > kMaxFormLevel ||
-      pdfium::ContainsKey(*m_ParsedSet, pDataStart)) {
+      pdfium::Contains(*m_ParsedSet, pDataStart)) {
     return size_left;
   }
 

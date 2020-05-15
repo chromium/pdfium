@@ -258,7 +258,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
   if (!pCSObj)
     return nullptr;
 
-  if (pdfium::ContainsKey(*pVisitedInternal, pCSObj))
+  if (pdfium::Contains(*pVisitedInternal, pCSObj))
     return nullptr;
 
   pdfium::ScopedSetInsertion<const CPDF_Object*> insertion(pVisitedInternal,

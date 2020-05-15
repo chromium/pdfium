@@ -40,7 +40,7 @@ void CFWL_NoteDriver::RegisterEventTarget(CFWL_Widget* pListener,
   if (key == 0) {
     do {
       key = rand();
-    } while (key == 0 || pdfium::ContainsKey(m_eventTargets, key));
+    } while (key == 0 || pdfium::Contains(m_eventTargets, key));
     pListener->SetEventKey(key);
   }
   if (!m_eventTargets[key])

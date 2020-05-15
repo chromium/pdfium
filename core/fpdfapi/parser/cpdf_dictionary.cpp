@@ -74,7 +74,7 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
   auto pCopy = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
-    if (!pdfium::ContainsKey(*pVisited, it.second.Get())) {
+    if (!pdfium::Contains(*pVisited, it.second.Get())) {
       std::set<const CPDF_Object*> visited(*pVisited);
       if (auto obj = it.second->CloneNonCyclic(bDirect, &visited))
         pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
@@ -193,7 +193,7 @@ CFX_Matrix CPDF_Dictionary::GetMatrixFor(const ByteString& key) const {
 }
 
 bool CPDF_Dictionary::KeyExist(const ByteString& key) const {
-  return pdfium::ContainsKey(m_Map, key);
+  return pdfium::Contains(m_Map, key);
 }
 
 std::vector<ByteString> CPDF_Dictionary::GetKeys() const {

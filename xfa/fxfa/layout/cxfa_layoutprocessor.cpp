@@ -124,7 +124,7 @@ CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
 }
 
 void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
-  if (!pdfium::ContainsValue(m_rgChangedContainers, pContainer))
+  if (!pdfium::Contains(m_rgChangedContainers, pContainer))
     m_rgChangedContainers.push_back(pContainer);
 }
 

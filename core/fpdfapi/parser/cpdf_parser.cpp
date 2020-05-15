@@ -306,7 +306,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
   xref_offset = GetDirectInteger(GetTrailer(), "Prev");
   while (xref_offset) {
     // Check for circular references.
-    if (pdfium::ContainsKey(seen_xref_offset, xref_offset))
+    if (pdfium::Contains(seen_xref_offset, xref_offset))
       return false;
 
     seen_xref_offset.insert(xref_offset);
@@ -373,7 +373,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
   FX_FILESIZE xref_offset = GetDirectInteger(GetTrailer(), "Prev");
   while (xref_offset) {
     // Check for circular references.
-    if (pdfium::ContainsKey(seen_xref_offset, xref_offset))
+    if (pdfium::Contains(seen_xref_offset, xref_offset))
       return false;
 
     seen_xref_offset.insert(xref_offset);
@@ -574,7 +574,7 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xref_offset) {
       return false;
 
     // Check for circular references.
-    if (pdfium::ContainsKey(seen_xref_offset, xref_offset))
+    if (pdfium::Contains(seen_xref_offset, xref_offset))
       return false;
   }
   m_ObjectStreamMap.clear();
@@ -860,7 +860,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
     return nullptr;
 
   // Prevent circular parsing the same object.
-  if (pdfium::ContainsKey(m_ParsingObjNums, objnum))
+  if (pdfium::Contains(m_ParsingObjNums, objnum))
     return nullptr;
 
   pdfium::ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums, objnum);
@@ -883,7 +883,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
 
 const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {
   // Prevent circular parsing the same object.
-  if (pdfium::ContainsKey(m_ParsingObjNums, object_number))
+  if (pdfium::Contains(m_ParsingObjNums, object_number))
     return nullptr;
 
   pdfium::ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums,
@@ -1049,7 +1049,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE main_xref_offset) {
       return false;
 
     // Check for circular references.
-    if (pdfium::ContainsKey(seen_xref_offset, xref_offset))
+    if (pdfium::Contains(seen_xref_offset, xref_offset))
       return false;
   }
   m_ObjectStreamMap.clear();

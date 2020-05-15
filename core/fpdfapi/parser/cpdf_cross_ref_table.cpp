@@ -112,7 +112,7 @@ void CPDF_CrossRefTable::ShrinkObjectMap(uint32_t objnum) {
 
   objects_info_.erase(objects_info_.lower_bound(objnum), objects_info_.end());
 
-  if (!pdfium::ContainsKey(objects_info_, objnum - 1))
+  if (!pdfium::Contains(objects_info_, objnum - 1))
     objects_info_[objnum - 1].pos = 0;
 }
 

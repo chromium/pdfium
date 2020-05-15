@@ -82,7 +82,7 @@ CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
       return pObj;
 
     pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent);
-    if (!pPageDict || pdfium::ContainsKey(visited, pPageDict))
+    if (!pPageDict || pdfium::Contains(visited, pPageDict))
       break;
   }
   return nullptr;

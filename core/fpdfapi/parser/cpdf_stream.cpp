@@ -100,7 +100,7 @@ RetainPtr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
   uint32_t streamSize = pAcc->GetSize();
   const CPDF_Dictionary* pDict = GetDict();
   RetainPtr<CPDF_Dictionary> pNewDict;
-  if (pDict && !pdfium::ContainsKey(*pVisited, pDict)) {
+  if (pDict && !pdfium::Contains(*pVisited, pDict)) {
     pNewDict =
         ToDictionary(static_cast<const CPDF_Object*>(pDict)->CloneNonCyclic(
             bDirect, pVisited));

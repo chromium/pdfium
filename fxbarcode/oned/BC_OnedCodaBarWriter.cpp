@@ -55,7 +55,7 @@ CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter() = default;
 CBC_OnedCodaBarWriter::~CBC_OnedCodaBarWriter() = default;
 
 bool CBC_OnedCodaBarWriter::SetStartChar(char start) {
-  if (!pdfium::ContainsValue(kStartEndChars, start))
+  if (!pdfium::Contains(kStartEndChars, start))
     return false;
 
   m_chStart = start;
@@ -63,7 +63,7 @@ bool CBC_OnedCodaBarWriter::SetStartChar(char start) {
 }
 
 bool CBC_OnedCodaBarWriter::SetEndChar(char end) {
-  if (!pdfium::ContainsValue(kStartEndChars, end))
+  if (!pdfium::Contains(kStartEndChars, end))
     return false;
 
   m_chEnd = end;
@@ -95,8 +95,8 @@ bool CBC_OnedCodaBarWriter::FindChar(wchar_t ch, bool isContent) {
     return false;
 
   char narrow_ch = static_cast<char>(ch);
-  return pdfium::ContainsValue(kCOntentChars, narrow_ch) ||
-         (isContent && pdfium::ContainsValue(kStartEndChars, narrow_ch));
+  return pdfium::Contains(kCOntentChars, narrow_ch) ||
+         (isContent && pdfium::Contains(kStartEndChars, narrow_ch));
 }
 
 bool CBC_OnedCodaBarWriter::CheckContentValidity(WideStringView contents) {

@@ -67,7 +67,7 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
   pVisited->insert(this);
   if (bDirect) {
     auto* pDirect = GetDirect();
-    return pDirect && !pdfium::ContainsKey(*pVisited, pDirect)
+    return pDirect && !pdfium::Contains(*pVisited, pDirect)
                ? pDirect->CloneNonCyclic(true, pVisited)
                : nullptr;
   }

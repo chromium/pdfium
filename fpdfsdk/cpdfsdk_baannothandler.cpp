@@ -211,8 +211,8 @@ bool CPDFSDK_BAAnnotHandler::IsFocusableAnnot(
     const CPDF_Annot::Subtype& annot_type) const {
   ASSERT(annot_type != CPDF_Annot::Subtype::WIDGET);
 
-  return pdfium::ContainsValue(
-      form_fill_environment_->GetFocusableAnnotSubtypes(), annot_type);
+  return pdfium::Contains(form_fill_environment_->GetFocusableAnnotSubtypes(),
+                          annot_type);
 }
 
 void CPDFSDK_BAAnnotHandler::InvalidateRect(CPDFSDK_Annot* annot) {

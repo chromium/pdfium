@@ -808,7 +808,7 @@ void CPDF_InteractiveForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
     if (!pField)
       continue;
 
-    if (bIncludeOrExclude == pdfium::ContainsValue(fields, pField))
+    if (bIncludeOrExclude == pdfium::Contains(fields, pField))
       pField->ResetField(notify);
   }
   if (notify == NotificationOption::kNotify && m_pFormNotify)
@@ -983,7 +983,7 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
 
     bool bFind = true;
     if (fields)
-      bFind = pdfium::ContainsValue(*fields, pField);
+      bFind = pdfium::Contains(*fields, pField);
     if (bIncludeOrExclude == bFind) {
       const CPDF_Dictionary* pFieldDict = pField->GetDict();
       if (pField->IsRequired() &&
@@ -1041,7 +1041,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     if (dwFlags & 0x04)
       continue;
 
-    if (bIncludeOrExclude != pdfium::ContainsValue(fields, pField))
+    if (bIncludeOrExclude != pdfium::Contains(fields, pField))
       continue;
 
     if ((dwFlags & 0x02) != 0 &&

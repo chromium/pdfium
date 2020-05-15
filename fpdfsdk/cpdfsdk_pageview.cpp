@@ -562,7 +562,7 @@ bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
 bool CPDFSDK_PageView::IsValidSDKAnnot(const CPDFSDK_Annot* p) const {
   if (!p)
     return false;
-  return pdfium::ContainsValue(m_SDKAnnotArray, p);
+  return pdfium::Contains(m_SDKAnnotArray, p);
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {

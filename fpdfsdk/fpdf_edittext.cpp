@@ -367,7 +367,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
     if (dwCurrentChar > kMaxUnicode)
       break;
 
-    if (!pdfium::ContainsKey(widths, dwGlyphIndex))
+    if (!pdfium::Contains(widths, dwGlyphIndex))
       widths[dwGlyphIndex] = pFont->GetGlyphWidth(dwGlyphIndex);
     to_unicode[dwGlyphIndex] = dwCurrentChar;
     dwCurrentChar =

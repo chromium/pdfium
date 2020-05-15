@@ -797,7 +797,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
     m_bCurPageDictLoadOK = false;
   }
 
-  if (pdfium::ContainsKey(m_pagesLoadState, dwPage))
+  if (pdfium::Contains(m_pagesLoadState, dwPage))
     return DataAvailable;
 
   const HintsScope hints_scope(GetValidator(), pHints);

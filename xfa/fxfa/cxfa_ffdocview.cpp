@@ -512,7 +512,7 @@ void CXFA_FFDocView::AddNewFormNode(CXFA_Node* pNode) {
 
 void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
   ASSERT(pNode->GetElementType() == XFA_Element::Subform);
-  if (!pdfium::ContainsValue(m_IndexChangedSubforms, pNode))
+  if (!pdfium::Contains(m_IndexChangedSubforms, pNode))
     m_IndexChangedSubforms.push_back(pNode);
 }
 
@@ -577,7 +577,7 @@ XFA_EventError CXFA_FFDocView::RunCalculateWidgets() {
 }
 
 void CXFA_FFDocView::AddValidateNode(CXFA_Node* node) {
-  if (!pdfium::ContainsValue(m_ValidateNodes, node))
+  if (!pdfium::Contains(m_ValidateNodes, node))
     m_ValidateNodes.push_back(node);
 }
 

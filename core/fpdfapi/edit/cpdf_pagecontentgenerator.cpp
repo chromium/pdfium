@@ -129,7 +129,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Finish dirty streams.
   for (int32_t dirty_stream : all_dirty_streams) {
     std::ostringstream* buf = streams[dirty_stream].get();
-    if (pdfium::ContainsKey(empty_streams, dirty_stream)) {
+    if (pdfium::Contains(empty_streams, dirty_stream)) {
       // Clear to show that this stream needs to be deleted.
       buf->str("");
     } else {

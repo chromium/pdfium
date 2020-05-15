@@ -74,7 +74,7 @@ CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
 CPDF_ObjectStream::~CPDF_ObjectStream() = default;
 
 bool CPDF_ObjectStream::HasObject(uint32_t obj_number) const {
-  return pdfium::ContainsKey(objects_offsets_, obj_number);
+  return pdfium::Contains(objects_offsets_, obj_number);
 }
 
 RetainPtr<CPDF_Object> CPDF_ObjectStream::ParseObject(

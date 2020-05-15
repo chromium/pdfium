@@ -833,7 +833,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     wchar_t wUnicode,
     uint32_t dwFontStyles,
     const wchar_t* pszFontFamily) {
-  if (pdfium::ContainsKey(m_FailedUnicodesSet, wUnicode))
+  if (pdfium::Contains(m_FailedUnicodesSet, wUnicode))
     return nullptr;
 
   const FGAS_FONTUSB* x = FGAS_GetUnicodeBitField(wUnicode);

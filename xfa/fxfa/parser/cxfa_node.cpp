@@ -556,7 +556,7 @@ std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
   CXFA_Node* pCommonParent = (*rgNodeSet.begin())->GetParent();
   for (CXFA_Node* pNode = pCommonParent->GetFirstChild(); pNode;
        pNode = pNode->GetNextSibling()) {
-    if (pdfium::ContainsValue(rgNodeSet, pNode))
+    if (pdfium::Contains(rgNodeSet, pNode))
       rgNodeArray.push_back(pNode);
   }
   return rgNodeArray;
@@ -597,7 +597,7 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
   for (CXFA_Node* pNode : sSet2) {
     CXFA_NodeSetPair* pNodeSetPair = NodeSetPairForNode(pNode, &rgMap);
     if (pNodeSetPair) {
-      if (pdfium::ContainsValue(pNodeSetPair->first, pNode))
+      if (pdfium::Contains(pNodeSetPair->first, pNode))
         pNodeSetPair->first.erase(pNode);
       else
         pNodeSetPair->second.insert(pNode);
@@ -2781,7 +2781,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
               pdfium::MakeUnique<CXFA_CalcData>());
           pGlobalData = pRefNode->JSObject()->GetCalcData();
         }
-        if (!pdfium::ContainsValue(pGlobalData->m_Globals, this))
+        if (!pdfium::Contains(pGlobalData->m_Globals, this))
           pGlobalData->m_Globals.push_back(this);
       }
     }
@@ -4258,7 +4258,7 @@ int32_t CXFA_Node::CountSelectedItems() {
   int32_t iSelected = 0;
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
   for (const auto& value : wsValueArray) {
-    if (pdfium::ContainsValue(wsSaveTextArray, value))
+    if (pdfium::Contains(wsSaveTextArray, value))
       iSelected++;
   }
   return iSelected;
@@ -4300,8 +4300,7 @@ std::vector<WideString> CXFA_Node::GetSelectedItemsValue() {
 bool CXFA_Node::GetItemState(int32_t nIndex) {
   std::vector<WideString> wsSaveTextArray = GetChoiceListItems(true);
   return pdfium::IndexInBounds(wsSaveTextArray, nIndex) &&
-         pdfium::ContainsValue(GetSelectedItemsValue(),
-                               wsSaveTextArray[nIndex]);
+         pdfium::Contains(GetSelectedItemsValue(), wsSaveTextArray[nIndex]);
 }
 
 void CXFA_Node::SetItemState(int32_t nIndex,

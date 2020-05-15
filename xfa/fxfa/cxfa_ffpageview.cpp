@@ -352,8 +352,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
   CXFA_FFWidget* hWidget = SpaceOrderWidgetArray[0];
   while (pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray) <
          nWidgetCount) {
-    if (!pdfium::ContainsValue(m_TabOrderWidgetArray,
-                               hWidget->GetLayoutItem())) {
+    if (!pdfium::Contains(m_TabOrderWidgetArray, hWidget->GetLayoutItem())) {
       m_TabOrderWidgetArray.emplace_back(hWidget->GetLayoutItem());
       CXFA_Node* pNode = hWidget->GetNode();
       if (pNode->GetFFWidgetType() == XFA_FFWidgetType::kExclGroup) {
@@ -367,8 +366,8 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
               SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
           if (radio->GetNode()->GetExclGroupIfExists() != pNode)
             break;
-          if (!pdfium::ContainsValue(m_TabOrderWidgetArray,
-                                     hWidget->GetLayoutItem())) {
+          if (!pdfium::Contains(m_TabOrderWidgetArray,
+                                hWidget->GetLayoutItem())) {
             m_TabOrderWidgetArray.emplace_back(radio->GetLayoutItem());
           }
           iWidgetIndex++;

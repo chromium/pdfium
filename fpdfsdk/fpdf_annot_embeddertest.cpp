@@ -83,8 +83,8 @@ void VerifyAnnotationSubtypesAndFocusability(
     ASSERT_TRUE(annot);
     EXPECT_EQ(expected_subtypes[i], FPDFAnnot_GetSubtype(annot.get()));
 
-    bool expected_focusable = pdfium::ContainsValue(expected_focusable_subtypes,
-                                                    expected_subtypes[i]);
+    bool expected_focusable =
+        pdfium::Contains(expected_focusable_subtypes, expected_subtypes[i]);
     EXPECT_EQ(expected_focusable,
               FORM_SetFocusedAnnot(form_handle, annot.get()));
 

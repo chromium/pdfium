@@ -50,7 +50,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
   if (!pFuncObj)
     return nullptr;
 
-  if (pdfium::ContainsKey(*pVisited, pFuncObj))
+  if (pdfium::Contains(*pVisited, pFuncObj))
     return nullptr;
   pdfium::ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pFuncObj);
 
