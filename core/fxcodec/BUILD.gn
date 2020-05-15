@@ -107,6 +107,8 @@ source_set("fxcodec") {
         "gif/cfx_gifcontext.h",
         "gif/cfx_lzwdecompressor.cpp",
         "gif/cfx_lzwdecompressor.h",
+        "gif/gif_progressive_decoder.cpp",
+        "gif/gif_progressive_decoder.h",
         "gif/gifmodule.cpp",
         "gif/gifmodule.h",
       ]

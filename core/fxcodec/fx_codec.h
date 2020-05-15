@@ -19,10 +19,6 @@
 #ifdef PDF_ENABLE_XFA_BMP
 #include "core/fxcodec/bmp/bmpmodule.h"
 #endif  // PDF_ENABLE_XFA_BMP
-
-#ifdef PDF_ENABLE_XFA_GIF
-#include "core/fxcodec/gif/gifmodule.h"
-#endif  // PDF_ENABLE_XFA_GIF
 #endif
 
 namespace fxcodec {
@@ -58,13 +54,6 @@ class ModuleMgr {
     m_pBmpModule = std::move(module);
   }
 #endif  // PDF_ENABLE_XFA_BMP
-
-#ifdef PDF_ENABLE_XFA_GIF
-  GifModule* GetGifModule() const { return m_pGifModule.get(); }
-  void SetGifModule(std::unique_ptr<GifModule> module) {
-    m_pGifModule = std::move(module);
-  }
-#endif  // PDF_ENABLE_XFA_GIF
 #endif  // PDF_ENABLE_XFA
 
  private:
@@ -75,10 +64,6 @@ class ModuleMgr {
 #ifdef PDF_ENABLE_XFA_BMP
   std::unique_ptr<BmpModule> m_pBmpModule;
 #endif  // PDF_ENABLE_XFA_BMP
-
-#ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<GifModule> m_pGifModule;
-#endif  // PDF_ENABLE_XFA_GIF
 #endif  // PDF_ENABLE_XFA
 };
 

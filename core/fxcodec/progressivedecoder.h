@@ -185,7 +185,7 @@ class ProgressiveDecoder :
 #endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
-  bool GifReadMoreData(GifModule* pGifModule, FXCODEC_STATUS* err_status);
+  bool GifReadMoreData(FXCODEC_STATUS* err_status);
   bool GifDetectImageTypeInBuffer();
   FXCODEC_STATUS GifStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS GifContinueDecode();

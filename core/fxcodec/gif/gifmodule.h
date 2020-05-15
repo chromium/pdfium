@@ -14,11 +14,15 @@
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_coordinates.h"
 
+#ifndef PDF_ENABLE_XFA_GIF
+#error "GIF must be enabled"
+#endif
+
 namespace fxcodec {
 
 class CFX_DIBAttribute;
 
-class GifModule final : public ProgressiveDecoderIface {
+class GifModule {
  public:
   class Delegate {
    public:
@@ -35,24 +39,28 @@ class GifModule final : public ProgressiveDecoderIface {
     virtual void GifReadScanline(int32_t row_num, uint8_t* row_buf) = 0;
   };
 
-  GifModule();
-  ~GifModule() override;
+  static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
+      Delegate* pDelegate);
+  static CFX_GifDecodeStatus ReadHeader(
+      ProgressiveDecoderIface::Context* context,
+      int* width,
+      int* height,
+      int* pal_num,
+      CFX_GifPalette** pal_pp,
+      int* bg_index);
+  static std::pair<CFX_GifDecodeStatus, size_t> LoadFrameInfo(
+      ProgressiveDecoderIface::Context* context);
+  static CFX_GifDecodeStatus LoadFrame(
+      ProgressiveDecoderIface::Context* context,
+      size_t frame_num);
+  static FX_FILESIZE GetAvailInput(ProgressiveDecoderIface::Context* context);
+  static bool Input(ProgressiveDecoderIface::Context* context,
+                    RetainPtr<CFX_CodecMemory> codec_memory,
+                    CFX_DIBAttribute* pAttribute);
 
-  // ProgressiveDecoderIface:
-  FX_FILESIZE GetAvailInput(Context* context) const override;
-  bool Input(Context* context,
-             RetainPtr<CFX_CodecMemory> codec_memory,
-             CFX_DIBAttribute* pAttribute) override;
-
-  std::unique_ptr<Context> Start(Delegate* pDelegate);
-  CFX_GifDecodeStatus ReadHeader(Context* context,
-                                 int* width,
-                                 int* height,
-                                 int* pal_num,
-                                 CFX_GifPalette** pal_pp,
-                                 int* bg_index);
-  std::pair<CFX_GifDecodeStatus, size_t> LoadFrameInfo(Context* context);
-  CFX_GifDecodeStatus LoadFrame(Context* context, size_t frame_num);
+  GifModule() = delete;
+  GifModule(const GifModule&) = delete;
+  GifModule& operator=(const GifModule&) = delete;
 };
 
 }  // namespace fxcodec

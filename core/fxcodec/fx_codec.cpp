@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
@@ -46,10 +47,6 @@ ModuleMgr* ModuleMgr::GetInstance() {
 ModuleMgr::ModuleMgr() {
 #ifdef PDF_ENABLE_XFA_BMP
   SetBmpModule(pdfium::MakeUnique<BmpModule>());
-#endif
-
-#ifdef PDF_ENABLE_XFA_GIF
-  SetGifModule(pdfium::MakeUnique<GifModule>());
 #endif
 }
 
