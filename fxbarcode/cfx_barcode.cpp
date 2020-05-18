@@ -26,27 +26,27 @@ namespace {
 std::unique_ptr<CBC_CodeBase> CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {
     case BC_CODE39:
-      return pdfium::MakeUnique<CBC_Code39>();
+      return std::make_unique<CBC_Code39>();
     case BC_CODABAR:
-      return pdfium::MakeUnique<CBC_Codabar>();
+      return std::make_unique<CBC_Codabar>();
     case BC_CODE128:
-      return pdfium::MakeUnique<CBC_Code128>(BC_CODE128_B);
+      return std::make_unique<CBC_Code128>(BC_CODE128_B);
     case BC_CODE128_B:
-      return pdfium::MakeUnique<CBC_Code128>(BC_CODE128_B);
+      return std::make_unique<CBC_Code128>(BC_CODE128_B);
     case BC_CODE128_C:
-      return pdfium::MakeUnique<CBC_Code128>(BC_CODE128_C);
+      return std::make_unique<CBC_Code128>(BC_CODE128_C);
     case BC_EAN8:
-      return pdfium::MakeUnique<CBC_EAN8>();
+      return std::make_unique<CBC_EAN8>();
     case BC_UPCA:
-      return pdfium::MakeUnique<CBC_UPCA>();
+      return std::make_unique<CBC_UPCA>();
     case BC_EAN13:
-      return pdfium::MakeUnique<CBC_EAN13>();
+      return std::make_unique<CBC_EAN13>();
     case BC_QR_CODE:
-      return pdfium::MakeUnique<CBC_QRCode>();
+      return std::make_unique<CBC_QRCode>();
     case BC_PDF417:
-      return pdfium::MakeUnique<CBC_PDF417I>();
+      return std::make_unique<CBC_PDF417I>();
     case BC_DATAMATRIX:
-      return pdfium::MakeUnique<CBC_DataMatrix>();
+      return std::make_unique<CBC_DataMatrix>();
     case BC_UNKNOWN:
     default:
       return nullptr;

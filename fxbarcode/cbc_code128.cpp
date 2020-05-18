@@ -25,10 +25,9 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/oned/BC_OnedCode128Writer.h"
-#include "third_party/base/ptr_util.h"
 
 CBC_Code128::CBC_Code128(BC_TYPE type)
-    : CBC_OneCode(pdfium::MakeUnique<CBC_OnedCode128Writer>(type)) {}
+    : CBC_OneCode(std::make_unique<CBC_OnedCode128Writer>(type)) {}
 
 CBC_Code128::~CBC_Code128() = default;
 

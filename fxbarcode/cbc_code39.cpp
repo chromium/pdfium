@@ -25,10 +25,9 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/oned/BC_OnedCode39Writer.h"
-#include "third_party/base/ptr_util.h"
 
 CBC_Code39::CBC_Code39()
-    : CBC_OneCode(pdfium::MakeUnique<CBC_OnedCode39Writer>()) {}
+    : CBC_OneCode(std::make_unique<CBC_OnedCode39Writer>()) {}
 
 CBC_Code39::~CBC_Code39() = default;
 

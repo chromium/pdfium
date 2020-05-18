@@ -39,7 +39,6 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -145,12 +144,12 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg) {
   }
 
   std::vector<std::unique_ptr<CBC_Encoder>> encoders;
-  encoders.push_back(pdfium::MakeUnique<CBC_ASCIIEncoder>());
-  encoders.push_back(pdfium::MakeUnique<CBC_C40Encoder>());
-  encoders.push_back(pdfium::MakeUnique<CBC_TextEncoder>());
-  encoders.push_back(pdfium::MakeUnique<CBC_X12Encoder>());
-  encoders.push_back(pdfium::MakeUnique<CBC_EdifactEncoder>());
-  encoders.push_back(pdfium::MakeUnique<CBC_Base256Encoder>());
+  encoders.push_back(std::make_unique<CBC_ASCIIEncoder>());
+  encoders.push_back(std::make_unique<CBC_C40Encoder>());
+  encoders.push_back(std::make_unique<CBC_TextEncoder>());
+  encoders.push_back(std::make_unique<CBC_X12Encoder>());
+  encoders.push_back(std::make_unique<CBC_EdifactEncoder>());
+  encoders.push_back(std::make_unique<CBC_Base256Encoder>());
   Encoding encodingMode = Encoding::ASCII;
   while (context.hasMoreCharacters()) {
     if (!encoders[EncoderIndex(encodingMode)]->Encode(&context))

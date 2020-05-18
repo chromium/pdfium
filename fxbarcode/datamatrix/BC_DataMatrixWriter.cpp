@@ -41,7 +41,6 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -58,7 +57,7 @@ std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
   int32_t height = symbolInfo->GetSymbolHeight();
   ASSERT(height);
 
-  auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(width, height);
+  auto matrix = std::make_unique<CBC_CommonByteMatrix>(width, height);
   int32_t matrixY = 0;
   for (int32_t y = 0; y < symbolHeight; y++) {
     int32_t matrixX;
@@ -132,7 +131,7 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CBC_DataMatrixWriter::Encode(
   ASSERT(height);
 
   auto placement =
-      pdfium::MakeUnique<CBC_DefaultPlacement>(codewords, width, height);
+      std::make_unique<CBC_DefaultPlacement>(codewords, width, height);
   placement->place();
   auto bytematrix = encodeLowLevel(placement.get(), pSymbolInfo);
   if (!bytematrix)

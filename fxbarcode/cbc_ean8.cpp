@@ -24,9 +24,8 @@
 #include <memory>
 
 #include "fxbarcode/oned/BC_OnedEAN8Writer.h"
-#include "third_party/base/ptr_util.h"
 
-CBC_EAN8::CBC_EAN8() : CBC_EANCode(pdfium::MakeUnique<CBC_OnedEAN8Writer>()) {}
+CBC_EAN8::CBC_EAN8() : CBC_EANCode(std::make_unique<CBC_OnedEAN8Writer>()) {}
 
 CBC_EAN8::~CBC_EAN8() = default;
 

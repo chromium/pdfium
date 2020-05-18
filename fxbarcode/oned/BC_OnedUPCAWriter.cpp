@@ -31,7 +31,6 @@
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 #include "fxbarcode/oned/BC_OnedEAN13Writer.h"
-#include "third_party/base/ptr_util.h"
 
 CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
   m_bLeftPadding = true;
@@ -63,7 +62,7 @@ WideString CBC_OnedUPCAWriter::FilterContents(WideStringView contents) {
 }
 
 void CBC_OnedUPCAWriter::InitEANWriter() {
-  m_subWriter = pdfium::MakeUnique<CBC_OnedEAN13Writer>();
+  m_subWriter = std::make_unique<CBC_OnedEAN13Writer>();
 }
 
 int32_t CBC_OnedUPCAWriter::CalcChecksum(const ByteString& contents) {

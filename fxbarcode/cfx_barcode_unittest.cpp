@@ -16,14 +16,13 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/bitmap_saver.h"
 #include "testing/utils/hash.h"
-#include "third_party/base/ptr_util.h"
 
 class BarcodeTest : public testing::Test {
  public:
   void SetUp() override {
     BC_Library_Init();
 
-    auto device = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+    auto device = std::make_unique<CFX_DefaultRenderDevice>();
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (bitmap->Create(640, 480, FXDIB_Rgb32))
       bitmap_ = bitmap;

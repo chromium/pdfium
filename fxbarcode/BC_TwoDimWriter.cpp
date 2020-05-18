@@ -15,7 +15,6 @@
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/ptr_util.h"
 
 CBC_TwoDimWriter::CBC_TwoDimWriter(bool bFixedSize)
     : m_bFixedSize(bFixedSize) {}
@@ -71,7 +70,7 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
   m_leftPadding = std::max((m_Width - m_outputWidth) / 2, 0);
   m_topPadding = std::max((m_Height - m_outputHeight) / 2, 0);
 
-  m_output = pdfium::MakeUnique<CBC_CommonBitMatrix>();
+  m_output = std::make_unique<CBC_CommonBitMatrix>();
   m_output->Init(m_inputWidth, m_inputHeight);
 
   for (int32_t y = 0; y < m_inputHeight; ++y) {

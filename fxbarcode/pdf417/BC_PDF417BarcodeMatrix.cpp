@@ -22,13 +22,12 @@
 
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
-#include "third_party/base/ptr_util.h"
 
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
     : m_width((width + 4) * 17 + 1), m_height(height) {
   m_matrix.resize(m_height);
   for (size_t i = 0; i < m_height; ++i)
-    m_matrix[i] = pdfium::MakeUnique<CBC_BarcodeRow>(m_width);
+    m_matrix[i] = std::make_unique<CBC_BarcodeRow>(m_width);
 }
 
 CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {}

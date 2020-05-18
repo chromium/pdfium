@@ -39,7 +39,6 @@
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "third_party/base/optional.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
@@ -450,7 +449,7 @@ bool CBC_QRCoderEncoder::Encode(WideStringView content,
     return false;
   }
 
-  auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(
+  auto matrix = std::make_unique<CBC_CommonByteMatrix>(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   Optional<int32_t> maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get());
