@@ -153,10 +153,10 @@ using fxcrt::RetainPtr;
 
 namespace pdfium {
 
-// Helper to make a RetainPtr along the lines of std::make_unique<>(),
-// or pdfium::MakeUnique<>(). Arguments are forwarded to T's constructor.
-// Classes managed by RetainPtr should have protected (or private)
-// constructors, and should friend this function.
+// Helper to make a RetainPtr along the lines of std::make_unique<>().
+// Arguments are forwarded to T's constructor. Classes managed by RetainPtr
+// should have protected (or private) constructors, and should friend this
+// function.
 template <typename T, typename... Args>
 RetainPtr<T> MakeRetain(Args&&... args) {
   return RetainPtr<T>(new T(std::forward<Args>(args)...));

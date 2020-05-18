@@ -15,13 +15,12 @@
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 class CFX_CSSStyleSheetTest : public testing::Test {
  public:
   void SetUp() override {
-    sheet_ = pdfium::MakeUnique<CFX_CSSStyleSheet>();
+    sheet_ = std::make_unique<CFX_CSSStyleSheet>();
     decl_ = nullptr;
   }
 

@@ -13,7 +13,6 @@
 #include <memory>
 
 #include "core/fxcrt/fx_stream.h"
-#include "third_party/base/ptr_util.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -43,7 +42,7 @@ void GetFileMode(uint32_t dwModes, int32_t& nFlags, int32_t& nMasks) {
 
 // static
 std::unique_ptr<FileAccessIface> FileAccessIface::Create() {
-  return pdfium::MakeUnique<CFX_FileAccess_Posix>();
+  return std::make_unique<CFX_FileAccess_Posix>();
 }
 
 CFX_FileAccess_Posix::CFX_FileAccess_Posix() : m_nFD(-1) {}

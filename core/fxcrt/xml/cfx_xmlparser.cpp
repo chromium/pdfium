@@ -22,7 +22,6 @@
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -80,7 +79,7 @@ CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
 CFX_XMLParser::~CFX_XMLParser() = default;
 
 std::unique_ptr<CFX_XMLDocument> CFX_XMLParser::Parse() {
-  auto doc = pdfium::MakeUnique<CFX_XMLDocument>();
+  auto doc = std::make_unique<CFX_XMLDocument>();
   current_node_ = doc->GetRoot();
 
   return DoSyntaxParse(doc.get()) ? std::move(doc) : nullptr;

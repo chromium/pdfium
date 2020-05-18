@@ -20,7 +20,6 @@
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/ptr_util.h"
 
 CFX_CSSStyleSelector::CFX_CSSStyleSelector() : m_fDefFontSize(12.0f) {}
 
@@ -85,7 +84,7 @@ void CFX_CSSStyleSelector::ComputeStyle(
     CFX_CSSComputedStyle* pDest) {
   std::unique_ptr<CFX_CSSDeclaration> pDecl;
   if (!styleString.IsEmpty() || !alignString.IsEmpty()) {
-    pDecl = pdfium::MakeUnique<CFX_CSSDeclaration>();
+    pDecl = std::make_unique<CFX_CSSDeclaration>();
 
     if (!styleString.IsEmpty())
       AppendInlineStyle(pDecl.get(), styleString);
@@ -142,7 +141,7 @@ void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
   ASSERT(pDecl);
   ASSERT(!style.IsEmpty());
 
-  auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(style.AsStringView());
+  auto pSyntax = std::make_unique<CFX_CSSSyntaxParser>(style.AsStringView());
   pSyntax->SetParseOnlyDeclarations();
 
   int32_t iLen2 = 0;

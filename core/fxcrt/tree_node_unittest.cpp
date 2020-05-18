@@ -7,7 +7,6 @@
 #include <memory>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 namespace fxcrt {
 
@@ -17,59 +16,59 @@ class TestTreeNode : public TreeNode<TestTreeNode> {};
 // These tests check that we trip CHECKS given bad calls.
 
 TEST(TreeNode, SelfAppendFirstChild) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
   EXPECT_DEATH(pNode->AppendFirstChild(pNode.get()), "");
 }
 
 TEST(TreeNode, SelfAppendLastChild) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
   EXPECT_DEATH(pNode->AppendLastChild(pNode.get()), "");
 }
 
 TEST(TreeNode, SelfInsertBeforeOther) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
-  auto pOther = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
+  auto pOther = std::make_unique<TestTreeNode>();
   pNode->AppendFirstChild(pOther.get());
   EXPECT_DEATH(pNode->InsertBefore(pNode.get(), pOther.get()), "");
 }
 
 TEST(TreeNode, InsertOtherBeforeSelf) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
-  auto pOther = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
+  auto pOther = std::make_unique<TestTreeNode>();
   pNode->AppendFirstChild(pOther.get());
   EXPECT_DEATH(pNode->InsertBefore(pOther.get(), pNode.get()), "");
 }
 
 TEST(TreeNode, SelfInsertAfterOther) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
-  auto pOther = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
+  auto pOther = std::make_unique<TestTreeNode>();
   pNode->AppendFirstChild(pOther.get());
   EXPECT_DEATH(pNode->InsertBefore(pNode.get(), pOther.get()), "");
 }
 
 TEST(TreeNode, InsertOtherAfterSelf) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
-  auto pOther = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
+  auto pOther = std::make_unique<TestTreeNode>();
   pNode->AppendFirstChild(pOther.get());
   EXPECT_DEATH(pNode->InsertBefore(pOther.get(), pNode.get()), "");
 }
 
 TEST(TreeNode, RemoveParentless) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
   EXPECT_DEATH(pNode->GetParent()->RemoveChild(pNode.get()), "");
 }
 
 TEST(TreeNode, RemoveFromWrongParent) {
-  auto pGoodParent = pdfium::MakeUnique<TestTreeNode>();
-  auto pBadParent = pdfium::MakeUnique<TestTreeNode>();
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
+  auto pGoodParent = std::make_unique<TestTreeNode>();
+  auto pBadParent = std::make_unique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
   pGoodParent->AppendFirstChild(pNode.get());
   EXPECT_DEATH(pBadParent->RemoveChild(pNode.get()), "");
 }
 
 TEST(TreeNode, SafeRemove) {
-  auto pParent = pdfium::MakeUnique<TestTreeNode>();
-  auto pChild = pdfium::MakeUnique<TestTreeNode>();
+  auto pParent = std::make_unique<TestTreeNode>();
+  auto pChild = std::make_unique<TestTreeNode>();
   pParent->AppendFirstChild(pChild.get());
   pChild->RemoveSelfIfParented();
   EXPECT_EQ(nullptr, pParent->GetFirstChild());
@@ -77,20 +76,20 @@ TEST(TreeNode, SafeRemove) {
 }
 
 TEST(TreeNode, SafeRemoveParentless) {
-  auto pNode = pdfium::MakeUnique<TestTreeNode>();
+  auto pNode = std::make_unique<TestTreeNode>();
   pNode->RemoveSelfIfParented();
   EXPECT_EQ(nullptr, pNode->GetParent());
 }
 
 TEST(TreeNode, RemoveAllChildren) {
-  auto pParent = pdfium::MakeUnique<TestTreeNode>();
+  auto pParent = std::make_unique<TestTreeNode>();
   pParent->RemoveAllChildren();
   EXPECT_EQ(nullptr, pParent->GetFirstChild());
 
-  auto p0 = pdfium::MakeUnique<TestTreeNode>();
-  auto p1 = pdfium::MakeUnique<TestTreeNode>();
-  auto p2 = pdfium::MakeUnique<TestTreeNode>();
-  auto p3 = pdfium::MakeUnique<TestTreeNode>();
+  auto p0 = std::make_unique<TestTreeNode>();
+  auto p1 = std::make_unique<TestTreeNode>();
+  auto p2 = std::make_unique<TestTreeNode>();
+  auto p3 = std::make_unique<TestTreeNode>();
   pParent->AppendLastChild(p0.get());
   pParent->AppendLastChild(p1.get());
   pParent->AppendLastChild(p2.get());
@@ -100,14 +99,14 @@ TEST(TreeNode, RemoveAllChildren) {
 }
 
 TEST(TreeNode, NthChild) {
-  auto pParent = pdfium::MakeUnique<TestTreeNode>();
+  auto pParent = std::make_unique<TestTreeNode>();
   EXPECT_EQ(nullptr, pParent->GetNthChild(-1));
   EXPECT_EQ(nullptr, pParent->GetNthChild(0));
 
-  auto p0 = pdfium::MakeUnique<TestTreeNode>();
-  auto p1 = pdfium::MakeUnique<TestTreeNode>();
-  auto p2 = pdfium::MakeUnique<TestTreeNode>();
-  auto p3 = pdfium::MakeUnique<TestTreeNode>();
+  auto p0 = std::make_unique<TestTreeNode>();
+  auto p1 = std::make_unique<TestTreeNode>();
+  auto p2 = std::make_unique<TestTreeNode>();
+  auto p3 = std::make_unique<TestTreeNode>();
   pParent->AppendLastChild(p0.get());
   pParent->AppendLastChild(p1.get());
   pParent->AppendLastChild(p2.get());
@@ -122,9 +121,9 @@ TEST(TreeNode, NthChild) {
 }
 
 TEST(TreeNode, AppendFirstChild) {
-  auto parent = pdfium::MakeUnique<TestTreeNode>();
-  auto child0 = pdfium::MakeUnique<TestTreeNode>();
-  auto child1 = pdfium::MakeUnique<TestTreeNode>();
+  auto parent = std::make_unique<TestTreeNode>();
+  auto child0 = std::make_unique<TestTreeNode>();
+  auto child1 = std::make_unique<TestTreeNode>();
   parent->AppendFirstChild(child0.get());
   EXPECT_EQ(child0.get(), parent->GetFirstChild());
   parent->AppendFirstChild(child1.get());
@@ -134,9 +133,9 @@ TEST(TreeNode, AppendFirstChild) {
 }
 
 TEST(TreeNode, RemoveChild) {
-  auto parent = pdfium::MakeUnique<TestTreeNode>();
-  auto child0 = pdfium::MakeUnique<TestTreeNode>();
-  auto child1 = pdfium::MakeUnique<TestTreeNode>();
+  auto parent = std::make_unique<TestTreeNode>();
+  auto child0 = std::make_unique<TestTreeNode>();
+  auto child1 = std::make_unique<TestTreeNode>();
 
   parent->AppendFirstChild(child0.get());
   parent->AppendLastChild(child1.get());
