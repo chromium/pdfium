@@ -11,7 +11,6 @@
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
-#include "third_party/base/ptr_util.h"
 
 std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -49,7 +48,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
   if (!BHDC)
     return nullptr;
 
-  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
+  auto pDict = std::make_unique<CJBig2_PatternDict>(GRAYMAX + 1);
   for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY)
     pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
   return pDict;
@@ -66,7 +65,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
   if (!BHDC)
     return nullptr;
 
-  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
+  auto pDict = std::make_unique<CJBig2_PatternDict>(GRAYMAX + 1);
   for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY)
     pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
   return pDict;
@@ -78,7 +77,7 @@ std::unique_ptr<CJBig2_GRDProc> CJBig2_PDDProc::CreateGRDProc() {
   if (width > JBIG2_MAX_IMAGE_SIZE || height > JBIG2_MAX_IMAGE_SIZE)
     return nullptr;
 
-  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
+  auto pGRD = std::make_unique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;
   pGRD->GBW = width;
   pGRD->GBH = height;

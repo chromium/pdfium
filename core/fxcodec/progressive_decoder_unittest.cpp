@@ -8,7 +8,6 @@
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
 #ifdef PDF_ENABLE_XFA_GIF
@@ -371,7 +370,7 @@ TEST(ProgressiveDecoder, BUG_895009) {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
   {
-    auto decoder = pdfium::MakeUnique<ProgressiveDecoder>();
+    auto decoder = std::make_unique<ProgressiveDecoder>();
 
     auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(kInput);
     CFX_DIBAttribute attr;

@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {
@@ -105,8 +104,7 @@ std::unique_ptr<CLcmsCmm> IccModule::CreateTransformSRGB(
   if (!hTransform)
     return nullptr;
 
-  return pdfium::MakeUnique<CLcmsCmm>(hTransform, nSrcComponents, bLab,
-                                      bNormal);
+  return std::make_unique<CLcmsCmm>(hTransform, nSrcComponents, bLab, bNormal);
 }
 
 // static

@@ -17,7 +17,6 @@
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {
@@ -596,9 +595,8 @@ std::unique_ptr<ScanlineDecoder> FaxModule::CreateDecoder(
     return nullptr;
   }
 
-  return pdfium::MakeUnique<FaxDecoder>(src_span, actual_width, actual_height,
-                                        K, EndOfLine, EncodedByteAlign,
-                                        BlackIs1);
+  return std::make_unique<FaxDecoder>(src_span, actual_width, actual_height, K,
+                                      EndOfLine, EncodedByteAlign, BlackIs1);
 }
 
 // static

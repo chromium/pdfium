@@ -10,14 +10,13 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 #include "core/fxge/fx_dib.h"
-#include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
 
 // static
 std::unique_ptr<ProgressiveDecoderIface::Context> GifDecoder::StartDecode(
     Delegate* pDelegate) {
-  return pdfium::MakeUnique<CFX_GifContext>(pDelegate);
+  return std::make_unique<CFX_GifContext>(pDelegate);
 }
 
 // static

@@ -22,7 +22,6 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/optional.h"
-#include "third_party/base/ptr_util.h"
 
 static pdfium::span<const uint8_t> JpegScanSOI(
     pdfium::span<const uint8_t> src_span) {
@@ -386,7 +385,7 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
     bool ColorTransform) {
   ASSERT(!src_span.empty());
 
-  auto pDecoder = pdfium::MakeUnique<JpegDecoder>();
+  auto pDecoder = std::make_unique<JpegDecoder>();
   if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform))
     return nullptr;
 

@@ -15,7 +15,6 @@
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/pauseindicator_iface.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -63,7 +62,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   if (!CJBig2_Image::IsValidImageSize(GBW, GBH))
-    return pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+    return std::make_unique<CJBig2_Image>(GBW, GBH);
 
   switch (GBTEMPLATE) {
     case 0:
@@ -89,7 +88,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     int OPT) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+  auto GBREG = std::make_unique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->data())
     return nullptr;
 
@@ -195,7 +194,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     int UNOPT) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+  auto GBREG = std::make_unique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->data())
     return nullptr;
 
@@ -256,7 +255,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+  auto GBREG = std::make_unique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->data())
     return nullptr;
 
@@ -341,7 +340,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+  auto GBREG = std::make_unique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->data())
     return nullptr;
 
@@ -393,7 +392,7 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeArith(
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_READY;
   std::unique_ptr<CJBig2_Image>* pImage = pState->pImage;
   if (!*pImage)
-    *pImage = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+    *pImage = std::make_unique<CJBig2_Image>(GBW, GBH);
   if (!(*pImage)->data()) {
     *pImage = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
@@ -451,7 +450,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArith(
 FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
     std::unique_ptr<CJBig2_Image>* pImage,
     CJBig2_BitStream* pStream) {
-  auto image = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
+  auto image = std::make_unique<CJBig2_Image>(GBW, GBH);
   if (!image->data()) {
     *pImage = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;

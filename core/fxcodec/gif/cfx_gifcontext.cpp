@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcodec {
@@ -438,7 +437,7 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeExtension() {
 
       if (!graphic_control_extension_.get())
         graphic_control_extension_ =
-            pdfium::MakeUnique<CFX_GifGraphicControlExtension>();
+            std::make_unique<CFX_GifGraphicControlExtension>();
       graphic_control_extension_->block_size = gif_gce.block_size;
       graphic_control_extension_->gce_flags = gif_gce.gce_flags;
       graphic_control_extension_->delay_time =
@@ -469,7 +468,7 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeImageInfo() {
   if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&img_info), sizeof(img_info)))
     return CFX_GifDecodeStatus::Unfinished;
 
-  auto gif_image = pdfium::MakeUnique<CFX_GifImage>();
+  auto gif_image = std::make_unique<CFX_GifImage>();
   gif_image->image_info.left =
       FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.left));
   gif_image->image_info.top =

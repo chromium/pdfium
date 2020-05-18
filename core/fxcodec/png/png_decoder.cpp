@@ -13,7 +13,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/ptr_util.h"
 
 #ifdef USE_SYSTEM_LIBPNG
 #include <png.h>
@@ -187,7 +186,7 @@ namespace fxcodec {
 // static
 std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
     Delegate* pDelegate) {
-  auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
+  auto p = std::make_unique<CPngContext>(pDelegate);
   p->m_pPng =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!p->m_pPng)

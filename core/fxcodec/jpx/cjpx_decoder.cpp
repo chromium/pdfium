@@ -420,8 +420,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
 
   m_Image = nullptr;
   m_SrcData = src_data;
-  m_DecodeData =
-      pdfium::MakeUnique<DecodeData>(src_data.data(), src_data.size());
+  m_DecodeData = std::make_unique<DecodeData>(src_data.data(), src_data.size());
   m_Stream = fx_opj_stream_create_memory_stream(m_DecodeData.get());
   if (!m_Stream)
     return false;

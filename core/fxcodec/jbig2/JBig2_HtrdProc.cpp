@@ -12,7 +12,6 @@
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
-#include "third_party/base/ptr_util.h"
 
 std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -20,7 +19,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
     PauseIndicatorIface* pPause) {
   std::unique_ptr<CJBig2_Image> HSKIP;
   if (HENABLESKIP == 1) {
-    HSKIP = pdfium::MakeUnique<CJBig2_Image>(HGW, HGH);
+    HSKIP = std::make_unique<CJBig2_Image>(HGW, HGH);
     for (uint32_t mg = 0; mg < HGH; ++mg) {
       for (uint32_t ng = 0; ng < HGW; ++ng) {
         int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
@@ -116,7 +115,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeMMR(
 
 std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
     const std::vector<std::unique_ptr<CJBig2_Image>>& GSPLANES) {
-  auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
+  auto HTREG = std::make_unique<CJBig2_Image>(HBW, HBH);
   if (!HTREG->data())
     return nullptr;
 

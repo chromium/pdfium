@@ -21,7 +21,6 @@
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/ptr_util.h"
 
 CJBig2_SDDProc::CJBig2_SDDProc() = default;
 
@@ -50,24 +49,24 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   std::vector<CJBig2_Image*> SBSYMS;
   std::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
   std::unique_ptr<CJBig2_SymbolDict> pDict;
-  auto IADH = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IADW = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IAAI = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IARDX = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IARDY = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IAEX = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IADT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IAFS = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IADS = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IAIT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IARI = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IARDW = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-  auto IARDH = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
+  auto IADH = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IADW = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IAAI = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IARDX = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IARDY = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IAEX = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IADT = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IAFS = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IADS = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IAIT = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IARI = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IARDW = std::make_unique<CJBig2_ArithIntDecoder>();
+  auto IARDH = std::make_unique<CJBig2_ArithIntDecoder>();
   nTmp = 0;
   while ((uint32_t)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
     nTmp++;
   }
-  IAID = pdfium::MakeUnique<CJBig2_ArithIaidDecoder>((uint8_t)nTmp);
+  IAID = std::make_unique<CJBig2_ArithIaidDecoder>((uint8_t)nTmp);
   SDNEWSYMS.resize(SDNUMNEWSYMS);
 
   HCHEIGHT = 0;
@@ -100,7 +99,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
       }
       TOTWIDTH = TOTWIDTH + SYMWIDTH;
       if (SDREFAGG == 0) {
-        auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
+        auto pGRD = std::make_unique<CJBig2_GRDProc>();
         pGRD->MMR = 0;
         pGRD->GBW = SYMWIDTH;
         pGRD->GBH = HCHEIGHT;
@@ -122,15 +121,15 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
         IAAI->Decode(pArithDecoder, (int*)&REFAGGNINST);
         if (REFAGGNINST > 1) {
           // Huffman tables must not outlive |pDecoder|.
-          auto SBHUFFFS = pdfium::MakeUnique<CJBig2_HuffmanTable>(6);
-          auto SBHUFFDS = pdfium::MakeUnique<CJBig2_HuffmanTable>(8);
-          auto SBHUFFDT = pdfium::MakeUnique<CJBig2_HuffmanTable>(11);
-          auto SBHUFFRDW = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRDH = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRDY = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
-          auto pDecoder = pdfium::MakeUnique<CJBig2_TRDProc>();
+          auto SBHUFFFS = std::make_unique<CJBig2_HuffmanTable>(6);
+          auto SBHUFFDS = std::make_unique<CJBig2_HuffmanTable>(8);
+          auto SBHUFFDT = std::make_unique<CJBig2_HuffmanTable>(11);
+          auto SBHUFFRDW = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDH = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDX = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDY = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
+          auto pDecoder = std::make_unique<CJBig2_TRDProc>();
           pDecoder->SBHUFF = SDHUFF;
           pDecoder->SBREFINE = 1;
           pDecoder->SBW = SYMWIDTH;
@@ -198,7 +197,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           if (!SBSYMS[IDI])
             return nullptr;
 
-          auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
+          auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
@@ -241,15 +240,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
   if (num_ex_syms > SDNUMEXSYMS)
     return nullptr;
 
-  pDict = pdfium::MakeUnique<CJBig2_SymbolDict>();
+  pDict = std::make_unique<CJBig2_SymbolDict>();
   J = 0;
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (!EXFLAGS[I] || J >= SDNUMEXSYMS)
       continue;
     if (I < SDNUMINSYMS) {
-      pDict->AddImage(SDINSYMS[I]
-                          ? pdfium::MakeUnique<CJBig2_Image>(*SDINSYMS[I])
-                          : nullptr);
+      pDict->AddImage(SDINSYMS[I] ? std::make_unique<CJBig2_Image>(*SDINSYMS[I])
+                                  : nullptr);
     } else {
       pDict->AddImage(std::move(SDNEWSYMS[I - SDNUMINSYMS]));
     }
@@ -283,11 +281,11 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   uint32_t num_ex_syms;
   // Pointers are not owned
   std::vector<CJBig2_Image*> SBSYMS;
-  auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
+  auto pHuffmanDecoder = std::make_unique<CJBig2_HuffmanDecoder>(pStream);
   SDNEWSYMS.resize(SDNUMNEWSYMS);
   if (SDREFAGG == 0)
     SDNEWSYMWIDTHS.resize(SDNUMNEWSYMS);
-  auto pDict = pdfium::MakeUnique<CJBig2_SymbolDict>();
+  auto pDict = std::make_unique<CJBig2_SymbolDict>();
   std::unique_ptr<CJBig2_HuffmanTable> pTable;
 
   HCHEIGHT = 0;
@@ -331,15 +329,15 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         BS = nullptr;
         if (REFAGGNINST > 1) {
           // Huffman tables must outlive |pDecoder|.
-          auto SBHUFFFS = pdfium::MakeUnique<CJBig2_HuffmanTable>(6);
-          auto SBHUFFDS = pdfium::MakeUnique<CJBig2_HuffmanTable>(8);
-          auto SBHUFFDT = pdfium::MakeUnique<CJBig2_HuffmanTable>(11);
-          auto SBHUFFRDW = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRDH = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRDY = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
-          auto pDecoder = pdfium::MakeUnique<CJBig2_TRDProc>();
+          auto SBHUFFFS = std::make_unique<CJBig2_HuffmanTable>(6);
+          auto SBHUFFDS = std::make_unique<CJBig2_HuffmanTable>(8);
+          auto SBHUFFDT = std::make_unique<CJBig2_HuffmanTable>(11);
+          auto SBHUFFRDW = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDH = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDX = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDY = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
+          auto pDecoder = std::make_unique<CJBig2_TRDProc>();
           pDecoder->SBHUFF = SDHUFF;
           pDecoder->SBREFINE = 1;
           pDecoder->SBW = SYMWIDTH;
@@ -404,8 +402,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             if (IDI < SBNUMSYMS)
               break;
           }
-          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
+          auto SBHUFFRDX = std::make_unique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRSIZE = std::make_unique<CJBig2_HuffmanTable>(1);
           if ((pHuffmanDecoder->DecodeAValue(SBHUFFRDX.get(), &RDXI) != 0) ||
               (pHuffmanDecoder->DecodeAValue(SBHUFFRDX.get(), &RDYI) != 0) ||
               (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE.get(), &nVal) != 0)) {
@@ -417,7 +415,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           std::copy(SDINSYMS, SDINSYMS + SDNUMINSYMS, SBSYMS.begin());
           for (size_t i = 0; i < NSYMSDECODED; ++i)
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
-          auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
+          auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
@@ -429,7 +427,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(pStream);
+          auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(pStream);
           BS = pGRRD->Decode(pArithDecoder.get(), grContext->data());
           if (!BS)
             return nullptr;
@@ -464,14 +462,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         }
 
         const uint32_t stride = safe_stride.ValueOrDie();
-        BHC = pdfium::MakeUnique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
+        BHC = std::make_unique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
         for (I = 0; I < HCHEIGHT; I++) {
           memcpy(BHC->data() + I * BHC->stride(), pStream->getPointer(),
                  stride);
           pStream->offset(stride);
         }
       } else {
-        auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
+        auto pGRD = std::make_unique<CJBig2_GRDProc>();
         pGRD->MMR = 1;
         pGRD->GBW = TOTWIDTH;
         pGRD->GBH = HCHEIGHT;
@@ -490,7 +488,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   }
   EXINDEX = 0;
   CUREXFLAG = 0;
-  pTable = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
+  pTable = std::make_unique<CJBig2_HuffmanTable>(1);
   EXFLAGS.resize(SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
@@ -519,9 +517,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     if (!EXFLAGS[I] || J >= SDNUMEXSYMS)
       continue;
     if (I < SDNUMINSYMS) {
-      pDict->AddImage(SDINSYMS[I]
-                          ? pdfium::MakeUnique<CJBig2_Image>(*SDINSYMS[I])
-                          : nullptr);
+      pDict->AddImage(SDINSYMS[I] ? std::make_unique<CJBig2_Image>(*SDINSYMS[I])
+                                  : nullptr);
     } else {
       pDict->AddImage(std::move(SDNEWSYMS[I - SDNUMINSYMS]));
     }

@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "third_party/base/optional.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -50,13 +49,13 @@ CJBig2_TRDProc::~CJBig2_TRDProc() = default;
 std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
     JBig2ArithCtx* grContext) {
-  auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
+  auto SBREG = std::make_unique<CJBig2_Image>(SBW, SBH);
   if (!SBREG->data())
     return nullptr;
 
   SBREG->Fill(SBDEFPIXEL);
   int32_t INITIAL_STRIPT;
-  auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
+  auto pHuffmanDecoder = std::make_unique<CJBig2_HuffmanDecoder>(pStream);
   if (pHuffmanDecoder->DecodeAValue(SBHUFFDT.Get(), &INITIAL_STRIPT) != 0)
     return nullptr;
 
@@ -173,7 +172,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         if (!GRREFERENCEDX || !GRREFERENCEDY)
           return nullptr;
 
-        auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
+        auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
         pGRRD->GRW = WOI.value();
         pGRRD->GRH = HOI.value();
         pGRRD->GRTEMPLATE = SBRTEMPLATE;
@@ -186,7 +185,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
 
-        auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(pStream);
+        auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(pStream);
         IBI = pGRRD->Decode(pArithDecoder.get(), grContext);
         if (!IBI)
           return nullptr;
@@ -226,7 +225,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext,
     JBig2IntDecoderState* pIDS) {
-  auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
+  auto SBREG = std::make_unique<CJBig2_Image>(SBW, SBH);
   if (!SBREG->data())
     return nullptr;
 
@@ -234,7 +233,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
   if (pIDS)
     pIADT = pIDS->IADT;
   else
-    pIADT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
+    pIADT = std::make_unique<CJBig2_ArithIntDecoder>();
   int32_t INITIAL_STRIPT;
   if (!pIADT->Decode(pArithDecoder, &INITIAL_STRIPT))
     return nullptr;
@@ -259,15 +258,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     pIARDY = pIDS->IARDY;
     pIAID = pIDS->IAID;
   } else {
-    pIAFS = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIADS = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIAIT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIARI = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIARDW = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIARDH = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIARDX = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIARDY = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
-    pIAID = pdfium::MakeUnique<CJBig2_ArithIaidDecoder>(SBSYMCODELEN);
+    pIAFS = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIADS = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIAIT = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIARI = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIARDW = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIARDH = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIARDX = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIARDY = std::make_unique<CJBig2_ArithIntDecoder>();
+    pIAID = std::make_unique<CJBig2_ArithIaidDecoder>(SBSYMCODELEN);
   }
 
   SBREG->Fill(SBDEFPIXEL);
@@ -353,7 +352,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         if (!GRREFERENCEDX || !GRREFERENCEDY)
           return nullptr;
 
-        auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
+        auto pGRRD = std::make_unique<CJBig2_GRRDProc>();
         pGRRD->GRW = WOI.value();
         pGRRD->GRH = HOI.value();
         pGRRD->GRTEMPLATE = SBRTEMPLATE;

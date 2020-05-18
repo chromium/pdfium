@@ -4,11 +4,11 @@
 
 // TODO(tsepez) this requires a lot more testing.
 
+#include "core/fxcodec/jbig2/JBig2_Image.h"
+
 #include <stdint.h>
 
-#include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -162,7 +162,7 @@ TEST(fxcodec, JBig2ImageExpandExternalTooBig) {
 }
 
 TEST(fxcodec, JBig2EmptyImage) {
-  auto empty = pdfium::MakeUnique<CJBig2_Image>(0, 0);
+  auto empty = std::make_unique<CJBig2_Image>(0, 0);
 
   // Empty subimage.
   auto sub1 = empty->SubImage(0, 0, 0, 0);
@@ -229,24 +229,24 @@ TEST(fxcodec, JBig2SubImage) {
   };
 
   // Image size a nice clean power of two.
-  auto img32 = pdfium::MakeUnique<CJBig2_Image>(
+  auto img32 = std::make_unique<CJBig2_Image>(
       32, 5, 8, reinterpret_cast<uint8_t*>(pattern));
 
   // Image size not a nice clean value.
-  auto img37 = pdfium::MakeUnique<CJBig2_Image>(
+  auto img37 = std::make_unique<CJBig2_Image>(
       37, 5, 8, reinterpret_cast<uint8_t*>(pattern));
 
   // Expected results to check against.
-  auto expected20 = pdfium::MakeUnique<CJBig2_Image>(
+  auto expected20 = std::make_unique<CJBig2_Image>(
       30, 5, 8, reinterpret_cast<uint8_t*>(pattern20));
 
-  auto expected22 = pdfium::MakeUnique<CJBig2_Image>(
+  auto expected22 = std::make_unique<CJBig2_Image>(
       30, 5, 8, reinterpret_cast<uint8_t*>(pattern22));
 
-  auto expected161 = pdfium::MakeUnique<CJBig2_Image>(
+  auto expected161 = std::make_unique<CJBig2_Image>(
       25, 5, 8, reinterpret_cast<uint8_t*>(pattern161));
 
-  auto expected_zeros = pdfium::MakeUnique<CJBig2_Image>(32, 5);
+  auto expected_zeros = std::make_unique<CJBig2_Image>(32, 5);
 
   // Empty subimage.
   auto sub = img32->SubImage(0, 0, 0, 0);
@@ -328,10 +328,10 @@ TEST(fxcodec, JBig2CopyLine) {
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
   };
 
-  auto img = pdfium::MakeUnique<CJBig2_Image>(
+  auto img = std::make_unique<CJBig2_Image>(
       37, 3, 8, reinterpret_cast<uint8_t*>(pattern));
 
-  auto expected = pdfium::MakeUnique<CJBig2_Image>(
+  auto expected = std::make_unique<CJBig2_Image>(
       37, 3, 8, reinterpret_cast<uint8_t*>(expected_pattern));
 
   // Shuffle.

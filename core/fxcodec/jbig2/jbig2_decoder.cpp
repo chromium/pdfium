@@ -8,7 +8,6 @@
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
-#include "third_party/base/ptr_util.h"
 
 namespace fxcodec {
 
@@ -35,7 +34,7 @@ FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
 JBig2_DocumentContext* GetJBig2DocumentContext(
     std::unique_ptr<JBig2_DocumentContext>* pContextHolder) {
   if (!*pContextHolder)
-    *pContextHolder = pdfium::MakeUnique<JBig2_DocumentContext>();
+    *pContextHolder = std::make_unique<JBig2_DocumentContext>();
   return pContextHolder->get();
 }
 

@@ -18,7 +18,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/ptr_util.h"
 
 extern "C" {
 #include "third_party/libtiff/tiffiop.h"
@@ -487,7 +486,7 @@ namespace fxcodec {
 // static
 std::unique_ptr<ProgressiveDecoderIface::Context> TiffDecoder::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
-  auto pDecoder = pdfium::MakeUnique<CTiffContext>();
+  auto pDecoder = std::make_unique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))
     return nullptr;
 
