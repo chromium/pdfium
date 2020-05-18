@@ -5,11 +5,9 @@
 #include "testing/js_embedder_test.h"
 
 #include "fxjs/cfxjs_engine.h"
-#include "third_party/base/ptr_util.h"
 
 JSEmbedderTest::JSEmbedderTest()
-    : m_pArrayBufferAllocator(
-          pdfium::MakeUnique<CFX_V8ArrayBufferAllocator>()) {}
+    : m_pArrayBufferAllocator(std::make_unique<CFX_V8ArrayBufferAllocator>()) {}
 
 JSEmbedderTest::~JSEmbedderTest() {}
 
@@ -24,7 +22,7 @@ void JSEmbedderTest::SetUp() {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   FXJS_PerIsolateData::SetUp(isolate());
-  m_Engine = pdfium::MakeUnique<CFXJS_Engine>(isolate());
+  m_Engine = std::make_unique<CFXJS_Engine>(isolate());
   m_Engine->InitializeEngine();
 }
 

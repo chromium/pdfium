@@ -26,7 +26,6 @@
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_V8
@@ -55,7 +54,7 @@ int CALLBACK GetRecordProc(HDC hdc,
 }  // namespace
 
 EmbedderTest::EmbedderTest()
-    : default_delegate_(pdfium::MakeUnique<EmbedderTest::Delegate>()),
+    : default_delegate_(std::make_unique<EmbedderTest::Delegate>()),
       delegate_(default_delegate_.get()) {
   FPDF_FILEWRITE::version = 1;
   FPDF_FILEWRITE::WriteBlock = WriteBlockCallback;
@@ -148,7 +147,7 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
     return false;
 
   EXPECT_TRUE(!loader_);
-  loader_ = pdfium::MakeUnique<TestLoader>(
+  loader_ = std::make_unique<TestLoader>(
       pdfium::make_span(file_contents_.get(), file_length_));
 
   memset(&file_access_, 0, sizeof(file_access_));
@@ -156,7 +155,7 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
   file_access_.m_GetBlock = TestLoader::GetBlock;
   file_access_.m_Param = loader_.get();
 
-  fake_file_access_ = pdfium::MakeUnique<FakeFileAccess>(&file_access_);
+  fake_file_access_ = std::make_unique<FakeFileAccess>(&file_access_);
   return OpenDocumentHelper(password, linearize_option, javascript_option,
                             fake_file_access_.get(), &document_, &avail_,
                             &form_handle_);
@@ -477,7 +476,7 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
   saved_file_access_.m_Param = &saved_document_file_data_;
 
   saved_fake_file_access_ =
-      pdfium::MakeUnique<FakeFileAccess>(&saved_file_access_);
+      std::make_unique<FakeFileAccess>(&saved_file_access_);
 
   EXPECT_TRUE(OpenDocumentHelper(
       password, LinearizeOption::kDefaultLinearize,

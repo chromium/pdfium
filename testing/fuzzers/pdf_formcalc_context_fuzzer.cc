@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
@@ -11,7 +13,6 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "public/fpdf_formfill.h"
 #include "testing/fuzzers/pdfium_fuzzer_helper.h"
-#include "third_party/base/ptr_util.h"
 #include "v8/include/v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
@@ -526,7 +527,7 @@ class PDFiumFormCalcContextFuzzer : public PDFiumFuzzerHelper {
     script_context->SetEventParam(&params);
     ByteStringView data_view(data_, size_);
 
-    auto value = pdfium::MakeUnique<CFXJSE_Value>(script_context->GetIsolate());
+    auto value = std::make_unique<CFXJSE_Value>(script_context->GetIsolate());
     script_context->RunScript(CXFA_Script::Type::Formcalc,
                               WideString::FromUTF8(data_view).AsStringView(),
                               value.get(), xfa_document->GetRoot());

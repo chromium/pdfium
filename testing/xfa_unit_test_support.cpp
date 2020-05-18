@@ -11,7 +11,6 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 namespace {
@@ -23,7 +22,7 @@ class XFATestEnvironment final : public testing::Environment {
  public:
   // testing::Environment:
   void SetUp() override {
-    auto font_mgr = pdfium::MakeUnique<CFGAS_FontMgr>();
+    auto font_mgr = std::make_unique<CFGAS_FontMgr>();
     if (font_mgr->EnumFonts())
       font_mgr_ = std::move(font_mgr);
   }

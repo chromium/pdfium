@@ -11,12 +11,10 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 
 XFAJSEmbedderTest::XFAJSEmbedderTest()
-    : array_buffer_allocator_(
-          pdfium::MakeUnique<CFX_V8ArrayBufferAllocator>()) {}
+    : array_buffer_allocator_(std::make_unique<CFX_V8ArrayBufferAllocator>()) {}
 
 XFAJSEmbedderTest::~XFAJSEmbedderTest() {}
 
@@ -91,7 +89,7 @@ bool XFAJSEmbedderTest::ExecuteSilenceFailure(ByteStringView input) {
 }
 
 bool XFAJSEmbedderTest::ExecuteHelper(ByteStringView input) {
-  value_ = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
+  value_ = std::make_unique<CFXJSE_Value>(GetIsolate());
   return script_context_->RunScript(CXFA_Script::Type::Formcalc,
                                     WideString::FromUTF8(input).AsStringView(),
                                     value_.get(), GetXFADocument()->GetRoot());

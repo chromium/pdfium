@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
+
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -53,7 +54,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   std::unique_ptr<CFX_ClipRgn> clip_rgn;
   if (is_clip)
-    clip_rgn = pdfium::MakeUnique<CFX_ClipRgn>(width, height);
+    clip_rgn = std::make_unique<CFX_ClipRgn>(width, height);
   if (src_bitmap->IsAlphaMask()) {
     dest_bitmap->CompositeMask(dest_left, dest_top, width, height, src_bitmap,
                                argb, src_left, src_top, blend_mode,
