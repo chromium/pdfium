@@ -17,7 +17,6 @@
 #include "core/fxcrt/fx_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/invalid_seekable_read_stream.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

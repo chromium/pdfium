@@ -21,7 +21,6 @@
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"

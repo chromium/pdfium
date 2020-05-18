@@ -9,7 +9,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_stream.h"
-#include "third_party/base/ptr_util.h"
 
 CPDF_Name::CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str)
     : m_Name(str) {

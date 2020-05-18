@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "third_party/base/ptr_util.h"
 
 CFWL_MessageKillFocus::CFWL_MessageKillFocus(CFWL_Widget* pSrcTarget)
     : CFWL_MessageKillFocus(pSrcTarget, nullptr) {}

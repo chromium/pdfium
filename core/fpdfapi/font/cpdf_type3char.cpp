@@ -10,7 +10,6 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

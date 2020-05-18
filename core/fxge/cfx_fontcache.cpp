@@ -13,7 +13,6 @@
 #include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
-#include "third_party/base/ptr_util.h"
 
 CFX_FontCache::CFX_FontCache() = default;
 

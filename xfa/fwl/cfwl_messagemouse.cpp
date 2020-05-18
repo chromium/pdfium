@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "third_party/base/ptr_util.h"
 
 CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      FWL_MouseCommand cmd)

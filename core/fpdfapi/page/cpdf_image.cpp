@@ -29,7 +29,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 
 // static
 bool CPDF_Image::IsValidJpegComponent(int32_t comps) {

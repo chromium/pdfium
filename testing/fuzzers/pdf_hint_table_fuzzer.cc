@@ -11,7 +11,6 @@
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fxcrt/cfx_bitstream.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
 int32_t GetData(const int32_t** data32, const uint8_t** data, size_t* size) {

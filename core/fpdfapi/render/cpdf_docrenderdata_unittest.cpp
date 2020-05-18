@@ -14,7 +14,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

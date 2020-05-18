@@ -34,7 +34,6 @@
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

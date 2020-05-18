@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 TEST(JBig2_BitStream, ReadNBits) {
   const uint8_t kData[] = {0xb1};  // 10110001

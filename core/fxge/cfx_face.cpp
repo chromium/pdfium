@@ -4,7 +4,6 @@
 
 #include "core/fxge/cfx_face.h"
 
-#include "third_party/base/ptr_util.h"
 
 // static
 RetainPtr<CFX_Face> CFX_Face::New(FT_Library library,

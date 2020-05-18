@@ -12,7 +12,6 @@
 #include "core/fpdfdoc/cpdf_metadata.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/ptr_util.h"
 
 static_assert(static_cast<int>(UnsupportedFeature::kDocumentXFAForm) ==
                   FPDF_UNSP_DOC_XFAFORM,

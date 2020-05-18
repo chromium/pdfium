@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "third_party/base/ptr_util.h"
 
 CFWL_MessageSetFocus::CFWL_MessageSetFocus(CFWL_Widget* pSrcTarget,
                                            CFWL_Widget* pDstTarget)

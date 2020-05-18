@@ -8,7 +8,6 @@
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fxcrt/fx_stream.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)

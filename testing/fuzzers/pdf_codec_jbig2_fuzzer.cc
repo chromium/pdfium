@@ -11,7 +11,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
-#include "third_party/base/ptr_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   const size_t kParameterSize = 8;
