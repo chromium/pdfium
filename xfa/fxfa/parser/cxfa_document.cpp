@@ -14,7 +14,6 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -1335,33 +1334,33 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
     }
     case XFA_HASHCODE_DataWindow: {
       if (!m_pScriptDataWindow)
-        m_pScriptDataWindow = pdfium::MakeUnique<CScript_DataWindow>(this);
+        m_pScriptDataWindow = std::make_unique<CScript_DataWindow>(this);
       return m_pScriptDataWindow.get();
     }
     case XFA_HASHCODE_Event: {
       if (!m_pScriptEvent)
-        m_pScriptEvent = pdfium::MakeUnique<CScript_EventPseudoModel>(this);
+        m_pScriptEvent = std::make_unique<CScript_EventPseudoModel>(this);
       return m_pScriptEvent.get();
     }
     case XFA_HASHCODE_Host: {
       if (!m_pScriptHost)
-        m_pScriptHost = pdfium::MakeUnique<CScript_HostPseudoModel>(this);
+        m_pScriptHost = std::make_unique<CScript_HostPseudoModel>(this);
       return m_pScriptHost.get();
     }
     case XFA_HASHCODE_Log: {
       if (!m_pScriptLog)
-        m_pScriptLog = pdfium::MakeUnique<CScript_LogPseudoModel>(this);
+        m_pScriptLog = std::make_unique<CScript_LogPseudoModel>(this);
       return m_pScriptLog.get();
     }
     case XFA_HASHCODE_Signature: {
       if (!m_pScriptSignature)
         m_pScriptSignature =
-            pdfium::MakeUnique<CScript_SignaturePseudoModel>(this);
+            std::make_unique<CScript_SignaturePseudoModel>(this);
       return m_pScriptSignature.get();
     }
     case XFA_HASHCODE_Layout: {
       if (!m_pScriptLayout)
-        m_pScriptLayout = pdfium::MakeUnique<CScript_LayoutPseudoModel>(this);
+        m_pScriptLayout = std::make_unique<CScript_LayoutPseudoModel>(this);
       return m_pScriptLayout.get();
     }
     default:
@@ -1406,7 +1405,7 @@ bool CXFA_Document::IsInteractive() {
 
 CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {
   if (!m_pLocaleMgr) {
-    m_pLocaleMgr = pdfium::MakeUnique<CXFA_LocaleMgr>(
+    m_pLocaleMgr = std::make_unique<CXFA_LocaleMgr>(
         ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)),
         GetNotify()->GetAppProvider()->GetLanguage());
   }
@@ -1415,7 +1414,7 @@ CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
   ASSERT(!m_pScriptContext);
-  m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this, fxjs_runtime);
+  m_pScriptContext = std::make_unique<CFXJSE_Engine>(this, fxjs_runtime);
   return m_pScriptContext.get();
 }
 

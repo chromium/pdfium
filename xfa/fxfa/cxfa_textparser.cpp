@@ -18,7 +18,6 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -72,7 +71,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     return;
 
   if (!m_pSelector) {
-    m_pSelector = pdfium::MakeUnique<CFX_CSSStyleSelector>();
+    m_pSelector = std::make_unique<CFX_CSSStyleSelector>();
 
     CXFA_Font* font = pTextProvider->GetFontIfExists();
     m_pSelector->SetDefFontSize(font ? font->GetFontSize() : 10.0f);
@@ -99,7 +98,7 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
       "sup{vertical-align:+15em;font-size:.66em}"
       "sub{vertical-align:-15em;font-size:.66em}";
   WideString ws = WideString::FromASCII(kStyle);
-  auto sheet = pdfium::MakeUnique<CFX_CSSStyleSheet>();
+  auto sheet = std::make_unique<CFX_CSSStyleSheet>();
   if (!sheet->LoadBuffer(ws.AsStringView()))
     return nullptr;
 
@@ -242,7 +241,7 @@ void CXFA_TextParser::ParseRichText(const CFX_XMLNode* pXMLNode,
   RetainPtr<CFX_CSSComputedStyle> pNewStyle;
   if (!(tagProvider->GetTagName().EqualsASCII("body") &&
         tagProvider->GetTagName().EqualsASCII("html"))) {
-    auto pTextContext = pdfium::MakeUnique<CXFA_TextParseContext>();
+    auto pTextContext = std::make_unique<CXFA_TextParseContext>();
     CFX_CSSDisplay eDisplay = CFX_CSSDisplay::Inline;
     if (!tagProvider->m_bContent) {
       auto declArray =
@@ -290,7 +289,7 @@ bool CXFA_TextParser::TagValidate(const WideString& wsName) const {
 // static
 std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
     const CFX_XMLNode* pXMLNode) {
-  auto tagProvider = pdfium::MakeUnique<TagProvider>();
+  auto tagProvider = std::make_unique<TagProvider>();
   const CFX_XMLElement* pXMLElement = ToXMLElement(pXMLNode);
   if (pXMLElement) {
     WideString wsName = pXMLElement->GetLocalTagName();

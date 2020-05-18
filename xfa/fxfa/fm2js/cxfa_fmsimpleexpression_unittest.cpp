@@ -10,17 +10,16 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 
 TEST(FMCallExpressionTest, more_than_32_arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.
-  auto exp = pdfium::MakeUnique<CXFA_FMIdentifierExpression>(L"sign");
+  auto exp = std::make_unique<CXFA_FMIdentifierExpression>(L"sign");
 
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> args;
   for (size_t i = 0; i < 50; i++)
-    args.push_back(pdfium::MakeUnique<CXFA_FMNullExpression>());
+    args.push_back(std::make_unique<CXFA_FMNullExpression>());
 
   CXFA_FMToJavaScriptDepth::Reset();
   CXFA_FMCallExpression callExp(std::move(exp), std::move(args), true);

@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_execute.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -32,6 +33,6 @@ CXFA_Execute::CXFA_Execute(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Execute,
                 {},
                 kExecuteAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Execute::~CXFA_Execute() = default;

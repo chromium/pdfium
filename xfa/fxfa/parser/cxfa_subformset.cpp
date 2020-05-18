@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_subformset.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_container.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -37,6 +38,6 @@ CXFA_SubformSet::CXFA_SubformSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SubformSet,
                 kSubformSetPropertyData,
                 kSubformSetAttributeData,
-                pdfium::MakeUnique<CJX_Container>(this)) {}
+                std::make_unique<CJX_Container>(this)) {}
 
 CXFA_SubformSet::~CXFA_SubformSet() = default;

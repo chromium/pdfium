@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_datetimesymbols.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                                            XFA_PacketType packet)
@@ -18,6 +19,6 @@ CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                 XFA_Element::DateTimeSymbols,
                 {},
                 {},
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_DateTimeSymbols::~CXFA_DateTimeSymbols() = default;

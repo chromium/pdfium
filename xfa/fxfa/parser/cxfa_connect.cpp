@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_connect.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -42,6 +43,6 @@ CXFA_Connect::CXFA_Connect(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Connect,
                 kConnectPropertyData,
                 kConnectAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Connect::~CXFA_Connect() = default;

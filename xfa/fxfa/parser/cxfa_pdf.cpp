@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_pdf.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -49,6 +50,6 @@ CXFA_Pdf::CXFA_Pdf(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Pdf,
                 kPdfPropertyData,
                 kPdfAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Pdf::~CXFA_Pdf() = default;

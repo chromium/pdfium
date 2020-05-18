@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/cxfa_ffpasswordedit.h"
 
+#include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -27,8 +27,8 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
-  auto pNewEdit = pdfium::MakeUnique<CFWL_Edit>(
-      GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
+  auto pNewEdit = std::make_unique<CFWL_Edit>(
+      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
   CFWL_Edit* pWidget = pNewEdit.get();
   SetNormalWidget(std::move(pNewEdit));
   pWidget->SetAdapterIface(this);

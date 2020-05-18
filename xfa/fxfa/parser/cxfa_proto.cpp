@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_proto.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 CXFA_Proto::CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
@@ -17,6 +18,6 @@ CXFA_Proto::CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Proto,
                 {},
                 {},
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Proto::~CXFA_Proto() = default;

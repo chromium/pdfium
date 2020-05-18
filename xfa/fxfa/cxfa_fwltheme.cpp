@@ -7,7 +7,6 @@
 #include "xfa/fxfa/cxfa_fwltheme.h"
 
 #include "core/fxcrt/fx_codepage.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -47,20 +46,19 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
 }  // namespace
 
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
-    : m_pCheckBoxTP(pdfium::MakeUnique<CFWL_CheckBoxTP>()),
-      m_pListBoxTP(pdfium::MakeUnique<CFWL_ListBoxTP>()),
-      m_pPictureBoxTP(pdfium::MakeUnique<CFWL_PictureBoxTP>()),
-      m_pSrollBarTP(pdfium::MakeUnique<CFWL_ScrollBarTP>()),
-      m_pEditTP(pdfium::MakeUnique<CFWL_EditTP>()),
-      m_pComboBoxTP(pdfium::MakeUnique<CFWL_ComboBoxTP>()),
-      m_pMonthCalendarTP(pdfium::MakeUnique<CFWL_MonthCalendarTP>()),
-      m_pDateTimePickerTP(pdfium::MakeUnique<CFWL_DateTimePickerTP>()),
-      m_pPushButtonTP(pdfium::MakeUnique<CFWL_PushButtonTP>()),
-      m_pCaretTP(pdfium::MakeUnique<CFWL_CaretTP>()),
-      m_pBarcodeTP(pdfium::MakeUnique<CFWL_BarcodeTP>()),
-      m_pTextOut(pdfium::MakeUnique<CFDE_TextOut>()),
-      m_pApp(pApp) {
-}
+    : m_pCheckBoxTP(std::make_unique<CFWL_CheckBoxTP>()),
+      m_pListBoxTP(std::make_unique<CFWL_ListBoxTP>()),
+      m_pPictureBoxTP(std::make_unique<CFWL_PictureBoxTP>()),
+      m_pSrollBarTP(std::make_unique<CFWL_ScrollBarTP>()),
+      m_pEditTP(std::make_unique<CFWL_EditTP>()),
+      m_pComboBoxTP(std::make_unique<CFWL_ComboBoxTP>()),
+      m_pMonthCalendarTP(std::make_unique<CFWL_MonthCalendarTP>()),
+      m_pDateTimePickerTP(std::make_unique<CFWL_DateTimePickerTP>()),
+      m_pPushButtonTP(std::make_unique<CFWL_PushButtonTP>()),
+      m_pCaretTP(std::make_unique<CFWL_CaretTP>()),
+      m_pBarcodeTP(std::make_unique<CFWL_BarcodeTP>()),
+      m_pTextOut(std::make_unique<CFDE_TextOut>()),
+      m_pApp(pApp) {}
 
 bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   for (size_t i = 0; !m_pCalendarFont && i < pdfium::size(g_FWLTheme_CalFonts);

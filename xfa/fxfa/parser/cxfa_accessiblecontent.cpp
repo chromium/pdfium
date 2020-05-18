@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_accessiblecontent.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -27,6 +28,6 @@ CXFA_AccessibleContent::CXFA_AccessibleContent(CXFA_Document* doc,
                 XFA_Element::AccessibleContent,
                 {},
                 kAccessibleContentAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_AccessibleContent::~CXFA_AccessibleContent() = default;

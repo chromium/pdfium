@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_desc.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_desc.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -35,6 +36,6 @@ CXFA_Desc::CXFA_Desc(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Desc,
                 kDescPropertyData,
                 kDescAttributeData,
-                pdfium::MakeUnique<CJX_Desc>(this)) {}
+                std::make_unique<CJX_Desc>(this)) {}
 
 CXFA_Desc::~CXFA_Desc() = default;

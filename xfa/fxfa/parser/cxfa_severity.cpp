@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_severity.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_Severity::CXFA_Severity(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Severity,
                 {},
                 kSeverityAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Severity::~CXFA_Severity() = default;

@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_certificates.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -37,6 +38,6 @@ CXFA_Certificates::CXFA_Certificates(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Certificates,
                 kCertificatesPropertyData,
                 kCertificatesAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Certificates::~CXFA_Certificates() = default;

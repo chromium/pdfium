@@ -6,10 +6,11 @@
 
 #include "xfa/fxfa/parser/cxfa_deltas.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_list.h"
-#include "third_party/base/ptr_util.h"
 
 CXFA_Deltas::CXFA_Deltas(CXFA_Document* doc)
-    : CXFA_List(doc, pdfium::MakeUnique<CJX_List>(this)) {}
+    : CXFA_List(doc, std::make_unique<CJX_List>(this)) {}
 
 CXFA_Deltas::~CXFA_Deltas() {}

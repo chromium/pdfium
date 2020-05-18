@@ -11,7 +11,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
-#include "third_party/base/ptr_util.h"
 
 CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
                                        const RetainPtr<CFX_DIBBase>& pDIBBase,
@@ -50,8 +49,8 @@ bool CXFA_ImageRenderer::Start() {
     FX_RECT clip_box = m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);
     m_Status = 2;
-    m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pDib, m_ImageMatrix, options, &clip_box);
+    m_pTransformer = std::make_unique<CFX_ImageTransformer>(pDib, m_ImageMatrix,
+                                                            options, &clip_box);
     return true;
   }
   if (m_ImageMatrix.a < 0)

@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_neverembed.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_NeverEmbed::CXFA_NeverEmbed(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::NeverEmbed,
                 {},
                 kNeverEmbedAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_NeverEmbed::~CXFA_NeverEmbed() = default;

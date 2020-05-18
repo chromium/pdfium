@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_digestmethods.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -30,6 +31,6 @@ CXFA_DigestMethods::CXFA_DigestMethods(CXFA_Document* doc,
                 XFA_Element::DigestMethods,
                 {},
                 kDigestMethodsAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_DigestMethods::~CXFA_DigestMethods() = default;

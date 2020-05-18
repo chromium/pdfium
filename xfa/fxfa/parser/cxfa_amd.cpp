@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_amd.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_Amd::CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Amd,
                 {},
                 kAmdAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Amd::~CXFA_Amd() = default;

@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_calendarsymbols.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -34,6 +35,6 @@ CXFA_CalendarSymbols::CXFA_CalendarSymbols(CXFA_Document* doc,
                 XFA_Element::CalendarSymbols,
                 kCalendarSymbolsPropertyData,
                 kCalendarSymbolsAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_CalendarSymbols::~CXFA_CalendarSymbols() = default;

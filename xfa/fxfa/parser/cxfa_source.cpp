@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_source.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_source.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -32,6 +33,6 @@ CXFA_Source::CXFA_Source(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Source,
                 kSourcePropertyData,
                 kSourceAttributeData,
-                pdfium::MakeUnique<CJX_Source>(this)) {}
+                std::make_unique<CJX_Source>(this)) {}
 
 CXFA_Source::~CXFA_Source() = default;

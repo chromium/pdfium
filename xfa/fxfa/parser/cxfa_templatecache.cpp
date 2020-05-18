@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_templatecache.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -28,6 +29,6 @@ CXFA_TemplateCache::CXFA_TemplateCache(CXFA_Document* doc,
                 XFA_Element::TemplateCache,
                 {},
                 kTemplateCacheAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_TemplateCache::~CXFA_TemplateCache() = default;

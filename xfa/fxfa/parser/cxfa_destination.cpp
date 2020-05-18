@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_destination.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_Destination::CXFA_Destination(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Destination,
                 {},
                 kDestinationAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Destination::~CXFA_Destination() = default;

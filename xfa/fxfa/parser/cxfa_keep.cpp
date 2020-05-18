@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_keep.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -37,6 +38,6 @@ CXFA_Keep::CXFA_Keep(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Keep,
                 kKeepPropertyData,
                 kKeepAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Keep::~CXFA_Keep() = default;

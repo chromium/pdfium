@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_nameattr.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_NameAttr::CXFA_NameAttr(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::NameAttr,
                 {},
                 kNameAttrAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_NameAttr::~CXFA_NameAttr() = default;

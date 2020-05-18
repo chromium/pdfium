@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_form.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_form.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -25,6 +26,6 @@ CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Form,
                 {},
                 kFormAttributeData,
-                pdfium::MakeUnique<CJX_Form>(this)) {}
+                std::make_unique<CJX_Form>(this)) {}
 
 CXFA_Form::~CXFA_Form() = default;

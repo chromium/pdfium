@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_reasons.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -29,6 +30,6 @@ CXFA_Reasons::CXFA_Reasons(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Reasons,
                 {},
                 kReasonsAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Reasons::~CXFA_Reasons() = default;

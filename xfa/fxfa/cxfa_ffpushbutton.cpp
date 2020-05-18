@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "core/fxge/render_defines.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -55,7 +54,7 @@ bool CXFA_FFPushButton::LoadWidget() {
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
-  auto pNew = pdfium::MakeUnique<CFWL_PushButton>(GetFWLApp());
+  auto pNew = std::make_unique<CFWL_PushButton>(GetFWLApp());
   CFWL_PushButton* pPushButton = pNew.get();
   m_pOldDelegate = pPushButton->GetDelegate();
   pPushButton->SetDelegate(this);
@@ -138,20 +137,20 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
 
   if (m_pNode->HasButtonRollover()) {
     if (!m_pRollProvider) {
-      m_pRollProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+      m_pRollProvider = std::make_unique<CXFA_TextProvider>(
           m_pNode.Get(), XFA_TEXTPROVIDERTYPE_Rollover);
     }
     m_pRolloverTextLayout =
-        pdfium::MakeUnique<CXFA_TextLayout>(GetDoc(), m_pRollProvider.get());
+        std::make_unique<CXFA_TextLayout>(GetDoc(), m_pRollProvider.get());
   }
 
   if (m_pNode->HasButtonDown()) {
     if (!m_pDownProvider) {
-      m_pDownProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+      m_pDownProvider = std::make_unique<CXFA_TextProvider>(
           m_pNode.Get(), XFA_TEXTPROVIDERTYPE_Down);
     }
     m_pDownTextLayout =
-        pdfium::MakeUnique<CXFA_TextLayout>(GetDoc(), m_pDownProvider.get());
+        std::make_unique<CXFA_TextLayout>(GetDoc(), m_pDownProvider.get());
   }
 }
 

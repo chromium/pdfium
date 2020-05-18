@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_contentarea.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_container.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -38,6 +39,6 @@ CXFA_ContentArea::CXFA_ContentArea(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ContentArea,
                 kContentAreaPropertyData,
                 kContentAreaAttributeData,
-                pdfium::MakeUnique<CJX_Container>(this)) {}
+                std::make_unique<CJX_Container>(this)) {}
 
 CXFA_ContentArea::~CXFA_ContentArea() = default;

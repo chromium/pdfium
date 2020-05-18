@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
@@ -276,14 +275,14 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
 
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   if (!m_pWidgetHandler)
-    m_pWidgetHandler = pdfium::MakeUnique<CXFA_FFWidgetHandler>(this);
+    m_pWidgetHandler = std::make_unique<CXFA_FFWidgetHandler>(this);
   return m_pWidgetHandler.get();
 }
 
 std::unique_ptr<CXFA_ReadyNodeIterator>
 CXFA_FFDocView::CreateReadyNodeIterator() {
   CXFA_Subform* pFormRoot = GetRootSubform();
-  return pFormRoot ? pdfium::MakeUnique<CXFA_ReadyNodeIterator>(pFormRoot)
+  return pFormRoot ? std::make_unique<CXFA_ReadyNodeIterator>(pFormRoot)
                    : nullptr;
 }
 

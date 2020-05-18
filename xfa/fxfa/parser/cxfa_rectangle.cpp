@@ -11,7 +11,6 @@
 
 #include "core/fxge/render_defines.h"
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
@@ -41,7 +40,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
                XFA_Element::Rectangle,
                kRectanglePropertyData,
                kRectangleAttributeData,
-               pdfium::MakeUnique<CJX_Node>(this)) {}
+               std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                                XFA_PacketType ePacket,

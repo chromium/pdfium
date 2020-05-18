@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_datetimeedit.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -38,7 +39,7 @@ CXFA_DateTimeEdit::CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DateTimeEdit,
                 kDateTimeEditPropertyData,
                 kDateTimeEditAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_DateTimeEdit::~CXFA_DateTimeEdit() = default;
 

@@ -13,7 +13,6 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
@@ -50,7 +49,7 @@ std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
   if (!locale)
     return nullptr;
 
-  return pdfium::MakeUnique<CXFA_XMLLocale>(std::move(doc), locale);
+  return std::make_unique<CXFA_XMLLocale>(std::move(doc), locale);
 }
 
 CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,

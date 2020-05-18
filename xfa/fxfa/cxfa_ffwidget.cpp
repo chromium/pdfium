@@ -18,7 +18,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -156,7 +155,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     FXCODEC_IMAGE_TYPE type,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi) {
-  auto pProgressiveDecoder = pdfium::MakeUnique<ProgressiveDecoder>();
+  auto pProgressiveDecoder = std::make_unique<ProgressiveDecoder>();
 
   CFX_DIBAttribute dibAttr;
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);

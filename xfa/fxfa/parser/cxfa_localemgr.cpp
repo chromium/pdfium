@@ -14,7 +14,6 @@
 #include "core/fxcodec/flate/flatemodule.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_common.h"
 #include "xfa/fxfa/parser/cxfa_locale.h"
@@ -1133,7 +1132,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid)
 
   for (CXFA_Node* pNodeLocale = pLocaleSet->GetFirstChild(); pNodeLocale;
        pNodeLocale = pNodeLocale->GetNextSibling()) {
-    m_LocaleArray.push_back(pdfium::MakeUnique<CXFA_NodeLocale>(pNodeLocale));
+    m_LocaleArray.push_back(std::make_unique<CXFA_NodeLocale>(pNodeLocale));
   }
 }
 

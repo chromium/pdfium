@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_corner.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -41,6 +42,6 @@ CXFA_Corner::CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet)
                   XFA_Element::Corner,
                   kCornerPropertyData,
                   kCornerAttributeData,
-                  pdfium::MakeUnique<CJX_Node>(this)) {}
+                  std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Corner::~CXFA_Corner() = default;

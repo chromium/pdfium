@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 class CXFA_NodeIteratorTemplateTest : public testing::Test {
  public:
@@ -57,16 +56,16 @@ class CXFA_NodeIteratorTemplateTest : public testing::Test {
   //            child5
   //
   void SetUp() override {
-    root_ = pdfium::MakeUnique<Node>(nullptr);
-    child1_ = pdfium::MakeUnique<Node>(root_.get());
-    child2_ = pdfium::MakeUnique<Node>(root_.get());
-    child3_ = pdfium::MakeUnique<Node>(child2_.get());
-    child4_ = pdfium::MakeUnique<Node>(child3_.get());
-    child5_ = pdfium::MakeUnique<Node>(child4_.get());
-    child6_ = pdfium::MakeUnique<Node>(child3_.get());
-    child7_ = pdfium::MakeUnique<Node>(child2_.get());
-    child8_ = pdfium::MakeUnique<Node>(child7_.get());
-    child9_ = pdfium::MakeUnique<Node>(child2_.get());
+    root_ = std::make_unique<Node>(nullptr);
+    child1_ = std::make_unique<Node>(root_.get());
+    child2_ = std::make_unique<Node>(root_.get());
+    child3_ = std::make_unique<Node>(child2_.get());
+    child4_ = std::make_unique<Node>(child3_.get());
+    child5_ = std::make_unique<Node>(child4_.get());
+    child6_ = std::make_unique<Node>(child3_.get());
+    child7_ = std::make_unique<Node>(child2_.get());
+    child8_ = std::make_unique<Node>(child7_.get());
+    child9_ = std::make_unique<Node>(child2_.get());
   }
 
   Node* root() const { return root_.get(); }

@@ -7,10 +7,10 @@
 #include "xfa/fxfa/cxfa_fflistbox.h"
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 #include <vector>
 
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -43,8 +43,8 @@ bool CXFA_FFListBox::LoadWidget() {
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
-  auto pNew = pdfium::MakeUnique<CFWL_ListBox>(
-      GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
+  auto pNew = std::make_unique<CFWL_ListBox>(
+      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
   CFWL_ListBox* pListBox = pNew.get();
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);

@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/cxfa_ffimageedit.h"
 
+#include <memory>
 #include <utility>
 
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -36,7 +36,7 @@ bool CXFA_FFImageEdit::LoadWidget() {
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
-  auto pNew = pdfium::MakeUnique<CFWL_PictureBox>(GetFWLApp());
+  auto pNew = std::make_unique<CFWL_PictureBox>(GetFWLApp());
   CFWL_PictureBox* pPictureBox = pNew.get();
   SetNormalWidget(std::move(pNew));
   pPictureBox->SetAdapterIface(this);
@@ -110,7 +110,7 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SetButtonDown(true);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
 

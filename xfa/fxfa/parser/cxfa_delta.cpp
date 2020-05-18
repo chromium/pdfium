@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_delta.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_delta.h"
-#include "third_party/base/ptr_util.h"
 
 CXFA_Delta::CXFA_Delta(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
@@ -17,6 +18,6 @@ CXFA_Delta::CXFA_Delta(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Delta,
                 {},
                 {},
-                pdfium::MakeUnique<CJX_Delta>(this)) {}
+                std::make_unique<CJX_Delta>(this)) {}
 
 CXFA_Delta::~CXFA_Delta() = default;

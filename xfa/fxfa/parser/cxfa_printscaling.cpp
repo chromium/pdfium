@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_printscaling.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_PrintScaling::CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PrintScaling,
                 {},
                 kPrintScalingAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_PrintScaling::~CXFA_PrintScaling() = default;

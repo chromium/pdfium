@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fxge/render_defines.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
@@ -389,7 +388,7 @@ bool CXFA_FFField::OnMouseEnter() {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::Enter));
 
   return true;
@@ -402,7 +401,7 @@ bool CXFA_FFField::OnMouseExit() {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::Leave));
 
   return true;
@@ -432,7 +431,7 @@ bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SetButtonDown(true);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
 
@@ -449,7 +448,7 @@ bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
     return false;
 
   SetButtonDown(false);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonUp, dwFlags,
       FWLToClient(point)));
 
@@ -463,7 +462,7 @@ bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDblClk, dwFlags,
       FWLToClient(point)));
 
@@ -477,7 +476,7 @@ bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::Move, dwFlags, FWLToClient(point)));
 
   return true;
@@ -492,7 +491,7 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouseWheel>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouseWheel>(
       GetNormalWidget(), FWLToClient(point), delta));
 
   return true;
@@ -503,7 +502,7 @@ bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SetButtonDown(true);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::RightButtonDown, dwFlags,
       FWLToClient(point)));
 
@@ -520,7 +519,7 @@ bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   RetainPtr<CXFA_ContentLayoutItem> retainer(m_pLayoutItem.Get());
 
   SetButtonDown(false);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::RightButtonUp, dwFlags,
       FWLToClient(point)));
 
@@ -534,7 +533,7 @@ bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetNormalWidget())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::RightButtonDblClk, dwFlags,
       FWLToClient(point)));
 
@@ -552,7 +551,7 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
     return false;
 
   SendMessageToFWLWidget(
-      pdfium::MakeUnique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
+      std::make_unique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus_Focused);
   InvalidateRect();
 
@@ -566,7 +565,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   ObservedPtr<CXFA_FFWidget> pNewWatched(pNewWidget);
   if (GetNormalWidget()) {
     SendMessageToFWLWidget(
-        pdfium::MakeUnique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
+        std::make_unique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
     GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
     InvalidateRect();
   }
@@ -580,7 +579,7 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::KeyDown, dwFlags, dwKeyCode));
 
   return true;
@@ -593,7 +592,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!GetNormalWidget() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::KeyUp, dwFlags, dwKeyCode));
 
   return true;
@@ -612,7 +611,7 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (!m_pNode->IsOpenAccess())
     return false;
 
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageKey>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
       GetNormalWidget(), FWL_KeyCommand::Char, dwFlags, dwChar));
 
   return true;

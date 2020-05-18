@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_ui.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -43,7 +44,7 @@ CXFA_Ui::CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Ui,
                 kUiPropertyData,
                 kUiAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Ui::~CXFA_Ui() = default;
 

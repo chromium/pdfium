@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_rootelement.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_textnode.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -28,6 +29,6 @@ CXFA_RootElement::CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::RootElement,
                 {},
                 kRootElementAttributeData,
-                pdfium::MakeUnique<CJX_TextNode>(this)) {}
+                std::make_unique<CJX_TextNode>(this)) {}
 
 CXFA_RootElement::~CXFA_RootElement() = default;

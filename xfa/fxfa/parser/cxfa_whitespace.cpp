@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_whitespace.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -26,6 +27,6 @@ CXFA_Whitespace::CXFA_Whitespace(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Whitespace,
                 {},
                 kWhitespaceAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Whitespace::~CXFA_Whitespace() = default;

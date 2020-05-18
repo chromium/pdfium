@@ -28,7 +28,6 @@
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
@@ -576,11 +575,11 @@ CXFA_NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode,
     return nullptr;
 
   if (!(*pMap)[pParentNode])
-    (*pMap)[pParentNode] = pdfium::MakeUnique<CXFA_NodeSetPairMap>();
+    (*pMap)[pParentNode] = std::make_unique<CXFA_NodeSetPairMap>();
 
   CXFA_NodeSetPairMap* pNodeSetPairMap = (*pMap)[pParentNode].get();
   if (!(*pNodeSetPairMap)[dwNameHash])
-    (*pNodeSetPairMap)[dwNameHash] = pdfium::MakeUnique<CXFA_NodeSetPair>();
+    (*pNodeSetPairMap)[dwNameHash] = std::make_unique<CXFA_NodeSetPair>();
 
   return (*pNodeSetPairMap)[dwNameHash].get();
 }
@@ -842,9 +841,9 @@ class CXFA_TextLayoutData final : public CXFA_WidgetLayoutData {
       return;
 
     m_pTextProvider =
-        pdfium::MakeUnique<CXFA_TextProvider>(pNode, XFA_TEXTPROVIDERTYPE_Text);
+        std::make_unique<CXFA_TextProvider>(pNode, XFA_TEXTPROVIDERTYPE_Text);
     m_pTextLayout =
-        pdfium::MakeUnique<CXFA_TextLayout>(doc, m_pTextProvider.get());
+        std::make_unique<CXFA_TextLayout>(doc, m_pTextProvider.get());
   }
 
  private:
@@ -899,10 +898,10 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
     if (!caption || caption->IsHidden())
       return false;
 
-    m_pCapTextProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+    m_pCapTextProvider = std::make_unique<CXFA_TextProvider>(
         pNode, XFA_TEXTPROVIDERTYPE_Caption);
     m_pCapTextLayout =
-        pdfium::MakeUnique<CXFA_TextLayout>(doc, m_pCapTextProvider.get());
+        std::make_unique<CXFA_TextLayout>(doc, m_pCapTextProvider.get());
     return true;
   }
 
@@ -2742,7 +2741,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
     pContext->SetNodesOfRunScript(&refNodes);
   }
 
-  auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetIsolate());
+  auto pTmpRetValue = std::make_unique<CFXJSE_Value>(pContext->GetIsolate());
   bool bRet = false;
   {
     AutoRestorer<uint8_t> restorer(&m_ExecuteRecursionDepth);
@@ -2777,8 +2776,7 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
 
         CXFA_CalcData* pGlobalData = pRefNode->JSObject()->GetCalcData();
         if (!pGlobalData) {
-          pRefNode->JSObject()->SetCalcData(
-              pdfium::MakeUnique<CXFA_CalcData>());
+          pRefNode->JSObject()->SetCalcData(std::make_unique<CXFA_CalcData>());
           pGlobalData = pRefNode->JSObject()->GetCalcData();
         }
         if (!pdfium::Contains(pGlobalData->m_Globals, this))
@@ -3266,7 +3264,7 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
 
   CXFA_FieldLayoutData* layoutData = m_pLayoutData->AsFieldLayoutData();
   if (!layoutData->m_pTextOut) {
-    layoutData->m_pTextOut = pdfium::MakeUnique<CFDE_TextOut>();
+    layoutData->m_pTextOut = std::make_unique<CFDE_TextOut>();
     CFDE_TextOut* pTextOut = layoutData->m_pTextOut.get();
     pTextOut->SetFont(GetFDEFont(doc));
     pTextOut->SetFontSize(fFontSize);
@@ -3789,25 +3787,25 @@ void CXFA_Node::InitLayoutData() {
 
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kText:
-      m_pLayoutData = pdfium::MakeUnique<CXFA_TextLayoutData>();
+      m_pLayoutData = std::make_unique<CXFA_TextLayoutData>();
       return;
     case XFA_FFWidgetType::kTextEdit:
-      m_pLayoutData = pdfium::MakeUnique<CXFA_TextEditData>();
+      m_pLayoutData = std::make_unique<CXFA_TextEditData>();
       return;
     case XFA_FFWidgetType::kImage:
-      m_pLayoutData = pdfium::MakeUnique<CXFA_ImageLayoutData>();
+      m_pLayoutData = std::make_unique<CXFA_ImageLayoutData>();
       return;
     case XFA_FFWidgetType::kImageEdit:
-      m_pLayoutData = pdfium::MakeUnique<CXFA_ImageEditData>();
+      m_pLayoutData = std::make_unique<CXFA_ImageEditData>();
       return;
     default:
       break;
   }
   if (GetElementType() == XFA_Element::Field) {
-    m_pLayoutData = pdfium::MakeUnique<CXFA_FieldLayoutData>();
+    m_pLayoutData = std::make_unique<CXFA_FieldLayoutData>();
     return;
   }
-  m_pLayoutData = pdfium::MakeUnique<CXFA_WidgetLayoutData>();
+  m_pLayoutData = std::make_unique<CXFA_WidgetLayoutData>();
 }
 
 void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
@@ -5095,913 +5093,913 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
   std::unique_ptr<CXFA_Node> node;
   switch (element) {
     case XFA_Element::Ps:
-      node = pdfium::MakeUnique<CXFA_Ps>(doc, packet);
+      node = std::make_unique<CXFA_Ps>(doc, packet);
       break;
     case XFA_Element::To:
-      node = pdfium::MakeUnique<CXFA_To>(doc, packet);
+      node = std::make_unique<CXFA_To>(doc, packet);
       break;
     case XFA_Element::Ui:
-      node = pdfium::MakeUnique<CXFA_Ui>(doc, packet);
+      node = std::make_unique<CXFA_Ui>(doc, packet);
       break;
     case XFA_Element::RecordSet:
-      node = pdfium::MakeUnique<CXFA_RecordSet>(doc, packet);
+      node = std::make_unique<CXFA_RecordSet>(doc, packet);
       break;
     case XFA_Element::SubsetBelow:
-      node = pdfium::MakeUnique<CXFA_SubsetBelow>(doc, packet);
+      node = std::make_unique<CXFA_SubsetBelow>(doc, packet);
       break;
     case XFA_Element::SubformSet:
-      node = pdfium::MakeUnique<CXFA_SubformSet>(doc, packet);
+      node = std::make_unique<CXFA_SubformSet>(doc, packet);
       break;
     case XFA_Element::AdobeExtensionLevel:
-      node = pdfium::MakeUnique<CXFA_AdobeExtensionLevel>(doc, packet);
+      node = std::make_unique<CXFA_AdobeExtensionLevel>(doc, packet);
       break;
     case XFA_Element::Typeface:
-      node = pdfium::MakeUnique<CXFA_Typeface>(doc, packet);
+      node = std::make_unique<CXFA_Typeface>(doc, packet);
       break;
     case XFA_Element::Break:
-      node = pdfium::MakeUnique<CXFA_Break>(doc, packet);
+      node = std::make_unique<CXFA_Break>(doc, packet);
       break;
     case XFA_Element::FontInfo:
-      node = pdfium::MakeUnique<CXFA_FontInfo>(doc, packet);
+      node = std::make_unique<CXFA_FontInfo>(doc, packet);
       break;
     case XFA_Element::NumberPattern:
-      node = pdfium::MakeUnique<CXFA_NumberPattern>(doc, packet);
+      node = std::make_unique<CXFA_NumberPattern>(doc, packet);
       break;
     case XFA_Element::DynamicRender:
-      node = pdfium::MakeUnique<CXFA_DynamicRender>(doc, packet);
+      node = std::make_unique<CXFA_DynamicRender>(doc, packet);
       break;
     case XFA_Element::PrintScaling:
-      node = pdfium::MakeUnique<CXFA_PrintScaling>(doc, packet);
+      node = std::make_unique<CXFA_PrintScaling>(doc, packet);
       break;
     case XFA_Element::CheckButton:
-      node = pdfium::MakeUnique<CXFA_CheckButton>(doc, packet);
+      node = std::make_unique<CXFA_CheckButton>(doc, packet);
       break;
     case XFA_Element::DatePatterns:
-      node = pdfium::MakeUnique<CXFA_DatePatterns>(doc, packet);
+      node = std::make_unique<CXFA_DatePatterns>(doc, packet);
       break;
     case XFA_Element::SourceSet:
-      node = pdfium::MakeUnique<CXFA_SourceSet>(doc, packet);
+      node = std::make_unique<CXFA_SourceSet>(doc, packet);
       break;
     case XFA_Element::Amd:
-      node = pdfium::MakeUnique<CXFA_Amd>(doc, packet);
+      node = std::make_unique<CXFA_Amd>(doc, packet);
       break;
     case XFA_Element::Arc:
-      node = pdfium::MakeUnique<CXFA_Arc>(doc, packet);
+      node = std::make_unique<CXFA_Arc>(doc, packet);
       break;
     case XFA_Element::Day:
-      node = pdfium::MakeUnique<CXFA_Day>(doc, packet);
+      node = std::make_unique<CXFA_Day>(doc, packet);
       break;
     case XFA_Element::Era:
-      node = pdfium::MakeUnique<CXFA_Era>(doc, packet);
+      node = std::make_unique<CXFA_Era>(doc, packet);
       break;
     case XFA_Element::Jog:
-      node = pdfium::MakeUnique<CXFA_Jog>(doc, packet);
+      node = std::make_unique<CXFA_Jog>(doc, packet);
       break;
     case XFA_Element::Log:
-      node = pdfium::MakeUnique<CXFA_Log>(doc, packet);
+      node = std::make_unique<CXFA_Log>(doc, packet);
       break;
     case XFA_Element::Map:
-      node = pdfium::MakeUnique<CXFA_Map>(doc, packet);
+      node = std::make_unique<CXFA_Map>(doc, packet);
       break;
     case XFA_Element::Mdp:
-      node = pdfium::MakeUnique<CXFA_Mdp>(doc, packet);
+      node = std::make_unique<CXFA_Mdp>(doc, packet);
       break;
     case XFA_Element::BreakBefore:
-      node = pdfium::MakeUnique<CXFA_BreakBefore>(doc, packet);
+      node = std::make_unique<CXFA_BreakBefore>(doc, packet);
       break;
     case XFA_Element::Oid:
-      node = pdfium::MakeUnique<CXFA_Oid>(doc, packet);
+      node = std::make_unique<CXFA_Oid>(doc, packet);
       break;
     case XFA_Element::Pcl:
-      node = pdfium::MakeUnique<CXFA_Pcl>(doc, packet);
+      node = std::make_unique<CXFA_Pcl>(doc, packet);
       break;
     case XFA_Element::Pdf:
-      node = pdfium::MakeUnique<CXFA_Pdf>(doc, packet);
+      node = std::make_unique<CXFA_Pdf>(doc, packet);
       break;
     case XFA_Element::Ref:
-      node = pdfium::MakeUnique<CXFA_Ref>(doc, packet);
+      node = std::make_unique<CXFA_Ref>(doc, packet);
       break;
     case XFA_Element::Uri:
-      node = pdfium::MakeUnique<CXFA_Uri>(doc, packet);
+      node = std::make_unique<CXFA_Uri>(doc, packet);
       break;
     case XFA_Element::Xdc:
-      node = pdfium::MakeUnique<CXFA_Xdc>(doc, packet);
+      node = std::make_unique<CXFA_Xdc>(doc, packet);
       break;
     case XFA_Element::Xdp:
-      node = pdfium::MakeUnique<CXFA_Xdp>(doc, packet);
+      node = std::make_unique<CXFA_Xdp>(doc, packet);
       break;
     case XFA_Element::Xfa:
-      node = pdfium::MakeUnique<CXFA_Xfa>(doc, packet);
+      node = std::make_unique<CXFA_Xfa>(doc, packet);
       break;
     case XFA_Element::Xsl:
-      node = pdfium::MakeUnique<CXFA_Xsl>(doc, packet);
+      node = std::make_unique<CXFA_Xsl>(doc, packet);
       break;
     case XFA_Element::Zpl:
-      node = pdfium::MakeUnique<CXFA_Zpl>(doc, packet);
+      node = std::make_unique<CXFA_Zpl>(doc, packet);
       break;
     case XFA_Element::Cache:
-      node = pdfium::MakeUnique<CXFA_Cache>(doc, packet);
+      node = std::make_unique<CXFA_Cache>(doc, packet);
       break;
     case XFA_Element::Margin:
-      node = pdfium::MakeUnique<CXFA_Margin>(doc, packet);
+      node = std::make_unique<CXFA_Margin>(doc, packet);
       break;
     case XFA_Element::KeyUsage:
-      node = pdfium::MakeUnique<CXFA_KeyUsage>(doc, packet);
+      node = std::make_unique<CXFA_KeyUsage>(doc, packet);
       break;
     case XFA_Element::Exclude:
-      node = pdfium::MakeUnique<CXFA_Exclude>(doc, packet);
+      node = std::make_unique<CXFA_Exclude>(doc, packet);
       break;
     case XFA_Element::ChoiceList:
-      node = pdfium::MakeUnique<CXFA_ChoiceList>(doc, packet);
+      node = std::make_unique<CXFA_ChoiceList>(doc, packet);
       break;
     case XFA_Element::Level:
-      node = pdfium::MakeUnique<CXFA_Level>(doc, packet);
+      node = std::make_unique<CXFA_Level>(doc, packet);
       break;
     case XFA_Element::LabelPrinter:
-      node = pdfium::MakeUnique<CXFA_LabelPrinter>(doc, packet);
+      node = std::make_unique<CXFA_LabelPrinter>(doc, packet);
       break;
     case XFA_Element::CalendarSymbols:
-      node = pdfium::MakeUnique<CXFA_CalendarSymbols>(doc, packet);
+      node = std::make_unique<CXFA_CalendarSymbols>(doc, packet);
       break;
     case XFA_Element::Para:
-      node = pdfium::MakeUnique<CXFA_Para>(doc, packet);
+      node = std::make_unique<CXFA_Para>(doc, packet);
       break;
     case XFA_Element::Part:
-      node = pdfium::MakeUnique<CXFA_Part>(doc, packet);
+      node = std::make_unique<CXFA_Part>(doc, packet);
       break;
     case XFA_Element::Pdfa:
-      node = pdfium::MakeUnique<CXFA_Pdfa>(doc, packet);
+      node = std::make_unique<CXFA_Pdfa>(doc, packet);
       break;
     case XFA_Element::Filter:
-      node = pdfium::MakeUnique<CXFA_Filter>(doc, packet);
+      node = std::make_unique<CXFA_Filter>(doc, packet);
       break;
     case XFA_Element::Present:
-      node = pdfium::MakeUnique<CXFA_Present>(doc, packet);
+      node = std::make_unique<CXFA_Present>(doc, packet);
       break;
     case XFA_Element::Pagination:
-      node = pdfium::MakeUnique<CXFA_Pagination>(doc, packet);
+      node = std::make_unique<CXFA_Pagination>(doc, packet);
       break;
     case XFA_Element::Encoding:
-      node = pdfium::MakeUnique<CXFA_Encoding>(doc, packet);
+      node = std::make_unique<CXFA_Encoding>(doc, packet);
       break;
     case XFA_Element::Event:
-      node = pdfium::MakeUnique<CXFA_Event>(doc, packet);
+      node = std::make_unique<CXFA_Event>(doc, packet);
       break;
     case XFA_Element::Whitespace:
-      node = pdfium::MakeUnique<CXFA_Whitespace>(doc, packet);
+      node = std::make_unique<CXFA_Whitespace>(doc, packet);
       break;
     case XFA_Element::DefaultUi:
-      node = pdfium::MakeUnique<CXFA_DefaultUi>(doc, packet);
+      node = std::make_unique<CXFA_DefaultUi>(doc, packet);
       break;
     case XFA_Element::DataModel:
-      node = pdfium::MakeUnique<CXFA_DataModel>(doc, packet);
+      node = std::make_unique<CXFA_DataModel>(doc, packet);
       break;
     case XFA_Element::Barcode:
-      node = pdfium::MakeUnique<CXFA_Barcode>(doc, packet);
+      node = std::make_unique<CXFA_Barcode>(doc, packet);
       break;
     case XFA_Element::TimePattern:
-      node = pdfium::MakeUnique<CXFA_TimePattern>(doc, packet);
+      node = std::make_unique<CXFA_TimePattern>(doc, packet);
       break;
     case XFA_Element::BatchOutput:
-      node = pdfium::MakeUnique<CXFA_BatchOutput>(doc, packet);
+      node = std::make_unique<CXFA_BatchOutput>(doc, packet);
       break;
     case XFA_Element::Enforce:
-      node = pdfium::MakeUnique<CXFA_Enforce>(doc, packet);
+      node = std::make_unique<CXFA_Enforce>(doc, packet);
       break;
     case XFA_Element::CurrencySymbols:
-      node = pdfium::MakeUnique<CXFA_CurrencySymbols>(doc, packet);
+      node = std::make_unique<CXFA_CurrencySymbols>(doc, packet);
       break;
     case XFA_Element::AddSilentPrint:
-      node = pdfium::MakeUnique<CXFA_AddSilentPrint>(doc, packet);
+      node = std::make_unique<CXFA_AddSilentPrint>(doc, packet);
       break;
     case XFA_Element::Rename:
-      node = pdfium::MakeUnique<CXFA_Rename>(doc, packet);
+      node = std::make_unique<CXFA_Rename>(doc, packet);
       break;
     case XFA_Element::Operation:
-      node = pdfium::MakeUnique<CXFA_Operation>(doc, packet);
+      node = std::make_unique<CXFA_Operation>(doc, packet);
       break;
     case XFA_Element::Typefaces:
-      node = pdfium::MakeUnique<CXFA_Typefaces>(doc, packet);
+      node = std::make_unique<CXFA_Typefaces>(doc, packet);
       break;
     case XFA_Element::SubjectDNs:
-      node = pdfium::MakeUnique<CXFA_SubjectDNs>(doc, packet);
+      node = std::make_unique<CXFA_SubjectDNs>(doc, packet);
       break;
     case XFA_Element::Issuers:
-      node = pdfium::MakeUnique<CXFA_Issuers>(doc, packet);
+      node = std::make_unique<CXFA_Issuers>(doc, packet);
       break;
     case XFA_Element::WsdlConnection:
-      node = pdfium::MakeUnique<CXFA_WsdlConnection>(doc, packet);
+      node = std::make_unique<CXFA_WsdlConnection>(doc, packet);
       break;
     case XFA_Element::Debug:
-      node = pdfium::MakeUnique<CXFA_Debug>(doc, packet);
+      node = std::make_unique<CXFA_Debug>(doc, packet);
       break;
     case XFA_Element::Delta:
-      node = pdfium::MakeUnique<CXFA_Delta>(doc, packet);
+      node = std::make_unique<CXFA_Delta>(doc, packet);
       break;
     case XFA_Element::EraNames:
-      node = pdfium::MakeUnique<CXFA_EraNames>(doc, packet);
+      node = std::make_unique<CXFA_EraNames>(doc, packet);
       break;
     case XFA_Element::ModifyAnnots:
-      node = pdfium::MakeUnique<CXFA_ModifyAnnots>(doc, packet);
+      node = std::make_unique<CXFA_ModifyAnnots>(doc, packet);
       break;
     case XFA_Element::StartNode:
-      node = pdfium::MakeUnique<CXFA_StartNode>(doc, packet);
+      node = std::make_unique<CXFA_StartNode>(doc, packet);
       break;
     case XFA_Element::Button:
-      node = pdfium::MakeUnique<CXFA_Button>(doc, packet);
+      node = std::make_unique<CXFA_Button>(doc, packet);
       break;
     case XFA_Element::Format:
-      node = pdfium::MakeUnique<CXFA_Format>(doc, packet);
+      node = std::make_unique<CXFA_Format>(doc, packet);
       break;
     case XFA_Element::Border:
-      node = pdfium::MakeUnique<CXFA_Border>(doc, packet);
+      node = std::make_unique<CXFA_Border>(doc, packet);
       break;
     case XFA_Element::Area:
-      node = pdfium::MakeUnique<CXFA_Area>(doc, packet);
+      node = std::make_unique<CXFA_Area>(doc, packet);
       break;
     case XFA_Element::Hyphenation:
-      node = pdfium::MakeUnique<CXFA_Hyphenation>(doc, packet);
+      node = std::make_unique<CXFA_Hyphenation>(doc, packet);
       break;
     case XFA_Element::Text:
-      node = pdfium::MakeUnique<CXFA_Text>(doc, packet);
+      node = std::make_unique<CXFA_Text>(doc, packet);
       break;
     case XFA_Element::Time:
-      node = pdfium::MakeUnique<CXFA_Time>(doc, packet);
+      node = std::make_unique<CXFA_Time>(doc, packet);
       break;
     case XFA_Element::Type:
-      node = pdfium::MakeUnique<CXFA_Type>(doc, packet);
+      node = std::make_unique<CXFA_Type>(doc, packet);
       break;
     case XFA_Element::Overprint:
-      node = pdfium::MakeUnique<CXFA_Overprint>(doc, packet);
+      node = std::make_unique<CXFA_Overprint>(doc, packet);
       break;
     case XFA_Element::Certificates:
-      node = pdfium::MakeUnique<CXFA_Certificates>(doc, packet);
+      node = std::make_unique<CXFA_Certificates>(doc, packet);
       break;
     case XFA_Element::EncryptionMethods:
-      node = pdfium::MakeUnique<CXFA_EncryptionMethods>(doc, packet);
+      node = std::make_unique<CXFA_EncryptionMethods>(doc, packet);
       break;
     case XFA_Element::SetProperty:
-      node = pdfium::MakeUnique<CXFA_SetProperty>(doc, packet);
+      node = std::make_unique<CXFA_SetProperty>(doc, packet);
       break;
     case XFA_Element::PrinterName:
-      node = pdfium::MakeUnique<CXFA_PrinterName>(doc, packet);
+      node = std::make_unique<CXFA_PrinterName>(doc, packet);
       break;
     case XFA_Element::StartPage:
-      node = pdfium::MakeUnique<CXFA_StartPage>(doc, packet);
+      node = std::make_unique<CXFA_StartPage>(doc, packet);
       break;
     case XFA_Element::PageOffset:
-      node = pdfium::MakeUnique<CXFA_PageOffset>(doc, packet);
+      node = std::make_unique<CXFA_PageOffset>(doc, packet);
       break;
     case XFA_Element::DateTime:
-      node = pdfium::MakeUnique<CXFA_DateTime>(doc, packet);
+      node = std::make_unique<CXFA_DateTime>(doc, packet);
       break;
     case XFA_Element::Comb:
-      node = pdfium::MakeUnique<CXFA_Comb>(doc, packet);
+      node = std::make_unique<CXFA_Comb>(doc, packet);
       break;
     case XFA_Element::Pattern:
-      node = pdfium::MakeUnique<CXFA_Pattern>(doc, packet);
+      node = std::make_unique<CXFA_Pattern>(doc, packet);
       break;
     case XFA_Element::IfEmpty:
-      node = pdfium::MakeUnique<CXFA_IfEmpty>(doc, packet);
+      node = std::make_unique<CXFA_IfEmpty>(doc, packet);
       break;
     case XFA_Element::SuppressBanner:
-      node = pdfium::MakeUnique<CXFA_SuppressBanner>(doc, packet);
+      node = std::make_unique<CXFA_SuppressBanner>(doc, packet);
       break;
     case XFA_Element::OutputBin:
-      node = pdfium::MakeUnique<CXFA_OutputBin>(doc, packet);
+      node = std::make_unique<CXFA_OutputBin>(doc, packet);
       break;
     case XFA_Element::Field:
-      node = pdfium::MakeUnique<CXFA_Field>(doc, packet);
+      node = std::make_unique<CXFA_Field>(doc, packet);
       break;
     case XFA_Element::Agent:
-      node = pdfium::MakeUnique<CXFA_Agent>(doc, packet);
+      node = std::make_unique<CXFA_Agent>(doc, packet);
       break;
     case XFA_Element::OutputXSL:
-      node = pdfium::MakeUnique<CXFA_OutputXSL>(doc, packet);
+      node = std::make_unique<CXFA_OutputXSL>(doc, packet);
       break;
     case XFA_Element::AdjustData:
-      node = pdfium::MakeUnique<CXFA_AdjustData>(doc, packet);
+      node = std::make_unique<CXFA_AdjustData>(doc, packet);
       break;
     case XFA_Element::AutoSave:
-      node = pdfium::MakeUnique<CXFA_AutoSave>(doc, packet);
+      node = std::make_unique<CXFA_AutoSave>(doc, packet);
       break;
     case XFA_Element::ContentArea:
-      node = pdfium::MakeUnique<CXFA_ContentArea>(doc, packet);
+      node = std::make_unique<CXFA_ContentArea>(doc, packet);
       break;
     case XFA_Element::WsdlAddress:
-      node = pdfium::MakeUnique<CXFA_WsdlAddress>(doc, packet);
+      node = std::make_unique<CXFA_WsdlAddress>(doc, packet);
       break;
     case XFA_Element::Solid:
-      node = pdfium::MakeUnique<CXFA_Solid>(doc, packet);
+      node = std::make_unique<CXFA_Solid>(doc, packet);
       break;
     case XFA_Element::DateTimeSymbols:
-      node = pdfium::MakeUnique<CXFA_DateTimeSymbols>(doc, packet);
+      node = std::make_unique<CXFA_DateTimeSymbols>(doc, packet);
       break;
     case XFA_Element::EncryptionLevel:
-      node = pdfium::MakeUnique<CXFA_EncryptionLevel>(doc, packet);
+      node = std::make_unique<CXFA_EncryptionLevel>(doc, packet);
       break;
     case XFA_Element::Edge:
-      node = pdfium::MakeUnique<CXFA_Edge>(doc, packet);
+      node = std::make_unique<CXFA_Edge>(doc, packet);
       break;
     case XFA_Element::Stipple:
-      node = pdfium::MakeUnique<CXFA_Stipple>(doc, packet);
+      node = std::make_unique<CXFA_Stipple>(doc, packet);
       break;
     case XFA_Element::Attributes:
-      node = pdfium::MakeUnique<CXFA_Attributes>(doc, packet);
+      node = std::make_unique<CXFA_Attributes>(doc, packet);
       break;
     case XFA_Element::VersionControl:
-      node = pdfium::MakeUnique<CXFA_VersionControl>(doc, packet);
+      node = std::make_unique<CXFA_VersionControl>(doc, packet);
       break;
     case XFA_Element::Meridiem:
-      node = pdfium::MakeUnique<CXFA_Meridiem>(doc, packet);
+      node = std::make_unique<CXFA_Meridiem>(doc, packet);
       break;
     case XFA_Element::ExclGroup:
-      node = pdfium::MakeUnique<CXFA_ExclGroup>(doc, packet);
+      node = std::make_unique<CXFA_ExclGroup>(doc, packet);
       break;
     case XFA_Element::ToolTip:
-      node = pdfium::MakeUnique<CXFA_ToolTip>(doc, packet);
+      node = std::make_unique<CXFA_ToolTip>(doc, packet);
       break;
     case XFA_Element::Compress:
-      node = pdfium::MakeUnique<CXFA_Compress>(doc, packet);
+      node = std::make_unique<CXFA_Compress>(doc, packet);
       break;
     case XFA_Element::Reason:
-      node = pdfium::MakeUnique<CXFA_Reason>(doc, packet);
+      node = std::make_unique<CXFA_Reason>(doc, packet);
       break;
     case XFA_Element::Execute:
-      node = pdfium::MakeUnique<CXFA_Execute>(doc, packet);
+      node = std::make_unique<CXFA_Execute>(doc, packet);
       break;
     case XFA_Element::ContentCopy:
-      node = pdfium::MakeUnique<CXFA_ContentCopy>(doc, packet);
+      node = std::make_unique<CXFA_ContentCopy>(doc, packet);
       break;
     case XFA_Element::DateTimeEdit:
-      node = pdfium::MakeUnique<CXFA_DateTimeEdit>(doc, packet);
+      node = std::make_unique<CXFA_DateTimeEdit>(doc, packet);
       break;
     case XFA_Element::Config:
-      node = pdfium::MakeUnique<CXFA_Config>(doc, packet);
+      node = std::make_unique<CXFA_Config>(doc, packet);
       break;
     case XFA_Element::Image:
-      node = pdfium::MakeUnique<CXFA_Image>(doc, packet);
+      node = std::make_unique<CXFA_Image>(doc, packet);
       break;
     case XFA_Element::SharpxHTML:
-      node = pdfium::MakeUnique<CXFA_SharpxHTML>(doc, packet);
+      node = std::make_unique<CXFA_SharpxHTML>(doc, packet);
       break;
     case XFA_Element::NumberOfCopies:
-      node = pdfium::MakeUnique<CXFA_NumberOfCopies>(doc, packet);
+      node = std::make_unique<CXFA_NumberOfCopies>(doc, packet);
       break;
     case XFA_Element::BehaviorOverride:
-      node = pdfium::MakeUnique<CXFA_BehaviorOverride>(doc, packet);
+      node = std::make_unique<CXFA_BehaviorOverride>(doc, packet);
       break;
     case XFA_Element::TimeStamp:
-      node = pdfium::MakeUnique<CXFA_TimeStamp>(doc, packet);
+      node = std::make_unique<CXFA_TimeStamp>(doc, packet);
       break;
     case XFA_Element::Month:
-      node = pdfium::MakeUnique<CXFA_Month>(doc, packet);
+      node = std::make_unique<CXFA_Month>(doc, packet);
       break;
     case XFA_Element::ViewerPreferences:
-      node = pdfium::MakeUnique<CXFA_ViewerPreferences>(doc, packet);
+      node = std::make_unique<CXFA_ViewerPreferences>(doc, packet);
       break;
     case XFA_Element::ScriptModel:
-      node = pdfium::MakeUnique<CXFA_ScriptModel>(doc, packet);
+      node = std::make_unique<CXFA_ScriptModel>(doc, packet);
       break;
     case XFA_Element::Decimal:
-      node = pdfium::MakeUnique<CXFA_Decimal>(doc, packet);
+      node = std::make_unique<CXFA_Decimal>(doc, packet);
       break;
     case XFA_Element::Subform:
-      node = pdfium::MakeUnique<CXFA_Subform>(doc, packet);
+      node = std::make_unique<CXFA_Subform>(doc, packet);
       break;
     case XFA_Element::Select:
-      node = pdfium::MakeUnique<CXFA_Select>(doc, packet);
+      node = std::make_unique<CXFA_Select>(doc, packet);
       break;
     case XFA_Element::Window:
-      node = pdfium::MakeUnique<CXFA_Window>(doc, packet);
+      node = std::make_unique<CXFA_Window>(doc, packet);
       break;
     case XFA_Element::LocaleSet:
-      node = pdfium::MakeUnique<CXFA_LocaleSet>(doc, packet);
+      node = std::make_unique<CXFA_LocaleSet>(doc, packet);
       break;
     case XFA_Element::Handler:
-      node = pdfium::MakeUnique<CXFA_Handler>(doc, packet);
+      node = std::make_unique<CXFA_Handler>(doc, packet);
       break;
     case XFA_Element::Presence:
-      node = pdfium::MakeUnique<CXFA_Presence>(doc, packet);
+      node = std::make_unique<CXFA_Presence>(doc, packet);
       break;
     case XFA_Element::Record:
-      node = pdfium::MakeUnique<CXFA_Record>(doc, packet);
+      node = std::make_unique<CXFA_Record>(doc, packet);
       break;
     case XFA_Element::Embed:
-      node = pdfium::MakeUnique<CXFA_Embed>(doc, packet);
+      node = std::make_unique<CXFA_Embed>(doc, packet);
       break;
     case XFA_Element::Version:
-      node = pdfium::MakeUnique<CXFA_Version>(doc, packet);
+      node = std::make_unique<CXFA_Version>(doc, packet);
       break;
     case XFA_Element::Command:
-      node = pdfium::MakeUnique<CXFA_Command>(doc, packet);
+      node = std::make_unique<CXFA_Command>(doc, packet);
       break;
     case XFA_Element::Copies:
-      node = pdfium::MakeUnique<CXFA_Copies>(doc, packet);
+      node = std::make_unique<CXFA_Copies>(doc, packet);
       break;
     case XFA_Element::Staple:
-      node = pdfium::MakeUnique<CXFA_Staple>(doc, packet);
+      node = std::make_unique<CXFA_Staple>(doc, packet);
       break;
     case XFA_Element::SubmitFormat:
-      node = pdfium::MakeUnique<CXFA_SubmitFormat>(doc, packet);
+      node = std::make_unique<CXFA_SubmitFormat>(doc, packet);
       break;
     case XFA_Element::Boolean:
-      node = pdfium::MakeUnique<CXFA_Boolean>(doc, packet);
+      node = std::make_unique<CXFA_Boolean>(doc, packet);
       break;
     case XFA_Element::Message:
-      node = pdfium::MakeUnique<CXFA_Message>(doc, packet);
+      node = std::make_unique<CXFA_Message>(doc, packet);
       break;
     case XFA_Element::Output:
-      node = pdfium::MakeUnique<CXFA_Output>(doc, packet);
+      node = std::make_unique<CXFA_Output>(doc, packet);
       break;
     case XFA_Element::PsMap:
-      node = pdfium::MakeUnique<CXFA_PsMap>(doc, packet);
+      node = std::make_unique<CXFA_PsMap>(doc, packet);
       break;
     case XFA_Element::ExcludeNS:
-      node = pdfium::MakeUnique<CXFA_ExcludeNS>(doc, packet);
+      node = std::make_unique<CXFA_ExcludeNS>(doc, packet);
       break;
     case XFA_Element::Assist:
-      node = pdfium::MakeUnique<CXFA_Assist>(doc, packet);
+      node = std::make_unique<CXFA_Assist>(doc, packet);
       break;
     case XFA_Element::Picture:
-      node = pdfium::MakeUnique<CXFA_Picture>(doc, packet);
+      node = std::make_unique<CXFA_Picture>(doc, packet);
       break;
     case XFA_Element::Traversal:
-      node = pdfium::MakeUnique<CXFA_Traversal>(doc, packet);
+      node = std::make_unique<CXFA_Traversal>(doc, packet);
       break;
     case XFA_Element::SilentPrint:
-      node = pdfium::MakeUnique<CXFA_SilentPrint>(doc, packet);
+      node = std::make_unique<CXFA_SilentPrint>(doc, packet);
       break;
     case XFA_Element::WebClient:
-      node = pdfium::MakeUnique<CXFA_WebClient>(doc, packet);
+      node = std::make_unique<CXFA_WebClient>(doc, packet);
       break;
     case XFA_Element::Producer:
-      node = pdfium::MakeUnique<CXFA_Producer>(doc, packet);
+      node = std::make_unique<CXFA_Producer>(doc, packet);
       break;
     case XFA_Element::Corner:
-      node = pdfium::MakeUnique<CXFA_Corner>(doc, packet);
+      node = std::make_unique<CXFA_Corner>(doc, packet);
       break;
     case XFA_Element::MsgId:
-      node = pdfium::MakeUnique<CXFA_MsgId>(doc, packet);
+      node = std::make_unique<CXFA_MsgId>(doc, packet);
       break;
     case XFA_Element::Color:
-      node = pdfium::MakeUnique<CXFA_Color>(doc, packet);
+      node = std::make_unique<CXFA_Color>(doc, packet);
       break;
     case XFA_Element::Keep:
-      node = pdfium::MakeUnique<CXFA_Keep>(doc, packet);
+      node = std::make_unique<CXFA_Keep>(doc, packet);
       break;
     case XFA_Element::Query:
-      node = pdfium::MakeUnique<CXFA_Query>(doc, packet);
+      node = std::make_unique<CXFA_Query>(doc, packet);
       break;
     case XFA_Element::Insert:
-      node = pdfium::MakeUnique<CXFA_Insert>(doc, packet);
+      node = std::make_unique<CXFA_Insert>(doc, packet);
       break;
     case XFA_Element::ImageEdit:
-      node = pdfium::MakeUnique<CXFA_ImageEdit>(doc, packet);
+      node = std::make_unique<CXFA_ImageEdit>(doc, packet);
       break;
     case XFA_Element::Validate:
-      node = pdfium::MakeUnique<CXFA_Validate>(doc, packet);
+      node = std::make_unique<CXFA_Validate>(doc, packet);
       break;
     case XFA_Element::DigestMethods:
-      node = pdfium::MakeUnique<CXFA_DigestMethods>(doc, packet);
+      node = std::make_unique<CXFA_DigestMethods>(doc, packet);
       break;
     case XFA_Element::NumberPatterns:
-      node = pdfium::MakeUnique<CXFA_NumberPatterns>(doc, packet);
+      node = std::make_unique<CXFA_NumberPatterns>(doc, packet);
       break;
     case XFA_Element::PageSet:
-      node = pdfium::MakeUnique<CXFA_PageSet>(doc, packet);
+      node = std::make_unique<CXFA_PageSet>(doc, packet);
       break;
     case XFA_Element::Integer:
-      node = pdfium::MakeUnique<CXFA_Integer>(doc, packet);
+      node = std::make_unique<CXFA_Integer>(doc, packet);
       break;
     case XFA_Element::SoapAddress:
-      node = pdfium::MakeUnique<CXFA_SoapAddress>(doc, packet);
+      node = std::make_unique<CXFA_SoapAddress>(doc, packet);
       break;
     case XFA_Element::Equate:
-      node = pdfium::MakeUnique<CXFA_Equate>(doc, packet);
+      node = std::make_unique<CXFA_Equate>(doc, packet);
       break;
     case XFA_Element::FormFieldFilling:
-      node = pdfium::MakeUnique<CXFA_FormFieldFilling>(doc, packet);
+      node = std::make_unique<CXFA_FormFieldFilling>(doc, packet);
       break;
     case XFA_Element::PageRange:
-      node = pdfium::MakeUnique<CXFA_PageRange>(doc, packet);
+      node = std::make_unique<CXFA_PageRange>(doc, packet);
       break;
     case XFA_Element::Update:
-      node = pdfium::MakeUnique<CXFA_Update>(doc, packet);
+      node = std::make_unique<CXFA_Update>(doc, packet);
       break;
     case XFA_Element::ConnectString:
-      node = pdfium::MakeUnique<CXFA_ConnectString>(doc, packet);
+      node = std::make_unique<CXFA_ConnectString>(doc, packet);
       break;
     case XFA_Element::Mode:
-      node = pdfium::MakeUnique<CXFA_Mode>(doc, packet);
+      node = std::make_unique<CXFA_Mode>(doc, packet);
       break;
     case XFA_Element::Layout:
-      node = pdfium::MakeUnique<CXFA_Layout>(doc, packet);
+      node = std::make_unique<CXFA_Layout>(doc, packet);
       break;
     case XFA_Element::Sharpxml:
-      node = pdfium::MakeUnique<CXFA_Sharpxml>(doc, packet);
+      node = std::make_unique<CXFA_Sharpxml>(doc, packet);
       break;
     case XFA_Element::XsdConnection:
-      node = pdfium::MakeUnique<CXFA_XsdConnection>(doc, packet);
+      node = std::make_unique<CXFA_XsdConnection>(doc, packet);
       break;
     case XFA_Element::Traverse:
-      node = pdfium::MakeUnique<CXFA_Traverse>(doc, packet);
+      node = std::make_unique<CXFA_Traverse>(doc, packet);
       break;
     case XFA_Element::Encodings:
-      node = pdfium::MakeUnique<CXFA_Encodings>(doc, packet);
+      node = std::make_unique<CXFA_Encodings>(doc, packet);
       break;
     case XFA_Element::Template:
-      node = pdfium::MakeUnique<CXFA_Template>(doc, packet);
+      node = std::make_unique<CXFA_Template>(doc, packet);
       break;
     case XFA_Element::Acrobat:
-      node = pdfium::MakeUnique<CXFA_Acrobat>(doc, packet);
+      node = std::make_unique<CXFA_Acrobat>(doc, packet);
       break;
     case XFA_Element::ValidationMessaging:
-      node = pdfium::MakeUnique<CXFA_ValidationMessaging>(doc, packet);
+      node = std::make_unique<CXFA_ValidationMessaging>(doc, packet);
       break;
     case XFA_Element::Signing:
-      node = pdfium::MakeUnique<CXFA_Signing>(doc, packet);
+      node = std::make_unique<CXFA_Signing>(doc, packet);
       break;
     case XFA_Element::Script:
-      node = pdfium::MakeUnique<CXFA_Script>(doc, packet);
+      node = std::make_unique<CXFA_Script>(doc, packet);
       break;
     case XFA_Element::AddViewerPreferences:
-      node = pdfium::MakeUnique<CXFA_AddViewerPreferences>(doc, packet);
+      node = std::make_unique<CXFA_AddViewerPreferences>(doc, packet);
       break;
     case XFA_Element::AlwaysEmbed:
-      node = pdfium::MakeUnique<CXFA_AlwaysEmbed>(doc, packet);
+      node = std::make_unique<CXFA_AlwaysEmbed>(doc, packet);
       break;
     case XFA_Element::PasswordEdit:
-      node = pdfium::MakeUnique<CXFA_PasswordEdit>(doc, packet);
+      node = std::make_unique<CXFA_PasswordEdit>(doc, packet);
       break;
     case XFA_Element::NumericEdit:
-      node = pdfium::MakeUnique<CXFA_NumericEdit>(doc, packet);
+      node = std::make_unique<CXFA_NumericEdit>(doc, packet);
       break;
     case XFA_Element::EncryptionMethod:
-      node = pdfium::MakeUnique<CXFA_EncryptionMethod>(doc, packet);
+      node = std::make_unique<CXFA_EncryptionMethod>(doc, packet);
       break;
     case XFA_Element::Change:
-      node = pdfium::MakeUnique<CXFA_Change>(doc, packet);
+      node = std::make_unique<CXFA_Change>(doc, packet);
       break;
     case XFA_Element::PageArea:
-      node = pdfium::MakeUnique<CXFA_PageArea>(doc, packet);
+      node = std::make_unique<CXFA_PageArea>(doc, packet);
       break;
     case XFA_Element::SubmitUrl:
-      node = pdfium::MakeUnique<CXFA_SubmitUrl>(doc, packet);
+      node = std::make_unique<CXFA_SubmitUrl>(doc, packet);
       break;
     case XFA_Element::Oids:
-      node = pdfium::MakeUnique<CXFA_Oids>(doc, packet);
+      node = std::make_unique<CXFA_Oids>(doc, packet);
       break;
     case XFA_Element::Signature:
-      node = pdfium::MakeUnique<CXFA_Signature>(doc, packet);
+      node = std::make_unique<CXFA_Signature>(doc, packet);
       break;
     case XFA_Element::ADBE_JSConsole:
-      node = pdfium::MakeUnique<CXFA_ADBE_JSConsole>(doc, packet);
+      node = std::make_unique<CXFA_ADBE_JSConsole>(doc, packet);
       break;
     case XFA_Element::Caption:
-      node = pdfium::MakeUnique<CXFA_Caption>(doc, packet);
+      node = std::make_unique<CXFA_Caption>(doc, packet);
       break;
     case XFA_Element::Relevant:
-      node = pdfium::MakeUnique<CXFA_Relevant>(doc, packet);
+      node = std::make_unique<CXFA_Relevant>(doc, packet);
       break;
     case XFA_Element::FlipLabel:
-      node = pdfium::MakeUnique<CXFA_FlipLabel>(doc, packet);
+      node = std::make_unique<CXFA_FlipLabel>(doc, packet);
       break;
     case XFA_Element::ExData:
-      node = pdfium::MakeUnique<CXFA_ExData>(doc, packet);
+      node = std::make_unique<CXFA_ExData>(doc, packet);
       break;
     case XFA_Element::DayNames:
-      node = pdfium::MakeUnique<CXFA_DayNames>(doc, packet);
+      node = std::make_unique<CXFA_DayNames>(doc, packet);
       break;
     case XFA_Element::SoapAction:
-      node = pdfium::MakeUnique<CXFA_SoapAction>(doc, packet);
+      node = std::make_unique<CXFA_SoapAction>(doc, packet);
       break;
     case XFA_Element::DefaultTypeface:
-      node = pdfium::MakeUnique<CXFA_DefaultTypeface>(doc, packet);
+      node = std::make_unique<CXFA_DefaultTypeface>(doc, packet);
       break;
     case XFA_Element::Manifest:
-      node = pdfium::MakeUnique<CXFA_Manifest>(doc, packet);
+      node = std::make_unique<CXFA_Manifest>(doc, packet);
       break;
     case XFA_Element::Overflow:
-      node = pdfium::MakeUnique<CXFA_Overflow>(doc, packet);
+      node = std::make_unique<CXFA_Overflow>(doc, packet);
       break;
     case XFA_Element::Linear:
-      node = pdfium::MakeUnique<CXFA_Linear>(doc, packet);
+      node = std::make_unique<CXFA_Linear>(doc, packet);
       break;
     case XFA_Element::CurrencySymbol:
-      node = pdfium::MakeUnique<CXFA_CurrencySymbol>(doc, packet);
+      node = std::make_unique<CXFA_CurrencySymbol>(doc, packet);
       break;
     case XFA_Element::Delete:
-      node = pdfium::MakeUnique<CXFA_Delete>(doc, packet);
+      node = std::make_unique<CXFA_Delete>(doc, packet);
       break;
     case XFA_Element::DigestMethod:
-      node = pdfium::MakeUnique<CXFA_DigestMethod>(doc, packet);
+      node = std::make_unique<CXFA_DigestMethod>(doc, packet);
       break;
     case XFA_Element::InstanceManager:
-      node = pdfium::MakeUnique<CXFA_InstanceManager>(doc, packet);
+      node = std::make_unique<CXFA_InstanceManager>(doc, packet);
       break;
     case XFA_Element::EquateRange:
-      node = pdfium::MakeUnique<CXFA_EquateRange>(doc, packet);
+      node = std::make_unique<CXFA_EquateRange>(doc, packet);
       break;
     case XFA_Element::Medium:
-      node = pdfium::MakeUnique<CXFA_Medium>(doc, packet);
+      node = std::make_unique<CXFA_Medium>(doc, packet);
       break;
     case XFA_Element::TextEdit:
-      node = pdfium::MakeUnique<CXFA_TextEdit>(doc, packet);
+      node = std::make_unique<CXFA_TextEdit>(doc, packet);
       break;
     case XFA_Element::TemplateCache:
-      node = pdfium::MakeUnique<CXFA_TemplateCache>(doc, packet);
+      node = std::make_unique<CXFA_TemplateCache>(doc, packet);
       break;
     case XFA_Element::CompressObjectStream:
-      node = pdfium::MakeUnique<CXFA_CompressObjectStream>(doc, packet);
+      node = std::make_unique<CXFA_CompressObjectStream>(doc, packet);
       break;
     case XFA_Element::DataValue:
-      node = pdfium::MakeUnique<CXFA_DataValue>(doc, packet);
+      node = std::make_unique<CXFA_DataValue>(doc, packet);
       break;
     case XFA_Element::AccessibleContent:
-      node = pdfium::MakeUnique<CXFA_AccessibleContent>(doc, packet);
+      node = std::make_unique<CXFA_AccessibleContent>(doc, packet);
       break;
     case XFA_Element::IncludeXDPContent:
-      node = pdfium::MakeUnique<CXFA_IncludeXDPContent>(doc, packet);
+      node = std::make_unique<CXFA_IncludeXDPContent>(doc, packet);
       break;
     case XFA_Element::XmlConnection:
-      node = pdfium::MakeUnique<CXFA_XmlConnection>(doc, packet);
+      node = std::make_unique<CXFA_XmlConnection>(doc, packet);
       break;
     case XFA_Element::ValidateApprovalSignatures:
-      node = pdfium::MakeUnique<CXFA_ValidateApprovalSignatures>(doc, packet);
+      node = std::make_unique<CXFA_ValidateApprovalSignatures>(doc, packet);
       break;
     case XFA_Element::SignData:
-      node = pdfium::MakeUnique<CXFA_SignData>(doc, packet);
+      node = std::make_unique<CXFA_SignData>(doc, packet);
       break;
     case XFA_Element::Packets:
-      node = pdfium::MakeUnique<CXFA_Packets>(doc, packet);
+      node = std::make_unique<CXFA_Packets>(doc, packet);
       break;
     case XFA_Element::DatePattern:
-      node = pdfium::MakeUnique<CXFA_DatePattern>(doc, packet);
+      node = std::make_unique<CXFA_DatePattern>(doc, packet);
       break;
     case XFA_Element::DuplexOption:
-      node = pdfium::MakeUnique<CXFA_DuplexOption>(doc, packet);
+      node = std::make_unique<CXFA_DuplexOption>(doc, packet);
       break;
     case XFA_Element::Base:
-      node = pdfium::MakeUnique<CXFA_Base>(doc, packet);
+      node = std::make_unique<CXFA_Base>(doc, packet);
       break;
     case XFA_Element::Bind:
-      node = pdfium::MakeUnique<CXFA_Bind>(doc, packet);
+      node = std::make_unique<CXFA_Bind>(doc, packet);
       break;
     case XFA_Element::Compression:
-      node = pdfium::MakeUnique<CXFA_Compression>(doc, packet);
+      node = std::make_unique<CXFA_Compression>(doc, packet);
       break;
     case XFA_Element::User:
-      node = pdfium::MakeUnique<CXFA_User>(doc, packet);
+      node = std::make_unique<CXFA_User>(doc, packet);
       break;
     case XFA_Element::Rectangle:
-      node = pdfium::MakeUnique<CXFA_Rectangle>(doc, packet);
+      node = std::make_unique<CXFA_Rectangle>(doc, packet);
       break;
     case XFA_Element::EffectiveOutputPolicy:
-      node = pdfium::MakeUnique<CXFA_EffectiveOutputPolicy>(doc, packet);
+      node = std::make_unique<CXFA_EffectiveOutputPolicy>(doc, packet);
       break;
     case XFA_Element::ADBE_JSDebugger:
-      node = pdfium::MakeUnique<CXFA_ADBE_JSDebugger>(doc, packet);
+      node = std::make_unique<CXFA_ADBE_JSDebugger>(doc, packet);
       break;
     case XFA_Element::Acrobat7:
-      node = pdfium::MakeUnique<CXFA_Acrobat7>(doc, packet);
+      node = std::make_unique<CXFA_Acrobat7>(doc, packet);
       break;
     case XFA_Element::Interactive:
-      node = pdfium::MakeUnique<CXFA_Interactive>(doc, packet);
+      node = std::make_unique<CXFA_Interactive>(doc, packet);
       break;
     case XFA_Element::Locale:
-      node = pdfium::MakeUnique<CXFA_Locale>(doc, packet);
+      node = std::make_unique<CXFA_Locale>(doc, packet);
       break;
     case XFA_Element::CurrentPage:
-      node = pdfium::MakeUnique<CXFA_CurrentPage>(doc, packet);
+      node = std::make_unique<CXFA_CurrentPage>(doc, packet);
       break;
     case XFA_Element::Data:
-      node = pdfium::MakeUnique<CXFA_Data>(doc, packet);
+      node = std::make_unique<CXFA_Data>(doc, packet);
       break;
     case XFA_Element::Date:
-      node = pdfium::MakeUnique<CXFA_Date>(doc, packet);
+      node = std::make_unique<CXFA_Date>(doc, packet);
       break;
     case XFA_Element::Desc:
-      node = pdfium::MakeUnique<CXFA_Desc>(doc, packet);
+      node = std::make_unique<CXFA_Desc>(doc, packet);
       break;
     case XFA_Element::Encrypt:
-      node = pdfium::MakeUnique<CXFA_Encrypt>(doc, packet);
+      node = std::make_unique<CXFA_Encrypt>(doc, packet);
       break;
     case XFA_Element::Draw:
-      node = pdfium::MakeUnique<CXFA_Draw>(doc, packet);
+      node = std::make_unique<CXFA_Draw>(doc, packet);
       break;
     case XFA_Element::Encryption:
-      node = pdfium::MakeUnique<CXFA_Encryption>(doc, packet);
+      node = std::make_unique<CXFA_Encryption>(doc, packet);
       break;
     case XFA_Element::MeridiemNames:
-      node = pdfium::MakeUnique<CXFA_MeridiemNames>(doc, packet);
+      node = std::make_unique<CXFA_MeridiemNames>(doc, packet);
       break;
     case XFA_Element::Messaging:
-      node = pdfium::MakeUnique<CXFA_Messaging>(doc, packet);
+      node = std::make_unique<CXFA_Messaging>(doc, packet);
       break;
     case XFA_Element::Speak:
-      node = pdfium::MakeUnique<CXFA_Speak>(doc, packet);
+      node = std::make_unique<CXFA_Speak>(doc, packet);
       break;
     case XFA_Element::DataGroup:
-      node = pdfium::MakeUnique<CXFA_DataGroup>(doc, packet);
+      node = std::make_unique<CXFA_DataGroup>(doc, packet);
       break;
     case XFA_Element::Common:
-      node = pdfium::MakeUnique<CXFA_Common>(doc, packet);
+      node = std::make_unique<CXFA_Common>(doc, packet);
       break;
     case XFA_Element::Sharptext:
-      node = pdfium::MakeUnique<CXFA_Sharptext>(doc, packet);
+      node = std::make_unique<CXFA_Sharptext>(doc, packet);
       break;
     case XFA_Element::PaginationOverride:
-      node = pdfium::MakeUnique<CXFA_PaginationOverride>(doc, packet);
+      node = std::make_unique<CXFA_PaginationOverride>(doc, packet);
       break;
     case XFA_Element::Reasons:
-      node = pdfium::MakeUnique<CXFA_Reasons>(doc, packet);
+      node = std::make_unique<CXFA_Reasons>(doc, packet);
       break;
     case XFA_Element::SignatureProperties:
-      node = pdfium::MakeUnique<CXFA_SignatureProperties>(doc, packet);
+      node = std::make_unique<CXFA_SignatureProperties>(doc, packet);
       break;
     case XFA_Element::Threshold:
-      node = pdfium::MakeUnique<CXFA_Threshold>(doc, packet);
+      node = std::make_unique<CXFA_Threshold>(doc, packet);
       break;
     case XFA_Element::AppearanceFilter:
-      node = pdfium::MakeUnique<CXFA_AppearanceFilter>(doc, packet);
+      node = std::make_unique<CXFA_AppearanceFilter>(doc, packet);
       break;
     case XFA_Element::Fill:
-      node = pdfium::MakeUnique<CXFA_Fill>(doc, packet);
+      node = std::make_unique<CXFA_Fill>(doc, packet);
       break;
     case XFA_Element::Font:
-      node = pdfium::MakeUnique<CXFA_Font>(doc, packet);
+      node = std::make_unique<CXFA_Font>(doc, packet);
       break;
     case XFA_Element::Form:
-      node = pdfium::MakeUnique<CXFA_Form>(doc, packet);
+      node = std::make_unique<CXFA_Form>(doc, packet);
       break;
     case XFA_Element::MediumInfo:
-      node = pdfium::MakeUnique<CXFA_MediumInfo>(doc, packet);
+      node = std::make_unique<CXFA_MediumInfo>(doc, packet);
       break;
     case XFA_Element::Certificate:
-      node = pdfium::MakeUnique<CXFA_Certificate>(doc, packet);
+      node = std::make_unique<CXFA_Certificate>(doc, packet);
       break;
     case XFA_Element::Password:
-      node = pdfium::MakeUnique<CXFA_Password>(doc, packet);
+      node = std::make_unique<CXFA_Password>(doc, packet);
       break;
     case XFA_Element::RunScripts:
-      node = pdfium::MakeUnique<CXFA_RunScripts>(doc, packet);
+      node = std::make_unique<CXFA_RunScripts>(doc, packet);
       break;
     case XFA_Element::Trace:
-      node = pdfium::MakeUnique<CXFA_Trace>(doc, packet);
+      node = std::make_unique<CXFA_Trace>(doc, packet);
       break;
     case XFA_Element::Float:
-      node = pdfium::MakeUnique<CXFA_Float>(doc, packet);
+      node = std::make_unique<CXFA_Float>(doc, packet);
       break;
     case XFA_Element::RenderPolicy:
-      node = pdfium::MakeUnique<CXFA_RenderPolicy>(doc, packet);
+      node = std::make_unique<CXFA_RenderPolicy>(doc, packet);
       break;
     case XFA_Element::Destination:
-      node = pdfium::MakeUnique<CXFA_Destination>(doc, packet);
+      node = std::make_unique<CXFA_Destination>(doc, packet);
       break;
     case XFA_Element::Value:
-      node = pdfium::MakeUnique<CXFA_Value>(doc, packet);
+      node = std::make_unique<CXFA_Value>(doc, packet);
       break;
     case XFA_Element::Bookend:
-      node = pdfium::MakeUnique<CXFA_Bookend>(doc, packet);
+      node = std::make_unique<CXFA_Bookend>(doc, packet);
       break;
     case XFA_Element::ExObject:
-      node = pdfium::MakeUnique<CXFA_ExObject>(doc, packet);
+      node = std::make_unique<CXFA_ExObject>(doc, packet);
       break;
     case XFA_Element::OpenAction:
-      node = pdfium::MakeUnique<CXFA_OpenAction>(doc, packet);
+      node = std::make_unique<CXFA_OpenAction>(doc, packet);
       break;
     case XFA_Element::NeverEmbed:
-      node = pdfium::MakeUnique<CXFA_NeverEmbed>(doc, packet);
+      node = std::make_unique<CXFA_NeverEmbed>(doc, packet);
       break;
     case XFA_Element::BindItems:
-      node = pdfium::MakeUnique<CXFA_BindItems>(doc, packet);
+      node = std::make_unique<CXFA_BindItems>(doc, packet);
       break;
     case XFA_Element::Calculate:
-      node = pdfium::MakeUnique<CXFA_Calculate>(doc, packet);
+      node = std::make_unique<CXFA_Calculate>(doc, packet);
       break;
     case XFA_Element::Print:
-      node = pdfium::MakeUnique<CXFA_Print>(doc, packet);
+      node = std::make_unique<CXFA_Print>(doc, packet);
       break;
     case XFA_Element::Extras:
-      node = pdfium::MakeUnique<CXFA_Extras>(doc, packet);
+      node = std::make_unique<CXFA_Extras>(doc, packet);
       break;
     case XFA_Element::Proto:
-      node = pdfium::MakeUnique<CXFA_Proto>(doc, packet);
+      node = std::make_unique<CXFA_Proto>(doc, packet);
       break;
     case XFA_Element::DSigData:
-      node = pdfium::MakeUnique<CXFA_DSigData>(doc, packet);
+      node = std::make_unique<CXFA_DSigData>(doc, packet);
       break;
     case XFA_Element::Creator:
-      node = pdfium::MakeUnique<CXFA_Creator>(doc, packet);
+      node = std::make_unique<CXFA_Creator>(doc, packet);
       break;
     case XFA_Element::Connect:
-      node = pdfium::MakeUnique<CXFA_Connect>(doc, packet);
+      node = std::make_unique<CXFA_Connect>(doc, packet);
       break;
     case XFA_Element::Permissions:
-      node = pdfium::MakeUnique<CXFA_Permissions>(doc, packet);
+      node = std::make_unique<CXFA_Permissions>(doc, packet);
       break;
     case XFA_Element::ConnectionSet:
-      node = pdfium::MakeUnique<CXFA_ConnectionSet>(doc, packet);
+      node = std::make_unique<CXFA_ConnectionSet>(doc, packet);
       break;
     case XFA_Element::Submit:
-      node = pdfium::MakeUnique<CXFA_Submit>(doc, packet);
+      node = std::make_unique<CXFA_Submit>(doc, packet);
       break;
     case XFA_Element::Range:
-      node = pdfium::MakeUnique<CXFA_Range>(doc, packet);
+      node = std::make_unique<CXFA_Range>(doc, packet);
       break;
     case XFA_Element::Linearized:
-      node = pdfium::MakeUnique<CXFA_Linearized>(doc, packet);
+      node = std::make_unique<CXFA_Linearized>(doc, packet);
       break;
     case XFA_Element::Packet:
-      node = pdfium::MakeUnique<CXFA_Packet>(doc, packet);
+      node = std::make_unique<CXFA_Packet>(doc, packet);
       break;
     case XFA_Element::RootElement:
-      node = pdfium::MakeUnique<CXFA_RootElement>(doc, packet);
+      node = std::make_unique<CXFA_RootElement>(doc, packet);
       break;
     case XFA_Element::PlaintextMetadata:
-      node = pdfium::MakeUnique<CXFA_PlaintextMetadata>(doc, packet);
+      node = std::make_unique<CXFA_PlaintextMetadata>(doc, packet);
       break;
     case XFA_Element::NumberSymbols:
-      node = pdfium::MakeUnique<CXFA_NumberSymbols>(doc, packet);
+      node = std::make_unique<CXFA_NumberSymbols>(doc, packet);
       break;
     case XFA_Element::PrintHighQuality:
-      node = pdfium::MakeUnique<CXFA_PrintHighQuality>(doc, packet);
+      node = std::make_unique<CXFA_PrintHighQuality>(doc, packet);
       break;
     case XFA_Element::Driver:
-      node = pdfium::MakeUnique<CXFA_Driver>(doc, packet);
+      node = std::make_unique<CXFA_Driver>(doc, packet);
       break;
     case XFA_Element::IncrementalLoad:
-      node = pdfium::MakeUnique<CXFA_IncrementalLoad>(doc, packet);
+      node = std::make_unique<CXFA_IncrementalLoad>(doc, packet);
       break;
     case XFA_Element::SubjectDN:
-      node = pdfium::MakeUnique<CXFA_SubjectDN>(doc, packet);
+      node = std::make_unique<CXFA_SubjectDN>(doc, packet);
       break;
     case XFA_Element::CompressLogicalStructure:
-      node = pdfium::MakeUnique<CXFA_CompressLogicalStructure>(doc, packet);
+      node = std::make_unique<CXFA_CompressLogicalStructure>(doc, packet);
       break;
     case XFA_Element::IncrementalMerge:
-      node = pdfium::MakeUnique<CXFA_IncrementalMerge>(doc, packet);
+      node = std::make_unique<CXFA_IncrementalMerge>(doc, packet);
       break;
     case XFA_Element::Radial:
-      node = pdfium::MakeUnique<CXFA_Radial>(doc, packet);
+      node = std::make_unique<CXFA_Radial>(doc, packet);
       break;
     case XFA_Element::Variables:
-      node = pdfium::MakeUnique<CXFA_Variables>(doc, packet);
+      node = std::make_unique<CXFA_Variables>(doc, packet);
       break;
     case XFA_Element::TimePatterns:
-      node = pdfium::MakeUnique<CXFA_TimePatterns>(doc, packet);
+      node = std::make_unique<CXFA_TimePatterns>(doc, packet);
       break;
     case XFA_Element::EffectiveInputPolicy:
-      node = pdfium::MakeUnique<CXFA_EffectiveInputPolicy>(doc, packet);
+      node = std::make_unique<CXFA_EffectiveInputPolicy>(doc, packet);
       break;
     case XFA_Element::NameAttr:
-      node = pdfium::MakeUnique<CXFA_NameAttr>(doc, packet);
+      node = std::make_unique<CXFA_NameAttr>(doc, packet);
       break;
     case XFA_Element::Conformance:
-      node = pdfium::MakeUnique<CXFA_Conformance>(doc, packet);
+      node = std::make_unique<CXFA_Conformance>(doc, packet);
       break;
     case XFA_Element::Transform:
-      node = pdfium::MakeUnique<CXFA_Transform>(doc, packet);
+      node = std::make_unique<CXFA_Transform>(doc, packet);
       break;
     case XFA_Element::LockDocument:
-      node = pdfium::MakeUnique<CXFA_LockDocument>(doc, packet);
+      node = std::make_unique<CXFA_LockDocument>(doc, packet);
       break;
     case XFA_Element::BreakAfter:
-      node = pdfium::MakeUnique<CXFA_BreakAfter>(doc, packet);
+      node = std::make_unique<CXFA_BreakAfter>(doc, packet);
       break;
     case XFA_Element::Line:
-      node = pdfium::MakeUnique<CXFA_Line>(doc, packet);
+      node = std::make_unique<CXFA_Line>(doc, packet);
       break;
     case XFA_Element::Source:
-      node = pdfium::MakeUnique<CXFA_Source>(doc, packet);
+      node = std::make_unique<CXFA_Source>(doc, packet);
       break;
     case XFA_Element::Occur:
-      node = pdfium::MakeUnique<CXFA_Occur>(doc, packet);
+      node = std::make_unique<CXFA_Occur>(doc, packet);
       break;
     case XFA_Element::PickTrayByPDFSize:
-      node = pdfium::MakeUnique<CXFA_PickTrayByPDFSize>(doc, packet);
+      node = std::make_unique<CXFA_PickTrayByPDFSize>(doc, packet);
       break;
     case XFA_Element::MonthNames:
-      node = pdfium::MakeUnique<CXFA_MonthNames>(doc, packet);
+      node = std::make_unique<CXFA_MonthNames>(doc, packet);
       break;
     case XFA_Element::Severity:
-      node = pdfium::MakeUnique<CXFA_Severity>(doc, packet);
+      node = std::make_unique<CXFA_Severity>(doc, packet);
       break;
     case XFA_Element::GroupParent:
-      node = pdfium::MakeUnique<CXFA_GroupParent>(doc, packet);
+      node = std::make_unique<CXFA_GroupParent>(doc, packet);
       break;
     case XFA_Element::DocumentAssembly:
-      node = pdfium::MakeUnique<CXFA_DocumentAssembly>(doc, packet);
+      node = std::make_unique<CXFA_DocumentAssembly>(doc, packet);
       break;
     case XFA_Element::NumberSymbol:
-      node = pdfium::MakeUnique<CXFA_NumberSymbol>(doc, packet);
+      node = std::make_unique<CXFA_NumberSymbol>(doc, packet);
       break;
     case XFA_Element::Tagged:
-      node = pdfium::MakeUnique<CXFA_Tagged>(doc, packet);
+      node = std::make_unique<CXFA_Tagged>(doc, packet);
       break;
     case XFA_Element::Items:
-      node = pdfium::MakeUnique<CXFA_Items>(doc, packet);
+      node = std::make_unique<CXFA_Items>(doc, packet);
       break;
     default:
       NOTREACHED();

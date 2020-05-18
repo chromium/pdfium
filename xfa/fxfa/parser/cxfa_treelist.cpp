@@ -10,14 +10,13 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/xfa/cjx_treelist.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_TreeList::CXFA_TreeList(CXFA_Document* pDocument)
     : CXFA_List(pDocument,
                 XFA_ObjectType::TreeList,
                 XFA_Element::TreeList,
-                pdfium::MakeUnique<CJX_TreeList>(this)) {}
+                std::make_unique<CJX_TreeList>(this)) {}
 
 CXFA_TreeList::~CXFA_TreeList() = default;
 

@@ -19,7 +19,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -115,7 +114,7 @@ std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
   if (!bDefault)
     dwStyle |= FX_LAYOUTSTYLE_Pagination;
 
-  auto pBreak = pdfium::MakeUnique<CFX_RTFBreak>(dwStyle);
+  auto pBreak = std::make_unique<CFX_RTFBreak>(dwStyle);
   pBreak->SetLineBreakTolerance(1);
   pBreak->SetFont(m_textParser.GetFont(m_pDoc.Get(), m_pTextProvider, nullptr));
   pBreak->SetFontSize(m_textParser.GetFontSize(m_pTextProvider, nullptr));
@@ -252,7 +251,7 @@ void CXFA_TextLayout::InitBreak(CFX_CSSComputedStyle* pStyle,
     m_pBreak->SetLineStartPos(fStart);
     m_pBreak->SetTabWidth(m_textParser.GetTabInterval(pStyle));
     if (!m_pTabstopContext)
-      m_pTabstopContext = pdfium::MakeUnique<CXFA_TextTabstopsContext>();
+      m_pTabstopContext = std::make_unique<CXFA_TextTabstopsContext>();
     m_textParser.GetTabstops(pStyle, m_pTabstopContext.get());
     for (const auto& stop : m_pTabstopContext->m_tabstops)
       m_pBreak->AddPositionedTab(stop.fTabstops);
@@ -292,7 +291,7 @@ float CXFA_TextLayout::GetLayoutHeight() {
 
 float CXFA_TextLayout::StartLayout(float fWidth) {
   if (!m_pLoader)
-    m_pLoader = pdfium::MakeUnique<CXFA_LoaderContext>();
+    m_pLoader = std::make_unique<CXFA_LoaderContext>();
 
   if (fWidth < 0 ||
       (m_pLoader->fWidth > -1 && fabs(fWidth - m_pLoader->fWidth) > 0)) {
@@ -986,7 +985,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
 
   RetainPtr<CFX_CSSComputedStyle> pStyle;
   if (bSavePieces) {
-    auto pNew = pdfium::MakeUnique<CXFA_PieceLine>();
+    auto pNew = std::make_unique<CXFA_PieceLine>();
     CXFA_PieceLine* pPieceLine = pNew.get();
     m_pieceLines.push_back(std::move(pNew));
     if (m_pTabstopContext)
@@ -1001,7 +1000,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
         pStyle = pUserData->m_pStyle;
       float fVerScale = pPiece->m_iVerticalScale / 100.0f;
 
-      auto pTP = pdfium::MakeUnique<CXFA_TextPiece>();
+      auto pTP = std::make_unique<CXFA_TextPiece>();
       pTP->iChars = pPiece->m_iCharCount;
       pTP->szText = pPiece->GetString();
       pTP->Widths = pPiece->GetWidths();

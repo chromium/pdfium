@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_datamodel.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_model.h"
-#include "third_party/base/ptr_util.h"
 
 CXFA_DataModel::CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet)
     : CXFA_Node(doc,
@@ -17,6 +18,6 @@ CXFA_DataModel::CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DataModel,
                 {},
                 {},
-                pdfium::MakeUnique<CJX_Model>(this)) {}
+                std::make_unique<CJX_Model>(this)) {}
 
 CXFA_DataModel::~CXFA_DataModel() = default;

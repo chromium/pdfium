@@ -6,9 +6,10 @@
 
 #include "xfa/fxfa/parser/cxfa_value.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_arc.h"
 #include "xfa/fxfa/parser/cxfa_exdata.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
@@ -51,7 +52,7 @@ CXFA_Value::CXFA_Value(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Value,
                 kValuePropertyData,
                 kValueAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Value::~CXFA_Value() = default;
 

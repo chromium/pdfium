@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
+#include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventtarget.h"
@@ -48,8 +48,8 @@ bool CXFA_FFTextEdit::LoadWidget() {
   // Prevents destruction of the CXFA_ContentLayoutItem that owns |this|.
   RetainPtr<CXFA_ContentLayoutItem> retain_layout(m_pLayoutItem.Get());
 
-  auto pNewWidget = pdfium::MakeUnique<CFWL_Edit>(
-      GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
+  auto pNewWidget = std::make_unique<CFWL_Edit>(
+      GetFWLApp(), std::make_unique<CFWL_WidgetProperties>(), nullptr);
   CFWL_Edit* pFWLEdit = pNewWidget.get();
   SetNormalWidget(std::move(pNewWidget));
   pFWLEdit->SetAdapterIface(this);
@@ -134,7 +134,7 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     InvalidateRect();
   }
   SetButtonDown(true);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       GetNormalWidget(), FWL_MouseCommand::LeftButtonDown, dwFlags,
       FWLToClient(point)));
 
@@ -151,7 +151,7 @@ bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
     InvalidateRect();
   }
   SetButtonDown(true);
-  SendMessageToFWLWidget(pdfium::MakeUnique<CFWL_MessageMouse>(
+  SendMessageToFWLWidget(std::make_unique<CFWL_MessageMouse>(
       nullptr, FWL_MouseCommand::RightButtonDown, dwFlags, FWLToClient(point)));
 
   return true;
@@ -183,7 +183,7 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
     return false;
 
   SendMessageToFWLWidget(
-      pdfium::MakeUnique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
+      std::make_unique<CFWL_MessageSetFocus>(nullptr, GetNormalWidget()));
 
   return true;
 }
@@ -194,7 +194,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 
   ObservedPtr<CXFA_FFWidget> pNewWatched(pNewWidget);
   SendMessageToFWLWidget(
-      pdfium::MakeUnique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
+      std::make_unique<CFWL_MessageKillFocus>(nullptr, GetNormalWidget()));
 
   GetLayoutItem()->ClearStatusBits(XFA_WidgetStatus_Focused);
   SetEditScrollOffset();

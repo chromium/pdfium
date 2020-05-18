@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_uri.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_textnode.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -30,6 +31,6 @@ CXFA_Uri::CXFA_Uri(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Uri,
                 {},
                 kUriAttributeData,
-                pdfium::MakeUnique<CJX_TextNode>(this)) {}
+                std::make_unique<CJX_TextNode>(this)) {}
 
 CXFA_Uri::~CXFA_Uri() = default;

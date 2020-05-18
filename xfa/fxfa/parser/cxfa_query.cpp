@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_query.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -35,6 +36,6 @@ CXFA_Query::CXFA_Query(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Query,
                 kQueryPropertyData,
                 kQueryAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Query::~CXFA_Query() = default;

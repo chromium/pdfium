@@ -6,9 +6,10 @@
 
 #include "xfa/fxfa/parser/cxfa_linear.h"
 
+#include <memory>
+
 #include "core/fxge/render_defines.h"
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxgraphics/cxfa_geshading.h"
 
@@ -37,7 +38,7 @@ CXFA_Linear::CXFA_Linear(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Linear,
                 kLinearPropertyData,
                 kLinearAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_Linear::~CXFA_Linear() = default;
 

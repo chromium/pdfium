@@ -11,7 +11,6 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -34,14 +33,14 @@ void CXFA_FFApp::SkipFontLoadForTesting(bool skip) {
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
   // Ensure fully initialized before making an app based on |this|.
-  m_pFWLApp = pdfium::MakeUnique<CFWL_App>(this);
+  m_pFWLApp = std::make_unique<CFWL_App>(this);
 }
 
 CXFA_FFApp::~CXFA_FFApp() {}
 
 CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
-    m_pFDEFontMgr = pdfium::MakeUnique<CFGAS_FontMgr>();
+    m_pFDEFontMgr = std::make_unique<CFGAS_FontMgr>();
     if (!g_skipFontLoadForTesting) {
       if (!m_pFDEFontMgr->EnumFonts())
         m_pFDEFontMgr = nullptr;
@@ -52,7 +51,7 @@ CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
 
 CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme(CXFA_FFDoc* doc) {
   if (!m_pFWLTheme) {
-    auto fwl_theme = pdfium::MakeUnique<CXFA_FWLTheme>(this);
+    auto fwl_theme = std::make_unique<CXFA_FWLTheme>(this);
     if (fwl_theme->LoadCalendarFont(doc))
       m_pFWLTheme = std::move(fwl_theme);
   }
@@ -61,7 +60,7 @@ CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme(CXFA_FFDoc* doc) {
 
 CFWL_WidgetMgr::AdapterIface* CXFA_FFApp::GetWidgetMgrAdapter() {
   if (!m_pAdapterWidgetMgr)
-    m_pAdapterWidgetMgr = pdfium::MakeUnique<CXFA_FWLAdapterWidgetMgr>();
+    m_pAdapterWidgetMgr = std::make_unique<CXFA_FWLAdapterWidgetMgr>();
   return m_pAdapterWidgetMgr.get();
 }
 

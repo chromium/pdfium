@@ -7,7 +7,6 @@
 #include "xfa/fxfa/layout/cxfa_layoutprocessor.h"
 
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
@@ -51,14 +50,14 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
     return -1;
 
   if (!m_pViewLayoutProcessor)
-    m_pViewLayoutProcessor = pdfium::MakeUnique<CXFA_ViewLayoutProcessor>(this);
+    m_pViewLayoutProcessor = std::make_unique<CXFA_ViewLayoutProcessor>(this);
   if (!m_pViewLayoutProcessor->InitLayoutPage(pFormRoot))
     return -1;
 
   if (!m_pViewLayoutProcessor->PrepareFirstPage(pFormRoot))
     return -1;
 
-  m_pContentLayoutProcessor = pdfium::MakeUnique<CXFA_ContentLayoutProcessor>(
+  m_pContentLayoutProcessor = std::make_unique<CXFA_ContentLayoutProcessor>(
       pFormRoot, m_pViewLayoutProcessor.get());
   m_nProgressCounter = 1;
   return 0;

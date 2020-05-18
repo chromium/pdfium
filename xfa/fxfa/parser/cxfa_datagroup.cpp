@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_datagroup.h"
 
+#include <memory>
+
 #include "fxjs/xfa/cjx_node.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -25,6 +26,6 @@ CXFA_DataGroup::CXFA_DataGroup(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DataGroup,
                 {},
                 kDataGroupAttributeData,
-                pdfium::MakeUnique<CJX_Node>(this)) {}
+                std::make_unique<CJX_Node>(this)) {}
 
 CXFA_DataGroup::~CXFA_DataGroup() = default;
