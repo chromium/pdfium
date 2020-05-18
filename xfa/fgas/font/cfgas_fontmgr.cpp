@@ -323,7 +323,7 @@ const uint16_t g_CodePages[] = {FX_CODEPAGE_MSWin_WesternEuropean,
                                 FX_CODEPAGE_MSDOS_US};
 
 uint16_t FX_GetCodePageBit(uint16_t wCodePage) {
-  for (size_t i = 0; i < FX_ArraySize(g_CodePages); ++i) {
+  for (size_t i = 0; i < pdfium::size(g_CodePages); ++i) {
     if (g_CodePages[i] == wCodePage)
       return static_cast<uint16_t>(i);
   }

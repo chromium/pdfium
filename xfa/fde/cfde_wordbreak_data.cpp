@@ -6,8 +6,8 @@
 
 #include "xfa/fde/cfde_wordbreak_data.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -2825,7 +2825,7 @@ bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
 
 WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint) {
   size_t index = static_cast<size_t>(wcCodePoint) / 2;
-  if (index >= FX_ArraySize(kCodePointProperties))
+  if (index >= pdfium::size(kCodePointProperties))
     return WordBreakProperty::kNone;
 
   uint8_t dwProperty = kCodePointProperties[index];

@@ -22,12 +22,12 @@
 
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -331,7 +331,7 @@ bool MaybeEmbedPositionAdjustmentPatterns(int32_t version,
     return true;
 
   const size_t index = version - 2;
-  if (index >= FX_ArraySize(kPositionAdjustmentPatternCoordinates))
+  if (index >= pdfium::size(kPositionAdjustmentPatternCoordinates))
     return false;
 
   const auto* coordinates = &kPositionAdjustmentPatternCoordinates[index][0];

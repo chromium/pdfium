@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_text.h"
@@ -17,11 +16,12 @@
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
 constexpr char kHelloGoodbyeText[] = "Hello, world!\r\nGoodbye, world!";
-constexpr int kHelloGoodbyeTextSize = FX_ArraySize(kHelloGoodbyeText);
+constexpr int kHelloGoodbyeTextSize = pdfium::size(kHelloGoodbyeText);
 
 bool check_unsigned_shorts(const char* expected,
                            const unsigned short* actual,
@@ -676,7 +676,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
       "http://example.com/",
       "http://www.abc.com",
   };
-  static const int kNumLinks = static_cast<int>(FX_ArraySize(kExpectedUrls));
+  static const int kNumLinks = static_cast<int>(pdfium::size(kExpectedUrls));
 
   EXPECT_EQ(kNumLinks, FPDFLink_CountWebLinks(pagelink));
 
@@ -687,7 +687,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
     EXPECT_EQ(static_cast<int>(expected_len),
               FPDFLink_GetURL(pagelink, i, nullptr, 0));
     EXPECT_EQ(static_cast<int>(expected_len),
-              FPDFLink_GetURL(pagelink, i, buffer, FX_ArraySize(buffer)));
+              FPDFLink_GetURL(pagelink, i, buffer, pdfium::size(buffer)));
     EXPECT_TRUE(check_unsigned_shorts(kExpectedUrls[i], buffer, expected_len));
   }
 
@@ -715,7 +715,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLinesBug) {
 
   EXPECT_EQ(kUrlSize, FPDFLink_GetURL(pagelink, 1, nullptr, 0));
   EXPECT_EQ(kUrlSize,
-            FPDFLink_GetURL(pagelink, 1, buffer, FX_ArraySize(buffer)));
+            FPDFLink_GetURL(pagelink, 1, buffer, pdfium::size(buffer)));
   EXPECT_TRUE(check_unsigned_shorts(kExpectedUrl, buffer, kUrlSize));
 
   FPDFLink_CloseWebLinks(pagelink);
@@ -849,7 +849,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontSize) {
                                         16, 16, 16, 16, 16, 16, 16, 16, 16, 16};
 
   int count = FPDFText_CountChars(textpage);
-  ASSERT_EQ(FX_ArraySize(kExpectedFontsSizes), static_cast<size_t>(count));
+  ASSERT_EQ(pdfium::size(kExpectedFontsSizes), static_cast<size_t>(count));
   for (int i = 0; i < count; ++i)
     EXPECT_EQ(kExpectedFontsSizes[i], FPDFText_GetFontSize(textpage, i)) << i;
 
@@ -968,18 +968,18 @@ TEST_F(FPDFTextEmbedderTest, Bug_921) {
   static constexpr int kStartIndex = 238;
 
   ASSERT_EQ(268, FPDFText_CountChars(textpage));
-  for (size_t i = 0; i < FX_ArraySize(kData); ++i)
+  for (size_t i = 0; i < pdfium::size(kData); ++i)
     EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage, kStartIndex + i));
 
-  unsigned short buffer[FX_ArraySize(kData) + 1];
+  unsigned short buffer[pdfium::size(kData) + 1];
   memset(buffer, 0xbd, sizeof(buffer));
   int count =
-      FPDFText_GetText(textpage, kStartIndex, FX_ArraySize(kData), buffer);
+      FPDFText_GetText(textpage, kStartIndex, pdfium::size(kData), buffer);
   ASSERT_GT(count, 0);
-  ASSERT_EQ(FX_ArraySize(kData) + 1, static_cast<size_t>(count));
-  for (size_t i = 0; i < FX_ArraySize(kData); ++i)
+  ASSERT_EQ(pdfium::size(kData) + 1, static_cast<size_t>(count));
+  for (size_t i = 0; i < pdfium::size(kData); ++i)
     EXPECT_EQ(kData[i], buffer[i]);
-  EXPECT_EQ(0, buffer[FX_ArraySize(kData)]);
+  EXPECT_EQ(0, buffer[pdfium::size(kData)]);
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
@@ -1001,8 +1001,8 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
       0x0056, 0x0065, 0x0072, 0x0069, 0x0074, 0x0061, 0xfffe,
       0x0073, 0x0065, 0x0072, 0x0075, 0x006D, 0x0000};
   {
-    constexpr int count = FX_ArraySize(soft_expected) - 1;
-    unsigned short buffer[FX_ArraySize(soft_expected)];
+    constexpr int count = pdfium::size(soft_expected) - 1;
+    unsigned short buffer[pdfium::size(soft_expected)];
     memset(buffer, 0, sizeof(buffer));
 
     EXPECT_EQ(count + 1, FPDFText_GetText(textpage, 0, count, buffer));
@@ -1014,14 +1014,14 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   {
     // There isn't the \0 in the actual doc, but there is a \r\n, so need to
     // add 1 to get aligned.
-    constexpr size_t offset = FX_ArraySize(soft_expected) + 1;
+    constexpr size_t offset = pdfium::size(soft_expected) + 1;
     // Expecting 'User-\r\ngenerated', the - is a unicode character, so cannnot
     // store in a char[].
     constexpr unsigned short hard_expected[] = {
         0x0055, 0x0073, 0x0065, 0x0072, 0x2010, 0x000d, 0x000a, 0x0067, 0x0065,
         0x006e, 0x0065, 0x0072, 0x0061, 0x0074, 0x0065, 0x0064, 0x0000};
-    constexpr int count = FX_ArraySize(hard_expected) - 1;
-    unsigned short buffer[FX_ArraySize(hard_expected)];
+    constexpr int count = pdfium::size(hard_expected) - 1;
+    unsigned short buffer[pdfium::size(hard_expected)];
 
     EXPECT_EQ(count + 1, FPDFText_GetText(textpage, offset, count, buffer));
     for (int i = 0; i < count; i++)
@@ -1103,7 +1103,7 @@ TEST_F(FPDFTextEmbedderTest, bug_1029) {
       0x0061, 0x0073, 0x0020, 0x0063, 0x006f, 0x006d, 0x006d, 0x0069,
       0x0074, 0x0074, 0x0065, 0x0064, 0x002c, 0x0020, 0x0069, 0x0074,
       0x0020, 0x006e, 0x006f, 0x0074, 0x0069, 0x0002, 0x0066, 0x0069};
-  static_assert(page_range_length == FX_ArraySize(expected),
+  static_assert(page_range_length == pdfium::size(expected),
                 "Expected should be the same size as the range being "
                 "extracted from page.");
   EXPECT_LT(page_range_offset + page_range_length,
@@ -1205,7 +1205,7 @@ TEST_F(FPDFTextEmbedderTest, GetText) {
   // Positive testing.
   constexpr char kHelloText[] = "Hello, world!";
   // Return value includes the terminating NUL that is provided.
-  constexpr unsigned long kHelloUTF16Size = FX_ArraySize(kHelloText) * 2;
+  constexpr unsigned long kHelloUTF16Size = pdfium::size(kHelloText) * 2;
   constexpr wchar_t kHelloWideText[] = L"Hello, world!";
   unsigned long size = FPDFTextObj_GetText(text_object, text_page, nullptr, 0);
   ASSERT_EQ(kHelloUTF16Size, size);
@@ -1323,14 +1323,14 @@ TEST_F(FPDFTextEmbedderTest, Bug_642) {
     ASSERT_TRUE(text_page);
 
     constexpr char kText[] = "ABCD";
-    constexpr size_t kTextSize = FX_ArraySize(kText);
+    constexpr size_t kTextSize = pdfium::size(kText);
     // -1 for CountChars not including the \0
     EXPECT_EQ(static_cast<int>(kTextSize) - 1,
               FPDFText_CountChars(text_page.get()));
 
     unsigned short buffer[kTextSize];
     int num_chars =
-        FPDFText_GetText(text_page.get(), 0, FX_ArraySize(buffer) - 1, buffer);
+        FPDFText_GetText(text_page.get(), 0, pdfium::size(buffer) - 1, buffer);
     ASSERT_EQ(static_cast<int>(kTextSize), num_chars);
     EXPECT_TRUE(check_unsigned_shorts(kText, buffer, kTextSize));
   }
@@ -1346,9 +1346,9 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
   ASSERT_TRUE(text_page);
 
-  static constexpr int kSubstringsSize[] = {FX_ArraySize("Hello,"),
-                                            FX_ArraySize(" world!\r\n"),
-                                            FX_ArraySize("Goodbye,")};
+  static constexpr int kSubstringsSize[] = {pdfium::size("Hello,"),
+                                            pdfium::size(" world!\r\n"),
+                                            pdfium::size("Goodbye,")};
 
   // -1 for CountChars not including the \0, but +1 for the extra control
   // character.
@@ -1498,7 +1498,7 @@ TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
 
 TEST_F(FPDFTextEmbedderTest, GetMatrix) {
   constexpr char kExpectedText[] = "A1\r\nA2\r\nA3";
-  constexpr size_t kExpectedTextSize = FX_ArraySize(kExpectedText);
+  constexpr size_t kExpectedTextSize = pdfium::size(kExpectedText);
   constexpr FS_MATRIX kExpectedMatrices[] = {
       {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
       {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
@@ -1511,7 +1511,7 @@ TEST_F(FPDFTextEmbedderTest, GetMatrix) {
       {1.0f, 0.0f, 0.0f, 0.833333, 60.0f, 130.0f},
       {1.0f, 0.0f, 0.0f, 0.833333, 60.0f, 130.0f},
   };
-  constexpr size_t kExpectedCount = FX_ArraySize(kExpectedMatrices);
+  constexpr size_t kExpectedCount = pdfium::size(kExpectedMatrices);
   static_assert(kExpectedCount + 1 == kExpectedTextSize,
                 "Bad expected matrix size");
 

@@ -7,8 +7,8 @@
 #include "xfa/fxfa/cxfa_fwltheme.h"
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_barcode.h"
@@ -63,7 +63,7 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
 }
 
 bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
-  for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
+  for (size_t i = 0; !m_pCalendarFont && i < pdfium::size(g_FWLTheme_CalFonts);
        ++i) {
     m_pCalendarFont =
         m_pApp->GetXFAFontMgr()->GetFont(doc, g_FWLTheme_CalFonts[i], 0);

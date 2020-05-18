@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -161,7 +161,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
 }
 
 wchar_t GetArabicFromAlefTable(wchar_t alef) {
-  static const size_t s_iAlefCount = FX_ArraySize(gs_FX_AlefTable);
+  static const size_t s_iAlefCount = pdfium::size(gs_FX_AlefTable);
   for (size_t iStart = 0; iStart < s_iAlefCount; iStart++) {
     const FX_ARAALEF& v = gs_FX_AlefTable[iStart];
     if (v.wAlef == alef)
@@ -221,7 +221,7 @@ wchar_t GetFormChar(const CFX_Char* cur,
 }  // namespace pdfium
 
 wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda) {
-  static const size_t s_iShaddaCount = FX_ArraySize(gs_FX_ShaddaTable);
+  static const size_t s_iShaddaCount = pdfium::size(gs_FX_ShaddaTable);
   for (size_t iStart = 0; iStart < s_iShaddaCount; iStart++) {
     const FX_ARASHADDA& v = gs_FX_ShaddaTable[iStart];
     if (v.wShadda == shadda)

@@ -22,10 +22,10 @@
 
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -54,7 +54,7 @@ constexpr CBC_SymbolInfo::Data kSymbolData[] = {
     {816, 336, 136, 56, 24, 24, 16}, {1050, 408, 175, 68, 18, 18, 36},
     {1304, 496, 163, 62, 20, 20, 36}};
 
-constexpr size_t kSymbolDataSize = FX_ArraySize(kSymbolData);
+constexpr size_t kSymbolDataSize = pdfium::size(kSymbolData);
 static_assert(kSymbolDataSize + 1 == kSymbolsCount, "Wrong kSymbolDataSize");
 
 }  // namespace

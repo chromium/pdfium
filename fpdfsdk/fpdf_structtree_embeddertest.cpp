@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
 #include "third_party/base/optional.h"
+#include "third_party/base/stl_util.h"
 
 class FPDFStructTreeEmbedderTest : public EmbedderTest {};
 
@@ -57,7 +57,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer, 1));
-    for (size_t i = 0; i < FX_ArraySize(buffer); ++i)
+    for (size_t i = 0; i < pdfium::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(gchild_element));
@@ -118,7 +118,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, 1));
-    for (size_t i = 0; i < FX_ArraySize(buffer); ++i)
+    for (size_t i = 0; i < pdfium::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, sizeof(buffer)));
@@ -154,7 +154,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(20U, FPDF_StructElement_GetTitle(element, buffer, 1));
-    for (size_t i = 0; i < FX_ArraySize(buffer); ++i)
+    for (size_t i = 0; i < pdfium::size(buffer); ++i)
       EXPECT_EQ(0U, buffer[i]);
 
     ASSERT_EQ(20U,

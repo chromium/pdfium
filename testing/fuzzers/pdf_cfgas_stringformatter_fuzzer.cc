@@ -6,9 +6,9 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 namespace {
@@ -32,8 +32,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   }
 
   uint8_t test_selector = data[0] % 10;
-  uint8_t locale_selector = data[1] % FX_ArraySize(kLocales);
-  uint8_t type_selector = data[2] % FX_ArraySize(kTypes);
+  uint8_t locale_selector = data[1] % pdfium::size(kLocales);
+  uint8_t type_selector = data[2] % pdfium::size(kTypes);
   data += 3;
   size -= 3;
 

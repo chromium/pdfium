@@ -6,14 +6,14 @@
 
 #include "fxjs/cjs_globalarrays.h"
 
-#include "core/fxcrt/fx_memory.h"
+#include "third_party/base/stl_util.h"
 
 #define GLOBAL_ARRAY(rt, name, ...)                                          \
   {                                                                          \
     static const wchar_t* const values[] = {__VA_ARGS__};                    \
     v8::Local<v8::Array> array = (rt)->NewArray();                           \
     v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();    \
-    for (size_t i = 0; i < FX_ArraySize(values); ++i)                        \
+    for (size_t i = 0; i < pdfium::size(values); ++i)                        \
       array->Set(ctx, i, (rt)->NewString(values[i])).FromJust();             \
     (rt)->SetConstArray((name), array);                                      \
     (rt)->DefineGlobalConst(                                                 \

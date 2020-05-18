@@ -28,6 +28,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -145,7 +146,7 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   ASSERT(numECWords > 0);
 
   const size_t len = codewords.GetLength();
-  static constexpr size_t kFactorTableNum = FX_ArraySize(FACTOR_SETS);
+  static constexpr size_t kFactorTableNum = pdfium::size(FACTOR_SETS);
   size_t table = 0;
   while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
     ++table;

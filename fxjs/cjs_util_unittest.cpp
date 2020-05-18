@@ -4,8 +4,8 @@
 
 #include "fxjs/cjs_util.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 TEST(CJS_Util, ParseDataType) {
   struct ParseDataTypeCase {
@@ -105,7 +105,7 @@ TEST(CJS_Util, ParseDataType) {
       {L"%10s", UTIL_STRING},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(cases); i++) {
+  for (size_t i = 0; i < pdfium::size(cases); i++) {
     WideString input(cases[i].input_string);
     EXPECT_EQ(cases[i].expected, CJS_Util::ParseDataType(&input))
         << cases[i].input_string;

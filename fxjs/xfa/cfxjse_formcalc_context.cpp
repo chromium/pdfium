@@ -279,7 +279,7 @@ const uint8_t kAltTableDate[] = {
     255, 2,   255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 1,   255, 255, 255, 255, 255, 255, 255, 255,
 };
-static_assert(FX_ArraySize(kAltTableDate) == L'a' - L'A' + 1,
+static_assert(pdfium::size(kAltTableDate) == L'a' - L'A' + 1,
               "Invalid kAltTableDate size.");
 
 const uint8_t kAltTableTime[] = {
@@ -287,7 +287,7 @@ const uint8_t kAltTableTime[] = {
     255, 6,   255, 255, 255, 255, 255, 7,   255, 255, 255,
     255, 255, 1,   17,  255, 255, 255, 255, 255, 255, 255,
 };
-static_assert(FX_ArraySize(kAltTableTime) == L'a' - L'A' + 1,
+static_assert(pdfium::size(kAltTableTime) == L'a' - L'A' + 1,
               "Invalid kAltTableTime size.");
 
 void AlternateDateTimeSymbols(WideString* pPattern,
@@ -981,7 +981,7 @@ WideString EncodeURL(const ByteString& bsURL) {
   szEncode[3] = 0;
   for (wchar_t ch : wsURL) {
     size_t i = 0;
-    size_t iCount = FX_ArraySize(kStrUnsafe);
+    size_t iCount = pdfium::size(kStrUnsafe);
     while (i < iCount) {
       if (ch == kStrUnsafe[i]) {
         int32_t iIndex = ch / 16;
@@ -996,7 +996,7 @@ WideString EncodeURL(const ByteString& bsURL) {
       continue;
 
     i = 0;
-    iCount = FX_ArraySize(kStrReserved);
+    iCount = pdfium::size(kStrReserved);
     while (i < iCount) {
       if (ch == kStrReserved[i]) {
         int32_t iIndex = ch / 16;
@@ -1011,7 +1011,7 @@ WideString EncodeURL(const ByteString& bsURL) {
       continue;
 
     i = 0;
-    iCount = FX_ArraySize(kStrSpecial);
+    iCount = pdfium::size(kStrSpecial);
     while (i < iCount) {
       if (ch == kStrSpecial[i]) {
         wsResultBuf.AppendChar(ch);
@@ -1344,7 +1344,7 @@ const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
     kClassTag,                              // tag
     "XFA_FM2JS_FormCalcClass",              // name
     kFormCalcFM2JSFunctions,                // methods
-    FX_ArraySize(kFormCalcFM2JSFunctions),  // number of methods
+    pdfium::size(kFormCalcFM2JSFunctions),  // number of methods
     nullptr,                                // dynamic prop type
     nullptr,                                // dynamic prop getter
     nullptr,                                // dynamic prop setter

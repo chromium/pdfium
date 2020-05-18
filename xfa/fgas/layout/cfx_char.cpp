@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -238,29 +237,29 @@ FX_BIDICLASS GetResolvedNeutrals(int32_t iAction) {
 }
 
 FX_BIDIWEAKSTATE GetWeakState(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < FX_ArraySize(kWeakStates));
-  ASSERT(static_cast<size_t>(eClass) < FX_ArraySize(kWeakStates[0]));
+  ASSERT(static_cast<size_t>(eState) < pdfium::size(kWeakStates));
+  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kWeakStates[0]));
   return kWeakStates[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
 }
 
 FX_BIDIWEAKACTION GetWeakAction(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < FX_ArraySize(kWeakActions));
-  ASSERT(static_cast<size_t>(eClass) < FX_ArraySize(kWeakActions[0]));
+  ASSERT(static_cast<size_t>(eState) < pdfium::size(kWeakActions));
+  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kWeakActions[0]));
   return kWeakActions[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALSTATE GetNeutralState(FX_BIDINEUTRALSTATE eState,
                                     FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < FX_ArraySize(kNeutralStates));
-  ASSERT(static_cast<size_t>(eClass) < FX_ArraySize(kNeutralStates[0]));
+  ASSERT(static_cast<size_t>(eState) < pdfium::size(kNeutralStates));
+  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kNeutralStates[0]));
   return kNeutralStates[static_cast<size_t>(eState)]
                        [static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALACTION GetNeutralAction(FX_BIDINEUTRALSTATE eState,
                                       FX_BIDICLASS eClass) {
-  ASSERT(static_cast<size_t>(eState) < FX_ArraySize(kNeutralActions));
-  ASSERT(static_cast<size_t>(eClass) < FX_ArraySize(kNeutralActions[0]));
+  ASSERT(static_cast<size_t>(eState) < pdfium::size(kNeutralActions));
+  ASSERT(static_cast<size_t>(eClass) < pdfium::size(kNeutralActions[0]));
   return kNeutralActions[static_cast<size_t>(eState)]
                         [static_cast<size_t>(eClass)];
 }

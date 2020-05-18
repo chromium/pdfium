@@ -6,9 +6,9 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 TEST(CXFA_FMLexerTest, NullString) {
   WideStringView null_string;
@@ -170,7 +170,7 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
             {L".#", TOKdotscream},
             {L".*", TOKdotstar}};
 
-  for (size_t i = 0; i < FX_ArraySize(op); ++i) {
+  for (size_t i = 0; i < pdfium::size(op); ++i) {
     auto lexer = pdfium::MakeUnique<CXFA_FMLexer>(op[i].op);
     CXFA_FMToken token = lexer->NextToken();
     EXPECT_EQ(op[i].token, token.m_type);

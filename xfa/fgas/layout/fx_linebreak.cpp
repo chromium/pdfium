@@ -6,8 +6,8 @@
 
 #include "xfa/fgas/layout/fx_linebreak.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -226,7 +226,7 @@ FX_LINEBREAKTYPE GetLineBreakTypeFromPair(FX_BREAKPROPERTY curr_char,
                                           FX_BREAKPROPERTY next_char) {
   size_t row = static_cast<size_t>(curr_char);
   size_t col = static_cast<size_t>(next_char);
-  ASSERT(row < FX_ArraySize(gs_FX_LineBreak_PairTable));
-  ASSERT(col < FX_ArraySize(gs_FX_LineBreak_PairTable[0]));
+  ASSERT(row < pdfium::size(gs_FX_LineBreak_PairTable));
+  ASSERT(col < pdfium::size(gs_FX_LineBreak_PairTable[0]));
   return gs_FX_LineBreak_PairTable[row][col];
 }

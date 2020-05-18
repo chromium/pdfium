@@ -14,6 +14,7 @@
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 #include "xfa/fxgraphics/cxfa_gepattern.h"
@@ -103,7 +104,7 @@ const FX_HATCHDATA kHatchPlaceHolder = {
     }};
 
 const FX_HATCHDATA& GetHatchBitmapData(size_t index) {
-  return index < FX_ArraySize(kHatchBitmapData) ? kHatchBitmapData[index]
+  return index < pdfium::size(kHatchBitmapData) ? kHatchBitmapData[index]
                                                 : kHatchPlaceHolder;
 }
 

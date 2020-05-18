@@ -40,6 +40,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
 
@@ -63,7 +64,7 @@ int32_t GetAlphaNumericCode(int32_t code) {
   if (code < 32)
     return -1;
   size_t code_index = static_cast<size_t>(code - 32);
-  if (code_index >= FX_ArraySize(g_alphaNumericTable))
+  if (code_index >= pdfium::size(g_alphaNumericTable))
     return -1;
   return g_alphaNumericTable[code_index];
 }

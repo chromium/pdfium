@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
@@ -455,7 +454,7 @@ bool ParseLocaleTime(const WideString& wsTime,
         ResolveZone(tzDiff, pLocale, &hour, &minute);
       } else {
         // Search the timezone list. There are only 8 of them, so linear scan.
-        for (size_t i = 0; i < FX_ArraySize(g_FXLocaleTimeZoneData); ++i) {
+        for (size_t i = 0; i < pdfium::size(g_FXLocaleTimeZoneData); ++i) {
           const FX_LOCALETIMEZONEINFO& info = g_FXLocaleTimeZoneData[i];
           if (tz != info.name)
             continue;

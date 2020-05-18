@@ -7,6 +7,7 @@
 #include "core/fxge/fx_dib.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -33,8 +34,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   BlendMode blend_mode = static_cast<BlendMode>(
       data[28] % (static_cast<int>(BlendMode::kLast) + 1));
-  FXDIB_Format dest_format = kFormat[data[29] % FX_ArraySize(kFormat)];
-  FXDIB_Format src_format = kFormat[data[30] % FX_ArraySize(kFormat)];
+  FXDIB_Format dest_format = kFormat[data[29] % pdfium::size(kFormat)];
+  FXDIB_Format src_format = kFormat[data[30] % pdfium::size(kFormat)];
   bool is_clip = !(data[31] % 2);
   bool is_rgb_byte_order = !(data[32] % 2);
   size -= kParameterSize;

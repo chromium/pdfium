@@ -15,7 +15,6 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventrecorder.h"
 #include "fxjs/cjs_object.h"
@@ -24,6 +23,7 @@
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/stl_util.h"
 
 #if defined(OS_ANDROID)
 #include <ctype.h>
@@ -215,7 +215,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                 cFormat.end());
 
-  for (size_t i = 0; i < FX_ArraySize(TbConvertTable); ++i) {
+  for (size_t i = 0; i < pdfium::size(TbConvertTable); ++i) {
     int iStart = 0;
     int iEnd;
     while ((iEnd = cFormat.find(TbConvertTable[i].lpszJSMark, iStart)) != -1) {
@@ -234,7 +234,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
       {L"M", min},   {L"s", sec},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
+  for (size_t i = 0; i < pdfium::size(cTableAd); ++i) {
     int iStart = 0;
     int iEnd;
     while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {

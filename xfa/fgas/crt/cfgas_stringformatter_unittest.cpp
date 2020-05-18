@@ -12,10 +12,10 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
-#include "core/fxcrt/fx_memory.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 class CFGAS_StringFormatterTest : public testing::Test {
@@ -114,7 +114,7 @@ TEST_F(CFGAS_StringFormatterTest, DateFormat) {
   // as they are not supported. In theory there are the full width versions
   // of DDD, DDDD, MMM, MMMM, E, e, gg, YYY, YYYYY.
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(
         fmt(tests[i].locale, tests[i].pattern)
@@ -163,7 +163,7 @@ TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
   // The z modifier only appends if the TZ is outside of +0
   SetTZ("UTC+2");
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(
         fmt(tests[i].locale, tests[i].pattern)
@@ -195,7 +195,7 @@ TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
       {L"en", L"9111T1111:", L"MMM D, YYYYTh:MM:SS A",
        L"Jan 1, 9111 11:11:00 AM"}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
                     ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_DateTime,
@@ -223,7 +223,7 @@ TEST_F(CFGAS_StringFormatterTest, TimeDateFormat) {
        L"time{'At 'HH:MM Z}date{' on 'MMM DD, YYYY}",
        L"At 10:30 GMT on Jul 16, 1999"}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
                     ->FormatDateTime(tests[i].input, FX_DATETIMETYPE_TimeDate,
@@ -284,7 +284,7 @@ TEST_F(CFGAS_StringFormatterTest, DateParse) {
   // not supported. In theory there are the full width versions of DDD,
   // DDDD, MMM, MMMM, E, e, gg, YYY, YYYYY.
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     CFX_DateTime result;
     EXPECT_TRUE(
         fmt(tests[i].locale, tests[i].pattern)
@@ -311,7 +311,7 @@ TEST_F(CFGAS_StringFormatterTest, DateParse) {
 //   // kkkk, HHH, HHHH, KKK, KKKK, MMM, MMMM, SSS, SSSS plus 2 more that the
 //   // spec apparently forgot to list the symbol.
 
-//   for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+//   for (size_t i = 0; i < pdfium::size(tests); ++i) {
 //     CFX_DateTime result;
 //     EXPECT_TRUE(fmt(tests[i].locale)
 //                     ->ParseDateTime(tests[i].input, tests[i].pattern,
@@ -633,7 +633,7 @@ TEST_F(CFGAS_StringFormatterTest, TextParse) {
                {L"en", L"A1C-1234-D", L"000-9999-X", L"A1C1234D"},
                {L"en", L"A1C-1234-D text", L"000-9999-X 'text'", L"A1C1234D"}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
                     ->ParseText(tests[i].input, &result));
@@ -663,7 +663,7 @@ TEST_F(CFGAS_StringFormatterTest, TextFormat) {
       {L"en", L"K1#5K2", L"00X OO9", L"K1# 5K2"},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)
                     ->FormatText(tests[i].input, &result));
@@ -681,7 +681,7 @@ TEST_F(CFGAS_StringFormatterTest, NullParse) {
       {L"en", L"No data", L"null{'No data'}"},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     EXPECT_TRUE(
         fmt(tests[i].locale, tests[i].pattern)->ParseNull(tests[i].input))
         << " TEST: " << i;
@@ -695,7 +695,7 @@ TEST_F(CFGAS_StringFormatterTest, NullFormat) {
     const wchar_t* output;
   } tests[] = {{L"en", L"null{'n/a'}", L"n/a"}, {L"en", L"null{}", L""}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)->FormatNull(&result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
@@ -711,7 +711,7 @@ TEST_F(CFGAS_StringFormatterTest, ZeroParse) {
                {L"en", L"9", L"zero{9}"},
                {L"en", L"a", L"zero{'a'}"}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     EXPECT_TRUE(
         fmt(tests[i].locale, tests[i].pattern)->ParseZero(tests[i].input))
         << " TEST: " << i;
@@ -731,7 +731,7 @@ TEST_F(CFGAS_StringFormatterTest, ZeroFormat) {
                // {L"en", L"0.0", L"zero{9}", L"0"},
                {L"en", L"0", L"zero{}", L""}};
 
-  for (size_t i = 0; i < FX_ArraySize(tests); ++i) {
+  for (size_t i = 0; i < pdfium::size(tests); ++i) {
     WideString result;
     EXPECT_TRUE(fmt(tests[i].locale, tests[i].pattern)->FormatZero(&result));
     EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;

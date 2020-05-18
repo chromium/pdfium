@@ -18,6 +18,7 @@
 #include "public/fpdf_edit.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -83,7 +84,7 @@ TEST_F(PDFAnnotTest, SetAP) {
 
   // Check that the appearance stream is same as we just set.
   const uint32_t kStreamDataSize =
-      FX_ArraySize(kStreamData) * sizeof(FPDF_WCHAR);
+      pdfium::size(kStreamData) * sizeof(FPDF_WCHAR);
   unsigned long normal_length_bytes = FPDFAnnot_GetAP(
       annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL, nullptr, 0);
   ASSERT_EQ(kStreamDataSize, normal_length_bytes);
@@ -159,12 +160,12 @@ TEST_F(PDFAnnotTest, InkListAPIValidations) {
       {80.0f, 90.0f}, {81.0f, 91.0f}, {82.0f, 92.0f},
       {83.0f, 93.0f}, {84.0f, 94.0f}, {85.0f, 95.0f}};
   static constexpr size_t kFirstStrokePointCount =
-      FX_ArraySize(kFirstInkStroke);
+      pdfium::size(kFirstInkStroke);
 
   static constexpr FS_POINTF kSecondInkStroke[] = {
       {70.0f, 90.0f}, {71.0f, 91.0f}, {72.0f, 92.0f}};
   static constexpr size_t kSecondStrokePointCount =
-      FX_ArraySize(kSecondInkStroke);
+      pdfium::size(kSecondInkStroke);
 
   static constexpr FS_POINTF kThirdInkStroke[] = {{60.0f, 90.0f},
                                                   {61.0f, 91.0f},
@@ -172,7 +173,7 @@ TEST_F(PDFAnnotTest, InkListAPIValidations) {
                                                   {63.0f, 93.0f},
                                                   {64.0f, 94.0f}};
   static constexpr size_t kThirdStrokePointCount =
-      FX_ArraySize(kThirdInkStroke);
+      pdfium::size(kThirdInkStroke);
 
   // Negative test: |annot| is passed as nullptr.
   EXPECT_EQ(-1, FPDFAnnot_AddInkStroke(nullptr, kFirstInkStroke,
@@ -251,7 +252,7 @@ TEST_F(PDFAnnotTest, RemoveInkList) {
   static constexpr FS_POINTF kInkStroke[] = {{80.0f, 90.0f}, {81.0f, 91.0f},
                                              {82.0f, 92.0f}, {83.0f, 93.0f},
                                              {84.0f, 94.0f}, {85.0f, 95.0f}};
-  static constexpr size_t kPointCount = FX_ArraySize(kInkStroke);
+  static constexpr size_t kPointCount = pdfium::size(kInkStroke);
 
   // InkStroke should get added to ink annotation. Also inklist should get
   // created.

@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
@@ -97,7 +98,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(WideStringView wsFontFamily,
 ByteString CFGAS_PDFFontMgr::PsNameToFontName(const ByteString& strPsName,
                                               bool bBold,
                                               bool bItalic) {
-  for (size_t i = 0; i < FX_ArraySize(g_XFAPDFFontName); ++i) {
+  for (size_t i = 0; i < pdfium::size(g_XFAPDFFontName); ++i) {
     if (strPsName == g_XFAPDFFontName[i][0]) {
       size_t index = 1;
       if (bBold)

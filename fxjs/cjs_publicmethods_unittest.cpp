@@ -4,8 +4,8 @@
 
 #include "fxjs/cjs_publicmethods.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 TEST(CJS_PublicMethods, IsNumber) {
   // TODO(weili): Check whether results from case 0, 1, 10, 15 are intended.
@@ -43,7 +43,7 @@ TEST(CJS_PublicMethods, IsNumber) {
       {L"0123", true},
       {L"9876123", true},
   };
-  for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
+  for (size_t i = 0; i < pdfium::size(test_data); ++i) {
     EXPECT_EQ(test_data[i].expected,
               CJS_PublicMethods::IsNumber(test_data[i].input))
         << "for case " << i;
