@@ -13,7 +13,6 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_unit_test_support.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_char.h"
@@ -27,7 +26,7 @@ class CFX_RTFBreakTest : public testing::Test {
   }
 
   std::unique_ptr<CFX_RTFBreak> CreateBreak(uint32_t layout_styles) {
-    auto rtf_break = pdfium::MakeUnique<CFX_RTFBreak>(layout_styles);
+    auto rtf_break = std::make_unique<CFX_RTFBreak>(layout_styles);
     rtf_break->SetFont(font_);
     return rtf_break;
   }

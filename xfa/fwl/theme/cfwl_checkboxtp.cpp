@@ -8,7 +8,6 @@
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/render_defines.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
@@ -160,7 +159,7 @@ void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
 
 void CFWL_CheckBoxTP::InitCheckPath(float fCheckLen) {
   if (!m_pCheckPath) {
-    m_pCheckPath = pdfium::MakeUnique<CXFA_GEPath>();
+    m_pCheckPath = std::make_unique<CXFA_GEPath>();
 
     float fWidth = kSignPath;
     float fHeight = -kSignPath;

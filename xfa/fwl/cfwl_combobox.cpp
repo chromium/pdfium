@@ -10,7 +10,6 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -30,7 +29,7 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
   InitComboList();
   InitComboEdit();
 }
@@ -405,25 +404,25 @@ void CFWL_ComboBox::InitComboList() {
   if (m_pListBox)
     return;
 
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_pParent = this;
   prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pListBox = pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp.Get(),
-                                                  std::move(prop), this);
+  m_pListBox = std::make_unique<CFWL_ComboList>(m_pOwnerApp.Get(),
+                                                std::move(prop), this);
 }
 
 void CFWL_ComboBox::InitComboEdit() {
   if (m_pEdit)
     return;
 
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(m_pOwnerApp.Get(),
-                                               std::move(prop), this);
+  m_pEdit = std::make_unique<CFWL_ComboEdit>(m_pOwnerApp.Get(), std::move(prop),
+                                             this);
   m_pEdit->SetOuter(this);
 }
 

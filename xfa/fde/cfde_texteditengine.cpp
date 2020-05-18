@@ -11,7 +11,6 @@
 #include <utility>
 
 #include "core/fxge/text_char_pos.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -209,7 +208,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
   if (!limit_horizontal_area_ && !limit_vertical_area_)
     return 0;
 
-  auto text_out = pdfium::MakeUnique<CFDE_TextOut>();
+  auto text_out = std::make_unique<CFDE_TextOut>();
   text_out->SetLineSpace(line_spacing_);
   text_out->SetFont(font_);
   text_out->SetFontSize(font_size_);
@@ -344,7 +343,7 @@ void CFDE_TextEditEngine::Insert(size_t idx,
 
   if (add_operation == RecordOperation::kInsertRecord) {
     AddOperationRecord(
-        pdfium::MakeUnique<InsertOperation>(this, gap_position_, text));
+        std::make_unique<InsertOperation>(this, gap_position_, text));
   }
 
   WideString previous_text;
@@ -855,8 +854,7 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   ret += WideStringView(content_.data() + start_idx, length);
 
   if (add_operation == RecordOperation::kInsertRecord) {
-    AddOperationRecord(
-        pdfium::MakeUnique<DeleteOperation>(this, start_idx, ret));
+    AddOperationRecord(std::make_unique<DeleteOperation>(this, start_idx, ret));
   }
 
   WideString previous_text = GetText();
@@ -903,7 +901,7 @@ void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& requested_rep) {
   Insert(gap_position_, rep, RecordOperation::kSkipRecord);
 
   AddOperationRecord(
-      pdfium::MakeUnique<ReplaceOperation>(this, start_idx, txt, rep));
+      std::make_unique<ReplaceOperation>(this, start_idx, txt, rep));
 }
 
 WideString CFDE_TextEditEngine::GetText() const {
@@ -1086,7 +1084,7 @@ void CFDE_TextEditEngine::RebuildPieces() {
   size_t current_piece_start = 0;
   float current_line_start = 0;
 
-  auto iter = pdfium::MakeUnique<CFDE_TextEditEngine::Iterator>(this);
+  auto iter = std::make_unique<CFDE_TextEditEngine::Iterator>(this);
   while (!iter->IsEOF(false)) {
     iter->Next(false);
 

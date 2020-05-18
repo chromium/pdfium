@@ -9,7 +9,6 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
@@ -25,26 +24,26 @@ const int kDateTimePickerHeight = 20;
 
 }  // namespace
 CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
 
-  auto monthProp = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  auto monthProp = std::make_unique<CFWL_WidgetProperties>();
   monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
   monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
   monthProp->m_pParent = this;
   monthProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pMonthCal = pdfium::MakeUnique<CFWL_MonthCalendar>(
+  m_pMonthCal = std::make_unique<CFWL_MonthCalendar>(
       m_pOwnerApp.Get(), std::move(monthProp), this);
 
   m_pMonthCal->SetWidgetRect(
       CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
 
-  auto editProp = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  auto editProp = std::make_unique<CFWL_WidgetProperties>();
   editProp->m_pParent = this;
   editProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit = pdfium::MakeUnique<CFWL_DateTimeEdit>(m_pOwnerApp.Get(),
-                                                  std::move(editProp), this);
+  m_pEdit = std::make_unique<CFWL_DateTimeEdit>(m_pOwnerApp.Get(),
+                                                std::move(editProp), this);
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
 }

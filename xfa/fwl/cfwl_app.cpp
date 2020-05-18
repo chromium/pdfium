@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/cfwl_app.h"
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -14,8 +13,8 @@
 CFWL_App::CFWL_App(AdapterIface* pAdapter)
     : m_pAdapterNative(pAdapter),
       m_pWidgetMgr(
-          pdfium::MakeUnique<CFWL_WidgetMgr>(pAdapter->GetWidgetMgrAdapter())),
-      m_pNoteDriver(pdfium::MakeUnique<CFWL_NoteDriver>()) {
+          std::make_unique<CFWL_WidgetMgr>(pAdapter->GetWidgetMgrAdapter())),
+      m_pNoteDriver(std::make_unique<CFWL_NoteDriver>()) {
   ASSERT(m_pAdapterNative);
 }
 

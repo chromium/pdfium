@@ -14,7 +14,6 @@
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
@@ -47,8 +46,8 @@ class CFGAS_StringFormatterTest : public testing::Test {
   CFGAS_StringFormatter* fmt(const WideString& locale,
                              const WideString& pattern) {
     fmt_.reset();  // Can't outlive |mgr_|.
-    mgr_ = pdfium::MakeUnique<CXFA_LocaleMgr>(nullptr, locale);
-    fmt_ = pdfium::MakeUnique<CFGAS_StringFormatter>(mgr_.get(), pattern);
+    mgr_ = std::make_unique<CXFA_LocaleMgr>(nullptr, locale);
+    fmt_ = std::make_unique<CFGAS_StringFormatter>(mgr_.get(), pattern);
     return fmt_.get();
   }
 

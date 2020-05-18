@@ -8,11 +8,8 @@
 
 #include <memory>
 
-#include "third_party/base/ptr_util.h"
-
 CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
-}
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {}
 
 CFWL_PictureBox::~CFWL_PictureBox() {}
 

@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "fxbarcode/cfx_barcode.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_themepart.h"
@@ -17,7 +16,7 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 
 CFWL_Barcode::CFWL_Barcode(const CFWL_App* app)
-    : CFWL_Edit(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {}
+    : CFWL_Edit(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {}
 
 CFWL_Barcode::~CFWL_Barcode() = default;
 

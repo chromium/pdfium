@@ -75,10 +75,10 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
     : m_pDocEnvironment(pDocEnvironment),
       m_pApp(pApp),
       m_pPDFDoc(pPDFDoc),
-      m_pNotify(pdfium::MakeUnique<CXFA_FFNotify>(this)),
-      m_pDocument(pdfium::MakeUnique<CXFA_Document>(
+      m_pNotify(std::make_unique<CXFA_FFNotify>(this)),
+      m_pDocument(std::make_unique<CXFA_Document>(
           m_pNotify.get(),
-          pdfium::MakeUnique<CXFA_LayoutProcessor>())) {}
+          std::make_unique<CXFA_LayoutProcessor>())) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
   if (m_DocView) {
@@ -114,7 +114,7 @@ bool CXFA_FFDoc::ParseDoc(const RetainPtr<IFX_SeekableStream>& stream) {
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
   if (!m_DocView)
-    m_DocView = pdfium::MakeUnique<CXFA_FFDocView>(this);
+    m_DocView = std::make_unique<CXFA_FFDocView>(this);
 
   return m_DocView.get();
 }
@@ -138,7 +138,7 @@ bool CXFA_FFDoc::OpenDoc(const RetainPtr<IFX_SeekableStream>& stream) {
 
   // At this point we've got an XFA document and we want to always return
   // true to signify the load succeeded.
-  m_pPDFFontMgr = pdfium::MakeUnique<CFGAS_PDFFontMgr>(GetPDFDoc(), mgr);
+  m_pPDFFontMgr = std::make_unique<CFGAS_PDFFontMgr>(GetPDFDoc(), mgr);
 
   m_FormType = FormType::kXFAForeground;
   CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));

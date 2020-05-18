@@ -10,7 +10,6 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -616,26 +615,26 @@ void CFWL_ListBox::InitVerticalScrollBar() {
   if (m_pVertScrollBar)
     return;
 
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_dwStyleExes = FWL_STYLEEXT_SCB_Vert;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  m_pVertScrollBar = pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
-                                                        std::move(prop), this);
+  m_pVertScrollBar = std::make_unique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
+                                                      std::move(prop), this);
 }
 
 void CFWL_ListBox::InitHorizontalScrollBar() {
   if (m_pHorzScrollBar)
     return;
 
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  auto prop = std::make_unique<CFWL_WidgetProperties>();
   prop->m_dwStyleExes = FWL_STYLEEXT_SCB_Horz;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  m_pHorzScrollBar = pdfium::MakeUnique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
-                                                        std::move(prop), this);
+  m_pHorzScrollBar = std::make_unique<CFWL_ScrollBar>(m_pOwnerApp.Get(),
+                                                      std::move(prop), this);
 }
 
 bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
@@ -903,7 +902,7 @@ int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, CFWL_ListItem* pItem) {
 }
 
 CFWL_ListItem* CFWL_ListBox::AddString(const WideString& wsAdd) {
-  m_ItemArray.emplace_back(pdfium::MakeUnique<CFWL_ListItem>(wsAdd));
+  m_ItemArray.emplace_back(std::make_unique<CFWL_ListItem>(wsAdd));
   return m_ItemArray.back().get();
 }
 

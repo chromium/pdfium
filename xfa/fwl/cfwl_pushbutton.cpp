@@ -9,7 +9,6 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
@@ -22,7 +21,7 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 CFWL_PushButton::CFWL_PushButton(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {}
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
 

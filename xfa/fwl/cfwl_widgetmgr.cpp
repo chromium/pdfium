@@ -9,14 +9,13 @@
 #include <utility>
 
 #include "build/build_config.h"
-#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapterNative)
     : m_pAdapter(pAdapterNative) {
-  m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
+  m_mapWidgetItem[nullptr] = std::make_unique<Item>();
 }
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() = default;
@@ -154,7 +153,7 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
 void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
   Item* pParentItem = GetWidgetMgrItem(pParent);
   if (!pParentItem) {
-    auto item = pdfium::MakeUnique<Item>(pParent);
+    auto item = std::make_unique<Item>(pParent);
     pParentItem = item.get();
     m_mapWidgetItem[pParent] = std::move(item);
 
@@ -164,7 +163,7 @@ void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
 
   Item* pItem = GetWidgetMgrItem(pChild);
   if (!pItem) {
-    auto item = pdfium::MakeUnique<Item>(pChild);
+    auto item = std::make_unique<Item>(pChild);
     pItem = item.get();
     m_mapWidgetItem[pChild] = std::move(item);
   }
@@ -203,7 +202,7 @@ void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
 void CFWL_WidgetMgr::SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned) {
   Item* pParentItem = GetWidgetMgrItem(pOwner);
   if (!pParentItem) {
-    auto item = pdfium::MakeUnique<Item>(pOwner);
+    auto item = std::make_unique<Item>(pOwner);
     pParentItem = item.get();
     m_mapWidgetItem[pOwner] = std::move(item);
 
@@ -213,7 +212,7 @@ void CFWL_WidgetMgr::SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned) {
 
   Item* pItem = GetWidgetMgrItem(pOwned);
   if (!pItem) {
-    auto item = pdfium::MakeUnique<Item>(pOwned);
+    auto item = std::make_unique<Item>(pOwned);
     pItem = item.get();
     m_mapWidgetItem[pOwned] = std::move(item);
   }

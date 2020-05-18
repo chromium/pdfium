@@ -11,7 +11,6 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_event.h"
@@ -31,7 +30,7 @@ const int kCaptionMargin = 5;
 }  // namespace
 
 CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
-    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
+    : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {
   m_TTOStyles.single_line_ = true;
 }
 

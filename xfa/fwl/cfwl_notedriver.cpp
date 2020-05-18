@@ -11,7 +11,6 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_eventtarget.h"
@@ -44,7 +43,7 @@ void CFWL_NoteDriver::RegisterEventTarget(CFWL_Widget* pListener,
     pListener->SetEventKey(key);
   }
   if (!m_eventTargets[key])
-    m_eventTargets[key] = pdfium::MakeUnique<CFWL_EventTarget>(pListener);
+    m_eventTargets[key] = std::make_unique<CFWL_EventTarget>(pListener);
 
   m_eventTargets[key]->SetEventSource(pEventSource);
 }

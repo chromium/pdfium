@@ -10,7 +10,6 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_datetimepicker.h"
@@ -556,7 +555,7 @@ void CFWL_MonthCalendar::ResetDateItem() {
       dwStates |= FWL_ITEMSTATE_MCD_Selected;
 
     CFX_RectF rtDate;
-    m_DateArray.push_back(pdfium::MakeUnique<DATEINFO>(
+    m_DateArray.push_back(std::make_unique<DATEINFO>(
         i + 1, iDayOfWeek, dwStates, rtDate, WideString::Format(L"%d", i + 1)));
     iDayOfWeek++;
   }
