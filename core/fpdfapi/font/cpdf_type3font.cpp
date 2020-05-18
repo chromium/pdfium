@@ -16,7 +16,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -125,7 +124,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
       m_pFontResources ? m_pFontResources.Get() : m_pPageResources.Get(),
       pStream);
 
-  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>();
+  auto pNewChar = std::make_unique<CPDF_Type3Char>();
 
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for

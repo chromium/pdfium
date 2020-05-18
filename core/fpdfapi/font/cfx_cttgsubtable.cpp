@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "core/fxge/cfx_fontmapper.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -248,12 +247,12 @@ CFX_CTTGSUBTable::ParseCoverage(FT_Bytes raw) {
   FT_Bytes sp = raw;
   uint16_t format = GetUInt16(sp);
   if (format == 1) {
-    auto rec = pdfium::MakeUnique<TCoverageFormat1>();
+    auto rec = std::make_unique<TCoverageFormat1>();
     ParseCoverageFormat1(raw, rec.get());
     return std::move(rec);
   }
   if (format == 2) {
-    auto rec = pdfium::MakeUnique<TCoverageFormat2>();
+    auto rec = std::make_unique<TCoverageFormat2>();
     ParseCoverageFormat2(raw, rec.get());
     return std::move(rec);
   }
@@ -288,11 +287,11 @@ void CFX_CTTGSUBTable::ParseSingleSubst(FT_Bytes raw,
   uint16_t Format = GetUInt16(sp);
   switch (Format) {
     case 1:
-      *rec = pdfium::MakeUnique<TSubTable1>();
+      *rec = std::make_unique<TSubTable1>();
       ParseSingleSubstFormat1(raw, static_cast<TSubTable1*>(rec->get()));
       break;
     case 2:
-      *rec = pdfium::MakeUnique<TSubTable2>();
+      *rec = std::make_unique<TSubTable2>();
       ParseSingleSubstFormat2(raw, static_cast<TSubTable2*>(rec->get()));
       break;
   }

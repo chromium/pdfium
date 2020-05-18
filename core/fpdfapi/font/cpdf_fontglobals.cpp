@@ -12,7 +12,6 @@
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -68,7 +67,7 @@ void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
                            CFX_FontMapper::StandardFont index,
                            const RetainPtr<CPDF_Font>& pFont) {
   if (!pdfium::Contains(m_StockMap, pDoc))
-    m_StockMap[pDoc] = pdfium::MakeUnique<CFX_StockFontArray>();
+    m_StockMap[pDoc] = std::make_unique<CFX_StockFontArray>();
   m_StockMap[pDoc]->SetFont(index, pFont);
 }
 

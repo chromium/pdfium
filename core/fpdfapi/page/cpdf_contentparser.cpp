@@ -20,7 +20,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxge/render_defines.h"
-#include "third_party/base/ptr_util.h"
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
@@ -80,7 +79,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   }
 
   CPDF_Dictionary* pResources = pForm->GetDict()->GetDictFor("Resources");
-  m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
+  m_pParser = std::make_unique<CPDF_StreamContentParser>(
       pForm->GetDocument(), pForm->m_pPageResources.Get(),
       pForm->m_pResources.Get(), pParentMatrix, pForm, pResources, form_bbox,
       pGraphicStates, pParsedSet);
@@ -183,8 +182,8 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
 
 CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (!m_pParser) {
-    m_pParsedSet = pdfium::MakeUnique<std::set<const uint8_t*>>();
-    m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
+    m_pParsedSet = std::make_unique<std::set<const uint8_t*>>();
+    m_pParser = std::make_unique<CPDF_StreamContentParser>(
         m_pObjectHolder->GetDocument(), m_pObjectHolder->m_pPageResources.Get(),
         nullptr, nullptr, m_pObjectHolder.Get(),
         m_pObjectHolder->m_pResources.Get(), m_pObjectHolder->GetBBox(),

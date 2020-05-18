@@ -21,7 +21,6 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -36,7 +35,7 @@ RetainPtr<CPDF_ReadValidator> MakeValidatorFromFile(
 
 std::unique_ptr<CPDF_DataAvail> MakeDataAvailFromFile(
     const std::string& file_name) {
-  return pdfium::MakeUnique<CPDF_DataAvail>(
+  return std::make_unique<CPDF_DataAvail>(
       nullptr, MakeValidatorFromFile(file_name), true);
 }
 
@@ -53,7 +52,7 @@ class TestLinearizedHeader final : public CPDF_LinearizedHeader {
     RetainPtr<CPDF_Dictionary> dict =
         ToDictionary(parser.GetObjectBody(nullptr));
     ASSERT(dict);
-    return pdfium::MakeUnique<TestLinearizedHeader>(dict.Get(), 0);
+    return std::make_unique<TestLinearizedHeader>(dict.Get(), 0);
   }
 };
 
@@ -172,8 +171,8 @@ TEST_F(CPDF_HintTablesTest, FirstPageOffset) {
   CPDF_SyntaxParser parser(validator, 0);
   RetainPtr<CPDF_Stream> stream = ToStream(parser.GetObjectBody(nullptr));
   ASSERT_TRUE(stream);
-  auto hint_tables = pdfium::MakeUnique<CPDF_HintTables>(
-      validator.Get(), linearized_header.get());
+  auto hint_tables = std::make_unique<CPDF_HintTables>(validator.Get(),
+                                                       linearized_header.get());
   // Check that hint table will load.
   ASSERT_TRUE(hint_tables->LoadHintStream(stream.Get()));
   // Check that hint table have correct first page offset.

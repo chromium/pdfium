@@ -23,7 +23,6 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
@@ -576,7 +575,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (error || !m_Font.GetSubData())
     return index;
 
-  m_pTTGSUBTable = pdfium::MakeUnique<CFX_CTTGSUBTable>(m_Font.GetSubData());
+  m_pTTGSUBTable = std::make_unique<CFX_CTTGSUBTable>(m_Font.GetSubData());
   return GetVerticalGlyph(index, pVertGlyph);
 }
 

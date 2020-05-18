@@ -14,7 +14,6 @@
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -82,8 +81,8 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
   if (m_bCurFindCache) {
     m_pCurImageCacheEntry = it->second.get();
   } else {
-    m_pCurImageCacheEntry = pdfium::MakeUnique<CPDF_ImageCacheEntry>(
-        m_pPage->GetDocument(), pImage);
+    m_pCurImageCacheEntry =
+        std::make_unique<CPDF_ImageCacheEntry>(m_pPage->GetDocument(), pImage);
   }
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       m_pPage->m_pPageResources.Get(), pRenderStatus, bStdCS);

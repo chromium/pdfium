@@ -12,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 TEST(cpdf_array, GetBooleanAt) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
@@ -133,7 +132,7 @@ TEST(cpdf_array, Clone) {
         {1, 2, 3, 4, 5}, {10, 9, 8, 7, 6}, {11, 12, 13, 14, 15}};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     // Indirect references to indirect objects.
-    auto obj_holder = pdfium::MakeUnique<CPDF_IndirectObjectHolder>();
+    auto obj_holder = std::make_unique<CPDF_IndirectObjectHolder>();
     for (size_t i = 0; i < kNumOfRows; ++i) {
       auto arr_elem = pdfium::MakeRetain<CPDF_Array>();
       for (size_t j = 0; j < kNumOfRowElems; ++j) {

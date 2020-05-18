@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fpdfapi/parser/cpdf_parser.h"
+
 #include <limits>
 #include <memory>
 #include <string>
@@ -9,7 +11,6 @@
 
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_extension.h"
@@ -17,7 +18,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -43,7 +43,7 @@ class CPDF_TestParser final : public CPDF_Parser {
       return false;
 
     // For the test file, the header is set at the beginning.
-    m_pSyntax = pdfium::MakeUnique<CPDF_SyntaxParser>(pFileAccess);
+    m_pSyntax = std::make_unique<CPDF_SyntaxParser>(pFileAccess);
     return true;
   }
 

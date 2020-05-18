@@ -20,7 +20,6 @@
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
 namespace {
@@ -67,7 +66,7 @@ std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
   if (!hints_stream)
     return nullptr;
 
-  auto pHintTables = pdfium::MakeUnique<CPDF_HintTables>(
+  auto pHintTables = std::make_unique<CPDF_HintTables>(
       parser->GetValidator().Get(), pLinearized);
   if (!pHintTables->LoadHintStream(hints_stream.Get()))
     return nullptr;

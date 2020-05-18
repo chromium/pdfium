@@ -440,7 +440,7 @@ std::unique_ptr<CPDF_Font::FormIface> CPDF_DocPageData::CreateForm(
     CPDF_Document* pDocument,
     CPDF_Dictionary* pPageResources,
     CPDF_Stream* pFormStream) {
-  return pdfium::MakeUnique<CPDF_Form>(pDocument, pPageResources, pFormStream);
+  return std::make_unique<CPDF_Form>(pDocument, pPageResources, pFormStream);
 }
 
 RetainPtr<CPDF_Font> CPDF_DocPageData::AddStandardFont(
@@ -466,7 +466,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
 
   CPDF_Dictionary* pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
-  auto pEncoding = pdfium::MakeUnique<CFX_UnicodeEncoding>(pFont.get());
+  auto pEncoding = std::make_unique<CFX_UnicodeEncoding>(pFont.get());
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
     auto pWidths = pdfium::MakeRetain<CPDF_Array>();

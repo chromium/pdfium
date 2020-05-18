@@ -12,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
 namespace {
@@ -122,7 +121,7 @@ CPDF_MeshStream::~CPDF_MeshStream() {}
 
 bool CPDF_MeshStream::Load() {
   m_pStream->LoadAllDataFiltered();
-  m_BitStream = pdfium::MakeUnique<CFX_BitStream>(m_pStream->GetSpan());
+  m_BitStream = std::make_unique<CFX_BitStream>(m_pStream->GetSpan());
   const CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerFor("BitsPerCoordinate");
   m_nComponentBits = pDict->GetIntegerFor("BitsPerComponent");

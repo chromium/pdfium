@@ -15,7 +15,6 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
@@ -67,7 +66,7 @@ void CPDF_Page::ParseContent() {
     return;
 
   if (GetParseState() == ParseState::kNotParsed)
-    StartParse(pdfium::MakeUnique<CPDF_ContentParser>(this));
+    StartParse(std::make_unique<CPDF_ContentParser>(this));
 
   ASSERT(GetParseState() == ParseState::kParsing);
   ContinueParse(nullptr);

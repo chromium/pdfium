@@ -28,7 +28,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -183,8 +182,8 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
       return false;
     }
 
-    m_pCrossRefAvail = pdfium::MakeUnique<CPDF_CrossRefAvail>(GetSyntaxParser(),
-                                                              last_xref_offset);
+    m_pCrossRefAvail = std::make_unique<CPDF_CrossRefAvail>(GetSyntaxParser(),
+                                                            last_xref_offset);
   }
 
   switch (m_pCrossRefAvail->CheckAvail()) {
@@ -492,7 +491,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
     return DocAvailStatus::DataError;
 
   m_parser.m_pSyntax =
-      pdfium::MakeUnique<CPDF_SyntaxParser>(GetValidator(), *header_offset);
+      std::make_unique<CPDF_SyntaxParser>(GetValidator(), *header_offset);
   m_pLinearized = m_parser.ParseLinearizedHeader();
   if (GetValidator()->has_read_problems())
     return DocAvailStatus::DataNotAvailable;
@@ -548,7 +547,7 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
     if (!pKid)
       continue;
 
-    auto pNode = pdfium::MakeUnique<PageNode>();
+    auto pNode = std::make_unique<PageNode>();
     pNode->m_dwPageNo = pKid->GetRefObjNum();
     pPageNode->m_ChildNodes.push_back(std::move(pNode));
   }
@@ -601,7 +600,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
   switch (pKids->GetType()) {
     case CPDF_Object::kReference: {
       CPDF_Reference* pKid = pKids->AsReference();
-      auto pNode = pdfium::MakeUnique<PageNode>();
+      auto pNode = std::make_unique<PageNode>();
       pNode->m_dwPageNo = pKid->GetRefObjNum();
       pPageNode->m_ChildNodes.push_back(std::move(pNode));
       break;
@@ -613,7 +612,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
         if (!pKid)
           continue;
 
-        auto pNode = pdfium::MakeUnique<PageNode>();
+        auto pNode = std::make_unique<PageNode>();
         pNode->m_dwPageNo = pKid->GetRefObjNum();
         pPageNode->m_ChildNodes.push_back(std::move(pNode));
       }
@@ -808,7 +807,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
         return DataError;
 
       auto page_num_obj = std::make_pair(
-          dwPage, pdfium::MakeUnique<CPDF_PageObjectAvail>(
+          dwPage, std::make_unique<CPDF_PageObjectAvail>(
                       GetValidator(), m_pDocument.Get(), pPageDict));
 
       CPDF_PageObjectAvail* page_obj_avail =
@@ -860,7 +859,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 
   {
     auto page_num_obj = std::make_pair(
-        dwPage, pdfium::MakeUnique<CPDF_PageObjectAvail>(
+        dwPage, std::make_unique<CPDF_PageObjectAvail>(
                     GetValidator(), m_pDocument.Get(), pPageDict));
     CPDF_PageObjectAvail* page_obj_avail =
         m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
@@ -893,7 +892,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
   CPDF_PageObjectAvail* resource_avail =
       m_PagesResourcesAvail
           .insert(std::make_pair(
-              resources, pdfium::MakeUnique<CPDF_PageObjectAvail>(
+              resources, std::make_unique<CPDF_PageObjectAvail>(
                              GetValidator(), m_pDocument.Get(), resources)))
           .first->second.get();
   return resource_avail->CheckAvail();
@@ -972,7 +971,7 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
     if (!pAcroForm)
       return FormNotExist;
 
-    m_pFormAvail = pdfium::MakeUnique<CPDF_PageObjectAvail>(
+    m_pFormAvail = std::make_unique<CPDF_PageObjectAvail>(
         GetValidator(), m_pDocument.Get(), pAcroForm);
   }
   switch (m_pFormAvail->CheckAvail()) {
@@ -1006,8 +1005,8 @@ CPDF_DataAvail::ParseDocument(
     // We already returned parsed document.
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
-  auto document = pdfium::MakeUnique<CPDF_Document>(std::move(pRenderData),
-                                                    std::move(pPageData));
+  auto document = std::make_unique<CPDF_Document>(std::move(pRenderData),
+                                                  std::move(pPageData));
   document->AddObserver(this);
 
   CPDF_ReadValidator::Session read_session(GetValidator());

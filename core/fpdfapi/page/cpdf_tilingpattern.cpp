@@ -12,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "third_party/base/ptr_util.h"
 
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        CPDF_Object* pPatternObj,
@@ -40,7 +39,7 @@ std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
     return nullptr;
 
   const CFX_Matrix& matrix = parent_matrix();
-  auto form = pdfium::MakeUnique<CPDF_Form>(document(), nullptr, pStream);
+  auto form = std::make_unique<CPDF_Form>(document(), nullptr, pStream);
 
   CPDF_AllStates allStates;
   allStates.m_ColorState.Emplace();

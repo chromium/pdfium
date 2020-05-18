@@ -34,7 +34,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
@@ -93,12 +92,12 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
   std::map<int32_t, std::unique_ptr<std::ostringstream>> streams;
   std::set<int32_t> empty_streams;
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
-      pdfium::MakeUnique<CPDF_ContentMarks>();
+      std::make_unique<CPDF_ContentMarks>();
   std::map<int32_t, const CPDF_ContentMarks*> current_content_marks;
 
   for (int32_t dirty_stream : all_dirty_streams) {
     std::unique_ptr<std::ostringstream> buf =
-        pdfium::MakeUnique<std::ostringstream>();
+        std::make_unique<std::ostringstream>();
 
     // Set the default graphic state values
     *buf << "q\n";
@@ -207,7 +206,7 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
 bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
   bool bDirty = false;
   std::unique_ptr<const CPDF_ContentMarks> empty_content_marks =
-      pdfium::MakeUnique<CPDF_ContentMarks>();
+      std::make_unique<CPDF_ContentMarks>();
   const CPDF_ContentMarks* content_marks = empty_content_marks.get();
 
   for (auto& pPageObj : m_pageObjects) {

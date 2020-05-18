@@ -10,7 +10,6 @@
 
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -41,8 +40,7 @@ RetainPtr<const CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
 
 CPDF_CID2UnicodeMap* CPDF_CMapManager::GetCID2UnicodeMap(CIDSet charset) {
   if (!m_CID2UnicodeMaps[charset]) {
-    m_CID2UnicodeMaps[charset] =
-        pdfium::MakeUnique<CPDF_CID2UnicodeMap>(charset);
+    m_CID2UnicodeMaps[charset] = std::make_unique<CPDF_CID2UnicodeMap>(charset);
   }
   return m_CID2UnicodeMaps[charset].get();
 }

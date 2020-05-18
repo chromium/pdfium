@@ -16,7 +16,6 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -142,7 +141,7 @@ CPDF_Parser::Error CPDF_Document::LoadDoc(
     const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     const char* password) {
   if (!m_pParser)
-    SetParser(pdfium::MakeUnique<CPDF_Parser>(this));
+    SetParser(std::make_unique<CPDF_Parser>(this));
 
   return HandleLoadResult(m_pParser->StartParse(pFileAccess, password));
 }
@@ -151,7 +150,7 @@ CPDF_Parser::Error CPDF_Document::LoadLinearizedDoc(
     const RetainPtr<CPDF_ReadValidator>& validator,
     const char* password) {
   if (!m_pParser)
-    SetParser(pdfium::MakeUnique<CPDF_Parser>(this));
+    SetParser(std::make_unique<CPDF_Parser>(this));
 
   return HandleLoadResult(m_pParser->StartLinearizedParse(validator, password));
 }

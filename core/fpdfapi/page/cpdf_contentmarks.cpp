@@ -10,14 +10,13 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "third_party/base/ptr_util.h"
 
-CPDF_ContentMarks::CPDF_ContentMarks() {}
+CPDF_ContentMarks::CPDF_ContentMarks() = default;
 
-CPDF_ContentMarks::~CPDF_ContentMarks() {}
+CPDF_ContentMarks::~CPDF_ContentMarks() = default;
 
 std::unique_ptr<CPDF_ContentMarks> CPDF_ContentMarks::Clone() {
-  auto result = pdfium::MakeUnique<CPDF_ContentMarks>();
+  auto result = std::make_unique<CPDF_ContentMarks>();
   if (m_pMarkData)
     result->m_pMarkData = pdfium::MakeRetain<MarkData>(*m_pMarkData);
   return result;

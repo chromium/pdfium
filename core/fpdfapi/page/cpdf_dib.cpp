@@ -33,7 +33,6 @@
 #include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -324,7 +323,7 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
 
   FXCODEC_STATUS iDecodeStatus;
   if (!m_pJbig2Context) {
-    m_pJbig2Context = pdfium::MakeUnique<Jbig2Context>();
+    m_pJbig2Context = std::make_unique<Jbig2Context>();
     if (m_pStreamAcc->GetImageParam()) {
       const CPDF_Stream* pGlobals =
           m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");

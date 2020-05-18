@@ -19,7 +19,6 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_random.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -718,5 +717,5 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
 
 void CPDF_SecurityHandler::InitCryptoHandler() {
   m_pCryptoHandler =
-      pdfium::MakeUnique<CPDF_CryptoHandler>(m_Cipher, m_EncryptKey, m_KeyLen);
+      std::make_unique<CPDF_CryptoHandler>(m_Cipher, m_EncryptKey, m_KeyLen);
 }

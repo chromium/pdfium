@@ -14,7 +14,6 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 class CPDF_CIDFontTest : public testing::Test {
  protected:
@@ -23,8 +22,8 @@ class CPDF_CIDFontTest : public testing::Test {
 };
 
 TEST_F(CPDF_CIDFontTest, BUG_920636) {
-  CPDF_Document doc(pdfium::MakeUnique<CPDF_DocRenderData>(),
-                    pdfium::MakeUnique<CPDF_DocPageData>());
+  CPDF_Document doc(std::make_unique<CPDF_DocRenderData>(),
+                    std::make_unique<CPDF_DocPageData>());
   auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   font_dict->SetNewFor<CPDF_Name>("Encoding", "Identity−H");
 

@@ -4,6 +4,8 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
+#include <memory>
+
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -13,7 +15,6 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 TEST(fpdf_parser_utility, PDF_NameDecode) {
   EXPECT_EQ("", PDF_NameDecode(""));
@@ -90,9 +91,9 @@ TEST(fpdf_parser_utility, ValidateDictAllResourcesOfType) {
 
   {
     // Indirect dictionary.
-    auto doc = pdfium::MakeUnique<CPDF_Document>(
-        pdfium::MakeUnique<CPDF_DocRenderData>(),
-        pdfium::MakeUnique<CPDF_DocPageData>());
+    auto doc =
+        std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
+                                        std::make_unique<CPDF_DocPageData>());
 
     auto dict = doc->New<CPDF_Dictionary>();
 
