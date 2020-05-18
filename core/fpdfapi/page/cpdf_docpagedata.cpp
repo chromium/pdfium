@@ -30,6 +30,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"
@@ -485,7 +486,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
       }
     } else {
       size_t i = CalculateEncodingDict(charset, pBaseDict);
-      if (i < FX_ArraySize(g_FX_CharsetUnicodes)) {
+      if (i < pdfium::size(g_FX_CharsetUnicodes)) {
         const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           int glyph_index = pEncoding->GlyphFromCharCode(pUnicodes[j]);
@@ -516,7 +517,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
     nStemV = pFont->GetSubstFont()->m_Weight / 5;
   } else {
     static const char stem_chars[] = {'i', 'I', '!', '1'};
-    const size_t count = FX_ArraySize(stem_chars);
+    const size_t count = pdfium::size(stem_chars);
     uint32_t glyph = pEncoding->GlyphFromCharCode(stem_chars[0]);
     nStemV = pFont->GetGlyphWidth(glyph);
     for (size_t i = 1; i < count; i++) {
@@ -621,11 +622,11 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
 size_t CPDF_DocPageData::CalculateEncodingDict(int charset,
                                                CPDF_Dictionary* pBaseDict) {
   size_t i;
-  for (i = 0; i < FX_ArraySize(g_FX_CharsetUnicodes); ++i) {
+  for (i = 0; i < pdfium::size(g_FX_CharsetUnicodes); ++i) {
     if (g_FX_CharsetUnicodes[i].m_Charset == charset)
       break;
   }
-  if (i == FX_ArraySize(g_FX_CharsetUnicodes))
+  if (i == pdfium::size(g_FX_CharsetUnicodes))
     return i;
 
   CPDF_Dictionary* pEncodingDict =

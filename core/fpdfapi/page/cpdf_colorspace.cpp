@@ -31,7 +31,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/icc/iccmodule.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "third_party/base/stl_util.h"
@@ -737,14 +736,14 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   const CPDF_Array* pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
     m_bHasGamma = true;
-    for (size_t i = 0; i < FX_ArraySize(m_Gamma); ++i)
+    for (size_t i = 0; i < pdfium::size(m_Gamma); ++i)
       m_Gamma[i] = pParam->GetNumberAt(i);
   }
 
   pParam = pDict->GetArrayFor("Matrix");
   if (pParam) {
     m_bHasMatrix = true;
-    for (size_t i = 0; i < FX_ArraySize(m_Matrix); ++i)
+    for (size_t i = 0; i < pdfium::size(m_Matrix); ++i)
       m_Matrix[i] = pParam->GetNumberAt(i);
   }
   return 3;
@@ -844,9 +843,9 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
   static_assert(
-      FX_ArraySize(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
+      pdfium::size(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
       "Range size mismatch");
-  for (size_t i = 0; i < FX_ArraySize(kDefaultRanges); ++i)
+  for (size_t i = 0; i < pdfium::size(kDefaultRanges); ++i)
     m_Ranges[i] = pParam ? pParam->GetNumberAt(i) : kDefaultRanges[i];
   return 3;
 }

@@ -25,7 +25,6 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
@@ -316,7 +315,7 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   RetainPtr<CPDF_Font> pFont;
   if (type == "TrueType") {
     ByteString tag = pFontDict->GetStringFor("BaseFont").First(4);
-    for (size_t i = 0; i < FX_ArraySize(kChineseFontNames); ++i) {
+    for (size_t i = 0; i < pdfium::size(kChineseFontNames); ++i) {
       if (tag == ByteString(kChineseFontNames[i], kChineseFontNameSize)) {
         const CPDF_Dictionary* pFontDesc =
             pFontDict->GetDictFor("FontDescriptor");

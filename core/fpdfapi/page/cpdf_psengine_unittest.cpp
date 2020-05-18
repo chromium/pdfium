@@ -5,8 +5,8 @@
 #include <limits>
 
 #include "core/fpdfapi/page/cpdf_psengine.h"
-#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -71,7 +71,7 @@ TEST(CPDF_PSProc, AddOperator) {
 
   CPDF_PSProc proc;
   EXPECT_EQ(0U, proc.num_operators());
-  for (size_t i = 0; i < FX_ArraySize(kTestData); ++i) {
+  for (size_t i = 0; i < pdfium::size(kTestData); ++i) {
     ByteStringView word(kTestData[i].name);
     proc.AddOperatorForTesting(word);
     ASSERT_EQ(i + 1, proc.num_operators());

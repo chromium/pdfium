@@ -12,6 +12,7 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/numerics/safe_math.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -33,7 +34,7 @@ CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
     : CPDF_Font(pDocument, pFontDict) {
   memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
   memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
-  for (size_t i = 0; i < FX_ArraySize(m_CharBBox); ++i)
+  for (size_t i = 0; i < pdfium::size(m_CharBBox); ++i)
     m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }
 
@@ -228,7 +229,7 @@ bool CPDF_SimpleFont::LoadCommon() {
   if (FontStyleIsAllCaps(m_Flags)) {
     static const unsigned char kLowercases[][2] = {
         {'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}};
-    for (size_t range = 0; range < FX_ArraySize(kLowercases); ++range) {
+    for (size_t range = 0; range < pdfium::size(kLowercases); ++range) {
       const auto& lower = kLowercases[range];
       for (int i = lower[0]; i <= lower[1]; ++i) {
         if (m_GlyphIndex[i] != 0xffff && m_pFontFile)

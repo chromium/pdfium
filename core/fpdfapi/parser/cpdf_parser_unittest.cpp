@@ -18,6 +18,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -79,9 +80,9 @@ TEST(cpdf_parser, RebuildCrossRefCorrectly) {
   ASSERT_TRUE(parser.RebuildCrossRef());
   const FX_FILESIZE offsets[] = {0, 15, 61, 154, 296, 374, 450};
   const uint16_t versions[] = {0, 0, 2, 4, 6, 8, 0};
-  for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
+  for (size_t i = 0; i < pdfium::size(offsets); ++i)
     EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
-  for (size_t i = 0; i < FX_ArraySize(versions); ++i)
+  for (size_t i = 0; i < pdfium::size(versions); ++i)
     EXPECT_EQ(versions[i], GetObjInfo(parser, i).gennum);
 }
 
@@ -119,9 +120,9 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+    static_assert(pdfium::size(kOffsets) == pdfium::size(kTypes),
                   "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+    for (size_t i = 0; i < pdfium::size(kOffsets); ++i) {
       EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
       EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
@@ -159,9 +160,9 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+    static_assert(pdfium::size(kOffsets) == pdfium::size(kTypes),
                   "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+    for (size_t i = 0; i < pdfium::size(kOffsets); ++i) {
       EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
       EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
@@ -199,9 +200,9 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+    static_assert(pdfium::size(kOffsets) == pdfium::size(kTypes),
                   "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+    for (size_t i = 0; i < pdfium::size(kOffsets); ++i) {
       EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
       EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }
@@ -231,9 +232,9 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed};
-    static_assert(FX_ArraySize(kOffsets) == FX_ArraySize(kTypes),
+    static_assert(pdfium::size(kOffsets) == pdfium::size(kTypes),
                   "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < FX_ArraySize(kOffsets); ++i) {
+    for (size_t i = 0; i < pdfium::size(kOffsets); ++i) {
       EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
       EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
     }

@@ -182,7 +182,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
       ByteString key = it.first;
       CPDF_Object* value = it.second.Get();
       ByteStringView fullname = FindFullName(
-          kInlineKeyAbbr, FX_ArraySize(kInlineKeyAbbr), key.AsStringView());
+          kInlineKeyAbbr, pdfium::size(kInlineKeyAbbr), key.AsStringView());
       if (!fullname.IsEmpty()) {
         AbbrReplacementOp op;
         op.is_replace_key = true;
@@ -195,7 +195,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
       if (value->IsName()) {
         ByteString name = value->GetString();
         fullname =
-            FindFullName(kInlineValueAbbr, FX_ArraySize(kInlineValueAbbr),
+            FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr),
                          name.AsStringView());
         if (!fullname.IsEmpty()) {
           AbbrReplacementOp op;
@@ -223,7 +223,7 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
     if (pElement->IsName()) {
       ByteString name = pElement->GetString();
       ByteStringView fullname =
-          FindFullName(kInlineValueAbbr, FX_ArraySize(kInlineValueAbbr),
+          FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr),
                        name.AsStringView());
       if (!fullname.IsEmpty())
         pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
@@ -1630,13 +1630,13 @@ void CPDF_StreamContentParser::ParsePathObject() {
 // static
 ByteStringView CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(kInlineKeyAbbr, FX_ArraySize(kInlineKeyAbbr), abbr);
+  return FindFullName(kInlineKeyAbbr, pdfium::size(kInlineKeyAbbr), abbr);
 }
 
 // static
 ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
     ByteStringView abbr) {
-  return FindFullName(kInlineValueAbbr, FX_ArraySize(kInlineValueAbbr), abbr);
+  return FindFullName(kInlineValueAbbr, pdfium::size(kInlineValueAbbr), abbr);
 }
 
 CPDF_StreamContentParser::ContentParam::ContentParam() {}

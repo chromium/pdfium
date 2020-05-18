@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -148,7 +149,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
 }
 
 uint32_t CPDF_Type3Font::GetCharWidthF(uint32_t charcode) {
-  if (charcode >= FX_ArraySize(m_CharWidthL))
+  if (charcode >= pdfium::size(m_CharWidthL))
     charcode = 0;
 
   if (m_CharWidthL[charcode])

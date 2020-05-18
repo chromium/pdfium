@@ -11,12 +11,12 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fxcrt/fx_memory.h"
+#include "third_party/base/stl_util.h"
 
 CFX_StockFontArray::CFX_StockFontArray() = default;
 
 CFX_StockFontArray::~CFX_StockFontArray() {
-  for (size_t i = 0; i < FX_ArraySize(m_StockFonts); ++i) {
+  for (size_t i = 0; i < pdfium::size(m_StockFonts); ++i) {
     if (m_StockFonts[i]) {
       RetainPtr<CPDF_Dictionary> destroy(m_StockFonts[i]->GetFontDict());
       m_StockFonts[i]->ClearFontDict();
@@ -26,7 +26,7 @@ CFX_StockFontArray::~CFX_StockFontArray() {
 
 RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
     CFX_FontMapper::StandardFont index) const {
-  if (index < FX_ArraySize(m_StockFonts))
+  if (index < pdfium::size(m_StockFonts))
     return m_StockFonts[index];
   NOTREACHED();
   return nullptr;
@@ -34,6 +34,6 @@ RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
 
 void CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,
                                  const RetainPtr<CPDF_Font>& pFont) {
-  if (index < FX_ArraySize(m_StockFonts))
+  if (index < pdfium::size(m_StockFonts))
     m_StockFonts[index] = pFont;
 }

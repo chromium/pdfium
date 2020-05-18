@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -203,10 +204,10 @@ Optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
 CIDSet CPDF_CMapParser::CharsetFromOrdering(ByteStringView ordering) {
   static const char* const kCharsetNames[CIDSET_NUM_SETS] = {
       nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
-  static_assert(FX_ArraySize(kCharsetNames) == CIDSET_NUM_SETS,
+  static_assert(pdfium::size(kCharsetNames) == CIDSET_NUM_SETS,
                 "Too many CID sets");
 
-  for (size_t charset = 1; charset < FX_ArraySize(kCharsetNames); ++charset) {
+  for (size_t charset = 1; charset < pdfium::size(kCharsetNames); ++charset) {
     if (ordering == kCharsetNames[charset])
       return static_cast<CIDSet>(charset);
   }

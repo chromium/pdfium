@@ -22,7 +22,7 @@ class SystemFontInfoIface;
 
 class CFX_FontMapper {
  public:
-  enum StandardFont {
+  enum StandardFont : uint8_t {
     kCourier = 0,
     kCourierBold,
     kCourierBoldOblique,

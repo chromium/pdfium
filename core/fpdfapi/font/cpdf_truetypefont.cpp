@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -106,7 +107,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       }
       m_Encoding.SetUnicode(charcode, PDF_UnicodeFromAdobeName(name));
       if (bMSSymbol) {
-        for (size_t j = 0; j < FX_ArraySize(kPrefix); j++) {
+        for (size_t j = 0; j < pdfium::size(kPrefix); j++) {
           uint16_t unicode = kPrefix[j] * 256 + charcode;
           m_GlyphIndex[charcode] = FT_Get_Char_Index(face, unicode);
           if (m_GlyphIndex[charcode])
@@ -150,7 +151,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   if (FT_UseTTCharmap(face, 3, 0)) {
     bool bFound = false;
     for (int charcode = 0; charcode < 256; charcode++) {
-      for (size_t j = 0; j < FX_ArraySize(kPrefix); j++) {
+      for (size_t j = 0; j < pdfium::size(kPrefix); j++) {
         uint16_t unicode = kPrefix[j] * 256 + charcode;
         m_GlyphIndex[charcode] = FT_Get_Char_Index(face, unicode);
         if (m_GlyphIndex[charcode]) {
