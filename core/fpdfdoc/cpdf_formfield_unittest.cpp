@@ -21,7 +21,6 @@
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -37,8 +36,8 @@ class ScopedCPDF_PageModule {
 class CPDF_TestEmptyDocument final : public CPDF_Document {
  public:
   CPDF_TestEmptyDocument()
-      : CPDF_Document(pdfium::MakeUnique<CPDF_DocRenderData>(),
-                      pdfium::MakeUnique<CPDF_DocPageData>()) {}
+      : CPDF_Document(std::make_unique<CPDF_DocRenderData>(),
+                      std::make_unique<CPDF_DocPageData>()) {}
 };
 
 void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,

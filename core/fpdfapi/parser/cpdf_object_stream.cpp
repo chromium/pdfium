@@ -55,8 +55,8 @@ std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
     const CPDF_Stream* stream) {
   if (!IsObjectsStreamObject(stream))
     return nullptr;
-  // The ctor of CPDF_ObjectStream is protected. Use WrapUnique instead
-  // MakeUnique.
+
+  // Protected constructor.
   return pdfium::WrapUnique(new CPDF_ObjectStream(stream));
 }
 

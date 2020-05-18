@@ -25,7 +25,6 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -198,7 +197,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (it != m_APMap.end())
     return it->second.get();
 
-  auto pNewForm = pdfium::MakeUnique<CPDF_Form>(
+  auto pNewForm = std::make_unique<CPDF_Form>(
       m_pDocument.Get(), pPage->m_pResources.Get(), pStream);
   pNewForm->ParseContent();
 

@@ -11,7 +11,6 @@
 #include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {
@@ -33,12 +32,12 @@ CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
   int32_t nWordIndex = pdfium::clamp(
       place.nWordIndex, 0, pdfium::CollectionSize<int32_t>(m_WordArray));
   m_WordArray.insert(m_WordArray.begin() + nWordIndex,
-                     pdfium::MakeUnique<CPVT_WordInfo>(wordinfo));
+                     std::make_unique<CPVT_WordInfo>(wordinfo));
   return place;
 }
 
 CPVT_WordPlace CSection::AddLine(const CPVT_LineInfo& lineinfo) {
-  m_LineArray.push_back(pdfium::MakeUnique<CLine>(lineinfo));
+  m_LineArray.push_back(std::make_unique<CLine>(lineinfo));
   return CPVT_WordPlace(SecPlace.nSecIndex, m_LineArray.size() - 1, -1);
 }
 

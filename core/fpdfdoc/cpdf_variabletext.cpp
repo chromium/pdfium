@@ -17,7 +17,6 @@
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -544,7 +543,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place) {
   int32_t nSecIndex = pdfium::clamp(
       place.nSecIndex, 0, pdfium::CollectionSize<int32_t>(m_SectionArray));
 
-  auto pSection = pdfium::MakeUnique<CSection>(this);
+  auto pSection = std::make_unique<CSection>(this);
   pSection->m_Rect = CPVT_FloatRect();
   pSection->SecPlace.nSecIndex = nSecIndex;
   m_SectionArray.insert(m_SectionArray.begin() + nSecIndex,
@@ -898,7 +897,7 @@ bool CPDF_VariableText::IsLatinWord(uint16_t word) {
 
 CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
   if (!m_pVTIterator)
-    m_pVTIterator = pdfium::MakeUnique<CPDF_VariableText::Iterator>(this);
+    m_pVTIterator = std::make_unique<CPDF_VariableText::Iterator>(this);
   return m_pVTIterator.get();
 }
 

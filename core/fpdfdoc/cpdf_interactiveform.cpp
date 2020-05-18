@@ -29,7 +29,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -483,7 +482,7 @@ CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
   if (level > nMaxRecursion)
     return nullptr;
 
-  auto pNew = pdfium::MakeUnique<Node>(short_name, pParent->GetLevel() + 1);
+  auto pNew = std::make_unique<Node>(short_name, pParent->GetLevel() + 1);
   Node* pChild = pNew.get();
   pParent->AddChildNode(std::move(pNew));
   return pChild;
@@ -575,7 +574,7 @@ uint8_t CPDF_InteractiveForm::GetNativeCharSet() {
 }
 
 CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
-    : m_pDocument(pDocument), m_pFieldTree(pdfium::MakeUnique<CFieldTree>()) {
+    : m_pDocument(pDocument), m_pFieldTree(std::make_unique<CFieldTree>()) {
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   if (!pRoot)
     return;
@@ -918,7 +917,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       }
     }
 
-    auto newField = pdfium::MakeUnique<CPDF_FormField>(this, pParent);
+    auto newField = std::make_unique<CPDF_FormField>(this, pParent);
     pField = newField.get();
     CPDF_Object* pTObj = pDict->GetObjectFor(pdfium::form_fields::kT);
     if (ToReference(pTObj)) {
@@ -956,7 +955,7 @@ CPDF_FormControl* CPDF_InteractiveForm::AddControl(
   if (it != m_ControlMap.end())
     return it->second.get();
 
-  auto pNew = pdfium::MakeUnique<CPDF_FormControl>(pField, pWidgetDict);
+  auto pNew = std::make_unique<CPDF_FormControl>(pField, pWidgetDict);
   CPDF_FormControl* pControl = pNew.get();
   m_ControlMap[pWidgetDict] = std::move(pNew);
   m_ControlLists[pField].emplace_back(pControl);
