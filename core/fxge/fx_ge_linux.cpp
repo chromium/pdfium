@@ -13,7 +13,6 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/ptr_util.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
 namespace {
@@ -153,7 +152,7 @@ bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
 
 std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUserPaths) {
-  auto pInfo = pdfium::MakeUnique<CFX_LinuxFontInfo>();
+  auto pInfo = std::make_unique<CFX_LinuxFontInfo>();
   if (!pInfo->ParseFontCfg(pUserPaths)) {
     pInfo->AddPath("/usr/share/fonts");
     pInfo->AddPath("/usr/share/X11/fonts/Type1");
@@ -178,6 +177,6 @@ class CLinuxPlatform : public CFX_GEModule::PlatformIface {
 // static
 std::unique_ptr<CFX_GEModule::PlatformIface>
 CFX_GEModule::PlatformIface::Create() {
-  return pdfium::MakeUnique<CLinuxPlatform>();
+  return std::make_unique<CLinuxPlatform>();
 }
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_

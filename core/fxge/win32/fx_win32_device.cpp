@@ -701,7 +701,7 @@ void CWin32Platform::Init() {
 // static
 std::unique_ptr<CFX_GEModule::PlatformIface>
 CFX_GEModule::PlatformIface::Create() {
-  return pdfium::MakeUnique<CWin32Platform>();
+  return std::make_unique<CWin32Platform>();
 }
 
 CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)

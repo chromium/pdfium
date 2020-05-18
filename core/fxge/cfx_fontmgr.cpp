@@ -15,7 +15,6 @@
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -86,7 +85,7 @@ CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
 
 CFX_FontMgr::CFX_FontMgr()
     : m_FTLibrary(FTLibraryInitHelper()),
-      m_pBuiltinMapper(pdfium::MakeUnique<CFX_FontMapper>(this)),
+      m_pBuiltinMapper(std::make_unique<CFX_FontMapper>(this)),
       m_FTLibrarySupportsHinting(SetLcdFilterMode() ||
                                  FreeTypeVersionSupportsHinting()) {}
 

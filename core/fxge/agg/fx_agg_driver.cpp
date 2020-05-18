@@ -17,7 +17,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
@@ -1206,7 +1205,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
 void CFX_AggDeviceDriver::SaveState() {
   std::unique_ptr<CFX_ClipRgn> pClip;
   if (m_pClipRgn)
-    pClip = pdfium::MakeUnique<CFX_ClipRgn>(*m_pClipRgn);
+    pClip = std::make_unique<CFX_ClipRgn>(*m_pClipRgn);
   m_StateStack.push_back(std::move(pClip));
 }
 
@@ -1218,7 +1217,7 @@ void CFX_AggDeviceDriver::RestoreState(bool bKeepSaved) {
 
   if (bKeepSaved) {
     if (m_StateStack.back())
-      m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(*m_StateStack.back());
+      m_pClipRgn = std::make_unique<CFX_ClipRgn>(*m_StateStack.back());
   } else {
     m_pClipRgn = std::move(m_StateStack.back());
     m_StateStack.pop_back();
@@ -1255,7 +1254,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
 
   m_FillFlags = fill_mode;
   if (!m_pClipRgn) {
-    m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(
+    m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
   size_t size = pPathData->GetPoints().size();
@@ -1289,7 +1288,7 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   if (!m_pClipRgn) {
-    m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(
+    m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
   CAgg_PathData path_data;
@@ -1576,7 +1575,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
   if (!m_pBitmap->GetBuffer())
     return true;
 
-  *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
+  *handle = std::make_unique<CFX_ImageRenderer>(
       m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix, options,
       m_bRgbByteOrder);
   return true;
@@ -1601,7 +1600,7 @@ bool CFX_DefaultRenderDevice::Attach(
     return false;
 
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(
+  SetDeviceDriver(std::make_unique<CFX_AggDeviceDriver>(
       pBitmap, bRgbByteOrder, pBackdropBitmap, bGroupKnockout));
   return true;
 }
@@ -1616,7 +1615,7 @@ bool CFX_DefaultRenderDevice::Create(
     return false;
 
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(
+  SetDeviceDriver(std::make_unique<CFX_AggDeviceDriver>(
       pBitmap, false, pBackdropBitmap, false));
   return true;
 }

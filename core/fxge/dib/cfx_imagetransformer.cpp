@@ -15,7 +15,6 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -330,7 +329,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
     result_clip.Offset(-result_rect.left, -result_rect.top);
     result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
                                     m_matrix.c > 0, m_matrix.b < 0);
-    m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
+    m_Stretcher = std::make_unique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
@@ -343,7 +342,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
     int dest_height = static_cast<int>(m_matrix.d > 0 ? -ceil(m_matrix.d)
                                                       : -floor(m_matrix.d));
     result_clip.Offset(-result_rect.left, -result_rect.top);
-    m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
+    m_Stretcher = std::make_unique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
@@ -373,7 +372,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
 
   m_dest2stretch = dest_to_strech;
   m_StretchClip = stretch_clip;
-  m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
+  m_Stretcher = std::make_unique<CFX_ImageStretcher>(
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
       m_ResampleOptions);
   m_Stretcher->Start();

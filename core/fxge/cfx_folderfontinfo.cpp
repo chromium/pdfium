@@ -16,7 +16,6 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #define CHARSET_FLAG_ANSI (1 << 0)
@@ -244,8 +243,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (pdfium::Contains(m_FontList, facename))
     return;
 
-  auto pInfo = pdfium::MakeUnique<FontFaceInfo>(path, facename, tables, offset,
-                                                filesize);
+  auto pInfo =
+      std::make_unique<FontFaceInfo>(path, facename, tables, offset, filesize);
   ByteString os2 =
       LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x4f532f32, filesize);
   if (os2.GetLength() >= 86) {

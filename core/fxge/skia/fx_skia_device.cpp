@@ -1895,7 +1895,7 @@ void CFX_SkiaDeviceDriver::SaveState() {
 #endif
   std::unique_ptr<CFX_ClipRgn> pClip;
   if (m_pClipRgn)
-    pClip = pdfium::MakeUnique<CFX_ClipRgn>(*m_pClipRgn);
+    pClip = std::make_unique<CFX_ClipRgn>(*m_pClipRgn);
   m_StateStack.push_back(std::move(pClip));
 #endif  // _SKIA_SUPPORT_PATHS_
 }
@@ -1921,7 +1921,7 @@ void CFX_SkiaDeviceDriver::RestoreState(bool bKeepSaved) {
 #endif
   if (bKeepSaved) {
     if (m_StateStack.back())
-      m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(*m_StateStack.back());
+      m_pClipRgn = std::make_unique<CFX_ClipRgn>(*m_StateStack.back());
   } else {
     m_pClipRgn = std::move(m_StateStack.back());
     m_StateStack.pop_back();
@@ -1946,7 +1946,7 @@ void CFX_SkiaDeviceDriver::SetClipMask(const FX_RECT& clipBox,
   SkBitmap bitmap;
   bitmap.installPixels(imageInfo, pThisLayer->GetBuffer(),
                        pThisLayer->GetPitch());
-  auto canvas = pdfium::MakeUnique<SkCanvas>(bitmap);
+  auto canvas = std::make_unique<SkCanvas>(bitmap);
   canvas->translate(
       -path_rect.left,
       -path_rect.top);  // FIXME(caryclark) wrong sign(s)? upside down?
@@ -1969,7 +1969,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
 #ifdef _SKIA_SUPPORT_PATHS_
   m_FillFlags = fill_mode;
   if (!m_pClipRgn) {
-    m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(
+    m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
 #endif  // _SKIA_SUPPORT_PATHS_
@@ -2024,7 +2024,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
 
 #ifdef _SKIA_SUPPORT_PATHS_
   if (!m_pClipRgn) {
-    m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(
+    m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
 #endif  // _SKIA_SUPPORT_PATHS_
@@ -2547,7 +2547,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   if (!m_pBitmap->GetBuffer())
     return true;
   m_pBitmap->UnPreMultiply();
-  *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
+  *handle = std::make_unique<CFX_ImageRenderer>(
       m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix, options,
       m_bRgbByteOrder);
 #endif  // _SKIA_SUPPORT_PATHS_
@@ -2729,7 +2729,7 @@ bool CFX_DefaultRenderDevice::Attach(
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(
+  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(
       pBitmap, bRgbByteOrder, pBackdropBitmap, bGroupKnockout));
   return true;
 }
@@ -2738,7 +2738,7 @@ bool CFX_DefaultRenderDevice::Attach(
 bool CFX_DefaultRenderDevice::AttachRecorder(SkPictureRecorder* recorder) {
   if (!recorder)
     return false;
-  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(recorder));
+  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(recorder));
   return true;
 }
 #endif  // _SKIA_SUPPORT_
@@ -2753,7 +2753,7 @@ bool CFX_DefaultRenderDevice::Create(
     return false;
   }
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(
+  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(
       pBitmap, false, pBackdropBitmap, false));
   return true;
 }

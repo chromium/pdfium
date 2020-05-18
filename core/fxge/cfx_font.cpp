@@ -23,7 +23,6 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
@@ -60,7 +59,7 @@ RetainPtr<CFX_Face> LoadFileImp(FXFT_LibraryRec* library,
                                 const RetainPtr<IFX_SeekableReadStream>& pFile,
                                 int32_t faceIndex,
                                 std::unique_ptr<FXFT_StreamRec>* stream) {
-  auto stream1 = pdfium::MakeUnique<FXFT_StreamRec>();
+  auto stream1 = std::make_unique<FXFT_StreamRec>();
   stream1->base = nullptr;
   stream1->size = static_cast<unsigned long>(pFile->GetSize());
   stream1->pos = 0;
@@ -354,7 +353,7 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
                          bool bVertical) {
   m_bEmbedded = false;
   m_bVertical = bVertical;
-  m_pSubstFont = pdfium::MakeUnique<CFX_SubstFont>();
+  m_pSubstFont = std::make_unique<CFX_SubstFont>();
   m_Face = CFX_GEModule::Get()->GetFontMgr()->FindSubstFont(
       face_name, bTrueType, flags, weight, italic_angle, CharsetCP,
       m_pSubstFont.get());
@@ -694,7 +693,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
   funcs.delta = 0;
 
   OUTLINE_PARAMS params;
-  auto pPath = pdfium::MakeUnique<CFX_PathData>();
+  auto pPath = std::make_unique<CFX_PathData>();
   params.m_pPath = pPath.get();
   params.m_CurX = params.m_CurY = 0;
   params.m_CoordUnit = 64 * 64.0;

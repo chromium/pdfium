@@ -18,7 +18,6 @@
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -328,7 +327,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
     return nullptr;
 
   auto pFont =
-      pdfium::MakeUnique<CFPF_SkiaFont>(this, pBestFont, dwStyle, uCharset);
+      std::make_unique<CFPF_SkiaFont>(this, pBestFont, dwStyle, uCharset);
   if (!pFont->IsValid())
     return nullptr;
 
@@ -417,7 +416,7 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
   if (pOS2 && (pOS2->ulCodePageRange1 & (1 << 31)))
     dwStyle |= FXFONT_SYMBOLIC;
 
-  return pdfium::MakeUnique<CFPF_SkiaPathFont>(
+  return std::make_unique<CFPF_SkiaPathFont>(
       file, FXFT_Get_Face_Family_Name(face->GetRec()), dwStyle,
       face->GetRec()->face_index, FPF_SkiaGetFaceCharset(pOS2),
       face->GetRec()->num_glyphs);

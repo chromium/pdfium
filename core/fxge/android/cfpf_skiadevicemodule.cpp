@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "core/fxge/android/cfpf_skiafontmgr.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -34,7 +33,7 @@ void CFPF_SkiaDeviceModule::Destroy() {
 
 CFPF_SkiaFontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
   if (!m_pFontMgr) {
-    auto pNewMgr = pdfium::MakeUnique<CFPF_SkiaFontMgr>();
+    auto pNewMgr = std::make_unique<CFPF_SkiaFontMgr>();
     if (!pNewMgr->InitFTLibrary())
       return nullptr;
     m_pFontMgr = std::move(pNewMgr);

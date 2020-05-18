@@ -11,7 +11,6 @@
 #include "core/fxge/android/cfx_androidfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "third_party/base/ptr_util.h"
 
 class CAndroidPlatform : public CFX_GEModule::PlatformIface {
  public:
@@ -27,7 +26,7 @@ class CAndroidPlatform : public CFX_GEModule::PlatformIface {
     if (!pFontMgr)
       return;
 
-    auto pFontInfo = pdfium::MakeUnique<CFX_AndroidFontInfo>();
+    auto pFontInfo = std::make_unique<CFX_AndroidFontInfo>();
     pFontInfo->Init(pFontMgr);
     CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(std::move(pFontInfo));
   }
@@ -39,5 +38,5 @@ class CAndroidPlatform : public CFX_GEModule::PlatformIface {
 // static
 std::unique_ptr<CFX_GEModule::PlatformIface>
 CFX_GEModule::PlatformIface::Create() {
-  return pdfium::MakeUnique<CAndroidPlatform>();
+  return std::make_unique<CAndroidPlatform>();
 }

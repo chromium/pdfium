@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -24,7 +23,7 @@ class CFX_WindowsRenderDeviceTest : public testing::Test {
     m_hDC = CreateCompatibleDC(nullptr);
     ASSERT_TRUE(m_hDC);
     CFX_GEModule::Create(nullptr);
-    m_driver = pdfium::MakeUnique<CFX_WindowsRenderDevice>(m_hDC, nullptr);
+    m_driver = std::make_unique<CFX_WindowsRenderDevice>(m_hDC, nullptr);
     m_driver->SaveState();
   }
 
