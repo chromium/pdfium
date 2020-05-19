@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -129,7 +130,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
     return Invert;
 
   ByteString csH = m_pWidgetDict->GetStringFor("H", "I");
-  for (size_t i = 0; i < FX_ArraySize(kHighlightModes); ++i) {
+  for (size_t i = 0; i < pdfium::size(kHighlightModes); ++i) {
     if (csH == kHighlightModes[i])
       return static_cast<HighlightingMode>(i);
   }

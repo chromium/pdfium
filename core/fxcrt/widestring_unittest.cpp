@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
@@ -1108,7 +1107,7 @@ TEST(WideString, ToUTF16LE) {
       {L"\x3132\x6162", ByteString("\x32\x31\x62\x61\0\0", 6)},
   };
 
-  for (size_t i = 0; i < FX_ArraySize(utf16le_encode_cases); ++i) {
+  for (size_t i = 0; i < pdfium::size(utf16le_encode_cases); ++i) {
     EXPECT_EQ(utf16le_encode_cases[i].bs,
               utf16le_encode_cases[i].ws.ToUTF16LE())
         << " for case number " << i;

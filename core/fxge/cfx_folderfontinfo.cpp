@@ -285,7 +285,7 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
 }
 
 void* CFX_FolderFontInfo::GetSubstFont(const ByteString& face) {
-  for (size_t iBaseFont = 0; iBaseFont < FX_ArraySize(Base14Substs);
+  for (size_t iBaseFont = 0; iBaseFont < pdfium::size(Base14Substs);
        iBaseFont++) {
     if (face == Base14Substs[iBaseFont].m_pName)
       return GetFont(Base14Substs[iBaseFont].m_pSubstName);

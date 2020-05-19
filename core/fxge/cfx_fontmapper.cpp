@@ -225,7 +225,7 @@ std::tuple<bool, uint32_t, size_t> GetStyleType(const ByteString& bsStyle,
   if (bsStyle.IsEmpty())
     return std::make_tuple(false, FXFONT_NORMAL, 0);
 
-  for (int i = FX_ArraySize(g_FontStyles) - 1; i >= 0; --i) {
+  for (int i = pdfium::size(g_FontStyles) - 1; i >= 0; --i) {
     const FX_FontStyle* pStyle = g_FontStyles + i;
     if (!pStyle || pStyle->len > bsStyle.GetLength())
       continue;

@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
@@ -19,6 +20,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -191,14 +193,14 @@ void ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
     uint8_t r;
     uint8_t g;
     uint8_t b;
-    for (size_t i = 0; i < FX_ArraySize(gray); ++i) {
+    for (size_t i = 0; i < pdfium::size(gray); ++i) {
       std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
           FXSYS_GetCValue(src_plt[i]), FXSYS_GetMValue(src_plt[i]),
           FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]));
       gray[i] = FXRGB2GRAY(r, g, b);
     }
   } else {
-    for (size_t i = 0; i < FX_ArraySize(gray); ++i) {
+    for (size_t i = 0; i < pdfium::size(gray); ++i) {
       gray[i] = FXRGB2GRAY(FXARGB_R(src_plt[i]), FXARGB_G(src_plt[i]),
                            FXARGB_B(src_plt[i]));
     }

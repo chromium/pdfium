@@ -514,13 +514,13 @@ void CFX_ImageTransformer::CalcMono(const CalcData& cdata,
   uint32_t argb[256];
   FX_ARGB* pPal = m_Storer.GetBitmap()->GetPalette();
   if (pPal) {
-    for (size_t i = 0; i < FX_ArraySize(argb); i++)
+    for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = pPal[i];
   } else if (m_Storer.GetBitmap()->IsCmykImage()) {
-    for (size_t i = 0; i < FX_ArraySize(argb); i++)
+    for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = 255 - i;
   } else {
-    for (size_t i = 0; i < FX_ArraySize(argb); i++)
+    for (size_t i = 0; i < pdfium::size(argb); i++)
       argb[i] = 0xff000000 | (i * 0x010101);
   }
   int destBpp = cdata.bitmap->GetBPP() / 8;

@@ -11,6 +11,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
+#include "third_party/base/stl_util.h"
 
 TEST(SeekableStreamProxyTest, NullStream) {
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
@@ -18,7 +19,7 @@ TEST(SeekableStreamProxyTest, NullStream) {
           pdfium::make_span<const uint8_t>(nullptr, 0)));
 
   wchar_t buffer[16];
-  EXPECT_EQ(0u, proxy_stream->ReadBlock(buffer, FX_ArraySize(buffer)));
+  EXPECT_EQ(0u, proxy_stream->ReadBlock(buffer, pdfium::size(buffer)));
 }
 
 TEST(SeekableStreamProxyTest, DefaultStreamBOMNotRecognized) {
@@ -28,7 +29,7 @@ TEST(SeekableStreamProxyTest, DefaultStreamBOMNotRecognized) {
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
-  EXPECT_EQ(0u, proxy_stream->ReadBlock(buffer, FX_ArraySize(buffer)));
+  EXPECT_EQ(0u, proxy_stream->ReadBlock(buffer, pdfium::size(buffer)));
 }
 
 TEST(SeekableStreamProxyTest, UTF8Stream) {
@@ -38,7 +39,7 @@ TEST(SeekableStreamProxyTest, UTF8Stream) {
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
-  EXPECT_EQ(3u, proxy_stream->ReadBlock(buffer, FX_ArraySize(buffer)));
+  EXPECT_EQ(3u, proxy_stream->ReadBlock(buffer, pdfium::size(buffer)));
   EXPECT_EQ(L'*', buffer[0]);
   EXPECT_EQ(L'\u00A2', buffer[1]);
   EXPECT_EQ(L'*', buffer[2]);
@@ -51,7 +52,7 @@ TEST(SeekableStreamProxyTest, UTF16LEStream) {
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
-  EXPECT_EQ(2u, proxy_stream->ReadBlock(buffer, FX_ArraySize(buffer)));
+  EXPECT_EQ(2u, proxy_stream->ReadBlock(buffer, pdfium::size(buffer)));
   EXPECT_EQ(L'A', buffer[0]);
   EXPECT_EQ(L'\u0142', buffer[1]);
 }
@@ -63,7 +64,7 @@ TEST(SeekableStreamProxyTest, UTF16BEStream) {
           reinterpret_cast<const uint8_t*>(data), sizeof(data) - 1)));
 
   wchar_t buffer[16];
-  EXPECT_EQ(2u, proxy_stream->ReadBlock(buffer, FX_ArraySize(buffer)));
+  EXPECT_EQ(2u, proxy_stream->ReadBlock(buffer, pdfium::size(buffer)));
   EXPECT_EQ(L'A', buffer[0]);
   EXPECT_EQ(L'\u0142', buffer[1]);
 }

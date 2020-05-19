@@ -4,8 +4,8 @@
 
 #include "core/fpdftext/cpdf_linkextract.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 // Class to help test functions in CPDF_LinkExtract class.
 class CPDF_TestLinkExtract final : public CPDF_LinkExtract {
@@ -31,7 +31,7 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
       L"abc@.xyz.org",    // Domain name should not start with '.'.
       L"fan@g..com"       // Domain name should not have consecutive '.'
   };
-  for (size_t i = 0; i < FX_ArraySize(invalid_strs); ++i) {
+  for (size_t i = 0; i < pdfium::size(invalid_strs); ++i) {
     const wchar_t* const input = invalid_strs[i];
     WideString text_str(input);
     EXPECT_FALSE(extractor.CheckMailLink(&text_str)) << input;
@@ -52,7 +52,7 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
       {L"fan@g.com..", L"fan@g.com"},           // Trim the ending periods.
       {L"CAP.cap@Gmail.Com", L"CAP.cap@Gmail.Com"},  // Keep the original case.
   };
-  for (size_t i = 0; i < FX_ArraySize(valid_strs); ++i) {
+  for (size_t i = 0; i < pdfium::size(valid_strs); ++i) {
     const wchar_t* const input = valid_strs[i][0];
     WideString text_str(input);
     WideString expected_str(L"mailto:");
@@ -79,7 +79,7 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
       L"abc.example.com",  // URL without scheme.
   };
   const int32_t DEFAULT_VALUE = -42;
-  for (size_t i = 0; i < FX_ArraySize(invalid_cases); ++i) {
+  for (size_t i = 0; i < pdfium::size(invalid_cases); ++i) {
     const wchar_t* const input = invalid_cases[i];
     WideString text_str(input);
     int32_t start_offset = DEFAULT_VALUE;
@@ -174,7 +174,7 @@ TEST(CPDF_LinkExtractTest, CheckWebLink) {
       {L"www.测试。net。", L"http://www.测试。net。", 0, 11},
       {L"www.测试.net；", L"http://www.测试.net；", 0, 11},
   };
-  for (size_t i = 0; i < FX_ArraySize(valid_cases); ++i) {
+  for (size_t i = 0; i < pdfium::size(valid_cases); ++i) {
     const wchar_t* const input = valid_cases[i].input_string;
     WideString text_str(input);
     int32_t start_offset = DEFAULT_VALUE;

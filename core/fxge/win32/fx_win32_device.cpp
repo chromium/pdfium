@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_folderfontinfo.h"
@@ -28,6 +27,7 @@
 #include "core/fxge/win32/win32_int.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
+#include "third_party/base/stl_util.h"
 #include "third_party/base/win/win_util.h"
 
 #ifndef _SKIA_SUPPORT_
@@ -73,7 +73,7 @@ const FontNameMap g_JpFontNameMap[] = {
 };
 
 bool GetSubFontName(ByteString* name) {
-  for (size_t i = 0; i < FX_ArraySize(g_JpFontNameMap); ++i) {
+  for (size_t i = 0; i < pdfium::size(g_JpFontNameMap); ++i) {
     if (!FXSYS_stricmp(name->c_str(), g_JpFontNameMap[i].m_pSrcFontName)) {
       *name = g_JpFontNameMap[i].m_pSubFontName;
       return true;
@@ -583,7 +583,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
     return hFont;
 
   WideString wsFace = WideString::FromDefANSI(facebuf);
-  for (size_t i = 0; i < FX_ArraySize(g_VariantNames); ++i) {
+  for (size_t i = 0; i < pdfium::size(g_VariantNames); ++i) {
     if (face != g_VariantNames[i].m_pFaceName)
       continue;
 

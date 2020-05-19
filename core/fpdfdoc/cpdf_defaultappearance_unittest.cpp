@@ -4,10 +4,10 @@
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 
-#include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/span.h"
+#include "third_party/base/stl_util.h"
 
 TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
   static const struct FindTagTestStruct {
@@ -37,7 +37,7 @@ TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
   };
 
   CPDF_DefaultAppearance da;
-  for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
+  for (size_t i = 0; i < pdfium::size(test_data); ++i) {
     CPDF_SimpleParser parser(
         pdfium::make_span(test_data[i].input, test_data[i].input_size));
     EXPECT_EQ(test_data[i].result,

@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/stl_util.h"
 
 TEST(cpdf_filespec, EncodeDecodeFileName) {
   static const std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
@@ -101,12 +102,12 @@ TEST(cpdf_filespec, GetFileName) {
     };
     // Keyword fields in reverse order of precedence to retrieve the file name.
     const char* const keywords[] = {"Unix", "Mac", "DOS", "F", "UF"};
-    static_assert(FX_ArraySize(test_data) == FX_ArraySize(keywords),
+    static_assert(pdfium::size(test_data) == pdfium::size(keywords),
                   "size mismatch");
     auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
     CPDF_FileSpec file_spec(dict_obj.Get());
     EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
-    for (size_t i = 0; i < FX_ArraySize(keywords); ++i) {
+    for (size_t i = 0; i < pdfium::size(keywords); ++i) {
       dict_obj->SetNewFor<CPDF_String>(keywords[i], test_data[i].input);
       EXPECT_STREQ(test_data[i].expected, file_spec.GetFileName().c_str());
     }
@@ -197,12 +198,12 @@ TEST(cpdf_filespec, GetFileStream) {
     const wchar_t file_name[] = L"test.pdf";
     const char* const keys[] = {"Unix", "Mac", "DOS", "F", "UF"};
     const char* const streams[] = {"test1", "test2", "test3", "test4", "test5"};
-    static_assert(FX_ArraySize(keys) == FX_ArraySize(streams), "size mismatch");
+    static_assert(pdfium::size(keys) == pdfium::size(streams), "size mismatch");
     CPDF_Dictionary* file_dict =
         file_spec.GetObj()->AsDictionary()->GetDictFor("EF");
 
     // Keys in reverse order of precedence to retrieve the file content stream.
-    for (size_t i = 0; i < FX_ArraySize(keys); ++i) {
+    for (size_t i = 0; i < pdfium::size(keys); ++i) {
       // Set the file name.
       dict_obj->SetNewFor<CPDF_String>(keys[i], file_name);
 

@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxcrt/fx_memory.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -26,8 +26,8 @@ const char* const g_sZoomModes[] = {"Unknown", "XYZ",  "Fit",  "FitH",
 
 const uint8_t g_sZoomModeMaxParamCount[] = {0, 3, 0, 1, 1, 4, 0, 1, 1, 0};
 
-static_assert(FX_ArraySize(g_sZoomModes) ==
-                  FX_ArraySize(g_sZoomModeMaxParamCount),
+static_assert(pdfium::size(g_sZoomModes) ==
+                  pdfium::size(g_sZoomModeMaxParamCount),
               "Zoom mode count Mismatch");
 
 }  // namespace

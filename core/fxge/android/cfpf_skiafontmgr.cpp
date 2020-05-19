@@ -11,13 +11,13 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -263,9 +263,9 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
   uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, g_SkiaFontmap,
-                                          FX_ArraySize(g_SkiaFontmap));
+                                          pdfium::size(g_SkiaFontmap));
   uint32_t dwSubstSans = FPF_SkiaGetSubstFont(dwFaceName, g_SkiaSansFontMap,
-                                              FX_ArraySize(g_SkiaSansFontMap));
+                                              pdfium::size(g_SkiaSansFontMap));
   bool bMaybeSymbol = FPF_SkiaMaybeSymbol(bsFamilyname);
   if (uCharset != FX_CHARSET_MSWin_Arabic &&
       FPF_SkiaMaybeArabic(bsFamilyname)) {

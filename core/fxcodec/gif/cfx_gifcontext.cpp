@@ -298,7 +298,7 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
             if (gif_image->row_num >=
                 static_cast<int32_t>(gif_image->image_info.height)) {
               img_pass_num_++;
-              if (img_pass_num_ == FX_ArraySize(kGifInterlaceStep)) {
+              if (img_pass_num_ == pdfium::size(kGifInterlaceStep)) {
                 DecodingFailureAtTailCleanup(gif_image);
                 return CFX_GifDecodeStatus::Error;
               }

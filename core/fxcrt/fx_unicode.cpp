@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/fx_unicode.h"
 
-#include "core/fxcrt/fx_memory.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -30,7 +30,7 @@ constexpr uint16_t kTextLayoutCodeProperties[] = {
 #undef CHARPROP____
 
 constexpr size_t kTextLayoutCodePropertiesSize =
-    FX_ArraySize(kTextLayoutCodeProperties);
+    pdfium::size(kTextLayoutCodeProperties);
 
 static_assert(kTextLayoutCodePropertiesSize == 65536, "missing characters");
 
@@ -63,7 +63,7 @@ constexpr uint16_t kExtendedTextLayoutCodeProperties[] = {
 #undef CHARPROP____
 
 constexpr size_t kExtendedTextLayoutCodePropertiesSize =
-    FX_ArraySize(kExtendedTextLayoutCodeProperties);
+    pdfium::size(kExtendedTextLayoutCodeProperties);
 
 static_assert(kExtendedTextLayoutCodePropertiesSize == 65536,
               "missing characters");
@@ -122,7 +122,7 @@ constexpr uint16_t kFXTextLayoutBidiMirror[] = {
 };
 
 constexpr size_t kFXTextLayoutBidiMirrorSize =
-    FX_ArraySize(kFXTextLayoutBidiMirror);
+    pdfium::size(kFXTextLayoutBidiMirror);
 
 // Check that the mirror indicies in the fx_ucddata.inc table are in bounds.
 #undef CHARPROP____

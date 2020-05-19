@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -139,7 +140,7 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
   // List of keys to check for the file specification string.
   // Follows the same precedence order as GetFileName().
   static constexpr const char* kKeys[] = {"UF", "F", "DOS", "Mac", "Unix"};
-  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
+  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : pdfium::size(kKeys);
   for (size_t i = 0; i < end; ++i) {
     ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {

@@ -10,6 +10,7 @@
 #include "core/fxcodec/basic/basicmodule.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 TEST(fxcodec, A85TestBadInputs) {
   const uint8_t src_buf[] = {1, 2, 3, 4};
@@ -33,7 +34,7 @@ TEST(fxcodec, A85TestBasic) {
   // Should have 5 chars for each set of 4 and 2 terminators.
   const uint8_t expected_out[] = {33, 60, 78, 63, 43,  115,
                                   56, 87, 45, 33, 126, 62};
-  ASSERT_EQ(FX_ArraySize(expected_out), dest_size);
+  ASSERT_EQ(pdfium::size(expected_out), dest_size);
 
   // Check the output
   auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
@@ -54,7 +55,7 @@ TEST(fxcodec, A85TestLeftoverBytes) {
 
     // 5 chars for first symbol + 2 + 2 terminators.
     uint8_t expected_out_1leftover[] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
-    ASSERT_EQ(FX_ArraySize(expected_out_1leftover), dest_size);
+    ASSERT_EQ(pdfium::size(expected_out_1leftover), dest_size);
 
     // Check the output
     auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
@@ -72,7 +73,7 @@ TEST(fxcodec, A85TestLeftoverBytes) {
     // 5 chars for first symbol + 3 + 2 terminators.
     const uint8_t expected_out_2leftover[] = {33,  60, 78, 63,  43,
                                               115, 56, 68, 126, 62};
-    ASSERT_EQ(FX_ArraySize(expected_out_2leftover), dest_size);
+    ASSERT_EQ(pdfium::size(expected_out_2leftover), dest_size);
 
     // Check the output
     auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
@@ -90,7 +91,7 @@ TEST(fxcodec, A85TestLeftoverBytes) {
     // 5 chars for first symbol + 4 + 2 terminators.
     const uint8_t expected_out_3leftover[] = {33, 60, 78,  63,  43, 115,
                                               56, 77, 114, 126, 62};
-    ASSERT_EQ(FX_ArraySize(expected_out_3leftover), dest_size);
+    ASSERT_EQ(pdfium::size(expected_out_3leftover), dest_size);
 
     // Check the output
     auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
@@ -111,7 +112,7 @@ TEST(fxcodec, A85TestZeros) {
 
     // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
     const uint8_t expected_out[] = {33, 60, 78, 63, 43, 122, 126, 62};
-    ASSERT_EQ(FX_ArraySize(expected_out), dest_size);
+    ASSERT_EQ(pdfium::size(expected_out), dest_size);
 
     // Check the output
     auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
@@ -128,7 +129,7 @@ TEST(fxcodec, A85TestZeros) {
 
     // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
     const uint8_t expected_out_2[] = {122, 33, 60, 78, 63, 43, 126, 62};
-    ASSERT_EQ(FX_ArraySize(expected_out_2), dest_size);
+    ASSERT_EQ(pdfium::size(expected_out_2), dest_size);
 
     // Check the output
     auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
@@ -146,7 +147,7 @@ TEST(fxcodec, A85TestZeros) {
     // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
     const uint8_t expected_out_leftover[] = {33, 60, 78, 63,  43,
                                              33, 33, 33, 126, 62};
-    ASSERT_EQ(FX_ArraySize(expected_out_leftover), dest_size);
+    ASSERT_EQ(pdfium::size(expected_out_leftover), dest_size);
 
     // Check the output
     auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);

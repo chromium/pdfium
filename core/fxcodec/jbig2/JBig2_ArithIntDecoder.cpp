@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -28,7 +28,7 @@ size_t RecursiveDecode(CJBig2_ArithDecoder* decoder,
                        std::vector<JBig2ArithCtx>* context,
                        int* prev,
                        size_t depth) {
-  static const size_t kDepthEnd = FX_ArraySize(g_ArithIntDecodeData) - 1;
+  static const size_t kDepthEnd = pdfium::size(g_ArithIntDecodeData) - 1;
   if (depth == kDepthEnd)
     return kDepthEnd;
 

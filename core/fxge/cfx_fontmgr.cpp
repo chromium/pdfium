@@ -15,6 +15,7 @@
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -74,12 +75,12 @@ CFX_FontMgr::FontDesc::FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
 CFX_FontMgr::FontDesc::~FontDesc() = default;
 
 void CFX_FontMgr::FontDesc::SetFace(size_t index, CFX_Face* face) {
-  ASSERT(index < FX_ArraySize(m_TTCFaces));
+  ASSERT(index < pdfium::size(m_TTCFaces));
   m_TTCFaces[index].Reset(face);
 }
 
 CFX_Face* CFX_FontMgr::FontDesc::GetFace(size_t index) const {
-  ASSERT(index < FX_ArraySize(m_TTCFaces));
+  ASSERT(index < pdfium::size(m_TTCFaces));
   return m_TTCFaces[index].Get();
 }
 
@@ -160,12 +161,12 @@ RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(const RetainPtr<FontDesc>& pDesc,
 // static
 Optional<pdfium::span<const uint8_t>> CFX_FontMgr::GetBuiltinFont(
     size_t index) {
-  if (index < FX_ArraySize(g_FoxitFonts)) {
+  if (index < pdfium::size(g_FoxitFonts)) {
     return pdfium::make_span(g_FoxitFonts[index].m_pFontData,
                              g_FoxitFonts[index].m_dwSize);
   }
-  size_t mm_index = index - FX_ArraySize(g_FoxitFonts);
-  if (mm_index < FX_ArraySize(g_MMFonts)) {
+  size_t mm_index = index - pdfium::size(g_FoxitFonts);
+  if (mm_index < pdfium::size(g_MMFonts)) {
     return pdfium::make_span(g_MMFonts[mm_index].m_pFontData,
                              g_MMFonts[mm_index].m_dwSize);
   }

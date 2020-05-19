@@ -11,8 +11,8 @@
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -107,24 +107,24 @@ constexpr JBig2TableLine kTableLine15[] = {
 
 constexpr HuffmanTable kHuffmanTables[16] = {
     {false, nullptr, 0},  // Zero dummy to preserve indexing.
-    {false, kTableLine1, FX_ArraySize(kTableLine1)},
-    {true, kTableLine2, FX_ArraySize(kTableLine2)},
-    {true, kTableLine3, FX_ArraySize(kTableLine3)},
-    {false, kTableLine4, FX_ArraySize(kTableLine4)},
-    {false, kTableLine5, FX_ArraySize(kTableLine5)},
-    {false, kTableLine6, FX_ArraySize(kTableLine6)},
-    {false, kTableLine7, FX_ArraySize(kTableLine7)},
-    {true, kTableLine8, FX_ArraySize(kTableLine8)},
-    {true, kTableLine9, FX_ArraySize(kTableLine9)},
-    {true, kTableLine10, FX_ArraySize(kTableLine10)},
-    {false, kTableLine11, FX_ArraySize(kTableLine11)},
-    {false, kTableLine12, FX_ArraySize(kTableLine12)},
-    {false, kTableLine13, FX_ArraySize(kTableLine13)},
-    {false, kTableLine14, FX_ArraySize(kTableLine14)},
-    {false, kTableLine15, FX_ArraySize(kTableLine15)}};
+    {false, kTableLine1, pdfium::size(kTableLine1)},
+    {true, kTableLine2, pdfium::size(kTableLine2)},
+    {true, kTableLine3, pdfium::size(kTableLine3)},
+    {false, kTableLine4, pdfium::size(kTableLine4)},
+    {false, kTableLine5, pdfium::size(kTableLine5)},
+    {false, kTableLine6, pdfium::size(kTableLine6)},
+    {false, kTableLine7, pdfium::size(kTableLine7)},
+    {true, kTableLine8, pdfium::size(kTableLine8)},
+    {true, kTableLine9, pdfium::size(kTableLine9)},
+    {true, kTableLine10, pdfium::size(kTableLine10)},
+    {false, kTableLine11, pdfium::size(kTableLine11)},
+    {false, kTableLine12, pdfium::size(kTableLine12)},
+    {false, kTableLine13, pdfium::size(kTableLine13)},
+    {false, kTableLine14, pdfium::size(kTableLine14)},
+    {false, kTableLine15, pdfium::size(kTableLine15)}};
 
 static_assert(CJBig2_HuffmanTable::kNumHuffmanTables ==
-                  FX_ArraySize(kHuffmanTables),
+                  pdfium::size(kHuffmanTables),
               "kNumHuffmanTables must be equal to the size of kHuffmanTables");
 
 }  // namespace
