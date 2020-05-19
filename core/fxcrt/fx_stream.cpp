@@ -20,7 +20,7 @@
 
 struct FX_FolderHandle {
   HANDLE m_Handle;
-  bool m_bEnd;
+  bool m_bReachedEnd;
   WIN32_FIND_DATAA m_FindData;
 };
 #else
@@ -130,7 +130,7 @@ FX_FolderHandle* FX_OpenFolder(const char* path) {
   if (handle->m_Handle == INVALID_HANDLE_VALUE)
     return nullptr;
 
-  handle->m_bEnd = false;
+  handle->m_bReachedEnd = false;
 #else
   DIR* dir = opendir(path);
   if (!dir)
@@ -149,14 +149,14 @@ bool FX_GetNextFile(FX_FolderHandle* handle,
     return false;
 
 #if defined(OS_WIN)
-  if (handle->m_bEnd)
+  if (handle->m_bReachedEnd)
     return false;
 
   *filename = handle->m_FindData.cFileName;
   *bFolder =
       (handle->m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
   if (!FindNextFileA(handle->m_Handle, &handle->m_FindData))
-    handle->m_bEnd = true;
+    handle->m_bReachedEnd = true;
   return true;
 #else
   struct dirent* de = readdir(handle->m_Dir);

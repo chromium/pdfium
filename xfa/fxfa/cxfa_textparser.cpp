@@ -74,7 +74,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     m_pSelector = std::make_unique<CFX_CSSStyleSelector>();
 
     CXFA_Font* font = pTextProvider->GetFontIfExists();
-    m_pSelector->SetDefFontSize(font ? font->GetFontSize() : 10.0f);
+    m_pSelector->SetDefaultFontSize(font ? font->GetFontSize() : 10.0f);
   }
 
   if (m_cssInitialized)

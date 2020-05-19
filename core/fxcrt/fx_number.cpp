@@ -13,22 +13,22 @@
 #include "core/fxcrt/fx_string.h"
 
 FX_Number::FX_Number()
-    : m_bInteger(true), m_bSigned(false), m_UnsignedValue(0) {}
+    : m_bIsInteger(true), m_bIsSigned(false), m_UnsignedValue(0) {}
 
 FX_Number::FX_Number(int32_t value)
-    : m_bInteger(true), m_bSigned(true), m_SignedValue(value) {}
+    : m_bIsInteger(true), m_bIsSigned(true), m_SignedValue(value) {}
 
 FX_Number::FX_Number(float value)
-    : m_bInteger(false), m_bSigned(true), m_FloatValue(value) {}
+    : m_bIsInteger(false), m_bIsSigned(true), m_FloatValue(value) {}
 
 FX_Number::FX_Number(ByteStringView strc)
-    : m_bInteger(true), m_bSigned(false), m_UnsignedValue(0) {
+    : m_bIsInteger(true), m_bIsSigned(false), m_UnsignedValue(0) {
   if (strc.IsEmpty())
     return;
 
   if (strc.Contains('.')) {
-    m_bInteger = false;
-    m_bSigned = true;
+    m_bIsInteger = false;
+    m_bIsSigned = true;
     m_FloatValue = StringToFloat(strc);
     return;
   }
@@ -43,10 +43,10 @@ FX_Number::FX_Number(ByteStringView strc)
   size_t cc = 0;
   if (strc[0] == '+') {
     cc++;
-    m_bSigned = true;
+    m_bIsSigned = true;
   } else if (strc[0] == '-') {
     bNegative = true;
-    m_bSigned = true;
+    m_bIsSigned = true;
     cc++;
   }
 
@@ -58,7 +58,7 @@ FX_Number::FX_Number(ByteStringView strc)
   }
 
   uint32_t uValue = unsigned_val.ValueOrDefault(0);
-  if (!m_bSigned) {
+  if (!m_bIsSigned) {
     m_UnsignedValue = uValue;
     return;
   }
@@ -86,13 +86,13 @@ FX_Number::FX_Number(ByteStringView strc)
 }
 
 int32_t FX_Number::GetSigned() const {
-  return m_bInteger ? m_SignedValue : static_cast<int32_t>(m_FloatValue);
+  return m_bIsInteger ? m_SignedValue : static_cast<int32_t>(m_FloatValue);
 }
 
 float FX_Number::GetFloat() const {
-  if (!m_bInteger)
+  if (!m_bIsInteger)
     return m_FloatValue;
 
-  return m_bSigned ? static_cast<float>(m_SignedValue)
-                   : static_cast<float>(m_UnsignedValue);
+  return m_bIsSigned ? static_cast<float>(m_SignedValue)
+                     : static_cast<float>(m_UnsignedValue);
 }

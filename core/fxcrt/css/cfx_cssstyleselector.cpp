@@ -21,13 +21,13 @@
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "third_party/base/logging.h"
 
-CFX_CSSStyleSelector::CFX_CSSStyleSelector() : m_fDefFontSize(12.0f) {}
+CFX_CSSStyleSelector::CFX_CSSStyleSelector() = default;
 
-CFX_CSSStyleSelector::~CFX_CSSStyleSelector() {}
+CFX_CSSStyleSelector::~CFX_CSSStyleSelector() = default;
 
-void CFX_CSSStyleSelector::SetDefFontSize(float fFontSize) {
+void CFX_CSSStyleSelector::SetDefaultFontSize(float fFontSize) {
   ASSERT(fFontSize > 0);
-  m_fDefFontSize = fFontSize;
+  m_fDefaultFontSize = fFontSize;
 }
 
 RetainPtr<CFX_CSSComputedStyle> CFX_CSSStyleSelector::CreateComputedStyle(
@@ -515,19 +515,19 @@ float CFX_CSSStyleSelector::ToFontSize(CFX_CSSPropertyValue eValue,
                                        float fCurFontSize) {
   switch (eValue) {
     case CFX_CSSPropertyValue::XxSmall:
-      return m_fDefFontSize / 1.2f / 1.2f / 1.2f;
+      return m_fDefaultFontSize / 1.2f / 1.2f / 1.2f;
     case CFX_CSSPropertyValue::XSmall:
-      return m_fDefFontSize / 1.2f / 1.2f;
+      return m_fDefaultFontSize / 1.2f / 1.2f;
     case CFX_CSSPropertyValue::Small:
-      return m_fDefFontSize / 1.2f;
+      return m_fDefaultFontSize / 1.2f;
     case CFX_CSSPropertyValue::Medium:
-      return m_fDefFontSize;
+      return m_fDefaultFontSize;
     case CFX_CSSPropertyValue::Large:
-      return m_fDefFontSize * 1.2f;
+      return m_fDefaultFontSize * 1.2f;
     case CFX_CSSPropertyValue::XLarge:
-      return m_fDefFontSize * 1.2f * 1.2f;
+      return m_fDefaultFontSize * 1.2f * 1.2f;
     case CFX_CSSPropertyValue::XxLarge:
-      return m_fDefFontSize * 1.2f * 1.2f * 1.2f;
+      return m_fDefaultFontSize * 1.2f * 1.2f * 1.2f;
     case CFX_CSSPropertyValue::Larger:
       return fCurFontSize * 1.2f;
     case CFX_CSSPropertyValue::Smaller:

@@ -49,7 +49,7 @@ class CFX_CSSSyntaxParser {
   void SaveMode(SyntaxMode eMode);
   bool RestoreMode();
 
-  bool m_bError = false;
+  bool m_bHasError = false;
   SyntaxMode m_eMode = SyntaxMode::kRuleSet;
   CFX_CSSTextBuf m_Output;
   CFX_CSSExtTextBuf m_Input;
