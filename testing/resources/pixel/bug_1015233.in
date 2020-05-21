@@ -1,0 +1,113 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 600 200]
+  /Resources <<
+    /ProcSet [/PDF /ImageC]
+    /ColorSpace <<
+      /C1 [/Pattern]
+    >>
+    /Pattern <<
+      /P1 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+0.24 0 0 0.24 0 0 cm
+/C1 cs
+/P1 scn
+888 400 108 60 re
+f*
+0 0 0 rg
+888 460 m
+888 400 l
+S
+/C1 cs
+/P1 scn
+1536 400 108 60 re
+f*
+0 0 0 rg
+1536 460 m
+1536 400 l
+S
+/C1 cs
+/P1 scn
+2184 400 108 60 re
+f*
+0 0 0 rg
+2184 460 m
+2184 400 l
+S
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Pattern
+  /PaintType 1
+  /PatternType 1
+  /TilingType 1
+  /BBox [0 0 128 32]
+  /Matrix [0.202488 0 0 -0.449947 0 791.999]
+  /Resources <<
+    /ProcSet [/PDF /ImageC]
+    /XObject <<
+      /R17 6 0 R
+    >>
+  >>
+  /XStep 128
+  /YStep 32
+  {{streamlen}}
+>>
+stream
+0.24 0 0 0.24 0 0 cm
+q
+0 134 534 -134 re
+W n
+q 533.333 0 0 -133.333 0 133.333 cm
+/R17 Do
+Q
+Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /DecodeParms <<
+    /Columns 128
+    /Colors 3
+    /Predictor 15
+  >>
+  /Filter [/ASCII85Decode /FlateDecode]
+  /Height 32
+  /Width 128
+  {{streamlen}}
+>>
+stream
+Gb"0JYmJ3"&-Ti)eYrN1j:2;&T!_s\O.TqV*k'Yd:%,W`r[n(QqR?*8l/0q(V12/<QMrK7>Pbi$Ds?0-
+^SQEPrg*O8rEK--oPa!Od_DW.CH2@W5h#c57fSeR/cAoM\+FV'hpVPkGl`cd*^p
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
