@@ -312,13 +312,16 @@ def CheckChangeOnUpload(input_api, output_api):
       x, white_list=(r'\.(?:c|cc|cpp|h)$',))
 
   results = []
-  results += _CheckUnwantedDependencies(input_api, output_api)
-  results += input_api.canned_checks.CheckPatchFormatted(input_api, output_api)
-  results += input_api.canned_checks.CheckChangeLintsClean(
-      input_api, output_api, cpp_source_filter, LINT_FILTERS)
-  results += _CheckIncludeOrder(input_api, output_api)
-  results += _CheckTestDuplicates(input_api, output_api)
-  results += _CheckPNGFormat(input_api, output_api)
+  results.extend(_CheckUnwantedDependencies(input_api, output_api))
+  results.extend(
+      input_api.canned_checks.CheckPatchFormatted(input_api, output_api))
+  results.extend(
+      input_api.canned_checks.CheckChangeLintsClean(input_api, output_api,
+                                                    cpp_source_filter,
+                                                    LINT_FILTERS))
+  results.extend(_CheckIncludeOrder(input_api, output_api))
+  results.extend(_CheckTestDuplicates(input_api, output_api))
+  results.extend(_CheckPNGFormat(input_api, output_api))
 
   for f in input_api.AffectedFiles():
     path, name = input_api.os_path.split(f.LocalPath())

@@ -24,11 +24,11 @@ def _CheckPublicHeaders(input_api, output_api):
 
 def CheckChangeOnUpload(input_api, output_api):
   results = []
-  results += _CheckPublicHeaders(input_api, output_api)
+  results.extend(_CheckPublicHeaders(input_api, output_api))
   return results
 
 
 def CheckChangeOnCommit(input_api, output_api):
   results = []
-  results += _CheckPublicHeaders(input_api, output_api)
+  results.extend(_CheckPublicHeaders(input_api, output_api))
   return results
