@@ -34,6 +34,11 @@ _INCLUDE_ORDER_WARNING = (
     'cppguide.html#Names_and_Order_of_Includes')
 
 
+# Bypass the AUTHORS check for these accounts.
+_KNOWN_ROBOTS = set() | set(
+    '%s@skia-public.iam.gserviceaccount.com' % s for s in ('pdfium-autoroll',))
+
+
 def _CheckUnwantedDependencies(input_api, output_api):
   """Runs checkdeps on #include statements added in this
   change. Breaking - rules is an error, breaking ! rules is a
@@ -322,6 +327,11 @@ def CheckChangeOnUpload(input_api, output_api):
   results.extend(_CheckIncludeOrder(input_api, output_api))
   results.extend(_CheckTestDuplicates(input_api, output_api))
   results.extend(_CheckPNGFormat(input_api, output_api))
+
+  author = input_api.change.author_email
+  if author and author not in _KNOWN_ROBOTS:
+    results.extend(
+        input_api.canned_checks.CheckAuthorizedAuthor(input_api, output_api))
 
   for f in input_api.AffectedFiles():
     path, name = input_api.os_path.split(f.LocalPath())
