@@ -533,6 +533,28 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (!m_pEdit)
     return false;
 
+  // In a combo box if the ENTER/SPACE key is pressed, show the combo box
+  // options.
+  switch (nChar) {
+    case FWL_VKEY_Return:
+      SetPopup(!IsPopup());
+      SetSelectText();
+      return true;
+    case FWL_VKEY_Space:
+      // Show the combo box options with space only if the combo box is not
+      // editable
+      if (!HasFlag(PCBS_ALLOWCUSTOMTEXT)) {
+        if (!IsPopup()) {
+          SetPopup(/*bPopUp=*/true);
+          SetSelectText();
+        }
+        return true;
+      }
+      break;
+    default:
+      break;
+  }
+
   m_nSelectItem = -1;
   if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
     return m_pEdit->OnChar(nChar, nFlag);

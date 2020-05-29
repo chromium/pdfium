@@ -1,0 +1,35 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm <<
+    /Fields [4 0 R]
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Ch
+  /Ff 131072
+  /T (Combo)
+  /Rect [100 400 200 430]
+  /Opt [() () ()]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

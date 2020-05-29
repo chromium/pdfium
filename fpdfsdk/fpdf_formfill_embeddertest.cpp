@@ -2309,6 +2309,81 @@ TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
   CheckSelection(L"ABCDEHello");
 }
 
+TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
+       CheckIfEnterAndSpaceKeyAreHandled) {
+  // Non-editable field is set to 'Banana' (index 1) upon opening.
+  ClickOnFormFieldAtPoint(NonEditableFormBegin());
+  CheckIsIndexSelected(0, false);
+  CheckIsIndexSelected(1, true);
+
+  // Verify that the Enter key is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Return, 0));
+
+  // Change the selection in the combo-box using the arrow down key.
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Down, 0));
+  CheckIsIndexSelected(1, false);
+  CheckIsIndexSelected(2, true);
+
+  // Tab to the next control.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, 0));
+
+  // Shift-tab to the previous control.
+  EXPECT_TRUE(
+      FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, FWL_EVENTFLAG_ShiftKey));
+
+  // Verify that the selection is unchanged.
+  CheckIsIndexSelected(2, true);
+
+  // Verify that the Space key is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Space, 0));
+
+  // Change the selection in the combo-box using the arrow down key.
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Down, 0));
+  CheckIsIndexSelected(3, true);
+
+  // Tab to the next control.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, 0));
+
+  // Shift-tab to the previous control.
+  EXPECT_TRUE(
+      FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, FWL_EVENTFLAG_ShiftKey));
+
+  // Verify that the selection is unchanged.
+  CheckIsIndexSelected(3, true);
+}
+
+TEST_F(FPDFFormFillComboBoxFormEmbedderTest,
+       CheckIfEnterAndSpaceKeyAreHandledOnEditableFormField) {
+  // Non-editable field is set to 'Banana' (index 1) upon opening.
+  ClickOnFormFieldAtPoint(EditableFormBegin());
+  CheckIsIndexSelected(0, false);
+  CheckIsIndexSelected(1, false);
+
+  // Verify that the Enter key is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Return, 0));
+
+  // Change the selection in the combo-box using the arrow down key.
+  EXPECT_TRUE(FORM_OnKeyDown(form_handle(), page(), FWL_VKEY_Down, 0));
+  CheckIsIndexSelected(0, true);
+  CheckIsIndexSelected(1, false);
+
+  // Tab to the next control.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, 0));
+
+  // Shift-tab to the previous control.
+  EXPECT_TRUE(
+      FORM_OnChar(form_handle(), page(), FWL_VKEY_Tab, FWL_EVENTFLAG_ShiftKey));
+
+  // Verify that the selection is unchanged.
+  CheckIsIndexSelected(0, true);
+
+  // Verify that the Space key is handled.
+  EXPECT_TRUE(FORM_OnChar(form_handle(), page(), FWL_VKEY_Space, 0));
+
+  CheckFocusedFieldText(L" ");
+  CheckIsIndexSelected(0, false);
+}
+
 TEST_F(FPDFFormFillTextFormEmbedderTest,
        InsertTextInEmptyCharLimitTextFieldOverflow) {
   // Click on the textfield.

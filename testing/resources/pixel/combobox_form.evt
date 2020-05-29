@@ -1,0 +1,10 @@
+# Check the combobox control
+mousemove,102,410
+mousedown,left,102,410
+mouseup,left,102,410
+
+# Press Enter to open the pop-up menu
+charcode,13
+
+# Press Space to make sure that the pop-up is not dismissed
+charcode,32
