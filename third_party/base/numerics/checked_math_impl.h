@@ -252,13 +252,23 @@ struct CheckedModOp<T,
   using result_type = typename MaxExponentPromotion<T, U>::type;
   template <typename V>
   static constexpr bool Do(T x, U y, V* result) {
+    if (BASE_NUMERICS_UNLIKELY(!y))
+      return false;
+
     using Promotion = typename BigEnoughPromotion<T, U>::type;
-    if (BASE_NUMERICS_LIKELY(y)) {
-      Promotion presult = static_cast<Promotion>(x) % static_cast<Promotion>(y);
-      *result = static_cast<Promotion>(presult);
-      return IsValueInRangeForNumericType<V>(presult);
+    if (BASE_NUMERICS_UNLIKELY(
+            (std::is_signed<T>::value && std::is_signed<U>::value &&
+             IsTypeInRangeForNumericType<T, Promotion>::value &&
+             static_cast<Promotion>(x) ==
+                 std::numeric_limits<Promotion>::lowest() &&
+             y == static_cast<U>(-1)))) {
+      *result = 0;
+      return true;
     }
-    return false;
+
+    Promotion presult = static_cast<Promotion>(x) % static_cast<Promotion>(y);
+    *result = static_cast<Promotion>(presult);
+    return IsValueInRangeForNumericType<V>(presult);
   }
 };
 
