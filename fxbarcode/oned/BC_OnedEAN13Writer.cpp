@@ -180,7 +180,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, &charpos[1], m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(7, 6);
   length = tempStr.GetLength();
@@ -195,7 +195,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, &charpos[7], m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.First(1);
   length = tempStr.GetLength();
@@ -211,7 +211,7 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, charpos.data(), m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   return true;
 }

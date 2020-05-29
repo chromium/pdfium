@@ -37,6 +37,11 @@
 #include "fxbarcode/BC_Writer.h"
 
 // static
+uint32_t CBC_OneDimWriter::GetTextRenderOptions() {
+  return FXTEXT_CLEARTYPE;
+}
+
+// static
 bool CBC_OneDimWriter::HasValidContentSize(WideStringView contents) {
   // Limit the size of 1D barcodes. Typical 1D barcodes are short so this should
   // be sufficient for most use cases.
@@ -184,7 +189,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   }
   device->DrawNormalText(str.GetLength(), pCharPos, m_pFont.Get(),
                          static_cast<float>(iFontSize), affine_matrix,
-                         m_fontColor, FXTEXT_CLEARTYPE);
+                         m_fontColor, GetTextRenderOptions());
 }
 
 bool CBC_OneDimWriter::ShowChars(WideStringView contents,

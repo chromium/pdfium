@@ -162,7 +162,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, &charpos[1], m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(6, 5);
   length = tempStr.GetLength();
@@ -176,7 +176,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, &charpos[6], m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.First(1);
   length = tempStr.GetLength();
@@ -192,7 +192,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, charpos.data(), m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(11, 1);
   length = tempStr.GetLength();
@@ -207,7 +207,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
       affine_matrix1.Concat(*matrix);
     device->DrawNormalText(length, &charpos[11], m_pFont.Get(),
                            static_cast<float>(iFontSize), affine_matrix1,
-                           m_fontColor, FXTEXT_CLEARTYPE);
+                           m_fontColor, GetTextRenderOptions());
   }
   return true;
 }
