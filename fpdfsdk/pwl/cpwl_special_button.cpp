@@ -39,6 +39,9 @@ bool CPWL_CheckBox::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
 }
 
 bool CPWL_CheckBox::OnChar(uint16_t nChar, uint32_t nFlag) {
+  if (IsReadOnly())
+    return false;
+
   SetCheck(!IsChecked());
   return true;
 }
@@ -59,6 +62,9 @@ bool CPWL_RadioButton::OnLButtonUp(uint32_t nFlag, const CFX_PointF& point) {
 }
 
 bool CPWL_RadioButton::OnChar(uint16_t nChar, uint32_t nFlag) {
+  if (IsReadOnly())
+    return false;
+
   SetCheck(true);
   return true;
 }

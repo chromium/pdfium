@@ -1021,6 +1021,75 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_851821) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInCheckbox) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Check for read-only checkbox.
+    ScopedFPDFAnnotation focused_annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(FORM_SetFocusedAnnot(form_handle(), focused_annot.get()));
+
+    // Shift-tab to the previous control.
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+                               FWL_EVENTFLAG_ShiftKey));
+    FPDF_ANNOTATION annot = nullptr;
+    int page_index = -1;
+    ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot));
+
+    // The read-only checkbox is initially in checked state.
+    EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
+
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, FWL_VKEY_Return, 0));
+    EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
+
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, FWL_VKEY_Space, 0));
+    EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
+
+    FPDFPage_CloseAnnot(annot);
+  }
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInRadiobutton) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Check for read-only radio button.
+    ScopedFPDFAnnotation focused_annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(FORM_SetFocusedAnnot(form_handle(), focused_annot.get()));
+
+    // Tab to the next control.
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
+
+    FPDF_ANNOTATION annot = nullptr;
+    int page_index = -1;
+    ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
+    EXPECT_EQ(2, FPDFPage_GetAnnotIndex(page, annot));
+    // The read-only radio button is initially in checked state.
+    EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
+
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, FWL_VKEY_Return, 0));
+    EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
+
+    EXPECT_TRUE(FORM_OnChar(form_handle(), page, FWL_VKEY_Space, 0));
+    EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
+
+    FPDFPage_CloseAnnot(annot);
+  }
+  UnloadPage(page);
+}
+
 #ifdef PDF_ENABLE_V8
 TEST_F(FPDFFormFillEmbedderTest, DisableJavaScript) {
   // Test that timers and intervals can't fire without JS.
