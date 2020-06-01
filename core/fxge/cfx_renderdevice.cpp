@@ -398,6 +398,8 @@ void CFX_RenderDevice::Flush(bool release) {
 
 void CFX_RenderDevice::SetDeviceDriver(
     std::unique_ptr<RenderDeviceDriverIface> pDriver) {
+  ASSERT(pDriver);
+  ASSERT(!m_pDeviceDriver);
   m_pDeviceDriver = std::move(pDriver);
   InitDeviceInfo();
 }

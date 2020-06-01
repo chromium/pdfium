@@ -29,6 +29,9 @@ struct CFX_Color;
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
 
+// Base class for all render devices. Derived classes must call
+// SetDeviceDriver() to fully initialize the class. Until then, class methods
+// are not safe to call, or may return invalid results.
 class CFX_RenderDevice {
  public:
   class StateRestorer {
@@ -47,7 +50,6 @@ class CFX_RenderDevice {
                                   float left,
                                   float top);
 
-  void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
   RenderDeviceDriverIface* GetDeviceDriver() const {
     return m_pDeviceDriver.get();
   }
@@ -223,6 +225,8 @@ class CFX_RenderDevice {
 
  protected:
   CFX_RenderDevice();
+
+  void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
 
  private:
   void InitDeviceInfo();
