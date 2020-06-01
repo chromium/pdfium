@@ -736,7 +736,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 //
 // Set if annotations are to be rendered.
 #define FPDF_ANNOT 0x01
-// Set if using text rendering optimized for LCD display.
+// Set if using text rendering optimized for LCD display. This flag will only
+// take effect if anti-aliasing is enabled for text.
 #define FPDF_LCD_TEXT 0x02
 // Don't use the native text output available on some platforms
 #define FPDF_NO_NATIVETEXT 0x04
@@ -752,7 +753,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 #define FPDF_RENDER_FORCEHALFTONE 0x400
 // Render for printing.
 #define FPDF_PRINTING 0x800
-// Set to disable anti-aliasing on text.
+// Set to disable anti-aliasing on text. This flag will also disable LCD
+// optimization for text rendering.
 #define FPDF_RENDER_NO_SMOOTHTEXT 0x1000
 // Set to disable anti-aliasing on images.
 #define FPDF_RENDER_NO_SMOOTHIMAGE 0x2000

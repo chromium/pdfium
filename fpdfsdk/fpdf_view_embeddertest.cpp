@@ -1255,6 +1255,11 @@ TEST_F(FPDFViewEmbedderTest, MAYBE_RenderHelloWorldWithFlags) {
   TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHPATH,
                                 kHelloWorldChecksum);
 
+  // For text rendering, When anti-aliasing is disabled, LCD Optimization flag
+  // will be ignored.
+  TestRenderPageBitmapWithFlags(page, FPDF_LCD_TEXT | FPDF_RENDER_NO_SMOOTHTEXT,
+                                kNoSmoothtextMD5);
+
   UnloadPage(page);
 }
 #endif  // defined(OS_LINUX)
