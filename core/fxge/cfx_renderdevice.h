@@ -40,7 +40,6 @@ class CFX_RenderDevice {
     UnownedPtr<CFX_RenderDevice> m_pDevice;
   };
 
-  CFX_RenderDevice();
   virtual ~CFX_RenderDevice();
 
   static CFX_Matrix GetFlipMatrix(float width,
@@ -221,6 +220,9 @@ class CFX_RenderDevice {
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   void Flush(bool release);
 #endif
+
+ protected:
+  CFX_RenderDevice();
 
  private:
   void InitDeviceInfo();
