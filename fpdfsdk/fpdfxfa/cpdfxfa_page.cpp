@@ -21,6 +21,14 @@
 #include "xfa/fxfa/cxfa_rendercontext.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
+namespace {
+
+constexpr uint32_t kIteratorFilter = XFA_WidgetStatus_Visible |
+                                     XFA_WidgetStatus_Viewable |
+                                     XFA_WidgetStatus_Focused;
+
+}  // namespace
+
 CPDFXFA_Page::CPDFXFA_Page(CPDF_Document* pDocument, int page_index)
     : m_pDocument(pDocument), m_iPageIndex(page_index) {
   ASSERT(m_pDocument->GetExtension());
@@ -179,12 +187,14 @@ CPDFSDK_Annot* CPDFXFA_Page::GetNextXFAAnnot(CPDFSDK_Annot* pSDKAnnot,
   if (!pXFAWidget)
     return nullptr;
 
+  CXFA_FFPageView* xfa_page_view = GetXFAPageView();
+  if (!xfa_page_view)
+    return nullptr;
+
   ObservedPtr<CPDFSDK_Annot> pObservedAnnot(pSDKAnnot);
   CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
   std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator =
-      GetXFAPageView()->CreateTraverseWidgetIterator(XFA_WidgetStatus_Visible |
-                                                     XFA_WidgetStatus_Viewable |
-                                                     XFA_WidgetStatus_Focused);
+      xfa_page_view->CreateTraverseWidgetIterator(kIteratorFilter);
 
   // Check |pSDKAnnot| again because JS may have destroyed it
   if (!pObservedAnnot)
@@ -209,9 +219,7 @@ CPDFSDK_Annot* CPDFXFA_Page::GetFirstOrLastXFAAnnot(CPDFSDK_PageView* page_view,
 
   ObservedPtr<CPDFSDK_PageView> watched_page_view(page_view);
   std::unique_ptr<IXFA_WidgetIterator> it =
-      xfa_page_view->CreateTraverseWidgetIterator(XFA_WidgetStatus_Visible |
-                                                  XFA_WidgetStatus_Viewable |
-                                                  XFA_WidgetStatus_Focused);
+      xfa_page_view->CreateTraverseWidgetIterator(kIteratorFilter);
   if (!watched_page_view)
     return nullptr;
 
