@@ -50,7 +50,7 @@ CPDF_ReadValidator::CPDF_ReadValidator(
       whole_file_already_available_(false),
       file_size_(file_read->GetSize()) {}
 
-CPDF_ReadValidator::~CPDF_ReadValidator() {}
+CPDF_ReadValidator::~CPDF_ReadValidator() = default;
 
 void CPDF_ReadValidator::ResetErrors() {
   read_error_ = false;

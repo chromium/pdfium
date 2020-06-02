@@ -144,7 +144,7 @@ CJBig2_HuffmanTable::CJBig2_HuffmanTable(CJBig2_BitStream* pStream)
   m_bOK = ParseFromCodedBuffer(pStream);
 }
 
-CJBig2_HuffmanTable::~CJBig2_HuffmanTable() {}
+CJBig2_HuffmanTable::~CJBig2_HuffmanTable() = default;
 
 bool CJBig2_HuffmanTable::ParseFromStandardTable(size_t idx) {
   const JBig2TableLine* pTable = kHuffmanTables[idx].lines;

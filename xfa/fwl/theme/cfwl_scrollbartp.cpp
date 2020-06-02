@@ -24,7 +24,7 @@ CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
   SetThemeData();
 }
 
-CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {}
+CFWL_ScrollBarTP::~CFWL_ScrollBarTP() = default;
 
 void CFWL_ScrollBarTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   CFWL_Widget* pWidget = pParams.m_pWidget;

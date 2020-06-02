@@ -38,4 +38,4 @@ CXFA_Traverse::CXFA_Traverse(CXFA_Document* doc, XFA_PacketType packet)
                 kTraverseAttributeData,
                 std::make_unique<CJX_Node>(this)) {}
 
-CXFA_Traverse::~CXFA_Traverse() {}
+CXFA_Traverse::~CXFA_Traverse() = default;

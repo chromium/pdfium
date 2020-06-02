@@ -11,4 +11,4 @@ CFX_CSSCustomProperty::CFX_CSSCustomProperty(const WideString& name,
 CFX_CSSCustomProperty::CFX_CSSCustomProperty(const CFX_CSSCustomProperty& prop)
     : name_(prop.name_), value_(prop.value_) {}
 
-CFX_CSSCustomProperty::~CFX_CSSCustomProperty() {}
+CFX_CSSCustomProperty::~CFX_CSSCustomProperty() = default;

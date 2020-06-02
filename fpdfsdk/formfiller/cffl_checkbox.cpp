@@ -19,7 +19,7 @@ CFFL_CheckBox::CFFL_CheckBox(CPDFSDK_FormFillEnvironment* pApp,
                              CPDFSDK_Widget* pWidget)
     : CFFL_Button(pApp, pWidget) {}
 
-CFFL_CheckBox::~CFFL_CheckBox() {}
+CFFL_CheckBox::~CFFL_CheckBox() = default;
 
 std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,

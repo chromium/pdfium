@@ -74,7 +74,7 @@ CFX_BidiString::CFX_BidiString(const WideString& str) : m_Str(str) {
     SetOverallDirectionRight();
 }
 
-CFX_BidiString::~CFX_BidiString() {}
+CFX_BidiString::~CFX_BidiString() = default;
 
 CFX_BidiChar::Direction CFX_BidiString::OverallDirection() const {
   ASSERT(m_eOverallDirection != CFX_BidiChar::NEUTRAL);

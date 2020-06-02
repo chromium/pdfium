@@ -60,7 +60,7 @@ CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
   ASSERT(m_ClipRect.Valid());
 }
 
-CFX_ImageStretcher::~CFX_ImageStretcher() {}
+CFX_ImageStretcher::~CFX_ImageStretcher() = default;
 
 bool CFX_ImageStretcher::Start() {
   if (m_DestWidth == 0 || m_DestHeight == 0)

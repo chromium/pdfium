@@ -8,4 +8,4 @@
 
 CFX_CSSPropertyHolder::CFX_CSSPropertyHolder() {}
 
-CFX_CSSPropertyHolder::~CFX_CSSPropertyHolder() {}
+CFX_CSSPropertyHolder::~CFX_CSSPropertyHolder() = default;

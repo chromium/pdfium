@@ -20,7 +20,7 @@ CJX_Manifest::CJX_Manifest(CXFA_Manifest* manifest) : CJX_Node(manifest) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Manifest::~CJX_Manifest() {}
+CJX_Manifest::~CJX_Manifest() = default;
 
 bool CJX_Manifest::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

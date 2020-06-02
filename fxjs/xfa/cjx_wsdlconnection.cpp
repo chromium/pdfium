@@ -21,7 +21,7 @@ CJX_WsdlConnection::CJX_WsdlConnection(CXFA_WsdlConnection* connection)
   DefineMethods(MethodSpecs);
 }
 
-CJX_WsdlConnection::~CJX_WsdlConnection() {}
+CJX_WsdlConnection::~CJX_WsdlConnection() = default;
 
 bool CJX_WsdlConnection::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

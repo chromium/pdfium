@@ -52,7 +52,7 @@ WideString CPWL_ListCtrl::Item::GetText() const {
 
 CPLST_Select::CPLST_Select() {}
 
-CPLST_Select::~CPLST_Select() {}
+CPLST_Select::~CPLST_Select() = default;
 
 void CPLST_Select::Add(int32_t nItemIndex) {
   m_Items[nItemIndex] = SELECTING;

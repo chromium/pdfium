@@ -23,7 +23,7 @@ CJX_Container::CJX_Container(CXFA_Node* node) : CJX_Node(node) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Container::~CJX_Container() {}
+CJX_Container::~CJX_Container() = default;
 
 bool CJX_Container::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

@@ -103,7 +103,7 @@ CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
   }
 }
 
-CPDF_LinearizedHeader::~CPDF_LinearizedHeader() {}
+CPDF_LinearizedHeader::~CPDF_LinearizedHeader() = default;
 
 bool CPDF_LinearizedHeader::HasHintTable() const {
   return GetPageCount() > 1 && GetHintStart() > 0 && GetHintLength() > 0;

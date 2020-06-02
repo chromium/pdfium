@@ -31,4 +31,4 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
 #endif
 }
 
-CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() {}
+CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() = default;

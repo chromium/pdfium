@@ -59,7 +59,7 @@ CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,
   ASSERT(locale_);
 }
 
-CXFA_XMLLocale::~CXFA_XMLLocale() {}
+CXFA_XMLLocale::~CXFA_XMLLocale() = default;
 
 WideString CXFA_XMLLocale::GetName() const {
   return locale_->GetAttribute(L"name");

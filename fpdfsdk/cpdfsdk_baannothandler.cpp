@@ -41,7 +41,7 @@ void UpdateAnnotRects(CPDFSDK_PageView* pPageView, CPDFSDK_BAAnnot* pBAAnnot) {
 
 CPDFSDK_BAAnnotHandler::CPDFSDK_BAAnnotHandler() {}
 
-CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() {}
+CPDFSDK_BAAnnotHandler::~CPDFSDK_BAAnnotHandler() = default;
 
 void CPDFSDK_BAAnnotHandler::SetFormFillEnvironment(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {

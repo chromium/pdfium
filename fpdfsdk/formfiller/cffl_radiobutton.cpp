@@ -19,7 +19,7 @@ CFFL_RadioButton::CFFL_RadioButton(CPDFSDK_FormFillEnvironment* pApp,
                                    CPDFSDK_Widget* pWidget)
     : CFFL_Button(pApp, pWidget) {}
 
-CFFL_RadioButton::~CFFL_RadioButton() {}
+CFFL_RadioButton::~CFFL_RadioButton() = default;
 
 std::unique_ptr<CPWL_Wnd> CFFL_RadioButton::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,

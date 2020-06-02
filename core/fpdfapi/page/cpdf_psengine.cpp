@@ -90,7 +90,7 @@ CPDF_PSOP::CPDF_PSOP(PDF_PSOP op) : m_op(op), m_value(0) {
 
 CPDF_PSOP::CPDF_PSOP(float value) : m_op(PSOP_CONST), m_value(value) {}
 
-CPDF_PSOP::~CPDF_PSOP() {}
+CPDF_PSOP::~CPDF_PSOP() = default;
 
 float CPDF_PSOP::GetFloatValue() const {
   if (m_op == PSOP_CONST)
@@ -112,7 +112,7 @@ bool CPDF_PSEngine::Execute() {
 }
 
 CPDF_PSProc::CPDF_PSProc() {}
-CPDF_PSProc::~CPDF_PSProc() {}
+CPDF_PSProc::~CPDF_PSProc() = default;
 
 bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
   if (depth > kMaxDepth)

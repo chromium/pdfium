@@ -28,7 +28,7 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
   m_bPagination = !!(m_dwLayoutStyles & FX_LAYOUTSTYLE_Pagination);
 }
 
-CFX_RTFBreak::~CFX_RTFBreak() {}
+CFX_RTFBreak::~CFX_RTFBreak() = default;
 
 void CFX_RTFBreak::SetLineStartPos(float fLinePos) {
   int32_t iLinePos = FXSYS_roundf(fLinePos * kConversionFactor);

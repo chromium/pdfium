@@ -48,7 +48,7 @@ CPDFXFA_DocEnvironment::CPDFXFA_DocEnvironment(CPDFXFA_Context* pContext)
   ASSERT(m_pContext);
 }
 
-CPDFXFA_DocEnvironment::~CPDFXFA_DocEnvironment() {}
+CPDFXFA_DocEnvironment::~CPDFXFA_DocEnvironment() = default;
 
 void CPDFXFA_DocEnvironment::SetChangeMark(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pContext->GetXFADoc() && m_pContext->GetFormFillEnv())

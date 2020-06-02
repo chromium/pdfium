@@ -1640,4 +1640,4 @@ ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
 
 CPDF_StreamContentParser::ContentParam::ContentParam() {}
 
-CPDF_StreamContentParser::ContentParam::~ContentParam() {}
+CPDF_StreamContentParser::ContentParam::~ContentParam() = default;

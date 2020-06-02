@@ -37,4 +37,4 @@ CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView,
     m_List.emplace_back(pAnnot);
 }
 
-CPDFSDK_AnnotIteration::~CPDFSDK_AnnotIteration() {}
+CPDFSDK_AnnotIteration::~CPDFSDK_AnnotIteration() = default;

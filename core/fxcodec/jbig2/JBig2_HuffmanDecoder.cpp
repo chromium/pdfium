@@ -12,7 +12,7 @@
 CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream)
     : m_pStream(pStream) {}
 
-CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder() {}
+CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder() = default;
 
 int CJBig2_HuffmanDecoder::DecodeAValue(const CJBig2_HuffmanTable* pTable,
                                         int* nResult) {

@@ -34,7 +34,7 @@ CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
   m_TTOStyles.single_line_ = true;
 }
 
-CFWL_CheckBox::~CFWL_CheckBox() {}
+CFWL_CheckBox::~CFWL_CheckBox() = default;
 
 FWL_Type CFWL_CheckBox::GetClassID() const {
   return FWL_Type::CheckBox;

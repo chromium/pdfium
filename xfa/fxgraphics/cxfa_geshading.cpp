@@ -44,7 +44,7 @@ CXFA_GEShading::CXFA_GEShading(const CFX_PointF& beginPoint,
   InitArgbArray();
 }
 
-CXFA_GEShading::~CXFA_GEShading() {}
+CXFA_GEShading::~CXFA_GEShading() = default;
 
 void CXFA_GEShading::InitArgbArray() {
   int32_t a1;

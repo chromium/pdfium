@@ -56,7 +56,7 @@ CJX_LayoutPseudoModel::CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model)
   DefineMethods(MethodSpecs);
 }
 
-CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}
+CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() = default;
 
 bool CJX_LayoutPseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

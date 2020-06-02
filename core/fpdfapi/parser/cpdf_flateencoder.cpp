@@ -54,7 +54,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(const CPDF_Stream* pStream,
   ASSERT(!m_pDict);
 }
 
-CPDF_FlateEncoder::~CPDF_FlateEncoder() {}
+CPDF_FlateEncoder::~CPDF_FlateEncoder() = default;
 
 void CPDF_FlateEncoder::CloneDict() {
   if (m_pClonedDict) {

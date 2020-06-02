@@ -55,7 +55,7 @@ CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
                                              uint32_t EncodingID)
     : CFX_UnicodeEncoding(pFont), m_nEncodingID(EncodingID) {}
 
-CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() {}
+CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() = default;
 
 uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
   FXFT_FaceRec* face = m_pFont->GetFaceRec();

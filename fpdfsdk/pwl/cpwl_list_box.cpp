@@ -22,7 +22,7 @@ CPWL_List_Notify::CPWL_List_Notify(CPWL_ListBox* pList) : m_pList(pList) {
   ASSERT(m_pList);
 }
 
-CPWL_List_Notify::~CPWL_List_Notify() {}
+CPWL_List_Notify::~CPWL_List_Notify() = default;
 
 void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
                                          float fPlateMax,

@@ -19,4 +19,4 @@ CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
                   XFA_Element::DataWindow,
                   std::make_unique<CJX_DataWindow>(this)) {}
 
-CScript_DataWindow::~CScript_DataWindow() {}
+CScript_DataWindow::~CScript_DataWindow() = default;

@@ -28,7 +28,7 @@
 CBC_CodeBase::CBC_CodeBase(std::unique_ptr<CBC_Writer> pWriter)
     : m_pBCWriter(std::move(pWriter)) {}
 
-CBC_CodeBase::~CBC_CodeBase() {}
+CBC_CodeBase::~CBC_CodeBase() = default;
 
 bool CBC_CodeBase::SetTextLocation(BC_TEXT_LOC location) {
   return m_pBCWriter->SetTextLocation(location);

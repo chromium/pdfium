@@ -23,7 +23,7 @@ CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
   DefineMethods(MethodSpecs);
 }
 
-CJX_LogPseudoModel::~CJX_LogPseudoModel() {}
+CJX_LogPseudoModel::~CJX_LogPseudoModel() = default;
 
 bool CJX_LogPseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

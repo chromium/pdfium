@@ -209,7 +209,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
 
 CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 
-CFXJSE_Context::~CFXJSE_Context() {}
+CFXJSE_Context::~CFXJSE_Context() = default;
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
   auto pValue = std::make_unique<CFXJSE_Value>(GetIsolate());

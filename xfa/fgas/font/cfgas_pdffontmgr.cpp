@@ -34,7 +34,7 @@ CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(CPDF_Document* pDoc, CFGAS_FontMgr* pFontMgr)
   ASSERT(pFontMgr);
 }
 
-CFGAS_PDFFontMgr::~CFGAS_PDFFontMgr() {}
+CFGAS_PDFFontMgr::~CFGAS_PDFFontMgr() = default;
 
 RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
                                                    bool bBold,

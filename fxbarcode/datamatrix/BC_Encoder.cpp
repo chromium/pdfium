@@ -7,4 +7,4 @@
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
 CBC_Encoder::CBC_Encoder() {}
-CBC_Encoder::~CBC_Encoder() {}
+CBC_Encoder::~CBC_Encoder() = default;

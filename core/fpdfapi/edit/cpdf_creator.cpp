@@ -148,7 +148,7 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
       m_Archive(std::make_unique<CFX_FileBufferArchive>(archive)) {}
 
-CPDF_Creator::~CPDF_Creator() {}
+CPDF_Creator::~CPDF_Creator() = default;
 
 bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
   if (!m_Archive->WriteDWord(objnum) || !m_Archive->WriteString(" 0 obj\r\n"))

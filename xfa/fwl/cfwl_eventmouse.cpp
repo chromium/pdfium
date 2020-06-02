@@ -13,4 +13,4 @@ CFWL_EventMouse::CFWL_EventMouse(CFWL_Widget* pSrcTarget,
                                  CFWL_Widget* pDstTarget)
     : CFWL_Event(CFWL_Event::Type::Mouse, pSrcTarget, pDstTarget) {}
 
-CFWL_EventMouse::~CFWL_EventMouse() {}
+CFWL_EventMouse::~CFWL_EventMouse() = default;

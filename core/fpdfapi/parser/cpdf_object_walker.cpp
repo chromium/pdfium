@@ -93,7 +93,7 @@ class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
 
 }  // namespace
 
-CPDF_ObjectWalker::SubobjectIterator::~SubobjectIterator() {}
+CPDF_ObjectWalker::SubobjectIterator::~SubobjectIterator() = default;
 
 const CPDF_Object* CPDF_ObjectWalker::SubobjectIterator::Increment() {
   if (!IsStarted()) {

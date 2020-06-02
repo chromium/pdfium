@@ -16,4 +16,4 @@ CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
                   XFA_Element::LogPseudoModel,
                   std::make_unique<CJX_LogPseudoModel>(this)) {}
 
-CScript_LogPseudoModel::~CScript_LogPseudoModel() {}
+CScript_LogPseudoModel::~CScript_LogPseudoModel() = default;

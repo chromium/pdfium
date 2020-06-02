@@ -100,7 +100,7 @@ CPDF_ContentMarks::MarkData::MarkData() {}
 CPDF_ContentMarks::MarkData::MarkData(const MarkData& src)
     : m_Marks(src.m_Marks) {}
 
-CPDF_ContentMarks::MarkData::~MarkData() {}
+CPDF_ContentMarks::MarkData::~MarkData() = default;
 
 size_t CPDF_ContentMarks::MarkData::CountItems() const {
   return m_Marks.size();

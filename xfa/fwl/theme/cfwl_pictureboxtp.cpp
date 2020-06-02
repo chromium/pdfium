@@ -12,7 +12,7 @@
 
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 
-CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
+CFWL_PictureBoxTP::~CFWL_PictureBoxTP() = default;
 
 void CFWL_PictureBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {

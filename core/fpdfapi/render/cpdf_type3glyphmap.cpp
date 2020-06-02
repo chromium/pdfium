@@ -39,7 +39,7 @@ int AdjustBlueHelper(float pos, std::vector<int>* blues) {
 
 CPDF_Type3GlyphMap::CPDF_Type3GlyphMap() {}
 
-CPDF_Type3GlyphMap::~CPDF_Type3GlyphMap() {}
+CPDF_Type3GlyphMap::~CPDF_Type3GlyphMap() = default;
 
 std::pair<int, int> CPDF_Type3GlyphMap::AdjustBlue(float top, float bottom) {
   return std::make_pair(AdjustBlueHelper(top, &m_TopBlue),

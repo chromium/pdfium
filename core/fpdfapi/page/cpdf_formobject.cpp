@@ -17,7 +17,7 @@ CPDF_FormObject::CPDF_FormObject(int32_t content_stream,
       m_pForm(std::move(pForm)),
       m_FormMatrix(matrix) {}
 
-CPDF_FormObject::~CPDF_FormObject() {}
+CPDF_FormObject::~CPDF_FormObject() = default;
 
 void CPDF_FormObject::Transform(const CFX_Matrix& matrix) {
   m_FormMatrix.Concat(matrix);

@@ -383,7 +383,7 @@ WideString::WideString(const std::initializer_list<WideStringView>& list) {
   }
 }
 
-WideString::~WideString() {}
+WideString::~WideString() = default;
 
 WideString& WideString::operator=(const wchar_t* str) {
   if (!str || !str[0])

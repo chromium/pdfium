@@ -27,4 +27,4 @@ std::vector<uint8_t, FxAllocAllocator<uint8_t>> CPDF_Encryptor::Encrypt(
   return result;
 }
 
-CPDF_Encryptor::~CPDF_Encryptor() {}
+CPDF_Encryptor::~CPDF_Encryptor() = default;

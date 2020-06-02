@@ -11,7 +11,7 @@
 
 CPDF_PSFunc::CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
 
-CPDF_PSFunc::~CPDF_PSFunc() {}
+CPDF_PSFunc::~CPDF_PSFunc() = default;
 
 bool CPDF_PSFunc::v_Init(const CPDF_Object* pObj,
                          std::set<const CPDF_Object*>* pVisited) {

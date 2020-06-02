@@ -21,7 +21,7 @@ constexpr uint32_t kRequiredNumInputs = 1;
 
 CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 
-CPDF_StitchFunc::~CPDF_StitchFunc() {}
+CPDF_StitchFunc::~CPDF_StitchFunc() = default;
 
 bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
                              std::set<const CPDF_Object*>* pVisited) {

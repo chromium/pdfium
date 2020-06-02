@@ -531,7 +531,7 @@ CFDE_TextOut::CFDE_TTOLine::CFDE_TTOLine(const CFDE_TTOLine& ttoLine)
   m_pieces = ttoLine.m_pieces;
 }
 
-CFDE_TextOut::CFDE_TTOLine::~CFDE_TTOLine() {}
+CFDE_TextOut::CFDE_TTOLine::~CFDE_TTOLine() = default;
 
 int32_t CFDE_TextOut::CFDE_TTOLine::AddPiece(int32_t index,
                                              const FDE_TTOPIECE& ttoPiece) {

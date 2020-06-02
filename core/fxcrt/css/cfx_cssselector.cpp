@@ -32,7 +32,7 @@ CFX_CSSSelector::CFX_CSSSelector(CFX_CSSSelectorType eType,
     : m_eType(eType),
       m_dwHash(FX_HashCode_GetW(WideStringView(psz, iLen), bIgnoreCase)) {}
 
-CFX_CSSSelector::~CFX_CSSSelector() {}
+CFX_CSSSelector::~CFX_CSSSelector() = default;
 
 CFX_CSSSelectorType CFX_CSSSelector::GetType() const {
   return m_eType;

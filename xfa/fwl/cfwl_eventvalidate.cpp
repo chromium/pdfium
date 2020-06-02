@@ -9,4 +9,4 @@
 CFWL_EventValidate::CFWL_EventValidate(CFWL_Widget* pSrcTarget)
     : CFWL_Event(CFWL_Event::Type::Validate, pSrcTarget) {}
 
-CFWL_EventValidate::~CFWL_EventValidate() {}
+CFWL_EventValidate::~CFWL_EventValidate() = default;

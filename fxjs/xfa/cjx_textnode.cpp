@@ -11,7 +11,7 @@
 
 CJX_TextNode::CJX_TextNode(CXFA_Node* node) : CJX_Node(node) {}
 
-CJX_TextNode::~CJX_TextNode() {}
+CJX_TextNode::~CJX_TextNode() = default;
 
 bool CJX_TextNode::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

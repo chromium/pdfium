@@ -213,7 +213,7 @@ CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
     m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }
 
-CPDF_CIDFont::~CPDF_CIDFont() {}
+CPDF_CIDFont::~CPDF_CIDFont() = default;
 
 bool CPDF_CIDFont::IsCIDFont() const {
   return true;

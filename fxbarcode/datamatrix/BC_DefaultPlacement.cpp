@@ -38,7 +38,7 @@ CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
   }
 }
 
-CBC_DefaultPlacement::~CBC_DefaultPlacement() {}
+CBC_DefaultPlacement::~CBC_DefaultPlacement() = default;
 
 int32_t CBC_DefaultPlacement::getNumrows() {
   return m_numrows;

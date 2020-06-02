@@ -382,4 +382,4 @@ CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget)
       pWidget(widget),
       iRedrawCounter(0) {}
 
-CFWL_WidgetMgr::Item::~Item() {}
+CFWL_WidgetMgr::Item::~Item() = default;

@@ -1589,7 +1589,7 @@ bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
 #ifndef _SKIA_SUPPORT_
 CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
 
-CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {}
+CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() = default;
 
 bool CFX_DefaultRenderDevice::Attach(
     const RetainPtr<CFX_DIBitmap>& pBitmap,

@@ -12,7 +12,7 @@
 
 CFWL_BarcodeTP::CFWL_BarcodeTP() {}
 
-CFWL_BarcodeTP::~CFWL_BarcodeTP() {}
+CFWL_BarcodeTP::~CFWL_BarcodeTP() = default;
 
 void CFWL_BarcodeTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {

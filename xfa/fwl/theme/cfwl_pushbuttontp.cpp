@@ -20,7 +20,7 @@ CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
   SetThemeData();
 }
 
-CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
+CFWL_PushButtonTP::~CFWL_PushButtonTP() = default;
 
 void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.m_iPart) {

@@ -27,7 +27,7 @@
 CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(const CBC_QRCoderECBlockData& data)
     : m_data(data) {}
 
-CBC_QRCoderECBlocks::~CBC_QRCoderECBlocks() {}
+CBC_QRCoderECBlocks::~CBC_QRCoderECBlocks() = default;
 
 int32_t CBC_QRCoderECBlocks::GetECCodeWordsPerBlock() const {
   return m_data.ecCodeWordsPerBlock;

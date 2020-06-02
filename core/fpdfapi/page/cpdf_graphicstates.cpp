@@ -8,7 +8,7 @@
 
 CPDF_GraphicStates::CPDF_GraphicStates() {}
 
-CPDF_GraphicStates::~CPDF_GraphicStates() {}
+CPDF_GraphicStates::~CPDF_GraphicStates() = default;
 
 void CPDF_GraphicStates::DefaultStates() {
   m_ColorState.Emplace();

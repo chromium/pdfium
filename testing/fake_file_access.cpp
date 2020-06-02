@@ -81,7 +81,7 @@ FakeFileAccess::FakeFileAccess(FPDF_FILEACCESS* file_access)
   ASSERT(file_access_);
 }
 
-FakeFileAccess::~FakeFileAccess() {}
+FakeFileAccess::~FakeFileAccess() = default;
 
 FPDF_BOOL FakeFileAccess::IsDataAvail(size_t offset, size_t size) const {
   return available_data_.Contains(RangeSet::Range(offset, offset + size));

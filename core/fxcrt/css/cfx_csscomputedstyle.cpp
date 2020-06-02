@@ -179,7 +179,7 @@ CFX_CSSComputedStyle::InheritedData::InheritedData()
       m_eFontStyle(CFX_CSSFontStyle::Normal),
       m_eTextAlign(CFX_CSSTextAlign::Left) {}
 
-CFX_CSSComputedStyle::InheritedData::~InheritedData() {}
+CFX_CSSComputedStyle::InheritedData::~InheritedData() = default;
 
 CFX_CSSComputedStyle::NonInheritedData::NonInheritedData()
     : m_MarginWidth(CFX_CSSLengthUnit::Point, 0),

@@ -139,7 +139,7 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
 
 CFX_CSSDeclaration::CFX_CSSDeclaration() {}
 
-CFX_CSSDeclaration::~CFX_CSSDeclaration() {}
+CFX_CSSDeclaration::~CFX_CSSDeclaration() = default;
 
 RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::GetProperty(
     CFX_CSSProperty eProperty,

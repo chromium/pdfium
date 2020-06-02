@@ -24,7 +24,7 @@ CFPF_SkiaDeviceModule* CFPF_GetSkiaDeviceModule() {
 
 CFPF_SkiaDeviceModule::CFPF_SkiaDeviceModule() {}
 
-CFPF_SkiaDeviceModule::~CFPF_SkiaDeviceModule() {}
+CFPF_SkiaDeviceModule::~CFPF_SkiaDeviceModule() = default;
 
 void CFPF_SkiaDeviceModule::Destroy() {
   delete gs_pPFModule;

@@ -25,7 +25,7 @@ CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot,
                                  CPDFSDK_PageView* pPageView)
     : CPDFSDK_Annot(pPageView), m_pAnnot(pAnnot) {}
 
-CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() {}
+CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() = default;
 
 CPDFSDK_BAAnnot* CPDFSDK_BAAnnot::AsBAAnnot() {
   return this;

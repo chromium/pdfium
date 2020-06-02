@@ -24,7 +24,7 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
       m_pDefFont(pDefFont),
       m_sDefFontAlias(sDefFontAlias) {}
 
-CPVT_FontMap::~CPVT_FontMap() {}
+CPVT_FontMap::~CPVT_FontMap() = default;
 
 // static
 RetainPtr<CPDF_Font> CPVT_FontMap::GetAnnotSysPDFFont(

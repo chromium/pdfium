@@ -20,7 +20,7 @@ CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(
   }
 }
 
-CPDF_SeekableMultiStream::~CPDF_SeekableMultiStream() {}
+CPDF_SeekableMultiStream::~CPDF_SeekableMultiStream() = default;
 
 FX_FILESIZE CPDF_SeekableMultiStream::GetSize() {
   uint32_t dwSize = 0;

@@ -42,4 +42,4 @@ CJS_Object::CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
       m_pV8Object(GetIsolate(), pObject),
       m_pRuntime(pRuntime) {}
 
-CJS_Object::~CJS_Object() {}
+CJS_Object::~CJS_Object() = default;

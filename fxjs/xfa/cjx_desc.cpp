@@ -19,7 +19,7 @@ CJX_Desc::CJX_Desc(CXFA_Desc* desc) : CJX_Node(desc) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Desc::~CJX_Desc() {}
+CJX_Desc::~CJX_Desc() = default;
 
 bool CJX_Desc::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

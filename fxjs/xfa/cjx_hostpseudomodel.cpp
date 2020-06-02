@@ -70,7 +70,7 @@ CJX_HostPseudoModel::CJX_HostPseudoModel(CScript_HostPseudoModel* model)
   DefineMethods(MethodSpecs);
 }
 
-CJX_HostPseudoModel::~CJX_HostPseudoModel() {}
+CJX_HostPseudoModel::~CJX_HostPseudoModel() = default;
 
 bool CJX_HostPseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

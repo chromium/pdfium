@@ -307,7 +307,7 @@ size_t FXJS_GlobalIsolateRefCount() {
   return g_isolate_ref_count;
 }
 
-FXJS_PerIsolateData::~FXJS_PerIsolateData() {}
+FXJS_PerIsolateData::~FXJS_PerIsolateData() = default;
 
 // static
 void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {

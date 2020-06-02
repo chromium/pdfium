@@ -222,7 +222,7 @@ void CFWL_WidgetTP::DrawArrowBtn(CXFA_Graphics* pGraphics,
 
 CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}
 
-CFWL_FontData::~CFWL_FontData() {}
+CFWL_FontData::~CFWL_FontData() = default;
 
 bool CFWL_FontData::Equal(WideStringView wsFontFamily,
                           uint32_t dwFontStyles,

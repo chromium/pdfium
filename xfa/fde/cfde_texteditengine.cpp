@@ -154,7 +154,7 @@ CFDE_TextEditEngine::CFDE_TextEditEngine()
   text_break_.SetTabWidth(36);
 }
 
-CFDE_TextEditEngine::~CFDE_TextEditEngine() {}
+CFDE_TextEditEngine::~CFDE_TextEditEngine() = default;
 
 void CFDE_TextEditEngine::Clear() {
   text_length_ = 0;
@@ -1218,7 +1218,7 @@ std::pair<size_t, size_t> CFDE_TextEditEngine::BoundsForWordAt(
 CFDE_TextEditEngine::Iterator::Iterator(const CFDE_TextEditEngine* engine)
     : engine_(engine), current_position_(-1) {}
 
-CFDE_TextEditEngine::Iterator::~Iterator() {}
+CFDE_TextEditEngine::Iterator::~Iterator() = default;
 
 void CFDE_TextEditEngine::Iterator::Next(bool bPrev) {
   if (bPrev && current_position_ == -1)

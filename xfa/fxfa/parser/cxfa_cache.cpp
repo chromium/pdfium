@@ -33,4 +33,4 @@ CXFA_Cache::CXFA_Cache(CXFA_Document* doc, XFA_PacketType packet)
                 kCacheAttributeData,
                 std::make_unique<CJX_Node>(this)) {}
 
-CXFA_Cache::~CXFA_Cache() {}
+CXFA_Cache::~CXFA_Cache() = default;

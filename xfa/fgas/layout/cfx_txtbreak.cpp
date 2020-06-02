@@ -31,7 +31,7 @@ CFX_TxtBreak::CFX_TxtBreak()
       m_iAlignment(CFX_TxtLineAlignment_Left),
       m_iCombWidth(360000) {}
 
-CFX_TxtBreak::~CFX_TxtBreak() {}
+CFX_TxtBreak::~CFX_TxtBreak() = default;
 
 void CFX_TxtBreak::SetLineWidth(float fLineWidth) {
   m_iLineWidth = FXSYS_roundf(fLineWidth * kConversionFactor);

@@ -9,4 +9,4 @@
 CFWL_EventSelectChanged::CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget)
     : CFWL_Event(CFWL_Event::Type::SelectChanged, pSrcTarget) {}
 
-CFWL_EventSelectChanged::~CFWL_EventSelectChanged() {}
+CFWL_EventSelectChanged::~CFWL_EventSelectChanged() = default;

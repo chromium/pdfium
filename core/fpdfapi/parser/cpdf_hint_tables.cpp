@@ -83,7 +83,7 @@ CPDF_HintTables::CPDF_HintTables(CPDF_ReadValidator* pValidator,
   ASSERT(m_pLinearized);
 }
 
-CPDF_HintTables::~CPDF_HintTables() {}
+CPDF_HintTables::~CPDF_HintTables() = default;
 
 bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   const uint32_t nPages = m_pLinearized->GetPageCount();

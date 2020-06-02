@@ -56,7 +56,7 @@ CPWL_EditImpl_Iterator::CPWL_EditImpl_Iterator(
     CPDF_VariableText::Iterator* pVTIterator)
     : m_pEdit(pEdit), m_pVTIterator(pVTIterator) {}
 
-CPWL_EditImpl_Iterator::~CPWL_EditImpl_Iterator() {}
+CPWL_EditImpl_Iterator::~CPWL_EditImpl_Iterator() = default;
 
 bool CPWL_EditImpl_Iterator::NextWord() {
   return m_pVTIterator->NextWord();
@@ -103,7 +103,7 @@ CPWL_EditImpl_Provider::CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap)
   ASSERT(m_pFontMap);
 }
 
-CPWL_EditImpl_Provider::~CPWL_EditImpl_Provider() {}
+CPWL_EditImpl_Provider::~CPWL_EditImpl_Provider() = default;
 
 IPVT_FontMap* CPWL_EditImpl_Provider::GetFontMap() const {
   return m_pFontMap;
@@ -151,7 +151,7 @@ bool CPWL_EditImpl_Provider::IsLatinWord(uint16_t word) {
 
 CPWL_EditImpl_Refresh::CPWL_EditImpl_Refresh() {}
 
-CPWL_EditImpl_Refresh::~CPWL_EditImpl_Refresh() {}
+CPWL_EditImpl_Refresh::~CPWL_EditImpl_Refresh() = default;
 
 void CPWL_EditImpl_Refresh::BeginRefresh() {
   m_OldLineRects = std::move(m_NewLineRects);
@@ -192,7 +192,7 @@ void CPWL_EditImpl_Refresh::Add(const CFX_FloatRect& new_rect) {
 CPWL_EditImpl_Undo::CPWL_EditImpl_Undo()
     : m_nCurUndoPos(0), m_bWorking(false) {}
 
-CPWL_EditImpl_Undo::~CPWL_EditImpl_Undo() {}
+CPWL_EditImpl_Undo::~CPWL_EditImpl_Undo() = default;
 
 bool CPWL_EditImpl_Undo::CanUndo() const {
   return m_nCurUndoPos > 0;
@@ -266,7 +266,7 @@ CFXEU_InsertWord::CFXEU_InsertWord(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_InsertWord::~CFXEU_InsertWord() {}
+CFXEU_InsertWord::~CFXEU_InsertWord() = default;
 
 int CFXEU_InsertWord::Redo() {
   m_pEdit->SelectNone();
@@ -289,7 +289,7 @@ CFXEU_InsertReturn::CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_InsertReturn::~CFXEU_InsertReturn() {}
+CFXEU_InsertReturn::~CFXEU_InsertReturn() = default;
 
 int CFXEU_InsertReturn::Redo() {
   m_pEdit->SelectNone();
@@ -311,7 +311,7 @@ CFXEU_ReplaceSelection::CFXEU_ReplaceSelection(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_ReplaceSelection::~CFXEU_ReplaceSelection() {}
+CFXEU_ReplaceSelection::~CFXEU_ReplaceSelection() = default;
 
 int CFXEU_ReplaceSelection::Redo() {
   m_pEdit->SelectNone();
@@ -343,7 +343,7 @@ CFXEU_Backspace::CFXEU_Backspace(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_Backspace::~CFXEU_Backspace() {}
+CFXEU_Backspace::~CFXEU_Backspace() = default;
 
 int CFXEU_Backspace::Redo() {
   m_pEdit->SelectNone();
@@ -377,7 +377,7 @@ CFXEU_Delete::CFXEU_Delete(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_Delete::~CFXEU_Delete() {}
+CFXEU_Delete::~CFXEU_Delete() = default;
 
 int CFXEU_Delete::Redo() {
   m_pEdit->SelectNone();
@@ -403,7 +403,7 @@ CFXEU_Clear::CFXEU_Clear(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_Clear::~CFXEU_Clear() {}
+CFXEU_Clear::~CFXEU_Clear() = default;
 
 int CFXEU_Clear::Redo() {
   m_pEdit->SelectNone();
@@ -433,7 +433,7 @@ CFXEU_InsertText::CFXEU_InsertText(CPWL_EditImpl* pEdit,
   ASSERT(m_pEdit);
 }
 
-CFXEU_InsertText::~CFXEU_InsertText() {}
+CFXEU_InsertText::~CFXEU_InsertText() = default;
 
 int CFXEU_InsertText::Redo() {
   m_pEdit->SelectNone();
@@ -572,7 +572,7 @@ CPWL_EditImpl::CPWL_EditImpl()
       m_bEnableRefresh(true),
       m_bEnableUndo(true) {}
 
-CPWL_EditImpl::~CPWL_EditImpl() {}
+CPWL_EditImpl::~CPWL_EditImpl() = default;
 
 void CPWL_EditImpl::Initialize() {
   m_pVT->Initialize();

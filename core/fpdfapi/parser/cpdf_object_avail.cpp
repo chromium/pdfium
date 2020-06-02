@@ -35,7 +35,7 @@ CPDF_ObjectAvail::CPDF_ObjectAvail(
   ASSERT(holder);
 }
 
-CPDF_ObjectAvail::~CPDF_ObjectAvail() {}
+CPDF_ObjectAvail::~CPDF_ObjectAvail() = default;
 
 CPDF_DataAvail::DocAvailStatus CPDF_ObjectAvail::CheckAvail() {
   if (!LoadRootObject())

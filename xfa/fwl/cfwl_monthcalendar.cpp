@@ -820,4 +820,4 @@ CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,
       rect(rc),
       wsDay(wsday) {}
 
-CFWL_MonthCalendar::DATEINFO::~DATEINFO() {}
+CFWL_MonthCalendar::DATEINFO::~DATEINFO() = default;

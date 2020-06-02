@@ -97,7 +97,7 @@ CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType)
   ASSERT(pDoc);
 }
 
-CPDF_OCContext::~CPDF_OCContext() {}
+CPDF_OCContext::~CPDF_OCContext() = default;
 
 bool CPDF_OCContext::LoadOCGStateFromConfig(
     const ByteString& csConfig,

@@ -16,7 +16,7 @@
 XFAJSEmbedderTest::XFAJSEmbedderTest()
     : array_buffer_allocator_(std::make_unique<CFX_V8ArrayBufferAllocator>()) {}
 
-XFAJSEmbedderTest::~XFAJSEmbedderTest() {}
+XFAJSEmbedderTest::~XFAJSEmbedderTest() = default;
 
 void XFAJSEmbedderTest::SetUp() {
   v8::Isolate::CreateParams params;

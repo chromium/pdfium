@@ -29,4 +29,4 @@ CXFA_Interactive::CXFA_Interactive(CXFA_Document* doc, XFA_PacketType packet)
                 kInteractiveAttributeData,
                 std::make_unique<CJX_Node>(this)) {}
 
-CXFA_Interactive::~CXFA_Interactive() {}
+CXFA_Interactive::~CXFA_Interactive() = default;

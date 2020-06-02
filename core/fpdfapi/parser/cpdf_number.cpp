@@ -16,7 +16,7 @@ CPDF_Number::CPDF_Number(float value) : m_Number(value) {}
 
 CPDF_Number::CPDF_Number(ByteStringView str) : m_Number(str) {}
 
-CPDF_Number::~CPDF_Number() {}
+CPDF_Number::~CPDF_Number() = default;
 
 CPDF_Object::Type CPDF_Number::GetType() const {
   return kNumber;

@@ -39,7 +39,7 @@ CFX_LZWDecompressor::CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
       bits_left_(0),
       code_store_(0) {}
 
-CFX_LZWDecompressor::~CFX_LZWDecompressor() {}
+CFX_LZWDecompressor::~CFX_LZWDecompressor() = default;
 
 CFX_GifDecodeStatus CFX_LZWDecompressor::Decode(const uint8_t* src_buf,
                                                 uint32_t src_size,

@@ -71,7 +71,7 @@ CPDF_GeneralState::CPDF_GeneralState() {}
 CPDF_GeneralState::CPDF_GeneralState(const CPDF_GeneralState& that)
     : m_Ref(that.m_Ref) {}
 
-CPDF_GeneralState::~CPDF_GeneralState() {}
+CPDF_GeneralState::~CPDF_GeneralState() = default;
 
 void CPDF_GeneralState::SetRenderIntent(const ByteString& ri) {
   m_Ref.GetPrivateCopy()->m_RenderIntent = RI_StringToId(ri);

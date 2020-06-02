@@ -607,12 +607,12 @@ int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
 CFX_FontDescriptor::CFX_FontDescriptor()
     : m_nFaceIndex(0), m_dwFontStyles(0), m_dwUsb(), m_dwCsb() {}
 
-CFX_FontDescriptor::~CFX_FontDescriptor() {}
+CFX_FontDescriptor::~CFX_FontDescriptor() = default;
 
 CFGAS_FontMgr::CFGAS_FontMgr()
     : m_pFontSource(std::make_unique<CFX_FontSourceEnum_File>()) {}
 
-CFGAS_FontMgr::~CFGAS_FontMgr() {}
+CFGAS_FontMgr::~CFGAS_FontMgr() = default;
 
 bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
   CFX_FontMapper* pFontMapper =

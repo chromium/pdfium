@@ -27,7 +27,7 @@ CJX_Tree::CJX_Tree(CXFA_Object* obj) : CJX_Object(obj) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Tree::~CJX_Tree() {}
+CJX_Tree::~CJX_Tree() = default;
 
 bool CJX_Tree::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

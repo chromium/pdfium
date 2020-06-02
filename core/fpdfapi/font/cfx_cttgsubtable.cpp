@@ -319,17 +319,17 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw, TSubTable2* rec) {
 CFX_CTTGSUBTable::TLangSysRecord::TLangSysRecord()
     : LangSysTag(0), LookupOrder(0), ReqFeatureIndex(0) {}
 
-CFX_CTTGSUBTable::TLangSysRecord::~TLangSysRecord() {}
+CFX_CTTGSUBTable::TLangSysRecord::~TLangSysRecord() = default;
 
 CFX_CTTGSUBTable::TScriptRecord::TScriptRecord()
     : ScriptTag(0), DefaultLangSys(0) {}
 
-CFX_CTTGSUBTable::TScriptRecord::~TScriptRecord() {}
+CFX_CTTGSUBTable::TScriptRecord::~TScriptRecord() = default;
 
 CFX_CTTGSUBTable::TFeatureRecord::TFeatureRecord()
     : FeatureTag(0), FeatureParams(0) {}
 
-CFX_CTTGSUBTable::TFeatureRecord::~TFeatureRecord() {}
+CFX_CTTGSUBTable::TFeatureRecord::~TFeatureRecord() = default;
 
 CFX_CTTGSUBTable::TRangeRecord::TRangeRecord()
     : Start(0), End(0), StartCoverageIndex(0) {}
@@ -338,30 +338,30 @@ CFX_CTTGSUBTable::TCoverageFormat1::TCoverageFormat1() {
   CoverageFormat = 1;
 }
 
-CFX_CTTGSUBTable::TCoverageFormat1::~TCoverageFormat1() {}
+CFX_CTTGSUBTable::TCoverageFormat1::~TCoverageFormat1() = default;
 
 CFX_CTTGSUBTable::TCoverageFormat2::TCoverageFormat2() {
   CoverageFormat = 2;
 }
 
-CFX_CTTGSUBTable::TCoverageFormat2::~TCoverageFormat2() {}
+CFX_CTTGSUBTable::TCoverageFormat2::~TCoverageFormat2() = default;
 
 CFX_CTTGSUBTable::TSubTableBase::TSubTableBase() {}
 
-CFX_CTTGSUBTable::TSubTableBase::~TSubTableBase() {}
+CFX_CTTGSUBTable::TSubTableBase::~TSubTableBase() = default;
 
 CFX_CTTGSUBTable::TSubTable1::TSubTable1() {
   SubstFormat = 1;
 }
 
-CFX_CTTGSUBTable::TSubTable1::~TSubTable1() {}
+CFX_CTTGSUBTable::TSubTable1::~TSubTable1() = default;
 
 CFX_CTTGSUBTable::TSubTable2::TSubTable2() {
   SubstFormat = 2;
 }
 
-CFX_CTTGSUBTable::TSubTable2::~TSubTable2() {}
+CFX_CTTGSUBTable::TSubTable2::~TSubTable2() = default;
 
 CFX_CTTGSUBTable::TLookup::TLookup() : LookupType(0), LookupFlag(0) {}
 
-CFX_CTTGSUBTable::TLookup::~TLookup() {}
+CFX_CTTGSUBTable::TLookup::~TLookup() = default;

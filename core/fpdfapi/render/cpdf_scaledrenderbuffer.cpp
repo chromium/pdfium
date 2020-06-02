@@ -19,7 +19,7 @@ constexpr size_t kImageSizeLimitBytes = 30 * 1024 * 1024;
 
 CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() {}
 
-CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() {}
+CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() = default;
 
 bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
                                          CFX_RenderDevice* pDevice,

@@ -29,7 +29,7 @@ CJX_Form::CJX_Form(CXFA_Form* form) : CJX_Model(form) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Form::~CJX_Form() {}
+CJX_Form::~CJX_Form() = default;
 
 bool CJX_Form::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

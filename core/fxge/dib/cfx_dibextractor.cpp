@@ -25,4 +25,4 @@ CFX_DIBExtractor::CFX_DIBExtractor(const RetainPtr<CFX_DIBBase>& pSrc) {
   m_pBitmap->SetAlphaMask(pOldSrc->m_pAlphaMask, nullptr);
 }
 
-CFX_DIBExtractor::~CFX_DIBExtractor() {}
+CFX_DIBExtractor::~CFX_DIBExtractor() = default;

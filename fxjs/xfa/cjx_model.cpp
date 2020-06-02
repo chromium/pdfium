@@ -24,7 +24,7 @@ CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Model::~CJX_Model() {}
+CJX_Model::~CJX_Model() = default;
 
 bool CJX_Model::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

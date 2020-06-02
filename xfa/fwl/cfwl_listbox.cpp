@@ -33,7 +33,7 @@ CFWL_ListBox::CFWL_ListBox(const CFWL_App* app,
                            CFWL_Widget* pOuter)
     : CFWL_Widget(app, std::move(properties), pOuter) {}
 
-CFWL_ListBox::~CFWL_ListBox() {}
+CFWL_ListBox::~CFWL_ListBox() = default;
 
 FWL_Type CFWL_ListBox::GetClassID() const {
   return FWL_Type::ListBox;

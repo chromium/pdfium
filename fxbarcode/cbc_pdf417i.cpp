@@ -38,7 +38,7 @@ constexpr size_t kMaxPDF417InputLengthBytes = 2710;
 CBC_PDF417I::CBC_PDF417I()
     : CBC_CodeBase(std::make_unique<CBC_PDF417Writer>()) {}
 
-CBC_PDF417I::~CBC_PDF417I() {}
+CBC_PDF417I::~CBC_PDF417I() = default;
 
 bool CBC_PDF417I::Encode(WideStringView contents) {
   if (contents.GetLength() > kMaxPDF417InputLengthBytes)

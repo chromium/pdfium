@@ -9,4 +9,4 @@
 CFX_CSSStringValue::CFX_CSSStringValue(const WideString& value)
     : CFX_CSSValue(CFX_CSSPrimitiveType::String), value_(value) {}
 
-CFX_CSSStringValue::~CFX_CSSStringValue() {}
+CFX_CSSStringValue::~CFX_CSSStringValue() = default;

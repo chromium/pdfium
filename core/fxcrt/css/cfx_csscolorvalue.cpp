@@ -9,4 +9,4 @@
 CFX_CSSColorValue::CFX_CSSColorValue(FX_ARGB value)
     : CFX_CSSValue(CFX_CSSPrimitiveType::RGB), value_(value) {}
 
-CFX_CSSColorValue::~CFX_CSSColorValue() {}
+CFX_CSSColorValue::~CFX_CSSColorValue() = default;

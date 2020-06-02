@@ -18,7 +18,7 @@ CJX_Delta::CJX_Delta(CXFA_Delta* delta) : CJX_Object(delta) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Delta::~CJX_Delta() {}
+CJX_Delta::~CJX_Delta() = default;
 
 bool CJX_Delta::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

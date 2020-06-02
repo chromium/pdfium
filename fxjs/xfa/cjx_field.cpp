@@ -37,7 +37,7 @@ CJX_Field::CJX_Field(CXFA_Field* field) : CJX_Container(field) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Field::~CJX_Field() {}
+CJX_Field::~CJX_Field() = default;
 
 bool CJX_Field::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

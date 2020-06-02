@@ -1136,7 +1136,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid)
   }
 }
 
-CXFA_LocaleMgr::~CXFA_LocaleMgr() {}
+CXFA_LocaleMgr::~CXFA_LocaleMgr() = default;
 
 LocaleIface* CXFA_LocaleMgr::GetDefLocale() {
   if (m_pDefLocale)

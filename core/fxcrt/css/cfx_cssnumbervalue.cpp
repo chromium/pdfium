@@ -12,7 +12,7 @@ CFX_CSSNumberValue::CFX_CSSNumberValue(CFX_CSSNumberType type, float value)
     value_ = 0.0f;
 }
 
-CFX_CSSNumberValue::~CFX_CSSNumberValue() {}
+CFX_CSSNumberValue::~CFX_CSSNumberValue() = default;
 
 float CFX_CSSNumberValue::Apply(float percentBase) const {
   switch (type_) {

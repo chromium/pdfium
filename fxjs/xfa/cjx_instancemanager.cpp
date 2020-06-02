@@ -30,7 +30,7 @@ CJX_InstanceManager::CJX_InstanceManager(CXFA_InstanceManager* mgr)
   DefineMethods(MethodSpecs);
 }
 
-CJX_InstanceManager::~CJX_InstanceManager() {}
+CJX_InstanceManager::~CJX_InstanceManager() = default;
 
 bool CJX_InstanceManager::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

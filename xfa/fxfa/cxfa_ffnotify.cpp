@@ -44,7 +44,7 @@
 
 CXFA_FFNotify::CXFA_FFNotify(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
-CXFA_FFNotify::~CXFA_FFNotify() {}
+CXFA_FFNotify::~CXFA_FFNotify() = default;
 
 void CXFA_FFNotify::OnPageEvent(CXFA_ViewLayoutItem* pSender,
                                 uint32_t dwEvent) {

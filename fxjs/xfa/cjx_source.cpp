@@ -35,7 +35,7 @@ CJX_Source::CJX_Source(CXFA_Source* src) : CJX_Node(src) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Source::~CJX_Source() {}
+CJX_Source::~CJX_Source() = default;
 
 bool CJX_Source::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

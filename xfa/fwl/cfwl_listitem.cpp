@@ -8,4 +8,4 @@
 
 CFWL_ListItem::CFWL_ListItem(const WideString& text) : m_wsText(text) {}
 
-CFWL_ListItem::~CFWL_ListItem() {}
+CFWL_ListItem::~CFWL_ListItem() = default;

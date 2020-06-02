@@ -35,7 +35,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument, CPDF_Dictionary* pPageDict)
   LoadTransparencyInfo();
 }
 
-CPDF_Page::~CPDF_Page() {}
+CPDF_Page::~CPDF_Page() = default;
 
 CPDF_Page* CPDF_Page::AsPDFPage() {
   return this;

@@ -31,4 +31,4 @@ CXFA_Comb::CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet)
                 kCombAttributeData,
                 std::make_unique<CJX_Node>(this)) {}
 
-CXFA_Comb::~CXFA_Comb() {}
+CXFA_Comb::~CXFA_Comb() = default;

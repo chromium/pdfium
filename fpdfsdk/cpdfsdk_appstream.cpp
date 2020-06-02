@@ -1145,7 +1145,7 @@ CPDFSDK_AppStream::CPDFSDK_AppStream(CPDFSDK_Widget* widget,
                                      CPDF_Dictionary* dict)
     : widget_(widget), dict_(dict) {}
 
-CPDFSDK_AppStream::~CPDFSDK_AppStream() {}
+CPDFSDK_AppStream::~CPDFSDK_AppStream() = default;
 
 void CPDFSDK_AppStream::SetAsPushButton() {
   CPDF_FormControl* pControl = widget_->GetFormControl();

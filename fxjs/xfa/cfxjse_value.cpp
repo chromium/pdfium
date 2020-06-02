@@ -72,7 +72,7 @@ CFXJSE_Value::CFXJSE_Value(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
   ForceSetValue(value);
 }
 
-CFXJSE_Value::~CFXJSE_Value() {}
+CFXJSE_Value::~CFXJSE_Value() = default;
 
 CFXJSE_HostObject* CFXJSE_Value::ToHostObject() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());

@@ -117,7 +117,7 @@ bool IsDocVersionBelow205(const CXFA_Document* doc) {
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
     : m_pPageArea(pPageArea), m_pDocView(pDocView) {}
 
-CXFA_FFPageView::~CXFA_FFPageView() {}
+CXFA_FFPageView::~CXFA_FFPageView() = default;
 
 CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
   return m_pDocView.Get();
@@ -244,7 +244,8 @@ CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
   Reset();
 }
 
-CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() {}
+CXFA_FFTabOrderPageWidgetIterator::~CXFA_FFTabOrderPageWidgetIterator() =
+    default;
 
 void CXFA_FFTabOrderPageWidgetIterator::Reset() {
   CreateTabOrderWidgetArray();
@@ -475,4 +476,4 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
 
 CXFA_TabParam::CXFA_TabParam(CXFA_FFWidget* pWidget) : m_pWidget(pWidget) {}
 
-CXFA_TabParam::~CXFA_TabParam() {}
+CXFA_TabParam::~CXFA_TabParam() = default;

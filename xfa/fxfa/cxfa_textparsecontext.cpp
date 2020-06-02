@@ -13,4 +13,4 @@
 CXFA_TextParseContext::CXFA_TextParseContext()
     : m_pParentStyle(nullptr), m_eDisplay(CFX_CSSDisplay::None) {}
 
-CXFA_TextParseContext::~CXFA_TextParseContext() {}
+CXFA_TextParseContext::~CXFA_TextParseContext() = default;

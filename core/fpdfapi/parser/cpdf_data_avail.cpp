@@ -70,9 +70,9 @@ class HintsScope {
 
 }  // namespace
 
-CPDF_DataAvail::FileAvail::~FileAvail() {}
+CPDF_DataAvail::FileAvail::~FileAvail() = default;
 
-CPDF_DataAvail::DownloadHints::~DownloadHints() {}
+CPDF_DataAvail::DownloadHints::~DownloadHints() = default;
 
 CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
@@ -1028,4 +1028,4 @@ CPDF_DataAvail::ParseDocument(
 
 CPDF_DataAvail::PageNode::PageNode() : m_type(PDF_PAGENODE_UNKNOWN) {}
 
-CPDF_DataAvail::PageNode::~PageNode() {}
+CPDF_DataAvail::PageNode::~PageNode() = default;

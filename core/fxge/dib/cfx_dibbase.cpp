@@ -98,7 +98,7 @@ CFX_Palette::CFX_Palette(const RetainPtr<CFX_DIBBase>& pBitmap)
   Obtain_Pal(m_Luts.data(), m_Palette.data(), m_lut);
 }
 
-CFX_Palette::~CFX_Palette() {}
+CFX_Palette::~CFX_Palette() = default;
 
 void ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
                                  int dest_pitch,
@@ -720,7 +720,7 @@ bool ConvertBuffer_Argb(int bpp,
 CFX_DIBBase::CFX_DIBBase()
     : m_Width(0), m_Height(0), m_bpp(0), m_AlphaFlag(0), m_Pitch(0) {}
 
-CFX_DIBBase::~CFX_DIBBase() {}
+CFX_DIBBase::~CFX_DIBBase() = default;
 
 uint8_t* CFX_DIBBase::GetBuffer() const {
   return nullptr;

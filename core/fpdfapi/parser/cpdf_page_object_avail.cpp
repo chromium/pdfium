@@ -6,7 +6,7 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 
-CPDF_PageObjectAvail::~CPDF_PageObjectAvail() {}
+CPDF_PageObjectAvail::~CPDF_PageObjectAvail() = default;
 
 bool CPDF_PageObjectAvail::ExcludeObject(const CPDF_Object* object) const {
   if (CPDF_ObjectAvail::ExcludeObject(object))

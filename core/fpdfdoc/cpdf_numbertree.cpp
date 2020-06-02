@@ -50,7 +50,7 @@ const CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
 CPDF_NumberTree::CPDF_NumberTree(const CPDF_Dictionary* pRoot)
     : m_pRoot(pRoot) {}
 
-CPDF_NumberTree::~CPDF_NumberTree() {}
+CPDF_NumberTree::~CPDF_NumberTree() = default;
 
 const CPDF_Object* CPDF_NumberTree::LookupValue(int num) const {
   return SearchNumberNode(m_pRoot.Get(), num);

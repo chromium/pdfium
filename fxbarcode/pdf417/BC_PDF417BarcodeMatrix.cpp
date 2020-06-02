@@ -30,7 +30,7 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
     m_matrix[i] = std::make_unique<CBC_BarcodeRow>(m_width);
 }
 
-CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {}
+CBC_BarcodeMatrix::~CBC_BarcodeMatrix() = default;
 
 std::vector<uint8_t, FxAllocAllocator<uint8_t>>
 CBC_BarcodeMatrix::toBitArray() {

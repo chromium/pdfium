@@ -31,7 +31,7 @@ CFX_GraphStateData::LineCap LineCapToFXGE(XFA_AttributeValue iLineCap) {
 
 CXFA_FFLine::CXFA_FFLine(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
-CXFA_FFLine::~CXFA_FFLine() {}
+CXFA_FFLine::~CXFA_FFLine() = default;
 
 void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
                                   XFA_AttributeValue iHand,

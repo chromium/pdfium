@@ -13,7 +13,7 @@
 CPDF_ContentMarkItem::CPDF_ContentMarkItem(ByteString name)
     : m_MarkName(std::move(name)) {}
 
-CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {}
+CPDF_ContentMarkItem::~CPDF_ContentMarkItem() = default;
 
 const CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
   switch (m_ParamType) {

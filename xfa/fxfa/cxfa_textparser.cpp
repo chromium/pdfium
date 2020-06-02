@@ -59,7 +59,7 @@ WideString GetLowerCaseElementAttributeOrDefault(
 CXFA_TextParser::CXFA_TextParser()
     : m_bParsed(false), m_cssInitialized(false) {}
 
-CXFA_TextParser::~CXFA_TextParser() {}
+CXFA_TextParser::~CXFA_TextParser() = default;
 
 void CXFA_TextParser::Reset() {
   m_mapXMLNodeToParseContext.clear();
@@ -634,4 +634,4 @@ bool CXFA_TextParser::GetTabstops(CFX_CSSComputedStyle* pStyle,
 CXFA_TextParser::TagProvider::TagProvider()
     : m_bTagAvailable(false), m_bContent(false) {}
 
-CXFA_TextParser::TagProvider::~TagProvider() {}
+CXFA_TextParser::TagProvider::~TagProvider() = default;

@@ -27,7 +27,7 @@
 CBC_BarcodeRow::CBC_BarcodeRow(size_t width)
     : m_row(width), m_currentLocation(0) {}
 
-CBC_BarcodeRow::~CBC_BarcodeRow() {}
+CBC_BarcodeRow::~CBC_BarcodeRow() = default;
 
 void CBC_BarcodeRow::addBar(bool black, int32_t width) {
   std::fill_n(m_row.begin() + m_currentLocation, width, black ? 1 : 0);

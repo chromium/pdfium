@@ -62,7 +62,7 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(
   }
 }
 
-CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
+CPDF_PageContentGenerator::~CPDF_PageContentGenerator() = default;
 
 void CPDF_PageContentGenerator::GenerateContent() {
   ASSERT(m_pObjHolder->IsPage());

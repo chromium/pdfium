@@ -11,7 +11,7 @@
 
 CXFA_FFRectangle::CXFA_FFRectangle(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
-CXFA_FFRectangle::~CXFA_FFRectangle() {}
+CXFA_FFRectangle::~CXFA_FFRectangle() = default;
 
 void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
                                     const CFX_Matrix& matrix,

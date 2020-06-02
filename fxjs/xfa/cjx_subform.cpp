@@ -28,7 +28,7 @@ CJX_Subform::CJX_Subform(CXFA_Node* node) : CJX_Container(node) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Subform::~CJX_Subform() {}
+CJX_Subform::~CJX_Subform() = default;
 
 bool CJX_Subform::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

@@ -38,7 +38,7 @@ bool IsValidBitsPerSample(uint32_t x) {
 
 CPDF_SampledFunc::CPDF_SampledFunc() : CPDF_Function(Type::kType0Sampled) {}
 
-CPDF_SampledFunc::~CPDF_SampledFunc() {}
+CPDF_SampledFunc::~CPDF_SampledFunc() = default;
 
 bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
                               std::set<const CPDF_Object*>* pVisited) {

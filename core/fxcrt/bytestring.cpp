@@ -188,7 +188,7 @@ ByteString::ByteString(const std::ostringstream& outStream) {
     m_pData.Reset(StringData::Create(str.c_str(), str.length()));
 }
 
-ByteString::~ByteString() {}
+ByteString::~ByteString() = default;
 
 ByteString& ByteString::operator=(const char* str) {
   if (!str || !str[0])

@@ -13,7 +13,7 @@
 CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)
     : m_pObjList(pDoc), m_RefObjNum(objnum) {}
 
-CPDF_Reference::~CPDF_Reference() {}
+CPDF_Reference::~CPDF_Reference() = default;
 
 CPDF_Object::Type CPDF_Reference::GetType() const {
   return kReference;

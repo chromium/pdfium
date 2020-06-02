@@ -10,7 +10,7 @@
 
 CJBig2_SymbolDict::CJBig2_SymbolDict() {}
 
-CJBig2_SymbolDict::~CJBig2_SymbolDict() {}
+CJBig2_SymbolDict::~CJBig2_SymbolDict() = default;
 
 std::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
   auto dst = std::make_unique<CJBig2_SymbolDict>();

@@ -12,7 +12,7 @@
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
     : CXFA_TreeList(pDocument) {}
 
-CXFA_ArrayNodeList::~CXFA_ArrayNodeList() {}
+CXFA_ArrayNodeList::~CXFA_ArrayNodeList() = default;
 
 void CXFA_ArrayNodeList::SetArrayNodeList(std::vector<CXFA_Node*> srcArray) {
   if (!srcArray.empty())

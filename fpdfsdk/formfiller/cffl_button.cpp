@@ -14,7 +14,7 @@ CFFL_Button::CFFL_Button(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       m_bMouseIn(false),
       m_bMouseDown(false) {}
 
-CFFL_Button::~CFFL_Button() {}
+CFFL_Button::~CFFL_Button() = default;
 
 void CFFL_Button::OnMouseEnter(CPDFSDK_PageView* pPageView) {
   m_bMouseIn = true;

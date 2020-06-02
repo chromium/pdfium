@@ -46,7 +46,7 @@ CJBig2_ArithIntDecoder::CJBig2_ArithIntDecoder() {
   m_IAx.resize(512);
 }
 
-CJBig2_ArithIntDecoder::~CJBig2_ArithIntDecoder() {}
+CJBig2_ArithIntDecoder::~CJBig2_ArithIntDecoder() = default;
 
 bool CJBig2_ArithIntDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
                                     int* nResult) {
@@ -90,7 +90,7 @@ CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA)
   m_IAID.resize(static_cast<size_t>(1) << SBSYMCODELEN);
 }
 
-CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() {}
+CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() = default;
 
 void CJBig2_ArithIaidDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
                                      uint32_t* nResult) {

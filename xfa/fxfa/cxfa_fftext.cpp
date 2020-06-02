@@ -20,7 +20,7 @@
 
 CXFA_FFText::CXFA_FFText(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
-CXFA_FFText::~CXFA_FFText() {}
+CXFA_FFText::~CXFA_FFText() = default;
 
 void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
                                const CFX_Matrix& matrix,

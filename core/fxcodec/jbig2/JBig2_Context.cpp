@@ -75,7 +75,7 @@ CJBig2_Context::CJBig2_Context(pdfium::span<const uint8_t> pSrcSpan,
       m_bIsGlobal(bIsGlobal),
       m_pSymbolDictCache(pSymbolDictCache) {}
 
-CJBig2_Context::~CJBig2_Context() {}
+CJBig2_Context::~CJBig2_Context() = default;
 
 JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
   if (m_pStream->getByteLeft() <= 0)

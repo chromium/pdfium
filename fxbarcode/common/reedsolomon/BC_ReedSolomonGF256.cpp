@@ -48,7 +48,7 @@ void CBC_ReedSolomonGF256::Init() {
       std::make_unique<CBC_ReedSolomonGF256Poly>(this, std::vector<int32_t>{1});
 }
 
-CBC_ReedSolomonGF256::~CBC_ReedSolomonGF256() {}
+CBC_ReedSolomonGF256::~CBC_ReedSolomonGF256() = default;
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256::BuildMonomial(
     int32_t degree,

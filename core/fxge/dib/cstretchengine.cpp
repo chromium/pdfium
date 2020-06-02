@@ -306,7 +306,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   }
 }
 
-CStretchEngine::~CStretchEngine() {}
+CStretchEngine::~CStretchEngine() = default;
 
 bool CStretchEngine::Continue(PauseIndicatorIface* pPause) {
   while (m_State == State::kHorizontal) {

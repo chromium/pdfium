@@ -16,7 +16,7 @@ CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
   ASSERT(pData.size() <= std::numeric_limits<uint32_t>::max() / 8);
 }
 
-CFX_BitStream::~CFX_BitStream() {}
+CFX_BitStream::~CFX_BitStream() = default;
 
 void CFX_BitStream::ByteAlign() {
   m_BitPos = FxAlignToBoundary<8>(m_BitPos);

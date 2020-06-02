@@ -53,7 +53,7 @@ CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
   DefineMethods(MethodSpecs);
 }
 
-CJX_EventPseudoModel::~CJX_EventPseudoModel() {}
+CJX_EventPseudoModel::~CJX_EventPseudoModel() = default;
 
 bool CJX_EventPseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

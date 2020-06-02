@@ -11,7 +11,7 @@
 CXFA_ReadyNodeIterator::CXFA_ReadyNodeIterator(CXFA_Node* pTravelRoot)
     : m_ContentIterator(pTravelRoot) {}
 
-CXFA_ReadyNodeIterator::~CXFA_ReadyNodeIterator() {}
+CXFA_ReadyNodeIterator::~CXFA_ReadyNodeIterator() = default;
 
 CXFA_Node* CXFA_ReadyNodeIterator::MoveToNext() {
   CXFA_Node* pItem = m_pCurNode ? m_ContentIterator.MoveToNext()

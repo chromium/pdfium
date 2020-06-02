@@ -102,7 +102,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   m_Size = m_pSingleStream->GetSize();
 }
 
-CPDF_ContentParser::~CPDF_ContentParser() {}
+CPDF_ContentParser::~CPDF_ContentParser() = default;
 
 // Returning |true| means that there is more content to be processed and
 // Continue() should be called again. Returning |false| means that we've

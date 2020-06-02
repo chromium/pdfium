@@ -626,7 +626,7 @@ CXFA_ContentLayoutProcessor::CXFA_ContentLayoutProcessor(
       ToContentLayoutItem(GetFormNode()->JSObject()->GetLayoutItem()));
 }
 
-CXFA_ContentLayoutProcessor::~CXFA_ContentLayoutProcessor() {}
+CXFA_ContentLayoutProcessor::~CXFA_ContentLayoutProcessor() = default;
 
 RetainPtr<CXFA_ContentLayoutItem>
 CXFA_ContentLayoutProcessor::CreateContentLayoutItem(CXFA_Node* pFormNode) {

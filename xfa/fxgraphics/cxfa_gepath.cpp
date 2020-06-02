@@ -10,7 +10,7 @@
 
 CXFA_GEPath::CXFA_GEPath() {}
 
-CXFA_GEPath::~CXFA_GEPath() {}
+CXFA_GEPath::~CXFA_GEPath() = default;
 
 void CXFA_GEPath::Clear() {
   data_.Clear();

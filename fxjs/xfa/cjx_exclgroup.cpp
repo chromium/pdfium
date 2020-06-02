@@ -28,7 +28,7 @@ CJX_ExclGroup::CJX_ExclGroup(CXFA_ExclGroup* group) : CJX_Node(group) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_ExclGroup::~CJX_ExclGroup() {}
+CJX_ExclGroup::~CJX_ExclGroup() = default;
 
 bool CJX_ExclGroup::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

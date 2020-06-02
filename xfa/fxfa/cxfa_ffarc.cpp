@@ -11,7 +11,7 @@
 
 CXFA_FFArc::CXFA_FFArc(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
-CXFA_FFArc::~CXFA_FFArc() {}
+CXFA_FFArc::~CXFA_FFArc() = default;
 
 void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
                               const CFX_Matrix& matrix,

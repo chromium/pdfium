@@ -64,7 +64,7 @@ CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj)
   ASSERT(m_pObj);
 }
 
-CPDF_FileSpec::~CPDF_FileSpec() {}
+CPDF_FileSpec::~CPDF_FileSpec() = default;
 
 WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
   if (filepath.GetLength() <= 1)

@@ -22,7 +22,7 @@ CJX_DataWindow::CJX_DataWindow(CScript_DataWindow* window)
   DefineMethods(MethodSpecs);
 }
 
-CJX_DataWindow::~CJX_DataWindow() {}
+CJX_DataWindow::~CJX_DataWindow() = default;
 
 bool CJX_DataWindow::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

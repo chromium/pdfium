@@ -76,7 +76,7 @@ WideString GetLabelNumPortion(int num, const ByteString& bsStyle) {
 CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
     : m_pDocument(pDocument) {}
 
-CPDF_PageLabel::~CPDF_PageLabel() {}
+CPDF_PageLabel::~CPDF_PageLabel() = default;
 
 Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!m_pDocument)

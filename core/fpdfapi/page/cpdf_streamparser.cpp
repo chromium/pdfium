@@ -120,7 +120,7 @@ CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span,
                                      const WeakPtr<ByteStringPool>& pPool)
     : m_pPool(pPool), m_pBuf(span) {}
 
-CPDF_StreamParser::~CPDF_StreamParser() {}
+CPDF_StreamParser::~CPDF_StreamParser() = default;
 
 RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,

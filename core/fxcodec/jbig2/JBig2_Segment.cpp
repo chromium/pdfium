@@ -19,4 +19,4 @@ CJBig2_Segment::CJBig2_Segment()
   m_cFlags.c = 0;
 }
 
-CJBig2_Segment::~CJBig2_Segment() {}
+CJBig2_Segment::~CJBig2_Segment() = default;

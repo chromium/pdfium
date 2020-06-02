@@ -11,4 +11,4 @@ CXFA_GEPattern::CXFA_GEPattern(FX_HatchStyle hatchStyle,
                                const FX_ARGB backArgb)
     : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {}
 
-CXFA_GEPattern::~CXFA_GEPattern() {}
+CXFA_GEPattern::~CXFA_GEPattern() = default;

@@ -9,4 +9,4 @@
 CJBig2_PatternDict::CJBig2_PatternDict(uint32_t dict_size)
     : NUMPATS(dict_size), HDPATS(dict_size) {}
 
-CJBig2_PatternDict::~CJBig2_PatternDict() {}
+CJBig2_PatternDict::~CJBig2_PatternDict() = default;

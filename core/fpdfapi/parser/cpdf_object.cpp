@@ -16,7 +16,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/logging.h"
 
-CPDF_Object::~CPDF_Object() {}
+CPDF_Object::~CPDF_Object() = default;
 
 CPDF_Object* CPDF_Object::GetDirect() {
   return this;

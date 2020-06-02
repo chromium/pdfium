@@ -9,4 +9,4 @@
 CFWL_EventScroll::CFWL_EventScroll(CFWL_Widget* pSrcTarget)
     : CFWL_Event(CFWL_Event::Type::Scroll, pSrcTarget) {}
 
-CFWL_EventScroll::~CFWL_EventScroll() {}
+CFWL_EventScroll::~CFWL_EventScroll() = default;

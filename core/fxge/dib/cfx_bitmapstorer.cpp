@@ -12,7 +12,7 @@
 
 CFX_BitmapStorer::CFX_BitmapStorer() {}
 
-CFX_BitmapStorer::~CFX_BitmapStorer() {}
+CFX_BitmapStorer::~CFX_BitmapStorer() = default;
 
 RetainPtr<CFX_DIBitmap> CFX_BitmapStorer::Detach() {
   return std::move(m_pBitmap);

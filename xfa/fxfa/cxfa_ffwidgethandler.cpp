@@ -25,7 +25,7 @@
 CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
     : m_pDocView(pDocView) {}
 
-CXFA_FFWidgetHandler::~CXFA_FFWidgetHandler() {}
+CXFA_FFWidgetHandler::~CXFA_FFWidgetHandler() = default;
 
 bool CXFA_FFWidgetHandler::OnMouseEnter(CXFA_FFWidget* hWidget) {
   m_pDocView->LockUpdate();

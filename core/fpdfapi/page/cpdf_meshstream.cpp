@@ -117,7 +117,7 @@ CPDF_MeshStream::CPDF_MeshStream(
   memset(&m_ColorMax, 0, sizeof(m_ColorMax));
 }
 
-CPDF_MeshStream::~CPDF_MeshStream() {}
+CPDF_MeshStream::~CPDF_MeshStream() = default;
 
 bool CPDF_MeshStream::Load() {
   m_pStream->LoadAllDataFiltered();

@@ -34,7 +34,7 @@ CPDF_CrossRefAvail::CPDF_CrossRefAvail(CPDF_SyntaxParser* parser,
   AddCrossRefForCheck(last_crossref_offset);
 }
 
-CPDF_CrossRefAvail::~CPDF_CrossRefAvail() {}
+CPDF_CrossRefAvail::~CPDF_CrossRefAvail() = default;
 
 CPDF_DataAvail::DocAvailStatus CPDF_CrossRefAvail::CheckAvail() {
   if (current_status_ == CPDF_DataAvail::DataAvailable)

@@ -34,7 +34,7 @@ CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field)
       m_field.Get(), std::vector<int32_t>{1}));
 }
 
-CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {}
+CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() = default;
 
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
     size_t degree) {

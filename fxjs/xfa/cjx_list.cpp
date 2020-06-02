@@ -26,7 +26,7 @@ CJX_List::CJX_List(CXFA_List* list) : CJX_Object(list) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_List::~CJX_List() {}
+CJX_List::~CJX_List() = default;
 
 bool CJX_List::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

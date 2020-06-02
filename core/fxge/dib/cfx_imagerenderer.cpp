@@ -82,7 +82,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
   m_Stretcher->Start();
 }
 
-CFX_ImageRenderer::~CFX_ImageRenderer() {}
+CFX_ImageRenderer::~CFX_ImageRenderer() = default;
 
 bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (m_Status == 1)

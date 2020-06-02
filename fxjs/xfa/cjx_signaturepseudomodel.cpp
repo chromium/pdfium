@@ -25,7 +25,7 @@ CJX_SignaturePseudoModel::CJX_SignaturePseudoModel(
   DefineMethods(MethodSpecs);
 }
 
-CJX_SignaturePseudoModel::~CJX_SignaturePseudoModel() {}
+CJX_SignaturePseudoModel::~CJX_SignaturePseudoModel() = default;
 
 bool CJX_SignaturePseudoModel::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

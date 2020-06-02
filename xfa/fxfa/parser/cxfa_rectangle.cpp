@@ -59,7 +59,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
                attributes,
                std::move(js_node)) {}
 
-CXFA_Rectangle::~CXFA_Rectangle() {}
+CXFA_Rectangle::~CXFA_Rectangle() = default;
 
 void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
                                  const CFX_RectF& rtWidget,

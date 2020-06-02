@@ -9,7 +9,7 @@
 JSEmbedderTest::JSEmbedderTest()
     : m_pArrayBufferAllocator(std::make_unique<CFX_V8ArrayBufferAllocator>()) {}
 
-JSEmbedderTest::~JSEmbedderTest() {}
+JSEmbedderTest::~JSEmbedderTest() = default;
 
 void JSEmbedderTest::SetUp() {
   v8::Isolate::CreateParams params;

@@ -10,4 +10,4 @@
 
 CXFA_PieceLine::CXFA_PieceLine() {}
 
-CXFA_PieceLine::~CXFA_PieceLine() {}
+CXFA_PieceLine::~CXFA_PieceLine() = default;

@@ -166,7 +166,7 @@ CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* pContext,
                                      CFX_RenderDevice* pDevice)
     : m_pContext(pContext), m_pDevice(pDevice) {}
 
-CPDF_RenderStatus::~CPDF_RenderStatus() {}
+CPDF_RenderStatus::~CPDF_RenderStatus() = default;
 
 void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
                                    const CPDF_GraphicStates* pInitialStates) {

@@ -42,7 +42,7 @@ WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category) {
 
 CXFA_NodeLocale::CXFA_NodeLocale(CXFA_Node* pLocale) : m_pLocale(pLocale) {}
 
-CXFA_NodeLocale::~CXFA_NodeLocale() {}
+CXFA_NodeLocale::~CXFA_NodeLocale() = default;
 
 WideString CXFA_NodeLocale::GetName() const {
   return WideString(m_pLocale

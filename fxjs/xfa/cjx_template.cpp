@@ -26,7 +26,7 @@ CJX_Template::CJX_Template(CXFA_Template* tmpl) : CJX_Model(tmpl) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Template::~CJX_Template() {}
+CJX_Template::~CJX_Template() = default;
 
 bool CJX_Template::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

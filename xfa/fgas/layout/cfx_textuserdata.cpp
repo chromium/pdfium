@@ -20,4 +20,4 @@ CFX_TextUserData::CFX_TextUserData(
     const RetainPtr<CFX_LinkUserData>& pLinkData)
     : m_pStyle(pStyle), m_pLinkData(pLinkData) {}
 
-CFX_TextUserData::~CFX_TextUserData() {}
+CFX_TextUserData::~CFX_TextUserData() = default;

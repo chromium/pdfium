@@ -34,7 +34,7 @@ CPVT_WordInfo::CPVT_WordInfo(const CPVT_WordInfo& word)
   operator=(word);
 }
 
-CPVT_WordInfo::~CPVT_WordInfo() {}
+CPVT_WordInfo::~CPVT_WordInfo() = default;
 
 CPVT_WordInfo& CPVT_WordInfo::operator=(const CPVT_WordInfo& word) {
   if (this == &word)

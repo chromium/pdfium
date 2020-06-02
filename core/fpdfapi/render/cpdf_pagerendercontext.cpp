@@ -14,4 +14,4 @@
 
 CPDF_PageRenderContext::CPDF_PageRenderContext() {}
 
-CPDF_PageRenderContext::~CPDF_PageRenderContext() {}
+CPDF_PageRenderContext::~CPDF_PageRenderContext() = default;

@@ -36,7 +36,7 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
   m_pFWLApp = std::make_unique<CFWL_App>(this);
 }
 
-CXFA_FFApp::~CXFA_FFApp() {}
+CXFA_FFApp::~CXFA_FFApp() = default;
 
 CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {

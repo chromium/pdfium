@@ -35,7 +35,7 @@ CPDF_VariableText::Provider::Provider(IPVT_FontMap* pFontMap)
   ASSERT(m_pFontMap);
 }
 
-CPDF_VariableText::Provider::~Provider() {}
+CPDF_VariableText::Provider::~Provider() = default;
 
 uint32_t CPDF_VariableText::Provider::GetCharWidth(int32_t nFontIndex,
                                                    uint16_t word) {
@@ -86,7 +86,7 @@ int32_t CPDF_VariableText::Provider::GetDefaultFontIndex() {
 CPDF_VariableText::Iterator::Iterator(CPDF_VariableText* pVT)
     : m_CurPos(-1, -1, -1), m_pVT(pVT) {}
 
-CPDF_VariableText::Iterator::~Iterator() {}
+CPDF_VariableText::Iterator::~Iterator() = default;
 
 void CPDF_VariableText::Iterator::SetAt(int32_t nWordIndex) {
   m_CurPos = m_pVT->WordIndexToWordPlace(nWordIndex);

@@ -10,7 +10,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-RenderDeviceDriverIface::~RenderDeviceDriverIface() {}
+RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
 
 bool RenderDeviceDriverIface::StartRendering() {
   return true;

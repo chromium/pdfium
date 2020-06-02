@@ -98,7 +98,7 @@ bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
   return true;
 }
 
-CFX_DIBitmap::~CFX_DIBitmap() {}
+CFX_DIBitmap::~CFX_DIBitmap() = default;
 
 uint8_t* CFX_DIBitmap::GetBuffer() const {
   return m_pBuffer.Get();

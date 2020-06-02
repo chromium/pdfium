@@ -16,7 +16,7 @@ CPDF_Name::CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str)
     m_Name = pPool->Intern(m_Name);
 }
 
-CPDF_Name::~CPDF_Name() {}
+CPDF_Name::~CPDF_Name() = default;
 
 CPDF_Object::Type CPDF_Name::GetType() const {
   return kName;

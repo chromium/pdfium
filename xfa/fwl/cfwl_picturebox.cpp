@@ -11,7 +11,7 @@
 CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app)
     : CFWL_Widget(app, std::make_unique<CFWL_WidgetProperties>(), nullptr) {}
 
-CFWL_PictureBox::~CFWL_PictureBox() {}
+CFWL_PictureBox::~CFWL_PictureBox() = default;
 
 FWL_Type CFWL_PictureBox::GetClassID() const {
   return FWL_Type::PictureBox;

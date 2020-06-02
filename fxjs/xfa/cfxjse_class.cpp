@@ -321,4 +321,4 @@ CFXJSE_Class* CFXJSE_Class::Create(
 
 CFXJSE_Class::CFXJSE_Class(CFXJSE_Context* lpContext) : m_pContext(lpContext) {}
 
-CFXJSE_Class::~CFXJSE_Class() {}
+CFXJSE_Class::~CFXJSE_Class() = default;

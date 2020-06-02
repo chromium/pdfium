@@ -9,4 +9,4 @@
 CFX_LinkUserData::CFX_LinkUserData(const WideString& wsText)
     : m_wsURLContent(wsText) {}
 
-CFX_LinkUserData::~CFX_LinkUserData() {}
+CFX_LinkUserData::~CFX_LinkUserData() = default;

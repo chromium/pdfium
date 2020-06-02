@@ -11,7 +11,7 @@
 
 CXFA_FWLAdapterWidgetMgr::CXFA_FWLAdapterWidgetMgr() {}
 
-CXFA_FWLAdapterWidgetMgr::~CXFA_FWLAdapterWidgetMgr() {}
+CXFA_FWLAdapterWidgetMgr::~CXFA_FWLAdapterWidgetMgr() = default;
 
 void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
   if (!pWidget)

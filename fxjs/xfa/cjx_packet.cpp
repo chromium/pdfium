@@ -27,7 +27,7 @@ CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
   DefineMethods(MethodSpecs);
 }
 
-CJX_Packet::~CJX_Packet() {}
+CJX_Packet::~CJX_Packet() = default;
 
 bool CJX_Packet::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);

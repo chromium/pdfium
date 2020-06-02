@@ -61,7 +61,7 @@ CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
   m_A = kDefaultAValue;
 }
 
-CJBig2_ArithDecoder::~CJBig2_ArithDecoder() {}
+CJBig2_ArithDecoder::~CJBig2_ArithDecoder() = default;
 
 int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
   ASSERT(pCX);

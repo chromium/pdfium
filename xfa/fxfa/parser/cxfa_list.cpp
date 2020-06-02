@@ -29,4 +29,4 @@ CXFA_List::CXFA_List(CXFA_Document* pDocument,
       std::unique_ptr<CXFA_List>(this));
 }
 
-CXFA_List::~CXFA_List() {}
+CXFA_List::~CXFA_List() = default;
