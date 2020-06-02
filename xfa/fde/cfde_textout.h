@@ -65,19 +65,20 @@ class CFDE_TextOut {
   class Line {
    public:
     Line();
-    Line(const Line& ttoLine);
+    Line(const Line& that);
     ~Line();
 
-    bool GetNewReload() const { return m_bNewReload; }
-    void SetNewReload(bool reload) { m_bNewReload = reload; }
-    int32_t AddPiece(int32_t index, const Piece& ttoPiece);
+    bool new_reload() const { return new_reload_; }
+    void set_new_reload(bool reload) { new_reload_ = reload; }
+
+    int32_t AddPiece(int32_t index, const Piece& piece);
     int32_t GetSize() const;
-    Piece* GetPtrAt(int32_t index);
-    void RemoveLast(int32_t iCount);
+    Piece* GetPieceAtIndex(int32_t index);
+    void RemoveLast(int32_t count);
 
    private:
-    bool m_bNewReload;
-    std::deque<Piece> m_pieces;
+    bool new_reload_ = false;
+    std::deque<Piece> pieces_;
   };
 
   bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
@@ -93,7 +94,7 @@ class CFDE_TextOut {
                       const CFX_RectF& rect,
                       int32_t* pStartChar,
                       int32_t* pPieceWidths);
-  void AppendPiece(const Piece& ttoPiece, bool bNeedReload, bool bEnd);
+  void AppendPiece(const Piece& piece, bool bNeedReload, bool bEnd);
   void DoAlignment(const CFX_RectF& rect);
   size_t GetDisplayPos(Piece* pPiece);
 
