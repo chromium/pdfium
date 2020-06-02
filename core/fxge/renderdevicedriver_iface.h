@@ -26,8 +26,7 @@ class PauseIndicatorIface;
 class TextCharPos;
 struct FX_RECT;
 
-enum class DeviceType : uint8_t {
-  kUnknown,
+enum class DeviceType : bool {
   kDisplay,
   kPrinter,
 };

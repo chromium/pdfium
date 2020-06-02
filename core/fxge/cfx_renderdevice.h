@@ -252,7 +252,7 @@ class CFX_RenderDevice {
   int m_Height = 0;
   int m_bpp = 0;
   int m_RenderCaps = 0;
-  DeviceType m_DeviceType = DeviceType::kUnknown;
+  DeviceType m_DeviceType = DeviceType::kDisplay;
   FX_RECT m_ClipBox;
   std::unique_ptr<RenderDeviceDriverIface> m_pDeviceDriver;
 };
