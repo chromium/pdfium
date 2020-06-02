@@ -299,7 +299,7 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
 
   for (auto& line : m_ttoLines) {
     for (size_t i = 0; i < line.GetSize(); ++i) {
-      Piece* pPiece = line.GetPieceAtIndex(i);
+      const Piece* pPiece = line.GetPieceAtIndex(i);
       size_t szCount = GetDisplayPos(pPiece);
       if (szCount == 0)
         continue;
@@ -451,7 +451,7 @@ void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
   pdfium::span<const wchar_t> text_span = m_wsText.span();
   size_t iPieceIndex = 0;
   size_t iPieceCount = pLine->GetSize();
-  Piece* pPiece = pLine->GetPieceAtIndex(0);
+  const Piece* pPiece = pLine->GetPieceAtIndex(0);
   int32_t iStartChar = pPiece->iStartChar;
   int32_t iPieceWidths = 0;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
@@ -481,7 +481,7 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   if (m_ttoLines.empty())
     return;
 
-  Piece* pFirstPiece = m_ttoLines.back().GetPieceAtIndex(0);
+  const Piece* pFirstPiece = m_ttoLines.back().GetPieceAtIndex(0);
   if (!pFirstPiece)
     return;
 
@@ -500,7 +500,7 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   }
 }
 
-size_t CFDE_TextOut::GetDisplayPos(Piece* pPiece) {
+size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
   ASSERT(pPiece->iChars >= 0);
 
   if (pdfium::CollectionSize<int32_t>(m_CharPos) < pPiece->iChars)
@@ -539,6 +539,12 @@ size_t CFDE_TextOut::Line::AddPiece(size_t index, const Piece& piece) {
 
 size_t CFDE_TextOut::Line::GetSize() const {
   return pieces_.size();
+}
+
+const CFDE_TextOut::Piece* CFDE_TextOut::Line::GetPieceAtIndex(
+    size_t index) const {
+  CHECK(pdfium::IndexInBounds(pieces_, index));
+  return &pieces_[index];
 }
 
 CFDE_TextOut::Piece* CFDE_TextOut::Line::GetPieceAtIndex(size_t index) {

@@ -73,6 +73,7 @@ class CFDE_TextOut {
 
     size_t AddPiece(size_t index, const Piece& piece);
     size_t GetSize() const;
+    const Piece* GetPieceAtIndex(size_t index) const;
     Piece* GetPieceAtIndex(size_t index);
     void RemoveLast(size_t count);
 
@@ -96,7 +97,7 @@ class CFDE_TextOut {
                       int32_t* pPieceWidths);
   void AppendPiece(const Piece& piece, bool bNeedReload, bool bEnd);
   void DoAlignment(const CFX_RectF& rect);
-  size_t GetDisplayPos(Piece* pPiece);
+  size_t GetDisplayPos(const Piece* pPiece);
 
   std::unique_ptr<CFX_TxtBreak> const m_pTxtBreak;
   RetainPtr<CFGAS_GEFont> m_pFont;
