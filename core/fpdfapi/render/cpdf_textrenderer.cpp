@@ -30,13 +30,13 @@ int GetTextRenderOptionsHelper(const CPDF_Font* pFont,
   if (pFont->IsCIDFont())
     text_options |= FXFONT_CIDFONT;
 
-  if (options.GetOptions().bClearType) {
+  if (options.GetOptions().bNoTextSmooth) {
+    text_options |= FXTEXT_NOSMOOTH;
+  } else if (options.GetOptions().bClearType) {
     text_options |= FXTEXT_CLEARTYPE;
     if (options.GetOptions().bBGRStripe)
       text_options |= FXTEXT_BGR_STRIPE;
   }
-  if (options.GetOptions().bNoTextSmooth)
-    text_options |= FXTEXT_NOSMOOTH;
   if (options.GetOptions().bNoNativeText)
     text_options |= FXTEXT_NO_NATIVETEXT;
 
