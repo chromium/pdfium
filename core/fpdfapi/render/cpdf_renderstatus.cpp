@@ -1050,7 +1050,17 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
     } else if (pType3Char->GetBitmap()) {
-      if (!m_bPrint) {
+      if (m_bPrint) {
+        CFX_Matrix image_matrix = pType3Char->matrix() * matrix;
+        CPDF_ImageRenderer renderer;
+        if (renderer.Start(this, pType3Char->GetBitmap(), fill_argb, 255,
+                           image_matrix, FXDIB_ResampleOptions(), false,
+                           BlendMode::kNormal)) {
+          renderer.Continue(nullptr);
+        }
+        if (!renderer.GetResult())
+          return false;
+      } else {
         CPDF_Document* pDoc = pType3Font->GetDocument();
         RetainPtr<CPDF_Type3Cache> pCache =
             CPDF_DocRenderData::FromDocument(pDoc)->GetCachedType3(pType3Font);
@@ -1079,16 +1089,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           glyphs[iChar].m_pGlyph = pBitmap;
           glyphs[iChar].m_Origin = origin;
         }
-      } else {
-        CFX_Matrix image_matrix = pType3Char->matrix() * matrix;
-        CPDF_ImageRenderer renderer;
-        if (renderer.Start(this, pType3Char->GetBitmap(), fill_argb, 255,
-                           image_matrix, FXDIB_ResampleOptions(), false,
-                           BlendMode::kNormal)) {
-          renderer.Continue(nullptr);
-        }
-        if (!renderer.GetResult())
-          return false;
       }
     }
   }
