@@ -17,17 +17,17 @@ class CFX_KeyValue;
 class CFX_Value {
  public:
   enum class DataType : uint8_t {
-    NUMBER = 0,
-    BOOLEAN,
-    STRING,
-    OBJECT,
-    NULLOBJ
+    kNumber = 0,
+    kBoolean,
+    kString,
+    kObject,
+    kNull
   };
 
   CFX_Value();
   ~CFX_Value();
 
-  DataType nType = DataType::NULLOBJ;
+  DataType nType = DataType::kNull;
   bool bData;
   double dData;
   ByteString sData;
