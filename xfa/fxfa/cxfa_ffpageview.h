@@ -98,7 +98,7 @@ class CXFA_FFTabOrderPageWidgetIterator final : public IXFA_WidgetIterator {
   CXFA_FFWidget* FindWidgetByName(const WideString& wsWidgetName,
                                   CXFA_FFWidget* pRefWidget);
   void CreateTabOrderWidgetArray();
-  std::vector<CXFA_FFWidget*> CreateSpaceOrderWidgetArray();
+  std::vector<RetainPtr<CXFA_ContentLayoutItem>> CreateSpaceOrderLayoutItems();
   CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
   void OrderContainer(CXFA_LayoutItemIterator* sIterator,
                       CXFA_LayoutItem* pViewItem,
