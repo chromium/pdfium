@@ -342,47 +342,36 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::FindWidgetByName(
 void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
   m_TabOrderWidgetArray.clear();
 
-  std::vector<CXFA_FFWidget*> SpaceOrderWidgetArray;
-  CreateSpaceOrderWidgetArray(&SpaceOrderWidgetArray);
-  if (SpaceOrderWidgetArray.empty())
+  const std::vector<CXFA_FFWidget*> widgets = CreateSpaceOrderWidgetArray();
+  if (widgets.empty())
     return;
 
-  int32_t nWidgetCount = pdfium::CollectionSize<int32_t>(SpaceOrderWidgetArray);
-  CXFA_FFWidget* hWidget = SpaceOrderWidgetArray[0];
-  while (pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray) <
-         nWidgetCount) {
-    if (!pdfium::Contains(m_TabOrderWidgetArray, hWidget->GetLayoutItem())) {
-      m_TabOrderWidgetArray.emplace_back(hWidget->GetLayoutItem());
-      CXFA_Node* pNode = hWidget->GetNode();
-      if (pNode->GetFFWidgetType() == XFA_FFWidgetType::kExclGroup) {
-        auto it = std::find(SpaceOrderWidgetArray.begin(),
-                            SpaceOrderWidgetArray.end(), hWidget);
-        int32_t iWidgetIndex = it != SpaceOrderWidgetArray.end()
-                                   ? it - SpaceOrderWidgetArray.begin() + 1
-                                   : 0;
+  CXFA_FFWidget* widget = widgets[0];
+  while (m_TabOrderWidgetArray.size() < widgets.size()) {
+    if (!pdfium::Contains(m_TabOrderWidgetArray, widget->GetLayoutItem())) {
+      m_TabOrderWidgetArray.emplace_back(widget->GetLayoutItem());
+      CXFA_Node* node = widget->GetNode();
+      if (node->GetFFWidgetType() == XFA_FFWidgetType::kExclGroup) {
+        auto it = std::find(widgets.begin(), widgets.end(), widget);
+        size_t index = it != widgets.end() ? it - widgets.begin() + 1 : 0;
         while (true) {
-          CXFA_FFWidget* radio =
-              SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
-          if (radio->GetNode()->GetExclGroupIfExists() != pNode)
+          CXFA_FFWidget* radio = widgets[index % widgets.size()];
+          if (radio->GetNode()->GetExclGroupIfExists() != node)
             break;
-          if (!pdfium::Contains(m_TabOrderWidgetArray,
-                                hWidget->GetLayoutItem())) {
+          if (!pdfium::Contains(m_TabOrderWidgetArray, widget->GetLayoutItem()))
             m_TabOrderWidgetArray.emplace_back(radio->GetLayoutItem());
-          }
-          iWidgetIndex++;
+          ++index;
         }
       }
-      if (CXFA_FFWidget* hTraverseWidget = GetTraverseWidget(hWidget)) {
-        hWidget = hTraverseWidget;
+      CXFA_FFWidget* next_widget = GetTraverseWidget(widget);
+      if (next_widget) {
+        widget = next_widget;
         continue;
       }
     }
-    auto it = std::find(SpaceOrderWidgetArray.begin(),
-                        SpaceOrderWidgetArray.end(), hWidget);
-    int32_t iWidgetIndex = it != SpaceOrderWidgetArray.end()
-                               ? it - SpaceOrderWidgetArray.begin() + 1
-                               : 0;
-    hWidget = SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
+    auto it = std::find(widgets.begin(), widgets.end(), widget);
+    size_t index = it != widgets.end() ? it - widgets.begin() + 1 : 0;
+    widget = widgets[index % widgets.size()];
   }
 }
 
@@ -440,16 +429,17 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     pContainer->AppendTabParam(pParam.get());
 }
 
-void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
-    std::vector<CXFA_FFWidget*>* WidgetArray) {
+std::vector<CXFA_FFWidget*>
+CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray() {
+  std::vector<CXFA_FFWidget*> widgets;
   CXFA_LayoutItemIterator sIterator(m_pPageViewLayout.Get());
   auto pParam = std::make_unique<CXFA_TabParam>(nullptr);
   bool bCurrentItem = false;
   bool bContentArea = false;
   OrderContainer(&sIterator, nullptr, pParam.get(), &bCurrentItem,
                  &bContentArea, false);
-  WidgetArray->insert(WidgetArray->end(), pParam->GetChildren().begin(),
-                      pParam->GetChildren().end());
+  widgets.insert(widgets.end(), pParam->GetChildren().begin(),
+                 pParam->GetChildren().end());
 
   sIterator.Reset();
   bCurrentItem = false;
@@ -457,8 +447,9 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
   pParam->ClearChildren();
   OrderContainer(&sIterator, nullptr, pParam.get(), &bCurrentItem,
                  &bContentArea, true);
-  WidgetArray->insert(WidgetArray->end(), pParam->GetChildren().begin(),
-                      pParam->GetChildren().end());
+  widgets.insert(widgets.end(), pParam->GetChildren().begin(),
+                 pParam->GetChildren().end());
+  return widgets;
 }
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
