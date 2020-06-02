@@ -240,14 +240,5 @@ and add the "Cr-Internals-Plugins-PDF" label.
 
 ## Contributing code
 
-For contributing code, we will follow
-[Chromium's process](https://chromium.googlesource.com/chromium/src/+/master/docs/contributing.md)
-as much as possible. The main exceptions are:
-
-1. Code has to conform to the existing style and not Chromium/Google style.
-2. PDFium uses a different Gerrit instance for code reviews, and credentials for
-this Gerrit instance need to be generated before uploading changes.
-
-Before submitting a fix for a bug, it can help if you create an issue in the
-bug tracker. This allows easier discussion about the problem and also helps
-with statistics tracking.
+See the [CONTRIBUTING](CONTRIBUTING.md) document for more information on
+contributing to the PDFium project.
