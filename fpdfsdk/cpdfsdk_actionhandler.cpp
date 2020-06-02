@@ -105,7 +105,7 @@ bool CPDFSDK_ActionHandler::DoAction_Destination(
 
 bool CPDFSDK_ActionHandler::DoAction_Page(
     const CPDF_Action& action,
-    enum CPDF_AAction::AActionType eType,
+    CPDF_AAction::AActionType eType,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   std::set<const CPDF_Dictionary*> visited;
   return ExecuteDocumentPageAction(action, eType, pFormFillEnv, &visited);
@@ -113,7 +113,7 @@ bool CPDFSDK_ActionHandler::DoAction_Page(
 
 bool CPDFSDK_ActionHandler::DoAction_Document(
     const CPDF_Action& action,
-    enum CPDF_AAction::AActionType eType,
+    CPDF_AAction::AActionType eType,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   std::set<const CPDF_Dictionary*> visited;
   return ExecuteDocumentPageAction(action, eType, pFormFillEnv, &visited);

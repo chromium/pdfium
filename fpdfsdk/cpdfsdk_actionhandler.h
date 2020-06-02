@@ -29,10 +29,10 @@ class CPDFSDK_ActionHandler {
                            WideString csJSName,
                            CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_Page(const CPDF_Action& action,
-                     enum CPDF_AAction::AActionType eType,
+                     CPDF_AAction::AActionType eType,
                      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_Document(const CPDF_Action& action,
-                         enum CPDF_AAction::AActionType eType,
+                         CPDF_AAction::AActionType eType,
                          CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_Field(const CPDF_Action& action,
                       CPDF_AAction::AActionType type,
