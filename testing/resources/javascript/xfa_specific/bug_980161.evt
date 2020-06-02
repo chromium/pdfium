@@ -1,0 +1,4 @@
+mousemove,50,50
+mousedown,left,50,50
+mouseup,left,50,50
+keycode,9
