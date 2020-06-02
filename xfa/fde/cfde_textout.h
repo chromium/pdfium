@@ -22,17 +22,6 @@ class CFX_RenderDevice;
 class CFX_TxtBreak;
 class TextCharPos;
 
-struct FDE_TTOPIECE {
-  FDE_TTOPIECE();
-  FDE_TTOPIECE(const FDE_TTOPIECE& that);
-  ~FDE_TTOPIECE();
-
-  int32_t iStartChar;
-  int32_t iChars;
-  uint32_t dwCharStyles;
-  CFX_RectF rtPiece;
-};
-
 class CFDE_TextOut {
  public:
   static bool DrawString(CFX_RenderDevice* device,
@@ -62,22 +51,33 @@ class CFDE_TextOut {
   int32_t GetTotalLines() const { return m_iTotalLines; }
 
  private:
-  class CFDE_TTOLine {
+  struct Piece {
+    Piece();
+    Piece(const Piece& that);
+    ~Piece();
+
+    int32_t iStartChar;
+    int32_t iChars;
+    uint32_t dwCharStyles;
+    CFX_RectF rtPiece;
+  };
+
+  class Line {
    public:
-    CFDE_TTOLine();
-    CFDE_TTOLine(const CFDE_TTOLine& ttoLine);
-    ~CFDE_TTOLine();
+    Line();
+    Line(const Line& ttoLine);
+    ~Line();
 
     bool GetNewReload() const { return m_bNewReload; }
     void SetNewReload(bool reload) { m_bNewReload = reload; }
-    int32_t AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece);
+    int32_t AddPiece(int32_t index, const Piece& ttoPiece);
     int32_t GetSize() const;
-    FDE_TTOPIECE* GetPtrAt(int32_t index);
+    Piece* GetPtrAt(int32_t index);
     void RemoveLast(int32_t iCount);
 
    private:
     bool m_bNewReload;
-    std::deque<FDE_TTOPIECE> m_pieces;
+    std::deque<Piece> m_pieces;
   };
 
   bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
@@ -87,15 +87,15 @@ class CFDE_TextOut {
   void LoadText(const WideString& str, const CFX_RectF& rect);
 
   void Reload(const CFX_RectF& rect);
-  void ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect);
+  void ReloadLinePiece(Line* pLine, const CFX_RectF& rect);
   bool RetrievePieces(CFX_BreakType dwBreakStatus,
                       bool bReload,
                       const CFX_RectF& rect,
                       int32_t* pStartChar,
                       int32_t* pPieceWidths);
-  void AppendPiece(const FDE_TTOPIECE& ttoPiece, bool bNeedReload, bool bEnd);
+  void AppendPiece(const Piece& ttoPiece, bool bNeedReload, bool bEnd);
   void DoAlignment(const CFX_RectF& rect);
-  size_t GetDisplayPos(FDE_TTOPIECE* pPiece);
+  size_t GetDisplayPos(Piece* pPiece);
 
   std::unique_ptr<CFX_TxtBreak> const m_pTxtBreak;
   RetainPtr<CFGAS_GEFont> m_pFont;
@@ -110,7 +110,7 @@ class CFDE_TextOut {
   uint32_t m_dwTxtBkStyles = 0;
   WideString m_wsText;
   CFX_Matrix m_Matrix;
-  std::deque<CFDE_TTOLine> m_ttoLines;
+  std::deque<Line> m_ttoLines;
   int32_t m_iCurLine = 0;
   int32_t m_iCurPiece = 0;
   int32_t m_iTotalLines = 0;
