@@ -71,10 +71,10 @@ class CFDE_TextOut {
     bool new_reload() const { return new_reload_; }
     void set_new_reload(bool reload) { new_reload_ = reload; }
 
-    int32_t AddPiece(int32_t index, const Piece& piece);
-    int32_t GetSize() const;
-    Piece* GetPieceAtIndex(int32_t index);
-    void RemoveLast(int32_t count);
+    size_t AddPiece(size_t index, const Piece& piece);
+    size_t GetSize() const;
+    Piece* GetPieceAtIndex(size_t index);
+    void RemoveLast(size_t count);
 
    private:
     bool new_reload_ = false;
@@ -113,7 +113,7 @@ class CFDE_TextOut {
   CFX_Matrix m_Matrix;
   std::deque<Line> m_ttoLines;
   int32_t m_iCurLine = 0;
-  int32_t m_iCurPiece = 0;
+  size_t m_iCurPiece = 0;
   int32_t m_iTotalLines = 0;
   std::vector<TextCharPos> m_CharPos;
 };

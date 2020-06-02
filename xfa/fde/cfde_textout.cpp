@@ -298,18 +298,15 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
     device->SetClip_Rect(rtClip.GetOuterRect());
 
   for (auto& line : m_ttoLines) {
-    int32_t iPieces = line.GetSize();
-    for (int32_t i = 0; i < iPieces; ++i) {
+    for (size_t i = 0; i < line.GetSize(); ++i) {
       Piece* pPiece = line.GetPieceAtIndex(i);
-      if (!pPiece)
+      size_t szCount = GetDisplayPos(pPiece);
+      if (szCount == 0)
         continue;
 
-      size_t szCount = GetDisplayPos(pPiece);
-      if (szCount > 0) {
-        CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
-                                 {m_CharPos.data(), szCount}, m_fFontSize,
-                                 m_Matrix);
-      }
+      CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
+                               {m_CharPos.data(), szCount}, m_fFontSize,
+                               m_Matrix);
     }
   }
   device->RestoreState(false);
@@ -429,7 +426,7 @@ void CFDE_TextOut::AppendPiece(const Piece& piece,
 
     m_iCurPiece = pLine->AddPiece(m_iCurPiece, piece);
     if (bEnd) {
-      int32_t iPieces = pLine->GetSize();
+      size_t iPieces = pLine->GetSize();
       if (m_iCurPiece < iPieces)
         pLine->RemoveLast(iPieces - m_iCurPiece - 1);
     }
@@ -452,11 +449,11 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 
 void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
   pdfium::span<const wchar_t> text_span = m_wsText.span();
+  size_t iPieceIndex = 0;
+  size_t iPieceCount = pLine->GetSize();
   Piece* pPiece = pLine->GetPieceAtIndex(0);
   int32_t iStartChar = pPiece->iStartChar;
-  int32_t iPieceCount = pLine->GetSize();
   int32_t iPieceWidths = 0;
-  int32_t iPieceIndex = 0;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   m_fLinePos = pPiece->rtPiece.top;
   while (iPieceIndex < iPieceCount) {
@@ -498,9 +495,8 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
     return;
 
   for (auto& line : m_ttoLines) {
-    int32_t iPieces = line.GetSize();
-    for (int32_t j = 0; j < iPieces; j++)
-      line.GetPieceAtIndex(j)->rtPiece.top += fInc;
+    for (size_t i = 0; i < line.GetSize(); ++i)
+      line.GetPieceAtIndex(i)->rtPiece.top += fInc;
   }
 }
 
@@ -532,28 +528,24 @@ CFDE_TextOut::Line::Line(const Line& that) {
 
 CFDE_TextOut::Line::~Line() = default;
 
-int32_t CFDE_TextOut::Line::AddPiece(int32_t index, const Piece& piece) {
-  if (index >= pdfium::CollectionSize<int32_t>(pieces_)) {
+size_t CFDE_TextOut::Line::AddPiece(size_t index, const Piece& piece) {
+  if (index >= pieces_.size()) {
     pieces_.push_back(piece);
-    return pdfium::CollectionSize<int32_t>(pieces_);
+    return pieces_.size();
   }
   pieces_[index] = piece;
   return index;
 }
 
-int32_t CFDE_TextOut::Line::GetSize() const {
-  return pdfium::CollectionSize<int32_t>(pieces_);
+size_t CFDE_TextOut::Line::GetSize() const {
+  return pieces_.size();
 }
 
-CFDE_TextOut::Piece* CFDE_TextOut::Line::GetPieceAtIndex(int32_t index) {
-  return pdfium::IndexInBounds(pieces_, index) ? &pieces_[index] : nullptr;
+CFDE_TextOut::Piece* CFDE_TextOut::Line::GetPieceAtIndex(size_t index) {
+  CHECK(pdfium::IndexInBounds(pieces_, index));
+  return &pieces_[index];
 }
 
-void CFDE_TextOut::Line::RemoveLast(int32_t count) {
-  if (count < 0)
-    return;
-
-  pieces_.erase(
-      pieces_.end() - std::min(count, pdfium::CollectionSize<int32_t>(pieces_)),
-      pieces_.end());
+void CFDE_TextOut::Line::RemoveLast(size_t count) {
+  pieces_.erase(pieces_.end() - std::min(count, pieces_.size()), pieces_.end());
 }
