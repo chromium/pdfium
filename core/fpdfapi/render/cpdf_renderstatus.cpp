@@ -116,6 +116,29 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   return pBitmap;
 }
 
+int GetFillRenderOptionsHelper(const CPDF_RenderOptions::Options& options,
+                               const CPDF_PathObject* path_obj,
+                               int fill_type,
+                               bool is_stroke,
+                               bool is_type3_char) {
+  int fill_options = fill_type;
+  if (fill_type && options.bRectAA)
+    fill_options |= FXFILL_RECT_AA;
+  if (options.bFillFullcover)
+    fill_options |= FXFILL_FULLCOVER;
+  if (options.bNoPathSmooth)
+    fill_options |= FXFILL_NOPATHSMOOTH;
+  if (static_cast<const CPDF_PageObject*>(path_obj)
+          ->m_GeneralState.GetStrokeAdjust())
+    fill_options |= FX_STROKE_ADJUST;
+  if (is_stroke)
+    fill_options |= FX_FILL_STROKE;
+  if (is_type3_char)
+    fill_options |= FX_FILL_TEXT_MODE;
+
+  return fill_options;
+}
+
 bool IsAvailableMatrix(const CFX_Matrix& matrix) {
   if (matrix.a == 0 || matrix.d == 0)
     return matrix.b != 0 && matrix.c != 0;
@@ -401,6 +424,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 
 bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
                                     const CFX_Matrix& mtObj2Device) {
+  // Path fill type, can be 0, FXFILL_ALTERNATE or FXFILL_WINDING.
   int FillType = pPathObj->filltype();
   bool bStroke = pPathObj->stroke();
   ProcessPathPattern(pPathObj, mtObj2Device, &FillType, &bStroke);
@@ -409,8 +433,9 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
 
   // If the option to convert fill paths to stroke is enabled for forced color,
   // set |FillType| to 0 and |bStroke| to true.
+  CPDF_RenderOptions::Options& options = m_Options.GetOptions();
   if (m_Options.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) &&
-      m_Options.GetOptions().bConvertFillToStroke && (FillType != 0)) {
+      options.bConvertFillToStroke && (FillType != 0)) {
     bStroke = true;
     FillType = 0;
   }
@@ -421,28 +446,14 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (!IsAvailableMatrix(path_matrix))
     return true;
 
-  if (FillType && m_Options.GetOptions().bRectAA)
-    FillType |= FXFILL_RECT_AA;
-  if (m_Options.GetOptions().bFillFullcover)
-    FillType |= FXFILL_FULLCOVER;
-  if (m_Options.GetOptions().bNoPathSmooth)
-    FillType |= FXFILL_NOPATHSMOOTH;
-  if (bStroke)
-    FillType |= FX_FILL_STROKE;
-
-  const CPDF_PageObject* pPageObj =
-      static_cast<const CPDF_PageObject*>(pPathObj);
-  if (pPageObj->m_GeneralState.GetStrokeAdjust())
-    FillType |= FX_STROKE_ADJUST;
-  if (m_pType3Char)
-    FillType |= FX_FILL_TEXT_MODE;
-
+  int fill_options = GetFillRenderOptionsHelper(options, pPathObj, FillType,
+                                                bStroke, m_pType3Char);
   CFX_GraphState graphState = pPathObj->m_GraphState;
   if (m_Options.GetOptions().bThinLine)
     graphState.SetLineWidth(0);
   return m_pDevice->DrawPathWithBlend(
       pPathObj->path().GetObject(), &path_matrix, graphState.GetObject(),
-      fill_argb, stroke_argb, FillType, m_curBlend);
+      fill_argb, stroke_argb, fill_options, m_curBlend);
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
