@@ -24,6 +24,9 @@ If it‘s a new feature, or updating existing code, first propose it to the
    place for long histories, discussion and debate, attaching screenshots, and
    linking to other associated bugs. Bugs are unnecessary for changes isolated
    enough to not need any of these.
+ * If the work being implemented is especially complex or large a design
+   document may be warranted. The document should be linked to the filled bug
+   and be set to publicly viewable.
  * If there isn't a bug and there should be one, please file a new bug.
  * Just because there is a bug in the bug system doesn't necessarily mean that
    a patch will be accepted.
@@ -94,6 +97,13 @@ structures. When the versioned structures are expanded those version fields
 need to be incremented to cover the new additions. The code then needs to guard
 against the structure being received having the required version number in
 order to validate the new additions are available.
+
+## Trybot Access
+Changes must pass the try bots before the are merged into the repo. For your
+first few CLs the try bots will need to be triggered by a committer. After
+you've submitted 2-3 CLs you can request try bot access by emailing one of the
+OWNERS and requesting try bot access. This will allow you to trigger the bots
+on your own changes without needing a committer.
 
 ## Committers
 All changes committed to PDFium must be reviewed by a committer. Committers
