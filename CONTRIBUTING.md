@@ -99,7 +99,7 @@ against the structure being received having the required version number in
 order to validate the new additions are available.
 
 ## Trybot Access
-Changes must pass the try bots before the are merged into the repo. For your
+Changes must pass the try bots before they are merged into the repo. For your
 first few CLs the try bots will need to be triggered by a committer. After
 you've submitted 2-3 CLs you can request try bot access by emailing one of the
 OWNERS and requesting try bot access. This will allow you to trigger the bots
