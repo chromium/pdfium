@@ -40,13 +40,6 @@ int GetTextRenderOptionsHelper(const CPDF_Font* pFont,
   if (options.GetOptions().bNoNativeText)
     text_options |= FXTEXT_NO_NATIVETEXT;
 
-  // TODO(crbug.com/pdfium/1535): Clean up or add code coverage for text
-  // rendering options |FXTEXT_PRINTGRAPHICTEXT| and |FXTEXT_PRINTIMAGETEXT|.
-  if (options.GetOptions().bPrintGraphicText)
-    text_options |= FXTEXT_PRINTGRAPHICTEXT;
-  if (options.GetOptions().bPrintImageText)
-    text_options |= FXTEXT_PRINTIMAGETEXT;
-
   return text_options;
 }
 

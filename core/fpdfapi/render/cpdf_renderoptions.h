@@ -24,14 +24,12 @@ class CPDF_RenderOptions {
     Options(const Options& rhs);
 
     bool bClearType = false;
-    bool bPrintGraphicText = false;
     bool bPrintPreview = false;
     bool bBGRStripe = false;
     bool bNoNativeText = false;
     bool bForceHalftone = false;
     bool bRectAA = false;
     bool bFillFullcover = false;
-    bool bPrintImageText = false;
     bool bOverprint = false;
     bool bThinLine = false;
     bool bBreakForMasks = false;

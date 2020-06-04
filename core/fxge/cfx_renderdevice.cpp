@@ -863,12 +863,10 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       uint32_t text_flags) {
   int nativetext_flags = text_flags;
   if (GetDeviceType() != DeviceType::kDisplay) {
-    if (!(text_flags & FXTEXT_PRINTGRAPHICTEXT)) {
-      if (ShouldDrawDeviceText(pFont, text_flags) &&
-          m_pDeviceDriver->DrawDeviceText(
-              nChars, pCharPos, pFont, mtText2Device, font_size, fill_color)) {
-        return true;
-      }
+    if (ShouldDrawDeviceText(pFont, text_flags) &&
+        m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
+                                        font_size, fill_color)) {
+      return true;
     }
     if (FXARGB_A(fill_color) < 255)
       return false;
@@ -883,8 +881,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
-      (GetDeviceType() == DeviceType::kPrinter &&
-       !(text_flags & FXTEXT_PRINTIMAGETEXT))) {
+      GetDeviceType() == DeviceType::kPrinter) {
     if (pFont->GetFaceRec()) {
       int nPathFlags =
           (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
