@@ -128,8 +128,7 @@ int GetFillRenderOptionsHelper(const CPDF_RenderOptions::Options& options,
     fill_options |= FXFILL_FULLCOVER;
   if (options.bNoPathSmooth)
     fill_options |= FXFILL_NOPATHSMOOTH;
-  if (static_cast<const CPDF_PageObject*>(path_obj)
-          ->m_GeneralState.GetStrokeAdjust())
+  if (path_obj->m_GeneralState.GetStrokeAdjust())
     fill_options |= FX_STROKE_ADJUST;
   if (is_stroke)
     fill_options |= FX_FILL_STROKE;
