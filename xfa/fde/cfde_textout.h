@@ -56,10 +56,10 @@ class CFDE_TextOut {
     Piece(const Piece& that);
     ~Piece();
 
-    int32_t iStartChar;
-    int32_t iChars;
-    uint32_t dwCharStyles;
-    CFX_RectF rtPiece;
+    int32_t start_char;
+    int32_t char_count;
+    uint32_t char_styles;
+    CFX_RectF bounds;
   };
 
   class Line {
