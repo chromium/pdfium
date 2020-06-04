@@ -229,6 +229,11 @@ void OutputMD5Hash(const char* file_name, const uint8_t* buffer, int len) {
 }
 
 #ifdef PDF_ENABLE_V8
+
+struct V8IsolateDeleter {
+  inline void operator()(v8::Isolate* ptr) { ptr->Dispose(); }
+};
+
 // These example JS platform callback handlers are entirely optional,
 // and exist here to show the flow of information from a document back
 // to the embedder.
@@ -1125,25 +1130,32 @@ int main(int argc, const char* argv[]) {
     return 1;
   }
 
-#ifdef PDF_ENABLE_V8
-  std::unique_ptr<v8::Platform> platform;
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  v8::StartupData snapshot;
-  if (!options.disable_javascript) {
-    platform = InitializeV8ForPDFiumWithStartupData(
-        options.exe_path, options.bin_directory, &snapshot);
-  }
-#else   // V8_USE_EXTERNAL_STARTUP_DATA
-  if (!options.disable_javascript)
-    platform = InitializeV8ForPDFium(options.exe_path);
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
-
   FPDF_LIBRARY_CONFIG config;
   config.version = 2;
   config.m_pUserFontPaths = nullptr;
   config.m_pIsolate = nullptr;
   config.m_v8EmbedderSlot = 0;
+
+#ifdef PDF_ENABLE_V8
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
+  v8::StartupData snapshot;
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+  std::unique_ptr<v8::Platform> platform;
+  std::unique_ptr<v8::Isolate, V8IsolateDeleter> isolate;
+  if (!options.disable_javascript) {
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
+    platform = InitializeV8ForPDFiumWithStartupData(
+        options.exe_path, options.bin_directory, &snapshot);
+#else   // V8_USE_EXTERNAL_STARTUP_DATA
+    platform = InitializeV8ForPDFium(options.exe_path);
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+    v8::Isolate::CreateParams params;
+    params.array_buffer_allocator = static_cast<v8::ArrayBuffer::Allocator*>(
+        FPDF_GetArrayBufferAllocatorSharedInstance());
+    isolate.reset(v8::Isolate::New(params));
+    config.m_pIsolate = isolate.get();
+  }
+#endif  // PDF_ENABLE_V8
 
   const char* path_array[2] = {nullptr, nullptr};
   Optional<const char*> custom_font_path = GetCustomFontPath(options);
@@ -1212,6 +1224,7 @@ int main(int argc, const char* argv[]) {
 
 #ifdef PDF_ENABLE_V8
   if (!options.disable_javascript) {
+    isolate.reset();
     v8::V8::ShutdownPlatform();
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     free(const_cast<char*>(snapshot.data));

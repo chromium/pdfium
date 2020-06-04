@@ -413,6 +413,9 @@ int CheckPDFiumCApi() {
     CHK(FPDF_DestroyLibrary);
     CHK(FPDF_DeviceToPage);
     CHK(FPDF_DocumentHasValidCrossReferenceTable);
+#ifdef PDF_ENABLE_V8
+    CHK(FPDF_GetArrayBufferAllocatorSharedInstance);
+#endif
     CHK(FPDF_GetDocPermissions);
     CHK(FPDF_GetFileVersion);
     CHK(FPDF_GetLastError);

@@ -1295,6 +1295,21 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
 //          NUL-terminated string of the form "--flag1 --flag2".
 //          The caller must not attempt to modify or free the result.
 FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags();
+
+// Experimental API.
+// Function: FPDF_GetArrayBufferAllocatorSharedInstance()
+//          Helper function for initializing V8 isolates that will
+//          use PDFium's internal memory management.
+// Parameters:
+//          None.
+// Return Value:
+//          Pointer to a suitable v8::ArrayBuffer::Allocator, returned
+//          as void for C compatibility.
+// Notes:
+//          Use is optional, but allows external creation of isolates
+//          matching the ones PDFium will make when none is provided
+//          via |FPDF_LIBRARY_CONFIG::m_pIsolate|.
+FPDF_EXPORT void* FPDF_CALLCONV FPDF_GetArrayBufferAllocatorSharedInstance();
 #endif  // PDF_ENABLE_V8
 
 #ifdef PDF_ENABLE_XFA
