@@ -1,0 +1,4 @@
+Alert: PASS: this.__proto__ = [object Object]
+Alert: PASS: app.__proto__ = [object Object]
+Alert: PASS: this.__proto__ = {} threw TypeError: Immutable prototype object '[object global]' cannot have their prototype set
+Alert: PASS: app.__proto__ = this threw TypeError: Immutable prototype object '[object Object]' cannot have their prototype set
