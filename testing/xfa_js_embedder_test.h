@@ -8,13 +8,17 @@
 #include <memory>
 #include <string>
 
+#include "core/fxcrt/string_view_template.h"
 #include "testing/embedder_test.h"
-#include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_node.h"
 
 class CFXJSE_Engine;
 class CFXJSE_Value;
 class CFX_V8ArrayBufferAllocator;
+class CXFA_Document;
+
+namespace v8 {
+class Isolate;
+}
 
 class XFAJSEmbedderTest : public EmbedderTest {
  public:
