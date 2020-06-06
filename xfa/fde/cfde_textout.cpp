@@ -323,7 +323,7 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   float fLineStop = rect.bottom();
   m_fLinePos = rect.top;
-  int32_t iStartChar = 0;
+  size_t start_char = 0;
   int32_t iPieceWidths = 0;
   CFX_BreakType dwBreakStatus;
   bool bRet = false;
@@ -333,7 +333,7 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
       continue;
 
     bool bEndofLine =
-        RetrievePieces(dwBreakStatus, false, rect, &iStartChar, &iPieceWidths);
+        RetrievePieces(dwBreakStatus, false, rect, &start_char, &iPieceWidths);
     if (bEndofLine &&
         (m_Styles.line_wrap_ || dwBreakStatus == CFX_BreakType::Paragraph ||
          dwBreakStatus == CFX_BreakType::Page)) {
@@ -351,7 +351,7 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
 
   dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus) && !bRet)
-    RetrievePieces(dwBreakStatus, false, rect, &iStartChar, &iPieceWidths);
+    RetrievePieces(dwBreakStatus, false, rect, &start_char, &iPieceWidths);
 
   m_pTxtBreak->ClearBreakPieces();
   m_pTxtBreak->Reset();
@@ -360,7 +360,7 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
 bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
                                   bool bReload,
                                   const CFX_RectF& rect,
-                                  int32_t* pStartChar,
+                                  size_t* pStartChar,
                                   int32_t* pPieceWidths) {
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   bool bNeedReload = false;
@@ -452,19 +452,19 @@ void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
   size_t iPieceIndex = 0;
   size_t iPieceCount = pLine->GetSize();
   const Piece* pPiece = pLine->GetPieceAtIndex(0);
-  int32_t iStartChar = pPiece->start_char;
+  size_t start_char = pPiece->start_char;
   int32_t iPieceWidths = 0;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   m_fLinePos = pPiece->bounds.top;
   while (iPieceIndex < iPieceCount) {
-    int32_t iStart = iStartChar;
-    int32_t iEnd = pPiece->char_count + iStart;
-    while (iStart < iEnd) {
-      dwBreakStatus = m_pTxtBreak->AppendChar(text_span[iStart]);
+    size_t start = start_char;
+    size_t end = pPiece->char_count + start;
+    while (start < end) {
+      dwBreakStatus = m_pTxtBreak->AppendChar(text_span[start]);
       if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-        RetrievePieces(dwBreakStatus, true, rect, &iStartChar, &iPieceWidths);
+        RetrievePieces(dwBreakStatus, true, rect, &start_char, &iPieceWidths);
 
-      ++iStart;
+      ++start;
     }
     ++iPieceIndex;
     pPiece = pLine->GetPieceAtIndex(iPieceIndex);
@@ -472,7 +472,7 @@ void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
 
   dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
-    RetrievePieces(dwBreakStatus, true, rect, &iStartChar, &iPieceWidths);
+    RetrievePieces(dwBreakStatus, true, rect, &start_char, &iPieceWidths);
 
   m_pTxtBreak->Reset();
 }
@@ -501,9 +501,7 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
 }
 
 size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
-  ASSERT(pPiece->char_count >= 0);
-
-  if (pdfium::CollectionSize<int32_t>(m_CharPos) < pPiece->char_count)
+  if (m_CharPos.size() < pPiece->char_count)
     m_CharPos.resize(pPiece->char_count, TextCharPos());
 
   CFX_TxtBreak::Run tr;
