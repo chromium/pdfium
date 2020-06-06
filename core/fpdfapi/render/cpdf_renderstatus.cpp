@@ -124,8 +124,6 @@ int GetFillRenderOptionsHelper(const CPDF_RenderOptions::Options& options,
   int fill_options = fill_type;
   if (fill_type && options.bRectAA)
     fill_options |= FXFILL_RECT_AA;
-  if (options.bFillFullcover)
-    fill_options |= FXFILL_FULLCOVER;
   if (options.bNoPathSmooth)
     fill_options |= FXFILL_NOPATHSMOOTH;
   if (path_obj->m_GeneralState.GetStrokeAdjust())
@@ -447,12 +445,10 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
 
   int fill_options = GetFillRenderOptionsHelper(options, pPathObj, FillType,
                                                 bStroke, m_pType3Char);
-  CFX_GraphState graphState = pPathObj->m_GraphState;
-  if (m_Options.GetOptions().bThinLine)
-    graphState.SetLineWidth(0);
   return m_pDevice->DrawPathWithBlend(
-      pPathObj->path().GetObject(), &path_matrix, graphState.GetObject(),
-      fill_argb, stroke_argb, fill_options, m_curBlend);
+      pPathObj->path().GetObject(), &path_matrix,
+      pPathObj->m_GraphState.GetObject(), fill_argb, stroke_argb, fill_options,
+      m_curBlend);
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
@@ -596,11 +592,9 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
                                        bool bStroke) {
   CFX_Matrix path_matrix = pPathObj->matrix() * mtObj2Device;
   if (bStroke) {
-    CFX_GraphState graphState = pPathObj->m_GraphState;
-    if (m_Options.GetOptions().bThinLine)
-      graphState.SetLineWidth(0);
     return m_pDevice->SetClip_PathStroke(pPathObj->path().GetObject(),
-                                         &path_matrix, graphState.GetObject());
+                                         &path_matrix,
+                                         pPathObj->m_GraphState.GetObject());
   }
   int fill_mode = pPathObj->filltype();
   if (m_Options.GetOptions().bNoPathSmooth) {
