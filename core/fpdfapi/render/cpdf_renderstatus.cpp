@@ -615,7 +615,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  BlendMode blend_type = pPageObj->m_GeneralState.GetBlendType();
+  const BlendMode blend_type = pPageObj->m_GeneralState.GetBlendType();
   CPDF_Dictionary* pSMaskDict =
       ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict) {
@@ -639,33 +639,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       (pPageObj->m_ClipPath.HasRef() &&
        pPageObj->m_ClipPath.GetTextCount() > 0 && !m_bPrint &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
-  if (m_Options.GetOptions().bOverprint && pPageObj->IsImage() &&
-      pPageObj->m_GeneralState.GetFillOP() &&
-      pPageObj->m_GeneralState.GetStrokeOP()) {
-    CPDF_Document* pDocument = nullptr;
-    CPDF_Page* pPage = nullptr;
-    if (m_pContext->GetPageCache()) {
-      pPage = m_pContext->GetPageCache()->GetPage();
-      pDocument = pPage->GetDocument();
-    } else {
-      pDocument = pPageObj->AsImage()->GetImage()->GetDocument();
-    }
-    const CPDF_Dictionary* pPageResources =
-        pPage ? pPage->m_pPageResources.Get() : nullptr;
-    auto* pImageStream = pPageObj->AsImage()->GetImage()->GetStream();
-    const CPDF_Object* pCSObj =
-        pImageStream->GetDict()->GetDirectObjectFor("ColorSpace");
-    RetainPtr<CPDF_ColorSpace> pColorSpace =
-        CPDF_DocPageData::FromDocument(pDocument)->GetColorSpace(
-            pCSObj, pPageResources);
-    if (pColorSpace) {
-      int format = pColorSpace->GetFamily();
-      if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
-          format == PDFCS_DEVICEN) {
-        blend_type = BlendMode::kDarken;
-      }
-    }
-  }
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
       !bTextClip && !bGroupTransparent) {
     return false;
