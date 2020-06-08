@@ -247,7 +247,7 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
   if (CFX_BreakTypeNoneOrPiece(dwBreakStatus))
     return false;
 
-  float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
+  float fLineStep = std::max(m_fLineSpace, m_fFontSize);
   float fLineWidth = 0.0f;
   for (int32_t i = 0; i < m_pTxtBreak->CountBreakPieces(); i++) {
     const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPieceUnstable(i);
@@ -317,10 +317,10 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
 
   m_wsText = str;
 
-  if (pdfium::CollectionSize<size_t>(m_CharWidths) < str.GetLength())
+  if (m_CharWidths.size() < str.GetLength())
     m_CharWidths.resize(str.GetLength(), 0);
 
-  float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
+  float fLineStep = std::max(m_fLineSpace, m_fFontSize);
   float fLineStop = rect.bottom();
   m_fLinePos = rect.top;
   size_t start_char = 0;
@@ -362,7 +362,7 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
                                   const CFX_RectF& rect,
                                   size_t* pStartChar,
                                   int32_t* pPieceWidths) {
-  float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
+  float fLineStep = std::max(m_fLineSpace, m_fFontSize);
   bool bNeedReload = false;
   int32_t iLineWidth = FXSYS_roundf(rect.Width() * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
@@ -374,7 +374,7 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
     int32_t j = 0;
     for (; j < iPieceChars; j++) {
       const CFX_Char* pTC = pPiece->GetChar(j);
-      int32_t iCurCharWidth = pTC->m_iCharWidth > 0 ? pTC->m_iCharWidth : 0;
+      int32_t iCurCharWidth = std::max(pTC->m_iCharWidth, 0);
       if (m_Styles.single_line_ || !m_Styles.line_wrap_) {
         if (iLineWidth - *pPieceWidths - iWidth < iCurCharWidth) {
           bNeedReload = true;
