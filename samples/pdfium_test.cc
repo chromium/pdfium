@@ -1214,6 +1214,17 @@ int main(int argc, const char* argv[]) {
     }
     RenderPdf(filename, file_contents.get(), file_length, options, events);
 
+#ifdef PDF_ENABLE_V8
+    if (!options.disable_javascript) {
+      int task_count = 0;
+      while (v8::platform::PumpMessageLoop(platform.get(), isolate.get()))
+        ++task_count;
+
+      if (task_count)
+        fprintf(stderr, "Pumped %d tasks\n", task_count);
+    }
+#endif  // PDF_ENABLE_V8
+
 #ifdef ENABLE_CALLGRIND
     if (options.callgrind_delimiters)
       CALLGRIND_STOP_INSTRUMENTATION;
