@@ -201,7 +201,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
                        FPDF_DOCUMENT document,
                        const void* contents,
-                       const unsigned long len) {
+                       unsigned long len) {
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pFile || !pFile->IsDictionary() || !pDoc || len > INT_MAX)

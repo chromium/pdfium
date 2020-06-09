@@ -146,7 +146,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
                        FPDF_DOCUMENT document,
                        const void* contents,
-                       const unsigned long len);
+                       unsigned long len);
 
 // Experimental API.
 // Get the file data of |attachment|. |buffer| is only modified if |buflen| is
