@@ -598,13 +598,7 @@ TEST_F(FPDFEditEmbedderTest, BUG_1399) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_SetText DISABLED_SetText
-#else
-#define MAYBE_SetText SetText
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_SetText) {
+TEST_F(FPDFEditEmbedderTest, SetText) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -620,16 +614,25 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SetText) {
   // Verify the "Hello, world!" text is gone and "Changed for SetText test" is
   // now displayed.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-#if defined(OS_MACOSX)
-  const char kChangedMD5[] = "904132275a1144ea06b0694537c80b4c";
-#elif defined(OS_WIN)
-  const char kChangedMD5[] = "3137fdb27962671f5c3963a5e965eff5";
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+  const char kChangedChecksum[] = "119f828345f547c68e9454418fb7d80d";
 #else
-  const char kChangedMD5[] = "a0c4ea6620772991f66bf7130379b08a";
+  const char kChangedChecksum[] = "6bc5171f4eb329474989c6ccfa3d6303";
+#endif  // defined(OS_WIN)
+#else
+#if defined(OS_WIN)
+  const char kChangedChecksum[] = "3137fdb27962671f5c3963a5e965eff5";
+#elif defined(OS_MACOSX)
+  const char kChangedChecksum[] = "904132275a1144ea06b0694537c80b4c";
+#else
+  const char kChangedChecksum[] = "a0c4ea6620772991f66bf7130379b08a";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kChangedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kChangedChecksum);
   }
 
   // Now save the result.
@@ -644,7 +647,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SetText) {
   EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kChangedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kChangedChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1114,16 +1117,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObject) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RemoveExistingPageObjectSplitStreamsNotLonely \
-  DISABLED_RemoveExistingPageObjectSplitStreamsNotLonely
-#else
-#define MAYBE_RemoveExistingPageObjectSplitStreamsNotLonely \
-  RemoveExistingPageObjectSplitStreamsNotLonely
-#endif
-TEST_F(FPDFEditEmbedderTest,
-       MAYBE_RemoveExistingPageObjectSplitStreamsNotLonely) {
+TEST_F(FPDFEditEmbedderTest, RemoveExistingPageObjectSplitStreamsNotLonely) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world_split_streams.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1138,16 +1132,24 @@ TEST_F(FPDFEditEmbedderTest,
 
   // Verify the "Hello, world!" text is gone.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-#if defined(OS_MACOSX)
-  const char kHelloRemovedMD5[] = "3b3b27602a86dfe5996a33c42c59885b";
-#elif defined(OS_WIN)
-  const char kHelloRemovedMD5[] = "a97d4c72c969ba373c2dce675d277e65";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_WIN)
+  const char kHelloRemovedChecksum[] = "e05c7837a5cad61305d157720637f969";
 #else
-  const char kHelloRemovedMD5[] = "95b92950647a2190e1230911e7a1a0e9";
+  const char kHelloRemovedChecksum[] = "deed7dc2754dc80930f3b05e2ac86c94";
+#endif  // defined(OS_WIN)
+#else
+#if defined(OS_WIN)
+  const char kHelloRemovedChecksum[] = "a97d4c72c969ba373c2dce675d277e65";
+#elif defined(OS_MACOSX)
+  const char kHelloRemovedChecksum[] = "3b3b27602a86dfe5996a33c42c59885b";
+#else
+  const char kHelloRemovedChecksum[] = "95b92950647a2190e1230911e7a1a0e9";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedChecksum);
   }
 
   // Save the file
@@ -1163,7 +1165,7 @@ TEST_F(FPDFEditEmbedderTest,
   EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedChecksum);
   }
 
   CloseSavedPage(saved_page);
