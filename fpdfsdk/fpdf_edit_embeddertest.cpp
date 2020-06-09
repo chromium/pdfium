@@ -35,7 +35,17 @@ using pdfium::kHelloWorldChecksum;
 
 namespace {
 
-const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
+const char kAllRemovedChecksum[] = "eee4600ac08b458ac7ac2320e225674c";
+
+const wchar_t kBottomText[] = L"I'm at the bottom of the page";
+
+#if defined(OS_WIN)
+const char kBottomTextChecksum[] = "08d1ff3e5a42801bee6077fd366bef00";
+#elif defined(OS_MACOSX)
+const char kBottomTextChecksum[] = "324e1db8164a040cf6104538baa95ba6";
+#else
+const char kBottomTextChecksum[] = "eacaa24573b8ce997b3882595f096f00";
+#endif
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #if defined(OS_WIN)
@@ -52,6 +62,18 @@ const char kFirstRemovedChecksum[] = "17ca3778fd8bb395b46532f1fa17f702";
 const char kFirstRemovedChecksum[] = "b76df015fe88009c3c342395df96abf1";
 #endif
 #endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+
+const wchar_t kLoadedFontText[] = L"I am testing my loaded font, WEE.";
+
+#if defined(OS_WIN)
+const char kLoadedFontTextChecksum[] = "d60ba39f9698e32360d99e727dd93165";
+#elif defined(OS_MACOSX)
+const char kLoadedFontTextChecksum[] = "fc921c0bbdde73986ac13c15a85db4c3";
+#else
+const char kLoadedFontTextChecksum[] = "70592859010ffbf532a2237b8118bcc4";
+#endif
+
+const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
 
 }  // namespace
 
@@ -1352,10 +1374,9 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromSingleStream) {
 
   ASSERT_EQ(0, FPDFPage_CountObjects(page));
 
-  const char kAllRemovedMD5[] = "eee4600ac08b458ac7ac2320e225674c";
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
   }
 
   // Save the file
@@ -1369,7 +1390,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromSingleStream) {
   EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1527,10 +1548,9 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromMultipleStreams) {
 
   ASSERT_EQ(0, FPDFPage_CountObjects(page));
 
-  const char kAllRemovedMD5[] = "eee4600ac08b458ac7ac2320e225674c";
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
   }
 
   // Save the file
@@ -1544,7 +1564,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromMultipleStreams) {
   EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedMD5);
+    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
   }
 
   CloseSavedPage(saved_page);
@@ -1946,25 +1966,17 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText) {
   FPDF_PAGEOBJECT text_object1 =
       FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
   EXPECT_TRUE(text_object1);
-  ScopedFPDFWideString text1 =
-      GetFPDFWideString(L"I'm at the bottom of the page");
+  ScopedFPDFWideString text1 = GetFPDFWideString(kBottomText);
   EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
   FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page, text_object1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if defined(OS_MACOSX)
-    const char md5[] = "324e1db8164a040cf6104538baa95ba6";
-#elif defined(OS_WIN)
-    const char md5[] = "08d1ff3e5a42801bee6077fd366bef00";
-#else
-    const char md5[] = "eacaa24573b8ce997b3882595f096f00";
-#endif
-    CompareBitmap(page_bitmap.get(), 612, 792, md5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kBottomTextChecksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    VerifySavedDocument(612, 792, md5);
+    VerifySavedDocument(612, 792, kBottomTextChecksum);
   }
 
   // Try another font
@@ -2238,20 +2250,12 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddStandardFontText2) {
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
   EXPECT_TRUE(text_object);
-  ScopedFPDFWideString text =
-      GetFPDFWideString(L"I'm at the bottom of the page");
+  ScopedFPDFWideString text = GetFPDFWideString(kBottomText);
   EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page.get(), text_object);
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-#if defined(OS_MACOSX)
-  const char md5[] = "324e1db8164a040cf6104538baa95ba6";
-#elif defined(OS_WIN)
-  const char md5[] = "08d1ff3e5a42801bee6077fd366bef00";
-#else
-  const char md5[] = "eacaa24573b8ce997b3882595f096f00";
-#endif
-  CompareBitmap(page_bitmap.get(), 612, 792, md5);
+  CompareBitmap(page_bitmap.get(), 612, 792, kBottomTextChecksum);
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadStandardFonts) {
@@ -2592,20 +2596,12 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
     FPDF_PAGEOBJECT text_object =
         FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
     EXPECT_TRUE(text_object);
-    ScopedFPDFWideString text =
-        GetFPDFWideString(L"I am testing my loaded font, WEE.");
+    ScopedFPDFWideString text = GetFPDFWideString(kLoadedFontText);
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
     FPDFPage_InsertObject(page, text_object);
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-#if defined(OS_MACOSX)
-    const char md5[] = "fc921c0bbdde73986ac13c15a85db4c3";
-#elif defined(OS_WIN)
-    const char md5[] = "d60ba39f9698e32360d99e727dd93165";
-#else
-    const char md5[] = "70592859010ffbf532a2237b8118bcc4";
-#endif
-    CompareBitmap(page_bitmap.get(), 612, 792, md5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kLoadedFontTextChecksum);
 
     // Add some more text, same font
     FPDF_PAGEOBJECT text_object2 =
@@ -2616,20 +2612,20 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddTrueTypeFontText) {
     FPDFPage_InsertObject(page, text_object2);
   }
   ScopedFPDFBitmap page_bitmap2 = RenderPage(page);
-#if defined(OS_MACOSX)
-  const char md5_2[] = "9a1a7dfebe659513691aadd0d95b8d50";
-#elif defined(OS_WIN)
-  const char md5_2[] = "2199b579c49ab5f80c246a586a80ee90";
+#if defined(OS_WIN)
+  const char kInsertTrueTypeChecksum[] = "2199b579c49ab5f80c246a586a80ee90";
+#elif defined(OS_MACOSX)
+  const char kInsertTrueTypeChecksum[] = "9a1a7dfebe659513691aadd0d95b8d50";
 #else
-  const char md5_2[] = "c1d10cce1761c4a998a16b2562030568";
+  const char kInsertTrueTypeChecksum[] = "c1d10cce1761c4a998a16b2562030568";
 #endif
-  CompareBitmap(page_bitmap2.get(), 612, 792, md5_2);
+  CompareBitmap(page_bitmap2.get(), 612, 792, kInsertTrueTypeChecksum);
 
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
-  VerifySavedDocument(612, 792, md5_2);
+  VerifySavedDocument(612, 792, kInsertTrueTypeChecksum);
 }
 
 TEST_F(FPDFEditEmbedderTest, TransformAnnot) {
@@ -2920,8 +2916,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkedText) {
       FPDFPageObj_CreateTextObj(document(), font.get(), 12.0f);
 
   EXPECT_TRUE(text_object);
-  ScopedFPDFWideString text1 =
-      GetFPDFWideString(L"I am testing my loaded font, WEE.");
+  ScopedFPDFWideString text1 = GetFPDFWideString(kLoadedFontText);
   EXPECT_TRUE(FPDFText_SetText(text_object, text1.get()));
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
   FPDFPage_InsertObject(page, text_object);
@@ -2982,16 +2977,9 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkedText) {
   EXPECT_EQ(0, memcmp(block_value, buffer, kBlobLen));
 
 // Render and check the bitmap is the expected one.
-#if defined(OS_MACOSX)
-  const char md5[] = "fc921c0bbdde73986ac13c15a85db4c3";
-#elif defined(OS_WIN)
-  const char md5[] = "d60ba39f9698e32360d99e727dd93165";
-#else
-  const char md5[] = "70592859010ffbf532a2237b8118bcc4";
-#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, md5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kLoadedFontTextChecksum);
   }
 
   // Now save the result.
