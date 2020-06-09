@@ -145,6 +145,7 @@ class CFXJS_ObjDefinition {
     v8::HandleScope handle_scope(isolate);
     v8::Local<v8::FunctionTemplate> fn = v8::FunctionTemplate::New(isolate);
     fn->InstanceTemplate()->SetInternalFieldCount(2);
+    fn->InstanceTemplate()->SetImmutableProto();
     fn->SetCallHandler(CallHandler, v8::Number::New(isolate, eObjType));
     if (eObjType == FXJSOBJTYPE_GLOBAL) {
       fn->InstanceTemplate()->Set(v8::Symbol::GetToStringTag(isolate),
