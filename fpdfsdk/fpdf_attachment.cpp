@@ -247,17 +247,23 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   return true;
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
                        void* buffer,
-                       unsigned long buflen) {
+                       unsigned long buflen,
+                       unsigned long* out_buflen) {
+  if (!out_buflen)
+    return false;
+
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   if (!pFile)
-    return 0;
+    return false;
 
   CPDF_Stream* pFileStream = CPDF_FileSpec(pFile).GetFileStream();
   if (!pFileStream)
-    return 0;
+    return false;
 
-  return DecodeStreamMaybeCopyAndReturnLength(pFileStream, buffer, buflen);
+  *out_buflen =
+      DecodeStreamMaybeCopyAndReturnLength(pFileStream, buffer, buflen);
+  return true;
 }

@@ -635,20 +635,25 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
     }
 
     // Retrieve the attachment.
-    length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
-    std::vector<char> data_buf(length_bytes);
-    if (length_bytes) {
-      unsigned long actual_length_bytes =
-          FPDFAttachment_GetFile(attachment, data_buf.data(), length_bytes);
-      if (actual_length_bytes != length_bytes)
-        data_buf.clear();
-    }
-    if (data_buf.empty()) {
-      fprintf(stderr, "Attachment \"%s\" is empty.\n", attachment_name.c_str());
+    if (!FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes)) {
+      fprintf(stderr, "Failed to retrieve attachment \"%s\".\n",
+              attachment_name.c_str());
       continue;
     }
 
-    // Write the attachment file.
+    std::vector<char> data_buf(length_bytes);
+    if (length_bytes) {
+      unsigned long actual_length_bytes;
+      if (!FPDFAttachment_GetFile(attachment, data_buf.data(), length_bytes,
+                                  &actual_length_bytes)) {
+        fprintf(stderr, "Failed to retrieve attachment \"%s\".\n",
+                attachment_name.c_str());
+        continue;
+      }
+    }
+
+    // Write the attachment file. Since a PDF document could have 0-byte files
+    // as attachments, we should allow saving the 0-byte attachments to files.
     WriteBufferToFile(data_buf.data(), length_bytes, save_name, "attachment");
   }
 }

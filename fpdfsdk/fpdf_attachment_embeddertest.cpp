@@ -37,11 +37,17 @@ TEST_F(FPDFAttachmentEmbedderTest, ExtractAttachments) {
   EXPECT_EQ(12u, FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
   EXPECT_EQ(L"1.txt", GetPlatformWString(buf.data()));
 
+  // Check some unsuccessful cases of FPDFAttachment_GetFile.
+  EXPECT_FALSE(FPDFAttachment_GetFile(attachment, nullptr, 0, nullptr));
+  EXPECT_FALSE(FPDFAttachment_GetFile(nullptr, nullptr, 0, &length_bytes));
+
   // Check that the content of the first attachment is correct.
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   std::vector<char> content_buf(length_bytes);
-  ASSERT_EQ(
-      4u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  unsigned long actual_length_bytes;
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(4u, actual_length_bytes);
   EXPECT_EQ(std::string("test"), std::string(content_buf.data(), 4));
 
   // Check that a non-existent key does not exist.
@@ -68,11 +74,12 @@ TEST_F(FPDFAttachmentEmbedderTest, ExtractAttachments) {
   ASSERT_TRUE(attachment);
 
   // Retrieve the second attachment file.
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   content_buf.clear();
   content_buf.resize(length_bytes);
-  ASSERT_EQ(5869u, FPDFAttachment_GetFile(attachment, content_buf.data(),
-                                          length_bytes));
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(5869u, actual_length_bytes);
 
   // Check that the calculated checksum of the file data matches expectation.
   const char kCheckSum[] = "72afcddedf554dda63c0c88e06f1ce18";
@@ -134,10 +141,12 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   EXPECT_EQ(L"0.txt", GetPlatformWString(buf.data()));
 
   // Verify the content of the new attachment (i.e. the first attachment).
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   std::vector<char> content_buf(length_bytes);
-  ASSERT_EQ(
-      6u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  unsigned long actual_length_bytes;
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(6u, actual_length_bytes);
   EXPECT_EQ(std::string(kContents1), std::string(content_buf.data(), 6));
 
   // Add an attachment to the end of the embedded file list and set its file.
@@ -159,11 +168,12 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   EXPECT_EQ(L"z.txt", GetPlatformWString(buf.data()));
 
   // Verify the content of the new attachment (i.e. the fourth attachment).
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   content_buf.clear();
   content_buf.resize(length_bytes);
-  ASSERT_EQ(
-      6u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(6u, actual_length_bytes);
   EXPECT_EQ(std::string(kContents2), std::string(content_buf.data(), 6));
 }
 
@@ -203,10 +213,12 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsWithParams) {
   EXPECT_EQ(L"5.txt", GetPlatformWString(buf.data()));
 
   // Verify the content of the new attachment.
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   std::vector<char> content_buf(length_bytes);
-  ASSERT_EQ(12u, FPDFAttachment_GetFile(attachment, content_buf.data(),
-                                        length_bytes));
+  unsigned long actual_length_bytes;
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(12u, actual_length_bytes);
   EXPECT_EQ(std::string(kContents), std::string(content_buf.data(), 12));
 
   // Verify the creation date of the new attachment.
@@ -230,7 +242,8 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsWithParams) {
   // Overwrite the existing file with empty content, and check that the checksum
   // gets updated to the correct value.
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), nullptr, 0));
-  EXPECT_EQ(0u, FPDFAttachment_GetFile(attachment, nullptr, 0));
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
+  EXPECT_EQ(0u, length_bytes);
   length_bytes =
       FPDFAttachment_GetStringValue(attachment, kChecksumKey, nullptr, 0);
   ASSERT_EQ(70u, length_bytes);
@@ -268,10 +281,12 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsToFileWithNoAttachments) {
   EXPECT_EQ(L"0.txt", GetPlatformWString(buf.data()));
 
   // Verify the content of the new attachment (i.e. the first attachment).
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   std::vector<char> content_buf(length_bytes);
-  ASSERT_EQ(
-      6u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  unsigned long actual_length_bytes;
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(6u, actual_length_bytes);
   EXPECT_EQ(std::string(kContents1), std::string(content_buf.data(), 6));
 
   // Add an attachment to the end of the embedded file list and set its file.
@@ -293,11 +308,12 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsToFileWithNoAttachments) {
   EXPECT_EQ(L"z.txt", GetPlatformWString(buf.data()));
 
   // Verify the content of the new attachment (i.e. the second attachment).
-  length_bytes = FPDFAttachment_GetFile(attachment, nullptr, 0);
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
   content_buf.clear();
   content_buf.resize(length_bytes);
-  ASSERT_EQ(
-      6u, FPDFAttachment_GetFile(attachment, content_buf.data(), length_bytes));
+  ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                     length_bytes, &actual_length_bytes));
+  ASSERT_EQ(6u, actual_length_bytes);
   EXPECT_EQ(std::string(kContents2), std::string(content_buf.data(), 6));
 }
 
