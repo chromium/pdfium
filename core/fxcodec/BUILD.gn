@@ -144,6 +144,7 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [
     ":fxcodec",
+    "../../third_party:libopenjpeg2",
     "../fpdfapi/parser",
   ]
   pdfium_root_dir = "../../"

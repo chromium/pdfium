@@ -402,6 +402,8 @@ source_set("fx_libopenjpeg") {
     "libopenjpeg20/mqc.c",
     "libopenjpeg20/openjpeg.c",
     "libopenjpeg20/opj_clock.c",
+    "libopenjpeg20/opj_malloc.cc",
+    "libopenjpeg20/opj_malloc.h",
     "libopenjpeg20/pi.c",
     "libopenjpeg20/sparse_array.c",
     "libopenjpeg20/sparse_array.h",
