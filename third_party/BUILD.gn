@@ -588,6 +588,8 @@ source_set("pdfium_base") {
     "base/debug/alias.h",
     "base/immediate_crash.h",
     "base/logging.h",
+    "base/memory/aligned_memory.cc",
+    "base/memory/aligned_memory.h",
     "base/no_destructor.h",
     "base/numerics/checked_math.h",
     "base/numerics/checked_math_impl.h",
