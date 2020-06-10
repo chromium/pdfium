@@ -19,9 +19,10 @@ IJS_Runtime::ScopedEventContext::~ScopedEventContext() {
 }
 
 // static
-void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
+void IJS_Runtime::Initialize(unsigned int slot, void* isolate, void* platform) {
 #ifdef PDF_ENABLE_V8
-  FXJS_Initialize(slot, static_cast<v8::Isolate*>(isolate));
+  FXJS_Initialize(slot, static_cast<v8::Isolate*>(isolate),
+                  static_cast<v8::Platform*>(platform));
 #endif
 }
 

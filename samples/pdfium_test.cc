@@ -1131,10 +1131,11 @@ int main(int argc, const char* argv[]) {
   }
 
   FPDF_LIBRARY_CONFIG config;
-  config.version = 2;
+  config.version = 3;
   config.m_pUserFontPaths = nullptr;
   config.m_pIsolate = nullptr;
   config.m_v8EmbedderSlot = 0;
+  config.m_pPlatform = nullptr;
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
@@ -1149,6 +1150,8 @@ int main(int argc, const char* argv[]) {
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
     platform = InitializeV8ForPDFium(options.exe_path);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
+    config.m_pPlatform = platform.get();
+
     v8::Isolate::CreateParams params;
     params.array_buffer_allocator = static_cast<v8::ArrayBuffer::Allocator*>(
         FPDF_GetArrayBufferAllocatorSharedInstance());

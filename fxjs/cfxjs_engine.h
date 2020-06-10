@@ -63,7 +63,9 @@ class FXJS_PerIsolateData {
   explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
 };
 
-void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
+void FXJS_Initialize(unsigned int embedderDataSlot,
+                     v8::Isolate* pIsolate,
+                     v8::Platform* platform);
 void FXJS_Release();
 
 // Gets the global isolate set by FXJS_Initialize(), or makes a new one each

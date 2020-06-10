@@ -232,7 +232,7 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
 
   // Version 2.
 
-  // pointer to the v8::Isolate to use, or NULL to force PDFium to create one.
+  // Pointer to the v8::Isolate to use, or NULL to force PDFium to create one.
   void* m_pIsolate;
 
   // The embedder data slot to use in the v8::Isolate to store PDFium's
@@ -240,6 +240,12 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
   // [0, |v8::Internals::kNumIsolateDataLots|). Note that 0 is fine for most
   // embedders.
   unsigned int m_v8EmbedderSlot;
+
+  // Version 3 - Experimantal,
+
+  // Pointer to the V8::Platform to use.
+  void* m_pPlatform;
+
 } FPDF_LIBRARY_CONFIG;
 
 // Function: FPDF_InitLibraryWithConfig
