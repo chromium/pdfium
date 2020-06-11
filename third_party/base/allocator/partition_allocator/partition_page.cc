@@ -13,7 +13,7 @@ namespace internal {
 
 namespace {
 
-ALWAYS_INLINE void PartitionDirectUnmap(PartitionPage* page) {
+ALWAYS_INLINE DeferredUnmap PartitionDirectUnmap(PartitionPage* page) {
   PartitionRootBase* root = PartitionRootBase::FromPage(page);
   const PartitionDirectMapExtent* extent =
       PartitionDirectMapExtent::FromPage(page);
@@ -46,8 +46,7 @@ ALWAYS_INLINE void PartitionDirectUnmap(PartitionPage* page) {
   // Account for the mapping starting a partition page before the actual
   // allocation address.
   ptr -= kPartitionPageSize;
-
-  FreePages(ptr, unmap_size);
+  return {ptr, unmap_size};
 }
 
 ALWAYS_INLINE void PartitionRegisterEmptyPage(PartitionPage* page) {
@@ -90,13 +89,12 @@ PartitionPage* PartitionPage::get_sentinel_page() {
   return &sentinel_page_;
 }
 
-void PartitionPage::FreeSlowPath() {
+DeferredUnmap PartitionPage::FreeSlowPath() {
   DCHECK(this != get_sentinel_page());
   if (LIKELY(num_allocated_slots == 0)) {
     // Page became fully unused.
     if (UNLIKELY(bucket->is_direct_mapped())) {
-      PartitionDirectUnmap(this);
-      return;
+      return PartitionDirectUnmap(this);
     }
     // If it's the current active page, change it. We bounce the page to
     // the empty list as a force towards defragmentation.
@@ -130,8 +128,9 @@ void PartitionPage::FreeSlowPath() {
     // Special case: for a partition page with just a single slot, it may
     // now be empty and we want to run it through the empty logic.
     if (UNLIKELY(num_allocated_slots == 0))
-      FreeSlowPath();
+      return FreeSlowPath();
   }
+  return {};
 }
 
 void PartitionPage::Decommit(PartitionRootBase* root) {
@@ -158,6 +157,10 @@ void PartitionPage::DecommitIfPossible(PartitionRootBase* root) {
   empty_cache_index = -1;
   if (is_empty())
     Decommit(root);
+}
+
+void DeferredUnmap::Unmap() {
+  FreePages(ptr, size);
 }
 
 }  // namespace internal

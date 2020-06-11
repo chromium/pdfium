@@ -13,19 +13,19 @@ namespace pdfium {
 namespace base {
 namespace internal {
 
-NOINLINE void PartitionRootBase::OutOfMemory() {
+NOINLINE void PartitionRootBase::OutOfMemory(size_t size) {
 #if !defined(ARCH_CPU_64_BITS)
   // Check whether this OOM is due to a lot of super pages that are allocated
   // but not committed, probably due to http://crbug.com/421387.
   if (total_size_of_super_pages + total_size_of_direct_mapped_pages -
           total_size_of_committed_pages >
       kReasonableSizeOfUnusedPages) {
-    PartitionOutOfMemoryWithLotsOfUncommitedPages();
+    PartitionOutOfMemoryWithLotsOfUncommitedPages(size);
   }
 #endif
-  if (PartitionRootBase::gOomHandlingFunction)
-    (*PartitionRootBase::gOomHandlingFunction)();
-  OOM_CRASH();
+  if (PartitionRootBase::g_oom_handling_function)
+    (*PartitionRootBase::g_oom_handling_function)(size);
+  OOM_CRASH(size);
 }
 
 void PartitionRootBase::DecommitEmptyPages() {

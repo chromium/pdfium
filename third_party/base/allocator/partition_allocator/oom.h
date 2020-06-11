@@ -21,7 +21,7 @@
 // OOM_CRASH() - Specialization of IMMEDIATE_CRASH which will raise a custom
 // exception on Windows to signal this is OOM and not a normal assert.
 #if defined(OS_WIN)
-#define OOM_CRASH()                                                     \
+#define OOM_CRASH(size)                                                 \
   do {                                                                  \
     OOM_CRASH_PREVENT_ICF();                                            \
     base::internal::RunPartitionAllocOomCallback();                     \
@@ -29,7 +29,7 @@
     IMMEDIATE_CRASH();                                                  \
   } while (0)
 #else
-#define OOM_CRASH()                                 \
+#define OOM_CRASH(size)                             \
   do {                                              \
     base::internal::RunPartitionAllocOomCallback(); \
     OOM_CRASH_PREVENT_ICF();                        \

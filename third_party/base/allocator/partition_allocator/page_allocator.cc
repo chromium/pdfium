@@ -239,14 +239,16 @@ bool ReserveAddressSpace(size_t size) {
   return false;
 }
 
-void ReleaseReservation() {
+bool ReleaseReservation() {
   // To avoid deadlock, call only FreePages.
   subtle::SpinLock::Guard guard(*GetReserveLock());
-  if (s_reservation_address != nullptr) {
-    FreePages(s_reservation_address, s_reservation_size);
-    s_reservation_address = nullptr;
-    s_reservation_size = 0;
-  }
+  if (!s_reservation_address)
+    return false;
+
+  FreePages(s_reservation_address, s_reservation_size);
+  s_reservation_address = nullptr;
+  s_reservation_size = 0;
+  return true;
 }
 
 uint32_t GetAllocPageErrorCode() {

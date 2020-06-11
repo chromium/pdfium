@@ -185,7 +185,7 @@ void PartitionBucket::Init(uint32_t new_slot_size) {
 }
 
 NOINLINE void PartitionBucket::OnFull() {
-  OOM_CRASH();
+  OOM_CRASH(0);
 }
 
 ALWAYS_INLINE void* PartitionBucket::AllocNewSlotSpan(
@@ -478,13 +478,10 @@ void* PartitionBucket::SlowPathAlloc(PartitionRootBase* root,
     if (size > kGenericMaxDirectMapped) {
       if (return_null)
         return nullptr;
-      PartitionExcessiveAllocationSize();
+      PartitionExcessiveAllocationSize(size);
     }
     new_page = PartitionDirectMap(root, flags, size);
-#if !defined(OS_MACOSX)
-    // Turn off the optimization to see if it helps https://crbug.com/892550.
     *is_already_zeroed = true;
-#endif
   } else if (LIKELY(SetNewActivePage())) {
     // First, did we find an active page in the active pages list?
     new_page = active_pages_head;
@@ -538,7 +535,7 @@ void* PartitionBucket::SlowPathAlloc(PartitionRootBase* root,
     DCHECK(active_pages_head == PartitionPage::get_sentinel_page());
     if (return_null)
       return nullptr;
-    root->OutOfMemory();
+    root->OutOfMemory(size);
   }
 
   // TODO(ajwong): Is there a way to avoid the reading of bucket here?

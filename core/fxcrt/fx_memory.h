@@ -35,7 +35,7 @@ pdfium::base::PartitionAllocatorGeneric& GetGeneralPartitionAllocator();
 pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator();
 
 void FXMEM_InitializePartitionAlloc();
-NOINLINE void FX_OutOfMemoryTerminate();
+NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 
 // These never return nullptr, and must return cleared memory.
 #define FX_Alloc(type, size) \

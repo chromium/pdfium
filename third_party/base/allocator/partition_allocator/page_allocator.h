@@ -183,7 +183,9 @@ BASE_EXPORT bool ReserveAddressSpace(size_t size);
 
 // Releases any reserved address space. |AllocPages| calls this automatically on
 // an allocation failure. External allocators may also call this on failure.
-BASE_EXPORT void ReleaseReservation();
+//
+// Returns true when an existing reservation was released.
+BASE_EXPORT bool ReleaseReservation();
 
 // Returns |errno| (POSIX) or the result of |GetLastError| (Windows) when |mmap|
 // (POSIX) or |VirtualAlloc| (Windows) fails.

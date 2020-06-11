@@ -19,6 +19,20 @@ namespace internal {
 
 struct PartitionRootBase;
 
+// PartitionPage::Free() defers unmapping a large page until the lock is
+// released. Callers of PartitionPage::Free() must invoke Run().
+// TODO(1061437): Reconsider once the new locking mechanism is implemented.
+struct DeferredUnmap {
+  void* ptr = nullptr;
+  size_t size = 0;
+  // In most cases there is no page to unmap and ptr == nullptr. This function
+  // is inlined to avoid the overhead of a function call in the common case.
+  ALWAYS_INLINE void Run();
+
+ private:
+  BASE_EXPORT NOINLINE void Unmap();
+};
+
 // Some notes on page states. A page can be in one of four major states:
 // 1) Active.
 // 2) Full.
@@ -62,8 +76,9 @@ struct PartitionPage {
   // Public API
 
   // Note the matching Alloc() functions are in PartitionPage.
-  BASE_EXPORT NOINLINE void FreeSlowPath();
-  ALWAYS_INLINE void Free(void* ptr);
+  // Callers must invoke DeferredUnmap::Run() after releasing the lock.
+  BASE_EXPORT NOINLINE DeferredUnmap FreeSlowPath() WARN_UNUSED_RESULT;
+  ALWAYS_INLINE DeferredUnmap Free(void* ptr) WARN_UNUSED_RESULT;
 
   void Decommit(PartitionRootBase* root);
   void DecommitIfPossible(PartitionRootBase* root);
@@ -201,7 +216,7 @@ ALWAYS_INLINE size_t PartitionPage::get_raw_size() const {
   return 0;
 }
 
-ALWAYS_INLINE void PartitionPage::Free(void* ptr) {
+ALWAYS_INLINE DeferredUnmap PartitionPage::Free(void* ptr) {
 #if DCHECK_IS_ON()
   size_t slot_size = bucket->slot_size;
   const size_t raw_size = get_raw_size();
@@ -229,12 +244,13 @@ ALWAYS_INLINE void PartitionPage::Free(void* ptr) {
   freelist_head = entry;
   --num_allocated_slots;
   if (UNLIKELY(num_allocated_slots <= 0)) {
-    FreeSlowPath();
+    return FreeSlowPath();
   } else {
     // All single-slot allocations must go through the slow path to
     // correctly update the size metadata.
     DCHECK(get_raw_size() == 0);
   }
+  return {};
 }
 
 ALWAYS_INLINE bool PartitionPage::is_active() const {
@@ -285,6 +301,12 @@ ALWAYS_INLINE void PartitionPage::Reset() {
   DCHECK(num_unprovisioned_slots);
 
   next_page = nullptr;
+}
+
+ALWAYS_INLINE void DeferredUnmap::Run() {
+  if (UNLIKELY(ptr)) {
+    Unmap();
+  }
 }
 
 }  // namespace internal

@@ -17,6 +17,18 @@
 namespace pdfium {
 namespace base {
 
+namespace {
+
+bool InitializeOnce() {
+  // We mark the sentinel bucket/page as free to make sure it is skipped by our
+  // logic to find a new active page.
+  internal::PartitionBucket::get_sentinel_bucket()->active_pages_head =
+      internal::PartitionPage::get_sentinel_page();
+  return true;
+}
+
+}  // namespace
+
 // Two partition pages are used as guard / metadata page so make sure the super
 // page size is bigger.
 static_assert(kPartitionPageSize * 4 <= kSuperPageSize, "ok super page size");
@@ -63,9 +75,7 @@ subtle::SpinLock* GetLock() {
   return s_initialized_lock;
 }
 
-static bool g_initialized = false;
-
-void (*internal::PartitionRootBase::gOomHandlingFunction)() = nullptr;
+OomFunction internal::PartitionRootBase::g_oom_handling_function = nullptr;
 std::atomic<bool> PartitionAllocHooks::hooks_enabled_(false);
 subtle::SpinLock PartitionAllocHooks::set_hooks_lock_;
 std::atomic<PartitionAllocHooks::AllocationObserverHook*>
@@ -171,26 +181,17 @@ bool PartitionAllocHooks::ReallocOverrideHookIfEnabled(size_t* out,
 
 static void PartitionAllocBaseInit(internal::PartitionRootBase* root) {
   DCHECK(!root->initialized);
-  {
-    subtle::SpinLock::Guard guard(*GetLock());
-    if (!g_initialized) {
-      g_initialized = true;
-      // We mark the sentinel bucket/page as free to make sure it is skipped by
-      // our logic to find a new active page.
-      internal::PartitionBucket::get_sentinel_bucket()->active_pages_head =
-          internal::PartitionPage::get_sentinel_page();
-    }
-  }
-
-  root->initialized = true;
+  static bool initialized = InitializeOnce();
+  static_cast<void>(initialized);
 
   // This is a "magic" value so we can test if a root pointer is valid.
   root->inverted_self = ~reinterpret_cast<uintptr_t>(root);
+  root->initialized = true;
 }
 
-void PartitionAllocGlobalInit(void (*oom_handling_function)()) {
-  DCHECK(oom_handling_function);
-  internal::PartitionRootBase::gOomHandlingFunction = oom_handling_function;
+void PartitionAllocGlobalInit(OomFunction on_out_of_memory) {
+  DCHECK(on_out_of_memory);
+  internal::PartitionRootBase::g_oom_handling_function = on_out_of_memory;
 }
 
 void PartitionRoot::Init(size_t bucket_count, size_t maximum_allocation) {
@@ -371,7 +372,7 @@ void* PartitionReallocGenericFlags(PartitionRootGeneric* root,
   if (new_size > kGenericMaxDirectMapped) {
     if (flags & PartitionAllocReturnNull)
       return nullptr;
-    internal::PartitionExcessiveAllocationSize();
+    internal::PartitionExcessiveAllocationSize(new_size);
   }
 
   const bool hooks_enabled = PartitionAllocHooks::AreHooksEnabled();
@@ -384,20 +385,25 @@ void* PartitionReallocGenericFlags(PartitionRootGeneric* root,
   if (LIKELY(!overridden)) {
     internal::PartitionPage* page = internal::PartitionPage::FromPointer(
         internal::PartitionCookieFreePointerAdjust(ptr));
-    // TODO(palmer): See if we can afford to make this a CHECK.
-    DCHECK(root->IsValidPage(page));
+    bool success = false;
+    {
+      subtle::SpinLock::Guard guard{root->lock};
+      // TODO(palmer): See if we can afford to make this a CHECK.
+      DCHECK(root->IsValidPage(page));
 
-    if (UNLIKELY(page->bucket->is_direct_mapped())) {
-      // We may be able to perform the realloc in place by changing the
-      // accessibility of memory pages and, if reducing the size, decommitting
-      // them.
-      if (PartitionReallocDirectMappedInPlace(root, page, new_size)) {
-        if (UNLIKELY(hooks_enabled)) {
-          PartitionAllocHooks::ReallocObserverHookIfEnabled(ptr, ptr, new_size,
-                                                            type_name);
-        }
-        return ptr;
+      if (UNLIKELY(page->bucket->is_direct_mapped())) {
+        // We may be able to perform the realloc in place by changing the
+        // accessibility of memory pages and, if reducing the size, decommitting
+        // them.
+        success = PartitionReallocDirectMappedInPlace(root, page, new_size);
       }
+    }
+    if (success) {
+      if (UNLIKELY(hooks_enabled)) {
+        PartitionAllocHooks::ReallocObserverHookIfEnabled(ptr, ptr, new_size,
+                                                          type_name);
+      }
+      return ptr;
     }
 
     const size_t actual_new_size = root->ActualSize(new_size);
@@ -426,7 +432,7 @@ void* PartitionReallocGenericFlags(PartitionRootGeneric* root,
   if (!ret) {
     if (flags & PartitionAllocReturnNull)
       return nullptr;
-    internal::PartitionExcessiveAllocationSize();
+    internal::PartitionExcessiveAllocationSize(new_size);
   }
 
   size_t copy_size = actual_old_size;
