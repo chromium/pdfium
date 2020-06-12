@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <string>
 #include <utility>
 
 #include "core/fxcrt/cfx_widetextbuf.h"

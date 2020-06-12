@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-#include <map>
 #include <sstream>
 #include <utility>
 #include <vector>

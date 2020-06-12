@@ -5,7 +5,6 @@
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/retain_ptr.h"

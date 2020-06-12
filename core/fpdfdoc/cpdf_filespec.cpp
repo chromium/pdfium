@@ -6,8 +6,6 @@
 
 #include "core/fpdfdoc/cpdf_filespec.h"
 
-#include <vector>
-
 #include "build/build_config.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"

@@ -10,7 +10,6 @@
 #include <memory>
 #include <sstream>
 #include <utility>
-#include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"

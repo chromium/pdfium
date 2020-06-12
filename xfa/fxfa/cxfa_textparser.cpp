@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <utility>
-#include <vector>
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_csscomputedstyle.h"

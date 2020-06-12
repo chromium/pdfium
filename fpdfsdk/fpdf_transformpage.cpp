@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <sstream>
-#include <vector>
 
 #include "constants/page_object.h"
 #include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"

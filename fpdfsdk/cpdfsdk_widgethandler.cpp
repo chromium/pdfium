@@ -7,7 +7,6 @@
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
 
 #include <memory>
-#include <vector>
 
 #include "constants/access_permissions.h"
 #include "constants/form_flags.h"

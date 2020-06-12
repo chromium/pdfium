@@ -7,7 +7,6 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 
 #include <limits>
-#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"

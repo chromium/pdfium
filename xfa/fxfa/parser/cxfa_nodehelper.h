@@ -7,8 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
 #define XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
 
-#include <vector>
-
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"

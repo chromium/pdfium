@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <sstream>
 #include <utility>
-#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"

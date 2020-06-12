@@ -6,7 +6,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"

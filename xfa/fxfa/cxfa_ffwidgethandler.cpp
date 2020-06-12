@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 
-#include <vector>
-
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"

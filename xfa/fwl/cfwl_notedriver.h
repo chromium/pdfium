@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_event.h"

@@ -4,8 +4,6 @@
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 
-#include <string>
-
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"

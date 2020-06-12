@@ -7,7 +7,6 @@
 #include "core/fpdfapi/render/cpdf_type3glyphmap.h"
 
 #include <algorithm>
-#include <map>
 #include <utility>
 
 #include "core/fxge/cfx_glyphbitmap.h"

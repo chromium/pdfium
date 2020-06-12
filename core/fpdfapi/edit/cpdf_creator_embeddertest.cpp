@@ -5,7 +5,6 @@
 #include <cstring>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "core/fxcrt/fx_system.h"
 #include "public/cpp/fpdf_scopers.h"

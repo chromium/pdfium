@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "build/build_config.h"

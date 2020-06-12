@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjs_object.h"

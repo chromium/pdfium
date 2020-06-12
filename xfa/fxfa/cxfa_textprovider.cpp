@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"

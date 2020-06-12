@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <set>
 #include <utility>
-#include <vector>
 
 #include "core/fxcrt/fx_system.h"
 

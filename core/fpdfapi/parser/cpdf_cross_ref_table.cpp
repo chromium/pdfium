@@ -5,7 +5,6 @@
 #include "core/fpdfapi/parser/cpdf_cross_ref_table.h"
 
 #include <utility>
-#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"

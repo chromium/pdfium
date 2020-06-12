@@ -6,7 +6,6 @@
 
 #include "fxjs/cjs_global.h"
 
-#include <map>
 #include <memory>
 #include <utility>
 #include <vector>

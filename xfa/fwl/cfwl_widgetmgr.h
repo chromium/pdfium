@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"

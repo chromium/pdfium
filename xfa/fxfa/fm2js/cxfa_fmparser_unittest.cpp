@@ -4,8 +4,6 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmparser.h"
 
-#include <vector>
-
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"

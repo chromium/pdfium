@@ -4,7 +4,6 @@
 
 #include <memory>
 #include <set>
-#include <string>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_document.h"

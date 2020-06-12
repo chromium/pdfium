@@ -4,8 +4,6 @@
 
 #include "public/fpdf_thumbnail.h"
 
-#include <vector>
-
 #include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"

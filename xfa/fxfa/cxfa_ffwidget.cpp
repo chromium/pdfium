@@ -10,7 +10,6 @@
 #include <cmath>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/progressive_decoder.h"

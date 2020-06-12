@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"

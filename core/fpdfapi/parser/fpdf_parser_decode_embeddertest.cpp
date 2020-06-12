@@ -4,7 +4,6 @@
 
 #include <cstring>
 #include <memory>
-#include <string>
 
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"

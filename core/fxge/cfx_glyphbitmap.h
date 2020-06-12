@@ -7,8 +7,6 @@
 #ifndef CORE_FXGE_CFX_GLYPHBITMAP_H_
 #define CORE_FXGE_CFX_GLYPHBITMAP_H_
 
-#include <vector>
-
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;

@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include <limits>
-#include <string>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"

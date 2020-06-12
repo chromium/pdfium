@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"

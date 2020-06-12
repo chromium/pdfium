@@ -5,7 +5,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 #include <utility>
-#include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
 

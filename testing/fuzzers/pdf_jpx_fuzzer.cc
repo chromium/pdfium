@@ -4,7 +4,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
