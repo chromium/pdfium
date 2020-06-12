@@ -17,7 +17,7 @@ class FXJSEngineUnitTest : public FXV8UnitTest {
 
   void SetUp() override {
     FXV8UnitTest::SetUp();
-    FXJS_Initialize(1, isolate(), nullptr);
+    FXJS_Initialize(1, isolate());
     engine_ = std::make_unique<CFXJS_Engine>(isolate());
   }
 

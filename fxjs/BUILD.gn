@@ -114,6 +114,8 @@ source_set("fxjs") {
 
     if (pdf_enable_xfa) {
       sources += [
+        "gc/heap.cpp",
+        "gc/heap.h",
         "xfa/cfxjse_class.cpp",
         "xfa/cfxjse_class.h",
         "xfa/cfxjse_context.cpp",
@@ -205,6 +207,7 @@ source_set("fxjs") {
       deps += [
         "../xfa/fgas",
         "../xfa/fxfa/fm2js",
+        "//v8:cppgc",
       ]
     }
   }
@@ -237,16 +240,19 @@ if (pdf_enable_v8) {
       "../fpdfsdk",
     ]
     pdfium_root_dir = "../"
-
     if (pdf_enable_xfa) {
       sources += [
+        "gc/heap_embeddertest.cpp",
         "xfa/cfxjse_app_embeddertest.cpp",
         "xfa/cfxjse_formcalc_context_embeddertest.cpp",
         "xfa/cfxjse_value_embeddertest.cpp",
         "xfa/cjx_hostpseudomodel_embeddertest.cpp",
         "xfa/cjx_list_embeddertest.cpp",
       ]
-      deps += [ "../xfa/fxfa" ]
+      deps += [
+        "../xfa/fxfa",
+        "//v8:cppgc",
+      ]
     }
   }
 }

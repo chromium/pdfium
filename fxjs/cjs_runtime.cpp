@@ -52,7 +52,7 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
       pExternalIsolate = static_cast<v8::Isolate*>(pPlatform->m_isolate);
       embedderDataSlot = pPlatform->m_v8EmbedderSlot;
     }
-    FXJS_Initialize(embedderDataSlot, pExternalIsolate, nullptr);
+    FXJS_Initialize(embedderDataSlot, pExternalIsolate);
   }
   m_isolateManaged = FXJS_GetIsolate(&pIsolate);
   SetIsolate(pIsolate);

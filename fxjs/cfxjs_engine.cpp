@@ -14,7 +14,6 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "third_party/base/stl_util.h"
-#include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8-util.h"
 
 class CFXJS_PerObjectData;
@@ -23,7 +22,6 @@ namespace {
 
 unsigned int g_embedderDataSlot = 1u;
 v8::Isolate* g_isolate = nullptr;
-v8::Platform* g_platform = nullptr;
 size_t g_isolate_ref_count = 0;
 CFX_V8ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
@@ -271,9 +269,7 @@ V8TemplateMapTraits::MapType* V8TemplateMapTraits::MapFromWeakCallbackInfo(
   return pMap ? &pMap->m_map : nullptr;
 }
 
-void FXJS_Initialize(unsigned int embedderDataSlot,
-                     v8::Isolate* pIsolate,
-                     v8::Platform* pPlatform) {
+void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
   if (g_isolate) {
     ASSERT(g_embedderDataSlot == embedderDataSlot);
     ASSERT(g_isolate == pIsolate);
@@ -281,7 +277,6 @@ void FXJS_Initialize(unsigned int embedderDataSlot,
   }
   g_embedderDataSlot = embedderDataSlot;
   g_isolate = pIsolate;
-  g_platform = pPlatform;
 }
 
 void FXJS_Release() {

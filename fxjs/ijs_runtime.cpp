@@ -9,7 +9,10 @@
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_runtime.h"
-#endif
+#ifdef PDF_ENABLE_XFA
+#include "fxjs/gc/heap.h"
+#endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
 
 IJS_Runtime::ScopedEventContext::ScopedEventContext(IJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime), m_pContext(pRuntime->NewEventContext()) {}
@@ -21,16 +24,21 @@ IJS_Runtime::ScopedEventContext::~ScopedEventContext() {
 // static
 void IJS_Runtime::Initialize(unsigned int slot, void* isolate, void* platform) {
 #ifdef PDF_ENABLE_V8
-  FXJS_Initialize(slot, static_cast<v8::Isolate*>(isolate),
-                  static_cast<v8::Platform*>(platform));
-#endif
+  FXJS_Initialize(slot, static_cast<v8::Isolate*>(isolate));
+#ifdef PDF_ENABLE_XFA
+  FXGC_Initialize(static_cast<v8::Platform*>(platform));
+#endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
 }
 
 // static
 void IJS_Runtime::Destroy() {
 #ifdef PDF_ENABLE_V8
+#ifdef PDF_ENABL_XFA
+  FXGC_Release();
+#endif  // PDF_ENABLE_XFA
   FXJS_Release();
-#endif
+#endif  // PDF_ENABLE_V8
 }
 
 // static
