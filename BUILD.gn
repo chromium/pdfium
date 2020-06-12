@@ -294,6 +294,7 @@ test("pdfium_embeddertests") {
   testonly = true
   sources = [ "testing/embedder_test_main.cpp" ]
   deps = [
+    ":pdfium_embeddertest_deps",
     "core/fpdfapi/edit:embeddertests",
     "core/fpdfapi/parser:embeddertests",
     "core/fpdfapi/render:embeddertests",

@@ -87,7 +87,6 @@ source_set("embedder_test_support") {
     "range_set.cpp",
     "range_set.h",
   ]
-
   deps = [
     ":test_support",
     "../:pdfium_public_headers",
@@ -106,6 +105,7 @@ source_set("embedder_test_support") {
       "js_embedder_test.h",
     ]
     deps += [ "../fxjs" ]
+    configs += [ "//v8:external_startup_data" ]
 
     if (pdf_enable_xfa) {
       sources += [

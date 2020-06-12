@@ -29,11 +29,14 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_V8
+#include "testing/v8_initializer.h"
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
 
 namespace {
+
+EmbedderTestEnvironment* g_environment = nullptr;
 
 int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {
   return EmbedderTest::BytesPerPixelForFormat(FPDFBitmap_GetFormat(bitmap));
@@ -52,6 +55,55 @@ int CALLBACK GetRecordProc(HDC hdc,
 #endif  // defined(OS_WIN)
 
 }  // namespace
+
+EmbedderTestEnvironment::EmbedderTestEnvironment(const char* exe_name)
+#ifdef PDF_ENABLE_V8
+    : exe_path_(exe_name)
+#endif
+{
+  ASSERT(!g_environment);
+  g_environment = this;
+}
+
+EmbedderTestEnvironment::~EmbedderTestEnvironment() {
+  ASSERT(g_environment);
+  g_environment = nullptr;
+
+#ifdef PDF_ENABLE_V8
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
+  if (v8_snapshot_)
+    free(const_cast<char*>(v8_snapshot_->data));
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#endif  // PDF_ENABLE_V8
+}
+
+// static
+EmbedderTestEnvironment* EmbedderTestEnvironment::GetInstance() {
+  return g_environment;
+}
+
+void EmbedderTestEnvironment::SetUp() {
+#ifdef PDF_ENABLE_V8
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
+  if (v8_snapshot_) {
+    platform_ =
+        InitializeV8ForPDFiumWithStartupData(exe_path_, std::string(), nullptr);
+  } else {
+    v8_snapshot_ = std::make_unique<v8::StartupData>();
+    platform_ = InitializeV8ForPDFiumWithStartupData(exe_path_, std::string(),
+                                                     v8_snapshot_.get());
+  }
+#else
+  platform_ = InitializeV8ForPDFium(exe_path_);
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#endif  // FPDF_ENABLE_V8
+}
+
+void EmbedderTestEnvironment::TearDown() {
+#ifdef PDF_ENABLE_V8
+  v8::V8::ShutdownPlatform();
+#endif  // PDF_ENABLE_V8
+}
 
 EmbedderTest::EmbedderTest()
     : default_delegate_(std::make_unique<EmbedderTest::Delegate>()),
