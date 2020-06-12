@@ -54,12 +54,13 @@ void FXGC_Release() {
   }
 }
 
-std::unique_ptr<cppgc::Heap> FXGC_CreateHeap() {
+FXGCScopedHeap FXGC_CreateHeap() {
   ++g_platform_ref_count;
-  return cppgc::Heap::Create(std::make_shared<CFXGC_Platform>());
+  auto heap = cppgc::Heap::Create(std::make_shared<CFXGC_Platform>());
+  return FXGCScopedHeap(heap.release());
 }
 
-void FXGC_ReleaseHeap(std::unique_ptr<cppgc::Heap> heap) {
+void FXGCHeapDeleter::operator()(cppgc::Heap* heap) {
   --g_platform_ref_count;
-  // |heap| destroyed when it goes out of scope.
+  delete heap;
 }

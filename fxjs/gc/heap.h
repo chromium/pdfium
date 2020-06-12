@@ -10,10 +10,14 @@
 #include "v8/include/cppgc/heap.h"
 #include "v8/include/libplatform/libplatform.h"
 
+struct FXGCHeapDeleter {
+  void operator()(cppgc::Heap* heap);
+};
+
+using FXGCScopedHeap = std::unique_ptr<cppgc::Heap, FXGCHeapDeleter>;
+
 void FXGC_Initialize(v8::Platform* platform);
 void FXGC_Release();
-
-std::unique_ptr<cppgc::Heap> FXGC_CreateHeap();
-void FXGC_ReleaseHeap(std::unique_ptr<cppgc::Heap> heap);
+FXGCScopedHeap FXGC_CreateHeap();
 
 #endif  // FXJS_GC_HEAP_H_

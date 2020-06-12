@@ -9,23 +9,26 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class HeapEmbedderTest : public EmbedderTest {};
+class HeapEmbedderTest : public EmbedderTest {
+ public:
+  void SetUp() override {
+    EmbedderTest::SetUp();
+    FXGC_Initialize(EmbedderTestEnvironment::GetInstance()->platform());
+  }
 
-TEST(HeapEmbedderTest, SeveralHeaps) {
-  FXGC_Initialize(EmbedderTestEnvironment::GetInstance()->platform());
+  void TearDown() override {
+    FXGC_Release();
+    EmbedderTest::TearDown();
+  }
+};
 
-  std::unique_ptr<cppgc::Heap> heap1 = FXGC_CreateHeap();
+TEST_F(HeapEmbedderTest, SeveralHeaps) {
+  FXGCScopedHeap heap1 = FXGC_CreateHeap();
   EXPECT_TRUE(heap1);
 
-  std::unique_ptr<cppgc::Heap> heap2 = FXGC_CreateHeap();
+  FXGCScopedHeap heap2 = FXGC_CreateHeap();
   EXPECT_TRUE(heap2);
 
-  std::unique_ptr<cppgc::Heap> heap3 = FXGC_CreateHeap();
+  FXGCScopedHeap heap3 = FXGC_CreateHeap();
   EXPECT_TRUE(heap2);
-
-  FXGC_ReleaseHeap(std::move(heap1));
-  FXGC_ReleaseHeap(std::move(heap2));
-  FXGC_ReleaseHeap(std::move(heap3));
-
-  FXGC_Release();
 }
