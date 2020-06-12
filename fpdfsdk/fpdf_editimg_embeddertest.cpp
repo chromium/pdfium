@@ -4,15 +4,11 @@
 
 #include "public/fpdf_edit.h"
 
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "public/cpp/fpdf_scopers.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "testing/embedder_test.h"
 #include "testing/utils/file_util.h"
 
-class PDFEditImgTest : public testing::Test {
-  void SetUp() override { CPDF_PageModule::Create(); }
-  void TearDown() override { CPDF_PageModule::Destroy(); }
-};
+class PDFEditImgTest : public EmbedderTest {};
 
 TEST_F(PDFEditImgTest, InsertObjectWithInvalidPage) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();

@@ -109,11 +109,9 @@ source_set("fpdfsdk") {
 pdfium_unittest_source_set("unittests") {
   sources = [
     "cpdfsdk_helpers_unittest.cpp",
-    "fpdf_annot_unittest.cpp",
     "fpdf_catalog_unittest.cpp",
     "fpdf_doc_unittest.cpp",
     "fpdf_edit_unittest.cpp",
-    "fpdf_editimg_unittest.cpp",
     "fpdf_view_unittest.cpp",
   ]
   deps = [
@@ -137,6 +135,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "fpdf_dataavail_embeddertest.cpp",
     "fpdf_doc_embeddertest.cpp",
     "fpdf_edit_embeddertest.cpp",
+    "fpdf_editimg_embeddertest.cpp",
     "fpdf_editpage_embeddertest.cpp",
     "fpdf_editpath_embeddertest.cpp",
     "fpdf_ext_embeddertest.cpp",
