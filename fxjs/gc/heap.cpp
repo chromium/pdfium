@@ -55,12 +55,22 @@ void FXGC_Release() {
 }
 
 FXGCScopedHeap FXGC_CreateHeap() {
+  // If XFA is included at compile-time, but JS is disabled at run-time,
+  // we may still attempt to build a CPDFXFA_Context which will want a
+  // heap. But we can't make one because JS is disabled.
+  // TODO(tsepez): Stop the context from even being created.
+  if (!g_platform)
+    return nullptr;
+
   ++g_platform_ref_count;
   auto heap = cppgc::Heap::Create(std::make_shared<CFXGC_Platform>());
   return FXGCScopedHeap(heap.release());
 }
 
 void FXGCHeapDeleter::operator()(cppgc::Heap* heap) {
+  if (!heap)
+    return;
+
   --g_platform_ref_count;
   delete heap;
 }

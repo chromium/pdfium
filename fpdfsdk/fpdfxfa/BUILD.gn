@@ -37,8 +37,15 @@ source_set("fpdfxfa") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [ "cpdfxfa_docenvironment_embeddertest.cpp" ]
+  sources = [
+    "cpdfxfa_context_embeddertest.cpp",
+    "cpdfxfa_docenvironment_embeddertest.cpp",
+  ]
   configs = [ "//v8:external_startup_data" ]
-  deps = [ "../../fxjs" ]
+  deps = [
+    ":fpdfxfa",
+    "../:fpdfsdk",
+    "../../fxjs",
+  ]
   pdfium_root_dir = "../../"
 }

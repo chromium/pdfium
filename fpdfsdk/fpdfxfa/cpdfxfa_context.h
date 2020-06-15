@@ -18,6 +18,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
+#include "fxjs/gc/heap.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CJS_Runtime;
@@ -42,12 +43,12 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   bool LoadXFADoc();
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
+  cppgc::Heap* GetGCHeap() { return m_pGCHeap.get(); }
   FormType GetFormType() const { return m_FormType; }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-
   RetainPtr<CPDFXFA_Page> GetXFAPage(int page_index);
   RetainPtr<CPDFXFA_Page> GetXFAPage(CXFA_FFPageView* pPage) const;
   void ClearChangeMark();
@@ -115,6 +116,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
 
   FormType m_FormType = FormType::kNone;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
+  FXGCScopedHeap m_pGCHeap;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   UnownedPtr<CXFA_FFDocView> m_pXFADocView;

@@ -114,10 +114,16 @@ EmbedderTest::~EmbedderTest() = default;
 
 void EmbedderTest::SetUp() {
   FPDF_LIBRARY_CONFIG config;
-  config.version = 2;
+  config.version = 3;
   config.m_pUserFontPaths = nullptr;
   config.m_v8EmbedderSlot = 0;
   config.m_pIsolate = external_isolate_;
+#ifdef PDF_ENABLE_V8
+  config.m_pPlatform = EmbedderTestEnvironment::GetInstance()->platform();
+#else   // PDF_ENABLE_V8
+  config.m_pPlatform = nullptr;
+#endif  // PDF_ENABLE_V8
+
   FPDF_InitLibraryWithConfig(&config);
 
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);

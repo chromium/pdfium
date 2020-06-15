@@ -9,20 +9,7 @@
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class HeapEmbedderTest : public EmbedderTest {
- public:
-  void SetUp() override {
-    EmbedderTest::SetUp();
-    FXGC_Initialize(EmbedderTestEnvironment::GetInstance()->platform());
-  }
-
-  void TearDown() override {
-    FXGC_Release();
-    EmbedderTest::TearDown();
-  }
-};
-
-TEST_F(HeapEmbedderTest, SeveralHeaps) {
+TEST_F(EmbedderTest, SeveralHeaps) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   EXPECT_TRUE(heap1);
 
