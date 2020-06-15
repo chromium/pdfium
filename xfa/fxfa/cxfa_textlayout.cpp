@@ -714,9 +714,6 @@ bool CXFA_TextLayout::LoadRichText(
     bool bCurLi = false;
     const CFX_XMLElement* pElement = nullptr;
     if (pContext) {
-      if (m_bBlockContinue || (m_pLoader && pXMLNode == m_pLoader->pXMLNode)) {
-        m_bBlockContinue = true;
-      }
       if (pXMLNode->GetType() == CFX_XMLNode::Type::kText) {
         bContentNode = true;
       } else if (pXMLNode->GetType() == CFX_XMLNode::Type::kElement) {
@@ -727,101 +724,100 @@ bool CXFA_TextLayout::LoadRichText(
         bIsOl = true;
         bCurOl = true;
       }
-      if (m_bBlockContinue || !bContentNode) {
-        eDisplay = pContext->GetDisplay();
-        if (eDisplay != CFX_CSSDisplay::Block &&
-            eDisplay != CFX_CSSDisplay::Inline &&
-            eDisplay != CFX_CSSDisplay::ListItem) {
-          return true;
+
+      eDisplay = pContext->GetDisplay();
+      if (eDisplay != CFX_CSSDisplay::Block &&
+          eDisplay != CFX_CSSDisplay::Inline &&
+          eDisplay != CFX_CSSDisplay::ListItem) {
+        return true;
+      }
+
+      pStyle = m_textParser.ComputeStyle(pXMLNode, pParentStyle.Get());
+      InitBreak(bContentNode ? pParentStyle.Get() : pStyle.Get(), eDisplay,
+                textWidth, pXMLNode, pParentStyle.Get());
+      if ((eDisplay == CFX_CSSDisplay::Block ||
+           eDisplay == CFX_CSSDisplay::ListItem) &&
+          pStyle &&
+          (wsName.IsEmpty() ||
+           !(wsName.EqualsASCII("body") || wsName.EqualsASCII("html") ||
+             wsName.EqualsASCII("ol") || wsName.EqualsASCII("ul")))) {
+        const CFX_CSSRect* pRect = pStyle->GetMarginWidth();
+        if (pRect) {
+          *pLinePos += pRect->top.GetValue();
+          fSpaceBelow = pRect->bottom.GetValue();
+        }
+      }
+
+      if (wsName.EqualsASCII("a")) {
+        WideString wsLinkContent = pElement->GetAttribute(L"href");
+        if (!wsLinkContent.IsEmpty())
+          pLinkData = pdfium::MakeRetain<CFX_LinkUserData>(wsLinkContent);
+      }
+
+      int32_t iTabCount = m_textParser.CountTabs(
+          bContentNode ? pParentStyle.Get() : pStyle.Get());
+      bool bSpaceRun = m_textParser.IsSpaceRun(bContentNode ? pParentStyle.Get()
+                                                            : pStyle.Get());
+      WideString wsText;
+      if (bContentNode && iTabCount == 0) {
+        wsText = ToXMLText(pXMLNode)->GetText();
+      } else if (wsName.EqualsASCII("br")) {
+        wsText = L'\n';
+      } else if (wsName.EqualsASCII("li")) {
+        bCurLi = true;
+        if (bIsOl)
+          wsText = WideString::Format(L"%d.  ", iLiCount);
+        else
+          wsText = 0x00B7 + WideStringView(L"  ", 1);
+      } else if (!bContentNode) {
+        if (iTabCount > 0) {
+          while (iTabCount-- > 0)
+            wsText += L'\t';
+        } else {
+          Optional<WideString> obj =
+              m_textParser.GetEmbeddedObj(m_pTextProvider, pXMLNode);
+          if (obj)
+            wsText = *obj;
+        }
+      }
+
+      int32_t iLength = wsText.GetLength();
+      if (iLength > 0 && bContentNode && !bSpaceRun)
+        ProcessText(&wsText);
+
+      if (m_pLoader) {
+        if (wsText.GetLength() > 0 && m_pLoader->bFilterSpace) {
+          wsText.TrimLeft(L" ");
+        }
+        if (CFX_CSSDisplay::Block == eDisplay) {
+          m_pLoader->bFilterSpace = true;
+        } else if (CFX_CSSDisplay::Inline == eDisplay &&
+                   m_pLoader->bFilterSpace) {
+          m_pLoader->bFilterSpace = false;
+        } else if (wsText.GetLength() > 0 && wsText.Back() == 0x20) {
+          m_pLoader->bFilterSpace = true;
+        } else if (wsText.GetLength() != 0) {
+          m_pLoader->bFilterSpace = false;
+        }
+      }
+
+      if (wsText.GetLength() > 0) {
+        if (!m_pLoader || m_pLoader->iChar == 0) {
+          auto pUserData = pdfium::MakeRetain<CFX_TextUserData>(
+              bContentNode ? pParentStyle : pStyle, pLinkData);
+          m_pBreak->SetUserData(pUserData);
         }
 
-        pStyle = m_textParser.ComputeStyle(pXMLNode, pParentStyle.Get());
-        InitBreak(bContentNode ? pParentStyle.Get() : pStyle.Get(), eDisplay,
-                  textWidth, pXMLNode, pParentStyle.Get());
-        if ((eDisplay == CFX_CSSDisplay::Block ||
-             eDisplay == CFX_CSSDisplay::ListItem) &&
-            pStyle &&
-            (wsName.IsEmpty() ||
-             !(wsName.EqualsASCII("body") || wsName.EqualsASCII("html") ||
-               wsName.EqualsASCII("ol") || wsName.EqualsASCII("ul")))) {
-          const CFX_CSSRect* pRect = pStyle->GetMarginWidth();
-          if (pRect) {
-            *pLinePos += pRect->top.GetValue();
-            fSpaceBelow = pRect->bottom.GetValue();
-          }
-        }
-
-        if (wsName.EqualsASCII("a")) {
-          WideString wsLinkContent = pElement->GetAttribute(L"href");
-          if (!wsLinkContent.IsEmpty())
-            pLinkData = pdfium::MakeRetain<CFX_LinkUserData>(wsLinkContent);
-        }
-
-        int32_t iTabCount = m_textParser.CountTabs(
-            bContentNode ? pParentStyle.Get() : pStyle.Get());
-        bool bSpaceRun = m_textParser.IsSpaceRun(
-            bContentNode ? pParentStyle.Get() : pStyle.Get());
-        WideString wsText;
-        if (bContentNode && iTabCount == 0) {
-          wsText = ToXMLText(pXMLNode)->GetText();
-        } else if (wsName.EqualsASCII("br")) {
-          wsText = L'\n';
-        } else if (wsName.EqualsASCII("li")) {
-          bCurLi = true;
-          if (bIsOl)
-            wsText = WideString::Format(L"%d.  ", iLiCount);
-          else
-            wsText = 0x00B7 + WideStringView(L"  ", 1);
-        } else if (!bContentNode) {
-          if (iTabCount > 0) {
-            while (iTabCount-- > 0)
-              wsText += L'\t';
-          } else {
-            Optional<WideString> obj =
-                m_textParser.GetEmbeddedObj(m_pTextProvider, pXMLNode);
-            if (obj)
-              wsText = *obj;
-          }
-        }
-
-        int32_t iLength = wsText.GetLength();
-        if (iLength > 0 && bContentNode && !bSpaceRun)
-          ProcessText(&wsText);
-
-        if (m_pLoader) {
-          if (wsText.GetLength() > 0 && m_pLoader->bFilterSpace) {
-            wsText.TrimLeft(L" ");
-          }
-          if (CFX_CSSDisplay::Block == eDisplay) {
-            m_pLoader->bFilterSpace = true;
-          } else if (CFX_CSSDisplay::Inline == eDisplay &&
-                     m_pLoader->bFilterSpace) {
+        if (AppendChar(wsText, pLinePos, 0, bSavePieces)) {
+          if (m_pLoader)
             m_pLoader->bFilterSpace = false;
-          } else if (wsText.GetLength() > 0 && wsText.Back() == 0x20) {
-            m_pLoader->bFilterSpace = true;
-          } else if (wsText.GetLength() != 0) {
-            m_pLoader->bFilterSpace = false;
+          if (!IsEnd(bSavePieces))
+            return true;
+          if (m_pLoader && m_pLoader->iTotalLines > -1) {
+            m_pLoader->pXMLNode = pXMLNode;
+            m_pLoader->pParentStyle = pParentStyle;
           }
-        }
-
-        if (wsText.GetLength() > 0) {
-          if (!m_pLoader || m_pLoader->iChar == 0) {
-            auto pUserData = pdfium::MakeRetain<CFX_TextUserData>(
-                bContentNode ? pParentStyle : pStyle, pLinkData);
-            m_pBreak->SetUserData(pUserData);
-          }
-
-          if (AppendChar(wsText, pLinePos, 0, bSavePieces)) {
-            if (m_pLoader)
-              m_pLoader->bFilterSpace = false;
-            if (!IsEnd(bSavePieces))
-              return true;
-            if (m_pLoader && m_pLoader->iTotalLines > -1) {
-              m_pLoader->pXMLNode = pXMLNode;
-              m_pLoader->pParentStyle = pParentStyle;
-            }
-            return false;
-          }
+          return false;
         }
       }
     }
@@ -848,27 +844,26 @@ bool CXFA_TextLayout::LoadRichText(
       eDisplay = pContext->GetDisplay();
   }
 
-  if (m_bBlockContinue) {
-    if (pContext && !bContentNode) {
-      CFX_BreakType dwStatus = (eDisplay == CFX_CSSDisplay::Block)
-                                   ? CFX_BreakType::Paragraph
-                                   : CFX_BreakType::Piece;
-      EndBreak(dwStatus, pLinePos, bSavePieces);
-      if (eDisplay == CFX_CSSDisplay::Block) {
-        *pLinePos += fSpaceBelow;
-        if (m_pTabstopContext)
-          m_pTabstopContext->RemoveAll();
-      }
-      if (IsEnd(bSavePieces)) {
-        if (m_pLoader && m_pLoader->iTotalLines > -1) {
-          m_pLoader->pXMLNode = pXMLNode->GetNextSibling();
-          m_pLoader->pParentStyle = pParentStyle;
-        }
-        return false;
-      }
-    }
+  if (!pContext || bContentNode)
+    return true;
+
+  CFX_BreakType dwStatus = (eDisplay == CFX_CSSDisplay::Block)
+                               ? CFX_BreakType::Paragraph
+                               : CFX_BreakType::Piece;
+  EndBreak(dwStatus, pLinePos, bSavePieces);
+  if (eDisplay == CFX_CSSDisplay::Block) {
+    *pLinePos += fSpaceBelow;
+    if (m_pTabstopContext)
+      m_pTabstopContext->RemoveAll();
   }
-  return true;
+  if (!IsEnd(bSavePieces))
+    return true;
+
+  if (m_pLoader && m_pLoader->iTotalLines > -1) {
+    m_pLoader->pXMLNode = pXMLNode->GetNextSibling();
+    m_pLoader->pParentStyle = pParentStyle;
+  }
+  return false;
 }
 
 bool CXFA_TextLayout::AppendChar(const WideString& wsText,

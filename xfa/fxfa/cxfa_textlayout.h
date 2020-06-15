@@ -121,7 +121,6 @@ class CXFA_TextLayout {
 
   bool m_bHasBlock = false;
   bool m_bRichText = false;
-  bool m_bBlockContinue = true;
   int32_t m_iLines = 0;
   float m_fMaxWidth = 0;
   std::vector<BlockData> m_Blocks;
