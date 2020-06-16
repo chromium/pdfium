@@ -55,7 +55,6 @@ source_set("unit_test_support") {
   testonly = true
   sources = []
   deps = []
-
   configs += [ "../:pdfium_core_config" ]
   visibility = [ "../*" ]
 
@@ -109,6 +108,8 @@ source_set("embedder_test_support") {
 
     if (pdf_enable_xfa) {
       sources += [
+        "gced_embeddertest.cpp",
+        "gced_embeddertest.h",
         "xfa_js_embedder_test.cpp",
         "xfa_js_embedder_test.h",
       ]
@@ -117,6 +118,8 @@ source_set("embedder_test_support") {
         "../fpdfsdk/fpdfxfa",
         "../xfa/fxfa",
         "../xfa/fxfa/parser",
+        "//v8:cppgc",
+        "//v8:v8_libplatform",
       ]
     }
   }

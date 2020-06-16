@@ -7,12 +7,11 @@
 #include <memory>
 #include <set>
 
-#include "testing/embedder_test.h"
+#include "testing/gced_embeddertest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/persistent.h"
-#include "v8/include/v8.h"
 
 namespace {
 
@@ -47,38 +46,9 @@ std::set<const PseudoCollectible*> PseudoCollectible::s_live_;
 std::set<const PseudoCollectible*> PseudoCollectible::s_dead_;
 cppgc::Persistent<PseudoCollectible> PseudoCollectible::s_persistent_;
 
-struct V8IsolateDeleter {
-  inline void operator()(v8::Isolate* ptr) { ptr->Dispose(); }
-};
-
 }  // namespace
 
-class HeapEmbedderTest : public EmbedderTest {
- public:
-  void SetUp() override {
-    v8::Isolate::CreateParams params;
-    params.array_buffer_allocator = static_cast<v8::ArrayBuffer::Allocator*>(
-        FPDF_GetArrayBufferAllocatorSharedInstance());
-    isolate_.reset(v8::Isolate::New(params));
-    EmbedderTest::SetExternalIsolate(isolate_.get());
-    EmbedderTest::SetUp();
-  }
-
-  void TearDown() override {
-    EmbedderTest::TearDown();
-    isolate_.reset();
-  }
-
-  void PumpPlatformMessageLoop() {
-    while (v8::platform::PumpMessageLoop(
-        EmbedderTestEnvironment::GetInstance()->platform(), isolate_.get())) {
-      continue;
-    }
-  }
-
- private:
-  std::unique_ptr<v8::Isolate, V8IsolateDeleter> isolate_;
-};
+class HeapEmbedderTest : public GCedEmbedderTest {};
 
 TEST_F(HeapEmbedderTest, SeveralHeaps) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
