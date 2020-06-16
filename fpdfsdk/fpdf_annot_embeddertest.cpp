@@ -1237,13 +1237,22 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+// TODO(crbug.com/pdfium/1541): Fix this test and enable.
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_AddAndModifyImage DISABLED_AddAndModifyImage
 #else
 #define MAYBE_AddAndModifyImage AddAndModifyImage
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
+#if defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_LINUX)
+  static const char kMd5NewImage[] = "26a8eb30937226a677839379e0d7ae1a";
+  static const char kMd5ModifiedImage[] = "2985114b32ba1a96be78ee643fe31aa5";
+#else
+  static const char kMd5NewImage[] = "14012ab500b4671fa73dd760129a8a93";
+  static const char kMd5ModifiedImage[] = "5f97f98f58ed04dc393f31460485f1a2";
+#endif  // defined(OS_LINUX)
+#else
 #if defined(OS_MACOSX)
   static const char kMd5NewImage[] = "dd18709d90c245a12ce0b8c4d092bea9";
   static const char kMd5ModifiedImage[] = "8d6f478ff8c7e67d49b253f1af587a99";
@@ -1254,6 +1263,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndModifyImage) {
   static const char kMd5NewImage[] = "528e6243dc29d54f36b61e0d3287d935";
   static const char kMd5ModifiedImage[] = "6d9e59f3e57a1ff82fb258356b7eb731";
 #endif
+#endif  // defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
