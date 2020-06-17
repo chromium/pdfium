@@ -99,17 +99,16 @@ TEST_F(FPDFPPOEmbedderTest, BadNupParams) {
 
 // TODO(Xlou): Add more tests to check output doc content of
 // FPDF_ImportNPagesToOne()
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_NupRenderImage DISABLED_NupRenderImage
-#else
-#define MAYBE_NupRenderImage NupRenderImage
-#endif
-TEST_F(FPDFPPOEmbedderTest, MAYBE_NupRenderImage) {
+TEST_F(FPDFPPOEmbedderTest, NupRenderImage) {
   ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
   const int kPageCount = 2;
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static constexpr const char* kExpectedMD5s[kPageCount] = {
+      "bf8fa88dc85a9897931273168e8e1a30", "4fa6a7507e9f3ef4f28719a7d656c3a5"};
+#else
   static constexpr const char* kExpectedMD5s[kPageCount] = {
       "4d225b961da0f1bced7c83273e64c9b6", "fb18142190d770cfbc329d2b071aee4d"};
+#endif
   ScopedFPDFDocument output_doc_3up(
       FPDF_ImportNPagesToOne(document(), 792, 612, 3, 1));
   ASSERT_TRUE(output_doc_3up);
@@ -220,16 +219,16 @@ TEST_F(FPDFPPOEmbedderTest, BUG_664284) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_BUG_750568 DISABLED_BUG_750568
+  const char* const kHashes[] = {
+      "eaa139e944eafb43d31e8742a0e158de", "226485e9d4fa6a67dfe0a88723f12060",
+      "c5601a3492ae5dcc5dd25140fc463bfe", "1f60055b54de4fac8a59c65e90da156e"};
 #else
-#define MAYBE_BUG_750568 BUG_750568
-#endif
-TEST_F(FPDFPPOEmbedderTest, MAYBE_BUG_750568) {
   const char* const kHashes[] = {
       "64ad08132a1c5a166768298c8a578f57", "83b83e2f6bc80707d0a917c7634140b9",
       "913cd3723a451e4e46fbc2c05702d1ee", "81fb7cfd4860f855eb468f73dfeb6d60"};
+#endif
 
   ASSERT_TRUE(OpenDocument("bug_750568.pdf"));
   ASSERT_EQ(4, FPDF_GetPageCount(document()));
