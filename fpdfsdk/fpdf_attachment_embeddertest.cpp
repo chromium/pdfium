@@ -108,6 +108,30 @@ TEST_F(FPDFAttachmentEmbedderTest, NoAttachmentToExtract) {
   EXPECT_FALSE(FPDFDoc_GetAttachment(document(), 0));
 }
 
+TEST_F(FPDFAttachmentEmbedderTest, InvalidAttachmentData) {
+  // Open a file with an attachment that is missing the embedded file (/EF).
+  ASSERT_TRUE(OpenDocument("embedded_attachments_invalid_data.pdf"));
+  ASSERT_EQ(1, FPDFDoc_GetAttachmentCount(document()));
+
+  // Retrieve the first attachment.
+  FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
+
+  // Check that the name of the attachment is correct.
+  unsigned long length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
+  ASSERT_EQ(12u, length_bytes);
+  std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+  EXPECT_EQ(12u, FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
+  EXPECT_EQ("1.txt", GetPlatformString(buf.data()));
+
+  // Check that is is not possible to retrieve the file data.
+  EXPECT_FALSE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
+
+  // Check that the attachment can be deleted.
+  EXPECT_TRUE(FPDFDoc_DeleteAttachment(document(), 0));
+  EXPECT_EQ(0, FPDFDoc_GetAttachmentCount(document()));
+}
+
 TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   // Open a file with two attachments.
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
