@@ -65,8 +65,7 @@ class FPDF_FileAvailContext final : public CPDF_DataAvail::FileAvail {
 
 class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   // IFX_SeekableReadStream:
   FX_FILESIZE GetSize() override { return file_->m_FileLen; }

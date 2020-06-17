@@ -14,8 +14,7 @@ class CFX_LinkUserData;
 
 class CFX_TextUserData final : public Retainable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   RetainPtr<CFX_CSSComputedStyle> m_pStyle;
   RetainPtr<CFX_LinkUserData> m_pLinkData;

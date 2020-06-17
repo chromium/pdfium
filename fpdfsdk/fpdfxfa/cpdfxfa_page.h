@@ -24,8 +24,7 @@ class CXFA_FFPageView;
 
 class CPDFXFA_Page final : public IPDF_Page {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   // IPDF_Page:
   CPDF_Page* AsPDFPage() override;

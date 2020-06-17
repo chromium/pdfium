@@ -21,8 +21,7 @@ class CPDF_OCContext final : public Retainable {
  public:
   enum UsageType { View = 0, Design, Print, Export };
 
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool CheckOCGVisible(const CPDF_Dictionary* pOCGDict) const;
   bool CheckObjectVisible(const CPDF_PageObject* pObj) const;

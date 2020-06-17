@@ -25,8 +25,7 @@ class IFX_SeekableReadStream;
 
 class CPDF_Image final : public Retainable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   static bool IsValidJpegComponent(int32_t comps);
   static bool IsValidJpegBitsPerComponent(int32_t bpc);

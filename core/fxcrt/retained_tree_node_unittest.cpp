@@ -15,8 +15,7 @@ class ObservableRetainedTreeNodeForTest
     : public RetainedTreeNode<ObservableRetainedTreeNodeForTest>,
       public Observable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
  private:
   ObservableRetainedTreeNodeForTest() = default;

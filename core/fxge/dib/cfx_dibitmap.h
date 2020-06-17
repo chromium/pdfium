@@ -16,8 +16,7 @@
 
 class CFX_DIBitmap : public CFX_DIBBase {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool Create(int width, int height, FXDIB_Format format);
 

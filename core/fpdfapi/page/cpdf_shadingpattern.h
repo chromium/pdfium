@@ -38,9 +38,7 @@ class CPDF_Object;
 
 class CPDF_ShadingPattern final : public CPDF_Pattern {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CPDF_ShadingPattern() override;
 
   // CPDF_Pattern:

@@ -56,8 +56,7 @@ class CPDF_ColorState {
  private:
   class ColorData final : public Retainable {
    public:
-    template <typename T, typename... Args>
-    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+    CONSTRUCT_VIA_MAKE_RETAIN;
 
     RetainPtr<ColorData> Clone() const;
 

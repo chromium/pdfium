@@ -170,4 +170,10 @@ RetainPtr<T> WrapRetain(T* that) {
 
 }  // namespace pdfium
 
+// Macro to allow construction via MakeRetain<>() only, when used
+// with a private constructor in a class.
+#define CONSTRUCT_VIA_MAKE_RETAIN         \
+  template <typename T, typename... Args> \
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args)
+
 #endif  // CORE_FXCRT_RETAIN_PTR_H_

@@ -47,8 +47,7 @@ class CPDF_ClipPath {
  private:
   class PathData final : public Retainable {
    public:
-    template <typename T, typename... Args>
-    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+    CONSTRUCT_VIA_MAKE_RETAIN;
 
     RetainPtr<PathData> Clone() const;
 

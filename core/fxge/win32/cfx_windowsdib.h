@@ -24,8 +24,7 @@ struct WINDIB_Open_Args_ {
 
 class CFX_WindowsDIB final : public CFX_DIBitmap {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   static ByteString GetBitmapInfo(const RetainPtr<CFX_DIBitmap>& pBitmap);
   static HBITMAP GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap, HDC hDC);

@@ -13,8 +13,7 @@
 
 class CFX_SeekableStreamProxy final : public Retainable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   // Unlike IFX_SeekableStreamProxy, buffers and sizes are always in terms
   // of the number of wchar_t elementss, not bytes.

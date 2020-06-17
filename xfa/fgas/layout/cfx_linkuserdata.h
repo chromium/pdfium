@@ -13,8 +13,7 @@
 
 class CFX_LinkUserData final : public Retainable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
 

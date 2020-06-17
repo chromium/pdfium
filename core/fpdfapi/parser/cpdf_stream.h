@@ -19,8 +19,7 @@ class CPDF_Stream final : public CPDF_Object {
  public:
   static constexpr int kFileBufSize = 512;
 
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   // CPDF_Object:
   Type GetType() const override;

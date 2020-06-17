@@ -21,8 +21,7 @@ class CFX_DIBBase;
 
 class CPDF_TransferFunc final : public Retainable, public Observable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   static constexpr size_t kChannelSampleSize = 256;
 

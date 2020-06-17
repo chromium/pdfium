@@ -22,8 +22,7 @@ class CPDF_Array final : public CPDF_Object {
  public:
   using const_iterator = std::vector<RetainPtr<CPDF_Object>>::const_iterator;
 
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   // CPDF_Object:
   Type GetType() const override;

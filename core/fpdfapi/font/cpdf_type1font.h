@@ -14,9 +14,7 @@
 
 class CPDF_Type1Font final : public CPDF_SimpleFont {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CPDF_Type1Font() override;
 
   // CPDF_Font:

@@ -36,8 +36,7 @@ class CPDF_StructKid {
 
 class CPDF_StructElement final : public Retainable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   ByteString GetType() const { return m_Type; }
   WideString GetAltText() const;

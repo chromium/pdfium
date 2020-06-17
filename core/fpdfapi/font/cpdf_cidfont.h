@@ -34,9 +34,7 @@ class CPDF_StreamAcc;
 
 class CPDF_CIDFont final : public CPDF_Font {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CPDF_CIDFont() override;
 
   static float CIDTransformToFloat(uint8_t ch);

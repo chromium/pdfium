@@ -22,8 +22,7 @@ class CPDF_Type3GlyphMap;
 
 class CPDF_Type3Cache final : public Retainable, public Observable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   const CFX_GlyphBitmap* LoadGlyph(uint32_t charcode,
                                    const CFX_Matrix* pMatrix);

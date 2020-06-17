@@ -20,9 +20,7 @@ class CPDF_PageObject;
 
 class CPDF_TilingPattern final : public CPDF_Pattern {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CPDF_TilingPattern() override;
 
   // CPDF_Pattern:

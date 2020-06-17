@@ -61,8 +61,7 @@ class CPDF_TextState {
  private:
   class TextData final : public Retainable {
    public:
-    template <typename T, typename... Args>
-    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+    CONSTRUCT_VIA_MAKE_RETAIN;
 
     RetainPtr<TextData> Clone() const;
 

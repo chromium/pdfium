@@ -28,9 +28,7 @@ class CFX_PathData;
 
 class CFX_GlyphCache : public Retainable, public Observable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CFX_GlyphCache() override;
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(const CFX_Font* pFont,

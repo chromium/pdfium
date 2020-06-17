@@ -25,8 +25,7 @@ class CPDF_Parser;
 
 class CPDF_SecurityHandler : public Retainable {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool OnInit(const CPDF_Dictionary* pEncryptDict,
               const CPDF_Array* pIdArray,

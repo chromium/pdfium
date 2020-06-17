@@ -17,8 +17,7 @@ class CPDF_TransferFunc;
 
 class CPDF_TransferFuncDIB final : public CFX_DIBBase {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   void TranslateScanline(
       const uint8_t* src_buf,

@@ -16,8 +16,7 @@
 
 class CFX_ReadOnlyMemoryStream final : public IFX_SeekableReadStream {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   // IFX_SeekableReadStream:
   FX_FILESIZE GetSize() override;

@@ -21,8 +21,7 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
     bool saved_has_unavailable_data_;
   };
 
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   void SetDownloadHints(CPDF_DataAvail::DownloadHints* hints) {
     hints_ = hints;

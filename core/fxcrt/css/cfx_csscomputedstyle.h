@@ -56,8 +56,7 @@ class CFX_CSSComputedStyle final : public Retainable {
     bool m_bHasPadding;
   };
 
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+  CONSTRUCT_VIA_MAKE_RETAIN;
 
   int32_t CountFontFamilies() const;
   const WideString GetFontFamily(int32_t index) const;

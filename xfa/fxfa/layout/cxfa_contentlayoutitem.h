@@ -17,9 +17,7 @@ class CXFA_FFWidget;
 
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CXFA_ContentLayoutItem() override;
 
   CXFA_FFWidget* GetFFWidget() { return m_pFFWidget.get(); }

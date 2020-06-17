@@ -27,9 +27,7 @@ class CFX_FontMgr {
  public:
   class FontDesc final : public Retainable, public Observable {
    public:
-    template <typename T, typename... Args>
-    friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+    CONSTRUCT_VIA_MAKE_RETAIN;
     ~FontDesc() override;
 
     pdfium::span<uint8_t> FontData() const {

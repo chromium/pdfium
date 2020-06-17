@@ -15,9 +15,7 @@ class CXFA_FFPageView;
 
 class CXFA_ViewLayoutItem : public CXFA_LayoutItem {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CONSTRUCT_VIA_MAKE_RETAIN;
   ~CXFA_ViewLayoutItem() override;
 
   CXFA_FFPageView* GetPageView() const { return m_pFFPageView.get(); }
