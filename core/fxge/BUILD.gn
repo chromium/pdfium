@@ -53,6 +53,8 @@ source_set("fxge") {
     "cfx_renderdevice.h",
     "cfx_substfont.cpp",
     "cfx_substfont.h",
+    "cfx_textrenderoptions.cpp",
+    "cfx_textrenderoptions.h",
     "cfx_unicodeencoding.cpp",
     "cfx_unicodeencoding.h",
     "dib/cfx_bitmapcomposer.cpp",

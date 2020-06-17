@@ -246,19 +246,20 @@ const CFX_PathData* CFX_GlyphCache::LoadGlyphPath(const CFX_Font* pFont,
   return pGlyphPath;
 }
 
-const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(const CFX_Font* pFont,
-                                                       uint32_t glyph_index,
-                                                       bool bFontStyle,
-                                                       const CFX_Matrix& matrix,
-                                                       uint32_t dest_width,
-                                                       int anti_alias,
-                                                       int* pTextFlags) {
+const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
+    const CFX_Font* pFont,
+    uint32_t glyph_index,
+    bool bFontStyle,
+    const CFX_Matrix& matrix,
+    uint32_t dest_width,
+    int anti_alias,
+    CFX_TextRenderOptions* text_options) {
   if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
   UniqueKeyGen keygen;
 #if defined(OS_MACOSX)
-  const bool bNative = !(*pTextFlags & FXTEXT_NO_NATIVETEXT);
+  const bool bNative = text_options->native_text;
 #else
   const bool bNative = false;
 #endif
@@ -267,7 +268,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(const CFX_Font* pFont,
 
 #if defined(OS_MACOSX) && !defined _SKIA_SUPPORT_ && \
     !defined _SKIA_SUPPORT_PATHS_
-  const bool bDoLookUp = !!(*pTextFlags & FXTEXT_NO_NATIVETEXT);
+  const bool bDoLookUp = !text_options->native_text;
 #else
   const bool bDoLookUp = true;
 #endif
@@ -308,7 +309,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(const CFX_Font* pFont,
   }
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, /*bNative=*/false);
   ByteString FaceGlyphsKey2(keygen.key_, keygen.key_len_);
-  *pTextFlags |= FXTEXT_NO_NATIVETEXT;
+  text_options->native_text = false;
   return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);
 #endif

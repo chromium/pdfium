@@ -353,9 +353,10 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
   }
 }
 
-bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
+bool ShouldDrawDeviceText(const CFX_Font* pFont,
+                          const CFX_TextRenderOptions& options) {
 #if defined(OS_MACOSX)
-  if (text_flags & FXFONT_CIDFONT)
+  if (options.font_is_cid)
     return false;
 
   const ByteString bsPsName = pFont->GetPsName();
@@ -860,38 +861,37 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       float font_size,
                                       const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
-                                      uint32_t text_flags) {
-  int nativetext_flags = text_flags;
+                                      const CFX_TextRenderOptions& options) {
   if (GetDeviceType() != DeviceType::kDisplay) {
-    if (ShouldDrawDeviceText(pFont, text_flags) &&
+    if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
                                         font_size, fill_color)) {
       return true;
     }
     if (FXARGB_A(fill_color) < 255)
       return false;
-  } else if (!(text_flags & FXTEXT_NO_NATIVETEXT)) {
-    if (ShouldDrawDeviceText(pFont, text_flags) &&
+  } else if (options.native_text) {
+    if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(nChars, pCharPos, pFont, mtText2Device,
                                         font_size, fill_color)) {
       return true;
     }
   }
+  bool is_text_smooth = options.IsSmooth();
   CFX_Matrix char2device = mtText2Device;
   CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
       GetDeviceType() == DeviceType::kPrinter) {
     if (pFont->GetFaceRec()) {
-      int nPathFlags =
-          (text_flags & FXTEXT_NOSMOOTH) == 0 ? 0 : FXFILL_NOPATHSMOOTH;
+      int nPathFlags = is_text_smooth ? 0 : FXFILL_NOPATHSMOOTH;
       return DrawTextPath(nChars, pCharPos, pFont, font_size, mtText2Device,
                           nullptr, nullptr, fill_color, 0, nullptr, nPathFlags);
     }
   }
   int anti_alias = FT_RENDER_MODE_MONO;
   bool bNormal = false;
-  if ((text_flags & FXTEXT_NOSMOOTH) == 0) {
+  if (is_text_smooth) {
     if (GetDeviceType() == DeviceType::kDisplay && m_bpp > 1) {
       if (!CFX_GEModule::Get()->GetFontMgr()->FTLibrarySupportsHinting()) {
         // Some Freetype implementations (like the one packaged with Fedora) do
@@ -907,16 +907,13 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         anti_alias = FT_RENDER_MODE_NORMAL;
       } else {
         anti_alias = FT_RENDER_MODE_LCD;
-
-        bool bClearType = false;
-        if (pFont->GetFaceRec())
-          bClearType = !!(text_flags & FXTEXT_CLEARTYPE);
-        bNormal = !bClearType;
+        bNormal = !pFont->GetFaceRec() || !options.IsLcd();
       }
     }
   }
   std::vector<TextGlyphPos> glyphs(nChars);
   CFX_Matrix deviceCtm = char2device;
+  CFX_TextRenderOptions native_text_options(options);
 
   for (size_t i = 0; i < glyphs.size(); ++i) {
     TextGlyphPos& glyph = glyphs[i];
@@ -936,11 +933,11 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       new_matrix.Concat(deviceCtm);
       glyph.m_pGlyph = pFont->LoadGlyphBitmap(
           charpos.m_GlyphIndex, charpos.m_bFontStyle, new_matrix,
-          charpos.m_FontCharWidth, anti_alias, &nativetext_flags);
+          charpos.m_FontCharWidth, anti_alias, &native_text_options);
     } else {
       glyph.m_pGlyph = pFont->LoadGlyphBitmap(
           charpos.m_GlyphIndex, charpos.m_bFontStyle, deviceCtm,
-          charpos.m_FontCharWidth, anti_alias, &nativetext_flags);
+          charpos.m_FontCharWidth, anti_alias, &native_text_options);
     }
   }
   if (anti_alias < FT_RENDER_MODE_LCD && glyphs.size() > 1)
@@ -1019,7 +1016,6 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
       }
       continue;
     }
-    bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
     int x_subpixel = static_cast<int>(glyph.m_fDeviceOrigin.x * 3) % 3;
     int start_col = std::max(point->x, 0);
@@ -1032,8 +1028,10 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (start_col >= end_col)
       continue;
 
-    DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
-                         end_col, bNormal, bBGRStripe, x_subpixel, a, r, g, b);
+    DrawNormalTextHelper(
+        bitmap, pGlyph, nrows, point->x, point->y, start_col, end_col, bNormal,
+        options.aliasing_type == CFX_TextRenderOptions::kBgrStripe, x_subpixel,
+        a, r, g, b);
   }
   if (bitmap->IsAlphaMask())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);

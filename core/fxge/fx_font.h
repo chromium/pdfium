@@ -39,7 +39,6 @@
 
 /* Other font flags */
 #define FXFONT_USEEXTERNATTR 0x80000
-#define FXFONT_CIDFONT 0x100000
 
 #define GET_TT_SHORT(w) (uint16_t)(((w)[0] << 8) | (w)[1])
 #define GET_TT_LONG(w) \

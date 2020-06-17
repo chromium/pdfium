@@ -26,6 +26,7 @@ class CFX_PathData;
 class PauseIndicatorIface;
 class TextCharPos;
 struct CFX_Color;
+struct CFX_TextRenderOptions;
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
 
@@ -162,7 +163,7 @@ class CFX_RenderDevice {
                       float font_size,
                       const CFX_Matrix& mtText2Device,
                       uint32_t fill_color,
-                      uint32_t text_flags);
+                      const CFX_TextRenderOptions& options);
   bool DrawTextPath(int nChars,
                     const TextCharPos* pCharPos,
                     CFX_Font* pFont,

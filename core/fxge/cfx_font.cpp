@@ -709,15 +709,16 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
   return pPath.release();
 }
 
-const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(uint32_t glyph_index,
-                                                 bool bFontStyle,
-                                                 const CFX_Matrix& matrix,
-                                                 uint32_t dest_width,
-                                                 int anti_alias,
-                                                 int* pTextFlags) const {
+const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(
+    uint32_t glyph_index,
+    bool bFontStyle,
+    const CFX_Matrix& matrix,
+    uint32_t dest_width,
+    int anti_alias,
+    CFX_TextRenderOptions* text_options) const {
   return GetOrCreateGlyphCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle,
                                                   matrix, dest_width,
-                                                  anti_alias, pTextFlags);
+                                                  anti_alias, text_options);
 }
 
 const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,

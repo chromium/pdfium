@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/cfx_face.h"
+#include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
 
@@ -68,12 +69,13 @@ class CFX_Font {
 #endif  // !defined(OS_WIN)
 #endif  // defined(PDF_ENABLE_XFA)
 
-  const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,
-                                         bool bFontStyle,
-                                         const CFX_Matrix& matrix,
-                                         uint32_t dest_width,
-                                         int anti_alias,
-                                         int* pTextFlags) const;
+  const CFX_GlyphBitmap* LoadGlyphBitmap(
+      uint32_t glyph_index,
+      bool bFontStyle,
+      const CFX_Matrix& matrix,
+      uint32_t dest_width,
+      int anti_alias,
+      CFX_TextRenderOptions* text_options) const;
   const CFX_PathData* LoadGlyphPath(uint32_t glyph_index,
                                     uint32_t dest_width) const;
 
