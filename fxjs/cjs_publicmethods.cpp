@@ -800,8 +800,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
 
   // When the |iDec| value is too big, Acrobat will just return "%".
   static constexpr int kDecLimit = 512;
-  // TODO(thestig): Calculate this once C++14 can be used to declare variables
-  // in constexpr functions.
+  // This count must be in sync with |kDecLimit|.
   static constexpr size_t kDigitsInDecLimit = 3;
   WideString& Value = pEvent->Value();
   if (iDec > kDecLimit) {
