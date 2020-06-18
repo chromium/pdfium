@@ -43,7 +43,7 @@ void CFX_CSSRuleCollection::AddRulesFrom(const CFX_CSSStyleSheet* pStyleSheet,
   int32_t iSelectors = pStyleRule->CountSelectorLists();
   for (int32_t i = 0; i < iSelectors; ++i) {
     CFX_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
-    m_TagRules[pSelector->GetNameHash()].push_back(
+    m_TagRules[pSelector->name_hash()].push_back(
         std::make_unique<Data>(pSelector, pDeclaration));
     m_iSelectors++;
   }

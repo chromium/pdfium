@@ -46,7 +46,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
 
     for (size_t i = 0; i < selectors.size(); i++) {
       uint32_t hash = FX_HashCode_GetW(selectors[i].AsStringView(), true);
-      EXPECT_EQ(hash, style->GetSelectorList(i)->GetNameHash());
+      EXPECT_EQ(hash, style->GetSelectorList(i)->name_hash());
     }
 
     decl_ = style->GetDeclaration();
@@ -132,7 +132,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   bool found_selector = false;
   uint32_t hash = FX_HashCode_GetW(L"a", true);
   for (size_t i = 0; i < style->CountSelectorLists(); i++) {
-    if (style->GetSelectorList(i)->GetNameHash() == hash) {
+    if (style->GetSelectorList(i)->name_hash() == hash) {
       found_selector = true;
       break;
     }
@@ -156,7 +156,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   found_selector = false;
   hash = FX_HashCode_GetW(L"b", true);
   for (size_t i = 0; i < style->CountSelectorLists(); i++) {
-    if (style->GetSelectorList(i)->GetNameHash() == hash) {
+    if (style->GetSelectorList(i)->name_hash() == hash) {
       found_selector = true;
       break;
     }
@@ -179,17 +179,17 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
 
   const auto* sel = style->GetSelectorList(0);
   ASSERT_TRUE(sel);
-  EXPECT_EQ(FX_HashCode_GetW(L"c", true), sel->GetNameHash());
+  EXPECT_EQ(FX_HashCode_GetW(L"c", true), sel->name_hash());
 
-  sel = sel->GetNextSelector();
+  sel = sel->next_selector();
   ASSERT_TRUE(sel);
-  EXPECT_EQ(FX_HashCode_GetW(L"b", true), sel->GetNameHash());
+  EXPECT_EQ(FX_HashCode_GetW(L"b", true), sel->name_hash());
 
-  sel = sel->GetNextSelector();
+  sel = sel->next_selector();
   ASSERT_TRUE(sel);
-  EXPECT_EQ(FX_HashCode_GetW(L"a", true), sel->GetNameHash());
+  EXPECT_EQ(FX_HashCode_GetW(L"a", true), sel->name_hash());
 
-  sel = sel->GetNextSelector();
+  sel = sel->next_selector();
   EXPECT_FALSE(sel);
 
   decl_ = style->GetDeclaration();

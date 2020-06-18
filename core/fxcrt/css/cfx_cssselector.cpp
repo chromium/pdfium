@@ -26,7 +26,7 @@ int32_t GetCSSNameLen(const wchar_t* psz, const wchar_t* pEnd) {
 }  // namespace
 
 CFX_CSSSelector::CFX_CSSSelector(const wchar_t* psz, int32_t iLen)
-    : m_dwHash(
+    : name_hash_(
           FX_HashCode_GetW(WideStringView(psz, iLen), /*bIgnoreCase=*/true)) {}
 
 CFX_CSSSelector::~CFX_CSSSelector() = default;
@@ -55,8 +55,8 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
       int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
       auto new_head = std::make_unique<CFX_CSSSelector>(psz, iNameLen);
       if (head) {
-        head->SetDescendentType();
-        new_head->SetNext(std::move(head));
+        head->set_descendent_type();
+        new_head->set_next(std::move(head));
       }
       head = std::move(new_head);
       psz += iNameLen;
