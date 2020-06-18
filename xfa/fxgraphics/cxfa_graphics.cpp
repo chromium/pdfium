@@ -165,7 +165,7 @@ void CXFA_Graphics::SetStrokeColor(const CXFA_GEColor& color) {
 }
 
 void CXFA_Graphics::SetFillColor(const CXFA_GEColor& color) {
-    m_info.fillColor = color;
+  m_info.fillColor = color;
 }
 
 void CXFA_Graphics::StrokePath(CXFA_GEPath* path, const CFX_Matrix* matrix) {

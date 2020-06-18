@@ -328,64 +328,44 @@ CXFA_FMEqualExpression::CXFA_FMEqualExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"eq_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"eq_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMNotEqualExpression::CXFA_FMNotEqualExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"neq_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"neq_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMGtExpression::CXFA_FMGtExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"gt_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"gt_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMGeExpression::CXFA_FMGeExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"ge_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"ge_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMLtExpression::CXFA_FMLtExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"lt_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"lt_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMLeExpression::CXFA_FMLeExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"le_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"le_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMPlusExpression::CXFA_FMPlusExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"plus_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"plus_op", op, std::move(pExp1), std::move(pExp2)) {
+}
 
 CXFA_FMMinusExpression::CXFA_FMMinusExpression(
     XFA_FM_TOKEN op,
@@ -400,19 +380,13 @@ CXFA_FMMulExpression::CXFA_FMMulExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"mul_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"mul_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMDivExpression::CXFA_FMDivExpression(
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(L"div_op",
-                           op,
-                           std::move(pExp1),
-                           std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"div_op", op, std::move(pExp1), std::move(pExp2)) {}
 
 CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(
     const WideString& opName,

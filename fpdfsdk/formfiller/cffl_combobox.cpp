@@ -17,8 +17,7 @@
 
 CFFL_ComboBox::CFFL_ComboBox(CPDFSDK_FormFillEnvironment* pApp,
                              CPDFSDK_Widget* pWidget)
-    : CFFL_TextObject(pApp, pWidget) {
-}
+    : CFFL_TextObject(pApp, pWidget) {}
 
 CFFL_ComboBox::~CFFL_ComboBox() {
   for (const auto& it : m_Maps)

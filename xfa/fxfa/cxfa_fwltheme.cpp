@@ -32,7 +32,9 @@
 namespace {
 
 const wchar_t* const g_FWLTheme_CalFonts[] = {
-    L"Arial", L"Courier New", L"DejaVu Sans",
+    L"Arial",
+    L"Courier New",
+    L"DejaVu Sans",
 };
 
 const float kLineHeight = 12.0f;

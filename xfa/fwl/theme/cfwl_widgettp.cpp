@@ -282,4 +282,3 @@ RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(WideStringView wsFontFamily,
   m_FontsArray.push_back(std::move(pFontData));
   return m_FontsArray.back()->GetFont();
 }
-

@@ -443,9 +443,8 @@ uint32_t GetFlags(FXFT_FaceRec* pFace) {
   return flags;
 }
 
-RetainPtr<IFX_SeekableReadStream> CreateFontStream(
-    CFX_FontMapper* pFontMapper,
-    uint32_t index) {
+RetainPtr<IFX_SeekableReadStream> CreateFontStream(CFX_FontMapper* pFontMapper,
+                                                   uint32_t index) {
   size_t dwFileSize = 0;
   std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer =
       pFontMapper->RawBytesForIndex(index, &dwFileSize);

@@ -2978,7 +2978,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkedText) {
   EXPECT_EQ(kBlobLen, out_buffer_len);
   EXPECT_EQ(0, memcmp(block_value, buffer, kBlobLen));
 
-// Render and check the bitmap is the expected one.
+  // Render and check the bitmap is the expected one.
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792, kLoadedFontTextChecksum);

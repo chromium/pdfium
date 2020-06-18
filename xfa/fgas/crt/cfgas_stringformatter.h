@@ -30,20 +30,16 @@ class CFGAS_StringFormatter {
 
   FX_LOCALECATEGORY GetCategory() const;
 
-  bool ParseText(const WideString& wsSrcText,
-                 WideString* wsValue) const;
-  bool ParseNum(const WideString& wsSrcNum,
-                WideString* wsValue) const;
+  bool ParseText(const WideString& wsSrcText, WideString* wsValue) const;
+  bool ParseNum(const WideString& wsSrcNum, WideString* wsValue) const;
   bool ParseDateTime(const WideString& wsSrcDateTime,
                      FX_DATETIMETYPE eDateTimeType,
                      CFX_DateTime* dtValue) const;
   bool ParseZero(const WideString& wsSrcText) const;
   bool ParseNull(const WideString& wsSrcText) const;
 
-  bool FormatText(const WideString& wsSrcText,
-                  WideString* wsOutput) const;
-  bool FormatNum(const WideString& wsSrcNum,
-                 WideString* wsOutput) const;
+  bool FormatText(const WideString& wsSrcText, WideString* wsOutput) const;
+  bool FormatNum(const WideString& wsSrcNum, WideString* wsOutput) const;
   bool FormatDateTime(const WideString& wsSrcDateTime,
                       FX_DATETIMETYPE eDateTimeType,
                       WideString* wsOutput) const;

@@ -8,7 +8,6 @@
 
 #include <memory>
 
-
 CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      FWL_MouseCommand cmd)
     : CFWL_Message(CFWL_Message::Type::Mouse, nullptr, pDstTarget),

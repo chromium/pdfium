@@ -23,7 +23,6 @@ bool XFA_DataMerge_NeedGenerateForm(CXFA_Node* pTemplateChild,
   return true;
 }
 
-
 CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
                                              XFA_Element eType,
                                              uint32_t dwNameHash,
@@ -103,4 +102,3 @@ CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode) {
   return ToNode(
       pParentFormNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Data));
 }
-

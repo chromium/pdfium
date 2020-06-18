@@ -17,8 +17,7 @@ CFWL_ComboEdit::CFWL_ComboEdit(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     CFWL_Widget* pOuter)
-    : CFWL_Edit(app, std::move(properties), pOuter) {
-}
+    : CFWL_Edit(app, std::move(properties), pOuter) {}
 
 CFWL_ComboEdit::~CFWL_ComboEdit() = default;
 

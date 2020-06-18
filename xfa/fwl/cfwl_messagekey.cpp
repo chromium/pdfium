@@ -8,7 +8,6 @@
 
 #include <memory>
 
-
 CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
                                  FWL_KeyCommand cmd,
                                  uint32_t flags,
