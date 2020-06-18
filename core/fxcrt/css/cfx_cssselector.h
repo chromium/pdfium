@@ -17,25 +17,22 @@ class CFX_CSSSelector {
  public:
   static std::unique_ptr<CFX_CSSSelector> FromString(WideStringView str);
 
-  CFX_CSSSelector(CFX_CSSSelectorType eType,
-                  const wchar_t* psz,
-                  int32_t iLen,
-                  bool bIgnoreCase);
+  CFX_CSSSelector(const wchar_t* psz, int32_t iLen);
   ~CFX_CSSSelector();
 
-  CFX_CSSSelectorType GetType() const;
-  uint32_t GetNameHash() const;
-  CFX_CSSSelector* GetNextSelector() const;
+  CFX_CSSSelectorType GetType() const { return m_eType; }
+  uint32_t GetNameHash() const { return m_dwHash; }
+  const CFX_CSSSelector* GetNextSelector() const { return m_pNext.get(); }
 
   void SetNext(std::unique_ptr<CFX_CSSSelector> pNext) {
     m_pNext = std::move(pNext);
   }
 
  private:
-  void SetType(CFX_CSSSelectorType eType) { m_eType = eType; }
+  void SetDescendentType() { m_eType = CFX_CSSSelectorType::Descendant; }
 
-  CFX_CSSSelectorType m_eType;
-  uint32_t m_dwHash;
+  CFX_CSSSelectorType m_eType = CFX_CSSSelectorType::Element;
+  const uint32_t m_dwHash;
   std::unique_ptr<CFX_CSSSelector> m_pNext;
 };
 

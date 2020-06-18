@@ -177,7 +177,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
   EXPECT_EQ(1u, style->CountSelectorLists());
 
-  auto* sel = style->GetSelectorList(0);
+  const auto* sel = style->GetSelectorList(0);
   ASSERT_TRUE(sel);
   EXPECT_EQ(FX_HashCode_GetW(L"c", true), sel->GetNameHash());
 

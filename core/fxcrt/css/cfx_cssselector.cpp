@@ -25,26 +25,11 @@ int32_t GetCSSNameLen(const wchar_t* psz, const wchar_t* pEnd) {
 
 }  // namespace
 
-CFX_CSSSelector::CFX_CSSSelector(CFX_CSSSelectorType eType,
-                                 const wchar_t* psz,
-                                 int32_t iLen,
-                                 bool bIgnoreCase)
-    : m_eType(eType),
-      m_dwHash(FX_HashCode_GetW(WideStringView(psz, iLen), bIgnoreCase)) {}
+CFX_CSSSelector::CFX_CSSSelector(const wchar_t* psz, int32_t iLen)
+    : m_dwHash(
+          FX_HashCode_GetW(WideStringView(psz, iLen), /*bIgnoreCase=*/true)) {}
 
 CFX_CSSSelector::~CFX_CSSSelector() = default;
-
-CFX_CSSSelectorType CFX_CSSSelector::GetType() const {
-  return m_eType;
-}
-
-uint32_t CFX_CSSSelector::GetNameHash() const {
-  return m_dwHash;
-}
-
-CFX_CSSSelector* CFX_CSSSelector::GetNextSelector() const {
-  return m_pNext.get();
-}
 
 // static.
 std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
@@ -63,18 +48,17 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
     }
   }
 
-  std::unique_ptr<CFX_CSSSelector> pFirst = nullptr;
+  std::unique_ptr<CFX_CSSSelector> head;
   for (psz = pStart; psz < pEnd;) {
     wchar_t wch = *psz;
     if ((isascii(wch) && isalpha(wch)) || wch == '*') {
       int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
-      auto p = std::make_unique<CFX_CSSSelector>(CFX_CSSSelectorType::Element,
-                                                 psz, iNameLen, true);
-      if (pFirst) {
-        pFirst->SetType(CFX_CSSSelectorType::Descendant);
-        p->SetNext(std::move(pFirst));
+      auto new_head = std::make_unique<CFX_CSSSelector>(psz, iNameLen);
+      if (head) {
+        head->SetDescendentType();
+        new_head->SetNext(std::move(head));
       }
-      pFirst = std::move(p);
+      head = std::move(new_head);
       psz += iNameLen;
     } else if (wch == ' ') {
       psz++;
@@ -82,5 +66,5 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
       return nullptr;
     }
   }
-  return pFirst;
+  return head;
 }
