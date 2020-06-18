@@ -10,6 +10,7 @@
 #include <set>
 #include <utility>
 
+#include "core/fpdfapi/page/cpdf_annotcontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -355,6 +356,20 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
     }
   }
   return false;
+}
+
+FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
+FPDFLink_GetAnnot(FPDF_PAGE page, FPDF_LINK link_annot) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFLink(link_annot);
+  if (!pPage || !pAnnotDict)
+    return nullptr;
+
+  auto pAnnotContext = std::make_unique<CPDF_AnnotContext>(
+      pAnnotDict, IPDFPageFromFPDFPage(page));
+
+  // Caller takes the ownership of the object.
+  return FPDFAnnotationFromCPDFAnnotContext(pAnnotContext.release());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,

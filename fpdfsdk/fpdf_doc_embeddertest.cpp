@@ -336,6 +336,23 @@ TEST_F(FPDFDocEmbedderTest, ActionURI) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFDocEmbedderTest, LinkToAnnotConversion) {
+  EXPECT_TRUE(OpenDocument("annots.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  {
+    FPDF_LINK first_link = FPDFLink_GetLinkAtPoint(page, 69.00, 653.00);
+    ScopedFPDFAnnotation first_annot(FPDFLink_GetAnnot(page, first_link));
+    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, first_annot.get()));
+
+    FPDF_LINK second_link = FPDFLink_GetLinkAtPoint(page, 80.00, 633.00);
+    ScopedFPDFAnnotation second_annot(FPDFLink_GetAnnot(page, second_link));
+    EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, second_annot.get()));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFDocEmbedderTest, ActionGoto) {
   EXPECT_TRUE(OpenDocument("goto_action.pdf"));
 

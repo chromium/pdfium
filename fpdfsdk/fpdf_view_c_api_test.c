@@ -135,6 +135,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFLink_CountQuadPoints);
     CHK(FPDFLink_Enumerate);
     CHK(FPDFLink_GetAction);
+    CHK(FPDFLink_GetAnnot);
     CHK(FPDFLink_GetAnnotRect);
     CHK(FPDFLink_GetDest);
     CHK(FPDFLink_GetLinkAtPoint);
