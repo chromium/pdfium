@@ -698,8 +698,8 @@ CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
   CFX_FloatRect rcWindow = GetRotatedRect();
   float fBorderWidth = GetBorderWidth();
   switch (GetBorderStyle()) {
-    case BorderStyle::BEVELED:
-    case BorderStyle::INSET:
+    case BorderStyle::kBeveled:
+    case BorderStyle::kInset:
       fBorderWidth *= 2.0f;
       break;
     default:

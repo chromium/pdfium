@@ -1202,7 +1202,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
 
   switch (nStyle) {
     default:
-    case BorderStyle::SOLID: {
+    case BorderStyle::kSolid: {
       CFX_PathData path;
       path.AppendRect(fLeft, fBottom, fRight, fTop);
       path.AppendRect(fLeft + fWidth, fBottom + fWidth, fRight - fWidth,
@@ -1211,7 +1211,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
                FXFILL_ALTERNATE);
       break;
     }
-    case BorderStyle::DASH: {
+    case BorderStyle::kDash: {
       CFX_GraphStateData gsd;
       gsd.m_DashArray = {3.0f, 3.0f};
       gsd.m_DashPhase = 0;
@@ -1232,8 +1232,8 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
                FXFILL_WINDING);
       break;
     }
-    case BorderStyle::BEVELED:
-    case BorderStyle::INSET: {
+    case BorderStyle::kBeveled:
+    case BorderStyle::kInset: {
       CFX_GraphStateData gsd;
       gsd.m_LineWidth = fHalfWidth;
 
@@ -1288,7 +1288,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
                FXFILL_ALTERNATE);
       break;
     }
-    case BorderStyle::UNDERLINE: {
+    case BorderStyle::kUnderline: {
       CFX_GraphStateData gsd;
       gsd.m_LineWidth = fWidth;
 

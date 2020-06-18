@@ -533,7 +533,7 @@ void CPWL_ScrollBar::NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) {
 void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
   CreateParams scp = cp;
   scp.dwBorderWidth = 2;
-  scp.nBorderStyle = BorderStyle::BEVELED;
+  scp.nBorderStyle = BorderStyle::kBeveled;
   scp.dwFlags =
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 

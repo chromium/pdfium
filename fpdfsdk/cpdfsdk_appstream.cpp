@@ -434,8 +434,8 @@ ByteString GetCircleBorderAppStream(const CFX_FloatRect& rect,
     CFX_FloatRect rect_by_75 = rect.GetDeflated(div, div);
     switch (nStyle) {
       default:
-      case BorderStyle::SOLID:
-      case BorderStyle::UNDERLINE: {
+      case BorderStyle::kSolid:
+      case BorderStyle::kUnderline: {
         sColor = GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           AutoClosedQCommand q2(&sAppStream);
@@ -444,7 +444,7 @@ ByteString GetCircleBorderAppStream(const CFX_FloatRect& rect,
                      << kStrokeOperator << "\n";
         }
       } break;
-      case BorderStyle::DASH: {
+      case BorderStyle::kDash: {
         sColor = GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           AutoClosedQCommand q2(&sAppStream);
@@ -455,7 +455,7 @@ ByteString GetCircleBorderAppStream(const CFX_FloatRect& rect,
                      << kStrokeOperator << "\n";
         }
       } break;
-      case BorderStyle::BEVELED: {
+      case BorderStyle::kBeveled: {
         sColor = GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           AutoClosedQCommand q2(&sAppStream);
@@ -480,7 +480,7 @@ ByteString GetCircleBorderAppStream(const CFX_FloatRect& rect,
                      << " " << kStrokeOperator << "\n";
         }
       } break;
-      case BorderStyle::INSET: {
+      case BorderStyle::kInset: {
         sColor = GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           AutoClosedQCommand q2(&sAppStream);
@@ -945,7 +945,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
 
     switch (nStyle) {
       default:
-      case BorderStyle::SOLID:
+      case BorderStyle::kSolid:
         sColor = GetColorAppStream(color, true);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -958,7 +958,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
           sAppStream << kFillEvenOddOperator << "\n";
         }
         break;
-      case BorderStyle::DASH:
+      case BorderStyle::kDash:
         sColor = GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -977,8 +977,8 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
                      << kLineToOperator << " " << kStrokeOperator << "\n";
         }
         break;
-      case BorderStyle::BEVELED:
-      case BorderStyle::INSET:
+      case BorderStyle::kBeveled:
+      case BorderStyle::kInset:
         sColor = GetColorAppStream(crLeftTop, true);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -1028,7 +1028,7 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
                      << "\n";
         }
         break;
-      case BorderStyle::UNDERLINE:
+      case BorderStyle::kUnderline:
         sColor = GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
           sAppStream << sColor;
@@ -1066,7 +1066,7 @@ ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
     sAppStream << GetBorderAppStreamInternal(
         rcBBox, 2, CFX_Color(CFX_Color::kGray, 0),
         CFX_Color(CFX_Color::kGray, 1), CFX_Color(CFX_Color::kGray, 0.5),
-        BorderStyle::BEVELED, CPWL_Dash(3, 0, 0));
+        BorderStyle::kBeveled, CPWL_Dash(3, 0, 0));
   }
 
   CFX_PointF ptCenter = CFX_PointF((rcBBox.left + rcBBox.right) / 2,
@@ -1194,15 +1194,15 @@ void CPDFSDK_AppStream::SetAsPushButton() {
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
-    case BorderStyle::DASH:
+    case BorderStyle::kDash:
       dsBorder = CPWL_Dash(3, 3, 0);
       break;
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 1);
       crRightBottom = crBackground / 2.0f;
       break;
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 0.5);
       crRightBottom = CFX_Color(CFX_Color::kGray, 0.75);
@@ -1301,13 +1301,13 @@ void CPDFSDK_AppStream::SetAsPushButton() {
     }
 
     switch (nBorderStyle) {
-      case BorderStyle::BEVELED: {
+      case BorderStyle::kBeveled: {
         CFX_Color crTemp = crLeftTop;
         crLeftTop = crRightBottom;
         crRightBottom = crTemp;
         break;
       }
-      case BorderStyle::INSET: {
+      case BorderStyle::kInset: {
         crLeftTop = CFX_Color(CFX_Color::kGray, 0);
         crRightBottom = CFX_Color(CFX_Color::kGray, 1);
         break;
@@ -1355,15 +1355,15 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
-    case BorderStyle::DASH:
+    case BorderStyle::kDash:
       dsBorder = CPWL_Dash(3, 3, 0);
       break;
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 1);
       crRightBottom = crBackground / 2.0f;
       break;
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 0.5);
       crRightBottom = CFX_Color(CFX_Color::kGray, 0.75);
@@ -1391,13 +1391,13 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
   ByteString csAP_N_OFF = csAP_N_ON;
 
   switch (nBorderStyle) {
-    case BorderStyle::BEVELED: {
+    case BorderStyle::kBeveled: {
       CFX_Color crTemp = crLeftTop;
       crLeftTop = crRightBottom;
       crRightBottom = crTemp;
       break;
     }
-    case BorderStyle::INSET: {
+    case BorderStyle::kInset: {
       crLeftTop = CFX_Color(CFX_Color::kGray, 0);
       crRightBottom = CFX_Color(CFX_Color::kGray, 1);
       break;
@@ -1449,15 +1449,15 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
   CFX_Color crRightBottom;
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
-    case BorderStyle::DASH:
+    case BorderStyle::kDash:
       dsBorder = CPWL_Dash(3, 3, 0);
       break;
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 1);
       crRightBottom = crBackground / 2.0f;
       break;
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 0.5);
       crRightBottom = CFX_Color(CFX_Color::kGray, 0.75);
@@ -1481,10 +1481,10 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
   ByteString csAP_N_ON;
   CFX_FloatRect rcCenter = rcWindow.GetCenterSquare().GetDeflated(1.0f, 1.0f);
   if (nStyle == CheckStyle::kCircle) {
-    if (nBorderStyle == BorderStyle::BEVELED) {
+    if (nBorderStyle == BorderStyle::kBeveled) {
       crLeftTop = CFX_Color(CFX_Color::kGray, 1);
       crRightBottom = crBackground - 0.25f;
-    } else if (nBorderStyle == BorderStyle::INSET) {
+    } else if (nBorderStyle == BorderStyle::kInset) {
       crLeftTop = CFX_Color(CFX_Color::kGray, 0.5f);
       crRightBottom = CFX_Color(CFX_Color::kGray, 0.75f);
     }
@@ -1503,13 +1503,13 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
   ByteString csAP_N_OFF = csAP_N_ON;
 
   switch (nBorderStyle) {
-    case BorderStyle::BEVELED: {
+    case BorderStyle::kBeveled: {
       CFX_Color crTemp = crLeftTop;
       crLeftTop = crRightBottom;
       crRightBottom = crTemp;
       break;
     }
-    case BorderStyle::INSET: {
+    case BorderStyle::kInset: {
       crLeftTop = CFX_Color(CFX_Color::kGray, 0);
       crRightBottom = CFX_Color(CFX_Color::kGray, 1);
       break;
@@ -1522,11 +1522,11 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
 
   if (nStyle == CheckStyle::kCircle) {
     CFX_Color crBK = crBackground - 0.25f;
-    if (nBorderStyle == BorderStyle::BEVELED) {
+    if (nBorderStyle == BorderStyle::kBeveled) {
       crLeftTop = crBackground - 0.25f;
       crRightBottom = CFX_Color(CFX_Color::kGray, 1);
       crBK = crBackground;
-    } else if (nBorderStyle == BorderStyle::INSET) {
+    } else if (nBorderStyle == BorderStyle::kInset) {
       crLeftTop = CFX_Color(CFX_Color::kGray, 0);
       crRightBottom = CFX_Color(CFX_Color::kGray, 1);
     }
@@ -1803,7 +1803,7 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
 
   if (bCharArray) {
     switch (widget_->GetBorderStyle()) {
-      case BorderStyle::SOLID: {
+      case BorderStyle::kSolid: {
         ByteString sColor =
             GetColorAppStream(widget_->GetBorderPWLColor(), false);
         if (sColor.GetLength() > 0) {
@@ -1826,7 +1826,7 @@ void CPDFSDK_AppStream::SetAsTextField(Optional<WideString> sValue) {
         }
         break;
       }
-      case BorderStyle::DASH: {
+      case BorderStyle::kDash: {
         ByteString sColor =
             GetColorAppStream(widget_->GetBorderPWLColor(), false);
         if (sColor.GetLength() > 0) {
@@ -1946,15 +1946,15 @@ ByteString CPDFSDK_AppStream::GetBorderAppStream() const {
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
-    case BorderStyle::DASH:
+    case BorderStyle::kDash:
       dsBorder = CPWL_Dash(3, 3, 0);
       break;
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 1);
       crRightBottom = crBackground / 2.0f;
       break;
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       fBorderWidth *= 2;
       crLeftTop = CFX_Color(CFX_Color::kGray, 0.5);
       crRightBottom = CFX_Color(CFX_Color::kGray, 0.75);

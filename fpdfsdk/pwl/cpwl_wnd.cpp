@@ -657,9 +657,9 @@ void CPWL_Wnd::SetFontSize(float fFontSize) {
 
 CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       return CFX_Color(CFX_Color::kGray, 1);
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       return CFX_Color(CFX_Color::kGray, 0.5f);
     default:
       return CFX_Color();
@@ -668,9 +668,9 @@ CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
 
 CFX_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       return GetBackgroundColor() / 2.0f;
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       return CFX_Color(CFX_Color::kGray, 0.75f);
     default:
       return CFX_Color();

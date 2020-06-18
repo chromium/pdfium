@@ -220,17 +220,17 @@ void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const ByteString& string) {
   ASSERT(pFormFillEnv);
 
-  BorderStyle nBorderStyle = BorderStyle::SOLID;
+  BorderStyle nBorderStyle = BorderStyle::kSolid;
   if (string == "solid")
-    nBorderStyle = BorderStyle::SOLID;
+    nBorderStyle = BorderStyle::kSolid;
   else if (string == "beveled")
-    nBorderStyle = BorderStyle::BEVELED;
+    nBorderStyle = BorderStyle::kBeveled;
   else if (string == "dashed")
-    nBorderStyle = BorderStyle::DASH;
+    nBorderStyle = BorderStyle::kDash;
   else if (string == "inset")
-    nBorderStyle = BorderStyle::INSET;
+    nBorderStyle = BorderStyle::kInset;
   else if (string == "underline")
-    nBorderStyle = BorderStyle::UNDERLINE;
+    nBorderStyle = BorderStyle::kUnderline;
   else
     return;
 
@@ -703,15 +703,15 @@ CJS_Result CJS_Field::get_border_style(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   switch (pWidget->GetBorderStyle()) {
-    case BorderStyle::SOLID:
+    case BorderStyle::kSolid:
       return CJS_Result::Success(pRuntime->NewString("solid"));
-    case BorderStyle::DASH:
+    case BorderStyle::kDash:
       return CJS_Result::Success(pRuntime->NewString("dashed"));
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       return CJS_Result::Success(pRuntime->NewString("beveled"));
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       return CJS_Result::Success(pRuntime->NewString("inset"));
-    case BorderStyle::UNDERLINE:
+    case BorderStyle::kUnderline:
       return CJS_Result::Success(pRuntime->NewString("underline"));
   }
   return CJS_Result::Success(pRuntime->NewString(""));

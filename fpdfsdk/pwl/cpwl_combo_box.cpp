@@ -285,7 +285,7 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
 
   ecp.rcRectWnd = CFX_FloatRect();
   ecp.dwBorderWidth = 0;
-  ecp.nBorderStyle = BorderStyle::SOLID;
+  ecp.nBorderStyle = BorderStyle::kSolid;
 
   auto pEdit = std::make_unique<CPWL_Edit>(ecp, CloneAttachedData());
   m_pEdit = pEdit.get();
@@ -304,7 +304,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
                                    220.0f / 255.0f, 220.0f / 255.0f);
   bcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;
   bcp.dwBorderWidth = 2;
-  bcp.nBorderStyle = BorderStyle::BEVELED;
+  bcp.nBorderStyle = BorderStyle::kBeveled;
   bcp.eCursorType = FXCT_ARROW;
 
   auto pButton = std::make_unique<CPWL_CBButton>(bcp, CloneAttachedData());
@@ -320,7 +320,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   CreateParams lcp = cp;
   lcp.dwFlags =
       PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
-  lcp.nBorderStyle = BorderStyle::SOLID;
+  lcp.nBorderStyle = BorderStyle::kSolid;
   lcp.dwBorderWidth = 1;
   lcp.eCursorType = FXCT_ARROW;
   lcp.rcRectWnd = CFX_FloatRect();

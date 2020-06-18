@@ -82,7 +82,7 @@ void CPWL_EditCtrl::CreateEditCaret(const CreateParams& cp) {
   CreateParams ecp = cp;
   ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
   ecp.dwBorderWidth = 0;
-  ecp.nBorderStyle = BorderStyle::SOLID;
+  ecp.nBorderStyle = BorderStyle::kSolid;
   ecp.rcRectWnd = CFX_FloatRect();
 
   auto pCaret = std::make_unique<CPWL_Caret>(ecp, CloneAttachedData());

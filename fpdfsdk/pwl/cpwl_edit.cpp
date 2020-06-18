@@ -164,8 +164,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   const CFX_FloatRect rcClient = GetClientRect();
   const BorderStyle border_style = GetBorderStyle();
   const int32_t nCharArray = m_pEdit->GetCharArray();
-  bool draw_border = nCharArray > 0 && (border_style == BorderStyle::SOLID ||
-                                        border_style == BorderStyle::DASH);
+  bool draw_border = nCharArray > 0 && (border_style == BorderStyle::kSolid ||
+                                        border_style == BorderStyle::kDash);
   if (draw_border) {
     FX_SAFE_INT32 nCharArraySafe = nCharArray;
     nCharArraySafe -= 1;
@@ -176,7 +176,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   if (draw_border) {
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = GetBorderWidth();
-    if (border_style == BorderStyle::DASH) {
+    if (border_style == BorderStyle::kDash) {
       gsd.m_DashArray = {static_cast<float>(GetBorderDash().nDash),
                          static_cast<float>(GetBorderDash().nGap)};
       gsd.m_DashPhase = GetBorderDash().nPhase;

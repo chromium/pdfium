@@ -28,7 +28,7 @@ class TextCharPos;
 struct CFX_Color;
 struct CFX_TextRenderOptions;
 
-enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
+enum class BorderStyle { kSolid, kDash, kBeveled, kInset, kUnderline };
 
 // Base class for all render devices. Derived classes must call
 // SetDeviceDriver() to fully initialize the class. Until then, class methods

@@ -142,19 +142,19 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
 
   const char* name = nullptr;
   switch (nStyle) {
-    case BorderStyle::SOLID:
+    case BorderStyle::kSolid:
       name = "S";
       break;
-    case BorderStyle::DASH:
+    case BorderStyle::kDash:
       name = "D";
       break;
-    case BorderStyle::BEVELED:
+    case BorderStyle::kBeveled:
       name = "B";
       break;
-    case BorderStyle::INSET:
+    case BorderStyle::kInset:
       name = "I";
       break;
-    case BorderStyle::UNDERLINE:
+    case BorderStyle::kUnderline:
       name = "U";
       break;
     default:
@@ -168,15 +168,15 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
   if (pBSDict) {
     ByteString sBorderStyle = pBSDict->GetStringFor("S", "S");
     if (sBorderStyle == "S")
-      return BorderStyle::SOLID;
+      return BorderStyle::kSolid;
     if (sBorderStyle == "D")
-      return BorderStyle::DASH;
+      return BorderStyle::kDash;
     if (sBorderStyle == "B")
-      return BorderStyle::BEVELED;
+      return BorderStyle::kBeveled;
     if (sBorderStyle == "I")
-      return BorderStyle::INSET;
+      return BorderStyle::kInset;
     if (sBorderStyle == "U")
-      return BorderStyle::UNDERLINE;
+      return BorderStyle::kUnderline;
   }
 
   const CPDF_Array* pBorder =
@@ -185,11 +185,11 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
     if (pBorder->size() >= 4) {
       const CPDF_Array* pDP = pBorder->GetArrayAt(3);
       if (pDP && pDP->size() > 0)
-        return BorderStyle::DASH;
+        return BorderStyle::kDash;
     }
   }
 
-  return BorderStyle::SOLID;
+  return BorderStyle::kSolid;
 }
 
 bool CPDFSDK_BAAnnot::IsVisible() const {
