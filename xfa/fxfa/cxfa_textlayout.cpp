@@ -523,10 +523,6 @@ bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
       LoadText(pNode, szText.width, &fLinePos, true);
     }
   }
-  if (szBlockIndex == m_Blocks.size()) {
-    m_pTabstopContext.reset();
-    m_pLoader.reset();
-  }
   return true;
 }
 
@@ -576,6 +572,8 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     size_t szBlockCount = CountBlocks();
     for (size_t i = 0; i < szBlockCount; ++i)
       LayoutInternal(i);
+    m_pTabstopContext.reset();
+    m_pLoader.reset();
   }
 
   std::vector<TextCharPos> char_pos(1);

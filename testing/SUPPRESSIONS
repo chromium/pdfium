@@ -348,6 +348,8 @@ reset_button.in * * *
 
 # xfa_specific
 
+# TODO(pdfium:1095): Remove after associated bug is fixed
+bug_997412.in win * *
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * *
 # TODO(pdfium:1168): Remove after associated bug is fixed
