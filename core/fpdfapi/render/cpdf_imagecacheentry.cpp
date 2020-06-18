@@ -54,7 +54,7 @@ RetainPtr<CFX_DIBBase> CPDF_ImageCacheEntry::DetachMask() {
 }
 
 CPDF_DIB::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
-    CPDF_Dictionary* pPageResources,
+    const CPDF_Dictionary* pPageResources,
     const CPDF_RenderStatus* pRenderStatus,
     bool bStdCS) {
   if (m_pCachedBitmap) {

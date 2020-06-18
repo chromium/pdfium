@@ -350,7 +350,7 @@ RetainPtr<CFX_DIBBase> CPDF_Image::DetachMask() {
 }
 
 bool CPDF_Image::StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
-                                  CPDF_Dictionary* pPageResource,
+                                  const CPDF_Dictionary* pPageResource,
                                   bool bStdCS,
                                   uint32_t GroupFamily,
                                   bool bLoadMask) {

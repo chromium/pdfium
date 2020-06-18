@@ -251,7 +251,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     const CPDF_Stream* pStream,
     bool bHasMask,
     const CPDF_Dictionary* pFormResources,
-    CPDF_Dictionary* pPageResources,
+    const CPDF_Dictionary* pPageResources,
     bool bStdCS,
     uint32_t GroupFamily,
     bool bLoadMask) {

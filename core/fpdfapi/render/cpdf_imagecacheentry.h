@@ -30,7 +30,7 @@ class CPDF_ImageCacheEntry {
   CPDF_Image* GetImage() const { return m_pImage.Get(); }
 
   CPDF_DIB::LoadState StartGetCachedBitmap(
-      CPDF_Dictionary* pPageResources,
+      const CPDF_Dictionary* pPageResources,
       const CPDF_RenderStatus* pRenderStatus,
       bool bStdCS);
 

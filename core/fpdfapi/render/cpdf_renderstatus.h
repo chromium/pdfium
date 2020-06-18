@@ -86,7 +86,9 @@ class CPDF_RenderStatus {
   const CPDF_Dictionary* GetFormResource() const {
     return m_pFormResource.Get();
   }
-  CPDF_Dictionary* GetPageResource() const { return m_pPageResource.Get(); }
+  const CPDF_Dictionary* GetPageResource() const {
+    return m_pPageResource.Get();
+  }
   CFX_RenderDevice* GetRenderDevice() const { return m_pDevice; }
   const CPDF_RenderOptions& GetRenderOptions() const { return m_Options; }
 
