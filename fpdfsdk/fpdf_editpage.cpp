@@ -345,11 +345,10 @@ FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
                         void* buffer,
                         unsigned long buflen,
                         unsigned long* out_buflen) {
-  if (!mark || !out_buflen)
-    return false;
-
   const CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
+  if (!pMarkItem || !out_buflen)
+    return false;
 
   *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
       WideString::FromUTF8(pMarkItem->GetName().AsStringView()), buffer,
@@ -359,11 +358,10 @@ FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark) {
-  if (!mark)
-    return -1;
-
   const CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
+  if (!pMarkItem)
+    return -1;
 
   const CPDF_Dictionary* pParams = pMarkItem->GetParam();
   return pParams ? pParams->size() : 0;
