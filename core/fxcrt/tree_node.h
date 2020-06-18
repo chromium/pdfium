@@ -11,7 +11,7 @@
 namespace fxcrt {
 
 // Implements the usual DOM/XML-ish trees.
-template <typename T>
+template <typename T, typename PtrType = T*>
 class TreeNode {
  public:
   TreeNode() = default;
@@ -130,22 +130,29 @@ class TreeNode {
       parent->RemoveChild(static_cast<T*>(this));
   }
 
+ protected:
+  const PtrType& RawParent() const { return m_pParent; }
+  const PtrType& RawFirstChild() const { return m_pFirstChild; }
+  const PtrType& RawLastChild() const { return m_pLastChild; }
+  const PtrType& RawNextSibling() const { return m_pNextSibling; }
+  const PtrType& RawPrevSibling() const { return m_pPrevSibling; }
+
  private:
   // Child left in state where sibling members need subsequent adjustment.
   void BecomeParent(T* child) {
     CHECK(child != this);  // Detect attempts at self-insertion.
     if (child->m_pParent)
-      child->m_pParent->TreeNode<T>::RemoveChild(child);
+      child->m_pParent->TreeNode<T, PtrType>::RemoveChild(child);
     child->m_pParent = static_cast<T*>(this);
     CHECK(!child->m_pNextSibling);
     CHECK(!child->m_pPrevSibling);
   }
 
-  T* m_pParent = nullptr;       // Raw, intra-tree pointer.
-  T* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
-  T* m_pLastChild = nullptr;    // Raw, intra-tree pointer.
-  T* m_pNextSibling = nullptr;  // Raw, intra-tree pointer
-  T* m_pPrevSibling = nullptr;  // Raw, intra-tree pointer
+  PtrType m_pParent = nullptr;       // Default: Raw, intra-tree pointer.
+  PtrType m_pFirstChild = nullptr;   // Default: Raw, intra-tree pointer.
+  PtrType m_pLastChild = nullptr;    // Default: Raw, intra-tree pointer.
+  PtrType m_pNextSibling = nullptr;  // Default: Raw, intra-tree pointer
+  PtrType m_pPrevSibling = nullptr;  // Default: Raw, intra-tree pointer
 };
 
 }  // namespace fxcrt

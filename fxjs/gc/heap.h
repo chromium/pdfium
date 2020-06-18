@@ -20,4 +20,8 @@ void FXGC_Initialize(v8::Platform* platform);
 void FXGC_Release();
 FXGCScopedHeap FXGC_CreateHeap();
 
+#define CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED \
+  template <typename T>                      \
+  friend class cppgc::MakeGarbageCollectedTrait
+
 #endif  // FXJS_GC_HEAP_H_

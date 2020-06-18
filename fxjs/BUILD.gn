@@ -114,6 +114,7 @@ source_set("fxjs") {
 
     if (pdf_enable_xfa) {
       sources += [
+        "gc/gced_tree_node.h",
         "gc/heap.cpp",
         "gc/heap.h",
         "xfa/cfxjse_class.cpp",
@@ -242,6 +243,7 @@ if (pdf_enable_v8) {
     pdfium_root_dir = "../"
     if (pdf_enable_xfa) {
       sources += [
+        "gc/gced_tree_node_embeddertest.cpp",
         "gc/heap_embeddertest.cpp",
         "xfa/cfxjse_app_embeddertest.cpp",
         "xfa/cfxjse_formcalc_context_embeddertest.cpp",
