@@ -105,7 +105,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicNormal) {
   EXPECT_FALSE(GetCPWLComboBox()->GetText().IsEmpty());
   EXPECT_STREQ(L"Banana", GetCPWLComboBox()->GetText().c_str());
 
-  // Check that selection is intially empty, then select entire word.
+  // Check that selection is initially empty, then select entire word.
   EXPECT_TRUE(GetCPWLComboBox()->GetSelectedText().IsEmpty());
   GetCPWLComboBox()->SetSelectText();
   EXPECT_STREQ(L"Banana", GetCPWLComboBox()->GetSelectedText().c_str());
@@ -150,7 +150,7 @@ TEST_F(CPWLComboBoxEditEmbedderTest, GetSelectedTextEmptyAndBasicEditable) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
   EXPECT_TRUE(GetCPWLComboBox()->GetText().IsEmpty());
 
-  // Check selection is intially empty, then select a provided option.
+  // Check selection is initially empty, then select a provided option.
   EXPECT_TRUE(GetCPWLComboBox()->GetSelectedText().IsEmpty());
   GetCPWLComboBox()->SetSelect(0);
   GetCPWLComboBox()->SetSelectText();
