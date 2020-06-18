@@ -70,10 +70,8 @@ bool CFX_CSSStyleSelector::MatchSelector(const WideString& tagname,
   // TODO(dsinclair): The code only supports a single level of selector at this
   // point. None of the code using selectors required the complexity so lets
   // just say we don't support them to simplify the code for now.
-  if (!pSel || pSel->next_selector() ||
-      pSel->type() == CFX_CSSSelectorType::Descendant) {
+  if (!pSel || pSel->next_selector() || pSel->is_descendant())
     return false;
-  }
   return pSel->name_hash() == FX_HashCode_GetW(tagname.AsStringView(), true);
 }
 

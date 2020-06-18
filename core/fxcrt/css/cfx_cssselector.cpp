@@ -55,7 +55,7 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
       int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
       auto new_head = std::make_unique<CFX_CSSSelector>(psz, iNameLen);
       if (head) {
-        head->set_descendent_type();
+        head->set_is_descendant();
         new_head->set_next(std::move(head));
       }
       head = std::move(new_head);

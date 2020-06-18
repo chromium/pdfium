@@ -10,7 +10,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/fx_string.h"
 
 class CFX_CSSSelector {
@@ -20,7 +19,7 @@ class CFX_CSSSelector {
   CFX_CSSSelector(const wchar_t* psz, int32_t iLen);
   ~CFX_CSSSelector();
 
-  CFX_CSSSelectorType type() const { return type_; }
+  bool is_descendant() const { return is_descendant_; }
   uint32_t name_hash() const { return name_hash_; }
   const CFX_CSSSelector* next_selector() const { return next_.get(); }
 
@@ -29,9 +28,9 @@ class CFX_CSSSelector {
   }
 
  private:
-  void set_descendent_type() { type_ = CFX_CSSSelectorType::Descendant; }
+  void set_is_descendant() { is_descendant_ = true; }
 
-  CFX_CSSSelectorType type_ = CFX_CSSSelectorType::Element;
+  bool is_descendant_ = false;
   const uint32_t name_hash_;
   std::unique_ptr<CFX_CSSSelector> next_;
 };

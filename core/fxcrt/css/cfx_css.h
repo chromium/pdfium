@@ -124,8 +124,6 @@ enum class CFX_CSSProperty : uint8_t {
   MarginTop,
 };
 
-enum class CFX_CSSSelectorType : uint8_t { Element = 0, Descendant };
-
 enum class CFX_CSSLengthUnit : uint8_t {
   Auto,
   None,
