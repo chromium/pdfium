@@ -15,9 +15,7 @@ class CFX_CSSSelector {
  public:
   static std::unique_ptr<CFX_CSSSelector> FromString(WideStringView str);
 
-  CFX_CSSSelector(const wchar_t* psz,
-                  int32_t iLen,
-                  std::unique_ptr<CFX_CSSSelector> next);
+  CFX_CSSSelector(WideStringView str, std::unique_ptr<CFX_CSSSelector> next);
   ~CFX_CSSSelector();
 
   bool is_descendant() const { return is_descendant_; }
