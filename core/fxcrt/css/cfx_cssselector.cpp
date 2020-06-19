@@ -47,20 +47,23 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
   std::unique_ptr<CFX_CSSSelector> head;
   for (size_t i = 0; i < str.GetLength();) {
     wchar_t wch = str[i];
-    if ((isascii(wch) && isalpha(wch)) || wch == '*') {
-      if (head)
-        head->set_is_descendant();
-      size_t len =
-          wch == '*' ? 1 : GetCSSNameLen(str.Last(str.GetLength() - i));
-      auto new_head = std::make_unique<CFX_CSSSelector>(str.Substr(i, len),
-                                                        std::move(head));
-      head = std::move(new_head);
-      i += len;
-    } else if (wch == ' ') {
+    if (wch == ' ') {
       ++i;
-    } else {
-      return nullptr;
+      continue;
     }
+
+    const bool is_star = wch == '*';
+    const bool is_valid_char = is_star || (isascii(wch) && isalpha(wch));
+    if (!is_valid_char)
+      return nullptr;
+
+    if (head)
+      head->set_is_descendant();
+    size_t len = is_star ? 1 : GetCSSNameLen(str.Last(str.GetLength() - i));
+    auto new_head =
+        std::make_unique<CFX_CSSSelector>(str.Substr(i, len), std::move(head));
+    head = std::move(new_head);
+    i += len;
   }
   return head;
 }
