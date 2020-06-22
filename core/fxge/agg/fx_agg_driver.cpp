@@ -292,7 +292,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
     for (size_t i = 0; i < (pGraphState->m_DashArray.size() + 1) / 2; i++) {
       float on = pGraphState->m_DashArray[i * 2];
       if (on <= 0.000001f)
-        on = 1.0f / 10;
+        on = 0.1f;
       float off = i * 2 + 1 == pGraphState->m_DashArray.size()
                       ? on
                       : pGraphState->m_DashArray[i * 2 + 1];

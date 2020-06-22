@@ -1588,12 +1588,11 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
     for (size_t i = 0; i < count; i++) {
       float on = pGraphState->m_DashArray[i * 2];
       if (on <= 0.000001f)
-        on = 1.f / 10;
+        on = 0.1f;
       float off = i * 2 + 1 == pGraphState->m_DashArray.size()
                       ? on
                       : pGraphState->m_DashArray[i * 2 + 1];
-      if (off < 0)
-        off = 0;
+      off = std::max(off, 0.0f);
       intervals.get()[i * 2] = on;
       intervals.get()[i * 2 + 1] = off;
     }

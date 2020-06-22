@@ -446,15 +446,15 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
       on_phase /= width;
       off_phase /= width;
       if (on_phase + off_phase <= 0.00002f) {
-        on_phase = 1.0f / 10;
-        off_phase = 1.0f / 10;
+        on_phase = 0.1f;
+        off_phase = 0.1f;
       }
       if (bDashExtend) {
         if (off_phase < 1)
           off_phase = 0;
         else
-          off_phase -= 1;
-        on_phase += 1;
+          --off_phase;
+        ++on_phase;
       }
       if (on_phase == 0 || off_phase == 0) {
         if (nCount == 0) {
