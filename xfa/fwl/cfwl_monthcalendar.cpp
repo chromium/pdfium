@@ -681,13 +681,13 @@ void CFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
     return;
 
   switch (pMessage->GetType()) {
-    case CFWL_Message::Type::SetFocus:
-    case CFWL_Message::Type::KillFocus:
+    case CFWL_Message::Type::kSetFocus:
+    case CFWL_Message::Type::kKillFocus:
       GetOuter()->GetDelegate()->OnProcessMessage(pMessage);
       break;
-    case CFWL_Message::Type::Key:
+    case CFWL_Message::Type::kKey:
       break;
-    case CFWL_Message::Type::Mouse: {
+    case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMouse = static_cast<CFWL_MessageMouse*>(pMessage);
       switch (pMouse->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:

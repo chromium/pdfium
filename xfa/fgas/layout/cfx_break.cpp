@@ -75,8 +75,8 @@ void CFX_Break::SetBreakStatus() {
     return;
 
   CFX_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
-  if (tc->m_dwStatus == CFX_BreakType::None)
-    tc->m_dwStatus = CFX_BreakType::Piece;
+  if (tc->m_dwStatus == CFX_BreakType::kNone)
+    tc->m_dwStatus = CFX_BreakType::kPiece;
 }
 
 bool CFX_Break::IsGreaterThanLineWidth(int32_t width) const {

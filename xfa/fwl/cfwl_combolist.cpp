@@ -76,10 +76,10 @@ void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
 
   CFWL_Message::Type type = pMessage->GetType();
   bool backDefault = true;
-  if (type == CFWL_Message::Type::SetFocus ||
-      type == CFWL_Message::Type::KillFocus) {
-    OnDropListFocusChanged(pMessage, type == CFWL_Message::Type::SetFocus);
-  } else if (type == CFWL_Message::Type::Mouse) {
+  if (type == CFWL_Message::Type::kSetFocus ||
+      type == CFWL_Message::Type::kKillFocus) {
+    OnDropListFocusChanged(pMessage, type == CFWL_Message::Type::kSetFocus);
+  } else if (type == CFWL_Message::Type::kMouse) {
     CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
     CFWL_ScrollBar* vertSB = GetVertScrollBar();
     if (IsShowScrollBar(true) && vertSB) {
@@ -109,7 +109,7 @@ void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
       default:
         break;
     }
-  } else if (type == CFWL_Message::Type::Key) {
+  } else if (type == CFWL_Message::Type::kKey) {
     backDefault = !OnDropListKey(static_cast<CFWL_MessageKey*>(pMessage));
   }
   if (backDefault)
@@ -185,7 +185,7 @@ void CFWL_ComboList::OnDropListLButtonUp(CFWL_MessageMouse* pMsg) {
 bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
   CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(m_pOuter);
   bool bPropagate = false;
-  if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
+  if (pKey->m_dwCmd == CFWL_MessageKey::Type::kKeyDown) {
     uint32_t dwKeyCode = pKey->m_dwKeyCode;
     switch (dwKeyCode) {
       case XFA_FWL_VKEY_Return:
@@ -204,7 +204,7 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
         break;
       }
     }
-  } else if (pKey->m_dwCmd == FWL_KeyCommand::Char) {
+  } else if (pKey->m_dwCmd == CFWL_MessageKey::Type::kChar) {
     bPropagate = true;
   }
   if (bPropagate) {

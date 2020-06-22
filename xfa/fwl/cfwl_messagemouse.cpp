@@ -10,14 +10,14 @@
 
 CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      FWL_MouseCommand cmd)
-    : CFWL_Message(CFWL_Message::Type::Mouse, nullptr, pDstTarget),
+    : CFWL_Message(CFWL_Message::Type::kMouse, nullptr, pDstTarget),
       m_dwCmd(cmd) {}
 
 CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      FWL_MouseCommand cmd,
                                      uint32_t flags,
                                      CFX_PointF pos)
-    : CFWL_Message(CFWL_Message::Type::Mouse, nullptr, pDstTarget),
+    : CFWL_Message(CFWL_Message::Type::kMouse, nullptr, pDstTarget),
       m_dwCmd(cmd),
       m_dwFlags(flags),
       m_pos(pos) {}

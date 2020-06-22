@@ -10,6 +10,6 @@
 
 CFWL_MessageSetFocus::CFWL_MessageSetFocus(CFWL_Widget* pSrcTarget,
                                            CFWL_Widget* pDstTarget)
-    : CFWL_Message(CFWL_Message::Type::SetFocus, pSrcTarget, pDstTarget) {}
+    : CFWL_Message(CFWL_Message::Type::kSetFocus, pSrcTarget, pDstTarget) {}
 
 CFWL_MessageSetFocus::~CFWL_MessageSetFocus() = default;

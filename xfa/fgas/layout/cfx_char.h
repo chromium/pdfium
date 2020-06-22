@@ -16,7 +16,13 @@
 #include "xfa/fgas/layout/cfx_textuserdata.h"
 #include "xfa/fgas/layout/fx_linebreak.h"
 
-enum class CFX_BreakType : uint8_t { None = 0, Piece, Line, Paragraph, Page };
+enum class CFX_BreakType : uint8_t {
+  kNone = 0,
+  kPiece,
+  kLine,
+  kParagraph,
+  kPage
+};
 
 class CFX_Char {
  public:
@@ -35,7 +41,7 @@ class CFX_Char {
   int16_t horizonal_scale() const { return m_iHorizontalScale; }
   int16_t vertical_scale() const { return m_iVerticalScale; }
 
-  CFX_BreakType m_dwStatus = CFX_BreakType::None;
+  CFX_BreakType m_dwStatus = CFX_BreakType::kNone;
   FX_BIDICLASS m_iBidiClass = FX_BIDICLASS::kON;
   FX_LINEBREAKTYPE m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
   uint32_t m_dwCharStyles = 0;

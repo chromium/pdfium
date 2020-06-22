@@ -9,10 +9,10 @@
 #include <memory>
 
 CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
-                                 FWL_KeyCommand cmd,
+                                 Type cmd,
                                  uint32_t flags,
                                  uint32_t keycode)
-    : CFWL_Message(CFWL_Message::Type::Key, nullptr, pDstTarget),
+    : CFWL_Message(CFWL_Message::Type::kKey, nullptr, pDstTarget),
       m_dwCmd(cmd),
       m_dwFlags(flags),
       m_dwKeyCode(keycode) {}

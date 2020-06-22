@@ -43,9 +43,9 @@ TEST_F(CFX_RTFBreakTest, AddChars) {
 
   WideString str(L"Input String.");
   for (wchar_t ch : str)
-    EXPECT_EQ(CFX_BreakType::None, rtf_break->AppendChar(ch));
+    EXPECT_EQ(CFX_BreakType::kNone, rtf_break->AppendChar(ch));
 
-  EXPECT_EQ(CFX_BreakType::Paragraph, rtf_break->AppendChar(L'\n'));
+  EXPECT_EQ(CFX_BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
   EXPECT_EQ(str + L"\n", rtf_break->GetBreakPieceUnstable(0)->GetString());
 
@@ -55,22 +55,22 @@ TEST_F(CFX_RTFBreakTest, AddChars) {
 
   str = L"Second str.";
   for (wchar_t ch : str)
-    EXPECT_EQ(CFX_BreakType::None, rtf_break->AppendChar(ch));
+    EXPECT_EQ(CFX_BreakType::kNone, rtf_break->AppendChar(ch));
 
   // Force the end of the break at the end of the string.
-  rtf_break->EndBreak(CFX_BreakType::Paragraph);
+  rtf_break->EndBreak(CFX_BreakType::kParagraph);
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
   EXPECT_EQ(str, rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
 TEST_F(CFX_RTFBreakTest, ControlCharacters) {
   auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
-  EXPECT_EQ(CFX_BreakType::Line, rtf_break->AppendChar(L'\v'));
-  EXPECT_EQ(CFX_BreakType::Page, rtf_break->AppendChar(L'\f'));
+  EXPECT_EQ(CFX_BreakType::kLine, rtf_break->AppendChar(L'\v'));
+  EXPECT_EQ(CFX_BreakType::kPage, rtf_break->AppendChar(L'\f'));
   const wchar_t kUnicodeParagraphSeparator = 0x2029;
-  EXPECT_EQ(CFX_BreakType::Paragraph,
+  EXPECT_EQ(CFX_BreakType::kParagraph,
             rtf_break->AppendChar(kUnicodeParagraphSeparator));
-  EXPECT_EQ(CFX_BreakType::Paragraph, rtf_break->AppendChar(L'\n'));
+  EXPECT_EQ(CFX_BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
 
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
   EXPECT_EQ(L"\v", rtf_break->GetBreakPieceUnstable(0)->GetString());

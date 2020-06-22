@@ -22,7 +22,7 @@ CFWL_DateTimeEdit::CFWL_DateTimeEdit(
 CFWL_DateTimeEdit::~CFWL_DateTimeEdit() = default;
 
 void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
-  if (pMessage->GetType() != CFWL_Message::Type::Mouse) {
+  if (pMessage->GetType() != CFWL_Message::Type::kMouse) {
     CFWL_Edit::OnProcessMessage(pMessage);
     return;
   }

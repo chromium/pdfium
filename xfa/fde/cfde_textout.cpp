@@ -210,7 +210,7 @@ void CFDE_TextOut::CalcLogicSize(WideStringView str, CFX_RectF* pRect) {
   float fWidth = 0.0f;
   float fHeight = 0.0f;
   float fStartPos = pRect->right();
-  CFX_BreakType dwBreakStatus = CFX_BreakType::None;
+  CFX_BreakType dwBreakStatus = CFX_BreakType::kNone;
   bool break_char_is_set = false;
   for (const wchar_t& wch : str) {
     if (!break_char_is_set && (wch == L'\n' || wch == L'\r')) {
@@ -222,7 +222,7 @@ void CFDE_TextOut::CalcLogicSize(WideStringView str, CFX_RectF* pRect) {
       RetrieveLineWidth(dwBreakStatus, &fStartPos, &fWidth, &fHeight);
   }
 
-  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
+  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
     RetrieveLineWidth(dwBreakStatus, &fStartPos, &fWidth, &fHeight);
 
@@ -258,9 +258,9 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
   }
   m_pTxtBreak->ClearBreakPieces();
 
-  if (dwBreakStatus == CFX_BreakType::Paragraph)
+  if (dwBreakStatus == CFX_BreakType::kParagraph)
     m_pTxtBreak->Reset();
-  if (!m_Styles.line_wrap_ && dwBreakStatus == CFX_BreakType::Line) {
+  if (!m_Styles.line_wrap_ && dwBreakStatus == CFX_BreakType::kLine) {
     *pWidth += fLineWidth;
   } else {
     *pWidth = std::max(*pWidth, fLineWidth);
@@ -336,8 +336,8 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
     bool bEndofLine =
         RetrievePieces(dwBreakStatus, false, rect, &start_char, &iPieceWidths);
     if (bEndofLine &&
-        (m_Styles.line_wrap_ || dwBreakStatus == CFX_BreakType::Paragraph ||
-         dwBreakStatus == CFX_BreakType::Page)) {
+        (m_Styles.line_wrap_ || dwBreakStatus == CFX_BreakType::kParagraph ||
+         dwBreakStatus == CFX_BreakType::kPage)) {
       iPieceWidths = 0;
       ++m_iCurLine;
       m_fLinePos += fLineStep;
@@ -350,7 +350,7 @@ void CFDE_TextOut::LoadText(const WideString& str, const CFX_RectF& rect) {
     }
   }
 
-  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
+  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus) && !bRet)
     RetrievePieces(dwBreakStatus, false, rect, &start_char, &iPieceWidths);
 
@@ -408,7 +408,7 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
   m_pTxtBreak->ClearBreakPieces();
 
   return m_Styles.single_line_ || m_Styles.line_wrap_ || bNeedReload ||
-         dwBreakStatus == CFX_BreakType::Paragraph;
+         dwBreakStatus == CFX_BreakType::kParagraph;
 }
 
 void CFDE_TextOut::AppendPiece(const Piece& piece,
@@ -455,7 +455,7 @@ void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
   const Piece* pPiece = pLine->GetPieceAtIndex(0);
   size_t start_char = pPiece->start_char;
   int32_t iPieceWidths = 0;
-  CFX_BreakType dwBreakStatus = CFX_BreakType::None;
+  CFX_BreakType dwBreakStatus = CFX_BreakType::kNone;
   m_fLinePos = pPiece->bounds.top;
   while (iPieceIndex < iPieceCount) {
     size_t start = start_char;
@@ -471,7 +471,7 @@ void CFDE_TextOut::ReloadLinePiece(Line* pLine, const CFX_RectF& rect) {
     pPiece = pLine->GetPieceAtIndex(iPieceIndex);
   }
 
-  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
+  dwBreakStatus = m_pTxtBreak->EndBreak(CFX_BreakType::kParagraph);
   if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus))
     RetrievePieces(dwBreakStatus, true, rect, &start_char, &iPieceWidths);
 

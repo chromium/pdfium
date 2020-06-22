@@ -28,7 +28,7 @@ enum CFX_TxtLineAlignment {
 };
 
 inline bool CFX_BreakTypeNoneOrPiece(CFX_BreakType type) {
-  return type == CFX_BreakType::None || type == CFX_BreakType::Piece;
+  return type == CFX_BreakType::kNone || type == CFX_BreakType::kPiece;
 }
 
 class CFX_TxtBreak final : public CFX_Break {

@@ -29,7 +29,7 @@ class CFX_BreakPiece {
   WideString GetString() const;
   std::vector<int32_t> GetWidths() const;
 
-  CFX_BreakType m_dwStatus = CFX_BreakType::Piece;
+  CFX_BreakType m_dwStatus = CFX_BreakType::kPiece;
   int32_t m_iStartPos = 0;
   int32_t m_iWidth = -1;
   int32_t m_iStartChar = 0;

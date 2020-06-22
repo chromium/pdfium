@@ -107,34 +107,34 @@ void CFWL_NoteDriver::ProcessMessage(std::unique_ptr<CFWL_Message> pMessage) {
   if (!DispatchMessage(pMessage.get(), pMessageForm))
     return;
 
-  if (pMessage->GetType() == CFWL_Message::Type::Mouse)
+  if (pMessage->GetType() == CFWL_Message::Type::kMouse)
     MouseSecondary(pMessage.get());
 }
 
 bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
                                       CFWL_Widget* pMessageForm) {
   switch (pMessage->GetType()) {
-    case CFWL_Message::Type::SetFocus: {
+    case CFWL_Message::Type::kSetFocus: {
       if (!DoSetFocus(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_Message::Type::KillFocus: {
+    case CFWL_Message::Type::kKillFocus: {
       if (!DoKillFocus(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_Message::Type::Key: {
+    case CFWL_Message::Type::kKey: {
       if (!DoKey(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_Message::Type::Mouse: {
+    case CFWL_Message::Type::kMouse: {
       if (!DoMouse(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_Message::Type::MouseWheel: {
+    case CFWL_Message::Type::kMouseWheel: {
       if (!DoWheel(pMessage, pMessageForm))
         return false;
       break;
@@ -165,7 +165,7 @@ bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
 bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
 #if !defined(OS_MACOSX)
-  if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
+  if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown &&
       pMsg->m_dwKeyCode == XFA_FWL_VKEY_Tab) {
     CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
     CFWL_Widget* pForm = GetMessageForm(pMsg->GetDstTarget());
@@ -192,7 +192,7 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
     return true;
   }
 
-  if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown &&
+  if (pMsg->m_dwCmd == CFWL_MessageKey::Type::kKeyDown &&
       pMsg->m_dwKeyCode == XFA_FWL_VKEY_Return) {
     CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
     CFWL_Widget* pDefButton = pWidgetMgr->GetDefaultButton(pMessageForm);

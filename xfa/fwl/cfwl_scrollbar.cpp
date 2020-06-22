@@ -305,7 +305,7 @@ void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
     return;
 
   CFWL_Message::Type type = pMessage->GetType();
-  if (type == CFWL_Message::Type::Mouse) {
+  if (type == CFWL_Message::Type::kMouse) {
     CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
     switch (pMsg->m_dwCmd) {
       case FWL_MouseCommand::LeftButtonDown:
@@ -323,7 +323,7 @@ void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
       default:
         break;
     }
-  } else if (type == CFWL_Message::Type::MouseWheel) {
+  } else if (type == CFWL_Message::Type::kMouseWheel) {
     auto* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
     OnMouseWheel(pMsg->delta());
   }

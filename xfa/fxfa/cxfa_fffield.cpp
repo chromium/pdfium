@@ -580,7 +580,7 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
     return false;
 
   SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
-      GetNormalWidget(), FWL_KeyCommand::KeyDown, dwFlags, dwKeyCode));
+      GetNormalWidget(), CFWL_MessageKey::Type::kKeyDown, dwFlags, dwKeyCode));
 
   return true;
 }
@@ -593,7 +593,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
     return false;
 
   SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
-      GetNormalWidget(), FWL_KeyCommand::KeyUp, dwFlags, dwKeyCode));
+      GetNormalWidget(), CFWL_MessageKey::Type::kKeyUp, dwFlags, dwKeyCode));
 
   return true;
 }
@@ -612,7 +612,7 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
     return false;
 
   SendMessageToFWLWidget(std::make_unique<CFWL_MessageKey>(
-      GetNormalWidget(), FWL_KeyCommand::Char, dwFlags, dwChar));
+      GetNormalWidget(), CFWL_MessageKey::Type::kChar, dwFlags, dwChar));
 
   return true;
 }

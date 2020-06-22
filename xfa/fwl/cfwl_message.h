@@ -15,7 +15,7 @@
 
 class CFWL_Message {
  public:
-  enum class Type { Key, KillFocus, Mouse, MouseWheel, SetFocus };
+  enum class Type { kKey, kKillFocus, kMouse, kMouseWheel, kSetFocus };
 
   virtual ~CFWL_Message();
 

@@ -684,7 +684,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   if (bRet && m_pLoader)
     m_pLoader->pNode = pNode;
   else
-    EndBreak(CFX_BreakType::Paragraph, pLinePos, bSavePieces);
+    EndBreak(CFX_BreakType::kParagraph, pLinePos, bSavePieces);
 }
 
 bool CXFA_TextLayout::LoadRichText(
@@ -836,7 +836,7 @@ bool CXFA_TextLayout::LoadRichText(
         m_pLoader->bFilterSpace = true;
     }
     if (bCurLi)
-      EndBreak(CFX_BreakType::Line, pLinePos, bSavePieces);
+      EndBreak(CFX_BreakType::kLine, pLinePos, bSavePieces);
   } else {
     if (pContext)
       eDisplay = pContext->GetDisplay();
@@ -846,8 +846,8 @@ bool CXFA_TextLayout::LoadRichText(
     return true;
 
   CFX_BreakType dwStatus = (eDisplay == CFX_CSSDisplay::Block)
-                               ? CFX_BreakType::Paragraph
-                               : CFX_BreakType::Piece;
+                               ? CFX_BreakType::kParagraph
+                               : CFX_BreakType::kPiece;
   EndBreak(dwStatus, pLinePos, bSavePieces);
   if (eDisplay == CFX_CSSDisplay::Block) {
     *pLinePos += fSpaceBelow;
@@ -868,7 +868,7 @@ bool CXFA_TextLayout::AppendChar(const WideString& wsText,
                                  float* pLinePos,
                                  float fSpaceAbove,
                                  bool bSavePieces) {
-  CFX_BreakType dwStatus = CFX_BreakType::None;
+  CFX_BreakType dwStatus = CFX_BreakType::kNone;
   int32_t iChar = 0;
   if (m_pLoader)
     iChar = m_pLoader->iChar;
@@ -880,14 +880,14 @@ bool CXFA_TextLayout::AppendChar(const WideString& wsText,
       wch = 0x20;
 
     dwStatus = m_pBreak->AppendChar(wch);
-    if (dwStatus != CFX_BreakType::None && dwStatus != CFX_BreakType::Piece) {
+    if (dwStatus != CFX_BreakType::kNone && dwStatus != CFX_BreakType::kPiece) {
       AppendTextLine(dwStatus, pLinePos, bSavePieces, false);
       if (IsEnd(bSavePieces)) {
         if (m_pLoader)
           m_pLoader->iChar = i;
         return true;
       }
-      if (dwStatus == CFX_BreakType::Paragraph && m_bRichText)
+      if (dwStatus == CFX_BreakType::kParagraph && m_bRichText)
         *pLinePos += fSpaceAbove;
     }
   }
@@ -909,7 +909,7 @@ void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
                                float* pLinePos,
                                bool bSavePieces) {
   dwStatus = m_pBreak->EndBreak(dwStatus);
-  if (dwStatus != CFX_BreakType::None && dwStatus != CFX_BreakType::Piece)
+  if (dwStatus != CFX_BreakType::kNone && dwStatus != CFX_BreakType::kPiece)
     AppendTextLine(dwStatus, pLinePos, bSavePieces, true);
 }
 
@@ -1068,7 +1068,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
   }
 
   m_pBreak->ClearBreakPieces();
-  if (dwStatus == CFX_BreakType::Paragraph) {
+  if (dwStatus == CFX_BreakType::kParagraph) {
     m_pBreak->Reset();
     if (!pStyle && bEndBreak) {
       CXFA_Para* para = m_pTextProvider->GetParaIfExists();

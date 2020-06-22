@@ -432,17 +432,17 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 
   bool backDefault = true;
   switch (pMessage->GetType()) {
-    case CFWL_Message::Type::SetFocus: {
+    case CFWL_Message::Type::kSetFocus: {
       backDefault = false;
       OnFocusChanged(pMessage, true);
       break;
     }
-    case CFWL_Message::Type::KillFocus: {
+    case CFWL_Message::Type::kKillFocus: {
       backDefault = false;
       OnFocusChanged(pMessage, false);
       break;
     }
-    case CFWL_Message::Type::Mouse: {
+    case CFWL_Message::Type::kMouse: {
       backDefault = false;
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
@@ -457,12 +457,13 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_Message::Type::Key: {
+    case CFWL_Message::Type::kKey: {
       backDefault = false;
       CFWL_MessageKey* pKey = static_cast<CFWL_MessageKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_KeyCommand::KeyUp)
+      if (pKey->m_dwCmd == CFWL_MessageKey::Type::kKeyUp)
         break;
-      if (IsDropListVisible() && pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
+      if (IsDropListVisible() &&
+          pKey->m_dwCmd == CFWL_MessageKey::Type::kKeyDown) {
         bool bListKey = pKey->m_dwKeyCode == XFA_FWL_VKEY_Up ||
                         pKey->m_dwKeyCode == XFA_FWL_VKEY_Down ||
                         pKey->m_dwKeyCode == XFA_FWL_VKEY_Return ||

@@ -11,17 +11,17 @@
 
 #include "xfa/fwl/cfwl_message.h"
 
-enum class FWL_KeyCommand { KeyDown, KeyUp, Char };
-
 class CFWL_MessageKey final : public CFWL_Message {
  public:
+  enum class Type { kKeyDown, kKeyUp, kChar };
+
   CFWL_MessageKey(CFWL_Widget* pDstTarget,
-                  FWL_KeyCommand cmd,
+                  Type cmd,
                   uint32_t flags,
                   uint32_t keycode);
   ~CFWL_MessageKey() override;
 
-  const FWL_KeyCommand m_dwCmd;
+  const Type m_dwCmd;
   const uint32_t m_dwFlags;
   const uint32_t m_dwKeyCode;
 };
