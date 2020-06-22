@@ -58,7 +58,13 @@ TEST_F(HeapEmbedderTest, SeveralHeaps) {
   EXPECT_TRUE(heap2);
 
   FXGCScopedHeap heap3 = FXGC_CreateHeap();
-  EXPECT_TRUE(heap2);
+  EXPECT_TRUE(heap3);
+
+  // Test manually destroying the heap.
+  heap3.reset();
+  EXPECT_FALSE(heap3);
+  heap3.reset();
+  EXPECT_FALSE(heap3);
 }
 
 TEST_F(HeapEmbedderTest, NoReferences) {

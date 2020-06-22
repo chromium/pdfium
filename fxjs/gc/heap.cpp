@@ -4,6 +4,7 @@
 
 #include "fxjs/gc/heap.h"
 
+#include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -42,6 +43,7 @@ class CFXGC_Platform final : public cppgc::Platform {
 
 void FXGC_Initialize(v8::Platform* platform) {
   if (platform) {
+    ASSERT(!g_platform);
     g_platform = platform;
     cppgc::InitializeProcess(platform->GetPageAllocator());
   }
@@ -68,9 +70,8 @@ FXGCScopedHeap FXGC_CreateHeap() {
 }
 
 void FXGCHeapDeleter::operator()(cppgc::Heap* heap) {
-  if (!heap)
-    return;
-
+  ASSERT(heap);
+  ASSERT(g_platform_ref_count > 0);
   --g_platform_ref_count;
   delete heap;
 }
