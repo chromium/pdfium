@@ -24,17 +24,11 @@ using FXFT_StreamRec = struct FT_StreamRec_;
 using FXFT_MM_VarPtr = FT_MM_Var*;
 
 struct FXFTFaceRecDeleter {
-  inline void operator()(FXFT_FaceRec* pRec) {
-    if (pRec)
-      FT_Done_Face(pRec);
-  }
+  inline void operator()(FXFT_FaceRec* pRec) { FT_Done_Face(pRec); }
 };
 
 struct FXFTLibraryRecDeleter {
-  inline void operator()(FXFT_LibraryRec* pRec) {
-    if (pRec)
-      FT_Done_FreeType(pRec);
-  }
+  inline void operator()(FXFT_LibraryRec* pRec) { FT_Done_FreeType(pRec); }
 };
 
 using ScopedFXFTFaceRec = std::unique_ptr<FXFT_FaceRec, FXFTFaceRecDeleter>;
