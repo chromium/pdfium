@@ -205,6 +205,10 @@ void CPWL_ComboBox::ReplaceSelection(const WideString& text) {
     m_pEdit->ReplaceSelection(text);
 }
 
+bool CPWL_ComboBox::SelectAllText() {
+  return m_pEdit && m_pEdit->SelectAllText();
+}
+
 bool CPWL_ComboBox::CanUndo() {
   return m_pEdit && m_pEdit->CanUndo();
 }
@@ -419,7 +423,7 @@ bool CPWL_ComboBox::RePosChildWnd() {
 
 void CPWL_ComboBox::SelectAll() {
   if (m_pEdit && HasFlag(PCBS_ALLOWCUSTOMTEXT))
-    m_pEdit->SelectAll();
+    m_pEdit->SelectAllText();
 }
 
 CFX_FloatRect CPWL_ComboBox::GetFocusRect() const {
@@ -583,7 +587,7 @@ void CPWL_ComboBox::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {
     return;
 
   SetSelectText();
-  SelectAll();
+  SelectAllText();
   m_pEdit->SetFocus();
   SetPopup(false);
   // Note, |this| may no longer be viable at this point. If more work needs to
@@ -595,9 +599,9 @@ bool CPWL_ComboBox::IsPopup() const {
 }
 
 void CPWL_ComboBox::SetSelectText() {
-  m_pEdit->SelectAll();
+  m_pEdit->SelectAllText();
   m_pEdit->ReplaceSelection(m_pList->GetText());
-  m_pEdit->SelectAll();
+  m_pEdit->SelectAllText();
   m_nSelectItem = m_pList->GetCurSel();
 }
 

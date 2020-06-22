@@ -76,6 +76,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   WideString GetText();
   WideString GetSelectedText();
   void ReplaceSelection(const WideString& text);
+  bool SelectAllText();
 
   bool CanUndo();
   bool CanRedo();

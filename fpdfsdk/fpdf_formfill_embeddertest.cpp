@@ -134,6 +134,11 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
     FORM_OnLButtonUp(form_handle(), page_, 0, end.x, end.y);
   }
 
+  void SelectAllTextAtPoint(const CFX_PointF& point) {
+    FocusOnPoint(point);
+    EXPECT_TRUE(FORM_SelectAllText(form_handle(), page_));
+  }
+
   void CheckSelection(WideStringView expected_string) {
     unsigned long actual_len =
         FORM_GetSelectedText(form_handle(), page_, nullptr, 0);
@@ -146,6 +151,10 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
 
     int num_chars = (actual_len / sizeof(unsigned short)) - 1;
     EXPECT_EQ(expected_string, WideString::FromUTF16LE(buf.data(), num_chars));
+  }
+
+  void FocusOnPoint(const CFX_PointF& point) {
+    EXPECT_TRUE(FORM_OnFocus(form_handle(), page(), 0, point.x, point.y));
   }
 
   void CheckFocusedFieldText(WideStringView expected_string) {
@@ -214,11 +223,11 @@ class FPDFFormFillTextFormEmbedderTest
   }
 
   void SelectAllCharLimitFormTextWithMouse() {
-    SelectTextWithMouse(CharLimitFormEnd(), CharLimitFormBegin());
+    SelectAllTextAtPoint(CharLimitFormBegin());
   }
 
   void SelectAllRegularFormTextWithMouse() {
-    SelectTextWithMouse(RegularFormEnd(), RegularFormBegin());
+    SelectAllTextAtPoint(RegularFormBegin());
   }
 
   const CFX_PointF& CharLimitFormBegin() const {
@@ -298,16 +307,12 @@ class FPDFFormFillComboBoxFormEmbedderTest
   }
 
   void SelectAllEditableFormTextWithMouse() {
-    SelectTextWithMouse(EditableFormEnd(), EditableFormBegin());
+    SelectAllTextAtPoint(EditableFormBegin());
   }
 
   void FocusOnEditableForm() { FocusOnPoint(EditableFormDropDown()); }
 
   void FocusOnNonEditableForm() { FocusOnPoint(NonEditableFormDropDown()); }
-
-  void FocusOnPoint(const CFX_PointF& point) {
-    EXPECT_EQ(true, FORM_OnFocus(form_handle(), page(), 0, point.x, point.y));
-  }
 
   const CFX_PointF& EditableFormBegin() const {
     static const CFX_PointF point = EditableFormAtX(kFormBeginX);
@@ -1528,6 +1533,44 @@ TEST_F(FPDFFormFillEmbedderTest, HasFormFieldAtPointForXFADoc) {
 #endif
   EXPECT_EQ(kExpectedFieldType,
             FPDFPage_HasFormFieldAtPoint(form_handle(), page, 50, 30));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbedderTest, SelectAllText) {
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Test bad arguments.
+  EXPECT_FALSE(FORM_SelectAllText(nullptr, nullptr));
+  EXPECT_FALSE(FORM_SelectAllText(form_handle(), nullptr));
+  EXPECT_FALSE(FORM_SelectAllText(nullptr, page));
+
+  // Focus on the text field and add some text.
+  EXPECT_TRUE(FORM_OnFocus(form_handle(), page, 0, 115, 115));
+  ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
+  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+
+  // Sanity check text field data.
+  uint16_t buffer[6];
+  ASSERT_EQ(12u, FORM_GetFocusedText(form_handle(), page, nullptr, 0));
+  ASSERT_EQ(12u,
+            FORM_GetFocusedText(form_handle(), page, buffer, sizeof(buffer)));
+  EXPECT_EQ("Hello", GetPlatformString(buffer));
+
+  // Check there is no selection.
+  ASSERT_EQ(2u, FORM_GetSelectedText(form_handle(), page, nullptr, 0));
+  ASSERT_EQ(2u,
+            FORM_GetSelectedText(form_handle(), page, buffer, sizeof(buffer)));
+  EXPECT_EQ("", GetPlatformString(buffer));
+
+  // Check FORM_SelectAllText() works.
+  EXPECT_TRUE(FORM_SelectAllText(form_handle(), page));
+  ASSERT_EQ(12u, FORM_GetSelectedText(form_handle(), page, nullptr, 0));
+  ASSERT_EQ(12u,
+            FORM_GetSelectedText(form_handle(), page, buffer, sizeof(buffer)));
+  EXPECT_EQ("Hello", GetPlatformString(buffer));
 
   UnloadPage(page);
 }

@@ -68,6 +68,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   WideString GetText() override;
   WideString GetSelectedText() override;
   void ReplaceSelection(const WideString& text) override;
+  bool SelectAllText() override;
   bool CanUndo() override;
   bool CanRedo() override;
   bool Undo() override;

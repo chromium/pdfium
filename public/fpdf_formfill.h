@@ -1569,6 +1569,21 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
                                                      FPDF_WIDESTRING wsText);
 
 /*
+ * Experimental API
+ * Function: FORM_SelectAllText
+ *       Call this function to select all the text within the currently focused
+ *       form text field or form combobox text field.
+ * Parameters:
+ *       hHandle     -   Handle to the form fill module, as returned by
+ *                       FPDFDOC_InitFormFillEnvironment().
+ *       page        -   Handle to the page, as returned by FPDF_LoadPage().
+ * Return Value:
+ *       Whether the operation succeeded or not.
+ */
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FORM_SelectAllText(FPDF_FORMHANDLE hHandle, FPDF_PAGE page);
+
+/*
  * Function: FORM_CanUndo
  *       Find out if it is possible for the current focused widget in a given
  *       form to perform an undo operation.

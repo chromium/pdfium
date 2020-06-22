@@ -296,6 +296,15 @@ void CPDFXFA_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
   return pWidgetHandler->PasteText(pXFAWidget->GetXFAFFWidget(), text);
 }
 
+bool CPDFXFA_WidgetHandler::SelectAllText(CPDFSDK_Annot* pAnnot) {
+  CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
+  if (!pXFAWidget)
+    return false;
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAFFWidgetHandler(pXFAWidget);
+  return pWidgetHandler->SelectAllText(pXFAWidget->GetXFAFFWidget());
+}
+
 bool CPDFXFA_WidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
   CPDFXFA_Widget* pXFAWidget = ToXFAWidget(pAnnot);
   if (!pXFAWidget)

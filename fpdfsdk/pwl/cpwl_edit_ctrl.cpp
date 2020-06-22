@@ -51,6 +51,11 @@ void CPWL_EditCtrl::ReplaceSelection(const WideString& text) {
   m_pEdit->ReplaceSelection(text);
 }
 
+bool CPWL_EditCtrl::SelectAllText() {
+  m_pEdit->SelectAll();
+  return true;
+}
+
 bool CPWL_EditCtrl::RePosChildWnd() {
   m_pEdit->SetPlateRect(GetClientRect());
   return true;
@@ -206,7 +211,7 @@ bool CPWL_EditCtrl::OnChar(uint16_t nChar, uint32_t nFlag) {
         CutText();
         return true;
       case 'A' - 'A' + 1:
-        SelectAll();
+        SelectAllText();
         return true;
       case 'Z' - 'A' + 1:
         if (bShift)
@@ -346,10 +351,6 @@ std::pair<int32_t, int32_t> CPWL_EditCtrl::GetSelection() const {
 void CPWL_EditCtrl::ClearSelection() {
   if (!IsReadOnly())
     m_pEdit->ClearSelection();
-}
-
-void CPWL_EditCtrl::SelectAll() {
-  m_pEdit->SelectAll();
 }
 
 void CPWL_EditCtrl::SetScrollPos(const CFX_PointF& point) {

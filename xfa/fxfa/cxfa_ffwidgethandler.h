@@ -52,6 +52,7 @@ class CXFA_FFWidgetHandler {
   WideString GetText(CXFA_FFWidget* widget);
   WideString GetSelectedText(CXFA_FFWidget* widget);
   void PasteText(CXFA_FFWidget* widget, const WideString& text);
+  bool SelectAllText(CXFA_FFWidget* widget);
 
   bool CanUndo(CXFA_FFWidget* widget);
   bool CanRedo(CXFA_FFWidget* widget);

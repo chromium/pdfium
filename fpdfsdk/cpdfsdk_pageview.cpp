@@ -228,6 +228,15 @@ void CPDFSDK_PageView::ReplaceSelection(const WideString& text) {
   }
 }
 
+bool CPDFSDK_PageView::SelectAllText() {
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  if (!annot)
+    return false;
+
+  CPDFSDK_AnnotHandlerMgr* handler = m_pFormFillEnv->GetAnnotHandlerMgr();
+  return handler->Annot_SelectAllText(annot);
+}
+
 bool CPDFSDK_PageView::CanUndo() {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =

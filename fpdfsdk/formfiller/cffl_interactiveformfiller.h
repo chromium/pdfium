@@ -89,6 +89,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   WideString GetText(CPDFSDK_Annot* pAnnot);
   WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
   void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
+  bool SelectAllText(CPDFSDK_Annot* pAnnot);
 
   bool CanUndo(CPDFSDK_Annot* pAnnot);
   bool CanRedo(CPDFSDK_Annot* pAnnot);

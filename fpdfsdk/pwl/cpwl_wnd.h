@@ -175,6 +175,7 @@ class CPWL_Wnd : public Observable {
   virtual WideString GetText();
   virtual WideString GetSelectedText();
   virtual void ReplaceSelection(const WideString& text);
+  virtual bool SelectAllText();
 
   virtual bool CanUndo();
   virtual bool CanRedo();

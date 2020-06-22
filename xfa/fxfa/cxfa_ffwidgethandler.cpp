@@ -162,6 +162,14 @@ void CXFA_FFWidgetHandler::PasteText(CXFA_FFWidget* widget,
   widget->Paste(text);
 }
 
+bool CXFA_FFWidgetHandler::SelectAllText(CXFA_FFWidget* widget) {
+  if (!widget->CanSelectAll())
+    return false;
+
+  widget->SelectAll();
+  return true;
+}
+
 bool CXFA_FFWidgetHandler::CanUndo(CXFA_FFWidget* widget) {
   return widget->CanUndo();
 }

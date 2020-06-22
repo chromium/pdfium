@@ -213,6 +213,14 @@ void CFFL_FormFiller::ReplaceSelection(const WideString& text) {
   pWnd->ReplaceSelection(text);
 }
 
+bool CFFL_FormFiller::SelectAllText() {
+  if (!IsValid())
+    return false;
+
+  CPWL_Wnd* pWnd = GetPWLWindow(GetCurPageView(), false);
+  return pWnd && pWnd->SelectAllText();
+}
+
 bool CFFL_FormFiller::CanUndo() {
   if (!IsValid())
     return false;

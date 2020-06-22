@@ -32,18 +32,12 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetSelection(int32_t nStartChar, int32_t nEndChar);
   std::pair<int32_t, int32_t> GetSelection() const;
   void ClearSelection();
-  void SelectAll();
 
   CFX_PointF GetScrollPos() const;
   void SetScrollPos(const CFX_PointF& point);
 
   void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
   int32_t GetCharSet() const;
-
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool Undo() override;
-  bool Redo() override;
 
   void SetReadyToInput();
 
@@ -65,6 +59,11 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   WideString GetText() override;
   WideString GetSelectedText() override;
   void ReplaceSelection(const WideString& text) override;
+  bool SelectAllText() override;
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
 
   bool SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,

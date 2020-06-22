@@ -334,6 +334,10 @@ WideString CPWL_Wnd::GetSelectedText() {
 
 void CPWL_Wnd::ReplaceSelection(const WideString& text) {}
 
+bool CPWL_Wnd::SelectAllText() {
+  return false;
+}
+
 bool CPWL_Wnd::CanUndo() {
   return false;
 }
