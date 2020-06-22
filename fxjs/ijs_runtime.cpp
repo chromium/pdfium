@@ -34,7 +34,7 @@ void IJS_Runtime::Initialize(unsigned int slot, void* isolate, void* platform) {
 // static
 void IJS_Runtime::Destroy() {
 #ifdef PDF_ENABLE_V8
-#ifdef PDF_ENABL_XFA
+#ifdef PDF_ENABLE_XFA
   FXGC_Release();
 #endif  // PDF_ENABLE_XFA
   FXJS_Release();
