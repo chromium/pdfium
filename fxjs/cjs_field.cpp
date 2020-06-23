@@ -880,21 +880,19 @@ CJS_Result CJS_Field::get_button_scale_when(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_IconFit IconFit = pFormControl->GetIconFit();
-  int ScaleM = IconFit.GetScaleMethod();
-  switch (ScaleM) {
-    case CPDF_IconFit::Always:
+  CPDF_IconFit::ScaleMethod scale_method = IconFit.GetScaleMethod();
+  switch (scale_method) {
+    case CPDF_IconFit::ScaleMethod::kAlways:
+    case CPDF_IconFit::ScaleMethod::kBigger:
+    case CPDF_IconFit::ScaleMethod::kNever:
+    case CPDF_IconFit::ScaleMethod::kSmaller:
       return CJS_Result::Success(
-          pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Always)));
-    case CPDF_IconFit::Bigger:
-      return CJS_Result::Success(
-          pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Bigger)));
-    case CPDF_IconFit::Never:
-      return CJS_Result::Success(
-          pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Never)));
-    case CPDF_IconFit::Smaller:
-      return CJS_Result::Success(
-          pRuntime->NewNumber(static_cast<int32_t>(CPDF_IconFit::Smaller)));
+          pRuntime->NewNumber(static_cast<int>(scale_method)));
   }
+
+  // Note this is deliberately not the default case for the switch statement
+  // above, so missing cases trigger compile time errors.
+  NOTREACHED();
   return CJS_Result::Success();
 }
 

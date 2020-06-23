@@ -15,7 +15,7 @@ class CPDF_Dictionary;
 
 class CPDF_IconFit {
  public:
-  enum ScaleMethod { Always = 0, Bigger, Smaller, Never };
+  enum class ScaleMethod { kAlways = 0, kBigger, kSmaller, kNever };
 
   explicit CPDF_IconFit(const CPDF_Dictionary* pDict);
   CPDF_IconFit(const CPDF_IconFit& that);
