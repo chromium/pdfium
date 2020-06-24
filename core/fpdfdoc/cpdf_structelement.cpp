@@ -21,9 +21,9 @@ namespace {
 
 ByteString GetStructElementType(const CPDF_StructTree* pTree,
                                 const CPDF_Dictionary* pDict) {
-  ByteString type = pDict->GetStringFor("S");
+  ByteString type = pDict->GetNameFor("S");
   if (pTree->GetRoleMap()) {
-    ByteString mapped = pTree->GetRoleMap()->GetStringFor(type);
+    ByteString mapped = pTree->GetRoleMap()->GetNameFor(type);
     if (!mapped.IsEmpty())
       type = std::move(mapped);
   }
@@ -114,7 +114,7 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
   if (const CPDF_Reference* pRef = ToReference(pKidDict->GetObjectFor("Pg")))
     PageObjNum = pRef->GetRefObjNum();
 
-  ByteString type = pKidDict->GetStringFor("Type");
+  ByteString type = pKidDict->GetNameFor("Type");
   if ((type == "MCR" || type == "OBJR") &&
       m_pTree->GetPage()->GetObjNum() != PageObjNum) {
     return;

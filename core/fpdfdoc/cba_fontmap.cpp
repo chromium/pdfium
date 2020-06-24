@@ -192,7 +192,7 @@ void CBA_FontMap::Initialize() {
 
 RetainPtr<CPDF_Font> CBA_FontMap::FindFontSameCharset(ByteString* sFontAlias,
                                                       int32_t nCharset) {
-  if (m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) != "Widget")
+  if (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) != "Widget")
     return nullptr;
 
   const CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
@@ -229,7 +229,7 @@ RetainPtr<CPDF_Font> CBA_FontMap::FindResFontSameCharset(
       continue;
 
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetStringFor("Type") != "Font")
+    if (!pElement || pElement->GetNameFor("Type") != "Font")
       continue;
 
     auto* pData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
@@ -252,7 +252,7 @@ RetainPtr<CPDF_Font> CBA_FontMap::FindResFontSameCharset(
 RetainPtr<CPDF_Font> CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   CPDF_Dictionary* pAcroFormDict = nullptr;
   const bool bWidget =
-      (m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) == "Widget");
+      (m_pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Widget");
   if (bWidget) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict)

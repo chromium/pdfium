@@ -11,6 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
@@ -106,7 +107,7 @@ TEST(CPDF_PageObjectAvailTest, ExcludePages) {
   holder.AddObject(3, pdfium::MakeRetain<CPDF_Dictionary>(),
                    TestHolder::ObjectState::Available);
   holder.GetTestObject(3)->GetDict()->SetFor(
-      "Type", pdfium::MakeRetain<CPDF_String>(nullptr, "Page", false));
+      "Type", pdfium::MakeRetain<CPDF_Name>(nullptr, "Page"));
   holder.GetTestObject(3)->GetDict()->SetNewFor<CPDF_Reference>("OtherPageData",
                                                                 &holder, 4);
   // Add unavailable object related to other page.

@@ -23,8 +23,8 @@
 namespace {
 
 bool IsMetaDataStreamDictionary(const CPDF_Dictionary* dict) {
-  return dict && dict->GetStringFor("Type") == "Metadata" &&
-         dict->GetStringFor("Subtype") == "XML";
+  return dict && dict->GetNameFor("Type") == "Metadata" &&
+         dict->GetNameFor("Subtype") == "XML";
 }
 
 }  // namespace

@@ -133,7 +133,7 @@ RetainPtr<CPDF_Font> GetFont(CPDF_Dictionary* pFormDict,
     return nullptr;
 
   CPDF_Dictionary* pElement = pFonts->GetDictFor(csAlias);
-  if (!pElement || pElement->GetStringFor("Type") != "Font")
+  if (!pElement || pElement->GetNameFor("Type") != "Font")
     return nullptr;
 
   return CPDF_DocPageData::FromDocument(pDocument)->GetFont(pElement);
@@ -161,7 +161,7 @@ RetainPtr<CPDF_Font> GetNativeFont(CPDF_Dictionary* pFormDict,
       continue;
 
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetStringFor("Type") != "Font")
+    if (!pElement || pElement->GetNameFor("Type") != "Font")
       continue;
 
     auto* pData = CPDF_DocPageData::FromDocument(pDocument);
@@ -203,7 +203,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
     if (!pElement)
       continue;
-    if (pElement->GetStringFor("Type") != "Font")
+    if (pElement->GetNameFor("Type") != "Font")
       continue;
     if (pFont->GetFontDict() == pElement) {
       *csNameTag = csKey;
@@ -239,7 +239,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
       continue;
 
     CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
-    if (!pElement || pElement->GetStringFor("Type") != "Font")
+    if (!pElement || pElement->GetNameFor("Type") != "Font")
       continue;
 
     pFont = CPDF_DocPageData::FromDocument(pDocument)->GetFont(pElement);
@@ -870,7 +870,7 @@ void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
 
   for (size_t i = 0; i < pAnnots->size(); i++) {
     CPDF_Dictionary* pAnnot = pAnnots->GetDictAt(i);
-    if (pAnnot && pAnnot->GetStringFor("Subtype") == "Widget")
+    if (pAnnot && pAnnot->GetNameFor("Subtype") == "Widget")
       LoadField(pAnnot, 0);
   }
 }
@@ -894,7 +894,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   if (!pField) {
     CPDF_Dictionary* pParent = pFieldDict;
     if (!pFieldDict->KeyExist(pdfium::form_fields::kT) &&
-        pFieldDict->GetStringFor("Subtype") == "Widget") {
+        pFieldDict->GetNameFor("Subtype") == "Widget") {
       pParent = pFieldDict->GetDictFor(pdfium::form_fields::kParent);
       if (!pParent)
         pParent = pFieldDict;
@@ -937,13 +937,13 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
       if (!pKid)
         continue;
-      if (pKid->GetStringFor("Subtype") != "Widget")
+      if (pKid->GetNameFor("Subtype") != "Widget")
         continue;
 
       AddControl(pField, pKid);
     }
   } else {
-    if (pFieldDict->GetStringFor("Subtype") == "Widget")
+    if (pFieldDict->GetNameFor("Subtype") == "Widget")
       AddControl(pField, pFieldDict);
   }
 }

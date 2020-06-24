@@ -386,7 +386,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
 
   for (size_t i = 0; i < pKidList->size(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
-    if (pKid->GetStringFor("Type") == "Page") {
+    if (pKid->GetNameFor("Type") == "Page") {
       if (nPagesToGo != 0) {
         nPagesToGo--;
         continue;

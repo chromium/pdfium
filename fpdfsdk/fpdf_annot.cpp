@@ -410,7 +410,7 @@ FPDFAnnot_GetSubtype(FPDF_ANNOTATION annot) {
     return FPDF_ANNOT_UNKNOWN;
 
   return static_cast<FPDF_ANNOTATION_SUBTYPE>(CPDF_Annot::StringToAnnotSubtype(
-      pAnnotDict->GetStringFor(pdfium::annotation::kSubtype)));
+      pAnnotDict->GetNameFor(pdfium::annotation::kSubtype)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -659,7 +659,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
     // Use default color. The default colors must be consistent with the ones
     // used to generate AP. See calls to GetColorStringWithDefault() in
     // CPVT_GenerateAP::Generate*AP().
-    if (pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) == "Highlight") {
+    if (pAnnotDict->GetNameFor(pdfium::annotation::kSubtype) == "Highlight") {
       *R = 255;
       *G = 255;
       *B = 0;
@@ -968,7 +968,7 @@ FPDFAnnot_GetLinkedAnnot(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
     return nullptr;
 
   CPDF_Dictionary* pLinkedDict = pAnnot->GetAnnotDict()->GetDictFor(key);
-  if (!pLinkedDict || pLinkedDict->GetStringFor("Type") != "Annot")
+  if (!pLinkedDict || pLinkedDict->GetNameFor("Type") != "Annot")
     return nullptr;
 
   auto pLinkedAnnot =

@@ -13,5 +13,5 @@ bool CPDF_PageObjectAvail::ExcludeObject(const CPDF_Object* object) const {
     return true;
 
   return object->IsDictionary() &&
-         object->GetDict()->GetStringFor("Type") == "Page";
+         object->GetDict()->GetNameFor("Type") == "Page";
 }

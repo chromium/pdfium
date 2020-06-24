@@ -242,7 +242,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   if (!pEncryptDict)
     return SUCCESS;
 
-  if (pEncryptDict->GetStringFor("Filter") != "Standard")
+  if (pEncryptDict->GetNameFor("Filter") != "Standard")
     return HANDLER_ERROR;
 
   auto pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();
@@ -623,7 +623,7 @@ bool CPDF_Parser::RebuildCrossRef() {
           ToStream(m_pSyntax->GetIndirectObject(
               nullptr, CPDF_SyntaxParser::ParseType::kStrict));
 
-      if (pStream && pStream->GetDict()->GetStringFor("Type") == "XRef") {
+      if (pStream && pStream->GetDict()->GetNameFor("Type") == "XRef") {
         cross_ref_table = CPDF_CrossRefTable::MergeUp(
             std::move(cross_ref_table),
             std::make_unique<CPDF_CrossRefTable>(

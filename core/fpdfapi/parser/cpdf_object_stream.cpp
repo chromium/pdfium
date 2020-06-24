@@ -28,7 +28,7 @@ bool CPDF_ObjectStream::IsObjectsStreamObject(const CPDF_Object* object) {
   if (!stream_dict)
     return false;
 
-  if (stream_dict->GetStringFor("Type") != "ObjStm")
+  if (stream_dict->GetNameFor("Type") != "ObjStm")
     return false;
 
   const CPDF_Number* number_of_objects =
