@@ -391,15 +391,15 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
         break;
     }
   } else if (pValue->GetType() == CFX_CSSPrimitiveType::List) {
-    RetainPtr<CFX_CSSValueList> pList = pValue.As<CFX_CSSValueList>();
-    if (!pList->values().empty()) {
+    RetainPtr<CFX_CSSValueList> value_list = pValue.As<CFX_CSSValueList>();
+    if (!value_list->values().empty()) {
       switch (eProperty) {
         case CFX_CSSProperty::FontFamily:
-          pComputedStyle->m_InheritedData.m_pFontFamily = pList;
+          pComputedStyle->m_InheritedData.m_pFontFamily = std::move(value_list);
           break;
         case CFX_CSSProperty::TextDecoration:
           pComputedStyle->m_NonInheritedData.m_dwTextDecoration =
-              ToTextDecoration(pList);
+              ToTextDecoration(value_list);
           break;
         default:
           break;

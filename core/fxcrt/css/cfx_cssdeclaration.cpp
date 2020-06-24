@@ -401,8 +401,8 @@ void CFX_CSSDeclaration::ParseValueListProperty(
                          CFX_CSSProperty::PaddingBottom);
       return;
     default: {
-      auto pList = pdfium::MakeRetain<CFX_CSSValueList>(list);
-      AddPropertyHolder(pProperty->eName, pList, bImportant);
+      auto value_list = pdfium::MakeRetain<CFX_CSSValueList>(std::move(list));
+      AddPropertyHolder(pProperty->eName, value_list, bImportant);
       return;
     }
   }
@@ -509,7 +509,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
   RetainPtr<CFX_CSSValue> pWeight;
   RetainPtr<CFX_CSSValue> pFontSize;
   RetainPtr<CFX_CSSValue> pLineHeight;
-  std::vector<RetainPtr<CFX_CSSValue>> familyList;
+  std::vector<RetainPtr<CFX_CSSValue>> family_list;
   CFX_CSSPrimitiveType eType;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
@@ -564,7 +564,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
           }
         }
         if (pFontSize) {
-          familyList.push_back(pdfium::MakeRetain<CFX_CSSStringValue>(
+          family_list.push_back(pdfium::MakeRetain<CFX_CSSStringValue>(
               WideString(pszValue, iValueLen)));
         }
         parser.UseCommaSeparator();
@@ -629,9 +629,10 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
   AddPropertyHolder(CFX_CSSProperty::FontWeight, pWeight, bImportant);
   AddPropertyHolder(CFX_CSSProperty::FontSize, pFontSize, bImportant);
   AddPropertyHolder(CFX_CSSProperty::LineHeight, pLineHeight, bImportant);
-  if (!familyList.empty()) {
-    auto pList = pdfium::MakeRetain<CFX_CSSValueList>(familyList);
-    AddPropertyHolder(CFX_CSSProperty::FontFamily, pList, bImportant);
+  if (!family_list.empty()) {
+    auto value_list =
+        pdfium::MakeRetain<CFX_CSSValueList>(std::move(family_list));
+    AddPropertyHolder(CFX_CSSProperty::FontFamily, value_list, bImportant);
   }
 }
 
