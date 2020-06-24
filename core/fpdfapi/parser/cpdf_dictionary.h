@@ -64,7 +64,6 @@ class CPDF_Dictionary final : public CPDF_Object {
   CPDF_Stream* GetStreamFor(const ByteString& key);
   CFX_FloatRect GetRectFor(const ByteString& key) const;
   CFX_Matrix GetMatrixFor(const ByteString& key) const;
-  float GetFloatFor(const ByteString& key) const { return GetNumberFor(key); }
 
   bool KeyExist(const ByteString& key) const;
   std::vector<ByteString> GetKeys() const;
