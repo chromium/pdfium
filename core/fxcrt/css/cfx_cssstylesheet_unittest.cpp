@@ -134,9 +134,11 @@ TEST_F(CFX_CSSStyleSheetTest, ParseEmptyBody) {
 
 TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
-      L"a { border: 10px; }\nb { text-decoration: underline; }";
+      L"a { border: 10px; }\n"
+      L"bcdef { text-decoration: underline; }\n"
+      L"* { padding: 0; }\n";
   EXPECT_TRUE(sheet_->LoadBuffer(buf));
-  ASSERT_EQ(2u, sheet_->CountRules());
+  ASSERT_EQ(3u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
   ASSERT_TRUE(style);
@@ -147,24 +149,39 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   ASSERT_TRUE(decl_);
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
-  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0,
+  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0f,
               CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderRightWidth, 10.0,
+  VerifyFloat(CFX_CSSProperty::BorderRightWidth, 10.0f,
               CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 10.0, CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 10.0,
+  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 10.0f,
+              CFX_CSSNumberType::Pixels);
+  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 10.0f,
               CFX_CSSNumberType::Pixels);
 
   style = sheet_->GetRule(1);
   ASSERT_TRUE(style);
   EXPECT_EQ(1u, style->CountSelectorLists());
-  EXPECT_TRUE(HasSelector(style, L"b"));
+  EXPECT_TRUE(HasSelector(style, L"bcdef"));
+  EXPECT_FALSE(HasSelector(style, L"bcde"));
 
   decl_ = style->GetDeclaration();
   ASSERT_TRUE(decl_);
   EXPECT_EQ(1u, decl_->PropertyCountForTesting());
   VerifyList(CFX_CSSProperty::TextDecoration,
              {CFX_CSSPropertyValue::Underline});
+
+  style = sheet_->GetRule(2);
+  ASSERT_TRUE(style);
+  EXPECT_EQ(1u, style->CountSelectorLists());
+  EXPECT_TRUE(HasSelector(style, L"*"));
+
+  decl_ = style->GetDeclaration();
+  ASSERT_TRUE(decl_);
+  EXPECT_EQ(4u, decl_->PropertyCountForTesting());
+  VerifyFloat(CFX_CSSProperty::PaddingLeft, 0.0f, CFX_CSSNumberType::Number);
+  VerifyFloat(CFX_CSSProperty::PaddingRight, 0.0f, CFX_CSSNumberType::Number);
+  VerifyFloat(CFX_CSSProperty::PaddingTop, 0.0f, CFX_CSSNumberType::Number);
+  VerifyFloat(CFX_CSSProperty::PaddingBottom, 0.0f, CFX_CSSNumberType::Number);
 }
 
 TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
@@ -195,12 +212,13 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   ASSERT_TRUE(decl_);
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
-  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0,
+  VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0f,
               CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderRightWidth, 10.0,
+  VerifyFloat(CFX_CSSProperty::BorderRightWidth, 10.0f,
               CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 10.0, CFX_CSSNumberType::Pixels);
-  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 10.0,
+  VerifyFloat(CFX_CSSProperty::BorderTopWidth, 10.0f,
+              CFX_CSSNumberType::Pixels);
+  VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 10.0f,
               CFX_CSSNumberType::Pixels);
 }
 
