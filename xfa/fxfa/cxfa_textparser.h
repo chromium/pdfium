@@ -40,44 +40,44 @@ class CXFA_TextParser {
       CXFA_TextProvider* pTextProvider);
   RetainPtr<CFX_CSSComputedStyle> ComputeStyle(
       const CFX_XMLNode* pXMLNode,
-      CFX_CSSComputedStyle* pParentStyle);
+      const CFX_CSSComputedStyle* pParentStyle);
 
   bool IsParsed() const { return m_bParsed; }
 
   XFA_AttributeValue GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
-  float GetTabInterval(CFX_CSSComputedStyle* pStyle) const;
-  int32_t CountTabs(CFX_CSSComputedStyle* pStyle) const;
+  float GetTabInterval(const CFX_CSSComputedStyle* pStyle) const;
+  int32_t CountTabs(const CFX_CSSComputedStyle* pStyle) const;
 
-  bool IsSpaceRun(CFX_CSSComputedStyle* pStyle) const;
-  bool GetTabstops(CFX_CSSComputedStyle* pStyle,
+  bool IsSpaceRun(const CFX_CSSComputedStyle* pStyle) const;
+  bool GetTabstops(const CFX_CSSComputedStyle* pStyle,
                    CXFA_TextTabstopsContext* pTabstopContext);
 
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* doc,
                                   CXFA_TextProvider* pTextProvider,
-                                  CFX_CSSComputedStyle* pStyle) const;
+                                  const CFX_CSSComputedStyle* pStyle) const;
   float GetFontSize(CXFA_TextProvider* pTextProvider,
-                    CFX_CSSComputedStyle* pStyle) const;
+                    const CFX_CSSComputedStyle* pStyle) const;
 
   int32_t GetHorScale(CXFA_TextProvider* pTextProvider,
-                      CFX_CSSComputedStyle* pStyle,
+                      const CFX_CSSComputedStyle* pStyle,
                       const CFX_XMLNode* pXMLNode) const;
   int32_t GetVerScale(CXFA_TextProvider* pTextProvider,
-                      CFX_CSSComputedStyle* pStyle) const;
+                      const CFX_CSSComputedStyle* pStyle) const;
 
   void GetUnderline(CXFA_TextProvider* pTextProvider,
-                    CFX_CSSComputedStyle* pStyle,
+                    const CFX_CSSComputedStyle* pStyle,
                     int32_t& iUnderline,
                     XFA_AttributeValue& iPeriod) const;
   void GetLinethrough(CXFA_TextProvider* pTextProvider,
-                      CFX_CSSComputedStyle* pStyle,
+                      const CFX_CSSComputedStyle* pStyle,
                       int32_t& iLinethrough) const;
   FX_ARGB GetColor(CXFA_TextProvider* pTextProvider,
-                   CFX_CSSComputedStyle* pStyle) const;
+                   const CFX_CSSComputedStyle* pStyle) const;
   float GetBaseline(CXFA_TextProvider* pTextProvider,
-                    CFX_CSSComputedStyle* pStyle) const;
+                    const CFX_CSSComputedStyle* pStyle) const;
   float GetLineHeight(CXFA_TextProvider* pTextProvider,
-                      CFX_CSSComputedStyle* pStyle,
+                      const CFX_CSSComputedStyle* pStyle,
                       bool bFirst,
                       float fVerScale) const;
 
@@ -118,10 +118,10 @@ class CXFA_TextParser {
 
   void InitCSSData(CXFA_TextProvider* pTextProvider);
   void ParseRichText(const CFX_XMLNode* pXMLNode,
-                     CFX_CSSComputedStyle* pParentStyle);
+                     const CFX_CSSComputedStyle* pParentStyle);
   std::unique_ptr<CFX_CSSStyleSheet> LoadDefaultSheetStyle();
   RetainPtr<CFX_CSSComputedStyle> CreateStyle(
-      CFX_CSSComputedStyle* pParentStyle);
+      const CFX_CSSComputedStyle* pParentStyle);
 
   bool m_bParsed;
   bool m_cssInitialized;

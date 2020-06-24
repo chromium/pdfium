@@ -28,11 +28,11 @@ class CXFA_TextParseContext {
   }
   const std::vector<const CFX_CSSDeclaration*>& GetDecls() { return decls_; }
 
-  RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
+  RetainPtr<const CFX_CSSComputedStyle> m_pParentStyle;
 
  private:
   std::vector<const CFX_CSSDeclaration*> decls_;
-  CFX_CSSDisplay m_eDisplay;
+  CFX_CSSDisplay m_eDisplay = CFX_CSSDisplay::None;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTPARSECONTEXT_H_

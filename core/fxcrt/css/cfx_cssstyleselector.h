@@ -33,7 +33,7 @@ class CFX_CSSStyleSelector {
   void UpdateStyleIndex();
 
   RetainPtr<CFX_CSSComputedStyle> CreateComputedStyle(
-      CFX_CSSComputedStyle* pParentStyle);
+      const CFX_CSSComputedStyle* pParentStyle);
 
   // Note, the dest style has to be an out param because the CXFA_TextParser
   // adds non-inherited data from the parent style. Attempting to copy

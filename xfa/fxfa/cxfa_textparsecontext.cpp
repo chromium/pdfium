@@ -10,7 +10,6 @@
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/css/cfx_cssstyleselector.h"
 
-CXFA_TextParseContext::CXFA_TextParseContext()
-    : m_pParentStyle(nullptr), m_eDisplay(CFX_CSSDisplay::None) {}
+CXFA_TextParseContext::CXFA_TextParseContext() = default;
 
 CXFA_TextParseContext::~CXFA_TextParseContext() = default;
