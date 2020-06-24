@@ -27,12 +27,12 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
 
 size_t CFX_CSSComputedStyle::CountFontFamilies() const {
   return m_InheritedData.m_pFontFamily
-             ? m_InheritedData.m_pFontFamily->CountValues()
+             ? m_InheritedData.m_pFontFamily->values().size()
              : 0;
 }
 
 const WideString CFX_CSSComputedStyle::GetFontFamily(size_t index) const {
-  return m_InheritedData.m_pFontFamily->GetValue(index)
+  return m_InheritedData.m_pFontFamily->values()[index]
       .As<CFX_CSSStringValue>()
       ->Value();
 }

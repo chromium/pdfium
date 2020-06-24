@@ -392,7 +392,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
     }
   } else if (pValue->GetType() == CFX_CSSPrimitiveType::List) {
     RetainPtr<CFX_CSSValueList> pList = pValue.As<CFX_CSSValueList>();
-    if (pList->CountValues() > 0) {
+    if (!pList->values().empty()) {
       switch (eProperty) {
         case CFX_CSSProperty::FontFamily:
           pComputedStyle->m_InheritedData.m_pFontFamily = pList;
@@ -560,9 +560,9 @@ CFX_CSSVerticalAlign CFX_CSSStyleSelector::ToVerticalAlign(
 uint32_t CFX_CSSStyleSelector::ToTextDecoration(
     const RetainPtr<CFX_CSSValueList>& pValue) {
   uint32_t dwDecoration = 0;
-  size_t count = pValue->CountValues();
-  for (size_t i = 0; i < count; ++i) {
-    const RetainPtr<CFX_CSSValue> pVal = pValue->GetValue(count - i - 1);
+  for (auto it = pValue->values().rbegin(); it != pValue->values().rend();
+       ++it) {
+    const RetainPtr<CFX_CSSValue> pVal = *it;
     if (pVal->GetType() != CFX_CSSPrimitiveType::Enum)
       continue;
 

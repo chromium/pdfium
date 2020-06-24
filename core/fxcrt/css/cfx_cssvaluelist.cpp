@@ -11,14 +11,6 @@
 #include "core/fxcrt/css/cfx_css.h"
 
 CFX_CSSValueList::CFX_CSSValueList(std::vector<RetainPtr<CFX_CSSValue>>& list)
-    : CFX_CSSValue(CFX_CSSPrimitiveType::List), m_ppList(std::move(list)) {}
+    : CFX_CSSValue(CFX_CSSPrimitiveType::List), list_(std::move(list)) {}
 
 CFX_CSSValueList::~CFX_CSSValueList() = default;
-
-size_t CFX_CSSValueList::CountValues() const {
-  return m_ppList.size();
-}
-
-RetainPtr<CFX_CSSValue> CFX_CSSValueList::GetValue(size_t index) const {
-  return m_ppList[index];
-}

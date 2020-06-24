@@ -74,19 +74,20 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   }
 
   void VerifyList(CFX_CSSProperty prop,
-                  std::vector<CFX_CSSPropertyValue> values) {
+                  std::vector<CFX_CSSPropertyValue> expected_values) {
     ASSERT(decl_);
 
     bool important;
     RetainPtr<CFX_CSSValueList> list =
         decl_->GetProperty(prop, &important).As<CFX_CSSValueList>();
     ASSERT_TRUE(list);
-    EXPECT_EQ(list->CountValues(), values.size());
+    const std::vector<RetainPtr<CFX_CSSValue>>& values = list->values();
+    ASSERT_EQ(values.size(), expected_values.size());
 
-    for (size_t i = 0; i < values.size(); i++) {
-      RetainPtr<CFX_CSSValue> val = list->GetValue(i);
+    for (size_t i = 0; i < expected_values.size(); ++i) {
+      const auto& val = values[i];
       EXPECT_EQ(val->GetType(), CFX_CSSPrimitiveType::Enum);
-      EXPECT_EQ(val.As<CFX_CSSEnumValue>()->Value(), values[i]);
+      EXPECT_EQ(val.As<CFX_CSSEnumValue>()->Value(), expected_values[i]);
     }
   }
 
