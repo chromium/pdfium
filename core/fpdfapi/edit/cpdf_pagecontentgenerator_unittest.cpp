@@ -291,9 +291,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
       &generator, "Font",
       lastString.First(lastString.GetLength() - compareString3.GetLength()));
   ASSERT_TRUE(fontDict);
-  EXPECT_EQ("Font", fontDict->GetStringFor("Type"));
-  EXPECT_EQ("Type1", fontDict->GetStringFor("Subtype"));
-  EXPECT_EQ("Times-Roman", fontDict->GetStringFor("BaseFont"));
+  EXPECT_EQ("Font", fontDict->GetNameFor("Type"));
+  EXPECT_EQ("Type1", fontDict->GetNameFor("Subtype"));
+  EXPECT_EQ("Times-Roman", fontDict->GetNameFor("BaseFont"));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
@@ -353,14 +353,14 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
                             compareString2.GetLength()));
   ASSERT_TRUE(fontDict);
   EXPECT_TRUE(fontDict->GetObjNum());
-  EXPECT_EQ("Font", fontDict->GetStringFor("Type"));
-  EXPECT_EQ("TrueType", fontDict->GetStringFor("Subtype"));
-  EXPECT_EQ("Helvetica", fontDict->GetStringFor("BaseFont"));
+  EXPECT_EQ("Font", fontDict->GetNameFor("Type"));
+  EXPECT_EQ("TrueType", fontDict->GetNameFor("Subtype"));
+  EXPECT_EQ("Helvetica", fontDict->GetNameFor("BaseFont"));
   CPDF_Dictionary* fontDesc = fontDict->GetDictFor("FontDescriptor");
   ASSERT_TRUE(fontDesc);
   EXPECT_TRUE(fontDesc->GetObjNum());
-  EXPECT_EQ("FontDescriptor", fontDesc->GetStringFor("Type"));
-  EXPECT_EQ("Helvetica", fontDesc->GetStringFor("FontName"));
+  EXPECT_EQ("FontDescriptor", fontDesc->GetNameFor("Type"));
+  EXPECT_EQ("Helvetica", fontDesc->GetNameFor("FontName"));
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
