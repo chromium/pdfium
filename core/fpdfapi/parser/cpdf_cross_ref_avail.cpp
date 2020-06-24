@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
@@ -186,12 +185,12 @@ bool CPDF_CrossRefAvail::CheckCrossRefStream() {
     return false;
   }
 
-  const CPDF_Name* type_name = ToName(trailer->GetObjectFor(kTypeFieldKey));
-  if (type_name && type_name->GetString() == kXRefKeyword) {
+  if (trailer->GetNameFor(kTypeFieldKey) == kXRefKeyword) {
     const int32_t xrefpos = trailer->GetIntegerFor(kPrevCrossRefFieldKey);
     if (xrefpos &&
-        pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos))
+        pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos)) {
       AddCrossRefForCheck(static_cast<FX_FILESIZE>(xrefpos));
+    }
   }
   // Goto check next crossref
   current_state_ = State::kCrossRefCheck;

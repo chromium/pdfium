@@ -9,7 +9,6 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -164,10 +163,8 @@ std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
 }
 
 bool ValidateDictType(const CPDF_Dictionary* dict, const ByteString& type) {
-  ASSERT(dict);
   ASSERT(!type.IsEmpty());
-  const CPDF_Name* name_obj = ToName(dict->GetObjectFor("Type"));
-  return name_obj && name_obj->GetString() == type;
+  return dict->GetNameFor("Type") == type;
 }
 
 bool ValidateDictAllResourcesOfType(const CPDF_Dictionary* dict,

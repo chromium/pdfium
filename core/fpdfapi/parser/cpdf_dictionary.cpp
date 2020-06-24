@@ -121,6 +121,11 @@ WideString CPDF_Dictionary::GetUnicodeTextFor(const ByteString& key) const {
   return p ? p->GetUnicodeText() : WideString();
 }
 
+ByteString CPDF_Dictionary::GetNameFor(const ByteString& key) const {
+  const CPDF_Name* p = ToName(GetObjectFor(key));
+  return p ? p->GetString() : ByteString();
+}
+
 bool CPDF_Dictionary::GetBooleanFor(const ByteString& key,
                                     bool bDefault) const {
   const CPDF_Object* p = GetObjectFor(key);

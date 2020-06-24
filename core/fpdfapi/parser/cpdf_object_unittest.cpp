@@ -271,6 +271,23 @@ TEST_F(PDFObjectsTest, GetDict) {
     EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict()));
 }
 
+TEST_F(PDFObjectsTest, GetNameFor) {
+  m_DictObj->SetNewFor<CPDF_String>("string", "ium", false);
+  m_DictObj->SetNewFor<CPDF_Name>("name", "Pdf");
+
+  EXPECT_STREQ("", m_DictObj->GetNameFor("invalid").c_str());
+  EXPECT_STREQ("", m_DictObj->GetNameFor("bool").c_str());
+  EXPECT_STREQ("", m_DictObj->GetNameFor("num").c_str());
+  EXPECT_STREQ("", m_DictObj->GetNameFor("string").c_str());
+  EXPECT_STREQ("Pdf", m_DictObj->GetNameFor("name").c_str());
+
+  EXPECT_STREQ("", m_DictObj->GetStringFor("invalid").c_str());
+  EXPECT_STREQ("false", m_DictObj->GetStringFor("bool").c_str());
+  EXPECT_STREQ("0.23", m_DictObj->GetStringFor("num").c_str());
+  EXPECT_STREQ("ium", m_DictObj->GetStringFor("string").c_str());
+  EXPECT_STREQ("Pdf", m_DictObj->GetStringFor("name").c_str());
+}
+
 TEST_F(PDFObjectsTest, GetArray) {
   const CPDF_Array* const direct_obj_results[] = {
       nullptr, nullptr,          nullptr, nullptr, nullptr, nullptr,

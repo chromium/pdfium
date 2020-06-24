@@ -115,11 +115,7 @@ CPDF_Document::~CPDF_Document() = default;
 // static
 bool CPDF_Document::IsValidPageObject(const CPDF_Object* obj) {
   const CPDF_Dictionary* dict = ToDictionary(obj);
-  if (!dict)
-    return false;
-
-  const CPDF_Name* name = ToName(dict->GetObjectFor("Type"));
-  return name && name->GetString() == "Page";
+  return dict && dict->GetNameFor("Type") == "Page";
 }
 
 RetainPtr<CPDF_Object> CPDF_Document::ParseIndirectObject(uint32_t objnum) {
