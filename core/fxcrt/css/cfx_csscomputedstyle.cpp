@@ -25,13 +25,13 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
   return false;
 }
 
-int32_t CFX_CSSComputedStyle::CountFontFamilies() const {
+size_t CFX_CSSComputedStyle::CountFontFamilies() const {
   return m_InheritedData.m_pFontFamily
              ? m_InheritedData.m_pFontFamily->CountValues()
              : 0;
 }
 
-const WideString CFX_CSSComputedStyle::GetFontFamily(int32_t index) const {
+const WideString CFX_CSSComputedStyle::GetFontFamily(size_t index) const {
   return m_InheritedData.m_pFontFamily->GetValue(index)
       .As<CFX_CSSStringValue>()
       ->Value();

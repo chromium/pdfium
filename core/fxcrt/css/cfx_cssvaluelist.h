@@ -16,8 +16,8 @@ class CFX_CSSValueList final : public CFX_CSSValue {
   explicit CFX_CSSValueList(std::vector<RetainPtr<CFX_CSSValue>>& list);
   ~CFX_CSSValueList() override;
 
-  int32_t CountValues() const;
-  RetainPtr<CFX_CSSValue> GetValue(int32_t index) const;
+  size_t CountValues() const;
+  RetainPtr<CFX_CSSValue> GetValue(size_t index) const;
 
  private:
   std::vector<RetainPtr<CFX_CSSValue>> m_ppList;

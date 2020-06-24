@@ -58,8 +58,8 @@ class CFX_CSSComputedStyle final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  int32_t CountFontFamilies() const;
-  const WideString GetFontFamily(int32_t index) const;
+  size_t CountFontFamilies() const;
+  const WideString GetFontFamily(size_t index) const;
   uint16_t GetFontWeight() const;
   CFX_CSSFontVariant GetFontVariant() const;
   CFX_CSSFontStyle GetFontStyle() const;

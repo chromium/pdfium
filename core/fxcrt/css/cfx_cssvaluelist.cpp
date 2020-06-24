@@ -15,10 +15,10 @@ CFX_CSSValueList::CFX_CSSValueList(std::vector<RetainPtr<CFX_CSSValue>>& list)
 
 CFX_CSSValueList::~CFX_CSSValueList() = default;
 
-int32_t CFX_CSSValueList::CountValues() const {
+size_t CFX_CSSValueList::CountValues() const {
   return m_ppList.size();
 }
 
-RetainPtr<CFX_CSSValue> CFX_CSSValueList::GetValue(int32_t index) const {
+RetainPtr<CFX_CSSValue> CFX_CSSValueList::GetValue(size_t index) const {
   return m_ppList[index];
 }

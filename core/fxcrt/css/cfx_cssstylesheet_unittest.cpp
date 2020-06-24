@@ -15,7 +15,6 @@
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/stl_util.h"
 
 class CFX_CSSStyleSheetTest : public testing::Test {
  public:
@@ -82,7 +81,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     RetainPtr<CFX_CSSValueList> list =
         decl_->GetProperty(prop, &important).As<CFX_CSSValueList>();
     ASSERT_TRUE(list);
-    EXPECT_EQ(list->CountValues(), pdfium::CollectionSize<int32_t>(values));
+    EXPECT_EQ(list->CountValues(), values.size());
 
     for (size_t i = 0; i < values.size(); i++) {
       RetainPtr<CFX_CSSValue> val = list->GetValue(i);
