@@ -42,6 +42,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
                          size_t decl_count) {
     LoadAndVerifyRuleCount(buf, 1);
     CFX_CSSStyleRule* style = sheet_->GetRule(0);
+    ASSERT_TRUE(style);
     EXPECT_EQ(selectors.size(), style->CountSelectorLists());
 
     for (size_t i = 0; i < selectors.size(); i++) {
@@ -50,6 +51,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     }
 
     decl_ = style->GetDeclaration();
+    ASSERT_TRUE(decl_);
     EXPECT_EQ(decl_->PropertyCountForTesting(), decl_count);
   }
 
@@ -79,6 +81,7 @@ class CFX_CSSStyleSheetTest : public testing::Test {
     bool important;
     RetainPtr<CFX_CSSValueList> list =
         decl_->GetProperty(prop, &important).As<CFX_CSSValueList>();
+    ASSERT_TRUE(list);
     EXPECT_EQ(list->CountValues(), pdfium::CollectionSize<int32_t>(values));
 
     for (size_t i = 0; i < values.size(); i++) {
@@ -86,6 +89,15 @@ class CFX_CSSStyleSheetTest : public testing::Test {
       EXPECT_EQ(val->GetType(), CFX_CSSPrimitiveType::Enum);
       EXPECT_EQ(val.As<CFX_CSSEnumValue>()->Value(), values[i]);
     }
+  }
+
+  static bool HasSelector(CFX_CSSStyleRule* style, WideStringView selector) {
+    uint32_t hash = FX_HashCode_GetW(selector, true);
+    for (size_t i = 0; i < style->CountSelectorLists(); ++i) {
+      if (style->GetSelectorList(i)->name_hash() == hash)
+        return true;
+    }
+    return false;
   }
 
   std::unique_ptr<CFX_CSSStyleSheet> sheet_;
@@ -124,22 +136,15 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
       L"a { border: 10px; }\nb { text-decoration: underline; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf));
-  EXPECT_EQ(2u, sheet_->CountRules());
+  ASSERT_EQ(2u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
+  ASSERT_TRUE(style);
   EXPECT_EQ(1u, style->CountSelectorLists());
-
-  bool found_selector = false;
-  uint32_t hash = FX_HashCode_GetW(L"a", true);
-  for (size_t i = 0; i < style->CountSelectorLists(); i++) {
-    if (style->GetSelectorList(i)->name_hash() == hash) {
-      found_selector = true;
-      break;
-    }
-  }
-  EXPECT_TRUE(found_selector);
+  EXPECT_TRUE(HasSelector(style, L"a"));
 
   decl_ = style->GetDeclaration();
+  ASSERT_TRUE(decl_);
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0,
@@ -151,19 +156,12 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
               CFX_CSSNumberType::Pixels);
 
   style = sheet_->GetRule(1);
+  ASSERT_TRUE(style);
   EXPECT_EQ(1u, style->CountSelectorLists());
-
-  found_selector = false;
-  hash = FX_HashCode_GetW(L"b", true);
-  for (size_t i = 0; i < style->CountSelectorLists(); i++) {
-    if (style->GetSelectorList(i)->name_hash() == hash) {
-      found_selector = true;
-      break;
-    }
-  }
-  EXPECT_TRUE(found_selector);
+  EXPECT_TRUE(HasSelector(style, L"b"));
 
   decl_ = style->GetDeclaration();
+  ASSERT_TRUE(decl_);
   EXPECT_EQ(1u, decl_->PropertyCountForTesting());
   VerifyList(CFX_CSSProperty::TextDecoration,
              {CFX_CSSPropertyValue::Underline});
@@ -175,6 +173,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   EXPECT_EQ(1u, sheet_->CountRules());
 
   CFX_CSSStyleRule* style = sheet_->GetRule(0);
+  ASSERT_TRUE(style);
   EXPECT_EQ(1u, style->CountSelectorLists());
 
   const auto* sel = style->GetSelectorList(0);
@@ -193,6 +192,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
   EXPECT_FALSE(sel);
 
   decl_ = style->GetDeclaration();
+  ASSERT_TRUE(decl_);
   EXPECT_EQ(4u, decl_->PropertyCountForTesting());
 
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 10.0,
