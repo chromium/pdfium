@@ -19,6 +19,7 @@
 #include "core/fxcrt/css/cfx_cssstylesheet.h"
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
+#include "third_party/base/containers/adapters.h"
 #include "third_party/base/logging.h"
 
 CFX_CSSStyleSelector::CFX_CSSStyleSelector() = default;
@@ -560,13 +561,12 @@ CFX_CSSVerticalAlign CFX_CSSStyleSelector::ToVerticalAlign(
 uint32_t CFX_CSSStyleSelector::ToTextDecoration(
     const RetainPtr<CFX_CSSValueList>& pValue) {
   uint32_t dwDecoration = 0;
-  for (auto it = pValue->values().rbegin(); it != pValue->values().rend();
-       ++it) {
-    const RetainPtr<CFX_CSSValue> pVal = *it;
-    if (pVal->GetType() != CFX_CSSPrimitiveType::Enum)
+  for (const RetainPtr<CFX_CSSValue>& val :
+       pdfium::base::Reversed(pValue->values())) {
+    if (val->GetType() != CFX_CSSPrimitiveType::Enum)
       continue;
 
-    switch (pVal.As<CFX_CSSEnumValue>()->Value()) {
+    switch (val.As<CFX_CSSEnumValue>()->Value()) {
       case CFX_CSSPropertyValue::Underline:
         dwDecoration |= CFX_CSSTEXTDECORATION_Underline;
         break;

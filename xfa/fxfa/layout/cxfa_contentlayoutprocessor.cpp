@@ -13,6 +13,7 @@
 
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/compiler_specific.h"
+#include "third_party/base/containers/adapters.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -1376,10 +1377,10 @@ float CXFA_ContentLayoutProcessor::InsertKeepLayoutItems() {
   }
 
   float fTotalHeight = 0;
-  for (auto iter = m_ArrayKeepItems.rbegin(); iter != m_ArrayKeepItems.rend();
-       iter++) {
-    AddLeaderAfterSplit(*iter);
-    fTotalHeight += (*iter)->m_sSize.height;
+  for (const RetainPtr<CXFA_ContentLayoutItem>& item :
+       pdfium::base::Reversed(m_ArrayKeepItems)) {
+    AddLeaderAfterSplit(item);
+    fTotalHeight += item->m_sSize.height;
   }
   m_ArrayKeepItems.clear();
 

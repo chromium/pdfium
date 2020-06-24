@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "third_party/base/containers/adapters.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
     const CPDF_PageObjectHolder* obj_holder)
@@ -123,9 +124,7 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
 
     // In reverse order so as to not change the indexes in the middle of the
     // loop, remove the streams.
-    for (auto it = streams_to_remove_.rbegin(); it != streams_to_remove_.rend();
-         ++it) {
-      size_t stream_index = *it;
+    for (size_t stream_index : pdfium::base::Reversed(streams_to_remove_)) {
       contents_array_->RemoveAt(stream_index);
       streams_left.erase(streams_left.begin() + stream_index);
     }

@@ -8,6 +8,7 @@
 
 #include "core/fxcrt/css/cfx_cssstringvalue.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
+#include "third_party/base/containers/adapters.h"
 
 CFX_CSSComputedStyle::CFX_CSSComputedStyle() = default;
 
@@ -15,10 +16,9 @@ CFX_CSSComputedStyle::~CFX_CSSComputedStyle() = default;
 
 bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
                                           WideString* pValue) const {
-  for (auto iter = m_CustomProperties.rbegin();
-       iter != m_CustomProperties.rend(); ++iter) {
-    if (wsName == iter->name()) {
-      *pValue = iter->value();
+  for (const auto& prop : pdfium::base::Reversed(m_CustomProperties)) {
+    if (wsName == prop.name()) {
+      *pValue = prop.value();
       return true;
     }
   }

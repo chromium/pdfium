@@ -11,6 +11,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/base/containers/adapters.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -510,8 +511,8 @@ void CFX_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   int32_t iNetWidth = m_pCurLine->m_iWidth;
   int32_t iGapChars = 0;
   bool bFind = false;
-  for (auto it = tpos.rbegin(); it != tpos.rend(); it++) {
-    CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[it->index];
+  for (const FX_TPO& pos : pdfium::base::Reversed(tpos)) {
+    const CFX_BreakPiece& ttp = m_pCurLine->m_LinePieces[pos.index];
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
 
