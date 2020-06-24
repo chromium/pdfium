@@ -166,29 +166,8 @@ void CFX_CSSComputedStyle::AddCustomStyle(const CFX_CSSCustomProperty& prop) {
   m_CustomProperties.push_back(prop);
 }
 
-CFX_CSSComputedStyle::InheritedData::InheritedData()
-    : m_LetterSpacing(CFX_CSSLengthUnit::Normal, 0),
-      m_WordSpacing(CFX_CSSLengthUnit::Normal, 0),
-      m_TextIndent(CFX_CSSLengthUnit::Point, 0),
-      m_pFontFamily(nullptr),
-      m_fFontSize(12.0f),
-      m_fLineHeight(14.0f),
-      m_dwFontColor(0xFF000000),
-      m_wFontWeight(400),
-      m_eFontVariant(CFX_CSSFontVariant::Normal),
-      m_eFontStyle(CFX_CSSFontStyle::Normal),
-      m_eTextAlign(CFX_CSSTextAlign::Left) {}
+CFX_CSSComputedStyle::InheritedData::InheritedData() = default;
 
 CFX_CSSComputedStyle::InheritedData::~InheritedData() = default;
 
-CFX_CSSComputedStyle::NonInheritedData::NonInheritedData()
-    : m_MarginWidth(CFX_CSSLengthUnit::Point, 0),
-      m_BorderWidth(CFX_CSSLengthUnit::Point, 0),
-      m_PaddingWidth(CFX_CSSLengthUnit::Point, 0),
-      m_fVerticalAlign(0.0f),
-      m_eDisplay(CFX_CSSDisplay::Inline),
-      m_eVerticalAlignType(CFX_CSSVerticalAlign::Baseline),
-      m_dwTextDecoration(0),
-      m_bHasMargin(false),
-      m_bHasBorder(false),
-      m_bHasPadding(false) {}
+CFX_CSSComputedStyle::NonInheritedData::NonInheritedData() = default;

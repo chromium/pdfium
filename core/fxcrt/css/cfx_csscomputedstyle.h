@@ -23,37 +23,37 @@ class CFX_CSSComputedStyle final : public Retainable {
     InheritedData();
     ~InheritedData();
 
-    CFX_CSSLength m_LetterSpacing;
-    CFX_CSSLength m_WordSpacing;
-    CFX_CSSLength m_TextIndent;
+    CFX_CSSLength m_LetterSpacing{CFX_CSSLengthUnit::Normal, 0};
+    CFX_CSSLength m_WordSpacing{CFX_CSSLengthUnit::Normal, 0};
+    CFX_CSSLength m_TextIndent{CFX_CSSLengthUnit::Point, 0};
     RetainPtr<CFX_CSSValueList> m_pFontFamily;
-    float m_fFontSize;
-    float m_fLineHeight;
-    FX_ARGB m_dwFontColor;
-    uint16_t m_wFontWeight;
-    CFX_CSSFontVariant m_eFontVariant;
-    CFX_CSSFontStyle m_eFontStyle;
-    CFX_CSSTextAlign m_eTextAlign;
+    float m_fFontSize = 12.0f;
+    float m_fLineHeight = 14.0f;
+    FX_ARGB m_dwFontColor = 0xFF000000;
+    uint16_t m_wFontWeight = 400;
+    CFX_CSSFontVariant m_eFontVariant = CFX_CSSFontVariant::Normal;
+    CFX_CSSFontStyle m_eFontStyle = CFX_CSSFontStyle::Normal;
+    CFX_CSSTextAlign m_eTextAlign = CFX_CSSTextAlign::Left;
   };
 
   class NonInheritedData {
    public:
     NonInheritedData();
 
-    CFX_CSSRect m_MarginWidth;
-    CFX_CSSRect m_BorderWidth;
-    CFX_CSSRect m_PaddingWidth;
+    CFX_CSSRect m_MarginWidth{CFX_CSSLengthUnit::Point, 0};
+    CFX_CSSRect m_BorderWidth{CFX_CSSLengthUnit::Point, 0};
+    CFX_CSSRect m_PaddingWidth{CFX_CSSLengthUnit::Point, 0};
     CFX_CSSLength m_Top;
     CFX_CSSLength m_Bottom;
     CFX_CSSLength m_Left;
     CFX_CSSLength m_Right;
-    float m_fVerticalAlign;
-    CFX_CSSDisplay m_eDisplay;
-    CFX_CSSVerticalAlign m_eVerticalAlignType;
-    uint8_t m_dwTextDecoration;
-    bool m_bHasMargin;
-    bool m_bHasBorder;
-    bool m_bHasPadding;
+    float m_fVerticalAlign = 0.0f;
+    CFX_CSSDisplay m_eDisplay = CFX_CSSDisplay::Inline;
+    CFX_CSSVerticalAlign m_eVerticalAlignType = CFX_CSSVerticalAlign::Baseline;
+    uint8_t m_dwTextDecoration = 0;
+    bool m_bHasMargin = false;
+    bool m_bHasBorder = false;
+    bool m_bHasPadding = false;
   };
 
   CONSTRUCT_VIA_MAKE_RETAIN;
