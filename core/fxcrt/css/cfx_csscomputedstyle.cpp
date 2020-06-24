@@ -25,14 +25,14 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
   return false;
 }
 
-size_t CFX_CSSComputedStyle::CountFontFamilies() const {
-  return m_InheritedData.m_pFontFamily
-             ? m_InheritedData.m_pFontFamily->values().size()
-             : 0;
-}
+Optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
+  if (!m_InheritedData.m_pFontFamily ||
+      m_InheritedData.m_pFontFamily->values().empty()) {
+    return pdfium::nullopt;
+  }
 
-const WideString CFX_CSSComputedStyle::GetFontFamily(size_t index) const {
-  return m_InheritedData.m_pFontFamily->values()[index]
+  return m_InheritedData.m_pFontFamily->values()
+      .back()
       .As<CFX_CSSStringValue>()
       ->Value();
 }

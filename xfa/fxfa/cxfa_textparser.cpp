@@ -350,9 +350,9 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   }
 
   if (pStyle) {
-    size_t count = pStyle->CountFontFamilies();
-    if (count > 0)
-      wsFamily = pStyle->GetFontFamily(count - 1).AsStringView();
+    Optional<WideString> last_family = pStyle->GetLastFontFamily();
+    if (last_family.has_value())
+      wsFamily = last_family.value();
 
     dwStyle = 0;
     if (pStyle->GetFontWeight() > FXFONT_FW_NORMAL)

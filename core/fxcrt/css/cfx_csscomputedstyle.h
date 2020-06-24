@@ -13,6 +13,7 @@
 #include "core/fxcrt/css/cfx_csscustomproperty.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/optional.h"
 
 class CFX_CSSValueList;
 
@@ -58,8 +59,7 @@ class CFX_CSSComputedStyle final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  size_t CountFontFamilies() const;
-  const WideString GetFontFamily(size_t index) const;
+  Optional<WideString> GetLastFontFamily() const;
   uint16_t GetFontWeight() const;
   CFX_CSSFontVariant GetFontVariant() const;
   CFX_CSSFontStyle GetFontStyle() const;
