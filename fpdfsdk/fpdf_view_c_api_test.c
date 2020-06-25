@@ -24,6 +24,7 @@
 #include "public/fpdf_progressive.h"
 #include "public/fpdf_save.h"
 #include "public/fpdf_searchex.h"
+#include "public/fpdf_signature.h"
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_sysfontinfo.h"
 #include "public/fpdf_text.h"
@@ -313,6 +314,9 @@ int CheckPDFiumCApi() {
     // fpdf_searchex.h
     CHK(FPDFText_GetCharIndexFromTextIndex);
     CHK(FPDFText_GetTextIndexFromCharIndex);
+
+    // fpdf_signature.h
+    CHK(FPDF_GetSignatureCount);
 
     // fpdf_structtree.h
     CHK(FPDF_StructElement_CountChildren);

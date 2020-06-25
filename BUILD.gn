@@ -122,6 +122,7 @@ source_set("pdfium_public_headers_impl") {
     "public/fpdf_progressive.h",
     "public/fpdf_save.h",
     "public/fpdf_searchex.h",
+    "public/fpdf_signature.h",
     "public/fpdf_structtree.h",
     "public/fpdf_sysfontinfo.h",
     "public/fpdf_text.h",
