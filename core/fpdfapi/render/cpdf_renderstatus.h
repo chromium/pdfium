@@ -122,11 +122,11 @@ class CPDF_RenderStatus {
                          BlendMode blend_mode,
                          const CPDF_Transparency& transparency);
 
- private:
   static std::unique_ptr<CPDF_GraphicStates> CloneObjStates(
       const CPDF_GraphicStates* pSrcStates,
       bool bStroke);
 
+ private:
   FX_ARGB GetFillArgbInternal(CPDF_PageObject* pObj, bool bType3) const;
   bool ProcessTransparency(CPDF_PageObject* PageObj,
                            const CFX_Matrix& mtObj2Device);
