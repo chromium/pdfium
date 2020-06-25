@@ -206,7 +206,7 @@ TEST_F(FPDFDocEmbedderTest, BUG_821454) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  // Cover some NULL arg cases while we're at it.
+  // Cover some invalid argument cases while we're at it.
   EXPECT_FALSE(FPDFLink_GetLinkAtPoint(nullptr, 150, 360));
   EXPECT_EQ(-1, FPDFLink_GetLinkZOrderAtPoint(nullptr, 150, 360));
 
@@ -222,6 +222,11 @@ TEST_F(FPDFDocEmbedderTest, BUG_821454) {
   ASSERT_TRUE(dest1);
   FPDF_DEST dest2 = FPDFLink_GetDest(document(), link2);
   ASSERT_TRUE(dest2);
+
+  // Cover more invalid argument cases while we're at it.
+  EXPECT_FALSE(FPDFLink_GetDest(nullptr, nullptr));
+  EXPECT_FALSE(FPDFLink_GetDest(nullptr, link1));
+  EXPECT_FALSE(FPDFLink_GetDest(document(), nullptr));
 
   EXPECT_EQ(0, FPDFDest_GetDestPageIndex(document(), dest1));
   EXPECT_EQ(0, FPDFDest_GetDestPageIndex(document(), dest2));
@@ -348,6 +353,11 @@ TEST_F(FPDFDocEmbedderTest, LinkToAnnotConversion) {
     FPDF_LINK second_link = FPDFLink_GetLinkAtPoint(page, 80.00, 633.00);
     ScopedFPDFAnnotation second_annot(FPDFLink_GetAnnot(page, second_link));
     EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, second_annot.get()));
+
+    // Also test invalid arguments.
+    EXPECT_FALSE(FPDFLink_GetAnnot(nullptr, nullptr));
+    EXPECT_FALSE(FPDFLink_GetAnnot(page, nullptr));
+    EXPECT_FALSE(FPDFLink_GetAnnot(nullptr, second_link));
   }
 
   UnloadPage(page);
