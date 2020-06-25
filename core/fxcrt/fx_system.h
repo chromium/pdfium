@@ -21,13 +21,11 @@
 
 // _FX_PLATFORM_ values;
 #define _FX_PLATFORM_LINUX_ 2
-#define _FX_PLATFORM_APPLE_ 3
 
 #if defined(_WIN32) || defined(_WIN64)
 #elif defined(__linux__)
 #define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
 #elif defined(__APPLE__)
-#define _FX_PLATFORM_ _FX_PLATFORM_APPLE_
 #elif defined(__asmjs__) || defined(__wasm__)
 #define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
 #endif
@@ -45,10 +43,10 @@
 #include <sal.h>
 #endif  // defined(OS_WIN)
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#if defined(OS_MACOSX)
 #include <Carbon/Carbon.h>
 #include <libkern/OSAtomic.h>
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+#endif  // defined(OS_MACOSX)
 
 #ifdef __cplusplus
 extern "C" {
