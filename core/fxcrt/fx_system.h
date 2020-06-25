@@ -188,33 +188,4 @@ int FXSYS_round(double d);
 }  // extern C
 #endif  // __cplusplus
 
-// To print a size_t value in a portable way:
-//   size_t size;
-//   printf("xyz: %" PRIuS, size);
-// The "u" in the macro corresponds to %u, and S is for "size".
-#if !defined(OS_WIN)
-
-#if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && !defined(PRId64)
-#error "inttypes.h has already been included before this header file, but "
-#error "without __STDC_FORMAT_MACROS defined."
-#endif
-
-#if !defined(__STDC_FORMAT_MACROS)
-#define __STDC_FORMAT_MACROS
-#endif
-
-#include <inttypes.h>
-
-#if !defined(PRIuS)
-#define PRIuS "zu"
-#endif
-
-#else  // !defined(OS_WIN)
-
-#if !defined(PRIuS)
-#define PRIuS "Iu"
-#endif
-
-#endif  // !defined(OS_WIN)
-
 #endif  // CORE_FXCRT_FX_SYSTEM_H_
