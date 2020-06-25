@@ -50,13 +50,13 @@ TEST_F(FXV8UnitTest, EmptyLocal) {
   // Can't set properties on empty objects, but does not fault.
   v8::Local<v8::Value> marker = cfx_v8()->NewNumber(2);
   v8::Local<v8::Object> empty_object;
-  EXPECT_FALSE(cfx_v8()->PutObjectProperty(empty_object, "clams", marker));
+  cfx_v8()->PutObjectProperty(empty_object, "clams", marker);
   EXPECT_TRUE(cfx_v8()->GetObjectProperty(empty_object, "clams").IsEmpty());
   EXPECT_EQ(0u, cfx_v8()->GetObjectPropertyNames(empty_object).size());
 
   // Can't set elements in empty arrays, but does not fault.
   v8::Local<v8::Array> empty_array;
-  EXPECT_FALSE(cfx_v8()->PutArrayElement(empty_array, 0, marker));
+  cfx_v8()->PutArrayElement(empty_array, 0, marker);
   EXPECT_TRUE(cfx_v8()->GetArrayElement(empty_array, 0).IsEmpty());
   EXPECT_EQ(0u, cfx_v8()->GetArrayLength(empty_array));
 }
@@ -180,7 +180,7 @@ TEST_F(FXV8UnitTest, NewArray) {
   EXPECT_TRUE(cfx_v8()->GetArrayElement(array, 2)->IsUndefined());
   EXPECT_EQ(0u, cfx_v8()->GetArrayLength(array));
 
-  EXPECT_TRUE(cfx_v8()->PutArrayElement(array, 3, cfx_v8()->NewNumber(12)));
+  cfx_v8()->PutArrayElement(array, 3, cfx_v8()->NewNumber(12));
   EXPECT_FALSE(cfx_v8()->GetArrayElement(array, 2).IsEmpty());
   EXPECT_TRUE(cfx_v8()->GetArrayElement(array, 2)->IsUndefined());
   EXPECT_FALSE(cfx_v8()->GetArrayElement(array, 3).IsEmpty());
@@ -208,8 +208,7 @@ TEST_F(FXV8UnitTest, NewObject) {
   EXPECT_TRUE(cfx_v8()->GetObjectProperty(object, "clams")->IsUndefined());
   EXPECT_EQ(0u, cfx_v8()->GetObjectPropertyNames(object).size());
 
-  EXPECT_TRUE(
-      cfx_v8()->PutObjectProperty(object, "clams", cfx_v8()->NewNumber(12)));
+  cfx_v8()->PutObjectProperty(object, "clams", cfx_v8()->NewNumber(12));
   EXPECT_FALSE(cfx_v8()->GetObjectProperty(object, "clams").IsEmpty());
   EXPECT_TRUE(cfx_v8()->GetObjectProperty(object, "clams")->IsNumber());
   EXPECT_EQ(1u, cfx_v8()->GetObjectPropertyNames(object).size());
@@ -264,6 +263,6 @@ TEST_F(FXV8UnitTest, ThrowFromSetter) {
                                 })
                   .FromJust());
   setter_sentinel = false;
-  EXPECT_FALSE(cfx_v8()->PutObjectProperty(object, "clams", name));
+  cfx_v8()->PutObjectProperty(object, "clams", name);
   EXPECT_TRUE(setter_sentinel);
 }

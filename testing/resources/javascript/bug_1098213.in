@@ -1,0 +1,65 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 8 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 2
+  /Kids [
+    3 0 R
+    4 0 R
+  ]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /CropBox [179 173 200 75]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /CropBox [127 214 186 29]
+  /Annots [
+    5 0 R
+    6 0 R
+    7 0 R
+  ]
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+>
+endobj
+{{object 6 0}} <<
+  /Type /Annot
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Annot
+>>
+endobj
+{{object 8 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS (
+    Object.defineProperty(Array.prototype, 1, {
+      set: (v) => {
+        Object.defineProperty(Array.prototype, 1, {
+          get: () => {}
+        });
+      }
+    });
+    try { this.getAnnots(); } catch (e) { app.alert('Caught: ' + e); }
+    app.alert('Done');
+  )
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

@@ -26,11 +26,12 @@ std::vector<WideString> CFX_V8::GetObjectPropertyNames(
   return fxv8::ReentrantGetObjectPropertyNamesHelper(m_pIsolate.Get(), pObj);
 }
 
-bool CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
+void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
                                ByteStringView bsUTF8PropertyName,
                                v8::Local<v8::Value> pPut) {
-  return fxv8::ReentrantPutObjectPropertyHelper(m_pIsolate.Get(), pObj,
-                                                bsUTF8PropertyName, pPut);
+  v8::TryCatch squash_exceptions(GetIsolate());
+  fxv8::ReentrantPutObjectPropertyHelper(GetIsolate(), pObj, bsUTF8PropertyName,
+                                         pPut);
 }
 
 void CFX_V8::DisposeIsolate() {
@@ -46,11 +47,11 @@ v8::Local<v8::Object> CFX_V8::NewObject() {
   return fxv8::NewObjectHelper(GetIsolate());
 }
 
-bool CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
+void CFX_V8::PutArrayElement(v8::Local<v8::Array> pArray,
                              unsigned index,
                              v8::Local<v8::Value> pValue) {
-  return fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index,
-                                              pValue);
+  v8::TryCatch squash_exceptions(GetIsolate());
+  fxv8::ReentrantPutArrayElementHelper(GetIsolate(), pArray, index, pValue);
 }
 
 v8::Local<v8::Value> CFX_V8::GetArrayElement(v8::Local<v8::Array> pArray,
