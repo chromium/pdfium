@@ -8,6 +8,7 @@
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/render_defines.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
@@ -128,28 +129,23 @@ void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
                                    const CFX_Matrix& matrix) {
   CXFA_GEPath path;
   float fBottom = rtSign.bottom();
-  float fRadius =
-      (rtSign.top - fBottom) / (1 + static_cast<float>(cos(FX_PI / 5.0f)));
+  float fRadius = (rtSign.top - fBottom) / (1 + cosf(FX_PI / 5.0f));
   CFX_PointF ptCenter((rtSign.left + rtSign.right()) / 2.0f,
                       (rtSign.top + fBottom) / 2.0f);
 
   CFX_PointF points[5];
-  float fAngel = FX_PI / 10.0f;
-  for (int32_t i = 0; i < 5; i++) {
-    points[i] =
-        ptCenter + CFX_PointF(fRadius * static_cast<float>(cos(fAngel)),
-                              fRadius * static_cast<float>(sin(fAngel)));
-    fAngel += FX_PI * 2 / 5.0f;
+  float fAngle = FX_PI / 10.0f;
+  for (auto& point : points) {
+    point =
+        ptCenter + CFX_PointF(fRadius * cosf(fAngle), fRadius * sinf(fAngle));
+    fAngle += FX_PI * 2 / 5.0f;
   }
 
   path.MoveTo(points[0]);
-  int32_t nNext = 0;
-  for (int32_t j = 0; j < 5; j++) {
-    nNext += 2;
-    if (nNext >= 5)
-      nNext -= 5;
-
-    path.LineTo(points[nNext]);
+  int next = 0;
+  for (size_t i = 0; i < pdfium::size(points); ++i) {
+    next = (next + 2) % pdfium::size(points);
+    path.LineTo(points[next]);
   }
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));

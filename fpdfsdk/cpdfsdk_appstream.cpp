@@ -274,27 +274,25 @@ ByteString GetAP_Square(const CFX_FloatRect& crBBox) {
 ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   std::ostringstream csAP;
 
-  float fRadius = (crBBox.top - crBBox.bottom) / (1 + (float)cos(FX_PI / 5.0f));
+  float fRadius = (crBBox.top - crBBox.bottom) / (1 + cosf(FX_PI / 5.0f));
   CFX_PointF ptCenter = CFX_PointF((crBBox.left + crBBox.right) / 2.0f,
                                    (crBBox.top + crBBox.bottom) / 2.0f);
 
-  float px[5];
-  float py[5];
-  float fAngel = FX_PI / 10.0f;
-  for (int32_t i = 0; i < 5; i++) {
-    px[i] = ptCenter.x + fRadius * (float)cos(fAngel);
-    py[i] = ptCenter.y + fRadius * (float)sin(fAngel);
-    fAngel += FX_PI * 2 / 5.0f;
+  CFX_PointF points[5];
+  float fAngle = FX_PI / 10.0f;
+  for (auto& point : points) {
+    point =
+        ptCenter + CFX_PointF(fRadius * cosf(fAngle), fRadius * sinf(fAngle));
+    fAngle += FX_PI * 2 / 5.0f;
   }
 
-  csAP << px[0] << " " << py[0] << " " << kMoveToOperator << "\n";
+  csAP << points[0].x << " " << points[0].y << " " << kMoveToOperator << "\n";
 
-  int32_t nNext = 0;
-  for (int32_t j = 0; j < 5; j++) {
-    nNext += 2;
-    if (nNext >= 5)
-      nNext -= 5;
-    csAP << px[nNext] << " " << py[nNext] << " " << kLineToOperator << "\n";
+  int next = 0;
+  for (size_t i = 0; i < pdfium::size(points); ++i) {
+    next = (next + 2) % pdfium::size(points);
+    csAP << points[next].x << " " << points[next].y << " " << kLineToOperator
+         << "\n";
   }
 
   return ByteString(csAP);
