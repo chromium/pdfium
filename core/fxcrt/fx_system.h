@@ -17,15 +17,13 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "build/build_config.h"
+
 // _FX_PLATFORM_ values;
-#define _FX_PLATFORM_WINDOWS_ 1
 #define _FX_PLATFORM_LINUX_ 2
 #define _FX_PLATFORM_APPLE_ 3
 
-#if defined(_WIN32)
-#define _FX_PLATFORM_ _FX_PLATFORM_WINDOWS_
-#elif defined(_WIN64)
-#define _FX_PLATFORM_ _FX_PLATFORM_WINDOWS_
+#if defined(_WIN32) || defined(_WIN64)
 #elif defined(__linux__)
 #define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
 #elif defined(__APPLE__)
@@ -42,10 +40,10 @@
 #error Cannot compile v8 with wasm.
 #endif  // PDF_ENABLE_V8
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #include <windows.h>
 #include <sal.h>
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 #include <Carbon/Carbon.h>
@@ -63,11 +61,11 @@ extern "C" {
 
 // PDFium file sizes match the platform. The value must be signed to support -1
 // error returns.
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #define FX_FILESIZE int64_t
-#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else
 #define FX_FILESIZE off_t
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 #ifndef ASSERT
 #ifndef NDEBUG
@@ -121,7 +119,7 @@ inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
 extern "C" {
 #endif  // __cplusplus
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if defined(OS_WIN)
 #define FXSYS_GetACP GetACP
 #define FXSYS_itoa _itoa
 #define FXSYS_WideCharToMultiByte WideCharToMultiByte
@@ -139,7 +137,7 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
                       const struct tm* timeptr);
 #define FXSYS_SetLastError SetLastError
 #define FXSYS_GetLastError GetLastError
-#else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#else  // defined(OS_WIN)
 int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
 int FXSYS_WideCharToMultiByte(uint32_t codepage,
@@ -166,7 +164,7 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_wcsftime wcsftime
 void FXSYS_SetLastError(uint32_t err);
 uint32_t FXSYS_GetLastError();
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#endif  // defined(OS_WIN)
 
 #define FXWORD_GET_LSBFIRST(p)                                \
   (static_cast<uint16_t>((static_cast<uint16_t>(p[1]) << 8) | \
@@ -196,7 +194,7 @@ int FXSYS_round(double d);
 //   size_t size;
 //   printf("xyz: %" PRIuS, size);
 // The "u" in the macro corresponds to %u, and S is for "size".
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#if !defined(OS_WIN)
 
 #if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && !defined(PRId64)
 #error "inttypes.h has already been included before this header file, but "
@@ -213,12 +211,12 @@ int FXSYS_round(double d);
 #define PRIuS "zu"
 #endif
 
-#else  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#else  // !defined(OS_WIN)
 
 #if !defined(PRIuS)
 #define PRIuS "Iu"
 #endif
 
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#endif  // !defined(OS_WIN)
 
 #endif  // CORE_FXCRT_FX_SYSTEM_H_
