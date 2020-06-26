@@ -13,6 +13,7 @@
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 #define FPF_EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 

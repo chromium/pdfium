@@ -19,6 +19,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 

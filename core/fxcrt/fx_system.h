@@ -87,8 +87,6 @@ extern "C" {
 #ifdef __cplusplus
 }  // extern "C"
 
-#include "third_party/base/numerics/safe_conversions.h"
-
 // Overloaded functions for C++ templates
 inline size_t FXSYS_len(const char* ptr) {
   return strlen(ptr);
