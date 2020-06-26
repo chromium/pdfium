@@ -43,11 +43,6 @@
 #include <sal.h>
 #endif  // defined(OS_WIN)
 
-#if defined(OS_MACOSX)
-#include <Carbon/Carbon.h>
-#include <libkern/OSAtomic.h>
-#endif  // defined(OS_MACOSX)
-
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
