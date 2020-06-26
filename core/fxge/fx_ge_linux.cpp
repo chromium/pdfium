@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -15,7 +16,10 @@
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/stl_util.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
+#if !defined(OS_LINUX)
+#error "Included on the wrong platform"
+#endif
+
 namespace {
 
 enum JpFontFamily : uint8_t {
@@ -180,4 +184,3 @@ std::unique_ptr<CFX_GEModule::PlatformIface>
 CFX_GEModule::PlatformIface::Create() {
   return std::make_unique<CLinuxPlatform>();
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_

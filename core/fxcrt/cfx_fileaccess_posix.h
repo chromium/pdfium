@@ -11,8 +11,7 @@
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_system.h"
 
-#if _FX_PLATFORM_ != _FX_PLATFORM_LINUX_ && !defined(OS_MACOSX) && \
-    !defined(OS_ANDROID)
+#if !defined(OS_POSIX)
 #error "Included on the wrong platform"
 #endif
 
