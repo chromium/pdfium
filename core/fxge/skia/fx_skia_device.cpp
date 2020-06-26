@@ -2355,7 +2355,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   m_pCache->FlushForDraw();
   int srcWidth = m_pBitmap->GetWidth();
   int srcHeight = m_pBitmap->GetHeight();
-  int srcRowBytes = srcWidth * sizeof(uint32_t);
+  size_t srcRowBytes = m_pBitmap->GetPitch();
   SkImageInfo srcImageInfo = SkImageInfo::Make(
       srcWidth, srcHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
   SkBitmap skSrcBitmap;
@@ -2364,7 +2364,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   ASSERT(dstBuffer);
   int dstWidth = pBitmap->GetWidth();
   int dstHeight = pBitmap->GetHeight();
-  int dstRowBytes = dstWidth * sizeof(uint32_t);
+  size_t dstRowBytes = pBitmap->GetPitch();
   SkImageInfo dstImageInfo = SkImageInfo::Make(
       dstWidth, dstHeight, Get32BitSkColorType(m_bRgbByteOrder),
       kPremul_SkAlphaType);
