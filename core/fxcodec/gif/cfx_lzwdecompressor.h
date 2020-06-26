@@ -40,26 +40,28 @@ class CFX_LZWDecompressor {
   size_t* DecompressedNextForTest() { return &decompressed_next_; }
 
  private:
+  // Use Create() instead.
   CFX_LZWDecompressor(uint8_t color_exp, uint8_t code_exp);
+
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
   bool DecodeString(uint16_t code);
   uint32_t ExtractData(uint8_t* dest_buf, uint32_t dest_size);
 
-  uint8_t code_size_;
-  uint8_t code_size_cur_;
-  uint16_t code_color_end_;
-  uint16_t code_clear_;
-  uint16_t code_end_;
-  uint16_t code_next_;
-  uint8_t code_first_;
+  const uint8_t code_size_;
+  uint8_t code_size_cur_ = 0;
+  const uint16_t code_color_end_;
+  const uint16_t code_clear_;
+  const uint16_t code_end_;
+  uint16_t code_next_ = 0;
+  uint8_t code_first_ = 0;
   std::vector<uint8_t, FxAllocAllocator<uint8_t>> decompressed_;
-  size_t decompressed_next_;
-  uint16_t code_old_;
-  const uint8_t* next_in_;
-  uint32_t avail_in_;
-  uint8_t bits_left_;
-  uint32_t code_store_;
+  size_t decompressed_next_ = 0;
+  uint16_t code_old_ = 0;
+  const uint8_t* next_in_ = nullptr;
+  uint32_t avail_in_ = 0;
+  uint8_t bits_left_ = 0;
+  uint32_t code_store_ = 0;
   CodeEntry code_table_[GIF_MAX_LZW_CODE];
 };
 
