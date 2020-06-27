@@ -95,16 +95,7 @@ void CPLST_Select::Done() {
   }
 }
 
-CPWL_ListCtrl::CPWL_ListCtrl()
-    : m_pNotify(nullptr),
-      m_bNotifyFlag(false),
-      m_nSelItem(-1),
-      m_nFootIndex(-1),
-      m_bCtrlSel(false),
-      m_nCaretIndex(-1),
-      m_fFontSize(0.0f),
-      m_pFontMap(nullptr),
-      m_bMultiple(false) {}
+CPWL_ListCtrl::CPWL_ListCtrl() = default;
 
 CPWL_ListCtrl::~CPWL_ListCtrl() {
   Clear();

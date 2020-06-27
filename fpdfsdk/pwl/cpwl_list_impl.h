@@ -153,18 +153,23 @@ class CPWL_ListCtrl {
 
   CFX_FloatRect m_rcPlate;
   CFX_FloatRect m_rcContent;
-  UnownedPtr<CPWL_List_Notify> m_pNotify;
-  bool m_bNotifyFlag;
   CFX_PointF m_ptScrollPos;
-  CPLST_Select m_aSelItems;  // for multiple
-  int32_t m_nSelItem;        // for single
-  int32_t m_nFootIndex;      // for multiple
-  bool m_bCtrlSel;           // for multiple
-  int32_t m_nCaretIndex;     // for multiple
+  float m_fFontSize = 0.0f;
+
+  // For single:
+  int32_t m_nSelItem = -1;
+
+  // For multiple:
+  CPLST_Select m_aSelItems;
+  int32_t m_nFootIndex = -1;
+  int32_t m_nCaretIndex = -1;
+  bool m_bCtrlSel = false;
+
+  bool m_bMultiple = false;
+  bool m_bNotifyFlag = false;
+  UnownedPtr<CPWL_List_Notify> m_pNotify;
   std::vector<std::unique_ptr<Item>> m_ListItems;
-  float m_fFontSize;
   UnownedPtr<IPVT_FontMap> m_pFontMap;
-  bool m_bMultiple;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_LIST_IMPL_H_
