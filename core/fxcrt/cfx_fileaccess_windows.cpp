@@ -34,7 +34,7 @@ std::unique_ptr<FileAccessIface> FileAccessIface::Create() {
   return std::make_unique<CFX_FileAccess_Windows>();
 }
 
-CFX_FileAccess_Windows::CFX_FileAccess_Windows() : m_hFile(nullptr) {}
+CFX_FileAccess_Windows::CFX_FileAccess_Windows() = default;
 
 CFX_FileAccess_Windows::~CFX_FileAccess_Windows() {
   Close();

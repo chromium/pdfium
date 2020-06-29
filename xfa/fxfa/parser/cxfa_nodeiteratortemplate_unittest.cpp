@@ -27,7 +27,7 @@ class CXFA_NodeIteratorTemplateTest : public testing::Test {
       }
     };
 
-    explicit Node(Node* parent) : parent_(parent), next_sibling_(nullptr) {
+    explicit Node(Node* parent) : parent_(parent) {
       if (parent) {
         if (!parent->children_.empty())
           parent->children_.back()->next_sibling_ = this;
@@ -36,8 +36,8 @@ class CXFA_NodeIteratorTemplateTest : public testing::Test {
     }
 
    private:
-    Node* parent_;
-    Node* next_sibling_;
+    Node* const parent_;
+    Node* next_sibling_ = nullptr;
     std::vector<Node*> children_;
   };
 
