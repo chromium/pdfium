@@ -1,0 +1,77 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources <<
+    /Shading <<
+      /S0 5 0 R
+    >>
+  >>
+  /Contents 4 0 R
+  /MediaBox [0 0 200 300]
+>>
+endobj
+{{object 4 0}} <<
+  {streamlen}}
+>>
+stream
+/S0 sh
+endstream
+endobj
+{{object 5 0}} <<
+  /ShadingType 4
+  /BitsPerComponent 8
+  /BitsPerCoordinate 16
+  /BitsPerFlag 8
+  /ColorSpace /DeviceRGB
+  /Decode [-32768 32767 -32768 32767 0 1]
+  /Filter /ASCIIHexDecode
+  /Function 6 0 R
+  {{streamlen}}
+>>
+stream
+00800a800a0000800a80c8ff00806480c800
+endstream
+endobj
+{{object 6 0}} <<
+  /FunctionType 3
+  /Bounds [0.5]
+  /Domain [0 1]
+  /Encode [0 1 0 1]
+  /Functions [7 0 R 8 0 R]
+  /Range [0 1 0 1 0 1]
+>>
+endobj
+{{object 7 0}} <<
+  /FunctionType 2
+  /C0 [1 0 0]
+  /C1 [0 1 0]
+  /Domain [0 1]
+  /N 1
+  /Range [0 1 0 1 0 1]
+>>
+endobj
+{{object 8 0}} <<
+  /FunctionType 2
+  /C0 [0 1 0]
+  /C1 [0 0 1]
+  /Domain [0 1]
+  /N 1
+  /Range [0 1 0 1 0 1]
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
