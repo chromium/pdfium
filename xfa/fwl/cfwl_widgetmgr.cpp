@@ -373,13 +373,6 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
 
 CFWL_WidgetMgr::Item::Item() : CFWL_WidgetMgr::Item(nullptr) {}
 
-CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget)
-    : pParent(nullptr),
-      pOwner(nullptr),
-      pChild(nullptr),
-      pPrevious(nullptr),
-      pNext(nullptr),
-      pWidget(widget),
-      iRedrawCounter(0) {}
+CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget) : pWidget(widget) {}
 
 CFWL_WidgetMgr::Item::~Item() = default;

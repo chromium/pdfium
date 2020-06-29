@@ -73,14 +73,14 @@ class CFWL_WidgetMgr {
     explicit Item(CFWL_Widget* widget);
     ~Item();
 
-    Item* pParent;
-    Item* pOwner;
-    Item* pChild;
-    Item* pPrevious;
-    Item* pNext;
+    Item* pParent = nullptr;
+    Item* pOwner = nullptr;
+    Item* pChild = nullptr;
+    Item* pPrevious = nullptr;
+    Item* pNext = nullptr;
     CFWL_Widget* const pWidget;
     std::unique_ptr<CXFA_Graphics> pOffscreen;
-    int32_t iRedrawCounter;
+    int32_t iRedrawCounter = 0;
   };
 
   CFWL_Widget* GetFirstSiblingWidget(CFWL_Widget* pWidget) const;
