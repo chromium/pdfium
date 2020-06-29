@@ -63,9 +63,9 @@ class CXFA_Graphics {
 
     CFX_GraphStateData graphState;
     CFX_Matrix CTM;
-    bool isActOnDash;
-    CXFA_GEColor strokeColor;
-    CXFA_GEColor fillColor;
+    bool isActOnDash = false;
+    CXFA_GEColor strokeColor{nullptr};
+    CXFA_GEColor fillColor{nullptr};
   };
 
   void RenderDeviceStrokePath(const CXFA_GEPath* path,

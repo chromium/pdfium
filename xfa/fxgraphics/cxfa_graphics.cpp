@@ -407,8 +407,7 @@ void CXFA_Graphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
   }
 }
 
-CXFA_Graphics::TInfo::TInfo()
-    : isActOnDash(false), strokeColor(nullptr), fillColor(nullptr) {}
+CXFA_Graphics::TInfo::TInfo() = default;
 
 CXFA_Graphics::TInfo::TInfo(const TInfo& info)
     : graphState(info.graphState),
