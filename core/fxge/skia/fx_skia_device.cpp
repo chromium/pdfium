@@ -1582,7 +1582,7 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
                std::min(deviceUnits[0].length(), deviceUnits[1].length()));
   if (!pGraphState->m_DashArray.empty()) {
     size_t count = (pGraphState->m_DashArray.size() + 1) / 2;
-    std::vector<SkScalar> intervals(count);
+    std::vector<SkScalar> intervals(count * 2);
     // Set dash pattern
     for (size_t i = 0; i < count; i++) {
       float on = pGraphState->m_DashArray[i * 2];
@@ -1595,8 +1595,8 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
       intervals[i * 2] = on;
       intervals[i * 2 + 1] = off;
     }
-    spaint->setPathEffect(SkDashPathEffect::Make(intervals.data(), count * 2,
-                                                 pGraphState->m_DashPhase));
+    spaint->setPathEffect(SkDashPathEffect::Make(
+        intervals.data(), intervals.size(), pGraphState->m_DashPhase));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(true);
