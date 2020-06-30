@@ -317,6 +317,7 @@ int CheckPDFiumCApi() {
 
     // fpdf_signature.h
     CHK(FPDF_GetSignatureCount);
+    CHK(FPDF_GetSignatureObject);
 
     // fpdf_structtree.h
     CHK(FPDF_StructElement_CountChildren);

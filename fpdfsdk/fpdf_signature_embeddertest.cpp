@@ -19,3 +19,20 @@ TEST_F(FPDFSignatureEmbedderTest, GetSignatureCountZero) {
   // Provide no document.
   EXPECT_EQ(-1, FPDF_GetSignatureCount(nullptr));
 }
+
+TEST_F(FPDFSignatureEmbedderTest, GetSignatureObject) {
+  EXPECT_TRUE(OpenDocument("two_signatures.pdf"));
+  // Different, non-null signature objects are returned.
+  FPDF_SIGNATURE signature1 = FPDF_GetSignatureObject(document(), 0);
+  EXPECT_NE(nullptr, signature1);
+  FPDF_SIGNATURE signature2 = FPDF_GetSignatureObject(document(), 1);
+  EXPECT_NE(nullptr, signature2);
+  EXPECT_NE(signature1, signature2);
+
+  // Out of bounds.
+  EXPECT_EQ(nullptr, FPDF_GetSignatureObject(document(), -1));
+  EXPECT_EQ(nullptr, FPDF_GetSignatureObject(document(), 2));
+
+  // Provide no document.
+  EXPECT_EQ(nullptr, FPDF_GetSignatureObject(nullptr, 0));
+}

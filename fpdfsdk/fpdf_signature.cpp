@@ -8,31 +8,52 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "third_party/base/stl_util.h"
+
+namespace {
+
+std::vector<CPDF_Dictionary*> CollectSignatures(CPDF_Document* doc) {
+  std::vector<CPDF_Dictionary*> signatures;
+  CPDF_Dictionary* root = doc->GetRoot();
+  if (!root)
+    return signatures;
+
+  const CPDF_Dictionary* acro_form = root->GetDictFor("AcroForm");
+  if (!acro_form)
+    return signatures;
+
+  const CPDF_Array* fields = acro_form->GetArrayFor("Fields");
+  if (!fields)
+    return signatures;
+
+  CPDF_ArrayLocker locker(fields);
+  for (auto& field : locker) {
+    CPDF_Dictionary* field_dict = field->GetDict();
+    if (field_dict && field_dict->GetNameFor("FT") == "Sig")
+      signatures.push_back(field_dict);
+  }
+  return signatures;
+}
+
+}  // namespace
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetSignatureCount(FPDF_DOCUMENT document) {
   auto* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc)
     return -1;
 
-  CPDF_Dictionary* root = doc->GetRoot();
-  if (!root)
-    return 0;
+  return pdfium::CollectionSize<int>(CollectSignatures(doc));
+}
 
-  const CPDF_Dictionary* acro_form = root->GetDictFor("AcroForm");
-  if (!acro_form)
-    return 0;
+FPDF_EXPORT FPDF_SIGNATURE FPDF_CALLCONV
+FPDF_GetSignatureObject(FPDF_DOCUMENT document, int index) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc)
+    return nullptr;
 
-  const CPDF_Array* fields = acro_form->GetArrayFor("Fields");
-  if (!fields)
-    return 0;
+  std::vector<CPDF_Dictionary*> signatures = CollectSignatures(doc);
+  if (!pdfium::IndexInBounds(signatures, index))
+    return nullptr;
 
-  int signature_count = 0;
-  CPDF_ArrayLocker locker(fields);
-  for (const auto& field : locker) {
-    const CPDF_Dictionary* field_dict = field->GetDict();
-    if (field_dict && field_dict->GetNameFor("FT") == "Sig")
-      ++signature_count;
-  }
-
-  return signature_count;
+  return FPDFSignatureFromCPDFDictionary(signatures[index]);
 }
