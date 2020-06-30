@@ -139,7 +139,6 @@ if (pdf_bundle_freetype) {
       "//third_party/freetype/src/include/freetype/internal/ftstream.h",
       "//third_party/freetype/src/include/freetype/internal/fttrace.h",
       "//third_party/freetype/src/include/freetype/internal/ftvalid.h",
-      "//third_party/freetype/src/include/freetype/internal/internal.h",
       "//third_party/freetype/src/include/freetype/internal/psaux.h",
       "//third_party/freetype/src/include/freetype/internal/pshints.h",
       "//third_party/freetype/src/include/freetype/internal/services/svbdf.h",
