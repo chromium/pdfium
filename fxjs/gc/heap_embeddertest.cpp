@@ -72,7 +72,8 @@ TEST_F(HeapEmbedderTest, NoReferences) {
   ASSERT_TRUE(heap1);
 
   PseudoCollectible::s_persistent_ =
-      cppgc::MakeGarbageCollected<PseudoCollectible>(heap1.get());
+      cppgc::MakeGarbageCollected<PseudoCollectible>(
+          heap1->GetAllocationHandle());
   EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
   EXPECT_EQ(1u, PseudoCollectible::LiveCount());
   EXPECT_EQ(0u, PseudoCollectible::DeadCount());
@@ -91,7 +92,8 @@ TEST_F(HeapEmbedderTest, HasReferences) {
   ASSERT_TRUE(heap1);
 
   PseudoCollectible::s_persistent_ =
-      cppgc::MakeGarbageCollected<PseudoCollectible>(heap1.get());
+      cppgc::MakeGarbageCollected<PseudoCollectible>(
+          heap1->GetAllocationHandle());
   EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
   EXPECT_EQ(1u, PseudoCollectible::LiveCount());
   EXPECT_EQ(0u, PseudoCollectible::DeadCount());

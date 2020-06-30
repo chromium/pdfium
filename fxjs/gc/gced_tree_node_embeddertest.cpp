@@ -44,7 +44,7 @@ class GCedTreeNodeEmbedderTest : public GCedEmbedderTest {
   cppgc::Heap* heap() const { return heap_.get(); }
   ObservableGCedTreeNodeForTest* CreateNode() {
     return cppgc::MakeGarbageCollected<ObservableGCedTreeNodeForTest>(
-        heap_.get());
+        heap_->GetAllocationHandle());
   }
 
   void ForceGCAndPump() {
@@ -58,7 +58,7 @@ class GCedTreeNodeEmbedderTest : public GCedEmbedderTest {
     for (int i = 0; i < 4; ++i) {
       parent->AppendFirstChild(
           cppgc::MakeGarbageCollected<ObservableGCedTreeNodeForTest>(
-              heap_.get()));
+              heap_->GetAllocationHandle()));
     }
   }
 
@@ -66,7 +66,7 @@ class GCedTreeNodeEmbedderTest : public GCedEmbedderTest {
     for (int i = 0; i < 4; ++i) {
       parent->AppendLastChild(
           cppgc::MakeGarbageCollected<ObservableGCedTreeNodeForTest>(
-              heap_.get()));
+              heap_->GetAllocationHandle()));
     }
   }
 
