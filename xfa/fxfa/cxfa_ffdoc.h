@@ -26,6 +26,10 @@ class CXFA_FFNotify;
 class CXFA_FFDocView;
 class CXFA_LayoutProcessor;
 
+namespace cppgc {
+class Heap;
+}  // namespace cppgc
+
 struct FX_IMAGEDIB_AND_DPI {
   FX_IMAGEDIB_AND_DPI();
   FX_IMAGEDIB_AND_DPI(const FX_IMAGEDIB_AND_DPI& that);
@@ -45,6 +49,7 @@ class CXFA_FFDoc {
       CXFA_FFApp* pApp,
       IXFA_DocEnvironment* pDocEnvironment,
       CPDF_Document* pPDFDoc,
+      cppgc::Heap* pGCHeap,
       const RetainPtr<IFX_SeekableStream>& stream);
 
   ~CXFA_FFDoc();
@@ -73,13 +78,15 @@ class CXFA_FFDoc {
  private:
   CXFA_FFDoc(CXFA_FFApp* pApp,
              IXFA_DocEnvironment* pDocEnvironment,
-             CPDF_Document* pPDFDoc);
+             CPDF_Document* pPDFDoc,
+             cppgc::Heap* pHeap);
   bool OpenDoc(const RetainPtr<IFX_SeekableStream>& stream);
   bool ParseDoc(const RetainPtr<IFX_SeekableStream>& stream);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
   UnownedPtr<CXFA_FFApp> const m_pApp;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
+  UnownedPtr<cppgc::Heap> const m_pHeap;
   std::unique_ptr<CFX_XMLDocument> m_pXMLDoc;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
   std::unique_ptr<CXFA_Document> m_pDocument;

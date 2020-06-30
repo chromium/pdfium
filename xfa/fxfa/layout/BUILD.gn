@@ -27,6 +27,7 @@ source_set("layout") {
     "../../../core/fxcrt",
     "../../../fxjs",
     "../parser",
+    "//v8:cppgc",
   ]
   allow_circular_includes_from = [ "../../../fxjs" ]
   configs += [

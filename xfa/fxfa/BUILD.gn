@@ -110,6 +110,7 @@ source_set("fxfa") {
     "../fxgraphics",
     "layout",
     "parser",
+    "//v8:cppgc",
   ]
   allow_circular_includes_from = [
     "../../fxjs",

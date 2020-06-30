@@ -22,6 +22,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
+#include "v8/include/cppgc/heap.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -54,14 +55,15 @@ std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
     CXFA_FFApp* pApp,
     IXFA_DocEnvironment* pDocEnvironment,
     CPDF_Document* pPDFDoc,
+    cppgc::Heap* pGCHeap,
     const RetainPtr<IFX_SeekableStream>& stream) {
   ASSERT(pApp);
   ASSERT(pDocEnvironment);
   ASSERT(pPDFDoc);
 
   // Use WrapUnique() to keep constructor private.
-  auto result =
-      pdfium::WrapUnique(new CXFA_FFDoc(pApp, pDocEnvironment, pPDFDoc));
+  auto result = pdfium::WrapUnique(
+      new CXFA_FFDoc(pApp, pDocEnvironment, pPDFDoc, pGCHeap));
   if (!result->OpenDoc(stream))
     return nullptr;
 
@@ -70,14 +72,16 @@ std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
                        IXFA_DocEnvironment* pDocEnvironment,
-                       CPDF_Document* pPDFDoc)
+                       CPDF_Document* pPDFDoc,
+                       cppgc::Heap* pHeap)
     : m_pDocEnvironment(pDocEnvironment),
       m_pApp(pApp),
       m_pPDFDoc(pPDFDoc),
+      m_pHeap(pHeap),
       m_pNotify(std::make_unique<CXFA_FFNotify>(this)),
       m_pDocument(std::make_unique<CXFA_Document>(
           m_pNotify.get(),
-          std::make_unique<CXFA_LayoutProcessor>())) {}
+          std::make_unique<CXFA_LayoutProcessor>(pHeap))) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
   if (m_DocView) {

@@ -141,8 +141,9 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
-  m_pXFADoc = CXFA_FFDoc::CreateAndOpen(m_pXFAApp.get(), &m_DocEnv,
-                                        m_pPDFDoc.Get(), stream);
+  m_pXFADoc = CXFA_FFDoc::CreateAndOpen(
+      m_pXFAApp.get(), &m_DocEnv, m_pPDFDoc.Get(), m_pGCHeap.get(), stream);
+
   if (!m_pXFADoc) {
     FXSYS_SetLastError(FPDF_ERR_XFALOAD);
     return false;

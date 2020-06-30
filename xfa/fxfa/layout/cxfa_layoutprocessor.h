@@ -20,17 +20,22 @@ class CXFA_Node;
 class CXFA_ViewLayoutItem;
 class CXFA_ViewLayoutProcessor;
 
+namespace cppgc {
+class Heap;
+}  // namespace cppgc
+
 class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
  public:
   static CXFA_LayoutProcessor* FromDocument(const CXFA_Document* pXFADoc);
 
-  CXFA_LayoutProcessor();
+  explicit CXFA_LayoutProcessor(cppgc::Heap* pHeap);
   ~CXFA_LayoutProcessor() override;
 
   // CXFA_Document::LayoutProcessorIface:
   void SetForceRelayout(bool bForceRestart) override;
   void AddChangedContainer(CXFA_Node* pContainer) override;
 
+  cppgc::Heap* GetHeap() { return m_pHeap.Get(); }
   int32_t StartLayout(bool bForceRestart);
   int32_t DoLayout();
   bool IncrementLayout();
@@ -47,6 +52,7 @@ class CXFA_LayoutProcessor : public CXFA_Document::LayoutProcessorIface {
  private:
   bool NeedLayout() const;
 
+  UnownedPtr<cppgc::Heap> const m_pHeap;
   std::unique_ptr<CXFA_ViewLayoutProcessor> m_pViewLayoutProcessor;
   std::unique_ptr<CXFA_ContentLayoutProcessor> m_pContentLayoutProcessor;
   std::vector<CXFA_Node*> m_rgChangedContainers;

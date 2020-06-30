@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/stl_util.h"
+#include "v8/include/cppgc/heap.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutprocessor.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutprocessor.h"
@@ -25,7 +26,8 @@ CXFA_LayoutProcessor* CXFA_LayoutProcessor::FromDocument(
   return static_cast<CXFA_LayoutProcessor*>(pXFADoc->GetLayoutProcessor());
 }
 
-CXFA_LayoutProcessor::CXFA_LayoutProcessor() = default;
+CXFA_LayoutProcessor::CXFA_LayoutProcessor(cppgc::Heap* pHeap)
+    : m_pHeap(pHeap) {}
 
 CXFA_LayoutProcessor::~CXFA_LayoutProcessor() = default;
 
