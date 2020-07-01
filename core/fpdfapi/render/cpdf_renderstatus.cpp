@@ -73,11 +73,12 @@ namespace {
 constexpr int kRenderMaxRecursionDepth = 64;
 int g_CurrentRecursionDepth = 0;
 
-int GetFillRenderOptionsHelper(const CPDF_RenderOptions::Options& options,
-                               const CPDF_PathObject* path_obj,
-                               int fill_type,
-                               bool is_stroke,
-                               bool is_type3_char) {
+int GetFillOptionsForDrawPathWithBlend(
+    const CPDF_RenderOptions::Options& options,
+    const CPDF_PathObject* path_obj,
+    int fill_type,
+    bool is_stroke,
+    bool is_type3_char) {
   int fill_options = fill_type;
   if (fill_type && options.bRectAA)
     fill_options |= FXFILL_RECT_AA;
@@ -89,6 +90,23 @@ int GetFillRenderOptionsHelper(const CPDF_RenderOptions::Options& options,
     fill_options |= FX_FILL_STROKE;
   if (is_type3_char)
     fill_options |= FX_FILL_TEXT_MODE;
+
+  return fill_options;
+}
+
+int GetFillOptionsForDrawTextPath(const CPDF_RenderOptions::Options& options,
+                                  const CPDF_TextObject* text_obj,
+                                  bool is_stroke,
+                                  bool is_fill) {
+  int fill_options = 0;
+  if (is_stroke && is_fill) {
+    fill_options |= FX_FILL_STROKE;
+    fill_options |= FX_STROKE_TEXT_MODE;
+  }
+  if (text_obj->m_GeneralState.GetStrokeAdjust())
+    fill_options |= FX_STROKE_ADJUST;
+  if (options.bNoTextSmooth)
+    fill_options |= FXFILL_NOPATHSMOOTH;
 
   return fill_options;
 }
@@ -400,11 +418,11 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (!IsAvailableMatrix(path_matrix))
     return true;
 
-  int fill_options = GetFillRenderOptionsHelper(options, pPathObj, FillType,
-                                                bStroke, m_pType3Char);
   return m_pDevice->DrawPathWithBlend(
       pPathObj->path().GetObject(), &path_matrix,
-      pPathObj->m_GraphState.GetObject(), fill_argb, stroke_argb, fill_options,
+      pPathObj->m_GraphState.GetObject(), fill_argb, stroke_argb,
+      GetFillOptionsForDrawPathWithBlend(options, pPathObj, FillType, bStroke,
+                                         m_pType3Char),
       m_curBlend);
 }
 
@@ -859,20 +877,13 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
         pDeviceMatrix = &device_matrix;
       }
     }
-    int flag = 0;
-    if (bStroke && bFill) {
-      flag |= FX_FILL_STROKE;
-      flag |= FX_STROKE_TEXT_MODE;
-    }
-    if (textobj->m_GeneralState.GetStrokeAdjust())
-      flag |= FX_STROKE_ADJUST;
-    if (m_Options.GetOptions().bNoTextSmooth)
-      flag |= FXFILL_NOPATHSMOOTH;
     return CPDF_TextRenderer::DrawTextPath(
         m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(),
         pFont.Get(), font_size, text_matrix, pDeviceMatrix,
         textobj->m_GraphState.GetObject(), fill_argb, stroke_argb,
-        pClippingPath, flag);
+        pClippingPath,
+        GetFillOptionsForDrawTextPath(m_Options.GetOptions(), textobj, bStroke,
+                                      bFill));
   }
   text_matrix.Concat(mtObj2Device);
   return CPDF_TextRenderer::DrawNormalText(
