@@ -256,6 +256,10 @@ TextRenderingMode CPDF_TextObject::GetTextRenderMode() const {
   return m_TextState.GetTextMode();
 }
 
+void CPDF_TextObject::SetTextRenderMode(TextRenderingMode mode) {
+  m_TextState.SetTextMode(mode);
+}
+
 CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
   float curpos = 0;
   float min_x = 10000 * 1.0f;

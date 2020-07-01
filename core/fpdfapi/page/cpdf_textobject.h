@@ -56,6 +56,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
   float GetFontSize() const;
 
   TextRenderingMode GetTextRenderMode() const;
+  void SetTextRenderMode(TextRenderingMode mode);
 
   void SetText(const ByteString& str);
   void SetPosition(const CFX_PointF& pos) { m_Pos = pos; }

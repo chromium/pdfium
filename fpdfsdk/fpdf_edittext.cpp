@@ -597,7 +597,7 @@ FPDFTextObj_GetTextRenderMode(FPDF_PAGEOBJECT text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
   if (!pTextObj)
     return FPDF_TEXTRENDERMODE_UNKNOWN;
-  return static_cast<FPDF_TEXT_RENDERMODE>(pTextObj->m_TextState.GetTextMode());
+  return static_cast<FPDF_TEXT_RENDERMODE>(pTextObj->GetTextRenderMode());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -612,7 +612,6 @@ FPDFTextObj_SetTextRenderMode(FPDF_PAGEOBJECT text,
   if (!pTextObj)
     return false;
 
-  pTextObj->m_TextState.SetTextMode(
-      static_cast<TextRenderingMode>(render_mode));
+  pTextObj->SetTextRenderMode(static_cast<TextRenderingMode>(render_mode));
   return true;
 }
