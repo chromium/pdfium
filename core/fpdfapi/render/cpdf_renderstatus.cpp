@@ -394,34 +394,34 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   return true;
 }
 
-bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
+bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
                                     const CFX_Matrix& mtObj2Device) {
   // Path fill type, can be 0, FXFILL_ALTERNATE or FXFILL_WINDING.
-  int FillType = pPathObj->filltype();
-  bool bStroke = pPathObj->stroke();
-  ProcessPathPattern(pPathObj, mtObj2Device, &FillType, &bStroke);
-  if (FillType == 0 && !bStroke)
+  int fill_type = path_obj->filltype();
+  bool stroke = path_obj->stroke();
+  ProcessPathPattern(path_obj, mtObj2Device, &fill_type, &stroke);
+  if (fill_type == 0 && !stroke)
     return true;
 
   // If the option to convert fill paths to stroke is enabled for forced color,
-  // set |FillType| to 0 and |bStroke| to true.
+  // set |fill_type| to 0 and |stroke| to true.
   CPDF_RenderOptions::Options& options = m_Options.GetOptions();
   if (m_Options.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) &&
-      options.bConvertFillToStroke && (FillType != 0)) {
-    bStroke = true;
-    FillType = 0;
+      options.bConvertFillToStroke && (fill_type != 0)) {
+    stroke = true;
+    fill_type = 0;
   }
 
-  uint32_t fill_argb = FillType ? GetFillArgb(pPathObj) : 0;
-  uint32_t stroke_argb = bStroke ? GetStrokeArgb(pPathObj) : 0;
-  CFX_Matrix path_matrix = pPathObj->matrix() * mtObj2Device;
+  uint32_t fill_argb = fill_type ? GetFillArgb(path_obj) : 0;
+  uint32_t stroke_argb = stroke ? GetStrokeArgb(path_obj) : 0;
+  CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
   if (!IsAvailableMatrix(path_matrix))
     return true;
 
   return m_pDevice->DrawPathWithBlend(
-      pPathObj->path().GetObject(), &path_matrix,
-      pPathObj->m_GraphState.GetObject(), fill_argb, stroke_argb,
-      GetFillOptionsForDrawPathWithBlend(options, pPathObj, FillType, bStroke,
+      path_obj->path().GetObject(), &path_matrix,
+      path_obj->m_GraphState.GetObject(), fill_argb, stroke_argb,
+      GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
                                          m_pType3Char),
       m_curBlend);
 }
@@ -550,32 +550,32 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   }
 }
 
-bool CPDF_RenderStatus::ClipPattern(const CPDF_PageObject* pPageObj,
+bool CPDF_RenderStatus::ClipPattern(const CPDF_PageObject* page_obj,
                                     const CFX_Matrix& mtObj2Device,
-                                    bool bStroke) {
-  if (pPageObj->IsPath())
-    return SelectClipPath(pPageObj->AsPath(), mtObj2Device, bStroke);
-  if (pPageObj->IsImage()) {
-    m_pDevice->SetClip_Rect(pPageObj->GetTransformedBBox(mtObj2Device));
+                                    bool stroke) {
+  if (page_obj->IsPath())
+    return SelectClipPath(page_obj->AsPath(), mtObj2Device, stroke);
+  if (page_obj->IsImage()) {
+    m_pDevice->SetClip_Rect(page_obj->GetTransformedBBox(mtObj2Device));
     return true;
   }
   return false;
 }
 
-bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
+bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* path_obj,
                                        const CFX_Matrix& mtObj2Device,
-                                       bool bStroke) {
-  CFX_Matrix path_matrix = pPathObj->matrix() * mtObj2Device;
-  if (bStroke) {
-    return m_pDevice->SetClip_PathStroke(pPathObj->path().GetObject(),
+                                       bool stroke) {
+  CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
+  if (stroke) {
+    return m_pDevice->SetClip_PathStroke(path_obj->path().GetObject(),
                                          &path_matrix,
-                                         pPathObj->m_GraphState.GetObject());
+                                         path_obj->m_GraphState.GetObject());
   }
-  int fill_mode = pPathObj->filltype();
+  int fill_mode = path_obj->filltype();
   if (m_Options.GetOptions().bNoPathSmooth) {
     fill_mode |= FXFILL_NOPATHSMOOTH;
   }
-  return m_pDevice->SetClip_PathFill(pPathObj->path().GetObject(), &path_matrix,
+  return m_pDevice->SetClip_PathFill(path_obj->path().GetObject(), &path_matrix,
                                      fill_mode);
 }
 
@@ -763,19 +763,19 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
 
 std::unique_ptr<CPDF_GraphicStates> CPDF_RenderStatus::CloneObjStates(
     const CPDF_GraphicStates* pSrcStates,
-    bool bStroke) {
+    bool stroke) {
   if (!pSrcStates)
     return nullptr;
 
   auto pStates = std::make_unique<CPDF_GraphicStates>();
   pStates->CopyStates(*pSrcStates);
-  const CPDF_Color* pObjColor = bStroke
+  const CPDF_Color* pObjColor = stroke
                                     ? pSrcStates->m_ColorState.GetStrokeColor()
                                     : pSrcStates->m_ColorState.GetFillColor();
   if (!pObjColor->IsNull()) {
     pStates->m_ColorState.SetFillColorRef(
-        bStroke ? pSrcStates->m_ColorState.GetStrokeColorRef()
-                : pSrcStates->m_ColorState.GetFillColorRef());
+        stroke ? pSrcStates->m_ColorState.GetStrokeColorRef()
+               : pSrcStates->m_ColorState.GetFillColorRef());
     pStates->m_ColorState.SetStrokeColorRef(
         pStates->m_ColorState.GetFillColorRef());
   }
@@ -790,7 +790,7 @@ void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
 
 bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                     const CFX_Matrix& mtObj2Device,
-                                    CFX_PathData* pClippingPath) {
+                                    CFX_PathData* clipping_path) {
   if (textobj->GetCharCodes().empty())
     return true;
 
@@ -802,29 +802,29 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
   if (pFont->IsType3Font())
     return ProcessType3Text(textobj, mtObj2Device);
 
-  bool bFill = false;
-  bool bStroke = false;
-  bool bClip = false;
-  if (pClippingPath) {
-    bClip = true;
+  bool is_fill = false;
+  bool is_stroke = false;
+  bool is_clip = false;
+  if (clipping_path) {
+    is_clip = true;
   } else {
     switch (text_render_mode) {
       case TextRenderingMode::MODE_FILL:
       case TextRenderingMode::MODE_FILL_CLIP:
-        bFill = true;
+        is_fill = true;
         break;
       case TextRenderingMode::MODE_STROKE:
       case TextRenderingMode::MODE_STROKE_CLIP:
         if (pFont->HasFace())
-          bStroke = true;
+          is_stroke = true;
         else
-          bFill = true;
+          is_fill = true;
         break;
       case TextRenderingMode::MODE_FILL_STROKE:
       case TextRenderingMode::MODE_FILL_STROKE_CLIP:
-        bFill = true;
+        is_fill = true;
         if (pFont->HasFace())
-          bStroke = true;
+          is_stroke = true;
         break;
       case TextRenderingMode::MODE_INVISIBLE:
         // Already handled above, but the compiler is not smart enough to
@@ -841,14 +841,14 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
   FX_ARGB stroke_argb = 0;
   FX_ARGB fill_argb = 0;
   bool bPattern = false;
-  if (bStroke) {
+  if (is_stroke) {
     if (textobj->m_ColorState.GetStrokeColor()->IsPattern()) {
       bPattern = true;
     } else {
       stroke_argb = GetStrokeArgb(textobj);
     }
   }
-  if (bFill) {
+  if (is_fill) {
     if (textobj->m_ColorState.GetFillColor()->IsPattern()) {
       bPattern = true;
     } else {
@@ -862,13 +862,13 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
   float font_size = textobj->m_TextState.GetFontSize();
   if (bPattern) {
     DrawTextPathWithPattern(textobj, mtObj2Device, pFont.Get(), font_size,
-                            &text_matrix, bFill, bStroke);
+                            &text_matrix, is_fill, is_stroke);
     return true;
   }
-  if (bClip || bStroke) {
+  if (is_clip || is_stroke) {
     const CFX_Matrix* pDeviceMatrix = &mtObj2Device;
     CFX_Matrix device_matrix;
-    if (bStroke) {
+    if (is_stroke) {
       const float* pCTM = textobj->m_TextState.GetCTM();
       if (pCTM[0] != 1.0f || pCTM[3] != 1.0f) {
         CFX_Matrix ctm(pCTM[0], pCTM[1], pCTM[2], pCTM[3], 0, 0);
@@ -881,9 +881,9 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
         m_pDevice, textobj->GetCharCodes(), textobj->GetCharPositions(),
         pFont.Get(), font_size, text_matrix, pDeviceMatrix,
         textobj->m_GraphState.GetObject(), fill_argb, stroke_argb,
-        pClippingPath,
-        GetFillOptionsForDrawTextPath(m_Options.GetOptions(), textobj, bStroke,
-                                      bFill));
+        clipping_path,
+        GetFillOptionsForDrawTextPath(m_Options.GetOptions(), textobj,
+                                      is_stroke, is_fill));
   }
   text_matrix.Concat(mtObj2Device);
   return CPDF_TextRenderer::DrawNormalText(
@@ -1069,9 +1069,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 CPDF_Font* pFont,
                                                 float font_size,
                                                 const CFX_Matrix* pTextMatrix,
-                                                bool bFill,
-                                                bool bStroke) {
-  if (!bStroke) {
+                                                bool fill,
+                                                bool stroke) {
+  if (!stroke) {
     std::vector<std::unique_ptr<CPDF_TextObject>> pCopy;
     pCopy.push_back(std::unique_ptr<CPDF_TextObject>(textobj->Clone()));
 
@@ -1112,8 +1112,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     }
     matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
                              charpos.m_Origin.y));
-    path.set_stroke(bStroke);
-    path.set_filltype(bFill ? FXFILL_WINDING : 0);
+    path.set_stroke(stroke);
+    path.set_filltype(fill ? FXFILL_WINDING : 0);
     path.path().Append(pPath, &matrix);
     path.set_matrix(*pTextMatrix);
     path.CalcBoundingBox();
@@ -1124,12 +1124,12 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
 void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
                                            const CPDF_PageObject* pPageObj,
                                            const CFX_Matrix& mtObj2Device,
-                                           bool bStroke) {
+                                           bool stroke) {
   if (!pattern->Load())
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-  if (!ClipPattern(pPageObj, mtObj2Device, bStroke))
+  if (!ClipPattern(pPageObj, mtObj2Device, stroke))
     return;
 
   FX_RECT rect = GetObjectClippedRect(pPageObj, mtObj2Device);
@@ -1138,8 +1138,8 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
 
   CFX_Matrix matrix = pattern->pattern_to_form() * mtObj2Device;
   int alpha =
-      FXSYS_roundf(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
-                                  : pPageObj->m_GeneralState.GetFillAlpha()));
+      FXSYS_roundf(255 * (stroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
+                                 : pPageObj->m_GeneralState.GetFillAlpha()));
   CPDF_RenderShading::Draw(m_pDevice, m_pContext.Get(), m_pCurObj.Get(),
                            pattern, matrix, rect, alpha, m_Options);
 }
@@ -1163,7 +1163,7 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                                           CPDF_PageObject* pPageObj,
                                           const CFX_Matrix& mtObj2Device,
-                                          bool bStroke) {
+                                          bool stroke) {
   const std::unique_ptr<CPDF_Form> pPatternForm = pPattern->Load(pPageObj);
   if (!pPatternForm)
     return;
@@ -1172,7 +1172,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   ScopedSkiaDeviceFlush scoped_skia_device_flush(m_pDevice);
 #endif
-  if (!ClipPattern(pPageObj, mtObj2Device, bStroke))
+  if (!ClipPattern(pPageObj, mtObj2Device, stroke))
     return;
 
   FX_RECT clip_box = m_pDevice->GetClipBox();
@@ -1181,7 +1181,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 
   RetainPtr<CFX_DIBitmap> pScreen =
       CPDF_RenderTiling::Draw(this, pPageObj, pPattern, pPatternForm.get(),
-                              mtObj2Device, clip_box, bStroke);
+                              mtObj2Device, clip_box, stroke);
   if (!pScreen)
     return;
 
@@ -1189,39 +1189,39 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                     BlendMode::kNormal, CPDF_Transparency());
 }
 
-void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
+void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* path_obj,
                                             const CFX_Matrix& mtObj2Device,
                                             const CPDF_Color* pColor,
-                                            bool bStroke) {
+                                            bool stroke) {
   CPDF_Pattern* pattern = pColor->GetPattern();
   if (!pattern)
     return;
 
   if (CPDF_TilingPattern* pTilingPattern = pattern->AsTilingPattern())
-    DrawTilingPattern(pTilingPattern, pPathObj, mtObj2Device, bStroke);
+    DrawTilingPattern(pTilingPattern, path_obj, mtObj2Device, stroke);
   else if (CPDF_ShadingPattern* pShadingPattern = pattern->AsShadingPattern())
-    DrawShadingPattern(pShadingPattern, pPathObj, mtObj2Device, bStroke);
+    DrawShadingPattern(pShadingPattern, path_obj, mtObj2Device, stroke);
 }
 
-void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,
+void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* path_obj,
                                            const CFX_Matrix& mtObj2Device,
                                            int* filltype,
-                                           bool* bStroke) {
+                                           bool* stroke) {
   ASSERT(filltype);
-  ASSERT(bStroke);
+  ASSERT(stroke);
 
   if (*filltype) {
-    const CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
+    const CPDF_Color& FillColor = *path_obj->m_ColorState.GetFillColor();
     if (FillColor.IsPattern()) {
-      DrawPathWithPattern(pPathObj, mtObj2Device, &FillColor, false);
+      DrawPathWithPattern(path_obj, mtObj2Device, &FillColor, false);
       *filltype = 0;
     }
   }
-  if (*bStroke) {
-    const CPDF_Color& StrokeColor = *pPathObj->m_ColorState.GetStrokeColor();
+  if (*stroke) {
+    const CPDF_Color& StrokeColor = *path_obj->m_ColorState.GetStrokeColor();
     if (StrokeColor.IsPattern()) {
-      DrawPathWithPattern(pPathObj, mtObj2Device, &StrokeColor, true);
-      *bStroke = false;
+      DrawPathWithPattern(path_obj, mtObj2Device, &StrokeColor, true);
+      *stroke = false;
     }
   }
 }
