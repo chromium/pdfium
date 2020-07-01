@@ -106,3 +106,43 @@ TEST_F(HeapEmbedderTest, HasReferences) {
   EXPECT_EQ(0u, PseudoCollectible::DeadCount());
   PseudoCollectible::Clear();
 }
+
+// TODO(tsepez): enable when CPPGC fixes this segv.
+TEST_F(HeapEmbedderTest, DISABLED_DeleteHeapHasReferences) {
+  FXGCScopedHeap heap1 = FXGC_CreateHeap();
+  ASSERT_TRUE(heap1);
+
+  PseudoCollectible::s_persistent_ =
+      cppgc::MakeGarbageCollected<PseudoCollectible>(
+          heap1->GetAllocationHandle());
+  EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+  EXPECT_EQ(1u, PseudoCollectible::LiveCount());
+  EXPECT_EQ(0u, PseudoCollectible::DeadCount());
+
+  heap1.reset();
+  PumpPlatformMessageLoop();
+  EXPECT_FALSE(PseudoCollectible::s_persistent_);
+  EXPECT_EQ(1u, PseudoCollectible::LiveCount());
+  EXPECT_EQ(1u, PseudoCollectible::DeadCount());
+  PseudoCollectible::Clear();
+}
+
+// TODO(tsepez): enable when CPPGC cleans this up.
+TEST_F(HeapEmbedderTest, DISABLED_DeleteHeapNoReferences) {
+  FXGCScopedHeap heap1 = FXGC_CreateHeap();
+  ASSERT_TRUE(heap1);
+
+  PseudoCollectible::s_persistent_ =
+      cppgc::MakeGarbageCollected<PseudoCollectible>(
+          heap1->GetAllocationHandle());
+  EXPECT_TRUE(PseudoCollectible::s_persistent_->IsLive());
+  EXPECT_EQ(1u, PseudoCollectible::LiveCount());
+  EXPECT_EQ(0u, PseudoCollectible::DeadCount());
+
+  PseudoCollectible::s_persistent_ = nullptr;
+  heap1.reset();
+  PumpPlatformMessageLoop();
+  EXPECT_EQ(1u, PseudoCollectible::LiveCount());
+  EXPECT_EQ(1u, PseudoCollectible::DeadCount());
+  PseudoCollectible::Clear();
+}
