@@ -220,6 +220,16 @@ specific_include_rules = {
 
 hooks = [
   {
+    # Ensure that the DEPS'd "depot_tools" has its self-update capability
+    # disabled.
+    'name': 'disable_depot_tools_selfupdate',
+    'pattern': '.',
+    'action': [ 'python',
+                'pdfium/third_party/depot_tools/update_depot_tools_toggle.py',
+                '--disable',
+    ],
+  },
+  {
     # Case-insensitivity for the Win SDK. Must run before win_toolchain below.
     'name': 'ciopfs_linux',
     'pattern': '.',
