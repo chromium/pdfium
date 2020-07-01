@@ -2122,27 +2122,27 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_SetTextRenderMode) {
       CompareBitmap(page_bitmap.get(), 612, 446, md5_stroke);
     }
 
+    // Save a copy.
+    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
     UnloadPage(page);
   }
 
   {
-    // Save a copy, open the copy, and render it.
-    // Note that the text render mode should be set to
-    // |FPDF_TEXTRENDERMODE_STROKE|, but isn't.
-    // TODO(crbug.com/pdfium/1470): Fix FPDFTextObj_SetTextRenderMode() to work
-    // on saved documents.
-    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    // Open the saved copy and render it. Check that the changed text render
+    // mode is kept in the saved copy.
     ASSERT_TRUE(OpenSavedDocument());
     FPDF_PAGE saved_page = LoadSavedPage(0);
     ASSERT_TRUE(saved_page);
 
     FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(saved_page, 0);
     EXPECT_TRUE(page_object);
-    EXPECT_EQ(FPDF_TEXTRENDERMODE_FILL,
+    EXPECT_EQ(FPDF_TEXTRENDERMODE_STROKE,
               FPDFTextObj_GetTextRenderMode(page_object));
 
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
-    CompareBitmap(bitmap.get(), 612, 446, md5);
+    CompareBitmap(bitmap.get(), 612, 446, md5_stroke);
 
     CloseSavedPage(saved_page);
     CloseSavedDocument();

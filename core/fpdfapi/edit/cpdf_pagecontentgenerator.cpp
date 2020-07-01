@@ -488,6 +488,7 @@ ByteString CPDF_PageContentGenerator::GetOrCreateDefaultGraphics() const {
 // This method adds text to the buffer, BT begins the text object, ET ends it.
 // Tm sets the text matrix (allows positioning and transforming text).
 // Tf sets the font name (from Font in Resources) and font size.
+// Tr sets the text rendering mode.
 // Tj sets the actual text, <####...> is used when specifying charcodes.
 void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
                                             CPDF_TextObject* pTextObj) {
@@ -534,6 +535,7 @@ void CPDF_PageContentGenerator::ProcessText(std::ostringstream* buf,
   }
   *buf << "/" << PDF_NameEncode(dictName) << " ";
   WriteFloat(*buf, pTextObj->GetFontSize()) << " Tf ";
+  *buf << static_cast<int>(pTextObj->GetTextRenderMode()) << " Tr ";
   ByteString text;
   for (uint32_t charcode : pTextObj->GetCharCodes()) {
     if (charcode != CPDF_Font::kInvalidCharCode)

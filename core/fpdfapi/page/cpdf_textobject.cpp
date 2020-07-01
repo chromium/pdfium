@@ -258,6 +258,7 @@ TextRenderingMode CPDF_TextObject::GetTextRenderMode() const {
 
 void CPDF_TextObject::SetTextRenderMode(TextRenderingMode mode) {
   m_TextState.SetTextMode(mode);
+  SetDirty(true);
 }
 
 CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {

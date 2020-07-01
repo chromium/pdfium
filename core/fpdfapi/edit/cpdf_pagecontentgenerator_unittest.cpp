@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
+#include "core/fpdfapi/page/cpdf_textstate.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -274,7 +275,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
       "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
   // Color RGB values used are integers divided by 255.
   ByteString compareString2 = " gs BT 1 0 0 1 100 100 Tm /";
-  ByteString compareString3 = " 10 Tf <48656C6C6F20576F726C64> Tj ET Q\n";
+  ByteString compareString3 = " 10 Tf 0 Tr <48656C6C6F20576F726C64> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength() +
                 compareString3.GetLength(),
             textString.GetLength());
@@ -329,6 +330,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     pTextObj->m_TextState.SetFont(pLoadedFont);
     pTextObj->m_TextState.SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");
+    pTextObj->SetTextRenderMode(TextRenderingMode::MODE_FILL_CLIP);
     TestProcessText(&generator, &buf, pTextObj.get());
   }
 
@@ -341,7 +343,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
       textString.Last(textString.GetLength() - firstResourceAt.value());
   // q and Q must be outside the BT .. ET operations
   ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
-  ByteString compareString2 = " 15.5 Tf <4920616D20696E646972656374> Tj ET Q\n";
+  ByteString compareString2 =
+      " 15.5 Tf 4 Tr <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),
             textString.GetLength());
   EXPECT_EQ(compareString1, textString.First(compareString1.GetLength()));
