@@ -1,4 +1,5 @@
 use_relative_paths = True
+use_relative_hooks = True
 
 vars = {
   # By default, we should check out everything needed to run on the main
@@ -225,7 +226,7 @@ hooks = [
     'name': 'disable_depot_tools_selfupdate',
     'pattern': '.',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/update_depot_tools_toggle.py',
+                'third_party/depot_tools/update_depot_tools_toggle.py',
                 '--disable',
     ],
   },
@@ -235,11 +236,11 @@ hooks = [
     'pattern': '.',
     'condition': 'checkout_win and host_os == "linux"',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                'third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-browser-clang/ciopfs',
-                '-s', 'pdfium/build/ciopfs.sha1',
+                '-s', 'build/ciopfs.sha1',
     ]
   },
   {
@@ -247,13 +248,13 @@ hooks = [
     'name': 'win_toolchain',
     'pattern': '.',
     'condition': 'checkout_win',
-    'action': ['python', 'pdfium/build/vs_toolchain.py', 'update', '--force'],
+    'action': ['python', 'build/vs_toolchain.py', 'update', '--force'],
   },
   {
     # Update the Mac toolchain if necessary.
     'name': 'mac_toolchain',
     'pattern': '.',
-    'action': ['python', 'pdfium/build/mac_toolchain.py'],
+    'action': ['python', 'build/mac_toolchain.py'],
   },
   # Pull clang-format binaries using checked-in hashes.
   {
@@ -261,11 +262,11 @@ hooks = [
     'pattern': '.',
     'condition': 'host_os == "win"',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                'third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'pdfium/buildtools/win/clang-format.exe.sha1',
+                '-s', 'buildtools/win/clang-format.exe.sha1',
     ],
   },
   {
@@ -273,11 +274,11 @@ hooks = [
     'pattern': '.',
     'condition': 'host_os == "mac"',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                'third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'pdfium/buildtools/mac/clang-format.sha1',
+                '-s', 'buildtools/mac/clang-format.sha1',
     ],
   },
   {
@@ -285,11 +286,11 @@ hooks = [
     'pattern': '.',
     'condition': 'host_os == "linux"',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                'third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'pdfium/buildtools/linux64/clang-format.sha1',
+                '-s', 'buildtools/linux64/clang-format.sha1',
     ],
   },
   {
@@ -297,42 +298,42 @@ hooks = [
     'name': 'clang',
     'pattern': '.',
     'action': ['python',
-               'pdfium/tools/clang/scripts/update.py'
+               'tools/clang/scripts/update.py'
     ],
   },
   {
     'name': 'sysroot_arm',
     'pattern': '.',
     'condition': 'checkout_linux and checkout_arm',
-    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+    'action': ['python', 'build/linux/sysroot_scripts/install-sysroot.py',
                '--arch=arm'],
   },
   {
     'name': 'sysroot_arm64',
     'pattern': '.',
     'condition': 'checkout_linux and checkout_arm64',
-    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+    'action': ['python', 'build/linux/sysroot_scripts/install-sysroot.py',
                '--arch=arm64'],
   },
   {
     'name': 'sysroot_x86',
     'pattern': '.',
     'condition': 'checkout_linux and (checkout_x86 or checkout_x64)',
-    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+    'action': ['python', 'build/linux/sysroot_scripts/install-sysroot.py',
                '--arch=x86'],
   },
   {
     'name': 'sysroot_mips',
     'pattern': '.',
     'condition': 'checkout_linux and checkout_mips',
-    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+    'action': ['python', 'build/linux/sysroot_scripts/install-sysroot.py',
                '--arch=mips'],
   },
   {
     'name': 'sysroot_x64',
     'pattern': '.',
     'condition': 'checkout_linux and checkout_x64',
-    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+    'action': ['python', 'build/linux/sysroot_scripts/install-sysroot.py',
                '--arch=x64'],
   },
   {
@@ -340,11 +341,11 @@ hooks = [
     'pattern': '.',
     'condition': 'checkout_instrumented_libraries',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                'third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-instrumented-libraries',
-                '-s', 'pdfium/third_party/instrumented_libraries/binaries/msan-chained-origins-trusty.tgz.sha1',
+                '-s', 'third_party/instrumented_libraries/binaries/msan-chained-origins-trusty.tgz.sha1',
               ],
   },
   {
@@ -352,18 +353,18 @@ hooks = [
     'pattern': '.',
     'condition': 'checkout_instrumented_libraries',
     'action': [ 'python',
-                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                'third_party/depot_tools/download_from_google_storage.py',
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-instrumented-libraries',
-                '-s', 'pdfium/third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1',
+                '-s', 'third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1',
               ],
   },
   {
     # Update LASTCHANGE.
     'name': 'lastchange',
     'pattern': '.',
-    'action': ['python', 'pdfium/build/util/lastchange.py',
-               '-o', 'pdfium/build/util/LASTCHANGE'],
+    'action': ['python', 'build/util/lastchange.py',
+               '-o', 'build/util/LASTCHANGE'],
   },
 ]
