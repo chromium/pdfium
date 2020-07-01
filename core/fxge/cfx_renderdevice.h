@@ -26,6 +26,7 @@ class CFX_PathData;
 class PauseIndicatorIface;
 class TextCharPos;
 struct CFX_Color;
+struct CFX_FillRenderOptions;
 struct CFX_TextRenderOptions;
 
 enum class BorderStyle { kSolid, kDash, kBeveled, kInset, kUnderline };
@@ -82,16 +83,13 @@ class CFX_RenderDevice {
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
-                int fill_mode) {
-    return DrawPathWithBlend(pPathData, pObject2Device, pGraphState, fill_color,
-                             stroke_color, fill_mode, BlendMode::kNormal);
-  }
+                int fill_mode);
   bool DrawPathWithBlend(const CFX_PathData* pPathData,
                          const CFX_Matrix* pObject2Device,
                          const CFX_GraphStateData* pGraphState,
                          uint32_t fill_color,
                          uint32_t stroke_color,
-                         int fill_mode,
+                         const CFX_FillRenderOptions& fill_options,
                          BlendMode blend_type);
   bool FillRect(const FX_RECT& rect, uint32_t color) {
     return FillRectWithBlend(rect, color, BlendMode::kNormal);

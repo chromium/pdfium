@@ -54,6 +54,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -73,23 +74,23 @@ namespace {
 constexpr int kRenderMaxRecursionDepth = 64;
 int g_CurrentRecursionDepth = 0;
 
-int GetFillOptionsForDrawPathWithBlend(
+CFX_FillRenderOptions GetFillOptionsForDrawPathWithBlend(
     const CPDF_RenderOptions::Options& options,
     const CPDF_PathObject* path_obj,
-    int fill_type,
+    CFX_FillRenderOptions::FillType fill_type,
     bool is_stroke,
     bool is_type3_char) {
-  int fill_options = fill_type;
-  if (fill_type && options.bRectAA)
-    fill_options |= FXFILL_RECT_AA;
+  CFX_FillRenderOptions fill_options(fill_type);
+  if (fill_type != CFX_FillRenderOptions::FillType::kNoFill && options.bRectAA)
+    fill_options.rect_aa = true;
   if (options.bNoPathSmooth)
-    fill_options |= FXFILL_NOPATHSMOOTH;
+    fill_options.aliased_path = true;
   if (path_obj->m_GeneralState.GetStrokeAdjust())
-    fill_options |= FX_STROKE_ADJUST;
+    fill_options.adjust_stroke = true;
   if (is_stroke)
-    fill_options |= FX_FILL_STROKE;
+    fill_options.stroke = true;
   if (is_type3_char)
-    fill_options |= FX_FILL_TEXT_MODE;
+    fill_options.text_mode = true;
 
   return fill_options;
 }
@@ -421,8 +422,8 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
   return m_pDevice->DrawPathWithBlend(
       path_obj->path().GetObject(), &path_matrix,
       path_obj->m_GraphState.GetObject(), fill_argb, stroke_argb,
-      GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
-                                         m_pType3Char),
+      GetFillOptionsForDrawPathWithBlend(
+          options, path_obj, GetFillType(fill_type), stroke, m_pType3Char),
       m_curBlend);
 }
 
