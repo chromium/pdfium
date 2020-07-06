@@ -19,10 +19,10 @@
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
-#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
@@ -586,28 +586,15 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
 }
 
 void CPDF_ImageRenderer::HandleFilters() {
-  CPDF_Object* pFilters =
-      m_pImageObject->GetImage()->GetStream()->GetDict()->GetDirectObjectFor(
-          "Filter");
-  if (!pFilters)
+  Optional<DecoderArray> decoder_array =
+      GetDecoderArray(m_pImageObject->GetImage()->GetStream()->GetDict());
+  if (!decoder_array.has_value())
     return;
 
-  if (pFilters->IsName()) {
-    ByteString bsDecodeType = pFilters->GetString();
-    if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode")
+  for (const auto& decoder : decoder_array.value()) {
+    if (decoder.first == "DCTDecode" || decoder.first == "JPXDecode") {
       m_ResampleOptions.bLossy = true;
-    return;
-  }
-
-  CPDF_Array* pArray = pFilters->AsArray();
-  if (!pArray)
-    return;
-
-  for (size_t i = 0; i < pArray->size(); i++) {
-    ByteString bsDecodeType = pArray->GetStringAt(i);
-    if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
-      m_ResampleOptions.bLossy = true;
-      break;
+      return;
     }
   }
 }
