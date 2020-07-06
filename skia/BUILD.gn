@@ -198,9 +198,6 @@ component("skia") {
     "//third_party/skia/src/sfnt/SkOTTable_name.cpp",
     "//third_party/skia/src/sfnt/SkOTUtils.cpp",
 
-    #mac
-    "//third_party/skia/src/utils/mac/SkStream_mac.cpp",
-
     #pdfium
     "//third_party/skia/src/ports/SkDiscardableMemory_none.cpp",
     "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
@@ -335,7 +332,6 @@ component("skia") {
     sources += [
       "//third_party/skia/src/ports/SkFontHost_mac.cpp",
       "//third_party/skia/src/utils/mac/SkCreateCGImageRef.cpp",
-      "//third_party/skia/src/utils/mac/SkStream_mac.cpp",
     ]
     set_sources_assignment_filter(sources_assignment_filter)
   }
