@@ -450,7 +450,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 // Test rendering of multiple ink with forced color scheme on.
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithInk[] =
-      "542e5dc877a9ffdc4101ee3dc391c3b1";
+      "1933e4ab19b9108ddcecd1a6abb20c85";
 #else  // OS_MACOSX & OS_LINUX
   static constexpr char kMD5ContentWithInk[] =
       "797bce7dc6c50ee86b095405df9fe5aa";

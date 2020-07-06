@@ -555,8 +555,13 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ExtractInkMultiple) {
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
+#if defined(OS_WIN)
+    static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
+#else
+    static constexpr char kExpectedHash[] = "354002e1c4386d38fdde29ef8d61074a";
+#endif
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 612, 792, "354002e1c4386d38fdde29ef8d61074a");
+    CompareBitmap(bitmap.get(), 612, 792, kExpectedHash);
   }
   UnloadPageNoEvents(page);
 }

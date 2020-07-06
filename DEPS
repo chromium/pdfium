@@ -20,7 +20,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'd4fe00fc12323cf381e7ab144bfe7ead31de4cb7',
+  'build_revision': '414118826cde1cf7eba01552f21f930bf0288b5e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
@@ -80,7 +80,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling pdfium_tests
   # and whatever else without interference from each other.
-  'pdfium_tests_revision': 'b4e9a126d289b49002d0f0acac71d1fdc26953b3',
+  'pdfium_tests_revision': '79c60bac7af87b386fd3df557eb782383e612a3a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
