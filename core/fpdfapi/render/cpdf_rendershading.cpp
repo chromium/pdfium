@@ -26,6 +26,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
@@ -699,14 +700,16 @@ struct CPDF_PatchDrawer {
       D2.GetPoints(points.subspan(3, 4));
       C2.GetPointsReverse(points.subspan(6, 4));
       D1.GetPointsReverse(points.subspan(9, 4));
-      int fillFlags = FXFILL_WINDING | FXFILL_FULLCOVER;
+      CFX_FillRenderOptions fill_options(
+          CFX_FillRenderOptions::WindingOptions());
+      fill_options.full_cover = true;
       if (bNoPathSmooth)
-        fillFlags |= FXFILL_NOPATHSMOOTH;
+        fill_options.aliased_path = true;
       pDevice->DrawPath(
           &path, nullptr, nullptr,
           ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
                      div_colors[0].comp[2]),
-          0, fillFlags);
+          0, fill_options);
     } else {
       if (d_bottom < COONCOLOR_THRESHOLD && d_top < COONCOLOR_THRESHOLD) {
         Coon_Bezier m1;

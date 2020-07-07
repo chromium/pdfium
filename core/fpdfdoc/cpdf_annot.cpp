@@ -22,6 +22,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -514,9 +515,10 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   CFX_PathData path;
   path.AppendFloatRect(rect);
 
-  int fill_type = 0;
+  CFX_FillRenderOptions fill_options;
   if (pOptions && pOptions->GetOptions().bNoPathSmooth)
-    fill_type |= FXFILL_NOPATHSMOOTH;
+    fill_options.aliased_path = true;
 
-  pDevice->DrawPath(&path, pUser2Device, &graph_state, argb, argb, fill_type);
+  pDevice->DrawPath(&path, pUser2Device, &graph_state, argb, argb,
+                    fill_options);
 }

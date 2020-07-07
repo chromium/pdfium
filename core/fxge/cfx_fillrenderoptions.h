@@ -21,6 +21,9 @@ struct CFX_FillRenderOptions {
     kWinding = 2,
   };
 
+  static const CFX_FillRenderOptions& EvenOddOptions();
+  static const CFX_FillRenderOptions& WindingOptions();
+
   CFX_FillRenderOptions();
   explicit CFX_FillRenderOptions(FillType fill_type);
 

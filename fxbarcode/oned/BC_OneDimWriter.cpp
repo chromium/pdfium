@@ -28,6 +28,7 @@
 
 #include "build/build_config.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -259,13 +260,14 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   path.AppendRect(0, 0, static_cast<float>(m_Width),
                   static_cast<float>(m_Height));
   device->DrawPath(&path, matrix, &stateData, kBackgroundColor,
-                   kBackgroundColor, FXFILL_ALTERNATE);
+                   kBackgroundColor, CFX_FillRenderOptions::EvenOddOptions());
   CFX_Matrix scaledMatrix(m_outputHScale, 0.0, 0.0,
                           static_cast<float>(m_Height), 0.0, 0.0);
   scaledMatrix.Concat(*matrix);
   for (const auto& rect : m_output) {
     CFX_GraphStateData data;
-    device->DrawPath(&rect, &scaledMatrix, &data, kBarColor, 0, FXFILL_WINDING);
+    device->DrawPath(&rect, &scaledMatrix, &data, kBarColor, 0,
+                     CFX_FillRenderOptions::WindingOptions());
   }
 
   return m_locTextLoc == BC_TEXT_LOC_NONE || !contents.Contains(' ') ||

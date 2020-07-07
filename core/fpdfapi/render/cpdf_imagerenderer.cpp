@@ -29,6 +29,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -485,8 +486,9 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     path.Transform(m_ImageMatrix);
     uint32_t fill_color =
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
-    m_pRenderStatus->GetRenderDevice()->DrawPath(&path, nullptr, nullptr,
-                                                 fill_color, 0, FXFILL_WINDING);
+    m_pRenderStatus->GetRenderDevice()->DrawPath(
+        &path, nullptr, nullptr, fill_color, 0,
+        CFX_FillRenderOptions::WindingOptions());
     return false;
   }
   RetainPtr<CFX_DIBBase> pAlphaMask;

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -214,7 +215,8 @@ void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_GEPath* path,
     m.Concat(*matrix);
 
   m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState, 0x0,
-                           m_info.strokeColor.GetArgb(), 0);
+                           m_info.strokeColor.GetArgb(),
+                           CFX_FillRenderOptions());
 }
 
 void CXFA_Graphics::RenderDeviceFillPath(const CXFA_GEPath* path,
@@ -224,10 +226,11 @@ void CXFA_Graphics::RenderDeviceFillPath(const CXFA_GEPath* path,
   if (matrix)
     m.Concat(*matrix);
 
+  const CFX_FillRenderOptions fill_options(GetFillType(fillMode));
   switch (m_info.fillColor.GetType()) {
     case CXFA_GEColor::Solid:
       m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState,
-                               m_info.fillColor.GetArgb(), 0x0, fillMode);
+                               m_info.fillColor.GetArgb(), 0x0, fill_options);
       return;
     case CXFA_GEColor::Pattern:
       FillPathWithPattern(path, fillMode, m);

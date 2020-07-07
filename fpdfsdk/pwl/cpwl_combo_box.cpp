@@ -10,6 +10,7 @@
 #include <sstream>
 #include <utility>
 
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
@@ -139,7 +140,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
     pDevice->DrawPath(&path, &mtUser2Device, nullptr,
                       PWL_DEFAULT_BLACKCOLOR.ToFXColor(GetTransparency()), 0,
-                      FXFILL_ALTERNATE);
+                      CFX_FillRenderOptions::EvenOddOptions());
   }
 }
 

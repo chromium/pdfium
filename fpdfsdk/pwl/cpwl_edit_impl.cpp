@@ -18,6 +18,7 @@
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -520,7 +521,7 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                                line.ptLine.y + line.fLineAscent);
 
           pDevice->DrawPath(&pathSelBK, &mtUser2Device, nullptr, crSelBK, 0,
-                            FXFILL_WINDING);
+                            CFX_FillRenderOptions::WindingOptions());
         }
       }
 

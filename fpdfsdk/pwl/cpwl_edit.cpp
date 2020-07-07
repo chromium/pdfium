@@ -15,6 +15,7 @@
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -194,7 +195,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     }
     if (!path.GetPoints().empty()) {
       pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0,
-                        GetBorderColor().ToFXColor(255), FXFILL_ALTERNATE);
+                        GetBorderColor().ToFXColor(255),
+                        CFX_FillRenderOptions::EvenOddOptions());
     }
   }
 
