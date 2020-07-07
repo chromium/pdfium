@@ -48,18 +48,19 @@ CFX_TextRenderOptions GetTextRenderOptionsHelper(
 }  // namespace
 
 // static
-bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
-                                     pdfium::span<const uint32_t> char_codes,
-                                     pdfium::span<const float> char_pos,
-                                     CPDF_Font* pFont,
-                                     float font_size,
-                                     const CFX_Matrix& mtText2User,
-                                     const CFX_Matrix* pUser2Device,
-                                     const CFX_GraphStateData* pGraphState,
-                                     FX_ARGB fill_argb,
-                                     FX_ARGB stroke_argb,
-                                     CFX_PathData* pClippingPath,
-                                     int nFlag) {
+bool CPDF_TextRenderer::DrawTextPath(
+    CFX_RenderDevice* pDevice,
+    pdfium::span<const uint32_t> char_codes,
+    pdfium::span<const float> char_pos,
+    CPDF_Font* pFont,
+    float font_size,
+    const CFX_Matrix& mtText2User,
+    const CFX_Matrix* pUser2Device,
+    const CFX_GraphStateData* pGraphState,
+    FX_ARGB fill_argb,
+    FX_ARGB stroke_argb,
+    CFX_PathData* pClippingPath,
+    const CFX_FillRenderOptions& fill_options) {
   std::vector<TextCharPos> pos =
       GetCharPosList(char_codes, char_pos, pFont, font_size);
   if (pos.empty())
@@ -77,7 +78,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
     if (!pDevice->DrawTextPath(i - startIndex, &pos[startIndex], font,
                                font_size, mtText2User, pUser2Device,
                                pGraphState, fill_argb, stroke_argb,
-                               pClippingPath, nFlag)) {
+                               pClippingPath, fill_options)) {
       bDraw = false;
     }
     fontPosition = curFontPosition;
@@ -86,7 +87,8 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
   CFX_Font* font = GetFont(pFont, fontPosition);
   if (!pDevice->DrawTextPath(pos.size() - startIndex, &pos[startIndex], font,
                              font_size, mtText2User, pUser2Device, pGraphState,
-                             fill_argb, stroke_argb, pClippingPath, nFlag)) {
+                             fill_argb, stroke_argb, pClippingPath,
+                             fill_options)) {
     bDraw = false;
   }
   return bDraw;

@@ -95,19 +95,20 @@ CFX_FillRenderOptions GetFillOptionsForDrawPathWithBlend(
   return fill_options;
 }
 
-int GetFillOptionsForDrawTextPath(const CPDF_RenderOptions::Options& options,
-                                  const CPDF_TextObject* text_obj,
-                                  bool is_stroke,
-                                  bool is_fill) {
-  int fill_options = 0;
+CFX_FillRenderOptions GetFillOptionsForDrawTextPath(
+    const CPDF_RenderOptions::Options& options,
+    const CPDF_TextObject* text_obj,
+    bool is_stroke,
+    bool is_fill) {
+  CFX_FillRenderOptions fill_options;
   if (is_stroke && is_fill) {
-    fill_options |= FX_FILL_STROKE;
-    fill_options |= FX_STROKE_TEXT_MODE;
+    fill_options.stroke = true;
+    fill_options.stroke_text_mode = true;
   }
   if (text_obj->m_GeneralState.GetStrokeAdjust())
-    fill_options |= FX_STROKE_ADJUST;
+    fill_options.adjust_stroke = true;
   if (options.bNoTextSmooth)
-    fill_options |= FXFILL_NOPATHSMOOTH;
+    fill_options.aliased_path = true;
 
   return fill_options;
 }
@@ -673,7 +674,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
           textobj->m_TextState.GetFont().Get(),
           textobj->m_TextState.GetFontSize(), textobj->GetTextMatrix(),
           &new_matrix, textobj->m_GraphState.GetObject(), 0xffffffff, 0,
-          nullptr, 0);
+          nullptr, CFX_FillRenderOptions());
     }
   }
   CPDF_RenderStatus bitmap_render(m_pContext.Get(), &bitmap_device);

@@ -172,7 +172,7 @@ class CFX_RenderDevice {
                     uint32_t fill_color,
                     uint32_t stroke_color,
                     CFX_PathData* pClippingPath,
-                    int nFlag);
+                    const CFX_FillRenderOptions& fill_options);
 
   void DrawFillRect(const CFX_Matrix* pUser2Device,
                     const CFX_FloatRect& rect,
