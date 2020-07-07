@@ -73,7 +73,7 @@ class CFX_RenderDevice {
   void SetBaseClip(const FX_RECT& rect);
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
-                        int fill_mode);
+                        const CFX_FillRenderOptions& fill_options);
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);

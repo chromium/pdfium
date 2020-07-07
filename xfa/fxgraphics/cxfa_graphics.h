@@ -16,6 +16,8 @@
 
 using FX_FillMode = int32_t;
 
+struct CFX_FillRenderOptions;
+
 enum class FX_HatchStyle {
   Horizontal = 0,
   Vertical = 1,
@@ -74,10 +76,10 @@ class CXFA_Graphics {
                             FX_FillMode fillMode,
                             const CFX_Matrix* matrix);
   void FillPathWithPattern(const CXFA_GEPath* path,
-                           FX_FillMode fillMode,
+                           const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
   void FillPathWithShading(const CXFA_GEPath* path,
-                           FX_FillMode fillMode,
+                           const CFX_FillRenderOptions& fill_options,
                            const CFX_Matrix& matrix);
   void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
                            const CFX_Matrix& matrix);

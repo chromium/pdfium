@@ -14,6 +14,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/progressive_decoder.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -134,7 +135,8 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
   CFX_RenderDevice::StateRestorer restorer(pRenderDevice);
   CFX_PathData path;
   path.AppendRect(rtImage.left, rtImage.bottom(), rtImage.right(), rtImage.top);
-  pRenderDevice->SetClip_PathFill(&path, &matrix, FXFILL_WINDING);
+  pRenderDevice->SetClip_PathFill(&path, &matrix,
+                                  CFX_FillRenderOptions::WindingOptions());
 
   CFX_Matrix mtImage(1, 0, 0, -1, 0, 1);
   mtImage.Concat(

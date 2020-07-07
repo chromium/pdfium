@@ -468,11 +468,13 @@ void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
   m_pDeviceDriver->SetBaseClip(rect);
 }
 
-bool CFX_RenderDevice::SetClip_PathFill(const CFX_PathData* pPathData,
-                                        const CFX_Matrix* pObject2Device,
-                                        int fill_mode) {
-  if (!m_pDeviceDriver->SetClip_PathFill(pPathData, pObject2Device,
-                                         fill_mode)) {
+bool CFX_RenderDevice::SetClip_PathFill(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_FillRenderOptions& fill_options) {
+  if (!m_pDeviceDriver->SetClip_PathFill(
+          pPathData, pObject2Device,
+          GetIntegerFlagsFromFillOptions(fill_options))) {
     return false;
   }
   UpdateClipBox();
@@ -494,7 +496,8 @@ bool CFX_RenderDevice::SetClip_PathStroke(
 bool CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   CFX_PathData path;
   path.AppendRect(rect.left, rect.bottom, rect.right, rect.top);
-  if (!SetClip_PathFill(&path, nullptr, FXFILL_WINDING))
+  if (!SetClip_PathFill(&path, nullptr,
+                        CFX_FillRenderOptions::WindingOptions()))
     return false;
 
   UpdateClipBox();

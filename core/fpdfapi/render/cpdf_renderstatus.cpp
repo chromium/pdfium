@@ -516,10 +516,12 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
     if (pPathData->GetPoints().empty()) {
       CFX_PathData EmptyPath;
       EmptyPath.AppendRect(-1, -1, 0, 0);
-      m_pDevice->SetClip_PathFill(&EmptyPath, nullptr, FXFILL_WINDING);
+      m_pDevice->SetClip_PathFill(&EmptyPath, nullptr,
+                                  CFX_FillRenderOptions::WindingOptions());
     } else {
-      m_pDevice->SetClip_PathFill(pPathData, &mtObj2Device,
-                                  ClipPath.GetClipType(i));
+      m_pDevice->SetClip_PathFill(
+          pPathData, &mtObj2Device,
+          CFX_FillRenderOptions(GetFillType(ClipPath.GetClipType(i))));
     }
   }
 
@@ -544,10 +546,10 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
     if (!pTextClippingPath)
       continue;
 
-    int fill_mode = FXFILL_WINDING;
+    CFX_FillRenderOptions fill_options(CFX_FillRenderOptions::WindingOptions());
     if (m_Options.GetOptions().bNoTextSmooth)
-      fill_mode |= FXFILL_NOPATHSMOOTH;
-    m_pDevice->SetClip_PathFill(pTextClippingPath.get(), nullptr, fill_mode);
+      fill_options.aliased_path = true;
+    m_pDevice->SetClip_PathFill(pTextClippingPath.get(), nullptr, fill_options);
     pTextClippingPath.reset();
   }
 }
@@ -573,12 +575,12 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* path_obj,
                                          &path_matrix,
                                          path_obj->m_GraphState.GetObject());
   }
-  int fill_mode = path_obj->filltype();
+  CFX_FillRenderOptions fill_options(GetFillType(path_obj->filltype()));
   if (m_Options.GetOptions().bNoPathSmooth) {
-    fill_mode |= FXFILL_NOPATHSMOOTH;
+    fill_options.aliased_path = true;
   }
   return m_pDevice->SetClip_PathFill(path_obj->path().GetObject(), &path_matrix,
-                                     fill_mode);
+                                     fill_options);
 }
 
 bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
