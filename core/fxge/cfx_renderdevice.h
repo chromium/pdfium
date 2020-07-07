@@ -235,12 +235,12 @@ class CFX_RenderDevice {
                           const CFX_GraphStateData* pGraphState,
                           uint32_t fill_color,
                           uint32_t stroke_color,
-                          int fill_mode,
+                          const CFX_FillRenderOptions& fill_options,
                           BlendMode blend_type);
   bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                         const CFX_PointF& ptLineTo,
                         uint32_t color,
-                        int fill_mode,
+                        const CFX_FillRenderOptions& fill_options,
                         BlendMode blend_type);
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t color,
