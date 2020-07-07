@@ -125,6 +125,8 @@ CFXJSE_Engine::~CFXJSE_Engine() {
   for (const auto& pair : m_mapVariableToContext)
     delete ToThisProxy(pair.second->GetGlobalObject().get());
 
+  // This is what ensures that the v8 object bound to a CXFA_Node
+  // no longer retains that binding since it will outlive that node.
   for (const auto& pair : m_mapObjectToValue)
     pair.second->ClearHostObject();
 }
