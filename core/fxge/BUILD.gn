@@ -175,7 +175,7 @@ source_set("fxge") {
       "apple/fx_quartz_device.cpp",
       "apple/fx_quartz_device.h",
     ]
-    libs = [ "CoreGraphics.framework" ]
+    frameworks = [ "CoreGraphics.framework" ]
   }
 
   if (is_win) {

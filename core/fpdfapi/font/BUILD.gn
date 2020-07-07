@@ -48,7 +48,7 @@ source_set("font") {
     "../parser",
   ]
   if (is_mac) {
-    libs = [ "CoreFoundation.framework" ]
+    frameworks = [ "CoreFoundation.framework" ]
   }
   visibility = [ "../../../*" ]
 }

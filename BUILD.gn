@@ -181,7 +181,7 @@ component("pdfium") {
   }
 
   if (is_mac) {
-    libs += [
+    frameworks = [
       "AppKit.framework",
       "CoreFoundation.framework",
     ]
