@@ -3,6 +3,7 @@ use_relative_hooks = True
 
 gclient_gn_args_file = 'pdfium/build/config/gclient_args.gni'
 gclient_gn_args = [
+  'checkout_google_benchmark',
   'mac_xcode_version',
 ]
 
@@ -12,6 +13,11 @@ vars = {
   # to skip things are not strictly needed to build chromium for development
   # purposes.
   'checkout_configuration': 'default',
+
+  # By default, do not check out Google Benchmark. This only exists to satisfy
+  # V8-enabled builds that require this variable. Running Google Benchmark is
+  # not supported with PDFium.
+  'checkout_google_benchmark': False,
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small"',
 
