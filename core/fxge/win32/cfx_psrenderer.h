@@ -75,7 +75,7 @@ class CFX_PSRenderer {
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
-                int fill_mode);
+                const CFX_FillRenderOptions& fill_options);
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  int dest_left,

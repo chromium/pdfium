@@ -198,7 +198,7 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
                               const CFX_GraphStateData* pGraphState,
                               uint32_t fill_color,
                               uint32_t stroke_color,
-                              int fill_mode) {
+                              const CFX_FillRenderOptions& fill_options) {
   StartRendering();
   int fill_alpha = FXARGB_A(fill_color);
   int stroke_alpha = FXARGB_A(stroke_color);
@@ -221,14 +221,16 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
   }
 
   OutputPath(pPathData, stroke_alpha ? nullptr : pObject2Device);
-  if (fill_mode && fill_alpha) {
+  if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
+      fill_alpha) {
     SetColor(fill_color);
-    if ((fill_mode & 3) == FXFILL_WINDING) {
+    if (fill_options.fill_type == CFX_FillRenderOptions::FillType::kWinding) {
       if (stroke_alpha)
         m_pStream->WriteString("q f Q ");
       else
         m_pStream->WriteString("f");
-    } else if ((fill_mode & 3) == FXFILL_ALTERNATE) {
+    } else if (fill_options.fill_type ==
+               CFX_FillRenderOptions::FillType::kEvenOdd) {
       if (stroke_alpha)
         m_pStream->WriteString("q F Q ");
       else
