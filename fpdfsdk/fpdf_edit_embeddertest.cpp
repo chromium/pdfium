@@ -3241,6 +3241,28 @@ TEST_F(FPDFEditEmbedderTest, ExtractJBigImageBitmap) {
   UnloadPage(page);
 }
 
+// TODO(crbug.com/pdfium/1554): Fix FPDFImageObj_GetBitmap() to take /SMask into
+// account, or provide a new API to do that.
+TEST_F(FPDFEditEmbedderTest, ExtractSMaskBitmap) {
+  ASSERT_TRUE(OpenDocument("matte.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjects = 4;
+  ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page));
+
+  for (int i = 0; i < kExpectedObjects; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
+    ASSERT_TRUE(bitmap);
+    EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
+    CompareBitmap(bitmap.get(), 50, 50, "46c9a1dbe0b44765ce46017ad629a2fe");
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbedderTest, GetImageData) {
   EXPECT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
