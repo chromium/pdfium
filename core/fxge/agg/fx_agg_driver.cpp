@@ -1333,8 +1333,13 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                    const CFX_GraphStateData* pGraphState,
                                    uint32_t fill_color,
                                    uint32_t stroke_color,
-                                   int fill_mode,
+                                   const CFX_FillRenderOptions& fill_options,
                                    BlendMode blend_type) {
+  // TODO(https://crbug.com/pdfium/1531): Completely remove |fill_mode| by using
+  // |fill_options|. Meanwhile remove/update the use of
+  // GetAlternateOrWindingFillMode(), IsAlternateOrWindingFillMode(),
+  // GetAlternateOrWindingFillType() and |kAlternateOrWindingFillModeMask|.
+  const int fill_mode = GetIntegerFlagsFromFillOptions(fill_options);
   ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
          kAlternateOrWindingFillModeMask);
 
@@ -1354,8 +1359,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     rasterizer.add_path(path_data.m_PathData);
     rasterizer.filling_rule(GetAlternateOrWindingFillType(fill_mode));
-    if (!RenderRasterizer(rasterizer, fill_color,
-                          !!(fill_mode & FXFILL_FULLCOVER), false)) {
+    if (!RenderRasterizer(rasterizer, fill_color, fill_options.full_cover,
+                          false)) {
       return false;
     }
   }
@@ -1363,7 +1368,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   if (!pGraphState || !stroke_alpha)
     return true;
 
-  if (fill_mode & FX_ZEROAREA_FILL) {
+  if (fill_options.zero_area) {
     CAgg_PathData path_data;
     path_data.BuildPath(pPathData, pObject2Device);
     agg::rasterizer_scanline_aa rasterizer;
@@ -1371,9 +1376,9 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                         static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     RasterizeStroke(&rasterizer, &path_data.m_PathData, nullptr, pGraphState, 1,
-                    !!(fill_mode & FX_STROKE_TEXT_MODE));
-    return RenderRasterizer(rasterizer, stroke_color,
-                            !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout);
+                    fill_options.stroke_text_mode);
+    return RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
+                            m_bGroupKnockout);
   }
   CFX_Matrix matrix1;
   CFX_Matrix matrix2;
@@ -1394,9 +1399,9 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
                       static_cast<float>(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(&rasterizer, &path_data.m_PathData, &matrix2, pGraphState,
-                  matrix1.a, !!(fill_mode & FX_STROKE_TEXT_MODE));
-  return RenderRasterizer(rasterizer, stroke_color,
-                          !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout);
+                  matrix1.a, fill_options.stroke_text_mode);
+  return RenderRasterizer(rasterizer, stroke_color, fill_options.full_cover,
+                          m_bGroupKnockout);
 }
 
 bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {

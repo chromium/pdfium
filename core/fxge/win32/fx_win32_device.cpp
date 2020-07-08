@@ -969,7 +969,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                 const CFX_GraphStateData* pGraphState,
                                 uint32_t fill_color,
                                 uint32_t stroke_color,
-                                int fill_mode,
+                                const CFX_FillRenderOptions& fill_options,
                                 BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal)
     return false;
@@ -1002,24 +1002,24 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     return false;
 
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
-    if (bDrawAlpha || ((m_DeviceType != DeviceType::kPrinter &&
-                        !(fill_mode & FXFILL_FULLCOVER)) ||
-                       (pGraphState && !pGraphState->m_DashArray.empty()))) {
+    if (bDrawAlpha ||
+        ((m_DeviceType != DeviceType::kPrinter && !fill_options.full_cover) ||
+         (pGraphState && !pGraphState->m_DashArray.empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->m_LineWidth == 1.0f &&
             (pPathData->GetPoints().size() == 5 ||
              pPathData->GetPoints().size() == 4) &&
             pPathData->IsRect())) {
-        if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, pPathData, pMatrix,
-                                             pGraphState, fill_color,
-                                             stroke_color, fill_mode)) {
+        if (pPlatform->m_GdiplusExt.DrawPath(
+                m_hDC, pPathData, pMatrix, pGraphState, fill_color,
+                stroke_color, GetIntegerFlagsFromFillOptions(fill_options))) {
           return true;
         }
       }
     }
   }
-  int old_fill_mode = fill_mode;
-  fill_mode &= 3;
+  const bool fill =
+      fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
   HPEN hPen = nullptr;
   HBRUSH hBrush = nullptr;
   if (pGraphState && stroke_alpha) {
@@ -1027,8 +1027,8 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     hPen = CreateExtPen(pGraphState, pMatrix, stroke_color);
     hPen = (HPEN)SelectObject(m_hDC, hPen);
   }
-  if (fill_mode && fill_alpha) {
-    SetPolyFillMode(m_hDC, fill_mode);
+  if (fill && fill_alpha) {
+    SetPolyFillMode(m_hDC, FillTypeToGdiFillType(fill_options.fill_type));
     hBrush = CreateBrush(fill_color);
     hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
   }
@@ -1044,8 +1044,8 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   } else {
     SetPathToDC(m_hDC, pPathData, pMatrix);
     if (pGraphState && stroke_alpha) {
-      if (fill_mode && fill_alpha) {
-        if (old_fill_mode & FX_FILL_TEXT_MODE) {
+      if (fill && fill_alpha) {
+        if (fill_options.text_mode) {
           StrokeAndFillPath(m_hDC);
         } else {
           FillPath(m_hDC);
@@ -1055,7 +1055,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
       } else {
         StrokePath(m_hDC);
       }
-    } else if (fill_mode && fill_alpha) {
+    } else if (fill && fill_alpha) {
       FillPath(m_hDC);
     }
   }

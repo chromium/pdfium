@@ -56,7 +56,7 @@ class RenderDeviceDriverIface {
                         const CFX_GraphStateData* pGraphState,
                         uint32_t fill_color,
                         uint32_t stroke_color,
-                        int fill_mode,
+                        const CFX_FillRenderOptions& fill_options,
                         BlendMode blend_type) = 0;
   virtual bool SetPixel(int x, int y, uint32_t color);
   virtual bool FillRectWithBlend(const FX_RECT& rect,

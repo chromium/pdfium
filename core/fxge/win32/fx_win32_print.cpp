@@ -451,12 +451,13 @@ bool CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                 const CFX_GraphStateData* pGraphState,
                                 FX_ARGB fill_color,
                                 FX_ARGB stroke_color,
-                                int fill_mode,
+                                const CFX_FillRenderOptions& fill_options,
                                 BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal)
     return false;
   return m_PSRenderer.DrawPath(pPathData, pObject2Device, pGraphState,
-                               fill_color, stroke_color, fill_mode & 3);
+                               fill_color, stroke_color,
+                               static_cast<int>(fill_options.fill_type));
 }
 
 bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
@@ -575,7 +576,7 @@ bool CTextOnlyPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                       const CFX_GraphStateData* pGraphState,
                                       uint32_t fill_color,
                                       uint32_t stroke_color,
-                                      int fill_mode,
+                                      const CFX_FillRenderOptions& fill_options,
                                       BlendMode blend_type) {
   return false;
 }

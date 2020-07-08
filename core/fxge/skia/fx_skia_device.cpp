@@ -2054,8 +2054,13 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     const CFX_GraphStateData* pGraphState,  // graphic state, for pen attributes
     uint32_t fill_color,                    // fill color
     uint32_t stroke_color,                  // stroke color
-    int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
+    const CFX_FillRenderOptions& fill_options,
     BlendMode blend_type) {
+  // TODO(https://crbug.com/pdfium/1531): Completely remove |fill_mode| by using
+  // |fill_options|. Meanwhile remove/update the use of
+  // GetAlternateOrWindingFillMode(), IsAlternateFillMode(),
+  // GetAlternateOrWindingFillType(),|kAlternateOrWindingFillModeMask|.
+  const int fill_mode = GetIntegerFlagsFromFillOptions(fill_options);
   ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
          kAlternateOrWindingFillModeMask);
   if (m_pCache->DrawPath(pPathData, pObject2Device, pGraphState, fill_color,
@@ -2069,7 +2074,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     skMatrix.setIdentity();
   SkPaint skPaint;
   skPaint.setAntiAlias(true);
-  if (fill_mode & FXFILL_FULLCOVER)
+  if (fill_options.full_cover)
     skPaint.setBlendMode(SkBlendMode::kPlus);
   int stroke_alpha = FXARGB_A(stroke_color);
   bool is_paint_stroke = pGraphState && stroke_alpha;

@@ -95,7 +95,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
-                int fill_mode,
+                const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
@@ -246,7 +246,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
-                int fill_mode,
+                const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
@@ -310,7 +310,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
-                int fill_mode,
+                const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
