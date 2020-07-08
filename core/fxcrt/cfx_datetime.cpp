@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_system.h"
 
 #if defined(OS_ANDROID) || defined(OS_LINUX) || defined(OS_MACOSX) || \
-    defined(OS_ASMJS) || defined(__wasm__)
+    defined(OS_ASMJS)
 #include <sys/time.h>
 #include <time.h>
 #endif
