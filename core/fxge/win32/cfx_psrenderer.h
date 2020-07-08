@@ -23,6 +23,7 @@ class CFX_Font;
 class CFX_PathData;
 class CPSFont;
 class TextCharPos;
+struct CFX_FillRenderOptions;
 struct FXDIB_ResampleOptions;
 
 struct EncoderIface {
@@ -64,7 +65,7 @@ class CFX_PSRenderer {
   void RestoreState(bool bKeepSaved);
   void SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
-                        int fill_mode);
+                        const CFX_FillRenderOptions& fill_options);
   void SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);

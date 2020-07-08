@@ -24,6 +24,7 @@ class CFX_PathData;
 class CPDF_ShadingPattern;
 class PauseIndicatorIface;
 class TextCharPos;
+struct CFX_FillRenderOptions;
 struct FX_RECT;
 
 enum class DeviceType : bool {
@@ -46,7 +47,7 @@ class RenderDeviceDriverIface {
   virtual void SetBaseClip(const FX_RECT& rect);
   virtual bool SetClip_PathFill(const CFX_PathData* pPathData,
                                 const CFX_Matrix* pObject2Device,
-                                int fill_mode) = 0;
+                                const CFX_FillRenderOptions& fill_options) = 0;
   virtual bool SetClip_PathStroke(const CFX_PathData* pPathData,
                                   const CFX_Matrix* pObject2Device,
                                   const CFX_GraphStateData* pGraphState);

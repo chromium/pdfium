@@ -20,6 +20,7 @@ class CFX_ClipRgn;
 class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_PathData;
+struct CFX_FillRenderOptions;
 
 class CAgg_PathData {
  public:
@@ -49,7 +50,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   void RestoreState(bool bKeepSaved) override;
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
-                        int fill_mode) override;
+                        const CFX_FillRenderOptions& fill_options) override;
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState) override;

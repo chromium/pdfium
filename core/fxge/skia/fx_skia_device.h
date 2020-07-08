@@ -21,6 +21,7 @@ class SkPath;
 class SkPictureRecorder;
 class SkiaState;
 class TextCharPos;
+struct CFX_FillRenderOptions;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
@@ -45,9 +46,10 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   /** Set clipping path using filled region */
   bool SetClip_PathFill(
-      const CFX_PathData* pPathData,     // path info
-      const CFX_Matrix* pObject2Device,  // optional transformation
-      int fill_mode) override;           // fill mode, WINDING or ALTERNATE
+      const CFX_PathData* pPathData,              // path info
+      const CFX_Matrix* pObject2Device,           // optional transformation
+      const CFX_FillRenderOptions& fill_options)  // fill options
+      override;
 
   /** Set clipping path using stroked region */
   bool SetClip_PathStroke(

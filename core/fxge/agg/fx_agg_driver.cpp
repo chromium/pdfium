@@ -12,6 +12,7 @@
 #include "build/build_config.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -1245,9 +1246,11 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, pThisLayer);
 }
 
-bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
-                                           const CFX_Matrix* pObject2Device,
-                                           int fill_mode) {
+bool CFX_AggDeviceDriver::SetClip_PathFill(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_FillRenderOptions& fill_options) {
+  int fill_mode = GetIntegerFlagsFromFillOptions(fill_options);
   ASSERT(IsAlternateOrWindingFillMode(fill_mode));
   ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
          kAlternateOrWindingFillModeMask);

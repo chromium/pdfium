@@ -23,6 +23,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -1958,10 +1959,10 @@ void CFX_SkiaDeviceDriver::SetClipMask(const FX_RECT& clipBox,
 bool CFX_SkiaDeviceDriver::SetClip_PathFill(
     const CFX_PathData* pPathData,     // path info
     const CFX_Matrix* pObject2Device,  // flips object's y-axis
-    int fill_mode                      // fill mode, WINDING or ALTERNATE
-    ) {
+    const CFX_FillRenderOptions& fill_options) {
   CFX_Matrix identity;
   const CFX_Matrix* deviceMatrix = pObject2Device ? pObject2Device : &identity;
+  const int fill_mode = GetIntegerFlagsFromFillOptions(fill_options);
   bool cached = m_pCache->SetClipFill(pPathData, deviceMatrix, fill_mode);
 
 #ifdef _SKIA_SUPPORT_PATHS_

@@ -23,6 +23,7 @@
 
 class CFX_ImageRenderer;
 class TextCharPos;
+struct CFX_FillRenderOptions;
 struct WINDIB_Open_Args_;
 
 RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
@@ -85,7 +86,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   void SetBaseClip(const FX_RECT& rect) override;
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
-                        int fill_mode) override;
+                        const CFX_FillRenderOptions& fill_options) override;
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState) override;
@@ -236,7 +237,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
   void RestoreState(bool bKeepSaved) override;
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
-                        int fill_mode) override;
+                        const CFX_FillRenderOptions& fill_options) override;
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState) override;
@@ -300,7 +301,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
   void RestoreState(bool bKeepSaved) override {}
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
-                        int fill_mode) override;
+                        const CFX_FillRenderOptions& fill_options) override;
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState) override;

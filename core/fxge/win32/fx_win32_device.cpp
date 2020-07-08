@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -81,6 +82,18 @@ bool GetSubFontName(ByteString* name) {
   }
   return false;
 }
+
+constexpr int FillTypeToGdiFillType(CFX_FillRenderOptions::FillType fill_type) {
+  return static_cast<int>(fill_type);
+}
+
+static_assert(FillTypeToGdiFillType(
+                  CFX_FillRenderOptions::FillType::kEvenOdd) == ALTERNATE,
+              "CFX_FillRenderOptions::FillType::kEvenOdd value mismatch");
+
+static_assert(
+    FillTypeToGdiFillType(CFX_FillRenderOptions::FillType::kWinding) == WINDING,
+    "CFX_FillRenderOptions::FillType::kWinding value mismatch");
 
 HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
                   const CFX_Matrix* pMatrix,
@@ -1083,9 +1096,10 @@ void CGdiDeviceDriver::SetBaseClip(const FX_RECT& rect) {
   m_BaseClipBox = rect;
 }
 
-bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
-                                        const CFX_Matrix* pMatrix,
-                                        int fill_mode) {
+bool CGdiDeviceDriver::SetClip_PathFill(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pMatrix,
+    const CFX_FillRenderOptions& fill_options) {
   if (pPathData->GetPoints().size() == 5) {
     Optional<CFX_FloatRect> maybe_rectf = pPathData->GetRect(pMatrix);
     if (maybe_rectf.has_value()) {
@@ -1099,7 +1113,7 @@ bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
     }
   }
   SetPathToDC(m_hDC, pPathData, pMatrix);
-  SetPolyFillMode(m_hDC, fill_mode & 3);
+  SetPolyFillMode(m_hDC, FillTypeToGdiFillType(fill_options.fill_type));
   SelectClipPath(m_hDC, RGN_AND);
   return true;
 }

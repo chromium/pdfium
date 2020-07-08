@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
@@ -377,7 +378,8 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                           static_cast<float>(pRect->right),
                           static_cast<float>(pRect->top));
         }
-        m_PSRenderer.SetClip_PathFill(&path, nullptr, FXFILL_WINDING);
+        m_PSRenderer.SetClip_PathFill(&path, nullptr,
+                                      CFX_FillRenderOptions::WindingOptions());
       }
     }
   }
@@ -428,10 +430,11 @@ void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
   m_PSRenderer.RestoreState(bKeepSaved);
 }
 
-bool CPSPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
-                                        const CFX_Matrix* pObject2Device,
-                                        int fill_mode) {
-  m_PSRenderer.SetClip_PathFill(pPathData, pObject2Device, fill_mode);
+bool CPSPrinterDriver::SetClip_PathFill(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_FillRenderOptions& fill_options) {
+  m_PSRenderer.SetClip_PathFill(pPathData, pObject2Device, fill_options);
   return true;
 }
 
@@ -553,9 +556,10 @@ int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
   }
 }
 
-bool CTextOnlyPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
-                                              const CFX_Matrix* pObject2Device,
-                                              int fill_mode) {
+bool CTextOnlyPrinterDriver::SetClip_PathFill(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_FillRenderOptions& fill_options) {
   return true;
 }
 
