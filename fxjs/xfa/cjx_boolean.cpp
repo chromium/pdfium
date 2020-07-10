@@ -32,7 +32,7 @@ void CJX_Boolean::defaultValue(CFXJSE_Value* pValue,
   int32_t iValue = FXSYS_atoi(newValue.c_str());
   WideString wsNewValue(iValue == 0 ? L"0" : L"1");
   WideString wsFormatValue(wsNewValue);
-  CXFA_Node* pContainerNode = ToNode(GetXFAObject())->GetContainerNode();
+  CXFA_Node* pContainerNode = GetXFANode()->GetContainerNode();
   if (pContainerNode)
     wsFormatValue = pContainerNode->GetFormatDataValue(wsNewValue);
 

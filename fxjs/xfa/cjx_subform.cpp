@@ -109,7 +109,7 @@ void CJX_Subform::instanceManager(CFXJSE_Value* pValue,
 
   WideString wsName = GetCData(XFA_Attribute::Name);
   CXFA_Node* pInstanceMgr = nullptr;
-  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetPrevSibling(); pNode;
+  for (CXFA_Node* pNode = GetXFANode()->GetPrevSibling(); pNode;
        pNode = pNode->GetPrevSibling()) {
     if (pNode->GetElementType() == XFA_Element::InstanceManager) {
       WideString wsInstMgrName =

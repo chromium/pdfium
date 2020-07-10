@@ -152,10 +152,6 @@ bool CJX_Node::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-CXFA_Node* CJX_Node::GetXFANode() const {
-  return ToNode(GetXFAObject());
-}
-
 CJS_Result CJX_Node::applyXSL(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)

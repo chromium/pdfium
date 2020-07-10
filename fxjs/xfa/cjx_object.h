@@ -104,6 +104,7 @@ class CJX_Object {
   JSE_PROP(className);
 
   CXFA_Document* GetDocument() const;
+  CXFA_Node* GetXFANode() const;
   CXFA_Object* GetXFAObject() const { return object_.Get(); }
 
   void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }

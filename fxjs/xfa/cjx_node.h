@@ -40,8 +40,6 @@ class CJX_Node : public CJX_Tree {
   JSE_PROP(ns);
   JSE_PROP(oneOfChild);
 
-  CXFA_Node* GetXFANode() const;
-
  protected:
   XFA_EventError execSingleEventByName(WideStringView wsEventName,
                                        XFA_Element eType);

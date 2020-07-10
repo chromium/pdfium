@@ -137,7 +137,7 @@ void CJX_Tree::nodes(CFXJSE_Value* pValue,
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_AttachNodeList* pNodeList =
-      new CXFA_AttachNodeList(GetDocument(), ToNode(GetXFAObject()));
+      new CXFA_AttachNodeList(GetDocument(), GetXFANode());
   pValue->SetHostObject(pNodeList, pScriptContext->GetJseNormalClass());
 }
 
@@ -149,7 +149,7 @@ void CJX_Tree::parent(CFXJSE_Value* pValue,
     return;
   }
 
-  CXFA_Node* pParent = ToNode(GetXFAObject())->GetParent();
+  CXFA_Node* pParent = GetXFANode()->GetParent();
   if (!pParent) {
     pValue->SetNull();
     return;
@@ -167,7 +167,7 @@ void CJX_Tree::index(CFXJSE_Value* pValue,
     return;
   }
 
-  CXFA_Node* pNode = ToNode(GetXFAObject());
+  CXFA_Node* pNode = GetXFANode();
   size_t iIndex = pNode ? pNode->GetIndexByName() : 0;
   pValue->SetInteger(pdfium::base::checked_cast<int32_t>(iIndex));
 }
@@ -180,7 +180,7 @@ void CJX_Tree::classIndex(CFXJSE_Value* pValue,
     return;
   }
 
-  CXFA_Node* pNode = ToNode(GetXFAObject());
+  CXFA_Node* pNode = GetXFANode();
   size_t iIndex = pNode ? pNode->GetIndexByClassName() : 0;
   pValue->SetInteger(pdfium::base::checked_cast<int32_t>(iIndex));
 }
@@ -202,7 +202,7 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
                                uint32_t dwFlag,
                                CXFA_Node* refNode) {
   if (!refNode)
-    refNode = ToNode(GetXFAObject());
+    refNode = GetXFANode();
 
   XFA_RESOLVENODE_RS resolveNodeRS;
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
