@@ -255,7 +255,7 @@ class CJX_Object {
   void RemoveMapModuleKey(void* pKey);
   void MoveBufferMapData(CXFA_Object* pDstModule);
 
-  UnownedPtr<CXFA_Object> object_;
+  UnownedPtr<CXFA_Object> const object_;
   UnownedPtr<CXFA_LayoutItem> layout_item_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_CalcData> calc_data_;
