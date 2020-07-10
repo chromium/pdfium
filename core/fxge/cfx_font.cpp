@@ -221,7 +221,7 @@ const CFX_Font::CharsetFontMap CFX_Font::defaultTTFMap[] = {
     {FX_CHARSET_ShiftJIS, "MS Gothic"},
     {FX_CHARSET_Hangul, "Batang"},
     {FX_CHARSET_MSWin_Cyrillic, "Arial"},
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_ || defined(OS_MACOSX)
+#if defined(OS_LINUX) || defined(OS_ASMJS) || defined(OS_MACOSX)
     {FX_CHARSET_MSWin_EasternEuropean, "Arial"},
 #else
     {FX_CHARSET_MSWin_EasternEuropean, "Tahoma"},

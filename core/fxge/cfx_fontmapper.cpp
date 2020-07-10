@@ -154,13 +154,13 @@ const AltFontFamily g_AltFontFamilies[] = {
     {"ForteMT", "Forte"},
 };
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
+#if defined(OS_LINUX) || defined(OS_ASMJS)
 const char kNarrowFamily[] = "LiberationSansNarrow";
 #elif defined(OS_ANDROID)
 const char kNarrowFamily[] = "RobotoCondensed";
 #else
 const char kNarrowFamily[] = "ArialNarrow";
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
+#endif  // defined(OS_LINUX) || defined(OS_ASMJS)
 
 ByteString TT_NormalizeName(const char* family) {
   ByteString norm(family);

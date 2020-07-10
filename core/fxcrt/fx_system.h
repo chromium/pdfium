@@ -19,17 +19,6 @@
 
 #include "build/build_config.h"
 
-// _FX_PLATFORM_ values;
-#define _FX_PLATFORM_LINUX_ 2
-
-#if defined(_WIN32) || defined(_WIN64)
-#elif defined(__linux__)
-#define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
-#elif defined(__APPLE__)
-#elif defined(__asmjs__) || defined(__wasm__)
-#define _FX_PLATFORM_ _FX_PLATFORM_LINUX_
-#endif
-
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #error Sorry, VC++ 2015 or later is required to compile PDFium.
 #endif  // defined(_MSC_VER) && _MSC_VER < 1900
