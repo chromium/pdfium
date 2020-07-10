@@ -1010,9 +1010,9 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
             (pPathData->GetPoints().size() == 5 ||
              pPathData->GetPoints().size() == 4) &&
             pPathData->IsRect())) {
-        if (pPlatform->m_GdiplusExt.DrawPath(
-                m_hDC, pPathData, pMatrix, pGraphState, fill_color,
-                stroke_color, GetIntegerFlagsFromFillOptions(fill_options))) {
+        if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, pPathData, pMatrix,
+                                             pGraphState, fill_color,
+                                             stroke_color, fill_options)) {
           return true;
         }
       }

@@ -50,7 +50,7 @@ class CGdiplusExt {
                 const CFX_GraphStateData* pGraphState,
                 uint32_t fill_argb,
                 uint32_t stroke_argb,
-                int fill_mode);
+                const CFX_FillRenderOptions& fill_options);
 
   RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
 

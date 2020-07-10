@@ -16,6 +16,7 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -299,9 +300,10 @@ typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipSetPixelOffsetMode)(
   reinterpret_cast<FuncType_##funcname>( \
       GdiplusExt.m_Functions[FuncId_##funcname])
 
-Gdiplus::GpFillMode GdiFillType2Gdip(int fill_type) {
-  return fill_type == ALTERNATE ? Gdiplus::FillModeAlternate
-                                : Gdiplus::FillModeWinding;
+Gdiplus::GpFillMode FillType2Gdip(CFX_FillRenderOptions::FillType fill_type) {
+  return fill_type == CFX_FillRenderOptions::FillType::kEvenOdd
+             ? Gdiplus::FillModeAlternate
+             : Gdiplus::FillModeWinding;
 }
 
 const CGdiplusExt& GetGdiplusExt() {
@@ -815,7 +817,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                            const CFX_GraphStateData* pGraphState,
                            uint32_t fill_argb,
                            uint32_t stroke_argb,
-                           int fill_mode) {
+                           const CFX_FillRenderOptions& fill_options) {
   pdfium::span<const FX_PATHPOINT> points = pPathData->GetPoints();
   if (points.empty())
     return true;
@@ -893,11 +895,13 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       }
     }
   }
-  if (fill_mode & FXFILL_NOPATHSMOOTH) {
+  const bool fill =
+      fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
+  if (fill_options.aliased_path) {
     bSmooth = false;
     CallFunc(GdipSetSmoothingMode)(pGraphics, Gdiplus::SmoothingModeNone);
-  } else if (!(fill_mode & FXFILL_FULLCOVER)) {
-    if (!bSmooth && (fill_mode & 3))
+  } else if (!fill_options.full_cover) {
+    if (!bSmooth && fill)
       bSmooth = true;
 
     if (bSmooth || (pGraphState && pGraphState->m_LineWidth > 2)) {
@@ -905,7 +909,6 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                                      Gdiplus::SmoothingModeAntiAlias);
     }
   }
-  int new_fill_mode = fill_mode & 3;
   if (points.size() == 4 && !pGraphState) {
     auto indices = IsSmallTriangle(gp_points, pObject2Device);
     if (indices.has_value()) {
@@ -923,8 +926,10 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     }
   }
   Gdiplus::GpPath* pGpPath = nullptr;
+  const Gdiplus::GpFillMode gp_fill_mode =
+      FillType2Gdip(fill_options.fill_type);
   CallFunc(GdipCreatePath2)(gp_points.data(), gp_types.data(), points.size(),
-                            GdiFillType2Gdip(new_fill_mode), &pGpPath);
+                            gp_fill_mode, &pGpPath);
   if (!pGpPath) {
     if (pMatrix)
       CallFunc(GdipDeleteMatrix)(pMatrix);
@@ -932,16 +937,16 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     CallFunc(GdipDeleteGraphics)(pGraphics);
     return false;
   }
-  if (new_fill_mode) {
+  if (fill) {
     Gdiplus::GpBrush* pBrush = GdipCreateBrushImpl(fill_argb);
-    CallFunc(GdipSetPathFillMode)(pGpPath, GdiFillType2Gdip(new_fill_mode));
+    CallFunc(GdipSetPathFillMode)(pGpPath, gp_fill_mode);
     CallFunc(GdipFillPath)(pGraphics, pBrush, pGpPath);
     CallFunc(GdipDeleteBrush)(pBrush);
   }
   if (pGraphState && stroke_argb) {
     Gdiplus::GpPen* pPen =
         GdipCreatePenImpl(pGraphState, pObject2Device, stroke_argb,
-                          !!(fill_mode & FX_STROKE_TEXT_MODE));
+                          fill_options.stroke_text_mode);
     if (nSubPathes == 1) {
       CallFunc(GdipDrawPath)(pGraphics, pPen, pGpPath);
     } else {
@@ -951,8 +956,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
             gp_types[i + 1] == Gdiplus::PathPointTypeStart) {
           Gdiplus::GpPath* pSubPath;
           CallFunc(GdipCreatePath2)(&gp_points[iStart], &gp_types[iStart],
-                                    i - iStart + 1,
-                                    GdiFillType2Gdip(new_fill_mode), &pSubPath);
+                                    i - iStart + 1, gp_fill_mode, &pSubPath);
           iStart = i + 1;
           CallFunc(GdipDrawPath)(pGraphics, pPen, pSubPath);
           CallFunc(GdipDeletePath)(pSubPath);
