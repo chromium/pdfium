@@ -13,7 +13,7 @@
 
 class CXFA_FFPageView;
 
-class CXFA_ViewLayoutItem : public CXFA_LayoutItem {
+class CXFA_ViewLayoutItem final : public CXFA_LayoutItem {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
   ~CXFA_ViewLayoutItem() override;

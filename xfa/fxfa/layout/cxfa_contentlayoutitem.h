@@ -15,7 +15,7 @@
 
 class CXFA_FFWidget;
 
-class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
+class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
   ~CXFA_ContentLayoutItem() override;
