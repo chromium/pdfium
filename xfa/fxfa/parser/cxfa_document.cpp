@@ -1412,6 +1412,10 @@ CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {
   return m_pLocaleMgr.get();
 }
 
+cppgc::Heap* CXFA_Document::GetHeap() const {
+  return notify_->GetFFDoc()->GetHeap();
+}
+
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
   ASSERT(!m_pScriptContext);
   m_pScriptContext = std::make_unique<CFXJSE_Engine>(this, fxjs_runtime);

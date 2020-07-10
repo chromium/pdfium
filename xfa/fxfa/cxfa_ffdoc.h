@@ -58,6 +58,7 @@ class CXFA_FFDoc {
     return m_pDocEnvironment.Get();
   }
   FormType GetFormType() const { return m_FormType; }
+  cppgc::Heap* GetHeap() const { return m_pHeap.Get(); }
   CFX_XMLDocument* GetXMLDocument() const { return m_pXMLDoc.get(); }
 
   CXFA_FFDocView* CreateDocView();

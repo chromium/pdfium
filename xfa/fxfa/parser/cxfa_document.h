@@ -17,6 +17,22 @@
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_nodeowner.h"
 
+class CFXJSE_Engine;
+class CJS_Runtime;
+class CScript_DataWindow;
+class CScript_EventPseudoModel;
+class CScript_HostPseudoModel;
+class CScript_LayoutPseudoModel;
+class CScript_LogPseudoModel;
+class CScript_SignaturePseudoModel;
+class CXFA_FFNotify;
+class CXFA_Node;
+class CXFA_Object;
+
+namespace cppgc {
+class Heap;
+}  // namespace cppgc
+
 enum XFA_VERSION {
   XFA_VERSION_UNKNOWN = 0,
   XFA_VERSION_200 = 200,
@@ -34,18 +50,6 @@ enum XFA_VERSION {
   XFA_VERSION_MIN = 200,
   XFA_VERSION_MAX = 400,
 };
-
-class CFXJSE_Engine;
-class CJS_Runtime;
-class CScript_DataWindow;
-class CScript_EventPseudoModel;
-class CScript_HostPseudoModel;
-class CScript_LayoutPseudoModel;
-class CScript_LogPseudoModel;
-class CScript_SignaturePseudoModel;
-class CXFA_FFNotify;
-class CXFA_Node;
-class CXFA_Object;
 
 class CXFA_Document final : public CXFA_NodeOwner {
  public:
@@ -77,6 +81,7 @@ class CXFA_Document final : public CXFA_NodeOwner {
   CFXJSE_Engine* GetScriptContext() const;
 
   CXFA_FFNotify* GetNotify() const { return notify_.Get(); }
+  cppgc::Heap* GetHeap() const;
   CXFA_LocaleMgr* GetLocaleMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, WideStringView wsID) const;
