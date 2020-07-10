@@ -247,7 +247,7 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_Node* pNode) {
 
   // SetFocusWidget() may destroy |hWidget| object by JS callback.
   ObservedPtr<CXFA_FFWidget> pObservedWidget(hWidget);
-  CXFA_FFDoc* hDoc = GetHDOC();
+  CXFA_FFDoc* hDoc = GetFFDoc();
   hDoc->GetDocEnvironment()->SetFocusWidget(hDoc, hWidget);
   if (!pObservedWidget)
     return;

@@ -97,7 +97,7 @@ void CJX_HostPseudoModel::calculationsEnabled(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   if (bSetting) {
     hDoc->GetDocEnvironment()->SetCalculationsEnabled(hDoc,
                                                       pValue->ToBoolean());
@@ -113,7 +113,7 @@ void CJX_HostPseudoModel::currentPage(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   if (bSetting) {
     hDoc->GetDocEnvironment()->SetCurrentPage(hDoc, pValue->ToInteger());
     return;
@@ -143,7 +143,7 @@ void CJX_HostPseudoModel::numPages(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   if (bSetting) {
     ThrowException(WideString::FromASCII("Unable to set numPages value."));
     return;
@@ -176,7 +176,7 @@ void CJX_HostPseudoModel::title(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   if (bSetting) {
     hDoc->GetDocEnvironment()->SetTitle(hDoc, pValue->ToWideString());
     return;
@@ -194,7 +194,7 @@ void CJX_HostPseudoModel::validationsEnabled(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   if (bSetting) {
     hDoc->GetDocEnvironment()->SetValidationsEnabled(hDoc, pValue->ToBoolean());
     return;
@@ -255,7 +255,7 @@ CJS_Result CJX_HostPseudoModel::gotoURL(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   WideString URL = runtime->ToWideString(params[0]);
   hDoc->GetDocEnvironment()->GotoURL(hDoc, URL);
   return CJS_Result::Success();
@@ -542,7 +542,7 @@ CJS_Result CJX_HostPseudoModel::print(
   int32_t nStartPage = runtime->ToInt32(params[1]);
   int32_t nEndPage = runtime->ToInt32(params[2]);
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   hDoc->GetDocEnvironment()->Print(hDoc, nStartPage, nEndPage, dwOptions);
   return CJS_Result::Success();
 }
@@ -574,7 +574,7 @@ CJS_Result CJX_HostPseudoModel::exportData(
   if (params.size() >= 2)
     XDP = runtime->ToBoolean(params[1]);
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   hDoc->GetDocEnvironment()->ExportData(hDoc, filePath, XDP);
   return CJS_Result::Success();
 }
@@ -586,7 +586,7 @@ CJS_Result CJX_HostPseudoModel::pageUp(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   int32_t nCurPage = hDoc->GetDocEnvironment()->GetCurrentPage(hDoc);
   int32_t nNewPage = 0;
   if (nCurPage <= 1)
@@ -604,7 +604,7 @@ CJS_Result CJX_HostPseudoModel::pageDown(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetFFDoc();
   int32_t nCurPage = hDoc->GetDocEnvironment()->GetCurrentPage(hDoc);
   int32_t nPageCount = hDoc->GetDocEnvironment()->CountPages(hDoc);
   if (!nPageCount || nCurPage == nPageCount)

@@ -5083,7 +5083,7 @@ CXFA_Node* CXFA_Node::GetTransparentParent() {
 }
 
 CFX_XMLDocument* CXFA_Node::GetXMLDocument() const {
-  return GetDocument()->GetNotify()->GetHDOC()->GetXMLDocument();
+  return GetDocument()->GetNotify()->GetFFDoc()->GetXMLDocument();
 }
 
 // static

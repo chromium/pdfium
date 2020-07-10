@@ -87,7 +87,7 @@ void CJX_Packet::content(CFXJSE_Value* pValue,
           GetXFANode()
               ->GetDocument()
               ->GetNotify()
-              ->GetHDOC()
+              ->GetFFDoc()
               ->GetXMLDocument()
               ->CreateNode<CFX_XMLText>(pValue->ToWideString()));
     }

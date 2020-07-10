@@ -1454,7 +1454,7 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
 }
 
 FormType CXFA_Document::GetFormType() const {
-  return GetNotify()->GetHDOC()->GetFormType();
+  return GetNotify()->GetFFDoc()->GetFormType();
 }
 
 CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
@@ -1614,7 +1614,7 @@ void CXFA_Document::DoDataMerge() {
   if (!pDatasetsRoot) {
     // Ownership will be passed in the AppendChild below to the XML tree.
     auto* pDatasetsXMLNode =
-        notify_->GetHDOC()->GetXMLDocument()->CreateNode<CFX_XMLElement>(
+        notify_->GetFFDoc()->GetXMLDocument()->CreateNode<CFX_XMLElement>(
             L"xfa:datasets");
     pDatasetsXMLNode->SetAttribute(L"xmlns:xfa",
                                    L"http://www.xfa.org/schema/xfa-data/1.0/");
@@ -1663,7 +1663,7 @@ void CXFA_Document::DoDataMerge() {
     pDataRoot->JSObject()->SetCData(XFA_Attribute::Name, L"data", false, false);
 
     auto* elem =
-        notify_->GetHDOC()->GetXMLDocument()->CreateNode<CFX_XMLElement>(
+        notify_->GetFFDoc()->GetXMLDocument()->CreateNode<CFX_XMLElement>(
             L"xfa:data");
     pDataRoot->SetXMLMappingNode(elem);
     pDatasetsRoot->InsertChildAndNotify(pDataRoot, nullptr);
@@ -1721,7 +1721,7 @@ void CXFA_Document::DoDataMerge() {
                                         false, false);
 
     auto* elem =
-        notify_->GetHDOC()->GetXMLDocument()->CreateNode<CFX_XMLElement>(
+        notify_->GetFFDoc()->GetXMLDocument()->CreateNode<CFX_XMLElement>(
             wsDataTopLevelName);
     pDataTopLevel->SetXMLMappingNode(elem);
 

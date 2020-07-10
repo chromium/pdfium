@@ -490,7 +490,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
         bChanged = false;
         {
           Optional<float> fRelSplitPos = pFormNode->FindSplitPos(
-              pNotify->GetHDOC()->GetDocView(), pLayoutItem->GetIndex(),
+              pNotify->GetFFDoc()->GetDocView(), pLayoutItem->GetIndex(),
               *fProposedSplitPos - fCurVerticalOffset);
           if (fRelSplitPos.has_value()) {
             bAnyChanged = true;

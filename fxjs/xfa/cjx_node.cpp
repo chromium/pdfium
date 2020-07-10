@@ -274,7 +274,7 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     return CJS_Result::Success();
 
   CFX_XMLDocument* top_xml_doc =
-      GetXFANode()->GetDocument()->GetNotify()->GetHDOC()->GetXMLDocument();
+      GetXFANode()->GetDocument()->GetNotify()->GetFFDoc()->GetXMLDocument();
   top_xml_doc->AppendNodesFrom(pParser->GetXMLDoc().get());
 
   if (bIgnoreRoot &&
