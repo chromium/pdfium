@@ -2650,7 +2650,7 @@ TEST_F(FPDFEditEmbedderTest, TransformAnnot) {
 }
 
 // TODO(npm): Add tests using Japanese fonts in other OS.
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
+#if defined(OS_LINUX)
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #define MAYBE_AddCIDFontText DISABLED_AddCIDFontText
@@ -2709,7 +2709,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_AddCIDFontText) {
 
   VerifySavedDocument(612, 792, md5);
 }
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
+#endif  // defined(OS_LINUX)
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
