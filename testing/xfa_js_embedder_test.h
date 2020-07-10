@@ -9,18 +9,13 @@
 #include <string>
 
 #include "core/fxcrt/string_view_template.h"
-#include "testing/embedder_test.h"
+#include "testing/js_embedder_test.h"
 
 class CFXJSE_Engine;
 class CFXJSE_Value;
-class CFX_V8ArrayBufferAllocator;
 class CXFA_Document;
 
-namespace v8 {
-class Isolate;
-}
-
-class XFAJSEmbedderTest : public EmbedderTest {
+class XFAJSEmbedderTest : public JSEmbedderTest {
  public:
   XFAJSEmbedderTest();
   ~XFAJSEmbedderTest() override;
@@ -33,22 +28,18 @@ class XFAJSEmbedderTest : public EmbedderTest {
                                LinearizeOption linearize_option,
                                JavaScriptOption javascript_option) override;
 
-  v8::Isolate* GetIsolate() const { return isolate_; }
   CXFA_Document* GetXFADocument() const;
+  CFXJSE_Engine* GetScriptContext() const { return script_context_; }
+  CFXJSE_Value* GetValue() const { return value_.get(); }
 
   bool Execute(ByteStringView input);
   bool ExecuteSilenceFailure(ByteStringView input);
 
-  CFXJSE_Engine* GetScriptContext() const { return script_context_; }
-  CFXJSE_Value* GetValue() const { return value_.get(); }
-
  private:
-  std::unique_ptr<CFX_V8ArrayBufferAllocator> array_buffer_allocator_;
-  std::unique_ptr<CFXJSE_Value> value_;
-  v8::Isolate* isolate_ = nullptr;
-  CFXJSE_Engine* script_context_ = nullptr;
-
   bool ExecuteHelper(ByteStringView input);
+
+  std::unique_ptr<CFXJSE_Value> value_;
+  CFXJSE_Engine* script_context_ = nullptr;
 };
 
 #endif  // TESTING_XFA_JS_EMBEDDER_TEST_H_

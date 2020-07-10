@@ -16,23 +16,12 @@ void JSEmbedderTest::SetUp() {
   params.array_buffer_allocator = m_pArrayBufferAllocator.get();
   m_pIsolate.reset(v8::Isolate::New(params));
 
-  EmbedderTest::SetExternalIsolate(isolate());
+  EmbedderTest::SetExternalIsolate(m_pIsolate.get());
   EmbedderTest::SetUp();
-
-  v8::Isolate::Scope isolate_scope(isolate());
-  v8::HandleScope handle_scope(isolate());
-  FXJS_PerIsolateData::SetUp(isolate());
-  m_Engine = std::make_unique<CFXJS_Engine>(isolate());
-  m_Engine->InitializeEngine();
 }
 
 void JSEmbedderTest::TearDown() {
-  m_Engine->ReleaseEngine();
-  m_Engine.reset();
   EmbedderTest::TearDown();
+  EmbedderTest::SetExternalIsolate(nullptr);
   m_pIsolate.reset();
-}
-
-v8::Local<v8::Context> JSEmbedderTest::GetV8Context() {
-  return m_Engine->GetV8Context();
 }

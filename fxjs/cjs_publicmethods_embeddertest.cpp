@@ -9,8 +9,8 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_publicmethods.h"
+#include "testing/external_engine_embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/js_embedder_test.h"
 
 namespace {
 
@@ -20,7 +20,7 @@ double RoundDownDate(double date) {
 
 }  // namespace
 
-class CJS_PublicMethodsEmbedderTest : public JSEmbedderTest {};
+class CJS_PublicMethodsEmbedderTest : public ExternalEngineEmbedderTest {};
 
 TEST_F(CJS_PublicMethodsEmbedderTest, ParseDateUsingFormat) {
   v8::Isolate::Scope isolate_scope(isolate());

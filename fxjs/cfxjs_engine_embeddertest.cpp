@@ -4,8 +4,8 @@
 
 #include "fxjs/cfxjs_engine.h"
 
+#include "testing/external_engine_embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/js_embedder_test.h"
 
 namespace {
 
@@ -19,7 +19,7 @@ const wchar_t kScript2[] = L"fred = 8";
 
 }  // namespace
 
-using CFXJSEngineEmbedderTest = JSEmbedderTest;
+class CFXJSEngineEmbedderTest : public ExternalEngineEmbedderTest {};
 
 void CheckAssignmentInEngineContext(CFXJS_Engine* current_engine,
                                     double expected) {

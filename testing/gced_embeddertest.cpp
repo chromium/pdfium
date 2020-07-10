@@ -10,26 +10,8 @@
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
 
-void GCedEmbedderTest::SetUp() {
-  v8::Isolate::CreateParams params;
-  params.array_buffer_allocator = static_cast<v8::ArrayBuffer::Allocator*>(
-      FPDF_GetArrayBufferAllocatorSharedInstance());
-  isolate_.reset(v8::Isolate::New(params));
-  EmbedderTest::SetExternalIsolate(isolate_.get());
-  EmbedderTest::SetUp();
-}
-
-void GCedEmbedderTest::TearDown() {
-  EmbedderTest::TearDown();
-  isolate_.reset();
-}
-
 void GCedEmbedderTest::PumpPlatformMessageLoop() {
   v8::Platform* platform = EmbedderTestEnvironment::GetInstance()->platform();
-  while (v8::platform::PumpMessageLoop(platform, isolate_.get()))
+  while (v8::platform::PumpMessageLoop(platform, isolate()))
     continue;
-}
-
-void GCedEmbedderTest::IsolateDeleter::operator()(v8::Isolate* ptr) {
-  ptr->Dispose();
 }

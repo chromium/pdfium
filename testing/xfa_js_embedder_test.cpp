@@ -13,20 +13,12 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 
-XFAJSEmbedderTest::XFAJSEmbedderTest()
-    : array_buffer_allocator_(std::make_unique<CFX_V8ArrayBufferAllocator>()) {}
+XFAJSEmbedderTest::XFAJSEmbedderTest() = default;
 
 XFAJSEmbedderTest::~XFAJSEmbedderTest() = default;
 
 void XFAJSEmbedderTest::SetUp() {
-  v8::Isolate::CreateParams params;
-  params.array_buffer_allocator = array_buffer_allocator_.get();
-  isolate_ = v8::Isolate::New(params);
-  ASSERT_TRUE(isolate_);
-
-  EmbedderTest::SetExternalIsolate(isolate_);
-  EmbedderTest::SetUp();
-
+  JSEmbedderTest::SetUp();
   CXFA_FFApp::SkipFontLoadForTesting(true);
 }
 
@@ -36,10 +28,7 @@ void XFAJSEmbedderTest::TearDown() {
   value_.reset();
   script_context_ = nullptr;
 
-  EmbedderTest::TearDown();
-
-  isolate_->Dispose();
-  isolate_ = nullptr;
+  JSEmbedderTest::TearDown();
 }
 
 CXFA_Document* XFAJSEmbedderTest::GetXFADocument() const {
@@ -73,7 +62,7 @@ bool XFAJSEmbedderTest::Execute(ByteStringView input) {
   if (ExecuteHelper(input))
     return true;
 
-  CFXJSE_Value msg(GetIsolate());
+  CFXJSE_Value msg(isolate());
   value_->GetObjectPropertyByIdx(1, &msg);
   fprintf(stderr, "FormCalc: %.*s\n", static_cast<int>(input.GetLength()),
           input.unterminated_c_str());
@@ -89,7 +78,7 @@ bool XFAJSEmbedderTest::ExecuteSilenceFailure(ByteStringView input) {
 }
 
 bool XFAJSEmbedderTest::ExecuteHelper(ByteStringView input) {
-  value_ = std::make_unique<CFXJSE_Value>(GetIsolate());
+  value_ = std::make_unique<CFXJSE_Value>(isolate());
   return script_context_->RunScript(CXFA_Script::Type::Formcalc,
                                     WideString::FromUTF8(input).AsStringView(),
                                     value_.get(), GetXFADocument()->GetRoot());
