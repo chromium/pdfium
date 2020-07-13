@@ -1,7 +1,7 @@
 use_relative_paths = True
 use_relative_hooks = True
 
-gclient_gn_args_file = 'pdfium/build/config/gclient_args.gni'
+gclient_gn_args_file = 'build/config/gclient_args.gni'
 gclient_gn_args = [
   'checkout_google_benchmark',
   'mac_xcode_version',
