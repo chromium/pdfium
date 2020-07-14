@@ -14,6 +14,8 @@
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "fxjs/xfa/cjx_object.h"
+#include "xfa/fxfa/parser/cxfa_thisproxy.h"
 
 namespace {
 
@@ -128,6 +130,15 @@ void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   hObject->SetAlignedPointerInInternalField(1, nullptr);
 }
 
+CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue) {
+  CFXJSE_HostObject* pHostObject = pValue->ToHostObject();
+  if (!pHostObject)
+    return nullptr;
+
+  CJX_Object* pJSObject = pHostObject->AsCJXObject();
+  return pJSObject ? ToThisProxy(pJSObject->GetXFAObject()) : nullptr;
+}
+
 }  // namespace
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
@@ -209,7 +220,12 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
 
 CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 
-CFXJSE_Context::~CFXJSE_Context() = default;
+CFXJSE_Context::~CFXJSE_Context() {
+  // This is what prevents leaking the CXFA_ThisProxies allocated in
+  // CXFJSE_Engine::CreateVariablesContext(). If the global object is
+  // not a thisproxy, then this degenerates to deleting nullptr, a no-op.
+  delete ToThisProxy(GetGlobalObject().get());
+}
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
   auto pValue = std::make_unique<CFXJSE_Value>(GetIsolate());

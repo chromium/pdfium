@@ -72,15 +72,6 @@ namespace {
 
 const char kFormCalcRuntime[] = "pfm_rt";
 
-CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue) {
-  CFXJSE_HostObject* pHostObject = pValue->ToHostObject();
-  if (!pHostObject)
-    return nullptr;
-
-  CJX_Object* pJSObject = pHostObject->AsCJXObject();
-  return pJSObject ? ToThisProxy(pJSObject->GetXFAObject()) : nullptr;
-}
-
 }  // namespace
 
 // static
@@ -130,11 +121,6 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
 }
 
 CFXJSE_Engine::~CFXJSE_Engine() {
-  // This is what prevents leaking the CXFA_ThisProxies allocated in
-  // CreateVariablesContext().
-  for (const auto& pair : m_mapVariableToContext)
-    delete ToThisProxy(pair.second->GetGlobalObject().get());
-
   // This is what ensures that the v8 object bound to a CXFA_Node
   // no longer retains that binding since it will outlive that node.
   for (const auto& pair : m_mapObjectToValue)
@@ -515,7 +501,7 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
     return nullptr;
 
   // Ownership of |proxy| is maintained through v8 bindings, and is
-  // manually freed in ~CFXJE_Engine() after re-obtaining the binding
+  // manually freed in ~CFXJE_Context() after re-obtaining the binding
   // from v8.
   auto* proxy = new CXFA_ThisProxy(pSubform, pScriptNode);
   auto pNewContext = CFXJSE_Context::Create(
