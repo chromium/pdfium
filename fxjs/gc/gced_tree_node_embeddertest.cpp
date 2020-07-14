@@ -4,6 +4,8 @@
 
 #include "fxjs/gc/gced_tree_node.h"
 
+#include <map>
+
 #include "core/fxcrt/observed_ptr.h"
 #include "fxjs/gc/heap.h"
 #include "testing/gced_embeddertest.h"
@@ -143,4 +145,11 @@ TEST_F(GCedTreeNodeEmbedderTest, InsertBeforeAfter) {
   ForceGCAndPump();
   EXPECT_TRUE(s_root);
   EXPECT_FALSE(watcher);
+}
+
+TEST_F(GCedTreeNodeEmbedderTest, AsMapKey) {
+  std::map<cppgc::Persistent<ObservableGCedTreeNodeForTest>, int> score;
+  ObservableGCedTreeNodeForTest* node = CreateNode();
+  score[node] = 100;
+  EXPECT_EQ(100, score[node]);
 }
