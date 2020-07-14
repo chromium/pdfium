@@ -23,7 +23,6 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -290,26 +289,17 @@ static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
 }
 #endif  // _SKIA_SUPPORT_
 
-constexpr int kAlternateOrWindingFillModeMask =
-    FXFILL_ALTERNATE | FXFILL_WINDING;
-
 SkColorType Get32BitSkColorType(bool is_rgb_byte_order) {
   return is_rgb_byte_order ? kRGBA_8888_SkColorType : kBGRA_8888_SkColorType;
 }
 
-int GetAlternateOrWindingFillMode(int fill_mode) {
-  return fill_mode & kAlternateOrWindingFillModeMask;
-}
-
-bool IsAlternateFillMode(int fill_mode) {
+SkPathFillType GetAlternateOrWindingFillType(
+    const CFX_FillRenderOptions& fill_options) {
   // TODO(thestig): This function should be able to assert
-  // GetAlternateOrWindingFillMode(fill_mode) != 0.
-  return GetAlternateOrWindingFillMode(fill_mode) == FXFILL_ALTERNATE;
-}
-
-SkPathFillType GetAlternateOrWindingFillType(int fill_mode) {
-  return IsAlternateFillMode(fill_mode) ? SkPathFillType::kEvenOdd
-                                        : SkPathFillType::kWinding;
+  // fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill.
+  return fill_options.fill_type == CFX_FillRenderOptions::FillType::kEvenOdd
+             ? SkPathFillType::kEvenOdd
+             : SkPathFillType::kWinding;
 }
 
 bool IsEvenOddFillType(SkPathFillType fill) {
@@ -745,7 +735,7 @@ class SkiaState {
                 const CFX_GraphStateData* pDrawState,
                 uint32_t fill_color,
                 uint32_t stroke_color,
-                int fill_mode,
+                const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) {
     if (m_debugDisable)
       return false;
@@ -753,15 +743,18 @@ class SkiaState {
     int drawIndex = std::min(m_drawIndex, m_commands.count());
     if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kPath == m_type &&
-         DrawChanged(pMatrix, pDrawState, fill_color, stroke_color, fill_mode,
-                     blend_type, m_pDriver->GetGroupKnockout()))) {
+         DrawChanged(pMatrix, pDrawState, fill_color, stroke_color,
+                     fill_options.fill_type, blend_type,
+                     m_pDriver->GetGroupKnockout()))) {
       Flush();
     }
     if (Accumulator::kPath != m_type) {
       m_skPath.reset();
-      m_fillFullCover = !!(fill_mode & FXFILL_FULLCOVER);
-      m_fillPath = GetAlternateOrWindingFillMode(fill_mode) && fill_color;
-      m_skPath.setFillType(GetAlternateOrWindingFillType(fill_mode));
+      m_fillFullCover = fill_options.full_cover;
+      m_fillPath =
+          fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
+          fill_color;
+      m_skPath.setFillType(GetAlternateOrWindingFillType(fill_options));
       if (pDrawState)
         m_drawState = *pDrawState;
       m_fillColor = fill_color;
@@ -1033,7 +1026,7 @@ class SkiaState {
 
   bool SetClipFill(const CFX_PathData* pPathData,
                    const CFX_Matrix* pMatrix,
-                   int fill_mode) {
+                   const CFX_FillRenderOptions& fill_options) {
     if (m_debugDisable)
       return false;
     Dump(__func__);
@@ -1055,7 +1048,7 @@ class SkiaState {
     }
     if (skClipPath.isEmpty()) {
       skClipPath = BuildPath(pPathData);
-      skClipPath.setFillType(GetAlternateOrWindingFillType(fill_mode));
+      skClipPath.setFillType(GetAlternateOrWindingFillType(fill_options));
       SkMatrix skMatrix = ToSkMatrix(*pMatrix);
       skClipPath.transform(skMatrix);
     }
@@ -1170,14 +1163,14 @@ class SkiaState {
                    const CFX_GraphStateData* pState,
                    uint32_t fill_color,
                    uint32_t stroke_color,
-                   int fill_mode,
+                   CFX_FillRenderOptions::FillType fill_type,
                    BlendMode blend_type,
                    bool group_knockout) const {
     return MatrixChanged(pMatrix) || StateChanged(pState, m_drawState) ||
            fill_color != m_fillColor || stroke_color != m_strokeColor ||
            IsEvenOddFillType(m_skPath.getFillType()) ||
-           IsAlternateFillMode(fill_mode) || blend_type != m_blendType ||
-           group_knockout != m_groupKnockout;
+           fill_type == CFX_FillRenderOptions::FillType::kEvenOdd ||
+           blend_type != m_blendType || group_knockout != m_groupKnockout;
   }
 
   bool FontChanged(CFX_Font* pFont,
@@ -1618,7 +1611,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
       m_pCache(new SkiaState(this)),
 #ifdef _SKIA_SUPPORT_PATHS_
       m_pClipRgn(nullptr),
-      m_FillFlags(0),
 #endif  // _SKIA_SUPPORT_PATHS_
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
@@ -1950,7 +1942,7 @@ void CFX_SkiaDeviceDriver::SetClipMask(const FX_RECT& clipBox,
       -path_rect.left,
       -path_rect.top);  // FIXME(caryclark) wrong sign(s)? upside down?
   SkPaint paint;
-  paint.setAntiAlias((m_FillFlags & FXFILL_NOPATHSMOOTH) == 0);
+  paint.setAntiAlias(!m_FillOptions.aliased_path);
   canvas->drawPath(path, paint);
   m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, pThisLayer);
 }
@@ -1962,11 +1954,10 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
     const CFX_FillRenderOptions& fill_options) {
   CFX_Matrix identity;
   const CFX_Matrix* deviceMatrix = pObject2Device ? pObject2Device : &identity;
-  const int fill_mode = GetIntegerFlagsFromFillOptions(fill_options);
-  bool cached = m_pCache->SetClipFill(pPathData, deviceMatrix, fill_mode);
+  bool cached = m_pCache->SetClipFill(pPathData, deviceMatrix, fill_options);
 
 #ifdef _SKIA_SUPPORT_PATHS_
-  m_FillFlags = fill_mode;
+  m_FillOptions = fill_options;
   if (!m_pClipRgn) {
     m_pClipRgn = std::make_unique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
@@ -1997,7 +1988,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
     }
   }
   SkPath skClipPath = BuildPath(pPathData);
-  skClipPath.setFillType(GetAlternateOrWindingFillType(fill_mode));
+  skClipPath.setFillType(GetAlternateOrWindingFillType(fill_options));
   SkMatrix skMatrix = ToSkMatrix(*deviceMatrix);
   skClipPath.transform(skMatrix);
   DebugShowSkiaPath(skClipPath);
@@ -2056,15 +2047,8 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     uint32_t stroke_color,                  // stroke color
     const CFX_FillRenderOptions& fill_options,
     BlendMode blend_type) {
-  // TODO(https://crbug.com/pdfium/1531): Completely remove |fill_mode| by using
-  // |fill_options|. Meanwhile remove/update the use of
-  // GetAlternateOrWindingFillMode(), IsAlternateFillMode(),
-  // GetAlternateOrWindingFillType(),|kAlternateOrWindingFillModeMask|.
-  const int fill_mode = GetIntegerFlagsFromFillOptions(fill_options);
-  ASSERT(GetAlternateOrWindingFillMode(fill_mode) !=
-         kAlternateOrWindingFillModeMask);
   if (m_pCache->DrawPath(pPathData, pObject2Device, pGraphState, fill_color,
-                         stroke_color, fill_mode, blend_type)) {
+                         stroke_color, fill_options, blend_type)) {
     return true;
   }
   SkMatrix skMatrix;
@@ -2084,8 +2068,9 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
   m_pCanvas->concat(skMatrix);
   bool do_stroke = true;
-  if (GetAlternateOrWindingFillMode(fill_mode) && fill_color) {
-    skPath.setFillType(GetAlternateOrWindingFillType(fill_mode));
+  if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
+      fill_color) {
+    skPath.setFillType(GetAlternateOrWindingFillType(fill_options));
     SkPath strokePath;
     const SkPath* fillPath = &skPath;
     if (is_paint_stroke) {

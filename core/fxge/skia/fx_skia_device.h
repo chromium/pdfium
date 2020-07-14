@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 
@@ -21,7 +22,6 @@ class SkPath;
 class SkPictureRecorder;
 class SkiaState;
 class TextCharPos;
-struct CFX_FillRenderOptions;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
@@ -180,7 +180,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 #ifdef _SKIA_SUPPORT_PATHS_
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
-  int m_FillFlags;
+  CFX_FillRenderOptions m_FillOptions;
 #endif
   bool m_bRgbByteOrder;
   bool m_bGroupKnockout;
