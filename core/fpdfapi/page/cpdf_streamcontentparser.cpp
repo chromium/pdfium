@@ -556,20 +556,20 @@ void CPDF_StreamContentParser::OnOperator(ByteStringView op) {
 
 void CPDF_StreamContentParser::Handle_CloseFillStrokePath() {
   Handle_ClosePath();
-  AddPathObject(FXFILL_WINDING, true);
+  AddPathObject(CFX_FillRenderOptions::FillType::kWinding, true);
 }
 
 void CPDF_StreamContentParser::Handle_FillStrokePath() {
-  AddPathObject(FXFILL_WINDING, true);
+  AddPathObject(CFX_FillRenderOptions::FillType::kWinding, true);
 }
 
 void CPDF_StreamContentParser::Handle_CloseEOFillStrokePath() {
   AddPathPoint(m_PathStartX, m_PathStartY, FXPT_TYPE::LineTo, true);
-  AddPathObject(FXFILL_ALTERNATE, true);
+  AddPathObject(CFX_FillRenderOptions::FillType::kEvenOdd, true);
 }
 
 void CPDF_StreamContentParser::Handle_EOFillStrokePath() {
-  AddPathObject(FXFILL_ALTERNATE, true);
+  AddPathObject(CFX_FillRenderOptions::FillType::kEvenOdd, true);
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
@@ -866,15 +866,15 @@ void CPDF_StreamContentParser::Handle_EndText() {
 }
 
 void CPDF_StreamContentParser::Handle_FillPath() {
-  AddPathObject(FXFILL_WINDING, false);
+  AddPathObject(CFX_FillRenderOptions::FillType::kWinding, false);
 }
 
 void CPDF_StreamContentParser::Handle_FillPathOld() {
-  AddPathObject(FXFILL_WINDING, false);
+  AddPathObject(CFX_FillRenderOptions::FillType::kWinding, false);
 }
 
 void CPDF_StreamContentParser::Handle_EOFillPath() {
-  AddPathObject(FXFILL_ALTERNATE, false);
+  AddPathObject(CFX_FillRenderOptions::FillType::kEvenOdd, false);
 }
 
 void CPDF_StreamContentParser::Handle_SetGray_Fill() {
@@ -965,7 +965,7 @@ void CPDF_StreamContentParser::Handle_SetMiterLimit() {
 void CPDF_StreamContentParser::Handle_MarkPlace() {}
 
 void CPDF_StreamContentParser::Handle_EndPath() {
-  AddPathObject(0, false);
+  AddPathObject(CFX_FillRenderOptions::FillType::kNoFill, false);
 }
 
 void CPDF_StreamContentParser::Handle_SaveGraphState() {
@@ -1016,11 +1016,11 @@ void CPDF_StreamContentParser::Handle_SetRenderIntent() {}
 
 void CPDF_StreamContentParser::Handle_CloseStrokePath() {
   Handle_ClosePath();
-  AddPathObject(0, true);
+  AddPathObject(CFX_FillRenderOptions::FillType::kNoFill, true);
 }
 
 void CPDF_StreamContentParser::Handle_StrokePath() {
-  AddPathObject(0, true);
+  AddPathObject(CFX_FillRenderOptions::FillType::kNoFill, true);
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Fill() {
@@ -1439,7 +1439,9 @@ void CPDF_StreamContentParser::AddPathPoint(float x,
   m_PathPoints.push_back(FX_PATHPOINT(CFX_PointF(x, y), type, close));
 }
 
-void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
+void CPDF_StreamContentParser::AddPathObject(
+    CFX_FillRenderOptions::FillType fill_type,
+    bool bStroke) {
   std::vector<FX_PATHPOINT> path_points;
   path_points.swap(m_PathPoints);
   CFX_FillRenderOptions::FillType path_clip_type = m_PathClipType;
@@ -1470,10 +1472,10 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   }
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
-  if (bStroke || FillType) {
+  if (bStroke || fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
     auto pPathObj = std::make_unique<CPDF_PathObject>(GetCurrentStreamIndex());
     pPathObj->set_stroke(bStroke);
-    pPathObj->set_filltype(FillType);
+    pPathObj->set_filltype(fill_type);
     pPathObj->path() = path;
     pPathObj->set_matrix(matrix);
     SetGraphicStates(pPathObj.get(), true, false, true);

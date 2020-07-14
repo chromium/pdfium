@@ -24,7 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxge/render_defines.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
@@ -55,7 +55,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
 TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   auto pPathObj = std::make_unique<CPDF_PathObject>();
   pPathObj->set_stroke(true);
-  pPathObj->set_filltype(FXFILL_ALTERNATE);
+  pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kEvenOdd);
   pPathObj->path().AppendRect(10, 5, 13, 30);
 
   auto dummy_page_dict = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -81,7 +81,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
   RetainPtr<CPDF_ColorSpace> pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
   {
     auto pPathObj = std::make_unique<CPDF_PathObject>();
-    pPathObj->set_filltype(FXFILL_WINDING);
+    pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
 
     // Test code in ProcessPath that generates re operator
     pPathObj->path().AppendRect(0.000000000000000000001,
@@ -114,7 +114,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
     pPathObj->m_GraphState.SetLineWidth(2.000000000000000000001);
     pPathObj->Transform(CFX_Matrix(1, 0, 0, 1, 432, 500000000000000.000002));
 
-    pPathObj->set_filltype(FXFILL_WINDING);
+    pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
     pPathObj->path().AppendPoint(CFX_PointF(0.000000000000000000001f, 4.67f),
                                  FXPT_TYPE::MoveTo);
     pPathObj->path().AppendPoint(
@@ -144,7 +144,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   auto pPathObj = std::make_unique<CPDF_PathObject>();
-  pPathObj->set_filltype(FXFILL_WINDING);
+  pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
   pPathObj->path().AppendPoint(CFX_PointF(3.102f, 4.67f), FXPT_TYPE::MoveTo);
   pPathObj->path().AppendPoint(CFX_PointF(5.45f, 0.29f), FXPT_TYPE::LineTo);
   pPathObj->path().AppendPoint(CFX_PointF(4.24f, 3.15f), FXPT_TYPE::BezierTo);
@@ -174,7 +174,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
 TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   auto pPathObj = std::make_unique<CPDF_PathObject>();
   pPathObj->set_stroke(true);
-  pPathObj->set_filltype(FXFILL_WINDING);
+  pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
   pPathObj->path().AppendPoint(CFX_PointF(1, 2), FXPT_TYPE::MoveTo);
   pPathObj->path().AppendPoint(CFX_PointF(3, 4), FXPT_TYPE::LineTo);
   pPathObj->path().AppendPointAndClose(CFX_PointF(5, 6), FXPT_TYPE::LineTo);

@@ -138,7 +138,7 @@ class CPDF_RenderStatus {
   bool ProcessPath(CPDF_PathObject* path_obj, const CFX_Matrix& mtObj2Device);
   void ProcessPathPattern(CPDF_PathObject* path_obj,
                           const CFX_Matrix& mtObj2Device,
-                          int* filltype,
+                          CFX_FillRenderOptions::FillType* filltype,
                           bool* stroke);
   void DrawPathWithPattern(CPDF_PathObject* path_obj,
                            const CFX_Matrix& mtObj2Device,

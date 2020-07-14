@@ -398,23 +398,25 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 
 bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
                                     const CFX_Matrix& mtObj2Device) {
-  // Path fill type, can be 0, FXFILL_ALTERNATE or FXFILL_WINDING.
-  int fill_type = path_obj->filltype();
+  CFX_FillRenderOptions::FillType fill_type = path_obj->filltype();
   bool stroke = path_obj->stroke();
   ProcessPathPattern(path_obj, mtObj2Device, &fill_type, &stroke);
-  if (fill_type == 0 && !stroke)
+  if (fill_type == CFX_FillRenderOptions::FillType::kNoFill && !stroke)
     return true;
 
   // If the option to convert fill paths to stroke is enabled for forced color,
-  // set |fill_type| to 0 and |stroke| to true.
+  // set |fill_type| to FillType::kNoFill and |stroke| to true.
   CPDF_RenderOptions::Options& options = m_Options.GetOptions();
   if (m_Options.ColorModeIs(CPDF_RenderOptions::Type::kForcedColor) &&
-      options.bConvertFillToStroke && (fill_type != 0)) {
+      options.bConvertFillToStroke &&
+      fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
     stroke = true;
-    fill_type = 0;
+    fill_type = CFX_FillRenderOptions::FillType::kNoFill;
   }
 
-  uint32_t fill_argb = fill_type ? GetFillArgb(path_obj) : 0;
+  uint32_t fill_argb = fill_type != CFX_FillRenderOptions::FillType::kNoFill
+                           ? GetFillArgb(path_obj)
+                           : 0;
   uint32_t stroke_argb = stroke ? GetStrokeArgb(path_obj) : 0;
   CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
   if (!IsAvailableMatrix(path_matrix))
@@ -423,8 +425,8 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
   return m_pDevice->DrawPathWithBlend(
       path_obj->path().GetObject(), &path_matrix,
       path_obj->m_GraphState.GetObject(), fill_argb, stroke_argb,
-      GetFillOptionsForDrawPathWithBlend(
-          options, path_obj, GetFillType(fill_type), stroke, m_pType3Char),
+      GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
+                                         m_pType3Char),
       m_curBlend);
 }
 
@@ -575,7 +577,7 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* path_obj,
                                          &path_matrix,
                                          path_obj->m_GraphState.GetObject());
   }
-  CFX_FillRenderOptions fill_options(GetFillType(path_obj->filltype()));
+  CFX_FillRenderOptions fill_options(path_obj->filltype());
   if (m_Options.GetOptions().bNoPathSmooth) {
     fill_options.aliased_path = true;
   }
@@ -1080,7 +1082,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     pCopy.push_back(std::unique_ptr<CPDF_TextObject>(textobj->Clone()));
 
     CPDF_PathObject path;
-    path.set_filltype(FXFILL_WINDING);
+    path.set_filltype(CFX_FillRenderOptions::FillType::kWinding);
     path.m_ClipPath.CopyClipPath(m_LastClipPath);
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
@@ -1117,7 +1119,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
                              charpos.m_Origin.y));
     path.set_stroke(stroke);
-    path.set_filltype(fill ? FXFILL_WINDING : 0);
+    path.set_filltype(fill ? CFX_FillRenderOptions::FillType::kWinding
+                           : CFX_FillRenderOptions::FillType::kNoFill);
     path.path().Append(pPath, &matrix);
     path.set_matrix(*pTextMatrix);
     path.CalcBoundingBox();
@@ -1207,18 +1210,19 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* path_obj,
     DrawShadingPattern(pShadingPattern, path_obj, mtObj2Device, stroke);
 }
 
-void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* path_obj,
-                                           const CFX_Matrix& mtObj2Device,
-                                           int* filltype,
-                                           bool* stroke) {
-  ASSERT(filltype);
+void CPDF_RenderStatus::ProcessPathPattern(
+    CPDF_PathObject* path_obj,
+    const CFX_Matrix& mtObj2Device,
+    CFX_FillRenderOptions::FillType* fill_type,
+    bool* stroke) {
+  ASSERT(fill_type);
   ASSERT(stroke);
 
-  if (*filltype) {
+  if (*fill_type != CFX_FillRenderOptions::FillType::kNoFill) {
     const CPDF_Color& FillColor = *path_obj->m_ColorState.GetFillColor();
     if (FillColor.IsPattern()) {
       DrawPathWithPattern(path_obj, mtObj2Device, &FillColor, false);
-      *filltype = 0;
+      *fill_type = CFX_FillRenderOptions::FillType::kNoFill;
     }
   }
   if (*stroke) {
