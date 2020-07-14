@@ -55,23 +55,4 @@ struct CFX_FillRenderOptions {
   bool zero_area = false;
 };
 
-// Converts integer |fill_type| into CFX_FillRenderOptions::FillType.
-// |fill_type| can be 0, FXFILL_ALTERNATE or FXFILL_WINDING.
-// TODO(https://crbug.com/pdfium/1531): Remove this function when all existence
-// of FXFILL_ALTERNATE and FXFILL_WINDING are replaced by FillType::kEvenOdd and
-// FillType::kWinding.
-CFX_FillRenderOptions::FillType GetFillType(int fill_type);
-
-// TODO(https://crbug.com/pdfium/1531): Remove the converter functions
-// GetFillOptionsFromIntegerFlags() and GetIntegerFlagsFromFillOptions() once
-// all integer rendering flags are replaced with CFX_FillRenderOptions.
-
-// Generates a matching CFX_FillRenderOptions struct from integer |flags| which
-// contains fill rendering options.
-CFX_FillRenderOptions GetFillOptionsFromIntegerFlags(int flags);
-
-// Generates an integer which represents fill options from CFX_FillRenderOptions
-// struct |options|.
-int GetIntegerFlagsFromFillOptions(const CFX_FillRenderOptions& options);
-
 #endif  // CORE_FXGE_CFX_FILLRENDEROPTIONS_H_
