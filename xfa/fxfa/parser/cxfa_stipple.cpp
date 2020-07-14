@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "core/fxge/render_defines.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 
@@ -68,6 +67,6 @@ void CXFA_Stipple::Draw(CXFA_Graphics* pGS,
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CXFA_GEColor(cr));
-  pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+  pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
   pGS->RestoreGraphState();
 }

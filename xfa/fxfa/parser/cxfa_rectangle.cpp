@@ -9,7 +9,6 @@
 #include <cmath>
 #include <utility>
 
-#include "core/fxge/render_defines.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_stroke.h"
@@ -377,7 +376,8 @@ void CXFA_Rectangle::StrokeRect(CXFA_Graphics* pGraphic,
   pathLT.LineTo(CFX_PointF(rt.left + fLineWidth, fBottom - fLineWidth));
   pathLT.LineTo(CFX_PointF(rt.left, fBottom));
   pGraphic->SetFillColor(CXFA_GEColor(argbTopLeft));
-  pGraphic->FillPath(&pathLT, FXFILL_WINDING, &matrix);
+  pGraphic->FillPath(&pathLT, CFX_FillRenderOptions::FillType::kWinding,
+                     &matrix);
 
   CXFA_GEPath pathRB;
   pathRB.MoveTo(CFX_PointF(fRight, rt.top));
@@ -388,7 +388,8 @@ void CXFA_Rectangle::StrokeRect(CXFA_Graphics* pGraphic,
   pathRB.LineTo(CFX_PointF(fRight - fLineWidth, rt.top + fLineWidth));
   pathRB.LineTo(CFX_PointF(fRight, rt.top));
   pGraphic->SetFillColor(CXFA_GEColor(argbBottomRight));
-  pGraphic->FillPath(&pathRB, FXFILL_WINDING, &matrix);
+  pGraphic->FillPath(&pathRB, CFX_FillRenderOptions::FillType::kWinding,
+                     &matrix);
 }
 
 void CXFA_Rectangle::StrokeLowered(CXFA_Graphics* pGS,
@@ -403,7 +404,7 @@ void CXFA_Rectangle::StrokeLowered(CXFA_Graphics* pGS,
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->SetFillColor(CXFA_GEColor(0xFF000000));
-  pGS->FillPath(&path, FXFILL_ALTERNATE, &matrix);
+  pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, &matrix);
 
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFF808080, 0xFFC0C0C0);
 }
@@ -420,7 +421,7 @@ void CXFA_Rectangle::StrokeRaised(CXFA_Graphics* pGS,
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->SetFillColor(CXFA_GEColor(0xFF000000));
-  pGS->FillPath(&path, FXFILL_ALTERNATE, &matrix);
+  pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd, &matrix);
 
   StrokeRect(pGS, rtInner, fHalfWidth, matrix, 0xFFFFFFFF, 0xFF808080);
 }

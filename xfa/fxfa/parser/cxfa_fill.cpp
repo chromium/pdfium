@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "core/fxge/render_defines.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_linear.h"
@@ -108,7 +107,8 @@ void CXFA_Fill::Draw(CXFA_Graphics* pGS,
       break;
     default:
       pGS->SetFillColor(CXFA_GEColor(GetColor(false)));
-      pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+      pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding,
+                    &matrix);
       break;
   }
 

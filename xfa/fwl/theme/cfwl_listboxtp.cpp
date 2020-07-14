@@ -7,7 +7,6 @@
 #include "xfa/fwl/theme/cfwl_listboxtp.h"
 
 #include "build/build_config.h"
-#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
@@ -70,7 +69,8 @@ void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
 #else
     path.AddRectangle(rtItem.left, rtItem.top, rtItem.width, rtItem.height);
 #endif
-    pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+    pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                        &matrix);
     pGraphics->RestoreGraphState();
   }
   if ((dwStates & CFWL_PartState_Focused) && pData)

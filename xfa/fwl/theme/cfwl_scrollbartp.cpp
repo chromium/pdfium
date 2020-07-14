@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/theme/cfwl_scrollbartp.h"
 
-#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
@@ -205,7 +204,8 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
     path.AddRectangle(rect.left, fBottom - 1, rect.width, 1);
   }
   pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 238, 237, 229)));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
   path.Clear();
   path.AddRectangle(rect.left + 1, rect.top, rect.width - 2, rect.height);
   pGraphics->RestoreGraphState();

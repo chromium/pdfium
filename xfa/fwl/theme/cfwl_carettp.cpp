@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/theme/cfwl_carettp.h"
 
-#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
@@ -39,5 +38,6 @@ void CFWL_CaretTP::DrawCaretBK(CXFA_Graphics* pGraphics,
   CXFA_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 0, 0, 0)));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
 }

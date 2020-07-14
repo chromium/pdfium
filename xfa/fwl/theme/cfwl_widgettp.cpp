@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <utility>
 
-#include "core/fxge/render_defines.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
@@ -104,7 +103,8 @@ void CFWL_WidgetTP::DrawBorder(CXFA_Graphics* pGraphics,
                     rect.height - 2);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(255, 0, 0, 0)));
-  pGraphics->FillPath(&path, FXFILL_ALTERNATE, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kEvenOdd,
+                      &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -125,7 +125,8 @@ void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(fillColor));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -194,7 +195,8 @@ void CFWL_WidgetTP::DrawArrow(CXFA_Graphics* pGraphics,
     }
   }
   pGraphics->SetFillColor(CXFA_GEColor(argSign));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
 }
 
 void CFWL_WidgetTP::DrawBtn(CXFA_Graphics* pGraphics,

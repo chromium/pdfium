@@ -9,7 +9,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxge/render_defines.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxgraphics/cxfa_geshading.h"
@@ -70,6 +69,6 @@ void CXFA_Radial::Draw(CXFA_Graphics* pGS,
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CXFA_GEColor(&shading));
-  pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+  pGS->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding, &matrix);
   pGS->RestoreGraphState();
 }

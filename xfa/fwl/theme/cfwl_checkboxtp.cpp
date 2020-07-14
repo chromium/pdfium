@@ -7,7 +7,6 @@
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"
 
 #include "core/fxge/cfx_pathdata.h"
-#include "core/fxge/render_defines.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_checkbox.h"
@@ -57,7 +56,8 @@ void CFWL_CheckBoxTP::DrawSignCheck(CXFA_Graphics* pGraphics,
   mt.Concat(matrix);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));
-  pGraphics->FillPath(m_pCheckPath.get(), FXFILL_WINDING, &mt);
+  pGraphics->FillPath(m_pCheckPath.get(),
+                      CFX_FillRenderOptions::FillType::kWinding, &mt);
   pGraphics->RestoreGraphState();
 }
 
@@ -69,7 +69,8 @@ void CFWL_CheckBoxTP::DrawSignCircle(CXFA_Graphics* pGraphics,
   path.AddEllipse(rtSign);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -107,7 +108,8 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CXFA_Graphics* pGraphics,
 
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -119,7 +121,8 @@ void CFWL_CheckBoxTP::DrawSignSquare(CXFA_Graphics* pGraphics,
   path.AddRectangle(rtSign.left, rtSign.top, rtSign.width, rtSign.height);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -149,7 +152,8 @@ void CFWL_CheckBoxTP::DrawSignStar(CXFA_Graphics* pGraphics,
   }
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(CXFA_GEColor(argbFill));
-  pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+  pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                      &matrix);
   pGraphics->RestoreGraphState();
 }
 

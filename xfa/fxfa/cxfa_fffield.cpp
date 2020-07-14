@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <utility>
 
-#include "core/fxge/render_defines.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
@@ -106,7 +105,7 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
     path.AddRectangle(m_UIRect.left, m_UIRect.top, m_UIRect.width,
                       m_UIRect.height);
 
-  pGS->FillPath(&path, FXFILL_WINDING, pMatrix);
+  pGS->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding, pMatrix);
 }
 
 void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {

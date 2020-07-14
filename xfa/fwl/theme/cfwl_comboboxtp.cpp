@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/theme/cfwl_comboboxtp.h"
 
-#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
@@ -42,7 +41,8 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       }
       pParams.m_pGraphics->SaveGraphState();
       pParams.m_pGraphics->SetFillColor(CXFA_GEColor(argb_color));
-      pParams.m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams.m_matrix);
+      pParams.m_pGraphics->FillPath(
+          &path, CFX_FillRenderOptions::FillType::kWinding, &pParams.m_matrix);
       pParams.m_pGraphics->RestoreGraphState();
       break;
     }

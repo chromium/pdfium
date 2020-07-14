@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/theme/cfwl_pushbuttontp.h"
 
-#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
@@ -74,7 +73,8 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
                             rtInner.height);
 
       pGraphics->SetFillColor(CXFA_GEColor(m_pThemeData->clrFill[iColor]));
-      pGraphics->FillPath(&fillPath, FXFILL_WINDING, &pParams.m_matrix);
+      pGraphics->FillPath(&fillPath, CFX_FillRenderOptions::FillType::kWinding,
+                          &pParams.m_matrix);
       if (pParams.m_dwStates & CFWL_PartState_Focused) {
         rtInner.Inflate(1, 1, 0, 0);
         DrawFocus(pGraphics, rtInner, pParams.m_matrix);

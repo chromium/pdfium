@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "core/fxge/render_defines.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -223,7 +222,8 @@ void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
       CXFA_GEPath path;
       path.AddRectangle(rtFill.left, rtFill.top, rtFill.width, rtFill.height);
       pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(128, 128, 255, 255)));
-      pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
+      pGraphics->FillPath(&path, CFX_FillRenderOptions::FillType::kWinding,
+                          &matrix);
     }
     return;
   }
