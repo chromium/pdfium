@@ -33,6 +33,6 @@ CFXJSE_FormCalcContext* CFXJSE_HostObject::AsFormCalcContext() {
   return nullptr;
 }
 
-CXFA_Object* CFXJSE_HostObject::AsCXFAObject() {
+CJX_Object* CFXJSE_HostObject::AsCJXObject() {
   return nullptr;
 }

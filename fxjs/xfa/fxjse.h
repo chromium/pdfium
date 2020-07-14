@@ -23,7 +23,7 @@ extern const char kClassTag[];
 class CFXJSE_FormCalcContext;
 class CFXJSE_Value;
 class CJS_Result;
-class CXFA_Object;
+class CJX_Object;
 
 // C++ object which is retrieved from v8 object's slot.
 class CFXJSE_HostObject {
@@ -33,7 +33,7 @@ class CFXJSE_HostObject {
 
   // Two subclasses.
   virtual CFXJSE_FormCalcContext* AsFormCalcContext();
-  virtual CXFA_Object* AsCXFAObject();
+  virtual CJX_Object* AsCJXObject();
 
  protected:
   CFXJSE_HostObject();

@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
+#include "fxjs/xfa/fxjse.h"
 #include "fxjs/xfa/jse_define.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
@@ -55,7 +56,7 @@ enum XFA_SOM_MESSAGETYPE {
   XFA_SOM_MandatoryMessage
 };
 
-class CJX_Object {
+class CJX_Object : public CFXJSE_HostObject {
  public:
   // Corresponds 1:1 with CJX_ subclasses.
   enum class TypeTag {
@@ -97,7 +98,10 @@ class CJX_Object {
   };
 
   explicit CJX_Object(CXFA_Object* obj);
-  virtual ~CJX_Object();
+  ~CJX_Object() override;
+
+  // CFXJSE_HostObject:
+  CJX_Object* AsCJXObject() override;
 
   virtual bool DynamicTypeIs(TypeTag eType) const;
 

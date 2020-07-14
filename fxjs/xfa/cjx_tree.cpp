@@ -138,7 +138,8 @@ void CJX_Tree::nodes(CFXJSE_Value* pValue,
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   CXFA_AttachNodeList* pNodeList =
       new CXFA_AttachNodeList(GetDocument(), GetXFANode());
-  pValue->SetHostObject(pNodeList, pScriptContext->GetJseNormalClass());
+  pValue->SetHostObject(pNodeList->JSObject(),
+                        pScriptContext->GetJseNormalClass());
 }
 
 void CJX_Tree::parent(CFXJSE_Value* pValue,
@@ -230,5 +231,6 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
       }
     }
   }
-  pValue->SetHostObject(pNodeList, pScriptContext->GetJseNormalClass());
+  pValue->SetHostObject(pNodeList->JSObject(),
+                        pScriptContext->GetJseNormalClass());
 }

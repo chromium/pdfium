@@ -74,7 +74,11 @@ const char kFormCalcRuntime[] = "pfm_rt";
 
 CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue) {
   CFXJSE_HostObject* pHostObject = pValue->ToHostObject();
-  return pHostObject ? ToThisProxy(pHostObject->AsCXFAObject()) : nullptr;
+  if (!pHostObject)
+    return nullptr;
+
+  CJX_Object* pJSObject = pHostObject->AsCJXObject();
+  return pJSObject ? ToThisProxy(pJSObject->GetXFAObject()) : nullptr;
 }
 
 }  // namespace
@@ -100,7 +104,11 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue) {
 
 // static
 CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_HostObject* pHostObj) {
-  return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
+  if (!pHostObj)
+    return nullptr;
+
+  CJX_Object* pJSObject = pHostObj->AsCJXObject();
+  return pJSObject ? pJSObject->GetXFAObject() : nullptr;
 }
 
 CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
@@ -110,7 +118,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
       m_pDocument(pDocument),
       m_JsContext(CFXJSE_Context::Create(fxjs_runtime->GetIsolate(),
                                          &GlobalClassDescriptor,
-                                         pDocument->GetRoot())),
+                                         pDocument->GetRoot()->JSObject())),
       m_ResolveProcessor(std::make_unique<CFXJSE_ResolveProcessor>()) {
   RemoveBuiltInObjs(m_JsContext.get());
   m_JsContext->EnableCompatibleMode();
@@ -122,6 +130,8 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
 }
 
 CFXJSE_Engine::~CFXJSE_Engine() {
+  // This is what prevents leaking the CXFA_ThisProxies allocated in
+  // CreateVariablesContext().
   for (const auto& pair : m_mapVariableToContext)
     delete ToThisProxy(pair.second->GetGlobalObject().get());
 
@@ -504,9 +514,12 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
   if (!pScriptNode || !pSubform)
     return nullptr;
 
-  auto pNewContext =
-      CFXJSE_Context::Create(GetIsolate(), &VariablesClassDescriptor,
-                             new CXFA_ThisProxy(pSubform, pScriptNode));
+  // Ownership of |proxy| is maintained through v8 bindings, and is
+  // manually freed in ~CFXJE_Engine() after re-obtaining the binding
+  // from v8.
+  auto* proxy = new CXFA_ThisProxy(pSubform, pScriptNode);
+  auto pNewContext = CFXJSE_Context::Create(
+      GetIsolate(), &VariablesClassDescriptor, proxy->JSObject());
   RemoveBuiltInObjs(pNewContext.get());
   pNewContext->EnableCompatibleMode();
   CFXJSE_Context* pResult = pNewContext.get();
@@ -785,7 +798,7 @@ CFXJSE_Value* CFXJSE_Engine::GetOrCreateJSBindingFromMap(CXFA_Object* pObject) {
     return iter->second.get();
 
   auto jsValue = std::make_unique<CFXJSE_Value>(GetIsolate());
-  jsValue->SetHostObject(pObject, m_pJsClass.Get());
+  jsValue->SetHostObject(pObject->JSObject(), m_pJsClass.Get());
 
   CFXJSE_Value* pValue = jsValue.get();
   m_mapObjectToValue.insert(std::make_pair(pObject, std::move(jsValue)));
@@ -816,7 +829,11 @@ CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {
 
   CFXJSE_HostObject* pHostObj =
       FXJSE_RetrieveObjectBinding(obj.As<v8::Object>());
-  return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
+  if (!pHostObj)
+    return nullptr;
+
+  CJX_Object* pJSObject = pHostObj->AsCJXObject();
+  return pJSObject ? pJSObject->GetXFAObject() : nullptr;
 }
 
 v8::Local<v8::Value> CFXJSE_Engine::NewXFAObject(
@@ -828,6 +845,6 @@ v8::Local<v8::Value> CFXJSE_Engine::NewXFAObject(
   v8::Local<v8::Object> object = klass->InstanceTemplate()
                                      ->NewInstance(m_JsContext->GetContext())
                                      .ToLocalChecked();
-  FXJSE_UpdateObjectBinding(object, obj);
+  FXJSE_UpdateObjectBinding(object, obj->JSObject());
   return scope.Escape(object);
 }

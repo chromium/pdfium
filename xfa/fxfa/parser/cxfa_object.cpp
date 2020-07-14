@@ -35,10 +35,6 @@ CXFA_Object::~CXFA_Object() {
     GetDocument()->GetScriptContext()->RemoveJSBindingFromMap(this);
 }
 
-CXFA_Object* CXFA_Object::AsCXFAObject() {
-  return this;
-}
-
 WideString CXFA_Object::GetSOMExpression() {
   CXFA_Node* pNode = AsNode();
   return pNode ? pNode->GetNameExpression() : WideString();

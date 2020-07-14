@@ -127,6 +127,10 @@ CJX_Object::~CJX_Object() {
   ClearMapModuleBuffer();
 }
 
+CJX_Object* CJX_Object::AsCJXObject() {
+  return this;
+}
+
 bool CJX_Object::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__;
 }
