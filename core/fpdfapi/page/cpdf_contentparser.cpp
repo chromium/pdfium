@@ -19,7 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
-#include "core/fxge/render_defines.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
@@ -86,8 +86,8 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
-    m_pParser->GetCurStates()->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING,
-                                                     true);
+    m_pParser->GetCurStates()->m_ClipPath.AppendPath(
+        ClipPath, CFX_FillRenderOptions::FillType::kWinding, true);
   }
   if (pForm->GetTransparency().IsGroup()) {
     CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;

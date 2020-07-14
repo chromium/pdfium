@@ -36,7 +36,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/render_defines.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
@@ -1385,11 +1384,11 @@ void CPDF_StreamContentParser::Handle_SetLineWidth() {
 }
 
 void CPDF_StreamContentParser::Handle_Clip() {
-  m_PathClipType = FXFILL_WINDING;
+  m_PathClipType = CFX_FillRenderOptions::FillType::kWinding;
 }
 
 void CPDF_StreamContentParser::Handle_EOClip() {
-  m_PathClipType = FXFILL_ALTERNATE;
+  m_PathClipType = CFX_FillRenderOptions::FillType::kEvenOdd;
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_13() {
@@ -1443,17 +1442,18 @@ void CPDF_StreamContentParser::AddPathPoint(float x,
 void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   std::vector<FX_PATHPOINT> path_points;
   path_points.swap(m_PathPoints);
-  uint8_t path_clip_type = m_PathClipType;
-  m_PathClipType = 0;
+  CFX_FillRenderOptions::FillType path_clip_type = m_PathClipType;
+  m_PathClipType = CFX_FillRenderOptions::FillType::kNoFill;
 
   if (path_points.empty())
     return;
 
   if (path_points.size() == 1) {
-    if (path_clip_type) {
+    if (path_clip_type != CFX_FillRenderOptions::FillType::kNoFill) {
       CPDF_Path path;
       path.AppendRect(0, 0, 0, 0);
-      m_pCurStates->m_ClipPath.AppendPath(path, FXFILL_WINDING, true);
+      m_pCurStates->m_ClipPath.AppendPath(
+          path, CFX_FillRenderOptions::FillType::kWinding, true);
     }
     return;
   }
@@ -1480,7 +1480,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     pPathObj->CalcBoundingBox();
     m_pObjectHolder->AppendPageObject(std::move(pPathObj));
   }
-  if (path_clip_type) {
+  if (path_clip_type != CFX_FillRenderOptions::FillType::kNoFill) {
     if (!matrix.IsIdentity())
       path.Transform(matrix);
     m_pCurStates->m_ClipPath.AppendPath(path, path_clip_type, true);

@@ -26,7 +26,7 @@ CPDF_Path CPDF_ClipPath::GetPath(size_t i) const {
   return m_Ref.GetObject()->m_PathAndTypeList[i].first;
 }
 
-uint8_t CPDF_ClipPath::GetClipType(size_t i) const {
+CFX_FillRenderOptions::FillType CPDF_ClipPath::GetClipType(size_t i) const {
   return m_Ref.GetObject()->m_PathAndTypeList[i].second;
 }
 
@@ -74,7 +74,9 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
   return rect;
 }
 
-void CPDF_ClipPath::AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge) {
+void CPDF_ClipPath::AppendPath(CPDF_Path path,
+                               CFX_FillRenderOptions::FillType type,
+                               bool bAutoMerge) {
   PathData* pData = m_Ref.GetPrivateCopy();
   if (!pData->m_PathAndTypeList.empty() && bAutoMerge) {
     const CPDF_Path& old_path = pData->m_PathAndTypeList.back().first;
