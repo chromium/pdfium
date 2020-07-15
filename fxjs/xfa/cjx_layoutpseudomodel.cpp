@@ -369,15 +369,16 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
   if (!pNotify)
     return CJS_Result::Success();
 
+  CFXJSE_Engine* pEngine = static_cast<CFXJSE_Engine*>(runtime);
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
-  auto pArrayNodeList = std::make_unique<CXFA_ArrayNodeList>(GetDocument());
+  auto* pArrayNodeList =
+      static_cast<CXFA_ArrayNodeList*>(pEngine->AddToCacheList(
+          std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
 
-  // TODO(dsinclair): Who owns the array once we release it? Won't this leak?
-  return CJS_Result::Success(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
-      pArrayNodeList.release(),
-      GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
+  return CJS_Result::Success(pEngine->NewXFAObject(
+      pArrayNodeList, pEngine->GetJseNormalClass()->GetTemplate()));
 }
 
 CJS_Result CJX_LayoutPseudoModel::absPageCount(

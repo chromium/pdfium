@@ -41,16 +41,14 @@ CJS_Result CJX_Form::formNodes(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  CXFA_Node* pDataNode =
-      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
+  CFXJSE_Engine* pEngine = static_cast<CFXJSE_Engine*>(runtime);
+  CXFA_Node* pDataNode = ToNode(pEngine->ToXFAObject(params[0]));
   if (!pDataNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
-  CFXJSE_Value* value =
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-          pFormNodes);
-
+  auto* pFormNodes = static_cast<CXFA_ArrayNodeList*>(pEngine->AddToCacheList(
+      std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
+  CFXJSE_Value* value = pEngine->GetOrCreateJSBindingFromMap(pFormNodes);
   return CJS_Result::Success(
       value->DirectGetValue().Get(runtime->GetIsolate()));
 }

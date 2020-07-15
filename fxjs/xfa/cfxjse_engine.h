@@ -87,12 +87,14 @@ class CFXJSE_Engine final : public CFX_V8 {
   CFXJSE_Value* GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
   void RemoveJSBindingFromMap(CXFA_Object* pObject);
 
-  void AddToCacheList(std::unique_ptr<CXFA_List> pList);
+  // Takes ownership of |pList|, returns unowned pointer to it.
+  CXFA_List* AddToCacheList(std::unique_ptr<CXFA_List> pList);
+
   CXFA_Object* GetThisObject() const { return m_pThisObject.Get(); }
+  CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
 
   void SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);
-  CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
 
   void SetRunAtType(XFA_AttributeValue eRunAt) { m_eRunAtType = eRunAt; }
   bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeValue::Server; }

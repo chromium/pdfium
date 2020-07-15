@@ -187,8 +187,6 @@ source_set("parser") {
     "cxfa_delete.h",
     "cxfa_delta.cpp",
     "cxfa_delta.h",
-    "cxfa_deltas.cpp",
-    "cxfa_deltas.h",
     "cxfa_desc.cpp",
     "cxfa_desc.h",
     "cxfa_destination.cpp",

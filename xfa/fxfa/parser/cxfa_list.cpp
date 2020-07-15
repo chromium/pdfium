@@ -24,9 +24,6 @@ CXFA_List::CXFA_List(CXFA_Document* pDocument,
                      XFA_ObjectType objectType,
                      XFA_Element eType,
                      std::unique_ptr<CJX_Object> obj)
-    : CXFA_Object(pDocument, objectType, eType, std::move(obj)) {
-  m_pDocument->GetScriptContext()->AddToCacheList(
-      std::unique_ptr<CXFA_List>(this));
-}
+    : CXFA_Object(pDocument, objectType, eType, std::move(obj)) {}
 
 CXFA_List::~CXFA_List() = default;
