@@ -75,6 +75,29 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
                               void* buffer,
                               unsigned long buflen);
 
+// Function: FPDF_StructElement_GetStringAttribute
+//          Get a struct element attribute of type "name" or "string".
+//          Experimental API.
+// Parameters:
+//          struct_element -   Handle to the struct element.
+//          attr_name      -   The name of the attribute to retrieve.
+//          buffer         -   A buffer for output. May be NULL.
+//          buflen         -   The length of the buffer, in bytes. May be 0.
+// Return value:
+//          The number of bytes in the attribute value, including the
+//          terminating NUL character. The number of bytes is returned
+//          regardless of the |buffer| and |buflen| parameters.
+// Comments:
+//          Regardless of the platform, the |buffer| is always in UTF-16LE
+//          encoding. The string is terminated by a UTF16 NUL character. If
+//          |buflen| is less than the required length, or |buffer| is NULL,
+//          |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
+                                      FPDF_BYTESTRING attr_name,
+                                      void* buffer,
+                                      unsigned long buflen);
+
 // Function: FPDF_StructElement_GetMarkedContentID
 //          Get the marked content ID for a given element.
 // Parameters:

@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_structelement.h"
 #include "core/fpdfdoc/cpdf_structtree.h"
@@ -76,6 +77,28 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
   return elem ? WideStringToBuffer(elem->GetAltText(), buffer, buflen) : 0;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
+                                      FPDF_BYTESTRING attr_name,
+                                      void* buffer,
+                                      unsigned long buflen) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
+  const CPDF_Array* array = dict ? dict->GetArrayFor("A") : nullptr;
+  if (!array)
+    return 0;
+  CPDF_ArrayLocker locker(array);
+  for (const RetainPtr<CPDF_Object>& obj : locker) {
+    const CPDF_Dictionary* obj_dict = obj->AsDictionary();
+    if (obj_dict && obj_dict->KeyExist(attr_name)) {
+      return WideStringToBuffer(obj_dict->GetUnicodeTextFor(attr_name), buffer,
+                                buflen);
+    }
+  }
+  return 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

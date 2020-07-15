@@ -5,6 +5,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
+#include "testing/fx_string_testhelpers.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/stl_util.h"
 
@@ -71,6 +72,60 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     FPDF_STRUCTELEMENT ggchild_element =
         FPDF_StructElement_GetChildAtIndex(gchild_element, 0);
     EXPECT_FALSE(ggchild_element);
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
+  ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT document = document =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(document);
+
+    constexpr int kBufLen = 100;
+    uint16_t buffer[kBufLen] = {0};
+    EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
+    EXPECT_EQ("Document", GetPlatformString(buffer));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(document));
+    FPDF_STRUCTELEMENT table = FPDF_StructElement_GetChildAtIndex(document, 0);
+    ASSERT_TRUE(table);
+
+    EXPECT_EQ(12U, FPDF_StructElement_GetType(table, buffer, kBufLen));
+    EXPECT_EQ("Table", GetPlatformString(buffer));
+
+    ASSERT_EQ(2, FPDF_StructElement_CountChildren(table));
+    FPDF_STRUCTELEMENT row = FPDF_StructElement_GetChildAtIndex(table, 0);
+    ASSERT_TRUE(row);
+
+    ASSERT_EQ(2, FPDF_StructElement_CountChildren(row));
+    FPDF_STRUCTELEMENT header_cell = FPDF_StructElement_GetChildAtIndex(row, 0);
+    ASSERT_TRUE(header_cell);
+
+    EXPECT_EQ(6U, FPDF_StructElement_GetType(header_cell, buffer, kBufLen));
+    EXPECT_EQ("TH", GetPlatformString(buffer));
+
+    // The header should have an attribute "Scope" with a scope of "Row".
+    EXPECT_EQ(8U, FPDF_StructElement_GetStringAttribute(header_cell, "Scope",
+                                                        buffer, kBufLen));
+    EXPECT_EQ("Row", GetPlatformString(buffer));
+
+    // An unsupported attribute should return 0.
+    EXPECT_EQ(0U, FPDF_StructElement_GetStringAttribute(header_cell, "Other",
+                                                        buffer, kBufLen));
+
+    // A null struct element should not crash.
+    EXPECT_EQ(0U, FPDF_StructElement_GetStringAttribute(nullptr, "Other",
+                                                        buffer, kBufLen));
   }
 
   UnloadPage(page);
