@@ -31,7 +31,7 @@
 #include "third_party/base/span.h"
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-#include "third_party/skia/include/core/SkTypes.h"
+#include "third_party/skia/include/core/SkTypes.h"  // nogncheck
 #endif
 
 namespace {
