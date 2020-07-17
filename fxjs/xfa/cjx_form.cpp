@@ -46,8 +46,9 @@ CJS_Result CJX_Form::formNodes(
   if (!pDataNode)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  auto* pFormNodes = static_cast<CXFA_ArrayNodeList*>(pEngine->AddToCacheList(
-      std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
+  auto* pFormNodes =
+      static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
+          std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
   CFXJSE_Value* value = pEngine->GetOrCreateJSBindingFromMap(pFormNodes);
   return CJS_Result::Success(
       value->DirectGetValue().Get(runtime->GetIsolate()));

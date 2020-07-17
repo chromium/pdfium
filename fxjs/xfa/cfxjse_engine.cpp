@@ -28,7 +28,6 @@
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
-#include "xfa/fxfa/parser/cxfa_treelist.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -769,11 +768,6 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     return !resolveNodeRS->objects.empty();
   }
   return nNodes > 0;
-}
-
-CXFA_List* CFXJSE_Engine::AddToCacheList(std::unique_ptr<CXFA_List> pList) {
-  m_CacheList.push_back(std::move(pList));
-  return m_CacheList.back().get();
 }
 
 CFXJSE_Value* CFXJSE_Engine::GetOrCreateJSBindingFromMap(CXFA_Object* pObject) {

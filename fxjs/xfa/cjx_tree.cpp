@@ -135,12 +135,11 @@ void CJX_Tree::nodes(CFXJSE_Value* pValue,
     return;
   }
 
-  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   auto* pNodeList =
-      static_cast<CXFA_AttachNodeList*>(pScriptContext->AddToCacheList(
+      static_cast<CXFA_AttachNodeList*>(GetDocument()->AddOwnedList(
           std::make_unique<CXFA_AttachNodeList>(GetDocument(), GetXFANode())));
-  pValue->SetHostObject(pNodeList->JSObject(),
-                        pScriptContext->GetJseNormalClass());
+  CFXJSE_Engine* pEngine = GetDocument()->GetScriptContext();
+  pValue->SetHostObject(pNodeList->JSObject(), pEngine->GetJseNormalClass());
 }
 
 void CJX_Tree::parent(CFXJSE_Value* pValue,
@@ -211,7 +210,7 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
   pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
                                  &resolveNodeRS, dwFlag, nullptr);
   auto* pNodeList =
-      static_cast<CXFA_ArrayNodeList*>(pScriptContext->AddToCacheList(
+      static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
           std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
   if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     for (auto& pObject : resolveNodeRS.objects) {

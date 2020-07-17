@@ -38,9 +38,9 @@ CJS_Result CJX_Container::getDelta(
 CJS_Result CJX_Container::getDeltas(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
-  auto* pList = static_cast<CXFA_ArrayNodeList*>(pEngine->AddToCacheList(
+  auto* pList = static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
       std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
+  auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
   return CJS_Result::Success(pEngine->NewXFAObject(
       pList, pEngine->GetJseNormalClass()->GetTemplate()));
 }

@@ -369,14 +369,14 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CFXJSE_Engine* pEngine = static_cast<CFXJSE_Engine*>(runtime);
   auto* pDocLayout = CXFA_LayoutProcessor::FromDocument(GetDocument());
   auto* pArrayNodeList =
-      static_cast<CXFA_ArrayNodeList*>(pEngine->AddToCacheList(
+      static_cast<CXFA_ArrayNodeList*>(GetDocument()->AddOwnedList(
           std::make_unique<CXFA_ArrayNodeList>(GetDocument())));
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
 
+  CFXJSE_Engine* pEngine = static_cast<CFXJSE_Engine*>(runtime);
   return CJS_Result::Success(pEngine->NewXFAObject(
       pArrayNodeList, pEngine->GetJseNormalClass()->GetTemplate()));
 }
