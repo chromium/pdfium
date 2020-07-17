@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"

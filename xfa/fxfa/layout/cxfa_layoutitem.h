@@ -10,10 +10,10 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/retained_tree_node.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
+class CXFA_Node;
 class CXFA_ViewLayoutItem;
 
 class CXFA_LayoutItem : public RetainedTreeNode<CXFA_LayoutItem> {

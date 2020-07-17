@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/layout/cxfa_layoutitem.h"
 
 class CXFA_FFPageView;

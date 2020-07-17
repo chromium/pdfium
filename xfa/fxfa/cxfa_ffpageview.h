@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/layout/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/layout/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/layout/cxfa_viewlayoutitem.h"
