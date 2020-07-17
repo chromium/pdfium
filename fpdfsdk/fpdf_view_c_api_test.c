@@ -316,6 +316,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_GetTextIndexFromCharIndex);
 
     // fpdf_signature.h
+    CHK(FPDFSignatureObj_GetContents);
     CHK(FPDF_GetSignatureCount);
     CHK(FPDF_GetSignatureObject);
 

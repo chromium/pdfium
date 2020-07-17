@@ -34,6 +34,25 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetSignatureCount(FPDF_DOCUMENT document);
 FPDF_EXPORT FPDF_SIGNATURE FPDF_CALLCONV
 FPDF_GetSignatureObject(FPDF_DOCUMENT document, int index);
 
+// Experimental API.
+// Function: FPDFSignatureObj_GetContents
+//          Get the contents of a signature object.
+// Parameters:
+//          signature   -   Handle to the signature object. Returned by
+//                          FPDF_GetSignatureObject().
+//          buffer      -   The address of a buffer that receives the contents.
+//          length      -   The size, in bytes, of |buffer|.
+// Return value:
+//          Returns the number of bytes in the contents on success, 0 on error.
+//
+// For public-key signatures, |buffer| is either a DER-encoded PKCS#1 binary or
+// a DER-encoded PKCS#7 binary. If |length| is less than the returned length, or
+// |buffer| is NULL, |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
+                             void* buffer,
+                             unsigned long length);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

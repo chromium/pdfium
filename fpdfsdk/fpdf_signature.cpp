@@ -57,3 +57,23 @@ FPDF_GetSignatureObject(FPDF_DOCUMENT document, int index) {
 
   return FPDFSignatureFromCPDFDictionary(signatures[index]);
 }
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
+                             void* buffer,
+                             unsigned long length) {
+  CPDF_Dictionary* signature_dict = CPDFDictionaryFromFPDFSignature(signature);
+  if (!signature_dict)
+    return 0;
+
+  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  if (!value_dict)
+    return 0;
+
+  ByteString contents = value_dict->GetStringFor("Contents");
+  unsigned long contents_len = contents.GetLength();
+  if (buffer && length >= contents_len)
+    memcpy(buffer, contents.c_str(), contents_len);
+
+  return contents_len;
+}
