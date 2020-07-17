@@ -658,6 +658,83 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   CloseSavedDocument();
 }
 
+// TODO(crbug.com/pdfium/1558): Clipping paths should be retained after saving
+// changed text.
+TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
+  // Load document with some text, with parts clipped.
+  ASSERT_TRUE(OpenDocument("bug_1558.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  static constexpr char kOriginalChecksum[] =
+#if defined(OS_WIN)
+      "220bf2086398fc46ac094952b244c8d9";
+#elif defined(OS_MACOSX)
+      "53cbaad93551ef2ccc27ddd63f2ca2b3";
+#else
+      "ba1936fa8ca1e8cca108da76ff3500a6";
+#endif
+  {
+    // When opened before any editing and saving, the clipping path is rendered.
+    ScopedFPDFBitmap original_bitmap = RenderPage(page);
+    CompareBitmap(original_bitmap.get(), 200, 200, kOriginalChecksum);
+  }
+
+  // "Change" the text in the objects to their current values to force them to
+  // regenerate when saving.
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
+    const int obj_count = FPDFPage_CountObjects(page);
+    ASSERT_EQ(2, obj_count);
+    for (int i = 0; i < obj_count; ++i) {
+      FPDF_PAGEOBJECT text_obj = FPDFPage_GetObject(page, i);
+      ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_obj));
+      unsigned long size =
+          FPDFTextObj_GetText(text_obj, text_page.get(),
+                              /*buffer=*/nullptr, /*length=*/0);
+      ASSERT_GT(size, 0u);
+      std::vector<FPDF_WCHAR> buffer = GetFPDFWideStringBuffer(size);
+      ASSERT_EQ(size, FPDFTextObj_GetText(text_obj, text_page.get(),
+                                          buffer.data(), size));
+      EXPECT_TRUE(FPDFText_SetText(text_obj, buffer.data()));
+    }
+  }
+
+  {
+    // After editing but before saving, the clipping path is retained.
+    ScopedFPDFBitmap edited_bitmap = RenderPage(page);
+    CompareBitmap(edited_bitmap.get(), 200, 200, kOriginalChecksum);
+  }
+
+  // Save the file.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Open the saved copy and render it.
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+
+  {
+    static constexpr char kChangedChecksum[] =
+#if defined(OS_WIN)
+        "da44e0c040ed56dbb60cf44ef033757b";
+#elif defined(OS_MACOSX)
+        "0bfd2dab51dd588a7f77d531582078cd";
+#else
+        "e63e78fcbcfba4b64f2b843fdf2cc3e8";
+#endif
+    // The checksum of |saved_bitmap| should be |kOriginalChecksum|.
+    ScopedFPDFBitmap saved_bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(saved_bitmap.get(), 200, 200, kChangedChecksum);
+  }
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbedderTest, RemovePageObject) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
