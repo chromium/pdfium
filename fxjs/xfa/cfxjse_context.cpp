@@ -15,6 +15,7 @@
 #include "fxjs/xfa/cfxjse_runtimedata.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_thisproxy.h"
 
 namespace {
@@ -130,15 +131,6 @@ void FXJSE_UpdateProxyBinding(v8::Local<v8::Object> hObject) {
   hObject->SetAlignedPointerInInternalField(1, nullptr);
 }
 
-CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue) {
-  CFXJSE_HostObject* pHostObject = pValue->ToHostObject();
-  if (!pHostObject)
-    return nullptr;
-
-  CJX_Object* pJSObject = pHostObject->AsCJXObject();
-  return pJSObject ? ToThisProxy(pJSObject->GetXFAObject()) : nullptr;
-}
-
 }  // namespace
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object> hObject,
@@ -184,9 +176,13 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
 std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
     const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
-    CFXJSE_HostObject* pGlobalObject) {
+    CFXJSE_HostObject* pGlobalObject,
+    std::unique_ptr<CXFA_ThisProxy> pProxy) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
-  auto pContext = std::make_unique<CFXJSE_Context>(pIsolate);
+
+  // Private constructor.
+  auto pContext =
+      pdfium::WrapUnique(new CFXJSE_Context(pIsolate, std::move(pProxy)));
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (pGlobalClass) {
     CFXJSE_Class* pGlobalClassObj =
@@ -218,14 +214,11 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   return pContext;
 }
 
-CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
+CFXJSE_Context::CFXJSE_Context(v8::Isolate* pIsolate,
+                               std::unique_ptr<CXFA_ThisProxy> pProxy)
+    : m_pIsolate(pIsolate), m_pProxy(std::move(pProxy)) {}
 
-CFXJSE_Context::~CFXJSE_Context() {
-  // This is what prevents leaking the CXFA_ThisProxies allocated in
-  // CXFJSE_Engine::CreateVariablesContext(). If the global object is
-  // not a thisproxy, then this degenerates to deleting nullptr, a no-op.
-  delete ToThisProxy(GetGlobalObject().get());
-}
+CFXJSE_Context::~CFXJSE_Context() = default;
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
   auto pValue = std::make_unique<CFXJSE_Value>(GetIsolate());

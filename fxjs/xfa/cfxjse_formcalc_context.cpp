@@ -28,6 +28,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -3208,7 +3209,7 @@ void CFXJSE_FormCalcContext::Eval(
   }
 
   std::unique_ptr<CFXJSE_Context> pNewContext(
-      CFXJSE_Context::Create(pIsolate, nullptr, nullptr));
+      CFXJSE_Context::Create(pIsolate, nullptr, nullptr, nullptr));
 
   auto returnValue = std::make_unique<CFXJSE_Value>(pIsolate);
   pNewContext->ExecuteScript(
