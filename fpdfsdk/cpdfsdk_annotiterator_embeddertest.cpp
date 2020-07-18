@@ -26,7 +26,7 @@ void CheckRect(const CFX_FloatRect& actual, const CFX_FloatRect& expected) {
 class CPDFSDK_AnnotIteratorTest : public EmbedderTest {};
 
 TEST_F(CPDFSDK_AnnotIteratorTest, CPDFSDK_AnnotIterator) {
-  EXPECT_TRUE(OpenDocument("annotiter.pdf"));
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
   FPDF_PAGE page2 = LoadPage(2);

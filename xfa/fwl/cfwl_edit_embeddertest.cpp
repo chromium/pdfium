@@ -23,7 +23,7 @@ class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
   }
 
   void CreateAndInitializeFormPDF(const char* filename) {
-    EXPECT_TRUE(OpenDocument(filename));
+    ASSERT_TRUE(OpenDocument(filename));
     page_ = LoadPage(0);
     ASSERT_TRUE(page_);
   }

@@ -224,7 +224,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
 
   // Test rendering of page content using progressive render APIs
   // without pausing the rendering.
-  EXPECT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
+  ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   FakePause pause(false);
@@ -251,7 +251,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithPause) {
 
   // Test rendering of page content using progressive render APIs
   // with pause in rendering.
-  EXPECT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
+  ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
@@ -286,7 +286,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderAnnotWithPause) {
 
   // Test rendering of the page with annotations using progressive render APIs
   // with pause in rendering.
-  EXPECT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
+  ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
@@ -321,7 +321,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormsWithPause) {
 
   // Test rendering of the page with forms using progressive render APIs
   // with pause in rendering.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);

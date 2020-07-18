@@ -8,14 +8,14 @@
 class CXFASimpleParserEmbedderTest : public EmbedderTest {};
 
 TEST_F(CXFASimpleParserEmbedderTest, Bug_216) {
-  EXPECT_TRUE(OpenDocument("bug_216.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_216.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
 }
 
 TEST_F(CXFASimpleParserEmbedderTest, Bug_709793) {
-  EXPECT_TRUE(OpenDocument("bug_709793.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_709793.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);

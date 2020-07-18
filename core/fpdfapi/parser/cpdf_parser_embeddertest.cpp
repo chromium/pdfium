@@ -16,7 +16,7 @@ TEST_F(CPDFParserEmbedderTest, LoadError_454695) {
 
 TEST_F(CPDFParserEmbedderTest, Bug_481363) {
   // Test colorspace object with malformed dictionary.
-  EXPECT_TRUE(OpenDocument("bug_481363.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_481363.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
@@ -24,7 +24,7 @@ TEST_F(CPDFParserEmbedderTest, Bug_481363) {
 
 TEST_F(CPDFParserEmbedderTest, Bug_544880) {
   // Test self referencing /Pages object.
-  EXPECT_TRUE(OpenDocument("bug_544880.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_544880.pdf"));
   // Shouldn't crash. We don't check the return value here because we get the
   // the count from the "/Count 1" in the testcase (at the time of writing)
   // rather than the actual count (0).
@@ -42,7 +42,7 @@ TEST_F(CPDFParserEmbedderTest, Bug_325b) {
 TEST_F(CPDFParserEmbedderTest, Bug_602650) {
   // Test the case that cross reference entries, which are well formed,
   // but do not match with the objects.
-  EXPECT_TRUE(OpenDocument("bug_602650.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_602650.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
@@ -55,11 +55,11 @@ TEST_F(CPDFParserEmbedderTest, Bug_602650) {
 }
 
 TEST_F(CPDFParserEmbedderTest, Bug_757705) {
-  EXPECT_TRUE(OpenDocument("bug_757705.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_757705.pdf"));
 }
 
 TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
-  EXPECT_TRUE(OpenDocumentLinearized("feature_linearized_loading.pdf"));
+  ASSERT_TRUE(OpenDocumentLinearized("feature_linearized_loading.pdf"));
   // To check that main cross ref table is loaded correctly,will be enough to
   // check that the second page was correctly loaded. Because it is contains
   // crossrefs for second page.
@@ -75,7 +75,7 @@ TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
 }
 
 TEST_F(CPDFParserEmbedderTest, Bug_828049) {
-  EXPECT_TRUE(OpenDocument("bug_828049.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_828049.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);

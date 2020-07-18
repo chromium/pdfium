@@ -27,7 +27,7 @@ class CPWLEditEmbedderTest : public EmbedderTest {
   }
 
   void CreateAndInitializeFormPDF() {
-    EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
+    ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
     m_page = LoadPage(0);
     ASSERT_TRUE(m_page);
 

@@ -182,7 +182,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  EXPECT_TRUE(OpenDocument("calculate.pdf"));
+  ASSERT_TRUE(OpenDocument("calculate.pdf"));
   auto* page = LoadPage(0);
   ASSERT_TRUE(page);
 
@@ -218,7 +218,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  EXPECT_TRUE(OpenDocument("calculate.pdf"));
+  ASSERT_TRUE(OpenDocument("calculate.pdf"));
   auto* page = LoadPage(0);
   ASSERT_TRUE(page);
 

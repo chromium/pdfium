@@ -96,7 +96,7 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyInvalid) {
 
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
   constexpr int kExpectedObjectCount = 8;
-  EXPECT_TRUE(OpenDocument("rectangles.pdf"));
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));
@@ -114,7 +114,7 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
 
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyText) {
   constexpr int kExpectedObjectCount = 2;
-  EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
+  ASSERT_TRUE(OpenDocument("text_render_mode.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page));

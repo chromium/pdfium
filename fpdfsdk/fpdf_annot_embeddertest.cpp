@@ -1888,7 +1888,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsComboBox) {
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotNull) {
   // Open file with form text fields.
-  EXPECT_TRUE(OpenDocument("text_form.pdf"));
+  ASSERT_TRUE(OpenDocument("text_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
@@ -1916,7 +1916,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotNull) {
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
   // Open file with form text fields.
-  EXPECT_TRUE(OpenDocument("text_form_multiple.pdf"));
+  ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
@@ -1949,7 +1949,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   // Open file with form comboboxes.
-  EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+  ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 

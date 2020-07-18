@@ -14,11 +14,11 @@ TEST_F(FPDFExtEmbedderTest, PageModeUnknown) {
 }
 
 TEST_F(FPDFExtEmbedderTest, PageModeUseNone) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(PAGEMODE_USENONE, FPDFDoc_GetPageMode(document()));
 }
 
 TEST_F(FPDFExtEmbedderTest, PageModeUseOutlines) {
-  EXPECT_TRUE(OpenDocument("use_outlines.pdf"));
+  ASSERT_TRUE(OpenDocument("use_outlines.pdf"));
   EXPECT_EQ(PAGEMODE_USEOUTLINES, FPDFDoc_GetPageMode(document()));
 }

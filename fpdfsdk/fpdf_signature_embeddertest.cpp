@@ -8,12 +8,12 @@
 class FPDFSignatureEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFSignatureEmbedderTest, GetSignatureCount) {
-  EXPECT_TRUE(OpenDocument("two_signatures.pdf"));
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   EXPECT_EQ(2, FPDF_GetSignatureCount(document()));
 }
 
 TEST_F(FPDFSignatureEmbedderTest, GetSignatureCountZero) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(0, FPDF_GetSignatureCount(document()));
 
   // Provide no document.
@@ -21,7 +21,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetSignatureCountZero) {
 }
 
 TEST_F(FPDFSignatureEmbedderTest, GetSignatureObject) {
-  EXPECT_TRUE(OpenDocument("two_signatures.pdf"));
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   // Different, non-null signature objects are returned.
   FPDF_SIGNATURE signature1 = FPDF_GetSignatureObject(document(), 0);
   EXPECT_NE(nullptr, signature1);
@@ -38,7 +38,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetSignatureObject) {
 }
 
 TEST_F(FPDFSignatureEmbedderTest, GetContents) {
-  EXPECT_TRUE(OpenDocument("two_signatures.pdf"));
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
   FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
   EXPECT_NE(nullptr, signature);
 

@@ -18,20 +18,20 @@
 class FPDFSaveEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDoc) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\r\n"));
   EXPECT_EQ(805u, GetString().length());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, 14));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
   EXPECT_EQ(805u, GetString().length());
 }
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, -1));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\r\n"));
 
@@ -45,7 +45,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
@@ -63,7 +63,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   const int kPageCount = 3;
   std::string original_md5[kPageCount];
 
-  EXPECT_TRUE(OpenDocument("linearized.pdf"));
+  ASSERT_TRUE(OpenDocument("linearized.pdf"));
   for (int i = 0; i < kPageCount; ++i) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
@@ -104,7 +104,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveXFADoc) {
 #endif  // PDF_ENABLE_XFA
 
 TEST_F(FPDFSaveEmbedderTest, BUG_342) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), testing::HasSubstr("0000000000 65535 f\r\n"));
   EXPECT_THAT(GetString(),
@@ -112,7 +112,7 @@ TEST_F(FPDFSaveEmbedderTest, BUG_342) {
 }
 
 TEST_F(FPDFSaveEmbedderTest, BUG_905142) {
-  EXPECT_TRUE(OpenDocument("bug_905142.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_905142.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), testing::HasSubstr("/Length 0"));
 }

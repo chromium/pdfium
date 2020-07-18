@@ -147,7 +147,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
 
 // Test for conversion of a point in device coordinates to page coordinates
 TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
-  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
@@ -230,7 +230,7 @@ TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
 
 // Test for conversion of a point in page coordinates to device coordinates.
 TEST_F(FPDFViewEmbedderTest, PageCoordinatesToDeviceCoordinates) {
-  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
@@ -313,7 +313,7 @@ TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
   FPDF_InitLibrary();  // Redundant given call in SetUp(), but safe.
   FPDF_InitLibrary();  // Doubly-redundant even, but safe.
 
-  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   CloseDocument();
   CloseDocument();  // Redundant given above, but safe.
   CloseDocument();  // Doubly-redundant even, but safe.
@@ -323,7 +323,7 @@ TEST_F(FPDFViewEmbedderTest, MultipleInitDestroy) {
 }
 
 TEST_F(FPDFViewEmbedderTest, Document) {
-  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, GetPageCount());
   EXPECT_EQ(0, GetFirstPageNum());
 
@@ -420,7 +420,7 @@ TEST_F(FPDFViewEmbedderTest, SandboxDocument) {
 }
 
 TEST_F(FPDFViewEmbedderTest, LinearizedDocument) {
-  EXPECT_TRUE(OpenDocumentLinearized("feature_linearized_loading.pdf"));
+  ASSERT_TRUE(OpenDocumentLinearized("feature_linearized_loading.pdf"));
   int version;
   EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
   EXPECT_EQ(16, version);
@@ -462,7 +462,7 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
 }
 
 TEST_F(FPDFViewEmbedderTest, Page) {
-  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
 
@@ -487,7 +487,7 @@ TEST_F(FPDFViewEmbedderTest, Page) {
 }
 
 TEST_F(FPDFViewEmbedderTest, ViewerRefDummy) {
-  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
+  ASSERT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
   EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
@@ -504,7 +504,7 @@ TEST_F(FPDFViewEmbedderTest, ViewerRefDummy) {
 }
 
 TEST_F(FPDFViewEmbedderTest, ViewerRef) {
-  EXPECT_TRUE(OpenDocument("viewer_ref.pdf"));
+  ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
   EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
   EXPECT_EQ(5, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
@@ -552,7 +552,7 @@ TEST_F(FPDFViewEmbedderTest, ViewerRef) {
 }
 
 TEST_F(FPDFViewEmbedderTest, NamedDests) {
-  EXPECT_TRUE(OpenDocument("named_dests.pdf"));
+  ASSERT_TRUE(OpenDocument("named_dests.pdf"));
   EXPECT_EQ(6u, FPDF_CountNamedDests(document()));
 
   long buffer_size;
@@ -655,7 +655,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDests) {
 }
 
 TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
-  EXPECT_TRUE(OpenDocument("named_dests.pdf"));
+  ASSERT_TRUE(OpenDocument("named_dests.pdf"));
 
   // Null pointer returns nullptr.
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), nullptr);
@@ -692,7 +692,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsByName) {
 }
 
 TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
-  EXPECT_TRUE(OpenDocument("named_dests_old_style.pdf"));
+  ASSERT_TRUE(OpenDocument("named_dests_old_style.pdf"));
   EXPECT_EQ(2u, FPDF_CountNamedDests(document()));
 
   // Test bad parameters.
@@ -730,7 +730,7 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
 
 // The following tests pass if the document opens without crashing.
 TEST_F(FPDFViewEmbedderTest, Crasher_113) {
-  EXPECT_TRUE(OpenDocument("bug_113.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_113.pdf"));
 }
 
 TEST_F(FPDFViewEmbedderTest, Crasher_451830) {
@@ -739,7 +739,7 @@ TEST_F(FPDFViewEmbedderTest, Crasher_451830) {
 }
 
 TEST_F(FPDFViewEmbedderTest, Crasher_452455) {
-  EXPECT_TRUE(OpenDocument("bug_452455.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_452455.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
@@ -751,13 +751,13 @@ TEST_F(FPDFViewEmbedderTest, Crasher_454695) {
 }
 
 TEST_F(FPDFViewEmbedderTest, Crasher_572871) {
-  EXPECT_TRUE(OpenDocument("bug_572871.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_572871.pdf"));
 }
 
 // It tests that document can still be loaded even the trailer has no 'Size'
 // field if other information is right.
 TEST_F(FPDFViewEmbedderTest, Failed_213) {
-  EXPECT_TRUE(OpenDocument("bug_213.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_213.pdf"));
 }
 
 // The following tests pass if the document opens without infinite looping.
@@ -766,7 +766,7 @@ TEST_F(FPDFViewEmbedderTest, Hang_298) {
 }
 
 TEST_F(FPDFViewEmbedderTest, Crasher_773229) {
-  EXPECT_TRUE(OpenDocument("bug_773229.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_773229.pdf"));
 }
 
 // Test if the document opens without infinite looping.
@@ -774,7 +774,7 @@ TEST_F(FPDFViewEmbedderTest, Crasher_773229) {
 // the fix, LoadAllCrossRefV4 will return false after detecting a cross
 // reference loop. Cross references will be rebuilt successfully.
 TEST_F(FPDFViewEmbedderTest, CrossRefV4Loop) {
-  EXPECT_TRUE(OpenDocument("bug_xrefv4_loop.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_xrefv4_loop.pdf"));
   MockDownloadHints hints;
 
   // Make sure calling FPDFAvail_IsDocAvail() on this file does not infinite
@@ -810,7 +810,7 @@ TEST_F(FPDFViewEmbedderTest, Hang_360) {
 // Deliberately damaged version of linearized.pdf with bad data in the shared
 // object hint table.
 TEST_F(FPDFViewEmbedderTest, Hang_1055) {
-  EXPECT_TRUE(OpenDocumentLinearized("linearized_bug_1055.pdf"));
+  ASSERT_TRUE(OpenDocumentLinearized("linearized_bug_1055.pdf"));
   int version;
   EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
   EXPECT_EQ(16, version);
@@ -847,7 +847,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   const char kLargerRotatedMD5[] = "115f13353ebfc82ddb392d1f0059eb12";
   const char kLargerRotatedLandscapeMD5[] = "c901239d17d84ac84cb6f2124da71b0d";
 
-  EXPECT_TRUE(OpenDocument("rectangles.pdf"));
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   const int page_width = static_cast<int>(FPDF_GetPageWidthF(page));
@@ -991,7 +991,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
 }
 
 TEST_F(FPDFViewEmbedderTest, FPDF_GetPageSizeByIndexF) {
-  EXPECT_TRUE(OpenDocument("rectangles.pdf"));
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FS_SIZEF size;
   EXPECT_FALSE(FPDF_GetPageSizeByIndexF(nullptr, 0, &size));
@@ -1026,7 +1026,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_GetPageSizeByIndexF) {
 }
 
 TEST_F(FPDFViewEmbedderTest, FPDF_GetPageSizeByIndex) {
-  EXPECT_TRUE(OpenDocument("rectangles.pdf"));
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   double width = 0;
   double height = 0;

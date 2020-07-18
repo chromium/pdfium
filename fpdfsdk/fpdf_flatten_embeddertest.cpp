@@ -15,7 +15,7 @@ class FPDFFlattenEmbedderTest : public EmbedderTest {};
 }  // namespace
 
 TEST_F(FPDFFlattenEmbedderTest, FlatNothing) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_NOTHINGTODO, FPDFPage_Flatten(page, FLAT_NORMALDISPLAY));
@@ -23,7 +23,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatNothing) {
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatNormal) {
-  EXPECT_TRUE(OpenDocument("annotiter.pdf"));
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_NORMALDISPLAY));
@@ -31,7 +31,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatNormal) {
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
-  EXPECT_TRUE(OpenDocument("annotiter.pdf"));
+  ASSERT_TRUE(OpenDocument("annotiter.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
@@ -53,7 +53,7 @@ TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_861842) {
   constexpr char kCheckboxHash[] = "594265790b81df2d93120d33b72a6ada";
 #endif
 
-  EXPECT_TRUE(OpenDocument("bug_861842.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_861842.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
@@ -82,7 +82,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   constexpr char kFlattenedPageHash[] = "ef01f57507662ec9aef7cc7cff92f96c";
 #endif
 
-  EXPECT_TRUE(OpenDocument("bug_889099.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_889099.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
@@ -106,7 +106,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 #endif
 TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_890322) {
   constexpr char md5_hash[] = "6c674642154408e877d88c6c082d67e9";
-  EXPECT_TRUE(OpenDocument("bug_890322.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
@@ -129,7 +129,7 @@ TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_890322) {
 #endif
 TEST_F(FPDFFlattenEmbedderTest, MAYBE_BUG_896366) {
   constexpr char md5_hash[] = "f71ab085c52c8445ae785eca3ec858b1";
-  EXPECT_TRUE(OpenDocument("bug_896366.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_896366.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 

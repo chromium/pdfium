@@ -27,7 +27,7 @@ class CPWLComboBoxEditEmbedderTest : public EmbedderTest {
   }
 
   void CreateAndInitializeFormComboboxPDF() {
-    EXPECT_TRUE(OpenDocument("combobox_form.pdf"));
+    ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
     m_page = LoadPage(0);
     ASSERT_TRUE(m_page);
 

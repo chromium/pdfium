@@ -20,7 +20,7 @@ using pdfium::kBlankPage612By792Checksum;
 TEST_F(FPDFParserDecodeEmbedderTest, Bug_552046) {
   // Tests specifying multiple image filters for a stream. Should not cause a
   // crash when rendered.
-  EXPECT_TRUE(OpenDocument("bug_552046.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_552046.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
@@ -31,7 +31,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug_552046) {
 TEST_F(FPDFParserDecodeEmbedderTest, Bug_555784) {
   // Tests bad input to the run length decoder that caused a heap overflow.
   // Should not cause a crash when rendered.
-  EXPECT_TRUE(OpenDocument("bug_555784.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_555784.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
@@ -48,7 +48,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug_555784) {
 TEST_F(FPDFParserDecodeEmbedderTest, MAYBE_Bug_455199) {
   // Tests object numbers with a value > 01000000.
   // Should open successfully.
-  EXPECT_TRUE(OpenDocument("bug_455199.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_455199.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);

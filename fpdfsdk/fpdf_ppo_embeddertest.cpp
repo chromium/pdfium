@@ -26,7 +26,7 @@ int FakeBlockWriter(FPDF_FILEWRITE* pThis,
 }  // namespace
 
 TEST_F(FPDFPPOEmbedderTest, NoViewerPreferences) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
   FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
   EXPECT_TRUE(output_doc);
@@ -35,7 +35,7 @@ TEST_F(FPDFPPOEmbedderTest, NoViewerPreferences) {
 }
 
 TEST_F(FPDFPPOEmbedderTest, ViewerPreferences) {
-  EXPECT_TRUE(OpenDocument("viewer_ref.pdf"));
+  ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
 
   FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
   EXPECT_TRUE(output_doc);
@@ -161,7 +161,7 @@ TEST_F(FPDFPPOEmbedderTest, BadCircularViewerPref) {
 }
 
 TEST_F(FPDFPPOEmbedderTest, BadRanges) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
@@ -184,7 +184,7 @@ TEST_F(FPDFPPOEmbedderTest, BadRanges) {
 }
 
 TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
-  EXPECT_TRUE(OpenDocument("viewer_ref.pdf"));
+  ASSERT_TRUE(OpenDocument("viewer_ref.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
@@ -206,7 +206,7 @@ TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
 }
 
 TEST_F(FPDFPPOEmbedderTest, BUG_664284) {
-  EXPECT_TRUE(OpenDocument("bug_664284.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
   ASSERT_NE(nullptr, page);
@@ -266,7 +266,7 @@ TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
 }
 
 TEST_F(FPDFPPOEmbedderTest, ImportWithZeroLengthStream) {
-  EXPECT_TRUE(OpenDocument("zero_length_stream.pdf"));
+  ASSERT_TRUE(OpenDocument("zero_length_stream.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 

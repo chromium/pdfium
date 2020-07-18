@@ -17,7 +17,7 @@ class CXFALayoutItemEmbedderTest : public EmbedderTest {};
 #endif
 
 TEST_F(CXFALayoutItemEmbedderTest, Bug_1265) {
-  EXPECT_TRUE(OpenDocument("bug_1265.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_1265.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
   EXPECT_NE(nullptr, page0);
@@ -26,7 +26,7 @@ TEST_F(CXFALayoutItemEmbedderTest, Bug_1265) {
 }
 
 TEST_F(CXFALayoutItemEmbedderTest, MAYBE_Bug_1301) {
-  EXPECT_TRUE(OpenDocument("bug_1301.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_1301.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
   FPDF_PAGE page2 = LoadPage(2);
@@ -38,7 +38,7 @@ TEST_F(CXFALayoutItemEmbedderTest, MAYBE_Bug_1301) {
 }
 
 TEST_F(CXFALayoutItemEmbedderTest, Bug_306123) {
-  EXPECT_TRUE(OpenDocument("bug_306123.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_306123.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
   FPDF_PAGE page2 = LoadPage(2);

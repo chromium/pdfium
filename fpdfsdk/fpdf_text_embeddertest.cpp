@@ -1405,7 +1405,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontWeight) {
 }
 
 TEST_F(FPDFTextEmbedderTest, GetTextRenderMode) {
-  EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
+  ASSERT_TRUE(OpenDocument("text_render_mode.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 

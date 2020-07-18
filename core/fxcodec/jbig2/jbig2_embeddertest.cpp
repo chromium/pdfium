@@ -19,7 +19,7 @@ class JBig2EmbedderTest : public EmbedderTest {};
 TEST_F(JBig2EmbedderTest, MAYBE_Bug_631912) {
   // Test jbig2 image in PDF file can be loaded successfully.
   // Should not crash.
-  EXPECT_TRUE(OpenDocument("bug_631912.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_631912.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);

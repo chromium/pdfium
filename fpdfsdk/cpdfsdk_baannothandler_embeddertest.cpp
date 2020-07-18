@@ -24,7 +24,7 @@ class CPDFSDK_BAAnnotHandlerTest : public EmbedderTest {
   }
 
   void SetUpBAAnnotHandler() {
-    EXPECT_TRUE(OpenDocument("links_highlights_annots.pdf"));
+    ASSERT_TRUE(OpenDocument("links_highlights_annots.pdf"));
     m_page = LoadPage(0);
     ASSERT_TRUE(m_page);
 
