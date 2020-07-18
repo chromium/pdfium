@@ -623,15 +623,35 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
                        FPDF_PAGEOBJECT image_object,
                        FPDF_BITMAP bitmap);
 
-// Get a bitmap rasterisation of |image_object|. The returned bitmap will be
-// owned by the caller, and FPDFBitmap_Destroy() must be called on the returned
-// bitmap when it is no longer needed.
+// Get a bitmap rasterization of |image_object|. FPDFImageObj_GetBitmap() only
+// operates on |image_object| and does not take the associated image mask into
+// account. It also ignores the matrix for |image_object|.
+// The returned bitmap will be owned by the caller, and FPDFBitmap_Destroy()
+// must be called on the returned bitmap when it is no longer needed.
 //
 //   image_object - handle to an image object.
 //
 // Returns the bitmap.
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object);
+
+// Experimental API.
+// Get a bitmap rasterization of |image_object| that takes the image mask and
+// image matrix into account. To render correctly, the caller must provide the
+// |document| associated with |image_object|. If there is a |page| associated
+// with |image_object| the caller should provide that as well.
+// The returned bitmap will be owned by the caller, and FPDFBitmap_Destroy()
+// must be called on the returned bitmap when it is no longer needed.
+//
+//   document     - handle to a document associated with |image_object|.
+//   page         - handle to an optional page associated with |image_object|.
+//   image_object - handle to an image object.
+//
+// Returns the bitmap.
+FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
+FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
+                               FPDF_PAGE page,
+                               FPDF_PAGEOBJECT image_object);
 
 // Get the decoded image data of |image_object|. The decoded data is the
 // uncompressed image data, i.e. the raw image data after having all filters

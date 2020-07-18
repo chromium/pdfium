@@ -119,6 +119,7 @@ struct Options {
   bool reverse_byte_order = false;
   bool save_attachments = false;
   bool save_images = false;
+  bool save_rendered_images = false;
   bool save_thumbnails = false;
   bool save_thumbnails_decoded = false;
   bool save_thumbnails_raw = false;
@@ -453,6 +454,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->save_attachments = true;
     } else if (cur_arg == "--save-images") {
       options->save_images = true;
+    } else if (cur_arg == "--save-rendered-images") {
+      options->save_rendered_images = true;
     } else if (cur_arg == "--save-thumbs") {
       options->save_thumbnails = true;
     } else if (cur_arg == "--save-thumbs-dec") {
@@ -720,6 +723,8 @@ bool RenderPage(const std::string& name,
     SendPageEvents(form, page, events);
   if (options.save_images)
     WriteImages(page, name.c_str(), page_index);
+  if (options.save_rendered_images)
+    WriteRenderedImages(doc, page, name.c_str(), page_index);
   if (options.save_thumbnails)
     WriteThumbnail(page, name.c_str(), page_index);
   if (options.save_thumbnails_decoded)

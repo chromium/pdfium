@@ -693,6 +693,44 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
   }
 }
 
+void WriteRenderedImages(FPDF_DOCUMENT doc,
+                         FPDF_PAGE page,
+                         const char* pdf_name,
+                         int page_num) {
+  for (int i = 0; i < FPDFPage_CountObjects(page); ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE)
+      continue;
+
+    ScopedFPDFBitmap bitmap(FPDFImageObj_GetRenderedBitmap(doc, page, obj));
+    if (!bitmap) {
+      fprintf(stderr, "Image object #%d on page #%d has an empty bitmap.\n",
+              i + 1, page_num + 1);
+      continue;
+    }
+
+    char filename[256];
+    int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%d.png",
+                                   pdf_name, page_num, i);
+    if (chars_formatted < 0 ||
+        static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+      fprintf(stderr, "Filename %s for saving image is too long.\n", filename);
+      continue;
+    }
+
+    std::vector<uint8_t> png_encoding = EncodeBitmapToPng(std::move(bitmap));
+    if (png_encoding.empty()) {
+      fprintf(stderr,
+              "Failed to convert image object #%d, on page #%d to png.\n",
+              i + 1, page_num + 1);
+      continue;
+    }
+
+    WriteBufferToFile(&png_encoding.front(), png_encoding.size(), filename,
+                      "image");
+  }
+}
+
 void WriteDecodedThumbnailStream(FPDF_PAGE page,
                                  const char* pdf_name,
                                  int page_num) {

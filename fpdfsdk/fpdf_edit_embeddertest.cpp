@@ -3249,7 +3249,7 @@ TEST_F(FPDFEditEmbedderTest, MarkGetStringParam) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, ExtractImageBitmap) {
+TEST_F(FPDFEditEmbedderTest, GetBitmap) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -3310,9 +3310,7 @@ TEST_F(FPDFEditEmbedderTest, ExtractImageBitmap) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1554): Fix FPDFImageObj_GetBitmap() to take the matrix
-// into account, or provide a new API to do that.
-TEST_F(FPDFEditEmbedderTest, ExtractImageBitmapIgnoresSetMatrix) {
+TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSetMatrix) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -3367,7 +3365,7 @@ TEST_F(FPDFEditEmbedderTest, ExtractImageBitmapIgnoresSetMatrix) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, ExtractJBigImageBitmap) {
+TEST_F(FPDFEditEmbedderTest, GetBitmapForJBigImage) {
   ASSERT_TRUE(OpenDocument("bug_631912.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -3385,9 +3383,7 @@ TEST_F(FPDFEditEmbedderTest, ExtractJBigImageBitmap) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1554): Fix FPDFImageObj_GetBitmap() to take /SMask into
-// account, or provide a new API to do that.
-TEST_F(FPDFEditEmbedderTest, ExtractSMaskBitmap) {
+TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSMask) {
   ASSERT_TRUE(OpenDocument("matte.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -3403,6 +3399,110 @@ TEST_F(FPDFEditEmbedderTest, ExtractSMaskBitmap) {
     EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
     CompareBitmap(bitmap.get(), 50, 50, "46c9a1dbe0b44765ce46017ad629a2fe");
   }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(39, FPDFPage_CountObjects(page));
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 33);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+
+  {
+    // Render |obj| as is.
+    ScopedFPDFBitmap bitmap(
+        FPDFImageObj_GetRenderedBitmap(document(), page, obj));
+    EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
+    CompareBitmap(bitmap.get(), 53, 43, "90fa16c2fb2bf8ad3654c2258417664c");
+  }
+
+  // Check the matrix for |obj|.
+  double a;
+  double b;
+  double c;
+  double d;
+  double e;
+  double f;
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(53.0, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(43.0, d);
+  EXPECT_DOUBLE_EQ(72.0, e);
+  EXPECT_DOUBLE_EQ(646.510009765625, f);
+
+  // Modify the matrix for |obj|.
+  a = 120.0;
+  EXPECT_TRUE(FPDFImageObj_SetMatrix(obj, a, b, c, d, e, f));
+
+  // Make sure the matrix modification took place.
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(120.0, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(43.0, d);
+  EXPECT_DOUBLE_EQ(72.0, e);
+  EXPECT_DOUBLE_EQ(646.510009765625, f);
+
+  {
+    // Render |obj| again. Note that the FPDFImageObj_SetMatrix() call has an
+    // effect.
+    ScopedFPDFBitmap bitmap(
+        FPDFImageObj_GetRenderedBitmap(document(), page, obj));
+    EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
+    CompareBitmap(bitmap.get(), 120, 43, "57ed8e15daa535490ff0c8b7640a36b4");
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
+  ASSERT_TRUE(OpenDocument("matte.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjects = 4;
+  ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page));
+
+  for (int i = 0; i < kExpectedObjects; ++i) {
+    FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
+    ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+    ScopedFPDFBitmap bitmap(
+        FPDFImageObj_GetRenderedBitmap(document(), page, obj));
+    ASSERT_TRUE(bitmap);
+    EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
+    if (i == 0)
+      CompareBitmap(bitmap.get(), 40, 60, "5a3ae4a660ce919e29c42ec2258142f1");
+    else
+      CompareBitmap(bitmap.get(), 40, 60, "67504e83f5d78214ea00efc19082c5c1");
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapBadParams) {
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 33);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+
+  // Test various null parameters.
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, nullptr, nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(document(), nullptr, nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, page, nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, nullptr, obj));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(document(), page, nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(nullptr, page, obj));
+
+  // Test mismatch between document and page parameters.
+  ScopedFPDFDocument new_document(FPDF_CreateNewDocument());
+  EXPECT_FALSE(FPDFImageObj_GetRenderedBitmap(new_document.get(), page, obj));
 
   UnloadPage(page);
 }

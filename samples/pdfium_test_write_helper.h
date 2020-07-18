@@ -48,6 +48,10 @@ std::string WriteSkp(const char* pdf_name,
 
 void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name);
 void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num);
+void WriteRenderedImages(FPDF_DOCUMENT doc,
+                         FPDF_PAGE page,
+                         const char* pdf_name,
+                         int page_num);
 void WriteDecodedThumbnailStream(FPDF_PAGE page,
                                  const char* pdf_name,
                                  int page_num);
