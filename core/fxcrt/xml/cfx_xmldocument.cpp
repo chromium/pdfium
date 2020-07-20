@@ -5,6 +5,7 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 
 CFX_XMLDocument::CFX_XMLDocument() {

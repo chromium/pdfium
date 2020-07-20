@@ -216,6 +216,9 @@ class WideString {
   // so GetLength() will include them.
   ByteString ToUTF16LE() const;
 
+  // Replace the characters &<>'" with HTML entities.
+  WideString EncodeEntities() const;
+
  protected:
   using StringData = StringDataTemplate<wchar_t>;
 

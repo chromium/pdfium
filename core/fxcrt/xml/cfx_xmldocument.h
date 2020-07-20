@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxcrt/xml/cfx_xmlelement.h"
 
+class CFX_XMLElement;
 class CFX_XMLNode;
 
 class CFX_XMLDocument {

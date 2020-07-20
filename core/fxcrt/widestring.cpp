@@ -694,6 +694,16 @@ ByteString WideString::ToUTF16LE() const {
   return result;
 }
 
+WideString WideString::EncodeEntities() const {
+  WideString ret = *this;
+  ret.Replace(L"&", L"&amp;");
+  ret.Replace(L"<", L"&lt;");
+  ret.Replace(L">", L"&gt;");
+  ret.Replace(L"\'", L"&apos;");
+  ret.Replace(L"\"", L"&quot;");
+  return ret;
+}
+
 WideString WideString::Substr(size_t first, size_t count) const {
   if (!m_pData)
     return WideString();

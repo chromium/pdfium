@@ -1132,6 +1132,11 @@ TEST(WideString, ToUTF16LE) {
   }
 }
 
+TEST(WideString, EncodeEntities) {
+  EXPECT_EQ(WideString(L"Symbols &<>'\".").EncodeEntities(),
+            L"Symbols &amp;&lt;&gt;&apos;&quot;.");
+}
+
 TEST(WideString, IsASCII) {
   EXPECT_TRUE(WideString(L"xy\u007fz").IsASCII());
   EXPECT_FALSE(WideString(L"xy\u0080z").IsASCII());

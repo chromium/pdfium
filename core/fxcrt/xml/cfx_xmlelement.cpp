@@ -150,7 +150,7 @@ WideString CFX_XMLElement::AttributeToString(const WideString& name,
   WideString ret = L" ";
   ret += name;
   ret += L"=\"";
-  ret += EncodeEntities(value);
+  ret += value.EncodeEntities();
   ret += L"\"";
   return ret;
 }

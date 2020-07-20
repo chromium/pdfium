@@ -13,7 +13,7 @@
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
-#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"

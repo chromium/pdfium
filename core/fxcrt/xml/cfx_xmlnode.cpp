@@ -21,13 +21,3 @@ CFX_XMLNode* CFX_XMLNode::GetRoot() {
 
   return pParent;
 }
-
-WideString CFX_XMLNode::EncodeEntities(const WideString& value) {
-  WideString ret = value;
-  ret.Replace(L"&", L"&amp;");
-  ret.Replace(L"<", L"&lt;");
-  ret.Replace(L">", L"&gt;");
-  ret.Replace(L"\'", L"&apos;");
-  ret.Replace(L"\"", L"&quot;");
-  return ret;
-}

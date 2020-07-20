@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/xml/cfx_xmldocument.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/js_resources.h"

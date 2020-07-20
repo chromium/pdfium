@@ -32,9 +32,6 @@ class CFX_XMLNode : public TreeNode<CFX_XMLNode> {
 
   CFX_XMLNode* GetRoot();
   void InsertChildNode(CFX_XMLNode* pNode, int32_t index);
-
- protected:
-  WideString EncodeEntities(const WideString& value);
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLNODE_H_
