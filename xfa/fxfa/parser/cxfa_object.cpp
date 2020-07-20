@@ -30,10 +30,7 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
       m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName, false)),
       m_pJSObject(std::move(jsObject)) {}
 
-CXFA_Object::~CXFA_Object() {
-  if (!GetDocument()->IsBeingDestroyed() && GetDocument()->HasScriptContext())
-    GetDocument()->GetScriptContext()->RemoveJSBindingFromMap(this);
-}
+CXFA_Object::~CXFA_Object() = default;
 
 WideString CXFA_Object::GetSOMExpression() {
   CXFA_Node* pNode = AsNode();

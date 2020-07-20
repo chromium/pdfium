@@ -23,12 +23,9 @@ class CXFA_NodeOwner {
   // Takes ownership of |list|, returns unowned pointer to it.
   CXFA_List* AddOwnedList(std::unique_ptr<CXFA_List> list);
 
-  bool IsBeingDestroyed() const { return is_being_destroyed_; }
-
  protected:
   CXFA_NodeOwner();
 
-  bool is_being_destroyed_ = false;
   std::vector<std::unique_ptr<CXFA_Node>> nodes_;  // Must outlive |lists_|.
   std::vector<std::unique_ptr<CXFA_List>> lists_;
 };

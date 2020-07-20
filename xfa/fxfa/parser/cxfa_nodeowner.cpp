@@ -13,9 +13,7 @@
 
 CXFA_NodeOwner::CXFA_NodeOwner() = default;
 
-CXFA_NodeOwner::~CXFA_NodeOwner() {
-  is_being_destroyed_ = true;
-}
+CXFA_NodeOwner::~CXFA_NodeOwner() = default;
 
 CXFA_Node* CXFA_NodeOwner::AddOwnedNode(std::unique_ptr<CXFA_Node> node) {
   if (!node)
