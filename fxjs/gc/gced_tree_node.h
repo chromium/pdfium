@@ -13,12 +13,10 @@
 
 namespace fxjs {
 
-// For DOM/XML-ish trees, where references outside the tree are RetainPtr<T>,
-// and the parent node also "retains" its children but doesn't always have
-// a direct pointer to them.
+// For DOM/XML-ish trees, where references outside the tree are Persistent<>.
 template <typename T>
-class GCedTreeNode : public TreeNode<T, cppgc::Member<T>>,
-                     public cppgc::GarbageCollected<GCedTreeNode<T>> {
+class GCedTreeNode : public cppgc::GarbageCollected<GCedTreeNode<T>>,
+                     public TreeNode<T, cppgc::Member<T>> {
  public:
   using TreeNode<T, cppgc::Member<T>>::RemoveChild;
 
