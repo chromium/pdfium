@@ -1705,13 +1705,7 @@ TEST_F(FPDFEditEmbedderTest, InsertPageObjectEditAndSave) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_InsertAndRemoveLargeFile DISABLED_InsertAndRemoveLargeFile
-#else
-#define MAYBE_InsertAndRemoveLargeFile InsertAndRemoveLargeFile
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_InsertAndRemoveLargeFile) {
+TEST_F(FPDFEditEmbedderTest, InsertAndRemoveLargeFile) {
   const int kOriginalObjectCount = 600;
 
   // Load document with many objects.
@@ -1734,7 +1728,11 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_InsertAndRemoveLargeFile) {
 
   // Verify the black rectangle was added.
   ASSERT_EQ(kOriginalObjectCount + 1, FPDFPage_CountObjects(page));
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kPlusRectangleMD5[] = "0d3715fcfb9bd0dd25dcce60800bff47";
+#else
   const char kPlusRectangleMD5[] = "6b9396ab570754b32b04ca629e902f77";
+#endif
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 300, kPlusRectangleMD5);
