@@ -1162,16 +1162,14 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderManyRectanglesWithFlags \
-  DISABLED_RenderManyRectanglesWithFlags
+  static const char kGrayscaleMD5[] = "b596ac8bbe64e7bff31888ab05e4dcf4";
+  static const char kNoSmoothpathMD5[] = "4d71ed53d9f6e6a761876ebb4ff23e19";
 #else
-#define MAYBE_RenderManyRectanglesWithFlags RenderManyRectanglesWithFlags
-#endif
-TEST_F(FPDFViewEmbedderTest, MAYBE_RenderManyRectanglesWithFlags) {
   static const char kGrayscaleMD5[] = "7b553f1052069a9c61237a05db0955d6";
   static const char kNoSmoothpathMD5[] = "ff6e5c509d1f6984bcdfd18b26a4203a";
+#endif
 
   ASSERT_TRUE(OpenDocument("many_rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
