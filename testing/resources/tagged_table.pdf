@@ -125,6 +125,7 @@ endobj
   /P 8 0 R
   /T (TitleText)
   /Pg 3 0 R
+  /Lang (en-US)
 >>
 endobj
 11 0 obj <<
@@ -133,6 +134,12 @@ endobj
   /K [12 0 R 13 0 R]
   /P 10 0 R
   /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /Summary ()
+      >>]
+  /ID (node12)
+  /Lang (hu)
 >>
 endobj
 12 0 obj <<
@@ -141,6 +148,7 @@ endobj
   /K [14 0 R 15 0 R]
   /P 11 0 R
   /Pg 3 0 R
+  /ID ()
 >>
 endobj
 13 0 obj <<
@@ -149,6 +157,7 @@ endobj
   /K [16 0 R 17 0 R]
   /P 11 0 R
   /Pg 3 0 R
+  /ID (node14)
 >>
 endobj
 14 0 obj <<
@@ -156,12 +165,15 @@ endobj
   /S /TH
   /P 12 0 R
   /Pg 3 0 R
-  /A [
-    <<
-      /O /Table
-      /Scope /Row
-    >>
-  ]
+  /A [<<
+        /O /Table
+        /Scope /Row
+      >>
+      <<
+        /O /Table
+        /ColSpan 2
+      >>]
+  /ID (node15)
 >>
 endobj
 15 0 obj <<
@@ -169,6 +181,7 @@ endobj
   /S /TD
   /P 12 0 R
   /Pg 3 0 R
+  /ID (node16)
 >>
 endobj
 16 0 obj <<
@@ -176,12 +189,11 @@ endobj
   /S /TH
   /P 13 0 R
   /Pg 3 0 R
-  /A [
-    <<
-      /O /Table
-      /Scope /Row
-    >>
-  ]
+  /A [<<
+        /O /Table
+        /Scope /Row
+      >>]
+  /ID (node17)
 >>
 endobj
 17 0 obj <<
@@ -189,6 +201,7 @@ endobj
   /S /TD
   /P 13 0 R
   /Pg 3 0 R
+  /ID (node18)
 >>
 endobj
 xref
@@ -204,17 +217,17 @@ xref
 0000001253 00000 n 
 0000001412 00000 n 
 0000001515 00000 n 
-0000001626 00000 n 
-0000001725 00000 n 
-0000001821 00000 n 
-0000001917 00000 n 
-0000002051 00000 n 
-0000002126 00000 n 
-0000002260 00000 n 
+0000001642 00000 n 
+0000001826 00000 n 
+0000001931 00000 n 
+0000002042 00000 n 
+0000002244 00000 n 
+0000002334 00000 n 
+0000002481 00000 n 
 trailer <<
   /Root 1 0 R
   /Size 18
 >>
 startxref
-2335
+2571
 %%EOF

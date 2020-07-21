@@ -124,6 +124,7 @@ endobj
   /P 8 0 R
   /T (TitleText)
   /Pg 3 0 R
+  /Lang (en-US)
 >>
 endobj
 {{object 11 0}} <<
@@ -132,6 +133,12 @@ endobj
   /K [12 0 R 13 0 R]
   /P 10 0 R
   /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /Summary ()
+      >>]
+  /ID (node12)
+  /Lang (hu)
 >>
 endobj
 {{object 12 0}} <<
@@ -140,6 +147,7 @@ endobj
   /K [14 0 R 15 0 R]
   /P 11 0 R
   /Pg 3 0 R
+  /ID ()
 >>
 endobj
 {{object 13 0}} <<
@@ -148,6 +156,7 @@ endobj
   /K [16 0 R 17 0 R]
   /P 11 0 R
   /Pg 3 0 R
+  /ID (node14)
 >>
 endobj
 {{object 14 0}} <<
@@ -155,12 +164,15 @@ endobj
   /S /TH
   /P 12 0 R
   /Pg 3 0 R
-  /A [
-    <<
-      /O /Table
-      /Scope /Row
-    >>
-  ]
+  /A [<<
+        /O /Table
+        /Scope /Row
+      >>
+      <<
+        /O /Table
+        /ColSpan 2
+      >>]
+  /ID (node15)
 >>
 endobj
 {{object 15 0}} <<
@@ -168,6 +180,7 @@ endobj
   /S /TD
   /P 12 0 R
   /Pg 3 0 R
+  /ID (node16)
 >>
 endobj
 {{object 16 0}} <<
@@ -175,12 +188,11 @@ endobj
   /S /TH
   /P 13 0 R
   /Pg 3 0 R
-  /A [
-    <<
-      /O /Table
-      /Scope /Row
-    >>
-  ]
+  /A [<<
+        /O /Table
+        /Scope /Row
+      >>]
+  /ID (node17)
 >>
 endobj
 {{object 17 0}} <<
@@ -188,6 +200,7 @@ endobj
   /S /TD
   /P 13 0 R
   /Pg 3 0 R
+  /ID (node18)
 >>
 endobj
 {{xref}}

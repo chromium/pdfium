@@ -325,6 +325,8 @@ int CheckPDFiumCApi() {
     CHK(FPDF_StructElement_CountChildren);
     CHK(FPDF_StructElement_GetAltText);
     CHK(FPDF_StructElement_GetChildAtIndex);
+    CHK(FPDF_StructElement_GetID);
+    CHK(FPDF_StructElement_GetLang);
     CHK(FPDF_StructElement_GetMarkedContentID);
     CHK(FPDF_StructElement_GetStringAttribute);
     CHK(FPDF_StructElement_GetTitle);

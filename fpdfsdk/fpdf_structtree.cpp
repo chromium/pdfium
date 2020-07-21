@@ -80,6 +80,36 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetID(FPDF_STRUCTELEMENT struct_element,
+                         void* buffer,
+                         unsigned long buflen) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
+  if (!dict)
+    return 0;
+  const CPDF_Object* obj = dict->GetObjectFor("ID");
+  if (!obj || !obj->IsString())
+    return 0;
+  return Utf16EncodeMaybeCopyAndReturnLength(obj->GetUnicodeText(), buffer,
+                                             buflen);
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_StructElement_GetLang(FPDF_STRUCTELEMENT struct_element,
+                           void* buffer,
+                           unsigned long buflen) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
+  const CPDF_Object* obj = dict->GetObjectFor("Lang");
+  if (!obj || !obj->IsString())
+    return 0;
+  return Utf16EncodeMaybeCopyAndReturnLength(obj->GetUnicodeText(), buffer,
+                                             buflen);
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
                                       FPDF_BYTESTRING attr_name,
                                       void* buffer,
@@ -93,10 +123,11 @@ FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
   CPDF_ArrayLocker locker(array);
   for (const RetainPtr<CPDF_Object>& obj : locker) {
     const CPDF_Dictionary* obj_dict = obj->AsDictionary();
-    if (obj_dict && obj_dict->KeyExist(attr_name)) {
-      return WideStringToBuffer(obj_dict->GetUnicodeTextFor(attr_name), buffer,
-                                buflen);
-    }
+    const CPDF_Object* attr = obj_dict->GetObjectFor(attr_name);
+    if (!attr || !(attr->IsString() || attr->IsName()))
+      continue;
+    return Utf16EncodeMaybeCopyAndReturnLength(attr->GetUnicodeText(), buffer,
+                                               buflen);
   }
   return 0;
 }

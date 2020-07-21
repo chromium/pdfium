@@ -103,6 +103,10 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
     EXPECT_EQ(12U, FPDF_StructElement_GetType(table, buffer, kBufLen));
     EXPECT_EQ("Table", GetPlatformString(buffer));
 
+    // The table should have an attribute "Summary" set to the empty string.
+    EXPECT_EQ(2U, FPDF_StructElement_GetStringAttribute(table, "Summary",
+                                                        buffer, kBufLen));
+
     ASSERT_EQ(2, FPDF_StructElement_CountChildren(table));
     FPDF_STRUCTELEMENT row = FPDF_StructElement_GetChildAtIndex(table, 0);
     ASSERT_TRUE(row);
@@ -119,6 +123,11 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
                                                         buffer, kBufLen));
     EXPECT_EQ("Row", GetPlatformString(buffer));
 
+    // The header has an attribute "ColSpan", but it's not a string so it
+    // returns null.
+    EXPECT_EQ(0U, FPDF_StructElement_GetStringAttribute(header_cell, "ColSpan",
+                                                        buffer, kBufLen));
+
     // An unsupported attribute should return 0.
     EXPECT_EQ(0U, FPDF_StructElement_GetStringAttribute(header_cell, "Other",
                                                         buffer, kBufLen));
@@ -126,6 +135,96 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
     // A null struct element should not crash.
     EXPECT_EQ(0U, FPDF_StructElement_GetStringAttribute(nullptr, "Other",
                                                         buffer, kBufLen));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFStructTreeEmbedderTest, GetID) {
+  ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT document = document =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(document);
+
+    constexpr int kBufLen = 100;
+    uint16_t buffer[kBufLen] = {0};
+    EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
+    EXPECT_EQ("Document", GetPlatformString(buffer));
+
+    // The document has no ID.
+    EXPECT_EQ(0U, FPDF_StructElement_GetID(document, buffer, kBufLen));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(document));
+    FPDF_STRUCTELEMENT table = FPDF_StructElement_GetChildAtIndex(document, 0);
+    ASSERT_TRUE(table);
+
+    EXPECT_EQ(12U, FPDF_StructElement_GetType(table, buffer, kBufLen));
+    EXPECT_EQ("Table", GetPlatformString(buffer));
+
+    // The table has an ID.
+    EXPECT_EQ(14U, FPDF_StructElement_GetID(table, buffer, kBufLen));
+    EXPECT_EQ("node12", GetPlatformString(buffer));
+
+    // The first child of the table is a row, which has an empty ID.
+    // It returns 2U, the length of an empty string, instead of 0U,
+    // representing null.
+    ASSERT_EQ(2, FPDF_StructElement_CountChildren(table));
+    FPDF_STRUCTELEMENT row = FPDF_StructElement_GetChildAtIndex(table, 0);
+    ASSERT_TRUE(row);
+    EXPECT_EQ(2U, FPDF_StructElement_GetID(row, buffer, kBufLen));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
+  ASSERT_TRUE(OpenDocument("tagged_table.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT document = document =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(document);
+
+    constexpr int kBufLen = 100;
+    uint16_t buffer[kBufLen] = {0};
+    EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
+    EXPECT_EQ("Document", GetPlatformString(buffer));
+
+    // The document has a language.
+    EXPECT_EQ(12U, FPDF_StructElement_GetLang(document, buffer, kBufLen));
+    EXPECT_EQ("en-US", GetPlatformString(buffer));
+
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(document));
+    FPDF_STRUCTELEMENT table = FPDF_StructElement_GetChildAtIndex(document, 0);
+    ASSERT_TRUE(table);
+
+    // The first child is a table, with a language.
+    EXPECT_EQ(12U, FPDF_StructElement_GetType(table, buffer, kBufLen));
+    EXPECT_EQ("Table", GetPlatformString(buffer));
+
+    EXPECT_EQ(6U, FPDF_StructElement_GetLang(table, buffer, kBufLen));
+    EXPECT_EQ("hu", GetPlatformString(buffer));
+
+    // The first child of the table is a row, which doesn't have a
+    // language explicitly set on it.
+    ASSERT_EQ(2, FPDF_StructElement_CountChildren(table));
+    FPDF_STRUCTELEMENT row = FPDF_StructElement_GetChildAtIndex(table, 0);
+    ASSERT_TRUE(row);
+    EXPECT_EQ(0U, FPDF_StructElement_GetLang(row, buffer, kBufLen));
   }
 
   UnloadPage(page);
