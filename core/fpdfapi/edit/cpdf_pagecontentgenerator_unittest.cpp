@@ -331,6 +331,18 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     pTextObj->m_TextState.SetFontSize(15.5f);
     pTextObj->SetText("I am indirect");
     pTextObj->SetTextRenderMode(TextRenderingMode::MODE_FILL_CLIP);
+
+    // Add a clipping path.
+    auto pPath = std::make_unique<CPDF_Path>();
+    pPath->AppendPoint(CFX_PointF(0, 0), FXPT_TYPE::MoveTo);
+    pPath->AppendPoint(CFX_PointF(5, 0), FXPT_TYPE::LineTo);
+    pPath->AppendPoint(CFX_PointF(5, 4), FXPT_TYPE::LineTo);
+    pPath->AppendPointAndClose(CFX_PointF(0, 4), FXPT_TYPE::LineTo);
+    pTextObj->m_ClipPath.Emplace();
+    pTextObj->m_ClipPath.AppendPath(*pPath,
+                                    CFX_FillRenderOptions::FillType::kEvenOdd,
+                                    /*bAutoMerge=*/false);
+
     TestProcessText(&generator, &buf, pTextObj.get());
   }
 
@@ -342,7 +354,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   ByteString lastString =
       textString.Last(textString.GetLength() - firstResourceAt.value());
   // q and Q must be outside the BT .. ET operations
-  ByteString compareString1 = "q BT 1 0 0 1 0 0 Tm /";
+  ByteString compareString1 = "q 0 0 5 4 re W* n 0 g BT 1 0 0 1 0 0 Tm /";
   ByteString compareString2 =
       " 15.5 Tf 4 Tr <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),

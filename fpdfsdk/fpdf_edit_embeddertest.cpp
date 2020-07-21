@@ -658,8 +658,6 @@ TEST_F(FPDFEditEmbedderTest, SetText) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/1558): Clipping paths should be retained after saving
-// changed text.
 TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
   // Load document with some text, with parts clipped.
   ASSERT_TRUE(OpenDocument("bug_1558.pdf"));
@@ -718,17 +716,8 @@ TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
   ASSERT_TRUE(saved_page);
 
   {
-    static constexpr char kChangedChecksum[] =
-#if defined(OS_WIN)
-        "da44e0c040ed56dbb60cf44ef033757b";
-#elif defined(OS_MACOSX)
-        "0bfd2dab51dd588a7f77d531582078cd";
-#else
-        "e63e78fcbcfba4b64f2b843fdf2cc3e8";
-#endif
-    // The checksum of |saved_bitmap| should be |kOriginalChecksum|.
     ScopedFPDFBitmap saved_bitmap = RenderSavedPage(saved_page);
-    CompareBitmap(saved_bitmap.get(), 200, 200, kChangedChecksum);
+    CompareBitmap(saved_bitmap.get(), 200, 200, kOriginalChecksum);
   }
 
   CloseSavedPage(saved_page);

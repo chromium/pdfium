@@ -404,6 +404,8 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
 // "rg" sets the fill color, "RG" sets the stroke color (using DefaultRGB)
 // "w" sets the stroke line width.
 // "ca" sets the fill alpha, "CA" sets the stroke alpha.
+// "W" and "W*" modify the clipping path using the nonzero winding rule and
+// even-odd rules, respectively.
 // "q" saves the graphics state, so that the settings can later be reversed
 void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
                                                 CPDF_PageObject* pPageObj) {
@@ -427,6 +429,29 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
   CFX_GraphStateData::LineJoin lineJoin = pPageObj->m_GraphState.GetLineJoin();
   if (lineJoin != CFX_GraphStateData::LineJoinMiter)
     *buf << static_cast<int>(lineJoin) << " j ";
+
+  const CPDF_ClipPath& clip_path = pPageObj->m_ClipPath;
+  if (clip_path.HasRef()) {
+    for (size_t i = 0; i < clip_path.GetPathCount(); ++i) {
+      CPDF_Path path = clip_path.GetPath(i);
+      ProcessPathPoints(buf, &path);
+      switch (clip_path.GetClipType(i)) {
+        case CFX_FillRenderOptions::FillType::kWinding:
+          *buf << " W ";
+          break;
+        case CFX_FillRenderOptions::FillType::kEvenOdd:
+          *buf << " W* ";
+          break;
+        case CFX_FillRenderOptions::FillType::kNoFill:
+          NOTREACHED();
+          break;
+      }
+
+      // Use a no-op path-painting operator to terminate the path without
+      // causing any marks to be placed on the page.
+      *buf << "n 0 g ";
+    }
+  }
 
   GraphicsData graphD;
   graphD.fillAlpha = pPageObj->m_GeneralState.GetFillAlpha();
