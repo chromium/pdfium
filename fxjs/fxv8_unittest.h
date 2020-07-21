@@ -1,9 +1,9 @@
-// Copyright 2018 PDFium Authors. All rights reserved.
+// Copyright 2020 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FXJS_CFX_V8_UNITTEST_H_
-#define FXJS_CFX_V8_UNITTEST_H_
+#ifndef FXJS_FXV8_UNITTEST_H_
+#define FXJS_FXV8_UNITTEST_H_
 
 #include <memory>
 
@@ -28,12 +28,10 @@ class FXV8UnitTest : public ::testing::Test {
   void SetUp() override;
 
   v8::Isolate* isolate() const { return isolate_.get(); }
-  CFX_V8* cfx_v8() const { return cfx_v8_.get(); }
 
  protected:
   std::unique_ptr<CFX_V8ArrayBufferAllocator> array_buffer_allocator_;
   std::unique_ptr<v8::Isolate, V8IsolateDeleter> isolate_;
-  std::unique_ptr<CFX_V8> cfx_v8_;
 };
 
-#endif  // FXJS_CFX_V8_UNITTEST_H_
+#endif  // FXJS_FXV8_UNITTEST_H_

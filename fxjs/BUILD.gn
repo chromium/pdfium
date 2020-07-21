@@ -219,11 +219,12 @@ if (pdf_enable_v8) {
     sources = [
       "cfx_globaldata_unittest.cpp",
       "cfx_v8_unittest.cpp",
-      "cfx_v8_unittest.h",
       "cfxjs_engine_unittest.cpp",
       "cjs_publicmethods_unittest.cpp",
       "cjs_util_unittest.cpp",
       "fx_date_helpers_unittest.cpp",
+      "fxv8_unittest.cpp",
+      "fxv8_unittest.h",
     ]
     configs = [ "//v8:external_startup_data" ]
     deps = [ ":fxjs" ]

@@ -6,8 +6,8 @@
 
 #include <memory>
 
-#include "fxjs/cfx_v8_unittest.h"
 #include "fxjs/cjs_object.h"
+#include "fxjs/fxv8_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class FXJSEngineUnitTest : public FXV8UnitTest {
