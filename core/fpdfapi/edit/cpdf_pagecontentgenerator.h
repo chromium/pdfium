@@ -22,6 +22,7 @@ class CPDF_ImageObject;
 class CPDF_Object;
 class CPDF_PageObject;
 class CPDF_PageObjectHolder;
+class CPDF_Path;
 class CPDF_PathObject;
 class CPDF_TextObject;
 
@@ -37,6 +38,7 @@ class CPDF_PageContentGenerator {
   friend class CPDF_PageContentGeneratorTest;
 
   void ProcessPageObject(std::ostringstream* buf, CPDF_PageObject* pPageObj);
+  void ProcessPathPoints(std::ostringstream* buf, CPDF_Path* pPath);
   void ProcessPath(std::ostringstream* buf, CPDF_PathObject* pPathObj);
   void ProcessImage(std::ostringstream* buf, CPDF_ImageObject* pImageObj);
   void ProcessGraphics(std::ostringstream* buf, CPDF_PageObject* pPageObj);

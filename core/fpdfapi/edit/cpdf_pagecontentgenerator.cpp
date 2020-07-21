@@ -331,7 +331,7 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
-// Processing path with operators from Tables 4.9 and 4.10 of PDF spec 1.7:
+// Processing path construction with operators from Table 4.9 of PDF spec 1.7:
 // "re" appends a rectangle (here, used only if the whole path is a rectangle)
 // "m" moves current point to the given coordinates
 // "l" creates a line from current point to the new point
@@ -339,6 +339,45 @@ void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
 // points as the Bezier control points
 // Note: "l", "c" change the current point
 // "h" closes the subpath (appends a line from current to starting point)
+void CPDF_PageContentGenerator::ProcessPathPoints(std::ostringstream* buf,
+                                                  CPDF_Path* pPath) {
+  pdfium::span<const FX_PATHPOINT> points = pPath->GetPoints();
+  if (pPath->IsRect()) {
+    CFX_PointF diff = points[2].m_Point - points[0].m_Point;
+    *buf << points[0].m_Point << " " << diff << " re";
+    return;
+  }
+  for (size_t i = 0; i < points.size(); ++i) {
+    if (i > 0)
+      *buf << " ";
+
+    *buf << points[i].m_Point;
+
+    FXPT_TYPE point_type = points[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
+      *buf << " m";
+    } else if (point_type == FXPT_TYPE::LineTo) {
+      *buf << " l";
+    } else if (point_type == FXPT_TYPE::BezierTo) {
+      if (i + 2 >= points.size() ||
+          !points[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
+          !points[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
+          points[i + 2].m_Type != FXPT_TYPE::BezierTo) {
+        // If format is not supported, close the path and paint
+        *buf << " h";
+        break;
+      }
+      *buf << " ";
+      *buf << points[i + 1].m_Point << " ";
+      *buf << points[i + 2].m_Point << " c";
+      i += 2;
+    }
+    if (points[i].m_CloseFigure)
+      *buf << " h";
+  }
+}
+
+// Processing path painting with operators from Table 4.10 of PDF spec 1.7:
 // Path painting operators: "S", "n", "B", "f", "B*", "f*", depending on
 // the filling mode and whether we want stroking the path or not.
 // "Q" restores the graphics state imposed by the ProcessGraphics method.
@@ -347,41 +386,8 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
   ProcessGraphics(buf, pPathObj);
 
   *buf << pPathObj->matrix() << " cm ";
+  ProcessPathPoints(buf, &pPathObj->path());
 
-  pdfium::span<const FX_PATHPOINT> points = pPathObj->path().GetPoints();
-  if (pPathObj->path().IsRect()) {
-    CFX_PointF diff = points[2].m_Point - points[0].m_Point;
-    *buf << points[0].m_Point << " " << diff << " re";
-  } else {
-    for (size_t i = 0; i < points.size(); ++i) {
-      if (i > 0)
-        *buf << " ";
-
-      *buf << points[i].m_Point;
-
-      FXPT_TYPE point_type = points[i].m_Type;
-      if (point_type == FXPT_TYPE::MoveTo) {
-        *buf << " m";
-      } else if (point_type == FXPT_TYPE::LineTo) {
-        *buf << " l";
-      } else if (point_type == FXPT_TYPE::BezierTo) {
-        if (i + 2 >= points.size() ||
-            !points[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
-            !points[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
-            points[i + 2].m_Type != FXPT_TYPE::BezierTo) {
-          // If format is not supported, close the path and paint
-          *buf << " h";
-          break;
-        }
-        *buf << " ";
-        *buf << points[i + 1].m_Point << " ";
-        *buf << points[i + 2].m_Point << " c";
-        i += 2;
-      }
-      if (points[i].m_CloseFigure)
-        *buf << " h";
-    }
-  }
   if (pPathObj->has_no_filltype())
     *buf << (pPathObj->stroke() ? " S" : " n");
   else if (pPathObj->has_winding_filltype())
