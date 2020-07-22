@@ -403,23 +403,19 @@ TEST_F(FPDFAnnotEmbedderTest, RenderAnnotWithOnlyRolloverAP) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
+TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderMultilineMarkupAnnotWithoutAP \
-  DISABLED_RenderMultilineMarkupAnnotWithoutAP
+  static const char kChecksum[] = "ec1f4ccbd0aecfdea6d53893387a0101";
 #else
-#define MAYBE_RenderMultilineMarkupAnnotWithoutAP \
-  RenderMultilineMarkupAnnotWithoutAP
+  static const char kChecksum[] = "76512832d88017668d9acc7aacd13dae";
 #endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_RenderMultilineMarkupAnnotWithoutAP) {
-  static const char kMd5[] = "76512832d88017668d9acc7aacd13dae";
   // Open a file with multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
-  CompareBitmap(bitmap.get(), 595, 842, kMd5);
+  CompareBitmap(bitmap.get(), 595, 842, kChecksum);
 
   UnloadPage(page);
 }
