@@ -11,7 +11,7 @@
 #include "testing/test_support.h"
 
 #ifdef PDF_ENABLE_V8
-#include "testing/v8_initializer.h"
+#include "testing/v8_test_environment.h"
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
@@ -26,18 +26,14 @@ int main(int argc, char** argv) {
   FXMEM_InitializePartitionAlloc();
 
 #ifdef PDF_ENABLE_V8
-  std::unique_ptr<v8::Platform> platform;
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  static v8::StartupData* snapshot = new v8::StartupData;
-  platform =
-      InitializeV8ForPDFiumWithStartupData(argv[0], std::string(), snapshot);
-#else  // V8_USE_EXTERNAL_STARTUP_DATA
-  platform = InitializeV8ForPDFium(argv[0]);
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+  // V8 test environment will be deleted by gtest.
+  AddGlobalTestEnvironment(new V8TestEnvironment(argv[0]));
 #endif  // PDF_ENABLE_V8
 
   InitializePDFTestEnvironment();
+
 #ifdef PDF_ENABLE_XFA
+  // XFA test environment will be deleted by gtest.
   InitializeXFATestEnvironment();
 #endif  // PDF_ENABLE_XFA
 
@@ -47,11 +43,7 @@ int main(int argc, char** argv) {
   int ret_val = RUN_ALL_TESTS();
 
   DestroyPDFTestEnvironment();
-  // NOTE: XFA test environment, if present, destroyed by gtest.
 
-#ifdef PDF_ENABLE_V8
-  v8::V8::ShutdownPlatform();
-#endif  // PDF_ENABLE_V8
 
   return ret_val;
 }

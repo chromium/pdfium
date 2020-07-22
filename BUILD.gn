@@ -254,6 +254,7 @@ test("pdfium_unittests") {
     configs += [ "//v8:external_startup_data" ]
     deps += [
       "fxjs:unittests",
+      "testing:pdfium_v8_gtest_support",
       "//v8",
     ]
   }
@@ -289,6 +290,9 @@ group("pdfium_embeddertest_deps") {
     "fxjs/*",
     "xfa/*",
   ]
+  if (pdf_enable_v8) {
+    public_deps += [ "testing:pdfium_v8_gtest_support" ]
+  }
 }
 
 test("pdfium_embeddertests") {

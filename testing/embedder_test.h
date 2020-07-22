@@ -23,44 +23,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
 
-#ifdef PDF_ENABLE_V8
-namespace v8 {
-class Platform;
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-class StartupData;
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-}  // namespace v8
-#endif  // PDF_ENABLE_V8
-
 class TestLoader;
 
 // The loading time of the CFGAS_FontMgr is linear in the number of times it is
 // loaded. So, if a test suite has a lot of tests that need a font manager they
 // can end up executing very, very slowly.
-class EmbedderTestEnvironment final : public testing::Environment {
- public:
-  explicit EmbedderTestEnvironment(const char* exe_path);
-  ~EmbedderTestEnvironment() override;
-
-  // Note: does not create one if it does not exist.
-  static EmbedderTestEnvironment* GetInstance();
-
-  void SetUp() override;
-  void TearDown() override;
-
-#ifdef PDF_ENABLE_V8
-  v8::Platform* platform() const { return platform_.get(); }
-#endif  // PDF_ENABLE_V8
-
- private:
-#ifdef PDF_ENABLE_V8
-  const char* const exe_path_;
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  std::unique_ptr<v8::StartupData> v8_snapshot_;
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-  std::unique_ptr<v8::Platform> platform_;
-#endif  // PDF_ENABLE_V8
-};
 
 // This class is used to load a PDF document, and then run programatic
 // API tests against it.

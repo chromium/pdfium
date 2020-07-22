@@ -15,12 +15,12 @@ class FXJSEngineUnitTest : public FXV8UnitTest {
   FXJSEngineUnitTest() = default;
   ~FXJSEngineUnitTest() override = default;
 
+  // FXV8UnitTest:
   void SetUp() override {
     FXV8UnitTest::SetUp();
     FXJS_Initialize(1, isolate());
     engine_ = std::make_unique<CFXJS_Engine>(isolate());
   }
-
   void TearDown() override { FXJS_Release(); }
 
   CFXJS_Engine* engine() const { return engine_.get(); }

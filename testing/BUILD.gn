@@ -51,6 +51,27 @@ source_set("test_support") {
   }
 }
 
+if (pdf_enable_v8) {
+  source_set("pdfium_v8_gtest_support") {
+    testonly = true
+    sources = [
+      "v8_test_environment.cpp",
+      "v8_test_environment.h",
+    ]
+    deps = [
+      ":test_support",
+      "../core/fxcrt",
+      "//testing/gtest",
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
+    configs += [
+      "../:pdfium_core_config",
+      "//v8:external_startup_data",
+    ]
+  }
+}
+
 source_set("unit_test_support") {
   testonly = true
   sources = []
@@ -58,17 +79,21 @@ source_set("unit_test_support") {
   configs += [ "../:pdfium_core_config" ]
   visibility = [ "../*" ]
 
-  if (pdf_enable_xfa) {
-    sources += [
-      "xfa_unit_test_support.cpp",
-      "xfa_unit_test_support.h",
-    ]
-    deps += [
-      "../:pdfium",
-      "../core/fxge",
-      "../xfa/fgas",
-      "//testing/gtest",
-    ]
+  if (pdf_enable_v8) {
+    deps += [ ":pdfium_v8_gtest_support" ]
+
+    if (pdf_enable_xfa) {
+      sources += [
+        "xfa_unit_test_support.cpp",
+        "xfa_unit_test_support.h",
+      ]
+      deps += [
+        "../:pdfium",
+        "../core/fxge",
+        "../xfa/fgas",
+        "//testing/gtest",
+      ]
+    }
   }
 }
 
@@ -105,13 +130,14 @@ source_set("embedder_test_support") {
       "js_embedder_test.cpp",
       "js_embedder_test.h",
     ]
-    deps += [ "../fxjs" ]
+    deps += [
+      ":pdfium_v8_gtest_support",
+      "../fxjs",
+    ]
     configs += [ "//v8:external_startup_data" ]
 
     if (pdf_enable_xfa) {
       sources += [
-        "gced_embeddertest.cpp",
-        "gced_embeddertest.h",
         "xfa_js_embedder_test.cpp",
         "xfa_js_embedder_test.h",
       ]

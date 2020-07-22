@@ -20,6 +20,7 @@ class CFXV8UnitTest : public FXV8UnitTest {
   CFXV8UnitTest() = default;
   ~CFXV8UnitTest() override = default;
 
+  // FXV8UnitTest:
   void SetUp() override {
     FXV8UnitTest::SetUp();
     cfx_v8_ = std::make_unique<CFX_V8>(isolate());

@@ -8,7 +8,7 @@
 #include <set>
 
 #include "core/fxcrt/autorestorer.h"
-#include "testing/gced_embeddertest.h"
+#include "fxjs/gc/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
@@ -48,15 +48,19 @@ cppgc::Persistent<PseudoCollectible> PseudoCollectible::s_persistent_;
 
 }  // namespace
 
-class HeapEmbedderTest : public GCedEmbedderTest {
+class HeapUnitTest : public FXGCUnitTest {
  public:
+  HeapUnitTest() = default;
+  ~HeapUnitTest() override = default;
+
+  // FXGCUnitTest:
   void TearDown() override {
     PseudoCollectible::ClearCounts();
-    GCedEmbedderTest::TearDown();
+    FXGCUnitTest::TearDown();
   }
 };
 
-TEST_F(HeapEmbedderTest, SeveralHeaps) {
+TEST_F(HeapUnitTest, SeveralHeaps) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   EXPECT_TRUE(heap1);
 
@@ -73,7 +77,7 @@ TEST_F(HeapEmbedderTest, SeveralHeaps) {
   EXPECT_FALSE(heap3);
 }
 
-TEST_F(HeapEmbedderTest, NoReferences) {
+TEST_F(HeapUnitTest, NoReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
@@ -95,7 +99,7 @@ TEST_F(HeapEmbedderTest, NoReferences) {
   EXPECT_EQ(1u, PseudoCollectible::DeadCount());
 }
 
-TEST_F(HeapEmbedderTest, HasReferences) {
+TEST_F(HeapUnitTest, HasReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
@@ -121,7 +125,7 @@ TEST_F(HeapEmbedderTest, HasReferences) {
 }
 
 // TODO(tsepez): enable when CPPGC fixes this segv.
-TEST_F(HeapEmbedderTest, DISABLED_DeleteHeapHasReferences) {
+TEST_F(HeapUnitTest, DISABLED_DeleteHeapHasReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {
@@ -144,7 +148,7 @@ TEST_F(HeapEmbedderTest, DISABLED_DeleteHeapHasReferences) {
   }
 }
 
-TEST_F(HeapEmbedderTest, DeleteHeapNoReferences) {
+TEST_F(HeapUnitTest, DeleteHeapNoReferences) {
   FXGCScopedHeap heap1 = FXGC_CreateHeap();
   ASSERT_TRUE(heap1);
   {

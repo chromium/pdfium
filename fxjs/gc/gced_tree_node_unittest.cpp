@@ -7,9 +7,10 @@
 #include <map>
 
 #include "core/fxcrt/observed_ptr.h"
+#include "fxjs/gc/fxgc_unittest.h"
 #include "fxjs/gc/heap.h"
-#include "testing/gced_embeddertest.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/v8_test_environment.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/persistent.h"
@@ -28,39 +29,36 @@ class ObservableGCedTreeNodeForTest
 
 }  // namespace
 
-class GCedTreeNodeEmbedderTest : public GCedEmbedderTest {
+class GCedTreeNodeUnitTest : public FXGCUnitTest {
  public:
   static cppgc::Persistent<ObservableGCedTreeNodeForTest> s_root;
 
-  void SetUp() override {
-    GCedEmbedderTest::SetUp();
-    heap_ = FXGC_CreateHeap();
-  }
+  GCedTreeNodeUnitTest() = default;
+  ~GCedTreeNodeUnitTest() override = default;
 
+  // FXGCUnitTest:
   void TearDown() override {
     s_root = nullptr;  // Can't (yet) outlive |heap_|.
-    heap_.reset();
-    GCedEmbedderTest::TearDown();
+    FXGCUnitTest::TearDown();
   }
 
-  cppgc::Heap* heap() const { return heap_.get(); }
   ObservableGCedTreeNodeForTest* CreateNode() {
     return cppgc::MakeGarbageCollected<ObservableGCedTreeNodeForTest>(
-        heap_->GetAllocationHandle());
+        heap()->GetAllocationHandle());
   }
 
   void ForceGCAndPump() {
     heap()->ForceGarbageCollectionSlow(
-        "GCedTreeNodeEmbedderTest", "test",
+        "GCedTreeNodeUnitTest", "test",
         cppgc::Heap::StackState::kNoHeapPointers);
-    PumpPlatformMessageLoop();
+    V8TestEnvironment::PumpPlatformMessageLoop(isolate());
   }
 
   void AddClutterToFront(ObservableGCedTreeNodeForTest* parent) {
     for (int i = 0; i < 4; ++i) {
       parent->AppendFirstChild(
           cppgc::MakeGarbageCollected<ObservableGCedTreeNodeForTest>(
-              heap_->GetAllocationHandle()));
+              heap()->GetAllocationHandle()));
     }
   }
 
@@ -68,7 +66,7 @@ class GCedTreeNodeEmbedderTest : public GCedEmbedderTest {
     for (int i = 0; i < 4; ++i) {
       parent->AppendLastChild(
           cppgc::MakeGarbageCollected<ObservableGCedTreeNodeForTest>(
-              heap_->GetAllocationHandle()));
+              heap()->GetAllocationHandle()));
     }
   }
 
@@ -76,23 +74,22 @@ class GCedTreeNodeEmbedderTest : public GCedEmbedderTest {
   FXGCScopedHeap heap_;
 };
 
-cppgc::Persistent<ObservableGCedTreeNodeForTest>
-    GCedTreeNodeEmbedderTest::s_root;
+cppgc::Persistent<ObservableGCedTreeNodeForTest> GCedTreeNodeUnitTest::s_root;
 
-TEST_F(GCedTreeNodeEmbedderTest, OneRefence) {
+TEST_F(GCedTreeNodeUnitTest, OneRefence) {
   s_root = CreateNode();
   ObservedPtr<ObservableGCedTreeNodeForTest> watcher(s_root);
   ForceGCAndPump();
   EXPECT_TRUE(watcher);
 }
 
-TEST_F(GCedTreeNodeEmbedderTest, NoReferences) {
+TEST_F(GCedTreeNodeUnitTest, NoReferences) {
   ObservedPtr<ObservableGCedTreeNodeForTest> watcher(CreateNode());
   ForceGCAndPump();
   EXPECT_FALSE(watcher);
 }
 
-TEST_F(GCedTreeNodeEmbedderTest, FirstHasParent) {
+TEST_F(GCedTreeNodeUnitTest, FirstHasParent) {
   s_root = CreateNode();
   ObservedPtr<ObservableGCedTreeNodeForTest> watcher(CreateNode());
   s_root->AppendFirstChild(watcher.Get());
@@ -118,7 +115,7 @@ TEST_F(GCedTreeNodeEmbedderTest, FirstHasParent) {
   EXPECT_FALSE(watcher);
 }
 
-TEST_F(GCedTreeNodeEmbedderTest, RemoveSelf) {
+TEST_F(GCedTreeNodeUnitTest, RemoveSelf) {
   s_root = CreateNode();
   ObservedPtr<ObservableGCedTreeNodeForTest> watcher(CreateNode());
   s_root->AppendFirstChild(watcher.Get());
@@ -131,7 +128,7 @@ TEST_F(GCedTreeNodeEmbedderTest, RemoveSelf) {
   EXPECT_FALSE(watcher);
 }
 
-TEST_F(GCedTreeNodeEmbedderTest, InsertBeforeAfter) {
+TEST_F(GCedTreeNodeUnitTest, InsertBeforeAfter) {
   s_root = CreateNode();
   AddClutterToFront(s_root);
   ObservedPtr<ObservableGCedTreeNodeForTest> watcher(CreateNode());
@@ -147,7 +144,7 @@ TEST_F(GCedTreeNodeEmbedderTest, InsertBeforeAfter) {
   EXPECT_FALSE(watcher);
 }
 
-TEST_F(GCedTreeNodeEmbedderTest, AsMapKey) {
+TEST_F(GCedTreeNodeUnitTest, AsMapKey) {
   std::map<cppgc::Persistent<ObservableGCedTreeNodeForTest>, int> score;
   ObservableGCedTreeNodeForTest* node = CreateNode();
   score[node] = 100;
