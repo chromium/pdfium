@@ -663,14 +663,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddAndSaveUnderlineAnnotation \
-  DISABLED_AddAndSaveUnderlineAnnotation
-#else
-#define MAYBE_AddAndSaveUnderlineAnnotation AddAndSaveUnderlineAnnotation
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndSaveUnderlineAnnotation) {
+TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -705,11 +698,15 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_AddAndSaveUnderlineAnnotation) {
   UnloadPage(page);
 
   // Open the saved document.
-  static const char kMd5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static const char kChecksum[] = "798fa41303381c9ba6d99092f5cd4d2b";
+#else
+  static const char kChecksum[] = "dba153419f67b7c0c0e3d22d3e8910d5";
+#endif
 
   ASSERT_TRUE(OpenSavedDocument());
   page = LoadSavedPage(0);
-  VerifySavedRendering(page, 612, 792, kMd5);
+  VerifySavedRendering(page, 612, 792, kChecksum);
 
   // Check that the saved document has 2 annotations on the first page
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
