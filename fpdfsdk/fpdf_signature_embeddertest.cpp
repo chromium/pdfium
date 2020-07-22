@@ -65,3 +65,30 @@ TEST_F(FPDFSignatureEmbedderTest, GetContents) {
   EXPECT_EQ('x', contents[0]);
   EXPECT_EQ('\0', contents[1]);
 }
+
+TEST_F(FPDFSignatureEmbedderTest, GetByteRange) {
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
+  FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
+  EXPECT_NE(nullptr, signature);
+
+  // FPDFSignatureObj_GetByteRange() positive testing.
+  unsigned long size = FPDFSignatureObj_GetByteRange(signature, nullptr, 0);
+  const std::vector<int> kExpectedByteRange{0, 10, 30, 10};
+  ASSERT_EQ(kExpectedByteRange.size(), size);
+  std::vector<int> byte_range(size);
+  ASSERT_EQ(size,
+            FPDFSignatureObj_GetByteRange(signature, byte_range.data(), size));
+  ASSERT_EQ(kExpectedByteRange, byte_range);
+
+  // FPDFSignatureObj_GetByteRange() negative testing.
+  ASSERT_EQ(0U, FPDFSignatureObj_GetContents(nullptr, nullptr, 0));
+
+  byte_range.resize(2);
+  byte_range[0] = 0;
+  byte_range[1] = 1;
+  size = FPDFSignatureObj_GetByteRange(signature, byte_range.data(),
+                                       byte_range.size());
+  ASSERT_EQ(kExpectedByteRange.size(), size);
+  EXPECT_EQ(0, byte_range[0]);
+  EXPECT_EQ(1, byte_range[1]);
+}

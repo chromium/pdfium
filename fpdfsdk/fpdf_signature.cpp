@@ -77,3 +77,28 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
 
   return contents_len;
 }
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
+                              int* buffer,
+                              unsigned long length) {
+  CPDF_Dictionary* signature_dict = CPDFDictionaryFromFPDFSignature(signature);
+  if (!signature_dict)
+    return 0;
+
+  CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  if (!value_dict)
+    return 0;
+
+  const CPDF_Array* byte_range = value_dict->GetArrayFor("ByteRange");
+  if (!byte_range)
+    return 0;
+
+  unsigned long byte_range_len = byte_range->size();
+  if (buffer && length >= byte_range_len) {
+    for (size_t i = 0; i < byte_range_len; ++i)
+      buffer[i] = byte_range->GetIntegerAt(i);
+  }
+
+  return byte_range_len;
+}

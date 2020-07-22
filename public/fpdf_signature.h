@@ -53,6 +53,28 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
                              void* buffer,
                              unsigned long length);
 
+// Experimental API.
+// Function: FPDFSignatureObj_GetByteRange
+//          Get the byte range of a signature object.
+// Parameters:
+//          signature   -   Handle to the signature object. Returned by
+//                          FPDF_GetSignatureObject().
+//          buffer      -   The address of a buffer that receives the
+//                          byte range.
+//          length      -   The size, in ints, of |buffer|.
+// Return value:
+//          Returns the number of ints in the byte range on
+//          success, 0 on error.
+//
+// |buffer| is an array of pairs of integers (starting byte offset,
+// length in bytes) that describes the exact byte range for the digest
+// calculation. If |length| is less than the returned length, or
+// |buffer| is NULL, |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
+                              int* buffer,
+                              unsigned long length);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
