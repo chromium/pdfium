@@ -9,6 +9,10 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+#ifndef PDF_ENABLE_V8
+#error "V8 must be enabled"
+#endif  // PDF_ENABLE_V8
+
 namespace v8 {
 class Isolate;
 class Platform;

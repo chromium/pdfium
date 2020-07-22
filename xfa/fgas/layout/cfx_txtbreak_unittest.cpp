@@ -9,7 +9,7 @@
 
 #include "core/fxge/cfx_font.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/xfa_unit_test_support.h"
+#include "testing/xfa_test_environment.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_char.h"
@@ -17,9 +17,9 @@
 class CFX_TxtBreakTest : public testing::Test {
  public:
   void SetUp() override {
-    font_ =
-        CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0, GetGlobalFontManager());
-    ASSERT_TRUE(font_.Get());
+    font_ = CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0,
+                                   XFATestEnvironment::GetGlobalFontManager());
+    ASSERT_TRUE(font_);
   }
 
   std::unique_ptr<CFX_TxtBreak> CreateBreak() {

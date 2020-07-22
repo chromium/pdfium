@@ -8,42 +8,36 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "testing/test_support.h"
+#include "testing/pdf_test_environment.h"
 
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_test_environment.h"
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
+#ifdef PDF_ENABLE_XFA
+#include "testing/xfa_test_environment.h"
+#endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 
-#ifdef PDF_ENABLE_XFA
-#include "testing/xfa_unit_test_support.h"
-#endif  // PDF_ENABLE_XFA
-
 // Can't use gtest-provided main since we need to initialize partition
-// alloc before invoking any test.
+// alloc before invoking any test, and add test environments.
 int main(int argc, char** argv) {
   FXMEM_InitializePartitionAlloc();
+
+  // PDF test environment will be deleted by gtest.
+  AddGlobalTestEnvironment(new PDFTestEnvironment());
 
 #ifdef PDF_ENABLE_V8
   // V8 test environment will be deleted by gtest.
   AddGlobalTestEnvironment(new V8TestEnvironment(argv[0]));
-#endif  // PDF_ENABLE_V8
-
-  InitializePDFTestEnvironment();
-
 #ifdef PDF_ENABLE_XFA
   // XFA test environment will be deleted by gtest.
-  InitializeXFATestEnvironment();
+  AddGlobalTestEnvironment(new XFATestEnvironment());
 #endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
 
   testing::InitGoogleTest(&argc, argv);
   testing::InitGoogleMock(&argc, argv);
 
-  int ret_val = RUN_ALL_TESTS();
-
-  DestroyPDFTestEnvironment();
-
-
-  return ret_val;
+  return RUN_ALL_TESTS();
 }

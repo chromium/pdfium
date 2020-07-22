@@ -46,7 +46,4 @@ struct NullTermWstrFuncTestData {
 
 }  // namespace pdfium
 
-void InitializePDFTestEnvironment();
-void DestroyPDFTestEnvironment();
-
 #endif  // TESTING_TEST_SUPPORT_H_

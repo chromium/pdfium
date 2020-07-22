@@ -35,7 +35,6 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":fde",
     "../../core/fxge",
-    "../../testing:unit_test_support",
     "../fgas",
   ]
   pdfium_root_dir = "../../"

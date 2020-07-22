@@ -50,7 +50,7 @@ executable("pdfium_test") {
   deps = [
     "../:pdfium_public_headers",
     "../fpdfsdk",
-    "../testing/:test_support",
+    "../testing:test_support",
     "../testing/image_diff",
     "../third_party:pdfium_base",
     "//build/win:default_exe_manifest",
