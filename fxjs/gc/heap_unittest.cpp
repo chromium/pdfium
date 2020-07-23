@@ -8,7 +8,7 @@
 #include <set>
 
 #include "core/fxcrt/autorestorer.h"
-#include "fxjs/gc/fxgc_unittest.h"
+#include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 #include "v8/include/cppgc/allocation.h"

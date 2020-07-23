@@ -7,7 +7,7 @@
 #include <cmath>
 #include <memory>
 
-#include "fxjs/fxv8_unittest.h"
+#include "testing/fxv8_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

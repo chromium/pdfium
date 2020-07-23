@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FXJS_FXV8_UNITTEST_H_
-#define FXJS_FXV8_UNITTEST_H_
+#ifndef TESTING_FXV8_UNITTEST_H_
+#define TESTING_FXV8_UNITTEST_H_
 
 #include <memory>
 
@@ -34,4 +34,4 @@ class FXV8UnitTest : public ::testing::Test {
   std::unique_ptr<v8::Isolate, V8IsolateDeleter> isolate_;
 };
 
-#endif  // FXJS_FXV8_UNITTEST_H_
+#endif  // TESTING_FXV8_UNITTEST_H_

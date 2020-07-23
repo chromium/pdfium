@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FXJS_GC_FXGC_UNITTEST_H_
-#define FXJS_GC_FXGC_UNITTEST_H_
+#ifndef TESTING_FXGC_UNITTEST_H_
+#define TESTING_FXGC_UNITTEST_H_
 
-#include "fxjs/fxv8_unittest.h"
 #include "fxjs/gc/heap.h"
+#include "testing/fxv8_unittest.h"
 
 class FXGCUnitTest : public FXV8UnitTest {
  public:
@@ -23,4 +23,4 @@ class FXGCUnitTest : public FXV8UnitTest {
   FXGCScopedHeap heap_;
 };
 
-#endif  // FXJS_GC_FXGC_UNITTEST_H_
+#endif  // TESTING_FXGC_UNITTEST_H_

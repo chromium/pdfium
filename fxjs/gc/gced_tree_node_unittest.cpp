@@ -7,8 +7,8 @@
 #include <map>
 
 #include "core/fxcrt/observed_ptr.h"
-#include "fxjs/gc/fxgc_unittest.h"
 #include "fxjs/gc/heap.h"
+#include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/v8_test_environment.h"
 #include "third_party/base/stl_util.h"
