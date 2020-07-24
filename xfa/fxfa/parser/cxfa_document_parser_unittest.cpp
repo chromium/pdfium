@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -31,6 +32,24 @@ class CXFA_DocumentParserTest : public testing::Test {
   std::unique_ptr<CXFA_DocumentParser> parser_;
 };
 
+TEST_F(CXFA_DocumentParserTest, EmptyInput) {
+  static const char kInput[] = "";
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      pdfium::as_bytes(pdfium::make_span(kInput)));
+  CFX_XMLParser xml_parser(stream);
+  EXPECT_FALSE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
+  EXPECT_FALSE(GetParser()->GetRootNode());
+}
+
+TEST_F(CXFA_DocumentParserTest, BadInput) {
+  static const char kInput[] = "<<<>bar?>>>>>>>";
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      pdfium::as_bytes(pdfium::make_span(kInput)));
+  CFX_XMLParser xml_parser(stream);
+  EXPECT_FALSE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
+  EXPECT_FALSE(GetParser()->GetRootNode());
+}
+
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
   static const char kInput[] =
       "<config>\n"
@@ -41,7 +60,8 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
+  CFX_XMLParser xml_parser(stream);
+  ASSERT_TRUE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
   ASSERT_TRUE(root);
@@ -59,7 +79,8 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOn) {
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
+  CFX_XMLParser xml_parser(stream);
+  ASSERT_TRUE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
   ASSERT_TRUE(root);
@@ -76,7 +97,8 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScope) {
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
+  CFX_XMLParser xml_parser(stream);
+  ASSERT_TRUE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
   ASSERT_TRUE(root);
@@ -93,7 +115,8 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScopeBad) {
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
+  CFX_XMLParser xml_parser(stream);
+  ASSERT_TRUE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
   ASSERT_TRUE(root);
@@ -113,7 +136,8 @@ TEST_F(CXFA_DocumentParserTest, MultipleXMLInstructions) {
 
   auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(kInput)));
-  ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
+  CFX_XMLParser xml_parser(stream);
+  ASSERT_TRUE(GetParser()->Parse(xml_parser.Parse(), XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
   ASSERT_TRUE(root);

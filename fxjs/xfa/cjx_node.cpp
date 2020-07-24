@@ -11,9 +11,11 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
@@ -264,8 +266,11 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   if (params.size() >= 3)
     bOverwrite = runtime->ToBoolean(params[2]);
 
+  CFX_XMLParser xml_parser(
+      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(expression.raw_span()));
+
   auto pParser = std::make_unique<CXFA_DocumentParser>(GetDocument());
-  CFX_XMLNode* pXMLNode = pParser->ParseXMLData(expression);
+  CFX_XMLNode* pXMLNode = pParser->ParseData(xml_parser.Parse());
   if (!pXMLNode)
     return CJS_Result::Success();
 

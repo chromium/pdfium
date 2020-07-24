@@ -19,26 +19,20 @@ class CFX_XMLNode;
 class CXFA_Document;
 class CXFA_Node;
 class CFX_XMLInstruction;
-class IFX_SeekableReadStream;
 
 class CXFA_DocumentParser {
  public:
   explicit CXFA_DocumentParser(CXFA_Document* pFactory);
   ~CXFA_DocumentParser();
 
-  bool Parse(const RetainPtr<IFX_SeekableReadStream>& pStream,
-             XFA_PacketType ePacketID);
-
-  CFX_XMLNode* ParseXMLData(const ByteString& wsXML);
-  void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
-
+  bool Parse(std::unique_ptr<CFX_XMLDocument> pXML, XFA_PacketType ePacketID);
+  CFX_XMLNode* ParseData(std::unique_ptr<CFX_XMLDocument> pXML);
   std::unique_ptr<CFX_XMLDocument> GetXMLDoc() { return std::move(xml_doc_); }
+
+  void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
   CXFA_Node* GetRootNode() const;
 
  private:
-  std::unique_ptr<CFX_XMLDocument> LoadXML(
-      const RetainPtr<IFX_SeekableReadStream>& pStream);
-
   CXFA_Node* ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
                               XFA_PacketType ePacketID);
   CXFA_Node* ParseAsXDPPacket_XDP(CFX_XMLNode* pXMLDocumentNode);

@@ -19,7 +19,6 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
-#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/logging.h"
@@ -230,14 +229,9 @@ CXFA_DocumentParser::CXFA_DocumentParser(CXFA_Document* pFactory)
 
 CXFA_DocumentParser::~CXFA_DocumentParser() = default;
 
-bool CXFA_DocumentParser::Parse(
-    const RetainPtr<IFX_SeekableReadStream>& pStream,
-    XFA_PacketType ePacketID) {
-  xml_doc_ = LoadXML(pStream);
-  if (!xml_doc_)
-    return false;
-
-  CFX_XMLNode* root = GetDocumentNode(xml_doc_->GetRoot());
+bool CXFA_DocumentParser::Parse(std::unique_ptr<CFX_XMLDocument> pXML,
+                                XFA_PacketType ePacketID) {
+  CFX_XMLNode* root = ParseData(std::move(pXML));
   if (!root)
     return false;
 
@@ -245,25 +239,16 @@ bool CXFA_DocumentParser::Parse(
   return !!m_pRootNode;
 }
 
-CFX_XMLNode* CXFA_DocumentParser::ParseXMLData(const ByteString& wsXML) {
-  auto pStream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(wsXML.raw_span());
-  xml_doc_ = LoadXML(pStream);
-  if (!xml_doc_)
+CFX_XMLNode* CXFA_DocumentParser::ParseData(
+    std::unique_ptr<CFX_XMLDocument> pXML) {
+  if (!pXML)
     return nullptr;
+
+  xml_doc_ = std::move(pXML);
+  xml_doc_->GetRoot()->InsertChildNode(
+      xml_doc_->CreateNode<CFX_XMLInstruction>(L"xml"), 0);
+
   return GetDocumentNode(xml_doc_->GetRoot());
-}
-
-std::unique_ptr<CFX_XMLDocument> CXFA_DocumentParser::LoadXML(
-    const RetainPtr<IFX_SeekableReadStream>& pStream) {
-  ASSERT(pStream);
-
-  CFX_XMLParser parser(pStream);
-  std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
-  if (doc) {
-    doc->GetRoot()->InsertChildNode(doc->CreateNode<CFX_XMLInstruction>(L"xml"),
-                                    0);
-  }
-  return doc;
 }
 
 void CXFA_DocumentParser::ConstructXFANode(CXFA_Node* pXFANode,

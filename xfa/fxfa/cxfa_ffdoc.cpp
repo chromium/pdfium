@@ -19,6 +19,7 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
@@ -100,18 +101,23 @@ CXFA_FFDoc::~CXFA_FFDoc() {
 }
 
 bool CXFA_FFDoc::ParseDoc(const RetainPtr<IFX_SeekableStream>& stream) {
-  CXFA_DocumentParser parser(m_pDocument.get());
-  bool parsed = parser.Parse(stream, XFA_PacketType::Xdp);
+  CFX_XMLParser xml_parser(stream);
+  std::unique_ptr<CFX_XMLDocument> xml_doc = xml_parser.Parse();
+  if (!xml_doc)
+    return false;
+
+  CXFA_DocumentParser doc_parser(m_pDocument.get());
+  bool parsed = doc_parser.Parse(std::move(xml_doc), XFA_PacketType::Xdp);
 
   // We have to set the XML document before we return so that we can clean
   // up in the OpenDoc method. If we don't, the XMLDocument will get free'd
   // when this method returns and UnownedPtrs get unhappy.
-  m_pXMLDoc = parser.GetXMLDoc();
+  m_pXMLDoc = doc_parser.GetXMLDoc();
 
   if (!parsed)
     return false;
 
-  m_pDocument->SetRoot(parser.GetRootNode());
+  m_pDocument->SetRoot(doc_parser.GetRootNode());
   return true;
 }
 
