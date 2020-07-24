@@ -1291,6 +1291,65 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
                                                       void* buffer,
                                                       long* buflen);
 
+// Experimental API.
+// Function: FPDF_GetXFAPacketCount
+//          Get the number of valid packets in the XFA entry.
+// Parameters:
+//          document - Handle to the document.
+// Return value:
+//          The number of valid packets, or -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV FPDF_GetXFAPacketCount(FPDF_DOCUMENT document);
+
+// Experimental API.
+// Function: FPDF_GetXFAPacketName
+//          Get the name of a packet in the XFA array.
+// Parameters:
+//          document - Handle to the document.
+//          index    - Index number of the packet. 0 for the first packet.
+//          buffer   - Buffer for holding the name of the XFA packet.
+//          buflen   - Length of |buffer| in bytes.
+// Return value:
+//          The length of the packet name in bytes, or 0 on error.
+//
+// |document| must be valid and |index| must be in the range [0, N), where N is
+// the value returned by FPDF_GetXFAPacketCount().
+// |buffer| is only modified if it is non-NULL and |buflen| is greater than or
+// equal to the length of the packet name. The packet name includes a
+// terminating NUL character. |buffer| is unmodified on error.
+FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetXFAPacketName(
+    FPDF_DOCUMENT document,
+    int index,
+    void* buffer,
+    unsigned long buflen);
+
+// Experimental API.
+// Function: FPDF_GetXFAPacketContent
+//          Get the content of a packet in the XFA array.
+// Parameters:
+//          document   - Handle to the document.
+//          index      - Index number of the packet. 0 for the first packet.
+//          buffer     - Buffer for holding the content of the XFA packet.
+//          buflen     - Length of |buffer| in bytes.
+//          out_buflen - Pointer to the variable that will receive the minimum
+//                       buffer size needed to contain the content of the XFA
+//                       packet.
+// Return value:
+//          Whether the operation succeeded or not.
+//
+// |document| must be valid and |index| must be in the range [0, N), where N is
+// the value returned by FPDF_GetXFAPacketCount(). |out_buflen| must not be
+// NULL. When the aforementioned arguments are valid, the operation succeeds,
+// and |out_buflen| receives the content size. |buffer| is only modified if
+// |buffer| is non-null and long enough to contain the content. Callers must
+// check both the return value and the input |buflen| is no less than the
+// returned |out_buflen| before using the data in |buffer|.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetXFAPacketContent(
+    FPDF_DOCUMENT document,
+    int index,
+    void* buffer,
+    unsigned long buflen,
+    unsigned long* out_buflen);
+
 #ifdef PDF_ENABLE_V8
 // Function: FPDF_GetRecommendedV8Flags
 //          Returns a space-separated string of command line flags that are
