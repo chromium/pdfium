@@ -737,6 +737,10 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
     return false;
   }
 
+  // Might have been destroyed by Annot_OnKillFocus().
+  if (!pFocusAnnot)
+    return false;
+
   if (pFocusAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
     CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pFocusAnnot.Get());
     FormFieldType fieldType = pWidget->GetFieldType();

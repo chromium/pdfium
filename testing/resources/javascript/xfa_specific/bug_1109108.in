@@ -1,0 +1,64 @@
+{{header}}
+{{include ../../xfa_catalog_1_0.fragment}}
+{{include ../../xfa_object_2_0.fragment}}
+{{include ../../xfa_preamble_3_0.fragment}}
+{{include ../../xfa_config_4_0.fragment}}
+{{object 5 0}} <<
+  {{streamlen}}
+>>
+stream
+<template>
+  <subform name="s1">
+    <subform name="s5">
+      <field name="field_28">
+        <calculate>
+          <script contentType="application/x-javascript">
+            var f=xfa.resolveNode("xfa.form.s1.s5.s6.field_35");
+            f.relevant ="print";
+          </script>
+        </calculate>
+        <ui>
+          <textEdit/>
+        </ui>
+        <value>
+          <text>CLGT.</text>
+        </value>
+      </field>
+      <subform name="s6">
+        <field name="field_35">
+          <ui>
+            <choiceList open="onEntry">
+              <border>
+                <edge/>
+              </border>
+            </choiceList>
+          </ui>
+          <items save="1">
+            <text>apples</text>
+            <text>bananas</text>
+            <text>pears</text>
+          </items>
+          <value>
+            <text>apples</text>
+          </value>
+          <event activity="change">
+            <script contentType="application/x-javascript">
+              xfa.template.remerge();
+              xfa.host.openList(this);
+              app.alert('remerged');
+            </script>
+          </event>
+        </field>
+      </subform>
+    </subform>
+  </subform>
+</template>
+endstream
+endobj
+{{include ../../xfa_locale_6_0.fragment}}
+{{include ../../xfa_postamble_7_0.fragment}}
+{{include ../../xfa_pages_8_0.fragment}}
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

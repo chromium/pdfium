@@ -114,6 +114,30 @@ bool IsDocVersionBelow205(const CXFA_Document* doc) {
 
 }  // namespace
 
+class CXFA_TabParam {
+ public:
+  CXFA_TabParam() = default;
+  explicit CXFA_TabParam(CXFA_FFWidget* pWidget)
+      : m_pItem(pWidget->GetLayoutItem()) {}
+
+  ~CXFA_TabParam() = default;
+
+  CXFA_FFWidget* GetWidget() const { return m_pItem->GetFFWidget(); }
+  const std::vector<RetainPtr<CXFA_ContentLayoutItem>>& GetChildren() const {
+    return m_Children;
+  }
+  void ClearChildren() { m_Children.clear(); }
+  void AppendTabParam(CXFA_TabParam* pParam) {
+    m_Children.push_back(pParam->m_pItem);
+    m_Children.insert(m_Children.end(), pParam->m_Children.begin(),
+                      pParam->m_Children.end());
+  }
+
+ private:
+  RetainPtr<CXFA_ContentLayoutItem> m_pItem;
+  std::vector<RetainPtr<CXFA_ContentLayoutItem>> m_Children;
+};
+
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
     : m_pPageArea(pPageArea), m_pDocView(pDocView) {}
 
@@ -223,16 +247,6 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetWidget(
       return nullptr;
   }
   return pWidget;
-}
-
-void CXFA_TabParam::AppendTabParam(CXFA_TabParam* pParam) {
-  m_Children.push_back(pParam->GetWidget());
-  m_Children.insert(m_Children.end(), pParam->GetChildren().begin(),
-                    pParam->GetChildren().end());
-}
-
-void CXFA_TabParam::ClearChildren() {
-  m_Children.clear();
 }
 
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
@@ -434,14 +448,14 @@ std::vector<RetainPtr<CXFA_ContentLayoutItem>>
 CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderLayoutItems() {
   std::vector<RetainPtr<CXFA_ContentLayoutItem>> items;
   CXFA_LayoutItemIterator sIterator(m_pPageViewLayout.Get());
-  auto pParam = std::make_unique<CXFA_TabParam>(nullptr);
+  auto pParam = std::make_unique<CXFA_TabParam>();
   bool bCurrentItem = false;
   bool bContentArea = false;
   OrderContainer(&sIterator, nullptr, pParam.get(), &bCurrentItem,
                  &bContentArea, false);
   items.reserve(pParam->GetChildren().size());
-  for (CXFA_FFWidget* widget : pParam->GetChildren())
-    items.emplace_back(widget->GetLayoutItem());
+  for (const auto& layout_item : pParam->GetChildren())
+    items.push_back(layout_item);
 
   sIterator.Reset();
   bCurrentItem = false;
@@ -449,8 +463,9 @@ CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderLayoutItems() {
   pParam->ClearChildren();
   OrderContainer(&sIterator, nullptr, pParam.get(), &bCurrentItem,
                  &bContentArea, true);
-  for (CXFA_FFWidget* widget : pParam->GetChildren())
-    items.emplace_back(widget->GetLayoutItem());
+  for (const auto& layout_item : pParam->GetChildren())
+    items.push_back(layout_item);
+
   return items;
 }
 
@@ -466,7 +481,3 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
   }
   return pWidget;
 }
-
-CXFA_TabParam::CXFA_TabParam(CXFA_FFWidget* pWidget) : m_pWidget(pWidget) {}
-
-CXFA_TabParam::~CXFA_TabParam() = default;

@@ -19,6 +19,7 @@
 
 class CXFA_FFWidget;
 class CXFA_FFDocView;
+class CXFA_TabParam;
 
 class CXFA_FFPageView : public Observable {
  public:
@@ -63,21 +64,6 @@ class CXFA_FFPageWidgetIterator final : public IXFA_WidgetIterator {
   CXFA_LayoutItemIterator m_sIterator;
   const uint32_t m_dwFilter;
   const bool m_bIgnoreRelevant;
-};
-
-class CXFA_TabParam {
- public:
-  explicit CXFA_TabParam(CXFA_FFWidget* pWidget);
-  ~CXFA_TabParam();
-
-  void AppendTabParam(CXFA_TabParam* pParam);
-  void ClearChildren();
-  CXFA_FFWidget* GetWidget() const { return m_pWidget.Get(); }
-  const std::vector<CXFA_FFWidget*>& GetChildren() const { return m_Children; }
-
- private:
-  UnownedPtr<CXFA_FFWidget> const m_pWidget;
-  std::vector<CXFA_FFWidget*> m_Children;
 };
 
 class CXFA_FFTabOrderPageWidgetIterator final : public IXFA_WidgetIterator {
