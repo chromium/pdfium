@@ -1590,14 +1590,13 @@ TEST_F(FPDFTextEmbedderTest, CharBox) {
     EXPECT_NEAR(kExpectedCharHeight, top - bottom, 0.001);
 
     // Check the loose character box size.
-    // TODO(crbug.com/pdfium/1465): There should be no division here.
     FS_RECTF rect;
     ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 0, &rect));
-    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth / 12, rect.right - rect.left);
-    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight / 12, rect.top - rect.bottom);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth, rect.right - rect.left);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight, rect.top - rect.bottom);
     ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 4, &rect));
-    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth / 12, rect.right - rect.left);
-    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight / 12, rect.top - rect.bottom);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharWidth, rect.right - rect.left);
+    EXPECT_FLOAT_EQ(kExpectedLooseCharHeight, rect.top - rect.bottom);
     ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 8, &rect));
     EXPECT_FLOAT_EQ(kExpectedLooseCharWidth, rect.right - rect.left);
     EXPECT_FLOAT_EQ(kExpectedLooseCharHeight, rect.top - rect.bottom);

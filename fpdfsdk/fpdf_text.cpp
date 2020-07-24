@@ -266,8 +266,9 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
     int ascent = charinfo.m_pTextObj->GetFont()->GetTypeAscent();
     int descent = charinfo.m_pTextObj->GetFont()->GetTypeDescent();
     if (ascent != descent) {
-      float width = charinfo.m_pTextObj->GetCharWidth(charinfo.m_CharCode);
-      float font_scale = font_size / (ascent - descent);
+      float width = charinfo.m_Matrix.a *
+                    charinfo.m_pTextObj->GetCharWidth(charinfo.m_CharCode);
+      float font_scale = charinfo.m_Matrix.a * font_size / (ascent - descent);
 
       rect->left = charinfo.m_Origin.x;
       rect->right = charinfo.m_Origin.x + (is_vert_writing ? -width : width);
