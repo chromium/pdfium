@@ -110,7 +110,13 @@ CPDF_Document::CPDF_Document(std::unique_ptr<RenderDataIface> pRenderData,
   m_pDocPage->SetDocument(this);
 }
 
-CPDF_Document::~CPDF_Document() = default;
+CPDF_Document::~CPDF_Document() {
+  // Be absolutely certain that |m_pExtension| is null before destroying
+  // the extension, to avoid re-entering it while being destroyed. clang
+  // seems to already do this for us, but the C++ standards seem to
+  // indicate the opposite.
+  m_pExtension.reset();
+}
 
 // static
 bool CPDF_Document::IsValidPageObject(const CPDF_Object* obj) {
