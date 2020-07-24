@@ -16,12 +16,12 @@
 #include "core/fxcrt/timerhandler_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fxjs/gc/heap.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CJS_Runtime;
+class CPDFXFA_DocEnvironment;
 
 enum LoadStatus {
   FXFA_LOADSTATUS_PRELOAD = 0,
@@ -120,8 +120,8 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   std::unique_ptr<CXFA_FFApp> const m_pXFAApp;
   std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
 
-  // Must be destroyed before |m_pFormFillEnv|.
-  CPDFXFA_DocEnvironment m_DocEnv;
+  // Can't outlive |m_pFormFillEnv|.
+  std::unique_ptr<CPDFXFA_DocEnvironment> m_pDocEnv;
 
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   UnownedPtr<CXFA_FFDocView> m_pXFADocView;
