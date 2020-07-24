@@ -28,7 +28,6 @@ enum LoadStatus {
   FXFA_LOADSTATUS_LOADING,
   FXFA_LOADSTATUS_LOADED,
   FXFA_LOADSTATUS_CLOSING,
-  FXFA_LOADSTATUS_CLOSED
 };
 
 class CPDFXFA_Context final : public CPDF_Document::Extension,
@@ -109,21 +108,23 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   CJS_Runtime* GetCJSRuntime() const;
   bool SavePackage(const RetainPtr<IFX_SeekableStream>& pStream,
                    XFA_HashCode code);
-  void CloseXFADoc();
 
   FormType m_FormType = FormType::kNone;
-  UnownedPtr<CPDF_Document> const m_pPDFDoc;
-  FXGCScopedHeap m_pGCHeap;
-  std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
-  UnownedPtr<CXFA_FFDocView> m_pXFADocView;
-  std::unique_ptr<CXFA_FFApp> const m_pXFAApp;
-  std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
   LoadStatus m_nLoadStatus = FXFA_LOADSTATUS_PRELOAD;
   int m_nPageCount = 0;
 
+  // The order in which the following members are destroyed is critical.
+  UnownedPtr<CPDF_Document> const m_pPDFDoc;
+  FXGCScopedHeap m_pGCHeap;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
+  std::unique_ptr<CXFA_FFApp> const m_pXFAApp;
+  std::vector<RetainPtr<CPDFXFA_Page>> m_XFAPageList;
+
   // Must be destroyed before |m_pFormFillEnv|.
   CPDFXFA_DocEnvironment m_DocEnv;
+
+  std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
+  UnownedPtr<CXFA_FFDocView> m_pXFADocView;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_

@@ -89,24 +89,8 @@ CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
 
 CPDFXFA_Context::~CPDFXFA_Context() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
-
-  // Must happen before we remove the form fill environment.
-  CloseXFADoc();
-
-  if (m_pFormFillEnv) {
+  if (m_pFormFillEnv)
     m_pFormFillEnv->ClearAllFocusedAnnots();
-    m_pFormFillEnv.Reset();
-  }
-
-  m_nLoadStatus = FXFA_LOADSTATUS_CLOSED;
-}
-
-void CPDFXFA_Context::CloseXFADoc() {
-  if (!m_pXFADoc)
-    return;
-
-  m_pXFADocView = nullptr;
-  m_pXFADoc.reset();
 }
 
 void CPDFXFA_Context::SetFormFillEnv(
@@ -160,7 +144,8 @@ bool CPDFXFA_Context::LoadXFADoc() {
 
   m_pXFADocView = m_pXFADoc->CreateDocView();
   if (m_pXFADocView->StartLayout() < 0) {
-    CloseXFADoc();
+    m_pXFADocView = nullptr;
+    m_pXFADoc.reset();
     FXSYS_SetLastError(FPDF_ERR_XFALAYOUT);
     return false;
   }
