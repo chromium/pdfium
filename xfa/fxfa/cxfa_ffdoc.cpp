@@ -36,7 +36,7 @@
 #include "xfa/fxfa/parser/cxfa_acrobat7.h"
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_document_parser.h"
+#include "xfa/fxfa/parser/cxfa_document_builder.h"
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -106,18 +106,18 @@ bool CXFA_FFDoc::ParseDoc(const RetainPtr<IFX_SeekableStream>& stream) {
   if (!xml_doc)
     return false;
 
-  CXFA_DocumentParser doc_parser(m_pDocument.get());
-  bool parsed = doc_parser.Parse(std::move(xml_doc), XFA_PacketType::Xdp);
+  CXFA_DocumentBuilder builder(m_pDocument.get());
+  bool parsed = builder.BuildDocument(std::move(xml_doc), XFA_PacketType::Xdp);
 
   // We have to set the XML document before we return so that we can clean
   // up in the OpenDoc method. If we don't, the XMLDocument will get free'd
   // when this method returns and UnownedPtrs get unhappy.
-  m_pXMLDoc = doc_parser.GetXMLDoc();
+  m_pXMLDoc = builder.GetXMLDoc();
 
   if (!parsed)
     return false;
 
-  m_pDocument->SetRoot(doc_parser.GetRootNode());
+  m_pDocument->SetRoot(builder.GetRootNode());
   return true;
 }
 

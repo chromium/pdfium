@@ -127,7 +127,7 @@
 #include "xfa/fxfa/parser/cxfa_digestmethod.h"
 #include "xfa/fxfa/parser/cxfa_digestmethods.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_document_parser.h"
+#include "xfa/fxfa/parser/cxfa_document_builder.h"
 #include "xfa/fxfa/parser/cxfa_documentassembly.h"
 #include "xfa/fxfa/parser/cxfa_draw.h"
 #include "xfa/fxfa/parser/cxfa_driver.h"

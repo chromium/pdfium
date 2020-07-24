@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_
-#define XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_
+#ifndef XFA_FXFA_PARSER_CXFA_DOCUMENT_BUILDER_H_
+#define XFA_FXFA_PARSER_CXFA_DOCUMENT_BUILDER_H_
 
 #include <memory>
 #include <utility>
@@ -20,13 +20,14 @@ class CXFA_Document;
 class CXFA_Node;
 class CFX_XMLInstruction;
 
-class CXFA_DocumentParser {
+class CXFA_DocumentBuilder {
  public:
-  explicit CXFA_DocumentParser(CXFA_Document* pFactory);
-  ~CXFA_DocumentParser();
+  explicit CXFA_DocumentBuilder(CXFA_Document* pFactory);
+  ~CXFA_DocumentBuilder();
 
-  bool Parse(std::unique_ptr<CFX_XMLDocument> pXML, XFA_PacketType ePacketID);
-  CFX_XMLNode* ParseData(std::unique_ptr<CFX_XMLDocument> pXML);
+  CFX_XMLNode* Build(std::unique_ptr<CFX_XMLDocument> pXML);
+  bool BuildDocument(std::unique_ptr<CFX_XMLDocument> pXML,
+                     XFA_PacketType ePacketID);
   std::unique_ptr<CFX_XMLDocument> GetXMLDoc() { return std::move(xml_doc_); }
 
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
@@ -73,4 +74,4 @@ class CXFA_DocumentParser {
   size_t m_ExecuteRecursionDepth = 0;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_
+#endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_BUILDER_H_

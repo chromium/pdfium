@@ -197,8 +197,8 @@ source_set("parser") {
     "cxfa_digestmethods.h",
     "cxfa_document.cpp",
     "cxfa_document.h",
-    "cxfa_document_parser.cpp",
-    "cxfa_document_parser.h",
+    "cxfa_document_builder.cpp",
+    "cxfa_document_builder.h",
     "cxfa_documentassembly.cpp",
     "cxfa_documentassembly.h",
     "cxfa_draw.cpp",
@@ -697,7 +697,7 @@ source_set("parser") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
-    "cxfa_document_parser_unittest.cpp",
+    "cxfa_document_builder_unittest.cpp",
     "cxfa_localevalue_unittest.cpp",
     "cxfa_measurement_unittest.cpp",
     "cxfa_node_unittest.cpp",
@@ -714,6 +714,6 @@ pdfium_unittest_source_set("unittests") {
 }
 
 pdfium_embeddertest_source_set("embeddertests") {
-  sources = [ "cxfa_document_parser_embeddertest.cpp" ]
+  sources = [ "cxfa_document_builder_embeddertest.cpp" ]
   pdfium_root_dir = "../../../"
 }

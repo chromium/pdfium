@@ -23,7 +23,7 @@
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_document_parser.h"
+#include "xfa/fxfa/parser/cxfa_document_builder.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -266,17 +266,17 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   if (params.size() >= 3)
     bOverwrite = runtime->ToBoolean(params[2]);
 
-  CFX_XMLParser xml_parser(
+  CFX_XMLParser parser(
       pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(expression.raw_span()));
 
-  auto pParser = std::make_unique<CXFA_DocumentParser>(GetDocument());
-  CFX_XMLNode* pXMLNode = pParser->ParseData(xml_parser.Parse());
+  auto builder = std::make_unique<CXFA_DocumentBuilder>(GetDocument());
+  CFX_XMLNode* pXMLNode = builder->Build(parser.Parse());
   if (!pXMLNode)
     return CJS_Result::Success();
 
   CFX_XMLDocument* top_xml_doc =
       GetXFANode()->GetDocument()->GetNotify()->GetFFDoc()->GetXMLDocument();
-  top_xml_doc->AppendNodesFrom(pParser->GetXMLDoc().get());
+  top_xml_doc->AppendNodesFrom(builder->GetXMLDoc().get());
 
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != CFX_XMLNode::Type::kElement ||
@@ -317,8 +317,8 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     pFakeXMLRoot->AppendLastChild(pXMLNode);
   }
 
-  pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
-  pFakeRoot = pParser->GetRootNode();
+  builder->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
+  pFakeRoot = builder->GetRootNode();
   if (!pFakeRoot)
     return CJS_Result::Success();
 
