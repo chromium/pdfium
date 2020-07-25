@@ -266,17 +266,19 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   if (params.size() >= 3)
     bOverwrite = runtime->ToBoolean(params[2]);
 
-  CFX_XMLParser parser(
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(expression.raw_span()));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(expression.raw_span());
 
+  CFX_XMLParser parser(stream);
+  std::unique_ptr<CFX_XMLDocument> xml_doc = parser.Parse();
   auto builder = std::make_unique<CXFA_DocumentBuilder>(GetDocument());
-  CFX_XMLNode* pXMLNode = builder->Build(parser.Parse());
+  CFX_XMLNode* pXMLNode = builder->Build(xml_doc.get());
   if (!pXMLNode)
     return CJS_Result::Success();
 
   CFX_XMLDocument* top_xml_doc =
       GetXFANode()->GetDocument()->GetNotify()->GetFFDoc()->GetXMLDocument();
-  top_xml_doc->AppendNodesFrom(builder->GetXMLDoc().get());
+  top_xml_doc->AppendNodesFrom(xml_doc.get());
 
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != CFX_XMLNode::Type::kElement ||

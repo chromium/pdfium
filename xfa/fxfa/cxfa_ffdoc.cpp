@@ -102,19 +102,12 @@ CXFA_FFDoc::~CXFA_FFDoc() {
 
 bool CXFA_FFDoc::ParseDoc(const RetainPtr<IFX_SeekableStream>& stream) {
   CFX_XMLParser xml_parser(stream);
-  std::unique_ptr<CFX_XMLDocument> xml_doc = xml_parser.Parse();
-  if (!xml_doc)
+  m_pXMLDoc = xml_parser.Parse();
+  if (!m_pXMLDoc)
     return false;
 
   CXFA_DocumentBuilder builder(m_pDocument.get());
-  bool parsed = builder.BuildDocument(std::move(xml_doc), XFA_PacketType::Xdp);
-
-  // We have to set the XML document before we return so that we can clean
-  // up in the OpenDoc method. If we don't, the XMLDocument will get free'd
-  // when this method returns and UnownedPtrs get unhappy.
-  m_pXMLDoc = builder.GetXMLDoc();
-
-  if (!parsed)
+  if (!builder.BuildDocument(m_pXMLDoc.get(), XFA_PacketType::Xdp))
     return false;
 
   m_pDocument->SetRoot(builder.GetRootNode());

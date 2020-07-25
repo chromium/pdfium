@@ -25,11 +25,8 @@ class CXFA_DocumentBuilder {
   explicit CXFA_DocumentBuilder(CXFA_Document* pFactory);
   ~CXFA_DocumentBuilder();
 
-  CFX_XMLNode* Build(std::unique_ptr<CFX_XMLDocument> pXML);
-  bool BuildDocument(std::unique_ptr<CFX_XMLDocument> pXML,
-                     XFA_PacketType ePacketID);
-  std::unique_ptr<CFX_XMLDocument> GetXMLDoc() { return std::move(xml_doc_); }
-
+  CFX_XMLNode* Build(CFX_XMLDocument* pXML);
+  bool BuildDocument(CFX_XMLDocument* pXML, XFA_PacketType ePacketID);
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
   CXFA_Node* GetRootNode() const;
 
@@ -68,9 +65,8 @@ class CXFA_DocumentBuilder {
                         XFA_PacketType ePacketID);
 
   UnownedPtr<CXFA_Document> m_pFactory;
-  std::unique_ptr<CFX_XMLDocument> xml_doc_;
-  // TODO(dsinclair): Figure out who owns this.
-  CXFA_Node* m_pRootNode = nullptr;
+  UnownedPtr<CFX_XMLDocument> xml_doc_;
+  UnownedPtr<CXFA_Node> m_pRootNode;  // All nodes owned by CXFA_NodeOwner.
   size_t m_ExecuteRecursionDepth = 0;
 };
 
