@@ -810,29 +810,36 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+// TODO(crbug.com/pdfium/1569): Fix this issue and enable the test for Skia.
+#if defined(_SKIA_SUPPORT_)
 #define MAYBE_ModifyRectQuadpointsWithAP DISABLED_ModifyRectQuadpointsWithAP
 #else
 #define MAYBE_ModifyRectQuadpointsWithAP ModifyRectQuadpointsWithAP
 #endif
 TEST_F(FPDFAnnotEmbedderTest, MAYBE_ModifyRectQuadpointsWithAP) {
-#if defined(OS_MACOSX)
-  static const char kMd5Original[] = "fc59468d154f397fd298c69f47ef565a";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  static const char kMd5Original[] = "00e70eb543c2a6e8f8aafb4ee951d9bf";
   static const char kMd5ModifiedHighlight[] =
-      "e64bf648f6e9354d1f3eedb47a2c9498";
-  static const char kMd5ModifiedSquare[] = "a66591662c8e7ad3c6059952e234bebf";
-#elif defined(OS_WIN)
+      "7638c4a8fe4aabbf8704e198f49b3198";
+  static const char kMd5ModifiedSquare[] = "54f507af6af63de877b9cafdab1bbdaa";
+#else
+#if defined(OS_WIN)
   static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";
   static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
+#elif defined(OS_MACOSX)
+  static const char kMd5Original[] = "fc59468d154f397fd298c69f47ef565a";
+  static const char kMd5ModifiedHighlight[] =
+      "e64bf648f6e9354d1f3eedb47a2c9498";
+  static const char kMd5ModifiedSquare[] = "a66591662c8e7ad3c6059952e234bebf";
 #else
   static const char kMd5Original[] = "0e27376094f11490f74c65f3dc3a42c5";
   static const char kMd5ModifiedHighlight[] =
       "66f3caef3a7d488a4fa1ad37fc06310e";
   static const char kMd5ModifiedSquare[] = "a456dad0bc6801ee2d6408a4394af563";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
