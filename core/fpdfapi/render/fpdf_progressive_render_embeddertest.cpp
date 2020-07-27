@@ -20,6 +20,15 @@ constexpr FX_ARGB kGreen = 0xFF00FF00;
 constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_LINUX)
+static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+    "fbd62f1df1cae1fd2fbf5a24bed6b4cd";
+#else
+static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+    "44e6dd3c36d8bbfb38d306b442e61241";
+#endif  // defined(OS_LINUX)
+#else
 #if defined(OS_WIN)
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "649d6792ea50faf98c013c2d81710595";
@@ -30,6 +39,7 @@ static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
 static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
     "a24edc7740f1d6f76899652dcf825dea";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 }  // namespace
 
@@ -219,13 +229,7 @@ FPDFProgressiveRenderEmbedderTest::RenderPageWithForcedColorScheme(
   return FinishRenderPageWithForms(page, form_handle_);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderWithoutPause DISABLED_RenderWithoutPause
-#else
-#define MAYBE_RenderWithoutPause RenderWithoutPause
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
   // Test rendering of page content using progressive render APIs
   // without pausing the rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
@@ -239,13 +243,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderWithPause DISABLED_RenderWithPause
-#else
-#define MAYBE_RenderWithPause RenderWithPause
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithPause) {
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithPause) {
   // Test rendering of page content using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
