@@ -55,7 +55,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
-  'code_coverage_revision': 'a70177d4a2e59031b801bd9777adfb728dac8983',
+  'code_coverage_revision': 'af90718d311e813960b98134d4ae1c59e83f9dcc',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling depot_tools
   # and whatever else without interference from each other.
