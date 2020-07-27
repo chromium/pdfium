@@ -50,7 +50,7 @@ class CXFA_FFDoc {
       IXFA_DocEnvironment* pDocEnvironment,
       CPDF_Document* pPDFDoc,
       cppgc::Heap* pGCHeap,
-      const RetainPtr<IFX_SeekableStream>& stream);
+      CFX_XMLDocument* pXML);
 
   ~CXFA_FFDoc();
 
@@ -59,10 +59,11 @@ class CXFA_FFDoc {
   }
   FormType GetFormType() const { return m_FormType; }
   cppgc::Heap* GetHeap() const { return m_pHeap.Get(); }
-  CFX_XMLDocument* GetXMLDocument() const { return m_pXMLDoc.get(); }
+  CFX_XMLDocument* GetXMLDocument() const {
+    return m_pDocEnvironment->GetXMLDoc();
+  }
 
   CXFA_FFDocView* CreateDocView();
-
   CXFA_Document* GetXFADoc() const { return m_pDocument.get(); }
   CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
@@ -81,14 +82,14 @@ class CXFA_FFDoc {
              IXFA_DocEnvironment* pDocEnvironment,
              CPDF_Document* pPDFDoc,
              cppgc::Heap* pHeap);
-  bool OpenDoc(const RetainPtr<IFX_SeekableStream>& stream);
-  bool ParseDoc(const RetainPtr<IFX_SeekableStream>& stream);
+  bool OpenDoc(CFX_XMLDocument* pXML);
+  bool BuildDoc(CFX_XMLDocument* pXML);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
   UnownedPtr<CXFA_FFApp> const m_pApp;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
   UnownedPtr<cppgc::Heap> const m_pHeap;
-  std::unique_ptr<CFX_XMLDocument> m_pXMLDoc;
+  UnownedPtr<CFX_XMLDocument> m_pXMLDoc;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
   std::unique_ptr<CXFA_Document> m_pDocument;
   std::unique_ptr<CXFA_FFDocView> m_DocView;

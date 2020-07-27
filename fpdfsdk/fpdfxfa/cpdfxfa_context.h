@@ -20,6 +20,7 @@
 #include "fxjs/gc/heap.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
+class CFX_XMLDocument;
 class CJS_Runtime;
 class CPDFXFA_DocEnvironment;
 
@@ -37,6 +38,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   ~CPDFXFA_Context() override;
 
   bool LoadXFADoc();
+  CFX_XMLDocument* GetXMLDoc() { return m_pXML.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
   cppgc::Heap* GetGCHeap() { return m_pGCHeap.get(); }
@@ -115,6 +117,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
 
   // The order in which the following members are destroyed is critical.
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
+  std::unique_ptr<CFX_XMLDocument> m_pXML;
   FXGCScopedHeap m_pGCHeap;
   ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
   std::unique_ptr<CXFA_FFApp> const m_pXFAApp;

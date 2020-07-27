@@ -15,6 +15,7 @@
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CFX_XMLDocument;
 class CXFA_FFDoc;
 class CXFA_FFPageView;
 class CXFA_FFWidget;
@@ -237,6 +238,7 @@ class IXFA_DocEnvironment {
                      uint32_t dwOptions) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
   virtual IJS_Runtime* GetIJSRuntime(CXFA_FFDoc* hDoc) const = 0;
+  virtual CFX_XMLDocument* GetXMLDoc() const = 0;
   virtual RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
       CXFA_FFDoc* hDoc,
       const WideString& wsLink) = 0;

@@ -603,6 +603,10 @@ IJS_Runtime* CPDFXFA_DocEnvironment::GetIJSRuntime(CXFA_FFDoc* hDoc) const {
   return pFormFillEnv ? pFormFillEnv->GetIJSRuntime() : nullptr;
 }
 
+CFX_XMLDocument* CPDFXFA_DocEnvironment::GetXMLDoc() const {
+  return m_pContext->GetXMLDoc();
+}
+
 RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
     const WideString& wsLink) {

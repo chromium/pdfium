@@ -57,7 +57,7 @@ std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
     IXFA_DocEnvironment* pDocEnvironment,
     CPDF_Document* pPDFDoc,
     cppgc::Heap* pGCHeap,
-    const RetainPtr<IFX_SeekableStream>& stream) {
+    CFX_XMLDocument* pXML) {
   ASSERT(pApp);
   ASSERT(pDocEnvironment);
   ASSERT(pPDFDoc);
@@ -65,7 +65,7 @@ std::unique_ptr<CXFA_FFDoc> CXFA_FFDoc::CreateAndOpen(
   // Use WrapUnique() to keep constructor private.
   auto result = pdfium::WrapUnique(
       new CXFA_FFDoc(pApp, pDocEnvironment, pPDFDoc, pGCHeap));
-  if (!result->OpenDoc(stream))
+  if (!result->OpenDoc(pXML))
     return nullptr;
 
   return result;
@@ -93,21 +93,18 @@ CXFA_FFDoc::~CXFA_FFDoc() {
     m_pDocument->ClearLayoutData();
 
   m_pDocument.reset();
-  m_pXMLDoc.reset();
   m_pNotify.reset();
   m_pPDFFontMgr.reset();
   m_HashToDibDpiMap.clear();
   m_pApp->ClearEventTargets();
 }
 
-bool CXFA_FFDoc::ParseDoc(const RetainPtr<IFX_SeekableStream>& stream) {
-  CFX_XMLParser xml_parser(stream);
-  m_pXMLDoc = xml_parser.Parse();
-  if (!m_pXMLDoc)
+bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {
+  if (!pXML)
     return false;
 
   CXFA_DocumentBuilder builder(m_pDocument.get());
-  if (!builder.BuildDocument(m_pXMLDoc.get(), XFA_PacketType::Xdp))
+  if (!builder.BuildDocument(pXML, XFA_PacketType::Xdp))
     return false;
 
   m_pDocument->SetRoot(builder.GetRootNode());
@@ -130,8 +127,8 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return m_DocView.get();
 }
 
-bool CXFA_FFDoc::OpenDoc(const RetainPtr<IFX_SeekableStream>& stream) {
-  if (!ParseDoc(stream))
+bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
+  if (!BuildDoc(pXML))
     return false;
 
   CFGAS_FontMgr* mgr = GetApp()->GetFDEFontMgr();

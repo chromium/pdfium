@@ -14,6 +14,8 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
@@ -123,9 +125,16 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
+  CFX_XMLParser parser(stream);
+  m_pXML = parser.Parse();
+  if (!m_pXML) {
+    FXSYS_SetLastError(FPDF_ERR_XFALOAD);
+    return false;
+  }
+
   m_pXFADoc =
       CXFA_FFDoc::CreateAndOpen(m_pXFAApp.get(), m_pDocEnv.get(),
-                                m_pPDFDoc.Get(), m_pGCHeap.get(), stream);
+                                m_pPDFDoc.Get(), m_pGCHeap.get(), m_pXML.get());
 
   if (!m_pXFADoc) {
     FXSYS_SetLastError(FPDF_ERR_XFALOAD);

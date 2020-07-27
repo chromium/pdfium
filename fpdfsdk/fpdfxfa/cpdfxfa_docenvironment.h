@@ -12,6 +12,7 @@
 #include "public/fpdfview.h"
 #include "xfa/fxfa/fxfa.h"
 
+class CFX_XMLDocument;
 class CPDFXFA_Context;
 class IJS_Runtime;
 
@@ -55,6 +56,7 @@ class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
              uint32_t dwOptions) override;
   FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) override;
   IJS_Runtime* GetIJSRuntime(CXFA_FFDoc* hDoc) const override;
+  CFX_XMLDocument* GetXMLDoc() const override;
   RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
       CXFA_FFDoc* hDoc,
       const WideString& wsLink) override;
