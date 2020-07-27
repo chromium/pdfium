@@ -224,8 +224,8 @@ bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
                                  "http://www.w3.org/1999/xhtml");
 }
 
-CXFA_DocumentBuilder::CXFA_DocumentBuilder(CXFA_Document* pFactory)
-    : m_pFactory(pFactory) {}
+CXFA_DocumentBuilder::CXFA_DocumentBuilder(CXFA_Document* pNodeFactory)
+    : node_factory_(pNodeFactory) {}
 
 CXFA_DocumentBuilder::~CXFA_DocumentBuilder() = default;
 
@@ -235,8 +235,8 @@ bool CXFA_DocumentBuilder::BuildDocument(CFX_XMLDocument* pXML,
   if (!root)
     return false;
 
-  m_pRootNode = ParseAsXDPPacket(root, ePacketID);
-  return !!m_pRootNode;
+  root_node_ = ParseAsXDPPacket(root, ePacketID);
+  return !!root_node_;
 }
 
 CFX_XMLNode* CXFA_DocumentBuilder::Build(CFX_XMLDocument* pXML) {
@@ -262,7 +262,7 @@ void CXFA_DocumentBuilder::ConstructXFANode(CXFA_Node* pXFANode,
           continue;
 
         if (eNodeType == CFX_XMLNode::Type::kElement) {
-          CXFA_Node* pXFAChild = m_pFactory->CreateNode(
+          CXFA_Node* pXFAChild = node_factory_->CreateNode(
               XFA_PacketType::Datasets, XFA_Element::DataValue);
           if (!pXFAChild)
             return;
@@ -282,20 +282,20 @@ void CXFA_DocumentBuilder::ConstructXFANode(CXFA_Node* pXFANode,
           break;
         }
       }
-      m_pRootNode = pXFANode;
+      root_node_ = pXFANode;
     } else {
-      m_pRootNode = DataLoader(pXFANode, pXMLNode, true);
+      root_node_ = DataLoader(pXFANode, pXMLNode, true);
     }
   } else if (pXFANode->IsContentNode()) {
     ParseContentNode(pXFANode, pXMLNode, ePacketID);
-    m_pRootNode = pXFANode;
+    root_node_ = pXFANode;
   } else {
-    m_pRootNode = NormalLoader(pXFANode, pXMLNode, ePacketID, true);
+    root_node_ = NormalLoader(pXFANode, pXMLNode, ePacketID, true);
   }
 }
 
 CXFA_Node* CXFA_DocumentBuilder::GetRootNode() const {
-  return m_pRootNode;
+  return root_node_;
 }
 
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
@@ -335,11 +335,11 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
     return nullptr;
 
   CXFA_Node* pXFARootNode =
-      m_pFactory->CreateNode(XFA_PacketType::Xdp, XFA_Element::Xfa);
+      node_factory_->CreateNode(XFA_PacketType::Xdp, XFA_Element::Xfa);
   if (!pXFARootNode)
     return nullptr;
 
-  m_pRootNode = pXFARootNode;
+  root_node_ = pXFARootNode;
   pXFARootNode->JSObject()->SetCData(XFA_Attribute::Name, L"xfa", false, false);
 
   for (auto it : ToXMLElement(pXMLDocumentNode)->GetAttributes()) {
@@ -456,7 +456,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Config(
     return nullptr;
 
   CXFA_Node* pNode =
-      m_pFactory->CreateNode(XFA_PacketType::Config, XFA_Element::Config);
+      node_factory_->CreateNode(XFA_PacketType::Config, XFA_Element::Config);
   if (!pNode)
     return nullptr;
 
@@ -474,8 +474,8 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Template(
   if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
     return nullptr;
 
-  CXFA_Node* pNode =
-      m_pFactory->CreateNode(XFA_PacketType::Template, XFA_Element::Template);
+  CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Template,
+                                               XFA_Element::Template);
   if (!pNode)
     return nullptr;
 
@@ -502,13 +502,13 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Form(
     return nullptr;
 
   CXFA_Node* pNode =
-      m_pFactory->CreateNode(XFA_PacketType::Form, XFA_Element::Form);
+      node_factory_->CreateNode(XFA_PacketType::Form, XFA_Element::Form);
   if (!pNode)
     return nullptr;
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name, packet.name, false, false);
   CXFA_Template* pTemplateRoot =
-      m_pRootNode->GetFirstChildByClass<CXFA_Template>(XFA_Element::Template);
+      root_node_->GetFirstChildByClass<CXFA_Template>(XFA_Element::Template);
   CXFA_Subform* pTemplateChosen =
       pTemplateRoot ? pTemplateRoot->GetFirstChildByClass<CXFA_Subform>(
                           XFA_Element::Subform)
@@ -532,8 +532,8 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
   XFA_PACKETINFO packet = XFA_GetPacketByIndex(XFA_PacketType::Datasets);
   CFX_XMLNode* pDatasetsXMLNode = GetDataSetsFromXDP(pXMLDocumentNode);
   if (pDatasetsXMLNode) {
-    CXFA_Node* pNode = m_pFactory->CreateNode(XFA_PacketType::Datasets,
-                                              XFA_Element::DataModel);
+    CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Datasets,
+                                                 XFA_Element::DataModel);
     if (!pNode)
       return nullptr;
 
@@ -564,8 +564,8 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Data(
   if (!pDataXMLNode)
     return nullptr;
 
-  CXFA_Node* pNode =
-      m_pFactory->CreateNode(XFA_PacketType::Datasets, XFA_Element::DataGroup);
+  CXFA_Node* pNode = node_factory_->CreateNode(XFA_PacketType::Datasets,
+                                               XFA_Element::DataGroup);
   if (!pNode)
     return nullptr;
 
@@ -586,7 +586,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_LocaleConnectionSourceSet(
   if (!MatchNodeName(pXMLDocumentNode, packet.name, packet.uri, packet.flags))
     return nullptr;
 
-  CXFA_Node* pNode = m_pFactory->CreateNode(packet_type, element);
+  CXFA_Node* pNode = node_factory_->CreateNode(packet_type, element);
   if (!pNode)
     return nullptr;
 
@@ -605,7 +605,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Xdc(
     return nullptr;
 
   CXFA_Node* pNode =
-      m_pFactory->CreateNode(XFA_PacketType::Xdc, XFA_Element::Xdc);
+      node_factory_->CreateNode(XFA_PacketType::Xdc, XFA_Element::Xdc);
   if (!pNode)
     return nullptr;
 
@@ -617,7 +617,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_Xdc(
 CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_User(
     CFX_XMLNode* pXMLDocumentNode) {
   CXFA_Node* pNode =
-      m_pFactory->CreateNode(XFA_PacketType::Xdp, XFA_Element::Packet);
+      node_factory_->CreateNode(XFA_PacketType::Xdp, XFA_Element::Packet);
   if (!pNode)
     return nullptr;
 
@@ -639,10 +639,10 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
                                               XFA_PacketType ePacketID,
                                               bool bUseAttribute) {
   constexpr size_t kMaxExecuteRecursion = 1000;
-  if (m_ExecuteRecursionDepth > kMaxExecuteRecursion)
+  if (execute_recursion_depth_ > kMaxExecuteRecursion)
     return nullptr;
-  AutoRestorer<size_t> restorer(&m_ExecuteRecursionDepth);
-  ++m_ExecuteRecursionDepth;
+  AutoRestorer<size_t> restorer(&execute_recursion_depth_);
+  ++execute_recursion_depth_;
 
   bool bOneOfPropertyFound = false;
   for (CFX_XMLNode* pXMLChild = pXMLDoc->GetFirstChild(); pXMLChild;
@@ -663,7 +663,7 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
           bOneOfPropertyFound = true;
         }
 
-        CXFA_Node* pXFAChild = m_pFactory->CreateNode(ePacketID, eType);
+        CXFA_Node* pXFAChild = node_factory_->CreateNode(ePacketID, eType);
         if (!pXFAChild)
           return nullptr;
         if (ePacketID == XFA_PacketType::Config) {
@@ -766,7 +766,7 @@ void CXFA_DocumentBuilder::ParseContentNode(CXFA_Node* pXFANode,
   if (!wsValue.IsEmpty()) {
     if (pXFANode->IsContentNode()) {
       CXFA_Node* pContentRawDataNode =
-          m_pFactory->CreateNode(ePacketID, element);
+          node_factory_->CreateNode(ePacketID, element);
       ASSERT(pContentRawDataNode);
       pContentRawDataNode->JSObject()->SetCData(XFA_Attribute::Value, wsValue,
                                                 false, false);
@@ -829,7 +829,7 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
           eNodeType = XFA_Element::DataValue;
 
         CXFA_Node* pXFAChild =
-            m_pFactory->CreateNode(XFA_PacketType::Datasets, eNodeType);
+            node_factory_->CreateNode(XFA_PacketType::Datasets, eNodeType);
         if (!pXFAChild)
           return;
 
@@ -853,7 +853,7 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
               wsNS.EqualsASCII("http://www.xfa.org/schema/xfa-data/1.0/")) {
             continue;
           }
-          CXFA_Node* pXFAMetaData = m_pFactory->CreateNode(
+          CXFA_Node* pXFAMetaData = node_factory_->CreateNode(
               XFA_PacketType::Datasets, XFA_Element::DataValue);
           if (!pXFAMetaData)
             return;
@@ -891,8 +891,8 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
         if (IsStringAllWhitespace(wsText))
           continue;
 
-        CXFA_Node* pXFAChild = m_pFactory->CreateNode(XFA_PacketType::Datasets,
-                                                      XFA_Element::DataValue);
+        CXFA_Node* pXFAChild = node_factory_->CreateNode(
+            XFA_PacketType::Datasets, XFA_Element::DataValue);
         if (!pXFAChild)
           return;
 
@@ -942,7 +942,7 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
       WideString wsCurValue = wsCurValueTextBuf.MakeString();
       if (!wsCurValue.IsEmpty()) {
         CXFA_Node* pXFAChild =
-            m_pFactory->CreateNode(ePacketID, XFA_Element::DataValue);
+            node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
         if (!pXFAChild)
           return;
 
@@ -959,7 +959,7 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
       pXMLCurValueNode = nullptr;
     }
     CXFA_Node* pXFAChild =
-        m_pFactory->CreateNode(ePacketID, XFA_Element::DataValue);
+        node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
     if (!pXFAChild)
       return;
 
@@ -980,7 +980,7 @@ void CXFA_DocumentBuilder::ParseDataValue(CXFA_Node* pXFANode,
     if (!wsCurValue.IsEmpty()) {
       if (bMarkAsCompound) {
         CXFA_Node* pXFAChild =
-            m_pFactory->CreateNode(ePacketID, XFA_Element::DataValue);
+            node_factory_->CreateNode(ePacketID, XFA_Element::DataValue);
         if (!pXFAChild)
           return;
 

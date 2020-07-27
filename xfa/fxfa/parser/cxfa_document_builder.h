@@ -22,7 +22,7 @@ class CFX_XMLInstruction;
 
 class CXFA_DocumentBuilder {
  public:
-  explicit CXFA_DocumentBuilder(CXFA_Document* pFactory);
+  explicit CXFA_DocumentBuilder(CXFA_Document* pNodeFactory);
   ~CXFA_DocumentBuilder();
 
   CFX_XMLNode* Build(CFX_XMLDocument* pXML);
@@ -64,10 +64,10 @@ class CXFA_DocumentBuilder {
                         CFX_XMLInstruction* pXMLInstruction,
                         XFA_PacketType ePacketID);
 
-  UnownedPtr<CXFA_Document> m_pFactory;
+  UnownedPtr<CXFA_Document> node_factory_;
   UnownedPtr<CFX_XMLDocument> xml_doc_;
-  UnownedPtr<CXFA_Node> m_pRootNode;  // All nodes owned by CXFA_NodeOwner.
-  size_t m_ExecuteRecursionDepth = 0;
+  UnownedPtr<CXFA_Node> root_node_;  // All nodes owned by CXFA_NodeOwner.
+  size_t execute_recursion_depth_ = 0;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_BUILDER_H_
