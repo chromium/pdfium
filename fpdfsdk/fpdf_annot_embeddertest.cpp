@@ -504,13 +504,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
   UnloadPageNoEvents(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_ExtractInkMultiple DISABLED_ExtractInkMultiple
-#else
-#define MAYBE_ExtractInkMultiple ExtractInkMultiple
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_ExtractInkMultiple) {
+TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
   // Open a file with three annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
   FPDF_PAGE page = LoadPageNoEvents(0);
@@ -551,11 +545,19 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_ExtractInkMultiple) {
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_MACOSX)
+    static constexpr char kExpectedHash[] = "acddfe688a117ead56af7b249a2cf8a1";
+#else
+    static constexpr char kExpectedHash[] = "1fb0dd8dd5f0b9bb8d076e48eb59296d";
+#endif  // defined(OS_MACOSX)
+#else
 #if defined(OS_WIN)
     static constexpr char kExpectedHash[] = "49d0a81c636531a337429325273d0508";
 #else
     static constexpr char kExpectedHash[] = "354002e1c4386d38fdde29ef8d61074a";
-#endif
+#endif  // defined(OS_WIN)
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, kExpectedHash);
   }
@@ -1433,13 +1435,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_GetSetStringValue DISABLED_GetSetStringValue
-#else
-#define MAYBE_GetSetStringValue GetSetStringValue
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_GetSetStringValue) {
+TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1494,6 +1490,13 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_GetSetStringValue) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#if defined(OS_LINUX)
+  static const char kMd5[] = "7a2b712ca88d7b71f125ea3f9c88e57a";
+#else
+  static const char kMd5[] = "626d25c5aa5baf67d22d9a0e1c23f6aa";
+#endif  // defined(OS_LINUX)
+#else
 #if defined(OS_MACOSX)
   static const char kMd5[] = "5e7e185b386ad21ca83b0287268c50fb";
 #elif defined(OS_WIN)
@@ -1501,6 +1504,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_GetSetStringValue) {
 #else
   static const char kMd5[] = "1d7bea2042c6fea0558ff2aef05811b5";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
   // Open the saved annotation.
   ASSERT_TRUE(OpenSavedDocument());
