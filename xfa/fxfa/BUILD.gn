@@ -77,8 +77,6 @@ source_set("fxfa") {
     "cxfa_pieceline.h",
     "cxfa_readynodeiterator.cpp",
     "cxfa_readynodeiterator.h",
-    "cxfa_rendercontext.cpp",
-    "cxfa_rendercontext.h",
     "cxfa_textlayout.cpp",
     "cxfa_textlayout.h",
     "cxfa_textparsecontext.cpp",
