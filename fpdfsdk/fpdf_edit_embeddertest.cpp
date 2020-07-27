@@ -2847,13 +2847,7 @@ TEST_F(FPDFEditEmbedderTest, AddMark) {
   CloseSavedDocument();
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_AddMarkCompressedStream DISABLED_AddMarkCompressedStream
-#else
-#define MAYBE_AddMarkCompressedStream AddMarkCompressedStream
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_AddMarkCompressedStream) {
+TEST_F(FPDFEditEmbedderTest, AddMarkCompressedStream) {
   // Load document with some text in a compressed stream.
   ASSERT_TRUE(OpenDocument("hello_world_compressed_stream.pdf"));
   FPDF_PAGE page = LoadPage(0);
