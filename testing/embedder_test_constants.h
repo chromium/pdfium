@@ -7,6 +7,9 @@
 
 namespace pdfium {
 
+// MD5 hash for rendering annotation_stamp_with_ap.pdf with annotations.
+extern const char kAnnotationStampWithApChecksum[];
+
 // MD5 hash for rendering a 612x792 blank page.
 extern const char kBlankPage612By792Checksum[];
 
@@ -24,6 +27,9 @@ extern const char kManyRectanglesChecksum[];
 
 // MD5 hash for rendering rectangles.pdf.
 extern const char kRectanglesChecksum[];
+
+// MD5 hash for rendering text_form.pdf.
+extern const char kTextFormChecksum[];
 
 }  // namespace pdfium
 

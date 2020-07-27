@@ -10,6 +10,13 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
+namespace {
+
+const char kEmailRecommendedFilledChecksum[] =
+    "211e4e46eb347aa2bc7c425556d600b0";
+
+}  // namespace
+
 class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
  protected:
   void SetUp() override {
@@ -110,11 +117,10 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_SimpleFill) {
   for (size_t i = 0; i < 10; ++i)
     FORM_OnChar(form_handle(), page(), 'a' + i, 0);
 
-  const char kFilledMD5[] = "211e4e46eb347aa2bc7c425556d600b0";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
-    CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kEmailRecommendedFilledChecksum);
   }
 }
 
@@ -134,11 +140,10 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_FillWithNewLineWithoutMultiline) {
   for (size_t i = 5; i < 10; ++i)
     FORM_OnChar(form_handle(), page(), 'a' + i, 0);
 
-  const char kFilledMD5[] = "211e4e46eb347aa2bc7c425556d600b0";
   {
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
-    CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+    CompareBitmap(page_bitmap.get(), 612, 792, kEmailRecommendedFilledChecksum);
   }
 }
 

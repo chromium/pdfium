@@ -21,28 +21,14 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/stl_util.h"
 
+using pdfium::kTextFormChecksum;
+
 using testing::_;
 using testing::InSequence;
 using testing::NiceMock;
 using testing::StrEq;
 
 using FPDFFormFillEmbedderTest = EmbedderTest;
-
-namespace {
-
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-const char kTextFormChecksum[] = "17efe329169f5b7681fbe939894a35de";
-#else
-#if defined(OS_WIN)
-const char kTextFormChecksum[] = "d3204faa62b607f0bd3893c9c22cabcb";
-#elif defined(OS_MACOSX)
-const char kTextFormChecksum[] = "d485541d958fef08d24e8eca3e537023";
-#else
-const char kTextFormChecksum[] = "b890950d4b9bc163b1a96797f3004b53";
-#endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-
-}  // namespace
 
 // A base class for many related tests that involve clicking and typing into
 // form fields.

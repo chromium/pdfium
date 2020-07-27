@@ -9,6 +9,7 @@
 #include "core/fxge/fx_dib.h"
 #include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"
+#include "testing/embedder_test_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -18,6 +19,17 @@ constexpr FX_ARGB kBlue = 0xFF0000FF;
 constexpr FX_ARGB kGreen = 0xFF00FF00;
 constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
+
+#if defined(OS_WIN)
+static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+    "649d6792ea50faf98c013c2d81710595";
+#elif defined(OS_MACOSX)
+static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+    "83e9f5222c4c959b0b63a5cd24f773a1";
+#else
+static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
+    "a24edc7740f1d6f76899652dcf825dea";
+#endif
 
 }  // namespace
 
@@ -214,14 +226,6 @@ FPDFProgressiveRenderEmbedderTest::RenderPageWithForcedColorScheme(
 #define MAYBE_RenderWithoutPause RenderWithoutPause
 #endif
 TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
-#if defined(OS_WIN)
-  static constexpr char kMd5BaseContent[] = "649d6792ea50faf98c013c2d81710595";
-#elif defined(OS_MACOSX)
-  static constexpr char kMd5BaseContent[] = "83e9f5222c4c959b0b63a5cd24f773a1";
-#else
-  static constexpr char kMd5BaseContent[] = "a24edc7740f1d6f76899652dcf825dea";
-#endif
-
   // Test rendering of page content using progressive render APIs
   // without pausing the rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
@@ -230,7 +234,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
   FakePause pause(false);
   EXPECT_TRUE(StartRenderPage(page, &pause));
   ScopedFPDFBitmap bitmap = FinishRenderPage(page);
-  CompareBitmap(bitmap.get(), 595, 842, kMd5BaseContent);
+  CompareBitmap(bitmap.get(), 595, 842,
+                kAnnotationStampWithApBaseContentChecksum);
   UnloadPage(page);
 }
 
@@ -241,14 +246,6 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithoutPause) {
 #define MAYBE_RenderWithPause RenderWithPause
 #endif
 TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithPause) {
-#if defined(OS_WIN)
-  static constexpr char kMd5BaseContent[] = "649d6792ea50faf98c013c2d81710595";
-#elif defined(OS_MACOSX)
-  static constexpr char kMd5BaseContent[] = "83e9f5222c4c959b0b63a5cd24f773a1";
-#else
-  static constexpr char kMd5BaseContent[] = "a24edc7740f1d6f76899652dcf825dea";
-#endif
-
   // Test rendering of page content using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
@@ -262,28 +259,12 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderWithPause) {
     render_done = ContinueRenderPage(page, &pause);
   }
   ScopedFPDFBitmap bitmap = FinishRenderPage(page);
-  CompareBitmap(bitmap.get(), 595, 842, kMd5BaseContent);
+  CompareBitmap(bitmap.get(), 595, 842,
+                kAnnotationStampWithApBaseContentChecksum);
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderAnnotWithPause DISABLED_RenderAnnotWithPause
-#else
-#define MAYBE_RenderAnnotWithPause RenderAnnotWithPause
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderAnnotWithPause) {
-#if defined(OS_WIN)
-  static constexpr char kMd5ContentWithAnnot[] =
-      "6aa001a77ec05d0f1b0d1d22e28744d4";
-#elif defined(OS_MACOSX)
-  static constexpr char kMd5ContentWithAnnot[] =
-      "80d7b6cc7b13a78d77a6151bc846e80b";
-#else
-  static constexpr char kMd5ContentWithAnnot[] =
-      "b42cef463483e668eaf4055a65e4f1f5";
-#endif
-
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderAnnotWithPause) {
   // Test rendering of the page with annotations using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
@@ -297,28 +278,11 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderAnnotWithPause) {
     render_done = ContinueRenderPage(page, &pause);
   }
   ScopedFPDFBitmap bitmap = FinishRenderPage(page);
-  CompareBitmap(bitmap.get(), 595, 842, kMd5ContentWithAnnot);
+  CompareBitmap(bitmap.get(), 595, 842, pdfium::kAnnotationStampWithApChecksum);
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_RenderFormsWithPause DISABLED_RenderFormsWithPause
-#else
-#define MAYBE_RenderFormsWithPause RenderFormsWithPause
-#endif
-TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormsWithPause) {
-#if defined(OS_WIN)
-  static constexpr char kMd5ContentWithForms[] =
-      "d3204faa62b607f0bd3893c9c22cabcb";
-#elif defined(OS_MACOSX)
-  static constexpr char kMd5ContentWithForms[] =
-      "d485541d958fef08d24e8eca3e537023";
-#else
-  static constexpr char kMd5ContentWithForms[] =
-      "b890950d4b9bc163b1a96797f3004b53";
-#endif
-
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormsWithPause) {
   // Test rendering of the page with forms using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
@@ -332,7 +296,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, MAYBE_RenderFormsWithPause) {
     render_done = ContinueRenderPage(page, &pause);
   }
   ScopedFPDFBitmap bitmap = FinishRenderPageWithForms(page, form_handle_);
-  CompareBitmap(bitmap.get(), 300, 300, kMd5ContentWithForms);
+  CompareBitmap(bitmap.get(), 300, 300, pdfium::kTextFormChecksum);
   UnloadPage(page);
 }
 

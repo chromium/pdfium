@@ -33,6 +33,8 @@
 #include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
+using pdfium::kAnnotationStampWithApChecksum;
+
 namespace {
 
 const wchar_t kStreamData[] =
@@ -41,27 +43,6 @@ const wchar_t kStreamData[] =
     L"c 215.4 739.0 216.8 737.1 218.9 736.1 c 220.8 735.1 221.4 733.0 "
     L"223.7 732.4 c 232.6 729.9 242.0 730.8 251.2 730.8 c 257.5 730.8 "
     L"263.0 732.9 269.0 734.4 c S";
-
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#if defined(OS_LINUX)
-const char kAnnotationStampWithApChecksum[] =
-    "db83eaadc92967e3ac9bebfc6178ca75";
-#else
-const char kAnnotationStampWithApChecksum[] =
-    "3c87b4a8e51245964357fb5f5fbc612b";
-#endif  // defined(OS_LINUX)
-#else
-#if defined(OS_WIN)
-const char kAnnotationStampWithApChecksum[] =
-    "6aa001a77ec05d0f1b0d1d22e28744d4";
-#elif defined(OS_MACOSX)
-const char kAnnotationStampWithApChecksum[] =
-    "80d7b6cc7b13a78d77a6151bc846e80b";
-#else
-const char kAnnotationStampWithApChecksum[] =
-    "b42cef463483e668eaf4055a65e4f1f5";
-#endif
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 void VerifyFocusableAnnotSubtypes(
     FPDF_FORMHANDLE form_handle,
