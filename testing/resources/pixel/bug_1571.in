@@ -1,0 +1,112 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 200 200]
+  /Contents 4 0 R
+  /Resources <<
+    /ProcSet [/PDF /ImageB /ImageC /ImageI]
+    /ExtGState <<
+      /GS1 5 0 R
+      /GS3 6 0 R
+    >>
+    /Pattern <<
+      /Pa2 7 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+1 0 0 1 50 100 cm
+1 1 1 RG
+/GS3 gs
+/Pattern cs
+/Pa2 scn
+/GS1 gs
+-7 7 m
+-7 -7 l
+-7 -7 l
+7 -7 l
+7 -7 l
+7 7 l
+7 7 l
+-7 7 l
+h
+B*
+Q
+q
+1 0 0 1 150 100 cm
+/Pattern cs
+/Pa2 scn
+/GS1 gs
+-7 7 m
+-7 -7 l
+-7 -7 l
+7 -7 l
+7 -7 l
+7 7 l
+7 7 l
+-7 7 l
+h
+B*
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /ExtGState
+  /ca 1
+>>
+endobj
+{{object 6 0}} <<
+  /Type /ExtGState
+  /CA 0
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Pattern
+  /PaintType 1
+  /PatternType 1
+  /TilingType 2
+  /BBox [0 0 0.25 0.25]
+  /Matrix [1.414 -1.414 1.414 1.414 -95.043 -381.294]
+  /PaintType 1
+  /Resources <<
+    % Acrobat requires this dictionary, even if it is empty.
+  >>
+  /XStep 0.25
+  /YStep 0.25
+  {{streamlen}}
+>>
+stream
+/DeviceRGB CS 0.941 0 0 SC
+/DeviceRGB cs 1 1 1 sc
+0 0 0.25 0.25 re
+f
+0.094 w
+0 0 m
+0.25 0 l
+0.094 w
+0.125 0 m
+0.125 0.25 l
+S
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
