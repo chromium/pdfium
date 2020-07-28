@@ -76,22 +76,22 @@
 #include <wordexp.h>
 #endif  // WORDEXP_AVAILABLE
 
-enum OutputFormat {
-  OUTPUT_NONE,
-  OUTPUT_PAGEINFO,
-  OUTPUT_STRUCTURE,
-  OUTPUT_TEXT,
-  OUTPUT_PPM,
-  OUTPUT_PNG,
-  OUTPUT_ANNOT,
+enum class OutputFormat {
+  kNone,
+  kPageInfo,
+  kStructure,
+  kText,
+  kPpm,
+  kPng,
+  kAnnot,
 #ifdef _WIN32
-  OUTPUT_BMP,
-  OUTPUT_EMF,
-  OUTPUT_PS2,
-  OUTPUT_PS3,
+  kBmp,
+  kEmf,
+  kPs2,
+  kPs3,
 #endif
 #ifdef PDF_ENABLE_SKIA
-  OUTPUT_SKP,
+  kSkp,
 #endif
 };
 
@@ -137,7 +137,7 @@ struct Options {
 #if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
   bool linux_no_system_fonts = false;
 #endif
-  OutputFormat output_format = OUTPUT_NONE;
+  OutputFormat output_format = OutputFormat::kNone;
   std::string password;
   std::string scale_factor_as_string;
   std::string exe_path;
@@ -479,36 +479,36 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->linux_no_system_fonts = true;
 #endif
     } else if (cur_arg == "--ppm") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --ppm argument\n");
         return false;
       }
-      options->output_format = OUTPUT_PPM;
+      options->output_format = OutputFormat::kPpm;
     } else if (cur_arg == "--png") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --png argument\n");
         return false;
       }
-      options->output_format = OUTPUT_PNG;
+      options->output_format = OutputFormat::kPng;
     } else if (cur_arg == "--txt") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --txt argument\n");
         return false;
       }
-      options->output_format = OUTPUT_TEXT;
+      options->output_format = OutputFormat::kText;
     } else if (cur_arg == "--annot") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --annot argument\n");
         return false;
       }
-      options->output_format = OUTPUT_ANNOT;
+      options->output_format = OutputFormat::kAnnot;
 #ifdef PDF_ENABLE_SKIA
     } else if (cur_arg == "--skp") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --skp argument\n");
         return false;
       }
-      options->output_format = OUTPUT_SKP;
+      options->output_format = OutputFormat::kSkp;
 #endif  // PDF_ENABLE_SKIA
     } else if (ParseSwitchKeyValue(cur_arg, "--font-dir=", &value)) {
       if (!options->font_directory.empty()) {
@@ -532,29 +532,29 @@ bool ParseCommandLine(const std::vector<std::string>& args,
 
 #ifdef _WIN32
     } else if (cur_arg == "--emf") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --emf argument\n");
         return false;
       }
-      options->output_format = OUTPUT_EMF;
+      options->output_format = OutputFormat::kEmf;
     } else if (cur_arg == "--ps2") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --ps2 argument\n");
         return false;
       }
-      options->output_format = OUTPUT_PS2;
+      options->output_format = OutputFormat::kPs2;
     } else if (cur_arg == "--ps3") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --ps3 argument\n");
         return false;
       }
-      options->output_format = OUTPUT_PS3;
+      options->output_format = OutputFormat::kPs3;
     } else if (cur_arg == "--bmp") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --bmp argument\n");
         return false;
       }
-      options->output_format = OUTPUT_BMP;
+      options->output_format = OutputFormat::kBmp;
 #endif  // _WIN32
 
 #ifdef PDF_ENABLE_V8
@@ -587,17 +587,17 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       }
       options->scale_factor_as_string = value;
     } else if (cur_arg == "--show-pageinfo") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --show-pageinfo argument\n");
         return false;
       }
-      options->output_format = OUTPUT_PAGEINFO;
+      options->output_format = OutputFormat::kPageInfo;
     } else if (cur_arg == "--show-structure") {
-      if (options->output_format != OUTPUT_NONE) {
+      if (options->output_format != OutputFormat::kNone) {
         fprintf(stderr, "Duplicate or conflicting --show-structure argument\n");
         return false;
       }
-      options->output_format = OUTPUT_STRUCTURE;
+      options->output_format = OutputFormat::kStructure;
     } else if (ParseSwitchKeyValue(cur_arg, "--pages=", &value)) {
       if (options->pages) {
         fprintf(stderr, "Duplicate --pages argument\n");
@@ -731,11 +731,11 @@ bool ProcessPage(const std::string& name,
     WriteDecodedThumbnailStream(page, name.c_str(), page_index);
   if (options.save_thumbnails_raw)
     WriteRawThumbnailStream(page, name.c_str(), page_index);
-  if (options.output_format == OUTPUT_PAGEINFO) {
+  if (options.output_format == OutputFormat::kPageInfo) {
     DumpPageInfo(page, page_index);
     return true;
   }
-  if (options.output_format == OUTPUT_STRUCTURE) {
+  if (options.output_format == OutputFormat::kStructure) {
     DumpPageStructure(page, page_index);
     return true;
   }
@@ -790,40 +790,40 @@ bool ProcessPage(const std::string& name,
     std::string image_file_name;
     switch (options.output_format) {
 #ifdef _WIN32
-      case OUTPUT_BMP:
+      case OutputFormat::kBmp:
         image_file_name =
             WriteBmp(name.c_str(), page_index, buffer, stride, width, height);
         break;
 
-      case OUTPUT_EMF:
+      case OutputFormat::kEmf:
         WriteEmf(page, name.c_str(), page_index);
         break;
 
-      case OUTPUT_PS2:
-      case OUTPUT_PS3:
+      case OutputFormat::kPs2:
+      case OutputFormat::kPs3:
         WritePS(page, name.c_str(), page_index);
         break;
 #endif
-      case OUTPUT_TEXT:
+      case OutputFormat::kText:
         WriteText(page, name.c_str(), page_index);
         break;
 
-      case OUTPUT_ANNOT:
+      case OutputFormat::kAnnot:
         WriteAnnot(page, name.c_str(), page_index);
         break;
 
-      case OUTPUT_PNG:
+      case OutputFormat::kPng:
         image_file_name =
             WritePng(name.c_str(), page_index, buffer, stride, width, height);
         break;
 
-      case OUTPUT_PPM:
+      case OutputFormat::kPpm:
         image_file_name =
             WritePpm(name.c_str(), page_index, buffer, stride, width, height);
         break;
 
 #ifdef PDF_ENABLE_SKIA
-      case OUTPUT_SKP: {
+      case OutputFormat::kSkp: {
         std::unique_ptr<SkPictureRecorder> recorder(
             reinterpret_cast<SkPictureRecorder*>(
                 FPDF_RenderPageSkp(page, width, height)));
@@ -974,9 +974,9 @@ void ProcessPdf(const std::string& name,
   FORM_DoDocumentOpenAction(form.get());
 
 #if _WIN32
-  if (options.output_format == OUTPUT_PS2)
+  if (options.output_format == OutputFormat::kPs2)
     FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT2);
-  else if (options.output_format == OUTPUT_PS3)
+  else if (options.output_format == OutputFormat::kPs3)
     FPDF_SetPrintMode(FPDF_PRINTMODE_POSTSCRIPT3);
 #endif
 
