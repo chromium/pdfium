@@ -43,7 +43,7 @@ class CPDF_TextObject final : public CPDF_PageObject {
   void GetItemInfo(size_t index, CPDF_TextObjectItem* pInfo) const;
 
   size_t CountChars() const;
-  void GetCharInfo(size_t index, uint32_t* charcode, float* kerning) const;
+  uint32_t GetCharCode(size_t index) const;
   void GetCharInfo(size_t index, CPDF_TextObjectItem* pInfo) const;
   float GetCharWidth(uint32_t charcode) const;
   int CountWords() const;

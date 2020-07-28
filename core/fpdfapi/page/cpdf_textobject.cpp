@@ -66,24 +66,16 @@ size_t CPDF_TextObject::CountChars() const {
   return count;
 }
 
-void CPDF_TextObject::GetCharInfo(size_t index,
-                                  uint32_t* charcode,
-                                  float* kerning) const {
+uint32_t CPDF_TextObject::GetCharCode(size_t index) const {
   size_t count = 0;
-  for (size_t i = 0; i < m_CharCodes.size(); ++i) {
-    if (m_CharCodes[i] == CPDF_Font::kInvalidCharCode)
+  for (uint32_t code : m_CharCodes) {
+    if (code == CPDF_Font::kInvalidCharCode)
       continue;
     if (count++ != index)
       continue;
-    *charcode = m_CharCodes[i];
-    if (i == m_CharCodes.size() - 1 ||
-        m_CharCodes[i + 1] != CPDF_Font::kInvalidCharCode) {
-      *kerning = 0;
-    } else {
-      *kerning = m_CharPos[i];
-    }
-    return;
+    return code;
   }
+  return CPDF_Font::kInvalidCharCode;
 }
 
 void CPDF_TextObject::GetCharInfo(size_t index,
@@ -105,9 +97,7 @@ int CPDF_TextObject::CountWords() const {
   bool bInLatinWord = false;
   int nWords = 0;
   for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
-    uint32_t charcode = CPDF_Font::kInvalidCharCode;
-    float unused_kerning;
-    GetCharInfo(i, &charcode, &unused_kerning);
+    uint32_t charcode = GetCharCode(i);
 
     WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
     uint16_t unicode = 0;
@@ -132,9 +122,7 @@ WideString CPDF_TextObject::GetWordString(int nWordIndex) const {
   int nWords = 0;
   bool bInLatinWord = false;
   for (size_t i = 0, sz = CountChars(); i < sz; ++i) {
-    uint32_t charcode = CPDF_Font::kInvalidCharCode;
-    float unused_kerning;
-    GetCharInfo(i, &charcode, &unused_kerning);
+    uint32_t charcode = GetCharCode(i);
 
     WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
     uint16_t unicode = 0;
