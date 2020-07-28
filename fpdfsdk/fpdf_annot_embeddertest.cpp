@@ -2904,18 +2904,15 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_FocusableAnnotRendering DISABLED_FocusableAnnotRendering
-#else
-#define MAYBE_FocusableAnnotRendering FocusableAnnotRendering
-#endif
-TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
+TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+    static const char kMd5sum[] = "4ca14c670396711194b40ecc2514969b";
+#else
 #if defined(OS_WIN)
     static const char kMd5sum[] = "3877bec7cb3e3144eaa6d10f38bf7a30";
 #elif defined(OS_MACOSX)
@@ -2923,6 +2920,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
 #else
     static const char kMd5sum[] = "40a7354d1f653127bcdac10e15f81654";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     // Check the initial rendering.
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, kMd5sum);
@@ -2942,6 +2940,9 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
   ASSERT_EQ(FPDF_ANNOT_HIGHLIGHT, subtypes[1]);
 
   {
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+    static const char kMd5sum[] = "48cb60b3f9bc364c73582aff3418451e";
+#else
 #if defined(OS_WIN)
     static const char kMd5sum[] = "a30f1bd1cac022d08ceb100df4940b5f";
 #elif defined(OS_MACOSX)
@@ -2949,6 +2950,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
 #else
     static const char kMd5sum[] = "e4c4de73addabf10672c308870e8a4ee";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     // Focus the first link and check the rendering.
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
@@ -2959,6 +2961,9 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
   }
 
   {
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+    static const char kMd5sum[] = "d09869ff0a209daf179da2d7a58142b1";
+#else
 #if defined(OS_WIN)
     static const char kMd5sum[] = "467f5a4db98fcadd5121807ff4e2eb10";
 #elif defined(OS_MACOSX)
@@ -2966,6 +2971,7 @@ TEST_F(FPDFAnnotEmbedderTest, MAYBE_FocusableAnnotRendering) {
 #else
     static const char kMd5sum[] = "65e831885e16b7ecc977cce2e4a27110";
 #endif
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
     // Focus the first highlight and check the rendering.
     ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 4));
     ASSERT_TRUE(annot);
