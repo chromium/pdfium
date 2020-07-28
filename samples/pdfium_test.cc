@@ -709,13 +709,13 @@ FPDF_BOOL NeedToPauseNow(IFSDK_PAUSE* p) {
   return true;
 }
 
-bool RenderPage(const std::string& name,
-                FPDF_DOCUMENT doc,
-                FPDF_FORMHANDLE form,
-                FPDF_FORMFILLINFO_PDFiumTest* form_fill_info,
-                const int page_index,
-                const Options& options,
-                const std::string& events) {
+bool ProcessPage(const std::string& name,
+                 FPDF_DOCUMENT doc,
+                 FPDF_FORMHANDLE form,
+                 FPDF_FORMFILLINFO_PDFiumTest* form_fill_info,
+                 const int page_index,
+                 const Options& options,
+                 const std::string& events) {
   FPDF_PAGE page = GetPageForIndex(form_fill_info, doc, page_index);
   if (!page)
     return false;
@@ -850,11 +850,11 @@ bool RenderPage(const std::string& name,
   return !!bitmap;
 }
 
-void RenderPdf(const std::string& name,
-               const char* buf,
-               size_t len,
-               const Options& options,
-               const std::string& events) {
+void ProcessPdf(const std::string& name,
+                const char* buf,
+                size_t len,
+                const Options& options,
+                const std::string& events) {
   TestLoader loader({buf, len});
 
   FPDF_FILEACCESS file_access = {};
@@ -981,7 +981,7 @@ void RenderPdf(const std::string& name,
 #endif
 
   int page_count = FPDF_GetPageCount(doc.get());
-  int rendered_pages = 0;
+  int processed_pages = 0;
   int bad_pages = 0;
   int first_page = options.pages ? options.first_page : 0;
   int last_page = options.pages ? options.last_page + 1 : page_count;
@@ -997,16 +997,16 @@ void RenderPdf(const std::string& name,
         return;
       }
     }
-    if (RenderPage(name, doc.get(), form.get(), &form_callbacks, i, options,
-                   events)) {
-      ++rendered_pages;
+    if (ProcessPage(name, doc.get(), form.get(), &form_callbacks, i, options,
+                    events)) {
+      ++processed_pages;
     } else {
       ++bad_pages;
     }
   }
 
   FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
-  fprintf(stderr, "Rendered %d pages.\n", rendered_pages);
+  fprintf(stderr, "Processed %d pages.\n", processed_pages);
   if (bad_pages)
     fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);
 }
@@ -1194,7 +1194,7 @@ int main(int argc, const char* argv[]) {
         GetFileContents(filename.c_str(), &file_length);
     if (!file_contents)
       continue;
-    fprintf(stderr, "Rendering PDF file %s.\n", filename.c_str());
+    fprintf(stderr, "Processing PDF file %s.\n", filename.c_str());
 
 #ifdef ENABLE_CALLGRIND
     if (options.callgrind_delimiters)
@@ -1220,7 +1220,7 @@ int main(int argc, const char* argv[]) {
         }
       }
     }
-    RenderPdf(filename, file_contents.get(), file_length, options, events);
+    ProcessPdf(filename, file_contents.get(), file_length, options, events);
 
 #ifdef PDF_ENABLE_V8
     if (!options.disable_javascript) {
