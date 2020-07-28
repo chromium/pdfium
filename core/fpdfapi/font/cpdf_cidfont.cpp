@@ -403,7 +403,8 @@ bool CPDF_CIDFont::Load() {
     if (pMapStream) {
       m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pMapStream);
       m_pStreamAcc->LoadAllDataFiltered();
-    } else if (m_pFontFile && pmap->GetString() == "Identity") {
+    } else if (m_pFontFile && pmap->IsName() &&
+               pmap->GetString() == "Identity") {
       m_bCIDIsGID = true;
     }
   }
