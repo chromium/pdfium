@@ -269,6 +269,7 @@ hooks = [
     # Update the Mac toolchain if necessary.
     'name': 'mac_toolchain',
     'pattern': '.',
+    'condition': 'checkout_mac',
     'action': ['python', 'build/mac_toolchain.py'],
   },
   # Pull clang-format binaries using checked-in hashes.
