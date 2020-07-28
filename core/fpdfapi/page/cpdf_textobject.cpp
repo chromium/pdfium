@@ -45,12 +45,12 @@ void CPDF_TextObject::GetItemInfo(size_t index,
   if (!pFont->IsCIDFont() || !pFont->AsCIDFont()->IsVertWriting())
     return;
 
-  uint16_t CID = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
+  uint16_t cid = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
   pInfo->m_Origin = CFX_PointF(0, pInfo->m_Origin.x);
 
-  short vx;
-  short vy;
-  pFont->AsCIDFont()->GetVertOrigin(CID, vx, vy);
+  int16_t vx;
+  int16_t vy;
+  pFont->AsCIDFont()->GetVertOrigin(cid, vx, vy);
 
   float fontsize = GetFontSize();
   pInfo->m_Origin.x -= fontsize * vx / 1000;
@@ -228,8 +228,8 @@ float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
   if (!bVertWriting)
     return pFont->GetCharWidthF(charcode) * fontsize;
 
-  uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
-  return pCIDFont->GetVertWidth(CID) * fontsize;
+  uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
+  return pCIDFont->GetVertWidth(cid) * fontsize;
 }
 
 RetainPtr<CPDF_Font> CPDF_TextObject::GetFont() const {
@@ -285,10 +285,10 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
       max_x = std::max(max_x, std::max(char_left, char_right));
       charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
     } else {
-      uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
-      short vx;
-      short vy;
-      pCIDFont->GetVertOrigin(CID, vx, vy);
+      uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
+      int16_t vx;
+      int16_t vy;
+      pCIDFont->GetVertOrigin(cid, vx, vy);
       char_rect.left -= vx;
       char_rect.right -= vx;
       char_rect.top -= vy;
@@ -301,7 +301,7 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
       float char_bottom = curpos + char_rect.bottom * fontsize / 1000;
       min_y = std::min(min_y, std::min(char_top, char_bottom));
       max_y = std::max(max_y, std::max(char_top, char_bottom));
-      charwidth = pCIDFont->GetVertWidth(CID) * fontsize / 1000;
+      charwidth = pCIDFont->GetVertWidth(cid) * fontsize / 1000;
     }
     curpos += charwidth;
     if (charcode == ' ' && (!pCIDFont || pCIDFont->GetCharSize(' ') == 1))

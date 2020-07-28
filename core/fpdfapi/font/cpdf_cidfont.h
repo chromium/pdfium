@@ -56,9 +56,9 @@ class CPDF_CIDFont final : public CPDF_Font {
   uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
   uint16_t CIDFromCharCode(uint32_t charcode) const;
-  const uint8_t* GetCIDTransform(uint16_t CID) const;
-  short GetVertWidth(uint16_t CID) const;
-  void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
+  const uint8_t* GetCIDTransform(uint16_t cid) const;
+  int16_t GetVertWidth(uint16_t cid) const;
+  void GetVertOrigin(uint16_t cid, int16_t& vx, int16_t& vy) const;
   int GetCharSize(uint32_t charcode) const;
 
  private:
@@ -83,8 +83,8 @@ class CPDF_CIDFont final : public CPDF_Font {
   bool m_bAdobeCourierStd = false;
   CIDSet m_Charset = CIDSET_UNKNOWN;
   uint16_t m_DefaultWidth = 1000;
-  short m_DefaultVY = 880;
-  short m_DefaultW1 = -1000;
+  int16_t m_DefaultVY = 880;
+  int16_t m_DefaultW1 = -1000;
   std::vector<uint32_t> m_WidthList;
   std::vector<uint32_t> m_VertMetrics;
   FX_RECT m_CharBBox[256];

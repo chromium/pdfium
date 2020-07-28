@@ -201,8 +201,8 @@ void FT_UseCIDCharmap(FXFT_FaceRec* face, int coding) {
     FT_Set_Charmap(face, *FXFT_Get_Face_Charmaps(face));
 }
 
-bool IsMetricForCID(const uint32_t* pEntry, uint16_t CID) {
-  return pEntry[0] <= CID && pEntry[1] >= CID;
+bool IsMetricForCID(const uint32_t* pEntry, uint16_t cid) {
+  return pEntry[0] <= cid && pEntry[1] >= cid;
 }
 
 }  // namespace
@@ -289,13 +289,13 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
     case CIDCODING_CID: {
       if (!m_pCID2UnicodeMap || !m_pCID2UnicodeMap->IsLoaded())
         return 0;
-      uint32_t CID = 0;
-      while (CID < 65536) {
+      uint32_t cid = 0;
+      while (cid < 65536) {
         wchar_t this_unicode =
-            m_pCID2UnicodeMap->UnicodeFromCID(static_cast<uint16_t>(CID));
+            m_pCID2UnicodeMap->UnicodeFromCID(static_cast<uint16_t>(cid));
         if (this_unicode == unicode)
-          return CID;
-        CID++;
+          return cid;
+        cid++;
       }
       break;
     }
@@ -481,8 +481,8 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
     }
   }
   if (!m_pFontFile && m_Charset == CIDSET_JAPAN1) {
-    uint16_t CID = CIDFromCharCode(charcode);
-    const uint8_t* pTransform = GetCIDTransform(CID);
+    uint16_t cid = CIDFromCharCode(charcode);
+    const uint8_t* pTransform = GetCIDTransform(cid);
     if (pTransform && !bVert) {
       CFX_Matrix matrix(CIDTransformToFloat(pTransform[0]),
                         CIDTransformToFloat(pTransform[1]),
@@ -514,28 +514,28 @@ uint32_t CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
   return m_DefaultWidth;
 }
 
-short CPDF_CIDFont::GetVertWidth(uint16_t CID) const {
+int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
   size_t vertsize = m_VertMetrics.size() / 5;
   if (vertsize) {
     const uint32_t* pTable = m_VertMetrics.data();
     for (size_t i = 0; i < vertsize; i++) {
       const uint32_t* pEntry = pTable + (i * 5);
-      if (IsMetricForCID(pEntry, CID))
-        return static_cast<short>(pEntry[2]);
+      if (IsMetricForCID(pEntry, cid))
+        return static_cast<int16_t>(pEntry[2]);
     }
   }
   return m_DefaultW1;
 }
 
-void CPDF_CIDFont::GetVertOrigin(uint16_t CID, short& vx, short& vy) const {
+void CPDF_CIDFont::GetVertOrigin(uint16_t cid, int16_t& vx, int16_t& vy) const {
   size_t vertsize = m_VertMetrics.size() / 5;
   if (vertsize) {
     const uint32_t* pTable = m_VertMetrics.data();
     for (size_t i = 0; i < vertsize; i++) {
       const uint32_t* pEntry = pTable + (i * 5);
-      if (IsMetricForCID(pEntry, CID)) {
-        vx = static_cast<short>(pEntry[3]);
-        vy = static_cast<short>(pEntry[4]);
+      if (IsMetricForCID(pEntry, cid)) {
+        vx = static_cast<int16_t>(pEntry[3]);
+        vy = static_cast<int16_t>(pEntry[4]);
         return;
       }
     }
@@ -545,12 +545,12 @@ void CPDF_CIDFont::GetVertOrigin(uint16_t CID, short& vx, short& vy) const {
   const uint32_t* pList = m_WidthList.data();
   for (size_t i = 0; i < size; i += 3) {
     const uint32_t* pEntry = pList + i;
-    if (IsMetricForCID(pEntry, CID)) {
+    if (IsMetricForCID(pEntry, cid)) {
       dwWidth = pEntry[2];
       break;
     }
   }
-  vx = static_cast<short>(dwWidth) / 2;
+  vx = static_cast<int16_t>(dwWidth) / 2;
   vy = m_DefaultVY;
 }
 
@@ -839,14 +839,14 @@ void CPDF_CIDFont::LoadGB2312() {
   m_bAnsiWidthsFixed = true;
 }
 
-const uint8_t* CPDF_CIDFont::GetCIDTransform(uint16_t CID) const {
+const uint8_t* CPDF_CIDFont::GetCIDTransform(uint16_t cid) const {
   if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
     return nullptr;
 
   const auto* pEnd = g_Japan1_VertCIDs + pdfium::size(g_Japan1_VertCIDs);
   const auto* pTransform = std::lower_bound(
-      g_Japan1_VertCIDs, pEnd, CID,
+      g_Japan1_VertCIDs, pEnd, cid,
       [](const CIDTransform& entry, uint16_t cid) { return entry.cid < cid; });
-  return (pTransform < pEnd && CID == pTransform->cid) ? &pTransform->a
+  return (pTransform < pEnd && cid == pTransform->cid) ? &pTransform->a
                                                        : nullptr;
 }
