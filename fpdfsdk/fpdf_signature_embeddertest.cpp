@@ -81,7 +81,7 @@ TEST_F(FPDFSignatureEmbedderTest, GetByteRange) {
   ASSERT_EQ(kExpectedByteRange, byte_range);
 
   // FPDFSignatureObj_GetByteRange() negative testing.
-  ASSERT_EQ(0U, FPDFSignatureObj_GetContents(nullptr, nullptr, 0));
+  ASSERT_EQ(0U, FPDFSignatureObj_GetByteRange(nullptr, nullptr, 0));
 
   byte_range.resize(2);
   byte_range[0] = 0;
