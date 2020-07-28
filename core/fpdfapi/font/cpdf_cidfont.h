@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -58,7 +59,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   const uint8_t* GetCIDTransform(uint16_t cid) const;
   int16_t GetVertWidth(uint16_t cid) const;
-  void GetVertOrigin(uint16_t cid, int16_t& vx, int16_t& vy) const;
+  CFX_Point16 GetVertOrigin(uint16_t cid) const;
   int GetCharSize(uint32_t charcode) const;
 
  private:

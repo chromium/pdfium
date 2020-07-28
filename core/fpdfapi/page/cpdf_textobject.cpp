@@ -48,13 +48,10 @@ void CPDF_TextObject::GetItemInfo(size_t index,
   uint16_t cid = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
   pInfo->m_Origin = CFX_PointF(0, pInfo->m_Origin.x);
 
-  int16_t vx;
-  int16_t vy;
-  pFont->AsCIDFont()->GetVertOrigin(cid, vx, vy);
-
+  CFX_Point16 vertical_origin = pFont->AsCIDFont()->GetVertOrigin(cid);
   float fontsize = GetFontSize();
-  pInfo->m_Origin.x -= fontsize * vx / 1000;
-  pInfo->m_Origin.y -= fontsize * vy / 1000;
+  pInfo->m_Origin.x -= fontsize * vertical_origin.x / 1000;
+  pInfo->m_Origin.y -= fontsize * vertical_origin.y / 1000;
 }
 
 size_t CPDF_TextObject::CountChars() const {
@@ -286,13 +283,11 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
       charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
     } else {
       uint16_t cid = pCIDFont->CIDFromCharCode(charcode);
-      int16_t vx;
-      int16_t vy;
-      pCIDFont->GetVertOrigin(cid, vx, vy);
-      char_rect.left -= vx;
-      char_rect.right -= vx;
-      char_rect.top -= vy;
-      char_rect.bottom -= vy;
+      CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
+      char_rect.left -= vertical_origin.x;
+      char_rect.right -= vertical_origin.x;
+      char_rect.top -= vertical_origin.y;
+      char_rect.bottom -= vertical_origin.y;
       min_x = std::min(
           min_x, static_cast<float>(std::min(char_rect.left, char_rect.right)));
       max_x = std::max(

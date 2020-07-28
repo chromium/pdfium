@@ -527,16 +527,15 @@ int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
   return m_DefaultW1;
 }
 
-void CPDF_CIDFont::GetVertOrigin(uint16_t cid, int16_t& vx, int16_t& vy) const {
+CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
   size_t vertsize = m_VertMetrics.size() / 5;
   if (vertsize) {
     const uint32_t* pTable = m_VertMetrics.data();
     for (size_t i = 0; i < vertsize; i++) {
       const uint32_t* pEntry = pTable + (i * 5);
       if (IsMetricForCID(pEntry, cid)) {
-        vx = static_cast<int16_t>(pEntry[3]);
-        vy = static_cast<int16_t>(pEntry[4]);
-        return;
+        return {static_cast<int16_t>(pEntry[3]),
+                static_cast<int16_t>(pEntry[4])};
       }
     }
   }
@@ -550,8 +549,7 @@ void CPDF_CIDFont::GetVertOrigin(uint16_t cid, int16_t& vx, int16_t& vy) const {
       break;
     }
   }
-  vx = static_cast<int16_t>(dwWidth) / 2;
-  vy = m_DefaultVY;
+  return {static_cast<int16_t>(dwWidth) / 2, m_DefaultVY};
 }
 
 int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {

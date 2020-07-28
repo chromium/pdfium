@@ -55,6 +55,7 @@ class CFX_PTemplate {
   BaseType x;
   BaseType y;
 };
+using CFX_Point16 = CFX_PTemplate<int16_t>;
 using CFX_Point = CFX_PTemplate<int32_t>;
 using CFX_PointF = CFX_PTemplate<float>;
 

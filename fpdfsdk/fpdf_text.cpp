@@ -248,11 +248,9 @@ FPDFText_GetLooseCharBox(FPDF_TEXTPAGE text_page, int index, FS_RECTF* rect) {
       CPDF_CIDFont* pCIDFont = charinfo.m_pTextObj->GetFont()->AsCIDFont();
       uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.m_CharCode);
 
-      int16_t vx;
-      int16_t vy;
-      pCIDFont->GetVertOrigin(cid, vx, vy);
-      double offsetx = (vx - 500) * font_size / 1000.0;
-      double offsety = vy * font_size / 1000.0;
+      CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
+      double offsetx = (vertical_origin.x - 500) * font_size / 1000.0;
+      double offsety = vertical_origin.y * font_size / 1000.0;
       int16_t vert_width = pCIDFont->GetVertWidth(cid);
       double height = vert_width * font_size / 1000.0;
 
