@@ -75,6 +75,25 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
                               int* buffer,
                               unsigned long length);
 
+// Experimental API.
+// Function: FPDFSignatureObj_GetSubFilter
+//          Get the encoding of the value of a signature object.
+// Parameters:
+//          signature   -   Handle to the signature object. Returned by
+//                          FPDF_GetSignatureObject().
+//          buffer      -   The address of a buffer that receives the encoding.
+//          length      -   The size, in bytes, of |buffer|.
+// Return value:
+//          Returns the number of bytes in the encoding name (including the
+//          trailing NUL character) on success, 0 on error.
+//
+// The |buffer| is always encoded in 7-bit ASCII. If |length| is less than the
+// returned length, or |buffer| is NULL, |buffer| will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
+                              char* buffer,
+                              unsigned long length);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

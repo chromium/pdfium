@@ -92,3 +92,39 @@ TEST_F(FPDFSignatureEmbedderTest, GetByteRange) {
   EXPECT_EQ(0, byte_range[0]);
   EXPECT_EQ(1, byte_range[1]);
 }
+
+TEST_F(FPDFSignatureEmbedderTest, GetSubFilter) {
+  ASSERT_TRUE(OpenDocument("two_signatures.pdf"));
+  FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
+  EXPECT_NE(nullptr, signature);
+
+  // FPDFSignatureObj_GetSubFilter() positive testing.
+  unsigned long size = FPDFSignatureObj_GetSubFilter(signature, nullptr, 0);
+  const char kExpectedSubFilter[] = "ETSI.CAdES.detached";
+  ASSERT_EQ(sizeof(kExpectedSubFilter), size);
+  std::vector<char> sub_filter(size);
+  ASSERT_EQ(size,
+            FPDFSignatureObj_GetSubFilter(signature, sub_filter.data(), size));
+  ASSERT_EQ(0, memcmp(kExpectedSubFilter, sub_filter.data(), size));
+
+  // FPDFSignatureObj_GetSubFilter() negative testing.
+  ASSERT_EQ(0U, FPDFSignatureObj_GetSubFilter(nullptr, nullptr, 0));
+
+  sub_filter.resize(2);
+  sub_filter[0] = 'x';
+  sub_filter[1] = '\0';
+  size = FPDFSignatureObj_GetSubFilter(signature, sub_filter.data(),
+                                       sub_filter.size());
+  ASSERT_EQ(sizeof(kExpectedSubFilter), size);
+  EXPECT_EQ('x', sub_filter[0]);
+  EXPECT_EQ('\0', sub_filter[1]);
+}
+
+TEST_F(FPDFSignatureEmbedderTest, GetSubFilterNoKeyExists) {
+  ASSERT_TRUE(OpenDocument("signature_no_sub_filter.pdf"));
+  FPDF_SIGNATURE signature = FPDF_GetSignatureObject(document(), 0);
+  EXPECT_NE(nullptr, signature);
+
+  // FPDFSignatureObj_GetSubFilter() negative testing: no SubFilter
+  ASSERT_EQ(0U, FPDFSignatureObj_GetSubFilter(signature, nullptr, 0));
+}
