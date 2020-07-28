@@ -39,13 +39,7 @@ TEST_F(FPDFParserDecodeEmbedderTest, Bug_555784) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_Bug_455199 DISABLED_Bug_455199
-#else
-#define MAYBE_Bug_455199 Bug_455199
-#endif
-TEST_F(FPDFParserDecodeEmbedderTest, MAYBE_Bug_455199) {
+TEST_F(FPDFParserDecodeEmbedderTest, Bug_455199) {
   // Tests object numbers with a value > 01000000.
   // Should open successfully.
   ASSERT_TRUE(OpenDocument("bug_455199.pdf"));
