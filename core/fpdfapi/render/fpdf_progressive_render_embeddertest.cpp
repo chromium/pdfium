@@ -372,7 +372,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
 #if defined(OS_MACOSX)
   static constexpr char kMD5ContentWithHighlightFill[] =
       "a820afec9b99d3d3f2e9e9382bbad7c1";
-#else  // OS_WIN & OS_LINUX
+#else
   static constexpr char kMD5ContentWithHighlightFill[] =
       "a08a0639f89446f66f3689ee8e08b9fe";
 #endif
@@ -395,7 +395,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 #if defined(OS_MACOSX)
   static constexpr char kMD5ContentWithHighlight[] =
       "8837bea0b3520164b1784e513c882a2d";
-#else  // OS_WIN & OS_LINUX
+#else
   static constexpr char kMD5ContentWithHighlight[] =
       "3dd8c02f5c06bac85e0d2c8bf37d1dc4";
 #endif
@@ -413,7 +413,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 #if defined(OS_WIN)
   static constexpr char kMD5ContentWithInk[] =
       "1933e4ab19b9108ddcecd1a6abb20c85";
-#else  // OS_MACOSX & OS_LINUX
+#else
   static constexpr char kMD5ContentWithInk[] =
       "797bce7dc6c50ee86b095405df9fe5aa";
 #endif
