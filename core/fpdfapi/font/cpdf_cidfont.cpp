@@ -346,24 +346,27 @@ bool CPDF_CIDFont::Load() {
     m_bAdobeCourierStd = true;
   }
 
-  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
+  const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding)
     return false;
 
   ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
   m_bType1 = (subtype == "CIDFontType0");
 
+  if (!pEncoding->IsName() && !pEncoding->IsStream())
+    return false;
+
   CPDF_CMapManager* manager = CPDF_FontGlobals::GetInstance()->GetCMapManager();
-  if (pEncoding->IsName()) {
-    ByteString cmap = pEncoding->GetString();
-    m_pCMap = manager->GetPredefinedCMap(cmap);
-  } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  const CPDF_Stream* pEncodingStream = pEncoding->AsStream();
+  if (pEncodingStream) {
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pEncodingStream);
     pAcc->LoadAllDataFiltered();
     pdfium::span<const uint8_t> span = pAcc->GetSpan();
     m_pCMap = pdfium::MakeRetain<CPDF_CMap>(span);
   } else {
-    return false;
+    ASSERT(pEncoding->IsName());
+    ByteString cmap = pEncoding->GetString();
+    m_pCMap = manager->GetPredefinedCMap(cmap);
   }
 
   const CPDF_Dictionary* pFontDesc = pCIDFontDict->GetDictFor("FontDescriptor");
@@ -396,8 +399,9 @@ bool CPDF_CIDFont::Load() {
 
   const CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
   if (pmap) {
-    if (const CPDF_Stream* pStream = pmap->AsStream()) {
-      m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+    const CPDF_Stream* pMapStream = pmap->AsStream();
+    if (pMapStream) {
+      m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pMapStream);
       m_pStreamAcc->LoadAllDataFiltered();
     } else if (m_pFontFile && pmap->GetString() == "Identity") {
       m_bCIDIsGID = true;
@@ -772,7 +776,8 @@ void CPDF_CIDFont::LoadMetricsArray(const CPDF_Array* pArray,
     if (!pObj)
       continue;
 
-    if (const CPDF_Array* pObjArray = pObj->AsArray()) {
+    const CPDF_Array* pObjArray = pObj->AsArray();
+    if (pObjArray) {
       if (width_status != 1)
         return;
       if (first_code >
