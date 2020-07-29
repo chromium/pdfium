@@ -11,6 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_object_walker.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "third_party/base/stl_util.h"
 
 CPDF_ObjectAvail::CPDF_ObjectAvail(
     const RetainPtr<CPDF_ReadValidator>& validator,
@@ -147,5 +148,5 @@ bool CPDF_ObjectAvail::ExcludeObject(const CPDF_Object* object) const {
 }
 
 bool CPDF_ObjectAvail::HasObjectParsed(uint32_t obj_num) const {
-  return parsed_objnums_.count(obj_num) > 0;
+  return pdfium::Contains(parsed_objnums_, obj_num);
 }

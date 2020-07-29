@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -199,7 +200,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefStream() {
 }
 
 void CPDF_CrossRefAvail::AddCrossRefForCheck(FX_FILESIZE crossref_offset) {
-  if (registered_crossrefs_.count(crossref_offset))
+  if (pdfium::Contains(registered_crossrefs_, crossref_offset))
     return;
 
   cross_refs_for_check_.push(crossref_offset);

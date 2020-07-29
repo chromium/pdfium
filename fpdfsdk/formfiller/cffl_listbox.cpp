@@ -14,6 +14,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
+#include "third_party/base/stl_util.h"
 
 CFFL_ListBox::CFFL_ListBox(CPDFSDK_FormFillEnvironment* pApp,
                            CPDFSDK_Widget* pWidget)
@@ -91,7 +92,7 @@ bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
     size_t nSelCount = 0;
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; ++i) {
       if (pListBox->IsItemSelected(i)) {
-        if (m_OriginSelections.count(i) == 0)
+        if (!pdfium::Contains(m_OriginSelections, i))
           return true;
 
         ++nSelCount;
