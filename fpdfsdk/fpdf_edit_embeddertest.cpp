@@ -1892,13 +1892,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_PathOnTopOfText) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_EditOverExistingContent DISABLED_EditOverExistingContent
-#else
-#define MAYBE_EditOverExistingContent EditOverExistingContent
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_EditOverExistingContent) {
+TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
   // Load document with existing content
   ASSERT_TRUE(OpenDocument("bug_717.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1916,8 +1910,13 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kOriginalChecksum[] = "1e82fbdd21490cee9d3479fe6125af67";
+#else
+  const char kOriginalChecksum[] = "ad04e5bd0f471a9a564fb034bd0fb073";
+#endif
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  CompareBitmap(bitmap.get(), 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
+  CompareBitmap(bitmap.get(), 612, 792, kOriginalChecksum);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   // Now save the result, closing the page and document
@@ -1926,8 +1925,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_EditOverExistingContent) {
 
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
-  VerifySavedRendering(saved_page, 612, 792,
-                       "ad04e5bd0f471a9a564fb034bd0fb073");
+  VerifySavedRendering(saved_page, 612, 792, kOriginalChecksum);
 
   ClearString();
   // Add another opaque rectangle on top of the existing content
@@ -1941,10 +1939,14 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_EditOverExistingContent) {
   EXPECT_TRUE(FPDFPageObj_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(saved_page, green_rect2);
-  const char kLastMD5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  const char kLastChecksum[] = "8705d023e5fec3499d1e30cf2bcc5dc1";
+#else
+  const char kLastChecksum[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
+#endif
   {
     ScopedFPDFBitmap new_bitmap = RenderSavedPage(saved_page);
-    CompareBitmap(new_bitmap.get(), 612, 792, kLastMD5);
+    CompareBitmap(new_bitmap.get(), 612, 792, kLastChecksum);
   }
   EXPECT_TRUE(FPDFPage_GenerateContent(saved_page));
 
@@ -1955,7 +1957,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_EditOverExistingContent) {
   CloseSavedDocument();
 
   // Render the saved result
-  VerifySavedDocument(612, 792, kLastMD5);
+  VerifySavedDocument(612, 792, kLastChecksum);
 }
 
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
