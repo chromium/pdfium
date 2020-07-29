@@ -124,8 +124,8 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   }
 
   const CFWL_App* GetOwnerApp() const { return m_pOwnerApp.Get(); }
-  uint32_t GetEventKey() const { return m_nEventKey; }
-  void SetEventKey(uint32_t key) { m_nEventKey = key; }
+  uint64_t GetEventKey() const { return m_nEventKey; }
+  void SetEventKey(uint64_t key) { m_nEventKey = key; }
 
   AdapterIface* GetAdapterIface() const { return m_pAdapterIface; }
   void SetAdapterIface(AdapterIface* pItem) { m_pAdapterIface = pItem; }
@@ -183,7 +183,7 @@ class CFWL_Widget : public Observable, public IFWL_WidgetDelegate {
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 
-  uint32_t m_nEventKey = 0;
+  uint64_t m_nEventKey = 0;
   AdapterIface* m_pAdapterIface = nullptr;
   UnownedPtr<IFWL_WidgetDelegate> m_pDelegate;
 };

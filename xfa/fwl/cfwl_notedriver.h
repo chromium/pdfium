@@ -49,7 +49,7 @@ class CFWL_NoteDriver {
   void MouseSecondary(CFWL_Message* pMsg);
   CFWL_Widget* GetMessageForm(CFWL_Widget* pDstTarget);
 
-  std::map<uint32_t, std::unique_ptr<CFWL_EventTarget>> m_eventTargets;
+  std::map<uint64_t, std::unique_ptr<CFWL_EventTarget>> m_eventTargets;
   UnownedPtr<CFWL_Widget> m_pHover;
   UnownedPtr<CFWL_Widget> m_pFocus;
   UnownedPtr<CFWL_Widget> m_pGrab;
