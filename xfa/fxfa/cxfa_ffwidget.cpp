@@ -621,7 +621,7 @@ CXFA_LayoutItem* CXFA_FFWidget::GetParent() {
   if (!pParentNode)
     return nullptr;
 
-  CXFA_LayoutProcessor* layout = GetDocView()->GetXFALayout();
+  CXFA_LayoutProcessor* layout = GetDocView()->GetLayoutProcessor();
   return layout->GetLayoutItem(pParentNode);
 }
 

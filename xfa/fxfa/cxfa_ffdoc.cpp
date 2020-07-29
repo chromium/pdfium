@@ -118,8 +118,9 @@ CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
-  return m_DocView && m_DocView->GetXFALayout() == pLayout ? m_DocView.get()
-                                                           : nullptr;
+  return m_DocView && m_DocView->GetLayoutProcessor() == pLayout
+             ? m_DocView.get()
+             : nullptr;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView() {

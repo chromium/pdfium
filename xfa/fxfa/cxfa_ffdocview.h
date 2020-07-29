@@ -69,7 +69,7 @@ class CXFA_FFDocView {
   CXFA_FFWidget* GetWidgetForNode(CXFA_Node* node);
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
                                  CXFA_FFWidget* pRefWidget);
-  CXFA_LayoutProcessor* GetXFALayout() const;
+  CXFA_LayoutProcessor* GetLayoutProcessor() const;
   void OnPageEvent(CXFA_ViewLayoutItem* pSender, uint32_t dwEvent);
   void LockUpdate() { m_iLock++; }
   void UnlockUpdate() { m_iLock--; }
@@ -101,8 +101,6 @@ class CXFA_FFDocView {
   bool m_bInLayoutStatus = false;
   std::vector<WideString> m_NullTestMsgArray;
 
-  void ResetLayoutProcessor() { m_pXFADocLayout.Release(); }
-
  private:
   bool RunEventLayoutReady();
   void RunBindItems();
@@ -121,7 +119,6 @@ class CXFA_FFDocView {
 
   UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
-  UnownedPtr<CXFA_LayoutProcessor> m_pXFADocLayout;
   UnownedPtr<CXFA_Node> m_pFocusNode;
   ObservedPtr<CXFA_FFWidget> m_pFocusWidget;
   std::deque<CXFA_Node*> m_ValidateNodes;

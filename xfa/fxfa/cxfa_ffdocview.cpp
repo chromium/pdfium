@@ -72,9 +72,8 @@ int32_t CXFA_FFDocView::StartLayout() {
   m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Start;
   m_pDoc->GetXFADoc()->DoProtoMerge();
   m_pDoc->GetXFADoc()->DoDataMerge();
-  m_pXFADocLayout = GetXFALayout();
 
-  int32_t iStatus = m_pXFADocLayout->StartLayout(false);
+  int32_t iStatus = GetLayoutProcessor()->StartLayout(false);
   if (iStatus < 0)
     return iStatus;
 
@@ -93,7 +92,7 @@ int32_t CXFA_FFDocView::StartLayout() {
 }
 
 int32_t CXFA_FFDocView::DoLayout() {
-  int32_t iStatus = m_pXFADocLayout->DoLayout();
+  int32_t iStatus = GetLayoutProcessor()->DoLayout();
   if (iStatus != 100)
     return iStatus;
 
@@ -213,17 +212,20 @@ void CXFA_FFDocView::UpdateUIDisplay(CXFA_Node* pNode, CXFA_FFWidget* pExcept) {
 }
 
 int32_t CXFA_FFDocView::CountPageViews() const {
-  return m_pXFADocLayout ? m_pXFADocLayout->CountPages() : 0;
+  CXFA_LayoutProcessor* pProcessor = GetLayoutProcessor();
+  return pProcessor ? pProcessor->CountPages() : 0;
 }
 
 CXFA_FFPageView* CXFA_FFDocView::GetPageView(int32_t nIndex) const {
-  if (!m_pXFADocLayout)
+  CXFA_LayoutProcessor* pProcessor = GetLayoutProcessor();
+  if (!pProcessor)
     return nullptr;
-  auto* pPage = m_pXFADocLayout->GetPage(nIndex);
+
+  auto* pPage = pProcessor->GetPage(nIndex);
   return pPage ? pPage->GetPageView() : nullptr;
 }
 
-CXFA_LayoutProcessor* CXFA_FFDocView::GetXFALayout() const {
+CXFA_LayoutProcessor* CXFA_FFDocView::GetLayoutProcessor() const {
   return CXFA_LayoutProcessor::FromDocument(m_pDoc->GetXFADoc());
 }
 
@@ -270,7 +272,8 @@ void CXFA_FFDocView::ResetNode(CXFA_Node* pNode) {
 }
 
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
-  return GetFFWidget(ToContentLayoutItem(GetXFALayout()->GetLayoutItem(node)));
+  return GetFFWidget(
+      ToContentLayoutItem(GetLayoutProcessor()->GetLayoutItem(node)));
 }
 
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
@@ -471,9 +474,10 @@ void CXFA_FFDocView::InvalidateRect(CXFA_FFPageView* pPageView,
 bool CXFA_FFDocView::RunLayout() {
   LockUpdate();
   m_bInLayoutStatus = true;
-  if (!m_pXFADocLayout->IncrementLayout() &&
-      m_pXFADocLayout->StartLayout(false) < 100) {
-    m_pXFADocLayout->DoLayout();
+
+  CXFA_LayoutProcessor* pProcessor = GetLayoutProcessor();
+  if (!pProcessor->IncrementLayout() && pProcessor->StartLayout(false) < 100) {
+    pProcessor->DoLayout();
     UnlockUpdate();
     m_bInLayoutStatus = false;
     m_pDoc->GetDocEnvironment()->PageViewEvent(nullptr,
