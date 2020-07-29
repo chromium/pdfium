@@ -90,11 +90,7 @@ namespace {
 
 bool g_bLibraryInitialized = false;
 
-const CPDF_Object* GetXFAEntryFromDocument(FPDF_DOCUMENT document) {
-  const CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
-  if (!doc)
-    return nullptr;
-
+const CPDF_Object* GetXFAEntryFromDocument(const CPDF_Document* doc) {
   const CPDF_Dictionary* root = doc->GetRoot();
   if (!root)
     return nullptr;
@@ -1181,11 +1177,12 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetXFAPacketCount(FPDF_DOCUMENT document) {
-  if (!document)
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc)
     return -1;
 
   return pdfium::CollectionSize<int>(
-      GetXFAPackets(GetXFAEntryFromDocument(document)));
+      GetXFAPackets(GetXFAEntryFromDocument(doc)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -1193,11 +1190,12 @@ FPDF_GetXFAPacketName(FPDF_DOCUMENT document,
                       int index,
                       void* buffer,
                       unsigned long buflen) {
-  if (!document || index < 0)
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || index < 0)
     return 0;
 
   std::vector<XFAPacket> xfa_packets =
-      GetXFAPackets(GetXFAEntryFromDocument(document));
+      GetXFAPackets(GetXFAEntryFromDocument(doc));
   if (static_cast<size_t>(index) >= xfa_packets.size())
     return 0;
 
@@ -1211,11 +1209,12 @@ FPDF_GetXFAPacketContent(FPDF_DOCUMENT document,
                          void* buffer,
                          unsigned long buflen,
                          unsigned long* out_buflen) {
-  if (!document || index < 0 || !out_buflen)
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || index < 0 || !out_buflen)
     return false;
 
   std::vector<XFAPacket> xfa_packets =
-      GetXFAPackets(GetXFAEntryFromDocument(document));
+      GetXFAPackets(GetXFAEntryFromDocument(doc));
   if (static_cast<size_t>(index) >= xfa_packets.size())
     return false;
 
