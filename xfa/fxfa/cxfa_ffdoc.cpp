@@ -96,7 +96,6 @@ CXFA_FFDoc::~CXFA_FFDoc() {
   m_pNotify.reset();
   m_pPDFFontMgr.reset();
   m_HashToDibDpiMap.clear();
-  m_pApp->ClearEventTargets();
 }
 
 bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {

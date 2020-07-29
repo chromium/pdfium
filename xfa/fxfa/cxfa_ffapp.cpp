@@ -66,7 +66,3 @@ CFWL_WidgetMgr::AdapterIface* CXFA_FFApp::GetWidgetMgrAdapter() {
 TimerHandlerIface* CXFA_FFApp::GetTimerHandler() {
   return m_pProvider->GetTimerHandler();
 }
-
-void CXFA_FFApp::ClearEventTargets() {
-  m_pFWLApp->GetNoteDriver()->ClearEventTargets();
-}

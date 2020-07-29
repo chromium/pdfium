@@ -280,12 +280,3 @@ CFWL_Widget* CFWL_NoteDriver::GetMessageForm(CFWL_Widget* pDstTarget) {
   CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
   return pWidgetMgr->GetSystemFormWidget(pDstTarget);
 }
-
-void CFWL_NoteDriver::ClearEventTargets() {
-  auto it = m_eventTargets.begin();
-  while (it != m_eventTargets.end()) {
-    auto old = it++;
-    if (!old->second->IsValid())
-      m_eventTargets.erase(old);
-  }
-}

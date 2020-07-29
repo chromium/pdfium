@@ -38,8 +38,6 @@ class CXFA_FFApp : public CFWL_App::AdapterIface {
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   CXFA_FontMgr* GetXFAFontMgr() { return &m_pFontMgr; }
 
-  void ClearEventTargets();
-
  private:
   UnownedPtr<IXFA_AppProvider> const m_pProvider;
 

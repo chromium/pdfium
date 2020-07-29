@@ -25,10 +25,8 @@ class CFWL_NoteDriver {
   ~CFWL_NoteDriver();
 
   void SendEvent(CFWL_Event* pNote);
-
   void RegisterEventTarget(CFWL_Widget* pListener, CFWL_Widget* pEventSource);
   void UnregisterEventTarget(CFWL_Widget* pListener);
-  void ClearEventTargets();
 
   CFWL_Widget* GetFocus() const { return m_pFocus.Get(); }
   bool SetFocus(CFWL_Widget* pFocus);
