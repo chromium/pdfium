@@ -197,8 +197,8 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
                                                         FPDF_DEST dest);
 
+// Experimental API.
 // Get the view (fit type) specified by |dest|.
-// Experimental API. Subject to change.
 //
 //   dest         - handle to the destination.
 //   pNumParams   - receives the number of view parameters, which is at most 4.
@@ -330,8 +330,8 @@ FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
                        int quad_index,
                        FS_QUADPOINTSF* quad_points);
 
+// Experimental API.
 // Get the file identifer defined in the trailer of |document|.
-// Experimental API. Subject to change.
 //
 //   document - handle to the document.
 //   id_type  - the file identifier type to retrieve.

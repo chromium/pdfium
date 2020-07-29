@@ -297,9 +297,10 @@ typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
                                                          const wchar_t* text,
                                                          size_t text_length);
 
+// Experimental API.
 // Function: FPDF_SetTypefaceAccessibleFunc
 //          Set the function pointer that makes GDI fonts available in sandboxed
-//          environments. Experimental API.
+//          environments.
 // Parameters:
 //          func -   A function pointer. See description above.
 // Return value:
@@ -307,9 +308,9 @@ typedef void (*PDFiumEnsureTypefaceCharactersAccessible)(const LOGFONT* font,
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
 
+// Experimental API.
 // Function: FPDF_SetPrintTextWithGDI
 //          Set whether to use GDI to draw fonts when printing on Windows.
-//          Experimental API.
 // Parameters:
 //          use_gdi -   Set to true to enable printing text with GDI.
 // Return value:
@@ -317,9 +318,9 @@ FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
 FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
+// Experimental API.
 // Function: FPDF_SetPrintMode
 //          Set printing mode when printing on Windows.
-//          Experimental API.
 // Parameters:
 //          mode - FPDF_PRINTMODE_EMF to output EMF (default)
 //                 FPDF_PRINTMODE_TEXTONLY to output text only (for charstream
@@ -385,9 +386,9 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password);
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password);
 
+// Experimental API.
 // Function: FPDF_LoadMemDocument64
 //          Open and load a PDF document from memory.
-//          Experimental API.
 // Parameters:
 //          data_buf    -   Pointer to a buffer containing the PDF document.
 //          size        -   Number of bytes in the PDF document.
@@ -590,9 +591,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 //          function is not defined.
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetLastError();
 
+// Experimental API.
 // Function: FPDF_DocumentHasValidCrossReferenceTable
 //          Whether the document's cross reference table is valid or not.
-//          Experimental API.
 // Parameters:
 //          document    -   Handle to a document. Returned by FPDF_LoadDocument.
 // Return value:
@@ -1193,9 +1194,9 @@ FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document);
 FPDF_EXPORT FPDF_PAGERANGE FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document);
 
+// Experimental API.
 // Function: FPDF_VIEWERREF_GetPrintPageRangeCount
 //          Returns the number of elements in a FPDF_PAGERANGE.
-//          Experimental API.
 // Parameters:
 //          pagerange   -   Handle to the page range.
 // Return value:
@@ -1203,9 +1204,9 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document);
 FPDF_EXPORT size_t FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRangeCount(FPDF_PAGERANGE pagerange);
 
+// Experimental API.
 // Function: FPDF_VIEWERREF_GetPrintPageRangeElement
 //          Returns an element from a FPDF_PAGERANGE.
-//          Experimental API.
 // Parameters:
 //          pagerange   -   Handle to the page range.
 //          index       -   Index of the element.

@@ -75,8 +75,9 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
                               void* buffer,
                               unsigned long buflen);
 
+// Experimental API.
 // Function: FPDF_StructElement_GetID
-//          Get the ID for a given element. Experimental API.
+//          Get the ID for a given element.
 // Parameters:
 //          struct_element -   Handle to the struct element.
 //          buffer         -   A buffer for output the ID string. May be NULL.
@@ -95,9 +96,9 @@ FPDF_StructElement_GetID(FPDF_STRUCTELEMENT struct_element,
                          void* buffer,
                          unsigned long buflen);
 
+// Experimental API.
 // Function: FPDF_StructElement_GetLang
 //          Get the case-insensitive IETF BCP 47 language code for an element.
-//          Experimental API.
 // Parameters:
 //          struct_element -   Handle to the struct element.
 //          buffer         -   A buffer for output the lang string. May be NULL.
@@ -116,9 +117,9 @@ FPDF_StructElement_GetLang(FPDF_STRUCTELEMENT struct_element,
                            void* buffer,
                            unsigned long buflen);
 
+// Experimental API.
 // Function: FPDF_StructElement_GetStringAttribute
 //          Get a struct element attribute of type "name" or "string".
-//          Experimental API.
 // Parameters:
 //          struct_element -   Handle to the struct element.
 //          attr_name      -   The name of the attribute to retrieve.
