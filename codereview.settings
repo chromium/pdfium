@@ -1,4 +1,5 @@
 # This file is used by git cl to get repository specific information.
+BUG_PREFIX: pdfium:
 CC_LIST: pdfium-reviews@googlegroups.com
 CODE_REVIEW_SERVER: codereview.chromium.org
 GERRIT_HOST: True
