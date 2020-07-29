@@ -10,8 +10,8 @@
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_SKIA
-#include "third_party/skia/include/core/SkPictureRecorder.h"
-#include "third_party/skia/include/core/SkStream.h"
+#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
+#include "third_party/skia/include/core/SkStream.h"  // nogncheck
 #endif
 
 std::string WritePpm(const char* pdf_name,
