@@ -852,10 +852,10 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  const int page_width = static_cast<int>(FPDF_GetPageWidthF(page));
-  const int page_height = static_cast<int>(FPDF_GetPageHeightF(page));
-  EXPECT_EQ(200, page_width);
-  EXPECT_EQ(300, page_height);
+  const float page_width = FPDF_GetPageWidthF(page);
+  const float page_height = FPDF_GetPageHeightF(page);
+  EXPECT_FLOAT_EQ(200, page_width);
+  EXPECT_FLOAT_EQ(300, page_height);
 
   using pdfium::kRectanglesChecksum;
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
@@ -918,8 +918,8 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
                                  mirror_vert_matrix, page_rect, kMirrorVertMD5);
 
   // Tests rendering to a larger bitmap
-  const int bitmap_width = page_width * 2;
-  const int bitmap_height = page_height * 2;
+  const float bitmap_width = page_width * 2;
+  const float bitmap_height = page_height * 2;
 
   // Render using an identity matrix and the whole bitmap area as clipping rect.
   FS_RECTF bitmap_rect{0, 0, bitmap_width, bitmap_height};
@@ -948,8 +948,8 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
 
   // On the larger bitmap, apply 90 degree rotation to a bitmap with the
   // appropriate dimensions.
-  const int landscape_bitmap_width = bitmap_height;
-  const int landscape_bitmap_height = bitmap_width;
+  const float landscape_bitmap_width = bitmap_height;
+  const float landscape_bitmap_height = bitmap_width;
   FS_RECTF landscape_bitmap_rect{0, 0, landscape_bitmap_width,
                                  landscape_bitmap_height};
   FS_MATRIX landscape_rotate_90_scale_2_matrix{
@@ -962,7 +962,8 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   // On the larger bitmap, apply 45 degree rotation to a bitmap with the
   // appropriate dimensions.
   const float sqrt2 = 1.41421356f;
-  const int diagonal_bitmap_size = ceil((bitmap_width + bitmap_height) / sqrt2);
+  const float diagonal_bitmap_size =
+      ceil((bitmap_width + bitmap_height) / sqrt2);
   FS_RECTF diagonal_bitmap_rect{0, 0, diagonal_bitmap_size,
                                 diagonal_bitmap_size};
   FS_MATRIX rotate_45_scale_2_matrix{
@@ -978,7 +979,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   const int tile_size = 50;
   const int tile_x = 2;
   const int tile_y = 1;
-  int tile_bitmap_size = scale * tile_size;
+  float tile_bitmap_size = scale * tile_size;
   FS_RECTF tile_bitmap_rect{0, 0, tile_bitmap_size, tile_bitmap_size};
   FS_MATRIX tile_2_1_matrix{scale,
                             0,

@@ -549,7 +549,7 @@ CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
       break;
     }
   }
-  return {static_cast<int16_t>(dwWidth) / 2, m_DefaultVY};
+  return {static_cast<int16_t>(dwWidth / 2), m_DefaultVY};
 }
 
 int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
