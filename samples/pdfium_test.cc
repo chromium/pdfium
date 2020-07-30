@@ -66,7 +66,7 @@
 #define R_OK 4
 #endif
 
-// wordexp is a POSIX function that is only available on OSX and non-Android
+// wordexp is a POSIX function that is only available on macOS and non-Android
 // Linux platforms.
 #if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
 #define WORDEXP_AVAILABLE

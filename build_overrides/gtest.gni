@@ -8,7 +8,7 @@ gtest_include_multiprocess = false
 # Exclude support for platform-specific operations across unit tests.
 gtest_include_platform_test = false
 
-# Exclude support for testing Objective C code on OS X and iOS.
+# Exclude support for testing Objective C code on macOS and iOS.
 gtest_include_objc_support = false
 
 # Exclude support for flushing coverage files on iOS.
