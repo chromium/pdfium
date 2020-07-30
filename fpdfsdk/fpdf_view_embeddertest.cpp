@@ -1235,14 +1235,19 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
-// FPDF_NO_NATIVETEXT flag disables native text support on macOS, therefore
+// FPDF_NO_NATIVETEXT flag only disables native text support on macOS, therefore
 // Windows and Linux rendering results remain the same as rendering with no
-// flag, while the expected hash value for macOS rendering result is no longer
-// "41ada106c6133b52ea45280eaaa38ae1"(hash value for rendering with no flag).
+// flags, while the macOS rendering result doesn't.
 #if defined(OS_WIN)
+  static const char kOriginalChecksum[] = "4671643caf99a1f4b6c0117ccb7bc9e7";
   static const char kNoNativeTextChecksum[] =
       "4671643caf99a1f4b6c0117ccb7bc9e7";
+#elif defined(OS_APPLE)
+  static const char kOriginalChecksum[] = "41ada106c6133b52ea45280eaaa38ae1";
+  static const char kNoNativeTextChecksum[] =
+      "d64d6b0fc39a8cefc43de39da5c60b17";
 #else
+  static const char kOriginalChecksum[] = "d64d6b0fc39a8cefc43de39da5c60b17";
   static const char kNoNativeTextChecksum[] =
       "d64d6b0fc39a8cefc43de39da5c60b17";
 #endif
@@ -1251,6 +1256,7 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
+  TestRenderPageBitmapWithFlags(page, 0, kOriginalChecksum);
   TestRenderPageBitmapWithFlags(page, FPDF_NO_NATIVETEXT,
                                 kNoNativeTextChecksum);
 
