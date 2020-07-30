@@ -30,7 +30,7 @@
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/span.h"
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #include "third_party/skia/include/core/SkTypes.h"  // nogncheck
 #endif
 
@@ -376,7 +376,7 @@ CFX_RenderDevice::CFX_RenderDevice() = default;
 
 CFX_RenderDevice::~CFX_RenderDevice() {
   RestoreState(false);
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   Flush(true);
 #endif
 }
@@ -389,7 +389,7 @@ CFX_Matrix CFX_RenderDevice::GetFlipMatrix(float width,
   return CFX_Matrix(width, 0, 0, -height, left, top + height);
 }
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 void CFX_RenderDevice::Flush(bool release) {
   if (release)
     m_pDeviceDriver.reset();
@@ -454,7 +454,7 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
   }
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_8bppMask);
-#if defined(OS_MACOSX) || defined _SKIA_SUPPORT_PATHS_
+#if defined(OS_MACOSX) || defined(_SKIA_SUPPORT_PATHS_)
   constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb32;
 #else
   constexpr FXDIB_Format kPlatformFormat = FXDIB_Rgb;
@@ -685,7 +685,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
           fill_options, blend_type)) {
     return false;
   }
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   bitmap_device.GetDeviceDriver()->Flush();
 #endif
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
@@ -859,7 +859,7 @@ bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
   return m_pDeviceDriver->ContinueDIBits(handle, pPause);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
   NOTREACHED();
 }

@@ -31,7 +31,7 @@ RetainPtr<CFX_GlyphCache> CFX_FontCache::GetGlyphCache(const CFX_Font* pFont) {
   return new_cache;
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 CFX_TypeFace* CFX_FontCache::GetDeviceCache(const CFX_Font* pFont) {
   return GetGlyphCache(pFont)->GetDeviceCache(pFont);
 }

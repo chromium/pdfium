@@ -31,7 +31,7 @@
 #include "third_party/base/stl_util.h"
 #include "third_party/base/win/win_util.h"
 
-#ifndef _SKIA_SUPPORT_
+#if !defined(_SKIA_SUPPORT_)
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 
@@ -207,7 +207,7 @@ void SetPathToDC(HDC hDC,
   EndPath(hDC);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 // TODO(caryclark)  This antigrain function is duplicated here to permit
 // removing the last remaining dependency. Eventually, this will be elminiated
 // altogether and replace by Skia code.
@@ -310,7 +310,7 @@ unsigned clip_liang_barsky(float x1,
   }
   return np;
 }
-#endif  // _SKIA_SUPPORT_
+#endif  //  defined(_SKIA_SUPPORT_)
 
 class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
  public:
@@ -934,7 +934,7 @@ void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
       float x[2];
       float y[2];
       int np;
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
       // TODO(caryclark) temporary replacement of antigrain in line function
       // to permit removing antigrain altogether
       rect_base rect = {0.0f, 0.0f, (float)(m_Width), (float)(m_Height)};

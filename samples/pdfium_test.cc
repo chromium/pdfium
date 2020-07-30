@@ -14,11 +14,11 @@
 #include <string>
 #include <vector>
 
-#if defined PDF_ENABLE_SKIA && !defined _SKIA_SUPPORT_
+#if defined(PDF_ENABLE_SKIA) && !defined(_SKIA_SUPPORT_)
 #define _SKIA_SUPPORT_
 #endif
 
-#if defined PDF_ENABLE_SKIA_PATHS && !defined _SKIA_SUPPORT_PATHS_
+#if defined(PDF_ENABLE_SKIA_PATHS) && !defined(_SKIA_SUPPORT_PATHS_)
 #define _SKIA_SUPPORT_PATHS_
 #endif
 

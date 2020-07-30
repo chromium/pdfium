@@ -92,6 +92,6 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
   return false;
 }
 
-#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 void RenderDeviceDriverIface::Flush() {}
 #endif

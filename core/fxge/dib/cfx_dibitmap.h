@@ -99,10 +99,10 @@ class CFX_DIBitmap : public CFX_DIBBase {
                                     uint32_t* pitch,
                                     uint32_t* size);
 
-#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   void PreMultiply();
 #endif
-#if defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   void UnPreMultiply();
 #endif
 
@@ -111,12 +111,12 @@ class CFX_DIBitmap : public CFX_DIBBase {
   CFX_DIBitmap(const CFX_DIBitmap& src);
   ~CFX_DIBitmap() override;
 
-#if defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   Format m_nFormat;
 #endif
 

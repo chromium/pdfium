@@ -1573,7 +1573,7 @@ bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
   return !m_pBitmap->GetBuffer() || pHandle->Continue(pPause);
 }
 
-#ifndef _SKIA_SUPPORT_
+#if !defined(_SKIA_SUPPORT_)
 CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() = default;
@@ -1607,4 +1607,4 @@ bool CFX_DefaultRenderDevice::Create(
   return true;
 }
 
-#endif
+#endif  // !defined(_SKIA_SUPPORT_)

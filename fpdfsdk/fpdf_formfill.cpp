@@ -195,7 +195,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
 #endif
 
@@ -220,7 +220,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
       pPageView->PageView_OnDraw(pDevice.get(), matrix, &options, rect);
   }
 
-#ifdef _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   pDevice->Flush(true);
   holder->UnPreMultiply();
 #endif
@@ -671,7 +671,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
             rotate, flags);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
                                               FPDF_RECORDER recorder,
                                               FPDF_PAGE page,

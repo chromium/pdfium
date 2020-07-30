@@ -209,7 +209,7 @@ class CFX_RenderDevice {
                   int32_t nStartGray,
                   int32_t nEndGray);
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   virtual void DebugVerifyBitmapIsPreMultiplied() const;
   virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                const RetainPtr<CFX_DIBBase>& pMask,
@@ -218,7 +218,7 @@ class CFX_RenderDevice {
                                int bitmap_alpha,
                                BlendMode blend_type);
 #endif
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   void Flush(bool release);
 #endif
 

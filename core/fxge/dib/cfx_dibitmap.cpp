@@ -26,7 +26,7 @@ constexpr int8_t kChannelOffset[] = {0, 2, 1, 0, 0, 1, 2, 3, 3};
 
 CFX_DIBitmap::CFX_DIBitmap() {
   m_pPalette = nullptr;
-#ifdef _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   m_nFormat = Format::kCleared;
 #endif
 }
@@ -168,7 +168,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     case FXDIB_Rgb32:
     case FXDIB_Argb: {
       color = IsCmykImage() ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
       if (FXDIB_Rgb32 == GetFormat() && !IsCmykImage())
         color |= 0xFF000000;
 #endif

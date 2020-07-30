@@ -19,7 +19,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #include "core/fxge/fx_font.h"
 #endif
 
@@ -79,7 +79,7 @@ class CFX_Font {
   const CFX_PathData* LoadGlyphPath(uint32_t glyph_index,
                                     uint32_t dest_width) const;
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   CFX_TypeFace* GetDeviceCache() const;
 #endif
 
@@ -90,7 +90,7 @@ class CFX_Font {
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   bool IsSubstFontBold() const;
 #endif
   bool IsVertical() const { return m_bVertical; }

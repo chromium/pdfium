@@ -24,7 +24,7 @@
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/numerics/safe_math.h"
 
-#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #include "third_party/skia/include/core/SkStream.h"  // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
 
@@ -265,8 +265,8 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, bNative);
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
 
-#if defined(OS_MACOSX) && !defined _SKIA_SUPPORT_ && \
-    !defined _SKIA_SUPPORT_PATHS_
+#if defined(OS_MACOSX) && !defined(_SKIA_SUPPORT_) && \
+    !defined(_SKIA_SUPPORT_PATHS_)
   const bool bDoLookUp = !text_options->native_text;
 #else
   const bool bDoLookUp = true;
@@ -276,8 +276,8 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
                              bFontStyle, dest_width, anti_alias);
   }
 
-#if defined(OS_MACOSX) && !defined _SKIA_SUPPORT_ && \
-    !defined _SKIA_SUPPORT_PATHS_
+#if defined(OS_MACOSX) && !defined(_SKIA_SUPPORT_) && \
+    !defined(_SKIA_SUPPORT_PATHS_)
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it != m_SizeMap.end()) {
@@ -314,7 +314,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
 #endif
 }
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
@@ -331,7 +331,7 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
 #endif  // defined(OS_WIN)
   return m_pTypeface.get();
 }
-#endif  // defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #if !defined(OS_MACOSX)
 void CFX_GlyphCache::InitPlatform() {}

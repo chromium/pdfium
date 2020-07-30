@@ -13,7 +13,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_freetype.h"
 
-#if !defined _SKIA_SUPPORT_ && !defined _SKIA_SUPPORT_PATHS_
+#if !defined(_SKIA_SUPPORT_) && !defined(_SKIA_SUPPORT_PATHS_)
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 

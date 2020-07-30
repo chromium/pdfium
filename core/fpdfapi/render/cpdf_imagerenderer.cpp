@@ -37,7 +37,7 @@
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/stl_util.h"
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 #include "core/fxge/skia/fx_skia_device.h"
 #endif
 
@@ -329,7 +329,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Rgb32, nullptr))
     return true;
 
-#if defined _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   bitmap_device1.Clear(0xffffff);
 #else
   bitmap_device1.GetBitmap()->Clear(0xffffff);
@@ -349,14 +349,14 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                              nullptr))
     return true;
 
-#if defined _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   bitmap_device2.Clear(0);
 #else
   bitmap_device2.GetBitmap()->Clear(0);
 #endif
   CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_Loader.GetMask(),
                      new_matrix, rect);
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
       bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
       rect.top, m_BitmapAlpha, m_BlendType);
@@ -367,7 +367,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
     bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);
   m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
-#endif  //  _SKIA_SUPPORT_
+#endif  //  defined(_SKIA_SUPPORT_)
   return false;
 }
 
@@ -385,7 +385,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   RetainPtr<CFX_DIBitmap> premultiplied = m_pDIBBase->Clone(nullptr);
   if (m_pDIBBase->HasAlpha())
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
@@ -408,7 +408,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     }
     return false;
   }
-#endif
+#endif  // defined(_SKIA_SUPPORT_)
 
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {

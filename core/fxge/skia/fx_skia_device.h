@@ -5,7 +5,7 @@
 #ifndef CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_
 #define CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #include <memory>
 #include <vector>
@@ -30,7 +30,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        bool bRgbByteOrder,
                        const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
                        bool bGroupKnockout);
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
   CFX_SkiaDeviceDriver(int size_x, int size_y);
 #endif
@@ -93,7 +93,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                  int dest_left,
                  int dest_top,
                  BlendMode blend_type) override;
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                        const RetainPtr<CFX_DIBBase>& pMask,
                        int dest_left,
@@ -102,7 +102,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        BlendMode blend_type) override;
 #endif
 
-#ifdef _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   void SetClipMask(const FX_RECT& clipBox, const SkPath& skClipPath);
 #endif
 
@@ -164,7 +164,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   bool GetGroupKnockout() const { return m_bGroupKnockout; }
 
-#ifdef _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   const CFX_ClipRgn* clip_region() const { return m_pClipRgn.get(); }
   const std::vector<std::unique_ptr<CFX_ClipRgn>>& stack() const {
     return m_StateStack;
@@ -177,7 +177,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
   std::unique_ptr<SkiaState> m_pCache;
-#ifdef _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
 #endif
@@ -185,6 +185,6 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool m_bRgbByteOrder;
   bool m_bGroupKnockout;
 };
-#endif  // defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 
 #endif  // CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_

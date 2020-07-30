@@ -626,7 +626,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
 
-#ifdef _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_PATHS_)
   pDevice->Flush(true);
   pBitmap->UnPreMultiply();
 #endif
@@ -670,7 +670,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
                      /*color_scheme=*/nullptr);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
                                                            int size_x,
                                                            int size_y) {
@@ -693,7 +693,7 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
 
   return recorder;
 }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   if (!page)

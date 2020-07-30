@@ -115,7 +115,7 @@ class RenderDeviceDriverIface {
                                int top,
                                int bitmap_alpha,
                                BlendMode blend_type);
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
   virtual void Flush();
 #endif
 };

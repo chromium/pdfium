@@ -174,7 +174,7 @@ bool CPDF_SampledFunc::v_Call(const float* inputs, float* results) const {
   return true;
 }
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 RetainPtr<CPDF_StreamAcc> CPDF_SampledFunc::GetSampleStream() const {
   return m_pSampleStream;
 }
